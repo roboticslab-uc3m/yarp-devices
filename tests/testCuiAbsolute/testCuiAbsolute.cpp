@@ -127,13 +127,46 @@ protected:
     };
 
 
+        TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInPullMode ) // -- Al tratarse de envío por petición, haremos una única comprobación para ver si está enviando mensajes el mensaje
+        {
+
+                int canId = 0;
+                int ret = 0;
+                double timeOut = 2;
+                double timeStamp = 0.0;
+                bool timePassed = false;
+
+                bool startSending = cuiAbsolute->startPullPublishing();       // -- manda al PIC una orden de que publique (modo por petición)
+                timeStamp = yarp::os::Time::now();                            // -- tiempo actual               
+
+                //-- Blocking read until we get a message from the expected canId
+                while ( (canId != CAN_ID) && !timePassed )          // -- it will check the ID
+                {
+                    if(int(yarp::os::Time::now()-timeStamp)==timeOut) {
+                        CD_ERROR("Time out passed\n");
+                        timePassed = true;
+                    }
+
+                    ret = iCanBus->read_timeout(&buffer, 0);         // -- return value of message with timeout of 1 [ms]
+                    if( ret <= 0 ) continue;                        // -- is waiting for recive message
+                    canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
+                    CD_DEBUG("Read ok from CuiAbsolute %d\n", canId);                    
+
+                }
+                //-- Como se trata de envío continuo, comprobamos varias veces la llegada del mensaje
+                ASSERT_TRUE(startSending);  // -- comprobamos startPullPublishing
+                ASSERT_FALSE(timePassed);   // -- comprobamos que no supera el tiempo de espera
+                ASSERT_EQ(canId , CAN_ID);  // -- comprobamos la llegada de un mensaje
+        }
+
+
         TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInContinuousMode ) // -- Al tratarse de envío continuo, haremos una comprobación de 3 veces para ver si está enviando mensajes
         {                        
 
             bool startSending = cuiAbsolute->startContinuousPublishing(0);          // -- manda al PIC una orden de que publique (modo continuo)
 
 
-            for(int i=0; i<3 ; i++){
+            for(int i=1; i<4 ; i++){
 
                 int canId = 0;
                 int ret = 0;
@@ -150,7 +183,7 @@ protected:
                     ret = iCanBus->read_timeout(&buffer,1);         // -- return value of message with timeout of 1 [ms]
                     if( ret <= 0 ) continue;                        // -- is waiting for recive message
                     canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
-                    CD_DEBUG("Read ok from CuiAbsolute %d\n", canId);
+                    CD_DEBUG("Read ok from CuiAbsolute %d (%d)\n", canId, i);
                         if(int(yarp::os::Time::now()-timeStamp)==timeOut) {
                             CD_ERROR("Time out passed\n");
                             timePassed = true;
@@ -171,7 +204,7 @@ protected:
 
             int canId = 0;
             int ret = 0;
-            double timeOut = 2; // -- 2 segundos
+            double timeOut = 1; // -- 1 segundo
             double timeStamp = 0.0;
             bool timePassed = false;
 
@@ -185,23 +218,23 @@ protected:
             //-- Blocking read until we get a message from the expected canId
             while ( canId != CAN_ID  && !timePassed ) // -- it will check the ID
             {
+
+                if(int(yarp::os::Time::now()-timeStamp)==timeOut) {
+                    CD_INFO("Time out passed and CuiAbsolute stopped successfully\n");
+                    timePassed = true;
+                }
+
                 ret = iCanBus->read_timeout(&buffer,1);         // -- return value of message with timeout of 1 [ms]
                 if( ret <= 0 ) continue;                        // -- is waiting for recive message
                 canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
                 CD_DEBUG("Read ok from CuiAbsolute %d\n", canId);
-                    if(int(yarp::os::Time::now()-timeStamp)==timeOut) {
-                        CD_ERROR("Time out passed\n");
-                        timePassed = true;
-                    }
+
             }
 
             //-- Como se trata de envío continuo, comprobamos varias veces la llegada del mensaje
             ASSERT_TRUE(stopSending);  // -- comprobamos startContinuousPublishing
             ASSERT_TRUE(timePassed);   // -- comprobamos que supera el tiempo de espera y no recibe ningún mensaje
-            ASSERT_NE(canId , CAN_ID);  // -- comprobamos que ningún mensaje que le llegue al CAN sea el del encoder absoluto
-            yarp::os::Time::delay(1);
-
-
+            ASSERT_NE(canId , CAN_ID); // -- comprobamos que ningún mensaje que le llegue al CAN sea el del encoder absoluto
         }
 
 }

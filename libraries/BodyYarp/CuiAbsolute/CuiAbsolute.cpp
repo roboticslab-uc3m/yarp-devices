@@ -56,3 +56,13 @@ bool teo::CuiAbsolute::send(uint32_t cob, uint16_t len, uint8_t * msgData) {
     return true;
 }
 
+// ----------------------------------------------------------------------------
+/* Debido a que la funcion send utiliza un Delay, vamos a incluir una función pública send sin delay */
+
+bool teo::CuiAbsolute::sendWithoutDelay(uint32_t cob, uint16_t len, uint8_t * msgData) {
+
+    if( ! canDevicePtr->sendRaw(cob + this->canId, len, msgData) )
+        return false;
+
+    return true;
+}
