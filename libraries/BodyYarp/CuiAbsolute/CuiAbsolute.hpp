@@ -328,12 +328,6 @@ class CuiAbsolute : public yarp::dev::DeviceDriver, public yarp::dev::IControlLi
          */
         bool send(uint32_t cob, uint16_t len, uint8_t * msgData);
 
-        /**
-         *  The same function without delay
-         */
-        bool sendWithoutDelay(uint32_t cob, uint16_t len, uint8_t * msgData);
-
-
         /** pt-related **/
         int ptPointCounter;
         yarp::os::Semaphore ptBuffer;

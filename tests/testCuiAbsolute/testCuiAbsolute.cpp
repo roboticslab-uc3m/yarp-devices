@@ -9,10 +9,9 @@
 #include "ColorDebug.hpp"
 
 #include "ICanBusSharer.h"
-//#include "TechnosoftIpos.hpp"  //-- ok practice?
 #include "CuiAbsolute/CuiAbsolute.hpp"
 
-#define CAN_ID 108
+#define CAN_ID 108 // ID of CuiAbsolute encoder that we want to test
 
 YARP_DECLARE_PLUGINS(BodyYarp)
 
@@ -36,7 +35,7 @@ public:
     // -- code here will execute just before the test ensues
         YARP_REGISTER_PLUGINS(BodyYarp);
 
-        yarp::os::Property hicoCanConf ("(device CanBusHico) (canDevice /dev/can1) (canBitrate 8)"); // -- truco para agregar directamente un conjunto de propiedades sin tener que llamar a la función "put"
+        yarp::os::Property hicoCanConf ("(device CanBusHico) (canDevice /dev/can1) (canBitrate 8)");
         bool ok = true;
         ok &= canBusDevice.open(hicoCanConf);   // -- we introduce the configuration properties defined in property object (p) and them, we stard the device (HicoCAN)
         ok &= canBusDevice.view(iCanBus);
@@ -64,7 +63,7 @@ public:
         ok &= canNodeDevice.view( iTorqueControlRaw );
         ok &= canNodeDevice.view( iVelocityControlRaw );
         ok &= canNodeDevice.view( iCanBusSharer );
-        ok &= canNodeDevice.view( cuiAbsolute );  //-- ok practice?
+        ok &= canNodeDevice.view( cuiAbsolute );
 
         if(ok)
         {
@@ -103,7 +102,7 @@ protected:
     yarp::dev::IPositionDirectRaw* iPositionDirectRaw;
     yarp::dev::ITorqueControlRaw* iTorqueControlRaw;
     yarp::dev::IVelocityControlRaw* iVelocityControlRaw;
-    ICanBusSharer* iCanBusSharer; // -- ??
+    ICanBusSharer* iCanBusSharer;
     CuiAbsolute* cuiAbsolute;
 
     struct can_msg buffer;
@@ -127,7 +126,7 @@ protected:
     };
 
 
-        TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInPullMode ) // -- Al tratarse de envío por petición, haremos una única comprobación para ver si está enviando mensajes el mensaje
+        TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInPullMode )
         {
 
                 int canId = 0;
@@ -136,12 +135,13 @@ protected:
                 double timeStamp = 0.0;
                 bool timePassed = false;
 
-                bool startSending = cuiAbsolute->startPullPublishing();       // -- manda al PIC una orden de que publique (modo por petición)
-                timeStamp = yarp::os::Time::now();                            // -- tiempo actual               
+                bool startSending = cuiAbsolute->startPullPublishing();
+                timeStamp = yarp::os::Time::now();
 
                 //-- Blocking read until we get a message from the expected canId
                 while ( (canId != CAN_ID) && !timePassed )          // -- it will check the ID
                 {
+                    // -- timer
                     if(int(yarp::os::Time::now()-timeStamp)==timeOut) {
                         CD_ERROR("Time out passed\n");
                         timePassed = true;
@@ -151,12 +151,11 @@ protected:
                     if( ret <= 0 ) continue;                        // -- is waiting for recive message
                     canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
                     CD_DEBUG("Read ok from CuiAbsolute %d\n", canId);                    
-
                 }
-                //-- Como se trata de envío continuo, comprobamos varias veces la llegada del mensaje
-                ASSERT_TRUE(startSending);  // -- comprobamos startPullPublishing
-                ASSERT_FALSE(timePassed);   // -- comprobamos que no supera el tiempo de espera
-                ASSERT_EQ(canId , CAN_ID);  // -- comprobamos la llegada de un mensaje
+
+                ASSERT_TRUE(startSending);  // -- testing startPullPublishing function
+                ASSERT_FALSE(timePassed);   // -- testing the time (it have to be less than 2 sec)
+                ASSERT_EQ(canId , CAN_ID);  // -- testing canId (message received)
         }
 
 
