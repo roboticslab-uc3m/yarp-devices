@@ -12,7 +12,7 @@
 //#include "TechnosoftIpos.hpp"  //-- ok practice?
 #include "CuiAbsolute/CuiAbsolute.hpp"
 
-#define CAN_ID 124
+#define CAN_ID 108
 
 YARP_DECLARE_PLUGINS(BodyYarp)
 
@@ -173,11 +173,14 @@ protected:
             int ret = 0;
             double timeOut = 2; // -- 2 segundos
             double timeStamp = 0.0;
-            bool startSending = false;
             bool timePassed = false;
 
+
             bool stopSending = cuiAbsolute->stopPublishingMessages();
-            yarp::os::Time::delay(1);                                   // -- metemos un delay para que de tiempo a que se vacie el buffer
+            yarp::os::Time::delay(1);                                     // -- aplico un delay de 1 segundo para vaciar el buffer
+
+            timeStamp = yarp::os::Time::now();                            // -- tiempo actual
+
 
             //-- Blocking read until we get a message from the expected canId
             while ( canId != CAN_ID  && !timePassed ) // -- it will check the ID
@@ -195,7 +198,7 @@ protected:
             //-- Como se trata de envío continuo, comprobamos varias veces la llegada del mensaje
             ASSERT_TRUE(stopSending);  // -- comprobamos startContinuousPublishing
             ASSERT_TRUE(timePassed);   // -- comprobamos que supera el tiempo de espera y no recibe ningún mensaje
-            ASSERT_EQ(canId , CAN_ID);  // -- comprobamos la llegada de un mensaje
+            ASSERT_NE(canId , CAN_ID);  // -- comprobamos que ningún mensaje que le llegue al CAN sea el del encoder absoluto
             yarp::os::Time::delay(1);
 
 
