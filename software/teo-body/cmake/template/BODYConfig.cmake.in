@@ -1,0 +1,14 @@
+# Authors: Juan G Victores
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Evident yet unstandarized names
+
+IF (NOT BODY_FOUND)
+
+  SET(BODY_LIBRARIES "@BODY_LIBRARIES@")
+  SET(BODY_INCLUDE_DIRS "@BODY_INCLUDE_DIRS@")
+  SET(BODY_LINK_DIRS "@BODY_LINK_DIRS@")
+  SET(BODY_DEFINES "@BODY_DEFINES@")
+  SET(BODY_MODULE_PATH "@BODY_MODULE_PATH@")
+
+  SET (BODY_FOUND TRUE)
+ENDIF (NOT BODY_FOUND)
