@@ -1,0 +1,28 @@
+
+/**
+ * \defgroup manipulation_libraries TEO Manipulation Libraries
+ * @brief TEO manipulation libraries.
+ */
+
+/**
+ * 
+ * \defgroup manipulation_modules TEO Manipulation Modules
+ * @brief TEO manipulation modules.
+ */
+
+/**
+ * \defgroup manipulation_examples TEO Manipulation Examples
+ * @brief TEO manipulation examples.
+ */
+
+
+/**
+* @ingroup manipulation_libraries
+* \defgroup ManipulationYarp ManipulationYarp
+*
+* @brief A collection of Manipulation libraries that implement YARP device interfaces
+* and therefore can be invoked as YARP plugins.
+*
+* This file can be edited at $MANIPULATION_ROOT/main/doc/groups.dox
+*/
+
