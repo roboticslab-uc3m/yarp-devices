@@ -92,7 +92,7 @@ int CanDevice::read_timeout(struct can_msg *buf, unsigned int timeout) {
     }
     else if (ret<0)
     {
-        CD_ERROR("%s.\n", strerror(errno))
+        CD_ERROR("%s.\n", strerror(errno));
         return ret;
     }
     else
