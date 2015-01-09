@@ -13,7 +13,7 @@ bool LaunchManipulation::configure(ResourceFinder &rf) {
     std::string manipulation_root = ::getenv("MANIPULATION_ROOT");
     CD_INFO("Using root: %s.\n", manipulation_root.c_str() );
 
-    std::string leftArmIni = manipulation_root + "/app/testManipulationBot2/conf/leftArm.ini";
+    std::string leftArmIni = manipulation_root + "/app/testBodyBot/conf/leftArm.ini";
 
     Property leftArmOptions;
     if (! leftArmOptions.fromConfigFile(leftArmIni) ) {  //-- Put first because defaults to wiping out.
@@ -23,19 +23,19 @@ bool LaunchManipulation::configure(ResourceFinder &rf) {
     CD_SUCCESS("Opened %s.\n",leftArmIni.c_str());
     leftArmOptions.put("name","/teo/leftArm");
     leftArmOptions.put("device","controlboard");
-    leftArmOptions.put("subdevice","manipulationbot2");
+    leftArmOptions.put("subdevice","bodybot");
 
     leftArmDevice.open(leftArmOptions);
     
     if (!leftArmDevice.isValid()) {
         CD_ERROR("leftArmDevice instantiation not worked.\n");
-        CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_manipulationbot2\" variable is set \"ON\"\n");
-        CD_ERROR("\"SKIP_manipulationbot2 is set\" --> should be --> \"ENABLE_manipulationbot2 is set\"\n");
+        CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_bodybot\" variable is set \"ON\"\n");
+        CD_ERROR("\"SKIP_bodybot is set\" --> should be --> \"ENABLE_bodybot is set\"\n");
         // robotDevice.close();  // un-needed?
         return false;
     }
 
-    std::string rightArmIni = manipulation_root + "/app/testManipulationBot2/conf/rightArm.ini";
+    std::string rightArmIni = manipulation_root + "/app/testBodyBot/conf/rightArm.ini";
 
     Property rightArmOptions;
     if (! rightArmOptions.fromConfigFile(rightArmIni) ) {  //-- Put first because defaults to wiping out.
@@ -45,14 +45,14 @@ bool LaunchManipulation::configure(ResourceFinder &rf) {
     CD_SUCCESS("Opened %s.\n",rightArmIni.c_str());
     rightArmOptions.put("name","/teo/rightArm");
     rightArmOptions.put("device","controlboard");
-    rightArmOptions.put("subdevice","manipulationbot2");
+    rightArmOptions.put("subdevice","bodybot");
 
     rightArmDevice.open(rightArmOptions);
 
     if (!rightArmDevice.isValid()) {
         CD_ERROR("rightArmDevice instantiation not worked.\n");
-        CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_manipulationbot2\" variable is set \"ON\"\n");
-        CD_ERROR("\"SKIP_manipulationbot2 is set\" --> should be --> \"ENABLE_manipulationbot2 is set\"\n");
+        CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_bodybot\" variable is set \"ON\"\n");
+        CD_ERROR("\"SKIP_bodybot is set\" --> should be --> \"ENABLE_bodybot is set\"\n");
         // robotDevice.close();  // un-needed?
         return false;
     }
