@@ -79,7 +79,7 @@ configure_file(${CMAKE_SOURCE_DIR}/cmake/template/BODYConfig.cmake.in
 
 # create a symbolic link to the shared directory (as contains models and may be heavy)
 # If you want a deep copy, you can use the copy_directory command instead of create_symlink.
-add_custom_target(install_applications COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/share ${CMAKE_SOURCE_DIR}/../share)
+#add_custom_target(install_applications COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/share ${CMAKE_SOURCE_DIR}/../share)
 
 #endif(MSVC)
 ##add_custom_target(nuke
