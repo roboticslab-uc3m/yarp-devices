@@ -4,17 +4,13 @@
 #define __MOTOR_DRIVER__
 
 #include <yarp/os/all.h>
-#include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/Drivers.h>
-#include <yarp/dev/PolyDriver.h>
 
 #include "ColorDebug.hpp"
 #include "CanDevice.hpp"
 
 using namespace yarp::os;
-using namespace yarp::dev;
 
-class MotorDriver : public DeviceDriver {
+class MotorDriver  {
 
     public:
 
