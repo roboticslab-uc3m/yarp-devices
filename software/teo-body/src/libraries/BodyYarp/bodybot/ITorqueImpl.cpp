@@ -134,9 +134,10 @@ bool teo::BodyBot::getTorque(int j, double *t) {
     //purge(canNode);
     //CAN::receive(canNode);
     struct can_msg reply;
-    if( ! canDevice.read_timeout(&reply,500) ){
-        CD_WARNING("Read timeout!\n");
-    }
+    return false; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ///////////////////////////if( ! canDevice.read_timeout(&reply,500) ){
+        //////////////////////////////CD_WARNING("Read timeout!\n");
+    ///////////////////////////////////////////////}
     //display(reply);
     //int got;
     //memcpy(&got,reply.data+4,4);
