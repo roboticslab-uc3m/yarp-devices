@@ -44,7 +44,7 @@ class CanDevice {
          * @param msgData Data to send
          * @return true/false on success/failure.
          */
-        bool send(uint32_t id, uint16_t len, uint8_t * msgData);
+        bool sendRaw(uint32_t id, uint16_t len, uint8_t * msgData);
 
         /** Read data.
          * @return Number on got, 0 on timeout, and errno on fail. */

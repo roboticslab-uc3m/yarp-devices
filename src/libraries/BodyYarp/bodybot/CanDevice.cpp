@@ -49,7 +49,7 @@ bool CanDevice::close() {
 
 // -----------------------------------------------------------------------------
 
-bool CanDevice::send(uint32_t id, uint16_t len, uint8_t * msgData) {
+bool CanDevice::sendRaw(uint32_t id, uint16_t len, uint8_t * msgData) {
 
      struct can_msg msg;
      memset(&msg,0,sizeof(struct can_msg));

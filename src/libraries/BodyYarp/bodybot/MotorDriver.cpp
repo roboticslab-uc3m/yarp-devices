@@ -105,7 +105,7 @@ bool MotorDriver::send(uint32_t cob, uint16_t len, uint8_t * msgData) {
     if ( (lastUsage - yarp::os::Time::now()) < DELAY )
         yarp::os::Time::delay( lastUsage + DELAY - yarp::os::Time::now() );
 
-    if( ! canDevicePtr->send(cob + this->canId, len, msgData) )
+    if( ! canDevicePtr->sendRaw(cob + this->canId, len, msgData) )
         return false;
 
     lastUsage = yarp::os::Time::now();
@@ -120,7 +120,7 @@ bool MotorDriver::start() {
     uint8_t msg_start[] = {0x01,0x01};
 
     msg_start[1]=this->getCanId();
-    if( ! canDevicePtr->send(0, 2, msg_start) )
+    if( ! canDevicePtr->sendRaw(0, 2, msg_start) )
     {
         CD_ERROR("Could not send \"start\" to canId: %d.\n",this->getCanId());
         return false;
