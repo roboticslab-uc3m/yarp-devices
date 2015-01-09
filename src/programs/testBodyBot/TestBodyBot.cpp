@@ -8,19 +8,10 @@ TestBodyBot::TestBodyBot() { }
 /************************************************************************/
 bool TestBodyBot::configure(ResourceFinder &rf) {
 
-    std::string robot_name = rf.check("robot",Value(DEFAULT_ROBOT_NAME),"Robot name.").asString();
-
-    CD_INFO("Using robot: %s.\n",robot_name.c_str());
-    
-    std::string gripperName(robot_name.c_str());
-    gripperName += "/gripper";
-    CD_INFO("Using gripperName: %s.\n",gripperName.c_str());
-
     Property options;
     options.fromString(rf.toString());  //-- Allow options like stream_state=0.
     options.put("device","controlboard");
-    options.put("subdevice","gripperbot");
-    options.put("name",gripperName);
+    options.put("subdevice","bodybot");
 
     robotDevice.open(options);
     
