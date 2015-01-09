@@ -2,7 +2,7 @@
 
 #include "BodyBot.hpp"
 
-// ------------------- IControlLimits Related ------------------------------------
+// ------------------- IControlMode Related ------------------------------------
 
 bool teo::BodyBot::setPositionMode(int j) {
     CD_INFO("(%d)\n",j);
