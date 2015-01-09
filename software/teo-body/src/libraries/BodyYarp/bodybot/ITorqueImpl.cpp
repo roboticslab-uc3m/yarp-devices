@@ -2,7 +2,7 @@
 
 #include "BodyBot.hpp"
 
-// ------------------- IForceControl Related ------------------------------------
+// ------------------- ITorqueControl Related ------------------------------------
 
 bool teo::BodyBot::setTorqueMode() {
     CD_INFO("\n");

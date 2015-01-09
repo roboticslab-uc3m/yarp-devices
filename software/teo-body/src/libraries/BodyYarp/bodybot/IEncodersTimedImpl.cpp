@@ -7,6 +7,8 @@
 bool teo::BodyBot::getEncodersTimed(double *encs, double *time) {
     CD_INFO("\n");
 
+    CD_WARNING("Not implemented yet.\n");
+
     return true;
 }
 
@@ -14,6 +16,8 @@ bool teo::BodyBot::getEncodersTimed(double *encs, double *time) {
 
 bool teo::BodyBot::getEncoderTimed(int j, double *encs, double *time) {
     CD_INFO("(%d)\n",j);
+
+    CD_WARNING("Not implemented yet.\n");
 
     return true;
 }
