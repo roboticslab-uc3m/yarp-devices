@@ -11,7 +11,7 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-project(body)
+project(TEO-BODY)
 
 ### options: cpp libraries
 option(ENABLE_BodyYarp "Choose if you want to compile BodyYarp" TRUE)
@@ -70,6 +70,7 @@ set(BODY_LINK_DIRS CACHE INTERNAL "appended link dirs" FORCE)
 set(BODY_LIBRARIES CACHE INTERNAL "appended libraries" FORCE)
 
 # add main contents
+add_subdirectory(share)
 add_subdirectory(src)
 
 # export our variables to a BODYConfig.cmake creation
