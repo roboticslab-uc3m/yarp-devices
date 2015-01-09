@@ -37,7 +37,6 @@ void teo::BodyBot::run() {
                 memcpy(&got, buffer.data+4,4);
                 drivers[ idxFromCanId[canId] ]->setEncoder( got / ( 11.11112 * (drivers[ idxFromCanId[canId] ]->getTr()) ) );
             }
-            //else if( (buffer.data[0]==0x01)&&(buffer.data[1]==0xFF)&&(buffer.data[2]==0x01)&&(buffer.data[3]==0x08)&&(buffer.data[4]==0x20) )
             else if( (buffer.data[0]==0x01)&&(buffer.data[1]==0xFF)&&(buffer.data[2]==0x01)&&(buffer.data[4]==0x20) )
             {
                 drivers[ idxFromCanId[canId] ]->ptBuffer.wait();
@@ -77,7 +76,6 @@ void teo::BodyBot::run() {
                     CD_DEBUG("\t-Target NOT reached (%d).\n",canId);
                 }
             }
-            //else if((canId != 0)&&(canId != 128))
             else
             {
                 //CD_DEBUG("Read ret > 0 (%d) canId: %d.\n",ret,canId);  //--way too verbose
