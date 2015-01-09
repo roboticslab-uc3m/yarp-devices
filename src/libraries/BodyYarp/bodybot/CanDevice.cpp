@@ -111,13 +111,11 @@ int CanDevice::read_timeout(struct can_msg *buf, unsigned int timeout) {
 
 void CanDevice::show_er( can_msg * message){
 
-    //if (message->id>=0x80 && message->id<=0x100){  //ivan
-    if (message->id>=0x80 && message->id<0x100){  //juan: discard decimal 256
+    if (message->id>=0x80 && message->id<0x100){
 
         if (message->data[0] == 0x01 && message->data[1] == 0xFF)
             return; // PVT control message
 
-        //CD_ERROR("Emergency message in id %d. \n", message->id-0x80 );
         CD_ERROR("Emergency message in id: %d. ", message->id & 0x7F );
 
         printf("%X %X : ",message->data[1],message->data[0]);
