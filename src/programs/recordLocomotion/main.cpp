@@ -41,7 +41,7 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-YARP_DECLARE_PLUGINS(BodyYarp);
+YARP_DECLARE_PLUGINS(BodyYarp)
 
 int main(int argc, char *argv[]) {
 
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
     rf.setVerbose(true);
     rf.setDefaultContext("recordLocomotion/conf");
     rf.setDefaultConfigFile("recordLocomotion.ini");
-    rf.configure("TEO_ROOT", argc, argv);
+    rf.configure(argc, argv);
 
     CD_INFO("Checking for yarp network...\n");
     Network yarp;

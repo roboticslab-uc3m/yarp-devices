@@ -41,7 +41,7 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-YARP_DECLARE_PLUGINS(BodyYarp);
+YARP_DECLARE_PLUGINS(BodyYarp)
 
 int main(int argc, char *argv[]) {
 
@@ -49,9 +49,9 @@ int main(int argc, char *argv[]) {
 
     ResourceFinder rf;
     rf.setVerbose(true);
-    rf.setDefaultContext("playbackManipulation/conf");
+    rf.setDefaultContext("playbackManipulation");
     rf.setDefaultConfigFile("playbackManipulation.ini");
-    rf.configure("TEO_ROOT", argc, argv);
+    rf.configure(argc, argv);
 
     CD_INFO("Checking for yarp network...\n");
     Network yarp;
