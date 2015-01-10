@@ -1,28 +1,31 @@
 
 /**
- * \defgroup manipulation_libraries TEO Manipulation Libraries
+@brief The main, catch-all namespace for TEO programs and libraries.
+ */
+namespace teo {}
+
+/**
+ \defgroup teo_body_libraries TEO Body Libraries
  * @brief TEO manipulation libraries.
  */
 
 /**
  * 
- * \defgroup manipulation_modules TEO Manipulation Modules
+ * \defgroup teo_body_modules TEO Body Modules
  * @brief TEO manipulation modules.
  */
 
 /**
- * \defgroup manipulation_examples TEO Manipulation Examples
+ * \defgroup teo_body_examples TEO Body Examples
  * @brief TEO manipulation examples.
  */
 
 
 /**
-* @ingroup manipulation_libraries
-* \defgroup ManipulationYarp ManipulationYarp
+* @ingroup teo_body_libraries
+* \defgroup BodyYarp BodyYarp
 *
-* @brief A collection of Manipulation libraries that implement YARP device interfaces
+* @brief A collection of Body libraries that implement YARP device interfaces
 * and therefore can be invoked as YARP plugins.
-*
-* This file can be edited at $MANIPULATION_ROOT/main/doc/groups.dox
 */
 
