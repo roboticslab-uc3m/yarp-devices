@@ -1,23 +1,23 @@
 
 /**
-@brief The main, catch-all namespace for TEO programs and libraries.
+@brief The main, catch-all namespace for TEO.
  */
 namespace teo {}
 
 /**
  \defgroup teo_body_libraries TEO Body Libraries
- * @brief TEO manipulation libraries.
+ * @brief TEO body libraries.
  */
 
 /**
  * 
  * \defgroup teo_body_modules TEO Body Modules
- * @brief TEO manipulation modules.
+ * @brief TEO body modules.
  */
 
 /**
  * \defgroup teo_body_examples TEO Body Examples
- * @brief TEO manipulation examples.
+ * @brief TEO body examples.
  */
 
 
