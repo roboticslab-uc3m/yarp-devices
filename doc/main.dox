@@ -1,0 +1,22 @@
+/**
+  * \mainpage The TEO Software Repository documentation (teo-body)
+
+Welcome to the TEO Software Repository documentation for the manipulation and locomotion PCs. <a class=el href="http://robots.uc3m.es" target="_blank">Click here to return to Wiki.</a>
+
+ \li \ref teo_body_install_on_debian_6
+
+Even more internal links of interest:
+ \li <a class=el href="http://robots.uc3m.es/dox-teo-main/index.html" target="_blank">teo-main</a>
+ \li <a class=el href="http://robots.uc3m.es/dox-teo-head/index.html" target="_blank">teo-head</a>
+
+External links (related projects):
+ \li <a class=el href="http://roboticslab.sourceforge.net/asibot" target="_blank">ASIBOT</a>
+ \li <a class=el href="http://eris.liralab.it/yarpdoc/index.html" target="_blank">YARP</a>
+ \li <a class=el href="http://eris.liralab.it/iCub/main/dox/html/index.html" target="_blank">iCub Software Repository Documentation</a>
+
+<hr>
+
+This page can be edited at teo-body/doc/main.dox.
+
+*/
+
