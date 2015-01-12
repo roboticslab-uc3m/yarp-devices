@@ -1,7 +1,7 @@
 /**
   * \mainpage The TEO Software Repository documentation (teo-body)
 
-Welcome to the TEO Software Repository documentation for the manipulation and locomotion PCs. <a class=el href="http://robots.uc3m.es" target="_blank">Click here to return to Wiki.</a>
+Welcome to the TEO Software Repository documentation for the manipulation and locomotion PCs. <a class=el href="http://robots.uc3m.es" target="_blank">Click here to return to Wiki.</a> <a class=el href="http://robots.uc3m.es/svn/TEOrepo/software/teo-body" target="_blank">Click here to see teo-body on repo.</a>
 
  \li \ref teo_body_install_on_debian_6
 
