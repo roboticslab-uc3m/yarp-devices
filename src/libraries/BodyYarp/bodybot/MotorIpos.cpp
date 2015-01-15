@@ -214,6 +214,15 @@ bool MotorIpos::interpretMessage( can_msg * message) {
         return true;
     }
 
+    if( (message->id-canId) == 0x580 )
+    {
+        //-- Commenting encoder value (response to petition) as way too verbose, happens all the time.
+        CD_DEBUG("Got ack from driver side.");
+        return true;
+    }
+
+    //-- Debugged up to here.
+
     if( (message->data[0]==0x01)&&(message->data[1]==0xFF)&&(message->data[2]==0x01)&&(message->data[4]==0x20) )
     {
         ptBuffer.wait();
