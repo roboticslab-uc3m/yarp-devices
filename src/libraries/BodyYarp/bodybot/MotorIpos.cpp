@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MotorDriver.hpp"
+#include "MotorIpos.hpp"
 
 // -----------------------------------------------------------------------------
 
-MotorDriver::MotorDriver(CanBusHico *canDevicePtr, const int& canId, const double &tr) : max(0), min(0), refAcceleration(0), refSpeed(0), encoder(0) {
+MotorIpos::MotorIpos(CanBusHico *canDevicePtr, const int& canId, const double &tr) : max(0), min(0), refAcceleration(0), refSpeed(0), encoder(0) {
     this->canDevicePtr = canDevicePtr;
     this->canId = canId;
     this->tr = tr;
@@ -16,13 +16,13 @@ MotorDriver::MotorDriver(CanBusHico *canDevicePtr, const int& canId, const doubl
 
 // -----------------------------------------------------------------------------
 
-int MotorDriver::getCanId() {
+int MotorIpos::getCanId() {
     return canId;
 }
 
 // -----------------------------------------------------------------------------
 
-double MotorDriver::getEncoder() {
+double MotorIpos::getEncoder() {
     double value;
     encoderReady.wait();
     value = encoder;
@@ -32,37 +32,37 @@ double MotorDriver::getEncoder() {
 
 // -----------------------------------------------------------------------------
 
-double MotorDriver::getMax() {
+double MotorIpos::getMax() {
     return max;
 }
 
 // -----------------------------------------------------------------------------
 
-double MotorDriver::getMin() {
+double MotorIpos::getMin() {
     return min;
 }
 
 // -----------------------------------------------------------------------------
 
-double MotorDriver::getRefAcceleration() {
+double MotorIpos::getRefAcceleration() {
     return refAcceleration;
 }
 
 // -----------------------------------------------------------------------------
 
-double MotorDriver::getRefSpeed() {
+double MotorIpos::getRefSpeed() {
     return refSpeed;
 }
 
 // -----------------------------------------------------------------------------
 
-double MotorDriver::getTr() {
+double MotorIpos::getTr() {
     return tr;
 }
 
 // -----------------------------------------------------------------------------
 
-void MotorDriver::setEncoder(const double& value) {
+void MotorIpos::setEncoder(const double& value) {
     encoderReady.wait();
     encoder = value;
     encoderReady.post();
@@ -70,37 +70,37 @@ void MotorDriver::setEncoder(const double& value) {
 
 // -----------------------------------------------------------------------------
 
-void MotorDriver::setMax(const double& value) {
+void MotorIpos::setMax(const double& value) {
     max = value;
 }
 
 // ----------------------------.-------------------------------------------------
 
-void MotorDriver::setMin(const double& value) {
+void MotorIpos::setMin(const double& value) {
     min = value;
 }
 
 // -----------------------------------------------------------------------------
 
-void MotorDriver::setRefAcceleration(const double& value) {
+void MotorIpos::setRefAcceleration(const double& value) {
     refAcceleration = value;
 }
 
 // -----------------------------------------------------------------------------
 
-void MotorDriver::setRefSpeed(const double& value) {
+void MotorIpos::setRefSpeed(const double& value) {
     refSpeed = value;
 }
 
 // -----------------------------------------------------------------------------
 
-void MotorDriver::setTr(const double& value) {
+void MotorIpos::setTr(const double& value) {
     tr = value;
 }
 
 // -----------------------------------------------------------------------------
 
-bool MotorDriver::send(uint32_t cob, uint16_t len, uint8_t * msgData) {
+bool MotorIpos::send(uint32_t cob, uint16_t len, uint8_t * msgData) {
 
     if ( (lastUsage - yarp::os::Time::now()) < DELAY )
         yarp::os::Time::delay( lastUsage + DELAY - yarp::os::Time::now() );
@@ -114,7 +114,7 @@ bool MotorDriver::send(uint32_t cob, uint16_t len, uint8_t * msgData) {
 
 // -----------------------------------------------------------------------------
 
-bool MotorDriver::start() {
+bool MotorIpos::start() {
 
     //*************************************************************
     uint8_t msg_start[] = {0x01,0x01};
@@ -133,7 +133,7 @@ bool MotorDriver::start() {
 
 // -----------------------------------------------------------------------------
 
-bool MotorDriver::readyToSwitchOn() {
+bool MotorIpos::readyToSwitchOn() {
 
     //*************************************************************
     uint8_t msg_readyToSwitchOn[] = {0x06,0x00}; //-- readyToSwitchOn, also acts as shutdown.
@@ -151,7 +151,7 @@ bool MotorDriver::readyToSwitchOn() {
 
 // -----------------------------------------------------------------------------
 
-bool MotorDriver::switchOn() {
+bool MotorIpos::switchOn() {
 
     //*************************************************************
     uint8_t msg_switchOn[] = {0x07,0x00};  //-- switchOn, also acts as disableOperation
@@ -176,7 +176,7 @@ bool MotorDriver::switchOn() {
 
 // -----------------------------------------------------------------------------
 
-bool MotorDriver::enable() {
+bool MotorIpos::enable() {
 
     //*************************************************************
     uint8_t msg_enable[] = {0x0F,0x00}; // enable

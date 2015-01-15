@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __MOTOR_DRIVER__
-#define __MOTOR_DRIVER__
+#ifndef __MOTOR_IPOS__
+#define __MOTOR_IPOS__
 
 #include <yarp/os/all.h>
 
@@ -10,11 +10,11 @@
 
 using namespace yarp::os;
 
-class MotorDriver  {
+class MotorIpos  {
 
     public:
 
-        MotorDriver(CanBusHico *canDevicePtr, const int& canId, const double& tr);
+        MotorIpos(CanBusHico *canDevicePtr, const int& canId, const double& tr);
 
         int getCanId();
         double getEncoder();  //-- Thread safe.
@@ -76,5 +76,5 @@ class MotorDriver  {
 
 };
  
-#endif  // __MOTOR_DRIVER__
+#endif  // __MOTOR_IPOS__
 
