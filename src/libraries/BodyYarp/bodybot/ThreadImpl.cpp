@@ -16,7 +16,7 @@ void teo::BodyBot::run() {
         if( ret <= 0 ) continue;
 
         int canId = buffer.id  & 0x7F;
-        CD_INFO("Read from fullCanId: %d (%d after mask)\n", buffer.id, canId);
+        CD_DEBUG("Read from fullCanId: %d (%d after mask)\n", buffer.id, canId);
 
         if( idxFromCanId.find(canId) == idxFromCanId.end() )
         {
