@@ -393,7 +393,8 @@ bool MotorIpos::interpretMessage( can_msg * message) {
             };
         break;
         default:
-            CD_WARNING("Unknown message: %X %X, fullCanId: %X\n",message->data[1],message->data[0],message->id);
+            CD_WARNING("Unknown message: %X %X, fullCanId: %X (%X + %X)\n",
+                       message->data[1],message->data[0],message->id,message->id-canId,canId);
     }
 
     return true;
