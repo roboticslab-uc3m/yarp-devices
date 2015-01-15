@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "CanDevice.hpp"
+#include "CanBusHico.hpp"
 
 // -----------------------------------------------------------------------------
 
-bool CanDevice::init(const std::string devicePath, const int bitrate) {
+bool CanBusHico::init(const std::string devicePath, const int bitrate) {
 
     //-- Open the CAN device for reading and writing.
     fileDescriptor = open(devicePath.c_str(), O_RDWR);
@@ -42,14 +42,14 @@ bool CanDevice::init(const std::string devicePath, const int bitrate) {
 
 // -----------------------------------------------------------------------------
 
-bool CanDevice::close() {
+bool CanBusHico::close() {
     //release semaphore?
     ::close(fileDescriptor);
 }
 
 // -----------------------------------------------------------------------------
 
-bool CanDevice::sendRaw(uint32_t id, uint16_t len, uint8_t * msgData) {
+bool CanBusHico::sendRaw(uint32_t id, uint16_t len, uint8_t * msgData) {
 
      struct can_msg msg;
      memset(&msg,0,sizeof(struct can_msg));
@@ -72,7 +72,7 @@ bool CanDevice::sendRaw(uint32_t id, uint16_t len, uint8_t * msgData) {
 
 // -----------------------------------------------------------------------------
 
-int CanDevice::read_timeout(struct can_msg *buf, unsigned int timeout) {
+int CanBusHico::read_timeout(struct can_msg *buf, unsigned int timeout) {
 
     fd_set fds;
     struct timeval tv;
@@ -109,7 +109,7 @@ int CanDevice::read_timeout(struct can_msg *buf, unsigned int timeout) {
 
 // -----------------------------------------------------------------------------
 
-void CanDevice::show_er( can_msg * message){
+void CanBusHico::show_er( can_msg * message){
 
     if (message->id>=0x80 && message->id<0x100){
 

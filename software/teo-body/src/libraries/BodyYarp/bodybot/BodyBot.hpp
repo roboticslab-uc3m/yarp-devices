@@ -17,7 +17,7 @@
 #include "hico_api.h"
 
 #include "ColorDebug.hpp"
-#include "CanDevice.hpp"
+#include "CanBusHico.hpp"
 #include "MotorDriver.hpp"
 
 #define DEFAULT_MODE "position"
@@ -653,7 +653,7 @@ class BodyBot : public DeviceDriver, public IPositionControl, public IVelocityCo
     protected:
 
         /** A CAN device. */
-        CanDevice canDevice;
+        CanBusHico canDevice;
 
         /** A vector of driver objects. */
         std::vector< MotorDriver* > drivers;

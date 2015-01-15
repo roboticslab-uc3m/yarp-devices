@@ -21,7 +21,7 @@
 
 #define DELAY 0.001  // Was DELAY2. Required when using same driver.
 
-class CanDevice {
+class CanBusHico {
 
     public:
 

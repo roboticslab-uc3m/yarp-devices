@@ -6,7 +6,7 @@
 #include <yarp/os/all.h>
 
 #include "ColorDebug.hpp"
-#include "CanDevice.hpp"
+#include "CanBusHico.hpp"
 
 using namespace yarp::os;
 
@@ -14,7 +14,7 @@ class MotorDriver  {
 
     public:
 
-        MotorDriver(CanDevice *canDevicePtr, const int& canId, const double& tr);
+        MotorDriver(CanBusHico *canDevicePtr, const int& canId, const double& tr);
 
         int getCanId();
         double getEncoder();  //-- Thread safe.
@@ -63,7 +63,7 @@ class MotorDriver  {
 
         int canId;
 
-        CanDevice *canDevicePtr;
+        CanBusHico *canDevicePtr;
 
         double max, min, refAcceleration, refSpeed, tr;
 
