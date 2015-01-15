@@ -59,6 +59,8 @@ class MotorIpos  {
 
         bool targetReached;
 
+        bool interpretMessage( can_msg * message);
+
     protected:
 
         int canId;
