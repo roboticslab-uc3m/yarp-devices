@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-MotorDriver::MotorDriver(CanDevice *canDevicePtr, const int& canId, const double &tr) : max(0), min(0), refAcceleration(0), refSpeed(0), encoder(0) {
+MotorDriver::MotorDriver(CanBusHico *canDevicePtr, const int& canId, const double &tr) : max(0), min(0), refAcceleration(0), refSpeed(0), encoder(0) {
     this->canDevicePtr = canDevicePtr;
     this->canId = canId;
     this->tr = tr;
