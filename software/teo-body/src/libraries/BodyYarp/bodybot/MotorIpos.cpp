@@ -207,7 +207,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
     if( (message->data[1]==0x64) && (message->data[2]==0x60) )
     {
         //-- Commenting encoder value (response to petition) as way too verbose, happens all the time.
-        CD_DEBUG("Got encoder value (response to petition), canId: %d.\n",canId);
+        CD_DEBUG("Got encoder value (response to petition). canId: %d.\n",canId);
         int got;
         memcpy(&got, message->data+4,4);
         setEncoder( got / ( 11.11112 * getTr() ) );
@@ -217,26 +217,26 @@ bool MotorIpos::interpretMessage( can_msg * message) {
     if( (message->data[0]==0x01)&&(message->data[1]==0xFF)&&(message->data[2]==0x01)&&(message->data[4]==0x20) )
     {
         ptBuffer.wait();
-        CD_WARNING("pt buffer full (%d)!\n",canId);
+        CD_WARNING("pt buffer full! canId: %d.\n",canId);
         return true;
     }
 
     if( (message->data[0]==0x01)&&(message->data[1]==0xFF)&&(message->data[2]==0x01)&&(message->data[4]==0x00) )
     {
         ptBuffer.post();
-        CD_WARNING("pt buffer empty (%d).\n",canId);
+        CD_WARNING("pt buffer empty. canId: %d.\n",canId);
         return true;
     }
 
     if( (message->data[0]==0x01)&&(message->data[1]==0xFF)&&(message->data[2]==0x01)&&(message->data[3]==0x08) )
     {
-        CD_WARNING("pt buffer message (don't know what it means) at canId %d.\n",canId);
+        CD_WARNING("pt buffer message (don't know what it means). canId: %d.\n",canId);
         return true;
     }
 
     if( (message->data[0]==0x37)&&(message->data[1]==0x96) )
     {
-        CD_WARNING("ended movement (canId %d).\n",canId);
+        CD_WARNING("ended movement. canId: %d.\n",canId);
         ptMovementDone = true;
         return true;
     }
@@ -245,12 +245,12 @@ bool MotorIpos::interpretMessage( can_msg * message) {
     {
         if(message->data[5] & 4) {
             targetReached = true;
-            CD_DEBUG("\t-Target reached (%d).\n",canId);
+            CD_DEBUG("Target reached. canId: %d.\n",canId);
         }
         else
         {
             targetReached = false;
-            CD_DEBUG("\t-Target NOT reached (%d).\n",canId);
+            CD_DEBUG("Target NOT reached. canId: %d.\n",canId);
         }
         return true;
     }
@@ -262,8 +262,8 @@ bool MotorIpos::interpretMessage( can_msg * message) {
 
     if (message->data[0] == 0x01 && message->data[1] == 0xFF)
     {
-        CD_DEBUG("PVT control message.\n");
-        return true; // PVT control message
+        CD_DEBUG("PVT control message. canId: %d.\n",canId);
+        return true;
     }
 
     CD_ERROR("Emergency message in id: %d. ", message->id & 0x7F );
@@ -396,6 +396,8 @@ bool MotorIpos::interpretMessage( can_msg * message) {
         break;
         default: CD_ERROR("Unknown error\n");
     }
+
+    return true;
 
 }  //-- ends interpretMessage
 
