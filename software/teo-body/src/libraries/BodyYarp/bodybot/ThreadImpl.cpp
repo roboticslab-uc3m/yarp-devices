@@ -13,7 +13,7 @@ void teo::BodyBot::run() {
         int ret = canDevice.read_timeout(&buffer,1);
 
         //-- All debugging messages should be contained in read_timeout, so just read again.
-        if( ret >= 0 ) continue;
+        if( ret <= 0 ) continue;
 
         int canId = buffer.id  & 0x7F;
         CD_INFO("Read from fullCanId: %ud (%d after mask)\n", buffer.id, canId);
