@@ -16,7 +16,9 @@ void teo::BodyBot::run() {
         if( ret <= 0 ) continue;
 
         int canId = buffer.id  & 0x7F;
-        CD_DEBUG("Read from fullCanId: %d (%d after mask)\n", buffer.id, canId);
+
+        //-- Commenting next line as way too verbose, happens all the time.
+        //CD_DEBUG("Read from fullCanId: %d (%d after mask)\n", buffer.id, canId);
 
         std::map< int, int >::iterator idxFromCanIdFound = idxFromCanId.find(canId);
 
