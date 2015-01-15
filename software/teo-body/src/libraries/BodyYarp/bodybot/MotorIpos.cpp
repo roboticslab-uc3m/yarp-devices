@@ -206,7 +206,8 @@ bool MotorIpos::interpretMessage( can_msg * message) {
 
     if( (message->data[1]==0x64) && (message->data[2]==0x60) )
     {
-        CD_DEBUG("Is encoder value (response to petition).\n");
+        //-- Commenting encoder value (response to petition) as way too verbose, happens all the time.
+        //CD_DEBUG("Is encoder value (response to petition).\n");
         int got;
         memcpy(&got, message->data+4,4);
         setEncoder( got / ( 11.11112 * getTr() ) );
