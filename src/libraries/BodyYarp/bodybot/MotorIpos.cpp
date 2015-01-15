@@ -263,7 +263,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
         switch (message->data[1]){
             case 0:
                 switch(message->data[0]){
-                    case 0: CD_ERROR("Error Reset\n");
+                    case 0: CD_ERROR("Error Reset or No Error\n");
                     break;
                     default: CD_ERROR("Unknown error\n");
                 };
