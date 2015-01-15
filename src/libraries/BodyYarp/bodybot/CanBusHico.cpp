@@ -89,7 +89,8 @@ int CanBusHico::read_timeout(struct can_msg *buf, unsigned int timeout) {
     ret=select(fileDescriptor+1,&fds,0,0,&tv);
     if(ret==0)
     {
-        CD_DEBUG("select() timeout.\n");
+        //-- Commenting select() timeout as way too verbose, happens all the time.
+        //CD_DEBUG("select() timeout.\n");
         return 0;  // Return 0 on select timeout.
     }
     else if (ret<0)
