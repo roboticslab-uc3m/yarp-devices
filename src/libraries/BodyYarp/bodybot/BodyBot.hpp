@@ -625,7 +625,7 @@ class BodyBot : public DeviceDriver, public IPositionControl, public IVelocityCo
          */
         virtual void run();
 
-        // -------- DeviceDriver declarations. Implementation in IDeviceImpl.cpp --------
+        // -------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp --------
 
         /**
          * Open the DeviceDriver.
