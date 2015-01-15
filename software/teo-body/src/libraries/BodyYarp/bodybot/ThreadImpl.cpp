@@ -18,9 +18,13 @@ void teo::BodyBot::run() {
         int canId = buffer.id  & 0x7F;
         CD_INFO("Read from fullCanId: %d (%d after mask)\n", buffer.id, canId);
 
-        //idxFromCanId[canId]
+        if( idxFromCanId.find(canId) == idxFromCanId.end() )
+        {
+            CD_ERROR("Read CAN message from unknown device!!!\n")
+            continue;
+        }
 
-
+        drivers[ idxFromCanId[canId] ]->interpretMessage(&buffer);
 
     }  //-- ends: while ( ! this->isStopping() ).
 
