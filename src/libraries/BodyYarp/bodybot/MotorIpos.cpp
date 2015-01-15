@@ -236,7 +236,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
 
     if( (message->id-canId) == 0x280 )  // PDO2
     {
-        if( (message->data[1]==0x37)&&(message->data[0]==0x92) ) {
+        if( (message->data[1]==0x92)&&(message->data[0]==0x37) ) {
             CD_DEBUG("Got PDO2 that it is observed as ack \"start position\" from driver. canId: %d (via %X).\n",canId,message->id-canId);
         } else {
             CD_DEBUG("Got PDO2 from driver side: type not kwnown: %X %X. canId: %d (via %X).\n",message->data[1],message->data[0],canId,message->id-canId);
