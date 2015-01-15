@@ -247,7 +247,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
             CD_DEBUG("Got PDO2 that it is observed as ack \"start position\" from driver. canId: %d (via %X).\n",canId,message->id-canId);
         } else if( (message->data[0]==0x37)&&(message->data[1]==0x86) ) {
             CD_DEBUG("Got PDO2 that it is observed when driver arrives to position target. canId: %d (via %X).\n",canId,message->id-canId);
-        }else {
+        } else {
             CD_DEBUG("Got PDO2 from driver side: unknown, %X %X %X %X %X %X %X %X. canId: %d (via %X).\n",
                     message->data[0],message->data[1],
                     message->data[2],message->data[3],
@@ -258,7 +258,17 @@ bool MotorIpos::interpretMessage( can_msg * message) {
         return true;
     }
 
-    //-- Debugged up to here.
+    if( (message->id-canId) == 0x80 )  // EMERGENCY
+    {
+        CD_DEBUG("Got EMERGENCY from driver side: unknown, %X %X %X %X %X %X %X %X. canId: %d (via %X).\n",
+                message->data[0],message->data[1],
+                message->data[2],message->data[3],
+                message->data[4],message->data[5],
+                message->data[6],message->data[7],
+                canId,message->id-canId);
+    }
+
+    //--------------- Debugged up to here -------------------------
 
     if( (message->data[0]==0x01)&&(message->data[1]==0xFF)&&(message->data[2]==0x01)&&(message->data[4]==0x20) )
     {
