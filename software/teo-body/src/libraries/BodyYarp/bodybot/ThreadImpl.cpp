@@ -5,6 +5,7 @@
 // ------------------ RateThread Related -----------------------------------------
 
 void teo::BodyBot::run() {
+
     while ( ! this->isStopping() ) {
 
         struct can_msg buffer;
