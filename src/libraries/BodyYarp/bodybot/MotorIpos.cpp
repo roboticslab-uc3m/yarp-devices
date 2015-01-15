@@ -228,11 +228,11 @@ bool MotorIpos::interpretMessage( can_msg * message) {
     {
         if( (message->data[0]==0x37)&&(message->data[1]==0x92) ) {
             CD_DEBUG("Got PDO1 that it is observed as ack \"start position\" from driver. canId: %d (via %X).\n",canId,message->id-canId);
-        } else if( (message->data[0]==0x37)&&(message->data[1]==0x96) ) {
+        } /*else if( (message->data[0]==0x37)&&(message->data[1]==0x96) ) {
             CD_DEBUG("Got PDO1 that it is observed when driver arrives to position target (variant 1). canId: %d (via %X).\n",canId,message->id-canId);
         } else if( (message->data[0]==0x37)&&(message->data[1]==0x98) ) {
             CD_DEBUG("Got PDO1 that it is observed when driver arrives to position target (variant 2). canId: %d (via %X).\n",canId,message->id-canId);
-        } else {
+        }*/ else {
             CD_DEBUG("Got PDO1 from driver side: unknown, %X %X %X %X %X %X %X %X. canId: %d (via %X).\n",
                     message->data[0],message->data[1],
                     message->data[2],message->data[3],
