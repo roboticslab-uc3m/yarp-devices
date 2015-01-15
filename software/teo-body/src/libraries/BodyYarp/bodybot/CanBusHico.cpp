@@ -85,26 +85,32 @@ int CanBusHico::read_timeout(struct can_msg *buf, unsigned int timeout) {
 
     FD_SET(fileDescriptor,&fds);
 
+    //-- select() returns the number of ready descriptors, or -1 for errors.
     ret=select(fileDescriptor+1,&fds,0,0,&tv);
     if(ret==0)
     {
-        return 0;  // Return 0 on Timeout.
+        CD_DEBUG("select() timeout.\n");
+        return 0;  // Return 0 on select timeout.
     }
     else if (ret<0)
     {
-        CD_ERROR("%s.\n", strerror(errno));
-        return ret;
-    }
-    else
-    {
-        assert(FD_ISSET(fileDescriptor,&fds));
-        canBusReady.wait();
-        ret=read(fileDescriptor,buf,sizeof(struct can_msg));
-        canBusReady.post();
-        show_er(buf);
-        return ret;
+        CD_ERROR("select() error: %s.\n", strerror(errno));
+        return ret;   // Return <0 on select error.
     }
 
+    assert(FD_ISSET(fileDescriptor,&fds));
+
+    canBusReady.wait();
+    //-- read() returns the number read, -1 for errors or 0 for EOF.
+    ret=read(fileDescriptor,buf,sizeof(struct can_msg));
+    canBusReady.post();
+
+    if (ret<0)
+    {
+        CD_ERROR("read() error: %s.\n", strerror(errno));
+    }
+
+    return ret;  //-- If gets to here, return whatever read() returned.
 }
 
 // -----------------------------------------------------------------------------
