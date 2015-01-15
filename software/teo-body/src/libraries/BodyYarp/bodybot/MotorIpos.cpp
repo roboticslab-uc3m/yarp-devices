@@ -229,7 +229,12 @@ bool MotorIpos::interpretMessage( can_msg * message) {
         if( (message->data[1]==0x92)&&(message->data[0]==0x37) ) {
             CD_DEBUG("Got PDO1 that it is observed as ack \"start position\" from driver. canId: %d (via %X).\n",canId,message->id-canId);
         } else {
-            CD_DEBUG("Got PDO1 from driver side: type not kwnown: %X %X. canId: %d (via %X).\n",message->data[1],message->data[0],canId,message->id-canId);
+            CD_DEBUG("Got PDO1 from driver side: unknown, %X %X %X %X %X %X %X %X. canId: %d (via %X).\n",
+                    message->data[0],message->data[1],
+                    message->data[2],message->data[3],
+                    message->data[4],message->data[5],
+                    message->data[6],message->data[7],
+                    canId,message->id-canId);
         }
         return true;
     }
@@ -239,7 +244,12 @@ bool MotorIpos::interpretMessage( can_msg * message) {
         if( (message->data[1]==0x92)&&(message->data[0]==0x37) ) {
             CD_DEBUG("Got PDO2 that it is observed as ack \"start position\" from driver. canId: %d (via %X).\n",canId,message->id-canId);
         } else {
-            CD_DEBUG("Got PDO2 from driver side: type not kwnown: %X %X. canId: %d (via %X).\n",message->data[1],message->data[0],canId,message->id-canId);
+            CD_DEBUG("Got PDO2 from driver side: unknown, %X %X %X %X %X %X %X %X. canId: %d (via %X).\n",
+                    message->data[0],message->data[1],
+                    message->data[2],message->data[3],
+                    message->data[4],message->data[5],
+                    message->data[6],message->data[7],
+                    canId,message->id-canId);
         }
         return true;
     }
