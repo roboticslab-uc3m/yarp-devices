@@ -201,3 +201,201 @@ bool MotorIpos::enable() {
 }
 
 // -----------------------------------------------------------------------------
+
+bool MotorIpos::interpretMessage( can_msg * message) {
+
+    if( (message->data[1]==0x64) && (message->data[2]==0x60) )
+    {
+        CD_DEBUG("Is encoder value (response to petition).\n");
+        int got;
+        memcpy(&got, message->data+4,4);
+        setEncoder( got / ( 11.11112 * getTr() ) );
+        return true;
+    }
+
+    if( (message->data[0]==0x01)&&(message->data[1]==0xFF)&&(message->data[2]==0x01)&&(message->data[4]==0x20) )
+    {
+        ptBuffer.wait();
+        CD_WARNING("pt buffer full (%d)!\n",canId);
+        return true;
+    }
+
+    if( (message->data[0]==0x01)&&(message->data[1]==0xFF)&&(message->data[2]==0x01)&&(message->data[4]==0x00) )
+    {
+        ptBuffer.post();
+        CD_WARNING("pt buffer empty (%d).\n",canId);
+        return true;
+    }
+
+    if( (message->data[0]==0x01)&&(message->data[1]==0xFF)&&(message->data[2]==0x01)&&(message->data[3]==0x08) )
+    {
+        CD_WARNING("pt buffer message (don't know what it means) at canId %d.\n",canId);
+        return true;
+    }
+
+    if( (message->data[0]==0x37)&&(message->data[1]==0x96) )
+    {
+        CD_WARNING("ended movement (canId %d).\n",canId);
+        ptMovementDone = true;
+        return true;
+    }
+
+    if( (message->data[1]==0x41)&&(message->data[2]=0x60) )
+    {
+        if(message->data[5] & 4) {
+            targetReached = true;
+            CD_DEBUG("\t-Target reached (%d).\n",canId);
+        }
+        else
+        {
+            targetReached = false;
+            CD_DEBUG("\t-Target NOT reached (%d).\n",canId);
+        }
+        return true;
+    }
+
+    //-- error stuff
+
+    //-- no meaning in next line
+    //if (message->id>=0x80 && message->id<0x100) return true;
+
+    if (message->data[0] == 0x01 && message->data[1] == 0xFF)
+    {
+        CD_DEBUG("PVT control message.\n");
+        return true; // PVT control message
+    }
+
+    CD_ERROR("Emergency message in id: %d. ", message->id & 0x7F );
+
+    printf("%X %X : ",message->data[1],message->data[0]);
+
+    switch (message->data[1]){
+        case 0:
+            switch(message->data[0]){
+                case 0: CD_ERROR("Error Reset\n");
+                break;
+                default: CD_ERROR("Unknown error\n");
+            };
+        break;
+        case 0x10:
+            switch(message->data[0]){
+                case 0: CD_ERROR("Generic error\n");
+                break;
+                default: CD_ERROR("Unknown error\n");
+            };
+        break;
+        case 0x23:
+            switch(message->data[0]){
+                case 0x10: CD_ERROR("Continuous over-current\n");
+                break;
+                case 0x40: CD_ERROR("Short-circuit\n");
+                break;
+                default: CD_ERROR("Unknown error\n");
+            };
+        break;
+        case 0x32:
+            switch(message->data[0]){
+                case 0x10: CD_ERROR("DC-link over-voltage\n");
+                break;
+                case 0x20: CD_ERROR("DC-link under-voltage\n");
+                break;
+                default: CD_ERROR("Unknown error\n");
+            };
+        break;
+        case 0x42:
+            switch(message->data[0]){
+                case 0x80: CD_ERROR("Over temperature motor\n");
+                break;
+                default: CD_ERROR("Unknown error\n");
+            };
+        break;
+        case 0x43:
+            switch(message->data[0]){
+                case 0x10: CD_ERROR("Over temperature drive.\n");
+                break;
+                default: CD_ERROR("Unknown error\n");
+            };
+        break;
+        case 0x54:
+            switch(message->data[0]){
+                case 0x41: CD_ERROR("Driver disabled due to enable input.\n");
+                break;
+                case 0x42: CD_ERROR("Negative limit switch active.\n");
+                break;
+                case 0x43: CD_ERROR("Positive limit switch active.\n");
+                break;
+                default: CD_ERROR("Unknown error.\n");
+            };
+        break;
+        case 0x61:
+            switch(message->data[0]){
+                case 0x00: CD_ERROR("Invalid stup data.\n");
+                break;
+                default: CD_ERROR("Unknown error.\n");
+            };
+        break;
+        case 0x75:
+            switch(message->data[0]){
+                case 0x00: CD_ERROR("Communication error.\n");
+                break;
+                default: CD_ERROR("Unknown error.\n");
+            };
+        break;
+        case 0x81:
+            switch(message->data[0]){
+                case 0x10: CD_ERROR("CAN overrun (message lost).\n");
+                break;
+                case 0x30: CD_ERROR("Life guard error or heartbeat error.\n");
+                break;
+                default: CD_ERROR("Unknown error\n");
+            };
+        break;
+        case 0x83:
+            switch(message->data[0]){
+                case 0x31: CD_ERROR("I2t protection triggered.\n");
+                break;
+                default: CD_ERROR("Unknown error\n");
+            };
+        break;
+        case 0x85:
+            switch(message->data[0]){
+                case 0x80: CD_ERROR("Position wraparound / Hal sensor missing.\n");
+                break;
+                default: CD_ERROR("Unknown error\n");
+            };
+        break;
+        case 0x86:
+            switch(message->data[0]){
+                case 0x11: CD_ERROR("Control error / Following error.\n");
+                break;
+                default: CD_ERROR("Unknown error\n");
+            };
+        break;
+        case 0x90:
+            switch(message->data[0]){
+                case 0x00: CD_ERROR("Command error\n");
+                break;
+                default: CD_ERROR("Unknown error\n");
+            };
+        break;
+        case 0xFF:
+            switch(message->data[0]){
+                case 0x01: CD_ERROR("Generic interpolated position mode error ( PVT / PT error.\n");
+                break;
+                case 0x02: CD_ERROR("Change set acknowledge bit wrong value.\n");
+                break;
+                case 0x03: CD_ERROR("Specified homing method not available.\n");
+                break;
+                case 0x04: CD_ERROR("A wrong mode is set in object 6060h, modes_of_operation.\n");
+                break;
+                case 0x05: CD_ERROR("Specified digital I/O line not available.\n");
+                break;
+                default: CD_ERROR("Unknown error\n");
+            };
+        break;
+        default: CD_ERROR("Unknown error\n");
+    }
+
+}  //-- ends interpretMessage
+
+// -----------------------------------------------------------------------------
