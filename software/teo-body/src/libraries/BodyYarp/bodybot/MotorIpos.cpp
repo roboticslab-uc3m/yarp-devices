@@ -316,6 +316,8 @@ bool MotorIpos::interpretMessage( can_msg * message) {
                 message->data[6],message->data[7],
                 canId,message->id-canId);
         }
+
+
         return true;
     }
 
