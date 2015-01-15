@@ -392,7 +392,8 @@ bool MotorIpos::interpretMessage( can_msg * message) {
                 default: CD_ERROR("Unknown error\n");
             };
         break;
-        default: CD_ERROR("Unknown error\n");
+        default:
+            CD_WARNING("Unknown message: %X %X : ",message->data[1],message->data[0]);
     }
 
     return true;
