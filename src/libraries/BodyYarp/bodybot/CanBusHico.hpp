@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __CAN_DEVICE__
-#define __CAN_DEVICE__
+#ifndef __CAN_BUS_HICO__
+#define __CAN_BUS_HICO__
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -61,5 +61,5 @@ class CanBusHico {
 
 };
  
-#endif  // __CAN_DEVICE__
+#endif  // __CAN_BUS_HICO__
 
