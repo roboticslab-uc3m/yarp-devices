@@ -258,14 +258,144 @@ bool MotorIpos::interpretMessage( can_msg * message) {
         return true;
     }
 
-    if( (message->id-canId) == 0x80 )  // EMERGENCY
+    if( (message->id-canId) == 0x80 )  // EMERGENCY, Table 4.2 Emergency Error Codes (p57, 73/263)
     {
-        CD_DEBUG("Got EMERGENCY from driver side: unknown, %X %X %X %X %X %X %X %X. canId: %d (via %X).\n",
-                message->data[0],message->data[1],
-                message->data[2],message->data[3],
-                message->data[4],message->data[5],
-                message->data[6],message->data[7],
-                canId,message->id-canId);
+        switch (message->data[1]){
+            case 0:
+                switch(message->data[0]){
+                    case 0: CD_ERROR("Error Reset\n");
+                    break;
+                    default: CD_ERROR("Unknown error\n");
+                };
+            break;
+            case 0x10:
+                switch(message->data[0]){
+                    case 0: CD_ERROR("Generic error\n");
+                    break;
+                    default: CD_ERROR("Unknown error\n");
+                };
+            break;
+            case 0x23:
+                switch(message->data[0]){
+                    case 0x10: CD_ERROR("Continuous over-current\n");
+                    break;
+                    case 0x40: CD_ERROR("Short-circuit\n");
+                    break;
+                    default: CD_ERROR("Unknown error\n");
+                };
+            break;
+            case 0x32:
+                switch(message->data[0]){
+                    case 0x10: CD_ERROR("DC-link over-voltage\n");
+                    break;
+                    case 0x20: CD_ERROR("DC-link under-voltage\n");
+                    break;
+                    default: CD_ERROR("Unknown error\n");
+                };
+            break;
+            case 0x42:
+                switch(message->data[0]){
+                    case 0x80: CD_ERROR("Over temperature motor\n");
+                    break;
+                    default: CD_ERROR("Unknown error\n");
+                };
+            break;
+            case 0x43:
+                switch(message->data[0]){
+                    case 0x10: CD_ERROR("Over temperature drive.\n");
+                    break;
+                    default: CD_ERROR("Unknown error\n");
+                };
+            break;
+            case 0x54:
+                switch(message->data[0]){
+                    case 0x41: CD_ERROR("Driver disabled due to enable input.\n");
+                    break;
+                    case 0x42: CD_ERROR("Negative limit switch active.\n");
+                    break;
+                    case 0x43: CD_ERROR("Positive limit switch active.\n");
+                    break;
+                    default: CD_ERROR("Unknown error.\n");
+                };
+            break;
+            case 0x61:
+                switch(message->data[0]){
+                    case 0x00: CD_ERROR("Invalid stup data.\n");
+                    break;
+                    default: CD_ERROR("Unknown error.\n");
+                };
+            break;
+            case 0x75:
+                switch(message->data[0]){
+                    case 0x00: CD_ERROR("Communication error.\n");
+                    break;
+                    default: CD_ERROR("Unknown error.\n");
+                };
+            break;
+            case 0x81:
+                switch(message->data[0]){
+                    case 0x10: CD_ERROR("CAN overrun (message lost).\n");
+                    break;
+                    case 0x30: CD_ERROR("Life guard error or heartbeat error.\n");
+                    break;
+                    default: CD_ERROR("Unknown error\n");
+                };
+            break;
+            case 0x83:
+                switch(message->data[0]){
+                    case 0x31: CD_ERROR("I2t protection triggered.\n");
+                    break;
+                    default: CD_ERROR("Unknown error\n");
+                };
+            break;
+            case 0x85:
+                switch(message->data[0]){
+                    case 0x80: CD_ERROR("Position wraparound / Hal sensor missing.\n");
+                    break;
+                    default: CD_ERROR("Unknown error\n");
+                };
+            break;
+            case 0x86:
+                switch(message->data[0]){
+                    case 0x11: CD_ERROR("Control error / Following error.\n");
+                    break;
+                    default: CD_ERROR("Unknown error\n");
+                };
+            break;
+            case 0x90:
+                switch(message->data[0]){
+                    case 0x00: CD_ERROR("Command error\n");
+                    break;
+                    default: CD_ERROR("Unknown error\n");
+                };
+            break;
+            case 0xFF:
+                switch(message->data[0]){
+                    case 0x01: CD_ERROR("Generic interpolated position mode error ( PVT / PT error.\n");
+                    break;
+                    case 0x02: CD_ERROR("Change set acknowledge bit wrong value.\n");
+                    break;
+                    case 0x03: CD_ERROR("Specified homing method not available.\n");
+                    break;
+                    case 0x04: CD_ERROR("A wrong mode is set in object 6060h, modes_of_operation.\n");
+                    break;
+                    case 0x05: CD_ERROR("Specified digital I/O line not available.\n");
+                    break;
+                    default: CD_ERROR("Unknown error\n");
+                };
+            break;
+            default: CD_DEBUG("Got EMERGENCY from driver side: unknown, %X %X %X %X %X %X %X %X. canId: %d (via %X).\n",
+                              message->data[0],message->data[1],
+                              message->data[2],message->data[3],
+                              message->data[4],message->data[5],
+                              message->data[6],message->data[7],
+                              canId,message->id-canId);
+            break;
+        }
+
+
+
+        return true;
     }
 
     //--------------- Debugged up to here -------------------------
@@ -322,133 +452,6 @@ bool MotorIpos::interpretMessage( can_msg * message) {
         return true;
     }
 
-        switch (message->data[1]){
-        case 0:
-            switch(message->data[0]){
-                case 0: CD_ERROR("Error Reset\n");
-                break;
-                default: CD_ERROR("Unknown error\n");
-            };
-        break;
-        case 0x10:
-            switch(message->data[0]){
-                case 0: CD_ERROR("Generic error\n");
-                break;
-                default: CD_ERROR("Unknown error\n");
-            };
-        break;
-        case 0x23:
-            switch(message->data[0]){
-                case 0x10: CD_ERROR("Continuous over-current\n");
-                break;
-                case 0x40: CD_ERROR("Short-circuit\n");
-                break;
-                default: CD_ERROR("Unknown error\n");
-            };
-        break;
-        case 0x32:
-            switch(message->data[0]){
-                case 0x10: CD_ERROR("DC-link over-voltage\n");
-                break;
-                case 0x20: CD_ERROR("DC-link under-voltage\n");
-                break;
-                default: CD_ERROR("Unknown error\n");
-            };
-        break;
-        case 0x42:
-            switch(message->data[0]){
-                case 0x80: CD_ERROR("Over temperature motor\n");
-                break;
-                default: CD_ERROR("Unknown error\n");
-            };
-        break;
-        case 0x43:
-            switch(message->data[0]){
-                case 0x10: CD_ERROR("Over temperature drive.\n");
-                break;
-                default: CD_ERROR("Unknown error\n");
-            };
-        break;
-        case 0x54:
-            switch(message->data[0]){
-                case 0x41: CD_ERROR("Driver disabled due to enable input.\n");
-                break;
-                case 0x42: CD_ERROR("Negative limit switch active.\n");
-                break;
-                case 0x43: CD_ERROR("Positive limit switch active.\n");
-                break;
-                default: CD_ERROR("Unknown error.\n");
-            };
-        break;
-        case 0x61:
-            switch(message->data[0]){
-                case 0x00: CD_ERROR("Invalid stup data.\n");
-                break;
-                default: CD_ERROR("Unknown error.\n");
-            };
-        break;
-        case 0x75:
-            switch(message->data[0]){
-                case 0x00: CD_ERROR("Communication error.\n");
-                break;
-                default: CD_ERROR("Unknown error.\n");
-            };
-        break;
-        case 0x81:
-            switch(message->data[0]){
-                case 0x10: CD_ERROR("CAN overrun (message lost).\n");
-                break;
-                case 0x30: CD_ERROR("Life guard error or heartbeat error.\n");
-                break;
-                default: CD_ERROR("Unknown error\n");
-            };
-        break;
-        case 0x83:
-            switch(message->data[0]){
-                case 0x31: CD_ERROR("I2t protection triggered.\n");
-                break;
-                default: CD_ERROR("Unknown error\n");
-            };
-        break;
-        case 0x85:
-            switch(message->data[0]){
-                case 0x80: CD_ERROR("Position wraparound / Hal sensor missing.\n");
-                break;
-                default: CD_ERROR("Unknown error\n");
-            };
-        break;
-        case 0x86:
-            switch(message->data[0]){
-                case 0x11: CD_ERROR("Control error / Following error.\n");
-                break;
-                default: CD_ERROR("Unknown error\n");
-            };
-        break;
-        case 0x90:
-            switch(message->data[0]){
-                case 0x00: CD_ERROR("Command error\n");
-                break;
-                default: CD_ERROR("Unknown error\n");
-            };
-        break;
-        case 0xFF:
-            switch(message->data[0]){
-                case 0x01: CD_ERROR("Generic interpolated position mode error ( PVT / PT error.\n");
-                break;
-                case 0x02: CD_ERROR("Change set acknowledge bit wrong value.\n");
-                break;
-                case 0x03: CD_ERROR("Specified homing method not available.\n");
-                break;
-                case 0x04: CD_ERROR("A wrong mode is set in object 6060h, modes_of_operation.\n");
-                break;
-                case 0x05: CD_ERROR("Specified digital I/O line not available.\n");
-                break;
-                default: CD_ERROR("Unknown error\n");
-            };
-        break;
-        default:
-        break;
-    }
 
     CD_WARNING("Unknown message: %X %X %X %X %X %X %X %X, canId: %d (via %X)\n",
             message->data[0],message->data[1],
