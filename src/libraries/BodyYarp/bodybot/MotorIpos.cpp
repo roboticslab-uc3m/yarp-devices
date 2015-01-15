@@ -266,9 +266,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
         return true;
     }
 
-    CD_ERROR("Emergency message in id: %d. ", message->id & 0x7F );
-
-    printf("%X %X : ",message->data[1],message->data[0]);
+    //printf("%X %X : ",message->data[1],message->data[0]);
 
     switch (message->data[1]){
         case 0:
