@@ -217,7 +217,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
     if( (message->id-canId) == 0x580 )
     {
         if( (message->data[1]==0x7A)&&(message->data[0]==0x60) ) {
-            CD_DEBUG("Got ack \"position target\" from driver. canId: %d.\n",canId);
+            CD_DEBUG("Got ack \"position target\" from driver. canId (via %X): %d.\n",canId,message->id-canId);
         } else {
             CD_DEBUG("Got ack from driver side: type not kwnown: %X %X. canId: %d (via %X).\n",message->data[1],message->data[0],canId,message->id-canId);
         }
@@ -227,7 +227,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
     if( (message->id-canId) == 0x180 )  // PDO1
     {
         if( (message->data[1]==0x92)&&(message->data[0]==0x37) ) {
-            CD_DEBUG("Got PDO1 that it is observed as ack \"start position\" from driver. canId: %d.\n",canId);
+            CD_DEBUG("Got PDO1 that it is observed as ack \"start position\" from driver. canId (via %X): %d.\n",canId,message->id-canId);
         } else {
             CD_DEBUG("Got PDO1 from driver side: type not kwnown: %X %X. canId: %d (via %X).\n",message->data[1],message->data[0],canId,message->id-canId);
         }
