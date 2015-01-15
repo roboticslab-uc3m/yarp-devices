@@ -278,9 +278,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
         return true;
     }
 
-    //printf("%X %X : ",message->data[1],message->data[0]);
-
-    switch (message->data[1]){
+        switch (message->data[1]){
         case 0:
             switch(message->data[0]){
                 case 0: CD_ERROR("Error Reset\n");
@@ -405,13 +403,15 @@ bool MotorIpos::interpretMessage( can_msg * message) {
             };
         break;
         default:
-            CD_WARNING("Unknown message: %X %X %X %X %X %X %X %X, canId: %d (via %X)\n",
-                    message->data[0],message->data[1],
-                    message->data[2],message->data[3],
-                    message->data[4],message->data[5],
-                    message->data[6],message->data[7],
-                    canId,message->id-canId);
+        break;
     }
+
+    CD_WARNING("Unknown message: %X %X %X %X %X %X %X %X, canId: %d (via %X)\n",
+            message->data[0],message->data[1],
+            message->data[2],message->data[3],
+            message->data[4],message->data[5],
+            message->data[6],message->data[7],
+            canId,message->id-canId);
 
     return true;
 
