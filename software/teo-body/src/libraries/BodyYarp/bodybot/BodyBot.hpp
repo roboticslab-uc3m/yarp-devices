@@ -18,7 +18,7 @@
 
 #include "ColorDebug.hpp"
 #include "CanBusHico.hpp"
-#include "MotorDriver.hpp"
+#include "MotorIpos.hpp"
 
 #define DEFAULT_MODE "position"
 
@@ -656,7 +656,7 @@ class BodyBot : public DeviceDriver, public IPositionControl, public IVelocityCo
         CanBusHico canDevice;
 
         /** A vector of driver objects. */
-        std::vector< MotorDriver* > drivers;
+        std::vector< MotorIpos* > drivers;
         std::map< int, int > idxFromCanId;
 
         /** A helper function to display CAN messages. */
