@@ -36,7 +36,7 @@ void teo::BodyBot::run() {
 
         if( (buffer.data[1]==0x64) && (buffer.data[2]==0x60) )
         {
-            //-- CD_INFO("Is encoder value (response to petition).\n");
+            CD_DEBUG("Is encoder value (response to petition).\n");
             int got;
             memcpy(&got, buffer.data+4,4);
             drivers[ idxFromCanId[canId] ]->setEncoder( got / ( 11.11112 * (drivers[ idxFromCanId[canId] ]->getTr()) ) );
