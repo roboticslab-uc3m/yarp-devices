@@ -58,12 +58,12 @@ bool teo::BodyBot::positionMove(int j, double ref) {  // encExposed = ref;
     //*************************************************************
     uint8_t msg_pos_reset[]={0x0F,0x00};  // Stop a position profile
 
-    /***if( ! drivers[j]->send( 0x200, 2, msg_pos_reset) )
+    if( ! drivers[j]->send( 0x200, 2, msg_pos_reset) )
     {
         CD_ERROR("Could not send \"reset position\" to canId: %d.\n",drivers[j]->getCanId());
         return false;
     }
-    CD_SUCCESS("Sent \"reset position\" to canId: %d.\n",drivers[j]->getCanId());***/
+    CD_SUCCESS("Sent \"reset position\" to canId: %d.\n",drivers[j]->getCanId());
     //*************************************************************
 
     return true;
