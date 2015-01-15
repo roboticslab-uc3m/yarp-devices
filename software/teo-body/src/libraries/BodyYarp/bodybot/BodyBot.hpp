@@ -60,7 +60,7 @@ class BodyBot : public DeviceDriver, public IPositionControl, public IVelocityCo
 
         BodyBot() { }
 
-        // ------- IPositionControl declarations. Implementation in IPositionImpl.cpp -------
+        // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
 
         /**
          * Get the number of controlled axes. This command asks the number of controlled
@@ -278,7 +278,7 @@ class BodyBot : public DeviceDriver, public IPositionControl, public IVelocityCo
        */
        virtual bool getEncoderTimed(int j, double *encs, double *time);
 
-        //  --------- IVelocityControl Declarations. Implementation in IVelocityImpl.cpp ---------
+        //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
 
         /**
          * Set velocity mode. This command
@@ -384,7 +384,7 @@ class BodyBot : public DeviceDriver, public IPositionControl, public IVelocityCo
         */
         virtual bool getControlModes(int *modes);
 
-        // -------- ITorqueControl declarations. Implementation in ITorqueImpl.cpp --------
+        // -------- ITorqueControl declarations. Implementation in ITorqueControlImpl.cpp --------
 
         /**
          * Set torque control mode. This command
