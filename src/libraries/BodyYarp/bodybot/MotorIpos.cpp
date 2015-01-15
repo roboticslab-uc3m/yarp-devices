@@ -216,7 +216,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
 
     if( (message->id-canId) == 0x580 )
     {
-        if( (message->data[1]==0x7A)&&(message->data[0]==0x60) ) {
+        if( (message->data[0]==0x60)&&(message->data[1]==0x7A) ) {
             CD_DEBUG("Got ack \"position target\" from driver. canId: %d (via %X).\n",canId,message->id-canId);
         } else {
             CD_DEBUG("Got ack from driver side: type not kwnown: %X %X. canId: %d (via %X).\n",message->data[1],message->data[0],canId,message->id-canId);
@@ -226,8 +226,12 @@ bool MotorIpos::interpretMessage( can_msg * message) {
 
     if( (message->id-canId) == 0x180 )  // PDO1
     {
-        if( (message->data[1]==0x92)&&(message->data[0]==0x37) ) {
+        if( (message->data[0]==0x37)&&(message->data[1]==0x92) ) {
             CD_DEBUG("Got PDO1 that it is observed as ack \"start position\" from driver. canId: %d (via %X).\n",canId,message->id-canId);
+        } else if( (message->data[0]==0x37)&&(message->data[1]==0x96) ) {
+            CD_DEBUG("Got PDO1 that it is observed when driver arrives to position target (variant 1). canId: %d (via %X).\n",canId,message->id-canId);
+        } else if( (message->data[0]==0x37)&&(message->data[1]==0x98) ) {
+            CD_DEBUG("Got PDO1 that it is observed when driver arrives to position target (variant 2). canId: %d (via %X).\n",canId,message->id-canId);
         } else {
             CD_DEBUG("Got PDO1 from driver side: unknown, %X %X %X %X %X %X %X %X. canId: %d (via %X).\n",
                     message->data[0],message->data[1],
@@ -241,7 +245,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
 
     if( (message->id-canId) == 0x280 )  // PDO2
     {
-        if( (message->data[1]==0x92)&&(message->data[0]==0x37) ) {
+        if( (message->data[0]==0x37)&&(message->data[1]==0x92) ) {
             CD_DEBUG("Got PDO2 that it is observed as ack \"start position\" from driver. canId: %d (via %X).\n",canId,message->id-canId);
         } else {
             CD_DEBUG("Got PDO2 from driver side: unknown, %X %X %X %X %X %X %X %X. canId: %d (via %X).\n",
