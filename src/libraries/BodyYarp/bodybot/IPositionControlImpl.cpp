@@ -38,20 +38,20 @@ bool teo::BodyBot::positionMove(int j, double ref) {  // encExposed = ref;
 
     if( ! drivers[j]->send( 0x600, 8, msg_position_target ) )
     {
-        CD_ERROR("Could not send position target.\n");
+        CD_ERROR("Could not send \"position target\" to canId: %d.\n",drivers[j]->getCanId());
         return false;
     }
-    CD_SUCCESS("Sent \"position target\".\n");
+    CD_SUCCESS("Sent \"position target\" to canId: %d.\n",drivers[j]->getCanId());
     //*************************************************************
     //uint8_t msg_start[]={0x1F,0x00}; // Start the movement with "Discrete motion profile (change set immediately = 0)".
     uint8_t msg_start[]={0x3F,0x00}; // Start the movement with "Continuous motion profile (change set immediately = 1)".
 
     if( ! drivers[j]->send( 0x200, 2, msg_start ) )
     {
-        CD_ERROR("Could not send \"start position.\n");
+        CD_ERROR("Could not send \"start position\" to canId: %d.\n",drivers[j]->getCanId());
         return false;
     }
-    CD_SUCCESS("Sent \"start position\".\n");
+    CD_SUCCESS("Sent \"start position\" to canId: %d.\n",drivers[j]->getCanId());
     //*************************************************************
 
     //-- Needed to send next. Sets "Do not assume target position" so later it accepts "Assume target position (update the new motion parameters)".
