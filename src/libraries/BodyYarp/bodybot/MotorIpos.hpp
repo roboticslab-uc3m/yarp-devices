@@ -40,7 +40,7 @@ class MotorIpos  {
          */
         bool send(uint32_t cob, uint16_t len, uint8_t * msgData);
 
-        /** start. All starting functions have to do with:
+        /** "start". All starting functions have to do with:
          * Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
         bool start();
         /** "ready to switch on", also acts as "shutdown" */
