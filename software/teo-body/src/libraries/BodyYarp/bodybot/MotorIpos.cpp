@@ -387,14 +387,11 @@ bool MotorIpos::interpretMessage( can_msg * message) {
 std::string MotorIpos::msgToStr(can_msg* message) {
     std::stringstream tmp;
     tmp << "hello";
-    printf("*%s*\n",tmp.str().c_str());
-    tmp << "more";
     printf("{%s}\n",tmp.str().c_str());
     for(int i=0; i < message->dlc; i++)
     {
-        tmp << message->data[i];
+        tmp << std::dec << message->data[i];
     }
-    tmp << "more";
     printf("-%s-\n",tmp.str().c_str());
     tmp << "canId(";
     tmp << (message->id & 0x7F);
