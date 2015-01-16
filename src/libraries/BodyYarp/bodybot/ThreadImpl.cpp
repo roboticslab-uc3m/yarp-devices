@@ -25,7 +25,7 @@ void teo::BodyBot::run() {
 
         if( idxFromCanIdFound == idxFromCanId.end() )
         {
-            CD_ERROR("Read CAN message from unknown device!!!\n")
+            CD_ERROR("Read CAN message from unknown device!!! canId: %d.\n",canId);
             continue;
         }
 
