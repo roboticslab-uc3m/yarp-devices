@@ -388,6 +388,8 @@ std::string MotorIpos::msgToStr(can_msg* message) {
     std::stringstream tmp;
     tmp << "hello";
     printf("*%s*\n",tmp.str().c_str());
+    tmp << "more";
+    printf("{%s}\n",tmp.str().c_str());
     for(int i=0; i < message->dlc; i++)
     {
         tmp << message->data[i];
