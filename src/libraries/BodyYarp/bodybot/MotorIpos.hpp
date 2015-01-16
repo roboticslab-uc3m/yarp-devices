@@ -73,6 +73,7 @@ class MotorIpos  {
 
         yarp::os::Semaphore encoderReady;
 
+        const char *msgToStr(can_msg* message);
 
 };
  
