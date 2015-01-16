@@ -22,16 +22,17 @@ bool teo::BodyBot::checkStatus(const int &j) {
 
     //*************************************************************
     uint8_t msgStatus[] = {0x40,0x41,0x60,0x00,0x00,0x00,0x00,0x00}; //2064: Memory position
-    bool received=false;
-    can_msg buffer;
-
     if( ! drivers[j]->send( 0x600, 8, msgStatus))
     {
         CD_ERROR("Could not send status query.\n");
         return false;
     }
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    /*do
+    /*
+    bool received=false;
+    can_msg buffer;
+
+    do
     {
         if( canDevice.read_timeout(&buffer,20))
         {

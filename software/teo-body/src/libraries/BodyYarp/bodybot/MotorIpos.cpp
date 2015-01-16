@@ -207,7 +207,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
     if( (message->data[1]==0x64) && (message->data[2]==0x60) )  //-- Note: Comes on 580 (SDO)
     {
         //-- Commenting encoder value (response to petition) as way too verbose, happens all the time.
-        //CD_DEBUG("Got encoder value (response to petition). canId: %d (via %X).\n",canId,message->id-canId);
+        CD_DEBUG("Got encoder value (response to petition). %s\n",msgToStr(message));
         int got;
         memcpy(&got, message->data+4,4);
         setEncoder( got / ( 11.11112 * getTr() ) );
@@ -217,9 +217,9 @@ bool MotorIpos::interpretMessage( can_msg * message) {
     if( (message->id-canId) == 0x580 )  // SDO
     {
         if( (message->data[0]==0x60)&&(message->data[1]==0x7A) ) {
-            CD_DEBUG("Got SDO ack \"position target\" from driver. canId: %d (via %X).\n",canId,message->id-canId);
+            CD_DEBUG("Got SDO ack \"position target\" from driver. %s\n",msgToStr(message));
         } else {
-            CD_DEBUG("Got SDO ack from driver side: type not known: %X %X. canId: %d (via %X).\n",message->data[1],message->data[0],canId,message->id-canId);
+            CD_DEBUG("Got SDO ack from driver side: type not known. %s\n",msgToStr(message));
         }
         return true;
     }
@@ -376,15 +376,28 @@ bool MotorIpos::interpretMessage( can_msg * message) {
     }
 
 
-    CD_WARNING("Unknown message: %X %X %X %X %X %X %X %X, canId: %d (via %X)\n",
-            message->data[0],message->data[1],
-            message->data[2],message->data[3],
-            message->data[4],message->data[5],
-            message->data[6],message->data[7],
+    CD_WARNING("Unknown message: %s\n",
+            msgToStr(message),
             canId,message->id-canId);
 
     return true;
 
 }  //-- ends interpretMessage
+
+// -----------------------------------------------------------------------------
+
+const char* MotorIpos::msgToStr(can_msg* message) {
+    std::stringstream tmp;
+    for(int i=0; i < message->dlc; i++)
+    {
+        tmp << std::hex << message->data[i];
+    }
+    tmp << "canId(";
+    tmp << (message->id & 0x7F);
+    tmp << ") via(";
+    tmp << (message->id & 0xFF80);
+    tmp << ").";
+    return tmp.str().c_str();
+}
 
 // -----------------------------------------------------------------------------
