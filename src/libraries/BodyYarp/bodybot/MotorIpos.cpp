@@ -345,7 +345,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
 
     if( (message->data[0]==0x37)&&(message->data[1]==0x96) )
     {
-        CD_WARNING("Ended movement. canId: %d (via %X).\n",canId,message->id-canId);
+        CD_WARNING("pt movement ended. canId: %d (via %X).\n",canId,message->id-canId);
         ptMovementDone = true;
         return true;
     }

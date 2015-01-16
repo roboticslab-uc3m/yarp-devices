@@ -31,7 +31,7 @@ bool teo::BodyBot::checkStatus(const int &j) {
         return false;
     }
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    do
+    /*do
     {
         if( canDevice.read_timeout(&buffer,20))
         {
@@ -41,11 +41,11 @@ bool teo::BodyBot::checkStatus(const int &j) {
             return false;
         }
     }
-    while(!received);
+    while(!received);*/
     //*************************************************************
 
     // Big Endian
-    CD_INFO("Drive of canId %d current status:\n", drivers[j]->getCanId());
+    /*CD_INFO("Drive of canId %d current status:\n", drivers[j]->getCanId());
     if(buffer.data[4] & 1){//0000 0001
         CD_INFO("\t-Ready to switch on.\n");
     }
@@ -89,7 +89,7 @@ bool teo::BodyBot::checkStatus(const int &j) {
     }
     if(buffer.data[5] & 128){//9th bit
         CD_INFO("\t-Axis on.\n");
-    }
+    }*/
 
     return true;
 }
