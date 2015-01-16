@@ -390,7 +390,7 @@ std::string MotorIpos::msgToStr(can_msg* message) {
     {
         tmp << std::dec << message->data[i];
     }*/
-    tmp <<  (char)message->data[0];
+    tmp << std::hex << static_cast<int>(message->data[0]);
     tmp << "-";
     tmp << "canId(";
     tmp << (message->id & 0x7F);
