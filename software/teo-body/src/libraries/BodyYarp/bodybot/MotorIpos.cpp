@@ -204,10 +204,10 @@ bool MotorIpos::enable() {
 
 bool MotorIpos::interpretMessage( can_msg * message) {
 
-    if( (message->data[1]==0x64) && (message->data[2]==0x60) )
+    if( (message->data[1]==0x64) && (message->data[2]==0x60) )  //-- Note: Comes on 580 (SDO)
     {
         //-- Commenting encoder value (response to petition) as way too verbose, happens all the time.
-        CD_DEBUG("Got encoder value (response to petition). canId: %d (via %X).\n",canId,message->id-canId);
+        //CD_DEBUG("Got encoder value (response to petition). canId: %d (via %X).\n",canId,message->id-canId);
         int got;
         memcpy(&got, message->data+4,4);
         setEncoder( got / ( 11.11112 * getTr() ) );
