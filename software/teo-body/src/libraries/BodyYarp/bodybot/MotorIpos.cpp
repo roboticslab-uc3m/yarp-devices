@@ -206,7 +206,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
 
     if( (message->id-canId) == 0x580 )  // SDO
     {
-        if( (message->data[1]==0x64) && (message->data[2]==0x60) )  //-- Note: Comes on 580 (SDO)
+        if( (message->data[1]==0x64) && (message->data[2]==0x60) )  // Manual 6064h
         {
             //-- Commenting encoder value (response to petition) as way too verbose, happens all the time.
             CD_DEBUG("Got encoder value (response to petition). %s\n",msgToStr(message).c_str());
