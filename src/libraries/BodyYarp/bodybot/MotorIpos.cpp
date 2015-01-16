@@ -385,7 +385,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
 // -----------------------------------------------------------------------------
 
 std::string MotorIpos::msgToStr(can_msg* message) {
-    std::stringstream tmp;
+    std::stringstream tmp(std::ios_base::app);
     for(int i=0; i < message->dlc; i++)
     {
         tmp << std::hex << message->data[i];
