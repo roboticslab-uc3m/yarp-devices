@@ -214,7 +214,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
             memcpy(&got, message->data+4,4);
             setEncoder( got / ( 11.11112 * getTr() ) );
             return true;
-        } else if( (message->data[0]==0x60)&&(message->data[1]==0x7A) ) {
+        } else if( (message->data[1]==0x7A)&&(message->data[2]==0x60) ) {  // Manual 607Ah
             CD_DEBUG("Got SDO ack \"position target\" from driver. %s\n",msgToStr(message).c_str());
         } else {
             CD_DEBUG("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
