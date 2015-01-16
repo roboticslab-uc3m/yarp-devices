@@ -4,6 +4,7 @@
 #define __MOTOR_IPOS__
 
 #include <yarp/os/all.h>
+#include <sstream>
 
 #include "ColorDebug.hpp"
 #include "CanBusHico.hpp"
