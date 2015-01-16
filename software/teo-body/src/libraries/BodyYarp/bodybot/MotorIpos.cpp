@@ -258,7 +258,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
         return true;
     }
 
-    if( (message->id-canId) == 0x80 )  // EMERGENCY, Table 4.2 Emergency Error Codes (p57, 73/263)
+    if( (message->id-canId) == 0x80 )  // EMERGENCY (EMCY), Table 4.2 Emergency Error Codes (p57, 73/263)
     {
         if( (message->data[1]==0x00)&&(message->data[0]==0x00) ) {
             CD_ERROR("Error Reset or No Error.\n");
