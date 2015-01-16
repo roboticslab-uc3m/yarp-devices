@@ -229,7 +229,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
         } else if( (message->data[0]==0x37)&&(message->data[1]==0x86) ) {
             CD_DEBUG("Got PDO1 that it is observed when driver arrives to position target. %s\n",msgToStr(message).c_str());
         } else {
-            CD_DEBUG("Got PDO1 from driver side: unknown. %s.\n",msgToStr(message).c_str());
+            CD_DEBUG("Got PDO1 from driver side: unknown. %s\n",msgToStr(message).c_str());
         }
         return true;
     }
