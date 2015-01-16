@@ -204,19 +204,17 @@ bool MotorIpos::enable() {
 
 bool MotorIpos::interpretMessage( can_msg * message) {
 
-    if( (message->data[1]==0x64) && (message->data[2]==0x60) )  //-- Note: Comes on 580 (SDO)
-    {
-        //-- Commenting encoder value (response to petition) as way too verbose, happens all the time.
-        CD_DEBUG("Got encoder value (response to petition). %s\n",msgToStr(message).c_str());
-        int got;
-        memcpy(&got, message->data+4,4);
-        setEncoder( got / ( 11.11112 * getTr() ) );
-        return true;
-    }
-
     if( (message->id-canId) == 0x580 )  // SDO
     {
-        if( (message->data[0]==0x60)&&(message->data[1]==0x7A) ) {
+        if( (message->data[1]==0x64) && (message->data[2]==0x60) )  //-- Note: Comes on 580 (SDO)
+        {
+            //-- Commenting encoder value (response to petition) as way too verbose, happens all the time.
+            CD_DEBUG("Got encoder value (response to petition). %s\n",msgToStr(message).c_str());
+            int got;
+            memcpy(&got, message->data+4,4);
+            setEncoder( got / ( 11.11112 * getTr() ) );
+            return true;
+        } else if( (message->data[0]==0x60)&&(message->data[1]==0x7A) ) {
             CD_DEBUG("Got SDO ack \"position target\" from driver. %s\n",msgToStr(message).c_str());
         } else {
             CD_DEBUG("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
@@ -227,16 +225,11 @@ bool MotorIpos::interpretMessage( can_msg * message) {
     if( (message->id-canId) == 0x180 )  // PDO1
     {
         if( (message->data[0]==0x37)&&(message->data[1]==0x92) ) {
-            CD_DEBUG("Got PDO1 that it is observed as ack \"start position\" from driver. canId: %d (via %X).\n",canId,message->id-canId);
+            CD_DEBUG("Got PDO1 that it is observed as ack \"start position\" from driver. %s\n",msgToStr(message).c_str());
         } else if( (message->data[0]==0x37)&&(message->data[1]==0x86) ) {
-            CD_DEBUG("Got PDO1 that it is observed when driver arrives to position target. canId: %d (via %X).\n",canId,message->id-canId);
+            CD_DEBUG("Got PDO1 that it is observed when driver arrives to position target. %s\n",msgToStr(message).c_str());
         } else {
-            CD_DEBUG("Got PDO1 from driver side: unknown, %X %X %X %X %X %X %X %X. canId: %d (via %X).\n",
-                    message->data[0],message->data[1],
-                    message->data[2],message->data[3],
-                    message->data[4],message->data[5],
-                    message->data[6],message->data[7],
-                    canId,message->id-canId);
+            CD_DEBUG("Got PDO1 from driver side: unknown. %s.\n",msgToStr(message).c_str());
         }
         return true;
     }
@@ -244,28 +237,18 @@ bool MotorIpos::interpretMessage( can_msg * message) {
     if( (message->id-canId) == 0x280 )  // PDO2
     {
         if( (message->data[0]==0x37)&&(message->data[1]==0x92) ) {
-            CD_DEBUG("Got PDO2 that it is observed as ack \"start position\" from driver. canId: %d (via %X).\n",canId,message->id-canId);
+            CD_DEBUG("Got PDO2 that it is observed as ack \"start position\" from driver. %s\n",msgToStr(message).c_str());
         } else if( (message->data[0]==0x37)&&(message->data[1]==0x86) ) {
-            CD_DEBUG("Got PDO2 that it is observed when driver arrives to position target. canId: %d (via %X).\n",canId,message->id-canId);
+            CD_DEBUG("Got PDO2 that it is observed when driver arrives to position target. %s\n",msgToStr(message).c_str());
         } else {
-            CD_DEBUG("Got PDO2 from driver side: unknown, %X %X %X %X %X %X %X %X. canId: %d (via %X).\n",
-                    message->data[0],message->data[1],
-                    message->data[2],message->data[3],
-                    message->data[4],message->data[5],
-                    message->data[6],message->data[7],
-                    canId,message->id-canId);
+            CD_DEBUG("Got PDO2 from driver side: unknown. %s\n",msgToStr(message).c_str());
         }
         return true;
     }
 
     if( (message->id-canId) == 0x80 )  // EMERGENCY (EMCY), Table 4.2 Emergency Error Codes (p57, 73/263)
     {
-        CD_ERROR("Got EMERGENCY from iPOS: %X %X %X %X %X %X %X %X. canId: %d (via %X): ",
-            message->data[0],message->data[1],
-            message->data[2],message->data[3],
-            message->data[4],message->data[5],
-            message->data[6],message->data[7],
-            canId,message->id-canId);
+        CD_ERROR("Got EMERGENCY from iPOS. %s\n",msgToStr(message).c_str());
         if( (message->data[1]==0x00)&&(message->data[0]==0x00) ) {
             CD_ERROR_NO_HEADER("Error Reset or No Error.\n");
         } else if ( (message->data[1]==0x10)&&(message->data[0]==0x00) ) {
