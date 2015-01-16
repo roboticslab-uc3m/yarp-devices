@@ -395,6 +395,7 @@ std::string MotorIpos::msgToStr(can_msg* message) {
     tmp << ") via(";
     tmp << (message->id & 0xFF80);
     tmp << ").";
+    printf("[%s]",tmp.str().c_str());
     return tmp.str();
 }
 
