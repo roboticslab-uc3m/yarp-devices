@@ -248,7 +248,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
 
     if( (message->id-canId) == 0x80 )  // EMERGENCY (EMCY), Table 4.2 Emergency Error Codes (p57, 73/263)
     {
-        CD_ERROR("Got EMERGENCY from iPOS. %s\n",msgToStr(message).c_str());
+        CD_ERROR("Got EMERGENCY from iPOS. %s: ",msgToStr(message).c_str());
         if( (message->data[1]==0x00)&&(message->data[0]==0x00) ) {
             CD_ERROR_NO_HEADER("Error Reset or No Error.\n");
         } else if ( (message->data[1]==0x10)&&(message->data[0]==0x00) ) {
@@ -347,17 +347,14 @@ bool MotorIpos::interpretMessage( can_msg * message) {
         return true;
     }
 
-    //-- error stuff
-
-    //-- no meaning in next line
-    //if (message->id>=0x80 && message->id<0x100) return true;
-
     if (message->data[0] == 0x01 && message->data[1] == 0xFF)
     {
         CD_DEBUG("PVT control message. canId: %d.\n",canId);
         return true;
     }
 
+    //-- no meaning in next line
+    //if (message->id>=0x80 && message->id<0x100) return true;
 
     CD_WARNING("Unknown message: %s\n", msgToStr(message).c_str());
 
