@@ -388,11 +388,10 @@ std::string MotorIpos::msgToStr(can_msg* message) {
     std::stringstream tmp;
     tmp << "hello";
     printf("{%s}\n",tmp.str().c_str());
-    for(int i=0; i < message->dlc; i++)
+    /*for(int i=0; i < message->dlc; i++)
     {
         tmp << std::dec << message->data[i];
-    }
-    printf("-%s-\n",tmp.str().c_str());
+    }*/
     tmp << "canId(";
     tmp << (message->id & 0x7F);
     tmp << ") via(";
