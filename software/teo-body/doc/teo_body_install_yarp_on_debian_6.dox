@@ -1,6 +1,6 @@
 
 /**
- * \page teo_install_yarp_on_debian_6 Install YARP (Ubuntu 14.10)
+ * \page teo_install_yarp_on_debian_6 Install YARP (Debian 6.0)
 
 We use YARP for communications. Installing YARP on Ubuntu is quite straightforward. Note that you will be prompted for your password upon using '''sudo''' a couple of times:
 
