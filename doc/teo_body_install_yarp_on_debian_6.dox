@@ -1,8 +1,8 @@
 
 /**
- * \page teo_install_yarp_on_debian_6 Install YARP (Debian 6.0)
+ * \page teo_body_install_yarp_on_debian_6 Install YARP (Debian 6.0)
 
-We use YARP for communications. Installing YARP on Ubuntu is quite straightforward. Note that you will be prompted for your password upon using '''sudo''' a couple of times:
+We use YARP for communications. Installing YARP on Debian should be quite straightforward. Note that you will be prompted for your password upon using '''sudo''' a couple of times:
 
 \verbatim
 sudo apt-get install build-essential libace-dev subversion git
@@ -19,7 +19,7 @@ For additional options use ccmake instead of cmake.
 
 <br><hr>
 
-This page can be edited at teo-main/doc/teo_install_yarp_on_debian_6.dox.
+This page can be edited at teo-body/doc/teo_install_yarp_on_debian_6.dox.
 
 *
 */
