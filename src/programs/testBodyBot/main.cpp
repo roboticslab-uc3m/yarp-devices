@@ -2,7 +2,7 @@
 
 /**
  *
- * @ingroup manipulation_modules
+ * @ingroup teo_body_programs
  * \defgroup testBodyBot testBodyBot
  *
  * Creates an instance of GripperBot wrapped in a YARP controlboard. This means that it may be used

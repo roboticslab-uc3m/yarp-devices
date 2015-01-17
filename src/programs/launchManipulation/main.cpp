@@ -2,7 +2,7 @@
 
 /**
  *
- * @ingroup manipulation_modules
+ * @ingroup teo_body_programs
  * \defgroup launchManipulation launchManipulation
  *
  * @section launchManipulation_legal Legal

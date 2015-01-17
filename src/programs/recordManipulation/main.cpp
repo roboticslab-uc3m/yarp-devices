@@ -2,7 +2,7 @@
 
 /**
  *
- * @ingroup manipulation_modules
+ * @ingroup teo_body_programs
  * \defgroup recordManipulation recordManipulation
  *
  * @section recordManipulation_legal Legal
