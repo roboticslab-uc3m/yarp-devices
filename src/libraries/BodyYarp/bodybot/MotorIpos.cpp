@@ -221,8 +221,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
         CD_DEBUG("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
         return false;
     }
-
-    if( (message->id-canId) == 0x180 )  // PDO1
+    else if( (message->id-canId) == 0x180 )  // PDO1
     {
         if( (message->data[0]==0x37)&&(message->data[1]==0x92) ) {
             CD_DEBUG("Got PDO1 that it is observed as ack \"start position\" from driver. %s\n",msgToStr(message).c_str());
@@ -234,8 +233,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
         CD_DEBUG("Got PDO1 from driver side: unknown. %s\n",msgToStr(message).c_str());
         return false;
     }
-
-    if( (message->id-canId) == 0x280 )  // PDO2
+    else if( (message->id-canId) == 0x280 )  // PDO2
     {
         if( (message->data[0]==0x37)&&(message->data[1]==0x92) ) {
             CD_DEBUG("Got PDO2 that it is observed as ack \"start position\" from driver. %s\n",msgToStr(message).c_str());
@@ -247,63 +245,104 @@ bool MotorIpos::interpretMessage( can_msg * message) {
         CD_DEBUG("Got PDO2 from driver side: unknown. %s\n",msgToStr(message).c_str());
         return false;
     }
-
-    if( (message->id-canId) == 0x80 )  // EMERGENCY (EMCY), Table 4.2 Emergency Error Codes (p57, 73/263)
+    else if( (message->id-canId) == 0x80 )  // EMERGENCY (EMCY), Table 4.2 Emergency Error Codes (p57, 73/263)
     {
         CD_ERROR("Got EMERGENCY from iPOS. %s ",msgToStr(message).c_str());
         if( (message->data[1]==0x00)&&(message->data[0]==0x00) ) {
             CD_ERROR_NO_HEADER("Error Reset or No Error.\n");
+            return true;
         } else if ( (message->data[1]==0x10)&&(message->data[0]==0x00) ) {
             CD_ERROR_NO_HEADER("Generic error.\n");
-        } else if ( (message->data[1]==0x23)&&(message->data[0]==0x10) ) {
-            CD_ERROR_NO_HEADER("Continuous over-current.\n");
-        } else if ( (message->data[1]==0x23)&&(message->data[0]==0x40) ) {
-            CD_ERROR_NO_HEADER("Short-circuit.\n");
-        } else if ( (message->data[1]==0x32)&&(message->data[0]==0x10) ) {
-            CD_ERROR_NO_HEADER("DC-link over-voltage.\n");
-        } else if ( (message->data[1]==0x32)&&(message->data[0]==0x20) ) {
-            CD_ERROR_NO_HEADER("DC-link under-voltage.\n");
+            return true;
+        } else if (message->data[1]==0x23) {
+            if (message->data[0]==0x10) {
+                CD_ERROR_NO_HEADER("Continuous over-current.\n");
+                return true;
+            } else if (message->data[0]==0x40) {
+                CD_ERROR_NO_HEADER("Short-circuit.\n");
+                return true;
+            }
+            CD_ERROR_NO_HEADER("NOT SPECIFIED IN MANUAL.\n");
+            return false;
+        } else if (message->data[1]==0x32) {
+            if (message->data[0]==0x10) {
+                CD_ERROR_NO_HEADER("DC-link over-voltage.\n");
+                return true;
+            } else if (message->data[0]==0x20) {
+                CD_ERROR_NO_HEADER("DC-link under-voltage.\n");
+                return true;
+            }
+            CD_ERROR_NO_HEADER("NOT SPECIFIED IN MANUAL.\n");
+            return false;
         } else if ( (message->data[1]==0x42)&&(message->data[0]==0x80) ) {
             CD_ERROR_NO_HEADER("Over temperature motor.\n");
+            return true;
         } else if ( (message->data[1]==0x43)&&(message->data[0]==0x10) ) {
             CD_ERROR_NO_HEADER("Over temperature drive.\n");
-        } else if ( (message->data[1]==0x54)&&(message->data[0]==0x41) ) {
-            CD_ERROR_NO_HEADER("Driver disabled due to enable input.\n");
-        } else if ( (message->data[1]==0x54)&&(message->data[0]==0x42) ) {
-            CD_ERROR_NO_HEADER("Negative limit switch active.\n");
-        } else if ( (message->data[1]==0x54)&&(message->data[0]==0x43) ) {
-            CD_ERROR_NO_HEADER("Positive limit switch active.\n");
+            return true;
+        } else if (message->data[1]==0x54) {
+            if (message->data[0]==0x41) {
+                CD_ERROR_NO_HEADER("Driver disabled due to enable input.\n");
+                return true;
+            } else if (message->data[0]==0x42) {
+                CD_ERROR_NO_HEADER("Negative limit switch active.\n");
+                return true;
+            } else if (message->data[0]==0x43) {
+                CD_ERROR_NO_HEADER("Positive limit switch active.\n");
+                return true;
+            }
+            CD_ERROR_NO_HEADER("NOT SPECIFIED IN MANUAL.\n");
+            return false;
         } else if ( (message->data[1]==0x61)&&(message->data[0]==0x00) ) {
             CD_ERROR_NO_HEADER("Invalid setup data.\n");
+            return true;
         } else if ( (message->data[1]==0x75)&&(message->data[0]==0x00) ) {
             CD_ERROR_NO_HEADER("Communication error.\n");
-        } else if ( (message->data[1]==0x81)&&(message->data[0]==0x10) ) {
-            CD_ERROR_NO_HEADER("CAN overrun (message lost).\n");
-        } else if ( (message->data[1]==0x81)&&(message->data[0]==0x30) ) {
-            CD_ERROR_NO_HEADER("Life guard error or heartbeat error.\n");
+            return true;
+        } else if (message->data[1]==0x81) {
+            if (message->data[0]==0x10) {
+                CD_ERROR_NO_HEADER("CAN overrun (message lost).\n");
+                return true;
+            } else if (message->data[0]==0x30) {
+                CD_ERROR_NO_HEADER("Life guard error or heartbeat error.\n");
+                return true;
+            }
+            CD_ERROR_NO_HEADER("NOT SPECIFIED IN MANUAL.\n");
+            return false;
         } else if ( (message->data[1]==0x83)&&(message->data[0]==0x31) ) {
             CD_ERROR_NO_HEADER("I2t protection triggered.\n");
+            return true;
         } else if ( (message->data[1]==0x85)&&(message->data[0]==0x80) ) {
             CD_ERROR_NO_HEADER("Position wraparound / Hal sensor missing.\n");
+            return true;
         } else if ( (message->data[1]==0x86)&&(message->data[0]==0x11) ) {
             CD_ERROR_NO_HEADER("Control error / Following error.\n");
+            return true;
         } else if ( (message->data[1]==0x90)&&(message->data[0]==0x00) ) {
             CD_ERROR_NO_HEADER("Command error\n");
-        } else if ( (message->data[1]==0xFF)&&(message->data[0]==0x01) ) {
-            CD_ERROR_NO_HEADER("Generic interpolated position mode error ( PVT / PT error.\n");
-        } else if ( (message->data[1]==0xFF)&&(message->data[0]==0x02) ) {
-            CD_ERROR_NO_HEADER("Change set acknowledge bit wrong value.\n");
-        } else if ( (message->data[1]==0xFF)&&(message->data[0]==0x03) ) {
-            CD_ERROR_NO_HEADER("Specified homing method not available.\n");
-        } else if ( (message->data[1]==0xFF)&&(message->data[0]==0x04) ) {
-            CD_ERROR_NO_HEADER("A wrong mode is set in object 6060h, modes_of_operation.\n");
-        } else if ( (message->data[1]==0xFF)&&(message->data[0]==0x05) ) {
-            CD_ERROR_NO_HEADER("Specified digital I/O line not available.\n");
-        } else {
+            return true;
+        } else if (message->data[1]==0xFF) {
+            if (message->data[0]==0x01) {
+                CD_ERROR_NO_HEADER("Generic interpolated position mode error ( PVT / PT error.\n");
+                return true;
+            } else if (message->data[0]==0x02) {
+                CD_ERROR_NO_HEADER("Change set acknowledge bit wrong value.\n");
+                return true;
+            } else if (message->data[0]==0x03) {
+                CD_ERROR_NO_HEADER("Specified homing method not available.\n");
+                return true;
+            } else if (message->data[0]==0x04) {
+                CD_ERROR_NO_HEADER("A wrong mode is set in object 6060h, modes_of_operation.\n");
+                return true;
+            } else if (message->data[0]==0x05) {
+                CD_ERROR_NO_HEADER("Specified digital I/O line not available.\n");
+                return true;
+            }
             CD_ERROR_NO_HEADER("NOT SPECIFIED IN MANUAL.\n");
+            return false;
         }
-
-        return true;
+        CD_ERROR_NO_HEADER("NOT SPECIFIED IN MANUAL.\n");
+        return false;
     }
 
     //--------------- Debugged up to here -------------------------
@@ -360,7 +399,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
 
     CD_WARNING("Unknown message: %s\n", msgToStr(message).c_str());
 
-    return true;
+    return false;
 
 }  //-- ends interpretMessage
 
