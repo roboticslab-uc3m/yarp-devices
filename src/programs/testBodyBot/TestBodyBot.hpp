@@ -20,6 +20,9 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
+namespace teo
+{
+
 /**
  * @ingroup testBodyBot
  *
@@ -40,6 +43,8 @@ class TestBodyBot : public RFModule {
         TestBodyBot();
         bool configure(ResourceFinder &rf);
 };
+
+}  // namespace teo
 
 #endif
 

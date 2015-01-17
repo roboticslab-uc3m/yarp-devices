@@ -3,10 +3,10 @@
 #include "TestBodyBot.hpp"
 
 /************************************************************************/
-TestBodyBot::TestBodyBot() { }
+teo::TestBodyBot::TestBodyBot() { }
 
 /************************************************************************/
-bool TestBodyBot::configure(ResourceFinder &rf) {
+bool teo::TestBodyBot::configure(ResourceFinder &rf) {
 
     Property options;
     options.fromString(rf.toString());  //-- Allow options like stream_state=0.
@@ -27,7 +27,7 @@ bool TestBodyBot::configure(ResourceFinder &rf) {
 }
 
 /************************************************************************/
-bool TestBodyBot::updateModule() {
+bool teo::TestBodyBot::updateModule() {
     //printf("TestBodyBot alive...\n");
     return true;
 }
