@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
     }
     CD_SUCCESS("Found yarp network.\n");
 
-    TestBodyBot mod;
+    teo::TestBodyBot mod;
     return mod.runModule(rf);
 }
 
