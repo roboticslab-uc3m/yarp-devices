@@ -27,6 +27,9 @@ bool teo::BodyBot::checkStatus(const int &j) {
         CD_ERROR("Could not send status query.\n");
         return false;
     }
+    CD_SUCCESS("Sent status query to canId: %d.\n",drivers[j]->getCanId());
+    //*************************************************************
+
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     /*
     bool received=false;
