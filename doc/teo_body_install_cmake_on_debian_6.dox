@@ -1,6 +1,6 @@
 
 /**
- * \page teo_install_cmake_on_ubuntu_14_10 Install CMake (Ubuntu 14.10)
+ * \page teo_install_cmake_on_debian_6 Install CMake (Ubuntu 14.10)
 
 We use CMake for project generating. Installing CMake on Ubuntu is quite straightforward. Note that you will be prompted for your password upon using '''sudo'''. Type:
 
@@ -11,7 +11,7 @@ sudo apt-get install cmake-curses-gui  # Recommended, as it contains ccmake.
 
 <br><hr>
 
-This page can be edited at teo-main/doc/teo_install_cmake_on_ubuntu_14_10.dox.
+This page can be edited at teo-main/doc/teo_install_cmake_on_debian_6.dox.
 
 *
 */
