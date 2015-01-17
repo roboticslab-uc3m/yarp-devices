@@ -1,0 +1,34 @@
+
+/**
+ * \page teo_body_install_on_debian_6 Simulation and Basic Control: Installation from Source Code (Debian 6.0)
+
+First install the depencencies:
+  \li \ref teo_body_install_cmake_on_debian_6
+  \li \ref teo_body_install_yarp_on_debian_6
+
+ * @section install_teo_body Install the Software
+
+Our software integrates the previous dependencies. Note that you will be prompted for your password upon using '''sudo''' a couple of times:
+
+\verbatim
+svn co http://robots.uc3m.es/svn/TEOrepo/software/teo-body  # Download teo-body software from the repository
+cd teo-body; mkdir build; cd build; cmake ..  # Configure the teo-body software
+make  # Compile
+sudo make install  # Install :-)
+\endverbatim
+
+For additional TEO options use ccmake instead of cmake.
+
+@section install_on_debian_6_even_more Even more!
+
+Done! You are now probably interested in one of the following links:
+  \li \ref teo_body_post_install
+  \li \ref teo_body_environment_variables
+
+<hr>
+
+This page can be edited at teo-body/doc/teo_install_on_debian_6.dox.
+
+*
+*/
+
