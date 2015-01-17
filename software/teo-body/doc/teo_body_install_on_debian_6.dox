@@ -1,6 +1,6 @@
 
 /**
- * \page teo_body_install_on_debian_6 Simulation and Basic Control: Installation from Source Code (Debian 6.0)
+ * \page teo_body_install_on_debian_6 Installation from Source Code (Debian 6.0)
 
 First install the depencencies:
   \li \ref teo_body_install_cmake_on_debian_6
