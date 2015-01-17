@@ -2,7 +2,7 @@
 
 /**
  *
- * @ingroup manipulation_modules
+ * @ingroup teo_body_programs
  * \defgroup playbackLocomotion playbackLocomotion
  *
  * @section playbackLocomotion_legal Legal
