@@ -26,7 +26,7 @@ namespace teo
 /**
  * @ingroup testBodyBot
  *
- * The TestBodyBot class tests the SkymegaBot class as a controlboard.
+ * @brief Tests the BodyBot class as a controlboard.
  * 
  */
 class TestBodyBot : public RFModule {

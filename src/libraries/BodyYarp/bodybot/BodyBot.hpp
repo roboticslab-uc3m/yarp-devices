@@ -36,7 +36,7 @@ namespace teo
  * @ingroup BodyYarp
  * \defgroup bodybot
  *
- * The \ref BodyYarp library is focused on the class BodyBot class.
+ * @brief The \ref BodyYarp library is focused on the class BodyBot class.
  *
  * <b>Installation</b>
  *

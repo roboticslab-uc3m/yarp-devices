@@ -36,6 +36,7 @@ bool teo::BodyBot::checkStatus(const int &j) {
 // -----------------------------------------------------------------------------
 
 std::string teo::BodyBot::msgToStr(can_msg* message) {
+
     std::stringstream tmp;
     for(int i=0; i < message->dlc-1; i++)
     {
@@ -49,6 +50,5 @@ std::string teo::BodyBot::msgToStr(can_msg* message) {
     tmp << ").";
     return tmp.str();
 }
-
 
 // -----------------------------------------------------------------------------
