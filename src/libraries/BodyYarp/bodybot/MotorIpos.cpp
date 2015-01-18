@@ -347,7 +347,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
 
     //--------------- Debugged up to here -------------------------
 
-    if ((message->data[1]== 0x41) && (message->data[2]=0x60)) {  // Manual 6041h: Status word; Table 5.4 Bit Assignment in Status Word
+    if ((message->data[1]== 0x41) && (message->data[2]=0x60)) {  // Manual 6041h: Status word; Table 5.4 Bit Assignment in Status Word (also see 5.5)
         CD_DEBUG("Got \"status word\" from driver. %s\n",msgToStr(message).c_str());
 
         if(message->data[4] & 1){//0000 0001 (bit 0)
@@ -400,6 +400,9 @@ bool MotorIpos::interpretMessage( can_msg * message) {
         } else {
             CD_DEBUG("\t-Axis off. Power stage is disabled. Motor control is not performed.\n"); // false
         }
+
+        ////Much much more in Table 5.6
+
     }
 
     if( (message->data[0]==0x01)&&(message->data[1]==0xFF)&&(message->data[2]==0x01)&&(message->data[4]==0x20) )
