@@ -36,7 +36,7 @@ namespace teo
  * @ingroup BodyYarp
  * \defgroup bodybot
  *
- * The \ref BodyYarp library is composed by a single class, BodyBot.
+ * The \ref BodyYarp library is focused on the class BodyBot class.
  *
  * <b>Installation</b>
  *
@@ -46,7 +46,7 @@ namespace teo
 /**
  *
  * @ingroup bodybot
- * The BodyBot class implements the YARP_dev IPositionControl, IVelocityControl and IEncoders interface class member functions.
+ * @brief The BodyBot class implements the YARP_dev IPositionControl, IVelocityControl and IEncoders interface class member functions.
  *
  */
 // Note: IEncodersTimed inherits from IEncoders

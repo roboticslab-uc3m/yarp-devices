@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-MotorIpos::MotorIpos(CanBusHico *canDevicePtr, const int& canId, const double &tr) : max(0), min(0), refAcceleration(0), refSpeed(0), encoder(0) {
+teo::MotorIpos::MotorIpos(CanBusHico *canDevicePtr, const int& canId, const double &tr) : max(0), min(0), refAcceleration(0), refSpeed(0), encoder(0) {
     this->canDevicePtr = canDevicePtr;
     this->canId = canId;
     this->tr = tr;
@@ -16,13 +16,13 @@ MotorIpos::MotorIpos(CanBusHico *canDevicePtr, const int& canId, const double &t
 
 // -----------------------------------------------------------------------------
 
-int MotorIpos::getCanId() {
+int teo::MotorIpos::getCanId() {
     return canId;
 }
 
 // -----------------------------------------------------------------------------
 
-double MotorIpos::getEncoder() {
+double teo::MotorIpos::getEncoder() {
     double value;
     encoderReady.wait();
     value = encoder;
@@ -32,37 +32,37 @@ double MotorIpos::getEncoder() {
 
 // -----------------------------------------------------------------------------
 
-double MotorIpos::getMax() {
+double teo::MotorIpos::getMax() {
     return max;
 }
 
 // -----------------------------------------------------------------------------
 
-double MotorIpos::getMin() {
+double teo::MotorIpos::getMin() {
     return min;
 }
 
 // -----------------------------------------------------------------------------
 
-double MotorIpos::getRefAcceleration() {
+double teo::MotorIpos::getRefAcceleration() {
     return refAcceleration;
 }
 
 // -----------------------------------------------------------------------------
 
-double MotorIpos::getRefSpeed() {
+double teo::MotorIpos::getRefSpeed() {
     return refSpeed;
 }
 
 // -----------------------------------------------------------------------------
 
-double MotorIpos::getTr() {
+double teo::MotorIpos::getTr() {
     return tr;
 }
 
 // -----------------------------------------------------------------------------
 
-void MotorIpos::setEncoder(const double& value) {
+void teo::MotorIpos::setEncoder(const double& value) {
     encoderReady.wait();
     encoder = value;
     encoderReady.post();
@@ -70,37 +70,37 @@ void MotorIpos::setEncoder(const double& value) {
 
 // -----------------------------------------------------------------------------
 
-void MotorIpos::setMax(const double& value) {
+void teo::MotorIpos::setMax(const double& value) {
     max = value;
 }
 
 // ----------------------------.-------------------------------------------------
 
-void MotorIpos::setMin(const double& value) {
+void teo::MotorIpos::setMin(const double& value) {
     min = value;
 }
 
 // -----------------------------------------------------------------------------
 
-void MotorIpos::setRefAcceleration(const double& value) {
+void teo::MotorIpos::setRefAcceleration(const double& value) {
     refAcceleration = value;
 }
 
 // -----------------------------------------------------------------------------
 
-void MotorIpos::setRefSpeed(const double& value) {
+void teo::MotorIpos::setRefSpeed(const double& value) {
     refSpeed = value;
 }
 
 // -----------------------------------------------------------------------------
 
-void MotorIpos::setTr(const double& value) {
+void teo::MotorIpos::setTr(const double& value) {
     tr = value;
 }
 
 // -----------------------------------------------------------------------------
 
-bool MotorIpos::send(uint32_t cob, uint16_t len, uint8_t * msgData) {
+bool teo::MotorIpos::send(uint32_t cob, uint16_t len, uint8_t * msgData) {
 
     if ( (lastUsage - yarp::os::Time::now()) < DELAY )
         yarp::os::Time::delay( lastUsage + DELAY - yarp::os::Time::now() );
@@ -114,7 +114,7 @@ bool MotorIpos::send(uint32_t cob, uint16_t len, uint8_t * msgData) {
 
 // -----------------------------------------------------------------------------
 
-bool MotorIpos::start() {
+bool teo::MotorIpos::start() {
 
     //*************************************************************
     uint8_t msg_start[] = {0x01,0x01};
@@ -133,7 +133,7 @@ bool MotorIpos::start() {
 
 // -----------------------------------------------------------------------------
 
-bool MotorIpos::readyToSwitchOn() {
+bool teo::MotorIpos::readyToSwitchOn() {
 
     //*************************************************************
     uint8_t msg_readyToSwitchOn[] = {0x06,0x00}; //-- readyToSwitchOn, also acts as shutdown.
@@ -151,7 +151,7 @@ bool MotorIpos::readyToSwitchOn() {
 
 // -----------------------------------------------------------------------------
 
-bool MotorIpos::switchOn() {
+bool teo::MotorIpos::switchOn() {
 
     //*************************************************************
     uint8_t msg_switchOn[] = {0x07,0x00};  //-- switchOn, also acts as disableOperation
@@ -176,7 +176,7 @@ bool MotorIpos::switchOn() {
 
 // -----------------------------------------------------------------------------
 
-bool MotorIpos::enable() {
+bool teo::MotorIpos::enable() {
 
     //*************************************************************
     uint8_t msg_enable[] = {0x0F,0x00}; // enable
@@ -202,7 +202,7 @@ bool MotorIpos::enable() {
 
 // -----------------------------------------------------------------------------
 
-bool MotorIpos::interpretMessage( can_msg * message) {
+bool teo::MotorIpos::interpretMessage( can_msg * message) {
 
     if( (message->id-canId) == 0x580 )  // SDO
     {
@@ -463,7 +463,7 @@ bool MotorIpos::interpretMessage( can_msg * message) {
 
 // -----------------------------------------------------------------------------
 
-std::string MotorIpos::msgToStr(can_msg* message) {
+std::string teo::MotorIpos::msgToStr(can_msg* message) {
     std::stringstream tmp;
     for(int i=0; i < message->dlc-1; i++)
     {
