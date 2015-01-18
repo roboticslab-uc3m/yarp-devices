@@ -672,9 +672,6 @@ class BodyBot : public DeviceDriver, public IPositionControl, public IVelocityCo
         /** For now some printf about motor driver. */
         bool checkStatus(const int& j);
 
-        /** Not very recommended, waits for motor movement to be done. */
-        bool waitSequence(int len);
-
         int16_t ptModeMs;  //-- [ms]
 
 };
