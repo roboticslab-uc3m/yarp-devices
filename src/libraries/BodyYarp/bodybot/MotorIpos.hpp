@@ -83,6 +83,7 @@ class MotorIpos  {
 
         yarp::os::Semaphore encoderReady;
 
+        /** A helper function to display CAN messages. */
         std::string msgToStr(can_msg* message);
 
 };
