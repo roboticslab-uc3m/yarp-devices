@@ -21,7 +21,7 @@ bool teo::BodyBot::checkStatus(const int &j) {
     if ( ! this->indexWithinRange(j) ) return false;
 
     //*************************************************************
-    uint8_t msgStatus[] = {0x40,0x41,0x60,0x00,0x00,0x00,0x00,0x00}; //2064: Memory position
+    uint8_t msgStatus[] = {0x40,0x41,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6041h: Status word
     if( ! drivers[j]->send( 0x600, 8, msgStatus))
     {
         CD_ERROR("Could not send status query.\n");
@@ -29,71 +29,6 @@ bool teo::BodyBot::checkStatus(const int &j) {
     }
     CD_SUCCESS("Sent status query to canId: %d.\n",drivers[j]->getCanId());
     //*************************************************************
-
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    /*
-    bool received=false;
-    can_msg buffer;
-
-    do
-    {
-        if( canDevice.read_timeout(&buffer,20))
-        {
-            received=((buffer.data[1]== 0x41) && (buffer.data[2]=0x60));
-        } else {
-            CD_WARNING("Read timeout!\n");
-            return false;
-        }
-    }
-    while(!received);*/
-    //*************************************************************
-
-    // Big Endian
-    /*CD_INFO("Drive of canId %d current status:\n", drivers[j]->getCanId());
-    if(buffer.data[4] & 1){//0000 0001
-        CD_INFO("\t-Ready to switch on.\n");
-    }
-    if(buffer.data[4] & 2){//0000 0010
-        CD_INFO("\t-Switched on.\n");
-    }
-    if(buffer.data[4] & 4){//0000 0100
-        CD_INFO("\t-Operation Enabled.\n");
-    }
-    if(buffer.data[4] & 8){//0000 0100
-        CD_INFO("\t-In fault condition.\n");
-    }
-    if(buffer.data[4] & 16){//0000 1000
-        CD_INFO("\t-Supply voltage absent.\n");
-    }
-    if(!(buffer.data[4] & 32)){//5th bit=0
-        CD_INFO("\t-Performing a quick stop.\n");
-    }
-    if(buffer.data[4] & 64){//6th bit
-        CD_INFO("\t-Switch on disabled.\n");
-    }
-    if(buffer.data[4] & 128){//7th bit
-        CD_INFO("\t-Warning, a TML function is already in execution.\n");
-    }
-    if(buffer.data[5] & 1){//9th bit
-        CD_INFO("\t-TML running.\n");
-    }
-    if(buffer.data[5] & 2){//9th bit
-        CD_INFO("\t-Remote operation via CAN available.\n");
-    }else{
-        CD_INFO("\t-Only internal TML operation available.\n");
-    }
-    if(buffer.data[5] & 4){//9th bit
-        CD_INFO("\t-Target reached.\n");
-    }
-    if(buffer.data[5] & 8){//9th bit
-        CD_INFO("\t-Internal Limit Active.\n");
-    }
-    if(buffer.data[5] & 64){//9th bit
-        CD_INFO("\t-Last event set has ocurred.\n");
-    }
-    if(buffer.data[5] & 128){//9th bit
-        CD_INFO("\t-Axis on.\n");
-    }*/
 
     return true;
 }
