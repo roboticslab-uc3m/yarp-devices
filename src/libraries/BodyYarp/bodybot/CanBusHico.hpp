@@ -21,6 +21,15 @@
 
 #define DELAY 0.001  // Was DELAY2. Required when using same driver.
 
+namespace teo
+{
+
+/**
+ *
+ * @ingroup bodybot
+ * @brief Specifies the HicoCan (hcanpci) behaviour and specifications.
+ *
+ */
 class CanBusHico {
 
     public:
@@ -60,6 +69,8 @@ class CanBusHico {
         yarp::os::Semaphore canBusReady;
 
 };
- 
+
+}  // namespace teo
+
 #endif  // __CAN_BUS_HICO__
 

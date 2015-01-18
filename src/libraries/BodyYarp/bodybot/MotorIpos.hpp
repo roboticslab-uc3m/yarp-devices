@@ -11,6 +11,15 @@
 
 using namespace yarp::os;
 
+namespace teo
+{
+
+/**
+ *
+ * @ingroup bodybot
+ * @brief Specifies the Technosoft iPOS behaviour and specifications.
+ *
+ */
 class MotorIpos  {
 
     public:
@@ -77,6 +86,8 @@ class MotorIpos  {
         std::string msgToStr(can_msg* message);
 
 };
- 
+
+}  // namespace teo
+
 #endif  // __MOTOR_IPOS__
 

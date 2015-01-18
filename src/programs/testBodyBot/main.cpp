@@ -5,7 +5,7 @@
  * @ingroup teo_body_programs
  * \defgroup testBodyBot testBodyBot
  *
- * Creates an instance of GripperBot wrapped in a YARP controlboard. This means that it may be used
+ * @brief Creates an instance of GripperBot wrapped in a YARP controlboard. This means that it may be used
  * through a YARP remote_controlboard or directly through low-level YARP controlboard RPC commands.
  *
  * @section testBodyBot_legal Legal

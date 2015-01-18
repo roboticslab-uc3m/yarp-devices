@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool CanBusHico::init(const std::string devicePath, const int bitrate) {
+bool teo::CanBusHico::init(const std::string devicePath, const int bitrate) {
 
     //-- Open the CAN device for reading and writing.
     fileDescriptor = open(devicePath.c_str(), O_RDWR);
@@ -42,14 +42,14 @@ bool CanBusHico::init(const std::string devicePath, const int bitrate) {
 
 // -----------------------------------------------------------------------------
 
-bool CanBusHico::close() {
+bool teo::CanBusHico::close() {
     //release semaphore?
     ::close(fileDescriptor);
 }
 
 // -----------------------------------------------------------------------------
 
-bool CanBusHico::sendRaw(uint32_t id, uint16_t len, uint8_t * msgData) {
+bool teo::CanBusHico::sendRaw(uint32_t id, uint16_t len, uint8_t * msgData) {
 
      struct can_msg msg;
      memset(&msg,0,sizeof(struct can_msg));
@@ -72,7 +72,7 @@ bool CanBusHico::sendRaw(uint32_t id, uint16_t len, uint8_t * msgData) {
 
 // -----------------------------------------------------------------------------
 
-int CanBusHico::read_timeout(struct can_msg *buf, unsigned int timeout) {
+int teo::CanBusHico::read_timeout(struct can_msg *buf, unsigned int timeout) {
 
     fd_set fds;
     struct timeval tv;
