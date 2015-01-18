@@ -660,7 +660,7 @@ class BodyBot : public DeviceDriver, public IPositionControl, public IVelocityCo
         std::map< int, int > idxFromCanId;
 
         /** A helper function to display CAN messages. */
-        void display(struct can_msg message);
+        std::string msgToStr(can_msg* message);
 
         /**
          * Check if index is within range (referred to driver vector size).
