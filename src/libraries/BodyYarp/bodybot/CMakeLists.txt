@@ -15,12 +15,14 @@ IF (NOT SKIP_bodybot)
   # Include any directories needed for YARP
   include_directories(${YARP_INCLUDE_DIRS} ${BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
 
+  add_library(motoripos MotorIpos.cpp IPositionControlRawImpl.cpp)
+
   yarp_add_plugin(bodybot DeviceDriverImpl.cpp IControlLimitsImpl.cpp IControlModeImpl.cpp IEncodersImpl.cpp IEncodersTimedImpl.cpp IPositionControlImpl.cpp IVelocityControlImpl.cpp ITorqueControlImpl.cpp CanBusHico.cpp BodyBot.cpp IPositionDirectImpl.cpp ThreadImpl.cpp)
-  TARGET_LINK_LIBRARIES(bodybot ${YARP_LIBRARIES})
+  TARGET_LINK_LIBRARIES(bodybot ${YARP_LIBRARIES} motoripos)
   install(TARGETS bodybot DESTINATION lib)
 
   # Exporting dependencies for BODYConfig.cmake quite manually for now... 
-  set(BODY_LIBRARIES ${BODY_LIBRARIES} BodyYarp bodybot CACHE INTERNAL "appended libraries") 
+  set(BODY_LIBRARIES ${BODY_LIBRARIES} BodyYarp bodybot motoripos CACHE INTERNAL "appended libraries") 
 
 ENDIF (NOT SKIP_bodybot)
 
