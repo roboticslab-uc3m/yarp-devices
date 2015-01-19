@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-teo::MotorIpos::MotorIpos(CanBusHico *canDevicePtr, const int& canId, const double &tr, int16_t ptModeMs) : max(0), min(0), refAcceleration(0), refSpeed(0), encoder(0), ptModeMs(0) {
+teo::MotorIpos::MotorIpos(CanBusHico *canDevicePtr, const int& canId, const double &tr, int16_t &ptModeMs) : max(0), min(0), refAcceleration(0), refSpeed(0), encoder(0), ptModeMs(0) {
     this->canDevicePtr = canDevicePtr;
     this->canId = canId;
     this->tr = tr;
@@ -23,32 +23,8 @@ int teo::MotorIpos::getCanId() {
 
 // -----------------------------------------------------------------------------
 
-double teo::MotorIpos::getMax() {
-    return max;
-}
-
-// -----------------------------------------------------------------------------
-
-double teo::MotorIpos::getMin() {
-    return min;
-}
-
-// -----------------------------------------------------------------------------
-
 double teo::MotorIpos::getTr() {
     return tr;
-}
-
-// -----------------------------------------------------------------------------
-
-void teo::MotorIpos::setMax(const double& value) {
-    max = value;
-}
-
-// ----------------------------.-------------------------------------------------
-
-void teo::MotorIpos::setMin(const double& value) {
-    min = value;
 }
 
 // -----------------------------------------------------------------------------
