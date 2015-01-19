@@ -141,6 +141,99 @@ class BodyBot : public DeviceDriver, public IControlLimits, public IControlMode,
         */
         virtual bool getControlModes(int *modes);
 
+        //  ---------- IEncoders Declarations. Implementation in IEncodersImpl.cpp ----------
+
+        /**
+         * Reset encoder, single joint. Set the encoder value to zero
+         * @param j encoder number
+         * @return true/false
+         */
+        virtual bool resetEncoder(int j);
+
+        /**
+         * Reset encoders. Set the encoders value to zero
+         * @return true/false
+         */
+        virtual bool resetEncoders();
+
+        /**
+         * Set the value of the encoder for a given joint.
+         * @param j encoder number
+         * @param val new value
+         * @return true/false
+         */
+        virtual bool setEncoder(int j, double val);
+
+        /**
+         * Set the value of all encoders.
+         * @param vals pointer to the new values
+         * @return true/false
+         */
+        virtual bool setEncoders(const double *vals);
+
+        /**
+         * Read the value of an encoder.
+         * @param j encoder number
+         * @param v pointer to storage for the return value
+         * @return true/false, upon success/failure (you knew it, uh?)
+         */
+        virtual bool getEncoder(int j, double *v);
+
+        /**
+         * Read the position of all axes.
+         * @param encs pointer to the array that will contain the output
+         * @return true/false on success/failure
+         */
+        virtual bool getEncoders(double *encs);
+
+        /**
+         * Read the istantaneous speed of an axis.
+         * @param j axis number
+         * @param sp pointer to storage for the output
+         * @return true if successful, false ... otherwise.
+         */
+        virtual bool getEncoderSpeed(int j, double *sp);
+
+        /**
+         * Read the instantaneous speed of all axes.
+         * @param spds pointer to storage for the output values
+         * @return guess what? (true/false on success or failure).
+         */
+        virtual bool getEncoderSpeeds(double *spds);
+
+        /**
+         * Read the instantaneous acceleration of an axis.
+         * @param j axis number
+         * @param spds pointer to the array that will contain the output
+         */
+        virtual bool getEncoderAcceleration(int j, double *spds);
+
+        /**
+         * Read the instantaneous acceleration of all axes.
+         * @param accs pointer to the array that will contain the output
+         * @return true if all goes well, false if anything bad happens.
+         */
+        virtual bool getEncoderAccelerations(double *accs);
+
+        //  ---------- IEncodersTimed Declarations. Implementation in IEncodersTimedImpl.cpp ----------
+
+        /**
+        * Read the instantaneous acceleration of all axes.
+        * \param encs pointer to the array that will contain the output
+        * \param time pointer to the array that will contain individual timestamps
+        * \return true if all goes well, false if anything bad happens.
+        */
+       virtual bool getEncodersTimed(double *encs, double *time);
+
+       /**
+       * Read the instantaneous acceleration of all axes.
+       * \param j axis index
+       * \param encs encoder value (pointer to)
+       * \param time corresponding timestamp (pointer to)
+       * \return true if all goes well, false if anything bad happens.
+       */
+       virtual bool getEncoderTimed(int j, double *encs, double *time);
+
         // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
 
         /**
@@ -266,124 +359,42 @@ class BodyBot : public DeviceDriver, public IControlLimits, public IControlMode,
          */
         virtual bool stop();
 
-        //  ---------- IEncoders Declarations. Implementation in IEncodersImpl.cpp ----------
+        // ------- IPositionDirect declarations. Implementation in IPositionDirectImpl.cpp -------
 
         /**
-         * Reset encoder, single joint. Set the encoder value to zero
-         * @param j encoder number
-         * @return true/false
-         */
-        virtual bool resetEncoder(int j);
-
-        /**
-         * Reset encoders. Set the encoders value to zero
-         * @return true/false
-         */
-        virtual bool resetEncoders();
-
-        /**
-         * Set the value of the encoder for a given joint.
-         * @param j encoder number
-         * @param val new value
-         * @return true/false
-         */
-        virtual bool setEncoder(int j, double val);
-
-        /**
-         * Set the value of all encoders.
-         * @param vals pointer to the new values
-         * @return true/false
-         */
-        virtual bool setEncoders(const double *vals);
-
-        /**
-         * Read the value of an encoder.
-         * @param j encoder number
-         * @param v pointer to storage for the return value
-         * @return true/false, upon success/failure (you knew it, uh?)
-         */
-        virtual bool getEncoder(int j, double *v);
-
-        /**
-         * Read the position of all axes.
-         * @param encs pointer to the array that will contain the output
-         * @return true/false on success/failure
-         */
-        virtual bool getEncoders(double *encs);
-
-        /**
-         * Read the istantaneous speed of an axis.
-         * @param j axis number
-         * @param sp pointer to storage for the output
-         * @return true if successful, false ... otherwise.
-         */
-        virtual bool getEncoderSpeed(int j, double *sp);
-
-        /**
-         * Read the instantaneous speed of all axes.
-         * @param spds pointer to storage for the output values
-         * @return guess what? (true/false on success or failure).
-         */
-        virtual bool getEncoderSpeeds(double *spds);
-
-        /**
-         * Read the instantaneous acceleration of an axis.
-         * @param j axis number
-         * @param spds pointer to the array that will contain the output
-         */
-        virtual bool getEncoderAcceleration(int j, double *spds);
-
-        /**
-         * Read the instantaneous acceleration of all axes.
-         * @param accs pointer to the array that will contain the output
-         * @return true if all goes well, false if anything bad happens.
-         */
-        virtual bool getEncoderAccelerations(double *accs);
-
-        //  ---------- IEncodersTimed Declarations. Implementation in IEncodersTimedImpl.cpp ----------
-
-        /**
-        * Read the instantaneous acceleration of all axes.
-        * \param encs pointer to the array that will contain the output
-        * \param time pointer to the array that will contain individual timestamps
-        * \return true if all goes well, false if anything bad happens.
-        */
-       virtual bool getEncodersTimed(double *encs, double *time);
-
-       /**
-       * Read the instantaneous acceleration of all axes.
-       * \param j axis index
-       * \param encs encoder value (pointer to)
-       * \param time corresponding timestamp (pointer to)
-       * \return true if all goes well, false if anything bad happens.
-       */
-       virtual bool getEncoderTimed(int j, double *encs, double *time);
-
-        //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
-
-        /**
-         * Set velocity mode. This command
-         * is required by control boards implementing different
-         * control methods (e.g. velocity/torque), in some cases
-         * it can be left empty.
+         * Set position direct mode. This command
+         * is required to switch control boards to low-level position
+         * control method.
          * @return true/false on success failure
          */
-        virtual bool setVelocityMode();
+        virtual bool setPositionDirectMode();
 
-        /**
-         * Start motion at a given speed, single joint.
+
+        /** Set new position for a single axis.
          * @param j joint number
-         * @param sp speed value
-         * @return bool/false upone success/failure
+         * @param ref specifies the new ref point
+         * @return true/false on success/failure
          */
-        virtual bool velocityMove(int j, double sp);
+        virtual bool setPosition(int j, double ref);
 
-        /**
-         * Start motion at a given speed, multiple joints.
-         * @param sp pointer to the array containing the new speed values
-         * @return true/false upon success/failure
+        /** Set new reference point for all axes.
+         * @param n_joint how many joints this command is referring to
+         * @param joints list of joints controlled. The size of this array is n_joints
+         * @param refs array, new reference points, one value for each joint, the size is n_joints.
+         *        The first value will be the new reference fot the joint joints[0].
+         *          for example:
+         *          n_joint  3
+         *          joints   0  2  4
+         *          refs    10 30 40
+         * @return true/false on success/failure
          */
-        virtual bool velocityMove(const double *sp);
+        virtual bool setPositions(const int n_joint, const int *joints, double *refs);
+
+        /** Set new position for a set of axis.
+         * @param refs specifies the new reference points
+         * @return true/false on success/failure
+         */
+        virtual bool setPositions(const double *refs);
 
         // -------- ITorqueControl declarations. Implementation in ITorqueControlImpl.cpp --------
 
@@ -573,42 +584,31 @@ class BodyBot : public DeviceDriver, public IControlLimits, public IControlMode,
          */
         virtual bool setTorqueOffset(int j, double v);
 
-        // ------- IPositionDirect declarations. Implementation in IPositionDirectImpl.cpp -------
+        //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
 
         /**
-         * Set position direct mode. This command
-         * is required to switch control boards to low-level position
-         * control method.
+         * Set velocity mode. This command
+         * is required by control boards implementing different
+         * control methods (e.g. velocity/torque), in some cases
+         * it can be left empty.
          * @return true/false on success failure
          */
-        virtual bool setPositionDirectMode();
+        virtual bool setVelocityMode();
 
-
-        /** Set new position for a single axis.
+        /**
+         * Start motion at a given speed, single joint.
          * @param j joint number
-         * @param ref specifies the new ref point
-         * @return true/false on success/failure
+         * @param sp speed value
+         * @return bool/false upone success/failure
          */
-        virtual bool setPosition(int j, double ref);
+        virtual bool velocityMove(int j, double sp);
 
-        /** Set new reference point for all axes.
-         * @param n_joint how many joints this command is referring to
-         * @param joints list of joints controlled. The size of this array is n_joints
-         * @param refs array, new reference points, one value for each joint, the size is n_joints.
-         *        The first value will be the new reference fot the joint joints[0].
-         *          for example:
-         *          n_joint  3
-         *          joints   0  2  4
-         *          refs    10 30 40
-         * @return true/false on success/failure
+        /**
+         * Start motion at a given speed, multiple joints.
+         * @param sp pointer to the array containing the new speed values
+         * @return true/false upon success/failure
          */
-        virtual bool setPositions(const int n_joint, const int *joints, double *refs);
-
-        /** Set new position for a set of axis.
-         * @param refs specifies the new reference points
-         * @return true/false on success/failure
-         */
-        virtual bool setPositions(const double *refs);
+        virtual bool velocityMove(const double *sp);
 
         // -------- Thread declarations. Implementation in ThreadImpl.cpp --------
 

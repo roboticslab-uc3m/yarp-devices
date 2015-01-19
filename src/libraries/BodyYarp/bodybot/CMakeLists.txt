@@ -15,7 +15,7 @@ IF (NOT SKIP_bodybot)
   # Include any directories needed for YARP
   include_directories(${YARP_INCLUDE_DIRS} ${BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
 
-  add_library(motoripos MotorIpos.cpp IControlLimitsRawImpl.cpp IControlModeRawImpl.cpp IPositionControlRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp )
+  add_library(motoripos MotorIpos.cpp IControlLimitsRawImpl.cpp IControlModeRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControlRawImpl.cpp IVelocityControlRawImpl.cpp ITorqueControlRawImpl.cpp )
 
   yarp_add_plugin(bodybot DeviceDriverImpl.cpp IControlLimitsImpl.cpp IControlModeImpl.cpp IPositionControlImpl.cpp IEncodersImpl.cpp IEncodersTimedImpl.cpp IVelocityControlImpl.cpp ITorqueControlImpl.cpp CanBusHico.cpp BodyBot.cpp IPositionDirectImpl.cpp ThreadImpl.cpp)
   TARGET_LINK_LIBRARIES(bodybot ${YARP_LIBRARIES} motoripos)
