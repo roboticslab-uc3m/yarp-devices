@@ -23,7 +23,8 @@ namespace teo
  *
  */
 // Note: IEncodersTimed inherits from IEncoders
-class MotorIpos : public IControlLimitsRaw, public IControlModeRaw, public IPositionControlRaw, public IEncodersTimedRaw  {
+class MotorIpos : public IControlLimitsRaw, public IControlModeRaw, public IEncodersTimedRaw,
+        public IPositionControlRaw {
 
     public:
 
