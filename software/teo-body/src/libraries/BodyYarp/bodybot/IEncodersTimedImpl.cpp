@@ -18,7 +18,7 @@ bool teo::BodyBot::getEncodersTimed(double *encs, double *time) {
 bool teo::BodyBot::getEncoderTimed(int j, double *encs, double *time) {
     CD_INFO("(%d)\n",j);
 
-    return drivers[j]->getEncoderTimedRaw( 0, encs, time );
+    return iEncodersTimedRaw[j]->getEncoderTimedRaw( 0, encs, time );
 }
 
 // -----------------------------------------------------------------------------

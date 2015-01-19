@@ -36,7 +36,7 @@ bool teo::BodyBot::getRefTorque(int j, double *t) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->getRefTorqueRaw( 0, t );
+    return iTorqueControlRaw[j]->getRefTorqueRaw( 0, t );
 }
 
 // -----------------------------------------------------------------------------
@@ -61,7 +61,7 @@ bool teo::BodyBot::setRefTorque(int j, double t) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->setRefTorqueRaw( 0, t );
+    return iTorqueControlRaw[j]->setRefTorqueRaw( 0, t );
 }
 
 // -----------------------------------------------------------------------------
@@ -72,7 +72,7 @@ bool teo::BodyBot::getBemfParam(int j, double *bemf) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->getBemfParamRaw( 0, bemf );;
+    return iTorqueControlRaw[j]->getBemfParamRaw( 0, bemf );;
 }
 
 // -----------------------------------------------------------------------------
@@ -83,7 +83,7 @@ bool teo::BodyBot::setBemfParam(int j, double bemf) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->setBemfParamRaw( 0, bemf );;
+    return iTorqueControlRaw[j]->setBemfParamRaw( 0, bemf );;
 }
 
 // -----------------------------------------------------------------------------
@@ -94,7 +94,7 @@ bool teo::BodyBot::setTorquePid(int j, const Pid &pid) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->setTorquePidRaw( 0, pid );;
+    return iTorqueControlRaw[j]->setTorquePidRaw( 0, pid );;
 }
 
 // -----------------------------------------------------------------------------
@@ -105,7 +105,7 @@ bool teo::BodyBot::getTorque(int j, double *t) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->getTorqueRaw( 0, t );;
+    return iTorqueControlRaw[j]->getTorqueRaw( 0, t );;
 }
 
 // -----------------------------------------------------------------------------
@@ -129,7 +129,7 @@ bool teo::BodyBot::getTorqueRange(int j, double *min, double *max) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->getTorqueRangeRaw( 0, min, max );
+    return iTorqueControlRaw[j]->getTorqueRangeRaw( 0, min, max );
 }
 
 // -----------------------------------------------------------------------------
@@ -166,7 +166,7 @@ bool teo::BodyBot::setTorqueErrorLimit(int j, double limit) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->setTorqueErrorLimitRaw( 0, limit );
+    return iTorqueControlRaw[j]->setTorqueErrorLimitRaw( 0, limit );
 }
 
 // -----------------------------------------------------------------------------
@@ -190,7 +190,7 @@ bool teo::BodyBot::getTorqueError(int j, double *err) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->getTorqueErrorRaw( 0, err );
+    return iTorqueControlRaw[j]->getTorqueErrorRaw( 0, err );
 }
 
 // -----------------------------------------------------------------------------
@@ -214,7 +214,7 @@ bool teo::BodyBot::getTorquePidOutput(int j, double *out) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->getTorquePidOutputRaw( 0, out );
+    return iTorqueControlRaw[j]->getTorquePidOutputRaw( 0, out );
 }
 
 // -----------------------------------------------------------------------------
@@ -238,7 +238,7 @@ bool teo::BodyBot::getTorquePid(int j, Pid *pid) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->getTorquePidRaw( 0, pid );
+    return iTorqueControlRaw[j]->getTorquePidRaw( 0, pid );
 }
 
 // -----------------------------------------------------------------------------
@@ -262,7 +262,7 @@ bool teo::BodyBot::getTorqueErrorLimit(int j, double *limit) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->getTorqueErrorLimitRaw( 0, limit );
+    return iTorqueControlRaw[j]->getTorqueErrorLimitRaw( 0, limit );
 }
 
 // -----------------------------------------------------------------------------
@@ -286,7 +286,7 @@ bool teo::BodyBot::resetTorquePid(int j) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->resetTorquePidRaw(0);
+    return iTorqueControlRaw[j]->resetTorquePidRaw(0);
 }
 
 // -----------------------------------------------------------------------------
@@ -297,7 +297,7 @@ bool teo::BodyBot::disableTorquePid(int j) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->disableTorquePidRaw(0);
+    return iTorqueControlRaw[j]->disableTorquePidRaw(0);
 }
 
 // -----------------------------------------------------------------------------
@@ -308,7 +308,7 @@ bool teo::BodyBot::enableTorquePid(int j) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->enableTorquePidRaw(0);
+    return iTorqueControlRaw[j]->enableTorquePidRaw(0);
 }
 
 // -----------------------------------------------------------------------------
@@ -319,7 +319,7 @@ bool teo::BodyBot::setTorqueOffset(int j, double v) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->setTorqueOffsetRaw( 0, v );
+    return iTorqueControlRaw[j]->setTorqueOffsetRaw( 0, v );
 }
 
 // -----------------------------------------------------------------------------

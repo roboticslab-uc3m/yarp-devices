@@ -28,9 +28,6 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
 
     public:
 
-        MotorIpos(CanBusHico *canDevicePtr, const int& canId, const double& tr, int16_t& ptModeMs);
-
-
         /**
          * Write message to the CAN buffer.
          * @param cob Message's COB
@@ -57,7 +54,13 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
 
         bool targetReached;
 
-        bool interpretMessage( can_msg * message);
+        //  --------- ICanBusSharer Declarations. Implementation in MotorIpos.cpp ---------
+        virtual bool interpretMessage( can_msg * message);
+
+        //  --------- DeviceDriver Declarations. Implementation in MotorIpos.cpp ---------
+        MotorIpos(CanBusHico *canDevicePtr, const int& canId, const double& tr, int16_t& ptModeMs);
+        virtual bool open(Searchable& config);
+        virtual bool close();
 
         //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
         virtual bool setLimitsRaw(int axis, double min, double max);

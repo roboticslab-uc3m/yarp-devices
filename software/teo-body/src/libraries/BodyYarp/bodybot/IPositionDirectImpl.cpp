@@ -9,7 +9,7 @@ bool teo::BodyBot::setPositionDirectMode() {
 
     bool ok = true;
     for(unsigned int i=0; i < drivers.size(); i++)
-        ok &= drivers[i]->setPositionDirectModeRaw();  // No existing single mode.
+        ok &= iPositionDirectRaw[i]->setPositionDirectModeRaw();  // No existing single mode.
     return ok;
 }
 
@@ -19,7 +19,7 @@ bool teo::BodyBot::setPositionDirectMode() {
 bool teo::BodyBot::setPosition(int j, double ref) {
     CD_INFO("\n");
 
-    return drivers[j]->setPositionRaw( 0, ref );
+    return iPositionDirectRaw[j]->setPositionRaw( 0, ref );
 }
 
 // -----------------------------------------------------------------------------
@@ -29,7 +29,7 @@ bool teo::BodyBot::setPositions(const int n_joint, const int *joints, double *re
 
     bool ok = true;
     for(unsigned int i=0; i < drivers.size(); i++)
-        ok &= drivers[i]->setPositionsRaw(n_joint, joints, refs); // No existing single mode.
+        ok &= iPositionDirectRaw[i]->setPositionsRaw(n_joint, joints, refs); // No existing single mode.
     return ok;
 }
 
@@ -38,7 +38,7 @@ bool teo::BodyBot::setPositions(const int n_joint, const int *joints, double *re
 bool teo::BodyBot::setPositions(const double *refs) {
     bool ok = true;
     for(unsigned int i=0; i < drivers.size(); i++)
-        ok &= drivers[i]->setPositionsRaw(refs); // No existing single mode.
+        ok &= iPositionDirectRaw[i]->setPositionsRaw(refs); // No existing single mode.
     return ok;
 }
 

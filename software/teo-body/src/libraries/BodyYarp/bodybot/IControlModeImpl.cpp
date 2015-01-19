@@ -10,7 +10,7 @@ bool teo::BodyBot::setPositionMode(int j) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->setPositionModeRaw( 0 );
+    return iControlModeRaw[j]->setPositionModeRaw( 0 );
 }
 
 // -----------------------------------------------------------------------------
@@ -18,7 +18,7 @@ bool teo::BodyBot::setPositionMode(int j) {
 bool teo::BodyBot::setVelocityMode(int j) {
     CD_INFO("(%d)\n",j);
 
-    return drivers[j]->setVelocityModeRaw( 0 );
+    return iControlModeRaw[j]->setVelocityModeRaw( 0 );
 }
 
 // -----------------------------------------------------------------------------
@@ -29,7 +29,7 @@ bool teo::BodyBot::setTorqueMode(int j)  {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->setTorqueModeRaw( 0 );
+    return iControlModeRaw[j]->setTorqueModeRaw( 0 );
 }
 
 // -----------------------------------------------------------------------------
@@ -40,7 +40,7 @@ bool teo::BodyBot::setImpedancePositionMode(int j) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->setImpedancePositionModeRaw( 0 );
+    return iControlModeRaw[j]->setImpedancePositionModeRaw( 0 );
 }
 
 // -----------------------------------------------------------------------------
@@ -51,7 +51,7 @@ bool teo::BodyBot::setImpedanceVelocityMode(int j) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->setImpedanceVelocityModeRaw( 0 );
+    return iControlModeRaw[j]->setImpedanceVelocityModeRaw( 0 );
 }
 
 // -----------------------------------------------------------------------------
@@ -62,7 +62,7 @@ bool teo::BodyBot::setOpenLoopMode(int j) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->setOpenLoopModeRaw( 0 );
+    return iControlModeRaw[j]->setOpenLoopModeRaw( 0 );
 }
 
 // -----------------------------------------------------------------------------
@@ -73,7 +73,7 @@ bool teo::BodyBot::getControlMode(int j, int *mode) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->getControlModeRaw( 0, mode );
+    return iControlModeRaw[j]->getControlModeRaw( 0, mode );
 }
 
 // -----------------------------------------------------------------------------
