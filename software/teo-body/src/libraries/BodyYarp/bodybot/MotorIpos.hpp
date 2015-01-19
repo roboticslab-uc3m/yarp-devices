@@ -30,12 +30,10 @@ class MotorIpos : public IPositionControlRaw, public IEncodersRaw {
         ~MotorIpos(){}
 
         int getCanId();
-        double getEncoder();  //-- Thread safe.
         double getMax();
         double getMin();
         double getTr();
 
-        void setEncoder(const double& value);  //-- Thread safe.
         void setMax(const double& value);
         void setMin(const double& value);
         void setTr(const double& value);
