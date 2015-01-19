@@ -78,7 +78,10 @@ class MotorIpos : public IPositionControlRaw {
             *ax = 1;
             return true;
         }
-        virtual bool setPositionModeRaw();
+        virtual bool setPositionModeRaw() {
+            CD_ERROR("\n");
+            return false;
+        }
         virtual bool positionMoveRaw(int j, double ref);
         virtual bool positionMoveRaw(const double *refs) {
             CD_ERROR("\n");
