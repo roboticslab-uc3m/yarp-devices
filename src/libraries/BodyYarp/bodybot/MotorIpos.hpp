@@ -24,11 +24,11 @@ namespace teo
  */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
 class MotorIpos : public IControlLimitsRaw, public IControlModeRaw, public IEncodersTimedRaw,
-        public IPositionControlRaw, public IVelocityControlRaw, public ITorqueControlRaw {
+        public IPositionControlRaw, public IPositionDirectRaw, public IVelocityControlRaw, public ITorqueControlRaw {
 
     public:
 
-        MotorIpos(CanBusHico *canDevicePtr, const int& canId, const double& tr);
+        MotorIpos(CanBusHico *canDevicePtr, const int& canId, const double& tr,         int16_t ptModeMs);
         ~MotorIpos(){}
 
         int getCanId();
@@ -169,6 +169,12 @@ class MotorIpos : public IControlLimitsRaw, public IControlModeRaw, public IEnco
             return false;
         }
 
+        // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
+        virtual bool setPositionDirectModeRaw();
+        virtual bool setPositionRaw(int j, double ref);
+        virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs);
+        virtual bool setPositionsRaw(const double *refs);
+
         // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
         virtual bool setTorqueModeRaw() {
             CD_ERROR("\n");
@@ -260,6 +266,7 @@ class MotorIpos : public IControlLimitsRaw, public IControlModeRaw, public IEnco
         std::string msgToStr(can_msg* message);
         std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
 
+        int16_t ptModeMs;  //-- [ms]
 };
 
 }  // namespace teo
