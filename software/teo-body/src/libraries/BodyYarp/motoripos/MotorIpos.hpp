@@ -29,6 +29,10 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
 
     public:
 
+        MotorIpos() {
+            canDevicePtr = NULL;
+        }
+
         //  --------- DeviceDriver Declarations. Implementation in MotorIpos.cpp ---------
         virtual bool open(Searchable& config);
         virtual bool close();
