@@ -40,14 +40,6 @@ double teo::MotorIpos::getTr() {
 
 // -----------------------------------------------------------------------------
 
-void teo::MotorIpos::setEncoder(const double& value) {
-    encoderReady.wait();
-    encoder = value;
-    encoderReady.post();
-}
-
-// -----------------------------------------------------------------------------
-
 void teo::MotorIpos::setMax(const double& value) {
     max = value;
 }
@@ -178,7 +170,9 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
             //CD_DEBUG("Got encoder value (response to petition). %s\n",msgToStr(message).c_str());
             int got;
             memcpy(&got, message->data+4,4);
-            setEncoder( got / ( 11.11112 * getTr() ) );
+            encoderReady.wait();
+            encoder =  got / ( 11.11112 * getTr() );
+            encoderReady.post();
             return true;
         } else if( (message->data[1]==0x7A)&&(message->data[2]==0x60) ) {  // Manual 607Ah
             CD_DEBUG("Got SDO ack \"position target\" from driver. %s\n",msgToStr(message).c_str());
