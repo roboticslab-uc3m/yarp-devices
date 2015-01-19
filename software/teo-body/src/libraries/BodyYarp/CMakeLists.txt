@@ -14,6 +14,7 @@ IF (ENABLE_BodyYarp)
   include(YarpPlugin)
 
   yarp_begin_plugin_library(BodyYarp)
+    add_subdirectory(motoripos)
     add_subdirectory(bodybot)
   yarp_end_plugin_library(BodyYarp)
 
