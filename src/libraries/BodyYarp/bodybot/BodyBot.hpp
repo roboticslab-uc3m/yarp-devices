@@ -671,7 +671,7 @@ class BodyBot : public DeviceDriver, public IControlLimits, public IControlMode,
         bool indexWithinRange(const int& idx);
 
         /** For now some printf about motor driver. */
-        bool checkStatus(const int& j);
+        //bool checkStatus(const int& j);
 
         int16_t ptModeMs;  //-- [ms]
 
