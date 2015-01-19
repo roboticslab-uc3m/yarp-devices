@@ -19,7 +19,7 @@ bool teo::BodyBot::setPositionDirectMode() {
 bool teo::BodyBot::setPosition(int j, double ref) {
     CD_INFO("\n");
 
-    return true;
+    return drivers[j]->setPositionRaw( 0, ref );
 }
 
 // -----------------------------------------------------------------------------
