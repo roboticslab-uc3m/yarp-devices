@@ -479,3 +479,20 @@ std::string teo::MotorIpos::msgToStr(can_msg* message) {
 }
 
 // -----------------------------------------------------------------------------
+
+std::string teo::MotorIpos::msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData) {
+    std::stringstream tmp;
+    for(int i=0; i < len-1; i++)
+    {
+        tmp << std::hex << static_cast<int>(*(msgData+i)) << " ";
+    }
+    tmp << std::hex << static_cast<int>(*(msgData+len));
+    tmp << ". canId(";
+    tmp << std::dec << canId;
+    tmp << ") via(";
+    tmp << std::hex << cob;
+    tmp << ").";
+    return tmp.str();
+}
+
+// -----------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 
 #include "BodyBot.hpp"
 
-// ------------------ IPosition Related ----------------------------------------
+// ------------------ IPositionControl Related ----------------------------------------
 
 bool teo::BodyBot::getAxes(int *axes) {
     *axes = drivers.size();
