@@ -23,12 +23,13 @@ namespace teo
  *
  */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
-class MotorIpos : public IControlLimitsRaw, public IControlModeRaw, public IEncodersTimedRaw,
+class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControlModeRaw, public IEncodersTimedRaw,
         public IPositionControlRaw, public IPositionDirectRaw, public IVelocityControlRaw, public ITorqueControlRaw {
 
     public:
 
         MotorIpos(CanBusHico *canDevicePtr, const int& canId, const double& tr, int16_t& ptModeMs);
+
 
         /**
          * Write message to the CAN buffer.
