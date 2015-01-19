@@ -5,7 +5,7 @@
  * @ingroup teo_body_programs
  * \defgroup testBodyBot testBodyBot
  *
- * @brief Creates an instance of GripperBot wrapped in a YARP controlboard. This means that it may be used
+ * @brief Creates an instance of BodyBot wrapped in a YARP controlboard. This means that it may be used
  * through a YARP remote_controlboard or directly through low-level YARP controlboard RPC commands.
  *
  * @section testBodyBot_legal Legal
@@ -36,11 +36,11 @@
  *
  * @section testBodyBot_interfacing Interfacing with the testBodyBot module
  *
- * The \ref testBodyBot module acts as the server part of a network wrapper of the GripperBot class.
- * The implementation maps certain YARP rpc's to tGripperBot function calls. Therefore, we can interface
+ * The \ref testBodyBot module acts as the server part of a network wrapper of the BodyBot class.
+ * The implementation maps certain YARP rpc's to BodyBot function calls. Therefore, we can interface
  * with the class from the command-line by typing:
 \verbatim
-[on terminal 3] yarp rpc /gripperbot/rpc:i
+[on terminal 3] yarp rpc /bodybot/rpc:i
 \endverbatim
  * We can send an absolute position joint space movement such as:
 \verbatim
