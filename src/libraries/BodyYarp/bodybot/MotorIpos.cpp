@@ -16,6 +16,11 @@
 }*/
 
 // -----------------------------------------------------------------------------
+bool teo::MotorIpos::setCanBusPtr(CanBusHico *canDevicePtr) {
+    this->canDevicePtr = canDevicePtr;
+}
+
+// -----------------------------------------------------------------------------
 bool teo::MotorIpos::open(Searchable& config) {
     CD_INFO("\n");
 
