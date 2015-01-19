@@ -10,7 +10,7 @@ bool teo::BodyBot::open(Searchable& config) {
 
     std::string canDevicePath = config.check("canDevice",Value(DEFAULT_CAN_DEVICE),"CAN device path").asString();
     int canBitrate = config.check("canBitrate",Value(DEFAULT_CAN_BITRATE),"CAN bitrate").asInt();
-    this->ptModeMs = config.check("ptModeMs",Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
+    int16_t ptModeMs = config.check("ptModeMs",Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
 
     Bottle ids = config.findGroup("ids").tail();  //-- e.g. 15
     Bottle trs = config.findGroup("trs").tail();  //-- e.g. 160
@@ -22,18 +22,40 @@ bool teo::BodyBot::open(Searchable& config) {
     Bottle initPoss = config.findGroup("initPoss").tail();  //-- e.g. 0 0 0 45
 
     //-- Populate the motor drivers vector.
-    for(int i=0; i<ids.size(); i++)
+    drivers.resize( ids.size() );
+    iControlLimitsRaw.resize( drivers.size() );
+    iControlModeRaw.resize( drivers.size() );
+    iEncodersTimedRaw.resize( drivers.size() );
+    iPositionControlRaw.resize( drivers.size() );
+    iPositionDirectRaw.resize( drivers.size() );
+    iTorqueControlRaw.resize( drivers.size() );
+    iVelocityControlRaw.resize( drivers.size() );
+    iCanBusSharer.resize( drivers.size() );
+    for(int i=0; i<drivers.size(); i++)
     {
         //-- Create motor driver object with a pointer to the CAN device, its id and tr (these are locally stored parameters).
-        //MotorIpos* driver = new MotorIpos( &canDevice, ids.get(i).asInt(), trs.get(i).asDouble(), ptModeMs );
-
-        PolyDriver* driver;
+        Property options;
+        options.put("device","motoripos");
+        options.put("canId",ids.get(i).asInt());
+        options.put("tr",trs.get(i).asInt());
+        options.put("ptModeMs",ptModeMs);
+        PolyDriver* driver = new PolyDriver(options);
 
         //-- Fill a map entry ( drivers.size() if before push_back, otherwise do drivers.size()-1).
         idxFromCanId[ ids.get(i).asInt() ] = drivers.size();
 
-        //-- Push the motor driver on to the drivers vector.
-        drivers.push_back(driver);
+        //-- Push the motor driver on to the vectors.
+        drivers[i] = driver;
+        driver->view( iControlLimitsRaw[i] );
+        driver->view( iControlModeRaw[i] );
+        driver->view( iEncodersTimedRaw[i] );
+        driver->view( iPositionControlRaw[i] );
+        driver->view( iPositionDirectRaw[i] );
+        driver->view( iTorqueControlRaw[i] );
+        driver->view( iVelocityControlRaw[i] );
+        driver->view( iCanBusSharer[i] );
+
+        iCanBusSharer[i]->setCanBusPtr( &canDevice );
     }
 
     //-- Initialize the CAN device (i.e. /dev/can0, set in DEFAULT_CAN_DEVICE).
