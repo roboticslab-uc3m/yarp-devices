@@ -22,9 +22,9 @@ namespace teo
  * @brief Specifies the Technosoft iPOS behaviour and specifications.
  *
  */
-// Note: IEncodersTimed inherits from IEncoders
+// Note: IEncodersTimedRaw inherits from IEncodersRaw
 class MotorIpos : public IControlLimitsRaw, public IControlModeRaw, public IEncodersTimedRaw,
-        public IPositionControlRaw {
+        public IPositionControlRaw, public IVelocityControlRaw, public ITorqueControlRaw {
 
     public:
 
