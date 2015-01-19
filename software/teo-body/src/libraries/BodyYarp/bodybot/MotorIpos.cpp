@@ -44,18 +44,6 @@ double teo::MotorIpos::getMin() {
 
 // -----------------------------------------------------------------------------
 
-double teo::MotorIpos::getRefAcceleration() {
-    return refAcceleration;
-}
-
-// -----------------------------------------------------------------------------
-
-double teo::MotorIpos::getRefSpeed() {
-    return refSpeed;
-}
-
-// -----------------------------------------------------------------------------
-
 double teo::MotorIpos::getTr() {
     return tr;
 }
@@ -78,18 +66,6 @@ void teo::MotorIpos::setMax(const double& value) {
 
 void teo::MotorIpos::setMin(const double& value) {
     min = value;
-}
-
-// -----------------------------------------------------------------------------
-
-void teo::MotorIpos::setRefAcceleration(const double& value) {
-    refAcceleration = value;
-}
-
-// -----------------------------------------------------------------------------
-
-void teo::MotorIpos::setRefSpeed(const double& value) {
-    refSpeed = value;
 }
 
 // -----------------------------------------------------------------------------

@@ -33,15 +33,11 @@ class MotorIpos : public IPositionControlRaw {
         double getEncoder();  //-- Thread safe.
         double getMax();
         double getMin();
-        double getRefAcceleration();
-        double getRefSpeed();
         double getTr();
 
         void setEncoder(const double& value);  //-- Thread safe.
         void setMax(const double& value);
         void setMin(const double& value);
-        void setRefAcceleration(const double& value);
-        void setRefSpeed(const double& value);
         void setTr(const double& value);
 
         /**
