@@ -39,6 +39,19 @@ bool teo::MotorIpos::enableRutine() {
 }
 
 // -----------------------------------------------------------------------------
+bool teo::MotorIpos::shutdownRutine() {
+
+    //-- Disable and shutdown the physical drivers.
+    if ( ! switchOn() )  //-- "switch on" also acts as "disable".
+        return false;
+
+    if ( ! readyToSwitchOn() )  //-- "ready to switch on" also acts as "shutdown".
+        return false;
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
 
 bool teo::MotorIpos::send(uint32_t cob, uint16_t len, uint8_t * msgData) {
 

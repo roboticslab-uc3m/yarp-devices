@@ -41,6 +41,7 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
         virtual bool interpretMessage( can_msg * message);
         virtual bool setCanBusPtr(CanBusHico *canDevicePtr);
         virtual bool enableRutine();
+        virtual bool shutdownRutine();
 
         //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
         virtual bool setLimitsRaw(int axis, double min, double max);

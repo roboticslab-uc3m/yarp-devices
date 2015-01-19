@@ -121,16 +121,12 @@ bool teo::BodyBot::close() {
     //-- Stop the read thread.
     this->Thread::stop();
 
-    //-- Disable and shutdown the physical drivers.
+    //-- Check the status of each driver.
     bool ok = true;
-    /*for(int i=0; i<drivers.size(); i++)
-    {
-        ok &= drivers[i]->switchOn();  //-- "switch on" also acts as "disable".
-    }
     for(int i=0; i<drivers.size(); i++)
     {
-        ok &= drivers[i]->readyToSwitchOn();  //-- "ready to switch on" also acts as "shutdown".
-    }*/
+        ok &= iCanBusSharer[i]->shutdownRutine();
+    }
 
     //-- Delete the driver objects.
     for(int i=0; i<drivers.size(); i++)

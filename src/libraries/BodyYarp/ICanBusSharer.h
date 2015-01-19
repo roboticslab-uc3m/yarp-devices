@@ -26,6 +26,8 @@ public:
 
     virtual bool enableRutine() = 0;
 
+    virtual bool shutdownRutine() = 0;
+
 };
 
 }  // namespace teo
