@@ -214,9 +214,7 @@ bool teo::BodyBot::getTorquePidOutput(int j, double *out) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    return drivers[j]->getTorquePidOutputRaw( 0, out );
 }
 
 // -----------------------------------------------------------------------------
@@ -224,9 +222,12 @@ bool teo::BodyBot::getTorquePidOutput(int j, double *out) {
 bool teo::BodyBot::getTorquePidOutputs(double *outs) {
     CD_INFO("\n");
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    bool ok = true;
+    for(int j=0; j<drivers.size(); j++)
+    {
+        ok &= this->getTorquePidOutput(j, &(outs[j]));
+    }
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
@@ -237,9 +238,7 @@ bool teo::BodyBot::getTorquePid(int j, Pid *pid) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    return drivers[j]->getTorquePidRaw( 0, pid );
 }
 
 // -----------------------------------------------------------------------------
@@ -247,9 +246,12 @@ bool teo::BodyBot::getTorquePid(int j, Pid *pid) {
 bool teo::BodyBot::getTorquePids(Pid *pids){
     CD_INFO("\n");
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    bool ok = true;
+    for(int j=0; j<drivers.size(); j++)
+    {
+        ok &= this->getTorquePid(j, &(pids[j]));
+    }
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
@@ -260,9 +262,7 @@ bool teo::BodyBot::getTorqueErrorLimit(int j, double *limit) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    return drivers[j]->getTorqueErrorLimitRaw( 0, limit );
 }
 
 // -----------------------------------------------------------------------------
@@ -270,9 +270,12 @@ bool teo::BodyBot::getTorqueErrorLimit(int j, double *limit) {
 bool teo::BodyBot::getTorqueErrorLimits(double *limits) {
     CD_INFO("\n");
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    bool ok = true;
+    for(int j=0; j<drivers.size(); j++)
+    {
+        ok &= this->getTorqueErrorLimit(j, &(limits[j]));
+    }
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
@@ -283,9 +286,7 @@ bool teo::BodyBot::resetTorquePid(int j) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    return drivers[j]->resetTorquePidRaw(0);
 }
 
 // -----------------------------------------------------------------------------
@@ -296,9 +297,7 @@ bool teo::BodyBot::disableTorquePid(int j) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    return drivers[j]->disableTorquePidRaw(0);
 }
 
 // -----------------------------------------------------------------------------
@@ -309,9 +308,7 @@ bool teo::BodyBot::enableTorquePid(int j) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    return drivers[j]->enableTorquePidRaw(0);
 }
 
 // -----------------------------------------------------------------------------
@@ -322,9 +319,7 @@ bool teo::BodyBot::setTorqueOffset(int j, double v) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    return drivers[j]->setTorqueOffsetRaw( 0, v );
 }
 
 // -----------------------------------------------------------------------------
