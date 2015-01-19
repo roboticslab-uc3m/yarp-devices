@@ -33,7 +33,7 @@ bool teo::BodyBot::positionMove(int j, double ref) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->positionMoveRaw( 0, ref );
+    return iPositionControlRaw[j]->positionMoveRaw( 0, ref );
 }
 
 // -----------------------------------------------------------------------------
@@ -57,7 +57,7 @@ bool teo::BodyBot::relativeMove(int j, double delta) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->relativeMoveRaw( 0, delta );
+    return iPositionControlRaw[j]->relativeMoveRaw( 0, delta );
 }
 
 // -----------------------------------------------------------------------------
@@ -81,7 +81,7 @@ bool teo::BodyBot::checkMotionDone(int j, bool *flag) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->checkMotionDoneRaw( 0, flag );
+    return iPositionControlRaw[j]->checkMotionDoneRaw( 0, flag );
 }
 
 // -----------------------------------------------------------------------------
@@ -105,7 +105,7 @@ bool teo::BodyBot::setRefSpeed(int j, double sp) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->setRefSpeedRaw( 0, sp );
+    return iPositionControlRaw[j]->setRefSpeedRaw( 0, sp );
 }
 
 // -----------------------------------------------------------------------------
@@ -127,7 +127,7 @@ bool teo::BodyBot::setRefAcceleration(int j, double acc) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->setRefAccelerationRaw( 0, acc );
+    return iPositionControlRaw[j]->setRefAccelerationRaw( 0, acc );
 }
 
 // -----------------------------------------------------------------------------
@@ -149,7 +149,7 @@ bool teo::BodyBot::getRefSpeed(int j, double *ref) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->getRefSpeedRaw( 0, ref);
+    return iPositionControlRaw[j]->getRefSpeedRaw( 0, ref);
 }
 
 // -----------------------------------------------------------------------------
@@ -171,7 +171,7 @@ bool teo::BodyBot::getRefAcceleration(int j, double *acc) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->getRefAccelerationRaw( 0, acc );
+    return iPositionControlRaw[j]->getRefAccelerationRaw( 0, acc );
 }
 
 // -----------------------------------------------------------------------------
@@ -193,7 +193,7 @@ bool teo::BodyBot::stop(int j) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->stopRaw (0);
+    return iPositionControlRaw[j]->stopRaw (0);
 }
 
 // -----------------------------------------------------------------------------

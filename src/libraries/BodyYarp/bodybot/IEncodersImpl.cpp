@@ -10,7 +10,7 @@ bool teo::BodyBot::resetEncoder(int j) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->resetEncoderRaw( 0 );
+    return iEncodersTimedRaw[j]->resetEncoderRaw( 0 );
 }
 
 // -----------------------------------------------------------------------------
@@ -32,7 +32,7 @@ bool teo::BodyBot::setEncoder(int j, double val) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->setEncoderRaw( 0, val );
+    return iEncodersTimedRaw[j]->setEncoderRaw( 0, val );
 }
 
 // -----------------------------------------------------------------------------
@@ -54,7 +54,7 @@ bool teo::BodyBot::getEncoder(int j, double *v) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->getEncoderRaw( 0, v );
+    return iEncodersTimedRaw[j]->getEncoderRaw( 0, v );
 }
 
 // -----------------------------------------------------------------------------
@@ -76,7 +76,7 @@ bool teo::BodyBot::getEncoderSpeed(int j, double *sp) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->getEncoderSpeedRaw( 0, sp );
+    return iEncodersTimedRaw[j]->getEncoderSpeedRaw( 0, sp );
 }
 
 // -----------------------------------------------------------------------------
@@ -98,7 +98,7 @@ bool teo::BodyBot::getEncoderAcceleration(int j, double *spds) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->getEncoderAccelerationRaw( 0, spds );
+    return iEncodersTimedRaw[j]->getEncoderAccelerationRaw( 0, spds );
 }
 
 // -----------------------------------------------------------------------------

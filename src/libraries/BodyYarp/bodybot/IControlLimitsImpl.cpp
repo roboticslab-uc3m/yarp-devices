@@ -10,7 +10,7 @@ bool teo::BodyBot::setLimits(int axis, double min, double max) {
     //-- Check index within range
     if ( ! this->indexWithinRange(axis) ) return false;
 
-    return drivers[axis]->setLimitsRaw( 0, min, max );
+    return iControlLimitsRaw[axis]->setLimitsRaw( 0, min, max );
 }
 
 // -----------------------------------------------------------------------------
@@ -21,7 +21,7 @@ bool teo::BodyBot::getLimits(int axis, double *min, double *max) {
     //-- Check index within range
     if( axis >= drivers.size() ) return false;
 
-    return drivers[axis]->getLimitsRaw( 0, min, max );
+    return iControlLimitsRaw[axis]->getLimitsRaw( 0, min, max );
 }
 
 // -----------------------------------------------------------------------------

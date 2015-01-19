@@ -20,6 +20,8 @@
 #include "CanBusHico.hpp"
 #include "MotorIpos.hpp"
 
+#include "ICanBusSharer.h"
+
 #define DEFAULT_MODE "position"
 
 #define DEFAULT_CAN_DEVICE "/dev/can0"
@@ -657,7 +659,15 @@ class BodyBot : public DeviceDriver, public IControlLimits, public IControlMode,
         CanBusHico canDevice;
 
         /** A vector of driver objects. */
-        std::vector< MotorIpos* > drivers;
+        std::vector< PolyDriver* > drivers;
+        std::vector< IControlLimitsRaw* > iControlLimitsRaw;
+        std::vector< IControlModeRaw* > iControlModeRaw;
+        std::vector< IEncodersTimedRaw* > iEncodersTimedRaw;
+        std::vector< IPositionControlRaw* > iPositionControlRaw;
+        std::vector< IPositionDirectRaw* > iPositionDirectRaw;
+        std::vector< ITorqueControlRaw* > iTorqueControlRaw;
+        std::vector< IVelocityControlRaw* > iVelocityControlRaw;
+        std::vector< ICanBusSharer* > iCanBusSharer;
         std::map< int, int > idxFromCanId;
 
         /** A helper function to display CAN messages. */

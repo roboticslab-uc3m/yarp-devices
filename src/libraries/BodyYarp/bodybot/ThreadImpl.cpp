@@ -29,7 +29,7 @@ void teo::BodyBot::run() {
             continue;
         }
 
-        drivers[ idxFromCanIdFound->second ]->interpretMessage(&buffer);  //-- Check if false?
+        iCanBusSharer[ idxFromCanIdFound->second ]->interpretMessage(&buffer);  //-- Check if false?
 
     }  //-- ends: while ( ! this->isStopping() ).
 

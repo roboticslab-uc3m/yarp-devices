@@ -23,7 +23,7 @@ bool teo::BodyBot::velocityMove(int j, double sp) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->velocityMoveRaw( 0, sp );
+    return iVelocityControlRaw[j]->velocityMoveRaw( 0, sp );
 }
 
 // -----------------------------------------------------------------------------

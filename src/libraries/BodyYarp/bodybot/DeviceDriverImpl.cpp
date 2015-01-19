@@ -25,7 +25,9 @@ bool teo::BodyBot::open(Searchable& config) {
     for(int i=0; i<ids.size(); i++)
     {
         //-- Create motor driver object with a pointer to the CAN device, its id and tr (these are locally stored parameters).
-        MotorIpos* driver = new MotorIpos( &canDevice, ids.get(i).asInt(), trs.get(i).asDouble(), ptModeMs );
+        //MotorIpos* driver = new MotorIpos( &canDevice, ids.get(i).asInt(), trs.get(i).asDouble(), ptModeMs );
+
+        PolyDriver* driver;
 
         //-- Fill a map entry ( drivers.size() if before push_back, otherwise do drivers.size()-1).
         idxFromCanId[ ids.get(i).asInt() ] = drivers.size();
@@ -75,7 +77,7 @@ bool teo::BodyBot::open(Searchable& config) {
     Time::delay(1);
 
     //-- Initialize the drivers: start (0.1) ready (0.1) on (2) enable. Wait between each step.
-    for(int i=0; i<drivers.size(); i++)
+    /*for(int i=0; i<drivers.size(); i++)
     {
         if ( ! drivers[i]->start() )
             return false;
@@ -100,7 +102,7 @@ bool teo::BodyBot::open(Searchable& config) {
     {
         if ( ! drivers[i]->enable() )
             return false;
-    }
+    }*/
 
     yarp::os::Time::delay(1);
     if( ! config.findGroup("initPoss").isNull() ) {
@@ -127,14 +129,14 @@ bool teo::BodyBot::close() {
 
     //-- Disable and shutdown the physical drivers.
     bool ok = true;
-    for(int i=0; i<drivers.size(); i++)
+    /*for(int i=0; i<drivers.size(); i++)
     {
         ok &= drivers[i]->switchOn();  //-- "switch on" also acts as "disable".
     }
     for(int i=0; i<drivers.size(); i++)
     {
         ok &= drivers[i]->readyToSwitchOn();  //-- "ready to switch on" also acts as "shutdown".
-    }
+    }*/
 
     //-- Delete the driver objects.
     for(int i=0; i<drivers.size(); i++)
