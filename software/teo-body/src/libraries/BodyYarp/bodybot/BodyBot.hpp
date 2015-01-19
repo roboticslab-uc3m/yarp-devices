@@ -50,8 +50,8 @@ namespace teo
  *
  */
 // Note: IEncodersTimed inherits from IEncoders
-class BodyBot : public DeviceDriver, public IPositionControl, public IVelocityControl,
-        public IEncodersTimed, public IControlLimits, public IControlMode, public ITorqueControl,
+class BodyBot : public DeviceDriver, public IPositionControl, public IEncodersTimed,
+        public IVelocityControl, public IControlLimits, public IControlMode, public ITorqueControl,
         public IPositionDirect, public Thread {
 
     // ------------------------------- Public -------------------------------------
