@@ -72,9 +72,7 @@ bool teo::BodyBot::getBemfParam(int j, double *bemf) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    return drivers[j]->getBemfParamRaw( 0, bemf );;
 }
 
 // -----------------------------------------------------------------------------
@@ -85,9 +83,7 @@ bool teo::BodyBot::setBemfParam(int j, double bemf) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    return drivers[j]->setBemfParamRaw( 0, bemf );;
 }
 
 // -----------------------------------------------------------------------------
@@ -98,9 +94,7 @@ bool teo::BodyBot::setTorquePid(int j, const Pid &pid) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    return drivers[j]->setTorquePidRaw( 0, pid );;
 }
 
 // -----------------------------------------------------------------------------
@@ -111,37 +105,7 @@ bool teo::BodyBot::getTorque(int j, double *t) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    uint8_t msg_read[]={0x40,0x7E,0x20,0x00}; // Query current. Ok only 4.
-
-    //memcpy(msg_read,,4);
-    if( ! drivers[j]->send(0x600,4,msg_read) ) {
-        CD_ERROR("Failed to send part of read failed.\n");
-        return false;
-    }
-    //display(message);
-    Time::delay(DELAY);
-    //purge(canNode);
-    //CAN::receive(canNode);
-    struct can_msg reply;
-    return false; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    ///////////////////////////if( ! canDevice.read_timeout(&reply,500) ){
-        //////////////////////////////CD_WARNING("Read timeout!\n");
-    ///////////////////////////////////////////////}
-    //display(reply);
-    //int got;
-    //memcpy(&got,reply.data+4,4);
-    //*current = got/(11.11112*devices[idx].tr);
-    //int got;START LOOP
-    //memcpy(&got,reply.data+4,4);
-    //*current = got;
-    int16_t got;
-    //lastCurrent = got;
-    //memcpy(&got,reply.data+4,2);
-    //*current = - got / 4268.4 ;
-    memcpy(&got,reply.data+4,4);
-    * t = got * (2.0 * 10.0) / 65520.0;
-
-    return true;
+    return drivers[j]->getTorqueRaw( 0, t );;
 }
 
 // -----------------------------------------------------------------------------
@@ -149,9 +113,12 @@ bool teo::BodyBot::getTorque(int j, double *t) {
 bool teo::BodyBot::getTorques(double *t) {
     CD_INFO("\n");
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    bool ok = true;
+    for(int j=0; j<drivers.size(); j++)
+    {
+        ok &= this->getTorque(j, t);
+    }
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
@@ -162,9 +129,7 @@ bool teo::BodyBot::getTorqueRange(int j, double *min, double *max) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    return drivers[j]->getTorqueRangeRaw( 0, min, max );
 }
 
 // -----------------------------------------------------------------------------
@@ -172,9 +137,12 @@ bool teo::BodyBot::getTorqueRange(int j, double *min, double *max) {
 bool teo::BodyBot::getTorqueRanges(double *min, double *max) {
     CD_INFO("\n");
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    bool ok = true;
+    for(int j=0; j<drivers.size(); j++)
+    {
+        ok &= this->getTorqueRange(j, min, max);
+    }
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
