@@ -4,23 +4,21 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-prepare_device(bodybot TYPE teo::BodyBot INCLUDE BodyBot.hpp WRAPPER controlboard)
+prepare_device(motoripos TYPE teo::MotorIpos INCLUDE MotorIpos.hpp WRAPPER controlboard)
 
-IF (NOT SKIP_bodybot)
-
-  option(ENABLE_testBodyBot "Choose if you want to compile testBodyBot" FALSE)
+IF (NOT SKIP_motoripos)
 
   find_package(YARP REQUIRED)
 
   # Include any directories needed for YARP
   include_directories(${YARP_INCLUDE_DIRS} ${BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
 
-  yarp_add_plugin(bodybot DeviceDriverImpl.cpp IControlLimitsImpl.cpp IControlModeImpl.cpp IEncodersImpl.cpp IEncodersTimedImpl.cpp IPositionControlImpl.cpp IVelocityControlImpl.cpp ITorqueControlImpl.cpp CanBusHico.cpp BodyBot.cpp IPositionDirectImpl.cpp ThreadImpl.cpp)
-  TARGET_LINK_LIBRARIES(bodybot ${YARP_LIBRARIES})
-  install(TARGETS bodybot DESTINATION lib)
+  yarp_add_plugin(motoripos MotorIpos.cpp IPositionControlRawImpl.cpp)
+  TARGET_LINK_LIBRARIES(motoripos ${YARP_LIBRARIES})
+  install(TARGETS motoripos DESTINATION lib)
 
   # Exporting dependencies for BODYConfig.cmake quite manually for now... 
-  set(BODY_LIBRARIES ${BODY_LIBRARIES} BodyYarp bodybot CACHE INTERNAL "appended libraries") 
+  set(BODY_LIBRARIES ${BODY_LIBRARIES} BodyYarp motoripos CACHE INTERNAL "appended libraries") 
 
-ENDIF (NOT SKIP_bodybot)
+ENDIF (NOT SKIP_motoripos)
 
