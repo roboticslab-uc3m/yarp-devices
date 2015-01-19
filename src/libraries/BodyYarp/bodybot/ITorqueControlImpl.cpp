@@ -150,9 +150,12 @@ bool teo::BodyBot::getTorqueRanges(double *min, double *max) {
 bool teo::BodyBot::setTorquePids(const Pid *pids) {
     CD_INFO("\n");
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    bool ok = true;
+    for(int j=0; j<drivers.size(); j++)
+    {
+        ok &= this->setTorquePid(j, pids[j]);
+    }
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
@@ -163,9 +166,7 @@ bool teo::BodyBot::setTorqueErrorLimit(int j, double limit) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    return drivers[j]->setTorqueErrorLimitRaw( j, limit );
 }
 
 // -----------------------------------------------------------------------------
@@ -173,9 +174,12 @@ bool teo::BodyBot::setTorqueErrorLimit(int j, double limit) {
 bool teo::BodyBot::setTorqueErrorLimits(const double *limits) {
     CD_INFO("\n");
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    bool ok = true;
+    for(int j=0; j<drivers.size(); j++)
+    {
+        ok &= this->setTorqueErrorLimit(j, (limits[j]));
+    }
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
@@ -186,9 +190,7 @@ bool teo::BodyBot::getTorqueError(int j, double *err) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    return drivers[j]->getTorqueErrorRaw( 0, err );
 }
 
 // -----------------------------------------------------------------------------
@@ -196,9 +198,12 @@ bool teo::BodyBot::getTorqueError(int j, double *err) {
 bool teo::BodyBot::getTorqueErrors(double *errs) {
     CD_INFO("\n");
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    bool ok = true;
+    for(int j=0; j<drivers.size(); j++)
+    {
+        ok &= this->getTorqueError(j, &(errs[j]));
+    }
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
