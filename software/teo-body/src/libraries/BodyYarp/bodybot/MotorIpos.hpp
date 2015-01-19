@@ -30,7 +30,6 @@ class MotorIpos : public IControlLimitsRaw, public IControlModeRaw, public IEnco
 
         MotorIpos(CanBusHico *canDevicePtr, const int& canId, const double& tr, int16_t& ptModeMs);
 
-        int getCanId();
         double getTr();
 
         void setTr(const double& value);

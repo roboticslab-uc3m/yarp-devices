@@ -68,7 +68,8 @@ bool teo::BodyBot::open(Searchable& config) {
     for(int i=0; i<drivers.size(); i++)
     {
         Time::delay(0.2);
-        this->checkStatus(i);
+        int tmp[drivers.size()];
+        getControlModes(tmp);
     }
 
     Time::delay(1);
