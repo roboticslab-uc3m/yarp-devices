@@ -148,7 +148,7 @@ bool teo::MotorIpos::setRefSpeedRaw(int j, double sp) {
     //*************************************************************
 
     //-- Store new value locally as we can not retrieve it from the driver for now.
-    setRefSpeed( sp );
+    refSpeed = sp;
 
     return true;
 }
@@ -176,7 +176,7 @@ bool teo::MotorIpos::setRefAccelerationRaw(int j, double acc) {
     //*************************************************************
 
     //-- Store new value locally as we can not retrieve it from the driver for now.
-    setRefAcceleration( acc );
+    refAcceleration = acc ;
 
     return true;
 }
@@ -189,7 +189,7 @@ bool teo::MotorIpos::getRefSpeedRaw(int j, double *ref) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    *ref = getRefSpeed();
+    *ref = refSpeed;
 
     return true;
 }
@@ -202,7 +202,7 @@ bool teo::MotorIpos::getRefAccelerationRaw(int j, double *acc) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    *acc = getRefAcceleration();
+    *acc = refAcceleration;
 
     return true;
 }
@@ -221,4 +221,3 @@ bool teo::MotorIpos::stopRaw(int j) {
 }
 
 // -----------------------------------------------------------------------------
-
