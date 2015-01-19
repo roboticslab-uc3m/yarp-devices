@@ -136,8 +136,6 @@ bool teo::MotorIpos::getTorqueRangeRaw(int j, double *min, double *max) {
 
 // -----------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
-
 bool teo::MotorIpos::setTorqueErrorLimitRaw(int j, double limit) {
     CD_INFO("(%d,%f)\n",j,limit);
 
@@ -200,8 +198,6 @@ bool teo::MotorIpos::getTorqueErrorLimitRaw(int j, double *limit) {
 
     return true;
 }
-
-// -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
 
