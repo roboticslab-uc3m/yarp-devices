@@ -24,9 +24,9 @@ bool teo::MotorIpos::setCanBusPtr(CanBusHico *canDevicePtr) {
 bool teo::MotorIpos::open(Searchable& config) {
     CD_INFO("\n");
 
-    this->canId = config.find("canId").asInt();
-    this->tr = config.find("tr").asInt();
-    this->ptModeMs  = config.find("ptModeMs").asInt();
+    this->canId = config.check("canId",0,"can bus ID").asInt();
+    this->tr = config.check("tr",0,"reduction").asInt();
+    this->ptModeMs  = config.check("ptModeMs",0,"ptMode ms").asInt();
     this->ptPointCounter = 0;
     this->ptMovementDone = false;
     this->targetReached = false;

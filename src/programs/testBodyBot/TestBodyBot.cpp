@@ -17,7 +17,7 @@ bool teo::TestBodyBot::configure(ResourceFinder &rf) {
     
     if (!robotDevice.isValid()) {
         CD_ERROR("Class instantiation not worked.\n");
-        CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_gripperbot\" variable is set \"ON\"\n");
+        CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_bodybot\" variable is set \"ON\"\n");
         CD_ERROR("\"SKIP_gripperbot is set\" --> should be --> \"ENABLE_gripperbot is set\"\n");
         // robotDevice.close();  // un-needed?
         return false;
