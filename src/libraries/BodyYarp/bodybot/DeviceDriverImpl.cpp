@@ -21,6 +21,13 @@ bool teo::BodyBot::open(Searchable& config) {
     Bottle refSpeeds = config.findGroup("refSpeeds").tail();  //-- e.g. 737.2798
     Bottle initPoss = config.findGroup("initPoss").tail();  //-- e.g. 0 0 0 45
 
+    //-- Initialize the CAN device (i.e. /dev/can0, set in DEFAULT_CAN_DEVICE).
+    if( ! canDevice.init(canDevicePath, canBitrate) )
+        return false;
+
+    //-- Start the reading thread.
+    this->Thread::start();
+
     //-- Populate the motor drivers vector.
     drivers.resize( ids.size() );
     iControlLimitsRaw.resize( drivers.size() );
@@ -39,7 +46,7 @@ bool teo::BodyBot::open(Searchable& config) {
         options.put("canId",ids.get(i).asInt());
         options.put("tr",trs.get(i).asInt());
         options.put("ptModeMs",ptModeMs);
-        PolyDriver* driver = new PolyDriver(options);
+        PolyDriver* driver = new PolyDriver;
 
         //-- Fill a map entry ( drivers.size() if before push_back, otherwise do drivers.size()-1).
         idxFromCanId[ ids.get(i).asInt() ] = drivers.size();
@@ -56,11 +63,8 @@ bool teo::BodyBot::open(Searchable& config) {
         driver->view( iCanBusSharer[i] );
 
         iCanBusSharer[i]->setCanBusPtr( &canDevice );
+        driver->open(options);
     }
-
-    //-- Initialize the CAN device (i.e. /dev/can0, set in DEFAULT_CAN_DEVICE).
-    if( ! canDevice.init(canDevicePath, canBitrate) )
-        return false;
 
     //-- Set initial parameters on physical motor drivers.
     for(int i=0; i<drivers.size(); i++)
@@ -135,9 +139,6 @@ bool teo::BodyBot::open(Searchable& config) {
                 return false;
         }
     }
-
-    //-- Start the thread.
-    this->Thread::start();
 
     return true;
 }
