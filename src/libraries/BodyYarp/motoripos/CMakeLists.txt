@@ -13,7 +13,7 @@ IF (NOT SKIP_motoripos)
   # Include any directories needed for YARP
   include_directories(${YARP_INCLUDE_DIRS} ${BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
 
-  yarp_add_plugin(motoripos MotorIpos.cpp IControlLimitsRawImpl.cpp IControlModeRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControlRawImpl.cpp IPositionDirectRawImpl.cpp ITorqueControlRawImpl.cpp IVelocityControlRawImpl.cpp )
+  yarp_add_plugin(motoripos MotorIpos.cpp DeviceDriverImpl.cpp IControlLimitsRawImpl.cpp IControlModeRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControlRawImpl.cpp IPositionDirectRawImpl.cpp ITorqueControlRawImpl.cpp IVelocityControlRawImpl.cpp )
 
   TARGET_LINK_LIBRARIES(motoripos ${YARP_LIBRARIES})
   install(TARGETS motoripos DESTINATION lib)
