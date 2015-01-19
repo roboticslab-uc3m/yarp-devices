@@ -8,7 +8,7 @@
 #include <sstream>
 
 #include "ColorDebug.hpp"
-#include "CanBusHico.hpp"
+#include "../ICanBusSharer.h"
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -24,7 +24,8 @@ namespace teo
  */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
 class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControlModeRaw, public IEncodersTimedRaw,
-        public IPositionControlRaw, public IPositionDirectRaw, public IVelocityControlRaw, public ITorqueControlRaw {
+        public IPositionControlRaw, public IPositionDirectRaw, public IVelocityControlRaw, public ITorqueControlRaw,
+        public ICanBusSharer {
 
     public:
 

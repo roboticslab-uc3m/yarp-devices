@@ -18,7 +18,6 @@
 
 #include "ColorDebug.hpp"
 #include "CanBusHico.hpp"
-#include "MotorIpos.hpp"
 
 #include "ICanBusSharer.h"
 
