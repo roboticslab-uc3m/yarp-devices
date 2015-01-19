@@ -47,7 +47,7 @@ bool teo::BodyBot::setRefTorques(const double *t) {
     bool ok = true;
     for(int j=0; j<drivers.size(); j++)
     {
-        ok &= this->setRefTorque(0, t[j]);
+        ok &= this->setRefTorque(j, t[j]);
     }
     return ok;
 }
@@ -166,7 +166,7 @@ bool teo::BodyBot::setTorqueErrorLimit(int j, double limit) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return drivers[j]->setTorqueErrorLimitRaw( j, limit );
+    return drivers[j]->setTorqueErrorLimitRaw( 0, limit );
 }
 
 // -----------------------------------------------------------------------------
@@ -177,7 +177,7 @@ bool teo::BodyBot::setTorqueErrorLimits(const double *limits) {
     bool ok = true;
     for(int j=0; j<drivers.size(); j++)
     {
-        ok &= this->setTorqueErrorLimit(j, (limits[j]));
+        ok &= this->setTorqueErrorLimit(j, limits[j]);
     }
     return ok;
 }
