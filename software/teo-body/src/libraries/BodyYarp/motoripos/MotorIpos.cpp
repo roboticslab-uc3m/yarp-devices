@@ -6,6 +6,35 @@
 bool teo::MotorIpos::setCanBusPtr(CanBusHico *canDevicePtr) {
     this->canDevicePtr = canDevicePtr;
     CD_SUCCESS("Ok pointer to CAN bus device %d.\n",canId);
+}
+
+// -----------------------------------------------------------------------------
+bool teo::MotorIpos::enableRutine() {
+    if(!canDevicePtr) {
+        CD_ERROR("\n");
+        return false;
+    }
+    //Time::delay(1);
+
+    //-- Initialize the drivers: start (0.1) ready (0.1) on (2) enable. Wait between each step.
+    if ( ! start() )
+        return false;
+
+    yarp::os::Time::delay(0.1);
+
+    if ( ! readyToSwitchOn() )
+        return false;
+
+    yarp::os::Time::delay(0.1);
+
+    if ( ! switchOn() )
+        return false;
+
+    yarp::os::Time::delay(2);
+
+    if ( ! enable() )
+        return false;
+
     return true;
 }
 
@@ -33,10 +62,10 @@ bool teo::MotorIpos::start() {
     msg_start[1]=this->canId;
     if( ! canDevicePtr->sendRaw(0, 2, msg_start) )
     {
-        CD_ERROR("Could not send \"start\". %s.\n", msgToStr(0, 2, msg_start).c_str() );
+        CD_ERROR("Could not send \"start\". %s\n", msgToStr(0, 2, msg_start).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"start\". %s.\n", msgToStr(0, 2, msg_start).c_str() );
+    CD_SUCCESS("Sent \"start\". %s\n", msgToStr(0, 2, msg_start).c_str() );
     //*************************************************************
 
     return true;
@@ -51,10 +80,10 @@ bool teo::MotorIpos::readyToSwitchOn() {
 
     if( ! this->send( 0x200, 2, msg_readyToSwitchOn) )
     {
-        CD_ERROR("Could not send \"readyToSwitchOn/shutdown\". %s.\n", msgToStr(0x200, 2, msg_readyToSwitchOn).c_str() );
+        CD_ERROR("Could not send \"readyToSwitchOn/shutdown\". %s\n", msgToStr(0x200, 2, msg_readyToSwitchOn).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"readyToSwitchOn/shutdown\". %s.\n", msgToStr(0x200, 2, msg_readyToSwitchOn).c_str() );
+    CD_SUCCESS("Sent \"readyToSwitchOn/shutdown\". %s\n", msgToStr(0x200, 2, msg_readyToSwitchOn).c_str() );
     //*************************************************************
 
     return true;
@@ -68,10 +97,10 @@ bool teo::MotorIpos::switchOn() {
     uint8_t msg_switchOn[] = {0x07,0x00};  //-- switchOn, also acts as disableOperation
     if( ! this->send( 0x200, 2, msg_switchOn) )
     {
-        CD_ERROR("Could not send \"switchOn/disableOperation\". %s.\n", msgToStr(0x200, 2, msg_switchOn).c_str() );
+        CD_ERROR("Could not send \"switchOn/disableOperation\". %s\n", msgToStr(0x200, 2, msg_switchOn).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"switchOn/disableOperation\". %s.\n", msgToStr(0x200, 2, msg_switchOn).c_str() );
+    CD_SUCCESS("Sent \"switchOn/disableOperation\". %s\n", msgToStr(0x200, 2, msg_switchOn).c_str() );
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     yarp::os::Time::delay(0.1);
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -94,10 +123,10 @@ bool teo::MotorIpos::enable() {
 
     if( ! this->send( 0x200, 2, msg_enable) )
     {
-        CD_ERROR("Could not send \"enable\". %s.\n", msgToStr(0x200, 2, msg_enable).c_str() );
+        CD_ERROR("Could not send \"enable\". %s\n", msgToStr(0x200, 2, msg_enable).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"enable\". %s.\n", msgToStr(0x200, 2, msg_enable).c_str() );
+    CD_SUCCESS("Sent \"enable\". %s\n", msgToStr(0x200, 2, msg_enable).c_str() );
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     yarp::os::Time::delay(0.1);
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

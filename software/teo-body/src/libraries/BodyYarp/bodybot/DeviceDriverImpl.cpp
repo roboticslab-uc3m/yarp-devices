@@ -46,7 +46,7 @@ bool teo::BodyBot::open(Searchable& config) {
         options.put("canId",ids.get(i).asInt());
         options.put("tr",trs.get(i).asInt());
         options.put("ptModeMs",ptModeMs);
-        PolyDriver* driver = new PolyDriver;
+        PolyDriver* driver = new PolyDriver(options);
 
         //-- Fill a map entry ( drivers.size() if before push_back, otherwise do drivers.size()-1).
         idxFromCanId[ ids.get(i).asInt() ] = drivers.size();
@@ -63,7 +63,6 @@ bool teo::BodyBot::open(Searchable& config) {
         driver->view( iCanBusSharer[i] );
 
         iCanBusSharer[i]->setCanBusPtr( &canDevice );
-        driver->open(options);
     }
 
     //-- Set initial parameters on physical motor drivers.
@@ -98,37 +97,9 @@ bool teo::BodyBot::open(Searchable& config) {
         Time::delay(0.2);
         std::vector<int> tmp(drivers.size());
         getControlModes(&(tmp[0]));
+
+        iCanBusSharer[i]->enableRutine();
     }
-
-    Time::delay(1);
-
-    //-- Initialize the drivers: start (0.1) ready (0.1) on (2) enable. Wait between each step.
-    /*for(int i=0; i<drivers.size(); i++)
-    {
-        if ( ! drivers[i]->start() )
-            return false;
-    }
-    yarp::os::Time::delay(0.1);
-
-    for(int i=0; i<drivers.size(); i++)
-    {
-        if ( ! drivers[i]->readyToSwitchOn() )
-            return false;
-    }
-    yarp::os::Time::delay(0.1);
-
-    for(int i=0; i<drivers.size(); i++)
-    {
-        if ( ! drivers[i]->switchOn() )
-            return false;
-    }
-    yarp::os::Time::delay(2);
-
-    for(int i=0; i<drivers.size(); i++)
-    {
-        if ( ! drivers[i]->enable() )
-            return false;
-    }*/
 
     yarp::os::Time::delay(1);
     if( ! config.findGroup("initPoss").isNull() ) {

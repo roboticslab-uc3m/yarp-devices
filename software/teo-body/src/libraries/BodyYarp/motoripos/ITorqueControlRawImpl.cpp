@@ -32,10 +32,10 @@ bool teo::MotorIpos::setRefTorqueRaw(int j, double t) {
 
     if(! send(0x600, 8, msg_ref_torque) )
     {
-        CD_ERROR("Could not send refTorque. %s.\n", msgToStr(0x600, 8, msg_ref_torque).c_str() );
+        CD_ERROR("Could not send refTorque. %s\n", msgToStr(0x600, 8, msg_ref_torque).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent refTorque.\n");
+    CD_SUCCESS("Sent refTorque. %s\n", msgToStr(0x600, 8, msg_ref_torque).c_str() );
     //*************************************************************
 
     return true;

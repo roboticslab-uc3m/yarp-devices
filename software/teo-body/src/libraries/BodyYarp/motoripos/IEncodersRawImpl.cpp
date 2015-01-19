@@ -28,10 +28,10 @@ bool teo::MotorIpos::setEncoderRaw(int j, double val) {  // encExposed = val;
     memcpy(msg_setEncoder+4,&sendEnc,4);
 
     if( ! send(0x600, 8, msg_setEncoder)){
-        CD_ERROR("Sent \"set encoder\". %s.\n", msgToStr(0x600, 8, msg_setEncoder).c_str() );
+        CD_ERROR("Sent \"set encoder\". %s\n", msgToStr(0x600, 8, msg_setEncoder).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"set encoder\". %s.\n", msgToStr(0x600, 8, msg_setEncoder).c_str() );
+    CD_SUCCESS("Sent \"set encoder\". %s\n", msgToStr(0x600, 8, msg_setEncoder).c_str() );
     //*************************************************************
 
     return true;

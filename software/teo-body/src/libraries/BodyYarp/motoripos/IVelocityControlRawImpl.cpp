@@ -17,10 +17,10 @@ bool teo::MotorIpos::velocityMoveRaw(int j, double sp) {
     memcpy(msg_vel+4,&sendVel,4);
 
     if( ! send(0x600, 8, msg_vel)){
-        CD_ERROR("Sent \"velocity target\". %s.\n", msgToStr(0x600, 8, msg_vel).c_str() );
+        CD_ERROR("Sent \"velocity target\". %s\n", msgToStr(0x600, 8, msg_vel).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"velocity target\". %s.\n", msgToStr(0x600, 8, msg_vel).c_str() );
+    CD_SUCCESS("Sent \"velocity target\". %s\n", msgToStr(0x600, 8, msg_vel).c_str() );
     //*************************************************************
 
     return true;
