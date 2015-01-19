@@ -7,9 +7,10 @@
 bool teo::BodyBot::getEncodersTimed(double *encs, double *time) {
     CD_INFO("\n");
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    bool ok = true;
+    for(unsigned int i=0; i < drivers.size(); i++)
+        ok &= getEncoderTimed(i,&(encs[i]),&(time[i]));
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
@@ -17,9 +18,7 @@ bool teo::BodyBot::getEncodersTimed(double *encs, double *time) {
 bool teo::BodyBot::getEncoderTimed(int j, double *encs, double *time) {
     CD_INFO("(%d)\n",j);
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    return drivers[j]->getEncoderTimedRaw( 0, encs, time );
 }
 
 // -----------------------------------------------------------------------------

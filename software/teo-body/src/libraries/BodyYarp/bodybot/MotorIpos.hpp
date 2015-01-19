@@ -22,7 +22,8 @@ namespace teo
  * @brief Specifies the Technosoft iPOS behaviour and specifications.
  *
  */
-class MotorIpos : public IPositionControlRaw, public IEncodersRaw {
+// Note: IEncodersTimed inherits from IEncoders
+class MotorIpos : public IPositionControlRaw, public IEncodersTimedRaw  {
 
     public:
 
@@ -142,6 +143,14 @@ class MotorIpos : public IPositionControlRaw, public IEncodersRaw {
             CD_ERROR("\n");
             return false;
         }
+
+        //  ---------- IEncodersTimedRaw Declarations. Implementation in IEncodersTimedRawImpl.cpp ----------
+
+        virtual bool getEncodersTimedRaw(double *encs, double *time) {
+            CD_ERROR("\n");
+            return false;
+        }
+        virtual bool getEncoderTimedRaw(int j, double *encs, double *time);
 
     protected:
 
