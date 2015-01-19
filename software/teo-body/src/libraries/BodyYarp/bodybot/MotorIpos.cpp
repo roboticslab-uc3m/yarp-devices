@@ -4,10 +4,11 @@
 
 // -----------------------------------------------------------------------------
 
-teo::MotorIpos::MotorIpos(CanBusHico *canDevicePtr, const int& canId, const double &tr) : max(0), min(0), refAcceleration(0), refSpeed(0), encoder(0) {
+teo::MotorIpos::MotorIpos(CanBusHico *canDevicePtr, const int& canId, const double &tr, int16_t ptModeMs) : max(0), min(0), refAcceleration(0), refSpeed(0), encoder(0), ptModeMs(0) {
     this->canDevicePtr = canDevicePtr;
     this->canId = canId;
     this->tr = tr;
+    this->ptModeMs = ptModeMs;
     this->ptPointCounter = 0;
     this->ptMovementDone = false;
     this->targetReached = false;

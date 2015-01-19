@@ -25,7 +25,7 @@ bool teo::BodyBot::open(Searchable& config) {
     for(int i=0; i<ids.size(); i++)
     {
         //-- Create motor driver object with a pointer to the CAN device, its id and tr (these are locally stored parameters).
-        MotorIpos* driver = new MotorIpos( &canDevice, ids.get(i).asInt(), trs.get(i).asDouble() );
+        MotorIpos* driver = new MotorIpos( &canDevice, ids.get(i).asInt(), trs.get(i).asDouble(), ptModeMs );
 
         //-- Fill a map entry ( drivers.size() if before push_back, otherwise do drivers.size()-1).
         idxFromCanId[ ids.get(i).asInt() ] = drivers.size();
