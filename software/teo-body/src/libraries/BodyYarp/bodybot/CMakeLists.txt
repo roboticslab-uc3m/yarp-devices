@@ -8,7 +8,7 @@ prepare_device(bodybot TYPE teo::BodyBot INCLUDE BodyBot.hpp WRAPPER controlboar
 
 IF (NOT SKIP_bodybot)
 
-  option(ENABLE_testBodyBot "Choose if you want to compile testBodyBot" FALSE)
+  option(ENABLE_testBodyBot "Choose if you want to compile testBodyBot" TRUE)
 
   find_package(YARP REQUIRED)
 

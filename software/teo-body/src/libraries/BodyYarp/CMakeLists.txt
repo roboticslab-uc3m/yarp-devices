@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.6)
 
 IF (ENABLE_BodyYarp)
 
-  option(ENABLE_testBodyYarp "Choose if you want to compile testBodyYarp" FALSE)
+  option(ENABLE_testBodyYarp "Choose if you want to compile testBodyYarp" TRUE)
 
   find_package(YARP REQUIRED)
   include_directories(${YARP_INCLUDE_DIRS})

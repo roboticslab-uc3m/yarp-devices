@@ -17,16 +17,16 @@ project(TEO-BODY)
 option(ENABLE_BodyYarp "Choose if you want to compile BodyYarp" TRUE)
 
 ### options: cpp modules
-option(ENABLE_launchManipulation "Choose if you want to compile launchManipulation" TRUE)
-option(ENABLE_recordManipulation "Choose if you want to compile recordManipulation" TRUE)
-option(ENABLE_playbackManipulation "Choose if you want to compile playbackManipulation" TRUE)
+option(ENABLE_launchManipulation "Choose if you want to compile launchManipulation" FALSE)
+option(ENABLE_recordManipulation "Choose if you want to compile recordManipulation" FALSE)
+option(ENABLE_playbackManipulation "Choose if you want to compile playbackManipulation" FALSE)
 
-option(ENABLE_launchLocomotion "Choose if you want to compile launchLocomotion" TRUE)
-option(ENABLE_recordLocomotion "Choose if you want to compile recordLocomotion" TRUE)
-option(ENABLE_playbackLocomotion "Choose if you want to compile playbackLocomotion" TRUE)
+option(ENABLE_launchLocomotion "Choose if you want to compile launchLocomotion" FALSE)
+option(ENABLE_recordLocomotion "Choose if you want to compile recordLocomotion" FALSE)
+option(ENABLE_playbackLocomotion "Choose if you want to compile playbackLocomotion" FALSE)
 
-option(ENABLE_recordLeftManipulation "Choose if you want to compile recordLeftManipulation" TRUE)
-option(ENABLE_playbackLeftManipulation "Choose if you want to compile playbackLeftManipulation" TRUE)
+option(ENABLE_recordLeftManipulation "Choose if you want to compile recordLeftManipulation" FALSE)
+option(ENABLE_playbackLeftManipulation "Choose if you want to compile playbackLeftManipulation" FALSE)
 
 if(MSVC)
   MESSAGE(STATUS "Running on windows")    
