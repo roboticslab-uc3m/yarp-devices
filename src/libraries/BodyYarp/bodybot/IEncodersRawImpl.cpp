@@ -24,7 +24,7 @@ bool teo::MotorIpos::setEncoderRaw(int j, double val) {  // encExposed = val;
     //*************************************************************
     uint8_t msg_setEncoder[]={0x23,0x81,0x20,0x00,0x00,0x00,0x00,0x00}; // "Set/Change the actual motor position"
 
-    int sendEnc = val * getTr() * 11.11112;  // Apply tr & convert units to encoder increments
+    int sendEnc = val * this->tr * 11.11112;  // Apply tr & convert units to encoder increments
     memcpy(msg_setEncoder+4,&sendEnc,4);
 
     if( ! send(0x600, 8, msg_setEncoder)){

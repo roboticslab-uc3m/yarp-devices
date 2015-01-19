@@ -17,18 +17,6 @@ teo::MotorIpos::MotorIpos(CanBusHico *canDevicePtr, const int& canId, const doub
 
 // -----------------------------------------------------------------------------
 
-double teo::MotorIpos::getTr() {
-    return tr;
-}
-
-// -----------------------------------------------------------------------------
-
-void teo::MotorIpos::setTr(const double& value) {
-    tr = value;
-}
-
-// -----------------------------------------------------------------------------
-
 bool teo::MotorIpos::send(uint32_t cob, uint16_t len, uint8_t * msgData) {
 
     if ( (lastUsage - yarp::os::Time::now()) < DELAY )
@@ -142,7 +130,7 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
             int got;
             memcpy(&got, message->data+4,4);
             encoderReady.wait();
-            encoder =  got / ( 11.11112 * getTr() );
+            encoder =  got / ( 11.11112 * this->tr );
             encoderReady.post();
             return true;
         } else if( (message->data[1]==0x7A)&&(message->data[2]==0x60) ) {  // Manual 607Ah
