@@ -2,7 +2,7 @@
 
 #include "BodyBot.hpp"
 
-// ------------------ IVelocity Related ----------------------------------------
+// ------------------ IVelocityControl Related ----------------------------------------
 
 bool teo::BodyBot::setVelocityMode() {
     CD_INFO("\n");
@@ -23,20 +23,7 @@ bool teo::BodyBot::velocityMove(int j, double sp) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    //*************************************************************
-    uint8_t msg_vel[]={0x23,0xFF,0x60,0x00,0x00,0x00,0x00,0x00}; // Velocity target
-
-    int sendVel = sp * (drivers[j]->getTr()) * 11.11112;  // Apply tr & convert units to encoder increments
-    memcpy(msg_vel+4,&sendVel,4);
-
-    if( ! drivers[j]->send(0x600, 8, msg_vel)){
-        CD_ERROR("Sent \"velocity target\" to canId: %d.\n",drivers[j]->getCanId());
-        return false;
-    }
-    CD_SUCCESS("Sent \"velocity target\" to canId: %d.\n",drivers[j]->getCanId());
-    //*************************************************************
-
-    return true;
+    return drivers[j]->velocityMoveRaw( 0, sp );
 }
 
 // -----------------------------------------------------------------------------
