@@ -129,10 +129,10 @@ bool teo::MotorIpos::setPositionsRaw(const int n_joint, const int *joints, doubl
 
         if( ! send(0x200,2,startPT) )
         {
-            CD_ERROR("Could not send \"startPT\". %s.\n", msgToStr(0x200,2,startPT).c_str() );
+            CD_ERROR("Could not send \"startPT\". %s\n", msgToStr(0x200,2,startPT).c_str() );
             return false;
         }
-        CD_SUCCESS("Sent \"startPT\". %s.\n", msgToStr(0x200,2,startPT).c_str() );
+        CD_SUCCESS("Sent \"startPT\". %s\n", msgToStr(0x200,2,startPT).c_str() );
     }
 
     //*************************************************************

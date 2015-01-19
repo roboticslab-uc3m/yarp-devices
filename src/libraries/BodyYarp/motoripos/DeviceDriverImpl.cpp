@@ -4,10 +4,7 @@
 
 // -----------------------------------------------------------------------------
 bool teo::MotorIpos::open(Searchable& config) {
-    if(! canDevicePtr ) {
-        CD_ERROR("Must open CAN first and setCanBusPtr.\n")
-        return false;
-    }
+
     this->canId = config.check("canId",0,"can bus ID").asInt();
     this->tr = config.check("tr",0,"reduction").asInt();
     this->ptModeMs  = config.check("ptModeMs",0,"ptMode ms").asInt();

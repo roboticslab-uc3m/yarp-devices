@@ -16,13 +16,15 @@ public:
      */
     virtual ~ICanBusSharer() {}
 
+    virtual bool setCanBusPtr(CanBusHico *canDevicePtr) = 0;
+
     /**
      * Interpret a can bus message.
      * @return true/false.
      */
     virtual bool interpretMessage( can_msg * message) = 0;
 
-    virtual bool setCanBusPtr(CanBusHico *canDevicePtr) = 0;
+    virtual bool enableRutine() = 0;
 
 };
 

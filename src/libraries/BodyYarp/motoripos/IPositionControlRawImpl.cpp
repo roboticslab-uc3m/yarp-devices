@@ -18,20 +18,20 @@ bool teo::MotorIpos::positionMoveRaw(int j, double ref) {  // encExposed = ref;
 
     if( ! send( 0x600, 8, msg_position_target ) )
     {
-        CD_ERROR("Could not send \"position target\". %s.\n", msgToStr(0x600, 8, msg_position_target).c_str() );
+        CD_ERROR("Could not send \"position target\". %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"position target\". %s.\n", msgToStr(0x600, 8, msg_position_target).c_str() );
+    CD_SUCCESS("Sent \"position target\". %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
     //*************************************************************
     //uint8_t msg_start[]={0x1F,0x00}; // Start the movement with "Discrete motion profile (change set immediately = 0)".
     uint8_t msg_start[]={0x3F,0x00}; // Start the movement with "Continuous motion profile (change set immediately = 1)".
 
     if( ! send( 0x200, 2, msg_start ) )
     {
-        CD_ERROR("Could not send \"start position\". %s.\n", msgToStr(0x200, 2, msg_start).c_str() );
+        CD_ERROR("Could not send \"start position\". %s\n", msgToStr(0x200, 2, msg_start).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"start position\". %s.\n", msgToStr(0x200, 2, msg_start).c_str() );
+    CD_SUCCESS("Sent \"start position\". %s\n", msgToStr(0x200, 2, msg_start).c_str() );
     //*************************************************************
 
     //-- Needed to send next. Sets "Do not assume target position" so later it accepts "Assume target position (update the new motion parameters)".
@@ -40,10 +40,10 @@ bool teo::MotorIpos::positionMoveRaw(int j, double ref) {  // encExposed = ref;
 
     if( ! send( 0x200, 2, msg_pos_reset) )
     {
-        CD_ERROR("Could not send \"reset position\". %s.\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
+        CD_ERROR("Could not send \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"reset position\". %s.\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
+    CD_SUCCESS("Sent \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
     //*************************************************************
 
     return true;
@@ -66,10 +66,10 @@ bool teo::MotorIpos::relativeMoveRaw(int j, double delta) {
 
     if( ! send( 0x600, 8, msg_position_target ) )
     {
-        CD_ERROR("Could not send \"position target\". %s.\n", msgToStr(0x600, 8, msg_position_target).c_str() );
+        CD_ERROR("Could not send \"position target\". %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"position target\". %s.\n", msgToStr(0x600, 8, msg_position_target).c_str() );
+    CD_SUCCESS("Sent \"position target\". %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
     //*************************************************************
     //uint8_t msg_start_rel[]={0x5F,0x00}; // Start the movement with "Discrete motion profile (change set immediately = 0)".
     uint8_t msg_start_rel[]={0x7F,0x00}; // Start the movement with "Continuous motion profile (change set immediately = 1)".
@@ -77,10 +77,10 @@ bool teo::MotorIpos::relativeMoveRaw(int j, double delta) {
 
     if( ! send( 0x200, 2, msg_start_rel ) )
     {
-        CD_ERROR("Could not send \"start rel position. %s.\n", msgToStr(0x200, 2, msg_start_rel).c_str() );
+        CD_ERROR("Could not send \"start rel position. %s\n", msgToStr(0x200, 2, msg_start_rel).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"start rel position\". %s.\n", msgToStr(0x200, 2, msg_start_rel).c_str() );;
+    CD_SUCCESS("Sent \"start rel position\". %s\n", msgToStr(0x200, 2, msg_start_rel).c_str() );;
     //*************************************************************
 
     //-- Needed to send next. Sets "Do not assume target position" so later it accepts "Assume target position (update the new motion parameters)".
@@ -89,10 +89,10 @@ bool teo::MotorIpos::relativeMoveRaw(int j, double delta) {
 
     if( ! send( 0x200, 2, msg_pos_reset) )
     {
-        CD_ERROR("Could not send \"reset position\". %s.\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
+        CD_ERROR("Could not send \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"reset position\". %s.\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
+    CD_SUCCESS("Sent \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
     //*************************************************************
 
     return true;
@@ -110,10 +110,10 @@ bool teo::MotorIpos::checkMotionDoneRaw(int j, bool *flag) {
     uint8_t msgStatus[] = {0x40,0x41,0x60,0x00,0x00,0x00,0x00,0x00}; //2064: Memory position
     if( ! send( 0x600, 8, msgStatus))
     {
-        CD_ERROR("Could not send status query. %s.\n", msgToStr(0x600, 8, msgStatus).c_str() );
+        CD_ERROR("Could not send status query. %s\n", msgToStr(0x600, 8, msgStatus).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"msgStatus\". %s.\n", msgToStr(0x600, 8, msgStatus).c_str() );
+    CD_SUCCESS("Sent \"msgStatus\". %s\n", msgToStr(0x600, 8, msgStatus).c_str() );
 
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Time::delay(DELAY);  //-- Wait for read update. Could implement semaphore waiting for specific message...
@@ -141,10 +141,10 @@ bool teo::MotorIpos::setRefSpeedRaw(int j, double sp) {
 
     if( ! send( 0x600, 8, msg_posmode_speed) )
     {
-        CD_ERROR("Could not send \"posmode_speed\". %s.\n", msgToStr(0x600, 8, msg_posmode_speed).c_str() );
+        CD_ERROR("Could not send \"posmode_speed\". %s\n", msgToStr(0x600, 8, msg_posmode_speed).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"posmode_speed\". %s.\n", msgToStr(0x600, 8, msg_posmode_speed).c_str() );
+    CD_SUCCESS("Sent \"posmode_speed\". %s\n", msgToStr(0x600, 8, msg_posmode_speed).c_str() );
     //*************************************************************
 
     //-- Store new value locally as we can not retrieve it from the driver for now.
@@ -169,10 +169,10 @@ bool teo::MotorIpos::setRefAccelerationRaw(int j, double acc) {
 
     if( ! send( 0x600, 8, msg_posmode_acc) )
     {
-        CD_ERROR("Could not send \"posmode_acc\". %s.\n", msgToStr(0x600, 8, msg_posmode_acc).c_str() );
+        CD_ERROR("Could not send \"posmode_acc\". %s\n", msgToStr(0x600, 8, msg_posmode_acc).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"posmode_acc\". %s.\n", msgToStr(0x600, 8, msg_posmode_acc).c_str() );
+    CD_SUCCESS("Sent \"posmode_acc\". %s\n", msgToStr(0x600, 8, msg_posmode_acc).c_str() );
     //*************************************************************
 
     //-- Store new value locally as we can not retrieve it from the driver for now.
