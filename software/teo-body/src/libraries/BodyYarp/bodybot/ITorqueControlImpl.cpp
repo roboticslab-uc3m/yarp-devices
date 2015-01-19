@@ -20,9 +20,12 @@ bool teo::BodyBot::setTorqueMode() {
 bool teo::BodyBot::getRefTorques(double *t){
     CD_INFO("\n");
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    bool ok = true;
+    for(int j=0; j<drivers.size(); j++)
+    {
+        ok &= this->getRefTorque(j, t);
+    }
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
@@ -33,9 +36,7 @@ bool teo::BodyBot::getRefTorque(int j, double *t) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    return drivers[j]->getRefTorqueRaw( 0, t );
 }
 
 // -----------------------------------------------------------------------------
@@ -43,9 +44,12 @@ bool teo::BodyBot::getRefTorque(int j, double *t) {
 bool teo::BodyBot::setRefTorques(const double *t) {
     CD_INFO("\n");
 
-    CD_WARNING("Not implemented yet.\n");
-
-    return true;
+    bool ok = true;
+    for(int j=0; j<drivers.size(); j++)
+    {
+        ok &= this->setRefTorque(0, t[j]);
+    }
+    return ok;
 }
 
 
@@ -57,22 +61,7 @@ bool teo::BodyBot::setRefTorque(int j, double t) {
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    //*************************************************************
-    uint8_t msg_ref_torque[]={0x23,0x1C,0x20,0x00,0x00,0x00,0x00,0x00}; // put 23 because it is a target
-
-    int sendRefTorque = t * (65520.0/20.0);
-    //memcpy(msg_ref_torque+4,&sendRefTorque,4);  // was +6 not +4, but +6 seems terrible with ,4!
-    memcpy(msg_ref_torque+6,&sendRefTorque,2);
-
-    if(! drivers[j]->send(0x600, 8, msg_ref_torque) )
-    {
-        CD_ERROR("Could not send refTorque to canId: %d.\n",drivers[j]->getCanId());
-        return false;
-    }
-    CD_SUCCESS("Sent refTorque.\n");
-    //*************************************************************
-
-    return true;
+    return drivers[j]->setRefTorqueRaw( 0, t );
 }
 
 // -----------------------------------------------------------------------------
