@@ -13,7 +13,7 @@ bool teo::MotorIpos::velocityMoveRaw(int j, double sp) {
     //*************************************************************
     uint8_t msg_vel[]={0x23,0xFF,0x60,0x00,0x00,0x00,0x00,0x00}; // Velocity target
 
-    int sendVel = sp * getTr() * 11.11112;  // Apply tr & convert units to encoder increments
+    int sendVel = sp * this->tr * 11.11112;  // Apply tr & convert units to encoder increments
     memcpy(msg_vel+4,&sendVel,4);
 
     if( ! send(0x600, 8, msg_vel)){

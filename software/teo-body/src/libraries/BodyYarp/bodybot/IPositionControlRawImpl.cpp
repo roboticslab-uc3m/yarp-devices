@@ -13,7 +13,7 @@ bool teo::MotorIpos::positionMoveRaw(int j, double ref) {  // encExposed = ref;
     //*************************************************************
     uint8_t msg_position_target[]={0x23,0x7A,0x60,0x00,0x00,0x00,0x00,0x00}; // Position target
 
-    int position = ref * getTr() * 11.11112;  // Appply tr & convert units to encoder increments
+    int position = ref * this->tr * 11.11112;  // Appply tr & convert units to encoder increments
     memcpy(msg_position_target+4,&position,4);
 
     if( ! send( 0x600, 8, msg_position_target ) )
@@ -61,7 +61,7 @@ bool teo::MotorIpos::relativeMoveRaw(int j, double delta) {
     //*************************************************************
     uint8_t msg_position_target[]={0x23,0x7A,0x60,0x00,0x00,0x00,0x00,0x00}; // Position target
 
-    int sendDelta = delta * getTr() * 11.11112;  // Appply tr & convert units to encoder increments
+    int sendDelta = delta * this->tr * 11.11112;  // Appply tr & convert units to encoder increments
     memcpy(msg_position_target+4,&sendDelta,4);
 
     if( ! send( 0x600, 8, msg_position_target ) )
@@ -136,7 +136,7 @@ bool teo::MotorIpos::setRefSpeedRaw(int j, double sp) {
 
     uint8_t msg_posmode_speed[]={0x23,0x81,0x60,0x00,0x00,0x00,0x00,0x00};
 
-    int sendRefSpeed = sp * getTr() * 11.11112;  // Appply tr & convert units to encoder increments
+    int sendRefSpeed = sp * this->tr * 11.11112;  // Appply tr & convert units to encoder increments
     memcpy(msg_posmode_speed+4,&sendRefSpeed,4);
 
     if( ! send( 0x600, 8, msg_posmode_speed) )
@@ -164,7 +164,7 @@ bool teo::MotorIpos::setRefAccelerationRaw(int j, double acc) {
     //*************************************************************
     uint8_t msg_posmode_acc[]={0x23,0x83,0x60,0x00,0x00,0x00,0x00,0x00};
 
-    int sendRefAcc = acc * getTr() * 11.11112;  // Appply tr & convert units to encoder increments
+    int sendRefAcc = acc * this->tr * 11.11112;  // Appply tr & convert units to encoder increments
     memcpy(msg_posmode_acc+4,&sendRefAcc,4);
 
     if( ! send( 0x600, 8, msg_posmode_acc) )

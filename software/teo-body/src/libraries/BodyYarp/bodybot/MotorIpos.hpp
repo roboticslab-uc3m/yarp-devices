@@ -30,10 +30,6 @@ class MotorIpos : public IControlLimitsRaw, public IControlModeRaw, public IEnco
 
         MotorIpos(CanBusHico *canDevicePtr, const int& canId, const double& tr, int16_t& ptModeMs);
 
-        double getTr();
-
-        void setTr(const double& value);
-
         /**
          * Write message to the CAN buffer.
          * @param cob Message's COB

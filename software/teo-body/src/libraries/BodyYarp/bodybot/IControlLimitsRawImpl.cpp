@@ -13,7 +13,7 @@ bool teo::MotorIpos::setLimitsRaw(int axis, double min, double max) {
     //*************************************************************
     uint8_t msg_position_min[]={0x23,0x7D,0x60,0x01,0x00,0x00,0x00,0x00}; // 0x01 is subindex 1
 
-    int sendMin = min * getTr() * 11.11112;  // Appply tr & convert units to encoder increments
+    int sendMin = min * this->tr * 11.11112;  // Appply tr & convert units to encoder increments
     memcpy(msg_position_min+4,&sendMin,4);
 
     if( ! send( 0x600, 8, msg_position_min ) )
@@ -25,7 +25,7 @@ bool teo::MotorIpos::setLimitsRaw(int axis, double min, double max) {
     //*************************************************************
     uint8_t msg_position_max[]={0x23,0x7D,0x60,0x02,0x00,0x00,0x00,0x00}; // 0x02 is subindex 2
 
-    int sendMax = max * getTr() * 11.11112;  // Appply tr & convert units to encoder increments
+    int sendMax = max * this->tr * 11.11112;  // Appply tr & convert units to encoder increments
     memcpy(msg_position_max+4,&sendMax,4);
 
     if( ! send( 0x600, 8, msg_position_max ) )
