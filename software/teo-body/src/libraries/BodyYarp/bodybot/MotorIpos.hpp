@@ -67,6 +67,23 @@ class MotorIpos : public IPositionControlRaw, public IEncodersTimedRaw  {
 
         bool interpretMessage( can_msg * message);
 
+        //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
+        virtual bool setLimitsRaw(int axis, double min, double max);
+        virtual bool getLimitsRaw(int axis, double *min, double *max);
+
+        //  --------- IControlModeRaw Declarations. Implementation in IControlModeRawImpl.cpp ---------
+        virtual bool setPositionModeRaw(int j);
+        virtual bool setVelocityModeRaw(int j);
+        virtual bool setTorqueModeRaw(int j);
+        virtual bool setImpedancePositionModeRaw(int j);
+        virtual bool setImpedanceVelocityModeRaw(int j);
+        virtual bool setOpenLoopModeRaw(int j);
+        virtual bool getControlModeRaw(int j, int *mode);
+        virtual bool getControlModes(int *modes){
+            CD_ERROR("\n");
+            return false;
+        }
+
         // ------- IPositionControlRaw declarations. Implementation in IPositionControlRawImpl.cpp -------
         virtual bool getAxes(int *ax){
             *ax = 1;
