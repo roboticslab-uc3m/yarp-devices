@@ -37,8 +37,8 @@ bool teo::MotorIpos::setLimitsRaw(int axis, double min, double max) {
     //*************************************************************
 
     //-- Store the new limits locally.
-    setMax(max);
-    setMin(min);
+    this->max;
+    this->min;
 
     return true;
 }
@@ -52,8 +52,8 @@ bool teo::MotorIpos::getLimitsRaw(int axis, double *min, double *max) {
     if( axis != 0 ) return false;
 
     //-- Get the limits that have been locally stored.
-    *min = getMin();
-    *max = getMax();
+    *min = this->min;
+    *max = this->max;
 
     return true;
 }
