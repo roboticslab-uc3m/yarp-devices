@@ -3,34 +3,27 @@
 #include "MotorIpos.hpp"
 
 // -----------------------------------------------------------------------------
-
-/*teo::MotorIpos::MotorIpos(CanBusHico *canDevicePtr, const int& canId, const double &tr, int16_t &ptModeMs) : max(0), min(0), refAcceleration(0), refSpeed(0), encoder(0), ptModeMs(0) {
-    this->canDevicePtr = canDevicePtr;
-    this->canId = canId;
-    this->tr = tr;
-    this->ptModeMs = ptModeMs;
-    this->ptPointCounter = 0;
-    this->ptMovementDone = false;
-    this->targetReached = false;
-    CD_SUCCESS("Created driver with canId %d and tr %f, pointer to CAN bus device, and all local parameters set to 0.\n",canId,tr);
-}*/
-
-// -----------------------------------------------------------------------------
-bool teo::MotorIpos::setCanBusPtr(CanBusHico *canDevicePtr) {
-    this->canDevicePtr = canDevicePtr;
-}
-
-// -----------------------------------------------------------------------------
 bool teo::MotorIpos::open(Searchable& config) {
-    CD_INFO("\n");
-
     this->canId = config.check("canId",0,"can bus ID").asInt();
     this->tr = config.check("tr",0,"reduction").asInt();
     this->ptModeMs  = config.check("ptModeMs",0,"ptMode ms").asInt();
     this->ptPointCounter = 0;
     this->ptMovementDone = false;
     this->targetReached = false;
+    this->max = 0;
+    this->min = 0;
+    this->refAcceleration = 0;
+    this->refSpeed = 0;
+    this->encoder = 0;
 
+    CD_SUCCESS("Created driver with canId %d and tr %f, and all local parameters set to 0.\n",canId,tr);
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+bool teo::MotorIpos::setCanBusPtr(CanBusHico *canDevicePtr) {
+    this->canDevicePtr = canDevicePtr;
+    CD_SUCCESS("Ok pointer to CAN bus device %d.\n",canId);
     return true;
 }
 

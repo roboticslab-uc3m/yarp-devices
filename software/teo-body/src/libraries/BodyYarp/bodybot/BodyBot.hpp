@@ -60,8 +60,6 @@ class BodyBot : public DeviceDriver, public IControlLimits, public IControlMode,
 
     public:
 
-        BodyBot() { }
-
         //  --------- IControlLimits Declarations. Implementation in IControlLimitsImpl.cpp ---------
 
         /**
@@ -678,12 +676,6 @@ class BodyBot : public DeviceDriver, public IControlLimits, public IControlMode,
          * @return true/false on success/failure.
          */
         bool indexWithinRange(const int& idx);
-
-        /** For now some printf about motor driver. */
-        //bool checkStatus(const int& j);
-
-        int16_t ptModeMs;  //-- [ms]
-
 };
 
 }  // namespace teo
