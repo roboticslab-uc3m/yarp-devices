@@ -46,19 +46,100 @@ namespace teo
 /**
  *
  * @ingroup bodybot
- * @brief The BodyBot class implements the YARP_dev IPositionControl, IVelocityControl and IEncoders interface class member functions.
+ * @brief The BodyBot class implements the YARP_dev IControlLimits, IControlMode, IEncodersTimed,
+        IPositionControl, IPositionDirect, ITorqueControl, IVelocityControl interface class member functions.
  *
  */
 // Note: IEncodersTimed inherits from IEncoders
-class BodyBot : public DeviceDriver, public IPositionControl, public IEncodersTimed,
-        public IVelocityControl, public IControlLimits, public IControlMode, public ITorqueControl,
-        public IPositionDirect, public Thread {
+class BodyBot : public DeviceDriver, public IControlLimits, public IControlMode, public IEncodersTimed,
+        public IPositionControl, public IPositionDirect, public ITorqueControl, public IVelocityControl,
+        public Thread {
 
     // ------------------------------- Public -------------------------------------
 
     public:
 
         BodyBot() { }
+
+        //  --------- IControlLimits Declarations. Implementation in IControlLimitsImpl.cpp ---------
+
+        /**
+         * Set the software limits for a particular axis, the behavior of the
+         * control card when these limits are exceeded, depends on the implementation.
+         * @param axis joint number (why am I telling you this)
+         * @param min the value of the lower limit
+         * @param max the value of the upper limit
+         * @return true or false on success or failure
+         */
+        virtual bool setLimits(int axis, double min, double max);
+
+        /**
+         * Get the software limits for a particular axis.
+         * @param axis joint number (again... why am I telling you this)
+         * @param pointer to store the value of the lower limit
+         * @param pointer to store the value of the upper limit
+         * @return true if everything goes fine, false otherwise.
+         */
+        virtual bool getLimits(int axis, double *min, double *max);
+
+        //  --------- IControlMode Declarations. Implementation in IControlModeImpl.cpp ---------
+
+        /**
+        * Set position mode, single axis.
+        * @param j: joint number
+        * @return: true/false success failure.
+        */
+        virtual bool setPositionMode(int j);
+
+        /**
+        * Set velocity mode, single axis.
+        * @param j: joint number
+        * @return: true/false success failure.
+        */
+        virtual bool setVelocityMode(int j);
+
+        /**
+        * Set torque mode, single axis.
+        * @param j: joint number
+        * @return: true/false success failure.
+        */
+        virtual bool setTorqueMode(int j);
+
+        /**
+        * Set impedance position mode, single axis.
+        * @param j: joint number
+        * @return: true/false success failure.
+        */
+        virtual bool setImpedancePositionMode(int j);
+
+        /**
+        * Set impedance velocity mode, single axis.
+        * @param j: joint number
+        * @return: true/false success failure.
+        */
+        virtual bool setImpedanceVelocityMode(int j);
+
+        /**
+        * Set open loop mode, single axis.
+        * @param j: joint number
+        * @return: true/false success failure.
+        */
+        virtual bool setOpenLoopMode(int j);
+
+        /**
+        * Get the current control mode.
+        * @param j: joint number
+        * @param mode: a vocab of the current control mode for joint j.
+        * @return: true/false success failure.
+        */
+        virtual bool getControlMode(int j, int *mode);
+
+        /**
+        * Get the current control mode (multiple joints).
+        * @param modes: a vector containing vocabs for the current control modes of the joints.
+        * @return: true/false success failure.
+        */
+        virtual bool getControlModes(int *modes);
 
         // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
 
@@ -303,86 +384,6 @@ class BodyBot : public DeviceDriver, public IPositionControl, public IEncodersTi
          * @return true/false upon success/failure
          */
         virtual bool velocityMove(const double *sp);
-
-        //  --------- IControlLimits Declarations. Implementation in IControlLimitsImpl.cpp ---------
-
-        /**
-         * Set the software limits for a particular axis, the behavior of the
-         * control card when these limits are exceeded, depends on the implementation.
-         * @param axis joint number (why am I telling you this)
-         * @param min the value of the lower limit
-         * @param max the value of the upper limit
-         * @return true or false on success or failure
-         */
-        virtual bool setLimits(int axis, double min, double max);
-
-        /**
-         * Get the software limits for a particular axis.
-         * @param axis joint number (again... why am I telling you this)
-         * @param pointer to store the value of the lower limit
-         * @param pointer to store the value of the upper limit
-         * @return true if everything goes fine, false otherwise.
-         */
-        virtual bool getLimits(int axis, double *min, double *max);
-
-        //  --------- IControlMode Declarations. Implementation in IControlModeImpl.cpp ---------
-
-        /**
-        * Set position mode, single axis.
-        * @param j: joint number
-        * @return: true/false success failure.
-        */
-        virtual bool setPositionMode(int j);
-
-        /**
-        * Set velocity mode, single axis.
-        * @param j: joint number
-        * @return: true/false success failure.
-        */
-        virtual bool setVelocityMode(int j);
-
-        /**
-        * Set torque mode, single axis.
-        * @param j: joint number
-        * @return: true/false success failure.
-        */
-        virtual bool setTorqueMode(int j);
-
-        /**
-        * Set impedance position mode, single axis.
-        * @param j: joint number
-        * @return: true/false success failure.
-        */
-        virtual bool setImpedancePositionMode(int j);
-
-        /**
-        * Set impedance velocity mode, single axis.
-        * @param j: joint number
-        * @return: true/false success failure.
-        */
-        virtual bool setImpedanceVelocityMode(int j);
-
-        /**
-        * Set open loop mode, single axis.
-        * @param j: joint number
-        * @return: true/false success failure.
-        */
-        virtual bool setOpenLoopMode(int j);
-
-        /**
-        * Get the current control mode.
-        * @param j: joint number
-        * @param mode: a vocab of the current control mode for joint j.
-        * @return: true/false success failure.
-        */
-        virtual bool getControlMode(int j, int *mode);
-
-        /**
-        * Get the current control mode (multiple joints).
-        * @param modes: a vector containing vocabs for the current control modes of the joints.
-        * @return: true/false success failure.
-        */
-        virtual bool getControlModes(int *modes);
 
         // -------- ITorqueControl declarations. Implementation in ITorqueControlImpl.cpp --------
 
