@@ -19,7 +19,7 @@
 #include "ColorDebug.hpp"
 #include "CanBusHico.hpp"
 
-#include "ICanBusSharer.h"
+#include "../ICanBusSharer.h"
 
 #define DEFAULT_MODE "position"
 

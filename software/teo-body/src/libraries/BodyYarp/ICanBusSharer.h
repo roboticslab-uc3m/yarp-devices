@@ -3,7 +3,7 @@
 #ifndef __I_CAN_BUS_SHARER__
 #define __I_CAN_BUS_SHARER__
 
-#include "CanBusHico.hpp"
+#include "bodybot/CanBusHico.hpp"
 
 namespace teo
 {
