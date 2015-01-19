@@ -170,38 +170,77 @@ class MotorIpos : public IControlLimitsRaw, public IControlModeRaw, public IEnco
         }
 
         // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
-        virtual bool setTorqueModeRaw();
-        virtual bool getRefTorquesRaw(double *t);
+        virtual bool setTorqueModeRaw() {
+            CD_ERROR("\n");
+            return false;
+        }
+        virtual bool getRefTorquesRaw(double *t) {
+            CD_ERROR("\n");
+            return false;
+        }
         virtual bool getRefTorqueRaw(int j, double *t);
-        virtual bool setRefTorquesRaw(const double *t);
+        virtual bool setRefTorquesRaw(const double *t) {
+            CD_ERROR("\n");
+            return false;
+        }
         virtual bool setRefTorqueRaw(int j, double t);
         virtual bool getBemfParamRaw(int j, double *bemf);
         virtual bool setBemfParamRaw(int j, double bemf);
         virtual bool setTorquePidRaw(int j, const Pid &pid);
         virtual bool getTorqueRaw(int j, double *t);
-        virtual bool getTorquesRaw(double *t);
+        virtual bool getTorquesRaw(double *t) {
+            CD_ERROR("\n");
+            return false;
+        }
         virtual bool getTorqueRangeRaw(int j, double *min, double *max);
-        virtual bool getTorqueRangesRaw(double *min, double *max);
-        virtual bool setTorquePidsRaw(const Pid *pids);
+        virtual bool getTorqueRangesRaw(double *min, double *max) {
+            CD_ERROR("\n");
+            return false;
+        }
+        virtual bool setTorquePidsRaw(const Pid *pids) {
+            CD_ERROR("\n");
+            return false;
+        }
         virtual bool setTorqueErrorLimitRaw(int j, double limit);
-        virtual bool setTorqueErrorLimitsRaw(const double *limits);
+        virtual bool setTorqueErrorLimitsRaw(const double *limits) {
+            CD_ERROR("\n");
+            return false;
+        }
         virtual bool getTorqueErrorRaw(int j, double *err);
-        virtual bool getTorqueErrorsRaw(double *errs);
+        virtual bool getTorqueErrorsRaw(double *errs) {
+            CD_ERROR("\n");
+            return false;
+        }
         virtual bool getTorquePidOutputRaw(int j, double *out);
-        virtual bool getTorquePidOutputsRaw(double *outs);
+        virtual bool getTorquePidOutputsRaw(double *outs) {
+            CD_ERROR("\n");
+            return false;
+        }
         virtual bool getTorquePidRaw(int j, Pid *pid);
-        virtual bool getTorquePidsRaw(Pid *pids);
+        virtual bool getTorquePidsRaw(Pid *pids) {
+            CD_ERROR("\n");
+            return false;
+        }
         virtual bool getTorqueErrorLimitRaw(int j, double *limit);
-        virtual bool getTorqueErrorLimitsRaw(double *limits);
+        virtual bool getTorqueErrorLimitsRaw(double *limits) {
+            CD_ERROR("\n");
+            return false;
+        }
         virtual bool resetTorquePidRaw(int j);
         virtual bool disableTorquePidRaw(int j);
         virtual bool enableTorquePidRaw(int j);
         virtual bool setTorqueOffsetRaw(int j, double v);
 
         //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
-        virtual bool setVelocityModeRaw();
+        virtual bool setVelocityModeRaw() {
+            CD_ERROR("\n");
+            return false;
+        }
         virtual bool velocityMoveRaw(int j, double sp);
-        virtual bool velocityMoveRaw(const double *sp);
+        virtual bool velocityMoveRaw(const double *sp) {
+            CD_ERROR("\n");
+            return false;
+        }
 
     protected:
 
