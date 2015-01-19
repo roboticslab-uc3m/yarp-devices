@@ -22,16 +22,6 @@ int teo::MotorIpos::getCanId() {
 
 // -----------------------------------------------------------------------------
 
-double teo::MotorIpos::getEncoder() {
-    double value;
-    encoderReady.wait();
-    value = encoder;
-    encoderReady.post();
-    return value;
-}
-
-// -----------------------------------------------------------------------------
-
 double teo::MotorIpos::getMax() {
     return max;
 }

@@ -22,7 +22,7 @@ namespace teo
  * @brief Specifies the Technosoft iPOS behaviour and specifications.
  *
  */
-class MotorIpos : public IPositionControlRaw {
+class MotorIpos : public IPositionControlRaw, public IEncodersRaw {
 
     public:
 
@@ -68,8 +68,7 @@ class MotorIpos : public IPositionControlRaw {
 
         bool interpretMessage( can_msg * message);
 
-        // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
-
+        // ------- IPositionControlRaw declarations. Implementation in IPositionControlRawImpl.cpp -------
         virtual bool getAxes(int *ax){
             *ax = 1;
             return true;
@@ -115,6 +114,33 @@ class MotorIpos : public IPositionControlRaw {
         }
         virtual bool stopRaw(int j);
         virtual bool stopRaw() {
+            CD_ERROR("\n");
+            return false;
+        }
+
+        //  ---------- IEncodersRaw Declarations. Implementation in IEncodersRawImpl.cpp ----------
+        virtual bool resetEncoderRaw(int j);
+        virtual bool resetEncodersRaw() {
+            CD_ERROR("\n");
+            return false;
+        }
+        virtual bool setEncoderRaw(int j, double val);
+        virtual bool setEncodersRaw(const double *vals) {
+            CD_ERROR("\n");
+            return false;
+        }
+        virtual bool getEncoderRaw(int j, double *v);
+        virtual bool getEncodersRaw(double *encs) {
+            CD_ERROR("\n");
+            return false;
+        }
+        virtual bool getEncoderSpeedRaw(int j, double *sp);
+        virtual bool getEncoderSpeedsRaw(double *spds) {
+            CD_ERROR("\n");
+            return false;
+        }
+        virtual bool getEncoderAccelerationRaw(int j, double *spds);
+        virtual bool getEncoderAccelerationsRaw(double *accs) {
             CD_ERROR("\n");
             return false;
         }
