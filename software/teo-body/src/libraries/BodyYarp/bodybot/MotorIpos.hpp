@@ -28,39 +28,13 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
 
     public:
 
-        /**
-         * Write message to the CAN buffer.
-         * @param cob Message's COB
-         * @param len Data field length
-         * @param msgData Data to send
-         * @return true/false on success/failure.
-         */
-        bool send(uint32_t cob, uint16_t len, uint8_t * msgData);
-
-        /** "start". All starting functions have to do with:
-         * Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
-        bool start();
-        /** "ready to switch on", also acts as "shutdown" */
-        bool readyToSwitchOn();
-        /** "switch on", also acts as "disable operation" */
-        bool switchOn();
-        /** enable */
-        bool enable();
-
-        /** pt-related **/
-        int ptPointCounter;
-        yarp::os::Semaphore ptBuffer;
-        bool ptMovementDone;
-
-        bool targetReached;
+        //  --------- DeviceDriver Declarations. Implementation in MotorIpos.cpp ---------
+        virtual bool open(Searchable& config);
+        virtual bool close();
 
         //  --------- ICanBusSharer Declarations. Implementation in MotorIpos.cpp ---------
         virtual bool interpretMessage( can_msg * message);
-
-        //  --------- DeviceDriver Declarations. Implementation in MotorIpos.cpp ---------
-        MotorIpos(CanBusHico *canDevicePtr, const int& canId, const double& tr, int16_t& ptModeMs);
-        virtual bool open(Searchable& config);
-        virtual bool close();
+        virtual bool setCanBusPtr(CanBusHico *canDevicePtr);
 
         //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
         virtual bool setLimitsRaw(int axis, double min, double max);
@@ -243,6 +217,32 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
         }
 
     protected:
+
+        /**
+         * Write message to the CAN buffer.
+         * @param cob Message's COB
+         * @param len Data field length
+         * @param msgData Data to send
+         * @return true/false on success/failure.
+         */
+        bool send(uint32_t cob, uint16_t len, uint8_t * msgData);
+
+        /** "start". All starting functions have to do with:
+         * Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
+        bool start();
+        /** "ready to switch on", also acts as "shutdown" */
+        bool readyToSwitchOn();
+        /** "switch on", also acts as "disable operation" */
+        bool switchOn();
+        /** enable */
+        bool enable();
+
+        /** pt-related **/
+        int ptPointCounter;
+        yarp::os::Semaphore ptBuffer;
+        bool ptMovementDone;
+
+        bool targetReached;
 
         int canId;
 
