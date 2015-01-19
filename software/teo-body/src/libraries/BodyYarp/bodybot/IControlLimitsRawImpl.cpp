@@ -2,7 +2,7 @@
 
 #include "MotorIpos.hpp"
 
-// ------------------- IControlLimits Related ------------------------------------
+// ------------------- IControlLimitsRaw Related ------------------------------------
 
 bool teo::MotorIpos::setLimitsRaw(int axis, double min, double max) {
     CD_INFO("(%d,%f,%f)\n",axis,min,max);

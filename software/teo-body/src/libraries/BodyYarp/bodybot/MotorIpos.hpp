@@ -23,7 +23,7 @@ namespace teo
  *
  */
 // Note: IEncodersTimed inherits from IEncoders
-class MotorIpos : public IPositionControlRaw, public IEncodersTimedRaw  {
+class MotorIpos : public IControlLimitsRaw, public IControlModeRaw, public IPositionControlRaw, public IEncodersTimedRaw  {
 
     public:
 
@@ -79,7 +79,7 @@ class MotorIpos : public IPositionControlRaw, public IEncodersTimedRaw  {
         virtual bool setImpedanceVelocityModeRaw(int j);
         virtual bool setOpenLoopModeRaw(int j);
         virtual bool getControlModeRaw(int j, int *mode);
-        virtual bool getControlModes(int *modes){
+        virtual bool getControlModesRaw(int *modes){
             CD_ERROR("\n");
             return false;
         }
