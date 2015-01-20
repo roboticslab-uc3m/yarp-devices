@@ -2,7 +2,7 @@
 
 #include "BodyBot.hpp"
 
-// ------------------ RateThread Related -----------------------------------------
+// ------------------ Thread Related -----------------------------------------
 
 void teo::BodyBot::run() {
 
