@@ -21,13 +21,13 @@ void teo::BodyBot::run() {
         int canId = buffer.id  & 0x7F;
 
         //-- Commenting next line as way too verbose, happens all the time.
-        CD_DEBUG("Read from fullCanId: %d (%d after mask)\n", buffer.id, canId);
+        CD_DEBUG("Read ok. %s\n", msgToStr(&buffer).c_str());
 
         std::map< int, int >::iterator idxFromCanIdFound = idxFromCanId.find(canId);
 
         if( idxFromCanIdFound == idxFromCanId.end() )
         {
-            CD_ERROR("Read CAN message from unknown device!!! %s.\n", msgToStr(&buffer).c_str());
+            CD_ERROR("Read CAN message from unknown device!!! %s\n", msgToStr(&buffer).c_str());
             continue;
         }
 
