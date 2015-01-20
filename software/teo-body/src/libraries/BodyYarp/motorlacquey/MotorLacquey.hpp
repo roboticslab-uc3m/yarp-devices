@@ -151,10 +151,22 @@ class MotorLacquey : public DeviceDriver, public IControlLimitsRaw, public ICont
         }
 
         // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
-        virtual bool setPositionDirectModeRaw();
-        virtual bool setPositionRaw(int j, double ref);
-        virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs);
-        virtual bool setPositionsRaw(const double *refs);
+        virtual bool setPositionDirectModeRaw() {
+            CD_INFO("\n");
+            return true;
+        }
+        virtual bool setPositionRaw(int j, double ref) {
+            CD_INFO("\n");
+            return true;
+        }
+        virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs) {
+            CD_INFO("\n");
+            return true;
+        }
+        virtual bool setPositionsRaw(const double *refs) {
+            CD_INFO("\n");
+            return true;
+        }
 
         // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
         virtual bool setTorqueModeRaw() {
@@ -165,21 +177,42 @@ class MotorLacquey : public DeviceDriver, public IControlLimitsRaw, public ICont
             CD_ERROR("\n");
             return false;
         }
-        virtual bool getRefTorqueRaw(int j, double *t);
+        virtual bool getRefTorqueRaw(int j, double *t) {
+            CD_INFO("\n");
+            return true;
+        }
         virtual bool setRefTorquesRaw(const double *t) {
             CD_ERROR("\n");
             return false;
         }
-        virtual bool setRefTorqueRaw(int j, double t);
-        virtual bool getBemfParamRaw(int j, double *bemf);
-        virtual bool setBemfParamRaw(int j, double bemf);
-        virtual bool setTorquePidRaw(int j, const Pid &pid);
-        virtual bool getTorqueRaw(int j, double *t);
+        virtual bool setRefTorqueRaw(int j, double t) {
+            CD_INFO("\n");
+            return true;
+        }
+        virtual bool getBemfParamRaw(int j, double *bemf) {
+            CD_INFO("\n");
+            return true;
+        }
+        virtual bool setBemfParamRaw(int j, double bemf) {
+            CD_INFO("\n");
+            return true;
+        }
+        virtual bool setTorquePidRaw(int j, const Pid &pid) {
+            CD_INFO("\n");
+            return true;
+        }
+        virtual bool getTorqueRaw(int j, double *t) {
+            CD_INFO("\n");
+            return true;
+        }
         virtual bool getTorquesRaw(double *t) {
             CD_ERROR("\n");
             return false;
         }
-        virtual bool getTorqueRangeRaw(int j, double *min, double *max);
+        virtual bool getTorqueRangeRaw(int j, double *min, double *max) {
+            CD_INFO("\n");
+            return true;
+        }
         virtual bool getTorqueRangesRaw(double *min, double *max) {
             CD_ERROR("\n");
             return false;
@@ -188,42 +221,72 @@ class MotorLacquey : public DeviceDriver, public IControlLimitsRaw, public ICont
             CD_ERROR("\n");
             return false;
         }
-        virtual bool setTorqueErrorLimitRaw(int j, double limit);
+        virtual bool setTorqueErrorLimitRaw(int j, double limit) {
+            CD_INFO("\n");
+            return true;
+        }
         virtual bool setTorqueErrorLimitsRaw(const double *limits) {
             CD_ERROR("\n");
             return false;
         }
-        virtual bool getTorqueErrorRaw(int j, double *err);
+        virtual bool getTorqueErrorRaw(int j, double *err) {
+            CD_INFO("\n");
+            return true;
+        }
         virtual bool getTorqueErrorsRaw(double *errs) {
             CD_ERROR("\n");
             return false;
         }
-        virtual bool getTorquePidOutputRaw(int j, double *out);
+        virtual bool getTorquePidOutputRaw(int j, double *out) {
+            CD_INFO("\n");
+            return true;
+        }
         virtual bool getTorquePidOutputsRaw(double *outs) {
             CD_ERROR("\n");
             return false;
         }
-        virtual bool getTorquePidRaw(int j, Pid *pid);
+        virtual bool getTorquePidRaw(int j, Pid *pid) {
+            CD_INFO("\n");
+            return true;
+        }
         virtual bool getTorquePidsRaw(Pid *pids) {
             CD_ERROR("\n");
             return false;
         }
-        virtual bool getTorqueErrorLimitRaw(int j, double *limit);
+        virtual bool getTorqueErrorLimitRaw(int j, double *limit) {
+            CD_INFO("\n");
+            return true;
+        }
         virtual bool getTorqueErrorLimitsRaw(double *limits) {
             CD_ERROR("\n");
             return false;
         }
-        virtual bool resetTorquePidRaw(int j);
-        virtual bool disableTorquePidRaw(int j);
-        virtual bool enableTorquePidRaw(int j);
-        virtual bool setTorqueOffsetRaw(int j, double v);
+        virtual bool resetTorquePidRaw(int j) {
+            CD_INFO("\n");
+            return true;
+        }
+        virtual bool disableTorquePidRaw(int j) {
+            CD_INFO("\n");
+            return true;
+        }
+        virtual bool enableTorquePidRaw(int j) {
+            CD_INFO("\n");
+            return true;
+        }
+        virtual bool setTorqueOffsetRaw(int j, double v) {
+            CD_INFO("\n");
+            return true;
+        }
 
         //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
         virtual bool setVelocityModeRaw() {
             CD_ERROR("\n");
             return false;
         }
-        virtual bool velocityMoveRaw(int j, double sp);
+        virtual bool velocityMoveRaw(int j, double sp) {
+            CD_INFO("\n");
+            return true;
+        }
         virtual bool velocityMoveRaw(const double *sp) {
             CD_ERROR("\n");
             return false;
