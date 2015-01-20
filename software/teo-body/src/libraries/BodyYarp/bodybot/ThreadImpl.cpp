@@ -31,6 +31,7 @@ void teo::BodyBot::run() {
             continue;
         }
 
+        CD_DEBUG("--->%d\n",idxFromCanIdFound->second);
         iCanBusSharer[ idxFromCanIdFound->second ]->interpretMessage(&buffer);  //-- Check if false?
 
     }  //-- ends: while ( ! this->isStopping() ).
