@@ -10,25 +10,41 @@ bool teo::MotorLacquey::positionMoveRaw(int j, double ref) {  // encExposed = re
     //-- Check index within range
     if ( j != 0 ) return false;
 
-
-
-
-
-
+    //Adjust range:
+    if (ref > 1023){
+        ref=1023;
+    }
+    else if (ref < -1023){
+        ref=-1023;
+    }
 
     //*************************************************************
-    uint8_t msg_position_target[]={0x23,0x7A,0x60,0x00,0x00,0x00,0x00,0x00}; // Position target
+    uint8_t msg_position_target[]={0x00,0x00}; // Position target
+    uint16_t pwm;
+    //Send appropriate message:
+    if (ref==0) {
+        msg_position_target[0]=0xF0;
+    } else if (ref>0) {
+        pwm=ref;
+        msg_position_target[1]=pwm>>2;
+        msg_position_target[0]=0xA0 + (pwm & 0b0000000000000011);
+    } else {
+        pwm=abs(ref);
+        msg_position_target[1]=pwm>>2;
+        msg_position_target[0]=0xC0 + (pwm & 0b0000000000000011);
+    }
 
-    int position = ref * this->tr * 11.11112;  // Appply tr & convert units to encoder increments
-    memcpy(msg_position_target+4,&position,4);
-
-    if( ! send( 0x600, 8, msg_position_target ) )
+    if( ! send( 0x600, 2, msg_position_target ) )
     {
-        CD_ERROR("Could not send \"position target\". %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
+        CD_ERROR("Could not send \"position target\". %s\n", msgToStr(0x600, 2, msg_position_target).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"position target\". %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
+    CD_SUCCESS("Sent \"position target\". %s\n", msgToStr(0x600, 2, msg_position_target).c_str() );
     //*************************************************************
+
+    encoderReady.wait();
+    this->encoder = ref;  // Already passed through Adjust range.
+    encoderReady.post();
 
     return true;
 }
