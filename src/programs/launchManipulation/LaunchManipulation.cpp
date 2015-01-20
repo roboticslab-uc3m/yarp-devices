@@ -8,12 +8,7 @@ LaunchManipulation::LaunchManipulation() { }
 /************************************************************************/
 bool LaunchManipulation::configure(ResourceFinder &rf) {
 
-    //CD_INFO("Using name: %s.\n", rf.find("name").asString().c_str() );
-
-    std::string manipulation_root = ::getenv("MANIPULATION_ROOT");
-    CD_INFO("Using root: %s.\n", manipulation_root.c_str() );
-
-    std::string leftArmIni = manipulation_root + "/app/testBodyBot/conf/leftArm.ini";
+    std::string leftArmIni = rf.findFileByName("leftArm.ini");
 
     Property leftArmOptions;
     if (! leftArmOptions.fromConfigFile(leftArmIni) ) {  //-- Put first because defaults to wiping out.
@@ -35,7 +30,7 @@ bool LaunchManipulation::configure(ResourceFinder &rf) {
         return false;
     }
 
-    std::string rightArmIni = manipulation_root + "/app/testBodyBot/conf/rightArm.ini";
+    std::string rightArmIni = rf.findFileByName("rightArm.ini");
 
     Property rightArmOptions;
     if (! rightArmOptions.fromConfigFile(rightArmIni) ) {  //-- Put first because defaults to wiping out.
@@ -57,51 +52,6 @@ bool LaunchManipulation::configure(ResourceFinder &rf) {
         return false;
     }
 
-    std::string leftGripperIni = manipulation_root + "/app/testGripperBot/conf/leftGripper.ini";
-
-    Property leftGripperOptions;
-    if (! leftGripperOptions.fromConfigFile(leftGripperIni) ) {  //-- Put first because defaults to wiping out.
-        CD_ERROR("Could not open %s.\n",leftGripperIni.c_str());
-        return false;
-    }
-    CD_SUCCESS("Opened %s.\n",leftGripperIni.c_str());
-    leftGripperOptions.put("name","/teo/leftGripper");
-    leftGripperOptions.put("device","controlboard");
-    leftGripperOptions.put("subdevice","gripperbot");
-
-    leftGripperDevice.open(leftGripperOptions);
-
-    if (!leftGripperDevice.isValid()) {
-        CD_ERROR("leftGripperDevice instantiation not worked.\n");
-        CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_gripperbot\" variable is set \"ON\"\n");
-        CD_ERROR("\"SKIP_gripperbot is set\" --> should be --> \"ENABLE_gripperbot is set\"\n");
-        // robotDevice.close();  // un-needed?
-        return false;
-    }
-
-    std::string rightGripperIni = manipulation_root + "/app/testGripperBot/conf/rightGripper.ini";
-
-    Property rightGripperOptions;
-    if (! rightGripperOptions.fromConfigFile(rightGripperIni) ) {  //-- Put first because defaults to wiping out.
-        CD_ERROR("Could not open %s.\n",rightGripperIni.c_str());
-        return false;
-    }
-    CD_SUCCESS("Opened %s.\n",rightGripperIni.c_str());
-    rightGripperOptions.put("name","/teo/rightGripper");
-    rightGripperOptions.put("device","controlboard");
-    rightGripperOptions.put("subdevice","gripperbot");
-
-    rightGripperDevice.open(rightGripperOptions);
-
-    if (!rightGripperDevice.isValid()) {
-        CD_ERROR("rightGripperDevice instantiation not worked.\n");
-        CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_gripperbot\" variable is set \"ON\"\n");
-        CD_ERROR("\"SKIP_gripperbot is set\" --> should be --> \"ENABLE_gripperbot is set\"\n");
-        // robotDevice.close();  // un-needed?
-        return false;
-    }
-
-
     return true;
 }
 
@@ -117,9 +67,6 @@ bool LaunchManipulation::updateModule() {
 bool LaunchManipulation::close() {
     leftArmDevice.close();
     rightArmDevice.close();
-
-    leftGripperDevice.close();
-    rightGripperDevice.close();
     return true;
 }
 
