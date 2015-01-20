@@ -17,7 +17,7 @@ bool teo::MotorIpos::open(Searchable& config) {
     this->refSpeed = 0;
     this->encoder = 0;
 
-    CD_SUCCESS("Created driver with canId %d and tr %f, and all local parameters set to 0.\n",canId,tr);
+    CD_SUCCESS("Created MotorIpos with canId %d and tr %f, and all local parameters set to 0.\n",canId,tr);
     return true;
 }
 
