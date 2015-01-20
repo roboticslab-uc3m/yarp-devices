@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MotorIpos.hpp"
+#include "MotorLacquey.hpp"
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setCanBusPtr(CanBusHico *canDevicePtr) {
+bool teo::MotorLacquey::setCanBusPtr(CanBusHico *canDevicePtr) {
 
     this->canDevicePtr = canDevicePtr;
     CD_SUCCESS("Ok pointer to CAN bus device %d.\n",canId);
@@ -13,7 +13,7 @@ bool teo::MotorIpos::setCanBusPtr(CanBusHico *canDevicePtr) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::start() {
+bool teo::MotorLacquey::start() {
 
     //*************************************************************
     uint8_t msg_start[] = {0x01,0x01};
@@ -32,7 +32,7 @@ bool teo::MotorIpos::start() {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::readyToSwitchOn() {
+bool teo::MotorLacquey::readyToSwitchOn() {
 
     //*************************************************************
     uint8_t msg_readyToSwitchOn[] = {0x06,0x00}; //-- readyToSwitchOn, also acts as shutdown.
@@ -50,7 +50,7 @@ bool teo::MotorIpos::readyToSwitchOn() {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::switchOn() {
+bool teo::MotorLacquey::switchOn() {
 
     //*************************************************************
     uint8_t msg_switchOn[] = {0x07,0x00};  //-- switchOn, also acts as disableOperation
@@ -75,7 +75,7 @@ bool teo::MotorIpos::switchOn() {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::enable() {
+bool teo::MotorLacquey::enable() {
 
     //*************************************************************
     uint8_t msg_enable[] = {0x0F,0x00}; // enable
@@ -101,7 +101,7 @@ bool teo::MotorIpos::enable() {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::interpretMessage( can_msg * message) {
+bool teo::MotorLacquey::interpretMessage( can_msg * message) {
 
     if( (message->id-canId) == 0x580 )  // SDO
     {
