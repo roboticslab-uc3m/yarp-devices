@@ -225,6 +225,7 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
 
     protected:
 
+        //  --------- Implementation in MotorIpos.cpp ---------
         /**
          * Write message to the CAN buffer.
          * @param cob Message's COB
