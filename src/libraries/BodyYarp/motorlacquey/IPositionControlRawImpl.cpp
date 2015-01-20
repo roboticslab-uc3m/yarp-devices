@@ -34,12 +34,12 @@ bool teo::MotorLacquey::positionMoveRaw(int j, double ref) {  // encExposed = re
         msg_position_target[0]=0xC0 + (pwm & 0b0000000000000011);
     }
 
-    if( ! send( 0x600, 8, msg_position_target ) )
+    if( ! send( 0x600, 2, msg_position_target ) )
     {
-        CD_ERROR("Could not send \"position target8\". %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
+        CD_ERROR("Could not send \"position target8\". %s\n", msgToStr(0x600, 2, msg_position_target).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"position target8\". %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
+    CD_SUCCESS("Sent \"position target8\". %s\n", msgToStr(0x600, 2, msg_position_target).c_str() );
     //*************************************************************
 
     encoderReady.wait();
