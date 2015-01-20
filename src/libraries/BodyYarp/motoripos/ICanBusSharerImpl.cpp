@@ -119,6 +119,33 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
         } else if( (message->data[1]==0x7A)&&(message->data[2]==0x60) ) {  // Manual 607Ah
             CD_DEBUG("Got SDO ack \"position target\" from driver. %s\n",msgToStr(message).c_str());
             return true;
+        } else if( ((message->data[1]==0x60)||(message->data[1]==0x61))&&(message->data[2]==0x60) ) {  // Manual 6060h/6061h
+            CD_DEBUG("Got SDO \"modes of operation\" from driver. %s\n",msgToStr(message).c_str());
+            int got;
+            memcpy(&got, message->data+4,4);
+            if(-5==got) {
+                CD_DEBUG("\t-iPOS specific: External Reference Torque Mode.\n");
+            } else if(-4==got) {
+                CD_DEBUG("\t-iPOS specific: External Reference Speed Mode.\n");
+            } else if(-3==got) {
+                CD_DEBUG("\t-iPOS specific: External Reference Position Mode.\n");
+            } else if(-2==got) {
+                CD_DEBUG("\t-iPOS specific: Electronic Camming Position Mode.\n");
+            } else if(-1==got) {
+                CD_DEBUG("\t-iPOS specific: Electronic Gearing Position Mode.\n");
+            } else if(1==got) {
+                CD_DEBUG("\t-Profile Position Mode.\n");
+            } else if(3==got) {
+                CD_DEBUG("\t-Profile Velocity Mode.\n");
+            } else if(6==got) {
+                CD_DEBUG("\t-Homing Mode.\n");
+            } else if(7==got) {
+                CD_DEBUG("\t-Interpolated Position Mode.\n");
+            } else {
+                CD_ERROR_NO_HEADER("MODE %d NOT SPECIFIED IN MANUAL.\n",got);
+                return false;
+            }
+            return true;
         } else if( (message->data[1]==0x41)&&(message->data[2]==0x60) ) {  // Manual 6041h: Status word; Table 5.4 Bit Assignment in Status Word (also see 5.5)
             CD_DEBUG("Got \"status word\" from driver. %s\n",msgToStr(message).c_str());
 
