@@ -30,7 +30,7 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
     public:
 
         MotorIpos() {
-            canDevicePtr = NULL;
+            //canDevicePtr = NULL;
         }
 
         //  --------- DeviceDriver Declarations. Implementation in MotorIpos.cpp ---------

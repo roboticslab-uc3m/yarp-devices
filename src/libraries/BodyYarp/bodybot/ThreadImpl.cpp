@@ -6,6 +6,8 @@
 
 void teo::BodyBot::run() {
 
+    CD_INFO("First thread run.\n");
+
     while ( ! this->isStopping() ) {
 
         struct can_msg buffer;
