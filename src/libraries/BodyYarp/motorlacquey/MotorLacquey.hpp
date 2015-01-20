@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __MOTOR_IPOS__
-#define __MOTOR_IPOS__
+#ifndef __MOTOR_LACQUEY__
+#define __MOTOR_LACQUEY__
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
@@ -270,5 +270,5 @@ class MotorLacquey : public DeviceDriver, public IControlLimitsRaw, public ICont
 
 }  // namespace teo
 
-#endif  // __MOTOR_IPOS__
+#endif  // __MOTOR_LACQUEY__
 
