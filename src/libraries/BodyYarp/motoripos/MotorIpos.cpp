@@ -139,18 +139,3 @@ bool teo::MotorIpos::send(uint32_t cob, uint16_t len, uint8_t * msgData) {
 }
 
 // -----------------------------------------------------------------------------
-
-void teo::MotorIpos::run() {
-
-    while ( ! this->isStopping() ) {
-
-        struct can_msg buffer;
-
-    }  //-- ends: while ( ! this->isStopping() ).
-
-    CD_INFO("Last thread run.\n");
-
-    return;
-}
-
-// -----------------------------------------------------------------------------
