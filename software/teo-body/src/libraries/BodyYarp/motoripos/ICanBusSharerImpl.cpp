@@ -63,7 +63,7 @@ bool teo::MotorIpos::switchOn() {
     struct can_msg replyOn;
     while(canDevicePtr->read_timeout(&replyOn,20))
     {
-        CD_SUCCESS("Got response to \"switchOn/disableOperation\" from canId: %d.\n",replyOn.id & 0x7F);
+        CD_SUCCESS("Got response to \"switchOn/disableOperation\". %s\n", msgToStr( &replyOn).c_str() );
     }
     //*************************************************************
 
