@@ -4,20 +4,6 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::send(uint32_t cob, uint16_t len, uint8_t * msgData) {
-
-    if ( (lastUsage - yarp::os::Time::now()) < DELAY )
-        yarp::os::Time::delay( lastUsage + DELAY - yarp::os::Time::now() );
-
-    if( ! canDevicePtr->sendRaw(cob + this->canId, len, msgData) )
-        return false;
-
-    lastUsage = yarp::os::Time::now();
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
 bool teo::MotorIpos::start() {
 
     //*************************************************************
@@ -136,6 +122,35 @@ std::string teo::MotorIpos::msgToStr(uint32_t cob, uint16_t len, uint8_t * msgDa
     tmp << std::hex << cob;
     tmp << ").";
     return tmp.str();
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::MotorIpos::send(uint32_t cob, uint16_t len, uint8_t * msgData) {
+
+    if ( (lastUsage - yarp::os::Time::now()) < DELAY )
+        yarp::os::Time::delay( lastUsage + DELAY - yarp::os::Time::now() );
+
+    if( ! canDevicePtr->sendRaw(cob + this->canId, len, msgData) )
+        return false;
+
+    lastUsage = yarp::os::Time::now();
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+void teo::MotorIpos::run() {
+
+    while ( ! this->isStopping() ) {
+
+        struct can_msg buffer;
+
+    }  //-- ends: while ( ! this->isStopping() ).
+
+    CD_INFO("Last thread run.\n");
+
+    return;
 }
 
 // -----------------------------------------------------------------------------
