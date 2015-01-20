@@ -218,6 +218,7 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
             if(message->data[7] & 128){//(bit 31)
                 CD_DEBUG("\t-Drive/motor in fault status.\n");
             }
+            return true;
         }
         CD_DEBUG("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
         return false;
