@@ -27,7 +27,7 @@ std::string teo::MotorIpos::msgToStr(uint32_t cob, uint16_t len, uint8_t * msgDa
     {
         tmp << std::hex << static_cast<int>(*(msgData+i)) << " ";
     }
-    tmp << std::hex << static_cast<int>(*(msgData+len));
+    tmp << std::hex << static_cast<int>(*(msgData+len-1));
     tmp << ". canId(";
     tmp << std::dec << canId;
     tmp << ") via(";
