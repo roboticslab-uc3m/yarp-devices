@@ -9,44 +9,89 @@ bool teo::MotorIpos::setCanBusPtr(CanBusHico *canDevicePtr) {
 }
 
 // -----------------------------------------------------------------------------
-bool teo::MotorIpos::enableRutine() {
-    if(!canDevicePtr) {
-        CD_ERROR("\n");
+
+bool teo::MotorIpos::start() {
+
+    //*************************************************************
+    uint8_t msg_start[] = {0x01,0x01};
+
+    msg_start[1]=this->canId;
+    if( ! canDevicePtr->sendRaw(0, 2, msg_start) )
+    {
+        CD_ERROR("Could not send \"start\". %s\n", msgToStr(0, 2, msg_start).c_str() );
         return false;
     }
-    //Time::delay(1);
-
-    //-- Initialize the drivers: start (0.1) ready (0.1) on (2) enable. Wait between each step.
-    if ( ! start() )
-        return false;
-
-    yarp::os::Time::delay(0.1);
-
-    if ( ! readyToSwitchOn() )
-        return false;
-
-    yarp::os::Time::delay(0.1);
-
-    if ( ! switchOn() )
-        return false;
-
-    yarp::os::Time::delay(2);
-
-    if ( ! enable() )
-        return false;
+    CD_SUCCESS("Sent \"start\". %s\n", msgToStr(0, 2, msg_start).c_str() );
+    //*************************************************************
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
-bool teo::MotorIpos::shutdownRutine() {
 
-    //-- Disable and shutdown the physical drivers.
-    if ( ! switchOn() )  //-- "switch on" also acts as "disable".
-        return false;
+bool teo::MotorIpos::readyToSwitchOn() {
 
-    if ( ! readyToSwitchOn() )  //-- "ready to switch on" also acts as "shutdown".
+    //*************************************************************
+    uint8_t msg_readyToSwitchOn[] = {0x06,0x00}; //-- readyToSwitchOn, also acts as shutdown.
+
+    if( ! this->send( 0x200, 2, msg_readyToSwitchOn) )
+    {
+        CD_ERROR("Could not send \"readyToSwitchOn/shutdown\". %s\n", msgToStr(0x200, 2, msg_readyToSwitchOn).c_str() );
         return false;
+    }
+    CD_SUCCESS("Sent \"readyToSwitchOn/shutdown\". %s\n", msgToStr(0x200, 2, msg_readyToSwitchOn).c_str() );
+    //*************************************************************
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::MotorIpos::switchOn() {
+
+    //*************************************************************
+    uint8_t msg_switchOn[] = {0x07,0x00};  //-- switchOn, also acts as disableOperation
+    if( ! this->send( 0x200, 2, msg_switchOn) )
+    {
+        CD_ERROR("Could not send \"switchOn/disableOperation\". %s\n", msgToStr(0x200, 2, msg_switchOn).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent \"switchOn/disableOperation\". %s\n", msgToStr(0x200, 2, msg_switchOn).c_str() );
+    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    yarp::os::Time::delay(0.1);
+    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    struct can_msg replyOn;
+    while(canDevicePtr->read_timeout(&replyOn,20))
+    {
+        CD_SUCCESS("Got response to \"switchOn/disableOperation\" from canId: %d.\n",replyOn.id & 0x7F);
+    }
+    //*************************************************************
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::MotorIpos::enable() {
+
+    //*************************************************************
+    uint8_t msg_enable[] = {0x0F,0x00}; // enable
+
+    if( ! this->send( 0x200, 2, msg_enable) )
+    {
+        CD_ERROR("Could not send \"enable\". %s\n", msgToStr(0x200, 2, msg_enable).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent \"enable\". %s\n", msgToStr(0x200, 2, msg_enable).c_str() );
+    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    yarp::os::Time::delay(0.1);
+    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    struct can_msg reply;
+    while(canDevicePtr->read_timeout(&reply,20))
+    {
+        CD_SUCCESS("Got response to \"enable\" from canId: %d.\n",reply.id & 0x7F);
+    }
+    //*************************************************************
 
     return true;
 }
