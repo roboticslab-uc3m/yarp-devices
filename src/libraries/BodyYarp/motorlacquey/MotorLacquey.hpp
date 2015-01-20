@@ -23,21 +23,21 @@ namespace teo
  *
  */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
-class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControlModeRaw, public IEncodersTimedRaw,
+class MotorLacquey : public DeviceDriver, public IControlLimitsRaw, public IControlModeRaw, public IEncodersTimedRaw,
         public IPositionControlRaw, public IPositionDirectRaw, public IVelocityControlRaw, public ITorqueControlRaw,
         public ICanBusSharer {
 
     public:
 
-        MotorIpos() {
+        MotorLacquey() {
             canDevicePtr = NULL;
         }
 
-        //  --------- DeviceDriver Declarations. Implementation in MotorIpos.cpp ---------
+        //  --------- DeviceDriver Declarations. Implementation in MotorLacquey.cpp ---------
         virtual bool open(Searchable& config);
         virtual bool close();
 
-        //  --------- ICanBusSharer Declarations. Implementation in MotorIpos.cpp ---------
+        //  --------- ICanBusSharer Declarations. Implementation in MotorLacquey.cpp ---------
         virtual bool setCanBusPtr(CanBusHico *canDevicePtr);        
         virtual bool interpretMessage( can_msg * message);
         /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
@@ -231,7 +231,7 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
 
     protected:
 
-        //  --------- Implementation in MotorIpos.cpp ---------
+        //  --------- Implementation in MotorLacquey.cpp ---------
         /**
          * Write message to the CAN buffer.
          * @param cob Message's COB

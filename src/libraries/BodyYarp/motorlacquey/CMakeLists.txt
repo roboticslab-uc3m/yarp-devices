@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-prepare_device(motoripos TYPE teo::MotorIpos INCLUDE MotorIpos.hpp)
+prepare_device(motoripos TYPE teo::MotorLacquey INCLUDE MotorLacquey.hpp)
 
 IF (NOT SKIP_motoripos)
 
@@ -13,7 +13,7 @@ IF (NOT SKIP_motoripos)
   # Include any directories needed for YARP
   include_directories(${YARP_INCLUDE_DIRS} ${BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
 
-  yarp_add_plugin(motoripos MotorIpos.cpp DeviceDriverImpl.cpp IControlLimitsRawImpl.cpp IControlModeRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControlRawImpl.cpp IPositionDirectRawImpl.cpp ITorqueControlRawImpl.cpp IVelocityControlRawImpl.cpp ICanBusSharerImpl.cpp )
+  yarp_add_plugin(motoripos MotorLacquey.cpp DeviceDriverImpl.cpp IControlLimitsRawImpl.cpp IControlModeRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControlRawImpl.cpp IPositionDirectRawImpl.cpp ITorqueControlRawImpl.cpp IVelocityControlRawImpl.cpp ICanBusSharerImpl.cpp )
 
   TARGET_LINK_LIBRARIES(motoripos ${YARP_LIBRARIES})
   install(TARGETS motoripos DESTINATION lib)

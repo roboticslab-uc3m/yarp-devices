@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MotorIpos.hpp"
+#include "MotorLacquey.hpp"
 
 // ------------------ IEncodersTimedRaw Related -----------------------------------------
 
-bool teo::MotorIpos::getEncoderTimedRaw(int j, double *encs, double *time) {
+bool teo::MotorLacquey::getEncoderTimedRaw(int j, double *encs, double *time) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range

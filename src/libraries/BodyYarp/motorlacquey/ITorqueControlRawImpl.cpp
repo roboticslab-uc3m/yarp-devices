@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MotorIpos.hpp"
+#include "MotorLacquey.hpp"
 
 // ------------------- ITorqueControlRaw Related ------------------------------------
 
-bool teo::MotorIpos::getRefTorqueRaw(int j, double *t) {
+bool teo::MotorLacquey::getRefTorqueRaw(int j, double *t) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -17,7 +17,7 @@ bool teo::MotorIpos::getRefTorqueRaw(int j, double *t) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setRefTorqueRaw(int j, double t) {
+bool teo::MotorLacquey::setRefTorqueRaw(int j, double t) {
     CD_INFO("(%d,%f)\n",j,t);
 
     //-- Check index within range
@@ -43,7 +43,7 @@ bool teo::MotorIpos::setRefTorqueRaw(int j, double t) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getBemfParamRaw(int j, double *bemf) {
+bool teo::MotorLacquey::getBemfParamRaw(int j, double *bemf) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -56,7 +56,7 @@ bool teo::MotorIpos::getBemfParamRaw(int j, double *bemf) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setBemfParamRaw(int j, double bemf) {
+bool teo::MotorLacquey::setBemfParamRaw(int j, double bemf) {
     CD_INFO("(%d,%f)\n",j,bemf);
 
     //-- Check index within range
@@ -69,7 +69,7 @@ bool teo::MotorIpos::setBemfParamRaw(int j, double bemf) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setTorquePidRaw(int j, const Pid &pid) {
+bool teo::MotorLacquey::setTorquePidRaw(int j, const Pid &pid) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -82,7 +82,7 @@ bool teo::MotorIpos::setTorquePidRaw(int j, const Pid &pid) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getTorqueRaw(int j, double *t) {
+bool teo::MotorLacquey::getTorqueRaw(int j, double *t) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -123,7 +123,7 @@ bool teo::MotorIpos::getTorqueRaw(int j, double *t) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getTorqueRangeRaw(int j, double *min, double *max) {
+bool teo::MotorLacquey::getTorqueRangeRaw(int j, double *min, double *max) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -136,7 +136,7 @@ bool teo::MotorIpos::getTorqueRangeRaw(int j, double *min, double *max) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setTorqueErrorLimitRaw(int j, double limit) {
+bool teo::MotorLacquey::setTorqueErrorLimitRaw(int j, double limit) {
     CD_INFO("(%d,%f)\n",j,limit);
 
     //-- Check index within range
@@ -149,7 +149,7 @@ bool teo::MotorIpos::setTorqueErrorLimitRaw(int j, double limit) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getTorqueErrorRaw(int j, double *err) {
+bool teo::MotorLacquey::getTorqueErrorRaw(int j, double *err) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -162,7 +162,7 @@ bool teo::MotorIpos::getTorqueErrorRaw(int j, double *err) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getTorquePidOutputRaw(int j, double *out) {
+bool teo::MotorLacquey::getTorquePidOutputRaw(int j, double *out) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -175,7 +175,7 @@ bool teo::MotorIpos::getTorquePidOutputRaw(int j, double *out) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getTorquePidRaw(int j, Pid *pid) {
+bool teo::MotorLacquey::getTorquePidRaw(int j, Pid *pid) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -188,7 +188,7 @@ bool teo::MotorIpos::getTorquePidRaw(int j, Pid *pid) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getTorqueErrorLimitRaw(int j, double *limit) {
+bool teo::MotorLacquey::getTorqueErrorLimitRaw(int j, double *limit) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -201,7 +201,7 @@ bool teo::MotorIpos::getTorqueErrorLimitRaw(int j, double *limit) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::resetTorquePidRaw(int j) {
+bool teo::MotorLacquey::resetTorquePidRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -214,7 +214,7 @@ bool teo::MotorIpos::resetTorquePidRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::disableTorquePidRaw(int j) {
+bool teo::MotorLacquey::disableTorquePidRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -227,7 +227,7 @@ bool teo::MotorIpos::disableTorquePidRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::enableTorquePidRaw(int j) {
+bool teo::MotorLacquey::enableTorquePidRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -240,7 +240,7 @@ bool teo::MotorIpos::enableTorquePidRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setTorqueOffsetRaw(int j, double v) {
+bool teo::MotorLacquey::setTorqueOffsetRaw(int j, double v) {
     CD_INFO("(%d,%f)\n",j,v);
 
     //-- Check index within range

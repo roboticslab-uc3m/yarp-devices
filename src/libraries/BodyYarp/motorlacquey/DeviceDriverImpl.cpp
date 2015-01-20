@@ -1,9 +1,9 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MotorIpos.hpp"
+#include "MotorLacquey.hpp"
 
 // -----------------------------------------------------------------------------
-bool teo::MotorIpos::open(Searchable& config) {
+bool teo::MotorLacquey::open(Searchable& config) {
 
     this->canId = config.check("canId",0,"can bus ID").asInt();
     this->tr = config.check("tr",0,"reduction").asInt();
@@ -22,7 +22,7 @@ bool teo::MotorIpos::open(Searchable& config) {
 }
 
 // -----------------------------------------------------------------------------
-bool teo::MotorIpos::close() {
+bool teo::MotorLacquey::close() {
     CD_INFO("\n");
     return true;
 }
