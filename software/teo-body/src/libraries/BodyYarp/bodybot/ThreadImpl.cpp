@@ -13,7 +13,9 @@ void teo::BodyBot::run() {
         struct can_msg buffer;
 
         //-- read_timeout() returns the number read, -1 for errors or 0 for timeout or EOF.
+        CD_INFO("Before.\n");
         int ret = canDevice.read_timeout(&buffer,1);
+        CD_INFO("After.\n");
 
         //-- All debugging messages should be contained in read_timeout, so just loop again.
         if( ret <= 0 ) continue;
