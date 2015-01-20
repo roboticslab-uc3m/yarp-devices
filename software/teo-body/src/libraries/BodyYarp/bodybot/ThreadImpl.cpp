@@ -21,7 +21,7 @@ void teo::BodyBot::run() {
         int canId = buffer.id  & 0x7F;
 
         //-- Commenting next line as way too verbose, happens all the time.
-        CD_DEBUG("Read ok. %s\n", msgToStr(&buffer).c_str());
+        //CD_DEBUG("Read ok. %s\n", msgToStr(&buffer).c_str());
 
         std::map< int, int >::iterator idxFromCanIdFound = idxFromCanId.find(canId);
 
@@ -31,7 +31,7 @@ void teo::BodyBot::run() {
             continue;
         }
 
-        CD_DEBUG("--->%d\n",idxFromCanIdFound->second);
+        //CD_DEBUG("idxFromCanIdFound->second: %d\n",idxFromCanIdFound->second);
         iCanBusSharer[ idxFromCanIdFound->second ]->interpretMessage(&buffer);  //-- Check if false?
 
     }  //-- ends: while ( ! this->isStopping() ).
