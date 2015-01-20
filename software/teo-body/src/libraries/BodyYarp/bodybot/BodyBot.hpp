@@ -13,6 +13,7 @@
 #include <vector>
 #include <map>
 #include <list>
+#include <sstream>
 
 #include "hico_api.h"
 
