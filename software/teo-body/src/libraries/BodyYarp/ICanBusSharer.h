@@ -18,12 +18,6 @@ public:
 
     virtual bool setCanBusPtr(CanBusHico *canDevicePtr) = 0;
 
-    /**
-     * Interpret a can bus message.
-     * @return true/false.
-     */
-    virtual bool interpretMessage( can_msg * message) = 0;
-
     /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
     virtual bool start() = 0;
 
@@ -35,6 +29,12 @@ public:
 
     /** enable */
     virtual bool enable() = 0;
+
+    /**
+     * Interpret a can bus message.
+     * @return true/false.
+     */
+    virtual bool interpretMessage( can_msg * message) = 0;
 
 };
 
