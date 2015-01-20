@@ -138,8 +138,6 @@ bool teo::BodyBot::open(Searchable& config) {
 
     //-- Start the reading thread.
     this->Thread::start();
-    CD_INFO("Wait 1 second before start...\n")
-    yarp::os::Time::delay(1);
 
     return true;
 }
