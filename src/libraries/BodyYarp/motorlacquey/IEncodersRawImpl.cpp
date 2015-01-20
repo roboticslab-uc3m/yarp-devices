@@ -21,18 +21,7 @@ bool teo::MotorLacquey::setEncoderRaw(int j, double val) {  // encExposed = val;
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    //*************************************************************
-    uint8_t msg_setEncoder[]={0x23,0x81,0x20,0x00,0x00,0x00,0x00,0x00}; // "Set/Change the actual motor position"
-
-    int sendEnc = val * this->tr * 11.11112;  // Apply tr & convert units to encoder increments
-    memcpy(msg_setEncoder+4,&sendEnc,4);
-
-    if( ! send(0x600, 8, msg_setEncoder)){
-        CD_ERROR("Sent \"set encoder\". %s\n", msgToStr(0x600, 8, msg_setEncoder).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"set encoder\". %s\n", msgToStr(0x600, 8, msg_setEncoder).c_str() );
-    //*************************************************************
+    CD_WARNING("Not implemented yet.\n");
 
     return true;
 }
@@ -45,22 +34,9 @@ bool teo::MotorLacquey::getEncoderRaw(int j, double *v) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    //*************************************************************
-    uint8_t msg_read[]={0x40,0x64,0x60,0x00,0x00,0x00,0x00,0x00}; // Query position.
-    if( ! send( 0x600, 8, msg_read) )
-    {
-        CD_ERROR("Could not send \"read encoder\". %s\n", msgToStr(0x600, 8, msg_read).c_str() );
-        return false;
-    }
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    Time::delay(DELAY);  // Must delay as it will be from same driver.
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
     encoderReady.wait();
     *v = encoder;
     encoderReady.post();
-
-    //*************************************************************
 
     return true;
 }
