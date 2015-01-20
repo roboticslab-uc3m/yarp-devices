@@ -21,6 +21,8 @@ bool teo::BodyBot::open(Searchable& config) {
     Bottle refSpeeds = config.findGroup("refSpeeds").tail();  //-- e.g. 737.2798
     Bottle initPoss = config.findGroup("initPoss").tail();  //-- e.g. 0 0 0 45
 
+    Bottle types = config.findGroup("types").tail();  //-- e.g. 15
+
     //-- Initialize the CAN device (i.e. /dev/can0, set in DEFAULT_CAN_DEVICE).
     if( ! canDevice.init(canDevicePath, canBitrate) )
         return false;
@@ -39,7 +41,7 @@ bool teo::BodyBot::open(Searchable& config) {
     {
         //-- Create motor driver object with a pointer to the CAN device, its id and tr (these are locally stored parameters).
         Property options;
-        options.put("device","motoripos");
+        options.put("device",types.get(i).asString());  //-- "motoripos", "motorlackey"
         options.put("canId",ids.get(i).asInt());
         options.put("tr",trs.get(i).asInt());
         options.put("ptModeMs",ptModeMs);
