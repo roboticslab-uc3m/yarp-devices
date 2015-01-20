@@ -3,9 +3,12 @@
 #include "MotorIpos.hpp"
 
 // -----------------------------------------------------------------------------
+
 bool teo::MotorIpos::setCanBusPtr(CanBusHico *canDevicePtr) {
+
     this->canDevicePtr = canDevicePtr;
     CD_SUCCESS("Ok pointer to CAN bus device %d.\n",canId);
+
 }
 
 // -----------------------------------------------------------------------------
