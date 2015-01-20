@@ -119,6 +119,61 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
         } else if( (message->data[1]==0x7A)&&(message->data[2]==0x60) ) {  // Manual 607Ah
             CD_DEBUG("Got SDO ack \"position target\" from driver. %s\n",msgToStr(message).c_str());
             return true;
+        } else if( (message->data[1]==0x41)&&(message->data[2]==0x60) ) {  // Manual 6041h: Status word; Table 5.4 Bit Assignment in Status Word (also see 5.5)
+            CD_DEBUG("Got \"status word\" from driver. %s\n",msgToStr(message).c_str());
+
+            if(message->data[4] & 1){//0000 0001 (bit 0)
+                CD_DEBUG("\t-Ready to switch on.\n");
+            }
+            if(message->data[4] & 2){//0000 0010 (bit 1)
+                CD_DEBUG("\t-Switched on.\n");
+            }
+            if(message->data[4] & 4){//0000 0100 (bit 2)
+                CD_DEBUG("\t-Operation Enabled.\n");
+            }
+            if(message->data[4] & 8){//0000 1000 (bit 3)
+                CD_DEBUG("\t-Fault. If set, a fault condition is or was present in the drive.\n");
+            }
+            if(message->data[4] & 16){//0001 0000 (bit 4)
+                CD_DEBUG("\t-Motor supply voltage is present.\n");//true
+            } else {
+                CD_DEBUG("\t-Motor supply voltage is absent.\n");//false
+            }
+            if(!(message->data[4] & 32)){//0010 0000 (bit 5), negated.
+                CD_DEBUG("\t-Performing a quick stop.\n");
+            }
+            if(message->data[4] & 64){//0100 0000 (bit 6)
+                CD_DEBUG("\t-Switch on disabled.\n");
+            }
+            if(message->data[4] & 128){//1000 0000 (bit 7)
+                CD_DEBUG("\t-Warning. A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored.\n");
+            }
+            if(message->data[5] & 1){//(bit 8)
+                CD_DEBUG("\t-A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called.\n");
+            }
+            if(message->data[5] & 2){//(bit 9)
+                CD_DEBUG("\t-Remote: drive parameters may be modified via CAN and the drive will execute the command message.\n"); // true
+            } else {
+                CD_DEBUG("\t-Remote: drive is in local mode and will not execute the command message (only TML internal)."); // false
+            }
+            if(message->data[5] & 4){//(bit 10)
+                CD_DEBUG("\t-Target reached.\n");
+            }
+            if(message->data[5] & 8){//(bit 11)
+                CD_DEBUG("\t-Internal Limit Active.\n");
+            }
+            if(message->data[5] & 64){//(bit 14)
+                CD_DEBUG("\t-Last event set has ocurred.\n"); // true
+            } else {
+                CD_DEBUG("\t-No event set or the programmed event has not occurred yet.\n"); // false
+            }
+            if(message->data[5] & 128){//(bit 15)
+                CD_DEBUG("\t-Axis on. Power stage is enabled. Motor control is performed.\n"); // true
+            } else {
+                CD_DEBUG("\t-Axis off. Power stage is disabled. Motor control is not performed.\n"); // false
+            }
+
+            ////Much much more in Table 5.6
         }
         CD_DEBUG("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
         return false;
@@ -248,64 +303,6 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
     }
 
     //--------------- Debugged up to here -------------------------
-
-    if ((message->data[1]== 0x41) && (message->data[2]=0x60)) {  // Manual 6041h: Status word; Table 5.4 Bit Assignment in Status Word (also see 5.5)
-        CD_DEBUG("Got \"status word\" from driver. %s\n",msgToStr(message).c_str());
-
-        if(message->data[4] & 1){//0000 0001 (bit 0)
-            CD_DEBUG("\t-Ready to switch on.\n");
-        }
-        if(message->data[4] & 2){//0000 0010 (bit 1)
-            CD_DEBUG("\t-Switched on.\n");
-        }
-        if(message->data[4] & 4){//0000 0100 (bit 2)
-            CD_DEBUG("\t-Operation Enabled.\n");
-        }
-        if(message->data[4] & 8){//0000 1000 (bit 3)
-            CD_DEBUG("\t-Fault. If set, a fault condition is or was present in the drive.\n");
-        }
-        if(message->data[4] & 16){//0001 0000 (bit 4)
-            CD_DEBUG("\t-Motor supply voltage is present.\n");//true
-        } else {
-            CD_DEBUG("\t-Motor supply voltage is absent.\n");//false
-        }
-        if(!(message->data[4] & 32)){//0010 0000 (bit 5), negated.
-            CD_DEBUG("\t-Performing a quick stop.\n");
-        }
-        if(message->data[4] & 64){//0100 0000 (bit 6)
-            CD_DEBUG("\t-Switch on disabled.\n");
-        }
-        if(message->data[4] & 128){//1000 0000 (bit 7)
-            CD_DEBUG("\t-Warning. A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored.\n");
-        }
-        if(message->data[5] & 1){//(bit 8)
-            CD_DEBUG("\t-A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called.\n");
-        }
-        if(message->data[5] & 2){//(bit 9)
-            CD_DEBUG("\t-Remote: drive parameters may be modified via CAN and the drive will execute the command message.\n"); // true
-        } else {
-            CD_DEBUG("\t-Remote: drive is in local mode and will not execute the command message (only TML internal)."); // false
-        }
-        if(message->data[5] & 4){//(bit 10)
-            CD_DEBUG("\t-Target reached.\n");
-        }
-        if(message->data[5] & 8){//(bit 11)
-            CD_DEBUG("\t-Internal Limit Active.\n");
-        }
-        if(message->data[5] & 64){//(bit 14)
-            CD_DEBUG("\t-Last event set has ocurred.\n"); // true
-        } else {
-            CD_DEBUG("\t-No event set or the programmed event has not occurred yet.\n"); // false
-        }
-        if(message->data[5] & 128){//(bit 15)
-            CD_DEBUG("\t-Axis on. Power stage is enabled. Motor control is performed.\n"); // true
-        } else {
-            CD_DEBUG("\t-Axis off. Power stage is disabled. Motor control is not performed.\n"); // false
-        }
-
-        ////Much much more in Table 5.6
-
-    }
 
     if( (message->data[0]==0x01)&&(message->data[1]==0xFF)&&(message->data[2]==0x01)&&(message->data[4]==0x20) )
     {
