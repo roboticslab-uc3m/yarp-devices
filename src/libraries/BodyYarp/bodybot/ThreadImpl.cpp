@@ -13,17 +13,15 @@ void teo::BodyBot::run() {
         struct can_msg buffer;
 
         //-- read_timeout() returns the number read, -1 for errors or 0 for timeout or EOF.
-        CD_INFO("Before.\n");
         int ret = canDevice.read_timeout(&buffer,1);
 
         //-- All debugging messages should be contained in read_timeout, so just loop again.
         if( ret <= 0 ) continue;
-        CD_INFO("After.\n");
 
         int canId = buffer.id  & 0x7F;
 
         //-- Commenting next line as way too verbose, happens all the time.
-        //CD_DEBUG("Read from fullCanId: %d (%d after mask)\n", buffer.id, canId);
+        CD_DEBUG("Read from fullCanId: %d (%d after mask)\n", buffer.id, canId);
 
         std::map< int, int >::iterator idxFromCanIdFound = idxFromCanId.find(canId);
 
