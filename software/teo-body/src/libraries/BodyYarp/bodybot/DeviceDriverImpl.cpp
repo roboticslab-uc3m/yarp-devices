@@ -48,7 +48,8 @@ bool teo::BodyBot::open(Searchable& config) {
         PolyDriver* driver = new PolyDriver(options);
 
         //-- Fill a map entry ( drivers.size() if before push_back, otherwise do drivers.size()-1).
-        idxFromCanId[ ids.get(i).asInt() ] = drivers.size();
+        //-- Just "i" if resize already performed.
+        idxFromCanId[ ids.get(i).asInt() ] = i;
 
         //-- Push the motor driver on to the vectors.
         drivers[i] = driver;
