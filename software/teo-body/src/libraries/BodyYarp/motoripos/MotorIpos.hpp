@@ -258,7 +258,7 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
         double lastUsage;
 
         double encoder;
-
+        uint32_t encoderTimestamp;
         yarp::os::Semaphore encoderReady;
 
         /** A helper function to display CAN messages. */

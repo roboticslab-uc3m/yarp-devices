@@ -113,6 +113,7 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
             memcpy(&got, message->data+4,4);
             encoderReady.wait();
             encoder =  got / ( 11.11112 * this->tr );
+            encoderTimestamp = message->ts;
             encoderReady.post();
             return true;
         } else if( (message->data[1]==0x7A)&&(message->data[2]==0x60) ) {  // Manual 607Ah
