@@ -25,7 +25,7 @@ namespace teo
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
 class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControlModeRaw, public IEncodersTimedRaw,
         public IPositionControlRaw, public IPositionDirectRaw, public IVelocityControlRaw, public ITorqueControlRaw,
-        public ICanBusSharer, public Thread {
+        public ICanBusSharer {
 
     public:
 
@@ -222,9 +222,6 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
             CD_ERROR("\n");
             return false;
         }
-
-        // -------- Thread declaration. Implementation in MotorIpos.cpp --------
-        virtual void run();
 
     protected:
 
