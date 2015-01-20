@@ -92,7 +92,7 @@ bool teo::MotorIpos::enable() {
     struct can_msg reply;
     while(canDevicePtr->read_timeout(&reply,20))
     {
-        CD_SUCCESS("Got response to \"enable\" from canId: %d.\n",reply.id & 0x7F);
+        CD_SUCCESS("Got response to \"enable\". %s\n", msgToStr(&reply).c_str() );
     }
     //*************************************************************
 
