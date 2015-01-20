@@ -74,8 +74,6 @@ bool teo::MotorIpos::setPositionDirectModeRaw() {
         return false;
     //*************************************************************
 
-    Time::delay(1);
-
     return true;
 }
 

@@ -10,6 +10,9 @@ bool teo::BodyBot::setPositionDirectMode() {
     bool ok = true;
     for(unsigned int i=0; i < drivers.size(); i++)
         ok &= iPositionDirectRaw[i]->setPositionDirectModeRaw();  // No existing single mode.
+
+    Time::delay(1);  //-- Seems like a "must".
+
     return ok;
 }
 
