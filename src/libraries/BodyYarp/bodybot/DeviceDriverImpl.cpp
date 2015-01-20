@@ -25,9 +25,6 @@ bool teo::BodyBot::open(Searchable& config) {
     if( ! canDevice.init(canDevicePath, canBitrate) )
         return false;
 
-    //-- Start the reading thread.
-    this->Thread::start();
-
     //-- Populate the motor drivers vector.
     drivers.resize( ids.size() );
     iControlLimitsRaw.resize( drivers.size() );
@@ -97,11 +94,36 @@ bool teo::BodyBot::open(Searchable& config) {
         Time::delay(0.2);
         std::vector<int> tmp(drivers.size());
         getControlModes(&(tmp[0]));
-
-        iCanBusSharer[i]->enableRutine();
     }
 
+    CD_INFO("Wait 1 second before start...\n")
     yarp::os::Time::delay(1);
+
+    //-- Initialize the drivers: start (0.1) ready (0.1) on (2) enable. Wait between each step.
+    for(int i=0; i<drivers.size(); i++)
+    {
+        if( ! iCanBusSharer[i]->start() )
+            return false;
+    }
+    yarp::os::Time::delay(0.1);
+    for(int i=0; i<drivers.size(); i++)
+    {
+        if( ! iCanBusSharer[i]->readyToSwitchOn() )
+            return false;
+    }
+    yarp::os::Time::delay(0.1);
+    for(int i=0; i<drivers.size(); i++)
+    {
+        if( ! iCanBusSharer[i]->switchOn() )
+            return false;
+    }
+    yarp::os::Time::delay(2);
+    for(int i=0; i<drivers.size(); i++)
+    {
+        if( ! iCanBusSharer[i]->enable() )
+            return false;
+    }
+
     if( ! config.findGroup("initPoss").isNull() ) {
         CD_DEBUG("Setting initPoss.\n");
         for(int i=0; i<initPoss.size(); i++)
@@ -110,6 +132,9 @@ bool teo::BodyBot::open(Searchable& config) {
                 return false;
         }
     }
+
+    //-- Start the reading thread.
+    this->Thread::start();
 
     return true;
 }
@@ -121,11 +146,13 @@ bool teo::BodyBot::close() {
     //-- Stop the read thread.
     this->Thread::stop();
 
-    //-- Check the status of each driver.
+    //-- Disable and shutdown the physical drivers.
     bool ok = true;
     for(int i=0; i<drivers.size(); i++)
     {
-        ok &= iCanBusSharer[i]->shutdownRutine();
+        ok &= iCanBusSharer[i]->switchOn();  //-- "switch on" also acts as "disable".
+
+        ok &= iCanBusSharer[i]->readyToSwitchOn();  //-- "ready to switch on" also acts as "shutdown".
     }
 
     //-- Delete the driver objects.

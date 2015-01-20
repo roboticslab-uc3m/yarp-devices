@@ -24,9 +24,17 @@ public:
      */
     virtual bool interpretMessage( can_msg * message) = 0;
 
-    virtual bool enableRutine() = 0;
+    /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
+    virtual bool start() = 0;
 
-    virtual bool shutdownRutine() = 0;
+    /** "ready to switch on", also acts as "shutdown" */
+    virtual bool readyToSwitchOn() = 0;
+
+    /** "switch on", also acts as "disable operation" */
+    virtual bool switchOn() = 0;
+
+    /** enable */
+    virtual bool enable() = 0;
 
 };
 

@@ -38,10 +38,16 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
         virtual bool close();
 
         //  --------- ICanBusSharer Declarations. Implementation in MotorIpos.cpp ---------
+        virtual bool setCanBusPtr(CanBusHico *canDevicePtr);        
         virtual bool interpretMessage( can_msg * message);
-        virtual bool setCanBusPtr(CanBusHico *canDevicePtr);
-        virtual bool enableRutine();
-        virtual bool shutdownRutine();
+        /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
+        virtual bool start();
+        /** "ready to switch on", also acts as "shutdown" */
+        virtual bool readyToSwitchOn();
+        /** "switch on", also acts as "disable operation" */
+        virtual bool switchOn();
+        /** enable */
+        virtual bool enable();
 
         //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
         virtual bool setLimitsRaw(int axis, double min, double max);
@@ -235,15 +241,6 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
          */
         bool send(uint32_t cob, uint16_t len, uint8_t * msgData);
 
-        /** "start". All starting functions have to do with:
-         * Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
-        bool start();
-        /** "ready to switch on", also acts as "shutdown" */
-        bool readyToSwitchOn();
-        /** "switch on", also acts as "disable operation" */
-        bool switchOn();
-        /** enable */
-        bool enable();
 
         /** pt-related **/
         int ptPointCounter;
