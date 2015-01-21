@@ -119,6 +119,9 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
         } else if( (message->data[1]==0x7A)&&(message->data[2]==0x60) ) {  // Manual 607Ah
             CD_DEBUG("Got SDO ack \"position target\" from driver. %s\n",msgToStr(message).c_str());
             return true;
+        } else if( (message->data[1]==0x60)&&(message->data[2]==0x60) ) {  // Manual 6060h should behave like 6061h, but ack always says mode 0.
+            CD_DEBUG("Got SDO ack \"modes of operation\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
         } else if( (message->data[1]==0x61)&&(message->data[2]==0x60) ) {  // Manual 6060h/6061h
             CD_DEBUG("Got SDO \"modes of operation display\" from driver. %s\n",msgToStr(message).c_str());
             int got;
