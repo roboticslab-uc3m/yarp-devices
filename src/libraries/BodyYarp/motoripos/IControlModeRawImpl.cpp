@@ -178,7 +178,7 @@ bool teo::MotorIpos::getControlModeRaw(int j, int *mode) {
 
     //-- Y ya de paso, por qué no...
     //*************************************************************
-    uint8_t msgError[] = {0x40,0x01,0x20,0x00,0x00,0x00,0x00,0x00}; // Manual 2000h: Motion Error Register
+    uint8_t msgError[] = {0x40,0x00,0x20,0x00,0x00,0x00,0x00,0x00}; // Manual 2000h: Motion Error Register
     if( ! send( 0x600, 8, msgError))
     {
         CD_ERROR("Could not send Motion Error Register query. %s\n", msgToStr(0x600, 8, msgError).c_str() );
