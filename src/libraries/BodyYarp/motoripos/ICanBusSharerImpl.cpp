@@ -184,7 +184,9 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
                 CD_DEBUG("\t-Remote: drive is in local mode and will not execute the command message (only TML internal)."); // false
             }
             if(message->data[5] & 4){//(bit 10)
-                CD_DEBUG("\t-Target reached.\n");
+                CD_DEBUG("\t-Target reached.\n");  // true
+            } else {
+                CD_DEBUG("\t-Target not reached.\n");  // false (improvised, not in manual, but reasonable).
             }
             if(message->data[5] & 8){//(bit 11)
                 CD_DEBUG("\t-Internal Limit Active.\n");
@@ -403,28 +405,11 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
         return true;
     }
 
-    if( (message->data[1]==0x41)&&(message->data[2]=0x60) )
-    {
-        if(message->data[5] & 4) {
-            targetReached = true;
-            CD_DEBUG("Target reached. canId: %d.\n",canId);
-        }
-        else
-        {
-            targetReached = false;
-            CD_DEBUG("Target NOT reached. canId: %d.\n",canId);
-        }
-        return true;
-    }
-
     if (message->data[0] == 0x01 && message->data[1] == 0xFF)
     {
         CD_DEBUG("PVT control message. canId: %d.\n",canId);
         return true;
     }
-
-    //-- no meaning in next line
-    //if (message->id>=0x80 && message->id<0x100) return true;
 
     CD_WARNING("Unknown message: %s\n", msgToStr(message).c_str());
 
