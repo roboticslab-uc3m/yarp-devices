@@ -21,7 +21,7 @@ bool teo::MotorLacquey::setEncoderRaw(int j, double val) {  // encExposed = val;
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motorlacquey).\n");
 
     return true;
 }
@@ -49,7 +49,7 @@ bool teo::MotorLacquey::getEncoderSpeedRaw(int j, double *sp) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motorlacquey).\n");
 
     return true;
 }
@@ -62,7 +62,7 @@ bool teo::MotorLacquey::getEncoderAccelerationRaw(int j, double *spds) {
     //-- Check index within range
     if ( j = 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motorlacquey).\n");
 
     return true;
 }

@@ -73,7 +73,7 @@ bool teo::MotorIpos::getEncoderSpeedRaw(int j, double *sp) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }
@@ -86,7 +86,7 @@ bool teo::MotorIpos::getEncoderAccelerationRaw(int j, double *spds) {
     //-- Check index within range
     if ( j = 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }

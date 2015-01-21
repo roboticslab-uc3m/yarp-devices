@@ -215,7 +215,7 @@ bool teo::MotorIpos::stopRaw(int j) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }

@@ -97,7 +97,7 @@ bool teo::MotorIpos::setImpedancePositionModeRaw(int j) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }
@@ -110,7 +110,7 @@ bool teo::MotorIpos::setImpedanceVelocityModeRaw(int j) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }
@@ -123,7 +123,7 @@ bool teo::MotorIpos::setOpenLoopModeRaw(int j) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }
@@ -156,7 +156,9 @@ bool teo::MotorIpos::getControlModeRaw(int j, int *mode) {
     CD_SUCCESS("Sent modes of operation. %s.\n", msgToStr(0x600, 8, msgOperation).c_str() );
     //*************************************************************
 
-    CD_WARNING("Not implemented yet.\n");
+    getModeReady.wait();
+    *mode = getMode;
+    getModeReady.post();
 
     return true;
 }

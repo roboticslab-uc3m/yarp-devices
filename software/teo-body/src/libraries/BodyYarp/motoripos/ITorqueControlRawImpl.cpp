@@ -10,7 +10,7 @@ bool teo::MotorIpos::getRefTorqueRaw(int j, double *t) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }
@@ -49,7 +49,7 @@ bool teo::MotorIpos::getBemfParamRaw(int j, double *bemf) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }
@@ -62,7 +62,7 @@ bool teo::MotorIpos::setBemfParamRaw(int j, double bemf) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }
@@ -75,7 +75,7 @@ bool teo::MotorIpos::setTorquePidRaw(int j, const Pid &pid) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }
@@ -129,7 +129,7 @@ bool teo::MotorIpos::getTorqueRangeRaw(int j, double *min, double *max) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }
@@ -142,7 +142,7 @@ bool teo::MotorIpos::setTorqueErrorLimitRaw(int j, double limit) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }
@@ -155,7 +155,7 @@ bool teo::MotorIpos::getTorqueErrorRaw(int j, double *err) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }
@@ -168,7 +168,7 @@ bool teo::MotorIpos::getTorquePidOutputRaw(int j, double *out) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }
@@ -181,7 +181,7 @@ bool teo::MotorIpos::getTorquePidRaw(int j, Pid *pid) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }
@@ -194,7 +194,7 @@ bool teo::MotorIpos::getTorqueErrorLimitRaw(int j, double *limit) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }
@@ -207,7 +207,7 @@ bool teo::MotorIpos::resetTorquePidRaw(int j) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }
@@ -220,7 +220,7 @@ bool teo::MotorIpos::disableTorquePidRaw(int j) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }
@@ -233,7 +233,7 @@ bool teo::MotorIpos::enableTorquePidRaw(int j) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }
@@ -246,7 +246,7 @@ bool teo::MotorIpos::setTorqueOffsetRaw(int j, double v) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet.\n");
+    CD_WARNING("Not implemented yet (motoripos).\n");
 
     return true;
 }
