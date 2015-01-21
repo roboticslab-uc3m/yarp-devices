@@ -42,9 +42,6 @@ class PlaybackManipulation : public RFModule {
         yarp::dev::PolyDriver leftArmDevice;
         yarp::dev::PolyDriver rightArmDevice;
 
-        yarp::dev::PolyDriver leftGripperDevice;
-        yarp::dev::PolyDriver rightGripperDevice;
-
         virtual double getPeriod() {return 3.0;}
         virtual bool updateModule();
         virtual bool close();
