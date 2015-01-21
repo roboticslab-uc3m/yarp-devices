@@ -100,7 +100,7 @@ bool teo::BodyBot::open(Searchable& config) {
         std::vector<int> tmp(drivers.size());
         getControlModes(&(tmp[0]));
     }
-    //-- Start the reading thread.
+    //-- Stop the reading thread.
     this->Thread::stop();
 
     CD_INFO("Wait 1 second before start...\n")
