@@ -125,14 +125,29 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
             memcpy(&got, message->data+4,4);
             if(-5==got) {
                 CD_DEBUG("\t-iPOS specific: External Reference Torque Mode.\n");
+                getModeReady.wait();
+                    getMode = VOCAB_TORQUE_MODE;
+                getModeReady.post();
             } else if(-4==got) {
                 CD_DEBUG("\t-iPOS specific: External Reference Speed Mode.\n");
+                getModeReady.wait();
+                    getMode = 0;
+                getModeReady.post();
             } else if(-3==got) {
                 CD_DEBUG("\t-iPOS specific: External Reference Position Mode.\n");
+                getModeReady.wait();
+                    getMode = 0;
+                getModeReady.post();
             } else if(-2==got) {
                 CD_DEBUG("\t-iPOS specific: Electronic Camming Position Mode.\n");
+                getModeReady.wait();
+                    getMode = 0;
+                getModeReady.post();
             } else if(-1==got) {
                 CD_DEBUG("\t-iPOS specific: Electronic Gearing Position Mode.\n");
+                getModeReady.wait();
+                    getMode = 0;
+                getModeReady.post();
             } else if(1==got) {
                 CD_DEBUG("\t-Profile Position Mode.\n");
                 getModeReady.wait();
@@ -140,12 +155,24 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
                 getModeReady.post();
             } else if(3==got) {
                 CD_DEBUG("\t-Profile Velocity Mode.\n");
+                getModeReady.wait();
+                    getMode = VOCAB_VELOCITY_MODE;
+                getModeReady.post();
             } else if(6==got) {
                 CD_DEBUG("\t-Homing Mode.\n");
+                getModeReady.wait();
+                    getMode = 0;
+                getModeReady.post();
             } else if(7==got) {
                 CD_DEBUG("\t-Interpolated Position Mode.\n");
+                getModeReady.wait();
+                    getMode = 0;
+                getModeReady.post();
             } else {
                 CD_ERROR_NO_HEADER("MODE %d NOT SPECIFIED IN MANUAL.\n",got);
+                getModeReady.wait();
+                    getMode = 0;
+                getModeReady.post();
                 return false;
             }
             return true;
