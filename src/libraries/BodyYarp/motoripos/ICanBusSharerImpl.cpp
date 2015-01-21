@@ -123,6 +123,9 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
             CD_DEBUG("Got SDO \"modes of operation\" from driver. %s\n",msgToStr(message).c_str());
             int got;
             memcpy(&got, message->data+4,4);
+            getModeReady.wait();
+                getMode = got;
+            getModeReady.post();
             if(-5==got) {
                 CD_DEBUG("\t-iPOS specific: External Reference Torque Mode.\n");
             } else if(-4==got) {
