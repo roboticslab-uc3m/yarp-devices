@@ -198,6 +198,17 @@ bool teo::MotorIpos::getControlModeRaw(int j, int *mode) {
     CD_SUCCESS("Sent Detailed Error Register query. %s\n", msgToStr(0x600, 8, msgErrorDetail).c_str() );
     //*************************************************************
 
+    //-- Y...
+    //*************************************************************
+    uint8_t msgSw[] = {0x40,0x0A,0x10,0x00,0x00,0x00,0x00,0x00}; // Manual 100Ah: Manufacturer Software Version
+    if( ! send( 0x600, 8, msgSw))
+    {
+        CD_ERROR("Could not send Manufacturer Software Version query. %s\n", msgToStr(0x600, 8, msgSw).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent Manufacturer Software Version query. %s\n", msgToStr(0x600, 8, msgSw).c_str() );
+    //*************************************************************
+
     return true;
 }
 
