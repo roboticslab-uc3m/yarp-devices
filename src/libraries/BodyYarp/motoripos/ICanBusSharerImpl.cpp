@@ -432,6 +432,9 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
                 CD_DEBUG("\t**Self check error.\n");
             }
             return true;
+        } else if( (message->data[1]==0x83)&&(message->data[2]==0x60) ) {  // Manual 6083h: Profile acceleration
+            CD_DEBUG("Got SDO ack \"posmode_acc\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
         }
         CD_DEBUG("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
         return false;

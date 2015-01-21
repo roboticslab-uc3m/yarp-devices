@@ -162,7 +162,7 @@ bool teo::MotorIpos::setRefAccelerationRaw(int j, double acc) {
     if ( j != 0 ) return false;
 
     //*************************************************************
-    uint8_t msg_posmode_acc[]={0x23,0x83,0x60,0x00,0x00,0x00,0x00,0x00};
+    uint8_t msg_posmode_acc[]={0x23,0x83,0x60,0x00,0x00,0x00,0x00,0x00};  // Manual 6083h: Profile acceleration
 
     int sendRefAcc = acc * this->tr * 11.11112;  // Appply tr & convert units to encoder increments
     memcpy(msg_posmode_acc+4,&sendRefAcc,4);
