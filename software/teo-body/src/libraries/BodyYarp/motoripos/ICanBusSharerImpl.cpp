@@ -292,49 +292,49 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
             }
             ////Much much more in Table 5.6
             if(message->data[6] & 1){//(bit 16)
-                CD_DEBUG("\t-Drive/motor initialization performed.\n");
+                CD_DEBUG("\t*Drive/motor initialization performed.\n");
             }
             if(message->data[6] & 2){//(bit 17)
-                CD_DEBUG("\t-Position trigger 1 reached.\n");
+                CD_DEBUG("\t*Position trigger 1 reached.\n");
             }
             if(message->data[6] & 4){//(bit 18)
-                CD_DEBUG("\t-Position trigger 2 reached.\n");
+                CD_DEBUG("\t*Position trigger 2 reached.\n");
             }
             if(message->data[6] & 8){//(bit 19)
-                CD_DEBUG("\t-Position trigger 3 reached.\n");
+                CD_DEBUG("\t*Position trigger 3 reached.\n");
             }
             if(message->data[6] & 16){//(bit 20)
-                CD_DEBUG("\t-Position trigger 4 reached.\n");
+                CD_DEBUG("\t*Position trigger 4 reached.\n");
             }
             if(message->data[6] & 32){//(bit 21)
-                CD_DEBUG("\t-AUTORUN mode enabled.\n");
+                CD_DEBUG("\t*AUTORUN mode enabled.\n");
             }
             if(message->data[6] & 64){//(bit 22)
-                CD_DEBUG("\t-Limit switch positive event / interrupt triggered.\n");
+                CD_DEBUG("\t*Limit switch positive event / interrupt triggered.\n");
             }
             if(message->data[6] & 128){//(bit 23)
-                CD_DEBUG("\t-Limit switch negative event / interrupt triggered.\n");
+                CD_DEBUG("\t*Limit switch negative event / interrupt triggered.\n");
             }
             if(message->data[7] & 1){//(bit 24)
-                CD_DEBUG("\t-Capture event/interrupt triggered.\n");
+                CD_DEBUG("\t*Capture event/interrupt triggered.\n");
             }
             if(message->data[7] & 2){//(bit 25)
-                CD_DEBUG("\t-Target command reached.\n");
+                CD_DEBUG("\t*Target command reached.\n");
             }
             if(message->data[7] & 4){//(bit 26)
-                CD_DEBUG("\t-Motor I2t protection warning level reached.\n");
+                CD_DEBUG("\t*Motor I2t protection warning level reached.\n");
             }
             if(message->data[7] & 8){//(bit 27)
-                CD_DEBUG("\t-Drive I2t protection warning level reached.\n");
+                CD_DEBUG("\t*Drive I2t protection warning level reached.\n");
             }
             if(message->data[7] & 16){//(bit 28)
-                CD_DEBUG("\t-Gear ratio in electronic gearing mode reached.\n");
+                CD_DEBUG("\t*Gear ratio in electronic gearing mode reached.\n");
             }
             if(message->data[7] & 64){//(bit 30)
-                CD_DEBUG("\t-Reference position in absolute electronic camming mode reached.\n");
+                CD_DEBUG("\t*Reference position in absolute electronic camming mode reached.\n");
             }
             if(message->data[7] & 128){//(bit 31)
-                CD_DEBUG("\t-Drive/motor in fault status.\n");
+                CD_DEBUG("\t*Drive/motor in fault status.\n");
             }
             return true;
         }
