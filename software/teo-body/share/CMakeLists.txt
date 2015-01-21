@@ -12,6 +12,7 @@ yarp_configure_external_installation(teo-body)
 
 add_subdirectory(testBodyBot)
 
+add_subdirectory(manipulation)
 add_subdirectory(launchManipulation)
 add_subdirectory(playbackManipulation)
 add_subdirectory(recordManipulation)
