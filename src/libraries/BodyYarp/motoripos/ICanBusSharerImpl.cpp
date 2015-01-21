@@ -123,9 +123,6 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
             CD_DEBUG("Got SDO \"modes of operation\" from driver. %s\n",msgToStr(message).c_str());
             int got;
             memcpy(&got, message->data+4,4);
-            getModeReady.wait();
-                getMode = got;
-            getModeReady.post();
             if(-5==got) {
                 CD_DEBUG("\t-iPOS specific: External Reference Torque Mode.\n");
             } else if(-4==got) {
@@ -138,6 +135,9 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
                 CD_DEBUG("\t-iPOS specific: Electronic Gearing Position Mode.\n");
             } else if(1==got) {
                 CD_DEBUG("\t-Profile Position Mode.\n");
+                getModeReady.wait();
+                    getMode = VOCAB_POSITION_MODE;
+                getModeReady.post();
             } else if(3==got) {
                 CD_DEBUG("\t-Profile Velocity Mode.\n");
             } else if(6==got) {

@@ -76,7 +76,7 @@ bool teo::MotorLacquey::getControlModeRaw(int j, int *mode) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    *mode = 0;
+    *mode = VOCAB_POSITION_MODE;
 
     return true;
 }
