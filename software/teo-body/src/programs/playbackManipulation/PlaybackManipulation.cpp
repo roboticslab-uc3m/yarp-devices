@@ -108,19 +108,6 @@ bool PlaybackManipulation::configure(ResourceFinder &rf) {
     CD_SUCCESS("Obtained rightArmEncs.\n");
 
 
-    if ( ! leftGripperDevice.view( playbackThread.leftGripperPos ) ) {
-        CD_ERROR("Could not obtain leftGripperPos.\n");
-        return false;
-    }
-    CD_SUCCESS("Obtained leftGripperPos.\n");
-
-    if ( ! rightGripperDevice.view( playbackThread.rightGripperPos ) ) {
-        CD_ERROR("Could not obtain rightGripperPos.\n");
-        return false;
-    }
-    CD_SUCCESS("Obtained rightGripperPos.\n");
-
-
     //-- Do stuff.
     playbackThread.leftArmPos->getAxes( &(playbackThread.leftArmNumMotors) );
     playbackThread.rightArmPos->getAxes( &(playbackThread.rightArmNumMotors) );
@@ -174,9 +161,6 @@ bool PlaybackManipulation::close() {
 
     leftArmDevice.close();
     rightArmDevice.close();
-
-    leftGripperDevice.close();
-    rightGripperDevice.close();
 
     playbackThread.ifs.close();
 
