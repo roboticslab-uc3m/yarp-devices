@@ -8,14 +8,15 @@ LaunchManipulation::LaunchManipulation() { }
 /************************************************************************/
 bool LaunchManipulation::configure(ResourceFinder &rf) {
 
+    //-- left arm --
     std::string leftArmIni = rf.findFileByName("leftArm.ini");
 
     Property leftArmOptions;
     if (! leftArmOptions.fromConfigFile(leftArmIni) ) {  //-- Put first because defaults to wiping out.
-        CD_ERROR("Could not open %s.\n",leftArmIni.c_str());
+        CD_ERROR("Could not configure from \"leftArm.ini\".\n");
         return false;
     }
-    CD_SUCCESS("Opened %s.\n",leftArmIni.c_str());
+    CD_SUCCESS("Configured left arm from  %s.\n",leftArmIni.c_str());
     leftArmOptions.put("name","/teo/leftArm");
     leftArmOptions.put("device","controlboard");
     leftArmOptions.put("subdevice","bodybot");
@@ -30,14 +31,15 @@ bool LaunchManipulation::configure(ResourceFinder &rf) {
         return false;
     }
 
+    //-- right arm --
     std::string rightArmIni = rf.findFileByName("rightArm.ini");
 
     Property rightArmOptions;
     if (! rightArmOptions.fromConfigFile(rightArmIni) ) {  //-- Put first because defaults to wiping out.
-        CD_ERROR("Could not open %s.\n",rightArmIni.c_str());
+        CD_ERROR("Could not configure from \"rightArm.ini\".\n");
         return false;
     }
-    CD_SUCCESS("Opened %s.\n",rightArmIni.c_str());
+    CD_SUCCESS("Configured right arm from %s.\n",rightArmIni.c_str());
     rightArmOptions.put("name","/teo/rightArm");
     rightArmOptions.put("device","controlboard");
     rightArmOptions.put("subdevice","bodybot");
