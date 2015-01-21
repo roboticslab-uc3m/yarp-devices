@@ -17,9 +17,9 @@ project(TEO-BODY)
 option(ENABLE_BodyYarp "Choose if you want to compile BodyYarp" TRUE)
 
 ### options: cpp modules
-option(ENABLE_launchManipulation "Choose if you want to compile launchManipulation" FALSE)
-option(ENABLE_recordManipulation "Choose if you want to compile recordManipulation" FALSE)
-option(ENABLE_playbackManipulation "Choose if you want to compile playbackManipulation" FALSE)
+option(ENABLE_launchManipulation "Choose if you want to compile launchManipulation" TRUE)
+option(ENABLE_recordManipulation "Choose if you want to compile recordManipulation" TRUE)
+option(ENABLE_playbackManipulation "Choose if you want to compile playbackManipulation" TRUE)
 
 option(ENABLE_launchLocomotion "Choose if you want to compile launchLocomotion" FALSE)
 option(ENABLE_recordLocomotion "Choose if you want to compile recordLocomotion" FALSE)
@@ -27,6 +27,12 @@ option(ENABLE_playbackLocomotion "Choose if you want to compile playbackLocomoti
 
 option(ENABLE_recordLeftManipulation "Choose if you want to compile recordLeftManipulation" FALSE)
 option(ENABLE_playbackLeftManipulation "Choose if you want to compile playbackLeftManipulation" FALSE)
+
+### options: for default
+option(ENABLE_BodyYarp_bodybot "Enable/disable compilation of BodyYarp_bodybot" TRUE)
+option(ENABLE_BodyYarp_motoripos "Enable/disable compilation of BodyYarp_motoripos" TRUE)
+option(ENABLE_BodyYarp_motorlacquey "Enable/disable compilation of BodyYarp_motorlacquey" TRUE)
+
 
 if(MSVC)
   MESSAGE(STATUS "Running on windows")    

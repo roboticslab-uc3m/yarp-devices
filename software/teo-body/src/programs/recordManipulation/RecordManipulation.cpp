@@ -22,7 +22,7 @@ bool RecordManipulation::configure(yarp::os::ResourceFinder &rf) {
     CD_SUCCESS("Opened file: %s.\n",fileName.c_str());
 
     //-- left arm --
-    std::string leftArmIni = rf.findFileByName("leftArm.ini");
+    std::string leftArmIni = rf.findFileByName("../manipulation/leftArm.ini");
 
     yarp::os::Property leftArmOptions;
     if (! leftArmOptions.fromConfigFile(leftArmIni) ) {  //-- Put first because defaults to wiping out.
@@ -44,7 +44,7 @@ bool RecordManipulation::configure(yarp::os::ResourceFinder &rf) {
     }
 
     //-- right arm --
-    std::string rightArmIni = rf.findFileByName("rightArm.ini");
+    std::string rightArmIni = rf.findFileByName("../manipulation/rightArm.ini");
 
     yarp::os::Property rightArmOptions;
     if (! rightArmOptions.fromConfigFile(rightArmIni) ) {  //-- Put first because defaults to wiping out.
