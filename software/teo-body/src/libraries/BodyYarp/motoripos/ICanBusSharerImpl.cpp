@@ -172,7 +172,7 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
                     getMode = 0;
                 getModeReady.post();
             } else {
-                CD_ERROR_NO_HEADER("Mode \"%d\" not specified in manual, may be in Fault mode.\n",got);
+                CD_ERROR_NO_HEADER("\t-Mode \"%d\" not specified in manual, may be in Fault mode.\n",got);
                 getModeReady.wait();
                     getMode = 0;
                 getModeReady.post();
@@ -266,7 +266,7 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
                 CD_DEBUG("\t*Over current. Set when protection is triggered.\n");
             }
             if(message->data[5] & 2){//(bit 9)
-                CD_DEBUG("\t*I2T protection. Set when protection is triggered.\n");
+                CD_DEBUG("\t*I2t protection. Set when protection is triggered.\n");
             }
             if(message->data[5] & 4){//(bit 10)
                 CD_DEBUG("\t*Over temperature motor. Set when protection is triggered.\n");
