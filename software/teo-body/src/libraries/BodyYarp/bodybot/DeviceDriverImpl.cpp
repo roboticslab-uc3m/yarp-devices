@@ -97,8 +97,8 @@ bool teo::BodyBot::open(Searchable& config) {
     for(int i=0; i<drivers.size(); i++)
     {
         Time::delay(0.2);
-        std::vector<int> tmp(drivers.size());
-        getControlModes(&(tmp[0]));
+        std::vector<int> tmp( drivers.size() );
+        getControlModes( tmp.data() );
     }
     //-- Stop the reading thread.
     this->Thread::stop();
