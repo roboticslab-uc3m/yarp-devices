@@ -237,6 +237,55 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
             return true;
         } else if( (message->data[1]==0x00)&&(message->data[2]==0x20) ) {  // Manual 2000h: Motion Error Register
             CD_DEBUG("Got SDO ack \"Motion Error Register\" from driver. %s\n",msgToStr(message).c_str());
+
+            if(message->data[4] & 1){//0000 0001 (bit 0)
+                CD_DEBUG("\t-CAN error. Set when CAN controller is in error mode.\n");
+            }
+            if(message->data[4] & 2){//0000 0010 (bit 1)
+                CD_DEBUG("\t-Short-circuit. Set when protection is triggered.\n");
+            }
+            if(message->data[4] & 4){//0000 0100 (bit 2)
+                CD_DEBUG("\t-Invalid setup data. Set when the EEPROM stored setup data is not valid or not present.\n");
+            }
+            if(message->data[4] & 8){//0000 1000 (bit 3)
+                CD_DEBUG("\t-Control error (position/speed error too big). Set when protection is triggered.\n");
+            }
+            if(message->data[4] & 16){//0001 0000 (bit 4)
+                CD_DEBUG("\t-Communication error. Set when protection is triggered.\n");//true
+            }
+            if(message->data[4] & 32){//0010 0000 (bit 5)
+                CD_DEBUG("\t-Motor position wraps around. Set when protection is triggered.\n");
+            }
+            if(message->data[4] & 64){//0100 0000 (bit 6)
+                CD_DEBUG("\t-Positive limit switch active. Set when LSP input is in active state.\n");
+            }
+            if(message->data[4] & 128){//1000 0000 (bit 7)
+                CD_DEBUG("\t-Negative limit switch active. Set when LSN input is in active state.\n");
+            }
+            if(message->data[5] & 1){//(bit 8)
+                CD_DEBUG("\t-Over current. Set when protection is triggered.\n");
+            }
+            if(message->data[5] & 2){//(bit 9)
+                CD_DEBUG("\t-I2T protection. Set when protection is triggered.\n");
+            }
+            if(message->data[5] & 4){//(bit 10)
+                CD_DEBUG("\t-Over temperature motor. Set when protection is triggered.\n");
+            }
+            if(message->data[5] & 8){//(bit 11)
+                CD_DEBUG("\t-Over temperature drive. Set when protection is triggered.\n");
+            }
+            if(message->data[5] & 16){//(bit 12)
+                CD_DEBUG("\t-Over-voltage. Set when protection is triggered.\n");
+            }
+            if(message->data[5] & 32){//(bit 13)
+                CD_DEBUG("\t-Under-voltage. Set when protection is triggered.\n");
+            }
+            if(message->data[5] & 64){//(bit 14)
+                CD_DEBUG("\t-Command error. This bit is set in several situations. They can be distinguished either by the associated emergency code, or in conjunction with other bits.\n");
+            }
+            if(message->data[5] & 128){//(bit 15)
+                CD_DEBUG("\t-Drive disabled due to enable input. Set when enable input is on disable state.\n");
+            }
             return true;
         } else if( (message->data[1]==0x02)&&(message->data[2]==0x10) ) {  // Manual 1002h contains "6041h Status word" plus Table 5.6
             CD_DEBUG("Got \"manufacturer status register\" from driver. %s\n",msgToStr(message).c_str());
