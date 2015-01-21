@@ -43,8 +43,6 @@ bool teo::MotorLacquey::setImpedancePositionModeRaw(int j) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motorlacquey).\n");
-
     return true;
 }
 
@@ -55,8 +53,6 @@ bool teo::MotorLacquey::setImpedanceVelocityModeRaw(int j) {
 
     //-- Check index within range
     if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (motorlacquey).\n");
 
     return true;
 }
@@ -69,8 +65,6 @@ bool teo::MotorLacquey::setOpenLoopModeRaw(int j) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motorlacquey).\n");
-
     return true;
 }
 
@@ -82,7 +76,7 @@ bool teo::MotorLacquey::getControlModeRaw(int j, int *mode) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motorlacquey).\n");
+    *mode = 0;
 
     return true;
 }
