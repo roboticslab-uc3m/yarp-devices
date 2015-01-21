@@ -137,13 +137,13 @@ bool teo::MotorIpos::getControlModeRaw(int j, int *mode) {
     if ( j != 0 ) return false;
 
     //*************************************************************
-    uint8_t msgOperation[] = {0x40,0x60,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6060h: Modes of Operation
-    if( ! send( 0x600, 8, msgOperation))
+    uint8_t msgOperationDisplay[] = {0x40,0x61,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6061h: Modes of Operation display
+    if( ! send( 0x600, 8, msgOperationDisplay))
     {
-        CD_ERROR("Could not send modes of operation. %s\n", msgToStr(0x600, 8, msgOperation).c_str() );
+        CD_ERROR("Could not send modes of operation display. %s\n", msgToStr(0x600, 8, msgOperationDisplay).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent modes of operation. %s\n", msgToStr(0x600, 8, msgOperation).c_str() );
+    CD_SUCCESS("Sent modes of operation display. %s\n", msgToStr(0x600, 8, msgOperationDisplay).c_str() );
     //*************************************************************
 
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
