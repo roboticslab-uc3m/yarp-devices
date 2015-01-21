@@ -9,7 +9,7 @@ LaunchManipulation::LaunchManipulation() { }
 bool LaunchManipulation::configure(ResourceFinder &rf) {
 
     //-- left arm --
-    std::string leftArmIni = rf.findFileByName("leftArm.ini");
+    std::string leftArmIni = rf.findFileByName("../manipulation/leftArm.ini");
 
     Property leftArmOptions;
     if (! leftArmOptions.fromConfigFile(leftArmIni) ) {  //-- Put first because defaults to wiping out.
@@ -32,7 +32,7 @@ bool LaunchManipulation::configure(ResourceFinder &rf) {
     }
 
     //-- right arm --
-    std::string rightArmIni = rf.findFileByName("rightArm.ini");
+    std::string rightArmIni = rf.findFileByName("../manipulation/rightArm.ini");
 
     Property rightArmOptions;
     if (! rightArmOptions.fromConfigFile(rightArmIni) ) {  //-- Put first because defaults to wiping out.
