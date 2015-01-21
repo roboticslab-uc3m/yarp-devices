@@ -187,26 +187,26 @@ bool teo::MotorIpos::getControlModeRaw(int j, int *mode) {
     CD_SUCCESS("Sent Motion Error Register query. %s\n", msgToStr(0x600, 8, msgError).c_str() );
     //*************************************************************
 
-    //-- Y tb ya de paso, por qué no...
+    //-- Y tb ya de paso, por qué no... // no info
     //*************************************************************
-    uint8_t msgErrorDetail[] = {0x40,0x02,0x20,0x00,0x00,0x00,0x00,0x00}; // Manual 2002h: Detailed Error Register
+    /*uint8_t msgErrorDetail[] = {0x40,0x02,0x20,0x00,0x00,0x00,0x00,0x00}; // Manual 2002h: Detailed Error Register
     if( ! send( 0x600, 8, msgErrorDetail))
     {
         CD_ERROR("Could not send Detailed Error Register query. %s\n", msgToStr(0x600, 8, msgErrorDetail).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent Detailed Error Register query. %s\n", msgToStr(0x600, 8, msgErrorDetail).c_str() );
+    CD_SUCCESS("Sent Detailed Error Register query. %s\n", msgToStr(0x600, 8, msgErrorDetail).c_str() );*/
     //*************************************************************
 
-    //-- Y...
+    //-- Y... // no info (just a 000Fh)
     //*************************************************************
-    uint8_t msgSw[] = {0x40,0x0A,0x10,0x00,0x00,0x00,0x00,0x00}; // Manual 100Ah: Manufacturer Software Version
+    /*uint8_t msgSw[] = {0x40,0x0A,0x10,0x00,0x00,0x00,0x00,0x00}; // Manual 100Ah: Manufacturer Software Version
     if( ! send( 0x600, 8, msgSw))
     {
         CD_ERROR("Could not send Manufacturer Software Version query. %s\n", msgToStr(0x600, 8, msgSw).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent Manufacturer Software Version query. %s\n", msgToStr(0x600, 8, msgSw).c_str() );
+    CD_SUCCESS("Sent Manufacturer Software Version query. %s\n", msgToStr(0x600, 8, msgSw).c_str() );*/
     //*************************************************************
 
     return true;
