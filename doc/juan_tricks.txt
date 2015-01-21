@@ -21,3 +21,5 @@ uint8_t msg_stop[]={0x0F,0x00}; // Does not stop, but is required for next start
 [set] [veld]
 [set] [vmo] 0 800
 
+* got to torque mode
+[set] [trqd]
