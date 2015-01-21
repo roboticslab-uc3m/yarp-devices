@@ -140,7 +140,7 @@ bool teo::MotorIpos::getControlModeRaw(int j, int *mode) {
     uint8_t msgStatus[] = {0x40,0x41,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6041h: Status word
     if( ! send( 0x600, 8, msgStatus))
     {
-        CD_ERROR("Could not send status query. %s.\n", msgToStr(0x600, 8, msgStatus).c_str() );
+        CD_ERROR("Could not send status query. %s\n", msgToStr(0x600, 8, msgStatus).c_str() );
         return false;
     }
     CD_SUCCESS("Sent status query. %s.\n", msgToStr(0x600, 8, msgStatus).c_str() );
@@ -150,10 +150,10 @@ bool teo::MotorIpos::getControlModeRaw(int j, int *mode) {
     uint8_t msgOperation[] = {0x40,0x60,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6060h: Modes of Operation
     if( ! send( 0x600, 8, msgOperation))
     {
-        CD_ERROR("Could not send modes of operation. %s.\n", msgToStr(0x600, 8, msgOperation).c_str() );
+        CD_ERROR("Could not send modes of operation. %s\n", msgToStr(0x600, 8, msgOperation).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent modes of operation. %s.\n", msgToStr(0x600, 8, msgOperation).c_str() );
+    CD_SUCCESS("Sent modes of operation. %s\n", msgToStr(0x600, 8, msgOperation).c_str() );
     //*************************************************************
 
     getModeReady.wait();
