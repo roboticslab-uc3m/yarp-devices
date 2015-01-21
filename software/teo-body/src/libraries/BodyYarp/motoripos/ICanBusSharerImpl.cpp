@@ -172,7 +172,7 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
                     getMode = 0;
                 getModeReady.post();
             } else {
-                CD_ERROR_NO_HEADER("MODE %d NOT SPECIFIED IN MANUAL.\n",got);
+                CD_ERROR_NO_HEADER("Mode \"%d\" not specified in manual, may be in Fault mode.\n",got);
                 getModeReady.wait();
                     getMode = 0;
                 getModeReady.post();
