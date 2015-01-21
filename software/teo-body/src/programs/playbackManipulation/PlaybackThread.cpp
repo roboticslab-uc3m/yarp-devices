@@ -23,8 +23,7 @@ void PlaybackThread::run() {
         yarp::os::Bottle lineBottle(line);  //-- yes, using a bottle to parse a string
         CD_DEBUG("string from bottle from string: %s\n", lineBottle.toString().c_str() );
         if( leftArmNumMotors+rightArmNumMotors != lineBottle.size() )
-            if( leftArmNumMotors+rightArmNumMotors+2 != lineBottle.size() )
-                CD_ERROR("-------------SIZE!!!!!!!!!!!!!\n");
+            CD_ERROR("-------------SIZE!!!!!!!!!!!!!\n");
 
         std::vector< double > leftArmOutDoubles( leftArmNumMotors );
         for(int i=0;i<leftArmNumMotors;i++)
@@ -37,8 +36,6 @@ void PlaybackThread::run() {
         leftArmPosDirect->setPositions( leftArmOutDoubles.size(), NULL, leftArmOutDoubles.data() );
         rightArmPosDirect->setPositions( rightArmOutDoubles.size(), NULL, rightArmOutDoubles.data() );
 
-        leftGripperPos->positionMove(0,lineBottle.get(leftArmNumMotors+rightArmNumMotors).asDouble());
-        rightGripperPos->positionMove(0,lineBottle.get(leftArmNumMotors+rightArmNumMotors+1).asDouble());
     }
     if( this->isStopping() ) return;
     CD_DEBUG("End parsing file.\n" );
