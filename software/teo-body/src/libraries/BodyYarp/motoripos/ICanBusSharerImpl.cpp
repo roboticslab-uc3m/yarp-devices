@@ -172,11 +172,11 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
                     getMode = 0;
                 getModeReady.post();
             } else {
-                CD_ERROR("\t-Mode \"%d\" not specified in manual, may be in Fault mode.\n",got);
+                CD_WARNING("\t-Mode \"%d\" not specified in manual, may be in Fault or not enabled yet.\n",got);
                 getModeReady.wait();
                     getMode = 0;
                 getModeReady.post();
-                return false;
+                return true;
             }
             return true;
         } else if( (message->data[1]==0x41)&&(message->data[2]==0x60) ) {  // Manual 6041h: Status word; Table 5.4 Bit Assignment in Status Word (also see 5.5)
