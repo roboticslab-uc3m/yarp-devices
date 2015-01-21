@@ -11,4 +11,5 @@ yarp_configure_external_installation(teo-body)
 ### Go through single applications
 
 add_subdirectory(testBodyBot)
+add_subdirectory(launchManipulation)
 
