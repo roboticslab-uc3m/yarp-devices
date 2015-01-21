@@ -16,7 +16,7 @@ bool LaunchManipulation::configure(ResourceFinder &rf) {
         CD_ERROR("Could not configure from \"leftArm.ini\".\n");
         return false;
     }
-    CD_SUCCESS("Configured left arm from  %s.\n",leftArmIni.c_str());
+    CD_SUCCESS("Configured left arm from %s.\n",leftArmIni.c_str());
     leftArmOptions.put("name","/teo/leftArm");
     leftArmOptions.put("device","controlboard");
     leftArmOptions.put("subdevice","bodybot");

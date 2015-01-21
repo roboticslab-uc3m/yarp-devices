@@ -36,20 +36,25 @@ bool MoveGripperThread::threadInit() {
 /************************************************************************/
 void MoveGripperThread::run() {
     noecho();
+
+    int leftArmSize, rightArmSize;
+    leftArmPos->getAxes(&leftArmSize);
+    rightArmPos->getAxes(&rightArmSize);
+
     while( ! this->isStopping() ) {
         char c = getch();
         if(c == openLeftChar) {
             //CD_WARNING("openLeftChar\n");
-            leftGripperPos->positionMove(0,1200);
+            leftArmPos->positionMove(leftArmSize-1,1200);
         } else if(c == closeLeftChar) {
             //CD_WARNING("closeLeftChar");
-            leftGripperPos->positionMove(0,-1200);
+            leftArmPos->positionMove(leftArmSize-1,-1200);
         } else if(c == openRightChar) {
             //CD_WARNING("openRightChar");
-            rightGripperPos->positionMove(0,1200);
+            rightArmPos->positionMove(rightArmSize-1,1200);
         } else if(c == closeRightChar) {
             //CD_WARNING("closeRightChar");
-            rightGripperPos->positionMove(0,-1200);
+            rightArmPos->positionMove(rightArmSize-1,-1200);
         }
     }
     endwin();
