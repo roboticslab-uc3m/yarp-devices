@@ -143,7 +143,7 @@ bool teo::MotorIpos::getControlModeRaw(int j, int *mode) {
         CD_ERROR("Could not send status query. %s\n", msgToStr(0x600, 8, msgStatus).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent status query. %s.\n", msgToStr(0x600, 8, msgStatus).c_str() );
+    CD_SUCCESS("Sent status query. %s\n", msgToStr(0x600, 8, msgStatus).c_str() );
     //*************************************************************
 
     //*************************************************************
