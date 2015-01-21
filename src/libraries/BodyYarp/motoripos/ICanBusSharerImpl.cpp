@@ -438,6 +438,16 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
         } else if( (message->data[1]==0x81)&&(message->data[2]==0x60) ) {  // Manual 6081h: Profile velocity
             CD_DEBUG("Got SDO ack \"posmode_speed\" from driver. %s\n",msgToStr(message).c_str());
             return true;
+        } else if( (message->data[1]==0x7D)&&(message->data[2]==0x60) ) {  // Manual 607Dh: Software position limit
+            if (message->data[3]==0x01) {
+                CD_DEBUG("Got SDO ack \"msg_position_min\" from driver. %s\n",msgToStr(message).c_str());
+            } else if (message->data[3]==0x02) {
+                CD_DEBUG("Got SDO ack \"msg_position_max\" from driver. %s\n",msgToStr(message).c_str());
+            } else {
+                CD_WARNING("Got SDO ack \"msg_position_????\" from driver. %s\n",msgToStr(message).c_str());
+                return false;
+            }
+            return true;
         }
         CD_DEBUG("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
         return false;
