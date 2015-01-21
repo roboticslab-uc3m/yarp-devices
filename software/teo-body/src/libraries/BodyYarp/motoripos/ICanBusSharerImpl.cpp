@@ -389,6 +389,49 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
                 CD_DEBUG("\t*Drive/motor in fault status.\n");
             }
             return true;
+        } else if( (message->data[1]==0x02)&&(message->data[2]==0x20) ) {  // 2002h: Detailed Error Register
+            CD_DEBUG("Got SDO ack \"Detailed Error Register\" from driver. %s\n",msgToStr(message).c_str());
+
+            if(message->data[4] & 1){//0000 0001 (bit 0)
+                CD_DEBUG("\t**The number of nested function calls exceeded the length of TML stack. Last function call was ignored.\n");
+            }
+            if(message->data[4] & 2){//0000 0010 (bit 1)
+                CD_DEBUG("\t**A RET/RETI instruction was executed while no function/ISR was active.\n");
+            }
+            if(message->data[4] & 4){//0000 0100 (bit 2)
+                CD_DEBUG("\t**A call to an inexistent homing routine was received.\n");
+            }
+            if(message->data[4] & 8){//0000 1000 (bit 3)
+                CD_DEBUG("\t**A call to an inexistent function was received.\n");
+            }
+            if(message->data[4] & 16){//0001 0000 (bit 4)
+                CD_DEBUG("\t**UPD instruction received while AXISON was executed. The UPD instruction was ingnored and it must be sent again when AXISON is completed.\n");
+            }
+            if(message->data[4] & 32){//0010 0000 (bit 5)
+                CD_DEBUG("\t**Cancelable call instruction received while another cancelable function was active.\n");
+            }
+            if(message->data[4] & 64){//0100 0000 (bit 6)
+                CD_DEBUG("\t**Positive software limit switch is active.\n");
+            }
+            if(message->data[4] & 128){//1000 0000 (bit 7)
+                CD_DEBUG("\t**Negative software limit switch is active.\n");
+            }
+            if(message->data[5] & 1){//(bit 8)
+                CD_DEBUG("\t**S-curve parameters caused and invalid profile. UPD instruction was ignored.\n");
+            }
+            if(message->data[5] & 2){//(bit 9)
+                CD_DEBUG("\t**Update ignored for S-curve.\n");
+            }
+            if(message->data[5] & 4){//(bit 10)
+                CD_DEBUG("\t**Encoder broken wire.\n");
+            }
+            if(message->data[5] & 8){//(bit 11)
+                CD_DEBUG("\t**Motionless start failed.\n");
+            }
+            if(message->data[5] & 32){//(bit 13)
+                CD_DEBUG("\t**Self check error.\n");
+            }
+            return true;
         }
         CD_DEBUG("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
         return false;
