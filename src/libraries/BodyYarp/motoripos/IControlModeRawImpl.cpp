@@ -192,10 +192,10 @@ bool teo::MotorIpos::getControlModeRaw(int j, int *mode) {
     uint8_t msgErrorDetail[] = {0x40,0x02,0x20,0x00,0x00,0x00,0x00,0x00}; // Manual 2002h: Detailed Error Register
     if( ! send( 0x600, 8, msgErrorDetail))
     {
-        CD_ERROR("Could not send Motion Error Register query. %s\n", msgToStr(0x600, 8, msgErrorDetail).c_str() );
+        CD_ERROR("Could not send Detailed Error Register query. %s\n", msgToStr(0x600, 8, msgErrorDetail).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent Motion Error Register query. %s\n", msgToStr(0x600, 8, msgErrorDetail).c_str() );
+    CD_SUCCESS("Sent Detailed Error Register query. %s\n", msgToStr(0x600, 8, msgErrorDetail).c_str() );
     //*************************************************************
 
     return true;
