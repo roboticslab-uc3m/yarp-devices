@@ -33,7 +33,7 @@ bool teo::MotorIpos::setLimitsRaw(int axis, double min, double max) {
         CD_ERROR("Could not send position max. %s\n", msgToStr(0x600, 8, msg_position_max).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"position max\".. %s\n", msgToStr(0x600, 8, msg_position_max).c_str() );
+    CD_SUCCESS("Sent \"position max\". %s\n", msgToStr(0x600, 8, msg_position_max).c_str() );
     //*************************************************************
 
     //-- Store the new limits locally.
