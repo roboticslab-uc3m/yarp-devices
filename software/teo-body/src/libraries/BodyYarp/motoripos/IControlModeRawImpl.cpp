@@ -156,24 +156,24 @@ bool teo::MotorIpos::getControlModeRaw(int j, int *mode) {
 
     //-- Ya de paso...
     //*************************************************************
-    //uint8_t msgStatus[] = {0x40,0x41,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6041h: Status word
+    //uint8_t msgStatusDisplay[] = {0x40,0x41,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6041h: Status display word
     //if( ! send( 0x600, 8, msgStatus))
     //{
-    //    CD_ERROR("Could not send status query. %s\n", msgToStr(0x600, 8, msgStatus).c_str() );
+    //    CD_ERROR("Could not send status display query. %s\n", msgToStr(0x600, 8, msgStatusDisplay).c_str() );
     //    return false;
     //}
-    //CD_SUCCESS("Sent status query. %s\n", msgToStr(0x600, 8, msgStatus).c_str() );
+    //CD_SUCCESS("Sent status display query. %s\n", msgToStr(0x600, 8, msgStatusDisplay).c_str() );
     //*************************************************************
 
-    //-- Ya de paso...
+    //-- Ya de paso, aun mejor...
     //*************************************************************
-    uint8_t msgStatus[] = {0x40,0x02,0x10,0x00,0x00,0x00,0x00,0x00}; // Manual 6041h: Status word
-    if( ! send( 0x600, 8, msgStatus))
+    uint8_t msgManuStatus[] = {0x40,0x02,0x10,0x00,0x00,0x00,0x00,0x00}; // Manual 1002h contains "6041h Status word" plus Table 5.6
+    if( ! send( 0x600, 8, msgManuStatus))
     {
-        CD_ERROR("Could not send status query. %s\n", msgToStr(0x600, 8, msgStatus).c_str() );
+        CD_ERROR("Could not send manufacturer status query. %s\n", msgToStr(0x600, 8, msgManuStatus).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent status query. %s\n", msgToStr(0x600, 8, msgStatus).c_str() );
+    CD_SUCCESS("Sent manufacturer status query. %s\n", msgToStr(0x600, 8, msgManuStatus).c_str() );
     //*************************************************************
 
     return true;
