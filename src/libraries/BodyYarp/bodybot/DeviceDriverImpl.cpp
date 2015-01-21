@@ -91,6 +91,8 @@ bool teo::BodyBot::open(Searchable& config) {
         return false;
     }
 
+    //-- Start the reading thread.
+    this->Thread::start();
     //-- Check the status of each driver.
     for(int i=0; i<drivers.size(); i++)
     {
@@ -98,6 +100,8 @@ bool teo::BodyBot::open(Searchable& config) {
         std::vector<int> tmp(drivers.size());
         getControlModes(&(tmp[0]));
     }
+    //-- Start the reading thread.
+    this->Thread::stop();
 
     CD_INFO("Wait 1 second before start...\n")
     yarp::os::Time::delay(1);
