@@ -35,9 +35,6 @@ class RecordRateThread : public yarp::os::RateThread {
         yarp::dev::IEncoders *rightArmEnc;
         yarp::dev::ITorqueControl *rightArmTrq;
 
-        yarp::dev::IEncoders *leftGripperEnc;
-        yarp::dev::IEncoders *rightGripperEnc;
-
         int leftArmNumMotors;
         int rightArmNumMotors;
 
