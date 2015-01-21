@@ -36,8 +36,8 @@ class MoveGripperThread : public yarp::os::Thread {
          */
         virtual void run();
 
-        yarp::dev::IPositionControl *leftGripperPos;
-        yarp::dev::IPositionControl *rightGripperPos;
+        yarp::dev::IPositionControl *leftArmPos;
+        yarp::dev::IPositionControl *rightArmPos;
 
 
     protected:
