@@ -232,6 +232,8 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
     protected:
 
         //  --------- Implementation in MotorIpos.cpp ---------
+
+        //-- CAN bus stuff
         /**
          * Write message to the CAN buffer.
          * @param cob Message's COB
@@ -241,31 +243,33 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
          */
         bool send(uint32_t cob, uint16_t len, uint8_t * msgData);
 
-
-        /** pt-related **/
-        int ptPointCounter;
-        yarp::os::Semaphore ptBuffer;
-        bool ptMovementDone;
-
-        bool targetReached;
-
-        int canId;
-
-        CanBusHico *canDevicePtr;
-
-        double max, min, refAcceleration, refSpeed, tr;
-
-        double lastUsage;
-
-        double encoder;
-        uint32_t encoderTimestamp;
-        yarp::os::Semaphore encoderReady;
-
         /** A helper function to display CAN messages. */
         std::string msgToStr(can_msg* message);
         std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
 
+        int canId;
+        CanBusHico *canDevicePtr;
+        double lastUsage;
+
+        //-- Encoder stuff
+        double encoder;
+        uint32_t encoderTimestamp;
+        yarp::os::Semaphore encoderReady;
+
+        //-- Mode stuff
+        int getMode;
+        yarp::os::Semaphore getModeReady;
+        bool targetReached;
+
+        //-- PT stuff
         int16_t ptModeMs;  //-- [ms]
+        int ptPointCounter;
+        bool ptMovementDone;
+        yarp::os::Semaphore ptBuffer;
+
+        //-- More internal parameter stuff
+        double max, min, refAcceleration, refSpeed, tr;
+
 };
 
 }  // namespace teo
