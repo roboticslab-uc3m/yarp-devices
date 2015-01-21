@@ -235,6 +235,9 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
                 CD_DEBUG("\t-Axis off. Power stage is disabled. Motor control is not performed.\n"); // false
             }
             return true;
+        } else if( (message->data[1]==0x00)&&(message->data[2]==0x20) ) {  // Manual 2000h: Motion Error Register
+            CD_DEBUG("Got SDO ack \"Motion Error Register\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
         } else if( (message->data[1]==0x02)&&(message->data[2]==0x10) ) {  // Manual 1002h contains "6041h Status word" plus Table 5.6
             CD_DEBUG("Got \"manufacturer status register\" from driver. %s\n",msgToStr(message).c_str());
 
