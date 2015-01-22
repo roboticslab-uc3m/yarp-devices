@@ -70,7 +70,7 @@ bool teo::MotorLacquey::checkMotionDoneRaw(int j, bool *flag) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motorlacquey).\n");
+    *flag = true;
 
     return true;
 }
