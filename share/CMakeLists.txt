@@ -17,3 +17,8 @@ add_subdirectory(launchManipulation)
 add_subdirectory(playbackManipulation)
 add_subdirectory(recordManipulation)
 
+add_subdirectory(locomotion)
+add_subdirectory(launchLocomotion)
+add_subdirectory(playbackLocomotion)
+add_subdirectory(recordLocomotion)
+
