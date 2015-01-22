@@ -6,7 +6,7 @@
 
 void teo::BodyBot::run() {
 
-    CD_INFO("First thread run.\n");
+    CD_INFO("Started BodyBot reading thread run.\n");
 
     while ( ! this->isStopping() ) {
 
@@ -36,7 +36,7 @@ void teo::BodyBot::run() {
 
     }  //-- ends: while ( ! this->isStopping() ).
 
-    CD_INFO("Last thread run.\n");
+    CD_INFO("Stopping BodyBot reading thread run.\n");
 
     return;
 }
