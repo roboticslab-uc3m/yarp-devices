@@ -554,7 +554,7 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
             return true;
         } else if (message->data[1]==0xFF) {
             if (message->data[0]==0x01) {
-                CD_ERROR_NO_HEADER("Generic interpolated position mode error ( PVT / PT error.\n");
+                CD_ERROR_NO_HEADER("Generic interpolated position mode error (PVT / PT error).\n");
                 return true;
             } else if (message->data[0]==0x02) {
                 CD_ERROR_NO_HEADER("Change set acknowledge bit wrong value.\n");
