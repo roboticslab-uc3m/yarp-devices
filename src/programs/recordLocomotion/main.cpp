@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
 
     ResourceFinder rf;
     rf.setVerbose(true);
-    rf.setDefaultContext("recordLocomotion/conf");
+    rf.setDefaultContext("recordLocomotion");
     rf.setDefaultConfigFile("recordLocomotion.ini");
     rf.configure(argc, argv);
 
