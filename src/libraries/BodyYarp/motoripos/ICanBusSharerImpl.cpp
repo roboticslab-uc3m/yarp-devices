@@ -457,6 +457,9 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
         } else if( (message->data[1]==0xC0)&&(message->data[2]==0x60) ) {  // Manual 60C0h: Interpolation sub mode select
             CD_DEBUG("Got SDO ack \"Interpolation sub mode select.\" from driver. %s\n",msgToStr(message).c_str());
             return true;
+        } else if( (message->data[1]==0x74)&&(message->data[2]==0x20) ) {  // Manual 2074h: Interpolated position buffer configuration
+            CD_DEBUG("Got SDO ack \"Interpolated position buffer configuration.\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
         }
         CD_DEBUG("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
         return false;
