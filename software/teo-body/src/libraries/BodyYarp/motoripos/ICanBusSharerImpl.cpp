@@ -247,9 +247,15 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
                 CD_DEBUG("\t-Remote: drive is in local mode and will not execute the command message (only TML internal)."); // false
             }
             if(message->data[5] & 4){//(bit 10)
+                targetReachedReady.wait();
+                    targetReached = true;
+                targetReachedReady.post();
                 CD_DEBUG("\t-Target reached.\n");  // true
             } else {
                 CD_DEBUG("\t-Target not reached.\n");  // false (improvised, not in manual, but reasonable).
+                targetReachedReady.wait();
+                    targetReached = false;
+                targetReachedReady.post();
             }
             if(message->data[5] & 8){//(bit 11)
                 CD_DEBUG("\t-Internal Limit Active.\n");
