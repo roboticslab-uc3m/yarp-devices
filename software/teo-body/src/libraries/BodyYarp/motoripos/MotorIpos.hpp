@@ -8,6 +8,7 @@
 #include <sstream>
 
 //#define CD_FULL_FILE  //-- Good for debugging as intended for polymorphism.
+#define CD_HIDE_WARNING
 #include "ColorDebug.hpp"
 #include "../ICanBusSharer.h"
 
