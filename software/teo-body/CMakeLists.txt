@@ -21,9 +21,9 @@ option(ENABLE_launchManipulation "Choose if you want to compile launchManipulati
 option(ENABLE_recordManipulation "Choose if you want to compile recordManipulation" TRUE)
 option(ENABLE_playbackManipulation "Choose if you want to compile playbackManipulation" TRUE)
 
-option(ENABLE_launchLocomotion "Choose if you want to compile launchLocomotion" FALSE)
-option(ENABLE_recordLocomotion "Choose if you want to compile recordLocomotion" FALSE)
-option(ENABLE_playbackLocomotion "Choose if you want to compile playbackLocomotion" FALSE)
+option(ENABLE_launchLocomotion "Choose if you want to compile launchLocomotion" TRUE)
+option(ENABLE_recordLocomotion "Choose if you want to compile recordLocomotion" TRUE)
+option(ENABLE_playbackLocomotion "Choose if you want to compile playbackLocomotion" TRUE)
 
 ### options: for default
 option(ENABLE_BodyYarp_bodybot "Enable/disable compilation of BodyYarp_bodybot" TRUE)
