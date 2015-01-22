@@ -8,11 +8,6 @@ PlaybackLocomotion::PlaybackLocomotion() { }
 /************************************************************************/
 bool PlaybackLocomotion::configure(ResourceFinder &rf) {
 
-    //CD_INFO("Using name: %s.\n", rf.find("name").asString().c_str() );
-
-    std::string manipulation_root = ::getenv("MANIPULATION_ROOT");
-    CD_INFO("Using root: %s.\n", manipulation_root.c_str() );
-
     int ptModeMs = rf.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
     CD_INFO("Using ptModeMs: %d (default: %d).\n",ptModeMs,int(DEFAULT_PT_MODE_MS));
 
@@ -26,15 +21,15 @@ bool PlaybackLocomotion::configure(ResourceFinder &rf) {
     }
     CD_SUCCESS("Opened file: %s.\n",fileName.c_str());
 
-    //-- Open manipulator devices.
-    std::string leftLegIni = manipulation_root + "/app/testBodyBot/conf/leftLeg.ini";
+    //-- left leg --
+    std::string leftLegIni = rf.findFileByName("../locomotion/leftLeg.ini");
 
-    Property leftLegOptions;
+    yarp::os::Property leftLegOptions;
     if (! leftLegOptions.fromConfigFile(leftLegIni) ) {  //-- Put first because defaults to wiping out.
-        CD_ERROR("Could not open %s.\n",leftLegIni.c_str());
+        CD_ERROR("Could not configure from \"leftLeg.ini\".\n");
         return false;
     }
-    CD_SUCCESS("Opened %s.\n",leftLegIni.c_str());
+    CD_SUCCESS("Configured left leg from %s.\n",leftLegIni.c_str());
     leftLegOptions.put("name","/teo/leftLeg");
     leftLegOptions.put("device","bodybot");
     leftLegOptions.put("ptModeMs",ptModeMs);
@@ -49,14 +44,15 @@ bool PlaybackLocomotion::configure(ResourceFinder &rf) {
         return false;
     }
 
-    std::string rightLegIni = manipulation_root + "/app/testBodyBot/conf/rightLeg.ini";
+    //-- right leg --
+    std::string rightLegIni = rf.findFileByName("../locomotion/rightLeg.ini");
 
-    Property rightLegOptions;
+    yarp::os::Property rightLegOptions;
     if (! rightLegOptions.fromConfigFile(rightLegIni) ) {  //-- Put first because defaults to wiping out.
-        CD_ERROR("Could not open %s.\n",rightLegIni.c_str());
+        CD_ERROR("Could not configure from \"rightLeg.ini\".\n");
         return false;
     }
-    CD_SUCCESS("Opened %s.\n",rightLegIni.c_str());
+    CD_SUCCESS("Configured right leg from %s.\n",rightLegIni.c_str());
     rightLegOptions.put("name","/teo/rightLeg");
     rightLegOptions.put("device","bodybot");
     rightLegOptions.put("ptModeMs",ptModeMs);
