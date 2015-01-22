@@ -460,6 +460,9 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
         } else if( (message->data[1]==0x74)&&(message->data[2]==0x20) ) {  // Manual 2074h: Interpolated position buffer configuration
             CD_DEBUG("Got SDO ack \"Interpolated position buffer configuration.\" from driver. %s\n",msgToStr(message).c_str());
             return true;
+        } else if( (message->data[1]==0x79)&&(message->data[2]==0x20) ) {  // Manual 2079h: Interpolated position initial position
+            CD_DEBUG("Got SDO ack \"Interpolated position initial position.\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
         }
         CD_DEBUG("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
         return false;
