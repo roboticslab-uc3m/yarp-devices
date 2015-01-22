@@ -7,7 +7,7 @@
 #include <yarp/dev/all.h>
 #include <sstream>
 
-#define CD_FULL_FILE
+//#define CD_FULL_FILE  //-- Good for debugging as intended for polymorphism.
 #include "ColorDebug.hpp"
 #include "../ICanBusSharer.h"
 
