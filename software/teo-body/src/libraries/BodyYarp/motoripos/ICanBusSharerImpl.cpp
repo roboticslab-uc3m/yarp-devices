@@ -103,7 +103,37 @@ bool teo::MotorIpos::enable() {
 
 bool teo::MotorIpos::interpretMessage( can_msg * message) {
 
-    if( (message->id-canId) == 0x580 )  // SDO
+    //--------------- Give high priority to PT, override EMGY red -------------------------
+
+    if( (message->data[1]==0xFF)&&(message->data[2]==0x01)&&(message->data[4]==0x20) )
+    {
+        ptBuffer.wait();
+        CD_WARNING("pt buffer full! canId: %d.\n",canId);
+        return true;
+    }
+    else if( (message->data[1]==0xFF)&&(message->data[2]==0x01)&&(message->data[4]==0x00) )
+    {
+        ptBuffer.post();
+        CD_WARNING("pt buffer empty. canId: %d.\n",canId);
+        return true;
+    }
+    else if( (message->data[1]==0xFF)&&(message->data[2]==0x01)&&(message->data[3]==0x08) )
+    {
+        CD_WARNING("pt buffer message (don't know what it means). canId: %d.\n",canId);
+        return true;
+    }
+    else if( (message->data[0]==0x37)&&(message->data[1]==0x96) )
+    {
+        CD_WARNING("pt movement ended. canId: %d (via %X).\n",canId,message->id-canId);
+        ptMovementDone = true;
+        return true;
+    }
+    else if (message->data[0] == 0x01 && message->data[1] == 0xFF)
+    {
+        CD_DEBUG("PVT control message. canId: %d.\n",canId);
+        return true;
+    }
+    else if( (message->id-canId) == 0x580 )  // -------------- SDO ----------------------
     {
         if( (message->data[1]==0x64) && (message->data[2]==0x60) )  // Manual 6064h
         {
@@ -467,7 +497,7 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
         CD_DEBUG("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
         return false;
     }
-    else if( (message->id-canId) == 0x180 )  // PDO1
+    else if( (message->id-canId) == 0x180 )  // ---------------------- PDO1 ----------------------
     {
         if( (message->data[0]==0x37)&&(message->data[1]==0x92) ) {
             CD_DEBUG("Got PDO1 that it is observed as ack \"start position\" from driver. %s\n",msgToStr(message).c_str());
@@ -591,42 +621,7 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
         return false;
     }
 
-    //--------------- Debugged up to here -------------------------
-
-    if( (message->data[0]==0x01)&&(message->data[1]==0xFF)&&(message->data[2]==0x01)&&(message->data[4]==0x20) )
-    {
-        ptBuffer.wait();
-        CD_WARNING("pt buffer full! canId: %d.\n",canId);
-        return true;
-    }
-
-    if( (message->data[0]==0x01)&&(message->data[1]==0xFF)&&(message->data[2]==0x01)&&(message->data[4]==0x00) )
-    {
-        ptBuffer.post();
-        CD_WARNING("pt buffer empty. canId: %d.\n",canId);
-        return true;
-    }
-
-    if( (message->data[0]==0x01)&&(message->data[1]==0xFF)&&(message->data[2]==0x01)&&(message->data[3]==0x08) )
-    {
-        CD_WARNING("pt buffer message (don't know what it means). canId: %d.\n",canId);
-        return true;
-    }
-
-    if( (message->data[0]==0x37)&&(message->data[1]==0x96) )
-    {
-        CD_WARNING("pt movement ended. canId: %d (via %X).\n",canId,message->id-canId);
-        ptMovementDone = true;
-        return true;
-    }
-
-    if (message->data[0] == 0x01 && message->data[1] == 0xFF)
-    {
-        CD_DEBUG("PVT control message. canId: %d.\n",canId);
-        return true;
-    }
-
-    CD_WARNING("Unknown message: %s\n", msgToStr(message).c_str());
+    CD_ERROR("Unknown message: %s\n", msgToStr(message).c_str());
 
     return false;
 
