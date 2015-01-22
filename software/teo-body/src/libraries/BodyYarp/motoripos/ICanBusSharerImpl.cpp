@@ -448,6 +448,9 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
                 return false;
             }
             return true;
+        } else if( (message->data[1]==0x81)&&(message->data[2]==0x20) ) {  // Manual 2081h: Set/Change the actual motor position
+            CD_DEBUG("Got SDO ack \"set encoder\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
         }
         CD_DEBUG("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
         return false;
