@@ -7,6 +7,7 @@
 #include <yarp/dev/all.h>
 #include <sstream>
 
+#define CD_FULL_FILE
 #include "ColorDebug.hpp"
 #include "../ICanBusSharer.h"
 
