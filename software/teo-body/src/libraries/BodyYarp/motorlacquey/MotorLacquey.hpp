@@ -162,7 +162,7 @@ class MotorLacquey : public DeviceDriver, public IControlLimitsRaw, public ICont
         }
         virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs) {
             CD_INFO("\n");
-            this->positionMoveRaw(refs);
+            this->positionMoveRaw(0,refs[0]);
             return true;
         }
         virtual bool setPositionsRaw(const double *refs) {
