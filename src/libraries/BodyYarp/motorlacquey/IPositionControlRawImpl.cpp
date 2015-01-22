@@ -83,8 +83,6 @@ bool teo::MotorLacquey::setRefSpeedRaw(int j, double sp) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motorlacquey).\n");
-
     return true;
 }
 
@@ -95,8 +93,6 @@ bool teo::MotorLacquey::setRefAccelerationRaw(int j, double acc) {
 
     //-- Check index within range
     if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (motorlacquey).\n");
 
     return true;
 }
@@ -109,7 +105,7 @@ bool teo::MotorLacquey::getRefSpeedRaw(int j, double *ref) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motorlacquey).\n");
+    *ref = 0;
 
     return true;
 }
@@ -122,7 +118,7 @@ bool teo::MotorLacquey::getRefAccelerationRaw(int j, double *acc) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motorlacquey).\n");
+    *acc = 0;
 
     return true;
 }
@@ -134,8 +130,6 @@ bool teo::MotorLacquey::stopRaw(int j) {
 
     //-- Check index within range
     if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (motorlacquey).\n");
 
     return true;
 }
