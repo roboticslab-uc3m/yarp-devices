@@ -13,7 +13,6 @@
 
 #include <string>
 
-#define CD_FULL_FILE
 #include "ColorDebug.hpp"
 
 #define DEFAULT_ROBOT_NAME "/teo"
