@@ -2,8 +2,8 @@
 
 /**
  * ColorDebug
- * Version: 0.10 - add CD_FULL_FILE define.
- * Version: 0.9 - add CD_HIDE_**** defines.
+ * Version: 0.10 - Add CD_FULL_FILE define. Revive CD_PERROR.
+ * Version: 0.9 - Add CD_HIDE_**** defines.
  * Version: 0.8 - stderr only on warning and error.
  * Version: 0.7 - fix CD_INFO_NO_HEADER to not print header (thank you, tests).
  * Version: 0.6 - Show file name instead of full path - fix for windows.
@@ -94,13 +94,18 @@ namespace ColorDebug {
 //-- Thanks: http://stackoverflow.com/questions/15549893/modify-printfs-via-macro-to-include-file-and-line-number-information
 #if defined ( CD_HIDE_ERROR )
     #define CD_ERROR(...)
+    #define CD_PERROR(...)
 #else
     #if defined ( CD_FULL_FILE )
         #define CD_ERROR(...) {fprintf(stderr,RED); do{fprintf(stderr, "[error] %s:%d %s(): ", __FILE__, __LINE__, __func__); \
             fprintf(stderr, __VA_ARGS__);} while(0); fprintf(stderr,RESET);}
+        #define CD_PERROR(...) {fprintf(stderr,RED); do{fprintf(stderr, "[error] %s:%d %s(): ", __FILE__, __LINE__, __func__); \
+            fprintf(stderr, __VA_ARGS__);} while(0); fprintf(stderr, "[error] "); perror(""); fprintf(stderr,RESET);}
     #else
         #define CD_ERROR(...) {fprintf(stderr,RED); do{fprintf(stderr, "[error] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
             fprintf(stderr, __VA_ARGS__);} while(0); fprintf(stderr,RESET);}
+        #define CD_PERROR(...) {fprintf(stderr,RED); do{fprintf(stderr, "[error] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
+            fprintf(stderr, __VA_ARGS__);} while(0); fprintf(stderr, "[error] "); perror(""); fprintf(stderr,RESET);}
     #endif
 #endif
 
