@@ -119,7 +119,9 @@ bool teo::MotorIpos::checkMotionDoneRaw(int j, bool *flag) {
     Time::delay(DELAY);  //-- Wait for read update. Could implement semaphore waiting for specific message...
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+    targetReachedReady.wait();
     *flag = targetReached;
+    targetReachedReady.post();
 
     return true;
 }
