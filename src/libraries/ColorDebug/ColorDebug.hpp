@@ -2,6 +2,13 @@
 
 /**
  * ColorDebug
+ * Version: 0.10 - add CD_FULL_FILE define.
+ * Version: 0.9 - add CD_HIDE_**** defines.
+ * Version: 0.8 - stderr only on warning and error.
+ * Version: 0.7 - fix CD_INFO_NO_HEADER to not print header (thank you, tests).
+ * Version: 0.6 - Show file name instead of full path - fix for windows.
+ * Version: 0.5 - Drop CD_PERROR (recommend use of CD_ERROR_NO_HEADER instead).
+ * Version: 0.4 - __func__ as __FUNCTION__ for VS2008.
  * Version: 0.3 - Added CD_*****_NO_HEADER. Added scopes for each CD_printf macro.
  * Version: 0.2 - Added CD_PERROR.
  * Version: 0.1 - Initial version.
@@ -22,7 +29,14 @@
 
 namespace ColorDebug {
 
-//-- Thanks dalle @ http://stackoverflow.com/questions/1546789/clean-code-to-printf-size-t-in-c-or-nearest-equivalent-of-c99s-z-in-c
+//-- Fix for old Windows versions.
+//-- Thanks: tomlogic @ http://stackoverflow.com/questions/2281970/cross-platform-defining-define-for-macros-function-and-func
+#if defined ( WIN32 )
+  #define __func__ __FUNCTION__
+#endif
+
+//-- Macros for size_t and similar across platforms.
+//-- Thanks: dalle @ http://stackoverflow.com/questions/1546789/clean-code-to-printf-size-t-in-c-or-nearest-equivalent-of-c99s-z-in-c
 #if defined(_MSC_VER)
   #define CD_SIZE_T    "%Iu"
   #define CD_SSIZE_T   "%Id"
@@ -44,11 +58,16 @@ namespace ColorDebug {
   #endif
 #endif
 
-//-- Thanks red1ynx @ http://stackoverflow.com/questions/8487986/file-macro-shows-full-path
-#define __REL_FILE__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
-// For Windows use '\\' instead of '/'.
+//-- Show file name instead of full path.
+//-- Thanks: red1ynx @ http://stackoverflow.com/questions/8487986/file-macro-shows-full-path
+#if defined ( WIN32 )  //-- For Windows use '\\' instead of '/'.
+  #define __REL_FILE__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
+#else
+  #define __REL_FILE__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
+#endif
 
-// http://stackoverflow.com/questions/1961209/making-some-text-in-printf-appear-in-green-and-red
+//-- Color defines.
+//-- Thanks: http://stackoverflow.com/questions/1961209/making-some-text-in-printf-appear-in-green-and-red
 #define RESET   "\033[0m"
 #define BLACK   "\033[30m"      /* Black */
 #define RED     "\033[31m"      /* Red */
@@ -67,41 +86,104 @@ namespace ColorDebug {
 #define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
 #define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
 
-// http://en.wikipedia.org/wiki/Variadic_macro
-// http://stackoverflow.com/questions/15549893/modify-printfs-via-macro-to-include-file-and-line-number-information
-#define CD_PERROR(...) {fprintf(stderr,RED); do{fprintf(stderr, "[error] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
-                         fprintf(stderr, __VA_ARGS__);} while(0); fprintf(stderr, "[error] "); perror(""); fprintf(stderr,RESET);}
 
-#define CD_ERROR(...) {fprintf(stderr,RED); do{fprintf(stderr, "[error] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
-                         fprintf(stderr, __VA_ARGS__);} while(0); fprintf(stderr,RESET);}
+//-- ------------------------ \begin Real macros ------------------------ --//
 
-#define CD_WARNING(...) {fprintf(stderr,YELLOW); do{fprintf(stderr, "[warning] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
-                           fprintf(stderr, __VA_ARGS__);} while(0); fprintf(stderr,RESET);}
+//-- CD_**** defines.
+//-- Thanks: http://en.wikipedia.org/wiki/Variadic_macro
+//-- Thanks: http://stackoverflow.com/questions/15549893/modify-printfs-via-macro-to-include-file-and-line-number-information
+#if defined ( CD_HIDE_ERROR )
+    #define CD_ERROR(...)
+#else
+    #if defined ( CD_FULL_FILE )
+        #define CD_ERROR(...) {fprintf(stderr,RED); do{fprintf(stderr, "[error] %s:%d %s(): ", __FILE__, __LINE__, __func__); \
+            fprintf(stderr, __VA_ARGS__);} while(0); fprintf(stderr,RESET);}
+    #else
+        #define CD_ERROR(...) {fprintf(stderr,RED); do{fprintf(stderr, "[error] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
+            fprintf(stderr, __VA_ARGS__);} while(0); fprintf(stderr,RESET);}
+    #endif
+#endif
 
-#define CD_SUCCESS(...) {fprintf(stderr,GREEN); do{printf("[success] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
-                           printf(__VA_ARGS__);} while(0); fprintf(stderr,RESET);}
+#if defined ( CD_HIDE_WARNING )
+    #define CD_WARNING(...)
+#else 
+    #if defined ( CD_FULL_FILE )
+        #define CD_WARNING(...) {fprintf(stderr,YELLOW); do{fprintf(stderr, "[warning] %s:%d %s(): ", __FILE__, __LINE__, __func__); \
+            fprintf(stderr, __VA_ARGS__);} while(0); fprintf(stderr,RESET);}
+    #else
+        #define CD_WARNING(...) {fprintf(stderr,YELLOW); do{fprintf(stderr, "[warning] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
+            fprintf(stderr, __VA_ARGS__);} while(0); fprintf(stderr,RESET);}
+    #endif
+#endif
 
-#define CD_INFO(...) {do{printf("[info] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
-                           printf(__VA_ARGS__);} while(0);}
+#if defined ( CD_HIDE_SUCCESS )
+    #define CD_SUCCESS(...)
+#else 
+    #if defined ( CD_FULL_FILE )
+        #define CD_SUCCESS(...) {printf(GREEN); do{printf("[success] %s:%d %s(): ", __FILE__, __LINE__, __func__); \
+            printf(__VA_ARGS__);} while(0); printf(RESET);}
+    #else
+        #define CD_SUCCESS(...) {printf(GREEN); do{printf("[success] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
+            printf(__VA_ARGS__);} while(0); printf(RESET);}
+    #endif
+#endif
 
-#define CD_DEBUG(...) {fprintf(stderr,BLUE); do{printf("[debug] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
-                           printf(__VA_ARGS__);} while(0); fprintf(stderr,RESET);}
+#if defined ( CD_HIDE_INFO )
+    #define CD_INFO(...)
+#else 
+    #if defined ( CD_FULL_FILE )
+        #define CD_INFO(...) {do{printf("[info] %s:%d %s(): ", __FILE__, __LINE__, __func__); \
+            printf(__VA_ARGS__);} while(0);}
+    #else
+        #define CD_INFO(...) {do{printf("[info] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
+            printf(__VA_ARGS__);} while(0);}
+    #endif
+#endif
 
+#if defined ( CD_HIDE_DEBUG )
+    #define CD_DEBUG(...)
+#else 
+    #if defined ( CD_FULL_FILE )
+        #define CD_DEBUG(...) {printf(BLUE); do{printf("[debug] %s:%d %s(): ", __FILE__, __LINE__, __func__); \
+            printf(__VA_ARGS__);} while(0); printf(RESET);}
+    #else
+        #define CD_DEBUG(...) {printf(BLUE); do{printf("[debug] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
+            printf(__VA_ARGS__);} while(0); printf(RESET);}
+    #endif
+#endif
 
-#define CD_ERROR_NO_HEADER(...) {fprintf(stderr,RED); fprintf(stderr, __VA_ARGS__); fprintf(stderr,RESET);}
+//-- CD_****_NO_HEADER defines.
+#if defined ( CD_HIDE_ERROR )
+    #define CD_ERROR_NO_HEADER(...)
+#else 
+    #define CD_ERROR_NO_HEADER(...) {fprintf(stderr,RED); fprintf(stderr, __VA_ARGS__); fprintf(stderr,RESET);}
+#endif
 
-#define CD_WARNING_NO_HEADER(...) {fprintf(stderr,YELLOW); fprintf(stderr, __VA_ARGS__); fprintf(stderr,RESET);}
+#if defined ( CD_HIDE_WARNING )
+    #define CD_WARNING_NO_HEADER(...)
+#else 
+    #define CD_WARNING_NO_HEADER(...) {fprintf(stderr,YELLOW); fprintf(stderr, __VA_ARGS__); fprintf(stderr,RESET);}
+#endif
 
-#define CD_SUCCESS_NO_HEADER(...) {fprintf(stderr,GREEN); printf(__VA_ARGS__); fprintf(stderr,RESET);}
+#if defined ( CD_HIDE_SUCCESS )
+    #define CD_SUCCESS_NO_HEADER(...)
+#else 
+    #define CD_SUCCESS_NO_HEADER(...) {printf(GREEN); printf(__VA_ARGS__); printf(RESET);}
+#endif
 
-#define CD_INFO_NO_HEADER(...) {do{printf("[info] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
-                           printf(__VA_ARGS__);} while(0);}
+#if defined ( CD_HIDE_INFO )
+    #define CD_INFO_NO_HEADER(...)
+#else 
+    #define CD_INFO_NO_HEADER(...) {printf(__VA_ARGS__);}
+#endif
 
-#define CD_DEBUG_NO_HEADER(...) {fprintf(stderr,BLUE); printf(__VA_ARGS__); fprintf(stderr,RESET);}
+#if defined ( CD_HIDE_DEBUG )
+    #define CD_DEBUG_NO_HEADER(...)
+#else 
+    #define CD_DEBUG_NO_HEADER(...) {printf(BLUE); printf(__VA_ARGS__); printf(RESET);}
+#endif
 
-
-
-
+//-- ------------------------ \end Real macros ------------------------ --//
 
 } //ColorDebug
 
