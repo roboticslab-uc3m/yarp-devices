@@ -17,7 +17,6 @@
 
 #include "hico_api.h"
 
-#define CD_FULL_FILE
 #include "ColorDebug.hpp"
 #include "CanBusHico.hpp"
 
