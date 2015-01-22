@@ -65,8 +65,6 @@ bool teo::BodyBot::open(Searchable& config) {
         iCanBusSharer[i]->setCanBusPtr( &canDevice );
     }
 
-    //-- Start the reading thread.
-    this->Thread::start();
 
     //-- Set initial parameters on physical motor drivers.
     for(int i=0; i<drivers.size(); i++)
@@ -138,6 +136,9 @@ bool teo::BodyBot::open(Searchable& config) {
                 return false;
         }
     }
+
+    //-- Start the reading thread.
+    this->Thread::start();
 
     return true;
 }
