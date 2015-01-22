@@ -32,7 +32,7 @@ bool teo::BodyBot::setPositions(const int n_joint, const int *joints, double *re
 
     bool ok = true;
     for(unsigned int i=0; i < drivers.size(); i++)
-        ok &= iPositionDirectRaw[i]->setPositionsRaw(n_joint, joints, &(refs[i])); // No existing single mode??
+        ok &= iPositionDirectRaw[i]->setPositionsRaw(1, &(joints[i]), &(refs[i])); // No existing single mode??
     return ok;
 }
 
@@ -41,7 +41,7 @@ bool teo::BodyBot::setPositions(const int n_joint, const int *joints, double *re
 bool teo::BodyBot::setPositions(const double *refs) {
     bool ok = true;
     for(unsigned int i=0; i < drivers.size(); i++)
-        ok &= iPositionDirectRaw[i]->setPositionsRaw(refs); // No existing single mode.
+        ok &= iPositionDirectRaw[i]->setPositionsRaw(&(refs[i])); // No existing single mode.
     return ok;
 }
 
