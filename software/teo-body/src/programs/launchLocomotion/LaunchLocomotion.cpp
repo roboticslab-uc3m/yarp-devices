@@ -39,7 +39,7 @@ bool LaunchLocomotion::configure(ResourceFinder &rf) {
         CD_ERROR("Could not configure from \"rightLeg.ini\".\n");
         return false;
     }
-    CD_SUCCESS("Opened %s.\n",rightLegIni.c_str());
+    CD_SUCCESS("Configured right leg from %s.\n",rightLegIni.c_str());
     rightLegOptions.put("name","/teo/rightLeg");
     rightLegOptions.put("device","controlboard");
     rightLegOptions.put("subdevice","bodybot");
