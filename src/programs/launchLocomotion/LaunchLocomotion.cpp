@@ -8,19 +8,15 @@ LaunchLocomotion::LaunchLocomotion() { }
 /************************************************************************/
 bool LaunchLocomotion::configure(ResourceFinder &rf) {
 
-    //CD_INFO("Using name: %s.\n", rf.find("name").asString().c_str() );
-
-    std::string manipulation_root = ::getenv("MANIPULATION_ROOT");
-    CD_INFO("Using root: %s.\n", manipulation_root.c_str() );
-
-    std::string leftLegIni = manipulation_root + "/app/testBodyBot/conf/leftLeg.ini";
+    //-- left leg --
+    std::string leftLegIni = rf.findFileByName("../locomotion/leftLeg.ini");
 
     Property leftLegOptions;
     if (! leftLegOptions.fromConfigFile(leftLegIni) ) {  //-- Put first because defaults to wiping out.
-        CD_ERROR("Could not open %s.\n",leftLegIni.c_str());
+        CD_ERROR("Could not configure from \"leftLeg.ini\".\n");
         return false;
     }
-    CD_SUCCESS("Opened %s.\n",leftLegIni.c_str());
+    CD_SUCCESS("Configured left leg from %s.\n",leftLegIni.c_str());
     leftLegOptions.put("name","/teo/leftLeg");
     leftLegOptions.put("device","controlboard");
     leftLegOptions.put("subdevice","bodybot");
@@ -35,11 +31,12 @@ bool LaunchLocomotion::configure(ResourceFinder &rf) {
         return false;
     }
 
-    std::string rightLegIni = manipulation_root + "/app/testBodyBot/conf/rightLeg.ini";
+    //-- right leg --
+    std::string rightLegIni = rf.findFileByName("../locomotion/rightLeg.ini");
 
     Property rightLegOptions;
     if (! rightLegOptions.fromConfigFile(rightLegIni) ) {  //-- Put first because defaults to wiping out.
-        CD_ERROR("Could not open %s.\n",rightLegIni.c_str());
+        CD_ERROR("Could not configure from \"rightLeg.ini\".\n");
         return false;
     }
     CD_SUCCESS("Opened %s.\n",rightLegIni.c_str());
@@ -57,7 +54,6 @@ bool LaunchLocomotion::configure(ResourceFinder &rf) {
         return false;
     }
 
-
     return true;
 }
 
@@ -73,7 +69,6 @@ bool LaunchLocomotion::updateModule() {
 bool LaunchLocomotion::close() {
     leftLegDevice.close();
     rightLegDevice.close();
-
     return true;
 }
 
