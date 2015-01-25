@@ -25,7 +25,7 @@ option(ENABLE_launchLocomotion "Choose if you want to compile launchLocomotion" 
 option(ENABLE_recordLocomotion "Choose if you want to compile recordLocomotion" TRUE)
 option(ENABLE_playbackLocomotion "Choose if you want to compile playbackLocomotion" TRUE)
 
-### options: for default
+### options: force default
 option(ENABLE_BodyYarp_bodybot "Enable/disable compilation of BodyYarp_bodybot" TRUE)
 option(ENABLE_BodyYarp_motoripos "Enable/disable compilation of BodyYarp_motoripos" TRUE)
 option(ENABLE_BodyYarp_motorlacquey "Enable/disable compilation of BodyYarp_motorlacquey" TRUE)
