@@ -32,6 +32,8 @@ bool RecordManipulation::configure(yarp::os::ResourceFinder &rf) {
     CD_SUCCESS("Configured left arm from %s.\n",leftArmIni.c_str());
     leftArmOptions.put("name","/teo/leftArm");
     leftArmOptions.put("device","bodybot");
+    if (rf.check("home")) leftArmOptions.put("home",1);
+    if (rf.check("reset")) leftArmOptions.put("reset",1);
 
     leftArmDevice.open(leftArmOptions);
     
@@ -54,6 +56,8 @@ bool RecordManipulation::configure(yarp::os::ResourceFinder &rf) {
     CD_SUCCESS("Configured right arm from %s.\n",rightArmIni.c_str());
     rightArmOptions.put("name","/teo/rightArm");
     rightArmOptions.put("device","bodybot");
+    if (rf.check("home")) rightArmOptions.put("home",1);
+    if (rf.check("reset")) rightArmOptions.put("reset",1);
 
     rightArmDevice.open(rightArmOptions);
 
