@@ -124,7 +124,7 @@ bool teo::BodyBot::open(Searchable& config) {
         CD_DEBUG("Moving motors to zero.\n");
         for(int i=0; i<drivers.size(); i++)
         {
-            if ( ! this->setPosition(i,0) )
+            if ( ! iPositionControlRaw[i]->positionMoveRaw(0,0) )
                 return false;
         }
         for(int i=0; i<drivers.size(); i++)
@@ -133,7 +133,7 @@ bool teo::BodyBot::open(Searchable& config) {
             while( ! motionDone ) {
                 yarp::os::Time::delay(0.1);  //-- [s]
                 CD_DEBUG("Moving %d to zero...\n",i);
-                if( ! this->checkMotionDone(i,&motionDone) )
+                if( ! iPositionControlRaw[i]->checkMotionDoneRaw(0,&motionDone) )
                     return false;
             }
         }
