@@ -19,7 +19,6 @@ bool teo::BodyBot::open(Searchable& config) {
     Bottle mins = config.findGroup("mins").tail();  //-- e.g. -360
     Bottle refAccelerations = config.findGroup("refAccelerations").tail();  //-- e.g. 0.575437
     Bottle refSpeeds = config.findGroup("refSpeeds").tail();  //-- e.g. 737.2798
-    Bottle initPoss = config.findGroup("initPoss").tail();  //-- e.g. 0 0 0 45
 
     Bottle types = config.findGroup("types").tail();  //-- e.g. 15
 
@@ -124,13 +123,30 @@ bool teo::BodyBot::open(Searchable& config) {
             return false;
     }
 
-    if( ! config.findGroup("initPoss").isNull() ) {
-        CD_DEBUG("Setting initPoss.\n");
-        for(int i=0; i<initPoss.size(); i++)
+    if( ! config.check("home") ) {
+        CD_DEBUG("Moving motors to zero.\n");
+        for(int i=0; i<drivers.size(); i++)
         {
-            if ( ! this->setEncoder(i,initPoss.get(i).asDouble()) )
+            if ( ! this->setPosition(i,0) )
                 return false;
         }
+        for(int i=0; i<drivers.size(); i++)
+        {
+            bool motionDone = false;
+            while( ! motionDone ) {
+                yarp::os::Time::delay(0.1);  //-- [s]
+                CD_DEBUG("Moving %d to zero...\n",i);
+                if( ! this->checkMotionDone(i,&motionDone) )
+                    return false;
+            }
+        }
+        CD_DEBUG("Moved motors to zero.\n");
+    }
+
+    if( ! config.check("reset") ) {
+        CD_DEBUG("Forcing encoders to zero.\n");
+        if ( ! this->resetEncoders() )
+            return false;
     }
 
     //-- Start the reading thread.
