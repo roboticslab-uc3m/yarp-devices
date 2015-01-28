@@ -95,9 +95,6 @@ bool teo::BodyBot::open(Searchable& config) {
     std::vector<int> tmp( drivers.size() );
     this->getControlModes( tmp.data() );
 
-    CD_INFO("Wait 1 second before start...\n")
-    yarp::os::Time::delay(1);
-
     //-- Initialize the drivers: start (0.1) ready (0.1) on (2) enable. Wait between each step.
     for(int i=0; i<drivers.size(); i++)
     {
