@@ -205,6 +205,9 @@ bool teo::MotorIpos::setPositionsRaw(const int n_joint, const int *joints, doubl
 // -----------------------------------------------------------------------------
 
 bool teo::MotorIpos::setPositionsRaw(const double *refs) {
+
+    CD_WARNING("Not implemented yet.\n");
+
     return true;
 }
 
