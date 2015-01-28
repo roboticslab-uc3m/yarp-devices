@@ -33,6 +33,8 @@ bool PlaybackManipulation::configure(ResourceFinder &rf) {
     leftArmOptions.put("name","/teo/leftArm");
     leftArmOptions.put("device","bodybot");
     leftArmOptions.put("ptModeMs",ptModeMs);
+    if (rf.check("home")) leftArmOptions.put("home",1);
+    if (rf.check("reset")) leftArmOptions.put("reset",1);
 
     leftArmDevice.open(leftArmOptions);
     
@@ -56,6 +58,8 @@ bool PlaybackManipulation::configure(ResourceFinder &rf) {
     rightArmOptions.put("name","/teo/rightArm");
     rightArmOptions.put("device","bodybot");
     rightArmOptions.put("ptModeMs",ptModeMs);
+    if (rf.check("home")) rightArmOptions.put("home",1);
+    if (rf.check("reset")) rightArmOptions.put("reset",1);
 
     rightArmDevice.open(rightArmOptions);
 

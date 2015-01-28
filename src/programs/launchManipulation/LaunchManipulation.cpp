@@ -20,6 +20,8 @@ bool LaunchManipulation::configure(ResourceFinder &rf) {
     leftArmOptions.put("name","/teo/leftArm");
     leftArmOptions.put("device","controlboard");
     leftArmOptions.put("subdevice","bodybot");
+    if (rf.check("home")) leftArmOptions.put("home",1);
+    if (rf.check("reset")) leftArmOptions.put("reset",1);
 
     leftArmDevice.open(leftArmOptions);
     
@@ -43,6 +45,8 @@ bool LaunchManipulation::configure(ResourceFinder &rf) {
     rightArmOptions.put("name","/teo/rightArm");
     rightArmOptions.put("device","controlboard");
     rightArmOptions.put("subdevice","bodybot");
+    if (rf.check("home")) rightArmOptions.put("home",1);
+    if (rf.check("reset")) rightArmOptions.put("reset",1);
 
     rightArmDevice.open(rightArmOptions);
 
