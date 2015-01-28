@@ -20,6 +20,8 @@ bool LaunchLocomotion::configure(ResourceFinder &rf) {
     leftLegOptions.put("name","/teo/leftLeg");
     leftLegOptions.put("device","controlboard");
     leftLegOptions.put("subdevice","bodybot");
+    if (rf.check("home")) leftLegOptions.put("home",1);
+    if (rf.check("reset")) leftLegOptions.put("reset",1);
 
     leftLegDevice.open(leftLegOptions);
     
@@ -43,6 +45,8 @@ bool LaunchLocomotion::configure(ResourceFinder &rf) {
     rightLegOptions.put("name","/teo/rightLeg");
     rightLegOptions.put("device","controlboard");
     rightLegOptions.put("subdevice","bodybot");
+    if (rf.check("home")) rightLegOptions.put("home",1);
+    if (rf.check("reset")) rightLegOptions.put("reset",1);
 
     rightLegDevice.open(rightLegOptions);
 

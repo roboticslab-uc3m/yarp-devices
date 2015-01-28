@@ -31,6 +31,8 @@ bool RecordLocomotion::configure(yarp::os::ResourceFinder &rf) {
     }
     CD_SUCCESS("Configured left leg from %s.\n",leftLegIni.c_str());
     leftLegOptions.put("device","bodybot");
+    if (rf.check("home")) leftLegOptions.put("home",1);
+    if (rf.check("reset")) leftLegOptions.put("reset",1);
 
     leftLegDevice.open(leftLegOptions);
     
@@ -53,6 +55,8 @@ bool RecordLocomotion::configure(yarp::os::ResourceFinder &rf) {
     CD_SUCCESS("Configured right leg from %s.\n",rightLegIni.c_str());
     rightLegOptions.put("name","/teo/rightLeg");
     rightLegOptions.put("device","bodybot");
+    if (rf.check("home")) rightLegOptions.put("home",1);
+    if (rf.check("reset")) rightLegOptions.put("reset",1);
 
     rightLegDevice.open(rightLegOptions);
 

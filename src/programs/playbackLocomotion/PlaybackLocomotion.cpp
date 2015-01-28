@@ -33,6 +33,8 @@ bool PlaybackLocomotion::configure(ResourceFinder &rf) {
     leftLegOptions.put("name","/teo/leftLeg");
     leftLegOptions.put("device","bodybot");
     leftLegOptions.put("ptModeMs",ptModeMs);
+    if (rf.check("home")) leftLegOptions.put("home",1);
+    if (rf.check("reset")) leftLegOptions.put("reset",1);
 
     leftLegDevice.open(leftLegOptions);
     
@@ -56,6 +58,8 @@ bool PlaybackLocomotion::configure(ResourceFinder &rf) {
     rightLegOptions.put("name","/teo/rightLeg");
     rightLegOptions.put("device","bodybot");
     rightLegOptions.put("ptModeMs",ptModeMs);
+    if (rf.check("home")) rightLegOptions.put("home",1);
+    if (rf.check("reset")) rightLegOptions.put("reset",1);
 
     rightLegDevice.open(rightLegOptions);
 
