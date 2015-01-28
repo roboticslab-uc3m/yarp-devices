@@ -120,6 +120,9 @@ bool teo::BodyBot::open(Searchable& config) {
             return false;
     }
 
+    //-- Start the reading thread (required for checkMotionDoneRaw).
+    this->Thread::start();
+
     if( ! config.check("home") ) {
         CD_DEBUG("Moving motors to zero.\n");
         for(int i=0; i<drivers.size(); i++)
@@ -145,9 +148,6 @@ bool teo::BodyBot::open(Searchable& config) {
         if ( ! this->resetEncoders() )
             return false;
     }
-
-    //-- Start the reading thread.
-    this->Thread::start();
 
     return true;
 }
