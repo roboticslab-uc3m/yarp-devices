@@ -8,6 +8,11 @@
 #include <sstream>
 
 //#define CD_FULL_FILE  //-- Good for debugging as intended for polymorphism.
+#define CD_HIDE_DEBUG
+#define CD_HIDE_SUCCESS
+#define CD_HIDE_INFO
+//#define CD_HIDE_WARNING
+//#define CD_HIDE_ERROR
 #include "ColorDebug.hpp"
 #include "../ICanBusSharer.h"
 
@@ -153,20 +158,21 @@ class MotorLacquey : public DeviceDriver, public IControlLimitsRaw, public ICont
 
         // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
         virtual bool setPositionDirectModeRaw() {
-            CD_INFO("\n");
+            CD_DEBUG("\n");
             return true;
         }
         virtual bool setPositionRaw(int j, double ref) {
-            CD_INFO("\n");
+            CD_DEBUG("\n");
+            this->positionMoveRaw(0,ref);
             return true;
         }
         virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs) {
-            CD_INFO("\n");
+            CD_DEBUG("\n");
             this->positionMoveRaw(0,refs[0]);
             return true;
         }
         virtual bool setPositionsRaw(const double *refs) {
-            CD_INFO("\n");
+            CD_DEBUG("\n");
             return true;
         }
 
