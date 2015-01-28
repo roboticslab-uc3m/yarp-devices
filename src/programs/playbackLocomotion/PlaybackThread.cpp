@@ -34,8 +34,8 @@ void PlaybackThread::run() {
         for(int i=0;i<rightLegNumMotors;i++)
             rightLegOutDoubles[i] = lineBottle.get(leftLegNumMotors+i).asDouble();
 
-        leftLegPosDirect->setPositions( leftLegOutDoubles.size(), NULL, leftLegOutDoubles.data() );
-        rightLegPosDirect->setPositions( rightLegOutDoubles.size(), NULL, rightLegOutDoubles.data() );
+        leftLegPosDirect->setPositions( leftLegOutDoubles.data() );
+        rightLegPosDirect->setPositions( rightLegOutDoubles.data() );
         lineCount++;
     }
     if( this->isStopping() ) return;
@@ -43,15 +43,15 @@ void PlaybackThread::run() {
 
 
     while( (! leftLegDone) &&  ( ! this->isStopping() )) {
-        CD_DEBUG("Left Leg not done!\n");
+        CD_INFO("Left Leg not done!\n");
         leftLegPos->checkMotionDone(&leftLegDone);
         yarp::os::Time::delay(0.1);  //-- [s]
     }
     if( this->isStopping() ) return;
-    CD_DEBUG("Left Leg done!\n");
+    CD_INFO("Left Leg done!\n");
 
     while( (! rightLegDone) &&  ( ! this->isStopping() )) {
-        CD_DEBUG("Right Leg not done!\n");
+        CD_INFO("Right Leg not done!\n");
         rightLegPos->checkMotionDone(&rightLegDone);
         yarp::os::Time::delay(0.1);  //-- [s]
     }

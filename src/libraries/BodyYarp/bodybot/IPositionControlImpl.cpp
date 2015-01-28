@@ -88,11 +88,13 @@ bool teo::BodyBot::checkMotionDone(int j, bool *flag) {
 
 bool teo::BodyBot::checkMotionDone(bool *flag) {
     CD_INFO("\n");
-
+    *flag = true;
     bool ok = true;
     for(int j=0; j<drivers.size(); j++)
     {
-        ok &= this->checkMotionDone(j,&flag[j]);
+        bool tmpFlag;
+        ok &= this->checkMotionDone(j,&tmpFlag);
+        *flag &= tmpFlag;
     }
     return ok;
 }
