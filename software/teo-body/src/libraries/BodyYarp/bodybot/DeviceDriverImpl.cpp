@@ -131,7 +131,7 @@ bool teo::BodyBot::open(Searchable& config) {
         {
             bool motionDone = false;
             while( ! motionDone ) {
-                yarp::os::Time::delay(0.1);  //-- [s]
+                yarp::os::Time::delay(0.5);  //-- [s]
                 CD_DEBUG("Moving %d to zero...\n",i);
                 if( ! iPositionControlRaw[i]->checkMotionDoneRaw(0,&motionDone) )
                     return false;
