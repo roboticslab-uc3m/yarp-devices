@@ -54,6 +54,8 @@ class MotorLacquey : public DeviceDriver, public IControlLimitsRaw, public ICont
         virtual bool switchOn();
         /** enable */
         virtual bool enable();
+        /** recoverFromError */
+        virtual bool recoverFromError();
 
         //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
         virtual bool setLimitsRaw(int axis, double min, double max);

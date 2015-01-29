@@ -101,6 +101,12 @@ bool teo::MotorIpos::enable() {
 
 // -----------------------------------------------------------------------------
 
+bool teo::MotorIpos::recoverFromError() {
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
 bool teo::MotorIpos::interpretMessage( can_msg * message) {
 
     //--------------- Give high priority to PT, override EMGY red -------------------------

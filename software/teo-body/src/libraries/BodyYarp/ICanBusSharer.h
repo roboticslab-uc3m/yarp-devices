@@ -30,6 +30,9 @@ public:
     /** enable */
     virtual bool enable() = 0;
 
+    /** recoverFromError */
+    virtual bool recoverFromError() = 0;
+
     /**
      * Interpret a can bus message.
      * @return true/false.
