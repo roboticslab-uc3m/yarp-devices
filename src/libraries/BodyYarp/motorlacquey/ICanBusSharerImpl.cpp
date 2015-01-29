@@ -41,6 +41,13 @@ bool teo::MotorLacquey::enable() {
 
 // -----------------------------------------------------------------------------
 
+bool teo::MotorLacquey::recoverFromError() {
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
 bool teo::MotorLacquey::interpretMessage( can_msg * message) {
 
     return true;
