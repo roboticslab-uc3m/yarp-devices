@@ -104,16 +104,13 @@ bool teo::MotorIpos::enable() {
 bool teo::MotorIpos::recoverFromError() {
 
     //*************************************************************
-    //j//uint8_t msg_vel[]={0x23,0xFF,0x60,0x00,0x00,0x00,0x00,0x00}; // Velocity target
+    //j//uint8_t msg_recover[]={0x23,0xFF}; // Control word 6040
 
-    //j//int sendVel = sp * this->tr * 11.11112;  // Apply tr & convert units to encoder increments
-    //j//memcpy(msg_vel+4,&sendVel,4);
-
-    //j//if( ! send(0x600, 8, msg_vel)){
-    //j//    CD_ERROR("Sent \"velocity target\". %s\n", msgToStr(0x600, 8, msg_vel).c_str() );
+    //j//if( ! send(0x200, 2, msg_recover)){
+    //j//    CD_ERROR("Sent \"velocity target\". %s\n", msgToStr(0x200, 2, msg_recover).c_str() );
     //j//    return false;
     //j//}
-    //j//CD_SUCCESS("Sent \"velocity target\". %s\n", msgToStr(0x600, 8, msg_vel).c_str() );
+    //j//CD_SUCCESS("Sent \"velocity target\". %s\n", msgToStr(0x200, 2, msg_recover).c_str() );
     //*************************************************************
 
     return true;
