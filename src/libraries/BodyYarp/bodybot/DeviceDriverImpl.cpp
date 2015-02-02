@@ -64,6 +64,8 @@ bool teo::BodyBot::open(Searchable& config) {
         iCanBusSharer[i]->setCanBusPtr( &canDevice );
     }
 
+    //-- Start the reading thread (required for checkMotionDoneRaw).
+    this->Thread::start();
 
     //-- Set initial parameters on physical motor drivers.
     for(int i=0; i<drivers.size(); i++)
@@ -119,9 +121,6 @@ bool teo::BodyBot::open(Searchable& config) {
         if( ! iCanBusSharer[i]->enable() )
             return false;
     }
-
-    //-- Start the reading thread (required for checkMotionDoneRaw).
-    this->Thread::start();
 
     if( config.check("home") ) {
         CD_DEBUG("Moving motors to zero.\n");
