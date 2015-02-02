@@ -64,9 +64,6 @@ bool teo::BodyBot::open(Searchable& config) {
         iCanBusSharer[i]->setCanBusPtr( &canDevice );
     }
 
-    //-- Start the reading thread (required for checkMotionDoneRaw).
-    this->Thread::start();
-
     //-- Set initial parameters on physical motor drivers.
     for(int i=0; i<drivers.size(); i++)
     {
@@ -92,6 +89,9 @@ bool teo::BodyBot::open(Searchable& config) {
         CD_ERROR("Not prepared for initializing in mode %s.\n",mode.c_str());
         return false;
     }
+
+    //-- Start the reading thread (required for checkMotionDoneRaw).
+    this->Thread::start();
 
     //-- Check the status of each driver.
     std::vector<int> tmp( drivers.size() );

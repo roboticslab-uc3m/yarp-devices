@@ -17,9 +17,9 @@
 
 #include "hico_api.h"
 
-#define CD_HIDE_DEBUG
-#define CD_HIDE_SUCCESS
-#define CD_HIDE_INFO
+//j//#define CD_HIDE_DEBUG
+//j//#define CD_HIDE_SUCCESS
+//j//#define CD_HIDE_INFO
 //#define CD_HIDE_WARNING
 //#define CD_HIDE_ERROR
 #include "ColorDebug.hpp"
