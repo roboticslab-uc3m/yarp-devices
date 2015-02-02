@@ -20,7 +20,7 @@ bool teo::MotorIpos::start() {
     this->getStartReady.post();
 
     //*************************************************************
-    uint8_t msg_start[] = {0x01,0x01};
+    uint8_t msg_start[] = {0x01,0x00};  // NMT
 
     msg_start[1]=this->canId;
     if( ! canDevicePtr->sendRaw(0, 2, msg_start) )
