@@ -16,7 +16,7 @@ bool teo::MotorIpos::setCanBusPtr(CanBusHico *canDevicePtr) {
 bool teo::MotorIpos::start() {
 
     //*************************************************************
-    uint8_t msg_start[] = {0x01,0x00};  // NMT
+    uint8_t msg_start[] = {0x01,0x00};  // NMT Start Remote Node (to operational, Fig 4.1)
 
     msg_start[1]=this->canId;
     if( ! canDevicePtr->sendRaw(0, 2, msg_start) )
@@ -27,7 +27,7 @@ bool teo::MotorIpos::start() {
     CD_SUCCESS("Sent \"start\". %s\n", msgToStr(0, 2, msg_start).c_str() );
     //*************************************************************
 
-    //-- Do not force expectr response as only happens upon transition.
+    //-- Do not force expect response as only happens upon transition.
     //-- For example, if already started, function would get stuck.
 
     return true;
@@ -48,7 +48,7 @@ bool teo::MotorIpos::readyToSwitchOn() {
     CD_SUCCESS("Sent \"readyToSwitchOn/shutdown\". %s\n", msgToStr(0x200, 2, msg_readyToSwitchOn).c_str() );
     //*************************************************************
 
-    //-- Do not force expectr response as only happens upon transition.
+    //-- Do not force expect response as only happens upon transition.
     //-- For example, if already on readyToSwitchOn, function would get stuck.
 
     return true;
