@@ -544,6 +544,12 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
         } else if( (message->data[0]==0x21)&&(message->data[1]==0x02) ) {
             CD_DEBUG("Got PDO1 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",msgToStr(message).c_str());
             return true;
+        } else if( (message->data[0]==0x21)&&(message->data[1]==0x03) ) {
+            this->getSwitchOnReady.wait();
+            this->getSwitchOn = true;
+            this->getSwitchOnReady.post();
+            CD_DEBUG("Got PDO1 that it is observed as part of TRANSITION performed upon \"switchOn\". %s\n",msgToStr(message).c_str());
+            return true;
         }
         CD_DEBUG("Got PDO1 from driver side: unknown. %s\n",msgToStr(message).c_str());
         return false;
@@ -564,6 +570,12 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
             return true;
         } else if( (message->data[0]==0x21)&&(message->data[1]==0x02) ) {
             CD_DEBUG("Got PDO2 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",msgToStr(message).c_str());
+            return true;
+        } else if( (message->data[0]==0x21)&&(message->data[1]==0x03) ) {
+            this->getSwitchOnReady.wait();
+            this->getSwitchOn = true;
+            this->getSwitchOnReady.post();
+            CD_DEBUG("Got PDO2 that it is observed as part of TRANSITION performed upon \"switchOn\". %s\n",msgToStr(message).c_str());
             return true;
         }
         CD_DEBUG("Got PDO2 from driver side: unknown. %s\n",msgToStr(message).c_str());
