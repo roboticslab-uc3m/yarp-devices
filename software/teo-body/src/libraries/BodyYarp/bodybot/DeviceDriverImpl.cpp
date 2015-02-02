@@ -26,6 +26,9 @@ bool teo::BodyBot::open(Searchable& config) {
     if( ! canDevice.init(canDevicePath, canBitrate) )
         return false;
 
+    //-- Start the reading thread (required for checkMotionDoneRaw).
+    this->Thread::start();
+
     //-- Populate the motor drivers vector.
     drivers.resize( ids.size() );
     iControlLimitsRaw.resize( drivers.size() );
@@ -89,9 +92,6 @@ bool teo::BodyBot::open(Searchable& config) {
         CD_ERROR("Not prepared for initializing in mode %s.\n",mode.c_str());
         return false;
     }
-
-    //-- Start the reading thread (required for checkMotionDoneRaw).
-    this->Thread::start();
 
     //-- Check the status of each driver.
     std::vector<int> tmp( drivers.size() );
