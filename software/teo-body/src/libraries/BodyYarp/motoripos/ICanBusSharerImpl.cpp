@@ -550,7 +550,7 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
             this->getSwitchOnReady.post();
             CD_DEBUG("Got PDO1 that it is observed as part of TRANSITION performed upon \"switchOn\". %s\n",msgToStr(message).c_str());
             return true;
-        } else if( (message->data[0]==0x83)&&(message->data[1]==0x33) ) {
+        } else if( (message->data[0]==0x33)&&(message->data[1]==0x83) ) {
             this->getEnableReady.wait();
             this->getEnable = true;
             this->getEnableReady.post();
@@ -583,7 +583,7 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
             this->getSwitchOnReady.post();
             CD_DEBUG("Got PDO2 that it is observed as part of TRANSITION performed upon \"switchOn\". %s\n",msgToStr(message).c_str());
             return true;
-        } else if( (message->data[0]==0x83)&&(message->data[1]==0x33) ) {
+        } else if( (message->data[0]==0x83)&&(message->data[1]==0x83) ) {
             this->getEnableReady.wait();
             this->getEnable = true;
             this->getEnableReady.post();
