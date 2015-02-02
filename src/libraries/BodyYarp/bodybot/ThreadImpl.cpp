@@ -29,7 +29,7 @@ void teo::BodyBot::run() {
         {
             //-- Intercept 700h 0 msg that just indicates presence.
             if( (buffer.id-canId) == 0x700 ) {
-                CD_DEBUG("Device indicating presence. %s\n",msgToStr(&buffer).c_str());
+                CD_SUCCESS("Device indicating presence. %s\n",msgToStr(&buffer).c_str());
                 continue;
             }
 
