@@ -272,8 +272,8 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
         yarp::os::Semaphore targetReachedReady;
 
         //-- Init stuff
-        //int getStart;
-        //yarp::os::Semaphore getStartReady;
+        int getStart;
+        yarp::os::Semaphore getStartReady;
 
         int getReadyToSwitchOn;
         yarp::os::Semaphore getReadyToSwitchOnReady;
