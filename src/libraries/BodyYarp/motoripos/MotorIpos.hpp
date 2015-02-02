@@ -267,8 +267,15 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
         //-- Mode stuff
         int getMode;
         yarp::os::Semaphore getModeReady;
+
         bool targetReached;
         yarp::os::Semaphore targetReachedReady;
+
+        int getEnable;
+        yarp::os::Semaphore getEnableReady;
+
+        int getSwitchOn;
+        yarp::os::Semaphore getSwitchOnReady;
 
         //-- PT stuff
         int16_t ptModeMs;  //-- [ms]

@@ -52,6 +52,10 @@ bool teo::MotorIpos::readyToSwitchOn() {
 
 bool teo::MotorIpos::switchOn() {
 
+    this->getSwitchOnReady.wait();
+    this->getSwitchOn = false;
+    this->getSwitchOnReady.post();
+
     //*************************************************************
     uint8_t msg_switchOn[] = {0x07,0x00};  //-- switchOn, also acts as disableOperation
     if( ! this->send( 0x200, 2, msg_switchOn) )
@@ -60,14 +64,20 @@ bool teo::MotorIpos::switchOn() {
         return false;
     }
     CD_SUCCESS("Sent \"switchOn/disableOperation\". %s\n", msgToStr(0x200, 2, msg_switchOn).c_str() );
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(0.1);
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    struct can_msg replyOn;
-    while(canDevicePtr->read_timeout(&replyOn,20))
-    {
-        CD_SUCCESS("Got response to \"switchOn/disableOperation\". %s\n", msgToStr( &replyOn).c_str() );
+
+    while( (! this->getSwitchOn) ) {
+        CD_INFO("Waiting for response to \"switchOn/disableOperation\" on id %d...\n", this->canId);
+        yarp::os::Time::delay(0.1);  //-- [s]
     }
+
+    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    //yarp::os::Time::delay(0.1);
+    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    //struct can_msg replyOn;
+    //while(canDevicePtr->read_timeout(&replyOn,20))
+    //{
+    //    CD_SUCCESS("Got response to \"switchOn/disableOperation\". %s\n", msgToStr( &replyOn).c_str() );
+    //}
     //*************************************************************
 
     return true;
@@ -87,13 +97,13 @@ bool teo::MotorIpos::enable() {
     }
     CD_SUCCESS("Sent \"enable\". %s\n", msgToStr(0x200, 2, msg_enable).c_str() );
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(0.1);
+    //yarp::os::Time::delay(0.1);
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    struct can_msg reply;
-    while(canDevicePtr->read_timeout(&reply,20))
-    {
-        CD_SUCCESS("Got response to \"enable\". %s\n", msgToStr(&reply).c_str() );
-    }
+    //struct can_msg reply;
+    //while(canDevicePtr->read_timeout(&reply,20))
+    //{
+    //    CD_SUCCESS("Got response to \"enable\". %s\n", msgToStr(&reply).c_str() );
+    //}
     //*************************************************************
 
     return true;
