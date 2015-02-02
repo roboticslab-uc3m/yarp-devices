@@ -37,10 +37,6 @@ bool teo::MotorIpos::start() {
 
 bool teo::MotorIpos::readyToSwitchOn() {
 
-    this->getReadyToSwitchOnReady.wait();
-    this->getReadyToSwitchOn = false;
-    this->getReadyToSwitchOnReady.post();
-
     //*************************************************************
     uint8_t msg_readyToSwitchOn[] = {0x06,0x00}; //-- readyToSwitchOn, also acts as shutdown.
 
@@ -52,10 +48,8 @@ bool teo::MotorIpos::readyToSwitchOn() {
     CD_SUCCESS("Sent \"readyToSwitchOn/shutdown\". %s\n", msgToStr(0x200, 2, msg_readyToSwitchOn).c_str() );
     //*************************************************************
 
-    while( (! this->getReadyToSwitchOn) ) {
-        CD_INFO("Waiting for response to \"readyToSwitchOn/shutdown\" on id %d...\n", this->canId);
-        yarp::os::Time::delay(0.1);  //-- [s]
-    }
+    //-- Do not force expectr response as only happens upon transition.
+    //-- For example, if already on readyToSwitchOn, function would get stuck.
 
     return true;
 }
@@ -544,6 +538,12 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
         } else if( (message->data[0]==0x40)&&(message->data[1]==0x02) ) {
             CD_DEBUG("Got PDO1 that it is observed as TRANSITION performed upon \"start\". %s\n",msgToStr(message).c_str());
             return true;
+        } else if( (message->data[0]==0x40)&&(message->data[1]==0x03) ) {
+            CD_DEBUG("Got PDO1 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",msgToStr(message).c_str());
+            return true;
+        } else if( (message->data[0]==0x21)&&(message->data[1]==0x02) ) {
+            CD_DEBUG("Got PDO1 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",msgToStr(message).c_str());
+            return true;
         }
         CD_DEBUG("Got PDO1 from driver side: unknown. %s\n",msgToStr(message).c_str());
         return false;
@@ -558,6 +558,12 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
             return true;
         } else if( (message->data[0]==0x40)&&(message->data[1]==0x02) ) {
             CD_DEBUG("Got PDO2 that it is observed as TRANSITION performed upon \"start\". %s\n",msgToStr(message).c_str());
+            return true;
+        } else if( (message->data[0]==0x40)&&(message->data[1]==0x03) ) {
+            CD_DEBUG("Got PDO2 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",msgToStr(message).c_str());
+            return true;
+        } else if( (message->data[0]==0x21)&&(message->data[1]==0x02) ) {
+            CD_DEBUG("Got PDO2 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",msgToStr(message).c_str());
             return true;
         }
         CD_DEBUG("Got PDO2 from driver side: unknown. %s\n",msgToStr(message).c_str());
