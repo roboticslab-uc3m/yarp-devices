@@ -71,10 +71,10 @@ bool teo::MotorIpos::switchOn() {
     }
     CD_SUCCESS("Sent \"switchOn/disableOperation\". %s\n", msgToStr(0x200, 2, msg_switchOn).c_str() );
 
-    while( (! this->getSwitchOn) ) {
-        CD_INFO("Waiting for response to \"switchOn/disableOperation\" on id %d...\n", this->canId);
-        yarp::os::Time::delay(0.1);  //-- [s]
-    }
+    //while( (! this->getSwitchOn) ) {
+    //    CD_INFO("Waiting for response to \"switchOn/disableOperation\" on id %d...\n", this->canId);
+    //    yarp::os::Time::delay(0.1);  //-- [s]
+    //}
 
     return true;
 }
@@ -98,10 +98,10 @@ bool teo::MotorIpos::enable() {
     CD_SUCCESS("Sent \"enable\". %s\n", msgToStr(0x200, 2, msg_enable).c_str() );
     //*************************************************************
 
-    while( (! this->getEnable) ) {
-        CD_INFO("Waiting for response to \"enable\" on id %d...\n", this->canId);
-        yarp::os::Time::delay(0.1);  //-- [s]
-    }
+    //while( (! this->getEnable) ) {
+    //    CD_INFO("Waiting for response to \"enable\" on id %d...\n", this->canId);
+    //    yarp::os::Time::delay(0.1);  //-- [s]
+    //}
 
     return true;
 }
