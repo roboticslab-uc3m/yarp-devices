@@ -15,6 +15,10 @@ bool teo::MotorIpos::setCanBusPtr(CanBusHico *canDevicePtr) {
 
 bool teo::MotorIpos::start() {
 
+    this->getStartReady.wait();
+    this->getStart = false;
+    this->getStartReady.post();
+
     //*************************************************************
     uint8_t msg_start[] = {0x01,0x01};
 
@@ -27,12 +31,21 @@ bool teo::MotorIpos::start() {
     CD_SUCCESS("Sent \"start\". %s\n", msgToStr(0, 2, msg_start).c_str() );
     //*************************************************************
 
+    while( (! this->getStart) ) {
+        CD_INFO("Waiting for response to \"start\" on id %d...\n", this->canId);
+        yarp::os::Time::delay(0.1);  //-- [s]
+    }
+
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool teo::MotorIpos::readyToSwitchOn() {
+
+    this->getReadyToSwitchOnReady.wait();
+    this->getReadyToSwitchOn = false;
+    this->getReadyToSwitchOnReady.post();
 
     //*************************************************************
     uint8_t msg_readyToSwitchOn[] = {0x06,0x00}; //-- readyToSwitchOn, also acts as shutdown.
@@ -44,6 +57,11 @@ bool teo::MotorIpos::readyToSwitchOn() {
     }
     CD_SUCCESS("Sent \"readyToSwitchOn/shutdown\". %s\n", msgToStr(0x200, 2, msg_readyToSwitchOn).c_str() );
     //*************************************************************
+
+    while( (! this->getReadyToSwitchOn) ) {
+        CD_INFO("Waiting for response to \"readyToSwitchOn/shutdown\" on id %d...\n", this->canId);
+        yarp::os::Time::delay(0.1);  //-- [s]
+    }
 
     return true;
 }
@@ -70,22 +88,16 @@ bool teo::MotorIpos::switchOn() {
         yarp::os::Time::delay(0.1);  //-- [s]
     }
 
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    //yarp::os::Time::delay(0.1);
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    //struct can_msg replyOn;
-    //while(canDevicePtr->read_timeout(&replyOn,20))
-    //{
-    //    CD_SUCCESS("Got response to \"switchOn/disableOperation\". %s\n", msgToStr( &replyOn).c_str() );
-    //}
-    //*************************************************************
-
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool teo::MotorIpos::enable() {
+
+    this->getEnableReady.wait();
+    this->getEnable = false;
+    this->getEnableReady.post();
 
     //*************************************************************
     uint8_t msg_enable[] = {0x0F,0x00}; // enable
@@ -96,15 +108,12 @@ bool teo::MotorIpos::enable() {
         return false;
     }
     CD_SUCCESS("Sent \"enable\". %s\n", msgToStr(0x200, 2, msg_enable).c_str() );
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    //yarp::os::Time::delay(0.1);
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    //struct can_msg reply;
-    //while(canDevicePtr->read_timeout(&reply,20))
-    //{
-    //    CD_SUCCESS("Got response to \"enable\". %s\n", msgToStr(&reply).c_str() );
-    //}
     //*************************************************************
+
+    while( (! this->getEnable) ) {
+        CD_INFO("Waiting for response to \"enable\" on id %d...\n", this->canId);
+        yarp::os::Time::delay(0.1);  //-- [s]
+    }
 
     return true;
 }
