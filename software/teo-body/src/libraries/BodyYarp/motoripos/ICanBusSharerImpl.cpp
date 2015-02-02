@@ -15,10 +15,6 @@ bool teo::MotorIpos::setCanBusPtr(CanBusHico *canDevicePtr) {
 
 bool teo::MotorIpos::start() {
 
-    this->getStartReady.wait();
-    this->getStart = false;
-    this->getStartReady.post();
-
     //*************************************************************
     uint8_t msg_start[] = {0x01,0x00};  // NMT
 
@@ -31,10 +27,8 @@ bool teo::MotorIpos::start() {
     CD_SUCCESS("Sent \"start\". %s\n", msgToStr(0, 2, msg_start).c_str() );
     //*************************************************************
 
-    while( (! this->getStart) ) {
-        CD_INFO("Waiting for response to \"start\" on id %d...\n", this->canId);
-        yarp::os::Time::delay(0.1);  //-- [s]
-    }
+    //-- Do not force expectr response as only happens upon transition.
+    //-- For example, if already started, function would get stuck.
 
     return true;
 }
