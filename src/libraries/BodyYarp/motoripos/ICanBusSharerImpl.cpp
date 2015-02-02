@@ -548,7 +548,7 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
             CD_DEBUG("Got PDO1 that it is observed when driver arrives to position target. %s\n",msgToStr(message).c_str());
             return true;
         } else if( (message->data[0]==0x40)&&(message->data[1]==0x02) ) {
-            CD_DEBUG("Got PDO1 that it is observed as ack \"start\". %s\n",msgToStr(message).c_str());
+            CD_DEBUG("Got PDO1 that it is observed as TRANSITION performed upon \"start\". %s\n",msgToStr(message).c_str());
             return true;
         }
         CD_DEBUG("Got PDO1 from driver side: unknown. %s\n",msgToStr(message).c_str());
@@ -563,7 +563,7 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
             CD_DEBUG("Got PDO2 that it is observed when driver arrives to position target. %s\n",msgToStr(message).c_str());
             return true;
         } else if( (message->data[0]==0x40)&&(message->data[1]==0x02) ) {
-            CD_DEBUG("Got PDO2 that it is observed as ack \"start\". %s\n",msgToStr(message).c_str());
+            CD_DEBUG("Got PDO2 that it is observed as TRANSITION performed upon \"start\". %s\n",msgToStr(message).c_str());
             return true;
         }
         CD_DEBUG("Got PDO2 from driver side: unknown. %s\n",msgToStr(message).c_str());
