@@ -88,6 +88,18 @@ bool PlaybackManipulation::configure(ResourceFinder &rf) {
     }
     CD_SUCCESS("Obtained leftArmPosDirect.\n");
 
+    if ( ! leftArmDevice.view( playbackThread.leftArmEncTimed ) ) {
+        CD_ERROR("Could not obtain leftArmEncTimed.\n");
+        return false;
+    }
+    CD_SUCCESS("Obtained leftArmEncTimed.\n");
+
+    if ( ! leftArmDevice.view( playbackThread.leftArmTorque ) ) {
+        CD_ERROR("Could not obtain leftArmTorque.\n");
+        return false;
+    }
+    CD_SUCCESS("Obtained leftArmTorque.\n");
+
     if ( ! rightArmDevice.view( playbackThread.rightArmPos ) ) {
         CD_ERROR("Could not obtain leftArmPos.\n");
         return false;
@@ -99,6 +111,18 @@ bool PlaybackManipulation::configure(ResourceFinder &rf) {
         return false;
     }
     CD_SUCCESS("Obtained rightArmPosDirect.\n");
+
+    if ( ! rightArmDevice.view( playbackThread.rightArmEncTimed ) ) {
+        CD_ERROR("Could not obtain rightArmEncTimed.\n");
+        return false;
+    }
+    CD_SUCCESS("Obtained rightArmEncTimed.\n");
+
+    if ( ! rightArmDevice.view( playbackThread.rightArmTorque ) ) {
+        CD_ERROR("Could not obtain rightArmTorque.\n");
+        return false;
+    }
+    CD_SUCCESS("Obtained rightArmTorque.\n");
 
     //-- Do stuff.
     playbackThread.leftArmPos->getAxes( &(playbackThread.leftArmNumMotors) );
