@@ -21,8 +21,9 @@ void PlaybackThread::run() {
     int lineCount = 1;
     while( getline( ifs, line) && ( ! this->isStopping() ) ) {
 
+        CD_DEBUG("[L:%d] %s\n", lineCount,line.c_str() );
         yarp::os::Bottle lineBottle(line);  //-- yes, using a bottle to parse a string
-        CD_DEBUG("[L:%d] string from bottle from string: %s\n", lineCount,lineBottle.toString().c_str() );
+        //CD_DEBUG("[L:%d] string from bottle from string: %s\n", lineCount,lineBottle.toString().c_str() );
         if( leftLegNumMotors+rightLegNumMotors != lineBottle.size() )
             CD_ERROR("-------------SIZE!!!!!!!!!!!!!\n");
 
