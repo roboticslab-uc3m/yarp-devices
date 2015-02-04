@@ -16,8 +16,8 @@ bool PlaybackManipulation::configure(ResourceFinder &rf) {
     //-- Open file for logging.
     if ( rf.check("log") ) {
         playbackThread.log = true;
-        std::string fileName = rf.check("log",yarp::os::Value(DEFAULT_FILE_NAME),"file name").asString();
-        CD_INFO("Using log file: %s (default: " DEFAULT_FILE_NAME ").\n",fileName.c_str());
+        std::string fileName = rf.check("log",yarp::os::Value(DEFAULT_LOG_FILE_NAME),"file name").asString();
+        CD_INFO("Using log file: %s (default: " DEFAULT_LOG_FILE_NAME ").\n",fileName.c_str());
         playbackThread.logFilePtr = ::fopen (fileName.c_str(),"w");
         if( ! playbackThread.logFilePtr ) {
             CD_PERROR("Could not open log file: %s.\n",fileName.c_str());
@@ -29,8 +29,8 @@ bool PlaybackManipulation::configure(ResourceFinder &rf) {
     }
 
     //-- Open file for reading.
-    std::string fileName = rf.check("file",Value(DEFAULT_FILE_NAME),"file name").asString();
-    CD_INFO("Using read file: %s (default: " DEFAULT_FILE_NAME ").\n",fileName.c_str());
+    std::string fileName = rf.check("file",Value(DEFAULT_READ_FILE_NAME),"file name").asString();
+    CD_INFO("Using read file: %s (default: " DEFAULT_READ_FILE_NAME ").\n",fileName.c_str());
     playbackThread.ifs.open( fileName.c_str() );
     if( ! playbackThread.ifs.is_open() ) {
         CD_ERROR("Could not open read file: %s.\n",fileName.c_str());
