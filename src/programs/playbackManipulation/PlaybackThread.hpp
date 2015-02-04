@@ -54,7 +54,7 @@ class PlaybackThread : public yarp::os::Thread {
         bool leftArmDone;
         bool rightArmDone;
 
-        int hold;
+        bool hold;
 
 protected:
 

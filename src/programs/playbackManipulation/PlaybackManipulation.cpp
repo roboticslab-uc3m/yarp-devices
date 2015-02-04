@@ -11,7 +11,7 @@ bool PlaybackManipulation::configure(ResourceFinder &rf) {
     int ptModeMs = rf.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
     CD_INFO("Using ptModeMs: %d (default: %d).\n",ptModeMs,int(DEFAULT_PT_MODE_MS));
 
-    playbackThread.hold = rf.check("hold",yarp::os::Value(0),"hold").asInt();
+    playbackThread.hold = rf.check("hold");
 
     //-- Open file for reading.
     std::string fileName = rf.check("file",Value(DEFAULT_FILE_NAME),"file name").asString();
