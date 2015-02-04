@@ -86,12 +86,6 @@ bool PlaybackManipulation::configure(ResourceFinder &rf) {
     }
     CD_SUCCESS("Obtained leftArmPosDirect.\n");
 
-    if ( ! leftArmDevice.view( playbackThread.leftArmEncs ) ) {
-        CD_ERROR("Could not obtain leftArmEncs.\n");
-        return false;
-    }
-    CD_SUCCESS("Obtained rightArmEncs.\n");
-
     if ( ! rightArmDevice.view( playbackThread.rightArmPos ) ) {
         CD_ERROR("Could not obtain leftArmPos.\n");
         return false;
@@ -104,30 +98,9 @@ bool PlaybackManipulation::configure(ResourceFinder &rf) {
     }
     CD_SUCCESS("Obtained rightArmPosDirect.\n");
 
-    if ( ! rightArmDevice.view( playbackThread.rightArmEncs ) ) {
-        CD_ERROR("Could not obtain rightArmEncs.\n");
-        return false;
-    }
-    CD_SUCCESS("Obtained rightArmEncs.\n");
-
-
     //-- Do stuff.
     playbackThread.leftArmPos->getAxes( &(playbackThread.leftArmNumMotors) );
     playbackThread.rightArmPos->getAxes( &(playbackThread.rightArmNumMotors) );
-
-    std::vector<double> leftArmEncValues(playbackThread.leftArmNumMotors);
-    playbackThread.leftArmEncs->getEncoders(leftArmEncValues.data());
-    CD_DEBUG("leftArmEncValues: ");
-    for(int i=0;i<playbackThread.leftArmNumMotors;i++)
-        CD_DEBUG_NO_HEADER("%f ",leftArmEncValues[i]);
-    CD_DEBUG_NO_HEADER("\n");
-
-    std::vector<double> rightArmEncValues(playbackThread.rightArmNumMotors);
-    playbackThread.rightArmEncs->getEncoders(rightArmEncValues.data());
-    CD_DEBUG("rightArmEncs: ");
-    for(int i=0;i<playbackThread.rightArmNumMotors;i++)
-        CD_DEBUG_NO_HEADER("%f ",rightArmEncValues[i]);
-    CD_DEBUG_NO_HEADER("\n");
 
     CD_INFO("setPositionDirectMode...\n");
     playbackThread.leftArmPosDirect->setPositionDirectMode();

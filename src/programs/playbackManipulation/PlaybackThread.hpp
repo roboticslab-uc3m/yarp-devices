@@ -42,11 +42,9 @@ class PlaybackThread : public yarp::os::Thread {
 
         yarp::dev::IPositionControl *leftArmPos;
         yarp::dev::IPositionDirect *leftArmPosDirect;
-        yarp::dev::IEncoders *leftArmEncs;  //-- Just for checking
 
         yarp::dev::IPositionControl *rightArmPos;
         yarp::dev::IPositionDirect *rightArmPosDirect;
-        yarp::dev::IEncoders *rightArmEncs;  //-- Just for checking
 
         int leftArmNumMotors;
         int rightArmNumMotors;

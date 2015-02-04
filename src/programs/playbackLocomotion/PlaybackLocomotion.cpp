@@ -103,7 +103,6 @@ bool PlaybackLocomotion::configure(ResourceFinder &rf) {
     playbackThread.rightLegPos->getAxes( &(playbackThread.rightLegNumMotors) );
 
     CD_INFO("setPositionDirectMode...\n");
-
     playbackThread.leftLegPosDirect->setPositionDirectMode();
     playbackThread.rightLegPosDirect->setPositionDirectMode();
 
