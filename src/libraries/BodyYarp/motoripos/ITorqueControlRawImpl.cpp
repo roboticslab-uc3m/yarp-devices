@@ -88,36 +88,24 @@ bool teo::MotorIpos::getTorqueRaw(int j, double *t) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
+    //*************************************************************
     uint8_t msg_read[]={0x40,0x7E,0x20,0x00}; // Query current. Ok only 4.
 
-    //memcpy(msg_read,,4);
-    if( ! send(0x600,4,msg_read) ) {
-        CD_ERROR("Failed to send part of read failed.\n");
+    if(! send(0x600, 4, msg_read) )
+    {
+        CD_ERROR("Could not send refTorque. %s\n", msgToStr(0x600, 2, msg_read).c_str() );
         return false;
     }
-    //display(message);
-    Time::delay(DELAY);
-    //purge(canNode);
-    //CAN::receive(canNode);
-    struct can_msg reply;
-    return false; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    ///////////////////////////if( ! canDevice.read_timeout(&reply,500) ){
-        //////////////////////////////CD_WARNING("Read timeout!\n");
-    ///////////////////////////////////////////////}
-    //display(reply);
-    //int got;
-    //memcpy(&got,reply.data+4,4);
-    //*current = got/(11.11112*devices[idx].tr);
-    //int got;START LOOP
-    //memcpy(&got,reply.data+4,4);
-    //*current = got;
-    int16_t got;
-    //lastCurrent = got;
-    //memcpy(&got,reply.data+4,2);
-    //*current = - got / 4268.4 ;
-    memcpy(&got,reply.data+4,4);
-    * t = got * (2.0 * 10.0) / 65520.0;
+    CD_SUCCESS("Sent refTorque. %s\n", msgToStr(0x600, 8, msg_read).c_str() );
+    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    Time::delay(DELAY);  // Must delay as it will be from same driver.
+    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+    getTorqueReady.wait();
+    *t = getTorque;
+    getTorqueReady.post();
+
+    //*************************************************************
     return true;
 }
 

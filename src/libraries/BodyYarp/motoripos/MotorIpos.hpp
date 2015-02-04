@@ -271,6 +271,10 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
         bool targetReached;
         yarp::os::Semaphore targetReachedReady;
 
+        //-- Torque stuff
+        double getTorque;
+        yarp::os::Semaphore getTorqueReady;
+
         //-- Init stuff
         int getSwitchOn;
         yarp::os::Semaphore getSwitchOnReady;

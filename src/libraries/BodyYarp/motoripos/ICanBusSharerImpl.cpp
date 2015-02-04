@@ -170,6 +170,15 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
             encoderTimestamp = message->ts;
             encoderReady.post();
             return true;
+        } else if( (message->data[1]==0x20) && (message->data[2]==0x7E) ) { // Manual 207Eh
+            //-- Commenting torque value (response to petition) as way too verbose, happens all the time.
+            //CD_DEBUG("Got torque value (response to petition). %s\n",msgToStr(message).c_str());
+            int16_t got;
+            memcpy(&got, message->data+4,2);
+            getTorqueReady.wait();
+            getTorque = got * (2.0 * 10.0) / 65520.0;
+            getTorqueReady.post();
+            return true;
         } else if( (message->data[1]==0x7A)&&(message->data[2]==0x60) ) {  // Manual 607Ah
             CD_DEBUG("Got SDO ack \"position target\" from driver. %s\n",msgToStr(message).c_str());
             return true;
