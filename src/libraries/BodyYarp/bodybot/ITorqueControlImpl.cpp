@@ -116,7 +116,7 @@ bool teo::BodyBot::getTorques(double *t) {
     bool ok = true;
     for(int j=0; j<drivers.size(); j++)
     {
-        ok &= this->getTorque(j, t);
+        ok &= this->getTorque(j, &(t[j]));
     }
     return ok;
 }
