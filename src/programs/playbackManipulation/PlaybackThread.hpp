@@ -60,7 +60,10 @@ class PlaybackThread : public yarp::os::Thread {
 
         bool hold;
 
-protected:
+        FILE * logFilePtr;
+        bool log;
+
+    protected:
 
 
 };

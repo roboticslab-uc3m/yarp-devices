@@ -38,6 +38,31 @@ void PlaybackThread::run() {
         leftArmPosDirect->setPositions( leftArmOutDoubles.data() );
         rightArmPosDirect->setPositions( rightArmOutDoubles.data() );
         lineCount++;
+
+        if( log ) {
+            //-- Re-using leftArmOutDoubles and rightArmOutDoubles
+            std::vector< double > leftArmTimes( leftArmNumMotors ); // only use [0] of here
+            //-- Not using rightArmTimes
+            std::vector< double > leftArmTorques( leftArmNumMotors );
+            std::vector< double > rightArmTorques( rightArmNumMotors );
+
+            leftArmEncTimed->getEncodersTimed( leftArmOutDoubles.data(), leftArmTimes.data() );
+            leftArmTorque->getTorques( leftArmTorques.data() );
+            rightArmEncTimed->getEncoders( rightArmOutDoubles.data() );
+            leftArmTorque->getTorques( rightArmTorques.data() );
+
+            fprintf(logFilePtr,"%f ",leftArmTimes[0]);
+            for(int i=0;i<leftArmNumMotors;i++)
+                fprintf(logFilePtr,"%f ",leftArmOutDoubles[i]);
+            for(int i=0;i<rightArmNumMotors;i++)
+                fprintf(logFilePtr,"%f ",rightArmOutDoubles[i]);
+            for(int i=0;i<leftArmNumMotors;i++)
+                fprintf(logFilePtr,"%f ",leftArmTorques[i]);
+            for(int i=0;i<rightArmNumMotors;i++)
+                fprintf(logFilePtr,"%f ",rightArmTorques[i]);
+            fprintf(logFilePtr,"\n");
+        }
+
     }
     if( this->isStopping() ) return;
     CD_DEBUG("End parsing file.\n" );
