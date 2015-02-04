@@ -102,15 +102,13 @@ bool PlaybackLocomotion::configure(ResourceFinder &rf) {
     playbackThread.leftLegPos->getAxes( &(playbackThread.leftLegNumMotors) );
     playbackThread.rightLegPos->getAxes( &(playbackThread.rightLegNumMotors) );
 
-    CD_INFO("setPositionDirectMode in 1 second...\n");
-    yarp::os::Time::delay(1);
+    CD_INFO("setPositionDirectMode...\n");
 
     playbackThread.leftLegPosDirect->setPositionDirectMode();
     playbackThread.rightLegPosDirect->setPositionDirectMode();
 
     //-- Start the thread.
-    CD_INFO("Start thread in 1 second...\n");
-    yarp::os::Time::delay(1);
+    CD_INFO("Start thread...\n");
     playbackThread.start();
 
     return true;

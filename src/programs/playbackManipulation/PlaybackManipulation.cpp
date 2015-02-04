@@ -92,7 +92,6 @@ bool PlaybackManipulation::configure(ResourceFinder &rf) {
     }
     CD_SUCCESS("Obtained rightArmEncs.\n");
 
-
     if ( ! rightArmDevice.view( playbackThread.rightArmPos ) ) {
         CD_ERROR("Could not obtain leftArmPos.\n");
         return false;
@@ -130,15 +129,12 @@ bool PlaybackManipulation::configure(ResourceFinder &rf) {
         CD_DEBUG_NO_HEADER("%f ",rightArmEncValues[i]);
     CD_DEBUG_NO_HEADER("\n");
 
-    CD_INFO("setPositionDirectMode in 1 second...\n");
-    yarp::os::Time::delay(1);
-
+    CD_INFO("setPositionDirectMode...\n");
     playbackThread.leftArmPosDirect->setPositionDirectMode();
     playbackThread.rightArmPosDirect->setPositionDirectMode();
 
     //-- Start the thread.
-    CD_INFO("Start thread in 1 second...\n");
-    yarp::os::Time::delay(1);
+    CD_INFO("Start thread...\n");
     playbackThread.start();
 
     return true;
