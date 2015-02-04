@@ -13,12 +13,27 @@ bool PlaybackManipulation::configure(ResourceFinder &rf) {
 
     playbackThread.hold = rf.check("hold");
 
+    //-- Open file for logging.
+    if ( rf.check("log") ) {
+        playbackThread.log = true;
+        std::string fileName = rf.check("log",yarp::os::Value(DEFAULT_LOG_FILE_NAME),"file name").asString();
+        CD_INFO("Using log file: %s (default: " DEFAULT_LOG_FILE_NAME ").\n",fileName.c_str());
+        playbackThread.logFilePtr = ::fopen (fileName.c_str(),"w");
+        if( ! playbackThread.logFilePtr ) {
+            CD_PERROR("Could not open log file: %s.\n",fileName.c_str());
+            return false;
+        }
+        CD_SUCCESS("Opened log file: %s.\n",fileName.c_str());
+    } else {
+        playbackThread.log = false;
+    }
+
     //-- Open file for reading.
-    std::string fileName = rf.check("file",Value(DEFAULT_FILE_NAME),"file name").asString();
-    CD_INFO("Using file: %s (default: " DEFAULT_FILE_NAME ").\n",fileName.c_str());
+    std::string fileName = rf.check("file",Value(DEFAULT_READ_FILE_NAME),"file name").asString();
+    CD_INFO("Using read file: %s (default: " DEFAULT_READ_FILE_NAME ").\n",fileName.c_str());
     playbackThread.ifs.open( fileName.c_str() );
     if( ! playbackThread.ifs.is_open() ) {
-        CD_ERROR("Could not open file: %s.\n",fileName.c_str());
+        CD_ERROR("Could not open read file: %s.\n",fileName.c_str());
         return false;
     }
     CD_SUCCESS("Opened file: %s.\n",fileName.c_str());
@@ -88,6 +103,18 @@ bool PlaybackManipulation::configure(ResourceFinder &rf) {
     }
     CD_SUCCESS("Obtained leftArmPosDirect.\n");
 
+    if ( ! leftArmDevice.view( playbackThread.leftArmEncTimed ) ) {
+        CD_ERROR("Could not obtain leftArmEncTimed.\n");
+        return false;
+    }
+    CD_SUCCESS("Obtained leftArmEncTimed.\n");
+
+    if ( ! leftArmDevice.view( playbackThread.leftArmTorque ) ) {
+        CD_ERROR("Could not obtain leftArmTorque.\n");
+        return false;
+    }
+    CD_SUCCESS("Obtained leftArmTorque.\n");
+
     if ( ! rightArmDevice.view( playbackThread.rightArmPos ) ) {
         CD_ERROR("Could not obtain leftArmPos.\n");
         return false;
@@ -99,6 +126,18 @@ bool PlaybackManipulation::configure(ResourceFinder &rf) {
         return false;
     }
     CD_SUCCESS("Obtained rightArmPosDirect.\n");
+
+    if ( ! rightArmDevice.view( playbackThread.rightArmEncTimed ) ) {
+        CD_ERROR("Could not obtain rightArmEncTimed.\n");
+        return false;
+    }
+    CD_SUCCESS("Obtained rightArmEncTimed.\n");
+
+    if ( ! rightArmDevice.view( playbackThread.rightArmTorque ) ) {
+        CD_ERROR("Could not obtain rightArmTorque.\n");
+        return false;
+    }
+    CD_SUCCESS("Obtained rightArmTorque.\n");
 
     //-- Do stuff.
     playbackThread.leftArmPos->getAxes( &(playbackThread.leftArmNumMotors) );
@@ -138,6 +177,7 @@ bool PlaybackManipulation::close() {
     rightArmDevice.close();
 
     playbackThread.ifs.close();
+    ::fclose(playbackThread.logFilePtr);
 
     return true;
 }

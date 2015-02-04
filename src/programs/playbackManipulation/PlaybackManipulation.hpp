@@ -19,7 +19,9 @@
 #include "PlaybackThread.hpp"
 
 #define DEFAULT_ROBOT_NAME "/teo"
-#define DEFAULT_FILE_NAME "manipulationRecording.txt"
+#define DEFAULT_READ_FILE_NAME "manipulationRecording.txt"
+
+#define DEFAULT_LOG_FILE_NAME "manipulationLog.txt"
 
 #define DEFAULT_PT_MODE_MS 50
 

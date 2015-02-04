@@ -42,9 +42,13 @@ class PlaybackThread : public yarp::os::Thread {
 
         yarp::dev::IPositionControl *leftArmPos;
         yarp::dev::IPositionDirect *leftArmPosDirect;
+        yarp::dev::IEncodersTimed *leftArmEncTimed;
+        yarp::dev::ITorqueControl *leftArmTorque;
 
         yarp::dev::IPositionControl *rightArmPos;
         yarp::dev::IPositionDirect *rightArmPosDirect;
+        yarp::dev::IEncodersTimed *rightArmEncTimed;
+        yarp::dev::ITorqueControl *rightArmTorque;
 
         int leftArmNumMotors;
         int rightArmNumMotors;
@@ -56,7 +60,10 @@ class PlaybackThread : public yarp::os::Thread {
 
         bool hold;
 
-protected:
+        FILE * logFilePtr;
+        bool log;
+
+    protected:
 
 
 };
