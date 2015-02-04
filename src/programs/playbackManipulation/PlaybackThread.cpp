@@ -40,26 +40,38 @@ void PlaybackThread::run() {
         lineCount++;
 
         if( log ) {
-            //-- Re-using leftArmOutDoubles and rightArmOutDoubles
+            std::vector< double > leftArmInDoubles( leftArmNumMotors );
+            std::vector< double > rightArmInDoubles( rightArmNumMotors );
             std::vector< double > leftArmTimes( leftArmNumMotors ); // only use [0] of here
             //-- Not using rightArmTimes
             std::vector< double > leftArmTorques( leftArmNumMotors );
             std::vector< double > rightArmTorques( rightArmNumMotors );
 
-            leftArmEncTimed->getEncodersTimed( leftArmOutDoubles.data(), leftArmTimes.data() );
+            leftArmEncTimed->getEncodersTimed( leftArmInDoubles.data(), leftArmTimes.data() );
             leftArmTorque->getTorques( leftArmTorques.data() );
-            rightArmEncTimed->getEncoders( rightArmOutDoubles.data() );
+            rightArmEncTimed->getEncoders( rightArmInDoubles.data() );
             leftArmTorque->getTorques( rightArmTorques.data() );
 
             fprintf(logFilePtr,"%f ",leftArmTimes[0]);
+
             for(int i=0;i<leftArmNumMotors;i++)
                 fprintf(logFilePtr,"%f ",leftArmOutDoubles[i]);
+
             for(int i=0;i<rightArmNumMotors;i++)
                 fprintf(logFilePtr,"%f ",rightArmOutDoubles[i]);
+
+            for(int i=0;i<leftArmNumMotors;i++)
+                fprintf(logFilePtr,"%f ",leftArmInDoubles[i]);
+
+            for(int i=0;i<rightArmNumMotors;i++)
+                fprintf(logFilePtr,"%f ",rightArmInDoubles[i]);
+
             for(int i=0;i<leftArmNumMotors;i++)
                 fprintf(logFilePtr,"%f ",leftArmTorques[i]);
+
             for(int i=0;i<rightArmNumMotors;i++)
                 fprintf(logFilePtr,"%f ",rightArmTorques[i]);
+
             fprintf(logFilePtr,"\n");
         }
 
