@@ -170,7 +170,7 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
             encoderTimestamp = message->ts;
             encoderReady.post();
             return true;
-        } else if( (message->data[1]==0x20) && (message->data[2]==0x7E) ) { // Manual 207Eh
+        } else if( (message->data[1]==0x7E) && (message->data[2]==0x20) ) { // Manual 207Eh
             //-- Commenting torque value (response to petition) as way too verbose, happens all the time.
             //CD_DEBUG("Got torque value (response to petition). %s\n",msgToStr(message).c_str());
             int16_t got;
