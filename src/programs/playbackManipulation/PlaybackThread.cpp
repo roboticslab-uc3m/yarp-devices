@@ -57,7 +57,13 @@ void PlaybackThread::run() {
     if( this->isStopping() ) return;
     CD_DEBUG("Right arm done!\n");
 
-}
+    if( this->hold ) {
+        while ( ! this->isStopping() ) {
+            CD_INFO("\"--hold\" activated, press CTRL-C to release hold...\n");
+            yarp::os::Time::delay(1);  //-- [s]
+        }
+    }
 
+}
 
 /************************************************************************/
