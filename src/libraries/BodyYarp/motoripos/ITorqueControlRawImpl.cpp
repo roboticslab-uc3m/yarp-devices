@@ -89,14 +89,14 @@ bool teo::MotorIpos::getTorqueRaw(int j, double *t) {
     if ( j != 0 ) return false;
 
     //*************************************************************
-    uint8_t msg_read[]={0x40,0x7E,0x20,0x00}; // Query current. Ok only 4.
+    uint8_t msg_getCurrent[]={0x40,0x7E,0x20,0x00}; // Query current. Ok only 4.
 
-    if(! send(0x600, 4, msg_read) )
+    if(! send(0x600, 4, msg_getCurrent) )
     {
-        CD_ERROR("Could not send refTorque. %s\n", msgToStr(0x600, 2, msg_read).c_str() );
+        CD_ERROR("Could not send msg_getCurrent. %s\n", msgToStr(0x600, 4, msg_getCurrent).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent refTorque. %s\n", msgToStr(0x600, 8, msg_read).c_str() );
+    CD_SUCCESS("Sent msg_getCurrent. %s\n", msgToStr(0x600, 4, msg_getCurrent).c_str() );
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Time::delay(DELAY);  // Must delay as it will be from same driver.
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
