@@ -23,7 +23,7 @@ bool teo::BodyBot::getRefTorques(double *t){
     bool ok = true;
     for(int j=0; j<drivers.size(); j++)
     {
-        ok &= this->getRefTorque(j, t);
+        ok &= this->getRefTorque(j, &(t[j]));
     }
     return ok;
 }
