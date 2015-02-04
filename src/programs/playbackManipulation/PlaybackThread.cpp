@@ -33,8 +33,8 @@ void PlaybackThread::run() {
         for(int i=0;i<rightArmNumMotors;i++)
             rightArmOutDoubles[i] = lineBottle.get(leftArmNumMotors+i).asDouble();
 
-        leftArmPosDirect->setPositions( leftArmOutDoubles.size(), NULL, leftArmOutDoubles.data() );
-        rightArmPosDirect->setPositions( rightArmOutDoubles.size(), NULL, rightArmOutDoubles.data() );
+        leftArmPosDirect->setPositions( leftArmOutDoubles.data() );
+        rightArmPosDirect->setPositions( rightArmOutDoubles.data() );
 
     }
     if( this->isStopping() ) return;
