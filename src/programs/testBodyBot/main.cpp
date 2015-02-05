@@ -81,6 +81,7 @@ Response: [ok]
  * And should get some kind of feedback, such as:
 \verbatim
 Response: [ok]
+ * When finished, Control-C closes programs cleanly. Start by Control-C on teo-main's rpc (it's the client part), and then Control-C on teo-body's testBodyBot (it shuts down the motors correctly). 
 \endverbatim
  *
  * @section testBodyBot_modify Modify
