@@ -25,12 +25,12 @@
  *
  * First we must make sure a YARP name server is running,
 \verbatim
-[on terminal 1] yarp detect --write
+[teo-body, terminal 1] yarp detect --write
 \endverbatim
  *
  * And run it <b>if it is not running</b> in our current namespace:
 \verbatim
-[on terminal 1] yarp server
+[teo-main, terminal 1] yarp server
 \endverbatim
  *
  * And then launch the actual and specify different options, as in "testBodyBot --option1 value1a value1b --option2 value2". Specifically, the following options are checked by the bodybot device (\ref BodyBot class):
@@ -64,11 +64,11 @@ types
  * The implementation maps certain YARP rpc's to BodyBot function calls. Therefore, we can interface
  * with the class from the command-line by typing:
 \verbatim
-[on terminal 3] yarp rpc /bodybot/rpc:i
+[teo-main, terminal 2] yarp rpc /bodybot/rpc:i
 \endverbatim
  * We can send an absolute position joint space movement (say, 5 degrees) to the motoripos such as:
 \verbatim
-[on terminal 3] set pos 0 5
+[teo-main, terminal 2] set pos 0 5
 \endverbatim
  * And should get some kind of feedback, such as:
 \verbatim
@@ -76,7 +76,7 @@ Response: [ok]
 \endverbatim
  * We can send an absolute position movement (say, a position corresponding to a 2000 us PWM) to the motorlacquey such as:
 \verbatim
-[on terminal 3] set pos 1 2000
+[teo-main, terminal 2] set pos 1 2000
 \endverbatim
  * And should get some kind of feedback, such as:
 \verbatim
