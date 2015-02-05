@@ -33,7 +33,7 @@
 [teo-main, terminal 1] yarp server
 \endverbatim
  *
- * And then launch the actual and specify different options, as in "testBodyBot --option1 value1a value1b --option2 value2". Specifically, the following options are checked by the bodybot device (\ref BodyBot class):
+ * And then launch the actual and specify different options, as in "testBodyBot \--option1 value1a value1b \--option2 value2". Specifically, the following options are checked by the bodybot device (\ref BodyBot class):
 
 \verbatim
 device=bodybot
