@@ -64,7 +64,7 @@ types
  * The implementation maps certain YARP rpc's to BodyBot function calls. Therefore, we can interface
  * with the class from the command-line by typing:
 \verbatim
-[teo-main, terminal 2] yarp rpc /bodybot/rpc:i
+[teo-main, terminal 2] yarp rpc /testBodyBot/rpc:i
 \endverbatim
  * We can send an absolute position joint space movement (say, 5 degrees) to the motoripos such as:
 \verbatim
