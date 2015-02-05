@@ -14,24 +14,48 @@
  *
  * Author: <a href="http://roboticslab.uc3m.es/roboticslab/persona_publ.php?id_pers=72">Juan G. Victores</a>
  *
- * Contrib: Iván (author oth the canOpen module)
- *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see license/LGPL.TXT
  *
  * @section testBodyBot_install Installation
  *
- * The module is compiled when ENABLE_testBodyBot is activated (default: OFF). For further
+ * The module is compiled when ENABLE_testBodyBot is activated (default: ON). For further
  * installation steps refer to <a class="el" href="pages.html">your own system installation guidelines</a>.
  *
  * @section testBodyBot_running Running (assuming correct installation)
  *
- * First we must run a YARP name server if it is not running in our current namespace:
+ * First we must make sure a YARP name server is running,
+\verbatim
+[on terminal 1] yarp detect --write
+\endverbatim
+ *
+ * And run it <b>if it is not running</b> in our current namespace:
 \verbatim
 [on terminal 1] yarp server
 \endverbatim
- * And then launch the actual module:
+ *
+ * And then launch the actual and specify different options, as in "testBodyBot --option1 value1a value1b --option2 value2". Specifically, the following options are checked by the bodybot device (\ref BodyBot class):
+
 \verbatim
-[on terminal 2] testBodyBot
+device=bodybot
+mode [position]
+    position/velocity mode
+canDevice [/dev/can0]
+    CAN device path
+canBitrate [8]
+    CAN bitrate
+ptModeMs [50]
+    PT mode miliseconds
+ids
+trs
+maxs
+mins
+refAccelerations
+refSpeeds
+types
+\endverbatim
+ * Say you have a motoripos device with id 15 and reduction 120, and a motorlacquey device with id 64, both on /dev/can0. The command that enables them and exposes YARP controlboard device ports is:
+\verbatim
+[teo-body, terminal 1] testBodyBot --canDevice /dev/can0 --ids 15 64 --types motoripos motorlacquey --trs 120
 \endverbatim
  *
  * @section testBodyBot_interfacing Interfacing with the testBodyBot module
@@ -42,9 +66,17 @@
 \verbatim
 [on terminal 3] yarp rpc /bodybot/rpc:i
 \endverbatim
- * We can send an absolute position joint space movement such as:
+ * We can send an absolute position joint space movement (say, 5 degrees) to the motoripos such as:
 \verbatim
-[on terminal 3] set pos 0 2000
+[on terminal 3] set pos 0 5
+\endverbatim
+ * And should get some kind of feedback, such as:
+\verbatim
+Response: [ok]
+\endverbatim
+ * We can send an absolute position movement (say, a position corresponding to a 2000 us PWM) to the motorlacquey such as:
+\verbatim
+[on terminal 3] set pos 1 2000
 \endverbatim
  * And should get some kind of feedback, such as:
 \verbatim
