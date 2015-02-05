@@ -32,7 +32,7 @@
  * @section recordManipulation_modify Modify
  *
  * This file can be edited at
- * $MANIPULATION_ROOT/src/modules/recordManipulation/main.cpp
+ * teo-body/src/modules/recordManipulation/main.cpp
  *
  */
 

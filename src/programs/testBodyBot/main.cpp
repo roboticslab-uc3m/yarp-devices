@@ -86,7 +86,7 @@ Response: [ok]
  * @section testBodyBot_modify Modify
  *
  * This file can be edited at
- * $MANIPULATION_ROOT/src/modules/testBodyBot/main.cpp
+ * teo-body/src/modules/testBodyBot/main.cpp
  *
  */
 

@@ -32,7 +32,7 @@
  * @section launchManipulation_modify Modify
  *
  * This file can be edited at
- * $MANIPULATION_ROOT/src/modules/launchManipulation/main.cpp
+ * teo-body/src/modules/launchManipulation/main.cpp
  *
  */
 

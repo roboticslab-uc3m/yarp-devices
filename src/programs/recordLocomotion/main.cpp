@@ -32,7 +32,7 @@
  * @section recordLocomotion_modify Modify
  *
  * This file can be edited at
- * $MANIPULATION_ROOT/src/modules/recordLocomotion/main.cpp
+ * teo-body/src/modules/recordLocomotion/main.cpp
  *
  */
 

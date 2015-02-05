@@ -32,7 +32,7 @@
  * @section playbackManipulation_modify Modify
  *
  * This file can be edited at
- * $MANIPULATION_ROOT/src/modules/playbackManipulation/main.cpp
+ * teo-body/src/modules/playbackManipulation/main.cpp
  *
  */
 

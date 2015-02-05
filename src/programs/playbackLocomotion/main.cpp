@@ -32,7 +32,7 @@
  * @section playbackLocomotion_modify Modify
  *
  * This file can be edited at
- * $MANIPULATION_ROOT/src/modules/playbackLocomotion/main.cpp
+ * teo-body/src/modules/playbackLocomotion/main.cpp
  *
  */
 
