@@ -21,6 +21,10 @@ bool RecordManipulation::configure(yarp::os::ResourceFinder &rf) {
     }
     CD_SUCCESS("Opened file: %s.\n",fileName.c_str());
 
+    //-- Gripper port
+    moveGripperPort.open("/gripper");
+    moveGripperPort.useCallback();
+
     //-- left arm --
     std::string leftArmIni = rf.findFileByName("../manipulation/leftArm.ini");
 
@@ -97,13 +101,13 @@ bool RecordManipulation::configure(yarp::os::ResourceFinder &rf) {
     }
     CD_SUCCESS("Obtained rightArmTrq.\n");
 
-    if ( ! leftArmDevice.view( moveGripperThread.leftArmPos ) ) {
+    if ( ! leftArmDevice.view( moveGripperPort.iPositionControlLeft ) ) {
         CD_ERROR("Could not obtain left gripperPos.\n");
         return false;
     }
     CD_SUCCESS("Obtained left gripperPos.\n");
 
-    if ( ! rightArmDevice.view( moveGripperThread.rightArmPos ) ) {
+    if ( ! rightArmDevice.view( moveGripperPort.iPositionControlRight ) ) {
         CD_ERROR("Could not obtain right gripperPos.\n");
         return false;
     }
@@ -124,12 +128,6 @@ bool RecordManipulation::configure(yarp::os::ResourceFinder &rf) {
     recordRateThread.leftArmTrq->setTorqueMode();
     recordRateThread.rightArmTrq->setTorqueMode();
 
-    //-- Start the threads.
-    moveGripperThread.setLeftOpenChar('1');
-    moveGripperThread.setLeftCloseChar('q');
-    moveGripperThread.setRightOpenChar('2');
-    moveGripperThread.setRightCloseChar('w');
-    moveGripperThread.start();
     CD_INFO("Start thread in 1 second...\n");
     yarp::os::Time::delay(1);
     recordRateThread.setRate(ptModeMs);
@@ -149,7 +147,8 @@ bool RecordManipulation::updateModule() {
 
 bool RecordManipulation::close() {
 
-    moveGripperThread.stop();
+    moveGripperPort.disableCallback();
+    moveGripperPort.close();
 
     recordRateThread.stop();
 

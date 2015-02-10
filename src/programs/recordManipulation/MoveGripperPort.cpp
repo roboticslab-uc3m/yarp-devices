@@ -3,62 +3,18 @@
 #include "RecordManipulation.hpp"
 
 /************************************************************************/
-bool MoveGripperPort::setLeftOpenChar(const char& openLeftChar) {
-    this->openLeftChar = openLeftChar;
-}
+void MoveGripperPort::onRead(yarp::os::Bottle &in) {
 
-/************************************************************************/
-bool MoveGripperPort::setLeftCloseChar(const char& closeLeftChar) {
-    this->closeLeftChar = closeLeftChar;
-}
+    int armSizeLeft, armSizeRight;
+    iPositionControlLeft->getAxes(&armSizeLeft);
+    iPositionControlRight->getAxes(&armSizeRight);
 
-/************************************************************************/
-bool MoveGripperPort::setRightOpenChar(const char& openRightChar) {
-    this->openRightChar = openRightChar;
-}
-
-/************************************************************************/
-bool MoveGripperPort::setRightCloseChar(const char& closeRightChar) {
-    this->closeRightChar = closeRightChar;
-}
-
-/************************************************************************/
-bool MoveGripperPort::threadInit() {
-
-    w = initscr();
-    //raw();  //-- raw deactivates signals and gets raw text. this we do NOT want.
-    cbreak();  //-- cbreak allow ctrl-c to reach normal handler. this we DO want.
-    nodelay(w, TRUE);
-
-    return true;
-}
-
-/************************************************************************/
-void MoveGripperPort::run() {
-    noecho();
-
-    int leftArmSize, rightArmSize;
-    leftArmPos->getAxes(&leftArmSize);
-    rightArmPos->getAxes(&rightArmSize);
-
-    while( ! this->isStopping() ) {
-        char c = getch();
-        if(c == openLeftChar) {
-            //CD_WARNING("openLeftChar\n");
-            leftArmPos->positionMove(leftArmSize-1,1200);
-        } else if(c == closeLeftChar) {
-            //CD_WARNING("closeLeftChar");
-            leftArmPos->positionMove(leftArmSize-1,-1200);
-        } else if(c == openRightChar) {
-            //CD_WARNING("openRightChar");
-            rightArmPos->positionMove(rightArmSize-1,1200);
-        } else if(c == closeRightChar) {
-            //CD_WARNING("closeRightChar");
-            rightArmPos->positionMove(rightArmSize-1,-1200);
-        }
-    }
-    endwin();
-
+    int j = in.get(0).asInt();
+    int ref = in.get(1).asInt();
+    if(j==0)
+        iPositionControlLeft->positionMove(armSizeLeft-1,ref);
+    else if (j==1)
+        iPositionControlRight->positionMove(armSizeRight-1,ref);
 }
 
 /************************************************************************/

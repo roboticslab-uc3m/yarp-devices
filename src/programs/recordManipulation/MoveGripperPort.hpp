@@ -1,55 +1,35 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __MOVE_GRIPPER_THREAD__
-#define __MOVE_GRIPPER_THREAD__
+#ifndef __MOVE_GRIPPER_PORT__
+#define __MOVE_GRIPPER_PORT__
 
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/select.h>
-#include <termios.h>
 
-#include <yarp/os/Thread.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-
-// Thanks: Alnitak @ http://stackoverflow.com/questions/448944/c-non-blocking-keyboard-input
 
 /**
  * @ingroup recordManipulation
  *
- * The MoveGripperThread class tests the class as a controlboard.
+ * The MoveGripperPort class.
  *
  */
-class MoveGripperPort : public yarp::os::Thread {
+class MoveGripperPort : public yarp::os::BufferedPort<yarp::os::Bottle> {
 
     public:
 
-        bool setLeftOpenChar(const char& openLeftChar);
-        bool setLeftCloseChar(const char& closeLeftChar);
-        bool setRightOpenChar(const char& openRightChar);
-        bool setRightCloseChar(const char& closeRightChar);
-
-        virtual bool threadInit();
-
-        /**
-         * Loop function. This is the thread itself.
-         */
-        virtual void run();
-
-        yarp::dev::IPositionControl *leftArmPos;
-        yarp::dev::IPositionControl *rightArmPos;
-
+        void setIPositionControl(yarp::dev::IPositionControl *value);
+        yarp::dev::IPositionControl *iPositionControlLeft;
+        yarp::dev::IPositionControl *iPositionControlRight;
 
     protected:
 
-        char openLeftChar;
-        char closeLeftChar;
-        char openRightChar;
-        char closeRightChar;
+        virtual void onRead(yarp::os::Bottle& in);
 
-        WINDOW *w;
 };
 
 
-#endif  // __MOVE_GRIPPER_THREAD__
+#endif  // __MOVE_GRIPPER_PORT__
 
