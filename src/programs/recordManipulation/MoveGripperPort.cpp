@@ -5,10 +5,6 @@
 /************************************************************************/
 void MoveGripperPort::onRead(yarp::os::Bottle &in) {
 
-    int armSizeLeft, armSizeRight;
-    iPositionControlLeft->getAxes(&armSizeLeft);
-    iPositionControlRight->getAxes(&armSizeRight);
-
     if( in.size() != 4 ) {
         CD_ERROR("Only '[set] [pos] axis ref' for now\n");
         return;
@@ -26,6 +22,10 @@ void MoveGripperPort::onRead(yarp::os::Bottle &in) {
 
     int j = in.get(2).asInt();
     double ref = in.get(3).asDouble();
+
+    int armSizeLeft, armSizeRight;
+    iPositionControlLeft->getAxes(&armSizeLeft);
+    iPositionControlRight->getAxes(&armSizeRight);
 
     if(j==0)
         iPositionControlLeft->positionMove(armSizeLeft-1,ref);
