@@ -15,7 +15,7 @@ void MoveGripperPort::onRead(yarp::os::Bottle &in) {
         return;
     }
 
-    if( (in.get(1).asVocab() != VOCAB_POSITION) || (in.get(0).asString() != "pos")  ) {
+    if( (in.get(1).asVocab() != VOCAB_POSITION) || (in.get(1).asString() != "pos")  ) {
         CD_ERROR("Only '[set] [pos] axis ref' for now\n");
         return;
     }
