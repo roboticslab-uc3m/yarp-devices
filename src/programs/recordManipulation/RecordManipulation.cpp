@@ -22,7 +22,7 @@ bool RecordManipulation::configure(yarp::os::ResourceFinder &rf) {
     CD_SUCCESS("Opened file: %s.\n",fileName.c_str());
 
     //-- Gripper port
-    moveGripperPort.open("/gripper");
+    moveGripperPort.open("/teo/grippers");
     moveGripperPort.useCallback();
 
     //-- left arm --
