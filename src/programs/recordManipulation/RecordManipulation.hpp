@@ -21,10 +21,8 @@
 #include "RecordRateThread.hpp"
 #include "MoveGripperThread.hpp"
 
-
-#define DEFAULT_ROBOT_NAME "/teo"
-#define DEFAULT_FILE_NAME "manipulationRecording.txt"
 #define DEFAULT_PT_MODE_MS 50
+#define DEFAULT_FILE_NAME "manipulationRecording.txt"
 
 /**
  * @ingroup recordManipulation

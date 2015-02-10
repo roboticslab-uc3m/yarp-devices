@@ -18,9 +18,8 @@
 
 #include "RecordRateThread.hpp"
 
-#define DEFAULT_ROBOT_NAME "/teo"
-#define DEFAULT_FILE_NAME "locomotionRecording.txt"
 #define DEFAULT_PT_MODE_MS 50
+#define DEFAULT_FILE_NAME "locomotionRecording.txt"
 
 /**
  * @ingroup recordLocomotion
