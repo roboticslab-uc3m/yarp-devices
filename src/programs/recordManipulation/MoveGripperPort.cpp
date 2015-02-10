@@ -3,27 +3,27 @@
 #include "RecordManipulation.hpp"
 
 /************************************************************************/
-bool MoveGripperThread::setLeftOpenChar(const char& openLeftChar) {
+bool MoveGripperPort::setLeftOpenChar(const char& openLeftChar) {
     this->openLeftChar = openLeftChar;
 }
 
 /************************************************************************/
-bool MoveGripperThread::setLeftCloseChar(const char& closeLeftChar) {
+bool MoveGripperPort::setLeftCloseChar(const char& closeLeftChar) {
     this->closeLeftChar = closeLeftChar;
 }
 
 /************************************************************************/
-bool MoveGripperThread::setRightOpenChar(const char& openRightChar) {
+bool MoveGripperPort::setRightOpenChar(const char& openRightChar) {
     this->openRightChar = openRightChar;
 }
 
 /************************************************************************/
-bool MoveGripperThread::setRightCloseChar(const char& closeRightChar) {
+bool MoveGripperPort::setRightCloseChar(const char& closeRightChar) {
     this->closeRightChar = closeRightChar;
 }
 
 /************************************************************************/
-bool MoveGripperThread::threadInit() {
+bool MoveGripperPort::threadInit() {
 
     w = initscr();
     //raw();  //-- raw deactivates signals and gets raw text. this we do NOT want.
@@ -34,7 +34,7 @@ bool MoveGripperThread::threadInit() {
 }
 
 /************************************************************************/
-void MoveGripperThread::run() {
+void MoveGripperPort::run() {
     noecho();
 
     int leftArmSize, rightArmSize;

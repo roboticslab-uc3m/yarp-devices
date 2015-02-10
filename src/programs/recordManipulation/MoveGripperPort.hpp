@@ -20,7 +20,7 @@
  * The MoveGripperThread class tests the class as a controlboard.
  *
  */
-class MoveGripperThread : public yarp::os::Thread {
+class MoveGripperPort : public yarp::os::Thread {
 
     public:
 

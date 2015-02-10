@@ -50,7 +50,7 @@ class RecordManipulation : public yarp::os::RFModule {
 
         RecordRateThread recordRateThread;
 
-        MoveGripperThread moveGripperThread;
+        MoveGripperPort moveGripperThread;
 
 };
 
