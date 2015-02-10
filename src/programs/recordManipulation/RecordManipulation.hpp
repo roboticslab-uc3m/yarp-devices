@@ -19,7 +19,7 @@
 #include "ColorDebug.hpp"
 
 #include "RecordRateThread.hpp"
-#include "MoveGripperThread.hpp"
+#include "MoveGripperPort.hpp"
 
 #define DEFAULT_PT_MODE_MS 50
 #define DEFAULT_FILE_NAME "manipulationRecording.txt"
