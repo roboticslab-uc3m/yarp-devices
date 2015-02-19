@@ -6,8 +6,8 @@
 void RecordRateThread::run() {
 
     //-- Make room!!
-    std::vector< double > vLeftArmAngles( leftLegNumMotors );
-    double* leftLegAngles = vLeftArmAngles.data();
+    std::vector< double > vLeftLegAngles( leftLegNumMotors );
+    double* leftLegAngles = vLeftLegAngles.data();
     std::vector< double > vRightArmAngles( rightLegNumMotors );
     double* rightLegAngles = vRightArmAngles.data();
 
