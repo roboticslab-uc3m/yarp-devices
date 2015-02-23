@@ -18,8 +18,8 @@ IF (NOT SKIP_motoripos)
   TARGET_LINK_LIBRARIES(motoripos ${YARP_LIBRARIES})
   install(TARGETS motoripos DESTINATION lib)
 
-  # Exporting dependencies for BODYConfig.cmake quite manually for now... 
-  set(BODY_LIBRARIES ${BODY_LIBRARIES} BodyYarp motoripos CACHE INTERNAL "appended libraries") 
+  # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
+  set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} motoripos CACHE INTERNAL "appended libraries") 
 
 ENDIF (NOT SKIP_motoripos)
 
