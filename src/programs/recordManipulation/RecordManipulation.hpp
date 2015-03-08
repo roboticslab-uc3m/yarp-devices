@@ -14,8 +14,6 @@
 #include <string>
 #include <stdlib.h>  // Used for ::getenv
 
-#include <curses.h>
-
 #include "ColorDebug.hpp"
 
 #include "RecordRateThread.hpp"
