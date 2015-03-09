@@ -20,7 +20,7 @@ namespace teo
 /**
  * @ingroup playbackManipulation
  *
- * The PlaybackThread class tests the class as a controlboard.
+ * @brief The PlaybackThread class tests the class as a controlboard.
  *
  */
 class PlaybackThread : public yarp::os::Thread {
