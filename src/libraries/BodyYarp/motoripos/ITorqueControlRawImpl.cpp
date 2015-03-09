@@ -26,9 +26,10 @@ bool teo::MotorIpos::setRefTorqueRaw(int j, double t) {
     //*************************************************************
     uint8_t msg_ref_torque[]={0x23,0x1C,0x20,0x00,0x00,0x00,0x00,0x00}; // put 23 because it is a target
 
-    int sendRefTorque = t * (65520.0/20.0);
+    int sendRefTorque = t * (65520.0/20.0) / (this->tr * 11.11112);  // Page 109 of 263, supposing 10 Ipeak.
     //memcpy(msg_ref_torque+4,&sendRefTorque,4);  // was +6 not +4, but +6 seems terrible with ,4!
-    memcpy(msg_ref_torque+6,&sendRefTorque,2);
+    //memcpy(msg_ref_torque+6,&sendRefTorque,2);
+    memcpy(msg_ref_torque+4,&sendRefTorque,4); // going to try this anyway
 
     if(! send(0x600, 8, msg_ref_torque) )
     {
