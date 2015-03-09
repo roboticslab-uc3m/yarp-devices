@@ -2,6 +2,9 @@
 
 #include "RecordManipulation.hpp"
 
+namespace teo
+{
+
 /************************************************************************/
 void RecordRateThread::run() {
 
@@ -37,3 +40,4 @@ void RecordRateThread::setFilePtr(FILE *value)
 
 /************************************************************************/
 
+}  // namespace teo

@@ -21,6 +21,9 @@
 #define DEFAULT_PT_MODE_MS 50
 #define DEFAULT_FILE_NAME "locomotionRecording.txt"
 
+namespace teo
+{
+
 /**
  * @ingroup recordLocomotion
  *
@@ -47,6 +50,8 @@ class RecordLocomotion : public yarp::os::RFModule {
 
         RecordRateThread recordRateThread;
 };
+
+}  // namespace teo
 
 #endif  // __RECORD_MANIPULATION__
 

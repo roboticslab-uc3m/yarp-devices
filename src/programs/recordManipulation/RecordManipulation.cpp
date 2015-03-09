@@ -2,6 +2,9 @@
 
 #include "RecordManipulation.hpp"
 
+namespace teo
+{
+
 /************************************************************************/
 RecordManipulation::RecordManipulation() { }
 
@@ -161,3 +164,5 @@ bool RecordManipulation::close() {
 }
 
 /************************************************************************/
+
+}  // namespace teo

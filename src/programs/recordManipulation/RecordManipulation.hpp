@@ -22,6 +22,9 @@
 #define DEFAULT_PT_MODE_MS 50
 #define DEFAULT_FILE_NAME "manipulationRecording.txt"
 
+namespace teo
+{
+
 /**
  * @ingroup recordManipulation
  *
@@ -51,6 +54,8 @@ class RecordManipulation : public yarp::os::RFModule {
         MoveGripperPort moveGripperPort;
 
 };
+
+}  // namespace teo
 
 #endif  // __RECORD_MANIPULATION__
 

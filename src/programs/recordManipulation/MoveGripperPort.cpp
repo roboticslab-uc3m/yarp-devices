@@ -2,6 +2,9 @@
 
 #include "RecordManipulation.hpp"
 
+namespace teo
+{
+
 /************************************************************************/
 void MoveGripperPort::onRead(yarp::os::Bottle &in) {
 
@@ -34,3 +37,5 @@ void MoveGripperPort::onRead(yarp::os::Bottle &in) {
 }
 
 /************************************************************************/
+
+}  // namespace teo

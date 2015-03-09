@@ -10,6 +10,9 @@
 
 #define DEFAULT_MS 50  // [ms], overwritten by parent DEFAULT_PT_MODE_MS.
 
+namespace teo
+{
+
 /**
  * @ingroup recordManipulation
  *
@@ -44,6 +47,8 @@ class RecordRateThread : public yarp::os::RateThread {
 
 
 };
+
+}  // namespace teo
 
 #endif  // __RECORD_RATE_THREAD__
 

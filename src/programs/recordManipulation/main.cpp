@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
     }
     CD_SUCCESS("Found yarp network.\n");
 
-    RecordManipulation mod;
+    teo::RecordManipulation mod;
     return mod.runModule(rf);
 }
 

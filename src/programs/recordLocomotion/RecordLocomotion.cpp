@@ -2,6 +2,9 @@
 
 #include "RecordLocomotion.hpp"
 
+namespace teo
+{
+
 /************************************************************************/
 RecordLocomotion::RecordLocomotion() { }
 
@@ -142,3 +145,5 @@ bool RecordLocomotion::close() {
 }
 
 /************************************************************************/
+
+}  // namespace teo

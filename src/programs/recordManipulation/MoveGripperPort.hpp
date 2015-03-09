@@ -10,6 +10,9 @@
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 
+namespace teo
+{
+
 /**
  * @ingroup recordManipulation
  *
@@ -30,6 +33,7 @@ class MoveGripperPort : public yarp::os::BufferedPort<yarp::os::Bottle> {
 
 };
 
+}  // namespace teo
 
 #endif  // __MOVE_GRIPPER_PORT__
 
