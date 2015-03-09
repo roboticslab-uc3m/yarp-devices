@@ -8,6 +8,11 @@
 namespace teo
 {
 
+/**
+ *
+ * @brief Abstract base for a CAN bus sharer.
+ *
+ */
 class ICanBusSharer
 {
 public:
