@@ -2,6 +2,9 @@
 
 #include "LaunchManipulation.hpp"
 
+namespace teo
+{
+
 /************************************************************************/
 LaunchManipulation::LaunchManipulation() { }
 
@@ -77,3 +80,5 @@ bool LaunchManipulation::close() {
 }
 
 /************************************************************************/
+
+}  // namespace teo

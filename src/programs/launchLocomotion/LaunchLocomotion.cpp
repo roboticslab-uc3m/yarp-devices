@@ -2,6 +2,9 @@
 
 #include "LaunchLocomotion.hpp"
 
+namespace teo
+{
+
 /************************************************************************/
 LaunchLocomotion::LaunchLocomotion() { }
 
@@ -77,3 +80,5 @@ bool LaunchLocomotion::close() {
 }
 
 /************************************************************************/
+
+}  // namespace teo

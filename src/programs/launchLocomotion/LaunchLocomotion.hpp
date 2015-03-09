@@ -21,6 +21,9 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
+namespace teo
+{
+
 /**
  * @ingroup launchManipulation
  *
@@ -43,6 +46,8 @@ class LaunchLocomotion : public RFModule {
         LaunchLocomotion();
         bool configure(ResourceFinder &rf);
 };
+
+}  // namespace teo
 
 #endif  // __LAUNCH_LOCOMOTION__
 
