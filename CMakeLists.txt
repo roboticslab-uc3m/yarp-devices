@@ -11,7 +11,7 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-project(TEO-BODY)
+project(TEO_BODY)
 
 ### options: cpp libraries
 option(ENABLE_BodyYarp "Choose if you want to compile BodyYarp" TRUE)
@@ -47,7 +47,7 @@ endif(MSVC)
 
 ######################
 
-### this makes everything go in $BODY_DIR/lib and $BODY_DIR/bin
+### this makes everything go in $TEO_BODY_DIR/lib and $TEO_BODY_DIR/bin
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 message(STATUS "Libraries go to ${LIBRARY_OUTPUT_PATH}")
@@ -63,25 +63,25 @@ mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 ##########################################
 
 # Pick up our cmake modules - they are all in the cmake subdirectory
-set(BODY_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+set(TEO_BODY_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 # let cmake use them
-list(APPEND CMAKE_MODULE_PATH ${BODY_MODULE_PATH})
+list(APPEND CMAKE_MODULE_PATH ${TEO_BODY_MODULE_PATH})
 
-#set_property(GLOBAL PROPERTY BODY_INCLUDE_DIRS)
+#set_property(GLOBAL PROPERTY TEO_BODY_INCLUDE_DIRS)
 #set_property(GLOBAL PROPERTY BODY_LINK_DIRS)
 #set_property(GLOBAL PROPERTY BODY_LIBRARIES)
-set(BODY_INCLUDE_DIRS CACHE INTERNAL "appended header dirs" FORCE)
-set(BODY_LINK_DIRS CACHE INTERNAL "appended link dirs" FORCE)
-set(BODY_LIBRARIES CACHE INTERNAL "appended libraries" FORCE)
+set(TEO_BODY_INCLUDE_DIRS CACHE INTERNAL "appended header dirs" FORCE)
+set(TEO_BODY_LINK_DIRS CACHE INTERNAL "appended link dirs" FORCE)
+set(TEO_BODY_LIBRARIES CACHE INTERNAL "appended libraries" FORCE)
 
 # add main contents
 add_subdirectory(share)
 add_subdirectory(src)
 
-# export our variables to a BODYConfig.cmake creation
-set(BODY_LINK_DIRS ${BODY_LINK_DIRS} ${LIBRARY_OUTPUT_PATH})
-configure_file(${CMAKE_SOURCE_DIR}/cmake/template/BODYConfig.cmake.in
-               ${CMAKE_BINARY_DIR}/BODYConfig.cmake @ONLY)
+# export our variables to a TEO_BODYConfig.cmake creation
+set(TEO_BODY_LINK_DIRS ${TEO_BODY_LINK_DIRS} ${LIBRARY_OUTPUT_PATH})
+configure_file(${CMAKE_SOURCE_DIR}/cmake/template/TEO_BODYConfig.cmake.in
+               ${CMAKE_BINARY_DIR}/TEO_BODYConfig.cmake @ONLY)
 
 # create a symbolic link to the shared directory (as contains models and may be heavy)
 # If you want a deep copy, you can use the copy_directory command instead of create_symlink.
@@ -92,13 +92,13 @@ configure_file(${CMAKE_SOURCE_DIR}/cmake/template/BODYConfig.cmake.in
 ##  "${CMAKE_COMMAND}" -E "remove_directory" "${CMAKE_SOURCE_DIR}/bin" ";"
 ##  "${CMAKE_COMMAND}" -E "remove_directory" "${CMAKE_SOURCE_DIR}/lib")
 
-#MESSAGE("\nDon't forget to set: " ${CMAKE_BINARY_DIR} " as your \${BODY_DIR} !!!\n")
+#MESSAGE("\nDon't forget to set: " ${CMAKE_BINARY_DIR} " as your \${TEO-BODY_DIR} !!!\n")
 
 # uninstall target
 configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/template/BODYConfigUninstall.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/BODYConfigUninstall.cmake" IMMEDIATE @ONLY)
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/template/TEO_BODYConfigUninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/TEO_BODYConfigUninstall.cmake" IMMEDIATE @ONLY)
 
 add_custom_target(uninstall
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/BODYConfigUninstall.cmake)
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/TEO_BODYConfigUninstall.cmake)
 

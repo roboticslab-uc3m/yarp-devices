@@ -14,6 +14,7 @@ bool teo::BodyBot::open(Searchable& config) {
 
     Bottle ids = config.findGroup("ids").tail();  //-- e.g. 15
     Bottle trs = config.findGroup("trs").tail();  //-- e.g. 160
+    Bottle ks = config.findGroup("ks").tail();  //-- e.g. 0.0706
 
     Bottle maxs = config.findGroup("maxs").tail();  //-- e.g. 360
     Bottle mins = config.findGroup("mins").tail();  //-- e.g. -360
@@ -45,7 +46,8 @@ bool teo::BodyBot::open(Searchable& config) {
         Property options;
         options.put("device",types.get(i).asString());  //-- "motoripos", "motorlackey"
         options.put("canId",ids.get(i).asInt());
-        options.put("tr",trs.get(i).asInt());
+        options.put("tr",trs.get(i).asDouble());
+        options.put("k",ks.get(i).asDouble());
         options.put("ptModeMs",ptModeMs);
         PolyDriver* driver = new PolyDriver(options);
 

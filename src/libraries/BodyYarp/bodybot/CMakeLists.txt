@@ -19,8 +19,8 @@ IF (NOT SKIP_bodybot)
   TARGET_LINK_LIBRARIES(bodybot ${YARP_LIBRARIES})
   install(TARGETS bodybot DESTINATION lib)
 
-  # Exporting dependencies for BODYConfig.cmake quite manually for now... 
-  set(BODY_LIBRARIES ${BODY_LIBRARIES} BodyYarp bodybot CACHE INTERNAL "appended libraries") 
+  # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
+  set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} bodybot CACHE INTERNAL "appended libraries") 
 
 ENDIF (NOT SKIP_bodybot)
 
