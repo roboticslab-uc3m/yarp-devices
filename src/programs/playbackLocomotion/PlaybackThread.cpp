@@ -2,6 +2,9 @@
 
 #include "PlaybackThread.hpp"
 
+namespace teo
+{
+
 /************************************************************************/
 
 bool PlaybackThread::threadInit() {
@@ -69,3 +72,5 @@ void PlaybackThread::run() {
 }
 
 /************************************************************************/
+
+}  // namespace teo

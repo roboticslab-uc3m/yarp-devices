@@ -14,6 +14,9 @@
 
 #define DEFAULT_MS 20  // [ms]
 
+namespace teo
+{
+
 /**
  * @ingroup playbackLocomotion
  *
@@ -56,10 +59,11 @@ class PlaybackThread : public yarp::os::Thread {
 
         bool hold;
 
-protected:
-
+    protected:
 
 };
+
+}  // namespace teo
 
 #endif  // __PLAYBACK_THREAD__
 
