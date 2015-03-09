@@ -25,6 +25,9 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
+namespace teo
+{
+
 /**
  * @ingroup playbackManipulation
  *
@@ -50,6 +53,8 @@ class PlaybackManipulation : public RFModule {
         PlaybackThread playbackThread;
 
 };
+
+}  // namespace teo
 
 #endif  // __PLAYBACK_MANIPULATION__
 

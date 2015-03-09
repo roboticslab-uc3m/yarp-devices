@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
     }
     CD_SUCCESS("Found yarp network.\n");
 
-    PlaybackLocomotion mod;
+    teo::PlaybackLocomotion mod;
     return mod.runModule(rf);
 }
 

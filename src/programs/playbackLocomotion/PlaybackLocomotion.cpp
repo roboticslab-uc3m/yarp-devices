@@ -2,6 +2,9 @@
 
 #include "PlaybackLocomotion.hpp"
 
+namespace teo
+{
+
 /************************************************************************/
 PlaybackLocomotion::PlaybackLocomotion() { }
 
@@ -143,3 +146,5 @@ bool PlaybackLocomotion::close() {
 }
 
 /************************************************************************/
+
+}  // namespace teo

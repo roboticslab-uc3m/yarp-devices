@@ -2,6 +2,9 @@
 
 #include "PlaybackManipulation.hpp"
 
+namespace teo
+{
+
 /************************************************************************/
 PlaybackManipulation::PlaybackManipulation() { }
 
@@ -183,3 +186,5 @@ bool PlaybackManipulation::close() {
 }
 
 /************************************************************************/
+
+}  // namespace teo
