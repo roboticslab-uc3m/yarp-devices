@@ -27,7 +27,7 @@ namespace teo
 /**
  * @ingroup launchManipulation
  *
- * The LaunchManipulation class launches the manipulators as controlboards.
+ * @brief The LaunchManipulation class launches the arms as controlboards.
  * 
  */
 class LaunchManipulation : public RFModule {

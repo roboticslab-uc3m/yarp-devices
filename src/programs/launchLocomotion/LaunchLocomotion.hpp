@@ -25,9 +25,9 @@ namespace teo
 {
 
 /**
- * @ingroup launchManipulation
+ * @ingroup launchLocomotion
  *
- * The LaunchLocomotion class launches the manipulators as controlboards.
+ * @brief The LaunchLocomotion class launches the legs as controlboards.
  * 
  */
 class LaunchLocomotion : public RFModule {
