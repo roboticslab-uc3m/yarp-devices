@@ -31,7 +31,7 @@ namespace teo
 /**
  * @ingroup playbackManipulation
  *
- * The PlaybackManipulation class tests the class as a controlboard.
+ * @brief The PlaybackManipulation class tests the class as a controlboard.
  * 
  */
 class PlaybackManipulation : public RFModule {
