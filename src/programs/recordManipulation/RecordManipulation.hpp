@@ -28,7 +28,7 @@ namespace teo
 /**
  * @ingroup recordManipulation
  *
- * The RecordManipulation class tests the class as a controlboard.
+ * @brief The RecordManipulation class tests the class as a controlboard.
  * 
  */
 class RecordManipulation : public yarp::os::RFModule {

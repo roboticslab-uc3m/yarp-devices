@@ -16,7 +16,7 @@ namespace teo
 /**
  * @ingroup recordManipulation
  *
- * The MoveGripperPort class.
+ * @brief The MoveGripperPort class.
  *
  */
 class MoveGripperPort : public yarp::os::BufferedPort<yarp::os::Bottle> {

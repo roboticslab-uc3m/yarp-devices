@@ -27,7 +27,7 @@ namespace teo
 /**
  * @ingroup recordLocomotion
  *
- * The RecordLocomotion class tests the class as a controlboard.
+ * @brief The RecordLocomotion class tests the class as a controlboard.
  * 
  */
 class RecordLocomotion : public yarp::os::RFModule {

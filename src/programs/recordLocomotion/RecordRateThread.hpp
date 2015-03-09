@@ -16,7 +16,7 @@ namespace teo
 /**
  * @ingroup recordLocomotion
  *
- * The RecordRateThread class tests the class as a controlboard.
+ * @brief The RecordRateThread class tests the class as a controlboard.
  *
  */
 class RecordRateThread : public yarp::os::RateThread {
