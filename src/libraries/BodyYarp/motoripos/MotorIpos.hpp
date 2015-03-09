@@ -289,7 +289,7 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
         yarp::os::Semaphore ptBuffer;
 
         //-- More internal parameter stuff
-        double max, min, refAcceleration, refSpeed, tr;
+        double max, min, refAcceleration, refSpeed, tr, k;
 
 };
 

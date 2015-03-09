@@ -18,8 +18,8 @@ IF (NOT SKIP_motorlacquey)
   TARGET_LINK_LIBRARIES(motorlacquey ${YARP_LIBRARIES})
   install(TARGETS motorlacquey DESTINATION lib)
 
-  # Exporting dependencies for BODYConfig.cmake quite manually for now... 
-  set(BODY_LIBRARIES ${BODY_LIBRARIES} BodyYarp motorlacquey CACHE INTERNAL "appended libraries") 
+  # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
+  set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} motorlacquey CACHE INTERNAL "appended libraries") 
 
 ENDIF (NOT SKIP_motorlacquey)
 

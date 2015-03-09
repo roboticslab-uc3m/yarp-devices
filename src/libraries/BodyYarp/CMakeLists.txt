@@ -13,6 +13,10 @@ IF (ENABLE_BodyYarp)
   list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})  
   include(YarpPlugin)
 
+  # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
+  set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} BodyYarp CACHE INTERNAL "appended libraries") 
+  # WARNING: BodyYarp bodybot works, but bodybot BodyYarp fails.
+
   yarp_begin_plugin_library(BodyYarp)
     add_subdirectory(motoripos)
     add_subdirectory(motorlacquey)

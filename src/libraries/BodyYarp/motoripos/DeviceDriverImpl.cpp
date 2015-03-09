@@ -6,7 +6,8 @@
 bool teo::MotorIpos::open(Searchable& config) {
 
     this->canId = config.check("canId",0,"can bus ID").asInt();
-    this->tr = config.check("tr",0,"reduction").asInt();
+    this->tr = config.check("tr",0,"reduction").asDouble();
+    this->k = config.check("k",0,"motor constant").asDouble();
     this->ptModeMs  = config.check("ptModeMs",0,"ptMode ms").asInt();
     this->ptPointCounter = 0;
     this->ptMovementDone = false;
@@ -17,7 +18,7 @@ bool teo::MotorIpos::open(Searchable& config) {
     this->refSpeed = 0;
     this->encoder = 0;
 
-    CD_SUCCESS("Created MotorIpos with canId %d and tr %f, and all local parameters set to 0.\n",canId,tr);
+    CD_SUCCESS("Created MotorIpos with canId %d, tr %f, k %f, and all local parameters set to 0.\n",canId,tr,k);
     return true;
 }
 
