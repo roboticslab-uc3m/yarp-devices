@@ -12,10 +12,10 @@ sudo cp hcanpci.ko /lib/modules/2.6.32-5-686/kernel/can
 sudo depmod
 \endverbatim
 
-Now add the following line to /etc/rc.local (lines before the exit):
+Now add the following line to /etc/rc.local (lines before the exit, change /your/path/to for your path):
 
 \verbatim
-/home/teo/src/hcanpci_linux-v1207en/driver/makenodes.sh
+/your/path/to/src/hcanpci_linux-v1207en/driver/makenodes.sh
 \endverbatim
 
 <br><hr>
