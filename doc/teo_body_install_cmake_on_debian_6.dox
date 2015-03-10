@@ -5,8 +5,7 @@
 We use CMake for project generating. Installing CMake on Debian should be quite straightforward. Note that you will be prompted for your password upon using '''sudo'''. Type:
 
 \verbatim
-sudo apt-get install cmake
-sudo apt-get install cmake-curses-gui  # Recommended, as it contains ccmake.
+sudo apt-get install apt-get install -t squeeze-backports cmake cmake-curses-gui
 \endverbatim
 
 <br><hr>
