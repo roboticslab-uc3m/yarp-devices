@@ -44,12 +44,13 @@ bool teo::MotorLacquey::getEncoderRaw(int j, double *v) {
 // -----------------------------------------------------------------------------
 
 bool teo::MotorLacquey::getEncoderSpeedRaw(int j, double *sp) {
-    CD_INFO("(%d)\n",j);
+    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motorlacquey).\n");
+    //CD_WARNING("Not implemented yet (motorlacquey).\n");  //-- Too verbose in controlboardwrapper2 stream.
+    *sp = 0;
 
     return true;
 }
@@ -57,12 +58,13 @@ bool teo::MotorLacquey::getEncoderSpeedRaw(int j, double *sp) {
 // -----------------------------------------------------------------------------
 
 bool teo::MotorLacquey::getEncoderAccelerationRaw(int j, double *spds) {
-    CD_INFO("(%d)\n",j);
+    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
     if ( j = 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motorlacquey).\n");
+    //CD_WARNING("Not implemented yet (motorlacquey).\n");  //-- Too verbose in controlboardwrapper2 stream.
+    *spds = 0;
 
     return true;
 }
