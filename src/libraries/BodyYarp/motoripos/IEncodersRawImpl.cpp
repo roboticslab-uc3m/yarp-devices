@@ -68,12 +68,13 @@ bool teo::MotorIpos::getEncoderRaw(int j, double *v) {
 // -----------------------------------------------------------------------------
 
 bool teo::MotorIpos::getEncoderSpeedRaw(int j, double *sp) {
-    CD_INFO("(%d)\n",j);
+    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    //CD_WARNING("Not implemented yet (motoripos).\n");  //-- Too verbose in controlboardwrapper2 stream.
+    *sp = 0;
 
     return true;
 }
@@ -81,12 +82,13 @@ bool teo::MotorIpos::getEncoderSpeedRaw(int j, double *sp) {
 // -----------------------------------------------------------------------------
 
 bool teo::MotorIpos::getEncoderAccelerationRaw(int j, double *spds) {
-    CD_INFO("(%d)\n",j);
+    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
     if ( j = 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    //CD_WARNING("Not implemented yet (motoripos).\n");  //-- Too verbose in controlboardwrapper2 stream.
+    *spds = 0;
 
     return true;
 }

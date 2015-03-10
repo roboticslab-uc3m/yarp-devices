@@ -16,7 +16,7 @@ bool teo::BodyBot::getEncodersTimed(double *encs, double *time) {
 // -----------------------------------------------------------------------------
 
 bool teo::BodyBot::getEncoderTimed(int j, double *encs, double *time) {
-    CD_INFO("(%d)\n",j);
+    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     return iEncodersTimedRaw[j]->getEncoderTimedRaw( 0, encs, time );
 }

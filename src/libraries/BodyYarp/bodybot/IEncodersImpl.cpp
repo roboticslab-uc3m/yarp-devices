@@ -71,7 +71,7 @@ bool teo::BodyBot::getEncoders(double *encs) {
 // -----------------------------------------------------------------------------
 
 bool teo::BodyBot::getEncoderSpeed(int j, double *sp) {
-    CD_INFO("(%d)\n",j);
+    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
@@ -93,7 +93,7 @@ bool teo::BodyBot::getEncoderSpeeds(double *spds) {
 // -----------------------------------------------------------------------------
 
 bool teo::BodyBot::getEncoderAcceleration(int j, double *spds) {
-    CD_INFO("(%d)\n",j);
+    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;

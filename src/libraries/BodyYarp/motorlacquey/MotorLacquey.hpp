@@ -8,7 +8,7 @@
 #include <sstream>
 
 //#define CD_FULL_FILE  //-- Good for debugging as intended for polymorphism.
-//j//#define CD_HIDE_DEBUG
+#define CD_HIDE_DEBUG
 //j//#define CD_HIDE_SUCCESS
 //j//#define CD_HIDE_INFO
 //#define CD_HIDE_WARNING

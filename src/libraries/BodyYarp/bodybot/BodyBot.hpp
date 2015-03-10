@@ -17,7 +17,7 @@
 
 #include "hico_api.h"
 
-//j//#define CD_HIDE_DEBUG
+#define CD_HIDE_DEBUG
 //j//#define CD_HIDE_SUCCESS
 //j//#define CD_HIDE_INFO
 //#define CD_HIDE_WARNING
