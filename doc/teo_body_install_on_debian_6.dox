@@ -23,6 +23,10 @@ make  # Compile
 sudo make install  # Install :-)
 \endverbatim
 
+Finally, install the hcanpci kernel module:
+
+  \li \ref teo_body_install_hcanpci_on_debian_6
+
 For additional TEO options use ccmake instead of cmake.
 
 @section install_on_debian_6_even_more Even more!

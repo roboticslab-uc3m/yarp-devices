@@ -1,0 +1,27 @@
+
+/**
+ * \page teo_body_install_hcanpci_on_debian_6 Install CMake (Debian 6.0)
+
+\verbatim
+mkdir src; cd src
+tar xvf ../teo-body/extern/hcanpci/linux-2-6-32/100_hcanpci_linux-v1207en-edi1822.tar.gz
+cd hcanpci_linux-v1207en/driver
+make
+sudo mkdir /lib/modules/2.6.32-5-686/kernel/can
+sudo cp hcanpci.ko /lib/modules/2.6.32-5-686/kernel/can
+sudo depmod
+\endverbatim
+
+Now add the following line to /etc/rc.local (lines before the exit):
+
+\verbatim
+/home/teo/src/hcanpci_linux-v1207en/driver/makenodes.sh
+\endverbatim
+
+<br><hr>
+
+This page can be edited at teo-body/doc/teo_body_install_hcanpci_on_debian_6.dox.
+
+*
+*/
+
