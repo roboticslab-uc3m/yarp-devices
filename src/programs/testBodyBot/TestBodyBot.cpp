@@ -10,7 +10,7 @@ bool teo::TestBodyBot::configure(ResourceFinder &rf) {
 
     Property options;
     options.fromString(rf.toString());  //-- Allow options like stream_state=0.
-    options.put("device","controlboard");
+    options.put("device","controlboardwrapper2");
     options.put("subdevice","bodybot");
 
     robotDevice.open(options);
