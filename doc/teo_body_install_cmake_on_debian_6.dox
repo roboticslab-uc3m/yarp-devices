@@ -2,10 +2,17 @@
 /**
  * \page teo_body_install_cmake_on_debian_6 Install CMake (Debian 6.0)
 
-We use CMake for project generating. Installing CMake on Debian should be quite straightforward. Note that you will be prompted for your password upon using '''sudo'''. Type:
+We use CMake for project generating. To install the version of CMake required for teo-body on Debian 6.0, you must activate the distribution's backports. Add:
 
 \verbatim
-sudo apt-get install apt-get install -t squeeze-backports cmake cmake-curses-gui
+deb http://backports.debian.org/debian-backports/ squeeze-backports main
+\endverbatim
+
+The run the following lines from a terminal. Note that you will be prompted for your password upon using '''sudo'''.
+
+\verbatim
+sudo apt-get update
+sudo apt-get install -t squeeze-backports cmake cmake-curses-gui
 \endverbatim
 
 <br><hr>
