@@ -8,7 +8,7 @@ We use CMake for project generating. To install the version of CMake required fo
 deb http://backports.debian.org/debian-backports/ squeeze-backports main
 \endverbatim
 
-The run the following lines from a terminal. Note that you will be prompted for your password upon using '''sudo'''.
+to your /etc/apt/sources.list file. Then run the following lines from a terminal. Note that you will be prompted for your password upon using '''sudo'''.
 
 \verbatim
 sudo apt-get update
