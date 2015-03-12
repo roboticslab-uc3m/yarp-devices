@@ -235,7 +235,7 @@ bool teo::MotorIpos::interpretMessage( can_msg * message) {
                     getMode = 0;
                 getModeReady.post();
             } else {
-                CD_WARNING("\t-Mode \"%d\" not specified in manual, may be in Fault or not enabled yet.\n",got);
+                CD_WARNING("\t-Mode \"%d\" not specified in manual, may be in Fault or not enabled yet. canId(%d).\n",got,(message->id & 0x7F));
                 getModeReady.wait();
                     getMode = 0;
                 getModeReady.post();
