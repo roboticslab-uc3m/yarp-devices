@@ -7,7 +7,7 @@
 #include <yarp/dev/all.h>
 #include <sstream>
 
-//#define CD_FULL_FILE  //-- Good for debugging as intended for polymorphism.
+//#define CD_FULL_FILE  //-- Can be globally managed from father CMake. Good for debugging with polymorphism.
 //#define CD_HIDE_DEBUG  //-- Can be globally managed from father CMake.
 //#define CD_HIDE_SUCCESS  //-- Can be globally managed from father CMake.
 //#define CD_HIDE_INFO  //-- Can be globally managed from father CMake.

@@ -31,6 +31,11 @@ option(ENABLE_BodyYarp_motoripos "Enable/disable compilation of BodyYarp_motorip
 option(ENABLE_BodyYarp_motorlacquey "Enable/disable compilation of BodyYarp_motorlacquey" TRUE)
 
 # ColorDebug options
+option(ColorDebug_FULL_FILE "Choose if you want to compile with CD_FULL_FILE" FALSE)
+if(ColorDebug_FULL_FILE)
+    add_definitions(-DCD_FULL_FILE)
+endif(ColorDebug_FULL_FILE)
+
 option(ColorDebug_HIDE_ERROR "Choose if you want to compile with CD_HIDE_ERROR" FALSE)
 if(ColorDebug_HIDE_ERROR)
     add_definitions(-DCD_HIDE_ERROR)
