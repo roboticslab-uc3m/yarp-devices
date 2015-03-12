@@ -83,7 +83,7 @@ bool teo::MotorIpos::setTorquePidRaw(int j, const Pid &pid) {
 // -----------------------------------------------------------------------------
 
 bool teo::MotorIpos::getTorqueRaw(int j, double *t) {
-    CD_INFO("(%d)\n",j);
+    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
     if ( j != 0 ) return false;

@@ -100,7 +100,7 @@ bool teo::BodyBot::setTorquePid(int j, const Pid &pid) {
 // -----------------------------------------------------------------------------
 
 bool teo::BodyBot::getTorque(int j, double *t) {
-    CD_INFO("(%d)\n",j);
+    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;

@@ -212,7 +212,7 @@ class MotorLacquey : public DeviceDriver, public IControlLimitsRaw, public ICont
             return true;
         }
         virtual bool getTorqueRaw(int j, double *t) {
-            CD_INFO("\n");
+            //CD_INFO("\n");  //-- Too verbose in controlboardwrapper2 stream.
             return true;
         }
         virtual bool getTorquesRaw(double *t) {
