@@ -17,11 +17,11 @@
 
 #include "hico_api.h"
 
-#define CD_HIDE_DEBUG
-//j//#define CD_HIDE_SUCCESS
-//j//#define CD_HIDE_INFO
-//#define CD_HIDE_WARNING
-//#define CD_HIDE_ERROR
+//#define CD_HIDE_DEBUG  //-- Can be globally managed from father CMake.
+//#define CD_HIDE_SUCCESS  //-- Can be globally managed from father CMake.
+//#define CD_HIDE_INFO  //-- Can be managed from father CMake.
+//#define CD_HIDE_WARNING  //-- Can be managed from father CMake.
+//#define CD_HIDE_ERROR  //-- Can be managed from father CMake.
 #include "ColorDebug.hpp"
 #include "CanBusHico.hpp"
 

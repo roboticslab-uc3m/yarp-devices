@@ -8,11 +8,11 @@
 #include <sstream>
 
 //#define CD_FULL_FILE  //-- Good for debugging as intended for polymorphism.
-#define CD_HIDE_DEBUG
-//j//#define CD_HIDE_SUCCESS
-//j//#define CD_HIDE_INFO
-//#define CD_HIDE_WARNING
-//#define CD_HIDE_ERROR
+//#define CD_HIDE_DEBUG  //-- Can be globally managed from father CMake.
+//#define CD_HIDE_SUCCESS  //-- Can be globally managed from father CMake.
+//#define CD_HIDE_INFO  //-- Can be globally managed from father CMake.
+//#define CD_HIDE_WARNING  //-- Can be globally managed from father CMake.
+//#define CD_HIDE_ERROR  //-- Can be globally managed from father CMake.
 #include "ColorDebug.hpp"
 #include "../ICanBusSharer.h"
 
