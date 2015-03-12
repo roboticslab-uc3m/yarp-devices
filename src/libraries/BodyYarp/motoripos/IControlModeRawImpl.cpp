@@ -131,7 +131,7 @@ bool teo::MotorIpos::setOpenLoopModeRaw(int j) {
 // -----------------------------------------------------------------------------
 
 bool teo::MotorIpos::getControlModeRaw(int j, int *mode) {
-    CD_INFO("(%d)\n",j);
+    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
 
     //-- Check index within range
     if ( j != 0 ) return false;

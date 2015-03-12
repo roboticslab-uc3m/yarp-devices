@@ -68,7 +68,7 @@ bool teo::BodyBot::setOpenLoopMode(int j) {
 // -----------------------------------------------------------------------------
 
 bool teo::BodyBot::getControlMode(int j, int *mode) {
-    CD_INFO("(%d)\n",j);
+    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
 
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
