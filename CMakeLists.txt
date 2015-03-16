@@ -16,7 +16,7 @@ project(TEO_BODY)
 ### options: cpp libraries
 option(ENABLE_BodyYarp "Choose if you want to compile BodyYarp" TRUE)
 
-### options: cpp modules
+### options: cpp programs
 option(ENABLE_launchManipulation "Choose if you want to compile launchManipulation" TRUE)
 option(ENABLE_recordManipulation "Choose if you want to compile recordManipulation" TRUE)
 option(ENABLE_playbackManipulation "Choose if you want to compile playbackManipulation" TRUE)
@@ -24,6 +24,8 @@ option(ENABLE_playbackManipulation "Choose if you want to compile playbackManipu
 option(ENABLE_launchLocomotion "Choose if you want to compile launchLocomotion" TRUE)
 option(ENABLE_recordLocomotion "Choose if you want to compile recordLocomotion" TRUE)
 option(ENABLE_playbackLocomotion "Choose if you want to compile playbackLocomotion" TRUE)
+
+option(ENABLE_playbackServer "Choose if you want to compile playbackServer" TRUE)
 
 ### options: force default
 option(ENABLE_BodyYarp_bodybot "Enable/disable compilation of BodyYarp_bodybot" TRUE)
