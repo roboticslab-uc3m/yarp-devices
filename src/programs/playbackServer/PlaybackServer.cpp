@@ -11,6 +11,7 @@ PlaybackServer::PlaybackServer() { }
 /************************************************************************/
 bool PlaybackServer::configure(ResourceFinder &rf) {
 
+    //-- Parse open options
     std::string webIp = rf.check("webIp",yarp::os::Value(DEFAULT_WEB_IP),"web server ip").asString();
     int webPort = rf.check("webPort",yarp::os::Value(DEFAULT_WEB_PORT),"web server port").asInt();
     std::string name = rf.check("name",Value(DEFAULT_WEB_NAME),"web yarp port name").asString();

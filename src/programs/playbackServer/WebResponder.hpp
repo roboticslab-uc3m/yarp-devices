@@ -24,6 +24,7 @@ class WebResponder : public yarp::os::PortReader {
 
     protected:
 
+        std::string readFile(const std::string& filePath);
 
 };
 
