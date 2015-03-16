@@ -22,3 +22,5 @@ add_subdirectory(launchLocomotion)
 add_subdirectory(playbackLocomotion)
 add_subdirectory(recordLocomotion)
 
+add_subdirectory(playbackServer)
+

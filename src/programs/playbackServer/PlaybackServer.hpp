@@ -17,6 +17,11 @@
 #include "ColorDebug.hpp"
 
 #include "PlaybackThread.hpp"
+#include "WebResponder.hpp"
+
+#define DEFAULT_WEB_IP "localhost"
+#define DEFAULT_WEB_PORT 8080
+#define DEFAULT_WEB_NAME "/playbackServer"
 
 #define DEFAULT_PT_MODE_MS 50
 #define DEFAULT_FILE_NAME "manipulationRecording.txt"
@@ -51,6 +56,9 @@ class PlaybackServer : public RFModule {
     //        virtual int period;
 
         PlaybackThread playbackThread;
+
+        Port server;
+        WebResponder responder;
 
 };
 
