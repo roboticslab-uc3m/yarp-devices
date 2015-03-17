@@ -36,6 +36,7 @@ protected:
         yarp::os::ResourceFinder* rf;
         std::string readFile(const std::string& fileName);
         std::vector<std::string> listFromDir(const std::string& dirName);
+        std::string& replaceAll(std::string& context, const std::string& from, const std::string& to);
 
 };
 

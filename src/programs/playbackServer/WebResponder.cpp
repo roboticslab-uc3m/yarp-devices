@@ -21,11 +21,14 @@ bool WebResponder::read(yarp::os::ConnectionReader &in) {
     if (page=="buttons.html") {
         std::string buttonsString = readFile("buttons.html");
         std::vector<std::string> me = listFromDir("/home");
+        std::string replaceString;
         for(int i=0;i<(int)me.size();i++)
         {
             CD_INFO("%s\n",me[i].c_str());
+            replaceString += me[i];
+            replaceString += "<br>";
         }
-        //buttonsString.replace();
+        replaceAll(buttonsString,"BUTTONS",replaceString);
         response.addString( buttonsString );
         //--Add logic here
         return response.write(*out);
@@ -100,6 +103,20 @@ std::vector<std::string> WebResponder::listFromDir(const std::string& dirName) {
 
 /************************************************************************/
 
+std::string& WebResponder::replaceAll(std::string& context, const std::string& from, const std::string& to) {
+    //-- [thanks:author] Bruce Eckel.
+    //-- [thanks:bookTitle] TICPP-2nd-ed-Vol-two.
+    size_t lookHere = 0;
+    size_t foundHere;
+    while((foundHere = context.find(from, lookHere)) != std::string::npos) {
+        context.replace(foundHere, from.size(), to);
+        lookHere = foundHere + to.size();
+    }
+    return context;
+}
+
+/************************************************************************/
+
 void WebResponder::setRf(yarp::os::ResourceFinder *value) {
     rf = value;
 }
@@ -107,4 +124,3 @@ void WebResponder::setRf(yarp::os::ResourceFinder *value) {
 /************************************************************************/
 
 }  // namespace teo
-
