@@ -6,8 +6,10 @@ set(appname playbackServer)
 
 
 file(GLOB conf ${CMAKE_CURRENT_SOURCE_DIR}/conf/*.ini)
-file(GLOB scripts ${CMAKE_CURRENT_SOURCE_DIR}/scripts/*.template)
+file(GLOB html ${CMAKE_CURRENT_SOURCE_DIR}/html/*.html)
+#file(GLOB scripts ${CMAKE_CURRENT_SOURCE_DIR}/scripts/*.template)
 
 yarp_install(FILES ${conf} DESTINATION ${TEO-BODY_CONTEXTS_INSTALL_DIR}/${appname})
-yarp_install(FILES ${scripts} DESTINATION ${TEO-BODY_APPLICATIONS_TEMPLATES_INSTALL_DIR})
+yarp_install(FILES ${html} DESTINATION ${TEO-BODY_CONTEXTS_INSTALL_DIR}/${appname}/html)
+#yarp_install(FILES ${scripts} DESTINATION ${TEO-BODY_APPLICATIONS_TEMPLATES_INSTALL_DIR})
 

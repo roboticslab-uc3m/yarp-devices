@@ -35,7 +35,9 @@ bool WebResponder::read(yarp::os::ConnectionReader &in) {
 
 std::string WebResponder::readFile(const std::string& fileName) {
     CD_DEBUG("fileName: %s\n",fileName.c_str());
-    std::string fullName = rf->findFileByName(fileName);
+    std::string searchString("html/");
+    searchString += fileName;
+    std::string fullName = rf->findFileByName(searchString);
     if( fullName == "" ) {
         std::string failResponse("[error] Could not find file \"");
         failResponse += fileName;
