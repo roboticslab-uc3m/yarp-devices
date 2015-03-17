@@ -20,17 +20,20 @@ bool WebResponder::read(yarp::os::ConnectionReader &in) {
     //-- Special page response (buttons.html)
     if (page=="buttons.html") {
         std::string buttonsString = readFile("buttons.html");
-        std::vector<std::string> me = listFromDir("/home");
+        //--Add logic here
+        std::vector<std::string> dirContents = listFromDir( this->filePath );
         std::string replaceString;
-        for(int i=0;i<(int)me.size();i++)
+        for(int i=0;i<(int)dirContents.size();i++)
         {
-            CD_INFO("%s\n",me[i].c_str());
-            replaceString += me[i];
-            replaceString += "<br>";
+            if((int)dirContents[i].find(".txt", 0) != std::string::npos)
+            {
+                CD_INFO("%s\n",dirContents[i].c_str());
+                replaceString += dirContents[i];
+                replaceString += "<br>";
+            }
         }
         replaceAll(buttonsString,"BUTTONS",replaceString);
         response.addString( buttonsString );
-        //--Add logic here
         return response.write(*out);
     }
 
@@ -119,6 +122,13 @@ std::string& WebResponder::replaceAll(std::string& context, const std::string& f
 
 void WebResponder::setRf(yarp::os::ResourceFinder *value) {
     rf = value;
+}
+
+/************************************************************************/
+
+void WebResponder::setFilePath(const std::string &value)
+{
+    filePath = value;
 }
 
 /************************************************************************/

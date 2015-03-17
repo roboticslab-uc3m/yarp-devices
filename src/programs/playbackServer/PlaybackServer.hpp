@@ -12,7 +12,6 @@
 #include <yarp/dev/PolyDriver.h>
 
 #include <string>
-#include <stdlib.h>  // Used for ::getenv
 
 #include "ColorDebug.hpp"
 
@@ -22,6 +21,8 @@
 #define DEFAULT_WEB_IP "localhost"
 #define DEFAULT_WEB_PORT 8080
 #define DEFAULT_WEB_NAME "/playbackServer"
+
+#define DEFAULT_FILE_PATH "/home/teo"
 
 #define DEFAULT_PT_MODE_MS 50
 #define DEFAULT_FILE_NAME "manipulationRecording.txt"
