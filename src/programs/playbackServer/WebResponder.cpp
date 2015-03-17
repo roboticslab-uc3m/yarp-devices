@@ -15,13 +15,18 @@ bool WebResponder::read(yarp::os::ConnectionReader &in) {
     if (out==NULL) return true;
     response.addString("web");
     CD_INFO("Got: %s\n", got.toString().c_str());
+    std::string page = got.get(0).asString();
 
-    //--
-    std::string code = got.get(0).asString();
-    if (code=="index") {
-        response.addString(readFile("index.html").c_str());
-        return response.write(*out);
-    }
+    //-- Special page response
+    //if (page=="index.html") {
+    //    response.addString( readFile("index.html"));
+    //    //--Add logic here
+    //    return response.write(*out);
+    //}
+
+    //-- Default page response
+    response.addString( readFile(page) );
+    return response.write(*out);
 
     return true;
 }
@@ -35,7 +40,9 @@ std::string WebResponder::readFile(const std::string& filePath) {
     std::ifstream t(filePath.c_str());
     std::string str;
     if(!t.is_open()) {
-        str.append("Not able to open file.\n");
+        str += "Could not open file \"";
+        str += filePath;
+        str += "\".";
         return str;
     }
     t.seekg(0, std::ios::end);
