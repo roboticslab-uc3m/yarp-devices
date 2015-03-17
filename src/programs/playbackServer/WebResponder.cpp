@@ -23,7 +23,6 @@ bool WebResponder::read(yarp::os::ConnectionReader &in) {
         //--Add logic here
         std::vector<std::string> dirContents = listFromDir( this->filePath, this->fileExtension );
         std::string replaceString;
-        //Begin form
         replaceString += "<select size=\"";
         replaceString += intToString(dirContents.size());
         replaceString += "\">";
@@ -35,7 +34,6 @@ bool WebResponder::read(yarp::os::ConnectionReader &in) {
             replaceString += "</option>";
         }
         replaceString += "</select>";
-        //End form
         replaceAll(buttonsString,"BUTTONS",replaceString);
         response.addString( buttonsString );
         return response.write(*out);
