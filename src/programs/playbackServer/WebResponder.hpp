@@ -5,7 +5,8 @@
 
 #include <fstream>  //-- For std::ifstream
 #include <dirent.h> //-- For listing directory contents
-#include <vector>
+#include <vector>  //-- For std::vector
+#include <sstream>  //-- For stringstream
 
 #include <yarp/os/PortReader.h>
 #include <yarp/os/ResourceFinder.h>
@@ -40,7 +41,9 @@ protected:
         std::string fileExtension;
         std::string readFile(const std::string& fileName);
         std::vector<std::string> listFromDir(const std::string& dirName);
+        std::vector<std::string> listFromDir(const std::string& dirName, const std::string& extension);
         std::string& replaceAll(std::string& context, const std::string& from, const std::string& to);
+        std::string intToString(const int& inInt);
 
 };
 

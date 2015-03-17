@@ -21,17 +21,21 @@ bool WebResponder::read(yarp::os::ConnectionReader &in) {
     if (page=="buttons.html") {
         std::string buttonsString = readFile("buttons.html");
         //--Add logic here
-        std::vector<std::string> dirContents = listFromDir( this->filePath );
+        std::vector<std::string> dirContents = listFromDir( this->filePath, this->fileExtension );
         std::string replaceString;
+        //Begin form
+        replaceString += "<select size=\"";
+        replaceString += intToString(dirContents.size());
+        replaceString += "\">";
         for(int i=0;i<(int)dirContents.size();i++)
         {
-            if((int)dirContents[i].find( this->fileExtension, 0) != std::string::npos)
-            {
-                CD_INFO("%s\n",dirContents[i].c_str());
-                replaceString += dirContents[i];
-                replaceString += "<br>";
-            }
+            CD_INFO("%s\n",dirContents[i].c_str());
+            replaceString += "<option>";
+            replaceString += dirContents[i];
+            replaceString += "</option>";
         }
+        replaceString += "</select>";
+        //End form
         replaceAll(buttonsString,"BUTTONS",replaceString);
         response.addString( buttonsString );
         return response.write(*out);
@@ -106,6 +110,30 @@ std::vector<std::string> WebResponder::listFromDir(const std::string& dirName) {
 
 /************************************************************************/
 
+std::vector<std::string> WebResponder::listFromDir(const std::string& dirName, const std::string& extension) {
+    CD_DEBUG("dirName: %s, %s\n",dirName.c_str(), extension.c_str());
+    DIR *dp;
+    struct dirent *ep;
+    dp = opendir( dirName.c_str() );
+    if (dp == NULL) {
+        CD_ERROR("Could not find directory \"%s\" on server.\n",dirName.c_str());
+        std::vector<std::string> failResponse;
+        return failResponse;
+    }
+    std::vector<std::string> successResponse;
+    while (ep = readdir (dp)) {
+        std::string fileName(ep->d_name);
+        if((int)fileName.find( extension, 0) != std::string::npos)
+        {
+            successResponse.push_back(fileName);
+        }
+    }
+    (void) closedir (dp);
+    return successResponse;
+}
+
+/************************************************************************/
+
 std::string& WebResponder::replaceAll(std::string& context, const std::string& from, const std::string& to) {
     //-- [thanks:author] Bruce Eckel.
     //-- [thanks:bookTitle] TICPP-2nd-ed-Vol-two.
@@ -116,6 +144,14 @@ std::string& WebResponder::replaceAll(std::string& context, const std::string& f
         lookHere = foundHere + to.size();
     }
     return context;
+}
+
+/************************************************************************/
+
+std::string WebResponder::intToString(const int& inInt) {
+    std::ostringstream s;
+    s << inInt;
+    return s.str();
 }
 
 /************************************************************************/
