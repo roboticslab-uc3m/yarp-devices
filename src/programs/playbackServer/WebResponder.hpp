@@ -3,8 +3,12 @@
 #ifndef __WEB_RESPONDER__
 #define __WEB_RESPONDER__
 
+#include <fstream>      // std::ifstream
+
 #include <yarp/os/PortReader.h>
 #include <yarp/os/ResourceFinder.h>
+
+#include "ColorDebug.hpp"
 
 namespace teo
 {
