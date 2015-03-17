@@ -18,11 +18,11 @@ bool WebResponder::read(yarp::os::ConnectionReader &in) {
     std::string page = got.get(0).asString();
 
     //-- Special page response
-    //if (page=="index.html") {
-    //    response.addString( readFile("index.html"));
-    //    //--Add logic here
-    //    return response.write(*out);
-    //}
+    if (page=="buttons.html") {
+        response.addString( readFile("buttons.html"));
+        //--Add logic here
+        return response.write(*out);
+    }
 
     //-- Default page response
     response.addString( readFile(page) );
