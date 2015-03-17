@@ -3,7 +3,9 @@
 #ifndef __WEB_RESPONDER__
 #define __WEB_RESPONDER__
 
-#include <fstream>      // std::ifstream
+#include <fstream>  //-- For std::ifstream
+#include <dirent.h> //-- For listing directory contents
+#include <vector>
 
 #include <yarp/os/PortReader.h>
 #include <yarp/os/ResourceFinder.h>
@@ -33,7 +35,7 @@ protected:
 
         yarp::os::ResourceFinder* rf;
         std::string readFile(const std::string& fileName);
-
+        std::vector<std::string> listFromDir(const std::string& dirName);
 
 };
 

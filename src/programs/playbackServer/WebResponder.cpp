@@ -17,9 +17,16 @@ bool WebResponder::read(yarp::os::ConnectionReader &in) {
     CD_INFO("Got: %s\n", got.toString().c_str());
     std::string page = got.get(0).asString();
 
-    //-- Special page response
+    //-- Special page response (buttons.html)
     if (page=="buttons.html") {
-        response.addString( readFile("buttons.html"));
+        std::string buttonsString = readFile("buttons.html");
+        std::vector<std::string> me = listFromDir("/home");
+        for(int i=0;i<(int)me.size();i++)
+        {
+            CD_INFO("%s\n",me[i].c_str());
+        }
+        //buttonsString.replace();
+        response.addString( buttonsString );
         //--Add logic here
         return response.write(*out);
     }
@@ -42,6 +49,7 @@ std::string WebResponder::readFile(const std::string& fileName) {
         std::string failResponse("[error] Could not find file \"");
         failResponse += fileName;
         failResponse += "\" on server.";
+        CD_ERROR("%s",failResponse.c_str());
         return failResponse;
     }
 
@@ -52,6 +60,7 @@ std::string WebResponder::readFile(const std::string& fileName) {
         failResponse += "\" at \"";
         failResponse += fullName;
         failResponse += "\" on server (contact a web admin, may lack file permission issue on server).";
+        CD_ERROR("%s",failResponse.c_str());
         return failResponse;
     }
 
@@ -65,6 +74,27 @@ std::string WebResponder::readFile(const std::string& fileName) {
     successResponse.assign((std::istreambuf_iterator<char>(fileIfstream)),
                 std::istreambuf_iterator<char>());
     fileIfstream.close();
+    return successResponse;
+}
+
+/************************************************************************/
+
+std::vector<std::string> WebResponder::listFromDir(const std::string& dirName) {
+    CD_DEBUG("dirName: %s\n",dirName.c_str());
+    DIR *dp;
+    struct dirent *ep;
+    dp = opendir( dirName.c_str() );
+    if (dp == NULL) {
+        CD_ERROR("Could not find directory \"%s\" on server.\n",dirName.c_str());
+        std::vector<std::string> failResponse;
+        return failResponse;
+    }
+    std::vector<std::string> successResponse;
+    while (ep = readdir (dp)) {
+        std::string fileName(ep->d_name);
+        successResponse.push_back(fileName);
+    }
+    (void) closedir (dp);
     return successResponse;
 }
 
