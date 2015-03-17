@@ -6,8 +6,18 @@
 </h1>
 BUTTONS
 <form>
-    <input type="submit" value="play">
-    <input type="submit" value="stop">
+    <input type="submit" value="play" onClick="submitPlay();">
+    <input type="submit" value="stop" onClick="submitStop();">
 </form>
+
+<script>
+function submitPlay() {
+    alert("Play");
+}
+function submitStop() {
+    alert("Stop");
+}
+</script>
+
 </body>
 </html>
