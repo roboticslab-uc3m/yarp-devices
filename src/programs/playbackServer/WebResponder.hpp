@@ -4,6 +4,7 @@
 #define __WEB_RESPONDER__
 
 #include <yarp/os/PortReader.h>
+#include <yarp/os/ResourceFinder.h>
 
 namespace teo
 {
@@ -22,9 +23,13 @@ class WebResponder : public yarp::os::PortReader {
 
         bool read(yarp::os::ConnectionReader& in);
 
-    protected:
+        void setRf(yarp::os::ResourceFinder* value);
 
-        std::string readFile(const std::string& filePath);
+protected:
+
+        yarp::os::ResourceFinder* rf;
+        std::string readFile(const std::string& fileName);
+
 
 };
 

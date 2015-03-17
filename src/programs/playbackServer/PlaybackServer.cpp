@@ -17,6 +17,7 @@ bool PlaybackServer::configure(ResourceFinder &rf) {
     std::string name = rf.check("name",Value(DEFAULT_WEB_NAME),"web yarp port name").asString();
 
     //-- Configure and open web server
+    responder.setRf(&rf);
     server.setReader(responder);
     Contact contact = Contact::byName(name);
     if (webPort!=0) {
