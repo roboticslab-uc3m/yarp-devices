@@ -17,13 +17,13 @@ bool WebResponder::read(yarp::os::ConnectionReader &in) {
     CD_INFO("Got: %s\n", got.toString().c_str());
     std::string page = got.get(0).asString();
 
-    //-- Special page response (buttons.html)
-    if (page=="buttons.html") {
+    if (page=="buttons.html") //-- Special page response (buttons.html)
+    {
         std::string buttonsString = readFile("buttons.html");
         //--Add logic here
         std::vector<std::string> dirContents = listFromDir( this->filePath, this->fileExtension );
         std::string replaceString;
-        replaceString += "<select size=\"";
+        replaceString += "<select id=\"selector\" size=\"";
         replaceString += intToString(dirContents.size());
         replaceString += "\">";
         for(int i=0;i<(int)dirContents.size();i++)
@@ -36,6 +36,18 @@ bool WebResponder::read(yarp::os::ConnectionReader &in) {
         replaceString += "</select>";
         replaceAll(buttonsString,"BUTTONS",replaceString);
         response.addString( buttonsString );
+        return response.write(*out);
+    }
+    else if (page=="play") //-- Special page response (play)
+    {
+        std::string selected = got.find("selected").asString();
+        CD_SUCCESS("Going to PLAY: %s\n",selected.c_str());
+        return response.write(*out);
+    }
+    else if (page=="stop") //-- Special page response (stop)
+    {
+        std::string selected = got.find("selected").asString();
+        CD_SUCCESS("Going to STOP: %s\n",selected.c_str());
         return response.write(*out);
     }
 

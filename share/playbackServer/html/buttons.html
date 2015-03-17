@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+<script src="xmlhttp.js" type="text/javascript"></script>
+</head>
 <body>
 <h1>
     This is buttons.html
@@ -12,10 +15,22 @@ BUTTONS
 
 <script>
 function submitPlay() {
-    alert("Play");
+    var selected = document.getElementById("selector").value;
+    if ( ! selected ) return false;
+    //alert( "Play: " + selected );
+    url="play?selected=" + selected;
+    xmlhttp.open("GET",url,true);
+    xmlhttp.setRequestHeader('Accept','message/x-jl-formresult');
+    xmlhttp.send();
 }
 function submitStop() {
-    alert("Stop");
+    var selected = document.getElementById("selector").value;
+    if ( ! selected ) return false;
+    //alert( "Stop: " + selected );
+    url="stop?selected=" + selected;
+    xmlhttp.open("GET",url,true);
+    xmlhttp.setRequestHeader('Accept','message/x-jl-formresult');
+    xmlhttp.send();
 }
 </script>
 
