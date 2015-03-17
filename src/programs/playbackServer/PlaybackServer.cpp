@@ -17,10 +17,12 @@ bool PlaybackServer::configure(ResourceFinder &rf) {
     std::string name = rf.check("name",Value(DEFAULT_WEB_NAME),"web yarp port name").asString();
 
     std::string filePath = rf.check("filePath",Value(DEFAULT_FILE_PATH),"robot file path").asString();
+    std::string fileExtension = rf.check("fileExtension",Value(DEFAULT_FILE_EXTENSION),"robot file extension").asString();
 
     //-- Configure and open web server
     responder.setRf(&rf);
     responder.setFilePath(filePath);
+    responder.setFileExtension(fileExtension);
     server.setReader(responder);
     Contact contact = Contact::byName(name);
     if (webPort!=0) {

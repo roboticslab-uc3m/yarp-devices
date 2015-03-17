@@ -23,6 +23,7 @@
 #define DEFAULT_WEB_NAME "/playbackServer"
 
 #define DEFAULT_FILE_PATH "/home/teo"
+#define DEFAULT_FILE_EXTENSION ".txt"
 
 #define DEFAULT_PT_MODE_MS 50
 #define DEFAULT_FILE_NAME "manipulationRecording.txt"

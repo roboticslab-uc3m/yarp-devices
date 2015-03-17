@@ -25,7 +25,7 @@ bool WebResponder::read(yarp::os::ConnectionReader &in) {
         std::string replaceString;
         for(int i=0;i<(int)dirContents.size();i++)
         {
-            if((int)dirContents[i].find(".txt", 0) != std::string::npos)
+            if((int)dirContents[i].find( this->fileExtension, 0) != std::string::npos)
             {
                 CD_INFO("%s\n",dirContents[i].c_str());
                 replaceString += dirContents[i];
@@ -129,6 +129,13 @@ void WebResponder::setRf(yarp::os::ResourceFinder *value) {
 void WebResponder::setFilePath(const std::string &value)
 {
     filePath = value;
+}
+
+/************************************************************************/
+
+void WebResponder::setFileExtension(const std::string &value)
+{
+    fileExtension = value;
 }
 
 /************************************************************************/

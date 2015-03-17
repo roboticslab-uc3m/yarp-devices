@@ -31,11 +31,13 @@ class WebResponder : public yarp::os::PortReader {
 
         void setRf(yarp::os::ResourceFinder* value);
         void setFilePath(const std::string &value);
+        void setFileExtension(const std::string &value);
 
 protected:
 
         yarp::os::ResourceFinder* rf;
         std::string filePath;
+        std::string fileExtension;
         std::string readFile(const std::string& fileName);
         std::vector<std::string> listFromDir(const std::string& dirName);
         std::string& replaceAll(std::string& context, const std::string& from, const std::string& to);
