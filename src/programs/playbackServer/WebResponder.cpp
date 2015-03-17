@@ -57,7 +57,7 @@ std::string WebResponder::readFile(const std::string& fileName) {
         std::string failResponse("[error] Could not find file \"");
         failResponse += fileName;
         failResponse += "\" on server.";
-        CD_ERROR("%s",failResponse.c_str());
+        CD_ERROR("%s\n",failResponse.c_str());
         return failResponse;
     }
 
@@ -68,7 +68,7 @@ std::string WebResponder::readFile(const std::string& fileName) {
         failResponse += "\" at \"";
         failResponse += fullName;
         failResponse += "\" on server (contact a web admin, may lack file permission issue on server).";
-        CD_ERROR("%s",failResponse.c_str());
+        CD_ERROR("%s\n",failResponse.c_str());
         return failResponse;
     }
 
