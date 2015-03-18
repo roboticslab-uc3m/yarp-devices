@@ -11,6 +11,8 @@
 #include <yarp/os/PortReader.h>
 #include <yarp/os/ResourceFinder.h>
 
+#include "PlaybackThread.hpp"
+
 #include "ColorDebug.hpp"
 
 namespace teo
@@ -31,12 +33,15 @@ class WebResponder : public yarp::os::PortReader {
         bool read(yarp::os::ConnectionReader& in);
 
         void setRf(yarp::os::ResourceFinder* value);
+        void setPlaybackThread(PlaybackThread *value);
         void setFilePath(const std::string &value);
         void setFileExtension(const std::string &value);
+
 
 protected:
 
         yarp::os::ResourceFinder* rf;
+        PlaybackThread* playbackThread;
         std::string filePath;
         std::string fileExtension;
         std::string readFile(const std::string& fileName);

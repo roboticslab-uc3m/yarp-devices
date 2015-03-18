@@ -26,8 +26,6 @@
 #define DEFAULT_FILE_EXTENSION ".txt"
 
 #define DEFAULT_PT_MODE_MS 50
-#define DEFAULT_FILE_NAME "manipulationRecording.txt"
-#define DEFAULT_LOG_NAME "manipulationLog.txt"
 
 using namespace yarp::os;
 using namespace yarp::dev;

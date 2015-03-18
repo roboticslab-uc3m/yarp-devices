@@ -42,12 +42,18 @@ bool WebResponder::read(yarp::os::ConnectionReader &in) {
     {
         std::string selected = got.find("selected").asString();
         CD_SUCCESS("Going to PLAY: %s\n",selected.c_str());
+        std::string playFullName( this->filePath );
+        playFullName += "/";
+        playFullName += selected;
+        playbackThread->setFileName( playFullName );
+        playbackThread->start();
         return response.write(*out);
     }
     else if (page=="stop") //-- Special page response (stop)
     {
         std::string selected = got.find("selected").asString();
         CD_SUCCESS("Going to STOP: %s\n",selected.c_str());
+
         return response.write(*out);
     }
 
@@ -172,8 +178,14 @@ void WebResponder::setRf(yarp::os::ResourceFinder *value) {
 
 /************************************************************************/
 
-void WebResponder::setFilePath(const std::string &value)
+void WebResponder::setPlaybackThread(PlaybackThread *value)
 {
+    playbackThread = value;
+}
+
+/************************************************************************/
+
+void WebResponder::setFilePath(const std::string &value) {
     filePath = value;
 }
 

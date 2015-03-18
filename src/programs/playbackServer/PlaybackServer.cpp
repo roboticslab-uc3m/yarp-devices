@@ -21,6 +21,7 @@ bool PlaybackServer::configure(ResourceFinder &rf) {
 
     //-- Configure and open web server
     responder.setRf(&rf);
+    responder.setPlaybackThread(&playbackThread);
     responder.setFilePath(filePath);
     responder.setFileExtension(fileExtension);
     server.setReader(responder);

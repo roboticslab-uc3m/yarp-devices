@@ -12,6 +12,13 @@ bool PlaybackThread::threadInit() {
     leftArmDone = false;
     rightArmDone = false;
 
+    ifs.open( this->fileName.c_str() );
+    if( ! ifs.is_open() ) {
+        CD_ERROR("Could not open read file: %s.\n", this->fileName.c_str());
+        return false;
+    }
+    CD_SUCCESS("Opened file: %s.\n", this->fileName.c_str());
+
     return true;
 
 }
@@ -106,6 +113,14 @@ void PlaybackThread::run() {
         }
     }
 
+}
+
+/************************************************************************/
+
+void PlaybackThread::setFileName(const std::string &value)
+{
+    fileName = value;
+    CD_SUCCESS("Configured: %s\n",fileName.c_str());
 }
 
 /************************************************************************/

@@ -63,11 +63,13 @@ class PlaybackThread : public yarp::os::Thread {
 
         bool hold;
 
+        void setFileName(const std::string &value);
+
+protected:
+
         FILE * logFilePtr;
         bool log;
-
-    protected:
-
+        std::string fileName;
 
 };
 
