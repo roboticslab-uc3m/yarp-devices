@@ -3,9 +3,11 @@
 /**
  *
  * @ingroup teo_body_programs
- * \defgroup launchManipulation launchManipulation
+ * \defgroup launchLocomotion launchLocomotion
  *
- * @section launchManipulation_legal Legal
+ * @brief Creates an instance of teo::LaunchLocomotion.
+ *
+ * @section launchLocomotion_legal Legal
  *
  * Copyright: 2013 (C) Universidad Carlos III de Madrid
  *
@@ -13,12 +15,12 @@
  *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see license/LGPL.TXT
  *
- * @section launchManipulation_install Installation
+ * @section launchLocomotion_install Installation
  *
  * The module is compiled when ENABLE_launchManipulation is activated (default: OFF). For further
  * installation steps refer to <a class="el" href="pages.html">your own system installation guidelines</a>.
  *
- * @section launchManipulation_running Running (assuming correct installation)
+ * @section launchLocomotion_running Running (assuming correct installation)
  *
  * First we must run a YARP name server if it is not running in our current namespace:
 \verbatim
@@ -26,13 +28,13 @@
 \endverbatim
  * And then launch the actual module:
 \verbatim
-[on terminal 2] launchManipulation
+[on terminal 2] launchLocomotion
 \endverbatim
  *
- * @section launchManipulation_modify Modify
+ * @section launchLocomotion_modify Modify
  *
  * This file can be edited at
- * teo-body/src/modules/launchManipulation/main.cpp
+ * teo-body/src/modules/launchLocomotion/main.cpp
  *
  */
 
@@ -49,8 +51,8 @@ int main(int argc, char *argv[]) {
 
     ResourceFinder rf;
     rf.setVerbose(true);
-    rf.setDefaultContext("launchManipulation");
-    rf.setDefaultConfigFile("launchManipulation.ini");
+    rf.setDefaultContext("launchLocomotion");
+    rf.setDefaultConfigFile("launchLocomotion.ini");
     rf.configure(argc, argv);
 
     CD_INFO("Checking for yarp network...\n");

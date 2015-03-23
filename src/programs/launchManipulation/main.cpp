@@ -5,6 +5,8 @@
  * @ingroup teo_body_programs
  * \defgroup launchManipulation launchManipulation
  *
+ * @brief Creates an instance of teo::LaunchManipulation.
+ *
  * @section launchManipulation_legal Legal
  *
  * Copyright: 2013 (C) Universidad Carlos III de Madrid

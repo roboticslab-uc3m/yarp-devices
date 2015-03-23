@@ -5,6 +5,8 @@
  * @ingroup teo_body_programs
  * \defgroup playbackServer playbackServer
  *
+ * @brief Creates an instance of teo::PlaybackManipulation.
+ *
  * @section playbackServer_legal Legal
  *
  * Copyright: 2013 (C) Universidad Carlos III de Madrid

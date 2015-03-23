@@ -5,6 +5,8 @@
  * @ingroup teo_body_programs
  * \defgroup playbackLocomotion playbackLocomotion
  *
+ * @brief Creates an instance of teo::PlaybackLocomotion.
+ *
  * @section playbackLocomotion_legal Legal
  *
  * Copyright: 2013 (C) Universidad Carlos III de Madrid

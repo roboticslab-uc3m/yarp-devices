@@ -5,8 +5,7 @@
  * @ingroup teo_body_programs
  * \defgroup testBodyBot testBodyBot
  *
- * @brief Creates an instance of BodyBot wrapped in a YARP controlboard. This means that it may be used
- * through a YARP remote_controlboard or directly through low-level YARP controlboard RPC commands.
+ * @brief Creates an instance of teo::TestBodyBot.
  *
  * @section testBodyBot_legal Legal
  *
