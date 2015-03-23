@@ -23,8 +23,13 @@ namespace teo
 {
 
 /**
- *
- * @ingroup bodybot
+ * @ingroup BodyYarp
+ * \defgroup MotorIpos
+ * @brief Contains teo::MotorIpos.
+ */
+
+ /**
+ * @ingroup MotorIpos
  * @brief Specifies the Technosoft iPOS behaviour and specifications.
  *
  */

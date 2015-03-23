@@ -36,7 +36,7 @@ namespace teo
 /**
  * @ingroup playbackServer
  *
- * @brief The PlaybackServer class tests the class as a controlboard.
+ * @brief Plays back a robot file, offering a web interface.
  * 
  */
 class PlaybackServer : public RFModule {

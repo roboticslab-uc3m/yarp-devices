@@ -16,7 +16,7 @@ namespace teo
 /**
  * @ingroup recordManipulation
  *
- * @brief The RecordRateThread class tests the class as a controlboard.
+ * @brief WARNING repeated class (you are seeing the recordManipulation version).
  *
  */
 class RecordRateThread : public yarp::os::RateThread {

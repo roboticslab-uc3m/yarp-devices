@@ -27,7 +27,9 @@ namespace teo
 /**
  * @ingroup launchManipulation
  *
- * @brief The LaunchManipulation class launches the arms as controlboards.
+ * @brief Launches left arm wrapped by controlboardwrapper2 and right arm wrapped by controlboardwrapper2.
+ * A controlboardwrapper2 may be used through a YARP remote_controlboard or directly through low-level YARP
+ * controlboardwrapper2 RPC commands.
  * 
  */
 class LaunchManipulation : public RFModule {

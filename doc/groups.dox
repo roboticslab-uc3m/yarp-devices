@@ -10,6 +10,17 @@ namespace teo {}
  */
 
 /**
+ * @ingroup teo_body_libraries
+ * \defgroup BodyYarp
+ *
+ * @brief Contains TEO Body YARP plugins.
+ *
+ * @section BodyYarp_install Installation
+ *
+ * Compiled when ENABLE_BodyYarp is activated.
+ */
+
+/**
  * 
  * \defgroup teo_body_programs TEO Body Programs
  * @brief TEO body programs.

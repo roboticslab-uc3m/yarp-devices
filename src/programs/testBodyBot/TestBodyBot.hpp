@@ -24,7 +24,9 @@ namespace teo
 /**
  * @ingroup testBodyBot
  *
- * @brief Tests the BodyBot class as a controlboard.
+ * @brief Launches 1 left arm DoF + left hand wrapped by controlboardwrapper2.
+ * A controlboardwrapper2 may be used through a YARP remote_controlboard or directly through low-level YARP
+ * controlboardwrapper2 RPC commands.
  * 
  */
 class TestBodyBot : public RFModule {

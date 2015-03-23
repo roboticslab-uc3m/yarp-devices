@@ -28,7 +28,7 @@ namespace teo
 /**
  * @ingroup recordManipulation
  *
- * @brief The RecordManipulation class tests the class as a controlboard.
+ * @brief Records a manipulation movement, generating a manipulation file.
  * 
  */
 class RecordManipulation : public yarp::os::RFModule {

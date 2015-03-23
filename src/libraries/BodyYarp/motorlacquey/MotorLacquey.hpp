@@ -23,9 +23,14 @@ namespace teo
 {
 
 /**
- *
- * @ingroup bodybot
- * @brief Specifies the Technosoft iPOS behaviour and specifications.
+ * @ingroup BodyYarp
+ * \defgroup MotorLacquey
+ * @brief Contains teo::MotorLacquey.
+ */
+
+ /**
+ * @ingroup MotorLacquey
+ * @brief Specifies the Lacquey Fetch hand custom UC3M controller behaviour and specifications.
  *
  */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw

@@ -27,8 +27,10 @@ namespace teo
 /**
  * @ingroup launchLocomotion
  *
- * @brief The LaunchLocomotion class launches the legs as controlboards.
- * 
+ * @brief Launches left leg + 1 hip DoF wrapped by controlboardwrapper2 and right leg + 1 hip DoF wrapped by controlboardwrapper2.
+ * A controlboardwrapper2 may be used through a YARP remote_controlboard or directly through low-level YARP
+ * controlboardwrapper2 RPC commands.
+ *
  */
 class LaunchLocomotion : public RFModule {
 

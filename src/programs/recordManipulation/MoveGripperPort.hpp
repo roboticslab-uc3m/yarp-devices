@@ -16,7 +16,7 @@ namespace teo
 /**
  * @ingroup recordManipulation
  *
- * @brief The MoveGripperPort class.
+ * @brief Opens a yarp::os::Port for controlling two robot grippers.
  *
  */
 class MoveGripperPort : public yarp::os::BufferedPort<yarp::os::Bottle> {

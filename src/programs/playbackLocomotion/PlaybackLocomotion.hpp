@@ -30,7 +30,7 @@ namespace teo
 /**
  * @ingroup playbackLocomotion
  *
- * @brief The PlaybackLocomotion class tests the class as a controlboard.
+ * @brief Plays back a locomotion file.
  * 
  */
 class PlaybackLocomotion : public RFModule {

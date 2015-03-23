@@ -27,7 +27,7 @@ namespace teo
 /**
  * @ingroup recordLocomotion
  *
- * @brief The RecordLocomotion class tests the class as a controlboard.
+ * @brief Records a locomotion movement, generating a locomotion file.
  * 
  */
 class RecordLocomotion : public yarp::os::RFModule {

@@ -40,21 +40,17 @@ namespace teo
 {
 
 /**
+ *
  * @ingroup BodyYarp
- * \defgroup bodybot
- *
- * @brief The \ref BodyYarp library is focused on the class BodyBot class.
- *
- * <b>Installation</b>
- *
- * The plugin is compiled when ENABLE_BodyYarp_bodybot is activated (not default).
+ * \defgroup BodyBot
+ * @brief Contains teo::BodyBot.
  */
 
-/**
- *
- * @ingroup bodybot
- * @brief The BodyBot class implements the YARP_dev IControlLimits, IControlMode, IEncodersTimed,
-        IPositionControl, IPositionDirect, ITorqueControl, IVelocityControl interface class member functions.
+ /**
+ * @ingroup BodyBot
+ * @brief Implements IControlLimits, IControlMode, IEncodersTimed, IPositionControl, IPositionDirect,
+ * ITorqueControl, IVelocityControl interface yarp::dev class member functions, linking to teo::MotorIpos
+ * and teo::MotorLacquey raw implementations.
  *
  */
 // Note: IEncodersTimed inherits from IEncoders
