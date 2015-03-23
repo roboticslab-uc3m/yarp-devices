@@ -5,7 +5,7 @@
  * @ingroup teo_body_programs
  * \defgroup recordManipulation recordManipulation
  *
- * @brief Creates an instance of teo::PlaybackManipulation.
+ * @brief Creates an instance of teo::RecordManipulation.
  *
  * @section recordManipulation_legal Legal
  *

@@ -5,7 +5,7 @@
  * @ingroup teo_body_programs
  * \defgroup recordLocomotion recordLocomotion
  *
- * @brief Creates an instance of teo::PlaybackManipulation.
+ * @brief Creates an instance of teo::RecordLocomotion.
  *
  * @section recordLocomotion_legal Legal
  *

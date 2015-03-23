@@ -5,7 +5,7 @@
  * @ingroup teo_body_programs
  * \defgroup playbackServer playbackServer
  *
- * @brief Creates an instance of teo::PlaybackManipulation.
+ * @brief Creates an instance of teo::PlaybackServer.
  *
  * @section playbackServer_legal Legal
  *
