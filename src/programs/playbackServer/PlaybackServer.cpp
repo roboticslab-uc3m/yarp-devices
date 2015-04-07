@@ -9,15 +9,15 @@ namespace teo
 PlaybackServer::PlaybackServer() { }
 
 /************************************************************************/
-bool PlaybackServer::configure(ResourceFinder &rf) {
+bool PlaybackServer::configure(yarp::os::ResourceFinder &rf) {
 
     //-- Parse open options
     std::string webIp = rf.check("webIp",yarp::os::Value(DEFAULT_WEB_IP),"web server ip").asString();
     int webPort = rf.check("webPort",yarp::os::Value(DEFAULT_WEB_PORT),"web server port").asInt();
-    std::string name = rf.check("name",Value(DEFAULT_WEB_NAME),"web yarp port name").asString();
+    std::string name = rf.check("name",yarp::os::Value(DEFAULT_WEB_NAME),"web yarp port name").asString();
 
-    std::string filePath = rf.check("filePath",Value(DEFAULT_FILE_PATH),"robot file path").asString();
-    std::string fileExtension = rf.check("fileExtension",Value(DEFAULT_FILE_EXTENSION),"robot file extension").asString();
+    std::string filePath = rf.check("filePath",yarp::os::Value(DEFAULT_FILE_PATH),"robot file path").asString();
+    std::string fileExtension = rf.check("fileExtension",yarp::os::Value(DEFAULT_FILE_EXTENSION),"robot file extension").asString();
 
     int ptModeMs = rf.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
     CD_INFO("Using ptModeMs: %d (default: %d).\n",ptModeMs,int(DEFAULT_PT_MODE_MS));
@@ -27,7 +27,7 @@ bool PlaybackServer::configure(ResourceFinder &rf) {
     //-- left arm --
     std::string leftArmIni = rf.findFileByName("../manipulation/leftArm.ini");
 
-    Property leftArmOptions;
+    yarp::os::Property leftArmOptions;
     if (! leftArmOptions.fromConfigFile(leftArmIni) ) {  //-- Put first because defaults to wiping out.
         CD_ERROR("Could not configure from \"leftArm.ini\".\n");
         return false;
@@ -52,7 +52,7 @@ bool PlaybackServer::configure(ResourceFinder &rf) {
     //-- right arm --
     std::string rightArmIni = rf.findFileByName("../manipulation/rightArm.ini");
 
-    Property rightArmOptions;
+    yarp::os::Property rightArmOptions;
     if (! rightArmOptions.fromConfigFile(rightArmIni) ) {  //-- Put first because defaults to wiping out.
         CD_ERROR("Could not configure from \"rightArm.ini\".\n");
         return false;
@@ -137,7 +137,7 @@ bool PlaybackServer::configure(ResourceFinder &rf) {
     responder.setFilePath(filePath);
     responder.setFileExtension(fileExtension);
     server.setReader(responder);
-    Contact contact = Contact::byName(name);
+    yarp::os::Contact contact = yarp::os::Contact::byName(name);
     if (webPort!=0) {
         contact = contact.addSocket("",webIp,webPort);
     }

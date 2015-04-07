@@ -27,9 +27,6 @@
 
 #define DEFAULT_PT_MODE_MS 50
 
-using namespace yarp::os;
-using namespace yarp::dev;
-
 namespace teo
 {
 
@@ -39,11 +36,11 @@ namespace teo
  * @brief Plays back a robot file, offering a web interface.
  * 
  */
-class PlaybackServer : public RFModule {
+class PlaybackServer : public yarp::os::RFModule {
 
     public:
         PlaybackServer();
-        bool configure(ResourceFinder &rf);
+        bool configure(yarp::os::ResourceFinder &rf);
 
     protected:
         yarp::dev::PolyDriver leftArmDevice;
@@ -57,7 +54,7 @@ class PlaybackServer : public RFModule {
 
         PlaybackThread playbackThread;
 
-        Port server;
+        yarp::os::Port server;
         WebResponder responder;
 
 };
