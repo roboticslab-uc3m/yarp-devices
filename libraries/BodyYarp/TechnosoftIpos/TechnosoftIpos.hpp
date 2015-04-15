@@ -41,7 +41,7 @@ class TechnosoftIpos : public DeviceDriver, public IControlLimitsRaw, public ICo
     public:
 
         TechnosoftIpos() {
-            //canDevicePtr = NULL;
+            canDevicePtr = NULL;
         }
 
         //  --------- DeviceDriver Declarations. Implementation in TechnosoftIpos.cpp ---------
