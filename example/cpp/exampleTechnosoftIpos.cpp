@@ -58,6 +58,7 @@ int main(int argc, char *argv[]) {
     //-- Initialize the CAN device (e.g. /dev/can0).
     if( ! canBusHico.init(canDevicePath, canBitrate) )
         return 1;
+    CD_DEBUG("open %p\n",&canBusHico);
 
     yarp::os::Property options;
     options.put("device","TechnosoftIpos");
