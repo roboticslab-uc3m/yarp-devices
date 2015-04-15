@@ -37,7 +37,11 @@ make -j3
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
 
+YARP_DECLARE_PLUGINS(BodyYarp)
+
 int main(int argc, char *argv[]) {
+
+    YARP_REGISTER_PLUGINS(BodyYarp);
 
     yarp::os::Network yarp;
     if (! yarp::os::Network::checkNetwork() ) {
@@ -54,16 +58,16 @@ int main(int argc, char *argv[]) {
       return 1;
     }
 
-    yarp::dev::IPositionControl *pos;
+    yarp::dev::IPositionControlRaw *pos;
     bool ok = dd.view(pos);
     if (!ok) {
-        printf("[warning] Problems acquiring robot interface\n");
+        printf("[warning] Problems acquiring robot raw position interface\n");
         return false;
-    } else printf("[success] Acquired robot interface\n");
-    pos->setPositionMode();
+    } else printf("[success] Acquired robot raw position interface\n");
+    pos->setPositionModeRaw();
 
     printf("test positionMove(1,-35)\n");
-    pos->positionMove(1, -35);
+    pos->positionMoveRaw(1, -35);
 
     printf("Delaying 5 seconds...\n");
     yarp::os::Time::delay(5);
