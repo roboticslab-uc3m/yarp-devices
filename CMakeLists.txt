@@ -108,7 +108,8 @@ set(TEO_BODY_LIBRARIES CACHE INTERNAL "appended libraries" FORCE)
 
 # add main contents
 add_subdirectory(share)
-add_subdirectory(src)
+add_subdirectory(libraries)
+add_subdirectory(programs)
 
 # export our variables to a TEO_BODYConfig.cmake creation
 set(TEO_BODY_LINK_DIRS ${TEO_BODY_LINK_DIRS} ${LIBRARY_OUTPUT_PATH})
