@@ -30,7 +30,7 @@ option(ENABLE_playbackServer "Choose if you want to compile playbackServer" TRUE
 ### options: force default
 option(ENABLE_BodyYarp_bodybot "Enable/disable compilation of BodyYarp_bodybot" TRUE)
 option(ENABLE_BodyYarp_technosoftipos "Enable/disable compilation of BodyYarp_technosoftipos" TRUE)
-option(ENABLE_BodyYarp_motorlacquey "Enable/disable compilation of BodyYarp_motorlacquey" TRUE)
+option(ENABLE_BodyYarp_lacqueyfetch "Enable/disable compilation of BodyYarp_lacqueyfetch" TRUE)
 
 # ColorDebug options
 option(ColorDebug_FULL_FILE "Choose if you want to compile with CD_FULL_FILE" FALSE)
