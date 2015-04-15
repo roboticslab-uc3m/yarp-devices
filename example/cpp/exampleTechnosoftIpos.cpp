@@ -50,6 +50,7 @@ int main(int argc, char *argv[]) {
     }
     yarp::os::Property options;
     options.put("device","TechnosoftIpos");
+    options.put("canId",23);
     yarp::dev::PolyDriver dd(options);
     if(!dd.isValid()) {
       printf("RaveBot device not available.\n");
