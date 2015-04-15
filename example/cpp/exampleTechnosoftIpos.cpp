@@ -52,6 +52,7 @@ int main(int argc, char *argv[]) {
     }
 
     teo::CanBusHico canBusHico;
+    CD_DEBUG("open %p\n",&canBusHico);
     std::string canDevicePath = "/dev/can0";
     int canBitrate = BITRATE_1000k;
     //-- Initialize the CAN device (e.g. /dev/can0).
