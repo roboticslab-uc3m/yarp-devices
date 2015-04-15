@@ -17,5 +17,5 @@ link_directories(${TEO_BODY_LINK_DIRS})
 
 # Set up our executables.
 add_executable(exampleTechnosoftIpos exampleTechnosoftIpos.cpp)
-target_link_libraries(testTaskLib ${YARP_LIBRARIES} ${TEO_BODY_LIBRARIES})
+target_link_libraries(exampleTechnosoftIpos ${YARP_LIBRARIES} ${TEO_BODY_LIBRARIES})
 
