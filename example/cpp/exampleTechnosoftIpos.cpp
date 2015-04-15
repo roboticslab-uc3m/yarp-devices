@@ -37,27 +37,24 @@ make -j3
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
 
-using namespace yarp::os;
-using namespace yarp::dev;
-
 int main(int argc, char *argv[]) {
 
-    Network yarp;
-    if (!Network::checkNetwork()) {
+    yarp::os::Network yarp;
+    if (! yarp::os::Network::checkNetwork() ) {
         printf("Please start a yarp name server first\n");
         return(-1);
     }
-    Property options;
+    yarp::os::Property options;
     options.put("device","TechnosoftIpos");
-    PolyDriver dd(options);
+    yarp::dev::PolyDriver dd(options);
     if(!dd.isValid()) {
       printf("RaveBot device not available.\n");
 	  dd.close();
-      Network::fini();
+      yarp::os::Network::fini();
       return 1;
     }
 
-    IPositionControl *pos;
+    yarp::dev::IPositionControl *pos;
     bool ok = dd.view(pos);
     if (!ok) {
         printf("[warning] Problems acquiring robot interface\n");
@@ -69,19 +66,19 @@ int main(int argc, char *argv[]) {
     pos->positionMove(1, -35);
 
     printf("Delaying 5 seconds...\n");
-    Time::delay(5);
+    yarp::os::Time::delay(5);
 
-    IEncoders *enc;
+    yarp::dev::IEncoders *enc;
     ok = dd.view(enc);
 
-    IVelocityControl *vel;
+    yarp::dev::IVelocityControl *vel;
     ok = dd.view(vel);
     vel->setVelocityMode();
     printf("test velocityMove(0,10)\n");
     vel->velocityMove(0,10);
 
     printf("Delaying 5 seconds...\n");
-    Time::delay(5);
+    yarp::os::Time::delay(5);
 
     return 0;
 }
