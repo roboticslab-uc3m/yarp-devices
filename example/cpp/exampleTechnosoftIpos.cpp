@@ -52,19 +52,19 @@ int main(int argc, char *argv[]) {
     }
 
     teo::CanBusHico canBusHico;
-    CD_DEBUG("open %p\n",&canBusHico);
     std::string canDevicePath = "/dev/can0";
     int canBitrate = BITRATE_1000k;
     //-- Initialize the CAN device (e.g. /dev/can0).
     if( ! canBusHico.init(canDevicePath, canBitrate) )
         return 1;
-    CD_DEBUG("open %p\n",&canBusHico);
+    CD_DEBUG("original unchanged %p\n",&canBusHico);
 
     yarp::os::Property options;
     options.put("device","TechnosoftIpos");
     options.put("canId",23);
     options.put("tr",120);
     options.put("canPtr", yarp::os::Value(&canBusHico,sizeof(teo::CanBusHico*)) );
+    CD_DEBUG("original unchanged %p\n",&canBusHico);
     yarp::dev::PolyDriver dd(options);
     if(!dd.isValid()) {
       printf("TechnosoftIpos device not available.\n");
