@@ -20,6 +20,7 @@ IF (NOT SKIP_bodybot)
   install(TARGETS bodybot DESTINATION lib)
 
   # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
+  set(TEO_BODY_INCLUDE_DIRS ${TEO_BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} CACHE INTERNAL "appended libraries") 
   set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} bodybot CACHE INTERNAL "appended libraries") 
 
 ENDIF (NOT SKIP_bodybot)

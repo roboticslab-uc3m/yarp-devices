@@ -37,6 +37,8 @@ make -j3
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
 
+#include "ICanBusSharer.h"
+
 YARP_DECLARE_PLUGINS(BodyYarp)
 
 int main(int argc, char *argv[]) {
@@ -48,19 +50,35 @@ int main(int argc, char *argv[]) {
         printf("Please start a yarp name server first\n");
         return 1;
     }
+
+    teo::CanBusHico canBusHico;
+    std::string canDevicePath = "/dev/can0";
+    int canBitrate = BITRATE_1000k;
+    //-- Initialize the CAN device (e.g. /dev/can0).
+    if( ! canBusHico.init(canDevicePath, canBitrate) )
+        return 1;
+
     yarp::os::Property options;
     options.put("device","TechnosoftIpos");
     options.put("canId",23);
     options.put("tr",120);
+    options.put("canPtr", yarp::os::Value(&canBusHico,sizeof(teo::CanBusHico*)) );
     yarp::dev::PolyDriver dd(options);
     if(!dd.isValid()) {
-      printf("RaveBot device not available.\n");
+      printf("TechnosoftIpos device not available.\n");
 	  dd.close();
       yarp::os::Network::fini();
       return 1;
     }
 
     //-- View TechnosoftIpos interfaces.
+    /*teo::ICanBusSharer *iCanBusSharer;
+    bool ok = dd.view(iCanBusSharer);
+    if (!ok) {
+        printf("[error] Problems viewing IPositionControlRaw.\n");
+        return 1;
+    } else printf("[success] Viewing ICanBusSharer.\n");*/
+
     yarp::dev::IPositionControlRaw *pos;
     bool ok = dd.view(pos);
     if (!ok) {

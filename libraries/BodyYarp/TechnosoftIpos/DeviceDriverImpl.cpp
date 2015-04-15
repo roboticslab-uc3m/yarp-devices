@@ -5,11 +5,8 @@
 // -----------------------------------------------------------------------------
 bool teo::TechnosoftIpos::open(Searchable& config) {
 
-    if( ! canDevicePtr ) {
-        CD_ERROR("Could not create TechnosoftIpos with NULL canDevicePtr.\n");
-        return false;
-    }
-
+    yarp::os::Value canPtr = config.check("canPtr",Value(this->canDevicePtr,sizeof(CanBusHico*)),"can bus ptr");
+    this->canDevicePtr = (CanBusHico*) (canPtr.asBlob());
     this->canId = config.check("canId",-1,"can bus ID").asInt();
     this->tr = config.check("tr",-1,"reduction").asDouble();
     this->k = config.check("k",-1,"motor constant").asDouble();
