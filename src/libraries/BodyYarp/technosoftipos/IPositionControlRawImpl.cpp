@@ -217,7 +217,7 @@ bool teo::TechnosoftIpos::stopRaw(int j) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (technosoftipos).\n");
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
 
     return true;
 }

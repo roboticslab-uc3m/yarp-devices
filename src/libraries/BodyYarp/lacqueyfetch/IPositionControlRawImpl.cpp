@@ -57,7 +57,7 @@ bool teo::LacqueyFetch::relativeMoveRaw(int j, double delta) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (lacqueyfetch).\n");
+    CD_WARNING("Not implemented yet (LacqueyFetch).\n");
 
     return true;
 }

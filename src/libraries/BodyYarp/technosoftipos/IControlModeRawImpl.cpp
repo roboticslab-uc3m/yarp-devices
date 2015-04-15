@@ -97,7 +97,7 @@ bool teo::TechnosoftIpos::setImpedancePositionModeRaw(int j) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (technosoftipos).\n");
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
 
     return true;
 }
@@ -110,7 +110,7 @@ bool teo::TechnosoftIpos::setImpedanceVelocityModeRaw(int j) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (technosoftipos).\n");
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
 
     return true;
 }
@@ -123,7 +123,7 @@ bool teo::TechnosoftIpos::setOpenLoopModeRaw(int j) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (technosoftipos).\n");
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
 
     return true;
 }

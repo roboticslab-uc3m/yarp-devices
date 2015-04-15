@@ -21,7 +21,7 @@ bool teo::LacqueyFetch::setEncoderRaw(int j, double val) {  // encExposed = val;
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (lacqueyfetch).\n");
+    CD_WARNING("Not implemented yet (LacqueyFetch).\n");
 
     return true;
 }
@@ -49,7 +49,7 @@ bool teo::LacqueyFetch::getEncoderSpeedRaw(int j, double *sp) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    //CD_WARNING("Not implemented yet (lacqueyfetch).\n");  //-- Too verbose in controlboardwrapper2 stream.
+    //CD_WARNING("Not implemented yet (LacqueyFetch).\n");  //-- Too verbose in controlboardwrapper2 stream.
     *sp = 0;
 
     return true;
@@ -63,7 +63,7 @@ bool teo::LacqueyFetch::getEncoderAccelerationRaw(int j, double *spds) {
     //-- Check index within range
     if ( j = 0 ) return false;
 
-    //CD_WARNING("Not implemented yet (lacqueyfetch).\n");  //-- Too verbose in controlboardwrapper2 stream.
+    //CD_WARNING("Not implemented yet (LacqueyFetch).\n");  //-- Too verbose in controlboardwrapper2 stream.
     *spds = 0;
 
     return true;

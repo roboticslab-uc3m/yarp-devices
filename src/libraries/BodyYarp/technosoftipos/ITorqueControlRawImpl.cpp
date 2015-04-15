@@ -10,7 +10,7 @@ bool teo::TechnosoftIpos::getRefTorqueRaw(int j, double *t) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (technosoftipos).\n");
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
 
     return true;
 }
@@ -49,7 +49,7 @@ bool teo::TechnosoftIpos::getBemfParamRaw(int j, double *bemf) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (technosoftipos).\n");
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
 
     return true;
 }
@@ -62,7 +62,7 @@ bool teo::TechnosoftIpos::setBemfParamRaw(int j, double bemf) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (technosoftipos).\n");
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
 
     return true;
 }
@@ -75,7 +75,7 @@ bool teo::TechnosoftIpos::setTorquePidRaw(int j, const Pid &pid) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (technosoftipos).\n");
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
 
     return true;
 }
@@ -117,7 +117,7 @@ bool teo::TechnosoftIpos::getTorqueRangeRaw(int j, double *min, double *max) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (technosoftipos).\n");
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
 
     return true;
 }
@@ -130,7 +130,7 @@ bool teo::TechnosoftIpos::setTorqueErrorLimitRaw(int j, double limit) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (technosoftipos).\n");
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
 
     return true;
 }
@@ -143,7 +143,7 @@ bool teo::TechnosoftIpos::getTorqueErrorRaw(int j, double *err) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (technosoftipos).\n");
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
 
     return true;
 }
@@ -156,7 +156,7 @@ bool teo::TechnosoftIpos::getTorquePidOutputRaw(int j, double *out) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (technosoftipos).\n");
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
 
     return true;
 }
@@ -169,7 +169,7 @@ bool teo::TechnosoftIpos::getTorquePidRaw(int j, Pid *pid) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (technosoftipos).\n");
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
 
     return true;
 }
@@ -182,7 +182,7 @@ bool teo::TechnosoftIpos::getTorqueErrorLimitRaw(int j, double *limit) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (technosoftipos).\n");
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
 
     return true;
 }
@@ -195,7 +195,7 @@ bool teo::TechnosoftIpos::resetTorquePidRaw(int j) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (technosoftipos).\n");
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
 
     return true;
 }
@@ -208,7 +208,7 @@ bool teo::TechnosoftIpos::disableTorquePidRaw(int j) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (technosoftipos).\n");
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
 
     return true;
 }
@@ -221,7 +221,7 @@ bool teo::TechnosoftIpos::enableTorquePidRaw(int j) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (technosoftipos).\n");
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
 
     return true;
 }
@@ -234,7 +234,7 @@ bool teo::TechnosoftIpos::setTorqueOffsetRaw(int j, double v) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (technosoftipos).\n");
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
 
     return true;
 }

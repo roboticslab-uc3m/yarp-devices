@@ -18,8 +18,8 @@ IF (ENABLE_BodyYarp)
   # WARNING: BodyYarp bodybot works, but bodybot BodyYarp fails.
 
   yarp_begin_plugin_library(BodyYarp)
-    add_subdirectory(technosoftipos)
-    add_subdirectory(lacqueyfetch)
+    add_subdirectory(TechnosoftIpos)
+    add_subdirectory(LacqueyFetch)
     add_subdirectory(bodybot)
   yarp_end_plugin_library(BodyYarp)
 

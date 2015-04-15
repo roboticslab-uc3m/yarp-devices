@@ -73,7 +73,7 @@ bool teo::TechnosoftIpos::getEncoderSpeedRaw(int j, double *sp) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    //CD_WARNING("Not implemented yet (technosoftipos).\n");  //-- Too verbose in controlboardwrapper2 stream.
+    //CD_WARNING("Not implemented yet (TechnosoftIpos).\n");  //-- Too verbose in controlboardwrapper2 stream.
     *sp = 0;
 
     return true;
@@ -87,7 +87,7 @@ bool teo::TechnosoftIpos::getEncoderAccelerationRaw(int j, double *spds) {
     //-- Check index within range
     if ( j = 0 ) return false;
 
-    //CD_WARNING("Not implemented yet (technosoftipos).\n");  //-- Too verbose in controlboardwrapper2 stream.
+    //CD_WARNING("Not implemented yet (TechnosoftIpos).\n");  //-- Too verbose in controlboardwrapper2 stream.
     *spds = 0;
 
     return true;
