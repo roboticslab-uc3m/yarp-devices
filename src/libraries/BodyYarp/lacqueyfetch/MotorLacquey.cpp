@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MotorLacquey.hpp"
+#include "LacqueyFetch.hpp"
 
 // -----------------------------------------------------------------------------
 
-std::string teo::MotorLacquey::msgToStr(can_msg* message) {
+std::string teo::LacqueyFetch::msgToStr(can_msg* message) {
     std::stringstream tmp;
     for(int i=0; i < message->dlc-1; i++)
     {
@@ -21,7 +21,7 @@ std::string teo::MotorLacquey::msgToStr(can_msg* message) {
 
 // -----------------------------------------------------------------------------
 
-std::string teo::MotorLacquey::msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData) {
+std::string teo::LacqueyFetch::msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData) {
     std::stringstream tmp;
     for(int i=0; i < len-1; i++)
     {
@@ -38,7 +38,7 @@ std::string teo::MotorLacquey::msgToStr(uint32_t cob, uint16_t len, uint8_t * ms
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::send(uint32_t cob, uint16_t len, uint8_t * msgData) {
+bool teo::LacqueyFetch::send(uint32_t cob, uint16_t len, uint8_t * msgData) {
 
     if ( (lastUsage - yarp::os::Time::now()) < DELAY )
         yarp::os::Time::delay( lastUsage + DELAY - yarp::os::Time::now() );

@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MotorLacquey.hpp"
+#include "LacqueyFetch.hpp"
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::setCanBusPtr(CanBusHico *canDevicePtr) {
+bool teo::LacqueyFetch::setCanBusPtr(CanBusHico *canDevicePtr) {
 
     this->canDevicePtr = canDevicePtr;
     CD_SUCCESS("Ok pointer to CAN bus device %d.\n",canId);
@@ -13,42 +13,42 @@ bool teo::MotorLacquey::setCanBusPtr(CanBusHico *canDevicePtr) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::start() {
+bool teo::LacqueyFetch::start() {
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::readyToSwitchOn() {
+bool teo::LacqueyFetch::readyToSwitchOn() {
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::switchOn() {
+bool teo::LacqueyFetch::switchOn() {
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::enable() {
+bool teo::LacqueyFetch::enable() {
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::recoverFromError() {
+bool teo::LacqueyFetch::recoverFromError() {
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::interpretMessage( can_msg * message) {
+bool teo::LacqueyFetch::interpretMessage( can_msg * message) {
 
     return true;
 

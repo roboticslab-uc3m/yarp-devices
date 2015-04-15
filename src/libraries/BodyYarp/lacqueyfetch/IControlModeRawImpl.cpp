@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MotorLacquey.hpp"
+#include "LacqueyFetch.hpp"
 
 // ------------------- IControlModeRaw Related ------------------------------------
 
-bool teo::MotorLacquey::setPositionModeRaw(int j) {
+bool teo::LacqueyFetch::setPositionModeRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -15,7 +15,7 @@ bool teo::MotorLacquey::setPositionModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::setVelocityModeRaw(int j) {
+bool teo::LacqueyFetch::setVelocityModeRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -26,7 +26,7 @@ bool teo::MotorLacquey::setVelocityModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::setTorqueModeRaw(int j)  {
+bool teo::LacqueyFetch::setTorqueModeRaw(int j)  {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -37,7 +37,7 @@ bool teo::MotorLacquey::setTorqueModeRaw(int j)  {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::setImpedancePositionModeRaw(int j) {
+bool teo::LacqueyFetch::setImpedancePositionModeRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -48,7 +48,7 @@ bool teo::MotorLacquey::setImpedancePositionModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::setImpedanceVelocityModeRaw(int j) {
+bool teo::LacqueyFetch::setImpedanceVelocityModeRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -59,7 +59,7 @@ bool teo::MotorLacquey::setImpedanceVelocityModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::setOpenLoopModeRaw(int j) {
+bool teo::LacqueyFetch::setOpenLoopModeRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -70,7 +70,7 @@ bool teo::MotorLacquey::setOpenLoopModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::getControlModeRaw(int j, int *mode) {
+bool teo::LacqueyFetch::getControlModeRaw(int j, int *mode) {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
 
     //-- Check index within range

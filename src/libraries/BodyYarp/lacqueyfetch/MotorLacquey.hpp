@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __MOTOR_LACQUEY__
-#define __MOTOR_LACQUEY__
+#ifndef __LACQUEY_FETCH__
+#define __LACQUEY_FETCH__
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
@@ -24,31 +24,31 @@ namespace teo
 
 /**
  * @ingroup BodyYarp
- * \defgroup MotorLacquey
- * @brief Contains teo::MotorLacquey.
+ * \defgroup LacqueyFetch
+ * @brief Contains teo::LacqueyFetch.
  */
 
  /**
- * @ingroup MotorLacquey
+ * @ingroup LacqueyFetch
  * @brief Specifies the Lacquey Fetch hand custom UC3M controller behaviour and specifications.
  *
  */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
-class MotorLacquey : public DeviceDriver, public IControlLimitsRaw, public IControlModeRaw, public IEncodersTimedRaw,
+class LacqueyFetch : public DeviceDriver, public IControlLimitsRaw, public IControlModeRaw, public IEncodersTimedRaw,
         public IPositionControlRaw, public IPositionDirectRaw, public IVelocityControlRaw, public ITorqueControlRaw,
         public ICanBusSharer {
 
     public:
 
-        MotorLacquey() {
+        LacqueyFetch() {
             canDevicePtr = NULL;
         }
 
-        //  --------- DeviceDriver Declarations. Implementation in MotorLacquey.cpp ---------
+        //  --------- DeviceDriver Declarations. Implementation in LacqueyFetch.cpp ---------
         virtual bool open(Searchable& config);
         virtual bool close();
 
-        //  --------- ICanBusSharer Declarations. Implementation in MotorLacquey.cpp ---------
+        //  --------- ICanBusSharer Declarations. Implementation in LacqueyFetch.cpp ---------
         virtual bool setCanBusPtr(CanBusHico *canDevicePtr);        
         virtual bool interpretMessage( can_msg * message);
         /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
@@ -309,7 +309,7 @@ class MotorLacquey : public DeviceDriver, public IControlLimitsRaw, public ICont
 
     protected:
 
-        //  --------- Implementation in MotorLacquey.cpp ---------
+        //  --------- Implementation in LacqueyFetch.cpp ---------
         /**
          * Write message to the CAN buffer.
          * @param cob Message's COB
@@ -348,5 +348,5 @@ class MotorLacquey : public DeviceDriver, public IControlLimitsRaw, public ICont
 
 }  // namespace teo
 
-#endif  // __MOTOR_LACQUEY__
+#endif  // __LACQUEY_FETCH__
 

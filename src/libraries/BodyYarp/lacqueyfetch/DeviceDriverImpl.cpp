@@ -1,9 +1,9 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MotorLacquey.hpp"
+#include "LacqueyFetch.hpp"
 
 // -----------------------------------------------------------------------------
-bool teo::MotorLacquey::open(Searchable& config) {
+bool teo::LacqueyFetch::open(Searchable& config) {
 
     this->canId = config.check("canId",0,"can bus ID").asInt();
     this->tr = config.check("tr",0,"reduction").asInt();
@@ -17,12 +17,12 @@ bool teo::MotorLacquey::open(Searchable& config) {
     this->refSpeed = 0;
     this->encoder = 0;
 
-    CD_SUCCESS("Created MotorLacquey with canId %d and tr %f, and all local parameters set to 0.\n",canId,tr);
+    CD_SUCCESS("Created LacqueyFetch with canId %d and tr %f, and all local parameters set to 0.\n",canId,tr);
     return true;
 }
 
 // -----------------------------------------------------------------------------
-bool teo::MotorLacquey::close() {
+bool teo::LacqueyFetch::close() {
     CD_INFO("\n");
     return true;
 }

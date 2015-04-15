@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MotorLacquey.hpp"
+#include "LacqueyFetch.hpp"
 
 // ------------------ IEncodersRaw Related -----------------------------------------
 
-bool teo::MotorLacquey::resetEncoderRaw(int j) {
+bool teo::LacqueyFetch::resetEncoderRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -15,20 +15,20 @@ bool teo::MotorLacquey::resetEncoderRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::setEncoderRaw(int j, double val) {  // encExposed = val;
+bool teo::LacqueyFetch::setEncoderRaw(int j, double val) {  // encExposed = val;
     CD_INFO("(%d,%f)\n",j,val);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motorlacquey).\n");
+    CD_WARNING("Not implemented yet (lacqueyfetch).\n");
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::getEncoderRaw(int j, double *v) {
+bool teo::LacqueyFetch::getEncoderRaw(int j, double *v) {
     //CD_INFO("%d\n",j);  //-- Too verbose in stream.
 
     //-- Check index within range
@@ -43,13 +43,13 @@ bool teo::MotorLacquey::getEncoderRaw(int j, double *v) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::getEncoderSpeedRaw(int j, double *sp) {
+bool teo::LacqueyFetch::getEncoderSpeedRaw(int j, double *sp) {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    //CD_WARNING("Not implemented yet (motorlacquey).\n");  //-- Too verbose in controlboardwrapper2 stream.
+    //CD_WARNING("Not implemented yet (lacqueyfetch).\n");  //-- Too verbose in controlboardwrapper2 stream.
     *sp = 0;
 
     return true;
@@ -57,13 +57,13 @@ bool teo::MotorLacquey::getEncoderSpeedRaw(int j, double *sp) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::getEncoderAccelerationRaw(int j, double *spds) {
+bool teo::LacqueyFetch::getEncoderAccelerationRaw(int j, double *spds) {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
     if ( j = 0 ) return false;
 
-    //CD_WARNING("Not implemented yet (motorlacquey).\n");  //-- Too verbose in controlboardwrapper2 stream.
+    //CD_WARNING("Not implemented yet (lacqueyfetch).\n");  //-- Too verbose in controlboardwrapper2 stream.
     *spds = 0;
 
     return true;

@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MotorLacquey.hpp"
+#include "LacqueyFetch.hpp"
 
 // ------------------ IPositionControlRaw Related ----------------------------------------
 
-bool teo::MotorLacquey::positionMoveRaw(int j, double ref) {  // encExposed = ref;
+bool teo::LacqueyFetch::positionMoveRaw(int j, double ref) {  // encExposed = ref;
     CD_INFO("(%d,%f)\n",j,ref);
 
     //-- Check index within range
@@ -51,20 +51,20 @@ bool teo::MotorLacquey::positionMoveRaw(int j, double ref) {  // encExposed = re
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::relativeMoveRaw(int j, double delta) {
+bool teo::LacqueyFetch::relativeMoveRaw(int j, double delta) {
     CD_INFO("(%d, %f)\n",j,delta);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motorlacquey).\n");
+    CD_WARNING("Not implemented yet (lacqueyfetch).\n");
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::checkMotionDoneRaw(int j, bool *flag) {
+bool teo::LacqueyFetch::checkMotionDoneRaw(int j, bool *flag) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -77,7 +77,7 @@ bool teo::MotorLacquey::checkMotionDoneRaw(int j, bool *flag) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::setRefSpeedRaw(int j, double sp) {
+bool teo::LacqueyFetch::setRefSpeedRaw(int j, double sp) {
     CD_INFO("(%d, %f)\n",j,sp);
 
     //-- Check index within range
@@ -88,7 +88,7 @@ bool teo::MotorLacquey::setRefSpeedRaw(int j, double sp) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::setRefAccelerationRaw(int j, double acc) {
+bool teo::LacqueyFetch::setRefAccelerationRaw(int j, double acc) {
     CD_INFO("(%d, %f)\n",j,acc);
 
     //-- Check index within range
@@ -99,7 +99,7 @@ bool teo::MotorLacquey::setRefAccelerationRaw(int j, double acc) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::getRefSpeedRaw(int j, double *ref) {
+bool teo::LacqueyFetch::getRefSpeedRaw(int j, double *ref) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -112,7 +112,7 @@ bool teo::MotorLacquey::getRefSpeedRaw(int j, double *ref) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::getRefAccelerationRaw(int j, double *acc) {
+bool teo::LacqueyFetch::getRefAccelerationRaw(int j, double *acc) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -125,7 +125,7 @@ bool teo::MotorLacquey::getRefAccelerationRaw(int j, double *acc) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorLacquey::stopRaw(int j) {
+bool teo::LacqueyFetch::stopRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range

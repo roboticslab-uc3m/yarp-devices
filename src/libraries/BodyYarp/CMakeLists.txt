@@ -19,7 +19,7 @@ IF (ENABLE_BodyYarp)
 
   yarp_begin_plugin_library(BodyYarp)
     add_subdirectory(technosoftipos)
-    add_subdirectory(motorlacquey)
+    add_subdirectory(lacqueyfetch)
     add_subdirectory(bodybot)
   yarp_end_plugin_library(BodyYarp)
 
