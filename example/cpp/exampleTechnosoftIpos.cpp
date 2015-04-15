@@ -57,14 +57,15 @@ int main(int argc, char *argv[]) {
     //-- Initialize the CAN device (e.g. /dev/can0).
     if( ! canBusHico.init(canDevicePath, canBitrate) )
         return 1;
-    CD_DEBUG("original unchanged %p\n",&canBusHico);
 
     yarp::os::Property options;
     options.put("device","TechnosoftIpos");
     options.put("canId",23);
     options.put("tr",120);
-    options.put("canPtr", yarp::os::Value(&canBusHico,sizeof(teo::CanBusHico*)) );
-    CD_DEBUG("original unchanged %p\n",&canBusHico);
+    yarp::os::Value canBusHicoVal(&canBusHico,sizeof(teo::CanBusHico*));
+    options.put("canPtr", canBusHicoVal);
+    printf("original %p\n",&canBusHico);
+    printf("changed %p\n", (teo::CanBusHico*)(canBusHicoVal.asBlob()) );
     yarp::dev::PolyDriver dd(options);
     if(!dd.isValid()) {
       printf("TechnosoftIpos device not available.\n");
