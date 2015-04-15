@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
     yarp::os::Network yarp;
     if (! yarp::os::Network::checkNetwork() ) {
         printf("Please start a yarp name server first\n");
-        return(-1);
+        return 1;
     }
     yarp::os::Property options;
     options.put("device","TechnosoftIpos");
@@ -58,13 +58,34 @@ int main(int argc, char *argv[]) {
       return 1;
     }
 
+    //-- View TechnosoftIpos interfaces.
     yarp::dev::IPositionControlRaw *pos;
     bool ok = dd.view(pos);
     if (!ok) {
-        printf("[warning] Problems acquiring robot raw position interface\n");
-        return false;
-    } else printf("[success] Acquired robot raw position interface\n");
-    pos->setPositionModeRaw();
+        printf("[error] Problems viewing IPositionControlRaw.\n");
+        return 1;
+    } else printf("[success] Viewing IPositionControlRaw.\n");
+
+    yarp::dev::IEncodersRaw *enc;
+    ok = dd.view(enc);
+    if (!ok) {
+        printf("[error] Problems viewing IEncodersRaw.\n");
+        return 1;
+    } else printf("[success] Viewing IEncodersRaw.\n");
+
+    yarp::dev::IVelocityControlRaw *vel;
+    ok = dd.view(vel);
+    if (!ok) {
+        printf("[error] Problems viewing IVelocityControlRaw.\n");
+        return 1;
+    } else printf("[success] Viewing IVelocityControlRaw.\n");
+
+    //-- Commands on TechnosoftIpos.
+    ok = pos->setPositionModeRaw();
+    if (!ok) {
+        printf("[error] Problems in setPositionModeRaw.\n");
+        return 1;
+    } else printf("[success] setPositionModeRaw.\n");
 
     printf("test positionMove(1,-35)\n");
     pos->positionMoveRaw(1, -35);
@@ -72,14 +93,9 @@ int main(int argc, char *argv[]) {
     printf("Delaying 5 seconds...\n");
     yarp::os::Time::delay(5);
 
-    yarp::dev::IEncoders *enc;
-    ok = dd.view(enc);
-
-    yarp::dev::IVelocityControl *vel;
-    ok = dd.view(vel);
-    vel->setVelocityMode();
+    vel->setVelocityModeRaw();
     printf("test velocityMove(0,10)\n");
-    vel->velocityMove(0,10);
+    vel->velocityMoveRaw(0,10);
 
     printf("Delaying 5 seconds...\n");
     yarp::os::Time::delay(5);
