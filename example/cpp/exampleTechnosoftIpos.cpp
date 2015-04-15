@@ -66,7 +66,8 @@ int main(int argc, char *argv[]) {
     canBusHicoVal.makeBlob(&canBusHico,sizeof(teo::CanBusHico*));
     options.put("canPtr", canBusHicoVal);
     printf("original %p\n",&canBusHico);
-    printf("changed %p\n", (teo::CanBusHico*)(canBusHicoVal.asBlob()) );
+    printf("changed1 %p\n", canBusHicoVal.asBlob() );
+    printf("changed2 %p\n", (teo::CanBusHico*)(canBusHicoVal.asBlob()) );
     yarp::dev::PolyDriver dd(options);
     if(!dd.isValid()) {
       printf("TechnosoftIpos device not available.\n");
