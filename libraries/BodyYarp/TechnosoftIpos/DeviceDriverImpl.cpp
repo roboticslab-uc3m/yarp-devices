@@ -19,11 +19,11 @@ bool teo::TechnosoftIpos::open(Searchable& config) {
     this->encoder = 0;
 
     if( -1 == this->canId ) {
-        CD_ERROR("Could not create TechnosoftIpos with canId -1");
+        CD_ERROR("Could not create TechnosoftIpos with canId -1\n");
         return false;
     }
     if( -1 == this->tr ) {
-        CD_ERROR("Could not create TechnosoftIpos with tr -1");
+        CD_ERROR("Could not create TechnosoftIpos with tr -1\n");
         return false;
     }
 
