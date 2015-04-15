@@ -1,23 +1,23 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MotorIpos.hpp"
+#include "TechnosoftIpos.hpp"
 
 // ------------------- ITorqueControlRaw Related ------------------------------------
 
-bool teo::MotorIpos::getRefTorqueRaw(int j, double *t) {
+bool teo::TechnosoftIpos::getRefTorqueRaw(int j, double *t) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    CD_WARNING("Not implemented yet (technosoftipos).\n");
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setRefTorqueRaw(int j, double t) {
+bool teo::TechnosoftIpos::setRefTorqueRaw(int j, double t) {
     CD_INFO("(%d,%f)\n",j,t);
 
     //-- Check index within range
@@ -43,46 +43,46 @@ bool teo::MotorIpos::setRefTorqueRaw(int j, double t) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getBemfParamRaw(int j, double *bemf) {
+bool teo::TechnosoftIpos::getBemfParamRaw(int j, double *bemf) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    CD_WARNING("Not implemented yet (technosoftipos).\n");
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setBemfParamRaw(int j, double bemf) {
+bool teo::TechnosoftIpos::setBemfParamRaw(int j, double bemf) {
     CD_INFO("(%d,%f)\n",j,bemf);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    CD_WARNING("Not implemented yet (technosoftipos).\n");
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setTorquePidRaw(int j, const Pid &pid) {
+bool teo::TechnosoftIpos::setTorquePidRaw(int j, const Pid &pid) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    CD_WARNING("Not implemented yet (technosoftipos).\n");
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getTorqueRaw(int j, double *t) {
+bool teo::TechnosoftIpos::getTorqueRaw(int j, double *t) {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
@@ -111,130 +111,130 @@ bool teo::MotorIpos::getTorqueRaw(int j, double *t) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getTorqueRangeRaw(int j, double *min, double *max) {
+bool teo::TechnosoftIpos::getTorqueRangeRaw(int j, double *min, double *max) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    CD_WARNING("Not implemented yet (technosoftipos).\n");
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setTorqueErrorLimitRaw(int j, double limit) {
+bool teo::TechnosoftIpos::setTorqueErrorLimitRaw(int j, double limit) {
     CD_INFO("(%d,%f)\n",j,limit);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    CD_WARNING("Not implemented yet (technosoftipos).\n");
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getTorqueErrorRaw(int j, double *err) {
+bool teo::TechnosoftIpos::getTorqueErrorRaw(int j, double *err) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    CD_WARNING("Not implemented yet (technosoftipos).\n");
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getTorquePidOutputRaw(int j, double *out) {
+bool teo::TechnosoftIpos::getTorquePidOutputRaw(int j, double *out) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    CD_WARNING("Not implemented yet (technosoftipos).\n");
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getTorquePidRaw(int j, Pid *pid) {
+bool teo::TechnosoftIpos::getTorquePidRaw(int j, Pid *pid) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    CD_WARNING("Not implemented yet (technosoftipos).\n");
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getTorqueErrorLimitRaw(int j, double *limit) {
+bool teo::TechnosoftIpos::getTorqueErrorLimitRaw(int j, double *limit) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    CD_WARNING("Not implemented yet (technosoftipos).\n");
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::resetTorquePidRaw(int j) {
+bool teo::TechnosoftIpos::resetTorquePidRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    CD_WARNING("Not implemented yet (technosoftipos).\n");
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::disableTorquePidRaw(int j) {
+bool teo::TechnosoftIpos::disableTorquePidRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    CD_WARNING("Not implemented yet (technosoftipos).\n");
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::enableTorquePidRaw(int j) {
+bool teo::TechnosoftIpos::enableTorquePidRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    CD_WARNING("Not implemented yet (technosoftipos).\n");
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setTorqueOffsetRaw(int j, double v) {
+bool teo::TechnosoftIpos::setTorqueOffsetRaw(int j, double v) {
     CD_INFO("(%d,%f)\n",j,v);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    CD_WARNING("Not implemented yet (technosoftipos).\n");
 
     return true;
 }

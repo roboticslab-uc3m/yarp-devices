@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MotorIpos.hpp"
+#include "TechnosoftIpos.hpp"
 
 // ------------------- IControlModeRaw Related ------------------------------------
 
-bool teo::MotorIpos::setPositionModeRaw(int j) {
+bool teo::TechnosoftIpos::setPositionModeRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -26,7 +26,7 @@ bool teo::MotorIpos::setPositionModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setVelocityModeRaw(int j) {
+bool teo::TechnosoftIpos::setVelocityModeRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -48,7 +48,7 @@ bool teo::MotorIpos::setVelocityModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setTorqueModeRaw(int j)  {
+bool teo::TechnosoftIpos::setTorqueModeRaw(int j)  {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -91,46 +91,46 @@ bool teo::MotorIpos::setTorqueModeRaw(int j)  {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setImpedancePositionModeRaw(int j) {
+bool teo::TechnosoftIpos::setImpedancePositionModeRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    CD_WARNING("Not implemented yet (technosoftipos).\n");
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setImpedanceVelocityModeRaw(int j) {
+bool teo::TechnosoftIpos::setImpedanceVelocityModeRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    CD_WARNING("Not implemented yet (technosoftipos).\n");
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setOpenLoopModeRaw(int j) {
+bool teo::TechnosoftIpos::setOpenLoopModeRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    CD_WARNING("Not implemented yet (technosoftipos).\n");
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getControlModeRaw(int j, int *mode) {
+bool teo::TechnosoftIpos::getControlModeRaw(int j, int *mode) {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
 
     //-- Check index within range

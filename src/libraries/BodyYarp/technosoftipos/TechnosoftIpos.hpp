@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __MOTOR_IPOS__
-#define __MOTOR_IPOS__
+#ifndef __TECHNOSOFT_IPOS__
+#define __TECHNOSOFT_IPOS__
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
@@ -24,31 +24,31 @@ namespace teo
 
 /**
  * @ingroup BodyYarp
- * \defgroup MotorIpos
- * @brief Contains teo::MotorIpos.
+ * \defgroup TechnosoftIpos
+ * @brief Contains teo::TechnosoftIpos.
  */
 
  /**
- * @ingroup MotorIpos
+ * @ingroup TechnosoftIpos
  * @brief Specifies the Technosoft iPOS behaviour and specifications.
  *
  */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
-class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControlModeRaw, public IEncodersTimedRaw,
+class TechnosoftIpos : public DeviceDriver, public IControlLimitsRaw, public IControlModeRaw, public IEncodersTimedRaw,
         public IPositionControlRaw, public IPositionDirectRaw, public IVelocityControlRaw, public ITorqueControlRaw,
         public ICanBusSharer {
 
     public:
 
-        MotorIpos() {
+        TechnosoftIpos() {
             //canDevicePtr = NULL;
         }
 
-        //  --------- DeviceDriver Declarations. Implementation in MotorIpos.cpp ---------
+        //  --------- DeviceDriver Declarations. Implementation in TechnosoftIpos.cpp ---------
         virtual bool open(Searchable& config);
         virtual bool close();
 
-        //  --------- ICanBusSharer Declarations. Implementation in MotorIpos.cpp ---------
+        //  --------- ICanBusSharer Declarations. Implementation in TechnosoftIpos.cpp ---------
         virtual bool setCanBusPtr(CanBusHico *canDevicePtr);        
         virtual bool interpretMessage( can_msg * message);
         /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
@@ -244,7 +244,7 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
 
     protected:
 
-        //  --------- Implementation in MotorIpos.cpp ---------
+        //  --------- Implementation in TechnosoftIpos.cpp ---------
 
         //-- CAN bus stuff
         /**
@@ -300,5 +300,5 @@ class MotorIpos : public DeviceDriver, public IControlLimitsRaw, public IControl
 
 }  // namespace teo
 
-#endif  // __MOTOR_IPOS__
+#endif  // __TECHNOSOFT_IPOS__
 

@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MotorIpos.hpp"
+#include "TechnosoftIpos.hpp"
 
 // ------------------ IEncodersRaw Related -----------------------------------------
 
-bool teo::MotorIpos::resetEncoderRaw(int j) {
+bool teo::TechnosoftIpos::resetEncoderRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -15,7 +15,7 @@ bool teo::MotorIpos::resetEncoderRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setEncoderRaw(int j, double val) {  // encExposed = val;
+bool teo::TechnosoftIpos::setEncoderRaw(int j, double val) {  // encExposed = val;
     CD_INFO("(%d,%f)\n",j,val);
 
     //-- Check index within range
@@ -39,7 +39,7 @@ bool teo::MotorIpos::setEncoderRaw(int j, double val) {  // encExposed = val;
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getEncoderRaw(int j, double *v) {
+bool teo::TechnosoftIpos::getEncoderRaw(int j, double *v) {
     //CD_INFO("%d\n",j);  //-- Too verbose in stream.
 
     //-- Check index within range
@@ -67,13 +67,13 @@ bool teo::MotorIpos::getEncoderRaw(int j, double *v) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getEncoderSpeedRaw(int j, double *sp) {
+bool teo::TechnosoftIpos::getEncoderSpeedRaw(int j, double *sp) {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    //CD_WARNING("Not implemented yet (motoripos).\n");  //-- Too verbose in controlboardwrapper2 stream.
+    //CD_WARNING("Not implemented yet (technosoftipos).\n");  //-- Too verbose in controlboardwrapper2 stream.
     *sp = 0;
 
     return true;
@@ -81,13 +81,13 @@ bool teo::MotorIpos::getEncoderSpeedRaw(int j, double *sp) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getEncoderAccelerationRaw(int j, double *spds) {
+bool teo::TechnosoftIpos::getEncoderAccelerationRaw(int j, double *spds) {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
     if ( j = 0 ) return false;
 
-    //CD_WARNING("Not implemented yet (motoripos).\n");  //-- Too verbose in controlboardwrapper2 stream.
+    //CD_WARNING("Not implemented yet (technosoftipos).\n");  //-- Too verbose in controlboardwrapper2 stream.
     *spds = 0;
 
     return true;

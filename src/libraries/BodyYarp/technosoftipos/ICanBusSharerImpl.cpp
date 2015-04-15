@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MotorIpos.hpp"
+#include "TechnosoftIpos.hpp"
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setCanBusPtr(CanBusHico *canDevicePtr) {
+bool teo::TechnosoftIpos::setCanBusPtr(CanBusHico *canDevicePtr) {
 
     this->canDevicePtr = canDevicePtr;
     CD_SUCCESS("Ok pointer to CAN bus device %d.\n",canId);
@@ -13,7 +13,7 @@ bool teo::MotorIpos::setCanBusPtr(CanBusHico *canDevicePtr) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::start() {
+bool teo::TechnosoftIpos::start() {
 
     //*************************************************************
     uint8_t msg_start[] = {0x01,0x00};  // NMT Start Remote Node (to operational, Fig 4.1)
@@ -35,7 +35,7 @@ bool teo::MotorIpos::start() {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::readyToSwitchOn() {
+bool teo::TechnosoftIpos::readyToSwitchOn() {
 
     //*************************************************************
     uint8_t msg_readyToSwitchOn[] = {0x06,0x00}; //-- readyToSwitchOn, also acts as shutdown.
@@ -56,7 +56,7 @@ bool teo::MotorIpos::readyToSwitchOn() {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::switchOn() {
+bool teo::TechnosoftIpos::switchOn() {
 
     this->getSwitchOnReady.wait();
     this->getSwitchOn = false;
@@ -81,7 +81,7 @@ bool teo::MotorIpos::switchOn() {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::enable() {
+bool teo::TechnosoftIpos::enable() {
 
     this->getEnableReady.wait();
     this->getEnable = false;
@@ -108,7 +108,7 @@ bool teo::MotorIpos::enable() {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::recoverFromError() {
+bool teo::TechnosoftIpos::recoverFromError() {
 
     //*************************************************************
     //j//uint8_t msg_recover[]={0x23,0xFF}; // Control word 6040
@@ -125,7 +125,7 @@ bool teo::MotorIpos::recoverFromError() {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::interpretMessage( can_msg * message) {
+bool teo::TechnosoftIpos::interpretMessage( can_msg * message) {
 
     //--------------- Give high priority to PT, override EMGY red -------------------------
 

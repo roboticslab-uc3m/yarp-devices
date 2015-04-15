@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MotorIpos.hpp"
+#include "TechnosoftIpos.hpp"
 
 // ------------------ IVelocityControlRaw Related ----------------------------------------
 
-bool teo::MotorIpos::velocityMoveRaw(int j, double sp) {
+bool teo::TechnosoftIpos::velocityMoveRaw(int j, double sp) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range

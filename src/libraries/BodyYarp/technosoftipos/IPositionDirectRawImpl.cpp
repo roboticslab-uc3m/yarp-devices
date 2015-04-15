@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MotorIpos.hpp"
+#include "TechnosoftIpos.hpp"
 
 // ------------------ IPositionDirect Related ----------------------------------
 
-bool teo::MotorIpos::setPositionDirectModeRaw() {
+bool teo::TechnosoftIpos::setPositionDirectModeRaw() {
     CD_INFO("\n");
 
     //-- ptprepare: pg. 165 (181/263)
@@ -79,7 +79,7 @@ bool teo::MotorIpos::setPositionDirectModeRaw() {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setPositionRaw(int j, double ref) {
+bool teo::TechnosoftIpos::setPositionRaw(int j, double ref) {
 
     //CD_INFO("j:%d ref:%f\n",j,refs[j]);
     //*************************************************************
@@ -131,7 +131,7 @@ bool teo::MotorIpos::setPositionRaw(int j, double ref) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setPositionsRaw(const int n_joint, const int *joints, double *refs) {
+bool teo::TechnosoftIpos::setPositionsRaw(const int n_joint, const int *joints, double *refs) {
     //CD_INFO("n_joint:%d, drivers.size():" CD_SIZE_T "\n",n_joint,drivers.size());
 
     //CD_INFO("j:%d ref:%f\n",j,refs[j]);
@@ -204,7 +204,7 @@ bool teo::MotorIpos::setPositionsRaw(const int n_joint, const int *joints, doubl
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setPositionsRaw(const double *refs) {
+bool teo::TechnosoftIpos::setPositionsRaw(const double *refs) {
 
     CD_WARNING("Not implemented yet.\n");
 

@@ -4,22 +4,22 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-prepare_device(motoripos TYPE teo::MotorIpos INCLUDE MotorIpos.hpp)
+prepare_device(technosoftipos TYPE teo::TechnosoftIpos INCLUDE TechnosoftIpos.hpp)
 
-IF (NOT SKIP_motoripos)
+IF (NOT SKIP_technosoftipos)
 
   find_package(YARP REQUIRED)
 
   # Include any directories needed for YARP
   include_directories(${YARP_INCLUDE_DIRS} ${BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
 
-  yarp_add_plugin(motoripos MotorIpos.cpp DeviceDriverImpl.cpp IControlLimitsRawImpl.cpp IControlModeRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControlRawImpl.cpp IPositionDirectRawImpl.cpp ITorqueControlRawImpl.cpp IVelocityControlRawImpl.cpp ICanBusSharerImpl.cpp )
+  yarp_add_plugin(technosoftipos TechnosoftIpos.cpp DeviceDriverImpl.cpp IControlLimitsRawImpl.cpp IControlModeRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControlRawImpl.cpp IPositionDirectRawImpl.cpp ITorqueControlRawImpl.cpp IVelocityControlRawImpl.cpp ICanBusSharerImpl.cpp )
 
-  TARGET_LINK_LIBRARIES(motoripos ${YARP_LIBRARIES})
-  install(TARGETS motoripos DESTINATION lib)
+  TARGET_LINK_LIBRARIES(technosoftipos ${YARP_LIBRARIES})
+  install(TARGETS technosoftipos DESTINATION lib)
 
   # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
-  set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} motoripos CACHE INTERNAL "appended libraries") 
+  set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} technosoftipos CACHE INTERNAL "appended libraries") 
 
-ENDIF (NOT SKIP_motoripos)
+ENDIF (NOT SKIP_technosoftipos)
 

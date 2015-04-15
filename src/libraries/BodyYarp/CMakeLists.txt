@@ -18,7 +18,7 @@ IF (ENABLE_BodyYarp)
   # WARNING: BodyYarp bodybot works, but bodybot BodyYarp fails.
 
   yarp_begin_plugin_library(BodyYarp)
-    add_subdirectory(motoripos)
+    add_subdirectory(technosoftipos)
     add_subdirectory(motorlacquey)
     add_subdirectory(bodybot)
   yarp_end_plugin_library(BodyYarp)

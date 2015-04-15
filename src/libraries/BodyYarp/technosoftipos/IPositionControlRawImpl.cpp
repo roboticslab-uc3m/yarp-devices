@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MotorIpos.hpp"
+#include "TechnosoftIpos.hpp"
 
 // ------------------ IPositionControlRaw Related ----------------------------------------
 
-bool teo::MotorIpos::positionMoveRaw(int j, double ref) {  // encExposed = ref;
+bool teo::TechnosoftIpos::positionMoveRaw(int j, double ref) {  // encExposed = ref;
     CD_INFO("(%d,%f)\n",j,ref);
 
     //-- Check index within range
@@ -51,7 +51,7 @@ bool teo::MotorIpos::positionMoveRaw(int j, double ref) {  // encExposed = ref;
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::relativeMoveRaw(int j, double delta) {
+bool teo::TechnosoftIpos::relativeMoveRaw(int j, double delta) {
     CD_INFO("(%d, %f)\n",j,delta);
 
     //-- Check index within range
@@ -100,7 +100,7 @@ bool teo::MotorIpos::relativeMoveRaw(int j, double delta) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::checkMotionDoneRaw(int j, bool *flag) {
+bool teo::TechnosoftIpos::checkMotionDoneRaw(int j, bool *flag) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -128,7 +128,7 @@ bool teo::MotorIpos::checkMotionDoneRaw(int j, bool *flag) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setRefSpeedRaw(int j, double sp) {
+bool teo::TechnosoftIpos::setRefSpeedRaw(int j, double sp) {
     CD_INFO("(%d, %f)\n",j,sp);
 
     //-- Check index within range
@@ -157,7 +157,7 @@ bool teo::MotorIpos::setRefSpeedRaw(int j, double sp) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::setRefAccelerationRaw(int j, double acc) {
+bool teo::TechnosoftIpos::setRefAccelerationRaw(int j, double acc) {
     CD_INFO("(%d, %f)\n",j,acc);
 
     //-- Check index within range
@@ -185,7 +185,7 @@ bool teo::MotorIpos::setRefAccelerationRaw(int j, double acc) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getRefSpeedRaw(int j, double *ref) {
+bool teo::TechnosoftIpos::getRefSpeedRaw(int j, double *ref) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -198,7 +198,7 @@ bool teo::MotorIpos::getRefSpeedRaw(int j, double *ref) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::getRefAccelerationRaw(int j, double *acc) {
+bool teo::TechnosoftIpos::getRefAccelerationRaw(int j, double *acc) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -211,13 +211,13 @@ bool teo::MotorIpos::getRefAccelerationRaw(int j, double *acc) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::MotorIpos::stopRaw(int j) {
+bool teo::TechnosoftIpos::stopRaw(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (motoripos).\n");
+    CD_WARNING("Not implemented yet (technosoftipos).\n");
 
     return true;
 }

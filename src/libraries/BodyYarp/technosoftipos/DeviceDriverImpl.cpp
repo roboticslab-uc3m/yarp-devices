@@ -1,9 +1,9 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MotorIpos.hpp"
+#include "TechnosoftIpos.hpp"
 
 // -----------------------------------------------------------------------------
-bool teo::MotorIpos::open(Searchable& config) {
+bool teo::TechnosoftIpos::open(Searchable& config) {
 
     this->canId = config.check("canId",0,"can bus ID").asInt();
     this->tr = config.check("tr",0,"reduction").asDouble();
@@ -18,12 +18,12 @@ bool teo::MotorIpos::open(Searchable& config) {
     this->refSpeed = 0;
     this->encoder = 0;
 
-    CD_SUCCESS("Created MotorIpos with canId %d, tr %f, k %f, and all local parameters set to 0.\n",canId,tr,k);
+    CD_SUCCESS("Created TechnosoftIpos with canId %d, tr %f, k %f, and all local parameters set to 0.\n",canId,tr,k);
     return true;
 }
 
 // -----------------------------------------------------------------------------
-bool teo::MotorIpos::close() {
+bool teo::TechnosoftIpos::close() {
     CD_INFO("\n");
     return true;
 }
