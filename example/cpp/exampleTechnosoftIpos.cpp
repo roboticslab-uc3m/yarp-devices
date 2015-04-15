@@ -62,7 +62,8 @@ int main(int argc, char *argv[]) {
     options.put("device","TechnosoftIpos");
     options.put("canId",23);
     options.put("tr",120);
-    yarp::os::Value canBusHicoVal(&canBusHico,sizeof(teo::CanBusHico*));
+    yarp::os::Value canBusHicoVal;
+    canBusHicoVal.makeBlob(&canBusHico,sizeof(teo::CanBusHico*));
     options.put("canPtr", canBusHicoVal);
     printf("original %p\n",&canBusHico);
     printf("changed %p\n", (teo::CanBusHico*)(canBusHicoVal.asBlob()) );
