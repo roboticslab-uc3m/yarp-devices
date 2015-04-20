@@ -5,11 +5,6 @@
 // -----------------------------------------------------------------------------
 bool teo::TechnosoftIpos::open(Searchable& config) {
 
-    CD_DEBUG("open1\n");
-    yarp::os::Value canPtr = config.check("canPtr",Value(this->canDevicePtr,sizeof(CanBusHico*)),"can bus ptr");
-    CD_DEBUG("open2 %p\n",this->canDevicePtr);
-    this->canDevicePtr = (CanBusHico*) (canPtr.asBlob());
-    CD_DEBUG("open3 %p\n",this->canDevicePtr);
     this->canId = config.check("canId",-1,"can bus ID").asInt();
     this->tr = config.check("tr",-1,"reduction").asDouble();
     this->k = config.check("k",-1,"motor constant").asDouble();
