@@ -62,11 +62,6 @@ int main(int argc, char *argv[]) {
     options.put("device","TechnosoftIpos");
     options.put("canId",23);
     options.put("tr",120);
-    yarp::os::Value canBusHicoVal(&canBusHico,sizeof(teo::CanBusHico*));
-    options.put("canPtr", canBusHicoVal);
-    printf("original %p\n",&canBusHico);
-    printf("changed1 %p\n", canBusHicoVal.asBlob() );
-    printf("changed2 %p\n", (teo::CanBusHico*)(canBusHicoVal.asBlob()) );
     yarp::dev::PolyDriver dd(options);
     if(!dd.isValid()) {
       printf("TechnosoftIpos device not available.\n");
@@ -76,15 +71,15 @@ int main(int argc, char *argv[]) {
     }
 
     //-- View TechnosoftIpos interfaces.
-    /*teo::ICanBusSharer *iCanBusSharer;
+    teo::ICanBusSharer *iCanBusSharer;
     bool ok = dd.view(iCanBusSharer);
     if (!ok) {
         printf("[error] Problems viewing IPositionControlRaw.\n");
         return 1;
-    } else printf("[success] Viewing ICanBusSharer.\n");*/
+    } else printf("[success] Viewing ICanBusSharer.\n");
 
     yarp::dev::IPositionControlRaw *pos;
-    bool ok = dd.view(pos);
+    ok = dd.view(pos);
     if (!ok) {
         printf("[error] Problems viewing IPositionControlRaw.\n");
         return 1;
@@ -103,6 +98,9 @@ int main(int argc, char *argv[]) {
         printf("[error] Problems viewing IVelocityControlRaw.\n");
         return 1;
     } else printf("[success] Viewing IVelocityControlRaw.\n");
+
+    //-- Pass before sendong commands
+    iCanBusSharer->setCanBusPtr(&canBusHico);
 
     //-- Commands on TechnosoftIpos.
     ok = pos->setPositionModeRaw();
