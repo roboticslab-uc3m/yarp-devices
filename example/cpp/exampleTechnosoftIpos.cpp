@@ -52,9 +52,9 @@ int main(int argc, char *argv[]) {
     }
 
     teo::CanBusHico canBusHico;
-    std::string canDevicePath = "/dev/can0";
+    std::string canDevicePath = "/dev/can1";
     int canBitrate = BITRATE_1000k;
-    //-- Initialize the CAN device (e.g. /dev/can0).
+    //-- Initialize the CAN device (e.g. /dev/can1).
     if( ! canBusHico.init(canDevicePath, canBitrate) )
         return 1;
 
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
     teo::ICanBusSharer *iCanBusSharer;
     bool ok = dd.view(iCanBusSharer);
     if (!ok) {
-        printf("[error] Problems viewing IPositionControlRaw.\n");
+        printf("[error] Problems viewing ICanBusSharer.\n");
         return 1;
     } else printf("[success] Viewing ICanBusSharer.\n");
 
@@ -109,18 +109,22 @@ int main(int argc, char *argv[]) {
         return 1;
     } else printf("[success] setPositionModeRaw.\n");
 
-    printf("test positionMove(1,-35)\n");
-    pos->positionMoveRaw(1, -35);
+    printf("test positionMove(0,-25)\n");
+    ok = pos->positionMoveRaw(0, -25);
+    if (!ok) {
+        printf("[error] Problems in positionMove.\n");
+        return 1;
+    } else printf("[success] positionMove.\n");
 
     printf("Delaying 5 seconds...\n");
     yarp::os::Time::delay(5);
 
-    vel->setVelocityModeRaw();
+    /*vel->setVelocityModeRaw();
     printf("test velocityMove(0,10)\n");
     vel->velocityMoveRaw(0,10);
 
     printf("Delaying 5 seconds...\n");
-    yarp::os::Time::delay(5);
+    yarp::os::Time::delay(5);*/
 
     return 0;
 }
