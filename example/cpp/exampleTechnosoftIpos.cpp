@@ -102,6 +102,17 @@ int main(int argc, char *argv[]) {
     //-- Pass before sendong commands
     iCanBusSharer->setCanBusPtr(&canBusHico);
 
+    iCanBusSharer->start();
+
+    yarp::os::Time::delay(0.1);
+    iCanBusSharer->readyToSwitchOn();
+
+    yarp::os::Time::delay(0.1);
+    iCanBusSharer->switchOn();
+
+    yarp::os::Time::delay(2);
+    iCanBusSharer->enable();
+
     //-- Commands on TechnosoftIpos.
     ok = pos->setPositionModeRaw();
     if (!ok) {
