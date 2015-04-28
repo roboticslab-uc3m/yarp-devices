@@ -11,7 +11,7 @@ IF (NOT SKIP_LacqueyFetch)
   find_package(YARP REQUIRED)
 
   # Include any directories needed for YARP
-  include_directories(${YARP_INCLUDE_DIRS} ${BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
+  include_directories(${YARP_INCLUDE_DIRS} ${TEO_BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
 
   yarp_add_plugin(LacqueyFetch LacqueyFetch.cpp DeviceDriverImpl.cpp IControlLimitsRawImpl.cpp IControlModeRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControlRawImpl.cpp ICanBusSharerImpl.cpp )
 

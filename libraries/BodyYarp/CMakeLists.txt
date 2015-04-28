@@ -14,13 +14,15 @@ IF (ENABLE_BodyYarp)
   include(YarpPlugin)
 
   # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
+  # Note: Need ICanBusSharer.h, which will also need CanBusControlboard/*.hpp for now
+  set(TEO_BODY_INCLUDE_DIRS ${TEO_BODY_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/CanBusControlboard CACHE INTERNAL "appended libraries") 
+  # Note: BodyYarp bodybot works, but bodybot BodyYarp fails.
   set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} BodyYarp CACHE INTERNAL "appended libraries") 
-  # WARNING: BodyYarp bodybot works, but bodybot BodyYarp fails.
 
   yarp_begin_plugin_library(BodyYarp)
     add_subdirectory(TechnosoftIpos)
     add_subdirectory(LacqueyFetch)
-    add_subdirectory(bodybot)
+    add_subdirectory(CanBusControlboard)
   yarp_end_plugin_library(BodyYarp)
 
   install(TARGETS BodyYarp DESTINATION lib)
@@ -33,7 +35,6 @@ IF (ENABLE_BodyYarp)
   ENDIF (ENABLE_testBodyYarp)
 
   # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
-  set(TEO_BODY_INCLUDE_DIRS ${TEO_BODY_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "appended libraries") 
 
 ENDIF (ENABLE_BodyYarp)
 
