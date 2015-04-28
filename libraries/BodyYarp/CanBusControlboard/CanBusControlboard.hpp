@@ -42,19 +42,19 @@ namespace teo
 /**
  *
  * @ingroup BodyYarp
- * \defgroup BodyBot
- * @brief Contains teo::BodyBot.
+ * \defgroup CanBusControlboard
+ * @brief Contains teo::CanBusControlboard.
  */
 
  /**
- * @ingroup BodyBot
+ * @ingroup CanBusControlboard
  * @brief Implements IControlLimits, IControlMode, IEncodersTimed, IPositionControl, IPositionDirect,
  * ITorqueControl, IVelocityControl interface yarp::dev class member functions, linking to teo::MotorIpos
  * and teo::MotorLacquey raw implementations.
  *
  */
 // Note: IEncodersTimed inherits from IEncoders
-class BodyBot : public DeviceDriver, public IControlLimits, public IControlMode, public IEncodersTimed,
+class CanBusControlboard : public DeviceDriver, public IControlLimits, public IControlMode, public IEncodersTimed,
         public IPositionControl, public IPositionDirect, public ITorqueControl, public IVelocityControl,
         public Thread {
 

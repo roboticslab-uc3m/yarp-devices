@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "BodyBot.hpp"
+#include "CanBusControlboard.hpp"
 
 // ------------------ IPositionDirect Related ----------------------------------
 
-bool teo::BodyBot::setPositionDirectMode() {
+bool teo::CanBusControlboard::setPositionDirectMode() {
     CD_INFO("\n");
 
     bool ok = true;
@@ -19,7 +19,7 @@ bool teo::BodyBot::setPositionDirectMode() {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::setPosition(int j, double ref) {
+bool teo::CanBusControlboard::setPosition(int j, double ref) {
     CD_INFO("\n");
 
     return iPositionDirectRaw[j]->setPositionRaw( 0, ref );
@@ -27,7 +27,7 @@ bool teo::BodyBot::setPosition(int j, double ref) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::setPositions(const int n_joint, const int *joints, double *refs) {
+bool teo::CanBusControlboard::setPositions(const int n_joint, const int *joints, double *refs) {
     CD_INFO("n_joint:%d, drivers.size():" CD_SIZE_T "\n",n_joint,drivers.size());
 
     bool ok = true;
@@ -38,7 +38,7 @@ bool teo::BodyBot::setPositions(const int n_joint, const int *joints, double *re
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::setPositions(const double *refs) {
+bool teo::CanBusControlboard::setPositions(const double *refs) {
     bool ok = true;
     for(unsigned int i=0; i < drivers.size(); i++)
         ok &= this->setPosition(i, refs[i]);

@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "BodyBot.hpp"
+#include "CanBusControlboard.hpp"
 
 // ------------------- IControlMode Related ------------------------------------
 
-bool teo::BodyBot::setPositionMode(int j) {
+bool teo::CanBusControlboard::setPositionMode(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -15,7 +15,7 @@ bool teo::BodyBot::setPositionMode(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::setVelocityMode(int j) {
+bool teo::CanBusControlboard::setVelocityMode(int j) {
     CD_INFO("(%d)\n",j);
 
     return iControlModeRaw[j]->setVelocityModeRaw( 0 );
@@ -23,7 +23,7 @@ bool teo::BodyBot::setVelocityMode(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::setTorqueMode(int j)  {
+bool teo::CanBusControlboard::setTorqueMode(int j)  {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -34,7 +34,7 @@ bool teo::BodyBot::setTorqueMode(int j)  {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::setImpedancePositionMode(int j) {
+bool teo::CanBusControlboard::setImpedancePositionMode(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -45,7 +45,7 @@ bool teo::BodyBot::setImpedancePositionMode(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::setImpedanceVelocityMode(int j) {
+bool teo::CanBusControlboard::setImpedanceVelocityMode(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -56,7 +56,7 @@ bool teo::BodyBot::setImpedanceVelocityMode(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::setOpenLoopMode(int j) {
+bool teo::CanBusControlboard::setOpenLoopMode(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -67,7 +67,7 @@ bool teo::BodyBot::setOpenLoopMode(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::getControlMode(int j, int *mode) {
+bool teo::CanBusControlboard::getControlMode(int j, int *mode) {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
 
     //-- Check index within range
@@ -78,7 +78,7 @@ bool teo::BodyBot::getControlMode(int j, int *mode) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::getControlModes(int *modes) {
+bool teo::CanBusControlboard::getControlModes(int *modes) {
     CD_INFO("\n");
 
     bool ok = true;

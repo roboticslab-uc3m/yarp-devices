@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "BodyBot.hpp"
+#include "CanBusControlboard.hpp"
 
 // ------------------ IPositionControl Related ----------------------------------------
 
-bool teo::BodyBot::getAxes(int *axes) {
+bool teo::CanBusControlboard::getAxes(int *axes) {
     CD_INFO("\n");
 
     *axes = drivers.size();
@@ -14,7 +14,7 @@ bool teo::BodyBot::getAxes(int *axes) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::setPositionMode() {
+bool teo::CanBusControlboard::setPositionMode() {
     CD_INFO("\n");
 
     bool ok = true;
@@ -27,7 +27,7 @@ bool teo::BodyBot::setPositionMode() {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::positionMove(int j, double ref) {
+bool teo::CanBusControlboard::positionMove(int j, double ref) {
     CD_INFO("(%d,%f)\n",j,ref);
 
     //-- Check index within range
@@ -38,7 +38,7 @@ bool teo::BodyBot::positionMove(int j, double ref) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::positionMove(const double *refs) {
+bool teo::CanBusControlboard::positionMove(const double *refs) {
     CD_INFO("\n");
 
     bool ok = true;
@@ -51,7 +51,7 @@ bool teo::BodyBot::positionMove(const double *refs) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::relativeMove(int j, double delta) {
+bool teo::CanBusControlboard::relativeMove(int j, double delta) {
     CD_INFO("(%d,%f)\n",j,delta);
 
     //-- Check index within range
@@ -62,7 +62,7 @@ bool teo::BodyBot::relativeMove(int j, double delta) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::relativeMove(const double *deltas) {
+bool teo::CanBusControlboard::relativeMove(const double *deltas) {
     CD_INFO("\n");
 
     bool ok = true;
@@ -75,7 +75,7 @@ bool teo::BodyBot::relativeMove(const double *deltas) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::checkMotionDone(int j, bool *flag) {
+bool teo::CanBusControlboard::checkMotionDone(int j, bool *flag) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -86,7 +86,7 @@ bool teo::BodyBot::checkMotionDone(int j, bool *flag) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::checkMotionDone(bool *flag) {
+bool teo::CanBusControlboard::checkMotionDone(bool *flag) {
     CD_INFO("\n");
     *flag = true;
     bool ok = true;
@@ -101,7 +101,7 @@ bool teo::BodyBot::checkMotionDone(bool *flag) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::setRefSpeed(int j, double sp) {
+bool teo::CanBusControlboard::setRefSpeed(int j, double sp) {
     CD_INFO("(%d, %f)\n",j,sp);
 
     //-- Check index within range
@@ -112,7 +112,7 @@ bool teo::BodyBot::setRefSpeed(int j, double sp) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::setRefSpeeds(const double *spds) {
+bool teo::CanBusControlboard::setRefSpeeds(const double *spds) {
     CD_INFO("\n");
 
     bool ok = true;
@@ -123,7 +123,7 @@ bool teo::BodyBot::setRefSpeeds(const double *spds) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::setRefAcceleration(int j, double acc) {
+bool teo::CanBusControlboard::setRefAcceleration(int j, double acc) {
     CD_INFO("(%d, %f)\n",j,acc);
 
     //-- Check index within range
@@ -134,7 +134,7 @@ bool teo::BodyBot::setRefAcceleration(int j, double acc) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::setRefAccelerations(const double *accs) {
+bool teo::CanBusControlboard::setRefAccelerations(const double *accs) {
     CD_INFO("\n");
 
     bool ok = true;
@@ -145,7 +145,7 @@ bool teo::BodyBot::setRefAccelerations(const double *accs) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::getRefSpeed(int j, double *ref) {
+bool teo::CanBusControlboard::getRefSpeed(int j, double *ref) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -156,7 +156,7 @@ bool teo::BodyBot::getRefSpeed(int j, double *ref) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::getRefSpeeds(double *spds) {
+bool teo::CanBusControlboard::getRefSpeeds(double *spds) {
     CD_INFO("\n");
 
     bool ok = true;
@@ -167,7 +167,7 @@ bool teo::BodyBot::getRefSpeeds(double *spds) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::getRefAcceleration(int j, double *acc) {
+bool teo::CanBusControlboard::getRefAcceleration(int j, double *acc) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -178,7 +178,7 @@ bool teo::BodyBot::getRefAcceleration(int j, double *acc) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::getRefAccelerations(double *accs) {
+bool teo::CanBusControlboard::getRefAccelerations(double *accs) {
     CD_INFO("\n");
 
     bool ok = true;
@@ -189,7 +189,7 @@ bool teo::BodyBot::getRefAccelerations(double *accs) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::stop(int j) {
+bool teo::CanBusControlboard::stop(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -200,7 +200,7 @@ bool teo::BodyBot::stop(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::stop() {
+bool teo::CanBusControlboard::stop() {
     CD_INFO("\n");
 
     bool ok = true;

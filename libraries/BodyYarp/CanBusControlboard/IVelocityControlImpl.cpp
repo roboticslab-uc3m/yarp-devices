@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "BodyBot.hpp"
+#include "CanBusControlboard.hpp"
 
 // ------------------ IVelocityControl Related ----------------------------------------
 
-bool teo::BodyBot::setVelocityMode() {
+bool teo::CanBusControlboard::setVelocityMode() {
     CD_INFO("\n");
 
     bool ok = true;
@@ -17,7 +17,7 @@ bool teo::BodyBot::setVelocityMode() {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::velocityMove(int j, double sp) {
+bool teo::CanBusControlboard::velocityMove(int j, double sp) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -28,7 +28,7 @@ bool teo::BodyBot::velocityMove(int j, double sp) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::velocityMove(const double *sp) {
+bool teo::CanBusControlboard::velocityMove(const double *sp) {
     CD_INFO("\n");
 
     bool ok = true;

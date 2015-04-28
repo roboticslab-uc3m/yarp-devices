@@ -1,12 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "BodyBot.hpp"
+#include "CanBusControlboard.hpp"
 
 // ------------------ Thread Related -----------------------------------------
 
-void teo::BodyBot::run() {
+void teo::CanBusControlboard::run() {
 
-    CD_INFO("Started BodyBot reading thread run.\n");
+    CD_INFO("Started CanBusControlboard reading thread run.\n");
 
     while ( ! this->isStopping() ) {
 
@@ -42,7 +42,7 @@ void teo::BodyBot::run() {
 
     }  //-- ends: while ( ! this->isStopping() ).
 
-    CD_INFO("Stopping BodyBot reading thread run.\n");
+    CD_INFO("Stopping CanBusControlboard reading thread run.\n");
 
     return;
 }

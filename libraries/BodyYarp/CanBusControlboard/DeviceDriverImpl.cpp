@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "BodyBot.hpp"
+#include "CanBusControlboard.hpp"
 
 // ------------------- DeviceDriver Related ------------------------------------
 
-bool teo::BodyBot::open(Searchable& config) {
+bool teo::CanBusControlboard::open(Searchable& config) {
 
     std::string mode = config.check("mode",Value(DEFAULT_MODE),"position/velocity mode").asString();
 
@@ -155,7 +155,7 @@ bool teo::BodyBot::open(Searchable& config) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::close() {
+bool teo::CanBusControlboard::close() {
 
     //-- Stop the read thread.
     this->Thread::stop();

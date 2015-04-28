@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "BodyBot.hpp"
+#include "CanBusControlboard.hpp"
 
 // ------------------ IEncoders Related -----------------------------------------
 
-bool teo::BodyBot::resetEncoder(int j) {
+bool teo::CanBusControlboard::resetEncoder(int j) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -15,7 +15,7 @@ bool teo::BodyBot::resetEncoder(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::resetEncoders() {
+bool teo::CanBusControlboard::resetEncoders() {
     CD_INFO("\n");
 
     bool ok = true;
@@ -26,7 +26,7 @@ bool teo::BodyBot::resetEncoders() {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::setEncoder(int j, double val) {
+bool teo::CanBusControlboard::setEncoder(int j, double val) {
     CD_INFO("(%d,%f)\n",j,val);
 
     //-- Check index within range
@@ -37,7 +37,7 @@ bool teo::BodyBot::setEncoder(int j, double val) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::setEncoders(const double *vals) {
+bool teo::CanBusControlboard::setEncoders(const double *vals) {
     CD_INFO("\n");
 
     bool ok = true;
@@ -48,7 +48,7 @@ bool teo::BodyBot::setEncoders(const double *vals) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::getEncoder(int j, double *v) {
+bool teo::CanBusControlboard::getEncoder(int j, double *v) {
     //CD_INFO("%d\n",j);  //-- Too verbose in stream.
 
     //-- Check index within range
@@ -59,7 +59,7 @@ bool teo::BodyBot::getEncoder(int j, double *v) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::getEncoders(double *encs) {
+bool teo::CanBusControlboard::getEncoders(double *encs) {
     //CD_INFO("\n");  //-- Too verbose in stream.
 
     bool ok = true;
@@ -70,7 +70,7 @@ bool teo::BodyBot::getEncoders(double *encs) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::getEncoderSpeed(int j, double *sp) {
+bool teo::CanBusControlboard::getEncoderSpeed(int j, double *sp) {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
@@ -81,7 +81,7 @@ bool teo::BodyBot::getEncoderSpeed(int j, double *sp) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::getEncoderSpeeds(double *spds) {
+bool teo::CanBusControlboard::getEncoderSpeeds(double *spds) {
     CD_INFO("\n");
 
     bool ok = true;
@@ -92,7 +92,7 @@ bool teo::BodyBot::getEncoderSpeeds(double *spds) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::getEncoderAcceleration(int j, double *spds) {
+bool teo::CanBusControlboard::getEncoderAcceleration(int j, double *spds) {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
@@ -103,7 +103,7 @@ bool teo::BodyBot::getEncoderAcceleration(int j, double *spds) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::BodyBot::getEncoderAccelerations(double *accs) {
+bool teo::CanBusControlboard::getEncoderAccelerations(double *accs) {
     CD_INFO("\n");
 
     bool ok = true;

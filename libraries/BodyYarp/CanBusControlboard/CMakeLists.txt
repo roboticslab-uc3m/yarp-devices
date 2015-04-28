@@ -4,18 +4,18 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-prepare_device(bodybot TYPE teo::BodyBot INCLUDE BodyBot.hpp WRAPPER controlboardwrapper2)
+prepare_device(bodybot TYPE teo::CanBusControlboard INCLUDE CanBusControlboard.hpp WRAPPER controlboardwrapper2)
 
 IF (NOT SKIP_bodybot)
 
-  option(ENABLE_testBodyBot "Choose if you want to compile testBodyBot" TRUE)
+  option(ENABLE_testCanBusControlboard "Choose if you want to compile testCanBusControlboard" TRUE)
 
   find_package(YARP REQUIRED)
 
   # Include any directories needed for YARP
   include_directories(${YARP_INCLUDE_DIRS} ${BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
 
-  yarp_add_plugin(bodybot DeviceDriverImpl.cpp IControlLimitsImpl.cpp IControlModeImpl.cpp IEncodersImpl.cpp IEncodersTimedImpl.cpp IPositionControlImpl.cpp IPositionDirectImpl.cpp ITorqueControlImpl.cpp IVelocityControlImpl.cpp CanBusHico.cpp BodyBot.cpp ThreadImpl.cpp)
+  yarp_add_plugin(bodybot DeviceDriverImpl.cpp IControlLimitsImpl.cpp IControlModeImpl.cpp IEncodersImpl.cpp IEncodersTimedImpl.cpp IPositionControlImpl.cpp IPositionDirectImpl.cpp ITorqueControlImpl.cpp IVelocityControlImpl.cpp CanBusHico.cpp CanBusControlboard.cpp ThreadImpl.cpp)
   TARGET_LINK_LIBRARIES(bodybot ${YARP_LIBRARIES})
   install(TARGETS bodybot DESTINATION lib)
 
