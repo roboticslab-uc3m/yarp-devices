@@ -22,7 +22,7 @@ bool LaunchManipulation::configure(ResourceFinder &rf) {
     CD_SUCCESS("Configured left arm from %s.\n",leftArmIni.c_str());
     leftArmOptions.put("name","/teo/leftArm");
     leftArmOptions.put("device","controlboardwrapper2");
-    leftArmOptions.put("subdevice","bodybot");
+    leftArmOptions.put("subdevice","CanBusControlboard");
     if (rf.check("home")) leftArmOptions.put("home",1);
     if (rf.check("reset")) leftArmOptions.put("reset",1);
 
@@ -47,7 +47,7 @@ bool LaunchManipulation::configure(ResourceFinder &rf) {
     CD_SUCCESS("Configured right arm from %s.\n",rightArmIni.c_str());
     rightArmOptions.put("name","/teo/rightArm");
     rightArmOptions.put("device","controlboardwrapper2");
-    rightArmOptions.put("subdevice","bodybot");
+    rightArmOptions.put("subdevice","CanBusControlboard");
     if (rf.check("home")) rightArmOptions.put("home",1);
     if (rf.check("reset")) rightArmOptions.put("reset",1);
 

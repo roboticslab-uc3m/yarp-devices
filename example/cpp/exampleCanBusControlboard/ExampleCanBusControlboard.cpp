@@ -11,7 +11,7 @@ bool teo::ExampleCanBusControlboard::configure(ResourceFinder &rf) {
     Property options;
     options.fromString(rf.toString());  //-- Allow options like stream_state=0.
     options.put("device","controlboardwrapper2");
-    options.put("subdevice","bodybot");
+    options.put("subdevice","CanBusControlboard");
 
     robotDevice.open(options);
     
