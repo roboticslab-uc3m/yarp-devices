@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __BODY_BOT__
-#define __BODY_BOT__
+#ifndef __CAN_BUS_CONTROLBOARD__
+#define __CAN_BUS_CONTROLBOARD__
 
 #include <yarp/os/all.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
@@ -682,5 +682,4 @@ class CanBusControlboard : public DeviceDriver, public IControlLimits, public IC
 
 }  // namespace teo
 
-#endif  //  __BODY_BOT__
-
+#endif  //  __CAN_BUS_CONTROLBOARD__
