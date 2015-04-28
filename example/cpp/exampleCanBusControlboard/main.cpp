@@ -5,7 +5,7 @@
  * @ingroup teo_body_programs
  * \defgroup exampleCanBusControlboard exampleCanBusControlboard
  *
- * @brief Creates an instance of teo::TestBodyBot.
+ * @brief Creates an instance of teo::ExampleCanBusControlboard.
  *
  * @section exampleCanBusControlboard_legal Legal
  *
@@ -90,7 +90,7 @@ Response: [ok]
  *
  */
 
-#include "TestBodyBot.hpp"
+#include "ExampleCanBusControlboard.hpp"
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
     }
     CD_SUCCESS("Found yarp network.\n");
 
-    teo::TestBodyBot mod;
+    teo::ExampleCanBusControlboard mod;
     return mod.runModule(rf);
 }
 

@@ -29,7 +29,7 @@ namespace teo
  * controlboardwrapper2 RPC commands.
  * 
  */
-class TestBodyBot : public RFModule {
+class ExampleCanBusControlboard : public RFModule {
 
     protected:
         yarp::dev::PolyDriver robotDevice;
@@ -40,7 +40,7 @@ class TestBodyBot : public RFModule {
 //        int period;
 
     public:
-        TestBodyBot();
+        ExampleCanBusControlboard();
         bool configure(ResourceFinder &rf);
 };
 

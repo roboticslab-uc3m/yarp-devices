@@ -2,16 +2,16 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-IF (ENABLE_exampleCanBusControlboard)
-
 set(KEYWORD "exampleCanBusControlboard")
 
 # Find YARP.
 find_package(YARP REQUIRED)
 
+find_package(TEO_BODY REQUIRED)
+
 # Search for source code.
 file(GLOB folder_source *.cpp *.cc *.c)
-file(GLOB folder_header *.h)
+file(GLOB folder_header *.hpp)
 source_group("Source Files" FILES ${folder_source})
 source_group("Header Files" FILES ${folder_header})
 
@@ -21,18 +21,16 @@ foreach(header_file ${folder_header})
   include_directories(${p})
 endforeach(header_file ${folder_header})
 
-include_directories(${YARP_INCLUDE_DIRS} ${BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
+include_directories(${YARP_INCLUDE_DIRS} ${TEO_BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
 
-link_directories(${BODY_LINK_DIRS})
+link_directories(${TEO_BODY_LINK_DIRS})
 
 # Set up our main executable.
 if (folder_source)
   add_executable(${KEYWORD} ${folder_source} ${folder_header})
-  target_link_libraries(${KEYWORD} ${YARP_LIBRARIES} BodyYarp)
+  target_link_libraries(${KEYWORD} ${YARP_LIBRARIES} ${TEO_BODY_LIBRARIES})
   install(TARGETS ${KEYWORD} DESTINATION bin)
 else (folder_source)
   message(FATAL_ERROR "No source code files found. Please add something")
 endif (folder_source)
-
-ENDIF (ENABLE_exampleCanBusControlboard)
 

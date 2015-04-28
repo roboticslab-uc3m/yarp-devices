@@ -1,12 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "TestBodyBot.hpp"
+#include "ExampleCanBusControlboard.hpp"
 
 /************************************************************************/
-teo::TestBodyBot::TestBodyBot() { }
+teo::ExampleCanBusControlboard::ExampleCanBusControlboard() { }
 
 /************************************************************************/
-bool teo::TestBodyBot::configure(ResourceFinder &rf) {
+bool teo::ExampleCanBusControlboard::configure(ResourceFinder &rf) {
 
     Property options;
     options.fromString(rf.toString());  //-- Allow options like stream_state=0.
@@ -27,8 +27,8 @@ bool teo::TestBodyBot::configure(ResourceFinder &rf) {
 }
 
 /************************************************************************/
-bool teo::TestBodyBot::updateModule() {
-    //printf("TestBodyBot alive...\n");
+bool teo::ExampleCanBusControlboard::updateModule() {
+    //printf("ExampleCanBusControlboard alive...\n");
     return true;
 }
 
