@@ -1,8 +1,6 @@
 # Copyright: Universidad Carlos III de Madrid (C) 2013-2014
 # Authors: Juan G. Victores
 
-add_subdirectory(testBodyBot)
-
 add_subdirectory(launchManipulation)
 add_subdirectory(recordManipulation)
 add_subdirectory(playbackManipulation)
