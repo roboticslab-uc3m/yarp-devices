@@ -26,7 +26,7 @@ namespace teo
 
 /**
  *
- * @ingroup bodybot
+ * @ingroup CanBusControlboard
  * @brief Specifies the HicoCan (hcanpci) behaviour and specifications.
  *
  */
