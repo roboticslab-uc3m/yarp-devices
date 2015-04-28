@@ -22,7 +22,7 @@ namespace teo
 {
 
 /**
- * @ingroup testBodyBot
+ * @ingroup exampleCanBusControlboard
  *
  * @brief Launches 1 left arm DoF + left hand wrapped by controlboardwrapper2.
  * A controlboardwrapper2 may be used through a YARP remote_controlboard or directly through low-level YARP

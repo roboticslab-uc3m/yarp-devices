@@ -2,9 +2,9 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-IF (ENABLE_testBodyBot)
+IF (ENABLE_exampleCanBusControlboard)
 
-set(KEYWORD "testBodyBot")
+set(KEYWORD "exampleCanBusControlboard")
 
 # Find YARP.
 find_package(YARP REQUIRED)
@@ -34,5 +34,5 @@ else (folder_source)
   message(FATAL_ERROR "No source code files found. Please add something")
 endif (folder_source)
 
-ENDIF (ENABLE_testBodyBot)
+ENDIF (ENABLE_exampleCanBusControlboard)
 
