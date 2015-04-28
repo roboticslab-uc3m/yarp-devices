@@ -32,10 +32,10 @@
 [teo-main, terminal 1] yarp server
 \endverbatim
  *
- * And then launch the actual and specify different options, as in "exampleCanBusControlboard \--option1 value1a value1b \--option2 value2". Specifically, the following options are checked by the bodybot device (\ref BodyBot class):
+ * And then launch the actual and specify different options, as in "exampleCanBusControlboard \--option1 value1a value1b \--option2 value2". Specifically, the following options are checked by the CanBusControlboard device (\ref CanBusControlboard class):
 
 \verbatim
-device=bodybot
+device=CanBusControlboard
 mode [position]
     position/velocity mode
 canDevice [/dev/can0]
@@ -59,8 +59,8 @@ types
  *
  * @section exampleCanBusControlboard_interfacing Interfacing with the exampleCanBusControlboard module
  *
- * The \ref exampleCanBusControlboard module acts as the server part of a network wrapper of the BodyBot class.
- * The implementation maps certain YARP rpc's to BodyBot function calls. Therefore, we can interface
+ * The \ref exampleCanBusControlboard module acts as the server part of a network wrapper of the CanBusControlboard class.
+ * The implementation maps certain YARP rpc's to CanBusControlboard function calls. Therefore, we can interface
  * with the class from the command-line by typing:
 \verbatim
 [teo-main, terminal 2] yarp rpc /exampleCanBusControlboard/rpc:i
