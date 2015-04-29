@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.6)
 
 IF (ENABLE_BodyYarp)
 
-  option(ENABLE_testBodyYarp "Choose if you want to compile testBodyYarp" TRUE)
+  option(ENABLE_launchBodyYarp "Choose if you want to compile launchBodyYarp" TRUE)
 
   find_package(YARP REQUIRED)
   include_directories(${YARP_INCLUDE_DIRS})
@@ -27,12 +27,12 @@ IF (ENABLE_BodyYarp)
 
   install(TARGETS BodyYarp DESTINATION lib)
 
-  IF (ENABLE_testBodyYarp)
+  IF (ENABLE_launchBodyYarp)
 
-    yarp_add_plugin_library_executable(testBodyYarp BodyYarp)
-    install(TARGETS testBodyYarp DESTINATION bin)
+    yarp_add_plugin_library_executable(launchBodyYarp BodyYarp)
+    install(TARGETS launchBodyYarp DESTINATION bin)
 
-  ENDIF (ENABLE_testBodyYarp)
+  ENDIF (ENABLE_launchBodyYarp)
 
   # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
 
