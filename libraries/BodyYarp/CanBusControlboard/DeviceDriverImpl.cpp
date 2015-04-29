@@ -50,6 +50,8 @@ bool teo::CanBusControlboard::open(Searchable& config) {
         options.put("device",types.get(i).asString());  //-- "TechnosoftIpos", "LacqueyFetch"
         options.put("canId",ids.get(i).asInt());
         options.put("tr",trs.get(i).asDouble());
+        options.put("min",mins.get(i).asDouble());
+        options.put("max",maxs.get(i).asDouble());
         options.put("k",ks.get(i).asDouble());
         options.put("refAcceleration",refAccelerations.get(i).asDouble());
         options.put("refSpeed",refSpeeds.get(i).asDouble());
