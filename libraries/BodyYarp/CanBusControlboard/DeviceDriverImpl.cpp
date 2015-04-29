@@ -42,9 +42,13 @@ bool teo::CanBusControlboard::open(Searchable& config) {
     iCanBusSharer.resize( drivers.size() );
     for(int i=0; i<drivers.size(); i++)
     {
+        if(types.get(i).asString() == "") {
+            CD_ERROR("Types empty at %d.\n",i);
+            return false;
+        }
         //-- Create motor driver object with a pointer to the CAN device, its id and tr (these are locally stored parameters).
         Property options;
-        options.put("device",types.get(i).asString());  //-- "motoripos", "motorlackey"
+        options.put("device",types.get(i).asString());  //-- "TechnosoftIpos", "LacqueyFetch"
         options.put("canId",ids.get(i).asInt());
         options.put("tr",trs.get(i).asDouble());
         options.put("k",ks.get(i).asDouble());
