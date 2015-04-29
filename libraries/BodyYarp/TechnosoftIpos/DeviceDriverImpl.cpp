@@ -22,8 +22,8 @@ bool teo::TechnosoftIpos::open(Searchable& config) {
         CD_ERROR("Could not create TechnosoftIpos with canId 0\n");
         return false;
     }
-    if( this->max == this->min ) {
-        CD_ERROR("Could not create TechnosoftIpos with min==max\n");
+    if( this->min >= this->max ) {
+        CD_ERROR("Could not create TechnosoftIpos with min >= max\n");
         return false;
     }
     if( 0 == this->tr ) {
