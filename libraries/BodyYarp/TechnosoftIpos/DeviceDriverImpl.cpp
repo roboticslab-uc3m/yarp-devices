@@ -16,8 +16,6 @@ bool teo::TechnosoftIpos::open(Searchable& config) {
     this->targetReached = false;
     this->max = 0;
     this->min = 0;
-    this->refAcceleration = 0;
-    this->refSpeed = 0;
     this->encoder = 0;
 
     if( 0 == this->canId ) {
