@@ -48,6 +48,8 @@ bool teo::CanBusControlboard::open(Searchable& config) {
         options.put("canId",ids.get(i).asInt());
         options.put("tr",trs.get(i).asDouble());
         options.put("k",ks.get(i).asDouble());
+        options.put("refAcceleration",refAccelerations.get(i).asDouble());
+        options.put("refSpeed",refSpeeds.get(i).asDouble());
         options.put("ptModeMs",ptModeMs);
         PolyDriver* driver = new PolyDriver(options);
 
