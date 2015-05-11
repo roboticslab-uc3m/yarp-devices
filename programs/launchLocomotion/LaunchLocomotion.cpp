@@ -11,55 +11,65 @@ LaunchLocomotion::LaunchLocomotion() { }
 /************************************************************************/
 bool LaunchLocomotion::configure(ResourceFinder &rf) {
 
-    //-- left leg --
-    std::string leftLegIni = rf.findFileByName("../locomotion/leftLeg.ini");
-
-    Property leftLegOptions;
-    if (! leftLegOptions.fromConfigFile(leftLegIni) ) {  //-- Put first because defaults to wiping out.
-        CD_ERROR("Could not configure from \"leftLeg.ini\".\n");
-        return false;
-    }
-    CD_SUCCESS("Configured left leg from %s.\n",leftLegIni.c_str());
-    leftLegOptions.put("name","/teo/leftLeg");
-    leftLegOptions.put("device","controlboardwrapper2");
-    leftLegOptions.put("subdevice","CanBusControlboard");
-    if (rf.check("home")) leftLegOptions.put("home",1);
-    if (rf.check("reset")) leftLegOptions.put("reset",1);
-
-    leftLegDevice.open(leftLegOptions);
+    //-- /dev/can0 --
+    Bottle devCan0 = rf.findGroup("devCan0");
+    CD_DEBUG("%s.\n",devCan0.toString().c_str());
+    Property optionsDevCan0;
+    optionsDevCan0.fromString(devCan0.toString());
+    deviceDevCan0.open(optionsDevCan0);
     
-    if (!leftLegDevice.isValid()) {
-        CD_ERROR("leftLegDevice instantiation not worked.\n");
-        CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_bodybot\" variable is set \"ON\"\n");
-        CD_ERROR("\"SKIP_bodybot is set\" --> should be --> \"ENABLE_bodybot is set\"\n");
+    if (!deviceDevCan0.isValid()) {
+        CD_ERROR("deviceDevCan0 instantiation not worked.\n");
         // robotDevice.close();  // un-needed?
         return false;
     }
 
-    //-- right leg --
-    std::string rightLegIni = rf.findFileByName("../locomotion/rightLeg.ini");
+    //-- /dev/can1 --
+    Bottle devCan1 = rf.findGroup("devCan1");
+    CD_DEBUG("%s.\n",devCan1.toString().c_str());
+    Property optionsDevCan1;
+    optionsDevCan0.fromString(devCan1.toString());
+    deviceDevCan1.open(optionsDevCan1);
 
-    Property rightLegOptions;
-    if (! rightLegOptions.fromConfigFile(rightLegIni) ) {  //-- Put first because defaults to wiping out.
-        CD_ERROR("Could not configure from \"rightLeg.ini\".\n");
-        return false;
-    }
-    CD_SUCCESS("Configured right leg from %s.\n",rightLegIni.c_str());
-    rightLegOptions.put("name","/teo/rightLeg");
-    rightLegOptions.put("device","controlboardwrapper2");
-    rightLegOptions.put("subdevice","CanBusControlboard");
-    if (rf.check("home")) rightLegOptions.put("home",1);
-    if (rf.check("reset")) rightLegOptions.put("reset",1);
-
-    rightLegDevice.open(rightLegOptions);
-
-    if (!rightLegDevice.isValid()) {
-        CD_ERROR("rightLegDevice instantiation not worked.\n");
-        CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_bodybot\" variable is set \"ON\"\n");
-        CD_ERROR("\"SKIP_bodybot is set\" --> should be --> \"ENABLE_bodybot is set\"\n");
+    if (!deviceDevCan1.isValid()) {
+        CD_ERROR("deviceDevCan1 instantiation not worked.\n");
         // robotDevice.close();  // un-needed?
         return false;
     }
+
+    //-- leftLeg --
+    Bottle leftLeg = rf.findGroup("leftLeg");
+    CD_DEBUG("%s.\n",leftLeg.toString().c_str());
+    Property optionsLeftLeg;
+    optionsLeftLeg.fromString(leftLeg.toString());
+    deviceLeftLeg.open(optionsLeftLeg);
+
+    //-- rightLeg --
+    Bottle rightLeg = rf.findGroup("rightLeg");
+    CD_DEBUG("%s.\n",rightLeg.toString().c_str());
+    Property optionsRightLeg;
+    optionsRightLeg.fromString(rightLeg.toString());
+    deviceLeftLeg.open(optionsRightLeg);
+
+    //-- trunk --
+    Bottle trunk = rf.findGroup("trunk");
+    CD_DEBUG("%s.\n",trunk.toString().c_str());
+    Property optionsTrunk;
+    optionsTrunk.fromString(trunk.toString());
+    deviceLeftLeg.open(optionsTrunk);
+
+    IMultipleWrapper *iwrapperLeftLeg, *iwrapperRightLeg, *iwrapperTrunk;
+
+    deviceLeftLeg.view(iwrapperLeftLeg);
+    deviceRightLeg.view(iwrapperRightLeg);
+    deviceTrunk.view(iwrapperTrunk);
+
+    PolyDriverList list;
+    list.push(&deviceDevCan0, "devCan0");
+    list.push(&deviceDevCan1, "devCan1");
+    iwrapperLeftLeg->attachAll(list);
+    iwrapperRightLeg->attachAll(list);
+    iwrapperTrunk->attachAll(list);
 
     return true;
 }
@@ -74,8 +84,8 @@ bool LaunchLocomotion::updateModule() {
 /************************************************************************/
 
 bool LaunchLocomotion::close() {
-    leftLegDevice.close();
-    rightLegDevice.close();
+    deviceDevCan0.close();
+    deviceDevCan1.close();
     return true;
 }
 
