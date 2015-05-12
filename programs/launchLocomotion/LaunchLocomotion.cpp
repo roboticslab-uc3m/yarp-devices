@@ -28,7 +28,7 @@ bool LaunchLocomotion::configure(ResourceFinder &rf) {
     Bottle devCan1 = rf.findGroup("devCan1");
     CD_DEBUG("%s.\n",devCan1.toString().c_str());
     Property optionsDevCan1;
-    optionsDevCan0.fromString(devCan1.toString());
+    optionsDevCan1.fromString(devCan1.toString());
     deviceDevCan1.open(optionsDevCan1);
 
     if (!deviceDevCan1.isValid()) {
