@@ -49,14 +49,14 @@ bool LaunchLocomotion::configure(ResourceFinder &rf) {
     CD_DEBUG("%s.\n",rightLeg.toString().c_str());
     Property optionsRightLeg;
     optionsRightLeg.fromString(rightLeg.toString());
-    deviceLeftLeg.open(optionsRightLeg);
+    deviceRightLeg.open(optionsRightLeg);
 
     //-- trunk --
     Bottle trunk = rf.findGroup("trunk");
     CD_DEBUG("%s.\n",trunk.toString().c_str());
     Property optionsTrunk;
     optionsTrunk.fromString(trunk.toString());
-    deviceLeftLeg.open(optionsTrunk);
+    deviceTrunk.open(optionsTrunk);
 
     IMultipleWrapper *iwrapperLeftLeg, *iwrapperRightLeg, *iwrapperTrunk;
 
