@@ -92,6 +92,10 @@ bool LaunchLocomotion::updateModule() {
 /************************************************************************/
 
 bool LaunchLocomotion::close() {
+    deviceLeftLeg.close();
+    deviceRightLeg.close();
+    deviceTrunk.close();
+
     deviceDevCan0.close();
     deviceDevCan1.close();
     return true;
