@@ -94,7 +94,7 @@ bool LaunchManipulation::updateModule() {
 bool LaunchManipulation::close() {
     deviceLeftArm.close();
     deviceRightArm.close();
-    deviceHead.close();
+    //deviceHead.close();
 
     deviceDevCan0.close();
     deviceDevCan1.close();
