@@ -17,10 +17,8 @@ bool LaunchLocomotion::configure(ResourceFinder &rf) {
     Property optionsDevCan0;
     optionsDevCan0.fromString(devCan0.toString());
     deviceDevCan0.open(optionsDevCan0);
-    
     if (!deviceDevCan0.isValid()) {
         CD_ERROR("deviceDevCan0 instantiation not worked.\n");
-        // robotDevice.close();  // un-needed?
         return false;
     }
 
@@ -30,10 +28,8 @@ bool LaunchLocomotion::configure(ResourceFinder &rf) {
     Property optionsDevCan1;
     optionsDevCan1.fromString(devCan1.toString());
     deviceDevCan1.open(optionsDevCan1);
-
     if (!deviceDevCan1.isValid()) {
         CD_ERROR("deviceDevCan1 instantiation not worked.\n");
-        // robotDevice.close();  // un-needed?
         return false;
     }
 
@@ -43,6 +39,10 @@ bool LaunchLocomotion::configure(ResourceFinder &rf) {
     Property optionsLeftLeg;
     optionsLeftLeg.fromString(leftLeg.toString());
     deviceLeftLeg.open(optionsLeftLeg);
+    if (!deviceLeftLeg.isValid()) {
+        CD_ERROR("deviceLeftLeg instantiation not worked.\n");
+        return false;
+    }
 
     //-- rightLeg --
     Bottle rightLeg = rf.findGroup("rightLeg");
@@ -50,6 +50,10 @@ bool LaunchLocomotion::configure(ResourceFinder &rf) {
     Property optionsRightLeg;
     optionsRightLeg.fromString(rightLeg.toString());
     deviceRightLeg.open(optionsRightLeg);
+    if (!deviceRightLeg.isValid()) {
+        CD_ERROR("deviceRightLeg instantiation not worked.\n");
+        return false;
+    }
 
     //-- trunk --
     Bottle trunk = rf.findGroup("trunk");
@@ -57,6 +61,10 @@ bool LaunchLocomotion::configure(ResourceFinder &rf) {
     Property optionsTrunk;
     optionsTrunk.fromString(trunk.toString());
     deviceTrunk.open(optionsTrunk);
+    if (!deviceTrunk.isValid()) {
+        CD_ERROR("deviceTrunk instantiation not worked.\n");
+        return false;
+    }
 
     IMultipleWrapper *iwrapperLeftLeg, *iwrapperRightLeg, *iwrapperTrunk;
 
