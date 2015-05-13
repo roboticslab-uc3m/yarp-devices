@@ -10,6 +10,7 @@
 #include <yarp/os/BufferedPort.h>
 
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/Wrapper.h>
 
 #include <string>
 #include <stdlib.h>
@@ -35,8 +36,12 @@ namespace teo
 class LaunchManipulation : public RFModule {
 
     protected:
-        yarp::dev::PolyDriver leftArmDevice;
-        yarp::dev::PolyDriver rightArmDevice;
+    yarp::dev::PolyDriver deviceDevCan0;
+    yarp::dev::PolyDriver deviceDevCan1;
+
+    yarp::dev::PolyDriver deviceLeftArm;
+    yarp::dev::PolyDriver deviceRightArm;
+    yarp::dev::PolyDriver deviceHead;
 
         virtual double getPeriod() {return 3.0;}
         virtual bool updateModule();

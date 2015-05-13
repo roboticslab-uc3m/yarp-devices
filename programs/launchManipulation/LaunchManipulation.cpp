@@ -11,55 +11,73 @@ LaunchManipulation::LaunchManipulation() { }
 /************************************************************************/
 bool LaunchManipulation::configure(ResourceFinder &rf) {
 
-    //-- left arm --
-    std::string leftArmIni = rf.findFileByName("../manipulation/leftArm.ini");
-
-    Property leftArmOptions;
-    if (! leftArmOptions.fromConfigFile(leftArmIni) ) {  //-- Put first because defaults to wiping out.
-        CD_ERROR("Could not configure from \"leftArm.ini\".\n");
-        return false;
-    }
-    CD_SUCCESS("Configured left arm from %s.\n",leftArmIni.c_str());
-    leftArmOptions.put("name","/teo/leftArm");
-    leftArmOptions.put("device","controlboardwrapper2");
-    leftArmOptions.put("subdevice","CanBusControlboard");
-    if (rf.check("home")) leftArmOptions.put("home",1);
-    if (rf.check("reset")) leftArmOptions.put("reset",1);
-
-    leftArmDevice.open(leftArmOptions);
-    
-    if (!leftArmDevice.isValid()) {
-        CD_ERROR("leftArmDevice instantiation not worked.\n");
-        CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_bodybot\" variable is set \"ON\"\n");
-        CD_ERROR("\"SKIP_bodybot is set\" --> should be --> \"ENABLE_bodybot is set\"\n");
-        // robotDevice.close();  // un-needed?
+    //-- /dev/can0 --
+    Bottle devCan0 = rf.findGroup("devCan0");
+    CD_DEBUG("%s.\n",devCan0.toString().c_str());
+    Property optionsDevCan0;
+    optionsDevCan0.fromString(devCan0.toString());
+    deviceDevCan0.open(optionsDevCan0);
+    if (!deviceDevCan0.isValid()) {
+        CD_ERROR("deviceDevCan0 instantiation not worked.\n");
         return false;
     }
 
-    //-- right arm --
-    std::string rightArmIni = rf.findFileByName("../manipulation/rightArm.ini");
-
-    Property rightArmOptions;
-    if (! rightArmOptions.fromConfigFile(rightArmIni) ) {  //-- Put first because defaults to wiping out.
-        CD_ERROR("Could not configure from \"rightArm.ini\".\n");
+    //-- /dev/can1 --
+    Bottle devCan1 = rf.findGroup("devCan1");
+    CD_DEBUG("%s.\n",devCan1.toString().c_str());
+    Property optionsDevCan1;
+    optionsDevCan1.fromString(devCan1.toString());
+    deviceDevCan1.open(optionsDevCan1);
+    if (!deviceDevCan1.isValid()) {
+        CD_ERROR("deviceDevCan1 instantiation not worked.\n");
         return false;
     }
-    CD_SUCCESS("Configured right arm from %s.\n",rightArmIni.c_str());
-    rightArmOptions.put("name","/teo/rightArm");
-    rightArmOptions.put("device","controlboardwrapper2");
-    rightArmOptions.put("subdevice","CanBusControlboard");
-    if (rf.check("home")) rightArmOptions.put("home",1);
-    if (rf.check("reset")) rightArmOptions.put("reset",1);
 
-    rightArmDevice.open(rightArmOptions);
-
-    if (!rightArmDevice.isValid()) {
-        CD_ERROR("rightArmDevice instantiation not worked.\n");
-        CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_bodybot\" variable is set \"ON\"\n");
-        CD_ERROR("\"SKIP_bodybot is set\" --> should be --> \"ENABLE_bodybot is set\"\n");
-        // robotDevice.close();  // un-needed?
+    //-- leftArm --
+    Bottle leftArm = rf.findGroup("leftArm");
+    CD_DEBUG("%s.\n",leftArm.toString().c_str());
+    Property optionsLeftArm;
+    optionsLeftArm.fromString(leftArm.toString());
+    deviceLeftArm.open(optionsLeftArm);
+    if (!deviceLeftArm.isValid()) {
+        CD_ERROR("deviceLeftArm instantiation not worked.\n");
         return false;
     }
+
+    //-- rightArm --
+    Bottle rightArm = rf.findGroup("rightArm");
+    CD_DEBUG("%s.\n",rightArm.toString().c_str());
+    Property optionsRightArm;
+    optionsRightArm.fromString(rightArm.toString());
+    deviceRightArm.open(optionsRightArm);
+    if (!deviceRightArm.isValid()) {
+        CD_ERROR("deviceRightArm instantiation not worked.\n");
+        return false;
+    }
+
+    //-- head --
+    //Bottle head = rf.findGroup("trunk");
+    //CD_DEBUG("%s.\n",head.toString().c_str());
+    //Property optionsHead;
+    //optionsHead.fromString(head.toString());
+    //deviceHead.open(optionsHead);
+    //if (!deviceHead.isValid()) {
+    //    CD_ERROR("deviceHead instantiation not worked.\n");
+    //    return false;
+    //}
+
+    IMultipleWrapper *iwrapperLeftArm, *iwrapperRightArm, *iwrapperHead;
+
+    deviceLeftArm.view(iwrapperLeftArm);
+    deviceRightArm.view(iwrapperRightArm);
+    //deviceHead.view(iwrapperHead);
+
+    PolyDriverList list;
+    list.push(&deviceDevCan0, "devCan0");
+    list.push(&deviceDevCan1, "devCan1");
+    iwrapperLeftArm->attachAll(list);
+    iwrapperRightArm->attachAll(list);
+    //iwrapperHead->attachAll(list);
 
     return true;
 }
@@ -74,8 +92,12 @@ bool LaunchManipulation::updateModule() {
 /************************************************************************/
 
 bool LaunchManipulation::close() {
-    leftArmDevice.close();
-    rightArmDevice.close();
+    deviceLeftArm.close();
+    deviceRightArm.close();
+    deviceHead.close();
+
+    deviceDevCan0.close();
+    deviceDevCan1.close();
     return true;
 }
 
