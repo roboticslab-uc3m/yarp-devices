@@ -56,28 +56,28 @@ bool LaunchManipulation::configure(ResourceFinder &rf) {
     }
 
     //-- head --
-    //Bottle head = rf.findGroup("trunk");
-    //CD_DEBUG("%s.\n",head.toString().c_str());
-    //Property optionsHead;
-    //optionsHead.fromString(head.toString());
-    //deviceHead.open(optionsHead);
-    //if (!deviceHead.isValid()) {
-    //    CD_ERROR("deviceHead instantiation not worked.\n");
-    //    return false;
-    //}
+    Bottle head = rf.findGroup("trunk");
+    CD_DEBUG("%s.\n",head.toString().c_str());
+    Property optionsHead;
+    optionsHead.fromString(head.toString());
+    deviceHead.open(optionsHead);
+    if (!deviceHead.isValid()) {
+        CD_ERROR("deviceHead instantiation not worked.\n");
+        return false;
+    }
 
     IMultipleWrapper *iwrapperLeftArm, *iwrapperRightArm, *iwrapperHead;
 
     deviceLeftArm.view(iwrapperLeftArm);
     deviceRightArm.view(iwrapperRightArm);
-    //deviceHead.view(iwrapperHead);
+    deviceHead.view(iwrapperHead);
 
     PolyDriverList list;
     list.push(&deviceDevCan0, "devCan0");
     list.push(&deviceDevCan1, "devCan1");
     iwrapperLeftArm->attachAll(list);
     iwrapperRightArm->attachAll(list);
-    //iwrapperHead->attachAll(list);
+    iwrapperHead->attachAll(list);
 
     return true;
 }
@@ -94,7 +94,7 @@ bool LaunchManipulation::updateModule() {
 bool LaunchManipulation::close() {
     deviceLeftArm.close();
     deviceRightArm.close();
-    //deviceHead.close();
+    deviceHead.close();
 
     deviceDevCan0.close();
     deviceDevCan1.close();
