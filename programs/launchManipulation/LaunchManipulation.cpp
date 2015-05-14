@@ -11,6 +11,12 @@ LaunchManipulation::LaunchManipulation() { }
 /************************************************************************/
 bool LaunchManipulation::configure(ResourceFinder &rf) {
 
+    if(rf.check("help")) {
+        printf("LaunchManipulation options:\n");
+        printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
+        return false;
+    }
+
     //-- /dev/can0 --
     Bottle devCan0 = rf.findGroup("devCan0");
     CD_DEBUG("%s.\n",devCan0.toString().c_str());
