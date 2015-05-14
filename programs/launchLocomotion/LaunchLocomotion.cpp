@@ -14,6 +14,7 @@ bool LaunchLocomotion::configure(ResourceFinder &rf) {
     if(rf.check("help")) {
         printf("LaunchLocomotion options:\n");
         printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
+        CD_DEBUG("rf: %s.\n",rf.toString().c_str());
         return false;
     }
 
