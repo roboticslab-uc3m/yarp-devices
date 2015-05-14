@@ -33,6 +33,7 @@ option(ENABLE_testBodyBot "Choose if you want to compile playbackServer" FALSE)
 option(ENABLE_BodyYarp_CanBusControlboard "Enable/disable compilation of BodyYarp_bodybot" TRUE)
 option(ENABLE_BodyYarp_TechnosoftIpos "Enable/disable compilation of BodyYarp_TechnosoftIpos" TRUE)
 option(ENABLE_BodyYarp_LacqueyFetch "Enable/disable compilation of BodyYarp_LacqueyFetch" TRUE)
+option(ENABLE_BodyYarp_FakeJoint "Enable/disable compilation of BodyYarp_FakeJoint" TRUE)
 
 # ColorDebug options
 option(ColorDebug_FULL_FILE "Choose if you want to compile with CD_FULL_FILE" FALSE)

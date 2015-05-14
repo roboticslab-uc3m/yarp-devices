@@ -22,6 +22,7 @@ IF (ENABLE_BodyYarp)
   yarp_begin_plugin_library(BodyYarp)
     add_subdirectory(TechnosoftIpos)
     add_subdirectory(LacqueyFetch)
+    add_subdirectory(FakeJoint)
     add_subdirectory(CanBusControlboard)
   yarp_end_plugin_library(BodyYarp)
 
