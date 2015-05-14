@@ -12,14 +12,15 @@ LaunchManipulation::LaunchManipulation() { }
 bool LaunchManipulation::configure(ResourceFinder &rf) {
 
     if(rf.check("help")) {
-        printf("LaunchManipulation options:\n");
+        printf("LaunchLocomotion options:\n");
         printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
+        CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
         return false;
     }
 
     //-- /dev/can0 --
     Bottle devCan0 = rf.findGroup("devCan0");
-    CD_DEBUG("%s.\n",devCan0.toString().c_str());
+    CD_DEBUG("%s\n",devCan0.toString().c_str());
     Property optionsDevCan0;
     optionsDevCan0.fromString(devCan0.toString());
     deviceDevCan0.open(optionsDevCan0);
@@ -30,7 +31,7 @@ bool LaunchManipulation::configure(ResourceFinder &rf) {
 
     //-- /dev/can1 --
     Bottle devCan1 = rf.findGroup("devCan1");
-    CD_DEBUG("%s.\n",devCan1.toString().c_str());
+    CD_DEBUG("%s\n",devCan1.toString().c_str());
     Property optionsDevCan1;
     optionsDevCan1.fromString(devCan1.toString());
     deviceDevCan1.open(optionsDevCan1);
@@ -41,7 +42,7 @@ bool LaunchManipulation::configure(ResourceFinder &rf) {
 
     //-- leftArm --
     Bottle leftArm = rf.findGroup("leftArm");
-    CD_DEBUG("%s.\n",leftArm.toString().c_str());
+    CD_DEBUG("%s\n",leftArm.toString().c_str());
     Property optionsLeftArm;
     optionsLeftArm.fromString(leftArm.toString());
     deviceLeftArm.open(optionsLeftArm);
@@ -52,7 +53,7 @@ bool LaunchManipulation::configure(ResourceFinder &rf) {
 
     //-- rightArm --
     Bottle rightArm = rf.findGroup("rightArm");
-    CD_DEBUG("%s.\n",rightArm.toString().c_str());
+    CD_DEBUG("%s\n",rightArm.toString().c_str());
     Property optionsRightArm;
     optionsRightArm.fromString(rightArm.toString());
     deviceRightArm.open(optionsRightArm);
@@ -63,7 +64,7 @@ bool LaunchManipulation::configure(ResourceFinder &rf) {
 
     //-- head --
     Bottle head = rf.findGroup("trunk");
-    CD_DEBUG("%s.\n",head.toString().c_str());
+    CD_DEBUG("%s\n",head.toString().c_str());
     Property optionsHead;
     optionsHead.fromString(head.toString());
     deviceHead.open(optionsHead);
