@@ -14,7 +14,7 @@ bool LaunchLocomotion::configure(ResourceFinder &rf) {
     if(rf.check("help")) {
         printf("LaunchLocomotion options:\n");
         printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
-        CD_DEBUG_NO_HEADER("%s.\n",rf.toString().c_str());
+        CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
         return false;
     }
 
@@ -31,7 +31,7 @@ bool LaunchLocomotion::configure(ResourceFinder &rf) {
 
     //-- /dev/can1 --
     Bottle devCan1 = rf.findGroup("devCan1");
-    CD_DEBUG("%s.\n",devCan1.toString().c_str());
+    CD_DEBUG("%s\n",devCan1.toString().c_str());
     Property optionsDevCan1;
     optionsDevCan1.fromString(devCan1.toString());
     deviceDevCan1.open(optionsDevCan1);
@@ -42,7 +42,7 @@ bool LaunchLocomotion::configure(ResourceFinder &rf) {
 
     //-- leftLeg --
     Bottle leftLeg = rf.findGroup("leftLeg");
-    CD_DEBUG("%s.\n",leftLeg.toString().c_str());
+    CD_DEBUG("%s\n",leftLeg.toString().c_str());
     Property optionsLeftLeg;
     optionsLeftLeg.fromString(leftLeg.toString());
     deviceLeftLeg.open(optionsLeftLeg);
@@ -53,7 +53,7 @@ bool LaunchLocomotion::configure(ResourceFinder &rf) {
 
     //-- rightLeg --
     Bottle rightLeg = rf.findGroup("rightLeg");
-    CD_DEBUG("%s.\n",rightLeg.toString().c_str());
+    CD_DEBUG("%s\n",rightLeg.toString().c_str());
     Property optionsRightLeg;
     optionsRightLeg.fromString(rightLeg.toString());
     deviceRightLeg.open(optionsRightLeg);
@@ -64,7 +64,7 @@ bool LaunchLocomotion::configure(ResourceFinder &rf) {
 
     //-- trunk --
     Bottle trunk = rf.findGroup("trunk");
-    CD_DEBUG("%s.\n",trunk.toString().c_str());
+    CD_DEBUG("%s\n",trunk.toString().c_str());
     Property optionsTrunk;
     optionsTrunk.fromString(trunk.toString());
     deviceTrunk.open(optionsTrunk);
