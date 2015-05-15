@@ -21,7 +21,9 @@ bool teo::CanBusControlboard::open(Searchable& config) {
     Bottle types = config.findGroup("types").tail();  //-- e.g. 15
 
     //-- Initialize the CAN device (i.e. /dev/can0, set in DEFAULT_CAN_DEVICE).
-    canBusDevice.open(config);
+    Property canBusOptions;
+    canBusOptions.fromString(config.toString());
+    canBusDevice.open(canBusOptions);
     if( ! canBusDevice.isValid() ){
         CD_ERROR("canBusDevice instantiation not worked.\n");
         return false;
