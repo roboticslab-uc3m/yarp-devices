@@ -51,12 +51,19 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    teo::CanBusHico canBusHico;
-    std::string canDevicePath = "/dev/can1";
-    int canBitrate = BITRATE_1000k;
-    //-- Initialize the CAN device (e.g. /dev/can1).
-    if( ! canBusHico.init(canDevicePath, canBitrate) )
+    PolyDriver canBusDevice;
+    CanBusHico* iCanBus;
+
+    Property canBusOptions;
+    canBusOptions.put("device","CanBusHico");
+    canBusOptions.put("canDevice","/dev/can1");
+    canBusOptions.put("canBitrate",BITRATE_1000k);
+    canBusDevice.open(canBusOptions);
+    if( ! canBusDevice.isValid() ){
+        CD_ERROR("canBusDevice instantiation not worked.\n");
         return 1;
+    }
+    canBusDevice.view(iCanBus);
 
     yarp::os::Property options;
     options.put("device","TechnosoftIpos");
@@ -104,7 +111,7 @@ int main(int argc, char *argv[]) {
     } else printf("[success] Viewing IVelocityControlRaw.\n");
 
     //-- Pass before sendong commands
-    iCanBusSharer->setCanBusPtr(&canBusHico);
+    iCanBusSharer->setCanBusPtr(iCanBus);
 
     iCanBusSharer->start();
 
