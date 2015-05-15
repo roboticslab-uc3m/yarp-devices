@@ -22,8 +22,10 @@ bool teo::CanBusControlboard::open(Searchable& config) {
 
     //-- Initialize the CAN device (i.e. /dev/can0, set in DEFAULT_CAN_DEVICE).
     canBusDevice.open(config);
-    if( ! canBusDevice.isValid() )
+    if( ! canBusDevice.isValid() ){
+        CD_ERROR("canBusDevice instantiation not worked.\n");
         return false;
+    }
     canBusDevice.view(iCanBus);
 
     //-- Start the reading thread (required for checkMotionDoneRaw).
