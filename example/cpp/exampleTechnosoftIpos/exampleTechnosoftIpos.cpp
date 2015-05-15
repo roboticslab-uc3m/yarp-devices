@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
     }
 
     PolyDriver canBusDevice;
-    CanBusHico* iCanBus;
+    teo::CanBusHico* iCanBus;
 
     Property canBusOptions;
     canBusOptions.put("device","CanBusHico");
