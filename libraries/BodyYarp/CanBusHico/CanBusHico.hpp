@@ -12,12 +12,18 @@
 #include <assert.h>
 #include <string>
 
-#include <yarp/os/Semaphore.h>
-#include <yarp/os/Time.h>
+#include <yarp/os/all.h>
+#include <yarp/dev/all.h>
 
 #include "hico_api.h"
 
 #include "ColorDebug.hpp"
+
+using namespace yarp::os;
+using namespace yarp::dev;
+
+#define DEFAULT_CAN_DEVICE "/dev/can0"
+#define DEFAULT_CAN_BITRATE BITRATE_1000k
 
 #define DELAY 0.001  // Was DELAY2. Required when using same driver.
 
@@ -26,11 +32,11 @@ namespace teo
 
 /**
  *
- * @ingroup CanBusControlboard
+ * @ingroup CanBusHico
  * @brief Specifies the HicoCan (hcanpci) behaviour and specifications.
  *
  */
-class CanBusHico {
+class CanBusHico : public DeviceDriver {
 
     public:
 
@@ -39,12 +45,10 @@ class CanBusHico {
          * @param bitrate is the bitrate, such as BITRATE_100k.
          * @return true/false on success/failure.
          */
-        bool init(const std::string device, const int bitrate);
+        bool open(yarp::os::Searchable& config);
 
-        /** Close the CAN device.
-         */
+        /** Close the CAN device. */
         bool close();
-
 
         /**
          * Write message to the CAN buffer.

@@ -13,7 +13,7 @@ void teo::CanBusControlboard::run() {
         struct can_msg buffer;
 
         //-- read_timeout() returns the number read, -1 for errors or 0 for timeout or EOF.
-        int ret = canDevice.read_timeout(&buffer,1);
+        int ret = iCanBus->read_timeout(&buffer,1);
 
         //-- All debugging messages should be contained in read_timeout, so just loop again.
         if( ret <= 0 ) continue;

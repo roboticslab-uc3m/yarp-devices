@@ -15,7 +15,7 @@ IF (NOT SKIP_TechnosoftIpos)
 
   yarp_add_plugin(TechnosoftIpos TechnosoftIpos.cpp DeviceDriverImpl.cpp IControlLimitsRawImpl.cpp IControlModeRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControlRawImpl.cpp IPositionDirectRawImpl.cpp ITorqueControlRawImpl.cpp IVelocityControlRawImpl.cpp ICanBusSharerImpl.cpp )
 
-  TARGET_LINK_LIBRARIES(TechnosoftIpos ${YARP_LIBRARIES})
+  TARGET_LINK_LIBRARIES(TechnosoftIpos ${YARP_LIBRARIES} ${TEO_BODY_LIBRARIES})
   install(TARGETS TechnosoftIpos DESTINATION lib)
 
   # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 

@@ -4,51 +4,6 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusHico::init(const std::string devicePath, const int bitrate) {
-
-    //-- Open the CAN device for reading and writing.
-    fileDescriptor = open(devicePath.c_str(), O_RDWR);
-    if(fileDescriptor<0)
-    {
-        CD_ERROR("Could not open CAN device of path: %s\n", devicePath.c_str());
-        return false;
-    }
-    CD_SUCCESS("Opened CAN device of path: %s\n", devicePath.c_str());
-
-    yarp::os::Time::delay(DELAY);
-
-    //-- Set the CAN bitrate.
-    if( ioctl(fileDescriptor,IOC_SET_BITRATE,&bitrate) != 0)
-    {
-        CD_ERROR("Could not set bitrate on CAN device: %s\n", devicePath.c_str());
-        return false;
-    }
-    CD_SUCCESS("Bitrate set on CAN device: %s\n", devicePath.c_str());
-
-    yarp::os::Time::delay(DELAY);
-
-    //-- Start the CAN device.
-    if( ioctl(fileDescriptor,IOC_START) != 0)
-    {
-        CD_ERROR("IOC_START failed on CAN device: %s\n", devicePath.c_str());
-        return false;
-    }
-    CD_SUCCESS("IOC_START ok on CAN device: %s\n", devicePath.c_str());
-
-    yarp::os::Time::delay(DELAY);
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool teo::CanBusHico::close() {
-    //release semaphore?
-    ::close(fileDescriptor);
-}
-
-// -----------------------------------------------------------------------------
-
 bool teo::CanBusHico::sendRaw(uint32_t id, uint16_t len, uint8_t * msgData) {
 
      struct can_msg msg;

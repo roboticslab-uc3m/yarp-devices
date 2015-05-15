@@ -15,8 +15,6 @@
 #include <list>
 #include <sstream>
 
-#include "hico_api.h"
-
 //#define CD_HIDE_DEBUG  //-- Can be globally managed from father CMake.
 //#define CD_HIDE_SUCCESS  //-- Can be globally managed from father CMake.
 //#define CD_HIDE_INFO  //-- Can be managed from father CMake.
@@ -29,8 +27,6 @@
 
 #define DEFAULT_MODE "position"
 
-#define DEFAULT_CAN_DEVICE "/dev/can0"
-#define DEFAULT_CAN_BITRATE BITRATE_1000k
 #define DEFAULT_PT_MODE_MS 50  //-- Don't move more than 1 degree in 50 ms.
 
 using namespace yarp::os;
@@ -655,7 +651,8 @@ class CanBusControlboard : public DeviceDriver, public IControlLimits, public IC
     protected:
 
         /** A CAN device. */
-        CanBusHico canDevice;
+        PolyDriver canBusDevice;
+        CanBusHico* iCanBus;
 
         /** A vector of driver objects. */
         std::vector< PolyDriver* > drivers;

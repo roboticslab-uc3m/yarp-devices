@@ -7,9 +7,6 @@
 bool teo::CanBusControlboard::open(Searchable& config) {
 
     std::string mode = config.check("mode",Value(DEFAULT_MODE),"position/velocity mode").asString();
-
-    std::string canDevicePath = config.check("canDevice",Value(DEFAULT_CAN_DEVICE),"CAN device path").asString();
-    int canBitrate = config.check("canBitrate",Value(DEFAULT_CAN_BITRATE),"CAN bitrate").asInt();
     int16_t ptModeMs = config.check("ptModeMs",Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
 
     Bottle ids = config.findGroup("ids").tail();  //-- e.g. 15
@@ -24,8 +21,10 @@ bool teo::CanBusControlboard::open(Searchable& config) {
     Bottle types = config.findGroup("types").tail();  //-- e.g. 15
 
     //-- Initialize the CAN device (i.e. /dev/can0, set in DEFAULT_CAN_DEVICE).
-    if( ! canDevice.init(canDevicePath, canBitrate) )
+    canBusDevice.open(config);
+    if( ! canBusDevice.isValid() )
         return false;
+    canBusDevice.view(iCanBus);
 
     //-- Start the reading thread (required for checkMotionDoneRaw).
     this->Thread::start();
@@ -73,7 +72,7 @@ bool teo::CanBusControlboard::open(Searchable& config) {
         driver->view( iVelocityControlRaw[i] );
         driver->view( iCanBusSharer[i] );
 
-        iCanBusSharer[i]->setCanBusPtr( &canDevice );
+        iCanBusSharer[i]->setCanBusPtr( iCanBus );
     }
 
     //-- Set initial parameters on physical motor drivers.
@@ -183,7 +182,7 @@ bool teo::CanBusControlboard::close() {
         drivers[i] = 0;
     }
 
-    canDevice.close();
+    iCanBus->close();
     CD_INFO("End.\n");
     return ok;
 }

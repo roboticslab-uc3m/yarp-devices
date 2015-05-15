@@ -13,9 +13,9 @@ IF (NOT SKIP_CanBusControlboard)
   find_package(YARP REQUIRED)
 
   # Include any directories needed for YARP
-  include_directories(${YARP_INCLUDE_DIRS} ${BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
+  include_directories(${YARP_INCLUDE_DIRS} ${TEO_BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
 
-  yarp_add_plugin(CanBusControlboard DeviceDriverImpl.cpp IControlLimitsImpl.cpp IControlModeImpl.cpp IEncodersImpl.cpp IEncodersTimedImpl.cpp IPositionControlImpl.cpp IPositionDirectImpl.cpp ITorqueControlImpl.cpp IVelocityControlImpl.cpp CanBusHico.cpp CanBusControlboard.cpp ThreadImpl.cpp)
+  yarp_add_plugin(CanBusControlboard DeviceDriverImpl.cpp IControlLimitsImpl.cpp IControlModeImpl.cpp IEncodersImpl.cpp IEncodersTimedImpl.cpp IPositionControlImpl.cpp IPositionDirectImpl.cpp ITorqueControlImpl.cpp IVelocityControlImpl.cpp CanBusControlboard.cpp ThreadImpl.cpp)
   TARGET_LINK_LIBRARIES(CanBusControlboard ${YARP_LIBRARIES})
   install(TARGETS CanBusControlboard DESTINATION lib)
 
