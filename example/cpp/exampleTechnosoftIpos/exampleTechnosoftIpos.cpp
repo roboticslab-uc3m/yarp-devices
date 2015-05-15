@@ -62,6 +62,8 @@ int main(int argc, char *argv[]) {
     options.put("device","TechnosoftIpos");
     options.put("canId",23);
     options.put("tr",120);
+    options.put("min",-60);
+    options.put("max",60);
     yarp::dev::PolyDriver dd(options);
     if(!dd.isValid()) {
       printf("TechnosoftIpos device not available.\n");
