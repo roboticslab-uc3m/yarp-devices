@@ -21,9 +21,8 @@
 //#define CD_HIDE_WARNING  //-- Can be managed from father CMake.
 //#define CD_HIDE_ERROR  //-- Can be managed from father CMake.
 #include "ColorDebug.hpp"
-#include "CanBusHico.hpp"
 
-#include "../ICanBusSharer.h"
+#include "ICanBusSharer.h"
 
 #define DEFAULT_MODE "position"
 

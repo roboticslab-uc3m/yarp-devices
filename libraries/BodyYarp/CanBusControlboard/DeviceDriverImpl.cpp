@@ -187,7 +187,7 @@ bool teo::CanBusControlboard::close() {
         drivers[i] = 0;
     }
 
-    iCanBus->close();
+    canBusDevice.close();
     CD_INFO("End.\n");
     return ok;
 }
