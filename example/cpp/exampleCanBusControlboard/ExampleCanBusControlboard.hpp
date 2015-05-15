@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __TEST_GRIPPER_BOT__
-#define __TEST_GRIPPER_BOT__
+#ifndef __EXAMPLE_CAN_BUS_CONTROLBOARD__
+#define __EXAMPLE_CAN_BUS_CONTROLBOARD__
 
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Module.h>
@@ -46,5 +46,5 @@ class ExampleCanBusControlboard : public RFModule {
 
 }  // namespace teo
 
-#endif
+#endif  // __EXAMPLE_CAN_BUS_CONTROLBOARD__
 
