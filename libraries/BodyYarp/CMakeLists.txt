@@ -20,10 +20,10 @@ IF (ENABLE_BodyYarp)
   set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} BodyYarp CACHE INTERNAL "appended libraries") 
 
   yarp_begin_plugin_library(BodyYarp)
-    add_subdirectory(CanBusHico)
     add_subdirectory(TechnosoftIpos)
     add_subdirectory(LacqueyFetch)
     add_subdirectory(FakeJoint)
+    add_subdirectory(CanBusHico)
     add_subdirectory(CanBusControlboard)
   yarp_end_plugin_library(BodyYarp)
 
