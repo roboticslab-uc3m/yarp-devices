@@ -63,7 +63,7 @@ bool LaunchManipulation::configure(ResourceFinder &rf) {
     }
 
     //-- head --
-    Bottle head = rf.findGroup("trunk");
+    Bottle head = rf.findGroup("head");
     CD_DEBUG("%s\n",head.toString().c_str());
     Property optionsHead;
     optionsHead.fromString(head.toString());
