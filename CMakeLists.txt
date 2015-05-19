@@ -27,8 +27,6 @@ option(ENABLE_playbackLocomotion "Choose if you want to compile playbackLocomoti
 
 option(ENABLE_playbackServer "Choose if you want to compile playbackServer" TRUE)
 
-option(ENABLE_testBodyBot "Choose if you want to compile playbackServer" FALSE)
-
 ### options: force default
 option(ENABLE_BodyYarp_CanBusHico "Enable/disable compilation of BodyYarp_CanBusHico" TRUE)
 option(ENABLE_BodyYarp_TechnosoftIpos "Enable/disable compilation of BodyYarp_TechnosoftIpos" TRUE)
