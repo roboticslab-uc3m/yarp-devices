@@ -63,8 +63,6 @@ class CanBusHico : public DeviceDriver {
          * @return Number on got, 0 on timeout, and errno on fail. */
         int read_timeout(struct can_msg *buf, unsigned int timeout);
 
-        //void show_er( can_msg * message);
-
     protected:
 
         /** CAN file descriptor */
