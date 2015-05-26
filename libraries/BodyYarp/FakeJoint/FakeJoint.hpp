@@ -30,7 +30,7 @@ namespace teo
 
  /**
  * @ingroup FakeJoint
- * @brief Specifies a fake joint behaviour and specifications.
+ * @brief Specifies a fake CAN bus joint (instant movement) behaviour and specifications.
  *
  */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
