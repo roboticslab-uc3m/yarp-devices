@@ -30,7 +30,7 @@ namespace teo
 
  /**
  * @ingroup TechnosoftIpos
- * @brief Specifies the Technosoft iPOS behaviour and specifications.
+ * @brief Implementation for the Technosoft iPOS as a single CAN bus joint (controlboard raw interfaces).
  *
  */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw

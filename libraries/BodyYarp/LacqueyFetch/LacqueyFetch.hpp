@@ -30,7 +30,7 @@ namespace teo
 
  /**
  * @ingroup LacqueyFetch
- * @brief Specifies the Lacquey Fetch hand custom UC3M controller behaviour and specifications.
+ * @brief Implementation for the Lacquey Fetch hand custom UC3M circuit as a single CAN bus joint (controlboard raw interfaces).
  *
  */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
