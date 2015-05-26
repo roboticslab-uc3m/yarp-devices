@@ -17,8 +17,6 @@
 
 #include "ColorDebug.hpp"
 
-#define DEFAULT_ROBOT_NAME "/teo"
-
 using namespace yarp::os;
 using namespace yarp::dev;
 
