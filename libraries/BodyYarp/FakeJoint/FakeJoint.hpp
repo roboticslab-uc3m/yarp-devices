@@ -30,7 +30,7 @@ namespace teo
 
  /**
  * @ingroup FakeJoint
- * @brief Implementation for a fake (instant movement) as a single CAN bus joint (controlboard raw interfaces).
+ * @brief Implementation for a fake joint (instant movement) as a single CAN bus joint (controlboard raw interfaces).
  *
  */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
