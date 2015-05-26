@@ -28,7 +28,8 @@ namespace teo
 /**
  * @ingroup launchManipulation
  *
- * @brief Launches left arm wrapped by controlboardwrapper2 and right arm wrapped by controlboardwrapper2.
+ * @brief Launches two CAN bus drivers, and three controlboardwrapper2 instances
+ * that wrap corresponding nodes for: /teo/leftArm, /teo/rightArm, /teo/head.
  * A controlboardwrapper2 may be used through a YARP remote_controlboard or directly through low-level YARP
  * controlboardwrapper2 RPC commands.
  * 

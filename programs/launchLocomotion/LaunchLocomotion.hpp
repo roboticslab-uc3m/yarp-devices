@@ -28,7 +28,8 @@ namespace teo
 /**
  * @ingroup launchLocomotion
  *
- * @brief Launches left leg + 1 hip DoF wrapped by controlboardwrapper2 and right leg + 1 hip DoF wrapped by controlboardwrapper2.
+ * @brief Launches two CAN bus drivers, and three controlboardwrapper2 instances
+ * that wrap corresponding nodes for: /teo/leftLeg, /teo/rightLeg, /teo/trunk.
  * A controlboardwrapper2 may be used through a YARP remote_controlboard or directly through low-level YARP
  * controlboardwrapper2 RPC commands.
  *

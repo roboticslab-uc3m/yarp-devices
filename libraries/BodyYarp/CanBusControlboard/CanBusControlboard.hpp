@@ -44,8 +44,8 @@ namespace teo
  /**
  * @ingroup CanBusControlboard
  * @brief Implements IControlLimits, IControlMode, IEncodersTimed, IPositionControl, IPositionDirect,
- * ITorqueControl, IVelocityControl interface yarp::dev class member functions, linking to teo::MotorIpos
- * and teo::MotorLacquey raw implementations.
+ * ITorqueControl, IVelocityControl interface yarp::dev class member functions, linking to teo::TechnosoftIpos,
+ * teo::LacqueyFetch and/or teo::FakeJoint raw implementations.
  *
  */
 // Note: IEncodersTimed inherits from IEncoders
