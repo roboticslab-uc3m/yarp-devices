@@ -77,18 +77,8 @@ bool teo::CanBusControlboard::open(Searchable& config) {
         driver->view( iVelocityControlRaw[i] );
         driver->view( iCanBusSharer[i] );
 
+        //-- Aditionally sets initial parameters on physical motor drivers.
         iCanBusSharer[i]->setCanBusPtr( iCanBus );
-    }
-
-    //-- Set initial parameters on physical motor drivers.
-    for(int i=0; i<drivers.size(); i++)
-    {
-        if ( ! this->setRefAcceleration( i, refAccelerations.get(i).asDouble() ) )
-            return false;
-        if ( ! this->setRefSpeed( i, refSpeeds.get(i).asDouble() ) )
-            return false;
-        if ( ! this->setLimits( i, mins.get(i).asDouble(), maxs.get(i).asDouble() ) )
-            return false;
     }
 
     //-- Set all motor drivers to mode.

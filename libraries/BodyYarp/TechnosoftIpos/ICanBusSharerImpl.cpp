@@ -9,6 +9,14 @@ bool teo::TechnosoftIpos::setCanBusPtr(CanBusHico *canDevicePtr) {
     this->canDevicePtr = canDevicePtr;
     CD_SUCCESS("Ok pointer to CAN bus device %d.\n",canId);
 
+    if ( ! this->setRefAccelerationRaw( 0, refAcceleration ) )
+        return false;
+    if ( ! this->setRefSpeedRaw( 0, refSpeed ) )
+        return false;
+    if ( ! this->setLimitsRaw( 0, min, max ) )
+        return false;
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
