@@ -113,6 +113,12 @@ int main(int argc, char *argv[]) {
     //-- Pass before sendong commands
     iCanBusSharer->setCanBusPtr(iCanBus);
 
+    ok = pos->setPositionModeRaw();
+    if (!ok) {
+        printf("[error] Problems in setPositionModeRaw.\n");
+        return 1;
+    } else printf("[success] setPositionModeRaw.\n");
+
     iCanBusSharer->start();
 
     yarp::os::Time::delay(0.1);
