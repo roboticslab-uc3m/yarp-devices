@@ -119,8 +119,7 @@ class TechnosoftIpos : public DeviceDriver, public IControlLimitsRaw, public ICo
             return true;
         }
         virtual bool setPositionModeRaw() {
-            CD_ERROR("\n");
-            return false;
+            return setPositionModeRaw(0);
         }
         virtual bool positionMoveRaw(int j, double ref);
         virtual bool positionMoveRaw(const double *refs) {

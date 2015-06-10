@@ -118,9 +118,8 @@ class FakeJoint : public DeviceDriver, public IControlLimitsRaw, public IControl
             *ax = 1;
             return true;
         }
-        virtual bool setPositionModeRaw() {
-            CD_ERROR("\n");
-            return false;
+        virtual bool setPositionModeRaw()  {
+            return setPositionModeRaw(0);
         }
         virtual bool positionMoveRaw(int j, double ref);
         virtual bool positionMoveRaw(const double *refs) {
