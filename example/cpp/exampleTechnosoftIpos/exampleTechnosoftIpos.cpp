@@ -110,14 +110,8 @@ int main(int argc, char *argv[]) {
         return 1;
     } else printf("[success] Viewing IVelocityControlRaw.\n");
 
-    //-- Pass before sendong commands
+    //-- Pass before sending commands.
     iCanBusSharer->setCanBusPtr(iCanBus);
-
-    ok = pos->setPositionModeRaw();
-    if (!ok) {
-        printf("[error] Problems in setPositionModeRaw.\n");
-        return 1;
-    } else printf("[success] setPositionModeRaw.\n");
 
     iCanBusSharer->start();
 
