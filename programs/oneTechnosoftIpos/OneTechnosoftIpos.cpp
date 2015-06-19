@@ -1,58 +1,22 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-/**
- * @ingroup teo_body_examples_cpp
- * \defgroup exampleTechnosoftIpos exampleTechnosoftIpos
- *
- * @brief This example.
- *
- * <b>Legal</b>
- *
- * Copyright: (C) 2010 Universidad Carlos III de Madrid;
- *            (C) 2010 RobotCub Consortium
- *
- * Author: Juan G Victores
- *
- * Contribs: Paul Fitzpatrick and Giacomo Spigler (YARP dev/motortest.cpp example)
- *
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see license/LGPL.TXT
- *
- * <b>Building</b>
-\verbatim
-cd example/cpp
-mkdir build; cd build; cmake ..
-make -j3
-\endverbatim
- *
- * <b>Running</b>
-\verbatim
-./exampleTechnosoftIpos
-\endverbatim
- *
- */
+#include "OneTechnosoftIpos.hpp"
 
-#include <stdio.h>
-#include <stdlib.h>
+namespace teo
+{
 
-#include <yarp/os/all.h>
-#include <yarp/dev/all.h>
+/************************************************************************/
+OneTechnosoftIpos::OneTechnosoftIpos() { }
 
-#include "ICanBusSharer.h"
+/************************************************************************/
+bool OneTechnosoftIpos::configure(ResourceFinder &rf) {
 
-YARP_DECLARE_PLUGINS(BodyYarp)
-
-int main(int argc, char *argv[]) {
-
-    YARP_REGISTER_PLUGINS(BodyYarp);
-
-    yarp::os::Network yarp;
-    if (! yarp::os::Network::checkNetwork() ) {
-        printf("Please start a yarp name server first\n");
-        return 1;
+    if(rf.check("help")) {
+        printf("OneTechnosoftIpos options:\n");
+        printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
+        CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
+        return false;
     }
-
-    PolyDriver canBusDevice;
-    teo::CanBusHico* iCanBus;
 
     Property canBusOptions;
     canBusOptions.put("device","CanBusHico");
@@ -61,7 +25,7 @@ int main(int argc, char *argv[]) {
     canBusDevice.open(canBusOptions);
     if( ! canBusDevice.isValid() ){
         CD_ERROR("canBusDevice instantiation not worked.\n");
-        return 1;
+        return false;
     }
     canBusDevice.view(iCanBus);
 
@@ -73,12 +37,12 @@ int main(int argc, char *argv[]) {
     options.put("max",60);
     options.put("refAcceleration",0.575437);
     options.put("refSpeed",737.2798);
-    yarp::dev::PolyDriver dd(options);
+    dd.open(options);
     if(!dd.isValid()) {
       printf("TechnosoftIpos device not available.\n");
-	  dd.close();
+      dd.close();
       yarp::os::Network::fini();
-      return 1;
+      return false;
     }
 
     //-- View TechnosoftIpos interfaces.
@@ -141,16 +105,25 @@ int main(int argc, char *argv[]) {
     printf("Delaying 5 seconds...\n");
     yarp::os::Time::delay(5);
 
-    /*vel->setVelocityModeRaw();
-    printf("test velocityMove(0,10)\n");
-    vel->velocityMoveRaw(0,10);
 
-    printf("Delaying 5 seconds...\n");
-    yarp::os::Time::delay(5);*/
-
-    dd.close();    
-
-    return 0;
+    return true;
 }
 
+/************************************************************************/
 
+bool OneTechnosoftIpos::updateModule() {
+    //printf("OneTechnosoftIpos alive...\n");
+    return true;
+}
+
+/************************************************************************/
+
+bool OneTechnosoftIpos::close() {
+    dd.close();
+
+    return true;
+}
+
+/************************************************************************/
+
+}  // namespace teo
