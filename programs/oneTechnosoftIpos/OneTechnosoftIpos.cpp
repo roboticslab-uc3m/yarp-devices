@@ -84,7 +84,8 @@ bool OneTechnosoftIpos::configure(ResourceFinder &rf) {
 
     struct can_msg buffer;
     while( iCanBus->read_timeout(&buffer,1) <= 0 );
-    printf("Read CAN message");
+    printf("Read CAN message\n");
+    iCanBusSharer->interpretMessage(&buffer);
 
     /*iCanBusSharer->start();
 
