@@ -79,8 +79,8 @@ bool OneTechnosoftIpos::configure(ResourceFinder &rf) {
     //-- Pass before sending commands.
     iCanBusSharer->setCanBusPtr(iCanBus);
 
-    int got;
-    ctrl->getControlModeRaw(0,&got);
+    //int got;
+    //ctrl->getControlModeRaw(0,&got);
 
     /*iCanBusSharer->start();
 
@@ -115,7 +115,7 @@ bool OneTechnosoftIpos::configure(ResourceFinder &rf) {
 /************************************************************************/
 
 bool OneTechnosoftIpos::updateModule() {
-    printf("OneTechnosoftIpos alive...\n");
+    //printf("OneTechnosoftIpos alive...\n");
 
     struct can_msg buffer;
     while( iCanBus->read_timeout(&buffer,1) <= 0 );
