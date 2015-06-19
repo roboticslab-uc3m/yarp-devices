@@ -95,8 +95,8 @@ bool OneTechnosoftIpos::configure(ResourceFinder &rf) {
         return 1;
     } else printf("[success] setPositionModeRaw.\n");
 
-    printf("test positionMove(0,-25)\n");
-    ok = pos->positionMoveRaw(0, -25);
+    printf("test positionMove(0,8)\n");
+    ok = pos->positionMoveRaw(0,8);
     if (!ok) {
         printf("[error] Problems in positionMove.\n");
         return 1;
