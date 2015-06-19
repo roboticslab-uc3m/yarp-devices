@@ -115,8 +115,9 @@ bool OneTechnosoftIpos::configure(ResourceFinder &rf) {
 /************************************************************************/
 
 bool OneTechnosoftIpos::updateModule() {
-    //printf("OneTechnosoftIpos alive...\n");
+    printf("OneTechnosoftIpos alive...\n");
 
+    struct can_msg buffer;
     while( iCanBus->read_timeout(&buffer,1) <= 0 );
     iCanBusSharer->interpretMessage(&buffer); // first is ack to pos
 

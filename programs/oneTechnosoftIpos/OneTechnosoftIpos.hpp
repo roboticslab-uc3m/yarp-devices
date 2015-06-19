@@ -37,7 +37,7 @@ class OneTechnosoftIpos : public RFModule {
 
     protected:
 
-        virtual double getPeriod() {return 1.0;}
+        virtual double getPeriod() {return 0.5;}
         virtual bool updateModule();
         virtual bool close();
     //        virtual bool interruptModule();
@@ -46,8 +46,6 @@ class OneTechnosoftIpos : public RFModule {
         /** A CAN device. */
         yarp::dev::PolyDriver canBusDevice;
         CanBusHico* iCanBus;
-
-        struct can_msg buffer;
 
         yarp::dev::PolyDriver dd;
 
