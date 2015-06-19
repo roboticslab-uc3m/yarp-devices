@@ -46,35 +46,30 @@ bool OneTechnosoftIpos::configure(ResourceFinder &rf) {
     }
 
     //-- View TechnosoftIpos interfaces.
-    teo::ICanBusSharer *iCanBusSharer;
     bool ok = dd.view(iCanBusSharer);
     if (!ok) {
         printf("[error] Problems viewing ICanBusSharer.\n");
         return 1;
     } else printf("[success] Viewing ICanBusSharer.\n");
 
-    yarp::dev::IPositionControlRaw *pos;
     ok = dd.view(pos);
     if (!ok) {
         printf("[error] Problems viewing IPositionControlRaw.\n");
         return 1;
     } else printf("[success] Viewing IPositionControlRaw.\n");
 
-    yarp::dev::IEncodersRaw *enc;
     ok = dd.view(enc);
     if (!ok) {
         printf("[error] Problems viewing IEncodersRaw.\n");
         return 1;
     } else printf("[success] Viewing IEncodersRaw.\n");
 
-    yarp::dev::IVelocityControlRaw *vel;
     ok = dd.view(vel);
     if (!ok) {
         printf("[error] Problems viewing IVelocityControlRaw.\n");
         return 1;
     } else printf("[success] Viewing IVelocityControlRaw.\n");
 
-    yarp::dev::IControlModeRaw *ctrl;
     ok = dd.view(ctrl);
     if (!ok) {
         printf("[error] Problems viewing IControlModeRaw.\n");

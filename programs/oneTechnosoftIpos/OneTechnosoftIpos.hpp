@@ -26,10 +26,7 @@ namespace teo
 /**
  * @ingroup oneTechnosoftIpos
  *
- * @brief Launches two CAN bus drivers, and three controlboardwrapper2 instances
- * that wrap corresponding nodes for: /teo/leftArm, /teo/rightArm, /teo/head.
- * A controlboardwrapper2 may be used through a YARP remote_controlboard or directly through low-level YARP
- * controlboardwrapper2 RPC commands.
+ * @brief Launches one CAN bus drivers and one TechnosoftIpos.
  * 
  */
 class OneTechnosoftIpos : public RFModule {
@@ -50,8 +47,14 @@ class OneTechnosoftIpos : public RFModule {
         yarp::dev::PolyDriver canBusDevice;
         CanBusHico* iCanBus;
 
-
         yarp::dev::PolyDriver dd;
+
+        teo::ICanBusSharer *iCanBusSharer;
+        yarp::dev::IPositionControlRaw *pos;
+        yarp::dev::IEncodersRaw *enc;
+        yarp::dev::IVelocityControlRaw *vel;
+        yarp::dev::IControlModeRaw *ctrl;
+
 };
 
 }  // namespace teo
