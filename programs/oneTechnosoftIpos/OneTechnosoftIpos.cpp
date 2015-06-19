@@ -31,10 +31,10 @@ bool OneTechnosoftIpos::configure(ResourceFinder &rf) {
 
     yarp::os::Property options;
     options.put("device","TechnosoftIpos");
-    options.put("canId",23);
-    options.put("tr",120);
-    options.put("min",-60);
-    options.put("max",60);
+    options.put("canId",10);  // locomotion 10 on /dev/can1 = left knee.
+    options.put("tr",235.2);
+    options.put("min",-5);
+    options.put("max",80);
     options.put("refAcceleration",0.575437);
     options.put("refSpeed",737.2798);
     dd.open(options);
@@ -102,9 +102,7 @@ bool OneTechnosoftIpos::configure(ResourceFinder &rf) {
         return 1;
     } else printf("[success] positionMove.\n");
 
-    printf("Delaying 5 seconds...\n");
-    yarp::os::Time::delay(5);
-
+    printf("Please quit with ^C\n");
 
     return true;
 }
