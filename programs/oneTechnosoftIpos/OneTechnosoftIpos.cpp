@@ -83,9 +83,12 @@ bool OneTechnosoftIpos::configure(ResourceFinder &rf) {
     ctrl->getControlModeRaw(0,&got);
 
     struct can_msg buffer;
+
     while( iCanBus->read_timeout(&buffer,1) <= 0 );
-    printf("Read CAN message\n");
-    iCanBusSharer->interpretMessage(&buffer);
+    iCanBusSharer->interpretMessage(&buffer); // first is ack to pos
+
+    while( iCanBus->read_timeout(&buffer,1) <= 0 );
+    iCanBusSharer->interpretMessage(&buffer); // first is ack to pos
 
     /*iCanBusSharer->start();
 
