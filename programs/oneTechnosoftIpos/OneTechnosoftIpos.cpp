@@ -74,10 +74,18 @@ bool OneTechnosoftIpos::configure(ResourceFinder &rf) {
         return 1;
     } else printf("[success] Viewing IVelocityControlRaw.\n");
 
+    yarp::dev::IControlModeRaw *ctrl;
+    ok = dd.view(ctrl);
+    if (!ok) {
+        printf("[error] Problems viewing IControlModeRaw.\n");
+        return 1;
+    } else printf("[success] Viewing IControlModeRaw.\n");
+
     //-- Pass before sending commands.
     iCanBusSharer->setCanBusPtr(iCanBus);
 
-    iCanBusSharer->start();
+
+    /*iCanBusSharer->start();
 
     yarp::os::Time::delay(0.1);
     iCanBusSharer->readyToSwitchOn();
@@ -100,7 +108,7 @@ bool OneTechnosoftIpos::configure(ResourceFinder &rf) {
     if (!ok) {
         printf("[error] Problems in positionMove.\n");
         return 1;
-    } else printf("[success] positionMove.\n");
+    } else printf("[success] positionMove.\n");*/
 
     printf("Please quit with ^C\n");
 
