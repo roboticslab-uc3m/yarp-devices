@@ -37,7 +37,7 @@ class OneTechnosoftIpos : public RFModule {
 
     protected:
 
-        virtual double getPeriod() {return 0.5;}
+        virtual double getPeriod() {return 0.2;}
         virtual bool updateModule();
         virtual bool close();
     //        virtual bool interruptModule();

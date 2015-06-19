@@ -79,8 +79,9 @@ bool OneTechnosoftIpos::configure(ResourceFinder &rf) {
     //-- Pass before sending commands.
     iCanBusSharer->setCanBusPtr(iCanBus);
 
-    //int got;
-    //ctrl->getControlModeRaw(0,&got);
+    Time::delay(3);
+    int got;
+    ctrl->getControlModeRaw(0,&got);
 
     /*iCanBusSharer->start();
 
