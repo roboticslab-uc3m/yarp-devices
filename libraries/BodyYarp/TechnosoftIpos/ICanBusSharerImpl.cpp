@@ -245,7 +245,7 @@ bool teo::TechnosoftIpos::interpretMessage( can_msg * message) {
             } else {
                 CD_WARNING("\t-Mode \"%d\" not specified in manual, may be in Fault or not enabled yet. canId(%d).\n",got,(message->id & 0x7F));
                 getModeReady.wait();
-                    getMode = 0;
+                    getMode = VOCAB_FAILED;
                 getModeReady.post();
                 return true;
             }
