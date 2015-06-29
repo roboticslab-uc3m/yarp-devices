@@ -33,7 +33,7 @@ bool RecordLocomotion::configure(yarp::os::ResourceFinder &rf) {
         return false;
     }
     CD_SUCCESS("Configured left leg from %s.\n",leftLegIni.c_str());
-    leftLegOptions.put("device","bodybot");
+    leftLegOptions.put("device","CanBusControlboard");
     if (rf.check("home")) leftLegOptions.put("home",1);
     if (rf.check("reset")) leftLegOptions.put("reset",1);
 
@@ -41,8 +41,8 @@ bool RecordLocomotion::configure(yarp::os::ResourceFinder &rf) {
     
     if (!leftLegDevice.isValid()) {
         CD_ERROR("leftLegDevice instantiation not worked.\n");
-        CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_bodybot\" variable is set \"ON\"\n");
-        CD_ERROR("\"SKIP_bodybot is set\" --> should be --> \"ENABLE_bodybot is set\"\n");
+        CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_CanBusControlboard\" variable is set \"ON\"\n");
+        CD_ERROR("\"SKIP_CanBusControlboard is set\" --> should be --> \"ENABLE_CanBusControlboard is set\"\n");
         // robotDevice.close();  // un-needed?
         return false;
     }
@@ -57,7 +57,7 @@ bool RecordLocomotion::configure(yarp::os::ResourceFinder &rf) {
     }
     CD_SUCCESS("Configured right leg from %s.\n",rightLegIni.c_str());
     rightLegOptions.put("name","/teo/rightLeg");
-    rightLegOptions.put("device","bodybot");
+    rightLegOptions.put("device","CanBusControlboard");
     if (rf.check("home")) rightLegOptions.put("home",1);
     if (rf.check("reset")) rightLegOptions.put("reset",1);
 
@@ -65,8 +65,8 @@ bool RecordLocomotion::configure(yarp::os::ResourceFinder &rf) {
 
     if (!rightLegDevice.isValid()) {
         CD_ERROR("rightLegDevice instantiation not worked.\n");
-        CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_bodybot\" variable is set \"ON\"\n");
-        CD_ERROR("\"SKIP_bodybot is set\" --> should be --> \"ENABLE_bodybot is set\"\n");
+        CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_CanBusControlboard\" variable is set \"ON\"\n");
+        CD_ERROR("\"SKIP_CanBusControlboard is set\" --> should be --> \"ENABLE_CanBusControlboard is set\"\n");
         // robotDevice.close();  // un-needed?
         return false;
     }
