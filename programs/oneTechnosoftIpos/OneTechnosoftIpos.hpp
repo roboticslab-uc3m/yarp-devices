@@ -18,6 +18,10 @@
 #include "ICanBusSharer.h"
 #include "ColorDebug.hpp"
 
+#define DEFAULT_CAN_DEVICE "/dev/can0"
+#define DEFAULT_CAN_ID 0
+#define DEFAULT_TR 100
+
 using namespace yarp::os;
 
 namespace teo

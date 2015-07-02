@@ -11,16 +11,23 @@ OneTechnosoftIpos::OneTechnosoftIpos() { }
 /************************************************************************/
 bool OneTechnosoftIpos::configure(ResourceFinder &rf) {
 
+    std::string canDevice = rf.check("dev",Value(DEFAULT_CAN_DEVICE),"CAN device path").asString();
+    int canId = rf.check("id",Value(DEFAULT_CAN_ID),"CAN id").asInt();
+    float tr = rf.check("tr",Value(DEFAULT_TR),"motor tr tr").asInt();
+
     if(rf.check("help")) {
         printf("OneTechnosoftIpos options:\n");
         printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
-        return false;
+        return true;
     }
+    printf("\t--dev %s [DEFAULT_CAN_DEVICE]\n",canDevice.c_str());
+    printf("\t--id %d [DEFAULT_CAN_ID]\n",canId);
+    printf("\t--tr %f [DEFAULT_CAN_ID]\n",tr);
 
     Property canBusOptions;
     canBusOptions.put("device","CanBusHico");
-    canBusOptions.put("canDevice","/dev/can1");
+    canBusOptions.put("canDevice",canDevice);
     canBusOptions.put("canBitrate",BITRATE_1000k);
     canBusDevice.open(canBusOptions);
     if( ! canBusDevice.isValid() ){
@@ -31,10 +38,10 @@ bool OneTechnosoftIpos::configure(ResourceFinder &rf) {
 
     yarp::os::Property options;
     options.put("device","TechnosoftIpos");
-    options.put("canId",10);  // locomotion 10 on /dev/can1 = left knee.
-    options.put("tr",235.2);
-    options.put("min",-5);
-    options.put("max",80);
+    options.put("canId",canId);  // locomotion 10 on /dev/can1 = left knee.
+    options.put("tr",tr);
+    options.put("min",-360);
+    options.put("max",360);
     options.put("refAcceleration",0.575437);
     options.put("refSpeed",737.2798);
     dd.open(options);
@@ -82,6 +89,7 @@ bool OneTechnosoftIpos::configure(ResourceFinder &rf) {
     Time::delay(3);
     int got;
     ctrl->getControlModeRaw(0,&got);
+    printf("Got mode: %s\n",Vocab::decode(got).c_str());
 
     /*iCanBusSharer->start();
 
