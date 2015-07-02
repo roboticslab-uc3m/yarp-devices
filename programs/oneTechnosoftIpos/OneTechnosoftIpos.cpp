@@ -21,9 +21,9 @@ bool OneTechnosoftIpos::configure(ResourceFinder &rf) {
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
         return true;
     }
-    printf("\t--dev %s [DEFAULT_CAN_DEVICE]\n",canDevice.c_str());
-    printf("\t--id %d [DEFAULT_CAN_ID]\n",canId);
-    printf("\t--tr %f [DEFAULT_CAN_ID]\n",tr);
+    printf("\t--dev %s [%s]\n",canDevice.c_str(),DEFAULT_CAN_DEVICE);
+    printf("\t--id %d [%d]\n",canId,DEFAULT_CAN_ID);
+    printf("\t--tr %f [%f]\n",tr,DEFAULT_TR);
 
     Property canBusOptions;
     canBusOptions.put("device","CanBusHico");
@@ -100,7 +100,7 @@ bool OneTechnosoftIpos::configure(ResourceFinder &rf) {
 
     ctrl->getControlModeRaw(0,&got);
     //printf("Got mode: %s\n",Vocab::decode(got).c_str());
-    printf("Got mode: %d\n",got);
+    printf("Got mode: %d (%d)\n",got,VOCAB_POSITION_MODE);
 
     /*iCanBusSharer->start();
 
