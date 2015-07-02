@@ -89,7 +89,20 @@ bool OneTechnosoftIpos::configure(ResourceFinder &rf) {
     Time::delay(3);
     int got;
     ctrl->getControlModeRaw(0,&got);
-    printf("Got mode: %s\n",Vocab::decode(got).c_str());
+    //printf("Got mode: %s\n",Vocab::decode(got).c_str());
+    printf("Got mode: %d\n",got);
+
+    ok = pos->setPositionModeRaw();
+    if (!ok) {
+        printf("[error] Problems in setPositionModeRaw.\n");
+        return 1;
+    } else printf("[success] setPositionModeRaw.\n");
+
+    ok = pos->setPositionModeRaw();
+    if (!ok) {
+        printf("[error] Problems in setPositionModeRaw.\n");
+        return 1;
+    } else printf("[success] setPositionModeRaw.\n");
 
     /*iCanBusSharer->start();
 
