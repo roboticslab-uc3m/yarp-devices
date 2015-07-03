@@ -15,14 +15,18 @@ project(TEO_BODY)
 
 ### options: cpp libraries
 option(ENABLE_BodyYarp "Choose if you want to compile BodyYarp" TRUE)
+option(ENABLE_OneCanBusOneWrapper "Choose if you want to compile OneCanBusOneWrapper" TRUE)
 option(ENABLE_TwoCanBusThreeWrappers "Choose if you want to compile TwoCanBusThreeWrappers" TRUE)
 
 ### options: cpp programs
 option(ENABLE_launchManipulation "Choose if you want to compile launchManipulation" TRUE)
+option(ENABLE_launchLocomotion "Choose if you want to compile launchLocomotion" TRUE)
+
+option(ENABLE_oneCanBusOneWrapper "Choose if you want to compile oneCanBusOneWrapper" TRUE)
+
 option(ENABLE_recordManipulation "Choose if you want to compile recordManipulation" TRUE)
 option(ENABLE_playbackManipulation "Choose if you want to compile playbackManipulation" TRUE)
 
-option(ENABLE_launchLocomotion "Choose if you want to compile launchLocomotion" TRUE)
 option(ENABLE_recordLocomotion "Choose if you want to compile recordLocomotion" TRUE)
 option(ENABLE_playbackLocomotion "Choose if you want to compile playbackLocomotion" TRUE)
 
