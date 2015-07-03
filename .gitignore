@@ -1,6 +1,8 @@
+build*
 *~
 *.swp
 *.orig
 tags
 CMakeLists.txt.user
-/build*/
+doc/html
+doc/doxygen_sqlite3.db
