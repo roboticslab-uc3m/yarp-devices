@@ -1,6 +1,8 @@
 # Copyright: Universidad Carlos III de Madrid (C) 2013-2014
 # Authors: Juan G. Victores
 
+add_subdirectory(dumpCanBus)
+
 add_subdirectory(oneCanBusOneWrapper)
 
 add_subdirectory(launchManipulation)

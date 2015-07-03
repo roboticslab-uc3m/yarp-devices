@@ -19,10 +19,13 @@ option(ENABLE_OneCanBusOneWrapper "Choose if you want to compile OneCanBusOneWra
 option(ENABLE_TwoCanBusThreeWrappers "Choose if you want to compile TwoCanBusThreeWrappers" TRUE)
 
 ### options: cpp programs
-option(ENABLE_launchManipulation "Choose if you want to compile launchManipulation" TRUE)
-option(ENABLE_launchLocomotion "Choose if you want to compile launchLocomotion" TRUE)
+
+option(ENABLE_dumpCanBus "Choose if you want to compile dumpCanBus" TRUE)
 
 option(ENABLE_oneCanBusOneWrapper "Choose if you want to compile oneCanBusOneWrapper" TRUE)
+
+option(ENABLE_launchManipulation "Choose if you want to compile launchManipulation" TRUE)
+option(ENABLE_launchLocomotion "Choose if you want to compile launchLocomotion" TRUE)
 
 option(ENABLE_recordManipulation "Choose if you want to compile recordManipulation" TRUE)
 option(ENABLE_playbackManipulation "Choose if you want to compile playbackManipulation" TRUE)
