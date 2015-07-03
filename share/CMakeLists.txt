@@ -10,9 +10,10 @@ yarp_configure_external_installation(teo-body)
 
 ### Go through single applications
 
-add_subdirectory(exampleCanBusControlboard)
+add_subdirectory(dumpCanBus)
 
 add_subdirectory(oneCanBusOneWrapper)
+
 add_subdirectory(launchManipulation)
 add_subdirectory(launchLocomotion)
 
