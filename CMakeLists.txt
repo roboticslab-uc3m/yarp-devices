@@ -15,6 +15,7 @@ project(TEO_BODY)
 
 ### options: cpp libraries
 option(ENABLE_BodyYarp "Choose if you want to compile BodyYarp" TRUE)
+option(ENABLE_TwoCanBusThreeWrappers "Choose if you want to compile TwoCanBusThreeWrappers" TRUE)
 
 ### options: cpp programs
 option(ENABLE_launchManipulation "Choose if you want to compile launchManipulation" TRUE)
