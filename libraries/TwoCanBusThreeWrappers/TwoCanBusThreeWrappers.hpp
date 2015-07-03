@@ -24,7 +24,14 @@ namespace teo
 {
 
 /**
+ *
  * @ingroup teo_body_libraries
+ * \defgroup TwoCanBusThreeWrappers
+ * @brief Contains teo::TwoCanBusThreeWrappers.
+ */
+
+/**
+ * @ingroup TwoCanBusThreeWrappers
  *
  * @brief Launches two CAN bus drivers, and three controlboardwrapper2 instances
  * that wrap corresponding nodes.
