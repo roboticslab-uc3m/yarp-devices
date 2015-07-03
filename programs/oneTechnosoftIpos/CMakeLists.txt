@@ -23,7 +23,7 @@ endforeach(header_file ${folder_header})
 
 include_directories(${YARP_INCLUDE_DIRS} ${TEO_BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
 
-link_directories(${BODY_LINK_DIRS})
+link_directories(${TEO_BODY_LINK_DIRS})
 
 # Set up our main executable.
 if (folder_source)
