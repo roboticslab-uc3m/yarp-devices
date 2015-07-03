@@ -28,6 +28,7 @@ bool DumpCanBus::configure(ResourceFinder &rf) {
         CD_ERROR("deviceDevCan0 instantiation not worked.\n");
         return false;
     }
+    deviceDevCan0.view(iCanBus);
 
     return this->start();
 }
