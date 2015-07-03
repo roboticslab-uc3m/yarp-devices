@@ -5,7 +5,7 @@
  * @ingroup teo_body_programs
  * \defgroup launchManipulation launchManipulation
  *
- * @brief Creates an instance of teo::LaunchManipulation.
+ * @brief Creates an instance of teo::TwoCanBusThreeWrappers.
  *
  * @section launchManipulation_legal Legal
  *
@@ -38,7 +38,7 @@
  *
  */
 
-#include "LaunchManipulation.hpp"
+#include "TwoCanBusThreeWrappers.hpp"
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
     }
     CD_SUCCESS("Found yarp network.\n");
 
-    teo::LaunchManipulation mod;
+    teo::TwoCanBusThreeWrappers mod;
     return mod.runModule(rf);
 }
 

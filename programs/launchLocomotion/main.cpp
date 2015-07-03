@@ -5,7 +5,7 @@
  * @ingroup teo_body_programs
  * \defgroup launchLocomotion launchLocomotion
  *
- * @brief Creates an instance of teo::LaunchLocomotion.
+ * @brief Creates an instance of teo::TwoCanBusThreeWrappers.
  *
  * @section launchLocomotion_legal Legal
  *
@@ -38,7 +38,7 @@
  *
  */
 
-#include "LaunchLocomotion.hpp"
+#include "TwoCanBusThreeWrappers.hpp"
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
     }
     CD_SUCCESS("Found yarp network.\n");
 
-    teo::LaunchLocomotion mod;
+    teo::TwoCanBusThreeWrappers mod;
     return mod.runModule(rf);
 }
 
