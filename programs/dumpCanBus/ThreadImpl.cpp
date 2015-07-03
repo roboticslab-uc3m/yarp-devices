@@ -6,7 +6,7 @@
 
 void teo::DumpCanBus::run() {
 
-    CD_INFO("Started CanBusControlboard reading thread run.\n");
+    CD_INFO("Started DumpCanBus reading thread run.\n");
 
     while ( ! this->RFModule::isStopping() ) {
 
@@ -33,7 +33,7 @@ void teo::DumpCanBus::run() {
 
     }  //-- ends: while ( ! this->isStopping() ).
 
-    CD_INFO("Stopping CanBusControlboard reading thread run.\n");
+    CD_INFO("Stopping DumpCanBus reading thread run.\n");
 
     return;
 }
