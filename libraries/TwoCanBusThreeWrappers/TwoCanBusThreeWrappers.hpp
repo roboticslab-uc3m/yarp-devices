@@ -24,7 +24,7 @@ namespace teo
 {
 
 /**
- * @ingroup launchManipulation
+ * @ingroup teo_body_libraries
  *
  * @brief Launches two CAN bus drivers, and three controlboardwrapper2 instances
  * that wrap corresponding nodes for: /teo/leftArm, /teo/rightArm, /teo/head.
