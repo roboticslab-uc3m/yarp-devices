@@ -12,12 +12,10 @@ yarp_configure_external_installation(teo-body)
 
 add_subdirectory(exampleCanBusControlboard)
 
-add_subdirectory(manipulation)
 add_subdirectory(launchManipulation)
 add_subdirectory(playbackManipulation)
 add_subdirectory(recordManipulation)
 
-add_subdirectory(locomotion)
 add_subdirectory(launchLocomotion)
 add_subdirectory(playbackLocomotion)
 add_subdirectory(recordLocomotion)
