@@ -29,7 +29,7 @@ bool DumpCanBus::configure(ResourceFinder &rf) {
         return false;
     }
 
-    return true;
+    return this->start();
 }
 
 /************************************************************************/
@@ -42,6 +42,7 @@ bool DumpCanBus::updateModule() {
 /************************************************************************/
 
 bool DumpCanBus::close() {
+    this->stop();
 
     deviceDevCan0.close();
 
