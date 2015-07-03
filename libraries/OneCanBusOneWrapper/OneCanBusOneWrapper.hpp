@@ -33,8 +33,8 @@ namespace teo
 /**
  * @ingroup OneCanBusOneWrapper
  *
- * @brief Launches two CAN bus drivers, and three controlboardwrapper2 instances
- * that wrap corresponding nodes.
+ * @brief Launches one CAN bus drivers, and one controlboardwrapper2 instance
+ * that wraps the corresponding nodes.
  * A controlboardwrapper2 may be used through a YARP remote_controlboard or directly through low-level YARP
  * controlboardwrapper2 RPC commands.
  * 
@@ -43,11 +43,8 @@ class OneCanBusOneWrapper : public RFModule {
 
     protected:
     yarp::dev::PolyDriver deviceDevCan0;
-    yarp::dev::PolyDriver deviceDevCan1;
 
     yarp::dev::PolyDriver deviceWrapper0;
-    yarp::dev::PolyDriver deviceWrapper1;
-    yarp::dev::PolyDriver deviceWrapper2;
 
         virtual double getPeriod() {return 3.0;}
         virtual bool updateModule();

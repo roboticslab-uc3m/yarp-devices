@@ -29,17 +29,6 @@ bool OneCanBusOneWrapper::configure(ResourceFinder &rf) {
         return false;
     }
 
-    //-- /dev/can1 --
-    Bottle devCan1 = rf.findGroup("devCan1");
-    CD_DEBUG("%s\n",devCan1.toString().c_str());
-    Property optionsDevCan1;
-    optionsDevCan1.fromString(devCan1.toString());
-    deviceDevCan1.open(optionsDevCan1);
-    if (!deviceDevCan1.isValid()) {
-        CD_ERROR("deviceDevCan1 instantiation not worked.\n");
-        return false;
-    }
-
     //-- wrapper0 --
     Bottle wrapper0 = rf.findGroup("wrapper0");
     CD_DEBUG("%s\n",wrapper0.toString().c_str());
@@ -51,40 +40,13 @@ bool OneCanBusOneWrapper::configure(ResourceFinder &rf) {
         return false;
     }
 
-    //-- wrapper1 --
-    Bottle wrapper1 = rf.findGroup("wrapper1");
-    CD_DEBUG("%s\n",wrapper1.toString().c_str());
-    Property optionsWrapper1;
-    optionsWrapper1.fromString(wrapper1.toString());
-    deviceWrapper1.open(optionsWrapper1);
-    if (!deviceWrapper1.isValid()) {
-        CD_ERROR("deviceWrapper1 instantiation not worked.\n");
-        return false;
-    }
-
-    //-- wrapper2 --
-    Bottle wrapper2 = rf.findGroup("wrapper2");
-    CD_DEBUG("%s\n",wrapper2.toString().c_str());
-    Property optionsWrapper2;
-    optionsWrapper2.fromString(wrapper2.toString());
-    deviceWrapper2.open(optionsWrapper2);
-    if (!deviceWrapper2.isValid()) {
-        CD_ERROR("deviceWrapper2 instantiation not worked.\n");
-        return false;
-    }
-
-    IMultipleWrapper *iWrapper0, *iWrapper1, *iWrapper2;
+    IMultipleWrapper *iWrapper0;
 
     deviceWrapper0.view(iWrapper0);
-    deviceWrapper1.view(iWrapper1);
-    deviceWrapper2.view(iWrapper2);
 
     PolyDriverList list;
     list.push(&deviceDevCan0, "devCan0");
-    list.push(&deviceDevCan1, "devCan1");
     iWrapper0->attachAll(list);
-    iWrapper1->attachAll(list);
-    iWrapper2->attachAll(list);
 
     return true;
 }
@@ -100,11 +62,9 @@ bool OneCanBusOneWrapper::updateModule() {
 
 bool OneCanBusOneWrapper::close() {
     deviceWrapper0.close();
-    deviceWrapper1.close();
-    deviceWrapper2.close();
 
     deviceDevCan0.close();
-    deviceDevCan1.close();
+
     return true;
 }
 
