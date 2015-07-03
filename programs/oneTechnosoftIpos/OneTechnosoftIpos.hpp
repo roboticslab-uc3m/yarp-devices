@@ -20,7 +20,7 @@
 
 #define DEFAULT_CAN_DEVICE "/dev/can0"
 #define DEFAULT_CAN_ID 0
-#define DEFAULT_TR 100
+#define DEFAULT_TR 100.0
 
 using namespace yarp::os;
 
