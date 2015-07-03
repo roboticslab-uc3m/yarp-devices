@@ -31,7 +31,6 @@ option(ENABLE_recordLocomotion "Choose if you want to compile recordLocomotion" 
 option(ENABLE_playbackLocomotion "Choose if you want to compile playbackLocomotion" TRUE)
 
 option(ENABLE_playbackServer "Choose if you want to compile playbackServer" TRUE)
-option(ENABLE_oneTechnosoftIpos "Choose if you want to compile playbackServer" TRUE)
 
 ### options: force default
 option(ENABLE_BodyYarp_CanBusHico "Enable/disable compilation of BodyYarp_CanBusHico" TRUE)

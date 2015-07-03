@@ -11,5 +11,3 @@ add_subdirectory(playbackLocomotion)
 
 add_subdirectory(playbackServer)
 
-add_subdirectory(oneTechnosoftIpos)
-
