@@ -34,5 +34,9 @@ else (folder_source)
   message(FATAL_ERROR "No source code files found. Please add something")
 endif (folder_source)
 
+  # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now...
+  set(TEO_BODY_INCLUDE_DIRS ${TEO_BODY_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "appended libraries")
+  set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} TwoCanBusThreeWrappers CACHE INTERNAL "appended libraries")
+
 ENDIF (ENABLE_TwoCanBusThreeWrappers)
 
