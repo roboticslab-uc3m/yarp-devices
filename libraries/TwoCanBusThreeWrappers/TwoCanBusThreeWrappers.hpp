@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __LAUNCH_MANIPULATION__
-#define __LAUNCH_MANIPULATION__
+#ifndef __TWO_CAN_BUS_THREE_WRAPPERS__
+#define __TWO_CAN_BUS_THREE_WRAPPERS__
 
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Module.h>
@@ -55,5 +55,5 @@ class TwoCanBusThreeWrappers : public RFModule {
 
 }  // namespace teo
 
-#endif  // __LAUNCH_MANIPULATION__
+#endif  // __TWO_CAN_BUS_THREE_WRAPPERS__
 
