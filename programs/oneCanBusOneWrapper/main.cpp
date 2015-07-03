@@ -5,7 +5,7 @@
  * @ingroup teo_body_programs
  * \defgroup oneCanBusOneWrapper oneCanBusOneWrapper
  *
- * @brief Creates an instance of teo::TwoCanBusThreeWrappers.
+ * @brief Creates an instance of teo::OneCanBusOneWrapper.
  *
  * @section oneCanBusOneWrapper_legal Legal
  *
@@ -38,7 +38,7 @@
  *
  */
 
-#include "TwoCanBusThreeWrappers.hpp"
+#include "OneCanBusOneWrapper.hpp"
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
     }
     CD_SUCCESS("Found yarp network.\n");
 
-    teo::TwoCanBusThreeWrappers mod;
+    teo::OneCanBusOneWrapper mod;
     return mod.runModule(rf);
 }
 
