@@ -29,25 +29,6 @@ bool DumpCanBus::configure(ResourceFinder &rf) {
         return false;
     }
 
-    //-- wrapper0 --
-    Bottle wrapper0 = rf.findGroup("wrapper0");
-    CD_DEBUG("%s\n",wrapper0.toString().c_str());
-    Property optionsWrapper0;
-    optionsWrapper0.fromString(wrapper0.toString());
-    deviceWrapper0.open(optionsWrapper0);
-    if (!deviceWrapper0.isValid()) {
-        CD_ERROR("deviceWrapper0 instantiation not worked.\n");
-        return false;
-    }
-
-    IMultipleWrapper *iWrapper0;
-
-    deviceWrapper0.view(iWrapper0);
-
-    PolyDriverList list;
-    list.push(&deviceDevCan0, "devCan0");
-    iWrapper0->attachAll(list);
-
     return true;
 }
 
@@ -61,7 +42,6 @@ bool DumpCanBus::updateModule() {
 /************************************************************************/
 
 bool DumpCanBus::close() {
-    deviceWrapper0.close();
 
     deviceDevCan0.close();
 
