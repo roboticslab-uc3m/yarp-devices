@@ -12,7 +12,7 @@ TwoCanBusThreeWrappers::TwoCanBusThreeWrappers() { }
 bool TwoCanBusThreeWrappers::configure(ResourceFinder &rf) {
 
     if(rf.check("help")) {
-        printf("LaunchLocomotion options:\n");
+        printf("TwoCanBusThreeWrappers options:\n");
         printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
         return false;
