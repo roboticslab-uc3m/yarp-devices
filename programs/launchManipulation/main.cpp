@@ -34,7 +34,7 @@
  * @section launchManipulation_modify Modify
  *
  * This file can be edited at
- * teo-body/src/modules/launchManipulation/main.cpp
+ * programs/launchManipulation/main.cpp
  *
  */
 

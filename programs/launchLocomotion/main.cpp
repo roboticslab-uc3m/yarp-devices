@@ -34,7 +34,7 @@
  * @section launchLocomotion_modify Modify
  *
  * This file can be edited at
- * teo-body/src/modules/launchLocomotion/main.cpp
+ * programs/launchLocomotion/main.cpp
  *
  */
 
