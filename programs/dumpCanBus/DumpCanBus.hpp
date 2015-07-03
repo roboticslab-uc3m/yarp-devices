@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __TWO_CAN_BUS_THREE_WRAPPERS__
-#define __TWO_CAN_BUS_THREE_WRAPPERS__
+#ifndef __DUMP_CAN_BUS__
+#define __DUMP_CAN_BUS__
 
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Module.h>
@@ -15,6 +15,7 @@
 #include <string>
 #include <stdlib.h>
 
+#include "ICanBusSharer.h"
 #include "ColorDebug.hpp"
 
 using namespace yarp::os;
@@ -36,10 +37,17 @@ namespace teo
  * @brief Launches one CAN bus driver, dumps output.
  *
  */
-class DumpCanBus : public RFModule {
+class DumpCanBus : public RFModule, public Thread {
+    public:
+        DumpCanBus();
+        bool configure(ResourceFinder &rf);
 
     protected:
-    yarp::dev::PolyDriver deviceDevCan0;
+        yarp::dev::PolyDriver deviceDevCan0;
+        CanBusHico* iCanBus;
+
+        /** A helper function to display CAN messages. */
+        std::string msgToStr(can_msg* message);
 
         virtual double getPeriod() {return 3.0;}
         virtual bool updateModule();
@@ -47,12 +55,24 @@ class DumpCanBus : public RFModule {
 //        virtual bool interruptModule();
 //        virtual int period;
 
-    public:
-        DumpCanBus();
-        bool configure(ResourceFinder &rf);
+    // -------- Thread declarations. Implementation in ThreadImpl.cpp --------
+
+        /**
+         * Main body of the new thread.
+         * Override this method to do what you want.
+         * After Thread::start is called, this
+         * method will start running in a separate thread.
+         * It is important that this method either keeps checking
+         * Thread::isStopping to see if it should stop, or
+         * you override the Thread::onStop method to interact
+         * with it in some way to shut the new thread down.
+         * There is no really reliable, portable way to stop
+         * a thread cleanly unless that thread cooperates.
+         */
+        virtual void run();
 };
 
 }  // namespace teo
 
-#endif  // __TWO_CAN_BUS_THREE_WRAPPERS__
+#endif  // __DUMP_CAN_BUS__
 
