@@ -45,9 +45,9 @@ class TwoCanBusThreeWrappers : public RFModule {
     yarp::dev::PolyDriver deviceDevCan0;
     yarp::dev::PolyDriver deviceDevCan1;
 
-    yarp::dev::PolyDriver deviceLeftArm;
-    yarp::dev::PolyDriver deviceRightArm;
-    yarp::dev::PolyDriver deviceHead;
+    yarp::dev::PolyDriver deviceWrapper0;
+    yarp::dev::PolyDriver deviceWrapper1;
+    yarp::dev::PolyDriver deviceWrapper2;
 
         virtual double getPeriod() {return 3.0;}
         virtual bool updateModule();

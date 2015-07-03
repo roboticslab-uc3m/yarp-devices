@@ -40,51 +40,51 @@ bool TwoCanBusThreeWrappers::configure(ResourceFinder &rf) {
         return false;
     }
 
-    //-- leftArm --
-    Bottle leftArm = rf.findGroup("leftArm");
-    CD_DEBUG("%s\n",leftArm.toString().c_str());
-    Property optionsLeftArm;
-    optionsLeftArm.fromString(leftArm.toString());
-    deviceLeftArm.open(optionsLeftArm);
-    if (!deviceLeftArm.isValid()) {
-        CD_ERROR("deviceLeftArm instantiation not worked.\n");
+    //-- wrapper0 --
+    Bottle wrapper0 = rf.findGroup("wrapper0");
+    CD_DEBUG("%s\n",wrapper0.toString().c_str());
+    Property optionsWrapper0;
+    optionsWrapper0.fromString(wrapper0.toString());
+    deviceWrapper0.open(optionsWrapper0);
+    if (!deviceWrapper0.isValid()) {
+        CD_ERROR("deviceWrapper0 instantiation not worked.\n");
         return false;
     }
 
-    //-- rightArm --
-    Bottle rightArm = rf.findGroup("rightArm");
-    CD_DEBUG("%s\n",rightArm.toString().c_str());
-    Property optionsRightArm;
-    optionsRightArm.fromString(rightArm.toString());
-    deviceRightArm.open(optionsRightArm);
-    if (!deviceRightArm.isValid()) {
-        CD_ERROR("deviceRightArm instantiation not worked.\n");
+    //-- wrapper1 --
+    Bottle wrapper1 = rf.findGroup("wrapper1");
+    CD_DEBUG("%s\n",wrapper1.toString().c_str());
+    Property optionsWrapper1;
+    optionsWrapper1.fromString(wrapper1.toString());
+    deviceWrapper1.open(optionsWrapper1);
+    if (!deviceWrapper1.isValid()) {
+        CD_ERROR("deviceWrapper1 instantiation not worked.\n");
         return false;
     }
 
-    //-- head --
-    Bottle head = rf.findGroup("head");
-    CD_DEBUG("%s\n",head.toString().c_str());
-    Property optionsHead;
-    optionsHead.fromString(head.toString());
-    deviceHead.open(optionsHead);
-    if (!deviceHead.isValid()) {
-        CD_ERROR("deviceHead instantiation not worked.\n");
+    //-- wrapper2 --
+    Bottle wrapper2 = rf.findGroup("wrapper2");
+    CD_DEBUG("%s\n",wrapper2.toString().c_str());
+    Property optionsWrapper2;
+    optionsWrapper2.fromString(wrapper2.toString());
+    deviceWrapper2.open(optionsWrapper2);
+    if (!deviceWrapper2.isValid()) {
+        CD_ERROR("deviceWrapper2 instantiation not worked.\n");
         return false;
     }
 
-    IMultipleWrapper *iwrapperLeftArm, *iwrapperRightArm, *iwrapperHead;
+    IMultipleWrapper *iWrapper0, *iWrapper1, *iWrapper2;
 
-    deviceLeftArm.view(iwrapperLeftArm);
-    deviceRightArm.view(iwrapperRightArm);
-    deviceHead.view(iwrapperHead);
+    deviceWrapper0.view(iWrapper0);
+    deviceWrapper1.view(iWrapper1);
+    deviceWrapper2.view(iWrapper2);
 
     PolyDriverList list;
     list.push(&deviceDevCan0, "devCan0");
     list.push(&deviceDevCan1, "devCan1");
-    iwrapperLeftArm->attachAll(list);
-    iwrapperRightArm->attachAll(list);
-    iwrapperHead->attachAll(list);
+    iWrapper0->attachAll(list);
+    iWrapper1->attachAll(list);
+    iWrapper2->attachAll(list);
 
     return true;
 }
@@ -99,9 +99,9 @@ bool TwoCanBusThreeWrappers::updateModule() {
 /************************************************************************/
 
 bool TwoCanBusThreeWrappers::close() {
-    deviceLeftArm.close();
-    deviceRightArm.close();
-    deviceHead.close();
+    deviceWrapper0.close();
+    deviceWrapper1.close();
+    deviceWrapper2.close();
 
     deviceDevCan0.close();
     deviceDevCan1.close();
