@@ -23,5 +23,3 @@ add_subdirectory(recordManipulation)
 add_subdirectory(playbackLocomotion)
 add_subdirectory(recordLocomotion)
 
-add_subdirectory(playbackServer)
-
