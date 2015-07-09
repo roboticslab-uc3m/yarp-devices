@@ -21,6 +21,17 @@ bool teo::TechnosoftIpos::setCanBusPtr(CanBusHico *canDevicePtr) {
 
 // -----------------------------------------------------------------------------
 
+bool teo::TechnosoftIpos::setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw) {
+
+    this->iEncodersTimedRawExternal = iEncodersTimedRaw;
+
+    CD_SUCCESS("Ok pointer to external encoder interface %p (%d).\n",iEncodersTimedRaw,canId);
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
 bool teo::TechnosoftIpos::start() {
 
     //*************************************************************

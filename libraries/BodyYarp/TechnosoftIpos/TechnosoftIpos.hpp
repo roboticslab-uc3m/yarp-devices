@@ -51,10 +51,7 @@ class TechnosoftIpos : public DeviceDriver, public IControlLimitsRaw, public ICo
 
         //  --------- ICanBusSharer Declarations. Implementation in TechnosoftIpos.cpp ---------
         virtual bool setCanBusPtr(CanBusHico *canDevicePtr);
-        virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw) {
-            iEncodersTimedRawExternal = iEncodersTimedRaw;
-            return true;
-        }
+        virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw);
         virtual bool interpretMessage( can_msg * message);
         /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
         virtual bool start();
