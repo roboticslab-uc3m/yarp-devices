@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __LACQUEY_FETCH__
-#define __LACQUEY_FETCH__
+#ifndef __CUI_ABSOLUTE__
+#define __CUI_ABSOLUTE__
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
@@ -347,5 +347,5 @@ class CuiAbsolute : public DeviceDriver, public IControlLimitsRaw, public IContr
 
 }  // namespace teo
 
-#endif  // __LACQUEY_FETCH__
+#endif  // __CUI_ABSOLUTE__
 
