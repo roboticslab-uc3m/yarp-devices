@@ -41,7 +41,7 @@ class LacqueyFetch : public DeviceDriver, public IControlLimitsRaw, public ICont
     public:
 
         LacqueyFetch() {
-            canDevicePtr = NULL;
+            canDevicePtr = 0;
         }
 
         //  --------- DeviceDriver Declarations. Implementation in LacqueyFetch.cpp ---------

@@ -41,7 +41,7 @@ class FakeJoint : public DeviceDriver, public IControlLimitsRaw, public IControl
     public:
 
         FakeJoint() {
-            canDevicePtr = NULL;
+            canDevicePtr = 0;
         }
 
         //  --------- DeviceDriver Declarations. Implementation in FakeJoint.cpp ---------
