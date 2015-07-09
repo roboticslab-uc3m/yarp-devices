@@ -7,7 +7,7 @@
 bool teo::CanBusControlboard::getAxes(int *axes) {
     CD_INFO("\n");
 
-    *axes = drivers.size();
+    *axes = nodes.size();
 
     return true;
 }
@@ -18,7 +18,7 @@ bool teo::CanBusControlboard::setPositionMode() {
     CD_INFO("\n");
 
     bool ok = true;
-    for(int j=0; j<drivers.size(); j++)
+    for(int j=0; j<nodes.size(); j++)
     {
         ok &= this->setPositionMode(j);
     }
@@ -42,7 +42,7 @@ bool teo::CanBusControlboard::positionMove(const double *refs) {
     CD_INFO("\n");
 
     bool ok = true;
-    for(int j=0; j<drivers.size(); j++)
+    for(int j=0; j<nodes.size(); j++)
     {
         ok &= this->positionMove(j,refs[j]);
     }
@@ -66,7 +66,7 @@ bool teo::CanBusControlboard::relativeMove(const double *deltas) {
     CD_INFO("\n");
 
     bool ok = true;
-    for(int j=0; j<drivers.size(); j++)
+    for(int j=0; j<nodes.size(); j++)
     {
         ok &= this->relativeMove(j,deltas[j]);
     }
@@ -90,7 +90,7 @@ bool teo::CanBusControlboard::checkMotionDone(bool *flag) {
     CD_INFO("\n");
     *flag = true;
     bool ok = true;
-    for(int j=0; j<drivers.size(); j++)
+    for(int j=0; j<nodes.size(); j++)
     {
         bool tmpFlag;
         ok &= this->checkMotionDone(j,&tmpFlag);
@@ -116,7 +116,7 @@ bool teo::CanBusControlboard::setRefSpeeds(const double *spds) {
     CD_INFO("\n");
 
     bool ok = true;
-    for(unsigned int i=0;i<drivers.size();i++)
+    for(unsigned int i=0;i<nodes.size();i++)
         ok &= setRefSpeed(i,spds[i]);
     return ok;
 }
@@ -138,7 +138,7 @@ bool teo::CanBusControlboard::setRefAccelerations(const double *accs) {
     CD_INFO("\n");
 
     bool ok = true;
-    for(unsigned int i=0;i<drivers.size();i++)
+    for(unsigned int i=0;i<nodes.size();i++)
         ok &= setRefAcceleration(i,accs[i]);
     return ok;
 }
@@ -160,7 +160,7 @@ bool teo::CanBusControlboard::getRefSpeeds(double *spds) {
     CD_INFO("\n");
 
     bool ok = true;
-    for(unsigned int i=0;i<drivers.size();i++)
+    for(unsigned int i=0;i<nodes.size();i++)
         ok &= getRefSpeed(i,&spds[i]);
     return ok;
 }
@@ -182,7 +182,7 @@ bool teo::CanBusControlboard::getRefAccelerations(double *accs) {
     CD_INFO("\n");
 
     bool ok = true;
-    for(unsigned int i=0;i<drivers.size();i++)
+    for(unsigned int i=0;i<nodes.size();i++)
         ok &= getRefAcceleration(i,&accs[i]);
     return ok;
 }
@@ -204,7 +204,7 @@ bool teo::CanBusControlboard::stop() {
     CD_INFO("\n");
 
     bool ok = true;
-    for(unsigned int i=0;i<drivers.size();i++)
+    for(unsigned int i=0;i<nodes.size();i++)
         ok &= stop(i);
     return ok;
 }

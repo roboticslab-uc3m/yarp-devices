@@ -5,8 +5,8 @@
 // -----------------------------------------------------------------------------
 
 bool teo::CanBusControlboard::indexWithinRange(const int& idx) {
-    if (idx >= drivers.size() ){
-        CD_WARNING("Index out of range!! (%d >= %zd)!!!\n",idx,drivers.size());
+    if (idx >= nodes.size() ){
+        CD_WARNING("Index out of range!! (%d >= %zd)!!!\n",idx,nodes.size());
         return false;
     }
     return true;

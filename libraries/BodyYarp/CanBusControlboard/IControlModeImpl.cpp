@@ -82,7 +82,7 @@ bool teo::CanBusControlboard::getControlModes(int *modes) {
     CD_INFO("\n");
 
     bool ok = true;
-    for(unsigned int i=0; i < drivers.size(); i++)
+    for(unsigned int i=0; i < nodes.size(); i++)
         ok &= getControlMode(i,&modes[i]);
     return ok;
 }

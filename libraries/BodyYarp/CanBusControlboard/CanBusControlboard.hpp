@@ -653,8 +653,8 @@ class CanBusControlboard : public DeviceDriver, public IControlLimits, public IC
         PolyDriver canBusDevice;
         CanBusHico* iCanBus;
 
-        /** A vector of driver objects. */
-        std::vector< PolyDriver* > drivers;
+        /** A vector of CAN node objects. */
+        std::vector< PolyDriver* > nodes;
         std::vector< IControlLimitsRaw* > iControlLimitsRaw;
         std::vector< IControlModeRaw* > iControlModeRaw;
         std::vector< IEncodersTimedRaw* > iEncodersTimedRaw;

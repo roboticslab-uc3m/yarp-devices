@@ -19,7 +19,7 @@ bool teo::CanBusControlboard::getLimits(int axis, double *min, double *max) {
     CD_INFO("(%d)\n",axis);
 
     //-- Check index within range
-    if( axis >= drivers.size() ) return false;
+    if( axis >= nodes.size() ) return false;
 
     return iControlLimitsRaw[axis]->getLimitsRaw( 0, min, max );
 }

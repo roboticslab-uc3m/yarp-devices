@@ -8,7 +8,7 @@ bool teo::CanBusControlboard::getEncodersTimed(double *encs, double *time) {
     CD_INFO("\n");
 
     bool ok = true;
-    for(unsigned int i=0; i < drivers.size(); i++)
+    for(unsigned int i=0; i < nodes.size(); i++)
         ok &= getEncoderTimed(i,&(encs[i]),&(time[i]));
     return ok;
 }

@@ -8,7 +8,7 @@ bool teo::CanBusControlboard::setVelocityMode() {
     CD_INFO("\n");
 
     bool ok = true;
-    for(int j=0; j<drivers.size(); j++)
+    for(int j=0; j<nodes.size(); j++)
     {
         ok &= this->setVelocityMode(j);
     }
@@ -32,7 +32,7 @@ bool teo::CanBusControlboard::velocityMove(const double *sp) {
     CD_INFO("\n");
 
     bool ok = true;
-    for(int j=0; j<drivers.size(); j++)
+    for(int j=0; j<nodes.size(); j++)
     {
         ok &= this->velocityMove(j,sp[j]);
     }

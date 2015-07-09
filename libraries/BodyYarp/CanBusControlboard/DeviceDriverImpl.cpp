@@ -34,22 +34,22 @@ bool teo::CanBusControlboard::open(Searchable& config) {
     //-- Start the reading thread (required for checkMotionDoneRaw).
     this->Thread::start();
 
-    //-- Populate the motor drivers vector.
-    drivers.resize( ids.size() );
-    iControlLimitsRaw.resize( drivers.size() );
-    iControlModeRaw.resize( drivers.size() );
-    iEncodersTimedRaw.resize( drivers.size() );
-    iPositionControlRaw.resize( drivers.size() );
-    iPositionDirectRaw.resize( drivers.size() );
-    iTorqueControlRaw.resize( drivers.size() );
-    iVelocityControlRaw.resize( drivers.size() );
-    iCanBusSharer.resize( drivers.size() );
-    for(int i=0; i<drivers.size(); i++)
+    //-- Populate the CAN nodes vector.
+    nodes.resize( ids.size() );
+    iControlLimitsRaw.resize( nodes.size() );
+    iControlModeRaw.resize( nodes.size() );
+    iEncodersTimedRaw.resize( nodes.size() );
+    iPositionControlRaw.resize( nodes.size() );
+    iPositionDirectRaw.resize( nodes.size() );
+    iTorqueControlRaw.resize( nodes.size() );
+    iVelocityControlRaw.resize( nodes.size() );
+    iCanBusSharer.resize( nodes.size() );
+    for(int i=0; i<nodes.size(); i++)
     {
         if(types.get(i).asString() == "")
             CD_WARNING("Argument \"types\" empty at %d.\n",i);
 
-        //-- Create motor driver object with a pointer to the CAN device, its id and tr (these are locally stored parameters).
+        //-- Create CAN node objects with a pointer to the CAN device, its id and tr (these are locally stored parameters).
         Property options;
         options.put("device",types.get(i).asString());  //-- "TechnosoftIpos", "LacqueyFetch"
         options.put("canId",ids.get(i).asInt());
@@ -67,7 +67,7 @@ bool teo::CanBusControlboard::open(Searchable& config) {
         idxFromCanId[ ids.get(i).asInt() ] = i;
 
         //-- Push the motor driver on to the vectors.
-        drivers[i] = driver;
+        nodes[i] = driver;
         driver->view( iControlLimitsRaw[i] );
         driver->view( iControlModeRaw[i] );
         driver->view( iEncodersTimedRaw[i] );
@@ -97,29 +97,29 @@ bool teo::CanBusControlboard::open(Searchable& config) {
     }
 
     //-- Check the status of each driver.
-    std::vector<int> tmp( drivers.size() );
+    std::vector<int> tmp( nodes.size() );
     this->getControlModes( tmp.data() );
 
     //-- Initialize the drivers: start (0.1) ready (0.1) on (2) enable. Wait between each step.
-    for(int i=0; i<drivers.size(); i++)
+    for(int i=0; i<nodes.size(); i++)
     {
         if( ! iCanBusSharer[i]->start() )
             return false;
     }
     yarp::os::Time::delay(0.1);
-    for(int i=0; i<drivers.size(); i++)
+    for(int i=0; i<nodes.size(); i++)
     {
         if( ! iCanBusSharer[i]->readyToSwitchOn() )
             return false;
     }
     yarp::os::Time::delay(0.1);
-    for(int i=0; i<drivers.size(); i++)
+    for(int i=0; i<nodes.size(); i++)
     {
         if( ! iCanBusSharer[i]->switchOn() )
             return false;
     }
     yarp::os::Time::delay(2);
-    for(int i=0; i<drivers.size(); i++)
+    for(int i=0; i<nodes.size(); i++)
     {
         if( ! iCanBusSharer[i]->enable() )
             return false;
@@ -127,12 +127,12 @@ bool teo::CanBusControlboard::open(Searchable& config) {
 
     if( config.check("home") ) {
         CD_DEBUG("Moving motors to zero.\n");
-        for(int i=0; i<drivers.size(); i++)
+        for(int i=0; i<nodes.size(); i++)
         {
             if ( ! iPositionControlRaw[i]->positionMoveRaw(0,0) )
                 return false;
         }
-        for(int i=0; i<drivers.size(); i++)
+        for(int i=0; i<nodes.size(); i++)
         {
             bool motionDone = false;
             while( ! motionDone ) {
@@ -163,7 +163,7 @@ bool teo::CanBusControlboard::close() {
 
     //-- Disable and shutdown the physical drivers.
     bool ok = true;
-    for(int i=0; i<drivers.size(); i++)
+    for(int i=0; i<nodes.size(); i++)
     {
         ok &= iCanBusSharer[i]->switchOn();  //-- "switch on" also acts as "disable".
 
@@ -171,10 +171,10 @@ bool teo::CanBusControlboard::close() {
     }
 
     //-- Delete the driver objects.
-    for(int i=0; i<drivers.size(); i++)
+    for(int i=0; i<nodes.size(); i++)
     {
-        delete drivers[i];
-        drivers[i] = 0;
+        delete nodes[i];
+        nodes[i] = 0;
     }
 
     canBusDevice.close();

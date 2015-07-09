@@ -8,7 +8,7 @@ bool teo::CanBusControlboard::setTorqueMode() {
     CD_INFO("\n");
 
     bool ok = true;
-    for(int j=0; j<drivers.size(); j++)
+    for(int j=0; j<nodes.size(); j++)
     {
         ok &= this->setTorqueMode(j);
     }
@@ -21,7 +21,7 @@ bool teo::CanBusControlboard::getRefTorques(double *t){
     CD_INFO("\n");
 
     bool ok = true;
-    for(int j=0; j<drivers.size(); j++)
+    for(int j=0; j<nodes.size(); j++)
     {
         ok &= this->getRefTorque(j, &(t[j]));
     }
@@ -45,7 +45,7 @@ bool teo::CanBusControlboard::setRefTorques(const double *t) {
     CD_INFO("\n");
 
     bool ok = true;
-    for(int j=0; j<drivers.size(); j++)
+    for(int j=0; j<nodes.size(); j++)
     {
         ok &= this->setRefTorque(j, t[j]);
     }
@@ -114,7 +114,7 @@ bool teo::CanBusControlboard::getTorques(double *t) {
     CD_INFO("\n");
 
     bool ok = true;
-    for(int j=0; j<drivers.size(); j++)
+    for(int j=0; j<nodes.size(); j++)
     {
         ok &= this->getTorque(j, &(t[j]));
     }
@@ -138,7 +138,7 @@ bool teo::CanBusControlboard::getTorqueRanges(double *min, double *max) {
     CD_INFO("\n");
 
     bool ok = true;
-    for(int j=0; j<drivers.size(); j++)
+    for(int j=0; j<nodes.size(); j++)
     {
         ok &= this->getTorqueRange(j, min, max);
     }
@@ -151,7 +151,7 @@ bool teo::CanBusControlboard::setTorquePids(const Pid *pids) {
     CD_INFO("\n");
 
     bool ok = true;
-    for(int j=0; j<drivers.size(); j++)
+    for(int j=0; j<nodes.size(); j++)
     {
         ok &= this->setTorquePid(j, pids[j]);
     }
@@ -175,7 +175,7 @@ bool teo::CanBusControlboard::setTorqueErrorLimits(const double *limits) {
     CD_INFO("\n");
 
     bool ok = true;
-    for(int j=0; j<drivers.size(); j++)
+    for(int j=0; j<nodes.size(); j++)
     {
         ok &= this->setTorqueErrorLimit(j, limits[j]);
     }
@@ -199,7 +199,7 @@ bool teo::CanBusControlboard::getTorqueErrors(double *errs) {
     CD_INFO("\n");
 
     bool ok = true;
-    for(int j=0; j<drivers.size(); j++)
+    for(int j=0; j<nodes.size(); j++)
     {
         ok &= this->getTorqueError(j, &(errs[j]));
     }
@@ -223,7 +223,7 @@ bool teo::CanBusControlboard::getTorquePidOutputs(double *outs) {
     CD_INFO("\n");
 
     bool ok = true;
-    for(int j=0; j<drivers.size(); j++)
+    for(int j=0; j<nodes.size(); j++)
     {
         ok &= this->getTorquePidOutput(j, &(outs[j]));
     }
@@ -247,7 +247,7 @@ bool teo::CanBusControlboard::getTorquePids(Pid *pids){
     CD_INFO("\n");
 
     bool ok = true;
-    for(int j=0; j<drivers.size(); j++)
+    for(int j=0; j<nodes.size(); j++)
     {
         ok &= this->getTorquePid(j, &(pids[j]));
     }
@@ -271,7 +271,7 @@ bool teo::CanBusControlboard::getTorqueErrorLimits(double *limits) {
     CD_INFO("\n");
 
     bool ok = true;
-    for(int j=0; j<drivers.size(); j++)
+    for(int j=0; j<nodes.size(); j++)
     {
         ok &= this->getTorqueErrorLimit(j, &(limits[j]));
     }
