@@ -334,6 +334,7 @@ class CuiAbsolute : public DeviceDriver, public IControlLimitsRaw, public IContr
 
         double lastUsage;
 
+        //-- Encoder stuff
         double encoder;
         uint32_t encoderTimestamp;
         yarp::os::Semaphore encoderReady;

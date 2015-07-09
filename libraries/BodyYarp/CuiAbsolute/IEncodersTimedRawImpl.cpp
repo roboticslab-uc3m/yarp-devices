@@ -10,6 +10,11 @@ bool teo::CuiAbsolute::getEncoderTimedRaw(int j, double *encs, double *time) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
+    encoderReady.wait();
+    *encs = encoder;
+    *time = encoderTimestamp;
+    encoderReady.post();
+
     return true;
 }
 
