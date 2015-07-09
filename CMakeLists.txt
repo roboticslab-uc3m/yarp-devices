@@ -34,6 +34,7 @@ option(ENABLE_recordLocomotion "Choose if you want to compile recordLocomotion" 
 option(ENABLE_playbackLocomotion "Choose if you want to compile playbackLocomotion" TRUE)
 
 ### options: force default
+option(ENABLE_BodyYarp_CuiAbsolute "Enable/disable compilation of BodyYarp_CuiAbsolute" TRUE)
 option(ENABLE_BodyYarp_CanBusHico "Enable/disable compilation of BodyYarp_CanBusHico" TRUE)
 option(ENABLE_BodyYarp_TechnosoftIpos "Enable/disable compilation of BodyYarp_TechnosoftIpos" TRUE)
 option(ENABLE_BodyYarp_LacqueyFetch "Enable/disable compilation of BodyYarp_LacqueyFetch" TRUE)
