@@ -23,6 +23,8 @@ public:
 
     virtual bool setCanBusPtr(CanBusHico *canDevicePtr) = 0;
 
+    virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw) = 0;
+
     /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
     virtual bool start() = 0;
 
