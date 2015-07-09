@@ -45,22 +45,26 @@ bool teo::TechnosoftIpos::getEncoderRaw(int j, double *v) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    //*************************************************************
-    uint8_t msg_read[]={0x40,0x64,0x60,0x00,0x00,0x00,0x00,0x00}; // Query position.
-    if( ! send( 0x600, 8, msg_read) )
-    {
-        CD_ERROR("Could not send \"read encoder\". %s\n", msgToStr(0x600, 8, msg_read).c_str() );
-        return false;
+    if( ! iEncodersTimedRawExternal ) {
+        //*************************************************************
+        uint8_t msg_read[]={0x40,0x64,0x60,0x00,0x00,0x00,0x00,0x00}; // Query position.
+        if( ! send( 0x600, 8, msg_read) )
+        {
+            CD_ERROR("Could not send \"read encoder\". %s\n", msgToStr(0x600, 8, msg_read).c_str() );
+            return false;
+        }
+        //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+        Time::delay(DELAY);  // Must delay as it will be from same driver.
+        //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+        encoderReady.wait();
+        *v = encoder;
+        encoderReady.post();
+
+        //*************************************************************
+    } else {
+        iEncodersTimedRawExternal->getEncoderRaw(0,v);
     }
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    Time::delay(DELAY);  // Must delay as it will be from same driver.
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-    encoderReady.wait();
-    *v = encoder;
-    encoderReady.post();
-
-    //*************************************************************
 
     return true;
 }
