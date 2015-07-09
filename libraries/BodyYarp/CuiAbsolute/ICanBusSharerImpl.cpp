@@ -50,6 +50,11 @@ bool teo::CuiAbsolute::recoverFromError() {
 
 bool teo::CuiAbsolute::interpretMessage( can_msg * message) {
 
+    CD_DEBUG("Got absolute encoder value. %s\n",msgToStr(message).c_str());
+    int got;
+    memcpy(&got, message->data+4,4);
+    CD_SUCCESS("Got absolute encoder value, as an int: %d\n",got);
+
     return true;
 
 }  //-- ends interpretMessage
