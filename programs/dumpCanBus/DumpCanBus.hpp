@@ -25,7 +25,7 @@ namespace teo
 {
 
 /**
- * @ingroup DumpCanBus
+ * @ingroup dumpCanBus
  *
  * @brief Launches one CAN bus driver, dumps output.
  *
