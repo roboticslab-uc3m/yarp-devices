@@ -17,8 +17,10 @@ void InCvPort::onRead(Bottle& b) {
     printf("%f %f %f\n",x,y,z);
     if( x > 50 ) iPositionControl->relativeMove(0, -5);
     if( x < -50 ) iPositionControl->relativeMove(0, 5);
-    //iPositionControl->positionMove(0,0.0);
-    //iPositionControl->positionMove(1,0.0);
+    //
+    if( y > 50 ) iPositionControl->relativeMove(1, -2);
+    if( y < -50 ) iPositionControl->relativeMove(1, 2);
+
 }
 
 /************************************************************************/
