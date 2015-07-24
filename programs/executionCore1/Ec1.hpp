@@ -15,6 +15,12 @@ using namespace yarp::os;
 namespace teo
 {
 
+/**
+ * @ingroup ec1
+ *
+ * @brief Input port of computer vision data.
+ *
+ */
 class InCvPort : public BufferedPort<Bottle> {
     public:
         void setIPositionControl(yarp::dev::IPositionControl *iPositionControl) {
@@ -36,6 +42,12 @@ class InCvPort : public BufferedPort<Bottle> {
         yarp::dev::IPositionControl *iPositionControl;
 };
 
+/**
+ * @ingroup ec1
+ *
+ * @brief Input port of speech recognition data.
+ *
+ */
 class InSrPort : public BufferedPort<Bottle> {
     public:
         void setInCvPortPtr(BufferedPort<Bottle> *inCvPortPtr) {

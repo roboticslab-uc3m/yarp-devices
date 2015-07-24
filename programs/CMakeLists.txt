@@ -1,7 +1,7 @@
 # Copyright: Universidad Carlos III de Madrid (C) 2013-2014
 # Authors: Juan G. Victores
 
-add_subdirectory(ec1)
+add_subdirectory(executionCore1)
 
 add_subdirectory(dumpCanBus)
 
