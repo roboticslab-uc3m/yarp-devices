@@ -57,6 +57,9 @@ class InSrPort : public BufferedPort<Bottle> {
         BufferedPort<Bottle>* inCvPortPtr;
 };
 
+namespace teo
+{
+
 class Ec1 : public RFModule {
 private:
     InSrPort inSrPort;
@@ -71,5 +74,7 @@ private:
   public:
     bool configure(ResourceFinder &rf);
 };
+
+}  // namespace teo
 
 #endif  // __EC1_HPP__

@@ -2,6 +2,9 @@
 
 #include "Ec1.hpp"
 
+namespace teo
+{
+
 /************************************************************************/
 
 bool Ec1::configure(ResourceFinder &rf) {
@@ -73,3 +76,5 @@ bool Ec1::interruptModule() {
 }
 
 /************************************************************************/
+
+}  // namespace teo

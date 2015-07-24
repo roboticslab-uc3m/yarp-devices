@@ -5,7 +5,7 @@
  * @ingroup teo_body_programs
  * \defgroup ec1 ec1
  *
- * @brief Creates an instance of Ec1.
+ * @brief Creates an instance of teo::Ec1.
  *
  * @section ec1_legal Legal
  *
@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
     rf.setDefaultConfigFile("ec1.ini");
     rf.configure(argc, argv);
 
-    Ec1 mod;
+    teo::Ec1 mod;
     if(rf.check("help")) {
         return mod.runModule(rf);
     }
