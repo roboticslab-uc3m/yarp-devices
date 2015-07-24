@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
     Network yarp;
     if (!yarp.checkNetwork()) {
         CD_ERROR("Found no yarp network (try running \"yarpserver &\"), bye!\n");
-        return -1;
+        return 1;
     }
     CD_SUCCESS("Found yarp network.\n");
 
