@@ -12,6 +12,9 @@
 
 using namespace yarp::os;
 
+namespace teo
+{
+
 class InCvPort : public BufferedPort<Bottle> {
     public:
         void setIPositionControl(yarp::dev::IPositionControl *iPositionControl) {
@@ -57,9 +60,13 @@ class InSrPort : public BufferedPort<Bottle> {
         BufferedPort<Bottle>* inCvPortPtr;
 };
 
-namespace teo
-{
 
+/**
+ * @ingroup ec1
+ *
+ * @brief Execution Core 1.
+ *
+ */
 class Ec1 : public RFModule {
 private:
     InSrPort inSrPort;
