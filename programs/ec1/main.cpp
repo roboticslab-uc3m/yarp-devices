@@ -2,7 +2,7 @@
 
 /**
  * 
- * @ingroup teo_head_programs
+ * @ingroup teo_programs
  * \defgroup ec1 ec1
  *
  * @brief The ec1 program.
