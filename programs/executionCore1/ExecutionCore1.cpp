@@ -45,7 +45,7 @@ bool ExecutionCore1::configure(ResourceFinder &rf) {
     //-- inCvPort.useCallback();  // wait for inSrPort to call it
     inSrPort.setInCvPortPtr(&inCvPort);
     inSrPort.useCallback();
-    inSrPort.open("/executionCore1/dm/command:i");
+    inSrPort.open("/executionCore1/dialogueManager/command:i");
     inCvPort.open("/executionCore1/cv/state:i");
 
     return true;
