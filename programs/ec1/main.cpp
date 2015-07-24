@@ -1,17 +1,15 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /**
- * 
- * @ingroup teo_programs
+ *
+ * @ingroup teo_body_programs
  * \defgroup ec1 ec1
  *
- * @brief The ec1 program.
+ * @brief Creates an instance of Ec1.
  *
- * The ec1 program.
- * 
  * @section ec1_legal Legal
  *
- * Copyright: 2013 (C) Universidad Carlos III de Madrid
+ * Copyright: 2015 (C) Universidad Carlos III de Madrid
  *
  * Author: <a href="http://roboticslab.uc3m.es/roboticslab/persona.php?id_pers=72">Juan G. Victores</a>
  *
