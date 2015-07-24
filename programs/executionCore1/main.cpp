@@ -5,7 +5,7 @@
  * @ingroup teo_body_programs
  * \defgroup ec1 ec1
  *
- * @brief Creates an instance of teo::Ec1.
+ * @brief Creates an instance of teo::ExecutionCore1.
  *
  * @section ec1_legal Legal
  *
@@ -24,7 +24,7 @@
 
 #include <yarp/os/all.h>
 
-#include "Ec1.hpp"
+#include "ExecutionCore1.hpp"
 
 using namespace yarp::os;
 
@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
     rf.setDefaultConfigFile("ec1.ini");
     rf.configure(argc, argv);
 
-    teo::Ec1 mod;
+    teo::ExecutionCore1 mod;
     if(rf.check("help")) {
         return mod.runModule(rf);
     }

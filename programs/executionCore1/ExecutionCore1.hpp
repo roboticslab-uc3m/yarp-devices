@@ -79,7 +79,7 @@ class InSrPort : public BufferedPort<Bottle> {
  * @brief Execution Core 1.
  *
  */
-class Ec1 : public RFModule {
+class ExecutionCore1 : public RFModule {
 private:
     InSrPort inSrPort;
     InCvPort inCvPort;

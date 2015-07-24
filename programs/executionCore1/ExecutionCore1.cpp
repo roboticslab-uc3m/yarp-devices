@@ -1,24 +1,24 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "Ec1.hpp"
+#include "ExecutionCore1.hpp"
 
 namespace teo
 {
 
 /************************************************************************/
 
-bool Ec1::configure(ResourceFinder &rf) {
+bool ExecutionCore1::configure(ResourceFinder &rf) {
 
     //ConstString fileName(DEFAULT_FILE_NAME);
     
     printf("--------------------------------------------------------------\n");
     if (rf.check("help")) {
-        printf("Ec1 options:\n");
+        printf("ExecutionCore1 options:\n");
         printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
         //printf("\t--file (default: \"%s\")\n",fileName.c_str());
     }
     //if (rf.check("file")) fileName = rf.find("file").asString();
-    //printf("Ec1 using file: %s\n",fileName.c_str());
+    //printf("ExecutionCore1 using file: %s\n",fileName.c_str());
 
     printf("--------------------------------------------------------------\n");
     if(rf.check("help")) {
@@ -52,20 +52,20 @@ bool Ec1::configure(ResourceFinder &rf) {
 }
 
 /************************************************************************/
-double Ec1::getPeriod() {
+double ExecutionCore1::getPeriod() {
     return 2.0;  // Fixed, in seconds, the slow thread that calls updateModule below
 }
 
 /************************************************************************/
-bool Ec1::updateModule() {
-    //printf("StateMachine in state [%d]. Ec1 alive...\n", stateMachine.getMachineState());
+bool ExecutionCore1::updateModule() {
+    //printf("StateMachine in state [%d]. ExecutionCore1 alive...\n", stateMachine.getMachineState());
     return true;
 }
 
 /************************************************************************/
 
-bool Ec1::interruptModule() {
-    printf("Ec1 closing...\n");
+bool ExecutionCore1::interruptModule() {
+    printf("ExecutionCore1 closing...\n");
     inCvPort.disableCallback();
     inSrPort.disableCallback();
     inCvPort.interrupt();

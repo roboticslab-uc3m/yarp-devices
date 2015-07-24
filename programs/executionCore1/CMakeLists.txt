@@ -2,9 +2,9 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-IF (ENABLE_ec1)
+IF (ENABLE_executionCore1)
 
-set(KEYWORD "ec1")
+set(KEYWORD "executionCore1")
 
 # Find YARP.  Point the YARP_DIR environment variable at your build.
 find_package(YARP REQUIRED)
@@ -33,5 +33,5 @@ else (folder_source)
   message(FATAL_ERROR "No source code files found. Please add something")
 endif (folder_source)
 
-ENDIF (ENABLE_ec1)
+ENDIF (ENABLE_executionCore1)
 
