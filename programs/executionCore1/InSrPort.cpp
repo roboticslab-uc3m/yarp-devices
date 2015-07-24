@@ -10,12 +10,12 @@ namespace teo
 void InSrPort::onRead(Bottle& b) {
     switch ( b.get(0).asVocab() ) {
         case VOCAB_FOLLOW_ME:
-            printf("enabling callback\n");
-            inCvPortPtr->useCallback();
+            printf("follow\n");
+            inCvPortPtr->setFollow(true);
             break;
         case VOCAB_STOP_FOLLOWING:
-            printf("disabling callback\n");
-            inCvPortPtr->disableCallback();
+            printf("stopFollowing\n");
+            inCvPortPtr->setFollow(false);
             break;
         default:
             break;

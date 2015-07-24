@@ -42,8 +42,8 @@ bool ExecutionCore1::configure(ResourceFinder &rf) {
     inCvPort.setIPositionControl(iPositionControl);
 
     //-----------------OPEN LOCAL PORTS------------//
-    //-- inCvPort.useCallback();  // wait for inSrPort to call it
     inSrPort.setInCvPortPtr(&inCvPort);
+    inCvPort.useCallback();
     inSrPort.useCallback();
     inSrPort.open("/executionCore1/dialogueManager/command:i");
     inCvPort.open("/executionCore1/cv/state:i");

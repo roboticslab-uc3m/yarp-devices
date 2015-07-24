@@ -8,7 +8,9 @@ namespace teo
 /************************************************************************/
 
 void InCvPort::onRead(Bottle& b) {
+    if ( ! follow ) return;
     if (b.size() < 3) return;
+
     double x = b.get(0).asDouble();
     double y = b.get(1).asDouble();
     double z = b.get(2).asDouble();
@@ -17,6 +19,13 @@ void InCvPort::onRead(Bottle& b) {
     if( x < -50 ) iPositionControl->relativeMove(0, 5);
     //iPositionControl->positionMove(0,0.0);
     //iPositionControl->positionMove(1,0.0);
+}
+
+/************************************************************************/
+
+void InCvPort::setFollow(bool value)
+{
+    follow = value;
 }
 
 /************************************************************************/

@@ -7,6 +7,8 @@
 #include <yarp/dev/all.h>
 #include <stdlib.h>
 
+#include "InCvPort.hpp"
+
 #define VOCAB_FOLLOW_ME VOCAB4('f','o','l','l')
 #define VOCAB_STOP_FOLLOWING VOCAB4('s','f','o','l')
 
@@ -23,7 +25,7 @@ namespace teo
  */
 class InSrPort : public BufferedPort<Bottle> {
     public:
-        void setInCvPortPtr(BufferedPort<Bottle> *inCvPortPtr) {
+        void setInCvPortPtr(InCvPort *inCvPortPtr) {
             this->inCvPortPtr = inCvPortPtr;
         }
 
@@ -31,7 +33,7 @@ class InSrPort : public BufferedPort<Bottle> {
         /** Callback on incoming Bottle. **/
         virtual void onRead(Bottle& b);
 
-        BufferedPort<Bottle>* inCvPortPtr;
+        InCvPort* inCvPortPtr;
 };
 
 }  // namespace teo
