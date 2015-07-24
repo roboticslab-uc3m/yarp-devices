@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __EC1_HPP__
-#define __EC1_HPP__
+#ifndef __EXECUTION_CORE1_HPP__
+#define __EXECUTION_CORE1_HPP__
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
@@ -96,4 +96,4 @@ private:
 
 }  // namespace teo
 
-#endif  // __EC1_HPP__
+#endif  // __EXECUTION_CORE1_HPP__
