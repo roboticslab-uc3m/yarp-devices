@@ -25,13 +25,6 @@ namespace teo
 {
 
 /**
- *
- * @ingroup teo_body_libraries
- * \defgroup DumpCanBus
- * @brief Contains teo::DumpCanBus.
- */
-
-/**
  * @ingroup DumpCanBus
  *
  * @brief Launches one CAN bus driver, dumps output.
