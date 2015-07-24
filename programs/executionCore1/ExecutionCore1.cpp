@@ -28,7 +28,7 @@ bool ExecutionCore1::configure(ResourceFinder &rf) {
     //
     Property headOptions;
     headOptions.put("device","remote_controlboard");
-    headOptions.put("local","/ec1/head");
+    headOptions.put("local","/executionCore1/head");
     headOptions.put("remote","/teo/head");
     headDevice.open(headOptions);
     if( ! headDevice.isValid() ) {
@@ -45,8 +45,8 @@ bool ExecutionCore1::configure(ResourceFinder &rf) {
     //-- inCvPort.useCallback();  // wait for inSrPort to call it
     inSrPort.setInCvPortPtr(&inCvPort);
     inSrPort.useCallback();
-    inSrPort.open("/ec1/dm/command:i");
-    inCvPort.open("/ec1/cv/state:i");
+    inSrPort.open("/executionCore1/dm/command:i");
+    inCvPort.open("/executionCore1/cv/state:i");
 
     return true;
 }

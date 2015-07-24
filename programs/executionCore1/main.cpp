@@ -3,11 +3,11 @@
 /**
  *
  * @ingroup teo_body_programs
- * \defgroup ec1 ec1
+ * \defgroup executionCore1 executionCore1
  *
  * @brief Creates an instance of teo::ExecutionCore1.
  *
- * @section ec1_legal Legal
+ * @section executionCore1_legal Legal
  *
  * Copyright: 2015 (C) Universidad Carlos III de Madrid
  *
@@ -18,7 +18,7 @@
  *
  * <hr>
  *
- * This file can be edited at ec1
+ * This file can be edited at executionCore1
  *
  */
 
@@ -32,8 +32,8 @@ int main(int argc, char **argv) {
 
     ResourceFinder rf;
     rf.setVerbose(true);
-    rf.setDefaultContext("ec1");
-    rf.setDefaultConfigFile("ec1.ini");
+    rf.setDefaultContext("executionCore1");
+    rf.setDefaultConfigFile("executionCore1.ini");
     rf.configure(argc, argv);
 
     teo::ExecutionCore1 mod;

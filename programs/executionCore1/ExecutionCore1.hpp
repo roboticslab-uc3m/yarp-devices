@@ -16,7 +16,7 @@ namespace teo
 {
 
 /**
- * @ingroup ec1
+ * @ingroup executionCore1
  *
  * @brief Input port of computer vision data.
  *
@@ -43,7 +43,7 @@ class InCvPort : public BufferedPort<Bottle> {
 };
 
 /**
- * @ingroup ec1
+ * @ingroup executionCore1
  *
  * @brief Input port of speech recognition data.
  *
@@ -74,7 +74,7 @@ class InSrPort : public BufferedPort<Bottle> {
 
 
 /**
- * @ingroup ec1
+ * @ingroup executionCore1
  *
  * @brief Execution Core 1.
  *
