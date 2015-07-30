@@ -18,8 +18,8 @@ void InCvPort::onRead(Bottle& b) {
     if( x > 50 ) iPositionControl->relativeMove(0, -5);
     if( x < -50 ) iPositionControl->relativeMove(0, 5);
     //
-    if( y > 50 ) iPositionControl->relativeMove(1, 2);
-    if( y < -50 ) iPositionControl->relativeMove(1, -2);
+    if( y > -50 ) iPositionControl->relativeMove(1, 2);
+    if( y < -70 ) iPositionControl->relativeMove(1, -2);
 
 }
 
