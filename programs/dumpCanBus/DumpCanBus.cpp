@@ -18,12 +18,8 @@ bool DumpCanBus::configure(ResourceFinder &rf) {
         return false;
     }
 
-    //-- /dev/can0 --
-    Bottle devCan0 = rf.findGroup("devCan0");
-    CD_DEBUG("%s\n",devCan0.toString().c_str());
-    Property optionsDevCan0;
-    optionsDevCan0.fromString(devCan0.toString());
-    deviceDevCan0.open(optionsDevCan0);
+    CD_DEBUG("%s\n",rf.toString().c_str());
+    deviceDevCan0.open(rf);
     if (!deviceDevCan0.isValid()) {
         CD_ERROR("deviceDevCan0 instantiation not worked.\n");
         return false;
