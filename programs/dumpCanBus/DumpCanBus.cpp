@@ -26,6 +26,8 @@ bool DumpCanBus::configure(ResourceFinder &rf) {
     }
     deviceDevCan0.view(iCanBus);
 
+    lastNow = Time::now();
+
     return this->start();
 }
 
@@ -50,6 +52,7 @@ bool DumpCanBus::close() {
 
 std::string DumpCanBus::msgToStr(can_msg* message) {
 
+
     std::stringstream tmp;
     for(int i=0; i < message->dlc-1; i++)
     {
@@ -60,7 +63,10 @@ std::string DumpCanBus::msgToStr(can_msg* message) {
     tmp << std::dec << (message->id & 0x7F);
     tmp << ") via(";
     tmp << std::hex << (message->id & 0xFF80);
-    tmp << ").";
+    tmp << "), t:" << Time::now() - lastNow << ".";
+
+    lastNow = Time::now();
+
     return tmp.str();
 }
 

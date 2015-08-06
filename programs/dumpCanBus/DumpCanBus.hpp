@@ -36,11 +36,13 @@ class DumpCanBus : public RFModule, public Thread {
         bool configure(ResourceFinder &rf);
 
     protected:
+
         yarp::dev::PolyDriver deviceDevCan0;
         CanBusHico* iCanBus;
 
         /** A helper function to display CAN messages. */
         std::string msgToStr(can_msg* message);
+        double lastNow;
 
         virtual double getPeriod() {return 3.0;}
         virtual bool updateModule();
