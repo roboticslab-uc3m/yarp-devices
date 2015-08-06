@@ -63,7 +63,7 @@ std::string DumpCanBus::msgToStr(can_msg* message) {
     tmp << std::dec << (message->id & 0x7F);
     tmp << ") via(";
     tmp << std::hex << (message->id & 0xFF80);
-    tmp << "), t:" << Time::now() - lastNow << ".";
+    tmp << "), t:" << Time::now() - lastNow << "[s].";
 
     lastNow = Time::now();
 
