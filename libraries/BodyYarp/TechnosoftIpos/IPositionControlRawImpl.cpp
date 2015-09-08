@@ -138,8 +138,8 @@ bool teo::TechnosoftIpos::setRefSpeedRaw(int j, double sp) {
 
     uint8_t msg_posmode_speed[]={0x23,0x81,0x60,0x00,0x00,0x00,0x00,0x00};  // Manual 6081h: Profile velocity
 
-    int sendRefSpeed = sp * this->tr * 11.11112;  // Appply tr & convert units to encoder increments
-    memcpy(msg_posmode_speed+4,&sendRefSpeed,4);
+    u_int16_t sendRefSpeed = sp * this->tr / 22.5;  // Appply tr & convert units to encoder increments
+    memcpy(msg_posmode_speed+6,&sendRefSpeed,2);
 
     if( ! send( 0x600, 8, msg_posmode_speed) )
     {

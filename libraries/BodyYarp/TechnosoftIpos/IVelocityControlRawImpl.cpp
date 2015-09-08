@@ -13,8 +13,8 @@ bool teo::TechnosoftIpos::velocityMoveRaw(int j, double sp) {
     //*************************************************************
     uint8_t msg_vel[]={0x23,0xFF,0x60,0x00,0x00,0x00,0x00,0x00}; // Velocity target
 
-    int sendVel = sp * this->tr * 11.11112;  // Apply tr & convert units to encoder increments
-    memcpy(msg_vel+4,&sendVel,4);
+    int16_t sendVel = sp * this->tr / 22.5;  // Apply tr & convert units to encoder increments
+    memcpy(msg_vel+6,&sendVel,2);
 
     if( ! send(0x600, 8, msg_vel)){
         CD_ERROR("Sent \"velocity target\". %s\n", msgToStr(0x600, 8, msg_vel).c_str() );
