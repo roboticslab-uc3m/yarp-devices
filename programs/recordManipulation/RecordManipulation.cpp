@@ -34,11 +34,14 @@ bool RecordManipulation::configure(yarp::os::ResourceFinder &rf) {
         CD_ERROR("Could not configure from \"launchManipulation.ini\".\n");
         return false;
     }
-    CD_DEBUG("Configuring left arm from %s.\n",allOptions.toString().c_str());
+    CD_SUCCESS("Configuring /dev/can0 from %s.\n",allOptions.toString().c_str());
 
     //-- Left arm --
-    //yarp::os::Property leftArmOptions = allOptions.findGroup("leftArm");
-    /*if (! leftArmOptions  ) {
+    yarp::os::Bottle leftArmBottle = allOptions.findGroup("devCan0");
+    yarp::os::Property leftArmOptions;
+    leftArmOptions.fromString(leftArmBottle.toString());
+    CD_DEBUG("Configuring /dev/can0 from %s.\n",allOptions.toString().c_str());
+    /*if (!  ) {
         CD_ERROR("Could not configure leftArm.\n");
         return false;
     }*/
