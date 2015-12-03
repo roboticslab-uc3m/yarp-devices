@@ -55,7 +55,7 @@ bool RecordManipulation::configure(yarp::os::ResourceFinder &rf) {
         return false;
     }
 
-    //-- right arm --
+    //-- /dev/can1 --
     yarp::os::Bottle devCan1 = allOptions.findGroup("devCan1");
     CD_DEBUG("%s\n",devCan1.toString().c_str());
     yarp::os::Property optionsDevCan1;

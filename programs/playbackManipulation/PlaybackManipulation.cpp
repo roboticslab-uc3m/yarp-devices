@@ -41,22 +41,26 @@ bool PlaybackManipulation::configure(ResourceFinder &rf) {
     }
     CD_SUCCESS("Opened file: %s.\n",fileName.c_str());
 
-    //-- left arm --
-    std::string leftArmIni = rf.findFileByName("../manipulation/leftArm.ini");
 
-    Property leftArmOptions;
-    if (! leftArmOptions.fromConfigFile(leftArmIni) ) {  //-- Put first because defaults to wiping out.
-        CD_ERROR("Could not configure from \"leftArm.ini\".\n");
+    std::string allIni = rf.findFileByName("../launchManipulation/launchManipulation.ini");
+    yarp::os::Property allOptions;
+    if (! allOptions.fromConfigFile(allIni) ) {  //-- Put first because defaults to wiping out.
+        CD_ERROR("Could not configure from \"launchManipulation.ini\".\n");
         return false;
     }
-    CD_SUCCESS("Configured left arm from %s.\n",leftArmIni.c_str());
-    leftArmOptions.put("name","/teo/leftArm");
-    leftArmOptions.put("device","CanBusControlboard");
-    leftArmOptions.put("ptModeMs",ptModeMs);
-    if (rf.check("home")) leftArmOptions.put("home",1);
-    if (rf.check("reset")) leftArmOptions.put("reset",1);
+    //CD_SUCCESS("Configuring from %s.\n",allOptions.toString().c_str());
 
-    leftArmDevice.open(leftArmOptions);
+    //-- /dev/can0 --
+    yarp::os::Bottle devCan0 = allOptions.findGroup("devCan0");
+    CD_DEBUG("%s\n",devCan0.toString().c_str());
+    yarp::os::Property optionsDevCan0;
+    optionsDevCan0.fromString(devCan0.toString());
+    optionsDevCan0.put("device","CanBusControlboard");
+    optionsDevCan0.put("ptModeMs",ptModeMs);
+    if (rf.check("home")) optionsDevCan0.put("home",1);
+    if (rf.check("reset")) optionsDevCan0.put("reset",1);
+
+    leftArmDevice.open(optionsDevCan0);
     
     if (!leftArmDevice.isValid()) {
         CD_ERROR("leftArmDevice instantiation not worked.\n");
@@ -66,22 +70,17 @@ bool PlaybackManipulation::configure(ResourceFinder &rf) {
         return false;
     }
 
-    //-- right arm --
-    std::string rightArmIni = rf.findFileByName("../manipulation/rightArm.ini");
+    //-- /dev/can1 --
+    yarp::os::Bottle devCan1 = allOptions.findGroup("devCan1");
+    CD_DEBUG("%s\n",devCan1.toString().c_str());
+    yarp::os::Property optionsDevCan1;
+    optionsDevCan1.fromString(devCan1.toString());
+    optionsDevCan1.put("device","CanBusControlboard");
+    optionsDevCan1.put("ptModeMs",ptModeMs);
+    if (rf.check("home")) optionsDevCan1.put("home",1);
+    if (rf.check("reset")) optionsDevCan1.put("reset",1);
 
-    Property rightArmOptions;
-    if (! rightArmOptions.fromConfigFile(rightArmIni) ) {  //-- Put first because defaults to wiping out.
-        CD_ERROR("Could not configure from \"rightArm.ini\".\n");
-        return false;
-    }
-    CD_SUCCESS("Configured right arm from %s.\n",rightArmIni.c_str());
-    rightArmOptions.put("name","/teo/rightArm");
-    rightArmOptions.put("device","CanBusControlboard");
-    rightArmOptions.put("ptModeMs",ptModeMs);
-    if (rf.check("home")) rightArmOptions.put("home",1);
-    if (rf.check("reset")) rightArmOptions.put("reset",1);
-
-    rightArmDevice.open(rightArmOptions);
+    rightArmDevice.open(optionsDevCan1);
 
     if (!rightArmDevice.isValid()) {
         CD_ERROR("rightArmDevice instantiation not worked.\n");
