@@ -34,20 +34,21 @@ bool RecordManipulation::configure(yarp::os::ResourceFinder &rf) {
         CD_ERROR("Could not configure from \"launchManipulation.ini\".\n");
         return false;
     }
+    CD_DEBUG("Configuring left arm from %s.\n",allOptions.toString().c_str());
 
     //-- Left arm --
-    yarp::os::Property leftArmOptions = allOptions.findGroup("leftArm");
+    //yarp::os::Property leftArmOptions = allOptions.findGroup("leftArm");
     /*if (! leftArmOptions  ) {
         CD_ERROR("Could not configure leftArm.\n");
         return false;
     }*/
-    CD_SUCCESS("Configuring left arm from %s.\n",leftArmIni.c_str());
-    leftArmOptions.put("name","/teo/leftArm");
-    leftArmOptions.put("device","CanBusControlboard");
-    if (rf.check("home")) leftArmOptions.put("home",1);
-    if (rf.check("reset")) leftArmOptions.put("reset",1);
+    //CD_SUCCESS("Configuring left arm from %s.\n",leftArmIni.c_str());
+    //leftArmOptions.put("name","/teo/leftArm");
+    //leftArmOptions.put("device","CanBusControlboard");
+    //if (rf.check("home")) leftArmOptions.put("home",1);
+    //if (rf.check("reset")) leftArmOptions.put("reset",1);
 
-    leftArmDevice.open(leftArmOptions);
+    //leftArmDevice.open(leftArmOptions);
     
     if (!leftArmDevice.isValid()) {
         CD_ERROR("leftArmDevice instantiation not worked.\n");
