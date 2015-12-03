@@ -28,15 +28,20 @@ bool RecordManipulation::configure(yarp::os::ResourceFinder &rf) {
     moveGripperPort.open("/teo/grippers");
     moveGripperPort.useCallback();
 
-    //-- left arm --
-    std::string leftArmIni = rf.findFileByName("../manipulation/leftArm.ini");
-
-    yarp::os::Property leftArmOptions;
-    if (! leftArmOptions.fromConfigFile(leftArmIni) ) {  //-- Put first because defaults to wiping out.
-        CD_ERROR("Could not configure from \"leftArm.ini\".\n");
+    std::string allIni = rf.findFileByName("../launchManipulation/launchManipulation.ini");
+    yarp::os::Property allOptions;
+    if (! allOptions.fromConfigFile(allIni) ) {  //-- Put first because defaults to wiping out.
+        CD_ERROR("Could not configure from \"launchManipulation.ini\".\n");
         return false;
     }
-    CD_SUCCESS("Configured left arm from %s.\n",leftArmIni.c_str());
+
+    //-- Left arm --
+    yarp::os::Property leftArmOptions = allOptions.findGroup("leftArm");
+    /*if (! leftArmOptions  ) {
+        CD_ERROR("Could not configure leftArm.\n");
+        return false;
+    }*/
+    CD_SUCCESS("Configuring left arm from %s.\n",leftArmIni.c_str());
     leftArmOptions.put("name","/teo/leftArm");
     leftArmOptions.put("device","CanBusControlboard");
     if (rf.check("home")) leftArmOptions.put("home",1);
