@@ -209,47 +209,47 @@ bool teo::TechnosoftIpos::interpretMessage( can_msg * message) {
             int got;
             memcpy(&got, message->data+4,4);
             if(-5==got) {
-                CD_DEBUG("\t-iPOS specific: External Reference Torque Mode.\n");
+                CD_DEBUG("\t-iPOS specific: External Reference Torque Mode. canId: %d.\n",canId);
                 getModeReady.wait();
                     getMode = VOCAB_TORQUE_MODE;
                 getModeReady.post();
             } else if(-4==got) {
-                CD_DEBUG("\t-iPOS specific: External Reference Speed Mode.\n");
+                CD_DEBUG("\t-iPOS specific: External Reference Speed Mode. canId: %d.\n",canId);
                 getModeReady.wait();
                     getMode = 0;
                 getModeReady.post();
             } else if(-3==got) {
-                CD_DEBUG("\t-iPOS specific: External Reference Position Mode.\n");
+                CD_DEBUG("\t-iPOS specific: External Reference Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
                     getMode = 0;
                 getModeReady.post();
             } else if(-2==got) {
-                CD_DEBUG("\t-iPOS specific: Electronic Camming Position Mode.\n");
+                CD_DEBUG("\t-iPOS specific: Electronic Camming Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
                     getMode = 0;
                 getModeReady.post();
             } else if(-1==got) {
-                CD_DEBUG("\t-iPOS specific: Electronic Gearing Position Mode.\n");
+                CD_DEBUG("\t-iPOS specific: Electronic Gearing Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
                     getMode = 0;
                 getModeReady.post();
             } else if(1==got) {
-                CD_DEBUG("\t-Profile Position Mode.\n");
+                CD_DEBUG("\t-Profile Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
                     getMode = VOCAB_POSITION_MODE;
                 getModeReady.post();
             } else if(3==got) {
-                CD_DEBUG("\t-Profile Velocity Mode.\n");
+                CD_DEBUG("\t-Profile Velocity Mode. canId: %d.\n",canId);
                 getModeReady.wait();
                     getMode = VOCAB_VELOCITY_MODE;
                 getModeReady.post();
             } else if(6==got) {
-                CD_DEBUG("\t-Homing Mode.\n");
+                CD_DEBUG("\t-Homing Mode. canId: %d.\n",canId);
                 getModeReady.wait();
                     getMode = 0;
                 getModeReady.post();
             } else if(7==got) {
-                CD_DEBUG("\t-Interpolated Position Mode.\n");
+                CD_DEBUG("\t-Interpolated Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
                     getMode = 0;
                 getModeReady.post();
@@ -265,36 +265,36 @@ bool teo::TechnosoftIpos::interpretMessage( can_msg * message) {
             CD_DEBUG("Got \"status word\" from driver. %s\n",msgToStr(message).c_str());
 
             if(message->data[4] & 1){//0000 0001 (bit 0)
-                CD_DEBUG("\t-Ready to switch on.\n");
+                CD_DEBUG("\t-Ready to switch on. canId: %d.\n",canId);
             }
             if(message->data[4] & 2){//0000 0010 (bit 1)
-                CD_DEBUG("\t-Switched on.\n");
+                CD_DEBUG("\t-Switched on. canId: %d.\n",canId);
             }
             if(message->data[4] & 4){//0000 0100 (bit 2)
-                CD_DEBUG("\t-Operation Enabled.\n");
+                CD_DEBUG("\t-Operation Enabled. canId: %d.\n",canId);
             }
             if(message->data[4] & 8){//0000 1000 (bit 3)
-                CD_DEBUG("\t-Fault. If set, a fault condition is or was present in the drive.\n");
+                CD_DEBUG("\t-Fault. If set, a fault condition is or was present in the drive. canId: %d.\n",canId);
             }
             if(message->data[4] & 16){//0001 0000 (bit 4)
-                CD_DEBUG("\t-Motor supply voltage is present.\n");//true
+                CD_DEBUG("\t-Motor supply voltage is present. canId: %d.\n",canId);//true
             } else {
-                CD_DEBUG("\t-Motor supply voltage is absent.\n");//false
+                CD_DEBUG("\t-Motor supply voltage is absent. canId: %d.\n",canId);//false
             }
             if(!(message->data[4] & 32)){//0010 0000 (bit 5), negated.
-                CD_DEBUG("\t-Performing a quick stop.\n");
+                CD_DEBUG("\t-Performing a quick stop. canId: %d.\n",canId);
             }
             if(message->data[4] & 64){//0100 0000 (bit 6)
-                CD_DEBUG("\t-Switch on disabled.\n");
+                CD_DEBUG("\t-Switch on disabled. canId: %d.\n",canId);
             }
             if(message->data[4] & 128){//1000 0000 (bit 7)
-                CD_DEBUG("\t-Warning. A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored.\n");
+                CD_DEBUG("\t-Warning. A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored. canId: %d.\n",canId);
             }
             if(message->data[5] & 1){//(bit 8)
-                CD_DEBUG("\t-A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called.\n");
+                CD_DEBUG("\t-A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called. canId: %d.\n",canId);
             }
             if(message->data[5] & 2){//(bit 9)
-                CD_DEBUG("\t-Remote: drive parameters may be modified via CAN and the drive will execute the command message.\n"); // true
+                CD_DEBUG("\t-Remote: drive parameters may be modified via CAN and the drive will execute the command message. canId: %d.\n",canId); // true
             } else {
                 CD_DEBUG("\t-Remote: drive is in local mode and will not execute the command message (only TML internal)."); // false
             }
@@ -302,222 +302,222 @@ bool teo::TechnosoftIpos::interpretMessage( can_msg * message) {
                 targetReachedReady.wait();
                     targetReached = true;
                 targetReachedReady.post();
-                CD_DEBUG("\t-Target reached.\n");  // true
+                CD_DEBUG("\t-Target reached. canId: %d.\n",canId);  // true
             } else {
-                CD_DEBUG("\t-Target not reached.\n");  // false (improvised, not in manual, but reasonable).
+                CD_DEBUG("\t-Target not reached. canId: %d.\n",canId);  // false (improvised, not in manual, but reasonable).
                 targetReachedReady.wait();
                     targetReached = false;
                 targetReachedReady.post();
             }
             if(message->data[5] & 8){//(bit 11)
-                CD_DEBUG("\t-Internal Limit Active.\n");
+                CD_DEBUG("\t-Internal Limit Active. canId: %d.\n",canId);
             }
             if(message->data[5] & 64){//(bit 14)
-                CD_DEBUG("\t-Last event set has ocurred.\n"); // true
+                CD_DEBUG("\t-Last event set has ocurred. canId: %d.\n",canId); // true
             } else {
-                CD_DEBUG("\t-No event set or the programmed event has not occurred yet.\n"); // false
+                CD_DEBUG("\t-No event set or the programmed event has not occurred yet. canId: %d.\n",canId); // false
             }
             if(message->data[5] & 128){//(bit 15)
-                CD_DEBUG("\t-Axis on. Power stage is enabled. Motor control is performed.\n"); // true
+                CD_DEBUG("\t-Axis on. Power stage is enabled. Motor control is performed. canId: %d.\n",canId); // true
             } else {
-                CD_DEBUG("\t-Axis off. Power stage is disabled. Motor control is not performed.\n"); // false
+                CD_DEBUG("\t-Axis off. Power stage is disabled. Motor control is not performed. canId: %d.\n",canId); // false
             }
             return true;
         } else if( (message->data[1]==0x00)&&(message->data[2]==0x20) ) {  // Manual 2000h: Motion Error Register
             CD_DEBUG("Got SDO ack \"Motion Error Register\" from driver. %s\n",msgToStr(message).c_str());
 
             if(message->data[4] & 1){//0000 0001 (bit 0)
-                CD_DEBUG("\t*CAN error. Set when CAN controller is in error mode.\n");
+                CD_DEBUG("\t*CAN error. Set when CAN controller is in error mode. canId: %d.\n",canId);
             }
             if(message->data[4] & 2){//0000 0010 (bit 1)
-                CD_DEBUG("\t*Short-circuit. Set when protection is triggered.\n");
+                CD_DEBUG("\t*Short-circuit. Set when protection is triggered. canId: %d.\n",canId);
             }
             if(message->data[4] & 4){//0000 0100 (bit 2)
-                CD_DEBUG("\t*Invalid setup data. Set when the EEPROM stored setup data is not valid or not present.\n");
+                CD_DEBUG("\t*Invalid setup data. Set when the EEPROM stored setup data is not valid or not present. canId: %d.\n",canId);
             }
             if(message->data[4] & 8){//0000 1000 (bit 3)
-                CD_DEBUG("\t*Control error (position/speed error too big). Set when protection is triggered.\n");
+                CD_DEBUG("\t*Control error (position/speed error too big). Set when protection is triggered. canId: %d.\n",canId);
             }
             if(message->data[4] & 16){//0001 0000 (bit 4)
-                CD_DEBUG("\t*Communication error. Set when protection is triggered.\n");//true
+                CD_DEBUG("\t*Communication error. Set when protection is triggered. canId: %d.\n",canId);//true
             }
             if(message->data[4] & 32){//0010 0000 (bit 5)
-                CD_DEBUG("\t*Motor position wraps around. Set when protection is triggered.\n");
+                CD_DEBUG("\t*Motor position wraps around. Set when protection is triggered. canId: %d.\n",canId);
             }
             if(message->data[4] & 64){//0100 0000 (bit 6)
-                CD_DEBUG("\t*Positive limit switch active. Set when LSP input is in active state.\n");
+                CD_DEBUG("\t*Positive limit switch active. Set when LSP input is in active state. canId: %d.\n",canId);
             }
             if(message->data[4] & 128){//1000 0000 (bit 7)
-                CD_DEBUG("\t*Negative limit switch active. Set when LSN input is in active state.\n");
+                CD_DEBUG("\t*Negative limit switch active. Set when LSN input is in active state. canId: %d.\n",canId);
             }
             if(message->data[5] & 1){//(bit 8)
-                CD_DEBUG("\t*Over current. Set when protection is triggered.\n");
+                CD_DEBUG("\t*Over current. Set when protection is triggered. canId: %d.\n",canId);
             }
             if(message->data[5] & 2){//(bit 9)
-                CD_DEBUG("\t*I2t protection. Set when protection is triggered.\n");
+                CD_DEBUG("\t*I2t protection. Set when protection is triggered. canId: %d.\n",canId);
             }
             if(message->data[5] & 4){//(bit 10)
-                CD_DEBUG("\t*Over temperature motor. Set when protection is triggered.\n");
+                CD_DEBUG("\t*Over temperature motor. Set when protection is triggered. canId: %d.\n",canId);
             }
             if(message->data[5] & 8){//(bit 11)
-                CD_DEBUG("\t*Over temperature drive. Set when protection is triggered.\n");
+                CD_DEBUG("\t*Over temperature drive. Set when protection is triggered. canId: %d.\n",canId);
             }
             if(message->data[5] & 16){//(bit 12)
-                CD_DEBUG("\t*Over-voltage. Set when protection is triggered.\n");
+                CD_DEBUG("\t*Over-voltage. Set when protection is triggered. canId: %d.\n",canId);
             }
             if(message->data[5] & 32){//(bit 13)
-                CD_DEBUG("\t*Under-voltage. Set when protection is triggered.\n");
+                CD_DEBUG("\t*Under-voltage. Set when protection is triggered. canId: %d.\n",canId);
             }
             if(message->data[5] & 64){//(bit 14)
-                CD_DEBUG("\t*Command error. This bit is set in several situations. They can be distinguished either by the associated emergency code, or in conjunction with other bits.\n");
+                CD_DEBUG("\t*Command error. This bit is set in several situations. They can be distinguished either by the associated emergency code, or in conjunction with other bits. canId: %d.\n",canId);
             }
             if(message->data[5] & 128){//(bit 15)
-                CD_DEBUG("\t*Drive disabled due to enable input. Set when enable input is on disable state.\n");
+                CD_DEBUG("\t*Drive disabled due to enable input. Set when enable input is on disable state. canId: %d.\n",canId);
             }
             return true;
         } else if( (message->data[1]==0x02)&&(message->data[2]==0x10) ) {  // Manual 1002h contains "6041h Status word" plus Table 5.6
             CD_DEBUG("Got \"manufacturer status register\" from driver. %s\n",msgToStr(message).c_str());
 
             if(message->data[4] & 1){//0000 0001 (bit 0)
-                CD_DEBUG("\t-Ready to switch on.\n");
+                CD_DEBUG("\t-Ready to switch on. canId: %d.\n",canId);
             }
             if(message->data[4] & 2){//0000 0010 (bit 1)
-                CD_DEBUG("\t-Switched on.\n");
+                CD_DEBUG("\t-Switched on. canId: %d.\n",canId);
             }
             if(message->data[4] & 4){//0000 0100 (bit 2)
-                CD_DEBUG("\t-Operation Enabled.\n");
+                CD_DEBUG("\t-Operation Enabled. canId: %d.\n",canId);
             }
             if(message->data[4] & 8){//0000 1000 (bit 3)
-                CD_DEBUG("\t-Fault. If set, a fault condition is or was present in the drive.\n");
+                CD_DEBUG("\t-Fault. If set, a fault condition is or was present in the drive. canId: %d.\n",canId);
             }
             if(message->data[4] & 16){//0001 0000 (bit 4)
-                CD_DEBUG("\t-Motor supply voltage is present.\n");//true
+                CD_DEBUG("\t-Motor supply voltage is present. canId: %d.\n",canId);//true
             } else {
-                CD_DEBUG("\t-Motor supply voltage is absent.\n");//false
+                CD_DEBUG("\t-Motor supply voltage is absent. canId: %d.\n",canId);//false
             }
             if(!(message->data[4] & 32)){//0010 0000 (bit 5), negated.
-                CD_DEBUG("\t-Performing a quick stop.\n");
+                CD_DEBUG("\t-Performing a quick stop. canId: %d.\n",canId);
             }
             if(message->data[4] & 64){//0100 0000 (bit 6)
-                CD_DEBUG("\t-Switch on disabled.\n");
+                CD_DEBUG("\t-Switch on disabled. canId: %d.\n",canId);
             }
             if(message->data[4] & 128){//1000 0000 (bit 7)
-                CD_DEBUG("\t-Warning. A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored.\n");
+                CD_DEBUG("\t-Warning. A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored. canId: %d.\n",canId);
             }
             if(message->data[5] & 1){//(bit 8)
-                CD_DEBUG("\t-A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called.\n");
+                CD_DEBUG("\t-A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called. canId: %d.\n",canId);
             }
             if(message->data[5] & 2){//(bit 9)
-                CD_DEBUG("\t-Remote: drive parameters may be modified via CAN and the drive will execute the command message.\n"); // true
+                CD_DEBUG("\t-Remote: drive parameters may be modified via CAN and the drive will execute the command message. canId: %d.\n",canId); // true
             } else {
                 CD_DEBUG("\t-Remote: drive is in local mode and will not execute the command message (only TML internal)."); // false
             }
             if(message->data[5] & 4){//(bit 10)
-                CD_DEBUG("\t-Target reached.\n");  // true
+                CD_DEBUG("\t-Target reached. canId: %d.\n",canId);  // true
             } else {
-                CD_DEBUG("\t-Target not reached.\n");  // false (improvised, not in manual, but reasonable).
+                CD_DEBUG("\t-Target not reached. canId: %d.\n",canId);  // false (improvised, not in manual, but reasonable).
             }
             if(message->data[5] & 8){//(bit 11)
-                CD_DEBUG("\t-Internal Limit Active.\n");
+                CD_DEBUG("\t-Internal Limit Active. canId: %d.\n",canId);
             }
             if(message->data[5] & 64){//(bit 14)
-                CD_DEBUG("\t-Last event set has ocurred.\n"); // true
+                CD_DEBUG("\t-Last event set has ocurred. canId: %d.\n",canId); // true
             } else {
-                CD_DEBUG("\t-No event set or the programmed event has not occurred yet.\n"); // false
+                CD_DEBUG("\t-No event set or the programmed event has not occurred yet. canId: %d.\n",canId); // false
             }
             if(message->data[5] & 128){//(bit 15)
-                CD_DEBUG("\t-Axis on. Power stage is enabled. Motor control is performed.\n"); // true
+                CD_DEBUG("\t-Axis on. Power stage is enabled. Motor control is performed. canId: %d.\n",canId); // true
             } else {
-                CD_DEBUG("\t-Axis off. Power stage is disabled. Motor control is not performed.\n"); // false
+                CD_DEBUG("\t-Axis off. Power stage is disabled. Motor control is not performed. canId: %d.\n",canId); // false
             }
             ////Much much more in Table 5.6
             if(message->data[6] & 1){//(bit 16)
-                CD_DEBUG("\t*Drive/motor initialization performed.\n");
+                CD_DEBUG("\t*Drive/motor initialization performed. canId: %d.\n",canId);
             }
             if(message->data[6] & 2){//(bit 17)
-                CD_DEBUG("\t*Position trigger 1 reached.\n");
+                CD_DEBUG("\t*Position trigger 1 reached. canId: %d.\n",canId);
             }
             if(message->data[6] & 4){//(bit 18)
-                CD_DEBUG("\t*Position trigger 2 reached.\n");
+                CD_DEBUG("\t*Position trigger 2 reached. canId: %d.\n",canId);
             }
             if(message->data[6] & 8){//(bit 19)
-                CD_DEBUG("\t*Position trigger 3 reached.\n");
+                CD_DEBUG("\t*Position trigger 3 reached. canId: %d.\n",canId);
             }
             if(message->data[6] & 16){//(bit 20)
-                CD_DEBUG("\t*Position trigger 4 reached.\n");
+                CD_DEBUG("\t*Position trigger 4 reached. canId: %d.\n",canId);
             }
             if(message->data[6] & 32){//(bit 21)
-                CD_DEBUG("\t*AUTORUN mode enabled.\n");
+                CD_DEBUG("\t*AUTORUN mode enabled. canId: %d.\n",canId);
             }
             if(message->data[6] & 64){//(bit 22)
-                CD_DEBUG("\t*Limit switch positive event / interrupt triggered.\n");
+                CD_DEBUG("\t*Limit switch positive event / interrupt triggered. canId: %d.\n",canId);
             }
             if(message->data[6] & 128){//(bit 23)
-                CD_DEBUG("\t*Limit switch negative event / interrupt triggered.\n");
+                CD_DEBUG("\t*Limit switch negative event / interrupt triggered. canId: %d.\n",canId);
             }
             if(message->data[7] & 1){//(bit 24)
-                CD_DEBUG("\t*Capture event/interrupt triggered.\n");
+                CD_DEBUG("\t*Capture event/interrupt triggered. canId: %d.\n",canId);
             }
             if(message->data[7] & 2){//(bit 25)
-                CD_DEBUG("\t*Target command reached.\n");
+                CD_DEBUG("\t*Target command reached. canId: %d.\n",canId);
             }
             if(message->data[7] & 4){//(bit 26)
-                CD_DEBUG("\t*Motor I2t protection warning level reached.\n");
+                CD_DEBUG("\t*Motor I2t protection warning level reached. canId: %d.\n",canId);
             }
             if(message->data[7] & 8){//(bit 27)
-                CD_DEBUG("\t*Drive I2t protection warning level reached.\n");
+                CD_DEBUG("\t*Drive I2t protection warning level reached. canId: %d.\n",canId);
             }
             if(message->data[7] & 16){//(bit 28)
-                CD_DEBUG("\t*Gear ratio in electronic gearing mode reached.\n");
+                CD_DEBUG("\t*Gear ratio in electronic gearing mode reached. canId: %d.\n",canId);
             }
             if(message->data[7] & 64){//(bit 30)
-                CD_DEBUG("\t*Reference position in absolute electronic camming mode reached.\n");
+                CD_DEBUG("\t*Reference position in absolute electronic camming mode reached. canId: %d.\n",canId);
             }
             if(message->data[7] & 128){//(bit 31)
-                CD_DEBUG("\t*Drive/motor in fault status.\n");
+                CD_DEBUG("\t*Drive/motor in fault status. canId: %d.\n",canId);
             }
             return true;
         } else if( (message->data[1]==0x02)&&(message->data[2]==0x20) ) {  // 2002h: Detailed Error Register
             CD_DEBUG("Got SDO ack \"Detailed Error Register\" from driver. %s\n",msgToStr(message).c_str());
 
             if(message->data[4] & 1){//0000 0001 (bit 0)
-                CD_DEBUG("\t**The number of nested function calls exceeded the length of TML stack. Last function call was ignored.\n");
+                CD_DEBUG("\t**The number of nested function calls exceeded the length of TML stack. Last function call was ignored. canId: %d.\n",canId);
             }
             if(message->data[4] & 2){//0000 0010 (bit 1)
-                CD_DEBUG("\t**A RET/RETI instruction was executed while no function/ISR was active.\n");
+                CD_DEBUG("\t**A RET/RETI instruction was executed while no function/ISR was active. canId: %d.\n",canId);
             }
             if(message->data[4] & 4){//0000 0100 (bit 2)
-                CD_DEBUG("\t**A call to an inexistent homing routine was received.\n");
+                CD_DEBUG("\t**A call to an inexistent homing routine was received. canId: %d.\n",canId);
             }
             if(message->data[4] & 8){//0000 1000 (bit 3)
-                CD_DEBUG("\t**A call to an inexistent function was received.\n");
+                CD_DEBUG("\t**A call to an inexistent function was received. canId: %d.\n",canId);
             }
             if(message->data[4] & 16){//0001 0000 (bit 4)
-                CD_DEBUG("\t**UPD instruction received while AXISON was executed. The UPD instruction was ingnored and it must be sent again when AXISON is completed.\n");
+                CD_DEBUG("\t**UPD instruction received while AXISON was executed. The UPD instruction was ingnored and it must be sent again when AXISON is completed. canId: %d.\n",canId);
             }
             if(message->data[4] & 32){//0010 0000 (bit 5)
-                CD_DEBUG("\t**Cancelable call instruction received while another cancelable function was active.\n");
+                CD_DEBUG("\t**Cancelable call instruction received while another cancelable function was active. canId: %d.\n",canId);
             }
             if(message->data[4] & 64){//0100 0000 (bit 6)
-                CD_DEBUG("\t**Positive software limit switch is active.\n");
+                CD_DEBUG("\t**Positive software limit switch is active. canId: %d.\n",canId);
             }
             if(message->data[4] & 128){//1000 0000 (bit 7)
-                CD_DEBUG("\t**Negative software limit switch is active.\n");
+                CD_DEBUG("\t**Negative software limit switch is active. canId: %d.\n",canId);
             }
             if(message->data[5] & 1){//(bit 8)
-                CD_DEBUG("\t**S-curve parameters caused and invalid profile. UPD instruction was ignored.\n");
+                CD_DEBUG("\t**S-curve parameters caused and invalid profile. UPD instruction was ignored. canId: %d.\n",canId);
             }
             if(message->data[5] & 2){//(bit 9)
-                CD_DEBUG("\t**Update ignored for S-curve.\n");
+                CD_DEBUG("\t**Update ignored for S-curve. canId: %d.\n",canId);
             }
             if(message->data[5] & 4){//(bit 10)
-                CD_DEBUG("\t**Encoder broken wire.\n");
+                CD_DEBUG("\t**Encoder broken wire. canId: %d.\n",canId);
             }
             if(message->data[5] & 8){//(bit 11)
-                CD_DEBUG("\t**Motionless start failed.\n");
+                CD_DEBUG("\t**Motionless start failed. canId: %d.\n",canId);
             }
             if(message->data[5] & 32){//(bit 13)
-                CD_DEBUG("\t**Self check error.\n");
+                CD_DEBUG("\t**Self check error. canId: %d.\n",canId);
             }
             return true;
         } else if( (message->data[1]==0x83)&&(message->data[2]==0x60) ) {  // Manual 6083h: Profile acceleration
@@ -625,99 +625,99 @@ bool teo::TechnosoftIpos::interpretMessage( can_msg * message) {
     {
         CD_ERROR("Got EMERGENCY from iPOS. %s ",msgToStr(message).c_str());
         if( (message->data[1]==0x00)&&(message->data[0]==0x00) ) {
-            CD_ERROR_NO_HEADER("Error Reset or No Error.\n");
+            CD_ERROR_NO_HEADER("Error Reset or No Error. canId: %d.\n",canId);
             return true;
         } else if ( (message->data[1]==0x10)&&(message->data[0]==0x00) ) {
-            CD_ERROR_NO_HEADER("Generic error.\n");
+            CD_ERROR_NO_HEADER("Generic error. canId: %d.\n",canId);
             return true;
         } else if (message->data[1]==0x23) {
             if (message->data[0]==0x10) {
-                CD_ERROR_NO_HEADER("Continuous over-current.\n");
+                CD_ERROR_NO_HEADER("Continuous over-current. canId: %d.\n",canId);
                 return true;
             } else if (message->data[0]==0x40) {
-                CD_ERROR_NO_HEADER("Short-circuit.\n");
+                CD_ERROR_NO_HEADER("Short-circuit. canId: %d.\n",canId);
                 return true;
             }
-            CD_ERROR_NO_HEADER("NOT SPECIFIED IN MANUAL.\n");
+            CD_ERROR_NO_HEADER("NOT SPECIFIED IN MANUAL. canId: %d.\n",canId);
             return false;
         } else if (message->data[1]==0x32) {
             if (message->data[0]==0x10) {
-                CD_ERROR_NO_HEADER("DC-link over-voltage.\n");
+                CD_ERROR_NO_HEADER("DC-link over-voltage. canId: %d.\n",canId);
                 return true;
             } else if (message->data[0]==0x20) {
-                CD_ERROR_NO_HEADER("DC-link under-voltage.\n");
+                CD_ERROR_NO_HEADER("DC-link under-voltage. canId: %d.\n",canId);
                 return true;
             }
-            CD_ERROR_NO_HEADER("NOT SPECIFIED IN MANUAL.\n");
+            CD_ERROR_NO_HEADER("NOT SPECIFIED IN MANUAL. canId: %d.\n",canId);
             return false;
         } else if ( (message->data[1]==0x42)&&(message->data[0]==0x80) ) {
-            CD_ERROR_NO_HEADER("Over temperature motor.\n");
+            CD_ERROR_NO_HEADER("Over temperature motor. canId: %d.\n",canId);
             return true;
         } else if ( (message->data[1]==0x43)&&(message->data[0]==0x10) ) {
-            CD_ERROR_NO_HEADER("Over temperature drive.\n");
+            CD_ERROR_NO_HEADER("Over temperature drive. canId: %d.\n",canId);
             return true;
         } else if (message->data[1]==0x54) {
             if (message->data[0]==0x41) {
-                CD_ERROR_NO_HEADER("Driver disabled due to enable input.\n");
+                CD_ERROR_NO_HEADER("Driver disabled due to enable input. canId: %d.\n",canId);
                 return true;
             } else if (message->data[0]==0x42) {
-                CD_ERROR_NO_HEADER("Negative limit switch active.\n");
+                CD_ERROR_NO_HEADER("Negative limit switch active. canId: %d.\n",canId);
                 return true;
             } else if (message->data[0]==0x43) {
-                CD_ERROR_NO_HEADER("Positive limit switch active.\n");
+                CD_ERROR_NO_HEADER("Positive limit switch active. canId: %d.\n",canId);
                 return true;
             }
-            CD_ERROR_NO_HEADER("NOT SPECIFIED IN MANUAL.\n");
+            CD_ERROR_NO_HEADER("NOT SPECIFIED IN MANUAL. canId: %d.\n",canId);
             return false;
         } else if ( (message->data[1]==0x61)&&(message->data[0]==0x00) ) {
-            CD_ERROR_NO_HEADER("Invalid setup data.\n");
+            CD_ERROR_NO_HEADER("Invalid setup data. canId: %d.\n",canId);
             return true;
         } else if ( (message->data[1]==0x75)&&(message->data[0]==0x00) ) {
-            CD_ERROR_NO_HEADER("Communication error.\n");
+            CD_ERROR_NO_HEADER("Communication error. canId: %d.\n",canId);
             return true;
         } else if (message->data[1]==0x81) {
             if (message->data[0]==0x10) {
-                CD_ERROR_NO_HEADER("CAN overrun (message lost).\n");
+                CD_ERROR_NO_HEADER("CAN overrun (message lost). canId: %d.\n",canId);
                 return true;
             } else if (message->data[0]==0x30) {
-                CD_ERROR_NO_HEADER("Life guard error or heartbeat error.\n");
+                CD_ERROR_NO_HEADER("Life guard error or heartbeat error. canId: %d.\n",canId);
                 return true;
             }
-            CD_ERROR_NO_HEADER("NOT SPECIFIED IN MANUAL.\n");
+            CD_ERROR_NO_HEADER("NOT SPECIFIED IN MANUAL. canId: %d.\n",canId);
             return false;
         } else if ( (message->data[1]==0x83)&&(message->data[0]==0x31) ) {
-            CD_ERROR_NO_HEADER("I2t protection triggered.\n");
+            CD_ERROR_NO_HEADER("I2t protection triggered. canId: %d.\n",canId);
             return true;
         } else if ( (message->data[1]==0x85)&&(message->data[0]==0x80) ) {
-            CD_ERROR_NO_HEADER("Position wraparound / Hal sensor missing.\n");
+            CD_ERROR_NO_HEADER("Position wraparound / Hal sensor missing. canId: %d.\n",canId);
             return true;
         } else if ( (message->data[1]==0x86)&&(message->data[0]==0x11) ) {
-            CD_ERROR_NO_HEADER("Control error / Following error.\n");
+            CD_ERROR_NO_HEADER("Control error / Following error. canId: %d.\n",canId);
             return true;
         } else if ( (message->data[1]==0x90)&&(message->data[0]==0x00) ) {
-            CD_ERROR_NO_HEADER("Command error\n");
+            CD_ERROR_NO_HEADER("Command error canId: %d.\n",canId);
             return true;
         } else if (message->data[1]==0xFF) {
             if (message->data[0]==0x01) {
-                CD_ERROR_NO_HEADER("Generic interpolated position mode error (PVT / PT error).\n");
+                CD_ERROR_NO_HEADER("Generic interpolated position mode error (PVT / PT error). canId: %d.\n",canId);
                 return true;
             } else if (message->data[0]==0x02) {
-                CD_ERROR_NO_HEADER("Change set acknowledge bit wrong value.\n");
+                CD_ERROR_NO_HEADER("Change set acknowledge bit wrong value. canId: %d.\n",canId);
                 return true;
             } else if (message->data[0]==0x03) {
-                CD_ERROR_NO_HEADER("Specified homing method not available.\n");
+                CD_ERROR_NO_HEADER("Specified homing method not available. canId: %d.\n",canId);
                 return true;
             } else if (message->data[0]==0x04) {
-                CD_ERROR_NO_HEADER("A wrong mode is set in object 6060h, modes_of_operation.\n");
+                CD_ERROR_NO_HEADER("A wrong mode is set in object 6060h, modes_of_operation. canId: %d.\n",canId);
                 return true;
             } else if (message->data[0]==0x05) {
-                CD_ERROR_NO_HEADER("Specified digital I/O line not available.\n");
+                CD_ERROR_NO_HEADER("Specified digital I/O line not available. canId: %d.\n",canId);
                 return true;
             }
-            CD_ERROR_NO_HEADER("NOT SPECIFIED IN MANUAL.\n");
+            CD_ERROR_NO_HEADER("NOT SPECIFIED IN MANUAL. canId: %d.\n",canId);
             return false;
         }
-        CD_ERROR_NO_HEADER("NOT SPECIFIED IN MANUAL.\n");
+        CD_ERROR_NO_HEADER("NOT SPECIFIED IN MANUAL. canId: %d.\n",canId);
         return false;
     }
 
