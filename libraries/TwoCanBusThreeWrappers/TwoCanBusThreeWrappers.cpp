@@ -18,11 +18,17 @@ bool TwoCanBusThreeWrappers::configure(ResourceFinder &rf) {
         return false;
     }
 
+    // Print the content of ResourceFinder
+    printf("Content of ResourceFinder object:\n%s\n\n",rf.toString().c_str());
+
     //-- /dev/can0 --
     Bottle devCan0 = rf.findGroup("devCan0");
     CD_DEBUG("%s\n",devCan0.toString().c_str());
     Property optionsDevCan0;
     optionsDevCan0.fromString(devCan0.toString());
+
+    //-- Check mode is given, and append it to config
+
     deviceDevCan0.open(optionsDevCan0);
     if (!deviceDevCan0.isValid()) {
         CD_ERROR("deviceDevCan0 instantiation not worked.\n");

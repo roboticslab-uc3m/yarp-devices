@@ -6,7 +6,13 @@
 
 bool teo::CanBusControlboard::open(Searchable& config) {
 
-    std::string mode = config.check("mode",Value(DEFAULT_MODE),"position/velocity mode").asString();
+    //------
+    CD_DEBUG("SE ESTÄ EJECUTANDO EL METODO: teo::CanBusControlboard::open(Searchable& config)\n ")
+    //------
+    CD_DEBUG("INPUT: %s\n", config.find("mode").asString().c_str()); // no le está llegando el modo
+    //std::string mode = config.check("mode",Value(DEFAULT_MODE),"position/velocity mode").asString();
+    //CD_DEBUG("MODO: %s\n", mode.c_str());
+    std::string mode = "velocity";
     int16_t ptModeMs = config.check("ptModeMs",Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
 
     Bottle ids = config.findGroup("ids").tail();  //-- e.g. 15
@@ -88,15 +94,22 @@ bool teo::CanBusControlboard::open(Searchable& config) {
     }
 
     //-- Set all motor drivers to mode.
+    CD_DEBUG("#### DETECCION DEL MODO: %s\n", mode.c_str());
+    //std::cout <<"#### DETECCION DEL MODO: "<< mode << "\n";
     if( mode=="position") {
+        CD_DEBUG("POSICION ###\n");
         if( ! this->setPositionMode() )
             return false;
     } else if( mode=="velocity") {
+        CD_DEBUG("VELOCIDAD ###\n");
         if( ! this->setVelocityMode() )
             return false;
     } else if( mode=="torque") {
+        CD_DEBUG("TORQUE ###\n");
         if( ! this->setTorqueMode() )
             return false;
+        /////////////////
+        else CD_DEBUG("HA ENTRADO EN EL MODO TORQUE CORRECTAMENTE\n");
     } else {
         CD_ERROR("Not prepared for initializing in mode %s.\n",mode.c_str());
         return false;
