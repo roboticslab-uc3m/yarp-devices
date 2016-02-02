@@ -138,11 +138,11 @@ bool teo::TechnosoftIpos::setRefSpeedRaw(int j, double sp) {
 
     uint8_t msg_posmode_speed[]={0x23,0x81,0x60,0x00,0x00,0x00,0x00,0x00};  // Manual 6081h: Profile velocity
 
-    //u_int16_t sendRefSpeed = sp * this->tr / 22.5;  // Appply tr & convert units to encoder increments
-    //memcpy(msg_posmode_speed+6,&sendRefSpeed,2);
-    float sendRefSpeed = sp * this->tr / 22.5;  // Apply tr & convert units to encoder increments
-    int16_t sendRefSpeedFormated = roundf(sendRefSpeed * 65536);  // 65536 = 2^16
-    memcpy(msg_posmode_speed+4,&sendRefSpeedFormated,4);
+    u_int16_t sendRefSpeed = sp * this->tr / 22.5;  // Appply tr & convert units to encoder increments
+    memcpy(msg_posmode_speed+6,&sendRefSpeed,2);
+    //float sendRefSpeed = sp * this->tr / 22.5;  // Apply tr & convert units to encoder increments
+    //int16_t sendRefSpeedFormated = roundf(sendRefSpeed * 65536);  // 65536 = 2^16
+    //memcpy(msg_posmode_speed+4,&sendRefSpeedFormated,4);
 
     if( ! send( 0x600, 8, msg_posmode_speed) )
     {
