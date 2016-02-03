@@ -12,7 +12,7 @@ bool teo::CanBusControlboard::open(Searchable& config) {
     CD_DEBUG("INPUT: %s\n", config.find("mode").asString().c_str()); // no le está llegando el modo
     //std::string mode = config.check("mode",Value(DEFAULT_MODE),"position/velocity mode").asString();
     //CD_DEBUG("MODO: %s\n", mode.c_str());
-    std::string mode = "velocity";
+    std::string mode = "torque";
     int16_t ptModeMs = config.check("ptModeMs",Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
 
     Bottle ids = config.findGroup("ids").tail();  //-- e.g. 15
@@ -96,6 +96,12 @@ bool teo::CanBusControlboard::open(Searchable& config) {
     //-- Set all motor drivers to mode.
     CD_DEBUG("#### DETECCION DEL MODO: %s\n", mode.c_str());
     //std::cout <<"#### DETECCION DEL MODO: "<< mode << "\n";
+    // Se va a iniciar en modo posición por defecto nada más empezar:
+    if( ! this->setPositionMode() )
+        return false;
+    //se aplicará un delay de 1 ms
+    yarp::os::Time::delay(1);
+    //ahora pasamos al modo correspondiente
     if( mode=="position") {
         CD_DEBUG("POSICION ###\n");
         if( ! this->setPositionMode() )
@@ -106,6 +112,7 @@ bool teo::CanBusControlboard::open(Searchable& config) {
             return false;
     } else if( mode=="torque") {
         CD_DEBUG("TORQUE ###\n");
+
         if( ! this->setTorqueMode() )
             return false;
         /////////////////
