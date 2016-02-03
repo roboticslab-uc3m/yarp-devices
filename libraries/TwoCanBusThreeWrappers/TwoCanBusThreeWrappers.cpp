@@ -18,6 +18,8 @@ bool TwoCanBusThreeWrappers::configure(ResourceFinder &rf) {
         return false;
     }
 
+    CD_DEBUG("PASADO POR PARAMETRO 1: %s\n", rf.find("mode").asString().c_str());
+
     // Print the content of ResourceFinder
     printf("Content of ResourceFinder object:\n%s\n\n",rf.toString().c_str());
 
