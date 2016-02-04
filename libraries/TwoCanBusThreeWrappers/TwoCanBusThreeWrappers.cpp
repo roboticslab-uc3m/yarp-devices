@@ -17,19 +17,24 @@ bool TwoCanBusThreeWrappers::configure(ResourceFinder &rf) {
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
         return false;
     }
-
-    CD_DEBUG("PASADO POR PARAMETRO 1: %s\n", rf.find("mode").asString().c_str());
+    //############## MY MODIFICATIONS ######################
 
     // Print the content of ResourceFinder
-    printf("Content of ResourceFinder object:\n%s\n\n",rf.toString().c_str());
+    printf("CONTENT OF ResourceFinder OBJECT:\n%s\n\n",rf.toString().c_str());
+
+    CD_DEBUG("MODE PASSED FOR PARAMETERS: %s\n", rf.find("mode").asString().c_str());
+
+    // Variable that stores the mode
+        std::string mode = rf.check("mode",Value("position"),"position/velocity mode").asString();
+        CD_DEBUG("La variable MODE contiene: %s\n", mode.c_str());
+        //#################################################
 
     //-- /dev/can0 --
     Bottle devCan0 = rf.findGroup("devCan0");
     CD_DEBUG("%s\n",devCan0.toString().c_str());
     Property optionsDevCan0;
     optionsDevCan0.fromString(devCan0.toString());
-
-    //-- Check mode is given, and append it to config
+    optionsDevCan0.put("mode", mode);
 
     deviceDevCan0.open(optionsDevCan0);
     if (!deviceDevCan0.isValid()) {

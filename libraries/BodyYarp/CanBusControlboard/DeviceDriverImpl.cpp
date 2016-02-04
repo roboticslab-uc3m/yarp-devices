@@ -8,12 +8,12 @@ bool teo::CanBusControlboard::open(Searchable& config) {
 
     //------
     CD_DEBUG("SE ESTÄ EJECUTANDO EL METODO: teo::CanBusControlboard::open(Searchable& config)\n ")
-    //------
-    CD_DEBUG("PASADO POR PARAMETRO 2: %s\n", config.find("mode").asString().c_str()); // no le está llegando el modo
-    std::string mode = config.check("mode",Value(DEFAULT_MODE),"position/velocity mode").asString();
+
+    std::string mode = config.check("mode",Value("position"),"position/velocity mode").asString();
     CD_DEBUG("MODO INTRODUCIDO: %s\n", mode.c_str());
     //std::string mode = "velocity";
     int16_t ptModeMs = config.check("ptModeMs",Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
+
 
     Bottle ids = config.findGroup("ids").tail();  //-- e.g. 15
     Bottle trs = config.findGroup("trs").tail();  //-- e.g. 160
