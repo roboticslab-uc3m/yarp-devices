@@ -26,7 +26,7 @@ bool TwoCanBusThreeWrappers::configure(ResourceFinder &rf) {
 
     // Variable that stores the mode
         std::string mode = rf.check("mode",Value("position"),"position/velocity mode").asString();
-        CD_DEBUG("La variable MODE contiene: %s\n", mode.c_str());
+        CD_DEBUG("Variable MODE contain: %s\n", mode.c_str());
         //#################################################
 
     //-- /dev/can0 --
@@ -34,8 +34,8 @@ bool TwoCanBusThreeWrappers::configure(ResourceFinder &rf) {
     CD_DEBUG("%s\n",devCan0.toString().c_str());
     Property optionsDevCan0;
     optionsDevCan0.fromString(devCan0.toString());
+    //Appended mode option for optionsDevCan0
     optionsDevCan0.put("mode", mode);
-
     deviceDevCan0.open(optionsDevCan0);
     if (!deviceDevCan0.isValid()) {
         CD_ERROR("deviceDevCan0 instantiation not worked.\n");
@@ -47,6 +47,8 @@ bool TwoCanBusThreeWrappers::configure(ResourceFinder &rf) {
     CD_DEBUG("%s\n",devCan1.toString().c_str());
     Property optionsDevCan1;
     optionsDevCan1.fromString(devCan1.toString());
+    //Added mode option for optionsDevCan1
+    optionsDevCan1.put("mode", mode);
     deviceDevCan1.open(optionsDevCan1);
     if (!deviceDevCan1.isValid()) {
         CD_ERROR("deviceDevCan1 instantiation not worked.\n");

@@ -7,10 +7,10 @@
 bool teo::CanBusControlboard::open(Searchable& config) {
 
     //------
-    CD_DEBUG("SE ESTÄ EJECUTANDO EL METODO: teo::CanBusControlboard::open(Searchable& config)\n ")
+    CD_DEBUG("EXECUTING THE FUNCTION: teo::CanBusControlboard::open(Searchable& config)\n ")
 
     std::string mode = config.check("mode",Value("position"),"position/velocity mode").asString();
-    CD_DEBUG("MODO INTRODUCIDO: %s\n", mode.c_str());
+    CD_DEBUG("INTRODUCED MODE: (it's comming?): %s\n", mode.c_str());
     //std::string mode = "velocity";
     int16_t ptModeMs = config.check("ptModeMs",Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
 
@@ -95,7 +95,6 @@ bool teo::CanBusControlboard::open(Searchable& config) {
 
     //-- Set all motor drivers to mode.
     CD_DEBUG("#### DETECCION DEL MODO: %s\n", mode.c_str());
-    std::cout <<"#### DETECCION DEL MODO: "<< mode << "\n";
 
     if( mode=="position") {
         CD_DEBUG("POSICION ###\n");

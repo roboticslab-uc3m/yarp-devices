@@ -18,6 +18,20 @@ bool OneCanBusOneWrapper::configure(ResourceFinder &rf) {
         return false;
     }
 
+    //################# MY MODIFICATIONS ######################
+
+       // Print the content of ResourceFinder
+       printf("CONTENT OF ResourceFinder OBJECT:\n%s\n\n",rf.toString().c_str());
+
+       CD_DEBUG("MODE PASSED FOR PARAMETERS: %s\n", rf.find("mode").asString().c_str());
+
+       // Variable that stores the mode
+           std::string mode = rf.check("mode",Value("position"),"position/velocity mode").asString();
+           CD_DEBUG("La variable MODE contiene: %s\n", mode.c_str());
+
+    //#########################################################
+
+
     //-- /dev/can0 --
     Bottle devCan0 = rf.findGroup("devCan0");
     CD_DEBUG("%s\n",devCan0.toString().c_str());
