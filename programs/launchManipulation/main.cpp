@@ -49,7 +49,6 @@ int main(int argc, char *argv[]) {
 
     YARP_REGISTER_PLUGINS(BodyYarp);
 
-    printf("### I AM TESTING LAUNCHMANIPULATION ###\n");
     ResourceFinder rf;
     rf.setVerbose(true);
 

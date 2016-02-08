@@ -17,24 +17,16 @@ bool TwoCanBusThreeWrappers::configure(ResourceFinder &rf) {
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
         return false;
     }
-    //############## MY MODIFICATIONS ######################
 
-    // Print the content of ResourceFinder
-    printf("CONTENT OF ResourceFinder OBJECT:\n%s\n\n",rf.toString().c_str());
-
-    CD_DEBUG("MODE PASSED FOR PARAMETERS: %s\n", rf.find("mode").asString().c_str());
-
-    // Variable that stores the mode
-        std::string mode = rf.check("mode",Value("position"),"position/velocity mode").asString();
-        CD_DEBUG("Variable MODE contain: %s\n", mode.c_str());
-        //#################################################
+    // Variable that stores the mode when we put --mode flag
+        std::string mode = rf.check("mode",Value("position"),"position/velocity mode").asString();   
 
     //-- /dev/can0 --
     Bottle devCan0 = rf.findGroup("devCan0");
     CD_DEBUG("%s\n",devCan0.toString().c_str());
     Property optionsDevCan0;
     optionsDevCan0.fromString(devCan0.toString());
-    //Appended mode option for optionsDevCan0
+    //Appended mode option for optionsDevCan0 (for --mode flag)
     optionsDevCan0.put("mode", mode);
     deviceDevCan0.open(optionsDevCan0);
     if (!deviceDevCan0.isValid()) {
@@ -47,7 +39,7 @@ bool TwoCanBusThreeWrappers::configure(ResourceFinder &rf) {
     CD_DEBUG("%s\n",devCan1.toString().c_str());
     Property optionsDevCan1;
     optionsDevCan1.fromString(devCan1.toString());
-    //Added mode option for optionsDevCan1
+    //Added mode option for optionsDevCan1 (for --mode flag)
     optionsDevCan1.put("mode", mode);
     deviceDevCan1.open(optionsDevCan1);
     if (!deviceDevCan1.isValid()) {
