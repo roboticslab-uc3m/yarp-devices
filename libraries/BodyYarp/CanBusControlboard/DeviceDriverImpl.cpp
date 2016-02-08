@@ -6,8 +6,9 @@
 
 bool teo::CanBusControlboard::open(Searchable& config) {
 
-    std::string mode = config.check("mode",Value(DEFAULT_MODE),"position/velocity mode").asString();
+    std::string mode = config.check("mode",Value("position"),"position/velocity mode").asString();
     int16_t ptModeMs = config.check("ptModeMs",Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
+
 
     Bottle ids = config.findGroup("ids").tail();  //-- e.g. 15
     Bottle trs = config.findGroup("trs").tail();  //-- e.g. 160
@@ -88,6 +89,7 @@ bool teo::CanBusControlboard::open(Searchable& config) {
     }
 
     //-- Set all motor drivers to mode.
+
     if( mode=="position") {
         if( ! this->setPositionMode() )
             return false;
@@ -96,7 +98,7 @@ bool teo::CanBusControlboard::open(Searchable& config) {
             return false;
     } else if( mode=="torque") {
         if( ! this->setTorqueMode() )
-            return false;
+            return false;      
     } else {
         CD_ERROR("Not prepared for initializing in mode %s.\n",mode.c_str());
         return false;

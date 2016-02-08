@@ -51,8 +51,10 @@ int main(int argc, char *argv[]) {
 
     ResourceFinder rf;
     rf.setVerbose(true);
+
     rf.setDefaultContext("launchManipulation");
     rf.setDefaultConfigFile("launchManipulation.ini");
+
     rf.configure(argc, argv);
 
     CD_INFO("Checking for yarp network...\n");
@@ -62,6 +64,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     CD_SUCCESS("Found yarp network.\n");
+
 
     teo::TwoCanBusThreeWrappers mod;
     return mod.runModule(rf);
