@@ -14,7 +14,7 @@ sudo depmod
 sudo ln -s $PWD/driver/makenodes.sh /usr/local/bin
 \endverbatim
 
-Now add the following line to /etc/rc.local (lines before the exit, change /your/path/to for your path):
+Now add the following line to /etc/rc.local (lines before the exit):
 
 \verbatim
 /usr/local/bin/makenodes.sh
