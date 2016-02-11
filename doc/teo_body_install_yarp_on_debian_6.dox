@@ -8,7 +8,7 @@ We use YARP for communications. Installing YARP on Debian should be quite straig
 sudo apt-get install build-essential libace-dev subversion git
 sudo apt-get install libgsl0-dev  # Needed for creating YARP lib_math we use for kinematics
 cd  # go home
-mkdir -p repos; cd repos  # make home/repos if it doesn't exist; then, enter it
+mkdir -p repos; cd repos  # make $HOME/repos if it doesn't exist; then, enter it
 git clone https://github.com/robotology/yarp
 cd yarp; mkdir build; cd build
 cmake .. -DCREATE_LIB_MATH=ON
