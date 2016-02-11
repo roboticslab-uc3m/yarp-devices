@@ -3,7 +3,8 @@
  * \page teo_body_install_hcanpci_on_debian_6 Install hcanpci kernel module (Debian 6.0)
 
 \verbatim
-mkdir src; cd src
+cd  # go home
+mkdir -p src; cd src  # make home/repos if it doesn't exist; then, enter it
 tar xvf ../teo-body/extern/hcanpci/linux-2-6-32/100_hcanpci_linux-v1207en-edi1822.tar.gz
 cd hcanpci_linux-v1207en/driver
 make
