@@ -11,7 +11,7 @@ cd  # go home
 mkdir -p repos; cd repos  # make $HOME/repos if it doesn't exist; then, enter it
 git clone https://github.com/robotology/yarp
 cd yarp; mkdir build; cd build
-cmake .. -DCREATE_LIB_MATH=ON
+cmake .. -DCREATE_LIB_MATH=ON -DYARP_USE_QT5=OFF  # YARP_USE_QT5 can induce errors as of 02/2016. Force it off fixes #15.
 make -j3;  sudo make install; sudo ldconfig; cd  # go home
 \endverbatim
 
