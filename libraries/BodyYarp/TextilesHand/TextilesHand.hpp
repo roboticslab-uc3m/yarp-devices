@@ -7,6 +7,17 @@
 #include <yarp/dev/all.h>
 #include <sstream>
 
+#include <errno.h>    /* Error number definitions */
+#include <fcntl.h>    /* File control definitions */
+#include <stdio.h>
+#include <stdint.h>   /* Standard types */
+#include <stdlib.h>
+#include <string.h>   /* String function definitions */
+#include <unistd.h>   /* UNIX standard function definitions */
+#include <termios.h>  /* POSIX terminal control definitions */
+#include <sys/ioctl.h>
+#include <getopt.h>
+
 //#define CD_FULL_FILE  //-- Can be globally managed from father CMake. Good for debugging with polymorphism.
 //#define CD_HIDE_DEBUG  //-- Can be globally managed from father CMake.
 //#define CD_HIDE_SUCCESS  //-- Can be globally managed from father CMake.
@@ -312,14 +323,19 @@ class TextilesHand : public DeviceDriver, public IControlLimitsRaw, public ICont
     protected:
 
         //  --------- Implementation in TextilesHand.cpp ---------
-        /**
-         * Write message to the CAN buffer.
-         * @param cob Message's COB
-         * @param len Data field length
-         * @param msgData Data to send
-         * @return true/false on success/failure.
-         */
-        bool send(uint32_t cob, uint16_t len, uint8_t * msgData);
+        // takes the string name of the serial port (e.g. "/dev/tty.usbserial","COM1")
+        // and a baud rate (bps) and connects to that port at that speed and 8N1.
+        // opens the port in fully raw mode so you can send binary data.
+        // returns valid fd, or -1 on error
+        int serialport_init(const char* serialport, int baud);
+
+        int serialport_writebyte(int fd, uint8_t b);
+
+        int serialport_write(int fd, const char* str);
+
+        int serialport_read_until(int fd, char* buf, char until);
+
+        int fd;  // File descriptor for serial communications
 
 
         /** pt-related **/

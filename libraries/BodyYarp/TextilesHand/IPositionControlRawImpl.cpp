@@ -10,37 +10,15 @@ bool teo::TextilesHand::positionMoveRaw(int j, double ref) {  // encExposed = re
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    //Adjust range:
-    if (ref > 1023){
-        ref=1023;
-    }
-    else if (ref < -1023){
-        ref=-1023;
-    }
-
-    //*************************************************************
-    uint8_t msg_position_target[]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}; // Position target
-    uint16_t pwm;
-    //Send appropriate message:
-    if (ref==0) {
-        msg_position_target[0]=0xF0;
-    } else if (ref>0) {
-        pwm=ref;
-        msg_position_target[1]=pwm>>2;
-        msg_position_target[0]=0xA0 + (pwm & 0b0000000000000011);
-    } else {
-        pwm=abs(ref);
-        msg_position_target[1]=pwm>>2;
-        msg_position_target[0]=0xC0 + (pwm & 0b0000000000000011);
-    }
-
-    if( ! send( 0x600, 2, msg_position_target ) )
-    {
-        CD_ERROR("Could not send \"position target8\". %s\n", msgToStr(0x600, 2, msg_position_target).c_str() );
+    unsigned char cmdByte;
+    if (ref == 0)
+        cmdByte = 'a';
+    else if (ref == 1)
+        cmdByte = 'b';
+    else
         return false;
-    }
-    CD_SUCCESS("Sent \"position target8\". %s\n", msgToStr(0x600, 2, msg_position_target).c_str() );
-    //*************************************************************
+    int res = serialport_writebyte(fd, cmdByte);
+    if(res==-1) return false;
 
     encoderReady.wait();
     this->encoder = ref;  // Already passed through Adjust range.

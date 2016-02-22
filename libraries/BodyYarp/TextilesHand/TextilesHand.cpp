@@ -4,50 +4,89 @@
 
 // -----------------------------------------------------------------------------
 
-std::string teo::TextilesHand::msgToStr(can_msg* message) {
-    std::stringstream tmp;
-    for(int i=0; i < message->dlc-1; i++)
-    {
-        tmp << std::hex << static_cast<int>(message->data[i]) << " ";
-    }
-    tmp << std::hex << static_cast<int>(message->data[message->dlc-1]);
-    tmp << ". canId(";
-    tmp << std::dec << (message->id & 0x7F);
-    tmp << ") via(";
-    tmp << std::hex << (message->id & 0xFF80);
-    tmp << ").";
-    return tmp.str();
+int teo::TextilesHand::serialport_writebyte( int fd, uint8_t b) {
+    int n = write(fd,&b,1);
+    if( n!=1)
+        return -1;
+    return 0;
 }
 
 // -----------------------------------------------------------------------------
 
-std::string teo::TextilesHand::msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData) {
-    std::stringstream tmp;
-    for(int i=0; i < len-1; i++)
-    {
-        tmp << std::hex << static_cast<int>(*(msgData+i)) << " ";
-    }
-    tmp << std::hex << static_cast<int>(*(msgData+len-1));
-    tmp << ". canId(";
-    tmp << std::dec << canId;
-    tmp << ") via(";
-    tmp << std::hex << cob;
-    tmp << ").";
-    return tmp.str();
+int teo::TextilesHand::serialport_write(int fd, const char* str) {
+    int len = strlen(str);
+    int n = write(fd, str, len);
+    if( n!=len )
+        return -1;
+    return 0;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::send(uint32_t cob, uint16_t len, uint8_t * msgData) {
+int teo::TextilesHand::serialport_read_until(int fd, char* buf, char until) {
+    char b[1];
+    int i=0;
+    do {
+        int n = read(fd, b, 1);  // read a char at a time
+        if( n==-1) return -1;    // couldn't read
+        if( n==0 ) {
+            usleep( 10 * 1000 ); // wait 10 msec try again
+            continue;
+        }
+        buf[i] = b[0]; i++;
+    } while( b[0] != until );
 
-    if ( (lastUsage - yarp::os::Time::now()) < DELAY )
-        yarp::os::Time::delay( lastUsage + DELAY - yarp::os::Time::now() );
+    buf[i] = 0;  // null terminate the string
+    return 0;
+}
 
-    if( ! canDevicePtr->sendRaw(cob + this->canId, len, msgData) )
-        return false;
+// -----------------------------------------------------------------------------
 
-    lastUsage = yarp::os::Time::now();
-    return true;
+int teo::TextilesHand::serialport_init(const char* serialport, int baud) {
+    struct termios toptions;
+    int fd;
+
+    //fprintf(stderr,"init_serialport: opening port %s @ %d bps\n",
+    //        serialport,baud);
+
+    fd = ::open(serialport, O_RDWR | O_NOCTTY | O_NDELAY);
+    if (fd == -1)  {
+        perror("init_serialport: Unable to open port ");
+        return -1;
+    }
+
+    if (tcgetattr(fd, &toptions) < 0) {
+        perror("init_serialport: Couldn't get term attributes");
+        return -1;
+    }
+    speed_t brate = baud; // let you override switch below if needed
+    cfsetispeed(&toptions, brate);
+    cfsetospeed(&toptions, brate);
+
+    // 8N1
+    toptions.c_cflag &= ~PARENB;
+    toptions.c_cflag &= ~CSTOPB;
+    toptions.c_cflag &= ~CSIZE;
+    toptions.c_cflag |= CS8;
+    // no flow control
+    toptions.c_cflag &= ~CRTSCTS;
+
+    toptions.c_cflag |= CREAD | CLOCAL;  // turn on READ & ignore ctrl lines
+    toptions.c_iflag &= ~(IXON | IXOFF | IXANY); // turn off s/w flow ctrl
+
+    toptions.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG); // make raw
+    toptions.c_oflag &= ~OPOST; // make raw
+
+    // see: http://unixwiz.net/techtips/termios-vmin-vtime.html
+    toptions.c_cc[VMIN]  = 0;
+    toptions.c_cc[VTIME] = 20;
+
+    if( tcsetattr(fd, TCSANOW, &toptions) < 0) {
+        perror("init_serialport: Couldn't set term attributes");
+        return -1;
+    }
+
+    return fd;
 }
 
 // -----------------------------------------------------------------------------
