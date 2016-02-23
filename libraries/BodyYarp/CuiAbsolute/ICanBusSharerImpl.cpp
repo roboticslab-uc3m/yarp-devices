@@ -59,11 +59,11 @@ bool teo::CuiAbsolute::interpretMessage( can_msg * message) {
 
     encoder = got * this->tr;
 
-    if (got < -180.0)
-        got += 360.0;
+    if (encoder < -180.0)
+        encoder += 360.0;
 
-    if (got > 180.0)
-        got -= 360.0;
+    if (encoder > 180.0)
+        encoder -= 360.0;
 
     encoderTimestamp = message->ts;
 
