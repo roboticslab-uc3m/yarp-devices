@@ -6,7 +6,7 @@
 bool teo::CuiAbsolute::open(Searchable& config) {
 
     this->canId = config.check("canId",0,"can bus ID").asInt();
-    this->tr = config.check("tr",0,"reduction").asInt();
+    this->tr = config.check("tr",1,"reduction").asInt();
     this->ptModeMs  = config.check("ptModeMs",0,"ptMode ms").asInt();
     this->ptPointCounter = 0;
     this->ptMovementDone = false;
