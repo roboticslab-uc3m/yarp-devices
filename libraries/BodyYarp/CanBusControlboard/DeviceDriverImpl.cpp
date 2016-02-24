@@ -80,7 +80,7 @@ bool teo::CanBusControlboard::open(Searchable& config) {
 
         //-- Associate absolute encoders to motor drivers
         if( types.get(i).asString() == "CuiAbsolute" ) {
-            int driverCanId = ids.get(i).asInt() - 100;
+            int driverCanId = ids.get(i).asInt() - 100;  //-- \todo{Document the dangers: ID must be > 100, driver must be instanced.}
             iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
         }
 

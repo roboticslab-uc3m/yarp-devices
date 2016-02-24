@@ -15,7 +15,7 @@ bool teo::CuiAbsolute::open(Searchable& config) {
     this->min = 0;
     this->refAcceleration = 0;
     this->refSpeed = 0;
-    this->encoder = 0;
+    this->encoder = sqrt (-1);  // NaN \todo{Investigate, debug and document the dangers of this use of NaN.}
 
     CD_SUCCESS("Created CuiAbsolute with canId %d and tr %f, and all local parameters set to 0.\n",canId,tr);
     return true;

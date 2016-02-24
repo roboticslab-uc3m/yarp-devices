@@ -54,12 +54,19 @@ bool teo::CuiAbsolute::interpretMessage( can_msg * message) {
     float got;
     memcpy(&got, message->data,4);
     //CD_SUCCESS("Got absolute encoder value, as a float: %f\n",got);
+
     encoderReady.wait();
-    if (this->tr == 1)
-        encoder =  got;
-    else if (this->tr == -1)
-        encoder = 360.0 - got;
+
+    encoder = got * this->tr;
+
+    if (encoder < -180.0)
+        encoder += 360.0;
+
+    if (encoder > 180.0)
+        encoder -= 360.0;
+
     encoderTimestamp = message->ts;
+
     encoderReady.post();
 
     return true;
