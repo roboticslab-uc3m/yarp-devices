@@ -12,7 +12,6 @@
 #define VOCAB_FOLLOW_ME VOCAB4('f','o','l','l')
 #define VOCAB_STOP_FOLLOWING VOCAB4('s','f','o','l')
 
-using namespace yarp::os;
 
 namespace teo
 {
@@ -23,7 +22,7 @@ namespace teo
  * @brief Input port of speech recognition data.
  *
  */
-class InSrPort : public BufferedPort<Bottle> {
+class InSrPort : public yarp::os::BufferedPort<yarp::os::Bottle> {
     public:
         void setInCvPortPtr(InCvPort *inCvPortPtr) {
             this->inCvPortPtr = inCvPortPtr;
@@ -31,7 +30,7 @@ class InSrPort : public BufferedPort<Bottle> {
 
     protected:
         /** Callback on incoming Bottle. **/
-        virtual void onRead(Bottle& b);
+        virtual void onRead(yarp::os::Bottle& b);
 
         InCvPort* inCvPortPtr;
 };

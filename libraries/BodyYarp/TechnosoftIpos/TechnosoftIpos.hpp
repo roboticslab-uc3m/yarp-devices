@@ -17,8 +17,6 @@
 #include "ColorDebug.hpp"
 #include "ICanBusSharer.h"
 
-using namespace yarp::os;
-using namespace yarp::dev;
 
 namespace teo
 {
@@ -35,8 +33,8 @@ namespace teo
  *
  */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
-class TechnosoftIpos : public DeviceDriver, public IControlLimitsRaw, public IControlModeRaw, public IEncodersTimedRaw,
-        public IPositionControlRaw, public IPositionDirectRaw, public IVelocityControlRaw, public ITorqueControlRaw,
+class TechnosoftIpos : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimitsRaw, public yarp::dev::IControlModeRaw, public yarp::dev::IEncodersTimedRaw,
+        public yarp::dev::IPositionControlRaw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControlRaw, public yarp::dev::ITorqueControlRaw,
         public ICanBusSharer {
 
     public:
@@ -47,7 +45,7 @@ class TechnosoftIpos : public DeviceDriver, public IControlLimitsRaw, public ICo
         }
 
         //  --------- DeviceDriver Declarations. Implementation in TechnosoftIpos.cpp ---------
-        virtual bool open(Searchable& config);
+        virtual bool open(yarp::os::Searchable& config);
         virtual bool close();
 
         //  --------- ICanBusSharer Declarations. Implementation in TechnosoftIpos.cpp ---------
@@ -188,7 +186,7 @@ class TechnosoftIpos : public DeviceDriver, public IControlLimitsRaw, public ICo
         virtual bool setRefTorqueRaw(int j, double t);
         virtual bool getBemfParamRaw(int j, double *bemf);
         virtual bool setBemfParamRaw(int j, double bemf);
-        virtual bool setTorquePidRaw(int j, const Pid &pid);
+        virtual bool setTorquePidRaw(int j, const yarp::dev::Pid &pid);
         virtual bool getTorqueRaw(int j, double *t);
         virtual bool getTorquesRaw(double *t) {
             CD_ERROR("\n");
@@ -199,7 +197,7 @@ class TechnosoftIpos : public DeviceDriver, public IControlLimitsRaw, public ICo
             CD_ERROR("\n");
             return false;
         }
-        virtual bool setTorquePidsRaw(const Pid *pids) {
+        virtual bool setTorquePidsRaw(const yarp::dev::Pid *pids) {
             CD_ERROR("\n");
             return false;
         }
@@ -218,8 +216,8 @@ class TechnosoftIpos : public DeviceDriver, public IControlLimitsRaw, public ICo
             CD_ERROR("\n");
             return false;
         }
-        virtual bool getTorquePidRaw(int j, Pid *pid);
-        virtual bool getTorquePidsRaw(Pid *pids) {
+        virtual bool getTorquePidRaw(int j, yarp::dev::Pid *pid);
+        virtual bool getTorquePidsRaw(yarp::dev::Pid *pids) {
             CD_ERROR("\n");
             return false;
         }

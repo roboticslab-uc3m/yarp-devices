@@ -69,7 +69,7 @@ bool teo::TechnosoftIpos::setBemfParamRaw(int j, double bemf) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setTorquePidRaw(int j, const Pid &pid) {
+bool teo::TechnosoftIpos::setTorquePidRaw(int j, const yarp::dev::Pid &pid) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -98,7 +98,7 @@ bool teo::TechnosoftIpos::getTorqueRaw(int j, double *t) {
     }
     //CD_SUCCESS("Sent msg_getCurrent. %s\n", msgToStr(0x600, 4, msg_getCurrent).c_str() );    //-- Too verbose in controlboardwrapper2 stream.
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    Time::delay(DELAY);  // Must delay as it will be from same driver.
+    yarp::os::Time::delay(DELAY);  // Must delay as it will be from same driver.
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     getTorqueReady.wait();
@@ -163,7 +163,7 @@ bool teo::TechnosoftIpos::getTorquePidOutputRaw(int j, double *out) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getTorquePidRaw(int j, Pid *pid) {
+bool teo::TechnosoftIpos::getTorquePidRaw(int j, yarp::dev::Pid *pid) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range

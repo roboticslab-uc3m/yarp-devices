@@ -7,7 +7,7 @@ namespace teo
 
 /************************************************************************/
 
-void InCvPort::onRead(Bottle& b) {
+void InCvPort::onRead(yarp::os::Bottle& b) {
     if ( ! follow ) return;
     if (b.size() < 3) return;
 

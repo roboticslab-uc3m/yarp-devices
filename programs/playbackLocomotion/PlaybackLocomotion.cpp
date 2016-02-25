@@ -9,7 +9,7 @@ namespace teo
 PlaybackLocomotion::PlaybackLocomotion() { }
 
 /************************************************************************/
-bool PlaybackLocomotion::configure(ResourceFinder &rf) {
+bool PlaybackLocomotion::configure(yarp::os::ResourceFinder &rf) {
 
     int ptModeMs = rf.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
     CD_INFO("Using ptModeMs: %d (default: %d).\n",ptModeMs,int(DEFAULT_PT_MODE_MS));
@@ -17,7 +17,7 @@ bool PlaybackLocomotion::configure(ResourceFinder &rf) {
     playbackThread.hold = rf.check("hold");
 
     //-- Open file for reading.
-    std::string fileName = rf.check("file",Value(DEFAULT_FILE_NAME),"file name").asString();
+    std::string fileName = rf.check("file",yarp::os::Value(DEFAULT_FILE_NAME),"file name").asString();
     CD_INFO("Using file: %s (default: " DEFAULT_FILE_NAME ").\n",fileName.c_str());
     playbackThread.ifs.open( fileName.c_str() );
     if( ! playbackThread.ifs.is_open() ) {

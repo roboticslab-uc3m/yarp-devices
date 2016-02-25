@@ -22,8 +22,6 @@
 #define DEFAULT_FILE_NAME "manipulationRecording.txt"
 #define DEFAULT_LOG_NAME "manipulationLog.txt"
 
-using namespace yarp::os;
-using namespace yarp::dev;
 
 namespace teo
 {
@@ -34,11 +32,11 @@ namespace teo
  * @brief Plays back a manipulation file.
  * 
  */
-class PlaybackManipulation : public RFModule {
+class PlaybackManipulation : public yarp::os::RFModule {
 
     public:
         PlaybackManipulation();
-        bool configure(ResourceFinder &rf);
+        bool configure(yarp::os::ResourceFinder &rf);
 
     protected:
         yarp::dev::PolyDriver leftArmDevice;

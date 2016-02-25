@@ -19,8 +19,6 @@
 
 #include "ColorDebug.hpp"
 
-using namespace yarp::os;
-using namespace yarp::dev;
 
 #define DEFAULT_CAN_DEVICE "/dev/can0"
 #define DEFAULT_CAN_BITRATE BITRATE_1000k
@@ -36,7 +34,7 @@ namespace teo
  * @brief Specifies the HicoCan (hcanpci) behaviour and specifications.
  *
  */
-class CanBusHico : public DeviceDriver {
+class CanBusHico : public yarp::dev::DeviceDriver {
 
     public:
 

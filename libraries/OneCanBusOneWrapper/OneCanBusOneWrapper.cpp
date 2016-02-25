@@ -9,7 +9,7 @@ namespace teo
 OneCanBusOneWrapper::OneCanBusOneWrapper() { }
 
 /************************************************************************/
-bool OneCanBusOneWrapper::configure(ResourceFinder &rf) {
+bool OneCanBusOneWrapper::configure(yarp::os::ResourceFinder &rf) {
 
     if(rf.check("help")) {
         printf("OneCanBusOneWrapper options:\n");
@@ -26,16 +26,16 @@ bool OneCanBusOneWrapper::configure(ResourceFinder &rf) {
        CD_DEBUG("MODE PASSED FOR PARAMETERS: %s\n", rf.find("mode").asString().c_str());
 
        // Variable that stores the mode
-           std::string mode = rf.check("mode",Value("position"),"position/velocity mode").asString();
+           std::string mode = rf.check("mode",yarp::os::Value("position"),"position/velocity mode").asString();
            CD_DEBUG("La variable MODE contiene: %s\n", mode.c_str());
 
     //#########################################################
 
 
     //-- /dev/can0 --
-    Bottle devCan0 = rf.findGroup("devCan0");
+    yarp::os::Bottle devCan0 = rf.findGroup("devCan0");
     CD_DEBUG("%s\n",devCan0.toString().c_str());
-    Property optionsDevCan0;
+    yarp::os::Property optionsDevCan0;
     optionsDevCan0.fromString(devCan0.toString());
     deviceDevCan0.open(optionsDevCan0);
     if (!deviceDevCan0.isValid()) {
@@ -44,9 +44,9 @@ bool OneCanBusOneWrapper::configure(ResourceFinder &rf) {
     }
 
     //-- wrapper0 --
-    Bottle wrapper0 = rf.findGroup("wrapper0");
+    yarp::os::Bottle wrapper0 = rf.findGroup("wrapper0");
     CD_DEBUG("%s\n",wrapper0.toString().c_str());
-    Property optionsWrapper0;
+    yarp::os::Property optionsWrapper0;
     optionsWrapper0.fromString(wrapper0.toString());
     deviceWrapper0.open(optionsWrapper0);
     if (!deviceWrapper0.isValid()) {
@@ -54,11 +54,11 @@ bool OneCanBusOneWrapper::configure(ResourceFinder &rf) {
         return false;
     }
 
-    IMultipleWrapper *iWrapper0;
+    yarp::dev::IMultipleWrapper *iWrapper0;
 
     deviceWrapper0.view(iWrapper0);
 
-    PolyDriverList list;
+    yarp::dev::PolyDriverList list;
     list.push(&deviceDevCan0, "devCan0");
     iWrapper0->attachAll(list);
 

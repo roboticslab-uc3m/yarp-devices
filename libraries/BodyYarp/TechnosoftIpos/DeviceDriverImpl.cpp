@@ -3,7 +3,7 @@
 #include "TechnosoftIpos.hpp"
 
 // -----------------------------------------------------------------------------
-bool teo::TechnosoftIpos::open(Searchable& config) {
+bool teo::TechnosoftIpos::open(yarp::os::Searchable& config) {
 
     this->canId = config.check("canId",0,"can bus ID").asInt();
     this->tr = config.check("tr",0,"reduction").asDouble();

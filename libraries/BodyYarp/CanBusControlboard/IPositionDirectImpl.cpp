@@ -11,7 +11,7 @@ bool teo::CanBusControlboard::setPositionDirectMode() {
     for(unsigned int i=0; i < nodes.size(); i++)
         ok &= iPositionDirectRaw[i]->setPositionDirectModeRaw();  // No existing single mode.
 
-    Time::delay(1);  //-- Seems like a "must".
+    yarp::os::Time::delay(1);  //-- Seems like a "must".
 
     return ok;
 }

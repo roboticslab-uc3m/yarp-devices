@@ -3,7 +3,7 @@
 #include "TextilesHand.hpp"
 
 // -----------------------------------------------------------------------------
-bool teo::TextilesHand::open(Searchable& config) {
+bool teo::TextilesHand::open(yarp::os::Searchable& config) {
 
     /*this->canId = config.check("canId",0,"can bus ID").asInt();
     this->tr = config.check("tr",0,"reduction").asInt();

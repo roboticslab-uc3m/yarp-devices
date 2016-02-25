@@ -7,7 +7,7 @@ namespace teo
 
 /************************************************************************/
 
-bool ExecutionCore1::configure(ResourceFinder &rf) {
+bool ExecutionCore1::configure(yarp::os::ResourceFinder &rf) {
 
     //ConstString fileName(DEFAULT_FILE_NAME);
     
@@ -26,7 +26,7 @@ bool ExecutionCore1::configure(ResourceFinder &rf) {
     }
 
     //
-    Property headOptions;
+    yarp::os::Property headOptions;
     headOptions.put("device","remote_controlboard");
     headOptions.put("local","/executionCore1/head");
     headOptions.put("remote","/teo/head");

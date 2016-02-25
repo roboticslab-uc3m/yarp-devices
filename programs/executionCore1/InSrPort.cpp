@@ -7,7 +7,7 @@ namespace teo
 
 /************************************************************************/
 
-void InSrPort::onRead(Bottle& b) {
+void InSrPort::onRead(yarp::os::Bottle& b) {
     switch ( b.get(0).asVocab() ) {
         case VOCAB_FOLLOW_ME:
             printf("follow\n");

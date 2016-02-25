@@ -116,7 +116,7 @@ bool teo::TechnosoftIpos::checkMotionDoneRaw(int j, bool *flag) {
     CD_SUCCESS("Sent \"msgStatus\". %s\n", msgToStr(0x600, 8, msgStatus).c_str() );
 
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    Time::delay(DELAY);  //-- Wait for read update. Could implement semaphore waiting for specific message...
+    yarp::os::Time::delay(DELAY);  //-- Wait for read update. Could implement semaphore waiting for specific message...
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     targetReachedReady.wait();

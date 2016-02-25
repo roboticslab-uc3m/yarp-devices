@@ -16,8 +16,6 @@
 #include "ColorDebug.hpp"
 #include "ICanBusSharer.h"
 
-using namespace yarp::os;
-using namespace yarp::dev;
 
 namespace teo
 {
@@ -34,8 +32,8 @@ namespace teo
  *
  */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
-class LacqueyFetch : public DeviceDriver, public IControlLimitsRaw, public IControlModeRaw, public IEncodersTimedRaw,
-        public IPositionControlRaw, public IPositionDirectRaw, public IVelocityControlRaw, public ITorqueControlRaw,
+class LacqueyFetch : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimitsRaw, public yarp::dev::IControlModeRaw, public yarp::dev::IEncodersTimedRaw,
+        public yarp::dev::IPositionControlRaw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControlRaw, public yarp::dev::ITorqueControlRaw,
         public ICanBusSharer {
 
     public:
@@ -45,7 +43,7 @@ class LacqueyFetch : public DeviceDriver, public IControlLimitsRaw, public ICont
         }
 
         //  --------- DeviceDriver Declarations. Implementation in LacqueyFetch.cpp ---------
-        virtual bool open(Searchable& config);
+        virtual bool open(yarp::os::Searchable& config);
         virtual bool close();
 
         //  --------- ICanBusSharer Declarations. Implementation in LacqueyFetch.cpp ---------
@@ -214,7 +212,7 @@ class LacqueyFetch : public DeviceDriver, public IControlLimitsRaw, public ICont
             CD_INFO("\n");
             return true;
         }
-        virtual bool setTorquePidRaw(int j, const Pid &pid) {
+        virtual bool setTorquePidRaw(int j, const yarp::dev::Pid &pid) {
             CD_INFO("\n");
             return true;
         }
@@ -234,7 +232,7 @@ class LacqueyFetch : public DeviceDriver, public IControlLimitsRaw, public ICont
             CD_ERROR("\n");
             return false;
         }
-        virtual bool setTorquePidsRaw(const Pid *pids) {
+        virtual bool setTorquePidsRaw(const yarp::dev::Pid *pids) {
             CD_ERROR("\n");
             return false;
         }
@@ -262,11 +260,11 @@ class LacqueyFetch : public DeviceDriver, public IControlLimitsRaw, public ICont
             CD_ERROR("\n");
             return false;
         }
-        virtual bool getTorquePidRaw(int j, Pid *pid) {
+        virtual bool getTorquePidRaw(int j, yarp::dev::Pid *pid) {
             CD_INFO("\n");
             return true;
         }
-        virtual bool getTorquePidsRaw(Pid *pids) {
+        virtual bool getTorquePidsRaw(yarp::dev::Pid *pids) {
             CD_ERROR("\n");
             return false;
         }

@@ -9,7 +9,7 @@ namespace teo
 TwoCanBusThreeWrappers::TwoCanBusThreeWrappers() { }
 
 /************************************************************************/
-bool TwoCanBusThreeWrappers::configure(ResourceFinder &rf) {
+bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf) {
 
     if(rf.check("help")) {
         printf("TwoCanBusThreeWrappers options:\n");
@@ -19,12 +19,12 @@ bool TwoCanBusThreeWrappers::configure(ResourceFinder &rf) {
     }
 
     // Variable that stores the mode when we put --mode flag
-        std::string mode = rf.check("mode",Value("position"),"position/velocity mode").asString();   
+        std::string mode = rf.check("mode",yarp::os::Value("position"),"position/velocity mode").asString();
 
     //-- /dev/can0 --
-    Bottle devCan0 = rf.findGroup("devCan0");
+    yarp::os::Bottle devCan0 = rf.findGroup("devCan0");
     CD_DEBUG("%s\n",devCan0.toString().c_str());
-    Property optionsDevCan0;
+    yarp::os::Property optionsDevCan0;
     optionsDevCan0.fromString(devCan0.toString());
     //Appended mode option for optionsDevCan0 (for --mode flag)
     optionsDevCan0.put("mode", mode);
@@ -35,9 +35,9 @@ bool TwoCanBusThreeWrappers::configure(ResourceFinder &rf) {
     }
 
     //-- /dev/can1 --
-    Bottle devCan1 = rf.findGroup("devCan1");
+    yarp::os::Bottle devCan1 = rf.findGroup("devCan1");
     CD_DEBUG("%s\n",devCan1.toString().c_str());
-    Property optionsDevCan1;
+    yarp::os::Property optionsDevCan1;
     optionsDevCan1.fromString(devCan1.toString());
     //Added mode option for optionsDevCan1 (for --mode flag)
     optionsDevCan1.put("mode", mode);
@@ -48,9 +48,9 @@ bool TwoCanBusThreeWrappers::configure(ResourceFinder &rf) {
     }
 
     //-- wrapper0 --
-    Bottle wrapper0 = rf.findGroup("wrapper0");
+    yarp::os::Bottle wrapper0 = rf.findGroup("wrapper0");
     CD_DEBUG("%s\n",wrapper0.toString().c_str());
-    Property optionsWrapper0;
+    yarp::os::Property optionsWrapper0;
     optionsWrapper0.fromString(wrapper0.toString());
     deviceWrapper0.open(optionsWrapper0);
     if (!deviceWrapper0.isValid()) {
@@ -59,9 +59,9 @@ bool TwoCanBusThreeWrappers::configure(ResourceFinder &rf) {
     }
 
     //-- wrapper1 --
-    Bottle wrapper1 = rf.findGroup("wrapper1");
+    yarp::os::Bottle wrapper1 = rf.findGroup("wrapper1");
     CD_DEBUG("%s\n",wrapper1.toString().c_str());
-    Property optionsWrapper1;
+    yarp::os::Property optionsWrapper1;
     optionsWrapper1.fromString(wrapper1.toString());
     deviceWrapper1.open(optionsWrapper1);
     if (!deviceWrapper1.isValid()) {
@@ -70,9 +70,9 @@ bool TwoCanBusThreeWrappers::configure(ResourceFinder &rf) {
     }
 
     //-- wrapper2 --
-    Bottle wrapper2 = rf.findGroup("wrapper2");
+    yarp::os::Bottle wrapper2 = rf.findGroup("wrapper2");
     CD_DEBUG("%s\n",wrapper2.toString().c_str());
-    Property optionsWrapper2;
+    yarp::os::Property optionsWrapper2;
     optionsWrapper2.fromString(wrapper2.toString());
     deviceWrapper2.open(optionsWrapper2);
     if (!deviceWrapper2.isValid()) {
@@ -80,13 +80,13 @@ bool TwoCanBusThreeWrappers::configure(ResourceFinder &rf) {
         return false;
     }
 
-    IMultipleWrapper *iWrapper0, *iWrapper1, *iWrapper2;
+    yarp::dev::IMultipleWrapper *iWrapper0, *iWrapper1, *iWrapper2;
 
     deviceWrapper0.view(iWrapper0);
     deviceWrapper1.view(iWrapper1);
     deviceWrapper2.view(iWrapper2);
 
-    PolyDriverList list;
+    yarp::dev::PolyDriverList list;
     list.push(&deviceDevCan0, "devCan0");
     list.push(&deviceDevCan1, "devCan1");
     iWrapper0->attachAll(list);
