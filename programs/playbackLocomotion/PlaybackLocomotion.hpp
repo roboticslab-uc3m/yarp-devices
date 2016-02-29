@@ -21,8 +21,6 @@
 #define DEFAULT_PT_MODE_MS 50
 #define DEFAULT_FILE_NAME "locomotionRecording.txt"
 
-using namespace yarp::os;
-using namespace yarp::dev;
 
 namespace teo
 {
@@ -33,11 +31,11 @@ namespace teo
  * @brief Plays back a locomotion file.
  * 
  */
-class PlaybackLocomotion : public RFModule {
+class PlaybackLocomotion : public yarp::os::RFModule {
 
     public:
         PlaybackLocomotion();
-        bool configure(ResourceFinder &rf);
+        bool configure(yarp::os::ResourceFinder &rf);
 
     protected:
         yarp::dev::PolyDriver leftLegDevice;

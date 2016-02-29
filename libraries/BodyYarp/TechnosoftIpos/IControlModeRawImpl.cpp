@@ -147,7 +147,7 @@ bool teo::TechnosoftIpos::getControlModeRaw(int j, int *mode) {
     //*************************************************************
 
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    Time::delay(DELAY);  // Must delay as it will be from same driver.
+    yarp::os::Time::delay(DELAY);  // Must delay as it will be from same driver.
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     getModeReady.wait();

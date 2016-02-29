@@ -4,10 +4,10 @@
 
 // ------------------- DeviceDriver Related ------------------------------------
 
-bool teo::CanBusHico::open(Searchable& config) {
+bool teo::CanBusHico::open(yarp::os::Searchable& config) {
 
-    std::string devicePath = config.check("canDevice",Value(DEFAULT_CAN_DEVICE),"CAN device path").asString();
-    int bitrate = config.check("canBitrate",Value(DEFAULT_CAN_BITRATE),"CAN bitrate").asInt();
+    std::string devicePath = config.check("canDevice",yarp::os::Value(DEFAULT_CAN_DEVICE),"CAN device path").asString();
+    int bitrate = config.check("canBitrate",yarp::os::Value(DEFAULT_CAN_BITRATE),"CAN bitrate").asInt();
 
     //-- Open the CAN device for reading and writing.
     fileDescriptor = ::open(devicePath.c_str(), O_RDWR);

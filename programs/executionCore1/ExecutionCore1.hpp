@@ -13,7 +13,6 @@
 #define VOCAB_FOLLOW_ME VOCAB4('f','o','l','l')
 #define VOCAB_STOP_FOLLOWING VOCAB4('s','f','o','l')
 
-using namespace yarp::os;
 
 namespace teo
 {
@@ -24,9 +23,9 @@ namespace teo
  * @brief Execution Core 1.
  *
  */
-class ExecutionCore1 : public RFModule {
+class ExecutionCore1 : public yarp::os::RFModule {
     public:
-        bool configure(ResourceFinder &rf);
+        bool configure(yarp::os::ResourceFinder &rf);
 
     protected:
         InSrPort inSrPort;

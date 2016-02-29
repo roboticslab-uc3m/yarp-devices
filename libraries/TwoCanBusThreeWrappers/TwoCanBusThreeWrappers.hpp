@@ -17,8 +17,6 @@
 
 #include "ColorDebug.hpp"
 
-using namespace yarp::os;
-using namespace yarp::dev;
 
 namespace teo
 {
@@ -39,7 +37,7 @@ namespace teo
  * controlboardwrapper2 RPC commands.
  * 
  */
-class TwoCanBusThreeWrappers : public RFModule {
+class TwoCanBusThreeWrappers : public yarp::os::RFModule {
 
     protected:
     yarp::dev::PolyDriver deviceDevCan0;
@@ -57,7 +55,7 @@ class TwoCanBusThreeWrappers : public RFModule {
 
     public:
         TwoCanBusThreeWrappers();
-        bool configure(ResourceFinder &rf);
+        bool configure(yarp::os::ResourceFinder &rf);
 };
 
 }  // namespace teo

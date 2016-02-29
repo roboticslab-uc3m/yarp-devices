@@ -54,7 +54,7 @@ bool teo::TechnosoftIpos::getEncoderRaw(int j, double *v) {
             return false;
         }
         //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-        Time::delay(DELAY);  // Must delay as it will be from same driver.
+        yarp::os::Time::delay(DELAY);  // Must delay as it will be from same driver.
         //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
         encoderReady.wait();

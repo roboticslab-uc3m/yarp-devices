@@ -10,7 +10,6 @@
 #define VOCAB_FOLLOW_ME VOCAB4('f','o','l','l')
 #define VOCAB_STOP_FOLLOWING VOCAB4('s','f','o','l')
 
-using namespace yarp::os;
 
 namespace teo
 {
@@ -21,7 +20,7 @@ namespace teo
  * @brief Input port of computer vision data.
  *
  */
-class InCvPort : public BufferedPort<Bottle> {
+class InCvPort : public yarp::os::BufferedPort<yarp::os::Bottle> {
     public:
 
         InCvPort(): follow(false) {}
@@ -36,7 +35,7 @@ protected:
         bool follow;
 
         /** Callback on incoming Bottle. **/
-        virtual void onRead(Bottle& b);
+        virtual void onRead(yarp::os::Bottle& b);
 
         yarp::dev::IPositionControl *iPositionControl;
 };

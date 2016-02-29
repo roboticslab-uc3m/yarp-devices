@@ -4,25 +4,25 @@
 
 // ------------------- DeviceDriver Related ------------------------------------
 
-bool teo::CanBusControlboard::open(Searchable& config) {
+bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
 
-    std::string mode = config.check("mode",Value("position"),"position/velocity mode").asString();
-    int16_t ptModeMs = config.check("ptModeMs",Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
+    std::string mode = config.check("mode",yarp::os::Value("position"),"position/velocity mode").asString();
+    int16_t ptModeMs = config.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
 
 
-    Bottle ids = config.findGroup("ids").tail();  //-- e.g. 15
-    Bottle trs = config.findGroup("trs").tail();  //-- e.g. 160
-    Bottle ks = config.findGroup("ks").tail();  //-- e.g. 0.0706
+    yarp::os::Bottle ids = config.findGroup("ids").tail();  //-- e.g. 15
+    yarp::os::Bottle trs = config.findGroup("trs").tail();  //-- e.g. 160
+    yarp::os::Bottle ks = config.findGroup("ks").tail();  //-- e.g. 0.0706
 
-    Bottle maxs = config.findGroup("maxs").tail();  //-- e.g. 360
-    Bottle mins = config.findGroup("mins").tail();  //-- e.g. -360
-    Bottle refAccelerations = config.findGroup("refAccelerations").tail();  //-- e.g. 0.575437
-    Bottle refSpeeds = config.findGroup("refSpeeds").tail();  //-- e.g. 737.2798
+    yarp::os::Bottle maxs = config.findGroup("maxs").tail();  //-- e.g. 360
+    yarp::os::Bottle mins = config.findGroup("mins").tail();  //-- e.g. -360
+    yarp::os::Bottle refAccelerations = config.findGroup("refAccelerations").tail();  //-- e.g. 0.575437
+    yarp::os::Bottle refSpeeds = config.findGroup("refSpeeds").tail();  //-- e.g. 737.2798
 
-    Bottle types = config.findGroup("types").tail();  //-- e.g. 15
+    yarp::os::Bottle types = config.findGroup("types").tail();  //-- e.g. 15
 
     //-- Initialize the CAN device.
-    Property canBusOptions;
+    yarp::os::Property canBusOptions;
     canBusOptions.fromString(config.toString());  // canDevice, canBitrate
     canBusOptions.put("device","CanBusHico");
     canBusDevice.open(canBusOptions);
@@ -51,7 +51,7 @@ bool teo::CanBusControlboard::open(Searchable& config) {
             CD_WARNING("Argument \"types\" empty at %d.\n",i);
 
         //-- Create CAN node objects with a pointer to the CAN device, its id and tr (these are locally stored parameters).
-        Property options;
+        yarp::os::Property options;
         options.put("device",types.get(i).asString());  //-- "TechnosoftIpos", "LacqueyFetch"
         options.put("canId",ids.get(i).asInt());
         options.put("tr",trs.get(i).asDouble());
@@ -61,7 +61,7 @@ bool teo::CanBusControlboard::open(Searchable& config) {
         options.put("refAcceleration",refAccelerations.get(i).asDouble());
         options.put("refSpeed",refSpeeds.get(i).asDouble());
         options.put("ptModeMs",ptModeMs);
-        PolyDriver* driver = new PolyDriver(options);
+        yarp::dev::PolyDriver* driver = new yarp::dev::PolyDriver(options);
 
         //-- Fill a map entry ( drivers.size() if before push_back, otherwise do drivers.size()-1).
         //-- Just "i" if resize already performed.

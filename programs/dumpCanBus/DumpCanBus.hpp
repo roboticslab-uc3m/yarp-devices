@@ -18,8 +18,6 @@
 #include "ICanBusSharer.h"
 #include "ColorDebug.hpp"
 
-using namespace yarp::os;
-using namespace yarp::dev;
 
 namespace teo
 {
@@ -30,10 +28,10 @@ namespace teo
  * @brief Launches one CAN bus driver, dumps output.
  *
  */
-class DumpCanBus : public RFModule, public Thread {
+class DumpCanBus : public yarp::os::RFModule, public yarp::os::Thread {
     public:
         DumpCanBus();
-        bool configure(ResourceFinder &rf);
+        bool configure(yarp::os::ResourceFinder &rf);
 
     protected:
 

@@ -28,8 +28,6 @@
 
 #define DEFAULT_PT_MODE_MS 50  //-- Don't move more than 1 degree in 50 ms.
 
-using namespace yarp::os;
-using namespace yarp::dev;
 
 namespace teo
 {
@@ -49,9 +47,9 @@ namespace teo
  *
  */
 // Note: IEncodersTimed inherits from IEncoders
-class CanBusControlboard : public DeviceDriver, public IControlLimits, public IControlMode, public IEncodersTimed,
-        public IPositionControl, public IPositionDirect, public ITorqueControl, public IVelocityControl,
-        public Thread {
+class CanBusControlboard : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits, public yarp::dev::IControlMode, public yarp::dev::IEncodersTimed,
+        public yarp::dev::IPositionControl, public yarp::dev::IPositionDirect, public yarp::dev::ITorqueControl, public yarp::dev::IVelocityControl,
+        public yarp::os::Thread {
 
     // ------------------------------- Public -------------------------------------
 
@@ -450,7 +448,7 @@ class CanBusControlboard : public DeviceDriver, public IControlLimits, public IC
          * @param pid new pid value
          * @return true/false on success/failure
          */
-        virtual bool setTorquePid(int j, const Pid &pid);
+        virtual bool setTorquePid(int j, const yarp::dev::Pid &pid);
 
         /** Get the value of the torque on a given joint (this is the
          * feedback if you have a torque sensor).
@@ -486,7 +484,7 @@ class CanBusControlboard : public DeviceDriver, public IControlLimits, public IC
          * @param pids pointer to a vector of pids
          * @return true/false upon success/failure
          */
-        virtual bool setTorquePids(const Pid *pids);
+        virtual bool setTorquePids(const yarp::dev::Pid *pids);
 
         /** Set the torque error limit for the controller on a specific joint
          * @param j joint number
@@ -532,13 +530,13 @@ class CanBusControlboard : public DeviceDriver, public IControlLimits, public IC
          * @param pid pointer to storage for the return value.
          * @return true/false on success/failure
          */
-        virtual bool getTorquePid(int j, Pid *pid);
+        virtual bool getTorquePid(int j, yarp::dev::Pid *pid);
 
         /** Get current pid value for a specific joint.
          * @param pids vector that will store the values of the pids.
          * @return true/false on success/failure
          */
-        virtual bool getTorquePids(Pid *pids);
+        virtual bool getTorquePids(yarp::dev::Pid *pids);
 
         /** Get the torque error limit for the controller on a specific joint
          * @param j joint number
@@ -637,7 +635,7 @@ class CanBusControlboard : public DeviceDriver, public IControlLimits, public IC
          * yarp developers to add documentation for your device).
          * @return true/false upon success/failure
          */
-        virtual bool open(Searchable& config);
+        virtual bool open(yarp::os::Searchable& config);
 
         /**
          * Close the DeviceDriver.
@@ -650,18 +648,18 @@ class CanBusControlboard : public DeviceDriver, public IControlLimits, public IC
     protected:
 
         /** A CAN device. */
-        PolyDriver canBusDevice;
+        yarp::dev::PolyDriver canBusDevice;
         CanBusHico* iCanBus;
 
         /** A vector of CAN node objects. */
-        std::vector< PolyDriver* > nodes;
-        std::vector< IControlLimitsRaw* > iControlLimitsRaw;
-        std::vector< IControlModeRaw* > iControlModeRaw;
-        std::vector< IEncodersTimedRaw* > iEncodersTimedRaw;
-        std::vector< IPositionControlRaw* > iPositionControlRaw;
-        std::vector< IPositionDirectRaw* > iPositionDirectRaw;
-        std::vector< ITorqueControlRaw* > iTorqueControlRaw;
-        std::vector< IVelocityControlRaw* > iVelocityControlRaw;
+        std::vector< yarp::dev::PolyDriver* > nodes;
+        std::vector< yarp::dev::IControlLimitsRaw* > iControlLimitsRaw;
+        std::vector< yarp::dev::IControlModeRaw* > iControlModeRaw;
+        std::vector< yarp::dev::IEncodersTimedRaw* > iEncodersTimedRaw;
+        std::vector< yarp::dev::IPositionControlRaw* > iPositionControlRaw;
+        std::vector< yarp::dev::IPositionDirectRaw* > iPositionDirectRaw;
+        std::vector< yarp::dev::ITorqueControlRaw* > iTorqueControlRaw;
+        std::vector< yarp::dev::IVelocityControlRaw* > iVelocityControlRaw;
         std::vector< ICanBusSharer* > iCanBusSharer;
         std::map< int, int > idxFromCanId;
 

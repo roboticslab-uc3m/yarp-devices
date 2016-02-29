@@ -9,7 +9,7 @@ namespace teo
 DumpCanBus::DumpCanBus() { }
 
 /************************************************************************/
-bool DumpCanBus::configure(ResourceFinder &rf) {
+bool DumpCanBus::configure(yarp::os::ResourceFinder &rf) {
 
     if(rf.check("help")) {
         printf("DumpCanBus options:\n");
@@ -26,7 +26,7 @@ bool DumpCanBus::configure(ResourceFinder &rf) {
     }
     deviceDevCan0.view(iCanBus);
 
-    lastNow = Time::now();
+    lastNow = yarp::os::Time::now();
 
     return this->start();
 }
@@ -63,9 +63,9 @@ std::string DumpCanBus::msgToStr(can_msg* message) {
     tmp << std::dec << (message->id & 0x7F);
     tmp << ") via(";
     tmp << std::hex << (message->id & 0xFF80);
-    tmp << "), t:" << Time::now() - lastNow << "[s].";
+    tmp << "), t:" << yarp::os::Time::now() - lastNow << "[s].";
 
-    lastNow = Time::now();
+    lastNow = yarp::os::Time::now();
 
     return tmp.str();
 }

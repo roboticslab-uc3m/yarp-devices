@@ -88,7 +88,7 @@ bool teo::CanBusControlboard::setBemfParam(int j, double bemf) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setTorquePid(int j, const Pid &pid) {
+bool teo::CanBusControlboard::setTorquePid(int j, const yarp::dev::Pid &pid) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -147,7 +147,7 @@ bool teo::CanBusControlboard::getTorqueRanges(double *min, double *max) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setTorquePids(const Pid *pids) {
+bool teo::CanBusControlboard::setTorquePids(const yarp::dev::Pid *pids) {
     CD_INFO("\n");
 
     bool ok = true;
@@ -232,7 +232,7 @@ bool teo::CanBusControlboard::getTorquePidOutputs(double *outs) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getTorquePid(int j, Pid *pid) {
+bool teo::CanBusControlboard::getTorquePid(int j, yarp::dev::Pid *pid) {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -243,7 +243,7 @@ bool teo::CanBusControlboard::getTorquePid(int j, Pid *pid) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getTorquePids(Pid *pids){
+bool teo::CanBusControlboard::getTorquePids(yarp::dev::Pid *pids){
     CD_INFO("\n");
 
     bool ok = true;
