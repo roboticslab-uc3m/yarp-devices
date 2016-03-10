@@ -33,7 +33,7 @@ IF (ENABLE_BodyYarp)
 
   IF (ENABLE_launchBodyYarp)
 
-    yarp_add_plugin_library_executable(launchBodyYarp BodyYarp)
+    YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE(launchBodyYarp BodyYarp)
     install(TARGETS launchBodyYarp DESTINATION bin)
 
   ENDIF (ENABLE_launchBodyYarp)
