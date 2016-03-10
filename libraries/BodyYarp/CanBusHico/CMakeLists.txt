@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-prepare_device(CanBusHico TYPE teo::CanBusHico INCLUDE CanBusHico.hpp)
+YARP_PREPARE_DEVICE(CanBusHico TYPE teo::CanBusHico INCLUDE CanBusHico.hpp)
 
 IF (NOT SKIP_CanBusHico)
 
