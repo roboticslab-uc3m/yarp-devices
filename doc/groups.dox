@@ -5,9 +5,9 @@
 namespace teo {}
 
 /**
- * \defgroup teo_body_libraries TEO Body Libraries
+ * \defgroup teo_body_libraries teo-body Libraries
  *
- * @brief TEO body libraries.
+ * @brief teo-body libraries.
  *
  */
 
@@ -15,7 +15,7 @@ namespace teo {}
  * @ingroup teo_body_libraries
  * \defgroup BodyYarp BodyYarp
  *
- * @brief Contains TEO body libraries that implement YARP device interfaces
+ * @brief Contains teo-body libraries that implement YARP device interfaces
  * and therefore can be invoked as YARP plugins.
  *
  * @section BodyYarp_install Installation
@@ -24,15 +24,15 @@ namespace teo {}
  */
 
 /**
- * \defgroup teo_body_programs TEO Body Programs
+ * \defgroup teo_body_programs teo-body Programs
  *
- * @brief TEO body programs.
+ * @brief teo-body programs.
  */
 
 /**
- * \defgroup teo_body_examples TEO Body Examples
+ * \defgroup teo_body_examples teo-body Examples
  *
- * @brief TEO body examples.
+ * @brief teo-body examples.
  */
 
 
