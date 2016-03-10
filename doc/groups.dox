@@ -30,9 +30,9 @@ namespace teo {}
  */
 
 /**
- * \defgroup teo_body_applications teo-body Applications
+ * \defgroup teo_body_applications teo-body Applications (Collections of Programs)
  *
- * @brief teo-body applications.
+ * @brief teo-body applications (collections of programs).
  */
 
 /**
