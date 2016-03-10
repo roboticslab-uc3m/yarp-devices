@@ -30,6 +30,12 @@ namespace teo {}
  */
 
 /**
+ * \defgroup teo_body_applications teo-body Applications
+ *
+ * @brief teo-body applications.
+ */
+
+/**
  * \defgroup teo_body_examples teo-body Examples
  *
  * @brief teo-body examples.
