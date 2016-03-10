@@ -221,7 +221,7 @@ bool teo::TechnosoftIpos::interpretMessage( can_msg * message) {
             if(-5==got) {
                 CD_INFO("\t-iPOS specific: External Reference Torque Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                    getMode = VOCAB_TORQUE_MODE;
+                    getMode = VOCAB_CM_TORQUE;
                 getModeReady.post();
             } else if(-4==got) {
                 CD_INFO("\t-iPOS specific: External Reference Speed Mode. canId: %d.\n",canId);
@@ -246,12 +246,12 @@ bool teo::TechnosoftIpos::interpretMessage( can_msg * message) {
             } else if(1==got) {
                 CD_INFO("\t-Profile Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                    getMode = VOCAB_POSITION_MODE;
+                    getMode = VOCAB_CM_POSITION;
                 getModeReady.post();
             } else if(3==got) {
                 CD_INFO("\t-Profile Velocity Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                    getMode = VOCAB_VELOCITY_MODE;
+                    getMode = VOCAB_CM_VELOCITY;
                 getModeReady.post();
             } else if(6==got) {
                 CD_INFO("\t-Homing Mode. canId: %d.\n",canId);
@@ -261,7 +261,7 @@ bool teo::TechnosoftIpos::interpretMessage( can_msg * message) {
             } else if(7==got) {
                 CD_INFO("\t-Interpolated Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                    getMode = 0;
+                    getMode = VOCAB_CM_POSITION_DIRECT;
                 getModeReady.post();
             } else {
                 CD_WARNING("\t-Mode \"%d\" not specified in manual, may be in Fault or not enabled yet. canId(%d).\n",got,(message->id & 0x7F));
