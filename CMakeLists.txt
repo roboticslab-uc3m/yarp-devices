@@ -40,6 +40,7 @@ option(ENABLE_BodyYarp_TechnosoftIpos "Enable/disable compilation of BodyYarp_Te
 option(ENABLE_BodyYarp_LacqueyFetch "Enable/disable compilation of BodyYarp_LacqueyFetch" TRUE)
 option(ENABLE_BodyYarp_TextilesHand "Enable/disable compilation of BodyYarp_TextilesHand" TRUE)
 option(ENABLE_BodyYarp_FakeJoint "Enable/disable compilation of BodyYarp_FakeJoint" TRUE)
+option(ENABLE_BodyYarp_Jr3 "Enable/disable compilation of BodyYarp_Jr3" TRUE)
 option(ENABLE_BodyYarp_CanBusControlboard "Enable/disable compilation of BodyYarp_CanBusControlboard" TRUE)
 
 # ColorDebug options
