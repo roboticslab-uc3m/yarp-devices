@@ -7,6 +7,8 @@
 #include <yarp/dev/all.h>
 #include <sstream>
 
+#include "jr3pci-ioctl.h"
+
 //#define CD_FULL_FILE  //-- Can be globally managed from father CMake. Good for debugging with polymorphism.
 //#define CD_HIDE_DEBUG  //-- Can be globally managed from father CMake.
 //#define CD_HIDE_SUCCESS  //-- Can be globally managed from father CMake.
@@ -47,6 +49,10 @@ class Jr3 : public yarp::dev::DeviceDriver
 
 
     protected:
+        six_axis_array fm0, fm1;
+        force_array fs0, fs1;
+        int ret, fd;
+        int i;
 
 };
 
