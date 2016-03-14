@@ -33,7 +33,7 @@ namespace teo
  * @brief Implementation for the JR3 sensor.
  *
  */
-class Jr3 : public yarp::dev::DeviceDriver
+class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IGenericSensor
 {
 
     public:
@@ -41,12 +41,32 @@ class Jr3 : public yarp::dev::DeviceDriver
         Jr3() {
         }
 
-        //  --------- DeviceDriver Declarations. Implementation in Jr3.cpp ---------
+        //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
         virtual bool open(yarp::os::Searchable& config);
         virtual bool close();
 
-        //  --------- ICanBusSharer Declarations. Implementation in Jr3.cpp ---------
+        //  --------- IGenericSensor Declarations. Implementation in IGenericSensorImpl.cpp ---------
+        /**
+         * Read a vector from the sensor.
+         * @param out a vector containing the sensor's last readings.
+         * @return true/false success/failure
+         */
+        virtual bool read(yarp::sig::Vector &out);
 
+        /**
+         * Get the number of channels of the sensor.
+         * @param nc pointer to storage, return value
+         * @return true/false success/failure
+         */
+        virtual bool getChannels(int *nc);
+
+        /**
+         * Calibrate the sensor, single channel.
+         * @param ch channel number
+         * @param v reset valure
+         * @return true/false success/failure
+         */
+        virtual bool calibrate(int ch, double v);
 
     protected:
         six_axis_array fm0, fm1;
