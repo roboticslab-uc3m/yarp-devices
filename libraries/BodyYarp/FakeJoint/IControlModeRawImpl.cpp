@@ -76,7 +76,7 @@ bool teo::FakeJoint::getControlModeRaw(int j, int *mode) {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    *mode = VOCAB_POSITION_MODE;
+    *mode = VOCAB_CM_POSITION;
 
     return true;
 }
