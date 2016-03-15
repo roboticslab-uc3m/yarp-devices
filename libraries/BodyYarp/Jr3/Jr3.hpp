@@ -5,6 +5,7 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
+#include <yarp/dev/IAnalogSensor.h>
 #include <sstream>
 
 #include "jr3pci-ioctl.h"
@@ -33,7 +34,7 @@ namespace teo
  * @brief Implementation for the JR3 sensor.
  *
  */
-class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IGenericSensor
+class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor
 {
 
     public:
@@ -45,29 +46,54 @@ class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IGenericSensor
         virtual bool open(yarp::os::Searchable& config);
         virtual bool close();
 
-        //  --------- IGenericSensor Declarations. Implementation in IGenericSensorImpl.cpp ---------
+        //  --------- IAnalogSensor Declarations. Implementation in IGenericSensorImpl.cpp ---------
         /**
          * Read a vector from the sensor.
          * @param out a vector containing the sensor's last readings.
-         * @return true/false success/failure
+         * @return AS_OK or return code. AS_TIMEOUT if the sensor timed-out.
          */
-        virtual bool read(yarp::sig::Vector &out);
+        virtual int read(yarp::sig::Vector &out);
+
+        /**
+         * Check the state value of a given channel.
+         * @param ch channel number.
+         * @return status.
+         */
+        virtual int getState(int ch);
 
         /**
          * Get the number of channels of the sensor.
-         * @param nc pointer to storage, return value
-         * @return true/false success/failure
+         * @return number of channels (0 in case of errors).
          */
-        virtual bool getChannels(int *nc);
+        virtual int getChannels();
 
         /**
-         * Calibrate the sensor, single channel.
-         * @param ch channel number
-         * @param v reset valure
-         * @return true/false success/failure
+         * Calibrates the whole sensor.
+         * @return status.
          */
-        virtual bool calibrate(int ch, double v);
+        virtual int calibrateSensor();
 
+        /**
+         * Calibrates the whole sensor, using an vector of calibration values.
+         * @param value a vector of calibration values.
+         * @return status.
+         */
+        virtual int calibrateSensor(const yarp::sig::Vector& value);
+
+        /**
+         * Calibrates one single channel.
+         * @param ch channel number.
+         * @return status.
+         */
+        virtual int calibrateChannel(int ch);
+
+        /**
+         * Calibrates one single channel, using a calibration value.
+         * @param ch channel number.
+         * @param value calibration value.
+         * @return status.
+         */
+        virtual int calibrateChannel(int ch, double value);
     protected:
         six_axis_array fm0, fm1;
         force_array fs0, fs1;
