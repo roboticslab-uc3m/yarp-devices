@@ -11,6 +11,7 @@ yarp_configure_external_installation(teo-body)
 ### Go through single applications
 
 add_subdirectory(dumpCanBus)
+add_subdirectory(checkCanBus)
 
 add_subdirectory(oneCanBusOneWrapper)
 
