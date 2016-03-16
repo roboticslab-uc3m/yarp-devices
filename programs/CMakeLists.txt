@@ -2,6 +2,7 @@
 # Authors: Juan G. Victores
 
 add_subdirectory(dumpCanBus)
+add_subdirectory(checkCanBus)
 
 add_subdirectory(oneCanBusOneWrapper)
 
