@@ -10,6 +10,9 @@ void teo::CheckCanBus::run() {
 
     while ( ! this->RFModule::isStopping() ) { // -- Mientras no se pare el RFModule
 
+        printf("lastNow: %d - actualTime: %d = %d", lastNow,yarp::os::Time::now());
+
+
         struct can_msg buffer; // -- Mensaje CAN
 
         //-- read_timeout() returns the number read, -1 for errors or 0 for timeout or EOF.

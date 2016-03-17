@@ -15,8 +15,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
     // -- TimeOut por defecto
     timeOut = 0;
 
-    // -- DeviceCan que utilizaremos
-    canNumber = 0;
+
 
     if(rf.check("help")) {
         printf("CheckCanBus options:\n");
@@ -29,9 +28,6 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         timeOut = rf.find("timeOut").asInt(); // -- recoge el parametro de timeout
     }
 
-    if(rf.check("canDevice")){
-        canNumber = rf.find("canDevice").asInt();
-    }
 
     CD_DEBUG("%s\n",rf.toString().c_str()); // -- nos muestra el contenido del objeto resource finder
     deviceDevCan0.open(rf); // -- Abre un dispositivo pasandole el contenido del RF (???????????)
@@ -41,9 +37,9 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
     }
     deviceDevCan0.view(iCanBus); // -- ????????
 
-    lastNow = yarp::os::Time::now(); // -- devuelve el tiempo actual en segundos
+    lastNow = yarp::os::Time::now(); // -- tiempo actual
 
-    return this->start();
+    return this->start(); // arranca el hilo
 }
 
 /************************************************************************/

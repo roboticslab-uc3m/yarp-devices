@@ -35,8 +35,8 @@ class CheckCanBus : public yarp::os::RFModule, public yarp::os::Thread {
         bool configure(yarp::os::ResourceFinder &rf);
 
         // -- Nuevas variables:
-        int timeOut;    // -- tiempo de espera para comprobar el ID (s)
-        int canNumber;  // -- Can que utilizaremos (0 o 1)
+        double timeOut;    // -- tiempo de espera para comprobar el ID (s)
+
 
     protected:
 
