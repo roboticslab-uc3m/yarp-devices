@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
     YARP_REGISTER_PLUGINS(BodyYarp);
 
     yarp::os::ResourceFinder rf;
-    rf.setVerbose(true); // -- Imprimir en pantalla la ubicación de los recursos
+    rf.setVerbose(true); // -- Imprimir en pantalla la ubicación de los recursos a TRUE
     rf.setDefaultContext("checkCanBus"); // -- ??
     rf.setDefaultConfigFile("checkCanBus.ini"); // -- Nombre del fichero de configuración
     rf.configure(argc, argv);
@@ -62,6 +62,6 @@ int main(int argc, char *argv[]) {
     CD_SUCCESS("Found yarp network.\n");
 
     teo::CheckCanBus mod; // -- Llamo a la clase
-    return mod.runModule(rf); // -- RFModule (resource finder)
+    return mod.runModule(rf); // -- RFModule (resource finder) ???
 }
 

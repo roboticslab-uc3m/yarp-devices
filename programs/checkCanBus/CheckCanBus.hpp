@@ -28,21 +28,24 @@ namespace teo
  * @brief Launches one CAN bus driver, dumps output.
  *
  */
+
 class CheckCanBus : public yarp::os::RFModule, public yarp::os::Thread {
     public:
         CheckCanBus();
         bool configure(yarp::os::ResourceFinder &rf);
 
-        int timeOut; // -- tiempo de espera para comprobar el ID (s)
+        // -- Nuevas variables:
+        int timeOut;    // -- tiempo de espera para comprobar el ID (s)
+        int canNumber;  // -- Can que utilizaremos (0 o 1)
 
     protected:
 
-        yarp::dev::PolyDriver deviceDevCan0;
+        yarp::dev::PolyDriver deviceDevCan0; // -- Dispositivo que se crea (¿A qué dispositivo hace referencia?)
         CanBusHico* iCanBus;
 
         /** A helper function to display CAN messages. */
-        std::string msgToStr(can_msg* message);
-        double lastNow;
+        std::string msgToStr(can_msg* message); // -- Muestra los mensajes que vienen del CAN
+        double lastNow; // -- Muestra el tiempo actual
 
         virtual double getPeriod() {return 3.0;}
         virtual bool updateModule();

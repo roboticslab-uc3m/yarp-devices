@@ -16,7 +16,7 @@ void teo::CheckCanBus::run() {
         int ret = iCanBus->read_timeout(&buffer,1);
 
         //-- All debugging messages should be contained in read_timeout, so just loop again.
-        if( ret <= 0 ) continue;
+        if( ret <= 0 ) continue; // -- ?????
 
         int canId = buffer.id  & 0x7F; // -- limpia basura del CAN
 
@@ -25,12 +25,19 @@ void teo::CheckCanBus::run() {
 
         //-- Intercept 700h 0 msg that just indicates presence.
         if( (buffer.id-canId) == 0x700 ) { // -- Filtra mensajes por presencia
-            // -- Indica la presencia de los mensajes
+            // -- Indica la presencia de los mensajes:
+            // -- Ejemplo al encender brazo derecho:
+            // -- [success] ThreadImpl.cpp:29 run(): Device indicating presence. 0. canId(15) via(700), t:8.65522[s].
+            // -- [success] ThreadImpl.cpp:29 run(): Device indicating presence. 0. canId(18) via(700), t:6.00585e-05[s].
+            // -- [success] ThreadImpl.cpp:29 run(): Device indicating presence. 0. canId(20) via(700), t:0.00826797[s].
+            // -- [success] ThreadImpl.cpp:29 run(): Device indicating presence. 0. canId(19) via(700), t:0.000579084[s].
+            // -- [success] ThreadImpl.cpp:29 run(): Device indicating presence. 0. canId(16) via(700), t:0.868453[s].
+            // -- [success] ThreadImpl.cpp:29 run(): Device indicating presence. 0. canId(17) via(700), t:0.000315072[s].
             CD_SUCCESS("Device indicating presence. %s\n",msgToStr(&buffer).c_str());
             continue;
         }
 
-        CD_SUCCESS("Read CAN message: %s\n", msgToStr(&buffer).c_str());
+        //CD_SUCCESS("Read CAN message: %s\n", msgToStr(&buffer).c_str()); // -- lee lo que le llega del can bus
 
     }  //-- ends: while ( ! this->isStopping() ).
 
