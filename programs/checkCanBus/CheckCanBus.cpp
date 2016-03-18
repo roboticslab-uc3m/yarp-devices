@@ -9,13 +9,11 @@ namespace teo
 CheckCanBus::CheckCanBus() { }
 
 /************************************************************************/
-// -- Función principal (¿dónde se llama?)
+// -- Función principal: Se llama en mod.runModule(rf) desde el main.cpp
 bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
 
     // -- TimeOut por defecto
     timeOut = 0;
-
-
 
     if(rf.check("help")) {
         printf("CheckCanBus options:\n");
@@ -24,13 +22,41 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         return false;
     }
 
+    // -- Parametro: --timeout [s]
     if(rf.check("timeout")){
         timeOut = rf.find("timeOut").asInt(); // -- recoge el parametro de timeout
     }
 
+    // -- Parametro: --idsfrom [.ini]
+    if(rf.check("idsfrom")){
+        printf("leyendo fichero: rightArm.ini\n");
+        CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
+        yarp::os::Bottle jointsCan0 = rf.findGroup("ids");
+        CD_DEBUG("%s\n",jointsCan0.toString().c_str());
+        printf("fin\n");
+    }
+
+    // -- leemos del fichero (ex: rightArm.ini)
+    //yarp::os::Bottle jointsCan0 = rf.findGroup("jointsCan0");
+    //CD_DEBUG("%s\n",jointsCan0.toString().c_str());
+
+    //-- /dev/can0 --
+    /*
+    yarp::os::Bottle devCan0 = rf.findGroup("devCan0");
+    CD_DEBUG("%s\n",devCan0.toString().c_str());
+    yarp::os::Property optionsDevCan0;
+    optionsDevCan0.fromString(devCan0.toString());
+    //Appended mode option for optionsDevCan0 (for --mode flag)
+    optionsDevCan0.put("mode", mode);
+    deviceDevCan0.open(optionsDevCan0);
+    if (!deviceDevCan0.isValid()) {
+        CD_ERROR("deviceDevCan0 instantiation not worked.\n");
+        return false;
+    }
+    */
 
     CD_DEBUG("%s\n",rf.toString().c_str()); // -- nos muestra el contenido del objeto resource finder
-    deviceDevCan0.open(rf); // -- Abre un dispositivo pasandole el contenido del RF (???????????)
+    deviceDevCan0.open(rf);                 // -- Abre el dispositivo HicoCan (tarjeta) y le pasa el ResourceFinder
     if (!deviceDevCan0.isValid()) {
         CD_ERROR("deviceDevCan0 instantiation not worked.\n");
         return false;

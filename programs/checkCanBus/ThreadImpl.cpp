@@ -1,5 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
+#include <ctime>
+#include <cstdio>
 #include "CheckCanBus.hpp"
 
 // ------------------ Thread Related -----------------------------------------
@@ -10,7 +12,6 @@ void teo::CheckCanBus::run() {
 
     while ( ! this->RFModule::isStopping() ) { // -- Mientras no se pare el RFModule
 
-        printf("lastNow: %d - actualTime: %d = %d", lastNow,yarp::os::Time::now());
 
 
         struct can_msg buffer; // -- Mensaje CAN

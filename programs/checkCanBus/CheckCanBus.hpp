@@ -47,7 +47,7 @@ class CheckCanBus : public yarp::os::RFModule, public yarp::os::Thread {
         std::string msgToStr(can_msg* message); // -- Muestra los mensajes que vienen del CAN
         double lastNow; // -- Muestra el tiempo actual
 
-        virtual double getPeriod() {return 3.0;}
+        virtual double getPeriod() {return 3.0;}  // Periodicidad de llamada a updateModule en [s]
         virtual bool updateModule();
         virtual bool close();
 
