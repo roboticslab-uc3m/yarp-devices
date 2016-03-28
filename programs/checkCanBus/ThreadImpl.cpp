@@ -38,6 +38,7 @@ void teo::CheckCanBus::run() {
             // -- [success] ThreadImpl.cpp:29 run(): Device indicating presence. 0. canId(16) via(700), t:0.868453[s].
             // -- [success] ThreadImpl.cpp:29 run(): Device indicating presence. 0. canId(17) via(700), t:0.000315072[s].
             CD_SUCCESS("Device indicating presence. %s\n",msgToStr(&buffer).c_str());
+            checkIds(&buffer);
             continue;
         }
 

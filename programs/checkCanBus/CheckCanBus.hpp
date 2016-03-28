@@ -50,8 +50,9 @@ class CheckCanBus : public yarp::os::RFModule, public yarp::os::Thread {
         /** A helper function to display CAN messages. */
         std::string msgToStr(can_msg* message); // -- Muestra los mensajes que vienen del CAN
 
-        // -- Nuevas variables
-        std::string CheckIds(can_msg* message); // --Declara función que encontraremos en el .hpp
+        // -- Funcion que se encargará de chekear los IDs del array y sacar un mensaje por pantalla
+        void checkIds(can_msg* message); // --Declara función que encontraremos en el .hpp
+
         double lastNow; // -- Muestra el tiempo actual
 
         virtual double getPeriod() {return 3.0;}  // Periodicidad de llamada a updateModule en [s]
