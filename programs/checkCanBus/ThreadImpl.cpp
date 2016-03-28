@@ -10,6 +10,7 @@ void teo::CheckCanBus::run() {
 
     CD_INFO("Started CheckCanBus reading thread run.\n");
 
+
     while ( ! this->RFModule::isStopping() ) { // -- Mientras no se pare el RFModule
 
 
@@ -29,20 +30,17 @@ void teo::CheckCanBus::run() {
 
         //-- Intercept 700h 0 msg that just indicates presence.
         if( (buffer.id-canId) == 0x700 ) { // -- Filtra mensajes por presencia
-            // -- Indica la presencia de los mensajes:
-            // -- Ejemplo al encender brazo derecho:
-            // -- [success] ThreadImpl.cpp:29 run(): Device indicating presence. 0. canId(15) via(700), t:8.65522[s].
-            // -- [success] ThreadImpl.cpp:29 run(): Device indicating presence. 0. canId(18) via(700), t:6.00585e-05[s].
-            // -- [success] ThreadImpl.cpp:29 run(): Device indicating presence. 0. canId(20) via(700), t:0.00826797[s].
-            // -- [success] ThreadImpl.cpp:29 run(): Device indicating presence. 0. canId(19) via(700), t:0.000579084[s].
-            // -- [success] ThreadImpl.cpp:29 run(): Device indicating presence. 0. canId(16) via(700), t:0.868453[s].
-            // -- [success] ThreadImpl.cpp:29 run(): Device indicating presence. 0. canId(17) via(700), t:0.000315072[s].
-            CD_SUCCESS("Device indicating presence. %s\n",msgToStr(&buffer).c_str());
+            if(bootTime == 0) bootTime = yarp::os::Time::now(); // -- toma el bootTime al detectar la primera presencia
+
+            //CD_SUCCESS("Device indicating presence. %s\n",msgToStr(&buffer).c_str());
             checkIds(&buffer);
             continue;
         }
 
+        if(yarp::os::Time::now()-bootTime > 19) printf("Han transcurrido 20 segundos\n");
+        printf("time: %i\n", yarp::os::Time::now()-bootTime);
         //CD_SUCCESS("Read CAN message: %s\n", msgToStr(&buffer).c_str()); // -- lee lo que le llega del can bus
+
 
     }  //-- ends: while ( ! this->isStopping() ).
 

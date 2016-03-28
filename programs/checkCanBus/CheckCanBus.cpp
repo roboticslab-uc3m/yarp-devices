@@ -19,6 +19,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
 
     // -- TimeOut por defecto
     timeOut = 0;
+    bootTime = 0; // -- inicializo el tiempo a 0 [s] la primera vez que arranca el programa
 
     if(rf.check("help")) {
         printf("CheckCanBus options:\n");
@@ -32,7 +33,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         timeOut = rf.find("timeOut").asInt(); // -- recoge el parametro de timeout
     }
 
-    // -- Parametro: --ids
+    // -- Parametro: --ids ----------------------------------------------------------
     if(rf.check("ids")){
         yarp::os::Bottle jointsCan0 = rf.findGroup("ids");  // -- Introduce en un objeto bottle el parámetro ids
         std::string strIds = jointsCan0.get(1).toString().c_str(); // -- strIds almacena los Ids que queremos comprobar
@@ -43,33 +44,8 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
                vectorIds.push_back(n); // -- introduce en el vector los IDs
            }
 
-        /* -- Comprobacion de que se introducen correctamente en un vector
-        for(int i = 0; i < vectorIds.size(); i++)
-            {
-            printf("ID: %i\n", vectorIds.at(i));
-        }
-        */
     }
 
-
-    // -- leemos del fichero (ex: rightArm.ini)
-    //yarp::os::Bottle jointsCan0 = rf.findGroup("jointsCan0");
-    //CD_DEBUG("%s\n",jointsCan0.toString().c_str());
-
-    //-- /dev/can0 --
-    /*
-    yarp::os::Bottle devCan0 = rf.findGroup("devCan0");
-    CD_DEBUG("%s\n",devCan0.toString().c_str());
-    yarp::os::Property optionsDevCan0;
-    optionsDevCan0.fromString(devCan0.toString());
-    //Appended mode option for optionsDevCan0 (for --mode flag)
-    optionsDevCan0.put("mode", mode);
-    deviceDevCan0.open(optionsDevCan0);
-    if (!deviceDevCan0.isValid()) {
-        CD_ERROR("deviceDevCan0 instantiation not worked.\n");
-        return false;
-    }
-    */
 
     CD_DEBUG("%s\n",rf.toString().c_str()); // -- nos muestra el contenido del objeto resource finder
     deviceDevCan0.open(rf);                 // -- Abre el dispositivo HicoCan (tarjeta) y le pasa el ResourceFinder
@@ -128,7 +104,7 @@ std::string CheckCanBus::msgToStr(can_msg* message) {
 void CheckCanBus::checkIds(can_msg* message) {
     for(int i = 0; i < vectorIds.size(); i++){
         if(vectorIds.at(i)== (message->id & 0x7F)) {
-            printf("Se ha detectado el ID: %i\n", vectorIds.at(i));
+            CD_SUCCESS("Se ha detectado el ID: %i\n", vectorIds.at(i));
         }
     }
 }
