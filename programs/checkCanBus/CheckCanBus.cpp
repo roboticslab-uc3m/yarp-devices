@@ -42,11 +42,13 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
                std::cout<<n<<std::endl;
                vectorIds.push_back(n); // -- introduce en el vector los IDs
            }
-        //printf("--Contenido: %s\n--Tamano: %i\n--elemento(1): %s\n",jointsCan0.toString().c_str(), jointsCan0.size(), jointsCan0.get(1).toString().c_str());
+
+        /* -- Comprobacion de que se introducen correctamente en un vector
         for(int i = 0; i < vectorIds.size(); i++)
             {
             printf("ID: %i\n", vectorIds.at(i));
         }
+        */
     }
 
     // -- leemos del fichero (ex: rightArm.ini)
@@ -102,7 +104,7 @@ bool CheckCanBus::close() {
 // -- Función que lee los mensajes que le llegan del CAN-BUS
 std::string CheckCanBus::msgToStr(can_msg* message) {
 
-    std::stringstream tmp;
+    std::stringstream tmp; // -- nos permite insertar cualquier tipo de dato dentro del flujo
     for(int i=0; i < message->dlc-1; i++)
     {
         tmp << std::hex << static_cast<int>(message->data[i]) << " ";
@@ -119,6 +121,27 @@ std::string CheckCanBus::msgToStr(can_msg* message) {
     return tmp.str();
 }
 
+/*************************************************************************/
+
+// -- Función que comprueba los mensajes que recibe del CAN con el vector de IDs
+std::string CheckIds::msgToStr(can_msg* message) {
+
+    std::stringstream tmp;
+    for(int i=0; i < message->dlc-1; i++)
+    {
+        tmp << std::hex << static_cast<int>(message->data[i]) << " ";
+    }
+    tmp << std::hex << static_cast<int>(message->data[message->dlc-1]);
+    tmp << ". canId(";
+    tmp << std::dec << (message->id & 0x7F); // -- muestra en decimal el ID
+    tmp << ") via(";
+    tmp << std::hex << (message->id & 0xFF80); // -- ???
+    tmp << "), t:" << yarp::os::Time::now() - lastNow << "[s]."; // -- tiempo que ha tardado en responder???
+
+    lastNow = yarp::os::Time::now();
+
+    return tmp.str();
+}
 
 
 /************************************************************************/
