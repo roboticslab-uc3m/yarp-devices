@@ -18,6 +18,9 @@
 #include "ICanBusSharer.h"
 #include "ColorDebug.hpp"
 
+//-- Nuevos includes
+#include <vector>
+
 
 namespace teo
 {
@@ -35,12 +38,13 @@ class CheckCanBus : public yarp::os::RFModule, public yarp::os::Thread {
         bool configure(yarp::os::ResourceFinder &rf);
 
         // -- Nuevas variables:
-        double timeOut;    // -- tiempo de espera para comprobar el ID (s)
+        double timeOut;     // -- tiempo de espera para comprobar el ID (s)
+        std::vector<int> vectorIds;    // -- vector que almacenará los IDs y su activación (30 grados de libertad)
 
 
     protected:
 
-        yarp::dev::PolyDriver deviceDevCan0; // -- Dispositivo que se crea (¿A qué dispositivo hace referencia?)
+        yarp::dev::PolyDriver deviceDevCan0; // -- Dispositivo que se crea. Hace referencia al dispositivo HicoCan
         CanBusHico* iCanBus;
 
         /** A helper function to display CAN messages. */

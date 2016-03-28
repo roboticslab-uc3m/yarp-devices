@@ -1,6 +1,11 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include "CheckCanBus.hpp"
+// --
+#include <string>
+#include <iostream>
+#include <sstream>
+// --
 
 namespace teo
 {
@@ -27,13 +32,21 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         timeOut = rf.find("timeOut").asInt(); // -- recoge el parametro de timeout
     }
 
-    // -- Parametro: --idsfrom [.ini]
-    if(rf.check("idsfrom")){
-        printf("leyendo fichero: rightArm.ini\n");
-        CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
-        yarp::os::Bottle jointsCan0 = rf.findGroup("ids");
-        CD_DEBUG("%s\n",jointsCan0.toString().c_str());
-        printf("fin\n");
+    // -- Parametro: --ids
+    if(rf.check("ids")){
+        yarp::os::Bottle jointsCan0 = rf.findGroup("ids");  // -- Introduce en un objeto bottle el parámetro ids
+        std::string strIds = jointsCan0.get(1).toString().c_str(); // -- strIds almacena los Ids que queremos comprobar
+        std::stringstream streamIds(strIds); // --  tratamos el string de IDs como un stream llamado streamIds
+        int n;
+        while(streamIds>>n){
+               std::cout<<n<<std::endl;
+               vectorIds.push_back(n); // -- introduce en el vector los IDs
+           }
+        //printf("--Contenido: %s\n--Tamano: %i\n--elemento(1): %s\n",jointsCan0.toString().c_str(), jointsCan0.size(), jointsCan0.get(1).toString().c_str());
+        for(int i = 0; i < vectorIds.size(); i++)
+            {
+            printf("ID: %i\n", vectorIds.at(i));
+        }
     }
 
     // -- leemos del fichero (ex: rightArm.ini)
