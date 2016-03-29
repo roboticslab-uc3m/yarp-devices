@@ -19,7 +19,8 @@
 #include "ColorDebug.hpp"
 
 //-- Nuevos includes
-#include <vector>
+//#include <vector>
+#include <queue>
 
 
 namespace teo
@@ -39,9 +40,9 @@ class CheckCanBus : public yarp::os::RFModule, public yarp::os::Thread {
 
         // -- Nuevas variables:
         double timeOut;     // -- tiempo de espera para comprobar el ID (s)
-        double bootTime;  // -- tiempo en el arranque (valor de tiempo aleatorio)
-        std::vector<int> vectorIds;    // -- vector que almacenará los IDs y su activación (30 grados de libertad)
-
+        double firstTime;  // -- tiempo en el arranque (valor de tiempo aleatorio)
+        //std::vector<int> vectorIds;    // -- vector que almacenará los IDs y su activación
+        std::queue<int> queueIds;   // -- cola que almacenará los IDs
 
     protected:
 
@@ -51,8 +52,11 @@ class CheckCanBus : public yarp::os::RFModule, public yarp::os::Thread {
         /** A helper function to display CAN messages. */
         std::string msgToStr(can_msg* message); // -- Muestra los mensajes que vienen del CAN
 
-        // -- Funcion que se encargará de chekear los IDs del array y sacar un mensaje por pantalla
+        // -- Funcion que se encargará de chekear los IDs introducidos e imprimir los detectados
         void checkIds(can_msg* message); // --Declara función que encontraremos en el .hpp
+
+        // -- Funcion que se encargará de imprimir los IDs no detectados
+        void printWronglIds();
 
         double lastNow; // -- Muestra el tiempo actual
 
