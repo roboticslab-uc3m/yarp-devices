@@ -107,7 +107,7 @@ void CheckCanBus::checkIds(can_msg* message) {
     for(int i=0; i<queueIds.size(); i++){  // -- bucle que recorrerá la cola
 
         if(queueIds.front()== (message->id & 0x7F)) {   // -- si el ID coincide, lo saco de la cola
-            CD_SUCCESS_NO_HEADER("\nSe ha detectado el ID: %i", queueIds.front());
+            CD_SUCCESS_NO_HEADER("Se ha detectado el ID: %i\n", queueIds.front());
             queueIds.pop(); // -- saca de la cola el elemento
         }
         // En caso de que no coincida el ID
