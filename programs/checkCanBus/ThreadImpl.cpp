@@ -1,6 +1,5 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include <ctime>
 #include <cstdio>
 #include "CheckCanBus.hpp"
 
@@ -12,7 +11,6 @@ void teo::CheckCanBus::run() {
 
 
     while ( ! this->RFModule::isStopping() ) { // -- Mientras no se pare el RFModule
-
 
 
         struct can_msg buffer; // -- Mensaje CAN
@@ -31,18 +29,19 @@ void teo::CheckCanBus::run() {
 
         //-- Intercept 700h 0 msg that just indicates presence.
         if( (buffer.id-canId) == 0x700 ) { // -- Filtra mensajes por presencia
-            if(firstTime == 0) firstTime = yarp::os::Time::now(); // -- toma el bootTime al detectar la primera presencia
+            if(firstTime == 0) firstTime = yarp::os::Time::now(); // -- toma el firsTime al detectar la primera presencia
 
             //CD_SUCCESS("Device indicating presence. %s\n",msgToStr(&buffer).c_str());
             checkIds(&buffer); // -- Comprueba los IDs e imprime por pantalla los detectados
             continue;
         }
-        // -- Transcurridos 10s imprime por pantalla los IDs no detectados
-        if(yarp::os::Time::now()-firstTime > 10) {
-            //printf("Han transcurrido 10 segundos\n");
-            CheckCanBus::printWronglIds();
+        // -- Transcurridos los segundos indicados, imprime por pantalla los IDs no detectados
+        if(int(yarp::os::Time::now()-firstTime)<timeOut+1)
+            printf("Tiempo de espera: %i\r", int(yarp::os::Time::now()-firstTime)); // -- muestra un mensaje que se reescribe con el tiempo restante
+        else {
+            CheckCanBus::printWronglIds(); // -- Imprime los IDs que no se han utilizado
         }
-        //CD_SUCCESS("Read CAN message: %s\n", msgToStr(&buffer).c_str()); // -- lee lo que le llega del can bus
+        //CD_SUCCESS_NO_HEADER("Read CAN message: %s\n", msgToStr(&buffer).c_str()); // -- lee lo que le llega del can bus
 
 
     }  //-- ends: while ( ! this->isStopping() ).

@@ -18,8 +18,8 @@ CheckCanBus::CheckCanBus() { }
 bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
 
     // -- TimeOut por defecto
-    timeOut = 0;
-    firstTime = 0; // -- inicializo el tiempo a 0 [s] la primera vez que arranca el programa
+    timeOut = 0;    // -- Por defecto 0 [s] el parámetro --timeout
+    firstTime = 0;  // -- inicializo el tiempo a 0 [s] la primera vez que arranca el programa
 
     if(rf.check("help")) {
         printf("CheckCanBus options:\n");
@@ -30,32 +30,23 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
 
     // -- Parametro: --timeout [s]
     if(rf.check("timeout")){
-        timeOut = rf.find("timeOut").asInt(); // -- recoge el parametro de timeout
+        timeOut = rf.find("timeout").asInt();
+
+        printf("[INFO] Timeout: %.2f [s]\n", timeOut);
     }
-
-    // -- Parametro: --ids -- version con Vectores
-    /*if(rf.check("ids")){
-        yarp::os::Bottle jointsCan0 = rf.findGroup("ids");  // -- Introduce en un objeto bottle el parámetro ids
-        std::string strIds = jointsCan0.get(1).toString().c_str(); // -- strIds almacena los Ids que queremos comprobar
-        std::stringstream streamIds(strIds); // --  tratamos el string de IDs como un stream llamado streamIds
-        int n;
-        while(streamIds>>n){
-               std::cout<<n<<std::endl;
-               vectorIds.push_back(n); // -- introduce en el vector los IDs
-           }
-
-    }*/
 
     // -- Parametro: --ids -- version con Cola
     if(rf.check("ids")){
         yarp::os::Bottle jointsCan0 = rf.findGroup("ids");  // -- Introduce en un objeto bottle el parámetro ids
         std::string strIds = jointsCan0.get(1).toString().c_str(); // -- strIds almacena los Ids que queremos comprobar
         std::stringstream streamIds(strIds); // --  tratamos el string de IDs como un stream llamado streamIds
+        CD_INFO_NO_HEADER("[INFO] Se va a proceder a la detección de los IDs: ");
         int n;
-        while(streamIds>>n){
-               std::cout<<n<<std::endl;
+        while(streamIds>>n){    // -- recorre el stream y va introduciendo cada ID en la cola
+               printf("%i ",n);
                queueIds.push(n); // -- introduce en la cola los IDs
            }
+        printf("\n");
     }
 
     CD_DEBUG("%s\n",rf.toString().c_str()); // -- nos muestra el contenido del objeto resource finder
@@ -111,22 +102,12 @@ std::string CheckCanBus::msgToStr(can_msg* message) {
 
 /*************************************************************************/
 
-// -- Función que comprueba los mensajes que recibe del CAN con el vector de IDs
-/*void CheckCanBus::checkIds(can_msg* message) {
-    for(int i = 0; i < vectorIds.size(); i++){
-        if(vectorIds.at(i)== (message->id & 0x7F)) {
-            CD_SUCCESS("Se ha detectado el ID: %i\n", vectorIds.at(i));
-        }
-    }
-}*/
-
-// -- Función que comprueba los mensajes que recibe del CAN con una cola de IDs
+// -- Función que comprueba los mensajes que recibe del CAN utilizando una cola de IDs
 void CheckCanBus::checkIds(can_msg* message) {
     for(int i=0; i<queueIds.size(); i++){  // -- bucle que recorrerá la cola
-        //CD_DEBUG_NO_HEADER("Bucle recorrido: %i\n", i);
-        //CD_INFO_NO_HEADER("Tamaño de cola: %i\n", queueIds.size());
+
         if(queueIds.front()== (message->id & 0x7F)) {   // -- si el ID coincide, lo saco de la cola
-            CD_SUCCESS_NO_HEADER("Se ha detectado el ID: %i\n", queueIds.front());
+            CD_SUCCESS_NO_HEADER("\nSe ha detectado el ID: %i", queueIds.front());
             queueIds.pop(); // -- saca de la cola el elemento
         }
         // En caso de que no coincida el ID
@@ -141,7 +122,7 @@ void CheckCanBus::checkIds(can_msg* message) {
 // -- Función que imprime por pantalla los IDs no detectados (IDs residuales en cola)
 void CheckCanBus::printWronglIds(){
     for(int i=0; i<queueIds.size(); i++){
-           CD_ERROR_NO_HEADER("No se ha detectado el ID: %i\n", queueIds.front());
+           CD_ERROR_NO_HEADER("\nNo se ha detectado el ID: %i", queueIds.front());
            queueIds.pop(); // -- saca de la cola el elemento
     }
 }
