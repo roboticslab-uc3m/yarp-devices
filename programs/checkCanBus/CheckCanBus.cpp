@@ -124,7 +124,7 @@ void CheckCanBus::printWronglIds(){
     for(int i=0; i<queueIds.size(); i++){
            CD_ERROR_NO_HEADER("\nNo se ha detectado el ID: %i", queueIds.front());
            queueIds.pop(); // -- saca de la cola el elemento
-    }
+    }    
 }
 
 /************************************************************************/
