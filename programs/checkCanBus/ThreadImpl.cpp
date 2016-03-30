@@ -33,13 +33,20 @@ void teo::CheckCanBus::run() {
 
             //CD_SUCCESS("Device indicating presence. %s\n",msgToStr(&buffer).c_str());
             checkIds(&buffer); // -- Comprueba los IDs e imprime por pantalla los detectados
-            continue;
+            continue; // -- Mientras esté detectando presencia, las instrucciones de abajo no las ejecuta
         }
-        // -- Transcurridos los segundos indicados, imprime por pantalla los IDs no detectados
-        if(int(yarp::os::Time::now()-firstTime)<timeOut+1)
-            printf("Tiempo de espera: %i\r", int(yarp::os::Time::now()-firstTime)); // -- muestra un mensaje que se reescribe con el tiempo restante
-        else {
-            CheckCanBus::printWronglIds(); // -- Imprime los IDs que no se han utilizado
+        //----------------- Comprueba IDs de encoders -------------------------
+        else {                             // -- En caso de que NO sean mensajes de presencia
+            checkIds(&buffer); // -- muestra en pantalla los IDs de los encoders
+            // -- Transcurridos los segundos indicados, imprime por pantalla los IDs no detectados
+            if(int(yarp::os::Time::now()-firstTime)<timeOut+1){
+                printf("Tiempo de espera: %i\r", int(yarp::os::Time::now()-firstTime)); // -- muestra un mensaje que se reescribe con el tiempo restante
+
+            }
+            else {
+                printWronglIds(); // -- Imprime los IDs que no se han utilizado
+
+            }
         }
         //CD_SUCCESS_NO_HEADER("Read CAN message: %s\n", msgToStr(&buffer).c_str()); // -- lee lo que le llega del can bus
 
