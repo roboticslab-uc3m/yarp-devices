@@ -41,7 +41,6 @@ class CheckCanBus : public yarp::os::RFModule, public yarp::os::Thread {
         // -- Nuevas variables:
         double timeOut;     // -- tiempo de espera para comprobar el ID (s)
         double firstTime;  // -- tiempo en el arranque (valor de tiempo aleatorio)
-        //std::vector<int> vectorIds;    // -- vector que almacenará los IDs y su activación
         std::queue<int> queueIds;   // -- cola que almacenará los IDs
 
     protected:

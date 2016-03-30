@@ -21,6 +21,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
     timeOut = 0;    // -- Por defecto 0 [s] el parámetro --timeout
     firstTime = 0;  // -- inicializo el tiempo a 0 [s] la primera vez que arranca el programa
 
+
     if(rf.check("help")) {
         printf("CheckCanBus options:\n");
         printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
@@ -49,6 +50,21 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         printf("\n");
     }
 
+    //-- Parametro: --from (incluirá configuración de la HicoCan y las ids)
+    if(rf.check("from")){
+        yarp::os::Bottle fileIds = rf.findGroup("idss");
+        std::string strIds = fileIds.get(1).toString(); // -- strIds almacena los Ids que queremos comprobar
+        std::stringstream streamIds(strIds); // --  tratamos el string de IDs como un stream llamado streamIds
+        CD_INFO_NO_HEADER("[INFO] Se va a proceder a la detección de los IDs (()): ");
+        int n;
+        while(streamIds>>n){    // -- recorre el stream y va introduciendo cada ID en la cola
+               printf("%i ",n);
+               queueIds.push(n); // -- introduce en la cola los IDs
+           }
+        printf("\n");
+    }
+
+    // -- Continuación del código que CONFIGURA LA HICO-CAN
     CD_DEBUG("%s\n",rf.toString().c_str()); // -- nos muestra el contenido del objeto resource finder
     deviceDevCan0.open(rf);                 // -- Abre el dispositivo HicoCan (tarjeta) y le pasa el ResourceFinder
     if (!deviceDevCan0.isValid()) {
@@ -121,10 +137,10 @@ void CheckCanBus::checkIds(can_msg* message) {
 
 // -- Función que imprime por pantalla los IDs no detectados (IDs residuales en cola)
 void CheckCanBus::printWronglIds(){ 
-    for(int i=0; i<queueIds.size(); i++){
-           CD_ERROR_NO_HEADER("\nNo se ha detectado el ID: %i", queueIds.front());
-           queueIds.pop(); // -- saca de la cola el elemento
-    }    
+        for(int i=0; i<queueIds.size(); i++){
+               CD_ERROR_NO_HEADER("\nNo se ha detectado el ID: %i", queueIds.front());
+               queueIds.pop(); // -- saca de la cola el elemento
+           }
 }
 
 /************************************************************************/
