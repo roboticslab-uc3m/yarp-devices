@@ -11,8 +11,7 @@ void teo::CheckCanBus::run() {
     CD_INFO("Started CheckCanBus reading thread run.\n");
 
 
-    while ( ! this->RFModule::isStopping() ) { // -- Mientras no se pare el RFModule
-
+    while ( ! this->RFModule::isStopping()) { // -- Mientras no se pare el RFModule
 
         struct can_msg buffer; // -- Mensaje CAN
 
@@ -40,9 +39,13 @@ void teo::CheckCanBus::run() {
         else {                             // -- En caso de que NO sean mensajes de presencia
             checkIds(&buffer); // -- muestra en pantalla los IDs de los encoders detectados
             // -- Transcurridos los segundos indicados, imprime por pantalla los IDs no detectados
-            if(int(yarp::os::Time::now()-firstTime)<timeOut+1)
-                printf("Tiempo de espera: %i\r", int(yarp::os::Time::now()-firstTime)); // -- muestra un mensaje que se reescribe con el tiempo restante
-            else printWronglIds(); // -- Imprime los IDs que no se han utilizado
+            if(int(yarp::os::Time::now()-firstTime)==timeOut+1)
+                  printWronglIds(); // -- Imprime los IDs que no se han utilizado
+            // -- 2 segundos después, para el Modulo
+            if(int(yarp::os::Time::now()-firstTime)==timeOut+3) {
+                printf("Happy end :)\n");
+                this->stopModule();
+            }
         }
         //CD_SUCCESS_NO_HEADER("Read CAN message: %s\n", msgToStr(&buffer).c_str()); // -- lee lo que le llega del can bus
 

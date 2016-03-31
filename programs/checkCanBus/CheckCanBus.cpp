@@ -36,7 +36,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         printf("[INFO] Timeout: %.2f [s]\n", timeOut);
     }
 
-    // -- Parametro: --ids -- version con Cola
+    // -- Parametro: --ids (introduce los IDs en una cola)
     if(rf.check("ids")){
         yarp::os::Bottle jointsCan0 = rf.findGroup("ids");  // -- Introduce en un objeto bottle el parámetro ids
         std::string strIds = jointsCan0.get(1).toString(); // -- strIds almacena los Ids que queremos comprobar
@@ -50,9 +50,11 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         printf("\n");
     }
 
-    //-- Parametro: --from (incluirá configuración de la HicoCan y las ids)
-    if(rf.check("from")){
-        yarp::os::Bottle fileIds = rf.findGroup("idss");
+    /*  -- Parametro: --from (con este parámetro indicamos el lugar del .ini donde especificamos la configuración+
+     *  de la HicoCan y las ids que queremos comprobar)
+     */
+    else{
+        yarp::os::Bottle fileIds = rf.findGroup("ids");
         std::string strIds = fileIds.get(1).toString(); // -- strIds almacena los Ids que queremos comprobar
         std::stringstream streamIds(strIds); // --  tratamos el string de IDs como un stream llamado streamIds
         CD_INFO_NO_HEADER("[INFO] Se va a proceder a la detección de los IDs (()): ");
@@ -136,11 +138,11 @@ void CheckCanBus::checkIds(can_msg* message) {
 }
 
 // -- Función que imprime por pantalla los IDs no detectados (IDs residuales en cola)
-void CheckCanBus::printWronglIds(){ 
-        for(int i=0; i<queueIds.size(); i++){
-               CD_ERROR_NO_HEADER("\nNo se ha detectado el ID: %i", queueIds.front());
+void CheckCanBus::printWronglIds(){
+    for(int i=0; i<queueIds.size(); i++){
+               CD_ERROR_NO_HEADER("No se ha detectado el ID: %i\n", queueIds.front());
                queueIds.pop(); // -- saca de la cola el elemento
-           }
+           }       
 }
 
 /************************************************************************/
