@@ -30,8 +30,8 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
     }
 
     // -- Parametro: --timeout [s]
-    if(rf.check("timeout")){
-        timeOut = rf.find("timeout").asInt();
+    if(rf.check("timeOut")){
+        timeOut = rf.find("timeOut").asInt();
 
         printf("[INFO] Timeout: %.2f [s]\n", timeOut);
     }
@@ -57,7 +57,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         yarp::os::Bottle fileIds = rf.findGroup("ids");
         std::string strIds = fileIds.get(1).toString(); // -- strIds almacena los Ids que queremos comprobar
         std::stringstream streamIds(strIds); // --  tratamos el string de IDs como un stream llamado streamIds
-        CD_INFO_NO_HEADER("[INFO] Se va a proceder a la detección de los IDs (()): ");
+        CD_INFO_NO_HEADER("[INFO] Se va a proceder a la detección de los IDs: ");
         int n;
         while(streamIds>>n){    // -- recorre el stream y va introduciendo cada ID en la cola
                printf("%i ",n);
