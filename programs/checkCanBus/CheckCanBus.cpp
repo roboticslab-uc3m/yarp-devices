@@ -18,7 +18,7 @@ CheckCanBus::CheckCanBus() { }
 bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
 
     // -- TimeOut por defecto
-    timeOut = 0;    // -- Por defecto 0 [s] el parámetro --timeout
+    timeOut = 0;    // -- Por defecto 0 [s] el parámetro --timeOut
     firstTime = 0;  // -- inicializo el tiempo a 0 [s] la primera vez que arranca el programa
 
 
@@ -81,7 +81,6 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
 }
 
 /************************************************************************/
-// -- ???????????????????????????????
 bool CheckCanBus::updateModule() {
     //printf("CheckCanBus alive...\n");
     return true;
@@ -122,14 +121,21 @@ std::string CheckCanBus::msgToStr(can_msg* message) {
 
 // -- Función que comprueba los mensajes que recibe del CAN utilizando una cola de IDs
 void CheckCanBus::checkIds(can_msg* message) {
+    // -- Almacenamos el contenido del mensaje en un stream
+    std::stringstream tmp; // -- stream que almacenará el mensaje recibido
+    for(int i=0; i < message->dlc-1; i++)
+        tmp << std::hex << static_cast<int>(message->data[i]) << " ";   // -- inserta los bytes del mensaje menos el último
+    tmp << std::hex << static_cast<int>(message->data[message->dlc-1]); // -- inserta último byte
+
+    // -- Recorremos la cola en busca del ID que ha lanzado el CAN
     for(int i=0; i<queueIds.size(); i++){  // -- bucle que recorrerá la cola
 
         if(queueIds.front()== (message->id & 0x7F)) {   // -- si el ID coincide, lo saco de la cola
             CD_SUCCESS_NO_HEADER("Se ha detectado el ID: %i\n", queueIds.front());
+            if(!tmp.str().compare("80 85 1 0 0 0 0 0")) CD_WARNING_NO_HEADER("Se ha detectado un posible BORRADO de la configuración del ID: %i\n ", queueIds.front());
             queueIds.pop(); // -- saca de la cola el elemento
         }
-        // En caso de que no coincida el ID
-        else{
+        else{                                           // -- En caso de que no coincida el ID
            int res = queueIds.front(); // -- residuo que volveriamos a introducir en la cola
            queueIds.pop();      // -- saca de la cola el primer elemento
            queueIds.push(res);  // -- lo vuelve a introducir al final

@@ -35,12 +35,13 @@ void teo::CheckCanBus::run() {
             checkIds(&buffer); // -- Comprueba los IDs e imprime por pantalla los detectados
             continue; // -- Mientras esté detectando presencia, las instrucciones de abajo no las ejecuta
         }
+
         //----------------- Comprueba IDs de encoders (mensajes con otra cabecera) -----------------
         else {                             // -- En caso de que NO sean mensajes de presencia
             checkIds(&buffer); // -- muestra en pantalla los IDs de los encoders detectados
             // -- Transcurridos los segundos indicados, imprime por pantalla los IDs no detectados
             if(int(yarp::os::Time::now()-firstTime)==timeOut+1)
-                  printWronglIds(); // -- Imprime los IDs que no se han utilizado
+                printWronglIds(); // -- Imprime los IDs que no se han utilizado
             // -- 2 segundos después, para el Modulo
             if(int(yarp::os::Time::now()-firstTime)==timeOut+3) {
                 printf("Happy end :)\n");
