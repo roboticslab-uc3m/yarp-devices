@@ -41,11 +41,12 @@ class CheckCanBus : public yarp::os::RFModule, public yarp::os::Thread {
         // -- Nuevas variables:
         double timeOut;     // -- tiempo de espera para comprobar el ID (s)
         double firstTime;  // -- tiempo en el arranque (valor de tiempo aleatorio)
+        double cleaningTime; // -- tiempo de espera para que no lleguen mensajes "basura" de encoders absolutos
         std::queue<int> queueIds;   // -- cola que almacenará los IDs
 
     protected:
 
-        yarp::dev::PolyDriver deviceDevCan0; // -- Dispositivo que se crea. Hace referencia al dispositivo HicoCan
+        yarp::dev::PolyDriver deviceDevCan0; // -- Dispositivo (HicoCan) que se crea.
         CanBusHico* iCanBus;
 
         /** A helper function to display CAN messages. */

@@ -17,9 +17,9 @@ CheckCanBus::CheckCanBus() { }
 // -- Función principal: Se llama en mod.runModule(rf) desde el main.cpp
 bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
 
-    // -- TimeOut por defecto
-    timeOut = 0;    // -- Por defecto 0 [s] el parámetro --timeOut
-    firstTime = 0;  // -- inicializo el tiempo a 0 [s] la primera vez que arranca el programa
+    timeOut = 2;        // -- Por defecto 2 [s] el parámetro --timeOut
+    firstTime = 0;      // -- inicializo el tiempo a 0 [s] la primera vez que arranca el programa
+    cleaningTime = 1;   // -- Por defecto 1 [s] el parámetro --cleaningTime
 
 
     if(rf.check("help")) {
@@ -32,8 +32,13 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
     // -- Parametro: --timeout [s]
     if(rf.check("timeOut")){
         timeOut = rf.find("timeOut").asInt();
-
         printf("[INFO] Timeout: %.2f [s]\n", timeOut);
+    }
+
+    // -- Parametro: --cleaningTime [s]
+    if(rf.check("cleaningTime")){
+        cleaningTime = rf.find("cleaningTime").asInt();
+        printf("[INFO] Cleaning Time: %.2f [s]\n", cleaningTime);
     }
 
     // -- Parametro: --ids (introduce los IDs en una cola)
@@ -73,8 +78,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         CD_ERROR("deviceDevCan0 instantiation not worked.\n");
         return false;
     }
-    deviceDevCan0.view(iCanBus); // -- ????????
-
+    deviceDevCan0.view(iCanBus);
     lastNow = yarp::os::Time::now(); // -- tiempo actual
 
     return this->start(); // arranca el hilo
