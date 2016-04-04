@@ -1,0 +1,5 @@
+/// checkCanBus.ini ///
+
+device CanBusHico
+canDevice /dev/can0
+canBitrate 8

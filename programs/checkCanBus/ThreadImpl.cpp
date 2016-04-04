@@ -20,7 +20,10 @@ void teo::CheckCanBus::run() {
         //-- read_timeout() returns the number read, -1 for errors or 0 for timeout or EOF.
         int ret = iCanBus->read_timeout(&buffer,1);
 
-        if((yarp::os::Time::now()-threadInitTime) < cleaningTime) continue; // -- Mientras no se haya cumplido el
+        /* Nota para la siguiente linea: si el tiempo que tarda el usuario en encender los brazos
+         * es inferior al cleaningTime, puede dar lugar a pérdida de mensajes que no sean detectados por la
+         * aplicación */
+        if((yarp::os::Time::now()-threadInitTime) < cleaningTime) continue; //-- hasta que no llegue al cleaningTime, no revisará lo siguiente
 
         //-- All debugging messages should be contained in read_timeout, so just loop again.
         if( ret <= 0 ) continue; // --  continue para omitir secciones de código e iniciar la siguiente iteración de un bucle

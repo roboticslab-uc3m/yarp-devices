@@ -1,0 +1,18 @@
+/// checkCanBus.ini ///
+
+device CanBusHico
+canDevice /dev/can0
+canBitrate 8
+
+[devCan0]
+device rightArm
+canDevice /dev/can0
+types TechnosoftIpos TechnosoftIpos TechnosoftIpos TechnosoftIpos TechnosoftIpos TechnosoftIpos
+ids   15             16             17             18             19             20 
+
+[devCan1]
+device leftArm
+canDevice /de/can0
+types TechnosoftIpos TechnosoftIpos TechnosoftIpos TechnosoftIpos TechnosoftIpos TechnosoftIpos
+ids   15             16             17             18             19             20
+
