@@ -24,7 +24,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
 
     if(rf.check("help")) {
         printf("CheckCanBus options:\n");
-        printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
+        printf("\t--help (this help)\t--from [file.ini]\t--context [path]\t --timeOut [s]\t --cleaningTime [s]\n");
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
         return false;
     }
