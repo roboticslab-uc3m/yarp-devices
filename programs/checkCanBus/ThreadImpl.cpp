@@ -10,6 +10,8 @@ void teo::CheckCanBus::run() {
 
     CD_INFO("Started CheckCanBus reading thread run.\n");
 
+    double threadInitTime = yarp::os::Time::now();
+    double cleaningTime = 2.0;  // -- Convertir en argumento de programa
 
     while ( ! this->RFModule::isStopping()) { // -- Mientras no se pare el RFModule
 
@@ -17,6 +19,8 @@ void teo::CheckCanBus::run() {
 
         //-- read_timeout() returns the number read, -1 for errors or 0 for timeout or EOF.
         int ret = iCanBus->read_timeout(&buffer,1);
+
+        if((yarp::os::Time::now()-threadInitTime) < cleaningTime) continue;
 
         //-- All debugging messages should be contained in read_timeout, so just loop again.
         if( ret <= 0 ) continue; // --  continue para omitir secciones de código e iniciar la siguiente iteración de un bucle
@@ -53,7 +57,7 @@ void teo::CheckCanBus::run() {
 
     }  //-- ends: while ( ! this->isStopping() ).
 
-    CD_INFO("Stopping DumpCanBus reading thread run.\n");
+    CD_INFO("Stopping CheckCanBus reading thread run.\n");
 
     return;
 }

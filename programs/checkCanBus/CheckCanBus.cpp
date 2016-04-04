@@ -41,7 +41,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         yarp::os::Bottle jointsCan0 = rf.findGroup("ids");  // -- Introduce en un objeto bottle el parámetro ids
         std::string strIds = jointsCan0.get(1).toString(); // -- strIds almacena los Ids que queremos comprobar
         std::stringstream streamIds(strIds); // --  tratamos el string de IDs como un stream llamado streamIds
-        CD_INFO_NO_HEADER("[INFO] Se va a proceder a la detección de los IDs: ");
+        CD_INFO_NO_HEADER("[INFO] It will proceed to detect IDs: ");
         int n;
         while(streamIds>>n){    // -- recorre el stream y va introduciendo cada ID en la cola
                printf("%i ",n);
@@ -57,7 +57,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         yarp::os::Bottle fileIds = rf.findGroup("ids");
         std::string strIds = fileIds.get(1).toString(); // -- strIds almacena los Ids que queremos comprobar
         std::stringstream streamIds(strIds); // --  tratamos el string de IDs como un stream llamado streamIds
-        CD_INFO_NO_HEADER("[INFO] Se va a proceder a la detección de los IDs: ");
+        CD_INFO_NO_HEADER("[INFO] It will proceed to detect IDs: ");
         int n;
         while(streamIds>>n){    // -- recorre el stream y va introduciendo cada ID en la cola
                printf("%i ",n);
@@ -131,8 +131,8 @@ void CheckCanBus::checkIds(can_msg* message) {
     for(int i=0; i<queueIds.size(); i++){  // -- bucle que recorrerá la cola
 
         if(queueIds.front()== (message->id & 0x7F)) {   // -- si el ID coincide, lo saco de la cola
-            CD_SUCCESS_NO_HEADER("Se ha detectado el ID: %i\n", queueIds.front());
-            if(!tmp.str().compare("80 85 1 0 0 0 0 0")) CD_WARNING_NO_HEADER("Se ha detectado un posible BORRADO de la configuración del ID: %i\n ", queueIds.front());
+            CD_SUCCESS_NO_HEADER("Detected ID: %i\n", queueIds.front());
+            if(!tmp.str().compare("80 85 1 0 0 0 0 0")) CD_WARNING_NO_HEADER("[WARNING] Detected possible cleaning of driver settings: %i\n ", queueIds.front());
             queueIds.pop(); // -- saca de la cola el elemento
         }
         else{                                           // -- En caso de que no coincida el ID
@@ -146,7 +146,7 @@ void CheckCanBus::checkIds(can_msg* message) {
 // -- Función que imprime por pantalla los IDs no detectados (IDs residuales en cola)
 void CheckCanBus::printWronglIds(){
     for(int i=0; i<queueIds.size(); i++){
-               CD_ERROR_NO_HEADER("No se ha detectado el ID: %i\n", queueIds.front());
+               CD_ERROR_NO_HEADER("Has not been detected ID: %i\n", queueIds.front());
                queueIds.pop(); // -- saca de la cola el elemento
            }       
 }
