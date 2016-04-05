@@ -44,6 +44,10 @@ option(ENABLE_BodyYarp_TextilesHand "Enable/disable compilation of BodyYarp_Text
 option(ENABLE_BodyYarp_FakeJoint "Enable/disable compilation of BodyYarp_FakeJoint" TRUE)
 option(ENABLE_BodyYarp_CanBusControlboard "Enable/disable compilation of BodyYarp_CanBusControlboard" TRUE)
 
+##### test and coverage options
+option(ENABLE_tests "Choose if you want to compile tests" TRUE)
+option(ENABLE_coverage "Choose if you want to enable coverage collection" FALSE)
+
 # ColorDebug options
 option(ColorDebug_FULL_FILE "Choose if you want to compile with CD_FULL_FILE" FALSE)
 if(ColorDebug_FULL_FILE)
@@ -118,10 +122,19 @@ set(TEO_BODY_INCLUDE_DIRS CACHE INTERNAL "appended header dirs" FORCE)
 set(TEO_BODY_LINK_DIRS CACHE INTERNAL "appended link dirs" FORCE)
 set(TEO_BODY_LIBRARIES CACHE INTERNAL "appended libraries" FORCE)
 
+if(ENABLE_coverage)
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage") # enabling coverage
+  endif(CMAKE_COMPILER_IS_GNUCXX)
+endif(ENABLE_coverage)
+
 # add main contents
 add_subdirectory(share)
 add_subdirectory(libraries)
 add_subdirectory(programs)
+if (ENABLE_tests)
+    add_subdirectory(test)
+endif (ENABLE_tests)
 
 # export our variables to a TEO_BODYConfig.cmake creation
 set(TEO_BODY_LINK_DIRS ${TEO_BODY_LINK_DIRS} ${LIBRARY_OUTPUT_PATH})
