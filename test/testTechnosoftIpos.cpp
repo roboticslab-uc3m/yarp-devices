@@ -6,7 +6,9 @@
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
 
-#include "ColorDebug.hpp"
+//#include "ColorDebug.hpp"
+
+#include "ICanBusSharer.h"
 
 YARP_DECLARE_PLUGINS(BodyYarp)
 
@@ -29,17 +31,19 @@ class TechnosoftIposTest : public testing::Test // -- inherit the Test class (gt
         {
         // -- code here will be called just after the test completes
         // -- ok to through exceptions from here if need be
-            dd.close();
+            canBusDevice.close();
         }
 
     protected:
-        yarp::dev::PolyDriver dd; // -- device HicoCan
-};
+        /** A CAN device. */
+        yarp::dev::PolyDriver canBusDevice;  //
+        CanBusHico* iCanBus;
+    };
 
 TEST_F( TechnosoftIposTest, TechnosoftIposTest1) // -- we call the class that we want to do the test and we assign it a name
 {
     yarp::os::Property p("(device CanBusHico) (canDevice /dev/can0) (canBitrate 8)"); // -- truco para agregar directamente un conjunto de propiedades sin tener que llamar a la función "put"
-    bool ok = dd.open(p);   // -- we introduce the configuration properties defined up and them, we stard the device (HicoCAN)
+    bool ok = canBusDevice.open(p);   // -- we introduce the configuration properties defined up and them, we stard the device (HicoCAN)
     ASSERT_EQ(ok, true);    // -- we run the first test
 }
 
