@@ -31,19 +31,38 @@ class TechnosoftIposTest : public testing::Test // -- inherit the Test class (gt
         {
         // -- code here will be called just after the test completes
         // -- ok to through exceptions from here if need be
+            canNodeDevice.close();
             canBusDevice.close();
         }
 
     protected:
-        /** A CAN device. */
+        /** CAN BUS device. */
         yarp::dev::PolyDriver canBusDevice;  //
         CanBusHico* iCanBus;
+
+        /** CAN node object. */
+        yarp::dev::PolyDriver canNodeDevice;
+        ICanBusSharer* iCanBusSharer;
+
     };
 
-TEST_F( TechnosoftIposTest, TechnosoftIposTest1) // -- we call the class that we want to do the test and we assign it a name
+TEST_F( TechnosoftIposTest, TechnosoftIposOpenCanBus) // -- we call the class that we want to do the test and we assign it a name
 {
     yarp::os::Property p("(device CanBusHico) (canDevice /dev/can0) (canBitrate 8)"); // -- truco para agregar directamente un conjunto de propiedades sin tener que llamar a la función "put"
-    bool ok = canBusDevice.open(p);   // -- we introduce the configuration properties defined up and them, we stard the device (HicoCAN)
+    bool ok = true;
+    ok &= canBusDevice.open(p);   // -- we introduce the configuration properties defined up and them, we stard the device (HicoCAN)
+    ASSERT_EQ(ok, true);    // -- we run the first test
+    ok &= canBusDevice.view(iCanBus);
+    ASSERT_EQ(ok, true);    // -- we run the first test
+}
+
+TEST_F( TechnosoftIposTest, TechnosoftIposOpenCanNode) // -- we call the class that we want to do the test and we assign it a name
+{
+    yarp::os::Property p("(device TechnosoftIpos) (canId 15) (min -45) (max 70) (tr 160) (refAcceleration 0.575) (refSpeed 5.0)"); // -- truco para agregar directamente un conjunto de propiedades sin tener que llamar a la función "put"
+    bool ok = true;
+    ok &= canNodeDevice.open(p);   // -- we introduce the configuration properties defined up and them, we stard the device (HicoCAN)
+    ASSERT_EQ(ok, true);    // -- we run the first test
+    ok &= canNodeDevice.view(iCanBusSharer);
     ASSERT_EQ(ok, true);    // -- we run the first test
 }
 
