@@ -1,5 +1,7 @@
-#include "gtest/gtest.h"
 
+#include "gtest/gtest.h" // -- We load the librarie of GoogleTest
+
+// -- We load the rest of libraries that we will use to call the functions of our code
 #include <yarp/os/all.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
@@ -14,34 +16,31 @@ namespace teo
 /**
  * @brief Tests \ref KdlSolver ikin and idyn on a simple mechanism.
  */
-class TechnosoftIposTest : public testing::Test
+class TechnosoftIposTest : public testing::Test // -- inherit the Test class (gtest.h)
 {
 
     public:
         virtual void SetUp() {
+        // -- code here will execute just before the test ensues
             YARP_REGISTER_PLUGINS(BodyYarp);
-
-            /*if( ! dd.view(iCartesianSolver) ) {
-                CD_ERROR("Could not view ICartesianSolver.\n");
-                return;
-            }*/
         }
 
         virtual void TearDown()
         {
+        // -- code here will be called just after the test completes
+        // -- ok to through exceptions from here if need be
             dd.close();
         }
 
     protected:
-        yarp::dev::PolyDriver dd;
-        //teo::ICartesianSolver *iCartesianSolver;
+        yarp::dev::PolyDriver dd; // -- device HicoCan
 };
 
-TEST_F( TechnosoftIposTest, TechnosoftIposTest1)
+TEST_F( TechnosoftIposTest, TechnosoftIposTest1) // -- we call the class that we want to do the test and we assign it a name
 {
-    yarp::os::Property p("(device CanBusHico) (canDevice /dev/can0) (canBitrate 8)");
-    bool ok = dd.open(p);
-    ASSERT_EQ(ok, true);
+    yarp::os::Property p("(device CanBusHico) (canDevice /dev/can0) (canBitrate 8)"); // -- truco para agregar directamente un conjunto de propiedades sin tener que llamar a la función "put"
+    bool ok = dd.open(p);   // -- we introduce the configuration properties defined up and them, we stard the device (HicoCAN)
+    ASSERT_EQ(ok, true);    // -- we run the first test
 }
 
 }  // namespace teo
