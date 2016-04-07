@@ -77,6 +77,8 @@ protected:
     yarp::dev::PolyDriver canNodeDevice;
     ICanBusSharer* iCanBusSharer; // -- ??
 
+    struct can_msg buffer;
+
     std::string msgToStr(can_msg* message)
     {
         std::stringstream tmp;
@@ -97,8 +99,6 @@ protected:
 
 TEST_F( TechnosoftIposTest, TechnosoftIposGetPresence) // -- we call the class that we want to do the test and we assign it a name
 {
-    struct can_msg buffer;
-
     int canId = 0;
     int ret = 0;
     //-- Blocking read until we get a message from the expected canId
@@ -121,8 +121,6 @@ TEST_F( TechnosoftIposTest, TechnosoftIposStart) // -- we call the class that we
 {
     //-- Pass CAN bus (HicoCAN) pointer to CAN node (TechnosoftIpos).
     iCanBusSharer->setCanBusPtr( iCanBus );
-
-    struct can_msg buffer;
 
     int canId = 0;
     int ret = 0;
