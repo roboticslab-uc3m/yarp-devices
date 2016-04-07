@@ -64,6 +64,8 @@ public:
             ::exit(1);
         }
 
+        //-- Pass CAN bus (HicoCAN) pointer to CAN node (TechnosoftIpos).
+        iCanBusSharer->setCanBusPtr( iCanBus );
     }
 
     virtual void TearDown()
@@ -131,11 +133,32 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetPresence) // -- we call the class t
 
 // idea: getControlMode
 
-TEST_F( TechnosoftIposTest, TechnosoftIposStart) // -- we call the class that we want to do the test and we assign it a name
+TEST_F( TechnosoftIposTest, TechnosoftIposSetRefAccelerationRaw )
 {
-    //-- Pass CAN bus (HicoCAN) pointer to CAN node (TechnosoftIpos).
-    iCanBusSharer->setCanBusPtr( iCanBus );
+    int canId = 0;
+    int ret = 0;
 
+    //-- Set initial parameter on physical motor driver.
+    bool ok = iPositionControlRaw->setRefAccelerationRaw( 0, 0.575 );  //-- ok corresponds to send (not read)
+    ASSERT_TRUE( ok );
+
+    while ( canId != CAN_ID ) // -- it will check the ID
+    {
+        ret = iCanBus->read_timeout(&buffer,1); // -- return value of message with timeout of 1 [ms]
+        if( ret <= 0 ) continue;    // -- is waiting for recive message
+        canId = buffer.id  & 0x7F;  // -- if it recive the message, it will get ID
+    }
+    CD_DEBUG("Read: %s\n", msgToStr(&buffer).c_str());
+
+    // Manual 8.2.3. 6083h: Profile acceleration (SDO ack \"posmode_acc\" from driver)
+    ASSERT_EQ(buffer.data[0] , 0x60);  //-- ??
+    ASSERT_EQ(buffer.data[1] , 0x83);  //-- 83
+    ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
+
+}
+
+/*TEST_F( TechnosoftIposTest, TechnosoftIposStart) // -- we call the class that we want to do the test and we assign it a name
+{
     int canId = 0;
     int ret = 0;
     
@@ -152,7 +175,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposStart) // -- we call the class that we
 
     ASSERT_EQ(buffer.data[0] , 0x40);
     ASSERT_EQ(buffer.data[1] , 0x02);
-}
+}*/
 
 }  // namespace teo
 

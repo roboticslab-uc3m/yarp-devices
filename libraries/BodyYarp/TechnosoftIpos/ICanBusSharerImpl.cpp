@@ -523,7 +523,7 @@ bool teo::TechnosoftIpos::interpretMessage( can_msg * message) {
                 CD_INFO("\t**Self check error. canId: %d.\n",canId);
             }
             return true;
-        } else if( (message->data[1]==0x83)&&(message->data[2]==0x60) ) {  // Manual 6083h: Profile acceleration
+        } else if( (message->data[1]==0x83)&&(message->data[2]==0x60) ) {  // Manual 8.2.3. 6083h: Profile acceleration
             CD_INFO("Got SDO ack \"posmode_acc\" from driver. %s\n",msgToStr(message).c_str());
             return true;
         } else if( (message->data[1]==0x81)&&(message->data[2]==0x60) ) {  // Manual 6081h: Profile velocity
