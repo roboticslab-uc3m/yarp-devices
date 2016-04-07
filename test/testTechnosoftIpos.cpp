@@ -45,8 +45,15 @@ public:
 
         yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 15) (min -45) (max 70) (tr 160) (refAcceleration 0.575) (refSpeed 5.0)"); // -- truco para agregar directamente un conjunto de propiedades sin tener que llamar a la función "put"
         bool ok2 = true;
-        ok2 &= canNodeDevice.open(TechnosoftIposConf);   // -- we introduce the configuration properties defined ........
-        ok2 &= canNodeDevice.view(iCanBusSharer);
+        ok2 &= canNodeDevice.open( TechnosoftIposConf );   // -- we introduce the configuration properties defined ........
+        ok2 &= canNodeDevice.view( iControlLimitsRaw );
+        ok2 &= canNodeDevice.view( iControlModeRaw );
+        ok2 &= canNodeDevice.view( iEncodersTimedRaw );
+        ok2 &= canNodeDevice.view( iPositionControlRaw );
+        ok2 &= canNodeDevice.view( iPositionDirectRaw );
+        ok2 &= canNodeDevice.view( iTorqueControlRaw );
+        ok2 &= canNodeDevice.view( iVelocityControlRaw );
+        ok2 &= canNodeDevice.view( iCanBusSharer );
         if(ok2)
         {
             CD_SUCCESS("Configuration of TechnosoftIpos sucessfully :)\n");
@@ -75,6 +82,13 @@ protected:
 
     /** CAN node object. */
     yarp::dev::PolyDriver canNodeDevice;
+    yarp::dev::IControlLimitsRaw* iControlLimitsRaw;
+    yarp::dev::IControlModeRaw* iControlModeRaw;
+    yarp::dev::IEncodersTimedRaw* iEncodersTimedRaw;
+    yarp::dev::IPositionControlRaw* iPositionControlRaw;
+    yarp::dev::IPositionDirectRaw* iPositionDirectRaw;
+    yarp::dev::ITorqueControlRaw* iTorqueControlRaw;
+    yarp::dev::IVelocityControlRaw* iVelocityControlRaw;
     ICanBusSharer* iCanBusSharer; // -- ??
 
     struct can_msg buffer;
