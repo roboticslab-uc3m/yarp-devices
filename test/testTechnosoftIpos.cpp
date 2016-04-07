@@ -119,8 +119,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetPresence) // -- we call the class t
 
 TEST_F( TechnosoftIposTest, TechnosoftIposStart) // -- we call the class that we want to do the test and we assign it a name
 {
-    //-- Set TechnosoftIpos pointer to HicoCAN
-    //-- WARNING: Currently, aditionally sets initial parameters on physical motor drivers.
+    //-- Pass CAN bus (HicoCAN) pointer to CAN node (TechnosoftIpos).
     iCanBusSharer->setCanBusPtr( iCanBus );
 
     struct can_msg buffer;
@@ -139,7 +138,8 @@ TEST_F( TechnosoftIposTest, TechnosoftIposStart) // -- we call the class that we
     }
     CD_DEBUG("Read: %s\n", msgToStr(&buffer).c_str());
 
-    ASSERT_EQ(1 , 1);
+    ASSERT_EQ(buffer.data[0] , 0x40);
+    ASSERT_EQ(buffer.data[1] , 0x02);
 }
 
 }  // namespace teo
