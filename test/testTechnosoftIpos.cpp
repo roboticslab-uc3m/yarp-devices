@@ -24,6 +24,7 @@ class TechnosoftIposTest : public testing::Test // -- inherit the Test class (gt
 {
 
 public:
+
     virtual void SetUp() {
     // -- code here will execute just before the test ensues
         YARP_REGISTER_PLUGINS(BodyYarp);
@@ -55,6 +56,7 @@ public:
             CD_ERROR("Bad Configuration of TechnosoftIpos :(\n");
             ::exit(1);
         }
+
     }
 
     virtual void TearDown()
@@ -66,6 +68,7 @@ public:
     }
 
 protected:
+
     /** CAN BUS device. */
     yarp::dev::PolyDriver canBusDevice;  //
     CanBusHico* iCanBus;
@@ -74,6 +77,21 @@ protected:
     yarp::dev::PolyDriver canNodeDevice;
     ICanBusSharer* iCanBusSharer; // -- ??
 
+    std::string msgToStr(can_msg* message)
+    {
+        std::stringstream tmp;
+        for(int i=0; i < message->dlc-1; i++)
+        {
+            tmp << std::hex << static_cast<int>(message->data[i]) << " ";
+        }
+        tmp << std::hex << static_cast<int>(message->data[message->dlc-1]);
+        tmp << ". canId(";
+        tmp << std::dec << (message->id & 0x7F);
+        tmp << ") via(";
+        tmp << std::hex << (message->id & 0xFF80);
+        tmp << ").";
+        return tmp.str();
+    }
 
 };
 
@@ -95,6 +113,33 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetPresence) // -- we call the class t
     }
     //-- Assert the message is of "indicating presence" type.
     ASSERT_EQ(buffer.id-canId , 0x700);
+}
+
+// idea: getControlMode
+
+TEST_F( TechnosoftIposTest, TechnosoftIposStart) // -- we call the class that we want to do the test and we assign it a name
+{
+    //-- Set TechnosoftIpos pointer to HicoCAN
+    //-- WARNING: Currently, aditionally sets initial parameters on physical motor drivers.
+    iCanBusSharer->setCanBusPtr( iCanBus );
+
+    struct can_msg buffer;
+
+    int canId = 0;
+    int ret = 0;
+    
+    bool ok = iCanBusSharer->start();  //-- ok corresponds to send (not read)
+    ASSERT_TRUE( ok );
+
+    while ( canId != CAN_ID ) // -- it will check the ID
+    {
+        ret = iCanBus->read_timeout(&buffer,1); // -- return value of message with timeout of 1 [ms]
+        if( ret <= 0 ) continue;    // -- is waiting for recive message
+        canId = buffer.id  & 0x7F;  // -- if it recive the message, it will get ID
+    }
+    CD_DEBUG("Read: %s\n", msgToStr(&buffer).c_str());
+
+    ASSERT_EQ(1 , 1);
 }
 
 }  // namespace teo
