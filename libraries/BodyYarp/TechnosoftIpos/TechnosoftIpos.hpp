@@ -66,6 +66,9 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver, public yarp::dev::IContro
         //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
         virtual bool setLimitsRaw(int axis, double min, double max);
         virtual bool getLimitsRaw(int axis, double *min, double *max);
+        //-- Auxiliary functions
+        bool setMinLimitRaw(double min);
+        bool setMaxLimitRaw(double max);
 
         //  --------- IControlModeRaw Declarations. Implementation in IControlModeRawImpl.cpp ---------
         virtual bool setPositionModeRaw(int j);

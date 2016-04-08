@@ -191,7 +191,6 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetRefSpeedRaw )
 
 }
 
-/*
 // -- Set Limits Raw
 TEST_F( TechnosoftIposTest, TechnosoftIposSetLimitsRaw )
 {
@@ -199,7 +198,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetLimitsRaw )
     int ret = 0;
 
     //-- Set initial parameter on physical motor driver.
-    bool ok = iControlLimitsRaw->setLimitsRaw(0,-45,70);  //-- ok corresponds to send (not read)
+    bool ok = technosoftIpos->setMinLimitRaw(-45);  //-- ok corresponds to send (not read)
     ASSERT_TRUE( ok );
 
     while ( canId != CAN_ID ) // -- it will check the ID
@@ -242,7 +241,6 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetLimitsRaw )
     }
     CD_DEBUG("Read: %s\n", msgToStr(&buffer).c_str());
 }
-*/
 
 
 /************************************************************************************
