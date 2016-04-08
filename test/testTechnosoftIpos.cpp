@@ -322,15 +322,21 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetPositionMode )
 }
 
 
-/************************************************************************************
- ************************** Test of START REMOTE NODE *******************************
+/*************************************************************************************
+ **************************** Initialization test drivers ****************************
  ************************************************************************************/
+
+//-- Check the status of each driver.
+//std::vector<int> tmp( nodes.size() ); // -- creating a "tmp"vector with "nodes" vector size
+//this->getControlModes( tmp.data() );
+
+//-- Test of: START REMOTE NODE
 TEST_F( TechnosoftIposTest, TechnosoftIposStart) // -- we call the class that we want to do the test and we assign it a name
 {
     int canId = 0;
     int ret = 0;
 
-    bool ok = iCanBusSharer->start();  //-- ok corresponds to send (not read)
+    bool ok = iCanBusSharer->start();   // -- ok corresponds to send (not read)
     ASSERT_TRUE( ok );
 
     while ( canId != CAN_ID ) // -- it will check the ID
@@ -345,6 +351,72 @@ TEST_F( TechnosoftIposTest, TechnosoftIposStart) // -- we call the class that we
     ASSERT_EQ(buffer.data[1] , 0x02);
 }
 
+//-- Test of READY TO SWITCH ON REMOTE NODE (with delay 0.1)
+TEST_F( TechnosoftIposTest, TechnosoftIposReadyToSwitchOn) // -- we call the class that we want to do the test and we assign it a name
+{
+    int canId = 0;
+    int ret = 0;
+
+    yarp::os::Time::delay(0.1);         // -- delay 100 [ms]
+    bool ok = iCanBusSharer->readyToSwitchOn();  //-- ok corresponds to send (not read)
+    ASSERT_TRUE( ok );
+
+    while ( canId != CAN_ID ) // -- it will check the ID
+    {
+        ret = iCanBus->read_timeout(&buffer,1); // -- return value of message with timeout of 1 [ms]
+        if( ret <= 0 ) continue;    // -- is waiting for recive message
+        canId = buffer.id  & 0x7F;  // -- if it recive the message, it will get ID
+    }
+    CD_DEBUG("Read: %s\n", msgToStr(&buffer).c_str());
+    // --
+    //ASSERT_EQ(buffer.data[0] , 0x40);
+    //ASSERT_EQ(buffer.data[1] , 0x02);
+}
+
+
+//-- Test of SWITCH ON REMOTE NODE (with delay 0.1)
+TEST_F( TechnosoftIposTest, TechnosoftIposSwitchOn) // -- we call the class that we want to do the test and we assign it a name
+{
+    int canId = 0;
+    int ret = 0;
+
+    yarp::os::Time::delay(0.1);                     // -- delay 100 [ms]
+    bool ok = iCanBusSharer->switchOn();     //-- ok corresponds to send (not read)
+    ASSERT_TRUE( ok );
+
+    while ( canId != CAN_ID ) // -- it will check the ID
+    {
+        ret = iCanBus->read_timeout(&buffer,1); // -- return value of message with timeout of 1 [ms]
+        if( ret <= 0 ) continue;    // -- is waiting for recive message
+        canId = buffer.id  & 0x7F;  // -- if it recive the message, it will get ID
+    }
+    CD_DEBUG("Read: %s\n", msgToStr(&buffer).c_str());
+    // --
+    //ASSERT_EQ(buffer.data[0] , 0x40);
+    //ASSERT_EQ(buffer.data[1] , 0x02);
+}
+
+//-- Test of ENABLE REMOTE NODE (with delay 0.2)
+TEST_F( TechnosoftIposTest, TechnosoftIposEnable) // -- we call the class that we want to do the test and we assign it a name
+{
+    int canId = 0;
+    int ret = 0;
+
+    yarp::os::Time::delay(0.2);         // -- delay 200 [ms]
+    bool ok = iCanBusSharer->enable();  //-- ok corresponds to send (not read)
+    ASSERT_TRUE( ok );
+
+    while ( canId != CAN_ID ) // -- it will check the ID
+    {
+        ret = iCanBus->read_timeout(&buffer,1); // -- return value of message with timeout of 1 [ms]
+        if( ret <= 0 ) continue;    // -- is waiting for recive message
+        canId = buffer.id  & 0x7F;  // -- if it recive the message, it will get ID
+    }
+    CD_DEBUG("Read: %s\n", msgToStr(&buffer).c_str());
+    // --
+    //ASSERT_EQ(buffer.data[0] , 0x40);
+    //ASSERT_EQ(buffer.data[1] , 0x02);
+}
 
 }  // namespace teo
 

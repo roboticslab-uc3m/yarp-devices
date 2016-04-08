@@ -115,7 +115,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
     }
 
     //-- Check the status of each driver.
-    std::vector<int> tmp( nodes.size() );
+    std::vector<int> tmp( nodes.size() ); // -- creating a "tmp"vector with "nodes" vector size
     this->getControlModes( tmp.data() );
 
     //-- Initialize the drivers: start (0.1) ready (0.1) on (2) enable. Wait between each step.
