@@ -50,11 +50,21 @@ bool teo::TechnosoftIpos::setVelocityModeRaw(int j) {
 
 bool teo::TechnosoftIpos::setTorqueModeRaw(int j)  {
     CD_INFO("(%d)\n",j);
-
+    bool ok = true;
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    //*************************************************************
+    /***************/
+    ok &  setTorqueModeRaw1();
+    ok &  setTorqueModeRaw2();
+    ok &  setTorqueModeRaw3();
+
+    return ok;
+}
+
+/******************* setTorqueModeRaw Splited **********************/
+
+bool teo::TechnosoftIpos::setTorqueModeRaw1(){
     //-- External reference type. Slave receives reference through CAN (manual 208 of 263).
     uint8_t msg_ref_type[]={0x2B,0x1D,0x20,0x00,0x01,0x00,0x00,0x00};  //CAN
 
@@ -64,7 +74,11 @@ bool teo::TechnosoftIpos::setTorqueModeRaw(int j)  {
         return false;
     }
     CD_SUCCESS("Sent \"ref_type\". %s\n", msgToStr(0x600, 8, msg_ref_type).c_str() );
-    //*************************************************************
+
+    return true;
+}
+
+bool teo::TechnosoftIpos::setTorqueModeRaw2(){
     //-- Mode -5 (manual 209 of 263).
     uint8_t msg_mode_torque[]={0x2F,0x60,0x60,0x00,0xFB,0x00,0x00,0x00};
 
@@ -74,7 +88,12 @@ bool teo::TechnosoftIpos::setTorqueModeRaw(int j)  {
         return false;
     }
     CD_SUCCESS("Sent \"mode_torque\". %s\n", msgToStr(0x600, 8, msg_mode_torque).c_str() );
-    //*************************************************************
+
+    return true;
+}
+
+bool teo::TechnosoftIpos::setTorqueModeRaw3(){
+
     //-- Control word (manual 215 of 263).
     uint8_t msg_torque_word[] = {0x1F,0x00};
 
@@ -84,11 +103,10 @@ bool teo::TechnosoftIpos::setTorqueModeRaw(int j)  {
         return false;
     }
     CD_SUCCESS("Sent \"torque_word\". %s\n", msgToStr(0x200, 2, msg_torque_word).c_str() );
-    //*************************************************************
 
     return true;
 }
-
+/*************************************************************************/
 // -----------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::setImpedancePositionModeRaw(int j) {

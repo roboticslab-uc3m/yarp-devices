@@ -82,6 +82,10 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver, public yarp::dev::IContro
             CD_ERROR("\n");
             return false;
         }
+        //-- Auxiliary functions
+        virtual bool setTorqueModeRaw1();
+        virtual bool setTorqueModeRaw2();
+        virtual bool setTorqueModeRaw3();
 
         //  ---------- IEncodersRaw Declarations. Implementation in IEncodersRawImpl.cpp ----------
         virtual bool resetEncoderRaw(int j);
