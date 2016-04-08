@@ -9,6 +9,7 @@
 #include "ColorDebug.hpp"
 
 #include "ICanBusSharer.h"
+#include "TechnosoftIpos.hpp"  //-- ok practice?
 
 #define CAN_ID 15
 
@@ -54,6 +55,7 @@ public:
         ok2 &= canNodeDevice.view( iTorqueControlRaw );
         ok2 &= canNodeDevice.view( iVelocityControlRaw );
         ok2 &= canNodeDevice.view( iCanBusSharer );
+        ok2 &= canNodeDevice.view( technosoftIpos );  //-- ok practice?
         if(ok2)
         {
             CD_SUCCESS("Configuration of TechnosoftIpos sucessfully :)\n");
@@ -92,6 +94,7 @@ protected:
     yarp::dev::ITorqueControlRaw* iTorqueControlRaw;
     yarp::dev::IVelocityControlRaw* iVelocityControlRaw;
     ICanBusSharer* iCanBusSharer; // -- ??
+    TechnosoftIpos* technosoftIpos;    //-- ok practice?
 
     struct can_msg buffer;
 
@@ -159,6 +162,8 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetRefAccelerationRaw )
     ASSERT_EQ(buffer.data[1] , 0x83);  //-- 83
     ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
 
+    ok &= iCanBusSharer->interpretMessage(&buffer);
+    ASSERT_TRUE( ok );
 }
 
 // -- Set Ref Speed Raw
@@ -245,7 +250,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetLimitsRaw )
  ************************************************************************************/
 
 //-- Set Velocity Mode
-TEST_F( TechnosoftIposTest, TechnosoftIposSetVelocityMode )
+/*TEST_F( TechnosoftIposTest, TechnosoftIposSetVelocityMode )
 {
     int canId = 0;
     int ret = 0;
@@ -319,7 +324,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetPositionMode )
     ASSERT_EQ(buffer.data[0] , 0x60);  //-- ??
     ASSERT_EQ(buffer.data[1] , 0x60);  //-- 60
     ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
-}
+}*/
 
 
 /*************************************************************************************
@@ -331,7 +336,8 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetPositionMode )
 //this->getControlModes( tmp.data() );
 
 //-- Test of: START REMOTE NODE
-TEST_F( TechnosoftIposTest, TechnosoftIposStart) // -- we call the class that we want to do the test and we assign it a name
+
+/*TEST_F( TechnosoftIposTest, TechnosoftIposStart) // -- we call the class that we want to do the test and we assign it a name
 {
     int canId = 0;
     int ret = 0;
@@ -352,6 +358,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposStart) // -- we call the class that we
 }
 
 //-- Test of READY TO SWITCH ON REMOTE NODE (with delay 0.1)
+
 TEST_F( TechnosoftIposTest, TechnosoftIposReadyToSwitchOn) // -- we call the class that we want to do the test and we assign it a name
 {
     int canId = 0;
@@ -417,6 +424,6 @@ TEST_F( TechnosoftIposTest, TechnosoftIposEnable) // -- we call the class that w
     //ASSERT_EQ(buffer.data[0] , 0x40);
     //ASSERT_EQ(buffer.data[1] , 0x02);
 }
-
+*/
 }  // namespace teo
 
