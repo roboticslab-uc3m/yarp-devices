@@ -55,9 +55,9 @@ bool teo::TechnosoftIpos::setTorqueModeRaw(int j)  {
     if ( j != 0 ) return false;
 
     /***************/
-    ok &  setTorqueModeRaw1();
-    ok &  setTorqueModeRaw2();
-    ok &  setTorqueModeRaw3();
+    ok &= setTorqueModeRaw1();
+    ok &= setTorqueModeRaw2();
+    ok &= setTorqueModeRaw3();
 
     return ok;
 }
@@ -150,10 +150,23 @@ bool teo::TechnosoftIpos::setOpenLoopModeRaw(int j) {
 
 bool teo::TechnosoftIpos::getControlModeRaw(int j, int *mode) {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
-
+    bool ok = true;
     //-- Check index within range
     if ( j != 0 ) return false;
+    ok &= getControlModeRaw1();
+    ok &= getControlModeRaw2();
+    ok &= getControlModeRaw3();
+    ok &= getControlModeRaw4();
 
+    getModeReady.wait();
+    *mode = getMode; // -- activate the sending of message mode
+    getModeReady.post();
+
+    return ok;
+}
+
+/******************* getControlModeRaw Splited **********************/
+bool teo::TechnosoftIpos::getControlModeRaw1() {
     //*************************************************************
     uint8_t msgOperationDisplay[] = {0x40,0x61,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6061h: Modes of Operation display
     if( ! send( 0x600, 8, msgOperationDisplay))
@@ -168,10 +181,11 @@ bool teo::TechnosoftIpos::getControlModeRaw(int j, int *mode) {
     yarp::os::Time::delay(DELAY);  // Must delay as it will be from same driver.
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    getModeReady.wait();
-    *mode = getMode;
-    getModeReady.post();
+    return true;
+}
 
+//*************************************************************
+bool teo::TechnosoftIpos::getControlModeRaw2() {
     //-- Ya de paso...
     //*************************************************************
     //uint8_t msgStatusDisplay[] = {0x40,0x41,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6041h: Status display word
@@ -192,8 +206,12 @@ bool teo::TechnosoftIpos::getControlModeRaw(int j, int *mode) {
         return false;
     }
     CD_SUCCESS("Sent manufacturer status query. %s\n", msgToStr(0x600, 8, msgManuStatus).c_str() );
-    //*************************************************************
 
+    return true;
+    /***************************************************************/
+}
+
+bool teo::TechnosoftIpos::getControlModeRaw3() {
     //-- Y ya de paso, por qué no...
     //*************************************************************
     uint8_t msgError[] = {0x40,0x00,0x20,0x00,0x00,0x00,0x00,0x00}; // Manual 2000h: Motion Error Register
@@ -203,8 +221,12 @@ bool teo::TechnosoftIpos::getControlModeRaw(int j, int *mode) {
         return false;
     }
     CD_SUCCESS("Sent Motion Error Register query. %s\n", msgToStr(0x600, 8, msgError).c_str() );
-    //*************************************************************
 
+    return true;
+    //*************************************************************
+}
+
+bool teo::TechnosoftIpos::getControlModeRaw4() {
     //-- Y tb ya de paso, por qué no... // no info
     //*************************************************************
     uint8_t msgErrorDetail[] = {0x40,0x02,0x20,0x00,0x00,0x00,0x00,0x00}; // Manual 2002h: Detailed Error Register
@@ -214,6 +236,8 @@ bool teo::TechnosoftIpos::getControlModeRaw(int j, int *mode) {
         return false;
     }
     CD_SUCCESS("Sent Detailed Error Register query. %s\n", msgToStr(0x600, 8, msgErrorDetail).c_str() );
+
+    return true;
     //*************************************************************
 
     //-- Y... // no info (just a 000Fh)
@@ -226,8 +250,7 @@ bool teo::TechnosoftIpos::getControlModeRaw(int j, int *mode) {
     }
     CD_SUCCESS("Sent Manufacturer Software Version query. %s\n", msgToStr(0x600, 8, msgSw).c_str() );*/
     //*************************************************************
-
-    return true;
 }
 
+/********************************************************************/
 // -----------------------------------------------------------------------------
