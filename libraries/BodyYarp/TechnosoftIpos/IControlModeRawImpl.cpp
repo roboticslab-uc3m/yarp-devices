@@ -54,7 +54,7 @@ bool teo::TechnosoftIpos::setTorqueModeRaw(int j)  {
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    /***************/
+    // -- splited functions
     ok &= setTorqueModeRaw1();
     ok &= setTorqueModeRaw2();
     ok &= setTorqueModeRaw3();
@@ -65,7 +65,8 @@ bool teo::TechnosoftIpos::setTorqueModeRaw(int j)  {
 /******************* setTorqueModeRaw Splited **********************/
 
 bool teo::TechnosoftIpos::setTorqueModeRaw1(){
-    //-- External reference type. Slave receives reference through CAN (manual 208 of 263).
+
+    //-- 5. External reference type. Slave receives reference through CAN (manual 208 of 263).
     uint8_t msg_ref_type[]={0x2B,0x1D,0x20,0x00,0x01,0x00,0x00,0x00};  //CAN
 
     if( ! send( 0x600, 8, msg_ref_type) )
@@ -79,7 +80,8 @@ bool teo::TechnosoftIpos::setTorqueModeRaw1(){
 }
 
 bool teo::TechnosoftIpos::setTorqueModeRaw2(){
-    //-- Mode -5 (manual 209 of 263).
+
+    //-- Mode -5 (manual 209 of 263). Send the following message (SDO access to object 6060 h , 8-bit value -1)
     uint8_t msg_mode_torque[]={0x2F,0x60,0x60,0x00,0xFB,0x00,0x00,0x00};
 
     if( ! send( 0x600, 8, msg_mode_torque) )
