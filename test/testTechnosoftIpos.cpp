@@ -163,8 +163,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetRefAccelerationRaw )
     ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
 
     //-- Print interpretation of message
-    ok &= technosoftIpos->interpretMessage(&buffer);
-    ASSERT_TRUE( ok );    
+    technosoftIpos->interpretMessage(&buffer); // without ASSERT (we don't need assert interpretMessage function)
 }
 
 // -- Set Ref Speed Raw
@@ -191,8 +190,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetRefSpeedRaw )
     ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
 
     //-- Print interpretation of message
-    ok &= technosoftIpos->interpretMessage(&buffer);
-    ASSERT_TRUE( ok );
+    technosoftIpos->interpretMessage(&buffer); // without ASSERT (we don't need assert interpretMessage function)
 }
 
 // -- Set Minimum Limits Raw
@@ -224,8 +222,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetMinLimitsRaw )
     ASSERT_EQ(buffer.data[3] , 0x01);  //-- 01 -> min
 
     //-- Print interpretation of message
-    ok &= technosoftIpos->interpretMessage(&buffer);
-    ASSERT_TRUE( ok );
+    technosoftIpos->interpretMessage(&buffer); // without ASSERT (we don't need assert interpretMessage function)
 }
 
 // -- Set Maximum Limits Raw
@@ -256,8 +253,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetMaxLimitsRaw )
     ASSERT_EQ(buffer.data[3] , 0x02);  //-- 02 -> max
 
     //-- Print interpretation of message
-    ok &= technosoftIpos->interpretMessage(&buffer);
-    ASSERT_TRUE( ok );
+    technosoftIpos->interpretMessage(&buffer); // without ASSERT (we don't need assert interpretMessage function)
 }
 
 
@@ -291,8 +287,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetVelocityMode )
     ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
 
     //-- Print interpretation of message
-    ok &= technosoftIpos->interpretMessage(&buffer);
-    ASSERT_TRUE( ok );
+    technosoftIpos->interpretMessage(&buffer); // without ASSERT (we don't need assert interpretMessage function)
 
 }
 
@@ -305,9 +300,6 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetTorqueMode )
 
     //-- Set initial parameter on physical motor driver.
     ok &=  technosoftIpos->setTorqueModeRaw1(); //-- ok corresponds to send (not read)
-    //ok &=  technosoftIpos->setTorqueModeRaw2(); //-- ok corresponds to send (not read)
-    //ok &=  technosoftIpos->setTorqueModeRaw3(); //-- ok corresponds to send (not read)
-
     ASSERT_TRUE( ok );
 
     while ( canId != CAN_ID ) // -- it will check the ID
@@ -319,14 +311,40 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetTorqueMode )
     CD_DEBUG("Read: %s\n", msgToStr(&buffer).c_str());
 
     //-- Print interpretation of message
-    technosoftIpos->interpretMessage(&buffer);
+    technosoftIpos->interpretMessage(&buffer); // without ASSERT (we don't need assert interpretMessage function)
+
+    ok &=  technosoftIpos->setTorqueModeRaw2(); //-- ok corresponds to send (not read)
+    ASSERT_TRUE( ok );
+
+    while ( canId != CAN_ID ) // -- it will check the ID
+    {
+        ret = iCanBus->read_timeout(&buffer,1); // -- return value of message with timeout of 1 [ms]
+        if( ret <= 0 ) continue;    // -- is waiting for recive message
+        canId = buffer.id  & 0x7F;  // -- if it recive the message, it will get ID
+    }
+    CD_DEBUG("Read: %s\n", msgToStr(&buffer).c_str());
+
+    //-- Print interpretation of message
+    ok &=  technosoftIpos->setTorqueModeRaw3(); //-- ok corresponds to send (not read)
+    ASSERT_TRUE( ok );
+
+    while ( canId != CAN_ID ) // -- it will check the ID
+    {
+        ret = iCanBus->read_timeout(&buffer,1); // -- return value of message with timeout of 1 [ms]
+        if( ret <= 0 ) continue;    // -- is waiting for recive message
+        canId = buffer.id  & 0x7F;  // -- if it recive the message, it will get ID
+    }
+    CD_DEBUG("Read: %s\n", msgToStr(&buffer).c_str());
+
+    //-- Print interpretation of message
+    technosoftIpos->interpretMessage(&buffer); // without ASSERT (we don't need assert interpretMessage function)
 
     // -- Manual 11.2.6. Object 201Dh: External Reference Type
     //    This object is used to set the type of external reference for use with electronic gearing position,
     //    electronic camming position, position external, speed external and torque external modes.
-    ASSERT_EQ(buffer.data[0] , 0x60);  //-- ??
-    ASSERT_EQ(buffer.data[1] , 0x1d);  //-- 1d
-    ASSERT_EQ(buffer.data[2] , 0x20);  //-- 20
+    //ASSERT_EQ(buffer.data[0] , 0x60);  //-- ??
+    //ASSERT_EQ(buffer.data[1] , 0x1d);  //-- 1d
+    //ASSERT_EQ(buffer.data[2] , 0x20);  //-- 20
 }
 
 
@@ -570,5 +588,6 @@ TEST_F( TechnosoftIposTest, TechnosoftIposEnable) // -- we call the class that w
     //ASSERT_EQ(buffer.data[1] , 0x02);
 }
 */
+
 }  // namespace teo
 
