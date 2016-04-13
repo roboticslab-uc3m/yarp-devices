@@ -11,7 +11,7 @@
 #include "ICanBusSharer.h"
 #include "TechnosoftIpos.hpp"  //-- ok practice?
 
-#define CAN_ID 6
+#define CAN_ID 15
 
 YARP_DECLARE_PLUGINS(BodyYarp)
 
@@ -44,8 +44,8 @@ public:
             ::exit(1);
         }
 
-        //yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 15) (min -45) (max 70) (tr 160) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal right arm
-        yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 6) (min -90) (max 90) (tr 400) (refAcceleration 0.575) (refSpeed 5.0)"); // -- axial right led
+        yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 15) (min -45) (max 70) (tr 160) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal right arm
+        //yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 6) (min -90) (max 90) (tr 400) (refAcceleration 0.575) (refSpeed 5.0)"); // -- axial right leg
         bool ok2 = true;
         ok2 &= canNodeDevice.open( TechnosoftIposConf );   // -- we introduce the configuration properties defined ........
         ok2 &= canNodeDevice.view( iControlLimitsRaw );
@@ -141,6 +141,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetPresence) // -- we call the class t
  ************************************************************************************/
 // -- Set Ref Aceleration Raw
 // idea: getControlMode (Juan)
+
 TEST_F( TechnosoftIposTest, TechnosoftIposSetRefAccelerationRaw )
 {
     int canId = 0;
@@ -169,7 +170,9 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetRefAccelerationRaw )
 
 }
 
+
 // -- Set Ref Speed Raw
+
 TEST_F( TechnosoftIposTest, TechnosoftIposSetRefSpeedRaw )
 {
     int canId = 0;
@@ -235,7 +238,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetMaxLimitsRaw )
     int ret = 0;
 
     //-- Set initial parameter on physical motor driver.
-    bool ok = technosoftIpos->setMaxLimitRaw(-45);  //-- ok corresponds to send (not read)
+    bool ok = technosoftIpos->setMaxLimitRaw(70);  //-- ok corresponds to send (not read)
     ASSERT_TRUE( ok );
     while ( canId != CAN_ID ) // -- it will check the ID
     {
@@ -564,9 +567,9 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetControlModeRaw_2_1 )
     technosoftIpos->interpretMessage(&buffer);
 
     // -- Manual 5.2.4. Object 6060h: Modes of Operation (SDO ack \"posmode_acc\" from driver)
-    ASSERT_EQ(buffer.data[0] , 0x60);  //-- ??
-    ASSERT_EQ(buffer.data[1] , 0x60);  //-- 60
-    ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
+    //ASSERT_EQ(buffer.data[0] , 0x60);  //-- ??
+    //ASSERT_EQ(buffer.data[1] , 0x60);  //-- 60
+    //ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
 }
 
 // -- get control mode raw [2]
@@ -846,9 +849,9 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetControlModeRaw_4_1 )
     technosoftIpos->interpretMessage(&buffer);
 
     // -- Manual 5.2.4. Object 6060h: Modes of Operation (SDO ack \"posmode_acc\" from driver)
-    ASSERT_EQ(buffer.data[0] , 0x60);  //-- ??
-    ASSERT_EQ(buffer.data[1] , 0x60);  //-- 60
-    ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
+    //ASSERT_EQ(buffer.data[0] , 0x60);  //-- ??
+    //ASSERT_EQ(buffer.data[1] , 0x60);  //-- 60
+    //ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
 }
 
 // -- get control mode raw [2]
@@ -873,9 +876,9 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetControlModeRaw_4_2 )
     technosoftIpos->interpretMessage(&buffer);
 
     // -- Manual ??
-    ASSERT_EQ(buffer.data[0] , 0x4f);  //-- ??
-    ASSERT_EQ(buffer.data[1] , 0x61);  //-- 60
-    ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
+    //ASSERT_EQ(buffer.data[0] , 0x4f);  //-- ??
+    //ASSERT_EQ(buffer.data[1] , 0x61);  //-- 60
+    //ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
 }
 
 // -- get control mode raw [3]
@@ -932,7 +935,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetControlModeRaw_4_4 )
     //ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
 }
 
-/*
+
 //-- Test of ENABLE REMOTE NODE (with delay 0.2)
 TEST_F( TechnosoftIposTest, TechnosoftIposEnable) // -- we call the class that we want to do the test and we assign it a name
 {
@@ -949,12 +952,130 @@ TEST_F( TechnosoftIposTest, TechnosoftIposEnable) // -- we call the class that w
         if( ret <= 0 ) continue;    // -- is waiting for recive message
         canId = buffer.id  & 0x7F;  // -- if it recive the message, it will get ID
     }
+    CD_INFO_NO_HEADER("\n~~~~~~~~~~~~~~~~~~ TechnosoftIposiposEnable ~~~~~~~~~~~~~~~~~~~~ \n\n");
+
     CD_DEBUG("Read: %s\n", msgToStr(&buffer).c_str());
+
+    //-- Print interpretation of message
+    technosoftIpos->interpretMessage(&buffer);
+
     // --
     //ASSERT_EQ(buffer.data[0] , 0x40);
     //ASSERT_EQ(buffer.data[1] , 0x02);
 }
-*/
+
+
+/*************************************************************************************
+ ****************************** Get Controls Mode Raw  ********************************
+ ************************************************************************************/
+
+// -- get control mode raw [1]
+TEST_F( TechnosoftIposTest, TechnosoftIposGetControlModeRaw_5_1 )
+{
+    int canId = 0;
+    int ret = 0;
+
+    //-- Set initial parameter on physical motor driver.
+    bool ok = technosoftIpos->getControlModeRaw1() ; //-- ok corresponds to send (not read)
+    ASSERT_TRUE( ok );
+
+    while ( canId != CAN_ID ) // -- it will check the ID
+    {
+        ret = iCanBus->read_timeout(&buffer,1); // -- return value of message with timeout of 1 [ms]
+        if( ret <= 0 ) continue;    // -- is waiting for recive message
+        canId = buffer.id  & 0x7F;  // -- if it recive the message, it will get ID
+    }
+    CD_DEBUG("Read: %s\n", msgToStr(&buffer).c_str());
+
+    //-- Print interpretation of message
+    technosoftIpos->interpretMessage(&buffer);
+
+    // -- Manual 5.2.4. Object 6060h: Modes of Operation (SDO ack \"posmode_acc\" from driver)
+    //ASSERT_EQ(buffer.data[0] , 0x60);  //-- ??
+    //ASSERT_EQ(buffer.data[1] , 0x60);  //-- 60
+    //ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
+}
+
+// -- get control mode raw [2]
+TEST_F( TechnosoftIposTest, TechnosoftIposGetControlModeRaw_5_2 )
+{
+    int canId = 0;
+    int ret = 0;
+
+    //-- Set initial parameter on physical motor driver.
+    bool ok = technosoftIpos->getControlModeRaw2() ; //-- ok corresponds to send (not read)
+    ASSERT_TRUE( ok );
+
+    while ( canId != CAN_ID ) // -- it will check the ID
+    {
+        ret = iCanBus->read_timeout(&buffer,1); // -- return value of message with timeout of 1 [ms]
+        if( ret <= 0 ) continue;    // -- is waiting for recive message
+        canId = buffer.id  & 0x7F;  // -- if it recive the message, it will get ID
+    }
+    CD_DEBUG("Read: %s\n", msgToStr(&buffer).c_str());
+
+    //-- Print interpretation of message
+    technosoftIpos->interpretMessage(&buffer);
+
+    // -- Manual ??
+    //ASSERT_EQ(buffer.data[0] , 0x4f);  //-- ??
+    //ASSERT_EQ(buffer.data[1] , 0x61);  //-- 60
+    //ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
+}
+
+// -- get control mode raw [3]
+TEST_F( TechnosoftIposTest, TechnosoftIposGetControlModeRaw_5_3 )
+{
+    int canId = 0;
+    int ret = 0;
+
+    //-- Set initial parameter on physical motor driver.
+    bool ok = technosoftIpos->getControlModeRaw3() ; //-- ok corresponds to send (not read)
+    ASSERT_TRUE( ok );
+
+    while ( canId != CAN_ID ) // -- it will check the ID
+    {
+        ret = iCanBus->read_timeout(&buffer,1); // -- return value of message with timeout of 1 [ms]
+        if( ret <= 0 ) continue;    // -- is waiting for recive message
+        canId = buffer.id  & 0x7F;  // -- if it recive the message, it will get ID
+    }
+    CD_DEBUG("Read: %s\n", msgToStr(&buffer).c_str());
+
+    //-- Print interpretation of message
+    technosoftIpos->interpretMessage(&buffer);
+
+    // -- Manual ??
+    //ASSERT_EQ(buffer.data[0] , 0x60);  //-- ??
+    //ASSERT_EQ(buffer.data[1] , 0x60);  //-- 60
+    //ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
+}
+
+// -- get control mode raw [4]
+TEST_F( TechnosoftIposTest, TechnosoftIposGetControlModeRaw_5_4 )
+{
+    int canId = 0;
+    int ret = 0;
+
+    //-- Set initial parameter on physical motor driver.
+    bool ok = technosoftIpos->getControlModeRaw4() ; //-- ok corresponds to send (not read)
+    ASSERT_TRUE( ok );
+
+    while ( canId != CAN_ID ) // -- it will check the ID
+    {
+        ret = iCanBus->read_timeout(&buffer,1); // -- return value of message with timeout of 1 [ms]
+        if( ret <= 0 ) continue;    // -- is waiting for recive message
+        canId = buffer.id  & 0x7F;  // -- if it recive the message, it will get ID
+    }
+    CD_DEBUG("Read: %s\n", msgToStr(&buffer).c_str());
+
+    //-- Print interpretation of message
+    technosoftIpos->interpretMessage(&buffer);
+
+    // -- Manual 5.2.4. Object 6060h: Modes of Operation (SDO ack \"posmode_acc\" from driver)
+    //ASSERT_EQ(buffer.data[0] , 0x60);  //-- ??
+    //ASSERT_EQ(buffer.data[1] , 0x60);  //-- 60
+    //ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
+}
 
 }  // namespace teo
 
