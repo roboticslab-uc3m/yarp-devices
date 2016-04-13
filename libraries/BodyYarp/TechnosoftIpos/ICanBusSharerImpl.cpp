@@ -34,20 +34,21 @@ bool teo::TechnosoftIpos::setIEncodersTimedRawExternal(IEncodersTimedRaw * iEnco
 }
 
 // -----------------------------------------------------------------------------
+/* -- Start Remote Node
+Used to change NMT state of one or all NMT slaves to Operational. PDO communication will be
+allowed. */
 
 bool teo::TechnosoftIpos::start() {
 
-    //*************************************************************
     uint8_t msg_start[] = {0x01,0x00};  // NMT Start Remote Node (to operational, Fig 4.1)
 
-    msg_start[1]=this->canId;
-    if( ! canDevicePtr->sendRaw(0, 2, msg_start) )
+    msg_start[1]=this->canId; // -- in byte 1 it writes canId
+    if( ! canDevicePtr->sendRaw(0, 2, msg_start) ) // -- ?
     {
         CD_ERROR("Could not send \"start\". %s\n", msgToStr(0, 2, msg_start).c_str() );
         return false;
     }
     CD_SUCCESS("Sent \"start\". %s\n", msgToStr(0, 2, msg_start).c_str() );
-    //*************************************************************
 
     //-- Do not force expect response as only happens upon transition.
     //-- For example, if already started, function would get stuck.
@@ -59,16 +60,14 @@ bool teo::TechnosoftIpos::start() {
 
 bool teo::TechnosoftIpos::readyToSwitchOn() {
 
-    //*************************************************************
     uint8_t msg_readyToSwitchOn[] = {0x06,0x00}; //-- readyToSwitchOn, also acts as shutdown.
-
-    if( ! this->send( 0x200, 2, msg_readyToSwitchOn) )
+    // -- send se diferencia de senRaw en que tiene un delay y adems incluye el ID (mirar funcin)
+    if( ! this->send( 0x200, 2, msg_readyToSwitchOn) ) // -- 0x200 (valor crtico que se pone sin saber qu significa) 2 (tamao del mensaje)
     {
         CD_ERROR("Could not send \"readyToSwitchOn/shutdown\". %s\n", msgToStr(0x200, 2, msg_readyToSwitchOn).c_str() );
         return false;
     }
     CD_SUCCESS("Sent \"readyToSwitchOn/shutdown\". %s\n", msgToStr(0x200, 2, msg_readyToSwitchOn).c_str() );
-    //*************************************************************
 
     //-- Do not force expect response as only happens upon transition.
     //-- For example, if already on readyToSwitchOn, function would get stuck.
@@ -84,7 +83,6 @@ bool teo::TechnosoftIpos::switchOn() {
     this->getSwitchOn = false;
     this->getSwitchOnReady.post();
 
-    //*************************************************************
     uint8_t msg_switchOn[] = {0x07,0x00};  //-- switchOn, also acts as disableOperation
     if( ! this->send( 0x200, 2, msg_switchOn) )
     {
@@ -109,7 +107,6 @@ bool teo::TechnosoftIpos::enable() {
     this->getEnable = false;
     this->getEnableReady.post();
 
-    //*************************************************************
     uint8_t msg_enable[] = {0x0F,0x00}; // enable
 
     if( ! this->send( 0x200, 2, msg_enable) )
@@ -128,6 +125,7 @@ bool teo::TechnosoftIpos::enable() {
     return true;
 }
 
+
 // -----------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::recoverFromError() {
@@ -144,6 +142,54 @@ bool teo::TechnosoftIpos::recoverFromError() {
 
     return true;
 }
+
+// -----------------------------------------------------------------------------
+/* If the driver blinks, the driver can be in stop state... (it can be possible, but we don't know)
+   And only in stop state we can send NMT messages (network management messages).
+*/
+
+/** Manual: 4.1.2. Device control
+    Reset Node: The NMT master sets the state of the selected NMT slave to the reset application sub-state.
+    In this state the drives perform a software reset and enter the pre-operational state.
+ **/
+
+bool teo::TechnosoftIpos::resetNode() {
+
+    uint8_t msg_resetNode[] = {0x81,0x00};  // NMT Reset Node (Manual 4.1.2.3)
+
+    msg_resetNode[1]=this->canId; // -- It writes canId in byte 1
+    if( ! canDevicePtr->sendRaw(0, 2, msg_resetNode) ) // -- 0 (hace referencia al ID. Si est en 0 es como un broadcast) 2 (tamao del mensaje)
+    {
+        CD_ERROR("Could not send \"reset node\". %s\n", msgToStr(0, 2, msg_resetNode).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent \"reset node\". %s\n", msgToStr(0, 2, msg_resetNode).c_str() );
+
+    //-- Do not force expect response as only happens upon transition.
+    //-- For example, if already started, function would get stuck.
+
+    return true;
+}
+
+bool teo::TechnosoftIpos::resetCommunication() {
+
+    uint8_t msg_resetCommunication[] = {0x82,0x00};  // NMT Reset Communications (Manual 4.1.2.2)
+
+    //msg_resetNode[1]=this->canId; // -- It writes canId in byte 1
+    if( ! this->send(0x200, 2, msg_resetCommunication) ) // -- 0 (hace referencia al ID. Si est en 0 es como un broadcast) 2 (tamao del mensaje)
+    {
+        CD_ERROR("Could not send \"reset communication\". %s\n", msgToStr(0, 2, msg_resetCommunication).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent \"reset communication\". %s\n", msgToStr(0, 2, msg_resetCommunication).c_str() );
+
+    //-- Do not force expect response as only happens upon transition.
+    //-- For example, if already started, function would get stuck.
+
+    return true;
+}
+
+
 
 // -----------------------------------------------------------------------------
 

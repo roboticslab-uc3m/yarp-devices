@@ -11,7 +11,7 @@
 #include "ICanBusSharer.h"
 #include "TechnosoftIpos.hpp"  //-- ok practice?
 
-#define CAN_ID 15
+#define CAN_ID 2
 
 YARP_DECLARE_PLUGINS(BodyYarp)
 
@@ -44,8 +44,9 @@ public:
             ::exit(1);
         }
 
-        yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 15) (min -45) (max 70) (tr 160) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal right arm
+        //yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 15) (min -45) (max 70) (tr 160) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal right arm
         //yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 6) (min -90) (max 90) (tr 400) (refAcceleration 0.575) (refSpeed 5.0)"); // -- axial right leg
+        yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 2) (min -25) (max 25) (tr 270.4) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal right ankle (tobillo)
         bool ok2 = true;
         ok2 &= canNodeDevice.open( TechnosoftIposConf );   // -- we introduce the configuration properties defined ........
         ok2 &= canNodeDevice.view( iControlLimitsRaw );
@@ -117,7 +118,33 @@ protected:
     }
 };
 
+TEST_F( TechnosoftIposTest, TechnosoftIposGetPresence) // -- we call the class that we want to do the test and we assign it a name
+{
+    int canId = 0;
+    int ret = 0;
+    //-- Blocking read until we get a message from the expected canId
+    CD_INFO("Blocking read until we get a message from the expected canId...\n");
 
+    while ( canId != CAN_ID ) // -- it will check the ID
+    {
+        ret = iCanBus->read_timeout(&buffer,1); // -- return value of message with timeout of 1 [ms]
+        if( ret <= 0 ){
+            //technosoftIpos->resetCommunication();
+            //yarp::os::Time::delay(0.3);
+
+            technosoftIpos->resetNode();
+            yarp::os::Time::delay(10);
+            continue;
+        }
+        // -- is waiting for recive message
+        canId = buffer.id  & 0x7F;  // -- if it recive the message, it will get ID
+        //CD_DEBUG("Read: %s\n", msgToStr(&buffer).c_str());
+    }
+    //-- Assert the message is of "indicating presence" type.
+    ASSERT_EQ(buffer.id-canId , 0x700);
+}
+
+/*
 TEST_F( TechnosoftIposTest, TechnosoftIposGetPresence) // -- we call the class that we want to do the test and we assign it a name
 {
     int canId = 0;
@@ -135,13 +162,13 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetPresence) // -- we call the class t
     //-- Assert the message is of "indicating presence" type.
     ASSERT_EQ(buffer.id-canId , 0x700);
 }
-
+*/
 /************************************************************************************
  ************** Test of seting initial parameters on physical motor drivers *********
  ************************************************************************************/
 // -- Set Ref Aceleration Raw
 // idea: getControlMode (Juan)
-
+/*
 TEST_F( TechnosoftIposTest, TechnosoftIposSetRefAccelerationRaw )
 {
     int canId = 0;
@@ -261,12 +288,12 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetMaxLimitsRaw )
     //-- Print interpretation of message
     technosoftIpos->interpretMessage(&buffer); // without ASSERT (we don't need assert interpretMessage function)
 }
-
+*/
 
 /************************************************************************************
  **************** Test of seting all motor drivers to differents mode ***************
  ************************************************************************************/
-
+/*
 //-- Set Velocity Mode
 
 TEST_F( TechnosoftIposTest, TechnosoftIposSetVelocityMode )
@@ -392,11 +419,11 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetPositionMode )
     ASSERT_EQ(buffer.data[1] , 0x60);  //-- 60
     ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
 }
-
+*/
 /*************************************************************************************
  ****************************** Get Controls Mode Raw  ********************************
  ************************************************************************************/
-
+/*
 // -- get control mode raw [1]
 TEST_F( TechnosoftIposTest, TechnosoftIposGetControlModeRaw_1_1 )
 {
@@ -505,7 +532,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetControlModeRaw_1_4 )
     //ASSERT_EQ(buffer.data[1] , 0x60);  //-- 60
     //ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
 }
-
+*/
 /*************************************************************************************
  **************************** Initialization test drivers ****************************
  ************************************************************************************/
@@ -515,7 +542,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetControlModeRaw_1_4 )
 //this->getControlModes( tmp.data() );
 
 //-- Test of: START REMOTE NODE
-
+/*
 TEST_F( TechnosoftIposTest, TechnosoftIposStart) // -- we call the class that we want to do the test and we assign it a name
 {
     int canId = 0;
@@ -540,11 +567,11 @@ TEST_F( TechnosoftIposTest, TechnosoftIposStart) // -- we call the class that we
     //ASSERT_EQ(buffer.data[0] , 0x40);
     //ASSERT_EQ(buffer.data[1] , 0x02);
 }
-
+*/
 /*************************************************************************************
  ****************************** Get Controls Mode Raw  ********************************
  ************************************************************************************/
-
+/*
 // -- get control mode raw [1]
 TEST_F( TechnosoftIposTest, TechnosoftIposGetControlModeRaw_2_1 )
 {
@@ -682,11 +709,11 @@ TEST_F( TechnosoftIposTest, TechnosoftIposReadyToSwitchOn) // -- we call the cla
     //ASSERT_EQ(buffer.data[0] , 0x40);
     //ASSERT_EQ(buffer.data[1] , 0x02);
 }
-
+*/
 /*************************************************************************************
  ****************************** Get Controls Mode Raw  ********************************
  ************************************************************************************/
-
+/*
 // -- get control mode raw [1]
 TEST_F( TechnosoftIposTest, TechnosoftIposGetControlModeRaw_3_1 )
 {
@@ -822,11 +849,11 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSwitchOn) // -- we call the class that
     //ASSERT_EQ(buffer.data[0] , 0x40);
     //ASSERT_EQ(buffer.data[1] , 0x02);
 }
-
+*/
 /*************************************************************************************
  ****************************** Get Controls Mode Raw  ********************************
  ************************************************************************************/
-
+/*
 // -- get control mode raw [1]
 TEST_F( TechnosoftIposTest, TechnosoftIposGetControlModeRaw_4_1 )
 {
@@ -963,12 +990,12 @@ TEST_F( TechnosoftIposTest, TechnosoftIposEnable) // -- we call the class that w
     //ASSERT_EQ(buffer.data[0] , 0x40);
     //ASSERT_EQ(buffer.data[1] , 0x02);
 }
-
+*/
 
 /*************************************************************************************
  ****************************** Get Controls Mode Raw  ********************************
  ************************************************************************************/
-
+/*
 // -- get control mode raw [1]
 TEST_F( TechnosoftIposTest, TechnosoftIposGetControlModeRaw_5_1 )
 {
@@ -1076,6 +1103,6 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetControlModeRaw_5_4 )
     //ASSERT_EQ(buffer.data[1] , 0x60);  //-- 60
     //ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
 }
-
+*/
 }  // namespace teo
 
