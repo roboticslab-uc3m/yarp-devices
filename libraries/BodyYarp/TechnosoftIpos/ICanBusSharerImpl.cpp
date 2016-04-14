@@ -34,9 +34,8 @@ bool teo::TechnosoftIpos::setIEncodersTimedRawExternal(IEncodersTimedRaw * iEnco
 }
 
 // -----------------------------------------------------------------------------
-/* -- Start Remote Node
-Used to change NMT state of one or all NMT slaves to Operational. PDO communication will be
-allowed. */
+/** -- Start Remote Node: Used to change NMT state of one or all NMT slaves to Operational.
+ PDO communication will beallowed. */
 
 bool teo::TechnosoftIpos::start() {
 

@@ -11,7 +11,7 @@
 #include "ICanBusSharer.h"
 #include "TechnosoftIpos.hpp"  //-- ok practice?
 
-#define CAN_ID 2
+#define CAN_ID 24
 
 YARP_DECLARE_PLUGINS(BodyYarp)
 
@@ -30,7 +30,7 @@ public:
     // -- code here will execute just before the test ensues
         YARP_REGISTER_PLUGINS(BodyYarp);
 
-        yarp::os::Property hicoCanConf ("(device CanBusHico) (canDevice /dev/can0) (canBitrate 8)"); // -- truco para agregar directamente un conjunto de propiedades sin tener que llamar a la función "put"
+        yarp::os::Property hicoCanConf ("(device CanBusHico) (canDevice /dev/can1) (canBitrate 8)"); // -- truco para agregar directamente un conjunto de propiedades sin tener que llamar a la función "put"
         bool ok = true;
         ok &= canBusDevice.open(hicoCanConf);   // -- we introduce the configuration properties defined in property object (p) and them, we stard the device (HicoCAN)
         ok &= canBusDevice.view(iCanBus);
@@ -46,7 +46,9 @@ public:
 
         //yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 15) (min -45) (max 70) (tr 160) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal right arm
         //yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 6) (min -90) (max 90) (tr 400) (refAcceleration 0.575) (refSpeed 5.0)"); // -- axial right leg
-        yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 2) (min -25) (max 25) (tr 270.4) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal right ankle (tobillo)
+        //yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 2) (min -25) (max 25) (tr 270.4) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal right ankle (tobillo)
+        yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 24) (min -100) (max 10) (tr 160) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal left elbow (codo)
+
         bool ok2 = true;
         ok2 &= canNodeDevice.open( TechnosoftIposConf );   // -- we introduce the configuration properties defined ........
         ok2 &= canNodeDevice.view( iControlLimitsRaw );
@@ -118,10 +120,16 @@ protected:
     }
 };
 
-TEST_F( TechnosoftIposTest, TechnosoftIposGetPresence) // -- we call the class that we want to do the test and we assign it a name
+TEST_F( TechnosoftIposTest, TechnosoftIposGetPresencewithReset) // -- we call the class that we want to do the test and we assign it a name
 {
     int canId = 0;
     int ret = 0;
+
+    // -- doing reset of node after delay
+    yarp::os::Time::delay(2);
+    technosoftIpos->resetNode();
+
+
     //-- Blocking read until we get a message from the expected canId
     CD_INFO("Blocking read until we get a message from the expected canId...\n");
 
@@ -132,8 +140,8 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetPresence) // -- we call the class t
             //technosoftIpos->resetCommunication();
             //yarp::os::Time::delay(0.3);
 
-            technosoftIpos->resetNode();
-            yarp::os::Time::delay(10);
+            //technosoftIpos->resetNode();
+            //yarp::os::Time::delay(10);
             continue;
         }
         // -- is waiting for recive message
