@@ -62,6 +62,10 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver, public yarp::dev::IContro
         virtual bool enable();
         /** recoverFromError */
         virtual bool recoverFromError();
+        /** resetNode */
+        virtual bool resetNode();
+        /** resetCommunication */
+        virtual bool resetCommunication();
 
         //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
         virtual bool setLimitsRaw(int axis, double min, double max);

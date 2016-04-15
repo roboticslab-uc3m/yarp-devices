@@ -152,6 +152,54 @@ bool teo::TechnosoftIpos::recoverFromError() {
     return true;
 }
 
+/** Manual: 4.1.2. Device control
+    Reset Node: The NMT master sets the state of the selected NMT slave to the reset application sub-state.
+    In this state the drives perform a software reset and enter the pre-operational state.
+ **/
+
+bool teo::TechnosoftIpos::resetNode() {
+
+    // NMT Reset Node (Manual 4.1.2.3)
+    uint8_t msg_resetNode[] = {0x81,0x00};  // reset all nodes ([0x00] = broadcast)
+
+    //msg_resetNode[1]=this->canId; // -- It writes canId in byte 1
+    if( ! canDevicePtr->sendRaw(0, 2, msg_resetNode) ) // -- 0 (hace referencia al ID. Si est en 0 es como un broadcast) 2 (tamao del mensaje)
+    {
+        CD_ERROR("Could not send \"reset node\". %s\n", msgToStr(0, 2, msg_resetNode).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent \"reset node\". %s\n", msgToStr(0, 2, msg_resetNode).c_str() );
+
+    //-- Do not force expect response as only happens upon transition.
+    //-- For example, if already started, function would get stuck.
+
+    return true;
+}
+
+/** Manual: 4.1.2. Device control
+ * The NMT master sets the state of the selected NMT slave to the “reset communication” sub-state.
+ * In this state the drives resets their communication and enter the pre-operational state.
+ */
+
+bool teo::TechnosoftIpos::resetCommunication() {
+
+    uint8_t msg_resetCommunication[] = {0x82,0x00};  // NMT Reset Communications (Manual 4.1.2.2)
+
+    //msg_resetNode[1]=this->canId; // -- It writes canId in byte 1
+    if( ! this->send(0x200, 2, msg_resetCommunication) ) // -- 0 (hace referencia al ID. Si est en 0 es como un broadcast) 2 (tamao del mensaje)
+    {
+        CD_ERROR("Could not send \"reset communication\". %s\n", msgToStr(0, 2, msg_resetCommunication).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent \"reset communication\". %s\n", msgToStr(0, 2, msg_resetCommunication).c_str() );
+
+    //-- Do not force expect response as only happens upon transition.
+    //-- For example, if already started, function would get stuck.
+
+    return true;
+}
+
+
 // -----------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::interpretMessage( can_msg * message) {

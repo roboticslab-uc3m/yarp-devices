@@ -35,6 +35,12 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         printf("[INFO] Timeout: %.2f [s]\n", timeOut);
     }
 
+    // -- Parametro: --resetNodes
+    if(rf.check("resetNodes")){
+        printf("[INFO] Reseting all nodes\n");
+
+    }
+
     // -- Parametro: --cleaningTime [s]
     if(rf.check("cleaningTime")){
         cleaningTime = rf.find("cleaningTime").asInt();
