@@ -62,8 +62,8 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver, public yarp::dev::IContro
         virtual bool enable();
         /** recoverFromError */
         virtual bool recoverFromError();
-        /** resetNode */
-        virtual bool resetNode();
+        /** resetNodes */
+        virtual bool resetNodes();
         /** resetCommunication */
         virtual bool resetCommunication();
 

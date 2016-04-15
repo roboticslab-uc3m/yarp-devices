@@ -157,18 +157,18 @@ bool teo::TechnosoftIpos::recoverFromError() {
     In this state the drives perform a software reset and enter the pre-operational state.
  **/
 
-bool teo::TechnosoftIpos::resetNode() {
+bool teo::TechnosoftIpos::resetNodes() {
 
     // NMT Reset Node (Manual 4.1.2.3)
-    uint8_t msg_resetNode[] = {0x81,0x00};  // reset all nodes ([0x00] = broadcast)
+    uint8_t msg_resetNodes[] = {0x81,0x00};  // reset all nodes ([0x00] = broadcast)
 
     //msg_resetNode[1]=this->canId; // -- It writes canId in byte 1
-    if( ! canDevicePtr->sendRaw(0, 2, msg_resetNode) ) // -- 0 (hace referencia al ID. Si est en 0 es como un broadcast) 2 (tamao del mensaje)
+    if( ! canDevicePtr->sendRaw(0, 2, msg_resetNodes) ) // -- 0 (hace referencia al ID. Si est en 0 es como un broadcast) 2 (tamao del mensaje)
     {
-        CD_ERROR("Could not send \"reset node\". %s\n", msgToStr(0, 2, msg_resetNode).c_str() );
+        CD_ERROR("Could not send \"reset node\". %s\n", msgToStr(0, 2, msg_resetNodes).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"reset node\". %s\n", msgToStr(0, 2, msg_resetNode).c_str() );
+    CD_SUCCESS("Sent \"reset node\". %s\n", msgToStr(0, 2, msg_resetNodes).c_str() );
 
     //-- Do not force expect response as only happens upon transition.
     //-- For example, if already started, function would get stuck.

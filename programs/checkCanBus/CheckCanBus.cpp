@@ -5,13 +5,24 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+
+#include "TechnosoftIpos/TechnosoftIpos.hpp"
 // --
+
+
+YARP_DECLARE_PLUGINS(BodyYarp)
 
 namespace teo
 {
 
 /************************************************************************/
-CheckCanBus::CheckCanBus() { }
+CheckCanBus::CheckCanBus() {
+
+    protected:
+    TechnosoftIpos* technosoftIpos;
+};
+
+
 
 /************************************************************************/
 // -- Función principal: Se llama en mod.runModule(rf) desde el main.cpp
@@ -39,6 +50,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
     if(rf.check("resetNodes")){
         printf("[INFO] Reseting all nodes\n");
 
+
     }
 
     // -- Parametro: --cleaningTime [s]
@@ -61,7 +73,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         printf("\n");
     }
 
-    /*  -- Parametro: --from (con este parámetro indicamos el lugar del .ini donde especificamos la configuración+
+    /*  -- Parametro: --from (con este parámetro indicamos el lugar del .ini donde especificamos la configuración
      *  de la HicoCan y las ids que queremos comprobar)
      */
     else{
@@ -85,6 +97,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         return false;
     }
     deviceDevCan0.view(iCanBus);
+
     lastNow = yarp::os::Time::now(); // -- tiempo actual
 
     return this->start(); // arranca el hilo
