@@ -44,6 +44,7 @@ class CheckCanBus : public yarp::os::RFModule, public yarp::os::Thread {
         double timeOut;     // -- tiempo de espera para comprobar el ID (s)
         double firstTime;  // -- tiempo en el arranque (valor de tiempo aleatorio)
         double cleaningTime; // -- tiempo de espera para que no lleguen mensajes "basura" de encoders absolutos
+        int nodeForReset;           // -- nodo que queremos resetear
         std::queue<int> queueIds;   // -- cola que almacenará los IDs
 
     protected:

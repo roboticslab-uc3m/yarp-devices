@@ -39,6 +39,7 @@ IF (ENABLE_BodyYarp)
   ENDIF (ENABLE_launchBodyYarp)
 
   # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
+  set(TEO_BODY_INCLUDE_DIRS ${TEO_BODY_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "appended libraries")
 
 ENDIF (ENABLE_BodyYarp)
 

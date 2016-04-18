@@ -84,8 +84,18 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
             iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
         }
 
-        //-- Aditionally sets initial parameters on physical motor drivers.
+        //-- Pass CAN bus pointer to CAN node
         iCanBusSharer[i]->setCanBusPtr( iCanBus );
+
+        //-- Set initial parameters on physical motor drivers.
+        if ( ! iPositionControlRaw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asDouble() ) )
+            return false;
+
+        if ( ! iPositionControlRaw[i]->setRefSpeedRaw( 0, refSpeeds.get(i).asDouble() ) )
+            return false;
+
+        if ( ! iControlLimitsRaw[i]->setLimitsRaw( 0, mins.get(i).asDouble(), maxs.get(i).asDouble() ) )
+            return false;
     }
 
     //-- Set all motor drivers to mode.
@@ -105,7 +115,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
     }
 
     //-- Check the status of each driver.
-    std::vector<int> tmp( nodes.size() );
+    std::vector<int> tmp( nodes.size() ); // -- creating a "tmp"vector with "nodes" vector size
     this->getControlModes( tmp.data() );
 
     //-- Initialize the drivers: start (0.1) ready (0.1) on (2) enable. Wait between each step.
