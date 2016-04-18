@@ -119,7 +119,7 @@ protected:
         return tmp.str();
     }
 };
-
+/*
 TEST_F( TechnosoftIposTest, TechnosoftIposGetPresencewithReset) // -- we call the class that we want to do the test and we assign it a name
 {
     int canId = 0;
@@ -151,7 +151,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetPresencewithReset) // -- we call th
     //-- Assert the message is of "indicating presence" type.
     ASSERT_EQ(buffer.id-canId , 0x700);
 }
-
+*/
 /*
 TEST_F( TechnosoftIposTest, TechnosoftIposGetPresence) // -- we call the class that we want to do the test and we assign it a name
 {

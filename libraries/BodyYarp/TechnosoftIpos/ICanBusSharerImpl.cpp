@@ -142,33 +142,34 @@ bool teo::TechnosoftIpos::recoverFromError() {
     return true;
 }
 
-// -----------------------------------------------------------------------------
-/* If the driver blinks, the driver can be in stop state... (it can be possible, but we don't know)
-   And only in stop state we can send NMT messages (network management messages).
-*/
-
 /** Manual: 4.1.2. Device control
     Reset Node: The NMT master sets the state of the selected NMT slave to the reset application sub-state.
     In this state the drives perform a software reset and enter the pre-operational state.
  **/
 
-bool teo::TechnosoftIpos::resetNode() {
+bool teo::TechnosoftIpos::resetNodes() {
 
-    uint8_t msg_resetNode[] = {0x81,0x00};  // NMT Reset Node (Manual 4.1.2.3)
+    // NMT Reset Node (Manual 4.1.2.3)
+    uint8_t msg_resetNodes[] = {0x81,0x00};  // reset all nodes ([0x00] = broadcast)
 
-    msg_resetNode[1]=this->canId; // -- It writes canId in byte 1
-    if( ! canDevicePtr->sendRaw(0, 2, msg_resetNode) ) // -- 0 (hace referencia al ID. Si est en 0 es como un broadcast) 2 (tamao del mensaje)
+    //msg_resetNode[1]=this->canId; // -- It writes canId in byte 1
+    if( ! canDevicePtr->sendRaw(0, 2, msg_resetNodes) ) // -- 0 (hace referencia al ID. Si est en 0 es como un broadcast) 2 (tamao del mensaje)
     {
-        CD_ERROR("Could not send \"reset node\". %s\n", msgToStr(0, 2, msg_resetNode).c_str() );
+        CD_ERROR("Could not send \"reset node\". %s\n", msgToStr(0, 2, msg_resetNodes).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"reset node\". %s\n", msgToStr(0, 2, msg_resetNode).c_str() );
+    CD_SUCCESS("Sent \"reset nodes\". %s\n", msgToStr(0, 2, msg_resetNodes).c_str() );
 
     //-- Do not force expect response as only happens upon transition.
     //-- For example, if already started, function would get stuck.
 
     return true;
 }
+
+/** Manual: 4.1.2. Device control
+ * The NMT master sets the state of the selected NMT slave to the “reset communication” sub-state.
+ * In this state the drives resets their communication and enter the pre-operational state.
+ */
 
 bool teo::TechnosoftIpos::resetCommunication() {
 
@@ -188,6 +189,29 @@ bool teo::TechnosoftIpos::resetCommunication() {
     return true;
 }
 
+
+/** Manual: 4.1.2. Device control
+    Reset Node: The NMT master sets the state of the selected NMT slave to the reset application sub-state.
+    In this state the drives perform a software reset and enter the pre-operational state.
+ **/
+
+bool teo::TechnosoftIpos::resetNode(int id) {
+
+    uint8_t msg_resetNode[] = {0x81,0x00};  // NMT Reset Node (Manual 4.1.2.3)
+
+    msg_resetNode[1] = id; // -- It writes canId in byte 1
+    if( ! canDevicePtr->sendRaw(0, 2, msg_resetNode) ) // -- 0 (hace referencia al ID. Si est en 0 es como un broadcast) 2 (tamao del mensaje)
+    {
+        CD_ERROR("Could not send \"reset node\". %s\n", msgToStr(0, 2, msg_resetNode).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent \"reset node\". %s\n", msgToStr(0, 2, msg_resetNode).c_str() );
+
+    //-- Do not force expect response as only happens upon transition.
+    //-- For example, if already started, function would get stuck.
+
+    return true;
+}
 
 
 // -----------------------------------------------------------------------------
