@@ -18,6 +18,8 @@
 #include "ICanBusSharer.h"
 #include "ColorDebug.hpp"
 
+#include "TechnosoftIpos/TechnosoftIpos.hpp" // -- ok????
+
 //-- Nuevos includes
 //#include <vector>
 #include <queue>
@@ -46,8 +48,21 @@ class CheckCanBus : public yarp::os::RFModule, public yarp::os::Thread {
 
     protected:
 
+        /** CAN BUS device. */
         yarp::dev::PolyDriver deviceDevCan0; // -- Dispositivo (HicoCan) que se crea.
         CanBusHico* iCanBus;
+
+        /** CAN node object. */
+            yarp::dev::PolyDriver canNodeDevice;
+            yarp::dev::IControlLimitsRaw* iControlLimitsRaw;
+            yarp::dev::IControlModeRaw* iControlModeRaw;
+            yarp::dev::IEncodersTimedRaw* iEncodersTimedRaw;
+            yarp::dev::IPositionControlRaw* iPositionControlRaw;
+            yarp::dev::IPositionDirectRaw* iPositionDirectRaw;
+            yarp::dev::ITorqueControlRaw* iTorqueControlRaw;
+            yarp::dev::IVelocityControlRaw* iVelocityControlRaw;
+            ICanBusSharer* iCanBusSharer; // -- ??
+            TechnosoftIpos* technosoftIpos;    //-- ok practice?
 
         /** A helper function to display CAN messages. */
         std::string msgToStr(can_msg* message); // -- Muestra los mensajes que vienen del CAN

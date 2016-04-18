@@ -16,11 +16,7 @@ namespace teo
 {
 
 /************************************************************************/
-CheckCanBus::CheckCanBus() {
-
-    protected:
-    TechnosoftIpos* technosoftIpos;
-};
+CheckCanBus::CheckCanBus() {}
 
 
 
@@ -96,7 +92,18 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         CD_ERROR("deviceDevCan0 instantiation not worked.\n");
         return false;
     }
-    deviceDevCan0.view(iCanBus);
+    deviceDevCan0.view(iCanBus);            // -- conecta el dispositivo (hicocan)
+    bool ok = true;
+    ok = canNodeDevice.view( technosoftIpos );   // -- conecta el dispositivo (drivers)
+
+    // --Checking
+    if(ok){
+        CD_SUCCESS("Configuration of TechnosoftIpos sucessfully :)\n");
+    }
+    else{
+        CD_ERROR("Bad Configuration of TechnosoftIpos :(\n");
+        ::exit(1);
+    }
 
     lastNow = yarp::os::Time::now(); // -- tiempo actual
 
