@@ -18,18 +18,9 @@ bool OneCanBusOneWrapper::configure(yarp::os::ResourceFinder &rf) {
         return false;
     }
 
-    //################# MY MODIFICATIONS ######################
-
-       // Print the content of ResourceFinder
-       printf("CONTENT OF ResourceFinder OBJECT:\n%s\n\n",rf.toString().c_str());
-
-       CD_DEBUG("MODE PASSED FOR PARAMETERS: %s\n", rf.find("mode").asString().c_str());
-
-       // Variable that stores the mode
-           std::string mode = rf.check("mode",yarp::os::Value("position"),"position/velocity mode").asString();
-           CD_DEBUG("La variable MODE contiene: %s\n", mode.c_str());
-
-    //#########################################################
+    //-- Variable that stores the mode
+    CD_DEBUG("mode activated: %s\n", rf.find("mode").asString().c_str());
+    std::string mode = rf.check("mode",yarp::os::Value("position"),"position/velocity mode").asString();
 
 
     //-- /dev/can0 --

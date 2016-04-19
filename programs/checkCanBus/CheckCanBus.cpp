@@ -5,13 +5,20 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+
+#include "TechnosoftIpos/TechnosoftIpos.hpp"
 // --
+
+
+YARP_DECLARE_PLUGINS(BodyYarp)
 
 namespace teo
 {
 
 /************************************************************************/
-CheckCanBus::CheckCanBus() { }
+CheckCanBus::CheckCanBus() {}
+
+
 
 /************************************************************************/
 // -- Función principal: Se llama en mod.runModule(rf) desde el main.cpp
@@ -20,14 +27,58 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
     timeOut = 2;        // -- Por defecto 2 [s] el parámetro --timeOut
     firstTime = 0;      // -- inicializo el tiempo a 0 [s] la primera vez que arranca el programa
     cleaningTime = 1;   // -- Por defecto 1 [s] el parámetro --cleaningTime
+    bool flag;          // -- flag de return
 
-
+    // -- Antes de configurar los periféricos, check a parámetro --help
     if(rf.check("help")) {
         printf("CheckCanBus options:\n");
-        printf("\t--help (this help)\t--from [file.ini]\t--context [path]\t --timeOut [s]\t --cleaningTime [s]\n");
+        printf("\t--help (this help)\t --ids [(\"id\")] \t\t --from [file.ini]\t --context [path]\n\t--timeOut [s]\t\t --resetAll (for all nodes)\t --resetNode [node]\t --cleaningTime [s]\n");
+        printf("\n");
+        printf(" can0: \t--canDevice /dev/can0\t\t can1: --canDevice /dev/can1\n");
+        printf(" .ini:\t checkLocomotionCan0.ini\t checkLocomotionCan1.ini\t checkManipulationCan0.ini\t checkManipulationCan1.ini\n");
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
+        ::exit(1);
         return false;
     }
+
+    // -- Continuación del código que CONFIGURA LA HICO-CAN y LOS DRIVERS
+    CD_DEBUG("%s\n",rf.toString().c_str()); // -- nos muestra el contenido del objeto resource finder
+    deviceDevCan0.open(rf);                 // -- Abre el dispositivo HicoCan (tarjeta) y le pasa el ResourceFinder
+    if (!deviceDevCan0.isValid()) {
+        CD_ERROR("deviceDevCan0 instantiation not worked.\n");
+        return false;
+    }
+    deviceDevCan0.view(iCanBus);            // -- conecta el dispositivo (hicocan)
+
+    // -- adding configuration of TechnosoftIpos (se trata de la configuración mínima que necesita el driver)
+    yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 24) (min -100) (max 10) (tr 160) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal left elbow (codo)
+
+    bool ok = true;
+    ok &= canNodeDevice.open( TechnosoftIposConf );   // -- we introduce the configuration properties defined ........
+    ok &= canNodeDevice.view( iControlLimitsRaw );
+    ok &= canNodeDevice.view( iControlModeRaw );
+    ok &= canNodeDevice.view( iEncodersTimedRaw );
+    ok &= canNodeDevice.view( iPositionControlRaw );
+    ok &= canNodeDevice.view( iPositionDirectRaw );
+    ok &= canNodeDevice.view( iTorqueControlRaw );
+    ok &= canNodeDevice.view( iVelocityControlRaw );
+    ok &= canNodeDevice.view( iCanBusSharer );
+    ok &= canNodeDevice.view( technosoftIpos );   // -- conecta el dispositivo (drivers)
+
+    // --Checking
+    if(ok){
+        CD_SUCCESS("Configuration of TechnosoftIpos sucessfully :)\n");
+    }
+    else{
+        CD_ERROR("Bad Configuration of TechnosoftIpos :(\n");
+        ::exit(1);
+    }
+
+    //-- Pass CAN bus (HicoCAN) pointer to CAN node (TechnosoftIpos).
+    iCanBusSharer->setCanBusPtr( iCanBus );
+
+    flag = this->start(); // arranca el hilo
+
 
     // -- Parametro: --timeout [s]
     if(rf.check("timeOut")){
@@ -35,11 +86,31 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         printf("[INFO] Timeout: %.2f [s]\n", timeOut);
     }
 
+
+    // -- Parametro: --resetAll
+    if(rf.check("resetAll")){
+        printf("[INFO] Reseting all nodes\n");
+        // -- doing reset of node after delay
+        yarp::os::Time::delay(1);
+        technosoftIpos->resetNodes();
+    }
+
+    // -- Parametro: --resetNode
+    if(rf.check("resetNode")){
+        nodeForReset = rf.find("resetNode").asInt();
+        printf("[INFO] Reseting node number: %i\n", nodeForReset );
+        // -- doing reset of node after delay
+        yarp::os::Time::delay(1);
+        technosoftIpos->resetNode(nodeForReset);
+    }
+
+
     // -- Parametro: --cleaningTime [s]
     if(rf.check("cleaningTime")){
         cleaningTime = rf.find("cleaningTime").asInt();
         printf("[INFO] Cleaning Time: %.2f [s]\n", cleaningTime);
     }
+
 
     // -- Parametro: --ids (introduce los IDs en una cola)
     if(rf.check("ids")){
@@ -55,7 +126,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         printf("\n");
     }
 
-    /*  -- Parametro: --from (con este parámetro indicamos el lugar del .ini donde especificamos la configuración+
+    /*  -- Parametro: --from (con este parámetro indicamos el lugar del .ini donde especificamos la configuración
      *  de la HicoCan y las ids que queremos comprobar)
      */
     else{
@@ -71,17 +142,9 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         printf("\n");
     }
 
-    // -- Continuación del código que CONFIGURA LA HICO-CAN
-    CD_DEBUG("%s\n",rf.toString().c_str()); // -- nos muestra el contenido del objeto resource finder
-    deviceDevCan0.open(rf);                 // -- Abre el dispositivo HicoCan (tarjeta) y le pasa el ResourceFinder
-    if (!deviceDevCan0.isValid()) {
-        CD_ERROR("deviceDevCan0 instantiation not worked.\n");
-        return false;
-    }
-    deviceDevCan0.view(iCanBus);
     lastNow = yarp::os::Time::now(); // -- tiempo actual
 
-    return this->start(); // arranca el hilo
+    return flag;
 }
 
 /************************************************************************/

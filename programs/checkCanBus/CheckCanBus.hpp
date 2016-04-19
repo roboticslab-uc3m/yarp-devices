@@ -18,6 +18,8 @@
 #include "ICanBusSharer.h"
 #include "ColorDebug.hpp"
 
+#include "TechnosoftIpos/TechnosoftIpos.hpp" // -- ok????
+
 //-- Nuevos includes
 //#include <vector>
 #include <queue>
@@ -42,12 +44,26 @@ class CheckCanBus : public yarp::os::RFModule, public yarp::os::Thread {
         double timeOut;     // -- tiempo de espera para comprobar el ID (s)
         double firstTime;  // -- tiempo en el arranque (valor de tiempo aleatorio)
         double cleaningTime; // -- tiempo de espera para que no lleguen mensajes "basura" de encoders absolutos
+        int nodeForReset;           // -- nodo que queremos resetear
         std::queue<int> queueIds;   // -- cola que almacenará los IDs
 
     protected:
 
+        /** CAN BUS device. */
         yarp::dev::PolyDriver deviceDevCan0; // -- Dispositivo (HicoCan) que se crea.
         CanBusHico* iCanBus;
+
+        /** CAN node object. */
+            yarp::dev::PolyDriver canNodeDevice;
+            yarp::dev::IControlLimitsRaw* iControlLimitsRaw;
+            yarp::dev::IControlModeRaw* iControlModeRaw;
+            yarp::dev::IEncodersTimedRaw* iEncodersTimedRaw;
+            yarp::dev::IPositionControlRaw* iPositionControlRaw;
+            yarp::dev::IPositionDirectRaw* iPositionDirectRaw;
+            yarp::dev::ITorqueControlRaw* iTorqueControlRaw;
+            yarp::dev::IVelocityControlRaw* iVelocityControlRaw;
+            ICanBusSharer* iCanBusSharer; // -- ??
+            TechnosoftIpos* technosoftIpos;    //-- ok practice?
 
         /** A helper function to display CAN messages. */
         std::string msgToStr(can_msg* message); // -- Muestra los mensajes que vienen del CAN

@@ -62,10 +62,19 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver, public yarp::dev::IContro
         virtual bool enable();
         /** recoverFromError */
         virtual bool recoverFromError();
+        /** reset node */
+        virtual bool resetNode(int id);
+        /** reset all nodes */
+        virtual bool resetNodes();
+        /** reset communications */
+        virtual bool resetCommunication();
 
         //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
         virtual bool setLimitsRaw(int axis, double min, double max);
         virtual bool getLimitsRaw(int axis, double *min, double *max);
+        //-- Auxiliary functions
+        bool setMinLimitRaw(double min);
+        bool setMaxLimitRaw(double max);
 
         //  --------- IControlModeRaw Declarations. Implementation in IControlModeRawImpl.cpp ---------
         virtual bool setPositionModeRaw(int j);
@@ -79,6 +88,14 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver, public yarp::dev::IContro
             CD_ERROR("\n");
             return false;
         }
+        //-- Auxiliary functions
+        virtual bool setTorqueModeRaw1();
+        virtual bool setTorqueModeRaw2();
+        virtual bool setTorqueModeRaw3();
+        virtual bool getControlModeRaw1();
+        virtual bool getControlModeRaw2();
+        virtual bool getControlModeRaw3();
+        virtual bool getControlModeRaw4();
 
         //  ---------- IEncodersRaw Declarations. Implementation in IEncodersRawImpl.cpp ----------
         virtual bool resetEncoderRaw(int j);
