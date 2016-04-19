@@ -69,7 +69,8 @@ void main(void)
         TRISCbits.TRISC4=1;     // SDI  in
         LATCbits.LATC2=1;       //Disable del encoder al inicio
 
-		
+        // -- Antes de comenzar a construir el mensaje, voy a aplicar un Delay de 2 segundos
+        Delay10KTCYx(500);      // 500 -> 1000ms -> 1s
         while(1){
 
                 LATCbits.LATC2=0;
@@ -125,7 +126,8 @@ void main(void)
 				//  Hemos estado probando con Delay10KTCYx()
 				//
 					Delay10KTCYx(1);						// 50019	(10,0038 ms)	accepted relative error  
-															//  5 -> 10msg.
+                                                                                                                        //  5 ->
+                                        msg.
 															// 50 -> 100msg.
 				
 

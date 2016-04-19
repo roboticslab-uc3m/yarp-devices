@@ -27,8 +27,19 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
     timeOut = 2;        // -- Por defecto 2 [s] el parámetro --timeOut
     firstTime = 0;      // -- inicializo el tiempo a 0 [s] la primera vez que arranca el programa
     cleaningTime = 1;   // -- Por defecto 1 [s] el parámetro --cleaningTime
+    bool flag;          // -- flag de return
 
-    bool flag;
+    // -- Antes de configurar los periféricos, check a parámetro --help
+    if(rf.check("help")) {
+        printf("CheckCanBus options:\n");
+        printf("\t--help (this help)\t --ids [(\"id\")] \t\t --from [file.ini]\t --context [path]\n\t--timeOut [s]\t\t --resetAll (for all nodes)\t --resetNode [node]\t --cleaningTime [s]\n");
+        printf("\n");
+        printf(" can0: \t--canDevice /dev/can0\t\t can1: --canDevice /dev/can1\n");
+        printf(" .ini:\t checkLocomotionCan0.ini\t checkLocomotionCan1.ini\t checkManipulationCan0.ini\t checkManipulationCan1.ini\n");
+        CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
+        ::exit(1);
+        return false;
+    }
 
     // -- Continuación del código que CONFIGURA LA HICO-CAN y LOS DRIVERS
     CD_DEBUG("%s\n",rf.toString().c_str()); // -- nos muestra el contenido del objeto resource finder
@@ -68,16 +79,6 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
 
     flag = this->start(); // arranca el hilo
 
-
-
-    if(rf.check("help")) {
-        printf("CheckCanBus options:\n");
-        printf("\t--help (this help)\t --ids [(\"id\")] \t\t --from [file.ini]\t --context [path]\n\t--timeOut [s]\t\t --resetAll (for all nodes)\t --resetNode [node]\t --cleaningTime [s]\n");
-        printf(" .ini:\t checkLocomotionCan0.ini\t checkLocomotionCan1.ini\t checkManipulationCan0.ini\t checkManipulationCan1.ini\n");
-        CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
-        ::exit(1);
-        return false;
-    }
 
     // -- Parametro: --timeout [s]
     if(rf.check("timeOut")){
