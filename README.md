@@ -4,6 +4,10 @@ Source code intended for the manipulation and locomotion PCs that the TEO humano
 
 Link to Doxygen generated documentation: http://robots.uc3m.es/dox-teo-body
 
+## Installation
+
+Installation instructions for installing from source can be found [here](http://robots.uc3m.es/dox-teo-body/teo_body_install_on_debian_6.html).
+
 ## Contributing
 
 #### Posting Issues
