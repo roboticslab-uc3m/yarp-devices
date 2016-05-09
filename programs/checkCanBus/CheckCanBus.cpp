@@ -6,9 +6,6 @@
 #include <iostream>
 #include <sstream>
 
-#include "TechnosoftIpos/TechnosoftIpos.hpp"
-// --
-
 
 YARP_DECLARE_PLUGINS(BodyYarp)
 
@@ -104,6 +101,14 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         technosoftIpos->resetNode(nodeForReset);
     }
 
+    // -- Parametro: --StartPicPublishing
+    if(rf.check("StartPicPublishing")){
+        printf("[INFO] Start PIC publishing messages");
+        uint8_t msgData[]={0x01}; // -- valor de Start que nos hemos inventado
+        // -- publishing PIC Cui messages after delay (1s)
+        yarp::os::Time::delay(1);
+        cuiAbsoluteEncoder->sendDatatoPic(0x600, 1, msgData);
+    }
 
     // -- Parametro: --cleaningTime [s]
     if(rf.check("cleaningTime")){
@@ -165,14 +170,16 @@ bool CheckCanBus::close() {
 
 /************************************************************************/
 // -- Función que lee los mensajes que le llegan del CAN-BUS
+// -- Ejemplo de lo que imprime la función en pantalla:
+//    Read CAN message: 42 d5 b3 43. canId(126) via(180), t:0.0178779[s]
 std::string CheckCanBus::msgToStr(can_msg* message) {
 
     std::stringstream tmp; // -- nos permite insertar cualquier tipo de dato dentro del flujo
-    for(int i=0; i < message->dlc-1; i++)
+    for(int i=0; i < message->dlc-1; i++) // -- recorre en un bucle el contenido del mensaje (en bytes)
     {
-        tmp << std::hex << static_cast<int>(message->data[i]) << " ";
+        tmp << std::hex << static_cast<int>(message->data[i]) << " "; //-- cada byte es un número hexadecimal que compone el mensaje
     }
-    tmp << std::hex << static_cast<int>(message->data[message->dlc-1]);
+    tmp << std::hex << static_cast<int>(message->data[message->dlc-1]); //-- introduce el último byte (número) en hexadecimal
     tmp << ". canId(";
     tmp << std::dec << (message->id & 0x7F); // -- muestra en decimal el ID
     tmp << ") via(";

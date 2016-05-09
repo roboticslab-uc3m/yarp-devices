@@ -32,6 +32,8 @@ namespace teo
  *
  */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
+// -- Nota: Definimos todas las funciones de los Drivers en los CuiAbsolute debido a que hereda todas las clases siguientes.
+//          Al final definiremos una función auxiliar que será la que utilicemos para enviar mensajes al PIC.
 class CuiAbsolute : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimitsRaw, public yarp::dev::IControlModeRaw, public yarp::dev::IEncodersTimedRaw,
         public yarp::dev::IPositionControlRaw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControlRaw, public yarp::dev::ITorqueControlRaw,
         public ICanBusSharer {
@@ -306,6 +308,10 @@ class CuiAbsolute : public yarp::dev::DeviceDriver, public yarp::dev::IControlLi
             CD_ERROR("\n");
             return false;
         }
+
+        // -- Auxiliary function: send data to PIC of Cui
+        //    necesitamos acceder a la función pública así que nos creamos una auxiliar
+        bool sendDatatoPic(uint32_t cob, uint16_t len, uint8_t * msgData);
 
     protected:
 

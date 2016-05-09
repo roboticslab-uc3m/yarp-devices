@@ -214,6 +214,7 @@ bool teo::TechnosoftIpos::resetNode(int id) {
 }
 
 
+
 // -----------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::interpretMessage( can_msg * message) {

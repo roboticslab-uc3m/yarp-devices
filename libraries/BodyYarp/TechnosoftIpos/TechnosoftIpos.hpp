@@ -72,7 +72,7 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver, public yarp::dev::IContro
         //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
         virtual bool setLimitsRaw(int axis, double min, double max);
         virtual bool getLimitsRaw(int axis, double *min, double *max);
-        //-- Auxiliary functions
+        //-- Auxiliary functions of setLimitsRaw
         bool setMinLimitRaw(double min);
         bool setMaxLimitRaw(double max);
 
@@ -80,22 +80,26 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver, public yarp::dev::IContro
         virtual bool setPositionModeRaw(int j);
         virtual bool setVelocityModeRaw(int j);
         virtual bool setTorqueModeRaw(int j);
+        //-- Auxiliary functions (splitted) of setTorqueModeRaw
+        bool setTorqueModeRaw1();
+        bool setTorqueModeRaw2();
+        bool setTorqueModeRaw3();
+
         virtual bool setImpedancePositionModeRaw(int j);
         virtual bool setImpedanceVelocityModeRaw(int j);
         virtual bool setOpenLoopModeRaw(int j);
         virtual bool getControlModeRaw(int j, int *mode);
+        //-- Auxiliary functions (splitted) of getControlModeRaw
+        bool getControlModeRaw1();
+        bool getControlModeRaw2();
+        bool getControlModeRaw3();
+        bool getControlModeRaw4();
+
         virtual bool getControlModesRaw(int *modes){
             CD_ERROR("\n");
             return false;
         }
-        //-- Auxiliary functions
-        virtual bool setTorqueModeRaw1();
-        virtual bool setTorqueModeRaw2();
-        virtual bool setTorqueModeRaw3();
-        virtual bool getControlModeRaw1();
-        virtual bool getControlModeRaw2();
-        virtual bool getControlModeRaw3();
-        virtual bool getControlModeRaw4();
+
 
         //  ---------- IEncodersRaw Declarations. Implementation in IEncodersRawImpl.cpp ----------
         virtual bool resetEncoderRaw(int j);
