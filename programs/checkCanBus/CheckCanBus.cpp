@@ -29,7 +29,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
     // -- Antes de configurar los periféricos, check a parámetro --help
     if(rf.check("help")) {
         printf("CheckCanBus options:\n");
-        printf("\t--help (this help)\t --ids [(\"id\")] \t\t --from [file.ini]\t --context [path]\n\t--timeOut [s]\t\t --resetAll (for all nodes)\t --resetNode [node]\t --cleaningTime [s]\n");
+        printf("\t--help (this help)\t --ids [\"id\"] \t\t --from [file.ini]\t --context [path]\n\t--timeOut [s]\t\t --resetAll (for all nodes)\t --resetNode [node]\t --cleaningTime [s]\n\t--startPicPublishing\n");
         printf("\n");
         printf(" can0: \t--canDevice /dev/can0\t\t can1: --canDevice /dev/can1\n");
         printf(" .ini:\t checkLocomotionCan0.ini\t checkLocomotionCan1.ini\t checkManipulationCan0.ini\t checkManipulationCan1.ini\n");
@@ -47,27 +47,51 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
     }
     deviceDevCan0.view(iCanBus);            // -- conecta el dispositivo (hicocan)
 
-    // -- adding configuration of TechnosoftIpos (se trata de la configuración mínima que necesita el driver)
+    // --------- adding configuration of TechnosoftIpos (se trata de la configuración mínima que necesita el driver)
     yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 24) (min -100) (max 10) (tr 160) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal left elbow (codo)
 
-    bool ok = true;
-    ok &= canNodeDevice.open( TechnosoftIposConf );   // -- we introduce the configuration properties defined ........
-    ok &= canNodeDevice.view( iControlLimitsRaw );
-    ok &= canNodeDevice.view( iControlModeRaw );
-    ok &= canNodeDevice.view( iEncodersTimedRaw );
-    ok &= canNodeDevice.view( iPositionControlRaw );
-    ok &= canNodeDevice.view( iPositionDirectRaw );
-    ok &= canNodeDevice.view( iTorqueControlRaw );
-    ok &= canNodeDevice.view( iVelocityControlRaw );
-    ok &= canNodeDevice.view( iCanBusSharer );
-    ok &= canNodeDevice.view( technosoftIpos );   // -- conecta el dispositivo (drivers)
+    bool iposOk = true;
+    iposOk &= canNodeDriver.open( TechnosoftIposConf );   // -- we introduce the configuration properties defined ........
+    iposOk &= canNodeDriver.view( iControlLimitsRaw );
+    iposOk &= canNodeDriver.view( iControlModeRaw );
+    iposOk &= canNodeDriver.view( iEncodersTimedRaw );
+    iposOk &= canNodeDriver.view( iPositionControlRaw );
+    iposOk &= canNodeDriver.view( iPositionDirectRaw );
+    iposOk &= canNodeDriver.view( iTorqueControlRaw );
+    iposOk &= canNodeDriver.view( iVelocityControlRaw );
+    iposOk &= canNodeDriver.view( iCanBusSharer );
+    iposOk &= canNodeDriver.view( technosoftIpos );   // -- conecta el dispositivo (drivers)
 
-    // --Checking
-    if(ok){
+    // --Checking configuration iPos
+    if(iposOk){
         CD_SUCCESS("Configuration of TechnosoftIpos sucessfully :)\n");
     }
     else{
         CD_ERROR("Bad Configuration of TechnosoftIpos :(\n");
+        ::exit(1);
+    }
+
+    // ---------- adding configuration of Cui Absolute Encoders (se trata de la configuración minima que necesita el encoder)
+    yarp::os::Property CuiAbsoluteConf("(device CuiAbsolute) (canId 124) (min 0) (max 0) (tr 1) (refAcceleration 0.0) (refSpeed 0.0)"); // -- frontal left elbow (codo)
+
+    bool cuiOk = true;
+    cuiOk &= canNodeCuiAbsolute.open( CuiAbsoluteConf );
+    cuiOk &= canNodeCuiAbsolute.view( iControlLimitsRaw  );
+    cuiOk &= canNodeCuiAbsolute.view( iControlModeRaw );
+    cuiOk &= canNodeCuiAbsolute.view( iEncodersTimedRaw );
+    cuiOk &= canNodeCuiAbsolute.view( iPositionControlRaw );
+    cuiOk &= canNodeCuiAbsolute.view( iPositionDirectRaw );
+    cuiOk &= canNodeCuiAbsolute.view( iTorqueControlRaw );
+    cuiOk &= canNodeCuiAbsolute.view( iVelocityControlRaw );
+    cuiOk &= canNodeCuiAbsolute.view( iCanBusSharer );
+    cuiOk &= canNodeCuiAbsolute.view( cuiAbsoluteEncoder ); // -- conecta el dispositivo (encoders absolutos)
+
+    // --Checking Cui Absolute Encoders
+    if(iposOk){
+        CD_SUCCESS("Configuration of CuiAbsolute sucessfully :)\n");
+    }
+    else{
+        CD_ERROR("Bad Configuration of CuiAbsolute:(\n");
         ::exit(1);
     }
 
@@ -101,13 +125,14 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         technosoftIpos->resetNode(nodeForReset);
     }
 
-    // -- Parametro: --StartPicPublishing
-    if(rf.check("StartPicPublishing")){
-        printf("[INFO] Start PIC publishing messages");
+    // -- Parametro: --startPicPublishing
+    // -- bool teo::CuiAbsolute::sendDataToPic(uint32_t cob, uint16_t len, uint8_t *msgData)
+    if(rf.check("startPicPublishing")){
+        printf("[INFO] Start PIC publishing messages\n");
         uint8_t msgData[]={0x01}; // -- valor de Start que nos hemos inventado
         // -- publishing PIC Cui messages after delay (1s)
         yarp::os::Time::delay(1);
-        cuiAbsoluteEncoder->sendDatatoPic(0x600, 1, msgData);
+        cuiAbsoluteEncoder->sendDataToPic(0, 1, msgData);
     }
 
     // -- Parametro: --cleaningTime [s]

@@ -53,8 +53,8 @@ class CheckCanBus : public yarp::os::RFModule, public yarp::os::Thread {
         yarp::dev::PolyDriver deviceDevCan0; // -- Dispositivo (HicoCan) que se crea.
         CanBusHico* iCanBus;
 
-        /** CAN node object. */
-            yarp::dev::PolyDriver canNodeDevice;
+        /** CAN node object (canNodeDevice): Driver */
+            yarp::dev::PolyDriver canNodeDriver;
             yarp::dev::IControlLimitsRaw* iControlLimitsRaw;
             yarp::dev::IControlModeRaw* iControlModeRaw;
             yarp::dev::IEncodersTimedRaw* iEncodersTimedRaw;
@@ -64,6 +64,9 @@ class CheckCanBus : public yarp::os::RFModule, public yarp::os::Thread {
             yarp::dev::IVelocityControlRaw* iVelocityControlRaw;
             ICanBusSharer* iCanBusSharer; // -- ??
             TechnosoftIpos* technosoftIpos;    //-- ok practice?
+
+        /** CAN node object (canNodeDevice): Cui Absolute Encoder. */
+            yarp::dev::PolyDriver canNodeCuiAbsolute;
             CuiAbsolute* cuiAbsoluteEncoder;
 
         /** A helper function to display CAN messages. */

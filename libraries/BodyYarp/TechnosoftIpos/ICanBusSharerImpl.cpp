@@ -42,7 +42,7 @@ bool teo::TechnosoftIpos::start() {
     uint8_t msg_start[] = {0x01,0x00};  // NMT Start Remote Node (to operational, Fig 4.1)
 
     msg_start[1]=this->canId; // -- in byte 1 it writes canId
-    if( ! canDevicePtr->sendRaw(0, 2, msg_start) ) // -- ?
+    if( ! canDevicePtr->sendRaw(0, 2, msg_start) ) // -- manda el mensaje
     {
         CD_ERROR("Could not send \"start\". %s\n", msgToStr(0, 2, msg_start).c_str() );
         return false;
