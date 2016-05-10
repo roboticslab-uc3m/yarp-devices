@@ -50,15 +50,11 @@ bool teo::CuiAbsolute::recoverFromError() {
 
 bool teo::CuiAbsolute::sendDataToPic(uint32_t id, uint16_t len, uint8_t *msgData){
 
-    if ( (lastUsage - yarp::os::Time::now()) < DELAY )
-        yarp::os::Time::delay( lastUsage + DELAY - yarp::os::Time::now() );
-
-    if( ! canDevicePtr->sendRaw(canId, len, msgData) ) {
+    if( ! canDevicePtr->sendRaw(id, len, msgData) ) {
         CD_ERROR("Could not send \"startPublishingMessages\". %s\n", msgToStr(id, len, msgData).c_str() );
         return false;
     }
     CD_SUCCESS("Sent \"startPublishingMessages\". %s\n", msgToStr(id, len, msgData).c_str() );
-    lastUsage = yarp::os::Time::now();
 
     return true;
 }

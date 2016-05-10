@@ -129,10 +129,10 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
     // -- bool teo::CuiAbsolute::sendDataToPic(uint32_t cob, uint16_t len, uint8_t *msgData)
     if(rf.check("startPicPublishing")){
         printf("[INFO] Start PIC publishing messages\n");
-        uint8_t msgData[]={0x01}; // -- valor de Start que nos hemos inventado
+        uint8_t msgData[]={0x01}; // -- valor de Start que nos hemos inventado para que el PIC comience a publicar
         // -- publishing PIC Cui messages after delay (1s)
         yarp::os::Time::delay(1);
-        cuiAbsoluteEncoder->sendDataToPic(0, 1, msgData);
+        cuiAbsoluteEncoder->sendDataToPic(124, 1, msgData);
     }
 
     // -- Parametro: --cleaningTime [s]
