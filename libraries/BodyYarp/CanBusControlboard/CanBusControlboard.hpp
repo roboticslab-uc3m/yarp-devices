@@ -663,6 +663,7 @@ class CanBusControlboard : public yarp::dev::DeviceDriver, public yarp::dev::ICo
         std::vector< ICanBusSharer* > iCanBusSharer;
         std::map< int, int > idxFromCanId;
 
+
         /** A helper function to display CAN messages. */
         std::string msgToStr(can_msg* message);
 

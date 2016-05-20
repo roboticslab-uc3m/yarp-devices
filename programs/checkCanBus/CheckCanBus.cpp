@@ -52,7 +52,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
 
     bool iposOk = true;
     iposOk &= canNodeDriver.open( TechnosoftIposConf );   // -- we introduce the configuration properties defined ........
-    iposOk &= canNodeDriver.view( iControlLimitsRaw );
+    iposOk &= canNodeDriver.view( iControlLimitsRaw ) ;
     iposOk &= canNodeDriver.view( iControlModeRaw );
     iposOk &= canNodeDriver.view( iEncodersTimedRaw );
     iposOk &= canNodeDriver.view( iPositionControlRaw );
@@ -132,7 +132,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         uint8_t msgData[3] = {0x01, 0x01, 0}; // -- Comienza a publicar mensajes en modo permanente sin delay
         // -- publishing PIC Cui messages after delay (1s)
         yarp::os::Time::delay(1);
-        cuiAbsoluteEncoder->sendDataToPic(124, 3, msgData);
+        //cuiAbsoluteEncoder->sendDataToPic(124, 3, msgData);
     }
 
     // -- Parametro: --cleaningTime [s]

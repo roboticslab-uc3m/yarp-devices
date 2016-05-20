@@ -47,7 +47,7 @@ bool teo::CuiAbsolute::recoverFromError() {
 }
 
 // -----------------------------------------------------------------------------
-
+/*
 bool teo::CuiAbsolute::sendDataToPic(uint32_t id, uint16_t len, uint8_t *msgData){
 
     if( ! canDevicePtr->sendRaw(id, len, msgData) ) {
@@ -58,6 +58,51 @@ bool teo::CuiAbsolute::sendDataToPic(uint32_t id, uint16_t len, uint8_t *msgData
 
     return true;
 }
+*/
+
+
+// ------------------------------------------------------------------------------
+
+bool teo::CuiAbsolute::startContinuousPublishing(uint32_t id, uint8_t delay){
+
+    uint8_t msgData[3] = {0x01, 0x01, delay}; // -- Comienza a publicar mensajes en modo permanente (modo 1) sin delay
+    if( ! canDevicePtr->sendRaw(id, 3, msgData) ) {
+        CD_ERROR("Could not send \"startContinuousPublishing\" to Cui Absolute Encoders. %s\n", msgToStr(id, 3, msgData).c_str());
+        return false;
+    }
+    CD_SUCCESS("Send: \"startContinuousPublishing\" to Cui Absolute Encoders . %s\n", msgToStr(id, 3, msgData).c_str() );
+
+    return true;
+}
+
+// ------------------------------------------------------------------------------
+
+bool teo::CuiAbsolute::startPullPublishing(uint32_t id){
+
+    uint8_t msgData[3] = {0x01, 0x02, 0x00}; // -- Comienza a publicar mensajes en modo pulling (modo 2) sin delay
+    if( ! canDevicePtr->sendRaw(id, 3, msgData) ) {
+        CD_ERROR("Could not send \"startPullPublishing\" to Cui Absolute Encoders. %s\n", msgToStr(id, 3, msgData).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Send: \"startPullPublishing\" to Cui Absolute Encoders. %s\n", msgToStr(id, 3, msgData).c_str() );
+
+    return true;
+}
+
+// ------------------------------------------------------------------------------
+
+bool teo::CuiAbsolute::stopPublishingMessages(uint32_t id){
+
+    uint8_t msgData[3] = {0x02, 0x01, 0x00}; // -- Para de publicar mensajes
+    if( ! canDevicePtr->sendRaw(id, 3, msgData) ) {
+        CD_ERROR("Could not send \"stopPublishingMessages\" to Cui Absolute Encoders. %s\n", msgToStr(id, 3, msgData).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Send: \"stopPublishingMessages\" to Cui Absolute Encoders. %s\n", msgToStr(id, 3, msgData).c_str() );
+
+    return true;
+}
+
 // ----------------------------------------------------------------------------
 
 bool teo::CuiAbsolute::interpretMessage( can_msg * message) {

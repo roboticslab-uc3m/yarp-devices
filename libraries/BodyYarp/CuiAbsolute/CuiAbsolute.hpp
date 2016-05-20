@@ -309,9 +309,13 @@ class CuiAbsolute : public yarp::dev::DeviceDriver, public yarp::dev::IControlLi
             return false;
         }
 
-        // -- Auxiliary function: send data to PIC of Cui
-        //    necesitamos acceder a la función pública así que nos creamos una auxiliar
-        bool sendDataToPic(uint32_t id, uint16_t len, uint8_t * msgData);
+        // -- Auxiliary functions: send data to PIC of Cui
+        //    nos creamos 3 funciones auxiliares para mandar al Cui difentes mensajes de funcionammiento
+
+        bool startContinuousPublishing(uint32_t id, uint8_t time);
+        bool startPullPublishing(uint32_t id);
+        bool stopPublishingMessages(uint32_t id);
+
 
     protected:
 

@@ -1,6 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include "CanBusControlboard.hpp"
+#include "CuiAbsolute/CuiAbsolute.hpp"
 
 // ------------------- DeviceDriver Related ------------------------------------
 
@@ -52,7 +53,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
 
         //-- Create CAN node objects with a pointer to the CAN device, its id and tr (these are locally stored parameters).
         yarp::os::Property options;
-        options.put("device",types.get(i).asString());  //-- "TechnosoftIpos", "LacqueyFetch"
+        options.put("device",types.get(i).asString());  //-- "TechnosoftIpos", "LacqueyFetch", "CuiAbsolute"
         options.put("canId",ids.get(i).asInt());
         options.put("tr",trs.get(i).asDouble());
         options.put("min",mins.get(i).asDouble());
@@ -61,27 +62,34 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
         options.put("refAcceleration",refAccelerations.get(i).asDouble());
         options.put("refSpeed",refSpeeds.get(i).asDouble());
         options.put("ptModeMs",ptModeMs);
-        yarp::dev::PolyDriver* driver = new yarp::dev::PolyDriver(options);
+
+        // -- Configuramos todos los dispositivos (TechnosoftIpos, LacqueyFetch, CuiAbsolute)
+        yarp::dev::PolyDriver* device = new yarp::dev::PolyDriver(options);
 
         //-- Fill a map entry ( drivers.size() if before push_back, otherwise do drivers.size()-1).
         //-- Just "i" if resize already performed.
         idxFromCanId[ ids.get(i).asInt() ] = i;
 
-        //-- Push the motor driver on to the vectors.
-        nodes[i] = driver;
-        driver->view( iControlLimitsRaw[i] );
-        driver->view( iControlModeRaw[i] );
-        driver->view( iEncodersTimedRaw[i] );
-        driver->view( iPositionControlRaw[i] );
-        driver->view( iPositionDirectRaw[i] );
-        driver->view( iTorqueControlRaw[i] );
-        driver->view( iVelocityControlRaw[i] );
-        driver->view( iCanBusSharer[i] );
+        //-- Push the motor driver and other devices (CuiAbsolute) on to the vectors.
+        nodes[i] = device;
+        device->view( iControlLimitsRaw[i] );
+        device->view( iControlModeRaw[i] );
+        device->view( iEncodersTimedRaw[i] );
+        device->view( iPositionControlRaw[i] );
+        device->view( iPositionDirectRaw[i] );
+        device->view( iTorqueControlRaw[i] );
+        device->view( iVelocityControlRaw[i] );
+        device->view( iCanBusSharer[i] );
 
         //-- Associate absolute encoders to motor drivers
         if( types.get(i).asString() == "CuiAbsolute" ) {
             int driverCanId = ids.get(i).asInt() - 100;  //-- \todo{Document the dangers: ID must be > 100, driver must be instanced.}
             iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
+
+            //-- Dentro de este "if" nos aseguramos de que se configura correctamente el encoder absoluto
+            CuiAbsolute* cuiAbsolute;
+            device->view( cuiAbsolute );
+            cuiAbsolute->startContinuousPublishing(ids.get(i).asInt(),0x00);
         }
 
         //-- Pass CAN bus pointer to CAN node
