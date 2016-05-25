@@ -89,7 +89,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
             //-- Dentro de este "if" nos aseguramos de que se configura correctamente el encoder absoluto
             CuiAbsolute* cuiAbsolute;
             device->view( cuiAbsolute );
-            cuiAbsolute->startContinuousPublishing(ids.get(i).asInt(),0x00);
+            cuiAbsolute->startContinuousPublishing(0);
         }
 
         //-- Pass CAN bus pointer to CAN node

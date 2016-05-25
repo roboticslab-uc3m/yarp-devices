@@ -29,7 +29,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
     // -- Antes de configurar los periféricos, check a parámetro --help
     if(rf.check("help")) {
         printf("CheckCanBus options:\n");
-        printf("\t--help (this help)\t --ids [\"id\"] \t\t --from [file.ini]\t --context [path]\n\t--timeOut [s]\t\t --resetAll (for all nodes)\t --resetNode [node]\t --cleaningTime [s]\n\t--startPicPublishing\n");
+        printf("\t--help (this help)\t --ids [\"id\"] \t\t\t --from [file.ini]\t --context [path]\n\t--timeOut [s]\t\t --resetAll (for all nodes)\t --resetNode [node]\t --cleaningTime [s]\n\t--startPicPublishing\t--startCuiPullPublishing\t--stopPublishing\n");
         printf("\n");
         printf(" can0: \t--canDevice /dev/can0\t\t can1: --canDevice /dev/can1\n");
         printf(" .ini:\t checkLocomotionCan0.ini\t checkLocomotionCan1.ini\t checkManipulationCan0.ini\t checkManipulationCan1.ini\n");
@@ -125,14 +125,31 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         technosoftIpos->resetNode(nodeForReset);
     }
 
-    // -- Parametro: --startPicPublishing
-    // -- bool teo::CuiAbsolute::sendDataToPic(uint32_t cob, uint16_t len, uint8_t *msgData)
-    if(rf.check("startPicPublishing")){
-        printf("[INFO] Start PIC publishing messages\n");
-        uint8_t msgData[3] = {0x01, 0x01, 0}; // -- Comienza a publicar mensajes en modo permanente sin delay
+    // -- Parametro para PIC: --startCuiContinuousPublishing
+    if(rf.check("startCuiContinuousPublishing")){
+        printf("[INFO] Start PIC of Cui publishing messages in continuous mode\n");
+        uint8_t msgData[3] = {0x01, 0x01, 0}; // -- Comienza a publicar mensajes en modo permanente sin delay (falta configurar delay, por defecto a 0)
         // -- publishing PIC Cui messages after delay (1s)
         yarp::os::Time::delay(1);
-        //cuiAbsoluteEncoder->sendDataToPic(124, 3, msgData);
+        cuiAbsoluteEncoder->startContinuousPublishing(0); // -- configurar delay
+    }
+
+    // -- Parametro para PIC: --startCuiPullPublishing
+    if(rf.check("startCuiPullPublishing")){
+        printf("[INFO] Start PIC publishing messages in pulling mode\n");
+        uint8_t msgData[3] = {0x01, 0x02, 0}; // -- Comienza a publicar mensajes en modo pulling
+        // -- publishing PIC Cui messages after delay (1s)
+        yarp::os::Time::delay(1);
+        cuiAbsoluteEncoder->startPullPublishing();
+    }
+
+    // -- Parametro para PIC: --
+    if(rf.check("stopCuiPublishing")){
+        printf("[INFO] Stop PIC publishing messages\n");
+        uint8_t msgData[3] = {0x01, 0x01, 0}; // -- Para de publicar mensajes
+        // -- publishing PIC Cui messages after delay (1s)
+        yarp::os::Time::delay(1);
+        cuiAbsoluteEncoder->stopPublishingMessages();
     }
 
     // -- Parametro: --cleaningTime [s]

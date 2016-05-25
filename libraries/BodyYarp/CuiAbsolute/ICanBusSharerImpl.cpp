@@ -46,60 +46,42 @@ bool teo::CuiAbsolute::recoverFromError() {
     return true;
 }
 
-// -----------------------------------------------------------------------------
-/*
-bool teo::CuiAbsolute::sendDataToPic(uint32_t id, uint16_t len, uint8_t *msgData){
-
-    if( ! canDevicePtr->sendRaw(id, len, msgData) ) {
-        CD_ERROR("Could not send \"startPublishingMessages\". %s\n", msgToStr(id, len, msgData).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"startPublishingMessages\". %s\n", msgToStr(id, len, msgData).c_str() );
-
-    return true;
-}
-*/
-
-
 // ------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::startContinuousPublishing(uint32_t id, uint8_t delay){
-
-    uint8_t msgData[3] = {0x01, 0x01, delay}; // -- Comienza a publicar mensajes en modo permanente (modo 1) sin delay
-    if( ! canDevicePtr->sendRaw(id, 3, msgData) ) {
-        CD_ERROR("Could not send \"startContinuousPublishing\" to Cui Absolute Encoders. %s\n", msgToStr(id, 3, msgData).c_str());
+bool teo::CuiAbsolute::startContinuousPublishing(uint8_t delay){
+    // -- start message
+    uint8_t msgData[3] = {0x01, 0x01, delay};
+    if( ! send(0 , 3, msgData) ) { // -- primer campo "cob" lo dejamos a 0 (este campo resulta desconocido para nosotros)
+        CD_ERROR("Could not send \"startContinuousPublishing\" to Cui Absolute Encoders.\n");
         return false;
     }
-    CD_SUCCESS("Send: \"startContinuousPublishing\" to Cui Absolute Encoders . %s\n", msgToStr(id, 3, msgData).c_str() );
-
+    CD_SUCCESS("Send: \"startContinuousPublishing\" to Cui Absolute Encoders.\n");
     return true;
 }
 
 // ------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::startPullPublishing(uint32_t id){
+bool teo::CuiAbsolute::startPullPublishing(){
 
     uint8_t msgData[3] = {0x01, 0x02, 0x00}; // -- Comienza a publicar mensajes en modo pulling (modo 2) sin delay
-    if( ! canDevicePtr->sendRaw(id, 3, msgData) ) {
-        CD_ERROR("Could not send \"startPullPublishing\" to Cui Absolute Encoders. %s\n", msgToStr(id, 3, msgData).c_str() );
+    if( ! send(0, 3, msgData) ) { // -- utilizaremos la funcion "send" por ser una funcion publica en vez de la funcion privada sendRaw
+        CD_ERROR("Could not send \"startPullPublishing\" to Cui Absolute Encoders.\n");
         return false;
     }
-    CD_SUCCESS("Send: \"startPullPublishing\" to Cui Absolute Encoders. %s\n", msgToStr(id, 3, msgData).c_str() );
-
+    CD_SUCCESS("Send: \"startPullPublishing\" to Cui Absolute Encoders. \n");
     return true;
 }
 
 // ------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::stopPublishingMessages(uint32_t id){
+bool teo::CuiAbsolute::stopPublishingMessages(){
 
     uint8_t msgData[3] = {0x02, 0x01, 0x00}; // -- Para de publicar mensajes
-    if( ! canDevicePtr->sendRaw(id, 3, msgData) ) {
-        CD_ERROR("Could not send \"stopPublishingMessages\" to Cui Absolute Encoders. %s\n", msgToStr(id, 3, msgData).c_str() );
+    if( ! send(0, 3, msgData) ) {
+        CD_ERROR("Could not send \"stopPublishingMessages\" to Cui Absolute Encoders. %s\n");
         return false;
     }
-    CD_SUCCESS("Send: \"stopPublishingMessages\" to Cui Absolute Encoders. %s\n", msgToStr(id, 3, msgData).c_str() );
-
+    CD_SUCCESS("Send: \"stopPublishingMessages\" to Cui Absolute Encoders. %s\n");
     return true;
 }
 
