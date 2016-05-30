@@ -7,6 +7,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
+#include "CuiAbsolute/CuiAbsolute.hpp" // -- añadimos libreria de encoder absolutos
 
 #include <stdlib.h>  //-- Just for ::exit()
 #include <fcntl.h>  //-- Just for O_RDWR
@@ -662,6 +663,9 @@ class CanBusControlboard : public yarp::dev::DeviceDriver, public yarp::dev::ICo
         std::vector< yarp::dev::IVelocityControlRaw* > iVelocityControlRaw;
         std::vector< ICanBusSharer* > iCanBusSharer;
         std::map< int, int > idxFromCanId;
+
+        /** Añadimos un vector de nodos Cui Absolute encoder */
+        std::vector< CuiAbsolute* > cuiAbsolute;
 
 
         /** A helper function to display CAN messages. */
