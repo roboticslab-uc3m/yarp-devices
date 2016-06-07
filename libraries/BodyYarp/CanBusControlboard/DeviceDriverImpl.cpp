@@ -1,7 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include "CanBusControlboard.hpp"
-#include "CuiAbsolute/CuiAbsolute.hpp"
 
 // ------------------- DeviceDriver Related ------------------------------------
 
@@ -46,6 +45,9 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
     iTorqueControlRaw.resize( nodes.size() );
     iVelocityControlRaw.resize( nodes.size() );
     iCanBusSharer.resize( nodes.size() );
+    // -- Cui Absolute Encoder
+    cuiAbsolute.resize( nodes.size() );
+
     for(int i=0; i<nodes.size(); i++)
     {
         if(types.get(i).asString() == "")
@@ -81,19 +83,21 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
         device->view( iVelocityControlRaw[i] );
         device->view( iCanBusSharer[i] );
 
+        //-- Pass CAN bus pointer to CAN node
+        iCanBusSharer[i]->setCanBusPtr( iCanBus );
+
+        
         //-- Associate absolute encoders to motor drivers
         if( types.get(i).asString() == "CuiAbsolute" ) {
             int driverCanId = ids.get(i).asInt() - 100;  //-- \todo{Document the dangers: ID must be > 100, driver must be instanced.}
-            iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
 
-            //-- Dentro de este "if" nos aseguramos de que se configura correctamente el encoder absoluto
-            CuiAbsolute* cuiAbsolute;
-            device->view( cuiAbsolute );
-            cuiAbsolute->startContinuousPublishing(0);
+            //-- Dentro de este "if" nos aseguramos de que se configura correctamente los encoders absolutos
+            device->view( cuiAbsolute[i] );
+            cuiAbsolute[i]->startContinuousPublishing(0);
+            
+                        iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
         }
 
-        //-- Pass CAN bus pointer to CAN node
-        iCanBusSharer[i]->setCanBusPtr( iCanBus );
 
         //-- Set initial parameters on physical motor drivers.
         if ( ! iPositionControlRaw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asDouble() ) )
