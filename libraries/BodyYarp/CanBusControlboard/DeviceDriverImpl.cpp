@@ -71,7 +71,9 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
         idxFromCanId[ ids.get(i).asInt() ] = i;
 
         //-- Push the motor driver and other devices (CuiAbsolute) on to the vectors.
-        nodes[i] = device;
+        nodes[i] = device;  // -- device es un puntero que guarda la dirección de un objeto PolyDriver
+                            // -- nodes es un vector de punteros que apuntará al device
+
         device->view( iControlLimitsRaw[i] );
         device->view( iControlModeRaw[i] );
         device->view( iEncodersTimedRaw[i] );
@@ -79,21 +81,31 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
         device->view( iPositionDirectRaw[i] );
         device->view( iTorqueControlRaw[i] );
         device->view( iVelocityControlRaw[i] );
-        device->view( iCanBusSharer[i] );
+        device->view( iCanBusSharer[i] );   // -- si el device es un Cui, este podrá "ver" las funciones programadas en iCanBusSharer (funciones que hemos añadido al encoder).
+                                            // -- estas funciones se encuentran implementadas en el cpp correspondiente "ICanBusSharerImpl.cpp", por lo tanto le da la funcionalidad que deseamos
+
+        //-- Pass CAN bus pointer to CAN node
+        iCanBusSharer[i]->setCanBusPtr( iCanBus );
 
         //-- Associate absolute encoders to motor drivers
         if( types.get(i).asString() == "CuiAbsolute" ) {
             int driverCanId = ids.get(i).asInt() - 100;  //-- \todo{Document the dangers: ID must be > 100, driver must be instanced.}
             iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
 
+            // variables extra
+            bool c = true;
+
             //-- Dentro de este "if" nos aseguramos de que se configura correctamente el encoder absoluto
             CuiAbsolute* cuiAbsolute;
-            device->view( cuiAbsolute );
+            c &= device->view( cuiAbsolute );
+
+            // -- comprobación del view
+            if (c) printf("[CUI INFO] Se ha conectado correctamente al ID%i \n", ids.get(i).asInt());
+            else ("[CUI VIEW ERROR]\n");
+
+            yarp::os::Time::delay(1);
             cuiAbsolute->startContinuousPublishing(0);
         }
-
-        //-- Pass CAN bus pointer to CAN node
-        iCanBusSharer[i]->setCanBusPtr( iCanBus );
 
         //-- Set initial parameters on physical motor drivers.
         if ( ! iPositionControlRaw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asDouble() ) )

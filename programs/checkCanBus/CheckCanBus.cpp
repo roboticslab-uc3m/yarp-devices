@@ -127,8 +127,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
 
     // -- Parametro para PIC: --startCuiContinuousPublishing
     if(rf.check("startCuiContinuousPublishing")){
-        printf("[INFO] Start PIC of Cui publishing messages in continuous mode\n");
-        uint8_t msgData[3] = {0x01, 0x01, 0}; // -- Comienza a publicar mensajes en modo permanente sin delay (falta configurar delay, por defecto a 0)
+        printf("[INFO] Start PIC of Cui publishing messages in continuous mode\n");       
         // -- publishing PIC Cui messages after delay (1s)
         yarp::os::Time::delay(1);
         cuiAbsoluteEncoder->startContinuousPublishing(0); // -- configurar delay

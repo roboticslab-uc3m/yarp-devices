@@ -24,7 +24,7 @@ option(ENABLE_dumpCanBus "Choose if you want to compile dumpCanBus" TRUE)
 
 option(ENABLE_checkCanBus "Choose if you want to compile checkCanBus" TRUE)
 
-option(ENABLE_testCuiAbsolute "Choose if you want to compile testCuiAbsolute" TRUE)
+# option(ENABLE_testCuiAbsolute "Choose if you want to compile testCuiAbsolute" TRUE)
 
 option(ENABLE_oneCanBusOneWrapper "Choose if you want to compile oneCanBusOneWrapper" TRUE)
 

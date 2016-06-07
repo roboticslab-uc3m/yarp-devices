@@ -103,20 +103,6 @@ bool TestCuiAbsolute::configure(yarp::os::ResourceFinder &rf) {
     }
 
 
-    // -- Parametro: --ids (introduce los IDs en una cola)
-    if(rf.check("ids")){
-        yarp::os::Bottle jointsCan0 = rf.findGroup("ids");  // -- Introduce en un objeto bottle el parámetro ids
-        std::string strIds = jointsCan0.get(1).toString(); // -- strIds almacena los Ids que queremos comprobar
-        std::stringstream streamIds(strIds); // --  tratamos el string de IDs como un stream llamado streamIds
-        CD_INFO_NO_HEADER("[INFO] It will proceed to detect IDs: ");
-        int n;
-        while(streamIds>>n){    // -- recorre el stream y va introduciendo cada ID en la cola
-               printf("%i ",n);
-               queueIds.push(n); // -- introduce en la cola los IDs
-           }
-        printf("\n");
-    }
-
     /*  -- Parametro: --from (con este parámetro indicamos el lugar del .ini donde especificamos la configuración
      *  de la HicoCan y las ids que queremos comprobar)
      */

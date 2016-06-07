@@ -4,8 +4,6 @@
 add_subdirectory(dumpCanBus)
 add_subdirectory(checkCanBus)
 
-add_subdirectory(testCuiAbsolute)
-
 add_subdirectory(oneCanBusOneWrapper)
 
 add_subdirectory(launchManipulation)
