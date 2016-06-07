@@ -1,5 +1,5 @@
 # Copyright: Universidad Carlos III de Madrid (C) 2013;
-# Authors: Juan G. Victores
+# Authors: Juan G. Victores & Raúl de Santos Rico
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 # Exploit new cmake 2.6 features (export). 
@@ -23,6 +23,8 @@ option(ENABLE_TwoCanBusThreeWrappers "Choose if you want to compile TwoCanBusThr
 option(ENABLE_dumpCanBus "Choose if you want to compile dumpCanBus" TRUE)
 
 option(ENABLE_checkCanBus "Choose if you want to compile checkCanBus" TRUE)
+
+option(ENABLE_testCuiAbsolute "Choose if you want to compile testCuiAbsolute" TRUE)
 
 option(ENABLE_oneCanBusOneWrapper "Choose if you want to compile oneCanBusOneWrapper" TRUE)
 
