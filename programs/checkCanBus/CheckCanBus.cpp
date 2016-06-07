@@ -29,7 +29,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
     // -- Antes de configurar los periféricos, check a parámetro --help
     if(rf.check("help")) {
         printf("CheckCanBus options:\n");
-        printf("\t--help (this help)\t\t --ids [\"id\"] \t\t\t --from [file.ini]\t --context [path]\n\t--timeOut [s]\t\t --resetAll (for all nodes)\t --resetNode [node]\t --cleaningTime [s]\n\t--startCuiContinuousPublishing\t--startCuiPullPublishing\t--stopCuiPublishing\n");
+        printf("\t--help (this help)\t --ids [\"id\"] \t\t\t --from [file.ini]\t --context [path]\n\t--timeOut [s]\t\t --resetAll (for all nodes)\t --resetNode [node]\t --cleaningTime [s]\n\t--startPicPublishing\t--startCuiPullPublishing\t--stopPublishing\n");
         printf("\n");
         printf(" can0: \t--canDevice /dev/can0\t\t can1: --canDevice /dev/can1\n");
         printf(" .ini:\t checkLocomotionCan0.ini\t checkLocomotionCan1.ini\t checkManipulationCan0.ini\t checkManipulationCan1.ini\n");
