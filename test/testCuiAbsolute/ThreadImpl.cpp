@@ -5,6 +5,7 @@
 
 // ------------------ Thread Related -----------------------------------------
 
+
 void teo::TestCuiAbsolute::run() {
 
 
@@ -23,6 +24,7 @@ void teo::TestCuiAbsolute::run() {
         /* Nota para la siguiente linea: si el tiempo que tarda el usuario en encender los brazos
          * es inferior al cleaningTime, puede dar lugar a pérdida de mensajes que no sean detectados por la
          * aplicación */
+
         if((yarp::os::Time::now()-threadInitTime) < cleaningTime) continue; //-- hasta que no llegue al cleaningTime, no revisará lo siguiente
 
         //-- All debugging messages should be contained in read_timeout, so just loop again.
@@ -36,13 +38,13 @@ void teo::TestCuiAbsolute::run() {
             if(firstTime == 0) firstTime = yarp::os::Time::now(); // -- toma el firsTime al detectar la primera presencia
 
             //CD_SUCCESS("Device indicating presence. %s\n",msgToStr(&buffer).c_str());
-            checkIds(&buffer); // -- Comprueba los IDs e imprime por pantalla los detectados
+            //checkIds(&buffer); // -- Comprueba los IDs e imprime por pantalla los detectados
             continue; // -- Mientras esté detectando presencia, las instrucciones de abajo no las ejecuta
         }
 
         //----------------- Comprueba IDs de encoders (mensajes con otra cabecera) -----------------
         else {                             // -- En caso de que NO sean mensajes de presencia
-            checkIds(&buffer); // -- muestra en pantalla los IDs de los encoders detectados
+            //checkIds(&buffer); // -- muestra en pantalla los IDs de los encoders detectados
 
                 printf("Happy end :)\n");
                 this->stopModule();            
@@ -55,6 +57,7 @@ void teo::TestCuiAbsolute::run() {
     //CD_INFO("Stopping TestCuiAbsolute reading thread run.\n");
 
     return;
+
 }
 
 // -----------------------------------------------------------------------------

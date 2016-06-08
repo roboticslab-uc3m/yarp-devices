@@ -43,8 +43,7 @@ class TestCuiAbsolute : public yarp::os::RFModule, public yarp::os::Thread {
         // -- Nuevas variables:        
         double firstTime;  // -- tiempo en el arranque (valor de tiempo aleatorio)
         double cleaningTime; // -- tiempo de espera para que no lleguen mensajes "basura" de encoders absolutos
-        int nodeForReset;           // -- nodo que queremos resetear
-        std::queue<int> queueIds;   // -- cola que almacenará los IDs
+        int id;              // -- id del encoder al que vamos a mandar mensaje        
 
     protected:
 
@@ -82,13 +81,6 @@ class TestCuiAbsolute : public yarp::os::RFModule, public yarp::os::Thread {
         bool send(uint32_t cob, uint16_t len, uint8_t * msgData);
         */
 
-        // -- Funcion que se encargará de chekear los IDs introducidos e imprimir los detectados
-        void checkIds(can_msg* message); // --Declara función que encontraremos en el .hpp
-
-        // -- Funcion que se encargará de imprimir los IDs no detectados
-        void printWronglIds();
-
-        double lastNow; // -- Muestra el tiempo actual
 
         virtual double getPeriod() {return 3.0;}  // Periodicidad de llamada a updateModule en [s]
         virtual bool updateModule();

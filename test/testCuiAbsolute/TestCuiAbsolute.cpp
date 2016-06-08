@@ -22,7 +22,7 @@ TestCuiAbsolute::TestCuiAbsolute() {}
 bool TestCuiAbsolute::configure(yarp::os::ResourceFinder &rf) {
 
     firstTime = 0;      // -- inicializo el tiempo a 0 [s] la primera vez que arranca el programa
-    cleaningTime = 1;   // -- Por defecto 1 [s] el parámetro --cleaningTime
+    //cleaningTime = 1;   // -- Por defecto 1 [s] el parámetro --cleaningTime
     bool flag;          // -- flag de return
 
     // -- Antes de configurar los periféricos, check a parámetro --help
@@ -37,6 +37,11 @@ bool TestCuiAbsolute::configure(yarp::os::ResourceFinder &rf) {
         return false;
     }
 
+    // -- Parametro: --id (ID del encoder absoluto al que vamos a enviar los mensajes)
+        if(rf.check("id")){
+            id = rf.find("id").asInt();
+        }
+
     // -- Continuación del código que CONFIGURA LA HICO-CAN y LOS DRIVERS
     CD_DEBUG("%s\n",rf.toString().c_str()); // -- nos muestra el contenido del objeto resource finder
     deviceDevCan0.open(rf);                 // -- Abre el dispositivo HicoCan (tarjeta) y le pasa el ResourceFinder
@@ -47,9 +52,13 @@ bool TestCuiAbsolute::configure(yarp::os::ResourceFinder &rf) {
     deviceDevCan0.view(iCanBus);            // -- conecta el dispositivo (hicocan)
 
     // ---------- adding configuration of Cui Absolute Encoders (se trata de la configuración minima que necesita el encoder)
-    yarp::os::Property CuiAbsoluteConf("(device CuiAbsolute) (canId 124) (min 0) (max 0) (tr 1) (refAcceleration 0.0) (refSpeed 0.0)"); // -- frontal left elbow (codo)
+    std::stringstream strconf;
+    strconf << "(device CuiAbsolute) (canId " << id << ") (min 0) (max 0) (tr 1) (refAcceleration 0.0) (refSpeed 0.0)";    
+    CD_DEBUG("%s\n",strconf.str().c_str());
+    yarp::os::Property CuiAbsoluteConf (strconf.str().c_str());
 
     bool cuiOk = true;
+
     cuiOk &= canNodeCuiAbsolute.open( CuiAbsoluteConf );
     cuiOk &= canNodeCuiAbsolute.view( iControlLimitsRaw  );
     cuiOk &= canNodeCuiAbsolute.view( iControlModeRaw );
@@ -72,8 +81,6 @@ bool TestCuiAbsolute::configure(yarp::os::ResourceFinder &rf) {
 
     //-- Pass CAN bus (HicoCAN) pointer to CAN node.
     iCanBusSharer->setCanBusPtr( iCanBus );
-
-    flag = this->start(); // arranca el hilo
 
     // -- Parametro para PIC: --startCuiContinuousPublishing
     if(rf.check("startCuiContinuousPublishing")){
@@ -101,27 +108,7 @@ bool TestCuiAbsolute::configure(yarp::os::ResourceFinder &rf) {
         yarp::os::Time::delay(1);
         cuiAbsoluteEncoder->stopPublishingMessages();
     }
-
-
-    /*  -- Parametro: --from (con este parámetro indicamos el lugar del .ini donde especificamos la configuración
-     *  de la HicoCan y las ids que queremos comprobar)
-     */
-    else{
-        yarp::os::Bottle fileIds = rf.findGroup("ids");
-        std::string strIds = fileIds.get(1).toString(); // -- strIds almacena los Ids que queremos comprobar
-        std::stringstream streamIds(strIds); // --  tratamos el string de IDs como un stream llamado streamIds
-        CD_INFO_NO_HEADER("[INFO] It will proceed to detect IDs: ");
-        int n;
-        while(streamIds>>n){    // -- recorre el stream y va introduciendo cada ID en la cola
-               printf("%i ",n);
-               queueIds.push(n); // -- introduce en la cola los IDs
-           }
-        printf("\n");
-    }
-
-    lastNow = yarp::os::Time::now(); // -- tiempo actual
-
-    return flag;
+    return true;
 }
 
 /************************************************************************/
@@ -139,64 +126,5 @@ bool TestCuiAbsolute::close() {
 
     return true;
 }
-
-/************************************************************************/
-// -- Función que lee los mensajes que le llegan del CAN-BUS
-// -- Ejemplo de lo que imprime la función en pantalla:
-//    Read CAN message: 42 d5 b3 43. canId(126) via(180), t:0.0178779[s]
-std::string TestCuiAbsolute::msgToStr(can_msg* message) {
-
-    std::stringstream tmp; // -- nos permite insertar cualquier tipo de dato dentro del flujo
-    for(int i=0; i < message->dlc-1; i++) // -- recorre en un bucle el contenido del mensaje (en bytes)
-    {
-        tmp << std::hex << static_cast<int>(message->data[i]) << " "; //-- cada byte es un número hexadecimal que compone el mensaje
-    }
-    tmp << std::hex << static_cast<int>(message->data[message->dlc-1]); //-- introduce el último byte (número) en hexadecimal
-    tmp << ". canId(";
-    tmp << std::dec << (message->id & 0x7F); // -- muestra en decimal el ID
-    tmp << ") via(";
-    tmp << std::hex << (message->id & 0xFF80); // -- ???
-    tmp << "), t:" << yarp::os::Time::now() - lastNow << "[s]."; // -- diferencia entre el tiempo actual y el del último mensaje
-
-    lastNow = yarp::os::Time::now();    // -- tiempo actual (aleatorio)
-
-    return tmp.str(); // -- devuelve el string (mensaje)
-}
-
-/*************************************************************************/
-
-// -- Función que comprueba los mensajes que recibe del CAN utilizando una cola de IDs
-void TestCuiAbsolute::checkIds(can_msg* message) {
-    // -- Almacenamos el contenido del mensaje en un stream
-    std::stringstream tmp; // -- stream que almacenará el mensaje recibido
-    for(int i=0; i < message->dlc-1; i++)
-        tmp << std::hex << static_cast<int>(message->data[i]) << " ";   // -- inserta los bytes del mensaje menos el último
-    tmp << std::hex << static_cast<int>(message->data[message->dlc-1]); // -- inserta último byte
-
-    // -- Recorremos la cola en busca del ID que ha lanzado el CAN
-    for(int i=0; i<queueIds.size(); i++){  // -- bucle que recorrerá la cola
-
-        if(queueIds.front()== (message->id & 0x7F)) {   // -- si el ID coincide, lo saco de la cola
-            CD_SUCCESS_NO_HEADER("Detected ID: %i\n", queueIds.front());
-            if(!tmp.str().compare("80 85 1 0 0 0 0 0")) CD_WARNING_NO_HEADER("[WARNING] Detected possible cleaning of driver settings: %i\n ", queueIds.front());
-            queueIds.pop(); // -- saca de la cola el elemento
-        }
-        else{                                           // -- En caso de que no coincida el ID
-           int res = queueIds.front(); // -- residuo que volveriamos a introducir en la cola
-           queueIds.pop();      // -- saca de la cola el primer elemento
-           queueIds.push(res);  // -- lo vuelve a introducir al final
-        }
-    }
-}
-
-// -- Función que imprime por pantalla los IDs no detectados (IDs residuales en cola)
-void TestCuiAbsolute::printWronglIds(){
-    for(int i=0; i<queueIds.size(); i++){
-               CD_ERROR_NO_HEADER("Has not been detected ID: %i\n", queueIds.front());
-               queueIds.pop(); // -- saca de la cola el elemento
-           }       
-}
-
-/************************************************************************/
 
 }  // namespace teo
