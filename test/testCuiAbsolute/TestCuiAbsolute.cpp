@@ -22,16 +22,14 @@ TestCuiAbsolute::TestCuiAbsolute() {}
 bool TestCuiAbsolute::configure(yarp::os::ResourceFinder &rf) {
 
     firstTime = 0;      // -- inicializo el tiempo a 0 [s] la primera vez que arranca el programa
-    //cleaningTime = 1;   // -- Por defecto 1 [s] el parámetro --cleaningTime
-    bool flag;          // -- flag de return
+    cleaningTime = 1;   // -- Por defecto 1 [s] el parámetro --cleaningTime
 
     // -- Antes de configurar los periféricos, check a parámetro --help
     if(rf.check("help")) {
         printf("TestCuiAbsolute options:\n");
-        printf("\t--help (this help)\t --ids [\"id\"] \t\t\t --from [file.ini]\t --context [path]\n\t--timeOut [s]\t\t --resetAll (for all nodes)\t --resetNode [node]\t --cleaningTime [s]\n\t--startPicPublishing\t--startCuiPullPublishing\t--stopPublishing\n");
-        printf("\n");
-        printf(" can0: \t--canDevice /dev/can0\t\t can1: --canDevice /dev/can1\n");
-        printf(" .ini:\t checkLocomotionCan0.ini\t checkLocomotionCan1.ini\t checkManipulationCan0.ini\t checkManipulationCan1.ini\n");
+        printf("\t--help (this help)\t\t --from [file.ini]\t --context [path]*\t --id[ID of Cui Absolute]\n");       
+        printf("Modes: \t--startContinuousPublishing\t--startPullPublishing\t--stopPublishing\n");
+        printf("*can0: \t--canDevice /dev/can0\t\t can1: --canDevice /dev/can1\n");
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
         ::exit(1);
         return false;
@@ -82,31 +80,31 @@ bool TestCuiAbsolute::configure(yarp::os::ResourceFinder &rf) {
     //-- Pass CAN bus (HicoCAN) pointer to CAN node.
     iCanBusSharer->setCanBusPtr( iCanBus );
 
-    // -- Parametro para PIC: --startCuiContinuousPublishing
-    if(rf.check("startCuiContinuousPublishing")){
-        printf("[INFO] Start PIC of Cui publishing messages in continuous mode\n");
-        uint8_t msgData[3] = {0x01, 0x01, 0}; // -- Comienza a publicar mensajes en modo permanente sin delay (falta configurar delay, por defecto a 0)
-        // -- publishing PIC Cui messages after delay (1s)
+    // -- Parametro para PIC: --startContinuousPublishing
+    if(rf.check("startContinuousPublishing")){
+        CD_INFO("Start PIC of Cui publishing messages in continuous mode\n");
+        // -- publishing PIC Cui messages        
+        cuiAbsoluteEncoder->startContinuousPublishing(0);
         yarp::os::Time::delay(1);
-        cuiAbsoluteEncoder->startContinuousPublishing(0); // -- configurar delay
+        this->stopModule();
     }
 
-    // -- Parametro para PIC: --startCuiPullPublishing
-    if(rf.check("startCuiPullPublishing")){
-        printf("[INFO] Start PIC publishing messages in pulling mode\n");
-        uint8_t msgData[3] = {0x01, 0x02, 0}; // -- Comienza a publicar mensajes en modo pulling
-        // -- publishing PIC Cui messages after delay (1s)
-        yarp::os::Time::delay(1);
+    // -- Parametro para PIC: --startPullPublishing
+    if(rf.check("startPullPublishing")){
+        CD_INFO("Start PIC publishing messages in pulling mode\n");        
+        // -- publishing PIC Cui messages
         cuiAbsoluteEncoder->startPullPublishing();
+        yarp::os::Time::delay(1);
+        this->stopModule();
     }
 
-    // -- Parametro para PIC: --
-    if(rf.check("stopCuiPublishing")){
-        printf("[INFO] Stop PIC publishing messages\n");
-        uint8_t msgData[3] = {0x01, 0x01, 0}; // -- Para de publicar mensajes
-        // -- publishing PIC Cui messages after delay (1s)
-        yarp::os::Time::delay(1);
+    // -- Parametro para PIC: --stopPublishing
+    if(rf.check("stopPublishing")){
+        CD_INFO("Stop PIC publishing messages\n");        
+        // -- publishing PIC Cui messages
         cuiAbsoluteEncoder->stopPublishingMessages();
+        yarp::os::Time::delay(1);
+        this->stopModule();
     }
     return true;
 }
@@ -120,7 +118,6 @@ bool TestCuiAbsolute::updateModule() {
 /************************************************************************/
 // -- Para el hilo y para el dispositivo PolyDriver
 bool TestCuiAbsolute::close() {
-    this->stop();
 
     deviceDevCan0.close();
 

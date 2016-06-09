@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include <cstdio>
-#include "TestCuiAbsolute.hpp"
+//#include <cstdio>
+//#include "TestCuiAbsolute.hpp"
 
 // ------------------ Thread Related -----------------------------------------
-
+/*
 
 void teo::TestCuiAbsolute::run() {
 
@@ -12,7 +12,7 @@ void teo::TestCuiAbsolute::run() {
     CD_INFO("Started TestCuiAbsolute reading thread run.\n");
 
     double threadInitTime = yarp::os::Time::now();
-    //double cleaningTime = 2.0;  // -- Convertir en argumento de programa
+    double cleaningTime = 2.0;  // -- Convertir en argumento de programa
 
     while ( ! this->RFModule::isStopping()) { // -- Mientras no se pare el RFModule
 
@@ -25,6 +25,7 @@ void teo::TestCuiAbsolute::run() {
          * es inferior al cleaningTime, puede dar lugar a pérdida de mensajes que no sean detectados por la
          * aplicación */
 
+/*
         if((yarp::os::Time::now()-threadInitTime) < cleaningTime) continue; //-- hasta que no llegue al cleaningTime, no revisará lo siguiente
 
         //-- All debugging messages should be contained in read_timeout, so just loop again.
@@ -59,6 +60,6 @@ void teo::TestCuiAbsolute::run() {
     return;
 
 }
-
+*/
 // -----------------------------------------------------------------------------
 

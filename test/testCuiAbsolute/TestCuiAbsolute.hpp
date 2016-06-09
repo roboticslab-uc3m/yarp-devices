@@ -22,7 +22,7 @@
 #include "CuiAbsolute/CuiAbsolute.hpp"          // -- uso de librería de encoders absolutos
 
 //-- Nuevos includes
-#include <queue>
+//#include <queue>
 
 
 namespace teo
@@ -35,7 +35,7 @@ namespace teo
  *
  */
 
-class TestCuiAbsolute : public yarp::os::RFModule, public yarp::os::Thread {
+class TestCuiAbsolute : public yarp::os::RFModule {
     public:
         TestCuiAbsolute();
         bool configure(yarp::os::ResourceFinder &rf);
@@ -52,7 +52,7 @@ class TestCuiAbsolute : public yarp::os::RFModule, public yarp::os::Thread {
         CanBusHico* iCanBus;
 
         /** CAN node object (canNodeDevice): Driver */
-            yarp::dev::PolyDriver canNodeDriver;
+            //yarp::dev::PolyDriver canNodeDriver;
             yarp::dev::IControlLimitsRaw* iControlLimitsRaw;
             yarp::dev::IControlModeRaw* iControlModeRaw;
             yarp::dev::IEncodersTimedRaw* iEncodersTimedRaw;
@@ -67,7 +67,7 @@ class TestCuiAbsolute : public yarp::os::RFModule, public yarp::os::Thread {
             CuiAbsolute* cuiAbsoluteEncoder;
 
         /** A helper function to display CAN messages. */
-        std::string msgToStr(can_msg* message); // -- Muestra los mensajes que vienen del CAN
+        //std::string msgToStr(can_msg* message); // -- Muestra los mensajes que vienen del CAN
 
         // -- Funcion que envía mensajes CAN al encoder absoluto
         // .. se encuentra definica en CuiAbsolute/CuiAbsolute.hpp
@@ -103,7 +103,7 @@ class TestCuiAbsolute : public yarp::os::RFModule, public yarp::os::Thread {
          * There is no really reliable, portable way to stop
          * a thread cleanly unless that thread cooperates.
          */
-        virtual void run();
+        //virtual void run();
 };
 
 }  // namespace teo
