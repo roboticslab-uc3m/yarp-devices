@@ -80,6 +80,7 @@ bool TestCuiAbsolute::configure(yarp::os::ResourceFinder &rf) {
     //-- Pass CAN bus (HicoCAN) pointer to CAN node.
     iCanBusSharer->setCanBusPtr( iCanBus );
 
+
     // -- Parametro para PIC: --startContinuousPublishing
     if(rf.check("startContinuousPublishing")){
         CD_INFO("Start PIC of Cui publishing messages in continuous mode\n");
@@ -106,6 +107,19 @@ bool TestCuiAbsolute::configure(yarp::os::ResourceFinder &rf) {
         yarp::os::Time::delay(1);
         this->stopModule();
     }
+
+    // -- Control de errores
+    if(!rf.check("startContinuousPublishing") && !rf.check("startPullPublishing") && !rf.check("stopPublishing")){
+        CD_ERROR("You need to specify more parameters. You can use \"testCuiAbsolute --help\"\n");
+
+        return false;
+    }
+
+    if(!rf.check("id")){
+        CD_ERROR("You need to specify the ID of Cui Absolute encoder. Example: \"--id 124\"\n");
+        return false;
+    }
+
     return true;
 }
 

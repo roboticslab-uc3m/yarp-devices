@@ -29,6 +29,10 @@
  * And then launch the actual module:
 \verbatim
 [on terminal 2] testCuiAbsolute
+Pararmeters:
+        --help (this help)		 --from [file.ini]	 --context [path]*	 --id[ID of Cui Absolute]
+Modes: 	--startContinuousPublishing	--startPullPublishing	--stopPublishing
+*can0: 	--canDevice /dev/can0		 can1: --canDevice /dev/can1
 \endverbatim
  *
  * @section testCuiAbsolute_modify Modify

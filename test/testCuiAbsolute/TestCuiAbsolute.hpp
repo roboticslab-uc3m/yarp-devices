@@ -21,9 +21,6 @@
 #include "TechnosoftIpos/TechnosoftIpos.hpp"    // -- uso de librería de drivers
 #include "CuiAbsolute/CuiAbsolute.hpp"          // -- uso de librería de encoders absolutos
 
-//-- Nuevos includes
-//#include <queue>
-
 
 namespace teo
 {
