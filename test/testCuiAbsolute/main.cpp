@@ -3,11 +3,11 @@
 /**
  *
  * @ingroup teo_body_programs
- * \defgroup dumpCanBus dumpCanBus
+ * \defgroup testCuiAbsolute testCuiAbsolute
  *
- * @brief Creates an instance of teo::DumpCanBus.
+ * @brief Creates an instance of teo::TestCuiAbsolute.
  *
- * @section dumpCanBus_legal Legal
+ * @section testCuiAbsolute_legal Legal
  *
  * Copyright: 2013 (C) Universidad Carlos III de Madrid
  *

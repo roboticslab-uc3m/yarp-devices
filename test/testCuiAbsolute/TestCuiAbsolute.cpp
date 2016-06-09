@@ -40,13 +40,14 @@ bool TestCuiAbsolute::configure(yarp::os::ResourceFinder &rf) {
             id = rf.find("id").asInt();
         }
 
-    // -- Continuación del código que CONFIGURA LA HICO-CAN y LOS DRIVERS
+    // -- Continuación del código que CONFIGURA LA HICO-CAN
     CD_DEBUG("%s\n",rf.toString().c_str()); // -- nos muestra el contenido del objeto resource finder
     deviceDevCan0.open(rf);                 // -- Abre el dispositivo HicoCan (tarjeta) y le pasa el ResourceFinder
     if (!deviceDevCan0.isValid()) {
         CD_ERROR("deviceDevCan0 instantiation not worked.\n");
         return false;
     }
+
     deviceDevCan0.view(iCanBus);            // -- conecta el dispositivo (hicocan)
 
     // ---------- adding configuration of Cui Absolute Encoders (se trata de la configuración minima que necesita el encoder)
@@ -56,7 +57,6 @@ bool TestCuiAbsolute::configure(yarp::os::ResourceFinder &rf) {
     yarp::os::Property CuiAbsoluteConf (strconf.str().c_str());
 
     bool cuiOk = true;
-
     cuiOk &= canNodeCuiAbsolute.open( CuiAbsoluteConf );
     cuiOk &= canNodeCuiAbsolute.view( iControlLimitsRaw  );
     cuiOk &= canNodeCuiAbsolute.view( iControlModeRaw );
@@ -132,9 +132,7 @@ bool TestCuiAbsolute::updateModule() {
 /************************************************************************/
 // -- Para el hilo y para el dispositivo PolyDriver
 bool TestCuiAbsolute::close() {
-
     deviceDevCan0.close();
-
     return true;
 }
 

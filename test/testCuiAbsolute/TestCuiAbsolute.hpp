@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __CHECK_CAN_BUS__
-#define __CHECK_CAN_BUS__
+#ifndef __TEST_CUI_ABSOLUTE__
+#define __TEST_CUI_ABSOLUTE__
 
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Module.h>
@@ -26,7 +26,7 @@ namespace teo
 {
 
 /**
- * @ingroup dumpCanBus //-- MODIFICAR
+ * @ingroup testCuiAbsolute
  *
  * @brief Launches one CAN bus driver, dumps output.
  *
@@ -48,8 +48,8 @@ class TestCuiAbsolute : public yarp::os::RFModule {
         yarp::dev::PolyDriver deviceDevCan0; // -- Dispositivo (HicoCan) que se crea.
         CanBusHico* iCanBus;
 
-        /** CAN node object (canNodeDevice): Driver */
-            //yarp::dev::PolyDriver canNodeDriver;
+        /** CAN node object (canNodeDevice): CuiAbsolute */
+            yarp::dev::PolyDriver canNodeCuiAbsolute;
             yarp::dev::IControlLimitsRaw* iControlLimitsRaw;
             yarp::dev::IControlModeRaw* iControlModeRaw;
             yarp::dev::IEncodersTimedRaw* iEncodersTimedRaw;
@@ -57,53 +57,17 @@ class TestCuiAbsolute : public yarp::os::RFModule {
             yarp::dev::IPositionDirectRaw* iPositionDirectRaw;
             yarp::dev::ITorqueControlRaw* iTorqueControlRaw;
             yarp::dev::IVelocityControlRaw* iVelocityControlRaw;
-            ICanBusSharer* iCanBusSharer; // -- ??
-
-        /** CAN node object (canNodeDevice): Cui Absolute Encoder. */
-            yarp::dev::PolyDriver canNodeCuiAbsolute;
+            ICanBusSharer* iCanBusSharer;
             CuiAbsolute* cuiAbsoluteEncoder;
 
-        /** A helper function to display CAN messages. */
-        //std::string msgToStr(can_msg* message); // -- Muestra los mensajes que vienen del CAN
-
-        // -- Funcion que envía mensajes CAN al encoder absoluto
-        // .. se encuentra definica en CuiAbsolute/CuiAbsolute.hpp
-        /*
-         * Write message to the CAN buffer.
-         * @param cob Message's COB
-         * @param len Data field length
-         * @param msgData Data to send
-         * @return true/false on success/failure.
-
-        bool send(uint32_t cob, uint16_t len, uint8_t * msgData);
-        */
-
-
+        /** Functions **/
         virtual double getPeriod() {return 3.0;}  // Periodicidad de llamada a updateModule en [s]
         virtual bool updateModule();
         virtual bool close();
 
-//        virtual bool interruptModule();
-//        virtual int period;
-
-    // -------- Thread declarations. Implementation in ThreadImpl.cpp --------
-
-        /**
-         * Main body of the new thread.
-         * Override this method to do what you want.
-         * After Thread::start is called, this
-         * method will start running in a separate thread.
-         * It is important that this method either keeps checking
-         * Thread::isStopping to see if it should stop, or
-         * you override the Thread::onStop method to interact
-         * with it in some way to shut the new thread down.
-         * There is no really reliable, portable way to stop
-         * a thread cleanly unless that thread cooperates.
-         */
-        //virtual void run();
 };
 
 }  // namespace teo
 
-#endif  // __CHECK_CAN_BUS__
+#endif  // __TEST_CUI_ABSOLUTE__
 
