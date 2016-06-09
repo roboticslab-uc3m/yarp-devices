@@ -18,8 +18,7 @@
 #include "ICanBusSharer.h"
 #include "ColorDebug.hpp"
 
-#include "TechnosoftIpos/TechnosoftIpos.hpp"    // -- uso de librería de drivers
-#include "CuiAbsolute/CuiAbsolute.hpp"          // -- uso de librería de encoders absolutos
+#include "TechnosoftIpos/TechnosoftIpos.hpp" // -- ok????
 
 //-- Nuevos includes
 #include <queue>
@@ -53,8 +52,8 @@ class CheckCanBus : public yarp::os::RFModule, public yarp::os::Thread {
         yarp::dev::PolyDriver deviceDevCan0; // -- Dispositivo (HicoCan) que se crea.
         CanBusHico* iCanBus;
 
-        /** CAN node object (canNodeDevice): Driver */
-            yarp::dev::PolyDriver canNodeDriver;
+        /** CAN node object. */
+            yarp::dev::PolyDriver canNodeDevice;
             yarp::dev::IControlLimitsRaw* iControlLimitsRaw;
             yarp::dev::IControlModeRaw* iControlModeRaw;
             yarp::dev::IEncodersTimedRaw* iEncodersTimedRaw;
@@ -65,24 +64,8 @@ class CheckCanBus : public yarp::os::RFModule, public yarp::os::Thread {
             ICanBusSharer* iCanBusSharer; // -- ??
             TechnosoftIpos* technosoftIpos;    //-- ok practice?
 
-        /** CAN node object (canNodeDevice): Cui Absolute Encoder. */
-            yarp::dev::PolyDriver canNodeCuiAbsolute;
-            CuiAbsolute* cuiAbsoluteEncoder;
-
         /** A helper function to display CAN messages. */
         std::string msgToStr(can_msg* message); // -- Muestra los mensajes que vienen del CAN
-
-        // -- Funcion que envía mensajes CAN al encoder absoluto
-        // .. se encuentra definica en CuiAbsolute/CuiAbsolute.hpp
-        /*
-         * Write message to the CAN buffer.
-         * @param cob Message's COB
-         * @param len Data field length
-         * @param msgData Data to send
-         * @return true/false on success/failure.
-
-        bool send(uint32_t cob, uint16_t len, uint8_t * msgData);
-        */
 
         // -- Funcion que se encargará de chekear los IDs introducidos e imprimir los detectados
         void checkIds(can_msg* message); // --Declara función que encontraremos en el .hpp
@@ -119,4 +102,3 @@ class CheckCanBus : public yarp::os::RFModule, public yarp::os::Thread {
 }  // namespace teo
 
 #endif  // __CHECK_CAN_BUS__
-

@@ -6,6 +6,9 @@
 #include <iostream>
 #include <sstream>
 
+#include "TechnosoftIpos/TechnosoftIpos.hpp"
+// --
+
 
 YARP_DECLARE_PLUGINS(BodyYarp)
 
@@ -29,10 +32,17 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
     // -- Antes de configurar los periféricos, check a parámetro --help
     if(rf.check("help")) {
         printf("CheckCanBus options:\n");
-        printf("\t--help (this help)\t --ids [\"id\"] \t\t\t --from [file.ini]\t --context [path]\n\t--timeOut [s]\t\t --resetAll (for all nodes)\t --resetNode [node]\t --cleaningTime [s]\n\t--startPicPublishing\t--startCuiPullPublishing\t--stopPublishing\n");
+        printf("\t--help (this help)\t --ids [\"(id)\"] \t\t --from [file.ini]\t --canDevice [path]*\n\t--timeOut [s]\t\t --resetAll (for all nodes)\t --resetNode [node]\t --cleaningTime [s]\n");
         printf("\n");
-        printf(" can0: \t--canDevice /dev/can0\t\t can1: --canDevice /dev/can1\n");
-        printf(" .ini:\t checkLocomotionCan0.ini\t checkLocomotionCan1.ini\t checkManipulationCan0.ini\t checkManipulationCan1.ini\n");
+        printf("*can0: \t--canDevice /dev/can0\t\t can1: --canDevice /dev/can1\n");
+        printf(" .ini:\t checkLocomotionCan0.ini\t checkLocomotionCan1.ini\t checkManipulationCan0.ini\t checkManipulationCan1.ini\n\n");
+        printf("Example of uses:\n");
+        printf("* Reset driver ID [23] and check it:\t\t\t\t checkCanBus --canDevice /dev/can1 --ids 23 --resetNode 23\n");
+        printf("* Reset drivers IDs [23,24] and check them:\t\t\t checkCanBus --canDevice /dev/can1 --ids \"(23 24)\" --resetAll\n");
+        printf("* Reset all drivers of manipulation Can0 and check devices:\t checkCanBus --canDevice /dev/can0 --from checkManipulationCan0.ini --resetAll\n");
+
+
+
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
         ::exit(1);
         return false;
@@ -47,51 +57,27 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
     }
     deviceDevCan0.view(iCanBus);            // -- conecta el dispositivo (hicocan)
 
-    // --------- adding configuration of TechnosoftIpos (se trata de la configuración mínima que necesita el driver)
+    // -- adding configuration of TechnosoftIpos (se trata de la configuración mínima que necesita el driver)
     yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 24) (min -100) (max 10) (tr 160) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal left elbow (codo)
 
-    bool iposOk = true;
-    iposOk &= canNodeDriver.open( TechnosoftIposConf );   // -- we introduce the configuration properties defined ........
-    iposOk &= canNodeDriver.view( iControlLimitsRaw ) ;
-    iposOk &= canNodeDriver.view( iControlModeRaw );
-    iposOk &= canNodeDriver.view( iEncodersTimedRaw );
-    iposOk &= canNodeDriver.view( iPositionControlRaw );
-    iposOk &= canNodeDriver.view( iPositionDirectRaw );
-    iposOk &= canNodeDriver.view( iTorqueControlRaw );
-    iposOk &= canNodeDriver.view( iVelocityControlRaw );
-    iposOk &= canNodeDriver.view( iCanBusSharer );
-    iposOk &= canNodeDriver.view( technosoftIpos );   // -- conecta el dispositivo (drivers)
+    bool ok = true;
+    ok &= canNodeDevice.open( TechnosoftIposConf );   // -- we introduce the configuration properties defined ........
+    ok &= canNodeDevice.view( iControlLimitsRaw );
+    ok &= canNodeDevice.view( iControlModeRaw );
+    ok &= canNodeDevice.view( iEncodersTimedRaw );
+    ok &= canNodeDevice.view( iPositionControlRaw );
+    ok &= canNodeDevice.view( iPositionDirectRaw );
+    ok &= canNodeDevice.view( iTorqueControlRaw );
+    ok &= canNodeDevice.view( iVelocityControlRaw );
+    ok &= canNodeDevice.view( iCanBusSharer );
+    ok &= canNodeDevice.view( technosoftIpos );   // -- conecta el dispositivo (drivers)
 
-    // --Checking configuration iPos
-    if(iposOk){
+    // --Checking
+    if(ok){
         CD_SUCCESS("Configuration of TechnosoftIpos sucessfully :)\n");
     }
     else{
         CD_ERROR("Bad Configuration of TechnosoftIpos :(\n");
-        ::exit(1);
-    }
-
-    // ---------- adding configuration of Cui Absolute Encoders (se trata de la configuración minima que necesita el encoder)
-    yarp::os::Property CuiAbsoluteConf("(device CuiAbsolute) (canId 124) (min 0) (max 0) (tr 1) (refAcceleration 0.0) (refSpeed 0.0)"); // -- frontal left elbow (codo)
-
-    bool cuiOk = true;
-    cuiOk &= canNodeCuiAbsolute.open( CuiAbsoluteConf );
-    cuiOk &= canNodeCuiAbsolute.view( iControlLimitsRaw  );
-    cuiOk &= canNodeCuiAbsolute.view( iControlModeRaw );
-    cuiOk &= canNodeCuiAbsolute.view( iEncodersTimedRaw );
-    cuiOk &= canNodeCuiAbsolute.view( iPositionControlRaw );
-    cuiOk &= canNodeCuiAbsolute.view( iPositionDirectRaw );
-    cuiOk &= canNodeCuiAbsolute.view( iTorqueControlRaw );
-    cuiOk &= canNodeCuiAbsolute.view( iVelocityControlRaw );
-    cuiOk &= canNodeCuiAbsolute.view( iCanBusSharer );
-    cuiOk &= canNodeCuiAbsolute.view( cuiAbsoluteEncoder ); // -- conecta el dispositivo (encoders absolutos)
-
-    // --Checking Cui Absolute Encoders
-    if(iposOk){
-        CD_SUCCESS("Configuration of CuiAbsolute sucessfully :)\n");
-    }
-    else{
-        CD_ERROR("Bad Configuration of CuiAbsolute:(\n");
         ::exit(1);
     }
 
@@ -125,31 +111,6 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         technosoftIpos->resetNode(nodeForReset);
     }
 
-    // -- Parametro para PIC: --startCuiContinuousPublishing
-    if(rf.check("startCuiContinuousPublishing")){
-        printf("[INFO] Start PIC of Cui publishing messages in continuous mode\n");       
-        // -- publishing PIC Cui messages after delay (1s)
-        yarp::os::Time::delay(1);
-        cuiAbsoluteEncoder->startContinuousPublishing(0); // -- configurar delay
-    }
-
-    // -- Parametro para PIC: --startCuiPullPublishing
-    if(rf.check("startCuiPullPublishing")){
-        printf("[INFO] Start PIC publishing messages in pulling mode\n");
-        uint8_t msgData[3] = {0x01, 0x02, 0}; // -- Comienza a publicar mensajes en modo pulling
-        // -- publishing PIC Cui messages after delay (1s)
-        yarp::os::Time::delay(1);
-        cuiAbsoluteEncoder->startPullPublishing();
-    }
-
-    // -- Parametro para PIC: --
-    if(rf.check("stopCuiPublishing")){
-        printf("[INFO] Stop PIC publishing messages\n");
-        uint8_t msgData[3] = {0x01, 0x01, 0}; // -- Para de publicar mensajes
-        // -- publishing PIC Cui messages after delay (1s)
-        yarp::os::Time::delay(1);
-        cuiAbsoluteEncoder->stopPublishingMessages();
-    }
 
     // -- Parametro: --cleaningTime [s]
     if(rf.check("cleaningTime")){
@@ -161,8 +122,8 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
     // -- Parametro: --ids (introduce los IDs en una cola)
     if(rf.check("ids")){
         yarp::os::Bottle jointsCan0 = rf.findGroup("ids");  // -- Introduce en un objeto bottle el parámetro ids
-        std::string strIds = jointsCan0.get(1).toString();  // -- strIds almacena los Ids que queremos comprobar
-        std::stringstream streamIds(strIds);                // --  tratamos el string de IDs como un stream llamado streamIds
+        std::string strIds = jointsCan0.get(1).toString(); // -- strIds almacena los Ids que queremos comprobar
+        std::stringstream streamIds(strIds); // --  tratamos el string de IDs como un stream llamado streamIds
         CD_INFO_NO_HEADER("[INFO] It will proceed to detect IDs: ");
         int n;
         while(streamIds>>n){    // -- recorre el stream y va introduciendo cada ID en la cola
@@ -211,16 +172,14 @@ bool CheckCanBus::close() {
 
 /************************************************************************/
 // -- Función que lee los mensajes que le llegan del CAN-BUS
-// -- Ejemplo de lo que imprime la función en pantalla:
-//    Read CAN message: 42 d5 b3 43. canId(126) via(180), t:0.0178779[s]
 std::string CheckCanBus::msgToStr(can_msg* message) {
 
     std::stringstream tmp; // -- nos permite insertar cualquier tipo de dato dentro del flujo
-    for(int i=0; i < message->dlc-1; i++) // -- recorre en un bucle el contenido del mensaje (en bytes)
+    for(int i=0; i < message->dlc-1; i++)
     {
-        tmp << std::hex << static_cast<int>(message->data[i]) << " "; //-- cada byte es un número hexadecimal que compone el mensaje
+        tmp << std::hex << static_cast<int>(message->data[i]) << " ";
     }
-    tmp << std::hex << static_cast<int>(message->data[message->dlc-1]); //-- introduce el último byte (número) en hexadecimal
+    tmp << std::hex << static_cast<int>(message->data[message->dlc-1]);
     tmp << ". canId(";
     tmp << std::dec << (message->id & 0x7F); // -- muestra en decimal el ID
     tmp << ") via(";
@@ -263,7 +222,7 @@ void CheckCanBus::printWronglIds(){
     for(int i=0; i<queueIds.size(); i++){
                CD_ERROR_NO_HEADER("Has not been detected ID: %i\n", queueIds.front());
                queueIds.pop(); // -- saca de la cola el elemento
-           }       
+           }
 }
 
 /************************************************************************/

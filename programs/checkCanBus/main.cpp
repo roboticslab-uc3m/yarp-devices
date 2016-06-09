@@ -30,19 +30,23 @@
 \verbatim
 [on terminal 2] checkCanBus
 Parameters:
-        --help (this help)	 --ids [("id")] 		 --from [file.ini]	 --context [path]
+        --help (this help)	 --ids ["(id)"] 		 --from [file.ini]	 --canDevice [path]*
         --timeOut [s]		 --resetAll (for all nodes)	 --resetNode [node]	 --cleaningTime [s]
 
- can0: 	--canDevice /dev/can0		 can1: --canDevice /dev/can1
+*can0: 	--canDevice /dev/can0		 can1: --canDevice /dev/can1
  .ini:	 checkLocomotionCan0.ini	 checkLocomotionCan1.ini	 checkManipulationCan0.ini	 checkManipulationCan1.ini
 
- Example of uses:
+Example of uses:
+* Reset driver ID [23] and check it:				 checkCanBus --canDevice /dev/can1 --ids 23 --resetNode 23
+* Reset drivers IDs [23,24] and check them:			 checkCanBus --canDevice /dev/can1 --ids "(23 24)" --resetAll
+* Reset all drivers of manipulation Can0 and check devices:	 checkCanBus --canDevice /dev/can0 --from checkManipulationCan0.ini --resetAll
+
 \endverbatim
  *
  * @section checkCanBus_modify Modify
  *
  * This file can be edited at
- * programs/dumpCanBus/main.cpp // --Modificar
+ * programs/checkCanBus/main.cpp //
  *
  */
 
