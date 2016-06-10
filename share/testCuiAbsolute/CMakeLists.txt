@@ -2,7 +2,7 @@
 # Author: Raúl de Santos Rico
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-set(appname checkCanBus)
+set(appname testCuiAbsolute)
 
 
 file(GLOB conf ${CMAKE_CURRENT_SOURCE_DIR}/conf/*.ini)
