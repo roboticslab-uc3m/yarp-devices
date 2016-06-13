@@ -47,14 +47,6 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         return false;
     }
 
-    // -- Control de errores
-    if(!rf.check("resetAll") && !rf.check("resetNode") && !rf.check("stopPublishing")){
-        printf("\n");
-        CD_ERROR("You need to specify more parameters. You can use \"checkCanBus --help\"\n");
-        ::exit(1);
-        return false;
-    }
-
     // -- Continuación del código que CONFIGURA LA HICO-CAN y LOS DRIVERS
     CD_DEBUG("%s\n",rf.toString().c_str()); // -- nos muestra el contenido del objeto resource finder
     deviceDevCan0.open(rf);                 // -- Abre el dispositivo HicoCan (tarjeta) y le pasa el ResourceFinder
