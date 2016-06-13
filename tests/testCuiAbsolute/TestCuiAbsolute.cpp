@@ -117,8 +117,9 @@ bool TestCuiAbsolute::configure(yarp::os::ResourceFinder &rf) {
 
     // -- Control de errores
     if(!rf.check("startContinuousPublishing") && !rf.check("startPullPublishing") && !rf.check("stopPublishing")){
+        printf("\n");
         CD_ERROR("You need to specify more parameters. You can use \"testCuiAbsolute --help\"\n");
-
+        ::exit(1);
         return false;
     }
 
