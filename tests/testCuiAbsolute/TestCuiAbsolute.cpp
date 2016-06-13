@@ -27,9 +27,16 @@ bool TestCuiAbsolute::configure(yarp::os::ResourceFinder &rf) {
     // -- Antes de configurar los periféricos, check a parámetro --help
     if(rf.check("help")) {
         printf("TestCuiAbsolute options:\n");
-        printf("\t--help (this help)\t\t --from [file.ini]\t --canDevice [path]*\t --id[ID of Cui Absolute]\n");
-        printf("Modes: \t--startContinuousPublishing\t--startPullPublishing\t--stopPublishing\n");
-        printf("*can0: \t--canDevice /dev/can0\t\t can1: --canDevice /dev/can1\n");
+        printf("\t --help (this help)\t\t --from [file.ini]\t --canDevice [path]*\t --id[ID of Cui Absolute]\n\n");
+        printf("Modes:\t --startContinuousPublishing\t --startPullPublishing\t --stopPublishing\n");
+        printf("*can0:\t --canDevice /dev/can0\t\t can1: --canDevice /dev/can1\n\n");
+        printf("Examples of uses:\n");
+        printf("* Continuous publishing for PIC with ID [124]:\t testCuiAbsolute --canDevice /dev/can1 --id 124 --startContinuousPublishing\n");
+        printf("* Pull publishing for PIC with ID [124]:\t testCuiAbsolute --canDevice /dev/can1 --id 124 --startPullPublishing\n");
+        printf("* Stop sending messages to PIC with ID [124]:\t testCuiAbsolute --canDevice /dev/can1 --id 124 --stopPublishing\n\n");
+        printf("Note: if you want to see the response of this PIC:\n");
+        printf("* Example [on terminal 2]: dumpCanBus --canDevice /dev/can1 | grep \"canId(124)\"\n");
+
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
         ::exit(1);
         return false;
