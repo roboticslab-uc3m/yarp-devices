@@ -135,7 +135,7 @@ add_subdirectory(share)
 add_subdirectory(libraries)
 add_subdirectory(programs)
 if (ENABLE_tests)
-    add_subdirectory(test)
+    add_subdirectory(tests)
 endif (ENABLE_tests)
 
 # export our variables to a TEO_BODYConfig.cmake creation

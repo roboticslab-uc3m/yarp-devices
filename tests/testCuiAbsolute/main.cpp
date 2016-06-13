@@ -2,7 +2,7 @@
 
 /**
  *
- * @ingroup teo_body_programs
+ * @ingroup teo_body_tests
  * \defgroup testCuiAbsolute testCuiAbsolute
  *
  * @brief Creates an instance of teo::TestCuiAbsolute.
@@ -30,10 +30,20 @@
 \verbatim
 [on terminal 2] testCuiAbsolute
 Pararmeters:
-        --help (this help)		 --from [file.ini]	 --context [path]*	 --id[ID of Cui Absolute]
+        --help (this help)          --from [file.ini]       --canDevice [path]*	 --id[ID of Cui Absolute]
 Modes: 	--startContinuousPublishing	--startPullPublishing	--stopPublishing
 *can0: 	--canDevice /dev/can0		 can1: --canDevice /dev/can1
+
+Example of uses:
+* Continuous publishing for PIC with ID [124]:    testCuiAbsolute --canDevice /dev/can1 --id 124 --startContinuousPublishing
+* Pull publishing for PIC with ID [124]:          testCuiAbsolute --canDevice /dev/can1 --id 124 --startPullPublishing
+* Stop sending messages to PIC with ID [124]:     testCuiAbsolute --canDevice /dev/can1 --id 124 --stopPublishing
 \endverbatim
+ * If you want to see the response of this PIC:
+\verbatim
+[on terminal 3]: dumpCanBus --canDevice /dev/can1 | grep "canId(124)"
+\endverbatim
+
  *
  * @section testCuiAbsolute_modify Modify
  *

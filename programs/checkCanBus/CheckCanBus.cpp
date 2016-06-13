@@ -42,7 +42,6 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf) {
         printf("* Reset all drivers of manipulation Can0 and check devices:\t checkCanBus --canDevice /dev/can0 --from checkManipulationCan0.ini --resetAll\n");
 
 
-
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
         ::exit(1);
         return false;
