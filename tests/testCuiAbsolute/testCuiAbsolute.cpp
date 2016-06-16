@@ -9,9 +9,10 @@
 #include "ColorDebug.hpp"
 
 #include "ICanBusSharer.h"
-#include "TechnosoftIpos.hpp"  //-- ok practice?
+//#include "TechnosoftIpos.hpp"  //-- ok practice?
+#include "CuiAbsolute/CuiAbsolute.hpp"
 
-#define CAN_ID 24
+#define CAN_ID 124
 
 YARP_DECLARE_PLUGINS(BodyYarp)
 
@@ -21,14 +22,15 @@ namespace teo
 /**
  * @brief Tests \ref KdlSolver ikin and idyn on a simple mechanism.
  */
-class TechnosoftIposTest : public testing::Test // -- inherit the Test class (gtest.h)
+class CuiAbsoluteTest : public testing::Test // -- inherit the Test class (gtest.h)
 {
 
 public:
 
     virtual void SetUp() {
-    // -- Variables
-    int id;
+
+        // -- Variables
+        int id = CAN_ID;
 
 
     // -- code here will execute just before the test ensues
@@ -62,7 +64,7 @@ public:
         ok &= canNodeDevice.view( iTorqueControlRaw );
         ok &= canNodeDevice.view( iVelocityControlRaw );
         ok &= canNodeDevice.view( iCanBusSharer );
-        ok &= canNodeDevice.view( technosoftIpos );  //-- ok practice?
+        ok &= canNodeDevice.view( cuiAbsolute );  //-- ok practice?
 
         if(ok)
         {
@@ -102,7 +104,7 @@ protected:
     yarp::dev::ITorqueControlRaw* iTorqueControlRaw;
     yarp::dev::IVelocityControlRaw* iVelocityControlRaw;
     ICanBusSharer* iCanBusSharer; // -- ??
-    TechnosoftIpos* technosoftIpos;    //-- ok practice?
+    CuiAbsolute* cuiAbsolute;
 
     struct can_msg buffer;
 
@@ -123,4 +125,80 @@ protected:
             return tmp.str();
         }
     };
+
+
+        TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInContinuousMode ) // -- Al tratarse de envío continuo, haremos una comprobación de 3 veces para ver si está enviando mensajes
+        {                        
+
+            bool startSending = cuiAbsolute->startContinuousPublishing(0);          // -- manda al PIC una orden de que publique (modo continuo)
+
+
+            for(int i=0; i<3 ; i++){
+
+                int canId = 0;
+                int ret = 0;
+                double timeOut = 2; // -- 2 segundos
+                double timeStamp = 0.0;                
+                bool timePassed = false;
+
+                timeStamp = yarp::os::Time::now();                            // -- tiempo actual
+
+                //-- Blocking read until we get a message from the expected canId
+
+                while ( (canId != CAN_ID) && !timePassed ) // -- it will check the ID
+                {
+                    ret = iCanBus->read_timeout(&buffer,1);         // -- return value of message with timeout of 1 [ms]
+                    if( ret <= 0 ) continue;                        // -- is waiting for recive message
+                    canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
+                    CD_DEBUG("Read ok from CuiAbsolute %d\n", canId);
+                        if(int(yarp::os::Time::now()-timeStamp)==timeOut) {
+                            CD_ERROR("Time out passed\n");
+                            timePassed = true;
+                        }
+                }
+
+                //-- Como se trata de envío continuo, comprobamos varias veces la llegada del mensaje
+                ASSERT_TRUE(startSending);  // -- comprobamos startContinuousPublishing
+                ASSERT_FALSE(timePassed);   // -- comprobamos que no supera el tiempo de espera
+                ASSERT_EQ(canId , CAN_ID);  // -- comprobamos la llegada de un mensaje
+                yarp::os::Time::delay(1);
+            }
+        }
+
+
+        TEST_F( CuiAbsoluteTest, CuiAbsoluteStopSendingMessage ) // -- we call the class that we want to do the test and we assign it a name
+        {
+
+            int canId = 0;
+            int ret = 0;
+            double timeOut = 2; // -- 2 segundos
+            double timeStamp = 0.0;
+            bool startSending = false;
+            bool timePassed = false;
+
+            bool stopSending = cuiAbsolute->stopPublishingMessages();
+            yarp::os::Time::delay(1);                                   // -- metemos un delay para que de tiempo a que se vacie el buffer
+
+            //-- Blocking read until we get a message from the expected canId
+            while ( canId != CAN_ID  && !timePassed ) // -- it will check the ID
+            {
+                ret = iCanBus->read_timeout(&buffer,1);         // -- return value of message with timeout of 1 [ms]
+                if( ret <= 0 ) continue;                        // -- is waiting for recive message
+                canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
+                CD_DEBUG("Read ok from CuiAbsolute %d\n", canId);
+                    if(int(yarp::os::Time::now()-timeStamp)==timeOut) {
+                        CD_ERROR("Time out passed\n");
+                        timePassed = true;
+                    }
+            }
+
+            //-- Como se trata de envío continuo, comprobamos varias veces la llegada del mensaje
+            ASSERT_TRUE(stopSending);  // -- comprobamos startContinuousPublishing
+            ASSERT_TRUE(timePassed);   // -- comprobamos que supera el tiempo de espera y no recibe ningún mensaje
+            ASSERT_EQ(canId , CAN_ID);  // -- comprobamos la llegada de un mensaje
+            yarp::os::Time::delay(1);
+
+
+        }
+
 }
