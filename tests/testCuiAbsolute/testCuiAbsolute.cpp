@@ -139,13 +139,13 @@ protected:
                     if(int(yarp::os::Time::now()-timeStamp)==timeOut) {
                         CD_ERROR("Time out exceeded\n");
                         timePassed = true;
-                        continue;
+                        //continue;
                     }
 
                     ret = iCanBus->read_timeout(&buffer, 0);         // -- return value of message with timeout of 0 [ms]
                     if( ret <= 0 ) continue;                        // -- is waiting for recive message
                     canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
-                    CD_DEBUG("Read ok from CuiAbsolute %d\n", canId);                    
+                    if (canId == CAN_ID) CD_DEBUG("Reading ok from CuiAbsolute %d\n", canId);
                 }
 
                 ASSERT_TRUE(startSending);         // -- testing startPullPublishing function
@@ -177,14 +177,13 @@ protected:
                     // -- if it exceeds the timeout...NOT PASS the test
                     if(int(yarp::os::Time::now()-timeStamp)==timeOut) {
                         CD_ERROR("Time out exceeded\n");
-                        timePassed = true;
-                        continue;
+                        timePassed = true;                        
                     }
 
                     ret = iCanBus->read_timeout(&buffer,1);         // -- return value of message with timeout of 1 [ms]
                     if( ret <= 0 ) continue;                        // -- is waiting for recive message
                     canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
-                    CD_DEBUG("Read ok from CuiAbsolute %d (%d)\n", canId, i);                        
+                    if (canId == CAN_ID) CD_DEBUG("Reading in continuous mode from CuiAbsolute %d [check %d]\n", canId, i);
                 }
 
                 ASSERT_TRUE(startSending);  // -- testing startContinuousPublishing function
@@ -201,7 +200,8 @@ protected:
             int ret = 0;
             double timeOut = 1;
             double timeStamp = 0.0;
-            bool timePassed = false;
+            double cleaningTime = 0.5; // time to empty the buffer
+            bool timePassed = false;            
 
             bool stopSending = cuiAbsolute->stopPublishingMessages();
             yarp::os::Time::delay(1);                                     // -- one second delay to empty the buffer
@@ -209,26 +209,31 @@ protected:
             timeStamp = yarp::os::Time::now();
 
             //-- Blocking read until we get a message from the expected canId
-            while ( canId != CAN_ID  && !timePassed ) // -- it will check the ID
+            while ( (canId != CAN_ID) && !timePassed ) // -- it will check the ID
             {
+                //printf("timeOut: %d\n", int(yarp::os::Time::now()-timeStamp));
 
                 // -- if it exceeds the timeout (1 secod) ...PASS the test
                 if(int(yarp::os::Time::now()-timeStamp)==timeOut) {
-                    CD_INFO("Time out passed and CuiAbsolute stopped successfully\n");
-                    timePassed = true;
-                    continue;
+                    CD_INFO("Time out passed and CuiAbsolute stopped successfully\n");                    
+                    timePassed = true;                 
                 }
 
                 ret = iCanBus->read_timeout(&buffer,1);         // -- return value of message with timeout of 1 [ms]
+
+                // This line is needed to clear the buffer (old messages that has been received)
+                if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
+
                 if( ret <= 0 ) continue;                        // -- is waiting for recive message
                 canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
                 CD_DEBUG("Read ok from CuiAbsolute %d\n", canId);
 
             }
 
-            ASSERT_TRUE(stopSending);  // -- testing stopPublishingMessages function
+            ASSERT_TRUE(stopSending);  // -- testing stopPublishingMessages function            
             ASSERT_TRUE(timePassed);   // -- testing the time (if it exceeds the timeout (1 secod) ...PASS the test)
             ASSERT_NE(canId , CAN_ID); // -- testing if the CAN ID of CUI is NOT the same that it has received
+
         }
 
 }
