@@ -8,29 +8,9 @@
 #include "ICanBusSharer.h"
 #include "CuiAbsolute/CuiAbsolute.hpp"
 
-#include <cstdlib> // -- for casting
-
 YARP_DECLARE_PLUGINS(BodyYarp)
 
-//-- Global variable: ID of encoder
-int cuiAbsoluteID;
-
-int main(int argc, char **argv) {
-
-  std::cout << "Running main() from gtest_main.cc\n";
-  testing::InitGoogleTest(&argc, argv);
-
-  if(argc<2) {
-      CD_INFO("Please, insert the number of Cui Absolute Encoder that you want to test\nEg: testCuiAbsolute 123 ");
-      exit(0);
-  }
-
-  else{
-    cuiAbsoluteID = atoi(argv[1]);
-    CD_INFO("Testing Cui Absolute encoder (ID %d)\n", cuiAbsoluteID);
-    return RUN_ALL_TESTS();
-  }
-}
+#define CAN_ID 124
 
 namespace teo
 {
@@ -44,9 +24,6 @@ class CuiAbsoluteTest : public testing::Test // -- inherit the Test class (gtest
 public:
 
     virtual void SetUp() {
-
-        // -- Variables
-        //int id = cuiAbsoluteID;
 
 
     // -- code here will execute just before the test ensues
@@ -67,7 +44,7 @@ public:
 
         // -- adding configuration of Cui Absolute Encoders (minimal configuration that CuiAbsolute need to run correctly)
         std::stringstream strconf;
-        strconf << "(device CuiAbsolute) (canId " << cuiAbsoluteID << ") (min 0) (max 0) (tr 1) (refAcceleration 0.0) (refSpeed 0.0)";
+        strconf << "(device CuiAbsolute) (canId " << CAN_ID << ") (min 0) (max 0) (tr 1) (refAcceleration 0.0) (refSpeed 0.0)";
         CD_DEBUG("%s\n",strconf.str().c_str());
         yarp::os::Property CuiAbsoluteConf (strconf.str().c_str());
 
@@ -156,7 +133,7 @@ protected:
                 timeStamp = yarp::os::Time::now();
 
                 //-- Blocking read until we get a message from the expected canId
-                while ( (canId != cuiAbsoluteID) && !timePassed )          // -- it will check the ID
+                while ( (canId != CAN_ID) && !timePassed )          // -- it will check the ID
                 {
                     // -- timer
                     if(int(yarp::os::Time::now()-timeStamp)==timeOut) {
@@ -173,7 +150,7 @@ protected:
 
                 ASSERT_TRUE(startSending);         // -- testing startPullPublishing function
                 ASSERT_FALSE(timePassed);          // -- testing the time (it have to be less than 2 sec)
-                ASSERT_EQ(canId , cuiAbsoluteID);  // -- testing if ID of the CUI is the same that it has received
+                ASSERT_EQ(canId , CAN_ID);  // -- testing if ID of the CUI is the same that it has received
         }
 
 
@@ -195,7 +172,7 @@ protected:
 
                 //-- Blocking read until we get a message from the expected canId
 
-                while ( (canId != cuiAbsoluteID) && !timePassed ) // -- it will check the ID
+                while ( (canId != CAN_ID) && !timePassed ) // -- it will check the ID
                 {
                     // -- if it exceeds the timeout...NOT PASS the test
                     if(int(yarp::os::Time::now()-timeStamp)==timeOut) {
@@ -212,7 +189,7 @@ protected:
 
                 ASSERT_TRUE(startSending);  // -- testing startContinuousPublishing function
                 ASSERT_FALSE(timePassed);   // -- testing the time (it have to be less than 2 sec)
-                ASSERT_EQ(canId , cuiAbsoluteID);  // -- testing if the CAN ID of CUI is the same that it has received (3 tests)
+                ASSERT_EQ(canId , CAN_ID);  // -- testing if the CAN ID of CUI is the same that it has received (3 tests)
                 yarp::os::Time::delay(1);
             }
         }
@@ -232,7 +209,7 @@ protected:
             timeStamp = yarp::os::Time::now();
 
             //-- Blocking read until we get a message from the expected canId
-            while ( canId != cuiAbsoluteID  && !timePassed ) // -- it will check the ID
+            while ( canId != CAN_ID  && !timePassed ) // -- it will check the ID
             {
 
                 // -- if it exceeds the timeout (1 secod) ...PASS the test
@@ -251,7 +228,7 @@ protected:
 
             ASSERT_TRUE(stopSending);  // -- testing stopPublishingMessages function
             ASSERT_TRUE(timePassed);   // -- testing the time (if it exceeds the timeout (1 secod) ...PASS the test)
-            ASSERT_NE(canId , cuiAbsoluteID); // -- testing if the CAN ID of CUI is NOT the same that it has received
+            ASSERT_NE(canId , CAN_ID); // -- testing if the CAN ID of CUI is NOT the same that it has received
         }
 
 }
