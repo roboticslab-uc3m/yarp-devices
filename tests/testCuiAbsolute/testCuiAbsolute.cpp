@@ -1,19 +1,36 @@
-
 #include "gtest/gtest.h" // -- We load the librarie of GoogleTest
 
 // -- We load the rest of libraries that we will use to call the functions of our code
 #include <yarp/os/all.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
-
 #include "ColorDebug.hpp"
-
 #include "ICanBusSharer.h"
 #include "CuiAbsolute/CuiAbsolute.hpp"
 
-#define CAN_ID 108 // ID of CuiAbsolute encoder that we want to test
+#include <cstdlib> // -- for casting
 
 YARP_DECLARE_PLUGINS(BodyYarp)
+
+//-- Global variable: ID of encoder
+int cuiAbsoluteID;
+
+int main(int argc, char **argv) {
+
+  std::cout << "Running main() from gtest_main.cc\n";
+  testing::InitGoogleTest(&argc, argv);
+
+  if(argc<2) {
+      CD_INFO("Please, insert the number of Cui Absolute Encoder that you want to test\nEg: testCuiAbsolute 123 ");
+      exit(0);
+  }
+
+  else{
+    cuiAbsoluteID = atoi(argv[1]);
+    CD_INFO("Testing Cui Absolute encoder (ID %d)\n", cuiAbsoluteID);
+    return RUN_ALL_TESTS();
+  }
+}
 
 namespace teo
 {
@@ -29,7 +46,7 @@ public:
     virtual void SetUp() {
 
         // -- Variables
-        int id = CAN_ID;
+        //int id = cuiAbsoluteID;
 
 
     // -- code here will execute just before the test ensues
@@ -48,9 +65,9 @@ public:
             ::exit(1);
         }
 
-        // ---------- adding configuration of Cui Absolute Encoders (se trata de la configuración minima que necesita el encoder)
+        // -- adding configuration of Cui Absolute Encoders (minimal configuration that CuiAbsolute need to run correctly)
         std::stringstream strconf;
-        strconf << "(device CuiAbsolute) (canId " << id << ") (min 0) (max 0) (tr 1) (refAcceleration 0.0) (refSpeed 0.0)";
+        strconf << "(device CuiAbsolute) (canId " << cuiAbsoluteID << ") (min 0) (max 0) (tr 1) (refAcceleration 0.0) (refSpeed 0.0)";
         CD_DEBUG("%s\n",strconf.str().c_str());
         yarp::os::Property CuiAbsoluteConf (strconf.str().c_str());
 
@@ -75,7 +92,7 @@ public:
             ::exit(1);
         }
 
-        //-- Pass CAN bus (HicoCAN) pointer to CAN node (TechnosoftIpos).
+        //-- Pass CAN bus (HicoCAN) pointer to CAN node.
         iCanBusSharer->setCanBusPtr( iCanBus );
     }
 
@@ -90,7 +107,7 @@ public:
 protected:
 
     /** CAN BUS device. */
-    yarp::dev::PolyDriver canBusDevice;  //
+    yarp::dev::PolyDriver canBusDevice;
     CanBusHico* iCanBus;
 
     /** CAN node object. */
@@ -139,60 +156,63 @@ protected:
                 timeStamp = yarp::os::Time::now();
 
                 //-- Blocking read until we get a message from the expected canId
-                while ( (canId != CAN_ID) && !timePassed )          // -- it will check the ID
+                while ( (canId != cuiAbsoluteID) && !timePassed )          // -- it will check the ID
                 {
                     // -- timer
                     if(int(yarp::os::Time::now()-timeStamp)==timeOut) {
-                        CD_ERROR("Time out passed\n");
+                        CD_ERROR("Time out exceeded\n");
                         timePassed = true;
+                        continue;
                     }
 
-                    ret = iCanBus->read_timeout(&buffer, 0);         // -- return value of message with timeout of 1 [ms]
+                    ret = iCanBus->read_timeout(&buffer, 0);         // -- return value of message with timeout of 0 [ms]
                     if( ret <= 0 ) continue;                        // -- is waiting for recive message
                     canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
                     CD_DEBUG("Read ok from CuiAbsolute %d\n", canId);                    
                 }
 
-                ASSERT_TRUE(startSending);  // -- testing startPullPublishing function
-                ASSERT_FALSE(timePassed);   // -- testing the time (it have to be less than 2 sec)
-                ASSERT_EQ(canId , CAN_ID);  // -- testing canId (message received)
+                ASSERT_TRUE(startSending);         // -- testing startPullPublishing function
+                ASSERT_FALSE(timePassed);          // -- testing the time (it have to be less than 2 sec)
+                ASSERT_EQ(canId , cuiAbsoluteID);  // -- testing if ID of the CUI is the same that it has received
         }
 
 
-        TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInContinuousMode ) // -- Al tratarse de envío continuo, haremos una comprobación de 3 veces para ver si está enviando mensajes
+        TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInContinuousMode )
         {                        
 
-            bool startSending = cuiAbsolute->startContinuousPublishing(0);          // -- manda al PIC una orden de que publique (modo continuo)
+            bool startSending = cuiAbsolute->startContinuousPublishing(0);
 
-
+            // -- In continuous mode, we are goint to do three test to ensure that we are receiving multiple messages
             for(int i=1; i<4 ; i++){
 
                 int canId = 0;
                 int ret = 0;
-                double timeOut = 2; // -- 2 segundos
+                double timeOut = 2; // -- 2 seconds
                 double timeStamp = 0.0;                
                 bool timePassed = false;
 
-                timeStamp = yarp::os::Time::now();                            // -- tiempo actual
+                timeStamp = yarp::os::Time::now();
 
                 //-- Blocking read until we get a message from the expected canId
 
-                while ( (canId != CAN_ID) && !timePassed ) // -- it will check the ID
+                while ( (canId != cuiAbsoluteID) && !timePassed ) // -- it will check the ID
                 {
+                    // -- if it exceeds the timeout...NOT PASS the test
+                    if(int(yarp::os::Time::now()-timeStamp)==timeOut) {
+                        CD_ERROR("Time out exceeded\n");
+                        timePassed = true;
+                        continue;
+                    }
+
                     ret = iCanBus->read_timeout(&buffer,1);         // -- return value of message with timeout of 1 [ms]
                     if( ret <= 0 ) continue;                        // -- is waiting for recive message
                     canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
-                    CD_DEBUG("Read ok from CuiAbsolute %d (%d)\n", canId, i);
-                        if(int(yarp::os::Time::now()-timeStamp)==timeOut) {
-                            CD_ERROR("Time out passed\n");
-                            timePassed = true;
-                        }
+                    CD_DEBUG("Read ok from CuiAbsolute %d (%d)\n", canId, i);                        
                 }
 
-                //-- Como se trata de envío continuo, comprobamos varias veces la llegada del mensaje
-                ASSERT_TRUE(startSending);  // -- comprobamos startContinuousPublishing
-                ASSERT_FALSE(timePassed);   // -- comprobamos que no supera el tiempo de espera
-                ASSERT_EQ(canId , CAN_ID);  // -- comprobamos la llegada de un mensaje
+                ASSERT_TRUE(startSending);  // -- testing startContinuousPublishing function
+                ASSERT_FALSE(timePassed);   // -- testing the time (it have to be less than 2 sec)
+                ASSERT_EQ(canId , cuiAbsoluteID);  // -- testing if the CAN ID of CUI is the same that it has received (3 tests)
                 yarp::os::Time::delay(1);
             }
         }
@@ -200,27 +220,26 @@ protected:
 
         TEST_F( CuiAbsoluteTest, CuiAbsoluteStopSendingMessage ) // -- we call the class that we want to do the test and we assign it a name
         {
-
             int canId = 0;
             int ret = 0;
-            double timeOut = 1; // -- 1 segundo
+            double timeOut = 1;
             double timeStamp = 0.0;
             bool timePassed = false;
 
-
             bool stopSending = cuiAbsolute->stopPublishingMessages();
-            yarp::os::Time::delay(1);                                     // -- aplico un delay de 1 segundo para vaciar el buffer
+            yarp::os::Time::delay(1);                                     // -- one second delay to empty the buffer
 
-            timeStamp = yarp::os::Time::now();                            // -- tiempo actual
-
+            timeStamp = yarp::os::Time::now();
 
             //-- Blocking read until we get a message from the expected canId
-            while ( canId != CAN_ID  && !timePassed ) // -- it will check the ID
+            while ( canId != cuiAbsoluteID  && !timePassed ) // -- it will check the ID
             {
 
+                // -- if it exceeds the timeout (1 secod) ...PASS the test
                 if(int(yarp::os::Time::now()-timeStamp)==timeOut) {
                     CD_INFO("Time out passed and CuiAbsolute stopped successfully\n");
                     timePassed = true;
+                    continue;
                 }
 
                 ret = iCanBus->read_timeout(&buffer,1);         // -- return value of message with timeout of 1 [ms]
@@ -230,10 +249,9 @@ protected:
 
             }
 
-            //-- Como se trata de envío continuo, comprobamos varias veces la llegada del mensaje
-            ASSERT_TRUE(stopSending);  // -- comprobamos startContinuousPublishing
-            ASSERT_TRUE(timePassed);   // -- comprobamos que supera el tiempo de espera y no recibe ningún mensaje
-            ASSERT_NE(canId , CAN_ID); // -- comprobamos que ningún mensaje que le llegue al CAN sea el del encoder absoluto
+            ASSERT_TRUE(stopSending);  // -- testing stopPublishingMessages function
+            ASSERT_TRUE(timePassed);   // -- testing the time (if it exceeds the timeout (1 secod) ...PASS the test)
+            ASSERT_NE(canId , cuiAbsoluteID); // -- testing if the CAN ID of CUI is NOT the same that it has received
         }
 
 }
