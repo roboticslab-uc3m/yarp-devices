@@ -4,7 +4,8 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setCanBusPtr(CanBusHico *canDevicePtr) {
+bool teo::FakeJoint::setCanBusPtr(CanBusHico *canDevicePtr)
+{
 
     this->canDevicePtr = canDevicePtr;
     CD_SUCCESS("Ok pointer to CAN bus device %d.\n",canId);
@@ -13,42 +14,48 @@ bool teo::FakeJoint::setCanBusPtr(CanBusHico *canDevicePtr) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::start() {
+bool teo::FakeJoint::start()
+{
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::readyToSwitchOn() {
+bool teo::FakeJoint::readyToSwitchOn()
+{
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::switchOn() {
+bool teo::FakeJoint::switchOn()
+{
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::enable() {
+bool teo::FakeJoint::enable()
+{
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::recoverFromError() {
+bool teo::FakeJoint::recoverFromError()
+{
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::interpretMessage( can_msg * message) {
+bool teo::FakeJoint::interpretMessage( can_msg * message)
+{
 
     return true;
 

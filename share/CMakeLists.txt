@@ -12,6 +12,7 @@ yarp_configure_external_installation(teo-body)
 
 add_subdirectory(dumpCanBus)
 add_subdirectory(checkCanBus)
+add_subdirectory(testCuiAbsolute)
 
 add_subdirectory(oneCanBusOneWrapper)
 

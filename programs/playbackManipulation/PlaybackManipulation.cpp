@@ -9,7 +9,8 @@ namespace teo
 PlaybackManipulation::PlaybackManipulation() { }
 
 /************************************************************************/
-bool PlaybackManipulation::configure(yarp::os::ResourceFinder &rf) {
+bool PlaybackManipulation::configure(yarp::os::ResourceFinder &rf)
+{
 
     int ptModeMs = rf.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
     CD_INFO("Using ptModeMs: %d (default: %d).\n",ptModeMs,int(DEFAULT_PT_MODE_MS));
@@ -17,17 +18,21 @@ bool PlaybackManipulation::configure(yarp::os::ResourceFinder &rf) {
     playbackThread.hold = rf.check("hold");
 
     //-- Open file for logging.
-    if ( rf.check("log") ) {
+    if ( rf.check("log") )
+    {
         playbackThread.log = true;
         std::string fileName = rf.check("log",yarp::os::Value(DEFAULT_LOG_NAME),"file name").asString();
         CD_INFO("Using log file: %s (default: " DEFAULT_LOG_NAME ").\n",fileName.c_str());
         playbackThread.logFilePtr = ::fopen (fileName.c_str(),"w");
-        if( ! playbackThread.logFilePtr ) {
+        if( ! playbackThread.logFilePtr )
+        {
             CD_PERROR("Could not open log file: %s.\n",fileName.c_str());
             return false;
         }
         CD_SUCCESS("Opened log file: %s.\n",fileName.c_str());
-    } else {
+    }
+    else
+    {
         playbackThread.log = false;
     }
 
@@ -35,7 +40,8 @@ bool PlaybackManipulation::configure(yarp::os::ResourceFinder &rf) {
     std::string fileName = rf.check("file",yarp::os::Value(DEFAULT_FILE_NAME),"file name").asString();
     CD_INFO("Using read file: %s (default: " DEFAULT_FILE_NAME ").\n",fileName.c_str());
     playbackThread.ifs.open( fileName.c_str() );
-    if( ! playbackThread.ifs.is_open() ) {
+    if( ! playbackThread.ifs.is_open() )
+    {
         CD_ERROR("Could not open read file: %s.\n",fileName.c_str());
         return false;
     }
@@ -44,7 +50,8 @@ bool PlaybackManipulation::configure(yarp::os::ResourceFinder &rf) {
 
     std::string allIni = rf.findFileByName("../launchManipulation/launchManipulation.ini");
     yarp::os::Property allOptions;
-    if (! allOptions.fromConfigFile(allIni) ) {  //-- Put first because defaults to wiping out.
+    if (! allOptions.fromConfigFile(allIni) )    //-- Put first because defaults to wiping out.
+    {
         CD_ERROR("Could not configure from \"launchManipulation.ini\".\n");
         return false;
     }
@@ -61,8 +68,9 @@ bool PlaybackManipulation::configure(yarp::os::ResourceFinder &rf) {
     if (rf.check("reset")) optionsDevCan0.put("reset",1);
 
     leftArmDevice.open(optionsDevCan0);
-    
-    if (!leftArmDevice.isValid()) {
+
+    if (!leftArmDevice.isValid())
+    {
         CD_ERROR("leftArmDevice instantiation not worked.\n");
         CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_CanBusControlboard\" variable is set \"ON\"\n");
         CD_ERROR("\"SKIP_CanBusControlboard is set\" --> should be --> \"ENABLE_CanBusControlboard is set\"\n");
@@ -82,7 +90,8 @@ bool PlaybackManipulation::configure(yarp::os::ResourceFinder &rf) {
 
     rightArmDevice.open(optionsDevCan1);
 
-    if (!rightArmDevice.isValid()) {
+    if (!rightArmDevice.isValid())
+    {
         CD_ERROR("rightArmDevice instantiation not worked.\n");
         CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_CanBusControlboard\" variable is set \"ON\"\n");
         CD_ERROR("\"SKIP_CanBusControlboard is set\" --> should be --> \"ENABLE_CanBusControlboard is set\"\n");
@@ -93,49 +102,57 @@ bool PlaybackManipulation::configure(yarp::os::ResourceFinder &rf) {
     //-- Configure the thread.
 
     //-- Obtain manipulator interfaces.
-    if ( ! leftArmDevice.view( playbackThread.leftArmPos ) ) {
+    if ( ! leftArmDevice.view( playbackThread.leftArmPos ) )
+    {
         CD_ERROR("Could not obtain leftArmPos.\n");
         return false;
     }
     CD_SUCCESS("Obtained leftArmPos.\n");
 
-    if ( ! leftArmDevice.view( playbackThread.leftArmPosDirect ) ) {
+    if ( ! leftArmDevice.view( playbackThread.leftArmPosDirect ) )
+    {
         CD_ERROR("Could not obtain leftArmPosDirect.\n");
         return false;
     }
     CD_SUCCESS("Obtained leftArmPosDirect.\n");
 
-    if ( ! leftArmDevice.view( playbackThread.leftArmEncTimed ) ) {
+    if ( ! leftArmDevice.view( playbackThread.leftArmEncTimed ) )
+    {
         CD_ERROR("Could not obtain leftArmEncTimed.\n");
         return false;
     }
     CD_SUCCESS("Obtained leftArmEncTimed.\n");
 
-    if ( ! leftArmDevice.view( playbackThread.leftArmTorque ) ) {
+    if ( ! leftArmDevice.view( playbackThread.leftArmTorque ) )
+    {
         CD_ERROR("Could not obtain leftArmTorque.\n");
         return false;
     }
     CD_SUCCESS("Obtained leftArmTorque.\n");
 
-    if ( ! rightArmDevice.view( playbackThread.rightArmPos ) ) {
+    if ( ! rightArmDevice.view( playbackThread.rightArmPos ) )
+    {
         CD_ERROR("Could not obtain leftArmPos.\n");
         return false;
     }
     CD_SUCCESS("Obtained rightArmPos.\n");
 
-    if ( ! rightArmDevice.view( playbackThread.rightArmPosDirect ) ) {
+    if ( ! rightArmDevice.view( playbackThread.rightArmPosDirect ) )
+    {
         CD_ERROR("Could not obtain rightArmPosDirect.\n");
         return false;
     }
     CD_SUCCESS("Obtained rightArmPosDirect.\n");
 
-    if ( ! rightArmDevice.view( playbackThread.rightArmEncTimed ) ) {
+    if ( ! rightArmDevice.view( playbackThread.rightArmEncTimed ) )
+    {
         CD_ERROR("Could not obtain rightArmEncTimed.\n");
         return false;
     }
     CD_SUCCESS("Obtained rightArmEncTimed.\n");
 
-    if ( ! rightArmDevice.view( playbackThread.rightArmTorque ) ) {
+    if ( ! rightArmDevice.view( playbackThread.rightArmTorque ) )
+    {
         CD_ERROR("Could not obtain rightArmTorque.\n");
         return false;
     }
@@ -158,8 +175,10 @@ bool PlaybackManipulation::configure(yarp::os::ResourceFinder &rf) {
 
 /************************************************************************/
 
-bool PlaybackManipulation::updateModule() {
-    if( ! playbackThread.isRunning() ) {
+bool PlaybackManipulation::updateModule()
+{
+    if( ! playbackThread.isRunning() )
+    {
         CD_DEBUG("playbackThread not running, so stopping module...\n");
         yarp::os::Time::delay(1);
         this->stopModule();
@@ -171,7 +190,8 @@ bool PlaybackManipulation::updateModule() {
 
 /************************************************************************/
 
-bool PlaybackManipulation::close() {
+bool PlaybackManipulation::close()
+{
 
     playbackThread.stop();
 

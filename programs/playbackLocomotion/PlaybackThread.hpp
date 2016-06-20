@@ -23,43 +23,44 @@ namespace teo
  * @brief WARNING repeated class (you are seeing the playbackLocomotion version).
  *
  */
-class PlaybackThread : public yarp::os::Thread {
+class PlaybackThread : public yarp::os::Thread
+{
 
-    public:
-        virtual bool threadInit();
+public:
+    virtual bool threadInit();
 
-        /**
-         * Main body of the new thread.
-         * Override this method to do what you want.
-         * After Thread::start is called, this
-         * method will start running in a separate thread.
-         * It is important that this method either keeps checking
-         * Thread::isStopping to see if it should stop, or
-         * you override the Thread::onStop method to interact
-         * with it in some way to shut the new thread down.
-         * There is no really reliable, portable way to stop
-         * a thread cleanly unless that thread cooperates.
-         */
-        virtual void run();
+    /**
+     * Main body of the new thread.
+     * Override this method to do what you want.
+     * After Thread::start is called, this
+     * method will start running in a separate thread.
+     * It is important that this method either keeps checking
+     * Thread::isStopping to see if it should stop, or
+     * you override the Thread::onStop method to interact
+     * with it in some way to shut the new thread down.
+     * There is no really reliable, portable way to stop
+     * a thread cleanly unless that thread cooperates.
+     */
+    virtual void run();
 
 
-        yarp::dev::IPositionControl *leftLegPos;
-        yarp::dev::IPositionDirect *leftLegPosDirect;
+    yarp::dev::IPositionControl *leftLegPos;
+    yarp::dev::IPositionDirect *leftLegPosDirect;
 
-        yarp::dev::IPositionControl *rightLegPos;
-        yarp::dev::IPositionDirect *rightLegPosDirect;
+    yarp::dev::IPositionControl *rightLegPos;
+    yarp::dev::IPositionDirect *rightLegPosDirect;
 
-        int leftLegNumMotors;
-        int rightLegNumMotors;
+    int leftLegNumMotors;
+    int rightLegNumMotors;
 
-        std::ifstream ifs;
+    std::ifstream ifs;
 
-        bool leftLegDone;
-        bool rightLegDone;
+    bool leftLegDone;
+    bool rightLegDone;
 
-        bool hold;
+    bool hold;
 
-    protected:
+protected:
 
 };
 

@@ -10,18 +10,18 @@
 
 #if defined(__COMO__)
 # define COMPILER_ID "Comeau"
-  /* __COMO_VERSION__ = VRR */
+/* __COMO_VERSION__ = VRR */
 # define COMPILER_VERSION_MAJOR DEC(__COMO_VERSION__ / 100)
 # define COMPILER_VERSION_MINOR DEC(__COMO_VERSION__ % 100)
 
 #elif defined(__INTEL_COMPILER) || defined(__ICC)
 # define COMPILER_ID "Intel"
-  /* __INTEL_COMPILER = VRP */
+/* __INTEL_COMPILER = VRP */
 # define COMPILER_VERSION_MAJOR DEC(__INTEL_COMPILER/100)
 # define COMPILER_VERSION_MINOR DEC(__INTEL_COMPILER/10 % 10)
 # define COMPILER_VERSION_PATCH DEC(__INTEL_COMPILER    % 10)
 # if defined(__INTEL_COMPILER_BUILD_DATE)
-  /* __INTEL_COMPILER_BUILD_DATE = YYYYMMDD */
+/* __INTEL_COMPILER_BUILD_DATE = YYYYMMDD */
 #  define COMPILER_VERSION_TWEAK DEC(__INTEL_COMPILER_BUILD_DATE)
 # endif
 
@@ -47,25 +47,25 @@
 
 #elif defined(__BORLANDC__)
 # define COMPILER_ID "Borland"
-  /* __BORLANDC__ = 0xVRR */
+/* __BORLANDC__ = 0xVRR */
 # define COMPILER_VERSION_MAJOR HEX(__BORLANDC__>>8)
 # define COMPILER_VERSION_MINOR HEX(__BORLANDC__ & 0xFF)
 
 #elif defined(__WATCOMC__)
 # define COMPILER_ID "Watcom"
-  /* __WATCOMC__ = VVRR */
+/* __WATCOMC__ = VVRR */
 # define COMPILER_VERSION_MAJOR DEC(__WATCOMC__ / 100)
 # define COMPILER_VERSION_MINOR DEC(__WATCOMC__ % 100)
 
 #elif defined(__SUNPRO_CC)
 # define COMPILER_ID "SunPro"
 # if __SUNPRO_CC >= 0x5100
-   /* __SUNPRO_CC = 0xVRRP */
+/* __SUNPRO_CC = 0xVRRP */
 #  define COMPILER_VERSION_MAJOR HEX(__SUNPRO_CC>>12)
 #  define COMPILER_VERSION_MINOR HEX(__SUNPRO_CC>>4 & 0xFF)
 #  define COMPILER_VERSION_PATCH HEX(__SUNPRO_CC    & 0xF)
 # else
-   /* __SUNPRO_CC = 0xVRP */
+/* __SUNPRO_CC = 0xVRP */
 #  define COMPILER_VERSION_MAJOR HEX(__SUNPRO_CC>>8)
 #  define COMPILER_VERSION_MINOR HEX(__SUNPRO_CC>>4 & 0xF)
 #  define COMPILER_VERSION_PATCH HEX(__SUNPRO_CC    & 0xF)
@@ -73,14 +73,14 @@
 
 #elif defined(__HP_aCC)
 # define COMPILER_ID "HP"
-  /* __HP_aCC = VVRRPP */
+/* __HP_aCC = VVRRPP */
 # define COMPILER_VERSION_MAJOR DEC(__HP_aCC/10000)
 # define COMPILER_VERSION_MINOR DEC(__HP_aCC/100 % 100)
 # define COMPILER_VERSION_PATCH DEC(__HP_aCC     % 100)
 
 #elif defined(__DECCXX)
 # define COMPILER_ID "Compaq"
-  /* __DECCXX_VER = VVRRTPPPP */
+/* __DECCXX_VER = VVRRTPPPP */
 # define COMPILER_VERSION_MAJOR DEC(__DECCXX_VER/10000000)
 # define COMPILER_VERSION_MINOR DEC(__DECCXX_VER/100000  % 100)
 # define COMPILER_VERSION_PATCH DEC(__DECCXX_VER         % 10000)
@@ -94,7 +94,7 @@
 #  else
 #   define COMPILER_ID "VisualAge"
 #  endif
-   /* __IBMCPP__ = VRP */
+/* __IBMCPP__ = VRP */
 #  define COMPILER_VERSION_MAJOR DEC(__IBMCPP__/100)
 #  define COMPILER_VERSION_MINOR DEC(__IBMCPP__/10 % 10)
 #  define COMPILER_VERSION_PATCH DEC(__IBMCPP__    % 10)
@@ -115,7 +115,7 @@
 
 #elif defined(__TI_COMPILER_VERSION__)
 # define COMPILER_ID "TI"
-  /* __TI_COMPILER_VERSION__ = VVVRRRPPP */
+/* __TI_COMPILER_VERSION__ = VVVRRRPPP */
 # define COMPILER_VERSION_MAJOR DEC(__TI_COMPILER_VERSION__/1000000)
 # define COMPILER_VERSION_MINOR DEC(__TI_COMPILER_VERSION__/1000   % 1000)
 # define COMPILER_VERSION_PATCH DEC(__TI_COMPILER_VERSION__        % 1000)
@@ -133,15 +133,15 @@
 
 #elif defined(_MSC_VER)
 # define COMPILER_ID "MSVC"
-  /* _MSC_VER = VVRR */
+/* _MSC_VER = VVRR */
 # define COMPILER_VERSION_MAJOR DEC(_MSC_VER / 100)
 # define COMPILER_VERSION_MINOR DEC(_MSC_VER % 100)
 # if defined(_MSC_FULL_VER)
 #  if _MSC_VER >= 1400
-    /* _MSC_FULL_VER = VVRRPPPPP */
+/* _MSC_FULL_VER = VVRRPPPPP */
 #   define COMPILER_VERSION_PATCH DEC(_MSC_FULL_VER % 100000)
 #  else
-    /* _MSC_FULL_VER = VVRRPPPP */
+/* _MSC_FULL_VER = VVRRPPPP */
 #   define COMPILER_VERSION_PATCH DEC(_MSC_FULL_VER % 10000)
 #  endif
 # endif
@@ -152,7 +152,7 @@
 /* Analog VisualDSP++ >= 4.5.6 */
 #elif defined(__VISUALDSPVERSION__)
 # define COMPILER_ID "ADSP"
-  /* __VISUALDSPVERSION__ = 0xVVRRPP00 */
+/* __VISUALDSPVERSION__ = 0xVVRRPP00 */
 # define COMPILER_VERSION_MAJOR HEX(__VISUALDSPVERSION__>>24)
 # define COMPILER_VERSION_MINOR HEX(__VISUALDSPVERSION__>>16 & 0xFF)
 # define COMPILER_VERSION_PATCH HEX(__VISUALDSPVERSION__>>8  & 0xFF)
@@ -169,12 +169,12 @@
 #elif defined(_SGI_COMPILER_VERSION) || defined(_COMPILER_VERSION)
 # define COMPILER_ID "MIPSpro"
 # if defined(_SGI_COMPILER_VERSION)
-  /* _SGI_COMPILER_VERSION = VRP */
+/* _SGI_COMPILER_VERSION = VRP */
 #  define COMPILER_VERSION_MAJOR DEC(_SGI_COMPILER_VERSION/100)
 #  define COMPILER_VERSION_MINOR DEC(_SGI_COMPILER_VERSION/10 % 10)
 #  define COMPILER_VERSION_PATCH DEC(_SGI_COMPILER_VERSION    % 10)
 # else
-  /* _COMPILER_VERSION = VRP */
+/* _COMPILER_VERSION = VRP */
 #  define COMPILER_VERSION_MAJOR DEC(_COMPILER_VERSION/100)
 #  define COMPILER_VERSION_MINOR DEC(_COMPILER_VERSION/10 % 10)
 #  define COMPILER_VERSION_PATCH DEC(_COMPILER_VERSION    % 10)
@@ -337,20 +337,22 @@ char const* info_compiler = "INFO" ":" "compiler[" COMPILER_ID "]";
 
 /* Construct a string literal encoding the version number components. */
 #ifdef COMPILER_VERSION_MAJOR
-char const info_version[] = {
-  'I', 'N', 'F', 'O', ':',
-  'c','o','m','p','i','l','e','r','_','v','e','r','s','i','o','n','[',
-  COMPILER_VERSION_MAJOR,
+char const info_version[] =
+{
+    'I', 'N', 'F', 'O', ':',
+    'c','o','m','p','i','l','e','r','_','v','e','r','s','i','o','n','[',
+    COMPILER_VERSION_MAJOR,
 # ifdef COMPILER_VERSION_MINOR
-  '.', COMPILER_VERSION_MINOR,
+    '.', COMPILER_VERSION_MINOR,
 #  ifdef COMPILER_VERSION_PATCH
-   '.', COMPILER_VERSION_PATCH,
+    '.', COMPILER_VERSION_PATCH,
 #   ifdef COMPILER_VERSION_TWEAK
     '.', COMPILER_VERSION_TWEAK,
 #   endif
 #  endif
 # endif
-  ']','\0'};
+    ']','\0'
+};
 #endif
 
 /* Construct the string literal in pieces to prevent the source from
@@ -366,12 +368,12 @@ char const* info_arch = "INFO" ":" "arch[" ARCHITECTURE_ID "]";
 
 int main(int argc, char* argv[])
 {
-  int require = 0;
-  require += info_compiler[argc];
-  require += info_platform[argc];
+    int require = 0;
+    require += info_compiler[argc];
+    require += info_platform[argc];
 #ifdef COMPILER_VERSION_MAJOR
-  require += info_version[argc];
+    require += info_version[argc];
 #endif
-  (void)argv;
-  return require;
+    (void)argv;
+    return require;
 }

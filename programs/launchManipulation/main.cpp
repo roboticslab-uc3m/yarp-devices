@@ -43,7 +43,8 @@
 
 YARP_DECLARE_PLUGINS(BodyYarp)
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 
     YARP_REGISTER_PLUGINS(BodyYarp);
 
@@ -57,7 +58,8 @@ int main(int argc, char *argv[]) {
 
     CD_INFO("Checking for yarp network...\n");
     yarp::os::Network yarp;
-    if (!yarp.checkNetwork()) {
+    if (!yarp.checkNetwork())
+    {
         CD_ERROR("Found no yarp network (try running \"yarpserver &\"), bye!\n");
         return 1;
     }

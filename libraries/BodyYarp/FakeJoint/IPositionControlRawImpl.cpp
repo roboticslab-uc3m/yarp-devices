@@ -4,7 +4,8 @@
 
 // ------------------ IPositionControlRaw Related ----------------------------------------
 
-bool teo::FakeJoint::positionMoveRaw(int j, double ref) {  // encExposed = ref;
+bool teo::FakeJoint::positionMoveRaw(int j, double ref)    // encExposed = ref;
+{
     CD_INFO("(%d,%f)\n",j,ref);
 
     //-- Check index within range
@@ -19,7 +20,8 @@ bool teo::FakeJoint::positionMoveRaw(int j, double ref) {  // encExposed = ref;
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::relativeMoveRaw(int j, double delta) {
+bool teo::FakeJoint::relativeMoveRaw(int j, double delta)
+{
     CD_INFO("(%d, %f)\n",j,delta);
 
     //-- Check index within range
@@ -32,7 +34,8 @@ bool teo::FakeJoint::relativeMoveRaw(int j, double delta) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::checkMotionDoneRaw(int j, bool *flag) {
+bool teo::FakeJoint::checkMotionDoneRaw(int j, bool *flag)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -45,7 +48,8 @@ bool teo::FakeJoint::checkMotionDoneRaw(int j, bool *flag) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setRefSpeedRaw(int j, double sp) {
+bool teo::FakeJoint::setRefSpeedRaw(int j, double sp)
+{
     CD_INFO("(%d, %f)\n",j,sp);
 
     //-- Check index within range
@@ -56,7 +60,8 @@ bool teo::FakeJoint::setRefSpeedRaw(int j, double sp) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setRefAccelerationRaw(int j, double acc) {
+bool teo::FakeJoint::setRefAccelerationRaw(int j, double acc)
+{
     CD_INFO("(%d, %f)\n",j,acc);
 
     //-- Check index within range
@@ -67,7 +72,8 @@ bool teo::FakeJoint::setRefAccelerationRaw(int j, double acc) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::getRefSpeedRaw(int j, double *ref) {
+bool teo::FakeJoint::getRefSpeedRaw(int j, double *ref)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -80,7 +86,8 @@ bool teo::FakeJoint::getRefSpeedRaw(int j, double *ref) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::getRefAccelerationRaw(int j, double *acc) {
+bool teo::FakeJoint::getRefAccelerationRaw(int j, double *acc)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -93,7 +100,8 @@ bool teo::FakeJoint::getRefAccelerationRaw(int j, double *acc) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::stopRaw(int j) {
+bool teo::FakeJoint::stopRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range

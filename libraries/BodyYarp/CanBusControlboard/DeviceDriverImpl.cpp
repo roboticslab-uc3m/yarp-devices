@@ -1,10 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include "CanBusControlboard.hpp"
+#include "CuiAbsolute/CuiAbsolute.hpp"
 
 // ------------------- DeviceDriver Related ------------------------------------
 
-bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
+bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
+{
 
     std::string mode = config.check("mode",yarp::os::Value("position"),"position/velocity mode").asString();
     int16_t ptModeMs = config.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
@@ -26,7 +28,8 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
     canBusOptions.fromString(config.toString());  // canDevice, canBitrate
     canBusOptions.put("device","CanBusHico");
     canBusDevice.open(canBusOptions);
-    if( ! canBusDevice.isValid() ){
+    if( ! canBusDevice.isValid() )
+    {
         CD_ERROR("canBusDevice instantiation not worked.\n");
         return false;
     }
@@ -52,7 +55,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
 
         //-- Create CAN node objects with a pointer to the CAN device, its id and tr (these are locally stored parameters).
         yarp::os::Property options;
-        options.put("device",types.get(i).asString());  //-- "TechnosoftIpos", "LacqueyFetch"
+        options.put("device",types.get(i).asString());  //-- "TechnosoftIpos", "LacqueyFetch", "CuiAbsolute"
         options.put("canId",ids.get(i).asInt());
         options.put("tr",trs.get(i).asDouble());
         options.put("min",mins.get(i).asDouble());
@@ -61,31 +64,51 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
         options.put("refAcceleration",refAccelerations.get(i).asDouble());
         options.put("refSpeed",refSpeeds.get(i).asDouble());
         options.put("ptModeMs",ptModeMs);
-        yarp::dev::PolyDriver* driver = new yarp::dev::PolyDriver(options);
+
+        // -- Configuramos todos los dispositivos (TechnosoftIpos, LacqueyFetch, CuiAbsolute)
+        yarp::dev::PolyDriver* device = new yarp::dev::PolyDriver(options);
 
         //-- Fill a map entry ( drivers.size() if before push_back, otherwise do drivers.size()-1).
         //-- Just "i" if resize already performed.
         idxFromCanId[ ids.get(i).asInt() ] = i;
 
-        //-- Push the motor driver on to the vectors.
-        nodes[i] = driver;
-        driver->view( iControlLimitsRaw[i] );
-        driver->view( iControlModeRaw[i] );
-        driver->view( iEncodersTimedRaw[i] );
-        driver->view( iPositionControlRaw[i] );
-        driver->view( iPositionDirectRaw[i] );
-        driver->view( iTorqueControlRaw[i] );
-        driver->view( iVelocityControlRaw[i] );
-        driver->view( iCanBusSharer[i] );
+        //-- Push the motor driver and other devices (CuiAbsolute) on to the vectors.
+        nodes[i] = device;  // -- device es un puntero que guarda la dirección de un objeto PolyDriver
+        // -- nodes es un vector de punteros que apuntará al device
 
-        //-- Associate absolute encoders to motor drivers
-        if( types.get(i).asString() == "CuiAbsolute" ) {
-            int driverCanId = ids.get(i).asInt() - 100;  //-- \todo{Document the dangers: ID must be > 100, driver must be instanced.}
-            iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
-        }
+        device->view( iControlLimitsRaw[i] );
+        device->view( iControlModeRaw[i] );
+        device->view( iEncodersTimedRaw[i] );
+        device->view( iPositionControlRaw[i] );
+        device->view( iPositionDirectRaw[i] );
+        device->view( iTorqueControlRaw[i] );
+        device->view( iVelocityControlRaw[i] );
+        device->view( iCanBusSharer[i] );   // -- si el device es un Cui, este podrá "ver" las funciones programadas en iCanBusSharer (funciones que hemos añadido al encoder).
+        // -- estas funciones se encuentran implementadas en el cpp correspondiente "ICanBusSharerImpl.cpp", por lo tanto le da la funcionalidad que deseamos
 
         //-- Pass CAN bus pointer to CAN node
         iCanBusSharer[i]->setCanBusPtr( iCanBus );
+
+        //-- Associate absolute encoders to motor drivers
+        if( types.get(i).asString() == "CuiAbsolute" )
+        {
+            int driverCanId = ids.get(i).asInt() - 100;  //-- \todo{Document the dangers: ID must be > 100, driver must be instanced.}
+            iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
+
+            // variables extra
+            bool c = true;
+
+            //-- Dentro de este "if" nos aseguramos de que se configura correctamente el encoder absoluto
+            CuiAbsolute* cuiAbsolute;
+            c &= device->view( cuiAbsolute );
+
+            // -- comprobación del view
+            if (c) printf("[CUI INFO] Se ha conectado correctamente al ID%i \n", ids.get(i).asInt());
+            else ("[CUI VIEW ERROR]\n");
+
+            yarp::os::Time::delay(1);
+            cuiAbsolute->startContinuousPublishing(0);
+        }
 
         //-- Set initial parameters on physical motor drivers.
         if ( ! iPositionControlRaw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asDouble() ) )
@@ -100,16 +123,23 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
 
     //-- Set all motor drivers to mode.
 
-    if( mode=="position") {
+    if( mode=="position")
+    {
         if( ! this->setPositionMode() )
             return false;
-    } else if( mode=="velocity") {
+    }
+    else if( mode=="velocity")
+    {
         if( ! this->setVelocityMode() )
             return false;
-    } else if( mode=="torque") {
+    }
+    else if( mode=="torque")
+    {
         if( ! this->setTorqueMode() )
-            return false;      
-    } else {
+            return false;
+    }
+    else
+    {
         CD_ERROR("Not prepared for initializing in mode %s.\n",mode.c_str());
         return false;
     }
@@ -143,7 +173,8 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
             return false;
     }
 
-    if( config.check("home") ) {
+    if( config.check("home") )
+    {
         CD_DEBUG("Moving motors to zero.\n");
         for(int i=0; i<nodes.size(); i++)
         {
@@ -153,7 +184,8 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
         for(int i=0; i<nodes.size(); i++)
         {
             bool motionDone = false;
-            while( ! motionDone ) {
+            while( ! motionDone )
+            {
                 yarp::os::Time::delay(0.5);  //-- [s]
                 CD_DEBUG("Moving %d to zero...\n",i);
                 if( ! iPositionControlRaw[i]->checkMotionDoneRaw(0,&motionDone) )
@@ -163,7 +195,8 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
         CD_DEBUG("Moved motors to zero.\n");
     }
 
-    if( config.check("reset") ) {
+    if( config.check("reset") )
+    {
         CD_DEBUG("Forcing encoders to zero.\n");
         if ( ! this->resetEncoders() )
             return false;
@@ -174,7 +207,8 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::close() {
+bool teo::CanBusControlboard::close()
+{
 
     //-- Stop the read thread.
     this->Thread::stop();

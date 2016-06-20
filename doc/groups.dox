@@ -30,6 +30,12 @@ namespace teo {}
  */
 
 /**
+ * \defgroup teo_body_tests teo-body Tests
+ *
+ * @brief teo-body tests.
+ */
+
+/**
  * \defgroup teo_body_applications teo-body Applications (Collections of Programs)
  *
  * @brief teo-body applications (collections of programs).

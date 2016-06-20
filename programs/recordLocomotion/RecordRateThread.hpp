@@ -19,31 +19,32 @@ namespace teo
  * @brief WARNING repeated class (you are seeing the recordLocomotion version).
  *
  */
-class RecordRateThread : public yarp::os::RateThread {
+class RecordRateThread : public yarp::os::RateThread
+{
 
-    public:
-        // Set the Thread Rate in the class constructor
-        RecordRateThread() : RateThread(DEFAULT_MS) {}  // In ms
+public:
+    // Set the Thread Rate in the class constructor
+    RecordRateThread() : RateThread(DEFAULT_MS) {}  // In ms
 
-        /**
-         * Loop function. This is the thread itself.
-         */
-        virtual void run();
+    /**
+     * Loop function. This is the thread itself.
+     */
+    virtual void run();
 
-        void setFilePtr(FILE *value);
+    void setFilePtr(FILE *value);
 
-        yarp::dev::IEncoders *leftLegEnc;
-        yarp::dev::ITorqueControl *leftLegTrq;
+    yarp::dev::IEncoders *leftLegEnc;
+    yarp::dev::ITorqueControl *leftLegTrq;
 
-        yarp::dev::IEncoders *rightLegEnc;
-        yarp::dev::ITorqueControl *rightLegTrq;
+    yarp::dev::IEncoders *rightLegEnc;
+    yarp::dev::ITorqueControl *rightLegTrq;
 
-        int leftLegNumMotors;
-        int rightLegNumMotors;
+    int leftLegNumMotors;
+    int rightLegNumMotors;
 
-    protected:
+protected:
 
-        FILE * filePtr;
+    FILE * filePtr;
 
 
 };

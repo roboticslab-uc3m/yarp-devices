@@ -19,10 +19,7 @@ void main(void)
 {
         
         //Variables que almacenarán los datos a enviar:
-
-		// Dirección del encoder: CAN_ID= ....
-
-        unsigned long CAN_ID=486;   //ID de la aplicación para la comunicación CAN (ID 118 + 0x180 (PDO1))
+        unsigned long CAN_ID=490;   //ID de la aplicación para la comunicación CAN (ID 118 + 0x180 (PDO1))
         BYTE val;
         int Orden1[2], aux;
     	float pos, grados, div=11.38;           //Se le da el valor de 11.38 a div por ser el resultado dividir (2^12)/360
@@ -36,13 +33,8 @@ void main(void)
         //BYTE hi_pos;
         //BYTE lo_pos;
         //ECAN_RX_MSG_FLAGS OrdenFlags1=0;
-
         ECAN_TX_MSG_FLAGS OrdenFlags1;
-
-		// En Brazo Derecho: Con Prioridad "3" (mínima) y sin espera parece que funciona.
-		// En Brazo Derecho: Con Prioridad "0" (máxima) y sin espera parece que no funciona.
-
-        OrdenFlags1=ECAN_TX_PRIORITY_3 & ECAN_TX_STD_FRAME & ECAN_TX_NO_RTR_FRAME;
+        OrdenFlags1=ECAN_TX_PRIORITY_0 & ECAN_TX_STD_FRAME & ECAN_TX_NO_RTR_FRAME;
     
         /*
         init_flag = CAN_CONFIG_SAMPLE_THRICE & CAN_CONFIG_PHSEG2_PRG_ON & CAN_CONFIG_STD_MSG & CAN_CONFIG_DBL_BUFFER_ON & CAN_CONFIG_VALID_XTD_MSG & CAN_CONFIG_LINE_FILTER_OFF;
@@ -69,8 +61,6 @@ void main(void)
         TRISCbits.TRISC4=1;     // SDI  in
         LATCbits.LATC2=1;       //Disable del encoder al inicio
 
-        // -- Antes de comenzar a construir el mensaje, voy a aplicar un Delay de 2 segundos
-        Delay10KTCYx(500);      // 500 -> 1000ms -> 1s
         while(1){
 
                 LATCbits.LATC2=0;
@@ -123,17 +113,10 @@ void main(void)
 
                 }
                 
-				//  Hemos estado probando con Delay10KTCYx()
-				//
-					Delay10KTCYx(1);						// 50019	(10,0038 ms)	accepted relative error  
-                                                                                                                        //  5 ->
-                                        msg.
-															// 50 -> 100msg.
-				
 
 
-				//	Delay100TCYx(200);                      // gives a delay of 10 x 256 x 1/6 = 500 us
-       			 
+                //Delay10TCYx(0);                       // gives a delay of 10 x 256 x 1/6 = 500 us
+       
                 }
 }
             

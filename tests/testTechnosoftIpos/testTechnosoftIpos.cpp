@@ -26,8 +26,9 @@ class TechnosoftIposTest : public testing::Test // -- inherit the Test class (gt
 
 public:
 
-    virtual void SetUp() {
-    // -- code here will execute just before the test ensues
+    virtual void SetUp()
+    {
+        // -- code here will execute just before the test ensues
         YARP_REGISTER_PLUGINS(BodyYarp);
 
         yarp::os::Property hicoCanConf ("(device CanBusHico) (canDevice /dev/can1) (canBitrate 8)"); // -- truco para agregar directamente un conjunto de propiedades sin tener que llamar a la función "put"
@@ -76,8 +77,8 @@ public:
 
     virtual void TearDown()
     {
-    // -- code here will be called just after the test completes
-    // -- ok to through exceptions from here if need be
+        // -- code here will be called just after the test completes
+        // -- ok to through exceptions from here if need be
         canNodeDevice.close();
         canBusDevice.close();
     }
@@ -119,6 +120,7 @@ protected:
         return tmp.str();
     }
 };
+
 /*
 TEST_F( TechnosoftIposTest, TechnosoftIposGetPresencewithReset) // -- we call the class that we want to do the test and we assign it a name
 {
@@ -152,6 +154,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetPresencewithReset) // -- we call th
     ASSERT_EQ(buffer.id-canId , 0x700);
 }
 */
+
 /*
 TEST_F( TechnosoftIposTest, TechnosoftIposGetPresence) // -- we call the class that we want to do the test and we assign it a name
 {

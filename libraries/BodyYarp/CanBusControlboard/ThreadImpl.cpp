@@ -4,11 +4,13 @@
 
 // ------------------ Thread Related -----------------------------------------
 
-void teo::CanBusControlboard::run() {
+void teo::CanBusControlboard::run()
+{
 
     CD_INFO("Started CanBusControlboard reading thread run.\n");
 
-    while ( ! this->isStopping() ) {
+    while ( ! this->isStopping() )
+    {
 
         struct can_msg buffer;
 
@@ -28,7 +30,8 @@ void teo::CanBusControlboard::run() {
         if( idxFromCanIdFound == idxFromCanId.end() )  //-- Can ID not found
         {
             //-- Intercept 700h 0 msg that just indicates presence.
-            if( (buffer.id-canId) == 0x700 ) {
+            if( (buffer.id-canId) == 0x700 )
+            {
                 CD_SUCCESS("Device indicating presence. %s\n",msgToStr(&buffer).c_str());
                 continue;
             }

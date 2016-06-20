@@ -4,7 +4,8 @@
 
 // -----------------------------------------------------------------------------
 
-std::string teo::FakeJoint::msgToStr(can_msg* message) {
+std::string teo::FakeJoint::msgToStr(can_msg* message)
+{
     std::stringstream tmp;
     for(int i=0; i < message->dlc-1; i++)
     {
@@ -21,7 +22,8 @@ std::string teo::FakeJoint::msgToStr(can_msg* message) {
 
 // -----------------------------------------------------------------------------
 
-std::string teo::FakeJoint::msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData) {
+std::string teo::FakeJoint::msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData)
+{
     std::stringstream tmp;
     for(int i=0; i < len-1; i++)
     {
@@ -38,7 +40,8 @@ std::string teo::FakeJoint::msgToStr(uint32_t cob, uint16_t len, uint8_t * msgDa
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::send(uint32_t cob, uint16_t len, uint8_t * msgData) {
+bool teo::FakeJoint::send(uint32_t cob, uint16_t len, uint8_t * msgData)
+{
 
     if ( (lastUsage - yarp::os::Time::now()) < DELAY )
         yarp::os::Time::delay( lastUsage + DELAY - yarp::os::Time::now() );

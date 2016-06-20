@@ -4,7 +4,8 @@
 
 // ------------------- IControlLimitsRaw Related ------------------------------------
 
-bool teo::TechnosoftIpos::setLimitsRaw(int axis, double min, double max) {
+bool teo::TechnosoftIpos::setLimitsRaw(int axis, double min, double max)
+{
     CD_INFO("(%d,%f,%f)\n",axis,min,max);
 
     //-- Check index within range
@@ -21,7 +22,7 @@ bool teo::TechnosoftIpos::setLimitsRaw(int axis, double min, double max) {
 bool teo::TechnosoftIpos::setMinLimitRaw(double min)
 {
     //*************************************************************
-    uint8_t msg_position_min[]={0x23,0x7D,0x60,0x01,0x00,0x00,0x00,0x00}; // 0x01 is subindex 1, Manual 607Dh: Software position limit
+    uint8_t msg_position_min[]= {0x23,0x7D,0x60,0x01,0x00,0x00,0x00,0x00}; // 0x01 is subindex 1, Manual 607Dh: Software position limit
 
     int sendMin = min * this->tr * 11.11112;  // Appply tr & convert units to encoder increments
     memcpy(msg_position_min+4,&sendMin,4);
@@ -45,7 +46,7 @@ bool teo::TechnosoftIpos::setMinLimitRaw(double min)
 bool teo::TechnosoftIpos::setMaxLimitRaw(double max)
 {
     //*************************************************************
-    uint8_t msg_position_max[]={0x23,0x7D,0x60,0x02,0x00,0x00,0x00,0x00}; // 0x02 is subindex 2, Manual 607Dh: Software position limit
+    uint8_t msg_position_max[]= {0x23,0x7D,0x60,0x02,0x00,0x00,0x00,0x00}; // 0x02 is subindex 2, Manual 607Dh: Software position limit
 
     int sendMax = max * this->tr * 11.11112;  // Appply tr & convert units to encoder increments
     memcpy(msg_position_max+4,&sendMax,4);
@@ -66,7 +67,8 @@ bool teo::TechnosoftIpos::setMaxLimitRaw(double max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getLimitsRaw(int axis, double *min, double *max) {
+bool teo::TechnosoftIpos::getLimitsRaw(int axis, double *min, double *max)
+{
     CD_INFO("(%d)\n",axis);
 
     //-- Check index within range

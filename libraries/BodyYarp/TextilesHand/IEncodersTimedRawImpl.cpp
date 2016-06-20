@@ -4,7 +4,8 @@
 
 // ------------------ IEncodersTimedRaw Related -----------------------------------------
 
-bool teo::TextilesHand::getEncoderTimedRaw(int j, double *encs, double *time) {
+bool teo::TextilesHand::getEncoderTimedRaw(int j, double *encs, double *time)
+{
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range

@@ -4,8 +4,10 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::indexWithinRange(const int& idx) {
-    if (idx >= nodes.size() ){
+bool teo::CanBusControlboard::indexWithinRange(const int& idx)
+{
+    if (idx >= nodes.size() )
+    {
         CD_WARNING("Index out of range!! (%d >= %zd)!!!\n",idx,nodes.size());
         return false;
     }
@@ -14,7 +16,8 @@ bool teo::CanBusControlboard::indexWithinRange(const int& idx) {
 
 // -----------------------------------------------------------------------------
 
-std::string teo::CanBusControlboard::msgToStr(can_msg* message) {
+std::string teo::CanBusControlboard::msgToStr(can_msg* message)
+{
 
     std::stringstream tmp;
     for(int i=0; i < message->dlc-1; i++)

@@ -4,7 +4,8 @@
 
 // ------------------- IControlLimitsRaw Related ------------------------------------
 
-bool teo::FakeJoint::setLimitsRaw(int axis, double min, double max) {
+bool teo::FakeJoint::setLimitsRaw(int axis, double min, double max)
+{
     CD_INFO("(%d,%f,%f)\n",axis,min,max);
 
     //-- Check index within range
@@ -19,7 +20,8 @@ bool teo::FakeJoint::setLimitsRaw(int axis, double min, double max) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::getLimitsRaw(int axis, double *min, double *max) {
+bool teo::FakeJoint::getLimitsRaw(int axis, double *min, double *max)
+{
     CD_INFO("(%d)\n",axis);
 
     //-- Check index within range

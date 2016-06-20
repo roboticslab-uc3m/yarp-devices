@@ -4,7 +4,8 @@
 
 // ------------------ IPositionDirect Related ----------------------------------
 
-bool teo::CanBusControlboard::setPositionDirectMode() {
+bool teo::CanBusControlboard::setPositionDirectMode()
+{
     CD_INFO("\n");
 
     bool ok = true;
@@ -19,7 +20,8 @@ bool teo::CanBusControlboard::setPositionDirectMode() {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setPosition(int j, double ref) {
+bool teo::CanBusControlboard::setPosition(int j, double ref)
+{
     CD_INFO("\n");
 
     return iPositionDirectRaw[j]->setPositionRaw( 0, ref );
@@ -27,7 +29,8 @@ bool teo::CanBusControlboard::setPosition(int j, double ref) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setPositions(const int n_joint, const int *joints, double *refs) {
+bool teo::CanBusControlboard::setPositions(const int n_joint, const int *joints, double *refs)
+{
     CD_INFO("n_joint:%d, drivers.size():" CD_SIZE_T "\n",n_joint,nodes.size());
 
     bool ok = true;
@@ -38,7 +41,8 @@ bool teo::CanBusControlboard::setPositions(const int n_joint, const int *joints,
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setPositions(const double *refs) {
+bool teo::CanBusControlboard::setPositions(const double *refs)
+{
     bool ok = true;
     for(unsigned int i=0; i < nodes.size(); i++)
         ok &= this->setPosition(i, refs[i]);

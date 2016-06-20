@@ -9,9 +9,11 @@ namespace teo
 OneCanBusOneWrapper::OneCanBusOneWrapper() { }
 
 /************************************************************************/
-bool OneCanBusOneWrapper::configure(yarp::os::ResourceFinder &rf) {
+bool OneCanBusOneWrapper::configure(yarp::os::ResourceFinder &rf)
+{
 
-    if(rf.check("help")) {
+    if(rf.check("help"))
+    {
         printf("OneCanBusOneWrapper options:\n");
         printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
@@ -29,7 +31,8 @@ bool OneCanBusOneWrapper::configure(yarp::os::ResourceFinder &rf) {
     yarp::os::Property optionsDevCan0;
     optionsDevCan0.fromString(devCan0.toString());
     deviceDevCan0.open(optionsDevCan0);
-    if (!deviceDevCan0.isValid()) {
+    if (!deviceDevCan0.isValid())
+    {
         CD_ERROR("deviceDevCan0 instantiation not worked.\n");
         return false;
     }
@@ -40,7 +43,8 @@ bool OneCanBusOneWrapper::configure(yarp::os::ResourceFinder &rf) {
     yarp::os::Property optionsWrapper0;
     optionsWrapper0.fromString(wrapper0.toString());
     deviceWrapper0.open(optionsWrapper0);
-    if (!deviceWrapper0.isValid()) {
+    if (!deviceWrapper0.isValid())
+    {
         CD_ERROR("deviceWrapper0 instantiation not worked.\n");
         return false;
     }
@@ -58,14 +62,16 @@ bool OneCanBusOneWrapper::configure(yarp::os::ResourceFinder &rf) {
 
 /************************************************************************/
 
-bool OneCanBusOneWrapper::updateModule() {
+bool OneCanBusOneWrapper::updateModule()
+{
     //printf("OneCanBusOneWrapper alive...\n");
     return true;
 }
 
 /************************************************************************/
 
-bool OneCanBusOneWrapper::close() {
+bool OneCanBusOneWrapper::close()
+{
     deviceWrapper0.close();
 
     deviceDevCan0.close();

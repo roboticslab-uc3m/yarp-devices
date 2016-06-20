@@ -21,7 +21,6 @@
 #include "TechnosoftIpos/TechnosoftIpos.hpp" // -- ok????
 
 //-- Nuevos includes
-//#include <vector>
 #include <queue>
 
 
@@ -35,72 +34,75 @@ namespace teo
  *
  */
 
-class CheckCanBus : public yarp::os::RFModule, public yarp::os::Thread {
-    public:
-        CheckCanBus();
-        bool configure(yarp::os::ResourceFinder &rf);
+class CheckCanBus : public yarp::os::RFModule, public yarp::os::Thread
+{
+public:
+    CheckCanBus();
+    bool configure(yarp::os::ResourceFinder &rf);
 
-        // -- Nuevas variables:
-        double timeOut;     // -- tiempo de espera para comprobar el ID (s)
-        double firstTime;  // -- tiempo en el arranque (valor de tiempo aleatorio)
-        double cleaningTime; // -- tiempo de espera para que no lleguen mensajes "basura" de encoders absolutos
-        int nodeForReset;           // -- nodo que queremos resetear
-        std::queue<int> queueIds;   // -- cola que almacenará los IDs
+    // -- Nuevas variables:
+    double timeOut;     // -- tiempo de espera para comprobar el ID (s)
+    double firstTime;  // -- tiempo en el arranque (valor de tiempo aleatorio)
+    double cleaningTime; // -- tiempo de espera para que no lleguen mensajes "basura" de encoders absolutos
+    int nodeForReset;           // -- nodo que queremos resetear
+    std::queue<int> queueIds;   // -- cola que almacenará los IDs
 
-    protected:
+protected:
 
-        /** CAN BUS device. */
-        yarp::dev::PolyDriver deviceDevCan0; // -- Dispositivo (HicoCan) que se crea.
-        CanBusHico* iCanBus;
+    /** CAN BUS device. */
+    yarp::dev::PolyDriver deviceDevCan0; // -- Dispositivo (HicoCan) que se crea.
+    CanBusHico* iCanBus;
 
-        /** CAN node object. */
-            yarp::dev::PolyDriver canNodeDevice;
-            yarp::dev::IControlLimitsRaw* iControlLimitsRaw;
-            yarp::dev::IControlModeRaw* iControlModeRaw;
-            yarp::dev::IEncodersTimedRaw* iEncodersTimedRaw;
-            yarp::dev::IPositionControlRaw* iPositionControlRaw;
-            yarp::dev::IPositionDirectRaw* iPositionDirectRaw;
-            yarp::dev::ITorqueControlRaw* iTorqueControlRaw;
-            yarp::dev::IVelocityControlRaw* iVelocityControlRaw;
-            ICanBusSharer* iCanBusSharer; // -- ??
-            TechnosoftIpos* technosoftIpos;    //-- ok practice?
+    /** CAN node object. */
+    yarp::dev::PolyDriver canNodeDevice;
+    yarp::dev::IControlLimitsRaw* iControlLimitsRaw;
+    yarp::dev::IControlModeRaw* iControlModeRaw;
+    yarp::dev::IEncodersTimedRaw* iEncodersTimedRaw;
+    yarp::dev::IPositionControlRaw* iPositionControlRaw;
+    yarp::dev::IPositionDirectRaw* iPositionDirectRaw;
+    yarp::dev::ITorqueControlRaw* iTorqueControlRaw;
+    yarp::dev::IVelocityControlRaw* iVelocityControlRaw;
+    ICanBusSharer* iCanBusSharer; // -- ??
+    TechnosoftIpos* technosoftIpos;    //-- ok practice?
 
-        /** A helper function to display CAN messages. */
-        std::string msgToStr(can_msg* message); // -- Muestra los mensajes que vienen del CAN
+    /** A helper function to display CAN messages. */
+    std::string msgToStr(can_msg* message); // -- Muestra los mensajes que vienen del CAN
 
-        // -- Funcion que se encargará de chekear los IDs introducidos e imprimir los detectados
-        void checkIds(can_msg* message); // --Declara función que encontraremos en el .hpp
+    // -- Funcion que se encargará de chekear los IDs introducidos e imprimir los detectados
+    void checkIds(can_msg* message); // --Declara función que encontraremos en el .hpp
 
-        // -- Funcion que se encargará de imprimir los IDs no detectados
-        void printWronglIds();
+    // -- Funcion que se encargará de imprimir los IDs no detectados
+    void printWronglIds();
 
-        double lastNow; // -- Muestra el tiempo actual
+    double lastNow; // -- Muestra el tiempo actual
 
-        virtual double getPeriod() {return 3.0;}  // Periodicidad de llamada a updateModule en [s]
-        virtual bool updateModule();
-        virtual bool close();
+    virtual double getPeriod()
+    {
+        return 3.0;   // Periodicidad de llamada a updateModule en [s]
+    }
+    virtual bool updateModule();
+    virtual bool close();
 
 //        virtual bool interruptModule();
 //        virtual int period;
 
     // -------- Thread declarations. Implementation in ThreadImpl.cpp --------
 
-        /**
-         * Main body of the new thread.
-         * Override this method to do what you want.
-         * After Thread::start is called, this
-         * method will start running in a separate thread.
-         * It is important that this method either keeps checking
-         * Thread::isStopping to see if it should stop, or
-         * you override the Thread::onStop method to interact
-         * with it in some way to shut the new thread down.
-         * There is no really reliable, portable way to stop
-         * a thread cleanly unless that thread cooperates.
-         */
-        virtual void run();
+    /**
+     * Main body of the new thread.
+     * Override this method to do what you want.
+     * After Thread::start is called, this
+     * method will start running in a separate thread.
+     * It is important that this method either keeps checking
+     * Thread::isStopping to see if it should stop, or
+     * you override the Thread::onStop method to interact
+     * with it in some way to shut the new thread down.
+     * There is no really reliable, portable way to stop
+     * a thread cleanly unless that thread cooperates.
+     */
+    virtual void run();
 };
 
 }  // namespace teo
 
 #endif  // __CHECK_CAN_BUS__
-

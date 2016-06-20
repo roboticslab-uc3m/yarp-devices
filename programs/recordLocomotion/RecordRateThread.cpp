@@ -6,7 +6,8 @@ namespace teo
 {
 
 /************************************************************************/
-void RecordRateThread::run() {
+void RecordRateThread::run()
+{
 
     //-- Make room!!
     std::vector< double > vLeftLegAngles( leftLegNumMotors );
@@ -17,17 +18,17 @@ void RecordRateThread::run() {
     leftLegEnc->getEncoders( leftLegAngles );
     rightLegEnc->getEncoders( rightLegAngles );
 
-    for(int i=0;i<leftLegNumMotors;i++)
+    for(int i=0; i<leftLegNumMotors; i++)
         fprintf(filePtr,"%f ",leftLegAngles[i]);
-    for(int i=0;i<rightLegNumMotors;i++)
+    for(int i=0; i<rightLegNumMotors; i++)
         fprintf(filePtr,"%f ",rightLegAngles[i]);
     fprintf(filePtr,"\n");
 
     CD_DEBUG("--> ");
-    for(int i=0;i<leftLegNumMotors;i++)
+    for(int i=0; i<leftLegNumMotors; i++)
         CD_DEBUG_NO_HEADER("%f ",leftLegAngles[i]);
     CD_DEBUG_NO_HEADER("|");
-    for(int i=0;i<rightLegNumMotors;i++)
+    for(int i=0; i<rightLegNumMotors; i++)
         CD_DEBUG_NO_HEADER("%f ",rightLegAngles[i]);
     CD_DEBUG_NO_HEADER("\n");
 

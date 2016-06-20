@@ -28,27 +28,31 @@ namespace teo
  * @ingroup recordLocomotion
  *
  * @brief Records a locomotion movement, generating a locomotion file.
- * 
+ *
  */
-class RecordLocomotion : public yarp::os::RFModule {
+class RecordLocomotion : public yarp::os::RFModule
+{
 
-    public:
-        RecordLocomotion();
-        bool configure(yarp::os::ResourceFinder &rf);
+public:
+    RecordLocomotion();
+    bool configure(yarp::os::ResourceFinder &rf);
 
-    protected:
-        yarp::dev::PolyDriver leftLegDevice;
-        yarp::dev::PolyDriver rightLegDevice;
+protected:
+    yarp::dev::PolyDriver leftLegDevice;
+    yarp::dev::PolyDriver rightLegDevice;
 
-        virtual double getPeriod() {return 3.0;}
-        virtual bool updateModule();
-        virtual bool close();
+    virtual double getPeriod()
+    {
+        return 3.0;
+    }
+    virtual bool updateModule();
+    virtual bool close();
     //        virtual bool interruptModule();
     //        virtual int period;
 
-        FILE * filePtr;
+    FILE * filePtr;
 
-        RecordRateThread recordRateThread;
+    RecordRateThread recordRateThread;
 };
 
 }  // namespace teo

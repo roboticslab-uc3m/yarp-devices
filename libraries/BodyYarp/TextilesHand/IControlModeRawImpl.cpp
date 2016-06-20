@@ -4,7 +4,8 @@
 
 // ------------------- IControlModeRaw Related ------------------------------------
 
-bool teo::TextilesHand::setPositionModeRaw(int j) {
+bool teo::TextilesHand::setPositionModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -15,7 +16,8 @@ bool teo::TextilesHand::setPositionModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setVelocityModeRaw(int j) {
+bool teo::TextilesHand::setVelocityModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -26,7 +28,8 @@ bool teo::TextilesHand::setVelocityModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setTorqueModeRaw(int j)  {
+bool teo::TextilesHand::setTorqueModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -37,7 +40,8 @@ bool teo::TextilesHand::setTorqueModeRaw(int j)  {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setImpedancePositionModeRaw(int j) {
+bool teo::TextilesHand::setImpedancePositionModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -48,7 +52,8 @@ bool teo::TextilesHand::setImpedancePositionModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setImpedanceVelocityModeRaw(int j) {
+bool teo::TextilesHand::setImpedanceVelocityModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -59,7 +64,8 @@ bool teo::TextilesHand::setImpedanceVelocityModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setOpenLoopModeRaw(int j) {
+bool teo::TextilesHand::setOpenLoopModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -70,7 +76,8 @@ bool teo::TextilesHand::setOpenLoopModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::getControlModeRaw(int j, int *mode) {
+bool teo::TextilesHand::getControlModeRaw(int j, int *mode)
+{
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
 
     //-- Check index within range
