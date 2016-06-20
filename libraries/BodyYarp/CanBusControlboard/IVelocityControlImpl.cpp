@@ -4,7 +4,8 @@
 
 // ------------------ IVelocityControl Related ----------------------------------------
 
-bool teo::CanBusControlboard::setVelocityMode() {
+bool teo::CanBusControlboard::setVelocityMode()
+{
     CD_INFO("\n");
 
     bool ok = true;
@@ -17,7 +18,8 @@ bool teo::CanBusControlboard::setVelocityMode() {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::velocityMove(int j, double sp) {
+bool teo::CanBusControlboard::velocityMove(int j, double sp)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -28,7 +30,8 @@ bool teo::CanBusControlboard::velocityMove(int j, double sp) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::velocityMove(const double *sp) {
+bool teo::CanBusControlboard::velocityMove(const double *sp)
+{
     CD_INFO("\n");
 
     bool ok = true;

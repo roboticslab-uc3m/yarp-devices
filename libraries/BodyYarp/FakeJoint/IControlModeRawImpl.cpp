@@ -4,7 +4,8 @@
 
 // ------------------- IControlModeRaw Related ------------------------------------
 
-bool teo::FakeJoint::setPositionModeRaw(int j) {
+bool teo::FakeJoint::setPositionModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -15,7 +16,8 @@ bool teo::FakeJoint::setPositionModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setVelocityModeRaw(int j) {
+bool teo::FakeJoint::setVelocityModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -26,7 +28,8 @@ bool teo::FakeJoint::setVelocityModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setTorqueModeRaw(int j)  {
+bool teo::FakeJoint::setTorqueModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -37,7 +40,8 @@ bool teo::FakeJoint::setTorqueModeRaw(int j)  {
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setImpedancePositionModeRaw(int j) {
+bool teo::FakeJoint::setImpedancePositionModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -48,7 +52,8 @@ bool teo::FakeJoint::setImpedancePositionModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setImpedanceVelocityModeRaw(int j) {
+bool teo::FakeJoint::setImpedanceVelocityModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -59,7 +64,8 @@ bool teo::FakeJoint::setImpedanceVelocityModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setOpenLoopModeRaw(int j) {
+bool teo::FakeJoint::setOpenLoopModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -70,7 +76,8 @@ bool teo::FakeJoint::setOpenLoopModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::getControlModeRaw(int j, int *mode) {
+bool teo::FakeJoint::getControlModeRaw(int j, int *mode)
+{
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
 
     //-- Check index within range

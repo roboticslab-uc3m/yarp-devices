@@ -9,9 +9,11 @@ namespace teo
 DumpCanBus::DumpCanBus() { }
 
 /************************************************************************/
-bool DumpCanBus::configure(yarp::os::ResourceFinder &rf) {
+bool DumpCanBus::configure(yarp::os::ResourceFinder &rf)
+{
 
-    if(rf.check("help")) {
+    if(rf.check("help"))
+    {
         printf("DumpCanBus options:\n");
         printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
@@ -20,7 +22,8 @@ bool DumpCanBus::configure(yarp::os::ResourceFinder &rf) {
 
     CD_DEBUG("%s\n",rf.toString().c_str());
     deviceDevCan0.open(rf);
-    if (!deviceDevCan0.isValid()) {
+    if (!deviceDevCan0.isValid())
+    {
         CD_ERROR("deviceDevCan0 instantiation not worked.\n");
         return false;
     }
@@ -33,14 +36,16 @@ bool DumpCanBus::configure(yarp::os::ResourceFinder &rf) {
 
 /************************************************************************/
 
-bool DumpCanBus::updateModule() {
+bool DumpCanBus::updateModule()
+{
     //printf("DumpCanBus alive...\n");
     return true;
 }
 
 /************************************************************************/
 
-bool DumpCanBus::close() {
+bool DumpCanBus::close()
+{
     this->stop();
 
     deviceDevCan0.close();
@@ -50,7 +55,8 @@ bool DumpCanBus::close() {
 
 /************************************************************************/
 
-std::string DumpCanBus::msgToStr(can_msg* message) {
+std::string DumpCanBus::msgToStr(can_msg* message)
+{
 
 
     std::stringstream tmp;

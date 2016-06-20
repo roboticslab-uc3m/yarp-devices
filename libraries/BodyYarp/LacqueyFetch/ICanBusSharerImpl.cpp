@@ -4,7 +4,8 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setCanBusPtr(CanBusHico *canDevicePtr) {
+bool teo::LacqueyFetch::setCanBusPtr(CanBusHico *canDevicePtr)
+{
 
     this->canDevicePtr = canDevicePtr;
     CD_SUCCESS("Ok pointer to CAN bus device %d.\n",canId);
@@ -13,42 +14,48 @@ bool teo::LacqueyFetch::setCanBusPtr(CanBusHico *canDevicePtr) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::start() {
+bool teo::LacqueyFetch::start()
+{
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::readyToSwitchOn() {
+bool teo::LacqueyFetch::readyToSwitchOn()
+{
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::switchOn() {
+bool teo::LacqueyFetch::switchOn()
+{
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::enable() {
+bool teo::LacqueyFetch::enable()
+{
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::recoverFromError() {
+bool teo::LacqueyFetch::recoverFromError()
+{
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::interpretMessage( can_msg * message) {
+bool teo::LacqueyFetch::interpretMessage( can_msg * message)
+{
 
     return true;
 

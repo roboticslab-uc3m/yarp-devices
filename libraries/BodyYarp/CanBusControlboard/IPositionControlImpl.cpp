@@ -4,7 +4,8 @@
 
 // ------------------ IPositionControl Related ----------------------------------------
 
-bool teo::CanBusControlboard::getAxes(int *axes) {
+bool teo::CanBusControlboard::getAxes(int *axes)
+{
     CD_INFO("\n");
 
     *axes = nodes.size();
@@ -14,7 +15,8 @@ bool teo::CanBusControlboard::getAxes(int *axes) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setPositionMode() {
+bool teo::CanBusControlboard::setPositionMode()
+{
     CD_INFO("\n");
 
     bool ok = true;
@@ -27,7 +29,8 @@ bool teo::CanBusControlboard::setPositionMode() {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::positionMove(int j, double ref) {
+bool teo::CanBusControlboard::positionMove(int j, double ref)
+{
     CD_INFO("(%d,%f)\n",j,ref);
 
     //-- Check index within range
@@ -38,7 +41,8 @@ bool teo::CanBusControlboard::positionMove(int j, double ref) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::positionMove(const double *refs) {
+bool teo::CanBusControlboard::positionMove(const double *refs)
+{
     CD_INFO("\n");
 
     bool ok = true;
@@ -51,7 +55,8 @@ bool teo::CanBusControlboard::positionMove(const double *refs) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::relativeMove(int j, double delta) {
+bool teo::CanBusControlboard::relativeMove(int j, double delta)
+{
     CD_INFO("(%d,%f)\n",j,delta);
 
     //-- Check index within range
@@ -62,7 +67,8 @@ bool teo::CanBusControlboard::relativeMove(int j, double delta) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::relativeMove(const double *deltas) {
+bool teo::CanBusControlboard::relativeMove(const double *deltas)
+{
     CD_INFO("\n");
 
     bool ok = true;
@@ -75,7 +81,8 @@ bool teo::CanBusControlboard::relativeMove(const double *deltas) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::checkMotionDone(int j, bool *flag) {
+bool teo::CanBusControlboard::checkMotionDone(int j, bool *flag)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -86,7 +93,8 @@ bool teo::CanBusControlboard::checkMotionDone(int j, bool *flag) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::checkMotionDone(bool *flag) {
+bool teo::CanBusControlboard::checkMotionDone(bool *flag)
+{
     CD_INFO("\n");
     *flag = true;
     bool ok = true;
@@ -101,7 +109,8 @@ bool teo::CanBusControlboard::checkMotionDone(bool *flag) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setRefSpeed(int j, double sp) {
+bool teo::CanBusControlboard::setRefSpeed(int j, double sp)
+{
     CD_INFO("(%d, %f)\n",j,sp);
 
     //-- Check index within range
@@ -112,18 +121,20 @@ bool teo::CanBusControlboard::setRefSpeed(int j, double sp) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setRefSpeeds(const double *spds) {
+bool teo::CanBusControlboard::setRefSpeeds(const double *spds)
+{
     CD_INFO("\n");
 
     bool ok = true;
-    for(unsigned int i=0;i<nodes.size();i++)
+    for(unsigned int i=0; i<nodes.size(); i++)
         ok &= setRefSpeed(i,spds[i]);
     return ok;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setRefAcceleration(int j, double acc) {
+bool teo::CanBusControlboard::setRefAcceleration(int j, double acc)
+{
     CD_INFO("(%d, %f)\n",j,acc);
 
     //-- Check index within range
@@ -134,18 +145,20 @@ bool teo::CanBusControlboard::setRefAcceleration(int j, double acc) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setRefAccelerations(const double *accs) {
+bool teo::CanBusControlboard::setRefAccelerations(const double *accs)
+{
     CD_INFO("\n");
 
     bool ok = true;
-    for(unsigned int i=0;i<nodes.size();i++)
+    for(unsigned int i=0; i<nodes.size(); i++)
         ok &= setRefAcceleration(i,accs[i]);
     return ok;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getRefSpeed(int j, double *ref) {
+bool teo::CanBusControlboard::getRefSpeed(int j, double *ref)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -156,18 +169,20 @@ bool teo::CanBusControlboard::getRefSpeed(int j, double *ref) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getRefSpeeds(double *spds) {
+bool teo::CanBusControlboard::getRefSpeeds(double *spds)
+{
     CD_INFO("\n");
 
     bool ok = true;
-    for(unsigned int i=0;i<nodes.size();i++)
+    for(unsigned int i=0; i<nodes.size(); i++)
         ok &= getRefSpeed(i,&spds[i]);
     return ok;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getRefAcceleration(int j, double *acc) {
+bool teo::CanBusControlboard::getRefAcceleration(int j, double *acc)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -178,18 +193,20 @@ bool teo::CanBusControlboard::getRefAcceleration(int j, double *acc) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getRefAccelerations(double *accs) {
+bool teo::CanBusControlboard::getRefAccelerations(double *accs)
+{
     CD_INFO("\n");
 
     bool ok = true;
-    for(unsigned int i=0;i<nodes.size();i++)
+    for(unsigned int i=0; i<nodes.size(); i++)
         ok &= getRefAcceleration(i,&accs[i]);
     return ok;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::stop(int j) {
+bool teo::CanBusControlboard::stop(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -200,11 +217,12 @@ bool teo::CanBusControlboard::stop(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::stop() {
+bool teo::CanBusControlboard::stop()
+{
     CD_INFO("\n");
 
     bool ok = true;
-    for(unsigned int i=0;i<nodes.size();i++)
+    for(unsigned int i=0; i<nodes.size(); i++)
         ok &= stop(i);
     return ok;
 }

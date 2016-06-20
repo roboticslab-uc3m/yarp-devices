@@ -4,7 +4,8 @@
 
 // ------------------ IPositionControlRaw Related ----------------------------------------
 
-bool teo::TextilesHand::positionMoveRaw(int j, double ref) {  // encExposed = ref;
+bool teo::TextilesHand::positionMoveRaw(int j, double ref)    // encExposed = ref;
+{
     CD_INFO("(%d,%f)\n",j,ref);
 
     //-- Check index within range
@@ -29,7 +30,8 @@ bool teo::TextilesHand::positionMoveRaw(int j, double ref) {  // encExposed = re
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::relativeMoveRaw(int j, double delta) {
+bool teo::TextilesHand::relativeMoveRaw(int j, double delta)
+{
     CD_INFO("(%d, %f)\n",j,delta);
 
     //-- Check index within range
@@ -42,7 +44,8 @@ bool teo::TextilesHand::relativeMoveRaw(int j, double delta) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::checkMotionDoneRaw(int j, bool *flag) {
+bool teo::TextilesHand::checkMotionDoneRaw(int j, bool *flag)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -55,7 +58,8 @@ bool teo::TextilesHand::checkMotionDoneRaw(int j, bool *flag) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setRefSpeedRaw(int j, double sp) {
+bool teo::TextilesHand::setRefSpeedRaw(int j, double sp)
+{
     CD_INFO("(%d, %f)\n",j,sp);
 
     //-- Check index within range
@@ -66,7 +70,8 @@ bool teo::TextilesHand::setRefSpeedRaw(int j, double sp) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setRefAccelerationRaw(int j, double acc) {
+bool teo::TextilesHand::setRefAccelerationRaw(int j, double acc)
+{
     CD_INFO("(%d, %f)\n",j,acc);
 
     //-- Check index within range
@@ -77,7 +82,8 @@ bool teo::TextilesHand::setRefAccelerationRaw(int j, double acc) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::getRefSpeedRaw(int j, double *ref) {
+bool teo::TextilesHand::getRefSpeedRaw(int j, double *ref)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -90,7 +96,8 @@ bool teo::TextilesHand::getRefSpeedRaw(int j, double *ref) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::getRefAccelerationRaw(int j, double *acc) {
+bool teo::TextilesHand::getRefAccelerationRaw(int j, double *acc)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -103,7 +110,8 @@ bool teo::TextilesHand::getRefAccelerationRaw(int j, double *acc) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::stopRaw(int j) {
+bool teo::TextilesHand::stopRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range

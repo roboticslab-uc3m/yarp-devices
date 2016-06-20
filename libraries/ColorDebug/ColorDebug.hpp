@@ -27,43 +27,44 @@
 #include <string>  // std::string
 #include <string.h>  // strrchr
 
-namespace ColorDebug {
+namespace ColorDebug
+{
 
 //-- Fix for old Windows versions.
 //-- Thanks: tomlogic @ http://stackoverflow.com/questions/2281970/cross-platform-defining-define-for-macros-function-and-func
 #if defined ( WIN32 )
-  #define __func__ __FUNCTION__
+#define __func__ __FUNCTION__
 #endif
 
 //-- Macros for size_t and similar across platforms.
 //-- Thanks: dalle @ http://stackoverflow.com/questions/1546789/clean-code-to-printf-size-t-in-c-or-nearest-equivalent-of-c99s-z-in-c
 #if defined(_MSC_VER)
-  #define CD_SIZE_T    "%Iu"
-  #define CD_SSIZE_T   "%Id"
-  #define CD_PTRDIFF_T "%Id"
+#define CD_SIZE_T    "%Iu"
+#define CD_SSIZE_T   "%Id"
+#define CD_PTRDIFF_T "%Id"
 #elif defined(__GNUC__)
-  #define CD_SIZE_T    "%zu"
-  #define CD_SSIZE_T   "%zd"
-  #define CD_PTRDIFF_T "%zd"
+#define CD_SIZE_T    "%zu"
+#define CD_SSIZE_T   "%zd"
+#define CD_PTRDIFF_T "%zd"
 #else
-  // TODO figure out which to use.
-  #if NUMBITS == 32
-    #define CD_SIZE_T_SPECIFIER    something_unsigned
-    #define CD_SSIZE_T_SPECIFIER   something_signed
-    #define CD_PTRDIFF_T_SPECIFIER something_signed
-  #else
-    #define CD_SIZE_T_SPECIFIER    something_bigger_unsigned
-    #define CD_SSIZE_T_SPECIFIER   something_bigger_signed
-    #define CD_PTRDIFF_T_SPECIFIER something-bigger_signed
-  #endif
+// TODO figure out which to use.
+#if NUMBITS == 32
+#define CD_SIZE_T_SPECIFIER    something_unsigned
+#define CD_SSIZE_T_SPECIFIER   something_signed
+#define CD_PTRDIFF_T_SPECIFIER something_signed
+#else
+#define CD_SIZE_T_SPECIFIER    something_bigger_unsigned
+#define CD_SSIZE_T_SPECIFIER   something_bigger_signed
+#define CD_PTRDIFF_T_SPECIFIER something-bigger_signed
+#endif
 #endif
 
 //-- Show file name instead of full path.
 //-- Thanks: red1ynx @ http://stackoverflow.com/questions/8487986/file-macro-shows-full-path
 #if defined ( WIN32 )  //-- For Windows use '\\' instead of '/'.
-  #define __REL_FILE__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
+#define __REL_FILE__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 #else
-  #define __REL_FILE__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
+#define __REL_FILE__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #endif
 
 //-- Color defines.
@@ -93,99 +94,99 @@ namespace ColorDebug {
 //-- Thanks: http://en.wikipedia.org/wiki/Variadic_macro
 //-- Thanks: http://stackoverflow.com/questions/15549893/modify-printfs-via-macro-to-include-file-and-line-number-information
 #if defined ( CD_HIDE_ERROR )
-    #define CD_ERROR(...)
-    #define CD_PERROR(...)
+#define CD_ERROR(...)
+#define CD_PERROR(...)
 #else
-    #if defined ( CD_FULL_FILE )
-        #define CD_ERROR(...) {fprintf(stderr,RED); do{fprintf(stderr, "[error] %s:%d %s(): ", __FILE__, __LINE__, __func__); \
+#if defined ( CD_FULL_FILE )
+#define CD_ERROR(...) {fprintf(stderr,RED); do{fprintf(stderr, "[error] %s:%d %s(): ", __FILE__, __LINE__, __func__); \
             fprintf(stderr, __VA_ARGS__);} while(0); fprintf(stderr,RESET);}
-        #define CD_PERROR(...) {fprintf(stderr,RED); do{fprintf(stderr, "[error] %s:%d %s(): ", __FILE__, __LINE__, __func__); \
+#define CD_PERROR(...) {fprintf(stderr,RED); do{fprintf(stderr, "[error] %s:%d %s(): ", __FILE__, __LINE__, __func__); \
             fprintf(stderr, __VA_ARGS__);} while(0); fprintf(stderr, "[error] "); perror(""); fprintf(stderr,RESET);}
-    #else
-        #define CD_ERROR(...) {fprintf(stderr,RED); do{fprintf(stderr, "[error] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
+#else
+#define CD_ERROR(...) {fprintf(stderr,RED); do{fprintf(stderr, "[error] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
             fprintf(stderr, __VA_ARGS__);} while(0); fprintf(stderr,RESET);}
-        #define CD_PERROR(...) {fprintf(stderr,RED); do{fprintf(stderr, "[error] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
+#define CD_PERROR(...) {fprintf(stderr,RED); do{fprintf(stderr, "[error] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
             fprintf(stderr, __VA_ARGS__);} while(0); fprintf(stderr, "[error] "); perror(""); fprintf(stderr,RESET);}
-    #endif
+#endif
 #endif
 
 #if defined ( CD_HIDE_WARNING )
-    #define CD_WARNING(...)
-#else 
-    #if defined ( CD_FULL_FILE )
-        #define CD_WARNING(...) {fprintf(stderr,YELLOW); do{fprintf(stderr, "[warning] %s:%d %s(): ", __FILE__, __LINE__, __func__); \
+#define CD_WARNING(...)
+#else
+#if defined ( CD_FULL_FILE )
+#define CD_WARNING(...) {fprintf(stderr,YELLOW); do{fprintf(stderr, "[warning] %s:%d %s(): ", __FILE__, __LINE__, __func__); \
             fprintf(stderr, __VA_ARGS__);} while(0); fprintf(stderr,RESET);}
-    #else
-        #define CD_WARNING(...) {fprintf(stderr,YELLOW); do{fprintf(stderr, "[warning] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
+#else
+#define CD_WARNING(...) {fprintf(stderr,YELLOW); do{fprintf(stderr, "[warning] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
             fprintf(stderr, __VA_ARGS__);} while(0); fprintf(stderr,RESET);}
-    #endif
+#endif
 #endif
 
 #if defined ( CD_HIDE_SUCCESS )
-    #define CD_SUCCESS(...)
-#else 
-    #if defined ( CD_FULL_FILE )
-        #define CD_SUCCESS(...) {printf(GREEN); do{printf("[success] %s:%d %s(): ", __FILE__, __LINE__, __func__); \
+#define CD_SUCCESS(...)
+#else
+#if defined ( CD_FULL_FILE )
+#define CD_SUCCESS(...) {printf(GREEN); do{printf("[success] %s:%d %s(): ", __FILE__, __LINE__, __func__); \
             printf(__VA_ARGS__);} while(0); printf(RESET);}
-    #else
-        #define CD_SUCCESS(...) {printf(GREEN); do{printf("[success] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
+#else
+#define CD_SUCCESS(...) {printf(GREEN); do{printf("[success] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
             printf(__VA_ARGS__);} while(0); printf(RESET);}
-    #endif
+#endif
 #endif
 
 #if defined ( CD_HIDE_INFO )
-    #define CD_INFO(...)
-#else 
-    #if defined ( CD_FULL_FILE )
-        #define CD_INFO(...) {do{printf("[info] %s:%d %s(): ", __FILE__, __LINE__, __func__); \
+#define CD_INFO(...)
+#else
+#if defined ( CD_FULL_FILE )
+#define CD_INFO(...) {do{printf("[info] %s:%d %s(): ", __FILE__, __LINE__, __func__); \
             printf(__VA_ARGS__);} while(0);}
-    #else
-        #define CD_INFO(...) {do{printf("[info] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
+#else
+#define CD_INFO(...) {do{printf("[info] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
             printf(__VA_ARGS__);} while(0);}
-    #endif
+#endif
 #endif
 
 #if defined ( CD_HIDE_DEBUG )
-    #define CD_DEBUG(...)
-#else 
-    #if defined ( CD_FULL_FILE )
-        #define CD_DEBUG(...) {printf(BLUE); do{printf("[debug] %s:%d %s(): ", __FILE__, __LINE__, __func__); \
+#define CD_DEBUG(...)
+#else
+#if defined ( CD_FULL_FILE )
+#define CD_DEBUG(...) {printf(BLUE); do{printf("[debug] %s:%d %s(): ", __FILE__, __LINE__, __func__); \
             printf(__VA_ARGS__);} while(0); printf(RESET);}
-    #else
-        #define CD_DEBUG(...) {printf(BLUE); do{printf("[debug] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
+#else
+#define CD_DEBUG(...) {printf(BLUE); do{printf("[debug] %s:%d %s(): ", __REL_FILE__, __LINE__, __func__); \
             printf(__VA_ARGS__);} while(0); printf(RESET);}
-    #endif
+#endif
 #endif
 
 //-- CD_****_NO_HEADER defines.
 #if defined ( CD_HIDE_ERROR )
-    #define CD_ERROR_NO_HEADER(...)
-#else 
-    #define CD_ERROR_NO_HEADER(...) {fprintf(stderr,RED); fprintf(stderr, __VA_ARGS__); fprintf(stderr,RESET);}
+#define CD_ERROR_NO_HEADER(...)
+#else
+#define CD_ERROR_NO_HEADER(...) {fprintf(stderr,RED); fprintf(stderr, __VA_ARGS__); fprintf(stderr,RESET);}
 #endif
 
 #if defined ( CD_HIDE_WARNING )
-    #define CD_WARNING_NO_HEADER(...)
-#else 
-    #define CD_WARNING_NO_HEADER(...) {fprintf(stderr,YELLOW); fprintf(stderr, __VA_ARGS__); fprintf(stderr,RESET);}
+#define CD_WARNING_NO_HEADER(...)
+#else
+#define CD_WARNING_NO_HEADER(...) {fprintf(stderr,YELLOW); fprintf(stderr, __VA_ARGS__); fprintf(stderr,RESET);}
 #endif
 
 #if defined ( CD_HIDE_SUCCESS )
-    #define CD_SUCCESS_NO_HEADER(...)
-#else 
-    #define CD_SUCCESS_NO_HEADER(...) {printf(GREEN); printf(__VA_ARGS__); printf(RESET);}
+#define CD_SUCCESS_NO_HEADER(...)
+#else
+#define CD_SUCCESS_NO_HEADER(...) {printf(GREEN); printf(__VA_ARGS__); printf(RESET);}
 #endif
 
 #if defined ( CD_HIDE_INFO )
-    #define CD_INFO_NO_HEADER(...)
-#else 
-    #define CD_INFO_NO_HEADER(...) {printf(__VA_ARGS__);}
+#define CD_INFO_NO_HEADER(...)
+#else
+#define CD_INFO_NO_HEADER(...) {printf(__VA_ARGS__);}
 #endif
 
 #if defined ( CD_HIDE_DEBUG )
-    #define CD_DEBUG_NO_HEADER(...)
-#else 
-    #define CD_DEBUG_NO_HEADER(...) {printf(BLUE); printf(__VA_ARGS__); printf(RESET);}
+#define CD_DEBUG_NO_HEADER(...)
+#else
+#define CD_DEBUG_NO_HEADER(...) {printf(BLUE); printf(__VA_ARGS__); printf(RESET);}
 #endif
 
 //-- ------------------------ \end Real macros ------------------------ --//

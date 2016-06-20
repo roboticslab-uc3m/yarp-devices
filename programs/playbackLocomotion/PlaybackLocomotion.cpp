@@ -9,7 +9,8 @@ namespace teo
 PlaybackLocomotion::PlaybackLocomotion() { }
 
 /************************************************************************/
-bool PlaybackLocomotion::configure(yarp::os::ResourceFinder &rf) {
+bool PlaybackLocomotion::configure(yarp::os::ResourceFinder &rf)
+{
 
     int ptModeMs = rf.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
     CD_INFO("Using ptModeMs: %d (default: %d).\n",ptModeMs,int(DEFAULT_PT_MODE_MS));
@@ -20,7 +21,8 @@ bool PlaybackLocomotion::configure(yarp::os::ResourceFinder &rf) {
     std::string fileName = rf.check("file",yarp::os::Value(DEFAULT_FILE_NAME),"file name").asString();
     CD_INFO("Using file: %s (default: " DEFAULT_FILE_NAME ").\n",fileName.c_str());
     playbackThread.ifs.open( fileName.c_str() );
-    if( ! playbackThread.ifs.is_open() ) {
+    if( ! playbackThread.ifs.is_open() )
+    {
         CD_ERROR("Could not open file: %s.\n",fileName.c_str());
         return false;
     }
@@ -30,7 +32,8 @@ bool PlaybackLocomotion::configure(yarp::os::ResourceFinder &rf) {
     std::string leftLegIni = rf.findFileByName("../locomotion/leftLeg.ini");
 
     yarp::os::Property leftLegOptions;
-    if (! leftLegOptions.fromConfigFile(leftLegIni) ) {  //-- Put first because defaults to wiping out.
+    if (! leftLegOptions.fromConfigFile(leftLegIni) )    //-- Put first because defaults to wiping out.
+    {
         CD_ERROR("Could not configure from \"leftLeg.ini\".\n");
         return false;
     }
@@ -42,8 +45,9 @@ bool PlaybackLocomotion::configure(yarp::os::ResourceFinder &rf) {
     if (rf.check("reset")) leftLegOptions.put("reset",1);
 
     leftLegDevice.open(leftLegOptions);
-    
-    if (!leftLegDevice.isValid()) {
+
+    if (!leftLegDevice.isValid())
+    {
         CD_ERROR("leftLegDevice instantiation not worked.\n");
         CD_ERROR("Be sure CMake \"ENABLE_LocomotionYarp_CanBusControlboard\" variable is set \"ON\"\n");
         CD_ERROR("\"SKIP_CanBusControlboard is set\" --> should be --> \"ENABLE_CanBusControlboard is set\"\n");
@@ -55,7 +59,8 @@ bool PlaybackLocomotion::configure(yarp::os::ResourceFinder &rf) {
     std::string rightLegIni = rf.findFileByName("../locomotion/rightLeg.ini");
 
     yarp::os::Property rightLegOptions;
-    if (! rightLegOptions.fromConfigFile(rightLegIni) ) {  //-- Put first because defaults to wiping out.
+    if (! rightLegOptions.fromConfigFile(rightLegIni) )    //-- Put first because defaults to wiping out.
+    {
         CD_ERROR("Could not configure from \"rightLeg.ini\".\n");
         return false;
     }
@@ -68,7 +73,8 @@ bool PlaybackLocomotion::configure(yarp::os::ResourceFinder &rf) {
 
     rightLegDevice.open(rightLegOptions);
 
-    if (!rightLegDevice.isValid()) {
+    if (!rightLegDevice.isValid())
+    {
         CD_ERROR("rightLegDevice instantiation not worked.\n");
         CD_ERROR("Be sure CMake \"ENABLE_LocomotionYarp_CanBusControlboard\" variable is set \"ON\"\n");
         CD_ERROR("\"SKIP_CanBusControlboard is set\" --> should be --> \"ENABLE_CanBusControlboard is set\"\n");
@@ -79,25 +85,29 @@ bool PlaybackLocomotion::configure(yarp::os::ResourceFinder &rf) {
     //-- Configure the thread.
 
     //-- Obtain manipulator interfaces.
-    if ( ! leftLegDevice.view( playbackThread.leftLegPos ) ) {
+    if ( ! leftLegDevice.view( playbackThread.leftLegPos ) )
+    {
         CD_ERROR("Could not obtain leftLegPos.\n");
         return false;
     }
     CD_SUCCESS("Obtained leftLegPos.\n");
 
-    if ( ! leftLegDevice.view( playbackThread.leftLegPosDirect ) ) {
+    if ( ! leftLegDevice.view( playbackThread.leftLegPosDirect ) )
+    {
         CD_ERROR("Could not obtain leftLegPosDirect.\n");
         return false;
     }
     CD_SUCCESS("Obtained leftLegPosDirect.\n");
 
-    if ( ! rightLegDevice.view( playbackThread.rightLegPos ) ) {
+    if ( ! rightLegDevice.view( playbackThread.rightLegPos ) )
+    {
         CD_ERROR("Could not obtain leftLegPos.\n");
         return false;
     }
     CD_SUCCESS("Obtained rightLegPos.\n");
 
-    if ( ! rightLegDevice.view( playbackThread.rightLegPosDirect ) ) {
+    if ( ! rightLegDevice.view( playbackThread.rightLegPosDirect ) )
+    {
         CD_ERROR("Could not obtain rightLegPosDirect.\n");
         return false;
     }
@@ -120,8 +130,10 @@ bool PlaybackLocomotion::configure(yarp::os::ResourceFinder &rf) {
 
 /************************************************************************/
 
-bool PlaybackLocomotion::updateModule() {
-    if( ! playbackThread.isRunning() ) {
+bool PlaybackLocomotion::updateModule()
+{
+    if( ! playbackThread.isRunning() )
+    {
         CD_DEBUG("playbackThread not running, so stopping module...\n");
         yarp::os::Time::delay(1);
         this->stopModule();
@@ -133,7 +145,8 @@ bool PlaybackLocomotion::updateModule() {
 
 /************************************************************************/
 
-bool PlaybackLocomotion::close() {
+bool PlaybackLocomotion::close()
+{
 
     playbackThread.stop();
 

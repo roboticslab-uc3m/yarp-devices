@@ -29,29 +29,33 @@ namespace teo
  * @ingroup recordManipulation
  *
  * @brief Records a manipulation movement, generating a manipulation file.
- * 
+ *
  */
-class RecordManipulation : public yarp::os::RFModule {
+class RecordManipulation : public yarp::os::RFModule
+{
 
-    public:
-        RecordManipulation();
-        bool configure(yarp::os::ResourceFinder &rf);
+public:
+    RecordManipulation();
+    bool configure(yarp::os::ResourceFinder &rf);
 
-    protected:
-        yarp::dev::PolyDriver leftArmDevice;
-        yarp::dev::PolyDriver rightArmDevice;
+protected:
+    yarp::dev::PolyDriver leftArmDevice;
+    yarp::dev::PolyDriver rightArmDevice;
 
-        virtual double getPeriod() {return 3.0;}
-        virtual bool updateModule();
-        virtual bool close();
+    virtual double getPeriod()
+    {
+        return 3.0;
+    }
+    virtual bool updateModule();
+    virtual bool close();
     //        virtual bool interruptModule();
     //        virtual int period;
 
-        FILE * filePtr;
+    FILE * filePtr;
 
-        RecordRateThread recordRateThread;
+    RecordRateThread recordRateThread;
 
-        MoveGripperPort moveGripperPort;
+    MoveGripperPort moveGripperPort;
 
 };
 

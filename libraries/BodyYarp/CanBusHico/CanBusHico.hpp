@@ -34,39 +34,40 @@ namespace teo
  * @brief Specifies the HicoCan (hcanpci) behaviour and specifications.
  *
  */
-class CanBusHico : public yarp::dev::DeviceDriver {
+class CanBusHico : public yarp::dev::DeviceDriver
+{
 
-    public:
+public:
 
-        /** Initialize the CAN device.
-         * @param device is the device path, such as "/dev/can0".
-         * @param bitrate is the bitrate, such as BITRATE_100k.
-         * @return true/false on success/failure.
-         */
-        bool open(yarp::os::Searchable& config);
+    /** Initialize the CAN device.
+     * @param device is the device path, such as "/dev/can0".
+     * @param bitrate is the bitrate, such as BITRATE_100k.
+     * @return true/false on success/failure.
+     */
+    bool open(yarp::os::Searchable& config);
 
-        /** Close the CAN device. */
-        bool close();
+    /** Close the CAN device. */
+    bool close();
 
-        /**
-         * Write message to the CAN buffer.
-         * @param id Message's COB-id
-         * @param len Data field length
-         * @param msgData Data to send
-         * @return true/false on success/failure.
-         */
-        bool sendRaw(uint32_t id, uint16_t len, uint8_t * msgData);
+    /**
+     * Write message to the CAN buffer.
+     * @param id Message's COB-id
+     * @param len Data field length
+     * @param msgData Data to send
+     * @return true/false on success/failure.
+     */
+    bool sendRaw(uint32_t id, uint16_t len, uint8_t * msgData);
 
-        /** Read data.
-         * @return Number on got, 0 on timeout, and errno on fail. */
-        int read_timeout(struct can_msg *buf, unsigned int timeout);
+    /** Read data.
+     * @return Number on got, 0 on timeout, and errno on fail. */
+    int read_timeout(struct can_msg *buf, unsigned int timeout);
 
-    protected:
+protected:
 
-        /** CAN file descriptor */
-        int fileDescriptor;
+    /** CAN file descriptor */
+    int fileDescriptor;
 
-        yarp::os::Semaphore canBusReady;
+    yarp::os::Semaphore canBusReady;
 
 };
 

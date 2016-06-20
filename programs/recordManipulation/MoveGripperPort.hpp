@@ -19,17 +19,18 @@ namespace teo
  * @brief Opens a yarp::os::Port for controlling two robot grippers.
  *
  */
-class MoveGripperPort : public yarp::os::BufferedPort<yarp::os::Bottle> {
+class MoveGripperPort : public yarp::os::BufferedPort<yarp::os::Bottle>
+{
 
-    public:
+public:
 
-        void setIPositionControl(yarp::dev::IPositionControl *value);
-        yarp::dev::IPositionControl *iPositionControlLeft;
-        yarp::dev::IPositionControl *iPositionControlRight;
+    void setIPositionControl(yarp::dev::IPositionControl *value);
+    yarp::dev::IPositionControl *iPositionControlLeft;
+    yarp::dev::IPositionControl *iPositionControlRight;
 
-    protected:
+protected:
 
-        virtual void onRead(yarp::os::Bottle& in);
+    virtual void onRead(yarp::os::Bottle& in);
 
 };
 

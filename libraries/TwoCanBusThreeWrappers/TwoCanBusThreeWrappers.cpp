@@ -9,9 +9,11 @@ namespace teo
 TwoCanBusThreeWrappers::TwoCanBusThreeWrappers() { }
 
 /************************************************************************/
-bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf) {
+bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf)
+{
 
-    if(rf.check("help")) {
+    if(rf.check("help"))
+    {
         printf("TwoCanBusThreeWrappers options:\n");
         printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
@@ -19,7 +21,7 @@ bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf) {
     }
 
     // Variable that stores the mode when we put --mode flag
-        std::string mode = rf.check("mode",yarp::os::Value("position"),"position/velocity mode").asString();
+    std::string mode = rf.check("mode",yarp::os::Value("position"),"position/velocity mode").asString();
 
     //-- /dev/can0 --
     yarp::os::Bottle devCan0 = rf.findGroup("devCan0");
@@ -29,7 +31,8 @@ bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf) {
     //Appended mode option for optionsDevCan0 (for --mode flag)
     optionsDevCan0.put("mode", mode);
     deviceDevCan0.open(optionsDevCan0);
-    if (!deviceDevCan0.isValid()) {
+    if (!deviceDevCan0.isValid())
+    {
         CD_ERROR("deviceDevCan0 instantiation not worked.\n");
         return false;
     }
@@ -42,7 +45,8 @@ bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf) {
     //Added mode option for optionsDevCan1 (for --mode flag)
     optionsDevCan1.put("mode", mode);
     deviceDevCan1.open(optionsDevCan1);
-    if (!deviceDevCan1.isValid()) {
+    if (!deviceDevCan1.isValid())
+    {
         CD_ERROR("deviceDevCan1 instantiation not worked.\n");
         return false;
     }
@@ -53,7 +57,8 @@ bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf) {
     yarp::os::Property optionsWrapper0;
     optionsWrapper0.fromString(wrapper0.toString());
     deviceWrapper0.open(optionsWrapper0);
-    if (!deviceWrapper0.isValid()) {
+    if (!deviceWrapper0.isValid())
+    {
         CD_ERROR("deviceWrapper0 instantiation not worked.\n");
         return false;
     }
@@ -64,7 +69,8 @@ bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf) {
     yarp::os::Property optionsWrapper1;
     optionsWrapper1.fromString(wrapper1.toString());
     deviceWrapper1.open(optionsWrapper1);
-    if (!deviceWrapper1.isValid()) {
+    if (!deviceWrapper1.isValid())
+    {
         CD_ERROR("deviceWrapper1 instantiation not worked.\n");
         return false;
     }
@@ -75,7 +81,8 @@ bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf) {
     yarp::os::Property optionsWrapper2;
     optionsWrapper2.fromString(wrapper2.toString());
     deviceWrapper2.open(optionsWrapper2);
-    if (!deviceWrapper2.isValid()) {
+    if (!deviceWrapper2.isValid())
+    {
         CD_ERROR("deviceWrapper2 instantiation not worked.\n");
         return false;
     }
@@ -98,14 +105,16 @@ bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf) {
 
 /************************************************************************/
 
-bool TwoCanBusThreeWrappers::updateModule() {
+bool TwoCanBusThreeWrappers::updateModule()
+{
     //printf("TwoCanBusThreeWrappers alive...\n");
     return true;
 }
 
 /************************************************************************/
 
-bool TwoCanBusThreeWrappers::close() {
+bool TwoCanBusThreeWrappers::close()
+{
     deviceWrapper0.close();
     deviceWrapper1.close();
     deviceWrapper2.close();

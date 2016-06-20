@@ -4,7 +4,8 @@
 
 // ------------------- IControlModeRaw Related ------------------------------------
 
-bool teo::CuiAbsolute::setPositionModeRaw(int j) {
+bool teo::CuiAbsolute::setPositionModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -15,7 +16,8 @@ bool teo::CuiAbsolute::setPositionModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::setVelocityModeRaw(int j) {
+bool teo::CuiAbsolute::setVelocityModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -26,7 +28,8 @@ bool teo::CuiAbsolute::setVelocityModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::setTorqueModeRaw(int j)  {
+bool teo::CuiAbsolute::setTorqueModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -37,7 +40,8 @@ bool teo::CuiAbsolute::setTorqueModeRaw(int j)  {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::setImpedancePositionModeRaw(int j) {
+bool teo::CuiAbsolute::setImpedancePositionModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -48,7 +52,8 @@ bool teo::CuiAbsolute::setImpedancePositionModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::setImpedanceVelocityModeRaw(int j) {
+bool teo::CuiAbsolute::setImpedanceVelocityModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -59,7 +64,8 @@ bool teo::CuiAbsolute::setImpedanceVelocityModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::setOpenLoopModeRaw(int j) {
+bool teo::CuiAbsolute::setOpenLoopModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -70,7 +76,8 @@ bool teo::CuiAbsolute::setOpenLoopModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getControlModeRaw(int j, int *mode) {
+bool teo::CuiAbsolute::getControlModeRaw(int j, int *mode)
+{
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
 
     //-- Check index within range

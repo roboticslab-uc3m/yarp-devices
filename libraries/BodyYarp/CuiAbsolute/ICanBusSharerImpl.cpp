@@ -4,7 +4,8 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::setCanBusPtr(CanBusHico *canDevicePtr) {
+bool teo::CuiAbsolute::setCanBusPtr(CanBusHico *canDevicePtr)
+{
 
     this->canDevicePtr = canDevicePtr;
     CD_SUCCESS("Ok pointer to CAN bus device %d.\n",canId);
@@ -13,45 +14,52 @@ bool teo::CuiAbsolute::setCanBusPtr(CanBusHico *canDevicePtr) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::start() {
+bool teo::CuiAbsolute::start()
+{
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::readyToSwitchOn() {
+bool teo::CuiAbsolute::readyToSwitchOn()
+{
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::switchOn() {
+bool teo::CuiAbsolute::switchOn()
+{
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::enable() {
+bool teo::CuiAbsolute::enable()
+{
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::recoverFromError() {
+bool teo::CuiAbsolute::recoverFromError()
+{
 
     return true;
 }
 
 // ------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::startContinuousPublishing(uint8_t delay){
+bool teo::CuiAbsolute::startContinuousPublishing(uint8_t delay)
+{
     // -- start message
     uint8_t msgData[3] = {0x01, 0x01, delay};
-    if( ! send(0 , 3, msgData) ) { // -- primer campo "cob" lo dejamos a 0 (este campo resulta desconocido para nosotros)
+    if( ! send(0 , 3, msgData) )   // -- primer campo "cob" lo dejamos a 0 (este campo resulta desconocido para nosotros)
+    {
         CD_ERROR("Could not send \"startContinuousPublishing\" to Cui Absolute Encoders.\n");
         return false;
     }
@@ -61,10 +69,12 @@ bool teo::CuiAbsolute::startContinuousPublishing(uint8_t delay){
 
 // ------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::startPullPublishing(){
+bool teo::CuiAbsolute::startPullPublishing()
+{
 
     uint8_t msgData[3] = {0x01, 0x02, 0x00}; // -- Comienza a publicar mensajes en modo pulling (modo 2) sin delay
-    if( ! send(0, 3, msgData) ) { // -- utilizaremos la funcion "send" por ser una funcion publica en vez de la funcion privada sendRaw
+    if( ! send(0, 3, msgData) )   // -- utilizaremos la funcion "send" por ser una funcion publica en vez de la funcion privada sendRaw
+    {
         CD_ERROR("Could not send \"startPullPublishing\" to Cui Absolute Encoders.\n");
         return false;
     }
@@ -74,10 +84,12 @@ bool teo::CuiAbsolute::startPullPublishing(){
 
 // ------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::stopPublishingMessages(){
+bool teo::CuiAbsolute::stopPublishingMessages()
+{
 
     uint8_t msgData[3] = {0x02, 0x01, 0x00}; // -- Para de publicar mensajes
-    if( ! send(0, 3, msgData) ) {
+    if( ! send(0, 3, msgData) )
+    {
         CD_ERROR("Could not send \"stopPublishingMessages\" to Cui Absolute Encoders. %s\n");
         return false;
     }
@@ -87,7 +99,8 @@ bool teo::CuiAbsolute::stopPublishingMessages(){
 
 // ----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::interpretMessage( can_msg * message) {
+bool teo::CuiAbsolute::interpretMessage( can_msg * message)
+{
 
     //CD_DEBUG("Got absolute encoder value. %s\n",msgToStr(message).c_str());
     float got;

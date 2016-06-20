@@ -5,7 +5,8 @@
 
 // ------------------ Thread Related -----------------------------------------
 
-void teo::CheckCanBus::run() {
+void teo::CheckCanBus::run()
+{
 
 
     CD_INFO("Started CheckCanBus reading thread run.\n");
@@ -13,7 +14,8 @@ void teo::CheckCanBus::run() {
     double threadInitTime = yarp::os::Time::now();
     //double cleaningTime = 2.0;  // -- Convertir en argumento de programa
 
-    while ( ! this->RFModule::isStopping()) { // -- Mientras no se pare el RFModule
+    while ( ! this->RFModule::isStopping())   // -- Mientras no se pare el RFModule
+    {
 
         struct can_msg buffer; // -- Mensaje CAN
 
@@ -27,12 +29,13 @@ void teo::CheckCanBus::run() {
 
         //-- All debugging messages should be contained in read_timeout, so just loop again.
         if( ret <= 0 ) continue; // --  continue para omitir secciones de código e iniciar la siguiente iteración de un bucle
-                                //  --  de esta forma se saltaría el código siguiente hasta que (ret > 0 )
+        //  --  de esta forma se saltaría el código siguiente hasta que (ret > 0 )
 
         int canId = buffer.id  & 0x7F; // -- limpia basura del CAN
 
         //-- Intercept 700h 0 msg that just indicates presence.
-        if( (buffer.id-canId) == 0x700 ) { // -- Filtra mensajes por presencia
+        if( (buffer.id-canId) == 0x700 )   // -- Filtra mensajes por presencia
+        {
             if(firstTime == 0) firstTime = yarp::os::Time::now(); // -- toma el firsTime al detectar la primera presencia
 
             //CD_SUCCESS("Device indicating presence. %s\n",msgToStr(&buffer).c_str());
@@ -41,13 +44,15 @@ void teo::CheckCanBus::run() {
         }
 
         //----------------- Comprueba IDs de encoders (mensajes con otra cabecera) -----------------
-        else {                             // -- En caso de que NO sean mensajes de presencia
+        else                               // -- En caso de que NO sean mensajes de presencia
+        {
             checkIds(&buffer); // -- muestra en pantalla los IDs de los encoders detectados
             // -- Transcurridos los segundos indicados, imprime por pantalla los IDs no detectados
             if(int(yarp::os::Time::now()-firstTime)==timeOut+1)
                 printWronglIds(); // -- Imprime los IDs que no se han utilizado
             // -- 2 segundos después, para el Modulo
-            if(int(yarp::os::Time::now()-firstTime)==timeOut+3) {
+            if(int(yarp::os::Time::now()-firstTime)==timeOut+3)
+            {
                 printf("Happy end :)\n");
                 this->stopModule();
             }

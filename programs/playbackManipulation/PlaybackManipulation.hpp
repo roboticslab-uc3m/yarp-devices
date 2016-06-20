@@ -30,25 +30,29 @@ namespace teo
  * @ingroup playbackManipulation
  *
  * @brief Plays back a manipulation file.
- * 
+ *
  */
-class PlaybackManipulation : public yarp::os::RFModule {
+class PlaybackManipulation : public yarp::os::RFModule
+{
 
-    public:
-        PlaybackManipulation();
-        bool configure(yarp::os::ResourceFinder &rf);
+public:
+    PlaybackManipulation();
+    bool configure(yarp::os::ResourceFinder &rf);
 
-    protected:
-        yarp::dev::PolyDriver leftArmDevice;
-        yarp::dev::PolyDriver rightArmDevice;
+protected:
+    yarp::dev::PolyDriver leftArmDevice;
+    yarp::dev::PolyDriver rightArmDevice;
 
-        virtual double getPeriod() {return 3.0;}
-        virtual bool updateModule();
-        virtual bool close();
+    virtual double getPeriod()
+    {
+        return 3.0;
+    }
+    virtual bool updateModule();
+    virtual bool close();
     //        virtual bool interruptModule();
     //        virtual int period;
 
-        PlaybackThread playbackThread;
+    PlaybackThread playbackThread;
 
 };
 

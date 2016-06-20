@@ -7,7 +7,8 @@ namespace teo
 
 /************************************************************************/
 
-bool PlaybackThread::threadInit() {
+bool PlaybackThread::threadInit()
+{
 
     leftLegDone = false;
     rightLegDone = false;
@@ -17,12 +18,14 @@ bool PlaybackThread::threadInit() {
 }
 
 /************************************************************************/
-void PlaybackThread::run() {
+void PlaybackThread::run()
+{
 
     CD_DEBUG("Begin parsing file.\n" );
     std::string line;
     int lineCount = 1;
-    while( getline( ifs, line) && ( ! this->isStopping() ) ) {
+    while( getline( ifs, line) && ( ! this->isStopping() ) )
+    {
 
         CD_DEBUG("[L:%d] %s\n", lineCount,line.c_str() );
         yarp::os::Bottle lineBottle(line);  //-- yes, using a bottle to parse a string
@@ -31,11 +34,11 @@ void PlaybackThread::run() {
             CD_ERROR("-------------SIZE!!!!!!!!!!!!!\n");
 
         std::vector< double > leftLegOutDoubles( leftLegNumMotors );
-        for(int i=0;i<leftLegNumMotors;i++)
+        for(int i=0; i<leftLegNumMotors; i++)
             leftLegOutDoubles[i] = lineBottle.get(i).asDouble();
 
         std::vector< double > rightLegOutDoubles( rightLegNumMotors );
-        for(int i=0;i<rightLegNumMotors;i++)
+        for(int i=0; i<rightLegNumMotors; i++)
             rightLegOutDoubles[i] = lineBottle.get(leftLegNumMotors+i).asDouble();
 
         leftLegPosDirect->setPositions( leftLegOutDoubles.data() );
@@ -46,7 +49,8 @@ void PlaybackThread::run() {
     CD_DEBUG("End parsing file.\n" );
 
 
-    while( (! leftLegDone) &&  ( ! this->isStopping() )) {
+    while( (! leftLegDone) &&  ( ! this->isStopping() ))
+    {
         CD_INFO("Left Leg not done!\n");
         leftLegPos->checkMotionDone(&leftLegDone);
         yarp::os::Time::delay(0.1);  //-- [s]
@@ -54,7 +58,8 @@ void PlaybackThread::run() {
     if( this->isStopping() ) return;
     CD_INFO("Left Leg done!\n");
 
-    while( (! rightLegDone) &&  ( ! this->isStopping() )) {
+    while( (! rightLegDone) &&  ( ! this->isStopping() ))
+    {
         CD_INFO("Right Leg not done!\n");
         rightLegPos->checkMotionDone(&rightLegDone);
         yarp::os::Time::delay(0.1);  //-- [s]
@@ -62,8 +67,10 @@ void PlaybackThread::run() {
     if( this->isStopping() ) return;
     CD_DEBUG("Right Leg done!\n");
 
-    if( this->hold ) {
-        while ( ! this->isStopping() ) {
+    if( this->hold )
+    {
+        while ( ! this->isStopping() )
+        {
             CD_INFO("\"--hold\" activated, press CTRL-C to release hold...\n");
             yarp::os::Time::delay(1);  //-- [s]
         }

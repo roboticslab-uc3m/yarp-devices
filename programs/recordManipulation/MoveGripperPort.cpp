@@ -6,19 +6,23 @@ namespace teo
 {
 
 /************************************************************************/
-void MoveGripperPort::onRead(yarp::os::Bottle &in) {
+void MoveGripperPort::onRead(yarp::os::Bottle &in)
+{
 
-    if( in.size() != 4 ) {
+    if( in.size() != 4 )
+    {
         CD_ERROR("Only '[set] [pos] axis ref' for now\n");
         return;
     }
 
-    if( (in.get(0).asVocab() != VOCAB_SET) || (in.get(0).asString() != "set")  ) {
+    if( (in.get(0).asVocab() != VOCAB_SET) || (in.get(0).asString() != "set")  )
+    {
         CD_ERROR("Only '[set] [pos] axis ref' for now\n");
         return;
     }
 
-    if( (in.get(1).asVocab() != VOCAB_POSITION) || (in.get(1).asString() != "pos")  ) {
+    if( (in.get(1).asVocab() != VOCAB_POSITION) || (in.get(1).asString() != "pos")  )
+    {
         CD_ERROR("Only '[set] [pos] axis ref' for now\n");
         return;
     }

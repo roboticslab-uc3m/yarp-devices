@@ -4,7 +4,8 @@
 
 // ------------------- IControlLimitsRaw Related ------------------------------------
 
-bool teo::CuiAbsolute::setLimitsRaw(int axis, double min, double max) {
+bool teo::CuiAbsolute::setLimitsRaw(int axis, double min, double max)
+{
     CD_INFO("(%d,%f,%f)\n",axis,min,max);
 
     //-- Check index within range
@@ -19,7 +20,8 @@ bool teo::CuiAbsolute::setLimitsRaw(int axis, double min, double max) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getLimitsRaw(int axis, double *min, double *max) {
+bool teo::CuiAbsolute::getLimitsRaw(int axis, double *min, double *max)
+{
     CD_INFO("(%d)\n",axis);
 
     //-- Check index within range

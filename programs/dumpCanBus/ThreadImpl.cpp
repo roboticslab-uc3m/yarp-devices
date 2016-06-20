@@ -4,11 +4,13 @@
 
 // ------------------ Thread Related -----------------------------------------
 
-void teo::DumpCanBus::run() {
+void teo::DumpCanBus::run()
+{
 
     CD_INFO("Started DumpCanBus reading thread run.\n");
 
-    while ( ! this->RFModule::isStopping() ) {
+    while ( ! this->RFModule::isStopping() )
+    {
 
         struct can_msg buffer;
 
@@ -24,7 +26,8 @@ void teo::DumpCanBus::run() {
         //CD_DEBUG("Read ok. %s\n", msgToStr(&buffer).c_str());
 
         //-- Intercept 700h 0 msg that just indicates presence.
-        if( (buffer.id-canId) == 0x700 ) {
+        if( (buffer.id-canId) == 0x700 )
+        {
             CD_SUCCESS("Device indicating presence. %s\n",msgToStr(&buffer).c_str());
             continue;
         }

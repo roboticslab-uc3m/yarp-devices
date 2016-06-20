@@ -4,7 +4,8 @@
 
 // ------------------- IControlModeRaw Related ------------------------------------
 
-bool teo::LacqueyFetch::setPositionModeRaw(int j) {
+bool teo::LacqueyFetch::setPositionModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -15,7 +16,8 @@ bool teo::LacqueyFetch::setPositionModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setVelocityModeRaw(int j) {
+bool teo::LacqueyFetch::setVelocityModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -26,7 +28,8 @@ bool teo::LacqueyFetch::setVelocityModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setTorqueModeRaw(int j)  {
+bool teo::LacqueyFetch::setTorqueModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -37,7 +40,8 @@ bool teo::LacqueyFetch::setTorqueModeRaw(int j)  {
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setImpedancePositionModeRaw(int j) {
+bool teo::LacqueyFetch::setImpedancePositionModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -48,7 +52,8 @@ bool teo::LacqueyFetch::setImpedancePositionModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setImpedanceVelocityModeRaw(int j) {
+bool teo::LacqueyFetch::setImpedanceVelocityModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -59,7 +64,8 @@ bool teo::LacqueyFetch::setImpedanceVelocityModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setOpenLoopModeRaw(int j) {
+bool teo::LacqueyFetch::setOpenLoopModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -70,7 +76,8 @@ bool teo::LacqueyFetch::setOpenLoopModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getControlModeRaw(int j, int *mode) {
+bool teo::LacqueyFetch::getControlModeRaw(int j, int *mode)
+{
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
 
     //-- Check index within range

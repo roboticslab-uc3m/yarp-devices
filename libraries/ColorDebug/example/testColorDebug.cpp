@@ -10,7 +10,8 @@
 
 #include "../ColorDebug.hpp"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 
     CD_ERROR("Test CD_ERROR.\n");
     CD_WARNING("Test CD_WARNING.\n");
