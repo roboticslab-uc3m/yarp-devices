@@ -11,7 +11,7 @@
 #include "ICanBusSharer.h"
 #include "TechnosoftIpos.hpp"  //-- ok practice?
 
-#define CAN_ID 24
+#define CAN_ID 124
 
 YARP_DECLARE_PLUGINS(BodyYarp)
 
@@ -48,7 +48,7 @@ public:
         //yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 15) (min -45) (max 70) (tr 160) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal right arm
         //yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 6) (min -90) (max 90) (tr 400) (refAcceleration 0.575) (refSpeed 5.0)"); // -- axial right leg
         //yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 2) (min -25) (max 25) (tr 270.4) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal right ankle (tobillo)
-        yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 24) (min -100) (max 10) (tr 160) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal left elbow (codo)
+        yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 124) (min -100) (max 10) (tr 160) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal left elbow (codo)
 
         bool ok2 = true;
         ok2 &= canNodeDevice.open( TechnosoftIposConf );   // -- we introduce the configuration properties defined ........
@@ -128,8 +128,8 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetPresencewithReset) // -- we call th
     int ret = 0;
 
     // -- doing reset of node after delay
-    yarp::os::Time::delay(2);
-    technosoftIpos->resetNode();
+    yarp::os::Time::delay(1);
+    technosoftIpos->resetNode(canId);
 
 
     //-- Blocking read until we get a message from the expected canId
@@ -179,13 +179,15 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetPresence) // -- we call the class t
  ************************************************************************************/
 // -- Set Ref Aceleration Raw
 // idea: getControlMode (Juan)
-/*
+
 TEST_F( TechnosoftIposTest, TechnosoftIposSetRefAccelerationRaw )
 {
     int canId = 0;
     int ret = 0;
 
+    yarp::os::Time::delay(1);
     //-- Set initial parameter on physical motor driver.
+    // --( implemented in Technosoftipos->IPositionControlRawImpl.cpp)
     bool ok = iPositionControlRaw->setRefAccelerationRaw( 0, 0.575 );  //-- ok corresponds to send (not read)
     ASSERT_TRUE( ok );
 
@@ -207,6 +209,8 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetRefAccelerationRaw )
 
 
 }
+
+/*
 
 
 // -- Set Ref Speed Raw

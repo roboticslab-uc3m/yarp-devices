@@ -96,6 +96,7 @@ bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf)
     yarp::dev::PolyDriverList list;
     list.push(&deviceDevCan0, "devCan0");
     list.push(&deviceDevCan1, "devCan1");
+
     iWrapper0->attachAll(list);
     iWrapper1->attachAll(list);
     iWrapper2->attachAll(list);
