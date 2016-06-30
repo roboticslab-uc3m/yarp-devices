@@ -57,7 +57,7 @@ bool teo::CuiAbsolute::recoverFromError()
 bool teo::CuiAbsolute::startContinuousPublishing(uint8_t delay)
 {
     // -- start message
-    uint8_t msgData[8] = {0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    uint8_t msgData[8] = {0x01, 0x01, delay, 0x00, 0x00, 0x00, 0x00, 0x00};
     if( ! send(0 , 8, msgData) )   // -- primer campo "cob" lo dejamos a 0 (este campo resulta desconocido para nosotros)
     {
         CD_ERROR("Could not send \"startContinuousPublishing\" to Cui Absolute Encoders.\n");
