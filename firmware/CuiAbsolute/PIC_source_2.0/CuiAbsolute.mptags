@@ -1,0 +1,490 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.5.4	//
+!_TAG_REVISION_NAME	MCHPTags	//
+!_TAG_REVISION_VERSION	6.0.1	//
+B0::2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	925;"	d	line:925
+B0CON_RXFUL::B0CONbits.RXFUL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1486;"	d	line:1486
+B0CON_RXFUL::B0RXFUL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1618;"	d	line:1618
+B0CON_RXM1::B0CONbits.RXM1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1479;"	d	line:1479
+B0CON_RXM1::B0RXM1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1625;"	d	line:1625
+B0CON_TXREQ::B0CONbits.TXREQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1472;"	d	line:1472
+B0CON_TXREQ::B0TXREQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1611;"	d	line:1611
+B1::3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	926;"	d	line:926
+B1CON_RXFUL::B1CONbits.RXFUL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1487;"	d	line:1487
+B1CON_RXFUL::B1RXFUL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1619;"	d	line:1619
+B1CON_RXM1::B1CONbits.RXM1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1480;"	d	line:1480
+B1CON_RXM1::B1RXM1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1626;"	d	line:1626
+B1CON_TXREQ::B1CONbits.TXREQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1473;"	d	line:1473
+B1CON_TXREQ::B1TXREQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1612;"	d	line:1612
+B2::4	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	927;"	d	line:927
+B2CON_RXFUL::B2CONbits.RXFUL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1488;"	d	line:1488
+B2CON_RXFUL::B2RXFUL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1620;"	d	line:1620
+B2CON_RXM1::B2CONbits.RXM1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1481;"	d	line:1481
+B2CON_RXM1::B2RXM1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1627;"	d	line:1627
+B2CON_TXREQ::B2CONbits.TXREQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1474;"	d	line:1474
+B2CON_TXREQ::B2TXREQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1613;"	d	line:1613
+B3::5	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	928;"	d	line:928
+B3CON_RXFUL::B3CONbits.RXFUL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1489;"	d	line:1489
+B3CON_RXFUL::B3RXFUL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1621;"	d	line:1621
+B3CON_RXM1::B3CONbits.RXM1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1482;"	d	line:1482
+B3CON_RXM1::B3RXM1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1628;"	d	line:1628
+B3CON_TXREQ::B3CONbits.TXREQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1475;"	d	line:1475
+B3CON_TXREQ::B3TXREQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1614;"	d	line:1614
+B4::6	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	929;"	d	line:929
+B4CON_RXFUL::B4CONbits.RXFUL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1490;"	d	line:1490
+B4CON_RXFUL::B4RXFUL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1622;"	d	line:1622
+B4CON_RXM1::B4CONbits.RXM1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1483;"	d	line:1483
+B4CON_RXM1::B4RXM1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1629;"	d	line:1629
+B4CON_TXREQ::B4CONbits.TXREQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1476;"	d	line:1476
+B4CON_TXREQ::B4TXREQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1615;"	d	line:1615
+B5::7	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	930;"	d	line:930
+B5CON_RXFUL::B5CONbits.RXFUL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1491;"	d	line:1491
+B5CON_RXFUL::B5RXFUL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1623;"	d	line:1623
+B5CON_RXM1::B5CONbits.RXM1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1484;"	d	line:1484
+B5CON_RXM1::B5RXM1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1630;"	d	line:1630
+B5CON_TXREQ::B5CONbits.TXREQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1477;"	d	line:1477
+B5CON_TXREQ::B5TXREQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1616;"	d	line:1616
+BOOL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	77;"	t	line:77
+BRGCON2_SAM::BRGCON2bits.SAM	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1349;"	d	line:1349
+BRGCON2_SAM::SAM	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1687;"	d	line:1687
+BRGCON2_SEG2PHTS::BRGCON2bits.SEG2PHTS	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1348;"	d	line:1348
+BRGCON2_SEG2PHTS::SEG2PHT	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1686;"	d	line:1686
+BRGCON3_WAKDIS::BRGCON3bits.WAKDIS	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1350;"	d	line:1350
+BRGCON3_WAKDIS::WAKDIS	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1688;"	d	line:1688
+BRGCON3_WAKFIL::BRGCON3bits.WAKFIL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1351;"	d	line:1351
+BRGCON3_WAKFIL::WAKFIL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1689;"	d	line:1689
+BSEL0_B0TXEN::B0TXEN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1511;"	d	line:1511
+BSEL0_B0TXEN::BSEL0bits.B0TXEN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1374;"	d	line:1374
+BSEL0_B1TXEN::B1TXEN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1512;"	d	line:1512
+BSEL0_B1TXEN::BSEL0bits.B1TXEN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1375;"	d	line:1375
+BSEL0_B2TXEN::B2TXEN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1513;"	d	line:1513
+BSEL0_B2TXEN::BSEL0bits.B2TXEN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1376;"	d	line:1376
+BSEL0_B3TXEN::B3TXEN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1514;"	d	line:1514
+BSEL0_B3TXEN::BSEL0bits.B3TXEN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1377;"	d	line:1377
+BSEL0_B4TXEN::B4TXEN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1515;"	d	line:1515
+BSEL0_B4TXEN::BSEL0bits.B4TXEN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1378;"	d	line:1378
+BSEL0_B5TXEN::B5TXEN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1516;"	d	line:1516
+BSEL0_B5TXEN::BSEL0bits.B5TXEN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1379;"	d	line:1379
+BYTE	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	78;"	t	line:78
+BYTE_VAL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	94;"	t	line:94
+CANCON_ABAT::ABAT	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1505;"	d	line:1505
+CANCON_ABAT::CANCONbits.ABAT	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1362;"	d	line:1362
+CIOCON_CANCAP::CANCAP	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1692;"	d	line:1692
+CIOCON_CANCAP::CIOCONbits.CANCAP	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1354;"	d	line:1354
+CIOCON_ENDRHI::CIOCONbits.ENDRHI	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1353;"	d	line:1353
+CIOCON_ENDRHI::ENDRHI	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1691;"	d	line:1691
+COMSTAT_FIFOEMPTY::COMSTATbits.FIFOEMPTY	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1345;"	d	line:1345
+COMSTAT_FIFOEMPTY::FIFOEMPTY	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1681;"	d	line:1681
+COMSTAT_RXB0OVFL::COMSTATbits.RXB0OVFL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1344;"	d	line:1344
+COMSTAT_RXB0OVFL::RXB0OVFL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1683;"	d	line:1683
+COMSTAT_RXB1OVFL::COMSTATbits.RXB1OVFL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1346;"	d	line:1346
+COMSTAT_RXB1OVFL::RXB1OVFL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1684;"	d	line:1684
+COMSTAT_RXBP::COMSTATbits.RXBP	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1342;"	d	line:1342
+COMSTAT_RXBP::RXBP	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1504;"	d	line:1504
+COMSTAT_RXBnOVFL::COMSTATbits.RXB1OVFL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1343;"	d	line:1343
+COMSTAT_RXBnOVFL::RXB1OVFL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1682;"	d	line:1682
+COMSTAT_TXB0::COMSTATbits.TXB0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1340;"	d	line:1340
+COMSTAT_TXB0::TXB0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1502;"	d	line:1502
+COMSTAT_TXBP::COMSTATbits.TXBP	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1341;"	d	line:1341
+COMSTAT_TXBP::TXBP	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1503;"	d	line:1503
+ECANAbortAll::(CANCON_ABAT=1)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1174;"	d	line:1174
+ECANCON_MDSEL0::ECANCONbits.MDSEL0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1497;"	d	line:1497
+ECANCON_MDSEL0::MDSEL0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1679;"	d	line:1679
+ECANCON_MDSEL1::ECANCONbits.MDSEL1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1496;"	d	line:1496
+ECANCON_MDSEL1::MDSEL1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1678;"	d	line:1678
+ECANDisableCANTX2::CIOCON_TX2EN=0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	633;"	d	line:633
+ECANGetFilterHitInfo::(_ECANRxFilterHitInfo.Val)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	339;"	d	line:339
+ECANGetFunctionalMode::(ECANCON&0b11000000)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	486;"	d	line:486
+ECANGetOperationMode::(CANCON&ECAN_OP_MODE_BITS)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	433;"	d	line:433
+ECANGetRxErrorCount::(RXERRCNT)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1101;"	d	line:1101
+ECANGetTxErrorCount::(TXERRCNT)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1083;"	d	line:1083
+ECANInitialize	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	144;"	p	line:144	signature:(void)
+ECANIsAllAborted::(CANCON_ABAT)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1192;"	d	line:1192
+ECANIsBusOff::(COMSTAT_TXB0)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1120;"	d	line:1120
+ECANIsRxPassive::(COMSTAT_RXBP)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1157;"	d	line:1157
+ECANIsTxPassive::(COMSTAT_TXBP)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1139;"	d	line:1139
+ECANLinkRXF0F1ToBuffer::(RXF0Buffer,RXF1Buffer)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1232;"	d	line:1232
+ECANLinkRXF0Thru3ToMask::(m0,m1,m2,m3)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1281;"	d	line:1281
+ECANLinkRXF10F11ToBuffer::(RXF10Buffer,RXF11Buffer)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1242;"	d	line:1242
+ECANLinkRXF12F13ToBuffer::(RXF12Buffer,RXF13Buffer)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1244;"	d	line:1244
+ECANLinkRXF12Thru15ToMask::(m12,m13,m14,m15)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1287;"	d	line:1287
+ECANLinkRXF14F15ToBuffer::(RXF14Buffer,RXF15Buffer)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1246;"	d	line:1246
+ECANLinkRXF2F3ToBuffer::(RXF2Buffer,RXF3Buffer)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1234;"	d	line:1234
+ECANLinkRXF4F5ToBuffer::(RXF4Buffer,RXF5Buffer)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1236;"	d	line:1236
+ECANLinkRXF4Thru7ToMask::(m4,m5,m6,m7)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1283;"	d	line:1283
+ECANLinkRXF6F7ToBuffer::(RXF6Buffer,RXF7Buffer)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1238;"	d	line:1238
+ECANLinkRXF8F9ToBuffer::(RXF8Buffer,RXF9Buffer)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1240;"	d	line:1240
+ECANLinkRXF8Thru11ToMask::(m8,m9,m10,m11)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1285;"	d	line:1285
+ECANLoadRTRBuffer	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	243;"	p	line:243	signature:(BYTE buffer, unsigned long id, BYTE *data, BYTE dataLen, BYTE type)
+ECANReceiveMessage	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	312;"	p	line:312	signature:( unsigned long* id, BYTE *Data, BYTE *DataLen, ECAN_RX_MSG_FLAGS *MsgFlags)
+ECANSendMessage	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	205;"	p	line:205	signature:( unsigned long id, BYTE *data, BYTE dataLen, ECAN_TX_MSG_FLAGS msgFlags)
+ECANSetB0AutoRTRMode::(mode)B0CON_RTREN=mode;	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	722;"	d	line:722
+ECANSetB1AutoRTRMode::(mode)B1CON_RTREN=mode;	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	724;"	d	line:724
+ECANSetB2AutoRTRMode::(mode)B2CON_RTREN=mode;	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	726;"	d	line:726
+ECANSetB3AutoRTRMode::(mode)B3CON_RTREN=mode;	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	728;"	d	line:728
+ECANSetB4AutoRTRMode::(mode)B4CON_RTREN=mode;	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	730;"	d	line:730
+ECANSetB5AutoRTRMode::(mode)B5CON_RTREN=mode;	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	732;"	d	line:732
+ECANSetBaudRate::(sjw,brp,phseg1,phseg2,propseg	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1323;"	d	line:1323
+ECANSetBnRxMode::(buffer,mode)##buffer##CON_RXM	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1064;"	d	line:1064
+ECANSetBnTxRxMode::(buffer,mode)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	920;"	d	line:920
+ECANSetBusSampleMode::(mode)BRGCON2_SAM=mode	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	509;"	d	line:509
+ECANSetCANTX2Mode::(mode)CIOCON_TX2SRC=mode<<7;	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	612;"	d	line:612
+ECANSetCaptureMode::(mode)CIOCON_CANCAP=mode	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	658;"	d	line:658
+ECANSetFilterMode::(mode)BRGCON3_WAKFIL=mode	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	560;"	d	line:560
+ECANSetFunctionalMode::(mode)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	460;"	d	line:460
+ECANSetOperationMode	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	384;"	p	line:384	signature:(ECAN_OP_MODE mode)
+ECANSetOperationModeNoWait::(mode)CANCON=mode	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	415;"	d	line:415
+ECANSetPHSEG2Mode::(mode)BRGCON2_SEG2PHTS=mode	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	684;"	d	line:684
+ECANSetRXB0DblBuffer::(mode)RXB0CON_RXB0DBEN=mode	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	967;"	d	line:967
+ECANSetRXF0Value::(val,type)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	808;"	d	line:808
+ECANSetRXF10Value::(val,type)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	851;"	d	line:851
+ECANSetRXF11Value::(val,type)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	855;"	d	line:855
+ECANSetRXF12Value::(val,type)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	859;"	d	line:859
+ECANSetRXF13Value::(val,type)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	863;"	d	line:863
+ECANSetRXF14Value::(val,type)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	867;"	d	line:867
+ECANSetRXF15Value::(val,type)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	871;"	d	line:871
+ECANSetRXF1Value::(val,type)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	812;"	d	line:812
+ECANSetRXF2Value::(val,type)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	816;"	d	line:816
+ECANSetRXF3Value::(val,type)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	820;"	d	line:820
+ECANSetRXF4Value::(val,type)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	824;"	d	line:824
+ECANSetRXF5Value::(val,type)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	828;"	d	line:828
+ECANSetRXF6Value::(val,type)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	835;"	d	line:835
+ECANSetRXF7Value::(val,type)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	839;"	d	line:839
+ECANSetRXF8Value::(val,type)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	843;"	d	line:843
+ECANSetRXF9Value::(val,type)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	847;"	d	line:847
+ECANSetRXM0Value::(val,type)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	771;"	d	line:771
+ECANSetRXM1Value::(val,type)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	773;"	d	line:773
+ECANSetRxBnRxMode::(buffer,mode)	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1014;"	d	line:1014
+ECANSetTxDriveMode::(mode)CIOCON_ENDRHI=mode	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	585;"	d	line:585
+ECANSetWakeupMode::(mode)BRGCON3_WAKDIS=mode	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	535;"	d	line:535
+ECAN_AUTORTR_MODE_DISABLE::0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	735;"	d	line:735
+ECAN_AUTORTR_MODE_ENABLE::1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	736;"	d	line:736
+ECAN_BUFFER_RX::0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	935;"	d	line:935
+ECAN_BUFFER_TX::1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	936;"	d	line:936
+ECAN_BUS_SAMPLE_MODE_ONCE::0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	511;"	d	line:511
+ECAN_BUS_SAMPLE_MODE_THRICE::1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	512;"	d	line:512
+ECAN_CAPTURE_MODE_DISABLE::0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	660;"	d	line:660
+ECAN_CAPTURE_MODE_ENABLE::1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	661;"	d	line:661
+ECAN_DBL_BUFFER_MODE_DISABLE::0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	970;"	d	line:970
+ECAN_DBL_BUFFER_MODE_ENABLE::1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	971;"	d	line:971
+ECAN_ENABLE_AUTO_RTR	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	122;"	d	line:122
+ECAN_FILTER_MODE_DISABLE::0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	562;"	d	line:562
+ECAN_FILTER_MODE_ENABLE::1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	563;"	d	line:563
+ECAN_H	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	40;"	d	line:40
+ECAN_INIT_CONFIGURATION::0x80	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	105;"	d	line:105
+ECAN_INIT_DISABLE::0x20	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	106;"	d	line:106
+ECAN_INIT_LISTEN_ONLY::0X60	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	107;"	d	line:107
+ECAN_INIT_LOOPBACK::0x40	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	104;"	d	line:104
+ECAN_INIT_NORMAL::0x00	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	103;"	d	line:103
+ECAN_LIB_MODE_FIXED::0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	97;"	d	line:97
+ECAN_LIB_MODE_RUN_TIME::1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	98;"	d	line:98
+ECAN_MODE_0::0x00	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	463;"	d	line:463
+ECAN_MODE_1::0x40	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	464;"	d	line:464
+ECAN_MODE_2::0x80	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	465;"	d	line:465
+ECAN_MSG_STD::0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	874;"	d	line:874
+ECAN_MSG_XTD::1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	875;"	d	line:875
+ECAN_OP_MODE	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	361;"	t	line:361
+ECAN_OP_MODE_BITS	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	355;"	e	line:355	enum:_ECAN_OP_MODE
+ECAN_OP_MODE_CONFIG	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	360;"	e	line:360	enum:_ECAN_OP_MODE
+ECAN_OP_MODE_LISTEN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	359;"	e	line:359	enum:_ECAN_OP_MODE
+ECAN_OP_MODE_LOOP	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	358;"	e	line:358	enum:_ECAN_OP_MODE
+ECAN_OP_MODE_NORMAL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	356;"	e	line:356	enum:_ECAN_OP_MODE
+ECAN_OP_MODE_SLEEP	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	357;"	e	line:357	enum:_ECAN_OP_MODE
+ECAN_PHSEG2_MODE_AUTOMATIC::0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	686;"	d	line:686
+ECAN_PHSEG2_MODE_PROGRAMMABLE::1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	687;"	d	line:687
+ECAN_RECEIVE_ALL::3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1019;"	d	line:1019
+ECAN_RECEIVE_ALL_VALID::0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1016;"	d	line:1016
+ECAN_RECEIVE_EXTENDED::2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1018;"	d	line:1018
+ECAN_RECEIVE_STANDARD::1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1017;"	d	line:1017
+ECAN_RXFn_DISABLE::0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	110;"	d	line:110
+ECAN_RXFn_ENABLE::1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	109;"	d	line:109
+ECAN_RXM0::0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1290;"	d	line:1290
+ECAN_RXM1::1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1291;"	d	line:1291
+ECAN_RXMF15::2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1292;"	d	line:1292
+ECAN_RX_DBL_BUFFERED	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	275;"	e	line:275	enum:_ECAN_RX_MSG_FLAGS
+ECAN_RX_INVALID_MSG	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	272;"	e	line:272	enum:_ECAN_RX_MSG_FLAGS
+ECAN_RX_MSG_FLAGS	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	276;"	t	line:276
+ECAN_RX_OVERFLOW	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	271;"	e	line:271	enum:_ECAN_RX_MSG_FLAGS
+ECAN_RX_RTR_FRAME	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	274;"	e	line:274	enum:_ECAN_RX_MSG_FLAGS
+ECAN_RX_XTD_FRAME	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	273;"	e	line:273	enum:_ECAN_RX_MSG_FLAGS
+ECAN_TX2_MODE_DISABLE::0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	100;"	d	line:100
+ECAN_TX2_MODE_ENABLE::1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	101;"	d	line:101
+ECAN_TX2_SOURCE_CLOCK::1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	614;"	d	line:614
+ECAN_TX2_SOURCE_COMP::0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	613;"	d	line:613
+ECAN_TXDRIVE_MODE_TRISTATE::0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	587;"	d	line:587
+ECAN_TXDRIVE_MODE_VDD::1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	588;"	d	line:588
+ECAN_TX_FRAME_BIT	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	164;"	e	line:164	enum:_ECAN_TX_MSG_FLAGS
+ECAN_TX_MSG_FLAGS	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	171;"	t	line:171
+ECAN_TX_NO_RTR_FRAME	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	169;"	e	line:169	enum:_ECAN_TX_MSG_FLAGS
+ECAN_TX_PRIORITY_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	159;"	e	line:159	enum:_ECAN_TX_MSG_FLAGS
+ECAN_TX_PRIORITY_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	160;"	e	line:160	enum:_ECAN_TX_MSG_FLAGS
+ECAN_TX_PRIORITY_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	161;"	e	line:161	enum:_ECAN_TX_MSG_FLAGS
+ECAN_TX_PRIORITY_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	162;"	e	line:162	enum:_ECAN_TX_MSG_FLAGS
+ECAN_TX_PRIORITY_BITS	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	158;"	e	line:158	enum:_ECAN_TX_MSG_FLAGS
+ECAN_TX_RTR_BIT	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	168;"	e	line:168	enum:_ECAN_TX_MSG_FLAGS
+ECAN_TX_RTR_FRAME	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	170;"	e	line:170	enum:_ECAN_TX_MSG_FLAGS
+ECAN_TX_STD_FRAME	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	165;"	e	line:165	enum:_ECAN_TX_MSG_FLAGS
+ECAN_TX_XTD_FRAME	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	166;"	e	line:166	enum:_ECAN_TX_MSG_FLAGS
+ECAN_WAKEUP_MODE_DISABLE::1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	538;"	d	line:538
+ECAN_WAKEUP_MODE_ENABLE::0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	537;"	d	line:537
+FALSE	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	77;"	e	line:77	enum:_BOOL
+HITECH_C18	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	45;"	d	line:45
+MCHP_C18	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	47;"	d	line:47
+Orden1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	79;"	v	line:79
+OrdenLon1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	81;"	v	line:81
+PIR3_IRXIF::IRXIF	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1695;"	d	line:1695
+PIR3_IRXIF::PIR3bits.IRXIF	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1360;"	d	line:1360
+PIR3_RXB0IF::PIR3bits.RXB0IF	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1357;"	d	line:1357
+PIR3_RXB0IF::RXB0IF	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1696;"	d	line:1696
+PIR3_RXB1IF::PIR3bits.RXB1IF	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1358;"	d	line:1358
+PIR3_RXB1IF::RXB1IF	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1697;"	d	line:1697
+PIR3_RXBnIF::PIR3bits.RXB1IF	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1356;"	d	line:1356
+PIR3_RXBnIF::RXB1IF	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1694;"	d	line:1694
+RXB0::0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	923;"	d	line:923
+RXB0CON_FILHIT0::RXB0CONbits.FILHIT0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1369;"	d	line:1369
+RXB0CON_FILHIT0::RXB0FILHIT0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1699;"	d	line:1699
+RXB0CON_RXB0DBEN::RXB0CONbits.RXBODBEN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1365;"	d	line:1365
+RXB0CON_RXB0DBEN::RXBODBEN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1703;"	d	line:1703
+RXB0CON_RXFUL::RXB0CONbits.RXFUL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1363;"	d	line:1363
+RXB0CON_RXFUL::RXB0FUL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1506;"	d	line:1506
+RXB0CON_RXM0::RXB0CONbits.RXM0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1371;"	d	line:1371
+RXB0CON_RXM0::RXB0M0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1509;"	d	line:1509
+RXB0CON_RXM1::RXB0CONbits.RXM1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1370;"	d	line:1370
+RXB0CON_RXM1::RXB0M1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1508;"	d	line:1508
+RXB1::1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	924;"	d	line:924
+RXB1CON_RXFUL::RXB1CONbits.RXFUL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1364;"	d	line:1364
+RXB1CON_RXFUL::RXB1CONbits.RXFUL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1644;"	d	line:1644
+RXB1CON_RXFUL::RXB1RXFUL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1670;"	d	line:1670
+RXFBCON0_F0BP_0::F0BP_01	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1539;"	d	line:1539
+RXFBCON0_F0BP_0::RXFBCON0bits.F0BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1400;"	d	line:1400
+RXFBCON0_F0BP_1::F0BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1540;"	d	line:1540
+RXFBCON0_F0BP_1::RXFBCON0bits.F0BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1401;"	d	line:1401
+RXFBCON0_F0BP_2::F0BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1541;"	d	line:1541
+RXFBCON0_F0BP_2::RXFBCON0bits.F0BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1402;"	d	line:1402
+RXFBCON0_F0BP_3::F0BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1542;"	d	line:1542
+RXFBCON0_F0BP_3::RXFBCON0bits.F0BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1403;"	d	line:1403
+RXFBCON0_F1BP_0::F1BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1543;"	d	line:1543
+RXFBCON0_F1BP_0::RXFBCON0bits.F1BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1404;"	d	line:1404
+RXFBCON0_F1BP_1::F1BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1544;"	d	line:1544
+RXFBCON0_F1BP_1::RXFBCON0bits.F1BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1405;"	d	line:1405
+RXFBCON0_F1BP_2::F1BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1545;"	d	line:1545
+RXFBCON0_F1BP_2::RXFBCON0bits.F1BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1406;"	d	line:1406
+RXFBCON0_F1BP_3::F1BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1546;"	d	line:1546
+RXFBCON0_F1BP_3::RXFBCON0bits.F1BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1407;"	d	line:1407
+RXFBCON1_F2BP_0::F2BP_01	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1548;"	d	line:1548
+RXFBCON1_F2BP_0::RXFBCON1bits.F2BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1409;"	d	line:1409
+RXFBCON1_F2BP_1::F2BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1549;"	d	line:1549
+RXFBCON1_F2BP_1::RXFBCON1bits.F2BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1410;"	d	line:1410
+RXFBCON1_F2BP_2::F2BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1550;"	d	line:1550
+RXFBCON1_F2BP_2::RXFBCON1bits.F2BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1411;"	d	line:1411
+RXFBCON1_F2BP_3::F2BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1551;"	d	line:1551
+RXFBCON1_F2BP_3::RXFBCON1bits.F2BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1412;"	d	line:1412
+RXFBCON1_F3BP_0::F3BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1552;"	d	line:1552
+RXFBCON1_F3BP_0::RXFBCON1bits.F3BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1413;"	d	line:1413
+RXFBCON1_F3BP_1::F3BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1553;"	d	line:1553
+RXFBCON1_F3BP_1::RXFBCON1bits.F3BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1414;"	d	line:1414
+RXFBCON1_F3BP_2::F3BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1554;"	d	line:1554
+RXFBCON1_F3BP_2::RXFBCON1bits.F3BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1415;"	d	line:1415
+RXFBCON1_F3BP_3::F3BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1555;"	d	line:1555
+RXFBCON1_F3BP_3::RXFBCON1bits.F3BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1416;"	d	line:1416
+RXFBCON2_F4BP_0::F4BP_01	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1557;"	d	line:1557
+RXFBCON2_F4BP_0::RXFBCON2bits.F4BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1418;"	d	line:1418
+RXFBCON2_F4BP_1::F4BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1558;"	d	line:1558
+RXFBCON2_F4BP_1::RXFBCON2bits.F4BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1419;"	d	line:1419
+RXFBCON2_F4BP_2::F4BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1559;"	d	line:1559
+RXFBCON2_F4BP_2::RXFBCON2bits.F4BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1420;"	d	line:1420
+RXFBCON2_F4BP_3::F4BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1560;"	d	line:1560
+RXFBCON2_F4BP_3::RXFBCON2bits.F4BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1421;"	d	line:1421
+RXFBCON2_F5BP_0::F5BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1561;"	d	line:1561
+RXFBCON2_F5BP_0::RXFBCON2bits.F5BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1422;"	d	line:1422
+RXFBCON2_F5BP_1::F5BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1562;"	d	line:1562
+RXFBCON2_F5BP_1::RXFBCON2bits.F5BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1423;"	d	line:1423
+RXFBCON2_F5BP_2::F5BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1563;"	d	line:1563
+RXFBCON2_F5BP_2::RXFBCON2bits.F5BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1424;"	d	line:1424
+RXFBCON2_F5BP_3::F5BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1564;"	d	line:1564
+RXFBCON2_F5BP_3::RXFBCON2bits.F5BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1425;"	d	line:1425
+RXFBCON3_F6BP_0::F6BP_01	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1566;"	d	line:1566
+RXFBCON3_F6BP_0::RXFBCON3BITS.F6BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1427;"	d	line:1427
+RXFBCON3_F6BP_1::F6BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1567;"	d	line:1567
+RXFBCON3_F6BP_1::RXFBCON3BITS.F6BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1428;"	d	line:1428
+RXFBCON3_F6BP_2::F6BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1568;"	d	line:1568
+RXFBCON3_F6BP_2::RXFBCON3BITS.F6BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1429;"	d	line:1429
+RXFBCON3_F6BP_3::F6BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1569;"	d	line:1569
+RXFBCON3_F6BP_3::RXFBCON3BITS.F6BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1430;"	d	line:1430
+RXFBCON3_F7BP_0::F7BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1570;"	d	line:1570
+RXFBCON3_F7BP_0::RXFBCON3BITS.F7BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1431;"	d	line:1431
+RXFBCON3_F7BP_1::F7BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1571;"	d	line:1571
+RXFBCON3_F7BP_1::RXFBCON3BITS.F7BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1432;"	d	line:1432
+RXFBCON3_F7BP_2::F7BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1572;"	d	line:1572
+RXFBCON3_F7BP_2::RXFBCON3BITS.F7BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1433;"	d	line:1433
+RXFBCON3_F7BP_3::F7BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1573;"	d	line:1573
+RXFBCON3_F7BP_3::RXFBCON3BITS.F7BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1434;"	d	line:1434
+RXFBCON4_F8BP_0::F8BP_01	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1575;"	d	line:1575
+RXFBCON4_F8BP_0::RXFBCON4bits.F8BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1436;"	d	line:1436
+RXFBCON4_F8BP_1::F8BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1576;"	d	line:1576
+RXFBCON4_F8BP_1::RXFBCON4bits.F8BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1437;"	d	line:1437
+RXFBCON4_F8BP_2::F8BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1577;"	d	line:1577
+RXFBCON4_F8BP_2::RXFBCON4bits.F8BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1438;"	d	line:1438
+RXFBCON4_F8BP_3::F8BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1578;"	d	line:1578
+RXFBCON4_F8BP_3::RXFBCON4bits.F8BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1439;"	d	line:1439
+RXFBCON4_F9BP_0::F9BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1579;"	d	line:1579
+RXFBCON4_F9BP_0::RXFBCON4bits.F9BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1440;"	d	line:1440
+RXFBCON4_F9BP_1::F9BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1580;"	d	line:1580
+RXFBCON4_F9BP_1::RXFBCON4bits.F9BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1441;"	d	line:1441
+RXFBCON4_F9BP_2::F9BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1581;"	d	line:1581
+RXFBCON4_F9BP_2::RXFBCON4bits.F9BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1442;"	d	line:1442
+RXFBCON4_F9BP_3::F9BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1582;"	d	line:1582
+RXFBCON4_F9BP_3::RXFBCON4bits.F9BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1443;"	d	line:1443
+RXFBCON5_F10BP_0::F10BP_01	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1584;"	d	line:1584
+RXFBCON5_F10BP_0::RXFBCON5bits.F10BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1445;"	d	line:1445
+RXFBCON5_F10BP_1::F10BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1585;"	d	line:1585
+RXFBCON5_F10BP_1::RXFBCON5bits.F10BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1446;"	d	line:1446
+RXFBCON5_F10BP_2::F10BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1586;"	d	line:1586
+RXFBCON5_F10BP_2::RXFBCON5bits.F10BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1447;"	d	line:1447
+RXFBCON5_F10BP_3::F10BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1587;"	d	line:1587
+RXFBCON5_F10BP_3::RXFBCON5bits.F10BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1448;"	d	line:1448
+RXFBCON5_F11BP_0::F11BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1588;"	d	line:1588
+RXFBCON5_F11BP_0::RXFBCON5bits.F11BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1449;"	d	line:1449
+RXFBCON5_F11BP_1::F11BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1589;"	d	line:1589
+RXFBCON5_F11BP_1::RXFBCON5bits.F11BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1450;"	d	line:1450
+RXFBCON5_F11BP_2::F11BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1590;"	d	line:1590
+RXFBCON5_F11BP_2::RXFBCON5bits.F11BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1451;"	d	line:1451
+RXFBCON5_F11BP_3::F11BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1591;"	d	line:1591
+RXFBCON5_F11BP_3::RXFBCON5bits.F11BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1452;"	d	line:1452
+RXFBCON6_F12BP_0::F12BP_01	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1593;"	d	line:1593
+RXFBCON6_F12BP_0::RXFBCON6bits.F12BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1454;"	d	line:1454
+RXFBCON6_F12BP_1::F12BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1594;"	d	line:1594
+RXFBCON6_F12BP_1::RXFBCON6bits.F12BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1455;"	d	line:1455
+RXFBCON6_F12BP_2::F12BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1595;"	d	line:1595
+RXFBCON6_F12BP_2::RXFBCON6bits.F12BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1456;"	d	line:1456
+RXFBCON6_F12BP_3::F12BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1596;"	d	line:1596
+RXFBCON6_F12BP_3::RXFBCON6bits.F12BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1457;"	d	line:1457
+RXFBCON6_F13BP_0::F13BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1597;"	d	line:1597
+RXFBCON6_F13BP_0::RXFBCON6bits.F13BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1458;"	d	line:1458
+RXFBCON6_F13BP_1::F13BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1598;"	d	line:1598
+RXFBCON6_F13BP_1::RXFBCON6bits.F13BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1459;"	d	line:1459
+RXFBCON6_F13BP_2::F13BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1599;"	d	line:1599
+RXFBCON6_F13BP_2::RXFBCON6bits.F13BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1460;"	d	line:1460
+RXFBCON6_F13BP_3::F13BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1600;"	d	line:1600
+RXFBCON6_F13BP_3::RXFBCON6bits.F13BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1461;"	d	line:1461
+RXFBCON7_F14BP_0::F14BP_01	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1602;"	d	line:1602
+RXFBCON7_F14BP_0::RXFBCON7bits.F14BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1463;"	d	line:1463
+RXFBCON7_F14BP_1::F14BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1603;"	d	line:1603
+RXFBCON7_F14BP_1::RXFBCON7bits.F14BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1464;"	d	line:1464
+RXFBCON7_F14BP_2::F14BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1604;"	d	line:1604
+RXFBCON7_F14BP_2::RXFBCON7bits.F14BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1465;"	d	line:1465
+RXFBCON7_F14BP_3::F14BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1605;"	d	line:1605
+RXFBCON7_F14BP_3::RXFBCON7bits.F14BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1466;"	d	line:1466
+RXFBCON7_F15BP_0::F15BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1606;"	d	line:1606
+RXFBCON7_F15BP_0::RXFBCON7bits.F15BP_0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1467;"	d	line:1467
+RXFBCON7_F15BP_1::F15BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1607;"	d	line:1607
+RXFBCON7_F15BP_1::RXFBCON7bits.F15BP_1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1468;"	d	line:1468
+RXFBCON7_F15BP_2::F15BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1608;"	d	line:1608
+RXFBCON7_F15BP_2::RXFBCON7bits.F15BP_2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1469;"	d	line:1469
+RXFBCON7_F15BP_3::F15BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1609;"	d	line:1609
+RXFBCON7_F15BP_3::RXFBCON7bits.F15BP_3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1470;"	d	line:1470
+RXFCON0_RXF0EN::RXF0EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1520;"	d	line:1520
+RXFCON0_RXF0EN::RXFCON0bits.RXF0EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1381;"	d	line:1381
+RXFCON0_RXF1EN::RXF1EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1521;"	d	line:1521
+RXFCON0_RXF1EN::RXFCON0bits.RXF1EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1382;"	d	line:1382
+RXFCON0_RXF2EN::RXF2EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1522;"	d	line:1522
+RXFCON0_RXF2EN::RXFCON0bits.RXF2EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1383;"	d	line:1383
+RXFCON0_RXF3EN::RXF3EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1523;"	d	line:1523
+RXFCON0_RXF3EN::RXFCON0bits.RXF3EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1384;"	d	line:1384
+RXFCON0_RXF4EN::RXF4EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1524;"	d	line:1524
+RXFCON0_RXF4EN::RXFCON0bits.RXF4EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1385;"	d	line:1385
+RXFCON0_RXF5EN::RXF5EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1525;"	d	line:1525
+RXFCON0_RXF5EN::RXFCON0bits.RXF5EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1386;"	d	line:1386
+RXFCON0_RXF6EN::RXF6EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1526;"	d	line:1526
+RXFCON0_RXF6EN::RXFCON0bits.RXF6EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1387;"	d	line:1387
+RXFCON0_RXF7EN::RXF7EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1527;"	d	line:1527
+RXFCON0_RXF7EN::RXFCON0bits.RXF7EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1388;"	d	line:1388
+RXFCON1_RXF10EN::RXF10EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1531;"	d	line:1531
+RXFCON1_RXF10EN::RXFCON1bits.RXF10EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1392;"	d	line:1392
+RXFCON1_RXF11EN::RXF11EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1532;"	d	line:1532
+RXFCON1_RXF11EN::RXFCON1bits.RXF11EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1393;"	d	line:1393
+RXFCON1_RXF12EN::RXF12EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1533;"	d	line:1533
+RXFCON1_RXF12EN::RXFCON1bits.RXF12EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1394;"	d	line:1394
+RXFCON1_RXF13EN::RXF13EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1534;"	d	line:1534
+RXFCON1_RXF13EN::RXFCON1bits.RXF13EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1395;"	d	line:1395
+RXFCON1_RXF14EN::RXF14EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1535;"	d	line:1535
+RXFCON1_RXF14EN::RXFCON1bits.RXF14EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1396;"	d	line:1396
+RXFCON1_RXF15EN::RXF15EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1536;"	d	line:1536
+RXFCON1_RXF15EN::RXFCON1bits.RXF15EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1397;"	d	line:1397
+RXFCON1_RXF8EN::RXFCON1bits.RXF8EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1390;"	d	line:1390
+RXFCON1_RXF8EN::XF8EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1529;"	d	line:1529
+RXFCON1_RXF9EN::RXFCON1bits.RXF9EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1391;"	d	line:1391
+RXFCON1_RXF9EN::XF9EN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1530;"	d	line:1530
+RXFUL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1642;"	m	line:1642
+RXM0SIDL_EXIDEN::RXM0EXIDM	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1675;"	d	line:1675
+RXM0SIDL_EXIDEN::RXM0SIDLbits.EXIDEN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1493;"	d	line:1493
+RXM1SIDL_EXIDEN::RXM1EXIDEN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1676;"	d	line:1676
+RXM1SIDL_EXIDEN::RXM1SIDLbits.EXIDEN	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1494;"	d	line:1494
+TRUE	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	77;"	e	line:77	enum:_BOOL
+TXABT	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1654;"	m	line:1654
+TXABT	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1666;"	m	line:1666
+TXB0::8	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	931;"	d	line:931
+TXB0CON_TXREQ::TXB0CONbits.TXREQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1366;"	d	line:1366
+TXB0CON_TXREQ::TXB0REQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1507;"	d	line:1507
+TXB1::9	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	932;"	d	line:932
+TXB1CON_TXREQ::TXB1CONbits.TXREQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1367;"	d	line:1367
+TXB1CON_TXREQ::TXB1CONbits.TXREQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1656;"	d	line:1656
+TXB1CON_TXREQ::TXB1REQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1671;"	d	line:1671
+TXB2::10	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	933;"	d	line:933
+TXB2CON_TXREQ::TXB2CONbits.TXREQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1368;"	d	line:1368
+TXB2CON_TXREQ::TXB2CONbits.TXREQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1668;"	d	line:1668
+TXB2CON_TXREQ::TXB2REQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1672;"	d	line:1672
+TXERR	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1652;"	m	line:1652
+TXERR	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1664;"	m	line:1664
+TXLARB	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1653;"	m	line:1653
+TXLARB	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1665;"	m	line:1665
+TXPRI0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1648;"	m	line:1648
+TXPRI0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1660;"	m	line:1660
+TXPRI1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1649;"	m	line:1649
+TXPRI1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1661;"	m	line:1661
+TXREQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1651;"	m	line:1651
+TXREQ	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1663;"	m	line:1663
+Val	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	93;"	m	line:93	union:_BYTE_VAL
+_BOOL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	77;"	g	line:77
+_BYTE_VAL	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	80;"	u	line:80
+_CANIDToRegs	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1329;"	p	line:1329	signature:(BYTE* ptr, unsigned long val, BYTE type )
+_ECAN_OP_MODE	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	353;"	g	line:353
+_ECAN_RX_MSG_FLAGS	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	269;"	g	line:269
+_ECAN_TX_MSG_FLAGS	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	156;"	g	line:156
+aux	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	79;"	v	line:79
+b0	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	84;"	m	line:84	struct:_BYTE_VAL::<anonymous>
+b1	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	85;"	m	line:85	struct:_BYTE_VAL::<anonymous>
+b2	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	86;"	m	line:86	struct:_BYTE_VAL::<anonymous>
+b3	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	87;"	m	line:87	struct:_BYTE_VAL::<anonymous>
+b4	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	88;"	m	line:88	struct:_BYTE_VAL::<anonymous>
+b5	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	89;"	m	line:89	struct:_BYTE_VAL::<anonymous>
+b6	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	90;"	m	line:90	struct:_BYTE_VAL::<anonymous>
+b7	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	91;"	m	line:91	struct:_BYTE_VAL::<anonymous>
+bit	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1704;"	p	line:1704	signature:(unsigned)&RXB0CON*8
+bits	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	92;"	m	line:92	union:_BYTE_VAL
+canId	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	67;"	v	line:67
+cleanData	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	248;"	f	line:248
+cleanData	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	95;"	p	line:95	file:	signature:(void)
+data	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	89;"	v	line:89
+dataLen	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	90;"	v	line:90
+div	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	80;"	v	line:80
+grados	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	80;"	v	line:80
+i	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	83;"	v	line:83
+main	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	100;"	f	line:100	signature:(void)
+picId	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	88;"	v	line:88
+pos	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	80;"	v	line:80
+rxflags	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	91;"	v	line:91
+send	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	198;"	f	line:198
+send	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	94;"	p	line:94	file:	signature:(void)
+sendDelay	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	75;"	v	line:75
+stop_flag	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	85;"	v	line:85
+txFlags	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	84;"	v	line:84
+x	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	82;"	v	line:82
+xf20	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1667;"	v	line:1667
+xf30	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1655;"	v	line:1655
+xf50	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\ECAN.h	1643;"	v	line:1643
+y	C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.c	82;"	v	line:82

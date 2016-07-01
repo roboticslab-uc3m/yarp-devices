@@ -6,6 +6,7 @@ Welcome to the TEO Software Repository documentation for the manipulation and lo
  \li \ref teo_body_install_on_debian_6
 
 Other internal links of interest:
+ \li \ref teo_body_firmware
  \li \ref teo_body_programs
  \li \ref teo_body_libraries
  \li \ref teo_body_applications
