@@ -9,9 +9,9 @@
  *
  * @section launchManipulation_legal Legal
  *
- * Copyright: 2013 (C) Universidad Carlos III de Madrid
+ * Copyright: 2016 (C) Universidad Carlos III de Madrid
  *
- * Author: <a href="http://roboticslab.uc3m.es/roboticslab/persona_publ.php?id_pers=72">Juan G. Victores</a>
+ * Authors: <a href="http://roboticslab.uc3m.es/roboticslab/persona_publ.php?id_pers=72">Juan G. Victores</a> and <a href="http://roboticslab.uc3m.es/roboticslab/people/r-de-santos">Raul de Santos</a>
  *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see license/LGPL.TXT
  *

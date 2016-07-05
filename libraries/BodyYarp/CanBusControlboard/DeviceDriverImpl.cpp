@@ -75,7 +75,6 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
         //-- Push the motor driver and other devices (CuiAbsolute) on to the vectors.
         nodes[i] = device;  // -- device es un puntero que guarda la dirección de un objeto PolyDriver
         // -- nodes es un vector de punteros que apuntará al device
-
         device->view( iControlLimitsRaw[i] );
         device->view( iControlModeRaw[i] );
         device->view( iEncodersTimedRaw[i] );
@@ -91,26 +90,24 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
 
         //-- Associate absolute encoders to motor drivers
         if( types.get(i).asString() == "CuiAbsolute" )
-        {
+        {           
             int driverCanId = ids.get(i).asInt() - 100;  //-- \todo{Document the dangers: ID must be > 100, driver must be instanced.}
-            iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
 
-            // variables extra
-            bool c = true;
+            CD_INFO("Sending \"Start Continuous Publishing\" message to Cui Absolute PIC (ID: %i)\n", ids.get(i).asInt());
 
-            //-- Dentro de este "if" nos aseguramos de que se configura correctamente el encoder absoluto
+            // Configuring Cui Absolute
             CuiAbsolute* cuiAbsolute;
-            c &= device->view( cuiAbsolute );
+            device->view( cuiAbsolute );
 
-            // -- comprobación del view
-            if (c) printf("[CUI INFO] Se ha conectado correctamente al ID%i \n", ids.get(i).asInt());
-            else ("[CUI VIEW ERROR]\n");
-
-            yarp::os::Time::delay(1);
+            yarp::os::Time::delay(0.5);
             cuiAbsolute->startContinuousPublishing(0);
+
+            // -- Pasa el valor del encoder absoluto al relativo
+            iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
         }
 
         //-- Set initial parameters on physical motor drivers.
+
         if ( ! iPositionControlRaw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asDouble() ) )
             return false;
 
@@ -119,7 +116,8 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
 
         if ( ! iControlLimitsRaw[i]->setLimitsRaw( 0, mins.get(i).asDouble(), maxs.get(i).asDouble() ) )
             return false;
-    }
+
+    } // -- for(int i=0; i<nodes.size(); i++)
 
     //-- Set all motor drivers to mode.
 
@@ -213,13 +211,25 @@ bool teo::CanBusControlboard::close()
     //-- Stop the read thread.
     this->Thread::stop();
 
-    //-- Disable and shutdown the physical drivers.
+    //-- Disable and shutdown the physical drivers (and Cui Encoders).
     bool ok = true;
     for(int i=0; i<nodes.size(); i++)
     {
         ok &= iCanBusSharer[i]->switchOn();  //-- "switch on" also acts as "disable".
 
         ok &= iCanBusSharer[i]->readyToSwitchOn();  //-- "ready to switch on" also acts as "shutdown".
+
+        // -- Sending a stop message to PICs of Cui Encoders
+        yarp::os::Value value;
+        value = nodes[i]->getValue("device");
+
+        if(value.asString() == "CuiAbsolute"){
+            CuiAbsolute* cuiAbsolute;
+            nodes[i]->view( cuiAbsolute );
+            CD_INFO("Stopping Cui Absolute PIC (ID: %s)\n", nodes[i]->getValue("canId").toString().c_str());
+            yarp::os::Time::delay(0.5);
+            cuiAbsolute->stopPublishingMessages();
+        }
     }
 
     //-- Delete the driver objects.

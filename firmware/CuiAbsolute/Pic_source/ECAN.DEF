@@ -10,7 +10,8 @@
 // Possible values are ECAN_LIB_MODE_FIXED, ECAN_LIB_MODE_RUN_TIME
 //   Use ECAN_LIB_MODE_FIXED if run-time selection of mode is not required.
 //   Use ECAN_LIB_MODE_RUN_TIME if run-time selection is required.
-#define ECAN_LIB_MODE_VAL ECAN_LIB_MODE_FIXED
+//#define ECAN_LIB_MODE_VAL ECAN_LIB_MODE_FIXED
+#define ECAN_LIB_MODE_VAL ECAN_LIB_MODE_RUN_TIME
 //
 // ECAN Functional Mode to be used in ECANInitialize().
 // Possible values are ECAN_MODE_0, ECAN_MODE_1, ECAN_MODE_2

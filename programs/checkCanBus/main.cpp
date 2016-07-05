@@ -9,7 +9,7 @@
  *
  * @section checkCanBus_legal Legal
  *
- * Copyright: 2013 (C) Universidad Carlos III de Madrid
+ * Copyright: 2016 (C) Universidad Carlos III de Madrid
  *
  * Author: <a href="http://roboticslab.uc3m.es/roboticslab/people/r-de-santos">Raul de Santos Rico</a>
  *
@@ -46,7 +46,7 @@ Example of uses:
  * @section checkCanBus_modify Modify
  *
  * This file can be edited at
- * programs/checkCanBus/main.cpp //
+ * programs/checkCanBus/main.cpp
  *
  */
 

@@ -160,7 +160,6 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInPullMode )
 
 TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInContinuousMode )
 {
-
     bool startSending = cuiAbsolute->startContinuousPublishing(0);
 
     // -- In continuous mode, we are goint to do three test to ensure that we are receiving multiple messages
