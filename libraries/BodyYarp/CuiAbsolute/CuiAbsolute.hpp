@@ -367,7 +367,7 @@ public:
 
     bool startContinuousPublishing(uint8_t time);
     bool startPullPublishing();
-    bool stopPublishingMessages();
+    bool stopPublishingMessages();    
 
 
 protected:
