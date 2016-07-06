@@ -4,30 +4,32 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusHico::sendRaw(uint32_t id, uint16_t len, uint8_t * msgData) {
+bool teo::CanBusHico::sendRaw(uint32_t id, uint16_t len, uint8_t * msgData)
+{
 
-     struct can_msg msg;
-     memset(&msg,0,sizeof(struct can_msg));
-     msg.ff = FF_NORMAL;
-     msg.id = id;
-     msg.dlc = len;
-     memcpy(msg.data, msgData, len*sizeof(uint8_t));
+    struct can_msg msg;
+    memset(&msg,0,sizeof(struct can_msg));
+    msg.ff = FF_NORMAL;
+    msg.id = id;
+    msg.dlc = len;
+    memcpy(msg.data, msgData, len*sizeof(uint8_t));
 
-     canBusReady.wait();
-     if ( write(fileDescriptor,&msg,sizeof(struct can_msg)) == -1)
-     {
-         canBusReady.post();
-         CD_ERROR("%s.\n", strerror(errno))
-         return false;
-     }
-     canBusReady.post();
+    canBusReady.wait();
+    if ( write(fileDescriptor,&msg,sizeof(struct can_msg)) == -1)
+    {
+        canBusReady.post();
+        CD_ERROR("%s.\n", strerror(errno))
+        return false;
+    }
+    canBusReady.post();
 
-     return true;
+    return true;
 }
 
 // -----------------------------------------------------------------------------
 
-int teo::CanBusHico::read_timeout(struct can_msg *buf, unsigned int timeout) {
+int teo::CanBusHico::read_timeout(struct can_msg *buf, unsigned int timeout)
+{
 
     fd_set fds;
     struct timeval tv;

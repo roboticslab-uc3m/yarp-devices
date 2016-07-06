@@ -28,41 +28,45 @@ namespace teo
  * @brief Launches one CAN bus driver, dumps output.
  *
  */
-class DumpCanBus : public yarp::os::RFModule, public yarp::os::Thread {
-    public:
-        DumpCanBus();
-        bool configure(yarp::os::ResourceFinder &rf);
+class DumpCanBus : public yarp::os::RFModule, public yarp::os::Thread
+{
+public:
+    DumpCanBus();
+    bool configure(yarp::os::ResourceFinder &rf);
 
-    protected:
+protected:
 
-        yarp::dev::PolyDriver deviceDevCan0;
-        CanBusHico* iCanBus;
+    yarp::dev::PolyDriver deviceDevCan0;
+    CanBusHico* iCanBus;
 
-        /** A helper function to display CAN messages. */
-        std::string msgToStr(can_msg* message);
-        double lastNow;
+    /** A helper function to display CAN messages. */
+    std::string msgToStr(can_msg* message);
+    double lastNow;
 
-        virtual double getPeriod() {return 3.0;}
-        virtual bool updateModule();
-        virtual bool close();
+    virtual double getPeriod()
+    {
+        return 3.0;
+    }
+    virtual bool updateModule();
+    virtual bool close();
 //        virtual bool interruptModule();
 //        virtual int period;
 
     // -------- Thread declarations. Implementation in ThreadImpl.cpp --------
 
-        /**
-         * Main body of the new thread.
-         * Override this method to do what you want.
-         * After Thread::start is called, this
-         * method will start running in a separate thread.
-         * It is important that this method either keeps checking
-         * Thread::isStopping to see if it should stop, or
-         * you override the Thread::onStop method to interact
-         * with it in some way to shut the new thread down.
-         * There is no really reliable, portable way to stop
-         * a thread cleanly unless that thread cooperates.
-         */
-        virtual void run();
+    /**
+     * Main body of the new thread.
+     * Override this method to do what you want.
+     * After Thread::start is called, this
+     * method will start running in a separate thread.
+     * It is important that this method either keeps checking
+     * Thread::isStopping to see if it should stop, or
+     * you override the Thread::onStop method to interact
+     * with it in some way to shut the new thread down.
+     * There is no really reliable, portable way to stop
+     * a thread cleanly unless that thread cooperates.
+     */
+    virtual void run();
 };
 
 }  // namespace teo

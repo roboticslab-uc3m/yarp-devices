@@ -4,7 +4,8 @@
 
 // ------------------ IEncodersRaw Related -----------------------------------------
 
-bool teo::CuiAbsolute::resetEncoderRaw(int j) {
+bool teo::CuiAbsolute::resetEncoderRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -15,7 +16,8 @@ bool teo::CuiAbsolute::resetEncoderRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::setEncoderRaw(int j, double val) {  // encExposed = val;
+bool teo::CuiAbsolute::setEncoderRaw(int j, double val)    // encExposed = val;
+{
     CD_INFO("(%d,%f)\n",j,val);
 
     //-- Check index within range
@@ -28,7 +30,8 @@ bool teo::CuiAbsolute::setEncoderRaw(int j, double val) {  // encExposed = val;
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getEncoderRaw(int j, double *v) {
+bool teo::CuiAbsolute::getEncoderRaw(int j, double *v)
+{
     //CD_INFO("%d\n",j);  //-- Too verbose in stream.
 
     //-- Check index within range
@@ -43,7 +46,8 @@ bool teo::CuiAbsolute::getEncoderRaw(int j, double *v) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getEncoderSpeedRaw(int j, double *sp) {
+bool teo::CuiAbsolute::getEncoderSpeedRaw(int j, double *sp)
+{
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
@@ -57,7 +61,8 @@ bool teo::CuiAbsolute::getEncoderSpeedRaw(int j, double *sp) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getEncoderAccelerationRaw(int j, double *spds) {
+bool teo::CuiAbsolute::getEncoderAccelerationRaw(int j, double *spds)
+{
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range

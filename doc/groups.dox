@@ -24,9 +24,30 @@ namespace teo {}
  */
 
 /**
+ * \defgroup teo_body_firmware teo-body Firmware
+ *
+ * @brief teo-body firmware.
+ *
+ */
+
+/**
+ * @ingroup teo_body_firmware
+ * \defgroup teo_body_cuiAbsolute CuiAbsolute
+ *
+ * @brief Contains the firmware that you need to program the Cui Absolute encoders.
+ */
+
+
+/**
  * \defgroup teo_body_programs teo-body Programs
  *
  * @brief teo-body programs.
+ */
+
+/**
+ * \defgroup teo_body_tests teo-body Tests
+ *
+ * @brief teo-body tests.
  */
 
 /**

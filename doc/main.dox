@@ -6,10 +6,12 @@ Welcome to the TEO Software Repository documentation for the manipulation and lo
  \li \ref teo_body_install_on_debian_6
 
 Other internal links of interest:
+ \li \ref teo_body_firmware
  \li \ref teo_body_programs
  \li \ref teo_body_libraries
  \li \ref teo_body_applications
  \li \ref teo_body_examples
+ \li \ref teo_body_tests
 
 Even more internal links of interest:
  \li <a class=el href="http://robots.uc3m.es/dox-teo-main/index.html">teo-main</a>

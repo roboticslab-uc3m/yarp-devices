@@ -4,7 +4,8 @@
 
 // ------------------ IEncoders Related -----------------------------------------
 
-bool teo::CanBusControlboard::resetEncoder(int j) {
+bool teo::CanBusControlboard::resetEncoder(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -15,7 +16,8 @@ bool teo::CanBusControlboard::resetEncoder(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::resetEncoders() {
+bool teo::CanBusControlboard::resetEncoders()
+{
     CD_INFO("\n");
 
     bool ok = true;
@@ -26,7 +28,8 @@ bool teo::CanBusControlboard::resetEncoders() {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setEncoder(int j, double val) {
+bool teo::CanBusControlboard::setEncoder(int j, double val)
+{
     CD_INFO("(%d,%f)\n",j,val);
 
     //-- Check index within range
@@ -37,7 +40,8 @@ bool teo::CanBusControlboard::setEncoder(int j, double val) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setEncoders(const double *vals) {
+bool teo::CanBusControlboard::setEncoders(const double *vals)
+{
     CD_INFO("\n");
 
     bool ok = true;
@@ -48,7 +52,8 @@ bool teo::CanBusControlboard::setEncoders(const double *vals) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getEncoder(int j, double *v) {
+bool teo::CanBusControlboard::getEncoder(int j, double *v)
+{
     //CD_INFO("%d\n",j);  //-- Too verbose in stream.
 
     //-- Check index within range
@@ -59,7 +64,8 @@ bool teo::CanBusControlboard::getEncoder(int j, double *v) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getEncoders(double *encs) {
+bool teo::CanBusControlboard::getEncoders(double *encs)
+{
     //CD_INFO("\n");  //-- Too verbose in stream.
 
     bool ok = true;
@@ -70,7 +76,8 @@ bool teo::CanBusControlboard::getEncoders(double *encs) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getEncoderSpeed(int j, double *sp) {
+bool teo::CanBusControlboard::getEncoderSpeed(int j, double *sp)
+{
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
@@ -81,18 +88,20 @@ bool teo::CanBusControlboard::getEncoderSpeed(int j, double *sp) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getEncoderSpeeds(double *spds) {
+bool teo::CanBusControlboard::getEncoderSpeeds(double *spds)
+{
     CD_INFO("\n");
 
     bool ok = true;
-    for(unsigned int i=0;i<nodes.size();i++)
+    for(unsigned int i=0; i<nodes.size(); i++)
         ok &= getEncoderSpeed(i,&spds[i]);
     return ok;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getEncoderAcceleration(int j, double *spds) {
+bool teo::CanBusControlboard::getEncoderAcceleration(int j, double *spds)
+{
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
@@ -103,11 +112,12 @@ bool teo::CanBusControlboard::getEncoderAcceleration(int j, double *spds) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getEncoderAccelerations(double *accs) {
+bool teo::CanBusControlboard::getEncoderAccelerations(double *accs)
+{
     CD_INFO("\n");
 
     bool ok = true;
-    for(unsigned int i=0;i<nodes.size();i++)
+    for(unsigned int i=0; i<nodes.size(); i++)
         ok &= getEncoderAcceleration(i,&accs[i]);
     return ok;
 }

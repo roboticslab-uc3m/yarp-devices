@@ -2,12 +2,12 @@
 MagicCookie={0b13fe8c-dfe0-40eb-8900-6712719559a7}
 Version=1.0
 [File000]
-Location=C:\Documents and Settings\pedro\Escritorio\ENCODER ABSOLUTO\Roman\Copia de ROMAN_FUNCIONA\main.o
+Location=C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\main.o
 Folder=Intermediary
 DeviceName=PIC18F2580
 LanguageToolSuiteID={5B7D72DD-9861-47BD-9F60-2BE967BF8416}
 LanguageToolID={E56A1C86-9D32-4DF6-8C34-FE0388B1B644}
-LanguageToolLocation=C:\Archivos de programa\Microchip\mplabc18\v3.47\bin\mcc18.exe
+LanguageToolLocation=C:\Program Files (x86)\Microchip\mplabc18\v3.47\bin\mcc18.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
 SOLK=<src>|main.c||<obj>||<lib>||<lkr>||
 SuiteArgsString=
@@ -15,12 +15,12 @@ ToolArgsString=-Ou- -Ot- -Ob- -Op- -Or- -Od- -Opa-
 TraceCmdString=
 DebugOptions=
 [File001]
-Location=C:\Documents and Settings\pedro\Escritorio\ENCODER ABSOLUTO\Roman\Copia de ROMAN_FUNCIONA\EncoderRoman.cof
+Location=C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\CuiAbsolute.cof
 Folder=Output
 DeviceName=PIC18F2580
 LanguageToolSuiteID={5B7D72DD-9861-47BD-9F60-2BE967BF8416}
 LanguageToolID={96C98149-AA1B-4CF9-B967-FAE79CAB663C}
-LanguageToolLocation=C:\Archivos de programa\Microchip\mplabc18\v3.47\bin\mplink.exe
+LanguageToolLocation=C:\Program Files (x86)\Microchip\mplabc18\v3.47\bin\mplink.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
 SOLK=<src>|main.c||<obj>||<lib>||<lkr>||
 SuiteArgsString=
@@ -28,12 +28,12 @@ ToolArgsString=/o"$(BINDIR_)$(TARGETBASE).cof" /M"$(BINDIR_)$(TARGETBASE).map" /
 TraceCmdString=
 DebugOptions=
 [File002]
-Location=C:\Documents and Settings\pedro\Escritorio\ENCODER ABSOLUTO\Roman\Copia de ROMAN_FUNCIONA\EncoderRoman.hex
+Location=C:\Users\Raul\Dropbox\RoboticsLab\Cui Absolute\Nuevos comentarios PIC_source\PIC_source_2.0\CuiAbsolute.hex
 Folder=Output
 DeviceName=PIC18F2580
 LanguageToolSuiteID={5B7D72DD-9861-47BD-9F60-2BE967BF8416}
 LanguageToolID={96C98149-AA1B-4CF9-B967-FAE79CAB663C}
-LanguageToolLocation=C:\Archivos de programa\Microchip\mplabc18\v3.47\bin\mplink.exe
+LanguageToolLocation=C:\Program Files (x86)\Microchip\mplabc18\v3.47\bin\mplink.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
 SOLK=<src>|main.c||<obj>||<lib>||<lkr>||
 SuiteArgsString=
@@ -41,5 +41,5 @@ ToolArgsString=/o"$(BINDIR_)$(TARGETBASE).cof" /M"$(BINDIR_)$(TARGETBASE).map" /
 TraceCmdString=
 DebugOptions=
 [TOOL_LOC_STAMPS]
-tool_loc{96C98149-AA1B-4CF9-B967-FAE79CAB663C}=C:\Archivos de programa\Microchip\mplabc18\v3.47\bin\mplink.exe
-tool_loc{E56A1C86-9D32-4DF6-8C34-FE0388B1B644}=C:\Archivos de programa\Microchip\mplabc18\v3.47\bin\mcc18.exe
+tool_loc{96C98149-AA1B-4CF9-B967-FAE79CAB663C}=C:\Program Files (x86)\Microchip\mplabc18\v3.47\bin\mplink.exe
+tool_loc{E56A1C86-9D32-4DF6-8C34-FE0388B1B644}=C:\Program Files (x86)\Microchip\mplabc18\v3.47\bin\mcc18.exe

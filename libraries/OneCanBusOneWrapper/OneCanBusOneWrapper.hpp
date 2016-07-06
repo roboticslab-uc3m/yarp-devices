@@ -35,24 +35,28 @@ namespace teo
  * that wraps the corresponding nodes.
  * A controlboardwrapper2 may be used through a YARP remote_controlboard or directly through low-level YARP
  * controlboardwrapper2 RPC commands.
- * 
+ *
  */
-class OneCanBusOneWrapper : public yarp::os::RFModule {
+class OneCanBusOneWrapper : public yarp::os::RFModule
+{
 
-    protected:
+protected:
     yarp::dev::PolyDriver deviceDevCan0;
 
     yarp::dev::PolyDriver deviceWrapper0;
 
-        virtual double getPeriod() {return 3.0;}
-        virtual bool updateModule();
-        virtual bool close();
+    virtual double getPeriod()
+    {
+        return 3.0;
+    }
+    virtual bool updateModule();
+    virtual bool close();
 //        virtual bool interruptModule();
 //        virtual int period;
 
-    public:
-        OneCanBusOneWrapper();
-        bool configure(yarp::os::ResourceFinder &rf);
+public:
+    OneCanBusOneWrapper();
+    bool configure(yarp::os::ResourceFinder &rf);
 };
 
 }  // namespace teo

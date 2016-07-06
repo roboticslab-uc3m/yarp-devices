@@ -9,7 +9,8 @@ namespace teo
 RecordLocomotion::RecordLocomotion() { }
 
 /************************************************************************/
-bool RecordLocomotion::configure(yarp::os::ResourceFinder &rf) {
+bool RecordLocomotion::configure(yarp::os::ResourceFinder &rf)
+{
 
     int ptModeMs = rf.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
     CD_INFO("Using ptModeMs: %d (default: %d).\n",ptModeMs,int(DEFAULT_PT_MODE_MS));
@@ -18,7 +19,8 @@ bool RecordLocomotion::configure(yarp::os::ResourceFinder &rf) {
     std::string fileName = rf.check("file",yarp::os::Value(DEFAULT_FILE_NAME),"file name").asString();
     CD_INFO("Using file: %s (default: " DEFAULT_FILE_NAME ").\n",fileName.c_str());
     filePtr = ::fopen (fileName.c_str(),"w");
-    if( ! filePtr ) {
+    if( ! filePtr )
+    {
         CD_PERROR("Could not open file: %s.\n",fileName.c_str());
         return false;
     }
@@ -28,7 +30,8 @@ bool RecordLocomotion::configure(yarp::os::ResourceFinder &rf) {
     std::string leftLegIni = rf.findFileByName("../locomotion/leftLeg.ini");
 
     yarp::os::Property leftLegOptions;
-    if (! leftLegOptions.fromConfigFile(leftLegIni) ) {  //-- Put first because defaults to wiping out.
+    if (! leftLegOptions.fromConfigFile(leftLegIni) )    //-- Put first because defaults to wiping out.
+    {
         CD_ERROR("Could not configure from \"leftLeg.ini\".\n");
         return false;
     }
@@ -38,8 +41,9 @@ bool RecordLocomotion::configure(yarp::os::ResourceFinder &rf) {
     if (rf.check("reset")) leftLegOptions.put("reset",1);
 
     leftLegDevice.open(leftLegOptions);
-    
-    if (!leftLegDevice.isValid()) {
+
+    if (!leftLegDevice.isValid())
+    {
         CD_ERROR("leftLegDevice instantiation not worked.\n");
         CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_CanBusControlboard\" variable is set \"ON\"\n");
         CD_ERROR("\"SKIP_CanBusControlboard is set\" --> should be --> \"ENABLE_CanBusControlboard is set\"\n");
@@ -51,7 +55,8 @@ bool RecordLocomotion::configure(yarp::os::ResourceFinder &rf) {
     std::string rightLegIni = rf.findFileByName("../locomotion/rightLeg.ini");
 
     yarp::os::Property rightLegOptions;
-    if (! rightLegOptions.fromConfigFile(rightLegIni) ) {  //-- Put first because defaults to wiping out.
+    if (! rightLegOptions.fromConfigFile(rightLegIni) )    //-- Put first because defaults to wiping out.
+    {
         CD_ERROR("Could not configure from \"rightLeg.ini\".\n");
         return false;
     }
@@ -63,7 +68,8 @@ bool RecordLocomotion::configure(yarp::os::ResourceFinder &rf) {
 
     rightLegDevice.open(rightLegOptions);
 
-    if (!rightLegDevice.isValid()) {
+    if (!rightLegDevice.isValid())
+    {
         CD_ERROR("rightLegDevice instantiation not worked.\n");
         CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_CanBusControlboard\" variable is set \"ON\"\n");
         CD_ERROR("\"SKIP_CanBusControlboard is set\" --> should be --> \"ENABLE_CanBusControlboard is set\"\n");
@@ -75,25 +81,29 @@ bool RecordLocomotion::configure(yarp::os::ResourceFinder &rf) {
     recordRateThread.setFilePtr(filePtr);
 
     //-- Obtain manipulator interfaces.
-    if ( ! leftLegDevice.view( recordRateThread.leftLegEnc ) ) {
+    if ( ! leftLegDevice.view( recordRateThread.leftLegEnc ) )
+    {
         CD_ERROR("Could not obtain leftLegEnc.\n");
         return false;
     }
     CD_SUCCESS("Obtained leftLegEnc.\n");
 
-    if ( ! leftLegDevice.view( recordRateThread.leftLegTrq ) ) {
+    if ( ! leftLegDevice.view( recordRateThread.leftLegTrq ) )
+    {
         CD_ERROR("Could not obtain leftLegTrq.\n");
         return false;
     }
     CD_SUCCESS("Obtained leftLegTrq.\n");
 
-    if ( ! rightLegDevice.view( recordRateThread.rightLegEnc ) ) {
+    if ( ! rightLegDevice.view( recordRateThread.rightLegEnc ) )
+    {
         CD_ERROR("Could not obtain rightLegEnc.\n");
         return false;
     }
     CD_SUCCESS("Obtained rightLegEnc.\n");
 
-    if ( ! rightLegDevice.view( recordRateThread.rightLegTrq ) ) {
+    if ( ! rightLegDevice.view( recordRateThread.rightLegTrq ) )
+    {
         CD_ERROR("Could not obtain rightLegTrq.\n");
         return false;
     }
@@ -125,14 +135,16 @@ bool RecordLocomotion::configure(yarp::os::ResourceFinder &rf) {
 
 /************************************************************************/
 
-bool RecordLocomotion::updateModule() {
+bool RecordLocomotion::updateModule()
+{
     //printf("RecordLocomotion alive...\n");
     return true;
 }
 
 /************************************************************************/
 
-bool RecordLocomotion::close() {
+bool RecordLocomotion::close()
+{
 
     recordRateThread.stop();
 

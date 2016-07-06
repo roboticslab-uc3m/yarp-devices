@@ -4,7 +4,8 @@
 
 // ------------------- IControlMode Related ------------------------------------
 
-bool teo::CanBusControlboard::setPositionMode(int j) {
+bool teo::CanBusControlboard::setPositionMode(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -15,7 +16,8 @@ bool teo::CanBusControlboard::setPositionMode(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setVelocityMode(int j) {
+bool teo::CanBusControlboard::setVelocityMode(int j)
+{
     CD_INFO("(%d)\n",j);
 
     return iControlModeRaw[j]->setVelocityModeRaw( 0 );
@@ -23,7 +25,8 @@ bool teo::CanBusControlboard::setVelocityMode(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setTorqueMode(int j)  {
+bool teo::CanBusControlboard::setTorqueMode(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -34,7 +37,8 @@ bool teo::CanBusControlboard::setTorqueMode(int j)  {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setImpedancePositionMode(int j) {
+bool teo::CanBusControlboard::setImpedancePositionMode(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -45,7 +49,8 @@ bool teo::CanBusControlboard::setImpedancePositionMode(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setImpedanceVelocityMode(int j) {
+bool teo::CanBusControlboard::setImpedanceVelocityMode(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -56,7 +61,8 @@ bool teo::CanBusControlboard::setImpedanceVelocityMode(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setOpenLoopMode(int j) {
+bool teo::CanBusControlboard::setOpenLoopMode(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -67,7 +73,8 @@ bool teo::CanBusControlboard::setOpenLoopMode(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getControlMode(int j, int *mode) {
+bool teo::CanBusControlboard::getControlMode(int j, int *mode)
+{
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
 
     //-- Check index within range
@@ -78,7 +85,8 @@ bool teo::CanBusControlboard::getControlMode(int j, int *mode) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getControlModes(int *modes) {
+bool teo::CanBusControlboard::getControlModes(int *modes)
+{
     CD_INFO("\n");
 
     bool ok = true;

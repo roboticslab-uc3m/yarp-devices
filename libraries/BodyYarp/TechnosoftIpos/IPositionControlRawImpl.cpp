@@ -4,14 +4,15 @@
 
 // ------------------ IPositionControlRaw Related ----------------------------------------
 
-bool teo::TechnosoftIpos::positionMoveRaw(int j, double ref) {  // encExposed = ref;
+bool teo::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encExposed = ref;
+{
     CD_INFO("(%d,%f)\n",j,ref);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
     //*************************************************************
-    uint8_t msg_position_target[]={0x23,0x7A,0x60,0x00,0x00,0x00,0x00,0x00}; // Position target
+    uint8_t msg_position_target[]= {0x23,0x7A,0x60,0x00,0x00,0x00,0x00,0x00}; // Position target
 
     int position = ref * this->tr * 11.11112;  // Appply tr & convert units to encoder increments
     memcpy(msg_position_target+4,&position,4);
@@ -24,7 +25,7 @@ bool teo::TechnosoftIpos::positionMoveRaw(int j, double ref) {  // encExposed = 
     CD_SUCCESS("Sent \"position target\". %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
     //*************************************************************
     //uint8_t msg_start[]={0x1F,0x00}; // Start the movement with "Discrete motion profile (change set immediately = 0)".
-    uint8_t msg_start[]={0x3F,0x00}; // Start the movement with "Continuous motion profile (change set immediately = 1)".
+    uint8_t msg_start[]= {0x3F,0x00}; // Start the movement with "Continuous motion profile (change set immediately = 1)".
 
     if( ! send( 0x200, 2, msg_start ) )
     {
@@ -36,7 +37,7 @@ bool teo::TechnosoftIpos::positionMoveRaw(int j, double ref) {  // encExposed = 
 
     //-- Needed to send next. Sets "Do not assume target position" so later it accepts "Assume target position (update the new motion parameters)".
     //*************************************************************
-    uint8_t msg_pos_reset[]={0x0F,0x00};  // Stop a position profile
+    uint8_t msg_pos_reset[]= {0x0F,0x00}; // Stop a position profile
 
     if( ! send( 0x200, 2, msg_pos_reset) )
     {
@@ -51,7 +52,8 @@ bool teo::TechnosoftIpos::positionMoveRaw(int j, double ref) {  // encExposed = 
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::relativeMoveRaw(int j, double delta) {
+bool teo::TechnosoftIpos::relativeMoveRaw(int j, double delta)
+{
     CD_INFO("(%d, %f)\n",j,delta);
 
     //-- Check index within range
@@ -59,7 +61,7 @@ bool teo::TechnosoftIpos::relativeMoveRaw(int j, double delta) {
 
 
     //*************************************************************
-    uint8_t msg_position_target[]={0x23,0x7A,0x60,0x00,0x00,0x00,0x00,0x00}; // Position target
+    uint8_t msg_position_target[]= {0x23,0x7A,0x60,0x00,0x00,0x00,0x00,0x00}; // Position target
 
     int sendDelta = delta * this->tr * 11.11112;  // Appply tr & convert units to encoder increments
     memcpy(msg_position_target+4,&sendDelta,4);
@@ -72,7 +74,7 @@ bool teo::TechnosoftIpos::relativeMoveRaw(int j, double delta) {
     CD_SUCCESS("Sent \"position target\". %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
     //*************************************************************
     //uint8_t msg_start_rel[]={0x5F,0x00}; // Start the movement with "Discrete motion profile (change set immediately = 0)".
-    uint8_t msg_start_rel[]={0x7F,0x00}; // Start the movement with "Continuous motion profile (change set immediately = 1)".
+    uint8_t msg_start_rel[]= {0x7F,0x00}; // Start the movement with "Continuous motion profile (change set immediately = 1)".
 
 
     if( ! send( 0x200, 2, msg_start_rel ) )
@@ -85,7 +87,7 @@ bool teo::TechnosoftIpos::relativeMoveRaw(int j, double delta) {
 
     //-- Needed to send next. Sets "Do not assume target position" so later it accepts "Assume target position (update the new motion parameters)".
     //*************************************************************
-    uint8_t msg_pos_reset[]={0x0F,0x00};  // Stop a position profile
+    uint8_t msg_pos_reset[]= {0x0F,0x00}; // Stop a position profile
 
     if( ! send( 0x200, 2, msg_pos_reset) )
     {
@@ -100,7 +102,8 @@ bool teo::TechnosoftIpos::relativeMoveRaw(int j, double delta) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::checkMotionDoneRaw(int j, bool *flag) {
+bool teo::TechnosoftIpos::checkMotionDoneRaw(int j, bool *flag)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -128,7 +131,8 @@ bool teo::TechnosoftIpos::checkMotionDoneRaw(int j, bool *flag) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setRefSpeedRaw(int j, double sp) {
+bool teo::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
+{
     CD_INFO("(%d, %f)\n",j,sp);
 
     //-- Check index within range
@@ -136,7 +140,7 @@ bool teo::TechnosoftIpos::setRefSpeedRaw(int j, double sp) {
 
     //*************************************************************
 
-    uint8_t msg_posmode_speed[]={0x23,0x81,0x60,0x00,0x00,0x00,0x00,0x00};  // Manual 6081h: Profile velocity
+    uint8_t msg_posmode_speed[]= {0x23,0x81,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6081h: Profile velocity
 
     u_int16_t sendRefSpeed = sp * this->tr / 22.5;  // Appply tr & convert units to encoder increments
     memcpy(msg_posmode_speed+6,&sendRefSpeed,2);
@@ -160,14 +164,15 @@ bool teo::TechnosoftIpos::setRefSpeedRaw(int j, double sp) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setRefAccelerationRaw(int j, double acc) {
+bool teo::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
+{
     CD_INFO("(%d, %f)\n",j,acc);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
     //*************************************************************
-    uint8_t msg_posmode_acc[]={0x23,0x83,0x60,0x00,0x00,0x00,0x00,0x00};  // Manual 6083h: Profile acceleration
+    uint8_t msg_posmode_acc[]= {0x23,0x83,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6083h: Profile acceleration
 
     int sendRefAcc = acc * this->tr * 11.11112;  // Appply tr & convert units to encoder increments
     memcpy(msg_posmode_acc+4,&sendRefAcc,4);
@@ -188,7 +193,8 @@ bool teo::TechnosoftIpos::setRefAccelerationRaw(int j, double acc) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getRefSpeedRaw(int j, double *ref) {
+bool teo::TechnosoftIpos::getRefSpeedRaw(int j, double *ref)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -201,7 +207,8 @@ bool teo::TechnosoftIpos::getRefSpeedRaw(int j, double *ref) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getRefAccelerationRaw(int j, double *acc) {
+bool teo::TechnosoftIpos::getRefAccelerationRaw(int j, double *acc)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -214,7 +221,8 @@ bool teo::TechnosoftIpos::getRefAccelerationRaw(int j, double *acc) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::stopRaw(int j) {
+bool teo::TechnosoftIpos::stopRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range

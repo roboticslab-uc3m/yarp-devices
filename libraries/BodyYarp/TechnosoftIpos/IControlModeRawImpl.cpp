@@ -4,7 +4,8 @@
 
 // ------------------- IControlModeRaw Related ------------------------------------
 
-bool teo::TechnosoftIpos::setPositionModeRaw(int j) {
+bool teo::TechnosoftIpos::setPositionModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -26,14 +27,15 @@ bool teo::TechnosoftIpos::setPositionModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setVelocityModeRaw(int j) {
+bool teo::TechnosoftIpos::setVelocityModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
     //*************************************************************
-    uint8_t msg_velocity_mode[]={0x2F,0x60,0x60,0x00,0x03}; // Velocity mode
+    uint8_t msg_velocity_mode[]= {0x2F,0x60,0x60,0x00,0x03}; // Velocity mode
 
     if( ! send( 0x600, 5, msg_velocity_mode) )
     {
@@ -48,7 +50,8 @@ bool teo::TechnosoftIpos::setVelocityModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setTorqueModeRaw(int j)  {
+bool teo::TechnosoftIpos::setTorqueModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
     bool ok = true;
     //-- Check index within range
@@ -64,10 +67,11 @@ bool teo::TechnosoftIpos::setTorqueModeRaw(int j)  {
 
 /******************* setTorqueModeRaw Splited **********************/
 
-bool teo::TechnosoftIpos::setTorqueModeRaw1(){
+bool teo::TechnosoftIpos::setTorqueModeRaw1()
+{
 
     //-- 5. External reference type. Slave receives reference through CAN (manual 208 of 263).
-    uint8_t msg_ref_type[]={0x2B,0x1D,0x20,0x00,0x01,0x00,0x00,0x00};  //CAN
+    uint8_t msg_ref_type[]= {0x2B,0x1D,0x20,0x00,0x01,0x00,0x00,0x00}; //CAN
 
     if( ! send( 0x600, 8, msg_ref_type) )
     {
@@ -79,10 +83,11 @@ bool teo::TechnosoftIpos::setTorqueModeRaw1(){
     return true;
 }
 
-bool teo::TechnosoftIpos::setTorqueModeRaw2(){
+bool teo::TechnosoftIpos::setTorqueModeRaw2()
+{
 
     //-- Mode -5 (manual 209 of 263). Send the following message (SDO access to object 6060 h , 8-bit value -1)
-    uint8_t msg_mode_torque[]={0x2F,0x60,0x60,0x00,0xFB,0x00,0x00,0x00};
+    uint8_t msg_mode_torque[]= {0x2F,0x60,0x60,0x00,0xFB,0x00,0x00,0x00};
 
     if( ! send( 0x600, 8, msg_mode_torque) )
     {
@@ -94,7 +99,8 @@ bool teo::TechnosoftIpos::setTorqueModeRaw2(){
     return true;
 }
 
-bool teo::TechnosoftIpos::setTorqueModeRaw3(){
+bool teo::TechnosoftIpos::setTorqueModeRaw3()
+{
 
     //-- Control word (manual 215 of 263).
     uint8_t msg_torque_word[] = {0x1F,0x00};
@@ -111,7 +117,8 @@ bool teo::TechnosoftIpos::setTorqueModeRaw3(){
 /*************************************************************************/
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setImpedancePositionModeRaw(int j) {
+bool teo::TechnosoftIpos::setImpedancePositionModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -124,7 +131,8 @@ bool teo::TechnosoftIpos::setImpedancePositionModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setImpedanceVelocityModeRaw(int j) {
+bool teo::TechnosoftIpos::setImpedanceVelocityModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -137,7 +145,8 @@ bool teo::TechnosoftIpos::setImpedanceVelocityModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setOpenLoopModeRaw(int j) {
+bool teo::TechnosoftIpos::setOpenLoopModeRaw(int j)
+{
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
@@ -150,7 +159,8 @@ bool teo::TechnosoftIpos::setOpenLoopModeRaw(int j) {
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getControlModeRaw(int j, int *mode) {
+bool teo::TechnosoftIpos::getControlModeRaw(int j, int *mode)
+{
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
     bool ok = true;
     //-- Check index within range
@@ -158,8 +168,7 @@ bool teo::TechnosoftIpos::getControlModeRaw(int j, int *mode) {
     ok &= getControlModeRaw1();
     ok &= getControlModeRaw2();
     ok &= getControlModeRaw3();
-    ok &= getControlModeRaw4();
-
+    ok &= getControlModeRaw4();    
     getModeReady.wait();
     *mode = getMode; // -- activate the sending of message mode
     getModeReady.post();
@@ -168,7 +177,8 @@ bool teo::TechnosoftIpos::getControlModeRaw(int j, int *mode) {
 }
 
 /******************* getControlModeRaw Splited **********************/
-bool teo::TechnosoftIpos::getControlModeRaw1() {
+bool teo::TechnosoftIpos::getControlModeRaw1()
+{
     //*************************************************************
     uint8_t msgOperationDisplay[] = {0x40,0x61,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6061h: Modes of Operation display
     if( ! send( 0x600, 8, msgOperationDisplay))
@@ -187,7 +197,8 @@ bool teo::TechnosoftIpos::getControlModeRaw1() {
 }
 
 //*************************************************************
-bool teo::TechnosoftIpos::getControlModeRaw2() {
+bool teo::TechnosoftIpos::getControlModeRaw2()
+{
     //-- Ya de paso...
     //*************************************************************
     //uint8_t msgStatusDisplay[] = {0x40,0x41,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6041h: Status display word
@@ -213,7 +224,8 @@ bool teo::TechnosoftIpos::getControlModeRaw2() {
     /***************************************************************/
 }
 
-bool teo::TechnosoftIpos::getControlModeRaw3() {
+bool teo::TechnosoftIpos::getControlModeRaw3()
+{
     //-- Y ya de paso, por qué no...
     //*************************************************************
     uint8_t msgError[] = {0x40,0x00,0x20,0x00,0x00,0x00,0x00,0x00}; // Manual 2000h: Motion Error Register
@@ -228,7 +240,8 @@ bool teo::TechnosoftIpos::getControlModeRaw3() {
     //*************************************************************
 }
 
-bool teo::TechnosoftIpos::getControlModeRaw4() {
+bool teo::TechnosoftIpos::getControlModeRaw4()
+{
     //-- Y tb ya de paso, por qué no... // no info
     //*************************************************************
     uint8_t msgErrorDetail[] = {0x40,0x02,0x20,0x00,0x00,0x00,0x00,0x00}; // Manual 2002h: Detailed Error Register

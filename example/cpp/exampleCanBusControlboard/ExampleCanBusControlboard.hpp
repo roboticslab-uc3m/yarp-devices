@@ -27,21 +27,25 @@ namespace teo
  * @brief Launches 1 left arm DoF + left hand wrapped by controlboardwrapper2.
  * A controlboardwrapper2 may be used through a YARP remote_controlboard or directly through low-level YARP
  * controlboardwrapper2 RPC commands.
- * 
+ *
  */
-class ExampleCanBusControlboard : public RFModule {
+class ExampleCanBusControlboard : public RFModule
+{
 
-    protected:
-        yarp::dev::PolyDriver robotDevice;
+protected:
+    yarp::dev::PolyDriver robotDevice;
 
-        double getPeriod() {return 3.0;}
-        bool updateModule();
+    double getPeriod()
+    {
+        return 3.0;
+    }
+    bool updateModule();
 //        bool interruptModule();
 //        int period;
 
-    public:
-        ExampleCanBusControlboard();
-        bool configure(ResourceFinder &rf);
+public:
+    ExampleCanBusControlboard();
+    bool configure(ResourceFinder &rf);
 };
 
 }  // namespace teo

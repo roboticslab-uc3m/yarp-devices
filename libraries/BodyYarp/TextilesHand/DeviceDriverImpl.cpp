@@ -3,7 +3,8 @@
 #include "TextilesHand.hpp"
 
 // -----------------------------------------------------------------------------
-bool teo::TextilesHand::open(yarp::os::Searchable& config) {
+bool teo::TextilesHand::open(yarp::os::Searchable& config)
+{
 
     /*this->canId = config.check("canId",0,"can bus ID").asInt();
     this->tr = config.check("tr",0,"reduction").asInt();
@@ -26,7 +27,8 @@ bool teo::TextilesHand::open(yarp::os::Searchable& config) {
     int rc,n;
 
     fd = serialport_init(serialport, baudrate);
-    if(!fd) {
+    if(!fd)
+    {
         printf("NULL fd, bye!\n");
         ::exit(-1);
     }
@@ -36,7 +38,8 @@ bool teo::TextilesHand::open(yarp::os::Searchable& config) {
 }
 
 // -----------------------------------------------------------------------------
-bool teo::TextilesHand::close() {
+bool teo::TextilesHand::close()
+{
     CD_INFO("\n");
     return true;
 }

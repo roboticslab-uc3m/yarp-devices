@@ -41,12 +41,14 @@ make -j3
 
 YARP_DECLARE_PLUGINS(BodyYarp)
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 
     YARP_REGISTER_PLUGINS(BodyYarp);
 
     yarp::os::Network yarp;
-    if (! yarp::os::Network::checkNetwork() ) {
+    if (! yarp::os::Network::checkNetwork() )
+    {
         printf("Please start a yarp name server first\n");
         return 1;
     }
@@ -59,7 +61,8 @@ int main(int argc, char *argv[]) {
     canBusOptions.put("canDevice","/dev/can1");
     canBusOptions.put("canBitrate",BITRATE_1000k);
     canBusDevice.open(canBusOptions);
-    if( ! canBusDevice.isValid() ){
+    if( ! canBusDevice.isValid() )
+    {
         CD_ERROR("canBusDevice instantiation not worked.\n");
         return 1;
     }
@@ -74,41 +77,50 @@ int main(int argc, char *argv[]) {
     options.put("refAcceleration",0.575437);
     options.put("refSpeed",737.2798);
     yarp::dev::PolyDriver dd(options);
-    if(!dd.isValid()) {
-      printf("TechnosoftIpos device not available.\n");
-	  dd.close();
-      yarp::os::Network::fini();
-      return 1;
+    if(!dd.isValid())
+    {
+        printf("TechnosoftIpos device not available.\n");
+        dd.close();
+        yarp::os::Network::fini();
+        return 1;
     }
 
     //-- View TechnosoftIpos interfaces.
     teo::ICanBusSharer *iCanBusSharer;
     bool ok = dd.view(iCanBusSharer);
-    if (!ok) {
+    if (!ok)
+    {
         printf("[error] Problems viewing ICanBusSharer.\n");
         return 1;
-    } else printf("[success] Viewing ICanBusSharer.\n");
+    }
+    else printf("[success] Viewing ICanBusSharer.\n");
 
     yarp::dev::IPositionControlRaw *pos;
     ok = dd.view(pos);
-    if (!ok) {
+    if (!ok)
+    {
         printf("[error] Problems viewing IPositionControlRaw.\n");
         return 1;
-    } else printf("[success] Viewing IPositionControlRaw.\n");
+    }
+    else printf("[success] Viewing IPositionControlRaw.\n");
 
     yarp::dev::IEncodersRaw *enc;
     ok = dd.view(enc);
-    if (!ok) {
+    if (!ok)
+    {
         printf("[error] Problems viewing IEncodersRaw.\n");
         return 1;
-    } else printf("[success] Viewing IEncodersRaw.\n");
+    }
+    else printf("[success] Viewing IEncodersRaw.\n");
 
     yarp::dev::IVelocityControlRaw *vel;
     ok = dd.view(vel);
-    if (!ok) {
+    if (!ok)
+    {
         printf("[error] Problems viewing IVelocityControlRaw.\n");
         return 1;
-    } else printf("[success] Viewing IVelocityControlRaw.\n");
+    }
+    else printf("[success] Viewing IVelocityControlRaw.\n");
 
     //-- Pass before sending commands.
     iCanBusSharer->setCanBusPtr(iCanBus);
@@ -126,17 +138,21 @@ int main(int argc, char *argv[]) {
 
     //-- Commands on TechnosoftIpos.
     ok = pos->setPositionModeRaw();
-    if (!ok) {
+    if (!ok)
+    {
         printf("[error] Problems in setPositionModeRaw.\n");
         return 1;
-    } else printf("[success] setPositionModeRaw.\n");
+    }
+    else printf("[success] setPositionModeRaw.\n");
 
     printf("test positionMove(0,-25)\n");
     ok = pos->positionMoveRaw(0, -25);
-    if (!ok) {
+    if (!ok)
+    {
         printf("[error] Problems in positionMove.\n");
         return 1;
-    } else printf("[success] positionMove.\n");
+    }
+    else printf("[success] positionMove.\n");
 
     printf("Delaying 5 seconds...\n");
     yarp::os::Time::delay(5);
@@ -148,7 +164,7 @@ int main(int argc, char *argv[]) {
     printf("Delaying 5 seconds...\n");
     yarp::os::Time::delay(5);*/
 
-    dd.close();    
+    dd.close();
 
     return 0;
 }

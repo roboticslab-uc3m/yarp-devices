@@ -3,7 +3,8 @@
 #include "TechnosoftIpos.hpp"
 
 // -----------------------------------------------------------------------------
-bool teo::TechnosoftIpos::open(yarp::os::Searchable& config) {
+bool teo::TechnosoftIpos::open(yarp::os::Searchable& config)
+{
 
     this->canId = config.check("canId",0,"can bus ID").asInt();
     this->tr = config.check("tr",0,"reduction").asDouble();
@@ -18,23 +19,28 @@ bool teo::TechnosoftIpos::open(yarp::os::Searchable& config) {
     this->targetReached = false;
     this->encoder = 0;
 
-    if( 0 == this->canId ) {
+    if( 0 == this->canId )
+    {
         CD_ERROR("Could not create TechnosoftIpos with canId 0\n");
         return false;
     }
-    if( this->min >= this->max ) {
+    if( this->min >= this->max )
+    {
         CD_ERROR("Could not create TechnosoftIpos with min >= max\n");
         return false;
     }
-    if( 0 == this->tr ) {
+    if( 0 == this->tr )
+    {
         CD_ERROR("Could not create TechnosoftIpos with tr 0\n");
         return false;
     }
-    if( 0 == this->refAcceleration ) {
+    if( 0 == this->refAcceleration )
+    {
         CD_ERROR("Could not create TechnosoftIpos with refAcceleration 0\n");
         return false;
     }
-    if( 0 == this->refSpeed ) {
+    if( 0 == this->refSpeed )
+    {
         CD_ERROR("Could not create TechnosoftIpos with refSpeed 0\n");
         return false;
     }
@@ -45,7 +51,8 @@ bool teo::TechnosoftIpos::open(yarp::os::Searchable& config) {
 }
 
 // -----------------------------------------------------------------------------
-bool teo::TechnosoftIpos::close() {
+bool teo::TechnosoftIpos::close()
+{
     CD_INFO("\n");
     return true;
 }

@@ -29,25 +29,29 @@ namespace teo
  * @ingroup playbackLocomotion
  *
  * @brief Plays back a locomotion file.
- * 
+ *
  */
-class PlaybackLocomotion : public yarp::os::RFModule {
+class PlaybackLocomotion : public yarp::os::RFModule
+{
 
-    public:
-        PlaybackLocomotion();
-        bool configure(yarp::os::ResourceFinder &rf);
+public:
+    PlaybackLocomotion();
+    bool configure(yarp::os::ResourceFinder &rf);
 
-    protected:
-        yarp::dev::PolyDriver leftLegDevice;
-        yarp::dev::PolyDriver rightLegDevice;
+protected:
+    yarp::dev::PolyDriver leftLegDevice;
+    yarp::dev::PolyDriver rightLegDevice;
 
-        virtual double getPeriod() {return 3.0;}
-        virtual bool updateModule();
-        virtual bool close();
+    virtual double getPeriod()
+    {
+        return 3.0;
+    }
+    virtual bool updateModule();
+    virtual bool close();
     //        virtual bool interruptModule();
     //        virtual int period;
 
-        PlaybackThread playbackThread;
+    PlaybackThread playbackThread;
 
 };
 

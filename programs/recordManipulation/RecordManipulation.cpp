@@ -9,7 +9,8 @@ namespace teo
 RecordManipulation::RecordManipulation() { }
 
 /************************************************************************/
-bool RecordManipulation::configure(yarp::os::ResourceFinder &rf) {
+bool RecordManipulation::configure(yarp::os::ResourceFinder &rf)
+{
 
     int ptModeMs = rf.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
     CD_INFO("Using ptModeMs: %d (default: %d).\n",ptModeMs,int(DEFAULT_PT_MODE_MS));
@@ -18,7 +19,8 @@ bool RecordManipulation::configure(yarp::os::ResourceFinder &rf) {
     std::string fileName = rf.check("file",yarp::os::Value(DEFAULT_FILE_NAME),"file name").asString();
     CD_INFO("Using file: %s (default: " DEFAULT_FILE_NAME ").\n",fileName.c_str());
     filePtr = ::fopen (fileName.c_str(),"w");
-    if( ! filePtr ) {
+    if( ! filePtr )
+    {
         CD_PERROR("Could not open file: %s.\n",fileName.c_str());
         return false;
     }
@@ -30,7 +32,8 @@ bool RecordManipulation::configure(yarp::os::ResourceFinder &rf) {
 
     std::string allIni = rf.findFileByName("../launchManipulation/launchManipulation.ini");
     yarp::os::Property allOptions;
-    if (! allOptions.fromConfigFile(allIni) ) {  //-- Put first because defaults to wiping out.
+    if (! allOptions.fromConfigFile(allIni) )    //-- Put first because defaults to wiping out.
+    {
         CD_ERROR("Could not configure from \"launchManipulation.ini\".\n");
         return false;
     }
@@ -46,8 +49,9 @@ bool RecordManipulation::configure(yarp::os::ResourceFinder &rf) {
     if (rf.check("reset")) optionsDevCan0.put("reset",1);
 
     leftArmDevice.open(optionsDevCan0);
-    
-    if (!leftArmDevice.isValid()) {
+
+    if (!leftArmDevice.isValid())
+    {
         CD_ERROR("leftArmDevice instantiation not worked.\n");
         CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_CanBusControlboard\" variable is set \"ON\"\n");
         CD_ERROR("\"SKIP_CanBusControlboard is set\" --> should be --> \"ENABLE_CanBusControlboard is set\"\n");
@@ -66,7 +70,8 @@ bool RecordManipulation::configure(yarp::os::ResourceFinder &rf) {
 
     rightArmDevice.open(optionsDevCan1);
 
-    if (!rightArmDevice.isValid()) {
+    if (!rightArmDevice.isValid())
+    {
         CD_ERROR("rightArmDevice instantiation not worked.\n");
         CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_CanBusControlboard\" variable is set \"ON\"\n");
         CD_ERROR("\"SKIP_CanBusControlboard is set\" --> should be --> \"ENABLE_CanBusControlboard is set\"\n");
@@ -78,37 +83,43 @@ bool RecordManipulation::configure(yarp::os::ResourceFinder &rf) {
     recordRateThread.setFilePtr(filePtr);
 
     //-- Obtain manipulator interfaces.
-    if ( ! leftArmDevice.view( recordRateThread.leftArmEnc ) ) {
+    if ( ! leftArmDevice.view( recordRateThread.leftArmEnc ) )
+    {
         CD_ERROR("Could not obtain leftArmEnc.\n");
         return false;
     }
     CD_SUCCESS("Obtained leftArmEnc.\n");
 
-    if ( ! leftArmDevice.view( recordRateThread.leftArmTrq ) ) {
+    if ( ! leftArmDevice.view( recordRateThread.leftArmTrq ) )
+    {
         CD_ERROR("Could not obtain leftArmTrq.\n");
         return false;
     }
     CD_SUCCESS("Obtained leftArmTrq.\n");
 
-    if ( ! rightArmDevice.view( recordRateThread.rightArmEnc ) ) {
+    if ( ! rightArmDevice.view( recordRateThread.rightArmEnc ) )
+    {
         CD_ERROR("Could not obtain rightArmEnc.\n");
         return false;
     }
     CD_SUCCESS("Obtained rightArmEnc.\n");
 
-    if ( ! rightArmDevice.view( recordRateThread.rightArmTrq ) ) {
+    if ( ! rightArmDevice.view( recordRateThread.rightArmTrq ) )
+    {
         CD_ERROR("Could not obtain rightArmTrq.\n");
         return false;
     }
     CD_SUCCESS("Obtained rightArmTrq.\n");
 
-    if ( ! leftArmDevice.view( moveGripperPort.iPositionControlLeft ) ) {
+    if ( ! leftArmDevice.view( moveGripperPort.iPositionControlLeft ) )
+    {
         CD_ERROR("Could not obtain left gripperPos.\n");
         return false;
     }
     CD_SUCCESS("Obtained left gripperPos.\n");
 
-    if ( ! rightArmDevice.view( moveGripperPort.iPositionControlRight ) ) {
+    if ( ! rightArmDevice.view( moveGripperPort.iPositionControlRight ) )
+    {
         CD_ERROR("Could not obtain right gripperPos.\n");
         return false;
     }
@@ -139,14 +150,16 @@ bool RecordManipulation::configure(yarp::os::ResourceFinder &rf) {
 
 /************************************************************************/
 
-bool RecordManipulation::updateModule() {
+bool RecordManipulation::updateModule()
+{
     //printf("RecordManipulation alive...\n");
     return true;
 }
 
 /************************************************************************/
 
-bool RecordManipulation::close() {
+bool RecordManipulation::close()
+{
 
     moveGripperPort.disableCallback();
     moveGripperPort.close();

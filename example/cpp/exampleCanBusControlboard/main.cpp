@@ -81,7 +81,7 @@ Response: [ok]
 \verbatim
 Response: [ok]
 \endverbatim
- * When finished, Control-C closes programs cleanly. Start by Control-C on teo-main's rpc (it's the client part), and then Control-C on teo-body's exampleCanBusControlboard (it shuts down the motors correctly). 
+ * When finished, Control-C closes programs cleanly. Start by Control-C on teo-main's rpc (it's the client part), and then Control-C on teo-body's exampleCanBusControlboard (it shuts down the motors correctly).
  *
  * @section exampleCanBusControlboard_modify Modify
  *
@@ -97,7 +97,8 @@ using namespace yarp::dev;
 
 YARP_DECLARE_PLUGINS(BodyYarp)
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 
     YARP_REGISTER_PLUGINS(BodyYarp);
 
@@ -109,7 +110,8 @@ int main(int argc, char *argv[]) {
 
     CD_INFO("Checking for yarp network...\n");
     Network yarp;
-    if (!yarp.checkNetwork()) {
+    if (!yarp.checkNetwork())
+    {
         CD_ERROR("Found no yarp network (try running \"yarpserver &\"), bye!\n");
         return -1;
     }
