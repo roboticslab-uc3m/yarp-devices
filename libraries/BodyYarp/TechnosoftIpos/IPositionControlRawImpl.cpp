@@ -14,7 +14,7 @@ bool teo::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encExposed = 
     //*************************************************************
     uint8_t msg_position_target[]= {0x23,0x7A,0x60,0x00,0x00,0x00,0x00,0x00}; // Position target
 
-    int position = ref * this->tr * 11.11112;  // Appply tr & convert units to encoder increments
+    int position = ref * this->tr * 11.38;  // Appply tr & convert units to encoder increments
     memcpy(msg_position_target+4,&position,4);
 
     if( ! send( 0x600, 8, msg_position_target ) )
@@ -63,7 +63,7 @@ bool teo::TechnosoftIpos::relativeMoveRaw(int j, double delta)
     //*************************************************************
     uint8_t msg_position_target[]= {0x23,0x7A,0x60,0x00,0x00,0x00,0x00,0x00}; // Position target
 
-    int sendDelta = delta * this->tr * 11.11112;  // Appply tr & convert units to encoder increments
+    int sendDelta = delta * this->tr * 11.38;  // Appply tr & convert units to encoder increments
     memcpy(msg_position_target+4,&sendDelta,4);
 
     if( ! send( 0x600, 8, msg_position_target ) )
@@ -174,7 +174,7 @@ bool teo::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
     //*************************************************************
     uint8_t msg_posmode_acc[]= {0x23,0x83,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6083h: Profile acceleration
 
-    int sendRefAcc = acc * this->tr * 11.11112;  // Appply tr & convert units to encoder increments
+    int sendRefAcc = acc * this->tr * 11.38;  // Appply tr & convert units to encoder increments
     memcpy(msg_posmode_acc+4,&sendRefAcc,4);
 
     if( ! send( 0x600, 8, msg_posmode_acc) )
