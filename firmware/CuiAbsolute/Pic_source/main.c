@@ -52,8 +52,8 @@
 #include <p18F2580.h>
 #include "ECAN.h"
 #include "ECAN.c"
-#include <delays.h>
 #include "timers.h"
+#include <delays.h>
 #include <spi.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -80,11 +80,11 @@ BYTE sendDelay = 1;
 /***********************************************************************************************************/
 
 // -- Inicialización de variables para el envío
-int Orden1[2], aux;
-float pos, grados, div=11.38; //Se le da el valor de 11.38 a div por ser el resultado dividir (2^12)/360
-BYTE OrdenLon1=1;
-BYTE x, y;
+int aux, message[2];
 int i=0;
+double degrees;
+double div = 4096/360; // resultado dividir (2^12)/360 = 11.38
+BYTE x, y;
 ECAN_TX_MSG_FLAGS txFlags = ECAN_TX_PRIORITY_3 & ECAN_TX_STD_FRAME & ECAN_TX_NO_RTR_FRAME;
 int stop_flag=0; // -- flag para saber cuando se ha recibido un stop
 
@@ -217,34 +217,34 @@ void send()
     {
         LATCbits.LATC2=0;
         WriteSPI (0b00000000);  //Espera a que el encoder esté listo (comando 0x00)
-        Delay10TCYx(3); 	//Wait 6us
-        y=SSPBUF;		//Recoge los datos del SSPBUF que provienen del encoder (MISO)
+        Delay10TCYx(3); 		//Wait 6us
+        y=SSPBUF;				//Recoge los datos del SSPBUF que provienen del encoder (MISO)
         LATCbits.LATC2=1;
     }
 
     LATCbits.LATC2=0;
-    WriteSPI(0b00000000);	//Espera para captar la parte alta de la posición
-    Delay10TCYx(3);		//Wait 6us
-    y=SSPBUF;			//Recoge los datos del SSPBUF que provienen del encoder (MISO)
-    Orden1[0]=y;		//Se almacena en el primer elemento del array que se enviará por CAN
+    WriteSPI(0b00000000);		//Espera para captar la parte alta de la posición
+    Delay10TCYx(3);				//Wait 6us
+    y=SSPBUF;					//Recoge los datos del SSPBUF que provienen del encoder (MISO)
+    message[0]=y;				//Se almacena en el primer elemento del array que se enviará por CAN
 
     LATCbits.LATC2=1;
     LATCbits.LATC2=0;
-    WriteSPI(0b00000000);       //Espera para captar la parte baja del mensage
+    WriteSPI(0b00000000);       //Espera para captar la parte baja del mensaje
     Delay10TCYx(3);             //Wait 6us
     y=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
-    Orden1[1]=y;                //Se almacena en el segundo elemento del array que se enviará por CAN
+    message[1]=y;               //Se almacena en el segundo elemento del array que se enviará por CAN
 
     LATCbits.LATC2=1;
 
-    aux=(Orden1[0]<<8)+Orden1[1];  //Se rota el byte alto de la posición 8 bits (2^8=256) y se suma al bajo
+    aux=(message[0]<<8)+message[1];  //Se rota el byte alto de la posición 8 bits (2^8=256) y se suma al bajo
 
-    grados = aux / div;            //Se divide para obtener la realacción en grados
+    degrees = aux / div;            //Se divide para obtener la realacción en grados
 
     x=0;
     while( !x )
     {
-        x=ECANSendMessage(canId, &grados, sizeof(grados), txFlags);
+        x=ECANSendMessage(canId, &degrees, sizeof(degrees), txFlags);
     }
 }
 
