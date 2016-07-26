@@ -9,8 +9,8 @@ Your OS needs the following (Debian 6.0 is a good intermediate solution in versi
 ### Install the Software
 
 First install the depencencies:
-  - teo_body_install_cmake_on_debian_6
-  - teo_body_install_yarp_on_debian_6
+  - [Install CMake (Debian 6.0)]( /doc/teo_body_install_cmake_on_debian_6.md )
+  - [Install YARP (Debian 6.0)]( /doc/teo_body_install_yarp_on_debian_6.md )
 
 Our software integrates the previous dependencies. Note that you will be prompted for your password upon using '''sudo''' a couple of times:
 
@@ -27,10 +27,10 @@ For additional TEO options use ccmake instead of cmake.
 
 Finally, install the hcanpci kernel module:
 
-  - teo_body_install_hcanpci_on_debian_6
+  - [Install hcanpci kernel module (Debian 6.0)]( /doc/teo_body_install_hcanpci_on_debian_6.md )
 
 ### Even more!
 
 Done! You are now probably interested in one of the following links:
-  - teo_body_post_install
+  - [teo-body - Now what can I do?]( /doc/teo_body_post_install.md )
   - teo_body_environment_variables
