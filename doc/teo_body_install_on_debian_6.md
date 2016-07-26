@@ -1,46 +1,36 @@
+## Installation from Source Code (Debian 6.0)
 
-/**
- * \page teo_body_install_on_debian_6 Installation from Source Code (Debian 6.0)
-
- * @section install_teo_body_why Why Debian 6.0?
+### Why Debian 6.0?
 
 Your OS needs the following (Debian 6.0 is a good intermediate solution in versions, and Debian is additionally more stable than Ubuntu):
-  \li A kernel old enough for the HicoCAN kernel drivers.
-  \li An OS new enough for github (you need a recent git version) and YARP (you need a recent CMake version).
+  - A kernel old enough for the HicoCAN kernel drivers.
+  - An OS new enough for github (you need a recent git version) and YARP (you need a recent CMake version).
 
- * @section install_teo_body Install the Software
+### Install the Software
 
 First install the depencencies:
-  \li \ref teo_body_install_cmake_on_debian_6
-  \li \ref teo_body_install_yarp_on_debian_6
+  - [Install CMake (Debian 6.0)]( /doc/teo_body_install_cmake_on_debian_6.md )
+  - [Install YARP (Debian 6.0)]( /doc/teo_body_install_yarp_on_debian_6.md )
 
 Our software integrates the previous dependencies. Note that you will be prompted for your password upon using '''sudo''' a couple of times:
 
-\verbatim
+```bash
 cd  # go home
 mkdir -p repos; cd repos  # make $HOME/repos if it doesn't exist; then, enter it
 git clone https://github.com/roboticslab-uc3m/teo-body.git  # Download teo-body software from the repository
 cd teo-body; mkdir build; cd build; cmake ..  # Configure the teo-body software
 make  # Compile
 sudo make install  # Install :-)
-\endverbatim
+```
 
 For additional TEO options use ccmake instead of cmake.
 
 Finally, install the hcanpci kernel module:
 
-  \li \ref teo_body_install_hcanpci_on_debian_6
+  - [Install hcanpci kernel module (Debian 6.0)]( /doc/teo_body_install_hcanpci_on_debian_6.md )
 
-@section install_on_debian_6_even_more Even more!
+### Even more!
 
 Done! You are now probably interested in one of the following links:
-  \li \ref teo_body_post_install
-  \li \ref teo_body_environment_variables
-
-<hr>
-
-This page can be edited at teo-body/doc/teo_install_on_debian_6.dox.
-
-*
-*/
-
+  - [teo-body - Now what can I do?]( /doc/teo_body_post_install.md )
+  - teo_body_environment_variables
