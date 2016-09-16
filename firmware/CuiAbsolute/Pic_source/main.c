@@ -76,7 +76,7 @@ unsigned long canId = 504; //508 (codo 124) 492 (pierna izquierda 108)
  * A tener en cuenta:
 	- La velocidad de ejecución de cada ciclo de instrucción son 0.8 microsegundos
         - Delay10TCYx(i) -> 10.Tcy.i genera una demora de 10 ciclos de instrucciones * i . Por tanto Delay10TCYc(1) equivale a 8 microsegundos (10 ciclos de reloj) */
-BYTE sendDelay = 1; //Default: 1 (se ha observado que con este valor, el encoder al cabo de un tiempo se queda congelado) (Con 50 funciona)
+BYTE sendDelay = 1; //Default: 1 
 /***********************************************************************************************************/
 
 // -- Inicialización de variables para el envío
