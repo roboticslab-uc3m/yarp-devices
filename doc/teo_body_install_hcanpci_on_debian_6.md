@@ -1,8 +1,6 @@
+## Install hcanpci kernel module (Debian 6.0)
 
-/**
- * \page teo_body_install_hcanpci_on_debian_6 Install hcanpci kernel module (Debian 6.0)
-
-\verbatim
+```bash
 cd  # go home
 mkdir -p src; cd src  # make $HOME/src if it doesn't exist; then, enter it
 tar xvf ../teo-body/extern/hcanpci/linux-2-6-32/100_hcanpci_linux-v1207en-edi1822.tar.gz
@@ -12,18 +10,10 @@ sudo mkdir /lib/modules/2.6.32-5-686/kernel/can
 sudo cp hcanpci.ko /lib/modules/2.6.32-5-686/kernel/can
 sudo depmod
 sudo ln -s $PWD/driver/makenodes.sh /usr/local/bin
-\endverbatim
+```
 
 Now add the following line to /etc/rc.local (lines before the exit):
 
-\verbatim
+```bash
 /usr/local/bin/makenodes.sh
-\endverbatim
-
-<br><hr>
-
-This page can be edited at teo-body/doc/teo_body_install_hcanpci_on_debian_6.dox.
-
-*
-*/
-
+```
