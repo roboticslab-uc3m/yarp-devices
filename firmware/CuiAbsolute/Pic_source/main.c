@@ -84,6 +84,7 @@ int aux, message[2];
 int i=0;
 double degrees;
 double div = 11.38; // resultado dividir (2^12)/360 = 11.38
+>>>>>>> 112e453422eb60e55e1cc3d846fb230a0929be65
 BYTE x, y;
 ECAN_TX_MSG_FLAGS txFlags = ECAN_TX_PRIORITY_3 & ECAN_TX_STD_FRAME & ECAN_TX_NO_RTR_FRAME;
 int stop_flag=0; // -- flag para saber cuando se ha recibido un stop
@@ -161,6 +162,8 @@ void main(void)
     		- La frecuencia de oscilación se encuentra definida como Fosc = 5Mhz (20/4)
     		- La velocidad de ejecución de cada ciclo de instrucción son 0.8 microsegundos
     		- Delay10TCYx(i) -> 10.Tcy.i genera una demora de 10 ciclos de instrucciones * i . Por tanto Delay10TCYc(1) equivale a 8 microsegundos (10 ciclos de reloj)
+   -- data[3]-data[7]: (Byte 4, 5, 6, 7 y 8) 
+	Siempre a cero (0x00) . Se han creado mensajes de 8 bytes para evitar conflictos con otros mensajes provenientes de los Drivers.
     */
 
     while(1)

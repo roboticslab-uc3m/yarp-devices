@@ -35,6 +35,9 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
     }
     canBusDevice.view(iCanBus);
 
+    //-- We test if we recive messages of the Cui (in the start and in the end)
+    struct can_msg buffer;
+
     //-- Start the reading thread (required for checkMotionDoneRaw).
     this->Thread::start();
 
@@ -99,10 +102,9 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
             CuiAbsolute* cuiAbsolute;
             device->view( cuiAbsolute );
 
-            yarp::os::Time::delay(0.5);
-            cuiAbsolute->startContinuousPublishing(0);
+            yarp::os::Time::delay(0.5);            
+            cuiAbsolute->startContinuousPublishing(0); // startContinuousPublishing(delay)
 
-            // -- Pasa el valor del encoder absoluto al relativo
             iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
         }
 
@@ -206,7 +208,11 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
 // -----------------------------------------------------------------------------
 
 bool teo::CanBusControlboard::close()
-{
+{    
+    int ret = 0;
+    double timeOut = 1; // timeout (1 secod)
+    struct can_msg buffer;
+
 
     //-- Stop the read thread.
     this->Thread::stop();
@@ -214,21 +220,61 @@ bool teo::CanBusControlboard::close()
     //-- Disable and shutdown the physical drivers (and Cui Encoders).
     bool ok = true;
     for(int i=0; i<nodes.size(); i++)
-    {
-        ok &= iCanBusSharer[i]->switchOn();  //-- "switch on" also acts as "disable".
-
-        ok &= iCanBusSharer[i]->readyToSwitchOn();  //-- "ready to switch on" also acts as "shutdown".
-
+    {       
         // -- Sending a stop message to PICs of Cui Encoders
         yarp::os::Value value;
         value = nodes[i]->getValue("device");
 
+        // Drivers:
+        if(value.asString() == "TechnosoftIpos"){
+            CD_INFO("Stopping Driver (ID: %s)\n", nodes[i]->getValue("canId").toString().c_str());
+            ok &= iCanBusSharer[i]->switchOn();  //-- "switch on" also acts as "disable".
+            ok &= iCanBusSharer[i]->readyToSwitchOn();  //-- "ready to switch on" also acts as "shutdown".
+        }
+
+        // Absolute encoders:
         if(value.asString() == "CuiAbsolute"){
+
+            int canId = 0;
+            int CAN_ID = atoi(nodes[i]->getValue("canId").toString().c_str());
+            bool timePassed = false;
+            double timeStamp = 0.0;
+            double cleaningTime = 0.5; // time to empty the buffer
+
             CuiAbsolute* cuiAbsolute;
             nodes[i]->view( cuiAbsolute );
-            CD_INFO("Stopping Cui Absolute PIC (ID: %s)\n", nodes[i]->getValue("canId").toString().c_str());
-            yarp::os::Time::delay(0.5);
+
+            CD_INFO("Stopping Cui Absolute PIC (ID: %d)\n", CAN_ID );
             cuiAbsolute->stopPublishingMessages();
+
+            yarp::os::Time::delay(0.5);
+            timeStamp = yarp::os::Time::now();
+
+            // This part of the code checks if the encoders have stopped sending messages
+            while ( !timePassed )
+            {
+                // -- if it exceeds the timeout (1 secod) ...PASS the test
+                if(int(yarp::os::Time::now()-timeStamp)==timeOut)
+                {
+                    CD_SUCCESS("Time out passed and CuiAbsolute ID (%d) was stopped successfully\n", CAN_ID);
+                    timePassed = true;
+                }
+
+                ret = iCanBus->read_timeout(&buffer,1);         // -- return value of message with timeout of 1 [ms]
+
+                // This line is needed to clear the buffer (old messages that has been received)
+                if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
+
+                if( ret <= 0 ) continue;                        // -- is waiting for recive message
+                canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
+                //CD_DEBUG("Read a message from CuiAbsolute %d\n", canId);
+
+                //printf("timeOut: %d\n", int(yarp::os::Time::now()-timeStamp));
+                if(canId == CAN_ID)  {
+                    CD_WARNING("Resending stop message to Cui Absolute PIC (ID: %d)\n", CAN_ID );
+                    cuiAbsolute->stopPublishingMessages();
+                }
+            }
         }
     }
 

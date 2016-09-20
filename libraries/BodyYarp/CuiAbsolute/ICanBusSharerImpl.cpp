@@ -63,7 +63,7 @@ bool teo::CuiAbsolute::startContinuousPublishing(uint8_t delay)
         CD_ERROR("Could not send \"startContinuousPublishing\" to Cui Absolute Encoder.\n");
         return false;
     }
-    CD_SUCCESS("Send: \"startContinuousPublishing\" to Cui Absolute Encoder.\n");
+    CD_INFO("Send: \"startContinuousPublishing\" to Cui Absolute Encoder.\n");
     return true;
 }
 
@@ -78,7 +78,7 @@ bool teo::CuiAbsolute::startPullPublishing()
         CD_ERROR("Could not send \"startPullPublishing\" to Cui Absolute Encoder.\n");
         return false;
     }
-    CD_SUCCESS("Send: \"startPullPublishing\" to Cui Absolute Encoder. \n");
+    CD_INFO("Send: \"startPullPublishing\" to Cui Absolute Encoder. \n");
     return true;
 }
 
@@ -93,7 +93,7 @@ bool teo::CuiAbsolute::stopPublishingMessages()
         CD_ERROR("Could not send \"stopPublishingMessages\" to Cui Absolute Encoder. %s\n");
         return false;
     }
-    CD_SUCCESS("Send: \"stopPublishingMessages\" to Cui Absolute Encoder. %s\n");
+    CD_INFO("Send: \"stopPublishingMessages\" to Cui Absolute Encoder. %s\n");
     return true;
 }
 
