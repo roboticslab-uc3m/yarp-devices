@@ -161,6 +161,8 @@ void main(void)
     		- La frecuencia de oscilación se encuentra definida como Fosc = 5Mhz (20/4)
     		- La velocidad de ejecución de cada ciclo de instrucción son 0.8 microsegundos
     		- Delay10TCYx(i) -> 10.Tcy.i genera una demora de 10 ciclos de instrucciones * i . Por tanto Delay10TCYc(1) equivale a 8 microsegundos (10 ciclos de reloj)
+   -- data[3]-data[7]: (Byte 4, 5, 6, 7 y 8) 
+	Siempre a cero (0x00) . Se han creado mensajes de 8 bytes para evitar conflictos con otros mensajes provenientes de los Drivers.
     */
 
     while(1)
