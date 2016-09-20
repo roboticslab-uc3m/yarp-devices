@@ -105,7 +105,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
             yarp::os::Time::delay(0.5);            
             cuiAbsolute->startContinuousPublishing(0); // startContinuousPublishing(delay)
 
-            (iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] ));
+            iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
         }
 
         //-- Set initial parameters on physical motor drivers.
@@ -244,37 +244,37 @@ bool teo::CanBusControlboard::close()
             CuiAbsolute* cuiAbsolute;
             nodes[i]->view( cuiAbsolute );
 
-                CD_INFO("Stopping Cui Absolute PIC (ID: %d)\n", CAN_ID );
-                cuiAbsolute->stopPublishingMessages();
+            CD_INFO("Stopping Cui Absolute PIC (ID: %d)\n", CAN_ID );
+            cuiAbsolute->stopPublishingMessages();
 
-                yarp::os::Time::delay(0.5);
-                timeStamp = yarp::os::Time::now();
+            yarp::os::Time::delay(0.5);
+            timeStamp = yarp::os::Time::now();
 
-                // This part of the code checks if the encoders have stopped sending messages
-                while ( !timePassed )
+            // This part of the code checks if the encoders have stopped sending messages
+            while ( !timePassed )
+            {
+                // -- if it exceeds the timeout (1 secod) ...PASS the test
+                if(int(yarp::os::Time::now()-timeStamp)==timeOut)
                 {
-                    // -- if it exceeds the timeout (1 secod) ...PASS the test
-                    if(int(yarp::os::Time::now()-timeStamp)==timeOut)
-                    {
-                        CD_SUCCESS("Time out passed and CuiAbsolute ID (%d) was stopped successfully\n", CAN_ID);
-                        timePassed = true;
-                    }
-
-                    ret = iCanBus->read_timeout(&buffer,1);         // -- return value of message with timeout of 1 [ms]
-
-                    // This line is needed to clear the buffer (old messages that has been received)
-                    if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
-
-                    if( ret <= 0 ) continue;                        // -- is waiting for recive message
-                    canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
-                    //CD_DEBUG("Read a message from CuiAbsolute %d\n", canId);
-
-                    //printf("timeOut: %d\n", int(yarp::os::Time::now()-timeStamp));
-                    if(canId == CAN_ID)  {                        
-                        CD_WARNING("Resending stop message to Cui Absolute PIC (ID: %d)\n", CAN_ID );
-                        cuiAbsolute->stopPublishingMessages();
-                    }
+                    CD_SUCCESS("Time out passed and CuiAbsolute ID (%d) was stopped successfully\n", CAN_ID);
+                    timePassed = true;
                 }
+
+                ret = iCanBus->read_timeout(&buffer,1);         // -- return value of message with timeout of 1 [ms]
+
+                // This line is needed to clear the buffer (old messages that has been received)
+                if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
+
+                if( ret <= 0 ) continue;                        // -- is waiting for recive message
+                canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
+                //CD_DEBUG("Read a message from CuiAbsolute %d\n", canId);
+
+                //printf("timeOut: %d\n", int(yarp::os::Time::now()-timeStamp));
+                if(canId == CAN_ID)  {
+                    CD_WARNING("Resending stop message to Cui Absolute PIC (ID: %d)\n", CAN_ID );
+                    cuiAbsolute->stopPublishingMessages();
+                }
+            }
         }
     }
 
