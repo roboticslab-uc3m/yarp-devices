@@ -1,26 +1,17 @@
-/**
- * \page teo_body_post_install teo-body - Now what can I do?
+## Now what can I do?
 
 Now that you have installed the basic teo-body repository, you're probably wondering what to do.
 
-@section post_install_init_comms Initializing the communication servers
+### Initializing the communication servers
 
 Our current implementation uses <a class="el" href="http://eris.liralab.it/yarpdoc/what_is_yarp.html">YARP</a> for communication. Basic use of YARP requires the use of a centralized server. This server associates the low-level implementation of the communication ports with the names we give them. Before executing any program, please launch a yarp server:
 
-\verbatim
+```bash
 [teo-main, terminal 1] yarp server
-\endverbatim
+```
 
 Only one yarp server is required per network.
 
-@section post_install_init_robot Initializing a robot that opens YARP controlboard ports
+### Initializing a robot that opens YARP controlboard ports
 
-You can use the \ref testBodyBot program.
-
-<hr>
-
-This page can be edited at teo-body/doc/post_install.dox.
-
-*
-*/
-
+You can use the testBodyBot program.

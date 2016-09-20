@@ -68,7 +68,7 @@
 /***** Variables configurables (CAN_ID & SEND_DELAY) *******************************************************/
 
 // CAN ID (Ver correspondecia en http://robots.uc3m.es/index.php/CuiAbsolute_Documentation)
-unsigned long canId = 508; //508 (codo 124) 492 (pierna izquierda 108)
+unsigned long canId = 504; //508 (codo 124) 492 (pierna izquierda 108)
 
 /* SEND DELAY (Valor que utilizará Delay10TCYx en el envío. Valor recomendado de 1 a 100)
  * El byte 3 (data[2]) que recibirá el PIC (valor comprendido entre [0-255]) se multiplicará por el tiempo que
@@ -76,14 +76,15 @@ unsigned long canId = 508; //508 (codo 124) 492 (pierna izquierda 108)
  * A tener en cuenta:
 	- La velocidad de ejecución de cada ciclo de instrucción son 0.8 microsegundos
         - Delay10TCYx(i) -> 10.Tcy.i genera una demora de 10 ciclos de instrucciones * i . Por tanto Delay10TCYc(1) equivale a 8 microsegundos (10 ciclos de reloj) */
-BYTE sendDelay = 1;
+BYTE sendDelay = 1; //Default: 1 
 /***********************************************************************************************************/
 
 // -- Inicialización de variables para el envío
 int aux, message[2];
 int i=0;
 double degrees;
-double div = 4096/360; // resultado dividir (2^12)/360 = 11.38
+double div = 11.38; // resultado dividir (2^12)/360 = 11.38
+>>>>>>> 112e453422eb60e55e1cc3d846fb230a0929be65
 BYTE x, y;
 ECAN_TX_MSG_FLAGS txFlags = ECAN_TX_PRIORITY_3 & ECAN_TX_STD_FRAME & ECAN_TX_NO_RTR_FRAME;
 int stop_flag=0; // -- flag para saber cuando se ha recibido un stop
@@ -139,7 +140,7 @@ void main(void)
     ECANSetRXM0Value(-1, ECAN_MSG_STD);
 
     // Manual (page 42): RXB0 will receive all valid messages
-    ECANSetRxBnRxMode(RXB0, ECAN_RECEIVE_ALL_VALID);
+    ECANSetRxBnRxMode(RXB0, ECAN_RECEIVE_ALL_VALID); //ECAN_RECEIVE_ALL_VALID (funciona) ECAN_RECEIVE_STANDARD (inestable, se queda pillado) ECAN_RECEIVE_ALL (no funciona, el mensaje de STOP lo ignora)
 
     // Manual (page 36): This macro sets the CAN bus Wake-up Filter mode. Specifies that the low-pass filter be disabled
     ECANSetFilterMode(ECAN_FILTER_MODE_DISABLE);
@@ -161,6 +162,8 @@ void main(void)
     		- La frecuencia de oscilación se encuentra definida como Fosc = 5Mhz (20/4)
     		- La velocidad de ejecución de cada ciclo de instrucción son 0.8 microsegundos
     		- Delay10TCYx(i) -> 10.Tcy.i genera una demora de 10 ciclos de instrucciones * i . Por tanto Delay10TCYc(1) equivale a 8 microsegundos (10 ciclos de reloj)
+   -- data[3]-data[7]: (Byte 4, 5, 6, 7 y 8) 
+	Siempre a cero (0x00) . Se han creado mensajes de 8 bytes para evitar conflictos con otros mensajes provenientes de los Drivers.
     */
 
     while(1)
@@ -171,23 +174,24 @@ void main(void)
             // ----------- Checkeamos ID Driver -----------
             if(picId == canId-384)  		// -- (canId = picId + 0x180)
             {
-                if(data[0]==0x01 && data[1]==0x01)    // -- comienza publicación (start) modo permanente : if(data[0]==0x01 && data[1]==0x01)
+                if(data[0]==0x01 && data[1]==0x01 && data[3]==0x00 && data[4]==0x00 && data[5]==0x00 && data[6]==0x00 && data[7]==0x00 )    // -- comienza publicación (start) modo permanente : if(data[0]==0x01 && data[1]==0x01)
                 {
                     // -- mientras no mande un Stop, sigue publicando
                     while(!stop_flag)
                     {
                         send();	// -- envia
-                        for( i=0; (i<= data[2]) && (!stop_flag) ; i++ )  // data[2] recibirá un valor comprendido en [0 - 255]
+                        for( i=0; (i<= data[2]) && (!stop_flag) ; i++ )  // DELAY: data[2] recibirá un valor comprendido en [0 - 255]
                         {
                             Delay10TCYx(sendDelay);
                             ECANReceiveMessage(&picId, data, &dataLen, &rxflags);
-                            if((data[0]==0x02 && data[1]==0x01) && (picId == canId-384)) stop_flag=1;
+                            if((data[0]==0x02 && data[1]==0x01 && data[3]==0x00 && data[4]==0x00 && data[5]==0x00 && data[6]==0x00 && data[7]==0x00) && (picId == canId-384)) 
+                            	stop_flag=1;
                         }
                     }
                     cleanData(); // -- Se para, limpia las variables
                     stop_flag=0;
                 }
-                if((data[0]==0x01)&&(data[1]==0x02))  	// -- publica por pulling (petición)
+                if(data[0]==0x01 && data[1]==0x02 && data[2]==0x00 && data[3]==0x00 && data[4]==0x00 && data[5]==0x00 && data[6]==0x00 && data[7]==0x00)  	// -- publica por pulling (petición)
                 {
                     send();		 // Manda una único mensaje
                     cleanData(); // Limpia las variables
@@ -213,7 +217,8 @@ void send()
     y=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
     LATCbits.LATC2=1;
 
-    while(y!=0b00010000)        //Espera hasta que el encoder esté preparado para enviar algo (Respuesta 0x10)
+    while((y!=0b00010000) && (y!=0b10100101))  	//	Espera hasta que el encoder esté preparado para enviar algo (Respuesta 0x10)->while(y!=0b00010000). 
+    											//	Se ha añadido también (y!=0b10100101) al while debido a que se producía un bloqueo en esta linea de código.
     {
         LATCbits.LATC2=0;
         WriteSPI (0b00000000);  //Espera a que el encoder esté listo (comando 0x00)
@@ -254,4 +259,9 @@ void cleanData()
     data[0] = 0x00;
     data[1] = 0x00;
     data[2] = 0x00;
+    data[3] = 0x00;
+    data[4] = 0x00;
+    data[5] = 0x00;
+    data[6] = 0x00;
+    data[7] = 0x00;
 }

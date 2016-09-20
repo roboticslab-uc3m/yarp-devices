@@ -1,10 +1,8 @@
-
-/**
- * \page teo_body_install_yarp_on_debian_6 Install YARP (Debian 6.0)
+## Install YARP (Debian 6.0)
 
 We use YARP for communications. Installing YARP on Debian should be quite straightforward. Note that you will be prompted for your password upon using '''sudo''' a couple of times:
 
-\verbatim
+```bash
 sudo apt-get install build-essential libace-dev subversion git
 sudo apt-get install libgsl0-dev  # Needed for creating YARP lib_math we use for kinematics
 cd  # go home
@@ -13,14 +11,6 @@ git clone https://github.com/robotology/yarp
 cd yarp; mkdir build; cd build
 cmake .. -DCREATE_LIB_MATH=ON -DYARP_USE_QT5=OFF  # YARP_USE_QT5 can induce errors as of 02/2016.
 make -j3;  sudo make install; sudo ldconfig; cd  # go home
-\endverbatim
+```
 
 For additional options use ccmake instead of cmake.
-
-<br><hr>
-
-This page can be edited at teo-body/doc/teo_install_yarp_on_debian_6.dox.
-
-*
-*/
-
