@@ -84,7 +84,6 @@ int aux, message[2];
 int i=0;
 double degrees;
 double div = 11.38; // resultado dividir (2^12)/360 = 11.38
->>>>>>> 112e453422eb60e55e1cc3d846fb230a0929be65
 BYTE x, y;
 ECAN_TX_MSG_FLAGS txFlags = ECAN_TX_PRIORITY_3 & ECAN_TX_STD_FRAME & ECAN_TX_NO_RTR_FRAME;
 int stop_flag=0; // -- flag para saber cuando se ha recibido un stop
