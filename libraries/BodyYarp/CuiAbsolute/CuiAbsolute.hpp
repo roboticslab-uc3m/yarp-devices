@@ -372,6 +372,7 @@ public:
 
 protected:
 
+
     //  --------- Implementation in CuiAbsolute.cpp ---------
     /**
      * Write message to the CAN buffer.
@@ -400,7 +401,7 @@ protected:
     //-- Encoder stuff
     double encoder;
     uint32_t encoderTimestamp;
-    yarp::os::Semaphore encoderReady;
+    yarp::os::Semaphore encoderReady;   
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(can_msg* message);

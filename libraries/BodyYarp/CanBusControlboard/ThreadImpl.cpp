@@ -27,6 +27,7 @@ void teo::CanBusControlboard::run()
 
         std::map< int, int >::iterator idxFromCanIdFound = idxFromCanId.find(canId);
 
+
         if( idxFromCanIdFound == idxFromCanId.end() )  //-- Can ID not found
         {
             //-- Intercept 700h 0 msg that just indicates presence.
@@ -39,6 +40,7 @@ void teo::CanBusControlboard::run()
             CD_ERROR("Read CAN message from unknown device!!! %s\n", msgToStr(&buffer).c_str());
             continue;
         }
+
 
         //CD_DEBUG("idxFromCanIdFound->second: %d\n",idxFromCanIdFound->second);
         iCanBusSharer[ idxFromCanIdFound->second ]->interpretMessage(&buffer);  //-- Check if false?

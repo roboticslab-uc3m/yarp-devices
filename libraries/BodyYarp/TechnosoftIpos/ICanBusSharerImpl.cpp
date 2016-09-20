@@ -269,7 +269,7 @@ bool teo::TechnosoftIpos::interpretMessage( can_msg * message)
             int got;
             memcpy(&got, message->data+4,4);
             encoderReady.wait();
-            encoder =  got / ( (4096/360) * this->tr );
+            encoder =  got / ( 11.38 * this->tr );
             encoderTimestamp = message->ts;
             encoderReady.post();
             return true;
