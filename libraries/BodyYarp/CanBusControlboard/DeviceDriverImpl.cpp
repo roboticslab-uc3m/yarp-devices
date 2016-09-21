@@ -102,9 +102,16 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
             CuiAbsolute* cuiAbsolute;
             device->view( cuiAbsolute );
 
-            yarp::os::Time::delay(0.5);            
+            yarp::os::Time::delay(0.2);
             cuiAbsolute->startContinuousPublishing(0); // startContinuousPublishing(delay)
-
+            yarp::os::Time::delay(0.2);
+            while(!cuiAbsolute->HasFirstReached())
+            {
+                CD_WARNING("Resending start continuous publishing message to CUI \n");
+                cuiAbsolute->startContinuousPublishing(0);
+                yarp::os::Time::delay(0.2);
+            }
+            CD_DEBUG("---> First CUI message has been reached \n");
             iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
         }
 

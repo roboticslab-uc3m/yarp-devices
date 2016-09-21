@@ -44,6 +44,11 @@ public:
     CuiAbsolute()
     {
         canDevicePtr = 0;
+        firstHasReached = false;
+    }
+
+    bool HasFirstReached(){
+        return firstHasReached;
     }
 
     //  --------- DeviceDriver Declarations. Implementation in CuiAbsolute.cpp ---------
@@ -398,10 +403,12 @@ protected:
 
     double lastUsage;
 
+
     //-- Encoder stuff
     double encoder;
     uint32_t encoderTimestamp;
-    yarp::os::Semaphore encoderReady;   
+    yarp::os::Semaphore encoderReady;
+    bool firstHasReached;
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(can_msg* message);
