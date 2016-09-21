@@ -96,16 +96,31 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
         {           
             int driverCanId = ids.get(i).asInt() - 100;  //-- \todo{Document the dangers: ID must be > 100, driver must be instanced.}
 
-            CD_INFO("Sending \"Start Continuous Publishing\" message to Cui Absolute PIC (ID: %i)\n", ids.get(i).asInt());
+            CD_INFO("Sending \"Start Continuous Publishing\" message to Cui Absolute (PIC ID: %d)\n", ids.get(i).asInt());
 
             // Configuring Cui Absolute
             CuiAbsolute* cuiAbsolute;
             device->view( cuiAbsolute );
 
-            yarp::os::Time::delay(0.5);            
+            yarp::os::Time::delay(0.2);
             cuiAbsolute->startContinuousPublishing(0); // startContinuousPublishing(delay)
-
-            iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
+            yarp::os::Time::delay(0.2);
+            for(int n=1; n<6 && (!cuiAbsolute->HasFirstReached()); n++)
+            {
+                CD_WARNING("(%d) Resending start continuous publishing message \n", n);
+                cuiAbsolute->startContinuousPublishing(0);
+                yarp::os::Time::delay(0.2);
+            }
+            if(cuiAbsolute->HasFirstReached())
+            {
+                CD_DEBUG("---> First CUI message has been reached \n");
+                iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
+            }
+            else
+            {
+                CD_ERROR("Cui Absolute (PIC ID: %d) doesn't respond. \n", ids.get(i).asInt());
+                return false;
+            }
         }
 
         //-- Set initial parameters on physical motor drivers.

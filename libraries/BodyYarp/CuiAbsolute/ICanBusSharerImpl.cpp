@@ -118,6 +118,8 @@ bool teo::CuiAbsolute::stopPublishingMessages()
 bool teo::CuiAbsolute::interpretMessage( can_msg * message)
 {
 
+    firstHasReached = true;
+
     //CD_DEBUG("Got absolute encoder value. %s\n",msgToStr(message).c_str());
     float got;
     memcpy(&got, message->data,4);

@@ -52,7 +52,7 @@ int teo::CanBusHico::read_timeout(struct can_msg *buf, unsigned int timeout)
     }
     else if (ret<0)
     {
-        CD_ERROR("select() error: %s.\n", strerror(errno));
+        //CD_ERROR("select() error: %s.\n", strerror(errno));
         return ret;   // Return <0 on select error.
     }
 
