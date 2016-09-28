@@ -37,7 +37,7 @@ void teo::CanBusControlboard::run()
                 continue;
             }
 
-            CD_ERROR("Read CAN message from unknown device!!! %s\n", msgToStr(&buffer).c_str());
+            //CD_ERROR("Read CAN message from unknown device!!! %s\n", msgToStr(&buffer).c_str()); // --Commented this line to avoid filling the screen with error messages
             continue;
         }
 
