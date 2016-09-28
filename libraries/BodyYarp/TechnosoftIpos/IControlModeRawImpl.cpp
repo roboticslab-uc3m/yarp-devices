@@ -168,7 +168,7 @@ bool teo::TechnosoftIpos::getControlModeRaw(int j, int *mode)
     ok &= getControlModeRaw1();
     ok &= getControlModeRaw2();
     ok &= getControlModeRaw3();
-    ok &= getControlModeRaw4();    
+    ok &= getControlModeRaw4();
     getModeReady.wait();
     *mode = getMode; // -- activate the sending of message mode
     getModeReady.post();
