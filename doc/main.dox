@@ -3,7 +3,7 @@
 
 Welcome to the TEO Software Repository documentation for the manipulation and locomotion PCs. <a class=el href="http://robots.uc3m.es">Click here to return to Wiki.</a> <a class=el href="https://github.com/roboticslab-uc3m/teo-body">Click here to see teo-body on repo.</a>
 
- \li \ref teo_body_install_on_debian_6
+ \li <a class=el href="https://github.com/roboticslab-uc3m/teo-body/blob/develop/doc/teo_body_install_on_debian_6.md">Teo body install on debian 6</a>
 
 Other internal links of interest:
  \li \ref teo_body_firmware
