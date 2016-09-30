@@ -10,6 +10,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
 
     std::string mode = config.check("mode",yarp::os::Value("position"),"position/velocity mode").asString();
     int16_t ptModeMs = config.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
+    int timeCuiWait  = config.check("waitEncoder", yarp::os::Value(DEFAULT_TIME_TO_WAIT_CUI), "CUI timeout seconds").asInt();
 
 
     yarp::os::Bottle ids = config.findGroup("ids").tail();  //-- e.g. 15
@@ -93,7 +94,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
 
         //-- Associate absolute encoders to motor drivers
         if( types.get(i).asString() == "CuiAbsolute" )
-        {           
+        {
             int driverCanId = ids.get(i).asInt() - 100;  //-- \todo{Document the dangers: ID must be > 100, driver must be instanced.}
 
             CD_INFO("Sending \"Start Continuous Publishing\" message to Cui Absolute (PIC ID: %d)\n", ids.get(i).asInt());
@@ -105,23 +106,49 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
             yarp::os::Time::delay(0.2);
             cuiAbsolute->startContinuousPublishing(0); // startContinuousPublishing(delay)
             yarp::os::Time::delay(0.2);
-            for(int n=1; n<6 && (!cuiAbsolute->HasFirstReached()); n++)
+
+            if(timeCuiWait > 0 && (!cuiAbsolute->HasFirstReached())) // using --externalEncoderWait && doesn't respond
             {
-                CD_WARNING("(%d) Resending start continuous publishing message \n", n);
-                cuiAbsolute->startContinuousPublishing(0);
-                yarp::os::Time::delay(0.2);
+                bool timePassed = false;
+                double timeStamp = 0.0;
+
+                timeStamp = yarp::os::Time::now();
+
+                // This part of the code checks if encoders
+                while ( !timePassed && (!cuiAbsolute->HasFirstReached()))
+                {
+                    // -- if it exceeds the timeCuiWait...
+                    if(int(yarp::os::Time::now()-timeStamp)>=timeCuiWait)
+                    {
+                        CD_ERROR("Time out passed and CuiAbsolute ID (%d) doesn't respond\n", ids.get(i).asInt() );
+                        yarp::os::Time::delay(2);
+                        CD_WARNING("Initializing with normal relative encoder configuration\n");
+                        yarp::os::Time::delay(2);
+                        timePassed = true;
+                    }
+                }
             }
-            if(cuiAbsolute->HasFirstReached())
+            else    // not used --externalEncoderWait (DEFAULT)
             {
-                CD_DEBUG("---> First CUI message has been reached \n");
-                iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
-            }
-            else
-            {
-                CD_ERROR("Cui Absolute (PIC ID: %d) doesn't respond. \n", ids.get(i).asInt());
-                return false;
+                for(int n=1; n<6 && (!cuiAbsolute->HasFirstReached()); n++) // doesn't respond && trying (5 trials)
+                {
+                    CD_WARNING("(%d) Resending start continuous publishing message \n", n);
+                    cuiAbsolute->startContinuousPublishing(0);
+                    yarp::os::Time::delay(0.2);
+                }
+                if(cuiAbsolute->HasFirstReached()) // it responds! :)
+                {
+                    CD_DEBUG("---> First CUI message has been reached \n");
+                    iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
+                }
+                else                               // doesn't respond :(
+                {
+                    CD_ERROR("Cui Absolute (PIC ID: %d) doesn't respond. Try using --externalEncoderWait [seconds] parameter with timeout higher than 0 \n", ids.get(i).asInt());
+                    return false;
+                }
             }
         }
+
 
         //-- Set initial parameters on physical motor drivers.
 
@@ -223,7 +250,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
 // -----------------------------------------------------------------------------
 
 bool teo::CanBusControlboard::close()
-{    
+{
     int ret = 0;
     double timeOut = 1; // timeout (1 secod)
     struct can_msg buffer;
@@ -235,20 +262,22 @@ bool teo::CanBusControlboard::close()
     //-- Disable and shutdown the physical drivers (and Cui Encoders).
     bool ok = true;
     for(int i=0; i<nodes.size(); i++)
-    {       
+    {
         // -- Sending a stop message to PICs of Cui Encoders
         yarp::os::Value value;
         value = nodes[i]->getValue("device");
 
         // Drivers:
-        if(value.asString() == "TechnosoftIpos"){
+        if(value.asString() == "TechnosoftIpos")
+        {
             CD_INFO("Stopping Driver (ID: %s)\n", nodes[i]->getValue("canId").toString().c_str());
             ok &= iCanBusSharer[i]->switchOn();  //-- "switch on" also acts as "disable".
             ok &= iCanBusSharer[i]->readyToSwitchOn();  //-- "ready to switch on" also acts as "shutdown".
         }
 
         // Absolute encoders:
-        if(value.asString() == "CuiAbsolute"){
+        if(value.asString() == "CuiAbsolute")
+        {
 
             int canId = 0;
             int CAN_ID = atoi(nodes[i]->getValue("canId").toString().c_str());
@@ -285,7 +314,8 @@ bool teo::CanBusControlboard::close()
                 //CD_DEBUG("Read a message from CuiAbsolute %d\n", canId);
 
                 //printf("timeOut: %d\n", int(yarp::os::Time::now()-timeStamp));
-                if(canId == CAN_ID)  {
+                if(canId == CAN_ID)
+                {
                     CD_WARNING("Resending stop message to Cui Absolute PIC (ID: %d)\n", CAN_ID );
                     cuiAbsolute->stopPublishingMessages();
                 }

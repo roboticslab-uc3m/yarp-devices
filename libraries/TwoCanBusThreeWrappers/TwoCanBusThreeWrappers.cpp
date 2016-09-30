@@ -15,9 +15,17 @@ bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf)
     if(rf.check("help"))
     {
         printf("TwoCanBusThreeWrappers options:\n");
-        printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
+        printf("\t--help (this help)\t--from [file.ini]\t--context [path]\t --externalEncoderWait [s]\n\n");
+        printf("Note: if the Absolute Encoder doesn't respond, use --externalEncoderWait [seconds] parameter for using default relative encoder position\n");
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
         return false;
+    }
+
+
+    if(rf.check("externalEncoderWait"))
+    {
+        timeEncoderWait = rf.find("externalEncoderWait").asInt();
+        printf("[INFO] Wait time for Absolute Encoder: %.2f [s]\n", timeEncoderWait);
     }
 
     // Variable that stores the mode when we put --mode flag
@@ -30,6 +38,7 @@ bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf)
     optionsDevCan0.fromString(devCan0.toString());
     //Appended mode option for optionsDevCan0 (for --mode flag)
     optionsDevCan0.put("mode", mode);
+    optionsDevCan0.put("waitEncoder", timeEncoderWait);
     deviceDevCan0.open(optionsDevCan0);
     if (!deviceDevCan0.isValid())
     {
@@ -44,6 +53,7 @@ bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf)
     optionsDevCan1.fromString(devCan1.toString());
     //Added mode option for optionsDevCan1 (for --mode flag)
     optionsDevCan1.put("mode", mode);
+    optionsDevCan1.put("waitEncoder", timeEncoderWait);
     deviceDevCan1.open(optionsDevCan1);
     if (!deviceDevCan1.isValid())
     {
