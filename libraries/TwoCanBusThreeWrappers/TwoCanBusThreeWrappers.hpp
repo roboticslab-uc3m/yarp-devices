@@ -57,10 +57,11 @@ protected:
 //        virtual bool interruptModule();
 //        virtual int period;
     int timeEncoderWait;
+    bool homing;
 
 public:
-    TwoCanBusThreeWrappers();
-    bool configure(yarp::os::ResourceFinder &rf);    
+    TwoCanBusThreeWrappers(); // TwoCanBusThreeWrappers();
+    bool configure(yarp::os::ResourceFinder &rf);        
 };
 
 }  // namespace teo

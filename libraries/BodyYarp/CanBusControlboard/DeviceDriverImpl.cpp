@@ -13,6 +13,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
     int timeCuiWait  = config.check("waitEncoder", yarp::os::Value(DEFAULT_TIME_TO_WAIT_CUI), "CUI timeout seconds").asInt();
 
 
+
     yarp::os::Bottle ids = config.findGroup("ids").tail();  //-- e.g. 15
     yarp::os::Bottle trs = config.findGroup("trs").tail();  //-- e.g. 160
     yarp::os::Bottle ks = config.findGroup("ks").tail();  //-- e.g. 0.0706
@@ -103,9 +104,9 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
             CuiAbsolute* cuiAbsolute;
             device->view( cuiAbsolute );
 
-            yarp::os::Time::delay(0.2);
+            yarp::os::Time::delay(0.5);
             cuiAbsolute->startContinuousPublishing(0); // startContinuousPublishing(delay)
-            yarp::os::Time::delay(0.2);
+            yarp::os::Time::delay(1);
 
             if(timeCuiWait > 0 && (!cuiAbsolute->HasFirstReached())) // using --externalEncoderWait && doesn't respond
             {
@@ -215,29 +216,24 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
             return false;
     }
 
+    //-------------------- HOMING -----------------------
     if( config.check("home") )
     {
         CD_DEBUG("Moving motors to zero.\n");
         for(int i=0; i<nodes.size(); i++)
-        {
-            if ( ! iPositionControlRaw[i]->positionMoveRaw(0,0) )
-                return false;
-        }
-        for(int i=0; i<nodes.size(); i++)
-        {
-            bool motionDone = false;
-            while( ! motionDone )
-            {
-                yarp::os::Time::delay(0.5);  //-- [s]
-                CD_DEBUG("Moving %d to zero...\n",i);
-                if( ! iPositionControlRaw[i]->checkMotionDoneRaw(0,&motionDone) )
+        {            
+            if((nodes[i]->getValue("device")).asString() == "TechnosoftIpos"){
+                CD_DEBUG("Moving (ID:%s) to zero...\n",nodes[i]->getValue("canId").toString().c_str());
+                yarp::os::Time::delay(0.5);
+                if ( ! iPositionControlRaw[i]->positionMoveRaw(0,0) )
                     return false;
             }
         }
+        yarp::os::Time::delay(1);
         CD_DEBUG("Moved motors to zero.\n");
     }
 
-    if( config.check("reset") )
+    if( config.check("reset") ) // --??
     {
         CD_DEBUG("Forcing encoders to zero.\n");
         if ( ! this->resetEncoders() )
