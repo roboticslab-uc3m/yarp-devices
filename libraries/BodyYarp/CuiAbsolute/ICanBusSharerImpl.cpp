@@ -118,12 +118,12 @@ bool teo::CuiAbsolute::stopPublishingMessages()
 bool teo::CuiAbsolute::interpretMessage( can_msg * message)
 {
 
-    firstHasReached = true;
+    firstHasReached = true;   
 
     //CD_DEBUG("Got absolute encoder value. %s\n",msgToStr(message).c_str());
     float got;
     memcpy(&got, message->data,4);
-    //CD_SUCCESS("Got absolute encoder value, as a float: %f\n",got);
+    //CD_SUCCESS("Got absolute encoder value, as a float: %f\n",got);    
 
     encoderReady.wait();
 
@@ -134,6 +134,10 @@ bool teo::CuiAbsolute::interpretMessage( can_msg * message)
 
     if (encoder > 180.0)
         encoder -= 360.0;
+
+    //---- TEMP -----
+    value = encoder;
+    // --------------
 
     encoderTimestamp = message->ts;
 

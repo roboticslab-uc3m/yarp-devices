@@ -2,6 +2,9 @@
 
 #include "CanBusControlboard.hpp"
 #include "CuiAbsolute/CuiAbsolute.hpp"
+// -- Pause
+#include <stdlib.h>
+#include <stdio.h>
 
 // ------------------- DeviceDriver Related ------------------------------------
 
@@ -104,9 +107,8 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
             CuiAbsolute* cuiAbsolute;
             device->view( cuiAbsolute );
 
-            yarp::os::Time::delay(0.5);
             cuiAbsolute->startContinuousPublishing(0); // startContinuousPublishing(delay)
-            yarp::os::Time::delay(1);
+            yarp::os::Time::delay(0.2);
 
             if(timeCuiWait > 0 && (!cuiAbsolute->HasFirstReached())) // using --externalEncoderWait && doesn't respond
             {
@@ -140,6 +142,8 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
                 if(cuiAbsolute->HasFirstReached()) // it responds! :)
                 {
                     CD_DEBUG("---> First CUI message has been reached \n");
+                    printf("Absolute encoder value -----> %f\n", cuiAbsolute->getValue());
+                    getchar(); // pause
                     iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
                 }
                 else                               // doesn't respond :(
@@ -215,8 +219,9 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
         if( ! iCanBusSharer[i]->enable() )
             return false;
     }
+    yarp::os::Time::delay(2);
 
-    //-------------------- HOMING -----------------------
+    //-- Homing
     if( config.check("home") )
     {
         CD_DEBUG("Moving motors to zero.\n");
@@ -224,16 +229,37 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
         {            
             if((nodes[i]->getValue("device")).asString() == "TechnosoftIpos"){
                 CD_DEBUG("Moving (ID:%s) to zero...\n",nodes[i]->getValue("canId").toString().c_str());
+                getchar(); // pause
                 yarp::os::Time::delay(0.5);
                 if ( ! iPositionControlRaw[i]->positionMoveRaw(0,0) )
                     return false;
             }
         }
-        yarp::os::Time::delay(1);
+        // -- Testing
+
+        for(int i=0; i<nodes.size(); i++)
+        {
+            if((nodes[i]->getValue("device")).asString() == "TechnosoftIpos"){
+                bool motionDone = false;
+                for(int x=1; x<=5 && !motionDone; x++ )
+                {
+                    yarp::os::Time::delay(0.2);  //-- [s]
+                    CD_DEBUG("Testing (ID:%s) position...\n",nodes[i]->getValue("canId").toString().c_str());
+                    if( ! iPositionControlRaw[i]->checkMotionDoneRaw(0,&motionDone) )
+                        return false;
+                        if(i==5 && !motionDone){
+                            CD_ERROR("Error position :/ \n");
+                            return false;
+                        }
+                }
+            }
+        }
+
         CD_DEBUG("Moved motors to zero.\n");
+        yarp::os::Time::delay(1);
     }
 
-    if( config.check("reset") ) // --??
+    if( config.check("reset") )
     {
         CD_DEBUG("Forcing encoders to zero.\n");
         if ( ! this->resetEncoders() )
