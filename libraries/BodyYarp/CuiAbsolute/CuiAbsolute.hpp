@@ -52,7 +52,7 @@ public:
     }
 
     //********* TEMP ********
-    float getValue(){
+    double getValue(){
         return value;
     }
 
@@ -415,7 +415,7 @@ protected:
     yarp::os::Semaphore encoderReady;
     bool firstHasReached;
     /*** TEMP ***/
-    float value;
+    double value;
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(can_msg* message);
