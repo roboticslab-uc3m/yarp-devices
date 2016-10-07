@@ -51,11 +51,6 @@ public:
         return firstHasReached;
     }
 
-    //********* TEMP ********
-    double getValue(){
-        return value;
-    }
-
     //  --------- DeviceDriver Declarations. Implementation in CuiAbsolute.cpp ---------
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
@@ -414,8 +409,6 @@ protected:
     uint32_t encoderTimestamp;
     yarp::os::Semaphore encoderReady;
     bool firstHasReached;
-    /*** TEMP ***/
-    double value;
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(can_msg* message);

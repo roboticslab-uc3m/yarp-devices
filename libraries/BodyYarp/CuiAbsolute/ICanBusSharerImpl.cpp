@@ -118,32 +118,49 @@ bool teo::CuiAbsolute::stopPublishingMessages()
 bool teo::CuiAbsolute::interpretMessage( can_msg * message)
 {
 
-    firstHasReached = true;   
-
     //CD_DEBUG("Got absolute encoder value. %s\n",msgToStr(message).c_str());
     float got;
     memcpy(&got, message->data,4);
-    //CD_SUCCESS("Got absolute encoder value, as a float: %f\n",got);    
+    //CD_SUCCESS("Got absolute encoder value, as a float: %f\n",got);
+
+    if( message->data[3]==0xc4 )
+    {
+        //CD_ERROR("Known error: %f | %f | %s\n",encoder,got,msgToStr(message).c_str());
+        return false;
+    }
 
     encoderReady.wait();
 
     encoder = got * this->tr;
 
-    if (encoder < -180.0)
+    if (encoder < -180.0)  // maybe a while?
         encoder += 360.0;
 
-    if (encoder > 180.0)
+    if (encoder > 180.0)  // maybe a while?
         encoder -= 360.0;
-
-    //---- TEMP -----
-    value = encoder;
-    // --------------
 
     encoderTimestamp = message->ts;
 
     encoderReady.post();
 
-    return true;
+    /*if(encoder < -1000)
+    {
+        if( (message->data[0]==0x3c)&&(message->data[1]==0x13)&&(message->data[2]==0xfe)&&(message->data[3]==0xc4) )
+        {
+            // known case
+        }
+        else if( (message->data[0]==0x37)&&(message->data[1]==0xb6)&&(message->data[2]==0xff)&&(message->data[3]==0xc4) )
+        {
+            // known case
+        }
+        else
+        {
+            CD_DEBUG("%f | %s\n",got,msgToStr(message).c_str());
+        }
+    }*/
+
+        firstHasReached = true;
+        return true;
 
 }  //-- ends interpretMessage
 
