@@ -125,7 +125,7 @@ bool teo::CuiAbsolute::interpretMessage( can_msg * message)
 
     if( message->data[3]==0xc4 )
     {
-        //CD_ERROR("Known error: %f | %f | %s\n",encoder,got,msgToStr(message).c_str());
+        CD_ERROR("Known PIC error: %f | %f | %s\n",encoder,got,msgToStr(message).c_str());
         return false;
     }
 
