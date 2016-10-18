@@ -56,6 +56,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
     iTorqueControlRaw.resize( nodes.size() );
     iVelocityControlRaw.resize( nodes.size() );
     iCanBusSharer.resize( nodes.size() );
+
     for(int i=0; i<nodes.size(); i++)
     {
         if(types.get(i).asString() == "")
@@ -95,6 +96,21 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
 
         //-- Pass CAN bus pointer to CAN node
         iCanBusSharer[i]->setCanBusPtr( iCanBus );
+
+        //-- DRIVERS
+        if(types.get(i).asString() == "TechnosoftIpos")
+        {
+            //-- Set initial parameters on physical motor drivers.
+
+            if ( ! iPositionControlRaw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asDouble() ) )
+                return false;
+
+            if ( ! iPositionControlRaw[i]->setRefSpeedRaw( 0, refSpeeds.get(i).asDouble() ) )
+                return false;
+
+            if ( ! iControlLimitsRaw[i]->setLimitsRaw( 0, mins.get(i).asDouble(), maxs.get(i).asDouble() ) )
+                return false;
+        }
 
         //-- Associate absolute encoders to motor drivers
         if( types.get(i).asString() == "CuiAbsolute" )
@@ -159,18 +175,6 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
             }
         }
 
-
-        //-- Set initial parameters on physical motor drivers.
-
-        if ( ! iPositionControlRaw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asDouble() ) )
-            return false;
-
-        if ( ! iPositionControlRaw[i]->setRefSpeedRaw( 0, refSpeeds.get(i).asDouble() ) )
-            return false;
-
-        if ( ! iControlLimitsRaw[i]->setLimitsRaw( 0, mins.get(i).asDouble(), maxs.get(i).asDouble() ) )
-            return false;
-
     } // -- for(int i=0; i<nodes.size(); i++)
 
     //-- Set all motor drivers to mode.
@@ -233,7 +237,6 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
         for(int i=0; i<nodes.size(); i++)
         {            
             if((nodes[i]->getValue("device")).asString() == "TechnosoftIpos"){
-                CD_DEBUG("Moving (ID:%s) to zero...\n",nodes[i]->getValue("canId").toString().c_str());
                 //getchar(); // pause
                 double val;
                 double time;
@@ -241,10 +244,13 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
                 iEncodersTimedRaw[i]->getEncoderTimedRaw(0,&val,&time); // -- getEncoderRaw(0,&value);
                 CD_DEBUG("Value of relative encoder ->%f\n", val);
                 //getchar();
-                if(val>0.087873 || val< -0.087873){
+                if ( val>0.087873 || val< -0.087873 ){
+                    CD_DEBUG("Moving (ID:%s) to zero...\n",nodes[i]->getValue("canId").toString().c_str());
                     if ( ! iPositionControlRaw[i]->positionMoveRaw(0,0) )
                         return false;
                 }
+                else
+                    CD_DEBUG("It's already in zero position\n");
             }
         }
         // -- Testing
