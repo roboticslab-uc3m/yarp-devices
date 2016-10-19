@@ -123,10 +123,12 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
             CuiAbsolute* cuiAbsolute;
             device->view( cuiAbsolute );
 
-            cuiAbsolute->startContinuousPublishing(0); // startContinuousPublishing(delay)
+            if ( ! cuiAbsolute->startContinuousPublishing(0) ) // startContinuousPublishing(delay)
+                return false;
+
             yarp::os::Time::delay(0.2);
 
-            if(timeCuiWait > 0 && (!cuiAbsolute->HasFirstReached())) // using --externalEncoderWait && doesn't respond
+            if ( timeCuiWait > 0 && ( ! cuiAbsolute->HasFirstReached() ) ) // using --externalEncoderWait && doesn't respond
             {
                 bool timePassed = false;
                 double timeStamp = 0.0;
@@ -134,7 +136,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
                 timeStamp = yarp::os::Time::now();
 
                 // This part of the code checks if encoders
-                while ( !timePassed && (!cuiAbsolute->HasFirstReached()))
+                while ( !timePassed && ( ! cuiAbsolute->HasFirstReached() ) )
                 {
                     // -- if it exceeds the timeCuiWait...
                     if(int(yarp::os::Time::now()-timeStamp)>=timeCuiWait)
@@ -149,13 +151,16 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
             }
             else    // not used --externalEncoderWait (DEFAULT)
             {
-                for(int n=1; n<=5 && (!cuiAbsolute->HasFirstReached()); n++) // doesn't respond && trying (5 trials)
+                for ( int n=1; n<=5 && ( ! cuiAbsolute->HasFirstReached() ); n++ ) // doesn't respond && trying (5 trials)
                 {
                     CD_WARNING("(%d) Resending start continuous publishing message \n", n);
-                    cuiAbsolute->startContinuousPublishing(0);
+                    if ( ! cuiAbsolute->startContinuousPublishing(0))
+                        return false;
+
                     yarp::os::Time::delay(0.2);
                 }
-                if(cuiAbsolute->HasFirstReached()) // it responds! :)
+
+                if( cuiAbsolute->HasFirstReached() ) // it responds! :)
                 {
                     CD_DEBUG("---> First CUI message has been reached \n");
                     double value;
@@ -163,7 +168,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
                         CD_ERROR("Wrong value of Cui \n");
                     }
                     printf("Absolute encoder value -----> %f\n", value);
-                    //getchar(); // pause
+                    //getchar(); // -- if you want to pause and return pressing any key
                     yarp::os::Time::delay(0.2);
                     iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
                 }
@@ -237,13 +242,11 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
         for(int i=0; i<nodes.size(); i++)
         {            
             if((nodes[i]->getValue("device")).asString() == "TechnosoftIpos"){
-                //getchar(); // pause
                 double val;
                 double time;
                 yarp::os::Time::delay(0.5);                                             
                 iEncodersTimedRaw[i]->getEncoderTimedRaw(0,&val,&time); // -- getEncoderRaw(0,&value);
                 CD_DEBUG("Value of relative encoder ->%f\n", val);
-                //getchar();
                 if ( val>0.087873 || val< -0.087873 ){
                     CD_DEBUG("Moving (ID:%s) to zero...\n",nodes[i]->getValue("canId").toString().c_str());
                     if ( ! iPositionControlRaw[i]->positionMoveRaw(0,0) )
@@ -324,7 +327,9 @@ bool teo::CanBusControlboard::close()
             nodes[i]->view( cuiAbsolute );
 
             CD_INFO("Stopping Cui Absolute PIC (ID: %d)\n", CAN_ID );
-            cuiAbsolute->stopPublishingMessages();
+
+            if (! cuiAbsolute->stopPublishingMessages() )
+                return false;
 
             yarp::os::Time::delay(0.5);
             timeStamp = yarp::os::Time::now();
