@@ -123,14 +123,22 @@ bool teo::CuiAbsolute::interpretMessage( can_msg * message)
     memcpy(&got, message->data,4);
     //CD_SUCCESS("Got absolute encoder value, as a float: %f\n",got);
 
-    if( message->data[3]==0xc4 )
+    /*
+    if( (message->data[3]==0xc4) && ((message->id & 0x7F) == 108) ) // (message->data[3]==0xc4) && (message->id & 0x7F == 113)
     {
-        CD_ERROR("Known PIC error: %f | %f | %s\n",encoder,got,msgToStr(message).c_str());
+        CD_ERROR_NO_HEADER("Known PIC error (ID->%d): %f | %f | %s\n", message->id & 0x7F, encoder,got,msgToStr(message).c_str());
+        return false;
+    }
+    */
+
+    if( (message->data[3]==0xc4) ) // (message->data[3]==0xc4) && (message->id & 0x7F == 113)
+    {
+        CD_ERROR_NO_HEADER("Known PIC error (ID->%d): %f | %f | %s\n", message->id & 0x7F, encoder,got,msgToStr(message).c_str());
         return false;
     }
 
     encoderReady.wait();
-
+     //canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
     encoder = got * this->tr;
 
     if (encoder < -180.0)  // maybe a while?
