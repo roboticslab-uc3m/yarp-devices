@@ -17,16 +17,14 @@ bool teo::TechnosoftIpos::setCanBusPtr(CanBusHico *canDevicePtr)
 
 bool teo::TechnosoftIpos::setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
 {
-
+    double v;
     this->iEncodersTimedRawExternal = iEncodersTimedRaw;
 
     CD_SUCCESS("Ok pointer to external encoder interface %p (%d). Updating with latest external...\n",iEncodersTimedRaw,canId);
 
-    double v = sqrt(-1);  //-- v is a NaN
     CD_INFO("canId(%d) wait to get external encoder value...\n",this->canId);
-    while( v != v )  //-- loop while v is still a NaN
-    {
-        iEncodersTimedRawExternal->getEncoderRaw(0,&v);
+    while( !iEncodersTimedRawExternal->getEncoderRaw(0,&v) )  //-- loop while v is still a NaN.
+    {        
         //CD_INFO("Wait to get external encoder value...\n"); //\todo{activate these lines if blocking is too much}
         //Time::delay(0.2);
     }
