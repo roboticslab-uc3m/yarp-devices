@@ -118,27 +118,28 @@ bool teo::CuiAbsolute::stopPublishingMessages()
 bool teo::CuiAbsolute::interpretMessage( can_msg * message)
 {
 
-    firstHasReached = true;
-
     //CD_DEBUG("Got absolute encoder value. %s\n",msgToStr(message).c_str());
     float got;
     memcpy(&got, message->data,4);
-    //CD_SUCCESS("Got absolute encoder value, as a float: %f\n",got);
+
+    if( (message->data[3]==0xc4) ) // If you want to print a specific Cui known error: Ex 113: (message->data[3]==0xc4) && (message->id & 0x7F == 113)
+    {
+        CD_ERROR_NO_HEADER("Known PIC error: %f | %f | %s\n", encoder,got,msgToStr(message).c_str());
+        return false;
+    }
 
     encoderReady.wait();
-
     encoder = got * this->tr;
 
-    if (encoder < -180.0)
+    if (encoder < -180.0)  // maybe a while?
         encoder += 360.0;
 
-    if (encoder > 180.0)
+    if (encoder > 180.0)  // maybe a while?
         encoder -= 360.0;
 
     encoderTimestamp = message->ts;
-
     encoderReady.post();
-
+    firstHasReached = true;
     return true;
 
 }  //-- ends interpretMessage

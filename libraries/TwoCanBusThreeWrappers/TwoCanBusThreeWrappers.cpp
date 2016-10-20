@@ -6,7 +6,10 @@ namespace teo
 {
 
 /************************************************************************/
-TwoCanBusThreeWrappers::TwoCanBusThreeWrappers() { }
+TwoCanBusThreeWrappers::TwoCanBusThreeWrappers()
+{
+    homing = false; // variable declarada en .hpp
+}
 
 /************************************************************************/
 bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf)
@@ -15,7 +18,7 @@ bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf)
     if(rf.check("help"))
     {
         printf("TwoCanBusThreeWrappers options:\n");
-        printf("\t--help (this help)\t--from [file.ini]\t--context [path]\t --externalEncoderWait [s]\n\n");
+        printf("\t--help (this help)\t--from [file.ini]\t--context [path]\t--homePoss\t--externalEncoderWait [s]\n\n");
         printf("Note: if the Absolute Encoder doesn't respond, use --externalEncoderWait [seconds] parameter for using default relative encoder position\n");
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
         return false;
@@ -26,19 +29,30 @@ bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf)
     {
         timeEncoderWait = rf.find("externalEncoderWait").asInt();
         printf("[INFO] Wait time for Absolute Encoder: %.2f [s]\n", timeEncoderWait);
+    }  
+
+    if(rf.check("homePoss"))
+    {
+        homing = true;
     }
 
     // Variable that stores the mode when we put --mode flag
     std::string mode = rf.check("mode",yarp::os::Value("position"),"position/velocity mode").asString();
+
+    // Variable that stores the use of --homePoss parameter
+    //bool doHome = rf.check("homePoss");
 
     //-- /dev/can0 --
     yarp::os::Bottle devCan0 = rf.findGroup("devCan0");
     CD_DEBUG("%s\n",devCan0.toString().c_str());
     yarp::os::Property optionsDevCan0;
     optionsDevCan0.fromString(devCan0.toString());
-    //Appended mode option for optionsDevCan0 (for --mode flag)
+    //Added mode option for optionsDevCan0 (for --mode parameter)
     optionsDevCan0.put("mode", mode);
+    //Added waitEncoder for optionsDevCan0 (for --timeEncoderWait parameter)
     optionsDevCan0.put("waitEncoder", timeEncoderWait);
+    //Added homing for optionsDevCan0 (for --homePoss parameter)
+    if(homing) optionsDevCan0.put("home", true);
     deviceDevCan0.open(optionsDevCan0);
     if (!deviceDevCan0.isValid())
     {
@@ -51,9 +65,12 @@ bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf)
     CD_DEBUG("%s\n",devCan1.toString().c_str());
     yarp::os::Property optionsDevCan1;
     optionsDevCan1.fromString(devCan1.toString());
-    //Added mode option for optionsDevCan1 (for --mode flag)
+    //Added mode option for optionsDevCan1 (for --mode parameter)
     optionsDevCan1.put("mode", mode);
+    //Added waitEncoder for optionsDevCan1 (for --timeEncoderWait parameter)
     optionsDevCan1.put("waitEncoder", timeEncoderWait);
+    //Added homing for optionsDevCan1 (for --homePoss parameter)
+    if(homing) optionsDevCan1.put("home", true);
     deviceDevCan1.open(optionsDevCan1);
     if (!deviceDevCan1.isValid())
     {

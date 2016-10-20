@@ -10,7 +10,7 @@
 
 YARP_DECLARE_PLUGINS(BodyYarp)
 
-#define CAN_ID 121 // ID of Cui Absolute encoder that you want to check...
+#define CAN_ID 115 // ID of Cui Absolute encoder that you want to check...
 
 namespace teo
 {

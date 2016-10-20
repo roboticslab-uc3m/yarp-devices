@@ -2,6 +2,9 @@
 
 #include "CanBusControlboard.hpp"
 #include "CuiAbsolute/CuiAbsolute.hpp"
+// -- Pause
+#include <stdlib.h>
+#include <stdio.h>
 
 // ------------------- DeviceDriver Related ------------------------------------
 
@@ -11,6 +14,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
     std::string mode = config.check("mode",yarp::os::Value("position"),"position/velocity mode").asString();
     int16_t ptModeMs = config.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
     int timeCuiWait  = config.check("waitEncoder", yarp::os::Value(DEFAULT_TIME_TO_WAIT_CUI), "CUI timeout seconds").asInt();
+
 
 
     yarp::os::Bottle ids = config.findGroup("ids").tail();  //-- e.g. 15
@@ -52,6 +56,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
     iTorqueControlRaw.resize( nodes.size() );
     iVelocityControlRaw.resize( nodes.size() );
     iCanBusSharer.resize( nodes.size() );
+
     for(int i=0; i<nodes.size(); i++)
     {
         if(types.get(i).asString() == "")
@@ -92,6 +97,21 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
         //-- Pass CAN bus pointer to CAN node
         iCanBusSharer[i]->setCanBusPtr( iCanBus );
 
+        //-- DRIVERS
+        if(types.get(i).asString() == "TechnosoftIpos")
+        {
+            //-- Set initial parameters on physical motor drivers.
+
+            if ( ! iPositionControlRaw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asDouble() ) )
+                return false;
+
+            if ( ! iPositionControlRaw[i]->setRefSpeedRaw( 0, refSpeeds.get(i).asDouble() ) )
+                return false;
+
+            if ( ! iControlLimitsRaw[i]->setLimitsRaw( 0, mins.get(i).asDouble(), maxs.get(i).asDouble() ) )
+                return false;
+        }
+
         //-- Associate absolute encoders to motor drivers
         if( types.get(i).asString() == "CuiAbsolute" )
         {
@@ -103,11 +123,12 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
             CuiAbsolute* cuiAbsolute;
             device->view( cuiAbsolute );
 
-            yarp::os::Time::delay(0.2);
-            cuiAbsolute->startContinuousPublishing(0); // startContinuousPublishing(delay)
+            if ( ! cuiAbsolute->startContinuousPublishing(0) ) // startContinuousPublishing(delay)
+                return false;
+
             yarp::os::Time::delay(0.2);
 
-            if(timeCuiWait > 0 && (!cuiAbsolute->HasFirstReached())) // using --externalEncoderWait && doesn't respond
+            if ( timeCuiWait > 0 && ( ! cuiAbsolute->HasFirstReached() ) ) // using --externalEncoderWait && doesn't respond
             {
                 bool timePassed = false;
                 double timeStamp = 0.0;
@@ -115,7 +136,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
                 timeStamp = yarp::os::Time::now();
 
                 // This part of the code checks if encoders
-                while ( !timePassed && (!cuiAbsolute->HasFirstReached()))
+                while ( !timePassed && ( ! cuiAbsolute->HasFirstReached() ) )
                 {
                     // -- if it exceeds the timeCuiWait...
                     if(int(yarp::os::Time::now()-timeStamp)>=timeCuiWait)
@@ -130,15 +151,25 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
             }
             else    // not used --externalEncoderWait (DEFAULT)
             {
-                for(int n=1; n<6 && (!cuiAbsolute->HasFirstReached()); n++) // doesn't respond && trying (5 trials)
+                for ( int n=1; n<=5 && ( ! cuiAbsolute->HasFirstReached() ); n++ ) // doesn't respond && trying (5 trials)
                 {
                     CD_WARNING("(%d) Resending start continuous publishing message \n", n);
-                    cuiAbsolute->startContinuousPublishing(0);
+                    if ( ! cuiAbsolute->startContinuousPublishing(0))
+                        return false;
+
                     yarp::os::Time::delay(0.2);
                 }
-                if(cuiAbsolute->HasFirstReached()) // it responds! :)
+
+                if( cuiAbsolute->HasFirstReached() ) // it responds! :)
                 {
                     CD_DEBUG("---> First CUI message has been reached \n");
+                    double value;
+                    while( ! cuiAbsolute->getEncoderRaw(0,&value) ){
+                        CD_ERROR("Wrong value of Cui \n");
+                    }
+                    printf("Absolute encoder value -----> %f\n", value);
+                    //getchar(); // -- if you want to pause and return pressing any key
+                    yarp::os::Time::delay(0.2);
                     iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
                 }
                 else                               // doesn't respond :(
@@ -148,18 +179,6 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
                 }
             }
         }
-
-
-        //-- Set initial parameters on physical motor drivers.
-
-        if ( ! iPositionControlRaw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asDouble() ) )
-            return false;
-
-        if ( ! iPositionControlRaw[i]->setRefSpeedRaw( 0, refSpeeds.get(i).asDouble() ) )
-            return false;
-
-        if ( ! iControlLimitsRaw[i]->setLimitsRaw( 0, mins.get(i).asDouble(), maxs.get(i).asDouble() ) )
-            return false;
 
     } // -- for(int i=0; i<nodes.size(); i++)
 
@@ -214,27 +233,46 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
         if( ! iCanBusSharer[i]->enable() )
             return false;
     }
+    yarp::os::Time::delay(2);
 
+    //-- Homing
     if( config.check("home") )
     {
         CD_DEBUG("Moving motors to zero.\n");
         for(int i=0; i<nodes.size(); i++)
-        {
-            if ( ! iPositionControlRaw[i]->positionMoveRaw(0,0) )
-                return false;
-        }
-        for(int i=0; i<nodes.size(); i++)
-        {
-            bool motionDone = false;
-            while( ! motionDone )
-            {
-                yarp::os::Time::delay(0.5);  //-- [s]
-                CD_DEBUG("Moving %d to zero...\n",i);
-                if( ! iPositionControlRaw[i]->checkMotionDoneRaw(0,&motionDone) )
-                    return false;
+        {            
+            if((nodes[i]->getValue("device")).asString() == "TechnosoftIpos"){
+                double val;
+                double time;
+                yarp::os::Time::delay(0.5);                                             
+                iEncodersTimedRaw[i]->getEncoderTimedRaw(0,&val,&time); // -- getEncoderRaw(0,&value);
+                CD_DEBUG("Value of relative encoder ->%f\n", val);
+                if ( val>0.087873 || val< -0.087873 ){
+                    CD_DEBUG("Moving (ID:%s) to zero...\n",nodes[i]->getValue("canId").toString().c_str());
+                    if ( ! iPositionControlRaw[i]->positionMoveRaw(0,0) )
+                        return false;
+                }
+                else
+                    CD_DEBUG("It's already in zero position\n");
             }
         }
+        // -- Testing
+
+        for(int i=0; i<nodes.size(); i++)
+        {
+            if((nodes[i]->getValue("device")).asString() == "TechnosoftIpos"){
+                bool motionDone = false;
+                yarp::os::Time::delay(0.2);  //-- [s]
+                CD_DEBUG("Testing (ID:%s) position... \n",nodes[i]->getValue("canId").toString().c_str());
+                if( ! iPositionControlRaw[i]->checkMotionDoneRaw(0,&motionDone) )
+                    return false;
+                if(!motionDone)
+                    CD_WARNING("Test motion fail (ID:%s) \n", nodes[i]->getValue("canId").toString().c_str());
+            }
+        }
+
         CD_DEBUG("Moved motors to zero.\n");
+        yarp::os::Time::delay(1);
     }
 
     if( config.check("reset") )
@@ -289,7 +327,9 @@ bool teo::CanBusControlboard::close()
             nodes[i]->view( cuiAbsolute );
 
             CD_INFO("Stopping Cui Absolute PIC (ID: %d)\n", CAN_ID );
-            cuiAbsolute->stopPublishingMessages();
+
+            if (! cuiAbsolute->stopPublishingMessages() )
+                return false;
 
             yarp::os::Time::delay(0.5);
             timeStamp = yarp::os::Time::now();

@@ -68,7 +68,7 @@
 /***** Variables configurables (CAN_ID & SEND_DELAY) *******************************************************/
 
 // CAN ID (Ver correspondecia en http://robots.uc3m.es/index.php/CuiAbsolute_Documentation)
-unsigned long canId = 504; //508 (codo 124) 492 (pierna izquierda 108)
+unsigned long canId = 498; //508 (codo 124) 492 (pierna izquierda 108)
 
 /* SEND DELAY (Valor que utilizará Delay10TCYx en el envío. Valor recomendado de 1 a 100)
  * El byte 3 (data[2]) que recibirá el PIC (valor comprendido entre [0-255]) se multiplicará por el tiempo que
@@ -161,8 +161,6 @@ void main(void)
     		- La frecuencia de oscilación se encuentra definida como Fosc = 5Mhz (20/4)
     		- La velocidad de ejecución de cada ciclo de instrucción son 0.8 microsegundos
     		- Delay10TCYx(i) -> 10.Tcy.i genera una demora de 10 ciclos de instrucciones * i . Por tanto Delay10TCYc(1) equivale a 8 microsegundos (10 ciclos de reloj)
-   -- data[3]-data[7]: (Byte 4, 5, 6, 7 y 8) 
-	Siempre a cero (0x00) . Se han creado mensajes de 8 bytes para evitar conflictos con otros mensajes provenientes de los Drivers.
     */
 
     while(1)
@@ -204,45 +202,50 @@ void main(void)
 // -- Funcion de envio de mensajes de posicion del Cui:
 void send()
 {
-    LATCbits.LATC2=0;
-    WriteSPI (0b00010000);      //Solicitación de posición (comando 0x10)
-    Delay10TCYx(3);             //Wait 6us
+    // - Manual: [1. The host issues the command, 0x10. The data read in at this time will be 0xa5 or 0x00 since this is the first SPI transfer]
+    LATCbits.LATC2=0;			
+    WriteSPI (0b00010000);      //Solicitación de posición (comando 0x10) 
+    Delay10TCYx(4);             // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Old delay: 3 ( 3 = 6us)
+    y=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
+    LATCbits.LATC2=1;			
+
+	// - Manual: [2. The host waits a minimum of 5 µs then sends a “nop_a5” command: 0x00]
+    LATCbits.LATC2=0;			
+    WriteSPI (0b00000000);      //Comando 0x00 -> nop_a5
+    Delay10TCYx(4);             // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Old delay: 3 ( 3 = 6us)
     y=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
     LATCbits.LATC2=1;
 
-    LATCbits.LATC2=0;
-    WriteSPI (0b00000000);      //Espera a que el encoder esté listo (comando 0x00)
-    Delay10TCYx(3);             //Wait 6us
-    y=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
-    LATCbits.LATC2=1;
-
-    while((y!=0b00010000) && (y!=0b10100101))  	//	Espera hasta que el encoder esté preparado para enviar algo (Respuesta 0x10)->while(y!=0b00010000). 
-    											//	Se ha añadido también (y!=0b10100101) al while debido a que se producía un bloqueo en esta linea de código.
+	// - Manual: [3. The response to the “nop_a5” is either 0xa5 or an echo of the command, 0x10.]
+    while(y==0b10100101)  		// - Manual: [a. If it is 0xa5, it will go back to step 2.]											
     {
+	    Delay10TCYx(3); 
         LATCbits.LATC2=0;
-        WriteSPI (0b00000000);  //Espera a que el encoder esté listo (comando 0x00)
-        Delay10TCYx(3); 		//Wait 6us
-        y=SSPBUF;				//Recoge los datos del SSPBUF que provienen del encoder (MISO)
+        WriteSPI (0b00000000);  // Comando 0x00 -> nop_a5)
+        Delay10TCYx(4); 		// Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Old delay: 3 ( 3 = 6us)
+        y=SSPBUF;				// Recoge los datos del SSPBUF que provienen del encoder (MISO)
         LATCbits.LATC2=1;
     }
 
-    LATCbits.LATC2=0;
-    WriteSPI(0b00000000);		//Espera para captar la parte alta de la posición
-    Delay10TCYx(3);				//Wait 6us
+	// - Manual: [b. Otherwise it will go to step 4.] (echo of the command, 0x10.)
+	// - Manual: [4. The host waits a minimum of 5 µs then sends “nop_a5”, the data read is the high byte of the position.]
+    LATCbits.LATC2=0;			
+    WriteSPI(0b00000000);		//Comando 0x00 -> nop_a5
+    Delay10TCYx(4);				// Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Old delay: 3 ( 3 = 6us)
     y=SSPBUF;					//Recoge los datos del SSPBUF que provienen del encoder (MISO)
     message[0]=y;				//Se almacena en el primer elemento del array que se enviará por CAN
-
     LATCbits.LATC2=1;
+    
+    // - Manual: [5. The host waits a minimum of 5 µs then sends “nop_a5”, the data read is the low byte of the position.]
     LATCbits.LATC2=0;
     WriteSPI(0b00000000);       //Espera para captar la parte baja del mensaje
-    Delay10TCYx(3);             //Wait 6us
+    Delay10TCYx(4);             // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Old delay: 3 ( 3 = 6us)
     y=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
     message[1]=y;               //Se almacena en el segundo elemento del array que se enviará por CAN
 
+	// - Manual: [6. The host waits a minimum of 5 µs before sending another SPI command.]
     LATCbits.LATC2=1;
-
     aux=(message[0]<<8)+message[1];  //Se rota el byte alto de la posición 8 bits (2^8=256) y se suma al bajo
-
     degrees = aux / div;            //Se divide para obtener la realacción en grados
 
     x=0;
