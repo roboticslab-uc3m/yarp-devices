@@ -17,7 +17,7 @@
  *
  * @section playbackManipulation_install Installation
  *
- * The module is compiled when ENABLE_playbackManipulation is activated (default: OFF). For further
+ * The module is compiled when ENABLE_playbackManipulation is activated (default: ON). For further
  * installation steps refer to <a class="el" href="pages.html">your own system installation guidelines</a>.
  *
  * @section playbackManipulation_running Running (assuming correct installation)

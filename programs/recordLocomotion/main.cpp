@@ -17,7 +17,7 @@
  *
  * @section recordLocomotion_install Installation
  *
- * The module is compiled when ENABLE_recordLocomotion is activated (default: OFF). For further
+ * The module is compiled when ENABLE_recordLocomotion is activated (default: ON). For further
  * installation steps refer to <a class="el" href="pages.html">your own system installation guidelines</a>.
  *
  * @section recordLocomotion_running Running (assuming correct installation)
