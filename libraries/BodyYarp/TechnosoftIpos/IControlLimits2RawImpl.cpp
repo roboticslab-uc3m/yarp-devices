@@ -83,3 +83,19 @@ bool teo::TechnosoftIpos::getLimitsRaw(int axis, double *min, double *max)
 
 // -----------------------------------------------------------------------------
 
+bool teo::TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
+{
+    CD_WARNING("Not implemented.\n");
+    return true;
+}
+
+
+// -----------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::getVelLimitsRaw(int axis, double *min, double *max)
+{
+    CD_WARNING("Not implemented.\n");
+    return true;
+}
+
+// -----------------------------------------------------------------------------
