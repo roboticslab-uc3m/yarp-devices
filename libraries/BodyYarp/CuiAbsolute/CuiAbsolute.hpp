@@ -32,9 +32,10 @@ namespace teo
 *
 */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
+// Note: IControlLimits2Raw inherits from IControlLimitsRaw
 // -- Nota: Definimos todas las funciones de los Drivers en los CuiAbsolute debido a que hereda todas las clases siguientes.
 //          Al final definiremos una función auxiliar que será la que utilicemos para enviar mensajes al PIC.
-class CuiAbsolute : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimitsRaw, public yarp::dev::IControlModeRaw, public yarp::dev::IEncodersTimedRaw,
+class CuiAbsolute : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlModeRaw, public yarp::dev::IEncodersTimedRaw,
     public yarp::dev::IPositionControlRaw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControlRaw, public yarp::dev::ITorqueControlRaw,
     public ICanBusSharer
 {
@@ -76,6 +77,8 @@ public:
     //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
     virtual bool setLimitsRaw(int axis, double min, double max);
     virtual bool getLimitsRaw(int axis, double *min, double *max);
+    virtual bool setVelLimitsRaw(int axis, double min, double max);
+    virtual bool getVelLimitsRaw(int axis, double *min, double *max);
 
     //  --------- IControlModeRaw Declarations. Implementation in IControlModeRawImpl.cpp ---------
     virtual bool setPositionModeRaw(int j);
