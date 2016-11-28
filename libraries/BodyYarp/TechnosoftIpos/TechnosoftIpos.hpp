@@ -72,9 +72,11 @@ public:
     /** reset communications */
     virtual bool resetCommunication();
 
-    //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
+    //  --------- IControlLimits2Raw Declarations. Implementation in IControlLimits2RawImpl.cpp ---------
     virtual bool setLimitsRaw(int axis, double min, double max);
     virtual bool getLimitsRaw(int axis, double *min, double *max);
+    virtual bool setVelLimitsRaw(int axis, double min, double max);
+    virtual bool getVelLimitsRaw(int axis, double *min, double *max);
     //-- Auxiliary functions of setLimitsRaw
     bool setMinLimitRaw(double min);
     bool setMaxLimitRaw(double max);
