@@ -49,7 +49,8 @@ namespace teo
 *
 */
 // Note: IEncodersTimed inherits from IEncoders
-class CanBusControlboard : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits, public yarp::dev::IControlMode, public yarp::dev::IEncodersTimed,
+// Note: IControlLimits2 inherits from IControlLimits
+class CanBusControlboard : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2, public yarp::dev::IControlMode, public yarp::dev::IEncodersTimed,
     public yarp::dev::IPositionControl, public yarp::dev::IPositionDirect, public yarp::dev::ITorqueControl, public yarp::dev::IVelocityControl,
     public yarp::os::Thread
 {
@@ -58,7 +59,7 @@ class CanBusControlboard : public yarp::dev::DeviceDriver, public yarp::dev::ICo
 
 public:
 
-    //  --------- IControlLimits Declarations. Implementation in IControlLimitsImpl.cpp ---------
+    //  --------- IControlLimits Declarations. Implementation in IControlLimits2Impl.cpp ---------
 
     /**
      * Set the software limits for a particular axis, the behavior of the
@@ -78,6 +79,25 @@ public:
      * @return true if everything goes fine, false otherwise.
      */
     virtual bool getLimits(int axis, double *min, double *max);
+
+    /**
+     * Set the software speed limits for a particular axis, the behavior of the
+     * control card when these limits are exceeded, depends on the implementation.
+     * @param axis joint number
+     * @param min the value of the lower limit
+     * @param max the value of the upper limit
+     * @return true or false on success or failure
+     */
+    virtual bool setVelLimits(int axis, double min, double max);
+
+    /**
+     * Get the software speed limits for a particular axis.
+     * @param axis joint number
+     * @param min pointer to store the value of the lower limit
+     * @param max pointer to store the value of the upper limit
+     * @return true if everything goes fine, false otherwise.
+     */
+    virtual bool getVelLimits(int axis, double *min, double *max);
 
     //  --------- IControlMode Declarations. Implementation in IControlModeImpl.cpp ---------
 

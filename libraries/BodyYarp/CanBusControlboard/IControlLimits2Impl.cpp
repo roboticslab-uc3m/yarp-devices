@@ -28,3 +28,16 @@ bool teo::CanBusControlboard::getLimits(int axis, double *min, double *max)
 
 // -----------------------------------------------------------------------------
 
+bool teo::CanBusControlboard::setVelLimits(int axis, double min, double max)
+{
+
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::getVelLimits(int axis, double *min, double *max)
+{
+
+}
+
+// -----------------------------------------------------------------------------
