@@ -33,7 +33,8 @@ namespace teo
 *
 */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
-class TechnosoftIpos : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimitsRaw, public yarp::dev::IControlModeRaw, public yarp::dev::IEncodersTimedRaw,
+// Note: IControlLimits2Raw inherits from IControlLimitsRaw
+class TechnosoftIpos : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlModeRaw, public yarp::dev::IEncodersTimedRaw,
     public yarp::dev::IPositionControlRaw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControlRaw, public yarp::dev::ITorqueControlRaw,
     public ICanBusSharer
 {
