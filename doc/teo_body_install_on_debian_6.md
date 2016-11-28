@@ -9,8 +9,8 @@ Your OS needs the following (Debian 6.0 is a good intermediate solution in versi
 ### Install the Software
 
 First install the depencencies:
-  - [Install CMake (Debian 6.0)]( /doc/teo_body_install_cmake_on_debian_6.md )
-  - [Install YARP (Debian 6.0)]( /doc/teo_body_install_yarp_on_debian_6.md )
+  - [Install CMake (Debian 6.0)](https://github.com/roboticslab-uc3m/installation-guides/blob/develop/install_cmake.md)
+  - [Install YARP (Debian 6.0)](https://github.com/roboticslab-uc3m/installation-guides/blob/develop/install_yarp.md)
 
 Our software integrates the previous dependencies. Note that you will be prompted for your password upon using '''sudo''' a couple of times:
 
