@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "FakeJoint.hpp"
+#include "TextilesHand.hpp"
 
 // ------------------- IControlLimitsRaw Related ------------------------------------
 
-bool teo::FakeJoint::setLimitsRaw(int axis, double min, double max)
+bool teo::TextilesHand::setLimitsRaw(int axis, double min, double max)
 {
     CD_INFO("(%d,%f,%f)\n",axis,min,max);
 
@@ -20,7 +20,7 @@ bool teo::FakeJoint::setLimitsRaw(int axis, double min, double max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::getLimitsRaw(int axis, double *min, double *max)
+bool teo::TextilesHand::getLimitsRaw(int axis, double *min, double *max)
 {
     CD_INFO("(%d)\n",axis);
 
@@ -36,3 +36,18 @@ bool teo::FakeJoint::getLimitsRaw(int axis, double *min, double *max)
 
 // -----------------------------------------------------------------------------
 
+bool teo::TextilesHand::setVelLimitsRaw(int axis, double min, double max)
+{
+    CD_WARNING("Not implemented.\n");
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::TextilesHand::getVelLimitsRaw(int axis, double *min, double *max)
+{
+    CD_WARNING("Not implemented.\n");
+    return true;
+}
+
+// -----------------------------------------------------------------------------

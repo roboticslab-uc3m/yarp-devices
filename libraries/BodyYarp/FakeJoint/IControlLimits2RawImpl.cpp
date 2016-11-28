@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "CuiAbsolute.hpp"
+#include "FakeJoint.hpp"
 
 // ------------------- IControlLimitsRaw Related ------------------------------------
 
-bool teo::CuiAbsolute::setLimitsRaw(int axis, double min, double max)
+bool teo::FakeJoint::setLimitsRaw(int axis, double min, double max)
 {
     CD_INFO("(%d,%f,%f)\n",axis,min,max);
 
@@ -20,7 +20,7 @@ bool teo::CuiAbsolute::setLimitsRaw(int axis, double min, double max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getLimitsRaw(int axis, double *min, double *max)
+bool teo::FakeJoint::getLimitsRaw(int axis, double *min, double *max)
 {
     CD_INFO("(%d)\n",axis);
 
@@ -36,3 +36,18 @@ bool teo::CuiAbsolute::getLimitsRaw(int axis, double *min, double *max)
 
 // -----------------------------------------------------------------------------
 
+bool teo::FakeJoint::setVelLimitsRaw(int axis, double min, double max)
+{
+    CD_WARNING("Not implemented.\n");
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::FakeJoint::getVelLimitsRaw(int axis, double *min, double *max)
+{
+    CD_WARNING("Not implemented.\n");
+    return true;
+}
+
+// -----------------------------------------------------------------------------

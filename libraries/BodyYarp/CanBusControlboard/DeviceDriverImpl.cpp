@@ -48,7 +48,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
 
     //-- Populate the CAN nodes vector.
     nodes.resize( ids.size() );
-    iControlLimitsRaw.resize( nodes.size() );
+    iControlLimits2Raw.resize( nodes.size() );
     iControlModeRaw.resize( nodes.size() );
     iEncodersTimedRaw.resize( nodes.size() );
     iPositionControlRaw.resize( nodes.size() );
@@ -84,7 +84,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
         //-- Push the motor driver and other devices (CuiAbsolute) on to the vectors.
         nodes[i] = device;  // -- device es un puntero que guarda la dirección de un objeto PolyDriver
         // -- nodes es un vector de punteros que apuntará al device
-        device->view( iControlLimitsRaw[i] );
+        device->view( iControlLimits2Raw[i] );
         device->view( iControlModeRaw[i] );
         device->view( iEncodersTimedRaw[i] );
         device->view( iPositionControlRaw[i] );
@@ -108,7 +108,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
             if ( ! iPositionControlRaw[i]->setRefSpeedRaw( 0, refSpeeds.get(i).asDouble() ) )
                 return false;
 
-            if ( ! iControlLimitsRaw[i]->setLimitsRaw( 0, mins.get(i).asDouble(), maxs.get(i).asDouble() ) )
+            if ( ! iControlLimits2Raw[i]->setLimitsRaw( 0, mins.get(i).asDouble(), maxs.get(i).asDouble() ) )
                 return false;
         }
 
