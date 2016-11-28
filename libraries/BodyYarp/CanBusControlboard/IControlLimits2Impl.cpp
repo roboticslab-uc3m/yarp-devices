@@ -30,14 +30,14 @@ bool teo::CanBusControlboard::getLimits(int axis, double *min, double *max)
 
 bool teo::CanBusControlboard::setVelLimits(int axis, double min, double max)
 {
-    return iControlLimits2Raw[axis]->setVelLimitsRaw( 0, min, max );
+    return iControlLimits2Raw[axis]->setVelLimitsRaw( 0, min, max ); // May segfault in future if not impl?
 }
 
 // -----------------------------------------------------------------------------
 
 bool teo::CanBusControlboard::getVelLimits(int axis, double *min, double *max)
 {
-    return iControlLimits2Raw[axis]->getVelLimitsRaw( 0, min, max );
+    return iControlLimits2Raw[axis]->getVelLimitsRaw( 0, min, max );  // May segfault in future if not impl?
 }
 
 // -----------------------------------------------------------------------------
