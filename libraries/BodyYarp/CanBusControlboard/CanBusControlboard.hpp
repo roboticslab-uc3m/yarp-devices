@@ -676,7 +676,7 @@ protected:
 
     /** A vector of CAN node objects. */
     std::vector< yarp::dev::PolyDriver* > nodes;
-    std::vector< yarp::dev::IControlLimitsRaw* > iControlLimitsRaw;
+    std::vector< yarp::dev::IControlLimits2Raw* > iControlLimits2Raw;
     std::vector< yarp::dev::IControlModeRaw* > iControlModeRaw;
     std::vector< yarp::dev::IEncodersTimedRaw* > iEncodersTimedRaw;
     std::vector< yarp::dev::IPositionControlRaw* > iPositionControlRaw;
