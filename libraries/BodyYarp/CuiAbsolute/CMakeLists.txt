@@ -13,7 +13,7 @@ IF (NOT SKIP_CuiAbsolute)
   # Include any directories needed for YARP
   include_directories(${YARP_INCLUDE_DIRS} ${TEO_BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
 
-  yarp_add_plugin(CuiAbsolute CuiAbsolute.cpp DeviceDriverImpl.cpp IControlLimitsRawImpl.cpp IControlModeRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControlRawImpl.cpp ICanBusSharerImpl.cpp )
+  yarp_add_plugin(CuiAbsolute CuiAbsolute.cpp DeviceDriverImpl.cpp IControlLimits2RawImpl.cpp IControlModeRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControlRawImpl.cpp ICanBusSharerImpl.cpp )
 
   TARGET_LINK_LIBRARIES(CuiAbsolute ${YARP_LIBRARIES})
   install(TARGETS CuiAbsolute DESTINATION lib)
