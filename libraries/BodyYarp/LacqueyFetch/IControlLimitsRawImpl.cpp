@@ -36,3 +36,18 @@ bool teo::LacqueyFetch::getLimitsRaw(int axis, double *min, double *max)
 
 // -----------------------------------------------------------------------------
 
+bool teo::LacqueyFetch::setVelLimitsRaw(int axis, double min, double max)
+{
+    CD_WARNING("Not implemented.\n");
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::LacqueyFetch::getVelLimitsRaw(int axis, double *min, double *max)
+{
+    CD_WARNING("Not implemented.\n");
+    return true;
+}
+
+// -----------------------------------------------------------------------------

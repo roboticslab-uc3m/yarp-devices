@@ -36,3 +36,18 @@ bool teo::TextilesHand::getLimitsRaw(int axis, double *min, double *max)
 
 // -----------------------------------------------------------------------------
 
+bool teo::TextilesHand::setVelLimitsRaw(int axis, double min, double max)
+{
+    CD_WARNING("Not implemented.\n");
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::TextilesHand::getVelLimitsRaw(int axis, double *min, double *max)
+{
+    CD_WARNING("Not implemented.\n");
+    return true;
+}
+
+// -----------------------------------------------------------------------------
