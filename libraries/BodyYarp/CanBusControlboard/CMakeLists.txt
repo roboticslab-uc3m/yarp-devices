@@ -8,8 +8,6 @@ YARP_PREPARE_DEVICE(CanBusControlboard TYPE teo::CanBusControlboard INCLUDE CanB
 
 IF (NOT SKIP_CanBusControlboard)
 
-  option(ENABLE_testCanBusControlboard "Choose if you want to compile testCanBusControlboard" TRUE)
-
   find_package(YARP REQUIRED)
 
   # Include any directories needed for YARP
