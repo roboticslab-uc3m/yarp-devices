@@ -30,3 +30,8 @@ Installation instructions for installing from source can be found [here]( /doc/t
 [![Coverage Status](https://coveralls.io/repos/roboticslab-uc3m/teo-body/badge.svg)](https://coveralls.io/r/roboticslab-uc3m/teo-body)
 
 [![Issues](https://img.shields.io/github/issues/roboticslab-uc3m/teo-body.svg?label=Issues)](https://github.com/roboticslab-uc3m/teo-body/issues)
+
+## Links of interest:
+
+* [teo-main](https://github.com/roboticslab-uc3m/teo-main)
+* [teo-head](https://github.com/roboticslab-uc3m/teo-head)
