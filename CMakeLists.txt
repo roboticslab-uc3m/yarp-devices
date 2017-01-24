@@ -13,6 +13,8 @@ endif(COMMAND cmake_policy)
 
 project(TEO_BODY)
 
+option(BUILD_SHARED_LIBS "All shared libs" TRUE)
+
 ### options: cpp libraries
 option(ENABLE_BodyYarp "Choose if you want to compile BodyYarp" TRUE)
 option(ENABLE_OneCanBusOneWrapper "Choose if you want to compile OneCanBusOneWrapper" TRUE)
