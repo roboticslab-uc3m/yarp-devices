@@ -29,14 +29,14 @@ IF (ENABLE_BodyYarp)
     add_subdirectory(CanBusControlboard)
   # yarp_end_plugin_library(BodyYarp)
 
-  install(TARGETS BodyYarp DESTINATION lib)
+  #install(TARGETS BodyYarp DESTINATION lib)
 
-  IF (ENABLE_launchBodyYarp)
+  #IF (ENABLE_launchBodyYarp)
 
-    YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE(launchBodyYarp BodyYarp)
-    install(TARGETS launchBodyYarp DESTINATION bin)
+  #  YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE(launchBodyYarp BodyYarp)
+  #  install(TARGETS launchBodyYarp DESTINATION bin)
 
-  ENDIF (ENABLE_launchBodyYarp)
+  #ENDIF (ENABLE_launchBodyYarp)
 
   # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
   set(TEO_BODY_INCLUDE_DIRS ${TEO_BODY_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "appended libraries")
