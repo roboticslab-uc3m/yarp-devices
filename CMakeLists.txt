@@ -15,6 +15,9 @@ project(TEO_BODY)
 
 option(BUILD_SHARED_LIBS "All shared libs" TRUE)
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -frtti")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti")
+
 ### options: cpp libraries
 option(ENABLE_BodyYarp "Choose if you want to compile BodyYarp" TRUE)
 option(ENABLE_OneCanBusOneWrapper "Choose if you want to compile OneCanBusOneWrapper" TRUE)

@@ -15,15 +15,9 @@
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
 
-#include "hico_api.h"
+#include "ICanBusHico.h"
 
 #include "ColorDebug.hpp"
-
-
-#define DEFAULT_CAN_DEVICE "/dev/can0"
-#define DEFAULT_CAN_BITRATE BITRATE_1000k
-
-#define DELAY 0.001  // Was DELAY2. Required when using same driver.
 
 namespace teo
 {
@@ -34,7 +28,7 @@ namespace teo
  * @brief Specifies the HicoCan (hcanpci) behaviour and specifications.
  *
  */
-class CanBusHico : public yarp::dev::DeviceDriver
+class CanBusHico : public yarp::dev::DeviceDriver, public ICanBusHico
 {
 
 public:

@@ -13,6 +13,7 @@
 #include <yarp/dev/Wrapper.h>
 
 #include <string>
+#include <sstream>
 #include <stdlib.h>
 
 #include "ICanBusSharer.h"
@@ -37,7 +38,7 @@ public:
 protected:
 
     yarp::dev::PolyDriver deviceDevCan0;
-    CanBusHico* iCanBus;
+    ICanBusHico* iCanBus;
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(can_msg* message);

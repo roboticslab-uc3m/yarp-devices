@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setCanBusPtr(CanBusHico *canDevicePtr)
+bool teo::FakeJoint::setCanBusPtr(ICanBusHico *canDevicePtr)
 {
 
     this->canDevicePtr = canDevicePtr;

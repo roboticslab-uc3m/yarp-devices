@@ -51,7 +51,7 @@ protected:
 
     /** CAN BUS device. */
     yarp::dev::PolyDriver deviceDevCan0; // -- Dispositivo (HicoCan) que se crea.
-    CanBusHico* iCanBus;
+    ICanBusHico* iCanBus;
 
     /** CAN node object. */
     yarp::dev::PolyDriver canNodeDevice;
