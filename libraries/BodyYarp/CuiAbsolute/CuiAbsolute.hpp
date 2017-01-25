@@ -37,7 +37,7 @@ namespace teo
 //          Al final definiremos una función auxiliar que será la que utilicemos para enviar mensajes al PIC.
 class CuiAbsolute : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimitsRaw, public yarp::dev::IControlModeRaw, public yarp::dev::IEncodersTimedRaw,
     public yarp::dev::IPositionControlRaw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControlRaw, public yarp::dev::ITorqueControlRaw,
-    public ICanBusSharer
+    public ICanBusSharer, public ICuiAbsolute
 {
 
 public:
