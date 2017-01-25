@@ -17,7 +17,7 @@ IF (ENABLE_BodyYarp)
   # Note: Need ICanBusSharer.h, which will also need CanBusHico/*.hpp for now
   set(TEO_BODY_INCLUDE_DIRS ${TEO_BODY_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/CanBusHico CACHE INTERNAL "appended libraries") 
   # Note: BodyYarp bodybot works, but bodybot BodyYarp fails.
-  set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} BodyYarp CACHE INTERNAL "appended libraries") 
+  #set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} BodyYarp CACHE INTERNAL "appended libraries") 
   
  #  yarp_begin_plugin_library(BodyYarp)
     add_subdirectory(CuiAbsolute)

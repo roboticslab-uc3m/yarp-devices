@@ -19,7 +19,7 @@ IF (NOT SKIP_FakeJoint)
   install(TARGETS FakeJoint DESTINATION lib)
 
   # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
-  set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} FakeJoint CACHE INTERNAL "appended libraries") 
+#  set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} FakeJoint CACHE INTERNAL "appended libraries") 
 
   #install(TARGETS FakeJoint DESTINATION lib)
   yarp_install(TARGETS FakeJoint

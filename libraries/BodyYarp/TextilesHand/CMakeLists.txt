@@ -19,7 +19,7 @@ IF (NOT SKIP_TextilesHand)
   install(TARGETS TextilesHand DESTINATION lib)
 
   # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
-  set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} TextilesHand CACHE INTERNAL "appended libraries") 
+#  set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} TextilesHand CACHE INTERNAL "appended libraries") 
 
   #install(TARGETS TextilesHand DESTINATION lib)
   yarp_install(TARGETS TextilesHand

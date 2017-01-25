@@ -19,7 +19,7 @@ IF (NOT SKIP_CanBusHico)
 
   # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
   set(TEO_BODY_INCLUDE_DIRS ${TEO_BODY_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${COLOR_DEBUG_INCLUDE_DIRS} CACHE INTERNAL "appended libraries") 
-  set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} CanBusHico CACHE INTERNAL "appended libraries") 
+#  set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} CanBusHico CACHE INTERNAL "appended libraries") 
 
   #install(TARGETS CanBusHico DESTINATION lib)
   yarp_install(TARGETS CanBusHico

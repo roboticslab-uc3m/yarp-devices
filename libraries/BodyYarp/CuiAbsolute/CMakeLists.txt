@@ -19,7 +19,8 @@ IF (NOT SKIP_CuiAbsolute)
   install(TARGETS CuiAbsolute DESTINATION lib)
 
   # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
-  set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} CuiAbsolute CACHE INTERNAL "appended libraries") 
+  set(TEO_BODY_INCLUDE_DIRS ${TEO_BODY_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "appended libraries")
+  #set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} CuiAbsolute CACHE INTERNAL "appended libraries") 
 
   #install(TARGETS CuiAbsolute DESTINATION lib)
   yarp_install(TARGETS CuiAbsolute
