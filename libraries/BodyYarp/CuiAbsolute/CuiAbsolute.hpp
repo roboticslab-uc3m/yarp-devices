@@ -371,9 +371,9 @@ public:
 
     // -- Auxiliary functions: send data to PIC of Cui
 
-    bool startContinuousPublishing(uint8_t time);
-    bool startPullPublishing();
-    bool stopPublishingMessages();    
+    virtual bool startContinuousPublishing(uint8_t time);
+    virtual bool startPullPublishing();
+    virtual bool stopPublishingMessages();
 
 
 protected:
