@@ -15,6 +15,11 @@
 #include <list>
 #include <sstream>
 
+#include "ICuiAbsolute.h"
+// -- Pause
+#include <stdlib.h>
+#include <stdio.h>
+
 //#define CD_HIDE_DEBUG  //-- Can be globally managed from father CMake.
 //#define CD_HIDE_SUCCESS  //-- Can be globally managed from father CMake.
 //#define CD_HIDE_INFO  //-- Can be managed from father CMake.

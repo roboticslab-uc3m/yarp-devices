@@ -3,6 +3,8 @@
 #ifndef __I_CUI_ABSOLUTE__
 #define __I_CUI_ABSOLUTE__
 
+#include <stdint.h>
+
 namespace teo
 {
 
@@ -21,7 +23,8 @@ public:
 
     virtual bool startContinuousPublishing(uint8_t time) = 0;
     virtual bool startPullPublishing() = 0;
-    virtual bool stopPublishingMessages() = 0;    
+    virtual bool stopPublishingMessages() = 0;
+    virtual bool HasFirstReached() = 0;
 
 };
 

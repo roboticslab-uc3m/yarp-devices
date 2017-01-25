@@ -1,10 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include "CanBusControlboard.hpp"
-#include "CuiAbsolute/CuiAbsolute.hpp"
-// -- Pause
-#include <stdlib.h>
-#include <stdio.h>
 
 // ------------------- DeviceDriver Related ------------------------------------
 
@@ -120,7 +116,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
             CD_INFO("Sending \"Start Continuous Publishing\" message to Cui Absolute (PIC ID: %d)\n", ids.get(i).asInt());
 
             // Configuring Cui Absolute
-            CuiAbsolute* cuiAbsolute;
+            ICuiAbsolute* cuiAbsolute;
             device->view( cuiAbsolute );
 
             if ( ! cuiAbsolute->startContinuousPublishing(0) ) // startContinuousPublishing(delay)
@@ -164,7 +160,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
                 {
                     CD_DEBUG("---> First CUI message has been reached \n");
                     double value;
-                    while( ! cuiAbsolute->getEncoderRaw(0,&value) ){
+                    while( ! iEncodersTimedRaw[i]->getEncoderRaw(0,&value) ){
                         CD_ERROR("Wrong value of Cui \n");
                     }
                     printf("Absolute encoder value -----> %f\n", value);
@@ -323,7 +319,7 @@ bool teo::CanBusControlboard::close()
             double timeStamp = 0.0;
             double cleaningTime = 0.5; // time to empty the buffer
 
-            CuiAbsolute* cuiAbsolute;
+            ICuiAbsolute* cuiAbsolute;
             nodes[i]->view( cuiAbsolute );
 
             CD_INFO("Stopping Cui Absolute PIC (ID: %d)\n", CAN_ID );

@@ -48,7 +48,7 @@ public:
         firstHasReached = false;
     }
 
-    bool HasFirstReached(){
+    virtual bool HasFirstReached() {
         return firstHasReached;
     }
 
