@@ -63,7 +63,7 @@ protected:
     yarp::dev::ITorqueControlRaw* iTorqueControlRaw;
     yarp::dev::IVelocityControlRaw* iVelocityControlRaw;
     ICanBusSharer* iCanBusSharer; // -- ??
-    TechnosoftIpos* technosoftIpos;    //-- ok practice?
+    ITechnosoftIpos* technosoftIpos;    //-- ok practice?
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(can_msg* message); // -- Muestra los mensajes que vienen del CAN

@@ -16,6 +16,7 @@
 //#define CD_HIDE_ERROR  //-- Can be globally managed from father CMake.
 #include "ColorDebug.hpp"
 #include "ICanBusSharer.h"
+#include "ICuiAbsolute.h"
 
 namespace teo
 {

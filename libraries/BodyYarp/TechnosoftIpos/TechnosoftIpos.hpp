@@ -16,7 +16,7 @@
 //#define CD_HIDE_ERROR  //-- Can be globally managed from father CMake.
 #include "ColorDebug.hpp"
 #include "ICanBusSharer.h"
-
+#include "ITechnosoftIpos.h"
 
 namespace teo
 {
@@ -35,7 +35,7 @@ namespace teo
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
 class TechnosoftIpos : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimitsRaw, public yarp::dev::IControlModeRaw, public yarp::dev::IEncodersTimedRaw,
     public yarp::dev::IPositionControlRaw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControlRaw, public yarp::dev::ITorqueControlRaw,
-    public ICanBusSharer
+    public ICanBusSharer, public ITechnosoftIpos
 {
 
 public:

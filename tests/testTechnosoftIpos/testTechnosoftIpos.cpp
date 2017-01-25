@@ -3,13 +3,13 @@
 
 // -- We load the rest of libraries that we will use to call the functions of our code
 #include <yarp/os/all.h>
-#include <yarp/dev/Drivers.h>
-#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/all.h>
 
 #include "ColorDebug.hpp"
 
 #include "ICanBusSharer.h"
-#include "TechnosoftIpos.hpp"  //-- ok practice?
+#include "ITechnosoftIpos.h"
+#include "ICanBusHico.h"
 
 #define CAN_ID 124
 
@@ -87,7 +87,7 @@ protected:
 
     /** CAN BUS device. */
     yarp::dev::PolyDriver canBusDevice;  //
-    CanBusHico* iCanBus;
+    ICanBusHico* iCanBus;
 
     /** CAN node object. */
     yarp::dev::PolyDriver canNodeDevice;
@@ -99,7 +99,7 @@ protected:
     yarp::dev::ITorqueControlRaw* iTorqueControlRaw;
     yarp::dev::IVelocityControlRaw* iVelocityControlRaw;
     ICanBusSharer* iCanBusSharer; // -- ??
-    TechnosoftIpos* technosoftIpos;    //-- ok practice?
+    ITechnosoftIpos* technosoftIpos;
 
     struct can_msg buffer;
 
@@ -200,7 +200,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetRefAccelerationRaw )
     CD_DEBUG("Read: %s\n", msgToStr(&buffer).c_str());
 
     //-- Print interpretation of message
-    technosoftIpos->interpretMessage(&buffer); // without ASSERT (we don't need assert interpretMessage function)
+    iCanBusSharer->interpretMessage(&buffer); // without ASSERT (we don't need assert interpretMessage function)
 
     // Manual 8.2.3. 6083h: Profile acceleration (SDO ack \"posmode_acc\" from driver)
     ASSERT_EQ(buffer.data[0] , 0x60);  //-- ??

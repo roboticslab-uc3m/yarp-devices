@@ -2,11 +2,12 @@
 
 // -- We load the rest of libraries that we will use to call the functions of our code
 #include <yarp/os/all.h>
-#include <yarp/dev/Drivers.h>
-#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/all.h>
+
 #include "ColorDebug.hpp"
+
 #include "ICanBusSharer.h"
-#include "CuiAbsolute/CuiAbsolute.hpp"
+#include "ICuiAbsolute.h"
 
 //YARP_DECLARE_PLUGINS(BodyYarp)
 
@@ -88,7 +89,7 @@ protected:
 
     /** CAN BUS device. */
     yarp::dev::PolyDriver canBusDevice;
-    CanBusHico* iCanBus;
+    ICanBusHico* iCanBus;
 
     /** CAN node object. */
     yarp::dev::PolyDriver canNodeDevice;
@@ -100,7 +101,7 @@ protected:
     yarp::dev::ITorqueControlRaw* iTorqueControlRaw;
     yarp::dev::IVelocityControlRaw* iVelocityControlRaw;
     ICanBusSharer* iCanBusSharer;
-    CuiAbsolute* cuiAbsolute;
+    ICuiAbsolute* cuiAbsolute;
 
     struct can_msg buffer;
 
