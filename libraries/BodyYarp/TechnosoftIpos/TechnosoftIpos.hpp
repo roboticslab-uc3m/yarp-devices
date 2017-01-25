@@ -16,7 +16,7 @@
 //#define CD_HIDE_ERROR  //-- Can be globally managed from father CMake.
 #include "ColorDebug.hpp"
 #include "ICanBusSharer.h"
-
+#include "ITechnosoftIpos.h"
 
 namespace teo
 {
@@ -35,7 +35,7 @@ namespace teo
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
 class TechnosoftIpos : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimitsRaw, public yarp::dev::IControlModeRaw, public yarp::dev::IEncodersTimedRaw,
     public yarp::dev::IPositionControlRaw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControlRaw, public yarp::dev::ITorqueControlRaw,
-    public ICanBusSharer
+    public ICanBusSharer, public ITechnosoftIpos
 {
 
 public:
@@ -51,7 +51,7 @@ public:
     virtual bool close();
 
     //  --------- ICanBusSharer Declarations. Implementation in TechnosoftIpos.cpp ---------
-    virtual bool setCanBusPtr(CanBusHico *canDevicePtr);
+    virtual bool setCanBusPtr(ICanBusHico *canDevicePtr);
     virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw); // -- ??
     virtual bool interpretMessage( can_msg * message);
     /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
@@ -314,7 +314,7 @@ protected:
     std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
 
     int canId;
-    CanBusHico *canDevicePtr;
+    ICanBusHico *canDevicePtr;
     double lastUsage;
 
     //-- Encoder stuff

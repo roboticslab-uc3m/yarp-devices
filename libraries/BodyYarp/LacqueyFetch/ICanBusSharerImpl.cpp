@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setCanBusPtr(CanBusHico *canDevicePtr)
+bool teo::LacqueyFetch::setCanBusPtr(ICanBusHico *canDevicePtr)
 {
 
     this->canDevicePtr = canDevicePtr;

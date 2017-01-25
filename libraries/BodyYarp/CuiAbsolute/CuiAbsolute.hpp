@@ -16,6 +16,7 @@
 //#define CD_HIDE_ERROR  //-- Can be globally managed from father CMake.
 #include "ColorDebug.hpp"
 #include "ICanBusSharer.h"
+#include "ICuiAbsolute.h"
 
 namespace teo
 {
@@ -56,7 +57,7 @@ public:
     virtual bool close();
 
     //  --------- ICanBusSharer Declarations. Implementation in CuiAbsolute.cpp ---------
-    virtual bool setCanBusPtr(CanBusHico *canDevicePtr);
+    virtual bool setCanBusPtr(ICanBusHico *canDevicePtr);
     virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
     {
         return true;
@@ -397,7 +398,7 @@ protected:
 
     int canId;
 
-    CanBusHico *canDevicePtr;
+    ICanBusHico *canDevicePtr;
 
     double max, min, refAcceleration, refSpeed, tr;
 

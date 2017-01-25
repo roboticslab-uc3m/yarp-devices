@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::setCanBusPtr(CanBusHico *canDevicePtr)
+bool teo::CuiAbsolute::setCanBusPtr(ICanBusHico *canDevicePtr)
 {
 
     this->canDevicePtr = canDevicePtr;

@@ -3,7 +3,8 @@
 #ifndef __I_CAN_BUS_SHARER__
 #define __I_CAN_BUS_SHARER__
 
-#include "CanBusHico.hpp"
+#include <yarp/dev/IEncodersTimed.h>
+#include "ICanBusHico.h"
 
 namespace teo
 {
@@ -21,7 +22,7 @@ public:
      */
     virtual ~ICanBusSharer() {}
 
-    virtual bool setCanBusPtr(CanBusHico *canDevicePtr) = 0;
+    virtual bool setCanBusPtr(ICanBusHico *canDevicePtr) = 0;
 
     virtual bool setIEncodersTimedRawExternal(yarp::dev::IEncodersTimedRaw * iEncodersTimedRaw) = 0;
 

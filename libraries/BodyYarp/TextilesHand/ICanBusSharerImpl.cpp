@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setCanBusPtr(CanBusHico *canDevicePtr)
+bool teo::TextilesHand::setCanBusPtr(ICanBusHico *canDevicePtr)
 {
 
     this->canDevicePtr = canDevicePtr;

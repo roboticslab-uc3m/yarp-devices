@@ -652,7 +652,7 @@ protected:
 
     /** A CAN device. */
     yarp::dev::PolyDriver canBusDevice;
-    CanBusHico* iCanBus;
+    ICanBusHico* iCanBus;
 
     /** A vector of CAN node objects. */
     std::vector< yarp::dev::PolyDriver* > nodes;
