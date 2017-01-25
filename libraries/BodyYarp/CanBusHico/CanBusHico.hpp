@@ -44,10 +44,10 @@ public:
      * @param bitrate is the bitrate, such as BITRATE_100k.
      * @return true/false on success/failure.
      */
-    bool open(yarp::os::Searchable& config);
+    virtual bool open(yarp::os::Searchable& config);
 
     /** Close the CAN device. */
-    bool close();
+    virtual bool close();
 
     /**
      * Write message to the CAN buffer.
@@ -56,7 +56,7 @@ public:
      * @param msgData Data to send
      * @return true/false on success/failure.
      */
-    bool sendRaw(uint32_t id, uint16_t len, uint8_t * msgData);
+    virtual bool sendRaw(uint32_t id, uint16_t len, uint8_t * msgData);
 
     /** Read data.
      * @return Number on got, 0 on timeout, and errno on fail. */
