@@ -117,7 +117,11 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
 
             // Configuring Cui Absolute
             ICuiAbsolute* cuiAbsolute;
-            device->view( cuiAbsolute );
+            if( ! device->view( cuiAbsolute ) )
+            {
+                CD_ERROR("Could not view.\n");
+                return false;
+            }
 
             if ( ! cuiAbsolute->startContinuousPublishing(0) ) // startContinuousPublishing(delay)
                 return false;
