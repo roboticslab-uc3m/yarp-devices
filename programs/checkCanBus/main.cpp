@@ -53,12 +53,12 @@ Example of uses:
 #include "CheckCanBus.hpp"
 
 
-YARP_DECLARE_PLUGINS(BodyYarp)
+// YARP_DECLARE_PLUGINS(BodyYarp)
 
 int main(int argc, char *argv[])
 {
 
-    YARP_REGISTER_PLUGINS(BodyYarp);
+//    YARP_REGISTER_PLUGINS(BodyYarp);
 
     yarp::os::ResourceFinder rf;
     rf.setVerbose(true); // -- Imprimir en pantalla la ubicación de los recursos a TRUE

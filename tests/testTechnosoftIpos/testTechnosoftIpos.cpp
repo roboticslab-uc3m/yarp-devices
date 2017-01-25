@@ -13,7 +13,7 @@
 
 #define CAN_ID 124
 
-YARP_DECLARE_PLUGINS(BodyYarp)
+//YARP_DECLARE_PLUGINS(BodyYarp)
 
 namespace teo
 {
@@ -29,7 +29,7 @@ public:
     virtual void SetUp()
     {
         // -- code here will execute just before the test ensues
-        YARP_REGISTER_PLUGINS(BodyYarp);
+        //YARP_REGISTER_PLUGINS(BodyYarp);
 
         yarp::os::Property hicoCanConf ("(device CanBusHico) (canDevice /dev/can1) (canBitrate 8)"); // -- truco para agregar directamente un conjunto de propiedades sin tener que llamar a la función "put"
         bool ok = true;
