@@ -60,7 +60,7 @@ public:
 
     /** Read data.
      * @return Number on got, 0 on timeout, and errno on fail. */
-    int read_timeout(struct can_msg *buf, unsigned int timeout);
+    virtual int read_timeout(struct can_msg *buf, unsigned int timeout);
 
 protected:
 
