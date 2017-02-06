@@ -2,13 +2,14 @@
 
 // -- We load the rest of libraries that we will use to call the functions of our code
 #include <yarp/os/all.h>
-#include <yarp/dev/Drivers.h>
-#include <yarp/dev/PolyDriver.h>
-#include "ColorDebug.hpp"
-#include "ICanBusSharer.h"
-#include "CuiAbsolute/CuiAbsolute.hpp"
+#include <yarp/dev/all.h>
 
-YARP_DECLARE_PLUGINS(BodyYarp)
+#include "ColorDebug.hpp"
+
+#include "ICanBusSharer.h"
+#include "ICuiAbsolute.h"
+
+//YARP_DECLARE_PLUGINS(BodyYarp)
 
 #define CAN_ID 115 // ID of Cui Absolute encoder that you want to check...
 
@@ -28,7 +29,7 @@ public:
 
 
         // -- code here will execute just before the test ensues
-        YARP_REGISTER_PLUGINS(BodyYarp);
+        //YARP_REGISTER_PLUGINS(BodyYarp);
 
         yarp::os::Property hicoCanConf ("(device CanBusHico) (canDevice /dev/can1) (canBitrate 8)");
         bool ok = true;
@@ -88,7 +89,7 @@ protected:
 
     /** CAN BUS device. */
     yarp::dev::PolyDriver canBusDevice;
-    CanBusHico* iCanBus;
+    ICanBusHico* iCanBus;
 
     /** CAN node object. */
     yarp::dev::PolyDriver canNodeDevice;
@@ -100,7 +101,7 @@ protected:
     yarp::dev::ITorqueControlRaw* iTorqueControlRaw;
     yarp::dev::IVelocityControlRaw* iVelocityControlRaw;
     ICanBusSharer* iCanBusSharer;
-    CuiAbsolute* cuiAbsolute;
+    ICuiAbsolute* cuiAbsolute;
 
     struct can_msg buffer;
 

@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setCanBusPtr(CanBusHico *canDevicePtr)
+bool teo::TechnosoftIpos::setCanBusPtr(ICanBusHico *canDevicePtr)
 {
 
     this->canDevicePtr = canDevicePtr;
