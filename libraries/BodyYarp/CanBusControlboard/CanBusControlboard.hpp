@@ -4,9 +4,7 @@
 #define __CAN_BUS_CONTROLBOARD__
 
 #include <yarp/os/all.h>
-#include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/Drivers.h>
-#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/all.h>
 
 #include <stdlib.h>  //-- Just for ::exit()
 #include <fcntl.h>  //-- Just for O_RDWR
