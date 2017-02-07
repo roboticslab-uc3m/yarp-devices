@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-YARP_PREPARE_PLUGIN(Jr3 TYPE teo::Jr3 INCLUDE Jr3.hpp WRAPPER analogServer)
+YARP_PREPARE_PLUGIN(Jr3 CATEGORY device TYPE teo::Jr3 INCLUDE Jr3.hpp)
 
 IF (NOT SKIP_Jr3)
 
@@ -19,7 +19,7 @@ IF (NOT SKIP_Jr3)
   install(TARGETS Jr3 DESTINATION lib)
 
   # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
-  set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} Jr3 CACHE INTERNAL "appended libraries") 
+  set(TEO_BODY_INCLUDE_DIRS ${TEO_BODY_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "appended libraries")
   #set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} LacqueyFetch CACHE INTERNAL "appended libraries")
 
   #install(TARGETS Jr3 DESTINATION lib)
