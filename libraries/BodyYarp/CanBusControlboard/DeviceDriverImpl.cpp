@@ -175,6 +175,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
                 else                               // doesn't respond :(
                 {
                     CD_ERROR("Cui Absolute (PIC ID: %d) doesn't respond. Try using --externalEncoderWait [seconds] parameter with timeout higher than 0 \n", ids.get(i).asInt());
+                    CanBusControlboard::close();
                     return false;
                 }
             }
