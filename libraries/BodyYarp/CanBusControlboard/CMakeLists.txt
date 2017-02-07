@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-YARP_PREPARE_DEVICE(CanBusControlboard TYPE teo::CanBusControlboard INCLUDE CanBusControlboard.hpp WRAPPER controlboardwrapper2)
+YARP_PREPARE_PLUGIN(CanBusControlboard CATEGORY device TYPE teo::CanBusControlboard INCLUDE CanBusControlboard.hpp WRAPPER controlboardwrapper2)
 
 IF (NOT SKIP_CanBusControlboard)
 

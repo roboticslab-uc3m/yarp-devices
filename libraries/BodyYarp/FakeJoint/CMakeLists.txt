@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-YARP_PREPARE_DEVICE(FakeJoint TYPE teo::FakeJoint INCLUDE FakeJoint.hpp)
+YARP_PREPARE_PLUGIN(FakeJoint CATEGORY device TYPE teo::FakeJoint INCLUDE FakeJoint.hpp)
 
 IF (NOT SKIP_FakeJoint)
 

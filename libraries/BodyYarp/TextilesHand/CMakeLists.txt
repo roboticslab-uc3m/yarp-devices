@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-YARP_PREPARE_DEVICE(TextilesHand TYPE teo::TextilesHand INCLUDE TextilesHand.hpp)
+YARP_PREPARE_PLUGIN(TextilesHand CATEGORY device TYPE teo::TextilesHand INCLUDE TextilesHand.hpp)
 
 IF (NOT SKIP_TextilesHand)
 

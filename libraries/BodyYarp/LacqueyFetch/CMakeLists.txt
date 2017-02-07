@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-YARP_PREPARE_DEVICE(LacqueyFetch TYPE teo::LacqueyFetch INCLUDE LacqueyFetch.hpp)
+YARP_PREPARE_PLUGIN(LacqueyFetch CATEGORY device TYPE teo::LacqueyFetch INCLUDE LacqueyFetch.hpp)
 
 IF (NOT SKIP_LacqueyFetch)
 
