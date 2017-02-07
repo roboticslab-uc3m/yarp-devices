@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-YARP_PREPARE_PLUGIN(Jr3 CATEGORY device TYPE teo::Jr3 INCLUDE Jr3.hpp)
+YARP_PREPARE_PLUGIN(Jr3 CATEGORY device TYPE teo::Jr3 INCLUDE Jr3.hpp WRAPPER analogServer)
 
 IF (NOT SKIP_Jr3)
 
