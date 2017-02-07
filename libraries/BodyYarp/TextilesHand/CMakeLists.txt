@@ -4,14 +4,14 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-YARP_PREPARE_DEVICE(TextilesHand TYPE teo::TextilesHand INCLUDE TextilesHand.hpp)
+YARP_PREPARE_PLUGIN(TextilesHand CATEGORY device TYPE teo::TextilesHand INCLUDE TextilesHand.hpp)
 
 IF (NOT SKIP_TextilesHand)
 
   find_package(YARP REQUIRED)
 
   # Include any directories needed for YARP
-  include_directories(${YARP_INCLUDE_DIRS} ${TEO_BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
+  include_directories(${YARP_INCLUDE_DIRS} ${TEO_BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
   yarp_add_plugin(TextilesHand TextilesHand.cpp DeviceDriverImpl.cpp IControlLimits2RawImpl.cpp IControlModeRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControlRawImpl.cpp ICanBusSharerImpl.cpp )
 

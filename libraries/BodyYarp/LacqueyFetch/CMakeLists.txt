@@ -4,14 +4,14 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-YARP_PREPARE_DEVICE(LacqueyFetch TYPE teo::LacqueyFetch INCLUDE LacqueyFetch.hpp)
+YARP_PREPARE_PLUGIN(LacqueyFetch CATEGORY device TYPE teo::LacqueyFetch INCLUDE LacqueyFetch.hpp)
 
 IF (NOT SKIP_LacqueyFetch)
 
   find_package(YARP REQUIRED)
 
   # Include any directories needed for YARP
-  include_directories(${YARP_INCLUDE_DIRS} ${TEO_BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
+  include_directories(${YARP_INCLUDE_DIRS} ${TEO_BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
   yarp_add_plugin(LacqueyFetch LacqueyFetch.cpp DeviceDriverImpl.cpp IControlLimits2RawImpl.cpp IControlModeRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControlRawImpl.cpp ICanBusSharerImpl.cpp )
 

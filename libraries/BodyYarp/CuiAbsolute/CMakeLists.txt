@@ -4,14 +4,14 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-YARP_PREPARE_DEVICE(CuiAbsolute TYPE teo::CuiAbsolute INCLUDE CuiAbsolute.hpp)
+YARP_PREPARE_PLUGIN(CuiAbsolute CATEGORY device TYPE teo::CuiAbsolute INCLUDE CuiAbsolute.hpp)
 
 IF (NOT SKIP_CuiAbsolute)
 
   find_package(YARP REQUIRED)
 
   # Include any directories needed for YARP
-  include_directories(${YARP_INCLUDE_DIRS} ${TEO_BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
+  include_directories(${YARP_INCLUDE_DIRS} ${TEO_BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
   yarp_add_plugin(CuiAbsolute CuiAbsolute.cpp DeviceDriverImpl.cpp IControlLimits2RawImpl.cpp IControlModeRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControlRawImpl.cpp ICanBusSharerImpl.cpp )
 
