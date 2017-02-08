@@ -13,7 +13,7 @@ endif(COMMAND cmake_policy)
 
 project(TEO_BODY)
 
-set(BUILD_SHARED_LIBS TRUE)  # All shared libs
+set(BUILD_SHARED_LIBS TRUE CACHE INTERNAL "hide this!")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -frtti")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti")
