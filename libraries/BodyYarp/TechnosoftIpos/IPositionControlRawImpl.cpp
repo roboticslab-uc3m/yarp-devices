@@ -63,6 +63,7 @@ bool teo::TechnosoftIpos::relativeMoveRaw(int j, double delta)
     //*************************************************************
     uint8_t msg_position_target[]= {0x23,0x7A,0x60,0x00,0x00,0x00,0x00,0x00}; // Position target
 
+    //-- 11.38 = ( 4 * 1024 pulse / 360 deg ) // deg -> pulse = UI (pos)
     int sendDelta = delta * this->tr * 11.38;  // Appply tr & convert units to encoder increments
     memcpy(msg_position_target+4,&sendDelta,4);
 
@@ -146,7 +147,10 @@ bool teo::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
     //memcpy(msg_posmode_speed+6,&sendRefSpeed,2);
     //float sendRefSpeed = sp * this->tr / 22.5;  // Apply tr & convert units to encoder increments
     //int32_t sendRefSpeedFormated = roundf(sendRefSpeed * 65536);  // 65536 = 2^16
-    int32_t sendRefSpeedFormated = roundf( sp * this->tr * 745.8 );
+
+    //-- 65536 for FIXED32
+    //-- 0.01138 = ( 4 * 1024 pulse / 360 deg ) * (0.001 s / sample)   // deg/s -> pulse/sample  = UI (vel)
+    int32_t sendRefSpeedFormated = roundf( sp * this->tr * 745.8 ); //-- 65536 * 0.01138 = 745.8
     memcpy(msg_posmode_speed+4,&sendRefSpeedFormated,4);
 
     if( ! send( 0x600, 8, msg_posmode_speed) )
@@ -178,7 +182,10 @@ bool teo::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
     //int sendRefAcc = acc * this->tr * 0.00001138;  // Appply tr & convert units to encoder increments
     //memcpy(msg_posmode_acc+4,&sendRefAcc,4);
     //int32_t sendRefAccFormated = roundf(sendRefAcc * 65536);  // 65536 = 2^16
-    int32_t sendRefAccFormated = roundf( acc * this->tr * 0.7458 );
+
+    //-- 65536 for FIXED32
+    //-- 0.00001138 = ( 4 * 1024 pulse / 360 deg ) * (0.000001 s^2 / sample^2)   // deg/s^2 -> pulse/sample^2 = UI (acc)
+    int32_t sendRefAccFormated = roundf( acc * this->tr * 0.7458 ); //-- 65536 * 0.00001138 = 0.7458
     memcpy(msg_posmode_acc+4,&sendRefAccFormated,4);
 
     if( ! send( 0x600, 8, msg_posmode_acc) )
