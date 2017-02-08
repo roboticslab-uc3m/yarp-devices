@@ -6,10 +6,20 @@
 
 int teo::Jr3::read(yarp::sig::Vector &out)
 {
-    out.resize(3);
-    out[0] = 1;
-    out[1] = 2;
-    out[2] = 3;
+    fmSemaphore.wait();
+
+    out.resize(DEFAULT_NUM_CHANNELS);
+
+    out[0] = f[0];
+    out[1] = f[1];
+    out[2] = f[2];
+
+    out[3] = m[0];
+    out[4] = m[1];
+    out[5] = m[2];
+
+    fmSemaphore.post();
+
     return yarp::dev::IAnalogSensor::AS_OK;
 }
 
@@ -24,7 +34,7 @@ int teo::Jr3::getState(int ch)
 
 int teo::Jr3::getChannels()
 {
-    return 3;
+    return DEFAULT_NUM_CHANNELS;
 }
 
 // -----------------------------------------------------------------------------

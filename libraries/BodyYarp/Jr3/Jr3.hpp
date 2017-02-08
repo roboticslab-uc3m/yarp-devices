@@ -23,6 +23,7 @@
 #include "ICanBusSharer.h"
 
 #define DEFAULT_RATE_MS 20.0
+#define DEFAULT_NUM_CHANNELS 6
 
 namespace teo
 {
@@ -103,6 +104,8 @@ class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor, pub
         virtual void run();
 
     private:
+        yarp::os::Semaphore fmSemaphore;
+        int f[3], m[3];
         six_axis_array fm;
         force_array fs;
         int fd;
