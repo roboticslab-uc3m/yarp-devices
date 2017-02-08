@@ -46,7 +46,7 @@ class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor
         virtual bool open(yarp::os::Searchable& config);
         virtual bool close();
 
-        //  --------- IAnalogSensor Declarations. Implementation in IGenericSensorImpl.cpp ---------
+        //  --------- IAnalogSensor Declarations. Implementation in IAnalogSensorImpl.cpp ---------
         /**
          * Read a vector from the sensor.
          * @param out a vector containing the sensor's last readings.
