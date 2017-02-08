@@ -142,11 +142,12 @@ bool teo::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
 
     uint8_t msg_posmode_speed[]= {0x23,0x81,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6081h: Profile velocity
 
-    u_int16_t sendRefSpeed = sp * this->tr * 0.01138;  // Appply tr & convert units to encoder increments
-    memcpy(msg_posmode_speed+6,&sendRefSpeed,2);
+    //uint16_t sendRefSpeed = sp * this->tr * 0.01138;  // Appply tr & convert units to encoder increments
+    //memcpy(msg_posmode_speed+6,&sendRefSpeed,2);
     //float sendRefSpeed = sp * this->tr / 22.5;  // Apply tr & convert units to encoder increments
-    //int16_t sendRefSpeedFormated = roundf(sendRefSpeed * 65536);  // 65536 = 2^16
-    //memcpy(msg_posmode_speed+4,&sendRefSpeedFormated,4);
+    //int32_t sendRefSpeedFormated = roundf(sendRefSpeed * 65536);  // 65536 = 2^16
+    int32_t sendRefSpeedFormated = roundf( sp * this->tr * 745.8 );
+    memcpy(msg_posmode_speed+4,&sendRefSpeedFormated,4);
 
     if( ! send( 0x600, 8, msg_posmode_speed) )
     {
@@ -174,8 +175,11 @@ bool teo::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
     //*************************************************************
     uint8_t msg_posmode_acc[]= {0x23,0x83,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6083h: Profile acceleration
 
-    int sendRefAcc = acc * this->tr * 0.00001138;  // Appply tr & convert units to encoder increments
-    memcpy(msg_posmode_acc+4,&sendRefAcc,4);
+    //int sendRefAcc = acc * this->tr * 0.00001138;  // Appply tr & convert units to encoder increments
+    //memcpy(msg_posmode_acc+4,&sendRefAcc,4);
+    //int32_t sendRefAccFormated = roundf(sendRefAcc * 65536);  // 65536 = 2^16
+    int32_t sendRefAccFormated = roundf( acc * this->tr * 0.7458 );
+    memcpy(msg_posmode_acc+4,&sendRefAccFormated,4);
 
     if( ! send( 0x600, 8, msg_posmode_acc) )
     {
