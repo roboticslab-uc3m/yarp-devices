@@ -14,11 +14,15 @@ bool teo::TechnosoftIpos::velocityMoveRaw(int j, double sp)
     //*************************************************************
     uint8_t msg_vel[]= {0x23,0xFF,0x60,0x00,0x00,0x00,0x00,0x00}; // Velocity target
 
-    int16_t sendVel = sp * this->tr * 0.01138;  // Apply tr & convert units to encoder increments
-    memcpy(msg_vel+6,&sendVel,2);
-    //float sendVel = sp * this->tr / 22.5;  // Apply tr & convert units to encoder increments
-    //int16_t sendVelFormated = roundf(sendVel * 65536);  // 65536 = 2^16
-    //memcpy(msg_vel+4,&sendVelFormated,4);
+    //uint16_t sendRefSpeed = sp * this->tr * 0.01138;  // Appply tr & convert units to encoder increments
+    //memcpy(msg_posmode_speed+6,&sendRefSpeed,2);
+    //float sendRefSpeed = sp * this->tr / 22.5;  // Apply tr & convert units to encoder increments
+    //int32_t sendRefSpeedFormated = roundf(sendRefSpeed * 65536);  // 65536 = 2^16
+
+    //-- 65536 for FIXED32
+    //-- 0.01138 = ( 4 * 1024 pulse / 360 deg ) * (0.001 s / sample)   // deg/s -> pulse/sample  = UI (vel)
+    int32_t sendRefSpeedFormated = roundf( sp * this->tr * 745.8 ); //-- 65536 * 0.01138 = 745.8
+    memcpy(msg_vel+4,&sendRefSpeedFormated,4);
 
     if( ! send(0x600, 8, msg_vel))
     {
