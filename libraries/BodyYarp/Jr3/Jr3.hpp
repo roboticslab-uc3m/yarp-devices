@@ -8,6 +8,9 @@
 #include <yarp/dev/IAnalogSensor.h>
 #include <sstream>
 
+#include <fcntl.h>  // ::open
+#include <unistd.h>  // ::close
+
 #include "jr3pci-ioctl.h"
 
 //#define CD_FULL_FILE  //-- Can be globally managed from father CMake. Good for debugging with polymorphism.
