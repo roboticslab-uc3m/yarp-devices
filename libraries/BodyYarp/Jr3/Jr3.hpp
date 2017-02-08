@@ -97,11 +97,11 @@ class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor
          * @return status.
          */
         virtual int calibrateChannel(int ch, double value);
-    protected:
-        six_axis_array fm0, fm1;
-        force_array fs0, fs1;
-        int ret, fd;
-        int i;
+
+    private:
+        six_axis_array fm;
+        force_array fs;
+        int fd;
 
 };
 
