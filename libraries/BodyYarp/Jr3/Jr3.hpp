@@ -8,6 +8,9 @@
 #include <yarp/dev/IAnalogSensor.h>
 #include <sstream>
 
+#include <fcntl.h>  // ::open
+#include <unistd.h>  // ::close
+
 #include "jr3pci-ioctl.h"
 
 //#define CD_FULL_FILE  //-- Can be globally managed from father CMake. Good for debugging with polymorphism.
@@ -19,6 +22,8 @@
 #include "ColorDebug.hpp"
 #include "ICanBusSharer.h"
 
+#define DEFAULT_RATE_MS 20.0
+#define DEFAULT_NUM_CHANNELS 6
 
 namespace teo
 {
@@ -31,22 +36,22 @@ namespace teo
 
  /**
  * @ingroup Jr3
- * @brief Implementation for the JR3 sensor.
+ * @brief Implementation for the JR3 sensor. Launch as in: yarpdev --device Jr3 --period 20 --name /jr3:o
  *
  */
-class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor
+class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor, public yarp::os::RateThread
 {
 
     public:
 
-        Jr3() {
+        Jr3() : RateThread(DEFAULT_RATE_MS) {
         }
 
         //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
         virtual bool open(yarp::os::Searchable& config);
         virtual bool close();
 
-        //  --------- IAnalogSensor Declarations. Implementation in IGenericSensorImpl.cpp ---------
+        //  --------- IAnalogSensor Declarations. Implementation in IAnalogSensorImpl.cpp ---------
         /**
          * Read a vector from the sensor.
          * @param out a vector containing the sensor's last readings.
@@ -94,11 +99,16 @@ class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor
          * @return status.
          */
         virtual int calibrateChannel(int ch, double value);
-    protected:
-        six_axis_array fm0, fm1;
-        force_array fs0, fs1;
-        int ret, fd;
-        int i;
+
+    // --------- RateThread Declarations. Implementation in RateThreadImpl.cpp ---------
+        virtual void run();
+
+    private:
+        yarp::os::Semaphore fmSemaphore;
+        int f[3], m[3];
+        six_axis_array fm;
+        force_array fs;
+        int fd;
 
 };
 
