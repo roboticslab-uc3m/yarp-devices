@@ -31,7 +31,7 @@ namespace teo
 
  /**
  * @ingroup Jr3
- * @brief Implementation for the JR3 sensor.
+ * @brief Implementation for the JR3 sensor. Launch as in: yarpdev --device Jr3 --period 20 --name /jr3:o
  *
  */
 class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor
