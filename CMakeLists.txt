@@ -13,7 +13,7 @@ endif(COMMAND cmake_policy)
 
 project(TEO_BODY)
 
-option(BUILD_SHARED_LIBS "All shared libs" TRUE)
+set(BUILD_SHARED_LIBS TRUE CACHE INTERNAL "hide this!")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -frtti")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti")
@@ -48,6 +48,7 @@ option(ENABLE_LacqueyFetch "Enable/disable compilation of BodyYarp_LacqueyFetch"
 option(ENABLE_TextilesHand "Enable/disable compilation of BodyYarp_TextilesHand" TRUE)
 option(ENABLE_FakeJoint "Enable/disable compilation of BodyYarp_FakeJoint" TRUE)
 option(ENABLE_CanBusControlboard "Enable/disable compilation of BodyYarp_CanBusControlboard" TRUE)
+option(ENABLE_Jr3 "Enable/disable compilation of BodyYarp_CanBusControlboard" TRUE)
 
 ##### test and coverage options
 option(ENABLE_tests "Choose if you want to compile tests" TRUE)
