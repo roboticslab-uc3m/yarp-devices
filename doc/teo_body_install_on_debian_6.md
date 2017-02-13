@@ -16,6 +16,10 @@ deb-src http://archive.debian.org/debian/ squeeze main non-free contrib
 deb ftp://ftp.gnome.org/debian-backports/ squeeze-backports main
 deb-src ftp://ftp.gnome.org/debian-backports/ squeeze-backports main
 ```
+- /etc/apt/apt.conf.d/90ignore-release-date
+```bash
+Acquire::Check-Valid-Until "false";
+```
 
 ### Install the Software
 
