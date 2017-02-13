@@ -8,7 +8,7 @@ Your OS needs the following (Debian 6.0 is a good intermediate solution in versi
 
 ### The specifics: APT sources
 
-/etc/apt/sources.list
+- /etc/apt/sources.list
 ```bash
 deb http://archive.debian.org/debian/ squeeze main non-free contrib
 deb-src http://archive.debian.org/debian/ squeeze main non-free contrib
