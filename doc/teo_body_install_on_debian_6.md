@@ -42,7 +42,7 @@ For additional TEO options use ccmake instead of cmake.
 
 Finally, install the hcanpci kernel module:
 
-  - [Install hcanpci kernel module (Debian 6.0)]( /doc/teo_body_install_hcanpci_on_debian_6.md )
+  - [Install hcanpci kernel module (Debian 6.0.10)]( /doc/teo_body_install_hcanpci_on_debian_6.md )
 
 ### Even more!
 
