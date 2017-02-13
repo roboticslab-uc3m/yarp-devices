@@ -1,8 +1,8 @@
-## Installation from Source Code (Debian 6.0)
+## Installation from Source Code (Debian 6.0.10)
 
-### Why Debian 6.0?
+### Why Debian 6.0.10?
 
-Your OS needs the following (Debian 6.0 is a good intermediate solution in versions, and Debian is additionally more stable than Ubuntu):
+Your OS needs the following (Debian 6.0.10 is a good intermediate solution in versions, and Debian is additionally more stable than Ubuntu):
   - A kernel old enough for the HicoCAN kernel drivers.
   - An OS new enough for github (you need a recent git version) and YARP (you need a recent CMake version).
 
@@ -24,8 +24,8 @@ Acquire::Check-Valid-Until "false";
 ### Install the Software
 
 First install the depencencies:
-  - [Install CMake (Debian 6.0)](https://github.com/roboticslab-uc3m/installation-guides/blob/develop/install_cmake.md)
-  - [Install YARP (Debian 6.0)](https://github.com/roboticslab-uc3m/installation-guides/blob/develop/install_yarp.md)
+  - [Install CMake (Debian 6.0.10)](https://github.com/roboticslab-uc3m/installation-guides/blob/develop/install_cmake.md)
+  - [Install YARP (Debian 6.0.10)](https://github.com/roboticslab-uc3m/installation-guides/blob/develop/install_yarp.md)
 
 Our software integrates the previous dependencies. Note that you will be prompted for your password upon using '''sudo''' a couple of times:
 
