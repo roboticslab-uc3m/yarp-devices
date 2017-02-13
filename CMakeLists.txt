@@ -18,6 +18,8 @@ set(BUILD_SHARED_LIBS TRUE CACHE INTERNAL "hide this!")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -frtti")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti")
 
+add_definitions(-DYARP_NO_DEPRECATED_WARNINGS=ON)
+
 ### options: cpp libraries
 option(ENABLE_BodyYarp "Choose if you want to compile BodyYarp" TRUE)
 option(ENABLE_OneCanBusOneWrapper "Choose if you want to compile OneCanBusOneWrapper" TRUE)
