@@ -52,4 +52,3 @@ Finally, install the hcanpci kernel module:
 
 Done! You are now probably interested in one of the following links:
   - [teo-body - Now what can I do?]( /doc/teo_body_post_install.md )
-  - teo_body_environment_variables
