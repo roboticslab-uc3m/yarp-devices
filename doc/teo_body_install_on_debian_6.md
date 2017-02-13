@@ -20,7 +20,10 @@ deb-src ftp://ftp.gnome.org/debian-backports/ squeeze-backports main
 ```bash
 Acquire::Check-Valid-Until "false";
 ```
-- If previous file is not set, you can simply run `sudo aptitude -o Acquire::Check-Valid-Until=false update`.
+- If the previous file is not set, you can simply run:
+```bash
+sudo aptitude -o Acquire::Check-Valid-Until=false update
+```
 
 ### Install the Software
 
