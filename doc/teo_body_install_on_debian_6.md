@@ -48,6 +48,10 @@ Finally, install the hcanpci kernel module:
 
   - [Install hcanpci kernel module (Debian 6.0.10)]( /doc/teo_body_install_hcanpci_on_debian_6.md )
 
+You may also want the `xsensmtx` device:
+
+ - [Install ICub and xsensmtx](https://github.com/roboticslab-uc3m/installation-guides/blob/develop/install_icub.md)
+
 ### Even more!
 
 Done! You are now probably interested in one of the following links:
