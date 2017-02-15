@@ -28,7 +28,7 @@ uint8_t msg_stop[]={0x0F,0x00}; // Does not stop, but is required for next start
 [set] [vels] (10.0)
 ```
 
-* set ref velocities (for pos mode)
+* set ref accelerations (for pos mode)
 ```
 [set] [acc] 0 10.0
 [set] [accs] (10.0)
