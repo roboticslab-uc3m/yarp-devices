@@ -14,32 +14,34 @@ uint8_t msg_stop[]={0x0F,0x00}; // Does not stop, but is required for next start
 
 * check if pos motion done:
 ```
-[get] [don] 0```
+[get] [don] 0
+```
 
 * stop all:
-
-`[set] [stos]`
-
-* set ref velocities (for pos mode)
-
-`[set] [vel] 0 10.0`
-
-`[set] [vels] (10.0)`
+```
+[set] [stos]
+```
 
 * set ref velocities (for pos mode)
+```
+[set] [vel] 0 10.0
+[set] [vels] (10.0)
+```
 
-`[set] [acc] 0 10.0`
-
-`[set] [accs] (10.0)`
+* set ref velocities (for pos mode)
+```
+[set] [acc] 0 10.0
+[set] [accs] (10.0)
+```
 
 * go to vel mode, move
-
-`[set] [veld]`
-
-`[set] [vmo] 0 800`
-
-`[set] [vmos] (800)`
+```
+[set] [veld]
+[set] [vmo] 0 800
+[set] [vmos] (800)
+```
 
 * got to torque mode
-
-`[set] [trqd]`
+```
+[set] [trqd]
+```
