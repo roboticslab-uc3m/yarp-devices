@@ -8,7 +8,7 @@ uint8_t msg_stop[]={0x0F,0x00}; // Does not stop, but is required for next start
 
 # Yarp VOCAB rpc commands:
 * check status:
-`[get] [icmd] [cmds]`
+```[get] [icmd] [cmds]```
 
 * check if pos motion done:
 `[get] [don] 0`
