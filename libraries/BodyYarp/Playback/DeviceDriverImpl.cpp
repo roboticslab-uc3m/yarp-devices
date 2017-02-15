@@ -6,7 +6,14 @@
 
 bool teo::Playback::open(yarp::os::Searchable& config)
 {
+    std::string fileName = config.check("file",yarp::os::Value("in.txt"),"file name").asString();
 
+    file.open(fileName.c_str());
+    if( ! file.is_open() )
+    {
+          printf("Not able to open file.\n");
+          return false;
+    }
 
     return true;
 }
@@ -15,7 +22,6 @@ bool teo::Playback::open(yarp::os::Searchable& config)
 
 bool teo::Playback::close()
 {
-    ::close(fd);
     return true;
 }
 
