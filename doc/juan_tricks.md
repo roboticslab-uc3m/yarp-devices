@@ -1,10 +1,12 @@
-Position movement:
+# Position movement:
+
+```c
 uint8_t msg_start[]={0x1F,0x00}; // Start the movement.
 //this->waitSequence(1);  // Not required.
 uint8_t msg_stop[]={0x0F,0x00}; // Does not stop, but is required for next start.
+```
 
-
-//-- Yarp VOCAB rpc commands:
+# Yarp VOCAB rpc commands:
 * check status:
 [get] [icmd] [cmds]
 
