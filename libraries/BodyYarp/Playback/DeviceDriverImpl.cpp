@@ -2,9 +2,12 @@
 
 #include "Playback.hpp"
 
+namespace teo
+{
+
 // -----------------------------------------------------------------------------
 
-bool teo::Playback::open(yarp::os::Searchable& config)
+bool Playback::open(yarp::os::Searchable& config)
 {
     std::string fileName = config.check("file",yarp::os::Value("in.txt"),"file name").asString();
 
@@ -20,9 +23,11 @@ bool teo::Playback::open(yarp::os::Searchable& config)
 
 // -----------------------------------------------------------------------------
 
-bool teo::Playback::close()
+bool Playback::close()
 {
     return true;
 }
 
 // -----------------------------------------------------------------------------
+
+}  // namespace teo
