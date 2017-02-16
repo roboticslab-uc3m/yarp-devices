@@ -6,6 +6,8 @@
 
 #include "ColorDebug.hpp"
 
+#include "IPlayback.h"
+
 namespace teo
 {
 
@@ -22,21 +24,21 @@ public:
 
         // -- code here will execute just before the test ensues
 
-        yarp::os::Property hicoCanConf ("(device Playback) (file test.txt)");
+        yarp::os::Property playbackConf ("(device Playback) (file test.txt)");
         bool ok = true;
-        ok &= canBusDevice.open(hicoCanConf);   // -- we introduce the configuration properties defined in property object (p) and them, we stard the device (HicoCAN)
-        //ok &= canBusDevice.view(iCanBus);
+        ok &= playbackDevice.open(playbackConf);   // -- we introduce the configuration properties defined in property object (p) and them, we stard the device (HicoCAN)
+        ok &= playbackDevice.view(iPlayback);
 
 
-        /*if(ok)
+        if(ok)
         {
-            CD_SUCCESS("Configuration of TechnosoftIpos sucessfully :)\n");
+            CD_SUCCESS("Configuration sucessful :)\n");
         }
         else
         {
-            CD_ERROR("Bad Configuration of TechnosoftIpos :(\n");
+            CD_ERROR("Bad Configuration\n");
             ::exit(1);
-        }*/
+        }
 
     }
 
@@ -44,13 +46,14 @@ public:
     {
         // -- code here will be called just after the test completes
         // -- ok to through exceptions from here if need be
-        canBusDevice.close();
+        playbackDevice.close();
     }
 
 protected:
 
-    /** CAN BUS device. */
-    yarp::dev::PolyDriver canBusDevice;
+    /** Playback device. */
+    yarp::dev::PolyDriver playbackDevice;
+    teo::IPlayback* iPlayback;
 
 };
 

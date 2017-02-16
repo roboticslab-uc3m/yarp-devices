@@ -17,6 +17,8 @@
 //#define CD_HIDE_ERROR  //-- Can be globally managed from father CMake.
 #include "ColorDebug.hpp"
 
+#include "IPlayback.h"
+
 #define DEFAULT_RATE_MS 20.0
 #define DEFAULT_NUM_CHANNELS 6
 
@@ -34,7 +36,7 @@ namespace teo
  * @brief Implementation for the PLAYBACK sensor. Launch as in: yarpdev --device Playback --period 20 --name /jr3:o
  *
  */
-class Playback : public yarp::dev::DeviceDriver
+class Playback : public yarp::dev::DeviceDriver, public IPlayback
 {
 
     public:
