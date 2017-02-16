@@ -74,7 +74,7 @@ TEST_F( PlaybackTest, PlaybackTestGetNext )
         std::cout << "Row[" << rowCounter << "]: ";
         for(int i=0;i<row.size();i++)
         {
-            std::cout  << row[i] << " ";
+            std::cout << row[i] << " ";
         }
         std::cout << std::endl;
         rowCounter++;
