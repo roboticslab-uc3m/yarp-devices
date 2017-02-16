@@ -7,12 +7,21 @@ namespace teo
 
 // -----------------------------------------------------------------------------
 
-bool Playback::get(std::vector<double>& line)
+bool Playback::getNumRows(int* num)
+{
+    *num = doublesOnFile.size();
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool Playback::getNext(std::vector<double>& row)
 {
     if( doublesOnFileIter >= doublesOnFile.size() )
         return false;
 
-    line = doublesOnFile[doublesOnFileIter];
+    row = doublesOnFile[doublesOnFileIter];
 
     doublesOnFileIter++;
 

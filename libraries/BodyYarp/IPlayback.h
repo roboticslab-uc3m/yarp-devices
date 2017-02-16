@@ -21,7 +21,9 @@ public:
      */
     virtual ~IPlayback() {}
 
-    virtual bool get(std::vector<double>& line) = 0;
+    virtual bool getNumRows(int* num) = 0;
+
+    virtual bool getNext(std::vector<double>& row) = 0;
 
 };
 

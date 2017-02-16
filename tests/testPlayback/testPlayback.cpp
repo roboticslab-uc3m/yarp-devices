@@ -57,18 +57,22 @@ protected:
 
 };
 
-
-TEST_F( PlaybackTest, PlaybackTestGet )
+TEST_F( PlaybackTest, PlaybackTestGetNumRows )
 {
-    std::vector<double> line;
+    int num;
+    ASSERT_TRUE( iPlayback->getNumRows( &num ) );
+    std::cout << "Num rows: " << num << std::endl;
+}
 
-    while( iPlayback->get(line) )
+TEST_F( PlaybackTest, PlaybackTestGetNext )
+{
+    std::vector<double> row;
+
+    while( iPlayback->getNext(row) )
     {
-        if ( line.size() == 0 ) continue;
-
-        for(int i=0;i<line.size();i++)
+        for(int i=0;i<row.size();i++)
         {
-            std::cout << line[i] << " ";
+            std::cout << row[i] << " ";
         }
         std::cout << std::endl;
     }

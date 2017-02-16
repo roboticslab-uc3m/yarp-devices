@@ -49,7 +49,8 @@ class Playback : public yarp::dev::DeviceDriver, public IPlayback
         virtual bool close();
 
         //  --------- IPlayback Declarations. Implementation in IPlaybackImpl.cpp ---------
-        virtual bool get(std::vector<double>& line);
+        virtual bool getNumRows(int* num);
+        virtual bool getNext(std::vector<double>& row);
 
     private:
 
