@@ -61,8 +61,17 @@ protected:
 TEST_F( PlaybackTest, PlaybackTestGet )
 {
     std::vector<double> line;
-    iPlayback->get(line);
-}
 
+    while( iPlayback->get(line) )
+    {
+        if ( line.size() == 0 ) continue;
+
+        for(int i=0;i<line.size();i++)
+        {
+            std::cout << line[i] << " ";
+        }
+        std::cout << std::endl;
+    }
+}
 
 }
