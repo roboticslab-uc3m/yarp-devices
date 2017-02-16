@@ -13,7 +13,7 @@ IF (NOT SKIP_Playback)
   # Include any directories needed for YARP
   include_directories(${YARP_INCLUDE_DIRS} ${TEO_BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
-  yarp_add_plugin(Playback DeviceDriverImpl.cpp)
+  yarp_add_plugin(Playback DeviceDriverImpl.cpp IPlaybackImpl.cpp)
 
   TARGET_LINK_LIBRARIES(Playback ${YARP_LIBRARIES})
   install(TARGETS Playback DESTINATION lib)

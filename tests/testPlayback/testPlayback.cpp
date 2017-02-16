@@ -58,9 +58,10 @@ protected:
 };
 
 
-TEST_F( PlaybackTest, PlaybackTest1 )
+TEST_F( PlaybackTest, PlaybackTestGet )
 {
-
+    std::vector<double> line;
+    iPlayback->get(line);
 }
 
 

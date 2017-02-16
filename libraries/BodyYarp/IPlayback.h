@@ -3,6 +3,8 @@
 #ifndef __I_PLAYBACK__
 #define __I_PLAYBACK__
 
+#include <vector>
+
 namespace teo
 {
 
@@ -19,7 +21,7 @@ public:
      */
     virtual ~IPlayback() {}
 
-    //virtual bool whatever() = 0;
+    virtual bool get(std::vector<double>& line) = 0;
 
 };
 

@@ -33,7 +33,7 @@ namespace teo
 
  /**
  * @ingroup Playback
- * @brief Implementation for the PLAYBACK sensor. Launch as in: yarpdev --device Playback --period 20 --name /jr3:o
+ * @brief Implementation for Playback.
  *
  */
 class Playback : public yarp::dev::DeviceDriver, public IPlayback
@@ -47,6 +47,9 @@ class Playback : public yarp::dev::DeviceDriver, public IPlayback
         //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
         virtual bool open(yarp::os::Searchable& config);
         virtual bool close();
+
+        //  --------- IPlayback Declarations. Implementation in IPlaybackImpl.cpp ---------
+        virtual bool get(std::vector<double>& line);
 
     private:
         std::ifstream file;
