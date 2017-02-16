@@ -36,6 +36,7 @@ bool Playback::open(yarp::os::Searchable& config)
 
 bool Playback::close()
 {
+    file.close();
     return true;
 }
 
