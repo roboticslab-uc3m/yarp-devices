@@ -68,13 +68,16 @@ TEST_F( PlaybackTest, PlaybackTestGetNext )
 {
     std::vector<double> row;
 
+    int rowCounter = 0;
     while( iPlayback->getNext(row) )
     {
+        std::cout << "Row[" << rowCounter << "]: ";
         for(int i=0;i<row.size();i++)
         {
-            std::cout << row[i] << " ";
+            std::cout  << row[i] << " ";
         }
         std::cout << std::endl;
+        rowCounter++;
     }
 }
 
