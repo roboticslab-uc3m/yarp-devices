@@ -52,7 +52,13 @@ class Playback : public yarp::dev::DeviceDriver, public IPlayback
         virtual bool get(std::vector<double>& line);
 
     private:
+
         std::ifstream file;
+
+        bool parseFileLine(std::vector<double>& doublesOnFileLine);
+
+        std::vector< std::vector<double> > doublesOnFile;
+        int doublesOnFileIter;
 
 };
 

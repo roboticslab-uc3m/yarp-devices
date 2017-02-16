@@ -18,6 +18,17 @@ bool Playback::open(yarp::os::Searchable& config)
           return false;
     }
 
+    std::vector<double> doublesOnFileLine;
+
+    while( this->parseFileLine(doublesOnFileLine) )
+    {
+        if ( doublesOnFileLine.size() == 0 ) continue;
+
+        doublesOnFile.push_back( doublesOnFileLine );
+    }
+
+    doublesOnFileIter = 0;
+
     return true;
 }
 
