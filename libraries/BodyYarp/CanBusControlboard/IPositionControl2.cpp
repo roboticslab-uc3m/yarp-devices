@@ -2,7 +2,7 @@
 
 #include "CanBusControlboard.hpp"
 
-// ------------------ IPositionControl Related ----------------------------------------
+// ------------------ IPositionControl2 Related ----------------------------------------
 
 bool teo::CanBusControlboard::getAxes(int *axes)
 {
@@ -229,3 +229,76 @@ bool teo::CanBusControlboard::stop()
 
 // -----------------------------------------------------------------------------
 
+bool teo::CanBusControlboard::positionMove(const int n_joint, const int *joints, const double *refs)
+{
+
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::relativeMove(const int n_joint, const int *joints, const double *deltas)
+{
+
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::checkMotionDone(const int n_joint, const int *joints, bool *flags)
+{
+
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::setRefSpeeds(const int n_joint, const int *joints, const double *spds)
+{
+
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
+{
+
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::getRefSpeeds(const int n_joint, const int *joints, double *spds)
+{
+
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::getRefAccelerations(const int n_joint, const int *joints, double *accs)
+{
+
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::stop(const int n_joint, const int *joints)
+{
+
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::getTargetPosition(const int joint, double *ref)
+{
+
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::getTargetPositions(double *refs)
+{
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::getTargetPositions(const int n_joint, const int *joints, double *refs) {
+    return false;
+}
