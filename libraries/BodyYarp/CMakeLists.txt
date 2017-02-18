@@ -28,7 +28,6 @@ IF (ENABLE_BodyYarp)
     add_subdirectory(CanBusHico)
     add_subdirectory(CanBusControlboard)
     add_subdirectory(Jr3)
-    add_subdirectory(Playback)
   # yarp_end_plugin_library(BodyYarp)
 
   #install(TARGETS BodyYarp DESTINATION lib)
