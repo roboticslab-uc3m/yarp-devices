@@ -17,8 +17,6 @@
 //#define CD_HIDE_ERROR  //-- Can be globally managed from father CMake.
 #include "ColorDebug.hpp"
 
-#include "IPlayback.h"
-
 #define DEFAULT_RATE_MS 20.0
 #define DEFAULT_NUM_CHANNELS 6
 
@@ -36,7 +34,7 @@ namespace teo
  * @brief Implementation for Playback.
  *
  */
-class Playback : public yarp::dev::DeviceDriver, public IPlayback
+class Playback
 {
 
     public:
@@ -44,13 +42,11 @@ class Playback : public yarp::dev::DeviceDriver, public IPlayback
         Playback() {
         }
 
-        //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
-        virtual bool open(yarp::os::Searchable& config);
-        virtual bool close();
+        bool open(yarp::os::Searchable& config);
+        bool close();
 
-        //  --------- IPlayback Declarations. Implementation in IPlaybackImpl.cpp ---------
-        virtual bool getNumRows(int* num);
-        virtual bool getNext(std::vector<double>& row);
+        bool getNumRows(int* num);
+        bool getNext(std::vector<double>& row);
 
     private:
 
