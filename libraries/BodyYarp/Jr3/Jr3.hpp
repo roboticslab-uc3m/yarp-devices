@@ -101,7 +101,6 @@ class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor
         virtual int calibrateChannel(int ch, double value);
 
     private:
-        int f[3], m[3];
         six_axis_array fm;
         force_array fs;
         int fd;
