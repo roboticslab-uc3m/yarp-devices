@@ -22,7 +22,7 @@
 #include "ColorDebug.hpp"
 #include "ICanBusSharer.h"
 
-#define DEFAULT_NUM_CHANNELS 6
+#define DEFAULT_NUM_CHANNELS 24
 
 namespace teo
 {
@@ -101,8 +101,8 @@ class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor
         virtual int calibrateChannel(int ch, double value);
 
     private:
-        six_axis_array fm;
-        force_array fs;
+        six_axis_array fm0, fm1, fm2, fm3;
+        force_array fs0, fs1, fs2, fs3;
         int fd;
 
 };

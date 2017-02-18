@@ -14,8 +14,8 @@ int main(int argc, char *argv[])
     }
     yarp::os::Property options;
     options.put("device","analogsensorclient");
-    options.put("remote","/jr3:o");
-    options.put("local","/jr3:i");
+    options.put("remote","/jr3/ch0:o");
+    options.put("local","/jr3/ch0:i");
 
     yarp::dev::PolyDriver dd(options);
     if(!dd.isValid()) {
