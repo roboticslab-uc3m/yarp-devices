@@ -8,3 +8,5 @@ add_subdirectory(BodyYarp)  # BodyYarp a plugin library which contains YARP plug
 add_subdirectory(OneCanBusOneWrapper)
 add_subdirectory(TwoCanBusThreeWrappers)
 
+add_subdirectory(Playback)
+

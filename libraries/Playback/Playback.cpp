@@ -7,6 +7,41 @@ namespace teo
 
 // -----------------------------------------------------------------------------
 
+bool Playback::open(yarp::os::Searchable& config)
+{
+    std::string fileName = config.check("file",yarp::os::Value("in.txt"),"file name").asString();
+
+    file.open(fileName.c_str());
+    if( ! file.is_open() )
+    {
+          printf("Not able to open file.\n");
+          return false;
+    }
+
+    std::vector<double> doublesOnFileLine;
+
+    while( this->parseFileLine(doublesOnFileLine) )
+    {
+        if ( doublesOnFileLine.size() == 0 ) continue;
+
+        doublesOnFile.push_back( doublesOnFileLine );
+    }
+
+    doublesOnFileIter = 0;
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool Playback::close()
+{
+    file.close();
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
 bool Playback::getNumRows(int* num)
 {
     *num = doublesOnFile.size();

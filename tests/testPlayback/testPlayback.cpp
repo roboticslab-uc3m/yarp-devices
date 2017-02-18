@@ -6,7 +6,7 @@
 
 #include "ColorDebug.hpp"
 
-#include "IPlayback.h"
+#include "Playback.hpp"
 
 namespace teo
 {
@@ -26,9 +26,7 @@ public:
 
         yarp::os::Property playbackConf ("(device Playback) (file test.txt)");
         bool ok = true;
-        ok &= playbackDevice.open(playbackConf);   // -- we introduce the configuration properties defined in property object (p) and them, we stard the device (HicoCAN)
-        ok &= playbackDevice.view(iPlayback);
-
+        ok &= playback.open(playbackConf);   // -- we introduce the configuration properties defined in property object (p) and them, we stard the device (HicoCAN)
 
         if(ok)
         {
@@ -46,21 +44,20 @@ public:
     {
         // -- code here will be called just after the test completes
         // -- ok to through exceptions from here if need be
-        playbackDevice.close();
+        playback.close();
     }
 
 protected:
 
-    /** Playback device. */
-    yarp::dev::PolyDriver playbackDevice;
-    teo::IPlayback* iPlayback;
+    /** Playback. */
+    Playback playback;
 
 };
 
 TEST_F( PlaybackTest, PlaybackTestGetNumRows )
 {
     int num;
-    ASSERT_TRUE( iPlayback->getNumRows( &num ) );
+    ASSERT_TRUE( playback.getNumRows( &num ) );
     std::cout << "Num rows: " << num << std::endl;
 }
 
@@ -69,7 +66,7 @@ TEST_F( PlaybackTest, PlaybackTestGetNext )
     std::vector<double> row;
 
     int rowCounter = 0;
-    while( iPlayback->getNext(row) )
+    while( playback.getNext(row) )
     {
         std::cout << "Row[" << rowCounter << "]: ";
         for(int i=0;i<row.size();i++)
