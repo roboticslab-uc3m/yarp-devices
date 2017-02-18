@@ -22,7 +22,6 @@
 #include "ColorDebug.hpp"
 #include "ICanBusSharer.h"
 
-#define DEFAULT_RATE_MS 20.0
 #define DEFAULT_NUM_CHANNELS 6
 
 namespace teo
@@ -39,12 +38,13 @@ namespace teo
  * @brief Implementation for the JR3 sensor. Launch as in: yarpdev --device Jr3 --period 20 --name /jr3:o
  *
  */
-class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor, public yarp::os::RateThread
+class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor
 {
 
     public:
 
-        Jr3() : RateThread(DEFAULT_RATE_MS) {
+        Jr3()
+        {
         }
 
         //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -99,9 +99,6 @@ class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor, pub
          * @return status.
          */
         virtual int calibrateChannel(int ch, double value);
-
-    // --------- RateThread Declarations. Implementation in RateThreadImpl.cpp ---------
-        virtual void run();
 
     private:
         int f[3], m[3];
