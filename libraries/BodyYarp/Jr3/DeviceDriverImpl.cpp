@@ -7,10 +7,10 @@
 bool teo::Jr3::open(yarp::os::Searchable& config)
 {
     if ( ( fd = ::open("/dev/jr3",O_RDWR) ) < 0) {
-        perror("Can't open device. No way to read force!\n");
+        CD_ERROR("Can't open device. No way to read force!\n");
         return false;
     }
-    printf("Can read force!\n");
+    CD_SUCCESS("Can read force!\n");
 
     int ret;
 

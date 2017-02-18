@@ -14,6 +14,7 @@ int teo::Jr3::read(yarp::sig::Vector &out)
 
     if ( ret == -1)
     {
+        CD_ERROR("\n");
         return yarp::dev::IAnalogSensor::AS_ERROR;
     }
 
