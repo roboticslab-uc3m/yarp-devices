@@ -20,9 +20,9 @@ int teo::Jr3::read(yarp::sig::Vector &out)
 
     out.resize(DEFAULT_NUM_CHANNELS);
 
-    out[0] = fs0.f[0] / 16384.0;
-    out[1] = fs0.f[1] / 16384.0;
-    out[2] = fs0.f[2] / 16384.0;
+    out[0] = 100*fm0.f[0]*fs0.f[0]/16384;
+    out[1] = 100*fm0.f[1]*fs0.f[1]/16384;
+    out[2] = 100*fm0.f[2]*fs0.f[2]/16384;
 
     out[3] = fs0.m[0] / 16384.0;
     out[4] = fs0.m[1] / 16384.0;
