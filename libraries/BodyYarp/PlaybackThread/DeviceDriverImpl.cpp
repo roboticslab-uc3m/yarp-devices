@@ -2,9 +2,11 @@
 
 #include "PlaybackThread.hpp"
 
+namespace teo {
+
 // -----------------------------------------------------------------------------
 
-bool teo::PlaybackThread::open(yarp::os::Searchable& config)
+bool PlaybackThread::open(yarp::os::Searchable& config)
 {
     CD_SUCCESS("\n");
     return true;
@@ -12,9 +14,11 @@ bool teo::PlaybackThread::open(yarp::os::Searchable& config)
 
 // -----------------------------------------------------------------------------
 
-bool teo::PlaybackThread::close()
+bool PlaybackThread::close()
 {
     return true;
 }
 
 // -----------------------------------------------------------------------------
+
+}  // namespace teo

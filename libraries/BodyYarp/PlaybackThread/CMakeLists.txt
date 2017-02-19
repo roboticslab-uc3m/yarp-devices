@@ -13,7 +13,7 @@ IF (NOT SKIP_PlaybackThread)
   # Include any directories needed for YARP
   include_directories(${YARP_INCLUDE_DIRS} ${TEO_BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
-  yarp_add_plugin(PlaybackThread DeviceDriverImpl.cpp IAnalogSensorImpl.cpp RateThreadImpl.cpp )
+  yarp_add_plugin(PlaybackThread DeviceDriverImpl.cpp IPlaybackThreadImpl.cpp RateThreadImpl.cpp )
 
   TARGET_LINK_LIBRARIES(PlaybackThread ${YARP_LIBRARIES})
   install(TARGETS PlaybackThread DESTINATION lib)

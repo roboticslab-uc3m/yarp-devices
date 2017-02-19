@@ -2,10 +2,15 @@
 
 #include "PlaybackThread.hpp"
 
+namespace teo {
+
 // -----------------------------------------------------------------------------
 
-void teo::PlaybackThread::run()
+void PlaybackThread::run()
 {
+
 }
 
 // -----------------------------------------------------------------------------
+
+}  // namespace teo
