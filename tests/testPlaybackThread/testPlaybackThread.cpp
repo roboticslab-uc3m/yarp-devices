@@ -28,8 +28,6 @@ public:
         bool ok = true;
         ok &= playbackDevice.open(playbackThreadConf);
         ok &= playbackDevice.view(iPlaybackThread);
-
-
         if(ok)
         {
             CD_SUCCESS("Configuration sucessful :)\n");

@@ -6,6 +6,7 @@
 
 bool teo::PlaybackThread::open(yarp::os::Searchable& config)
 {
+    CD_SUCCESS("\n");
     return true;
 }
 

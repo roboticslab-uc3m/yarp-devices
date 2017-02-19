@@ -35,10 +35,10 @@ namespace teo
 
  /**
  * @ingroup PlaybackThread
- * @brief Implementation for the JR3 sensor. Launch as in: yarpdev --device PlaybackThread --period 20 --name /jr3:o
+ * @brief Implementation for the PlaybackThread.
  *
  */
-class PlaybackThread : public yarp::dev::DeviceDriver, public yarp::os::RateThread, IPlaybackThread
+class PlaybackThread : public yarp::dev::DeviceDriver, public yarp::os::RateThread, public IPlaybackThread
 {
 
     public:
