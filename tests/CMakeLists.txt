@@ -7,3 +7,6 @@ add_subdirectory(testTechnosoftIpos)
 add_subdirectory(testCuiAbsolute)
 
 add_subdirectory(testPlayback)
+
+add_subdirectory(testPlaybackThread)
+
