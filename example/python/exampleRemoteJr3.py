@@ -18,7 +18,7 @@ if not dd.isValid():
     print 'Cannot open the device!'
     sys.exit()
 
-#pos = dd.viewIPositionControl()
+iAnalogSensor = dd.viewIAnalogSensor()
 
 print 'delay(1)'
 yarp.Time.delay(1)
