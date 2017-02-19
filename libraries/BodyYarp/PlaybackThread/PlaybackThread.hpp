@@ -50,8 +50,10 @@ class PlaybackThread : public yarp::dev::DeviceDriver, public yarp::os::RateThre
         virtual bool open(yarp::os::Searchable& config);
         virtual bool close();
 
+        //  --------- IPlaybackThread Declarations. Implementation in IPlaybackThreadImpl.cpp ---------
         virtual bool play();
-    // --------- RateThread Declarations. Implementation in RateThreadImpl.cpp ---------
+
+        // --------- RateThread Declarations. Implementation in RateThreadImpl.cpp ---------
         virtual void run();
 
     private:
