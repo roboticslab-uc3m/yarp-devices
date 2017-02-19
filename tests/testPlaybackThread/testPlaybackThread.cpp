@@ -27,7 +27,7 @@ public:
         yarp::os::Property playbackThreadConf ("(device PlaybackThread) (file test.txt)");
         bool ok = true;
         ok &= playbackDevice.open(playbackThreadConf);
-        //ok &= playbackDevice.view(iPlaybackThread);
+        ok &= playbackDevice.view(iPlaybackThread);
 
 
         if(ok)

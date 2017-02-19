@@ -13,7 +13,6 @@ bool teo::PlaybackThread::open(yarp::os::Searchable& config)
 
 bool teo::PlaybackThread::close()
 {
-    ::close(fd);
     return true;
 }
 
