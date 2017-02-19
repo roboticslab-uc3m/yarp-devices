@@ -20,9 +20,21 @@ if not dd.isValid():
 
 iAnalogSensor = dd.viewIAnalogSensor()
 
+# The following delay should avoid 0 channels and bad read
 print 'delay(1)'
 yarp.Time.delay(1)
 
-print 'bye!'
+channels = iAnalogSensor.getChannels()
+print 'channels:', channels
 
+# Of course we dislike while(1)
+while 1:
+    vector = yarp.Vector(channels)
+    iAnalogSensor.read(vector)
+    vector_list = []
+    for i in range(vector.size()):
+        vector_list.append( vector[i] )
+    print '[%s]' % ', '.join(map(str, vector_list))
+
+print 'bye!'
 
