@@ -57,7 +57,7 @@ protected:
 
 TEST_F( PlaybackThreadTest, PlaybackThreadTestPlay )
 {
-
+    iPlaybackThread->play();
 }
 
 }
