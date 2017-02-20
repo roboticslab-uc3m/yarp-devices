@@ -38,12 +38,12 @@ namespace teo
  * @brief Implementation for the PlaybackThread.
  *
  */
-class PlaybackThread : public yarp::dev::DeviceDriver, public yarp::os::RateThread, public IPlaybackThread
+class PlaybackThread : public yarp::dev::DeviceDriver, public yarp::os::Thread, public IPlaybackThread
 {
 
     public:
 
-        PlaybackThread() : RateThread(DEFAULT_RATE_MS) {
+        PlaybackThread() {
         }
 
         //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
