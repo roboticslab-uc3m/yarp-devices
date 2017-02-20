@@ -7,10 +7,8 @@ namespace teo
 
 // -----------------------------------------------------------------------------
 
-bool Playback::open(yarp::os::Searchable& config)
+bool Playback::fromFile(const std::string& fileName)
 {
-    std::string fileName = config.check("file",yarp::os::Value("in.txt"),"file name").asString();
-
     file.open(fileName.c_str());
     if( ! file.is_open() )
     {
@@ -29,14 +27,8 @@ bool Playback::open(yarp::os::Searchable& config)
 
     doublesOnFileIter = 0;
 
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool Playback::close()
-{
     file.close();
+
     return true;
 }
 

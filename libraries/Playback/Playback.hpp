@@ -42,8 +42,7 @@ class Playback
         Playback() {
         }
 
-        bool open(yarp::os::Searchable& config);
-        bool close();
+        bool fromFile(const std::string& fileName);
 
         bool getNumRows(int* num);
         bool getNext(std::vector<double>& row);

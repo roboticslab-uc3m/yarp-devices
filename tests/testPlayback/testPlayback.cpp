@@ -24,9 +24,8 @@ public:
 
         // -- code here will execute just before the test ensues
 
-        yarp::os::Property playbackConf ("(device Playback) (file test.txt)");
         bool ok = true;
-        ok &= playback.open(playbackConf);   // -- we introduce the configuration properties defined in property object (p) and them, we stard the device (HicoCAN)
+        ok &= playback.fromFile("test.txt");
 
         if(ok)
         {
@@ -44,7 +43,6 @@ public:
     {
         // -- code here will be called just after the test completes
         // -- ok to through exceptions from here if need be
-        playback.close();
     }
 
 protected:
