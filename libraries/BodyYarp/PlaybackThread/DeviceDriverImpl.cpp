@@ -8,6 +8,8 @@ namespace teo {
 
 bool PlaybackThread::open(yarp::os::Searchable& config)
 {
+    std::string fileName = config.check("file",yarp::os::Value("test.txt"),"file name").asString();
+    this->fromFile(fileName);
     return true;
 }
 

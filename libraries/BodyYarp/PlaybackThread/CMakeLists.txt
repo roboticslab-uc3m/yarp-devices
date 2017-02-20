@@ -15,7 +15,7 @@ IF (NOT SKIP_PlaybackThread)
 
   yarp_add_plugin(PlaybackThread DeviceDriverImpl.cpp IPlaybackThreadImpl.cpp ThreadImpl.cpp )
 
-  TARGET_LINK_LIBRARIES(PlaybackThread ${YARP_LIBRARIES})
+  TARGET_LINK_LIBRARIES(PlaybackThread ${YARP_LIBRARIES} Playback)
   install(TARGETS PlaybackThread DESTINATION lib)
 
   # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
