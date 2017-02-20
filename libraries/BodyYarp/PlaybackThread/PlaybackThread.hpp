@@ -19,6 +19,8 @@
 //#define CD_HIDE_ERROR  //-- Can be globally managed from father CMake.
 #include "ColorDebug.hpp"
 
+#include "Playback.hpp"
+
 #include "IPlaybackThread.h"
 
 #define DEFAULT_RATE_MS 20.0
@@ -38,7 +40,7 @@ namespace teo
  * @brief Implementation for the PlaybackThread.
  *
  */
-class PlaybackThread : public yarp::dev::DeviceDriver, public yarp::os::Thread, public IPlaybackThread
+class PlaybackThread : public yarp::dev::DeviceDriver, public IPlaybackThread, public yarp::os::Thread, public Playback
 {
 
     public:
