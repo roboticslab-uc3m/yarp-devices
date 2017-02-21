@@ -369,18 +369,36 @@ bool teo::CanBusControlboard::stop(const int n_joint, const int *joints)
 
 bool teo::CanBusControlboard::getTargetPosition(const int joint, double *ref)
 {
-
+    CD_INFO("\n");
+    return getEncoder(joint, ref);
 }
 
 // -----------------------------------------------------------------------------
 
 bool teo::CanBusControlboard::getTargetPositions(double *refs)
 {
-    return false;
+    CD_INFO("\n");
+
+    bool ok = true;
+    for(unsigned int i=0; i<nodes.size(); i++)
+    {
+        ok &= getEncoders(&refs[i]);
+    }
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
 
 bool teo::CanBusControlboard::getTargetPositions(const int n_joint, const int *joints, double *refs) {
-    return false;
+    CD_INFO("\n");
+
+    bool ok = true;
+    for(unsigned int i=0; i<nodes.size(); i++)
+    {
+        if( joints[i] )
+        {
+            ok &= getEncoders(&refs[i]);
+        }
+    }
+    return ok;
 }
