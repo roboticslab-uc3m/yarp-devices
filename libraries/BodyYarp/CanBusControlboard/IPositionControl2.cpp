@@ -36,7 +36,9 @@ bool teo::CanBusControlboard::positionMove(int j, double ref)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
+    targetPositionSemaphore.wait();
     targetPosition[j] = ref;
+    targetPositionSemaphore.post();
 
     return iPositionControlRaw[j]->positionMoveRaw( 0, ref );
 }
@@ -64,7 +66,9 @@ bool teo::CanBusControlboard::relativeMove(int j, double delta)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
+    targetPositionSemaphore.wait();
     targetPosition[j] = delta;
+    targetPositionSemaphore.post();
 
     return iPositionControlRaw[j]->relativeMoveRaw( 0, delta );
 }
@@ -374,7 +378,11 @@ bool teo::CanBusControlboard::stop(const int n_joint, const int *joints)
 bool teo::CanBusControlboard::getTargetPosition(const int joint, double *ref)
 {
     CD_INFO("\n");
+
+    targetPositionSemaphore.wait();
     *ref = targetPosition[joint];
+    targetPositionSemaphore.post();
+
     return true;
 }
 
