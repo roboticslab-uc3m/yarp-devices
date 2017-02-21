@@ -24,7 +24,7 @@ public:
 
         // -- code here will execute just before the test ensues
 
-        yarp::os::Property playbackThreadConf ("(device PlaybackThread) (file test.txt)");
+        yarp::os::Property playbackThreadConf ("(device PlaybackThread) (file /usr/local/share/teo-body/contexts/Playback/txt/testPlayback.txt)");
         bool ok = true;
         ok &= playbackDevice.open(playbackThreadConf);
         ok &= playbackDevice.view(iPlaybackThread);
