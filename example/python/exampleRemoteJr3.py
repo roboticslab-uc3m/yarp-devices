@@ -18,6 +18,11 @@ if not dd.isValid():
     print 'Cannot open the device!'
     quit()
 
+############################################
+# The following code needs https://github.com/robotology/yarp/commit/ca96cce20f8c04375a23090f4ec8fd0cb2a9d37d
+# Not in 2.3.68, planned for 2.3.70
+# As of Feb 21 2017, merged to YARP devel but not master.
+############################################
 iAnalogSensor = dd.viewIAnalogSensor()
 
 # The following delay should avoid 0 channels and bad read
