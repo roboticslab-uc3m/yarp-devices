@@ -12,9 +12,10 @@ bool Playback::fromFile(const std::string& fileName)
     file.open(fileName.c_str());
     if( ! file.is_open() )
     {
-          printf("Not able to open file: %s\n",fileName.c_str());
+          CD_ERROR("Not able to open file: %s\n",fileName.c_str());
           return false;
     }
+    CD_SUCCESS("Opened file: %s\n",fileName.c_str());
 
     std::vector<double> doublesOnFileLine;
 
