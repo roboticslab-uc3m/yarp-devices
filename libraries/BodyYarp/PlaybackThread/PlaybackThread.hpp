@@ -23,8 +23,8 @@
 
 #include "IPlaybackThread.h"
 
-#define DEFAULT_RATE_MS 20.0
-#define DEFAULT_NUM_CHANNELS 6
+#define DEFAULT_FILE_NAME "test.txt"
+#define DEFAULT_TIME_IDX 0
 
 namespace teo
 {
@@ -59,7 +59,7 @@ class PlaybackThread : public yarp::dev::DeviceDriver, public IPlaybackThread, p
         virtual void run();
 
     private:
-
+        int timeIdx;
 };
 
 }  // namespace teo
