@@ -12,7 +12,7 @@ bool Playback::fromFile(const std::string& fileName)
     file.open(fileName.c_str());
     if( ! file.is_open() )
     {
-          printf("Not able to open file.\n");
+          printf("Not able to open file: %s\n",fileName.c_str());
           return false;
     }
 
