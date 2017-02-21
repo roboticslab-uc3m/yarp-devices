@@ -11,15 +11,19 @@ bool PlaybackThread::play()
     std::vector<double> row;
 
     int rowCounter = 0;
+    double now = yarp::os::Time::now();
     while( this->getNext(row) )
     {
         if( timeToSubtract != timeToSubtract )
         {
-            timeToSubtract = yarp::os::Time::now() - row[timeIdx];
+            CD_DEBUG("now: %f, timestamp: %f, diff: %f\n",now,row[timeIdx],now-row[timeIdx])
+            timeToSubtract = now - row[timeIdx];
         }
         else
         {
-            yarp::os::Time::delay(row[timeIdx]-timeToSubtract);
+            double wait = timeToSubtract - row[timeIdx];
+            CD_DEBUG("timestamp: %f, diff: %f\n",timeToSubtract,row[timeIdx],wait);
+            yarp::os::Time::delay( wait );
         }
 
         std::cout << "Row[" << rowCounter << "]: ";
