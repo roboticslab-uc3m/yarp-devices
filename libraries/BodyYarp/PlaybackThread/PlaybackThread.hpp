@@ -11,6 +11,8 @@
 #include <fcntl.h>  // ::open
 #include <unistd.h>  // ::close
 
+#include <limits>  // NAN
+
 //#define CD_FULL_FILE  //-- Can be globally managed from father CMake. Good for debugging with polymorphism.
 //#define CD_HIDE_DEBUG  //-- Can be globally managed from father CMake.
 //#define CD_HIDE_SUCCESS  //-- Can be globally managed from father CMake.
@@ -46,6 +48,7 @@ class PlaybackThread : public yarp::dev::DeviceDriver, public IPlaybackThread, p
     public:
 
         PlaybackThread() {
+            timeToSubtract = std::numeric_limits<double>::quiet_NaN();
         }
 
         //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -60,6 +63,7 @@ class PlaybackThread : public yarp::dev::DeviceDriver, public IPlaybackThread, p
 
     private:
         int timeIdx;
+        double timeToSubtract;
 };
 
 }  // namespace teo

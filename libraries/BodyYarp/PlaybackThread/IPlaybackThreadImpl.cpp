@@ -13,13 +13,21 @@ bool PlaybackThread::play()
     int rowCounter = 0;
     while( this->getNext(row) )
     {
+        if( timeToSubtract != timeToSubtract )
+        {
+            timeToSubtract = yarp::os::Time::now() - row[timeIdx];
+        }
+        else
+        {
+            yarp::os::Time::delay(row[timeIdx]-timeToSubtract);
+        }
+
         std::cout << "Row[" << rowCounter << "]: ";
         for(int i=0;i<row.size();i++)
         {
             std::cout << row[i] << " ";
         }
         std::cout << std::endl;
-        yarp::os::Time::delay(row[0]);
         rowCounter++;
     }
 
