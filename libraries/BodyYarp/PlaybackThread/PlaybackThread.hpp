@@ -48,7 +48,7 @@ class PlaybackThread : public yarp::dev::DeviceDriver, public IPlaybackThread, p
     public:
 
         PlaybackThread() {
-            timeToSubtract = std::numeric_limits<double>::quiet_NaN();
+            initTime = std::numeric_limits<double>::quiet_NaN();
         }
 
         //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -63,7 +63,8 @@ class PlaybackThread : public yarp::dev::DeviceDriver, public IPlaybackThread, p
 
     private:
         int timeIdx;
-        double timeToSubtract;
+        double initTime;
+        double initRow;
 };
 
 }  // namespace teo
