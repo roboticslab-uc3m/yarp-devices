@@ -785,7 +785,7 @@ protected:
     std::vector< yarp::dev::IVelocityControlRaw* > iVelocityControlRaw;
     std::vector< ICanBusSharer* > iCanBusSharer;
     std::map< int, int > idxFromCanId;
-
+    std::vector< double > targetPosition;
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(can_msg* message);

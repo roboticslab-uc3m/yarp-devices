@@ -53,6 +53,8 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
     iVelocityControlRaw.resize( nodes.size() );
     iCanBusSharer.resize( nodes.size() );
 
+    targetPosition.resize( nodes.size() );
+
     for(int i=0; i<nodes.size(); i++)
     {
         if(types.get(i).asString() == "")
