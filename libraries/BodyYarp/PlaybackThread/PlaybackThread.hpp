@@ -64,6 +64,7 @@ class PlaybackThread : public yarp::dev::DeviceDriver, public IPlaybackThread, p
 
         // --------- RateThread Declarations. Implementation in RateThreadImpl.cpp ---------
         virtual void run();
+        virtual void onStop();
 
     private:
         int timeIdx;
