@@ -60,6 +60,8 @@ protected:
 TEST_F( PlaybackThreadTest, PlaybackThreadTestPlay )
 {
     iPlaybackThread->play();
+    yarp::os::Time::delay(5);
+    iPlaybackThread->stopPlay();
 }
 
 }

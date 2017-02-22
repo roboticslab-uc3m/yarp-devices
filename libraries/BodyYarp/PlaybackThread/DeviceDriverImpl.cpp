@@ -16,7 +16,12 @@ bool PlaybackThread::open(yarp::os::Searchable& config)
 
     yarp::os::Bottle mask = config.findGroup("mask").tail();
 
+    rowCounter = 0;
+
     this->fromFile(fileName);
+
+    setState( NOT_PLAYING );
+    this->start();
 
     return true;
 }

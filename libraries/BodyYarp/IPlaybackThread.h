@@ -22,6 +22,7 @@ public:
     virtual ~IPlaybackThread() {}
 
     virtual bool play() = 0;
+    virtual bool stopPlay() = 0;
 
 };
 

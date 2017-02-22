@@ -9,6 +9,37 @@ namespace teo {
 void PlaybackThread::run()
 {
 
+    while ( ! this->isStopping() )
+    {
+        if ( getState() == PLAYING )
+        {
+            std::vector<double> row;
+
+            if( ! this->getNext(row) )
+            {
+                setState( NOT_PLAYING );
+                break;
+            }
+
+            if( initTime != initTime )
+            {
+                initTime = yarp::os::Time::now();
+                initRow = row[timeIdx];
+            }
+            else
+            {
+                yarp::os::Time::delay( initTime + (row[timeIdx] - initRow) - yarp::os::Time::now() );
+            }
+
+            std::cout << "Row[" << rowCounter << "]: ";
+            for(int i=0;i<row.size();i++)
+            {
+                std::cout << row[i] << " ";
+            }
+            std::cout << std::endl;
+            rowCounter++;
+        }  // if ( getState() == PLAYING )
+    }  // while ( ! this->isStopping() )
 }
 
 // -----------------------------------------------------------------------------
