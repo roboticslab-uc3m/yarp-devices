@@ -53,6 +53,7 @@ option(ENABLE_CanBusControlboard "Enable/disable compilation of BodyYarp_CanBusC
 option(ENABLE_Jr3 "Enable/disable compilation of BodyYarp_Jr3" TRUE)
 
 option(ENABLE_Playback "Enable/disable compilation of BodyYarp_Playback" TRUE)
+option(ENABLE_PlaybackThread "Enable/disable compilation of BodyYarp_PlaybackThread" TRUE)
 
 ##### test and coverage options
 option(ENABLE_tests "Choose if you want to compile tests" TRUE)
