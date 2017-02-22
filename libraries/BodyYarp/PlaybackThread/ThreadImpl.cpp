@@ -40,6 +40,11 @@ void PlaybackThread::run()
                 std::cout << row[i] << " ";
             }
             std::cout << std::endl;
+
+            if( _iRunnable != NULL )
+            {
+                _iRunnable->run( row );
+            }
         }  // if ( getState() == PLAYING )
     }  // while ( ! this->isStopping() )
 }

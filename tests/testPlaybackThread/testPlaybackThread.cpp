@@ -11,6 +11,19 @@
 namespace teo
 {
 
+class MockupRunnable : public IRunnable
+{
+    virtual bool run(std::vector<double> &v)
+    {
+        std::cout << "MockupRunnable: ";
+        for(int i=0;i<v.size();i++)
+        {
+            std::cout << v[i] << " ";
+        }
+        std::cout << std::endl;
+    }
+};
+
 /**
 * @brief Tests \ref Playback
 */
@@ -54,7 +67,6 @@ protected:
     /** Playback device. */
     yarp::dev::PolyDriver playbackDevice;
     teo::IPlaybackThread* iPlaybackThread;
-
 };
 
 TEST_F( PlaybackThreadTest, PlaybackThreadTestPlayQuick )
@@ -87,6 +99,15 @@ TEST_F( PlaybackThreadTest, PlaybackThreadTestPause )
     CD_INFO("Play untill end.\n");
     iPlaybackThread->play();
     while( iPlaybackThread->isPlaying() );
+}
+
+TEST_F( PlaybackThreadTest, PlaybackThreadTestRunnable )
+{
+    IRunnable* iRunnable = new MockupRunnable;
+    iPlaybackThread->setIRunnable( iRunnable );
+    iPlaybackThread->play();
+    while( iPlaybackThread->isPlaying() );
+    delete iRunnable;
 }
 
 }

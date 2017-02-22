@@ -15,6 +15,7 @@ bool PlaybackThread::open(yarp::os::Searchable& config)
     CD_INFO("timeIdx: %d [%d]\n", timeIdx, DEFAULT_TIME_IDX);
 
     yarp::os::Bottle mask = config.findGroup("mask").tail();
+    _iRunnable = NULL;
 
     this->fromFile(fileName);
 

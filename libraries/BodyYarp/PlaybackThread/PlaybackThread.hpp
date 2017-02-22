@@ -57,6 +57,10 @@ class PlaybackThread : public yarp::dev::DeviceDriver, public IPlaybackThread, p
         virtual bool pause();
         virtual bool stopPlay();
         virtual bool isPlaying();
+        virtual bool setIRunnable(IRunnable* iRunnable)
+        {
+            _iRunnable = iRunnable;
+        }
 
         // --------- RateThread Declarations. Implementation in RateThreadImpl.cpp ---------
         virtual void run();
@@ -66,6 +70,8 @@ class PlaybackThread : public yarp::dev::DeviceDriver, public IPlaybackThread, p
         int timeIdx;
         double initTime;
         double initRow;
+
+        IRunnable* _iRunnable;
 
         int _state;
         yarp::os::Semaphore _stateSemaphore;
