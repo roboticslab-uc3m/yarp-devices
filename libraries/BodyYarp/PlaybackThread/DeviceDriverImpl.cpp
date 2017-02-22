@@ -18,8 +18,6 @@ bool PlaybackThread::open(yarp::os::Searchable& config)
 
     this->fromFile(fileName);
 
-    initTime = std::numeric_limits<double>::quiet_NaN();
-
     setState( NOT_PLAYING );
     this->start();
 
