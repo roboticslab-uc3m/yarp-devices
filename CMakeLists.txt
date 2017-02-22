@@ -50,7 +50,9 @@ option(ENABLE_LacqueyFetch "Enable/disable compilation of BodyYarp_LacqueyFetch"
 option(ENABLE_TextilesHand "Enable/disable compilation of BodyYarp_TextilesHand" TRUE)
 option(ENABLE_FakeJoint "Enable/disable compilation of BodyYarp_FakeJoint" TRUE)
 option(ENABLE_CanBusControlboard "Enable/disable compilation of BodyYarp_CanBusControlboard" TRUE)
-option(ENABLE_Jr3 "Enable/disable compilation of BodyYarp_CanBusControlboard" TRUE)
+option(ENABLE_Jr3 "Enable/disable compilation of BodyYarp_Jr3" TRUE)
+
+option(ENABLE_Playback "Enable/disable compilation of BodyYarp_Playback" TRUE)
 
 ##### test and coverage options
 option(ENABLE_tests "Choose if you want to compile tests" TRUE)
