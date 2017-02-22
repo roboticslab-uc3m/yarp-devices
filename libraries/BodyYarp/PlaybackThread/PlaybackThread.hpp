@@ -50,9 +50,7 @@ class PlaybackThread : public yarp::dev::DeviceDriver, public IPlaybackThread, p
 
     public:
 
-        PlaybackThread() {
-            initTime = std::numeric_limits<double>::quiet_NaN();
-        }
+        PlaybackThread() { }
 
         //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
         virtual bool open(yarp::os::Searchable& config);
