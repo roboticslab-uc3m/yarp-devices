@@ -71,6 +71,8 @@ class PlaybackThread : public yarp::dev::DeviceDriver, public IPlaybackThread, p
         double initTime;
         double initRow;
 
+        yarp::os::Bottle mask;
+
         IRunnable* _iRunnable;
 
         int _state;
