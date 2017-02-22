@@ -10,11 +10,13 @@ bool PlaybackThread::open(yarp::os::Searchable& config)
 {
     std::string fileName = config.check("file",yarp::os::Value(DEFAULT_FILE_NAME),"file name").asString();
     timeIdx = config.check("timeIdx",yarp::os::Value(DEFAULT_TIME_IDX),"index of timestamp").asInt();
+    mask = config.findGroup("mask").tail();
 
     CD_INFO("file: %s [%s]\n", fileName.c_str(), DEFAULT_FILE_NAME);
     CD_INFO("timeIdx: %d [%d]\n", timeIdx, DEFAULT_TIME_IDX);
+    CD_INFO("mask: %s (%d)\n", mask.toString().c_str(), mask.size());
 
-    yarp::os::Bottle mask = config.findGroup("mask").tail();
+    _iRunnable = NULL;
 
     this->fromFile(fileName);
 
