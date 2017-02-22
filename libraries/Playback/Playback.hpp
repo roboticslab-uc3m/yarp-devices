@@ -40,12 +40,15 @@ class Playback
     public:
 
         Playback() {
+            doublesOnFileIter = 0;
         }
 
         bool fromFile(const std::string& fileName);
 
-        bool getNumRows(int* num);
+        int getNumRows();
+        int getIter();
         bool getNext(std::vector<double>& row);
+        bool reset();
 
     private:
 

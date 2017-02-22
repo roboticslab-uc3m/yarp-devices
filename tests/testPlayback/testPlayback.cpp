@@ -54,25 +54,21 @@ protected:
 
 TEST_F( PlaybackTest, PlaybackTestGetNumRows )
 {
-    int num;
-    ASSERT_TRUE( playback.getNumRows( &num ) );
-    std::cout << "Num rows: " << num << std::endl;
+    std::cout << "Num rows: " << playback.getNumRows() << std::endl;
 }
 
 TEST_F( PlaybackTest, PlaybackTestGetNext )
 {
     std::vector<double> row;
 
-    int rowCounter = 0;
     while( playback.getNext(row) )
     {
-        std::cout << "Row[" << rowCounter << "]: ";
+        std::cout << "Row[" << playback.getIter() << "]: ";
         for(int i=0;i<row.size();i++)
         {
             std::cout << row[i] << " ";
         }
         std::cout << std::endl;
-        rowCounter++;
     }
 }
 

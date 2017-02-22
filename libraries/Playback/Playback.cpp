@@ -26,8 +26,6 @@ bool Playback::fromFile(const std::string& fileName)
         doublesOnFile.push_back( doublesOnFileLine );
     }
 
-    doublesOnFileIter = 0;
-
     file.close();
 
     return true;
@@ -35,9 +33,23 @@ bool Playback::fromFile(const std::string& fileName)
 
 // -----------------------------------------------------------------------------
 
-bool Playback::getNumRows(int* num)
+int Playback::getNumRows()
 {
-    *num = doublesOnFile.size();
+    return doublesOnFile.size();
+}
+
+// -----------------------------------------------------------------------------
+
+int Playback::getIter()
+{
+    return doublesOnFileIter;
+}
+
+// -----------------------------------------------------------------------------
+
+bool Playback::reset()
+{
+    doublesOnFileIter = 0;
 
     return true;
 }

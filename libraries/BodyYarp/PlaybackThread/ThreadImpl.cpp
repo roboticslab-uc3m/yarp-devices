@@ -11,15 +11,17 @@ void PlaybackThread::run()
 
     while ( ! this->isStopping() )
     {
+        //CD_DEBUG("\n");
         if ( getState() == PLAYING )
         {
+            //CD_DEBUG("PLAYING. %d\n", this->getIter() );
             std::vector<double> row;
 
             if( ! this->getNext(row) )
             {
-                CD_DEBUG("End of rows, stopPlay()\n");
                 stopPlay();
-                break;
+                CD_INFO("End of rows, auto stopPlay()\n");
+                continue;
             }
 
             if( initTime != initTime )
@@ -32,13 +34,12 @@ void PlaybackThread::run()
                 yarp::os::Time::delay( initTime + (row[timeIdx] - initRow) - yarp::os::Time::now() );
             }
 
-            std::cout << "Row[" << rowCounter << "]: ";
+            std::cout << "Row[" << this->getIter() << "]: ";
             for(int i=0;i<row.size();i++)
             {
                 std::cout << row[i] << " ";
             }
             std::cout << std::endl;
-            rowCounter++;
         }  // if ( getState() == PLAYING )
     }  // while ( ! this->isStopping() )
 }
@@ -48,6 +49,7 @@ void PlaybackThread::run()
 void PlaybackThread::onStop()
 {
     setState( NOT_PLAYING );
+    //CD_DEBUG("Bye!\n");
 }
 
 // -----------------------------------------------------------------------------

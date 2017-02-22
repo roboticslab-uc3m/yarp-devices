@@ -58,7 +58,9 @@ class PlaybackThread : public yarp::dev::DeviceDriver, public IPlaybackThread, p
 
         //  --------- IPlaybackThread Declarations. Implementation in IPlaybackThreadImpl.cpp ---------
         virtual bool play();
+        virtual bool pause();
         virtual bool stopPlay();
+        virtual bool isPlaying();
 
         // --------- RateThread Declarations. Implementation in RateThreadImpl.cpp ---------
         virtual void run();
@@ -69,17 +71,22 @@ class PlaybackThread : public yarp::dev::DeviceDriver, public IPlaybackThread, p
         double initTime;
         double initRow;
 
-        int rowCounter;
-
         int _state;
+        yarp::os::Semaphore _stateSemaphore;
         int getState()
         {
-            return _state;
+            _stateSemaphore.wait();
+            int tmp = _state;
+            _stateSemaphore.post();
+            return tmp;
         }
         void setState( const int& state)
         {
-             _state = state;
-             return;
+            //CD_DEBUG("%d\n",state);
+            _stateSemaphore.wait();
+            _state = state;
+            _stateSemaphore.post();
+            return;
         }
 };
 

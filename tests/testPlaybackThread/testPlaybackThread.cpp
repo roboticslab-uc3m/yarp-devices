@@ -57,11 +57,36 @@ protected:
 
 };
 
-TEST_F( PlaybackThreadTest, PlaybackThreadTestPlay )
+TEST_F( PlaybackThreadTest, PlaybackThreadTestPlayQuick )
 {
     iPlaybackThread->play();
-    yarp::os::Time::delay(5);
-    iPlaybackThread->stopPlay();
+}
+
+TEST_F( PlaybackThreadTest, PlaybackThreadTestPlayFull )
+{
+    iPlaybackThread->play();
+    while( iPlaybackThread->isPlaying() );
+}
+
+TEST_F( PlaybackThreadTest, PlaybackThreadTestPlayReplay )
+{
+    iPlaybackThread->play();
+    while( iPlaybackThread->isPlaying() );
+    iPlaybackThread->play();
+    while( iPlaybackThread->isPlaying() );
+}
+
+TEST_F( PlaybackThreadTest, PlaybackThreadTestPause )
+{
+    CD_INFO("Play 2 seconds.\n");
+    iPlaybackThread->play();
+    yarp::os::Time::delay(0.5);
+    iPlaybackThread->pause();
+    CD_INFO("Pause 7 seconds (normal for one to pass).\n");
+    yarp::os::Time::delay(7);
+    CD_INFO("Play untill end.\n");
+    iPlaybackThread->play();
+    while( iPlaybackThread->isPlaying() );
 }
 
 }
