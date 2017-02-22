@@ -30,6 +30,7 @@ bool PlaybackThread::open(yarp::os::Searchable& config)
 
 bool PlaybackThread::close()
 {
+    this->stop();
     return true;
 }
 
