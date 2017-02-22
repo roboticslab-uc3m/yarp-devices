@@ -1,15 +1,11 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __JR3__
-#define __JR3__
+#ifndef __PLAYBACK_THREAD__
+#define __PLAYBACK_THREAD__
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
-#include <yarp/dev/IAnalogSensor.h>
 #include <sstream>
-
-#include <fcntl.h>  // ::open
-#include <unistd.h>  // ::close
 
 #include <limits>  // NAN
 
@@ -92,5 +88,5 @@ class PlaybackThread : public yarp::dev::DeviceDriver, public IPlaybackThread, p
 
 }  // namespace teo
 
-#endif  // __JR3__
+#endif  // __PLAYBACK_THREAD__
 

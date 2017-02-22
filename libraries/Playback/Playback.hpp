@@ -17,9 +17,6 @@
 //#define CD_HIDE_ERROR  //-- Can be globally managed from father CMake.
 #include "ColorDebug.hpp"
 
-#define DEFAULT_RATE_MS 20.0
-#define DEFAULT_NUM_CHANNELS 6
-
 namespace teo
 {
 
