@@ -11,7 +11,7 @@
 
 //YARP_DECLARE_PLUGINS(BodyYarp)
 
-#define CAN_ID 115 // ID of Cui Absolute encoder that you want to check...
+#define CAN_ID 101 // ID of Cui Absolute encoder that you want to check...
 
 namespace teo
 {
@@ -31,7 +31,7 @@ public:
         // -- code here will execute just before the test ensues
         //YARP_REGISTER_PLUGINS(BodyYarp);
 
-        yarp::os::Property hicoCanConf ("(device CanBusHico) (canDevice /dev/can1) (canBitrate 8)");
+        yarp::os::Property hicoCanConf ("(device CanBusHico) (canDevice /dev/can0) (canBitrate 8)");
         bool ok = true;
         ok &= canBusDevice.open(hicoCanConf);   // -- we introduce the configuration properties defined in property object (p) and them, we stard the device (HicoCAN)
         ok &= canBusDevice.view(iCanBus);
@@ -53,7 +53,12 @@ public:
         yarp::os::Property CuiAbsoluteConf (strconf.str().c_str());
 
         ok &= canNodeDevice.open( CuiAbsoluteConf );   // -- we introduce the configuration properties defined ........
-        ok &= canNodeDevice.view( iControlLimitsRaw );
+        if ( ! canNodeDevice.isValid() )
+        {
+            CD_ERROR("Bad device of CuiAbsolute :(\n");
+            ::exit(1);
+        }
+        ok &= canNodeDevice.view( iControlLimits2Raw );
         ok &= canNodeDevice.view( iControlModeRaw );
         ok &= canNodeDevice.view( iEncodersTimedRaw );
         ok &= canNodeDevice.view( iPositionControlRaw );
@@ -65,11 +70,11 @@ public:
 
         if(ok)
         {
-            CD_SUCCESS("Configuration of TechnosoftIpos sucessfully :)\n");
+            CD_SUCCESS("Configuration of CuiAbsolute sucessfully :)\n");
         }
         else
         {
-            CD_ERROR("Bad Configuration of TechnosoftIpos :(\n");
+            CD_ERROR("Bad Configuration of CuiAbsolute :(\n");
             ::exit(1);
         }
 
@@ -93,7 +98,7 @@ protected:
 
     /** CAN node object. */
     yarp::dev::PolyDriver canNodeDevice;
-    yarp::dev::IControlLimitsRaw* iControlLimitsRaw;
+    yarp::dev::IControlLimits2Raw* iControlLimits2Raw;
     yarp::dev::IControlModeRaw* iControlModeRaw;
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRaw;
     yarp::dev::IPositionControlRaw* iPositionControlRaw;
