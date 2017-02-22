@@ -17,7 +17,8 @@ void PlaybackThread::run()
 
             if( ! this->getNext(row) )
             {
-                setState( NOT_PLAYING );
+                CD_DEBUG("End of rows, stopPlay()\n");
+                stopPlay();
                 break;
             }
 
