@@ -21,6 +21,8 @@ class MockupRunnable : public IRunnable
             std::cout << v[i] << " ";
         }
         std::cout << std::endl;
+
+        return true;
     }
 };
 
