@@ -103,6 +103,19 @@ TEST_F( PlaybackThreadTest, PlaybackThreadTestPause )
     while( iPlaybackThread->isPlaying() );
 }
 
+TEST_F( PlaybackThreadTest, PlaybackThreadTestTimeScale )
+{
+    CD_INFO("Play x2 slower.\n");
+    iPlaybackThread->setTimeScale(2);
+    iPlaybackThread->play();
+    while( iPlaybackThread->isPlaying() );
+    CD_INFO("Play x10 faster.\n");
+    iPlaybackThread->setTimeScale(0.1);
+    iPlaybackThread->play();
+    while( iPlaybackThread->isPlaying() );
+    iPlaybackThread->setTimeScale(1);
+}
+
 TEST_F( PlaybackThreadTest, PlaybackThreadTestRunnable )
 {
     IRunnable* iRunnable = new MockupRunnable;
