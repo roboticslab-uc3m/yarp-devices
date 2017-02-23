@@ -15,20 +15,13 @@ project(${KEYWORD})
 find_package(YARP REQUIRED)
 list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
+find_package(TEO_BODY REQUIRED)
+
 # Search for source code.
 file(GLOB folder_source *.cpp *.cc *.c)
 file(GLOB folder_header *.h)
 source_group("Source Files" FILES ${folder_source})
 source_group("Header Files" FILES ${folder_header})
-
-# Search for IDL files.
-file(GLOB idl_files *.thrift *.msg *.srv)
-foreach(idl ${idl_files})
-  yarp_idl_to_dir(${idl} ${CMAKE_BINARY_DIR}/idl IDL_SRC IDL_HDR IDL_INCLUDE)
-  set(folder_source ${folder_source} ${IDL_SRC})
-  set(folder_header ${folder_header} ${IDL_HDR})
-  include_directories(${IDL_INCLUDE})
-endforeach()
 
 # Automatically add include directories if needed.
 foreach(header_file ${folder_header})
@@ -37,7 +30,7 @@ foreach(header_file ${folder_header})
 endforeach(header_file ${folder_header})
 
 # Include any directories needed for YARP
-include_directories(${YARP_INCLUDE_DIRS})
+include_directories(${YARP_INCLUDE_DIRS} ${TEO_BODY_INCLUDE_DIRS})
 
 # Set up our main executable.
 if (folder_source)
