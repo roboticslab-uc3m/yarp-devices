@@ -31,7 +31,7 @@ void PlaybackThread::run()
             }
             else
             {
-                yarp::os::Time::delay( initTime + (row[timeIdx] - initRow) - yarp::os::Time::now() );
+                yarp::os::Time::delay( initTime + (row[timeIdx] - initRow)*timeScale - yarp::os::Time::now() );
             }
 
             if( mask.size() == 0 )

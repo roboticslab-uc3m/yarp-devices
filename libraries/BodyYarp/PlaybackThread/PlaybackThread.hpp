@@ -26,6 +26,7 @@
 
 #define DEFAULT_FILE_NAME "test.txt"
 #define DEFAULT_TIME_IDX 0
+#define DEFAULT_TIME_SCALE 1
 
 namespace teo
 {
@@ -57,10 +58,8 @@ class PlaybackThread : public yarp::dev::DeviceDriver, public IPlaybackThread, p
         virtual bool pause();
         virtual bool stopPlay();
         virtual bool isPlaying();
-        virtual bool setIRunnable(IRunnable* iRunnable)
-        {
-            _iRunnable = iRunnable;
-        }
+        virtual bool setTimeScale(double timeScale);
+        virtual bool setIRunnable(IRunnable* iRunnable);
 
         // --------- RateThread Declarations. Implementation in RateThreadImpl.cpp ---------
         virtual void run();
@@ -68,6 +67,7 @@ class PlaybackThread : public yarp::dev::DeviceDriver, public IPlaybackThread, p
 
     private:
         int timeIdx;
+        double timeScale;
         double initTime;
         double initRow;
 

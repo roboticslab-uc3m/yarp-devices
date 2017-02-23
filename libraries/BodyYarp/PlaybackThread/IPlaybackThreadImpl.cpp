@@ -6,6 +6,13 @@ namespace teo {
 
 // -----------------------------------------------------------------------------
 
+bool PlaybackThread::setIRunnable(IRunnable* iRunnable)
+{
+    _iRunnable = iRunnable;
+}
+
+// -----------------------------------------------------------------------------
+
 bool PlaybackThread::play()
 {
     initTime = std::numeric_limits<double>::quiet_NaN();
@@ -38,5 +45,11 @@ bool PlaybackThread::isPlaying()
 }
 
 // -----------------------------------------------------------------------------
+
+bool PlaybackThread::setTimeScale(double timeScale)
+{
+    this->timeScale = timeScale;
+    return true;
+}
 
 }  // namespace teo
