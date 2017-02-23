@@ -26,7 +26,7 @@
 
 #define DEFAULT_FILE_NAME "test.txt"
 #define DEFAULT_TIME_IDX 0
-#define DEFAULT_TIME_SCALE 1
+#define DEFAULT_TIME_SCALE 1.0
 
 namespace teo
 {
