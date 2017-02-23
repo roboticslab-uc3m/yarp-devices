@@ -13,10 +13,11 @@ int main(int argc, char *argv[])
         return(1);
     }
     yarp::os::Property options;
-    options.put("device","analogsensorclient");
-    options.put("remote","/jr3/ch0:o");
-    options.put("local","/jr3/ch0:i");
-
+    options.put("device","PlaybackThread");
+    options.put("file","/usr/local/share/teo-body/contexts/Playback/txt/yarpdatadumper-teo-right-arm.txt");
+    options.put("timeIdx",1);
+    options.put("timeScale",0.000001);
+    options.fromString("(mask 0 0 1 1 1 1 1 1 1)",false);
     yarp::dev::PolyDriver dd(options);
     if(!dd.isValid()) {
       printf("Device not available.\n");
@@ -25,7 +26,7 @@ int main(int argc, char *argv[])
       return 1;
     }
 
-    yarp::dev::IAnalogSensor *iAnalogSensor;
+    /*yarp::dev::IAnalogSensor *iAnalogSensor;
 
     if ( ! dd.view(iAnalogSensor) )
     {
@@ -54,7 +55,7 @@ int main(int argc, char *argv[])
             printf("Bad read, error: %d\n",ret);
             //return 1;  // Commenting out, too draconian; on init there can be several until stabilized
         }
-    }
+    }*/
 
 	dd.close();
 
