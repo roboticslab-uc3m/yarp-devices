@@ -5,45 +5,78 @@
 
 #include "IPlaybackThread.h"
 
+class PositionMoveRunnable : public teo::IRunnable
+{
+public:
+    virtual bool run(std::vector<double> &v)
+    {
+        iPositionControl->positionMove( v.data() );
+        return true;
+    }
+    yarp::dev::IPositionControl* iPositionControl;
+};
+
 int main(int argc, char *argv[])
 {
     yarp::os::Network yarp;
+
+    yarp::dev::PolyDriver playbackThreadDevice;
+    teo::IPlaybackThread *iPlaybackThread;
+
+    yarp::dev::PolyDriver robotDevice;
+    PositionMoveRunnable positionMoveRunnable;
 
     if ( ! yarp::os::Network::checkNetwork() )
     {
         printf("Please start a yarp name server first\n");
         return(1);
     }
-    yarp::os::Property options;
-    options.put("device","PlaybackThread");
-    options.put("file","/usr/local/share/teo-body/contexts/Playback/txt/yarpdatadumper-teo-right-arm.txt");
-    options.put("timeIdx",1);
-    options.put("timeScale",0.000001);
-    options.fromString("(mask 0 0 1 1 1 1 1 1 1)",false);
-    yarp::dev::PolyDriver dd(options);
-    if(!dd.isValid()) {
-      printf("Device not available.\n");
-	  dd.close();
-      yarp::os::Network::fini();
-      return 1;
-    }
 
-    teo::IPlaybackThread *iPlaybackThread;
-
-    if ( ! dd.view(iPlaybackThread) )
+    //-- playbackThreadDevice and interface
+    yarp::os::Property playbackThreadOptions;
+    playbackThreadOptions.put("device","PlaybackThread");
+    playbackThreadOptions.put("file","/usr/local/share/teo-body/contexts/Playback/txt/yarpdatadumper-teo-right-arm.txt");
+    playbackThreadOptions.put("timeIdx",1);
+    playbackThreadOptions.put("timeScale",0.000001);
+    playbackThreadOptions.fromString("(mask 0 0 1 1 1 1 1 1 1)",false);
+    playbackThreadDevice.open(playbackThreadOptions);
+    if( ! playbackThreadDevice.isValid() )
     {
-        printf("[error] Problems acquiring interface\n");
+        printf("playbackThreadDevice not available.\n");
+        playbackThreadDevice.close();
+        yarp::os::Network::fini();
         return 1;
     }
-	printf("[success] acquired interface\n");
 
-    // The following delay should avoid 0 channels and bad read
-    yarp::os::Time::delay(1);
+    if ( ! playbackThreadDevice.view(iPlaybackThread) )
+    {
+        printf("[error] Problems acquiring iPlaybackThread interface\n");
+        return 1;
+    }
+    printf("[success] acquired iPlaybackThread interface\n");
+
+    //-- robotDevice
+    yarp::os::Property robotOptions;
+    robotOptions.put("device","remote_controlboard");
+    robotOptions.put("local","/playback");
+    robotOptions.put("remote","/teoSim/rightArm");
+    robotDevice.open(robotOptions);
+    if( ! robotDevice.isValid() )
+    {
+        printf("robotDevice not available.\n");
+        robotDevice.close();
+        yarp::os::Network::fini();
+        return 1;
+    }
+    robotDevice.view( positionMoveRunnable.iPositionControl );
+    teo::IRunnable* iRunnable = dynamic_cast< teo::IRunnable* >( &positionMoveRunnable );
+    iPlaybackThread->setIRunnable( iRunnable );
 
     iPlaybackThread->play();
     while( iPlaybackThread->isPlaying() );
 
-	dd.close();
+    robotDevice.close();
+    playbackThreadDevice.close();
 
     return 0;
 }
