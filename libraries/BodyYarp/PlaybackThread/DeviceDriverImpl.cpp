@@ -10,7 +10,7 @@ bool PlaybackThread::open(yarp::os::Searchable& config)
 {
     std::string fileName = config.check("file",yarp::os::Value(DEFAULT_FILE_NAME),"file name").asString();
     timeIdx = config.check("timeIdx",yarp::os::Value(DEFAULT_TIME_IDX),"index of timestamp").asInt();
-    timeScale = config.check("timeScale",yarp::os::Value(DEFAULT_TIME_SCALE),"time scaling of timestamp").asInt();
+    timeScale = config.check("timeScale",yarp::os::Value(DEFAULT_TIME_SCALE),"time scaling of timestamp").asDouble();
     mask = config.findGroup("mask").tail();
 
     CD_INFO("file: %s [%s]\n", fileName.c_str(), DEFAULT_FILE_NAME);
