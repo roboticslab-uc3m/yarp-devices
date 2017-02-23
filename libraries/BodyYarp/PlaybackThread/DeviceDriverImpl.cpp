@@ -15,6 +15,7 @@ bool PlaybackThread::open(yarp::os::Searchable& config)
 
     CD_INFO("file: %s [%s]\n", fileName.c_str(), DEFAULT_FILE_NAME);
     CD_INFO("timeIdx: %d [%d]\n", timeIdx, DEFAULT_TIME_IDX);
+    CD_INFO("timeScale: %f [%f]\n", timeIdx, DEFAULT_TIME_SCALE);
     CD_INFO("mask: %s (%d)\n", mask.toString().c_str(), mask.size());
 
     _iRunnable = NULL;
