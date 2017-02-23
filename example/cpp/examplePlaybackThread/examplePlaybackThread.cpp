@@ -3,6 +3,8 @@
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
 
+#include "IPlaybackThread.h"
+
 int main(int argc, char *argv[])
 {
     yarp::os::Network yarp;
@@ -26,9 +28,9 @@ int main(int argc, char *argv[])
       return 1;
     }
 
-    /*yarp::dev::IAnalogSensor *iAnalogSensor;
+    teo::IPlaybackThread *iPlaybackThread;
 
-    if ( ! dd.view(iAnalogSensor) )
+    if ( ! dd.view(iPlaybackThread) )
     {
         printf("[error] Problems acquiring interface\n");
         return 1;
@@ -38,24 +40,8 @@ int main(int argc, char *argv[])
     // The following delay should avoid 0 channels and bad read
     yarp::os::Time::delay(1);
 
-    int channels = iAnalogSensor->getChannels();
-    printf("channels: %d\n", channels);
-
-    // Of course we dislike while(1)
-    while(1)
-    {
-        yarp::sig::Vector vector;
-        int ret = iAnalogSensor->read(vector);
-        if (ret == yarp::dev::IAnalogSensor::AS_OK)
-        {
-            printf("Good read, got: %s\n",vector.toString().c_str());
-        }
-        else
-        {
-            printf("Bad read, error: %d\n",ret);
-            //return 1;  // Commenting out, too draconian; on init there can be several until stabilized
-        }
-    }*/
+    iPlaybackThread->play();
+    while( iPlaybackThread->isPlaying() );
 
 	dd.close();
 
