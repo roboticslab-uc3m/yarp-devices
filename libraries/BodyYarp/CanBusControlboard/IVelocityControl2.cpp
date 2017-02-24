@@ -68,7 +68,7 @@ bool teo::CanBusControlboard::velocityMove(const int n_joint, const int *joints,
 
 bool teo::CanBusControlboard::getRefVelocity(const int joint, double *vel)
 {
-    CD_INFO("\n");
+    CD_INFO("%d\n",joint);
 
     // -- Get the last reference speed set by velocityMove for single joint (saved in double vector)
     refVelocitySemaphore.wait();
