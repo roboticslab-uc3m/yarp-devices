@@ -25,6 +25,11 @@ bool teo::CanBusControlboard::velocityMove(int j, double sp)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
+    // -- Save the last reference speed (double sp) for single joint (int j)
+    refVelocitySemaphore.wait();
+    refVelocity[j] = sp;
+    refVelocitySemaphore.post();
+
     return iVelocityControlRaw[j]->velocityMoveRaw( 0, sp );
 }
 
@@ -65,6 +70,7 @@ bool teo::CanBusControlboard::getRefVelocity(const int joint, double *vel)
 {
     CD_INFO("\n");
 
+    // -- Get the last reference speed set by velocityMove for single joint (saved in double vector)
     refVelocitySemaphore.wait();
     *vel = refVelocity[joint];
     refVelocitySemaphore.post();
