@@ -55,7 +55,7 @@ namespace teo
 // Note: IControlLimits2 inherits from IControlLimits
 // Note: IPositionControl2 inherits from IPositionControl (hereda)
 class CanBusControlboard : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2, public yarp::dev::IControlMode, public yarp::dev::IEncodersTimed,
-    public yarp::dev::IPositionControl2, public yarp::dev::IPositionDirect, public yarp::dev::ITorqueControl, public yarp::dev::IVelocityControl,
+    public yarp::dev::IPositionControl2, public yarp::dev::IPositionDirect, public yarp::dev::ITorqueControl, public yarp::dev::IVelocityControl2,
     public yarp::os::Thread
 {
 
@@ -255,7 +255,7 @@ public:
     */
     virtual bool getEncoderTimed(int j, double *encs, double *time);
 
-    // ------- IPositionControl2 declarations. Implementation in IPositionControl2.cpp -------
+    // ------- IPositionControl declarations. Implementation in IPositionControl2.cpp -------
 
     /**
      * Get the number of controlled axes. This command asks the number of controlled
@@ -380,7 +380,7 @@ public:
      */
     virtual bool stop();
 
-    //###############################################################################
+    // ########## IPositionControl2 declarations. Implementation in IPositionControl2.cpp ###########
 
     /** Set new reference point for a subset of joints.
      * @param joints pointer to the array of joint numbers
@@ -701,7 +701,7 @@ public:
      */
     virtual bool setTorqueOffset(int j, double v);
 
-    //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
+    //  --------- IVelocityControl Declarations. Implementation in IVelocityControl2.cpp ---------
 
     /**
      * Set velocity mode. This command
@@ -726,6 +726,90 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool velocityMove(const double *sp);
+
+    //  ########## IVelocityControl2 Declarations. Implementation in IVelocityControl2.cpp ##########
+
+    /** Start motion at a given speed for a subset of joints.
+     * @param n_joint how many joints this command is referring to
+     * @param joints of joints controlled. The size of this array is n_joints
+     * @param spds pointer to the array containing the new speed values, one value for each joint, the size of the array is n_joints.
+     * The first value will be the new reference fot the joint joints[0].
+     *          for example:
+     *          n_joint  3
+     *          joints   0  2  4
+     *          spds    10 30 40
+     * @return true/false on success/failure
+     */
+    virtual bool velocityMove(const int n_joint, const int *joints, const double *spds);
+
+    /** Get the last reference speed set by velocityMove for single joint.
+     * @param j joint number
+     * @param vel returns the requested reference.
+     * @return true/false on success/failure
+     */
+    virtual bool getRefVelocity(const int joint, double *vel);
+
+    /** Get the last reference speed set by velocityMove for all joints.
+     * @param vels pointer to the array containing the new speed values, one value for each joint
+     * @return true/false on success/failure
+     */
+    virtual bool getRefVelocities(double *vels);
+
+    /** Get the last reference speed set by velocityMove for a group of joints.
+     * @param n_joint how many joints this command is referring to
+     * @param joints of joints controlled. The size of this array is n_joints
+     * @param vels pointer to the array containing the requested values, one value for each joint.
+     *  The size of the array is n_joints.
+     * @return true/false on success/failure
+     */
+    virtual bool getRefVelocities(const int n_joint, const int *joints, double *vels);
+
+    /** Set reference acceleration for a subset of joints. This is the valure that is
+     * used during the generation of the trajectory.
+     * @param n_joint how many joints this command is referring to
+     * @param joints list of joints controlled. The size of this array is n_joints
+     * @param accs   pointer to the array containing acceleration values, one value for each joint, the size of the array is n_joints.
+     * The first value will be the new reference fot the joint joints[0].
+     *          for example:
+     *          n_joint  3
+     *          joints   0  2  4
+     *          accs    10 30 40
+     * @return true/false on success/failure
+     */
+    // virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs);
+
+    /** Stop motion for a subset of joints
+     * @param n_joint how many joints this command is referring to
+     * @param joints joints pointer to the array of joint numbers
+     * @return true/false on success or failure
+     */
+    // virtual bool stop(const int n_joint, const int *joints);
+
+    /** Set new velocity pid value for a joint
+     * @param j joint number
+     * @param pid new pid value
+     * @return true/false on success/failure
+     */
+    virtual bool setVelPid(int j, const yarp::dev::Pid &pid);
+
+    /** Set new velocity pid value on multiple joints
+     * @param pids pointer to a vector of pids
+     * @return true/false upon success/failure
+     */
+    virtual bool setVelPids(const yarp::dev::Pid *pids);
+
+    /** Get current velocity pid value for a specific joint.
+     * @param j joint number
+     * @param pid pointer to storage for the return value.
+     * @return success/failure
+     */
+    virtual bool getVelPid(int j, yarp::dev::Pid *pid);
+
+    /** Get current velocity pid value for a specific subset of joints.
+     * @param pids vector that will store the values of the pids.
+     * @return success/failure
+     */
+    virtual bool getVelPids(yarp::dev::Pid *pids);
 
     // -------- Thread declarations. Implementation in ThreadImpl.cpp --------
 
