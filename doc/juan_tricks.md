@@ -48,6 +48,7 @@ uint8_t msg_stop[]={0x0F,0x00}; // Does not stop, but is required for next start
 
 # Edit .ini config files in Calc (Excel)
 ```
+Click `Separated by space` and `Merge delimiters`.
 #!/bin/sh
 openoffice.org -calc launchManipulation.ini
 # libreoffice -calc launchManipulation.ini
