@@ -45,3 +45,10 @@ uint8_t msg_stop[]={0x0F,0x00}; // Does not stop, but is required for next start
 ```
 [set] [trqd]
 ```
+
+# Edit .ini config files in Calc (Excel)
+```
+#!/bin/sh
+openoffice.org -calc launchManipulation.ini
+sed -i 's/\"//g' launchManipulation.ini
+```
