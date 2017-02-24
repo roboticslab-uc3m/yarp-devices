@@ -870,7 +870,9 @@ protected:
     std::vector< ICanBusSharer* > iCanBusSharer;
     std::map< int, int > idxFromCanId;
     std::vector< double > targetPosition;
+    std::vector< double > refVelocity;
     yarp::os::Semaphore targetPositionSemaphore;
+    yarp::os::Semaphore refVelocitySemaphore;
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(can_msg* message);
