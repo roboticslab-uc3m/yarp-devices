@@ -44,3 +44,56 @@ bool teo::CanBusControlboard::velocityMove(const double *sp)
 
 // -----------------------------------------------------------------------------
 
+bool teo::CanBusControlboard::velocityMove(const int n_joint, const int *joints, const double *spds)
+{
+
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::getRefVelocity(const int joint, double *vel)
+{
+
+}
+
+// ------------------------------------------------------------------------------
+
+bool getRefVelocities(double *vels)
+{
+
+}
+
+// -----------------------------------------------------------------------------
+
+bool getRefVelocities(const int n_joint, const int *joints, double *vels)
+{
+
+}
+
+// -----------------------------------------------------------------------------
+
+bool setVelPid(int j, const yarp::dev::Pid &pid)
+{
+
+}
+
+// -----------------------------------------------------------------------------
+
+bool setVelPids(const yarp::dev::Pid *pids)
+{
+
+}
+
+// -----------------------------------------------------------------------------
+
+bool getVelPid(int j, yarp::dev::Pid *pid)
+{
+
+}
+
+// -----------------------------------------------------------------------------
+
+bool getVelPids(yarp::dev::Pid *pids)
+{
+
+}
