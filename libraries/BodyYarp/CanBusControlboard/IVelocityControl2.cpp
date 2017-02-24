@@ -46,54 +46,87 @@ bool teo::CanBusControlboard::velocityMove(const double *sp)
 
 bool teo::CanBusControlboard::velocityMove(const int n_joint, const int *joints, const double *spds)
 {
+    CD_INFO("\n");
 
+    bool ok = true;
+    for(int j=0; j<nodes.size(); j++)
+    {
+        if( joints[j] )
+        {
+            ok &= this->velocityMove(j,spds[j]);
+        }
+    }
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
 
 bool teo::CanBusControlboard::getRefVelocity(const int joint, double *vel)
 {
+    CD_INFO("\n");
 
+    refVelocitySemaphore.wait();
+    *vel = refVelocity[joint];
+    refVelocitySemaphore.post();
+
+    return true;
 }
 
 // ------------------------------------------------------------------------------
 
-bool getRefVelocities(double *vels)
+bool teo::CanBusControlboard::getRefVelocities(double *vels)
+{
+    CD_INFO("\n");
+
+    bool ok = true;
+    for(unsigned int i=0; i<nodes.size(); i++)
+    {
+        ok &= getRefVelocity(i,&(vels[i]));
+    }
+    return ok;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::getRefVelocities(const int n_joint, const int *joints, double *vels)
+{
+    CD_INFO("\n");
+
+    bool ok = true;
+    for(unsigned int i=0; i<nodes.size(); i++)
+    {
+        if( joints[i] )
+        {
+            ok &= getRefVelocity(i,&(vels[i]));
+        }
+    }
+    return ok;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::setVelPid(int j, const yarp::dev::Pid &pid)
 {
 
 }
 
 // -----------------------------------------------------------------------------
 
-bool getRefVelocities(const int n_joint, const int *joints, double *vels)
+bool teo::CanBusControlboard::setVelPids(const yarp::dev::Pid *pids)
 {
 
 }
 
 // -----------------------------------------------------------------------------
 
-bool setVelPid(int j, const yarp::dev::Pid &pid)
+bool teo::CanBusControlboard::getVelPid(int j, yarp::dev::Pid *pid)
 {
 
 }
 
 // -----------------------------------------------------------------------------
 
-bool setVelPids(const yarp::dev::Pid *pids)
-{
-
-}
-
-// -----------------------------------------------------------------------------
-
-bool getVelPid(int j, yarp::dev::Pid *pid)
-{
-
-}
-
-// -----------------------------------------------------------------------------
-
-bool getVelPids(yarp::dev::Pid *pids)
+bool teo::CanBusControlboard::getVelPids(yarp::dev::Pid *pids)
 {
 
 }
