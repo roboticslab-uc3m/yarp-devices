@@ -113,26 +113,26 @@ bool teo::CanBusControlboard::getRefVelocities(const int n_joint, const int *joi
 
 bool teo::CanBusControlboard::setVelPid(int j, const yarp::dev::Pid &pid)
 {
-
+    return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool teo::CanBusControlboard::setVelPids(const yarp::dev::Pid *pids)
 {
-
+    return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool teo::CanBusControlboard::getVelPid(int j, yarp::dev::Pid *pid)
 {
-
+    return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool teo::CanBusControlboard::getVelPids(yarp::dev::Pid *pids)
 {
-
+    return true;
 }

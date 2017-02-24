@@ -388,7 +388,7 @@ protected:
 
     ICanBusHico *canDevicePtr;
 
-    double max, min, refAcceleration, refSpeed, tr;
+    double max, min, maxVel, minVel, refAcceleration, refSpeed, tr;
 
     double lastUsage;
 

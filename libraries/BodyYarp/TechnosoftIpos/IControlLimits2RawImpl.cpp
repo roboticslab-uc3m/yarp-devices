@@ -94,7 +94,15 @@ bool teo::TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
 
 bool teo::TechnosoftIpos::getVelLimitsRaw(int axis, double *min, double *max)
 {
-    CD_WARNING("Not implemented.\n");
+    CD_INFO("(%d)\n",axis);
+
+    //-- Check index within range
+    if( axis != 0 ) return false;
+
+    //-- Get the limits that have been locally stored.
+    *min = this->minVel;
+    *max = this->maxVel;
+
     return true;
 }
 
