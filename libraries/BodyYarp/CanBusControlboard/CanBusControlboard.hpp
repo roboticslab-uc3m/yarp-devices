@@ -53,8 +53,9 @@ namespace teo
 */
 // Note: IEncodersTimed inherits from IEncoders
 // Note: IControlLimits2 inherits from IControlLimits
+// Note: IPositionControl2 inherits from IPositionControl (hereda)
 class CanBusControlboard : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2, public yarp::dev::IControlMode, public yarp::dev::IEncodersTimed,
-    public yarp::dev::IPositionControl, public yarp::dev::IPositionDirect, public yarp::dev::ITorqueControl, public yarp::dev::IVelocityControl,
+    public yarp::dev::IPositionControl2, public yarp::dev::IPositionDirect, public yarp::dev::ITorqueControl, public yarp::dev::IVelocityControl2,
     public yarp::os::Thread
 {
 
@@ -254,7 +255,7 @@ public:
     */
     virtual bool getEncoderTimed(int j, double *encs, double *time);
 
-    // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
+    // ------- IPositionControl declarations. Implementation in IPositionControl2.cpp -------
 
     /**
      * Get the number of controlled axes. This command asks the number of controlled
@@ -378,6 +379,102 @@ public:
      * @return true/false on success/failure
      */
     virtual bool stop();
+
+    // ########## IPositionControl2 declarations. Implementation in IPositionControl2.cpp ###########
+
+    /** Set new reference point for a subset of joints.
+     * @param joints pointer to the array of joint numbers
+     * @param refs   pointer to the array specifing the new reference points
+     * @return true/false on success/failure
+     */
+    virtual bool positionMove(const int n_joint, const int *joints, const double *refs);
+
+    /** Set relative position for a subset of joints.
+     * @param joints pointer to the array of joint numbers
+     * @param deltas pointer to the array of relative commands
+     * @return true/false on success/failure
+     */
+    virtual bool relativeMove(const int n_joint, const int *joints, const double *deltas);
+
+    /** Check if the current trajectory is terminated. Non blocking.
+     * @param joints pointer to the array of joint numbers
+     * @param flags  pointer to return value (logical "and" of all set of joints)
+     * @return true/false if network communication went well.
+     */
+    virtual bool checkMotionDone(const int n_joint, const int *joints, bool *flags);
+
+    /** Set reference speed on all joints. These values are used during the
+     * interpolation of the trajectory.
+     * @param joints pointer to the array of joint numbers
+     * @param spds   pointer to the array with speed values.
+     * @return true/false upon success/failure
+     */
+    virtual bool setRefSpeeds(const int n_joint, const int *joints, const double *spds);
+
+    /** Set reference acceleration on all joints. This is the valure that is
+     * used during the generation of the trajectory.
+     * @param joints pointer to the array of joint numbers
+     * @param accs   pointer to the array with acceleration values
+     * @return true/false upon success/failure
+     */
+    virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs);
+
+    /** Get reference speed of all joints. These are the  values used during the
+     * interpolation of the trajectory.
+     * @param joints pointer to the array of joint numbers
+     * @param spds   pointer to the array that will store the speed values.
+     * @return true/false upon success/failure
+     */
+    virtual bool getRefSpeeds(const int n_joint, const int *joints, double *spds);
+
+    /** Get reference acceleration for a joint. Returns the acceleration used to
+     * generate the trajectory profile.
+     * @param joints pointer to the array of joint numbers
+     * @param accs   pointer to the array that will store the acceleration values
+     * @return true/false on success/failure
+     */
+    virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs);
+
+    /** Stop motion for subset of joints
+     * @param joints pointer to the array of joint numbers
+     * @return true/false on success/failure
+     */
+    virtual bool stop(const int n_joint, const int *joints);
+
+        /** Get the last position reference for the specified axis.
+     *  This is the dual of PositionMove and shall return only values sent using
+     *  IPositionControl interface.
+     *  If other interfaces like IPositionDirect are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionDirect::SetPosition
+     * @param ref last reference sent using PositionMove functions
+     * @return true/false on success/failure
+     */
+    virtual bool getTargetPosition(const int joint, double *ref);
+
+    /** Get the last position reference for all axes.
+     *  This is the dual of PositionMove and shall return only values sent using
+     *  IPositionControl interface.
+     *  If other interfaces like IPositionDirect are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionDirect::SetPosition
+     * @param ref last reference sent using PositionMove functions
+     * @return true/false on success/failure
+     */
+    virtual bool getTargetPositions(double *refs);
+
+    /** Get the last position reference for the specified group of axes.
+     *  This is the dual of PositionMove and shall return only values sent using
+     *  IPositionControl interface.
+     *  If other interfaces like IPositionDirect are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionDirect::SetPosition
+     * @param ref last reference sent using PositionMove functions
+     * @return true/false on success/failure
+     */
+    virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs);
+
+
 
     // ------- IPositionDirect declarations. Implementation in IPositionDirectImpl.cpp -------
 
@@ -604,7 +701,7 @@ public:
      */
     virtual bool setTorqueOffset(int j, double v);
 
-    //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
+    //  --------- IVelocityControl Declarations. Implementation in IVelocityControl2.cpp ---------
 
     /**
      * Set velocity mode. This command
@@ -629,6 +726,90 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool velocityMove(const double *sp);
+
+    //  ########## IVelocityControl2 Declarations. Implementation in IVelocityControl2.cpp ##########
+
+    /** Start motion at a given speed for a subset of joints.
+     * @param n_joint how many joints this command is referring to
+     * @param joints of joints controlled. The size of this array is n_joints
+     * @param spds pointer to the array containing the new speed values, one value for each joint, the size of the array is n_joints.
+     * The first value will be the new reference fot the joint joints[0].
+     *          for example:
+     *          n_joint  3
+     *          joints   0  2  4
+     *          spds    10 30 40
+     * @return true/false on success/failure
+     */
+    virtual bool velocityMove(const int n_joint, const int *joints, const double *spds);
+
+    /** Get the last reference speed set by velocityMove for single joint.
+     * @param j joint number
+     * @param vel returns the requested reference.
+     * @return true/false on success/failure
+     */
+    virtual bool getRefVelocity(const int joint, double *vel);
+
+    /** Get the last reference speed set by velocityMove for all joints.
+     * @param vels pointer to the array containing the new speed values, one value for each joint
+     * @return true/false on success/failure
+     */
+    virtual bool getRefVelocities(double *vels);
+
+    /** Get the last reference speed set by velocityMove for a group of joints.
+     * @param n_joint how many joints this command is referring to
+     * @param joints of joints controlled. The size of this array is n_joints
+     * @param vels pointer to the array containing the requested values, one value for each joint.
+     *  The size of the array is n_joints.
+     * @return true/false on success/failure
+     */
+    virtual bool getRefVelocities(const int n_joint, const int *joints, double *vels);
+
+    /** Set reference acceleration for a subset of joints. This is the valure that is
+     * used during the generation of the trajectory.
+     * @param n_joint how many joints this command is referring to
+     * @param joints list of joints controlled. The size of this array is n_joints
+     * @param accs   pointer to the array containing acceleration values, one value for each joint, the size of the array is n_joints.
+     * The first value will be the new reference fot the joint joints[0].
+     *          for example:
+     *          n_joint  3
+     *          joints   0  2  4
+     *          accs    10 30 40
+     * @return true/false on success/failure
+     */
+    // virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs);
+
+    /** Stop motion for a subset of joints
+     * @param n_joint how many joints this command is referring to
+     * @param joints joints pointer to the array of joint numbers
+     * @return true/false on success or failure
+     */
+    // virtual bool stop(const int n_joint, const int *joints);
+
+    /** Set new velocity pid value for a joint
+     * @param j joint number
+     * @param pid new pid value
+     * @return true/false on success/failure
+     */
+    virtual bool setVelPid(int j, const yarp::dev::Pid &pid);
+
+    /** Set new velocity pid value on multiple joints
+     * @param pids pointer to a vector of pids
+     * @return true/false upon success/failure
+     */
+    virtual bool setVelPids(const yarp::dev::Pid *pids);
+
+    /** Get current velocity pid value for a specific joint.
+     * @param j joint number
+     * @param pid pointer to storage for the return value.
+     * @return success/failure
+     */
+    virtual bool getVelPid(int j, yarp::dev::Pid *pid);
+
+    /** Get current velocity pid value for a specific subset of joints.
+     * @param pids vector that will store the values of the pids.
+     * @return success/failure
+     */
+    virtual bool getVelPids(yarp::dev::Pid *pids);
 
     // -------- Thread declarations. Implementation in ThreadImpl.cpp --------
 
@@ -688,7 +869,10 @@ protected:
     std::vector< yarp::dev::IVelocityControlRaw* > iVelocityControlRaw;
     std::vector< ICanBusSharer* > iCanBusSharer;
     std::map< int, int > idxFromCanId;
-
+    std::vector< double > targetPosition;
+    std::vector< double > refVelocity;
+    yarp::os::Semaphore targetPositionSemaphore;
+    yarp::os::Semaphore refVelocitySemaphore;
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(can_msg* message);

@@ -2,7 +2,7 @@
 
 #include "CanBusControlboard.hpp"
 
-// ------------------ IPositionControl Related ----------------------------------------
+// ------------------ IPositionControl2 Related ----------------------------------------
 
 bool teo::CanBusControlboard::getAxes(int *axes)
 {
@@ -36,6 +36,10 @@ bool teo::CanBusControlboard::positionMove(int j, double ref)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
+    targetPositionSemaphore.wait();
+    targetPosition[j] = ref;
+    targetPositionSemaphore.post();
+
     return iPositionControlRaw[j]->positionMoveRaw( 0, ref );
 }
 
@@ -61,6 +65,10 @@ bool teo::CanBusControlboard::relativeMove(int j, double delta)
 
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
+
+    targetPositionSemaphore.wait();
+    targetPosition[j] = delta;
+    targetPositionSemaphore.post();
 
     return iPositionControlRaw[j]->relativeMoveRaw( 0, delta );
 }
@@ -229,3 +237,181 @@ bool teo::CanBusControlboard::stop()
 
 // -----------------------------------------------------------------------------
 
+bool teo::CanBusControlboard::positionMove(const int n_joint, const int *joints, const double *refs)
+{
+    CD_INFO("\n");
+
+    bool ok = true;
+    for(int j=0; j<nodes.size(); j++)
+    {
+        if( joints[j] )
+        {
+            ok &= this->positionMove(j,refs[j]);
+        }
+    }
+    return ok;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::relativeMove(const int n_joint, const int *joints, const double *deltas)
+{
+    CD_INFO("\n");
+
+    bool ok = true;
+    for(int j=0; j<nodes.size(); j++)
+    {
+        if( joints[j] )
+        {
+            ok &= this->relativeMove(j,deltas[j]);
+        }
+    }
+    return ok;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::checkMotionDone(const int n_joint, const int *joints, bool *flags)
+{
+    CD_INFO("\n");
+    *flags = true;
+    bool ok = true;
+    for(int j=0; j<nodes.size(); j++)
+    {
+        if( joints[j] )
+        {
+            bool tmpFlag;
+            ok &= this->checkMotionDone(j,&tmpFlag);
+            *flags &= tmpFlag;
+        }
+    }
+    return ok;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::setRefSpeeds(const int n_joint, const int *joints, const double *spds)
+{
+    CD_INFO("\n");
+
+    bool ok = true;
+    for(unsigned int i=0; i<nodes.size(); i++)
+    {
+        if( joints[i] )
+        {
+            ok &= setRefSpeed(i,spds[i]);
+        }
+    }
+    return ok;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
+{
+    CD_INFO("\n");
+
+    bool ok = true;
+    for(unsigned int i=0; i<nodes.size(); i++)
+    {
+        if( joints[i] )
+        {
+            ok &= setRefAcceleration(i,accs[i]);
+        }
+    }
+    return ok;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::getRefSpeeds(const int n_joint, const int *joints, double *spds)
+{
+    CD_INFO("\n");
+
+    bool ok = true;
+    for(unsigned int i=0; i<nodes.size(); i++)
+    {
+        if( joints[i] )
+        {
+            ok &= getRefSpeed(i,&spds[i]);
+        }
+    }
+    return ok;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::getRefAccelerations(const int n_joint, const int *joints, double *accs)
+{
+    CD_INFO("\n");
+
+    bool ok = true;
+    for(unsigned int i=0; i<nodes.size(); i++)
+    {
+        if( joints[i] )
+        {
+            ok &= getRefAcceleration(i,&accs[i]);
+        }
+    }
+    return ok;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::stop(const int n_joint, const int *joints)
+{
+    CD_INFO("\n");
+
+    bool ok = true;
+    for(unsigned int i=0; i<nodes.size(); i++)
+    {
+        if( joints[i] )
+        {
+            ok &= stop(i);
+        }
+    }
+    return ok;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::getTargetPosition(const int joint, double *ref)
+{
+    CD_INFO("\n");
+
+    targetPositionSemaphore.wait();
+    *ref = targetPosition[joint];
+    targetPositionSemaphore.post();
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::getTargetPositions(double *refs)
+{
+    CD_INFO("\n");
+
+    bool ok = true;
+    for(unsigned int i=0; i<nodes.size(); i++)
+    {
+        ok &= getTargetPosition(i,&(refs[i]));
+    }
+    return ok;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::getTargetPositions(const int n_joint, const int *joints, double *refs) {
+    CD_INFO("\n");
+
+    bool ok = true;
+    for(unsigned int i=0; i<nodes.size(); i++)
+    {
+        if( joints[i] )
+        {
+            ok &= getTargetPosition(i,&(refs[i]));
+        }
+    }
+    return ok;
+}

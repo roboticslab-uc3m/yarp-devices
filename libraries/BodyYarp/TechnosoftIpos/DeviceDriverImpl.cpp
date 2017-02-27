@@ -10,6 +10,8 @@ bool teo::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->tr = config.check("tr",0,"reduction").asDouble();
     this->max = config.check("max",0,"max").asDouble();
     this->min = config.check("min",0,"min").asDouble();
+    this->maxVel = config.check("maxVel",1000,"maxVel").asDouble();
+    this->minVel = config.check("minVel",0,"minVel").asDouble();
     this->k = config.check("k",0,"motor constant").asDouble();
     this->refAcceleration = config.check("refAcceleration",0,"ref acceleration").asDouble();
     this->refSpeed = config.check("refSpeed",0,"ref speed").asDouble();
