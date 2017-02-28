@@ -5,7 +5,7 @@
 
 // ---------------------------- IInteractionMode Related ----------------------------------
 
-bool getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
+bool teo::CanBusControlboard::getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
 {
     return true;
 }
