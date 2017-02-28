@@ -351,7 +351,12 @@ protected:
     yarp::os::Semaphore ptBuffer;
 
     //-- More internal parameter stuff
-    double max, min, maxVel, minVel, refAcceleration, refSpeed, tr, k;
+    double max, min, maxVel, minVel, refAcceleration, refSpeed, refTorque, tr, k;
+
+    //-- Semaphore
+    yarp::os::Semaphore refTorqueSemaphore;
+
+
 
 };
 
