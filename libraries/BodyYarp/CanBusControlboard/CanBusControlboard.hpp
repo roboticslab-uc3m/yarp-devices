@@ -990,8 +990,10 @@ protected:
     std::map< int, int > idxFromCanId;
     std::vector< double > targetPosition;
     std::vector< double > refVelocity;
+    std::vector< yarp::dev::InteractionModeEnum > interactionMode; // -- It's right??
     yarp::os::Semaphore targetPositionSemaphore;
     yarp::os::Semaphore refVelocitySemaphore;
+    yarp::os::Semaphore interactionModeSemaphore;
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(can_msg* message);
