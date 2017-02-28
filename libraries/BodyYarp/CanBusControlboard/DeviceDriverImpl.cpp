@@ -57,6 +57,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
 
     targetPosition.resize( nodes.size() );
     refVelocity.resize(nodes.size());
+    interactionMode.resize(nodes.size()); // it's right?
 
     for(int i=0; i<nodes.size(); i++)
     {
