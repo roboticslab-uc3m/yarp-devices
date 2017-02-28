@@ -71,7 +71,7 @@ bool teo::CanBusControlboard::setOpenLoopMode(int j)
     return iControlModeRaw[j]->setOpenLoopModeRaw( 0 );
 }
 
-// -----------------------------------------------------------------------------
+// ---------------------- IControlMode2 Related  ---------------------------------
 
 bool teo::CanBusControlboard::getControlMode(int j, int *mode)
 {

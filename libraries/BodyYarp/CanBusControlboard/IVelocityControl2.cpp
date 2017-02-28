@@ -47,7 +47,7 @@ bool teo::CanBusControlboard::velocityMove(const double *sp)
     return ok;
 }
 
-// -----------------------------------------------------------------------------
+// ----------------------------  IVelocityControl2 Related  --------------------
 
 bool teo::CanBusControlboard::velocityMove(const int n_joint, const int *joints, const double *spds)
 {

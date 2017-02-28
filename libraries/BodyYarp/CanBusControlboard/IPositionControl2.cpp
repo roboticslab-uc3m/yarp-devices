@@ -2,7 +2,7 @@
 
 #include "CanBusControlboard.hpp"
 
-// ------------------ IPositionControl2 Related ----------------------------------------
+// ------------------ IPositionControl Related ----------------------------------------
 
 bool teo::CanBusControlboard::getAxes(int *axes)
 {
@@ -235,7 +235,7 @@ bool teo::CanBusControlboard::stop()
     return ok;
 }
 
-// -----------------------------------------------------------------------------
+// ---------------------------- IPositionControl2 Related ---------------------
 
 bool teo::CanBusControlboard::positionMove(const int n_joint, const int *joints, const double *refs)
 {
