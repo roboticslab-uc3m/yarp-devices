@@ -20,6 +20,7 @@ bool teo::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->ptMovementDone = false;
     this->targetReached = false;
     this->encoder = 0;
+    this->refTorque = 0;
 
     if( 0 == this->canId )
     {
