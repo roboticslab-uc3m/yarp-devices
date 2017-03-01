@@ -35,7 +35,7 @@ namespace teo
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
 // Note: IControlLimits2Raw inherits from IControlLimitsRaw
 class TechnosoftIpos : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlModeRaw, public yarp::dev::IInteractionModeRaw, public yarp::dev::IEncodersTimedRaw,
-    public yarp::dev::IPositionControlRaw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControlRaw, public yarp::dev::ITorqueControlRaw,
+    public yarp::dev::IPositionControlRaw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControlRaw, public yarp::dev::ITorqueControlRaw, public yarp::dev::IVelocityControl2Raw,
     public ICanBusSharer, public ITechnosoftIpos
 {
 
@@ -363,6 +363,86 @@ public:
      */
     virtual bool setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
 
+    //--------------IVelocityControl2Raw declarations. Implementation in IVelocityControl2RawImpl.cpp -----------------
+    /**
+     * Start motion at a given speed for a subset of joints.
+     * @param n_joint how many joints this command is referring to
+     * @param joints pointer to the array of joint numbers
+     * @param spds    pointer to the array containing the new speed values
+     * @return true/false upon success/failure
+     */
+    virtual bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds);
+
+     /** Get the last reference speed set by velocityMove for single joint.
+     * @param j joint number
+     * @param vel returns the requested reference.
+     * @return true/false on success/failure
+     */
+    virtual bool getRefVelocityRaw(const int joint, double *vel);
+
+    /** Get the last reference speed set by velocityMove for all joints.
+     * @param vels pointer to the array containing the new speed values, one value for each joint
+     * @return true/false on success/failure
+     */
+    virtual bool getRefVelocitiesRaw(double *vels);
+
+    /** Get the last reference speed set by velocityMove for a group of joints.
+     * @param n_joint how many joints this command is referring to
+     * @param joints of joints controlled. The size of this array is n_joints
+     * @param vels pointer to the array containing the requested values, one value for each joint.
+     *  The size of the array is n_joints.
+     * @return true/false on success/failure
+     */
+    virtual bool getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels);
+
+    /** Set reference acceleration for a subset of joints. This is the valure that is
+     * used during the generation of the trajectory.
+     * @param joints pointer to the array of joint numbers
+     * @param accs   pointer to the array containing acceleration values
+     * @return true/false upon success/failure
+     */
+    virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs);
+
+    /** Get reference acceleration for a subset of joints. These are the values used during the
+     * interpolation of the trajectory.
+     * @param joints pointer to the array of joint numbers
+     * @param accs   pointer to the array that will store the acceleration values.
+     * @return true/false on success or failure
+     */
+    virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs);
+
+    /** Stop motion for a subset of joints
+     * @param joints pointer to the array of joint numbers
+     * @return true/false on success or failure
+     */
+    virtual bool stopRaw(const int n_joint, const int *joints);
+
+    /** Set new velocity pid value for a joint
+     * @param j joint number
+     * @param pid new pid value
+     * @return true/false on success/failure
+     */
+    virtual bool setVelPidRaw(int j, const yarp::dev::Pid &pid);
+
+    /** Set new velocity pid value on multiple joints
+     * @param pids pointer to a vector of pids
+     * @return true/false upon success/failure
+     */
+    virtual bool setVelPidsRaw(const yarp::dev::Pid *pids);
+
+    /** Get current velocity pid value for a specific joint.
+     * @param j joint number
+     * @param pid pointer to storage for the return value.
+     * @return success/failure
+     */
+    virtual bool getVelPidRaw(int j, yarp::dev::Pid *pid);
+
+    /** Get current velocity pid value for a specific subset of joints.
+     * @param pids vector that will store the values of the pids.
+     * @return success/failure
+     */
+    virtual bool getVelPidsRaw(yarp::dev::Pid *pids);
+
 protected:
 
     //  --------- Implementation in TechnosoftIpos.cpp ---------
@@ -416,14 +496,15 @@ protected:
     yarp::os::Semaphore ptBuffer;
 
     //-- More internal parameter stuff
-    double max, min, maxVel, minVel, refAcceleration, refSpeed, refTorque, tr, k;
+    double max, min, maxVel, minVel, refAcceleration, refSpeed, refTorque, refVelocity, tr, k;
 
     //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
     yarp::dev::InteractionModeEnum interactionMode;
 
     //-- Semaphores
     yarp::os::Semaphore refTorqueSemaphore;
-    yarp::os::Semaphore interactionModeSemaphore;
+    yarp::os::Semaphore refVelocitySemaphore;
+    yarp::os::Semaphore interactionModeSemaphore;    
 
 
 
