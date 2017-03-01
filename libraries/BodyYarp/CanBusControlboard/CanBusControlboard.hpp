@@ -987,13 +987,16 @@ protected:
     std::vector< yarp::dev::ITorqueControlRaw* > iTorqueControlRaw;
     std::vector< yarp::dev::IVelocityControlRaw* > iVelocityControlRaw;
     std::vector< ICanBusSharer* > iCanBusSharer;
+
+    std::vector< yarp::dev::IInteractionModeRaw* > iInteractionModeRaw;
+
     std::map< int, int > idxFromCanId;
     std::vector< double > targetPosition;
     std::vector< double > refVelocity;
-    std::vector< yarp::dev::InteractionModeEnum > interactionMode; // -- It's right??
+    //std::vector< yarp::dev::InteractionModeEnum > interactionMode; // -- It's right?? R: now, we don't need a vector!!
     yarp::os::Semaphore targetPositionSemaphore;
     yarp::os::Semaphore refVelocitySemaphore;
-    yarp::os::Semaphore interactionModeSemaphore;
+    //yarp::os::Semaphore interactionModeSemaphore;
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(can_msg* message);
