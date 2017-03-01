@@ -985,18 +985,19 @@ protected:
     std::vector< yarp::dev::IPositionControlRaw* > iPositionControlRaw;
     std::vector< yarp::dev::IPositionDirectRaw* > iPositionDirectRaw;
     std::vector< yarp::dev::ITorqueControlRaw* > iTorqueControlRaw;
-    std::vector< yarp::dev::IVelocityControlRaw* > iVelocityControlRaw;
+    //std::vector< yarp::dev::IVelocityControlRaw* > iVelocityControlRaw; // -- old
     std::vector< ICanBusSharer* > iCanBusSharer;
 
     std::vector< yarp::dev::IInteractionModeRaw* > iInteractionModeRaw;
+    std::vector< yarp::dev::IVelocityControl2Raw* > iVelocityControl2Raw; // -- new
 
     std::map< int, int > idxFromCanId;
     std::vector< double > targetPosition;
-    std::vector< double > refVelocity;
+    //std::vector< double > refVelocity;            // -- now, we don't need a vector!! Implemented in TechnosoftIpos->IVelocityControl2RawImpl.cpp
     //std::vector< yarp::dev::InteractionModeEnum > interactionMode; // -- It's right?? R: now, we don't need a vector!!
     yarp::os::Semaphore targetPositionSemaphore;
-    yarp::os::Semaphore refVelocitySemaphore;
-    //yarp::os::Semaphore interactionModeSemaphore;
+    //yarp::os::Semaphore refVelocitySemaphore;     // -- now, we don't need a vector!! Implemented in TechnosoftIpos->IVelocityControl2RawImpl.cpp
+    //yarp::os::Semaphore interactionModeSemaphore; // -- now, we don't need a vector!! Implemented in TechnosoftIpos->IInteractionModeRawImpl.cpp
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(can_msg* message);
