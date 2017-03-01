@@ -35,7 +35,7 @@ bool teo::TechnosoftIpos::getInteractionModesRaw(yarp::dev::InteractionModeEnum*
 
 bool teo::TechnosoftIpos::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
 {
-    CD_INFO("(%d)\n",axis);
+    CD_INFO("(%d), (%s)\n",axis, mode); //-- I don't know if this is correct (if I want to print mode?)
 
     interactionModeSemaphore.wait();
     interactionMode = mode;
