@@ -1,5 +1,5 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
+/*
 #include "TechnosoftIpos.hpp"
 
 // ------------------ IPositionControlRaw Related ----------------------------------------
@@ -245,3 +245,4 @@ bool teo::TechnosoftIpos::stopRaw(int j)
 }
 
 // -----------------------------------------------------------------------------
+*/
