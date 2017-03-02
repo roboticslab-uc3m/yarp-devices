@@ -93,6 +93,7 @@ bool teo::TechnosoftIpos::getRefVelocitiesRaw(const int n_joint, const int *join
 
 bool teo::TechnosoftIpos::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
 {
+    CD_WARNING("Missing implementation\n");
     return true;
 }
 
@@ -100,6 +101,7 @@ bool teo::TechnosoftIpos::setRefAccelerationsRaw(const int n_joint, const int *j
 
 bool teo::TechnosoftIpos::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
 {
+    CD_WARNING("Missing implementation\n");
     return true;
 }
 
@@ -107,6 +109,7 @@ bool teo::TechnosoftIpos::getRefAccelerationsRaw(const int n_joint, const int *j
 
 bool teo::TechnosoftIpos::stopRaw(const int n_joint, const int *joints)
 {
+    CD_WARNING("Missing implementation\n");
     return true;
 }
 
@@ -114,6 +117,7 @@ bool teo::TechnosoftIpos::stopRaw(const int n_joint, const int *joints)
 
 bool teo::TechnosoftIpos::setVelPidRaw(int j, const yarp::dev::Pid &pid)
 {
+    CD_WARNING("Missing implementation\n");
     return true;
 }
 
@@ -121,6 +125,7 @@ bool teo::TechnosoftIpos::setVelPidRaw(int j, const yarp::dev::Pid &pid)
 
 bool teo::TechnosoftIpos::setVelPidsRaw(const yarp::dev::Pid *pids)
 {
+    CD_WARNING("Missing implementation\n");
     return true;
 }
 
@@ -128,6 +133,7 @@ bool teo::TechnosoftIpos::setVelPidsRaw(const yarp::dev::Pid *pids)
 
 bool teo::TechnosoftIpos::getVelPidRaw(int j, yarp::dev::Pid *pid)
 {
+    CD_WARNING("Missing implementation\n");
     return true;
 }
 
@@ -135,6 +141,7 @@ bool teo::TechnosoftIpos::getVelPidRaw(int j, yarp::dev::Pid *pid)
 
 bool teo::TechnosoftIpos::getVelPidsRaw(yarp::dev::Pid *pids)
 {
+    CD_WARNING("Missing implementation\n");
     return true;
 }
 
