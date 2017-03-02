@@ -91,6 +91,27 @@ bool teo::TechnosoftIpos::getRefVelocitiesRaw(const int n_joint, const int *join
 
 // -----------------------------------------------------------------------------
 
+bool teo::TechnosoftIpos::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::stopRaw(const int n_joint, const int *joints)
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
 bool teo::TechnosoftIpos::setVelPidRaw(int j, const yarp::dev::Pid &pid)
 {
     return true;
