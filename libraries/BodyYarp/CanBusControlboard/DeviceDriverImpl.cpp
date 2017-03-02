@@ -101,9 +101,10 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
         device->view( iVelocityControl2Raw[i] );     // -- new
         device->view( iCanBusSharer[i] );   // -- si el device es un Cui, este podrá "ver" las funciones programadas en iCanBusSharer (funciones que hemos añadido al encoder).
         // -- estas funciones se encuentran implementadas en el cpp correspondiente "ICanBusSharerImpl.cpp", por lo tanto le da la funcionalidad que deseamos
+        device->view( iInteractionModeRaw[i] );
 
         //-- Pass CAN bus pointer to CAN node
-        iCanBusSharer[i]->setCanBusPtr( iCanBus );
+        iCanBusSharer[i]->setCanBusPtr( iCanBus );               
 
         //-- DRIVERS
         if(types.get(i).asString() == "TechnosoftIpos")
