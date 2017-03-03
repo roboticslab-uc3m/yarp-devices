@@ -244,4 +244,44 @@ bool teo::TechnosoftIpos::stopRaw(int j)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------- IPositionControl2Raw Related ----------------------------
+
+bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
+{
+
+}
+
+bool getRefVelocityRaw(const int joint, double *vel)
+{
+
+}
+
+bool getRefVelocitiesRaw(double *vels)
+{
+
+}
+
+bool getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels)
+{
+
+}
+
+bool setVelPidRaw(int j, const yarp::dev::Pid &pid)
+{
+
+}
+
+bool setVelPidsRaw(const yarp::dev::Pid *pids)
+{
+
+}
+
+bool getVelPidRaw(int j, yarp::dev::Pid *pid)
+{
+
+}
+
+bool getVelPidsRaw(yarp::dev::Pid *pids)
+{
+
+}
