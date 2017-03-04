@@ -13,11 +13,11 @@ IF (ENABLE_BodyYarp)
   list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})  
   include(YarpPlugin)
 
-  # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
+  # Exporting dependencies for YARP_DEVICESConfig.cmake quite manually for now... 
   # Note: Need ICanBusSharer.h, which will also need CanBusHico/*.hpp for now
-  set(TEO_BODY_INCLUDE_DIRS ${TEO_BODY_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/CanBusHico CACHE INTERNAL "appended libraries") 
+  set(YARP_DEVICES_INCLUDE_DIRS ${YARP_DEVICES_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/CanBusHico CACHE INTERNAL "appended libraries") 
   # Note: BodyYarp bodybot works, but bodybot BodyYarp fails.
-  set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} BodyYarp CACHE INTERNAL "appended libraries") 
+  set(YARP_DEVICES_LIBRARIES ${YARP_DEVICES_LIBRARIES} BodyYarp CACHE INTERNAL "appended libraries") 
 
   yarp_begin_plugin_library(BodyYarp)
     add_subdirectory(CuiAbsolute)
@@ -38,8 +38,8 @@ IF (ENABLE_BodyYarp)
 
   ENDIF (ENABLE_launchBodyYarp)
 
-  # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
-  set(TEO_BODY_INCLUDE_DIRS ${TEO_BODY_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "appended libraries")
+  # Exporting dependencies for YARP_DEVICESConfig.cmake quite manually for now... 
+  set(YARP_DEVICES_INCLUDE_DIRS ${YARP_DEVICES_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "appended libraries")
 
 ENDIF (ENABLE_BodyYarp)
 
