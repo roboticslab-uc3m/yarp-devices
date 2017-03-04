@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /**
- * @ingroup teo_body_examples_cpp
+ * @ingroup yarp_devices_examples_cpp
  * \defgroup exampleTechnosoftIpos exampleTechnosoftIpos
  *
  * @brief This example.

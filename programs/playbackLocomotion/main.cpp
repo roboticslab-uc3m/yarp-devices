@@ -2,7 +2,7 @@
 
 /**
  *
- * @ingroup teo_body_programs
+ * @ingroup yarp_devices_programs
  * \defgroup playbackLocomotion playbackLocomotion
  *
  * @brief Creates an instance of teo::PlaybackLocomotion.
@@ -34,7 +34,7 @@
  * @section playbackLocomotion_modify Modify
  *
  * This file can be edited at
- * teo-body/src/modules/playbackLocomotion/main.cpp
+ * yarp-devices/src/modules/playbackLocomotion/main.cpp
  *
  */
 
