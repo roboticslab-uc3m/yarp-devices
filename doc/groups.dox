@@ -5,17 +5,17 @@
 namespace teo {}
 
 /**
- * \defgroup teo_body_libraries teo-body Libraries
+ * \defgroup yarp_devices_libraries yarp-devices Libraries
  *
- * @brief teo-body libraries.
+ * @brief yarp-devices libraries.
  *
  */
 
 /**
- * @ingroup teo_body_libraries
+ * @ingroup yarp_devices_libraries
  * \defgroup BodyYarp BodyYarp
  *
- * @brief Contains teo-body libraries that implement YARP device interfaces
+ * @brief Contains libraries that implement YARP device interfaces
  * and therefore can be invoked as YARP plugins.
  *
  * @section BodyYarp_install Installation
@@ -24,42 +24,42 @@ namespace teo {}
  */
 
 /**
- * \defgroup teo_body_firmware teo-body Firmware
+ * \defgroup yarp_devices_firmware yarp-devices Firmware
  *
- * @brief teo-body firmware.
+ * @brief yarp-devices firmware.
  *
  */
 
 /**
- * @ingroup teo_body_firmware
- * \defgroup teo_body_cuiAbsolute CuiAbsolute
+ * @ingroup yarp_devices_firmware
+ * \defgroup yarp_devices_cuiAbsolute CuiAbsolute
  *
  * @brief Contains the firmware that you need to program the Cui Absolute encoders.
  */
 
 
 /**
- * \defgroup teo_body_programs teo-body Programs
+ * \defgroup yarp_devices_programs yarp-devices Programs
  *
- * @brief teo-body programs.
+ * @brief yarp-devices programs.
  */
 
 /**
- * \defgroup teo_body_tests teo-body Tests
+ * \defgroup yarp_devices_tests yarp-devices Tests
  *
- * @brief teo-body tests.
+ * @brief yarp-devices tests.
  */
 
 /**
- * \defgroup teo_body_applications teo-body Applications (Collections of Programs)
+ * \defgroup yarp_devices_applications yarp-devices Applications (Collections of Programs)
  *
- * @brief teo-body applications (collections of programs).
+ * @brief yarp-devices applications (collections of programs).
  */
 
 /**
- * \defgroup teo_body_examples teo-body Examples
+ * \defgroup yarp_devices_examples yarp-devices Examples
  *
- * @brief teo-body examples.
+ * @brief yarp-devices examples.
  */
 
 

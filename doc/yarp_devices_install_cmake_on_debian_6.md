@@ -1,6 +1,6 @@
 ## Install CMake (Debian 6.0)
 
-We use CMake for project generating. To install the version of CMake required for teo-body on Debian 6.0, you must activate the distribution's backports. Add:
+We use CMake for project generating. To install the version of CMake required for yarp-devices on Debian 6.0, you must activate the distribution's backports. Add:
 
 ```bash
 deb http://backports.debian.org/debian-backports/ squeeze-backports main

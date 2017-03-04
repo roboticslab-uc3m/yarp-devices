@@ -1,6 +1,6 @@
 ## Now what can I do?
 
-Now that you have installed the basic teo-body repository, you're probably wondering what to do.
+Now that you have installed the basic yarp-devices repository, you're probably wondering what to do.
 
 ### Initializing the communication servers
 

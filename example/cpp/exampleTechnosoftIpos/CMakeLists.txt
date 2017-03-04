@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 2.6)
 
 # Start a project.
-project(teo-body-example)
+project(yarp-devices-example)
 
 # Find YARP.  Point the YARP_DIR environment variable at your build.
 find_package(YARP REQUIRED)

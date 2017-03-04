@@ -2,7 +2,7 @@
 
 /**
  *
- * @ingroup teo_body_programs
+ * @ingroup yarp_devices_programs
  * \defgroup recordLocomotion recordLocomotion
  *
  * @brief Creates an instance of teo::RecordLocomotion.
@@ -34,7 +34,7 @@
  * @section recordLocomotion_modify Modify
  *
  * This file can be edited at
- * teo-body/src/modules/recordLocomotion/main.cpp
+ * yarp-devices/src/modules/recordLocomotion/main.cpp
  *
  */
 

@@ -2,7 +2,7 @@
 
 /**
  *
- * @ingroup teo_body_programs
+ * @ingroup yarp_devices_programs
  * \defgroup recordManipulation recordManipulation
  *
  * @brief Creates an instance of teo::RecordManipulation.
@@ -34,7 +34,7 @@
  * @section recordManipulation_modify Modify
  *
  * This file can be edited at
- * teo-body/src/modules/recordManipulation/main.cpp
+ * yarp-devices/src/modules/recordManipulation/main.cpp
  *
  */
 

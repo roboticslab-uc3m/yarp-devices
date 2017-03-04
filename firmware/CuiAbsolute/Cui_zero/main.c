@@ -2,12 +2,12 @@
 
 /**
  *
- * @ingroup teo_body_cuiAbsolute
- * \defgroup teo_body_cuiZero CUI-Zero
+ * @ingroup yarp_devices_cuiAbsolute
+ * \defgroup yarp_devices_cuiZero CUI-Zero
  *
  * @brief Firmware that allows to program the zero position of Cui Absolute encoder.
  *
- * @section teo_body_firmware_legal Legal
+ * @section yarp_devices_firmware_legal Legal
  *
  * Copyright: 2016 (C) Universidad Carlos III de Madrid
  *

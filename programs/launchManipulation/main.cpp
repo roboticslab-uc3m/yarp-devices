@@ -2,7 +2,7 @@
 
 /**
  *
- * @ingroup teo_body_programs
+ * @ingroup yarp_devices_programs
  * \defgroup launchManipulation launchManipulation
  *
  * @brief Creates an instance of teo::TwoCanBusThreeWrappers.
