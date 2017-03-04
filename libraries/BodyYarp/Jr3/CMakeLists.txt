@@ -11,16 +11,16 @@ IF (NOT SKIP_Jr3)
   find_package(YARP REQUIRED)
 
   # Include any directories needed for YARP
-  include_directories(${YARP_INCLUDE_DIRS} ${TEO_BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
+  include_directories(${YARP_INCLUDE_DIRS} ${YARP_DEVICES_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
   yarp_add_plugin(Jr3 DeviceDriverImpl.cpp IAnalogSensorImpl.cpp )
 
   TARGET_LINK_LIBRARIES(Jr3 ${YARP_LIBRARIES})
   install(TARGETS Jr3 DESTINATION lib)
 
-  # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
-  set(TEO_BODY_INCLUDE_DIRS ${TEO_BODY_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "appended libraries")
-  #set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} LacqueyFetch CACHE INTERNAL "appended libraries")
+  # Exporting dependencies for YARP_DEVICESConfig.cmake quite manually for now... 
+  set(YARP_DEVICES_INCLUDE_DIRS ${YARP_DEVICES_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "appended libraries")
+  #set(YARP_DEVICES_LIBRARIES ${YARP_DEVICES_LIBRARIES} LacqueyFetch CACHE INTERNAL "appended libraries")
 
   #install(TARGETS Jr3 DESTINATION lib)
   yarp_install(TARGETS Jr3

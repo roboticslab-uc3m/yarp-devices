@@ -15,7 +15,7 @@ project(${KEYWORD})
 find_package(YARP REQUIRED)
 list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
-find_package(TEO_BODY REQUIRED)
+find_package(YARP_DEVICES REQUIRED)
 
 # Search for source code.
 file(GLOB folder_source *.cpp *.cc *.c)
@@ -30,7 +30,7 @@ foreach(header_file ${folder_header})
 endforeach(header_file ${folder_header})
 
 # Include any directories needed for YARP
-include_directories(${YARP_INCLUDE_DIRS} ${TEO_BODY_INCLUDE_DIRS})
+include_directories(${YARP_INCLUDE_DIRS} ${YARP_DEVICES_INCLUDE_DIRS})
 
 # Set up our main executable.
 if (folder_source)

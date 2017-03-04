@@ -33,5 +33,5 @@ Installation instructions for installing from source can be found [here]( /doc/y
 
 ## Links of interest:
 
-* [teo-main](https://github.com/roboticslab-uc3m/teo-main)
-* [teo-head](https://github.com/roboticslab-uc3m/teo-head)
+* [kinematics-dynamics](https://github.com/roboticslab-uc3m/kinematics-dynamics)
+* [vision](https://github.com/roboticslab-uc3m/vision)
