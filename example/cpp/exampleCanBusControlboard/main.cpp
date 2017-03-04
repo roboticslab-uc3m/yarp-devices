@@ -29,7 +29,7 @@
  *
  * And run it <b>if it is not running</b> in our current namespace:
 \verbatim
-[teo-main, terminal 1] yarp server
+[kinematics-dynamics, terminal 1] yarp server
 \endverbatim
  *
  * And then launch the actual and specify different options, as in "exampleCanBusControlboard \--option1 value1a value1b \--option2 value2". Specifically, the following options are checked by the CanBusControlboard device (\ref CanBusControlboard class):
@@ -63,11 +63,11 @@ types
  * The implementation maps certain YARP rpc's to CanBusControlboard function calls. Therefore, we can interface
  * with the class from the command-line by typing:
 \verbatim
-[teo-main, terminal 2] yarp rpc /exampleCanBusControlboard/rpc:i
+[kinematics-dynamics, terminal 2] yarp rpc /exampleCanBusControlboard/rpc:i
 \endverbatim
  * We can send an absolute position joint space movement (say, 5 degrees) to the motoripos such as:
 \verbatim
-[teo-main, terminal 2] set pos 0 5
+[kinematics-dynamics, terminal 2] set pos 0 5
 \endverbatim
  * And should get some kind of feedback, such as:
 \verbatim
@@ -75,13 +75,13 @@ Response: [ok]
 \endverbatim
  * We can send an absolute position movement (say, a position corresponding to a 2000 us PWM) to the motorlacquey such as:
 \verbatim
-[teo-main, terminal 2] set pos 1 2000
+[kinematics-dynamics, terminal 2] set pos 1 2000
 \endverbatim
  * And should get some kind of feedback, such as:
 \verbatim
 Response: [ok]
 \endverbatim
- * When finished, Control-C closes programs cleanly. Start by Control-C on teo-main's rpc (it's the client part), and then Control-C on yarp-devices' exampleCanBusControlboard (it shuts down the motors correctly).
+ * When finished, Control-C closes programs cleanly. Start by Control-C on kinematics-dynamics' rpc (it's the client part), and then Control-C on yarp-devices' exampleCanBusControlboard (it shuts down the motors correctly).
  *
  * @section exampleCanBusControlboard_modify Modify
  *
