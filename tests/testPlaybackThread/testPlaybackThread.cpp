@@ -41,7 +41,7 @@ public:
 
         yarp::os::Property playbackThreadConf;
         playbackThreadConf.put("device","PlaybackThread");
-        playbackThreadConf.put("file","/usr/local/share/teo-body/contexts/Playback/txt/testPlayback.txt");
+        playbackThreadConf.put("file","/usr/local/share/yarp-devices/contexts/Playback/txt/testPlayback.txt");
         playbackThreadConf.put("timeIdx",0);
         playbackThreadConf.fromString("(mask 0 1 0 1)",false);
         bool ok = true;

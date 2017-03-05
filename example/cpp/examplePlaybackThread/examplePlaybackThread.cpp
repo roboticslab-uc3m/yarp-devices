@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     //-- playbackThreadDevice and interface
     yarp::os::Property playbackThreadOptions;
     playbackThreadOptions.put("device","PlaybackThread");
-    playbackThreadOptions.put("file","/usr/local/share/teo-body/contexts/Playback/txt/yarpdatadumper-teo-right-arm.txt");
+    playbackThreadOptions.put("file","/usr/local/share/yarp-devices/contexts/Playback/txt/yarpdatadumper-teo-right-arm.txt");
     playbackThreadOptions.put("timeIdx",1);
     playbackThreadOptions.put("timeScale",0.000001);
     playbackThreadOptions.fromString("(mask 0 0 1 1 1 1 1 1 1)",false);

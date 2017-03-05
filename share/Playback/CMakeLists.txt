@@ -6,5 +6,5 @@ set(appname Playback)
 
 file(GLOB txt ${CMAKE_CURRENT_SOURCE_DIR}/txt/*.txt)
 
-yarp_install(FILES ${txt} DESTINATION ${TEO-BODY_CONTEXTS_INSTALL_DIR}/${appname}/txt)
+yarp_install(FILES ${txt} DESTINATION ${ROBOTICSLAB-YARP-DEVICES_CONTEXTS_INSTALL_DIR}/${appname}/txt)
 

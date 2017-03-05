@@ -11,15 +11,15 @@ IF (NOT SKIP_CanBusControlboard)
   find_package(YARP REQUIRED)
 
   # Include any directories needed for YARP
-  include_directories(${YARP_INCLUDE_DIRS} ${TEO_BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
+  include_directories(${YARP_INCLUDE_DIRS} ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
   yarp_add_plugin(CanBusControlboard DeviceDriverImpl.cpp IControlLimits2Impl.cpp IControlModeImpl.cpp IEncodersImpl.cpp IEncodersTimedImpl.cpp IPositionControl2.cpp IPositionDirectImpl.cpp ITorqueControlImpl.cpp IVelocityControl2.cpp CanBusControlboard.cpp ThreadImpl.cpp)
   TARGET_LINK_LIBRARIES(CanBusControlboard ${YARP_LIBRARIES})
   install(TARGETS CanBusControlboard DESTINATION lib)
 
-  # Exporting dependencies for TEO_BODYConfig.cmake quite manually for now... 
-  set(TEO_BODY_INCLUDE_DIRS ${TEO_BODY_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} CACHE INTERNAL "appended libraries") 
-#  set(TEO_BODY_LIBRARIES ${TEO_BODY_LIBRARIES} CanBusControlboard CACHE INTERNAL "appended libraries") 
+  # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now... 
+  set(ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} CACHE INTERNAL "appended libraries") 
+#  set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} CanBusControlboard CACHE INTERNAL "appended libraries") 
 
   #install(TARGETS CanBusControlboard DESTINATION lib)
   yarp_install(TARGETS CanBusControlboard

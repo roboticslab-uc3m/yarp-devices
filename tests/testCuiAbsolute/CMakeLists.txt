@@ -4,9 +4,9 @@ enable_testing()
 
 find_package(YARP REQUIRED)
 
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR} ${YARP_INCLUDE_DIRS} ${TEO_BODY_INCLUDE_DIRS})
-link_directories(${TEO_LINK_DIRS})
+include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR} ${YARP_INCLUDE_DIRS} ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS})
+link_directories(${ROBOTICSLAB_YARP_DEVICES_LINK_DIRS})
 
 add_executable(testCuiAbsolute testCuiAbsolute.cpp)
-target_link_libraries(testCuiAbsolute ${YARP_LIBRARIES} ${TEO_BODY_LIBRARIES} gtest gtest_main)
+target_link_libraries(testCuiAbsolute ${YARP_LIBRARIES} ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} gtest gtest_main)
 

@@ -2,12 +2,12 @@
 
 /**
  *
- * @ingroup teo_body_cuiAbsolute
- * \defgroup teo_body_picFirmware PIC-Firmware
+ * @ingroup yarp_devices_cuiAbsolute
+ * \defgroup yarp_devices_picFirmware PIC-Firmware
  *
  * @brief Firmware that allows communication with the PIC and the publication of position messages. 
  *
- * @section teo_body_firmware_legal Legal
+ * @section yarp_devices_firmware_legal Legal
  *
  * Copyright: 2016 (C) Universidad Carlos III de Madrid
  *

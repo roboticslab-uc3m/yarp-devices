@@ -25,7 +25,7 @@ public:
         // -- code here will execute just before the test ensues
 
         bool ok = true;
-        ok &= playback.fromFile("/usr/local/share/teo-body/contexts/Playback/txt/testPlayback.txt");
+        ok &= playback.fromFile("/usr/local/share/yarp-devices/contexts/Playback/txt/testPlayback.txt");
 
         if(ok)
         {

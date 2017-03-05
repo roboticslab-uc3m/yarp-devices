@@ -23,7 +23,7 @@ namespace teo
 
 /**
  *
- * @ingroup teo_body_libraries
+ * @ingroup yarp_devices_libraries
  * \defgroup TwoCanBusThreeWrappers
  * @brief Contains teo::TwoCanBusThreeWrappers.
  */
