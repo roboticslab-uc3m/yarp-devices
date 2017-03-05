@@ -11,7 +11,7 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-project(YARP_DEVICES)
+project(ROBOTICSLAB_YARP_DEVICES)
 
 set(BUILD_SHARED_LIBS TRUE CACHE INTERNAL "hide this!")
 
@@ -106,7 +106,7 @@ endif(MSVC)
 
 ######################
 
-### this makes everything go in $YARP_DEVICES_DIR/lib and $YARP_DEVICES_DIR/bin
+### this makes everything go in $ROBOTICSLAB_YARP_DEVICES_DIR/lib and $ROBOTICSLAB_YARP_DEVICES_DIR/bin
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 message(STATUS "Libraries go to ${LIBRARY_OUTPUT_PATH}")
@@ -122,16 +122,16 @@ mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 ##########################################
 
 # Pick up our cmake modules - they are all in the cmake subdirectory
-set(YARP_DEVICES_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+set(ROBOTICSLAB_YARP_DEVICES_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 # let cmake use them
-list(APPEND CMAKE_MODULE_PATH ${YARP_DEVICES_MODULE_PATH})
+list(APPEND CMAKE_MODULE_PATH ${ROBOTICSLAB_YARP_DEVICES_MODULE_PATH})
 
-#set_property(GLOBAL PROPERTY YARP_DEVICES_INCLUDE_DIRS)
-#set_property(GLOBAL PROPERTY YARP_DEVICES_LINK_DIRS)
-#set_property(GLOBAL PROPERTY YARP_DEVICES_LIBRARIES)
-set(YARP_DEVICES_INCLUDE_DIRS CACHE INTERNAL "appended header dirs" FORCE)
-set(YARP_DEVICES_LINK_DIRS CACHE INTERNAL "appended link dirs" FORCE)
-set(YARP_DEVICES_LIBRARIES CACHE INTERNAL "appended libraries" FORCE)
+#set_property(GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
+#set_property(GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_LINK_DIRS)
+#set_property(GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_LIBRARIES)
+set(ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS CACHE INTERNAL "appended header dirs" FORCE)
+set(ROBOTICSLAB_YARP_DEVICES_LINK_DIRS CACHE INTERNAL "appended link dirs" FORCE)
+set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES CACHE INTERNAL "appended libraries" FORCE)
 
 if(ENABLE_coverage)
   if(CMAKE_COMPILER_IS_GNUCXX)
@@ -147,10 +147,10 @@ if (ENABLE_tests)
     add_subdirectory(tests)
 endif (ENABLE_tests)
 
-# export our variables to a YARP_DEVICESConfig.cmake creation
-set(YARP_DEVICES_LINK_DIRS ${YARP_DEVICES_LINK_DIRS} ${LIBRARY_OUTPUT_PATH})
-configure_file(${CMAKE_SOURCE_DIR}/cmake/template/YARP_DEVICESConfig.cmake.in
-               ${CMAKE_BINARY_DIR}/YARP_DEVICESConfig.cmake @ONLY)
+# export our variables to a ROBOTICSLAB_YARP_DEVICESConfig.cmake creation
+set(ROBOTICSLAB_YARP_DEVICES_LINK_DIRS ${ROBOTICSLAB_YARP_DEVICES_LINK_DIRS} ${LIBRARY_OUTPUT_PATH})
+configure_file(${CMAKE_SOURCE_DIR}/cmake/template/ROBOTICSLAB_YARP_DEVICESConfig.cmake.in
+               ${CMAKE_BINARY_DIR}/ROBOTICSLAB_YARP_DEVICESConfig.cmake @ONLY)
 
 # create a symbolic link to the shared directory (as contains models and may be heavy)
 # If you want a deep copy, you can use the copy_directory command instead of create_symlink.
@@ -161,13 +161,13 @@ configure_file(${CMAKE_SOURCE_DIR}/cmake/template/YARP_DEVICESConfig.cmake.in
 ##  "${CMAKE_COMMAND}" -E "remove_directory" "${CMAKE_SOURCE_DIR}/bin" ";"
 ##  "${CMAKE_COMMAND}" -E "remove_directory" "${CMAKE_SOURCE_DIR}/lib")
 
-#MESSAGE("\nDon't forget to set: " ${CMAKE_BINARY_DIR} " as your \${YARP_DEVICES_DIR} !!!\n")
+#MESSAGE("\nDon't forget to set: " ${CMAKE_BINARY_DIR} " as your \${ROBOTICSLAB_YARP_DEVICES_DIR} !!!\n")
 
 # uninstall target
 configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/template/YARP_DEVICESConfigUninstall.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/YARP_DEVICESConfigUninstall.cmake" IMMEDIATE @ONLY)
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/template/ROBOTICSLAB_YARP_DEVICESConfigUninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/ROBOTICSLAB_YARP_DEVICESConfigUninstall.cmake" IMMEDIATE @ONLY)
 
 add_custom_target(uninstall
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/YARP_DEVICESConfigUninstall.cmake)
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/ROBOTICSLAB_YARP_DEVICESConfigUninstall.cmake)
 

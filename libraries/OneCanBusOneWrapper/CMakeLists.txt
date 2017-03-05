@@ -21,9 +21,9 @@ foreach(header_file ${folder_header})
   include_directories(${p})
 endforeach(header_file ${folder_header})
 
-include_directories(${YARP_INCLUDE_DIRS} ${YARP_DEVICES_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
+include_directories(${YARP_INCLUDE_DIRS} ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
 
-link_directories(${YARP_DEVICES_LINK_DIRS})
+link_directories(${ROBOTICSLAB_YARP_DEVICES_LINK_DIRS})
 
 # Set up our main executable.
 if (folder_source)
@@ -34,9 +34,9 @@ else (folder_source)
   message(FATAL_ERROR "No source code files found. Please add something")
 endif (folder_source)
 
-  # Exporting dependencies for YARP_DEVICESConfig.cmake quite manually for now...
-  set(YARP_DEVICES_INCLUDE_DIRS ${YARP_DEVICES_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "appended libraries")
-  set(YARP_DEVICES_LIBRARIES ${YARP_DEVICES_LIBRARIES} OneCanBusOneWrapper CACHE INTERNAL "appended libraries")
+  # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now...
+  set(ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "appended libraries")
+  set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} OneCanBusOneWrapper CACHE INTERNAL "appended libraries")
 
 ENDIF (ENABLE_OneCanBusOneWrapper)
 
