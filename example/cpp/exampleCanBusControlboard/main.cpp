@@ -2,7 +2,7 @@
 
 /**
  *
- * @ingroup teo_body_programs
+ * @ingroup yarp_devices_programs
  * \defgroup exampleCanBusControlboard exampleCanBusControlboard
  *
  * @brief Creates an instance of teo::ExampleCanBusControlboard.
@@ -24,12 +24,12 @@
  *
  * First we must make sure a YARP name server is running,
 \verbatim
-[teo-body, terminal 1] yarp detect --write
+[yarp-devices, terminal 1] yarp detect --write
 \endverbatim
  *
  * And run it <b>if it is not running</b> in our current namespace:
 \verbatim
-[teo-main, terminal 1] yarp server
+[kinematics-dynamics, terminal 1] yarp server
 \endverbatim
  *
  * And then launch the actual and specify different options, as in "exampleCanBusControlboard \--option1 value1a value1b \--option2 value2". Specifically, the following options are checked by the CanBusControlboard device (\ref CanBusControlboard class):
@@ -54,7 +54,7 @@ types
 \endverbatim
  * Say you have a motoripos device with id 15 and reduction 120, and a motorlacquey device with id 64, both on /dev/can0. The command that enables them and exposes YARP controlboard device ports is:
 \verbatim
-[teo-body, terminal 1] exampleCanBusControlboard --canDevice /dev/can0 --ids 15 64 --types motoripos motorlacquey --trs 120
+[yarp-devices, terminal 1] exampleCanBusControlboard --canDevice /dev/can0 --ids 15 64 --types motoripos motorlacquey --trs 120
 \endverbatim
  *
  * @section exampleCanBusControlboard_interfacing Interfacing with the exampleCanBusControlboard module
@@ -63,11 +63,11 @@ types
  * The implementation maps certain YARP rpc's to CanBusControlboard function calls. Therefore, we can interface
  * with the class from the command-line by typing:
 \verbatim
-[teo-main, terminal 2] yarp rpc /exampleCanBusControlboard/rpc:i
+[kinematics-dynamics, terminal 2] yarp rpc /exampleCanBusControlboard/rpc:i
 \endverbatim
  * We can send an absolute position joint space movement (say, 5 degrees) to the motoripos such as:
 \verbatim
-[teo-main, terminal 2] set pos 0 5
+[kinematics-dynamics, terminal 2] set pos 0 5
 \endverbatim
  * And should get some kind of feedback, such as:
 \verbatim
@@ -75,18 +75,18 @@ Response: [ok]
 \endverbatim
  * We can send an absolute position movement (say, a position corresponding to a 2000 us PWM) to the motorlacquey such as:
 \verbatim
-[teo-main, terminal 2] set pos 1 2000
+[kinematics-dynamics, terminal 2] set pos 1 2000
 \endverbatim
  * And should get some kind of feedback, such as:
 \verbatim
 Response: [ok]
 \endverbatim
- * When finished, Control-C closes programs cleanly. Start by Control-C on teo-main's rpc (it's the client part), and then Control-C on teo-body's exampleCanBusControlboard (it shuts down the motors correctly).
+ * When finished, Control-C closes programs cleanly. Start by Control-C on kinematics-dynamics' rpc (it's the client part), and then Control-C on yarp-devices' exampleCanBusControlboard (it shuts down the motors correctly).
  *
  * @section exampleCanBusControlboard_modify Modify
  *
  * This file can be edited at
- * teo-body/src/modules/exampleCanBusControlboard/main.cpp
+ * yarp-devices/src/modules/exampleCanBusControlboard/main.cpp
  *
  */
 

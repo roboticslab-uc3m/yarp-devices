@@ -3,19 +3,19 @@
 cmake_minimum_required(VERSION 2.6)
 
 # Start a project.
-project(teo-body-example)
+project(yarp-devices-example)
 
 # Find YARP.  Point the YARP_DIR environment variable at your build.
 find_package(YARP REQUIRED)
 
-# Find TEO_BODY.  Point the TEO_BODY_DIR environment variable at your build.
-find_package(TEO_BODY REQUIRED)
+# Find ROBOTICSLAB_YARP_DEVICES.  Point the ROBOTICSLAB_YARP_DEVICES_DIR environment variable at your build.
+find_package(ROBOTICSLAB_YARP_DEVICES REQUIRED)
 
 # Inclue any directories needed for YARP
-include_directories(${YARP_INCLUDE_DIRS} ${TEO_BODY_INCLUDE_DIRS})
-link_directories(${TEO_BODY_LINK_DIRS})
+include_directories(${YARP_INCLUDE_DIRS} ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS})
+link_directories(${ROBOTICSLAB_YARP_DEVICES_LINK_DIRS})
 
 # Set up our executables.
 add_executable(exampleTechnosoftIpos exampleTechnosoftIpos.cpp)
-target_link_libraries(exampleTechnosoftIpos ${YARP_LIBRARIES} ${TEO_BODY_LIBRARIES})
+target_link_libraries(exampleTechnosoftIpos ${YARP_LIBRARIES} ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES})
 

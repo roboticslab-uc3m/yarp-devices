@@ -2,7 +2,7 @@
 
 /**
  *
- * @ingroup teo_body_programs
+ * @ingroup yarp_devices_programs
  * \defgroup playbackManipulation playbackManipulation
  *
  * @brief Creates an instance of teo::PlaybackManipulation.
@@ -34,7 +34,7 @@
  * @section playbackManipulation_modify Modify
  *
  * This file can be edited at
- * teo-body/src/modules/playbackManipulation/main.cpp
+ * yarp-devices/src/modules/playbackManipulation/main.cpp
  *
  */
 

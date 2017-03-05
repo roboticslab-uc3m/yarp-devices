@@ -5,10 +5,10 @@
 # crontab -e
 # 30 2 * * * /your/command
 
-echo "Update teo-body..."
-cd $HOME/teo-body
+echo "Update yarp-devices..."
+cd $HOME/yarp-devices
 git pull
-echo "Doxy teo-body..."
+echo "Doxy yarp-devices..."
 cd doc
 rm -r html
 /usr/bin/doxygen

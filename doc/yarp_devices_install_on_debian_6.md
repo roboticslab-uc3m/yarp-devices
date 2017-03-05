@@ -17,8 +17,8 @@ Our software integrates the previous dependencies. Note that you will be prompte
 ```bash
 cd  # go home
 mkdir -p repos; cd repos  # make $HOME/repos if it doesn't exist; then, enter it
-git clone https://github.com/roboticslab-uc3m/teo-body.git  # Download teo-body software from the repository
-cd teo-body; mkdir build; cd build; cmake ..  # Configure the teo-body software
+git clone https://github.com/roboticslab-uc3m/yarp-devices.git  # Download yarp-devices software from the repository
+cd yarp-devices; mkdir build; cd build; cmake ..  # Configure the yarp-devices software
 make  # Compile
 sudo make install  # Install :-)
 ```
@@ -27,10 +27,10 @@ For additional TEO options use ccmake instead of cmake.
 
 Finally, install the hcanpci kernel module:
 
-  - [Install hcanpci kernel module (Debian 6.0)]( /doc/teo_body_install_hcanpci_on_debian_6.md )
+  - [Install hcanpci kernel module (Debian 6.0)]( /doc/yarp_devices_install_hcanpci_on_debian_6.md )
 
 ### Even more!
 
 Done! You are now probably interested in one of the following links:
-  - [teo-body - Now what can I do?]( /doc/teo_body_post_install.md )
-  - teo_body_environment_variables
+  - [yarp-devices - Now what can I do?]( /doc/yarp_devices_post_install.md )
+  - yarp_devices_environment_variables
