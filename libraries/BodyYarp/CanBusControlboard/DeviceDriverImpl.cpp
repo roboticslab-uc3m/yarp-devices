@@ -49,7 +49,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
     iControlLimits2Raw.resize( nodes.size() );
     iControlModeRaw.resize( nodes.size() );
     iEncodersTimedRaw.resize( nodes.size() );
-    iPositionControlRaw.resize( nodes.size() );
+    iPositionControl2Raw.resize( nodes.size() );
     iPositionDirectRaw.resize( nodes.size() );
     iTorqueControlRaw.resize( nodes.size() );
     // iVelocityControlRaw.resize( nodes.size() ); // -- old
@@ -58,7 +58,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
     iInteractionModeRaw.resize( nodes.size() );
     iVelocityControl2Raw.resize( nodes.size() ); // -- new
 
-    targetPosition.resize( nodes.size() );
+    // targetPosition.resize( nodes.size() );    // -- new, we don't need this anymore!!
     // refVelocity.resize(nodes.size());        // -- new, we don't need this anymore!!
     // interactionMode.resize(nodes.size());    // it's right?
 
@@ -94,7 +94,8 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
         device->view( iControlLimits2Raw[i] );
         device->view( iControlModeRaw[i] );
         device->view( iEncodersTimedRaw[i] );
-        device->view( iPositionControlRaw[i] );
+        // device->view( iPositionControlRaw[i] );  // -- old
+        device->view( iPositionControl2Raw[i] );    // -- new
         device->view( iPositionDirectRaw[i] );
         device->view( iTorqueControlRaw[i] );
         // device->view( iVelocityControlRaw[i] );  // -- old
@@ -111,10 +112,10 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
         {
             //-- Set initial parameters on physical motor drivers.
 
-            if ( ! iPositionControlRaw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asDouble() ) )
+            if ( ! iPositionControl2Raw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asDouble() ) )
                 return false;
 
-            if ( ! iPositionControlRaw[i]->setRefSpeedRaw( 0, refSpeeds.get(i).asDouble() ) )
+            if ( ! iPositionControl2Raw[i]->setRefSpeedRaw( 0, refSpeeds.get(i).asDouble() ) )
                 return false;
 
             if ( ! iControlLimits2Raw[i]->setLimitsRaw( 0, mins.get(i).asDouble(), maxs.get(i).asDouble() ) )
@@ -262,7 +263,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
                 CD_DEBUG("Value of relative encoder ->%f\n", val);
                 if ( val>0.087873 || val< -0.087873 ){
                     CD_DEBUG("Moving (ID:%s) to zero...\n",nodes[i]->getValue("canId").toString().c_str());
-                    if ( ! iPositionControlRaw[i]->positionMoveRaw(0,0) )
+                    if ( ! iPositionControl2Raw[i]->positionMoveRaw(0,0) )
                         return false;
                 }
                 else
@@ -277,7 +278,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
                 bool motionDone = false;
                 yarp::os::Time::delay(0.2);  //-- [s]
                 CD_DEBUG("Testing (ID:%s) position... \n",nodes[i]->getValue("canId").toString().c_str());
-                if( ! iPositionControlRaw[i]->checkMotionDoneRaw(0,&motionDone) )
+                if( ! iPositionControl2Raw[i]->checkMotionDoneRaw(0,&motionDone) )
                     return false;
                 if(!motionDone)
                     CD_WARNING("Test motion fail (ID:%s) \n", nodes[i]->getValue("canId").toString().c_str());
