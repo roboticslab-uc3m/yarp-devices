@@ -982,7 +982,7 @@ protected:
     std::vector< yarp::dev::IControlLimits2Raw* > iControlLimits2Raw;
     std::vector< yarp::dev::IControlModeRaw* > iControlModeRaw;
     std::vector< yarp::dev::IEncodersTimedRaw* > iEncodersTimedRaw;
-    std::vector< yarp::dev::IPositionControlRaw* > iPositionControlRaw;
+    std::vector< yarp::dev::IPositionControl2Raw* > iPositionControl2Raw;
     std::vector< yarp::dev::IPositionDirectRaw* > iPositionDirectRaw;
     std::vector< yarp::dev::ITorqueControlRaw* > iTorqueControlRaw;
     //std::vector< yarp::dev::IVelocityControlRaw* > iVelocityControlRaw; // -- old
@@ -992,10 +992,10 @@ protected:
     std::vector< yarp::dev::IVelocityControl2Raw* > iVelocityControl2Raw; // -- new
 
     std::map< int, int > idxFromCanId;
-    std::vector< double > targetPosition;
+    //std::vector< double > targetPosition;         // -- now, we don't need a vector!! Implemented in TechnosoftIpos->IPositionControl2RawImpl.cpp
     //std::vector< double > refVelocity;            // -- now, we don't need a vector!! Implemented in TechnosoftIpos->IVelocityControl2RawImpl.cpp
     //std::vector< yarp::dev::InteractionModeEnum > interactionMode; // -- It's right?? R: now, we don't need a vector!!
-    yarp::os::Semaphore targetPositionSemaphore;
+    //yarp::os::Semaphore targetPositionSemaphore;    // -- now, we don't need a vector!! Implemented in TechnosoftIpos->IPositionControl2RawImpl.cpp
     //yarp::os::Semaphore refVelocitySemaphore;     // -- now, we don't need a vector!! Implemented in TechnosoftIpos->IVelocityControl2RawImpl.cpp
     //yarp::os::Semaphore interactionModeSemaphore; // -- now, we don't need a vector!! Implemented in TechnosoftIpos->IInteractionModeRawImpl.cpp
 
