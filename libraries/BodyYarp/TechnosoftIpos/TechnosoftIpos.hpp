@@ -594,7 +594,7 @@ protected:
     yarp::os::Semaphore ptBuffer;
 
     //-- More internal parameter stuff
-    double max, min, maxVel, minVel, refAcceleration, refSpeed, refTorque, refVelocity, tr, k;
+    double max, min, maxVel, minVel, refAcceleration, refSpeed, refTorque, refVelocity, targetPosition, tr, k;
 
     //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
     yarp::dev::InteractionModeEnum interactionMode;
@@ -602,7 +602,9 @@ protected:
     //-- Semaphores
     yarp::os::Semaphore refTorqueSemaphore;
     yarp::os::Semaphore refVelocitySemaphore;
-    yarp::os::Semaphore interactionModeSemaphore;    
+    yarp::os::Semaphore interactionModeSemaphore;
+    yarp::os::Semaphore targetPositionSemaphore;
+
 
 
 
