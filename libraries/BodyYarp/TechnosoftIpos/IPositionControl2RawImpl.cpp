@@ -47,6 +47,11 @@ bool teo::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encExposed = 
     CD_SUCCESS("Sent \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
     //*************************************************************
 
+    //-- it will save the value
+    targetPositionSemaphore.wait();
+    targetPosition = ref;
+    targetPositionSemaphore.post();
+
     return true;
 }
 
@@ -97,6 +102,11 @@ bool teo::TechnosoftIpos::relativeMoveRaw(int j, double delta)
     }
     CD_SUCCESS("Sent \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
     //*************************************************************
+
+    //-- it will save the value
+    targetPositionSemaphore.wait();
+    targetPosition = delta;
+    targetPositionSemaphore.post();
 
     return true;
 }
@@ -246,42 +256,64 @@ bool teo::TechnosoftIpos::stopRaw(int j)
 
 // -------------------------- IPositionControl2Raw Related ----------------------------
 
-bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
+bool teo::TechnosoftIpos::positionMoveRaw(const int n_joint, const int *joints, const double *refs)
 {
-
+    return true;
 }
 
-bool getRefVelocityRaw(const int joint, double *vel)
+bool teo::TechnosoftIpos::relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)
 {
-
+    return true;
 }
 
-bool getRefVelocitiesRaw(double *vels)
+bool teo::TechnosoftIpos::checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags)
 {
-
+    return true;
 }
 
-bool getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels)
+bool teo::TechnosoftIpos::setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)
 {
+    return true;
+}
+/*
+bool teo::TechnosoftIpos::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
+{
+    return true;
+}
+*/
+bool teo::TechnosoftIpos::getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)
+{
+    return true;
+}
+/*
+bool teo::TechnosoftIpos::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
+{
+    return true;
+}
+*/
+/*
+bool teo::TechnosoftIpos::stopRaw(const int n_joint, const int *joints)
+{
+    return true;
+}
+*/
+bool teo::TechnosoftIpos::getTargetPositionRaw(const int joint, double *ref)
+{
+    CD_INFO("\n");
 
+    targetPositionSemaphore.wait();
+    *ref = targetPosition;
+    targetPositionSemaphore.post();
+
+    return true;
 }
 
-bool setVelPidRaw(int j, const yarp::dev::Pid &pid)
+bool teo::TechnosoftIpos::getTargetPositionsRaw(double *refs)
 {
-
+    return true;
 }
 
-bool setVelPidsRaw(const yarp::dev::Pid *pids)
+bool teo::TechnosoftIpos::getTargetPositionsRaw(const int n_joint, const int *joints, double *refs)
 {
-
-}
-
-bool getVelPidRaw(int j, yarp::dev::Pid *pid)
-{
-
-}
-
-bool getVelPidsRaw(yarp::dev::Pid *pids)
-{
-
+    return true;
 }
