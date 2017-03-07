@@ -172,7 +172,9 @@ bool teo::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
     //*************************************************************
 
     //-- Store new value locally as we can not retrieve it from the driver for now.
+    refSpeedSemaphore.wait();
     refSpeed = sp;
+    refSpeedSemaphore.post();
 
     return true;
 }
@@ -207,7 +209,9 @@ bool teo::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
     //*************************************************************
 
     //-- Store new value locally as we can not retrieve it from the driver for now.
+    refAccelSemaphore.wait();
     refAcceleration = acc ;
+    refAccelSemaphore.post();
 
     return true;
 }
@@ -258,21 +262,29 @@ bool teo::TechnosoftIpos::stopRaw(int j)
 
 bool teo::TechnosoftIpos::positionMoveRaw(const int n_joint, const int *joints, const double *refs)
 {
+    CD_WARNING("Missing implementation\n");
+
     return true;
 }
 
 bool teo::TechnosoftIpos::relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)
 {
+    CD_WARNING("Missing implementation\n");
+
     return true;
 }
 
 bool teo::TechnosoftIpos::checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags)
 {
+    CD_WARNING("Missing implementation\n");
+
     return true;
 }
 
 bool teo::TechnosoftIpos::setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)
 {
+    CD_WARNING("Missing implementation\n");
+
     return true;
 }
 /*
@@ -283,37 +295,44 @@ bool teo::TechnosoftIpos::setRefAccelerationsRaw(const int n_joint, const int *j
 */
 bool teo::TechnosoftIpos::getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)
 {
+    CD_WARNING("Missing implementation\n");
+
     return true;
 }
+
 /*
 bool teo::TechnosoftIpos::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
 {
     return true;
 }
 */
+
 /*
 bool teo::TechnosoftIpos::stopRaw(const int n_joint, const int *joints)
 {
     return true;
 }
 */
+
 bool teo::TechnosoftIpos::getTargetPositionRaw(const int joint, double *ref)
 {
     CD_INFO("\n");
 
-    targetPositionSemaphore.wait();
     *ref = targetPosition;
-    targetPositionSemaphore.post();
 
     return true;
 }
 
 bool teo::TechnosoftIpos::getTargetPositionsRaw(double *refs)
 {
+    CD_WARNING("Missing implementation\n");
+
     return true;
 }
 
 bool teo::TechnosoftIpos::getTargetPositionsRaw(const int n_joint, const int *joints, double *refs)
 {
+    CD_WARNING("Missing implementation\n");
+
     return true;
 }
