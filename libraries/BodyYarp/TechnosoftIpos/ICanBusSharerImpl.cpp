@@ -298,7 +298,7 @@ bool teo::TechnosoftIpos::interpretMessage( can_msg * message)
             CD_INFO("Got SDO \"modes of operation display\" from driver. %s\n",msgToStr(message).c_str());
             int got;
             memcpy(&got, message->data+4,4);
-            if(-5==got)
+            if(251==got)  // -5
             {
                 CD_INFO("\t-iPOS specific: External Reference Torque Mode. canId: %d.\n",canId);
                 getModeReady.wait();
