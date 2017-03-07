@@ -16,21 +16,16 @@ bool teo::TechnosoftIpos::getInteractionModeRaw(int axis, yarp::dev::Interaction
 
 bool teo::TechnosoftIpos::getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
-    CD_INFO("\n");
+    CD_WARNING("Missing implementation\n");
 
-        bool ok = true;
-            if( joints )
-            {
-                ok &= getInteractionModeRaw(0,modes);
-            }
-        return ok;
+    return true;
 }
 
 bool teo::TechnosoftIpos::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
-    CD_INFO("\n");
+    CD_WARNING("Missing implementation\n");
 
-    return getInteractionModeRaw(0,modes);
+    return true;
 }
 
 bool teo::TechnosoftIpos::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
@@ -46,20 +41,17 @@ bool teo::TechnosoftIpos::setInteractionModeRaw(int axis, yarp::dev::Interaction
 
 bool teo::TechnosoftIpos::setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
-    CD_INFO("\n");
+    CD_WARNING("Missing implementation\n");
 
-   if( joints )
-   {
-       return this->setInteractionModeRaw(0,*modes);
-   }
+    return true;
 
 }
 
 bool teo::TechnosoftIpos::setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
-    CD_INFO("\n");
+    CD_WARNING("Missing implementation\n");
 
-    return setInteractionModeRaw(0,*modes);
+    return true;
 
 }
 
