@@ -35,7 +35,7 @@ namespace teo
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
 // Note: IControlLimits2Raw inherits from IControlLimitsRaw
 class TechnosoftIpos : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlModeRaw, public yarp::dev::IInteractionModeRaw, public yarp::dev::IEncodersTimedRaw,
-    public yarp::dev::IPositionControlRaw, public yarp::dev::IPositionControl2Raw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControlRaw, public yarp::dev::ITorqueControlRaw, public yarp::dev::IVelocityControl2Raw,
+    public yarp::dev::IPositionControl2Raw, public yarp::dev::IPositionDirectRaw, public yarp::dev::ITorqueControlRaw, public yarp::dev::IVelocityControl2Raw,
     public ICanBusSharer, public ITechnosoftIpos
 {
 
@@ -600,6 +600,8 @@ protected:
     yarp::dev::InteractionModeEnum interactionMode;
 
     //-- Semaphores
+    yarp::os::Semaphore refAccelSemaphore;
+    yarp::os::Semaphore refSpeedSemaphore;
     yarp::os::Semaphore refTorqueSemaphore;
     yarp::os::Semaphore refVelocitySemaphore;
     yarp::os::Semaphore interactionModeSemaphore;
