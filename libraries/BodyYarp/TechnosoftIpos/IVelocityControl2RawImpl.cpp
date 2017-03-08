@@ -6,7 +6,7 @@
 
 bool teo::TechnosoftIpos::velocityMoveRaw(int j, double sp)
 {
-    CD_DEBUG("(%d)\n",j);
+    CD_DEBUG("(%d),(%f)\n",j,sp);
 
     //-- Check index within range
     if ( j != 0 ) return false;
@@ -52,10 +52,10 @@ bool teo::TechnosoftIpos::velocityMoveRaw(const int n_joint, const int *joints, 
 
 bool teo::TechnosoftIpos::getRefVelocityRaw(const int joint, double *vel)
 {
-    CD_DEBUG("%d, %d\n",joint, refVelocity);
 
     // -- Get the last reference speed set by velocityMove for single joint (saved in double vector)
     refVelocitySemaphore.wait();
+    CD_DEBUG("%d, %f\n",joint, refVelocity);
     *vel = refVelocity;
     refVelocitySemaphore.post();
 
