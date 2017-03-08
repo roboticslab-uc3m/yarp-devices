@@ -6,7 +6,7 @@
 
 bool teo::TechnosoftIpos::velocityMoveRaw(int j, double sp)
 {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
@@ -44,7 +44,7 @@ bool teo::TechnosoftIpos::velocityMoveRaw(int j, double sp)
 
 bool teo::TechnosoftIpos::velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
 {
-    CD_WARNING("Missing implementation\n");
+    CD_DEBUG("Missing implementation\n");
     return true;
 }
 
@@ -52,10 +52,12 @@ bool teo::TechnosoftIpos::velocityMoveRaw(const int n_joint, const int *joints, 
 
 bool teo::TechnosoftIpos::getRefVelocityRaw(const int joint, double *vel)
 {
-    CD_INFO("%d, %d\n",joint, refVelocity);
+    CD_DEBUG("%d, %d\n",joint, refVelocity);
 
     // -- Get the last reference speed set by velocityMove for single joint (saved in double vector)
+    refVelocitySemaphore.wait();
     *vel = refVelocity;
+    refVelocitySemaphore.post();
 
     return true;
 }
