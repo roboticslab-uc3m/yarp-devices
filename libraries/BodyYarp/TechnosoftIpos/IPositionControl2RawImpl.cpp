@@ -220,7 +220,7 @@ bool teo::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
 
 bool teo::TechnosoftIpos::getRefSpeedRaw(int j, double *ref)
 {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d),(%f)\n",j,refSpeed);
 
     //-- Check index within range
     if ( j != 0 ) return false;
