@@ -141,15 +141,6 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInPullMode )
     std::map< int, int > idxFromCanId;
 
     bool startSending = cuiAbsolute->startPullPublishing();
-/*
-    printf("wait...");
-    while( iCanBus->read_timeout(&buffer, 1) <= 0 )
-    {
-        yarp::os::Time::delay(0.1);
-        printf(".");
-    }
-    printf("\n");
-*/
     timeStamp = yarp::os::Time::now();    
 
     //-- Blocking read until we get a message from the expected canId
