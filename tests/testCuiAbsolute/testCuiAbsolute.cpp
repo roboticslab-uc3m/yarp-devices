@@ -3,6 +3,7 @@
 // -- We load the rest of libraries that we will use to call the functions of our code
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
+#include <map> // -- nuevo
 
 #include "ColorDebug.hpp"
 
@@ -137,25 +138,41 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInPullMode )
     double timeOut = 2;
     double timeStamp = 0.0;
     bool timePassed = false;
+    std::map< int, int > idxFromCanId;
 
     bool startSending = cuiAbsolute->startPullPublishing();
-    timeStamp = yarp::os::Time::now();
+    timeStamp = yarp::os::Time::now();    
 
     //-- Blocking read until we get a message from the expected canId
     while ( (canId != CAN_ID) && !timePassed )          // -- it will check the ID
     {
-        // -- timer
-        if(int(yarp::os::Time::now()-timeStamp)==timeOut)
+        struct can_msg buffer; // buffer is a extra variable returned by buffer
+        iCanBusSharer->interpretMessage(&buffer); // necessary for HasFirstReached() returns true
+        if( cuiAbsolute->HasFirstReached() ) // it responds! :)
         {
-            CD_ERROR("Time out exceeded\n");
-            timePassed = true;
-            //continue;
-        }
+            // -- timer
+            if(int(yarp::os::Time::now()-timeStamp)==timeOut)
+            {
+                CD_ERROR("Time out exceeded\n");
+                timePassed = true;
+                //continue;
+            }
 
-        ret = iCanBus->read_timeout(&buffer, 0);         // -- return value of message with timeout of 0 [ms]
-        if( ret <= 0 ) continue;                        // -- is waiting for recive message
-        canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
-        if (canId == CAN_ID) CD_DEBUG("Reading in pull mode from CuiAbsolute %d\n", canId);
+            ret = iCanBus->read_timeout(&buffer, 0);         // -- return value of message with timeout of 0 [ms]
+            if( ret <= 0 ) continue;                        // -- is waiting for recive message
+            canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
+
+
+
+
+            // -- Reading Cui Absolute Encoder Value
+            double value = 0;
+            while( ! iEncodersTimedRaw->getEncoderRaw(0,&value) ){
+                CD_ERROR("Wrong value of Cui \n");
+            }
+
+            if (canId == CAN_ID) CD_DEBUG("Reading in pull mode from CuiAbsolute (%d)--> %f\n", canId, value);
+        }
     }
 
     ASSERT_TRUE(startSending);         // -- testing startPullPublishing function
