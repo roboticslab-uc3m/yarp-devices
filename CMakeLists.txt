@@ -36,12 +36,6 @@ option(ENABLE_oneCanBusOneWrapper "Choose if you want to compile oneCanBusOneWra
 option(ENABLE_launchManipulation "Choose if you want to compile launchManipulation" TRUE)
 option(ENABLE_launchLocomotion "Choose if you want to compile launchLocomotion" TRUE)
 
-option(ENABLE_recordManipulation "Choose if you want to compile recordManipulation" TRUE)
-option(ENABLE_playbackManipulation "Choose if you want to compile playbackManipulation" TRUE)
-
-option(ENABLE_recordLocomotion "Choose if you want to compile recordLocomotion" TRUE)
-option(ENABLE_playbackLocomotion "Choose if you want to compile playbackLocomotion" TRUE)
-
 ### options: force default
 option(ENABLE_CuiAbsolute "Enable/disable compilation of BodyYarp_CuiAbsolute" TRUE)
 option(ENABLE_CanBusHico "Enable/disable compilation of BodyYarp_CanBusHico" TRUE)
