@@ -138,6 +138,7 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInPullMode )
     double timeOut = 2;
     double timeStamp = 0.0;
     bool timePassed = false;
+    double cleaningTime = 0.5; // time to empty the buffer
     std::map< int, int > idxFromCanId;
 
     bool startSending = cuiAbsolute->startPullPublishing();
@@ -154,19 +155,23 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInPullMode )
                 //continue;
             }
 
-            ret = iCanBus->read_timeout(&buffer, 1);         // -- return value of message with timeout of 0 [ms]
+            ret = iCanBus->read_timeout(&buffer, 0);         // -- return value of message with timeout of 0 [ms]
+
+            // This line is needed to clear the buffer (old messages that has been received)
+            if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
+
             if( ret <= 0 ) continue;                        // -- is waiting for recive message
             canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
 
 
             if (canId == CAN_ID) {
                  // -- Reading Cui Absolute Encoder Value
-                iCanBusSharer->interpretMessage(&buffer); // necessary for read CuiAbsolute               
+                iCanBusSharer->interpretMessage(&buffer); // necessary for read CuiAbsolute
                 double value;
                 while( ! iEncodersTimedRaw->getEncoderRaw(0,&value) ){
                     CD_ERROR("Wrong value of Cui \n");
                 }
-                CD_DEBUG("Reading in pull mode from CuiAbsolute %d (Value: %f)\n", canId, value);
+                CD_DEBUG("Reading in pull mode from CuiAbsolute %d (Value: %f)\n", canId, value);                
             }
     }
 
@@ -186,8 +191,9 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInContinuousMode )
 
         int canId = 0;
         int ret = 0;
-        double timeOut = 2; // -- 2 seconds
+        double timeOut = 5; // -- 2 seconds
         double timeStamp = 0.0;
+        double cleaningTime = 0.5; // time to empty the buffer
         bool timePassed = false;
 
         timeStamp = yarp::os::Time::now();
@@ -203,14 +209,18 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInContinuousMode )
                 timePassed = true;
             }
 
-            ret = iCanBus->read_timeout(&buffer,1);         // -- return value of message with timeout of 1 [ms]
+            ret = iCanBus->read_timeout(&buffer,0);         // -- return value of message with timeout of 1 [ms]
+
+            // This line is needed to clear the buffer (old messages that has been received)
+            if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
+
             if( ret <= 0 ) continue;                        // -- is waiting for recive message
             canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
             if (canId == CAN_ID)
             {
                 // -- Reading Cui Absolute Encoder Value
-                iCanBusSharer->interpretMessage(&buffer); // necessary for read CuiAbsolute                
-                double value;
+                iCanBusSharer->interpretMessage(&buffer); // necessary for read CuiAbsolute
+                double value = 0;
                 while( ! iEncodersTimedRaw->getEncoderRaw(0,&value) ){
                     CD_ERROR("Wrong value of Cui \n");
                 }
@@ -252,7 +262,7 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteStopSendingMessage ) // -- we call the class
             timePassed = true;
         }
 
-        ret = iCanBus->read_timeout(&buffer,1);         // -- return value of message with timeout of 1 [ms]
+        ret = iCanBus->read_timeout(&buffer,0);         // -- return value of message with timeout of 1 [ms]
 
         // This line is needed to clear the buffer (old messages that has been received)
         if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
