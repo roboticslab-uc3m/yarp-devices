@@ -55,7 +55,7 @@ protected:
 
     /** CAN node object. */
     yarp::dev::PolyDriver canNodeDevice;
-    yarp::dev::IControlLimitsRaw* iControlLimitsRaw;
+    yarp::dev::IControlLimits2Raw* iControlLimits2Raw;
     yarp::dev::IControlModeRaw* iControlModeRaw;
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRaw;
     yarp::dev::IPositionControlRaw* iPositionControlRaw;

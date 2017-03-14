@@ -64,7 +64,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf)
 
     bool ok = true;
     ok &= canNodeDevice.open( TechnosoftIposConf );   // -- we introduce the configuration properties defined ........
-    ok &= canNodeDevice.view( iControlLimitsRaw );
+    ok &= canNodeDevice.view( iControlLimits2Raw );
     ok &= canNodeDevice.view( iControlModeRaw );
     ok &= canNodeDevice.view( iEncodersTimedRaw );
     ok &= canNodeDevice.view( iPositionControlRaw );
