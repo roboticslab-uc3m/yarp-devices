@@ -158,7 +158,7 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInPullMode )
             ret = iCanBus->read_timeout(&buffer, 0);         // -- return value of message with timeout of 0 [ms]
 
             // This line is needed to clear the buffer (old messages that has been received)
-            if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
+            // if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
 
             if( ret <= 0 ) continue;                        // -- is waiting for recive message
             canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
