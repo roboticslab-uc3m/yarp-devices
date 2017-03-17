@@ -44,6 +44,11 @@ int ExampleRemoteControlboard::run(int argc, char **argv)
         printf("[error] Problems acquiring position interface\n");
         return 1;
     }
+    if ( ! dd.view(pos2) )  // connect 'pos2' interface to 'dd' device
+    {
+        printf("[error] Problems acquiring position interface\n");
+        return 1;
+    }
     printf("[success] Acquired position interface\n");
 
     if ( ! dd.view(enc) ) // connect 'enc' interface to 'dd' device
@@ -62,7 +67,7 @@ int ExampleRemoteControlboard::run(int argc, char **argv)
 
     //-- Start
 
-    printf("setPositionMode()\n");
+    /*printf("setPositionMode()\n");
     pos->setPositionMode(); //use the position object to set the device to position mode (as opposed to velocity mode)
 
     printf("setRefSpeed(0,5)\n");
@@ -103,9 +108,9 @@ int ExampleRemoteControlboard::run(int argc, char **argv)
     vel->velocityMove(0,0);
 
     printf("setPositionMode()\n");
-    pos->setPositionMode(); //use the position object to set the device to position mode (as opposed to velocity mode)
+    pos->setPositionMode(); //use the position object to set the device to position mode (as opposed to velocity mode)*/
 
-    {
+    /*{
         printf("positionMove() <- -3,-3\n");
         std::vector<double> q(2,0.0);
         q[0] = -3.0;
@@ -147,7 +152,31 @@ int ExampleRemoteControlboard::run(int argc, char **argv)
         std::vector<double> d(2,0.0);
         enc->getEncoders( d.data() );
         printf("getEncoders() -> is at: %f %f\n", d[0], d[1]);
+    }*/
+
+    {
+        printf("positionMove() <- -3,-3\n");
+        std::vector<double> q(2,0.0);
+        std::vector<int> mask(2,1);
+        q[0] = -3.0;
+        q[1] = -3.0;
+        pos2->positionMove( 2, mask.data(), q.data() );
+        printf("Wait to reach");
+        bool done = false;
+        while(!done)
+        {
+            pos->checkMotionDone( & done );
+            printf(".");
+            fflush(stdout);
+            yarp::os::Time::delay(0.1);
+        }
+        printf("\n");
+
+        std::vector<double> d(2,0.0);
+        enc->getEncoders( d.data() );
+        printf("getEncoders() -> is at: %f %f\n", d[0], d[1]);
     }
+
 
     dd.close();
 
