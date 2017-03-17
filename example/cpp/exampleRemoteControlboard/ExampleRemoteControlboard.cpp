@@ -32,10 +32,10 @@ int ExampleRemoteControlboard::run(int argc, char **argv)
 
     if(!dd.isValid())
     {
-      printf("%d not available.\n", robot.c_str());
-	  dd.close();
-      yarp::os::Network::fini(); //disconnect from the YARP network
-      return 1;
+        printf("%d not available.\n", robot.c_str());
+        dd.close();
+        yarp::os::Network::fini(); //disconnect from the YARP network
+        return 1;
     }
 
     bool ok = dd.view(pos); // connect 'pos' interface to 'dd' device
