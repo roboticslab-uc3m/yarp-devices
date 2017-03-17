@@ -6,7 +6,7 @@
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
 
-#define DEFAULT_ROBOT "/teo/head"
+#define DEFAULT_ROBOT "/robot/part"
 
 namespace teo
 {
