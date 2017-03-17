@@ -41,8 +41,8 @@ int ExampleRemoteControlboard::run(int argc, char **argv)
     bool ok = dd.view(pos); // connect 'pos' interface to 'dd' device
     if (!ok)
     {
-        printf("[warning] Problems acquiring robot interface\n");
-        return false;
+        printf("[error] Problems acquiring robot interface\n");
+        return 1;
     }
     printf("[success] testAsibot acquired robot interface\n");
 
