@@ -14,7 +14,7 @@ namespace teo
 class ExampleRemoteControlboard
 {
 public:
-    bool run(int argc, char **argv);
+    int run(int argc, char **argv);
 
 private:
     yarp::os::Network yarp; // connect to YARP network

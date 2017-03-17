@@ -5,7 +5,7 @@
 namespace teo
 {
 
-bool ExampleRemoteControlboard::run(int argc, char **argv)
+int ExampleRemoteControlboard::run(int argc, char **argv)
 {
     yarp::os::ResourceFinder rf;
     rf.setVerbose(true);
@@ -20,7 +20,7 @@ bool ExampleRemoteControlboard::run(int argc, char **argv)
     if (!yarp::os::Network::checkNetwork())
     {
         printf("Please start a yarp name server first\n");
-        return(1);
+        return 1;
     }
 
     //Configure Drivers
@@ -44,8 +44,7 @@ bool ExampleRemoteControlboard::run(int argc, char **argv)
         printf("[warning] Problems acquiring robot interface\n");
         return false;
     }
-    else
-        printf("[success] testAsibot acquired robot interface\n");
+    printf("[success] testAsibot acquired robot interface\n");
 
     pos->setPositionMode(); //use the object to set the device to position mode (as opposed to velocity mode)
 
