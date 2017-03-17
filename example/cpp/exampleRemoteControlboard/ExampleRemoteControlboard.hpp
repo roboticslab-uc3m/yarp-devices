@@ -6,7 +6,7 @@
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
 
-#define DEFAULT_ROBOT "/teoSim/leftArm"
+#define DEFAULT_ROBOT "/teo/head"
 
 namespace teo
 {

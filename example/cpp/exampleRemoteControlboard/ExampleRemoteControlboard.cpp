@@ -7,6 +7,7 @@ namespace teo
 
 int ExampleRemoteControlboard::run(int argc, char **argv)
 {
+    //-- Init
     yarp::os::ResourceFinder rf;
     rf.setVerbose(true);
     rf.setDefaultContext("exampleRemoteControlboard");
@@ -23,14 +24,13 @@ int ExampleRemoteControlboard::run(int argc, char **argv)
         return 1;
     }
 
-    //Configure Drivers
+    //-- Configure device
     yarp::os::Property options; //create an instance of Property, a nice YARP class for storing name-value (key-value) pairs
     options.put("device","remote_controlboard"); //we add a name-value pair that indicates the YARP device
     options.put("remote",robot); //we add info on to whom we will connect
     options.put("local","/local"); //we add info on how we will call ourselves on the YARP network
     dd.open(options); //Configure the YARP multi-use driver with the given options
-
-    if(!dd.isValid())
+    if( ! dd.isValid() )
     {
         printf("%s not available.\n", robot.c_str());
         dd.close();
@@ -38,34 +38,68 @@ int ExampleRemoteControlboard::run(int argc, char **argv)
         return 1;
     }
 
-    bool ok = dd.view(pos); // connect 'pos' interface to 'dd' device
-    if (!ok)
+    //-- View interfaces
+    if ( ! dd.view(pos) )  // connect 'pos' interface to 'dd' device
     {
-        printf("[error] Problems acquiring robot interface\n");
+        printf("[error] Problems acquiring position interface\n");
         return 1;
     }
-    printf("[success] testAsibot acquired robot interface\n");
+    printf("[success] Acquired position interface\n");
 
-    pos->setPositionMode(); //use the object to set the device to position mode (as opposed to velocity mode)
+    if ( ! dd.view(enc) ) // connect 'enc' interface to 'dd' device
+    {
+        printf("[error] Problems acquiring encoder interface\n");
+        return 1;
+    }
+    printf("[success] Acquired encoder interface\n");
 
-    printf("test positionMove(1,-35)\n");
-    pos->positionMove(1, -35);
+    if ( ! dd.view(vel) ) // connect 'vel' interface to 'dd' device
+    {
+        printf("[error] Problems acquiring velocity interface\n");
+        return 1;
+    }
+    printf("[success] Acquired velocity interface\n");
 
-    printf("Delaying 5 seconds...\n");
-    yarp::os::Time::delay(5);
+    //-- Start
 
-    ok = dd.view(enc); // connect 'enc' interface to 'dd' device
+    printf("setPositionMode()\n");
+    pos->setPositionMode(); //use the position object to set the device to position mode (as opposed to velocity mode)
+
+    printf("positionMove(0,-3)\n");
+    pos->setRefSpeed(0,5);
+    pos->setRefAcceleration(0,5);
+    pos->positionMove(0, -10);
+
+    printf("Wait to reach");
+    bool done = false;
+    do
+    {
+        yarp::os::Time::delay(0.1);
+        pos->checkMotionDone( & done );
+        printf(".");
+        fflush(stdout);
+    }
+    while( ! done );
+    printf("\n");
+
     double d;
     enc->getEncoder(0,&d);
-    printf("test getEncoder(0) -> is at: %f\n", d);
+    printf("getEncoder(0) -> is at: %f\n", d);
 
-    ok = dd.view(vel); // connect 'vel' interface to 'dd' device
+    printf("setVelocityMode()\n");
     vel->setVelocityMode(); //use the object to set the device to velocity mode (as opposed to position mode)
-    printf("test velocityMove(0,10)\n");
-    vel->velocityMove(0,10);
 
-    printf("Delaying 5 seconds...\n");
-    yarp::os::Time::delay(5);
+    printf("velocityMove(0,5)\n");
+    vel->velocityMove(0,5);
+
+    printf("Delaying 2 seconds...\n");
+    yarp::os::Time::delay(2);
+
+    printf("velocityMove(0,10)\n");
+    vel->velocityMove(0,0);
+
+    printf("setPositionMode()\n");
+    pos->setPositionMode(); //use the position object to set the device to position mode (as opposed to velocity mode)
 
     dd.close();
 
