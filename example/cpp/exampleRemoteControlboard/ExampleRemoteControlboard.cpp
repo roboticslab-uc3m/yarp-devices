@@ -1,11 +1,11 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "TeoSimExample.hpp"
+#include "ExampleRemoteControlboard.hpp"
 
 namespace teo
 {
 
-bool TeoSimExample::run()
+bool ExampleRemoteControlboard::run()
 {
     printf("Note: requires a running instance of teoSim\n");
     if (!yarp::os::Network::checkNetwork())

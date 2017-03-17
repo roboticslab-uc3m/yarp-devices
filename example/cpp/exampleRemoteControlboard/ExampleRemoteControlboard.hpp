@@ -9,7 +9,7 @@
 namespace teo
 {
 
-class TeoSimExample
+class ExampleRemoteControlboard
 {
 public:
     bool run();
