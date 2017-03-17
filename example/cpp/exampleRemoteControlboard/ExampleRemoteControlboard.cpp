@@ -65,9 +65,13 @@ int ExampleRemoteControlboard::run(int argc, char **argv)
     printf("setPositionMode()\n");
     pos->setPositionMode(); //use the position object to set the device to position mode (as opposed to velocity mode)
 
-    printf("positionMove(0,-3)\n");
+    printf("setRefSpeed(0,5)\n");
     pos->setRefSpeed(0,5);
+
+    printf("setRefAcceleration(0,5)\n");
     pos->setRefAcceleration(0,5);
+
+    printf("positionMove(0,-10)\n");
     pos->positionMove(0, -10);
 
     printf("Wait to reach");
@@ -95,7 +99,7 @@ int ExampleRemoteControlboard::run(int argc, char **argv)
     printf("Delaying 2 seconds...\n");
     yarp::os::Time::delay(2);
 
-    printf("velocityMove(0,10)\n");
+    printf("velocityMove(0,0) <- stop\n");
     vel->velocityMove(0,0);
 
     printf("setPositionMode()\n");
