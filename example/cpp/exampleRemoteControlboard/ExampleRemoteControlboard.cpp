@@ -5,8 +5,17 @@
 namespace teo
 {
 
-bool ExampleRemoteControlboard::run()
+bool ExampleRemoteControlboard::run(int argc, char **argv)
 {
+    yarp::os::ResourceFinder rf;
+    rf.setVerbose(true);
+    rf.setDefaultContext("exampleRemoteControlboard");
+    rf.setDefaultConfigFile("exampleRemoteControlboard.ini");
+    rf.configure(argc, argv);
+
+    std::string robot = rf.check("robot",yarp::os::Value(DEFAULT_ROBOT),"name of /robot to be used").asString();
+    printf("\t--robot: %s [%s]\n",robot.c_str(),DEFAULT_ROBOT);
+
     printf("Note: requires a running instance of teoSim\n");
     if (!yarp::os::Network::checkNetwork())
     {
@@ -17,13 +26,13 @@ bool ExampleRemoteControlboard::run()
     //Configure Drivers
     yarp::os::Property options; //create an instance of Property, a nice YARP class for storing name-value (key-value) pairs
     options.put("device","remote_controlboard"); //we add a name-value pair that indicates the YARP device
-    options.put("remote","/teoSim/rightArm"); //we add info on to whom we will connect
+    options.put("remote",robot); //we add info on to whom we will connect
     options.put("local","/local"); //we add info on how we will call ourselves on the YARP network
     dd.open(options); //Configure the YARP multi-use driver with the given options
 
     if(!dd.isValid())
     {
-      printf("/teoSim/rightArm device not available.\n");
+      printf("%d not available.\n", robot.c_str());
 	  dd.close();
       yarp::os::Network::fini(); //disconnect from the YARP network
       return 1;

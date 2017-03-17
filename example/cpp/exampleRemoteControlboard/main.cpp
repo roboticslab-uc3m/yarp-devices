@@ -35,6 +35,6 @@ make -j3
 int main(int argc, char **argv)
 {
     teo::ExampleRemoteControlboard mod;
-    return mod.run();
+    return mod.run(argc,argv);
 }
 

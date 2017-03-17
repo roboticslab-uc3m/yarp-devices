@@ -6,13 +6,15 @@
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
 
+#define DEFAULT_ROBOT "/teoSim/leftArm"
+
 namespace teo
 {
 
 class ExampleRemoteControlboard
 {
 public:
-    bool run();
+    bool run(int argc, char **argv);
 
 private:
     yarp::os::Network yarp; // connect to YARP network
