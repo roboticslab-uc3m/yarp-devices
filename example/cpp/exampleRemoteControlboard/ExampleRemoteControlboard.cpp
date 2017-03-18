@@ -5,8 +5,9 @@
 namespace teo
 {
 
-bool ExampleRemoteControlboard::run(int argc, char **argv)
+int ExampleRemoteControlboard::run(int argc, char **argv)
 {
+    //-- Init
     yarp::os::ResourceFinder rf;
     rf.setVerbose(true);
     rf.setDefaultContext("exampleRemoteControlboard");
@@ -20,53 +21,162 @@ bool ExampleRemoteControlboard::run(int argc, char **argv)
     if (!yarp::os::Network::checkNetwork())
     {
         printf("Please start a yarp name server first\n");
-        return(1);
+        return 1;
     }
 
-    //Configure Drivers
+    //-- Configure device
     yarp::os::Property options; //create an instance of Property, a nice YARP class for storing name-value (key-value) pairs
     options.put("device","remote_controlboard"); //we add a name-value pair that indicates the YARP device
     options.put("remote",robot); //we add info on to whom we will connect
     options.put("local","/local"); //we add info on how we will call ourselves on the YARP network
     dd.open(options); //Configure the YARP multi-use driver with the given options
-
-    if(!dd.isValid())
+    if( ! dd.isValid() )
     {
-      printf("%d not available.\n", robot.c_str());
-	  dd.close();
-      yarp::os::Network::fini(); //disconnect from the YARP network
-      return 1;
+        printf("%s not available.\n", robot.c_str());
+        dd.close();
+        yarp::os::Network::fini(); //disconnect from the YARP network
+        return 1;
     }
 
-    bool ok = dd.view(pos); // connect 'pos' interface to 'dd' device
-    if (!ok)
+    //-- View interfaces
+    if ( ! dd.view(pos) )  // connect 'pos' interface to 'dd' device
     {
-        printf("[warning] Problems acquiring robot interface\n");
-        return false;
+        printf("[error] Problems acquiring position interface\n");
+        return 1;
     }
-    else
-        printf("[success] testAsibot acquired robot interface\n");
+    if ( ! dd.view(pos2) )  // connect 'pos2' interface to 'dd' device
+    {
+        printf("[error] Problems acquiring position interface\n");
+        return 1;
+    }
+    printf("[success] Acquired position interface\n");
 
-    pos->setPositionMode(); //use the object to set the device to position mode (as opposed to velocity mode)
+    if ( ! dd.view(enc) ) // connect 'enc' interface to 'dd' device
+    {
+        printf("[error] Problems acquiring encoder interface\n");
+        return 1;
+    }
+    printf("[success] Acquired encoder interface\n");
 
-    printf("test positionMove(1,-35)\n");
-    pos->positionMove(1, -35);
+    if ( ! dd.view(vel) ) // connect 'vel' interface to 'dd' device
+    {
+        printf("[error] Problems acquiring velocity interface\n");
+        return 1;
+    }
+    printf("[success] Acquired velocity interface\n");
 
-    printf("Delaying 5 seconds...\n");
-    yarp::os::Time::delay(5);
+    //-- Start
 
-    ok = dd.view(enc); // connect 'enc' interface to 'dd' device
+    /*printf("setPositionMode()\n");
+    pos->setPositionMode(); //use the position object to set the device to position mode (as opposed to velocity mode)
+
+    printf("setRefSpeed(0,5)\n");
+    pos->setRefSpeed(0,5);
+
+    printf("setRefAcceleration(0,5)\n");
+    pos->setRefAcceleration(0,5);
+
+    printf("positionMove(0,-10)\n");
+    pos->positionMove(0, -10);
+
+    printf("Wait to reach");
+    bool done = false;
+    do
+    {
+        yarp::os::Time::delay(0.1);
+        pos->checkMotionDone( & done );
+        printf(".");
+        fflush(stdout);
+    }
+    while( ! done );
+    printf("\n");
+
     double d;
     enc->getEncoder(0,&d);
-    printf("test getEncoder(0) -> is at: %f\n", d);
+    printf("getEncoder(0) -> is at: %f\n", d);
 
-    ok = dd.view(vel); // connect 'vel' interface to 'dd' device
+    printf("setVelocityMode()\n");
     vel->setVelocityMode(); //use the object to set the device to velocity mode (as opposed to position mode)
-    printf("test velocityMove(0,10)\n");
-    vel->velocityMove(0,10);
 
-    printf("Delaying 5 seconds...\n");
-    yarp::os::Time::delay(5);
+    printf("velocityMove(0,5)\n");
+    vel->velocityMove(0,5);
+
+    printf("Delaying 2 seconds...\n");
+    yarp::os::Time::delay(2);
+
+    printf("velocityMove(0,0) <- stop\n");
+    vel->velocityMove(0,0);
+
+    printf("setPositionMode()\n");
+    pos->setPositionMode(); //use the position object to set the device to position mode (as opposed to velocity mode)*/
+
+    /*{
+        printf("positionMove() <- -3,-3\n");
+        std::vector<double> q(2,0.0);
+        q[0] = -3.0;
+        q[1] = -3.0;
+        pos->positionMove( q.data() );
+        printf("Wait to reach");
+        bool done = false;
+        while(!done)
+        {
+            pos->checkMotionDone( & done );
+            printf(".");
+            fflush(stdout);
+            yarp::os::Time::delay(0.1);
+        }
+        printf("\n");
+
+        std::vector<double> d(2,0.0);
+        enc->getEncoders( d.data() );
+        printf("getEncoders() -> is at: %f %f\n", d[0], d[1]);
+    }
+
+    {
+        printf("positionMove() <- -0,-0\n");
+        std::vector<double> q(2,0.0);
+        q[0] = -3.0;
+        q[1] = -3.0;
+        pos->positionMove( q.data() );
+        printf("Wait to reach");
+        bool done = false;
+        while(!done)
+        {
+            pos->checkMotionDone( & done );
+            printf(".");
+            fflush(stdout);
+            yarp::os::Time::delay(0.1);
+        }
+        printf("\n");
+
+        std::vector<double> d(2,0.0);
+        enc->getEncoders( d.data() );
+        printf("getEncoders() -> is at: %f %f\n", d[0], d[1]);
+    }*/
+
+    {
+        printf("positionMove() <- -3,-3\n");
+        std::vector<double> q(2,0.0);
+        std::vector<int> mask(2,1);
+        q[0] = -3.0;
+        q[1] = -3.0;
+        pos2->positionMove( 2, mask.data(), q.data() );
+        printf("Wait to reach");
+        bool done = false;
+        while(!done)
+        {
+            pos->checkMotionDone( & done );
+            printf(".");
+            fflush(stdout);
+            yarp::os::Time::delay(0.1);
+        }
+        printf("\n");
+
+        std::vector<double> d(2,0.0);
+        enc->getEncoders( d.data() );
+        printf("getEncoders() -> is at: %f %f\n", d[0], d[1]);
+    }
+
 
     dd.close();
 
