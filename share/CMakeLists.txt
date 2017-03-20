@@ -19,5 +19,3 @@ add_subdirectory(oneCanBusOneWrapper)
 add_subdirectory(launchManipulation)
 add_subdirectory(launchLocomotion)
 
-add_subdirectory(Playback)
-
