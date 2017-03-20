@@ -46,7 +46,6 @@ option(ENABLE_FakeJoint "Enable/disable compilation of BodyYarp_FakeJoint" TRUE)
 option(ENABLE_CanBusControlboard "Enable/disable compilation of BodyYarp_CanBusControlboard" TRUE)
 option(ENABLE_Jr3 "Enable/disable compilation of BodyYarp_Jr3" TRUE)
 
-option(ENABLE_Playback "Enable/disable compilation of BodyYarp_Playback" TRUE)
 option(ENABLE_PlaybackThread "Enable/disable compilation of BodyYarp_PlaybackThread" TRUE)
 
 ##### test and coverage options
