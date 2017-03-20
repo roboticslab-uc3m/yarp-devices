@@ -1,16 +1,35 @@
-## Installation from Source Code (Debian 6.0)
+## Installation from Source Code (Debian 6.0.10)
 
-### Why Debian 6.0?
+### Why Debian 6.0.10?
 
-Your OS needs the following (Debian 6.0 is a good intermediate solution in versions, and Debian is additionally more stable than Ubuntu):
+Your OS needs the following (Debian 6.0.10 is a good intermediate solution in versions, and Debian is additionally more stable than Ubuntu):
   - A kernel old enough for the HicoCAN kernel drivers.
   - An OS new enough for github (you need a recent git version) and YARP (you need a recent CMake version).
+
+### The specifics: APT sources
+
+- /etc/apt/sources.list
+```bash
+deb http://archive.debian.org/debian/ squeeze main non-free contrib
+deb-src http://archive.debian.org/debian/ squeeze main non-free contrib
+
+deb ftp://ftp.gnome.org/debian-backports/ squeeze-backports main
+deb-src ftp://ftp.gnome.org/debian-backports/ squeeze-backports main
+```
+- /etc/apt/apt.conf.d/90ignore-release-date
+```bash
+Acquire::Check-Valid-Until "false";
+```
+- If the previous file is not set, you can simply run:
+```bash
+sudo aptitude -o Acquire::Check-Valid-Until=false update
+```
 
 ### Install the Software
 
 First install the depencencies:
-  - [Install CMake (Debian 6.0)](https://github.com/roboticslab-uc3m/installation-guides/blob/develop/install_cmake.md)
-  - [Install YARP (Debian 6.0)](https://github.com/roboticslab-uc3m/installation-guides/blob/develop/install_yarp.md)
+  - [Install CMake 2.8.9 (Debian 6.0.10)](https://github.com/roboticslab-uc3m/installation-guides/blob/develop/install-cmake.md#install-cmake-289-debian-6010)
+  - [Install YARP 2.3.68+ (Debian 6.0.10)](https://github.com/roboticslab-uc3m/installation-guides/blob/develop/install-yarp.md#install-yarp-2368-debian-6010)
 
 Our software integrates the previous dependencies. Note that you will be prompted for your password upon using '''sudo''' a couple of times:
 
@@ -27,10 +46,13 @@ For additional TEO options use ccmake instead of cmake.
 
 Finally, install the hcanpci kernel module:
 
-  - [Install hcanpci kernel module (Debian 6.0)]( /doc/yarp_devices_install_hcanpci_on_debian_6.md )
+ - [Install hcanpci kernel module (Debian 6.0.10)]( /doc/yarp_devices_install_hcanpci_on_debian_6.md )
+
+You may also want the `xsensmtx` device:
+
+ - [Install ICub and xsensmtx](https://github.com/roboticslab-uc3m/installation-guides/blob/develop/install_icub.md)
 
 ### Even more!
 
 Done! You are now probably interested in one of the following links:
   - [yarp-devices - Now what can I do?]( /doc/yarp_devices_post_install.md )
-  - yarp_devices_environment_variables

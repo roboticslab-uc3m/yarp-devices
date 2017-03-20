@@ -1,10 +1,10 @@
-# Copyright: (C) 2013 Universidad Carlos III de Madrid
-# Author: Juan G. Victores
+# Copyright: (C) 2017 Universidad Carlos III de Madrid
+# Author: Juan G. Victores & Raul de Santos Rico
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 cmake_minimum_required(VERSION 2.6)
 
-YARP_PREPARE_DEVICE(FakeJoint TYPE teo::FakeJoint INCLUDE FakeJoint.hpp)
+YARP_PREPARE_PLUGIN(FakeJoint CATEGORY device TYPE teo::FakeJoint INCLUDE FakeJoint.hpp)
 
 IF (NOT SKIP_FakeJoint)
 
@@ -18,8 +18,19 @@ IF (NOT SKIP_FakeJoint)
   TARGET_LINK_LIBRARIES(FakeJoint ${YARP_LIBRARIES})
   install(TARGETS FakeJoint DESTINATION lib)
 
-  # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now... 
-  set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} FakeJoint CACHE INTERNAL "appended libraries") 
+  # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now...
+#  set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} FakeJoint CACHE INTERNAL "appended libraries") 
+
+  #install(TARGETS FakeJoint DESTINATION lib)
+  yarp_install(TARGETS FakeJoint
+             EXPORT YARP
+             COMPONENT runtime
+             LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+             ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+
+  yarp_install(FILES FakeJoint.ini
+              COMPONENT runtime
+              DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
 ENDIF (NOT SKIP_FakeJoint)
 

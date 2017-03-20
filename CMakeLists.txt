@@ -13,6 +13,13 @@ endif(COMMAND cmake_policy)
 
 project(ROBOTICSLAB_YARP_DEVICES)
 
+set(BUILD_SHARED_LIBS TRUE CACHE INTERNAL "hide this!")
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -frtti")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti")
+
+add_definitions(-DYARP_NO_DEPRECATED_WARNINGS=ON)
+
 ### options: cpp libraries
 option(ENABLE_BodyYarp "Choose if you want to compile BodyYarp" TRUE)
 option(ENABLE_OneCanBusOneWrapper "Choose if you want to compile OneCanBusOneWrapper" TRUE)
@@ -29,20 +36,15 @@ option(ENABLE_oneCanBusOneWrapper "Choose if you want to compile oneCanBusOneWra
 option(ENABLE_launchManipulation "Choose if you want to compile launchManipulation" TRUE)
 option(ENABLE_launchLocomotion "Choose if you want to compile launchLocomotion" TRUE)
 
-option(ENABLE_recordManipulation "Choose if you want to compile recordManipulation" TRUE)
-option(ENABLE_playbackManipulation "Choose if you want to compile playbackManipulation" TRUE)
-
-option(ENABLE_recordLocomotion "Choose if you want to compile recordLocomotion" TRUE)
-option(ENABLE_playbackLocomotion "Choose if you want to compile playbackLocomotion" TRUE)
-
 ### options: force default
-option(ENABLE_BodyYarp_CuiAbsolute "Enable/disable compilation of BodyYarp_CuiAbsolute" TRUE)
-option(ENABLE_BodyYarp_CanBusHico "Enable/disable compilation of BodyYarp_CanBusHico" TRUE)
-option(ENABLE_BodyYarp_TechnosoftIpos "Enable/disable compilation of BodyYarp_TechnosoftIpos" TRUE)
-option(ENABLE_BodyYarp_LacqueyFetch "Enable/disable compilation of BodyYarp_LacqueyFetch" TRUE)
-option(ENABLE_BodyYarp_TextilesHand "Enable/disable compilation of BodyYarp_TextilesHand" TRUE)
-option(ENABLE_BodyYarp_FakeJoint "Enable/disable compilation of BodyYarp_FakeJoint" TRUE)
-option(ENABLE_BodyYarp_CanBusControlboard "Enable/disable compilation of BodyYarp_CanBusControlboard" TRUE)
+option(ENABLE_CuiAbsolute "Enable/disable compilation of BodyYarp_CuiAbsolute" TRUE)
+option(ENABLE_CanBusHico "Enable/disable compilation of BodyYarp_CanBusHico" TRUE)
+option(ENABLE_TechnosoftIpos "Enable/disable compilation of BodyYarp_TechnosoftIpos" TRUE)
+option(ENABLE_LacqueyFetch "Enable/disable compilation of BodyYarp_LacqueyFetch" TRUE)
+option(ENABLE_TextilesHand "Enable/disable compilation of BodyYarp_TextilesHand" TRUE)
+option(ENABLE_FakeJoint "Enable/disable compilation of BodyYarp_FakeJoint" TRUE)
+option(ENABLE_CanBusControlboard "Enable/disable compilation of BodyYarp_CanBusControlboard" TRUE)
+option(ENABLE_Jr3 "Enable/disable compilation of BodyYarp_Jr3" TRUE)
 
 ##### test and coverage options
 option(ENABLE_tests "Choose if you want to compile tests" TRUE)

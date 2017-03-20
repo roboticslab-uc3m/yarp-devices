@@ -1,10 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include "CanBusControlboard.hpp"
-#include "CuiAbsolute/CuiAbsolute.hpp"
-// -- Pause
-#include <stdlib.h>
-#include <stdio.h>
 
 // ------------------- DeviceDriver Related ------------------------------------
 
@@ -23,6 +19,8 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
 
     yarp::os::Bottle maxs = config.findGroup("maxs").tail();  //-- e.g. 360
     yarp::os::Bottle mins = config.findGroup("mins").tail();  //-- e.g. -360
+    yarp::os::Bottle maxVels = config.findGroup("maxVels").tail();  //-- e.g. 1000
+    yarp::os::Bottle minVels = config.findGroup("minVels").tail();  //-- e.g. 0
     yarp::os::Bottle refAccelerations = config.findGroup("refAccelerations").tail();  //-- e.g. 0.575437
     yarp::os::Bottle refSpeeds = config.findGroup("refSpeeds").tail();  //-- e.g. 737.2798
 
@@ -57,6 +55,9 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
     iVelocityControlRaw.resize( nodes.size() );
     iCanBusSharer.resize( nodes.size() );
 
+    targetPosition.resize( nodes.size() );
+    refVelocity.resize(nodes.size());
+
     for(int i=0; i<nodes.size(); i++)
     {
         if(types.get(i).asString() == "")
@@ -69,6 +70,8 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
         options.put("tr",trs.get(i).asDouble());
         options.put("min",mins.get(i).asDouble());
         options.put("max",maxs.get(i).asDouble());
+        options.put("minVel",minVels.get(i).asDouble());
+        options.put("maxVel",maxVels.get(i).asDouble());
         options.put("k",ks.get(i).asDouble());
         options.put("refAcceleration",refAccelerations.get(i).asDouble());
         options.put("refSpeed",refSpeeds.get(i).asDouble());
@@ -120,8 +123,12 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
             CD_INFO("Sending \"Start Continuous Publishing\" message to Cui Absolute (PIC ID: %d)\n", ids.get(i).asInt());
 
             // Configuring Cui Absolute
-            CuiAbsolute* cuiAbsolute;
-            device->view( cuiAbsolute );
+            ICuiAbsolute* cuiAbsolute;
+            if( ! device->view( cuiAbsolute ) )
+            {
+                CD_ERROR("Could not view.\n");
+                return false;
+            }
 
             if ( ! cuiAbsolute->startContinuousPublishing(0) ) // startContinuousPublishing(delay)
                 return false;
@@ -164,7 +171,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
                 {
                     CD_DEBUG("---> First CUI message has been reached \n");
                     double value;
-                    while( ! cuiAbsolute->getEncoderRaw(0,&value) ){
+                    while( ! iEncodersTimedRaw[i]->getEncoderRaw(0,&value) ){
                         CD_ERROR("Wrong value of Cui \n");
                     }
                     printf("Absolute encoder value -----> %f\n", value);
@@ -323,7 +330,7 @@ bool teo::CanBusControlboard::close()
             double timeStamp = 0.0;
             double cleaningTime = 0.5; // time to empty the buffer
 
-            CuiAbsolute* cuiAbsolute;
+            ICuiAbsolute* cuiAbsolute;
             nodes[i]->view( cuiAbsolute );
 
             CD_INFO("Stopping Cui Absolute PIC (ID: %d)\n", CAN_ID );

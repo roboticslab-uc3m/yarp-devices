@@ -51,11 +51,11 @@ protected:
 
     /** CAN BUS device. */
     yarp::dev::PolyDriver deviceDevCan0; // -- Dispositivo (HicoCan) que se crea.
-    CanBusHico* iCanBus;
+    ICanBusHico* iCanBus;
 
     /** CAN node object. */
     yarp::dev::PolyDriver canNodeDevice;
-    yarp::dev::IControlLimitsRaw* iControlLimitsRaw;
+    yarp::dev::IControlLimits2Raw* iControlLimits2Raw;
     yarp::dev::IControlModeRaw* iControlModeRaw;
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRaw;
     yarp::dev::IPositionControlRaw* iPositionControlRaw;
@@ -63,7 +63,7 @@ protected:
     yarp::dev::ITorqueControlRaw* iTorqueControlRaw;
     yarp::dev::IVelocityControlRaw* iVelocityControlRaw;
     ICanBusSharer* iCanBusSharer; // -- ??
-    TechnosoftIpos* technosoftIpos;    //-- ok practice?
+    ITechnosoftIpos* technosoftIpos;    //-- ok practice?
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(can_msg* message); // -- Muestra los mensajes que vienen del CAN

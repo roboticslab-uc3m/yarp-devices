@@ -1,10 +1,10 @@
-# Copyright: (C) 2013 Universidad Carlos III de Madrid
-# Author: Juan G. Victores
+# Copyright: (C) 2017 Universidad Carlos III de Madrid
+# Author: Juan G. Victores & Raul de Santos Rico
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 cmake_minimum_required(VERSION 2.6)
 
-YARP_PREPARE_DEVICE(LacqueyFetch TYPE teo::LacqueyFetch INCLUDE LacqueyFetch.hpp)
+YARP_PREPARE_PLUGIN(LacqueyFetch CATEGORY device TYPE teo::LacqueyFetch INCLUDE LacqueyFetch.hpp)
 
 IF (NOT SKIP_LacqueyFetch)
 
@@ -18,8 +18,20 @@ IF (NOT SKIP_LacqueyFetch)
   TARGET_LINK_LIBRARIES(LacqueyFetch ${YARP_LIBRARIES})
   install(TARGETS LacqueyFetch DESTINATION lib)
 
-  # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now... 
-  set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} LacqueyFetch CACHE INTERNAL "appended libraries") 
+  # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now...
+  set(ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "appended libraries")
+  #set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} LacqueyFetch CACHE INTERNAL "appended libraries")
+
+  #install(TARGETS LacqueyFetch DESTINATION lib)
+  yarp_install(TARGETS LacqueyFetch
+             EXPORT YARP
+             COMPONENT runtime
+             LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+             ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+
+  yarp_install(FILES LacqueyFetch.ini
+              COMPONENT runtime
+              DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}) 
 
 ENDIF (NOT SKIP_LacqueyFetch)
 

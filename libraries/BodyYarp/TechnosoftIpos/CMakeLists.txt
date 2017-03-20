@@ -1,10 +1,10 @@
-# Copyright: (C) 2013 Universidad Carlos III de Madrid
-# Author: Juan G. Victores
+# Copyright: (C) 2017 Universidad Carlos III de Madrid
+# Author: Juan G. Victores & Raul de Santos Rico
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 cmake_minimum_required(VERSION 2.6)
 
-YARP_PREPARE_DEVICE(TechnosoftIpos TYPE teo::TechnosoftIpos INCLUDE TechnosoftIpos.hpp)
+YARP_PREPARE_PLUGIN(TechnosoftIpos CATEGORY device TYPE teo::TechnosoftIpos INCLUDE TechnosoftIpos.hpp)
 
 IF (NOT SKIP_TechnosoftIpos)
 
@@ -18,9 +18,20 @@ IF (NOT SKIP_TechnosoftIpos)
   TARGET_LINK_LIBRARIES(TechnosoftIpos ${YARP_LIBRARIES} ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES})
   install(TARGETS TechnosoftIpos DESTINATION lib)
 
-  # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now... 
+  # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now...
   set(ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "appended libraries")
-  set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} TechnosoftIpos CACHE INTERNAL "appended libraries") 
+ # set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} TechnosoftIpos CACHE INTERNAL "appended libraries") 
+
+  #install(TARGETS TechnosoftIpos DESTINATION lib)
+  yarp_install(TARGETS TechnosoftIpos
+             EXPORT YARP
+             COMPONENT runtime
+             LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+             ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+
+  yarp_install(FILES TechnosoftIpos.ini
+              COMPONENT runtime
+              DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}) 
 
 ENDIF (NOT SKIP_TechnosoftIpos)
 

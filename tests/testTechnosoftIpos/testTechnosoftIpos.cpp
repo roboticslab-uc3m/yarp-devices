@@ -3,17 +3,17 @@
 
 // -- We load the rest of libraries that we will use to call the functions of our code
 #include <yarp/os/all.h>
-#include <yarp/dev/Drivers.h>
-#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/all.h>
 
 #include "ColorDebug.hpp"
 
 #include "ICanBusSharer.h"
-#include "TechnosoftIpos.hpp"  //-- ok practice?
+#include "ITechnosoftIpos.h"
+#include "ICanBusHico.h"
 
 #define CAN_ID 124
 
-YARP_DECLARE_PLUGINS(BodyYarp)
+//YARP_DECLARE_PLUGINS(BodyYarp)
 
 namespace teo
 {
@@ -29,7 +29,7 @@ public:
     virtual void SetUp()
     {
         // -- code here will execute just before the test ensues
-        YARP_REGISTER_PLUGINS(BodyYarp);
+        //YARP_REGISTER_PLUGINS(BodyYarp);
 
         yarp::os::Property hicoCanConf ("(device CanBusHico) (canDevice /dev/can1) (canBitrate 8)"); // -- truco para agregar directamente un conjunto de propiedades sin tener que llamar a la función "put"
         bool ok = true;
@@ -52,7 +52,7 @@ public:
 
         bool ok2 = true;
         ok2 &= canNodeDevice.open( TechnosoftIposConf );   // -- we introduce the configuration properties defined ........
-        ok2 &= canNodeDevice.view( iControlLimitsRaw );
+        //j//fail due to yarp non-public inheritance// ok2 &= canNodeDevice.view( iControlLimitsRaw );
         ok2 &= canNodeDevice.view( iControlModeRaw );
         ok2 &= canNodeDevice.view( iEncodersTimedRaw );
         ok2 &= canNodeDevice.view( iPositionControlRaw );
@@ -87,11 +87,11 @@ protected:
 
     /** CAN BUS device. */
     yarp::dev::PolyDriver canBusDevice;  //
-    CanBusHico* iCanBus;
+    ICanBusHico* iCanBus;
 
     /** CAN node object. */
     yarp::dev::PolyDriver canNodeDevice;
-    yarp::dev::IControlLimitsRaw* iControlLimitsRaw;
+    yarp::dev::IControlLimits2Raw* iControlLimits2Raw;
     yarp::dev::IControlModeRaw* iControlModeRaw;
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRaw;
     yarp::dev::IPositionControlRaw* iPositionControlRaw;
@@ -99,7 +99,7 @@ protected:
     yarp::dev::ITorqueControlRaw* iTorqueControlRaw;
     yarp::dev::IVelocityControlRaw* iVelocityControlRaw;
     ICanBusSharer* iCanBusSharer; // -- ??
-    TechnosoftIpos* technosoftIpos;    //-- ok practice?
+    ITechnosoftIpos* technosoftIpos;
 
     struct can_msg buffer;
 
@@ -200,7 +200,7 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetRefAccelerationRaw )
     CD_DEBUG("Read: %s\n", msgToStr(&buffer).c_str());
 
     //-- Print interpretation of message
-    technosoftIpos->interpretMessage(&buffer); // without ASSERT (we don't need assert interpretMessage function)
+    iCanBusSharer->interpretMessage(&buffer); // without ASSERT (we don't need assert interpretMessage function)
 
     // Manual 8.2.3. 6083h: Profile acceleration (SDO ack \"posmode_acc\" from driver)
     ASSERT_EQ(buffer.data[0] , 0x60);  //-- ??

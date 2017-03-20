@@ -1,10 +1,10 @@
-# Copyright: (C) 2013 Universidad Carlos III de Madrid
-# Author: Juan G. Victores
+# Copyright: (C) 2017 Universidad Carlos III de Madrid
+# Author: Juan G. Victores & Raul de Santos Rico
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 cmake_minimum_required(VERSION 2.6)
 
-YARP_PREPARE_DEVICE(TextilesHand TYPE teo::TextilesHand INCLUDE TextilesHand.hpp)
+YARP_PREPARE_PLUGIN(TextilesHand CATEGORY device TYPE teo::TextilesHand INCLUDE TextilesHand.hpp)
 
 IF (NOT SKIP_TextilesHand)
 
@@ -18,8 +18,19 @@ IF (NOT SKIP_TextilesHand)
   TARGET_LINK_LIBRARIES(TextilesHand ${YARP_LIBRARIES})
   install(TARGETS TextilesHand DESTINATION lib)
 
-  # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now... 
-  set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} TextilesHand CACHE INTERNAL "appended libraries") 
+  # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now...
+#  set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} TextilesHand CACHE INTERNAL "appended libraries") 
+
+  #install(TARGETS TextilesHand DESTINATION lib)
+  yarp_install(TARGETS TextilesHand
+             EXPORT YARP
+             COMPONENT runtime
+             LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+             ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+
+  yarp_install(FILES TextilesHand.ini
+              COMPONENT runtime
+              DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}) 
 
 ENDIF (NOT SKIP_TextilesHand)
 

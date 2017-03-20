@@ -2,15 +2,17 @@
 
 // -- We load the rest of libraries that we will use to call the functions of our code
 #include <yarp/os/all.h>
-#include <yarp/dev/Drivers.h>
-#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/all.h>
+#include <map> // -- nuevo
+
 #include "ColorDebug.hpp"
+
 #include "ICanBusSharer.h"
-#include "CuiAbsolute/CuiAbsolute.hpp"
+#include "ICuiAbsolute.h"
 
-YARP_DECLARE_PLUGINS(BodyYarp)
+//YARP_DECLARE_PLUGINS(BodyYarp)
 
-#define CAN_ID 115 // ID of Cui Absolute encoder that you want to check...
+#define CAN_ID 103 // ID of Cui Absolute encoder that you want to check...
 
 namespace teo
 {
@@ -28,9 +30,9 @@ public:
 
 
         // -- code here will execute just before the test ensues
-        YARP_REGISTER_PLUGINS(BodyYarp);
+        //YARP_REGISTER_PLUGINS(BodyYarp);
 
-        yarp::os::Property hicoCanConf ("(device CanBusHico) (canDevice /dev/can1) (canBitrate 8)");
+        yarp::os::Property hicoCanConf ("(device CanBusHico) (canDevice /dev/can0) (canBitrate 8)");
         bool ok = true;
         ok &= canBusDevice.open(hicoCanConf);   // -- we introduce the configuration properties defined in property object (p) and them, we stard the device (HicoCAN)
         ok &= canBusDevice.view(iCanBus);
@@ -52,7 +54,12 @@ public:
         yarp::os::Property CuiAbsoluteConf (strconf.str().c_str());
 
         ok &= canNodeDevice.open( CuiAbsoluteConf );   // -- we introduce the configuration properties defined ........
-        ok &= canNodeDevice.view( iControlLimitsRaw );
+        if ( ! canNodeDevice.isValid() )
+        {
+            CD_ERROR("Bad device of CuiAbsolute :(\n");
+            ::exit(1);
+        }
+        ok &= canNodeDevice.view( iControlLimits2Raw );
         ok &= canNodeDevice.view( iControlModeRaw );
         ok &= canNodeDevice.view( iEncodersTimedRaw );
         ok &= canNodeDevice.view( iPositionControlRaw );
@@ -64,11 +71,11 @@ public:
 
         if(ok)
         {
-            CD_SUCCESS("Configuration of TechnosoftIpos sucessfully :)\n");
+            CD_SUCCESS("Configuration of CuiAbsolute sucessfully :)\n");
         }
         else
         {
-            CD_ERROR("Bad Configuration of TechnosoftIpos :(\n");
+            CD_ERROR("Bad Configuration of CuiAbsolute :(\n");
             ::exit(1);
         }
 
@@ -88,11 +95,11 @@ protected:
 
     /** CAN BUS device. */
     yarp::dev::PolyDriver canBusDevice;
-    CanBusHico* iCanBus;
+    ICanBusHico* iCanBus;
 
     /** CAN node object. */
     yarp::dev::PolyDriver canNodeDevice;
-    yarp::dev::IControlLimitsRaw* iControlLimitsRaw;
+    yarp::dev::IControlLimits2Raw* iControlLimits2Raw;
     yarp::dev::IControlModeRaw* iControlModeRaw;
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRaw;
     yarp::dev::IPositionControlRaw* iPositionControlRaw;
@@ -100,7 +107,7 @@ protected:
     yarp::dev::ITorqueControlRaw* iTorqueControlRaw;
     yarp::dev::IVelocityControlRaw* iVelocityControlRaw;
     ICanBusSharer* iCanBusSharer;
-    CuiAbsolute* cuiAbsolute;
+    ICuiAbsolute* cuiAbsolute;
 
     struct can_msg buffer;
 
@@ -131,25 +138,41 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInPullMode )
     double timeOut = 2;
     double timeStamp = 0.0;
     bool timePassed = false;
+    double cleaningTime = 0.5; // time to empty the buffer
+    std::map< int, int > idxFromCanId;
 
     bool startSending = cuiAbsolute->startPullPublishing();
-    timeStamp = yarp::os::Time::now();
+    timeStamp = yarp::os::Time::now();    
 
     //-- Blocking read until we get a message from the expected canId
-    while ( (canId != CAN_ID) && !timePassed )          // -- it will check the ID
+    while ( (canId != CAN_ID) && !timePassed )          // -- it will check the ID (poner condición nAn)
     {
-        // -- timer
-        if(int(yarp::os::Time::now()-timeStamp)==timeOut)
-        {
-            CD_ERROR("Time out exceeded\n");
-            timePassed = true;
-            //continue;
-        }
+            // -- timer
+            if(int(yarp::os::Time::now()-timeStamp)==timeOut)
+            {
+                CD_ERROR("Time out exceeded\n");
+                timePassed = true;
+                //continue;
+            }
 
-        ret = iCanBus->read_timeout(&buffer, 0);         // -- return value of message with timeout of 0 [ms]
-        if( ret <= 0 ) continue;                        // -- is waiting for recive message
-        canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
-        if (canId == CAN_ID) CD_DEBUG("Reading in pull mode from CuiAbsolute %d\n", canId);
+            ret = iCanBus->read_timeout(&buffer, 0);         // -- return value of message with timeout of 0 [ms]
+
+            // This line is needed to clear the buffer (old messages that has been received)
+            // if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
+
+            if( ret <= 0 ) continue;                        // -- is waiting for recive message
+            canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
+
+
+            if (canId == CAN_ID) {
+                 // -- Reading Cui Absolute Encoder Value
+                iCanBusSharer->interpretMessage(&buffer); // necessary for read CuiAbsolute
+                double value;
+                while( ! iEncodersTimedRaw->getEncoderRaw(0,&value) ){
+                    CD_ERROR("Wrong value of Cui \n");
+                }
+                CD_DEBUG("Reading in pull mode from CuiAbsolute %d (Value: %f)\n", canId, value);                
+            }
     }
 
     ASSERT_TRUE(startSending);         // -- testing startPullPublishing function
@@ -168,8 +191,9 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInContinuousMode )
 
         int canId = 0;
         int ret = 0;
-        double timeOut = 2; // -- 2 seconds
+        double timeOut = 5; // -- 2 seconds
         double timeStamp = 0.0;
+        double cleaningTime = 0.5; // time to empty the buffer
         bool timePassed = false;
 
         timeStamp = yarp::os::Time::now();
@@ -185,10 +209,23 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInContinuousMode )
                 timePassed = true;
             }
 
-            ret = iCanBus->read_timeout(&buffer,1);         // -- return value of message with timeout of 1 [ms]
+            ret = iCanBus->read_timeout(&buffer,0);         // -- return value of message with timeout of 1 [ms]
+
+            // This line is needed to clear the buffer (old messages that has been received)
+            if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
+
             if( ret <= 0 ) continue;                        // -- is waiting for recive message
             canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
-            if (canId == CAN_ID) CD_DEBUG("Reading in continuous mode from CuiAbsolute %d [check %d]\n", canId, i);
+            if (canId == CAN_ID)
+            {
+                // -- Reading Cui Absolute Encoder Value
+                iCanBusSharer->interpretMessage(&buffer); // necessary for read CuiAbsolute
+                double value = 0;
+                while( ! iEncodersTimedRaw->getEncoderRaw(0,&value) ){
+                    CD_ERROR("Wrong value of Cui \n");
+                }
+                CD_DEBUG("Reading in continuous mode from CuiAbsolute %d (Value: %f) [check %d]\n", canId, value, i);
+            }
         }
 
         ASSERT_TRUE(startSending);  // -- testing startContinuousPublishing function
@@ -225,7 +262,7 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteStopSendingMessage ) // -- we call the class
             timePassed = true;
         }
 
-        ret = iCanBus->read_timeout(&buffer,1);         // -- return value of message with timeout of 1 [ms]
+        ret = iCanBus->read_timeout(&buffer,0);         // -- return value of message with timeout of 1 [ms]
 
         // This line is needed to clear the buffer (old messages that has been received)
         if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;

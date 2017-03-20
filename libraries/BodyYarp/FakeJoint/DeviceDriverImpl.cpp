@@ -12,8 +12,10 @@ bool teo::FakeJoint::open(yarp::os::Searchable& config)
     this->ptPointCounter = 0;
     this->ptMovementDone = false;
     this->targetReached = false;
-    this->max = 0;
-    this->min = 0;
+    this->max = config.check("max",0,"max").asDouble();
+    this->min = config.check("min",0,"min").asDouble();
+    this->maxVel = config.check("maxVel",1000,"maxVel").asDouble();
+    this->minVel = config.check("minVel",0,"minVel").asDouble();
     this->refAcceleration = 0;
     this->refSpeed = 0;
     this->encoder = 0;

@@ -16,6 +16,7 @@
 //#define CD_HIDE_ERROR  //-- Can be globally managed from father CMake.
 #include "ColorDebug.hpp"
 #include "ICanBusSharer.h"
+#include "ICuiAbsolute.h"
 
 namespace teo
 {
@@ -37,7 +38,7 @@ namespace teo
 //          Al final definiremos una función auxiliar que será la que utilicemos para enviar mensajes al PIC.
 class CuiAbsolute : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlModeRaw, public yarp::dev::IEncodersTimedRaw,
     public yarp::dev::IPositionControlRaw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControlRaw, public yarp::dev::ITorqueControlRaw,
-    public ICanBusSharer
+    public ICanBusSharer, public ICuiAbsolute
 {
 
 public:
@@ -48,7 +49,7 @@ public:
         firstHasReached = false;
     }
 
-    bool HasFirstReached(){
+    virtual bool HasFirstReached() {
         return firstHasReached;
     }
 
@@ -57,7 +58,7 @@ public:
     virtual bool close();
 
     //  --------- ICanBusSharer Declarations. Implementation in CuiAbsolute.cpp ---------
-    virtual bool setCanBusPtr(CanBusHico *canDevicePtr);
+    virtual bool setCanBusPtr(ICanBusHico *canDevicePtr);
     virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
     {
         return true;
@@ -373,9 +374,9 @@ public:
 
     // -- Auxiliary functions: send data to PIC of Cui
 
-    bool startContinuousPublishing(uint8_t time);
-    bool startPullPublishing();
-    bool stopPublishingMessages();    
+    virtual bool startContinuousPublishing(uint8_t time);
+    virtual bool startPullPublishing();
+    virtual bool stopPublishingMessages();
 
 
 protected:
@@ -400,7 +401,7 @@ protected:
 
     int canId;
 
-    CanBusHico *canDevicePtr;
+    ICanBusHico *canDevicePtr;
 
     double max, min, refAcceleration, refSpeed, tr;
 

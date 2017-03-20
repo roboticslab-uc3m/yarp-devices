@@ -61,7 +61,7 @@ public:
     virtual bool close();
 
     //  --------- ICanBusSharer Declarations. Implementation in TextilesHand.cpp ---------
-    virtual bool setCanBusPtr(CanBusHico *canDevicePtr);
+    virtual bool setCanBusPtr(ICanBusHico *canDevicePtr);
     virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
     {
         return true;
@@ -402,7 +402,7 @@ protected:
 
     int canId;
 
-    CanBusHico *canDevicePtr;
+    ICanBusHico *canDevicePtr;
 
     double max, min, refAcceleration, refSpeed, tr;
 
