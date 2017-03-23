@@ -3,13 +3,11 @@
 #ifndef __SPACE_NAVIGATOR__
 #define __SPACE_NAVIGATOR__
 
-#include <sstream>
-#include <yarp/os/all.h> // FIXME
 #include <yarp/dev/IAnalogSensor.h>
 
 #include "ColorDebug.hpp"
 
-#define DEFAULT_NUM_CHANNELS 24
+#define DEFAULT_NUM_CHANNELS 8
 
 #define FULL_SCALE_X 460.0
 #define FULL_SCALE_Y 430.0
@@ -38,6 +36,7 @@ namespace roboticslab
 class SpaceNavigator : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor
 {
     public:
+
         SpaceNavigator()
         {
         }
@@ -94,6 +93,14 @@ class SpaceNavigator : public yarp::dev::DeviceDriver, public yarp::dev::IAnalog
          * @return status.
          */
         virtual int calibrateChannel(int ch, double value);
+
+    protected:
+
+        //! @brief Enforce that a value is between -1 and 1
+        double enforceRange(double in);
+
+        //! @brief Enforce the deadband (setting values within deadband to zero)
+        double enforceDeadband(double in);
 
     private:
 

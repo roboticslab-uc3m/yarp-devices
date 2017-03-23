@@ -6,14 +6,19 @@
 
 bool roboticslab::SpaceNavigator::open(yarp::os::Searchable& config)
 {
-   return true;
+    if (spnav_open() == -1)
+    {
+        CD_ERROR("Failed to connect to the space navigator daemon\n");
+        return false;
+    }
+    return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::SpaceNavigator::close()
 {
-    return true;
+    return spnav_close() != -1;
 }
 
 // -----------------------------------------------------------------------------
