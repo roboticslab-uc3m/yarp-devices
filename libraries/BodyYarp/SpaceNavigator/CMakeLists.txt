@@ -8,9 +8,16 @@ yarp_prepare_plugin(SpaceNavigator
                     WRAPPER analogServer)
 
 if(NOT SKIP_SpaceNavigator)
-  include_directories(${YARP_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
-  yarp_add_plugin(SpaceNavigator SpaceNavigator.cpp SpaceNavigator.hpp DeviceDriverImpl.cpp IAnalogSensorImpl.cpp)
-  target_link_libraries(SpaceNavigator ${YARP_LIBRARIES} spnav)
+  find_package(Spnav REQUIRED)
+  include_directories(${YARP_INCLUDE_DIRS} ${SPNAV_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
+
+  yarp_add_plugin(SpaceNavigator
+                  SpaceNavigator.cpp
+                  SpaceNavigator.hpp
+                  DeviceDriverImpl.cpp
+                  IAnalogSensorImpl.cpp)
+
+  target_link_libraries(SpaceNavigator ${YARP_LIBRARIES} ${SPNAV_LIBRARIES})
   install(TARGETS SpaceNavigator DESTINATION lib)
 
   yarp_install(TARGETS SpaceNavigator
