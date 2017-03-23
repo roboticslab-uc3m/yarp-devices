@@ -81,7 +81,7 @@ bool teo::TechnosoftIpos::getLimitsRaw(int axis, double *min, double *max)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -------------------  IControlLimits2Raw Related  ----------------------------
 
 bool teo::TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
 {

@@ -53,9 +53,11 @@ namespace teo
 */
 // Note: IEncodersTimed inherits from IEncoders
 // Note: IControlLimits2 inherits from IControlLimits
-// Note: IPositionControl2 inherits from IPositionControl (hereda)
-class CanBusControlboard : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2, public yarp::dev::IControlMode, public yarp::dev::IEncodersTimed,
-    public yarp::dev::IPositionControl2, public yarp::dev::IPositionDirect, public yarp::dev::ITorqueControl, public yarp::dev::IVelocityControl2,
+// Note: IPositionControl2 inherits from IPositionControl
+// Note: IControlMode2 inherits from IControlMode
+// Note: to fix [ERROR]iint->getInteractionlMode failed, we should inherit from IInteractionMode
+class CanBusControlboard : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2, public yarp::dev::IControlMode2, public yarp::dev::IEncodersTimed,
+    public yarp::dev::IPositionControl2, public yarp::dev::IPositionDirect, public yarp::dev::ITorqueControl, public yarp::dev::IVelocityControl2, public yarp::dev::IInteractionMode,
     public yarp::os::Thread
 {
 
@@ -161,6 +163,58 @@ public:
     * @return: true/false success failure.
     */
     virtual bool getControlModes(int *modes);
+
+    //  --------- IControlMode2 Declarations. Implementation in IControlMode2.cpp ---------
+
+    /**
+    * Get the current control mode for a subset of axes.
+    * @param n_joints how many joints this command is referring to
+    * @param joints list of joint numbers, the size of this array is n_joints
+    * @param modes array containing the new controlmodes, one value for each joint, the size is n_joints.
+    *          The first value will be the new reference fot the joint joints[0].
+    *          for example:
+    *          n_joint  3
+    *          joints   0  2  4
+    *          modes    VOCAB_CM_POSITION VOCAB_CM_VELOCITY VOCAB_CM_POSITION
+    * @return true/false success failure.
+    */
+    virtual bool getControlModes(const int n_joint, const int *joints, int *modes);
+
+    /**
+    * Set the current control mode.
+    * @param j: joint number
+    * @param mode: a vocab of the desired control mode for joint j.
+    * @return true if the new controlMode was successfully set, false if the message was not received or
+    *         the joint was unable to switch to the desired controlMode
+    *         (e.g. the joint is on a fault condition or the desired mode is not implemented).    */
+    virtual bool setControlMode(const int j, const int mode);
+
+    /**
+    * Set the current control mode for a subset of axes.
+    * @param n_joints how many joints this command is referring to
+    * @param joints list of joint numbers, the size of this array is n_joints
+    * @param modes array containing the new controlmodes, one value for each joint, the size is n_joints.
+    *          The first value will be the new reference fot the joint joints[0].
+    *          for example:
+    *          n_joint  3
+    *          joints   0  2  4
+    *          modes    VOCAB_CM_POSITION VOCAB_CM_VELOCITY VOCAB_CM_POSITION
+    * @return true if the new controlMode was successfully set, false if the message was not received or
+    *         the joint was unable to switch to the desired controlMode
+    *         (e.g. the joint is on a fault condition or the desired mode is not implemented).
+    */
+    virtual bool setControlModes(const int n_joint, const int *joints, int *modes);
+
+    /**
+    * Set the current control mode (multiple joints).
+    * @param modes: a vector containing vocabs for the desired control modes of the joints.
+    * @return true if the new controlMode was successfully set, false if the message was not received or
+    *         the joint was unable to switch to the desired controlMode
+    *         (e.g. the joint is on a fault condition or the desired mode is not implemented).
+    */
+    virtual bool setControlModes(int *modes);
+
+
 
     //  ---------- IEncoders Declarations. Implementation in IEncodersImpl.cpp ----------
 
@@ -727,7 +781,7 @@ public:
      */
     virtual bool velocityMove(const double *sp);
 
-    //  ########## IVelocityControl2 Declarations. Implementation in IVelocityControl2.cpp ##########
+    //  --------- IVelocityControl2 Declarations. Implementation in IVelocityControl2.cpp ----------
 
     /** Start motion at a given speed for a subset of joints.
      * @param n_joint how many joints this command is referring to
@@ -811,6 +865,71 @@ public:
      */
     virtual bool getVelPids(yarp::dev::Pid *pids);
 
+    // -----------IInteracionMode Declarations. Implementation in IInteracionMode.cpp --------------
+    /**
+     * Get the current interaction mode of the robot, values can be stiff or compliant.
+     * @param axis joint number
+     * @param mode contains the requested information about interaction mode of the joint
+     * @return true or false on success or failure.
+     */
+    virtual bool getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode);
+
+
+    /**
+     * Get the current interaction mode of the robot for a set of joints, values can be stiff or compliant.
+     * @param n_joints how many joints this command is referring to
+     * @param joints list of joints controlled. The size of this array is n_joints
+     * @param modes array containing the requested information about interaction mode, one value for each joint, the size is n_joints.
+     *          for example:
+     *          n_joint  3
+     *          joints   0  2  4
+     *          refs    VOCAB_IM_STIFF VOCAB_IM_STIFF VOCAB_IM_COMPLIANT
+     * @return true or false on success or failure.
+     */
+    virtual bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+
+
+    /**
+     * Get the current interaction mode of the robot for a all the joints, values can be stiff or compliant.
+     * @param mode array containing the requested information about interaction mode, one value for each joint.
+     * @return true or false on success or failure.
+     */
+    virtual bool getInteractionModes(yarp::dev::InteractionModeEnum* modes);
+
+
+    /**
+     * Set the interaction mode of the robot, values can be stiff or compliant.
+     * Please note that some robot may not implement certain types of interaction, so always check the return value.
+     * @param axis joint number
+     * @param mode the desired interaction mode
+     * @return true or false on success or failure.
+     */
+    virtual bool setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode);
+
+
+    /**
+     * Set the interaction mode of the robot for a set of joints, values can be stiff or compliant.
+     * Please note that some robot may not implement certain types of interaction, so always check the return value.
+     * @param n_joints how many joints this command is referring to
+     * @param joints list of joints controlled. The size of this array is n_joints
+     * @param modes array containing the desired interaction mode, one value for each joint, the size is n_joints.
+     *          for example:
+     *          n_joint  3
+     *          joints   0  2  4
+     *          refs    VOCAB_IM_STIFF VOCAB_IM_STIFF VOCAB_IM_COMPLIANT
+     * @return true or false on success or failure. If one or more joint fails, the return value will be false.
+     */
+    virtual bool setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+
+    /**
+     * Set the interaction mode of the robot for a all the joints, values can be stiff or compliant.
+     * Some robot may not implement some types of interaction, so always check the return value
+     * @param mode array with the desired interaction mode for all joints, length is the total number of joints for the part
+     * @return true or false on success or failure. If one or more joint fails, the return value will be false.
+     */
+    virtual bool setInteractionModes(yarp::dev::InteractionModeEnum* modes);
+
+
     // -------- Thread declarations. Implementation in ThreadImpl.cpp --------
 
     /**
@@ -863,16 +982,22 @@ protected:
     std::vector< yarp::dev::IControlLimits2Raw* > iControlLimits2Raw;
     std::vector< yarp::dev::IControlModeRaw* > iControlModeRaw;
     std::vector< yarp::dev::IEncodersTimedRaw* > iEncodersTimedRaw;
-    std::vector< yarp::dev::IPositionControlRaw* > iPositionControlRaw;
+    std::vector< yarp::dev::IPositionControl2Raw* > iPositionControl2Raw;
     std::vector< yarp::dev::IPositionDirectRaw* > iPositionDirectRaw;
     std::vector< yarp::dev::ITorqueControlRaw* > iTorqueControlRaw;
-    std::vector< yarp::dev::IVelocityControlRaw* > iVelocityControlRaw;
+    //std::vector< yarp::dev::IVelocityControlRaw* > iVelocityControlRaw; // -- old
     std::vector< ICanBusSharer* > iCanBusSharer;
+
+    std::vector< yarp::dev::IInteractionModeRaw* > iInteractionModeRaw;
+    std::vector< yarp::dev::IVelocityControl2Raw* > iVelocityControl2Raw; // -- new
+
     std::map< int, int > idxFromCanId;
-    std::vector< double > targetPosition;
-    std::vector< double > refVelocity;
-    yarp::os::Semaphore targetPositionSemaphore;
-    yarp::os::Semaphore refVelocitySemaphore;
+    //std::vector< double > targetPosition;         // -- now, we don't need a vector!! Implemented in TechnosoftIpos->IPositionControl2RawImpl.cpp
+    //std::vector< double > refVelocity;            // -- now, we don't need a vector!! Implemented in TechnosoftIpos->IVelocityControl2RawImpl.cpp
+    //std::vector< yarp::dev::InteractionModeEnum > interactionMode; // -- It's right?? R: now, we don't need a vector!!
+    //yarp::os::Semaphore targetPositionSemaphore;    // -- now, we don't need a vector!! Implemented in TechnosoftIpos->IPositionControl2RawImpl.cpp
+    //yarp::os::Semaphore refVelocitySemaphore;     // -- now, we don't need a vector!! Implemented in TechnosoftIpos->IVelocityControl2RawImpl.cpp
+    //yarp::os::Semaphore interactionModeSemaphore; // -- now, we don't need a vector!! Implemented in TechnosoftIpos->IInteractionModeRawImpl.cpp
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(can_msg* message);

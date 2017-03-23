@@ -71,7 +71,7 @@ bool teo::CanBusControlboard::setOpenLoopMode(int j)
     return iControlModeRaw[j]->setOpenLoopModeRaw( 0 );
 }
 
-// -----------------------------------------------------------------------------
+// ---------------------- IControlMode2 Related  ---------------------------------
 
 bool teo::CanBusControlboard::getControlMode(int j, int *mode)
 {
@@ -96,3 +96,76 @@ bool teo::CanBusControlboard::getControlModes(int *modes)
 }
 
 // -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::getControlModes(const int n_joint, const int *joints, int *modes)
+{
+    CD_INFO("\n");
+
+    bool ok = true;
+    for(unsigned int i=0; i < nodes.size(); i++)
+    {
+        if( joints[i] )
+        {
+            ok &= getControlMode(i,&modes[i]);
+        }
+    }
+    return ok;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::setControlMode(const int j, const int mode)
+{
+    CD_INFO("(%d, %d)\n",j,mode);
+
+    bool ok = true;
+    //-- Check index within range
+    if ( ! this->indexWithinRange(j) ) return false;
+
+    if( mode == VOCAB_CM_POSITION )
+        ok = setPositionMode(j);
+    if( mode == VOCAB_CM_VELOCITY )
+        ok = setVelocityMode(j);
+    if( mode == VOCAB_CM_TORQUE )
+        ok = setTorqueMode(j);
+    if( mode == VOCAB_CM_IMPEDANCE_POS )
+        ok = setImpedancePositionMode(j);
+    if( mode == VOCAB_CM_IMPEDANCE_VEL )
+        ok = setImpedanceVelocityMode(j);
+    if( mode == VOCAB_CM_OPENLOOP )
+        ok = setOpenLoopMode(j);
+
+    return ok;
+
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::setControlModes(const int n_joint, const int *joints, int *modes)
+{
+    CD_INFO("\n");
+
+    bool ok = true;
+    for(int j=0; j<nodes.size(); j++)
+    {
+        if( joints[j] )
+        {
+            ok &= this->setControlMode(j,modes[j]);
+        }
+    }
+    return ok;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CanBusControlboard::setControlModes(int *modes)
+{
+    CD_INFO("\n");
+
+    bool ok = true;
+    for(unsigned int i=0; i<nodes.size(); i++)
+    {
+        ok &= setControlMode(i,modes[i]);
+    }
+    return ok;
+}

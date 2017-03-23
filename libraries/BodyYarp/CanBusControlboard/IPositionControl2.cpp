@@ -2,7 +2,7 @@
 
 #include "CanBusControlboard.hpp"
 
-// ------------------ IPositionControl2 Related ----------------------------------------
+// ------------------ IPositionControl Related ----------------------------------------
 
 bool teo::CanBusControlboard::getAxes(int *axes)
 {
@@ -36,11 +36,7 @@ bool teo::CanBusControlboard::positionMove(int j, double ref)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    targetPositionSemaphore.wait();
-    targetPosition[j] = ref;
-    targetPositionSemaphore.post();
-
-    return iPositionControlRaw[j]->positionMoveRaw( 0, ref );
+    return iPositionControl2Raw[j]->positionMoveRaw( 0, ref );
 }
 
 // -----------------------------------------------------------------------------
@@ -66,11 +62,7 @@ bool teo::CanBusControlboard::relativeMove(int j, double delta)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    targetPositionSemaphore.wait();
-    targetPosition[j] = delta;
-    targetPositionSemaphore.post();
-
-    return iPositionControlRaw[j]->relativeMoveRaw( 0, delta );
+    return iPositionControl2Raw[j]->relativeMoveRaw( 0, delta );
 }
 
 // -----------------------------------------------------------------------------
@@ -96,7 +88,7 @@ bool teo::CanBusControlboard::checkMotionDone(int j, bool *flag)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iPositionControlRaw[j]->checkMotionDoneRaw( 0, flag );
+    return iPositionControl2Raw[j]->checkMotionDoneRaw( 0, flag );
 }
 
 // -----------------------------------------------------------------------------
@@ -124,7 +116,7 @@ bool teo::CanBusControlboard::setRefSpeed(int j, double sp)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iPositionControlRaw[j]->setRefSpeedRaw( 0, sp );
+    return iPositionControl2Raw[j]->setRefSpeedRaw( 0, sp );
 }
 
 // -----------------------------------------------------------------------------
@@ -148,7 +140,7 @@ bool teo::CanBusControlboard::setRefAcceleration(int j, double acc)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iPositionControlRaw[j]->setRefAccelerationRaw( 0, acc );
+    return iPositionControl2Raw[j]->setRefAccelerationRaw( 0, acc );
 }
 
 // -----------------------------------------------------------------------------
@@ -172,7 +164,7 @@ bool teo::CanBusControlboard::getRefSpeed(int j, double *ref)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iPositionControlRaw[j]->getRefSpeedRaw( 0, ref);
+    return iPositionControl2Raw[j]->getRefSpeedRaw( 0, ref);
 }
 
 // -----------------------------------------------------------------------------
@@ -196,7 +188,7 @@ bool teo::CanBusControlboard::getRefAcceleration(int j, double *acc)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iPositionControlRaw[j]->getRefAccelerationRaw( 0, acc );
+    return iPositionControl2Raw[j]->getRefAccelerationRaw( 0, acc );
 }
 
 // -----------------------------------------------------------------------------
@@ -220,7 +212,7 @@ bool teo::CanBusControlboard::stop(int j)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iPositionControlRaw[j]->stopRaw (0);
+    return iPositionControl2Raw[j]->stopRaw (0);
 }
 
 // -----------------------------------------------------------------------------
@@ -235,7 +227,7 @@ bool teo::CanBusControlboard::stop()
     return ok;
 }
 
-// -----------------------------------------------------------------------------
+// ---------------------------- IPositionControl2 Related ---------------------
 
 bool teo::CanBusControlboard::positionMove(const int n_joint, const int *joints, const double *refs)
 {
@@ -355,11 +347,8 @@ bool teo::CanBusControlboard::getTargetPosition(const int joint, double *ref)
 {
     CD_DEBUG("\n");
 
-    targetPositionSemaphore.wait();
-    *ref = targetPosition[joint];
-    targetPositionSemaphore.post();
+    return iPositionControl2Raw[joint]->getTargetPositionRaw(0, ref);
 
-    return true;
 }
 
 // -----------------------------------------------------------------------------

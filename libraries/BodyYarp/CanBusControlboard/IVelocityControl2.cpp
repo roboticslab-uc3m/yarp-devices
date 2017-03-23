@@ -20,17 +20,12 @@ bool teo::CanBusControlboard::setVelocityMode()
 
 bool teo::CanBusControlboard::velocityMove(int j, double sp)
 {
-    CD_INFO("(%d)\n",j);
+    CD_INFO("(%d), (%f)\n",j , sp);
 
     //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
+    if ( ! this->indexWithinRange(j) ) return false;    
 
-    // -- Save the last reference speed (double sp) for single joint (int j)
-    refVelocitySemaphore.wait();
-    refVelocity[j] = sp;
-    refVelocitySemaphore.post();
-
-    return iVelocityControlRaw[j]->velocityMoveRaw( 0, sp );
+    return iVelocityControl2Raw[j]->velocityMoveRaw( 0, sp );
 }
 
 // -----------------------------------------------------------------------------
@@ -47,7 +42,7 @@ bool teo::CanBusControlboard::velocityMove(const double *sp)
     return ok;
 }
 
-// -----------------------------------------------------------------------------
+// ----------------------------  IVelocityControl2 Related  --------------------
 
 bool teo::CanBusControlboard::velocityMove(const int n_joint, const int *joints, const double *spds)
 {
@@ -70,12 +65,11 @@ bool teo::CanBusControlboard::getRefVelocity(const int joint, double *vel)
 {
     CD_INFO("%d\n",joint);
 
-    // -- Get the last reference speed set by velocityMove for single joint (saved in double vector)
-    refVelocitySemaphore.wait();
-    *vel = refVelocity[joint];
-    refVelocitySemaphore.post();
+    //-- Check index within range
+    if ( ! this->indexWithinRange(joint) ) return false;
 
-    return true;
+    // -- Get the last reference speed set by velocityMove (see IVelocityControl2RawImpl.cpp contained in TechnosoftIpos ) for single joint
+    return iVelocityControl2Raw[joint]->getRefVelocityRaw(0, vel); // -- It can be... getRefVelocityRaw(joint, vel)
 }
 
 // ------------------------------------------------------------------------------

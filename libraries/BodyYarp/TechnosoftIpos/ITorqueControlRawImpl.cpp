@@ -11,7 +11,7 @@ bool teo::TechnosoftIpos::getRefTorqueRaw(int j, double *t)
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
+    *t = refTorque;
 
     return true;
 }
@@ -39,6 +39,11 @@ bool teo::TechnosoftIpos::setRefTorqueRaw(int j, double t)
     }
     CD_SUCCESS("Sent refTorque. %s\n", msgToStr(0x600, 8, msg_ref_torque).c_str() );
     //*************************************************************
+
+    refTorqueSemaphore.wait();
+    refTorque = t;
+    refTorqueSemaphore.post();
+
 
     return true;
 }
