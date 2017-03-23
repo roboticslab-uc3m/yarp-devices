@@ -6,7 +6,7 @@
 
 bool teo::CanBusControlboard::setPositionMode(int j)
 {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d)\n",j);
 
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
@@ -18,7 +18,7 @@ bool teo::CanBusControlboard::setPositionMode(int j)
 
 bool teo::CanBusControlboard::setVelocityMode(int j)
 {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d)\n",j);
 
     return iControlModeRaw[j]->setVelocityModeRaw( 0 );
 }
@@ -27,7 +27,7 @@ bool teo::CanBusControlboard::setVelocityMode(int j)
 
 bool teo::CanBusControlboard::setTorqueMode(int j)
 {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d)\n",j);
 
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
@@ -39,7 +39,7 @@ bool teo::CanBusControlboard::setTorqueMode(int j)
 
 bool teo::CanBusControlboard::setImpedancePositionMode(int j)
 {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d)\n",j);
 
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
@@ -51,7 +51,7 @@ bool teo::CanBusControlboard::setImpedancePositionMode(int j)
 
 bool teo::CanBusControlboard::setImpedanceVelocityMode(int j)
 {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d)\n",j);
 
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
@@ -63,7 +63,7 @@ bool teo::CanBusControlboard::setImpedanceVelocityMode(int j)
 
 bool teo::CanBusControlboard::setOpenLoopMode(int j)
 {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d)\n",j);
 
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
@@ -87,7 +87,7 @@ bool teo::CanBusControlboard::getControlMode(int j, int *mode)
 
 bool teo::CanBusControlboard::getControlModes(int *modes)
 {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
 
     bool ok = true;
     for(unsigned int i=0; i < nodes.size(); i++)
@@ -99,7 +99,7 @@ bool teo::CanBusControlboard::getControlModes(int *modes)
 
 bool teo::CanBusControlboard::getControlModes(const int n_joint, const int *joints, int *modes)
 {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
 
     bool ok = true;
     for(unsigned int i=0; i < n_joint; i++)
@@ -111,7 +111,7 @@ bool teo::CanBusControlboard::getControlModes(const int n_joint, const int *join
 
 bool teo::CanBusControlboard::setControlMode(const int j, const int mode)
 {
-    CD_INFO("(%d, %d)\n",j,mode);
+    CD_DEBUG("(%d, %d)\n",j,mode);
 
     bool ok = true;
     //-- Check index within range
@@ -138,7 +138,7 @@ bool teo::CanBusControlboard::setControlMode(const int j, const int mode)
 
 bool teo::CanBusControlboard::setControlModes(const int n_joint, const int *joints, int *modes)
 {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
 
     bool ok = true;
     for(int j=0; j<n_joint; j++)
@@ -152,7 +152,7 @@ bool teo::CanBusControlboard::setControlModes(const int n_joint, const int *join
 
 bool teo::CanBusControlboard::setControlModes(int *modes)
 {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
 
     bool ok = true;
     for(unsigned int i=0; i<nodes.size(); i++)

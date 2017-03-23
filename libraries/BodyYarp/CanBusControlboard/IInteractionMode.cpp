@@ -7,7 +7,7 @@
 
 bool teo::CanBusControlboard::getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
 {
-    CD_INFO("(%d)\n",axis);
+    CD_DEBUG("(%d)\n",axis);
     //*mode = interactionMode[axis];
 
     //-- Check index within range
@@ -18,7 +18,7 @@ bool teo::CanBusControlboard::getInteractionMode(int axis, yarp::dev::Interactio
 
 bool teo::CanBusControlboard::getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
 
         bool ok = true;
         for(unsigned int i=0; i < n_joints; i++)
@@ -28,7 +28,7 @@ bool teo::CanBusControlboard::getInteractionModes(int n_joints, int *joints, yar
 
 bool teo::CanBusControlboard::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
 
     bool ok = true;
     for(unsigned int i=0; i < nodes.size(); i++)
@@ -38,7 +38,7 @@ bool teo::CanBusControlboard::getInteractionModes(yarp::dev::InteractionModeEnum
 
 bool teo::CanBusControlboard::setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode)
 {
-    CD_INFO("(%d)\n",axis);
+    CD_DEBUG("(%d)\n",axis);
 
     //-- Check index within range
     if ( ! this->indexWithinRange(axis) ) return false;
@@ -48,7 +48,7 @@ bool teo::CanBusControlboard::setInteractionMode(int axis, yarp::dev::Interactio
 
 bool teo::CanBusControlboard::setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
 
        bool ok = true;
        for(int j=0; j<n_joints; j++)
@@ -59,7 +59,7 @@ bool teo::CanBusControlboard::setInteractionModes(int n_joints, int *joints, yar
 
 bool teo::CanBusControlboard::setInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
 
     bool ok = true;
     for(unsigned int i=0; i<nodes.size(); i++)

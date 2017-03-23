@@ -52,15 +52,10 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
     iPositionControl2Raw.resize( nodes.size() );
     iPositionDirectRaw.resize( nodes.size() );
     iTorqueControlRaw.resize( nodes.size() );
-    // iVelocityControlRaw.resize( nodes.size() ); // -- old
     iCanBusSharer.resize( nodes.size() );
 
     iInteractionModeRaw.resize( nodes.size() );
     iVelocityControl2Raw.resize( nodes.size() ); // -- new
-
-    // targetPosition.resize( nodes.size() );    // -- new, we don't need this anymore!!
-    // refVelocity.resize(nodes.size());        // -- new, we don't need this anymore!!
-    // interactionMode.resize(nodes.size());    // it's right?
 
     for(int i=0; i<nodes.size(); i++)
     {
@@ -94,11 +89,9 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
         device->view( iControlLimits2Raw[i] );
         device->view( iControlModeRaw[i] );
         device->view( iEncodersTimedRaw[i] );
-        // device->view( iPositionControlRaw[i] );  // -- old
         device->view( iPositionControl2Raw[i] );    // -- new
         device->view( iPositionDirectRaw[i] );
         device->view( iTorqueControlRaw[i] );
-        // device->view( iVelocityControlRaw[i] );  // -- old
         device->view( iVelocityControl2Raw[i] );     // -- new
         device->view( iCanBusSharer[i] );   // -- si el device es un Cui, este podrá "ver" las funciones programadas en iCanBusSharer (funciones que hemos añadido al encoder).
         // -- estas funciones se encuentran implementadas en el cpp correspondiente "ICanBusSharerImpl.cpp", por lo tanto le da la funcionalidad que deseamos

@@ -434,7 +434,7 @@ public:
      */
     virtual bool stop();
 
-    // ########## IPositionControl2 declarations. Implementation in IPositionControl2.cpp ###########
+    // ------- IPositionControl2 declarations. Implementation in IPositionControl2.cpp -------
 
     /** Set new reference point for a subset of joints.
      * @param joints pointer to the array of joint numbers
@@ -985,19 +985,12 @@ protected:
     std::vector< yarp::dev::IPositionControl2Raw* > iPositionControl2Raw;
     std::vector< yarp::dev::IPositionDirectRaw* > iPositionDirectRaw;
     std::vector< yarp::dev::ITorqueControlRaw* > iTorqueControlRaw;
-    //std::vector< yarp::dev::IVelocityControlRaw* > iVelocityControlRaw; // -- old
     std::vector< ICanBusSharer* > iCanBusSharer;
 
     std::vector< yarp::dev::IInteractionModeRaw* > iInteractionModeRaw;
-    std::vector< yarp::dev::IVelocityControl2Raw* > iVelocityControl2Raw; // -- new
+    std::vector< yarp::dev::IVelocityControl2Raw* > iVelocityControl2Raw;
 
     std::map< int, int > idxFromCanId;
-    //std::vector< double > targetPosition;         // -- now, we don't need a vector!! Implemented in TechnosoftIpos->IPositionControl2RawImpl.cpp
-    //std::vector< double > refVelocity;            // -- now, we don't need a vector!! Implemented in TechnosoftIpos->IVelocityControl2RawImpl.cpp
-    //std::vector< yarp::dev::InteractionModeEnum > interactionMode; // -- It's right?? R: now, we don't need a vector!!
-    //yarp::os::Semaphore targetPositionSemaphore;    // -- now, we don't need a vector!! Implemented in TechnosoftIpos->IPositionControl2RawImpl.cpp
-    //yarp::os::Semaphore refVelocitySemaphore;     // -- now, we don't need a vector!! Implemented in TechnosoftIpos->IVelocityControl2RawImpl.cpp
-    //yarp::os::Semaphore interactionModeSemaphore; // -- now, we don't need a vector!! Implemented in TechnosoftIpos->IInteractionModeRawImpl.cpp
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(can_msg* message);

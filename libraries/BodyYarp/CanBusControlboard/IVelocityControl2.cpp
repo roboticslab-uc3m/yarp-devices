@@ -6,7 +6,7 @@
 
 bool teo::CanBusControlboard::setVelocityMode()
 {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
 
     bool ok = true;
     for(int j=0; j<nodes.size(); j++)
@@ -20,7 +20,7 @@ bool teo::CanBusControlboard::setVelocityMode()
 
 bool teo::CanBusControlboard::velocityMove(int j, double sp)
 {
-    CD_INFO("(%d), (%f)\n",j , sp);
+    CD_DEBUG("(%d), (%f)\n",j , sp);
 
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;    
@@ -32,7 +32,7 @@ bool teo::CanBusControlboard::velocityMove(int j, double sp)
 
 bool teo::CanBusControlboard::velocityMove(const double *sp)
 {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
 
     bool ok = true;
     for(int j=0; j<nodes.size(); j++)
@@ -46,7 +46,7 @@ bool teo::CanBusControlboard::velocityMove(const double *sp)
 
 bool teo::CanBusControlboard::velocityMove(const int n_joint, const int *joints, const double *spds)
 {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
 
     bool ok = true;
     for(int j=0; j<n_joint; j++)
@@ -60,7 +60,7 @@ bool teo::CanBusControlboard::velocityMove(const int n_joint, const int *joints,
 
 bool teo::CanBusControlboard::getRefVelocity(const int joint, double *vel)
 {
-    CD_INFO("%d\n",joint);
+    CD_DEBUG("%d\n",joint);
 
     //-- Check index within range
     if ( ! this->indexWithinRange(joint) ) return false;
@@ -73,7 +73,7 @@ bool teo::CanBusControlboard::getRefVelocity(const int joint, double *vel)
 
 bool teo::CanBusControlboard::getRefVelocities(double *vels)
 {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
 
     bool ok = true;
     for(unsigned int i=0; i<nodes.size(); i++)
@@ -87,7 +87,7 @@ bool teo::CanBusControlboard::getRefVelocities(double *vels)
 
 bool teo::CanBusControlboard::getRefVelocities(const int n_joint, const int *joints, double *vels)
 {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
 
     bool ok = true;
     for(unsigned int i=0; i<n_joint; i++)
