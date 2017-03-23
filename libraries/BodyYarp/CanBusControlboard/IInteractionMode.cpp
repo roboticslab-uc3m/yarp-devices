@@ -21,13 +21,8 @@ bool teo::CanBusControlboard::getInteractionModes(int n_joints, int *joints, yar
     CD_INFO("\n");
 
         bool ok = true;
-        for(unsigned int i=0; i < nodes.size(); i++)
-        {
-            if( joints[i] )
-            {
-                ok &= getInteractionMode(i,&modes[i]);
-            }
-        }
+        for(unsigned int i=0; i < n_joints; i++)
+            ok &= getInteractionMode(joints[i],&modes[i]);
         return ok;
 }
 
@@ -56,13 +51,9 @@ bool teo::CanBusControlboard::setInteractionModes(int n_joints, int *joints, yar
     CD_INFO("\n");
 
        bool ok = true;
-       for(int j=0; j<nodes.size(); j++)
-       {
-           if( joints[j] )
-           {
-               ok &= this->setInteractionMode(j,modes[j]);
-           }
-       }
+       for(int j=0; j<n_joints; j++)
+            ok &= this->setInteractionMode(joints[j],modes[j]);
+
        return ok;
 }
 
@@ -72,8 +63,6 @@ bool teo::CanBusControlboard::setInteractionModes(yarp::dev::InteractionModeEnum
 
     bool ok = true;
     for(unsigned int i=0; i<nodes.size(); i++)
-    {
         ok &= setInteractionMode(i,modes[i]);
-    }
     return ok;
 }

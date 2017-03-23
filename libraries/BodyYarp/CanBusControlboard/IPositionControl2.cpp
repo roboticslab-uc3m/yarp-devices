@@ -47,7 +47,7 @@ bool teo::CanBusControlboard::positionMove(const double *refs)
 
     bool ok = true;
     for(int j=0; j<nodes.size(); j++)
-    {        
+    {
         ok &= this->positionMove(j,refs[j]);
     }
     return ok;
@@ -249,7 +249,7 @@ bool teo::CanBusControlboard::relativeMove(const int n_joint, const int *joints,
 
     bool ok = true;
     for(int j=0; j<n_joint; j++) // j<nodes.size()
-    {        
+    {
         ok &= this->relativeMove(joints[j],deltas[j]);
     }
     return ok;
@@ -293,7 +293,7 @@ bool teo::CanBusControlboard::setRefAccelerations(const int n_joint, const int *
 
     bool ok = true;
     for(unsigned int i=0; i<n_joint; i++)
-    {        
+    {
         ok &= setRefAcceleration(joints[i],accs[i]);
     }
     return ok;
@@ -320,8 +320,8 @@ bool teo::CanBusControlboard::getRefAccelerations(const int n_joint, const int *
     CD_DEBUG("\n");
 
     bool ok = true;
-    for(unsigned int i=0; i<nodes.size(); i++)
-    {        
+    for(unsigned int i=0; i<n_joint; i++)
+    {
         ok &= getRefAcceleration(joints[i],&accs[i]);
     }
     return ok;
@@ -372,7 +372,7 @@ bool teo::CanBusControlboard::getTargetPositions(const int n_joint, const int *j
     CD_DEBUG("\n");
 
     bool ok = true;
-    for(unsigned int i=0; i<nodes.size(); i++)
+    for(unsigned int i=0; i<n_joint; i++)
     {
         ok &= getTargetPosition(joints[i],&(refs[i]));
     }

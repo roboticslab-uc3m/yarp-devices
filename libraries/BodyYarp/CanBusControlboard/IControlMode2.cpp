@@ -102,13 +102,8 @@ bool teo::CanBusControlboard::getControlModes(const int n_joint, const int *join
     CD_INFO("\n");
 
     bool ok = true;
-    for(unsigned int i=0; i < nodes.size(); i++)
-    {
-        if( joints[i] )
-        {
-            ok &= getControlMode(i,&modes[i]);
-        }
-    }
+    for(unsigned int i=0; i < n_joint; i++)
+        ok &= getControlMode(joints[i],&modes[i]);
     return ok;
 }
 
@@ -146,12 +141,9 @@ bool teo::CanBusControlboard::setControlModes(const int n_joint, const int *join
     CD_INFO("\n");
 
     bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        if( joints[j] )
-        {
-            ok &= this->setControlMode(j,modes[j]);
-        }
+    for(int j=0; j<n_joint; j++)
+    {                
+        ok &= this->setControlMode(joints[j],modes[j]);
     }
     return ok;
 }
@@ -164,8 +156,6 @@ bool teo::CanBusControlboard::setControlModes(int *modes)
 
     bool ok = true;
     for(unsigned int i=0; i<nodes.size(); i++)
-    {
         ok &= setControlMode(i,modes[i]);
-    }
     return ok;
 }
