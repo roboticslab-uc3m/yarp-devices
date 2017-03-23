@@ -34,8 +34,8 @@ namespace teo
 */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
 // Note: IControlLimits2Raw inherits from IControlLimitsRaw
-class TechnosoftIpos : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlModeRaw, public yarp::dev::IEncodersTimedRaw,
-    public yarp::dev::IPositionControlRaw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControlRaw, public yarp::dev::ITorqueControlRaw,
+class TechnosoftIpos : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlModeRaw, public yarp::dev::IInteractionModeRaw, public yarp::dev::IEncodersTimedRaw,
+    public yarp::dev::IPositionControl2Raw, public yarp::dev::IPositionDirectRaw, public yarp::dev::ITorqueControlRaw, public yarp::dev::IVelocityControl2Raw,
     public ICanBusSharer, public ITechnosoftIpos
 {
 
@@ -206,6 +206,101 @@ public:
         return false;
     }
 
+    // ------- IPositionControl2Raw declarations. Implementation in IPositionControl2RawImpl.cpp ---------
+
+    /** Set new reference point for a subset of joints.
+     * @param joints pointer to the array of joint numbers
+     * @param refs   pointer to the array specifies the new reference points
+     * @return true/false on success/failure
+     */
+    virtual bool positionMoveRaw(const int n_joint, const int *joints, const double *refs);
+
+    /** Set relative position for a subset of joints.
+     * @param joints pointer to the array of joint numbers
+     * @param deltas pointer to the array of relative commands
+     * @return true/false on success/failure
+     */
+    virtual bool relativeMoveRaw(const int n_joint, const int *joints, const double *deltas);
+
+    /** Check if the current trajectory is terminated. Non blocking.
+     * @param joints pointer to the array of joint numbers
+     * @param flag true if the trajectory is terminated, false otherwise
+     *        (a single value which is the 'and' of all joints')
+     * @return true/false if network communication went well.
+     */
+    virtual bool checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags);
+
+    /** Set reference speed on all joints. These values are used during the
+     * interpolation of the trajectory.
+     * @param joints pointer to the array of joint numbers
+     * @param spds   pointer to the array with speed values.
+     * @return true/false upon success/failure
+     */
+    virtual bool setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds);
+
+    /** Set reference acceleration on all joints. This is the valure that is
+     * used during the generation of the trajectory.
+     * @param joints pointer to the array of joint numbers
+     * @param accs   pointer to the array with acceleration values
+     * @return true/false upon success/failure
+     */
+    virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs);
+
+    /** Get reference speed of all joints. These are the  values used during the
+     * interpolation of the trajectory.
+     * @param joints pointer to the array of joint numbers
+     * @param spds   pointer to the array that will store the speed values.
+     * @return true/false upon success/failure
+     */
+    virtual bool getRefSpeedsRaw(const int n_joint, const int *joints, double *spds);
+
+    /** Get reference acceleration for a joint. Returns the acceleration used to
+     * generate the trajectory profile.
+     * @param joints pointer to the array of joint numbers
+     * @param accs   pointer to the array that will store the acceleration values
+     * @return true/false on success/failure
+     */
+    virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs);
+
+    /** Stop motion for subset of joints
+     * @param joints pointer to the array of joint numbers
+     * @return true/false on success/failure
+     */
+    virtual bool stopRaw(const int n_joint, const int *joints);
+
+    /** Get the last position reference for the specified axis.
+     *  This is the dual of PositionMove and shall return only values sent using
+     *  IPositionControl interface.
+     *  If other interfaces like IPositionDirect are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionDirect::SetPosition
+     * @param ref last reference sent using PositionMove functions
+     * @return true/false on success/failure
+     */
+    virtual bool getTargetPositionRaw(const int joint, double *ref);
+
+    /** Get the last position reference for all axes.
+     *  This is the dual of PositionMove and shall return only values sent using
+     *  IPositionControl interface.
+     *  If other interfaces like IPositionDirect are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionDirect::SetPosition
+     * @param ref last reference sent using PositionMove functions
+     * @return true/false on success/failure
+     */
+    virtual bool getTargetPositionsRaw(double *refs);
+
+    /** Get the last position reference for the specified group of axes.
+     *  This is the dual of PositionMove and shall return only values sent using
+     *  IPositionControl interface.
+     *  If other interfaces like IPositionDirect are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionDirect::SetPosition
+     * @param ref last reference sent using PositionMove functions
+     * @return true/false on success/failure
+     */
+    virtual bool getTargetPositionsRaw(const int n_joint, const int *joints, double *refs);
+
     // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
     virtual bool setPositionDirectModeRaw();
     virtual bool setPositionRaw(int j, double ref);
@@ -298,6 +393,154 @@ public:
         return false;
     }
 
+    // ------- IInteractionModeRaw declarations. Implementation in IInteractionModeRawImpl.cpp -------
+
+    /**
+     * Get the current interaction mode of the robot, values can be stiff or compliant.
+     * @param axis joint number
+     * @param mode contains the requested information about interaction mode of the joint
+     * @return true or false on success or failure.
+     */
+    virtual bool getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode);
+
+
+    /**
+     * Get the current interaction mode of the robot for a set of joints, values can be stiff or compliant.
+     * @param n_joints how many joints this command is referring to
+     * @param joints list of joints controlled. The size of this array is n_joints
+     * @param modes array containing the requested information about interaction mode, one value for each joint, the size is n_joints.
+     *          for example:
+     *          n_joint  3
+     *          joints   0  2  4
+     *          refs    VOCAB_IM_STIFF VOCAB_IM_STIFF VOCAB_IM_COMPLIANT
+     * @return true or false on success or failure.
+     */
+    virtual bool getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+
+
+    /**
+     * Get the current interaction mode of the robot for a all the joints, values can be stiff or compliant.
+     * @param mode array containing the requested information about interaction mode, one value for each joint.
+     * @return true or false on success or failure.
+     */
+    virtual bool getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
+
+
+    /**
+     * Set the interaction mode of the robot, values can be stiff or compliant.
+     * Please note that some robot may not implement certain types of interaction, so always check the return value.
+     * @param axis joint number
+     * @param mode the desired interaction mode
+     * @return true or false on success or failure.
+     */
+    virtual bool setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode);
+
+
+    /**
+     * Set the interaction mode of the robot for a set of joints, values can be stiff or compliant.
+     * Please note that some robot may not implement certain types of interaction, so always check the return value.
+     * @param n_joints how many joints this command is referring to
+     * @param joints list of joints controlled. The size of this array is n_joints
+     * @param modes array containing the desired interaction mode, one value for each joint, the size is n_joints.
+     *          for example:
+     *          n_joint  3
+     *          joints   0  2  4
+     *          refs    VOCAB_IM_STIFF VOCAB_IM_STIFF VOCAB_IM_COMPLIANT
+     * @return true or false on success or failure. If one or more joint fails, the return value will be false.
+     */
+    virtual bool setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+
+    /**
+     * Set the interaction mode of the robot for a all the joints, values can be stiff or compliant.
+     * Some robot may not implement some types of interaction, so always check the return value
+     * @param mode array with the desired interaction mode for all joints, length is the total number of joints for the part
+     * @return true or false on success or failure. If one or more joint fails, the return value will be false.
+     */
+    virtual bool setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
+
+    //--------------IVelocityControl2Raw declarations. Implementation in IVelocityControl2RawImpl.cpp -----------------
+    /**
+     * Start motion at a given speed for a subset of joints.
+     * @param n_joint how many joints this command is referring to
+     * @param joints pointer to the array of joint numbers
+     * @param spds    pointer to the array containing the new speed values
+     * @return true/false upon success/failure
+     */
+    virtual bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds);
+
+     /** Get the last reference speed set by velocityMove for single joint.
+     * @param j joint number
+     * @param vel returns the requested reference.
+     * @return true/false on success/failure
+     */
+    virtual bool getRefVelocityRaw(const int joint, double *vel);
+
+    /** Get the last reference speed set by velocityMove for all joints.
+     * @param vels pointer to the array containing the new speed values, one value for each joint
+     * @return true/false on success/failure
+     */
+    virtual bool getRefVelocitiesRaw(double *vels);
+
+    /** Get the last reference speed set by velocityMove for a group of joints.
+     * @param n_joint how many joints this command is referring to
+     * @param joints of joints controlled. The size of this array is n_joints
+     * @param vels pointer to the array containing the requested values, one value for each joint.
+     *  The size of the array is n_joints.
+     * @return true/false on success/failure
+     */
+    virtual bool getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels);
+
+    /** Set reference acceleration for a subset of joints. This is the valure that is
+     * used during the generation of the trajectory.
+     * @param joints pointer to the array of joint numbers
+     * @param accs   pointer to the array containing acceleration values
+     * @return true/false upon success/failure
+     */
+    // ------------------- Just declareted in IPositionControl2Raw
+    // -- virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs);
+
+    /** Get reference acceleration for a subset of joints. These are the values used during the
+     * interpolation of the trajectory.
+     * @param joints pointer to the array of joint numbers
+     * @param accs   pointer to the array that will store the acceleration values.
+     * @return true/false on success or failure
+     */
+    // ------------------- Just declareted in IPositionControl2Raw
+    // -- virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs);
+
+    /** Stop motion for a subset of joints
+     * @param joints pointer to the array of joint numbers
+     * @return true/false on success or failure
+     */
+    // ------------------- Just declareted in IPositionControl2Raw
+    // -- virtual bool stopRaw(const int n_joint, const int *joints);
+
+    /** Set new velocity pid value for a joint
+     * @param j joint number
+     * @param pid new pid value
+     * @return true/false on success/failure
+     */
+    virtual bool setVelPidRaw(int j, const yarp::dev::Pid &pid);
+
+    /** Set new velocity pid value on multiple joints
+     * @param pids pointer to a vector of pids
+     * @return true/false upon success/failure
+     */
+    virtual bool setVelPidsRaw(const yarp::dev::Pid *pids);
+
+    /** Get current velocity pid value for a specific joint.
+     * @param j joint number
+     * @param pid pointer to storage for the return value.
+     * @return success/failure
+     */
+    virtual bool getVelPidRaw(int j, yarp::dev::Pid *pid);
+
+    /** Get current velocity pid value for a specific subset of joints.
+     * @param pids vector that will store the values of the pids.
+     * @return success/failure
+     */
+    virtual bool getVelPidsRaw(yarp::dev::Pid *pids);
+
 protected:
 
     //  --------- Implementation in TechnosoftIpos.cpp ---------
@@ -351,7 +594,21 @@ protected:
     yarp::os::Semaphore ptBuffer;
 
     //-- More internal parameter stuff
-    double max, min, maxVel, minVel, refAcceleration, refSpeed, tr, k;
+    double max, min, maxVel, minVel, refAcceleration, refSpeed, refTorque, refVelocity, targetPosition, tr, k;
+
+    //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
+    yarp::dev::InteractionModeEnum interactionMode;
+
+    //-- Semaphores
+    yarp::os::Semaphore refAccelSemaphore;
+    yarp::os::Semaphore refSpeedSemaphore;
+    yarp::os::Semaphore refTorqueSemaphore;
+    yarp::os::Semaphore refVelocitySemaphore;
+    yarp::os::Semaphore interactionModeSemaphore;
+    yarp::os::Semaphore targetPositionSemaphore;
+
+
+
 
 };
 

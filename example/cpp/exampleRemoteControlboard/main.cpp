@@ -2,7 +2,7 @@
 
 /**
  * @ingroup teo_examples_cpp
- * \defgroup teoSimExample teoSimExample
+ * \defgroup exampleRemoteControlboard exampleRemoteControlboard
  *
  * @brief This example connects to a running \ref teoSim program.
  *
@@ -30,11 +30,11 @@ make -j3
  *
  */
 
-#include "TeoSimExample.hpp"
+#include "ExampleRemoteControlboard.hpp"
 
 int main(int argc, char **argv)
 {
-    teo::TeoSimExample mod;
-    return mod.run();
+    teo::ExampleRemoteControlboard mod;
+    return mod.run(argc,argv);
 }
 

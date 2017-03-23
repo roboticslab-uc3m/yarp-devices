@@ -2,7 +2,7 @@
 
 cmake_minimum_required (VERSION 2.6.0)
 
-set(KEYWORD "teoSimExample")
+set(KEYWORD "exampleRemoteControlboard")
 
 # Start a project.
 project(${KEYWORD})
