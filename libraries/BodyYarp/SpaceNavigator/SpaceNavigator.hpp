@@ -38,9 +38,7 @@ class SpaceNavigator : public yarp::dev::DeviceDriver, public yarp::dev::IAnalog
 {
     public:
 
-        SpaceNavigator()
-        {
-        }
+        SpaceNavigator();
 
         //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
         virtual bool open(yarp::os::Searchable& config);
@@ -105,6 +103,11 @@ class SpaceNavigator : public yarp::dev::DeviceDriver, public yarp::dev::IAnalog
 
     private:
 
+        double dx, dy, dz;
+        double droll, dpitch, dyaw;
+        int button1, button2;
+        unsigned int noDataCounter;
+        static const unsigned int MAX_NO_DATA_ITERATIONS;
 };
 
 }  // namespace roboticslab
