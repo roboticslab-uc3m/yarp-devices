@@ -13,7 +13,7 @@ bool teo::CanBusControlboard::getInteractionMode(int axis, yarp::dev::Interactio
     //-- Check index within range
     if ( ! this->indexWithinRange(axis) ) return false;
 
-    return iInteractionModeRaw[axis]->getInteractionModeRaw(axis, mode);
+    return iInteractionModeRaw[axis]->getInteractionModeRaw(0, mode);
 }
 
 bool teo::CanBusControlboard::getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
@@ -43,7 +43,7 @@ bool teo::CanBusControlboard::setInteractionMode(int axis, yarp::dev::Interactio
     //-- Check index within range
     if ( ! this->indexWithinRange(axis) ) return false;
 
-    return iInteractionModeRaw[axis]->setInteractionModeRaw(axis, mode);
+    return iInteractionModeRaw[axis]->setInteractionModeRaw(0, mode);
 }
 
 bool teo::CanBusControlboard::setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
