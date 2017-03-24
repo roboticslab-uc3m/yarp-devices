@@ -22,7 +22,7 @@ int roboticslab::SpaceNavigator::read(yarp::sig::Vector &out)
         else if (sev.type == SPNAV_EVENT_BUTTON)
         {
             int *p_button = (sev.button.bnum == 0) ? &button1 : &button2;
-            *p_button = sev.button.press; // 1: press, 0: release
+            *p_button = sev.button.press; // 1: press flank, 0: release flank
         }
 
         noDataCounter = 0;
@@ -36,7 +36,7 @@ int roboticslab::SpaceNavigator::read(yarp::sig::Vector &out)
     {
         noDataCounter = 0;
         dx = dy = dz = droll = dpitch = dyaw = 0.0;
-        button1 = button2 = 0;
+        //button1 = button2 = 0; // buttons should preserve pressed/released state
     }
 
     out.resize(DEFAULT_NUM_CHANNELS);
