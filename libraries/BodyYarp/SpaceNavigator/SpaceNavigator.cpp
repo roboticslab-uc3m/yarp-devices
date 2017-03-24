@@ -2,7 +2,7 @@
 
 #include "SpaceNavigator.hpp"
 
-double enforceRange(double in)
+double roboticslab::SpaceNavigator::enforceRange(double in)
 {
     double out;
 
@@ -26,7 +26,7 @@ double enforceRange(double in)
 
 // -----------------------------------------------------------------------------
 
-double enforceDeadband(double in)
+double roboticslab::SpaceNavigator::enforceDeadband(double in)
 {
     double out;
 
