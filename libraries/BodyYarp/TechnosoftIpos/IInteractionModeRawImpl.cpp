@@ -9,7 +9,10 @@ bool teo::TechnosoftIpos::getInteractionModeRaw(int axis, yarp::dev::Interaction
 {
     CD_INFO("(%d)\n",axis);
 
+    interactionModeSemaphore.wait();
     *mode = interactionMode;
+    interactionModeSemaphore.post();
+
     return true;
 }
 
