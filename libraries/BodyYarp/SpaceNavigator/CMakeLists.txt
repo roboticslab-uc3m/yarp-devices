@@ -9,7 +9,7 @@ yarp_prepare_plugin(SpaceNavigator
 
 if(NOT SKIP_SpaceNavigator)
   find_package(Spnav REQUIRED)
-  include_directories(${YARP_INCLUDE_DIRS} ${SPNAV_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
+  include_directories(${YARP_INCLUDE_DIRS} ${SPNAV_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
   yarp_add_plugin(SpaceNavigator
                   SpaceNavigator.cpp

@@ -3,6 +3,7 @@
 #ifndef __SPACE_NAVIGATOR__
 #define __SPACE_NAVIGATOR__
 
+#include <spnav.h>
 #include <yarp/dev/IAnalogSensor.h>
 
 #include "ColorDebug.hpp"
