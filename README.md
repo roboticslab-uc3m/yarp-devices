@@ -1,6 +1,6 @@
 [![Yarp-devices Homepage](https://img.shields.io/badge/yarp-devices-orange.svg)](http://robots.uc3m.es/dox-yarp-devices) [![Latest Release](https://img.shields.io/github/tag/roboticslab-uc3m/yarp-devices.svg?label=Latest Release)](https://github.com/roboticslab-uc3m/yarp-devices/tags)
 
-Source code intended for the manipulation and locomotion PCs that the TEO humanoid robot uses (e.g. CAN bus / CANopen).
+A place for YARP devices.
 
 Link to Doxygen generated documentation: http://robots.uc3m.es/dox-yarp-devices
 
