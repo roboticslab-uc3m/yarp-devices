@@ -444,14 +444,22 @@ public:
      * @param refs   pointer to the array specifies the new reference points
      * @return true/false on success/failure
      */
-    virtual bool positionMoveRaw(const int n_joint, const int *joints, const double *refs);
+    virtual bool positionMoveRaw(const int n_joint, const int *joints, const double *refs)
+    {
+        CD_DEBUG("\n");
+        return true;
+    }
 
     /** Set relative position for a subset of joints.
      * @param joints pointer to the array of joint numbers
      * @param deltas pointer to the array of relative commands
      * @return true/false on success/failure
      */
-    virtual bool relativeMoveRaw(const int n_joint, const int *joints, const double *deltas);
+    virtual bool relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)
+    {
+        CD_DEBUG("\n");
+        return true;
+    }
 
     /** Check if the current trajectory is terminated. Non blocking.
      * @param joints pointer to the array of joint numbers
@@ -459,7 +467,11 @@ public:
      *        (a single value which is the 'and' of all joints')
      * @return true/false if network communication went well.
      */
-    virtual bool checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags);
+    virtual bool checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags)
+    {
+        CD_DEBUG("\n");
+        return true;
+    }
 
     /** Set reference speed on all joints. These values are used during the
      * interpolation of the trajectory.
@@ -467,7 +479,11 @@ public:
      * @param spds   pointer to the array with speed values.
      * @return true/false upon success/failure
      */
-    virtual bool setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds);
+    virtual bool setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)
+    {
+        CD_DEBUG("\n");
+        return true;
+    }
 
     /** Set reference acceleration on all joints. This is the valure that is
      * used during the generation of the trajectory.
@@ -475,7 +491,11 @@ public:
      * @param accs   pointer to the array with acceleration values
      * @return true/false upon success/failure
      */
-    virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs);
+    virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
+    {
+        CD_DEBUG("\n");
+        return true;
+    }
 
     /** Get reference speed of all joints. These are the  values used during the
      * interpolation of the trajectory.
@@ -483,7 +503,11 @@ public:
      * @param spds   pointer to the array that will store the speed values.
      * @return true/false upon success/failure
      */
-    virtual bool getRefSpeedsRaw(const int n_joint, const int *joints, double *spds);
+    virtual bool getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)
+    {
+        CD_DEBUG("\n");
+        return true;
+    }
 
     /** Get reference acceleration for a joint. Returns the acceleration used to
      * generate the trajectory profile.
@@ -491,13 +515,21 @@ public:
      * @param accs   pointer to the array that will store the acceleration values
      * @return true/false on success/failure
      */
-    virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs);
+    virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
+    {
+        CD_DEBUG("\n");
+        return true;
+    }
 
     /** Stop motion for subset of joints
      * @param joints pointer to the array of joint numbers
      * @return true/false on success/failure
      */
-    virtual bool stopRaw(const int n_joint, const int *joints);
+    virtual bool stopRaw(const int n_joint, const int *joints)
+    {
+        CD_DEBUG("\n");
+        return true;
+    }
 
     /** Get the last position reference for the specified axis.
      *  This is the dual of PositionMove and shall return only values sent using
@@ -508,7 +540,11 @@ public:
      * @param ref last reference sent using PositionMove functions
      * @return true/false on success/failure
      */
-    virtual bool getTargetPositionRaw(const int joint, double *ref);
+    virtual bool getTargetPositionRaw(const int joint, double *ref)
+    {
+        CD_DEBUG("\n");
+        return true;
+    }
 
     /** Get the last position reference for all axes.
      *  This is the dual of PositionMove and shall return only values sent using
@@ -519,7 +555,11 @@ public:
      * @param ref last reference sent using PositionMove functions
      * @return true/false on success/failure
      */
-    virtual bool getTargetPositionsRaw(double *refs);
+    virtual bool getTargetPositionsRaw(double *refs)
+    {
+        CD_DEBUG("\n");
+        return true;
+    }
 
     /** Get the last position reference for the specified group of axes.
      *  This is the dual of PositionMove and shall return only values sent using
@@ -530,13 +570,12 @@ public:
      * @param ref last reference sent using PositionMove functions
      * @return true/false on success/failure
      */
-    virtual bool getTargetPositionsRaw(const int n_joint, const int *joints, double *refs);
+    virtual bool getTargetPositionsRaw(const int n_joint, const int *joints, double *refs)
+    {
+        CD_DEBUG("\n");
+        return true;
+    }
 
-    // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
-    //virtual bool setPositionDirectModeRaw();
-    //virtual bool setPositionRaw(int j, double ref);
-    //virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs);
-    //virtual bool setPositionsRaw(const double *refs);
 
     // -- Auxiliary functions: send data to PIC of Cui
 
