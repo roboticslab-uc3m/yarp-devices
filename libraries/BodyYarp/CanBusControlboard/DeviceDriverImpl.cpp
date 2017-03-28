@@ -84,18 +84,63 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
         idxFromCanId[ ids.get(i).asInt() ] = i;
 
         //-- Push the motor driver and other devices (CuiAbsolute) on to the vectors.
-        nodes[i] = device;  // -- device es un puntero que guarda la dirección de un objeto PolyDriver
-        // -- nodes es un vector de punteros que apuntará al device
-        device->view( iControlLimits2Raw[i] );
-        device->view( iControlModeRaw[i] );
-        device->view( iEncodersTimedRaw[i] );
-        device->view( iPositionControl2Raw[i] );    // -- new
-        device->view( iPositionDirectRaw[i] );
-        device->view( iTorqueControlRaw[i] );
-        device->view( iVelocityControl2Raw[i] );     // -- new
-        device->view( iCanBusSharer[i] );   // -- si el device es un Cui, este podrá "ver" las funciones programadas en iCanBusSharer (funciones que hemos añadido al encoder).
+        nodes[i] = device;
+
+        //-- View interfaces
+        if( !device->view( iControlLimits2Raw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iControlLimits2Raw interface\n");
+            return false;
+        }
+
+        if( !device->view( iControlModeRaw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iControlModeRaw interface\n");
+            return false;
+        }
+
+        if( !device->view( iEncodersTimedRaw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iEncodersTimedRaw interface\n");
+            return false;
+        }
+
+        if( !device->view( iPositionControl2Raw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iPositionControl2Raw interface\n");
+            return false;
+        }
+
+        if( !device->view( iPositionDirectRaw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iPositionDirectRaw interface\n");
+            return false;
+        }
+
+        if( !device->view( iTorqueControlRaw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iTorqueControlRaw interface\n");
+            return false;
+        }
+
+        if( !device->view( iVelocityControl2Raw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iVelocityControl2Raw interface\n");
+            return false;
+        }
+        // -- si el device es un Cui, este podrá "ver" las funciones programadas en iCanBusSharer (funciones que hemos añadido al encoder).
         // -- estas funciones se encuentran implementadas en el cpp correspondiente "ICanBusSharerImpl.cpp", por lo tanto le da la funcionalidad que deseamos
-        device->view( iInteractionModeRaw[i] );
+        if(! device->view( iCanBusSharer[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iCanBusSharer interface\n");
+            return false;
+        }
+
+        if(! device->view( iInteractionModeRaw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iInteractionModeRaw interface\n");
+            return false;
+        }
 
         //-- Pass CAN bus pointer to CAN node
         iCanBusSharer[i]->setCanBusPtr( iCanBus );               
