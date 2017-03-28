@@ -36,6 +36,7 @@ install(TARGETS YarpDevicesInterfaces
 set_property(GLOBAL APPEND PROPERTY ROBOTICSLAB_YARP_DEVICES_TARGETS YarpDevicesInterfaces)
 
 # YARP devices.
+add_subdirectory(AmorControlboard)
 add_subdirectory(AravisGigE)
 add_subdirectory(CanBusControlboard)
 add_subdirectory(CanBusHico)
