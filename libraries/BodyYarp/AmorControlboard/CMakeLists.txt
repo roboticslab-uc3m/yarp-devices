@@ -8,7 +8,12 @@ yarp_prepare_plugin(AmorControlboard
                     WRAPPER controlboardwrapper2)
 
 if(NOT SKIP_AmorControlboard)
-  include_directories(${YARP_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
+  find_package(AMOR_API REQUIRED)
+
+  include_directories(${YARP_INCLUDE_DIRS}
+                      ${AMOR_API_INCLUDE_DIRS}
+                      ${COLOR_DEBUG_INCLUDE_DIRS}
+                      ${CMAKE_CURRENT_SOURCE_DIR})
 
   yarp_add_plugin(AmorControlboard AmorControlboard.cpp
                                    AmorControlboard.hpp
@@ -22,7 +27,8 @@ if(NOT SKIP_AmorControlboard)
                                    IVelocityControl2Impl.cpp
                                    IVelocityControlImpl.cpp)
 
-  target_link_libraries(AmorControlboard ${YARP_LIBRARIES} amor_api)
+  target_link_libraries(AmorControlboard ${YARP_LIBRARIES} ${AMOR_API_LIBRARIES})
+
   install(TARGETS AmorControlboard DESTINATION lib)
 
   yarp_install(TARGETS AmorControlboard
