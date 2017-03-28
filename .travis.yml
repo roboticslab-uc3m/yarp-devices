@@ -38,7 +38,7 @@ install:
 
 before_script:
   - mkdir -p build && cd build
-  - cmake .. -DENABLE_coverage=ON
+  - cmake .. -DENABLE_AmorControlboard=OFF -DENABLE_coverage=ON
 
 script:
   - make
