@@ -24,14 +24,13 @@ bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
         CD_SUCCESS("Acquired AMOR handle!\n");
     }
 
-    axes = AMOR_NUM_JOINTS;
-
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::close() {
+bool roboticslab::AmorControlboard::close()
+{
     CD_INFO("Closing...\n");
 
     if (handle != AMOR_INVALID_HANDLE)

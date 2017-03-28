@@ -10,7 +10,8 @@ yarp_prepare_plugin(AmorControlboard
 if(NOT SKIP_AmorControlboard)
   include_directories(${YARP_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
-  yarp_add_plugin(AmorControlboard AmorControlboard.hpp
+  yarp_add_plugin(AmorControlboard AmorControlboard.cpp
+                                   AmorControlboard.hpp
                                    DeviceDriverImpl.cpp
                                    IControlLimitsImpl.cpp
                                    IControlModeImpl.cpp

@@ -4,18 +4,22 @@
 
 // ------------------ IEncodersTimed Related -----------------------------------------
 
-bool roboticslab::AmorControlboard::getEncodersTimed(double *encs, double *time) {
+bool roboticslab::AmorControlboard::getEncodersTimed(double *encs, double *time)
+{
     //CD_DEBUG("\n");  //-- Way too verbose
     bool ok = true;
-    for(unsigned int i=0; i < axes; i++)
-        ok &= getEncoderTimed(i,&(encs[i]),&(time[i]));
+    for (unsigned int i = 0; i < AMOR_NUM_JOINTS; i++)
+        ok &= getEncoderTimed(i, &(encs[i]), &(time[i]));
     return ok;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getEncoderTimed(int j, double *encs, double *time) {
-    //CD_DEBUG("(%d)\n",j);  //-- Way too verbose
+bool roboticslab::AmorControlboard::getEncoderTimed(int j, double *encs, double *time)
+{
+    //CD_DEBUG("(%d)\n", j);  //-- Way too verbose
+    if (!indexWithinRange(j))
+        return false;
 
     getEncoder(j, encs);
     *time = yarp::os::Time::now();
