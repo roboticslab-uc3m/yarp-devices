@@ -372,6 +372,71 @@ public:
         return false;
     }
 
+    // ------- IInteractionModeRaw declarations. Implementation in IInteractionModeRawImpl.cpp -------
+
+    /**
+     * Get the current interaction mode of the robot, values can be stiff or compliant.
+     * @param axis joint number
+     * @param mode contains the requested information about interaction mode of the joint
+     * @return true or false on success or failure.
+     */
+    virtual bool getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode);
+
+
+    /**
+     * Get the current interaction mode of the robot for a set of joints, values can be stiff or compliant.
+     * @param n_joints how many joints this command is referring to
+     * @param joints list of joints controlled. The size of this array is n_joints
+     * @param modes array containing the requested information about interaction mode, one value for each joint, the size is n_joints.
+     *          for example:
+     *          n_joint  3
+     *          joints   0  2  4
+     *          refs    VOCAB_IM_STIFF VOCAB_IM_STIFF VOCAB_IM_COMPLIANT
+     * @return true or false on success or failure.
+     */
+    virtual bool getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+
+
+    /**
+     * Get the current interaction mode of the robot for a all the joints, values can be stiff or compliant.
+     * @param mode array containing the requested information about interaction mode, one value for each joint.
+     * @return true or false on success or failure.
+     */
+    virtual bool getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
+
+
+    /**
+     * Set the interaction mode of the robot, values can be stiff or compliant.
+     * Please note that some robot may not implement certain types of interaction, so always check the return value.
+     * @param axis joint number
+     * @param mode the desired interaction mode
+     * @return true or false on success or failure.
+     */
+    virtual bool setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode);
+
+
+    /**
+     * Set the interaction mode of the robot for a set of joints, values can be stiff or compliant.
+     * Please note that some robot may not implement certain types of interaction, so always check the return value.
+     * @param n_joints how many joints this command is referring to
+     * @param joints list of joints controlled. The size of this array is n_joints
+     * @param modes array containing the desired interaction mode, one value for each joint, the size is n_joints.
+     *          for example:
+     *          n_joint  3
+     *          joints   0  2  4
+     *          refs    VOCAB_IM_STIFF VOCAB_IM_STIFF VOCAB_IM_COMPLIANT
+     * @return true or false on success or failure. If one or more joint fails, the return value will be false.
+     */
+    virtual bool setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+
+    /**
+     * Set the interaction mode of the robot for a all the joints, values can be stiff or compliant.
+     * Some robot may not implement some types of interaction, so always check the return value
+     * @param mode array with the desired interaction mode for all joints, length is the total number of joints for the part
+     * @return true or false on success or failure. If one or more joint fails, the return value will be false.
+     */
+    virtual bool setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
+
     // -- Auxiliary functions: send data to PIC of Cui
 
     virtual bool startContinuousPublishing(uint8_t time);
@@ -419,6 +484,12 @@ protected:
     std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
 
     int16_t ptModeMs;  //-- [ms]
+
+    //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
+    yarp::dev::InteractionModeEnum interactionMode;
+
+    //-- Semaphores
+    yarp::os::Semaphore interactionModeSemaphore;
 };
 
 }  // namespace teo
