@@ -4,53 +4,27 @@
 
 // ------------------- DeviceDriver Related ------------------------------------
 
-bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config) {
-
-    //CD_DEBUG("penv: %p\n",*((const OpenRAVE::EnvironmentBase**)(config.find("penv").asBlob())));
-    /*penv = *((OpenRAVE::EnvironmentBase**)(config.find("penv").asBlob()));
-
-    int robotIndex = config.check("robotIndex",-1,"robotIndex").asInt();
-    if( robotIndex < 0 )  // a.k.a. -1 one line above
-    {
-        CD_ERROR("Please review robotIndex.\n");
-        return false;
-    }
-    int manipulatorIndex = config.check("manipulatorIndex",-1,"manipulatorIndex").asInt();
-    if( manipulatorIndex < 0 )  // a.k.a. -1 one line above
-    {
-        CD_ERROR("Please review manipulatorIndex.\n");
-        return false;
-    }
-
-    std::vector<OpenRAVE::RobotBasePtr> vectorOfRobotPtr;
-    penv->GetRobots(vectorOfRobotPtr);
-    probot = vectorOfRobotPtr[robotIndex];
-
-    dEncRaw.resize( probot->GetDOF() );
-    std::fill(dEncRaw.begin(), dEncRaw.end(), 0);
-
-    std::vector<OpenRAVE::RobotBase::ManipulatorPtr> vectorOfManipulatorPtr = probot->GetManipulators();
-    manipulatorIDs = vectorOfManipulatorPtr[manipulatorIndex]->GetArmIndices();*/
-
+bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
+{
     int major, minor, build;
     amor_get_library_version(&major, &minor, &build);
-    printf("AMOR API library version %d.%d.%d\n\n", major, minor, build);
 
-    std::cout << "Trying to connect to AMOR... ";
+    CD_INFO("AMOR API library version %d.%d.%d\n", major, minor, build);
+    CD_INFO("Trying to connect to AMOR...\n");
 
-#ifdef WIN32
-    handle = amor_connect("canlib_esd.dll", 0);
-#else
-    handle = amor_connect("libeddriver.so", 0);
-#endif // UNIX
+    handle = amor_connect((char *)DEFAULT_CAN_LIBRARY, DEFAULT_CAN_PORT);
 
-    if(handle == AMOR_INVALID_HANDLE) {
-        std::cout << amor_error() << "[FAILED]" << std::endl;
-        close();
+    if (handle == AMOR_INVALID_HANDLE)
+    {
+        CD_ERROR("Could not get AMOR handle (%s)\n", amor_error());
         return false;
     }
+    else
+    {
+        CD_SUCCESS("Acquired AMOR handle!\n");
+    }
 
-    axes = 7;
+    axes = AMOR_NUM_JOINTS;
 
     return true;
 }
@@ -58,7 +32,14 @@ bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config) {
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::close() {
-    printf("[AmorControlboard] close()\n");
+    CD_INFO("Closing...\n");
+
+    if (handle != AMOR_INVALID_HANDLE)
+    {
+        amor_emergency_stop(handle);
+        amor_release(handle);
+    }
+
     return true;
 }
 

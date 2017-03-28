@@ -3,23 +3,19 @@
 #ifndef __AMOR_CONTROLBOARD_HPP__
 #define __AMOR_CONTROLBOARD_HPP__
 
+#include <stdio.h>
+#include <vector>
+
 #include <yarp/os/all.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/Drivers.h>
-#include <yarp/dev/PolyDriver.h>
-#include <yarp/sig/all.h>
+#include <yarp/dev/DeviceDriver.h>
 
 #include <amor.h>
 
-#include <iostream>
-#include <stdio.h>
-#include <sstream>
-#include <vector>
-
 #include "ColorDebug.hpp"
 
-#define DEFAULT_AXES 7
+#define DEFAULT_CAN_LIBRARY "libeddriver.so"
+#define DEFAULT_CAN_PORT 0
 
 namespace roboticslab
 {
