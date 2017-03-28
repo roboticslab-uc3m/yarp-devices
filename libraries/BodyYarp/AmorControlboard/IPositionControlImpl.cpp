@@ -5,23 +5,23 @@
 // ------------------- IPositionControl Related --------------------------------
 
 bool roboticslab::AmorControlboard::getAxes(int *ax) {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
     *ax = axes;
-    CD_INFO("Reporting %d axes are present\n", *ax);
+    CD_DEBUG("Reporting %d axes are present\n", *ax);
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::setPositionMode() {
-    CD_INFO("NOTHING TO DO\n");
+    CD_DEBUG("NOTHING TO DO\n");
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::positionMove(int j, double ref) {  // encExposed = ref;
-    CD_INFO("\n");
+    CD_DEBUG("\n");
     if ((unsigned int)j>axes) {
         fprintf(stderr,"[FakeControlboardOR] error: axis index more than axes.\n");
         return false;
@@ -42,49 +42,49 @@ bool roboticslab::AmorControlboard::positionMove(int j, double ref) {  // encExp
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::positionMove(const double *refs) {  // encExposed = refs;
-    CD_INFO("NOTHING TO DO\n");
+    CD_DEBUG("NOTHING TO DO\n");
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::relativeMove(int j, double delta) {
-    CD_INFO("NOTHING TO DO\n");
+    CD_DEBUG("NOTHING TO DO\n");
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::relativeMove(const double *deltas) {  // encExposed = deltas + encExposed
-    CD_INFO("NOTHING TO DO\n");
+    CD_DEBUG("NOTHING TO DO\n");
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::checkMotionDone(int j, bool *flag) {
-    CD_INFO("NOTHING TO DO\n");
+    CD_DEBUG("NOTHING TO DO\n");
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::checkMotionDone(bool *flag) {
-    CD_INFO("NOTHING TO DO\n");
+    CD_DEBUG("NOTHING TO DO\n");
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::setRefSpeed(int j, double sp) {
-    CD_INFO("NOTHING TO DO\n");
+    CD_DEBUG("NOTHING TO DO\n");
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::setRefSpeeds(const double *spds) {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
     bool ok = true;
     for(unsigned int i=0;i<axes;i++)
         ok &= setRefSpeed(i,spds[i]);
@@ -94,14 +94,14 @@ bool roboticslab::AmorControlboard::setRefSpeeds(const double *spds) {
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::setRefAcceleration(int j, double acc) {
-    CD_INFO("NOTHING TO DO\n");
+    CD_DEBUG("NOTHING TO DO\n");
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::setRefAccelerations(const double *accs) {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
     bool ok = true;
     for(unsigned int i=0;i<axes;i++)
         ok &= setRefAcceleration(i,accs[i]);
@@ -111,14 +111,14 @@ bool roboticslab::AmorControlboard::setRefAccelerations(const double *accs) {
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::getRefSpeed(int j, double *ref) {
-    CD_INFO("NOTHING TO DO\n");
+    CD_DEBUG("NOTHING TO DO\n");
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::getRefSpeeds(double *spds) {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
     bool ok = true;
     for(unsigned int i=0;i<axes;i++)
         ok &= getRefSpeed(i,&spds[i]);
@@ -128,14 +128,14 @@ bool roboticslab::AmorControlboard::getRefSpeeds(double *spds) {
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::getRefAcceleration(int j, double *acc) {
-    CD_INFO("NOTHING TO DO\n");
+    CD_DEBUG("NOTHING TO DO\n");
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::getRefAccelerations(double *accs) {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
     bool ok = true;
     for(unsigned int i=0;i<axes;i++)
         ok &= getRefAcceleration(i,&accs[i]);
@@ -145,14 +145,14 @@ bool roboticslab::AmorControlboard::getRefAccelerations(double *accs) {
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::stop(int j) {
-    CD_INFO("NOTHING TO DO\n");
+    CD_DEBUG("NOTHING TO DO\n");
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::stop() {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
     bool ok = true;
     for(unsigned int i=0;i<axes;i++)
         ok &= stop(i);

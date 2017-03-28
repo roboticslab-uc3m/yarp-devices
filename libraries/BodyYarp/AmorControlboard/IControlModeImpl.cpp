@@ -5,42 +5,42 @@
 // ------------------- IControlLimits Related ------------------------------------
 
 bool roboticslab::AmorControlboard::setPositionMode(int j) {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d)\n",j);
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::setVelocityMode(int j) {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d)\n",j);
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::setTorqueMode(int j)  {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d)\n",j);
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::setImpedancePositionMode(int j) {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d)\n",j);
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::setImpedanceVelocityMode(int j) {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d)\n",j);
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::setOpenLoopMode(int j) {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d)\n",j);
     return true;
 }
 

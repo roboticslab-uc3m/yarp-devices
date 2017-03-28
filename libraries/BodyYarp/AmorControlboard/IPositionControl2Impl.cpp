@@ -71,7 +71,7 @@ bool roboticslab::AmorControlboard::stop(const int n_joint, const int *joints)
 
 bool roboticslab::AmorControlboard::getTargetPosition(const int joint, double *ref)
 {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
     return true;
 }
 

@@ -5,14 +5,14 @@
 // ------------------ IVelocity Related ----------------------------------------
 
 bool roboticslab::AmorControlboard::setVelocityMode() {
-    CD_INFO("NOTHING TO DO\n");
+    CD_DEBUG("NOTHING TO DO\n");
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::velocityMove(int j, double sp) {  // velExposed = sp;
-    CD_INFO("\n");
+    CD_DEBUG("\n");
 
     AMOR_VECTOR7 sps;
 
@@ -29,9 +29,9 @@ bool roboticslab::AmorControlboard::velocityMove(int j, double sp) {  // velExpo
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::velocityMove(const double *sp) {
-    CD_INFO("\n");
-    printf("[YarpOpenraveControlboard] Vel:");
-    CD_INFO("NOTHING TO DO");
+    CD_DEBUG("\n");
+    printf("[OpenraveControlboard] Vel:");
+    CD_DEBUG("NOTHING TO DO");
     printf("\n");
     bool ok = true;
     for(unsigned int i=0;i<axes;i++)

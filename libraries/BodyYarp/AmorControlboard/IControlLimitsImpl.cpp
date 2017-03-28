@@ -5,14 +5,14 @@
 // ------------------- IControlLimits Related ------------------------------------
 
 bool roboticslab::AmorControlboard::setLimits(int axis, double min, double max) {
-    CD_INFO("NOTHING TO DO\n");
+    CD_DEBUG("NOTHING TO DO\n");
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::getLimits(int axis, double *min, double *max) {
-    CD_INFO("NOTHING TO DO\n");
+    CD_DEBUG("NOTHING TO DO\n");
     return true;
 }
 

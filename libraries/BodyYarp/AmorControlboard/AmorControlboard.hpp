@@ -547,14 +547,10 @@ public:
 
 private:
 
-    // General Joint Motion Controller parameters //
-    unsigned int axes;
-    //
     std::vector<int> mode;
     std::vector<int> manipulatorIDs;
 
     AMOR_HANDLE handle = AMOR_INVALID_HANDLE;
-
 };
 
 }  // namespace roboticslab
