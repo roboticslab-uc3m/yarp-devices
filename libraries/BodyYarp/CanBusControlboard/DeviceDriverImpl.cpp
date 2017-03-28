@@ -90,56 +90,56 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
         if( !device->view( iControlLimits2Raw[i] ))
         {
             CD_ERROR("[error] Problems acquiring iControlLimits2Raw interface\n");
-            return 1;
+            return false;
         }
 
         if( !device->view( iControlModeRaw[i] ))
         {
             CD_ERROR("[error] Problems acquiring iControlModeRaw interface\n");
-            return 1;
+            return false;
         }
 
         if( !device->view( iEncodersTimedRaw[i] ))
         {
             CD_ERROR("[error] Problems acquiring iEncodersTimedRaw interface\n");
-            return 1;
+            return false;
         }
 
         if( !device->view( iPositionControl2Raw[i] ))
         {
             CD_ERROR("[error] Problems acquiring iPositionControl2Raw interface\n");
-            return 1;
+            return false;
         }
 
         if( !device->view( iPositionDirectRaw[i] ))
         {
             CD_ERROR("[error] Problems acquiring iPositionDirectRaw interface\n");
-            return 1;
+            return false;
         }
 
         if( !device->view( iTorqueControlRaw[i] ))
         {
             CD_ERROR("[error] Problems acquiring iTorqueControlRaw interface\n");
-            return 1;
+            return false;
         }
 
         if( !device->view( iVelocityControl2Raw[i] ))
         {
             CD_ERROR("[error] Problems acquiring iVelocityControl2Raw interface\n");
-            return 1;
+            return false;
         }
         // -- si el device es un Cui, este podrá "ver" las funciones programadas en iCanBusSharer (funciones que hemos añadido al encoder).
         // -- estas funciones se encuentran implementadas en el cpp correspondiente "ICanBusSharerImpl.cpp", por lo tanto le da la funcionalidad que deseamos
         if(! device->view( iCanBusSharer[i] ))
         {
             CD_ERROR("[error] Problems acquiring iCanBusSharer interface\n");
-            return 1;
+            return false;
         }
 
         if(! device->view( iInteractionModeRaw[i] ))
         {
             CD_ERROR("[error] Problems acquiring iInteractionModeRaw interface\n");
-            return 1;
+            return false;
         }
 
         //-- Pass CAN bus pointer to CAN node
