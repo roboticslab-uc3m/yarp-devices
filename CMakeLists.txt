@@ -49,6 +49,7 @@ option(ENABLE_SpaceNavigator "Enable/disable compilation of YarpPlugins_SpaceNav
 option(ENABLE_WiimoteSensor "Enable/disable compilation of YarpPlugins_WiimoteSensor" TRUE)
 option(ENABLE_LeapMotionSensor "Enable/disable compilation of YarpPlugins_LeapMotionSensor" TRUE)
 option(ENABLE_ProximitySensorsClient "Enable/disable compilation of YarpPlugins_ProximitySensorsClient" TRUE)
+option(ENABLE_GigE "Enable/disable compilation of Aravis GigE driver" FALSE)
 
 ##### test and coverage options
 option(ENABLE_tests "Choose if you want to compile tests" TRUE)
