@@ -1,5 +1,5 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
+/*
 #include "CuiAbsolute.hpp"
 
 // ------------------ IPositionControlRaw Related ----------------------------------------
@@ -257,9 +257,9 @@ bool teo::CuiAbsolute::stopRaw(int j)
 
     return true;
 }
-
+*/
 // -------------------------- IPositionControl2Raw Related ----------------------------
-
+/*
 bool teo::CuiAbsolute::positionMoveRaw(const int n_joint, const int *joints, const double *refs)
 {
     CD_WARNING("Missing implementation\n");
@@ -287,19 +287,21 @@ bool teo::CuiAbsolute::setRefSpeedsRaw(const int n_joint, const int *joints, con
 
     return true;
 }
+*/
 /*
 bool teo::TechnosoftIpos::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
 {
     return true;
 }
 */
+/*
 bool teo::CuiAbsolute::getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)
 {
     CD_WARNING("Missing implementation\n");
 
     return true;
 }
-
+*/
 /*
 bool teo::TechnosoftIpos::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
 {
@@ -313,7 +315,7 @@ bool teo::TechnosoftIpos::stopRaw(const int n_joint, const int *joints)
     return true;
 }
 */
-
+/*
 bool teo::CuiAbsolute::getTargetPositionRaw(const int joint, double *ref)
 {
     CD_INFO("\n");
@@ -336,3 +338,4 @@ bool teo::CuiAbsolute::getTargetPositionsRaw(const int n_joint, const int *joint
 
     return true;
 }
+*/
