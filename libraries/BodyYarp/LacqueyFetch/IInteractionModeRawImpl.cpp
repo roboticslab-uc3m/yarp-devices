@@ -33,7 +33,7 @@ bool teo::LacqueyFetch::getInteractionModesRaw(yarp::dev::InteractionModeEnum* m
 
 bool teo::LacqueyFetch::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
 {
-    CD_INFO("(%d), (%s)\n",axis, mode); //-- I don't know if this is correct (if I want to print mode?)
+    CD_INFO("(%d), (%s)\n",axis, yarp::os::Vocab::decode(mode)); //-- I don't know if this is correct (if I want to print mode?)
 
     interactionModeSemaphore.wait();
     interactionMode = mode;
