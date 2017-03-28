@@ -16,10 +16,10 @@ if(NOT SKIP_AmorControlboard)
                                    IControlModeImpl.cpp
                                    IEncodersImpl.cpp
                                    IEncodersTimedImpl.cpp
-                                   IPosition2Impl.cpp
-                                   IPositionImpl.cpp
-                                   IVelocity2Impl.cpp
-                                   IVelocityImpl.cpp)
+                                   IPositionControl2Impl.cpp
+                                   IPositionControlImpl.cpp
+                                   IVelocityControl2Impl.cpp
+                                   IVelocityControlImpl.cpp)
 
   target_link_libraries(AmorControlboard ${YARP_LIBRARIES} amor_api)
   install(TARGETS AmorControlboard DESTINATION lib)

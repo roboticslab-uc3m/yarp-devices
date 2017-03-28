@@ -44,7 +44,7 @@ public:
     // Set the Thread Rate in the class constructor
     AmorControlboard() {}
 
-    // ------- IPositionControl declarations. Implementation in IPositionImpl.cpp -------
+    // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
 
     /**
      * Get the number of controlled axes. This command asks the number of controlled
@@ -169,7 +169,7 @@ public:
      */
     virtual bool stop();
 
-// ------- IPositionControl2 declarations. Implementation in IPosition2Impl.cpp -------
+// ------- IPositionControl2 declarations. Implementation in IPositionControl2Impl.cpp -------
 
     /** Set new reference point for a subset of joints.
      * @param joints pointer to the array of joint numbers
@@ -263,7 +263,7 @@ public:
      */
     virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs);
 
-//  ---------- IEncodersTimed Declarations. Implementation in IEncoderImpl.cpp ----------
+//  ---------- IEncodersTimed declarations. Implementation in IEncodersTimedImpl.cpp ----------
 
     /**
      * Reset encoder, single joint. Set the encoder value to zero
@@ -337,6 +337,8 @@ public:
      */
     virtual bool getEncoderAccelerations(double *accs);
 
+//  --------- IEncodersTimed declarations. Implementation in IEncodersTimedImpl.cpp ---------
+
     /**
     * Read the instantaneous acceleration of all axes.
     * \param encs pointer to the array that will contain the output
@@ -354,7 +356,7 @@ public:
    */
    virtual bool getEncoderTimed(int j, double *encs, double *time);
 
-//  --------- IVelocityControl Declarations. Implementation in IVelocityImpl.cpp ---------
+//  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
 
     /**
      * Set velocity mode. This command
@@ -380,7 +382,7 @@ public:
      */
     virtual bool velocityMove(const double *sp);
 
-//  --------- IVelocityControl2 Declarations. Implementation in IVelocity2Impl.cpp ---------
+//  --------- IVelocityControl2 declarations. Implementation in IVelocityControl2Impl.cpp ---------
 
     /** Start motion at a given speed for a subset of joints.
      * @param n_joint how many joints this command is referring to
@@ -443,7 +445,7 @@ public:
      */
     virtual bool getVelPids(yarp::dev::Pid *pids);
 
-//  --------- IControlLimits Declarations. Implementation in IControlLimitsImpl.cpp ---------
+//  --------- IControlLimits declarations. Implementation in IControlLimitsImpl.cpp ---------
 
     /**
      * Set the software limits for a particular axis, the behavior of the
@@ -463,7 +465,7 @@ public:
      */
     virtual bool getLimits(int axis, double *min, double *max);
 
-//  --------- IControlMode Declarations. Implementation in IControlModeImpl.cpp ---------
+//  --------- IControlMode declarations. Implementation in IControlModeImpl.cpp ---------
 
     /**
     * Set position mode, single axis.
@@ -522,7 +524,7 @@ public:
     */
     virtual bool getControlModes(int *modes);
 
-// -------- DeviceDriver declarations. Implementation in IDeviceImpl.cpp --------
+// -------- DeviceDriver declarations. Implementation in IDeviceDriverImpl.cpp --------
 
     /**
      * Open the DeviceDriver.
@@ -544,26 +546,6 @@ public:
      * @return true/false on success/failure.
      */
     virtual bool close();
-
-// -------- RateThread declarations. Implementation in RateThreadImpl.cpp --------
-
-    /**
-     * Initialization method. The thread executes this function
-     * when it starts and before "run". This is a good place to
-     * perform initialization tasks that need to be done by the
-     * thread itself (device drivers initialization, memory
-     * allocation etc). If the function returns false the thread
-     * quits and never calls "run". The return value of threadInit()
-     * is notified to the class and passed as a parameter
-     * to afterStart(). Note that afterStart() is called by the
-     * same thread that is executing the "start" method.
-     */
-    bool threadInit();
-
-    /**
-     * Loop function. This is the thread itself.
-     */
-    void run();
 
 // ------------------------------- Private -------------------------------------
 
