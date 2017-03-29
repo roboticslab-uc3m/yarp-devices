@@ -170,141 +170,33 @@ public:
     virtual bool setPositionsRaw(const double *refs);
 
     // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
-    virtual bool setTorqueModeRaw()
-    {
-        CD_ERROR("\n");
-        return false;
-    }
-    virtual bool getRefTorquesRaw(double *t)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
-    virtual bool getRefTorqueRaw(int j, double *t)
-    {
-        CD_INFO("\n");
-        return true;
-    }
-    virtual bool setRefTorquesRaw(const double *t)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
-    virtual bool setRefTorqueRaw(int j, double t)
-    {
-        CD_INFO("\n");
-        return true;
-    }
-    virtual bool getBemfParamRaw(int j, double *bemf)
-    {
-        CD_INFO("\n");
-        return true;
-    }
-    virtual bool setBemfParamRaw(int j, double bemf)
-    {
-        CD_INFO("\n");
-        return true;
-    }
-    virtual bool setTorquePidRaw(int j, const yarp::dev::Pid &pid)
-    {
-        CD_INFO("\n");
-        return true;
-    }
-    virtual bool getTorqueRaw(int j, double *t)
-    {
-        //CD_INFO("\n");  //-- Too verbose in controlboardwrapper2 stream.
-        return true;
-    }
-    virtual bool getTorquesRaw(double *t)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
-    virtual bool getTorqueRangeRaw(int j, double *min, double *max)
-    {
-        CD_INFO("\n");
-        return true;
-    }
-    virtual bool getTorqueRangesRaw(double *min, double *max)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
-    virtual bool setTorquePidsRaw(const yarp::dev::Pid *pids)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
-    virtual bool setTorqueErrorLimitRaw(int j, double limit)
-    {
-        CD_INFO("\n");
-        return true;
-    }
-    virtual bool setTorqueErrorLimitsRaw(const double *limits)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
-    virtual bool getTorqueErrorRaw(int j, double *err)
-    {
-        CD_INFO("\n");
-        return true;
-    }
-    virtual bool getTorqueErrorsRaw(double *errs)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
-    virtual bool getTorquePidOutputRaw(int j, double *out)
-    {
-        CD_INFO("\n");
-        return true;
-    }
-    virtual bool getTorquePidOutputsRaw(double *outs)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
-    virtual bool getTorquePidRaw(int j, yarp::dev::Pid *pid)
-    {
-        CD_INFO("\n");
-        return true;
-    }
-    virtual bool getTorquePidsRaw(yarp::dev::Pid *pids)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
-    virtual bool getTorqueErrorLimitRaw(int j, double *limit)
-    {
-        CD_INFO("\n");
-        return true;
-    }
-    virtual bool getTorqueErrorLimitsRaw(double *limits)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
-    virtual bool resetTorquePidRaw(int j)
-    {
-        CD_INFO("\n");
-        return true;
-    }
-    virtual bool disableTorquePidRaw(int j)
-    {
-        CD_INFO("\n");
-        return true;
-    }
-    virtual bool enableTorquePidRaw(int j)
-    {
-        CD_INFO("\n");
-        return true;
-    }
-    virtual bool setTorqueOffsetRaw(int j, double v)
-    {
-        CD_INFO("\n");
-        return true;
-    }
+    virtual bool setTorqueModeRaw();
+    virtual bool getRefTorquesRaw(double *t);
+    virtual bool getRefTorqueRaw(int j, double *t);
+    virtual bool setRefTorquesRaw(const double *t);
+    virtual bool setRefTorqueRaw(int j, double t);
+    virtual bool getBemfParamRaw(int j, double *bemf);
+    virtual bool setBemfParamRaw(int j, double bemf);
+    virtual bool setTorquePidRaw(int j, const yarp::dev::Pid &pid);
+    virtual bool getTorqueRaw(int j, double *t);
+    virtual bool getTorquesRaw(double *t);
+    virtual bool getTorqueRangeRaw(int j, double *min, double *max);
+    virtual bool getTorqueRangesRaw(double *min, double *max);
+    virtual bool setTorquePidsRaw(const yarp::dev::Pid *pids);
+    virtual bool setTorqueErrorLimitRaw(int j, double limit);
+    virtual bool setTorqueErrorLimitsRaw(const double *limits);
+    virtual bool getTorqueErrorRaw(int j, double *err);
+    virtual bool getTorqueErrorsRaw(double *errs);
+    virtual bool getTorquePidOutputRaw(int j, double *out);
+    virtual bool getTorquePidOutputsRaw(double *outs);
+    virtual bool getTorquePidRaw(int j, yarp::dev::Pid *pid);
+    virtual bool getTorquePidsRaw(yarp::dev::Pid *pids);
+    virtual bool getTorqueErrorLimitRaw(int j, double *limit);
+    virtual bool getTorqueErrorLimitsRaw(double *limits);
+    virtual bool resetTorquePidRaw(int j);
+    virtual bool disableTorquePidRaw(int j);
+    virtual bool enableTorquePidRaw(int j);
+    virtual bool setTorqueOffsetRaw(int j, double v);
 
     //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
     virtual bool setVelocityModeRaw()
