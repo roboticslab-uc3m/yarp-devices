@@ -318,7 +318,9 @@ bool teo::TechnosoftIpos::getTargetPositionRaw(const int joint, double *ref)
 {
     CD_INFO("\n");
 
+    targetPositionSemaphore.wait();
     *ref = targetPosition;
+    targetPositionSemaphore.post();
 
     return true;
 }
