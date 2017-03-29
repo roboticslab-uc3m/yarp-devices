@@ -33,8 +33,9 @@ namespace teo
 */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
 // Note: IControlLimits2Raw inherits from IControlLimitsRaw
+// Note: IPositionControl2Raw inherits from IPositionControlRaw
 class LacqueyFetch : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlModeRaw, public yarp::dev::IEncodersTimedRaw,
-    public yarp::dev::IPositionControlRaw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControlRaw, public yarp::dev::ITorqueControlRaw,
+    public yarp::dev::IPositionControl2Raw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControlRaw, public yarp::dev::ITorqueControlRaw,
     public ICanBusSharer, public yarp::dev::IInteractionModeRaw
 {
 
@@ -128,63 +129,39 @@ public:
     virtual bool getEncoderTimedRaw(int j, double *encs, double *time);
 
     // ------- IPositionControlRaw declarations. Implementation in IPositionControlRawImpl.cpp -------
-    virtual bool getAxes(int *ax)
-    {
-        *ax = 1;
-        return true;
-    }
-    virtual bool setPositionModeRaw()
-    {
-        return setPositionModeRaw(0);
-    }
+    virtual bool getAxes(int *ax);
+    virtual bool setPositionModeRaw();
     virtual bool positionMoveRaw(int j, double ref);
-    virtual bool positionMoveRaw(const double *refs)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool positionMoveRaw(const double *refs);
     virtual bool relativeMoveRaw(int j, double delta);
-    virtual bool relativeMoveRaw(const double *deltas)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool relativeMoveRaw(const double *deltas);
     virtual bool checkMotionDoneRaw(int j, bool *flag);
-    virtual bool checkMotionDoneRaw(bool *flag)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool checkMotionDoneRaw(bool *flag);
     virtual bool setRefSpeedRaw(int j, double sp);
-    virtual bool setRefSpeedsRaw(const double *spds)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool setRefSpeedsRaw(const double *spds);
     virtual bool setRefAccelerationRaw(int j, double acc);
-    virtual bool setRefAccelerationsRaw(const double *accs)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool setRefAccelerationsRaw(const double *accs);
     virtual bool getRefSpeedRaw(int j, double *ref);
-    virtual bool getRefSpeedsRaw(double *spds)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getRefSpeedsRaw(double *spds);
     virtual bool getRefAccelerationRaw(int j, double *acc);
-    virtual bool getRefAccelerationsRaw(double *accs)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getRefAccelerationsRaw(double *accs);
     virtual bool stopRaw(int j);
-    virtual bool stopRaw()
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool stopRaw();
+
+    // ------- IPositionControl2Raw declarations. Implementation in IPositionControl2RawImpl.cpp ---------
+
+    virtual bool positionMoveRaw(const int n_joint, const int *joints, const double *refs);
+    virtual bool relativeMoveRaw(const int n_joint, const int *joints, const double *deltas);
+    virtual bool checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags);
+    virtual bool setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds);
+    virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs);
+    virtual bool getRefSpeedsRaw(const int n_joint, const int *joints, double *spds);
+    virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs);
+    virtual bool stopRaw(const int n_joint, const int *joints);
+    virtual bool getTargetPositionRaw(const int joint, double *ref);
+    virtual bool getTargetPositionsRaw(double *refs);
+    virtual bool getTargetPositionsRaw(const int n_joint, const int *joints, double *refs);
+
 
     // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
     virtual bool setPositionDirectModeRaw()
@@ -453,7 +430,7 @@ protected:
 
     ICanBusHico *canDevicePtr;
 
-    double max, min, refAcceleration, refSpeed, tr;
+    double max, min, refAcceleration, refSpeed, tr, targetPosition;
 
     double lastUsage;
 
@@ -472,6 +449,8 @@ protected:
     //-- Semaphores
     yarp::os::Semaphore encoderReady;
     yarp::os::Semaphore interactionModeSemaphore;
+    yarp::os::Semaphore targetPositionSemaphore;
+
 
 };
 
