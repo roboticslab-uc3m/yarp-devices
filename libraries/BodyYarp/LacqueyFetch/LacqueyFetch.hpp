@@ -164,28 +164,10 @@ public:
 
 
     // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
-    virtual bool setPositionDirectModeRaw()
-    {
-        CD_DEBUG("\n");
-        return true;
-    }
-    virtual bool setPositionRaw(int j, double ref)
-    {
-        CD_DEBUG("\n");
-        this->positionMoveRaw(0,ref);
-        return true;
-    }
-    virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs)
-    {
-        CD_DEBUG("\n");
-        this->positionMoveRaw(0,refs[0]);
-        return true;
-    }
-    virtual bool setPositionsRaw(const double *refs)
-    {
-        CD_DEBUG("\n");
-        return true;
-    }
+    virtual bool setPositionDirectModeRaw();
+    virtual bool setPositionRaw(int j, double ref);
+    virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs);
+    virtual bool setPositionsRaw(const double *refs);
 
     // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
     virtual bool setTorqueModeRaw()
