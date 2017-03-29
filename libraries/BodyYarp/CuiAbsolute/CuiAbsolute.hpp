@@ -230,22 +230,23 @@ public:
     virtual bool enableTorquePidRaw(int j);
     virtual bool setTorqueOffsetRaw(int j, double v);
 
-    //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
-    virtual bool setVelocityModeRaw()
-    {
-        CD_ERROR("\n");
-        return false;
-    }
-    virtual bool velocityMoveRaw(int j, double sp)
-    {
-        CD_INFO("\n");
-        return true;
-    }
-    virtual bool velocityMoveRaw(const double *sp)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    //  --------- IVelocityControlRaw Declarations. Implementation in IVelocityControl2RawImpl.cpp ---------
+    virtual bool setVelocityModeRaw();
+    virtual bool velocityMoveRaw(int j, double sp);
+    virtual bool velocityMoveRaw(const double *sp);
+
+    //  --------- IVelocityControl2Raw Declarations. Implementation in IVelocityControl2RawImpl.cpp ---------
+    virtual bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds);
+    virtual bool getRefVelocityRaw(const int joint, double *vel);
+    virtual bool getRefVelocitiesRaw(double *vels);
+    virtual bool getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels);
+    // -- (just defined in IInteractionModeRaw) - virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs);
+    // -- (just defined in IInteractionModeRaw) - virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs);
+    // -- (just defined in IInteractionModeRaw) - virtual bool stopRaw(const int n_joint, const int *joints);
+    virtual bool setVelPidRaw(int j, const yarp::dev::Pid &pid);
+    virtual bool setVelPidsRaw(const yarp::dev::Pid *pids);
+    virtual bool getVelPidRaw(int j, yarp::dev::Pid *pid);
+    virtual bool getVelPidsRaw(yarp::dev::Pid *pids);
 
     // ------- IInteractionModeRaw declarations. Implementation in IInteractionModeRawImpl.cpp -------
 
