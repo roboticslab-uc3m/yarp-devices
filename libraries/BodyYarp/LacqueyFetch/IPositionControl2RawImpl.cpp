@@ -76,7 +76,7 @@ bool teo::LacqueyFetch::positionMoveRaw(int j, double ref)    // encExposed = re
 
 bool teo::LacqueyFetch::positionMoveRaw(const double *refs)
 {
-    CD_ERROR("\n");
+    CD_ERROR("Missing implementation\n");
     return false;
 }
 
@@ -98,7 +98,7 @@ bool teo::LacqueyFetch::relativeMoveRaw(int j, double delta)
 
 bool teo::LacqueyFetch::relativeMoveRaw(const double *deltas)
 {
-    CD_ERROR("\n");
+    CD_ERROR("Missing implementation\n");
     return false;
 }
 
@@ -120,7 +120,7 @@ bool teo::LacqueyFetch::checkMotionDoneRaw(int j, bool *flag)
 
 bool teo::LacqueyFetch::checkMotionDoneRaw(bool *flag)
 {
-    CD_ERROR("\n");
+    CD_ERROR("Missing implementation\n");
     return false;
 }
 
@@ -140,7 +140,7 @@ bool teo::LacqueyFetch::setRefSpeedRaw(int j, double sp)
 
 bool teo::LacqueyFetch::setRefSpeedsRaw(const double *spds)
 {
-    CD_ERROR("\n");
+    CD_ERROR("Missing implementation\n");
     return false;
 }
 
@@ -160,7 +160,7 @@ bool teo::LacqueyFetch::setRefAccelerationRaw(int j, double acc)
 
 bool teo::LacqueyFetch::setRefAccelerationsRaw(const double *accs)
 {
-    CD_ERROR("\n");
+    CD_ERROR("Missing implementation\n");
     return false;
 }
 
@@ -182,7 +182,7 @@ bool teo::LacqueyFetch::getRefSpeedRaw(int j, double *ref)
 
 bool teo::LacqueyFetch::getRefSpeedsRaw(double *spds)
 {
-    CD_ERROR("\n");
+    CD_ERROR("Missing implementation\n");
     return false;
 }
 
@@ -204,7 +204,7 @@ bool teo::LacqueyFetch::getRefAccelerationRaw(int j, double *acc)
 
 bool teo::LacqueyFetch::getRefAccelerationsRaw(double *accs)
 {
-    CD_ERROR("\n");
+    CD_ERROR("Missing implementation\n");
     return false;
 }
 
@@ -224,7 +224,7 @@ bool teo::LacqueyFetch::stopRaw(int j)
 
 bool teo::LacqueyFetch::stopRaw()
 {
-    CD_ERROR("\n");
+    CD_ERROR("Missing implementation\n");
     return false;
 }
 
