@@ -89,3 +89,9 @@ bool teo::CuiAbsolute::getControlModeRaw(int j, int *mode)
 }
 
 // -----------------------------------------------------------------------------
+
+bool teo::CuiAbsolute::getControlModesRaw(int *modes)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
