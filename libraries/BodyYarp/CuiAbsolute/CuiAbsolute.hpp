@@ -98,35 +98,15 @@ public:
 
     //  ---------- IEncodersRaw Declarations. Implementation in IEncodersRawImpl.cpp ----------
     virtual bool resetEncoderRaw(int j);
-    virtual bool resetEncodersRaw()
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool resetEncodersRaw();
     virtual bool setEncoderRaw(int j, double val);
-    virtual bool setEncodersRaw(const double *vals)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool setEncodersRaw(const double *vals);
     virtual bool getEncoderRaw(int j, double *v);
-    virtual bool getEncodersRaw(double *encs)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getEncodersRaw(double *encs);
     virtual bool getEncoderSpeedRaw(int j, double *sp);
-    virtual bool getEncoderSpeedsRaw(double *spds)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getEncoderSpeedsRaw(double *spds);
     virtual bool getEncoderAccelerationRaw(int j, double *spds);
-    virtual bool getEncoderAccelerationsRaw(double *accs)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getEncoderAccelerationsRaw(double *accs);
 
     //  ---------- IEncodersTimedRaw Declarations. Implementation in IEncodersTimedRawImpl.cpp ----------
     virtual bool getEncodersTimedRaw(double *encs, double *time)
