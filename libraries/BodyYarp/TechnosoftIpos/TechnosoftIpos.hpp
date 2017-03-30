@@ -119,7 +119,7 @@ public:
     virtual bool getEncodersTimedRaw(double *encs, double *time);
     virtual bool getEncoderTimedRaw(int j, double *encs, double *time);
 
-    // ------- IPositionControlRaw declarations. Implementation in IPositionControlRawImpl.cpp -------
+    // ------- IPositionControlRaw declarations. Implementation in IPositionControl2RawImpl.cpp -------
     virtual bool getAxes(int *ax);
     virtual bool setPositionModeRaw();
     virtual bool positionMoveRaw(int j, double ref);
@@ -188,13 +188,12 @@ public:
     virtual bool enableTorquePidRaw(int j);
     virtual bool setTorqueOffsetRaw(int j, double v);
 
-    //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
+    //  --------- IVelocityControlRaw Declarations. Implementation in IVelocityControl2RawImpl.cpp ---------
     virtual bool setVelocityModeRaw();
     virtual bool velocityMoveRaw(int j, double sp);
     virtual bool velocityMoveRaw(const double *sp);
 
     //--------------IVelocityControl2Raw declarations. Implementation in IVelocityControl2RawImpl.cpp -----------------
-
     virtual bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds);
     virtual bool getRefVelocityRaw(const int joint, double *vel);
     virtual bool getRefVelocitiesRaw(double *vels);
