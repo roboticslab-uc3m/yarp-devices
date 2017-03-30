@@ -2,7 +2,7 @@
 
 #include "LacqueyFetch.hpp"
 
-// ------------------ IPositionControlRaw Related ----------------------------------------
+// ######################## IPositionControlRaw Related ############################
 
 bool teo::LacqueyFetch::getAxes(int *ax)
 {
@@ -10,10 +10,14 @@ bool teo::LacqueyFetch::getAxes(int *ax)
     return true;
 }
 
+//--------------------------------------------------------------------------------------
+
 bool teo::LacqueyFetch::setPositionModeRaw()
 {
     return setPositionModeRaw(0);
 }
+
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::positionMoveRaw(int j, double ref)    // encExposed = ref;
 {
@@ -68,7 +72,7 @@ bool teo::LacqueyFetch::positionMoveRaw(int j, double ref)    // encExposed = re
     return true;
 }
 
-// -----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::positionMoveRaw(const double *refs)
 {
@@ -76,7 +80,7 @@ bool teo::LacqueyFetch::positionMoveRaw(const double *refs)
     return false;
 }
 
-// -----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::relativeMoveRaw(int j, double delta)
 {
@@ -90,7 +94,7 @@ bool teo::LacqueyFetch::relativeMoveRaw(int j, double delta)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::relativeMoveRaw(const double *deltas)
 {
@@ -98,7 +102,7 @@ bool teo::LacqueyFetch::relativeMoveRaw(const double *deltas)
     return false;
 }
 
-// -----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::checkMotionDoneRaw(int j, bool *flag)
 {
@@ -112,7 +116,7 @@ bool teo::LacqueyFetch::checkMotionDoneRaw(int j, bool *flag)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::checkMotionDoneRaw(bool *flag)
 {
@@ -120,7 +124,7 @@ bool teo::LacqueyFetch::checkMotionDoneRaw(bool *flag)
     return false;
 }
 
-// -----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::setRefSpeedRaw(int j, double sp)
 {
@@ -132,7 +136,7 @@ bool teo::LacqueyFetch::setRefSpeedRaw(int j, double sp)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::setRefSpeedsRaw(const double *spds)
 {
@@ -140,7 +144,7 @@ bool teo::LacqueyFetch::setRefSpeedsRaw(const double *spds)
     return false;
 }
 
-// -----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::setRefAccelerationRaw(int j, double acc)
 {
@@ -152,7 +156,7 @@ bool teo::LacqueyFetch::setRefAccelerationRaw(int j, double acc)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::setRefAccelerationsRaw(const double *accs)
 {
@@ -160,7 +164,7 @@ bool teo::LacqueyFetch::setRefAccelerationsRaw(const double *accs)
     return false;
 }
 
-// -----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::getRefSpeedRaw(int j, double *ref)
 {
@@ -174,7 +178,7 @@ bool teo::LacqueyFetch::getRefSpeedRaw(int j, double *ref)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::getRefSpeedsRaw(double *spds)
 {
@@ -182,7 +186,7 @@ bool teo::LacqueyFetch::getRefSpeedsRaw(double *spds)
     return false;
 }
 
-// -----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::getRefAccelerationRaw(int j, double *acc)
 {
@@ -196,7 +200,7 @@ bool teo::LacqueyFetch::getRefAccelerationRaw(int j, double *acc)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::getRefAccelerationsRaw(double *accs)
 {
@@ -204,7 +208,7 @@ bool teo::LacqueyFetch::getRefAccelerationsRaw(double *accs)
     return false;
 }
 
-// -----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::stopRaw(int j)
 {
@@ -216,7 +220,7 @@ bool teo::LacqueyFetch::stopRaw(int j)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::stopRaw()
 {
@@ -224,64 +228,71 @@ bool teo::LacqueyFetch::stopRaw()
     return false;
 }
 
-// ------------------ IPositionControl2Raw Related ----------------------------------------
+// ############################# IPositionControl2Raw Related ###########################
 
 bool teo::LacqueyFetch::positionMoveRaw(const int n_joint, const int *joints, const double *refs)
 {
-    CD_WARNING("Missing implementation\n");
-
-    return true;
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
+
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)
 {
-    CD_WARNING("Missing implementation\n");
-
-    return true;
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
+
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags)
 {
-    CD_WARNING("Missing implementation\n");
-
-    return true;
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
+
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)
 {
-    CD_WARNING("Missing implementation\n");
-
-    return true;
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
+
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
 {
-    return true;
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
+
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)
 {
-    CD_WARNING("Missing implementation\n");
-
-    return true;
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
 
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
 {
-    CD_WARNING("Missing implementation\n");
-
-    return true;
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
 
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::stopRaw(const int n_joint, const int *joints)
 {
-    CD_WARNING("Missing implementation\n");
-
-    return true;
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
 
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::getTargetPositionRaw(const int joint, double *ref)
 {
@@ -294,16 +305,18 @@ bool teo::LacqueyFetch::getTargetPositionRaw(const int joint, double *ref)
     return true;
 }
 
+//--------------------------------------------------------------------------------------
+
 bool teo::LacqueyFetch::getTargetPositionsRaw(double *refs)
 {
-    CD_WARNING("Missing implementation\n");
-
-    return true;
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
+
+//--------------------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::getTargetPositionsRaw(const int n_joint, const int *joints, double *refs)
 {
-    CD_WARNING("Missing implementation\n");
-
-    return true;
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
