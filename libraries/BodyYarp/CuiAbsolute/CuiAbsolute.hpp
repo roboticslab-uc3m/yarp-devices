@@ -112,64 +112,39 @@ public:
     virtual bool getEncodersTimedRaw(double *encs, double *time);
     virtual bool getEncoderTimedRaw(int j, double *encs, double *time);
 
-    // ------- IPositionControlRaw declarations. Implementation in IPositionControlRawImpl.cpp -------
-    virtual bool getAxes(int *ax)
-    {
-        *ax = 1;
-        return true;
-    }
-    virtual bool setPositionModeRaw()
-    {
-        return setPositionModeRaw(0);
-    }
+    // ------- IPositionControlRaw declarations. Implementation in IPositionControl2RawImpl.cpp -------
+    virtual bool getAxes(int *ax);
+    virtual bool setPositionModeRaw();
     virtual bool positionMoveRaw(int j, double ref);
-    virtual bool positionMoveRaw(const double *refs)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool positionMoveRaw(const double *refs);
     virtual bool relativeMoveRaw(int j, double delta);
-    virtual bool relativeMoveRaw(const double *deltas)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool relativeMoveRaw(const double *deltas);
     virtual bool checkMotionDoneRaw(int j, bool *flag);
-    virtual bool checkMotionDoneRaw(bool *flag)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool checkMotionDoneRaw(bool *flag);
     virtual bool setRefSpeedRaw(int j, double sp);
-    virtual bool setRefSpeedsRaw(const double *spds)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool setRefSpeedsRaw(const double *spds);
     virtual bool setRefAccelerationRaw(int j, double acc);
-    virtual bool setRefAccelerationsRaw(const double *accs)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool setRefAccelerationsRaw(const double *accs);
     virtual bool getRefSpeedRaw(int j, double *ref);
-    virtual bool getRefSpeedsRaw(double *spds)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getRefSpeedsRaw(double *spds);
     virtual bool getRefAccelerationRaw(int j, double *acc);
-    virtual bool getRefAccelerationsRaw(double *accs)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getRefAccelerationsRaw(double *accs);
     virtual bool stopRaw(int j);
-    virtual bool stopRaw()
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool stopRaw();
+
+    // ------- IPositionControl2Raw declarations. Implementation in IPositionControl2RawImpl.cpp ---------
+
+    virtual bool positionMoveRaw(const int n_joint, const int *joints, const double *refs);
+    virtual bool relativeMoveRaw(const int n_joint, const int *joints, const double *deltas);
+    virtual bool checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags);
+    virtual bool setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds);
+    virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs);
+    virtual bool getRefSpeedsRaw(const int n_joint, const int *joints, double *spds);
+    virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs);
+    virtual bool stopRaw(const int n_joint, const int *joints);
+    virtual bool getTargetPositionRaw(const int joint, double *ref);
+    virtual bool getTargetPositionsRaw(double *refs);
+    virtual bool getTargetPositionsRaw(const int n_joint, const int *joints, double *refs);
 
     // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
     virtual bool setPositionDirectModeRaw();
@@ -288,101 +263,6 @@ public:
      * @return true or false on success or failure. If one or more joint fails, the return value will be false.
      */
     virtual bool setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
-
-    // ------- IPositionControl2Raw declarations. Implementation in IPositionControl2RawImpl.cpp ---------
-
-    /** Set new reference point for a subset of joints.
-     * @param joints pointer to the array of joint numbers
-     * @param refs   pointer to the array specifies the new reference points
-     * @return true/false on success/failure
-     */
-    virtual bool positionMoveRaw(const int n_joint, const int *joints, const double *refs);
-
-    /** Set relative position for a subset of joints.
-     * @param joints pointer to the array of joint numbers
-     * @param deltas pointer to the array of relative commands
-     * @return true/false on success/failure
-     */
-    virtual bool relativeMoveRaw(const int n_joint, const int *joints, const double *deltas);
-
-    /** Check if the current trajectory is terminated. Non blocking.
-     * @param joints pointer to the array of joint numbers
-     * @param flag true if the trajectory is terminated, false otherwise
-     *        (a single value which is the 'and' of all joints')
-     * @return true/false if network communication went well.
-     */
-    virtual bool checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags);
-
-    /** Set reference speed on all joints. These values are used during the
-     * interpolation of the trajectory.
-     * @param joints pointer to the array of joint numbers
-     * @param spds   pointer to the array with speed values.
-     * @return true/false upon success/failure
-     */
-    virtual bool setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds);
-
-    /** Set reference acceleration on all joints. This is the valure that is
-     * used during the generation of the trajectory.
-     * @param joints pointer to the array of joint numbers
-     * @param accs   pointer to the array with acceleration values
-     * @return true/false upon success/failure
-     */
-    virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs);
-
-    /** Get reference speed of all joints. These are the  values used during the
-     * interpolation of the trajectory.
-     * @param joints pointer to the array of joint numbers
-     * @param spds   pointer to the array that will store the speed values.
-     * @return true/false upon success/failure
-     */
-    virtual bool getRefSpeedsRaw(const int n_joint, const int *joints, double *spds);
-
-    /** Get reference acceleration for a joint. Returns the acceleration used to
-     * generate the trajectory profile.
-     * @param joints pointer to the array of joint numbers
-     * @param accs   pointer to the array that will store the acceleration values
-     * @return true/false on success/failure
-     */
-    virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs);
-
-    /** Stop motion for subset of joints
-     * @param joints pointer to the array of joint numbers
-     * @return true/false on success/failure
-     */
-    virtual bool stopRaw(const int n_joint, const int *joints);
-
-    /** Get the last position reference for the specified axis.
-     *  This is the dual of PositionMove and shall return only values sent using
-     *  IPositionControl interface.
-     *  If other interfaces like IPositionDirect are implemented by the device, this call
-     *  must ignore their values, i.e. this call must never return a reference sent using
-     *  IPositionDirect::SetPosition
-     * @param ref last reference sent using PositionMove functions
-     * @return true/false on success/failure
-     */
-    virtual bool getTargetPositionRaw(const int joint, double *ref);
-
-    /** Get the last position reference for all axes.
-     *  This is the dual of PositionMove and shall return only values sent using
-     *  IPositionControl interface.
-     *  If other interfaces like IPositionDirect are implemented by the device, this call
-     *  must ignore their values, i.e. this call must never return a reference sent using
-     *  IPositionDirect::SetPosition
-     * @param ref last reference sent using PositionMove functions
-     * @return true/false on success/failure
-     */
-    virtual bool getTargetPositionsRaw(double *refs);
-
-    /** Get the last position reference for the specified group of axes.
-     *  This is the dual of PositionMove and shall return only values sent using
-     *  IPositionControl interface.
-     *  If other interfaces like IPositionDirect are implemented by the device, this call
-     *  must ignore their values, i.e. this call must never return a reference sent using
-     *  IPositionDirect::SetPosition
-     * @param ref last reference sent using PositionMove functions
-     * @return true/false on success/failure
-     */
-    virtual bool getTargetPositionsRaw(const int n_joint, const int *joints, double *refs);
 
 
     // -- Auxiliary functions: send data to PIC of Cui

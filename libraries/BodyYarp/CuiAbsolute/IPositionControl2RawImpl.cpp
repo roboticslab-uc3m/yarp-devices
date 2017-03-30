@@ -4,6 +4,21 @@
 
 // ------------------ IPositionControlRaw Related ----------------------------------------
 
+bool teo::CuiAbsolute::getAxes(int *ax)
+{
+    *ax = 1;
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CuiAbsolute::setPositionModeRaw()
+{
+    return setPositionModeRaw(0);
+}
+
+// -----------------------------------------------------------------------------
+
 bool teo::CuiAbsolute::positionMoveRaw(int j, double ref)    // encExposed = ref;
 {
     CD_INFO("(%d,%f)\n",j,ref);
@@ -14,6 +29,14 @@ bool teo::CuiAbsolute::positionMoveRaw(int j, double ref)    // encExposed = ref
     CD_WARNING("Not implemented yet (CuiAbsolute).\n");
 
     return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CuiAbsolute::positionMoveRaw(const double *refs)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -32,6 +55,14 @@ bool teo::CuiAbsolute::relativeMoveRaw(int j, double delta)
 
 // -----------------------------------------------------------------------------
 
+bool teo::CuiAbsolute::relativeMoveRaw(const double *deltas)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
 bool teo::CuiAbsolute::checkMotionDoneRaw(int j, bool *flag)
 {
     CD_INFO("(%d)\n",j);
@@ -42,6 +73,14 @@ bool teo::CuiAbsolute::checkMotionDoneRaw(int j, bool *flag)
     *flag = true;
 
     return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CuiAbsolute::checkMotionDoneRaw(bool *flag)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -58,6 +97,14 @@ bool teo::CuiAbsolute::setRefSpeedRaw(int j, double sp)
 
 // -----------------------------------------------------------------------------
 
+bool teo::CuiAbsolute::setRefSpeedsRaw(const double *spds)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
 bool teo::CuiAbsolute::setRefAccelerationRaw(int j, double acc)
 {
     CD_INFO("(%d, %f)\n",j,acc);
@@ -66,6 +113,14 @@ bool teo::CuiAbsolute::setRefAccelerationRaw(int j, double acc)
     if ( j != 0 ) return false;
 
     return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CuiAbsolute::setRefAccelerationsRaw(const double *accs)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -84,6 +139,14 @@ bool teo::CuiAbsolute::getRefSpeedRaw(int j, double *ref)
 
 // -----------------------------------------------------------------------------
 
+bool teo::CuiAbsolute::getRefSpeedsRaw(double *spds)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
 bool teo::CuiAbsolute::getRefAccelerationRaw(int j, double *acc)
 {
     CD_INFO("(%d)\n",j);
@@ -98,6 +161,14 @@ bool teo::CuiAbsolute::getRefAccelerationRaw(int j, double *acc)
 
 // -----------------------------------------------------------------------------
 
+bool teo::CuiAbsolute::getRefAccelerationsRaw(double *accs)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
 bool teo::CuiAbsolute::stopRaw(int j)
 {
     CD_INFO("(%d)\n",j);
@@ -106,6 +177,12 @@ bool teo::CuiAbsolute::stopRaw(int j)
     if ( j != 0 ) return false;
 
     return true;
+}
+
+bool teo::CuiAbsolute::stopRaw()
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
 
 // -------------------------- IPositionControl2Raw Related ----------------------------
@@ -118,12 +195,16 @@ bool teo::CuiAbsolute::positionMoveRaw(const int n_joint, const int *joints, con
     return true;
 }
 
+// -----------------------------------------------------------------------------
+
 bool teo::CuiAbsolute::relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)
 {
     CD_WARNING("Missing implementation\n");
 
     return true;
 }
+
+// -----------------------------------------------------------------------------
 
 bool teo::CuiAbsolute::checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags)
 {
@@ -132,6 +213,8 @@ bool teo::CuiAbsolute::checkMotionDoneRaw(const int n_joint, const int *joints, 
     return true;
 }
 
+// -----------------------------------------------------------------------------
+
 bool teo::CuiAbsolute::setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)
 {
     CD_WARNING("Missing implementation\n");
@@ -139,6 +222,7 @@ bool teo::CuiAbsolute::setRefSpeedsRaw(const int n_joint, const int *joints, con
     return true;
 }
 
+// -----------------------------------------------------------------------------
 
 bool teo::CuiAbsolute::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
 {
@@ -147,6 +231,7 @@ bool teo::CuiAbsolute::setRefAccelerationsRaw(const int n_joint, const int *join
     return true;
 }
 
+// -----------------------------------------------------------------------------
 
 bool teo::CuiAbsolute::getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)
 {
@@ -155,6 +240,7 @@ bool teo::CuiAbsolute::getRefSpeedsRaw(const int n_joint, const int *joints, dou
     return true;
 }
 
+// -----------------------------------------------------------------------------
 
 bool teo::CuiAbsolute::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
 {
@@ -163,7 +249,7 @@ bool teo::CuiAbsolute::getRefAccelerationsRaw(const int n_joint, const int *join
     return true;
 }
 
-
+// -----------------------------------------------------------------------------
 
 bool teo::CuiAbsolute::stopRaw(const int n_joint, const int *joints)
 {
@@ -172,6 +258,7 @@ bool teo::CuiAbsolute::stopRaw(const int n_joint, const int *joints)
     return true;
 }
 
+// -----------------------------------------------------------------------------
 
 bool teo::CuiAbsolute::getTargetPositionRaw(const int joint, double *ref)
 {
@@ -181,6 +268,8 @@ bool teo::CuiAbsolute::getTargetPositionRaw(const int joint, double *ref)
 
     return true;
 }
+
+// -----------------------------------------------------------------------------
 
 bool teo::CuiAbsolute::getTargetPositionsRaw(double *refs)
 {
