@@ -9,4 +9,5 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
 bool roboticslab::AravisGigE::close()
 {
     CD_INFO("AravisGigE driver is closed!\n");
+    return true;
 }
