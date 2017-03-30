@@ -100,7 +100,7 @@ public:
     virtual bool getEncodersTimedRaw(double *encs, double *time);
     virtual bool getEncoderTimedRaw(int j, double *encs, double *time);
 
-    // ------- IPositionControlRaw declarations. Implementation in IPositionControlRawImpl.cpp -------
+    // ------- IPositionControlRaw declarations. Implementation in IPositionControl2RawImpl.cpp -------
     virtual bool getAxes(int *ax);
     virtual bool setPositionModeRaw();
     virtual bool positionMoveRaw(int j, double ref);
