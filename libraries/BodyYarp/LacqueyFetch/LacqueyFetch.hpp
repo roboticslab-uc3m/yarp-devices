@@ -82,50 +82,22 @@ public:
     virtual bool setImpedanceVelocityModeRaw(int j);
     virtual bool setOpenLoopModeRaw(int j);
     virtual bool getControlModeRaw(int j, int *mode);
-    virtual bool getControlModesRaw(int *modes)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getControlModesRaw(int *modes);
 
     //  ---------- IEncodersRaw Declarations. Implementation in IEncodersRawImpl.cpp ----------
     virtual bool resetEncoderRaw(int j);
-    virtual bool resetEncodersRaw()
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool resetEncodersRaw();
     virtual bool setEncoderRaw(int j, double val);
-    virtual bool setEncodersRaw(const double *vals)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool setEncodersRaw(const double *vals);
     virtual bool getEncoderRaw(int j, double *v);
-    virtual bool getEncodersRaw(double *encs)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getEncodersRaw(double *encs);
     virtual bool getEncoderSpeedRaw(int j, double *sp);
-    virtual bool getEncoderSpeedsRaw(double *spds)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getEncoderSpeedsRaw(double *spds);
     virtual bool getEncoderAccelerationRaw(int j, double *spds);
-    virtual bool getEncoderAccelerationsRaw(double *accs)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getEncoderAccelerationsRaw(double *accs);
 
     //  ---------- IEncodersTimedRaw Declarations. Implementation in IEncodersTimedRawImpl.cpp ----------
-    virtual bool getEncodersTimedRaw(double *encs, double *time)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getEncodersTimedRaw(double *encs, double *time);
     virtual bool getEncoderTimedRaw(int j, double *encs, double *time);
 
     // ------- IPositionControlRaw declarations. Implementation in IPositionControlRawImpl.cpp -------
@@ -149,7 +121,6 @@ public:
     virtual bool stopRaw();
 
     // ------- IPositionControl2Raw declarations. Implementation in IPositionControl2RawImpl.cpp ---------
-
     virtual bool positionMoveRaw(const int n_joint, const int *joints, const double *refs);
     virtual bool relativeMoveRaw(const int n_joint, const int *joints, const double *deltas);
     virtual bool checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags);
@@ -217,68 +188,11 @@ public:
     virtual bool getVelPidsRaw(yarp::dev::Pid *pids);
 
     // ------- IInteractionModeRaw declarations. Implementation in IInteractionModeRawImpl.cpp -------
-
-    /**
-     * Get the current interaction mode of the robot, values can be stiff or compliant.
-     * @param axis joint number
-     * @param mode contains the requested information about interaction mode of the joint
-     * @return true or false on success or failure.
-     */
     virtual bool getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode);
-
-
-    /**
-     * Get the current interaction mode of the robot for a set of joints, values can be stiff or compliant.
-     * @param n_joints how many joints this command is referring to
-     * @param joints list of joints controlled. The size of this array is n_joints
-     * @param modes array containing the requested information about interaction mode, one value for each joint, the size is n_joints.
-     *          for example:
-     *          n_joint  3
-     *          joints   0  2  4
-     *          refs    VOCAB_IM_STIFF VOCAB_IM_STIFF VOCAB_IM_COMPLIANT
-     * @return true or false on success or failure.
-     */
     virtual bool getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
-
-
-    /**
-     * Get the current interaction mode of the robot for a all the joints, values can be stiff or compliant.
-     * @param mode array containing the requested information about interaction mode, one value for each joint.
-     * @return true or false on success or failure.
-     */
     virtual bool getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
-
-
-    /**
-     * Set the interaction mode of the robot, values can be stiff or compliant.
-     * Please note that some robot may not implement certain types of interaction, so always check the return value.
-     * @param axis joint number
-     * @param mode the desired interaction mode
-     * @return true or false on success or failure.
-     */
     virtual bool setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode);
-
-
-    /**
-     * Set the interaction mode of the robot for a set of joints, values can be stiff or compliant.
-     * Please note that some robot may not implement certain types of interaction, so always check the return value.
-     * @param n_joints how many joints this command is referring to
-     * @param joints list of joints controlled. The size of this array is n_joints
-     * @param modes array containing the desired interaction mode, one value for each joint, the size is n_joints.
-     *          for example:
-     *          n_joint  3
-     *          joints   0  2  4
-     *          refs    VOCAB_IM_STIFF VOCAB_IM_STIFF VOCAB_IM_COMPLIANT
-     * @return true or false on success or failure. If one or more joint fails, the return value will be false.
-     */
     virtual bool setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
-
-    /**
-     * Set the interaction mode of the robot for a all the joints, values can be stiff or compliant.
-     * Some robot may not implement some types of interaction, so always check the return value
-     * @param mode array with the desired interaction mode for all joints, length is the total number of joints for the part
-     * @return true or false on success or failure. If one or more joint fails, the return value will be false.
-     */
     virtual bool setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
 
 protected:

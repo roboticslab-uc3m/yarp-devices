@@ -16,6 +16,14 @@ bool teo::LacqueyFetch::resetEncoderRaw(int j)
 
 // -----------------------------------------------------------------------------
 
+bool teo::LacqueyFetch::resetEncodersRaw()
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
 bool teo::LacqueyFetch::setEncoderRaw(int j, double val)    // encExposed = val;
 {
     CD_INFO("(%d,%f)\n",j,val);
@@ -26,6 +34,14 @@ bool teo::LacqueyFetch::setEncoderRaw(int j, double val)    // encExposed = val;
     CD_WARNING("Not implemented yet (LacqueyFetch).\n");
 
     return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::LacqueyFetch::setEncodersRaw(const double *vals)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -46,6 +62,14 @@ bool teo::LacqueyFetch::getEncoderRaw(int j, double *v)
 
 // -----------------------------------------------------------------------------
 
+bool teo::LacqueyFetch::getEncodersRaw(double *encs)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
 bool teo::LacqueyFetch::getEncoderSpeedRaw(int j, double *sp)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
@@ -57,6 +81,14 @@ bool teo::LacqueyFetch::getEncoderSpeedRaw(int j, double *sp)
     *sp = 0;
 
     return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::LacqueyFetch::getEncoderSpeedsRaw(double *spds)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -76,3 +108,8 @@ bool teo::LacqueyFetch::getEncoderAccelerationRaw(int j, double *spds)
 
 // -----------------------------------------------------------------------------
 
+bool teo::LacqueyFetch::getEncoderAccelerationsRaw(double *accs)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
