@@ -100,11 +100,7 @@ public:
     bool getControlModeRaw3();
     bool getControlModeRaw4();
 
-    virtual bool getControlModesRaw(int *modes)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getControlModesRaw(int *modes);
 
 
     //  ---------- IEncodersRaw Declarations. Implementation in IEncodersRawImpl.cpp ----------
