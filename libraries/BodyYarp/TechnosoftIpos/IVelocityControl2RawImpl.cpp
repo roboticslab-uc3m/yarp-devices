@@ -2,7 +2,15 @@
 
 #include "TechnosoftIpos.hpp"
 
-// ------------------ IVelocityControlRaw Related ----------------------------------------
+// ######################## IVelocityControlRaw Related #############################
+
+bool teo::TechnosoftIpos::setVelocityModeRaw()
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// ----------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::velocityMoveRaw(int j, double sp)
 {
@@ -40,7 +48,15 @@ bool teo::TechnosoftIpos::velocityMoveRaw(int j, double sp)
     return true;
 }
 
-// ------------------ IVelocityControlRaw2 Related ----------------------------------------
+// ----------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::velocityMoveRaw(const double *sp)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// ######################## IVelocityControlRaw2 Related ########################
 
 bool teo::TechnosoftIpos::velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
 {

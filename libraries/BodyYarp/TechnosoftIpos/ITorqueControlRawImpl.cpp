@@ -2,7 +2,23 @@
 
 #include "TechnosoftIpos.hpp"
 
-// ------------------- ITorqueControlRaw Related ------------------------------------
+// ############################# ITorqueControlRaw Related #############################
+
+bool teo::TechnosoftIpos::setTorqueModeRaw()
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -------------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::getRefTorquesRaw(double *t)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -------------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::getRefTorqueRaw(int j, double *t)
 {
@@ -16,7 +32,15 @@ bool teo::TechnosoftIpos::getRefTorqueRaw(int j, double *t)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::setRefTorquesRaw(const double *t)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -------------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::setRefTorqueRaw(int j, double t)
 {
@@ -48,7 +72,7 @@ bool teo::TechnosoftIpos::setRefTorqueRaw(int j, double t)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::getBemfParamRaw(int j, double *bemf)
 {
@@ -62,7 +86,7 @@ bool teo::TechnosoftIpos::getBemfParamRaw(int j, double *bemf)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::setBemfParamRaw(int j, double bemf)
 {
@@ -76,7 +100,7 @@ bool teo::TechnosoftIpos::setBemfParamRaw(int j, double bemf)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
 {
@@ -90,7 +114,7 @@ bool teo::TechnosoftIpos::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::getTorqueRaw(int j, double *t)
 {
@@ -120,7 +144,15 @@ bool teo::TechnosoftIpos::getTorqueRaw(int j, double *t)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::getTorquesRaw(double *t)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -------------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::getTorqueRangeRaw(int j, double *min, double *max)
 {
@@ -134,7 +166,23 @@ bool teo::TechnosoftIpos::getTorqueRangeRaw(int j, double *min, double *max)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::getTorqueRangesRaw(double *min, double *max)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -------------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::setTorquePidsRaw(const yarp::dev::Pid *pids)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -------------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::setTorqueErrorLimitRaw(int j, double limit)
 {
@@ -148,7 +196,15 @@ bool teo::TechnosoftIpos::setTorqueErrorLimitRaw(int j, double limit)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::setTorqueErrorLimitsRaw(const double *limits)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -------------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::getTorqueErrorRaw(int j, double *err)
 {
@@ -162,7 +218,15 @@ bool teo::TechnosoftIpos::getTorqueErrorRaw(int j, double *err)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::getTorqueErrorsRaw(double *errs)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -------------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::getTorquePidOutputRaw(int j, double *out)
 {
@@ -176,7 +240,7 @@ bool teo::TechnosoftIpos::getTorquePidOutputRaw(int j, double *out)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::getTorquePidRaw(int j, yarp::dev::Pid *pid)
 {
@@ -190,7 +254,23 @@ bool teo::TechnosoftIpos::getTorquePidRaw(int j, yarp::dev::Pid *pid)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::getTorquePidsRaw(yarp::dev::Pid *pids)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -------------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::getTorquePidOutputsRaw(double *outs)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -------------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::getTorqueErrorLimitRaw(int j, double *limit)
 {
@@ -204,7 +284,15 @@ bool teo::TechnosoftIpos::getTorqueErrorLimitRaw(int j, double *limit)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::getTorqueErrorLimitsRaw(double *limits)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -------------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::resetTorquePidRaw(int j)
 {
@@ -218,7 +306,7 @@ bool teo::TechnosoftIpos::resetTorquePidRaw(int j)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::disableTorquePidRaw(int j)
 {
@@ -232,7 +320,7 @@ bool teo::TechnosoftIpos::disableTorquePidRaw(int j)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::enableTorquePidRaw(int j)
 {
@@ -246,7 +334,7 @@ bool teo::TechnosoftIpos::enableTorquePidRaw(int j)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::setTorqueOffsetRaw(int j, double v)
 {
@@ -260,4 +348,4 @@ bool teo::TechnosoftIpos::setTorqueOffsetRaw(int j, double v)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
