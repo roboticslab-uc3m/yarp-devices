@@ -2,13 +2,15 @@
 
 #include "LacqueyFetch.hpp"
 
-// ------- IVelocityControlRaw Related -------
+// ######################### IVelocityControlRaw Related ###########################
 
 bool teo::LacqueyFetch::setVelocityModeRaw()
 {
-    CD_ERROR("\n");
+    CD_ERROR("Missing implementation\n");
     return false;
 }
+
+// -----------------------------------------------------------------------------
 
 bool teo::LacqueyFetch::velocityMoveRaw(int j, double sp)
 {
@@ -16,17 +18,19 @@ bool teo::LacqueyFetch::velocityMoveRaw(int j, double sp)
     return true;
 }
 
+// -----------------------------------------------------------------------------
+
 bool teo::LacqueyFetch::velocityMoveRaw(const double *sp)
 {
-    CD_ERROR("\n");
+    CD_ERROR("Missing implementation\n");
     return false;
 }
 
-// ------- IVelocityControl2Raw Related -------
+// ######################### IVelocityControl2Raw Related #########################
 
 bool teo::LacqueyFetch::velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
 {
-    CD_ERROR("\n");
+    CD_ERROR("Missing implementation\n");
     return false;
 }
 
@@ -34,7 +38,7 @@ bool teo::LacqueyFetch::velocityMoveRaw(const int n_joint, const int *joints, co
 
 bool teo::LacqueyFetch::getRefVelocityRaw(const int joint, double *vel)
 {
-    CD_ERROR("\n");
+    CD_ERROR("Missing implementation\n");
     return false;
 }
 
@@ -42,7 +46,7 @@ bool teo::LacqueyFetch::getRefVelocityRaw(const int joint, double *vel)
 
 bool teo::LacqueyFetch::getRefVelocitiesRaw(double *vels)
 {
-    CD_ERROR("\n");
+    CD_ERROR("Missing implementation\n");
     return false;
 }
 
@@ -50,7 +54,7 @@ bool teo::LacqueyFetch::getRefVelocitiesRaw(double *vels)
 
 bool teo::LacqueyFetch::getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels)
 {
-    CD_ERROR("\n");
+    CD_ERROR("Missing implementation\n");
     return false;
 }
 
@@ -82,7 +86,7 @@ bool teo::LacqueyFetch::stopRaw(const int n_joint, const int *joints)
 
 bool teo::LacqueyFetch::setVelPidRaw(int j, const yarp::dev::Pid &pid)
 {
-    CD_ERROR("\n");
+    CD_ERROR("Missing implementation\n");
     return false;
 }
 
@@ -90,7 +94,7 @@ bool teo::LacqueyFetch::setVelPidRaw(int j, const yarp::dev::Pid &pid)
 
 bool teo::LacqueyFetch::setVelPidsRaw(const yarp::dev::Pid *pids)
 {
-    CD_ERROR("\n");
+    CD_ERROR("Missing implementation\n");
     return false;
 }
 
@@ -98,7 +102,7 @@ bool teo::LacqueyFetch::setVelPidsRaw(const yarp::dev::Pid *pids)
 
 bool teo::LacqueyFetch::getVelPidRaw(int j, yarp::dev::Pid *pid)
 {
-    CD_ERROR("\n");
+    CD_ERROR("Missing implementation\n");
     return false;
 }
 
@@ -106,6 +110,6 @@ bool teo::LacqueyFetch::getVelPidRaw(int j, yarp::dev::Pid *pid)
 
 bool teo::LacqueyFetch::getVelPidsRaw(yarp::dev::Pid *pids)
 {
-    CD_ERROR("\n");
+    CD_ERROR("Missing implementation\n");
     return false;
 }
