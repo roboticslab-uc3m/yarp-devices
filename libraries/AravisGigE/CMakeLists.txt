@@ -17,7 +17,7 @@ IF (ENABLE_GigE)
   # Include any directories needed for YARP
   include_directories(${YARP_INCLUDE_DIRS} ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
-  yarp_add_plugin(AravisGigE DeviceDriverImpl.cpp IFrameGrabberInterfaceImpl.cpp )
+  yarp_add_plugin(AravisGigE AravisGigE.hpp DeviceDriverImpl.cpp IFrameGrabberImageImpl.cpp )
 
   TARGET_LINK_LIBRARIES(AravisGigE ${YARP_LIBRARIES})
   install(TARGETS AravisGigE DESTINATION lib)
