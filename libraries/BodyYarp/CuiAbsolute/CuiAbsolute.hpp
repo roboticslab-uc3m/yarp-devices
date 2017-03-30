@@ -109,11 +109,7 @@ public:
     virtual bool getEncoderAccelerationsRaw(double *accs);
 
     //  ---------- IEncodersTimedRaw Declarations. Implementation in IEncodersTimedRawImpl.cpp ----------
-    virtual bool getEncodersTimedRaw(double *encs, double *time)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getEncodersTimedRaw(double *encs, double *time);
     virtual bool getEncoderTimedRaw(int j, double *encs, double *time);
 
     // ------- IPositionControlRaw declarations. Implementation in IPositionControlRawImpl.cpp -------
