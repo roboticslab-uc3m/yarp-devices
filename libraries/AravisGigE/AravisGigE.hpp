@@ -4,6 +4,8 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/AudioVisualInterfaces.h>
 
+#include <arv.h>
+
 #include "ColorDebug.hpp"
 
 namespace roboticslab {
@@ -28,6 +30,11 @@ class AravisGigE : public yarp::dev::DeviceDriver, public yarp::dev::IFrameGrabb
         virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
         virtual int height() const;
         virtual int width() const;
+
+    private:
+        ArvCamera       *camera;                // Camera to control.
+        ArvStream       *stream;                // Object for video stream reception.
+        void *framebuffer; //
 };
 
 
