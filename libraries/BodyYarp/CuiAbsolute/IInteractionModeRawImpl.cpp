@@ -2,7 +2,7 @@
 
 #include "CuiAbsolute.hpp"
 
-// ------------------ IInteractionModeRaw Related ----------------------------------------
+// ################################ IInteractionModeRaw Related ################################
 
 
 bool teo::CuiAbsolute::getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode)
@@ -13,6 +13,7 @@ bool teo::CuiAbsolute::getInteractionModeRaw(int axis, yarp::dev::InteractionMod
     return true;
 }
 
+// ----------------------------------------------------------------------------------------------
 
 bool teo::CuiAbsolute::getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
@@ -21,12 +22,16 @@ bool teo::CuiAbsolute::getInteractionModesRaw(int n_joints, int *joints, yarp::d
     return true;
 }
 
+// ----------------------------------------------------------------------------------------------
+
 bool teo::CuiAbsolute::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 
     return true;
 }
+
+// ----------------------------------------------------------------------------------------------
 
 bool teo::CuiAbsolute::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
 {
@@ -39,6 +44,8 @@ bool teo::CuiAbsolute::setInteractionModeRaw(int axis, yarp::dev::InteractionMod
     return true;
 }
 
+// ----------------------------------------------------------------------------------------------
+
 bool teo::CuiAbsolute::setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
@@ -46,6 +53,8 @@ bool teo::CuiAbsolute::setInteractionModesRaw(int n_joints, int *joints, yarp::d
     return true;
 
 }
+
+// ----------------------------------------------------------------------------------------------
 
 bool teo::CuiAbsolute::setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
@@ -55,4 +64,5 @@ bool teo::CuiAbsolute::setInteractionModesRaw(yarp::dev::InteractionModeEnum* mo
 
 }
 
+// ----------------------------------------------------------------------------------------------
 
