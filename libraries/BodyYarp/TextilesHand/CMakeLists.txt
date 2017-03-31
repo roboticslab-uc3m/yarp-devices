@@ -16,7 +16,6 @@ IF (NOT SKIP_TextilesHand)
   yarp_add_plugin(TextilesHand TextilesHand.cpp DeviceDriverImpl.cpp IControlLimits2RawImpl.cpp IControlModeRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControlRawImpl.cpp ICanBusSharerImpl.cpp )
 
   TARGET_LINK_LIBRARIES(TextilesHand ${YARP_LIBRARIES})
-  install(TARGETS TextilesHand DESTINATION lib)
 
   # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now...
 #  set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} TextilesHand CACHE INTERNAL "appended libraries") 

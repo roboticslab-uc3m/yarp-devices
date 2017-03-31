@@ -16,7 +16,6 @@ IF (NOT SKIP_FakeJoint)
   yarp_add_plugin(FakeJoint FakeJoint.cpp DeviceDriverImpl.cpp IControlLimits2RawImpl.cpp IControlModeRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControlRawImpl.cpp ICanBusSharerImpl.cpp )
 
   TARGET_LINK_LIBRARIES(FakeJoint ${YARP_LIBRARIES})
-  install(TARGETS FakeJoint DESTINATION lib)
 
   # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now...
 #  set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} FakeJoint CACHE INTERNAL "appended libraries") 
