@@ -4,6 +4,14 @@
 
 // ------------------ IEncodersTimedRaw Related -----------------------------------------
 
+bool teo::TextilesHand::getEncodersTimedRaw(double *encs, double *time)
+{
+    CD_ERROR("\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
 bool teo::TextilesHand::getEncoderTimedRaw(int j, double *encs, double *time)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
