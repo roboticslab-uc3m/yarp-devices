@@ -34,8 +34,8 @@ namespace teo
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
 // Note: IControlLimits2Raw inherits from IControlLimitsRaw
 class FakeJoint : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlModeRaw, public yarp::dev::IEncodersTimedRaw,
-    public yarp::dev::IPositionControl2Raw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControlRaw, public yarp::dev::ITorqueControlRaw,
-    public ICanBusSharer
+    public yarp::dev::IPositionControl2Raw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControl2Raw, public yarp::dev::ITorqueControlRaw,
+    public ICanBusSharer, public yarp::dev::IInteractionModeRaw
 {
 
 public:
@@ -173,6 +173,28 @@ public:
     virtual bool velocityMoveRaw(int j, double sp);
     virtual bool velocityMoveRaw(const double *sp);
 
+    //  --------- IVelocityControl2Raw Declarations. Implementation in IVelocityControl2RawImpl.cpp ---------
+    virtual bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds);
+    virtual bool getRefVelocityRaw(const int joint, double *vel);
+    virtual bool getRefVelocitiesRaw(double *vels);
+    virtual bool getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels);
+    // -- (just defined in IInteractionModeRaw) - virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs);
+    // -- (just defined in IInteractionModeRaw) - virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs);
+    // -- (just defined in IInteractionModeRaw) - virtual bool stopRaw(const int n_joint, const int *joints);
+    virtual bool setVelPidRaw(int j, const yarp::dev::Pid &pid);
+    virtual bool setVelPidsRaw(const yarp::dev::Pid *pids);
+    virtual bool getVelPidRaw(int j, yarp::dev::Pid *pid);
+    virtual bool getVelPidsRaw(yarp::dev::Pid *pids);
+
+    // ------- IInteractionModeRaw declarations. Implementation in IInteractionModeRawImpl.cpp -------
+
+    virtual bool getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode);
+    virtual bool getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+    virtual bool getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
+    virtual bool setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode);
+    virtual bool setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+    virtual bool setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
+
 protected:
 
     //  --------- Implementation in FakeJoint.cpp ---------
@@ -211,8 +233,12 @@ protected:
 
     int16_t ptModeMs;  //-- [ms]
 
+    //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
+    yarp::dev::InteractionModeEnum interactionMode;
+
     //-- Semaphores
     yarp::os::Semaphore targetPositionSemaphore;
+    yarp::os::Semaphore interactionModeSemaphore;
 };
 
 }  // namespace teo
