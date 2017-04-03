@@ -90,7 +90,7 @@ bool teo::CanBusControlboard::getEncoderSpeed(int j, double *sp)
 
 bool teo::CanBusControlboard::getEncoderSpeeds(double *spds)
 {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
 
     bool ok = true;
     for(unsigned int i=0; i<nodes.size(); i++)
@@ -114,7 +114,7 @@ bool teo::CanBusControlboard::getEncoderAcceleration(int j, double *spds)
 
 bool teo::CanBusControlboard::getEncoderAccelerations(double *accs)
 {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
 
     bool ok = true;
     for(unsigned int i=0; i<nodes.size(); i++)

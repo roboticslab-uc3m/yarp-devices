@@ -269,3 +269,9 @@ bool teo::TechnosoftIpos::getControlModeRaw4()
 
 /********************************************************************/
 // -----------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::getControlModesRaw(int *modes)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}

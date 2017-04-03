@@ -63,7 +63,7 @@ bool teo::TechnosoftIpos::readyToSwitchOn()
 
     uint8_t msg_readyToSwitchOn[] = {0x06,0x00}; //-- readyToSwitchOn, also acts as shutdown.
     // -- send se diferencia de senRaw en que tiene un delay y adems incluye el ID (mirar funcin)
-    if( ! this->send( 0x200, 2, msg_readyToSwitchOn) ) // -- 0x200 (valor crtico que se pone sin saber qu significa) 2 (tamao del mensaje)
+    if( ! this->send( 0x200, 2, msg_readyToSwitchOn) ) // -- 0x200 (valor critico que se pone sin saber que significa) 2 (tamano del mensaje)
     {
         CD_ERROR("Could not send \"readyToSwitchOn/shutdown\". %s\n", msgToStr(0x200, 2, msg_readyToSwitchOn).c_str() );
         return false;
@@ -298,7 +298,7 @@ bool teo::TechnosoftIpos::interpretMessage( can_msg * message)
             CD_INFO("Got SDO \"modes of operation display\" from driver. %s\n",msgToStr(message).c_str());
             int got;
             memcpy(&got, message->data+4,4);
-            if(-5==got)
+            if(251==got)  // -5
             {
                 CD_INFO("\t-iPOS specific: External Reference Torque Mode. canId: %d.\n",canId);
                 getModeReady.wait();

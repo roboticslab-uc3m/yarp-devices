@@ -2,7 +2,22 @@
 
 #include "TechnosoftIpos.hpp"
 
-// ------------------ IPositionControlRaw Related ----------------------------------------
+// ######################### IPositionControlRaw Related #########################
+
+bool teo::TechnosoftIpos::getAxes(int *ax)
+{
+    *ax = 1;
+    return true;
+}
+
+// --------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::setPositionModeRaw()
+{
+    return setPositionModeRaw(0);
+}
+
+// --------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encExposed = ref;
 {
@@ -47,7 +62,20 @@ bool teo::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encExposed = 
     CD_SUCCESS("Sent \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
     //*************************************************************
 
+    //-- it will save the value
+    targetPositionSemaphore.wait();
+    targetPosition = ref;
+    targetPositionSemaphore.post();
+
     return true;
+}
+
+// --------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::positionMoveRaw(const double *refs)
+{
+    CD_ERROR("\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -98,7 +126,20 @@ bool teo::TechnosoftIpos::relativeMoveRaw(int j, double delta)
     CD_SUCCESS("Sent \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
     //*************************************************************
 
+    //-- it will save the value
+    targetPositionSemaphore.wait();
+    targetPosition = delta;
+    targetPositionSemaphore.post();
+
     return true;
+}
+
+// --------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::relativeMoveRaw(const double *deltas)
+{
+    CD_ERROR("\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -128,6 +169,14 @@ bool teo::TechnosoftIpos::checkMotionDoneRaw(int j, bool *flag)
     targetReachedReady.post();
 
     return true;
+}
+
+// --------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::checkMotionDoneRaw(bool *flag)
+{
+    CD_ERROR("\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -162,9 +211,19 @@ bool teo::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
     //*************************************************************
 
     //-- Store new value locally as we can not retrieve it from the driver for now.
+    refSpeedSemaphore.wait();
     refSpeed = sp;
+    refSpeedSemaphore.post();
 
     return true;
+}
+
+// --------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::setRefSpeedsRaw(const double *spds)
+{
+    CD_ERROR("\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -197,16 +256,26 @@ bool teo::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
     //*************************************************************
 
     //-- Store new value locally as we can not retrieve it from the driver for now.
+    refAccelSemaphore.wait();
     refAcceleration = acc ;
+    refAccelSemaphore.post();
 
     return true;
+}
+
+// --------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::setRefAccelerationsRaw(const double *accs)
+{
+    CD_ERROR("\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::getRefSpeedRaw(int j, double *ref)
 {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d),(%f)\n",j,refSpeed);
 
     //-- Check index within range
     if ( j != 0 ) return false;
@@ -214,6 +283,14 @@ bool teo::TechnosoftIpos::getRefSpeedRaw(int j, double *ref)
     *ref = refSpeed;
 
     return true;
+}
+
+// --------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::getRefSpeedsRaw(double *spds)
+{
+    CD_ERROR("\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -230,6 +307,14 @@ bool teo::TechnosoftIpos::getRefAccelerationRaw(int j, double *acc)
     return true;
 }
 
+// --------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::getRefAccelerationsRaw(double *accs)
+{
+    CD_ERROR("\n");
+    return false;
+}
+
 // -----------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::stopRaw(int j)
@@ -244,4 +329,112 @@ bool teo::TechnosoftIpos::stopRaw(int j)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::stopRaw()
+{
+    CD_ERROR("\n");
+    return false;
+}
+
+// ######################### IPositionControl2Raw Related #########################
+
+bool teo::TechnosoftIpos::positionMoveRaw(const int n_joint, const int *joints, const double *refs)
+{
+    CD_WARNING("Missing implementation\n");
+
+    return true;
+}
+
+// --------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)
+{
+    CD_WARNING("Missing implementation\n");
+
+    return true;
+}
+
+// --------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags)
+{
+    CD_WARNING("Missing implementation\n");
+
+    return true;
+}
+
+// --------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)
+{
+    CD_WARNING("Missing implementation\n");
+
+    return true;
+}
+
+// --------------------------------------------------------------------------------
+/*
+bool teo::TechnosoftIpos::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
+{
+    return true;
+}
+*/
+
+// --------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)
+{
+    CD_WARNING("Missing implementation\n");
+
+    return true;
+}
+
+// --------------------------------------------------------------------------------
+
+/*
+bool teo::TechnosoftIpos::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
+{
+    return true;
+}
+*/
+
+// --------------------------------------------------------------------------------
+
+/*
+bool teo::TechnosoftIpos::stopRaw(const int n_joint, const int *joints)
+{
+    return true;
+}
+*/
+
+// --------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::getTargetPositionRaw(const int joint, double *ref)
+{
+    CD_INFO("\n");
+
+    targetPositionSemaphore.wait();
+    *ref = targetPosition;
+    targetPositionSemaphore.post();
+
+    return true;
+}
+
+// --------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::getTargetPositionsRaw(double *refs)
+{
+    CD_WARNING("Missing implementation\n");
+
+    return true;
+}
+
+// --------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::getTargetPositionsRaw(const int n_joint, const int *joints, double *refs)
+{
+    CD_WARNING("Missing implementation\n");
+
+    return true;
+}

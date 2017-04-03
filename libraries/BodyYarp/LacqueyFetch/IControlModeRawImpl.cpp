@@ -89,3 +89,9 @@ bool teo::LacqueyFetch::getControlModeRaw(int j, int *mode)
 }
 
 // -----------------------------------------------------------------------------
+
+bool teo::LacqueyFetch::getControlModesRaw(int *modes)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}

@@ -34,8 +34,8 @@ namespace teo
 */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
 // Note: IControlLimits2Raw inherits from IControlLimitsRaw
-class TechnosoftIpos : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlModeRaw, public yarp::dev::IEncodersTimedRaw,
-    public yarp::dev::IPositionControlRaw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControlRaw, public yarp::dev::ITorqueControlRaw,
+class TechnosoftIpos : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlModeRaw, public yarp::dev::IInteractionModeRaw, public yarp::dev::IEncodersTimedRaw,
+    public yarp::dev::IPositionControl2Raw, public yarp::dev::IPositionDirectRaw, public yarp::dev::ITorqueControlRaw, public yarp::dev::IVelocityControl2Raw,
     public ICanBusSharer, public ITechnosoftIpos
 {
 
@@ -100,111 +100,58 @@ public:
     bool getControlModeRaw3();
     bool getControlModeRaw4();
 
-    virtual bool getControlModesRaw(int *modes)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getControlModesRaw(int *modes);
 
 
     //  ---------- IEncodersRaw Declarations. Implementation in IEncodersRawImpl.cpp ----------
     virtual bool resetEncoderRaw(int j);
-    virtual bool resetEncodersRaw()
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool resetEncodersRaw();
     virtual bool setEncoderRaw(int j, double val);
-    virtual bool setEncodersRaw(const double *vals)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool setEncodersRaw(const double *vals);
     virtual bool getEncoderRaw(int j, double *v);
-    virtual bool getEncodersRaw(double *encs)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getEncodersRaw(double *encs);
     virtual bool getEncoderSpeedRaw(int j, double *sp);
-    virtual bool getEncoderSpeedsRaw(double *spds)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getEncoderSpeedsRaw(double *spds);
     virtual bool getEncoderAccelerationRaw(int j, double *spds);
-    virtual bool getEncoderAccelerationsRaw(double *accs)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getEncoderAccelerationsRaw(double *accs);
 
     //  ---------- IEncodersTimedRaw Declarations. Implementation in IEncodersTimedRawImpl.cpp ----------
-    virtual bool getEncodersTimedRaw(double *encs, double *time)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getEncodersTimedRaw(double *encs, double *time);
     virtual bool getEncoderTimedRaw(int j, double *encs, double *time);
 
-    // ------- IPositionControlRaw declarations. Implementation in IPositionControlRawImpl.cpp -------
-    virtual bool getAxes(int *ax)
-    {
-        *ax = 1;
-        return true;
-    }
-    virtual bool setPositionModeRaw()
-    {
-        return setPositionModeRaw(0);
-    }
+    // ------- IPositionControlRaw declarations. Implementation in IPositionControl2RawImpl.cpp -------
+    virtual bool getAxes(int *ax);
+    virtual bool setPositionModeRaw();
     virtual bool positionMoveRaw(int j, double ref);
-    virtual bool positionMoveRaw(const double *refs)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool positionMoveRaw(const double *refs);
     virtual bool relativeMoveRaw(int j, double delta);
-    virtual bool relativeMoveRaw(const double *deltas)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool relativeMoveRaw(const double *deltas);
     virtual bool checkMotionDoneRaw(int j, bool *flag);
-    virtual bool checkMotionDoneRaw(bool *flag)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool checkMotionDoneRaw(bool *flag);
     virtual bool setRefSpeedRaw(int j, double sp);
-    virtual bool setRefSpeedsRaw(const double *spds)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool setRefSpeedsRaw(const double *spds);
     virtual bool setRefAccelerationRaw(int j, double acc);
-    virtual bool setRefAccelerationsRaw(const double *accs)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool setRefAccelerationsRaw(const double *accs);
     virtual bool getRefSpeedRaw(int j, double *ref);
-    virtual bool getRefSpeedsRaw(double *spds)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getRefSpeedsRaw(double *spds);
     virtual bool getRefAccelerationRaw(int j, double *acc);
-    virtual bool getRefAccelerationsRaw(double *accs)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getRefAccelerationsRaw(double *accs);
     virtual bool stopRaw(int j);
-    virtual bool stopRaw()
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool stopRaw();
+
+    // ------- IPositionControl2Raw declarations. Implementation in IPositionControl2RawImpl.cpp ---------
+
+    virtual bool positionMoveRaw(const int n_joint, const int *joints, const double *refs);
+    virtual bool relativeMoveRaw(const int n_joint, const int *joints, const double *deltas);
+    virtual bool checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags);
+    virtual bool setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds);
+    virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs);
+    virtual bool getRefSpeedsRaw(const int n_joint, const int *joints, double *spds);
+    virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs);
+    virtual bool stopRaw(const int n_joint, const int *joints);
+    virtual bool getTargetPositionRaw(const int joint, double *ref);
+    virtual bool getTargetPositionsRaw(double *refs);
+    virtual bool getTargetPositionsRaw(const int n_joint, const int *joints, double *refs);
 
     // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
     virtual bool setPositionDirectModeRaw();
@@ -213,90 +160,64 @@ public:
     virtual bool setPositionsRaw(const double *refs);
 
     // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
-    virtual bool setTorqueModeRaw()
-    {
-        CD_ERROR("\n");
-        return false;
-    }
-    virtual bool getRefTorquesRaw(double *t)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool setTorqueModeRaw();
+    virtual bool getRefTorquesRaw(double *t);
     virtual bool getRefTorqueRaw(int j, double *t);
-    virtual bool setRefTorquesRaw(const double *t)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool setRefTorquesRaw(const double *t);
     virtual bool setRefTorqueRaw(int j, double t);
     virtual bool getBemfParamRaw(int j, double *bemf);
     virtual bool setBemfParamRaw(int j, double bemf);
     virtual bool setTorquePidRaw(int j, const yarp::dev::Pid &pid);
     virtual bool getTorqueRaw(int j, double *t);
-    virtual bool getTorquesRaw(double *t)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getTorquesRaw(double *t);
     virtual bool getTorqueRangeRaw(int j, double *min, double *max);
-    virtual bool getTorqueRangesRaw(double *min, double *max)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
-    virtual bool setTorquePidsRaw(const yarp::dev::Pid *pids)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getTorqueRangesRaw(double *min, double *max);
+    virtual bool setTorquePidsRaw(const yarp::dev::Pid *pids);
     virtual bool setTorqueErrorLimitRaw(int j, double limit);
-    virtual bool setTorqueErrorLimitsRaw(const double *limits)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool setTorqueErrorLimitsRaw(const double *limits);
     virtual bool getTorqueErrorRaw(int j, double *err);
-    virtual bool getTorqueErrorsRaw(double *errs)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getTorqueErrorsRaw(double *errs);
     virtual bool getTorquePidOutputRaw(int j, double *out);
-    virtual bool getTorquePidOutputsRaw(double *outs)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getTorquePidOutputsRaw(double *outs);
     virtual bool getTorquePidRaw(int j, yarp::dev::Pid *pid);
-    virtual bool getTorquePidsRaw(yarp::dev::Pid *pids)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getTorquePidsRaw(yarp::dev::Pid *pids);
     virtual bool getTorqueErrorLimitRaw(int j, double *limit);
-    virtual bool getTorqueErrorLimitsRaw(double *limits)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool getTorqueErrorLimitsRaw(double *limits);
     virtual bool resetTorquePidRaw(int j);
     virtual bool disableTorquePidRaw(int j);
     virtual bool enableTorquePidRaw(int j);
     virtual bool setTorqueOffsetRaw(int j, double v);
 
-    //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
-    virtual bool setVelocityModeRaw()
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    //  --------- IVelocityControlRaw Declarations. Implementation in IVelocityControl2RawImpl.cpp ---------
+    virtual bool setVelocityModeRaw();
     virtual bool velocityMoveRaw(int j, double sp);
-    virtual bool velocityMoveRaw(const double *sp)
-    {
-        CD_ERROR("\n");
-        return false;
-    }
+    virtual bool velocityMoveRaw(const double *sp);
+
+    //--------------IVelocityControl2Raw declarations. Implementation in IVelocityControl2RawImpl.cpp -----------------
+    virtual bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds);
+    virtual bool getRefVelocityRaw(const int joint, double *vel);
+    virtual bool getRefVelocitiesRaw(double *vels);
+    virtual bool getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels);
+    // ------------------- Just declareted in IPositionControl2Raw
+    // -- virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs);
+    // ------------------- Just declareted in IPositionControl2Raw
+    // -- virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs);
+    // ------------------- Just declareted in IPositionControl2Raw
+    // -- virtual bool stopRaw(const int n_joint, const int *joints);
+    virtual bool setVelPidRaw(int j, const yarp::dev::Pid &pid);
+    virtual bool setVelPidsRaw(const yarp::dev::Pid *pids);
+    virtual bool getVelPidRaw(int j, yarp::dev::Pid *pid);
+    virtual bool getVelPidsRaw(yarp::dev::Pid *pids);
+
+    // ------- IInteractionModeRaw declarations. Implementation in IInteractionModeRawImpl.cpp -------
+    virtual bool getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode);
+    virtual bool getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+    virtual bool getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
+    virtual bool setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode);
+    virtual bool setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+    virtual bool setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
+
+
 
 protected:
 
@@ -351,7 +272,21 @@ protected:
     yarp::os::Semaphore ptBuffer;
 
     //-- More internal parameter stuff
-    double max, min, maxVel, minVel, refAcceleration, refSpeed, tr, k;
+    double max, min, maxVel, minVel, refAcceleration, refSpeed, refTorque, refVelocity, targetPosition, tr, k;
+
+    //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
+    yarp::dev::InteractionModeEnum interactionMode;
+
+    //-- Semaphores
+    yarp::os::Semaphore refAccelSemaphore;
+    yarp::os::Semaphore refSpeedSemaphore;
+    yarp::os::Semaphore refTorqueSemaphore;
+    yarp::os::Semaphore refVelocitySemaphore;
+    yarp::os::Semaphore interactionModeSemaphore;
+    yarp::os::Semaphore targetPositionSemaphore;
+
+
+
 
 };
 
