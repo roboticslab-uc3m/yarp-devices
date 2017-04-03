@@ -2,7 +2,7 @@
 
 #include "TextilesHand.hpp"
 
-// ------------------ IEncodersRaw Related -----------------------------------------
+// ############################ IEncodersRaw Related ############################
 
 bool teo::TextilesHand::resetEncoderRaw(int j)
 {
@@ -14,7 +14,15 @@ bool teo::TextilesHand::resetEncoderRaw(int j)
     return this->setEncoderRaw(j,0);
 }
 
-// -----------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+
+bool teo::TextilesHand::resetEncodersRaw()
+{
+    CD_ERROR("\n");
+    return false;
+}
+
+// ------------------------------------------------------------------------------
 
 bool teo::TextilesHand::setEncoderRaw(int j, double val)    // encExposed = val;
 {
@@ -26,6 +34,14 @@ bool teo::TextilesHand::setEncoderRaw(int j, double val)    // encExposed = val;
     CD_WARNING("Not implemented yet (TextilesHand).\n");
 
     return true;
+}
+
+// ------------------------------------------------------------------------------
+
+bool teo::TextilesHand::setEncodersRaw(const double *vals)
+{
+    CD_ERROR("\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -44,6 +60,14 @@ bool teo::TextilesHand::getEncoderRaw(int j, double *v)
     return true;
 }
 
+// ------------------------------------------------------------------------------
+
+bool teo::TextilesHand::getEncodersRaw(double *encs)
+{
+    CD_ERROR("\n");
+    return false;
+}
+
 // -----------------------------------------------------------------------------
 
 bool teo::TextilesHand::getEncoderSpeedRaw(int j, double *sp)
@@ -59,7 +83,15 @@ bool teo::TextilesHand::getEncoderSpeedRaw(int j, double *sp)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+
+bool teo::TextilesHand::getEncoderSpeedsRaw(double *spds)
+{
+    CD_ERROR("\n");
+    return false;
+}
+
+// ------------------------------------------------------------------------------
 
 bool teo::TextilesHand::getEncoderAccelerationRaw(int j, double *spds)
 {
@@ -76,3 +108,10 @@ bool teo::TextilesHand::getEncoderAccelerationRaw(int j, double *spds)
 
 // -----------------------------------------------------------------------------
 
+bool teo::TextilesHand::getEncoderAccelerationsRaw(double *accs)
+{
+    CD_ERROR("\n");
+    return false;
+}
+
+// ------------------------------------------------------------------------------

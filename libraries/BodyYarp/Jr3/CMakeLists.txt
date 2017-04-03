@@ -16,7 +16,6 @@ IF (NOT SKIP_Jr3)
   yarp_add_plugin(Jr3 DeviceDriverImpl.cpp IAnalogSensorImpl.cpp )
 
   TARGET_LINK_LIBRARIES(Jr3 ${YARP_LIBRARIES})
-  install(TARGETS Jr3 DESTINATION lib)
 
   # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now... 
   set(ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "appended libraries")

@@ -14,6 +14,13 @@ bool teo::CuiAbsolute::setCanBusPtr(ICanBusHico *canDevicePtr)
 
 // -----------------------------------------------------------------------------
 
+bool teo::CuiAbsolute::setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
 bool teo::CuiAbsolute::start()
 {
 
