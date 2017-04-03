@@ -18,7 +18,6 @@ if(NOT SKIP_SpaceNavigator)
                   IAnalogSensorImpl.cpp)
 
   target_link_libraries(SpaceNavigator ${YARP_LIBRARIES} ${SPNAV_LIBRARIES})
-  install(TARGETS SpaceNavigator DESTINATION lib)
 
   yarp_install(TARGETS SpaceNavigator
                EXPORT YARP
