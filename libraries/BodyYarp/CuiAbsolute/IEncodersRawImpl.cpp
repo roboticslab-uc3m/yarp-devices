@@ -2,7 +2,7 @@
 
 #include "CuiAbsolute.hpp"
 
-// ------------------ IEncodersRaw Related -----------------------------------------
+// ######################### IEncodersRaw Related ##############################
 
 bool teo::CuiAbsolute::resetEncoderRaw(int j)
 {
@@ -12,6 +12,14 @@ bool teo::CuiAbsolute::resetEncoderRaw(int j)
     if ( j != 0 ) return false;
 
     return this->setEncoderRaw(j,0);
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CuiAbsolute::resetEncodersRaw()
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -26,6 +34,14 @@ bool teo::CuiAbsolute::setEncoderRaw(int j, double val)    // encExposed = val;
     CD_WARNING("Not implemented yet (CuiAbsolute).\n");
 
     return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CuiAbsolute::setEncodersRaw(const double *vals)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -46,6 +62,14 @@ bool teo::CuiAbsolute::getEncoderRaw(int j, double *v)
 
 // -----------------------------------------------------------------------------
 
+bool teo::CuiAbsolute::getEncodersRaw(double *encs)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
 bool teo::CuiAbsolute::getEncoderSpeedRaw(int j, double *sp)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
@@ -61,6 +85,14 @@ bool teo::CuiAbsolute::getEncoderSpeedRaw(int j, double *sp)
 
 // -----------------------------------------------------------------------------
 
+bool teo::CuiAbsolute::getEncoderSpeedsRaw(double *spds)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
 bool teo::CuiAbsolute::getEncoderAccelerationRaw(int j, double *spds)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
@@ -72,6 +104,14 @@ bool teo::CuiAbsolute::getEncoderAccelerationRaw(int j, double *spds)
     *spds = 0;
 
     return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CuiAbsolute::getEncoderAccelerationsRaw(double *accs)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------

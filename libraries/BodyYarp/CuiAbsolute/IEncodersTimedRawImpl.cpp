@@ -4,6 +4,14 @@
 
 // ------------------ IEncodersTimedRaw Related -----------------------------------------
 
+bool teo::CuiAbsolute::getEncodersTimedRaw(double *encs, double *time)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
 bool teo::CuiAbsolute::getEncoderTimedRaw(int j, double *encs, double *time)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.

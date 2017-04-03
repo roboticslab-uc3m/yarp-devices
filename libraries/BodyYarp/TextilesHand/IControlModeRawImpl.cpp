@@ -89,3 +89,9 @@ bool teo::TextilesHand::getControlModeRaw(int j, int *mode)
 }
 
 // -----------------------------------------------------------------------------
+
+bool teo::TextilesHand::getControlModesRaw(int *modes)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}

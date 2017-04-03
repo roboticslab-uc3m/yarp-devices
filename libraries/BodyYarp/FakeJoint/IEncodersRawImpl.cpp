@@ -16,6 +16,14 @@ bool teo::FakeJoint::resetEncoderRaw(int j)
 
 // -----------------------------------------------------------------------------
 
+bool teo::FakeJoint::resetEncodersRaw()
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
 bool teo::FakeJoint::setEncoderRaw(int j, double val)    // encExposed = val;
 {
     CD_INFO("(%d,%f)\n",j,val);
@@ -26,6 +34,12 @@ bool teo::FakeJoint::setEncoderRaw(int j, double val)    // encExposed = val;
     CD_WARNING("Not implemented yet (FakeJoint).\n");
 
     return true;
+}
+
+bool teo::FakeJoint::setEncodersRaw(const double *vals)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -46,6 +60,14 @@ bool teo::FakeJoint::getEncoderRaw(int j, double *v)
 
 // -----------------------------------------------------------------------------
 
+bool teo::FakeJoint::getEncodersRaw(double *encs)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
 bool teo::FakeJoint::getEncoderSpeedRaw(int j, double *sp)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
@@ -57,6 +79,22 @@ bool teo::FakeJoint::getEncoderSpeedRaw(int j, double *sp)
     *sp = 0;
 
     return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::FakeJoint::getEncoderAccelerationsRaw(double *accs)
+{
+    CD_ERROR("\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::FakeJoint::getEncoderSpeedsRaw(double *spds)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -75,4 +113,3 @@ bool teo::FakeJoint::getEncoderAccelerationRaw(int j, double *spds)
 }
 
 // -----------------------------------------------------------------------------
-

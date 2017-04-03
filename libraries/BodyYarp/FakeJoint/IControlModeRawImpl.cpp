@@ -89,3 +89,9 @@ bool teo::FakeJoint::getControlModeRaw(int j, int *mode)
 }
 
 // -----------------------------------------------------------------------------
+
+bool teo::FakeJoint::getControlModesRaw(int *modes)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}

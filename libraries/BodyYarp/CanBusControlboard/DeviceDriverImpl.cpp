@@ -49,14 +49,13 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
     iControlLimits2Raw.resize( nodes.size() );
     iControlModeRaw.resize( nodes.size() );
     iEncodersTimedRaw.resize( nodes.size() );
-    iPositionControlRaw.resize( nodes.size() );
+    iPositionControl2Raw.resize( nodes.size() );
     iPositionDirectRaw.resize( nodes.size() );
     iTorqueControlRaw.resize( nodes.size() );
-    iVelocityControlRaw.resize( nodes.size() );
     iCanBusSharer.resize( nodes.size() );
 
-    targetPosition.resize( nodes.size() );
-    refVelocity.resize(nodes.size());
+    iInteractionModeRaw.resize( nodes.size() );
+    iVelocityControl2Raw.resize( nodes.size() ); // -- new
 
     for(int i=0; i<nodes.size(); i++)
     {
@@ -85,30 +84,76 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
         idxFromCanId[ ids.get(i).asInt() ] = i;
 
         //-- Push the motor driver and other devices (CuiAbsolute) on to the vectors.
-        nodes[i] = device;  // -- device es un puntero que guarda la dirección de un objeto PolyDriver
-        // -- nodes es un vector de punteros que apuntará al device
-        device->view( iControlLimits2Raw[i] );
-        device->view( iControlModeRaw[i] );
-        device->view( iEncodersTimedRaw[i] );
-        device->view( iPositionControlRaw[i] );
-        device->view( iPositionDirectRaw[i] );
-        device->view( iTorqueControlRaw[i] );
-        device->view( iVelocityControlRaw[i] );
-        device->view( iCanBusSharer[i] );   // -- si el device es un Cui, este podrá "ver" las funciones programadas en iCanBusSharer (funciones que hemos añadido al encoder).
+        nodes[i] = device;
+
+        //-- View interfaces
+        if( !device->view( iControlLimits2Raw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iControlLimits2Raw interface\n");
+            return false;
+        }
+
+        if( !device->view( iControlModeRaw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iControlModeRaw interface\n");
+            return false;
+        }
+
+        if( !device->view( iEncodersTimedRaw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iEncodersTimedRaw interface\n");
+            return false;
+        }
+
+        if( !device->view( iPositionControl2Raw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iPositionControl2Raw interface\n");
+            return false;
+        }
+
+        if( !device->view( iPositionDirectRaw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iPositionDirectRaw interface\n");
+            return false;
+        }
+
+        if( !device->view( iTorqueControlRaw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iTorqueControlRaw interface\n");
+            return false;
+        }
+
+        if( !device->view( iVelocityControl2Raw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iVelocityControl2Raw interface\n");
+            return false;
+        }
+        // -- si el device es un Cui, este podrá "ver" las funciones programadas en iCanBusSharer (funciones que hemos añadido al encoder).
         // -- estas funciones se encuentran implementadas en el cpp correspondiente "ICanBusSharerImpl.cpp", por lo tanto le da la funcionalidad que deseamos
+        if(! device->view( iCanBusSharer[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iCanBusSharer interface\n");
+            return false;
+        }
+
+        if(! device->view( iInteractionModeRaw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iInteractionModeRaw interface\n");
+            return false;
+        }
 
         //-- Pass CAN bus pointer to CAN node
-        iCanBusSharer[i]->setCanBusPtr( iCanBus );
+        iCanBusSharer[i]->setCanBusPtr( iCanBus );               
 
         //-- DRIVERS
         if(types.get(i).asString() == "TechnosoftIpos")
         {
             //-- Set initial parameters on physical motor drivers.
 
-            if ( ! iPositionControlRaw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asDouble() ) )
+            if ( ! iPositionControl2Raw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asDouble() ) )
                 return false;
 
-            if ( ! iPositionControlRaw[i]->setRefSpeedRaw( 0, refSpeeds.get(i).asDouble() ) )
+            if ( ! iPositionControl2Raw[i]->setRefSpeedRaw( 0, refSpeeds.get(i).asDouble() ) )
                 return false;
 
             if ( ! iControlLimits2Raw[i]->setLimitsRaw( 0, mins.get(i).asDouble(), maxs.get(i).asDouble() ) )
@@ -256,7 +301,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
                 CD_DEBUG("Value of relative encoder ->%f\n", val);
                 if ( val>0.087873 || val< -0.087873 ){
                     CD_DEBUG("Moving (ID:%s) to zero...\n",nodes[i]->getValue("canId").toString().c_str());
-                    if ( ! iPositionControlRaw[i]->positionMoveRaw(0,0) )
+                    if ( ! iPositionControl2Raw[i]->positionMoveRaw(0,0) )
                         return false;
                 }
                 else
@@ -271,7 +316,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
                 bool motionDone = false;
                 yarp::os::Time::delay(0.2);  //-- [s]
                 CD_DEBUG("Testing (ID:%s) position... \n",nodes[i]->getValue("canId").toString().c_str());
-                if( ! iPositionControlRaw[i]->checkMotionDoneRaw(0,&motionDone) )
+                if( ! iPositionControl2Raw[i]->checkMotionDoneRaw(0,&motionDone) )
                     return false;
                 if(!motionDone)
                     CD_WARNING("Test motion fail (ID:%s) \n", nodes[i]->getValue("canId").toString().c_str());
