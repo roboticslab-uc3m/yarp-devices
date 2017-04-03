@@ -6,7 +6,7 @@
 
 bool teo::CanBusControlboard::getEncodersTimed(double *encs, double *time)
 {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
 
     bool ok = true;
     for(unsigned int i=0; i < nodes.size(); i++)

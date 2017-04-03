@@ -2,7 +2,7 @@
 
 #include "TechnosoftIpos.hpp"
 
-// ------------------ IEncodersRaw Related -----------------------------------------
+// -------------------------- IEncodersRaw Related ----------------------------------
 
 bool teo::TechnosoftIpos::resetEncoderRaw(int j)
 {
@@ -14,7 +14,13 @@ bool teo::TechnosoftIpos::resetEncoderRaw(int j)
     return this->setEncoderRaw(j,0);
 }
 
-// -----------------------------------------------------------------------------
+bool teo::TechnosoftIpos::resetEncodersRaw()
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::setEncoderRaw(int j, double val)    // encExposed = val;
 {
@@ -40,7 +46,15 @@ bool teo::TechnosoftIpos::setEncoderRaw(int j, double val)    // encExposed = va
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::setEncodersRaw(const double *vals)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::getEncoderRaw(int j, double *v)
 {
@@ -76,7 +90,15 @@ bool teo::TechnosoftIpos::getEncoderRaw(int j, double *v)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::getEncodersRaw(double *encs)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::getEncoderSpeedRaw(int j, double *sp)
 {
@@ -91,7 +113,15 @@ bool teo::TechnosoftIpos::getEncoderSpeedRaw(int j, double *sp)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::getEncoderSpeedsRaw(double *spds)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::getEncoderAccelerationRaw(int j, double *spds)
 {
@@ -106,5 +136,10 @@ bool teo::TechnosoftIpos::getEncoderAccelerationRaw(int j, double *spds)
     return true;
 }
 
-// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------
 
+bool teo::TechnosoftIpos::getEncoderAccelerationsRaw(double *accs)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}

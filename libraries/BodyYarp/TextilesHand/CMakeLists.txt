@@ -13,10 +13,9 @@ IF (NOT SKIP_TextilesHand)
   # Include any directories needed for YARP
   include_directories(${YARP_INCLUDE_DIRS} ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
-  yarp_add_plugin(TextilesHand TextilesHand.cpp DeviceDriverImpl.cpp IControlLimits2RawImpl.cpp IControlModeRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControlRawImpl.cpp ICanBusSharerImpl.cpp )
+  yarp_add_plugin(TextilesHand TextilesHand.cpp DeviceDriverImpl.cpp IControlLimits2RawImpl.cpp IControlModeRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControl2RawImpl.cpp ICanBusSharerImpl.cpp IPositionDirectRawImpl.cpp ITorqueControlRawImpl.cpp IVelocityControl2RawImpl.cpp IInteractionModeRawImpl.cpp)
 
   TARGET_LINK_LIBRARIES(TextilesHand ${YARP_LIBRARIES})
-  install(TARGETS TextilesHand DESTINATION lib)
 
   # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now...
 #  set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} TextilesHand CACHE INTERNAL "appended libraries") 
