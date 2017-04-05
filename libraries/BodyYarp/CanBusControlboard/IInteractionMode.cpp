@@ -7,7 +7,7 @@
 
 bool teo::CanBusControlboard::getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
 {
-    CD_DEBUG("(%d)\n",axis);
+    // CD_DEBUG("(%d)\n",axis);  // -- is printed too many times...
     //*mode = interactionMode[axis];
 
     //-- Check index within range
