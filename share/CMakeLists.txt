@@ -19,3 +19,7 @@ add_subdirectory(oneCanBusOneWrapper)
 add_subdirectory(launchManipulation)
 add_subdirectory(launchLocomotion)
 
+if(ENABLE_SpaceNavigator)
+    add_subdirectory(spaceNavigator)
+endif()
+
