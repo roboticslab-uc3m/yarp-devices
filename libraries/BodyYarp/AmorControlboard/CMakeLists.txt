@@ -29,8 +29,6 @@ if(NOT SKIP_AmorControlboard)
 
   target_link_libraries(AmorControlboard ${YARP_LIBRARIES} ${AMOR_API_LIBRARIES})
 
-  install(TARGETS AmorControlboard DESTINATION lib)
-
   yarp_install(TARGETS AmorControlboard
                EXPORT YARP
                COMPONENT runtime
