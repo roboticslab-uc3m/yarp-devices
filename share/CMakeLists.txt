@@ -10,12 +10,27 @@ yarp_configure_external_installation(roboticslab-yarp-devices)
 
 ### Go through single applications
 
-add_subdirectory(dumpCanBus)
-add_subdirectory(checkCanBus)
-add_subdirectory(testCuiAbsolute)
+if(ENABLE_dumpCanBus)
+    add_subdirectory(dumpCanBus)
+endif()
 
-add_subdirectory(oneCanBusOneWrapper)
+if(ENABLE_checkCanBus)
+    add_subdirectory(checkCanBus)
+endif()
 
-add_subdirectory(launchManipulation)
-add_subdirectory(launchLocomotion)
+if(ENABLE_oneCanBusOneWrapper)
+    add_subdirectory(oneCanBusOneWrapper)
+endif()
+
+if(ENABLE_launchManipulation)
+    add_subdirectory(launchManipulation)
+endif()
+
+if(ENABLE_launchLocomotion)
+    add_subdirectory(launchLocomotion)
+endif()
+
+if(ENABLE_tests)
+    add_subdirectory(testCuiAbsolute)
+endif()
 
