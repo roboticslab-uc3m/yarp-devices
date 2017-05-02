@@ -12,13 +12,6 @@ bool teo::CuiAbsolute::getAxes(int *ax)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::setPositionModeRaw()
-{
-    return setPositionModeRaw(0);
-}
-
-// -----------------------------------------------------------------------------
-
 bool teo::CuiAbsolute::positionMoveRaw(int j, double ref)    // encExposed = ref;
 {
     CD_INFO("(%d,%f)\n",j,ref);

@@ -12,13 +12,6 @@ bool teo::FakeJoint::getAxes(int *ax)
 
 // -------------------------------------------------------------------------------
 
-bool teo::FakeJoint::setPositionModeRaw()
-{
-    return setPositionModeRaw(0);
-}
-
-// -------------------------------------------------------------------------------
-
 bool teo::FakeJoint::positionMoveRaw(int j, double ref)    // encExposed = ref;
 {
     CD_INFO("(%d,%f)\n",j,ref);

@@ -319,14 +319,6 @@ public:
      */
     virtual bool getAxes(int *ax);
 
-    /** Set position mode. This command
-     * is required by control boards implementing different
-     * control methods (e.g. velocity/torque), in some cases
-     * it can be left empty.
-     * return true/false on success/failure
-     */
-    virtual bool setPositionMode();
-
     /** Set new reference point for a single axis.
      * @param j joint number
      * @param ref specifies the new ref point
@@ -569,15 +561,6 @@ public:
 
     // -------- ITorqueControl declarations. Implementation in ITorqueControlImpl.cpp --------
 
-    /**
-     * Set torque control mode. This command
-     * is required by control boards implementing different
-     * control methods (e.g. velocity/torque), in some cases
-     * it can be left empty.
-     * @return true/false on success/failure
-     */
-    virtual bool setTorqueMode();
-
     /** Get the reference value of the torque for all joints.
       * This is NOT the feedback (see getTorques instead).
       * @param t pointer to the array of torque values
@@ -756,15 +739,6 @@ public:
     virtual bool setTorqueOffset(int j, double v);
 
     //  --------- IVelocityControl Declarations. Implementation in IVelocityControl2.cpp ---------
-
-    /**
-     * Set velocity mode. This command
-     * is required by control boards implementing different
-     * control methods (e.g. velocity/torque), in some cases
-     * it can be left empty.
-     * @return true/false on success failure
-     */
-    virtual bool setVelocityMode();
 
     /**
      * Start motion at a given speed, single joint.

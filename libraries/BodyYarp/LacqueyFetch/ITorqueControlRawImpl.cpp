@@ -4,14 +4,6 @@
 
 // ######################### ITorqueControlRaw Related #########################
 
-bool teo::LacqueyFetch::setTorqueModeRaw()
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
 bool teo::LacqueyFetch::getRefTorquesRaw(double *t)
 {
     CD_ERROR("Missing implementation\n");

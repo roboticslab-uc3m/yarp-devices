@@ -4,14 +4,6 @@
 
 //  ########################### IVelocityControlRaw implementations ###########################
 
-bool teo::CuiAbsolute::setVelocityModeRaw()
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// --------------------------------------------------------------------------------------------
-
 bool teo::CuiAbsolute::velocityMoveRaw(int j, double sp)
 {
     CD_INFO("Missing implementation\n");

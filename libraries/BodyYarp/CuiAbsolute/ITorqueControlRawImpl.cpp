@@ -2,12 +2,6 @@
 
 #include "CuiAbsolute.hpp"
 
-bool teo::CuiAbsolute::setTorqueModeRaw()
-{
-    CD_ERROR("\n");
-    return false;
-}
-
 bool teo::CuiAbsolute::getRefTorquesRaw(double *t)
 {
     CD_ERROR("\n");

@@ -101,7 +101,6 @@ public:
 
     // ------- IPositionControlRaw declarations. Implementation in IPositionControlRawImpl.cpp -------
     virtual bool getAxes(int *ax);
-    virtual bool setPositionModeRaw();
     virtual bool positionMoveRaw(int j, double ref);
     virtual bool positionMoveRaw(const double *refs);
     virtual bool relativeMoveRaw(int j, double delta);
@@ -140,7 +139,6 @@ public:
     virtual bool setPositionsRaw(const double *refs);
 
     // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
-    virtual bool setTorqueModeRaw();
     virtual bool getRefTorquesRaw(double *t);
     virtual bool getRefTorqueRaw(int j, double *t);
     virtual bool setRefTorquesRaw(const double *t);
@@ -169,7 +167,6 @@ public:
     virtual bool setTorqueOffsetRaw(int j, double v);
 
     //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
-    virtual bool setVelocityModeRaw();
     virtual bool velocityMoveRaw(int j, double sp);
     virtual bool velocityMoveRaw(const double *sp);
 

@@ -236,25 +236,24 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
 
     //-- Set all motor drivers to mode.
 
-    if( mode=="position")
-    {
-        if( ! this->setPositionMode() )
-            return false;
-    }
-    else if( mode=="velocity")
-    {
-        if( ! this->setVelocityMode() )
-            return false;
-    }
-    else if( mode=="torque")
-    {
-        if( ! this->setTorqueMode() )
-            return false;
-    }
+    bool (IControlMode2::*setModeFunc)(int);
+
+    if( mode=="position" )
+        setModeFunc = &IControlMode2::setPositionMode;
+    else if( mode=="velocity" )
+        setModeFunc = &IControlMode2::setVelocityMode;
+    else if( mode=="torque" )
+        setModeFunc = &IControlMode2::setTorqueMode;
     else
     {
         CD_ERROR("Not prepared for initializing in mode %s.\n",mode.c_str());
         return false;
+    }
+
+    for(int i=0; i<nodes.size(); i++)
+    {
+        if( ! (this->*setModeFunc)(i) )
+            return false;
     }
 
     //-- Check the status of each driver.

@@ -12,13 +12,6 @@ bool teo::TechnosoftIpos::getAxes(int *ax)
 
 // --------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setPositionModeRaw()
-{
-    return setPositionModeRaw(0);
-}
-
-// --------------------------------------------------------------------------------
-
 bool teo::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encExposed = ref;
 {
     CD_INFO("(%d,%f)\n",j,ref);

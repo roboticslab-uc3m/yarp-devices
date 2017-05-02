@@ -12,13 +12,6 @@ bool teo::LacqueyFetch::getAxes(int *ax)
 
 //--------------------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setPositionModeRaw()
-{
-    return setPositionModeRaw(0);
-}
-
-//--------------------------------------------------------------------------------------
-
 bool teo::LacqueyFetch::positionMoveRaw(int j, double ref)    // encExposed = ref;
 {
     CD_INFO("(%d,%f)\n",j,ref);

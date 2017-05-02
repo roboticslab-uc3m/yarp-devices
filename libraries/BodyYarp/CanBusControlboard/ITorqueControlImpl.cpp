@@ -4,20 +4,6 @@
 
 // ------------------- ITorqueControl Related ------------------------------------
 
-bool teo::CanBusControlboard::setTorqueMode()
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        ok &= this->setTorqueMode(j);
-    }
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
 bool teo::CanBusControlboard::getRefTorques(double *t)
 {
     CD_DEBUG("\n");

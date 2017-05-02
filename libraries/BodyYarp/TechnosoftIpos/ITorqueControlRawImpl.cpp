@@ -4,14 +4,6 @@
 
 // ############################# ITorqueControlRaw Related #############################
 
-bool teo::TechnosoftIpos::setTorqueModeRaw()
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// -------------------------------------------------------------------------------------
-
 bool teo::TechnosoftIpos::getRefTorquesRaw(double *t)
 {
     CD_ERROR("Missing implementation\n");

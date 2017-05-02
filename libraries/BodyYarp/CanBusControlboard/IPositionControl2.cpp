@@ -15,20 +15,6 @@ bool teo::CanBusControlboard::getAxes(int *axes)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setPositionMode()
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        ok &= this->setPositionMode(j);
-    }
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
 bool teo::CanBusControlboard::positionMove(int j, double ref)
 {
     CD_DEBUG("(%d, %f)\n",j,ref);

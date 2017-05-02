@@ -4,14 +4,6 @@
 
 // ######################### IVelocityControlRaw Related ###########################
 
-bool teo::LacqueyFetch::setVelocityModeRaw()
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
 bool teo::LacqueyFetch::velocityMoveRaw(int j, double sp)
 {
     CD_INFO("\n");

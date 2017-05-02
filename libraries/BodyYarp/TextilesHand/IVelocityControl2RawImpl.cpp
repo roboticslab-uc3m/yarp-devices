@@ -4,14 +4,6 @@
 
 //  ########################### IVelocityControlRaw implementations ###########################
 
-bool teo::TextilesHand::setVelocityModeRaw()
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// --------------------------------------------------------------------------------------------
-
 bool teo::TextilesHand::velocityMoveRaw(int j, double sp)
 {
     CD_INFO("Missing implementation\n");
