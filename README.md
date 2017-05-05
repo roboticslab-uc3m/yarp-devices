@@ -1,4 +1,4 @@
-[![Yarp-devices Homepage](https://img.shields.io/badge/yarp-devices-orange.svg)](http://robots.uc3m.es/dox-yarp-devices) [![Latest Release](https://img.shields.io/github/tag/roboticslab-uc3m/yarp-devices.svg?label=Latest Release)](https://github.com/roboticslab-uc3m/yarp-devices/tags)
+[![Yarp-devices Homepage](https://img.shields.io/badge/yarp-devices-orange.svg)](http://robots.uc3m.es/dox-yarp-devices) [![Latest Release](https://img.shields.io/github/tag/roboticslab-uc3m/yarp-devices.svg?label=Latest%20Release)](https://github.com/roboticslab-uc3m/yarp-devices/tags)
 
 A place for YARP devices.
 
@@ -25,7 +25,7 @@ Installation instructions for installing from source can be found [here]( /doc/y
 
 ## Status
 
-[![Build Status (Linux/OSX)](https://img.shields.io/travis/roboticslab-uc3m/yarp-devices/master.svg?label=Build Status (Linux/OSX))](https://travis-ci.org/roboticslab-uc3m/yarp-devices)
+[![Build Status (Linux/OSX)](https://travis-ci.org/roboticslab-uc3m/yarp-devices.svg?branch=develop)](https://travis-ci.org/roboticslab-uc3m/yarp-devices)
 
 [![Coverage Status](https://coveralls.io/repos/roboticslab-uc3m/yarp-devices/badge.svg)](https://coveralls.io/r/roboticslab-uc3m/yarp-devices)
 
