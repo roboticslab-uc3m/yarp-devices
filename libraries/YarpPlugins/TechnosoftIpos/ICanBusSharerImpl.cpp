@@ -732,12 +732,40 @@ bool roboticslab::TechnosoftIpos::interpretMessage( can_msg * message)
         }
         else if( (message->data[1]==0x83)&&(message->data[2]==0x60) )      // Manual 8.2.3. 6083h: Profile acceleration
         {
-            CD_INFO("Got SDO ack \"posmode_acc\" from driver. %s\n",msgToStr(message).c_str());
+            if (message->data[0]==0x60)      // SDO segment upload/acknowledge
+            {
+                CD_INFO("Got SDO ack \"posmode_acc\" from driver. %s\n",msgToStr(message).c_str());
+            }
+            else
+            {
+                int32_t refAcceleration = message->data[4];
+                refAcceleration += (message->data[5] << 8);
+                refAcceleration += (message->data[6] << 16);
+                refAcceleration += (message->data[7] << 24);
+                refAccelSemaphore.wait();
+                this->refAcceleration = round(refAcceleration / (tr * 0.7458));  //-- 65536 * 0.00001138 = 0.7458
+                refAccelSemaphore.post();
+                CD_INFO("Got SDO \"posmode_acc\" response from driver. %s\n",msgToStr(message).c_str());
+            }
             return true;
         }
         else if( (message->data[1]==0x81)&&(message->data[2]==0x60) )      // Manual 8.2.2. 6081h: Profile velocity
         {
-            CD_INFO("Got SDO ack \"posmode_speed\" from driver. %s\n",msgToStr(message).c_str());
+            if (message->data[0]==0x60)      // SDO segment upload/acknowledge
+            {
+                CD_INFO("Got SDO ack \"posmode_speed\" from driver. %s\n",msgToStr(message).c_str());
+            }
+            else      // Query
+            {
+                int32_t refSpeed = message->data[4];
+                refSpeed += (message->data[5] << 8);
+                refSpeed += (message->data[6] << 16);
+                refSpeed += (message->data[7] << 24);
+                refSpeedSemaphore.wait();
+                this->refSpeed = round(refSpeed / (tr * 745.8));  //-- 65536 * 0.01138 = 745.8
+                refSpeedSemaphore.post();
+                CD_INFO("Got SDO \"posmode_speed\" response from driver. %s\n",msgToStr(message).c_str());
+            }
             return true;
         }
         else if( (message->data[1]==0x7D)&&(message->data[2]==0x60) )      // Manual 607Dh: Software position limit
