@@ -738,12 +738,10 @@ bool roboticslab::TechnosoftIpos::interpretMessage( can_msg * message)
             }
             else
             {
-                int32_t refAcceleration = message->data[4];
-                refAcceleration += (message->data[5] << 8);
-                refAcceleration += (message->data[6] << 16);
-                refAcceleration += (message->data[7] << 24);
+                int32_t got;
+                memcpy(&got, message->data+4,4);
                 refAccelSemaphore.wait();
-                this->refAcceleration = refAcceleration / (tr * 0.7458);  //-- 65536 * 0.00001138 = 0.7458
+                refAcceleration = got / (tr * 0.7458);  //-- 65536 * 0.00001138 = 0.7458
                 refAccelSemaphore.post();
                 CD_INFO("Got SDO \"posmode_acc\" response from driver. %s\n",msgToStr(message).c_str());
             }
@@ -757,12 +755,10 @@ bool roboticslab::TechnosoftIpos::interpretMessage( can_msg * message)
             }
             else      // Query
             {
-                int32_t refSpeed = message->data[4];
-                refSpeed += (message->data[5] << 8);
-                refSpeed += (message->data[6] << 16);
-                refSpeed += (message->data[7] << 24);
+                int32_t got;
+                memcpy(&got, message->data+4,4);
                 refSpeedSemaphore.wait();
-                this->refSpeed = refSpeed / (tr * 745.8);  //-- 65536 * 0.01138 = 745.8
+                refSpeed = got / (tr * 745.8);  //-- 65536 * 0.01138 = 745.8
                 refSpeedSemaphore.post();
                 CD_INFO("Got SDO \"posmode_speed\" response from driver. %s\n",msgToStr(message).c_str());
             }
