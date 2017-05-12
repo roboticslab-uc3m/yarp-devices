@@ -743,7 +743,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage( can_msg * message)
                 refAcceleration += (message->data[6] << 16);
                 refAcceleration += (message->data[7] << 24);
                 refAccelSemaphore.wait();
-                this->refAcceleration = round(refAcceleration / (tr * 0.7458));  //-- 65536 * 0.00001138 = 0.7458
+                this->refAcceleration = refAcceleration / (tr * 0.7458);  //-- 65536 * 0.00001138 = 0.7458
                 refAccelSemaphore.post();
                 CD_INFO("Got SDO \"posmode_acc\" response from driver. %s\n",msgToStr(message).c_str());
             }
@@ -762,7 +762,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage( can_msg * message)
                 refSpeed += (message->data[6] << 16);
                 refSpeed += (message->data[7] << 24);
                 refSpeedSemaphore.wait();
-                this->refSpeed = round(refSpeed / (tr * 745.8));  //-- 65536 * 0.01138 = 745.8
+                this->refSpeed = refSpeed / (tr * 745.8);  //-- 65536 * 0.01138 = 745.8
                 refSpeedSemaphore.post();
                 CD_INFO("Got SDO \"posmode_speed\" response from driver. %s\n",msgToStr(message).c_str());
             }
