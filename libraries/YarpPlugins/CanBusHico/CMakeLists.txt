@@ -18,7 +18,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
 yarp_add_plugin(CanBusHico CanBusHico.cpp
                            CanBusHico.hpp
                            hico_api.h
-                           DeviceDriverImpl.cpp)
+                           DeviceDriverImpl.cpp
+                           HicoCanMessage.cpp
+                           HicoCanMessage.hpp)
 
 add_dependencies(CanBusHico COLOR_DEBUG)
 
