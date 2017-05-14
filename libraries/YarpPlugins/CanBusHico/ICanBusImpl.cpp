@@ -36,8 +36,26 @@ bool roboticslab::CanBusHico::canGetBaudRate(unsigned int * rate)
 
 bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
 {
-    CD_ERROR("Not implemented.\n");
-    return false;
+    CD_INFO("(%d)\n", id);
+
+    if (id > 0x7F)
+    {
+        CD_ERROR("Invalid ID (%d > 0x7F).\n", id);
+        return false;
+    }
+
+    struct can_filter filter;
+    filter.type = FTYPE_AMASK;
+    filter.mask = ~0x7F;  //-- SJA 1000 style, mask specifies "do not care" bits
+    filter.code = id;
+
+    if (::ioctl(fileDescriptor, IOC_SET_FILTER, &filter) != 0)
+    {
+        CD_ERROR("Could not set filter.\n");
+        return false;
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -71,7 +89,7 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
         FD_SET(fileDescriptor, &fds);
 
         //-- select() returns the number of ready descriptors, or -1 for errors.
-        ret = ::select(fileDescriptor+1, &fds, 0, 0, &tv);
+        ret = ::select(fileDescriptor + 1, &fds, 0, 0, &tv);
 
         if (ret <= 0)
         {
