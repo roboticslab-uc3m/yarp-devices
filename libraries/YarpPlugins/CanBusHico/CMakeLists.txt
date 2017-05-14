@@ -19,6 +19,7 @@ yarp_add_plugin(CanBusHico CanBusHico.cpp
                            CanBusHico.hpp
                            hico_api.h
                            DeviceDriverImpl.cpp
+                           ICanBusImpl.cpp
                            HicoCanMessage.cpp
                            HicoCanMessage.hpp)
 
