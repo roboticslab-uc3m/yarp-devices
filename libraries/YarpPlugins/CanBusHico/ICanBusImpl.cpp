@@ -46,7 +46,7 @@ bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
 
     struct can_filter filter;
     filter.type = FTYPE_AMASK;
-    filter.mask = ~0x7F;  //-- SJA 1000 style, mask specifies "do not care" bits
+    filter.mask = 0x7F;  //-- dsPIC style, mask specifies "do care" bits
     filter.code = id;
 
     if (::ioctl(fileDescriptor, IOC_SET_FILTER, &filter) != 0)
