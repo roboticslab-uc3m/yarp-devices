@@ -7,6 +7,8 @@
 #include <sys/ioctl.h>
 
 #include <cstring>
+#include <vector>
+#include <algorithm>
 
 #include <ColorDebug.hpp>
 
@@ -16,10 +18,8 @@ bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
 {
     CD_DEBUG("(%d)\n", rate);
 
-    int ret;
-
     canBusReady.wait();
-    ret = ::ioctl(fileDescriptor, IOC_SET_BITRATE, &rate);
+    int ret = ::ioctl(fileDescriptor, IOC_SET_BITRATE, &rate);
     canBusReady.post();
 
     if (ret != 0)
@@ -37,10 +37,8 @@ bool roboticslab::CanBusHico::canGetBaudRate(unsigned int * rate)
 {
     CD_DEBUG("\n");
 
-    int ret;
-
     canBusReady.wait();
-    ret = ::ioctl(fileDescriptor, IOC_GET_BITRATE, rate);
+    int ret = ::ioctl(fileDescriptor, IOC_GET_BITRATE, rate);
     canBusReady.post();
 
     if (ret != 0)
@@ -64,22 +62,29 @@ bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
         return false;
     }
 
+    canBusReady.wait();
+
+    if (!filteredIds.insert(id).second)
+    {
+        CD_WARNING("Filter for ID %d is already active.\n", id);
+        canBusReady.post();
+        return true;
+    }
+
     struct can_filter filter;
     filter.type = FTYPE_AMASK;
     filter.mask = 0x7F;  //-- dsPIC style, mask specifies "do care" bits
     filter.code = id;
 
-    int ret;
-
-    canBusReady.wait();
-    ret = ::ioctl(fileDescriptor, IOC_SET_FILTER, &filter);
-    canBusReady.post();
-
-    if (ret != 0)
+    if (::ioctl(fileDescriptor, IOC_SET_FILTER, &filter) != 0)
     {
         CD_ERROR("Could not set filter: %s.\n", std::strerror(errno));
+        filteredIds.erase(id);
+        canBusReady.post();
         return false;
     }
+
+    canBusReady.post();
 
     return true;
 }
@@ -88,8 +93,45 @@ bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
 
 bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
 {
-    CD_ERROR("Not implemented.\n");
-    return false;
+    CD_DEBUG("(%d)\n", id);
+
+    if (id > 0x7F)
+    {
+        CD_ERROR("Invalid ID (%d > 0x7F).\n", id);
+        return false;
+    }
+
+    canBusReady.wait();
+
+    if (filteredIds.find(id) == filteredIds.end())
+    {
+        CD_WARNING("Filter for ID %d not found, doing nothing.\n", id);
+        canBusReady.post();
+        return true;
+    }
+
+    if (!clearFilters())
+    {
+        CD_ERROR("Could not clear list of active filters prior to populating it with previously stored IDs.\n");
+        canBusReady.post();
+        return false;
+    }
+
+    filteredIds.erase(id);
+
+    std::vector<unsigned int> localCopy(filteredIds.begin(), filteredIds.end());
+
+    canBusReady.post();
+
+    for (std::vector<unsigned int>::iterator it = localCopy.begin(); it != localCopy.end(); ++it)
+    {
+        if (!canIdAdd(*it))
+        {
+            CD_WARNING("Could not add ID %d back.\n", *it);
+        }
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------

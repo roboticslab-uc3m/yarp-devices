@@ -125,3 +125,16 @@ bool roboticslab::CanBusHico::setDelay()
 }
 
 // -----------------------------------------------------------------------------
+
+bool roboticslab::CanBusHico::clearFilters()
+{
+    if (::ioctl(fileDescriptor, IOC_CLEAR_FILTERS) != 0)
+    {
+        CD_ERROR("Could not clear filters: %s\n", std::strerror(errno));
+        return false;
+    }
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------

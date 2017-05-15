@@ -3,6 +3,8 @@
 #ifndef __CAN_BUS_HICO__
 #define __CAN_BUS_HICO__
 
+#include <set>
+
 #include <yarp/os/Semaphore.h>
 
 #include <yarp/dev/DeviceDriver.h>
@@ -78,11 +80,15 @@ protected:
 
     bool setFdMode(bool requestedBlocking);
     bool setDelay();
+    bool clearFilters();
 
     /** CAN file descriptor */
     int fileDescriptor;
 
     int fcntlFlags;
+
+    /** Unique IDs set in active acceptance filters */
+    std::set<unsigned int> filteredIds;
 
     yarp::os::Semaphore canBusReady;
 
