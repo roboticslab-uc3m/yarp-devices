@@ -7,11 +7,7 @@
 bool teo::CanBusControlboard::setPositionMode(int j)
 {
     CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iControlMode2Raw[j]->setPositionModeRaw( 0 );
+    return setControlMode(j, VOCAB_CM_POSITION);
 }
 
 // -----------------------------------------------------------------------------
@@ -19,8 +15,7 @@ bool teo::CanBusControlboard::setPositionMode(int j)
 bool teo::CanBusControlboard::setVelocityMode(int j)
 {
     CD_DEBUG("(%d)\n",j);
-
-    return iControlMode2Raw[j]->setVelocityModeRaw( 0 );
+    return setControlMode(j, VOCAB_CM_VELOCITY);
 }
 
 // -----------------------------------------------------------------------------
@@ -28,11 +23,7 @@ bool teo::CanBusControlboard::setVelocityMode(int j)
 bool teo::CanBusControlboard::setTorqueMode(int j)
 {
     CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iControlMode2Raw[j]->setTorqueModeRaw( 0 );
+    return setControlMode(j, VOCAB_CM_TORQUE);
 }
 
 // -----------------------------------------------------------------------------
@@ -40,11 +31,7 @@ bool teo::CanBusControlboard::setTorqueMode(int j)
 bool teo::CanBusControlboard::setImpedancePositionMode(int j)
 {
     CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iControlMode2Raw[j]->setImpedancePositionModeRaw( 0 );
+    return setControlMode(j, VOCAB_CM_IMPEDANCE_POS);
 }
 
 // -----------------------------------------------------------------------------
@@ -52,11 +39,7 @@ bool teo::CanBusControlboard::setImpedancePositionMode(int j)
 bool teo::CanBusControlboard::setImpedanceVelocityMode(int j)
 {
     CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iControlMode2Raw[j]->setImpedanceVelocityModeRaw( 0 );
+    return setControlMode(j, VOCAB_CM_IMPEDANCE_VEL);
 }
 
 // -----------------------------------------------------------------------------
