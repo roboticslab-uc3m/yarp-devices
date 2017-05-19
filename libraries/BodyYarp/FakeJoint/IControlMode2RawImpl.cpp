@@ -66,12 +66,8 @@ bool teo::FakeJoint::setImpedanceVelocityModeRaw(int j)
 
 bool teo::FakeJoint::setOpenLoopModeRaw(int j)
 {
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    return true;
+    CD_ERROR("(%d)\n",j);  //-- Removed in YARP 2.3.70
+    return false;
 }
 
 // -----------------------------------------------------------------------------

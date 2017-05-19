@@ -63,12 +63,8 @@ bool teo::CanBusControlboard::setImpedanceVelocityMode(int j)
 
 bool teo::CanBusControlboard::setOpenLoopMode(int j)
 {
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iControlMode2Raw[j]->setOpenLoopModeRaw( 0 );
+    CD_ERROR("(%d)\n",j);  //-- Removed in YARP 2.3.70
+    return false;
 }
 
 // ---------------------- IControlMode2 Related  ---------------------------------
@@ -127,8 +123,8 @@ bool teo::CanBusControlboard::setControlMode(const int j, const int mode)
         ok = setImpedancePositionMode(j);
     if( mode == VOCAB_CM_IMPEDANCE_VEL )
         ok = setImpedanceVelocityMode(j);
-    if( mode == VOCAB_CM_OPENLOOP )
-        ok = setOpenLoopMode(j);
+    /*if( mode == VOCAB_CM_OPENLOOP )
+        ok = setOpenLoopMode(j);*/
 
     return ok;
 

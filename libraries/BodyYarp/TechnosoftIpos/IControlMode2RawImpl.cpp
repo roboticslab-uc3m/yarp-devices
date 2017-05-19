@@ -147,14 +147,8 @@ bool teo::TechnosoftIpos::setImpedanceVelocityModeRaw(int j)
 
 bool teo::TechnosoftIpos::setOpenLoopModeRaw(int j)
 {
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
-
-    return true;
+    CD_ERROR("(%d)\n",j);  //-- Removed in YARP 2.3.70
+    return false;
 }
 
 // -----------------------------------------------------------------------------
