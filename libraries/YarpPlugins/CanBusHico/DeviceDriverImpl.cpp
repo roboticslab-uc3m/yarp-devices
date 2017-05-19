@@ -2,17 +2,26 @@
 
 #include "CanBusHico.hpp"
 
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+
+#include <string>
+
+#include <yarp/os/Time.h>
+
+#include <ColorDebug.hpp>
+
 // ------------------- DeviceDriver Related ------------------------------------
 
 bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 {
-
-    std::string devicePath = config.check("canDevice",yarp::os::Value(DEFAULT_CAN_DEVICE),"CAN device path").asString();
-    int bitrate = config.check("canBitrate",yarp::os::Value(DEFAULT_CAN_BITRATE),"CAN bitrate").asInt();
+    std::string devicePath = config.check("canDevice", yarp::os::Value(DEFAULT_CAN_DEVICE), "CAN device path").asString();
+    int bitrate = config.check("canBitrate", yarp::os::Value(DEFAULT_CAN_BITRATE), "CAN bitrate").asInt();
 
     //-- Open the CAN device for reading and writing.
     fileDescriptor = ::open(devicePath.c_str(), O_RDWR);
-    if(fileDescriptor<0)
+    if (fileDescriptor < 0)
     {
         CD_ERROR("Could not open CAN device of path: %s\n", devicePath.c_str());
         return false;
@@ -22,7 +31,7 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
     yarp::os::Time::delay(DELAY);
 
     //-- Set the CAN bitrate.
-    if( ioctl(fileDescriptor,IOC_SET_BITRATE,&bitrate) != 0)
+    if (::ioctl(fileDescriptor, IOC_SET_BITRATE, &bitrate) != 0)
     {
         CD_ERROR("Could not set bitrate on CAN device: %s\n", devicePath.c_str());
         return false;
@@ -32,7 +41,7 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
     yarp::os::Time::delay(DELAY);
 
     //-- Start the CAN device.
-    if( ioctl(fileDescriptor,IOC_START) != 0)
+    if (::ioctl(fileDescriptor,IOC_START) != 0)
     {
         CD_ERROR("IOC_START failed on CAN device: %s\n", devicePath.c_str());
         return false;
@@ -48,7 +57,6 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
 bool roboticslab::CanBusHico::close()
 {
-
     //release semaphore?
     ::close(fileDescriptor);
 
@@ -56,4 +64,3 @@ bool roboticslab::CanBusHico::close()
 }
 
 // -----------------------------------------------------------------------------
-

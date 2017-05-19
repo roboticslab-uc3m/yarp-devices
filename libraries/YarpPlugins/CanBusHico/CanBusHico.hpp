@@ -3,22 +3,14 @@
 #ifndef __CAN_BUS_HICO__
 #define __CAN_BUS_HICO__
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <unistd.h>  // just for ::write
-#include <err.h>
-#include <errno.h>
-#include <assert.h>
-#include <string>
+#include <yarp/os/Semaphore.h>
 
-#include <yarp/os/all.h>
-#include <yarp/dev/all.h>
+#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/CanBusInterface.h>
 
 #include "hico_api.h"
 #include "ICanBusHico.h"
 #include "HicoCanMessage.hpp"
-#include "ColorDebug.hpp"
 
 namespace roboticslab
 {

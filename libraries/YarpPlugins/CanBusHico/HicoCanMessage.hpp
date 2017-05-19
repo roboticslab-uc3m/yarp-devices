@@ -32,7 +32,7 @@ public:
     virtual void setBuffer(unsigned char * buf);
 
 private:
-    can_msg * message;
+    struct can_msg * message;
 };
 
 }  // namespace roboticslab

@@ -22,7 +22,7 @@ roboticslab::HicoCanMessage::~HicoCanMessage()
 yarp::dev::CanMessage & roboticslab::HicoCanMessage::operator=(const yarp::dev::CanMessage & l)
 {
     const HicoCanMessage & tmp = dynamic_cast<const HicoCanMessage &>(l);
-    std::memcpy(message, tmp.message, sizeof(can_msg));
+    std::memcpy(message, tmp.message, sizeof(struct can_msg));
     return *this;
 }
 
@@ -88,7 +88,7 @@ void roboticslab::HicoCanMessage::setBuffer(unsigned char * buf)
 {
     if (buf != 0)
     {
-        message = (can_msg *) buf;
+        message = (struct can_msg *) buf;
     }
 }
 

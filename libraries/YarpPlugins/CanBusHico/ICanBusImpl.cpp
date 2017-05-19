@@ -2,11 +2,24 @@
 
 #include "CanBusHico.hpp"
 
+#include <unistd.h>
+#include <assert.h>
+#include <errno.h>
+#include <sys/ioctl.h>
+#include <sys/select.h>
+#include <sys/time.h>
+
+#include <cstring>
+
+#include <yarp/os/Time.h>
+
+#include <ColorDebug.hpp>
+
 // -----------------------------------------------------------------------------
 
 bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
 {
-    CD_INFO("(%d)\n", rate);
+    CD_DEBUG("(%d)\n", rate);
 
     if (::ioctl(fileDescriptor, IOC_SET_BITRATE, &rate) != 0)
     {
@@ -21,7 +34,7 @@ bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
 
 bool roboticslab::CanBusHico::canGetBaudRate(unsigned int * rate)
 {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
 
     if (::ioctl(fileDescriptor, IOC_GET_BITRATE, rate) != 0)
     {
@@ -36,7 +49,7 @@ bool roboticslab::CanBusHico::canGetBaudRate(unsigned int * rate)
 
 bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
 {
-    CD_INFO("(%d)\n", id);
+    CD_DEBUG("(%d)\n", id);
 
     if (id > 0x7F)
     {
@@ -109,7 +122,7 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
 
         if (ret < 0)
         {
-            CD_WARNING("read() error: %s.\n", strerror(errno));
+            CD_WARNING("read() error: %s.\n", std::strerror(errno));
         }
         else
         {
@@ -148,7 +161,7 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
 
         if (ret == -1)
         {
-            CD_WARNING("%s.\n", ::strerror(errno));
+            CD_WARNING("%s.\n", std::strerror(errno));
         }
         else
         {

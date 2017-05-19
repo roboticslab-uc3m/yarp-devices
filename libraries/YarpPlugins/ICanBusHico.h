@@ -8,7 +8,7 @@
 #define DEFAULT_CAN_DEVICE "/dev/can0"
 #define DEFAULT_CAN_BITRATE BITRATE_1000k
 
-#define DELAY 0.001  // Was DELAY2. Required when using same driver.
+#define DELAY 0.001  // [s] Required when using same driver.
 
 namespace roboticslab
 {
