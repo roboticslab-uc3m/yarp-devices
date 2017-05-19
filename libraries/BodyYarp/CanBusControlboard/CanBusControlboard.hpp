@@ -105,7 +105,7 @@ public:
      */
     virtual bool getVelLimits(int axis, double *min, double *max);
 
-    //  --------- IControlMode Declarations. Implementation in IControlModeImpl.cpp ---------
+    //  --------- IControlMode Declarations. Implementation in IControlMode2Impl.cpp ---------
 
     /**
     * Set position mode, single axis.
@@ -164,7 +164,7 @@ public:
     */
     virtual bool getControlModes(int *modes);
 
-    //  --------- IControlMode2 Declarations. Implementation in IControlMode2.cpp ---------
+    //  --------- IControlMode2 Declarations. Implementation in IControlMode2Impl.cpp ---------
 
     /**
     * Get the current control mode for a subset of axes.
@@ -309,7 +309,7 @@ public:
     */
     virtual bool getEncoderTimed(int j, double *encs, double *time);
 
-    // ------- IPositionControl declarations. Implementation in IPositionControl2.cpp -------
+    // ------- IPositionControl declarations. Implementation in IPositionControl2Impl.cpp -------
 
     /**
      * Get the number of controlled axes. This command asks the number of controlled
@@ -426,7 +426,7 @@ public:
      */
     virtual bool stop();
 
-    // ------- IPositionControl2 declarations. Implementation in IPositionControl2.cpp -------
+    // ------- IPositionControl2 declarations. Implementation in IPositionControl2Impl.cpp -------
 
     /** Set new reference point for a subset of joints.
      * @param joints pointer to the array of joint numbers
@@ -738,7 +738,7 @@ public:
      */
     virtual bool setTorqueOffset(int j, double v);
 
-    //  --------- IVelocityControl Declarations. Implementation in IVelocityControl2.cpp ---------
+    //  --------- IVelocityControl Declarations. Implementation in IVelocityControl2Impl.cpp ---------
 
     /**
      * Start motion at a given speed, single joint.
@@ -755,7 +755,7 @@ public:
      */
     virtual bool velocityMove(const double *sp);
 
-    //  --------- IVelocityControl2 Declarations. Implementation in IVelocityControl2.cpp ----------
+    //  --------- IVelocityControl2 Declarations. Implementation in IVelocityControl2Impl.cpp ----------
 
     /** Start motion at a given speed for a subset of joints.
      * @param n_joint how many joints this command is referring to
@@ -839,7 +839,7 @@ public:
      */
     virtual bool getVelPids(yarp::dev::Pid *pids);
 
-    // -----------IInteracionMode Declarations. Implementation in IInteracionMode.cpp --------------
+    // -----------IInteracionMode Declarations. Implementation in IInteracionModeImpl.cpp --------------
     /**
      * Get the current interaction mode of the robot, values can be stiff or compliant.
      * @param axis joint number
