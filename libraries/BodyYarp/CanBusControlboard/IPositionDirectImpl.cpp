@@ -4,22 +4,6 @@
 
 // ------------------ IPositionDirect Related ----------------------------------
 
-bool teo::CanBusControlboard::setPositionDirectMode()
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i < nodes.size(); i++)
-        ok &= iPositionDirectRaw[i]->setPositionDirectModeRaw();  // No existing single mode.
-
-    yarp::os::Time::delay(1);  //-- Seems like a "must".
-
-    return ok;
-}
-
-
-// -----------------------------------------------------------------------------
-
 bool teo::CanBusControlboard::setPosition(int j, double ref)
 {
     CD_DEBUG("\n");

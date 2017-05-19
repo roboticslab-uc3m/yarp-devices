@@ -524,15 +524,6 @@ public:
 
     // ------- IPositionDirect declarations. Implementation in IPositionDirectImpl.cpp -------
 
-    /**
-     * Set position direct mode. This command
-     * is required to switch control boards to low-level position
-     * control method.
-     * @return true/false on success failure
-     */
-    virtual bool setPositionDirectMode();
-
-
     /** Set new position for a single axis.
      * @param j joint number
      * @param ref specifies the new ref point

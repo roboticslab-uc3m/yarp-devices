@@ -301,6 +301,8 @@ bool teo::TechnosoftIpos::setControlModeRaw(const int j, const int mode)
         return setImpedancePositionModeRaw(j);
     else if( mode == VOCAB_CM_IMPEDANCE_VEL )
         return setImpedanceVelocityModeRaw(j);
+    else if( mode == VOCAB_CM_POSITION_DIRECT )
+        return setPositionDirectModeRaw();
     /*else if( mode == VOCAB_CM_OPENLOOP )
         return setOpenLoopModeRaw(j);*/
 

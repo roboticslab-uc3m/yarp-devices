@@ -150,7 +150,6 @@ public:
     virtual bool getTargetPositionsRaw(const int n_joint, const int *joints, double *refs);
 
     // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
-    virtual bool setPositionDirectModeRaw();
     virtual bool setPositionRaw(int j, double ref);
     virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs);
     virtual bool setPositionsRaw(const double *refs);

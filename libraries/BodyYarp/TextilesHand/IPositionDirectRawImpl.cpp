@@ -4,14 +4,6 @@
 
 // ############################## IPositionDirectRaw Related ##############################
 
-bool teo::TextilesHand::setPositionDirectModeRaw()
-{
-    CD_DEBUG("\n");
-    return true;
-}
-
-// ----------------------------------------------------------------------------------------
-
 bool teo::TextilesHand::setPositionRaw(int j, double ref)
 {
     CD_DEBUG("\n");

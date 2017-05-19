@@ -4,12 +4,6 @@
 
 // ------- IPositionDirectRaw Related -------
 
-bool teo::LacqueyFetch::setPositionDirectModeRaw()
-{
-    CD_DEBUG("\n");
-    return true;
-}
-
 bool teo::LacqueyFetch::setPositionRaw(int j, double ref)
 {
     CD_DEBUG("\n");

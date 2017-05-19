@@ -158,7 +158,6 @@ public:
     virtual bool getTargetPositionsRaw(const int n_joint, const int *joints, double *refs);
 
     // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
-    virtual bool setPositionDirectModeRaw();
     virtual bool setPositionRaw(int j, double ref);
     virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs);
     virtual bool setPositionsRaw(const double *refs);
@@ -238,6 +237,9 @@ protected:
     /** A helper function to display CAN messages. */
     std::string msgToStr(can_msg* message);
     std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
+
+    /** Old yarp::dev::IPositionDirectRaw implementation. */
+    bool setPositionDirectModeRaw();
 
     int canId;
     ICanBusHico *canDevicePtr;
