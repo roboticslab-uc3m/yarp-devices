@@ -11,7 +11,7 @@ bool teo::CanBusControlboard::setPositionMode(int j)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iControlModeRaw[j]->setPositionModeRaw( 0 );
+    return iControlMode2Raw[j]->setPositionModeRaw( 0 );
 }
 
 // -----------------------------------------------------------------------------
@@ -20,7 +20,7 @@ bool teo::CanBusControlboard::setVelocityMode(int j)
 {
     CD_DEBUG("(%d)\n",j);
 
-    return iControlModeRaw[j]->setVelocityModeRaw( 0 );
+    return iControlMode2Raw[j]->setVelocityModeRaw( 0 );
 }
 
 // -----------------------------------------------------------------------------
@@ -32,7 +32,7 @@ bool teo::CanBusControlboard::setTorqueMode(int j)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iControlModeRaw[j]->setTorqueModeRaw( 0 );
+    return iControlMode2Raw[j]->setTorqueModeRaw( 0 );
 }
 
 // -----------------------------------------------------------------------------
@@ -44,7 +44,7 @@ bool teo::CanBusControlboard::setImpedancePositionMode(int j)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iControlModeRaw[j]->setImpedancePositionModeRaw( 0 );
+    return iControlMode2Raw[j]->setImpedancePositionModeRaw( 0 );
 }
 
 // -----------------------------------------------------------------------------
@@ -56,7 +56,7 @@ bool teo::CanBusControlboard::setImpedanceVelocityMode(int j)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iControlModeRaw[j]->setImpedanceVelocityModeRaw( 0 );
+    return iControlMode2Raw[j]->setImpedanceVelocityModeRaw( 0 );
 }
 
 // -----------------------------------------------------------------------------
@@ -68,7 +68,7 @@ bool teo::CanBusControlboard::setOpenLoopMode(int j)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iControlModeRaw[j]->setOpenLoopModeRaw( 0 );
+    return iControlMode2Raw[j]->setOpenLoopModeRaw( 0 );
 }
 
 // ---------------------- IControlMode2 Related  ---------------------------------
@@ -80,7 +80,7 @@ bool teo::CanBusControlboard::getControlMode(int j, int *mode)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iControlModeRaw[j]->getControlModeRaw( 0, mode );
+    return iControlMode2Raw[j]->getControlModeRaw( 0, mode );
 }
 
 // -----------------------------------------------------------------------------

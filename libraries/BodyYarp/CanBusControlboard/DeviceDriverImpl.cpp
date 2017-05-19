@@ -47,7 +47,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
     //-- Populate the CAN nodes vector.
     nodes.resize( ids.size() );
     iControlLimits2Raw.resize( nodes.size() );
-    iControlModeRaw.resize( nodes.size() );
+    iControlMode2Raw.resize( nodes.size() );
     iEncodersTimedRaw.resize( nodes.size() );
     iPositionControl2Raw.resize( nodes.size() );
     iPositionDirectRaw.resize( nodes.size() );
@@ -93,9 +93,9 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
             return false;
         }
 
-        if( !device->view( iControlModeRaw[i] ))
+        if( !device->view( iControlMode2Raw[i] ))
         {
-            CD_ERROR("[error] Problems acquiring iControlModeRaw interface\n");
+            CD_ERROR("[error] Problems acquiring iControlMode2Raw interface\n");
             return false;
         }
 

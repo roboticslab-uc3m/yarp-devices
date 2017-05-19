@@ -33,7 +33,7 @@ namespace teo
 */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
 // Note: IControlLimits2Raw inherits from IControlLimitsRaw
-class FakeJoint : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlModeRaw, public yarp::dev::IEncodersTimedRaw,
+class FakeJoint : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlMode2Raw, public yarp::dev::IEncodersTimedRaw,
     public yarp::dev::IPositionControl2Raw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControl2Raw, public yarp::dev::ITorqueControlRaw,
     public ICanBusSharer, public yarp::dev::IInteractionModeRaw
 {
@@ -73,7 +73,7 @@ public:
     virtual bool setVelLimitsRaw(int axis, double min, double max);
     virtual bool getVelLimitsRaw(int axis, double *min, double *max);
 
-    //  --------- IControlModeRaw Declarations. Implementation in IControlModeRawImpl.cpp ---------
+    //  --------- IControlModeRaw Declarations. Implementation in IControlMode2RawImpl.cpp ---------
     virtual bool setPositionModeRaw(int j);
     virtual bool setVelocityModeRaw(int j);
     virtual bool setTorqueModeRaw(int j);
@@ -82,6 +82,12 @@ public:
     virtual bool setOpenLoopModeRaw(int j);
     virtual bool getControlModeRaw(int j, int *mode);
     virtual bool getControlModesRaw(int *modes);
+
+    //  --------- IControlMode2Raw Declarations. Implementation in IControlMode2RawImpl.cpp ---------
+    virtual bool getControlModesRaw(const int n_joint, const int *joints, int *modes);
+    virtual bool setControlModeRaw(const int j, const int mode);
+    virtual bool setControlModesRaw(const int n_joint, const int *joints, int *modes);
+    virtual bool setControlModesRaw(int *modes);
 
     //  ---------- IEncodersRaw Declarations. Implementation in IEncodersRawImpl.cpp ----------
     virtual bool resetEncoderRaw(int j);

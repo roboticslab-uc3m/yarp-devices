@@ -2,7 +2,7 @@
 
 #include "TextilesHand.hpp"
 
-// ------------------- IControlModeRaw Related ------------------------------------
+// ############################## IControlModeRaw Related ##############################
 
 bool teo::TextilesHand::setPositionModeRaw(int j)
 {
@@ -91,6 +91,38 @@ bool teo::TextilesHand::getControlModeRaw(int j, int *mode)
 // -----------------------------------------------------------------------------
 
 bool teo::TextilesHand::getControlModesRaw(int *modes)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// ############################## IControlMode2Raw Related ##############################
+
+bool teo::TextilesHand::getControlModesRaw(const int n_joint, const int *joints, int *modes)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::TextilesHand::setControlModeRaw(const int j, const int mode)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::TextilesHand::setControlModesRaw(const int n_joint, const int *joints, int *modes)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::TextilesHand::setControlModesRaw(int *modes)
 {
     CD_ERROR("Missing implementation\n");
     return false;

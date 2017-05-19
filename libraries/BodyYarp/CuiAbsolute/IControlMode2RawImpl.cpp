@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "LacqueyFetch.hpp"
+#include "CuiAbsolute.hpp"
 
-// ------------------- IControlModeRaw Related ------------------------------------
+// ############################## IControlModeRaw Related ##############################
 
-bool teo::LacqueyFetch::setPositionModeRaw(int j)
+bool teo::CuiAbsolute::setPositionModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -16,7 +16,7 @@ bool teo::LacqueyFetch::setPositionModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setVelocityModeRaw(int j)
+bool teo::CuiAbsolute::setVelocityModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -28,7 +28,7 @@ bool teo::LacqueyFetch::setVelocityModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setTorqueModeRaw(int j)
+bool teo::CuiAbsolute::setTorqueModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -40,7 +40,7 @@ bool teo::LacqueyFetch::setTorqueModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setImpedancePositionModeRaw(int j)
+bool teo::CuiAbsolute::setImpedancePositionModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -52,7 +52,7 @@ bool teo::LacqueyFetch::setImpedancePositionModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setImpedanceVelocityModeRaw(int j)
+bool teo::CuiAbsolute::setImpedanceVelocityModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -64,7 +64,7 @@ bool teo::LacqueyFetch::setImpedanceVelocityModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setOpenLoopModeRaw(int j)
+bool teo::CuiAbsolute::setOpenLoopModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -76,7 +76,7 @@ bool teo::LacqueyFetch::setOpenLoopModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getControlModeRaw(int j, int *mode)
+bool teo::CuiAbsolute::getControlModeRaw(int j, int *mode)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
 
@@ -90,7 +90,39 @@ bool teo::LacqueyFetch::getControlModeRaw(int j, int *mode)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getControlModesRaw(int *modes)
+bool teo::CuiAbsolute::getControlModesRaw(int *modes)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// ############################## IControlMode2Raw Related ##############################
+
+bool teo::CuiAbsolute::getControlModesRaw(const int n_joint, const int *joints, int *modes)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CuiAbsolute::setControlModeRaw(const int j, const int mode)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CuiAbsolute::setControlModesRaw(const int n_joint, const int *joints, int *modes)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::CuiAbsolute::setControlModesRaw(int *modes)
 {
     CD_ERROR("Missing implementation\n");
     return false;

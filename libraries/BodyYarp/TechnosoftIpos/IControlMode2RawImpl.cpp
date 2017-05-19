@@ -2,7 +2,7 @@
 
 #include "TechnosoftIpos.hpp"
 
-// ------------------- IControlModeRaw Related ------------------------------------
+// ############################## IControlModeRaw Related ##############################
 
 bool teo::TechnosoftIpos::setPositionModeRaw(int j)
 {
@@ -271,6 +271,38 @@ bool teo::TechnosoftIpos::getControlModeRaw4()
 // -----------------------------------------------------------------------------
 
 bool teo::TechnosoftIpos::getControlModesRaw(int *modes)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// ############################## IControlMode2Raw Related ##############################
+
+bool teo::TechnosoftIpos::getControlModesRaw(const int n_joint, const int *joints, int *modes)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::setControlModeRaw(const int j, const int mode)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::setControlModesRaw(const int n_joint, const int *joints, int *modes)
+{
+    CD_ERROR("Missing implementation\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::TechnosoftIpos::setControlModesRaw(int *modes)
 {
     CD_ERROR("Missing implementation\n");
     return false;
