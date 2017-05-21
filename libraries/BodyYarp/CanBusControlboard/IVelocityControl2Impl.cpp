@@ -4,20 +4,6 @@
 
 // ------------------ IVelocityControl Related ----------------------------------------
 
-bool teo::CanBusControlboard::setVelocityMode()
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        ok &= this->setVelocityMode(j);
-    }
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
 bool teo::CanBusControlboard::velocityMove(int j, double sp)
 {
     CD_DEBUG("(%d), (%f)\n",j , sp);

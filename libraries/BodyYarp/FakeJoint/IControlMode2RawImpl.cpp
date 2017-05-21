@@ -2,7 +2,7 @@
 
 #include "FakeJoint.hpp"
 
-// ------------------- IControlModeRaw Related ------------------------------------
+// ############################## IControlModeRaw Related ##############################
 
 bool teo::FakeJoint::setPositionModeRaw(int j)
 {
@@ -66,12 +66,8 @@ bool teo::FakeJoint::setImpedanceVelocityModeRaw(int j)
 
 bool teo::FakeJoint::setOpenLoopModeRaw(int j)
 {
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    return true;
+    CD_ERROR("(%d)\n",j);  //-- Removed in YARP 2.3.70
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -94,4 +90,61 @@ bool teo::FakeJoint::getControlModesRaw(int *modes)
 {
     CD_ERROR("Missing implementation\n");
     return false;
+}
+
+// ############################## IControlMode2Raw Related ##############################
+
+bool teo::FakeJoint::getControlModesRaw(const int n_joint, const int *joints, int *modes)
+{
+    CD_DEBUG("\n");
+
+    //-- Check array size
+    if ( n_joint != 1 ) return false;
+
+    return getControlModeRaw(0, &modes[0]);
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::FakeJoint::setControlModeRaw(const int j, const int mode)
+{
+    CD_DEBUG("(%d, %d)\n",j,mode);
+
+    //-- Check index within range
+    if ( j != 0 ) return false;
+
+    if( mode == VOCAB_CM_POSITION )
+        return setPositionModeRaw(j);
+    else if( mode == VOCAB_CM_VELOCITY )
+        return setVelocityModeRaw(j);
+    else if( mode == VOCAB_CM_TORQUE )
+        return setTorqueModeRaw(j);
+    else if( mode == VOCAB_CM_IMPEDANCE_POS )
+        return setImpedancePositionModeRaw(j);
+    else if( mode == VOCAB_CM_IMPEDANCE_VEL )
+        return setImpedanceVelocityModeRaw(j);
+    /*else if( mode == VOCAB_CM_OPENLOOP )
+        return setOpenLoopModeRaw(j);*/
+
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::FakeJoint::setControlModesRaw(const int n_joint, const int *joints, int *modes)
+{
+    CD_DEBUG("(%d)\n",n_joint);
+
+    //-- Check array size
+    if ( n_joint != 1 ) return false;
+
+    return setControlModeRaw(0, modes[0]);
+}
+
+// -----------------------------------------------------------------------------
+
+bool teo::FakeJoint::setControlModesRaw(int *modes)
+{
+    CD_DEBUG("\n");
+    return setControlModeRaw(0, modes[0]);
 }

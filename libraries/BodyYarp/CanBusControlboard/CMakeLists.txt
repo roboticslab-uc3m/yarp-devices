@@ -13,7 +13,7 @@ IF (NOT SKIP_CanBusControlboard)
   # Include any directories needed for YARP
   include_directories(${YARP_INCLUDE_DIRS} ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
-  yarp_add_plugin(CanBusControlboard DeviceDriverImpl.cpp IControlLimits2Impl.cpp IControlMode2.cpp IEncodersImpl.cpp IEncodersTimedImpl.cpp IPositionControl2.cpp IPositionDirectImpl.cpp ITorqueControlImpl.cpp IVelocityControl2.cpp CanBusControlboard.cpp IInteractionMode.cpp ThreadImpl.cpp)
+  yarp_add_plugin(CanBusControlboard DeviceDriverImpl.cpp IControlLimits2Impl.cpp IControlMode2Impl.cpp IEncodersImpl.cpp IEncodersTimedImpl.cpp IPositionControl2Impl.cpp IPositionDirectImpl.cpp ITorqueControlImpl.cpp IVelocityControl2Impl.cpp CanBusControlboard.cpp IInteractionModeImpl.cpp ThreadImpl.cpp)
   TARGET_LINK_LIBRARIES(CanBusControlboard ${YARP_LIBRARIES})
 
   # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now... 

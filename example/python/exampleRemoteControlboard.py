@@ -46,9 +46,16 @@ options.put('remote','/ravebot')  # we add info on to whom we will connect
 options.put('local','/exampleRemoteControlboard')  # we add info on how we will call ourselves on the YARP network
 dd = yarp.PolyDriver(options)  # create a YARP multi-use driver with the given options
 
-pos = dd.viewIPositionControl()  # make a position controller object we call 'pos'
+mode = dd.viewIControlMode()  # make a operation mode controller object we call 'mode'
 
-pos.setPositionMode()  # use the object to set the device to position mode (as opposed to velocity mode)(note: stops the robot)
+enc = dd.viewIEncoders()  # make an encoder controller object we call 'enc'
+axes = enc.getAxes()  # retrieve number of joints
+
+# use the object to set the device to position mode (as opposed to velocity mode)(note: stops the robot)
+for j in range(1,axes):
+    mode.setPositionMode(j)
+
+pos = dd.viewIPositionControl()  # make a position controller object we call 'pos'
 
 print 'test positionMove(1,-35) -> moves motor 1 (start count at motor 0) to -35 degrees'
 pos.positionMove(1,-35)
@@ -56,13 +63,16 @@ pos.positionMove(1,-35)
 print 'test delay(5)'
 yarp.Time.delay(5)
 
-enc = dd.viewIEncoders()  # make an encoder controller object we call 'enc'
-v = yarp.DVector(enc.getAxes())  # create a YARP vector of doubles the size of the number of elements read by enc, call it 'v'
+v = yarp.DVector(axes)  # create a YARP vector of doubles the size of the number of elements read by enc, call it 'v'
 enc.getEncoders(v)  # read the encoder values and put them into 'v'
 print 'v[1] is: ' + str(v[1])  # print element 1 of 'v', note that motors and encoders start at 0
 
+# use the object to set the device to velocity mode (as opposed to position mode)
+for j in range(1,axes):
+    mode.setPositionMode(j)
+
 vel = dd.viewIVelocityControl()  # make a velocity controller object we call 'pos'
-vel.setVelocityMode()  # use the object to set the device to velocity mode (as opposed to position mode)
+
 print 'test velocityMove(0,10) -> moves motor 0 (start count at motor 0) at 10 degrees per second'
 vel.velocityMove(0,10)
 

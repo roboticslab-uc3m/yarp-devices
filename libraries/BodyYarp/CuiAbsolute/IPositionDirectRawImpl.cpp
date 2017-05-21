@@ -2,12 +2,6 @@
 
 #include "CuiAbsolute.hpp"
 
-bool teo::CuiAbsolute::setPositionDirectModeRaw()
-{
-    CD_DEBUG("\n");
-    return true;
-}
-
 bool teo::CuiAbsolute::setPositionRaw(int j, double ref)
 {
     CD_DEBUG("\n");

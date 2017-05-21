@@ -4,14 +4,6 @@
 
 //  ########################### IVelocityControlRaw implementations ###########################
 
-bool teo::FakeJoint::setVelocityModeRaw()
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// --------------------------------------------------------------------------------------------
-
 bool teo::FakeJoint::velocityMoveRaw(int j, double sp)
 {
     CD_INFO("Missing implementation\n");

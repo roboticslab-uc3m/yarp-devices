@@ -4,14 +4,6 @@
 
 // ######################## IVelocityControlRaw Related #############################
 
-bool teo::TechnosoftIpos::setVelocityModeRaw()
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// ----------------------------------------------------------------------------------
-
 bool teo::TechnosoftIpos::velocityMoveRaw(int j, double sp)
 {
     CD_DEBUG("(%d),(%f)\n",j,sp);

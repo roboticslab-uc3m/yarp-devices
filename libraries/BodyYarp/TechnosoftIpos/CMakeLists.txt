@@ -13,7 +13,7 @@ IF (NOT SKIP_TechnosoftIpos)
   # Include any directories needed for YARP
   include_directories(${YARP_INCLUDE_DIRS} ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
-  yarp_add_plugin(TechnosoftIpos TechnosoftIpos.cpp DeviceDriverImpl.cpp IControlLimits2RawImpl.cpp IControlModeRawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControl2RawImpl.cpp IPositionDirectRawImpl.cpp ITorqueControlRawImpl.cpp IVelocityControl2RawImpl.cpp ICanBusSharerImpl.cpp IInteractionModeRawImpl.cpp )
+  yarp_add_plugin(TechnosoftIpos TechnosoftIpos.cpp DeviceDriverImpl.cpp IControlLimits2RawImpl.cpp IControlMode2RawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControl2RawImpl.cpp IPositionDirectRawImpl.cpp ITorqueControlRawImpl.cpp IVelocityControl2RawImpl.cpp ICanBusSharerImpl.cpp IInteractionModeRawImpl.cpp )
 
   TARGET_LINK_LIBRARIES(TechnosoftIpos ${YARP_LIBRARIES} ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES})
 

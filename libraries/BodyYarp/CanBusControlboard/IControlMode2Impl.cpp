@@ -7,11 +7,7 @@
 bool teo::CanBusControlboard::setPositionMode(int j)
 {
     CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iControlModeRaw[j]->setPositionModeRaw( 0 );
+    return setControlMode(j, VOCAB_CM_POSITION);
 }
 
 // -----------------------------------------------------------------------------
@@ -19,8 +15,7 @@ bool teo::CanBusControlboard::setPositionMode(int j)
 bool teo::CanBusControlboard::setVelocityMode(int j)
 {
     CD_DEBUG("(%d)\n",j);
-
-    return iControlModeRaw[j]->setVelocityModeRaw( 0 );
+    return setControlMode(j, VOCAB_CM_VELOCITY);
 }
 
 // -----------------------------------------------------------------------------
@@ -28,11 +23,7 @@ bool teo::CanBusControlboard::setVelocityMode(int j)
 bool teo::CanBusControlboard::setTorqueMode(int j)
 {
     CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iControlModeRaw[j]->setTorqueModeRaw( 0 );
+    return setControlMode(j, VOCAB_CM_TORQUE);
 }
 
 // -----------------------------------------------------------------------------
@@ -40,11 +31,7 @@ bool teo::CanBusControlboard::setTorqueMode(int j)
 bool teo::CanBusControlboard::setImpedancePositionMode(int j)
 {
     CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iControlModeRaw[j]->setImpedancePositionModeRaw( 0 );
+    return setControlMode(j, VOCAB_CM_IMPEDANCE_POS);
 }
 
 // -----------------------------------------------------------------------------
@@ -52,35 +39,27 @@ bool teo::CanBusControlboard::setImpedancePositionMode(int j)
 bool teo::CanBusControlboard::setImpedanceVelocityMode(int j)
 {
     CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iControlModeRaw[j]->setImpedanceVelocityModeRaw( 0 );
+    return setControlMode(j, VOCAB_CM_IMPEDANCE_VEL);
 }
 
 // -----------------------------------------------------------------------------
 
 bool teo::CanBusControlboard::setOpenLoopMode(int j)
 {
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iControlModeRaw[j]->setOpenLoopModeRaw( 0 );
+    CD_ERROR("(%d)\n",j);  //-- Removed in YARP 2.3.70
+    return false;
 }
 
-// ---------------------- IControlMode2 Related  ---------------------------------
+// -----------------------------------------------------------------------------
 
 bool teo::CanBusControlboard::getControlMode(int j, int *mode)
 {
-    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
+    //CD_DEBUG("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
 
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iControlModeRaw[j]->getControlModeRaw( 0, mode );
+    return iControlMode2Raw[j]->getControlModeRaw( 0, mode );
 }
 
 // -----------------------------------------------------------------------------
@@ -95,7 +74,7 @@ bool teo::CanBusControlboard::getControlModes(int *modes)
     return ok;
 }
 
-// -----------------------------------------------------------------------------
+// ---------------------- IControlMode2 Related  ---------------------------------
 
 bool teo::CanBusControlboard::getControlModes(const int n_joint, const int *joints, int *modes)
 {
@@ -113,32 +92,17 @@ bool teo::CanBusControlboard::setControlMode(const int j, const int mode)
 {
     CD_DEBUG("(%d, %d)\n",j,mode);
 
-    bool ok = true;
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    if( mode == VOCAB_CM_POSITION )
-        ok = setPositionMode(j);
-    if( mode == VOCAB_CM_VELOCITY )
-        ok = setVelocityMode(j);
-    if( mode == VOCAB_CM_TORQUE )
-        ok = setTorqueMode(j);
-    if( mode == VOCAB_CM_IMPEDANCE_POS )
-        ok = setImpedancePositionMode(j);
-    if( mode == VOCAB_CM_IMPEDANCE_VEL )
-        ok = setImpedanceVelocityMode(j);
-    if( mode == VOCAB_CM_OPENLOOP )
-        ok = setOpenLoopMode(j);
-
-    return ok;
-
+    return iControlMode2Raw[j]->setControlModeRaw( 0, mode );
 }
 
 // -----------------------------------------------------------------------------
 
 bool teo::CanBusControlboard::setControlModes(const int n_joint, const int *joints, int *modes)
 {
-    CD_DEBUG("\n");
+    CD_DEBUG("(%d)\n",n_joint);
 
     bool ok = true;
     for(int j=0; j<n_joint; j++)

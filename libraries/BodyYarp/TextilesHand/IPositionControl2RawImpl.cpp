@@ -12,13 +12,6 @@ bool teo::TextilesHand::getAxes(int *ax)
 
 // -----------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setPositionModeRaw()
-{
-    return setPositionModeRaw(0);
-}
-
-// -----------------------------------------------------------------------------------------
-
 bool teo::TextilesHand::positionMoveRaw(int j, double ref)    // encExposed = ref;
 {
     CD_INFO("(%d,%f)\n",j,ref);

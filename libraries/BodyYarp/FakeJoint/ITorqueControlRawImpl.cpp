@@ -4,14 +4,6 @@
 
 // ######################## ITorqueControlRaw Related ##########################
 
-bool teo::FakeJoint::setTorqueModeRaw()
-{
-    CD_ERROR("\n");
-    return false;
-}
-
-// ------------------------------------------------------------------------------
-
 bool teo::FakeJoint::getRefTorquesRaw(double *t)
 {
     CD_ERROR("\n");

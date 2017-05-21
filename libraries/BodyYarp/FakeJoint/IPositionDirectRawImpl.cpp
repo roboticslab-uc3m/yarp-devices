@@ -4,14 +4,6 @@
 
 // ######################## IPositionDirectRaw Related ##########################
 
-bool teo::FakeJoint::setPositionDirectModeRaw()
-{
-    CD_DEBUG("\n");
-    return true;
-}
-
-// ------------------------------------------------------------------------------
-
 bool teo::FakeJoint::setPositionRaw(int j, double ref)
 {
     CD_DEBUG("\n");

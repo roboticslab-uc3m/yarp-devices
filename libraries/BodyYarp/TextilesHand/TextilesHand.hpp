@@ -44,7 +44,7 @@ namespace teo
 */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
 // Note: IControlLimits2Raw inherits from IControlLimitsRaw
-class TextilesHand : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlModeRaw, public yarp::dev::IEncodersTimedRaw,
+class TextilesHand : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlMode2Raw, public yarp::dev::IEncodersTimedRaw,
     public yarp::dev::IPositionControl2Raw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControl2Raw, public yarp::dev::ITorqueControlRaw,
     public ICanBusSharer, public yarp::dev::IInteractionModeRaw
 {
@@ -84,7 +84,7 @@ public:
     virtual bool setVelLimitsRaw(int axis, double min, double max);
     virtual bool getVelLimitsRaw(int axis, double *min, double *max);
 
-    //  --------- IControlModeRaw Declarations. Implementation in IControlModeRawImpl.cpp ---------
+    //  --------- IControlModeRaw Declarations. Implementation in IControlMode2RawImpl.cpp ---------
     virtual bool setPositionModeRaw(int j);
     virtual bool setVelocityModeRaw(int j);
     virtual bool setTorqueModeRaw(int j);
@@ -93,6 +93,12 @@ public:
     virtual bool setOpenLoopModeRaw(int j);
     virtual bool getControlModeRaw(int j, int *mode);
     virtual bool getControlModesRaw(int *modes);
+
+    //  --------- IControlMode2Raw Declarations. Implementation in IControlMode2RawImpl.cpp ---------
+    virtual bool getControlModesRaw(const int n_joint, const int *joints, int *modes);
+    virtual bool setControlModeRaw(const int j, const int mode);
+    virtual bool setControlModesRaw(const int n_joint, const int *joints, int *modes);
+    virtual bool setControlModesRaw(int *modes);
 
     //  ---------- IEncodersRaw Declarations. Implementation in IEncodersRawImpl.cpp ----------
     virtual bool resetEncoderRaw(int j);
@@ -112,7 +118,6 @@ public:
 
     // ------- IPositionControlRaw declarations. Implementation in IPositionControl2RawImpl.cpp -------
     virtual bool getAxes(int *ax);
-    virtual bool setPositionModeRaw();
     virtual bool positionMoveRaw(int j, double ref);
     virtual bool positionMoveRaw(const double *refs);
     virtual bool relativeMoveRaw(int j, double delta);
@@ -145,13 +150,11 @@ public:
     virtual bool getTargetPositionsRaw(const int n_joint, const int *joints, double *refs);
 
     // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
-    virtual bool setPositionDirectModeRaw();
     virtual bool setPositionRaw(int j, double ref);
     virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs);
     virtual bool setPositionsRaw(const double *refs);
 
     // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
-    virtual bool setTorqueModeRaw();
     virtual bool getRefTorquesRaw(double *t);
     virtual bool getRefTorqueRaw(int j, double *t);
     virtual bool setRefTorquesRaw(const double *t);
@@ -180,7 +183,6 @@ public:
     virtual bool setTorqueOffsetRaw(int j, double v);
 
     //  --------- IVelocityControlRaw Declarations. Implementation in IVelocityControl2RawImpl.cpp ---------
-    virtual bool setVelocityModeRaw();
     virtual bool velocityMoveRaw(int j, double sp);
     virtual bool velocityMoveRaw(const double *sp);
 

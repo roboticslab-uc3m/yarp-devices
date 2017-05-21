@@ -4,14 +4,6 @@
 
 // ############################ ITorqueControlRaw Related ############################
 
-bool teo::TextilesHand::setTorqueModeRaw()
-{
-    CD_ERROR("\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------------
-
 bool teo::TextilesHand::getRefTorquesRaw(double *t)
 {
     CD_ERROR("\n");

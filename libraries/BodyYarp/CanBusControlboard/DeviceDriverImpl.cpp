@@ -47,7 +47,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
     //-- Populate the CAN nodes vector.
     nodes.resize( ids.size() );
     iControlLimits2Raw.resize( nodes.size() );
-    iControlModeRaw.resize( nodes.size() );
+    iControlMode2Raw.resize( nodes.size() );
     iEncodersTimedRaw.resize( nodes.size() );
     iPositionControl2Raw.resize( nodes.size() );
     iPositionDirectRaw.resize( nodes.size() );
@@ -93,9 +93,9 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
             return false;
         }
 
-        if( !device->view( iControlModeRaw[i] ))
+        if( !device->view( iControlMode2Raw[i] ))
         {
-            CD_ERROR("[error] Problems acquiring iControlModeRaw interface\n");
+            CD_ERROR("[error] Problems acquiring iControlMode2Raw interface\n");
             return false;
         }
 
@@ -236,25 +236,24 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
 
     //-- Set all motor drivers to mode.
 
-    if( mode=="position")
-    {
-        if( ! this->setPositionMode() )
-            return false;
-    }
-    else if( mode=="velocity")
-    {
-        if( ! this->setVelocityMode() )
-            return false;
-    }
-    else if( mode=="torque")
-    {
-        if( ! this->setTorqueMode() )
-            return false;
-    }
+    int controlModeVocab = 0;
+
+    if( mode=="position" )
+        controlModeVocab = VOCAB_CM_POSITION;
+    else if( mode=="velocity" )
+        controlModeVocab = VOCAB_CM_VELOCITY;
+    else if( mode=="torque" )
+        controlModeVocab = VOCAB_CM_TORQUE;
     else
     {
         CD_ERROR("Not prepared for initializing in mode %s.\n",mode.c_str());
         return false;
+    }
+
+    for(int i=0; i<nodes.size(); i++)
+    {
+        if( ! this->setControlMode(i, controlModeVocab) )
+            return false;
     }
 
     //-- Check the status of each driver.
