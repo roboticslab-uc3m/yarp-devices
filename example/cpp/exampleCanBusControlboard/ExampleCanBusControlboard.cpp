@@ -6,10 +6,9 @@
 teo::ExampleCanBusControlboard::ExampleCanBusControlboard() { }
 
 /************************************************************************/
-bool teo::ExampleCanBusControlboard::configure(ResourceFinder &rf)
+bool teo::ExampleCanBusControlboard::configure(yarp::os::ResourceFinder &rf)
 {
-
-    Property options;
+    yarp::os::Property options;
     options.fromString(rf.toString());  //-- Allow options like stream_state=0.
     options.put("device","controlboardwrapper2");
     options.put("subdevice","CanBusControlboard");
@@ -34,4 +33,3 @@ bool teo::ExampleCanBusControlboard::updateModule()
     //printf("ExampleCanBusControlboard alive...\n");
     return true;
 }
-

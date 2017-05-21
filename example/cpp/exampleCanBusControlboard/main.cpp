@@ -92,24 +92,16 @@ Response: [ok]
 
 #include "ExampleCanBusControlboard.hpp"
 
-using namespace yarp::os;
-using namespace yarp::dev;
-
-YARP_DECLARE_PLUGINS(BodyYarp)
-
 int main(int argc, char *argv[])
 {
-
-    YARP_REGISTER_PLUGINS(BodyYarp);
-
-    ResourceFinder rf;
+    yarp::os::ResourceFinder rf;
     rf.setVerbose(true);
     rf.setDefaultContext("exampleCanBusControlboard");
     rf.setDefaultConfigFile("exampleCanBusControlboard.ini");
     rf.configure(argc, argv);
 
     CD_INFO("Checking for yarp network...\n");
-    Network yarp;
+    yarp::os::Network yarp;
     if (!yarp.checkNetwork())
     {
         CD_ERROR("Found no yarp network (try running \"yarpserver &\"), bye!\n");
@@ -120,4 +112,3 @@ int main(int argc, char *argv[])
     teo::ExampleCanBusControlboard mod;
     return mod.runModule(rf);
 }
-
