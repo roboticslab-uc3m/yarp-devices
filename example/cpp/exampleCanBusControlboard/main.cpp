@@ -95,13 +95,8 @@ Response: [ok]
 using namespace yarp::os;
 using namespace yarp::dev;
 
-YARP_DECLARE_PLUGINS(BodyYarp)
-
 int main(int argc, char *argv[])
 {
-
-    YARP_REGISTER_PLUGINS(BodyYarp);
-
     ResourceFinder rf;
     rf.setVerbose(true);
     rf.setDefaultContext("exampleCanBusControlboard");

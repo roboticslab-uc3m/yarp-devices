@@ -39,13 +39,8 @@ make -j3
 
 #include "ICanBusSharer.h"
 
-YARP_DECLARE_PLUGINS(BodyYarp)
-
 int main(int argc, char *argv[])
 {
-
-    YARP_REGISTER_PLUGINS(BodyYarp);
-
     yarp::os::Network yarp;
     if (! yarp::os::Network::checkNetwork() )
     {
@@ -53,17 +48,17 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    PolyDriver canBusDevice;
-    teo::CanBusHico* iCanBus;
+    yarp::dev::PolyDriver canBusDevice;
+    teo::ICanBusHico* iCanBus;
 
-    Property canBusOptions;
+    yarp::os::Property canBusOptions;
     canBusOptions.put("device","CanBusHico");
     canBusOptions.put("canDevice","/dev/can1");
     canBusOptions.put("canBitrate",BITRATE_1000k);
     canBusDevice.open(canBusOptions);
     if( ! canBusDevice.isValid() )
     {
-        CD_ERROR("canBusDevice instantiation not worked.\n");
+        printf("canBusDevice instantiation not worked.\n");
         return 1;
     }
     canBusDevice.view(iCanBus);
@@ -122,6 +117,15 @@ int main(int argc, char *argv[])
     }
     else printf("[success] Viewing IVelocityControlRaw.\n");
 
+    yarp::dev::IControlModeRaw *mode;
+    ok = dd.view(mode);
+    if (!ok)
+    {
+        printf("[error] Problems viewing IControlModeRaw.\n");
+        return 1;
+    }
+    else printf("[success] Viewing IControlModeRaw.\n");
+
     //-- Pass before sending commands.
     iCanBusSharer->setCanBusPtr(iCanBus);
 
@@ -137,7 +141,7 @@ int main(int argc, char *argv[])
     iCanBusSharer->enable();
 
     //-- Commands on TechnosoftIpos.
-    ok = pos->setPositionModeRaw();
+    ok = mode->setPositionModeRaw(0);
     if (!ok)
     {
         printf("[error] Problems in setPositionModeRaw.\n");
