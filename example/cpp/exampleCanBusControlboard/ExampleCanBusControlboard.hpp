@@ -15,9 +15,6 @@
 
 #include "ColorDebug.hpp"
 
-using namespace yarp::os;
-using namespace yarp::dev;
-
 namespace teo
 {
 
@@ -29,7 +26,7 @@ namespace teo
  * controlboardwrapper2 RPC commands.
  *
  */
-class ExampleCanBusControlboard : public RFModule
+class ExampleCanBusControlboard : public yarp::os::RFModule
 {
 
 protected:
@@ -45,10 +42,9 @@ protected:
 
 public:
     ExampleCanBusControlboard();
-    bool configure(ResourceFinder &rf);
+    bool configure(yarp::os::ResourceFinder &rf);
 };
 
 }  // namespace teo
 
 #endif  // __EXAMPLE_CAN_BUS_CONTROLBOARD__
-
