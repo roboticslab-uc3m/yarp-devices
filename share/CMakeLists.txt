@@ -34,3 +34,7 @@ if(ENABLE_tests)
     add_subdirectory(testCuiAbsolute)
 endif()
 
+if(ENABLE_SpaceNavigator)
+    add_subdirectory(spaceNavigator)
+endif()
+

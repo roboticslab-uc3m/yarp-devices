@@ -14,6 +14,8 @@ before_install:
   - '[[ "$TRAVIS_EVENT_TYPE" = cron ]] && export YARP_CHECKOUT=devel || export YARP_CHECKOUT=master'
 
 install:
+  #-- Install SpaceNavigator-related packages
+  - sudo apt-get install libspnav-dev 
   #-- Install cmake
   - sudo apt-get install cmake
   #-- Install yarp
