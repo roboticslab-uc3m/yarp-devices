@@ -24,15 +24,22 @@ namespace roboticslab
 
 /**
  * @ingroup BodyYarp
- * \defgroup SpaceNavigator
+ * @defgroup SpaceNavigator
  * @brief Contains roboticslab::SpaceNavigator.
  */
 
  /**
  * @ingroup SpaceNavigator
- * @brief Implementation for the SpaceNavigator 3D mouse. Launch as in:
- * yarpdev --device SpaceNavigator --period 5 --name /SpaceNavigator:o
+ * @brief Implementation for the SpaceNavigator 3D mouse.
  *
+ * Launch as in:
+@verbatim
+yarpdev --device SpaceNavigator --period 5 --name /spacenavigator
+@endverbatim
+ * You can split mouse and button output into separate channels with:
+@verbatim
+yarpdev --device SpaceNavigator --period 5 --name /spacenavigator --ports "(mouse:o buttons:o)" --channels 8 --mouse:o 0 5 0 5 --buttons:o 6 7 0 1
+@endverbatim
  */
 class SpaceNavigator : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor
 {
