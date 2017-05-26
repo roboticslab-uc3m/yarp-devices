@@ -21,7 +21,13 @@ bool teo::Jr3::open(yarp::os::Searchable& config)
     fs3.m[0]=5.5;
     fs3.m[1]=5.5;
     fs3.m[2]=5.5;
-    ret=ioctl(fd,JR3_CMD_SETFULLSCALES,&fs3);
+
+    //ret=ioctl(fd,JR3_CMD_SETFULLSCALES,&fs3);
+
+    #define IOCTL3_JR3_SET_FULL_SCALES    _IOW( JR3_TYPE, 39,  struct force_array )
+    ret=ioctl(fd,IOCTL3_JR3_SET_FULL_SCALES,&fs3);
+
+    //ret=ioctl(fd,IOCTL3_JR3_RESET);
 
     //-- Make sure fullscales were set.
     ret=ioctl(fd,IOCTL0_JR3_GET_FULL_SCALES,&fs0);
