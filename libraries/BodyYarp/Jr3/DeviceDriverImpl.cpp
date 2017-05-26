@@ -27,12 +27,11 @@ bool teo::Jr3::open(yarp::os::Searchable& config)
     #define IOCTL3_JR3_SET_FULL_SCALES    _IOW( JR3_TYPE, 39,  struct force_array )
     ret=ioctl(fd,IOCTL3_JR3_SET_FULL_SCALES,&fs3);
 
-    yarp::os::Time::delay(0.5);
-
     //int card = 0;
     //write_data(JR3_COMMAND0,JR3_CMD_SETFULLSCALES,card);
 
-    //ioctl(fd,JR3_CMD_SETFULLSCALES,JR3_COMMAND0);
+    ioctl(fd,JR3_CMD_SETFULLSCALES,JR3_COMMAND0);
+    yarp::os::Time::delay(0.5);
 
 
     //-- Make sure fullscales were set.
