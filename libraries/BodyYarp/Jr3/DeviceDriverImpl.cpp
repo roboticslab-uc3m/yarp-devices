@@ -15,19 +15,26 @@ bool teo::Jr3::open(yarp::os::Searchable& config)
     int ret;
 
     //-- Force fullscales.
-    fs3.f[0]=110;
+    /*fs3.f[0]=110;
     fs3.f[1]=110;
     fs3.f[2]=220;
     fs3.m[0]=5.5;
     fs3.m[1]=5.5;
-    fs3.m[2]=5.5;
+    fs3.m[2]=5.5;*/
 
     //ret=ioctl(fd,JR3_CMD_SETFULLSCALES,&fs3);
 
-    #define IOCTL3_JR3_SET_FULL_SCALES    _IOW( JR3_TYPE, 39,  struct force_array )
-    ret=ioctl(fd,IOCTL3_JR3_SET_FULL_SCALES,&fs3);
+    //#define IOCTL3_JR3_SET_FULL_SCALES    _IOW( JR3_TYPE, 39,  struct force_array )
+    //ret=ioctl(fd,IOCTL3_JR3_SET_FULL_SCALES,&fs3);
 
-    //ret=ioctl(fd,IOCTL3_JR3_RESET);
+    ret=ioctl(fd,IOCTL3_JR3_RESET);
+    yarp::os::Time::delay(0.5);
+
+    //int card = 0;
+    //write_data(JR3_COMMAND0,JR3_CMD_SETFULLSCALES,card);
+
+    //ioctl(fd,JR3_CMD_SETFULLSCALES,JR3_COMMAND0);
+
 
     //-- Make sure fullscales were set.
     ret=ioctl(fd,IOCTL0_JR3_GET_FULL_SCALES,&fs0);
