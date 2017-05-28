@@ -2,7 +2,7 @@
 
 #include "AmorControlboard.hpp"
 
-// ------------------- IControlLimits Related ------------------------------------
+// ------------------- IControlLimits related ------------------------------------
 
 bool roboticslab::AmorControlboard::setLimits(int axis, double min, double max)
 {

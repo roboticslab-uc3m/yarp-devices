@@ -2,7 +2,7 @@
 
 #include "AmorControlboard.hpp"
 
-// ------------------- IPositionControl2 Related --------------------------------
+// ------------------- IPositionControl2 related --------------------------------
 
 bool roboticslab::AmorControlboard::positionMove(const int n_joint, const int *joints, const double *refs)
 {

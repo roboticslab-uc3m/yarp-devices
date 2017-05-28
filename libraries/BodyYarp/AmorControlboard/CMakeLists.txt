@@ -22,10 +22,10 @@ if(NOT SKIP_AmorControlboard)
                                    IControlModeImpl.cpp
                                    IEncodersImpl.cpp
                                    IEncodersTimedImpl.cpp
-                                   IPositionControl2Impl.cpp
                                    IPositionControlImpl.cpp
-                                   IVelocityControl2Impl.cpp
-                                   IVelocityControlImpl.cpp)
+                                   IPositionControl2Impl.cpp
+                                   IVelocityControlImpl.cpp
+                                   IVelocityControl2Impl.cpp)
 
   target_link_libraries(AmorControlboard ${YARP_LIBRARIES} ${AMOR_API_LIBRARIES})
 

@@ -2,7 +2,7 @@
 
 #include "AmorControlboard.hpp"
 
-// ------------------ IEncoders Related -----------------------------------------
+// ------------------ IEncoders related -----------------------------------------
 
 bool roboticslab::AmorControlboard::resetEncoder(int j)
 {

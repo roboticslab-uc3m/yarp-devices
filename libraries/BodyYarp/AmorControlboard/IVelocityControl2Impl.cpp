@@ -2,7 +2,7 @@
 
 #include "AmorControlboard.hpp"
 
-// ------------------ IVelocity2 Related ----------------------------------------
+// ------------------ IVelocityControl2 related ----------------------------------------
 
 bool roboticslab::AmorControlboard::velocityMove(const int n_joint, const int *joints, const double *spds)
 {
@@ -78,4 +78,3 @@ bool roboticslab::AmorControlboard::getVelPids(yarp::dev::Pid *pids)
 }
 
 // -----------------------------------------------------------------------------
-

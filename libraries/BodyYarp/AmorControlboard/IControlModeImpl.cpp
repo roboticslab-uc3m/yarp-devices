@@ -2,7 +2,7 @@
 
 #include "AmorControlboard.hpp"
 
-// ------------------- IControlLimits Related ------------------------------------
+// ------------------- IControlMode related ------------------------------------
 
 bool roboticslab::AmorControlboard::setPositionMode(int j)
 {

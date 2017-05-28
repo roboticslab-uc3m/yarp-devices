@@ -2,15 +2,7 @@
 
 #include "AmorControlboard.hpp"
 
-// ------------------ IVelocity Related ----------------------------------------
-
-bool roboticslab::AmorControlboard::setVelocityMode()
-{
-    CD_DEBUG("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------
+// ------------------ IVelocityControl related ----------------------------------------
 
 bool roboticslab::AmorControlboard::velocityMove(int j, double sp)
 {

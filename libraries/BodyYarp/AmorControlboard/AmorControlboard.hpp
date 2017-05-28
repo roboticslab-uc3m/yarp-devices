@@ -22,22 +22,24 @@ namespace roboticslab
 
 /**
  * @ingroup BodyYarp
- * \defgroup AmorControlboard
+ * @defgroup AmorControlboard
  * @brief Contains roboticslab::AmorControlboard.
  */
 
 /**
 * @ingroup AmorControlboard
-* @brief Implements several yarp::dev:: control board interfaces.
+* @brief Implements several yarp::dev:: controlboard interfaces.
 *
 */
-class AmorControlboard : public yarp::dev::DeviceDriver, public yarp::dev::IPositionControl2,
-                         public yarp::dev::IVelocityControl2, public yarp::dev::IEncodersTimed,
-                         public yarp::dev::IControlLimits, public yarp::dev::IControlMode
+class AmorControlboard : public yarp::dev::DeviceDriver,
+                         public yarp::dev::IPositionControl2,
+                         public yarp::dev::IVelocityControl2,
+                         public yarp::dev::IEncodersTimed,
+                         public yarp::dev::IControlLimits,
+                         public yarp::dev::IControlMode
 {
 public:
 
-    // Set the Thread Rate in the class constructor
     AmorControlboard() {}
 
     // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
@@ -49,14 +51,6 @@ public:
      * @return true/false.
      */
     virtual bool getAxes(int *ax);
-
-    /** Set position mode. This command
-     * is required by control boards implementing different
-     * control methods (e.g. velocity/torque), in some cases
-     * it can be left empty.
-     * return true/false on success/failure
-     */
-    virtual bool setPositionMode();
 
     /** Set new reference point for a single axis.
      * @param j joint number
@@ -259,7 +253,7 @@ public:
      */
     virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs);
 
-//  ---------- IEncodersTimed declarations. Implementation in IEncodersTimedImpl.cpp ----------
+//  ---------- IEncoders declarations. Implementation in IEncodersImpl.cpp ----------
 
     /**
      * Reset encoder, single joint. Set the encoder value to zero
@@ -353,15 +347,6 @@ public:
    virtual bool getEncoderTimed(int j, double *encs, double *time);
 
 //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
-
-    /**
-     * Set velocity mode. This command
-     * is required by control boards implementing different
-     * control methods (e.g. velocity/torque), in some cases
-     * it can be left empty.
-     * @return true/false on success failure
-     */
-    virtual bool setVelocityMode();
 
     /**
      * Start motion at a given speed, single joint.

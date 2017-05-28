@@ -2,7 +2,7 @@
 
 #include "AmorControlboard.hpp"
 
-// ------------------ IEncodersTimed Related -----------------------------------------
+// ------------------ IEncodersTimed related -----------------------------------------
 
 bool roboticslab::AmorControlboard::getEncodersTimed(double *encs, double *time)
 {

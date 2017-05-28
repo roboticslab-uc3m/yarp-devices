@@ -2,20 +2,12 @@
 
 #include "AmorControlboard.hpp"
 
-// ------------------- IPositionControl Related --------------------------------
+// ------------------- IPositionControl related --------------------------------
 
 bool roboticslab::AmorControlboard::getAxes(int *ax)
 {
     CD_DEBUG("\n");
     *ax = AMOR_NUM_JOINTS;
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::AmorControlboard::setPositionMode()
-{
-    CD_DEBUG("\n");
     return true;
 }
 
@@ -198,4 +190,3 @@ bool roboticslab::AmorControlboard::stop()
 }
 
 // -----------------------------------------------------------------------------
-

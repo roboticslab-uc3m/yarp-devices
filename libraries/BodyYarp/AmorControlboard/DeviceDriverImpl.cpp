@@ -2,7 +2,7 @@
 
 #include "AmorControlboard.hpp"
 
-// ------------------- DeviceDriver Related ------------------------------------
+// ------------------- DeviceDriver related ------------------------------------
 
 bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
 {
