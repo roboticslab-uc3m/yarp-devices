@@ -539,6 +539,20 @@ protected:
      */
     bool indexWithinRange(const int& idx);
 
+    /**
+     * Convert from radians to degrees.
+     * @param rad radians
+     * @return degrees
+     */
+    static double toDeg(double rad);
+
+    /**
+     * Convert from degrees to radians.
+     * @param deg degrees
+     * @return radians
+     */
+    static double toRad(double deg);
+
 // ------------------------------- Private -------------------------------------
 
 private:

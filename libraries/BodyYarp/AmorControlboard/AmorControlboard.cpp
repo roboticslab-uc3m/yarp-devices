@@ -2,6 +2,9 @@
 
 #include "AmorControlboard.hpp"
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::indexWithinRange(const int& idx)
@@ -12,6 +15,20 @@ bool roboticslab::AmorControlboard::indexWithinRange(const int& idx)
         return false;
     }
     return true;
+}
+
+// -----------------------------------------------------------------------------
+
+double roboticslab::AmorControlboard::toDeg(double rad)
+{
+    return rad * 180 / M_PI;
+}
+
+// -----------------------------------------------------------------------------
+
+double roboticslab::AmorControlboard::toRad(double deg)
+{
+    return deg * M_PI / 180;
 }
 
 // -----------------------------------------------------------------------------
