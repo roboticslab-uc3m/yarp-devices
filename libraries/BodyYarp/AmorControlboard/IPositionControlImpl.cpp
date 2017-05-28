@@ -18,19 +18,21 @@ bool roboticslab::AmorControlboard::positionMove(int j, double ref)
     CD_DEBUG("(%d, %f)\n", j, ref);
 
     if (!indexWithinRange(j))
-        return false;
-
-    AMOR_VECTOR7 refs;
-
-    for (unsigned int i = 0; i < AMOR_NUM_JOINTS; i++)
     {
-        if (i == j)
-            refs[i] = ref * 180 / 3.14159;
-        else
-            refs[i] = 0;
+        return false;
     }
 
-    return amor_set_positions(handle, refs) == AMOR_SUCCESS;
+    AMOR_VECTOR7 positions;
+
+    if (amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
+    {
+        CD_ERROR("Could not retrieve current positions.\n");
+        return false;
+    }
+
+    positions[j] = toRad(ref);
+
+    return amor_set_positions(handle, positions) == AMOR_SUCCESS;
 }
 
 // -----------------------------------------------------------------------------
@@ -38,10 +40,15 @@ bool roboticslab::AmorControlboard::positionMove(int j, double ref)
 bool roboticslab::AmorControlboard::positionMove(const double *refs)
 {
     CD_DEBUG("\n");
-    bool ok = true;
+
+    AMOR_VECTOR7 positions;
+
     for (int j = 0; j < AMOR_NUM_JOINTS; j++)
-        ok &= positionMove(j, refs[j]);
-    return ok;
+    {
+        positions[j] = toRad(refs[j]);
+    }
+
+    return amor_set_positions(handle, positions) == AMOR_SUCCESS;
 }
 
 // -----------------------------------------------------------------------------
@@ -49,9 +56,23 @@ bool roboticslab::AmorControlboard::positionMove(const double *refs)
 bool roboticslab::AmorControlboard::relativeMove(int j, double delta)
 {
     CD_DEBUG("(%d, %f)\n", j, delta);
+
     if (!indexWithinRange(j))
+    {
         return false;
-    return true;
+    }
+
+    AMOR_VECTOR7 positions;
+
+    if (amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
+    {
+        CD_ERROR("Could not retrieve current positions.\n");
+        return false;
+    }
+
+    positions[j] += toRad(delta);
+
+    return amor_set_positions(handle, positions) == AMOR_SUCCESS;
 }
 
 // -----------------------------------------------------------------------------
@@ -59,7 +80,15 @@ bool roboticslab::AmorControlboard::relativeMove(int j, double delta)
 bool roboticslab::AmorControlboard::relativeMove(const double *deltas)
 {
     CD_DEBUG("\n");
-    return true;
+
+    AMOR_VECTOR7 positions;
+
+    for (int j = 0; j < AMOR_NUM_JOINTS; j++)
+    {
+        positions[j] += toRad(deltas[j]);
+    }
+
+    return amor_set_positions(handle, positions) == AMOR_SUCCESS;
 }
 
 // -----------------------------------------------------------------------------
@@ -67,8 +96,12 @@ bool roboticslab::AmorControlboard::relativeMove(const double *deltas)
 bool roboticslab::AmorControlboard::checkMotionDone(int j, bool *flag)
 {
     CD_DEBUG("(%d)\n", j);
+
     if (!indexWithinRange(j))
+    {
         return false;
+    }
+
     return checkMotionDone(flag);
 }
 
@@ -77,13 +110,17 @@ bool roboticslab::AmorControlboard::checkMotionDone(int j, bool *flag)
 bool roboticslab::AmorControlboard::checkMotionDone(bool *flag)
 {
     CD_DEBUG("\n");
+
     amor_movement_status status;
+
     if (amor_get_movement_status(handle, &status) != AMOR_SUCCESS)
     {
         CD_ERROR("Could not get AMOR movement status!\n");
         return false;
     }
+
     *flag = (status == AMOR_MOVEMENT_STATUS_FINISHED);
+
     return true;
 }
 
@@ -91,93 +128,77 @@ bool roboticslab::AmorControlboard::checkMotionDone(bool *flag)
 
 bool roboticslab::AmorControlboard::setRefSpeed(int j, double sp)
 {
-    CD_DEBUG("(%d, %f)\n", j, sp);
-    if (!indexWithinRange(j))
-        return false;
-    return true;
+    CD_ERROR("Not available (%d, %f).\n", j, sp);
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::setRefSpeeds(const double *spds)
 {
-    CD_DEBUG("\n");
-    bool ok = true;
-    for (unsigned int i = 0; i < AMOR_NUM_JOINTS; i++)
-        ok &= setRefSpeed(i, spds[i]);
-    return ok;
+    CD_ERROR("Not available.\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::setRefAcceleration(int j, double acc)
 {
-    CD_DEBUG("(%d, %f)\n", j, acc);
-    if (!indexWithinRange(j))
-        return false;
-    return true;
+    CD_ERROR("Not available (%d, %f).\n", j, acc);
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::setRefAccelerations(const double *accs)
 {
-    CD_DEBUG("\n");
-    bool ok = true;
-    for (unsigned int i = 0; i < AMOR_NUM_JOINTS; i++)
-        ok &= setRefAcceleration(i, accs[i]);
-    return ok;
+    CD_ERROR("Not available.\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::getRefSpeed(int j, double *ref)
 {
-    CD_DEBUG("(%d)\n", j);
-    if (!indexWithinRange(j))
-        return false;
-    return true;
+    CD_ERROR("Not available (%d).\n", j);
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::getRefSpeeds(double *spds)
 {
-    CD_DEBUG("\n");
-    bool ok = true;
-    for (unsigned int i = 0; i < AMOR_NUM_JOINTS; i++)
-        ok &= getRefSpeed(i, &spds[i]);
-    return ok;
+    CD_ERROR("Not available.\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::getRefAcceleration(int j, double *acc)
 {
-    CD_DEBUG("(%d)\n", j);
-    if (!indexWithinRange(j))
-        return false;
-    return true;
+    CD_ERROR("Not available (%d).\n", j);
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::getRefAccelerations(double *accs)
 {
-    CD_DEBUG("\n");
-    bool ok = true;
-    for (unsigned int i = 0; i < AMOR_NUM_JOINTS; i++)
-        ok &= getRefAcceleration(i, &accs[i]);
-    return ok;
+    CD_ERROR("Not available.\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::stop(int j)
 {
-    CD_DEBUG("(%d)\n", j);
+    CD_WARNING("Selective stop not available, stopping all joints at once (%d).\n", j);
+
     if (!indexWithinRange(j))
+    {
         return false;
+    }
+
     return stop();
 }
 

@@ -540,6 +540,13 @@ protected:
     bool indexWithinRange(const int& idx);
 
     /**
+     * Check if number of joints is within range.
+     * @param n_joint index to check.
+     * @return true/false on success/failure.
+     */
+    bool batchWithinRange(const int& n_joint);
+
+    /**
      * Convert from radians to degrees.
      * @param rad radians
      * @return degrees

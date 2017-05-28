@@ -11,9 +11,29 @@ bool roboticslab::AmorControlboard::indexWithinRange(const int& idx)
 {
     if (idx >= AMOR_NUM_JOINTS)
     {
-        CD_WARNING("Index out of range!! (%d >= %d)!!!\n", idx, AMOR_NUM_JOINTS);
+        CD_ERROR("Index out of range!! (%d >= %d)!!!\n", idx, AMOR_NUM_JOINTS);
         return false;
     }
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::AmorControlboard::batchWithinRange(const int& n_joint)
+{
+    if (n_joint == 0)
+    {
+        CD_WARNING("Passed array of size (n_joint) equal to zero.\n");
+        return true;
+    }
+
+    if (n_joint < 0 || n_joint > AMOR_NUM_JOINTS)
+    {
+        CD_ERROR("n_joint out of range (< 0 or > %d): %d.\n", AMOR_NUM_JOINTS, n_joint);
+        return false;
+    }
+
     return true;
 }
 
