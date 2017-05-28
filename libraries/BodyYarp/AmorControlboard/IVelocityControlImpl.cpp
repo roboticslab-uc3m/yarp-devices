@@ -9,18 +9,21 @@ bool roboticslab::AmorControlboard::velocityMove(int j, double sp)
     CD_DEBUG("(%d, %f)\n", j, sp);
 
     if (!indexWithinRange(j))
+    {
         return false;
-
-    AMOR_VECTOR7 sps;
-
-    for (unsigned int i = 0; i < AMOR_NUM_JOINTS; i++) {
-        if (i == j)
-            sps[i] = sp;
-        else
-            sps[i] = 0;
     }
 
-    return amor_set_velocities(handle, sps) == AMOR_SUCCESS;
+    AMOR_VECTOR7 velocities;
+
+    if (amor_get_actual_velocities(handle, &velocities) != AMOR_SUCCESS)
+    {
+        CD_ERROR("Could not retrieve current velocities.\n");
+        return false;
+    }
+
+    velocities[j] = toRad(sp);
+
+    return amor_set_velocities(handle, velocities) == AMOR_SUCCESS;
 }
 
 // -----------------------------------------------------------------------------
@@ -28,10 +31,15 @@ bool roboticslab::AmorControlboard::velocityMove(int j, double sp)
 bool roboticslab::AmorControlboard::velocityMove(const double *sp)
 {
     CD_DEBUG("\n");
-    bool ok = true;
-    for (unsigned int i = 0; i < AMOR_NUM_JOINTS; i++)
-        ok &= velocityMove(i, sp[i]);
-    return ok;
+
+    AMOR_VECTOR7 velocities;
+
+    for (int j = 0; j < AMOR_NUM_JOINTS; j++)
+    {
+        velocities[j] = toRad(sp[j]);
+    }
+
+    return amor_set_velocities(handle, velocities) == AMOR_SUCCESS;
 }
 
 // ----------------------------------------------------------------------------
