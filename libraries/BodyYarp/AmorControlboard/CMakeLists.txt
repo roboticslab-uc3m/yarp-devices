@@ -19,13 +19,15 @@ if(NOT SKIP_AmorControlboard)
                                    AmorControlboard.hpp
                                    DeviceDriverImpl.cpp
                                    IControlLimitsImpl.cpp
+                                   IControlLimits2Impl.cpp
                                    IControlModeImpl.cpp
                                    IEncodersImpl.cpp
                                    IEncodersTimedImpl.cpp
                                    IPositionControlImpl.cpp
                                    IPositionControl2Impl.cpp
                                    IVelocityControlImpl.cpp
-                                   IVelocityControl2Impl.cpp)
+                                   IVelocityControl2Impl.cpp
+                                   IAxisInfoImpl.cpp)
 
   target_link_libraries(AmorControlboard ${YARP_LIBRARIES} ${AMOR_API_LIBRARIES})
 

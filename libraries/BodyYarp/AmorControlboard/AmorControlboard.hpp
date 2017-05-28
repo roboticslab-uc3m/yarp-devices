@@ -8,6 +8,7 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/IControlLimits2.h>
 #include <yarp/dev/DeviceDriver.h>
 
 #include <amor.h>
@@ -35,8 +36,9 @@ class AmorControlboard : public yarp::dev::DeviceDriver,
                          public yarp::dev::IPositionControl2,
                          public yarp::dev::IVelocityControl2,
                          public yarp::dev::IEncodersTimed,
-                         public yarp::dev::IControlLimits,
-                         public yarp::dev::IControlMode
+                         public yarp::dev::IControlLimits2,
+                         public yarp::dev::IControlMode,
+                         public yarp::dev::IAxisInfo
 {
 public:
 
@@ -299,7 +301,7 @@ public:
     virtual bool getEncoders(double *encs);
 
     /**
-     * Read the istantaneous speed of an axis.
+     * Read the instantaneous speed of an axis.
      * @param j axis number
      * @param sp pointer to storage for the output
      * @return true if successful, false ... otherwise.
@@ -446,6 +448,27 @@ public:
      */
     virtual bool getLimits(int axis, double *min, double *max);
 
+//  --------- IControlLimits2 declarations. Implementation in IControlLimits2Impl.cpp ---------
+
+    /**
+     * Set the software speed limits for a particular axis, the behavior of the
+     * control card when these limits are exceeded, depends on the implementation.
+     * @param axis joint number
+     * @param min the value of the lower limit
+     * @param max the value of the upper limit
+     * @return true or false on success or failure
+     */
+    virtual bool setVelLimits(int axis, double min, double max);
+
+    /**
+     * Get the software speed limits for a particular axis.
+     * @param axis joint number
+     * @param min pointer to store the value of the lower limit
+     * @param max pointer to store the value of the upper limit
+     * @return true if everything goes fine, false otherwise.
+     */
+    virtual bool getVelLimits(int axis, double *min, double *max);
+
 //  --------- IControlMode declarations. Implementation in IControlModeImpl.cpp ---------
 
     /**
@@ -504,6 +527,24 @@ public:
     * @return: true/false success failure.
     */
     virtual bool getControlModes(int *modes);
+
+// -------- IAxisInfo declarations. Implementation in IAxisInfoImpl.cpp --------
+
+    /**
+     * Get the name for a particular axis.
+     * @param axis joint number
+     * @param name the axis name
+     * @return true if everything goes fine, false otherwise.
+     */
+    virtual bool getAxisName(int axis, yarp::os::ConstString& name);
+
+    /**
+     * Get the joint type (e.g. revolute/prismatic) for a particular axis.
+     * @param axis joint number
+     * @param type the joint type
+     * @return true if everything goes fine, false otherwise.
+     */
+    virtual bool getJointType(int axis, yarp::dev::JointTypeEnum& type);
 
 // -------- DeviceDriver declarations. Implementation in IDeviceDriverImpl.cpp --------
 
