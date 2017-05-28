@@ -2,7 +2,7 @@
 
 #include "AmorControlboard.hpp"
 
-// ------------------- IControlLimits2 related ------------------------------------
+// ------------------- IAxisInfo related ------------------------------------
 
 bool roboticslab::AmorControlboard::getAxisName(int axis, yarp::os::ConstString& name)
 {

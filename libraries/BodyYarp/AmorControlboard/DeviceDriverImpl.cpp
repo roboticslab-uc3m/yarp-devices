@@ -19,9 +19,27 @@ bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
         CD_ERROR("Could not get AMOR handle (%s)\n", amor_error());
         return false;
     }
-    else
+
+    CD_SUCCESS("Acquired AMOR handle!\n");
+
+    if (config.check("useAmorCartesianController"))
     {
-        CD_SUCCESS("Acquired AMOR handle!\n");
+        CD_INFO("Using AMOR cartesian controller device.\n");
+
+        yarp::os::Value vHandle(handle, sizeof handle);
+        yarp::os::Property cartesianControllerOptions;
+
+        cartesianControllerOptions.put("device", "AmorCartesianController");
+        cartesianControllerOptions.put("handle", vHandle);
+
+        yarp::dev::PolyDriver cartesianControllerDevice = yarp::dev::PolyDriver(cartesianControllerOptions);
+
+        if (!cartesianControllerDevice.isValid())
+        {
+            CD_ERROR("AMOR cartesian controller device not valid.\n");
+            amor_release(handle);
+            return false;
+        }
     }
 
     return true;
