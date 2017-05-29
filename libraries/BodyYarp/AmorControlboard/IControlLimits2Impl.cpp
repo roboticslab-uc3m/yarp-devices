@@ -25,7 +25,7 @@ bool roboticslab::AmorControlboard::getVelLimits(int axis, double *min, double *
 
     if (amor_get_joint_info(handle, axis, &parameters) != AMOR_SUCCESS)
     {
-        CD_ERROR("Could not retrieve joint info.\n");
+        CD_ERROR("%s\n", amor_error());
         return false;
     }
 

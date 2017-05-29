@@ -17,7 +17,7 @@ bool roboticslab::AmorControlboard::positionMove(const int n_joint, const int *j
 
     if (n_joint < AMOR_NUM_JOINTS && amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
     {
-        CD_ERROR("Could not retrieve current positions.\n");
+        CD_ERROR("%s\n", amor_error());
         return false;
     }
 
@@ -44,7 +44,7 @@ bool roboticslab::AmorControlboard::relativeMove(const int n_joint, const int *j
 
     if (n_joint < AMOR_NUM_JOINTS && amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
     {
-        CD_ERROR("Could not retrieve current positions.\n");
+        CD_ERROR("%s\n", amor_error());
         return false;
     }
 
@@ -71,7 +71,7 @@ bool roboticslab::AmorControlboard::checkMotionDone(const int n_joint, const int
 
     if (amor_get_movement_status(handle, &status) != AMOR_SUCCESS)
     {
-        CD_ERROR("Could not get AMOR movement status!\n");
+        CD_ERROR("%s\n", amor_error());
         return false;
     }
 
@@ -146,7 +146,7 @@ bool roboticslab::AmorControlboard::getTargetPosition(const int joint, double *r
 
     if (amor_get_req_positions(handle, &positions) != AMOR_SUCCESS)
     {
-        CD_ERROR("Could not retrieve last commanded positions.\n");
+        CD_ERROR("%s\n", amor_error());
         return false;
     }
 
@@ -165,7 +165,7 @@ bool roboticslab::AmorControlboard::getTargetPositions(double *refs)
 
     if (amor_get_req_positions(handle, &positions) != AMOR_SUCCESS)
     {
-        CD_ERROR("Could not retrieve last commanded positions.\n");
+        CD_ERROR("%s\n", amor_error());
         return false;
     }
 
@@ -192,7 +192,7 @@ bool roboticslab::AmorControlboard::getTargetPositions(const int n_joint, const 
 
     if (amor_get_req_positions(handle, &positions) != AMOR_SUCCESS)
     {
-        CD_ERROR("Could not retrieve last commanded positions.\n");
+        CD_ERROR("%s\n", amor_error());
         return false;
     }
 

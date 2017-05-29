@@ -49,7 +49,7 @@ bool roboticslab::AmorControlboard::getEncoder(int j, double *v)
 
     if (amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
     {
-        CD_ERROR("Could not retrieve current positions.\n");
+        CD_ERROR("%s\n", amor_error());
         return false;
     }
 
@@ -68,7 +68,7 @@ bool roboticslab::AmorControlboard::getEncoders(double *encs)
 
     if (amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
     {
-        CD_ERROR("Could not retrieve current positions.\n");
+        CD_ERROR("%s\n", amor_error());
         return false;
     }
 
@@ -95,7 +95,7 @@ bool roboticslab::AmorControlboard::getEncoderSpeed(int j, double *sp)
 
     if (amor_get_actual_velocities(handle, &velocities) != AMOR_SUCCESS)
     {
-        CD_ERROR("Could not retrieve current velocities.\n");
+        CD_ERROR("%s\n", amor_error());
         return false;
     }
 
@@ -114,7 +114,7 @@ bool roboticslab::AmorControlboard::getEncoderSpeeds(double *spds)
 
     if (amor_get_actual_velocities(handle, &velocities) != AMOR_SUCCESS)
     {
-        CD_ERROR("Could not retrieve current velocities.\n");
+        CD_ERROR("%s\n", amor_error());
         return false;
     }
 

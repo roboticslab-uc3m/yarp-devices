@@ -26,7 +26,7 @@ bool roboticslab::AmorControlboard::positionMove(int j, double ref)
 
     if (amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
     {
-        CD_ERROR("Could not retrieve current positions.\n");
+        CD_ERROR("%s\n", amor_error());
         return false;
     }
 
@@ -66,7 +66,7 @@ bool roboticslab::AmorControlboard::relativeMove(int j, double delta)
 
     if (amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
     {
-        CD_ERROR("Could not retrieve current positions.\n");
+        CD_ERROR("%s\n", amor_error());
         return false;
     }
 
@@ -115,7 +115,7 @@ bool roboticslab::AmorControlboard::checkMotionDone(bool *flag)
 
     if (amor_get_movement_status(handle, &status) != AMOR_SUCCESS)
     {
-        CD_ERROR("Could not get AMOR movement status!\n");
+        CD_ERROR("%s\n", amor_error());
         return false;
     }
 

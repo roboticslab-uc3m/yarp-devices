@@ -29,14 +29,14 @@ bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
     {
         if (amor_get_joint_info(handle, j, &jointInfo[j]) != AMOR_SUCCESS)
         {
-            CD_ERROR("Unable to retrieve joint info (%d).\n", j);
+            CD_ERROR("%s (%d).\n", amor_error(), j);
             amor_release(handle);
             return false;
         }
 
         if (amor_get_status(handle, j, &jointStatus[j]) != AMOR_SUCCESS)
         {
-            CD_ERROR("Unable to retrieve joint status (%d).\n", j);
+            CD_ERROR("%s (%d).\n", amor_error(), j);
             amor_release(handle);
             return false;
         }
@@ -46,7 +46,7 @@ bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
 
     if (amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
     {
-        CD_ERROR("Unable to retrieve current positions.\n");
+        CD_ERROR("%s\n", amor_error());
         amor_release(handle);
         return false;
     }

@@ -17,7 +17,7 @@ bool roboticslab::AmorControlboard::velocityMove(int j, double sp)
 
     if (amor_get_actual_velocities(handle, &velocities) != AMOR_SUCCESS)
     {
-        CD_ERROR("Could not retrieve current velocities.\n");
+        CD_ERROR("%s\n", amor_error());
         return false;
     }
 

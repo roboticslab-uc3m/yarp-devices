@@ -17,7 +17,7 @@ bool roboticslab::AmorControlboard::velocityMove(const int n_joint, const int *j
 
     if (n_joint < AMOR_NUM_JOINTS && amor_get_actual_velocities(handle, &velocities) != AMOR_SUCCESS)
     {
-        CD_ERROR("Could not retrieve current velocities.\n");
+        CD_ERROR("%s\n", amor_error());
         return false;
     }
 
@@ -44,7 +44,7 @@ bool roboticslab::AmorControlboard::getRefVelocity(const int joint, double *vel)
 
     if (amor_get_req_velocities(handle, &velocities) != AMOR_SUCCESS)
     {
-        CD_ERROR("Could not retrieve last commanded velocities.\n");
+        CD_ERROR("%s\n", amor_error());
         return false;
     }
 
@@ -63,7 +63,7 @@ bool roboticslab::AmorControlboard::getRefVelocities(double *vels)
 
     if (amor_get_req_velocities(handle, &velocities) != AMOR_SUCCESS)
     {
-        CD_ERROR("Could not retrieve last commanded velocities.\n");
+        CD_ERROR("%s\n", amor_error());
         return false;
     }
 
@@ -90,7 +90,7 @@ bool roboticslab::AmorControlboard::getRefVelocities(const int n_joint, const in
 
     if (amor_get_req_velocities(handle, &velocities) != AMOR_SUCCESS)
     {
-        CD_ERROR("Could not retrieve last commanded velocities.\n");
+        CD_ERROR("%s\n", amor_error());
         return false;
     }
 
