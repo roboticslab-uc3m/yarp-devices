@@ -22,14 +22,9 @@ bool teo::Jr3::open(yarp::os::Searchable& config)
     fs3.m[1]=5.5;
     fs3.m[2]=5.5;
 
-    ioctl(fd,JR3_FULLSCALE+0,&fs3);
-    ioctl(fd,JR3_FULLSCALE+1,&fs3);
-    ioctl(fd,JR3_FULLSCALE+2,&fs3);
-    ioctl(fd,JR3_FULLSCALE+3,&fs3);
+    ioctl(fd,IOCTL3_JR3_SET_FULL_SCALES,&fs3);
 
-    ioctl(fd,JR3_CMD_SETFULLSCALES,JR3_COMMAND0);
     yarp::os::Time::delay(0.5);
-
 
     //-- Make sure fullscales were set.
     ret=ioctl(fd,IOCTL0_JR3_GET_FULL_SCALES,&fs0);
