@@ -12,7 +12,6 @@
 #include <unistd.h>  // ::close
 
 #include "jr3pci-ioctl.h"
-#include "jr3pci-driver.h"
 
 //#define CD_FULL_FILE  //-- Can be globally managed from father CMake. Good for debugging with polymorphism.
 //#define CD_HIDE_DEBUG  //-- Can be globally managed from father CMake.
