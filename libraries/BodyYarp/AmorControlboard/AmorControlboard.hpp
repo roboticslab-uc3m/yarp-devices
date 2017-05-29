@@ -9,7 +9,7 @@
 #include <yarp/os/all.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IControlLimits2.h>
-#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/PolyDriver.h>
 
 #include <amor.h>
 

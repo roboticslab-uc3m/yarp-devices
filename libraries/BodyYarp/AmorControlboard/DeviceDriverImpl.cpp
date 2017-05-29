@@ -32,7 +32,7 @@ bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
         cartesianControllerOptions.put("device", "AmorCartesianController");
         cartesianControllerOptions.put("handle", vHandle);
 
-        yarp::dev::PolyDriver cartesianControllerDevice = yarp::dev::PolyDriver(cartesianControllerOptions);
+        yarp::dev::PolyDriver cartesianControllerDevice(cartesianControllerOptions);
 
         if (!cartesianControllerDevice.isValid())
         {
