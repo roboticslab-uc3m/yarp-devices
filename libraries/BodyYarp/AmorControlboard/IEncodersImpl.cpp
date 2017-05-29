@@ -38,7 +38,7 @@ bool roboticslab::AmorControlboard::setEncoders(const double *vals)
 
 bool roboticslab::AmorControlboard::getEncoder(int j, double *v)
 {
-    CD_DEBUG("(%d)\n", j);
+    //CD_DEBUG("(%d)\n", j);
 
     if (!indexWithinRange(j))
     {
@@ -84,7 +84,7 @@ bool roboticslab::AmorControlboard::getEncoders(double *encs)
 
 bool roboticslab::AmorControlboard::getEncoderSpeed(int j, double *sp)
 {
-    CD_DEBUG("(%d)\n", j);
+    //CD_DEBUG("(%d)\n", j);
 
     if (!indexWithinRange(j))
     {
@@ -130,7 +130,7 @@ bool roboticslab::AmorControlboard::getEncoderSpeeds(double *spds)
 
 bool roboticslab::AmorControlboard::getEncoderAcceleration(int j, double *spds)
 {
-    CD_ERROR("Not available.\n");
+    //CD_ERROR("Not available.\n");
     return false;
 }
 
