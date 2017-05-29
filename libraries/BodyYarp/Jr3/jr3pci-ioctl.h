@@ -5,14 +5,14 @@
 #define __JR3IOCTL__
 
 typedef struct force_array {
-    int f[3];
-    int m[3];
-    int v[2];
+	  int f[3];
+	  int m[3];
+	  int v[2];
 } force_array;
 
 typedef struct six_axis_array {
-    int f[3];
-    int m[3];
+	  int f[3];
+	  int m[3];
 } six_axis_array;
 
 #define JR3_IOC_MAGIC 'k'
@@ -60,8 +60,10 @@ typedef struct six_axis_array {
 #define IOCTL3_JR3_FILTER5            _IOR( JR3_TYPE, 36,  struct six_axis_array )
 #define IOCTL3_JR3_FILTER6            _IOR( JR3_TYPE, 37,  struct six_axis_array )
 #define IOCTL3_JR3_ZEROOFFS           _IO ( JR3_TYPE, 38   )
-#define IOCTL3_JR3_GET_FULL_SCALES    _IOR( JR3_TYPE, 39,  struct force_array )
+#define IOCTL3_JR3_GET_FULL_SCALES _IOR( JR3_TYPE, 39, struct force_array )
 
-#define IOCTL_JR3_MAXNR 40
+#define IOCTL3_JR3_SET_FULL_SCALES _IOW( JR3_TYPE, 40, struct force_array )
+
+#define IOCTL_JR3_MAXNR 41
 #endif
 

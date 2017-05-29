@@ -14,6 +14,19 @@ bool teo::Jr3::open(yarp::os::Searchable& config)
 
     int ret;
 
+    //-- Force fullscales.
+    fs3.f[0]=110;
+    fs3.f[1]=110;
+    fs3.f[2]=220;
+    fs3.m[0]=5.5;
+    fs3.m[1]=5.5;
+    fs3.m[2]=5.5;
+
+    ioctl(fd,IOCTL3_JR3_SET_FULL_SCALES,&fs3);
+
+    yarp::os::Time::delay(0.5);
+
+    //-- Make sure fullscales were set.
     ret=ioctl(fd,IOCTL0_JR3_GET_FULL_SCALES,&fs0);
     CD_INFO("Full scales of Sensor 0 are %d %d %d %d %d %d\n",fs0.f[0],fs0.f[1],fs0.f[2],fs0.m[0],fs0.m[1],fs0.m[2]);
     ret=ioctl(fd,IOCTL1_JR3_GET_FULL_SCALES,&fs1);
