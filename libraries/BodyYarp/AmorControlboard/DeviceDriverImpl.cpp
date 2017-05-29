@@ -22,6 +22,49 @@ bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
 
     CD_SUCCESS("Acquired AMOR handle!\n");
 
+    AMOR_JOINT_INFO jointInfo[AMOR_NUM_JOINTS];
+    int jointStatus[AMOR_NUM_JOINTS];
+
+    for (int j = 0; j < AMOR_NUM_JOINTS; j++)
+    {
+        if (amor_get_joint_info(handle, j, &jointInfo[j]) != AMOR_SUCCESS)
+        {
+            CD_ERROR("Unable to retrieve joint info (%d).\n", j);
+            amor_release(handle);
+            return false;
+        }
+
+        if (amor_get_status(handle, j, &jointStatus[j]) != AMOR_SUCCESS)
+        {
+            CD_ERROR("Unable to retrieve joint status (%d).\n", j);
+            amor_release(handle);
+            return false;
+        }
+    }
+
+    AMOR_VECTOR7 positions;
+
+    if (amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
+    {
+        CD_ERROR("Unable to retrieve current positions.\n");
+        amor_release(handle);
+        return false;
+    }
+
+    CD_INFO("Current positions (degrees): [");
+
+    for (int j = 0; j < AMOR_NUM_JOINTS; j++)
+    {
+        CD_INFO_NO_HEADER("%f", toDeg(positions[j]));
+
+        if (j != AMOR_NUM_JOINTS - 1)
+        {
+            CD_INFO_NO_HEADER(" ");
+        }
+    }
+
+    CD_INFO_NO_HEADER("]\n");
+
     if (config.check("useAmorCartesianController"))
     {
         CD_INFO("Using AMOR cartesian controller device.\n");
