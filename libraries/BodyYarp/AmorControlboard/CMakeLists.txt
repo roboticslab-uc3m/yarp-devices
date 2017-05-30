@@ -21,6 +21,7 @@ if(NOT SKIP_AmorControlboard)
                                    IControlLimitsImpl.cpp
                                    IControlLimits2Impl.cpp
                                    IControlModeImpl.cpp
+                                   IControlMode2Impl.cpp
                                    IEncodersImpl.cpp
                                    IEncodersTimedImpl.cpp
                                    IPositionControlImpl.cpp
