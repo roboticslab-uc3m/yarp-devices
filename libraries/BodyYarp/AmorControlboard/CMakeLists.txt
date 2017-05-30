@@ -28,7 +28,9 @@ if(NOT SKIP_AmorControlboard)
                                    IPositionControl2Impl.cpp
                                    IVelocityControlImpl.cpp
                                    IVelocityControl2Impl.cpp
-                                   IAxisInfoImpl.cpp)
+                                   IAxisInfoImpl.cpp
+                                   ITorqueControlImpl.cpp
+                                   IInteractionModeImpl.cpp)
 
   target_link_libraries(AmorControlboard ${YARP_LIBRARIES} ${AMOR_API_LIBRARIES})
 

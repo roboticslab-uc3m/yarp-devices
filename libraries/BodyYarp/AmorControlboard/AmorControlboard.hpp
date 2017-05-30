@@ -38,7 +38,9 @@ class AmorControlboard : public yarp::dev::DeviceDriver,
                          public yarp::dev::IEncodersTimed,
                          public yarp::dev::IControlLimits2,
                          public yarp::dev::IControlMode2,
-                         public yarp::dev::IAxisInfo
+                         public yarp::dev::IAxisInfo,
+                         public yarp::dev::ITorqueControl,
+                         public yarp::dev::IInteractionMode
 {
 public:
 
@@ -597,6 +599,267 @@ public:
      * @return true if everything goes fine, false otherwise.
      */
     virtual bool getJointType(int axis, yarp::dev::JointTypeEnum& type);
+
+// -------- ITorqueControl declarations. Implementation in ITorqueControlImpl.cpp --------
+
+    /** Get the reference value of the torque for all joints.
+     * This is NOT the feedback (see getTorques instead).
+     * @param t pointer to the array of torque values
+     * @return true/false on success/failure
+     */
+    virtual bool getRefTorques(double *t);
+
+    /** Get the reference value of the torque for a given joint.
+     * This is NOT the feedback (see getTorque instead).
+     * @param j joint number
+     * @param t the returned reference torque of joint j
+     * @return true/false on success/failure
+     */
+    virtual bool getRefTorque(int j, double *t);
+
+    /** Set the reference value of the torque for all joints.
+     * @param t pointer to the array of torque values
+     * @return true/false on success/failure
+     */
+    virtual bool setRefTorques(const double *t);
+
+    /** Set the reference value of the torque for a given joint.
+     * @param j joint number
+     * @param t new value
+     * @return true/false on success/failure
+     */
+    virtual bool setRefTorque(int j, double t);
+
+    /** Set new torque reference for a subset of joints.
+     * @param joints pointer to the array of joint numbers
+     * @param refs   pointer to the array specifing the new torque reference
+     * @return true/false on success/failure
+     */
+    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t);
+
+    /** Get the back-emf compensation gain for a given joint.
+     * @param j joint number
+     * @param bemf the returned bemf gain of joint j
+     * @return true/false on success/failure
+     */
+    virtual bool getBemfParam(int j, double *bemf);
+
+    /** Set the back-emf compensation gain for a given joint.
+     * @param j joint number
+     * @param bemf new value
+     * @return true/false on success/failure
+     */
+    virtual bool setBemfParam(int j, double bemf);
+
+    /** Get a subset of motor parameters (bemf, ktau etc) useful for torque control.
+     * @param j joint number
+     * @param params a struct containing the motor parameters to be retrieved
+     * @return true/false on success/failure
+     */
+    virtual bool getMotorTorqueParams(int j, yarp::dev::MotorTorqueParameters *params);
+
+    /** Set a subset of motor parameters (bemf, ktau etc) useful for torque control.
+     * @param j joint number
+     * @param params a struct containing the motor parameters to be set
+     * @return true/false on success/failure
+     */
+    virtual bool setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params);
+
+     /** Set new pid value for a joint axis.
+     * @param j joint number
+     * @param pid new pid value
+     * @return true/false on success/failure
+     */
+    virtual bool setTorquePid(int j, const yarp::dev::Pid &pid);
+
+    /** Get the value of the torque on a given joint (this is the
+     * feedback if you have a torque sensor).
+     * @param j joint number
+     * @param t pointer to the result value
+     * @return true/false on success/failure
+     */
+    virtual bool getTorque(int j, double *t);
+
+    /** Get the value of the torque for all joints (this is
+     * the feedback if you have torque sensors).
+     * @param t pointer to the array that will store the output
+     * @return true/false on success/failure
+     */
+    virtual bool getTorques(double *t);
+
+    /** Get the full scale of the torque sensor of a given joint
+     * @param j joint number
+     * @param min minimum torque of the joint j
+     * @param max maximum torque of the joint j
+     * @return true/false on success/failure
+     */
+    virtual bool getTorqueRange(int j, double *min, double *max);
+
+    /** Get the full scale of the torque sensors of all joints
+     * @param min pointer to the array that will store minimum torques of the joints
+     * @param max pointer to the array that will store maximum torques of the joints
+     * @return true/false on success/failure
+     */
+    virtual bool getTorqueRanges(double *min, double *max);
+
+    /** Set new pid value on multiple axes.
+     * @param pids pointer to a vector of pids
+     * @return true/false upon success/failure
+     */
+    virtual bool setTorquePids(const yarp::dev::Pid *pids);
+
+    /** Set the torque error limit for the controller on a specific joint
+     * @param j joint number
+     * @param limit limit value
+     * @return true/false on success/failure
+     */
+    virtual bool setTorqueErrorLimit(int j, double limit);
+
+    /** Get the torque error limit for the controller on all joints.
+     * @param limits pointer to the vector with the new limits
+     * @return true/false on success/failure
+     */
+    virtual bool setTorqueErrorLimits(const double *limits);
+
+    /** Get the current torque error for a joint.
+     * @param j joint number
+     * @param err pointer to the storage for the return value
+     * @return true/false on success failure
+     */
+    virtual bool getTorqueError(int j, double *err);
+
+    /** Get the torque error of all joints.
+     * @param errs pointer to the vector that will store the errors
+     * @return true/false on success/failure
+     */
+    virtual bool getTorqueErrors(double *errs);
+
+    /** Get the output of the controller (e.g. pwm value)
+     * @param j joint number
+     * @param out pointer to storage for return value
+     * @return true/false on success/failure
+     */
+    virtual bool getTorquePidOutput(int j, double *out);
+
+    /** Get the output of the controllers (e.g. pwm value)
+     * @param outs pointer to the vector that will store the output values
+     * @return true/false on success/failure
+     */
+    virtual bool getTorquePidOutputs(double *outs);
+
+    /** Get current pid value for a specific joint.
+     * @param j joint number
+     * @param pid pointer to storage for the return value.
+     * @return true/false on success/failure
+     */
+    virtual bool getTorquePid(int j, yarp::dev::Pid *pid);
+
+    /** Get current pid value for a specific joint.
+     * @param pids vector that will store the values of the pids.
+     * @return true/false on success/failure
+     */
+    virtual bool getTorquePids(yarp::dev::Pid *pids);
+
+    /** Get the torque error limit for the controller on a specific joint
+     * @param j joint number
+     * @param limit pointer to the result value
+     * @return true/false on success/failure
+     */
+    virtual bool getTorqueErrorLimit(int j, double *limit);
+
+    /** Get the torque error limit for all controllers
+     * @param limits pointer to the array that will store the output
+     * @return true/false on success/failure
+     */
+    virtual bool getTorqueErrorLimits(double *limits);
+
+    /** Reset the controller of a given joint, usually sets the
+     * current position of the joint as the reference value for the PID, and resets
+     * the integrator.
+     * @param j joint number
+     * @return true/false on success/failure
+     */
+    virtual bool resetTorquePid(int j);
+
+    /** Disable the pid computation for a joint
+     * @param j joint number
+     * @return true/false on success/failure
+     */
+    virtual bool disableTorquePid(int j);
+
+    /** Enable the pid computation for a joint
+     * @param j joint number
+     * @return true/false on success/failure
+     */
+    virtual bool enableTorquePid(int j);
+
+    /** Set offset value for a given pid
+     * @param j joint number
+     * @param v the new value
+     * @return true/false on success/failure
+     */
+    virtual bool setTorqueOffset(int j, double v);
+
+// -------- IInteractionMode declarations. Implementation in IInteractionModeImpl.cpp --------
+
+    /**
+     * Get the current interaction mode of the robot, values can be stiff or compliant.
+     * @param axis joint number
+     * @param mode contains the requested information about interaction mode of the joint
+     * @return true or false on success or failure.
+     */
+    virtual bool getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode);
+
+    /**
+     * Get the current interaction mode of the robot for a set of joints, values can be stiff or compliant.
+     * @param n_joints how many joints this command is referring to
+     * @param joints list of joints controlled. The size of this array is n_joints
+     * @param modes array containing the requested information about interaction mode, one value for each joint, the size is n_joints.
+     *          for example:
+     *          n_joint  3
+     *          joints   0  2  4
+     *          refs    VOCAB_IM_STIFF VOCAB_IM_STIFF VOCAB_IM_COMPLIANT
+     * @return true or false on success or failure.
+     */
+    virtual bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+
+    /**
+     * Get the current interaction mode of the robot for a all the joints, values can be stiff or compliant.
+     * @param mode array containing the requested information about interaction mode, one value for each joint.
+     * @return true or false on success or failure.
+     */
+    virtual bool getInteractionModes(yarp::dev::InteractionModeEnum* modes);
+
+    /**
+     * Set the interaction mode of the robot, values can be stiff or compliant.
+     * Please note that some robot may not implement certain types of interaction, so always check the return value.
+     * @param axis joint number
+     * @param mode the desired interaction mode
+     * @return true or false on success or failure.
+     */
+    virtual bool setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode);
+
+    /**
+     * Set the interaction mode of the robot for a set of joints, values can be stiff or compliant.
+     * Please note that some robot may not implement certain types of interaction, so always check the return value.
+     * @param n_joints how many joints this command is referring to
+     * @param joints list of joints controlled. The size of this array is n_joints
+     * @param modes array containing the desired interaction mode, one value for each joint, the size is n_joints.
+     *          for example:
+     *          n_joint  3
+     *          joints   0  2  4
+     *          refs    VOCAB_IM_STIFF VOCAB_IM_STIFF VOCAB_IM_COMPLIANT
+     * @return true or false on success or failure. If one or more joint fails, the return value will be false.
+     */
+    virtual bool setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+
+    /**
+     * Set the interaction mode of the robot for a all the joints, values can be stiff or compliant.
+     * Some robot may not implement some types of interaction, so always check the return value
+     * @param mode array with the desired interaction mode for all joints, length is the total number of joints for the part
+     * @return true or false on success or failure. If one or more joint fails, the return value will be false.
+     */
+    virtual bool setInteractionModes(yarp::dev::InteractionModeEnum* modes);
 
 // -------- DeviceDriver declarations. Implementation in IDeviceDriverImpl.cpp --------
 
