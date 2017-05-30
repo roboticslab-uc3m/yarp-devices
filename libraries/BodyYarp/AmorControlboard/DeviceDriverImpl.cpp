@@ -65,6 +65,14 @@ bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
 
     CD_INFO_NO_HEADER("]\n");
 
+    // Set position mode.
+    if (amor_set_positions(handle, positions) != AMOR_SUCCESS)
+    {
+        CD_ERROR("%s\n", amor_error());
+        amor_release(handle);
+        return false;
+    }
+
     if (config.check("useAmorCartesianController"))
     {
         CD_INFO("Using AMOR cartesian controller device.\n");
