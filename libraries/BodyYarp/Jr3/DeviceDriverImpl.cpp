@@ -15,14 +15,18 @@ bool teo::Jr3::open(yarp::os::Searchable& config)
     int ret;
 
     //-- Force fullscales.
-    fs3.f[0]=110;
-    fs3.f[1]=110;
-    fs3.f[2]=220;
-    fs3.m[0]=5.5;
-    fs3.m[1]=5.5;
-    fs3.m[2]=5.5;
+    force_array fs;
+    fs.f[0]=110;
+    fs.f[1]=110;
+    fs.f[2]=220;
+    fs.m[0]=5.5;
+    fs.m[1]=5.5;
+    fs.m[2]=5.5;
 
-    ioctl(fd,IOCTL3_JR3_SET_FULL_SCALES,&fs3);
+    ioctl(fd,IOCTL0_JR3_SET_FULL_SCALES,&fs);
+    ioctl(fd,IOCTL1_JR3_SET_FULL_SCALES,&fs);
+    ioctl(fd,IOCTL2_JR3_SET_FULL_SCALES,&fs);
+    ioctl(fd,IOCTL3_JR3_SET_FULL_SCALES,&fs);
 
     yarp::os::Time::delay(0.5);
 
