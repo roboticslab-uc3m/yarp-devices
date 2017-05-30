@@ -105,16 +105,54 @@ bool roboticslab::AmorControlboard::setRefAccelerations(const int n_joint, const
 
 bool roboticslab::AmorControlboard::getRefSpeeds(const int n_joint, const int *joints, double *spds)
 {
-    CD_ERROR("Not available (%d).\n", n_joint);
-    return false;
+    CD_DEBUG("(%d)\n", n_joint);
+
+    if (!batchWithinRange(n_joint))
+    {
+        return false;
+    }
+
+    for (int j = 0; j < n_joint; j++)
+    {
+        AMOR_JOINT_INFO parameters;
+
+        if (amor_get_joint_info(handle, joints[j], &parameters) != AMOR_SUCCESS)
+        {
+            CD_ERROR("%s\n", amor_error());
+            return false;
+        }
+
+        spds[j] = toDeg(parameters.maxVelocity);
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::getRefAccelerations(const int n_joint, const int *joints, double *accs)
 {
-    CD_ERROR("Not available (%d).\n", n_joint);
-    return false;
+    CD_DEBUG("(%d)\n", n_joint);
+
+    if (!batchWithinRange(n_joint))
+    {
+        return false;
+    }
+
+    for (int j = 0; j < n_joint; j++)
+    {
+        AMOR_JOINT_INFO parameters;
+
+        if (amor_get_joint_info(handle, joints[j], &parameters) != AMOR_SUCCESS)
+        {
+            CD_ERROR("%s\n", amor_error());
+            return false;
+        }
+
+        accs[j] = toDeg(parameters.maxAcceleration);
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------

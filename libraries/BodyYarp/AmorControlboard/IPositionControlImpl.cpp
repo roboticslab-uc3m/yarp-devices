@@ -160,32 +160,92 @@ bool roboticslab::AmorControlboard::setRefAccelerations(const double *accs)
 
 bool roboticslab::AmorControlboard::getRefSpeed(int j, double *ref)
 {
-    CD_ERROR("Not available (%d).\n", j);
-    return false;
+    CD_DEBUG("(%d)\n", j);
+
+    if (!indexWithinRange(j))
+    {
+        return false;
+    }
+
+    AMOR_JOINT_INFO parameters;
+
+    if (amor_get_joint_info(handle, j, &parameters) != AMOR_SUCCESS)
+    {
+        CD_ERROR("%s\n", amor_error());
+        return false;
+    }
+
+    *ref = toDeg(parameters.maxVelocity);
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::getRefSpeeds(double *spds)
 {
-    CD_ERROR("Not available.\n");
-    return false;
+    CD_ERROR("\n");
+
+    for (int j = 0; j < AMOR_NUM_JOINTS; j++)
+    {
+        AMOR_JOINT_INFO parameters;
+
+        if (amor_get_joint_info(handle, j, &parameters) != AMOR_SUCCESS)
+        {
+            CD_ERROR("%s\n", amor_error());
+            return false;
+        }
+
+        spds[j] = toDeg(parameters.maxVelocity);
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::getRefAcceleration(int j, double *acc)
 {
-    CD_ERROR("Not available (%d).\n", j);
-    return false;
+    CD_DEBUG("(%d)\n", j);
+
+    if (!indexWithinRange(j))
+    {
+        return false;
+    }
+
+    AMOR_JOINT_INFO parameters;
+
+    if (amor_get_joint_info(handle, j, &parameters) != AMOR_SUCCESS)
+    {
+        CD_ERROR("%s\n", amor_error());
+        return false;
+    }
+
+    *acc = toDeg(parameters.maxAcceleration);
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::getRefAccelerations(double *accs)
 {
-    CD_ERROR("Not available.\n");
-    return false;
+    CD_ERROR("\n");
+
+    for (int j = 0; j < AMOR_NUM_JOINTS; j++)
+    {
+        AMOR_JOINT_INFO parameters;
+
+        if (amor_get_joint_info(handle, j, &parameters) != AMOR_SUCCESS)
+        {
+            CD_ERROR("%s\n", amor_error());
+            return false;
+        }
+
+        accs[j] = toDeg(parameters.maxAcceleration);
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
