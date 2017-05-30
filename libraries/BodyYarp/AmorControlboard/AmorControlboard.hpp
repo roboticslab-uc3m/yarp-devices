@@ -42,7 +42,7 @@ class AmorControlboard : public yarp::dev::DeviceDriver,
 {
 public:
 
-    AmorControlboard() {}
+    AmorControlboard() : handle(AMOR_INVALID_HANDLE) {}
 
     // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
 
@@ -605,7 +605,7 @@ protected:
 
 private:
 
-    AMOR_HANDLE handle = AMOR_INVALID_HANDLE;
+    AMOR_HANDLE handle;
     yarp::dev::PolyDriver cartesianControllerDevice;
 };
 
