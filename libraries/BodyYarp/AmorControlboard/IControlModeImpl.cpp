@@ -69,6 +69,7 @@ bool roboticslab::AmorControlboard::getControlMode(int j, int *mode)
     //CD_DEBUG("(%d)\n", j);  //-- Way too verbose.
     if (!indexWithinRange(j))
         return false;
+    *mode = VOCAB_CM_POSITION;
     return true;
 }
 
