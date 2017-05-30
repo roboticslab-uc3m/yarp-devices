@@ -16,25 +16,25 @@ bool roboticslab::AmorControlboard::getAxisName(int axis, yarp::os::ConstString&
     switch (axis)
     {
         case 0:
-            name = "A0";
-            break;
-        case 1:
             name = "A1";
             break;
-        case 2:
+        case 1:
             name = "A2";
             break;
-        case 3:
+        case 2:
             name = "A2.5";
             break;
-        case 4:
+        case 3:
             name = "A3";
             break;
-        case 5:
+        case 4:
             name = "A4";
             break;
-        case 6:
+        case 5:
             name = "A5";
+            break;
+        case 6:
+            name = "A6";
             break;
         default:
             CD_ERROR("\n");
