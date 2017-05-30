@@ -42,7 +42,9 @@ class AmorControlboard : public yarp::dev::DeviceDriver,
 {
 public:
 
-    AmorControlboard() : handle(AMOR_INVALID_HANDLE) {}
+    AmorControlboard() : handle(AMOR_INVALID_HANDLE),
+                         usingCartesianController(false)
+    {}
 
     // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
 
@@ -607,6 +609,7 @@ private:
 
     AMOR_HANDLE handle;
     yarp::dev::PolyDriver cartesianControllerDevice;
+    bool usingCartesianController;
 };
 
 }  // namespace roboticslab

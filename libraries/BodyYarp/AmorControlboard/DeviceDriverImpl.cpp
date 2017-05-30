@@ -77,6 +77,8 @@ bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
     {
         CD_INFO("Using AMOR cartesian controller device.\n");
 
+        usingCartesianController = true;
+
         yarp::os::Value vHandle(handle, sizeof handle);
         yarp::os::Property cartesianControllerOptions;
 
@@ -100,12 +102,19 @@ bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
 
 bool roboticslab::AmorControlboard::close()
 {
-    CD_INFO("Closing...\n");
+    CD_INFO("Closing AmorControlboard...\n");
+
+    if (usingCartesianController)
+    {
+        cartesianControllerDevice.close();
+    }
 
     if (handle != AMOR_INVALID_HANDLE)
     {
         amor_emergency_stop(handle);
         amor_release(handle);
+
+        handle = AMOR_INVALID_HANDLE;
     }
 
     return true;
