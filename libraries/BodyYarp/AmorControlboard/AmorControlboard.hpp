@@ -605,10 +605,8 @@ protected:
 
 private:
 
-    std::vector<int> mode;
-    std::vector<int> manipulatorIDs;
-
     AMOR_HANDLE handle = AMOR_INVALID_HANDLE;
+    yarp::dev::PolyDriver cartesianControllerDevice;
 };
 
 }  // namespace roboticslab
