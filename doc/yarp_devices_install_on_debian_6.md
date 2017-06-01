@@ -28,8 +28,8 @@ sudo aptitude -o Acquire::Check-Valid-Until=false update
 ### Install the Software
 
 First install the depencencies:
-  - [Install CMake 2.8.9 (Debian 6.0.10)](https://github.com/roboticslab-uc3m/installation-guides/blob/develop/install-cmake.md#install-cmake-289-debian-6010)
-  - [Install YARP 2.3.68+ (Debian 6.0.10)](https://github.com/roboticslab-uc3m/installation-guides/blob/develop/install-yarp.md#install-yarp-2368-debian-6010)
+  - [Install CMake 2.8.9 (Debian 6.0.10)](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-cmake.md#install-cmake-289-debian-6010)
+  - [Install YARP 2.3.68+ (Debian 6.0.10)](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md#install-yarp-2368-debian-6010)
 
 Our software integrates the previous dependencies. Note that you will be prompted for your password upon using '''sudo''' a couple of times:
 
