@@ -50,7 +50,7 @@ Finally, install the hcanpci kernel module:
 
 You may also want the `xsensmtx` device:
 
- - [Install ICub and xsensmtx](https://github.com/roboticslab-uc3m/installation-guides/blob/develop/install_icub.md)
+ - [Install ICub and xsensmtx](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install_icub.md)
 
 ### Even more!
 
