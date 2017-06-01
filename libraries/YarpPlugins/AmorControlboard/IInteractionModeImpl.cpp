@@ -6,7 +6,7 @@
 
 bool roboticslab::AmorControlboard::getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
 {
-    CD_DEBUG("(%d)\n", axis);
+    //CD_DEBUG("(%d)\n", axis);
 
     if (!indexWithinRange(axis))
     {

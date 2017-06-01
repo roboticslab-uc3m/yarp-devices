@@ -36,7 +36,7 @@ bool roboticslab::AmorControlboard::setRefTorques(const double *t)
 
 bool roboticslab::AmorControlboard::setRefTorque(int j, double t)
 {
-    CD_DEBUG("(%d, %d)\n", j, t);
+    CD_DEBUG("(%d, %f)\n", j, t);
 
     if (!indexWithinRange(j))
     {
@@ -78,7 +78,7 @@ bool roboticslab::AmorControlboard::getBemfParam(int j, double *bemf)
 
 bool roboticslab::AmorControlboard::setBemfParam(int j, double bemf)
 {
-    CD_DEBUG("(%d, %d)\n", j, bemf);
+    CD_DEBUG("(%d, %f)\n", j, bemf);
 
     if (!indexWithinRange(j))
     {
@@ -134,7 +134,7 @@ bool roboticslab::AmorControlboard::setTorquePid(int j, const yarp::dev::Pid &pi
 
 bool roboticslab::AmorControlboard::getTorque(int j, double *t)
 {
-    CD_DEBUG("(%d)\n", j);
+    //CD_DEBUG("(%d)\n", j);
 
     if (!indexWithinRange(j))
     {
@@ -186,7 +186,7 @@ bool roboticslab::AmorControlboard::setTorquePids(const yarp::dev::Pid *pids)
 
 bool roboticslab::AmorControlboard::setTorqueErrorLimit(int j, double limit)
 {
-    CD_DEBUG("(%d, %d)\n", j, limit);
+    CD_DEBUG("(%d, %f)\n", j, limit);
 
     if (!indexWithinRange(j))
     {
@@ -338,7 +338,7 @@ bool roboticslab::AmorControlboard::enableTorquePid(int j)
 
 bool roboticslab::AmorControlboard::setTorqueOffset(int j, double v)
 {
-    CD_DEBUG("(%d, %d)\n", j, v);
+    CD_DEBUG("(%d, %f)\n", j, v);
 
     if (!indexWithinRange(j))
     {
