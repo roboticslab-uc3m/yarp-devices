@@ -32,6 +32,7 @@ IF (ENABLE_YarpPlugins)
     add_subdirectory(WiimoteSensor)
     add_subdirectory(LeapMotionSensor)
     add_subdirectory(ProximitySensorsClient)
+    add_subdirectory(AravisGigE) # Aravis driver for GigE cameras
   # yarp_end_plugin_library(YarpPlugins)
 
   #install(TARGETS YarpPlugins DESTINATION lib)

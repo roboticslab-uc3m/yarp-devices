@@ -7,5 +7,3 @@ add_subdirectory(YarpPlugins)  # Old YarpPlugins, a plugin library which contain
 
 add_subdirectory(OneCanBusOneWrapper)
 add_subdirectory(TwoCanBusThreeWrappers)
-
-add_subdirectory(AravisGigE) # Aravis driver for GigE cameras
