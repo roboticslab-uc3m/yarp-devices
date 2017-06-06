@@ -4,18 +4,16 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-IF (ENABLE_GigE)
+find_package(YARP REQUIRED)
+include_directories(${YARP_INCLUDE_DIRS})
+list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
+include(YarpPlugin)
 
-  find_package(YARP REQUIRED)
-  include_directories(${YARP_INCLUDE_DIRS})
-  list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-  include(YarpPlugin)
+YARP_PREPARE_PLUGIN(AravisGigE CATEGORY device TYPE roboticslab::AravisGigE INCLUDE AravisGigE.hpp WRAPPER grabber)
 
+IF (NOT SKIP_AravisGigE)
   find_package(ARAVIS REQUIRED)
   include_directories(${ARAVIS_INCLUDE_DIRS})
-
-  YARP_PREPARE_PLUGIN(AravisGigE CATEGORY device TYPE roboticslab::AravisGigE INCLUDE AravisGigE.hpp WRAPPER grabber)
-
 
   # Include any directories needed for YARP
   include_directories(${YARP_INCLUDE_DIRS} ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
@@ -39,6 +37,6 @@ IF (ENABLE_GigE)
               COMPONENT runtime
               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
-ENDIF (ENABLE_GigE)
+ENDIF (NOT SKIP_AravisGigE)
 
 
