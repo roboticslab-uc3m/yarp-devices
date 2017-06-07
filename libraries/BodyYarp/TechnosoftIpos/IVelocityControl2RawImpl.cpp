@@ -21,7 +21,7 @@ bool teo::TechnosoftIpos::velocityMoveRaw(int j, double sp)
 
     //-- 65536 for FIXED32
     //-- 0.01138 = ( 4 * 1024 pulse / 360 deg ) * (0.001 s / sample)   // deg/s -> pulse/sample  = UI (vel)
-    int32_t sendRefSpeedFormated = roundf( sp * this->tr * 745.8 ); //-- 65536 * 0.01138 = 745.8
+    int32_t sendRefSpeedFormated = sp * this->tr * 745.8; //-- 65536 * 0.01138 = 745.8
     memcpy(msg_vel+4,&sendRefSpeedFormated,4);
 
     if( ! send(0x600, 8, msg_vel))

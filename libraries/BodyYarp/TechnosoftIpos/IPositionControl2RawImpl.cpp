@@ -192,7 +192,7 @@ bool teo::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
 
     //-- 65536 for FIXED32
     //-- 0.01138 = ( 4 * 1024 pulse / 360 deg ) * (0.001 s / sample)   // deg/s -> pulse/sample  = UI (vel)
-    int32_t sendRefSpeedFormated = roundf( sp * this->tr * 745.8 ); //-- 65536 * 0.01138 = 745.8
+    int32_t sendRefSpeedFormated = sp * this->tr * 745.8; //-- 65536 * 0.01138 = 745.8
     memcpy(msg_posmode_speed+4,&sendRefSpeedFormated,4);
 
     if( ! send( 0x600, 8, msg_posmode_speed) )
@@ -237,7 +237,7 @@ bool teo::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
 
     //-- 65536 for FIXED32
     //-- 0.00001138 = ( 4 * 1024 pulse / 360 deg ) * (0.000001 s^2 / sample^2)   // deg/s^2 -> pulse/sample^2 = UI (acc)
-    int32_t sendRefAccFormated = roundf( acc * this->tr * 0.7458 ); //-- 65536 * 0.00001138 = 0.7458
+    int32_t sendRefAccFormated = acc * this->tr * 0.7458; //-- 65536 * 0.00001138 = 0.7458
     memcpy(msg_posmode_acc+4,&sendRefAccFormated,4);
 
     if( ! send( 0x600, 8, msg_posmode_acc) )
