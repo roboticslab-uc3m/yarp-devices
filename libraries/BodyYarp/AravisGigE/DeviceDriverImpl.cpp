@@ -15,7 +15,9 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
 
     widthMin = widthMax = heightMin = heightMax = 0;
     xoffset = yoffset = _width = _height = 0;
-    fpsMin = fpsMax = gainMin = gainMax = exposureMin = exposureMax = 0;
+    fpsMin = fpsMax = fps = 0;
+    gainMin = gainMax = gain = 0;
+    exposureMin = exposureMax = exposure = 0;
     controlExposure = false;
     targetGrey = 0;
     frameID = prevFrameID = 0;
@@ -48,8 +50,9 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
         return false;
     }
 
-    //-- Once we have a camera, we obtain the camera properties limits
+    //-- Once we have a camera, we obtain the camera properties limits and initial values
     pixelFormats = arv_camera_get_available_pixel_formats(camera, &pixelFormatsCnt);
+    pixelFormat = arv_camera_get_pixel_format(camera);
 
     arv_camera_get_width_bounds(camera, &widthMin, &widthMax);
     arv_camera_get_height_bounds(camera, &heightMin, &heightMax);
@@ -62,15 +65,22 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
     {
         arv_camera_get_frame_rate_bounds(camera, &fpsMin, &fpsMax);
         CD_INFO("FPS range: min=%d max=%d\n", fpsMin, fpsMax);
+
+        fps = arv_camera_get_frame_rate(camera);
+        CD_INFO("Current FPS value: %d\n", fps);
     }
     else
         CD_WARNING("FPS property not available\n");
+
 
     gainAvailable = arv_camera_is_gain_available(camera);
     if (gainAvailable)
     {
         arv_camera_get_gain_bounds (camera, &gainMin, &gainMax);
         CD_INFO("Gain range: min=%d max=%d\n", gainMin, gainMax);
+
+        gain = arv_camera_get_gain(camera);
+        CD_INFO("Current gain value: %d\n", gain);
     }
     else
         CD_WARNING("Gain property not available\n");
@@ -80,16 +90,66 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
     {
         arv_camera_get_exposure_time_bounds (camera, &exposureMin, &exposureMax);
         CD_INFO("Exposure range: min=%d max=%d\n", exposureMin, exposureMax);
+
+        exposure = arv_camera_get_exposure_time(camera);
+        CD_INFO("Current exposure value: %d\n", exposure);
     }
     else
         CD_WARNING("Gain property not available\n");
 
 
+    //-- Start capturing images
+    //-------------------------------------------------------------------------------
+
+    //-- Initialization of buffer(s)
+    if (stream)
+    {
+        g_object_unref(stream);
+        stream = NULL;
+    }
+    stream = arv_camera_create_stream(camera, NULL, NULL);
+    if (stream == NULL)
+    {
+        CD_ERROR("Could not create Aravis stream.\n");
+        return false;
+    }
+    g_object_set(stream, "socket-buffer", ARV_GV_STREAM_SOCKET_BUFFER_AUTO, "socket-buffer-size", 0, NULL);
+    g_object_set(stream, "packet-resend", ARV_GV_STREAM_PACKET_RESEND_NEVER, NULL);
+    g_object_set(stream, "packet-timeout", (unsigned) 40000, "frame-retention", (unsigned) 200000, NULL);
+
+    payload = arv_camera_get_payload (camera);
+
+    for (int i = 0; i < num_buffers; i++)
+        arv_stream_push_buffer(stream, arv_buffer_new(payload, NULL));
+
+    //-- Start continuous acquisition
+    arv_camera_set_acquisition_mode(camera, ARV_ACQUISITION_MODE_CONTINUOUS);
+    arv_device_set_string_feature_value(arv_camera_get_device(camera), "TriggerMode" , "Off");
+    arv_camera_start_acquisition(camera);
+    CD_INFO("Aravis Camera acquisition started!\n");
     return true;
 }
 
 bool roboticslab::AravisGigE::close()
 {
-    CD_INFO("AravisGigE driver is closed!\n");
+    if(camera==NULL)
+    {
+        CD_ERROR("Camera was not started!\n");
+        return false;
+    }
+
+    arv_camera_stop_acquisition(camera);
+    CD_INFO("Aravis Camera acquisition stopped!\n");
+
+    //-- Cleanup
+    if(stream)
+    {
+        g_object_unref(stream);
+        stream = NULL;
+    }
+
+    g_object_unref(camera);
+    camera = NULL;
+
     return true;
 }
