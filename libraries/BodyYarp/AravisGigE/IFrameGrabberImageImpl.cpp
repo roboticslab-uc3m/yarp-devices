@@ -5,7 +5,7 @@ bool roboticslab::AravisGigE::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
     //-- Right now it is implemented as polling (grab + retrieve image)
     //-- I think it could be also implemented with callbacks with ArvStreamCallback
 
-    //-- Grab frame
+    //-- Grab frame (get raw image)
     //--------------------------------------------------------------------------------
     framebuffer = NULL;
 
@@ -44,10 +44,36 @@ bool roboticslab::AravisGigE::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
         return false;
     }
 
-    //-- Retrieve frame and send as yarp image
+    //-- Retrieve frame (convert and send as yarp image)
     //--------------------------------------------------------------------------------
+    if (framebuffer!=NULL)
+    {
+        //-- Create a yarp image container according with the current pixel format
+        yarp::sig::Image raw_image;
+        if (pixelFormat == ARV_PIXEL_FORMAT_MONO_8)
+        {
+            raw_image = yarp::sig::ImageOf<yarp::sig::PixelMono> ();
+        }
+        else if (pixelFormat == ARV_PIXEL_FORMAT_MONO_16)
+        {
+            raw_image = yarp::sig::ImageOf<yarp::sig::PixelMono16> ();
+        }
+        else
+        {
+            CD_ERROR("Unsupported pixel format\n");
+        }
 
-    //-- WIP
+        //-- Write data
+        raw_image.zero();
+        raw_image.resize(_width, _height);
+        mempcpy(raw_image.getRawImage(), framebuffer, _width*_height*raw_image.getPixelSize());
+        image.copy(raw_image);
+    }
+    else
+    {
+        CD_ERROR("Framebuffer is empty\n");
+        return false;
+    }
 
     return true;
 }
