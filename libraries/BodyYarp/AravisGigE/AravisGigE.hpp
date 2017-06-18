@@ -34,7 +34,48 @@ class AravisGigE : public yarp::dev::DeviceDriver, public yarp::dev::IFrameGrabb
     private:
         ArvCamera       *camera;                // Camera to control.
         ArvStream       *stream;                // Object for video stream reception.
-        void *framebuffer; //
+        void            *framebuffer;           //
+
+        unsigned int    payload;                // Width x height x Pixel width.
+
+        int             widthMin;               // Camera sensor minium width.
+        int             widthMax;               // Camera sensor maximum width.
+        int             heightMin;              // Camera sensor minium height.
+        int             heightMax;              // Camera sensor maximum height.
+        bool            fpsAvailable;
+        double          fpsMin;                 // Camera minium fps.
+        double          fpsMax;                 // Camera maximum fps.
+        bool            gainAvailable;
+        double          gainMin;                // Camera minimum gain.
+        double          gainMax;                // Camera maximum gain.
+        bool            exposureAvailable;
+        double          exposureMin;            // Camera's minimum exposure time.
+        double          exposureMax;            // Camera's maximum exposure time.
+
+        bool            controlExposure;        // Flag if automatic exposure shall be done by this SW
+        bool            autoGain;
+        double          targetGrey;             // Target grey value (mid grey))
+
+        gint64          *pixelFormats;
+        guint           pixelFormatsCnt;
+
+
+        int             num_buffers;            // number of payload transmission buffers
+
+        ArvPixelFormat  pixelFormat;            // pixel format
+
+        int             xoffset;                // current frame region x offset
+        int             yoffset;                // current frame region y offset
+        int             _width;                  // current frame width of frame
+        int             _height;                 // current frame height of image
+
+        double          fps;                    // current value of fps
+        double          exposure;               // current value of exposure time
+        double          gain;                   // current value of gain
+        double          midGrey;                // current value of mid grey (brightness)
+
+        unsigned        frameID;                // current frame id
+        unsigned        prevFrameID;
 };
 
 
