@@ -3,7 +3,13 @@
 bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
 {
     CD_INFO("Opening AravisGigE device\n");
-    arv_enable_interface ("Fake"); //-- Enables fake Aravis cameras (useful for debug / testing)
+
+    //-- Configuration of Aravis GigE Camera device
+    if (config.check("fake"))
+    {
+        CD_INFO("Enabling fake Aravis camera\n");
+        arv_enable_interface ("Fake"); //-- Enables fake Aravis cameras (useful for debug / testing)
+    }
 
     //-- Data initialization
     //-------------------------------------------------------------------------------
