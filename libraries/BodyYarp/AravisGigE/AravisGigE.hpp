@@ -31,6 +31,29 @@ class AravisGigE : public yarp::dev::DeviceDriver, public yarp::dev::IFrameGrabb
         virtual int height() const;
         virtual int width() const;
 
+        // ---------- IFrameGrabberControls Declarations. Implementation in IFrameGrabberControlsImpl.cpp ---------
+        virtual bool setBrightness(double v);
+        virtual bool setExposure(double v);
+        virtual bool setSharpness(double v);
+        virtual bool setWhiteBalance(double blue, double red);
+        virtual bool setHue(double v);
+        virtual bool setSaturation(double v);
+        virtual bool setGamma(double v);
+        virtual bool setShutter(double v);
+        virtual bool setGain(double v);
+        virtual bool setIris(double v);
+
+        virtual double getBrightness();
+        virtual double getExposure();
+        virtual double getSharpness();
+        virtual bool getWhiteBalance(double &blue, double &red);
+        virtual double getHue();
+        virtual double getSaturation();
+        virtual double getGamma();
+        virtual double getShutter();
+        virtual double getGain();
+        virtual double getIris();
+
     private:
         ArvCamera       *camera;                // Camera to control.
         ArvStream       *stream;                // Object for video stream reception.
