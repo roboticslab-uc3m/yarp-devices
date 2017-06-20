@@ -56,7 +56,7 @@ double roboticslab::AravisGigE::getBrightness()
     //-- Not implemented yet
 }
 
-double roboticslab::AravisGigE::getEsposure()
+double roboticslab::AravisGigE::getExposure()
 {
     //-- Not implemented yet
 }
