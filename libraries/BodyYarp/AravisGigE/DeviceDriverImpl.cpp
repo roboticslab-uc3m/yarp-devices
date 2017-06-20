@@ -59,6 +59,16 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
     //-- Once we have a camera, we obtain the camera properties limits and initial values
     pixelFormats = arv_camera_get_available_pixel_formats(camera, &pixelFormatsCnt);
     pixelFormat = arv_camera_get_pixel_format(camera);
+    if (config.check("introspection"))
+    {
+        //-- List all  available formats
+        guint n_pixel_formats;
+        const char ** available_formats = arv_camera_get_available_pixel_formats_as_display_names(camera, &n_pixel_formats);
+        CD_INFO("Available pixel formats:\n");
+        for (int i = 0; i < n_pixel_formats; i++)
+             CD_INFO("\t- %s\n", available_formats[i]);
+    }
+    CD_INFO("Pixel format selected: %s\n", arv_camera_get_pixel_format_as_string(camera));
 
     arv_camera_get_width_bounds(camera, &widthMin, &widthMax);
     arv_camera_get_height_bounds(camera, &heightMin, &heightMax);
@@ -103,6 +113,15 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
     else
         CD_WARNING("Gain property not available\n");
 
+
+    //-- Verbose will show all available properties at start
+    if (config.check("introspection"))
+    {
+        guint n_properties;
+        const char **properties = arv_device_get_available_enumeration_feature_values_as_strings(arv_camera_get_device(camera), "BalanceWhiteAuto", &n_properties);
+        for (int i = 0; i < n_properties; i++)
+            CD_INFO("New property discovered: %s\n", properties[i]);
+    }
 
     //-- Start capturing images
     //-------------------------------------------------------------------------------
