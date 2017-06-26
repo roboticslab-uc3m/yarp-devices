@@ -35,8 +35,16 @@ bool AmorControlboard::getLimits(int axis, double *min, double *max)
         return false;
     }
 
-    *min = toDeg(parameters.lowerJointLimit);
-    *max = toDeg(parameters.upperJointLimit);
+    if (parameters.lowerJointLimit == 0.0 && parameters.upperJointLimit == 0.0)
+    {
+        *min = -180.0;
+        *max = 180.0;
+    }
+    else
+    {
+        *min = toDeg(parameters.lowerJointLimit);
+        *max = toDeg(parameters.upperJointLimit);
+    }
 
     return true;
 }
