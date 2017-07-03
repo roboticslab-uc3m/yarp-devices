@@ -113,6 +113,16 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
     else
         CD_WARNING("Gain property not available\n");
 
+    //-- Lens controls availability
+    CD_INFO("Lens Controls available:\n");
+    arv_device_get_feature(arv_camera_get_device(camera), "Zoom") == NULL ? zoomAvailable = false : zoomAvailable = true;
+    if (zoomAvailable)
+    {
+        arv_device_get_integer_feature_bounds(arv_camera_get_device(camera), "Zoom", &zoomMin, &zoomMax);
+        CD_INFO("\tZoom range: min=%d max=%d\n", zoomMin, zoomMax);
+    }
+    else
+        CD_WARNING("\tZoom property not available\n");
 
     //-- Verbose will show all available properties at start
     if (config.check("introspection"))
