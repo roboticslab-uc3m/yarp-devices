@@ -31,6 +31,15 @@ class AravisGigE : public yarp::dev::DeviceDriver, public yarp::dev::IFrameGrabb
         virtual int height() const;
         virtual int width() const;
 
+        // ---------- ICameraLensControls Declarations. Implementation in ICameraLensControlsImpl.cpp ---------
+        virtual bool setZoom(int v);
+        virtual bool setFocus(int v);
+        virtual bool setIris(int v);
+
+        virtual int getZoom();
+        virtual int getFocus();
+        virtual int getIris();
+
         // ---------- IFrameGrabberControls Declarations. Implementation in IFrameGrabberControlsImpl.cpp ---------
         virtual bool setBrightness(double v);
         virtual bool setExposure(double v);
@@ -99,6 +108,16 @@ class AravisGigE : public yarp::dev::DeviceDriver, public yarp::dev::IFrameGrabb
 
         unsigned        frameID;                // current frame id
         unsigned        prevFrameID;
+
+        //-- Lens Controls
+        int zoomMin;                            // Camera zoom minimum value
+        int zoomMax;                            // Camera zoom maximum value
+        int focusMin;                           // Camera focus minimum value
+        int focusMax;                           // Camera focus maximum value
+        int irisMin;                            // Camera iris minimum value
+        int irisMax;                            // Camera iris maximum value
+
+
 };
 
 
