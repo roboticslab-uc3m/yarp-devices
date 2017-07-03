@@ -8,7 +8,7 @@ bool roboticslab::AravisGigE::setZoom(int v)
         return false;
     }
 
-    if (zoomMin<=v && v>=zoomMax)
+    if (zoomMin<=v && v<=zoomMax)
     {
         arv_device_set_integer_feature_value(arv_camera_get_device(camera), "Zoom", v);
         int zoom = getZoom();
@@ -34,7 +34,7 @@ bool roboticslab::AravisGigE::setFocus(int v)
         return false;
     }
 
-    if (focusMin<=v && v>=focusMax)
+    if (focusMin<=v && v<=focusMax)
     {
         arv_device_set_integer_feature_value(arv_camera_get_device(camera), "Focus", v);
         int focus = getFocus();
