@@ -22,7 +22,22 @@ bool roboticslab::AravisGigE::setZoom(int v)
 
 bool roboticslab::AravisGigE::setFocus(int v)
 {
-
+    if (focusMin<=v && v>=focusMax)
+    {
+        arv_device_set_integer_feature_value(arv_camera_get_device(camera), "Focus", v);
+        int focus = getFocus();
+        if (focus!=v)
+        {
+            CD_ERROR("Some error ocurred when trying to set property \"Focus\"\n");
+            return false;
+        }
+        return true;
+    }
+    else
+    {
+        CD_ERROR("Value %d for property \"Focus\" out of range (%d, %d)\n", v, focusMin, focusMax);
+        return false;
+    }
 }
 
 //bool roboticslab::AravisGigE::setIris(int v)
@@ -45,7 +60,15 @@ int roboticslab::AravisGigE::getZoom()
 
 int roboticslab::AravisGigE::getFocus()
 {
-
+    if (focusAvailable)
+    {
+        return arv_device_get_integer_feature_value(arv_camera_get_device(camera), "Focus");
+    }
+    else
+    {
+        CD_ERROR("Property \"Focus\" not available\n");
+        return -1;
+    }
 }
 
 //int roboticslab::AravisGigE::getIris()

@@ -124,6 +124,15 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
     else
         CD_WARNING("\tZoom property not available\n");
 
+    arv_device_get_feature(arv_camera_get_device(camera), "Focus") == NULL ? focusAvailable = false : focusAvailable= true;
+    if (focusAvailable)
+    {
+        arv_device_get_integer_feature_bounds(arv_camera_get_device(camera), "Focus", &focusMin, &focusMax);
+        CD_INFO("\tFocus range: min=%d max=%d\n", focusMin, focusMax);
+    }
+    else
+        CD_WARNING("\tFocus property not available\n");
+
     //-- Verbose will show all available properties at start
     if (config.check("introspection"))
     {
