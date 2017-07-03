@@ -2,6 +2,12 @@
 
 bool roboticslab::AravisGigE::setZoom(int v)
 {
+    if (!zoomAvailable)
+    {
+        CD_ERROR("Property \"Zoom\" not available\n");
+        return false;
+    }
+
     if (zoomMin<=v && v>=zoomMax)
     {
         arv_device_set_integer_feature_value(arv_camera_get_device(camera), "Zoom", v);
@@ -22,6 +28,12 @@ bool roboticslab::AravisGigE::setZoom(int v)
 
 bool roboticslab::AravisGigE::setFocus(int v)
 {
+    if (!focusAvailable)
+    {
+        CD_ERROR("Property \"Focus\" not available\n");
+        return false;
+    }
+
     if (focusMin<=v && v>=focusMax)
     {
         arv_device_set_integer_feature_value(arv_camera_get_device(camera), "Focus", v);
