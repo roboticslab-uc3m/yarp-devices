@@ -2,7 +2,7 @@
 #define __ARAVIS_GIGE__
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/AudioVisualInterfaces.h>
+#include <yarp/dev/FrameGrabberInterfaces.h>
 
 #include <arv.h>
 
@@ -16,7 +16,8 @@ namespace roboticslab {
  *
  */
 
-class AravisGigE : public yarp::dev::DeviceDriver, public yarp::dev::IFrameGrabberImage
+class AravisGigE : public yarp::dev::DeviceDriver, public yarp::dev::IFrameGrabberImage,
+        public yarp::dev::IFrameGrabberControls2
 {
     public:
 
@@ -40,28 +41,22 @@ class AravisGigE : public yarp::dev::DeviceDriver, public yarp::dev::IFrameGrabb
         virtual int getFocus();
 //        virtual int getIris();
 
-        // ---------- IFrameGrabberControls Declarations. Implementation in IFrameGrabberControlsImpl.cpp ---------
-        virtual bool setBrightness(double v);
-        virtual bool setExposure(double v);
-        virtual bool setSharpness(double v);
-        virtual bool setWhiteBalance(double blue, double red);
-        virtual bool setHue(double v);
-        virtual bool setSaturation(double v);
-        virtual bool setGamma(double v);
-        virtual bool setShutter(double v);
-        virtual bool setGain(double v);
-        virtual bool setIris(double v);
-
-        virtual double getBrightness();
-        virtual double getExposure();
-        virtual double getSharpness();
-        virtual bool getWhiteBalance(double &blue, double &red);
-        virtual double getHue();
-        virtual double getSaturation();
-        virtual double getGamma();
-        virtual double getShutter();
-        virtual double getGain();
-        virtual double getIris();
+        // ---------- IFrameGrabberControls2 Declarations. Implementation in IFrameGrabberControls2Impl.cpp ---------
+        virtual bool getCameraDescription(CameraDescriptor *camera);
+        virtual bool hasFeature(int feature, bool *hasFeature);
+        virtual bool setFeature(int feature, double value);
+        virtual bool getFeature(int feature, double *value);
+        virtual bool setFeature(int feature, double value1, double value2);
+        virtual bool getFeature(int feature, double *value1, double *value2);
+        virtual bool hasOnOff(int feature, bool *HasOnOff);
+        virtual bool setActive(int feature, bool onoff);
+        virtual bool getActive(int feature, bool *isActive);
+        virtual bool hasAuto(int feature, bool *hasAuto);
+        virtual bool hasManual(int feature, bool *hasManual);
+        virtual bool hasOnePush(int feature, bool *hasOnePush);
+        virtual bool setMode(int feature, FeatureMode mode);
+        virtual bool getMode(int feature, FeatureMode *mode);
+        virtual bool setOnePush(int feature);
 
     private:
         ArvCamera       *camera;                // Camera to control.
@@ -119,8 +114,6 @@ class AravisGigE : public yarp::dev::DeviceDriver, public yarp::dev::IFrameGrabb
         bool irisAvailable;
         gint64 irisMin;                            // Camera iris minimum value
         gint64 irisMax;                            // Camera iris maximum value
-
-
 };
 
 
