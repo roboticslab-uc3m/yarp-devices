@@ -20,8 +20,18 @@ bool roboticslab::AravisGigE::hasFeature(int feature, bool *hasFeature)
 
 bool roboticslab::AravisGigE::setFeature(int feature, double value)
 {
-    CD_ERROR("Requested to set feature %d, but not implemented!\n", feature);
-    return false;
+    CD_DEBUG("Requested to set feature %d\n", feature);
+    auto yarp_feature = yarp_arv_feature_map.find(feature);
+    if (yarp_feature == yarp_arv_feature_map.end())
+    {
+        CD_ERROR("Property with yarp id %d not available\n", feature);
+        return false;
+    }
+
+    //-- Check value is within range here (when you can inspect ranges)
+
+    arv_device_set_integer_feature_value(arv_camera_get_device(camera), yarp_feature->second, (int)value);
+    return true;
 }
 
 bool roboticslab::AravisGigE::getFeature(int feature, double *value)
