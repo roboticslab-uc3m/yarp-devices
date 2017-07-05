@@ -1,6 +1,8 @@
 #ifndef __ARAVIS_GIGE__
 #define __ARAVIS_GIGE__
 
+#include <map>
+
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 
@@ -114,6 +116,9 @@ class AravisGigE : public yarp::dev::DeviceDriver, public yarp::dev::IFrameGrabb
         bool irisAvailable;
         gint64 irisMin;                            // Camera iris minimum value
         gint64 irisMax;                            // Camera iris maximum value
+
+        //-- IFrameGrabberControls2
+        std::map<int, const char*> yarp_arv_feature_map; //-- Map yarp features with aravis feature ids
 };
 
 

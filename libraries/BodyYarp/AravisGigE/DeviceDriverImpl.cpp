@@ -29,6 +29,11 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
     frameID = prevFrameID = 0;
     num_buffers = 50;
 
+    //-- Initalize parameter mapping
+    yarp_arv_feature_map[YARP_FEATURE_ZOOM] = "Zoom";
+    yarp_arv_feature_map[YARP_FEATURE_FOCUS] = "Focus";
+
+
     //-- Open Aravis device(s)
     //-------------------------------------------------------------------------------
     int index = 0; //-- Right now, index is hardcoded (in the future could be a param)
