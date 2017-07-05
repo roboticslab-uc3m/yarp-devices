@@ -26,7 +26,7 @@ bool roboticslab::AravisGigE::setFeature(int feature, double value)
 
 bool roboticslab::AravisGigE::getFeature(int feature, double *value)
 {
-    CD_DEBUG("Property with yarp id %d requested\n");
+    CD_DEBUG("Property with yarp id %d requested\n", feature);
     auto yarp_feature = yarp_arv_feature_map.find(feature);
     if (yarp_feature == yarp_arv_feature_map.end())
     {
