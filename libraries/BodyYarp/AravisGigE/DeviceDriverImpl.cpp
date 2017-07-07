@@ -30,8 +30,11 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
     num_buffers = 50;
 
     //-- Initalize parameter mapping
-    yarp_arv_feature_map[YARP_FEATURE_ZOOM] = "Zoom";
-    yarp_arv_feature_map[YARP_FEATURE_FOCUS] = "Focus";
+    yarp_arv_float_feat_map[YARP_FEATURE_EXPOSURE]  ="ExposureTime";
+    yarp_arv_float_feat_map[YARP_FEATURE_GAIN] = "Gain";
+    yarp_arv_float_feat_map[YARP_FEATURE_FRAME_RATE] = "FPS";
+    yarp_arv_int_feature_map[YARP_FEATURE_ZOOM] = "Zoom";
+    yarp_arv_int_feature_map[YARP_FEATURE_FOCUS] = "Focus";
 
 
     //-- Open Aravis device(s)

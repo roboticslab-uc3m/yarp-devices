@@ -10,10 +10,15 @@ bool roboticslab::AravisGigE::getCameraDescription(CameraDescriptor *camera)
 bool roboticslab::AravisGigE::hasFeature(int feature, bool *hasFeature)
 {
     CD_DEBUG("Request to know if camera has feature %d\n", feature);
-    if (yarp_arv_feature_map.find(feature) != yarp_arv_feature_map.end())
+    if (yarp_arv_int_feature_map.find(feature) != yarp_arv_int_feature_map.end() ||
+            yarp_arv_float_feat_map.find(feature) != yarp_arv_float_feat_map.end())
+    {
         *hasFeature = true;
+    }
     else
+    {
         *hasFeature = false;
+    }
 
     return true;
 }
@@ -21,31 +26,49 @@ bool roboticslab::AravisGigE::hasFeature(int feature, bool *hasFeature)
 bool roboticslab::AravisGigE::setFeature(int feature, double value)
 {
     CD_DEBUG("Requested to set feature %d\n", feature);
-    auto yarp_feature = yarp_arv_feature_map.find(feature);
-    if (yarp_feature == yarp_arv_feature_map.end())
+    auto yarp_int_feature = yarp_arv_int_feature_map.find(feature);
+    if (yarp_int_feature == yarp_arv_int_feature_map.end())
     {
-        CD_ERROR("Property with yarp id %d not available\n", feature);
-        return false;
+        auto yarp_float_feature = yarp_arv_float_feat_map.find(feature);
+        if (yarp_float_feature == yarp_arv_float_feat_map.end())
+        {
+            CD_ERROR("Property with yarp id %d not available\n", feature);
+            return false;
+        }
+
+        //-- Check {here} that value is within range here (when you can inspect ranges)
+
+        arv_device_set_float_feature_value(arv_camera_get_device(camera), yarp_float_feature->second, value);
     }
+    else
+    {
+        //-- Check {here} that value is within range here (when you can inspect ranges)
 
-    //-- Check value is within range here (when you can inspect ranges)
-
-    arv_device_set_integer_feature_value(arv_camera_get_device(camera), yarp_feature->second, (int)value);
+        arv_device_set_integer_feature_value(arv_camera_get_device(camera), yarp_int_feature->second, value);
+    }
     return true;
 }
 
 bool roboticslab::AravisGigE::getFeature(int feature, double *value)
 {
     CD_DEBUG("Property with yarp id %d requested\n", feature);
-    auto yarp_feature = yarp_arv_feature_map.find(feature);
-    if (yarp_feature == yarp_arv_feature_map.end())
+    auto yarp_int_feature = yarp_arv_int_feature_map.find(feature);
+    if (yarp_int_feature == yarp_arv_int_feature_map.end())
     {
-        CD_ERROR("Property with yarp id %d not available\n", feature);
-        return false;
-    }
+        auto yarp_float_feature = yarp_arv_float_feat_map.find(feature);
+        if (yarp_float_feature == yarp_arv_float_feat_map.end())
+        {
+            CD_ERROR("Property with yarp id %d not available\n", feature);
+            return false;
+        }
 
-    *value = arv_device_get_integer_feature_value(arv_camera_get_device(camera), yarp_feature->second);
-    CD_DEBUG("Value: %d.\n", *value);
+        *value = arv_device_get_float_feature_value(arv_camera_get_device(camera), yarp_float_feature->second);
+    }
+    else
+    {
+        *value = arv_device_get_integer_feature_value(arv_camera_get_device(camera), yarp_int_feature->second);
+    }
+    CD_DEBUG("Value: %f\n", *value);
     return true;
 }
 

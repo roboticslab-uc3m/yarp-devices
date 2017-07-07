@@ -109,7 +109,8 @@ class AravisGigE : public yarp::dev::DeviceDriver, public yarp::dev::IFrameGrabb
         gint64 irisMax;                            // Camera iris maximum value
 
         //-- IFrameGrabberControls2
-        std::map<int, const char*> yarp_arv_feature_map; //-- Map yarp features with aravis feature ids
+        std::map<int, const char*> yarp_arv_int_feature_map; //-- Map yarp features with aravis feature ids
+        std::map<int, const char*> yarp_arv_float_feat_map;
 };
 
 
