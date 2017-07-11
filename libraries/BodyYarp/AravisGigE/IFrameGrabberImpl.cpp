@@ -4,7 +4,6 @@ bool roboticslab::AravisGigE::getRawBuffer(unsigned char *buffer)
 {
     //-- Right now it is implemented as polling
     //-- I think it could be also implemented with callbacks with ArvStreamCallback
-    CD_DEBUG("This is the default interface!\n");
 
     //-- Grab frame (get raw image)
     //--------------------------------------------------------------------------------

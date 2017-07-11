@@ -18,7 +18,7 @@ namespace roboticslab {
  *
  */
 
-class AravisGigE : public yarp::dev::DeviceDriver, public yarp::dev::IFrameGrabberImage,
+class AravisGigE : public yarp::dev::DeviceDriver, public yarp::dev::IFrameGrabberImageRaw,
         public yarp::dev::IFrameGrabber, public yarp::dev::IFrameGrabberControls2
 {
     public:
@@ -36,8 +36,8 @@ class AravisGigE : public yarp::dev::DeviceDriver, public yarp::dev::IFrameGrabb
         //virtual int height() const; //-- Implemented by IFrameGrabberImageImpl
         //virtual int width() const; //-- Implemented by IFrameGrabberImageImpl
 
-        //  --------- IFrameGrabberImage Declarations. Implementation in IFrameGrabberImageImpl.cpp ---------
-        /*virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);*/
+        //  --------- IFrameGrabberImageRaw Declarations. Implementation in IFrameGrabberImageRawImpl.cpp ---------
+        virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image);
         virtual int height() const;
         virtual int width() const;
 

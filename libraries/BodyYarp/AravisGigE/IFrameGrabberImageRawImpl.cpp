@@ -1,14 +1,13 @@
 #include "AravisGigE.hpp"
 
-bool roboticslab::AravisGigE::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
+bool roboticslab::AravisGigE::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono> &image)
 {
     //-- Right now it is implemented as polling (grab + retrieve image)
     //-- I think it could be also implemented with callbacks with ArvStreamCallback
-    CD_DEBUG("This is the default interface!\n");
 
     //-- Grab frame (get raw image)
     //--------------------------------------------------------------------------------
-     if (!getRawBuffer(NULL))
+     if (!getRawBuffer(NULL)) //-- NULL as it is stored internally in framebuffer variable
      {
          return false;
      }
@@ -19,24 +18,15 @@ bool roboticslab::AravisGigE::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
     {
         //-- Create a yarp image container according with the current pixel format
         yarp::sig::Image raw_image;
-        if (pixelFormat == ARV_PIXEL_FORMAT_MONO_8)
-        {
-            raw_image = yarp::sig::ImageOf<yarp::sig::PixelMono> ();
-        }
-        else if (pixelFormat == ARV_PIXEL_FORMAT_MONO_16)
-        {
-            raw_image = yarp::sig::ImageOf<yarp::sig::PixelMono16> ();
-        }
-        else
+        if (pixelFormat != ARV_PIXEL_FORMAT_MONO_8)
         {
             CD_ERROR("Unsupported pixel format\n");
         }
 
         //-- Write data
-        raw_image.zero();
-        raw_image.resize(_width, _height);
-        mempcpy(raw_image.getRawImage(), framebuffer, _width*_height*raw_image.getPixelSize());
-        image.copy(raw_image);
+        image.zero();
+        image.resize(_width, _height);
+        mempcpy(image.getRawImage(), framebuffer, _width*_height*image.getPixelSize());
     }
     else
     {
