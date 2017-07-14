@@ -46,8 +46,10 @@ class AravisGigE : public yarp::dev::DeviceDriver, public yarp::dev::IFrameGrabb
         virtual bool hasFeature(int feature, bool *hasFeature);
         virtual bool setFeature(int feature, double value);
         virtual bool getFeature(int feature, double *value);
+        virtual bool getFeatureLimits(int feature, double *minValue, double *maxValue);
         virtual bool setFeature(int feature, double value1, double value2);
         virtual bool getFeature(int feature, double *value1, double *value2);
+        virtual bool getFeatureLimits(int feature, double *minValue1, double *maxValue1, double *minValue2, double *maxValue2);
         virtual bool hasOnOff(int feature, bool *HasOnOff);
         virtual bool setActive(int feature, bool onoff);
         virtual bool getActive(int feature, bool *isActive);

@@ -5,9 +5,9 @@
 cmake_minimum_required(VERSION 2.6)
 
 find_package(YARP REQUIRED)
-include_directories(${YARP_INCLUDE_DIRS})
-list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-include(YarpPlugin)
+include_directories(${YARP_INCLUDE_DIRS}) # deprecated
+list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH}) # deprecated
+include(YarpPlugin) # deprecated
 
 YARP_PREPARE_PLUGIN(AravisGigE CATEGORY device TYPE roboticslab::AravisGigE INCLUDE AravisGigE.hpp WRAPPER grabber)
 

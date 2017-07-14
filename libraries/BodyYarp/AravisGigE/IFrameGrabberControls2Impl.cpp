@@ -103,15 +103,58 @@ bool roboticslab::AravisGigE::getFeature(int feature, double *value)
     return true;
 }
 
+bool roboticslab::AravisGigE::getFeatureLimits(int feature, double *minValue, double *maxValue)
+{
+    CD_DEBUG("Property with yarp id %d requested\n", feature);
+    //-- Check if YARP supports this feature
+    cameraFeature_id_t f;
+    f = static_cast<cameraFeature_id_t>(feature);
+    if (f < YARP_FEATURE_BRIGHTNESS || f > YARP_FEATURE_NUMBER_OF-1)
+    {
+        CD_ERROR("Feature not supported by YARP\n");
+        return false;
+    }
+
+    auto yarp_int_feature = yarp_arv_int_feature_map.find(f);
+    if (yarp_int_feature == yarp_arv_int_feature_map.end())
+    {
+        auto yarp_float_feature = yarp_arv_float_feat_map.find(f);
+        if (yarp_float_feature == yarp_arv_float_feat_map.end())
+        {
+            CD_ERROR("Property with yarp id %d not available\n", f);
+            return false;
+        }
+
+        //-- Float feature
+        arv_device_get_float_feature_bounds(arv_camera_get_device(camera), yarp_float_feature->second, minValue, maxValue);
+    }
+    else
+    {
+        //-- Integer feature
+        gint64 min_value_int, max_value_int;
+        arv_device_get_integer_feature_bounds(arv_camera_get_device(camera), yarp_int_feature->second, &min_value_int, &max_value_int);
+        *minValue = (double)min_value_int;
+        *maxValue = (double)max_value_int;
+    }
+    CD_DEBUG("Limits: %f %f\n", *minValue, *maxValue);
+    return true;
+}
+
 bool roboticslab::AravisGigE::setFeature(int feature, double value1, double value2)
 {
-    CD_ERROR("Not implemented!\n");
+    CD_ERROR("No features with 2 values supported!\n");
     return false;
 }
 
 bool roboticslab::AravisGigE::getFeature(int feature, double *value1, double *value2)
 {
-    CD_ERROR("Not implemented!\n");
+    CD_ERROR("No features with 2 values supported!\n");
+    return false;
+}
+
+bool roboticslab::AravisGigE::getFeatureLimits(int feature, double *minValue1, double *maxValue1, double *minValue2, double *maxValue2)
+{
+    CD_ERROR("No features with 2 values supported!\n");
     return false;
 }
 

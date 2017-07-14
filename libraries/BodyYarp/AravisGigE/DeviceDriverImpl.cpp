@@ -8,7 +8,7 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
     if (config.check("fake"))
     {
         CD_INFO("Enabling fake Aravis camera\n");
-        arv_enable_interface ("Fake"); //-- Enables fake Aravis cameras (useful for debug / testing)
+        arv_enable_interface("Fake"); //-- Enables fake Aravis cameras (useful for debug / testing)
     }
 
     //-- Data initialization
@@ -140,15 +140,6 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
     }
     else
         CD_WARNING("\tFocus property not available\n");
-
-    //-- Verbose will show all available properties at start
-    if (config.check("introspection"))
-    {
-        guint n_properties;
-        const char **properties = arv_device_get_available_enumeration_feature_values_as_strings(arv_camera_get_device(camera), "BalanceWhiteAuto", &n_properties);
-        for (int i = 0; i < n_properties; i++)
-            CD_INFO("New property discovered: %s\n", properties[i]);
-    }
 
     //-- Start capturing images
     //-------------------------------------------------------------------------------
