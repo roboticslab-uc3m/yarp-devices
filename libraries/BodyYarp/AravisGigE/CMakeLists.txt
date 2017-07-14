@@ -24,8 +24,6 @@ IF (NOT SKIP_AravisGigE)
 
   # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now...
   set(ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "appended libraries")
-  #set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} LacqueyFetch CACHE INTERNAL "appended libraries")
-
   #install(TARGETS AravisGigE DESTINATION lib)
   yarp_install(TARGETS AravisGigE
              EXPORT YARP
@@ -36,7 +34,6 @@ IF (NOT SKIP_AravisGigE)
   yarp_install(FILES AravisGigE.ini
               COMPONENT runtime
               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-
 ENDIF (NOT SKIP_AravisGigE)
 
 
