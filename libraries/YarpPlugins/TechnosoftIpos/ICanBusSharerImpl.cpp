@@ -782,6 +782,22 @@ bool roboticslab::TechnosoftIpos::interpretMessage( can_msg * message)
             CD_INFO("Got SDO ack \"Interpolated position initial position.\" from driver. %s\n",msgToStr(message).c_str());
             return true;
         }
+        else if( (message->data[1]==0xFF)&&(message->data[2]==0x60) )      // Manual 60FFh: Target velocity
+        {
+            if (message->data[0]==0x60)      // SDO segment upload/acknowledge
+            {
+                CD_INFO("Got SDO ack \"Target velocity.\" from driver. %s\n",msgToStr(message).c_str());
+            }
+            else
+            {
+                int32_t got;
+                memcpy(&got, message->data+4,4);
+                refVelocitySemaphore.wait();
+                refVelocity = got / (tr * 745.8);  //-- 65536 * 0.01138 = 745.8
+                refVelocitySemaphore.post();
+                CD_INFO("Got SDO \"Target velocity\" response from driver. %s\n",msgToStr(message).c_str());
+            }
+        }
         CD_INFO("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
         return false;
     }
