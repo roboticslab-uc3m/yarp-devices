@@ -29,6 +29,7 @@ IF (ENABLE_BodyYarp)
     add_subdirectory(CanBusControlboard)
     add_subdirectory(Jr3)
     add_subdirectory(SpaceNavigator)
+    add_subdirectory(WiimoteSensor)
   # yarp_end_plugin_library(BodyYarp)
 
   #install(TARGETS BodyYarp DESTINATION lib)

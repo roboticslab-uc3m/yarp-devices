@@ -15,7 +15,9 @@ before_install:
 
 install:
   #-- Install SpaceNavigator-related packages
-  - sudo apt-get install libspnav-dev 
+  - sudo apt-get install libspnav-dev
+  #-- Install Wiimote-related packages
+  - sudo apt-get install libxwiimote-dev
   #-- Install cmake
   - sudo apt-get install cmake
   #-- Install yarp
