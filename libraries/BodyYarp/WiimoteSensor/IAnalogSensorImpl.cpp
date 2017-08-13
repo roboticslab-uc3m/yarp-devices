@@ -49,7 +49,7 @@ int roboticslab::WiimoteSensor::getState(int ch)
 
 int roboticslab::WiimoteSensor::getChannels()
 {
-    return yarp::dev::IAnalogSensor::AS_OK;
+    return 4;
 }
 
 // -----------------------------------------------------------------------------
