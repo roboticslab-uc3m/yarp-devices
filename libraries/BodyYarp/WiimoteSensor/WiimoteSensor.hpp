@@ -30,7 +30,8 @@ class WiimoteSensor : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogS
 {
 public:
 
-    WiimoteSensor();
+    WiimoteSensor() : iface(NULL), fds_num(0)
+    {}
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
     virtual bool open(yarp::os::Searchable& config);
