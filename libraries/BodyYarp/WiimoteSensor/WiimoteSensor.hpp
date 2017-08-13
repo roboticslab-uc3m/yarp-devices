@@ -3,7 +3,10 @@
 #ifndef __WIIMOTE_SENSOR_HPP__
 #define __WIIMOTE_SENSOR_HPP__
 
+#include <poll.h>
+
 #include <xwiimote.h>
+
 #include <yarp/dev/IAnalogSensor.h>
 
 #include "ColorDebug.hpp"
@@ -87,6 +90,10 @@ private:
     static char * getDevicePath(int id);
 
     struct xwii_iface * iface;
+    struct xwii_event event;
+    struct pollfd fds[2];
+
+    int fds_num;
 };
 
 }  // namespace roboticslab

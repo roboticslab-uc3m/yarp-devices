@@ -3,6 +3,7 @@
 #include "WiimoteSensor.hpp"
 
 #include <cstdlib>
+#include <cstring>
 
 #include <yarp/os/Value.h>
 
@@ -28,7 +29,7 @@ bool roboticslab::WiimoteSensor::open(yarp::os::Searchable& config)
 
     if (ret < 0)
     {
-        CD_ERROR("Cannot create xwii_iface '%s' (error: %d).\n", syspath, ret);
+        CD_ERROR("Cannot create xwii_iface '%s': %d.\n", syspath, ret);
         return false;
     }
 
@@ -40,6 +41,16 @@ bool roboticslab::WiimoteSensor::open(yarp::os::Searchable& config)
         close();
         return false;
     }
+
+    std::memset(fds, 0, sizeof(fds));
+
+    fds[0].fd = 0;
+    fds[0].events = POLLIN;
+
+    fds[1].fd = xwii_iface_get_fd(iface);
+    fds[1].events = POLLIN;
+
+    fds_num = 2;
 
     return true;
 }
