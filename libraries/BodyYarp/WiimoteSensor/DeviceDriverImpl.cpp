@@ -25,19 +25,21 @@ bool roboticslab::WiimoteSensor::open(yarp::os::Searchable& config)
 
     int ret = xwii_iface_new(&iface, syspath);
 
-    std::free(syspath);
-
     if (ret < 0)
     {
         CD_ERROR("Cannot create xwii_iface '%s': %d.\n", syspath, ret);
+        std::free(syspath);
         return false;
     }
+
+    CD_SUCCESS("Created xwii_iface '%s'.\n", syspath);
+    std::free(syspath);
 
     ret = xwii_iface_open(iface, XWII_IFACE_CORE | XWII_IFACE_ACCEL);
 
     if (ret < 0)
     {
-        CD_ERROR("Cannot open interface: %d.\n", ret);
+        CD_ERROR("Cannot open interface, did you launch with sudo? (%d).\n", ret);
         close();
         return false;
     }
