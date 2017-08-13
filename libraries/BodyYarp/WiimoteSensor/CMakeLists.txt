@@ -13,6 +13,7 @@ if(NOT SKIP_WiimoteSensor)
 
   yarp_add_plugin(WiimoteSensor
                   WiimoteSensor.hpp
+                  WiimoteSensor.cpp
                   DeviceDriverImpl.cpp
                   IAnalogSensorImpl.cpp)
 
