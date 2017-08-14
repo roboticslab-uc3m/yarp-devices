@@ -30,7 +30,11 @@ class WiimoteSensor : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogS
 {
 public:
 
-    WiimoteSensor() : iface(NULL), fds_num(0)
+    WiimoteSensor()
+        : iface(NULL),
+          fds_num(0),
+          buttonA_pressed(false), buttonB_pressed(false),
+          roll(0.0), pitch(0.0)
     {}
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -95,6 +99,10 @@ private:
     struct pollfd fds[2];
 
     int fds_num;
+
+    bool buttonA_pressed, buttonB_pressed;
+
+    double roll, pitch;
 };
 
 }  // namespace roboticslab
