@@ -8,7 +8,7 @@
 
 int roboticslab::WiimoteSensor::read(yarp::sig::Vector &out)
 {
-    if (poll(fds, fds_num, -1) < 0 && errno != EINTR)
+    if (poll(fds, fds_num, 0) < 0 && errno != EINTR)
     {
         CD_ERROR("Cannot poll fds: %d.\n", -errno);
         return yarp::dev::IAnalogSensor::AS_ERROR;
