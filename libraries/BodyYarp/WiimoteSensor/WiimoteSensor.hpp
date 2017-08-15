@@ -44,7 +44,8 @@ public:
           buttonA_pressed(false), buttonB_pressed(false),
           roll(0.0), pitch(0.0),
           calibZeroX(0), calibZeroY(0), calibZeroZ(0),
-          calibOneX(0), calibOneY(0), calibOneZ(0)
+          calibOneX(0), calibOneY(0), calibOneZ(0),
+          yawActive(false)
     {}
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -102,6 +103,8 @@ public:
 
 private:
 
+    enum roll_yaw_mode { ROLL, YAW };
+
     static char * getDevicePath(int id);
 
     struct xwii_iface * iface;
@@ -116,6 +119,8 @@ private:
 
     int calibZeroX, calibZeroY, calibZeroZ;
     int calibOneX, calibOneY, calibOneZ;
+
+    bool yawActive;
 };
 
 }  // namespace roboticslab

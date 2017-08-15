@@ -25,12 +25,13 @@ int roboticslab::WiimoteSensor::read(yarp::sig::Vector &out)
         }
     }
 
-    out.resize(4);  //-- [roll, pitch, A, B]
+    out.resize(5);  //-- [roll, pitch, A, B, yawActive]
 
     out[0] = roll;
     out[1] = pitch;
     out[2] = buttonA_pressed ? 1.0 : 0.0;
     out[3] = buttonB_pressed ? 1.0 : 0.0;
+    out[4] = yawActive ? 1.0 : 0.0;
 
     switch (event.type)
     {
@@ -65,6 +66,16 @@ int roboticslab::WiimoteSensor::read(yarp::sig::Vector &out)
             }
 
             break;
+        case XWII_KEY_ONE:
+            CD_INFO("Roll active.\n");
+            yawActive = false;
+            out[4] = 0.0;
+            break;
+        case XWII_KEY_TWO:
+            CD_INFO("Yaw active.\n");
+            yawActive = true;
+            out[4] = 1.0;
+            break;
         }
 
         break;
@@ -86,7 +97,7 @@ int roboticslab::WiimoteSensor::read(yarp::sig::Vector &out)
         break;
     }
 
-    CD_INFO("[roll, pitch, A, B] = [%f, %f, %f, %f]\n", out[0], out[1], out[2], out[3]);
+    CD_INFO("[roll, pitch, A, B, yawActive] = [%f, %f, %.0f, %.0f, %.0f]\n", out[0], out[1], out[2], out[3], out[4]);
 
     return yarp::dev::IAnalogSensor::AS_OK;
 }
@@ -102,7 +113,7 @@ int roboticslab::WiimoteSensor::getState(int ch)
 
 int roboticslab::WiimoteSensor::getChannels()
 {
-    return 4;
+    return 5;
 }
 
 // -----------------------------------------------------------------------------
