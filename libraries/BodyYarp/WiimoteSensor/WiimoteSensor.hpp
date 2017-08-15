@@ -13,6 +13,14 @@
 
 #define DEFAULT_DEVICE 1
 
+#define DEFAULT_CALIB_ZERO_X -30
+#define DEFAULT_CALIB_ZERO_Y -22
+#define DEFAULT_CALIB_ZERO_Z 72
+
+#define DEFAULT_CALIB_ONE_X 69
+#define DEFAULT_CALIB_ONE_Y -123
+#define DEFAULT_CALIB_ONE_Z -25
+
 namespace roboticslab
 {
 
@@ -34,7 +42,9 @@ public:
         : iface(NULL),
           fds_num(0),
           buttonA_pressed(false), buttonB_pressed(false),
-          roll(0.0), pitch(0.0)
+          roll(0.0), pitch(0.0),
+          calibZeroX(0), calibZeroY(0), calibZeroZ(0),
+          calibOneX(0), calibOneY(0), calibOneZ(0)
     {}
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -103,6 +113,9 @@ private:
     bool buttonA_pressed, buttonB_pressed;
 
     double roll, pitch;
+
+    int calibZeroX, calibZeroY, calibZeroZ;
+    int calibOneX, calibOneY, calibOneZ;
 };
 
 }  // namespace roboticslab

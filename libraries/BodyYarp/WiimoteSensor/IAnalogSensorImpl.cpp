@@ -75,6 +75,13 @@ int roboticslab::WiimoteSensor::read(yarp::sig::Vector &out)
             int z = event.v.abs[0].z;
 
             CD_INFO("Accel event: [x] %d, [y] %d, [z] %d\n", x, y, z);
+
+            double normX = ((double) x - calibZeroX) / (calibOneX - calibZeroX);
+            double normY = ((double) y - calibZeroY) / (calibOneY - calibZeroY);
+            double normZ = ((double) z - calibZeroZ) / (calibOneZ - calibZeroZ);
+
+            out[0] = roll = normX;
+            out[1] = pitch = normY;
         }
         break;
     }
