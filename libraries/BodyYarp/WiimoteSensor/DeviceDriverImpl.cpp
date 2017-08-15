@@ -3,7 +3,6 @@
 #include "WiimoteSensor.hpp"
 
 #include <cstdlib>
-#include <cstring>
 
 #include <yarp/os/Value.h>
 
@@ -44,16 +43,6 @@ bool roboticslab::WiimoteSensor::open(yarp::os::Searchable& config)
         return false;
     }
 
-    std::memset(fds, 0, sizeof(fds));
-
-    fds[0].fd = 0;
-    fds[0].events = POLLIN;
-
-    fds[1].fd = xwii_iface_get_fd(iface);
-    fds[1].events = POLLIN;
-
-    fds_num = 2;
-
     calibZeroX = config.check("calibZeroX", yarp::os::Value(DEFAULT_CALIB_ZERO_X), "normalization value for X axis (zero)").asInt();
     calibZeroY = config.check("calibZeroY", yarp::os::Value(DEFAULT_CALIB_ZERO_Y), "normalization value for Y axis (zero)").asInt();
     calibZeroZ = config.check("calibZeroZ", yarp::os::Value(DEFAULT_CALIB_ZERO_Z), "normalization value for Z axis (zero)").asInt();
@@ -65,6 +54,9 @@ bool roboticslab::WiimoteSensor::open(yarp::os::Searchable& config)
     CD_INFO("Calibration (zero): x = %d, y = %d, z = %d\n", calibZeroX, calibZeroY, calibZeroZ);
     CD_INFO("Calibration (one): x = %d, y = %d, z = %d\n", calibOneX, calibOneY, calibOneZ);
 
+    dispatcherThread.setInterfacePointer(iface);
+    dispatcherThread.start();
+
     return true;
 }
 
@@ -72,6 +64,7 @@ bool roboticslab::WiimoteSensor::open(yarp::os::Searchable& config)
 
 bool roboticslab::WiimoteSensor::close()
 {
+    dispatcherThread.stop();
     xwii_iface_unref(iface);
     return true;
 }

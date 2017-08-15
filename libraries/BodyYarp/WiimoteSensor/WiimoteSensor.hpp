@@ -3,13 +3,11 @@
 #ifndef __WIIMOTE_SENSOR_HPP__
 #define __WIIMOTE_SENSOR_HPP__
 
-#include <poll.h>
-
 #include <xwiimote.h>
 
+#include <yarp/os/Thread.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/dev/IAnalogSensor.h>
-
-#include "ColorDebug.hpp"
 
 #define DEFAULT_DEVICE 1
 
@@ -32,6 +30,65 @@ namespace roboticslab
 
 /**
  * @ingroup WiimoteSensor
+ * @brief Holds key state data from input events.
+ */
+struct WiimoteEventData
+{
+    WiimoteEventData()
+        : accelX(0), accelY(0), accelZ(0),
+          buttonA(false), buttonB(false),
+          button1(false), button2(false)
+    {}
+
+    int accelX;
+    int accelY;
+    int accelZ;
+
+    bool buttonA;
+    bool buttonB;
+
+    bool button1;
+    bool button2;
+};
+
+/**
+ * @ingroup WiimoteSensor
+ * @brief Thread that listens to Wiimote events.
+ */
+class WiimoteDispatcherThread : public yarp::os::Thread
+{
+public:
+
+    //! @brief Constructor.
+    WiimoteDispatcherThread() : iface(NULL)
+    {}
+
+    //! @brief Called just before a new thread starts.
+    virtual void beforeStart();
+
+    //! @brief Main body of the new thread.
+    virtual void run();
+
+    //! @brief Set pointer to @ref xwii_iface.
+    void setInterfacePointer(struct xwii_iface * iface)
+    {
+        this->iface = iface;
+    }
+
+    //! @brief Retrieve event data object.
+    WiimoteEventData getEventData() const;
+
+private:
+
+    struct xwii_iface * iface;
+    struct xwii_event event;
+
+    WiimoteEventData eventData;
+    mutable yarp::os::Mutex eventDataMutex;
+};
+
+/**
+ * @ingroup WiimoteSensor
  * @brief Implementation for the Wiimote controller.
  */
 class WiimoteSensor : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor
@@ -40,12 +97,8 @@ public:
 
     WiimoteSensor()
         : iface(NULL),
-          fds_num(0),
-          buttonA_pressed(false), buttonB_pressed(false),
-          roll(0.0), pitch(0.0),
           calibZeroX(0), calibZeroY(0), calibZeroZ(0),
-          calibOneX(0), calibOneY(0), calibOneZ(0),
-          yawActive(false)
+          calibOneX(0), calibOneY(0), calibOneZ(0)
     {}
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -103,24 +156,14 @@ public:
 
 private:
 
-    enum roll_yaw_mode { ROLL, YAW };
-
     static char * getDevicePath(int id);
 
     struct xwii_iface * iface;
-    struct xwii_event event;
-    struct pollfd fds[2];
-
-    int fds_num;
-
-    bool buttonA_pressed, buttonB_pressed;
-
-    double roll, pitch;
 
     int calibZeroX, calibZeroY, calibZeroZ;
     int calibOneX, calibOneY, calibOneZ;
 
-    bool yawActive;
+    WiimoteDispatcherThread dispatcherThread;
 };
 
 }  // namespace roboticslab

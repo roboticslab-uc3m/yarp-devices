@@ -15,7 +15,8 @@ if(NOT SKIP_WiimoteSensor)
                   WiimoteSensor.hpp
                   WiimoteSensor.cpp
                   DeviceDriverImpl.cpp
-                  IAnalogSensorImpl.cpp)
+                  IAnalogSensorImpl.cpp
+                  WiimoteDispatcherThread.cpp)
 
   target_link_libraries(WiimoteSensor ${YARP_LIBRARIES} ${XWIIMOTE_LIBRARIES})
 
