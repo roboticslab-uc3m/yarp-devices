@@ -46,6 +46,7 @@ option(ENABLE_FakeJoint "Enable/disable compilation of BodyYarp_FakeJoint" TRUE)
 option(ENABLE_CanBusControlboard "Enable/disable compilation of BodyYarp_CanBusControlboard" TRUE)
 option(ENABLE_Jr3 "Enable/disable compilation of BodyYarp_Jr3" TRUE)
 option(ENABLE_SpaceNavigator "Enable/disable compilation of BodyYarp_SpaceNavigator" TRUE)
+option(ENABLE_WiimoteSensor "Enable/disable compilation of BodyYarp_WiimoteSensor" TRUE)
 
 ##### test and coverage options
 option(ENABLE_tests "Choose if you want to compile tests" TRUE)
