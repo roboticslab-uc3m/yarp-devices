@@ -4,10 +4,10 @@
 
 #include <ColorDebug.hpp>
 
-bool roboticslab::ProximitySensors::hasObstacle()
+roboticslab::IProximitySensors::alert_level roboticslab::ProximitySensors::getAlertLevel()
 {
     alertMutex.lock();
-    bool alert_copy = alert;
+    alert_level alert_copy = alert;
     alertMutex.unlock();
     return alert_copy;
 }

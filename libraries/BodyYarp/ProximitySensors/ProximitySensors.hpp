@@ -27,12 +27,12 @@ class ProximitySensors : public yarp::dev::DeviceDriver, public IProximitySensor
 {
     public:
 
-        ProximitySensors() : alert(false), gripper(false)
+        ProximitySensors() : alert(ZERO), gripper(false)
         {}
 
         // -------- IProximitySensors declarations. Implementation in IProximitySensorsImpl.cpp --------
 
-        virtual bool hasObstacle();
+        virtual alert_level getAlertLevel();
         virtual bool hasTarget();
 
         // -------- DeviceDriver declarations. Implementation in IDeviceImpl.cpp --------
@@ -60,6 +60,7 @@ class ProximitySensors : public yarp::dev::DeviceDriver, public IProximitySensor
 
         static const int THRESHOLD_GRIPPER;
         static const int THRESHOLD_ALERT;
+        static const int THRESHOLD_LOW_ALERT;
 
     protected:
 
@@ -77,7 +78,7 @@ class ProximitySensors : public yarp::dev::DeviceDriver, public IProximitySensor
         };
 
         SensorReader sr;
-        bool alert;
+        alert_level alert;
         bool gripper;
         yarp::os::Mutex alertMutex, gripperMutex;
 

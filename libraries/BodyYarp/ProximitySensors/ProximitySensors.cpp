@@ -5,7 +5,8 @@
 #include <ColorDebug.hpp>
 
 const int roboticslab::ProximitySensors::THRESHOLD_GRIPPER = 50;
-const int roboticslab::ProximitySensors::THRESHOLD_ALERT = 300;
+const int roboticslab::ProximitySensors::THRESHOLD_ALERT = 800;
+const int roboticslab::ProximitySensors::THRESHOLD_LOW_ALERT = 100;
 
 void roboticslab::ProximitySensors::SensorReader::onRead(yarp::os::Bottle& b)
 {
@@ -26,7 +27,14 @@ void roboticslab::ProximitySensors::SensorReader::onRead(yarp::os::Bottle& b)
 	max=b.get(i).asDouble();}
         CD_INFO("Current maximum sensor value: %f\n", max);
     sens->alertMutex.lock();
-	sens->alert = max > THRESHOLD_ALERT;
+    if(max > THRESHOLD_ALERT)
+    sens->alert = HIGH;
+        else if (max > THRESHOLD_LOW_ALERT)
+        {sens->alert = LOW;}
+            else
+            sens->alert = ZERO;
+
+//	sens->alert = max > THRESHOLD_ALERT;
     sens->alertMutex.unlock();
 }
 

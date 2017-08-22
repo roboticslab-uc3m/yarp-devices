@@ -15,12 +15,14 @@ namespace roboticslab
 class IProximitySensors
 {
     public:
+
+        enum alert_level {ZERO, LOW, HIGH};
         /**
          * Destructor.
          */
         virtual ~IProximitySensors() {};
 
-        virtual bool hasObstacle() = 0;
+        virtual alert_level getAlertLevel() = 0;
         virtual bool hasTarget() = 0;
 
 };
