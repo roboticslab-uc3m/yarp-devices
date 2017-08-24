@@ -14,7 +14,7 @@
 
 #define DEFAULT_PORTMONITOR_TYPE "lua"
 #define DEFAULT_PORTMONITOR_CONTEXT "sensors"
-#define DEFAULT_PORTMONITOR_FILE "amor_sensors_modifier.lua"
+#define DEFAULT_PORTMONITOR_FILE "amor_sensors_modifier"
 
 namespace roboticslab
 {

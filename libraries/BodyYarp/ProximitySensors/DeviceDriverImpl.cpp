@@ -19,23 +19,31 @@ bool roboticslab::ProximitySensors::open(yarp::os::Searchable& config)
     std::string local = config.check("local", yarp::os::Value(DEFAULT_LOCAL), "local port").asString();
     std::string remote = config.check("remote", yarp::os::Value(DEFAULT_REMOTE), "remote port").asString();
 
-    std::string pmType = config.check("portMonitorType", yarp::os::Value(DEFAULT_PORTMONITOR_TYPE), "port monitor type").asString();
-    std::string pmContext = config.check("portMonitorContext", yarp::os::Value(DEFAULT_PORTMONITOR_CONTEXT), "port monitor context").asString();
-    std::string pmFile = config.check("portMonitorFile", yarp::os::Value(DEFAULT_PORTMONITOR_FILE), "port monitor file").asString();
-
     sr.setReference(this);
     sr.open(local);
     sr.useCallback();
 
-    std::ostringstream carrier;
+    std::string carrier;
 
-    carrier << "tcp+recv.portmonitor+type." << pmType << "+context." << pmContext << "+file." << pmFile;
+    if (config.check("usePortMonitor") || (config.check("portMonitorType") && config.check("portMonitorContext")
+            && config.check("portMonitorFile")))
+    {
+        std::string pmType = config.check("portMonitorType", yarp::os::Value(DEFAULT_PORTMONITOR_TYPE),
+                "port monitor type").asString();
+        std::string pmContext = config.check("portMonitorContext", yarp::os::Value(DEFAULT_PORTMONITOR_CONTEXT),
+                "port monitor context").asString();
+        std::string pmFile = config.check("portMonitorFile", yarp::os::Value(DEFAULT_PORTMONITOR_FILE),
+                "port monitor file").asString();
 
-    CD_INFO("Using carrier: %s\n", carrier.str().c_str());
+        std::ostringstream oss;
+        oss << "tcp+recv.portmonitor+type." << pmType << "+context." << pmContext << "+file." << pmFile;
 
-    yarp::os::Network::connect(remote, local, carrier.str());
+        carrier = oss.str();
 
-    if (sr.getInputCount() == 0)
+        CD_INFO("Using carrier: %s\n", carrier.c_str());
+    }
+
+    if (!yarp::os::Network::connect(remote, local, carrier))
     {
         CD_ERROR("Unable to connect to remote port \"%s\".\n", remote.c_str());
         close();
