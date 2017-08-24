@@ -9,6 +9,13 @@
 
 #include "IProximitySensors.h"
 
+#define DEFAULT_LOCAL "/sensor_reader"
+#define DEFAULT_REMOTE "/serial/out"
+
+#define DEFAULT_PORTMONITOR_TYPE "lua"
+#define DEFAULT_PORTMONITOR_CONTEXT "sensors"
+#define DEFAULT_PORTMONITOR_FILE "amor_sensors_modifier.lua"
+
 namespace roboticslab
 {
 
