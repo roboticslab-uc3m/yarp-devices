@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "ProximitySensors.hpp"
+#include "ProximitySensorsClient.hpp"
 
 #include <ColorDebug.hpp>
 
-roboticslab::IProximitySensors::alert_level roboticslab::ProximitySensors::getAlertLevel()
+roboticslab::IProximitySensors::alert_level roboticslab::ProximitySensorsClient::getAlertLevel()
 {
     alertMutex.lock();
     alert_level alert_copy = alert;
@@ -12,7 +12,7 @@ roboticslab::IProximitySensors::alert_level roboticslab::ProximitySensors::getAl
     return alert_copy;
 }
 
-bool roboticslab::ProximitySensors::hasTarget()
+bool roboticslab::ProximitySensorsClient::hasTarget()
 {
     gripperMutex.lock();
     bool gripper_copy = gripper;

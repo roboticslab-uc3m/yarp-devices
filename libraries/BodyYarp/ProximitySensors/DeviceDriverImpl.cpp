@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "ProximitySensors.hpp"
+#include "ProximitySensorsClient.hpp"
 
 #include <string>
 #include <sstream>
@@ -11,9 +11,9 @@
 
 // ------------------- DeviceDriver Related ------------------------------------
 
-bool roboticslab::ProximitySensors::open(yarp::os::Searchable& config)
+bool roboticslab::ProximitySensorsClient::open(yarp::os::Searchable& config)
 {
-    CD_INFO("Starting ProximitySensors plugin.\n");
+    CD_INFO("Starting ProximitySensorsClient plugin.\n");
     CD_DEBUG("config: %s.\n", config.toString().c_str());
 
     std::string local = config.check("local", yarp::os::Value(DEFAULT_LOCAL), "local port").asString();
@@ -55,9 +55,9 @@ bool roboticslab::ProximitySensors::open(yarp::os::Searchable& config)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::ProximitySensors::close()
+bool roboticslab::ProximitySensorsClient::close()
 {
-    CD_INFO("Closing ProximitySensors plugin.\n");
+    CD_INFO("Closing ProximitySensorsClient plugin.\n");
     sr.disableCallback();
     sr.close();
     return true;

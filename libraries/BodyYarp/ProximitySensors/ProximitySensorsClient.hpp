@@ -30,11 +30,11 @@ namespace roboticslab
  * @ingroup ProximitySensors
  * @brief The ProximitySensors class implements IProximitySensors.
  */
-class ProximitySensors : public yarp::dev::DeviceDriver, public IProximitySensors
+class ProximitySensorsClient : public yarp::dev::DeviceDriver, public IProximitySensors
 {
     public:
 
-        ProximitySensors() : alert(ZERO), gripper(false)
+        ProximitySensorsClient() : alert(ZERO), gripper(false)
         {}
 
         // -------- IProximitySensors declarations. Implementation in IProximitySensorsImpl.cpp --------
@@ -76,12 +76,12 @@ class ProximitySensors : public yarp::dev::DeviceDriver, public IProximitySensor
         public:
             SensorReader() : sens(NULL) {}
             virtual void onRead(yarp::os::Bottle& b);
-            void setReference(ProximitySensors * sens)
+            void setReference(ProximitySensorsClient * sens)
             {
                 this->sens = sens;
             }
         private:
-            ProximitySensors * sens;
+            ProximitySensorsClient * sens;
         };
 
         SensorReader sr;

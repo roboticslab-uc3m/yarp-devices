@@ -1,14 +1,14 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "ProximitySensors.hpp"
+#include "ProximitySensorsClient.hpp"
 
 #include <ColorDebug.hpp>
 
-const int roboticslab::ProximitySensors::THRESHOLD_GRIPPER = 50;
-const int roboticslab::ProximitySensors::THRESHOLD_ALERT = 800;
-const int roboticslab::ProximitySensors::THRESHOLD_LOW_ALERT = 100;
+const int roboticslab::ProximitySensorsClient::THRESHOLD_GRIPPER = 50;
+const int roboticslab::ProximitySensorsClient::THRESHOLD_ALERT = 800;
+const int roboticslab::ProximitySensorsClient::THRESHOLD_LOW_ALERT = 100;
 
-void roboticslab::ProximitySensors::SensorReader::onRead(yarp::os::Bottle& b)
+void roboticslab::ProximitySensorsClient::SensorReader::onRead(yarp::os::Bottle& b)
 {
     if (b.size() == 0)
         return;
