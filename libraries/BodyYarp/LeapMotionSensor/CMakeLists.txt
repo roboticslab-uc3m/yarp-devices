@@ -8,7 +8,9 @@ yarp_prepare_plugin(LeapMotionSensor
                     WRAPPER analogServer)
 
 if(NOT SKIP_LeapMotionSensor)
-  include_directories(${YARP_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
+  find_package(Leap 2.3 EXACT REQUIRED)
+
+  include_directories(${YARP_INCLUDE_DIRS} ${Leap_INCLUDE_DIR} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
   yarp_add_plugin(LeapMotionSensor
                   LeapMotionSensor.cpp
@@ -16,7 +18,7 @@ if(NOT SKIP_LeapMotionSensor)
                   DeviceDriverImpl.cpp
                   IAnalogSensorImpl.cpp)
 
-  target_link_libraries(LeapMotionSensor ${YARP_LIBRARIES})
+  target_link_libraries(LeapMotionSensor ${YARP_LIBRARIES} ${Leap_LIBRARY})
 
   yarp_install(TARGETS LeapMotionSensor
                EXPORT YARP
@@ -28,4 +30,3 @@ if(NOT SKIP_LeapMotionSensor)
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()
-
