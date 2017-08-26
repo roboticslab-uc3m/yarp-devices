@@ -1,22 +1,11 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __LEAP_MOTION__
-#define __LEAP_MOTION__
+#ifndef __LEAP_MOTION_SENSOR__
+#define __LEAP_MOTION_SENSOR__
+
+#include <Leap.h>
 
 #include <yarp/dev/IAnalogSensor.h>
-
-#include "ColorDebug.hpp"
-
-#define DEFAULT_NUM_CHANNELS 8
-
-#define FULL_SCALE_X 460.0
-#define FULL_SCALE_Y 430.0
-#define FULL_SCALE_Z 440.0
-#define FULL_SCALE_ROLL 415.0
-#define FULL_SCALE_PITCH 405.0
-#define FULL_SCALE_YAW 435.0
-
-#define DEADBAND 0.125
 
 namespace roboticslab
 {
@@ -40,7 +29,8 @@ class LeapMotionSensor : public yarp::dev::DeviceDriver, public yarp::dev::IAnal
 {
 public:
 
-    LeapMotionSensor();
+    LeapMotionSensor() : controller(NULL)
+    {}
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
     virtual bool open(yarp::os::Searchable& config);
@@ -94,8 +84,12 @@ public:
      * @return status.
      */
     virtual int calibrateChannel(int ch, double value);
+
+protected:
+
+    Leap::Controller * controller;
 };
 
 }  // namespace roboticslab
 
-#endif  // __LEAP_MOTION__
+#endif  // __LEAP_MOTION_SENSOR__

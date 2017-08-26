@@ -13,7 +13,6 @@ if(NOT SKIP_LeapMotionSensor)
   include_directories(${YARP_INCLUDE_DIRS} ${Leap_INCLUDE_DIR} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
   yarp_add_plugin(LeapMotionSensor
-                  LeapMotionSensor.cpp
                   LeapMotionSensor.hpp
                   DeviceDriverImpl.cpp
                   IAnalogSensorImpl.cpp)
