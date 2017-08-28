@@ -47,9 +47,9 @@ int roboticslab::LeapMotionSensor::read(yarp::sig::Vector &out)
     out.resize(6);
 
     // send translation coordinates in cm
-    out[0] = -position.z * 0.01;
-    out[1] = -position.x * 0.01;
-    out[2] = position.y * 0.01;
+    out[0] = -position.z * 0.1;
+    out[1] = -position.x * 0.1;
+    out[2] = position.y * 0.1;
 
     // ...and rotations in degrees
     out[3] = -normal.roll() * 180.0 / M_PI;
