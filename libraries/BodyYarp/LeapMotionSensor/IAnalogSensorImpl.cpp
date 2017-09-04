@@ -52,10 +52,10 @@ int roboticslab::LeapMotionSensor::read(yarp::sig::Vector &out)
     out[1] = position.y;
     out[2] = position.z;
 
-    // ...and rotations in radians
+    // ...and rotations in radians (assume hand fingers pointing at -Z)
     out[3] = direction.pitch();
     out[4] = -direction.yaw();
-    out[5] = -normal.roll();
+    out[5] = normal.roll();
 
     lastValidData = out;
 
