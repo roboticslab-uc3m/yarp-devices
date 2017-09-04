@@ -2,8 +2,6 @@
 
 #include "LeapMotionSensor.hpp"
 
-#include <cmath>
-
 #include <yarp/sig/Vector.h>
 
 #include "ColorDebug.hpp"
@@ -46,15 +44,18 @@ int roboticslab::LeapMotionSensor::read(yarp::sig::Vector &out)
 
     out.resize(6);
 
-    // send translation coordinates in cm
-    out[0] = -position.z * 0.1;
-    out[1] = -position.x * 0.1;
-    out[2] = position.y * 0.1;
+    // https://developer.leapmotion.com/documentation/v2/cpp/api/Leap.Hand.html
+    // https://developer.leapmotion.com/documentation/v2/cpp/api/Leap.Vector.html
 
-    // ...and rotations in degrees
-    out[3] = -normal.roll() * 180.0 / M_PI;
-    out[4] = -direction.pitch() * 180.0 / M_PI;
-    out[5] = -direction.yaw() * 180.0 / M_PI;
+    // send translation coordinates in mm
+    out[0] = position.x;
+    out[1] = position.y;
+    out[2] = position.z;
+
+    // ...and rotations in radians
+    out[3] = direction.pitch();
+    out[4] = -direction.yaw();
+    out[5] = -normal.roll();
 
     lastValidData = out;
 
