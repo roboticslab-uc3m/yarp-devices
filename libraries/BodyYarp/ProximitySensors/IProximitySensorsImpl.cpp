@@ -19,4 +19,3 @@ bool roboticslab::ProximitySensorsClient::hasTarget()
     gripperMutex.unlock();
     return gripper_copy;
 }
-

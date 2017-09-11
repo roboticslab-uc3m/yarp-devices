@@ -3,31 +3,27 @@
 #ifndef __I_PROXIMITY_SENSORS__
 #define __I_PROXIMITY_SENSORS__
 
-
 namespace roboticslab
 {
 
 /**
  *
- * @brief Abstract base for a sensor reader.
+ * @brief Abstract base class for a sensor reader.
  *
  */
 class IProximitySensors
 {
-    public:
+public:
 
-        enum alert_level {ZERO, LOW, HIGH};
-        /**
-         * Destructor.
-         */
-        virtual ~IProximitySensors() {};
+    enum alert_level { ZERO, LOW, HIGH };
 
-        virtual alert_level getAlertLevel() = 0;
-        virtual bool hasTarget() = 0;
+    virtual ~IProximitySensors() {};
 
+    virtual alert_level getAlertLevel() = 0;
+
+    virtual bool hasTarget() = 0;
 };
 
 }  // namespace roboticslab
 
 #endif  //  __I_PROXIMITY_SENSORS__
-
