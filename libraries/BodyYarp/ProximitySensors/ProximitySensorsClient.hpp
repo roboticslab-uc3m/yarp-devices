@@ -16,6 +16,10 @@
 #define DEFAULT_PORTMONITOR_CONTEXT "sensors"
 #define DEFAULT_PORTMONITOR_FILE "amor_sensors_modifier"
 
+#define DEFAULT_THRESHOLD_GRIPPER 50
+#define DEFAULT_THRESHOLD_ALERT_HIGH 800
+#define DEFAULT_THRESHOLD_ALERT_LOW 100
+
 namespace roboticslab
 {
 
@@ -34,7 +38,11 @@ class ProximitySensorsClient : public yarp::dev::DeviceDriver, public IProximity
 {
 public:
 
-    ProximitySensorsClient() : alert(ZERO), gripper(false)
+    ProximitySensorsClient() : alert(ZERO),
+                               gripper(false),
+                               thresholdGripper(DEFAULT_THRESHOLD_GRIPPER),
+                               thresholdAlertHigh(DEFAULT_THRESHOLD_ALERT_HIGH),
+                               thresholdAlertLow(DEFAULT_THRESHOLD_ALERT_LOW)
     {}
 
     // -------- IProximitySensors declarations. Implementation in IProximitySensorsImpl.cpp --------
@@ -65,10 +73,6 @@ public:
      */
     virtual bool close();
 
-    static const int THRESHOLD_GRIPPER;
-    static const int THRESHOLD_ALERT;
-    static const int THRESHOLD_LOW_ALERT;
-
 protected:
 
     class SensorReader : public yarp::os::BufferedPort<yarp::os::Bottle>
@@ -85,9 +89,13 @@ protected:
     };
 
     SensorReader sr;
+
     alert_level alert;
     bool gripper;
+
     yarp::os::Mutex alertMutex, gripperMutex;
+
+    int thresholdGripper, thresholdAlertHigh, thresholdAlertLow;
 };
 
 }  // namespace roboticslab

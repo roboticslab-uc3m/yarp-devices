@@ -43,6 +43,10 @@ bool roboticslab::ProximitySensorsClient::open(yarp::os::Searchable& config)
         CD_INFO("Using carrier: %s\n", carrier.c_str());
     }
 
+    thresholdGripper = config.check("thresholdGripper", yarp::os::Value(DEFAULT_THRESHOLD_GRIPPER)).asDouble();
+    thresholdAlertHigh = config.check("thresholdAlertHigh", yarp::os::Value(DEFAULT_THRESHOLD_ALERT_HIGH)).asDouble();
+    thresholdAlertLow = config.check("thresholdAlertLow", yarp::os::Value(DEFAULT_THRESHOLD_ALERT_LOW)).asDouble();
+
     if (!yarp::os::Network::connect(remote, local, carrier))
     {
         CD_ERROR("Unable to connect to remote port \"%s\".\n", remote.c_str());

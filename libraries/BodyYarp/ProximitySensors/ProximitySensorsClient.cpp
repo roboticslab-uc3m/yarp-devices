@@ -4,10 +4,6 @@
 
 #include <ColorDebug.hpp>
 
-const int roboticslab::ProximitySensorsClient::THRESHOLD_GRIPPER = 50;
-const int roboticslab::ProximitySensorsClient::THRESHOLD_ALERT = 800;
-const int roboticslab::ProximitySensorsClient::THRESHOLD_LOW_ALERT = 100;
-
 void roboticslab::ProximitySensorsClient::SensorReader::onRead(yarp::os::Bottle& b)
 {
     if (b.size() == 0)
@@ -17,7 +13,7 @@ void roboticslab::ProximitySensorsClient::SensorReader::onRead(yarp::os::Bottle&
 
     sens->gripperMutex.lock();
 
-    if (b.get(14).asDouble() > THRESHOLD_GRIPPER && b.get(14).asDouble() < 1000)
+    if (b.get(14).asDouble() > sens->thresholdGripper && b.get(14).asDouble() < 1000)
 	{
         sens->gripper=true;
 	    CD_INFO("Target detected.\n");
@@ -43,11 +39,11 @@ void roboticslab::ProximitySensorsClient::SensorReader::onRead(yarp::os::Bottle&
 
     sens->alertMutex.lock();
 
-    if (max > THRESHOLD_ALERT)
+    if (max > sens->thresholdAlertHigh)
     {
         sens->alert = HIGH;
     }
-    else if (max > THRESHOLD_LOW_ALERT)
+    else if (max > sens->thresholdAlertLow)
     {
         sens->alert = LOW;
     }
