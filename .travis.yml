@@ -37,7 +37,7 @@ before_script:
   - mkdir -p build && cd build
 
 script:
-  - cmake .. -DENABLE_coverage=ON
+  - cmake .. -DENABLE_LeapMotionSensor=OFF -DENABLE_coverage=ON
   - make
   - sudo make install
 
