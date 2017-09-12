@@ -48,6 +48,7 @@ option(ENABLE_Jr3 "Enable/disable compilation of BodyYarp_Jr3" TRUE)
 option(ENABLE_SpaceNavigator "Enable/disable compilation of BodyYarp_SpaceNavigator" TRUE)
 option(ENABLE_WiimoteSensor "Enable/disable compilation of BodyYarp_WiimoteSensor" TRUE)
 option(ENABLE_LeapMotionSensor "Enable/disable compilation of BodyYarp_LeapMotionSensor" TRUE)
+option(ENABLE_ProximitySensorsClient "Enable/disable compilation of BodyYarp_ProximitySensorsClient" TRUE)
 
 ##### test and coverage options
 option(ENABLE_tests "Choose if you want to compile tests" TRUE)
