@@ -12,6 +12,16 @@ uint8_t msg_stop[]={0x0F,0x00}; // Does not stop, but is required for next start
 [get] [icmd] [cmds]
 ```
 
+* get limits:
+```
+[get] [llim]
+```
+
+* get velocity limits:
+```
+[get] [vlim]
+```
+
 * check if pos motion done:
 ```
 [get] [don] 0
