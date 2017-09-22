@@ -31,7 +31,7 @@ IF (ENABLE_BodyYarp)
     add_subdirectory(SpaceNavigator)
     add_subdirectory(WiimoteSensor)
     add_subdirectory(LeapMotionSensor)
-    add_subdirectory(ProximitySensors)
+    add_subdirectory(ProximitySensorsClient)
   # yarp_end_plugin_library(BodyYarp)
 
   #install(TARGETS BodyYarp DESTINATION lib)
