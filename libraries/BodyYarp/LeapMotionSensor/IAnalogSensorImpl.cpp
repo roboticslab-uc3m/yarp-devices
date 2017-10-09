@@ -42,7 +42,7 @@ int roboticslab::LeapMotionSensor::read(yarp::sig::Vector &out)
     Leap::Vector direction = hand.direction();
     Leap::Vector normal = hand.palmNormal();
 
-    out.resize(6);
+    out.resize(getChannels());
 
     // https://developer.leapmotion.com/documentation/v2/cpp/api/Leap.Hand.html
     // https://developer.leapmotion.com/documentation/v2/cpp/api/Leap.Vector.html
@@ -56,6 +56,9 @@ int roboticslab::LeapMotionSensor::read(yarp::sig::Vector &out)
     out[3] = direction.pitch();
     out[4] = -direction.yaw();
     out[5] = normal.roll();
+
+    out[6] = hand.grabStrength() == 1.0 ? 1.0 : 0.0;
+    out[7] = hand.pinchStrength() == 1.0 ? 1.0 : 0.0;
 
     lastValidData = out;
 
@@ -73,7 +76,7 @@ int roboticslab::LeapMotionSensor::getState(int ch)
 
 int roboticslab::LeapMotionSensor::getChannels()
 {
-    return 6;
+    return 8;
 }
 
 // -----------------------------------------------------------------------------
