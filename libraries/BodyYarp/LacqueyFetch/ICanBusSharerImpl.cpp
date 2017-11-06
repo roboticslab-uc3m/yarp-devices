@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setCanBusPtr(ICanBusHico *canDevicePtr)
+bool roboticslab::LacqueyFetch::setCanBusPtr(ICanBusHico *canDevicePtr)
 {
 
     this->canDevicePtr = canDevicePtr;
@@ -14,7 +14,7 @@ bool teo::LacqueyFetch::setCanBusPtr(ICanBusHico *canDevicePtr)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::start()
+bool roboticslab::LacqueyFetch::start()
 {
 
     return true;
@@ -22,7 +22,7 @@ bool teo::LacqueyFetch::start()
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::readyToSwitchOn()
+bool roboticslab::LacqueyFetch::readyToSwitchOn()
 {
 
     return true;
@@ -30,7 +30,7 @@ bool teo::LacqueyFetch::readyToSwitchOn()
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::switchOn()
+bool roboticslab::LacqueyFetch::switchOn()
 {
 
     return true;
@@ -38,7 +38,7 @@ bool teo::LacqueyFetch::switchOn()
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::enable()
+bool roboticslab::LacqueyFetch::enable()
 {
 
     return true;
@@ -46,7 +46,7 @@ bool teo::LacqueyFetch::enable()
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::recoverFromError()
+bool roboticslab::LacqueyFetch::recoverFromError()
 {
 
     return true;
@@ -54,7 +54,7 @@ bool teo::LacqueyFetch::recoverFromError()
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::interpretMessage( can_msg * message)
+bool roboticslab::LacqueyFetch::interpretMessage( can_msg * message)
 {
 
     return true;

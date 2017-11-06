@@ -19,7 +19,7 @@
 
 #include "ColorDebug.hpp"
 
-namespace teo
+namespace roboticslab
 {
 
 /**
@@ -65,7 +65,7 @@ protected:
 
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
 #endif  // __CAN_BUS_HICO__
 

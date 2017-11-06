@@ -10,7 +10,7 @@
 
 #define DELAY 0.001  // Was DELAY2. Required when using same driver.
 
-namespace teo
+namespace roboticslab
 {
 
 /**
@@ -41,6 +41,6 @@ public:
 
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
 #endif  //  __I_CAN_BUS_HICO__

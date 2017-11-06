@@ -4,7 +4,7 @@
 
 // ------------------- IControlLimits Related ------------------------------------
 
-bool teo::CanBusControlboard::setLimits(int axis, double min, double max)
+bool roboticslab::CanBusControlboard::setLimits(int axis, double min, double max)
 {
     CD_DEBUG("(%d,%f,%f)\n",axis,min,max);
 
@@ -16,7 +16,7 @@ bool teo::CanBusControlboard::setLimits(int axis, double min, double max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getLimits(int axis, double *min, double *max)
+bool roboticslab::CanBusControlboard::getLimits(int axis, double *min, double *max)
 {
     CD_DEBUG("(%d)\n",axis);
 
@@ -28,14 +28,14 @@ bool teo::CanBusControlboard::getLimits(int axis, double *min, double *max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setVelLimits(int axis, double min, double max)
+bool roboticslab::CanBusControlboard::setVelLimits(int axis, double min, double max)
 {
     return iControlLimits2Raw[axis]->setVelLimitsRaw( 0, min, max ); // May segfault in future if not impl?
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getVelLimits(int axis, double *min, double *max)
+bool roboticslab::CanBusControlboard::getVelLimits(int axis, double *min, double *max)
 {
     return iControlLimits2Raw[axis]->getVelLimitsRaw( 0, min, max );  // May segfault in future if not impl?
 }

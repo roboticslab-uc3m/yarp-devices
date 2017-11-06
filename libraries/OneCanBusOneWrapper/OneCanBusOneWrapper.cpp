@@ -2,7 +2,7 @@
 
 #include "OneCanBusOneWrapper.hpp"
 
-namespace teo
+namespace roboticslab
 {
 
 /************************************************************************/
@@ -81,4 +81,4 @@ bool OneCanBusOneWrapper::close()
 
 /************************************************************************/
 
-}  // namespace teo
+}  // namespace roboticslab

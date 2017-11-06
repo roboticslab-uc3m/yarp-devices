@@ -4,7 +4,7 @@
 
 // ------------------ IEncodersRaw Related -----------------------------------------
 
-bool teo::FakeJoint::resetEncoderRaw(int j)
+bool roboticslab::FakeJoint::resetEncoderRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -16,7 +16,7 @@ bool teo::FakeJoint::resetEncoderRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::resetEncodersRaw()
+bool roboticslab::FakeJoint::resetEncodersRaw()
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -24,7 +24,7 @@ bool teo::FakeJoint::resetEncodersRaw()
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setEncoderRaw(int j, double val)    // encExposed = val;
+bool roboticslab::FakeJoint::setEncoderRaw(int j, double val)    // encExposed = val;
 {
     CD_INFO("(%d,%f)\n",j,val);
 
@@ -36,7 +36,7 @@ bool teo::FakeJoint::setEncoderRaw(int j, double val)    // encExposed = val;
     return true;
 }
 
-bool teo::FakeJoint::setEncodersRaw(const double *vals)
+bool roboticslab::FakeJoint::setEncodersRaw(const double *vals)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -44,7 +44,7 @@ bool teo::FakeJoint::setEncodersRaw(const double *vals)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::getEncoderRaw(int j, double *v)
+bool roboticslab::FakeJoint::getEncoderRaw(int j, double *v)
 {
     //CD_INFO("%d\n",j);  //-- Too verbose in stream.
 
@@ -60,7 +60,7 @@ bool teo::FakeJoint::getEncoderRaw(int j, double *v)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::getEncodersRaw(double *encs)
+bool roboticslab::FakeJoint::getEncodersRaw(double *encs)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -68,7 +68,7 @@ bool teo::FakeJoint::getEncodersRaw(double *encs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::getEncoderSpeedRaw(int j, double *sp)
+bool roboticslab::FakeJoint::getEncoderSpeedRaw(int j, double *sp)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
@@ -83,7 +83,7 @@ bool teo::FakeJoint::getEncoderSpeedRaw(int j, double *sp)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::getEncoderAccelerationsRaw(double *accs)
+bool roboticslab::FakeJoint::getEncoderAccelerationsRaw(double *accs)
 {
     CD_ERROR("\n");
     return false;
@@ -91,7 +91,7 @@ bool teo::FakeJoint::getEncoderAccelerationsRaw(double *accs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::getEncoderSpeedsRaw(double *spds)
+bool roboticslab::FakeJoint::getEncoderSpeedsRaw(double *spds)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -99,7 +99,7 @@ bool teo::FakeJoint::getEncoderSpeedsRaw(double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::getEncoderAccelerationRaw(int j, double *spds)
+bool roboticslab::FakeJoint::getEncoderAccelerationRaw(int j, double *spds)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 

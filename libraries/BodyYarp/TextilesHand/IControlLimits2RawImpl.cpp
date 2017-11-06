@@ -4,7 +4,7 @@
 
 // ------------------- IControlLimitsRaw Related ------------------------------------
 
-bool teo::TextilesHand::setLimitsRaw(int axis, double min, double max)
+bool roboticslab::TextilesHand::setLimitsRaw(int axis, double min, double max)
 {
     CD_INFO("(%d,%f,%f)\n",axis,min,max);
 
@@ -20,7 +20,7 @@ bool teo::TextilesHand::setLimitsRaw(int axis, double min, double max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::getLimitsRaw(int axis, double *min, double *max)
+bool roboticslab::TextilesHand::getLimitsRaw(int axis, double *min, double *max)
 {
     CD_INFO("(%d)\n",axis);
 
@@ -36,7 +36,7 @@ bool teo::TextilesHand::getLimitsRaw(int axis, double *min, double *max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setVelLimitsRaw(int axis, double min, double max)
+bool roboticslab::TextilesHand::setVelLimitsRaw(int axis, double min, double max)
 {
     CD_WARNING("Not implemented.\n");
     return true;
@@ -44,7 +44,7 @@ bool teo::TextilesHand::setVelLimitsRaw(int axis, double min, double max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::getVelLimitsRaw(int axis, double *min, double *max)
+bool roboticslab::TextilesHand::getVelLimitsRaw(int axis, double *min, double *max)
 {
     CD_WARNING("Not implemented.\n");
     return true;

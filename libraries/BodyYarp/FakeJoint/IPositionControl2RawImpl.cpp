@@ -4,7 +4,7 @@
 
 // ######################## IPositionControlRaw Related ##########################
 
-bool teo::FakeJoint::getAxes(int *ax)
+bool roboticslab::FakeJoint::getAxes(int *ax)
 {
     *ax = 1;
     return true;
@@ -12,7 +12,7 @@ bool teo::FakeJoint::getAxes(int *ax)
 
 // -------------------------------------------------------------------------------
 
-bool teo::FakeJoint::positionMoveRaw(int j, double ref)    // encExposed = ref;
+bool roboticslab::FakeJoint::positionMoveRaw(int j, double ref)    // encExposed = ref;
 {
     CD_INFO("(%d,%f)\n",j,ref);
 
@@ -28,7 +28,7 @@ bool teo::FakeJoint::positionMoveRaw(int j, double ref)    // encExposed = ref;
 
 // -------------------------------------------------------------------------------
 
-bool teo::FakeJoint::positionMoveRaw(const double *refs)
+bool roboticslab::FakeJoint::positionMoveRaw(const double *refs)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -36,7 +36,7 @@ bool teo::FakeJoint::positionMoveRaw(const double *refs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::relativeMoveRaw(int j, double delta)
+bool roboticslab::FakeJoint::relativeMoveRaw(int j, double delta)
 {
     CD_INFO("(%d, %f)\n",j,delta);
 
@@ -50,7 +50,7 @@ bool teo::FakeJoint::relativeMoveRaw(int j, double delta)
 
 // -------------------------------------------------------------------------------
 
-bool teo::FakeJoint::relativeMoveRaw(const double *deltas)
+bool roboticslab::FakeJoint::relativeMoveRaw(const double *deltas)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -58,7 +58,7 @@ bool teo::FakeJoint::relativeMoveRaw(const double *deltas)
 
 // -------------------------------------------------------------------------------
 
-bool teo::FakeJoint::checkMotionDoneRaw(int j, bool *flag)
+bool roboticslab::FakeJoint::checkMotionDoneRaw(int j, bool *flag)
 {
     CD_INFO("(%d)\n",j);
 
@@ -72,7 +72,7 @@ bool teo::FakeJoint::checkMotionDoneRaw(int j, bool *flag)
 
 // -------------------------------------------------------------------------------
 
-bool teo::FakeJoint::checkMotionDoneRaw(bool *flag)
+bool roboticslab::FakeJoint::checkMotionDoneRaw(bool *flag)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -80,7 +80,7 @@ bool teo::FakeJoint::checkMotionDoneRaw(bool *flag)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setRefSpeedRaw(int j, double sp)
+bool roboticslab::FakeJoint::setRefSpeedRaw(int j, double sp)
 {
     CD_INFO("(%d, %f)\n",j,sp);
 
@@ -92,7 +92,7 @@ bool teo::FakeJoint::setRefSpeedRaw(int j, double sp)
 
 // -------------------------------------------------------------------------------
 
-bool teo::FakeJoint::setRefSpeedsRaw(const double *spds)
+bool roboticslab::FakeJoint::setRefSpeedsRaw(const double *spds)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -100,7 +100,7 @@ bool teo::FakeJoint::setRefSpeedsRaw(const double *spds)
 
 // -------------------------------------------------------------------------------
 
-bool teo::FakeJoint::setRefAccelerationRaw(int j, double acc)
+bool roboticslab::FakeJoint::setRefAccelerationRaw(int j, double acc)
 {
     CD_INFO("(%d, %f)\n",j,acc);
 
@@ -112,7 +112,7 @@ bool teo::FakeJoint::setRefAccelerationRaw(int j, double acc)
 
 // -------------------------------------------------------------------------------
 
-bool teo::FakeJoint::setRefAccelerationsRaw(const double *accs)
+bool roboticslab::FakeJoint::setRefAccelerationsRaw(const double *accs)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -120,7 +120,7 @@ bool teo::FakeJoint::setRefAccelerationsRaw(const double *accs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::getRefSpeedRaw(int j, double *ref)
+bool roboticslab::FakeJoint::getRefSpeedRaw(int j, double *ref)
 {
     CD_INFO("(%d)\n",j);
 
@@ -134,7 +134,7 @@ bool teo::FakeJoint::getRefSpeedRaw(int j, double *ref)
 
 // -------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getRefSpeedsRaw(double *spds)
+bool roboticslab::FakeJoint::getRefSpeedsRaw(double *spds)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -142,7 +142,7 @@ bool teo::FakeJoint::getRefSpeedsRaw(double *spds)
 
 // -------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getRefAccelerationRaw(int j, double *acc)
+bool roboticslab::FakeJoint::getRefAccelerationRaw(int j, double *acc)
 {
     CD_INFO("(%d)\n",j);
 
@@ -156,7 +156,7 @@ bool teo::FakeJoint::getRefAccelerationRaw(int j, double *acc)
 
 // -------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getRefAccelerationsRaw(double *accs)
+bool roboticslab::FakeJoint::getRefAccelerationsRaw(double *accs)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -164,7 +164,7 @@ bool teo::FakeJoint::getRefAccelerationsRaw(double *accs)
 
 // -------------------------------------------------------------------------------
 
-bool teo::FakeJoint::stopRaw(int j)
+bool roboticslab::FakeJoint::stopRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -176,7 +176,7 @@ bool teo::FakeJoint::stopRaw(int j)
 
 // -------------------------------------------------------------------------------
 
-bool teo::FakeJoint::stopRaw()
+bool roboticslab::FakeJoint::stopRaw()
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -184,7 +184,7 @@ bool teo::FakeJoint::stopRaw()
 
 // ######################## IPositionControl2Raw Related ##########################
 
-bool teo::FakeJoint::positionMoveRaw(const int n_joint, const int *joints, const double *refs)
+bool roboticslab::FakeJoint::positionMoveRaw(const int n_joint, const int *joints, const double *refs)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -192,7 +192,7 @@ bool teo::FakeJoint::positionMoveRaw(const int n_joint, const int *joints, const
 
 //--------------------------------------------------------------------------------------
 
-bool teo::FakeJoint::relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)
+bool roboticslab::FakeJoint::relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -200,7 +200,7 @@ bool teo::FakeJoint::relativeMoveRaw(const int n_joint, const int *joints, const
 
 //--------------------------------------------------------------------------------------
 
-bool teo::FakeJoint::checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags)
+bool roboticslab::FakeJoint::checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -208,7 +208,7 @@ bool teo::FakeJoint::checkMotionDoneRaw(const int n_joint, const int *joints, bo
 
 //--------------------------------------------------------------------------------------
 
-bool teo::FakeJoint::setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)
+bool roboticslab::FakeJoint::setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -216,7 +216,7 @@ bool teo::FakeJoint::setRefSpeedsRaw(const int n_joint, const int *joints, const
 
 //--------------------------------------------------------------------------------------
 
-bool teo::FakeJoint::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
+bool roboticslab::FakeJoint::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -224,7 +224,7 @@ bool teo::FakeJoint::setRefAccelerationsRaw(const int n_joint, const int *joints
 
 //--------------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)
+bool roboticslab::FakeJoint::getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -232,7 +232,7 @@ bool teo::FakeJoint::getRefSpeedsRaw(const int n_joint, const int *joints, doubl
 
 //--------------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
+bool roboticslab::FakeJoint::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -240,7 +240,7 @@ bool teo::FakeJoint::getRefAccelerationsRaw(const int n_joint, const int *joints
 
 //--------------------------------------------------------------------------------------
 
-bool teo::FakeJoint::stopRaw(const int n_joint, const int *joints)
+bool roboticslab::FakeJoint::stopRaw(const int n_joint, const int *joints)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -248,7 +248,7 @@ bool teo::FakeJoint::stopRaw(const int n_joint, const int *joints)
 
 //--------------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getTargetPositionRaw(const int joint, double *ref)
+bool roboticslab::FakeJoint::getTargetPositionRaw(const int joint, double *ref)
 {
     CD_INFO("\n");
 
@@ -261,7 +261,7 @@ bool teo::FakeJoint::getTargetPositionRaw(const int joint, double *ref)
 
 //--------------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getTargetPositionsRaw(double *refs)
+bool roboticslab::FakeJoint::getTargetPositionsRaw(double *refs)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -269,7 +269,7 @@ bool teo::FakeJoint::getTargetPositionsRaw(double *refs)
 
 //--------------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getTargetPositionsRaw(const int n_joint, const int *joints, double *refs)
+bool roboticslab::FakeJoint::getTargetPositionsRaw(const int n_joint, const int *joints, double *refs)
 {
     CD_ERROR("Missing implementation\n");
     return false;

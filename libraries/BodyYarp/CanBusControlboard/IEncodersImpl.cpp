@@ -4,7 +4,7 @@
 
 // ------------------ IEncoders Related -----------------------------------------
 
-bool teo::CanBusControlboard::resetEncoder(int j)
+bool roboticslab::CanBusControlboard::resetEncoder(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -16,7 +16,7 @@ bool teo::CanBusControlboard::resetEncoder(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::resetEncoders()
+bool roboticslab::CanBusControlboard::resetEncoders()
 {
     CD_INFO("\n");
 
@@ -28,7 +28,7 @@ bool teo::CanBusControlboard::resetEncoders()
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setEncoder(int j, double val)
+bool roboticslab::CanBusControlboard::setEncoder(int j, double val)
 {
     CD_INFO("(%d,%f)\n",j,val);
 
@@ -40,7 +40,7 @@ bool teo::CanBusControlboard::setEncoder(int j, double val)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setEncoders(const double *vals)
+bool roboticslab::CanBusControlboard::setEncoders(const double *vals)
 {
     CD_INFO("\n");
 
@@ -52,7 +52,7 @@ bool teo::CanBusControlboard::setEncoders(const double *vals)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getEncoder(int j, double *v)
+bool roboticslab::CanBusControlboard::getEncoder(int j, double *v)
 {
     //CD_INFO("%d\n",j);  //-- Too verbose in stream.
 
@@ -64,7 +64,7 @@ bool teo::CanBusControlboard::getEncoder(int j, double *v)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getEncoders(double *encs)
+bool roboticslab::CanBusControlboard::getEncoders(double *encs)
 {
     //CD_INFO("\n");  //-- Too verbose in stream.
 
@@ -76,7 +76,7 @@ bool teo::CanBusControlboard::getEncoders(double *encs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getEncoderSpeed(int j, double *sp)
+bool roboticslab::CanBusControlboard::getEncoderSpeed(int j, double *sp)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
@@ -88,7 +88,7 @@ bool teo::CanBusControlboard::getEncoderSpeed(int j, double *sp)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getEncoderSpeeds(double *spds)
+bool roboticslab::CanBusControlboard::getEncoderSpeeds(double *spds)
 {
     CD_DEBUG("\n");
 
@@ -100,7 +100,7 @@ bool teo::CanBusControlboard::getEncoderSpeeds(double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getEncoderAcceleration(int j, double *spds)
+bool roboticslab::CanBusControlboard::getEncoderAcceleration(int j, double *spds)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
@@ -112,7 +112,7 @@ bool teo::CanBusControlboard::getEncoderAcceleration(int j, double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getEncoderAccelerations(double *accs)
+bool roboticslab::CanBusControlboard::getEncoderAccelerations(double *accs)
 {
     CD_DEBUG("\n");
 

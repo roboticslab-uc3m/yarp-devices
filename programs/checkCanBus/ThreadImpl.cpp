@@ -5,7 +5,7 @@
 
 // ------------------ Thread Related -----------------------------------------
 
-void teo::CheckCanBus::run()
+void roboticslab::CheckCanBus::run()
 {
 
 

@@ -4,7 +4,7 @@
 
 // ------------------ IEncodersTimedRaw Related -----------------------------------------
 
-bool teo::LacqueyFetch::getEncodersTimedRaw(double *encs, double *time)
+bool roboticslab::LacqueyFetch::getEncodersTimedRaw(double *encs, double *time)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -12,7 +12,7 @@ bool teo::LacqueyFetch::getEncodersTimedRaw(double *encs, double *time)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getEncoderTimedRaw(int j, double *encs, double *time)
+bool roboticslab::LacqueyFetch::getEncoderTimedRaw(int j, double *encs, double *time)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 

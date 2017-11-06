@@ -4,7 +4,7 @@
 
 // ------------------ IEncodersTimed Related -----------------------------------------
 
-bool teo::CanBusControlboard::getEncodersTimed(double *encs, double *time)
+bool roboticslab::CanBusControlboard::getEncodersTimed(double *encs, double *time)
 {
     CD_DEBUG("\n");
 
@@ -16,7 +16,7 @@ bool teo::CanBusControlboard::getEncodersTimed(double *encs, double *time)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getEncoderTimed(int j, double *encs, double *time)
+bool roboticslab::CanBusControlboard::getEncoderTimed(int j, double *encs, double *time)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 

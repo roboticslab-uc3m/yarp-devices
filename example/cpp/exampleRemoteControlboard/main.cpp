@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /**
- * @ingroup teo_examples_cpp
+ * @ingroup roboticslab_examples_cpp
  * \defgroup exampleRemoteControlboard exampleRemoteControlboard
  *
- * @brief This example connects to a running \ref teoSim program.
+ * @brief This example connects to a running \ref roboticslabSim program.
  *
  * <b>Legal</b>
  *
@@ -18,14 +18,14 @@
  *
  * <b>Building</b>
 \verbatim
-cd $TEO_ROOT/example/cpp
+cd $roboticslab_ROOT/example/cpp
 mkdir build; cd build; cmake ..
 make -j3
 \endverbatim
  *
  * <b>Running</b>
 \verbatim
-./testTeoSimRightArm
+./testroboticslabSimRightArm
 \endverbatim
  *
  */
@@ -34,7 +34,7 @@ make -j3
 
 int main(int argc, char **argv)
 {
-    teo::ExampleRemoteControlboard mod;
+    roboticslab::ExampleRemoteControlboard mod;
     return mod.run(argc,argv);
 }
 

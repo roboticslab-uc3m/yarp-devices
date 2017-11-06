@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::setCanBusPtr(ICanBusHico *canDevicePtr)
+bool roboticslab::CuiAbsolute::setCanBusPtr(ICanBusHico *canDevicePtr)
 {
 
     this->canDevicePtr = canDevicePtr;
@@ -14,22 +14,14 @@ bool teo::CuiAbsolute::setCanBusPtr(ICanBusHico *canDevicePtr)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
+bool roboticslab::CuiAbsolute::setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
 {
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::start()
-{
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool teo::CuiAbsolute::readyToSwitchOn()
+bool roboticslab::CuiAbsolute::start()
 {
 
     return true;
@@ -37,7 +29,7 @@ bool teo::CuiAbsolute::readyToSwitchOn()
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::switchOn()
+bool roboticslab::CuiAbsolute::readyToSwitchOn()
 {
 
     return true;
@@ -45,7 +37,7 @@ bool teo::CuiAbsolute::switchOn()
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::enable()
+bool roboticslab::CuiAbsolute::switchOn()
 {
 
     return true;
@@ -53,7 +45,15 @@ bool teo::CuiAbsolute::enable()
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::recoverFromError()
+bool roboticslab::CuiAbsolute::enable()
+{
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::CuiAbsolute::recoverFromError()
 {
 
     return true;
@@ -61,7 +61,7 @@ bool teo::CuiAbsolute::recoverFromError()
 
 // ------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::startContinuousPublishing(uint8_t delay)
+bool roboticslab::CuiAbsolute::startContinuousPublishing(uint8_t delay)
 {
     // -- start message
     uint8_t msgData[8] = {0x01, 0x01, delay, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -76,7 +76,7 @@ bool teo::CuiAbsolute::startContinuousPublishing(uint8_t delay)
 
 // ------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::startPullPublishing()
+bool roboticslab::CuiAbsolute::startPullPublishing()
 {
 
     uint8_t msgData[8] = {0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; // -- Comienza a publicar mensajes en modo pulling (modo 2) sin delay
@@ -91,7 +91,7 @@ bool teo::CuiAbsolute::startPullPublishing()
 
 // ------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::stopPublishingMessages()
+bool roboticslab::CuiAbsolute::stopPublishingMessages()
 {
 
     uint8_t msgData[8] = {0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; // -- Para de publicar mensajes
@@ -107,7 +107,7 @@ bool teo::CuiAbsolute::stopPublishingMessages()
 // ------------------------------------------------------------------------------
 /*** Esta función actualmente no se utiliza debido a que implica cierta peligrosidad...
  *
- * bool teo::CuiAbsolute::setZeroPosition()
+ * bool roboticslab::CuiAbsolute::setZeroPosition()
  * {
  *
  *   uint8_t msgData[8] = {0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; // -- Homing
@@ -122,7 +122,7 @@ bool teo::CuiAbsolute::stopPublishingMessages()
 */
 // ------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::interpretMessage( can_msg * message)
+bool roboticslab::CuiAbsolute::interpretMessage( can_msg * message)
 {
 
     //CD_DEBUG("Got absolute encoder value. %s\n",msgToStr(message).c_str());

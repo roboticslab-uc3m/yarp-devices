@@ -5,7 +5,7 @@
 
 #include <stdint.h>
 
-namespace teo
+namespace roboticslab
 {
 
 /**
@@ -28,6 +28,6 @@ public:
 
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
 #endif  //  __I_CUI_ABSOLUTE__

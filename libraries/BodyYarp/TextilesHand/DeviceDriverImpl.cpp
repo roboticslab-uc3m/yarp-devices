@@ -3,7 +3,7 @@
 #include "TextilesHand.hpp"
 
 // -----------------------------------------------------------------------------
-bool teo::TextilesHand::open(yarp::os::Searchable& config)
+bool roboticslab::TextilesHand::open(yarp::os::Searchable& config)
 {
 
     /*this->canId = config.check("canId",0,"can bus ID").asInt();
@@ -38,7 +38,7 @@ bool teo::TextilesHand::open(yarp::os::Searchable& config)
 }
 
 // -----------------------------------------------------------------------------
-bool teo::TextilesHand::close()
+bool roboticslab::TextilesHand::close()
 {
     CD_INFO("\n");
     return true;

@@ -4,7 +4,7 @@
 
 // ------------------- IControlMode Related ------------------------------------
 
-bool teo::CanBusControlboard::setPositionMode(int j)
+bool roboticslab::CanBusControlboard::setPositionMode(int j)
 {
     CD_DEBUG("(%d)\n",j);
     return setControlMode(j, VOCAB_CM_POSITION);
@@ -12,7 +12,7 @@ bool teo::CanBusControlboard::setPositionMode(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setVelocityMode(int j)
+bool roboticslab::CanBusControlboard::setVelocityMode(int j)
 {
     CD_DEBUG("(%d)\n",j);
     return setControlMode(j, VOCAB_CM_VELOCITY);
@@ -20,7 +20,7 @@ bool teo::CanBusControlboard::setVelocityMode(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setTorqueMode(int j)
+bool roboticslab::CanBusControlboard::setTorqueMode(int j)
 {
     CD_DEBUG("(%d)\n",j);
     return setControlMode(j, VOCAB_CM_TORQUE);
@@ -28,7 +28,7 @@ bool teo::CanBusControlboard::setTorqueMode(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setImpedancePositionMode(int j)
+bool roboticslab::CanBusControlboard::setImpedancePositionMode(int j)
 {
     CD_DEBUG("(%d)\n",j);
     return setControlMode(j, VOCAB_CM_IMPEDANCE_POS);
@@ -36,7 +36,7 @@ bool teo::CanBusControlboard::setImpedancePositionMode(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setImpedanceVelocityMode(int j)
+bool roboticslab::CanBusControlboard::setImpedanceVelocityMode(int j)
 {
     CD_DEBUG("(%d)\n",j);
     return setControlMode(j, VOCAB_CM_IMPEDANCE_VEL);
@@ -44,7 +44,7 @@ bool teo::CanBusControlboard::setImpedanceVelocityMode(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setOpenLoopMode(int j)
+bool roboticslab::CanBusControlboard::setOpenLoopMode(int j)
 {
     CD_ERROR("(%d)\n",j);  //-- Removed in YARP 2.3.70
     return false;
@@ -52,7 +52,7 @@ bool teo::CanBusControlboard::setOpenLoopMode(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getControlMode(int j, int *mode)
+bool roboticslab::CanBusControlboard::getControlMode(int j, int *mode)
 {
     //CD_DEBUG("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
 
@@ -64,7 +64,7 @@ bool teo::CanBusControlboard::getControlMode(int j, int *mode)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getControlModes(int *modes)
+bool roboticslab::CanBusControlboard::getControlModes(int *modes)
 {
     CD_DEBUG("\n");
 
@@ -76,7 +76,7 @@ bool teo::CanBusControlboard::getControlModes(int *modes)
 
 // ---------------------- IControlMode2 Related  ---------------------------------
 
-bool teo::CanBusControlboard::getControlModes(const int n_joint, const int *joints, int *modes)
+bool roboticslab::CanBusControlboard::getControlModes(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("\n");
 
@@ -88,7 +88,7 @@ bool teo::CanBusControlboard::getControlModes(const int n_joint, const int *join
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setControlMode(const int j, const int mode)
+bool roboticslab::CanBusControlboard::setControlMode(const int j, const int mode)
 {
     CD_DEBUG("(%d, %d)\n",j,mode);
 
@@ -100,7 +100,7 @@ bool teo::CanBusControlboard::setControlMode(const int j, const int mode)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setControlModes(const int n_joint, const int *joints, int *modes)
+bool roboticslab::CanBusControlboard::setControlModes(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("(%d)\n",n_joint);
 
@@ -114,7 +114,7 @@ bool teo::CanBusControlboard::setControlModes(const int n_joint, const int *join
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setControlModes(int *modes)
+bool roboticslab::CanBusControlboard::setControlModes(int *modes)
 {
     CD_DEBUG("\n");
 

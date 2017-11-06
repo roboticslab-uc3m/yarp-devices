@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setCanBusPtr(ICanBusHico *canDevicePtr)
+bool roboticslab::TextilesHand::setCanBusPtr(ICanBusHico *canDevicePtr)
 {
 
     this->canDevicePtr = canDevicePtr;
@@ -14,7 +14,7 @@ bool teo::TextilesHand::setCanBusPtr(ICanBusHico *canDevicePtr)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::start()
+bool roboticslab::TextilesHand::start()
 {
 
     return true;
@@ -22,7 +22,7 @@ bool teo::TextilesHand::start()
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::readyToSwitchOn()
+bool roboticslab::TextilesHand::readyToSwitchOn()
 {
 
     return true;
@@ -30,7 +30,7 @@ bool teo::TextilesHand::readyToSwitchOn()
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::switchOn()
+bool roboticslab::TextilesHand::switchOn()
 {
 
     return true;
@@ -38,7 +38,7 @@ bool teo::TextilesHand::switchOn()
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::enable()
+bool roboticslab::TextilesHand::enable()
 {
 
     return true;
@@ -46,7 +46,7 @@ bool teo::TextilesHand::enable()
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::recoverFromError()
+bool roboticslab::TextilesHand::recoverFromError()
 {
 
     return true;
@@ -54,7 +54,7 @@ bool teo::TextilesHand::recoverFromError()
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::interpretMessage( can_msg * message)
+bool roboticslab::TextilesHand::interpretMessage( can_msg * message)
 {
 
     return true;

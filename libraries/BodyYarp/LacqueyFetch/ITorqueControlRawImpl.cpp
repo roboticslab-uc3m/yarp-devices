@@ -4,7 +4,7 @@
 
 // ######################### ITorqueControlRaw Related #########################
 
-bool teo::LacqueyFetch::getRefTorquesRaw(double *t)
+bool roboticslab::LacqueyFetch::getRefTorquesRaw(double *t)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -12,7 +12,7 @@ bool teo::LacqueyFetch::getRefTorquesRaw(double *t)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getRefTorqueRaw(int j, double *t)
+bool roboticslab::LacqueyFetch::getRefTorqueRaw(int j, double *t)
 {
     CD_INFO("\n");
     return true;
@@ -20,7 +20,7 @@ bool teo::LacqueyFetch::getRefTorqueRaw(int j, double *t)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setRefTorquesRaw(const double *t)
+bool roboticslab::LacqueyFetch::setRefTorquesRaw(const double *t)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -28,7 +28,7 @@ bool teo::LacqueyFetch::setRefTorquesRaw(const double *t)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setRefTorqueRaw(int j, double t)
+bool roboticslab::LacqueyFetch::setRefTorqueRaw(int j, double t)
 {
     CD_INFO("\n");
     return true;
@@ -36,7 +36,7 @@ bool teo::LacqueyFetch::setRefTorqueRaw(int j, double t)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getBemfParamRaw(int j, double *bemf)
+bool roboticslab::LacqueyFetch::getBemfParamRaw(int j, double *bemf)
 {
     CD_INFO("\n");
     return true;
@@ -44,7 +44,7 @@ bool teo::LacqueyFetch::getBemfParamRaw(int j, double *bemf)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setBemfParamRaw(int j, double bemf)
+bool roboticslab::LacqueyFetch::setBemfParamRaw(int j, double bemf)
 {
     CD_INFO("\n");
     return true;
@@ -52,7 +52,7 @@ bool teo::LacqueyFetch::setBemfParamRaw(int j, double bemf)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
+bool roboticslab::LacqueyFetch::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
 {
     CD_INFO("\n");
     return true;
@@ -60,7 +60,7 @@ bool teo::LacqueyFetch::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getTorqueRaw(int j, double *t)
+bool roboticslab::LacqueyFetch::getTorqueRaw(int j, double *t)
 {
     //CD_INFO("\n");  //-- Too verbose in controlboardwrapper2 stream.
     return true;
@@ -68,7 +68,7 @@ bool teo::LacqueyFetch::getTorqueRaw(int j, double *t)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getTorquesRaw(double *t)
+bool roboticslab::LacqueyFetch::getTorquesRaw(double *t)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -76,7 +76,7 @@ bool teo::LacqueyFetch::getTorquesRaw(double *t)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getTorqueRangeRaw(int j, double *min, double *max)
+bool roboticslab::LacqueyFetch::getTorqueRangeRaw(int j, double *min, double *max)
 {
     CD_INFO("\n");
     return true;
@@ -84,7 +84,7 @@ bool teo::LacqueyFetch::getTorqueRangeRaw(int j, double *min, double *max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getTorqueRangesRaw(double *min, double *max)
+bool roboticslab::LacqueyFetch::getTorqueRangesRaw(double *min, double *max)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -92,7 +92,7 @@ bool teo::LacqueyFetch::getTorqueRangesRaw(double *min, double *max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setTorquePidsRaw(const yarp::dev::Pid *pids)
+bool roboticslab::LacqueyFetch::setTorquePidsRaw(const yarp::dev::Pid *pids)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -100,7 +100,7 @@ bool teo::LacqueyFetch::setTorquePidsRaw(const yarp::dev::Pid *pids)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setTorqueErrorLimitRaw(int j, double limit)
+bool roboticslab::LacqueyFetch::setTorqueErrorLimitRaw(int j, double limit)
 {
     CD_INFO("\n");
     return true;
@@ -108,7 +108,7 @@ bool teo::LacqueyFetch::setTorqueErrorLimitRaw(int j, double limit)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setTorqueErrorLimitsRaw(const double *limits)
+bool roboticslab::LacqueyFetch::setTorqueErrorLimitsRaw(const double *limits)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -116,7 +116,7 @@ bool teo::LacqueyFetch::setTorqueErrorLimitsRaw(const double *limits)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getTorqueErrorRaw(int j, double *err)
+bool roboticslab::LacqueyFetch::getTorqueErrorRaw(int j, double *err)
 {
     CD_INFO("\n");
     return true;
@@ -124,7 +124,7 @@ bool teo::LacqueyFetch::getTorqueErrorRaw(int j, double *err)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getTorqueErrorsRaw(double *errs)
+bool roboticslab::LacqueyFetch::getTorqueErrorsRaw(double *errs)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -132,7 +132,7 @@ bool teo::LacqueyFetch::getTorqueErrorsRaw(double *errs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getTorquePidOutputRaw(int j, double *out)
+bool roboticslab::LacqueyFetch::getTorquePidOutputRaw(int j, double *out)
 {
     CD_INFO("\n");
     return true;
@@ -140,7 +140,7 @@ bool teo::LacqueyFetch::getTorquePidOutputRaw(int j, double *out)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getTorquePidOutputsRaw(double *outs)
+bool roboticslab::LacqueyFetch::getTorquePidOutputsRaw(double *outs)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -148,7 +148,7 @@ bool teo::LacqueyFetch::getTorquePidOutputsRaw(double *outs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getTorquePidRaw(int j, yarp::dev::Pid *pid)
+bool roboticslab::LacqueyFetch::getTorquePidRaw(int j, yarp::dev::Pid *pid)
 {
     CD_INFO("\n");
     return true;
@@ -156,7 +156,7 @@ bool teo::LacqueyFetch::getTorquePidRaw(int j, yarp::dev::Pid *pid)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getTorquePidsRaw(yarp::dev::Pid *pids)
+bool roboticslab::LacqueyFetch::getTorquePidsRaw(yarp::dev::Pid *pids)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -164,7 +164,7 @@ bool teo::LacqueyFetch::getTorquePidsRaw(yarp::dev::Pid *pids)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getTorqueErrorLimitRaw(int j, double *limit)
+bool roboticslab::LacqueyFetch::getTorqueErrorLimitRaw(int j, double *limit)
 {
     CD_INFO("\n");
     return true;
@@ -172,7 +172,7 @@ bool teo::LacqueyFetch::getTorqueErrorLimitRaw(int j, double *limit)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getTorqueErrorLimitsRaw(double *limits)
+bool roboticslab::LacqueyFetch::getTorqueErrorLimitsRaw(double *limits)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -180,7 +180,7 @@ bool teo::LacqueyFetch::getTorqueErrorLimitsRaw(double *limits)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::resetTorquePidRaw(int j)
+bool roboticslab::LacqueyFetch::resetTorquePidRaw(int j)
 {
     CD_INFO("\n");
     return true;
@@ -188,7 +188,7 @@ bool teo::LacqueyFetch::resetTorquePidRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::disableTorquePidRaw(int j)
+bool roboticslab::LacqueyFetch::disableTorquePidRaw(int j)
 {
     CD_INFO("\n");
     return true;
@@ -196,7 +196,7 @@ bool teo::LacqueyFetch::disableTorquePidRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::enableTorquePidRaw(int j)
+bool roboticslab::LacqueyFetch::enableTorquePidRaw(int j)
 {
     CD_INFO("\n");
     return true;
@@ -204,7 +204,7 @@ bool teo::LacqueyFetch::enableTorquePidRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setTorqueOffsetRaw(int j, double v)
+bool roboticslab::LacqueyFetch::setTorqueOffsetRaw(int j, double v)
 {
     CD_INFO("\n");
     return true;

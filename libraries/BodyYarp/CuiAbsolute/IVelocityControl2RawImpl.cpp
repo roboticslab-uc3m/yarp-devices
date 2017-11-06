@@ -4,7 +4,7 @@
 
 //  ########################### IVelocityControlRaw implementations ###########################
 
-bool teo::CuiAbsolute::velocityMoveRaw(int j, double sp)
+bool roboticslab::CuiAbsolute::velocityMoveRaw(int j, double sp)
 {
     CD_INFO("Missing implementation\n");
     return true;
@@ -12,7 +12,7 @@ bool teo::CuiAbsolute::velocityMoveRaw(int j, double sp)
 
 // --------------------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::velocityMoveRaw(const double *sp)
+bool roboticslab::CuiAbsolute::velocityMoveRaw(const double *sp)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -20,7 +20,7 @@ bool teo::CuiAbsolute::velocityMoveRaw(const double *sp)
 
 //  ########################### IVelocityControl2Raw implementations ###########################
 
-bool teo::CuiAbsolute::velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
+bool roboticslab::CuiAbsolute::velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -28,7 +28,7 @@ bool teo::CuiAbsolute::velocityMoveRaw(const int n_joint, const int *joints, con
 
 // --------------------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getRefVelocityRaw(const int joint, double *vel)
+bool roboticslab::CuiAbsolute::getRefVelocityRaw(const int joint, double *vel)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -36,7 +36,7 @@ bool teo::CuiAbsolute::getRefVelocityRaw(const int joint, double *vel)
 
 // --------------------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getRefVelocitiesRaw(double *vels)
+bool roboticslab::CuiAbsolute::getRefVelocitiesRaw(double *vels)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -44,7 +44,7 @@ bool teo::CuiAbsolute::getRefVelocitiesRaw(double *vels)
 
 // --------------------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels)
+bool roboticslab::CuiAbsolute::getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -52,7 +52,7 @@ bool teo::CuiAbsolute::getRefVelocitiesRaw(const int n_joint, const int *joints,
 
 // --------------------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::setVelPidRaw(int j, const yarp::dev::Pid &pid)
+bool roboticslab::CuiAbsolute::setVelPidRaw(int j, const yarp::dev::Pid &pid)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -60,7 +60,7 @@ bool teo::CuiAbsolute::setVelPidRaw(int j, const yarp::dev::Pid &pid)
 
 // --------------------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::setVelPidsRaw(const yarp::dev::Pid *pids)
+bool roboticslab::CuiAbsolute::setVelPidsRaw(const yarp::dev::Pid *pids)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -68,7 +68,7 @@ bool teo::CuiAbsolute::setVelPidsRaw(const yarp::dev::Pid *pids)
 
 // --------------------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getVelPidRaw(int j, yarp::dev::Pid *pid)
+bool roboticslab::CuiAbsolute::getVelPidRaw(int j, yarp::dev::Pid *pid)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -76,7 +76,7 @@ bool teo::CuiAbsolute::getVelPidRaw(int j, yarp::dev::Pid *pid)
 
 // --------------------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getVelPidsRaw(yarp::dev::Pid *pids)
+bool roboticslab::CuiAbsolute::getVelPidsRaw(yarp::dev::Pid *pids)
 {
     CD_ERROR("Missing implementation\n");
     return false;

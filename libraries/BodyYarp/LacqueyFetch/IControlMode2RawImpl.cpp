@@ -4,7 +4,7 @@
 
 // ############################## IControlModeRaw Related ##############################
 
-bool teo::LacqueyFetch::setPositionModeRaw(int j)
+bool roboticslab::LacqueyFetch::setPositionModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -16,7 +16,7 @@ bool teo::LacqueyFetch::setPositionModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setVelocityModeRaw(int j)
+bool roboticslab::LacqueyFetch::setVelocityModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -28,7 +28,7 @@ bool teo::LacqueyFetch::setVelocityModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setTorqueModeRaw(int j)
+bool roboticslab::LacqueyFetch::setTorqueModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -40,7 +40,7 @@ bool teo::LacqueyFetch::setTorqueModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setImpedancePositionModeRaw(int j)
+bool roboticslab::LacqueyFetch::setImpedancePositionModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -52,7 +52,7 @@ bool teo::LacqueyFetch::setImpedancePositionModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setImpedanceVelocityModeRaw(int j)
+bool roboticslab::LacqueyFetch::setImpedanceVelocityModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -64,7 +64,7 @@ bool teo::LacqueyFetch::setImpedanceVelocityModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setOpenLoopModeRaw(int j)
+bool roboticslab::LacqueyFetch::setOpenLoopModeRaw(int j)
 {
     CD_ERROR("(%d)\n",j);  //-- Removed in YARP 2.3.70
     return false;
@@ -72,7 +72,7 @@ bool teo::LacqueyFetch::setOpenLoopModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getControlModeRaw(int j, int *mode)
+bool roboticslab::LacqueyFetch::getControlModeRaw(int j, int *mode)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
 
@@ -86,7 +86,7 @@ bool teo::LacqueyFetch::getControlModeRaw(int j, int *mode)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getControlModesRaw(int *modes)
+bool roboticslab::LacqueyFetch::getControlModesRaw(int *modes)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -94,7 +94,7 @@ bool teo::LacqueyFetch::getControlModesRaw(int *modes)
 
 // ############################## IControlMode2Raw Related ##############################
 
-bool teo::LacqueyFetch::getControlModesRaw(const int n_joint, const int *joints, int *modes)
+bool roboticslab::LacqueyFetch::getControlModesRaw(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("\n");
 
@@ -106,7 +106,7 @@ bool teo::LacqueyFetch::getControlModesRaw(const int n_joint, const int *joints,
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setControlModeRaw(const int j, const int mode)
+bool roboticslab::LacqueyFetch::setControlModeRaw(const int j, const int mode)
 {
     CD_DEBUG("(%d, %d)\n",j,mode);
 
@@ -131,7 +131,7 @@ bool teo::LacqueyFetch::setControlModeRaw(const int j, const int mode)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setControlModesRaw(const int n_joint, const int *joints, int *modes)
+bool roboticslab::LacqueyFetch::setControlModesRaw(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("(%d)\n",n_joint);
 
@@ -143,7 +143,7 @@ bool teo::LacqueyFetch::setControlModesRaw(const int n_joint, const int *joints,
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setControlModesRaw(int *modes)
+bool roboticslab::LacqueyFetch::setControlModesRaw(int *modes)
 {
     CD_DEBUG("\n");
     return setControlModeRaw(0, modes[0]);

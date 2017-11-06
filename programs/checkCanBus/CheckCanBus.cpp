@@ -12,7 +12,7 @@
 
 YARP_DECLARE_PLUGINS(BodyYarp)
 
-namespace teo
+namespace roboticslab
 {
 
 /************************************************************************/
@@ -248,4 +248,4 @@ void CheckCanBus::printWronglIds()
 
 /************************************************************************/
 
-}  // namespace teo
+}  // namespace roboticslab

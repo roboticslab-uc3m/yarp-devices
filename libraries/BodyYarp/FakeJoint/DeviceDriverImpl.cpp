@@ -3,7 +3,7 @@
 #include "FakeJoint.hpp"
 
 // -----------------------------------------------------------------------------
-bool teo::FakeJoint::open(yarp::os::Searchable& config)
+bool roboticslab::FakeJoint::open(yarp::os::Searchable& config)
 {
 
     this->canId = config.check("canId",0,"can bus ID").asInt();
@@ -25,7 +25,7 @@ bool teo::FakeJoint::open(yarp::os::Searchable& config)
 }
 
 // -----------------------------------------------------------------------------
-bool teo::FakeJoint::close()
+bool roboticslab::FakeJoint::close()
 {
     CD_INFO("\n");
     return true;

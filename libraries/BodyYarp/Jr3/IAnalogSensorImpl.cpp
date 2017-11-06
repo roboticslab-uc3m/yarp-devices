@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-int teo::Jr3::read(yarp::sig::Vector &out)
+int roboticslab::Jr3::read(yarp::sig::Vector &out)
 {
     int ret;
     ret = ioctl(fd,IOCTL0_JR3_FILTER0,&fm0);
@@ -57,42 +57,42 @@ int teo::Jr3::read(yarp::sig::Vector &out)
 
 // -----------------------------------------------------------------------------
 
-int teo::Jr3::getState(int ch)
+int roboticslab::Jr3::getState(int ch)
 {
     return yarp::dev::IAnalogSensor::AS_OK;
 }
 
 // -----------------------------------------------------------------------------
 
-int teo::Jr3::getChannels()
+int roboticslab::Jr3::getChannels()
 {
     return DEFAULT_NUM_CHANNELS;
 }
 
 // -----------------------------------------------------------------------------
 
-int teo::Jr3::calibrateSensor()
+int roboticslab::Jr3::calibrateSensor()
 {
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-int teo::Jr3::calibrateSensor(const yarp::sig::Vector& value)
+int roboticslab::Jr3::calibrateSensor(const yarp::sig::Vector& value)
 {
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-int teo::Jr3::calibrateChannel(int ch)
+int roboticslab::Jr3::calibrateChannel(int ch)
 {
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-int teo::Jr3::calibrateChannel(int ch, double value)
+int roboticslab::Jr3::calibrateChannel(int ch, double value)
 {
     return true;
 }

@@ -3,7 +3,7 @@
 #include "CuiAbsolute.hpp"
 
 // -----------------------------------------------------------------------------
-bool teo::CuiAbsolute::open(yarp::os::Searchable& config)
+bool roboticslab::CuiAbsolute::open(yarp::os::Searchable& config)
 {
 
     this->canId = config.check("canId",0,"can bus ID").asInt();
@@ -23,7 +23,7 @@ bool teo::CuiAbsolute::open(yarp::os::Searchable& config)
 }
 
 // -----------------------------------------------------------------------------
-bool teo::CuiAbsolute::close()
+bool roboticslab::CuiAbsolute::close()
 {
     CD_INFO("\n");
     return true;

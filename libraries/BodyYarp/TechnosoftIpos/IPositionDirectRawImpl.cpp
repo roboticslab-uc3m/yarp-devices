@@ -4,7 +4,7 @@
 
 // ------------------ IPositionDirect Related ----------------------------------
 
-bool teo::TechnosoftIpos::setPositionRaw(int j, double ref)
+bool roboticslab::TechnosoftIpos::setPositionRaw(int j, double ref)
 {
 
     //CD_INFO("j:%d ref:%f\n",j,refs[j]);
@@ -59,7 +59,7 @@ bool teo::TechnosoftIpos::setPositionRaw(int j, double ref)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setPositionsRaw(const int n_joint, const int *joints, double *refs)
+bool roboticslab::TechnosoftIpos::setPositionsRaw(const int n_joint, const int *joints, double *refs)
 {
     //CD_INFO("n_joint:%d, drivers.size():" CD_SIZE_T "\n",n_joint,drivers.size());
 
@@ -135,7 +135,7 @@ bool teo::TechnosoftIpos::setPositionsRaw(const int n_joint, const int *joints, 
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setPositionsRaw(const double *refs)
+bool roboticslab::TechnosoftIpos::setPositionsRaw(const double *refs)
 {
 
     CD_WARNING("Not implemented yet.\n");

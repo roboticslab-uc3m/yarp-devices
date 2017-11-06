@@ -3,7 +3,7 @@
 #include "TechnosoftIpos.hpp"
 
 // -----------------------------------------------------------------------------
-bool teo::TechnosoftIpos::open(yarp::os::Searchable& config)
+bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 {
 
     // -- .ini parameters (in order)
@@ -59,7 +59,7 @@ bool teo::TechnosoftIpos::open(yarp::os::Searchable& config)
 }
 
 // -----------------------------------------------------------------------------
-bool teo::TechnosoftIpos::close()
+bool roboticslab::TechnosoftIpos::close()
 {
     CD_INFO("\n");
     return true;

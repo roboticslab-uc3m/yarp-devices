@@ -5,7 +5,7 @@
  * @ingroup yarp_devices_programs
  * \defgroup checkCanBus checkCanBus
  *
- * @brief Creates an instance of teo::CheckCanBus.
+ * @brief Creates an instance of roboticslab::CheckCanBus.
  *
  * @section checkCanBus_legal Legal
  *
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     }
     CD_SUCCESS("Found yarp network.\n");
 
-    teo::CheckCanBus mod;      // -- Clase que hereda de RFModule y de Thread
+    roboticslab::CheckCanBus mod;      // -- Clase que hereda de RFModule y de Thread
     return mod.runModule(rf); // -- runModule llama a la función configure() de CheckCanBus.hpp
 }
 

@@ -4,7 +4,7 @@
 
 // ------------------- DeviceDriver Related ------------------------------------
 
-bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
+bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 {
 
     std::string mode = config.check("mode",yarp::os::Value("position"),"position/velocity mode").asString();
@@ -338,7 +338,7 @@ bool teo::CanBusControlboard::open(yarp::os::Searchable& config)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::close()
+bool roboticslab::CanBusControlboard::close()
 {
     int ret = 0;
     double timeOut = 1; // timeout (1 secod)

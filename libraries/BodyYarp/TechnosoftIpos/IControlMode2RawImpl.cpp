@@ -4,7 +4,7 @@
 
 // ############################## IControlModeRaw Related ##############################
 
-bool teo::TechnosoftIpos::setPositionModeRaw(int j)
+bool roboticslab::TechnosoftIpos::setPositionModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -27,7 +27,7 @@ bool teo::TechnosoftIpos::setPositionModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setVelocityModeRaw(int j)
+bool roboticslab::TechnosoftIpos::setVelocityModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -50,7 +50,7 @@ bool teo::TechnosoftIpos::setVelocityModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setTorqueModeRaw(int j)
+bool roboticslab::TechnosoftIpos::setTorqueModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
     bool ok = true;
@@ -67,7 +67,7 @@ bool teo::TechnosoftIpos::setTorqueModeRaw(int j)
 
 /******************* setTorqueModeRaw Splited **********************/
 
-bool teo::TechnosoftIpos::setTorqueModeRaw1()
+bool roboticslab::TechnosoftIpos::setTorqueModeRaw1()
 {
 
     //-- 5. External reference type. Slave receives reference through CAN (manual 208 of 263).
@@ -83,7 +83,7 @@ bool teo::TechnosoftIpos::setTorqueModeRaw1()
     return true;
 }
 
-bool teo::TechnosoftIpos::setTorqueModeRaw2()
+bool roboticslab::TechnosoftIpos::setTorqueModeRaw2()
 {
 
     //-- Mode -5 (manual 209 of 263). Send the following message (SDO access to object 6060 h , 8-bit value -1)
@@ -99,7 +99,7 @@ bool teo::TechnosoftIpos::setTorqueModeRaw2()
     return true;
 }
 
-bool teo::TechnosoftIpos::setTorqueModeRaw3()
+bool roboticslab::TechnosoftIpos::setTorqueModeRaw3()
 {
 
     //-- Control word (manual 215 of 263).
@@ -117,7 +117,7 @@ bool teo::TechnosoftIpos::setTorqueModeRaw3()
 /*************************************************************************/
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setImpedancePositionModeRaw(int j)
+bool roboticslab::TechnosoftIpos::setImpedancePositionModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -131,7 +131,7 @@ bool teo::TechnosoftIpos::setImpedancePositionModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setImpedanceVelocityModeRaw(int j)
+bool roboticslab::TechnosoftIpos::setImpedanceVelocityModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -145,7 +145,7 @@ bool teo::TechnosoftIpos::setImpedanceVelocityModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setOpenLoopModeRaw(int j)
+bool roboticslab::TechnosoftIpos::setOpenLoopModeRaw(int j)
 {
     CD_ERROR("(%d)\n",j);  //-- Removed in YARP 2.3.70
     return false;
@@ -153,7 +153,7 @@ bool teo::TechnosoftIpos::setOpenLoopModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getControlModeRaw(int j, int *mode)
+bool roboticslab::TechnosoftIpos::getControlModeRaw(int j, int *mode)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
     bool ok = true;
@@ -171,7 +171,7 @@ bool teo::TechnosoftIpos::getControlModeRaw(int j, int *mode)
 }
 
 /******************* getControlModeRaw Splited **********************/
-bool teo::TechnosoftIpos::getControlModeRaw1()
+bool roboticslab::TechnosoftIpos::getControlModeRaw1()
 {
     //*************************************************************
     uint8_t msgOperationDisplay[] = {0x40,0x61,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6061h: Modes of Operation display
@@ -191,7 +191,7 @@ bool teo::TechnosoftIpos::getControlModeRaw1()
 }
 
 //*************************************************************
-bool teo::TechnosoftIpos::getControlModeRaw2()
+bool roboticslab::TechnosoftIpos::getControlModeRaw2()
 {
     //-- Ya de paso...
     //*************************************************************
@@ -218,7 +218,7 @@ bool teo::TechnosoftIpos::getControlModeRaw2()
     /***************************************************************/
 }
 
-bool teo::TechnosoftIpos::getControlModeRaw3()
+bool roboticslab::TechnosoftIpos::getControlModeRaw3()
 {
     //-- Y ya de paso, por qué no...
     //*************************************************************
@@ -234,7 +234,7 @@ bool teo::TechnosoftIpos::getControlModeRaw3()
     //*************************************************************
 }
 
-bool teo::TechnosoftIpos::getControlModeRaw4()
+bool roboticslab::TechnosoftIpos::getControlModeRaw4()
 {
     //-- Y tb ya de paso, por qué no... // no info
     //*************************************************************
@@ -264,7 +264,7 @@ bool teo::TechnosoftIpos::getControlModeRaw4()
 /********************************************************************/
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getControlModesRaw(int *modes)
+bool roboticslab::TechnosoftIpos::getControlModesRaw(int *modes)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -272,7 +272,7 @@ bool teo::TechnosoftIpos::getControlModesRaw(int *modes)
 
 // ############################## IControlMode2Raw Related ##############################
 
-bool teo::TechnosoftIpos::getControlModesRaw(const int n_joint, const int *joints, int *modes)
+bool roboticslab::TechnosoftIpos::getControlModesRaw(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("\n");
 
@@ -284,7 +284,7 @@ bool teo::TechnosoftIpos::getControlModesRaw(const int n_joint, const int *joint
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setControlModeRaw(const int j, const int mode)
+bool roboticslab::TechnosoftIpos::setControlModeRaw(const int j, const int mode)
 {
     CD_DEBUG("(%d, %d)\n",j,mode);
 
@@ -311,7 +311,7 @@ bool teo::TechnosoftIpos::setControlModeRaw(const int j, const int mode)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setControlModesRaw(const int n_joint, const int *joints, int *modes)
+bool roboticslab::TechnosoftIpos::setControlModesRaw(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("(%d)\n",n_joint);
 
@@ -323,7 +323,7 @@ bool teo::TechnosoftIpos::setControlModesRaw(const int n_joint, const int *joint
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setControlModesRaw(int *modes)
+bool roboticslab::TechnosoftIpos::setControlModesRaw(int *modes)
 {
     CD_DEBUG("\n");
     return setControlModeRaw(0, modes[0]);

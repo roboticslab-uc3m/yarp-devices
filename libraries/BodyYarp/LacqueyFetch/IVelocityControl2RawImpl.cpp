@@ -4,7 +4,7 @@
 
 // ######################### IVelocityControlRaw Related ###########################
 
-bool teo::LacqueyFetch::velocityMoveRaw(int j, double sp)
+bool roboticslab::LacqueyFetch::velocityMoveRaw(int j, double sp)
 {
     CD_INFO("\n");
     return true;
@@ -12,7 +12,7 @@ bool teo::LacqueyFetch::velocityMoveRaw(int j, double sp)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::velocityMoveRaw(const double *sp)
+bool roboticslab::LacqueyFetch::velocityMoveRaw(const double *sp)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -20,7 +20,7 @@ bool teo::LacqueyFetch::velocityMoveRaw(const double *sp)
 
 // ######################### IVelocityControl2Raw Related #########################
 
-bool teo::LacqueyFetch::velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
+bool roboticslab::LacqueyFetch::velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -28,7 +28,7 @@ bool teo::LacqueyFetch::velocityMoveRaw(const int n_joint, const int *joints, co
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getRefVelocityRaw(const int joint, double *vel)
+bool roboticslab::LacqueyFetch::getRefVelocityRaw(const int joint, double *vel)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -36,7 +36,7 @@ bool teo::LacqueyFetch::getRefVelocityRaw(const int joint, double *vel)
 
 // ------------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getRefVelocitiesRaw(double *vels)
+bool roboticslab::LacqueyFetch::getRefVelocitiesRaw(double *vels)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -44,7 +44,7 @@ bool teo::LacqueyFetch::getRefVelocitiesRaw(double *vels)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels)
+bool roboticslab::LacqueyFetch::getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -52,7 +52,7 @@ bool teo::LacqueyFetch::getRefVelocitiesRaw(const int n_joint, const int *joints
 
 // -----------------------------------------------------------------------------
 /*
-bool teo::LacqueyFetch::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
+bool roboticslab::LacqueyFetch::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
 {
     CD_ERROR("\n");
     return false;
@@ -60,7 +60,7 @@ bool teo::LacqueyFetch::setRefAccelerationsRaw(const int n_joint, const int *joi
 */
 // -----------------------------------------------------------------------------
 /*
-bool teo::LacqueyFetch::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
+bool roboticslab::LacqueyFetch::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
 {
     CD_ERROR("\n");
     return false;
@@ -68,7 +68,7 @@ bool teo::LacqueyFetch::getRefAccelerationsRaw(const int n_joint, const int *joi
 */
 // -----------------------------------------------------------------------------
 /*
-bool teo::LacqueyFetch::stopRaw(const int n_joint, const int *joints)
+bool roboticslab::LacqueyFetch::stopRaw(const int n_joint, const int *joints)
 {
     CD_ERROR("\n");
     return false;
@@ -76,7 +76,7 @@ bool teo::LacqueyFetch::stopRaw(const int n_joint, const int *joints)
 */
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setVelPidRaw(int j, const yarp::dev::Pid &pid)
+bool roboticslab::LacqueyFetch::setVelPidRaw(int j, const yarp::dev::Pid &pid)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -84,7 +84,7 @@ bool teo::LacqueyFetch::setVelPidRaw(int j, const yarp::dev::Pid &pid)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setVelPidsRaw(const yarp::dev::Pid *pids)
+bool roboticslab::LacqueyFetch::setVelPidsRaw(const yarp::dev::Pid *pids)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -92,7 +92,7 @@ bool teo::LacqueyFetch::setVelPidsRaw(const yarp::dev::Pid *pids)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getVelPidRaw(int j, yarp::dev::Pid *pid)
+bool roboticslab::LacqueyFetch::getVelPidRaw(int j, yarp::dev::Pid *pid)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -100,7 +100,7 @@ bool teo::LacqueyFetch::getVelPidRaw(int j, yarp::dev::Pid *pid)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getVelPidsRaw(yarp::dev::Pid *pids)
+bool roboticslab::LacqueyFetch::getVelPidsRaw(yarp::dev::Pid *pids)
 {
     CD_ERROR("Missing implementation\n");
     return false;

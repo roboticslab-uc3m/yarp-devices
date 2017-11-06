@@ -4,7 +4,7 @@
 
 // ------------------ IPositionDirect Related ----------------------------------
 
-bool teo::CanBusControlboard::setPosition(int j, double ref)
+bool roboticslab::CanBusControlboard::setPosition(int j, double ref)
 {
     CD_DEBUG("\n");
 
@@ -13,7 +13,7 @@ bool teo::CanBusControlboard::setPosition(int j, double ref)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setPositions(const int n_joint, const int *joints, double *refs)
+bool roboticslab::CanBusControlboard::setPositions(const int n_joint, const int *joints, double *refs)
 {
     CD_DEBUG("n_joint:%d, drivers.size():" CD_SIZE_T "\n",n_joint,nodes.size());
 
@@ -25,7 +25,7 @@ bool teo::CanBusControlboard::setPositions(const int n_joint, const int *joints,
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setPositions(const double *refs)
+bool roboticslab::CanBusControlboard::setPositions(const double *refs)
 {
     CD_DEBUG("\n");
 

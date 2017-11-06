@@ -14,7 +14,7 @@
 
 #define CAN_ID 103 // ID of Cui Absolute encoder that you want to check...
 
-namespace teo
+namespace roboticslab
 {
 
 /**

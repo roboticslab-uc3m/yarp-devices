@@ -4,7 +4,7 @@
 
 // ######################## IPositionDirectRaw Related ##########################
 
-bool teo::FakeJoint::setPositionRaw(int j, double ref)
+bool roboticslab::FakeJoint::setPositionRaw(int j, double ref)
 {
     CD_DEBUG("\n");
     this->positionMoveRaw(0,ref);
@@ -13,7 +13,7 @@ bool teo::FakeJoint::setPositionRaw(int j, double ref)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::setPositionsRaw(const int n_joint, const int *joints, double *refs)
+bool roboticslab::FakeJoint::setPositionsRaw(const int n_joint, const int *joints, double *refs)
 {
     CD_DEBUG("\n");
     this->positionMoveRaw(0,refs[0]);
@@ -22,7 +22,7 @@ bool teo::FakeJoint::setPositionsRaw(const int n_joint, const int *joints, doubl
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::setPositionsRaw(const double *refs)
+bool roboticslab::FakeJoint::setPositionsRaw(const double *refs)
 {
     CD_DEBUG("\n");
     return true;

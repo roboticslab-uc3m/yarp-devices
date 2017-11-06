@@ -4,7 +4,7 @@
 
 // ######################### IEncodersRaw Related ##############################
 
-bool teo::CuiAbsolute::resetEncoderRaw(int j)
+bool roboticslab::CuiAbsolute::resetEncoderRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -16,7 +16,7 @@ bool teo::CuiAbsolute::resetEncoderRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::resetEncodersRaw()
+bool roboticslab::CuiAbsolute::resetEncodersRaw()
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -24,7 +24,7 @@ bool teo::CuiAbsolute::resetEncodersRaw()
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::setEncoderRaw(int j, double val)    // encExposed = val;
+bool roboticslab::CuiAbsolute::setEncoderRaw(int j, double val)    // encExposed = val;
 {
     CD_INFO("(%d,%f)\n",j,val);
 
@@ -38,7 +38,7 @@ bool teo::CuiAbsolute::setEncoderRaw(int j, double val)    // encExposed = val;
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::setEncodersRaw(const double *vals)
+bool roboticslab::CuiAbsolute::setEncodersRaw(const double *vals)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -46,7 +46,7 @@ bool teo::CuiAbsolute::setEncodersRaw(const double *vals)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getEncoderRaw(int j, double *v)
+bool roboticslab::CuiAbsolute::getEncoderRaw(int j, double *v)
 {
     //CD_INFO("%d\n",j);  //-- Too verbose in stream.
 
@@ -62,7 +62,7 @@ bool teo::CuiAbsolute::getEncoderRaw(int j, double *v)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getEncodersRaw(double *encs)
+bool roboticslab::CuiAbsolute::getEncodersRaw(double *encs)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -70,7 +70,7 @@ bool teo::CuiAbsolute::getEncodersRaw(double *encs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getEncoderSpeedRaw(int j, double *sp)
+bool roboticslab::CuiAbsolute::getEncoderSpeedRaw(int j, double *sp)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
@@ -85,7 +85,7 @@ bool teo::CuiAbsolute::getEncoderSpeedRaw(int j, double *sp)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getEncoderSpeedsRaw(double *spds)
+bool roboticslab::CuiAbsolute::getEncoderSpeedsRaw(double *spds)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -93,7 +93,7 @@ bool teo::CuiAbsolute::getEncoderSpeedsRaw(double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getEncoderAccelerationRaw(int j, double *spds)
+bool roboticslab::CuiAbsolute::getEncoderAccelerationRaw(int j, double *spds)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
@@ -108,7 +108,7 @@ bool teo::CuiAbsolute::getEncoderAccelerationRaw(int j, double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getEncoderAccelerationsRaw(double *accs)
+bool roboticslab::CuiAbsolute::getEncoderAccelerationsRaw(double *accs)
 {
     CD_ERROR("Missing implementation\n");
     return false;

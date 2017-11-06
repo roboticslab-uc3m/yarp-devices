@@ -4,7 +4,7 @@
 
 // ######################### IPositionControlRaw Related #########################
 
-bool teo::TechnosoftIpos::getAxes(int *ax)
+bool roboticslab::TechnosoftIpos::getAxes(int *ax)
 {
     *ax = 1;
     return true;
@@ -12,7 +12,7 @@ bool teo::TechnosoftIpos::getAxes(int *ax)
 
 // --------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encExposed = ref;
+bool roboticslab::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encExposed = ref;
 {
     CD_INFO("(%d,%f)\n",j,ref);
 
@@ -65,7 +65,7 @@ bool teo::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encExposed = 
 
 // --------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::positionMoveRaw(const double *refs)
+bool roboticslab::TechnosoftIpos::positionMoveRaw(const double *refs)
 {
     CD_ERROR("\n");
     return false;
@@ -73,7 +73,7 @@ bool teo::TechnosoftIpos::positionMoveRaw(const double *refs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::relativeMoveRaw(int j, double delta)
+bool roboticslab::TechnosoftIpos::relativeMoveRaw(int j, double delta)
 {
     CD_INFO("(%d, %f)\n",j,delta);
 
@@ -129,7 +129,7 @@ bool teo::TechnosoftIpos::relativeMoveRaw(int j, double delta)
 
 // --------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::relativeMoveRaw(const double *deltas)
+bool roboticslab::TechnosoftIpos::relativeMoveRaw(const double *deltas)
 {
     CD_ERROR("\n");
     return false;
@@ -137,7 +137,7 @@ bool teo::TechnosoftIpos::relativeMoveRaw(const double *deltas)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::checkMotionDoneRaw(int j, bool *flag)
+bool roboticslab::TechnosoftIpos::checkMotionDoneRaw(int j, bool *flag)
 {
     CD_INFO("(%d)\n",j);
 
@@ -166,7 +166,7 @@ bool teo::TechnosoftIpos::checkMotionDoneRaw(int j, bool *flag)
 
 // --------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::checkMotionDoneRaw(bool *flag)
+bool roboticslab::TechnosoftIpos::checkMotionDoneRaw(bool *flag)
 {
     CD_ERROR("\n");
     return false;
@@ -174,7 +174,7 @@ bool teo::TechnosoftIpos::checkMotionDoneRaw(bool *flag)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
+bool roboticslab::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
 {
     CD_INFO("(%d, %f)\n",j,sp);
 
@@ -213,7 +213,7 @@ bool teo::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
 
 // --------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setRefSpeedsRaw(const double *spds)
+bool roboticslab::TechnosoftIpos::setRefSpeedsRaw(const double *spds)
 {
     CD_ERROR("\n");
     return false;
@@ -221,7 +221,7 @@ bool teo::TechnosoftIpos::setRefSpeedsRaw(const double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
+bool roboticslab::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
 {
     CD_INFO("(%d, %f)\n",j,acc);
 
@@ -258,7 +258,7 @@ bool teo::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
 
 // --------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setRefAccelerationsRaw(const double *accs)
+bool roboticslab::TechnosoftIpos::setRefAccelerationsRaw(const double *accs)
 {
     CD_ERROR("\n");
     return false;
@@ -266,7 +266,7 @@ bool teo::TechnosoftIpos::setRefAccelerationsRaw(const double *accs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getRefSpeedRaw(int j, double *ref)
+bool roboticslab::TechnosoftIpos::getRefSpeedRaw(int j, double *ref)
 {
     CD_DEBUG("(%d),(%f)\n",j,refSpeed);
 
@@ -280,7 +280,7 @@ bool teo::TechnosoftIpos::getRefSpeedRaw(int j, double *ref)
 
 // --------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getRefSpeedsRaw(double *spds)
+bool roboticslab::TechnosoftIpos::getRefSpeedsRaw(double *spds)
 {
     CD_ERROR("\n");
     return false;
@@ -288,7 +288,7 @@ bool teo::TechnosoftIpos::getRefSpeedsRaw(double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getRefAccelerationRaw(int j, double *acc)
+bool roboticslab::TechnosoftIpos::getRefAccelerationRaw(int j, double *acc)
 {
     CD_INFO("(%d)\n",j);
 
@@ -302,7 +302,7 @@ bool teo::TechnosoftIpos::getRefAccelerationRaw(int j, double *acc)
 
 // --------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getRefAccelerationsRaw(double *accs)
+bool roboticslab::TechnosoftIpos::getRefAccelerationsRaw(double *accs)
 {
     CD_ERROR("\n");
     return false;
@@ -310,7 +310,7 @@ bool teo::TechnosoftIpos::getRefAccelerationsRaw(double *accs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::stopRaw(int j)
+bool roboticslab::TechnosoftIpos::stopRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -324,7 +324,7 @@ bool teo::TechnosoftIpos::stopRaw(int j)
 
 // --------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::stopRaw()
+bool roboticslab::TechnosoftIpos::stopRaw()
 {
     CD_ERROR("\n");
     return false;
@@ -332,7 +332,7 @@ bool teo::TechnosoftIpos::stopRaw()
 
 // ######################### IPositionControl2Raw Related #########################
 
-bool teo::TechnosoftIpos::positionMoveRaw(const int n_joint, const int *joints, const double *refs)
+bool roboticslab::TechnosoftIpos::positionMoveRaw(const int n_joint, const int *joints, const double *refs)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -341,7 +341,7 @@ bool teo::TechnosoftIpos::positionMoveRaw(const int n_joint, const int *joints, 
 
 // --------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)
+bool roboticslab::TechnosoftIpos::relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -350,7 +350,7 @@ bool teo::TechnosoftIpos::relativeMoveRaw(const int n_joint, const int *joints, 
 
 // --------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags)
+bool roboticslab::TechnosoftIpos::checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -359,7 +359,7 @@ bool teo::TechnosoftIpos::checkMotionDoneRaw(const int n_joint, const int *joint
 
 // --------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)
+bool roboticslab::TechnosoftIpos::setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -368,7 +368,7 @@ bool teo::TechnosoftIpos::setRefSpeedsRaw(const int n_joint, const int *joints, 
 
 // --------------------------------------------------------------------------------
 /*
-bool teo::TechnosoftIpos::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
+bool roboticslab::TechnosoftIpos::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
 {
     return true;
 }
@@ -376,7 +376,7 @@ bool teo::TechnosoftIpos::setRefAccelerationsRaw(const int n_joint, const int *j
 
 // --------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)
+bool roboticslab::TechnosoftIpos::getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -386,7 +386,7 @@ bool teo::TechnosoftIpos::getRefSpeedsRaw(const int n_joint, const int *joints, 
 // --------------------------------------------------------------------------------
 
 /*
-bool teo::TechnosoftIpos::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
+bool roboticslab::TechnosoftIpos::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
 {
     return true;
 }
@@ -395,7 +395,7 @@ bool teo::TechnosoftIpos::getRefAccelerationsRaw(const int n_joint, const int *j
 // --------------------------------------------------------------------------------
 
 /*
-bool teo::TechnosoftIpos::stopRaw(const int n_joint, const int *joints)
+bool roboticslab::TechnosoftIpos::stopRaw(const int n_joint, const int *joints)
 {
     return true;
 }
@@ -403,7 +403,7 @@ bool teo::TechnosoftIpos::stopRaw(const int n_joint, const int *joints)
 
 // --------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getTargetPositionRaw(const int joint, double *ref)
+bool roboticslab::TechnosoftIpos::getTargetPositionRaw(const int joint, double *ref)
 {
     CD_INFO("\n");
 
@@ -416,7 +416,7 @@ bool teo::TechnosoftIpos::getTargetPositionRaw(const int joint, double *ref)
 
 // --------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getTargetPositionsRaw(double *refs)
+bool roboticslab::TechnosoftIpos::getTargetPositionsRaw(double *refs)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -425,7 +425,7 @@ bool teo::TechnosoftIpos::getTargetPositionsRaw(double *refs)
 
 // --------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getTargetPositionsRaw(const int n_joint, const int *joints, double *refs)
+bool roboticslab::TechnosoftIpos::getTargetPositionsRaw(const int n_joint, const int *joints, double *refs)
 {
     CD_WARNING("Missing implementation\n");
 

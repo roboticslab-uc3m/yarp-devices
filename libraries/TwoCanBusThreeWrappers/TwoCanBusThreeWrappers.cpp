@@ -2,7 +2,7 @@
 
 #include "TwoCanBusThreeWrappers.hpp"
 
-namespace teo
+namespace roboticslab
 {
 
 /************************************************************************/
@@ -154,4 +154,4 @@ bool TwoCanBusThreeWrappers::close()
 
 /************************************************************************/
 
-}  // namespace teo
+}  // namespace roboticslab

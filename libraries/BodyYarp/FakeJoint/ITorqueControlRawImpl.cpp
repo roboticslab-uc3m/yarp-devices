@@ -4,7 +4,7 @@
 
 // ######################## ITorqueControlRaw Related ##########################
 
-bool teo::FakeJoint::getRefTorquesRaw(double *t)
+bool roboticslab::FakeJoint::getRefTorquesRaw(double *t)
 {
     CD_ERROR("\n");
     return false;
@@ -12,7 +12,7 @@ bool teo::FakeJoint::getRefTorquesRaw(double *t)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getRefTorqueRaw(int j, double *t)
+bool roboticslab::FakeJoint::getRefTorqueRaw(int j, double *t)
 {
     CD_INFO("\n");
     return true;
@@ -20,7 +20,7 @@ bool teo::FakeJoint::getRefTorqueRaw(int j, double *t)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::setRefTorquesRaw(const double *t)
+bool roboticslab::FakeJoint::setRefTorquesRaw(const double *t)
 {
     CD_ERROR("\n");
     return false;
@@ -28,7 +28,7 @@ bool teo::FakeJoint::setRefTorquesRaw(const double *t)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::setRefTorqueRaw(int j, double t)
+bool roboticslab::FakeJoint::setRefTorqueRaw(int j, double t)
 {
     CD_INFO("\n");
     return true;
@@ -36,7 +36,7 @@ bool teo::FakeJoint::setRefTorqueRaw(int j, double t)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getBemfParamRaw(int j, double *bemf)
+bool roboticslab::FakeJoint::getBemfParamRaw(int j, double *bemf)
 {
     CD_INFO("\n");
     return true;
@@ -44,7 +44,7 @@ bool teo::FakeJoint::getBemfParamRaw(int j, double *bemf)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::setBemfParamRaw(int j, double bemf)
+bool roboticslab::FakeJoint::setBemfParamRaw(int j, double bemf)
 {
     CD_INFO("\n");
     return true;
@@ -52,7 +52,7 @@ bool teo::FakeJoint::setBemfParamRaw(int j, double bemf)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
+bool roboticslab::FakeJoint::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
 {
     CD_INFO("\n");
     return true;
@@ -60,7 +60,7 @@ bool teo::FakeJoint::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getTorqueRaw(int j, double *t)
+bool roboticslab::FakeJoint::getTorqueRaw(int j, double *t)
 {
     //CD_INFO("\n");  //-- Too verbose in controlboardwrapper2 stream.
     return true;
@@ -68,7 +68,7 @@ bool teo::FakeJoint::getTorqueRaw(int j, double *t)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getTorquesRaw(double *t)
+bool roboticslab::FakeJoint::getTorquesRaw(double *t)
 {
     CD_ERROR("\n");
     return false;
@@ -76,7 +76,7 @@ bool teo::FakeJoint::getTorquesRaw(double *t)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getTorqueRangeRaw(int j, double *min, double *max)
+bool roboticslab::FakeJoint::getTorqueRangeRaw(int j, double *min, double *max)
 {
     CD_INFO("\n");
     return true;
@@ -84,7 +84,7 @@ bool teo::FakeJoint::getTorqueRangeRaw(int j, double *min, double *max)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getTorqueRangesRaw(double *min, double *max)
+bool roboticslab::FakeJoint::getTorqueRangesRaw(double *min, double *max)
 {
     CD_ERROR("\n");
     return false;
@@ -92,7 +92,7 @@ bool teo::FakeJoint::getTorqueRangesRaw(double *min, double *max)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::setTorquePidsRaw(const yarp::dev::Pid *pids)
+bool roboticslab::FakeJoint::setTorquePidsRaw(const yarp::dev::Pid *pids)
 {
     CD_ERROR("\n");
     return false;
@@ -100,7 +100,7 @@ bool teo::FakeJoint::setTorquePidsRaw(const yarp::dev::Pid *pids)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::setTorqueErrorLimitRaw(int j, double limit)
+bool roboticslab::FakeJoint::setTorqueErrorLimitRaw(int j, double limit)
 {
     CD_INFO("\n");
     return true;
@@ -108,7 +108,7 @@ bool teo::FakeJoint::setTorqueErrorLimitRaw(int j, double limit)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::setTorqueErrorLimitsRaw(const double *limits)
+bool roboticslab::FakeJoint::setTorqueErrorLimitsRaw(const double *limits)
 {
     CD_ERROR("\n");
     return false;
@@ -116,7 +116,7 @@ bool teo::FakeJoint::setTorqueErrorLimitsRaw(const double *limits)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getTorqueErrorRaw(int j, double *err)
+bool roboticslab::FakeJoint::getTorqueErrorRaw(int j, double *err)
 {
     CD_INFO("\n");
     return true;
@@ -124,7 +124,7 @@ bool teo::FakeJoint::getTorqueErrorRaw(int j, double *err)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getTorqueErrorsRaw(double *errs)
+bool roboticslab::FakeJoint::getTorqueErrorsRaw(double *errs)
 {
     CD_ERROR("\n");
     return false;
@@ -132,7 +132,7 @@ bool teo::FakeJoint::getTorqueErrorsRaw(double *errs)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getTorquePidOutputRaw(int j, double *out)
+bool roboticslab::FakeJoint::getTorquePidOutputRaw(int j, double *out)
 {
     CD_INFO("\n");
     return true;
@@ -140,7 +140,7 @@ bool teo::FakeJoint::getTorquePidOutputRaw(int j, double *out)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getTorquePidOutputsRaw(double *outs)
+bool roboticslab::FakeJoint::getTorquePidOutputsRaw(double *outs)
 {
     CD_ERROR("\n");
     return false;
@@ -148,7 +148,7 @@ bool teo::FakeJoint::getTorquePidOutputsRaw(double *outs)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getTorquePidRaw(int j, yarp::dev::Pid *pid)
+bool roboticslab::FakeJoint::getTorquePidRaw(int j, yarp::dev::Pid *pid)
 {
     CD_INFO("\n");
     return true;
@@ -156,7 +156,7 @@ bool teo::FakeJoint::getTorquePidRaw(int j, yarp::dev::Pid *pid)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getTorquePidsRaw(yarp::dev::Pid *pids)
+bool roboticslab::FakeJoint::getTorquePidsRaw(yarp::dev::Pid *pids)
 {
     CD_ERROR("\n");
     return false;
@@ -164,7 +164,7 @@ bool teo::FakeJoint::getTorquePidsRaw(yarp::dev::Pid *pids)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getTorqueErrorLimitRaw(int j, double *limit)
+bool roboticslab::FakeJoint::getTorqueErrorLimitRaw(int j, double *limit)
 {
     CD_INFO("\n");
     return true;
@@ -172,7 +172,7 @@ bool teo::FakeJoint::getTorqueErrorLimitRaw(int j, double *limit)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getTorqueErrorLimitsRaw(double *limits)
+bool roboticslab::FakeJoint::getTorqueErrorLimitsRaw(double *limits)
 {
     CD_ERROR("\n");
     return false;
@@ -180,7 +180,7 @@ bool teo::FakeJoint::getTorqueErrorLimitsRaw(double *limits)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::resetTorquePidRaw(int j)
+bool roboticslab::FakeJoint::resetTorquePidRaw(int j)
 {
     CD_INFO("\n");
     return true;
@@ -188,7 +188,7 @@ bool teo::FakeJoint::resetTorquePidRaw(int j)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::disableTorquePidRaw(int j)
+bool roboticslab::FakeJoint::disableTorquePidRaw(int j)
 {
     CD_INFO("\n");
     return true;
@@ -196,7 +196,7 @@ bool teo::FakeJoint::disableTorquePidRaw(int j)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::enableTorquePidRaw(int j)
+bool roboticslab::FakeJoint::enableTorquePidRaw(int j)
 {
     CD_INFO("\n");
     return true;
@@ -204,7 +204,7 @@ bool teo::FakeJoint::enableTorquePidRaw(int j)
 
 // ------------------------------------------------------------------------------
 
-bool teo::FakeJoint::setTorqueOffsetRaw(int j, double v)
+bool roboticslab::FakeJoint::setTorqueOffsetRaw(int j, double v)
 {
     CD_INFO("\n");
     return true;

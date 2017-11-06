@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-int teo::TextilesHand::serialport_writebyte( int fd, uint8_t b)
+int roboticslab::TextilesHand::serialport_writebyte( int fd, uint8_t b)
 {
     int n = write(fd,&b,1);
     if( n!=1)
@@ -14,7 +14,7 @@ int teo::TextilesHand::serialport_writebyte( int fd, uint8_t b)
 
 // -----------------------------------------------------------------------------
 
-int teo::TextilesHand::serialport_write(int fd, const char* str)
+int roboticslab::TextilesHand::serialport_write(int fd, const char* str)
 {
     int len = strlen(str);
     int n = write(fd, str, len);
@@ -25,7 +25,7 @@ int teo::TextilesHand::serialport_write(int fd, const char* str)
 
 // -----------------------------------------------------------------------------
 
-int teo::TextilesHand::serialport_read_until(int fd, char* buf, char until)
+int roboticslab::TextilesHand::serialport_read_until(int fd, char* buf, char until)
 {
     char b[1];
     int i=0;
@@ -49,7 +49,7 @@ int teo::TextilesHand::serialport_read_until(int fd, char* buf, char until)
 
 // -----------------------------------------------------------------------------
 
-int teo::TextilesHand::serialport_init(const char* serialport, int baud)
+int roboticslab::TextilesHand::serialport_init(const char* serialport, int baud)
 {
     struct termios toptions;
     int fd;

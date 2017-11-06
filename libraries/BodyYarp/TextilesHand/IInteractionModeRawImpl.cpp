@@ -5,7 +5,7 @@
 // ################################ IInteractionModeRaw Related ################################
 
 
-bool teo::TextilesHand::getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode)
+bool roboticslab::TextilesHand::getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode)
 {
     CD_INFO("(%d)\n",axis);
 
@@ -15,7 +15,7 @@ bool teo::TextilesHand::getInteractionModeRaw(int axis, yarp::dev::InteractionMo
 
 // ----------------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::TextilesHand::getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -24,7 +24,7 @@ bool teo::TextilesHand::getInteractionModesRaw(int n_joints, int *joints, yarp::
 
 // ----------------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::TextilesHand::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -33,7 +33,7 @@ bool teo::TextilesHand::getInteractionModesRaw(yarp::dev::InteractionModeEnum* m
 
 // ----------------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
+bool roboticslab::TextilesHand::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
 {
     CD_INFO("(%d), (%s)\n",axis, mode); //-- I don't know if this is correct (if I want to print mode?)
 
@@ -46,7 +46,7 @@ bool teo::TextilesHand::setInteractionModeRaw(int axis, yarp::dev::InteractionMo
 
 // ----------------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::TextilesHand::setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -56,7 +56,7 @@ bool teo::TextilesHand::setInteractionModesRaw(int n_joints, int *joints, yarp::
 
 // ----------------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::TextilesHand::setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 

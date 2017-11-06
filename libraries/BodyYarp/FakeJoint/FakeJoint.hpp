@@ -17,13 +17,13 @@
 #include "ICanBusSharer.h"
 
 
-namespace teo
+namespace roboticslab
 {
 
 /**
  * @ingroup BodyYarp
  * \defgroup FakeJoint
- * @brief Contains teo::FakeJoint.
+ * @brief Contains roboticslab::FakeJoint.
  */
 
 /**
@@ -243,7 +243,7 @@ protected:
     yarp::os::Semaphore interactionModeSemaphore;
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
 #endif  // __FAKE_JOINT__
 

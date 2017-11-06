@@ -3,7 +3,7 @@
 #ifndef __I_TECHNOSOFT_IPOS__
 #define __I_TECHNOSOFT_IPOS__
 
-namespace teo
+namespace roboticslab
 {
 
 /**
@@ -26,6 +26,6 @@ public:
 
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
 #endif  //  __I_TECHNOSOFT_IPOS__

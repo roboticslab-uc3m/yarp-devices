@@ -3,10 +3,10 @@
 #include "ExampleCanBusControlboard.hpp"
 
 /************************************************************************/
-teo::ExampleCanBusControlboard::ExampleCanBusControlboard() { }
+roboticslab::ExampleCanBusControlboard::ExampleCanBusControlboard() { }
 
 /************************************************************************/
-bool teo::ExampleCanBusControlboard::configure(yarp::os::ResourceFinder &rf)
+bool roboticslab::ExampleCanBusControlboard::configure(yarp::os::ResourceFinder &rf)
 {
     yarp::os::Property options;
     options.fromString(rf.toString());  //-- Allow options like stream_state=0.
@@ -28,7 +28,7 @@ bool teo::ExampleCanBusControlboard::configure(yarp::os::ResourceFinder &rf)
 }
 
 /************************************************************************/
-bool teo::ExampleCanBusControlboard::updateModule()
+bool roboticslab::ExampleCanBusControlboard::updateModule()
 {
     //printf("ExampleCanBusControlboard alive...\n");
     return true;

@@ -5,7 +5,7 @@
 // ------------------ IInteractionModeRaw Related ----------------------------------------
 
 
-bool teo::LacqueyFetch::getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode)
+bool roboticslab::LacqueyFetch::getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode)
 {
     CD_INFO("(%d)\n",axis);
 
@@ -17,21 +17,21 @@ bool teo::LacqueyFetch::getInteractionModeRaw(int axis, yarp::dev::InteractionMo
 }
 
 
-bool teo::LacqueyFetch::getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::LacqueyFetch::getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 
     return true;
 }
 
-bool teo::LacqueyFetch::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::LacqueyFetch::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 
     return true;
 }
 
-bool teo::LacqueyFetch::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
+bool roboticslab::LacqueyFetch::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
 {    
     //CD_INFO("(%d), (%s)\n",axis, yarp::os::Vocab::decode(mode));
     CD_INFO("(%d), (%s)\n",axis, mode); // I think this may be the correct solution (I've to check it)
@@ -43,7 +43,7 @@ bool teo::LacqueyFetch::setInteractionModeRaw(int axis, yarp::dev::InteractionMo
     return true;
 }
 
-bool teo::LacqueyFetch::setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::LacqueyFetch::setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -51,7 +51,7 @@ bool teo::LacqueyFetch::setInteractionModesRaw(int n_joints, int *joints, yarp::
 
 }
 
-bool teo::LacqueyFetch::setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::LacqueyFetch::setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 

@@ -5,7 +5,7 @@
 // ------------------ IInteractionModeRaw Related ----------------------------------------
 
 
-bool teo::TechnosoftIpos::getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode)
+bool roboticslab::TechnosoftIpos::getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode)
 {
     CD_INFO("(%d)\n",axis);
 
@@ -17,21 +17,21 @@ bool teo::TechnosoftIpos::getInteractionModeRaw(int axis, yarp::dev::Interaction
 }
 
 
-bool teo::TechnosoftIpos::getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::TechnosoftIpos::getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 
     return true;
 }
 
-bool teo::TechnosoftIpos::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::TechnosoftIpos::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 
     return true;
 }
 
-bool teo::TechnosoftIpos::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
+bool roboticslab::TechnosoftIpos::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
 {
     CD_INFO("(%d), (%s)\n",axis, mode); //-- I don't know if this is correct (if I want to print mode?)
 
@@ -42,7 +42,7 @@ bool teo::TechnosoftIpos::setInteractionModeRaw(int axis, yarp::dev::Interaction
     return true;
 }
 
-bool teo::TechnosoftIpos::setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::TechnosoftIpos::setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -50,7 +50,7 @@ bool teo::TechnosoftIpos::setInteractionModesRaw(int n_joints, int *joints, yarp
 
 }
 
-bool teo::TechnosoftIpos::setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::TechnosoftIpos::setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 

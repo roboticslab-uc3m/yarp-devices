@@ -5,7 +5,7 @@
  * @ingroup yarp_devices_programs
  * \defgroup dumpCanBus dumpCanBus
  *
- * @brief Creates an instance of teo::DumpCanBus.
+ * @brief Creates an instance of roboticslab::DumpCanBus.
  *
  * @section dumpCanBus_legal Legal
  *
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     }
     CD_SUCCESS("Found yarp network.\n");
 
-    teo::DumpCanBus mod;
+    roboticslab::DumpCanBus mod;
     return mod.runModule(rf);
 }
 

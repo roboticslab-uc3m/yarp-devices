@@ -4,7 +4,7 @@
 
 // ------------------- IControlLimitsRaw Related ------------------------------------
 
-bool teo::LacqueyFetch::setLimitsRaw(int axis, double min, double max)
+bool roboticslab::LacqueyFetch::setLimitsRaw(int axis, double min, double max)
 {
     CD_INFO("(%d,%f,%f)\n",axis,min,max);
 
@@ -20,7 +20,7 @@ bool teo::LacqueyFetch::setLimitsRaw(int axis, double min, double max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getLimitsRaw(int axis, double *min, double *max)
+bool roboticslab::LacqueyFetch::getLimitsRaw(int axis, double *min, double *max)
 {
     CD_INFO("(%d)\n",axis);
 
@@ -36,7 +36,7 @@ bool teo::LacqueyFetch::getLimitsRaw(int axis, double *min, double *max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setVelLimitsRaw(int axis, double min, double max)
+bool roboticslab::LacqueyFetch::setVelLimitsRaw(int axis, double min, double max)
 {
     CD_WARNING("Not implemented.\n");
     return true;
@@ -44,7 +44,7 @@ bool teo::LacqueyFetch::setVelLimitsRaw(int axis, double min, double max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getVelLimitsRaw(int axis, double *min, double *max)
+bool roboticslab::LacqueyFetch::getVelLimitsRaw(int axis, double *min, double *max)
 {
     CD_WARNING("Not implemented.\n");
     return true;

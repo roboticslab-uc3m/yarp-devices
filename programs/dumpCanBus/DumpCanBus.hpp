@@ -20,7 +20,7 @@
 #include "ColorDebug.hpp"
 
 
-namespace teo
+namespace roboticslab
 {
 
 /**
@@ -70,7 +70,7 @@ protected:
     virtual void run();
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
 #endif  // __DUMP_CAN_BUS__
 

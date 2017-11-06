@@ -4,7 +4,7 @@
 
 // ------------------ Thread Related -----------------------------------------
 
-void teo::DumpCanBus::run()
+void roboticslab::DumpCanBus::run()
 {
 
     CD_INFO("Started DumpCanBus reading thread run.\n");
