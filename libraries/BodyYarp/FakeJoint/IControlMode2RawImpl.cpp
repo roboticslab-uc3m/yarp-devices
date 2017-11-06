@@ -4,7 +4,7 @@
 
 // ############################## IControlModeRaw Related ##############################
 
-bool teo::FakeJoint::setPositionModeRaw(int j)
+bool roboticslab::FakeJoint::setPositionModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -16,7 +16,7 @@ bool teo::FakeJoint::setPositionModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setVelocityModeRaw(int j)
+bool roboticslab::FakeJoint::setVelocityModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -28,7 +28,7 @@ bool teo::FakeJoint::setVelocityModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setTorqueModeRaw(int j)
+bool roboticslab::FakeJoint::setTorqueModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -40,7 +40,7 @@ bool teo::FakeJoint::setTorqueModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setImpedancePositionModeRaw(int j)
+bool roboticslab::FakeJoint::setImpedancePositionModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -52,7 +52,7 @@ bool teo::FakeJoint::setImpedancePositionModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setImpedanceVelocityModeRaw(int j)
+bool roboticslab::FakeJoint::setImpedanceVelocityModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -64,7 +64,7 @@ bool teo::FakeJoint::setImpedanceVelocityModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setOpenLoopModeRaw(int j)
+bool roboticslab::FakeJoint::setOpenLoopModeRaw(int j)
 {
     CD_ERROR("(%d)\n",j);  //-- Removed in YARP 2.3.70
     return false;
@@ -72,7 +72,7 @@ bool teo::FakeJoint::setOpenLoopModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::getControlModeRaw(int j, int *mode)
+bool roboticslab::FakeJoint::getControlModeRaw(int j, int *mode)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
 
@@ -86,7 +86,7 @@ bool teo::FakeJoint::getControlModeRaw(int j, int *mode)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::getControlModesRaw(int *modes)
+bool roboticslab::FakeJoint::getControlModesRaw(int *modes)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -94,7 +94,7 @@ bool teo::FakeJoint::getControlModesRaw(int *modes)
 
 // ############################## IControlMode2Raw Related ##############################
 
-bool teo::FakeJoint::getControlModesRaw(const int n_joint, const int *joints, int *modes)
+bool roboticslab::FakeJoint::getControlModesRaw(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("\n");
 
@@ -106,7 +106,7 @@ bool teo::FakeJoint::getControlModesRaw(const int n_joint, const int *joints, in
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setControlModeRaw(const int j, const int mode)
+bool roboticslab::FakeJoint::setControlModeRaw(const int j, const int mode)
 {
     CD_DEBUG("(%d, %d)\n",j,mode);
 
@@ -131,7 +131,7 @@ bool teo::FakeJoint::setControlModeRaw(const int j, const int mode)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setControlModesRaw(const int n_joint, const int *joints, int *modes)
+bool roboticslab::FakeJoint::setControlModesRaw(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("(%d)\n",n_joint);
 
@@ -143,7 +143,7 @@ bool teo::FakeJoint::setControlModesRaw(const int n_joint, const int *joints, in
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setControlModesRaw(int *modes)
+bool roboticslab::FakeJoint::setControlModesRaw(int *modes)
 {
     CD_DEBUG("\n");
     return setControlModeRaw(0, modes[0]);

@@ -5,7 +5,7 @@
 
 // ---------------------------- IInteractionMode Related ----------------------------------
 
-bool teo::CanBusControlboard::getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
+bool roboticslab::CanBusControlboard::getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
 {
     // CD_DEBUG("(%d)\n",axis);  // -- is printed too many times...
     //*mode = interactionMode[axis];
@@ -16,7 +16,7 @@ bool teo::CanBusControlboard::getInteractionMode(int axis, yarp::dev::Interactio
     return iInteractionModeRaw[axis]->getInteractionModeRaw(0, mode);
 }
 
-bool teo::CanBusControlboard::getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::CanBusControlboard::getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     CD_DEBUG("\n");
 
@@ -26,7 +26,7 @@ bool teo::CanBusControlboard::getInteractionModes(int n_joints, int *joints, yar
         return ok;
 }
 
-bool teo::CanBusControlboard::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::CanBusControlboard::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
     CD_DEBUG("\n");
 
@@ -36,7 +36,7 @@ bool teo::CanBusControlboard::getInteractionModes(yarp::dev::InteractionModeEnum
     return ok;
 }
 
-bool teo::CanBusControlboard::setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode)
+bool roboticslab::CanBusControlboard::setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode)
 {
     CD_DEBUG("(%d)\n",axis);
 
@@ -46,7 +46,7 @@ bool teo::CanBusControlboard::setInteractionMode(int axis, yarp::dev::Interactio
     return iInteractionModeRaw[axis]->setInteractionModeRaw(0, mode);
 }
 
-bool teo::CanBusControlboard::setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::CanBusControlboard::setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     CD_DEBUG("\n");
 
@@ -57,7 +57,7 @@ bool teo::CanBusControlboard::setInteractionModes(int n_joints, int *joints, yar
        return ok;
 }
 
-bool teo::CanBusControlboard::setInteractionModes(yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::CanBusControlboard::setInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
     CD_DEBUG("\n");
 

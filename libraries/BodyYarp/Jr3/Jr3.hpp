@@ -24,13 +24,13 @@
 
 #define DEFAULT_NUM_CHANNELS 24
 
-namespace teo
+namespace roboticslab
 {
 
 /**
  * @ingroup BodyYarp
  * \defgroup Jr3
- * @brief Contains teo::Jr3.
+ * @brief Contains roboticslab::Jr3.
  */
 
  /**
@@ -107,7 +107,7 @@ class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor
 
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
 #endif  // __JR3__
 

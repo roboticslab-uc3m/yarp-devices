@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusHico::sendRaw(uint32_t id, uint16_t len, uint8_t * msgData)
+bool roboticslab::CanBusHico::sendRaw(uint32_t id, uint16_t len, uint8_t * msgData)
 {
 
     struct can_msg msg;
@@ -28,7 +28,7 @@ bool teo::CanBusHico::sendRaw(uint32_t id, uint16_t len, uint8_t * msgData)
 
 // -----------------------------------------------------------------------------
 
-int teo::CanBusHico::read_timeout(struct can_msg *buf, unsigned int timeout)
+int roboticslab::CanBusHico::read_timeout(struct can_msg *buf, unsigned int timeout)
 {
 
     fd_set fds;

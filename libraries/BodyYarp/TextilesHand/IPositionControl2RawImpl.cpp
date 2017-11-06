@@ -4,7 +4,7 @@
 
 // ############################## IPositionControlRaw Related ##############################
 
-bool teo::TextilesHand::getAxes(int *ax)
+bool roboticslab::TextilesHand::getAxes(int *ax)
 {
     *ax = 1;
     return true;
@@ -12,7 +12,7 @@ bool teo::TextilesHand::getAxes(int *ax)
 
 // -----------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::positionMoveRaw(int j, double ref)    // encExposed = ref;
+bool roboticslab::TextilesHand::positionMoveRaw(int j, double ref)    // encExposed = ref;
 {
     CD_INFO("(%d,%f)\n",j,ref);
 
@@ -38,7 +38,7 @@ bool teo::TextilesHand::positionMoveRaw(int j, double ref)    // encExposed = re
 
 // -----------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::positionMoveRaw(const double *refs)
+bool roboticslab::TextilesHand::positionMoveRaw(const double *refs)
 {
     CD_ERROR("\n");
     return false;
@@ -46,7 +46,7 @@ bool teo::TextilesHand::positionMoveRaw(const double *refs)
 
 // -----------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::relativeMoveRaw(int j, double delta)
+bool roboticslab::TextilesHand::relativeMoveRaw(int j, double delta)
 {
     CD_INFO("(%d, %f)\n",j,delta);
 
@@ -60,7 +60,7 @@ bool teo::TextilesHand::relativeMoveRaw(int j, double delta)
 
 // -----------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::relativeMoveRaw(const double *deltas)
+bool roboticslab::TextilesHand::relativeMoveRaw(const double *deltas)
 {
     CD_ERROR("\n");
     return false;
@@ -68,7 +68,7 @@ bool teo::TextilesHand::relativeMoveRaw(const double *deltas)
 
 // -----------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::checkMotionDoneRaw(int j, bool *flag)
+bool roboticslab::TextilesHand::checkMotionDoneRaw(int j, bool *flag)
 {
     CD_INFO("(%d)\n",j);
 
@@ -82,7 +82,7 @@ bool teo::TextilesHand::checkMotionDoneRaw(int j, bool *flag)
 
 // -----------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::checkMotionDoneRaw(bool *flag)
+bool roboticslab::TextilesHand::checkMotionDoneRaw(bool *flag)
 {
     CD_ERROR("\n");
     return false;
@@ -90,7 +90,7 @@ bool teo::TextilesHand::checkMotionDoneRaw(bool *flag)
 
 // -----------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setRefSpeedRaw(int j, double sp)
+bool roboticslab::TextilesHand::setRefSpeedRaw(int j, double sp)
 {
     CD_INFO("(%d, %f)\n",j,sp);
 
@@ -102,7 +102,7 @@ bool teo::TextilesHand::setRefSpeedRaw(int j, double sp)
 
 // -----------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setRefSpeedsRaw(const double *spds)
+bool roboticslab::TextilesHand::setRefSpeedsRaw(const double *spds)
 {
     CD_ERROR("\n");
     return false;
@@ -110,7 +110,7 @@ bool teo::TextilesHand::setRefSpeedsRaw(const double *spds)
 
 // -----------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setRefAccelerationRaw(int j, double acc)
+bool roboticslab::TextilesHand::setRefAccelerationRaw(int j, double acc)
 {
     CD_INFO("(%d, %f)\n",j,acc);
 
@@ -122,7 +122,7 @@ bool teo::TextilesHand::setRefAccelerationRaw(int j, double acc)
 
 // -----------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setRefAccelerationsRaw(const double *accs)
+bool roboticslab::TextilesHand::setRefAccelerationsRaw(const double *accs)
 {
     CD_ERROR("\n");
     return false;
@@ -130,7 +130,7 @@ bool teo::TextilesHand::setRefAccelerationsRaw(const double *accs)
 
 // -----------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getRefSpeedRaw(int j, double *ref)
+bool roboticslab::TextilesHand::getRefSpeedRaw(int j, double *ref)
 {
     CD_INFO("(%d)\n",j);
 
@@ -144,7 +144,7 @@ bool teo::TextilesHand::getRefSpeedRaw(int j, double *ref)
 
 // -----------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getRefSpeedsRaw(double *spds)
+bool roboticslab::TextilesHand::getRefSpeedsRaw(double *spds)
 {
     CD_ERROR("\n");
     return false;
@@ -152,7 +152,7 @@ bool teo::TextilesHand::getRefSpeedsRaw(double *spds)
 
 // -----------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getRefAccelerationRaw(int j, double *acc)
+bool roboticslab::TextilesHand::getRefAccelerationRaw(int j, double *acc)
 {
     CD_INFO("(%d)\n",j);
 
@@ -166,7 +166,7 @@ bool teo::TextilesHand::getRefAccelerationRaw(int j, double *acc)
 
 // -----------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getRefAccelerationsRaw(double *accs)
+bool roboticslab::TextilesHand::getRefAccelerationsRaw(double *accs)
 {
     CD_ERROR("\n");
     return false;
@@ -174,7 +174,7 @@ bool teo::TextilesHand::getRefAccelerationsRaw(double *accs)
 
 // -----------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::stopRaw(int j)
+bool roboticslab::TextilesHand::stopRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -186,7 +186,7 @@ bool teo::TextilesHand::stopRaw(int j)
 
 // -----------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::stopRaw()
+bool roboticslab::TextilesHand::stopRaw()
 {
     CD_ERROR("\n");
     return false;
@@ -196,7 +196,7 @@ bool teo::TextilesHand::stopRaw()
 // ############################## IPositionControl2Raw Related ##############################
 
 
-bool teo::TextilesHand::positionMoveRaw(const int n_joint, const int *joints, const double *refs)
+bool roboticslab::TextilesHand::positionMoveRaw(const int n_joint, const int *joints, const double *refs)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -205,7 +205,7 @@ bool teo::TextilesHand::positionMoveRaw(const int n_joint, const int *joints, co
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)
+bool roboticslab::TextilesHand::relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -214,7 +214,7 @@ bool teo::TextilesHand::relativeMoveRaw(const int n_joint, const int *joints, co
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags)
+bool roboticslab::TextilesHand::checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -223,7 +223,7 @@ bool teo::TextilesHand::checkMotionDoneRaw(const int n_joint, const int *joints,
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)
+bool roboticslab::TextilesHand::setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -232,7 +232,7 @@ bool teo::TextilesHand::setRefSpeedsRaw(const int n_joint, const int *joints, co
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
+bool roboticslab::TextilesHand::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -241,7 +241,7 @@ bool teo::TextilesHand::setRefAccelerationsRaw(const int n_joint, const int *joi
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)
+bool roboticslab::TextilesHand::getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -250,7 +250,7 @@ bool teo::TextilesHand::getRefSpeedsRaw(const int n_joint, const int *joints, do
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
+bool roboticslab::TextilesHand::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -259,7 +259,7 @@ bool teo::TextilesHand::getRefAccelerationsRaw(const int n_joint, const int *joi
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::stopRaw(const int n_joint, const int *joints)
+bool roboticslab::TextilesHand::stopRaw(const int n_joint, const int *joints)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -268,7 +268,7 @@ bool teo::TextilesHand::stopRaw(const int n_joint, const int *joints)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::getTargetPositionRaw(const int joint, double *ref)
+bool roboticslab::TextilesHand::getTargetPositionRaw(const int joint, double *ref)
 {
     CD_INFO("\n");
 
@@ -279,7 +279,7 @@ bool teo::TextilesHand::getTargetPositionRaw(const int joint, double *ref)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::getTargetPositionsRaw(double *refs)
+bool roboticslab::TextilesHand::getTargetPositionsRaw(double *refs)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -288,7 +288,7 @@ bool teo::TextilesHand::getTargetPositionsRaw(double *refs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::getTargetPositionsRaw(const int n_joint, const int *joints, double *refs)
+bool roboticslab::TextilesHand::getTargetPositionsRaw(const int n_joint, const int *joints, double *refs)
 {
     CD_WARNING("Missing implementation\n");
 

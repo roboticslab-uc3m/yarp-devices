@@ -4,7 +4,7 @@
 
 //  ########################### IVelocityControlRaw implementations ###########################
 
-bool teo::TextilesHand::velocityMoveRaw(int j, double sp)
+bool roboticslab::TextilesHand::velocityMoveRaw(int j, double sp)
 {
     CD_INFO("Missing implementation\n");
     return true;
@@ -12,7 +12,7 @@ bool teo::TextilesHand::velocityMoveRaw(int j, double sp)
 
 // --------------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::velocityMoveRaw(const double *sp)
+bool roboticslab::TextilesHand::velocityMoveRaw(const double *sp)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -20,7 +20,7 @@ bool teo::TextilesHand::velocityMoveRaw(const double *sp)
 
 //  ########################### IVelocityControl2Raw implementations ###########################
 
-bool teo::TextilesHand::velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
+bool roboticslab::TextilesHand::velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -28,7 +28,7 @@ bool teo::TextilesHand::velocityMoveRaw(const int n_joint, const int *joints, co
 
 // --------------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getRefVelocityRaw(const int joint, double *vel)
+bool roboticslab::TextilesHand::getRefVelocityRaw(const int joint, double *vel)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -36,7 +36,7 @@ bool teo::TextilesHand::getRefVelocityRaw(const int joint, double *vel)
 
 // --------------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getRefVelocitiesRaw(double *vels)
+bool roboticslab::TextilesHand::getRefVelocitiesRaw(double *vels)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -44,7 +44,7 @@ bool teo::TextilesHand::getRefVelocitiesRaw(double *vels)
 
 // --------------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels)
+bool roboticslab::TextilesHand::getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -52,7 +52,7 @@ bool teo::TextilesHand::getRefVelocitiesRaw(const int n_joint, const int *joints
 
 // --------------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setVelPidRaw(int j, const yarp::dev::Pid &pid)
+bool roboticslab::TextilesHand::setVelPidRaw(int j, const yarp::dev::Pid &pid)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -60,7 +60,7 @@ bool teo::TextilesHand::setVelPidRaw(int j, const yarp::dev::Pid &pid)
 
 // --------------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setVelPidsRaw(const yarp::dev::Pid *pids)
+bool roboticslab::TextilesHand::setVelPidsRaw(const yarp::dev::Pid *pids)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -68,7 +68,7 @@ bool teo::TextilesHand::setVelPidsRaw(const yarp::dev::Pid *pids)
 
 // --------------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getVelPidRaw(int j, yarp::dev::Pid *pid)
+bool roboticslab::TextilesHand::getVelPidRaw(int j, yarp::dev::Pid *pid)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -76,7 +76,7 @@ bool teo::TextilesHand::getVelPidRaw(int j, yarp::dev::Pid *pid)
 
 // --------------------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getVelPidsRaw(yarp::dev::Pid *pids)
+bool roboticslab::TextilesHand::getVelPidsRaw(yarp::dev::Pid *pids)
 {
     CD_ERROR("Missing implementation\n");
     return false;

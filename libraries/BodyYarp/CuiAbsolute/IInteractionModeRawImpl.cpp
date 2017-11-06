@@ -5,7 +5,7 @@
 // ################################ IInteractionModeRaw Related ################################
 
 
-bool teo::CuiAbsolute::getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode)
+bool roboticslab::CuiAbsolute::getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode)
 {
     CD_INFO("(%d)\n",axis);
 
@@ -15,7 +15,7 @@ bool teo::CuiAbsolute::getInteractionModeRaw(int axis, yarp::dev::InteractionMod
 
 // ----------------------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::CuiAbsolute::getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -24,7 +24,7 @@ bool teo::CuiAbsolute::getInteractionModesRaw(int n_joints, int *joints, yarp::d
 
 // ----------------------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::CuiAbsolute::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -33,7 +33,7 @@ bool teo::CuiAbsolute::getInteractionModesRaw(yarp::dev::InteractionModeEnum* mo
 
 // ----------------------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
+bool roboticslab::CuiAbsolute::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
 {
     CD_INFO("(%d), (%s)\n",axis, mode); //-- I don't know if this is correct (if I want to print mode?)
 
@@ -46,7 +46,7 @@ bool teo::CuiAbsolute::setInteractionModeRaw(int axis, yarp::dev::InteractionMod
 
 // ----------------------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::CuiAbsolute::setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -56,7 +56,7 @@ bool teo::CuiAbsolute::setInteractionModesRaw(int n_joints, int *joints, yarp::d
 
 // ----------------------------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::CuiAbsolute::setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 

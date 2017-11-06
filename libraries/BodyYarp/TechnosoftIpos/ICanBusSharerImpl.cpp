@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setCanBusPtr(ICanBusHico *canDevicePtr)
+bool roboticslab::TechnosoftIpos::setCanBusPtr(ICanBusHico *canDevicePtr)
 {
 
     this->canDevicePtr = canDevicePtr;
@@ -15,7 +15,7 @@ bool teo::TechnosoftIpos::setCanBusPtr(ICanBusHico *canDevicePtr)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
+bool roboticslab::TechnosoftIpos::setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
 {
     double v;
     this->iEncodersTimedRawExternal = iEncodersTimedRaw;
@@ -37,7 +37,7 @@ bool teo::TechnosoftIpos::setIEncodersTimedRawExternal(IEncodersTimedRaw * iEnco
 /** -- Start Remote Node: Used to change NMT state of one or all NMT slaves to Operational.
  PDO communication will beallowed. */
 
-bool teo::TechnosoftIpos::start()
+bool roboticslab::TechnosoftIpos::start()
 {
 
     uint8_t msg_start[] = {0x01,0x00};  // NMT Start Remote Node (to operational, Fig 4.1)
@@ -58,7 +58,7 @@ bool teo::TechnosoftIpos::start()
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::readyToSwitchOn()
+bool roboticslab::TechnosoftIpos::readyToSwitchOn()
 {
 
     uint8_t msg_readyToSwitchOn[] = {0x06,0x00}; //-- readyToSwitchOn, also acts as shutdown.
@@ -78,7 +78,7 @@ bool teo::TechnosoftIpos::readyToSwitchOn()
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::switchOn()
+bool roboticslab::TechnosoftIpos::switchOn()
 {
 
     this->getSwitchOnReady.wait();
@@ -103,7 +103,7 @@ bool teo::TechnosoftIpos::switchOn()
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::enable()
+bool roboticslab::TechnosoftIpos::enable()
 {
 
     this->getEnableReady.wait();
@@ -131,7 +131,7 @@ bool teo::TechnosoftIpos::enable()
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::recoverFromError()
+bool roboticslab::TechnosoftIpos::recoverFromError()
 {
 
     //*************************************************************
@@ -152,7 +152,7 @@ bool teo::TechnosoftIpos::recoverFromError()
     In this state the drives perform a software reset and enter the pre-operational state.
  **/
 
-bool teo::TechnosoftIpos::resetNodes()
+bool roboticslab::TechnosoftIpos::resetNodes()
 {
 
     // NMT Reset Node (Manual 4.1.2.3)
@@ -177,7 +177,7 @@ bool teo::TechnosoftIpos::resetNodes()
  * In this state the drives resets their communication and enter the pre-operational state.
  */
 
-bool teo::TechnosoftIpos::resetCommunication()
+bool roboticslab::TechnosoftIpos::resetCommunication()
 {
 
     uint8_t msg_resetCommunication[] = {0x82,0x00};  // NMT Reset Communications (Manual 4.1.2.2)
@@ -202,7 +202,7 @@ bool teo::TechnosoftIpos::resetCommunication()
     In this state the drives perform a software reset and enter the pre-operational state.
  **/
 
-bool teo::TechnosoftIpos::resetNode(int id)
+bool roboticslab::TechnosoftIpos::resetNode(int id)
 {
 
     uint8_t msg_resetNode[] = {0x81,0x00};  // NMT Reset Node (Manual 4.1.2.3)
@@ -225,7 +225,7 @@ bool teo::TechnosoftIpos::resetNode(int id)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::interpretMessage( can_msg * message)
+bool roboticslab::TechnosoftIpos::interpretMessage( can_msg * message)
 {
 
     //--------------- Give high priority to PT, override EMGY red -------------------------

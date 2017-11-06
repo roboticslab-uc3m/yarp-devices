@@ -4,7 +4,7 @@
 
 // ------------------- ITorqueControl Related ------------------------------------
 
-bool teo::CanBusControlboard::getRefTorques(double *t)
+bool roboticslab::CanBusControlboard::getRefTorques(double *t)
 {
     CD_DEBUG("\n");
 
@@ -18,7 +18,7 @@ bool teo::CanBusControlboard::getRefTorques(double *t)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getRefTorque(int j, double *t)
+bool roboticslab::CanBusControlboard::getRefTorque(int j, double *t)
 {
     CD_DEBUG("(%d)\n",j);
 
@@ -30,7 +30,7 @@ bool teo::CanBusControlboard::getRefTorque(int j, double *t)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setRefTorques(const double *t)
+bool roboticslab::CanBusControlboard::setRefTorques(const double *t)
 {
     CD_DEBUG("\n");
 
@@ -45,7 +45,7 @@ bool teo::CanBusControlboard::setRefTorques(const double *t)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setRefTorque(int j, double t)
+bool roboticslab::CanBusControlboard::setRefTorque(int j, double t)
 {
     CD_DEBUG("(%d,%f)\n",j,t);
 
@@ -57,7 +57,7 @@ bool teo::CanBusControlboard::setRefTorque(int j, double t)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getBemfParam(int j, double *bemf)
+bool roboticslab::CanBusControlboard::getBemfParam(int j, double *bemf)
 {
     CD_DEBUG("(%d)\n",j);
 
@@ -69,7 +69,7 @@ bool teo::CanBusControlboard::getBemfParam(int j, double *bemf)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setBemfParam(int j, double bemf)
+bool roboticslab::CanBusControlboard::setBemfParam(int j, double bemf)
 {
     CD_DEBUG("(%d,%f)\n",j,bemf);
 
@@ -81,7 +81,7 @@ bool teo::CanBusControlboard::setBemfParam(int j, double bemf)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setTorquePid(int j, const yarp::dev::Pid &pid)
+bool roboticslab::CanBusControlboard::setTorquePid(int j, const yarp::dev::Pid &pid)
 {
     CD_DEBUG("(%d)\n",j);
 
@@ -93,7 +93,7 @@ bool teo::CanBusControlboard::setTorquePid(int j, const yarp::dev::Pid &pid)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getTorque(int j, double *t)
+bool roboticslab::CanBusControlboard::getTorque(int j, double *t)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
@@ -105,7 +105,7 @@ bool teo::CanBusControlboard::getTorque(int j, double *t)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getTorques(double *t)
+bool roboticslab::CanBusControlboard::getTorques(double *t)
 {
     CD_DEBUG("\n");
 
@@ -119,7 +119,7 @@ bool teo::CanBusControlboard::getTorques(double *t)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getTorqueRange(int j, double *min, double *max)
+bool roboticslab::CanBusControlboard::getTorqueRange(int j, double *min, double *max)
 {
     CD_DEBUG("(%d)\n",j);
 
@@ -131,7 +131,7 @@ bool teo::CanBusControlboard::getTorqueRange(int j, double *min, double *max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getTorqueRanges(double *min, double *max)
+bool roboticslab::CanBusControlboard::getTorqueRanges(double *min, double *max)
 {
     CD_DEBUG("\n");
 
@@ -145,7 +145,7 @@ bool teo::CanBusControlboard::getTorqueRanges(double *min, double *max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setTorquePids(const yarp::dev::Pid *pids)
+bool roboticslab::CanBusControlboard::setTorquePids(const yarp::dev::Pid *pids)
 {
     CD_DEBUG("\n");
 
@@ -159,7 +159,7 @@ bool teo::CanBusControlboard::setTorquePids(const yarp::dev::Pid *pids)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setTorqueErrorLimit(int j, double limit)
+bool roboticslab::CanBusControlboard::setTorqueErrorLimit(int j, double limit)
 {
     CD_DEBUG("(%d,%f)\n",j,limit);
 
@@ -171,7 +171,7 @@ bool teo::CanBusControlboard::setTorqueErrorLimit(int j, double limit)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setTorqueErrorLimits(const double *limits)
+bool roboticslab::CanBusControlboard::setTorqueErrorLimits(const double *limits)
 {
     CD_DEBUG("\n");
 
@@ -185,7 +185,7 @@ bool teo::CanBusControlboard::setTorqueErrorLimits(const double *limits)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getTorqueError(int j, double *err)
+bool roboticslab::CanBusControlboard::getTorqueError(int j, double *err)
 {
     CD_DEBUG("(%d)\n",j);
 
@@ -197,7 +197,7 @@ bool teo::CanBusControlboard::getTorqueError(int j, double *err)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getTorqueErrors(double *errs)
+bool roboticslab::CanBusControlboard::getTorqueErrors(double *errs)
 {
     CD_DEBUG("\n");
 
@@ -211,7 +211,7 @@ bool teo::CanBusControlboard::getTorqueErrors(double *errs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getTorquePidOutput(int j, double *out)
+bool roboticslab::CanBusControlboard::getTorquePidOutput(int j, double *out)
 {
     CD_DEBUG("(%d)\n",j);
 
@@ -223,7 +223,7 @@ bool teo::CanBusControlboard::getTorquePidOutput(int j, double *out)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getTorquePidOutputs(double *outs)
+bool roboticslab::CanBusControlboard::getTorquePidOutputs(double *outs)
 {
     CD_DEBUG("\n");
 
@@ -237,7 +237,7 @@ bool teo::CanBusControlboard::getTorquePidOutputs(double *outs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getTorquePid(int j, yarp::dev::Pid *pid)
+bool roboticslab::CanBusControlboard::getTorquePid(int j, yarp::dev::Pid *pid)
 {
     CD_DEBUG("(%d)\n",j);
 
@@ -249,7 +249,7 @@ bool teo::CanBusControlboard::getTorquePid(int j, yarp::dev::Pid *pid)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getTorquePids(yarp::dev::Pid *pids)
+bool roboticslab::CanBusControlboard::getTorquePids(yarp::dev::Pid *pids)
 {
     CD_DEBUG("\n");
 
@@ -263,7 +263,7 @@ bool teo::CanBusControlboard::getTorquePids(yarp::dev::Pid *pids)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getTorqueErrorLimit(int j, double *limit)
+bool roboticslab::CanBusControlboard::getTorqueErrorLimit(int j, double *limit)
 {
     CD_DEBUG("(%d)\n",j);
 
@@ -275,7 +275,7 @@ bool teo::CanBusControlboard::getTorqueErrorLimit(int j, double *limit)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getTorqueErrorLimits(double *limits)
+bool roboticslab::CanBusControlboard::getTorqueErrorLimits(double *limits)
 {
     CD_DEBUG("\n");
 
@@ -289,7 +289,7 @@ bool teo::CanBusControlboard::getTorqueErrorLimits(double *limits)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::resetTorquePid(int j)
+bool roboticslab::CanBusControlboard::resetTorquePid(int j)
 {
     CD_DEBUG("(%d)\n",j);
 
@@ -301,7 +301,7 @@ bool teo::CanBusControlboard::resetTorquePid(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::disableTorquePid(int j)
+bool roboticslab::CanBusControlboard::disableTorquePid(int j)
 {
     CD_DEBUG("(%d)\n",j);
 
@@ -313,7 +313,7 @@ bool teo::CanBusControlboard::disableTorquePid(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::enableTorquePid(int j)
+bool roboticslab::CanBusControlboard::enableTorquePid(int j)
 {
     CD_DEBUG("(%d)\n",j);
 
@@ -325,7 +325,7 @@ bool teo::CanBusControlboard::enableTorquePid(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setTorqueOffset(int j, double v)
+bool roboticslab::CanBusControlboard::setTorqueOffset(int j, double v)
 {
     CD_DEBUG("(%d,%f)\n",j,v);
 

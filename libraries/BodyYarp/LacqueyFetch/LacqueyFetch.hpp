@@ -17,13 +17,13 @@
 #include "ICanBusSharer.h"
 
 
-namespace teo
+namespace roboticslab
 {
 
 /**
  * @ingroup BodyYarp
  * \defgroup LacqueyFetch
- * @brief Contains teo::LacqueyFetch.
+ * @brief Contains roboticslab::LacqueyFetch.
  */
 
 /**
@@ -245,7 +245,7 @@ protected:
 
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
 #endif  // __LACQUEY_FETCH__
 

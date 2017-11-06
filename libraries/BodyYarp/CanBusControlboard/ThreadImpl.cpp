@@ -4,7 +4,7 @@
 
 // ------------------ Thread Related -----------------------------------------
 
-void teo::CanBusControlboard::run()
+void roboticslab::CanBusControlboard::run()
 {
 
     CD_INFO("Started CanBusControlboard reading thread run.\n");

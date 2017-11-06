@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-YARP_PREPARE_PLUGIN(CanBusHico CATEGORY device TYPE teo::CanBusHico INCLUDE CanBusHico.hpp)
+YARP_PREPARE_PLUGIN(CanBusHico CATEGORY device TYPE roboticslab::CanBusHico INCLUDE CanBusHico.hpp)
 
 IF (NOT SKIP_CanBusHico)
 

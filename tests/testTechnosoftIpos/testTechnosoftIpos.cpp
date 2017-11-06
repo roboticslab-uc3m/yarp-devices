@@ -15,7 +15,7 @@
 
 //YARP_DECLARE_PLUGINS(BodyYarp)
 
-namespace teo
+namespace roboticslab
 {
 
 /**
@@ -1119,5 +1119,5 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetControlModeRaw_5_4 )
     //ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
 }
 */
-}  // namespace teo
+}  // namespace roboticslab
 

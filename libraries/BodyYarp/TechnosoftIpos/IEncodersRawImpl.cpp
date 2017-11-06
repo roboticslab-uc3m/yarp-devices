@@ -4,7 +4,7 @@
 
 // -------------------------- IEncodersRaw Related ----------------------------------
 
-bool teo::TechnosoftIpos::resetEncoderRaw(int j)
+bool roboticslab::TechnosoftIpos::resetEncoderRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -14,7 +14,7 @@ bool teo::TechnosoftIpos::resetEncoderRaw(int j)
     return this->setEncoderRaw(j,0);
 }
 
-bool teo::TechnosoftIpos::resetEncodersRaw()
+bool roboticslab::TechnosoftIpos::resetEncodersRaw()
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -22,7 +22,7 @@ bool teo::TechnosoftIpos::resetEncodersRaw()
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setEncoderRaw(int j, double val)    // encExposed = val;
+bool roboticslab::TechnosoftIpos::setEncoderRaw(int j, double val)    // encExposed = val;
 {
     CD_INFO("(%d,%f)\n",j,val);
 
@@ -48,7 +48,7 @@ bool teo::TechnosoftIpos::setEncoderRaw(int j, double val)    // encExposed = va
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setEncodersRaw(const double *vals)
+bool roboticslab::TechnosoftIpos::setEncodersRaw(const double *vals)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -56,7 +56,7 @@ bool teo::TechnosoftIpos::setEncodersRaw(const double *vals)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getEncoderRaw(int j, double *v)
+bool roboticslab::TechnosoftIpos::getEncoderRaw(int j, double *v)
 {
     //CD_INFO("%d\n",j);  //-- Too verbose in stream.
 
@@ -92,7 +92,7 @@ bool teo::TechnosoftIpos::getEncoderRaw(int j, double *v)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getEncodersRaw(double *encs)
+bool roboticslab::TechnosoftIpos::getEncodersRaw(double *encs)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -100,7 +100,7 @@ bool teo::TechnosoftIpos::getEncodersRaw(double *encs)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getEncoderSpeedRaw(int j, double *sp)
+bool roboticslab::TechnosoftIpos::getEncoderSpeedRaw(int j, double *sp)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
@@ -115,7 +115,7 @@ bool teo::TechnosoftIpos::getEncoderSpeedRaw(int j, double *sp)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getEncoderSpeedsRaw(double *spds)
+bool roboticslab::TechnosoftIpos::getEncoderSpeedsRaw(double *spds)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -123,7 +123,7 @@ bool teo::TechnosoftIpos::getEncoderSpeedsRaw(double *spds)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getEncoderAccelerationRaw(int j, double *spds)
+bool roboticslab::TechnosoftIpos::getEncoderAccelerationRaw(int j, double *spds)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
@@ -138,7 +138,7 @@ bool teo::TechnosoftIpos::getEncoderAccelerationRaw(int j, double *spds)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getEncoderAccelerationsRaw(double *accs)
+bool roboticslab::TechnosoftIpos::getEncoderAccelerationsRaw(double *accs)
 {
     CD_ERROR("Missing implementation\n");
     return false;

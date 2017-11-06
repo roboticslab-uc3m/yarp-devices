@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setCanBusPtr(ICanBusHico *canDevicePtr)
+bool roboticslab::FakeJoint::setCanBusPtr(ICanBusHico *canDevicePtr)
 {
 
     this->canDevicePtr = canDevicePtr;
@@ -14,7 +14,7 @@ bool teo::FakeJoint::setCanBusPtr(ICanBusHico *canDevicePtr)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::start()
+bool roboticslab::FakeJoint::start()
 {
 
     return true;
@@ -22,7 +22,7 @@ bool teo::FakeJoint::start()
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::readyToSwitchOn()
+bool roboticslab::FakeJoint::readyToSwitchOn()
 {
 
     return true;
@@ -30,7 +30,7 @@ bool teo::FakeJoint::readyToSwitchOn()
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::switchOn()
+bool roboticslab::FakeJoint::switchOn()
 {
 
     return true;
@@ -38,7 +38,7 @@ bool teo::FakeJoint::switchOn()
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::enable()
+bool roboticslab::FakeJoint::enable()
 {
 
     return true;
@@ -46,7 +46,7 @@ bool teo::FakeJoint::enable()
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::recoverFromError()
+bool roboticslab::FakeJoint::recoverFromError()
 {
 
     return true;
@@ -54,7 +54,7 @@ bool teo::FakeJoint::recoverFromError()
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::interpretMessage( can_msg * message)
+bool roboticslab::FakeJoint::interpretMessage( can_msg * message)
 {
 
     return true;

@@ -2,7 +2,7 @@
 
 #include "DumpCanBus.hpp"
 
-namespace teo
+namespace roboticslab
 {
 
 /************************************************************************/
@@ -78,4 +78,4 @@ std::string DumpCanBus::msgToStr(can_msg* message)
 
 /************************************************************************/
 
-}  // namespace teo
+}  // namespace roboticslab

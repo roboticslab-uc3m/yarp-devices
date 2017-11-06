@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::indexWithinRange(const int& idx)
+bool roboticslab::CanBusControlboard::indexWithinRange(const int& idx)
 {
     if (idx >= nodes.size() )
     {
@@ -16,7 +16,7 @@ bool teo::CanBusControlboard::indexWithinRange(const int& idx)
 
 // -----------------------------------------------------------------------------
 
-std::string teo::CanBusControlboard::msgToStr(can_msg* message)
+std::string roboticslab::CanBusControlboard::msgToStr(can_msg* message)
 {
 
     std::stringstream tmp;

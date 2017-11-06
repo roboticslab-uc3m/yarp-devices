@@ -4,7 +4,7 @@
 
 // ------------------ IPositionControl Related ----------------------------------------
 
-bool teo::CanBusControlboard::getAxes(int *axes)
+bool roboticslab::CanBusControlboard::getAxes(int *axes)
 {
     CD_DEBUG("\n");
 
@@ -15,7 +15,7 @@ bool teo::CanBusControlboard::getAxes(int *axes)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::positionMove(int j, double ref)
+bool roboticslab::CanBusControlboard::positionMove(int j, double ref)
 {
     CD_DEBUG("(%d, %f)\n",j,ref);
 
@@ -27,7 +27,7 @@ bool teo::CanBusControlboard::positionMove(int j, double ref)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::positionMove(const double *refs)
+bool roboticslab::CanBusControlboard::positionMove(const double *refs)
 {
     CD_DEBUG("\n");
 
@@ -41,7 +41,7 @@ bool teo::CanBusControlboard::positionMove(const double *refs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::relativeMove(int j, double delta)
+bool roboticslab::CanBusControlboard::relativeMove(int j, double delta)
 {
     CD_DEBUG("(%d, %f)\n",j,delta);
 
@@ -53,7 +53,7 @@ bool teo::CanBusControlboard::relativeMove(int j, double delta)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::relativeMove(const double *deltas)
+bool roboticslab::CanBusControlboard::relativeMove(const double *deltas)
 {
     CD_DEBUG("\n");
 
@@ -67,7 +67,7 @@ bool teo::CanBusControlboard::relativeMove(const double *deltas)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::checkMotionDone(int j, bool *flag)
+bool roboticslab::CanBusControlboard::checkMotionDone(int j, bool *flag)
 {
     CD_DEBUG("(%d)\n",j);
 
@@ -79,7 +79,7 @@ bool teo::CanBusControlboard::checkMotionDone(int j, bool *flag)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::checkMotionDone(bool *flag)
+bool roboticslab::CanBusControlboard::checkMotionDone(bool *flag)
 {
     CD_DEBUG("\n");
     *flag = true;
@@ -95,7 +95,7 @@ bool teo::CanBusControlboard::checkMotionDone(bool *flag)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setRefSpeed(int j, double sp)
+bool roboticslab::CanBusControlboard::setRefSpeed(int j, double sp)
 {
     CD_DEBUG("(%d, %f)\n",j,sp);
 
@@ -107,7 +107,7 @@ bool teo::CanBusControlboard::setRefSpeed(int j, double sp)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setRefSpeeds(const double *spds)
+bool roboticslab::CanBusControlboard::setRefSpeeds(const double *spds)
 {
     CD_DEBUG("\n");
 
@@ -119,7 +119,7 @@ bool teo::CanBusControlboard::setRefSpeeds(const double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setRefAcceleration(int j, double acc)
+bool roboticslab::CanBusControlboard::setRefAcceleration(int j, double acc)
 {
     CD_DEBUG("(%d, %f)\n",j,acc);
 
@@ -131,7 +131,7 @@ bool teo::CanBusControlboard::setRefAcceleration(int j, double acc)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setRefAccelerations(const double *accs)
+bool roboticslab::CanBusControlboard::setRefAccelerations(const double *accs)
 {
     CD_DEBUG("\n");
 
@@ -143,7 +143,7 @@ bool teo::CanBusControlboard::setRefAccelerations(const double *accs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getRefSpeed(int j, double *ref)
+bool roboticslab::CanBusControlboard::getRefSpeed(int j, double *ref)
 {
     CD_DEBUG("(%d)\n",j);
 
@@ -155,7 +155,7 @@ bool teo::CanBusControlboard::getRefSpeed(int j, double *ref)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getRefSpeeds(double *spds)
+bool roboticslab::CanBusControlboard::getRefSpeeds(double *spds)
 {
     CD_DEBUG("\n");
 
@@ -167,7 +167,7 @@ bool teo::CanBusControlboard::getRefSpeeds(double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getRefAcceleration(int j, double *acc)
+bool roboticslab::CanBusControlboard::getRefAcceleration(int j, double *acc)
 {
     CD_DEBUG("(%d)\n",j);
 
@@ -179,7 +179,7 @@ bool teo::CanBusControlboard::getRefAcceleration(int j, double *acc)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getRefAccelerations(double *accs)
+bool roboticslab::CanBusControlboard::getRefAccelerations(double *accs)
 {
     CD_DEBUG("\n");
 
@@ -191,7 +191,7 @@ bool teo::CanBusControlboard::getRefAccelerations(double *accs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::stop(int j)
+bool roboticslab::CanBusControlboard::stop(int j)
 {
     CD_DEBUG("(%d)\n",j);
 
@@ -203,7 +203,7 @@ bool teo::CanBusControlboard::stop(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::stop()
+bool roboticslab::CanBusControlboard::stop()
 {
     CD_DEBUG("\n");
 
@@ -215,7 +215,7 @@ bool teo::CanBusControlboard::stop()
 
 // ---------------------------- IPositionControl2 Related ---------------------
 
-bool teo::CanBusControlboard::positionMove(const int n_joint, const int *joints, const double *refs)
+bool roboticslab::CanBusControlboard::positionMove(const int n_joint, const int *joints, const double *refs)
 {
     CD_DEBUG("\n");
 
@@ -229,7 +229,7 @@ bool teo::CanBusControlboard::positionMove(const int n_joint, const int *joints,
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::relativeMove(const int n_joint, const int *joints, const double *deltas)
+bool roboticslab::CanBusControlboard::relativeMove(const int n_joint, const int *joints, const double *deltas)
 {
     CD_DEBUG("\n");
 
@@ -243,7 +243,7 @@ bool teo::CanBusControlboard::relativeMove(const int n_joint, const int *joints,
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::checkMotionDone(const int n_joint, const int *joints, bool *flags)
+bool roboticslab::CanBusControlboard::checkMotionDone(const int n_joint, const int *joints, bool *flags)
 {
     CD_DEBUG("\n");
     *flags = true;
@@ -259,7 +259,7 @@ bool teo::CanBusControlboard::checkMotionDone(const int n_joint, const int *join
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setRefSpeeds(const int n_joint, const int *joints, const double *spds)
+bool roboticslab::CanBusControlboard::setRefSpeeds(const int n_joint, const int *joints, const double *spds)
 {
     CD_DEBUG("\n");
 
@@ -273,7 +273,7 @@ bool teo::CanBusControlboard::setRefSpeeds(const int n_joint, const int *joints,
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
+bool roboticslab::CanBusControlboard::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
 {
     CD_DEBUG("\n");
 
@@ -287,7 +287,7 @@ bool teo::CanBusControlboard::setRefAccelerations(const int n_joint, const int *
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getRefSpeeds(const int n_joint, const int *joints, double *spds)
+bool roboticslab::CanBusControlboard::getRefSpeeds(const int n_joint, const int *joints, double *spds)
 {
     CD_DEBUG("\n");
 
@@ -301,7 +301,7 @@ bool teo::CanBusControlboard::getRefSpeeds(const int n_joint, const int *joints,
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getRefAccelerations(const int n_joint, const int *joints, double *accs)
+bool roboticslab::CanBusControlboard::getRefAccelerations(const int n_joint, const int *joints, double *accs)
 {
     CD_DEBUG("\n");
 
@@ -315,7 +315,7 @@ bool teo::CanBusControlboard::getRefAccelerations(const int n_joint, const int *
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::stop(const int n_joint, const int *joints)
+bool roboticslab::CanBusControlboard::stop(const int n_joint, const int *joints)
 {
     CD_DEBUG("\n");
 
@@ -329,7 +329,7 @@ bool teo::CanBusControlboard::stop(const int n_joint, const int *joints)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getTargetPosition(const int joint, double *ref)
+bool roboticslab::CanBusControlboard::getTargetPosition(const int joint, double *ref)
 {
     CD_DEBUG("\n");
 
@@ -339,7 +339,7 @@ bool teo::CanBusControlboard::getTargetPosition(const int joint, double *ref)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getTargetPositions(double *refs)
+bool roboticslab::CanBusControlboard::getTargetPositions(double *refs)
 {
     CD_DEBUG("\n");
 
@@ -353,7 +353,7 @@ bool teo::CanBusControlboard::getTargetPositions(double *refs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getTargetPositions(const int n_joint, const int *joints, double *refs)
+bool roboticslab::CanBusControlboard::getTargetPositions(const int n_joint, const int *joints, double *refs)
 {
     CD_DEBUG("\n");
 

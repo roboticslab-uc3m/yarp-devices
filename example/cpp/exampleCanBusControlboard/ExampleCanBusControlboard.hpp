@@ -15,7 +15,7 @@
 
 #include "ColorDebug.hpp"
 
-namespace teo
+namespace roboticslab
 {
 
 /**
@@ -45,6 +45,6 @@ public:
     bool configure(yarp::os::ResourceFinder &rf);
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
 #endif  // __EXAMPLE_CAN_BUS_CONTROLBOARD__

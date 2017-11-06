@@ -18,14 +18,14 @@
 #include "ColorDebug.hpp"
 
 
-namespace teo
+namespace roboticslab
 {
 
 /**
  *
  * @ingroup yarp_devices_libraries
  * \defgroup OneCanBusOneWrapper
- * @brief Contains teo::OneCanBusOneWrapper.
+ * @brief Contains roboticslab::OneCanBusOneWrapper.
  */
 
 /**
@@ -59,7 +59,7 @@ public:
     bool configure(yarp::os::ResourceFinder &rf);
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
 #endif  // __TWO_CAN_BUS_THREE_WRAPPERS__
 

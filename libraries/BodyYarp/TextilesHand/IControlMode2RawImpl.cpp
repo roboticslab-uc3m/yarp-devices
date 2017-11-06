@@ -4,7 +4,7 @@
 
 // ############################## IControlModeRaw Related ##############################
 
-bool teo::TextilesHand::setPositionModeRaw(int j)
+bool roboticslab::TextilesHand::setPositionModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -16,7 +16,7 @@ bool teo::TextilesHand::setPositionModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setVelocityModeRaw(int j)
+bool roboticslab::TextilesHand::setVelocityModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -28,7 +28,7 @@ bool teo::TextilesHand::setVelocityModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setTorqueModeRaw(int j)
+bool roboticslab::TextilesHand::setTorqueModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -40,7 +40,7 @@ bool teo::TextilesHand::setTorqueModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setImpedancePositionModeRaw(int j)
+bool roboticslab::TextilesHand::setImpedancePositionModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -52,7 +52,7 @@ bool teo::TextilesHand::setImpedancePositionModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setImpedanceVelocityModeRaw(int j)
+bool roboticslab::TextilesHand::setImpedanceVelocityModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -64,7 +64,7 @@ bool teo::TextilesHand::setImpedanceVelocityModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setOpenLoopModeRaw(int j)
+bool roboticslab::TextilesHand::setOpenLoopModeRaw(int j)
 {
     CD_ERROR("(%d)\n",j);  //-- Removed in YARP 2.3.70
     return false;
@@ -72,7 +72,7 @@ bool teo::TextilesHand::setOpenLoopModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::getControlModeRaw(int j, int *mode)
+bool roboticslab::TextilesHand::getControlModeRaw(int j, int *mode)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
 
@@ -86,7 +86,7 @@ bool teo::TextilesHand::getControlModeRaw(int j, int *mode)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::getControlModesRaw(int *modes)
+bool roboticslab::TextilesHand::getControlModesRaw(int *modes)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -94,7 +94,7 @@ bool teo::TextilesHand::getControlModesRaw(int *modes)
 
 // ############################## IControlMode2Raw Related ##############################
 
-bool teo::TextilesHand::getControlModesRaw(const int n_joint, const int *joints, int *modes)
+bool roboticslab::TextilesHand::getControlModesRaw(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("\n");
 
@@ -106,7 +106,7 @@ bool teo::TextilesHand::getControlModesRaw(const int n_joint, const int *joints,
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setControlModeRaw(const int j, const int mode)
+bool roboticslab::TextilesHand::setControlModeRaw(const int j, const int mode)
 {
     CD_DEBUG("(%d, %d)\n",j,mode);
 
@@ -131,7 +131,7 @@ bool teo::TextilesHand::setControlModeRaw(const int j, const int mode)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setControlModesRaw(const int n_joint, const int *joints, int *modes)
+bool roboticslab::TextilesHand::setControlModesRaw(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("(%d)\n",n_joint);
 
@@ -143,7 +143,7 @@ bool teo::TextilesHand::setControlModesRaw(const int n_joint, const int *joints,
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::setControlModesRaw(int *modes)
+bool roboticslab::TextilesHand::setControlModesRaw(int *modes)
 {
     CD_DEBUG("\n");
     return setControlModeRaw(0, modes[0]);

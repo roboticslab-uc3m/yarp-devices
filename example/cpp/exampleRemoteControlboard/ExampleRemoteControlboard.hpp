@@ -1,14 +1,14 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __TEO_SIM_EXAMPLE_HPP__
-#define __TEO_SIM_EXAMPLE_HPP__
+#ifndef __roboticslab_SIM_EXAMPLE_HPP__
+#define __roboticslab_SIM_EXAMPLE_HPP__
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
 
 #define DEFAULT_ROBOT "/robot/part"
 
-namespace teo
+namespace roboticslab
 {
 
 class ExampleRemoteControlboard
@@ -25,7 +25,7 @@ private:
     yarp::dev::IVelocityControl *vel; //make a velocity controller object we call 'vel'
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
-#endif // __TEO_SIM_EXAMPLE_HPP__
+#endif // __roboticslab_SIM_EXAMPLE_HPP__
 

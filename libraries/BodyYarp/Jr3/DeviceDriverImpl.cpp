@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool teo::Jr3::open(yarp::os::Searchable& config)
+bool roboticslab::Jr3::open(yarp::os::Searchable& config)
 {
     if ( ( fd = ::open("/dev/jr3",O_RDWR) ) < 0) {
         CD_ERROR("Can't open device. No way to read force!\n");
@@ -50,7 +50,7 @@ bool teo::Jr3::open(yarp::os::Searchable& config)
 
 // -----------------------------------------------------------------------------
 
-bool teo::Jr3::close()
+bool roboticslab::Jr3::close()
 {
     ::close(fd);
     return true;

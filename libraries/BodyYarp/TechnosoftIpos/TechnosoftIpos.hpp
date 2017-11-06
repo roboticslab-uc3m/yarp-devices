@@ -17,13 +17,13 @@
 #include "ICanBusSharer.h"
 #include "ITechnosoftIpos.h"
 
-namespace teo
+namespace roboticslab
 {
 
 /**
  * @ingroup BodyYarp
  * \defgroup TechnosoftIpos
- * @brief Contains teo::TechnosoftIpos.
+ * @brief Contains roboticslab::TechnosoftIpos.
  */
 
 /**
@@ -293,7 +293,7 @@ protected:
 
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
 #endif  // __TECHNOSOFT_IPOS__
 

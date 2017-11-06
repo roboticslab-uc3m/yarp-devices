@@ -24,7 +24,7 @@
 #include <queue>
 
 
-namespace teo
+namespace roboticslab
 {
 
 /**
@@ -103,6 +103,6 @@ protected:
     virtual void run();
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
 #endif  // __CHECK_CAN_BUS__

@@ -4,7 +4,7 @@
 
 // ------------------ IEncodersRaw Related -----------------------------------------
 
-bool teo::LacqueyFetch::resetEncoderRaw(int j)
+bool roboticslab::LacqueyFetch::resetEncoderRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -16,7 +16,7 @@ bool teo::LacqueyFetch::resetEncoderRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::resetEncodersRaw()
+bool roboticslab::LacqueyFetch::resetEncodersRaw()
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -24,7 +24,7 @@ bool teo::LacqueyFetch::resetEncodersRaw()
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setEncoderRaw(int j, double val)    // encExposed = val;
+bool roboticslab::LacqueyFetch::setEncoderRaw(int j, double val)    // encExposed = val;
 {
     CD_INFO("(%d,%f)\n",j,val);
 
@@ -38,7 +38,7 @@ bool teo::LacqueyFetch::setEncoderRaw(int j, double val)    // encExposed = val;
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::setEncodersRaw(const double *vals)
+bool roboticslab::LacqueyFetch::setEncodersRaw(const double *vals)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -46,7 +46,7 @@ bool teo::LacqueyFetch::setEncodersRaw(const double *vals)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getEncoderRaw(int j, double *v)
+bool roboticslab::LacqueyFetch::getEncoderRaw(int j, double *v)
 {
     //CD_INFO("%d\n",j);  //-- Too verbose in stream.
 
@@ -62,7 +62,7 @@ bool teo::LacqueyFetch::getEncoderRaw(int j, double *v)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getEncodersRaw(double *encs)
+bool roboticslab::LacqueyFetch::getEncodersRaw(double *encs)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -70,7 +70,7 @@ bool teo::LacqueyFetch::getEncodersRaw(double *encs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getEncoderSpeedRaw(int j, double *sp)
+bool roboticslab::LacqueyFetch::getEncoderSpeedRaw(int j, double *sp)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
@@ -85,7 +85,7 @@ bool teo::LacqueyFetch::getEncoderSpeedRaw(int j, double *sp)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getEncoderSpeedsRaw(double *spds)
+bool roboticslab::LacqueyFetch::getEncoderSpeedsRaw(double *spds)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -93,7 +93,7 @@ bool teo::LacqueyFetch::getEncoderSpeedsRaw(double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getEncoderAccelerationRaw(int j, double *spds)
+bool roboticslab::LacqueyFetch::getEncoderAccelerationRaw(int j, double *spds)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
@@ -108,7 +108,7 @@ bool teo::LacqueyFetch::getEncoderAccelerationRaw(int j, double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool teo::LacqueyFetch::getEncoderAccelerationsRaw(double *accs)
+bool roboticslab::LacqueyFetch::getEncoderAccelerationsRaw(double *accs)
 {
     CD_ERROR("Missing implementation\n");
     return false;

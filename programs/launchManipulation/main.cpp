@@ -5,7 +5,7 @@
  * @ingroup yarp_devices_programs
  * \defgroup launchManipulation launchManipulation
  *
- * @brief Creates an instance of teo::TwoCanBusThreeWrappers.
+ * @brief Creates an instance of roboticslab::TwoCanBusThreeWrappers.
  *
  * @section launchManipulation_legal Legal
  *
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
     CD_SUCCESS("Found yarp network.\n");
 
 
-    teo::TwoCanBusThreeWrappers mod;
+    roboticslab::TwoCanBusThreeWrappers mod;
     return mod.runModule(rf);
 }
 

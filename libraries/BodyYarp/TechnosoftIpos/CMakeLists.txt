@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-YARP_PREPARE_PLUGIN(TechnosoftIpos CATEGORY device TYPE teo::TechnosoftIpos INCLUDE TechnosoftIpos.hpp)
+YARP_PREPARE_PLUGIN(TechnosoftIpos CATEGORY device TYPE roboticslab::TechnosoftIpos INCLUDE TechnosoftIpos.hpp)
 
 IF (NOT SKIP_TechnosoftIpos)
 

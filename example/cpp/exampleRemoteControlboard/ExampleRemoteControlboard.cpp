@@ -2,7 +2,7 @@
 
 #include "ExampleRemoteControlboard.hpp"
 
-namespace teo
+namespace roboticslab
 {
 
 int ExampleRemoteControlboard::run(int argc, char **argv)
@@ -17,7 +17,7 @@ int ExampleRemoteControlboard::run(int argc, char **argv)
     std::string robot = rf.check("robot",yarp::os::Value(DEFAULT_ROBOT),"name of /robot to be used").asString();
     printf("\t--robot: %s [%s]\n",robot.c_str(),DEFAULT_ROBOT);
 
-    printf("Note: requires a running instance of teoSim\n");
+    printf("Note: requires a running instance of roboticslabSim\n");
     if (!yarp::os::Network::checkNetwork())
     {
         printf("Please start a yarp name server first\n");
@@ -183,4 +183,4 @@ int ExampleRemoteControlboard::run(int argc, char **argv)
     return 0;
 }
 
-} //namespace TEO
+} //namespace roboticslab

@@ -5,7 +5,7 @@
 // ################################ IInteractionModeRaw Related ################################
 
 
-bool teo::FakeJoint::getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode)
+bool roboticslab::FakeJoint::getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode)
 {
     CD_INFO("(%d)\n",axis);
 
@@ -15,7 +15,7 @@ bool teo::FakeJoint::getInteractionModeRaw(int axis, yarp::dev::InteractionModeE
 
 // ----------------------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::FakeJoint::getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -24,7 +24,7 @@ bool teo::FakeJoint::getInteractionModesRaw(int n_joints, int *joints, yarp::dev
 
 // ----------------------------------------------------------------------------------------------
 
-bool teo::FakeJoint::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::FakeJoint::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -33,7 +33,7 @@ bool teo::FakeJoint::getInteractionModesRaw(yarp::dev::InteractionModeEnum* mode
 
 // ----------------------------------------------------------------------------------------------
 
-bool teo::FakeJoint::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
+bool roboticslab::FakeJoint::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
 {
     CD_INFO("(%d), (%s)\n",axis, mode); //-- I don't know if this is correct (if I want to print mode?)
 
@@ -46,7 +46,7 @@ bool teo::FakeJoint::setInteractionModeRaw(int axis, yarp::dev::InteractionModeE
 
 // ----------------------------------------------------------------------------------------------
 
-bool teo::FakeJoint::setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::FakeJoint::setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -56,7 +56,7 @@ bool teo::FakeJoint::setInteractionModesRaw(int n_joints, int *joints, yarp::dev
 
 // ----------------------------------------------------------------------------------------------
 
-bool teo::FakeJoint::setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::FakeJoint::setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 

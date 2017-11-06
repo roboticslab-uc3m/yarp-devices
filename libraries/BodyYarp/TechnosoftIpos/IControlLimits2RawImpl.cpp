@@ -4,7 +4,7 @@
 
 // ------------------- IControlLimitsRaw Related ------------------------------------
 
-bool teo::TechnosoftIpos::setLimitsRaw(int axis, double min, double max)
+bool roboticslab::TechnosoftIpos::setLimitsRaw(int axis, double min, double max)
 {
     CD_INFO("(%d,%f,%f)\n",axis,min,max);
 
@@ -19,7 +19,7 @@ bool teo::TechnosoftIpos::setLimitsRaw(int axis, double min, double max)
 }
 
 // -----------------------------------------------------------------------------
-bool teo::TechnosoftIpos::setMinLimitRaw(double min)
+bool roboticslab::TechnosoftIpos::setMinLimitRaw(double min)
 {
     //*************************************************************
     uint8_t msg_position_min[]= {0x23,0x7D,0x60,0x01,0x00,0x00,0x00,0x00}; // 0x01 is subindex 1, Manual 607Dh: Software position limit
@@ -43,7 +43,7 @@ bool teo::TechnosoftIpos::setMinLimitRaw(double min)
 }
 
 // -----------------------------------------------------------------------------
-bool teo::TechnosoftIpos::setMaxLimitRaw(double max)
+bool roboticslab::TechnosoftIpos::setMaxLimitRaw(double max)
 {
     //*************************************************************
     uint8_t msg_position_max[]= {0x23,0x7D,0x60,0x02,0x00,0x00,0x00,0x00}; // 0x02 is subindex 2, Manual 607Dh: Software position limit
@@ -67,7 +67,7 @@ bool teo::TechnosoftIpos::setMaxLimitRaw(double max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getLimitsRaw(int axis, double *min, double *max)
+bool roboticslab::TechnosoftIpos::getLimitsRaw(int axis, double *min, double *max)
 {
     CD_INFO("(%d)\n",axis);
 
@@ -83,7 +83,7 @@ bool teo::TechnosoftIpos::getLimitsRaw(int axis, double *min, double *max)
 
 // -------------------  IControlLimits2Raw Related  ----------------------------
 
-bool teo::TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
+bool roboticslab::TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
 {
     CD_WARNING("Not implemented.\n");
     return true;
@@ -92,7 +92,7 @@ bool teo::TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getVelLimitsRaw(int axis, double *min, double *max)
+bool roboticslab::TechnosoftIpos::getVelLimitsRaw(int axis, double *min, double *max)
 {
     CD_INFO("(%d)\n",axis);
 

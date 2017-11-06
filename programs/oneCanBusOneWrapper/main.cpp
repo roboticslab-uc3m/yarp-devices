@@ -5,7 +5,7 @@
  * @ingroup yarp_devices_programs
  * \defgroup oneCanBusOneWrapper oneCanBusOneWrapper
  *
- * @brief Creates an instance of teo::OneCanBusOneWrapper.
+ * @brief Creates an instance of roboticslab::OneCanBusOneWrapper.
  *
  * @section oneCanBusOneWrapper_legal Legal
  *
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     }
     CD_SUCCESS("Found yarp network.\n");
 
-    teo::OneCanBusOneWrapper mod;
+    roboticslab::OneCanBusOneWrapper mod;
     return mod.runModule(rf);
 }
 

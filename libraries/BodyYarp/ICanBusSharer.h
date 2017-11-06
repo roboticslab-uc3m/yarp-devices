@@ -6,7 +6,7 @@
 #include <yarp/dev/IEncodersTimed.h>
 #include "ICanBusHico.h"
 
-namespace teo
+namespace roboticslab
 {
 
 /**
@@ -49,6 +49,6 @@ public:
 
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
 #endif  //  __I_CAN_BUS_SHARER__

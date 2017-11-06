@@ -4,7 +4,7 @@
 
 // ############################# ITorqueControlRaw Related #############################
 
-bool teo::TechnosoftIpos::getRefTorquesRaw(double *t)
+bool roboticslab::TechnosoftIpos::getRefTorquesRaw(double *t)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -12,7 +12,7 @@ bool teo::TechnosoftIpos::getRefTorquesRaw(double *t)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getRefTorqueRaw(int j, double *t)
+bool roboticslab::TechnosoftIpos::getRefTorqueRaw(int j, double *t)
 {
     CD_INFO("(%d)\n",j);
 
@@ -26,7 +26,7 @@ bool teo::TechnosoftIpos::getRefTorqueRaw(int j, double *t)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setRefTorquesRaw(const double *t)
+bool roboticslab::TechnosoftIpos::setRefTorquesRaw(const double *t)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -34,7 +34,7 @@ bool teo::TechnosoftIpos::setRefTorquesRaw(const double *t)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setRefTorqueRaw(int j, double t)
+bool roboticslab::TechnosoftIpos::setRefTorqueRaw(int j, double t)
 {
     CD_INFO("(%d,%f)\n",j,t);
 
@@ -66,7 +66,7 @@ bool teo::TechnosoftIpos::setRefTorqueRaw(int j, double t)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getBemfParamRaw(int j, double *bemf)
+bool roboticslab::TechnosoftIpos::getBemfParamRaw(int j, double *bemf)
 {
     CD_INFO("(%d)\n",j);
 
@@ -80,7 +80,7 @@ bool teo::TechnosoftIpos::getBemfParamRaw(int j, double *bemf)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setBemfParamRaw(int j, double bemf)
+bool roboticslab::TechnosoftIpos::setBemfParamRaw(int j, double bemf)
 {
     CD_INFO("(%d,%f)\n",j,bemf);
 
@@ -94,7 +94,7 @@ bool teo::TechnosoftIpos::setBemfParamRaw(int j, double bemf)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
+bool roboticslab::TechnosoftIpos::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
 {
     CD_INFO("(%d)\n",j);
 
@@ -108,7 +108,7 @@ bool teo::TechnosoftIpos::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getTorqueRaw(int j, double *t)
+bool roboticslab::TechnosoftIpos::getTorqueRaw(int j, double *t)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
@@ -138,7 +138,7 @@ bool teo::TechnosoftIpos::getTorqueRaw(int j, double *t)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getTorquesRaw(double *t)
+bool roboticslab::TechnosoftIpos::getTorquesRaw(double *t)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -146,7 +146,7 @@ bool teo::TechnosoftIpos::getTorquesRaw(double *t)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getTorqueRangeRaw(int j, double *min, double *max)
+bool roboticslab::TechnosoftIpos::getTorqueRangeRaw(int j, double *min, double *max)
 {
     CD_INFO("(%d)\n",j);
 
@@ -160,7 +160,7 @@ bool teo::TechnosoftIpos::getTorqueRangeRaw(int j, double *min, double *max)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getTorqueRangesRaw(double *min, double *max)
+bool roboticslab::TechnosoftIpos::getTorqueRangesRaw(double *min, double *max)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -168,7 +168,7 @@ bool teo::TechnosoftIpos::getTorqueRangesRaw(double *min, double *max)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setTorquePidsRaw(const yarp::dev::Pid *pids)
+bool roboticslab::TechnosoftIpos::setTorquePidsRaw(const yarp::dev::Pid *pids)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -176,7 +176,7 @@ bool teo::TechnosoftIpos::setTorquePidsRaw(const yarp::dev::Pid *pids)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setTorqueErrorLimitRaw(int j, double limit)
+bool roboticslab::TechnosoftIpos::setTorqueErrorLimitRaw(int j, double limit)
 {
     CD_INFO("(%d,%f)\n",j,limit);
 
@@ -190,7 +190,7 @@ bool teo::TechnosoftIpos::setTorqueErrorLimitRaw(int j, double limit)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setTorqueErrorLimitsRaw(const double *limits)
+bool roboticslab::TechnosoftIpos::setTorqueErrorLimitsRaw(const double *limits)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -198,7 +198,7 @@ bool teo::TechnosoftIpos::setTorqueErrorLimitsRaw(const double *limits)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getTorqueErrorRaw(int j, double *err)
+bool roboticslab::TechnosoftIpos::getTorqueErrorRaw(int j, double *err)
 {
     CD_INFO("(%d)\n",j);
 
@@ -212,7 +212,7 @@ bool teo::TechnosoftIpos::getTorqueErrorRaw(int j, double *err)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getTorqueErrorsRaw(double *errs)
+bool roboticslab::TechnosoftIpos::getTorqueErrorsRaw(double *errs)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -220,7 +220,7 @@ bool teo::TechnosoftIpos::getTorqueErrorsRaw(double *errs)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getTorquePidOutputRaw(int j, double *out)
+bool roboticslab::TechnosoftIpos::getTorquePidOutputRaw(int j, double *out)
 {
     CD_INFO("(%d)\n",j);
 
@@ -234,7 +234,7 @@ bool teo::TechnosoftIpos::getTorquePidOutputRaw(int j, double *out)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getTorquePidRaw(int j, yarp::dev::Pid *pid)
+bool roboticslab::TechnosoftIpos::getTorquePidRaw(int j, yarp::dev::Pid *pid)
 {
     CD_INFO("(%d)\n",j);
 
@@ -248,7 +248,7 @@ bool teo::TechnosoftIpos::getTorquePidRaw(int j, yarp::dev::Pid *pid)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getTorquePidsRaw(yarp::dev::Pid *pids)
+bool roboticslab::TechnosoftIpos::getTorquePidsRaw(yarp::dev::Pid *pids)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -256,7 +256,7 @@ bool teo::TechnosoftIpos::getTorquePidsRaw(yarp::dev::Pid *pids)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getTorquePidOutputsRaw(double *outs)
+bool roboticslab::TechnosoftIpos::getTorquePidOutputsRaw(double *outs)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -264,7 +264,7 @@ bool teo::TechnosoftIpos::getTorquePidOutputsRaw(double *outs)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getTorqueErrorLimitRaw(int j, double *limit)
+bool roboticslab::TechnosoftIpos::getTorqueErrorLimitRaw(int j, double *limit)
 {
     CD_INFO("(%d)\n",j);
 
@@ -278,7 +278,7 @@ bool teo::TechnosoftIpos::getTorqueErrorLimitRaw(int j, double *limit)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::getTorqueErrorLimitsRaw(double *limits)
+bool roboticslab::TechnosoftIpos::getTorqueErrorLimitsRaw(double *limits)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -286,7 +286,7 @@ bool teo::TechnosoftIpos::getTorqueErrorLimitsRaw(double *limits)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::resetTorquePidRaw(int j)
+bool roboticslab::TechnosoftIpos::resetTorquePidRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -300,7 +300,7 @@ bool teo::TechnosoftIpos::resetTorquePidRaw(int j)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::disableTorquePidRaw(int j)
+bool roboticslab::TechnosoftIpos::disableTorquePidRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -314,7 +314,7 @@ bool teo::TechnosoftIpos::disableTorquePidRaw(int j)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::enableTorquePidRaw(int j)
+bool roboticslab::TechnosoftIpos::enableTorquePidRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -328,7 +328,7 @@ bool teo::TechnosoftIpos::enableTorquePidRaw(int j)
 
 // -------------------------------------------------------------------------------------
 
-bool teo::TechnosoftIpos::setTorqueOffsetRaw(int j, double v)
+bool roboticslab::TechnosoftIpos::setTorqueOffsetRaw(int j, double v)
 {
     CD_INFO("(%d,%f)\n",j,v);
 

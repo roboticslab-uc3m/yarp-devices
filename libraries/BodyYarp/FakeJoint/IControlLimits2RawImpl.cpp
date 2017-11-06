@@ -4,7 +4,7 @@
 
 // ------------------- IControlLimitsRaw Related ------------------------------------
 
-bool teo::FakeJoint::setLimitsRaw(int axis, double min, double max)
+bool roboticslab::FakeJoint::setLimitsRaw(int axis, double min, double max)
 {
     CD_INFO("(%d,%f,%f)\n",axis,min,max);
 
@@ -20,7 +20,7 @@ bool teo::FakeJoint::setLimitsRaw(int axis, double min, double max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::getLimitsRaw(int axis, double *min, double *max)
+bool roboticslab::FakeJoint::getLimitsRaw(int axis, double *min, double *max)
 {
     CD_INFO("(%d)\n",axis);
 
@@ -36,7 +36,7 @@ bool teo::FakeJoint::getLimitsRaw(int axis, double *min, double *max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::setVelLimitsRaw(int axis, double min, double max)
+bool roboticslab::FakeJoint::setVelLimitsRaw(int axis, double min, double max)
 {
     CD_WARNING("Not implemented.\n");
     return true;
@@ -44,7 +44,7 @@ bool teo::FakeJoint::setVelLimitsRaw(int axis, double min, double max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::FakeJoint::getVelLimitsRaw(int axis, double *min, double *max)
+bool roboticslab::FakeJoint::getVelLimitsRaw(int axis, double *min, double *max)
 {
     CD_INFO("(%d)\n",axis);
 

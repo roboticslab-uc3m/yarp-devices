@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
     }
 
     yarp::dev::PolyDriver canBusDevice;
-    teo::ICanBusHico* iCanBus;
+    roboticslab::ICanBusHico* iCanBus;
 
     yarp::os::Property canBusOptions;
     canBusOptions.put("device","CanBusHico");
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
     }
 
     //-- View TechnosoftIpos interfaces.
-    teo::ICanBusSharer *iCanBusSharer;
+    roboticslab::ICanBusSharer *iCanBusSharer;
     bool ok = dd.view(iCanBusSharer);
     if (!ok)
     {

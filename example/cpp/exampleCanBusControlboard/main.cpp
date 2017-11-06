@@ -5,7 +5,7 @@
  * @ingroup yarp_devices_programs
  * \defgroup exampleCanBusControlboard exampleCanBusControlboard
  *
- * @brief Creates an instance of teo::ExampleCanBusControlboard.
+ * @brief Creates an instance of roboticslab::ExampleCanBusControlboard.
  *
  * @section exampleCanBusControlboard_legal Legal
  *
@@ -109,6 +109,6 @@ int main(int argc, char *argv[])
     }
     CD_SUCCESS("Found yarp network.\n");
 
-    teo::ExampleCanBusControlboard mod;
+    roboticslab::ExampleCanBusControlboard mod;
     return mod.runModule(rf);
 }

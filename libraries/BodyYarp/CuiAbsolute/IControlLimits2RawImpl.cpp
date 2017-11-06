@@ -4,7 +4,7 @@
 
 // ------------------- IControlLimitsRaw Related ------------------------------------
 
-bool teo::CuiAbsolute::setLimitsRaw(int axis, double min, double max)
+bool roboticslab::CuiAbsolute::setLimitsRaw(int axis, double min, double max)
 {
     CD_INFO("(%d,%f,%f)\n",axis,min,max);
 
@@ -20,7 +20,7 @@ bool teo::CuiAbsolute::setLimitsRaw(int axis, double min, double max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getLimitsRaw(int axis, double *min, double *max)
+bool roboticslab::CuiAbsolute::getLimitsRaw(int axis, double *min, double *max)
 {
     CD_INFO("(%d)\n",axis);
 
@@ -36,7 +36,7 @@ bool teo::CuiAbsolute::getLimitsRaw(int axis, double *min, double *max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::setVelLimitsRaw(int axis, double min, double max)
+bool roboticslab::CuiAbsolute::setVelLimitsRaw(int axis, double min, double max)
 {
     CD_WARNING("Not implemented.\n");
     return true;
@@ -44,7 +44,7 @@ bool teo::CuiAbsolute::setVelLimitsRaw(int axis, double min, double max)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CuiAbsolute::getVelLimitsRaw(int axis, double *min, double *max)
+bool roboticslab::CuiAbsolute::getVelLimitsRaw(int axis, double *min, double *max)
 {
     CD_WARNING("Not implemented.\n");
     return true;

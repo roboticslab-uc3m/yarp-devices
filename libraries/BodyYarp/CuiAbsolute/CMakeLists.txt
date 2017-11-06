@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-YARP_PREPARE_PLUGIN(CuiAbsolute CATEGORY device TYPE teo::CuiAbsolute INCLUDE CuiAbsolute.hpp)
+YARP_PREPARE_PLUGIN(CuiAbsolute CATEGORY device TYPE roboticslab::CuiAbsolute INCLUDE CuiAbsolute.hpp)
 
 IF (NOT SKIP_CuiAbsolute)
 

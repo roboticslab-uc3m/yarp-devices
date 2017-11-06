@@ -28,13 +28,13 @@
 #include "ICanBusSharer.h"
 
 
-namespace teo
+namespace roboticslab
 {
 
 /**
  * @ingroup BodyYarp
  * \defgroup TextilesHand
- * @brief Contains teo::TextilesHand.
+ * @brief Contains roboticslab::TextilesHand.
  */
 
 /**
@@ -258,7 +258,7 @@ protected:
     yarp::os::Semaphore interactionModeSemaphore;
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
 #endif  // __TEXTILES_HAND__
 

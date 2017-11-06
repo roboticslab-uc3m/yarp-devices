@@ -4,7 +4,7 @@
 
 // ############################ IEncodersRaw Related ############################
 
-bool teo::TextilesHand::resetEncoderRaw(int j)
+bool roboticslab::TextilesHand::resetEncoderRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -16,7 +16,7 @@ bool teo::TextilesHand::resetEncoderRaw(int j)
 
 // ------------------------------------------------------------------------------
 
-bool teo::TextilesHand::resetEncodersRaw()
+bool roboticslab::TextilesHand::resetEncodersRaw()
 {
     CD_ERROR("\n");
     return false;
@@ -24,7 +24,7 @@ bool teo::TextilesHand::resetEncodersRaw()
 
 // ------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setEncoderRaw(int j, double val)    // encExposed = val;
+bool roboticslab::TextilesHand::setEncoderRaw(int j, double val)    // encExposed = val;
 {
     CD_INFO("(%d,%f)\n",j,val);
 
@@ -38,7 +38,7 @@ bool teo::TextilesHand::setEncoderRaw(int j, double val)    // encExposed = val;
 
 // ------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setEncodersRaw(const double *vals)
+bool roboticslab::TextilesHand::setEncodersRaw(const double *vals)
 {
     CD_ERROR("\n");
     return false;
@@ -46,7 +46,7 @@ bool teo::TextilesHand::setEncodersRaw(const double *vals)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::getEncoderRaw(int j, double *v)
+bool roboticslab::TextilesHand::getEncoderRaw(int j, double *v)
 {
     //CD_INFO("%d\n",j);  //-- Too verbose in stream.
 
@@ -62,7 +62,7 @@ bool teo::TextilesHand::getEncoderRaw(int j, double *v)
 
 // ------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getEncodersRaw(double *encs)
+bool roboticslab::TextilesHand::getEncodersRaw(double *encs)
 {
     CD_ERROR("\n");
     return false;
@@ -70,7 +70,7 @@ bool teo::TextilesHand::getEncodersRaw(double *encs)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::getEncoderSpeedRaw(int j, double *sp)
+bool roboticslab::TextilesHand::getEncoderSpeedRaw(int j, double *sp)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
@@ -85,7 +85,7 @@ bool teo::TextilesHand::getEncoderSpeedRaw(int j, double *sp)
 
 // ------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getEncoderSpeedsRaw(double *spds)
+bool roboticslab::TextilesHand::getEncoderSpeedsRaw(double *spds)
 {
     CD_ERROR("\n");
     return false;
@@ -93,7 +93,7 @@ bool teo::TextilesHand::getEncoderSpeedsRaw(double *spds)
 
 // ------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getEncoderAccelerationRaw(int j, double *spds)
+bool roboticslab::TextilesHand::getEncoderAccelerationRaw(int j, double *spds)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
@@ -108,7 +108,7 @@ bool teo::TextilesHand::getEncoderAccelerationRaw(int j, double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool teo::TextilesHand::getEncoderAccelerationsRaw(double *accs)
+bool roboticslab::TextilesHand::getEncoderAccelerationsRaw(double *accs)
 {
     CD_ERROR("\n");
     return false;

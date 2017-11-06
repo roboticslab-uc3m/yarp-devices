@@ -4,7 +4,7 @@
 
 // ############################ ITorqueControlRaw Related ############################
 
-bool teo::TextilesHand::getRefTorquesRaw(double *t)
+bool roboticslab::TextilesHand::getRefTorquesRaw(double *t)
 {
     CD_ERROR("\n");
     return false;
@@ -12,7 +12,7 @@ bool teo::TextilesHand::getRefTorquesRaw(double *t)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getRefTorqueRaw(int j, double *t)
+bool roboticslab::TextilesHand::getRefTorqueRaw(int j, double *t)
 {
     CD_INFO("\n");
     return true;
@@ -20,7 +20,7 @@ bool teo::TextilesHand::getRefTorqueRaw(int j, double *t)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setRefTorquesRaw(const double *t)
+bool roboticslab::TextilesHand::setRefTorquesRaw(const double *t)
 {
     CD_ERROR("\n");
     return false;
@@ -28,7 +28,7 @@ bool teo::TextilesHand::setRefTorquesRaw(const double *t)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setRefTorqueRaw(int j, double t)
+bool roboticslab::TextilesHand::setRefTorqueRaw(int j, double t)
 {
     CD_INFO("\n");
     return true;
@@ -36,7 +36,7 @@ bool teo::TextilesHand::setRefTorqueRaw(int j, double t)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getBemfParamRaw(int j, double *bemf)
+bool roboticslab::TextilesHand::getBemfParamRaw(int j, double *bemf)
 {
     CD_INFO("\n");
     return true;
@@ -44,7 +44,7 @@ bool teo::TextilesHand::getBemfParamRaw(int j, double *bemf)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setBemfParamRaw(int j, double bemf)
+bool roboticslab::TextilesHand::setBemfParamRaw(int j, double bemf)
 {
     CD_INFO("\n");
     return true;
@@ -52,7 +52,7 @@ bool teo::TextilesHand::setBemfParamRaw(int j, double bemf)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
+bool roboticslab::TextilesHand::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
 {
     CD_INFO("\n");
     return true;
@@ -60,7 +60,7 @@ bool teo::TextilesHand::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getTorqueRaw(int j, double *t)
+bool roboticslab::TextilesHand::getTorqueRaw(int j, double *t)
 {
     //CD_INFO("\n");  //-- Too verbose in controlboardwrapper2 stream.
     return true;
@@ -68,7 +68,7 @@ bool teo::TextilesHand::getTorqueRaw(int j, double *t)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getTorquesRaw(double *t)
+bool roboticslab::TextilesHand::getTorquesRaw(double *t)
 {
     CD_ERROR("\n");
     return false;
@@ -76,7 +76,7 @@ bool teo::TextilesHand::getTorquesRaw(double *t)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getTorqueRangeRaw(int j, double *min, double *max)
+bool roboticslab::TextilesHand::getTorqueRangeRaw(int j, double *min, double *max)
 {
     CD_INFO("\n");
     return true;
@@ -84,7 +84,7 @@ bool teo::TextilesHand::getTorqueRangeRaw(int j, double *min, double *max)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getTorqueRangesRaw(double *min, double *max)
+bool roboticslab::TextilesHand::getTorqueRangesRaw(double *min, double *max)
 {
     CD_ERROR("\n");
     return false;
@@ -92,7 +92,7 @@ bool teo::TextilesHand::getTorqueRangesRaw(double *min, double *max)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setTorquePidsRaw(const yarp::dev::Pid *pids)
+bool roboticslab::TextilesHand::setTorquePidsRaw(const yarp::dev::Pid *pids)
 {
     CD_ERROR("\n");
     return false;
@@ -100,7 +100,7 @@ bool teo::TextilesHand::setTorquePidsRaw(const yarp::dev::Pid *pids)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setTorqueErrorLimitRaw(int j, double limit)
+bool roboticslab::TextilesHand::setTorqueErrorLimitRaw(int j, double limit)
 {
     CD_INFO("\n");
     return true;
@@ -108,7 +108,7 @@ bool teo::TextilesHand::setTorqueErrorLimitRaw(int j, double limit)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setTorqueErrorLimitsRaw(const double *limits)
+bool roboticslab::TextilesHand::setTorqueErrorLimitsRaw(const double *limits)
 {
     CD_ERROR("\n");
     return false;
@@ -116,7 +116,7 @@ bool teo::TextilesHand::setTorqueErrorLimitsRaw(const double *limits)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getTorqueErrorRaw(int j, double *err)
+bool roboticslab::TextilesHand::getTorqueErrorRaw(int j, double *err)
 {
     CD_INFO("\n");
     return true;
@@ -124,7 +124,7 @@ bool teo::TextilesHand::getTorqueErrorRaw(int j, double *err)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getTorqueErrorsRaw(double *errs)
+bool roboticslab::TextilesHand::getTorqueErrorsRaw(double *errs)
 {
     CD_ERROR("\n");
     return false;
@@ -132,7 +132,7 @@ bool teo::TextilesHand::getTorqueErrorsRaw(double *errs)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getTorquePidOutputRaw(int j, double *out)
+bool roboticslab::TextilesHand::getTorquePidOutputRaw(int j, double *out)
 {
     CD_INFO("\n");
     return true;
@@ -140,7 +140,7 @@ bool teo::TextilesHand::getTorquePidOutputRaw(int j, double *out)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getTorquePidOutputsRaw(double *outs)
+bool roboticslab::TextilesHand::getTorquePidOutputsRaw(double *outs)
 {
     CD_ERROR("\n");
     return false;
@@ -148,7 +148,7 @@ bool teo::TextilesHand::getTorquePidOutputsRaw(double *outs)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getTorquePidRaw(int j, yarp::dev::Pid *pid)
+bool roboticslab::TextilesHand::getTorquePidRaw(int j, yarp::dev::Pid *pid)
 {
     CD_INFO("\n");
     return true;
@@ -156,7 +156,7 @@ bool teo::TextilesHand::getTorquePidRaw(int j, yarp::dev::Pid *pid)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getTorquePidsRaw(yarp::dev::Pid *pids)
+bool roboticslab::TextilesHand::getTorquePidsRaw(yarp::dev::Pid *pids)
 {
     CD_ERROR("\n");
     return false;
@@ -164,7 +164,7 @@ bool teo::TextilesHand::getTorquePidsRaw(yarp::dev::Pid *pids)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getTorqueErrorLimitRaw(int j, double *limit)
+bool roboticslab::TextilesHand::getTorqueErrorLimitRaw(int j, double *limit)
 {
     CD_INFO("\n");
     return true;
@@ -172,7 +172,7 @@ bool teo::TextilesHand::getTorqueErrorLimitRaw(int j, double *limit)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::getTorqueErrorLimitsRaw(double *limits)
+bool roboticslab::TextilesHand::getTorqueErrorLimitsRaw(double *limits)
 {
     CD_ERROR("\n");
     return false;
@@ -180,7 +180,7 @@ bool teo::TextilesHand::getTorqueErrorLimitsRaw(double *limits)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::resetTorquePidRaw(int j)
+bool roboticslab::TextilesHand::resetTorquePidRaw(int j)
 {
     CD_INFO("\n");
     return true;
@@ -188,7 +188,7 @@ bool teo::TextilesHand::resetTorquePidRaw(int j)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::disableTorquePidRaw(int j)
+bool roboticslab::TextilesHand::disableTorquePidRaw(int j)
 {
     CD_INFO("\n");
     return true;
@@ -196,7 +196,7 @@ bool teo::TextilesHand::disableTorquePidRaw(int j)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::enableTorquePidRaw(int j)
+bool roboticslab::TextilesHand::enableTorquePidRaw(int j)
 {
     CD_INFO("\n");
     return true;
@@ -204,7 +204,7 @@ bool teo::TextilesHand::enableTorquePidRaw(int j)
 
 // -----------------------------------------------------------------------------------
 
-bool teo::TextilesHand::setTorqueOffsetRaw(int j, double v)
+bool roboticslab::TextilesHand::setTorqueOffsetRaw(int j, double v)
 {
     CD_INFO("\n");
     return true;

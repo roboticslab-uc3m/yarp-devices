@@ -4,7 +4,7 @@
 
 // ------------------ IVelocityControl Related ----------------------------------------
 
-bool teo::CanBusControlboard::velocityMove(int j, double sp)
+bool roboticslab::CanBusControlboard::velocityMove(int j, double sp)
 {
     CD_DEBUG("(%d), (%f)\n",j , sp);
 
@@ -16,7 +16,7 @@ bool teo::CanBusControlboard::velocityMove(int j, double sp)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::velocityMove(const double *sp)
+bool roboticslab::CanBusControlboard::velocityMove(const double *sp)
 {
     CD_DEBUG("\n");
 
@@ -30,7 +30,7 @@ bool teo::CanBusControlboard::velocityMove(const double *sp)
 
 // ----------------------------  IVelocityControl2 Related  --------------------
 
-bool teo::CanBusControlboard::velocityMove(const int n_joint, const int *joints, const double *spds)
+bool roboticslab::CanBusControlboard::velocityMove(const int n_joint, const int *joints, const double *spds)
 {
     CD_DEBUG("\n");
 
@@ -44,7 +44,7 @@ bool teo::CanBusControlboard::velocityMove(const int n_joint, const int *joints,
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getRefVelocity(const int joint, double *vel)
+bool roboticslab::CanBusControlboard::getRefVelocity(const int joint, double *vel)
 {
     CD_DEBUG("%d\n",joint);
 
@@ -57,7 +57,7 @@ bool teo::CanBusControlboard::getRefVelocity(const int joint, double *vel)
 
 // ------------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getRefVelocities(double *vels)
+bool roboticslab::CanBusControlboard::getRefVelocities(double *vels)
 {
     CD_DEBUG("\n");
 
@@ -71,7 +71,7 @@ bool teo::CanBusControlboard::getRefVelocities(double *vels)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getRefVelocities(const int n_joint, const int *joints, double *vels)
+bool roboticslab::CanBusControlboard::getRefVelocities(const int n_joint, const int *joints, double *vels)
 {
     CD_DEBUG("\n");
 
@@ -85,28 +85,28 @@ bool teo::CanBusControlboard::getRefVelocities(const int n_joint, const int *joi
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setVelPid(int j, const yarp::dev::Pid &pid)
+bool roboticslab::CanBusControlboard::setVelPid(int j, const yarp::dev::Pid &pid)
 {
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::setVelPids(const yarp::dev::Pid *pids)
+bool roboticslab::CanBusControlboard::setVelPids(const yarp::dev::Pid *pids)
 {
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getVelPid(int j, yarp::dev::Pid *pid)
+bool roboticslab::CanBusControlboard::getVelPid(int j, yarp::dev::Pid *pid)
 {
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusControlboard::getVelPids(yarp::dev::Pid *pids)
+bool roboticslab::CanBusControlboard::getVelPids(yarp::dev::Pid *pids)
 {
     return true;
 }

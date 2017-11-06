@@ -4,7 +4,7 @@
 
 // ------------------- DeviceDriver Related ------------------------------------
 
-bool teo::CanBusHico::open(yarp::os::Searchable& config)
+bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 {
 
     std::string devicePath = config.check("canDevice",yarp::os::Value(DEFAULT_CAN_DEVICE),"CAN device path").asString();
@@ -46,7 +46,7 @@ bool teo::CanBusHico::open(yarp::os::Searchable& config)
 
 // -----------------------------------------------------------------------------
 
-bool teo::CanBusHico::close()
+bool roboticslab::CanBusHico::close()
 {
 
     //release semaphore?

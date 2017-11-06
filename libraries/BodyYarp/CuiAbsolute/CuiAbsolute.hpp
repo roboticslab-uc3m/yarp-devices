@@ -18,13 +18,13 @@
 #include "ICanBusSharer.h"
 #include "ICuiAbsolute.h"
 
-namespace teo
+namespace roboticslab
 {
 
 /**
  * @ingroup BodyYarp
  * \defgroup CuiAbsolute
- * @brief Contains teo::CuiAbsolute.
+ * @brief Contains roboticslab::CuiAbsolute.
  */
 
 /**
@@ -265,7 +265,7 @@ protected:
     //yarp::os::Semaphore refAccelSemaphore;
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
 #endif  // __CUI_ABSOLUTE__
 

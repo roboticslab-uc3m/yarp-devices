@@ -3,7 +3,7 @@
 #include "LacqueyFetch.hpp"
 
 // -----------------------------------------------------------------------------
-bool teo::LacqueyFetch::open(yarp::os::Searchable& config)
+bool roboticslab::LacqueyFetch::open(yarp::os::Searchable& config)
 {
 
     this->canId = config.check("canId",0,"can bus ID").asInt();
@@ -23,7 +23,7 @@ bool teo::LacqueyFetch::open(yarp::os::Searchable& config)
 }
 
 // -----------------------------------------------------------------------------
-bool teo::LacqueyFetch::close()
+bool roboticslab::LacqueyFetch::close()
 {
     CD_INFO("\n");
     return true;

@@ -34,21 +34,21 @@
 #define DEFAULT_TIME_TO_WAIT_CUI 0
 
 
-namespace teo
+namespace roboticslab
 {
 
 /**
  *
  * @ingroup BodyYarp
  * \defgroup CanBusControlboard
- * @brief Contains teo::CanBusControlboard.
+ * @brief Contains roboticslab::CanBusControlboard.
  */
 
 /**
 * @ingroup CanBusControlboard
 * @brief Implements IControlLimits, IControlMode, IEncodersTimed, IPositionControl, IPositionDirect,
-* ITorqueControl, IVelocityControl interface yarp::dev class member functions, linking to teo::TechnosoftIpos,
-* teo::LacqueyFetch and/or teo::FakeJoint raw implementations.
+* ITorqueControl, IVelocityControl interface yarp::dev class member functions, linking to roboticslab::TechnosoftIpos,
+* roboticslab::LacqueyFetch and/or roboticslab::FakeJoint raw implementations.
 *
 */
 // Note: IEncodersTimed inherits from IEncoders
@@ -968,6 +968,6 @@ protected:
     bool indexWithinRange(const int& idx);
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
 #endif  //  __CAN_BUS_CONTROLBOARD__
