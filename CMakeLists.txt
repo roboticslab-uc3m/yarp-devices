@@ -21,7 +21,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti")
 add_definitions(-DYARP_NO_DEPRECATED_WARNINGS=ON)
 
 ### options: cpp libraries
-option(ENABLE_BodyYarp "Choose if you want to compile BodyYarp" TRUE)
+option(ENABLE_YarpPlugins "Choose if you want to compile YarpPlugins" TRUE)
 option(ENABLE_OneCanBusOneWrapper "Choose if you want to compile OneCanBusOneWrapper" TRUE)
 option(ENABLE_TwoCanBusThreeWrappers "Choose if you want to compile TwoCanBusThreeWrappers" TRUE)
 
