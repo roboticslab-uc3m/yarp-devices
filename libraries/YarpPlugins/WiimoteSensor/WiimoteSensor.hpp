@@ -23,7 +23,7 @@ namespace roboticslab
 {
 
 /**
- * @ingroup BodyYarp
+ * @ingroup YarpPlugins
  * @defgroup WiimoteSensor
  * @brief Contains roboticslab::WiimoteSensor.
  */

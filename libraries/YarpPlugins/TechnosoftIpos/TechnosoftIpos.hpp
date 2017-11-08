@@ -21,7 +21,7 @@ namespace roboticslab
 {
 
 /**
- * @ingroup BodyYarp
+ * @ingroup YarpPlugins
  * \defgroup TechnosoftIpos
  * @brief Contains roboticslab::TechnosoftIpos.
  */

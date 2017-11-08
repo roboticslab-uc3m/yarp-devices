@@ -41,12 +41,12 @@
 #include "DumpCanBus.hpp"
 
 
-//YARP_DECLARE_PLUGINS(BodyYarp)
+//YARP_DECLARE_PLUGINS(YarpPlugins)
 
 int main(int argc, char *argv[])
 {
 
-//    YARP_REGISTER_PLUGINS(BodyYarp);
+//    YARP_REGISTER_PLUGINS(YarpPlugins);
 
     yarp::os::ResourceFinder rf;
     rf.setVerbose(true);

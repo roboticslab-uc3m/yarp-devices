@@ -11,7 +11,7 @@ namespace roboticslab
 {
 
 /**
- * @ingroup BodyYarp
+ * @ingroup YarpPlugins
  * @defgroup LeapMotionSensor
  * @brief Contains roboticslab::LeapMotionSensor.
  */

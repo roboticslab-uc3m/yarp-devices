@@ -16,8 +16,8 @@ IF (ENABLE_YarpPlugins)
   # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now... 
   # Note: Need ICanBusSharer.h, which will also need CanBusHico/*.hpp for now
   set(ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/CanBusHico CACHE INTERNAL "appended libraries") 
-  # Note: BodyYarp bodybot works, but bodybot BodyYarp fails.
-  #set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} BodyYarp CACHE INTERNAL "appended libraries") 
+  # Note: YarpPlugins bodybot works, but bodybot YarpPlugins fails.
+  #set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} YarpPlugins CACHE INTERNAL "appended libraries") 
   
  #  yarp_begin_plugin_library(YarpPlugins)
     add_subdirectory(CuiAbsolute)

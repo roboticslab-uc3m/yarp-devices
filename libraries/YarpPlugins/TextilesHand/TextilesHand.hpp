@@ -32,7 +32,7 @@ namespace roboticslab
 {
 
 /**
- * @ingroup BodyYarp
+ * @ingroup YarpPlugins
  * \defgroup TextilesHand
  * @brief Contains roboticslab::TextilesHand.
  */

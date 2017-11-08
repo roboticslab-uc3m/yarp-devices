@@ -23,7 +23,7 @@ namespace roboticslab
 {
 
 /**
- * @ingroup BodyYarp
+ * @ingroup YarpPlugins
  * @defgroup SpaceNavigator
  * @brief Contains roboticslab::SpaceNavigator.
  */
