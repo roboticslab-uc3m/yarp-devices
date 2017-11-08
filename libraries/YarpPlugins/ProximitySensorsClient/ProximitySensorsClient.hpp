@@ -24,7 +24,7 @@ namespace roboticslab
 {
 
 /**
- * @ingroup BodyYarp
+ * @ingroup YarpPlugins
  * \defgroup ProximitySensorsClient
  *
  * @brief Contains roboticslab::ProximitySensorsClient.

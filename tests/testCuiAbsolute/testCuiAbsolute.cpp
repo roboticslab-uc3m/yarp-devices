@@ -10,7 +10,7 @@
 #include "ICanBusSharer.h"
 #include "ICuiAbsolute.h"
 
-//YARP_DECLARE_PLUGINS(BodyYarp)
+//YARP_DECLARE_PLUGINS(YarpPlugins)
 
 #define CAN_ID 103 // ID of Cui Absolute encoder that you want to check...
 
@@ -30,7 +30,7 @@ public:
 
 
         // -- code here will execute just before the test ensues
-        //YARP_REGISTER_PLUGINS(BodyYarp);
+        //YARP_REGISTER_PLUGINS(YarpPlugins);
 
         yarp::os::Property hicoCanConf ("(device CanBusHico) (canDevice /dev/can0) (canBitrate 8)");
         bool ok = true;

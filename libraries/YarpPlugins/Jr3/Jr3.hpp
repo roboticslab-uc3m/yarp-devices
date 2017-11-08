@@ -28,7 +28,7 @@ namespace roboticslab
 {
 
 /**
- * @ingroup BodyYarp
+ * @ingroup YarpPlugins
  * \defgroup Jr3
  * @brief Contains roboticslab::Jr3.
  */

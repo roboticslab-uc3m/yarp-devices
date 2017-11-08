@@ -22,7 +22,7 @@ namespace roboticslab
 {
 
 /**
- * @ingroup BodyYarp
+ * @ingroup YarpPlugins
  * \defgroup CuiAbsolute
  * @brief Contains roboticslab::CuiAbsolute.
  */

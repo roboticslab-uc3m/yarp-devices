@@ -3,7 +3,7 @@
 
 add_subdirectory(ColorDebug)  # ColorDebug sets COLOR_DEBUG_INCLUDE_DIRS
 
-add_subdirectory(YarpPlugins)  # Old BodyYarp, a plugin library which contains YARP plugins
+add_subdirectory(YarpPlugins)  # Old YarpPlugins, a plugin library which contains YARP plugins
 
 add_subdirectory(OneCanBusOneWrapper)
 add_subdirectory(TwoCanBusThreeWrappers)

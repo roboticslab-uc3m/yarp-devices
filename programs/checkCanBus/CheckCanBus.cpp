@@ -10,7 +10,7 @@
 // --
 
 
-YARP_DECLARE_PLUGINS(BodyYarp)
+YARP_DECLARE_PLUGINS(YarpPlugins)
 
 namespace roboticslab
 {

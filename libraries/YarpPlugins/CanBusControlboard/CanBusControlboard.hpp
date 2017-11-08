@@ -39,7 +39,7 @@ namespace roboticslab
 
 /**
  *
- * @ingroup BodyYarp
+ * @ingroup YarpPlugins
  * \defgroup CanBusControlboard
  * @brief Contains roboticslab::CanBusControlboard.
  */
