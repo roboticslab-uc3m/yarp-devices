@@ -10,14 +10,14 @@ Some of the devices require a specific OS version to work. This table tracks the
 
 * :white_check_mark: The device works in this OS.
 * :x:  The device won't work on this OS.
-* :grey_question: The device hasn't been tested on this OS yet.
+* :question: The device hasn't been tested on this OS yet.
 
 
 | OS | OneCanBusOneWrapper | TwoCanBusThreeWrappers | AravisGigE | CanBusControlboard | CanBusHico | CuiAbsolute | FakeJoint | Jr3 | LacqueyFetch | LeapMotionSensor | ProximitySensorsClient | SpaceNavigator | TechnosoftIpos | TextilesHand | WiimoteSensor |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [Debian 6.0.10](yarp_devices_install_on_debian_6.md) | :white_check_mark: | :white_check_mark: | :grey_question: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Ubuntu 14.04 (and derivatives) | :grey_question: |  :grey_question: | :white_check_mark: |  :grey_question: | :grey_question: | :grey_question: | :grey_question: | :grey_question: | :grey_question: | :grey_question: | :grey_question: | :grey_question: |  :grey_question: | :grey_question: | :grey_question: | 
-| Ubuntu 16.04 (and derivatives) | :grey_question: |  :grey_question: | :white_check_mark: |  :grey_question: | :grey_question: | :grey_question: | :grey_question: | :grey_question: | :grey_question: | :grey_question: | :grey_question: | :grey_question: | :grey_question: | :grey_question: | :grey_question: | 
+| --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| [Debian 6.0.10](yarp_devices_install_on_debian_6.md) | :white_check_mark: | :white_check_mark: | :question: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Ubuntu 14.04 (and derivatives) | :question: |  :question: | :white_check_mark: |  :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: |  :question: | :question: | :question: | 
+| Ubuntu 16.04 (and derivatives) | :question: |  :question: | :white_check_mark: |  :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | 
 
 
 ## Common dependencies
@@ -32,7 +32,7 @@ Some dependencies must be installed for all the devices:
 Some devices require specific dependencies to work that must be satisfied. Use the following table to locate and install the dependencies required for your concrete application.
 
 | Dependency | OneCanBusOneWrapper | TwoCanBusThreeWrappers | AravisGigE | CanBusControlboard | CanBusHico | CuiAbsolute | FakeJoint | Jr3 | LacqueyFetch | LeapMotionSensor | ProximitySensorsClient | SpaceNavigator | TechnosoftIpos | TextilesHand | WiimoteSensor |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | [Aravis 0.4]() |  :x: |  :x: | :white_check_mark: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: |  :x: | :x: | :x: | 
 | [hcanpci (kernel module)](yarp_devices_install_on_debian_6.md) | :white_check_mark: | :white_check_mark: | :x: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 
