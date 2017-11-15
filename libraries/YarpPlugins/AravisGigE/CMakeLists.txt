@@ -19,7 +19,6 @@ IF (NOT SKIP_AravisGigE)
   include_directories(${YARP_INCLUDE_DIRS} ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
   yarp_add_plugin(AravisGigE AravisGigE.hpp DeviceDriverImpl.cpp IFrameGrabberImpl.cpp IFrameGrabberImageRawImpl.cpp IFrameGrabberControls2Impl.cpp)
-  TARGET_COMPILE_FEATURES(AravisGigE PRIVATE cxx_auto_type)
   TARGET_LINK_LIBRARIES(AravisGigE ${YARP_LIBRARIES} ${ARAVIS_LIBRARIES})
 
   # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now...

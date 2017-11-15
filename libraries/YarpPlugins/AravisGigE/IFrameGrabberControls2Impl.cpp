@@ -48,10 +48,10 @@ bool roboticslab::AravisGigE::setFeature(int feature, double value)
         return false;
     }
 
-    auto yarp_int_feature = yarp_arv_int_feature_map.find(f);
+    std::map<cameraFeature_id_t, const char*>::iterator yarp_int_feature = yarp_arv_int_feature_map.find(f);
     if (yarp_int_feature == yarp_arv_int_feature_map.end())
     {
-        auto yarp_float_feature = yarp_arv_float_feat_map.find(f);
+        std::map<cameraFeature_id_t, const char*>::iterator yarp_float_feature = yarp_arv_float_feat_map.find(f);
         if (yarp_float_feature == yarp_arv_float_feat_map.end())
         {
             CD_ERROR("Property with yarp id %d not available\n", f);
@@ -83,10 +83,10 @@ bool roboticslab::AravisGigE::getFeature(int feature, double *value)
         return false;
     }
 
-    auto yarp_int_feature = yarp_arv_int_feature_map.find(f);
+    std::map<cameraFeature_id_t, const char*>::iterator yarp_int_feature = yarp_arv_int_feature_map.find(f);
     if (yarp_int_feature == yarp_arv_int_feature_map.end())
     {
-        auto yarp_float_feature = yarp_arv_float_feat_map.find(f);
+        std::map<cameraFeature_id_t, const char*>::iterator yarp_float_feature = yarp_arv_float_feat_map.find(f);
         if (yarp_float_feature == yarp_arv_float_feat_map.end())
         {
             CD_ERROR("Property with yarp id %d not available\n", f);
@@ -115,10 +115,10 @@ bool roboticslab::AravisGigE::getFeatureLimits(int feature, double *minValue, do
         return false;
     }
 
-    auto yarp_int_feature = yarp_arv_int_feature_map.find(f);
+    std::map<cameraFeature_id_t, const char*>::iterator yarp_int_feature = yarp_arv_int_feature_map.find(f);
     if (yarp_int_feature == yarp_arv_int_feature_map.end())
     {
-        auto yarp_float_feature = yarp_arv_float_feat_map.find(f);
+        std::map<cameraFeature_id_t, const char*>::iterator yarp_float_feature = yarp_arv_float_feat_map.find(f);
         if (yarp_float_feature == yarp_arv_float_feat_map.end())
         {
             CD_ERROR("Property with yarp id %d not available\n", f);
