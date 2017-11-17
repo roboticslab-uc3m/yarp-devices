@@ -57,8 +57,8 @@ int roboticslab::LeapMotionSensor::read(yarp::sig::Vector &out)
     out[4] = -direction.yaw();
     out[5] = normal.roll();
 
-    out[6] = hand.grabStrength() == 1.0 ? 1.0 : 0.0;
-    out[7] = hand.pinchStrength() == 1.0 ? 1.0 : 0.0;
+    out[6] = hand.grabStrength() > 0.5 ? 1.0 : 0.0;
+    out[7] = hand.pinchStrength() > 0.5 ? 1.0 : 0.0;
 
     lastValidData = out;
 
