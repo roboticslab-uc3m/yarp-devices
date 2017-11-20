@@ -9,7 +9,6 @@ compiler:
   - clang
 
 before_install:
-  - sudo add-apt-repository --yes ppa:kalakris/cmake
   - sudo apt-get update -qq  # -qq No output except for errors
   - '[[ "$TRAVIS_EVENT_TYPE" = cron ]] && export YARP_CHECKOUT=devel || export YARP_CHECKOUT=master'
 
