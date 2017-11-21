@@ -6,10 +6,10 @@ Link to Doxygen generated documentation: http://robots.uc3m.es/dox-yarp-devices
 
 ## Installation
 
-Installation instructions for installing from source can be found [here]( /doc/yarp_devices_install.md ).
+Installation instructions for installing from source can be found [here]( /doc/yarp-devices-install.md ).
 
 ## Usage
-Usage instructions for the different devices contained in this repository can be found [here](doc/yarp_devices_usage.md).
+Usage instructions for the different devices contained in this repository can be found [here](doc/yarp-devices-usage.md).
 
 ## Contributing
 
