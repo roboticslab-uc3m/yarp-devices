@@ -8,7 +8,12 @@ yarp_prepare_plugin(WiimoteSensor
                     WRAPPER analogServer)
 
 if(NOT SKIP_WiimoteSensor)
-  find_package(XWiimote REQUIRED)
+  find_package(XWiimote 0.3 REQUIRED)
+
+  if(XWIIMOTE_VERSION VERSION_LESS "2")
+    add_definitions(-DXWIIMOTE_LEGACY_INTERFACE)
+  endif()
+
   include_directories(${YARP_INCLUDE_DIRS} ${XWIIMOTE_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
   yarp_add_plugin(WiimoteSensor
