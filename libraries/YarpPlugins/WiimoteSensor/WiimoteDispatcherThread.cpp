@@ -44,9 +44,13 @@ void roboticslab::WiimoteDispatcherThread::run()
             return;
         }
 
+#ifdef XWIIMOTE_LEGACY_INTERFACE
         // xwii_iface_dispatch not available on Trusty
         // https://github.com/roboticslab-uc3m/yarp-devices/issues/134
         int ret = xwii_iface_poll(iface, &event);
+#else
+        int ret = xwii_iface_dispatch(iface, &event, sizeof(event));
+#endif
 
         if (ret != 0)
         {
