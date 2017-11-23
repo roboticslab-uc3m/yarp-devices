@@ -46,7 +46,7 @@ For additional TEO options use ccmake instead of cmake.
 
 Finally, install the hcanpci kernel module:
 
- - [Install hcanpci kernel module (Debian 6.0.10)]( /doc/yarp_devices_install_hcanpci_on_debian_6.md )
+ - [Install hcanpci kernel module (Debian 6.0.10)]( /doc/yarp-devices-install-hcanpci-on-debian-6.md )
 
 You may also want the `xsensmtx` device:
 
@@ -55,4 +55,4 @@ You may also want the `xsensmtx` device:
 ### Even more!
 
 Done! You are now probably interested in one of the following links:
-  - [yarp-devices - Now what can I do?]( /doc/yarp_devices_post_install.md )
+  - [yarp-devices - Now what can I do?]( /doc/yarp-devices-post-install.md )
