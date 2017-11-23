@@ -15,7 +15,7 @@ Some of the devices require a specific OS version to work. This table tracks the
 
 | OS | OneCanBusOneWrapper | TwoCanBusThreeWrappers | AravisGigE | CanBusControlboard | CanBusHico | CuiAbsolute | FakeJoint | Jr3 | LacqueyFetch | LeapMotionSensor | ProximitySensorsClient | SpaceNavigator | TechnosoftIpos | TextilesHand | WiimoteSensor |
 | --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| [Debian 6.0.10](yarp_devices_install_on_debian_6.md) | :white_check_mark: | :white_check_mark: | :question: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| [Debian 6.0.10](yarp-devices-install-on-debian-6.md) | :white_check_mark: | :white_check_mark: | :question: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Ubuntu 14.04 (and derivatives) | :question: |  :question: | :white_check_mark: |  :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: |  :question: | :question: | :question: | 
 | Ubuntu 16.04 (and derivatives) | :question: |  :question: | :white_check_mark: |  :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | 
 
@@ -34,7 +34,7 @@ Some devices require specific dependencies to work that must be satisfied. Use t
 | Dependency | OneCanBusOneWrapper | TwoCanBusThreeWrappers | AravisGigE | CanBusControlboard | CanBusHico | CuiAbsolute | FakeJoint | Jr3 | LacqueyFetch | LeapMotionSensor | ProximitySensorsClient | SpaceNavigator | TechnosoftIpos | TextilesHand | WiimoteSensor |
 | --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | [Aravis 0.4](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-aravis.md) |  :x: |  :x: | :white_check_mark: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: |  :x: | :x: | :x: | 
-| [hcanpci (kernel module)](yarp_devices_install_on_debian_6.md) | :white_check_mark: | :white_check_mark: | :x: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| [hcanpci (kernel module)](yarp-devices-install-on-debian-6.md) | :white_check_mark: | :white_check_mark: | :x: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 
 
 ## Installation
@@ -55,4 +55,4 @@ Remember to enable the devices you want to compile using `ccmake` instead of `cm
 ## Even more!
 
 Done! You are now probably interested in one of the following links:
-  - [yarp-devices - Now what can I do?]( /doc/yarp_devices_post_install.md )
+  - [yarp-devices - Now what can I do?]( /doc/yarp-devices-post-install.md )
