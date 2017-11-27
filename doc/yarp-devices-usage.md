@@ -81,4 +81,4 @@ Exposure: 32000
 
 #### I cannot receive a color image, but I receive a grey image with a regular point pattern on it.
 
-What you are receiving is the raw image of the camera. To obtain a color image from it you need to decode it using a Bayer filter. Follow the steps in the section [Obtaining a color image from the device](https://github.com/roboticslab-uc3m/yarp-devices/blob/develop/doc/yarp-devices-usage.md#obtaining-a-color-image-from-the-device) in this very same guide to fix it.
+What you are receiving is the raw image of the camera. To obtain a color image from it you need to decode it using a Bayer filter. Follow the steps in the section [Obtaining a color image from the device](#obtaining-a-color-image-from-the-device) in this very same guide to fix it.
