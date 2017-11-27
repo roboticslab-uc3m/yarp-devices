@@ -276,6 +276,7 @@ protected:
 
     //-- More internal parameter stuff
     double max, min, maxVel, minVel, refAcceleration, refSpeed, refTorque, refVelocity, targetPosition, tr, k;
+    int encoderPulses; // default: 4096 (1024 * 4)
 
     //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
     yarp::dev::InteractionModeEnum interactionMode;

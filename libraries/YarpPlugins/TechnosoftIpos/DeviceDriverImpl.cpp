@@ -15,6 +15,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->tr = config.check("tr",0,"reduction").asDouble();
     this->refAcceleration = config.check("refAcceleration",0,"ref acceleration").asDouble();
     this->refSpeed = config.check("refSpeed",0,"ref speed").asDouble();
+    this->encoderPulses = config.check("encoderPulses",0,"encoderPulses").asDouble();
 
     // -- other parameters...
     this->k = config.check("k",0,"motor constant").asDouble();
@@ -52,9 +53,14 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
         CD_ERROR("Could not create TechnosoftIpos with refSpeed 0\n");
         return false;
     }
+    if( 0 == this->encoderPulses )
+    {
+        CD_ERROR("Could not create TechnosoftIpos with encoderPulses 0\n");
+        return false;
+    }
 
-    CD_SUCCESS("Created TechnosoftIpos with canId %d, tr %f, k %f, refAcceleration %f, refSpeed %f, and all local parameters set to 0.\n",
-               canId,tr,k,refSpeed,refAcceleration);
+    CD_SUCCESS("Created TechnosoftIpos with canId %d, tr %f, k %f, refAcceleration %f, refSpeed %f, encoderPulses %d and all local parameters set to 0.\n",
+               canId,tr,k,refAcceleration,refSpeed,encoderPulses);
     return true;
 }
 
