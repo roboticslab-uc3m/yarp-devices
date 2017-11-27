@@ -68,3 +68,17 @@ These are the features currently available in YARP. To check which ones are supp
 | Capture quality | YARP_FEATURE_CAPTURE_QUALITY | 21 |
 | Mirror | YARP_FEATURE_MIRROR | 22 |
 | Number of features | YARP_FEATURE_NUMBER_OF | 23 |
+
+### FAQ
+#### I can receive an image, but it is all dark, what can I do?
+
+This is probably due to a bad configuration of the camera parameters. Try to increase the gain or exposure until the image starts looking brighter. For the 1.0.B06 lab, some values that work great are:
+
+```
+Gain: 10
+Exposure: 32000
+````
+
+#### I cannot receive a color image, but I receive a grey image with a regular point pattern on it.
+
+What you are receiving is the raw image of the camera. To obtain a color image from it you need to decode it using a Bayer filter. Follow the steps in the section [Obtaining a color image from the device](#obtaining-a-color-image-from-the-device) in this very same guide to fix it.

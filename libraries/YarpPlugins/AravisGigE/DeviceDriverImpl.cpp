@@ -88,10 +88,10 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
     if (fpsAvailable)
     {
         arv_camera_get_frame_rate_bounds(camera, &fpsMin, &fpsMax);
-        CD_INFO("FPS range: min=%d max=%d\n", fpsMin, fpsMax);
+        CD_INFO("FPS range: min=%f max=%f\n", fpsMin, fpsMax);
 
         fps = arv_camera_get_frame_rate(camera);
-        CD_INFO("Current FPS value: %d\n", fps);
+        CD_INFO("Current FPS value: %f\n", fps);
     }
     else
         CD_WARNING("FPS property not available\n");
@@ -101,10 +101,10 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
     if (gainAvailable)
     {
         arv_camera_get_gain_bounds (camera, &gainMin, &gainMax);
-        CD_INFO("Gain range: min=%d max=%d\n", gainMin, gainMax);
+        CD_INFO("Gain range: min=%f max=%f\n", gainMin, gainMax);
 
         gain = arv_camera_get_gain(camera);
-        CD_INFO("Current gain value: %d\n", gain);
+        CD_INFO("Current gain value: %f\n", gain);
     }
     else
         CD_WARNING("Gain property not available\n");
@@ -113,10 +113,10 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
     if (exposureAvailable)
     {
         arv_camera_get_exposure_time_bounds (camera, &exposureMin, &exposureMax);
-        CD_INFO("Exposure range: min=%d max=%d\n", exposureMin, exposureMax);
+        CD_INFO("Exposure range: min=%f max=%f\n", exposureMin, exposureMax);
 
         exposure = arv_camera_get_exposure_time(camera);
-        CD_INFO("Current exposure value: %d\n", exposure);
+        CD_INFO("Current exposure value: %f\n", exposure);
     }
     else
         CD_WARNING("Gain property not available\n");
