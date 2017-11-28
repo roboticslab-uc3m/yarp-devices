@@ -7,9 +7,10 @@
 
 find_package(GLib REQUIRED)
 
-message("--->")
-message(${GLib_INCLUDE_DIRS})
-message("--->")
+# This was used for debugging purposes:
+# message("--->")
+# message(${GLib_INCLUDE_DIRS})
+# message("--->")
 
 find_path(ARAVIS_INCLUDE_DIR arv.h
   $ENV{ARAVIS_DIR}
