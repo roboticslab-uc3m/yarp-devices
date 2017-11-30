@@ -29,8 +29,19 @@ def main(remote_port: 'Remote port running the AravisGigE grabber'='/grabber'):
 
     # Create and configure driver
     options = yarp.Property()
-    options.put('device','remote_controlboard')
+    options.put('device','remote_grabber')
     options.put('remote', remote_port)
     options.put('local','/AravisGigEController')
     dd = yarp.PolyDriver(options)
 
+    # View driver as FrameGrabber
+    grabber = dd.viewFrameGrabberImage()
+
+    hasFeat = None
+    image = yarp.ImageRgb()
+    grabber.height
+    grabber.getImage(image)
+    grabber.hasFeature(16, hasFeat)
+    print(hasFeat)
+
+    print(dir(grabber))
