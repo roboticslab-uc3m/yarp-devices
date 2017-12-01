@@ -16,5 +16,5 @@ setup(name = moduleName,
         url = 'https://github.com/roboticslab-uc3m/yarp-devices/',
         package_dir = {'': normpath('${CMAKE_SOURCE_DIR}/programs/AravisGigEController/')},
         scripts = [join(normpath('${CMAKE_SOURCE_DIR}/programs/AravisGigEController/'), moduleName+'.py')],
-        install_requires = ['begins==0.9','pyside==1.2.4']
+        install_requires = ['begins==0.9','pyside>=1.2.2']
 )
