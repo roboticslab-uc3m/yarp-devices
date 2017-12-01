@@ -22,7 +22,7 @@ bool roboticslab::TechnosoftIpos::velocityMoveRaw(int j, double sp)
     //-- 65536 for FIXED32
     //-- 0.01138 = ( 4 * 1024 pulse / 360 deg ) * (0.001 s / sample)   // deg/s -> pulse/sample  = UI (vel)
     // encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024)
-    double val = (encoderPulses / 360) * 0.001;     //-- if encoderPulses is 4096 (4 * 1024), val = 0,011377778
+    double val = (encoderPulses / 360.0) * 0.001;     //-- if encoderPulses is 4096 (4 * 1024), val = 0,011377778
     int32_t sendRefSpeedFormated = sp * this->tr * (65536 * val); //-- 65536 * 0.01138 = 745.8
     memcpy(msg_vel+4,&sendRefSpeedFormated,4);
 

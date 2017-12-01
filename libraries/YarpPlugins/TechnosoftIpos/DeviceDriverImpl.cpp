@@ -15,7 +15,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->tr = config.check("tr",0,"reduction").asDouble();
     this->refAcceleration = config.check("refAcceleration",0,"ref acceleration").asDouble();
     this->refSpeed = config.check("refSpeed",0,"ref speed").asDouble();
-    this->encoderPulses = config.check("encoderPulses",0,"encoderPulses").asDouble();
+    this->encoderPulses = config.check("encoderPulses",0,"encoderPulses").asInt();
 
     // -- other parameters...
     this->k = config.check("k",0,"motor constant").asDouble();

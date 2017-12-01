@@ -85,7 +85,7 @@ bool roboticslab::TechnosoftIpos::relativeMoveRaw(int j, double delta)
     uint8_t msg_position_target[]= {0x23,0x7A,0x60,0x00,0x00,0x00,0x00,0x00}; // Position target
 
     //-- 11.38 = ( 4 * 1024 pulse / 360 deg ) // deg -> pulse = UI (pos)
-    double val = encoderPulses / 360; // encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024).
+    double val = encoderPulses / 360.0; // encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024).
     int sendDelta = delta * this->tr * val;  // Appply tr & convert units to encoder increments
     memcpy(msg_position_target+4,&sendDelta,4);
 
@@ -194,7 +194,7 @@ bool roboticslab::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
     //-- 65536 for FIXED32
     //-- 0.01138 = ( 4 * 1024 pulse / 360 deg ) * (0.001 s / sample)   // deg/s -> pulse/sample  = UI (vel)
     //-- encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024)
-    double val = (encoderPulses / 360) * 0.001;     //-- if encoderPulses is 4096 (4 * 1024), val = 0,011377778
+    double val = (encoderPulses / 360.0) * 0.001;     //-- if encoderPulses is 4096 (4 * 1024), val = 0,011377778
     int32_t sendRefSpeedFormated = sp * this->tr * (65536 * val); //-- 65536 * 0.01138 = 745.8
     memcpy(msg_posmode_speed+4,&sendRefSpeedFormated,4);
 
@@ -241,7 +241,7 @@ bool roboticslab::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
     //-- 65536 for FIXED32
     //-- 0.00001138 = ( 4 * 1024 pulse / 360 deg ) * (0.000001 s^2 / sample^2)   // deg/s^2 -> pulse/sample^2 = UI (acc)
     //-- encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024)
-    double val = (encoderPulses / 360) * 0.000001;     //-- if encoderPulses is 4096 (4 * 1024), val = 0.00001138
+    double val = (encoderPulses / 360.0) * 0.000001;     //-- if encoderPulses is 4096 (4 * 1024), val = 0.00001138
     int32_t sendRefAccFormated = acc * this->tr * (65536 * val); //-- 65536 * 0.00001138 = 0.7458
     memcpy(msg_posmode_acc+4,&sendRefAccFormated,4);
 
