@@ -89,6 +89,17 @@ class AravisGigEControllerGUI(QtGui.QWidget):
         self.fpsSpinBox.setMinimum(0)
         self.fpsSpinBox.setMaximum(30)
 
+        # Connect to signals:
+        self.zoomSlider.valueChanged.connect(self.onZoomSliderChanged)
+        self.zoomSpinBox.valueChanged.connect(self.onZoomSpinBoxChanged)
+        self.focusSlider.valueChanged.connect(self.onFocusSliderChanged)
+        self.focusSpinBox.valueChanged.connect(self.onFocusSpinBoxChanged)
+        self.gainSlider.valueChanged.connect(self.onGainSliderChanged)
+        self.gainSpinBox.valueChanged.connect(self.onGainSpinBoxChanged)
+        self.exposureSlider.valueChanged.connect(self.onExposureSliderChanged)
+        self.exposureSpinBox.valueChanged.connect(self.onExposureSpinBoxChanged)
+        self.fpsSlider.valueChanged.connect(self.onfpsSliderChanged)
+        self.fpsSpinBox.valueChanged.connect(self.onfpsSpinBoxChanged)
 
     def resetValues(self):
         self.zoomSlider.setValue(0)
@@ -102,17 +113,62 @@ class AravisGigEControllerGUI(QtGui.QWidget):
         self.fpsSlider.setValue(0)
         self.fpsSpinBox.setValue(0)
 
+    def onZoomSliderChanged(self):
+        zoom = self.zoomSlider.value()
+        if zoom != self.zoomSpinBox.value():
+            self.controller.set_zoom(zoom)
+            self.zoomSpinBox.setValue(zoom)
 
-if __name__ == '__main__':
-    from AravisGigEController import AravisGigEController
+    def onZoomSpinBoxChanged(self):
+        zoom = self.zoomSpinBox.value()
+        if zoom != self.zoomSlider.value():
+            self.controller.set_zoom(zoom)
+            self.zoomSlider.setValue(zoom)
 
-    # Create Qt app
-    app = QtGui.QApplication(sys.argv)
+    def onFocusSliderChanged(self):
+        focus = self.focusSlider.value()
+        if focus != self.focusSpinBox.value():
+            self.controller.set_focus(focus)
+            self.focusSpinBox.setValue(focus)
 
-    # Create the widget and show it
-    controller = AravisGigEController()
-    gui = AravisGigEControllerGUI(controller)
-    gui.show()
+    def onFocusSpinBoxChanged(self):
+        focus = self.focusSpinBox.value()
+        if focus != self.focusSlider.value():
+            self.controller.set_focus(focus)
+            self.focusSlider.setValue(focus)
 
-    # Run the app
-    sys.exit(app.exec_())
+    def onGainSliderChanged(self):
+        gain = self.gainSlider.value()
+        if gain != self.gainSpinBox.value():
+            self.controller.set_gain(gain)
+            self.gainSpinBox.setValue(gain)
+
+    def onGainSpinBoxChanged(self):
+        gain = self.gainSpinBox.value()
+        if gain != self.gainSlider.value():
+            self.controller.set_gain(gain)
+            self.gainSlider.setValue(gain)
+
+    def onExposureSliderChanged(self):
+        exposure = self.exposureSlider.value()
+        if exposure != self.exposureSpinBox.value():
+            self.controller.set_exposure(exposure)
+            self.exposureSpinBox.setValue(exposure)
+
+    def onExposureSpinBoxChanged(self):
+        exposure = self.exposureSpinBox.value()
+        if exposure != self.exposureSlider.value():
+            self.controller.set_exposure(exposure)
+            self.exposureSlider.setValue(exposure)
+
+    def onfpsSliderChanged(self):
+        fps = self.fpsSlider.value()
+        if fps != self.fpsSpinBox.value():
+            self.controller.set_FPS(fps)
+            self.fpsSpinBox.setValue(fps)
+
+    def onfpsSpinBoxChanged(self):
+        fps = self.fpsSpinBox.value()
+        if fps != self.fpsSlider.value():
+            self.controller.set_FPS(fps)
+            self.fpsSlider.setValue(fps)
