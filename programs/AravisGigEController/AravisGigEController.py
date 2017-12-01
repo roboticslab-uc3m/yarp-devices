@@ -47,19 +47,23 @@ class AravisGigEController:
 
     def set_zoom(self, zoom):
         print("Zoom set to {}".format(zoom))
+        self.controls.setFeature(16, zoom)
 
     def set_focus(self, focus):
         print("Focus set to {}".format(focus))
+        self.controls.setFeature(10, focus)
 
     def set_gain(self, gain):
         print("Gain set to {}".format(gain))
+        self.controls.setFeature(8, gain)
 
     def set_exposure(self, exposure):
         print("Exposure set to {}".format(exposure))
+        self.controls.setFeature(1, exposure)
 
     def set_FPS(self, fps):
         print("FPS set to {}".format(fps))
-
+        self.controls.setFeature(16, fps)
 
 @begin.start(auto_convert=True, config_file='config.txt')
 @begin.logging
