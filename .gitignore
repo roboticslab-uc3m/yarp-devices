@@ -10,3 +10,4 @@ doc/doxygen_sqlite3.db
 *.project
 .idea
 venv
+**/__pycache__
