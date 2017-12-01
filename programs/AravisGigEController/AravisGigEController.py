@@ -17,6 +17,32 @@ import yarp
 import begin
 
 
+class AravisGigEController:
+    def __init__(self):
+        pass
+
+    def init(self):
+        pass
+
+    def close(self):
+        pass
+
+    def set_zoom(self, zoom):
+        print("Zoom set to {}".format(zoom))
+
+    def set_focus(self, focus):
+        print("Focus set to {}".format(focus))
+
+    def set_gain(self, gain):
+        print("Gain set to {}".format(gain))
+
+    def set_exposure(self, exposure):
+        print("Exposure set to {}".format(exposure))
+
+    def set_FPS(self, fps):
+        print("FPS set to {}".format(fps))
+
+
 @begin.start(auto_convert=True, config_file='config.txt')
 @begin.logging
 def main(remote_port: 'Remote port running the AravisGigE grabber'='/grabber'):
