@@ -11,21 +11,39 @@ Copyright: Universidad Carlos III de Madrid (C) 2017;
 CopyPolicy: Released under the terms of the GNU GPL v2.0.
 """
 
+import sys
 import logging
 
 import yarp
 import begin
+from PySide import QtCore, QtGui
+
+from AravisGigEControllerGUI import AravisGigEControllerGUI
 
 
 class AravisGigEController:
-    def __init__(self):
-        pass
+    def __init__(self, remote_port):
+        self.remote_port = remote_port
 
     def init(self):
-        pass
+        # Check for YARP network
+        yarp.Network.init()
+        if not yarp.Network.checkNetwork():
+            logging.error('Could not connect to YARP network. Please try running YARP server.')
+            quit()
+
+        # Create and configure driver
+        options = yarp.Property()
+        options.put('device','remote_grabber')
+        options.put('remote', self.remote_port)
+        options.put('local','/AravisGigEController')
+        dd = yarp.PolyDriver(options)
+
+        # View driver as FrameGrabber
+        self.controls = dd.viewIFrameGrabberControls2()
 
     def close(self):
-        pass
+        yarp.Network.fini() # disconnect from the YARP network
 
     def set_zoom(self, zoom):
         print("Zoom set to {}".format(zoom))
@@ -46,28 +64,15 @@ class AravisGigEController:
 @begin.start(auto_convert=True, config_file='config.txt')
 @begin.logging
 def main(remote_port: 'Remote port running the AravisGigE grabber'='/grabber'):
+    # Create Qt app
+    app = QtGui.QApplication(sys.argv)
 
-    # Check for YARP network
-    yarp.Network.init()
-    if not yarp.Network.checkNetwork():
-        logging.error('Could not connect to YARP network. Please try running YARP server.')
-        quit()
+    # Create the widget and show it
+    controller = AravisGigEController(remote_port)
+    gui = AravisGigEControllerGUI(controller)
+    gui.show()
 
-    # Create and configure driver
-    options = yarp.Property()
-    options.put('device','remote_grabber')
-    options.put('remote', remote_port)
-    options.put('local','/AravisGigEController')
-    dd = yarp.PolyDriver(options)
-
-    # View driver as FrameGrabber
-    controls = dd.viewIFrameGrabberControls2()
-
-    hasFeat = None
-    #controls.hasFeature(16, hasFeat)
-    print(help(controls.hasFeature))
-    print(help(controls.setFeature))
-    print(hasFeat)
+    # Run the app
+    sys.exit(app.exec_())
 
 
-    yarp.Network.fini() # disconnect from the YARP network

@@ -1,6 +1,8 @@
+import os, sys
+
 from PySide import QtCore,QtGui
 from PySide import QtUiTools
-import os, sys
+
 
 def load_ui(file_name, where=None):
     """
