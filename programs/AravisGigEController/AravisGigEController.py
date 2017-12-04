@@ -1,24 +1,18 @@
-#!/usr/bin/env python3
-
 """
 AravisGigEController
 ---------------------
 
-Simple GUI for controlling GigE cameras using Aravis and YARP
+Backend for the AravisGigEController
 
 Author: David Estevez
 Copyright: Universidad Carlos III de Madrid (C) 2017;
 CopyPolicy: Released under the terms of the GNU GPL v2.0.
 """
 
-import sys
+
 import logging
 
 import yarp
-import begin
-from PySide import QtCore, QtGui
-
-from AravisGigEControllerGUI import AravisGigEControllerGUI
 
 
 class AravisGigEController:
@@ -68,19 +62,3 @@ class AravisGigEController:
     def set_FPS(self, fps):
         print("FPS set to {}".format(fps))
         self.controls.setFeature(yarp.YARP_FEATURE_FRAME_RATE, fps)
-
-@begin.start(auto_convert=True, config_file='config.txt')
-@begin.logging
-def main(remote_port: 'Remote port running the AravisGigE grabber'='/grabber'):
-    # Create Qt app
-    app = QtGui.QApplication(sys.argv)
-
-    # Create the widget and show it
-    controller = AravisGigEController(remote_port)
-    gui = AravisGigEControllerGUI(controller)
-    gui.show()
-
-    # Run the app
-    sys.exit(app.exec_())
-
-

@@ -1,3 +1,14 @@
+"""
+AravisGigEController
+---------------------
+
+Frontend for the AravisGigEController
+
+Author: David Estevez
+Copyright: Universidad Carlos III de Madrid (C) 2017;
+CopyPolicy: Released under the terms of the GNU GPL v2.0.
+"""
+
 import os, sys
 
 from PySide import QtCore,QtGui
@@ -50,7 +61,7 @@ class AravisGigEControllerGUI(QtGui.QWidget):
 
     def setupUI(self):
         # Load UI and set it as main layout
-        ui_file_path = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'AravisGigEControllerGUI.ui')
+        ui_file_path = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'templates', 'AravisGigEControllerGUI.ui')
         main_widget = load_ui(ui_file_path, self)
         layout = QtGui.QVBoxLayout()
         layout.addWidget(main_widget)

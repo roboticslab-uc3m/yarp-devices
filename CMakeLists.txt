@@ -164,11 +164,12 @@ configure_file(
 add_custom_target(uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/ROBOTICSLAB_YARP_DEVICESConfigUninstall.cmake)
 
-# configure setup.py
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/template/setup.py.in"
-               "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
+if (ENABLE_AravisGigEController)
+# configure AravisGigEController setup.py
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/template/programs/AravisGigEController/setup.py.in"
+               "${CMAKE_CURRENT_BINARY_DIR}/programs/AravisGigEController/setup.py")
 
 # run setup.py (install rule)
-if (ENABLE_AravisGigEController)
-    install(CODE "EXECUTE_PROCESS(COMMAND python3 ${CMAKE_CURRENT_BINARY_DIR}/setup.py install)")
+    install(CODE "EXECUTE_PROCESS(COMMAND python3 ${CMAKE_CURRENT_BINARY_DIR}/programs/AravisGigEController/setup.py install)")
+
 endif (ENABLE_AravisGigEController)
