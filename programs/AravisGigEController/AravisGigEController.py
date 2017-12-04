@@ -24,6 +24,8 @@ from AravisGigEControllerGUI import AravisGigEControllerGUI
 class AravisGigEController:
     def __init__(self, remote_port):
         self.remote_port = remote_port
+        self.dd = None
+        self.controls = None
 
     def init(self):
         # Check for YARP network
