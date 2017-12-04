@@ -37,33 +37,35 @@ class AravisGigEController:
         options.put('device','remote_grabber')
         options.put('remote', self.remote_port)
         options.put('local','/AravisGigEController')
-        dd = yarp.PolyDriver(options)
+        self.dd = yarp.PolyDriver(options)
 
         # View driver as FrameGrabber
-        self.controls = dd.viewIFrameGrabberControls2()
+        self.controls = self.dd.viewIFrameGrabberControls2()
 
     def close(self):
+        self.dd.close()
         yarp.Network.fini() # disconnect from the YARP network
 
     def set_zoom(self, zoom):
         print("Zoom set to {}".format(zoom))
-        self.controls.setFeature(16, zoom)
+        print(self.controls)
+        self.controls.setFeature(yarp.YARP_FEATURE_ZOOM, zoom)
 
     def set_focus(self, focus):
         print("Focus set to {}".format(focus))
-        self.controls.setFeature(10, focus)
+        self.controls.setFeature(yarp.YARP_FEATURE_FOCUS, focus)
 
     def set_gain(self, gain):
         print("Gain set to {}".format(gain))
-        self.controls.setFeature(8, gain)
+        self.controls.setFeature(yarp.YARP_FEATURE_GAIN, gain)
 
     def set_exposure(self, exposure):
         print("Exposure set to {}".format(exposure))
-        self.controls.setFeature(1, exposure)
+        self.controls.setFeature(yarp.YARP_FEATURE_EXPOSURE, exposure)
 
     def set_FPS(self, fps):
         print("FPS set to {}".format(fps))
-        self.controls.setFeature(16, fps)
+        self.controls.setFeature(yarp.YARP_FEATURE_FRAME_RATE, fps)
 
 @begin.start(auto_convert=True, config_file='config.txt')
 @begin.logging
