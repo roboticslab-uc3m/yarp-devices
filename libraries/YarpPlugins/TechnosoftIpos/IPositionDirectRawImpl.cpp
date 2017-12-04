@@ -20,7 +20,7 @@ bool roboticslab::TechnosoftIpos::setPositionRaw(int j, double ref)
     //-- Send the following message:
     //uint8_t ptpoint1[]={0x20,0x4E,0x00,0x00,0xE8,0x03,0x00,0x02};
     uint8_t msg_ptPoint[8];
-    int32_t position = ref * this->tr * 11.38;  // Appply tr & convert units to encoder increments
+    int32_t position = ref * this->tr * (encoderPulses / 360.0);  // Appply tr & convert units to encoder increments
     memcpy(msg_ptPoint+0,&position,4);
     memcpy(msg_ptPoint+4,&(this->ptModeMs),2);
     uint8_t ic = (ptPointCounter+1)*2;  //-- *2 because only 7 bits, so only half the buffer is usable
@@ -76,7 +76,7 @@ bool roboticslab::TechnosoftIpos::setPositionsRaw(const int n_joint, const int *
     //-- Send the following message:
     //uint8_t ptpoint1[]={0x20,0x4E,0x00,0x00,0xE8,0x03,0x00,0x02};
     uint8_t msg_ptPoint[8];
-    int32_t position = refs[0] * this->tr * 11.38;  // Appply tr & convert units to encoder increments
+    int32_t position = refs[0] * this->tr * (encoderPulses / 360.0);  // Appply tr & convert units to encoder increments
     memcpy(msg_ptPoint+0,&position,4);
     memcpy(msg_ptPoint+4,&(this->ptModeMs),2);
     uint8_t ic = (ptPointCounter+1)*2;  //-- *2 because only 7 bits, so only half the buffer is usable

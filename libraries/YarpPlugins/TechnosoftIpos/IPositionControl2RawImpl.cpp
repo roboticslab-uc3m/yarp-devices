@@ -22,7 +22,7 @@ bool roboticslab::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encEx
     //*************************************************************
     uint8_t msg_position_target[]= {0x23,0x7A,0x60,0x00,0x00,0x00,0x00,0x00}; // Position target
 
-    int position = ref * this->tr * 11.38;  // Appply tr & convert units to encoder increments
+    int position = ref * this->tr * (encoderPulses / 360.0);  // Appply tr & convert units to encoder increments
     memcpy(msg_position_target+4,&position,4);
 
     if( ! send( 0x600, 8, msg_position_target ) )
@@ -195,7 +195,7 @@ bool roboticslab::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
     //-- 0.01138 = ( 4 * 1024 pulse / 360 deg ) * (0.001 s / sample)   // deg/s -> pulse/sample  = UI (vel)
     //-- encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024)
     double val = (encoderPulses / 360.0) * 0.001;     //-- if encoderPulses is 4096 (4 * 1024), val = 0,011377778
-    int32_t sendRefSpeedFormated = sp * this->tr * (65536 * val); //-- 65536 * 0.01138 = 745.8
+    int32_t sendRefSpeedFormated = sp * this->tr * (65536 * val); //-- if encoderPulses is 4096 -> 65536 * 0.01138 = 745.8
     memcpy(msg_posmode_speed+4,&sendRefSpeedFormated,4);
 
     if( ! send( 0x600, 8, msg_posmode_speed) )

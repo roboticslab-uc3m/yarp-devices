@@ -267,7 +267,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage( can_msg * message)
             int got;
             memcpy(&got, message->data+4,4);
             encoderReady.wait();
-            encoder =  got / ( 11.38 * this->tr );
+            encoder =  got / ( (encoderPulses / 360.0) * this->tr );
             encoderTimestamp = message->ts;
             encoderReady.post();
             return true;
