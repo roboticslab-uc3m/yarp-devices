@@ -22,13 +22,17 @@ if(ENABLE_oneCanBusOneWrapper)
     add_subdirectory(oneCanBusOneWrapper)
 endif()
 
-if(ENABLE_launchManipulation)
-    add_subdirectory(launchManipulation)
+if(ENABLE_twoCanBusThreeWrappers)
+    add_subdirectory(twoCanBusThreeWrappers)
 endif()
+	
+# if(ENABLE_launchManipulation)
+#     add_subdirectory(launchManipulation)
+# endif()
 
-if(ENABLE_launchLocomotion)
-    add_subdirectory(launchLocomotion)
-endif()
+# if(ENABLE_launchLocomotion)
+#     add_subdirectory(launchLocomotion)
+# endif()
 
 if(ENABLE_tests)
     add_subdirectory(testCuiAbsolute)
