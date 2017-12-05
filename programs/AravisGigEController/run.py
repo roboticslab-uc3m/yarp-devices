@@ -16,8 +16,9 @@ import sys
 import begin
 from PySide import QtGui
 
-from AravisGigEController import AravisGigEController
-from AravisGigEControllerGUI import AravisGigEControllerGUI
+from .AravisGigEController import AravisGigEController
+from .AravisGigEControllerGUI import AravisGigEControllerGUI
+
 
 @begin.start(auto_convert=True)
 @begin.logging
