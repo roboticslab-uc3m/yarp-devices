@@ -32,7 +32,7 @@ bool roboticslab::TechnosoftIpos::setEncoderRaw(int j, double val)    // encExpo
     //*************************************************************
     uint8_t msg_setEncoder[]= {0x23,0x81,0x20,0x00,0x00,0x00,0x00,0x00}; // Manual 2081h: Set/Change the actual motor position
 
-    int sendEnc = val * this->tr * 11.38;  // Apply tr & convert units to encoder increments
+    int sendEnc = val * this->tr * (encoderPulses / 360.0);  // Apply tr & convert units to encoder increments
     memcpy(msg_setEncoder+4,&sendEnc,4);
 
     if( ! send(0x600, 8, msg_setEncoder))

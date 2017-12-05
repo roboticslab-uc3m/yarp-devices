@@ -23,6 +23,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     yarp::os::Bottle minVels = config.findGroup("minVels").tail();  //-- e.g. 0
     yarp::os::Bottle refAccelerations = config.findGroup("refAccelerations").tail();  //-- e.g. 0.575437
     yarp::os::Bottle refSpeeds = config.findGroup("refSpeeds").tail();  //-- e.g. 737.2798
+    yarp::os::Bottle encoderPulsess = config.findGroup("encoderPulsess").tail();  //-- e.g. 4096 (4 * 1024)
 
     yarp::os::Bottle types = config.findGroup("types").tail();  //-- e.g. 15
 
@@ -74,6 +75,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         options.put("k",ks.get(i).asDouble());
         options.put("refAcceleration",refAccelerations.get(i).asDouble());
         options.put("refSpeed",refSpeeds.get(i).asDouble());
+        options.put("encoderPulses",encoderPulsess.get(i).asDouble());
         options.put("ptModeMs",ptModeMs);
 
         // -- Configuramos todos los dispositivos (TechnosoftIpos, LacqueyFetch, CuiAbsolute)

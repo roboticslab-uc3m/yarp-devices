@@ -65,10 +65,13 @@
 #pragma config STVREN = OFF, LVP = OFF, XINST = OFF
 
 
-/***** Variables configurables (CAN_ID & SEND_DELAY) *******************************************************/
+/***** Variables configurables (CAN_ID & ENCODER PULSES & SEND_DELAY) *******************************************************/
 
 // CAN ID (Ver correspondecia en http://robots.uc3m.es/index.php/CuiAbsolute_Documentation)
 unsigned long canId = 498; //508 (codo 124) 492 (pierna izquierda 108)
+
+// ENCODER PULSES (Valor compuesto por el factor de pulsos-por-slot (normalmente 4) y numero total de slots del encoder (actualmente: 4 * 1024))
+double encoderPulses = 4096;
 
 /* SEND DELAY (Valor que utilizará Delay10TCYx en el envío. Valor recomendado de 1 a 100)
  * El byte 3 (data[2]) que recibirá el PIC (valor comprendido entre [0-255]) se multiplicará por el tiempo que
@@ -83,7 +86,7 @@ BYTE sendDelay = 1; //Default: 1
 int aux, message[2];
 int i=0;
 double degrees;
-double div = 11.38; // resultado dividir (2^12)/360 = 11.38
+double div = encoderPulses/360.0; // resultado dividir 4096/360 = 11.38
 BYTE x, y;
 ECAN_TX_MSG_FLAGS txFlags = ECAN_TX_PRIORITY_3 & ECAN_TX_STD_FRAME & ECAN_TX_NO_RTR_FRAME;
 int stop_flag=0; // -- flag para saber cuando se ha recibido un stop
