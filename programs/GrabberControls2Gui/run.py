@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-AravisGigEController
+GrabberControls2Gui
 ---------------------
 
 Simple GUI for controlling GigE cameras using Aravis and YARP
@@ -16,8 +16,8 @@ import sys
 import begin
 from PySide import QtGui
 
-from .AravisGigEController import AravisGigEController
-from .AravisGigEControllerGUI import AravisGigEControllerGUI
+from .GrabberControls2GuiBackend import GrabberControls2GuiBackend
+from .GrabberControls2GuiGUI import GrabberControls2GuiGUI
 
 
 @begin.start(auto_convert=True)
@@ -27,8 +27,8 @@ def main(remote_port: 'Remote port running the AravisGigE grabber'='/grabber'):
     app = QtGui.QApplication(sys.argv)
 
     # Create the widget and show it
-    controller = AravisGigEController(remote_port)
-    gui = AravisGigEControllerGUI(controller)
+    controller = GrabberControls2GuiBackend(remote_port)
+    gui = GrabberControls2GuiGUI(controller)
     gui.show()
 
     # Run the app

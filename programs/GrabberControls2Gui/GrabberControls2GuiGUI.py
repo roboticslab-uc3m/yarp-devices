@@ -37,7 +37,7 @@ def load_ui(file_name, where=None):
 
     return ui
 
-class AravisGigEControllerGUI(QtGui.QWidget):
+class GrabberControls2GuiGUI(QtGui.QWidget):
     def __init__(self, controller=None, parent=None):
         QtGui.QWidget.__init__(self, parent)
 
@@ -61,7 +61,7 @@ class AravisGigEControllerGUI(QtGui.QWidget):
 
     def setupUI(self):
         # Load UI and set it as main layout
-        ui_file_path = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'templates', 'AravisGigEControllerGUI.ui')
+        ui_file_path = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'templates', 'GrabberControls2GuiGUI.ui')
         main_widget = load_ui(ui_file_path, self)
         layout = QtGui.QVBoxLayout()
         layout.addWidget(main_widget)

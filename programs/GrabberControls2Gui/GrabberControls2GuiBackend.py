@@ -1,8 +1,8 @@
 """
-AravisGigEController
+GrabberControls2GuiBackend
 ---------------------
 
-Backend for the AravisGigEController
+Backend for the grabberControls2GUI
 
 Author: David Estevez
 Copyright: Universidad Carlos III de Madrid (C) 2017;
@@ -15,7 +15,7 @@ import logging
 import yarp
 
 
-class AravisGigEController:
+class GrabberControls2GuiBackend:
     def __init__(self, remote_port):
         self.remote_port = remote_port
         self.dd = None
@@ -32,7 +32,7 @@ class AravisGigEController:
         options = yarp.Property()
         options.put('device','remote_grabber')
         options.put('remote', self.remote_port)
-        options.put('local','/AravisGigEController')
+        options.put('local','/GrabberControls2Gui')
         self.dd = yarp.PolyDriver(options)
 
         # View driver as FrameGrabber
