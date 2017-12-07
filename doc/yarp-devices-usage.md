@@ -82,3 +82,18 @@ Exposure: 32000
 #### I cannot receive a color image, but I receive a grey image with a regular point pattern on it.
 
 What you are receiving is the raw image of the camera. To obtain a color image from it you need to decode it using a Bayer filter. Follow the steps in the section [Obtaining a color image from the device](#obtaining-a-color-image-from-the-device) in this very same guide to fix it.
+
+## AravisGigEController program
+
+To use the AravisGigEController you will need to be already running an instance of yarpserver and AravisGigE device. Once both are up and running, you can simply call the AravisGigEController:
+
+```bash
+$ AravisGigEController
+```
+
+By default it will try to connect to `/grabber`. If the port for the AravisGigE device is not `/grabber`, you can specify it when launching the AravisGigEController:
+
+```bash
+$ AravisGigEController --remote-port /whatever_port_you_want
+```
+
