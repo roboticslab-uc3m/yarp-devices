@@ -2,35 +2,35 @@
 # Author: Juan G. Victores & Raul de Santos Rico
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.6)
+yarp_prepare_plugin(CanBusHico
+                    CATEGORY device
+                    TYPE roboticslab::CanBusHico
+                    INCLUDE CanBusHico.hpp
+                    DEFAULT ON)
 
-YARP_PREPARE_PLUGIN(CanBusHico CATEGORY device TYPE roboticslab::CanBusHico INCLUDE CanBusHico.hpp)
+if(NOT SKIP_CanBusHico)
 
-IF (NOT SKIP_CanBusHico)
+get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
 
-  find_package(YARP REQUIRED)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
+                    ${_common_dirs})
 
-  # Include any directories needed for YARP
-  include_directories(${YARP_INCLUDE_DIRS} ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS})
+yarp_add_plugin(CanBusHico CanBusHico.cpp
+                           CanBusHico.hpp
+                           hico_api.h
+                           DeviceDriverImpl.cpp)
 
-  yarp_add_plugin(CanBusHico DeviceDriverImpl.cpp CanBusHico.cpp CanBusHico.cpp)
+add_dependencies(CanBusHico COLOR_DEBUG)
 
-  TARGET_LINK_LIBRARIES(CanBusHico ${YARP_LIBRARIES})
+target_link_libraries(CanBusHico ${YARP_LIBRARIES})
 
-  # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now... 
-#  set(ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${COLOR_DEBUG_INCLUDE_DIRS} CACHE INTERNAL "appended libraries")
-#  set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} CanBusHico CACHE INTERNAL "appended libraries") 
-
-  #install(TARGETS CanBusHico DESTINATION lib)
-  yarp_install(TARGETS CanBusHico
-             EXPORT YARP
+yarp_install(TARGETS CanBusHico
              COMPONENT runtime
              LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
              ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
-  yarp_install(FILES CanBusHico.ini
-              COMPONENT runtime
-              DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+yarp_install(FILES CanBusHico.ini
+             COMPONENT runtime
+             DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
-ENDIF (NOT SKIP_CanBusHico)
-
+endif()

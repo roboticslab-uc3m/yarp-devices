@@ -1,14 +1,35 @@
 # Authors: Juan G Victores
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-# Evident yet unstandarized names
 
-IF (NOT ROBOTICSLAB_YARP_DEVICES_FOUND)
+# Once you find_package(ROBOTICSLAB_YARP_DEVICES), it defines:
+#
+# * several targets; it's advised to link against individual libraries with the usual
+#   target_link_libraries() command
+#
+# * ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS; use include_directories(${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS})
+#
+# * ROBOTICSLAB_YARP_DEVICES_LIBRARIES; shorthand for linking against all targets at once,
+#   use target_link_libraries(_target ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES})
+#
+# Notes:
+#
+# * All target names are prepended with the ROBOTICSLAB:: namespace
 
-  SET(ROBOTICSLAB_YARP_DEVICES_LIBRARIES "@ROBOTICSLAB_YARP_DEVICES_LIBRARIES@")
-  SET(ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS "@ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS@")
-  SET(ROBOTICSLAB_YARP_DEVICES_LINK_DIRS "@ROBOTICSLAB_YARP_DEVICES_LINK_DIRS@")
-  SET(ROBOTICSLAB_YARP_DEVICES_DEFINES "@ROBOTICSLAB_YARP_DEVICES_DEFINES@")
-  SET(ROBOTICSLAB_YARP_DEVICES_MODULE_PATH "@ROBOTICSLAB_YARP_DEVICES_MODULE_PATH@")
+@PACKAGE_INIT@
 
-  SET (ROBOTICSLAB_YARP_DEVICES_FOUND TRUE)
-ENDIF (NOT ROBOTICSLAB_YARP_DEVICES_FOUND)
+set(ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
+
+foreach(_dir @PACKAGE_ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIR@)
+    set_and_check(_temp_var ${_dir})
+    list(APPEND ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS ${_temp_var})
+endforeach()
+
+if(NOT "@_exported_targets@" STREQUAL "")
+    include(${CMAKE_CURRENT_LIST_DIR}/ROBOTICSLAB_YARP_DEVICESTargets.cmake)
+
+    set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES)
+
+    foreach(_target @_exported_targets@)
+        list(APPEND ROBOTICSLAB_YARP_DEVICES_LIBRARIES ROBOTICSLAB::${_target})
+    endforeach()
+endif()

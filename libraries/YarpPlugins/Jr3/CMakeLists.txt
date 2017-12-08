@@ -2,35 +2,35 @@
 # Author: Juan G. Victores
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.6)
+yarp_prepare_plugin(Jr3
+                    CATEGORY device
+                    TYPE roboticslab::Jr3
+                    INCLUDE Jr3.hpp
+                    DEFAULT ON)
 
-YARP_PREPARE_PLUGIN(Jr3 CATEGORY device TYPE roboticslab::Jr3 INCLUDE Jr3.hpp WRAPPER analogServer)
+if(NOT SKIP_Jr3)
 
-IF (NOT SKIP_Jr3)
+get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
 
-  find_package(YARP REQUIRED)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
+                    ${_common_dirs})
 
-  # Include any directories needed for YARP
-  include_directories(${YARP_INCLUDE_DIRS} ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
+yarp_add_plugin(Jr3 Jr3.hpp
+                    jr3pci-ioctl.h
+                    DeviceDriverImpl.cpp
+                    IAnalogSensorImpl.cpp)
 
-  yarp_add_plugin(Jr3 DeviceDriverImpl.cpp IAnalogSensorImpl.cpp )
+add_dependencies(Jr3 COLOR_DEBUG)
 
-  TARGET_LINK_LIBRARIES(Jr3 ${YARP_LIBRARIES})
+target_link_libraries(Jr3 ${YARP_LIBRARIES})
 
-  # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now... 
-  set(ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "appended libraries")
-  #set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} LacqueyFetch CACHE INTERNAL "appended libraries")
-
-  #install(TARGETS Jr3 DESTINATION lib)
-  yarp_install(TARGETS Jr3
-             EXPORT YARP
+yarp_install(TARGETS Jr3
              COMPONENT runtime
              LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
              ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
-  yarp_install(FILES Jr3.ini
-              COMPONENT runtime
-              DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+yarp_install(FILES Jr3.ini
+             COMPONENT runtime
+             DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
-ENDIF (NOT SKIP_Jr3)
-
+endif()
