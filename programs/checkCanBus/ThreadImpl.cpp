@@ -1,14 +1,16 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include <cstdio>
 #include "CheckCanBus.hpp"
+#include "hico_api.h"
+
+#include <yarp/os/Time.h>
+
+#include <ColorDebug.hpp>
 
 // ------------------ Thread Related -----------------------------------------
 
 void roboticslab::CheckCanBus::run()
 {
-
-
     CD_INFO("Started CheckCanBus reading thread run.\n");
 
     double threadInitTime = yarp::os::Time::now();
@@ -53,7 +55,7 @@ void roboticslab::CheckCanBus::run()
             // -- 2 segundos después, para el Modulo
             if(int(yarp::os::Time::now()-firstTime)==timeOut+3)
             {
-                printf("Happy end :)\n");
+                CD_SUCCESS_NO_HEADER("Happy end :)\n");
                 this->stopModule();
             }
         }

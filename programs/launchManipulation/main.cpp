@@ -38,16 +38,15 @@
  *
  */
 
+#include <yarp/os/Network.h>
+#include <yarp/os/ResourceFinder.h>
+
+#include <ColorDebug.hpp>
+
 #include "TwoCanBusThreeWrappers.hpp"
-
-
-//YARP_DECLARE_PLUGINS(YarpPlugins)
 
 int main(int argc, char *argv[])
 {
-
-    //YARP_REGISTER_PLUGINS(YarpPlugins);
-
     yarp::os::ResourceFinder rf;
     rf.setVerbose(true);
 
@@ -69,4 +68,3 @@ int main(int argc, char *argv[])
     roboticslab::TwoCanBusThreeWrappers mod;
     return mod.runModule(rf);
 }
-

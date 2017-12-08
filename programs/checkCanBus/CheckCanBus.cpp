@@ -1,16 +1,19 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include "CheckCanBus.hpp"
-// --
+
+#include <cstdio>
+#include <cstdlib>
+
+#include <ios>
 #include <string>
-#include <iostream>
 #include <sstream>
 
-#include "TechnosoftIpos/TechnosoftIpos.hpp"
-// --
+#include <yarp/os/Bottle.h>
+#include <yarp/os/Property.h>
+#include <yarp/os/Time.h>
 
-
-YARP_DECLARE_PLUGINS(YarpPlugins)
+#include <ColorDebug.hpp>
 
 namespace roboticslab
 {
@@ -33,19 +36,19 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf)
     // -- Antes de configurar los periféricos, check a parámetro --help
     if(rf.check("help"))
     {
-        printf("CheckCanBus options:\n");
-        printf("\t--help (this help)\t --ids [\"(id)\"] \t\t --from [file.ini]\t --canDevice [path]*\n\t--timeOut [s]\t\t --resetAll (for all nodes)\t --resetNode [node]\t --cleaningTime [s]\n");
-        printf("\n");
-        printf("*can0: \t--canDevice /dev/can0\t\t can1: --canDevice /dev/can1\n");
-        printf(" .ini:\t checkLocomotionCan0.ini\t checkLocomotionCan1.ini\t checkManipulationCan0.ini\t checkManipulationCan1.ini\n\n");
-        printf("Example of uses:\n");
-        printf("* Reset driver ID [23] and check it:\t\t\t\t checkCanBus --canDevice /dev/can1 --ids 23 --resetNode 23\n");
-        printf("* Reset drivers IDs [23,24] and check them:\t\t\t checkCanBus --canDevice /dev/can1 --ids \"(23 24)\" --resetAll\n");
-        printf("* Reset all drivers of manipulation Can0 and check devices:\t checkCanBus --canDevice /dev/can0 --from checkManipulationCan0.ini --resetAll\n");
+        std::printf("CheckCanBus options:\n");
+        std::printf("\t--help (this help)\t --ids [\"(id)\"] \t\t --from [file.ini]\t --canDevice [path]*\n\t--timeOut [s]\t\t --resetAll (for all nodes)\t --resetNode [node]\t --cleaningTime [s]\n");
+        std::printf("\n");
+        std::printf("*can0: \t--canDevice /dev/can0\t\t can1: --canDevice /dev/can1\n");
+        std::printf(" .ini:\t checkLocomotionCan0.ini\t checkLocomotionCan1.ini\t checkManipulationCan0.ini\t checkManipulationCan1.ini\n\n");
+        std::printf("Example of uses:\n");
+        std::printf("* Reset driver ID [23] and check it:\t\t\t\t checkCanBus --canDevice /dev/can1 --ids 23 --resetNode 23\n");
+        std::printf("* Reset drivers IDs [23,24] and check them:\t\t\t checkCanBus --canDevice /dev/can1 --ids \"(23 24)\" --resetAll\n");
+        std::printf("* Reset all drivers of manipulation Can0 and check devices:\t checkCanBus --canDevice /dev/can0 --from checkManipulationCan0.ini --resetAll\n");
 
 
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
-        ::exit(1);
+        std::exit(1);
         return false;
     }
 
@@ -82,7 +85,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf)
     else
     {
         CD_ERROR("Bad Configuration of TechnosoftIpos :(\n");
-        ::exit(1);
+        std::exit(1);
     }
 
     //-- Pass CAN bus (HicoCAN) pointer to CAN node (TechnosoftIpos).
@@ -94,14 +97,14 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf)
     if(rf.check("timeOut"))
     {
         timeOut = rf.find("timeOut").asInt();
-        printf("[INFO] Timeout: %.2f [s]\n", timeOut);
+        CD_INFO_NO_HEADER("[INFO] Timeout: %.2f [s]\n", timeOut);
     }
 
 
     // -- Parametro: --resetAll
     if(rf.check("resetAll"))
     {
-        printf("[INFO] Reseting all nodes\n");
+        CD_INFO_NO_HEADER("[INFO] Reseting all nodes\n");
         // -- doing reset of node after delay
         yarp::os::Time::delay(1);
         technosoftIpos->resetNodes();
@@ -111,7 +114,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf)
     if(rf.check("resetNode"))
     {
         nodeForReset = rf.find("resetNode").asInt();
-        printf("[INFO] Reseting node number: %i\n", nodeForReset );
+        CD_INFO_NO_HEADER("[INFO] Reseting node number: %i\n", nodeForReset );
         // -- doing reset of node after delay
         yarp::os::Time::delay(1);
         technosoftIpos->resetNode(nodeForReset);
@@ -122,7 +125,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf)
     if(rf.check("cleaningTime"))
     {
         cleaningTime = rf.find("cleaningTime").asInt();
-        printf("[INFO] Cleaning Time: %.2f [s]\n", cleaningTime);
+        CD_INFO_NO_HEADER("[INFO] Cleaning Time: %.2f [s]\n", cleaningTime);
     }
 
 
@@ -136,10 +139,10 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf)
         int n;
         while(streamIds>>n)     // -- recorre el stream y va introduciendo cada ID en la cola
         {
-            printf("%i ",n);
+            std::printf("%i ",n);
             queueIds.push(n); // -- introduce en la cola los IDs
         }
-        printf("\n");
+        std::printf("\n");
     }
 
 
@@ -155,10 +158,10 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf)
         int n;
         while(streamIds>>n)     // -- recorre el stream y va introduciendo cada ID en la cola
         {
-            printf("%i ",n);
+            std::printf("%i ",n);
             queueIds.push(n); // -- introduce en la cola los IDs
         }
-        printf("\n");
+        std::printf("\n");
     }
 
     lastNow = yarp::os::Time::now(); // -- tiempo actual

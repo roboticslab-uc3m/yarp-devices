@@ -1,19 +1,21 @@
+#include "gtest/gtest.h"
 
-#include "gtest/gtest.h" // -- We load the librarie of GoogleTest
+#include <yarp/os/Property.h>
+#include <yarp/os/Time.h>
 
-// -- We load the rest of libraries that we will use to call the functions of our code
-#include <yarp/os/all.h>
-#include <yarp/dev/all.h>
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/IControlLimits2.h>
 
-#include "ColorDebug.hpp"
+#include <ColorDebug.hpp>
 
 #include "ICanBusSharer.h"
 #include "ITechnosoftIpos.h"
 #include "ICanBusHico.h"
 
-#define CAN_ID 124
+#include "hico_api.h"
 
-//YARP_DECLARE_PLUGINS(YarpPlugins)
+#define CAN_ID 124
 
 namespace roboticslab
 {
@@ -29,7 +31,6 @@ public:
     virtual void SetUp()
     {
         // -- code here will execute just before the test ensues
-        //YARP_REGISTER_PLUGINS(YarpPlugins);
 
         yarp::os::Property hicoCanConf ("(device CanBusHico) (canDevice /dev/can1) (canBitrate 8)"); // -- truco para agregar directamente un conjunto de propiedades sin tener que llamar a la función "put"
         bool ok = true;
@@ -1120,4 +1121,3 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetControlModeRaw_5_4 )
 }
 */
 }  // namespace roboticslab
-

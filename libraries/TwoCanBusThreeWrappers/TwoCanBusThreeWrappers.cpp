@@ -2,6 +2,18 @@
 
 #include "TwoCanBusThreeWrappers.hpp"
 
+#include <cstdio>
+#include <string>
+
+#include <yarp/os/Bottle.h>
+#include <yarp/os/Property.h>
+#include <yarp/os/Value.h>
+
+#include <yarp/dev/PolyDriverList.h>
+#include <yarp/dev/Wrapper.h>
+
+#include <ColorDebug.hpp>
+
 namespace roboticslab
 {
 
@@ -17,9 +29,9 @@ bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf)
 
     if(rf.check("help"))
     {
-        printf("TwoCanBusThreeWrappers options:\n");
-        printf("\t--help (this help)\t--from [file.ini]\t--context [path]\t--homePoss\t--externalEncoderWait [s]\n\n");
-        printf("Note: if the Absolute Encoder doesn't respond, use --externalEncoderWait [seconds] parameter for using default relative encoder position\n");
+        std::printf("TwoCanBusThreeWrappers options:\n");
+        std::printf("\t--help (this help)\t--from [file.ini]\t--context [path]\t--homePoss\t--externalEncoderWait [s]\n\n");
+        std::printf("Note: if the Absolute Encoder doesn't respond, use --externalEncoderWait [seconds] parameter for using default relative encoder position\n");
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
         return false;
     }
@@ -28,7 +40,7 @@ bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf)
     if(rf.check("externalEncoderWait"))
     {
         timeEncoderWait = rf.find("externalEncoderWait").asInt();
-        printf("[INFO] Wait time for Absolute Encoder: %.2f [s]\n", timeEncoderWait);
+        std::printf("[INFO] Wait time for Absolute Encoder: %.2f [s]\n", timeEncoderWait);
     }  
 
     if(rf.check("homePoss"))

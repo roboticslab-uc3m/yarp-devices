@@ -3,22 +3,16 @@
 #ifndef __DUMP_CAN_BUS__
 #define __DUMP_CAN_BUS__
 
+#include <string>
+
+#include <yarp/os/ResourceFinder.h>
 #include <yarp/os/RFModule.h>
-#include <yarp/os/Module.h>
-#include <yarp/os/Network.h>
-#include <yarp/os/Port.h>
-#include <yarp/os/BufferedPort.h>
+#include <yarp/os/Thread.h>
 
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/Wrapper.h>
 
-#include <string>
-#include <sstream>
-#include <stdlib.h>
-
-#include "ICanBusSharer.h"
-#include "ColorDebug.hpp"
-
+#include "ICanBusHico.h"
+#include "hico_api.h"
 
 namespace roboticslab
 {
@@ -73,4 +67,3 @@ protected:
 }  // namespace roboticslab
 
 #endif  // __DUMP_CAN_BUS__
-

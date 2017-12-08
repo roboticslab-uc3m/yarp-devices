@@ -50,16 +50,15 @@ Example of uses:
  *
  */
 
+#include <yarp/os/Network.h>
+#include <yarp/os/ResourceFinder.h>
+
+#include <ColorDebug.hpp>
+
 #include "CheckCanBus.hpp"
-
-
-// YARP_DECLARE_PLUGINS(YarpPlugins)
 
 int main(int argc, char *argv[])
 {
-
-//    YARP_REGISTER_PLUGINS(YarpPlugins);
-
     yarp::os::ResourceFinder rf;
     rf.setVerbose(true); // -- Imprimir en pantalla la ubicación de los recursos a TRUE
     rf.setDefaultContext("checkCanBus"); // -- Con esta función busca el directorio "checkCanBus" dentro de build/share/
@@ -78,4 +77,3 @@ int main(int argc, char *argv[])
     roboticslab::CheckCanBus mod;      // -- Clase que hereda de RFModule y de Thread
     return mod.runModule(rf); // -- runModule llama a la función configure() de CheckCanBus.hpp
 }
-
