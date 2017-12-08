@@ -155,7 +155,8 @@ install(FILES ${CMAKE_BINARY_DIR}/ROBOTICSLAB_YARP_DEVICESConfig.cmake.install
 # https://github.com/roboticslab-uc3m/project-generator/issues/19
 if(_exported_targets)
     # <pkg>Targets.cmake (build tree).
-    export(EXPORT ROBOTICSLAB_YARP_DEVICES
+    # In CMake 3.0 or later: export(EXPORT ROBOTICSLAB_YARP_DEVICES...)
+    export(TARGETS ${_exported_targets}
            NAMESPACE ROBOTICSLAB::
            FILE ROBOTICSLAB_YARP_DEVICESTargets.cmake)
 
