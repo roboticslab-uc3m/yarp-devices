@@ -27,9 +27,12 @@ sudo aptitude -o Acquire::Check-Valid-Until=false update
 
 ### Install the Software
 
-First install the depencencies:
+First install the dependencies:
   - [Install CMake 2.8.9 (Debian 6.0.10)](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-cmake.md#install-cmake-289-debian-6010)
   - [Install YARP 2.3.68+ (Debian 6.0.10)](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md#install-yarp-2368-debian-6010)
+
+Additionally, this project depends on YCM to download and build external packages. Although this process is intended to run automatically during the CMake configuration phase, you may still want to install YCM and said packages by yourself. In that respect, refer to [Install YCM](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-ycm.md) and to the installation guides of any package listed below:
+- [color-debug](https://github.com/roboticslab-uc3m/color-debug)
 
 Our software integrates the previous dependencies. Note that you will be prompted for your password upon using '''sudo''' a couple of times:
 
