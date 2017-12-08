@@ -54,8 +54,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
 
-# Pick up our cmake modules.
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+# Pick up our CMake modules.
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake
+                              ${CMAKE_SOURCE_DIR}/cmake/find-modules)
 
 # Enabling coverage.
 option(ENABLE_coverage "Choose if you want to enable coverage collection" OFF)
@@ -95,6 +96,7 @@ set_property(GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_TARGETS)
 include(CMakeDependentOption)
 
 # Add main contents.
+add_subdirectory(cmake)
 add_subdirectory(share)
 add_subdirectory(libraries)
 add_subdirectory(programs)
@@ -119,6 +121,7 @@ include(CMakePackageConfigHelpers)
 
 # Set exported variables (build tree).
 set(ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIR ${_common_includes})
+set(ROBOTICSLAB_YARP_DEVICES_MODULE_DIR ${CMAKE_SOURCE_DIR}/cmake)
 
 # <pkg>Config.cmake (build tree).
 configure_package_config_file(${CMAKE_SOURCE_DIR}/cmake/template/ROBOTICSLAB_YARP_DEVICESConfig.cmake.in
@@ -126,16 +129,19 @@ configure_package_config_file(${CMAKE_SOURCE_DIR}/cmake/template/ROBOTICSLAB_YAR
                               INSTALL_DESTINATION ${CMAKE_BINARY_DIR}
                               INSTALL_PREFIX ${CMAKE_BINARY_DIR}
                               PATH_VARS ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIR
+                                        ROBOTICSLAB_YARP_DEVICES_MODULE_DIR
                               NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
 # Set exported variables (build tree).
 set(ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIR ${CMAKE_INSTALL_INCLUDEDIR})
+set(ROBOTICSLAB_YARP_DEVICES_MODULE_DIR ${CMAKE_INSTALL_DATADIR}/ROBOTICSLAB_YARP_DEVICES/cmake)
 
 # <pkg>Config.cmake (install tree).
 configure_package_config_file(${CMAKE_SOURCE_DIR}/cmake/template/ROBOTICSLAB_YARP_DEVICESConfig.cmake.in
                               ${CMAKE_BINARY_DIR}/ROBOTICSLAB_YARP_DEVICESConfig.cmake.install
                               INSTALL_DESTINATION ${_cmake_destination}
                               PATH_VARS ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIR
+                                        ROBOTICSLAB_YARP_DEVICES_MODULE_DIR
                               NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
 # Install <pkg>Config.cmake.
