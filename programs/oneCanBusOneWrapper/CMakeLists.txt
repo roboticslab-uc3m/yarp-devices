@@ -1,4 +1,5 @@
-option(ENABLE_oneCanBusOneWrapper "Enable/disable oneCanBusOneWrapper program" ON)
+cmake_dependent_option(ENABLE_oneCanBusOneWrapper "Enable/disable oneCanBusOneWrapper program" ON
+                       ENABLE_OneCanBusOneWrapper OFF)
 
 if(ENABLE_oneCanBusOneWrapper)
 

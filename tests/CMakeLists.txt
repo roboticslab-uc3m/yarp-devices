@@ -1,4 +1,5 @@
-option(ENABLE_tests "Choose if you want to compile tests" ON)
+cmake_dependent_option(ENABLE_tests "Compile unit tests" ON
+                       ENABLE_YarpPlugins OFF)
 
 if(ENABLE_tests)
 

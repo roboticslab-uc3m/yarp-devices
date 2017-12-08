@@ -1,4 +1,5 @@
-option(ENABLE_launchLocomotion "Enable/disable launchLocomotion program" ON)
+cmake_dependent_option(ENABLE_launchLocomotion "Enable/disable launchLocomotion program" ON
+                       ENABLE_TwoCanBusThreeWrappers OFF)
 
 if(ENABLE_launchLocomotion)
 

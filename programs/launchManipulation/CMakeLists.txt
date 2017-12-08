@@ -1,4 +1,5 @@
-option(ENABLE_launchManipulation "Enable/disable launchManipulation program" ON)
+cmake_dependent_option(ENABLE_launchManipulation "Enable/disable launchManipulation program" ON
+                       ENABLE_TwoCanBusThreeWrappers OFF)
 
 if(ENABLE_launchManipulation)
 
