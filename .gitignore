@@ -11,3 +11,4 @@ doc/doxygen_sqlite3.db
 .idea
 venv
 **/__pycache__
+/external/
