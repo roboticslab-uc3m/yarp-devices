@@ -2,6 +2,16 @@
 
 #include "ExampleRemoteControlboard.hpp"
 
+#include <cstdio>
+#include <string>
+#include <vector>
+
+#include <yarp/os/Network.h>
+#include <yarp/os/Property.h>
+#include <yarp/os/ResourceFinder.h>
+#include <yarp/os/Time.h>
+#include <yarp/os/Value.h>
+
 namespace roboticslab
 {
 
@@ -15,12 +25,12 @@ int ExampleRemoteControlboard::run(int argc, char **argv)
     rf.configure(argc, argv);
 
     std::string robot = rf.check("robot",yarp::os::Value(DEFAULT_ROBOT),"name of /robot to be used").asString();
-    printf("\t--robot: %s [%s]\n",robot.c_str(),DEFAULT_ROBOT);
+    std::printf("\t--robot: %s [%s]\n",robot.c_str(),DEFAULT_ROBOT);
 
-    printf("Note: requires a running instance of roboticslabSim\n");
+    std::printf("Note: requires a running instance of roboticslabSim\n");
     if (!yarp::os::Network::checkNetwork())
     {
-        printf("Please start a yarp name server first\n");
+        std::printf("Please start a yarp name server first\n");
         return 1;
     }
 
@@ -32,7 +42,7 @@ int ExampleRemoteControlboard::run(int argc, char **argv)
     dd.open(options); //Configure the YARP multi-use driver with the given options
     if( ! dd.isValid() )
     {
-        printf("%s not available.\n", robot.c_str());
+        std::printf("%s not available.\n", robot.c_str());
         dd.close();
         yarp::os::Network::fini(); //disconnect from the YARP network
         return 1;
@@ -41,29 +51,29 @@ int ExampleRemoteControlboard::run(int argc, char **argv)
     //-- View interfaces
     if ( ! dd.view(pos) )  // connect 'pos' interface to 'dd' device
     {
-        printf("[error] Problems acquiring position interface\n");
+        std::printf("[error] Problems acquiring position interface\n");
         return 1;
     }
     if ( ! dd.view(pos2) )  // connect 'pos2' interface to 'dd' device
     {
-        printf("[error] Problems acquiring position interface\n");
+        std::printf("[error] Problems acquiring position interface\n");
         return 1;
     }
-    printf("[success] Acquired position interface\n");
+    std::printf("[success] Acquired position interface\n");
 
     if ( ! dd.view(enc) ) // connect 'enc' interface to 'dd' device
     {
-        printf("[error] Problems acquiring encoder interface\n");
+        std::printf("[error] Problems acquiring encoder interface\n");
         return 1;
     }
-    printf("[success] Acquired encoder interface\n");
+    std::printf("[success] Acquired encoder interface\n");
 
     if ( ! dd.view(vel) ) // connect 'vel' interface to 'dd' device
     {
-        printf("[error] Problems acquiring velocity interface\n");
+        std::printf("[error] Problems acquiring velocity interface\n");
         return 1;
     }
-    printf("[success] Acquired velocity interface\n");
+    std::printf("[success] Acquired velocity interface\n");
 
     //-- Start
 
@@ -155,26 +165,26 @@ int ExampleRemoteControlboard::run(int argc, char **argv)
     }*/
 
     {
-        printf("positionMove() <- -3,-3\n");
+        std::printf("positionMove() <- -3,-3\n");
         std::vector<double> q(2,0.0);
         std::vector<int> mask(2,1);
         q[0] = -3.0;
         q[1] = -3.0;
         pos2->positionMove( 2, mask.data(), q.data() );
-        printf("Wait to reach");
+        std::printf("Wait to reach");
         bool done = false;
         while(!done)
         {
             pos->checkMotionDone( & done );
-            printf(".");
-            fflush(stdout);
+            std::printf(".");
+            std::fflush(stdout);
             yarp::os::Time::delay(0.1);
         }
-        printf("\n");
+        std::printf("\n");
 
         std::vector<double> d(2,0.0);
         enc->getEncoders( d.data() );
-        printf("getEncoders() -> is at: %f %f\n", d[0], d[1]);
+        std::printf("getEncoders() -> is at: %f %f\n", d[0], d[1]);
     }
 
 

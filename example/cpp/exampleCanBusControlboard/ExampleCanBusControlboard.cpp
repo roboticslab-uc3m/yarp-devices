@@ -2,6 +2,10 @@
 
 #include "ExampleCanBusControlboard.hpp"
 
+#include <yarp/os/Property.h>
+
+#include <ColorDebug.hpp>
+
 /************************************************************************/
 roboticslab::ExampleCanBusControlboard::ExampleCanBusControlboard() { }
 
