@@ -122,7 +122,7 @@ endif()
 include(CMakePackageConfigHelpers)
 
 # Set exported variables (build tree).
-set(ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIR ${_common_includes})
+set(ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIR "${_common_includes}")
 set(ROBOTICSLAB_YARP_DEVICES_MODULE_DIR ${CMAKE_SOURCE_DIR}/cmake)
 
 # <pkg>Config.cmake (build tree).
