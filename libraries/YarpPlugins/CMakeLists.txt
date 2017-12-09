@@ -42,6 +42,7 @@ install(FILES ICanBusHico.h
               ICuiAbsolute.h
               IProximitySensors.h
               ITechnosoftIpos.h
+              hico_api.h # remove, see #122
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Export variables to the global scope.
