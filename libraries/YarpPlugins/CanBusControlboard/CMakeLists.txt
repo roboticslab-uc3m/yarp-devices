@@ -31,7 +31,8 @@ yarp_add_plugin(CanBusControlboard CanBusControlboard.cpp
 
 add_dependencies(CanBusControlboard COLOR_DEBUG)
 
-target_link_libraries(CanBusControlboard ${YARP_LIBRARIES})
+target_link_libraries(CanBusControlboard YARP::YARP_OS
+                                         YARP::YARP_dev)
 
 yarp_install(TARGETS CanBusControlboard
              COMPONENT runtime

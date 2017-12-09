@@ -1,5 +1,7 @@
 #include "gtest/gtest.h"
 
+#include <cstdlib>
+
 #include <yarp/os/Property.h>
 #include <yarp/os/Time.h>
 
@@ -43,7 +45,7 @@ public:
         else
         {
             CD_ERROR("Bad Configuration of HicoCAN :(\n");
-            ::exit(1);
+            std::exit(1);
         }
 
         //yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 15) (min -45) (max 70) (tr 160) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal right arm
@@ -69,7 +71,7 @@ public:
         else
         {
             CD_ERROR("Bad Configuration of TechnosoftIpos :(\n");
-            ::exit(1);
+            std::exit(1);
         }
 
         //-- Pass CAN bus (HicoCAN) pointer to CAN node (TechnosoftIpos).

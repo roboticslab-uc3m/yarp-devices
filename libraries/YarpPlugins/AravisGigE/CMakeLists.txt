@@ -27,7 +27,8 @@ yarp_add_plugin(AravisGigE AravisGigE.cpp
 
 add_dependencies(AravisGigE COLOR_DEBUG)
 
-target_link_libraries(AravisGigE ${YARP_LIBRARIES}
+target_link_libraries(AravisGigE YARP::YARP_OS
+                                 YARP::YARP_dev
                                  ${ARAVIS_LIBRARIES})
 
 yarp_install(TARGETS AravisGigE

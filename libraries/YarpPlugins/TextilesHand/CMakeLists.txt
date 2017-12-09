@@ -31,7 +31,8 @@ yarp_add_plugin(TextilesHand TextilesHand.cpp
 
 add_dependencies(TextilesHand COLOR_DEBUG)
 
-target_link_libraries(TextilesHand ${YARP_LIBRARIES})
+target_link_libraries(TextilesHand YARP::YARP_OS
+                                   YARP::YARP_dev)
 
 yarp_install(TARGETS TextilesHand
              COMPONENT runtime

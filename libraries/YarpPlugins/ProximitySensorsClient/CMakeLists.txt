@@ -22,7 +22,8 @@ yarp_add_plugin(ProximitySensorsClient ProximitySensorsClient.hpp
 
 add_dependencies(ProximitySensorsClient COLOR_DEBUG)
 
-target_link_libraries(ProximitySensorsClient ${YARP_LIBRARIES})
+target_link_libraries(ProximitySensorsClient YARP::YARP_OS
+                                             YARP::YARP_dev)
 
 yarp_install(TARGETS ProximitySensorsClient
              COMPONENT runtime

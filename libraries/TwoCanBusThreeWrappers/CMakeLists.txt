@@ -17,7 +17,8 @@ add_dependencies(TwoCanBusThreeWrappers COLOR_DEBUG)
 
 set_target_properties(TwoCanBusThreeWrappers PROPERTIES PUBLIC_HEADER TwoCanBusThreeWrappers.hpp)
 
-target_link_libraries(TwoCanBusThreeWrappers LINK_PUBLIC ${YARP_LIBRARIES})
+target_link_libraries(TwoCanBusThreeWrappers LINK_PUBLIC YARP::YARP_OS
+                                                         YARP::YARP_dev)
 
 install(TARGETS TwoCanBusThreeWrappers
         EXPORT ROBOTICSLAB_YARP_DEVICES

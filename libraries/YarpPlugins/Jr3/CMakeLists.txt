@@ -22,7 +22,8 @@ yarp_add_plugin(Jr3 Jr3.hpp
 
 add_dependencies(Jr3 COLOR_DEBUG)
 
-target_link_libraries(Jr3 ${YARP_LIBRARIES})
+target_link_libraries(Jr3 YARP::YARP_OS
+                          YARP::YARP_dev)
 
 yarp_install(TARGETS Jr3
              COMPONENT runtime

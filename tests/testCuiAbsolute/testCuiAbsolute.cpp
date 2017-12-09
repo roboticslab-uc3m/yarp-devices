@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 
+#include <cstdlib>
 #include <ios>
 #include <string>
 #include <sstream>
@@ -46,7 +47,7 @@ public:
         else
         {
             CD_ERROR("Bad Configuration of HicoCAN :(\n");
-            ::exit(1);
+            std::exit(1);
         }
 
         // -- adding configuration of Cui Absolute Encoders (minimal configuration that CuiAbsolute need to run correctly)
@@ -59,7 +60,7 @@ public:
         if ( ! canNodeDevice.isValid() )
         {
             CD_ERROR("Bad device of CuiAbsolute :(\n");
-            ::exit(1);
+            std::exit(1);
         }
         ok &= canNodeDevice.view( iControlLimits2Raw );
         ok &= canNodeDevice.view( iControlModeRaw );
@@ -78,7 +79,7 @@ public:
         else
         {
             CD_ERROR("Bad Configuration of CuiAbsolute :(\n");
-            ::exit(1);
+            std::exit(1);
         }
 
         //-- Pass CAN bus (HicoCAN) pointer to CAN node.

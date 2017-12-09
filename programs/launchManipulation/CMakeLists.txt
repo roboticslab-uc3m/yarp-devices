@@ -14,7 +14,8 @@ add_executable(launchManipulation main.cpp)
 
 add_dependencies(launchManipulation COLOR_DEBUG)
 
-target_link_libraries(launchManipulation ${YARP_LIBRARIES}
+target_link_libraries(launchManipulation YARP::YARP_OS
+                                         YARP::YARP_init
                                          TwoCanBusThreeWrappers)
 
 install(TARGETS launchManipulation

@@ -31,7 +31,8 @@ yarp_add_plugin(FakeJoint FakeJoint.cpp
 
 add_dependencies(FakeJoint COLOR_DEBUG)
 
-target_link_libraries(FakeJoint ${YARP_LIBRARIES})
+target_link_libraries(FakeJoint YARP::YARP_OS
+                                YARP::YARP_dev)
 
 yarp_install(TARGETS FakeJoint
              COMPONENT runtime

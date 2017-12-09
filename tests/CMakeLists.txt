@@ -10,9 +10,6 @@ enable_testing()
 include_directories(${gtest_SOURCE_DIR}/include
                     ${gtest_SOURCE_DIR})
 
-link_libraries(gtest
-               gtest_main)
-
 add_subdirectory(testTechnosoftIpos)
 
 add_subdirectory(testCuiAbsolute)

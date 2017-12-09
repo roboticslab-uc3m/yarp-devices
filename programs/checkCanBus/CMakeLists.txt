@@ -17,8 +17,9 @@ add_executable(checkCanBus main.cpp
 
 add_dependencies(checkCanBus COLOR_DEBUG)
 
-target_link_libraries(checkCanBus ${YARP_LIBRARIES}
-                                  ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES})
+target_link_libraries(checkCanBus YARP::YARP_OS
+                                  YARP::YARP_init
+                                  YARP::YARP_dev)
 
 install(TARGETS checkCanBus
         DESTINATION ${CMAKE_INSTALL_BINDIR})

@@ -17,7 +17,8 @@ add_dependencies(OneCanBusOneWrapper COLOR_DEBUG)
 
 set_target_properties(OneCanBusOneWrapper PROPERTIES PUBLIC_HEADER OneCanBusOneWrapper.hpp)
 
-target_link_libraries(OneCanBusOneWrapper LINK_PUBLIC ${YARP_LIBRARIES})
+target_link_libraries(OneCanBusOneWrapper LINK_PUBLIC YARP::YARP_OS
+                                                      YARP::YARP_dev)
 
 install(TARGETS OneCanBusOneWrapper
         EXPORT ROBOTICSLAB_YARP_DEVICES

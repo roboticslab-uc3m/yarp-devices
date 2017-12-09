@@ -31,7 +31,8 @@ yarp_add_plugin(TechnosoftIpos TechnosoftIpos.cpp
 
 add_dependencies(TechnosoftIpos COLOR_DEBUG)
 
-target_link_libraries(TechnosoftIpos ${YARP_LIBRARIES})
+target_link_libraries(TechnosoftIpos YARP::YARP_OS
+                                     YARP::YARP_dev)
 
 yarp_install(TARGETS TechnosoftIpos
              COMPONENT runtime

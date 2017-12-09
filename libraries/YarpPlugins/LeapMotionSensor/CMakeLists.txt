@@ -23,7 +23,9 @@ yarp_add_plugin(LeapMotionSensor LeapMotionSensor.hpp
 
 add_dependencies(LeapMotionSensor COLOR_DEBUG)
 
-target_link_libraries(LeapMotionSensor ${YARP_LIBRARIES}
+target_link_libraries(LeapMotionSensor YARP::YARP_OS
+                                       YARP::YARP_dev
+                                       YARP::YARP_sig
                                        ${Leap_LIBRARY})
 
 yarp_install(TARGETS LeapMotionSensor

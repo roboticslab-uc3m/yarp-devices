@@ -31,7 +31,8 @@ yarp_add_plugin(CuiAbsolute CuiAbsolute.cpp
 
 add_dependencies(CuiAbsolute COLOR_DEBUG)
 
-target_link_libraries(CuiAbsolute ${YARP_LIBRARIES})
+target_link_libraries(CuiAbsolute YARP::YARP_OS
+                                  YARP::YARP_dev)
 
 yarp_install(TARGETS CuiAbsolute
              COMPONENT runtime

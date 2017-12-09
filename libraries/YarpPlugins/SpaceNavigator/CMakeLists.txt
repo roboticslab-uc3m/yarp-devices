@@ -24,7 +24,7 @@ yarp_add_plugin(SpaceNavigator SpaceNavigator.cpp
 
 add_dependencies(SpaceNavigator COLOR_DEBUG)
 
-target_link_libraries(SpaceNavigator ${YARP_LIBRARIES}
+target_link_libraries(SpaceNavigator YARP::YARP_dev
                                      ${SPNAV_LIBRARIES})
 
 yarp_install(TARGETS SpaceNavigator

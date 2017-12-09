@@ -31,7 +31,8 @@ yarp_add_plugin(LacqueyFetch LacqueyFetch.cpp
 
 add_dependencies(LacqueyFetch COLOR_DEBUG)
 
-target_link_libraries(LacqueyFetch ${YARP_LIBRARIES})
+target_link_libraries(LacqueyFetch YARP::YARP_OS
+                                   YARP::YARP_dev)
 
 yarp_install(TARGETS LacqueyFetch
              COMPONENT runtime

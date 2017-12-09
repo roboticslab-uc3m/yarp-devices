@@ -30,7 +30,8 @@ yarp_add_plugin(WiimoteSensor
 
 add_dependencies(WiimoteSensor COLOR_DEBUG)
 
-target_link_libraries(WiimoteSensor ${YARP_LIBRARIES}
+target_link_libraries(WiimoteSensor YARP::YARP_OS
+                                    YARP::YARP_dev
                                     ${XWIIMOTE_LIBRARIES})
 
 yarp_install(TARGETS WiimoteSensor

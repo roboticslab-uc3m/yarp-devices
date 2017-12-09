@@ -22,7 +22,8 @@ yarp_add_plugin(CanBusHico CanBusHico.cpp
 
 add_dependencies(CanBusHico COLOR_DEBUG)
 
-target_link_libraries(CanBusHico ${YARP_LIBRARIES})
+target_link_libraries(CanBusHico YARP::YARP_OS
+                                 YARP::YARP_dev)
 
 yarp_install(TARGETS CanBusHico
              COMPONENT runtime

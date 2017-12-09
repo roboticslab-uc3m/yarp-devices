@@ -7,4 +7,7 @@ include_directories(${YARP_INCLUDE_DIRS}
 
 add_executable(testCuiAbsolute testCuiAbsolute.cpp)
 
-target_link_libraries(testCuiAbsolute ${YARP_LIBRARIES})
+target_link_libraries(testCuiAbsolute YARP::YARP_OS
+                                      YARP::YARP_dev
+                                      gtest
+                                      gtest_main)
