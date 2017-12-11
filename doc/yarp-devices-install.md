@@ -16,16 +16,16 @@ Some of the devices require a specific OS version to work. This table tracks the
 | OS | OneCanBusOneWrapper | TwoCanBusThreeWrappers | AravisGigE | CanBusControlboard | CanBusHico | CuiAbsolute | FakeJoint | Jr3 | LacqueyFetch | LeapMotionSensor | ProximitySensorsClient | SpaceNavigator | TechnosoftIpos | TextilesHand | WiimoteSensor | AravisGigEController |
 | --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | [Debian 6.0.10](yarp-devices-install-on-debian-6.md) | :white_check_mark: | :white_check_mark: | :question: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :question:|
-| Ubuntu 14.04 (and derivatives) | :question: |  :question: | :white_check_mark: |  :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: |  :question: | :question: | :question: |  :white_check_mark: |
-| Ubuntu 16.04 (and derivatives) | :question: |  :question: | :white_check_mark: |  :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: |  :white_check_mark: |
+| Ubuntu 14.04 (and derivatives) | :white_check_mark: |  :white_check_mark: | :white_check_mark: |  :question: | :question: | :question: | :question: | :white_check_mark: | :question: | :question: | :question: | :question: |  :question: | :question: | :question: |  :white_check_mark: |
+| Ubuntu 16.04 (and derivatives) | :white_check_mark: | :white_check_mark: | :white_check_mark: |  :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: | :question: |  :white_check_mark: |
 
 
 ## Common dependencies
 
 Some dependencies must be installed for all the devices:
 
-  - [Install CMake 2.8.9 (Debian 6.0.10)](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-cmake.md#install-cmake-289-debian-6010)
-  - [Install YARP 2.3.68+ (Debian 6.0.10)](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md#install-yarp-2368-debian-6010)
+  - [Install CMake](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-cmake.md)
+  - [Install YARP](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md)
 
 ## Specific dependencies
 
