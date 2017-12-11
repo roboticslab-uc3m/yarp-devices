@@ -63,10 +63,3 @@ When installing AravisGigEController, take into account the following points:
 * AravisGigEController requires Python 3+ with custom yarp Python bindings installed. Currently, installing them is not an easy task (see [comment348230791@roboticslab-uc3m/yarp-devices:145](https://github.com/roboticslab-uc3m/yarp-devices/issues/145#issuecomment-348230791) and [roboticslab-uc3m/installation-guides:26](https://github.com/roboticslab-uc3m/installation-guides/issues/26)) but we expect this to change in the future.
 
 * Setup.py should take care of automatically installing the remaining dependencies for AravisGigEController. But it sometimes returns an error trying to install PySide. In that case, you can try to install it from the software repository: `sudo apt install python3-pyside`
-
-
-
-## Even more!
-
-Done! You are now probably interested in one of the following links:
-  - [yarp-devices - Now what can I do?]( /doc/yarp-devices-post-install.md )
