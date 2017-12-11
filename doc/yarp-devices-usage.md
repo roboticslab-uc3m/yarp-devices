@@ -100,4 +100,4 @@ $ AravisGigEController --remote-port /whatever_port_you_want
 
 ## Useful links
 
-* [juan-tricks](juan-tricks.md)
+* [yarp-devices-tricks](yarp-devices-tricks.md)
