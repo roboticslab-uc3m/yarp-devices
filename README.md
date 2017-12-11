@@ -11,6 +11,9 @@ Installation instructions for installing from source can be found [here]( /doc/y
 ## Usage
 Usage instructions for the different devices contained in this repository can be found [here](doc/yarp-devices-usage.md).
 
+## Tricks
+Some tricks for the different devices contained in this repository can be found [here](doc/yarp-devices-tricks.md).
+
 ## Contributing
 
 #### Posting Issues
@@ -33,8 +36,3 @@ Usage instructions for the different devices contained in this repository can be
 [![Coverage Status](https://coveralls.io/repos/roboticslab-uc3m/yarp-devices/badge.svg)](https://coveralls.io/r/roboticslab-uc3m/yarp-devices)
 
 [![Issues](https://img.shields.io/github/issues/roboticslab-uc3m/yarp-devices.svg?label=Issues)](https://github.com/roboticslab-uc3m/yarp-devices/issues)
-
-## Links of interest:
-
-* [kinematics-dynamics](https://github.com/roboticslab-uc3m/kinematics-dynamics)
-* [vision](https://github.com/roboticslab-uc3m/vision)
