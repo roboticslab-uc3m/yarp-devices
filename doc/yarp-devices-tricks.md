@@ -9,7 +9,7 @@ uint8_t msg_stop[]={0x0F,0x00}; // Does not stop, but is required for next start
 
 # Yarp RPC commands (VOCABs):
 
-Note that this is a hack. VOCABs may be updated without warning. The recommended YARP-ish way is via YARP_dev interfaces. An interactive way to do this is via an `ipython` console and following this repository's [Python examples](../examples/python).
+Note that this is a hack. VOCABs may be updated without warning. The recommended YARP-ish way is via YARP_dev interfaces. An interactive way to do this is via an `ipython` console and following this repository's [Python examples](https://github.com/roboticslab-uc3m/yarp-devices/tree/develop/example/python).
 
 ## remote_controlboard
 * check status:
