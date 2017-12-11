@@ -15,7 +15,7 @@ Some of the devices require a specific OS version to work. This table tracks the
 
 | OS                                                   | OneCanBusOneWrapper | TwoCanBusThreeWrappers | AravisGigE         | CanBusControlboard | CanBusHico         | CuiAbsolute        | FakeJoint          | Jr3                | LacqueyFetch       | LeapMotionSensor   | ProximitySensorsClient | SpaceNavigator     | TechnosoftIpos     | TextilesHand       | WiimoteSensor      | AravisGigEController |
 | ---------------------------------------------------- | :-----------------: | :--------------------: | :----------------: | :----------------: | :----------------: | :----------------: | :----------------: | :----------------: | :----------------: | :----------------: | :--------------------: | :----------------: | :----------------: | :----------------: | :----------------: | :------------------: |
-| [Debian 6.0.10](yarp-devices-install-on-debian-6.md) | :white_check_mark:  | :white_check_mark:     | :question:         | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:     | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :question:           |
+| [Debian 6.0.10](yarp-devices-install-on-debian-6.md) | :white_check_mark:  | :white_check_mark:     | :question:         | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :question:         | :white_check_mark:     | :question:         | :white_check_mark: | :white_check_mark: | :question:         | :question:           |
 | Ubuntu 14.04 (and derivatives)                       | :white_check_mark:  | :white_check_mark:     | :white_check_mark: | :x:                | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:     | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:   |
 | Ubuntu 16.04 (and derivatives)                       | :white_check_mark:  | :white_check_mark:     | :white_check_mark: | :x:                | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:     | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:   |
 
@@ -31,15 +31,22 @@ Some dependencies must be installed for all the devices (for Debian guides, see 
 
 Some devices require specific dependencies to work that must be satisfied. Use the following table to locate and install the dependencies required for your concrete application.
 
-| Dependency | OneCanBusOneWrapper | TwoCanBusThreeWrappers | AravisGigE | CanBusControlboard | CanBusHico | CuiAbsolute | FakeJoint | Jr3 | LacqueyFetch | LeapMotionSensor | ProximitySensorsClient | SpaceNavigator | TechnosoftIpos | TextilesHand | WiimoteSensor | AravisGigEController* |
+| Dependency | OneCanBusOneWrapper | TwoCanBusThreeWrappers | AravisGigE | CanBusControlboard | CanBusHico | CuiAbsolute | FakeJoint | Jr3 | LacqueyFetch | LeapMotionSensor* | ProximitySensorsClient | SpaceNavigator | TechnosoftIpos | TextilesHand | WiimoteSensor | AravisGigEController** |
 | --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | [Aravis 0.4](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-aravis.md) |  :x: |  :x: | :white_check_mark: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: |  :x: | :x: | :x: |  :x: |
 | [hcanpci (kernel module)](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-hcanpci.md) | :white_check_mark: | :white_check_mark: | :x: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x: |
 | Python 3+ |  :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: |  :x: | :x: | :x: | :white_check_mark: |
 | [setuptools (pip3)](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-setuptools.md#install-setuptools-using-pip3) |  :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: |  :x: | :x: | :x: | :white_check_mark: |
 | [Custom yarp Python 3 bindings](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md#install-python-bindings-with-iframegrabbercontrols2-support) | :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: |  :x: | :x: | :x: | :white_check_mark: |
+| [Spacenav](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-spacenav.md#install-spacenav-ubuntu) |  :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :white_check_mark: |  :x: | :x: | :x: | :white_check_mark: |
+| [XWiimote](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-xwiimote.md#install-xwiimote-ubuntu) |  :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: |  :x: | :x: | :white_check_mark: | :white_check_mark: |
+| [Leap Motion SDK v2](https://developer.leapmotion.com/sdk/v2)*** |  :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :white_check_mark: | :x: | :x: |  :x: | :x: | :x: | :white_check_mark: |
 
-\* See specific install instructions in the installation section.
+\* CMake find modules are smart enough to locate the SDK files in the usual paths. We recommend unzipping the `LeapSDK` folder in `/opt/LeapSDK` (make sure it contains `include/` and `lib/` at the top level).
+
+\*\* See specific install instructions in the installation section.
+
+\*\*\* Download link requires registration.
 
 ## Installation (Ubuntu)
 
@@ -69,4 +76,4 @@ When installing AravisGigEController, take into account the following points:
 ## Useful links
 
 * [yarp-devices usage](yarp-devices-usage.md)
-* [yarp-devices-tricks](yarp-devices-tricks.md)
+* [yarp-devices tricks](yarp-devices-tricks.md)
