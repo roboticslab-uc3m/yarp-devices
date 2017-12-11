@@ -1,5 +1,5 @@
-# Copyright: 2014 UC3M
-# Author: Juan G Victores
+# Copyright: 2017 UC3M
+# Author: Juan G Victores and Raul de Santos Rico
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 # 
 
@@ -25,14 +25,6 @@ endif()
 if(ENABLE_twoCanBusThreeWrappers)
     add_subdirectory(twoCanBusThreeWrappers)
 endif()
-	
-# if(ENABLE_launchManipulation)
-#     add_subdirectory(launchManipulation)
-# endif()
-
-# if(ENABLE_launchLocomotion)
-#     add_subdirectory(launchLocomotion)
-# endif()
 
 if(ENABLE_tests)
     add_subdirectory(testCuiAbsolute)
