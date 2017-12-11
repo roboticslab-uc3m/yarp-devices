@@ -69,4 +69,4 @@ When installing AravisGigEController, take into account the following points:
 ## Useful links
 
 * [yarp-devices usage](yarp-devices-usage.md)
-* [juan-tricks](juan-tricks.md)
+* [yarp-devices-tricks](yarp-devices-tricks.md)
