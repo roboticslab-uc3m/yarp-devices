@@ -20,9 +20,9 @@ Some of the devices require a specific OS version to work. This table tracks the
 | Ubuntu 16.04 (and derivatives)                       | :white_check_mark:  | :white_check_mark:     | :white_check_mark: | :x:                | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:     | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:   |
 
 
-## Common dependencies
+## Common dependencies (Ubuntu)
 
-Some dependencies must be installed for all the devices:
+Some dependencies must be installed for all the devices (for Debian guides, see [Debian 6.0.10](yarp-devices-install-on-debian-6.md)):
 
   - [Install CMake](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-cmake.md)
   - [Install YARP](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md)
