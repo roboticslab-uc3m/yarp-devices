@@ -2,37 +2,42 @@
 # Authors: Juan G. Victores & David Estevez
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.6)
+yarp_prepare_plugin(AravisGigE
+                    CATEGORY device
+                    TYPE roboticslab::AravisGigE
+                    INCLUDE AravisGigE.hpp
+                    DEFAULT OFF)
 
-find_package(YARP REQUIRED)
-include_directories(${YARP_INCLUDE_DIRS}) # deprecated
-list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH}) # deprecated
-include(YarpPlugin) # deprecated
+if(NOT SKIP_AravisGigE)
 
-YARP_PREPARE_PLUGIN(AravisGigE CATEGORY device TYPE roboticslab::AravisGigE INCLUDE AravisGigE.hpp WRAPPER grabber)
+find_package(ARAVIS REQUIRED)
 
-IF (NOT SKIP_AravisGigE)
-  find_package(ARAVIS REQUIRED)
-  include_directories(${ARAVIS_INCLUDE_DIRS})
+get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
 
-  # Include any directories needed for YARP
-  include_directories(${YARP_INCLUDE_DIRS} ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
+                    ${_common_dirs}
+                    ${ARAVIS_INCLUDE_DIRS})
 
-  yarp_add_plugin(AravisGigE AravisGigE.hpp DeviceDriverImpl.cpp IFrameGrabberImpl.cpp IFrameGrabberImageRawImpl.cpp IFrameGrabberControls2Impl.cpp)
-  TARGET_LINK_LIBRARIES(AravisGigE ${YARP_LIBRARIES} ${ARAVIS_LIBRARIES})
+yarp_add_plugin(AravisGigE AravisGigE.cpp
+                           AravisGigE.hpp
+                           DeviceDriverImpl.cpp
+                           IFrameGrabberControls2Impl.cpp
+                           IFrameGrabberImageRawImpl.cpp
+                           IFrameGrabberImpl.cpp)
 
-  # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now...
-  set(ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "appended libraries")
-  #install(TARGETS AravisGigE DESTINATION lib)
-  yarp_install(TARGETS AravisGigE
-             EXPORT YARP
+add_dependencies(AravisGigE COLOR_DEBUG)
+
+target_link_libraries(AravisGigE YARP::YARP_OS
+                                 YARP::YARP_dev
+                                 ${ARAVIS_LIBRARIES})
+
+yarp_install(TARGETS AravisGigE
              COMPONENT runtime
              LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
              ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
-  yarp_install(FILES AravisGigE.ini
-              COMPONENT runtime
-              DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-ENDIF (NOT SKIP_AravisGigE)
+yarp_install(FILES AravisGigE.ini
+             COMPONENT runtime
+             DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
-
+endif()

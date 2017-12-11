@@ -3,8 +3,10 @@
 #ifndef __roboticslab_SIM_EXAMPLE_HPP__
 #define __roboticslab_SIM_EXAMPLE_HPP__
 
-#include <yarp/os/all.h>
-#include <yarp/dev/all.h>
+#include <yarp/os/Network.h>
+
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/ControlBoardInterfaces.h>
 
 #define DEFAULT_ROBOT "/robot/part"
 
@@ -28,4 +30,3 @@ private:
 }  // namespace roboticslab
 
 #endif // __roboticslab_SIM_EXAMPLE_HPP__
-

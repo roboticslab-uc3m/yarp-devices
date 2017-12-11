@@ -2,35 +2,45 @@
 # Author: Juan G. Victores & Raul de Santos Rico
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.6)
+yarp_prepare_plugin(LacqueyFetch
+                    CATEGORY device
+                    TYPE roboticslab::LacqueyFetch
+                    INCLUDE LacqueyFetch.hpp
+                    DEFAULT ON)
 
-YARP_PREPARE_PLUGIN(LacqueyFetch CATEGORY device TYPE roboticslab::LacqueyFetch INCLUDE LacqueyFetch.hpp)
+if(NOT SKIP_LacqueyFetch)
 
-IF (NOT SKIP_LacqueyFetch)
+get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
 
-  find_package(YARP REQUIRED)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
+                    ${_common_dirs})
 
-  # Include any directories needed for YARP
-  include_directories(${YARP_INCLUDE_DIRS} ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
+yarp_add_plugin(LacqueyFetch LacqueyFetch.cpp
+                             LacqueyFetch.hpp
+                             DeviceDriverImpl.cpp
+                             ICanBusSharerImpl.cpp
+                             IControlLimits2RawImpl.cpp
+                             IControlMode2RawImpl.cpp
+                             IEncodersRawImpl.cpp
+                             IEncodersTimedRawImpl.cpp
+                             IInteractionModeRawImpl.cpp
+                             IPositionControl2RawImpl.cpp
+                             IPositionDirectRawImpl.cpp
+                             ITorqueControlRawImpl.cpp
+                             IVelocityControl2RawImpl.cpp)
 
-  yarp_add_plugin(LacqueyFetch LacqueyFetch.cpp DeviceDriverImpl.cpp IControlLimits2RawImpl.cpp IControlMode2RawImpl.cpp IEncodersRawImpl.cpp IEncodersTimedRawImpl.cpp IPositionControl2RawImpl.cpp ICanBusSharerImpl.cpp IPositionDirectRawImpl.cpp ITorqueControlRawImpl.cpp IVelocityControl2RawImpl.cpp IInteractionModeRawImpl.cpp )
+add_dependencies(LacqueyFetch COLOR_DEBUG)
 
-  TARGET_LINK_LIBRARIES(LacqueyFetch ${YARP_LIBRARIES})
+target_link_libraries(LacqueyFetch YARP::YARP_OS
+                                   YARP::YARP_dev)
 
-  # Exporting dependencies for ROBOTICSLAB_YARP_DEVICESConfig.cmake quite manually for now...
-  set(ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "appended libraries")
-  #set(ROBOTICSLAB_YARP_DEVICES_LIBRARIES ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} LacqueyFetch CACHE INTERNAL "appended libraries")
-
-  #install(TARGETS LacqueyFetch DESTINATION lib)
-  yarp_install(TARGETS LacqueyFetch
-             EXPORT YARP
+yarp_install(TARGETS LacqueyFetch
              COMPONENT runtime
              LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
              ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
-  yarp_install(FILES LacqueyFetch.ini
-              COMPONENT runtime
-              DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}) 
+yarp_install(FILES LacqueyFetch.ini
+             COMPONENT runtime
+             DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
-ENDIF (NOT SKIP_LacqueyFetch)
-
+endif()

@@ -90,6 +90,11 @@ Response: [ok]
  *
  */
 
+#include <yarp/os/Network.h>
+#include <yarp/os/ResourceFinder.h>
+
+#include <ColorDebug.hpp>
+
 #include "ExampleCanBusControlboard.hpp"
 
 int main(int argc, char *argv[])

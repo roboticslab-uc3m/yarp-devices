@@ -1,19 +1,23 @@
+#include "gtest/gtest.h"
 
-#include "gtest/gtest.h" // -- We load the librarie of GoogleTest
+#include <cstdlib>
 
-// -- We load the rest of libraries that we will use to call the functions of our code
-#include <yarp/os/all.h>
-#include <yarp/dev/all.h>
+#include <yarp/os/Property.h>
+#include <yarp/os/Time.h>
 
-#include "ColorDebug.hpp"
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/IControlLimits2.h>
+
+#include <ColorDebug.hpp>
 
 #include "ICanBusSharer.h"
 #include "ITechnosoftIpos.h"
 #include "ICanBusHico.h"
 
-#define CAN_ID 124
+#include "hico_api.h"
 
-//YARP_DECLARE_PLUGINS(YarpPlugins)
+#define CAN_ID 124
 
 namespace roboticslab
 {
@@ -29,7 +33,6 @@ public:
     virtual void SetUp()
     {
         // -- code here will execute just before the test ensues
-        //YARP_REGISTER_PLUGINS(YarpPlugins);
 
         yarp::os::Property hicoCanConf ("(device CanBusHico) (canDevice /dev/can1) (canBitrate 8)"); // -- truco para agregar directamente un conjunto de propiedades sin tener que llamar a la función "put"
         bool ok = true;
@@ -42,7 +45,7 @@ public:
         else
         {
             CD_ERROR("Bad Configuration of HicoCAN :(\n");
-            ::exit(1);
+            std::exit(1);
         }
 
         //yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 15) (min -45) (max 70) (tr 160) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal right arm
@@ -68,7 +71,7 @@ public:
         else
         {
             CD_ERROR("Bad Configuration of TechnosoftIpos :(\n");
-            ::exit(1);
+            std::exit(1);
         }
 
         //-- Pass CAN bus (HicoCAN) pointer to CAN node (TechnosoftIpos).
@@ -1120,4 +1123,3 @@ TEST_F( TechnosoftIposTest, TechnosoftIposGetControlModeRaw_5_4 )
 }
 */
 }  // namespace roboticslab
-

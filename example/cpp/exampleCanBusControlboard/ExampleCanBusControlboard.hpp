@@ -3,17 +3,9 @@
 #ifndef __EXAMPLE_CAN_BUS_CONTROLBOARD__
 #define __EXAMPLE_CAN_BUS_CONTROLBOARD__
 
+#include <yarp/os/ResourceFinder.h>
 #include <yarp/os/RFModule.h>
-#include <yarp/os/Module.h>
-#include <yarp/os/Network.h>
-#include <yarp/os/Port.h>
-#include <yarp/os/BufferedPort.h>
-
 #include <yarp/dev/PolyDriver.h>
-
-#include <string>
-
-#include "ColorDebug.hpp"
 
 namespace roboticslab
 {

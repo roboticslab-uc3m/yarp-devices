@@ -1,12 +1,13 @@
-# Testing things #########################################################################################
-
-enable_testing()
-
 find_package(YARP REQUIRED)
 
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR} ${YARP_INCLUDE_DIRS} ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS})
-link_directories(${ROBOTICSLAB_YARP_DEVICES_LINK_DIRS})
+get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
+
+include_directories(${YARP_INCLUDE_DIRS}
+                    ${_common_dirs})
 
 add_executable(testTechnosoftIpos testTechnosoftIpos.cpp)
-target_link_libraries(testTechnosoftIpos ${YARP_LIBRARIES} ${ROBOTICSLAB_YARP_DEVICES_LIBRARIES} gtest gtest_main)
 
+target_link_libraries(testTechnosoftIpos YARP::YARP_OS
+                                         YARP::YARP_dev
+                                         gtest
+                                         gtest_main)

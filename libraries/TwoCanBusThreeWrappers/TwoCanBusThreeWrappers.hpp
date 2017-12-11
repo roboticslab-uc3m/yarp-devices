@@ -3,20 +3,9 @@
 #ifndef __TWO_CAN_BUS_THREE_WRAPPERS__
 #define __TWO_CAN_BUS_THREE_WRAPPERS__
 
+#include <yarp/os/ResourceFinder.h>
 #include <yarp/os/RFModule.h>
-#include <yarp/os/Module.h>
-#include <yarp/os/Network.h>
-#include <yarp/os/Port.h>
-#include <yarp/os/BufferedPort.h>
-
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/Wrapper.h>
-
-#include <string>
-#include <stdlib.h>
-
-#include "ColorDebug.hpp"
-
 
 namespace roboticslab
 {
@@ -67,4 +56,3 @@ public:
 }  // namespace roboticslab
 
 #endif  // __TWO_CAN_BUS_THREE_WRAPPERS__
-

@@ -2,12 +2,5 @@
 # Author: Juan G Victores
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-set(appname dumpCanBus)
-
-
-file(GLOB conf ${CMAKE_CURRENT_SOURCE_DIR}/conf/*.ini)
-file(GLOB scripts ${CMAKE_CURRENT_SOURCE_DIR}/scripts/*.template)
-
-yarp_install(FILES ${conf} DESTINATION ${ROBOTICSLAB-YARP-DEVICES_CONTEXTS_INSTALL_DIR}/${appname})
-yarp_install(FILES ${scripts} DESTINATION ${ROBOTICSLAB-YARP-DEVICES_APPLICATIONS_TEMPLATES_INSTALL_DIR})
-
+yarp_install(FILES conf/dumpCanBus.ini
+             DESTINATION ${ROBOTICSLAB-YARP-DEVICES_CONTEXTS_INSTALL_DIR}/dumpCanBus)

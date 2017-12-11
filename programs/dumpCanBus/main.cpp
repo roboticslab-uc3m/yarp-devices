@@ -38,16 +38,15 @@
  *
  */
 
+#include <yarp/os/Network.h>
+#include <yarp/os/ResourceFinder.h>
+
+#include <ColorDebug.hpp>
+
 #include "DumpCanBus.hpp"
-
-
-//YARP_DECLARE_PLUGINS(YarpPlugins)
 
 int main(int argc, char *argv[])
 {
-
-//    YARP_REGISTER_PLUGINS(YarpPlugins);
-
     yarp::os::ResourceFinder rf;
     rf.setVerbose(true);
     rf.setDefaultContext("dumpCanBus");
@@ -66,4 +65,3 @@ int main(int argc, char *argv[])
     roboticslab::DumpCanBus mod;
     return mod.runModule(rf);
 }
-

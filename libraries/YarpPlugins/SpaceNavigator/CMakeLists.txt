@@ -5,28 +5,35 @@ yarp_prepare_plugin(SpaceNavigator
                     CATEGORY device
                     TYPE roboticslab::SpaceNavigator
                     INCLUDE SpaceNavigator.hpp
-                    WRAPPER analogServer)
+                    DEFAULT ON)
 
 if(NOT SKIP_SpaceNavigator)
-  find_package(Spnav REQUIRED)
-  include_directories(${YARP_INCLUDE_DIRS} ${SPNAV_INCLUDE_DIRS} ${COLOR_DEBUG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
-  yarp_add_plugin(SpaceNavigator
-                  SpaceNavigator.cpp
-                  SpaceNavigator.hpp
-                  DeviceDriverImpl.cpp
-                  IAnalogSensorImpl.cpp)
+find_package(Spnav REQUIRED)
 
-  target_link_libraries(SpaceNavigator ${YARP_LIBRARIES} ${SPNAV_LIBRARIES})
+get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
 
-  yarp_install(TARGETS SpaceNavigator
-               EXPORT YARP
-               COMPONENT runtime
-               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
-               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
+                    ${_common_dirs}
+                    ${SPNAV_INCLUDE_DIRS})
 
-  yarp_install(FILES SpaceNavigator.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+yarp_add_plugin(SpaceNavigator SpaceNavigator.cpp
+                               SpaceNavigator.hpp
+                               DeviceDriverImpl.cpp
+                               IAnalogSensorImpl.cpp)
+
+add_dependencies(SpaceNavigator COLOR_DEBUG)
+
+target_link_libraries(SpaceNavigator YARP::YARP_dev
+                                     ${SPNAV_LIBRARIES})
+
+yarp_install(TARGETS SpaceNavigator
+             COMPONENT runtime
+             LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+             ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+
+yarp_install(FILES SpaceNavigator.ini
+             COMPONENT runtime
+             DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
 endif()
-
