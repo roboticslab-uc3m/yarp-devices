@@ -43,7 +43,7 @@ Some devices require specific dependencies to work that must be satisfied. Use t
 
 ## Installation
 
-Once the required dependencies have been install, the code has to be compiled and installed. Note that you will be prompted for your password upon using '''sudo''' a couple of times:
+Once the required dependencies have been install, the code has to be compiled and installed. Note that you will be prompted for your password upon using `sudo` a couple of times:
 
 ```bash
 cd  # go home
