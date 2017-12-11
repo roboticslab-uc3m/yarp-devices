@@ -1,5 +1,5 @@
-# Copyright: 2014 UC3M
-# Author: Juan G Victores
+# Copyright: 2017 UC3M
+# Author: Juan G Victores and Raul de Santos Rico
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 find_package(YARP REQUIRED)
