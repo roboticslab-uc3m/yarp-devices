@@ -33,8 +33,3 @@ Usage instructions for the different devices contained in this repository can be
 [![Coverage Status](https://coveralls.io/repos/roboticslab-uc3m/yarp-devices/badge.svg)](https://coveralls.io/r/roboticslab-uc3m/yarp-devices)
 
 [![Issues](https://img.shields.io/github/issues/roboticslab-uc3m/yarp-devices.svg?label=Issues)](https://github.com/roboticslab-uc3m/yarp-devices/issues)
-
-## Links of interest:
-
-* [kinematics-dynamics](https://github.com/roboticslab-uc3m/kinematics-dynamics)
-* [vision](https://github.com/roboticslab-uc3m/vision)
