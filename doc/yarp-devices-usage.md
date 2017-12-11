@@ -97,3 +97,7 @@ By default it will try to connect to `/grabber`. If the port for the AravisGigE 
 $ AravisGigEController --remote-port /whatever_port_you_want
 ```
 
+
+## Useful links
+
+* [juan-tricks](juan-tricks.md)
