@@ -11,6 +11,9 @@ Installation instructions for installing from source can be found [here]( /doc/y
 ## Usage
 Usage instructions for the different devices contained in this repository can be found [here](doc/yarp-devices-usage.md).
 
+## Tricks
+Some tricks for the different devices contained in this repository can be found [here](doc/yarp-devices-tricks.md).
+
 ## Contributing
 
 #### Posting Issues
