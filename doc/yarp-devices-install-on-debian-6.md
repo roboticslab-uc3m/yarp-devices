@@ -46,7 +46,7 @@ For additional TEO options use ccmake instead of cmake.
 
 Finally, install the hcanpci kernel module:
 
- - [Install hcanpci kernel module (Debian 6.0.10)](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-hcanpci-on-debian-6.md)
+ - [Install hcanpci kernel module (Debian 6.0.10)](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-hcanpci.md#install-hcanpci-kernel-module-debian-60)
 
 You may also want the `xsensmtx` device:
 
