@@ -1,12 +1,12 @@
-## Installation from Source Code (Debian 6.0.10)
+# Installation from Source Code (Debian 6.0.10)
 
-### Why Debian 6.0.10?
+## Why Debian 6.0.10?
 
 Your OS needs the following (Debian 6.0.10 is a good intermediate solution in versions, and Debian is additionally more stable than Ubuntu):
   - A kernel old enough for the HicoCAN kernel drivers.
   - An OS new enough for github (you need a recent git version) and YARP (you need a recent CMake version).
 
-### The specifics: APT sources
+## The specifics: APT sources
 
 - /etc/apt/sources.list
 ```bash
@@ -25,7 +25,7 @@ Acquire::Check-Valid-Until "false";
 sudo aptitude -o Acquire::Check-Valid-Until=false update
 ```
 
-### Install the Software
+## Install the Software
 
 First install the depencencies:
   - [Install CMake 2.8.9 (Debian 6.0.10)](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-cmake.md#install-cmake-289-debian-6010)
@@ -51,8 +51,3 @@ Finally, install the hcanpci kernel module:
 You may also want the `xsensmtx` device:
 
  - [Install ICub and xsensmtx](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install_icub.md)
-
-### Even more!
-
-Done! You are now probably interested in one of the following links:
-  - [yarp-devices - Now what can I do?]( /doc/yarp-devices-post-install.md )
