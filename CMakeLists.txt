@@ -26,15 +26,12 @@ option(ENABLE_OneCanBusOneWrapper "Choose if you want to compile OneCanBusOneWra
 option(ENABLE_TwoCanBusThreeWrappers "Choose if you want to compile TwoCanBusThreeWrappers" TRUE)
 
 ### options: cpp programs
-
 option(ENABLE_dumpCanBus "Choose if you want to compile dumpCanBus" TRUE)
-
 option(ENABLE_checkCanBus "Choose if you want to compile checkCanBus" TRUE)
-
 option(ENABLE_oneCanBusOneWrapper "Choose if you want to compile oneCanBusOneWrapper" TRUE)
-
 option(ENABLE_launchManipulation "Choose if you want to compile launchManipulation" TRUE)
 option(ENABLE_launchLocomotion "Choose if you want to compile launchLocomotion" TRUE)
+option(ENABLE_grabbercontrols2gui "Choose if you want to compile grabbercontrols2gui" FALSE)
 
 ### options: force default
 option(ENABLE_CuiAbsolute "Enable/disable compilation of YarpPlugins_CuiAbsolute" TRUE)
@@ -167,3 +164,12 @@ configure_file(
 add_custom_target(uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/ROBOTICSLAB_YARP_DEVICESConfigUninstall.cmake)
 
+if (ENABLE_grabbercontrols2gui)
+# configure grabbercontrols2gui setup.py
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/template/setup.py.in"
+               "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
+
+# run setup.py (install rule)
+    install(CODE "EXECUTE_PROCESS(COMMAND python3 ${CMAKE_CURRENT_BINARY_DIR}/setup.py install)")
+
+endif (ENABLE_grabbercontrols2gui)

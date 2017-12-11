@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+
+from setuptools import setup
+from os.path import normpath # see https://github.com/roboticslab-uc3m/asibot-main/commit/320d03f
+
+
+setup(name='yarp-devices',
+      version='0.0.1',
+      description = 'Useful yarp devices and programs to interact with those devices for robots',
+      author='David Estevez',
+      author_email="destevez@ing.uc3m.es",
+      url='https://github.com/roboticslab-uc3m/yarp-devices/',
+      packages=['GrabberControls2Gui'],
+      package_dir={'GrabberControls2Gui': normpath('${CMAKE_SOURCE_DIR}/programs/GrabberControls2Gui')},
+      package_data={'GrabberControls2Gui': ['templates/*.ui']},
+      install_requires=['begins==0.9','pyside==1.2.2'],
+      entry_points={'gui_scripts': 'grabbercontrols2gui = GrabberControls2Gui.run:main.start'} # See https://pypi.python.org/pypi/begins/0.8#entry-points
+)
