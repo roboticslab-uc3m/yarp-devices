@@ -63,7 +63,7 @@ Note that this is a hack. VOCABs may be updated without warning. The recommended
 
 # Edit .ini config files in Calc (Excel)
 Click `Separated by space` and `Merge delimiters`.
-```
+```bash
 #!/bin/sh
 openoffice.org -calc launchManipulation.ini
 # libreoffice -calc launchManipulation.ini
