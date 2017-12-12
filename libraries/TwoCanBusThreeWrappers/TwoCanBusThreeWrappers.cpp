@@ -40,8 +40,8 @@ bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf)
     if(rf.check("externalEncoderWait"))
     {
         timeEncoderWait = rf.find("externalEncoderWait").asInt();
-        std::printf("[INFO] Wait time for Absolute Encoder: %.2f [s]\n", timeEncoderWait);
-    }  
+        std::printf("[INFO] Wait time for Absolute Encoder: %d [s]\n", timeEncoderWait);
+    }
 
     if(rf.check("homePoss"))
     {
