@@ -732,12 +732,38 @@ bool roboticslab::TechnosoftIpos::interpretMessage( can_msg * message)
         }
         else if( (message->data[1]==0x83)&&(message->data[2]==0x60) )      // Manual 8.2.3. 6083h: Profile acceleration
         {
-            CD_INFO("Got SDO ack \"posmode_acc\" from driver. %s\n",msgToStr(message).c_str());
+            if (message->data[0]==0x60)      // SDO segment upload/acknowledge
+            {
+                CD_INFO("Got SDO ack \"posmode_acc\" from driver. %s\n",msgToStr(message).c_str());
+            }
+            else
+            {
+                int32_t got;
+                memcpy(&got, message->data+4,4);
+                double val = (encoderPulses / 360.0) * 0.000001;  //-- if encoderPulses is 4096 (4 * 1024), val = 0.00001138
+                refAccelSemaphore.wait();
+                refAcceleration = got / (tr * 65536 * val);
+                refAccelSemaphore.post();
+                CD_INFO("Got SDO \"posmode_acc\" response from driver. %s\n",msgToStr(message).c_str());
+            }
             return true;
         }
         else if( (message->data[1]==0x81)&&(message->data[2]==0x60) )      // Manual 8.2.2. 6081h: Profile velocity
         {
-            CD_INFO("Got SDO ack \"posmode_speed\" from driver. %s\n",msgToStr(message).c_str());
+            if (message->data[0]==0x60)      // SDO segment upload/acknowledge
+            {
+                CD_INFO("Got SDO ack \"posmode_speed\" from driver. %s\n",msgToStr(message).c_str());
+            }
+            else      // Query
+            {
+                int32_t got;
+                memcpy(&got, message->data+4,4);
+                double val = (encoderPulses / 360.0) * 0.001;  //-- if encoderPulses is 4096 (4 * 1024), val = 0.01138
+                refSpeedSemaphore.wait();
+                refSpeed = got / (tr * 65536 * val);
+                refSpeedSemaphore.post();
+                CD_INFO("Got SDO \"posmode_speed\" response from driver. %s\n",msgToStr(message).c_str());
+            }
             return true;
         }
         else if( (message->data[1]==0x7D)&&(message->data[2]==0x60) )      // Manual 607Dh: Software position limit
@@ -781,6 +807,23 @@ bool roboticslab::TechnosoftIpos::interpretMessage( can_msg * message)
         {
             CD_INFO("Got SDO ack \"Interpolated position initial position.\" from driver. %s\n",msgToStr(message).c_str());
             return true;
+        }
+        else if( (message->data[1]==0xFF)&&(message->data[2]==0x60) )      // Manual 60FFh: Target velocity
+        {
+            if (message->data[0]==0x60)      // SDO segment upload/acknowledge
+            {
+                CD_INFO("Got SDO ack \"Target velocity.\" from driver. %s\n",msgToStr(message).c_str());
+            }
+            else
+            {
+                int32_t got;
+                memcpy(&got, message->data+4,4);
+                double val = (encoderPulses / 360.0) * 0.001;  //-- if encoderPulses is 4096 (4 * 1024), val = 0.01138
+                refVelocitySemaphore.wait();
+                refVelocity = got / (tr * 65536 * val);
+                refVelocitySemaphore.post();
+                CD_INFO("Got SDO \"Target velocity\" response from driver. %s\n",msgToStr(message).c_str());
+            }
         }
         CD_INFO("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
         return false;

@@ -62,10 +62,28 @@ bool roboticslab::TechnosoftIpos::velocityMoveRaw(const int n_joint, const int *
 
 bool roboticslab::TechnosoftIpos::getRefVelocityRaw(const int joint, double *vel)
 {
+    CD_DEBUG("(%d)\n",joint);
+
+    //-- Check index within range
+    if ( joint != 0 ) return false;
+
+    //*************************************************************
+    uint8_t msg_vel[]= {0x40,0xFF,0x60,0x00,0x00,0x00,0x00,0x00}; // Velocity target
+
+    if( ! send(0x600, 8, msg_vel))
+    {
+        CD_ERROR("Sent \"velocity target\" query. %s\n", msgToStr(0x600, 8, msg_vel).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent \"velocity target\" query. %s\n", msgToStr(0x600, 8, msg_vel).c_str() );
+    //*************************************************************
+
+    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    yarp::os::Time::delay(DELAY);  //-- Wait for read update. Could implement semaphore waiting for specific message...
+    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     // -- Get the last reference speed set by velocityMove for single joint (saved in double vector)
     refVelocitySemaphore.wait();
-    CD_DEBUG("%d, %f\n",joint, refVelocity);
     *vel = refVelocity;
     refVelocitySemaphore.post();
 

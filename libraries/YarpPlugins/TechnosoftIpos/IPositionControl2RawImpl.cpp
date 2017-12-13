@@ -206,7 +206,7 @@ bool roboticslab::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
     CD_SUCCESS("Sent \"posmode_speed\". %s\n", msgToStr(0x600, 8, msg_posmode_speed).c_str() );
     //*************************************************************
 
-    //-- Store new value locally as we can not retrieve it from the driver for now.
+    //-- it will save the value
     refSpeedSemaphore.wait();
     refSpeed = sp;
     refSpeedSemaphore.post();
@@ -253,7 +253,7 @@ bool roboticslab::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
     CD_SUCCESS("Sent \"posmode_acc\". %s\n", msgToStr(0x600, 8, msg_posmode_acc).c_str() );
     //*************************************************************
 
-    //-- Store new value locally as we can not retrieve it from the driver for now.
+    //-- it will save the value
     refAccelSemaphore.wait();
     refAcceleration = acc ;
     refAccelSemaphore.post();
@@ -273,12 +273,27 @@ bool roboticslab::TechnosoftIpos::setRefAccelerationsRaw(const double *accs)
 
 bool roboticslab::TechnosoftIpos::getRefSpeedRaw(int j, double *ref)
 {
-    CD_DEBUG("(%d),(%f)\n",j,refSpeed);
+    CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
+    uint8_t msg_posmode_speed[]= {0x40,0x81,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6081h: Profile velocity
+
+    if( ! send( 0x600, 8, msg_posmode_speed) )
+    {
+        CD_ERROR("Could not send \"posmode_speed\" query. %s\n", msgToStr(0x600, 8, msg_posmode_speed).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent \"posmode_speed\" query. %s\n", msgToStr(0x600, 8, msg_posmode_speed).c_str() );
+
+    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    yarp::os::Time::delay(DELAY);  //-- Wait for read update. Could implement semaphore waiting for specific message...
+    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+    refSpeedSemaphore.wait();
     *ref = refSpeed;
+    refSpeedSemaphore.post();
 
     return true;
 }
@@ -300,7 +315,22 @@ bool roboticslab::TechnosoftIpos::getRefAccelerationRaw(int j, double *acc)
     //-- Check index within range
     if ( j != 0 ) return false;
 
+    uint8_t msg_posmode_acc[]= {0x40,0x83,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6083h: Profile acceleration
+
+    if( ! send( 0x600, 8, msg_posmode_acc) )
+    {
+        CD_ERROR("Could not send \"posmode_acc\" query. %s\n", msgToStr(0x600, 8, msg_posmode_acc).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent \"posmode_acc\" query. %s\n", msgToStr(0x600, 8, msg_posmode_acc).c_str() );
+
+    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    yarp::os::Time::delay(DELAY);  //-- Wait for read update. Could implement semaphore waiting for specific message...
+    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+    refAccelSemaphore.wait();
     *acc = refAcceleration;
+    refAccelSemaphore.post();
 
     return true;
 }
