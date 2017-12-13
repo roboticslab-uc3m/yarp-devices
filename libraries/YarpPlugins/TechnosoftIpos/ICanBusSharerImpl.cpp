@@ -740,8 +740,9 @@ bool roboticslab::TechnosoftIpos::interpretMessage( can_msg * message)
             {
                 int32_t got;
                 memcpy(&got, message->data+4,4);
+                double val = (encoderPulses / 360.0) * 0.000001;  //-- if encoderPulses is 4096 (4 * 1024), val = 0.00001138
                 refAccelSemaphore.wait();
-                refAcceleration = got / (tr * 0.7458);  //-- 65536 * 0.00001138 = 0.7458
+                refAcceleration = got / (tr * 65536 * val);
                 refAccelSemaphore.post();
                 CD_INFO("Got SDO \"posmode_acc\" response from driver. %s\n",msgToStr(message).c_str());
             }
@@ -757,8 +758,9 @@ bool roboticslab::TechnosoftIpos::interpretMessage( can_msg * message)
             {
                 int32_t got;
                 memcpy(&got, message->data+4,4);
+                double val = (encoderPulses / 360.0) * 0.001;  //-- if encoderPulses is 4096 (4 * 1024), val = 0.01138
                 refSpeedSemaphore.wait();
-                refSpeed = got / (tr * 745.8);  //-- 65536 * 0.01138 = 745.8
+                refSpeed = got / (tr * 65536 * val);
                 refSpeedSemaphore.post();
                 CD_INFO("Got SDO \"posmode_speed\" response from driver. %s\n",msgToStr(message).c_str());
             }
@@ -816,8 +818,9 @@ bool roboticslab::TechnosoftIpos::interpretMessage( can_msg * message)
             {
                 int32_t got;
                 memcpy(&got, message->data+4,4);
+                double val = (encoderPulses / 360.0) * 0.001;  //-- if encoderPulses is 4096 (4 * 1024), val = 0.01138
                 refVelocitySemaphore.wait();
-                refVelocity = got / (tr * 745.8);  //-- 65536 * 0.01138 = 745.8
+                refVelocity = got / (tr * 65536 * val);
                 refVelocitySemaphore.post();
                 CD_INFO("Got SDO \"Target velocity\" response from driver. %s\n",msgToStr(message).c_str());
             }
