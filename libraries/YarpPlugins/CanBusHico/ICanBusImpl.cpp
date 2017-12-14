@@ -3,11 +3,8 @@
 #include "CanBusHico.hpp"
 
 #include <unistd.h>
-#include <assert.h>
 #include <errno.h>
 #include <sys/ioctl.h>
-#include <sys/select.h>
-#include <sys/time.h>
 
 #include <cstring>
 
@@ -19,9 +16,15 @@ bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
 {
     CD_DEBUG("(%d)\n", rate);
 
-    if (::ioctl(fileDescriptor, IOC_SET_BITRATE, &rate) != 0)
+    int ret;
+
+    canBusReady.wait();
+    ret = ::ioctl(fileDescriptor, IOC_SET_BITRATE, &rate);
+    canBusReady.post();
+
+    if (ret != 0)
     {
-        CD_ERROR("Could not set bitrate.\n");
+        CD_ERROR("Could not set bitrate: %s.\n", std::strerror(errno));
         return false;
     }
 
@@ -34,9 +37,15 @@ bool roboticslab::CanBusHico::canGetBaudRate(unsigned int * rate)
 {
     CD_DEBUG("\n");
 
-    if (::ioctl(fileDescriptor, IOC_GET_BITRATE, rate) != 0)
+    int ret;
+
+    canBusReady.wait();
+    ret = ::ioctl(fileDescriptor, IOC_GET_BITRATE, rate);
+    canBusReady.post();
+
+    if (ret != 0)
     {
-        CD_ERROR("Could not get bitrate.\n");
+        CD_ERROR("Could not set bitrate: %s.\n", std::strerror(errno));
         return false;
     }
 
@@ -60,9 +69,15 @@ bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
     filter.mask = 0x7F;  //-- dsPIC style, mask specifies "do care" bits
     filter.code = id;
 
-    if (::ioctl(fileDescriptor, IOC_SET_FILTER, &filter) != 0)
+    int ret;
+
+    canBusReady.wait();
+    ret = ::ioctl(fileDescriptor, IOC_SET_FILTER, &filter);
+    canBusReady.post();
+
+    if (ret != 0)
     {
-        CD_ERROR("Could not set filter.\n");
+        CD_ERROR("Could not set filter: %s.\n", std::strerror(errno));
         return false;
     }
 
