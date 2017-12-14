@@ -11,8 +11,6 @@
 
 #include <cstring>
 
-#include <yarp/os/Time.h>
-
 #include <ColorDebug.hpp>
 
 // -----------------------------------------------------------------------------
@@ -83,44 +81,28 @@ bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
 
 bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait)
 {
-    int ret;
+    bool ok = true;
+
+    canBusReady.wait();
+
+    if (!setFdMode(wait))
+    {
+        CD_WARNING("setFdMode() failed: %s.\n", std::strerror(errno));
+    }
 
     for (unsigned int i = 0; i < size; i++)
     {
-        if (wait && i != 0)
+        if (wait && !setDelay())
         {
-            yarp::os::Time::delay(DELAY);
+            ok = false;
+            break;
         }
-
-        fd_set fds;
-        struct timeval tv;
-        FD_ZERO(&fds);
-
-        tv.tv_sec = DELAY;
-        tv.tv_usec = 0;
-
-        FD_SET(fileDescriptor, &fds);
-
-        //-- select() returns the number of ready descriptors, or -1 for errors.
-        ret = ::select(fileDescriptor + 1, &fds, 0, 0, &tv);
-
-        if (ret <= 0)
-        {
-            //-- No CD as select() timeout is way too verbose, happens all the time.
-            return false;  // Return 0 on select timeout, <0 on select error.
-        }
-
-        assert(FD_ISSET(fileDescriptor, &fds));
 
         yarp::dev::CanMessage & msg = msgs[i];
         struct can_msg * _msg = reinterpret_cast<struct can_msg *>(msg.getPointer());
 
-        canBusReady.wait();
         //-- read() returns the number read, -1 for errors or 0 for EOF.
-        ret = ::read(fileDescriptor, _msg, sizeof(struct can_msg));
-        canBusReady.post();
-
-        if (ret < 0)
+        if (::read(fileDescriptor, _msg, sizeof(struct can_msg)) < 0)
         {
             CD_WARNING("read() error: %s.\n", std::strerror(errno));
         }
@@ -133,33 +115,35 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
     if (*read < size)
     {
         CD_ERROR("read (%d) < size (%d)\n", *read, size);
-        return false;
+        ok = false;
     }
 
-    return true;
+    canBusReady.post();
+
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait)
 {
-    int ret;
+    bool ok = true;
+
+    canBusReady.wait();
+
+    if (!setFdMode(wait))
+    {
+        CD_WARNING("setFdMode() failed: %s.\n", std::strerror(errno));
+    }
 
     for (unsigned int i = 0; i < size; i++)
     {
-        if (wait && i != 0)
-        {
-            yarp::os::Time::delay(DELAY);
-        }
+        // 'wait' param not handled
 
         const yarp::dev::CanMessage & msg = const_cast<yarp::dev::CanBuffer &>(msgs)[i];
         const struct can_msg * _msg = reinterpret_cast<const struct can_msg *>(msg.getPointer());
 
-        canBusReady.wait();
-        ret = ::write(fileDescriptor, _msg, sizeof(struct can_msg));
-        canBusReady.post();
-
-        if (ret == -1)
+        if (::write(fileDescriptor, _msg, sizeof(struct can_msg)) == -1)
         {
             CD_WARNING("%s.\n", std::strerror(errno));
         }
@@ -172,10 +156,12 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
     if (*sent < size)
     {
         CD_ERROR("sent (%d) < size (%d)\n", *sent, size);
-        return false;
+        ok = false;
     }
 
-    return true;
+    canBusReady.post();
+
+    return ok;
 }
 
 // -----------------------------------------------------------------------------

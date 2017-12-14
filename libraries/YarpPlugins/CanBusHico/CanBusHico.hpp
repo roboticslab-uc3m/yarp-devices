@@ -24,10 +24,14 @@ namespace roboticslab
 class CanBusHico : public ICanBusHico,
                    public yarp::dev::DeviceDriver,
                    public yarp::dev::ICanBus,
-                   private yarp::dev::ImplementCanBufferFactory<HicoCanMessage, can_msg>
+                   private yarp::dev::ImplementCanBufferFactory<HicoCanMessage, struct can_msg>
 {
 
 public:
+
+    CanBusHico() : fileDescriptor(0),
+                   fcntlFlags(0)
+    {}
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 
@@ -72,8 +76,13 @@ public:
 
 protected:
 
+    bool setFdMode(bool requestedBlocking);
+    bool setDelay();
+
     /** CAN file descriptor */
     int fileDescriptor;
+
+    int fcntlFlags;
 
     yarp::os::Semaphore canBusReady;
 

@@ -30,6 +30,16 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
     yarp::os::Time::delay(DELAY);
 
+    fcntlFlags = ::fcntl(fileDescriptor, F_GETFL);
+
+    if (fcntlFlags < 0)
+    {
+        CD_ERROR("Could not retrieve FD flags\n");
+        return false;
+    }
+
+    yarp::os::Time::delay(DELAY);
+
     //-- Set the CAN bitrate.
     if (::ioctl(fileDescriptor, IOC_SET_BITRATE, &bitrate) != 0)
     {
