@@ -111,8 +111,8 @@ class GrabberControls2GuiGUI(QtGui.QWidget):
         self.gainSpinBox.setEnabled(False) if not self.controller.has_gain() else None
         self.exposureSlider.setEnabled(False) if not self.controller.has_exposure() else None  # Look me mom I'm a hacker!
         self.exposureSpinBox.setEnabled(False) if not self.controller.has_exposure() else None
-        self.fpsSlider.setEnabled(False) if not self.controller.has_fps() else None  # Look me mom I'm a hacker!
-        self.fpsSpinBox.setEnabled(False) if not self.controller.has_fps() else None
+        self.fpsSlider.setEnabled(False) if not self.controller.has_FPS() else None  # Look me mom I'm a hacker!
+        self.fpsSpinBox.setEnabled(False) if not self.controller.has_FPS() else None
 
         # Connect to signals:
         self.zoomSlider.valueChanged.connect(self.onZoomSliderChanged)
