@@ -5,7 +5,7 @@ from os.path import normpath # see https://github.com/roboticslab-uc3m/asibot-ma
 
 
 setup(name='yarp-devices',
-      version='0.0.1',
+      version='0.0.2',
       description = 'Useful yarp devices and programs to interact with those devices for robots',
       author='David Estevez',
       author_email="destevez@ing.uc3m.es",
