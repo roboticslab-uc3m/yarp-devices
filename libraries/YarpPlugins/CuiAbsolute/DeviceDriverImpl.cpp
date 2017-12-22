@@ -18,6 +18,11 @@ bool roboticslab::CuiAbsolute::open(yarp::os::Searchable& config)
     this->refSpeed = 0;
     this->encoder = sqrt (-1);  // NaN \todo{Investigate, debug and document the dangers of this use of NaN.}
 
+    yarp::os::Value v = config.check("canBufferFactory", 0, "");
+    iCanBufferFactory = reinterpret_cast<yarp::dev::ICanBufferFactory *>(const_cast<char *>(v.asBlob()));
+
+    canOutputBuffer = iCanBufferFactory->createBuffer(1);
+
     CD_SUCCESS("Created CuiAbsolute with canId %d and tr %f, and all local parameters set to 0.\n",canId,tr);
     return true;
 }
@@ -26,6 +31,7 @@ bool roboticslab::CuiAbsolute::open(yarp::os::Searchable& config)
 bool roboticslab::CuiAbsolute::close()
 {
     CD_INFO("\n");
+    iCanBufferFactory->destroyBuffer(canOutputBuffer);
     return true;
 }
 

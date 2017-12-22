@@ -2,20 +2,22 @@
 
 #include "LacqueyFetch.hpp"
 
+#include <cstring>
+
 // -----------------------------------------------------------------------------
 
-std::string roboticslab::LacqueyFetch::msgToStr(can_msg* message)
+std::string roboticslab::LacqueyFetch::msgToStr(yarp::dev::CanMessage * message)
 {
     std::stringstream tmp;
-    for(int i=0; i < message->dlc-1; i++)
+    for(int i=0; i < message->getLen()-1; i++)
     {
-        tmp << std::hex << static_cast<int>(message->data[i]) << " ";
+        tmp << std::hex << static_cast<int>(message->getData()[i]) << " ";
     }
-    tmp << std::hex << static_cast<int>(message->data[message->dlc-1]);
+    tmp << std::hex << static_cast<int>(message->getData()[message->getLen()-1]);
     tmp << ". canId(";
-    tmp << std::dec << (message->id & 0x7F);
+    tmp << std::dec << (message->getId() & 0x7F);
     tmp << ") via(";
-    tmp << std::hex << (message->id & 0xFF80);
+    tmp << std::hex << (message->getId() & 0xFF80);
     tmp << ").";
     return tmp.str();
 }
@@ -46,7 +48,14 @@ bool roboticslab::LacqueyFetch::send(uint32_t cob, uint16_t len, uint8_t * msgDa
     if ( (lastUsage - yarp::os::Time::now()) < DELAY )
         yarp::os::Time::delay( lastUsage + DELAY - yarp::os::Time::now() );
 
-    if( ! canDevicePtr->sendRaw(cob + this->canId, len, msgData) )
+    yarp::dev::CanMessage &msg = canOutputBuffer[0];
+    msg.setId(cob + canId);
+    msg.setLen(len);
+    std::memcpy(msg.getData(), msgData, len * sizeof(uint8_t));
+
+    unsigned int sent;
+
+    if( ! canDevicePtr->canWrite(canOutputBuffer, 1, &sent, false) )
         return false;
 
     lastUsage = yarp::os::Time::now();

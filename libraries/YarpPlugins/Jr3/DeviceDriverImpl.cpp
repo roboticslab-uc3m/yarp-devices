@@ -2,6 +2,8 @@
 
 #include "Jr3.hpp"
 
+#include <sys/ioctl.h>
+
 // -----------------------------------------------------------------------------
 
 bool roboticslab::Jr3::open(yarp::os::Searchable& config)

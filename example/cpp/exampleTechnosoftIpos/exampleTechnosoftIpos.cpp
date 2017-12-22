@@ -37,11 +37,12 @@ make -j3
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Value.h>
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/CanBusInterface.h>
 
-#include <ICanBusHico.h>
 #include <ICanBusSharer.h>
 
 int main(int argc, char *argv[])
@@ -54,12 +55,13 @@ int main(int argc, char *argv[])
     }
 
     yarp::dev::PolyDriver canBusDevice;
-    roboticslab::ICanBusHico* iCanBus;
+    yarp::dev::ICanBus* iCanBus;
+    yarp::dev::ICanBufferFactory* iCanBufferFactory;
 
     yarp::os::Property canBusOptions;
     canBusOptions.put("device","CanBusHico");
     canBusOptions.put("canDevice","/dev/can1");
-    canBusOptions.put("canBitrate",BITRATE_1000k);
+    canBusOptions.put("canBitrate",8);
     canBusDevice.open(canBusOptions);
     if( ! canBusDevice.isValid() )
     {
@@ -67,6 +69,7 @@ int main(int argc, char *argv[])
         return 1;
     }
     canBusDevice.view(iCanBus);
+    canBusDevice.view(iCanBufferFactory);
 
     yarp::os::Property options;
     options.put("device","TechnosoftIpos");
@@ -76,6 +79,10 @@ int main(int argc, char *argv[])
     options.put("max",60);
     options.put("refAcceleration",0.575437);
     options.put("refSpeed",737.2798);
+
+    yarp::os::Value v(iCanBufferFactory, sizeof(yarp::dev::ICanBufferFactory));
+    options.put("canBufferFactory", v);
+
     yarp::dev::PolyDriver dd(options);
     if(!dd.isValid())
     {

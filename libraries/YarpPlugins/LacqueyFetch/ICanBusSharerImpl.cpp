@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LacqueyFetch::setCanBusPtr(ICanBusHico *canDevicePtr)
+bool roboticslab::LacqueyFetch::setCanBusPtr(yarp::dev::ICanBus *canDevicePtr)
 {
 
     this->canDevicePtr = canDevicePtr;
@@ -54,7 +54,7 @@ bool roboticslab::LacqueyFetch::recoverFromError()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LacqueyFetch::interpretMessage( can_msg * message)
+bool roboticslab::LacqueyFetch::interpretMessage(yarp::dev::CanMessage * message)
 {
 
     return true;

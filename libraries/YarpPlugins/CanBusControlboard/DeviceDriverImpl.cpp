@@ -37,10 +37,20 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         CD_ERROR("canBusDevice instantiation not worked.\n");
         return false;
     }
-    canBusDevice.view(iCanBus);
 
-    //-- We test if we recive messages of the Cui (in the start and in the end)
-    struct can_msg buffer;
+    if( !canBusDevice.view(iCanBus) )
+    {
+        CD_ERROR("Cannot view ICanBus interface in device: CanBusHico.\n");
+        return false;
+    }
+
+    if( !canBusDevice.view(iCanBufferFactory) )
+    {
+        CD_ERROR("Cannot view ICanBusFactory interface in device: CanBusHico.\n");
+        return false;
+    }
+
+    canInputBuffer = iCanBufferFactory->createBuffer(1);
 
     //-- Start the reading thread (required for checkMotionDoneRaw).
     this->Thread::start();
@@ -77,6 +87,9 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         options.put("refSpeed",refSpeeds.get(i).asDouble());
         options.put("encoderPulses",encoderPulsess.get(i).asDouble());
         options.put("ptModeMs",ptModeMs);
+
+        yarp::os::Value v(iCanBufferFactory, sizeof(yarp::dev::ICanBufferFactory));
+        options.put("canBufferFactory", v);
 
         // -- Configuramos todos los dispositivos (TechnosoftIpos, LacqueyFetch, CuiAbsolute)
         yarp::dev::PolyDriver* device = new yarp::dev::PolyDriver(options);
@@ -342,13 +355,12 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
 bool roboticslab::CanBusControlboard::close()
 {
-    int ret = 0;
     double timeOut = 1; // timeout (1 secod)
-    struct can_msg buffer;
-
 
     //-- Stop the read thread.
     this->Thread::stop();
+
+    yarp::dev::CanMessage &msg = canInputBuffer[0];
 
     //-- Disable and shutdown the physical drivers (and Cui Encoders).
     bool ok = true;
@@ -397,13 +409,14 @@ bool roboticslab::CanBusControlboard::close()
                     timePassed = true;
                 }
 
-                ret = iCanBus->read_timeout(&buffer,1);         // -- return value of message with timeout of 1 [ms]
+                unsigned int read;
+                bool okRead = iCanBus->canRead(canInputBuffer, 1, &read, true);
 
                 // This line is needed to clear the buffer (old messages that has been received)
                 if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
 
-                if( ret <= 0 ) continue;                        // -- is waiting for recive message
-                canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
+                if( !okRead ) continue;                        // -- is waiting for recive message
+                canId = msg.getId()  & 0x7F;                      // -- if it recive the message, it will get ID
                 //CD_DEBUG("Read a message from CuiAbsolute %d\n", canId);
 
                 //printf("timeOut: %d\n", int(yarp::os::Time::now()-timeStamp));
@@ -423,7 +436,9 @@ bool roboticslab::CanBusControlboard::close()
         nodes[i] = 0;
     }
 
+    iCanBufferFactory->destroyBuffer(canInputBuffer);
     canBusDevice.close();
+
     CD_INFO("End.\n");
     return ok;
 }

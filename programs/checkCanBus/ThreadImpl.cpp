@@ -1,7 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include "CheckCanBus.hpp"
-#include "hico_api.h"
 
 #include <yarp/os/Time.h>
 
@@ -19,10 +18,11 @@ void roboticslab::CheckCanBus::run()
     while ( ! this->RFModule::isStopping())   // -- Mientras no se pare el RFModule
     {
 
-        struct can_msg buffer; // -- Mensaje CAN
+        yarp::dev::CanMessage &msg = canInputBuffer[0]; // -- Mensaje CAN
+        unsigned int read;
 
-        //-- read_timeout() returns the number read, -1 for errors or 0 for timeout or EOF.
-        int ret = iCanBus->read_timeout(&buffer,1);
+        //-- returns false for errors, timeout or EOF.
+        bool ok = iCanBus->canRead(canInputBuffer, 1, &read, true);
 
         /* Nota para la siguiente linea: si el tiempo que tarda el usuario en encender los brazos
          * es inferior al cleaningTime, puede dar lugar a pérdida de mensajes que no sean detectados por la
@@ -30,25 +30,25 @@ void roboticslab::CheckCanBus::run()
         if((yarp::os::Time::now()-threadInitTime) < cleaningTime) continue; //-- hasta que no llegue al cleaningTime, no revisará lo siguiente
 
         //-- All debugging messages should be contained in read_timeout, so just loop again.
-        if( ret <= 0 ) continue; // --  continue para omitir secciones de código e iniciar la siguiente iteración de un bucle
+        if( !ok ) continue; // --  continue para omitir secciones de código e iniciar la siguiente iteración de un bucle
         //  --  de esta forma se saltaría el código siguiente hasta que (ret > 0 )
 
-        int canId = buffer.id  & 0x7F; // -- limpia basura del CAN
+        int canId = msg.getId() & 0x7F; // -- limpia basura del CAN
 
         //-- Intercept 700h 0 msg that just indicates presence.
-        if( (buffer.id-canId) == 0x700 )   // -- Filtra mensajes por presencia
+        if( (msg.getId()-canId) == 0x700 )   // -- Filtra mensajes por presencia
         {
             if(firstTime == 0) firstTime = yarp::os::Time::now(); // -- toma el firsTime al detectar la primera presencia
 
             //CD_SUCCESS("Device indicating presence. %s\n",msgToStr(&buffer).c_str());
-            checkIds(&buffer); // -- Comprueba los IDs e imprime por pantalla los detectados
+            checkIds(&msg); // -- Comprueba los IDs e imprime por pantalla los detectados
             continue; // -- Mientras esté detectando presencia, las instrucciones de abajo no las ejecuta
         }
 
         //----------------- Comprueba IDs de encoders (mensajes con otra cabecera) -----------------
         else                               // -- En caso de que NO sean mensajes de presencia
         {
-            checkIds(&buffer); // -- muestra en pantalla los IDs de los encoders detectados
+            checkIds(&msg); // -- muestra en pantalla los IDs de los encoders detectados
             // -- Transcurridos los segundos indicados, imprime por pantalla los IDs no detectados
             if(int(yarp::os::Time::now()-firstTime)==timeOut+1)
                 printWronglIds(); // -- Imprime los IDs que no se han utilizado

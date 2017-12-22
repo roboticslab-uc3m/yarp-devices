@@ -10,9 +10,7 @@
 #include <yarp/os/Thread.h>
 
 #include <yarp/dev/PolyDriver.h>
-
-#include "ICanBusHico.h"
-#include "hico_api.h"
+#include <yarp/dev/CanBusInterface.h>
 
 namespace roboticslab
 {
@@ -32,10 +30,12 @@ public:
 protected:
 
     yarp::dev::PolyDriver deviceDevCan0;
-    ICanBusHico* iCanBus;
+    yarp::dev::ICanBus* iCanBus;
+    yarp::dev::ICanBufferFactory* iCanBufferFactory;
+    yarp::dev::CanBuffer canInputBuffer;
 
     /** A helper function to display CAN messages. */
-    std::string msgToStr(can_msg* message);
+    std::string msgToStr(yarp::dev::CanMessage* message);
     double lastNow;
 
     virtual double getPeriod()

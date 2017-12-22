@@ -27,6 +27,10 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->refTorque = 0;
     this->refVelocity = 0; // if you want to test.. put 0.1
 
+    yarp::os::Value v = config.check("canBufferFactory", 0, "");
+    iCanBufferFactory = reinterpret_cast<yarp::dev::ICanBufferFactory *>(const_cast<char *>(v.asBlob()));
+
+    canOutputBuffer = iCanBufferFactory->createBuffer(1);
 
     if( 0 == this->canId )
     {
@@ -68,6 +72,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 bool roboticslab::TechnosoftIpos::close()
 {
     CD_INFO("\n");
+    iCanBufferFactory->destroyBuffer(canOutputBuffer);
     return true;
 }
 

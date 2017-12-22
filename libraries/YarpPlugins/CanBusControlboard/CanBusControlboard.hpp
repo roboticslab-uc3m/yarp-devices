@@ -5,6 +5,7 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
+#include <yarp/dev/CanBusInterface.h>
 
 #include <stdlib.h>  //-- Just for ::exit()
 #include <fcntl.h>  //-- Just for O_RDWR
@@ -940,7 +941,9 @@ protected:
 
     /** A CAN device. */
     yarp::dev::PolyDriver canBusDevice;
-    ICanBusHico* iCanBus;
+    yarp::dev::ICanBus* iCanBus;
+    yarp::dev::ICanBufferFactory *iCanBufferFactory;
+    yarp::dev::CanBuffer canInputBuffer;
 
     /** A vector of CAN node objects. */
     std::vector< yarp::dev::PolyDriver* > nodes;
@@ -958,7 +961,7 @@ protected:
     std::map< int, int > idxFromCanId;
 
     /** A helper function to display CAN messages. */
-    std::string msgToStr(can_msg* message);
+    std::string msgToStr(yarp::dev::CanMessage* message);
 
     /**
      * Check if index is within range (referred to driver vector size).

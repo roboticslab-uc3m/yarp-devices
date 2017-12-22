@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeJoint::setCanBusPtr(ICanBusHico *canDevicePtr)
+bool roboticslab::FakeJoint::setCanBusPtr(yarp::dev::ICanBus *canDevicePtr)
 {
 
     this->canDevicePtr = canDevicePtr;
@@ -54,7 +54,7 @@ bool roboticslab::FakeJoint::recoverFromError()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeJoint::interpretMessage( can_msg * message)
+bool roboticslab::FakeJoint::interpretMessage(yarp::dev::CanMessage * message)
 {
 
     return true;
