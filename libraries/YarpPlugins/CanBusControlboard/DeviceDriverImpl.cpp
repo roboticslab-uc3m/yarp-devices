@@ -11,7 +11,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     int16_t ptModeMs = config.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
     int timeCuiWait  = config.check("waitEncoder", yarp::os::Value(DEFAULT_TIME_TO_WAIT_CUI), "CUI timeout seconds").asInt();
 
-
+    std::string canBusType = config.check("canBusType", yarp::os::Value(DEFAULT_CAN_BUS), "CAN bus device").asString();
 
     yarp::os::Bottle ids = config.findGroup("ids").tail();  //-- e.g. 15
     yarp::os::Bottle trs = config.findGroup("trs").tail();  //-- e.g. 160
@@ -30,7 +30,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     //-- Initialize the CAN device.
     yarp::os::Property canBusOptions;
     canBusOptions.fromString(config.toString());  // canDevice, canBitrate
-    canBusOptions.put("device","CanBusHico");
+    canBusOptions.put("device",canBusType);
     canBusDevice.open(canBusOptions);
     if( ! canBusDevice.isValid() )
     {
@@ -40,13 +40,13 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
     if( !canBusDevice.view(iCanBus) )
     {
-        CD_ERROR("Cannot view ICanBus interface in device: CanBusHico.\n");
+        CD_ERROR("Cannot view ICanBus interface in device: %s.\n", canBusType.c_str());
         return false;
     }
 
     if( !canBusDevice.view(iCanBufferFactory) )
     {
-        CD_ERROR("Cannot view ICanBusFactory interface in device: CanBusHico.\n");
+        CD_ERROR("Cannot view ICanBusFactory interface in device: %s.\n", canBusType.c_str());
         return false;
     }
 
