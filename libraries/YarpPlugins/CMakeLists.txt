@@ -37,12 +37,10 @@ add_subdirectory(TextilesHand)
 add_subdirectory(WiimoteSensor)
 
 # Install interface headers.
-install(FILES ICanBusHico.h
-              ICanBusSharer.h
+install(FILES ICanBusSharer.h
               ICuiAbsolute.h
               IProximitySensors.h
               ITechnosoftIpos.h
-              hico_api.h # remove, see #122
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Export variables to the global scope.

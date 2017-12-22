@@ -11,8 +11,12 @@
 #include <yarp/dev/CanBusInterface.h>
 
 #include "hico_api.h"
-#include "ICanBusHico.h"
 #include "HicoCanMessage.hpp"
+
+#define DEFAULT_CAN_DEVICE "/dev/can0"
+#define DEFAULT_CAN_BITRATE BITRATE_1000k
+
+#define DELAY 0.001  // [s] Required when using same driver.
 
 namespace roboticslab
 {
@@ -23,8 +27,7 @@ namespace roboticslab
  * @brief Specifies the HicoCan (hcanpci) behaviour and specifications.
  *
  */
-class CanBusHico : public ICanBusHico,
-                   public yarp::dev::DeviceDriver,
+class CanBusHico : public yarp::dev::DeviceDriver,
                    public yarp::dev::ICanBus,
                    private yarp::dev::ImplementCanBufferFactory<HicoCanMessage, struct can_msg>
 {
@@ -46,21 +49,6 @@ public:
 
     /** Close the CAN device. */
     virtual bool close();
-
-    //  --------- ICanBusHico declarations. Implementation in CanBusHico.cpp ---------
-
-    /**
-     * Write message to the CAN buffer.
-     * @param id Message's COB-id
-     * @param len Data field length
-     * @param msgData Data to send
-     * @return true/false on success/failure.
-     */
-    virtual bool sendRaw(uint32_t id, uint16_t len, uint8_t * msgData);
-
-    /** Read data.
-     * @return Number on got, 0 on timeout, and errno on fail. */
-    virtual int read_timeout(struct can_msg *buf, unsigned int timeout);
 
     //  --------- ICanBus declarations. Implementation in ICanBusImpl.cpp ---------
 
