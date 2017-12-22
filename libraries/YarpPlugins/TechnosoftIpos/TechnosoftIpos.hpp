@@ -250,7 +250,7 @@ protected:
 
     //-- Encoder stuff
     double encoder;
-    uint32_t encoderTimestamp;
+    double encoderTimestamp;
     yarp::os::Semaphore encoderReady;
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRawExternal;
 

@@ -144,7 +144,7 @@ bool roboticslab::CuiAbsolute::interpretMessage(yarp::dev::CanMessage * message)
     if (encoder > 180.0)  // maybe a while?
         encoder -= 360.0;
 
-    encoderTimestamp = message->ts;
+    encoderTimestamp = yarp::os::Time::now();
     encoderReady.post();
     firstHasReached = true;
     return true;

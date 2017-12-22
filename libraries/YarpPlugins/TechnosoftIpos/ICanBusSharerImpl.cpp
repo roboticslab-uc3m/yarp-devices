@@ -290,7 +290,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(yarp::dev::CanMessage * messa
             memcpy(&got, message->getData()+4,4);
             encoderReady.wait();
             encoder =  got / ( (encoderPulses / 360.0) * this->tr );
-            encoderTimestamp = message->ts;
+            encoderTimestamp = yarp::os::Time::now();
             encoderReady.post();
             return true;
         }
