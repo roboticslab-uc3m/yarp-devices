@@ -48,6 +48,16 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
     endif()
 endif()
 
+# Pick up our CMake modules.
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake
+                              ${CMAKE_SOURCE_DIR}/cmake/find-modules)
+
+# Bootstrap YCM. Stick to v0.2.2 because of:
+# https://github.com/robotology/ycm/issues/118
+# ...and to keep YCM itself compatible with cmake_minimum_required().
+set(YCM_TAG v0.2.2)
+include(YCMBootstrap)
+
 # Standard installation directories.
 include(GNUInstallDirs)
 
@@ -55,10 +65,6 @@ include(GNUInstallDirs)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
-
-# Pick up our CMake modules.
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake
-                              ${CMAKE_SOURCE_DIR}/cmake/find-modules)
 
 # Enabling coverage.
 option(ENABLE_coverage "Choose if you want to enable coverage collection" OFF)
@@ -69,12 +75,6 @@ if(ENABLE_coverage)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
     endif()
 endif()
-
-# Bootstrap YCM. Stick to v0.2.2 because of:
-# https://github.com/robotology/ycm/issues/118
-# ...and to keep YCM itself compatible with cmake_minimum_required().
-set(YCM_TAG v0.2.2)
-include(YCMBootstrap)
 
 # Superbuild phase - include color-debug.
 include(FindOrBuildPackage)
