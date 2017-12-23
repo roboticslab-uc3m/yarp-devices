@@ -153,21 +153,23 @@ bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
 
 bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait)
 {
-    bool ok = true;
+    *read = 0;
 
     canBusReady.wait();
 
     if (!setFdMode(wait))
     {
-        CD_WARNING("setFdMode() failed: %s.\n", std::strerror(errno));
+        CD_ERROR("setFdMode() failed: %s.\n", std::strerror(errno));
+        canBusReady.post();
+        return false;
     }
 
     for (unsigned int i = 0; i < size; i++)
     {
         if (wait && !setDelay())
         {
-            ok = false;
-            break;
+            CD_WARNING("Could not set timeout on blocking operation.\n");
+            continue;
         }
 
         yarp::dev::CanMessage & msg = msgs[i];
@@ -176,7 +178,7 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
         //-- read() returns the number read, -1 for errors or 0 for EOF.
         if (::read(fileDescriptor, _msg, sizeof(struct can_msg)) < 0)
         {
-            CD_WARNING("read() error: %s.\n", std::strerror(errno));
+            CD_ERROR("read() error: %s.\n", std::strerror(errno));
         }
         else
         {
@@ -184,40 +186,42 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
         }
     }
 
+    canBusReady.post();
+
     if (*read < size)
     {
         CD_ERROR("read (%d) < size (%d)\n", *read, size);
-        ok = false;
+        return false;
     }
 
-    canBusReady.post();
-
-    return ok;
+    return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait)
 {
-    bool ok = true;
+    *sent = 0;
 
     canBusReady.wait();
 
     if (!setFdMode(wait))
     {
-        CD_WARNING("setFdMode() failed: %s.\n", std::strerror(errno));
+        CD_ERROR("setFdMode() failed: %s.\n", std::strerror(errno));
+        canBusReady.post();
+        return false;
     }
 
     for (unsigned int i = 0; i < size; i++)
     {
-        // 'wait' param not handled
+        // 'wait' param not handled, blocks indefinitely when true
 
         const yarp::dev::CanMessage & msg = const_cast<yarp::dev::CanBuffer &>(msgs)[i];
         const struct can_msg * _msg = reinterpret_cast<const struct can_msg *>(msg.getPointer());
 
         if (::write(fileDescriptor, _msg, sizeof(struct can_msg)) == -1)
         {
-            CD_WARNING("%s.\n", std::strerror(errno));
+            CD_ERROR("%s.\n", std::strerror(errno));
         }
         else
         {
@@ -225,15 +229,15 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
         }
     }
 
+    canBusReady.post();
+
     if (*sent < size)
     {
         CD_ERROR("sent (%d) < size (%d)\n", *sent, size);
-        ok = false;
+        return false;
     }
 
-    canBusReady.post();
-
-    return ok;
+    return true;
 }
 
 // -----------------------------------------------------------------------------
