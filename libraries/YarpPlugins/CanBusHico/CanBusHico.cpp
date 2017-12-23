@@ -36,8 +36,8 @@ bool roboticslab::CanBusHico::setDelay()
     fd_set fds;
     struct timeval tv;
 
-    tv.tv_sec = DELAY * 1000;
-    tv.tv_usec = 0;
+    tv.tv_sec = DELAY;
+    tv.tv_usec = DELAY * 1000 * 1000;
 
     FD_ZERO(&fds);
     FD_SET(fileDescriptor, &fds);
