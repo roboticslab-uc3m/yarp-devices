@@ -41,7 +41,7 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
     yarp::os::Time::delay(DELAY);
 
     //-- Set the CAN bitrate.
-    if (::ioctl(fileDescriptor, IOC_SET_BITRATE, &bitrate) != 0)
+    if (!canSetBaudRate(bitrate))
     {
         CD_ERROR("Could not set bitrate on CAN device: %s\n", devicePath.c_str());
         return false;
@@ -67,7 +67,6 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
 bool roboticslab::CanBusHico::close()
 {
-    //release semaphore?
     ::close(fileDescriptor);
 
     return true;
