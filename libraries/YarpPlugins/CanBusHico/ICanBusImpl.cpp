@@ -18,6 +18,14 @@ bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
 {
     CD_DEBUG("(%d)\n", rate);
 
+    std::string rateStr;
+
+    if (!interpretBitrate(rate, rateStr))
+    {
+        CD_ERROR("Unrecognized baudrate value: %s.", rateStr.c_str());
+        return false;
+    }
+
     canBusReady.wait();
     int ret = ::ioctl(fileDescriptor, IOC_SET_BITRATE, &rate);
     canBusReady.post();
@@ -45,6 +53,13 @@ bool roboticslab::CanBusHico::canGetBaudRate(unsigned int * rate)
     {
         CD_ERROR("Could not set bitrate: %s.\n", std::strerror(errno));
         return false;
+    }
+
+    std::string rateStr;
+
+    if (interpretBitrate(*rate, rateStr))
+    {
+        CD_DEBUG("Got baudrate: %s (%d).\n", rateStr.c_str(), *rate);
     }
 
     return true;

@@ -4,6 +4,7 @@
 #define __CAN_BUS_HICO__
 
 #include <set>
+#include <string>
 
 #include <yarp/os/Semaphore.h>
 
@@ -69,6 +70,7 @@ protected:
     bool setFdMode(bool requestedBlocking);
     bool setDelay();
     bool clearFilters();
+    bool interpretBitrate(unsigned int rate, std::string & str);
 
     /** CAN file descriptor */
     int fileDescriptor;

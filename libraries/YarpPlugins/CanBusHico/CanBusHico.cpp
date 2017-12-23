@@ -71,3 +71,43 @@ bool roboticslab::CanBusHico::clearFilters()
 }
 
 // -----------------------------------------------------------------------------
+
+bool roboticslab::CanBusHico::interpretBitrate(unsigned int rate, std::string & str)
+{
+    switch (rate)
+    {
+    case BITRATE_10k:
+        str = "10k";
+        break;
+    case BITRATE_20k:
+        str = "20k";
+        break;
+    case BITRATE_50k:
+        str = "50k";
+        break;
+    case BITRATE_100k:
+        str = "100k";
+        break;
+    case BITRATE_125k:
+        str = "125k";
+        break;
+    case BITRATE_250k:
+        str = "250k";
+        break;
+    case BITRATE_500k:
+        str = "500k";
+        break;
+    case BITRATE_800k:
+        str = "800k";
+        break;
+    case BITRATE_1000k:
+        str = "1000k";
+        break;
+    default:
+        return false;
+    }
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
