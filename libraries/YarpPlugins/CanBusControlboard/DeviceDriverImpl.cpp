@@ -247,6 +247,13 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             }
         }
 
+        //-- Enable acceptance filters for each node ID
+        if( !iCanBus->canIdAdd(ids.get(i).asInt()) )
+        {
+            CD_ERROR("Cannot register acceptance filter for node ID: %d.\n", ids.get(i).asInt());
+            return false;
+        }
+
     } // -- for(int i=0; i<nodes.size(); i++)
 
     //-- Set all motor drivers to mode.
