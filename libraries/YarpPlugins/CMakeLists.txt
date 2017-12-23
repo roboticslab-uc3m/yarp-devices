@@ -25,6 +25,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_subdirectory(AravisGigE) # Aravis driver for GigE cameras
 add_subdirectory(CanBusControlboard)
 add_subdirectory(CanBusHico)
+add_subdirectory(CanBusPeak)
+add_subdirectory(CanBusSocket)
 add_subdirectory(CuiAbsolute)
 add_subdirectory(FakeJoint)
 add_subdirectory(Jr3)
