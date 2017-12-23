@@ -55,7 +55,7 @@ bool roboticslab::LacqueyFetch::send(uint32_t cob, uint16_t len, uint8_t * msgDa
 
     unsigned int sent;
 
-    if( ! canDevicePtr->canWrite(canOutputBuffer, 1, &sent, false) )
+    if( ! canDevicePtr->canWrite(canOutputBuffer, 1, &sent, true) )
         return false;
 
     lastUsage = yarp::os::Time::now();
