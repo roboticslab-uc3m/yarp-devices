@@ -127,16 +127,14 @@ bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
         return true;
     }
 
+    std::vector<unsigned int> localCopy(filteredIds.begin(), filteredIds.end());
+
     if (!clearFilters())
     {
         CD_ERROR("Could not clear list of active filters prior to populating it with previously stored IDs.\n");
         canBusReady.post();
         return false;
     }
-
-    filteredIds.erase(id);
-
-    std::vector<unsigned int> localCopy(filteredIds.begin(), filteredIds.end());
 
     canBusReady.post();
 

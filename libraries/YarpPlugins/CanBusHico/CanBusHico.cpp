@@ -67,6 +67,8 @@ bool roboticslab::CanBusHico::clearFilters()
         return false;
     }
 
+    filteredIds.clear();
+
     return true;
 }
 
