@@ -30,7 +30,7 @@ namespace roboticslab
  */
 class CanBusHico : public yarp::dev::DeviceDriver,
                    public yarp::dev::ICanBus,
-                   private yarp::dev::ImplementCanBufferFactory<HicoCanMessage, struct can_msg>
+                   public yarp::dev::ImplementCanBufferFactory<HicoCanMessage, struct can_msg>
 {
 
 public:
