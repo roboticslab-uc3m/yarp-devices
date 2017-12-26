@@ -46,7 +46,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
     if( !canBusDevice.view(iCanBufferFactory) )
     {
-        CD_ERROR("Cannot view ICanBusFactory interface in device: %s.\n", canBusType.c_str());
+        CD_ERROR("Cannot view ICanBufferFactory interface in device: %s.\n", canBusType.c_str());
         return false;
     }
 
