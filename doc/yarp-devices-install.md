@@ -27,6 +27,9 @@ Some dependencies must be installed for all the devices (for Debian guides, see 
   - [Install CMake](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-cmake.md)
   - [Install YARP](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md)
 
+Additionally, this project depends on YCM to download and build external packages. Although this process is intended to run automatically during the CMake configuration phase, you may still want to install YCM and said packages by yourself. In that respect, refer to [Install YCM](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-ycm.md) and to the installation guides of any package listed below:
+- [color-debug](https://github.com/roboticslab-uc3m/color-debug)
+
 ## Specific dependencies
 
 Some devices require specific dependencies to work that must be satisfied. Use the following table to locate and install the dependencies required for your concrete application.
@@ -38,9 +41,9 @@ Some devices require specific dependencies to work that must be satisfied. Use t
 | Python 3+ |  :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: |  :x: | :x: | :x: | :white_check_mark: |
 | [setuptools (pip3)](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-setuptools.md#install-setuptools-using-pip3) |  :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: |  :x: | :x: | :x: | :white_check_mark: |
 | [Custom yarp Python 3 bindings](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md#install-python-bindings-with-iframegrabbercontrols2-support) | :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: |  :x: | :x: | :x: | :white_check_mark: |
-| [Spacenav](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-spacenav.md#install-spacenav-ubuntu) |  :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :white_check_mark: |  :x: | :x: | :x: | :white_check_mark: |
-| [XWiimote](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-xwiimote.md#install-xwiimote-ubuntu) |  :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: |  :x: | :x: | :white_check_mark: | :white_check_mark: |
-| [Leap Motion SDK v2](https://developer.leapmotion.com/sdk/v2)*** |  :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :white_check_mark: | :x: | :x: |  :x: | :x: | :x: | :white_check_mark: |
+| [Spacenav](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-spacenav.md#install-spacenav-ubuntu) |  :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :white_check_mark: |  :x: | :x: | :x: | :x: |
+| [XWiimote](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-xwiimote.md#install-xwiimote-ubuntu) |  :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: |  :x: | :x: | :white_check_mark: | :x: |
+| [Leap Motion SDK v2](https://developer.leapmotion.com/sdk/v2)*** |  :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :white_check_mark: | :x: | :x: |  :x: | :x: | :x: | :x: |
 
 \* CMake find modules are smart enough to locate the SDK files in the usual paths. We recommend unzipping the `LeapSDK` folder in `/opt/LeapSDK` (make sure it contains `include/` and `lib/` at the top level).
 
