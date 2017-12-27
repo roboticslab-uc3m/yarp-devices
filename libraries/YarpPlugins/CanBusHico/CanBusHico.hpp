@@ -67,8 +67,10 @@ public:
 
 protected:
 
+    enum io_operation { READ, WRITE };
+
     bool setFdMode(bool requestedBlocking);
-    bool setDelay();
+    bool waitUntilTimeout(io_operation op, bool * bufferReady);
     bool clearFilters();
     bool interpretBitrate(unsigned int rate, std::string & str);
 

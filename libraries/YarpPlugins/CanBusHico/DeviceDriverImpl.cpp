@@ -21,18 +21,20 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
     //-- Open the CAN device for reading and writing.
     fileDescriptor = ::open(devicePath.c_str(), O_RDWR);
-    if (fileDescriptor < 0)
+
+    if (fileDescriptor == -1)
     {
         CD_ERROR("Could not open CAN device of path: %s\n", devicePath.c_str());
         return false;
     }
+
     CD_SUCCESS("Opened CAN device of path: %s\n", devicePath.c_str());
 
     yarp::os::Time::delay(DELAY);
 
     fcntlFlags = ::fcntl(fileDescriptor, F_GETFL);
 
-    if (fcntlFlags < 0)
+    if (fcntlFlags == -1)
     {
         CD_ERROR("Could not retrieve FD flags\n");
         return false;
@@ -46,16 +48,18 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
         CD_ERROR("Could not set bitrate on CAN device: %s\n", devicePath.c_str());
         return false;
     }
+
     CD_SUCCESS("Bitrate set on CAN device: %s\n", devicePath.c_str());
 
     yarp::os::Time::delay(DELAY);
 
     //-- Start the CAN device.
-    if (::ioctl(fileDescriptor,IOC_START) != 0)
+    if (::ioctl(fileDescriptor,IOC_START) == -1)
     {
         CD_ERROR("IOC_START failed on CAN device: %s\n", devicePath.c_str());
         return false;
     }
+
     CD_SUCCESS("IOC_START ok on CAN device: %s\n", devicePath.c_str());
 
     yarp::os::Time::delay(DELAY);

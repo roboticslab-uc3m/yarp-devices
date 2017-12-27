@@ -23,7 +23,12 @@ bool roboticslab::CanBusHico::setFdMode(bool requestedBlocking)
     if (currentlyBlocking != requestedBlocking)
     {
         int flag = requestedBlocking ? ~O_NONBLOCK : O_NONBLOCK;
-        return ::fcntl(fileDescriptor, F_SETFL, fcntlFlags & flag) != -1;
+
+        if (::fcntl(fileDescriptor, F_SETFL, fcntlFlags & flag) == -1)
+        {
+            CD_ERROR("fcntl() error: %s.\n", std::strerror(errno));
+            return false;
+        }
     }
 
     return true;
@@ -31,7 +36,7 @@ bool roboticslab::CanBusHico::setFdMode(bool requestedBlocking)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::setDelay()
+bool roboticslab::CanBusHico::waitUntilTimeout(io_operation op, bool * bufferReady)
 {
     fd_set fds;
     struct timeval tv;
@@ -42,17 +47,36 @@ bool roboticslab::CanBusHico::setDelay()
     FD_ZERO(&fds);
     FD_SET(fileDescriptor, &fds);
 
-    //-- select() returns the number of ready descriptors, or -1 for errors.
-    int ret = ::select(fileDescriptor + 1, &fds, 0, 0, &tv);
+    //-- select() returns the number of ready descriptors, 0 for timeout, -1 for errors.
+    int ret;
 
-    if (ret <= 0)
+    switch (op)
     {
-        //-- No CD as select() timeout is way too verbose, happens all the time.
-        // Return 0 on select timeout, <0 on select error.
+    case READ:
+        ret = ::select(fileDescriptor + 1, &fds, 0, 0, &tv);
+        break;
+    case WRITE:
+        ret = ::select(fileDescriptor + 1, 0, &fds, 0, &tv);
+        break;
+    default:
+        CD_ERROR("Unhandled IO operation on select().\n");
         return false;
     }
 
-    assert(FD_ISSET(fileDescriptor, &fds));
+    if (ret < 0)
+    {
+        CD_ERROR("select() error: %s.\n", std::strerror(errno));
+        return false;
+    }
+    else if (ret == 0)
+    {
+        *bufferReady = false;
+    }
+    else
+    {
+        assert(FD_ISSET(fileDescriptor, &fds));
+        *bufferReady = true;
+    }
 
     return true;
 }
@@ -61,9 +85,9 @@ bool roboticslab::CanBusHico::setDelay()
 
 bool roboticslab::CanBusHico::clearFilters()
 {
-    if (::ioctl(fileDescriptor, IOC_CLEAR_FILTERS) != 0)
+    if (::ioctl(fileDescriptor, IOC_CLEAR_FILTERS) == -1)
     {
-        CD_ERROR("Could not clear filters: %s\n", std::strerror(errno));
+        CD_ERROR("ioctl() error: %s\n", std::strerror(errno));
         return false;
     }
 
