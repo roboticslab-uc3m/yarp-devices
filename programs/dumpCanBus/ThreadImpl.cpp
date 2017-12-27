@@ -12,18 +12,16 @@ void roboticslab::DumpCanBus::run()
 
     while ( ! this->RFModule::isStopping() )
     {
-
-        yarp::dev::CanMessage &msg = canInputBuffer[0];
-
         unsigned int read;
 
-        //-- returns false for errors, timeout or EOF.
+        //-- Blocks with timeout until one message arrives, returns false on errors.
         bool ok = iCanBus->canRead(canInputBuffer, 1, &read, true);
 
-        //-- All debugging messages should be contained in read_timeout, so just loop again.
-        if( !ok ) continue;
+        //-- All debugging messages should be contained in canRead, so just loop again.
+        if( !ok || read == 0 ) continue;
 
-        int canId = msg.getId()  & 0x7F;
+        yarp::dev::CanMessage &msg = canInputBuffer[0];
+        int canId = msg.getId() & 0x7F;
 
         //-- Commenting next line as way too verbose, happens all the time.
         //CD_DEBUG("Read ok. %s\n", msgToStr(&buffer).c_str());

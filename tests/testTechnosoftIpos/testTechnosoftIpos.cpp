@@ -203,7 +203,8 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetRefAccelerationRaw )
     while ( canId != CAN_ID ) // -- it will check the ID
     {
         unsigned int read;
-        if( !iCanBus->canRead(canInputBuffer, 1, &read, true) ) continue;    // -- is waiting for recive message
+        bool ok = iCanBus->canRead(canInputBuffer, 1, &read, true);
+        if( !ok || read == 0 ) continue;    // -- is waiting for recive message
         canId = msg.getId()  & 0x7F;  // -- if it recive the message, it will get ID
     }
     CD_DEBUG("Read: %s\n", msgToStr(&msg).c_str());
