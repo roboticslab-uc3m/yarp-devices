@@ -19,6 +19,14 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
     std::string devicePath = config.check("canDevice", yarp::os::Value(DEFAULT_CAN_DEVICE), "CAN device path").asString();
     int bitrate = config.check("canBitrate", yarp::os::Value(DEFAULT_CAN_BITRATE), "CAN bitrate").asInt();
 
+    timeoutMs = config.check("canTimeoutMs", yarp::os::Value(DEFAULT_CAN_TIMEOUT_MS), "timeout [ms]").asInt();
+
+    if (timeoutMs <= 0)
+    {
+        CD_ERROR("Illegal timeout value: %d.\n", timeoutMs);
+        return false;
+    }
+
     //-- Open the CAN device for reading and writing.
     fileDescriptor = ::open(devicePath.c_str(), O_RDWR);
 

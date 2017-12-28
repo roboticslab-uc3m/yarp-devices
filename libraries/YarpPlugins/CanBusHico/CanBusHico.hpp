@@ -16,8 +16,9 @@
 
 #define DEFAULT_CAN_DEVICE "/dev/can0"
 #define DEFAULT_CAN_BITRATE BITRATE_1000k
+#define DEFAULT_CAN_TIMEOUT_MS 1
 
-#define DELAY 0.001  // [s] Required when using same driver.
+#define DELAY 0.001  // [s]
 
 namespace roboticslab
 {
@@ -36,7 +37,8 @@ class CanBusHico : public yarp::dev::DeviceDriver,
 public:
 
     CanBusHico() : fileDescriptor(0),
-                   fcntlFlags(0)
+                   fcntlFlags(0),
+                   timeoutMs(DEFAULT_CAN_TIMEOUT_MS)
     {}
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -78,6 +80,8 @@ protected:
     int fileDescriptor;
 
     int fcntlFlags;
+
+    int timeoutMs;
 
     /** Unique IDs set in active acceptance filters */
     std::set<unsigned int> filteredIds;

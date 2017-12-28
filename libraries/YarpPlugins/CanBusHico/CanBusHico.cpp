@@ -16,6 +16,18 @@
 
 // -----------------------------------------------------------------------------
 
+namespace
+{
+    void setTimeval(int timeMs, struct timeval * tv)
+    {
+        int sec = timeMs / 1000;
+        tv->tv_sec = sec;
+        tv->tv_usec = (timeMs - (sec * 1000)) * 1000;
+    }
+}
+
+// -----------------------------------------------------------------------------
+
 bool roboticslab::CanBusHico::setFdMode(bool requestedBlocking)
 {
     bool currentlyBlocking = (fcntlFlags & O_NONBLOCK) != O_NONBLOCK;
@@ -39,13 +51,12 @@ bool roboticslab::CanBusHico::setFdMode(bool requestedBlocking)
 bool roboticslab::CanBusHico::waitUntilTimeout(io_operation op, bool * bufferReady)
 {
     fd_set fds;
-    struct timeval tv;
-
-    tv.tv_sec = DELAY;
-    tv.tv_usec = DELAY * 1000 * 1000;
 
     FD_ZERO(&fds);
     FD_SET(fileDescriptor, &fds);
+
+    struct timeval tv;
+    setTimeval(timeoutMs, &tv);
 
     //-- select() returns the number of ready descriptors, 0 for timeout, -1 for errors.
     int ret;
