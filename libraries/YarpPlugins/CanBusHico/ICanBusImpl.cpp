@@ -3,10 +3,10 @@
 #include "CanBusHico.hpp"
 
 #include <unistd.h>
-#include <errno.h>
 #include <sys/ioctl.h>
 
 #include <cstring>
+#include <cerrno>
 #include <vector>
 #include <algorithm>
 
