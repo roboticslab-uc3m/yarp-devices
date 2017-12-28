@@ -56,7 +56,6 @@ bool roboticslab::CanBusHico::waitUntilTimeout(io_operation op, bool * bufferRea
     FD_SET(fileDescriptor, &fds);
 
     struct timeval tv;
-    setTimeval(timeoutMs, &tv);
 
     //-- select() returns the number of ready descriptors, 0 for timeout, -1 for errors.
     int ret;
@@ -64,9 +63,11 @@ bool roboticslab::CanBusHico::waitUntilTimeout(io_operation op, bool * bufferRea
     switch (op)
     {
     case READ:
+        setTimeval(rxTimeoutMs, &tv);
         ret = ::select(fileDescriptor + 1, &fds, 0, 0, &tv);
         break;
     case WRITE:
+        setTimeval(txTimeoutMs, &tv);
         ret = ::select(fileDescriptor + 1, 0, &fds, 0, &tv);
         break;
     default:

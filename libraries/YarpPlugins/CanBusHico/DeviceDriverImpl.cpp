@@ -19,11 +19,18 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
     std::string devicePath = config.check("canDevice", yarp::os::Value(DEFAULT_CAN_DEVICE), "CAN device path").asString();
     int bitrate = config.check("canBitrate", yarp::os::Value(DEFAULT_CAN_BITRATE), "CAN bitrate").asInt();
 
-    timeoutMs = config.check("canTimeoutMs", yarp::os::Value(DEFAULT_CAN_TIMEOUT_MS), "timeout [ms]").asInt();
+    rxTimeoutMs = config.check("canRxTimeoutMs", yarp::os::Value(DEFAULT_CAN_RX_TIMEOUT_MS), "RX timeout [ms]").asInt();
+    txTimeoutMs = config.check("canTxTimeoutMs", yarp::os::Value(DEFAULT_CAN_TX_TIMEOUT_MS), "TX timeout [ms]").asInt();
 
-    if (timeoutMs <= 0)
+    if (rxTimeoutMs <= 0)
     {
-        CD_ERROR("Illegal timeout value: %d.\n", timeoutMs);
+        CD_ERROR("Illegal RX timeout value: %d.\n", rxTimeoutMs);
+        return false;
+    }
+
+    if (txTimeoutMs <= 0)
+    {
+        CD_ERROR("Illegal TX timeout value: %d.\n", txTimeoutMs);
         return false;
     }
 
