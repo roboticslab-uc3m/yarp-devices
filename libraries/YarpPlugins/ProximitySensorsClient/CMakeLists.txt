@@ -7,7 +7,7 @@ yarp_prepare_plugin(ProximitySensorsClient
                     INCLUDE ProximitySensorsClient.hpp
                     DEFAULT ON)
 
-if(NOT SKIP_ProximitySensors)
+if(NOT SKIP_ProximitySensorsClient)
 
 get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
 

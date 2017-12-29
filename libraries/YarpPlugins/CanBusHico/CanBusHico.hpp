@@ -16,8 +16,9 @@
 
 #define DEFAULT_CAN_DEVICE "/dev/can0"
 #define DEFAULT_CAN_BITRATE BITRATE_1000k
+#define DEFAULT_CAN_TIMEOUT_MS 1
 
-#define DELAY 0.001  // [s] Required when using same driver.
+#define DELAY 0.001  // [s]
 
 namespace roboticslab
 {
@@ -30,13 +31,14 @@ namespace roboticslab
  */
 class CanBusHico : public yarp::dev::DeviceDriver,
                    public yarp::dev::ICanBus,
-                   private yarp::dev::ImplementCanBufferFactory<HicoCanMessage, struct can_msg>
+                   public yarp::dev::ImplementCanBufferFactory<HicoCanMessage, struct can_msg>
 {
 
 public:
 
     CanBusHico() : fileDescriptor(0),
-                   fcntlFlags(0)
+                   fcntlFlags(0),
+                   timeoutMs(DEFAULT_CAN_TIMEOUT_MS)
     {}
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -67,8 +69,10 @@ public:
 
 protected:
 
+    enum io_operation { READ, WRITE };
+
     bool setFdMode(bool requestedBlocking);
-    bool setDelay();
+    bool waitUntilTimeout(io_operation op, bool * bufferReady);
     bool clearFilters();
     bool interpretBitrate(unsigned int rate, std::string & str);
 
@@ -76,6 +80,8 @@ protected:
     int fileDescriptor;
 
     int fcntlFlags;
+
+    int timeoutMs;
 
     /** Unique IDs set in active acceptance filters */
     std::set<unsigned int> filteredIds;

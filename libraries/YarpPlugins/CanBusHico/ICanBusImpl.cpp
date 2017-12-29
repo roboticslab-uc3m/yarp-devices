@@ -3,10 +3,10 @@
 #include "CanBusHico.hpp"
 
 #include <unistd.h>
-#include <errno.h>
 #include <sys/ioctl.h>
 
 #include <cstring>
+#include <cerrno>
 #include <vector>
 #include <algorithm>
 
@@ -32,7 +32,7 @@ bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
     int ret = ::ioctl(fileDescriptor, IOC_SET_BITRATE, &rate);
     canBusReady.post();
 
-    if (ret != 0)
+    if (ret == -1)
     {
         CD_ERROR("Could not set bitrate: %s.\n", std::strerror(errno));
         return false;
@@ -51,7 +51,7 @@ bool roboticslab::CanBusHico::canGetBaudRate(unsigned int * rate)
     int ret = ::ioctl(fileDescriptor, IOC_GET_BITRATE, rate);
     canBusReady.post();
 
-    if (ret != 0)
+    if (ret == -1)
     {
         CD_ERROR("Could not set bitrate: %s.\n", std::strerror(errno));
         return false;
@@ -93,7 +93,7 @@ bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
     filter.mask = 0x7F;  //-- dsPIC style, mask specifies "do care" bits
     filter.code = id;
 
-    if (::ioctl(fileDescriptor, IOC_SET_FILTER, &filter) != 0)
+    if (::ioctl(fileDescriptor, IOC_SET_FILTER, &filter) == -1)
     {
         CD_ERROR("Could not set filter: %s.\n", std::strerror(errno));
         filteredIds.erase(id);
@@ -159,26 +159,45 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
 
     if (!setFdMode(wait))
     {
-        CD_ERROR("setFdMode() failed: %s.\n", std::strerror(errno));
+        CD_ERROR("setFdMode() failed.\n");
         canBusReady.post();
         return false;
     }
 
     for (unsigned int i = 0; i < size; i++)
     {
-        if (wait && !setDelay())
+        if (wait)
         {
-            CD_WARNING("Could not set timeout on blocking operation.\n");
-            continue;
+            bool bufferReady;
+
+            if (!waitUntilTimeout(READ, &bufferReady))
+            {
+                CD_ERROR("waitUntilTimeout() failed.\n");
+                canBusReady.wait();
+                return false;
+            }
+
+            if (!bufferReady)
+            {
+                break;
+            }
         }
 
         yarp::dev::CanMessage & msg = msgs[i];
         struct can_msg * _msg = reinterpret_cast<struct can_msg *>(msg.getPointer());
 
-        //-- read() returns the number read, -1 for errors or 0 for EOF.
-        if (::read(fileDescriptor, _msg, sizeof(struct can_msg)) < 0)
+        //-- read() returns the number of bytes read, -1 for errors, 0 for EOF.
+        int ret = ::read(fileDescriptor, _msg, sizeof(struct can_msg));
+
+        if (ret == -1)
         {
             CD_ERROR("read() error: %s.\n", std::strerror(errno));
+            canBusReady.wait();
+            return false;
+        }
+        else if (ret == 0)
+        {
+            break;
         }
         else
         {
@@ -187,12 +206,6 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
     }
 
     canBusReady.post();
-
-    if (*read < size)
-    {
-        CD_ERROR("read (%d) < size (%d)\n", *read, size);
-        return false;
-    }
 
     return true;
 }
@@ -207,7 +220,7 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
 
     if (!setFdMode(wait))
     {
-        CD_ERROR("setFdMode() failed: %s.\n", std::strerror(errno));
+        CD_ERROR("setFdMode() failed.\n");
         canBusReady.post();
         return false;
     }
@@ -219,9 +232,18 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
         const yarp::dev::CanMessage & msg = const_cast<yarp::dev::CanBuffer &>(msgs)[i];
         const struct can_msg * _msg = reinterpret_cast<const struct can_msg *>(msg.getPointer());
 
-        if (::write(fileDescriptor, _msg, sizeof(struct can_msg)) == -1)
+        //-- read() returns the number of bytes sent or -1 for errors.
+        int ret = ::write(fileDescriptor, _msg, sizeof(struct can_msg)) == -1;
+
+        if (ret == -1)
         {
             CD_ERROR("%s.\n", std::strerror(errno));
+            canBusReady.post();
+            return false;
+        }
+        else if (ret == 0)
+        {
+            break;
         }
         else
         {
@@ -230,12 +252,6 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
     }
 
     canBusReady.post();
-
-    if (*sent < size)
-    {
-        CD_ERROR("sent (%d) < size (%d)\n", *sent, size);
-        return false;
-    }
 
     return true;
 }
