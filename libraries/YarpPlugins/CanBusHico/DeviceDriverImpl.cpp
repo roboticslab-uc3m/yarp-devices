@@ -61,6 +61,17 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
     yarp::os::Time::delay(DELAY);
 
+    //-- Clear acceptance filters
+    if (!clearFilters())
+    {
+        CD_ERROR("Could not clear acceptance filters on CAN device: %s\n", devicePath.c_str());
+        return false;
+    }
+
+    CD_SUCCESS("Acceptance filters cleared on CAN device: %s\n", devicePath.c_str());
+
+    yarp::os::Time::delay(DELAY);
+
     //-- Start the CAN device.
     if (::ioctl(fileDescriptor,IOC_START) == -1)
     {
@@ -79,6 +90,7 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
 bool roboticslab::CanBusHico::close()
 {
+    clearFilters();
     ::close(fileDescriptor);
 
     return true;
