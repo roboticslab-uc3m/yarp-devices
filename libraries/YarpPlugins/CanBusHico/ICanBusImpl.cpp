@@ -166,7 +166,7 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
 
     for (unsigned int i = 0; i < size; i++)
     {
-        if (wait && timeoutMs > 0)
+        if (wait && rxTimeoutMs > 0)
         {
             bool bufferReady;
 
@@ -227,7 +227,22 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
 
     for (unsigned int i = 0; i < size; i++)
     {
-        // 'wait' param not handled, blocks indefinitely when true
+        if (wait && txTimeoutMs > 0)
+        {
+            bool bufferReady;
+
+            if (!waitUntilTimeout(WRITE, &bufferReady))
+            {
+                CD_ERROR("waitUntilTimeout() failed.\n");
+                canBusReady.wait();
+                return false;
+            }
+
+            if (!bufferReady)
+            {
+                break;
+            }
+        }
 
         const yarp::dev::CanMessage & msg = const_cast<yarp::dev::CanBuffer &>(msgs)[i];
         const struct can_msg * _msg = reinterpret_cast<const struct can_msg *>(msg.getPointer());

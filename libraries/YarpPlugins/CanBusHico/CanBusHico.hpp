@@ -16,7 +16,9 @@
 
 #define DEFAULT_CAN_DEVICE "/dev/can0"
 #define DEFAULT_CAN_BITRATE BITRATE_1000k
-#define DEFAULT_CAN_TIMEOUT_MS 1
+
+#define DEFAULT_CAN_RX_TIMEOUT_MS 1
+#define DEFAULT_CAN_TX_TIMEOUT_MS 0  // '0' means no timeout
 
 #define DELAY 0.001  // [s]
 
@@ -38,7 +40,8 @@ public:
 
     CanBusHico() : fileDescriptor(0),
                    fcntlFlags(0),
-                   timeoutMs(DEFAULT_CAN_TIMEOUT_MS)
+                   rxTimeoutMs(DEFAULT_CAN_RX_TIMEOUT_MS),
+                   txTimeoutMs(DEFAULT_CAN_TX_TIMEOUT_MS)
     {}
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -80,7 +83,7 @@ protected:
     int fileDescriptor;
     int fcntlFlags;
 
-    int timeoutMs;
+    int rxTimeoutMs, txTimeoutMs;
 
     /** Unique IDs set in active acceptance filters */
     std::set<unsigned int> filteredIds;

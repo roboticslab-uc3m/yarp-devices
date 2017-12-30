@@ -19,11 +19,18 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
     std::string devicePath = config.check("canDevice", yarp::os::Value(DEFAULT_CAN_DEVICE), "CAN device path").asString();
     int bitrate = config.check("canBitrate", yarp::os::Value(DEFAULT_CAN_BITRATE), "CAN bitrate").asInt();
 
-    timeoutMs = config.check("canTimeoutMs", yarp::os::Value(DEFAULT_CAN_TIMEOUT_MS), "timeout [ms]").asInt();
+    rxTimeoutMs = config.check("canRxTimeoutMs", yarp::os::Value(DEFAULT_CAN_RX_TIMEOUT_MS), "RX timeout [ms]").asInt();
+    txTimeoutMs = config.check("canTxTimeoutMs", yarp::os::Value(DEFAULT_CAN_TX_TIMEOUT_MS), "TX timeout [ms]").asInt();
 
-    if (timeoutMs <= 0)
+    if (rxTimeoutMs <= 0)
     {
-        CD_WARNING("Timeout value <= 0, CAN read/write calls will block until the buffer is ready.\n");
+        CD_WARNING("RX timeout value <= 0, CAN read calls will block until the buffer is ready.\n");
+        return false;
+    }
+
+    if (txTimeoutMs <= 0)
+    {
+        CD_WARNING("TX timeout value <= 0, CAN write calls will block until the buffer is ready.\n");
     }
 
     //-- Open the CAN device for reading and writing.
