@@ -23,8 +23,7 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
     if (timeoutMs <= 0)
     {
-        CD_ERROR("Illegal timeout value: %d.\n", timeoutMs);
-        return false;
+        CD_WARNING("Timeout value <= 0, CAN read/write calls will block until the buffer is ready.\n");
     }
 
     //-- Open the CAN device for reading and writing.

@@ -166,7 +166,7 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
 
     for (unsigned int i = 0; i < size; i++)
     {
-        if (wait)
+        if (wait && timeoutMs > 0)
         {
             bool bufferReady;
 

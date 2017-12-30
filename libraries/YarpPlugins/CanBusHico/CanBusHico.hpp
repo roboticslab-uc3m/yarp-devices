@@ -78,7 +78,6 @@ protected:
 
     /** CAN file descriptor */
     int fileDescriptor;
-
     int fcntlFlags;
 
     int timeoutMs;
