@@ -6,7 +6,8 @@ yarp_prepare_plugin(CanBusHico
                     CATEGORY device
                     TYPE roboticslab::CanBusHico
                     INCLUDE CanBusHico.hpp
-                    DEFAULT ON)
+                    DEFAULT ON
+                    DEPENDS UNIX)
 
 if(NOT SKIP_CanBusHico)
 

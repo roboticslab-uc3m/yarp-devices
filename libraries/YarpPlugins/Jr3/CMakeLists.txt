@@ -6,7 +6,8 @@ yarp_prepare_plugin(Jr3
                     CATEGORY device
                     TYPE roboticslab::Jr3
                     INCLUDE Jr3.hpp
-                    DEFAULT ON)
+                    DEFAULT ON
+                    DEPENDS UNIX)
 
 if(NOT SKIP_Jr3)
 

@@ -6,7 +6,8 @@ yarp_prepare_plugin(TextilesHand
                     CATEGORY device
                     TYPE roboticslab::TextilesHand
                     INCLUDE TextilesHand.hpp
-                    DEFAULT ON)
+                    DEFAULT ON
+                    DEPENDS UNIX)
 
 if(NOT SKIP_TextilesHand)
 
