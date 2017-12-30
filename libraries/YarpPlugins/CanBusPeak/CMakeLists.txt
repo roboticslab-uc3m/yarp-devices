@@ -2,7 +2,8 @@ yarp_prepare_plugin(CanBusPeak
                     CATEGORY device
                     TYPE roboticslab::CanBusPeak
                     INCLUDE CanBusPeak.hpp
-                    DEFAULT ON)
+                    DEFAULT ON
+                    DEPENDS UNIX)
 
 if(NOT SKIP_CanBusPeak)
 
