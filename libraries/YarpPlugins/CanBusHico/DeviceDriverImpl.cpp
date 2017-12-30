@@ -24,14 +24,13 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
     if (rxTimeoutMs <= 0)
     {
-        CD_ERROR("Illegal RX timeout value: %d.\n", rxTimeoutMs);
+        CD_WARNING("RX timeout value <= 0, CAN read calls will block until the buffer is ready.\n");
         return false;
     }
 
     if (txTimeoutMs <= 0)
     {
-        CD_ERROR("Illegal TX timeout value: %d.\n", txTimeoutMs);
-        return false;
+        CD_WARNING("TX timeout value <= 0, CAN write calls will block until the buffer is ready.\n");
     }
 
     //-- Open the CAN device for reading and writing.
@@ -68,6 +67,17 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
     yarp::os::Time::delay(DELAY);
 
+    //-- Clear acceptance filters
+    if (!clearFilters())
+    {
+        CD_ERROR("Could not clear acceptance filters on CAN device: %s\n", devicePath.c_str());
+        return false;
+    }
+
+    CD_SUCCESS("Acceptance filters cleared on CAN device: %s\n", devicePath.c_str());
+
+    yarp::os::Time::delay(DELAY);
+
     //-- Start the CAN device.
     if (::ioctl(fileDescriptor,IOC_START) == -1)
     {
@@ -86,6 +96,7 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
 bool roboticslab::CanBusHico::close()
 {
+    clearFilters();
     ::close(fileDescriptor);
 
     return true;

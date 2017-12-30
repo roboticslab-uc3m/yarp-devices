@@ -3,14 +3,13 @@
 #include "CanBusHico.hpp"
 
 #include <unistd.h>
-#include <assert.h>
-#include <stdint.h>
-#include <errno.h>
 #include <fcntl.h>
 #include <sys/select.h>
 #include <sys/time.h>
 
 #include <cstring>
+#include <cerrno>
+#include <cassert>
 
 #include <ColorDebug.hpp>
 

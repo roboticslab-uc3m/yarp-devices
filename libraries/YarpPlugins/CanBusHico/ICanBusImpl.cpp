@@ -3,10 +3,10 @@
 #include "CanBusHico.hpp"
 
 #include <unistd.h>
-#include <errno.h>
 #include <sys/ioctl.h>
 
 #include <cstring>
+#include <cerrno>
 #include <vector>
 #include <algorithm>
 
@@ -166,7 +166,7 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
 
     for (unsigned int i = 0; i < size; i++)
     {
-        if (wait)
+        if (wait && rxTimeoutMs > 0)
         {
             bool bufferReady;
 
@@ -227,7 +227,7 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
 
     for (unsigned int i = 0; i < size; i++)
     {
-        if (wait)
+        if (wait && txTimeoutMs > 0)
         {
             bool bufferReady;
 
