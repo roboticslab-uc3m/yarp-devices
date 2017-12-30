@@ -18,7 +18,7 @@
 #define DEFAULT_CAN_BITRATE BITRATE_1000k
 
 #define DEFAULT_CAN_RX_TIMEOUT_MS 1
-#define DEFAULT_CAN_TX_TIMEOUT_MS 1
+#define DEFAULT_CAN_TX_TIMEOUT_MS 0  // '0' means no timeout
 
 #define DELAY 0.001  // [s]
 
