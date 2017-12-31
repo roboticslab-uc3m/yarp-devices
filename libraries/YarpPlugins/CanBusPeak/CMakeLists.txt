@@ -3,7 +3,7 @@ yarp_prepare_plugin(CanBusPeak
                     TYPE roboticslab::CanBusPeak
                     INCLUDE CanBusPeak.hpp
                     DEFAULT ON
-                    DEPENDS UNIX)
+                    DEPENDS "UNIX;NOT CMAKE_VERSION VERSION_LESS 2.8.11")
 
 if(NOT SKIP_CanBusPeak)
 
@@ -12,8 +12,7 @@ find_package(PCan REQUIRED)
 get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
-                    ${_common_dirs}
-                    ${PCan_INCLUDE_DIRS})
+                    ${_common_dirs})
 
 yarp_add_plugin(CanBusPeak CanBusPeak.cpp
                            CanBusPeak.hpp
@@ -26,7 +25,7 @@ add_dependencies(CanBusPeak COLOR_DEBUG)
 
 target_link_libraries(CanBusPeak YARP::YARP_OS
                                  YARP::YARP_dev
-                                 ${PCan_LIBRARIES})
+                                 PCan::PCanFD)
 
 yarp_install(TARGETS CanBusPeak
              COMPONENT runtime
