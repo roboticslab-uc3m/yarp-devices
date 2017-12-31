@@ -25,9 +25,11 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(XWiimote REQUIRED_VARS XWiimote_INCLUDE_DIR XWiimote_LIBRARY
                                            VERSION_VAR XWiimote_VERSION)
 
-if(XWiimote_FOUND)
-    set(XWiimote_INCLUDE_DIRS ${XWiimote_INCLUDE_DIR})
-    set(XWiimote_LIBRARIES ${XWiimote_LIBRARY})
+if(XWiimote_FOUND AND NOT TARGET XWiimote::XWiimote)
+    add_library(XWiimote::XWiimote UNKNOWN IMPORTED)
+
+    set_target_properties(XWiimote::XWiimote PROPERTIES IMPORTED_LOCATION "${XWiimote_LIBRARY}"
+                                                        INTERFACE_INCLUDE_DIRECTORIES "${XWiimote_INCLUDE_DIR}")
 endif()
 
 mark_as_advanced(XWiimote_INCLUDE_DIR XWiimote_LIBRARY)

@@ -19,8 +19,7 @@ endif()
 get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
-                    ${_common_dirs}
-                    ${XWiimote_INCLUDE_DIRS})
+                    ${_common_dirs})
 
 yarp_add_plugin(WiimoteSensor
           WiimoteSensor.hpp
@@ -33,7 +32,7 @@ add_dependencies(WiimoteSensor COLOR_DEBUG)
 
 target_link_libraries(WiimoteSensor YARP::YARP_OS
                                     YARP::YARP_dev
-                                    ${XWiimote_LIBRARIES})
+                                    XWiimote::XWiimote)
 
 yarp_install(TARGETS WiimoteSensor
              COMPONENT runtime
