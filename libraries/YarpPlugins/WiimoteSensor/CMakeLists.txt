@@ -12,7 +12,7 @@ if(NOT SKIP_WiimoteSensor)
 
 find_package(XWiimote 0.3 REQUIRED)
 
-if(XWIIMOTE_VERSION VERSION_LESS "2")
+if(XWiimote_VERSION VERSION_LESS "2")
     add_definitions(-DXWIIMOTE_LEGACY_INTERFACE)
 endif()
 
@@ -20,7 +20,7 @@ get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
                     ${_common_dirs}
-                    ${XWIIMOTE_INCLUDE_DIRS})
+                    ${XWiimote_INCLUDE_DIRS})
 
 yarp_add_plugin(WiimoteSensor
           WiimoteSensor.hpp
@@ -33,7 +33,7 @@ add_dependencies(WiimoteSensor COLOR_DEBUG)
 
 target_link_libraries(WiimoteSensor YARP::YARP_OS
                                     YARP::YARP_dev
-                                    ${XWIIMOTE_LIBRARIES})
+                                    ${XWiimote_LIBRARIES})
 
 yarp_install(TARGETS WiimoteSensor
              COMPONENT runtime

@@ -1,31 +1,33 @@
-# Find the xwiimote library and header.
+# Find the XWiimote library and header.
 #
 # Sets the following variables:
 #
-# XWIIMOTE_FOUND        - System has xwiimote
-# XWIIMOTE_VERSION      - xwiimote version
-# XWIIMOTE_INCLUDE_DIRS - xwiimote include directories
-# XWIIMOTE_LIBRARIES    - xwiimote libraries
+# XWiimote_FOUND        - system has XWiimote
+# XWiimote_VERSION      - XWiimote version
+# XWiimote_INCLUDE_DIRS - XWiimote include directories
+# XWiimote_LIBRARIES    - XWiimote libraries
 
 if(UNIX)
     find_package(PkgConfig)
-    pkg_check_modules(XWIIMOTE QUIET libxwiimote)
+    pkg_check_modules(XWiimote QUIET libxwiimote)
 
-    if(NOT XWIIMOTE_INCLUDE_DIR)
-        find_path(XWIIMOTE_INCLUDE_DIR xwiimote.h HINTS ${XWIIMOTE_INCLUDEDIR})
+    if(NOT XWiimote_INCLUDE_DIR)
+        find_path(XWiimote_INCLUDE_DIR xwiimote.h HINTS ${XWiimote_INCLUDEDIR})
     endif()
 
-    if(NOT XWIIMOTE_LIBRARY)
-        find_library(XWIIMOTE_LIBRARY NAMES xwiimote
-                                      HINTS ${XWIIMOTE_LIBDIR})
+    if(NOT XWiimote_LIBRARY)
+        find_library(XWiimote_LIBRARY NAMES xwiimote
+                                      HINTS ${XWiimote_LIBDIR})
     endif()
 endif()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(XWiimote REQUIRED_VARS XWIIMOTE_INCLUDE_DIR XWIIMOTE_LIBRARY
-                                           VERSION_VAR XWIIMOTE_VERSION)
+find_package_handle_standard_args(XWiimote REQUIRED_VARS XWiimote_INCLUDE_DIR XWiimote_LIBRARY
+                                           VERSION_VAR XWiimote_VERSION)
 
-mark_as_advanced(XWIIMOTE_INCLUDE_DIR XWIIMOTE_LIBRARY)
+if(XWiimote_FOUND)
+    set(XWiimote_INCLUDE_DIRS ${XWiimote_INCLUDE_DIR})
+    set(XWiimote_LIBRARIES ${XWiimote_LIBRARY})
+endif()
 
-set(XWIIMOTE_INCLUDE_DIRS ${XWIIMOTE_INCLUDE_DIR})
-set(XWIIMOTE_LIBRARIES ${XWIIMOTE_LIBRARY})
+mark_as_advanced(XWiimote_INCLUDE_DIR XWiimote_LIBRARY)
