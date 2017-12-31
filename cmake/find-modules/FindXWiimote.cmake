@@ -1,31 +1,40 @@
-# Find the xwiimote library and header.
+# Find the XWiimote library and header.
 #
 # Sets the following variables:
 #
-# XWIIMOTE_FOUND        - System has xwiimote
-# XWIIMOTE_VERSION      - xwiimote version
-# XWIIMOTE_INCLUDE_DIRS - xwiimote include directories
-# XWIIMOTE_LIBRARIES    - xwiimote libraries
+# XWiimote_FOUND        - system has XWiimote
+# XWiimote_VERSION      - XWiimote version
+#
+# ...and the following imported targets:
+#
+# XWiimote::XWiimote    - the XWiimote library
 
 if(UNIX)
     find_package(PkgConfig)
-    pkg_check_modules(XWIIMOTE QUIET libxwiimote)
+    pkg_check_modules(XWiimote QUIET libxwiimote)
 
-    if(NOT XWIIMOTE_INCLUDE_DIR)
-        find_path(XWIIMOTE_INCLUDE_DIR xwiimote.h HINTS ${XWIIMOTE_INCLUDEDIR})
+    if(NOT XWiimote_INCLUDE_DIR)
+        find_path(XWiimote_INCLUDE_DIR NAMES xwiimote.h
+                                       PATHS ${PC_XWiimote_INCLUDEDIR})
     endif()
 
-    if(NOT XWIIMOTE_LIBRARY)
-        find_library(XWIIMOTE_LIBRARY NAMES xwiimote
-                                      HINTS ${XWIIMOTE_LIBDIR})
+    if(NOT XWiimote_LIBRARY)
+        find_library(XWiimote_LIBRARY NAMES xwiimote
+                                      PATHS ${PC_XWiimote_LIBDIR})
     endif()
+
+    set(XWiimote_VERSION ${PC_Xwiimote_VERSION})
 endif()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(XWiimote REQUIRED_VARS XWIIMOTE_INCLUDE_DIR XWIIMOTE_LIBRARY
-                                           VERSION_VAR XWIIMOTE_VERSION)
+find_package_handle_standard_args(XWiimote REQUIRED_VARS XWiimote_INCLUDE_DIR XWiimote_LIBRARY
+                                           VERSION_VAR XWiimote_VERSION)
 
-mark_as_advanced(XWIIMOTE_INCLUDE_DIR XWIIMOTE_LIBRARY)
+if(XWiimote_FOUND AND NOT TARGET XWiimote::XWiimote)
+    add_library(XWiimote::XWiimote UNKNOWN IMPORTED)
 
-set(XWIIMOTE_INCLUDE_DIRS ${XWIIMOTE_INCLUDE_DIR})
-set(XWIIMOTE_LIBRARIES ${XWIIMOTE_LIBRARY})
+    set_target_properties(XWiimote::XWiimote PROPERTIES IMPORTED_LOCATION "${XWiimote_LIBRARY}"
+                                                        INTERFACE_INCLUDE_DIRECTORIES "${XWiimote_INCLUDE_DIR}")
+endif()
+
+mark_as_advanced(XWiimote_INCLUDE_DIR XWiimote_LIBRARY)
