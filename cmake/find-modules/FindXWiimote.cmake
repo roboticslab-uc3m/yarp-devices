@@ -4,21 +4,26 @@
 #
 # XWiimote_FOUND        - system has XWiimote
 # XWiimote_VERSION      - XWiimote version
-# XWiimote_INCLUDE_DIRS - XWiimote include directories
-# XWiimote_LIBRARIES    - XWiimote libraries
+#
+# ...and the following imported targets:
+#
+# XWiimote::XWiimote    - the XWiimote library
 
 if(UNIX)
     find_package(PkgConfig)
     pkg_check_modules(XWiimote QUIET libxwiimote)
 
     if(NOT XWiimote_INCLUDE_DIR)
-        find_path(XWiimote_INCLUDE_DIR xwiimote.h HINTS ${XWiimote_INCLUDEDIR})
+        find_path(XWiimote_INCLUDE_DIR NAMES xwiimote.h
+                                       PATHS ${PC_XWiimote_INCLUDEDIR})
     endif()
 
     if(NOT XWiimote_LIBRARY)
         find_library(XWiimote_LIBRARY NAMES xwiimote
-                                      HINTS ${XWiimote_LIBDIR})
+                                      PATHS ${PC_XWiimote_LIBDIR})
     endif()
+
+    set(XWiimote_VERSION ${PC_Xwiimote_VERSION})
 endif()
 
 include(FindPackageHandleStandardArgs)
