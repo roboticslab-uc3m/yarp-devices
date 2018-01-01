@@ -96,8 +96,11 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
 bool roboticslab::CanBusHico::close()
 {
-    clearFilters();
-    ::close(fileDescriptor);
+    if (fileDescriptor > 0)
+    {
+        clearFilters();
+        ::close(fileDescriptor);
+    }
 
     return true;
 }
