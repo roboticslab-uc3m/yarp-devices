@@ -35,6 +35,7 @@ install:
   - cd peak-linux-driver-$PEAK_DRIVER_VER
   - make -C lib
   - sudo make -C lib install
+  - sudo cp -f driver/pcan.h driver/pcanfd.h /usr/include # hardcoded install path
   - cd ..
   # see http://gronlier.fr/blog/2015/01/adding-code-coverage-to-your-c-project/
   - if [ "$CXX" = "g++" ]; then wget http://ftp.de.debian.org/debian/pool/main/l/lcov/lcov_1.11.orig.tar.gz; fi
