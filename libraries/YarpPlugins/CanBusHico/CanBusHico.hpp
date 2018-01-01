@@ -5,6 +5,7 @@
 
 #include <set>
 #include <string>
+#include <utility>
 
 #include <yarp/os/Semaphore.h>
 
@@ -87,6 +88,8 @@ protected:
 
     /** Unique IDs set in active acceptance filters */
     std::set<unsigned int> filteredIds;
+
+    std::pair<bool, unsigned int> bitrateState;
 
     yarp::os::Semaphore canBusReady;
 

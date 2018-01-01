@@ -26,17 +26,35 @@ bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
         return false;
     }
 
-    CD_INFO("Setting bitrate (%s).\n", rateStr.c_str());
-
     canBusReady.wait();
-    int ret = ::ioctl(fileDescriptor, IOC_SET_BITRATE, &rate);
-    canBusReady.post();
 
-    if (ret == -1)
+    if (bitrateState.first)
+    {
+        if (bitrateState.second == rate)
+        {
+            CD_WARNING("Bitrate already set.\n");
+            canBusReady.post();
+            return true;
+        }
+        else
+        {
+            CD_ERROR("Bitrate already set to a different value: %d.\n", bitrateState.second);
+            canBusReady.post();
+            return false;
+        }
+    }
+
+    if (::ioctl(fileDescriptor, IOC_SET_BITRATE, &rate) == -1)
     {
         CD_ERROR("Could not set bitrate: %s.\n", std::strerror(errno));
+        canBusReady.post();
         return false;
     }
+
+    bitrateState.first = true;
+    bitrateState.second = rate;
+
+    canBusReady.post();
 
     return true;
 }
