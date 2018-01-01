@@ -7,6 +7,7 @@
 #include <string>
 #include <utility>
 
+#include <yarp/os/Bottle.h>
 #include <yarp/os/Semaphore.h>
 
 #include <yarp/dev/DeviceDriver.h>
@@ -42,7 +43,8 @@ public:
     CanBusHico() : fileDescriptor(0),
                    fcntlFlags(0),
                    rxTimeoutMs(DEFAULT_CAN_RX_TIMEOUT_MS),
-                   txTimeoutMs(DEFAULT_CAN_TX_TIMEOUT_MS)
+                   txTimeoutMs(DEFAULT_CAN_TX_TIMEOUT_MS),
+                   filterManager(NULL)
     {}
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -73,25 +75,45 @@ public:
 
 protected:
 
+    class FilterManager
+    {
+    public:
+        explicit FilterManager(int fileDescriptor);
+        bool parseIds(const yarp::os::Bottle & b);
+        bool hasId(unsigned int id) const;
+        bool isValid() const;
+        bool insertId(unsigned int id);
+        bool eraseId(unsigned int id);
+        bool clearFilters(bool clearStage = true);
+
+        static const int MAX_FILTERS;
+
+    private:
+        bool setMaskedFilter(unsigned int id);
+        bool setRangedFilter(unsigned int lower, unsigned int upper);
+        bool bulkUpdate();
+
+        int fd;
+        bool valid;
+        std::set<unsigned int> stage, currentlyActive;
+    };
+
     enum io_operation { READ, WRITE };
 
     bool setFdMode(bool requestedBlocking);
     bool waitUntilTimeout(io_operation op, bool * bufferReady);
-    bool clearFilters();
     bool interpretBitrate(unsigned int rate, std::string & str);
 
     /** CAN file descriptor */
     int fileDescriptor;
     int fcntlFlags;
-
     int rxTimeoutMs, txTimeoutMs;
 
-    /** Unique IDs set in active acceptance filters */
-    std::set<unsigned int> filteredIds;
+    yarp::os::Semaphore canBusReady;
 
     std::pair<bool, unsigned int> bitrateState;
 
-    yarp::os::Semaphore canBusReady;
+    FilterManager * filterManager;
 
 };
 

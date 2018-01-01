@@ -21,7 +21,8 @@ yarp_add_plugin(CanBusHico CanBusHico.cpp
                            DeviceDriverImpl.cpp
                            ICanBusImpl.cpp
                            HicoCanMessage.cpp
-                           HicoCanMessage.hpp)
+                           HicoCanMessage.hpp
+                           FilterManager.cpp)
 
 add_dependencies(CanBusHico COLOR_DEBUG)
 

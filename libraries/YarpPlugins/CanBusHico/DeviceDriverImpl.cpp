@@ -67,14 +67,33 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
     yarp::os::Time::delay(DELAY);
 
-    //-- Clear acceptance filters
-    if (!clearFilters())
-    {
-        CD_ERROR("Could not clear acceptance filters on CAN device: %s\n", devicePath.c_str());
-        return false;
-    }
+    filterManager = new FilterManager(fileDescriptor);
 
-    CD_SUCCESS("Acceptance filters cleared on CAN device: %s\n", devicePath.c_str());
+    //-- Load initial node IDs and set acceptance filters.
+    if (config.check("ids"))
+    {
+        const yarp::os::Bottle & ids = config.findGroup("ids").tail();
+
+        if (ids.size() != 0)
+        {
+            CD_INFO("Parsing bottle of ids on CAN device: %s.\n", ids.toString().c_str());
+
+            if (!filterManager->parseIds(ids))
+            {
+                CD_ERROR("Could not set acceptance filters on CAN device: %s\n", devicePath.c_str());
+                return false;
+            }
+
+            if (!filterManager->isValid())
+            {
+                CD_WARNING("Hardware limit was hit on CAN device %s, no acceptance filters are enabled.\n", devicePath.c_str());
+            }
+        }
+        else
+        {
+            CD_INFO("No bottle of ids given to CAN device.\n");
+        }
+    }
 
     yarp::os::Time::delay(DELAY);
 
@@ -98,7 +117,13 @@ bool roboticslab::CanBusHico::close()
 {
     if (fileDescriptor > 0)
     {
-        clearFilters();
+        if (filterManager != NULL)
+        {
+            filterManager->clearFilters();
+            delete filterManager;
+            filterManager = NULL;
+        }
+
         ::close(fileDescriptor);
     }
 

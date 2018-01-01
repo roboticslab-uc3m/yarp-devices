@@ -7,8 +7,8 @@
 
 #include <cstring>
 #include <cerrno>
-#include <vector>
-#include <algorithm>
+
+#include <string>
 
 #include <ColorDebug.hpp>
 
@@ -99,24 +99,25 @@ bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
 
     canBusReady.wait();
 
-    if (!filteredIds.insert(id).second)
+    if (filterManager->hasId(id))
     {
         CD_WARNING("Filter for ID %d is already active.\n", id);
         canBusReady.post();
         return true;
     }
 
-    struct can_filter filter;
-    filter.type = FTYPE_AMASK;
-    filter.mask = 0x7F;  //-- dsPIC style, mask specifies "do care" bits
-    filter.code = id;
-
-    if (::ioctl(fileDescriptor, IOC_SET_FILTER, &filter) == -1)
+    if (!filterManager->insertId(id))
     {
         CD_ERROR("Could not set filter: %s.\n", std::strerror(errno));
-        filteredIds.erase(id);
         canBusReady.post();
         return false;
+    }
+
+    if (!filterManager->isValid())
+    {
+        CD_WARNING("Hardware limit was hit, not all requested filters are enabled.\n");
+        canBusReady.post();
+        return true;
     }
 
     canBusReady.post();
@@ -138,31 +139,28 @@ bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
 
     canBusReady.wait();
 
-    if (filteredIds.find(id) == filteredIds.end())
+    if (!filterManager->hasId(id))
     {
         CD_WARNING("Filter for ID %d not found, doing nothing.\n", id);
         canBusReady.post();
         return true;
     }
 
-    std::vector<unsigned int> localCopy(filteredIds.begin(), filteredIds.end());
-
-    if (!clearFilters())
+    if (!filterManager->eraseId(id))
     {
-        CD_ERROR("Could not clear list of active filters prior to populating it with previously stored IDs.\n");
+        CD_ERROR("Could not remove filter: %s.\n", std::strerror(errno));
+        canBusReady.post();
+        return false;
+    }
+
+    if (!filterManager->isValid())
+    {
+        CD_WARNING("Hardware limit was hit, not all requested filters are enabled.\n");
         canBusReady.post();
         return false;
     }
 
     canBusReady.post();
-
-    for (std::vector<unsigned int>::iterator it = localCopy.begin(); it != localCopy.end(); ++it)
-    {
-        if (!canIdAdd(*it))
-        {
-            CD_WARNING("Could not add ID %d back.\n", *it);
-        }
-    }
 
     return true;
 }
