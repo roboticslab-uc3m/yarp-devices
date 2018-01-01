@@ -5,6 +5,8 @@
 
 #include <yarp/dev/CanBusInterface.h>
 
+#include <pcanfd.h>
+
 namespace roboticslab
 {
 
@@ -30,6 +32,7 @@ public:
     virtual void setBuffer(unsigned char * buf);
 
 private:
+    struct pcanfd_msg * message;
 };
 
 }  // namespace roboticslab
