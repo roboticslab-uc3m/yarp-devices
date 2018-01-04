@@ -91,6 +91,12 @@ bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
 {
     CD_DEBUG("(%d)\n", id);
 
+    if (filterConfig == FilterManager::DISABLED)
+    {
+        CD_WARNING("CAN filters are not enabled in this device.\n");
+        return true;
+    }
+
     if (id > 0x7F)
     {
         CD_ERROR("Invalid ID (%d > 0x7F).\n", id);
@@ -130,6 +136,12 @@ bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
 bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
 {
     CD_DEBUG("(%d)\n", id);
+
+    if (filterConfig == FilterManager::DISABLED)
+    {
+        CD_WARNING("CAN filters are not enabled in this device.\n");
+        return true;
+    }
 
     if (id > 0x7F)
     {

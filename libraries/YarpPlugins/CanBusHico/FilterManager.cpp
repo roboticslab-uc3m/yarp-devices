@@ -13,6 +13,8 @@
 
 #include <ColorDebug.hpp>
 
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
 
 namespace
@@ -32,15 +34,16 @@ const int roboticslab::CanBusHico::FilterManager::MAX_FILTERS = 4;
 
 // -----------------------------------------------------------------------------
 
-roboticslab::CanBusHico::FilterManager::FilterManager(int fileDescriptor)
+CanBusHico::FilterManager::FilterManager(int fileDescriptor, bool enableRanges)
     : fd(fileDescriptor),
-      valid(true)
+      valid(true),
+      enableRanges(enableRanges)
 {
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::FilterManager::parseIds(const yarp::os::Bottle & b)
+bool CanBusHico::FilterManager::parseIds(const yarp::os::Bottle & b)
 {
     bool modified = false;
 
@@ -64,21 +67,21 @@ bool roboticslab::CanBusHico::FilterManager::parseIds(const yarp::os::Bottle & b
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::FilterManager::hasId(unsigned int id) const
+bool CanBusHico::FilterManager::hasId(unsigned int id) const
 {
     return currentlyActive.find(id) != currentlyActive.end();
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::FilterManager::isValid() const
+bool CanBusHico::FilterManager::isValid() const
 {
     return valid;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::FilterManager::insertId(unsigned int id)
+bool CanBusHico::FilterManager::insertId(unsigned int id)
 {
     stage.insert(id);
 
@@ -92,7 +95,7 @@ bool roboticslab::CanBusHico::FilterManager::insertId(unsigned int id)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::FilterManager::eraseId(unsigned int id)
+bool CanBusHico::FilterManager::eraseId(unsigned int id)
 {
     stage.erase(id);
 
@@ -106,7 +109,7 @@ bool roboticslab::CanBusHico::FilterManager::eraseId(unsigned int id)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::FilterManager::clearFilters(bool clearStage)
+bool CanBusHico::FilterManager::clearFilters(bool clearStage)
 {
     CD_DEBUG("(%d)\n", clearStage);
 
@@ -128,7 +131,7 @@ bool roboticslab::CanBusHico::FilterManager::clearFilters(bool clearStage)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::FilterManager::setMaskedFilter(unsigned int id)
+bool CanBusHico::FilterManager::setMaskedFilter(unsigned int id)
 {
     CD_DEBUG("(%d)\n", id);
 
@@ -175,7 +178,7 @@ bool roboticslab::CanBusHico::FilterManager::setRangedFilter(unsigned int lower,
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::FilterManager::bulkUpdate()
+bool CanBusHico::FilterManager::bulkUpdate()
 {
     std::vector< std::vector<unsigned int> > sequences;
 
@@ -211,16 +214,17 @@ bool roboticslab::CanBusHico::FilterManager::bulkUpdate()
         {
             const std::vector<unsigned int> & seq = sequences[i];
 
-            if (seq.size() == 1)
-            {
-                ok &= setMaskedFilter(seq[0]);
-            }
-            else
+            if (enableRanges && seq.size() > 1)
             {
                 ok &= setRangedFilter(seq[0], seq[seq.size() - 1]);
             }
-
-            yarp::os::Time::delay(DELAY);
+            else
+            {
+                for (unsigned int j = 0; i < seq.size(); j++)
+                {
+                    ok &= setMaskedFilter(seq[j]);
+                }
+            }
         }
 
         if (!ok)
@@ -230,6 +234,29 @@ bool roboticslab::CanBusHico::FilterManager::bulkUpdate()
     }
 
     return true;
+}
+
+// -----------------------------------------------------------------------------
+
+CanBusHico::FilterManager::filter_config CanBusHico::FilterManager::parseFilterConfiguration(const std::string & str)
+{
+    if (str == "disabled")
+    {
+        return DISABLED;
+    }
+    else if (str == "noRange")
+    {
+        return NO_RANGE;
+    }
+    else if (str == "maskAndRange")
+    {
+        return MASK_AND_RANGE;
+    }
+    else
+    {
+        CD_WARNING("Unrecognized filter configuration, setting DISABLED: %s.\n", str.c_str());
+        return DISABLED;
+    }
 }
 
 // -----------------------------------------------------------------------------

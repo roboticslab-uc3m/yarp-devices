@@ -33,6 +33,13 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
         CD_WARNING("TX timeout value <= 0, CAN write calls will block until the buffer is ready.\n");
     }
 
+    std::string filterConfigStr = config.check("CanFilterConfiguration", yarp::os::Value(DEFAULT_CAN_FILTER_CONFIGURATION),
+            "CAN filter config").asString();
+
+    CD_INFO("CAN filter configuration: %s.\n", filterConfigStr.c_str());
+
+    filterConfig = FilterManager::parseFilterConfiguration(filterConfigStr);
+
     //-- Open the CAN device for reading and writing.
     fileDescriptor = ::open(devicePath.c_str(), O_RDWR);
 
@@ -67,35 +74,39 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
     yarp::os::Time::delay(DELAY);
 
-    filterManager = new FilterManager(fileDescriptor);
-
-    //-- Load initial node IDs and set acceptance filters.
-    if (config.check("ids"))
+    if (filterConfig != FilterManager::DISABLED)
     {
-        const yarp::os::Bottle & ids = config.findGroup("ids").tail();
+        filterManager = new FilterManager(fileDescriptor, filterConfig == FilterManager::MASK_AND_RANGE);
 
-        if (ids.size() != 0)
+        //-- Load initial node IDs and set acceptance filters.
+        if (config.check("ids"))
         {
-            CD_INFO("Parsing bottle of ids on CAN device: %s.\n", ids.toString().c_str());
+            const yarp::os::Bottle & ids = config.findGroup("ids").tail();
 
-            if (!filterManager->parseIds(ids))
+            if (ids.size() != 0)
             {
-                CD_ERROR("Could not set acceptance filters on CAN device: %s\n", devicePath.c_str());
-                return false;
+                CD_INFO("Parsing bottle of ids on CAN device: %s.\n", ids.toString().c_str());
+
+                if (!filterManager->parseIds(ids))
+                {
+                    CD_ERROR("Could not set acceptance filters on CAN device: %s\n", devicePath.c_str());
+                    return false;
+                }
+
+                if (!filterManager->isValid())
+                {
+                    CD_WARNING("Hardware limit was hit on CAN device %s, no acceptance filters are enabled.\n",
+                            devicePath.c_str());
+                }
             }
-
-            if (!filterManager->isValid())
+            else
             {
-                CD_WARNING("Hardware limit was hit on CAN device %s, no acceptance filters are enabled.\n", devicePath.c_str());
+                CD_INFO("No bottle of ids given to CAN device.\n");
             }
         }
-        else
-        {
-            CD_INFO("No bottle of ids given to CAN device.\n");
-        }
+
+        yarp::os::Time::delay(DELAY);
     }
-
-    yarp::os::Time::delay(DELAY);
 
     //-- Start the CAN device.
     if (::ioctl(fileDescriptor,IOC_START) == -1)
@@ -117,7 +128,7 @@ bool roboticslab::CanBusHico::close()
 {
     if (fileDescriptor > 0)
     {
-        if (filterManager != NULL)
+        if (filterConfig != FilterManager::DISABLED && filterManager != NULL)
         {
             filterManager->clearFilters();
             delete filterManager;

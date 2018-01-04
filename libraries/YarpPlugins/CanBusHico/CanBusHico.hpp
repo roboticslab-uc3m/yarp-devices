@@ -24,6 +24,8 @@
 
 #define DELAY 0.001  // [s]
 
+#define DEFAULT_CAN_FILTER_CONFIGURATION "disabled"
+
 namespace roboticslab
 {
 
@@ -44,7 +46,8 @@ public:
                    fcntlFlags(0),
                    rxTimeoutMs(DEFAULT_CAN_RX_TIMEOUT_MS),
                    txTimeoutMs(DEFAULT_CAN_TX_TIMEOUT_MS),
-                   filterManager(NULL)
+                   filterManager(NULL),
+                   filterConfig(FilterManager::DISABLED)
     {}
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -78,13 +81,18 @@ protected:
     class FilterManager
     {
     public:
-        explicit FilterManager(int fileDescriptor);
+        enum filter_config { DISABLED, NO_RANGE, MASK_AND_RANGE };
+
+        explicit FilterManager(int fileDescriptor, bool enableRanges);
+
         bool parseIds(const yarp::os::Bottle & b);
         bool hasId(unsigned int id) const;
         bool isValid() const;
         bool insertId(unsigned int id);
         bool eraseId(unsigned int id);
         bool clearFilters(bool clearStage = true);
+
+        static filter_config parseFilterConfiguration(const std::string & str);
 
         static const int MAX_FILTERS;
 
@@ -95,6 +103,7 @@ protected:
 
         int fd;
         bool valid;
+        bool enableRanges;
         std::set<unsigned int> stage, currentlyActive;
     };
 
@@ -114,6 +123,8 @@ protected:
     std::pair<bool, unsigned int> bitrateState;
 
     FilterManager * filterManager;
+
+    FilterManager::filter_config filterConfig;
 
 };
 
