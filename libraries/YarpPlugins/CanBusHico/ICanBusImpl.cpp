@@ -219,9 +219,16 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
 
         if (ret == -1)
         {
-            CD_ERROR("read() error: %s.\n", std::strerror(errno));
-            canBusReady.wait();
-            return false;
+            if (!wait && errno == EAGAIN)
+            {
+                break;
+            }
+            else
+            {
+                CD_ERROR("read() error: %s.\n", std::strerror(errno));
+                canBusReady.wait();
+                return false;
+            }
         }
         else if (ret == 0)
         {
@@ -275,14 +282,21 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
         const yarp::dev::CanMessage & msg = const_cast<yarp::dev::CanBuffer &>(msgs)[i];
         const struct can_msg * _msg = reinterpret_cast<const struct can_msg *>(msg.getPointer());
 
-        //-- read() returns the number of bytes sent or -1 for errors.
+        //-- write() returns the number of bytes sent or -1 for errors.
         int ret = ::write(fileDescriptor, _msg, sizeof(struct can_msg));
 
         if (ret == -1)
         {
-            CD_ERROR("%s.\n", std::strerror(errno));
-            canBusReady.post();
-            return false;
+            if (!wait && errno == EAGAIN)
+            {
+                break;
+            }
+            else
+            {
+                CD_ERROR("%s.\n", std::strerror(errno));
+                canBusReady.post();
+                return false;
+            }
         }
         else if (ret == 0)
         {
