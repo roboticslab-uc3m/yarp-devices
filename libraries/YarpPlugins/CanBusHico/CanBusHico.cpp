@@ -2,7 +2,6 @@
 
 #include "CanBusHico.hpp"
 
-#include <unistd.h>
 #include <fcntl.h>
 #include <sys/select.h>
 #include <sys/time.h>
@@ -88,21 +87,6 @@ bool roboticslab::CanBusHico::waitUntilTimeout(io_operation op, bool * bufferRea
         assert(FD_ISSET(fileDescriptor, &fds));
         *bufferReady = true;
     }
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusHico::clearFilters()
-{
-    if (::ioctl(fileDescriptor, IOC_CLEAR_FILTERS) == -1)
-    {
-        CD_ERROR("ioctl() error: %s\n", std::strerror(errno));
-        return false;
-    }
-
-    filteredIds.clear();
 
     return true;
 }
