@@ -201,7 +201,7 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
             if (!waitUntilTimeout(READ, &bufferReady))
             {
                 CD_ERROR("waitUntilTimeout() failed.\n");
-                canBusReady.wait();
+                canBusReady.post();
                 return false;
             }
 
@@ -226,7 +226,7 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
             else
             {
                 CD_ERROR("read() error: %s.\n", std::strerror(errno));
-                canBusReady.wait();
+                canBusReady.post();
                 return false;
             }
         }
@@ -269,7 +269,7 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
             if (!waitUntilTimeout(WRITE, &bufferReady))
             {
                 CD_ERROR("waitUntilTimeout() failed.\n");
-                canBusReady.wait();
+                canBusReady.post();
                 return false;
             }
 
