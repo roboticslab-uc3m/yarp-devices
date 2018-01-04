@@ -266,7 +266,7 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
         const struct can_msg * _msg = reinterpret_cast<const struct can_msg *>(msg.getPointer());
 
         //-- read() returns the number of bytes sent or -1 for errors.
-        int ret = ::write(fileDescriptor, _msg, sizeof(struct can_msg)) == -1;
+        int ret = ::write(fileDescriptor, _msg, sizeof(struct can_msg));
 
         if (ret == -1)
         {

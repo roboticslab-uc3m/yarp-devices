@@ -25,7 +25,6 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
     if (rxTimeoutMs <= 0)
     {
         CD_WARNING("RX timeout value <= 0, CAN read calls will block until the buffer is ready.\n");
-        return false;
     }
 
     if (txTimeoutMs <= 0)
