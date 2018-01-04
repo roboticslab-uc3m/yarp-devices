@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /**
- * @ingroup roboticslab_examples_cpp
+ * @ingroup yarp_devices_examples_cpp
  * \defgroup exampleRemoteControlboard exampleRemoteControlboard
  *
  * @brief This example connects to a running \ref roboticslabSim program.

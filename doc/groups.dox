@@ -1,8 +1,8 @@
 
 /**
-@brief The main, catch-all namespace for TEO.
+@brief The main, catch-all namespace for Robotics Lab UC3M.
  */
-namespace teo {}
+namespace roboticslab {}
 
 /**
  * \defgroup yarp_devices_libraries yarp-devices Libraries
@@ -18,9 +18,6 @@ namespace teo {}
  * @brief Contains libraries that implement YARP device interfaces
  * and therefore can be invoked as YARP plugins.
  *
- * @section YarpPlugins_install Installation
- *
- * Compiled when ENABLE_YarpPlugins is activated.
  */
 
 /**
@@ -62,5 +59,12 @@ namespace teo {}
  * @brief yarp-devices examples.
  */
 
+/**
+ * @ingroup yarp_devices_examples
+ * \defgroup yarp_devices_examples_cpp yarp-devices C++ examples
+ */
 
-
+/**
+ * @ingroup yarp_devices_examples
+ * \defgroup yarp_devices_examples_py yarp-devices Python examples
+ */

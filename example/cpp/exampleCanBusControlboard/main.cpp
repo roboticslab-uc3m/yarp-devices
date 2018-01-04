@@ -2,7 +2,7 @@
 
 /**
  *
- * @ingroup yarp_devices_programs
+ * @ingroup yarp_devices_examples_cpp
  * \defgroup exampleCanBusControlboard exampleCanBusControlboard
  *
  * @brief Creates an instance of roboticslab::ExampleCanBusControlboard.

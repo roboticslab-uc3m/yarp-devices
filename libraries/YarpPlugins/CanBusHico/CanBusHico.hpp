@@ -24,7 +24,8 @@ namespace roboticslab
 
 /**
  *
- * @ingroup CanBusHico
+ * @ingroup YarpPlugins
+ * @defgroup CanBusHico
  * @brief Specifies the HicoCan (hcanpci) behaviour and specifications.
  *
  */
