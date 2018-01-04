@@ -182,21 +182,32 @@ bool CanBusHico::FilterManager::bulkUpdate()
 {
     std::vector< std::vector<unsigned int> > sequences;
 
-    std::set<unsigned int>::iterator itSeq = stage.begin();
-    std::set<unsigned int>::const_iterator itEnd = stage.end();
-
-    while (itSeq != itEnd)
+    if (enableRanges)
     {
-        std::set<unsigned int>::iterator itNext = std::adjacent_find(itSeq, itEnd, not_consecutive());
+        std::set<unsigned int>::iterator itSeq = stage.begin();
+        std::set<unsigned int>::const_iterator itEnd = stage.end();
 
-        if (itNext != itEnd)
+        while (itSeq != itEnd)
         {
-            ++itNext;
-        }        
+            std::set<unsigned int>::iterator itNext = std::adjacent_find(itSeq, itEnd, not_consecutive());
 
-        std::vector<unsigned int> sequence(itSeq, itNext);
-        sequences.push_back(sequence);
-        itSeq = itNext;
+            if (itNext != itEnd)
+            {
+                ++itNext;
+            }
+
+            std::vector<unsigned int> sequence(itSeq, itNext);
+            sequences.push_back(sequence);
+            itSeq = itNext;
+        }
+    }
+    else
+    {
+        for (std::set<unsigned int>::const_iterator it = stage.begin(); it != stage.end(); ++it)
+        {
+            std::vector<unsigned int> sequence(1, *it);
+            sequences.push_back(sequence);
+        }
     }
 
     if (sequences.size() > MAX_FILTERS)

@@ -32,7 +32,7 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
         CD_WARNING("TX timeout value <= 0, CAN write calls will block until the buffer is ready.\n");
     }
 
-    std::string filterConfigStr = config.check("CanFilterConfiguration", yarp::os::Value(DEFAULT_CAN_FILTER_CONFIGURATION),
+    std::string filterConfigStr = config.check("canFilterConfiguration", yarp::os::Value(DEFAULT_CAN_FILTER_CONFIGURATION),
             "CAN filter config").asString();
 
     CD_INFO("CAN filter configuration: %s.\n", filterConfigStr.c_str());
