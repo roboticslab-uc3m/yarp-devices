@@ -49,11 +49,10 @@ Note that this is a hack. VOCABs may be updated without warning. The recommended
 [set] [accs] (10.0)
 ```
 
-* go to vel mode, get ref velocities
+* go to vel mode, move
 ```
 [set] [veld]
-[get] [vmo] 0
-[get] [vmos]
+[set] [vmos] (800)
 ```
 
 * got to torque mode
