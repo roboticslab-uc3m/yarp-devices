@@ -103,16 +103,16 @@ class GrabberControls2GuiGUI(QtGui.QWidget):
         self.fpsSpinBox.setMaximum(30)
 
         # Disable widgets if feature not supported
-        self.zoomSlider.setEnabled(False) if not self.controller.has_zoom() else None  # Look me mom I'm a hacker!
-        self.zoomSpinBox.setEnabled(False) if not self.controller.has_zoom() else None
-        self.focusSlider.setEnabled(False) if not self.controller.has_focus() else None  # Look me mom I'm a hacker!
-        self.focusSpinBox.setEnabled(False) if not self.controller.has_focus() else None
-        self.gainSlider.setEnabled(False) if not self.controller.has_gain() else None  # Look me mom I'm a hacker!
-        self.gainSpinBox.setEnabled(False) if not self.controller.has_gain() else None
-        self.exposureSlider.setEnabled(False) if not self.controller.has_exposure() else None  # Look me mom I'm a hacker!
-        self.exposureSpinBox.setEnabled(False) if not self.controller.has_exposure() else None
-        self.fpsSlider.setEnabled(False) if not self.controller.has_FPS() else None  # Look me mom I'm a hacker!
-        self.fpsSpinBox.setEnabled(False) if not self.controller.has_FPS() else None
+        self.zoomSlider.setEnabled(self.controller.has_zoom())
+        self.zoomSpinBox.setEnabled(self.controller.has_zoom())
+        self.focusSlider.setEnabled(self.controller.has_focus())
+        self.focusSpinBox.setEnabled(self.controller.has_focus())
+        self.gainSlider.setEnabled(self.controller.has_gain())
+        self.gainSpinBox.setEnabled(self.controller.has_gain())
+        self.exposureSlider.setEnabled(self.controller.has_exposure())
+        self.exposureSpinBox.setEnabled(self.controller.has_exposure())
+        self.fpsSlider.setEnabled(self.controller.has_FPS())
+        self.fpsSpinBox.setEnabled(self.controller.has_FPS())
 
         # Connect to signals:
         self.zoomSlider.valueChanged.connect(self.onZoomSliderChanged)
