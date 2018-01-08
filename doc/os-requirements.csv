@@ -1,0 +1,4 @@
+OS, OneCanBusOneWrapper, TwoCanBusThreeWrappers, AravisGigE, CanBusControlboard, CanBusHico, CuiAbsolute, FakeJoint, Jr3, LacqueyFetch, LeapMotionSensor, ProximitySensorsClient, SpaceNavigator, TechnosoftIpos, TextilesHand, WiimoteSensor, AravisGigEController
+[Debian 6.0.10](yarp-devices-install-on-debian-6.md), yes, yes, not_tested, yes, yes, yes, yes, yes, yes, not_tested, yes, not_tested, yes, yes, not_tested, not_tested
+Ubuntu 14.04 (and derivatives), yes, yes, yes, no, no, yes, yes, yes, yes, yes,yes, yes, yes, yes, yes, yes
+Ubuntu 16.04 (and derivatives), yes, yes, yes, no, no, yes, yes, yes, yes, yes, yes, yes, yes, yes, yes, yes
