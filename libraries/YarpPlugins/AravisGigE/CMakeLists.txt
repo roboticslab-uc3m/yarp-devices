@@ -18,8 +18,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
                     ${_common_dirs}
                     ${ARAVIS_INCLUDE_DIRS})
 
-yarp_add_plugin(AravisGigE AravisGigE.cpp
-                           AravisGigE.hpp
+yarp_add_plugin(AravisGigE AravisGigE.hpp
                            DeviceDriverImpl.cpp
                            IFrameGrabberControls2Impl.cpp
                            IFrameGrabberImageRawImpl.cpp
