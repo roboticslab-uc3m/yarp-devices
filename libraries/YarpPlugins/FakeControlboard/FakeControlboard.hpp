@@ -61,7 +61,7 @@ public:
     // Set the Thread Rate in the class constructor
     FakeControlboard() : RateThread(DEFAULT_JMC_MS) {}  // In ms
 
-// ------- IPositionControl declarations. Implementation in IPositionImpl.cpp -------
+// ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
 
     /**
      * Get the number of controlled axes. This command asks the number of controlled
@@ -194,7 +194,7 @@ public:
      */
     virtual bool stop();
 
-// ------- IPositionControl2 declarations. Implementation in IPosition2Impl.cpp -------
+// ------- IPositionControl2 declarations. Implementation in IPositionControl2Impl.cpp -------
 
     /**
      * Set new reference point for a subset of joints.
@@ -390,7 +390,7 @@ public:
      */
     virtual bool getEncoderTimed(int j, double *encs, double *time);
 
-//  --------- IVelocityControl Declarations. Implementation in IVelocityImpl.cpp ---------
+//  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
 
     /**
      * Start motion at a given speed, single joint.
@@ -407,7 +407,7 @@ public:
      */
     virtual bool velocityMove(const double *sp);
 
-//  --------- IVelocityControl2 Declarations. Implementation in IVelocity2Impl.cpp ---------
+//  --------- IVelocityControl2 Declarations. Implementation in IVelocityControl2Impl.cpp ---------
 
     /**
      * Start motion at a given speed for a subset of joints.
@@ -630,7 +630,7 @@ public:
      */
     virtual bool setControlModes(int *modes);
 
-// -------- ITorqueControl declarations. Implementation in ITorqueImpl.cpp --------
+// -------- ITorqueControl declarations. Implementation in ITorqueControlImpl.cpp --------
 
     /**
      * Get the reference value of the torque for all joints.
@@ -835,7 +835,7 @@ public:
      */
     virtual bool setTorqueOffset(int j, double v);
 
-// -------- DeviceDriver declarations. Implementation in IDeviceImpl.cpp --------
+// -------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp --------
 
     /**
      * Open the DeviceDriver.

@@ -1,11 +1,11 @@
 # Copyright: (C) 2017 Universidad Carlos III de Madrid
 # Author: Juan G. Victores & Raul de Santos Rico
 
-YARP_PREPARE_PLUGIN(FakeControlboard
+yarp_prepare_plugin(FakeControlboard
                     CATEGORY device
                     TYPE roboticslab::FakeControlboard
                     INCLUDE FakeControlboard.hpp
-                    WRAPPER controlboardwrapper2)
+                    DEFAULT ON)
 
 if(NOT SKIP_FakeControlboard)
 
@@ -14,8 +14,7 @@ get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
                     ${_common_dirs})
 
-yarp_add_plugin(FakeControlboard FakeControlboard.cpp
-                                 FakeControlboard.hpp
+yarp_add_plugin(FakeControlboard FakeControlboard.hpp
                                  DeviceDriverImpl.cpp
                                  IControlLimitsImpl.cpp
                                  IControlLimits2Impl.cpp
@@ -23,11 +22,11 @@ yarp_add_plugin(FakeControlboard FakeControlboard.cpp
                                  IControlMode2Impl.cpp
                                  IEncodersImpl.cpp
                                  IEncodersTimedImpl.cpp
-                                 IPositionImpl.cpp
-                                 IPosition2Impl.cpp
-                                 ITorqueImpl.cpp
-                                 IVelocityImpl.cpp
-                                 IVelocity2Impl.cpp
+                                 IPositionControlImpl.cpp
+                                 IPositionControl2Impl.cpp
+                                 ITorqueControlImpl.cpp
+                                 IVelocityControlImpl.cpp
+                                 IVelocityControl2Impl.cpp
                                  SharedArea.cpp)
 
 add_dependencies(FakeControlboard COLOR_DEBUG)
