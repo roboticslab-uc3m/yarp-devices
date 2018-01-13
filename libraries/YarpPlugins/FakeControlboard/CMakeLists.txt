@@ -27,6 +27,7 @@ yarp_add_plugin(FakeControlboard FakeControlboard.hpp
                                  ITorqueControlImpl.cpp
                                  IVelocityControlImpl.cpp
                                  IVelocityControl2Impl.cpp
+                                 RateThreadImpl.cpp
                                  SharedArea.cpp)
 
 add_dependencies(FakeControlboard COLOR_DEBUG)
