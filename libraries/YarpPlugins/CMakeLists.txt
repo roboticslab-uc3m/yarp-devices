@@ -26,6 +26,7 @@ add_subdirectory(AravisGigE) # Aravis driver for GigE cameras
 add_subdirectory(CanBusControlboard)
 add_subdirectory(CanBusHico)
 add_subdirectory(CuiAbsolute)
+add_subdirectory(FakeControlboard)
 add_subdirectory(FakeJoint)
 add_subdirectory(Jr3)
 add_subdirectory(LacqueyFetch)
