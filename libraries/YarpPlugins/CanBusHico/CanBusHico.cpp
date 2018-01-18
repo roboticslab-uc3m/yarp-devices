@@ -28,17 +28,28 @@ namespace
 
 bool roboticslab::CanBusHico::setFdMode(bool requestedBlocking)
 {
-    bool currentlyBlocking = (fcntlFlags & O_NONBLOCK) != O_NONBLOCK;
+    bool currentlyBlocking = (fcntlFlags & O_NONBLOCK) == 0;
 
     if (currentlyBlocking != requestedBlocking)
     {
-        int flag = requestedBlocking ? ~O_NONBLOCK : O_NONBLOCK;
+        int flags = fcntlFlags;
 
-        if (::fcntl(fileDescriptor, F_SETFL, fcntlFlags & flag) == -1)
+        if (requestedBlocking)
+        {
+            flags &= ~O_NONBLOCK;
+        }
+        else
+        {
+            flags |= O_NONBLOCK;
+        }
+
+        if (::fcntl(fileDescriptor, F_SETFL, flags) == -1)
         {
             CD_ERROR("fcntl() error: %s.\n", std::strerror(errno));
             return false;
         }
+
+        fcntlFlags = flags;
     }
 
     return true;
