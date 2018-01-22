@@ -43,6 +43,7 @@ git clone https://github.com/roboticslab-uc3m/yarp-devices.git  # Download yarp-
 cd yarp-devices; mkdir build; cd build; cmake ..  # Configure the yarp-devices software
 make  # Compile
 sudo make install  # Install :-)
+sudo ldconfig
 ```
 
 For additional TEO options use ccmake instead of cmake.
