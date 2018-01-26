@@ -1,9 +1,9 @@
 /**
-  * \mainpage yarp-devices Repository documentation
+  * \mainpage roboticslab-uc3m/yarp-devices Repository documentation
 
-Welcome to the TEO Software Repository documentation for the manipulation and locomotion PCs. <a class=el href="http://robots.uc3m.es">Click here to return to Wiki.</a> <a class=el href="https://github.com/roboticslab-uc3m/yarp-devices">Click here to see yarp-devices on repo.</a>
+Welcome to the roboticslab-uc3m/yarp-devices Software Repository documentation. <a class=el href="http://robots.uc3m.es">Click here to return to Wiki.</a> <a class=el href="https://github.com/roboticslab-uc3m/yarp-devices">Click here to see yarp-devices on repo.</a>
 
- \li <a class=el href="https://github.com/roboticslab-uc3m/yarp-devices/blob/develop/doc/yarp-devices-install-on-debian-6.md">Yarp devices install on debian 6</a>
+ \li <a class=el href="https://github.com/roboticslab-uc3m/yarp-devices/blob/develop/doc/yarp-devices-install.md">Yarp devices install</a>
 
 Other internal links of interest:
  \li \ref yarp_devices_firmware
@@ -20,7 +20,6 @@ Even more internal links of interest:
 External links (related projects):
  \li <a class=el href="http://www.yarp.it/">YARP doc</a> / <a class=el href="https://github.com/robotology/yarp">YARP github</a>
  \li <a class=el href="http://wiki.icub.org/iCub/main/dox/html/index.html">iCub Software Repository Documentation</a>
- \li <a class=el href="https://github.com/roboticslab-uc3m/asibot-main/">ASIBOT</a>
 
 <hr>
 
