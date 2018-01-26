@@ -2,7 +2,7 @@
 
 #include "PhidgetSpatial.hpp"
 
-namespace rd
+namespace roboticslab
 {
 
 // -----------------------------------------------------------------------------
@@ -113,4 +113,4 @@ int PhidgetSpatial::display_properties(CPhidgetSpatialHandle phid) {
 
 // ----------------------------------------------------------------------------
 
-}  // namespace rd
+}  // namespace roboticslab

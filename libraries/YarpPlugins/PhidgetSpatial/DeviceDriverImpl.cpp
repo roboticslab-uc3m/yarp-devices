@@ -2,7 +2,7 @@
 
 #include "PhidgetSpatial.hpp"
 
-namespace rd
+namespace roboticslab
 {
 
 // -----------------------------------------------------------------------------
@@ -63,4 +63,4 @@ bool PhidgetSpatial::close()
 
 // -----------------------------------------------------------------------------
 
-}  // namespace rd
+}  // namespace roboticslab

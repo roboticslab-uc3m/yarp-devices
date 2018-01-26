@@ -2,7 +2,7 @@
 
 #include "PhidgetSpatial.hpp"
 
-namespace rd
+namespace roboticslab
 {
 
 // -----------------------------------------------------------------------------
@@ -90,4 +90,4 @@ int PhidgetSpatial::calibrateChannel(int ch, double value)
 
 // -----------------------------------------------------------------------------
 
-}  // namespace rd
+}  // namespace roboticslab

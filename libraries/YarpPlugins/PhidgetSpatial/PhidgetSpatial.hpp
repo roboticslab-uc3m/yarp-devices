@@ -19,7 +19,7 @@ using namespace yarp::dev;
 #define DEFAULT_RATE_MS 20.0
 #define DEFAULT_NUM_CHANNELS 11
 
-namespace rd
+namespace roboticslab
 {
 
 /**
@@ -124,7 +124,7 @@ private:
 
 };
 
-}  // namespace rd
+}  // namespace roboticslab
 
 #endif
 

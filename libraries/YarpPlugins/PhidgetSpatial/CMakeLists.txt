@@ -1,10 +1,9 @@
-# Copyright: (C) 2017 ASROB
-# Author: Juan G. Victores
+# Copyright: (C) 2017 Universidad Carlos III de Madrid
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 yarp_prepare_plugin(PhidgetSpatial
                     CATEGORY device
-                    TYPE rd::PhidgetSpatial
+                    TYPE roboticslab::PhidgetSpatial
                     INCLUDE PhidgetSpatial.hpp
                     DEFAULT OFF)
 
