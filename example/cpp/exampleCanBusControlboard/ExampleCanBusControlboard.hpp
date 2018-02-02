@@ -3,22 +3,11 @@
 #ifndef __EXAMPLE_CAN_BUS_CONTROLBOARD__
 #define __EXAMPLE_CAN_BUS_CONTROLBOARD__
 
+#include <yarp/os/ResourceFinder.h>
 #include <yarp/os/RFModule.h>
-#include <yarp/os/Module.h>
-#include <yarp/os/Network.h>
-#include <yarp/os/Port.h>
-#include <yarp/os/BufferedPort.h>
-
 #include <yarp/dev/PolyDriver.h>
 
-#include <string>
-
-#include "ColorDebug.hpp"
-
-using namespace yarp::os;
-using namespace yarp::dev;
-
-namespace teo
+namespace roboticslab
 {
 
 /**
@@ -29,7 +18,7 @@ namespace teo
  * controlboardwrapper2 RPC commands.
  *
  */
-class ExampleCanBusControlboard : public RFModule
+class ExampleCanBusControlboard : public yarp::os::RFModule
 {
 
 protected:
@@ -45,10 +34,9 @@ protected:
 
 public:
     ExampleCanBusControlboard();
-    bool configure(ResourceFinder &rf);
+    bool configure(yarp::os::ResourceFinder &rf);
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
 #endif  // __EXAMPLE_CAN_BUS_CONTROLBOARD__
-

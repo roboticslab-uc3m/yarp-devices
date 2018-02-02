@@ -2,7 +2,15 @@
 
 #include "DumpCanBus.hpp"
 
-namespace teo
+#include <cstdio>
+#include <ios>
+#include <sstream>
+
+#include <yarp/os/Time.h>
+
+#include <ColorDebug.hpp>
+
+namespace roboticslab
 {
 
 /************************************************************************/
@@ -14,8 +22,8 @@ bool DumpCanBus::configure(yarp::os::ResourceFinder &rf)
 
     if(rf.check("help"))
     {
-        printf("DumpCanBus options:\n");
-        printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
+        std::printf("DumpCanBus options:\n");
+        std::printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
         return false;
     }
@@ -57,8 +65,6 @@ bool DumpCanBus::close()
 
 std::string DumpCanBus::msgToStr(can_msg* message)
 {
-
-
     std::stringstream tmp;
     for(int i=0; i < message->dlc-1; i++)
     {
@@ -78,4 +84,4 @@ std::string DumpCanBus::msgToStr(can_msg* message)
 
 /************************************************************************/
 
-}  // namespace teo
+}  // namespace roboticslab

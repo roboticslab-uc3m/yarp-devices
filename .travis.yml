@@ -9,14 +9,18 @@ compiler:
   - clang
 
 before_install:
-  - sudo add-apt-repository --yes ppa:kalakris/cmake
   - sudo apt-get update -qq  # -qq No output except for errors
+  - '[[ "$TRAVIS_EVENT_TYPE" = cron ]] && export YARP_CHECKOUT=devel || export YARP_CHECKOUT=master'
 
 install:
+  #-- Install SpaceNavigator-related packages
+  - sudo apt-get install libspnav-dev
+  #-- Install Wiimote-related packages
+  - sudo apt-get install libxwiimote-dev
   #-- Install cmake
   - sudo apt-get install cmake
   #-- Install yarp
-  - git clone https://github.com/robotology/yarp
+  - git clone --branch="$YARP_CHECKOUT" https://github.com/robotology/yarp
   - cd yarp && mkdir build && cd build
   - cmake .. -DSKIP_ACE=ON
   - make
@@ -32,7 +36,7 @@ before_script:
   - mkdir -p build && cd build
 
 script:
-  - cmake .. -DENABLE_coverage=ON
+  - cmake .. -DENABLE_LeapMotionSensor=OFF -DENABLE_coverage=ON
   - make
   - sudo make install
 

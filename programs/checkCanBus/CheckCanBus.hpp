@@ -3,28 +3,22 @@
 #ifndef __CHECK_CAN_BUS__
 #define __CHECK_CAN_BUS__
 
+#include <queue>
+#include <string>
+
+#include <yarp/os/ResourceFinder.h>
 #include <yarp/os/RFModule.h>
-#include <yarp/os/Module.h>
-#include <yarp/os/Network.h>
-#include <yarp/os/Port.h>
-#include <yarp/os/BufferedPort.h>
+#include <yarp/os/Thread.h>
 
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/Wrapper.h>
-
-#include <string>
-#include <stdlib.h>
+#include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/IControlLimits2.h>
 
 #include "ICanBusSharer.h"
-#include "ColorDebug.hpp"
+#include "ITechnosoftIpos.h"
+#include "hico_api.h"
 
-#include "TechnosoftIpos/TechnosoftIpos.hpp" // -- ok????
-
-//-- Nuevos includes
-#include <queue>
-
-
-namespace teo
+namespace roboticslab
 {
 
 /**
@@ -103,6 +97,6 @@ protected:
     virtual void run();
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
 #endif  // __CHECK_CAN_BUS__

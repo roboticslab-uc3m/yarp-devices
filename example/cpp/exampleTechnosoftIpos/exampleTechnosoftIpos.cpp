@@ -31,39 +31,39 @@ make -j3
  *
  */
 
-#include <stdio.h>
+#include <cstdio>
 #include <stdlib.h>
 
-#include <yarp/os/all.h>
-#include <yarp/dev/all.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Property.h>
+#include <yarp/os/Time.h>
 
-#include "ICanBusSharer.h"
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/ControlBoardInterfaces.h>
 
-YARP_DECLARE_PLUGINS(BodyYarp)
+#include <ICanBusHico.h>
+#include <ICanBusSharer.h>
 
 int main(int argc, char *argv[])
 {
-
-    YARP_REGISTER_PLUGINS(BodyYarp);
-
     yarp::os::Network yarp;
     if (! yarp::os::Network::checkNetwork() )
     {
-        printf("Please start a yarp name server first\n");
+        std::printf("Please start a yarp name server first\n");
         return 1;
     }
 
-    PolyDriver canBusDevice;
-    teo::CanBusHico* iCanBus;
+    yarp::dev::PolyDriver canBusDevice;
+    roboticslab::ICanBusHico* iCanBus;
 
-    Property canBusOptions;
+    yarp::os::Property canBusOptions;
     canBusOptions.put("device","CanBusHico");
     canBusOptions.put("canDevice","/dev/can1");
     canBusOptions.put("canBitrate",BITRATE_1000k);
     canBusDevice.open(canBusOptions);
     if( ! canBusDevice.isValid() )
     {
-        CD_ERROR("canBusDevice instantiation not worked.\n");
+        std::printf("canBusDevice instantiation not worked.\n");
         return 1;
     }
     canBusDevice.view(iCanBus);
@@ -79,48 +79,57 @@ int main(int argc, char *argv[])
     yarp::dev::PolyDriver dd(options);
     if(!dd.isValid())
     {
-        printf("TechnosoftIpos device not available.\n");
+        std::printf("TechnosoftIpos device not available.\n");
         dd.close();
         yarp::os::Network::fini();
         return 1;
     }
 
     //-- View TechnosoftIpos interfaces.
-    teo::ICanBusSharer *iCanBusSharer;
+    roboticslab::ICanBusSharer *iCanBusSharer;
     bool ok = dd.view(iCanBusSharer);
     if (!ok)
     {
-        printf("[error] Problems viewing ICanBusSharer.\n");
+        std::printf("[error] Problems viewing ICanBusSharer.\n");
         return 1;
     }
-    else printf("[success] Viewing ICanBusSharer.\n");
+    else std::printf("[success] Viewing ICanBusSharer.\n");
 
     yarp::dev::IPositionControlRaw *pos;
     ok = dd.view(pos);
     if (!ok)
     {
-        printf("[error] Problems viewing IPositionControlRaw.\n");
+        std::printf("[error] Problems viewing IPositionControlRaw.\n");
         return 1;
     }
-    else printf("[success] Viewing IPositionControlRaw.\n");
+    else std::printf("[success] Viewing IPositionControlRaw.\n");
 
     yarp::dev::IEncodersRaw *enc;
     ok = dd.view(enc);
     if (!ok)
     {
-        printf("[error] Problems viewing IEncodersRaw.\n");
+        std::printf("[error] Problems viewing IEncodersRaw.\n");
         return 1;
     }
-    else printf("[success] Viewing IEncodersRaw.\n");
+    else std::printf("[success] Viewing IEncodersRaw.\n");
 
     yarp::dev::IVelocityControlRaw *vel;
     ok = dd.view(vel);
     if (!ok)
     {
-        printf("[error] Problems viewing IVelocityControlRaw.\n");
+        std::printf("[error] Problems viewing IVelocityControlRaw.\n");
         return 1;
     }
-    else printf("[success] Viewing IVelocityControlRaw.\n");
+    else std::printf("[success] Viewing IVelocityControlRaw.\n");
+
+    yarp::dev::IControlModeRaw *mode;
+    ok = dd.view(mode);
+    if (!ok)
+    {
+        std::printf("[error] Problems viewing IControlModeRaw.\n");
+        return 1;
+    }
+    else std::printf("[success] Viewing IControlModeRaw.\n");
 
     //-- Pass before sending commands.
     iCanBusSharer->setCanBusPtr(iCanBus);
@@ -137,24 +146,24 @@ int main(int argc, char *argv[])
     iCanBusSharer->enable();
 
     //-- Commands on TechnosoftIpos.
-    ok = pos->setPositionModeRaw();
+    ok = mode->setPositionModeRaw(0);
     if (!ok)
     {
-        printf("[error] Problems in setPositionModeRaw.\n");
+        std::printf("[error] Problems in setPositionModeRaw.\n");
         return 1;
     }
-    else printf("[success] setPositionModeRaw.\n");
+    else std::printf("[success] setPositionModeRaw.\n");
 
-    printf("test positionMove(0,-25)\n");
+    std::printf("test positionMove(0,-25)\n");
     ok = pos->positionMoveRaw(0, -25);
     if (!ok)
     {
-        printf("[error] Problems in positionMove.\n");
+        std::printf("[error] Problems in positionMove.\n");
         return 1;
     }
-    else printf("[success] positionMove.\n");
+    else std::printf("[success] positionMove.\n");
 
-    printf("Delaying 5 seconds...\n");
+    std::printf("Delaying 5 seconds...\n");
     yarp::os::Time::delay(5);
 
     /*vel->setVelocityModeRaw();
@@ -168,5 +177,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
-

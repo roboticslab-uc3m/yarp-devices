@@ -1,4 +1,4 @@
-[![Yarp-devices Homepage](https://img.shields.io/badge/yarp-devices-orange.svg)](http://robots.uc3m.es/dox-yarp-devices) [![Latest Release](https://img.shields.io/github/tag/roboticslab-uc3m/yarp-devices.svg?label=Latest Release)](https://github.com/roboticslab-uc3m/yarp-devices/tags)
+[![Yarp-devices Homepage](https://img.shields.io/badge/yarp-devices-orange.svg)](http://robots.uc3m.es/dox-yarp-devices) [![Latest Release](https://img.shields.io/github/tag/roboticslab-uc3m/yarp-devices.svg?label=Latest%20Release)](https://github.com/roboticslab-uc3m/yarp-devices/tags)
 
 A place for YARP devices.
 
@@ -6,7 +6,13 @@ Link to Doxygen generated documentation: http://robots.uc3m.es/dox-yarp-devices
 
 ## Installation
 
-Installation instructions for installing from source can be found [here]( /doc/yarp_devices_install_on_debian_6.md ).
+Installation instructions for installing from source can be found [here](/doc/yarp-devices-install.md) and [here (Debian 6.0)](/doc/yarp-devices-install-on-debian-6.md).
+
+## Usage
+Usage instructions for the different devices contained in this repository can be found [here](doc/yarp-devices-usage.md).
+
+## Tricks
+Some tricks for the different devices contained in this repository can be found [here](doc/yarp-devices-tricks.md).
 
 ## Contributing
 
@@ -25,13 +31,8 @@ Installation instructions for installing from source can be found [here]( /doc/y
 
 ## Status
 
-[![Build Status (Linux/OSX)](https://img.shields.io/travis/roboticslab-uc3m/yarp-devices/master.svg?label=Build Status (Linux/OSX))](https://travis-ci.org/roboticslab-uc3m/yarp-devices)
+[![Build Status (Linux/OSX)](https://travis-ci.org/roboticslab-uc3m/yarp-devices.svg?branch=develop)](https://travis-ci.org/roboticslab-uc3m/yarp-devices)
 
 [![Coverage Status](https://coveralls.io/repos/roboticslab-uc3m/yarp-devices/badge.svg)](https://coveralls.io/r/roboticslab-uc3m/yarp-devices)
 
 [![Issues](https://img.shields.io/github/issues/roboticslab-uc3m/yarp-devices.svg?label=Issues)](https://github.com/roboticslab-uc3m/yarp-devices/issues)
-
-## Links of interest:
-
-* [kinematics-dynamics](https://github.com/roboticslab-uc3m/kinematics-dynamics)
-* [vision](https://github.com/roboticslab-uc3m/vision)

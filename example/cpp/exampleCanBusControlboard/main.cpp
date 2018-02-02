@@ -2,10 +2,10 @@
 
 /**
  *
- * @ingroup yarp_devices_programs
+ * @ingroup yarp_devices_examples_cpp
  * \defgroup exampleCanBusControlboard exampleCanBusControlboard
  *
- * @brief Creates an instance of teo::ExampleCanBusControlboard.
+ * @brief Creates an instance of roboticslab::ExampleCanBusControlboard.
  *
  * @section exampleCanBusControlboard_legal Legal
  *
@@ -90,26 +90,23 @@ Response: [ok]
  *
  */
 
+#include <yarp/os/Network.h>
+#include <yarp/os/ResourceFinder.h>
+
+#include <ColorDebug.hpp>
+
 #include "ExampleCanBusControlboard.hpp"
-
-using namespace yarp::os;
-using namespace yarp::dev;
-
-YARP_DECLARE_PLUGINS(BodyYarp)
 
 int main(int argc, char *argv[])
 {
-
-    YARP_REGISTER_PLUGINS(BodyYarp);
-
-    ResourceFinder rf;
+    yarp::os::ResourceFinder rf;
     rf.setVerbose(true);
     rf.setDefaultContext("exampleCanBusControlboard");
     rf.setDefaultConfigFile("exampleCanBusControlboard.ini");
     rf.configure(argc, argv);
 
     CD_INFO("Checking for yarp network...\n");
-    Network yarp;
+    yarp::os::Network yarp;
     if (!yarp.checkNetwork())
     {
         CD_ERROR("Found no yarp network (try running \"yarpserver &\"), bye!\n");
@@ -117,7 +114,6 @@ int main(int argc, char *argv[])
     }
     CD_SUCCESS("Found yarp network.\n");
 
-    teo::ExampleCanBusControlboard mod;
+    roboticslab::ExampleCanBusControlboard mod;
     return mod.runModule(rf);
 }
-

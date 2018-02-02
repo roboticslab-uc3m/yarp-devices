@@ -5,7 +5,7 @@
  * @ingroup yarp_devices_programs
  * \defgroup oneCanBusOneWrapper oneCanBusOneWrapper
  *
- * @brief Creates an instance of teo::OneCanBusOneWrapper.
+ * @brief Creates an instance of roboticslab::OneCanBusOneWrapper.
  *
  * @section oneCanBusOneWrapper_legal Legal
  *
@@ -38,16 +38,15 @@
  *
  */
 
+#include <yarp/os/Network.h>
+#include <yarp/os/ResourceFinder.h>
+
+#include <ColorDebug.hpp>
+
 #include "OneCanBusOneWrapper.hpp"
-
-
-//YARP_DECLARE_PLUGINS(BodyYarp)
 
 int main(int argc, char *argv[])
 {
-
-    //YARP_REGISTER_PLUGINS(BodyYarp);
-
     yarp::os::ResourceFinder rf;
     rf.setVerbose(true);
     rf.setDefaultContext("oneCanBusOneWrapper");
@@ -63,7 +62,6 @@ int main(int argc, char *argv[])
     }
     CD_SUCCESS("Found yarp network.\n");
 
-    teo::OneCanBusOneWrapper mod;
+    roboticslab::OneCanBusOneWrapper mod;
     return mod.runModule(rf);
 }
-

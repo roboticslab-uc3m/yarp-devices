@@ -1,12 +1,14 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include "DumpCanBus.hpp"
+#include "hico_api.h"
+
+#include <ColorDebug.hpp>
 
 // ------------------ Thread Related -----------------------------------------
 
-void teo::DumpCanBus::run()
+void roboticslab::DumpCanBus::run()
 {
-
     CD_INFO("Started DumpCanBus reading thread run.\n");
 
     while ( ! this->RFModule::isStopping() )
@@ -42,4 +44,3 @@ void teo::DumpCanBus::run()
 }
 
 // -----------------------------------------------------------------------------
-

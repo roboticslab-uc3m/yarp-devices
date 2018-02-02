@@ -1,31 +1,21 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __TWO_CAN_BUS_THREE_WRAPPERS__
-#define __TWO_CAN_BUS_THREE_WRAPPERS__
+#ifndef __ONE_CAN_BUS_THREE_WRAPPER__
+#define __ONE_CAN_BUS_THREE_WRAPPER__
 
+#include <yarp/os/ResourceFinder.h>
 #include <yarp/os/RFModule.h>
-#include <yarp/os/Module.h>
-#include <yarp/os/Network.h>
-#include <yarp/os/Port.h>
-#include <yarp/os/BufferedPort.h>
 
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/Wrapper.h>
 
-#include <string>
-#include <stdlib.h>
-
-#include "ColorDebug.hpp"
-
-
-namespace teo
+namespace roboticslab
 {
 
 /**
  *
  * @ingroup yarp_devices_libraries
  * \defgroup OneCanBusOneWrapper
- * @brief Contains teo::OneCanBusOneWrapper.
+ * @brief Contains roboticslab::OneCanBusOneWrapper.
  */
 
 /**
@@ -59,7 +49,6 @@ public:
     bool configure(yarp::os::ResourceFinder &rf);
 };
 
-}  // namespace teo
+}  // namespace roboticslab
 
-#endif  // __TWO_CAN_BUS_THREE_WRAPPERS__
-
+#endif  // __ONE_CAN_BUS_THREE_WRAPPER__

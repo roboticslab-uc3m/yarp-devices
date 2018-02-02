@@ -1,25 +1,32 @@
-#include "gtest/gtest.h" // -- We load the librarie of GoogleTest
+#include "gtest/gtest.h"
 
-// -- We load the rest of libraries that we will use to call the functions of our code
-#include <yarp/os/all.h>
-#include <yarp/dev/all.h>
-#include <map> // -- nuevo
+#include <cstdlib>
+#include <ios>
+#include <string>
+#include <sstream>
+#include <map>
 
-#include "ColorDebug.hpp"
+#include <yarp/os/Property.h>
+#include <yarp/os/Time.h>
+
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/IControlLimits2.h>
+
+#include <ColorDebug.hpp>
 
 #include "ICanBusSharer.h"
 #include "ICuiAbsolute.h"
 
-//YARP_DECLARE_PLUGINS(BodyYarp)
-
 #define CAN_ID 103 // ID of Cui Absolute encoder that you want to check...
 
-namespace teo
+namespace roboticslab
 {
 
 /**
-* @brief Tests \ref KdlSolver ikin and idyn on a simple mechanism.
-*/
+ * @ingroup yarp_devices_tests
+ * @brief Tests \ref CuiAbsolute on a single CAN node.
+ */
 class CuiAbsoluteTest : public testing::Test // -- inherit the Test class (gtest.h)
 {
 
@@ -27,10 +34,7 @@ public:
 
     virtual void SetUp()
     {
-
-
         // -- code here will execute just before the test ensues
-        //YARP_REGISTER_PLUGINS(BodyYarp);
 
         yarp::os::Property hicoCanConf ("(device CanBusHico) (canDevice /dev/can0) (canBitrate 8)");
         bool ok = true;
@@ -44,7 +48,7 @@ public:
         else
         {
             CD_ERROR("Bad Configuration of HicoCAN :(\n");
-            ::exit(1);
+            std::exit(1);
         }
 
         // -- adding configuration of Cui Absolute Encoders (minimal configuration that CuiAbsolute need to run correctly)
@@ -57,7 +61,7 @@ public:
         if ( ! canNodeDevice.isValid() )
         {
             CD_ERROR("Bad device of CuiAbsolute :(\n");
-            ::exit(1);
+            std::exit(1);
         }
         ok &= canNodeDevice.view( iControlLimits2Raw );
         ok &= canNodeDevice.view( iControlModeRaw );
@@ -76,7 +80,7 @@ public:
         else
         {
             CD_ERROR("Bad Configuration of CuiAbsolute :(\n");
-            ::exit(1);
+            std::exit(1);
         }
 
         //-- Pass CAN bus (HicoCAN) pointer to CAN node.

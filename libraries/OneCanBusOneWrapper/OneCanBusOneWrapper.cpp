@@ -2,7 +2,19 @@
 
 #include "OneCanBusOneWrapper.hpp"
 
-namespace teo
+#include <cstdio>
+#include <string>
+
+#include <yarp/os/Bottle.h>
+#include <yarp/os/Property.h>
+#include <yarp/os/Value.h>
+
+#include <yarp/dev/PolyDriverList.h>
+#include <yarp/dev/Wrapper.h>
+
+#include <ColorDebug.hpp>
+
+namespace roboticslab
 {
 
 /************************************************************************/
@@ -11,11 +23,10 @@ OneCanBusOneWrapper::OneCanBusOneWrapper() { }
 /************************************************************************/
 bool OneCanBusOneWrapper::configure(yarp::os::ResourceFinder &rf)
 {
-
     if(rf.check("help"))
     {
-        printf("OneCanBusOneWrapper options:\n");
-        printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
+        std::printf("OneCanBusOneWrapper options:\n");
+        std::printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
         return false;
     }
@@ -81,4 +92,4 @@ bool OneCanBusOneWrapper::close()
 
 /************************************************************************/
 
-}  // namespace teo
+}  // namespace roboticslab

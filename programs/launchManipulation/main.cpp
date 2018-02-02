@@ -5,7 +5,7 @@
  * @ingroup yarp_devices_programs
  * \defgroup launchManipulation launchManipulation
  *
- * @brief Creates an instance of teo::TwoCanBusThreeWrappers.
+ * @brief Creates an instance of roboticslab::TwoCanBusThreeWrappers.
  *
  * @section launchManipulation_legal Legal
  *
@@ -38,16 +38,15 @@
  *
  */
 
+#include <yarp/os/Network.h>
+#include <yarp/os/ResourceFinder.h>
+
+#include <ColorDebug.hpp>
+
 #include "TwoCanBusThreeWrappers.hpp"
-
-
-//YARP_DECLARE_PLUGINS(BodyYarp)
 
 int main(int argc, char *argv[])
 {
-
-    //YARP_REGISTER_PLUGINS(BodyYarp);
-
     yarp::os::ResourceFinder rf;
     rf.setVerbose(true);
 
@@ -66,7 +65,6 @@ int main(int argc, char *argv[])
     CD_SUCCESS("Found yarp network.\n");
 
 
-    teo::TwoCanBusThreeWrappers mod;
+    roboticslab::TwoCanBusThreeWrappers mod;
     return mod.runModule(rf);
 }
-

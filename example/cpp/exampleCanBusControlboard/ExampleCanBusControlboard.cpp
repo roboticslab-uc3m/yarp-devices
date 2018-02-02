@@ -2,14 +2,17 @@
 
 #include "ExampleCanBusControlboard.hpp"
 
-/************************************************************************/
-teo::ExampleCanBusControlboard::ExampleCanBusControlboard() { }
+#include <yarp/os/Property.h>
+
+#include <ColorDebug.hpp>
 
 /************************************************************************/
-bool teo::ExampleCanBusControlboard::configure(ResourceFinder &rf)
+roboticslab::ExampleCanBusControlboard::ExampleCanBusControlboard() { }
+
+/************************************************************************/
+bool roboticslab::ExampleCanBusControlboard::configure(yarp::os::ResourceFinder &rf)
 {
-
-    Property options;
+    yarp::os::Property options;
     options.fromString(rf.toString());  //-- Allow options like stream_state=0.
     options.put("device","controlboardwrapper2");
     options.put("subdevice","CanBusControlboard");
@@ -19,7 +22,7 @@ bool teo::ExampleCanBusControlboard::configure(ResourceFinder &rf)
     if (!robotDevice.isValid())
     {
         CD_ERROR("Class instantiation not worked.\n");
-        CD_ERROR("Be sure CMake \"ENABLE_BodyYarp_CanBusControlboard\" variable is set \"ON\"\n");
+        CD_ERROR("Be sure CMake \"ENABLE_YarpPlugins_CanBusControlboard\" variable is set \"ON\"\n");
         CD_ERROR("\"SKIP_CanBusControlboard is set\" --> should be --> \"ENABLE_CanBusControlboard is set\"\n");
         // robotDevice.close();  // un-needed?
         return false;
@@ -29,9 +32,8 @@ bool teo::ExampleCanBusControlboard::configure(ResourceFinder &rf)
 }
 
 /************************************************************************/
-bool teo::ExampleCanBusControlboard::updateModule()
+bool roboticslab::ExampleCanBusControlboard::updateModule()
 {
     //printf("ExampleCanBusControlboard alive...\n");
     return true;
 }
-

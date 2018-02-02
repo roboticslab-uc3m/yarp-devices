@@ -5,7 +5,7 @@
  * @ingroup yarp_devices_programs
  * \defgroup dumpCanBus dumpCanBus
  *
- * @brief Creates an instance of teo::DumpCanBus.
+ * @brief Creates an instance of roboticslab::DumpCanBus.
  *
  * @section dumpCanBus_legal Legal
  *
@@ -38,16 +38,15 @@
  *
  */
 
+#include <yarp/os/Network.h>
+#include <yarp/os/ResourceFinder.h>
+
+#include <ColorDebug.hpp>
+
 #include "DumpCanBus.hpp"
-
-
-//YARP_DECLARE_PLUGINS(BodyYarp)
 
 int main(int argc, char *argv[])
 {
-
-//    YARP_REGISTER_PLUGINS(BodyYarp);
-
     yarp::os::ResourceFinder rf;
     rf.setVerbose(true);
     rf.setDefaultContext("dumpCanBus");
@@ -63,7 +62,6 @@ int main(int argc, char *argv[])
     }
     CD_SUCCESS("Found yarp network.\n");
 
-    teo::DumpCanBus mod;
+    roboticslab::DumpCanBus mod;
     return mod.runModule(rf);
 }
-
