@@ -1,0 +1,1 @@
+javac -classpath C:\robotology\yarp-2.3.20\share\yarp\bindings\build  -source 1.3 -target 1.3 *.java
