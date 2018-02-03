@@ -49,7 +49,6 @@ vel = dd.viewIVelocityControl()  # make a velocity controller object we call 've
 enc = dd.viewIEncoders()  # make an encoder controller object we call 'enc'
 mode = dd.viewIControlMode()  # make a operation mode controller object we call 'mode'
 
-enc = dd.viewIEncoders()  # make an encoder controller object we call 'enc'
 axes = enc.getAxes()  # retrieve number of joints
 
 # use the object to set the device to position mode (as opposed to velocity mode)(note: stops the robot)
