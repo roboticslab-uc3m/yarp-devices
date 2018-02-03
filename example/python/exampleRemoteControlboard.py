@@ -48,6 +48,7 @@ pos = dd.viewIPositionControl()  # make a position controller object we call 'po
 vel = dd.viewIVelocityControl()  # make a velocity controller object we call 'vel'
 enc = dd.viewIEncoders()  # make an encoder controller object we call 'enc'
 mode = dd.viewIControlMode()  # make a operation mode controller object we call 'mode'
+ll = dd.viewIControlLimits()  # make a limits controller object we call 'll'
 
 axes = enc.getAxes()  # retrieve number of joints
 
@@ -65,9 +66,13 @@ v = yarp.DVector(axes)  # create a YARP vector of doubles the size of the number
 enc.getEncoders(v)  # read the encoder values and put them into 'v'
 print 'v[1] is: ' + str(v[1])  # print element 1 of 'v', note that motors and encoders start at 0
 
+min = yarp.DVector(1)
+max = yarp.DVector(1)
+ll.getLimits(0,min,max)
+
 # use the object to set the device to velocity mode (as opposed to position mode)
 for j in range(1,axes):
-    mode.setPositionMode(j)
+    mode.setVelocityMode(j)
 
 print 'test velocityMove(0,10) -> moves motor 0 (start count at motor 0) at 10 degrees per second'
 vel.velocityMove(0,10)
