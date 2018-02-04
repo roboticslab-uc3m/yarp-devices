@@ -36,7 +36,7 @@ before_script:
   - mkdir -p build && cd build
 
 script:
-  - cmake .. -DENABLE_LeapMotionSensor=OFF -DENABLE_coverage=ON
+  - cmake .. -DENABLE_coverage=ON
   - make
   - sudo make install
 
@@ -53,4 +53,3 @@ after_success:
   - if [ "$CXX" = "g++" ]; then coveralls-lcov --source-encoding=ISO-8859-1 coverage.info; fi
 
   - sudo make uninstall
-
