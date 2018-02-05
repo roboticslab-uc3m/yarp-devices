@@ -71,7 +71,7 @@ max = yarp.DVector(1)
 ll.getLimits(0,min,max)
 
 # use the object to set the device to velocity mode (as opposed to position mode)
-for j in range(1,axes):
+for j in range(axes):
     mode.setVelocityMode(j)
 
 print 'test velocityMove(0,10) -> moves motor 0 (start count at motor 0) at 10 degrees per second'
