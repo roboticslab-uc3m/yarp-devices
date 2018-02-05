@@ -51,13 +51,13 @@ Note that this is a hack. VOCABs may be updated without warning. The recommended
 
 * go to vel mode, move
 ```
-[set] [veld]
+[set] [icmd] [cmod] 0 [vel]
 [set] [vmos] (800)
 ```
 
-* got to torque mode
+* go to torque mode
 ```
-[set] [trqd]
+[set] [icmd] [cmod] 0 [torq]
 ```
 
 # Edit .ini config files in Calc (Excel)
