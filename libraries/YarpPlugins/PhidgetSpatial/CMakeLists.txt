@@ -5,16 +5,20 @@ yarp_prepare_plugin(PhidgetSpatial
                     CATEGORY device
                     TYPE roboticslab::PhidgetSpatial
                     INCLUDE PhidgetSpatial.hpp
-                    DEFAULT OFF)
+                    DEFAULT OFF) # FIXME: resolve #165 and set to ON
 
-IF (NOT SKIP_PhidgetSpatial)
+if(NOT SKIP_PhidgetSpatial)
 
     # Include any directories needed for YARP
-    include_directories( ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-    yarp_add_plugin(PhidgetSpatial PhidgetSpatial.hpp PhidgetSpatial.cpp DeviceDriverImpl.cpp IAnalogSensorImpl.cpp )
+    yarp_add_plugin(PhidgetSpatial PhidgetSpatial.hpp
+                                   PhidgetSpatial.cpp
+                                   DeviceDriverImpl.cpp
+                                   IAnalogSensorImpl.cpp)
 
-    TARGET_LINK_LIBRARIES(PhidgetSpatial ${YARP_LIBRARIES} phidget21)
+    target_link_libraries(PhidgetSpatial ${YARP_LIBRARIES}
+                                         phidget21)
 
     yarp_install(TARGETS PhidgetSpatial
                  COMPONENT runtime
@@ -25,4 +29,4 @@ IF (NOT SKIP_PhidgetSpatial)
                  COMPONENT runtime
                  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
-ENDIF (NOT SKIP_PhidgetSpatial)
+endif()

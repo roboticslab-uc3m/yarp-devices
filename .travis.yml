@@ -9,21 +9,17 @@ compiler:
   - clang
 
 before_install:
-  - sudo apt-get update -qq  # -qq No output except for errors
+  - sudo apt-get -qq update # -qq No output except for errors
   - '[[ "$TRAVIS_EVENT_TYPE" = cron ]] && export YARP_CHECKOUT=devel || export YARP_CHECKOUT=master'
 
 install:
-  #-- Install SpaceNavigator-related packages
-  - sudo apt-get install libspnav-dev
-  #-- Install Wiimote-related packages
-  - sudo apt-get install libxwiimote-dev
-  #-- Install cmake
-  - sudo apt-get install cmake
+  #-- Install 3rd-party dependencies
+  - sudo apt-get install libspnav-dev libxwiimote-dev
   #-- Install yarp
   - git clone --branch="$YARP_CHECKOUT" https://github.com/robotology/yarp
   - cd yarp && mkdir build && cd build
   - cmake .. -DSKIP_ACE=ON
-  - make
+  - make -j$(nproc)
   - sudo make install
   - cd ../..
   # see http://gronlier.fr/blog/2015/01/adding-code-coverage-to-your-c-project/
@@ -34,9 +30,9 @@ install:
 
 before_script:
   - mkdir -p build && cd build
+  - cmake .. -DENABLE_coverage=ON
 
 script:
-  - cmake .. -DENABLE_LeapMotionSensor=OFF -DENABLE_coverage=ON
   - make
   - sudo make install
 
@@ -53,4 +49,3 @@ after_success:
   - if [ "$CXX" = "g++" ]; then coveralls-lcov --source-encoding=ISO-8859-1 coverage.info; fi
 
   - sudo make uninstall
-
