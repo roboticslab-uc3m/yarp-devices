@@ -14,7 +14,7 @@ before_install:
 
 install:
   #-- Install 3rd-party dependencies
-  - sudo apt-get install libspnav-dev libxwiimote-dev
+  - sudo apt-get install libspnav-dev libxwiimote-dev libusb-1.0-0-dev
   #-- Install yarp
   - git clone --branch="$YARP_CHECKOUT" https://github.com/robotology/yarp
   - cd yarp && mkdir build && cd build
