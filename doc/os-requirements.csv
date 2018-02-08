@@ -1,3 +1,17 @@
-OS, OneCanBusOneWrapper, TwoCanBusThreeWrappers, AravisGigE, CanBusControlboard, CanBusHico, CuiAbsolute, FakeJoint, Jr3, LacqueyFetch, LeapMotionSensor, ProximitySensorsClient, SpaceNavigator, TechnosoftIpos, TextilesHand, WiimoteSensor, AravisGigEController
-Ubuntu 14.04 (and derivatives), yes, yes, yes, yes, yes, yes, yes, yes, yes, yes,yes, yes, yes, yes, yes, yes
-Ubuntu 16.04 (and derivatives), yes, yes, yes,yes,?, yes, yes, yes, yes, yes, yes, yes, yes, yes, yes, yes
+OS,Ubuntu 14.04 (and derivatives),Ubuntu 16.04 (and derivatives)
+ OneCanBusOneWrapper, yes, yes
+ TwoCanBusThreeWrappers, yes, yes
+ AravisGigE, yes, yes
+ CanBusControlboard, yes,yes
+ CanBusHico, yes,?
+ CuiAbsolute, yes, yes
+ FakeJoint, yes, yes
+ Jr3, yes, yes
+ LacqueyFetch, yes, yes
+ LeapMotionSensor, yes, yes
+ ProximitySensorsClient,yes, yes
+ SpaceNavigator, yes, yes
+ TechnosoftIpos, yes, yes
+ TextilesHand, yes, yes
+ WiimoteSensor, yes, yes
+ AravisGigEController, yes, yes
