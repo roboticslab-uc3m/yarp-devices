@@ -5,7 +5,7 @@ OS,Ubuntu 14.04 (and derivatives),Ubuntu 16.04 (and derivatives)
  CanBusHico, yes,?
  CuiAbsolute, yes, yes
  FakeJoint, yes, yes
- Jr3, yes, yes
+ Jr3, yes, ?
  LacqueyFetch, yes, yes
  LeapMotionSensor, yes, yes
  OneCanBusOneWrapper, yes, yes
