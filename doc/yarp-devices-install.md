@@ -10,7 +10,7 @@ Some of the devices require a specific OS version to work. This table tracks the
 
 ## Common dependencies (Ubuntu)
 
-Some dependencies must be installed for all the devices (for Debian guides, see [Debian 6.0.10](yarp-devices-install-on-debian-6.md)):
+Some dependencies must be installed for all the devices:
 
   - [Install CMake](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-cmake.md)
   - [Install YARP](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md)
@@ -29,8 +29,6 @@ Some devices require specific dependencies to work that must be satisfied. Use t
 \*\*\* Download link requires registration.
 
 ## Installation (Ubuntu)
-
-For Debian guides, see [Debian 6.0.10](yarp-devices-install-on-debian-6.md).
 
 Once the required dependencies have been installed, the code has to be compiled and installed. Note that you will be prompted for your password upon using `sudo` a couple of times:
 
