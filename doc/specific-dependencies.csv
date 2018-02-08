@@ -1,9 +1,18 @@
-Dependency , OneCanBusOneWrapper , TwoCanBusThreeWrappers , AravisGigE , CanBusControlboard , CanBusHico , CuiAbsolute , FakeJoint , Jr3 , LacqueyFetch , LeapMotionSensor* , ProximitySensorsClient , SpaceNavigator , TechnosoftIpos , TextilesHand , WiimoteSensor , AravisGigEController**
-[Aravis 0.4](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-aravis.md) ,  no ,  no , yes ,  no , no , no , no , no , no , no , no , no ,  no , no , no ,  no
-[hcanpci (kernel module)](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-hcanpci.md) , yes , yes , no , yes , yes , yes , yes , yes , yes , no , no , no , yes , yes , no , no
-Python 3+ ,  no ,  no , no ,  no , no , no , no , no , no , no , no , no ,  no , no , no , yes
-[setuptools (pip3)](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-setuptools.md#install-setuptools-using-pip3) ,  no ,  no , no ,  no , no , no , no , no , no , no , no , no ,  no , no , no , yes
-[Custom yarp Python 3 bindings](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md#install-python-bindings-with-iframegrabbercontrols2-support) , no ,  no , no ,  no , no , no , no , no , no , no , no , no ,  no , no , no , yes
-[Spacenav](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-spacenav.md#install-spacenav-ubuntu) ,  no ,  no , no ,  no , no , no , no , no , no , no , no , yes ,  no , no , no , no
-[XWiimote](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-xwiimote.md#install-xwiimote-ubuntu) ,  no ,  no , no ,  no , no , no , no , no , no , no , no , no ,  no , no , yes , no
-[Leap Motion SDK v2](https://developer.leapmotion.com/sdk/v2)*** ,  no ,  no , no ,  no , no , no , no , no , no , yes , no , no ,  no , no , no , no
+Dependency ,Aravis 0.4,hcanpci,Python 3+ ,setuptools (pip3) ,YARP with Python 3 bindings ,Spacenav ,XWiimote ,Leap Motion SDK v2***
+Dependency (installation-guides),install-aravis.md,install-hcanpci.md,,install-setuptools.md#install-setuptools-using-pip3,install-yarp.md#install-python-bindings-with-iframegrabbercontrols2-support,install-spacenav.md#install-spacenav-ubuntu,install-xwiimote.md#install-xwiimote-ubuntu,https://developer.leapmotion.com/sdk/v2
+ AravisGigE , yes , no , no , no , no , no , no , no 
+GrabberControls2Gui**,  no, no, yes, yes, yes, no, no, no
+ CanBusControlboard ,  no , yes ,  no ,  no ,  no ,  no ,  no ,  no 
+ CanBusHico , no , yes , no , no , no , no , no , no 
+ CuiAbsolute , no , yes , no , no , no , no , no , no 
+ FakeJoint , no , yes , no , no , no , no , no , no 
+ Jr3 , no , yes , no , no , no , no , no , no 
+ LacqueyFetch , no , yes , no , no , no , no , no , no 
+ LeapMotionSensor* , no , no , no , no , no , no , no , yes 
+ OneCanBusOneWrapper ,  no , yes ,  no ,  no , no ,  no ,  no ,  no 
+ ProximitySensorsClient , no , no , no , no , no , no , no , no 
+ SpaceNavigator , no , no , no , no , no , yes , no , no 
+ TechnosoftIpos ,  no , yes ,  no ,  no ,  no ,  no ,  no ,  no 
+ TextilesHand , no , yes , no , no , no , no , no , no 
+ TwoCanBusThreeWrappers ,  no , yes ,  no ,  no ,  no ,  no ,  no ,  no 
+ WiimoteSensor , no , no , no , no , no , no , yes , no 
