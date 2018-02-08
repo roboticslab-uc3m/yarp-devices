@@ -6,19 +6,7 @@ This guide aims to simplify as much as possible the process of finding out which
 
 ## OS Requirements
 
-Some of the devices require a specific OS version to work. This table tracks the OS requirements:
-
-* :white_check_mark: The device works in this OS.
-* :x:  The device won't work on this OS.
-* :question: The device hasn't been tested on this OS yet.
-
-
-| OS                                                   | OneCanBusOneWrapper | TwoCanBusThreeWrappers | AravisGigE         | CanBusControlboard | CanBusHico         | CuiAbsolute        | FakeJoint          | Jr3                | LacqueyFetch       | LeapMotionSensor   | PhidgetSpatial     | ProximitySensorsClient | SpaceNavigator     | TechnosoftIpos     | TextilesHand       | WiimoteSensor      | AravisGigEController |
-| ---------------------------------------------------- | :-----------------: | :--------------------: | :----------------: | :----------------: | :----------------: | :----------------: | :----------------: | :----------------: | :----------------: | :----------------: | :----------------: | :--------------------: | :----------------: | :----------------: | :----------------: | :----------------: | :------------------: |
-| [Debian 6.0.10](yarp-devices-install-on-debian-6.md) | :white_check_mark:  | :white_check_mark:     | :question:         | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :question:         | :question:         | :white_check_mark:     | :question:         | :white_check_mark: | :white_check_mark: | :question:         | :question:           |
-| Ubuntu 14.04 (and derivatives)                       | :white_check_mark:  | :white_check_mark:     | :white_check_mark: | :x:                | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :question:         | :white_check_mark:     | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:   |
-| Ubuntu 16.04 (and derivatives)                       | :white_check_mark:  | :white_check_mark:     | :white_check_mark: | :x:                | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:     | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:   |
-
+Some of the devices require a specific OS version to work. This table tracks the OS requirements: [os-requirements.csv](os-requirements.csv)
 
 ## Common dependencies (Ubuntu)
 
