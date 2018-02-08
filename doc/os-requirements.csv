@@ -1,7 +1,6 @@
 OS,Ubuntu 14.04 (and derivatives),Ubuntu 16.04 (and derivatives)
- OneCanBusOneWrapper, yes, yes
- TwoCanBusThreeWrappers, yes, yes
  AravisGigE, yes, yes
+ AravisGigEController, yes, yes
  CanBusControlboard, yes,yes
  CanBusHico, yes,?
  CuiAbsolute, yes, yes
@@ -9,9 +8,10 @@ OS,Ubuntu 14.04 (and derivatives),Ubuntu 16.04 (and derivatives)
  Jr3, yes, yes
  LacqueyFetch, yes, yes
  LeapMotionSensor, yes, yes
+ OneCanBusOneWrapper, yes, yes
  ProximitySensorsClient,yes, yes
  SpaceNavigator, yes, yes
  TechnosoftIpos, yes, yes
  TextilesHand, yes, yes
+ TwoCanBusThreeWrappers, yes, yes
  WiimoteSensor, yes, yes
- AravisGigEController, yes, yes
