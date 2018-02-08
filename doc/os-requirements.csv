@@ -8,6 +8,7 @@ OS,Ubuntu 14.04 (and derivatives),Ubuntu 16.04 (and derivatives)
  LacqueyFetch, yes, yes
  LeapMotionSensor, yes, yes
  OneCanBusOneWrapper, yes, yes
+ PhidgetSpatial, ?, ?
  ProximitySensorsClient,yes, yes
  SpaceNavigator, yes, yes
  TechnosoftIpos, yes, yes
