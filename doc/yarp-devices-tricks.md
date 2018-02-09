@@ -12,29 +12,31 @@ uint8_t msg_stop[]={0x0F,0x00}; // Does not stop, but is required for next start
 Note that this is a hack. VOCABs may be updated without warning. The recommended YARP-ish way is via YARP_dev interfaces. An interactive way to do this is via an `ipython` console and following this repository's [Python examples](https://github.com/roboticslab-uc3m/yarp-devices/tree/develop/example/python).
 
 ## remote_controlboard
-* check status:
+* get control modes:
 ```
 [get] [icmd] [cmds]
 ```
 
-* get limits:
+* set pos mode
 ```
-[get] [llim]
-```
-
-* get velocity limits:
-```
-[get] [vlim]
+[set] [icmd] [cmod] 0 [vel]
 ```
 
-* check if pos motion done:
+* set vel mode
 ```
-[get] [don] 0
+[set] [icmd] [cmod] 0 [vel]
 ```
 
-* stop all:
+* set torque mode
 ```
-[set] [stos]
+[set] [icmd] [cmod] 0 [torq]
+```
+
+### in pos mode
+* set pos (for pos mode)
+```
+[set] [pos] 0 10.0
+[set] [poss] (10.0)
 ```
 
 * set ref velocities (for pos mode)
@@ -49,15 +51,31 @@ Note that this is a hack. VOCABs may be updated without warning. The recommended
 [set] [accs] (10.0)
 ```
 
-* go to vel mode, move
+* check if pos motion done:
 ```
-[set] [icmd] [cmod] 0 [vel]
+[get] [don] 0
+```
+
+* stop all:
+```
+[set] [stos]
+```
+
+### in vel mode
+* move in vel mode
+```
 [set] [vmos] (800)
 ```
 
-* go to torque mode
+### limits
+* get pos limits:
 ```
-[set] [icmd] [cmod] 0 [torq]
+[get] [llim]
+```
+
+* get vel limits:
+```
+[get] [vlim]
 ```
 
 # Edit .ini config files in Calc (Excel)
