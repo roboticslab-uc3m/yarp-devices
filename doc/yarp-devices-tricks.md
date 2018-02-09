@@ -19,7 +19,7 @@ Note that this is a hack. VOCABs may be updated without warning. The recommended
 
 * set pos mode
 ```
-[set] [icmd] [cmod] 0 [vel]
+[set] [icmd] [cmod] 0 [pos]
 ```
 
 * set vel mode
