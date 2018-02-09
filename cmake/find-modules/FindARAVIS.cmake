@@ -5,7 +5,17 @@
 #  ARAVIS_LIBRARIES - The libraries needed to use Aravis
 #  ARAVIS_DEFINITIONS - Compiler switches required for using Aravis
 
-find_package(GLib REQUIRED)
+include(CMakeFindDependencyMacro OPTIONAL) # available since CMake 3.0
+
+if(COMMAND find_dependency)
+  find_dependency(GLib)
+else()
+  find_package(GLib)
+
+  if(NOT GLib_FOUND)
+    return()
+  endif()
+endif()
 
 # This was used for debugging purposes:
 # message("--->")
