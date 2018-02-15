@@ -13,7 +13,7 @@
 
 if(UNIX)
     find_package(PkgConfig)
-    pkg_check_modules(XWiimote QUIET libxwiimote)
+    pkg_check_modules(PC_XWiimote QUIET libxwiimote)
 
     if(NOT XWiimote_INCLUDE_DIR)
         find_path(XWiimote_INCLUDE_DIR NAMES xwiimote.h

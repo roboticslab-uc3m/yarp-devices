@@ -7,9 +7,15 @@ cmake_minimum_required(VERSION 2.8.9 FATAL_ERROR)
 project(ROBOTICSLAB_YARP_DEVICES)
 
 # Safety check against missing dummy library for system-available COLOR_DEBUG.
-# Remove if cmake_minimum_required() above is set to 3.0 or later.
+# Remove if cmake_minimum_required() is set to 3.0 or later.
 if(POLICY CMP0046)
     cmake_policy(SET CMP0046 NEW)
+endif()
+
+# Disable annoying YCM-related warnings.
+# Remove if cmake_minimum_required() is set to 3.1 or later.
+if(POLICY CMP0054)
+    cmake_policy(SET CMP0054 NEW)
 endif()
 
 # Force building shared libraries and YARP DL modules.
@@ -86,6 +92,7 @@ find_or_build_package(COLOR_DEBUG)
 if(USE_SYSTEM_COLOR_DEBUG)
     find_package(COLOR_DEBUG REQUIRED)
     include_directories(${COLOR_DEBUG_INCLUDE_DIRS})
+    add_library(COLOR_DEBUG UNKNOWN IMPORTED)
 endif()
 
 # Store common include directories in global scope.

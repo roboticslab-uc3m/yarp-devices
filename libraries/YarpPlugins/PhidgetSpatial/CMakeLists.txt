@@ -1,11 +1,18 @@
 # Copyright: (C) 2017 Universidad Carlos III de Madrid
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+find_package(Phidgets 2.1 EXACT QUIET)
+
+if(NOT Phidgets_FOUND AND (NOT DEFINED ENABLE_PhidgetSpatial OR PhidgetSpatial))
+    message(WARNING "Phidgets package not found, disabling PhidgetSpatial")
+endif()
+
 yarp_prepare_plugin(PhidgetSpatial
                     CATEGORY device
                     TYPE roboticslab::PhidgetSpatial
                     INCLUDE PhidgetSpatial.hpp
-                    DEFAULT OFF) # FIXME: resolve #165 and set to ON
+                    DEFAULT ON
+                    DEPENDS "NOT CMAKE_VERSION VERSION_LESS 2.8.11;Phidgets_FOUND")
 
 if(NOT SKIP_PhidgetSpatial)
 
@@ -17,8 +24,9 @@ if(NOT SKIP_PhidgetSpatial)
                                    DeviceDriverImpl.cpp
                                    IAnalogSensorImpl.cpp)
 
-    target_link_libraries(PhidgetSpatial ${YARP_LIBRARIES}
-                                         phidget21)
+    target_link_libraries(PhidgetSpatial YARP::YARP_OS
+                                         YARP::YARP_dev
+                                         Phidgets::Phidget21)
 
     yarp_install(TARGETS PhidgetSpatial
                  COMPONENT runtime
@@ -28,5 +36,9 @@ if(NOT SKIP_PhidgetSpatial)
     yarp_install(FILES PhidgetSpatial.ini
                  COMPONENT runtime
                  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+else()
+
+    set(ENABLE_PhidgetSpatial OFF CACHE BOOL "Enable/disable PhidgetSpatial device" FORCE)
 
 endif()
