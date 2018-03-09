@@ -94,6 +94,9 @@ add_subdirectory(libraries)
 add_subdirectory(programs)
 add_subdirectory(tests)
 
+# Store the package in the user registry.
+export(PACKAGE ROBOTICSLAB_YARP_DEVICES)
+
 # Create and install config files.
 include(InstallBasicPackageFiles)
 
