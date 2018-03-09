@@ -16,10 +16,7 @@ yarp_prepare_plugin(LeapMotionSensor
 
 if(NOT SKIP_LeapMotionSensor)
 
-    get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
-
     include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
-                        ${_common_dirs}
                         ${Leap_INCLUDE_DIR})
 
     yarp_add_plugin(LeapMotionSensor LeapMotionSensor.hpp

@@ -17,10 +17,7 @@ yarp_prepare_plugin(AravisGigE
 
 if(NOT SKIP_AravisGigE)
 
-    get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
-
     include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
-                        ${_common_dirs}
                         ${ARAVIS_INCLUDE_DIRS})
 
     yarp_add_plugin(AravisGigE AravisGigE.hpp
