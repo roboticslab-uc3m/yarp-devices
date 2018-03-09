@@ -102,6 +102,18 @@ class GrabberControls2GuiGUI(QtGui.QWidget):
         self.fpsSpinBox.setMinimum(0)
         self.fpsSpinBox.setMaximum(30)
 
+        # Disable widgets if feature not supported
+        self.zoomSlider.setEnabled(self.controller.has_zoom())
+        self.zoomSpinBox.setEnabled(self.controller.has_zoom())
+        self.focusSlider.setEnabled(self.controller.has_focus())
+        self.focusSpinBox.setEnabled(self.controller.has_focus())
+        self.gainSlider.setEnabled(self.controller.has_gain())
+        self.gainSpinBox.setEnabled(self.controller.has_gain())
+        self.exposureSlider.setEnabled(self.controller.has_exposure())
+        self.exposureSpinBox.setEnabled(self.controller.has_exposure())
+        self.fpsSlider.setEnabled(self.controller.has_FPS())
+        self.fpsSpinBox.setEnabled(self.controller.has_FPS())
+
         # Connect to signals:
         self.zoomSlider.valueChanged.connect(self.onZoomSliderChanged)
         self.zoomSpinBox.valueChanged.connect(self.onZoomSpinBoxChanged)

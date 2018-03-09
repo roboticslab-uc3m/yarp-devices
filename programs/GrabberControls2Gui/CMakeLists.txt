@@ -1,4 +1,4 @@
-option(ENABLE_grabbercontrols2gui "Enable/disable grabbercontrols2gui program" OFF)
+option(ENABLE_grabbercontrols2gui "Enable/disable grabbercontrols2gui program" ON)
 
 if(ENABLE_grabbercontrols2gui)
 

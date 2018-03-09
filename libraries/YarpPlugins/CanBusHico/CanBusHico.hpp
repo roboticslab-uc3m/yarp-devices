@@ -30,10 +30,14 @@ namespace roboticslab
 {
 
 /**
- *
+ * @ingroup YarpPlugins
+ * @defgroup CanBusHico
+ * @brief Contains roboticslab::CanBusHico.
+ */
+
+/**
  * @ingroup CanBusHico
  * @brief Specifies the HicoCan (hcanpci) behaviour and specifications.
- *
  */
 class CanBusHico : public yarp::dev::DeviceDriver,
                    public yarp::dev::ICanBus,
