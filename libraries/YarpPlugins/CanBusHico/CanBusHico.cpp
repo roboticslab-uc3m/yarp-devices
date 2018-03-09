@@ -2,7 +2,6 @@
 
 #include "CanBusHico.hpp"
 
-#include <unistd.h>
 #include <fcntl.h>
 #include <sys/select.h>
 #include <sys/time.h>
@@ -29,17 +28,28 @@ namespace
 
 bool roboticslab::CanBusHico::setFdMode(bool requestedBlocking)
 {
-    bool currentlyBlocking = (fcntlFlags & O_NONBLOCK) != O_NONBLOCK;
+    bool currentlyBlocking = (fcntlFlags & O_NONBLOCK) == 0;
 
     if (currentlyBlocking != requestedBlocking)
     {
-        int flag = requestedBlocking ? ~O_NONBLOCK : O_NONBLOCK;
+        int flags = fcntlFlags;
 
-        if (::fcntl(fileDescriptor, F_SETFL, fcntlFlags & flag) == -1)
+        if (requestedBlocking)
+        {
+            flags &= ~O_NONBLOCK;
+        }
+        else
+        {
+            flags |= O_NONBLOCK;
+        }
+
+        if (::fcntl(fileDescriptor, F_SETFL, flags) == -1)
         {
             CD_ERROR("fcntl() error: %s.\n", std::strerror(errno));
             return false;
         }
+
+        fcntlFlags = flags;
     }
 
     return true;
@@ -55,7 +65,6 @@ bool roboticslab::CanBusHico::waitUntilTimeout(io_operation op, bool * bufferRea
     FD_SET(fileDescriptor, &fds);
 
     struct timeval tv;
-    setTimeval(timeoutMs, &tv);
 
     //-- select() returns the number of ready descriptors, 0 for timeout, -1 for errors.
     int ret;
@@ -63,9 +72,11 @@ bool roboticslab::CanBusHico::waitUntilTimeout(io_operation op, bool * bufferRea
     switch (op)
     {
     case READ:
+        setTimeval(rxTimeoutMs, &tv);
         ret = ::select(fileDescriptor + 1, &fds, 0, 0, &tv);
         break;
     case WRITE:
+        setTimeval(txTimeoutMs, &tv);
         ret = ::select(fileDescriptor + 1, 0, &fds, 0, &tv);
         break;
     default:
@@ -87,21 +98,6 @@ bool roboticslab::CanBusHico::waitUntilTimeout(io_operation op, bool * bufferRea
         assert(FD_ISSET(fileDescriptor, &fds));
         *bufferReady = true;
     }
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusHico::clearFilters()
-{
-    if (::ioctl(fileDescriptor, IOC_CLEAR_FILTERS) == -1)
-    {
-        CD_ERROR("ioctl() error: %s\n", std::strerror(errno));
-        return false;
-    }
-
-    filteredIds.clear();
 
     return true;
 }

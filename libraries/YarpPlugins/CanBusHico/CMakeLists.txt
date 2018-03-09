@@ -6,14 +6,12 @@ yarp_prepare_plugin(CanBusHico
                     CATEGORY device
                     TYPE roboticslab::CanBusHico
                     INCLUDE CanBusHico.hpp
-                    DEFAULT ON)
+                    DEFAULT ON
+                    DEPENDS UNIX)
 
 if(NOT SKIP_CanBusHico)
 
-get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
-                    ${_common_dirs})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}) # yarp plugin builder needs this
 
 yarp_add_plugin(CanBusHico CanBusHico.cpp
                            CanBusHico.hpp
@@ -21,12 +19,14 @@ yarp_add_plugin(CanBusHico CanBusHico.cpp
                            DeviceDriverImpl.cpp
                            ICanBusImpl.cpp
                            HicoCanMessage.cpp
-                           HicoCanMessage.hpp)
+                           HicoCanMessage.hpp
+                           FilterManager.cpp)
 
 add_dependencies(CanBusHico COLOR_DEBUG)
 
 target_link_libraries(CanBusHico YARP::YARP_OS
-                                 YARP::YARP_dev)
+                                 YARP::YARP_dev
+                                 YarpDevicesInterfaces)
 
 yarp_install(TARGETS CanBusHico
              COMPONENT runtime

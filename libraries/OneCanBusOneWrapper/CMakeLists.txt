@@ -4,11 +4,7 @@ if(ENABLE_OneCanBusOneWrapper)
 
 find_package(YARP REQUIRED)
 
-set_property(GLOBAL APPEND PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
-get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
-
-include_directories(${YARP_INCLUDE_DIRS}
-                    ${_common_dirs})
+include_directories(${YARP_INCLUDE_DIRS}) # remove if YARP > v2.3.70
 
 add_library(OneCanBusOneWrapper OneCanBusOneWrapper.cpp
                                 OneCanBusOneWrapper.hpp)
@@ -19,6 +15,9 @@ set_target_properties(OneCanBusOneWrapper PROPERTIES PUBLIC_HEADER OneCanBusOneW
 
 target_link_libraries(OneCanBusOneWrapper LINK_PUBLIC YARP::YARP_OS
                                                       YARP::YARP_dev)
+
+target_include_directories(OneCanBusOneWrapper PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+                                                      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 install(TARGETS OneCanBusOneWrapper
         EXPORT ROBOTICSLAB_YARP_DEVICES

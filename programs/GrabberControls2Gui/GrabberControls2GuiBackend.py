@@ -47,18 +47,33 @@ class GrabberControls2GuiBackend:
         print(self.controls)
         self.controls.setFeature(yarp.YARP_FEATURE_ZOOM, zoom)
 
+    def has_zoom(self):
+        return self.controls.hasFeature(yarp.YARP_FEATURE_ZOOM)
+
     def set_focus(self, focus):
         print("Focus set to {}".format(focus))
         self.controls.setFeature(yarp.YARP_FEATURE_FOCUS, focus)
+
+    def has_focus(self):
+        return self.controls.hasFeature(yarp.YARP_FEATURE_FOCUS)
 
     def set_gain(self, gain):
         print("Gain set to {}".format(gain))
         self.controls.setFeature(yarp.YARP_FEATURE_GAIN, gain)
 
+    def has_gain(self):
+        return self.controls.hasFeature(yarp.YARP_FEATURE_GAIN)
+
     def set_exposure(self, exposure):
         print("Exposure set to {}".format(exposure))
         self.controls.setFeature(yarp.YARP_FEATURE_EXPOSURE, exposure)
 
+    def has_exposure(self):
+        return self.controls.hasFeature(yarp.YARP_FEATURE_EXPOSURE)
+
     def set_FPS(self, fps):
         print("FPS set to {}".format(fps))
         self.controls.setFeature(yarp.YARP_FEATURE_FRAME_RATE, fps)
+
+    def has_FPS(self):
+        return self.controls.hasFeature(yarp.YARP_FEATURE_FRAME_RATE)

@@ -25,8 +25,9 @@ namespace roboticslab
 {
 
 /**
-* @brief Tests \ref KdlSolver ikin and idyn on a simple mechanism.
-*/
+ * @ingroup yarp_devices_tests
+ * @brief Tests \ref CuiAbsolute on a single CAN node.
+ */
 class CuiAbsoluteTest : public testing::Test // -- inherit the Test class (gtest.h)
 {
 

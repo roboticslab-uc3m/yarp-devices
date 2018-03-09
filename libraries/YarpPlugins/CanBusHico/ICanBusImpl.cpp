@@ -7,8 +7,8 @@
 
 #include <cstring>
 #include <cerrno>
-#include <vector>
-#include <algorithm>
+
+#include <string>
 
 #include <ColorDebug.hpp>
 
@@ -26,17 +26,35 @@ bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
         return false;
     }
 
-    CD_INFO("Setting bitrate (%s).\n", rateStr.c_str());
-
     canBusReady.wait();
-    int ret = ::ioctl(fileDescriptor, IOC_SET_BITRATE, &rate);
-    canBusReady.post();
 
-    if (ret == -1)
+    if (bitrateState.first)
+    {
+        if (bitrateState.second == rate)
+        {
+            CD_WARNING("Bitrate already set.\n");
+            canBusReady.post();
+            return true;
+        }
+        else
+        {
+            CD_ERROR("Bitrate already set to a different value: %d.\n", bitrateState.second);
+            canBusReady.post();
+            return false;
+        }
+    }
+
+    if (::ioctl(fileDescriptor, IOC_SET_BITRATE, &rate) == -1)
     {
         CD_ERROR("Could not set bitrate: %s.\n", std::strerror(errno));
+        canBusReady.post();
         return false;
     }
+
+    bitrateState.first = true;
+    bitrateState.second = rate;
+
+    canBusReady.post();
 
     return true;
 }
@@ -73,6 +91,12 @@ bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
 {
     CD_DEBUG("(%d)\n", id);
 
+    if (filterConfig == FilterManager::DISABLED)
+    {
+        CD_WARNING("CAN filters are not enabled in this device.\n");
+        return true;
+    }
+
     if (id > 0x7F)
     {
         CD_ERROR("Invalid ID (%d > 0x7F).\n", id);
@@ -81,24 +105,25 @@ bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
 
     canBusReady.wait();
 
-    if (!filteredIds.insert(id).second)
+    if (filterManager->hasId(id))
     {
         CD_WARNING("Filter for ID %d is already active.\n", id);
         canBusReady.post();
         return true;
     }
 
-    struct can_filter filter;
-    filter.type = FTYPE_AMASK;
-    filter.mask = 0x7F;  //-- dsPIC style, mask specifies "do care" bits
-    filter.code = id;
-
-    if (::ioctl(fileDescriptor, IOC_SET_FILTER, &filter) == -1)
+    if (!filterManager->insertId(id))
     {
         CD_ERROR("Could not set filter: %s.\n", std::strerror(errno));
-        filteredIds.erase(id);
         canBusReady.post();
         return false;
+    }
+
+    if (!filterManager->isValid())
+    {
+        CD_WARNING("Hardware limit was hit, not all requested filters are enabled.\n");
+        canBusReady.post();
+        return true;
     }
 
     canBusReady.post();
@@ -112,6 +137,12 @@ bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
 {
     CD_DEBUG("(%d)\n", id);
 
+    if (filterConfig == FilterManager::DISABLED)
+    {
+        CD_WARNING("CAN filters are not enabled in this device.\n");
+        return true;
+    }
+
     if (id > 0x7F)
     {
         CD_ERROR("Invalid ID (%d > 0x7F).\n", id);
@@ -120,31 +151,28 @@ bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
 
     canBusReady.wait();
 
-    if (filteredIds.find(id) == filteredIds.end())
+    if (!filterManager->hasId(id))
     {
         CD_WARNING("Filter for ID %d not found, doing nothing.\n", id);
         canBusReady.post();
         return true;
     }
 
-    std::vector<unsigned int> localCopy(filteredIds.begin(), filteredIds.end());
-
-    if (!clearFilters())
+    if (!filterManager->eraseId(id))
     {
-        CD_ERROR("Could not clear list of active filters prior to populating it with previously stored IDs.\n");
+        CD_ERROR("Could not remove filter: %s.\n", std::strerror(errno));
+        canBusReady.post();
+        return false;
+    }
+
+    if (!filterManager->isValid())
+    {
+        CD_WARNING("Hardware limit was hit, not all requested filters are enabled.\n");
         canBusReady.post();
         return false;
     }
 
     canBusReady.post();
-
-    for (std::vector<unsigned int>::iterator it = localCopy.begin(); it != localCopy.end(); ++it)
-    {
-        if (!canIdAdd(*it))
-        {
-            CD_WARNING("Could not add ID %d back.\n", *it);
-        }
-    }
 
     return true;
 }
@@ -166,14 +194,14 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
 
     for (unsigned int i = 0; i < size; i++)
     {
-        if (wait)
+        if (wait && rxTimeoutMs > 0)
         {
             bool bufferReady;
 
             if (!waitUntilTimeout(READ, &bufferReady))
             {
                 CD_ERROR("waitUntilTimeout() failed.\n");
-                canBusReady.wait();
+                canBusReady.post();
                 return false;
             }
 
@@ -191,9 +219,16 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
 
         if (ret == -1)
         {
-            CD_ERROR("read() error: %s.\n", std::strerror(errno));
-            canBusReady.wait();
-            return false;
+            if (!wait && errno == EAGAIN)
+            {
+                break;
+            }
+            else
+            {
+                CD_ERROR("read() error: %s.\n", std::strerror(errno));
+                canBusReady.post();
+                return false;
+            }
         }
         else if (ret == 0)
         {
@@ -227,19 +262,41 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
 
     for (unsigned int i = 0; i < size; i++)
     {
-        // 'wait' param not handled, blocks indefinitely when true
+        if (wait && txTimeoutMs > 0)
+        {
+            bool bufferReady;
+
+            if (!waitUntilTimeout(WRITE, &bufferReady))
+            {
+                CD_ERROR("waitUntilTimeout() failed.\n");
+                canBusReady.post();
+                return false;
+            }
+
+            if (!bufferReady)
+            {
+                break;
+            }
+        }
 
         const yarp::dev::CanMessage & msg = const_cast<yarp::dev::CanBuffer &>(msgs)[i];
         const struct can_msg * _msg = reinterpret_cast<const struct can_msg *>(msg.getPointer());
 
-        //-- read() returns the number of bytes sent or -1 for errors.
-        int ret = ::write(fileDescriptor, _msg, sizeof(struct can_msg)) == -1;
+        //-- write() returns the number of bytes sent or -1 for errors.
+        int ret = ::write(fileDescriptor, _msg, sizeof(struct can_msg));
 
         if (ret == -1)
         {
-            CD_ERROR("%s.\n", std::strerror(errno));
-            canBusReady.post();
-            return false;
+            if (!wait && errno == EAGAIN)
+            {
+                break;
+            }
+            else
+            {
+                CD_ERROR("%s.\n", std::strerror(errno));
+                canBusReady.post();
+                return false;
+            }
         }
         else if (ret == 0)
         {
