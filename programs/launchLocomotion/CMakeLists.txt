@@ -5,10 +5,7 @@ if(ENABLE_launchLocomotion)
 
 find_package(YARP REQUIRED)
 
-get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
-
-include_directories(${YARP_INCLUDE_DIRS}
-                    ${_common_dirs})
+include_directories(${YARP_INCLUDE_DIRS}) # remove if YARP > v2.3.70
 
 add_executable(launchLocomotion main.cpp)
 

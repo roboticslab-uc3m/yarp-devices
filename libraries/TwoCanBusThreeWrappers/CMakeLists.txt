@@ -4,11 +4,7 @@ if(ENABLE_TwoCanBusThreeWrappers)
 
 find_package(YARP REQUIRED)
 
-set_property(GLOBAL APPEND PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
-get_property(ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
-
-include_directories(${YARP_INCLUDE_DIRS}
-                    ${ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS})
+include_directories(${YARP_INCLUDE_DIRS}) # remove if YARP > v2.3.70
 
 add_library(TwoCanBusThreeWrappers TwoCanBusThreeWrappers.cpp
                                    TwoCanBusThreeWrappers.hpp)

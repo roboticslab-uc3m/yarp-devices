@@ -20,10 +20,7 @@ if(NOT SKIP_WiimoteSensor)
         add_definitions(-DXWIIMOTE_LEGACY_INTERFACE)
     endif()
 
-    get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
-
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
-                        ${_common_dirs})
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}) # yarp plugin builder needs this
 
     yarp_add_plugin(WiimoteSensor
               WiimoteSensor.hpp
@@ -36,7 +33,8 @@ if(NOT SKIP_WiimoteSensor)
 
     target_link_libraries(WiimoteSensor YARP::YARP_OS
                                         YARP::YARP_dev
-                                        XWiimote::XWiimote)
+                                        XWiimote::XWiimote
+                                        YarpDevicesInterfaces)
 
     yarp_install(TARGETS WiimoteSensor
                  COMPONENT runtime
