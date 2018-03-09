@@ -16,6 +16,9 @@ set_target_properties(OneCanBusOneWrapper PROPERTIES PUBLIC_HEADER OneCanBusOneW
 target_link_libraries(OneCanBusOneWrapper LINK_PUBLIC YARP::YARP_OS
                                                       YARP::YARP_dev)
 
+target_include_directories(OneCanBusOneWrapper PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+                                                      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
 install(TARGETS OneCanBusOneWrapper
         EXPORT ROBOTICSLAB_YARP_DEVICES
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

@@ -16,6 +16,9 @@ set_target_properties(TwoCanBusThreeWrappers PROPERTIES PUBLIC_HEADER TwoCanBusT
 target_link_libraries(TwoCanBusThreeWrappers LINK_PUBLIC YARP::YARP_OS
                                                          YARP::YARP_dev)
 
+target_include_directories(TwoCanBusThreeWrappers PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+                                                         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
 install(TARGETS TwoCanBusThreeWrappers
         EXPORT ROBOTICSLAB_YARP_DEVICES
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
