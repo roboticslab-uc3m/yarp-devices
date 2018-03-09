@@ -5,10 +5,10 @@
 # crontab -e
 # 30 2 * * * /your/command
 
-echo "Update yarp-devices..."
-cd $HOME/yarp-devices
+echo "Update roboticslab-uc3m/yarp-devices..."
+cd $HOME/roboticslab-uc3m/yarp-devices
 git pull
-echo "Doxy yarp-devices..."
+echo "Doxy roboticslab-uc3m/yarp-devices..."
 cd doc
 rm -r html
 /usr/bin/doxygen

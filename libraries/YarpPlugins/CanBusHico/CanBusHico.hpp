@@ -5,7 +5,9 @@
 
 #include <set>
 #include <string>
+#include <utility>
 
+#include <yarp/os/Bottle.h>
 #include <yarp/os/Semaphore.h>
 
 #include <yarp/dev/DeviceDriver.h>
@@ -17,26 +19,39 @@
 #define DEFAULT_CAN_DEVICE "/dev/can0"
 #define DEFAULT_CAN_BITRATE BITRATE_1000k
 
-#define DELAY 0.001  // [s] Required when using same driver.
+#define DEFAULT_CAN_RX_TIMEOUT_MS 1
+#define DEFAULT_CAN_TX_TIMEOUT_MS 0  // '0' means no timeout
+
+#define DELAY 0.001  // [s]
+
+#define DEFAULT_CAN_FILTER_CONFIGURATION "disabled"
 
 namespace roboticslab
 {
 
 /**
- *
+ * @ingroup YarpPlugins
+ * @defgroup CanBusHico
+ * @brief Contains roboticslab::CanBusHico.
+ */
+
+/**
  * @ingroup CanBusHico
  * @brief Specifies the HicoCan (hcanpci) behaviour and specifications.
- *
  */
 class CanBusHico : public yarp::dev::DeviceDriver,
                    public yarp::dev::ICanBus,
-                   private yarp::dev::ImplementCanBufferFactory<HicoCanMessage, struct can_msg>
+                   public yarp::dev::ImplementCanBufferFactory<HicoCanMessage, struct can_msg>
 {
 
 public:
 
     CanBusHico() : fileDescriptor(0),
-                   fcntlFlags(0)
+                   fcntlFlags(0),
+                   rxTimeoutMs(DEFAULT_CAN_RX_TIMEOUT_MS),
+                   txTimeoutMs(DEFAULT_CAN_TX_TIMEOUT_MS),
+                   filterManager(NULL),
+                   filterConfig(FilterManager::DISABLED)
     {}
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -67,20 +82,53 @@ public:
 
 protected:
 
+    class FilterManager
+    {
+    public:
+        enum filter_config { DISABLED, NO_RANGE, MASK_AND_RANGE };
+
+        explicit FilterManager(int fileDescriptor, bool enableRanges);
+
+        bool parseIds(const yarp::os::Bottle & b);
+        bool hasId(unsigned int id) const;
+        bool isValid() const;
+        bool insertId(unsigned int id);
+        bool eraseId(unsigned int id);
+        bool clearFilters(bool clearStage = true);
+
+        static filter_config parseFilterConfiguration(const std::string & str);
+
+        static const int MAX_FILTERS;
+
+    private:
+        bool setMaskedFilter(unsigned int id);
+        bool setRangedFilter(unsigned int lower, unsigned int upper);
+        bool bulkUpdate();
+
+        int fd;
+        bool valid;
+        bool enableRanges;
+        std::set<unsigned int> stage, currentlyActive;
+    };
+
+    enum io_operation { READ, WRITE };
+
     bool setFdMode(bool requestedBlocking);
-    bool setDelay();
-    bool clearFilters();
+    bool waitUntilTimeout(io_operation op, bool * bufferReady);
     bool interpretBitrate(unsigned int rate, std::string & str);
 
     /** CAN file descriptor */
     int fileDescriptor;
-
     int fcntlFlags;
-
-    /** Unique IDs set in active acceptance filters */
-    std::set<unsigned int> filteredIds;
+    int rxTimeoutMs, txTimeoutMs;
 
     yarp::os::Semaphore canBusReady;
+
+    std::pair<bool, unsigned int> bitrateState;
+
+    FilterManager * filterManager;
+
+    FilterManager::filter_config filterConfig;
 
 };
 

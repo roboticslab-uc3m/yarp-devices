@@ -46,7 +46,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
     if( !canBusDevice.view(iCanBufferFactory) )
     {
-        CD_ERROR("Cannot view ICanBusFactory interface in device: %s.\n", canBusType.c_str());
+        CD_ERROR("Cannot view ICanBufferFactory interface in device: %s.\n", canBusType.c_str());
         return false;
     }
 
@@ -362,7 +362,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
 bool roboticslab::CanBusControlboard::close()
 {
-    double timeOut = 1; // timeout (1 secod)
+    const double timeOut = 1; // timeout (1 secod)
 
     //-- Stop the read thread.
     this->Thread::stop();
@@ -388,7 +388,6 @@ bool roboticslab::CanBusControlboard::close()
         // Absolute encoders:
         if(value.asString() == "CuiAbsolute")
         {
-
             int canId = 0;
             int CAN_ID = atoi(nodes[i]->getValue("canId").toString().c_str());
             bool timePassed = false;
@@ -422,7 +421,8 @@ bool roboticslab::CanBusControlboard::close()
                 // This line is needed to clear the buffer (old messages that has been received)
                 if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
 
-                if( !okRead ) continue;                        // -- is waiting for recive message
+                if( !okRead || read == 0 ) continue;              // -- is waiting for recive message
+
                 canId = msg.getId()  & 0x7F;                      // -- if it recive the message, it will get ID
                 //CD_DEBUG("Read a message from CuiAbsolute %d\n", canId);
 
@@ -451,4 +451,3 @@ bool roboticslab::CanBusControlboard::close()
 }
 
 // -----------------------------------------------------------------------------
-

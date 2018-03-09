@@ -2,28 +2,54 @@
 
 #include "CanBusHico.hpp"
 
-#include <unistd.h>
-#include <assert.h>
-#include <stdint.h>
-#include <errno.h>
 #include <fcntl.h>
 #include <sys/select.h>
 #include <sys/time.h>
 
 #include <cstring>
+#include <cerrno>
+#include <cassert>
 
 #include <ColorDebug.hpp>
 
 // -----------------------------------------------------------------------------
 
+namespace
+{
+    void setTimeval(int timeMs, struct timeval * tv)
+    {
+        int sec = timeMs / 1000;
+        tv->tv_sec = sec;
+        tv->tv_usec = (timeMs - (sec * 1000)) * 1000;
+    }
+}
+
+// -----------------------------------------------------------------------------
+
 bool roboticslab::CanBusHico::setFdMode(bool requestedBlocking)
 {
-    bool currentlyBlocking = (fcntlFlags & O_NONBLOCK) != O_NONBLOCK;
+    bool currentlyBlocking = (fcntlFlags & O_NONBLOCK) == 0;
 
     if (currentlyBlocking != requestedBlocking)
     {
-        int flag = requestedBlocking ? ~O_NONBLOCK : O_NONBLOCK;
-        return ::fcntl(fileDescriptor, F_SETFL, fcntlFlags & flag) != -1;
+        int flags = fcntlFlags;
+
+        if (requestedBlocking)
+        {
+            flags &= ~O_NONBLOCK;
+        }
+        else
+        {
+            flags |= O_NONBLOCK;
+        }
+
+        if (::fcntl(fileDescriptor, F_SETFL, flags) == -1)
+        {
+            CD_ERROR("fcntl() error: %s.\n", std::strerror(errno));
+            return false;
+        }
+
+        fcntlFlags = flags;
     }
 
     return true;
@@ -31,43 +57,47 @@ bool roboticslab::CanBusHico::setFdMode(bool requestedBlocking)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::setDelay()
+bool roboticslab::CanBusHico::waitUntilTimeout(io_operation op, bool * bufferReady)
 {
     fd_set fds;
-    struct timeval tv;
-
-    tv.tv_sec = DELAY;
-    tv.tv_usec = DELAY * 1000 * 1000;
 
     FD_ZERO(&fds);
     FD_SET(fileDescriptor, &fds);
 
-    //-- select() returns the number of ready descriptors, or -1 for errors.
-    int ret = ::select(fileDescriptor + 1, &fds, 0, 0, &tv);
+    struct timeval tv;
 
-    if (ret <= 0)
+    //-- select() returns the number of ready descriptors, 0 for timeout, -1 for errors.
+    int ret;
+
+    switch (op)
     {
-        //-- No CD as select() timeout is way too verbose, happens all the time.
-        // Return 0 on select timeout, <0 on select error.
+    case READ:
+        setTimeval(rxTimeoutMs, &tv);
+        ret = ::select(fileDescriptor + 1, &fds, 0, 0, &tv);
+        break;
+    case WRITE:
+        setTimeval(txTimeoutMs, &tv);
+        ret = ::select(fileDescriptor + 1, 0, &fds, 0, &tv);
+        break;
+    default:
+        CD_ERROR("Unhandled IO operation on select().\n");
         return false;
     }
 
-    assert(FD_ISSET(fileDescriptor, &fds));
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusHico::clearFilters()
-{
-    if (::ioctl(fileDescriptor, IOC_CLEAR_FILTERS) != 0)
+    if (ret < 0)
     {
-        CD_ERROR("Could not clear filters: %s\n", std::strerror(errno));
+        CD_ERROR("select() error: %s.\n", std::strerror(errno));
         return false;
     }
-
-    filteredIds.clear();
+    else if (ret == 0)
+    {
+        *bufferReady = false;
+    }
+    else
+    {
+        assert(FD_ISSET(fileDescriptor, &fds));
+        *bufferReady = true;
+    }
 
     return true;
 }

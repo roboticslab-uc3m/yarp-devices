@@ -6,14 +6,12 @@ yarp_prepare_plugin(Jr3
                     CATEGORY device
                     TYPE roboticslab::Jr3
                     INCLUDE Jr3.hpp
-                    DEFAULT ON)
+                    DEFAULT ON
+                    DEPENDS UNIX)
 
 if(NOT SKIP_Jr3)
 
-get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
-                    ${_common_dirs})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}) # yarp plugin builder needs this
 
 yarp_add_plugin(Jr3 Jr3.hpp
                     jr3pci-ioctl.h
@@ -23,7 +21,8 @@ yarp_add_plugin(Jr3 Jr3.hpp
 add_dependencies(Jr3 COLOR_DEBUG)
 
 target_link_libraries(Jr3 YARP::YARP_OS
-                          YARP::YARP_dev)
+                          YARP::YARP_dev
+                          YarpDevicesInterfaces)
 
 yarp_install(TARGETS Jr3
              COMPONENT runtime

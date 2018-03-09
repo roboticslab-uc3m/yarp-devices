@@ -13,24 +13,28 @@ env:
     - PEAK_DRIVER_VER=8.5.1
 
 before_install:
-  - sudo apt-get update -qq  # -qq No output except for errors
+  - sudo apt-get -qq update # -qq No output except for errors
   - '[[ "$TRAVIS_EVENT_TYPE" = cron ]] && export YARP_CHECKOUT=devel || export YARP_CHECKOUT=master'
 
 install:
-  #-- Install SpaceNavigator-related packages
-  - sudo apt-get install libspnav-dev
-  #-- Install Wiimote-related packages
-  - sudo apt-get install libxwiimote-dev
-  #-- Install cmake
-  - sudo apt-get install cmake
+  #-- Install 3rd-party dependencies
+  - sudo apt-get install libspnav-dev libxwiimote-dev libusb-1.0-0-dev libgtest-dev
   #-- Install yarp
   - git clone --branch="$YARP_CHECKOUT" https://github.com/robotology/yarp
   - cd yarp && mkdir build && cd build
   - cmake .. -DSKIP_ACE=ON
-  - make
+  - make -j$(nproc)
   - sudo make install
   - cd ../..
-  #- Download and install Peak CAN driver
+  #-- Install libphidget21
+  - cd extern/phidget
+  - tar xzf libphidget_2.1.8.20151217.tar.gz
+  - cd libphidget-2.1.8.20151217
+  - ./configure --enable-jni=no
+  - make -j$(nproc)
+  - sudo make install
+  - cd ../../..
+  #-- Download and install Peak CAN driver
   - wget -O- https://www.peak-system.com/fileadmin/media/linux/files/peak-linux-driver-$PEAK_DRIVER_VER.tar.gz | tar xz
   - cd peak-linux-driver-$PEAK_DRIVER_VER
   - make -C lib
@@ -45,9 +49,9 @@ install:
 
 before_script:
   - mkdir -p build && cd build
+  - cmake .. -DENABLE_coverage=ON
 
 script:
-  - cmake .. -DENABLE_LeapMotionSensor=OFF -DENABLE_coverage=ON
   - make
   - sudo make install
 
@@ -64,4 +68,3 @@ after_success:
   - if [ "$CXX" = "g++" ]; then coveralls-lcov --source-encoding=ISO-8859-1 coverage.info; fi
 
   - sudo make uninstall
-

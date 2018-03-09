@@ -25,8 +25,9 @@ namespace roboticslab
 {
 
 /**
-* @brief Tests \ref KdlSolver ikin and idyn on a simple mechanism.
-*/
+ * @ingroup yarp_devices_tests
+ * @brief Tests \ref CuiAbsolute on a single CAN node.
+ */
 class CuiAbsoluteTest : public testing::Test // -- inherit the Test class (gtest.h)
 {
 
@@ -171,7 +172,7 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInPullMode )
             // This line is needed to clear the buffer (old messages that has been received)
             // if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
 
-            if( !ok ) continue;                        // -- is waiting for recive message
+            if( !ok || read == 0 ) continue;                 // -- is waiting for recive message
             canId = msg.getId() & 0x7F;                      // -- if it recive the message, it will get ID
 
 
@@ -227,7 +228,7 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInContinuousMode )
             // This line is needed to clear the buffer (old messages that has been received)
             if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
 
-            if( !ok ) continue;                        // -- is waiting for recive message
+            if( !ok || read == 0 ) continue;                 // -- is waiting for recive message
             canId = msg.getId() & 0x7F;                      // -- if it recive the message, it will get ID
             if (canId == CAN_ID)
             {
@@ -282,7 +283,7 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteStopSendingMessage ) // -- we call the class
         // This line is needed to clear the buffer (old messages that has been received)
         if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
 
-        if( !ok ) continue;                        // -- is waiting for recive message
+        if( !ok || read == 0 ) continue;                 // -- is waiting for recive message
         canId = msg.getId() & 0x7F;                      // -- if it recive the message, it will get ID
         CD_DEBUG("Read a message from CuiAbsolute %d\n", canId);
 

@@ -50,7 +50,7 @@ bool roboticslab::TechnosoftIpos::start()
 
     unsigned int sent;
 
-    if( ! canDevicePtr->canWrite(canOutputBuffer, 1, &sent, true) )
+    if( ! canDevicePtr->canWrite(canOutputBuffer, 1, &sent, true) || sent == 0 )
     {
         CD_ERROR("Could not send \"start\". %s\n", msgToStr(&msg_start).c_str() );
         return false;
@@ -174,7 +174,7 @@ bool roboticslab::TechnosoftIpos::resetNodes()
     unsigned int sent;
 
     //msg_resetNode[1]=this->canId; // -- It writes canId in byte 1
-    if( ! canDevicePtr->canWrite(canOutputBuffer, 1, &sent, true) ) // -- 0 (hace referencia al ID. Si est en 0 es como un broadcast) 2 (tamao del mensaje)
+    if( ! canDevicePtr->canWrite(canOutputBuffer, 1, &sent, true) || sent == 0 ) // -- 0 (hace referencia al ID. Si est en 0 es como un broadcast) 2 (tamao del mensaje)
     {
         CD_ERROR("Could not send \"reset node\". %s\n", msgToStr(&msg_resetNodes).c_str() );
         return false;
@@ -230,7 +230,7 @@ bool roboticslab::TechnosoftIpos::resetNode(int id)
 
     unsigned int sent;
 
-    if( ! canDevicePtr->canWrite(canOutputBuffer, 1, &sent, true) ) // -- 0 (hace referencia al ID. Si est en 0 es como un broadcast) 2 (tamao del mensaje)
+    if( ! canDevicePtr->canWrite(canOutputBuffer, 1, &sent, true) || sent == 0 ) // -- 0 (hace referencia al ID. Si est en 0 es como un broadcast) 2 (tamao del mensaje)
     {
         CD_ERROR("Could not send \"reset node\". %s\n", msgToStr(&msg_resetNode).c_str() );
         return false;

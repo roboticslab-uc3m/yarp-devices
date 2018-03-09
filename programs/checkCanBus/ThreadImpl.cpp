@@ -17,11 +17,9 @@ void roboticslab::CheckCanBus::run()
 
     while ( ! this->RFModule::isStopping())   // -- Mientras no se pare el RFModule
     {
-
-        yarp::dev::CanMessage &msg = canInputBuffer[0]; // -- Mensaje CAN
         unsigned int read;
 
-        //-- returns false for errors, timeout or EOF.
+        //-- Blocks with timeout until one message arrives, returns false on errors.
         bool ok = iCanBus->canRead(canInputBuffer, 1, &read, true);
 
         /* Nota para la siguiente linea: si el tiempo que tarda el usuario en encender los brazos
@@ -29,10 +27,11 @@ void roboticslab::CheckCanBus::run()
          * aplicación */
         if((yarp::os::Time::now()-threadInitTime) < cleaningTime) continue; //-- hasta que no llegue al cleaningTime, no revisará lo siguiente
 
-        //-- All debugging messages should be contained in read_timeout, so just loop again.
-        if( !ok ) continue; // --  continue para omitir secciones de código e iniciar la siguiente iteración de un bucle
-        //  --  de esta forma se saltaría el código siguiente hasta que (ret > 0 )
+        //-- All debugging messages should be contained in canRead, so just loop again.
+        if( !ok || read == 0 ) continue; // --  continue para omitir secciones de código e iniciar la siguiente iteración de un bucle
+        //  --  de esta forma se saltaría el código siguiente hasta que read > 0
 
+        yarp::dev::CanMessage &msg = canInputBuffer[0];
         int canId = msg.getId() & 0x7F; // -- limpia basura del CAN
 
         //-- Intercept 700h 0 msg that just indicates presence.

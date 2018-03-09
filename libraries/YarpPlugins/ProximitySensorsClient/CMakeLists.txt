@@ -7,12 +7,9 @@ yarp_prepare_plugin(ProximitySensorsClient
                     INCLUDE ProximitySensorsClient.hpp
                     DEFAULT ON)
 
-if(NOT SKIP_ProximitySensors)
-
-get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
+if(NOT SKIP_ProximitySensorsClient)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
-                    ${_common_dirs}
                     ${Leap_INCLUDE_DIR})
 
 yarp_add_plugin(ProximitySensorsClient ProximitySensorsClient.hpp
@@ -23,7 +20,8 @@ yarp_add_plugin(ProximitySensorsClient ProximitySensorsClient.hpp
 add_dependencies(ProximitySensorsClient COLOR_DEBUG)
 
 target_link_libraries(ProximitySensorsClient YARP::YARP_OS
-                                             YARP::YARP_dev)
+                                             YARP::YARP_dev
+                                             YarpDevicesInterfaces)
 
 yarp_install(TARGETS ProximitySensorsClient
              COMPONENT runtime
