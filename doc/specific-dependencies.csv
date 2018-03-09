@@ -4,6 +4,8 @@ Dependency (installation-guides),install-aravis.md,install-hcanpci.md,,install-s
 GrabberControls2Gui**,  no, no, yes, yes, yes, no, no, no
  CanBusControlboard ,  no , yes ,  no ,  no ,  no ,  no ,  no ,  no 
  CanBusHico , no , yes , no , no , no , no , no , no 
+ CanBusPeak , no , no , no , no , no , no , no , no 
+ CanBusSocket , no , no , no , no , no , no , no , no 
  CuiAbsolute , no , yes , no , no , no , no , no , no 
  FakeJoint , no , yes , no , no , no , no , no , no 
  Jr3 , no , yes , no , no , no , no , no , no 

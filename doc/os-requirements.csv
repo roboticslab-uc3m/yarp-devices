@@ -1,7 +1,9 @@
 OS,Ubuntu 14.04 (and derivatives),Ubuntu 16.04 (and derivatives)
  AravisGigE, yes, yes
- CanBusControlboard, yes,yes
- CanBusHico, yes,?
+ CanBusControlboard, yes, yes
+ CanBusHico, yes, ?
+ CanBusPeak, ?, ?
+ CanBusSocket, ?, ?
  CuiAbsolute, yes, yes
  FakeJoint, yes, yes
  GrabberControls2Gui, yes, yes
