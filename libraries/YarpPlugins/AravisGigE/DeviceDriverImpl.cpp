@@ -5,7 +5,7 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
     CD_INFO("Opening AravisGigE device\n");
 
     //-- Configuration of Aravis GigE Camera device
-    if (config.check("fake"))
+    if (config.check("fake", "enable fake Aravis camera"))
     {
         CD_INFO("Enabling fake Aravis camera\n");
         arv_enable_interface("Fake"); //-- Enables fake Aravis cameras (useful for debug / testing)
@@ -67,7 +67,7 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
     //-- Once we have a camera, we obtain the camera properties limits and initial values
     pixelFormats = arv_camera_get_available_pixel_formats(camera, &pixelFormatsCnt);
     pixelFormat = arv_camera_get_pixel_format(camera);
-    if (config.check("introspection"))
+    if (config.check("introspection", "print available pixel formats on device init"))
     {
         //-- List all  available formats
         guint n_pixel_formats;
