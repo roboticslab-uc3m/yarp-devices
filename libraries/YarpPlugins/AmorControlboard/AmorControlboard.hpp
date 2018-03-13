@@ -22,7 +22,7 @@ namespace roboticslab
 {
 
 /**
- * @ingroup BodyYarp
+ * @ingroup YarpPlugins
  * @defgroup AmorControlboard
  * @brief Contains roboticslab::AmorControlboard.
  */
@@ -30,7 +30,6 @@ namespace roboticslab
 /**
 * @ingroup AmorControlboard
 * @brief Implements several yarp::dev:: controlboard interfaces.
-*
 */
 class AmorControlboard : public yarp::dev::DeviceDriver,
                          public yarp::dev::IPositionControl2,
