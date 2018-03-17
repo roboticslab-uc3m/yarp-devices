@@ -73,7 +73,7 @@ bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
         return false;
     }
 
-    if (config.check("useAmorCartesianController"))
+    if (config.check("useAmorCartesianController", "instantiate AmorCartesianControl device"))
     {
         CD_INFO("Using AMOR cartesian controller device.\n");
 

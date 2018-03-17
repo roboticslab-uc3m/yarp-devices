@@ -3,7 +3,7 @@ option(ENABLE_grabbercontrols2gui "Enable/disable grabbercontrols2gui program" O
 if(ENABLE_grabbercontrols2gui)
 
 # configure grabbercontrols2gui setup.py
-configure_file("${CMAKE_SOURCE_DIR}/cmake/template/setup.py.in"
+configure_file("${CMAKE_SOURCE_DIR}/cmake/templates/setup.py.in"
                "${CMAKE_BINARY_DIR}/setup.py")
 
 # run setup.py (install rule)
