@@ -19,8 +19,8 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
     std::string devicePath = config.check("canDevice", yarp::os::Value(DEFAULT_CAN_DEVICE), "CAN device path").asString();
     int bitrate = config.check("canBitrate", yarp::os::Value(DEFAULT_CAN_BITRATE), "CAN bitrate").asInt();
 
-    rxTimeoutMs = config.check("canRxTimeoutMs", yarp::os::Value(DEFAULT_CAN_RX_TIMEOUT_MS), "RX timeout [ms]").asInt();
-    txTimeoutMs = config.check("canTxTimeoutMs", yarp::os::Value(DEFAULT_CAN_TX_TIMEOUT_MS), "TX timeout [ms]").asInt();
+    rxTimeoutMs = config.check("canRxTimeoutMs", yarp::os::Value(DEFAULT_CAN_RX_TIMEOUT_MS), "RX timeout (milliseconds)").asInt();
+    txTimeoutMs = config.check("canTxTimeoutMs", yarp::os::Value(DEFAULT_CAN_TX_TIMEOUT_MS), "TX timeout (milliseconds)").asInt();
 
     if (rxTimeoutMs <= 0)
     {
@@ -33,7 +33,7 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
     }
 
     std::string filterConfigStr = config.check("canFilterConfiguration", yarp::os::Value(DEFAULT_CAN_FILTER_CONFIGURATION),
-            "CAN filter config").asString();
+            "CAN filter configuration (disabled|noRange|maskAndRange)").asString();
 
     CD_INFO("CAN filter configuration: %s.\n", filterConfigStr.c_str());
 
@@ -78,7 +78,7 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
         filterManager = new FilterManager(fileDescriptor, filterConfig == FilterManager::MASK_AND_RANGE);
 
         //-- Load initial node IDs and set acceptance filters.
-        if (config.check("ids"))
+        if (config.check("ids", "initial node IDs"))
         {
             const yarp::os::Bottle & ids = config.findGroup("ids").tail();
 

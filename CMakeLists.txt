@@ -44,7 +44,8 @@ endif()
 
 # Pick up our CMake modules.
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake
-                              ${CMAKE_SOURCE_DIR}/cmake/find-modules)
+                              ${CMAKE_SOURCE_DIR}/cmake/find-modules
+                              ${CMAKE_SOURCE_DIR}/cmake/ycm-modules)
 
 # Bootstrap YCM. Keep it compatible with cmake_minimum_required().
 set(YCM_TAG v0.6.0)
@@ -94,6 +95,9 @@ add_subdirectory(libraries)
 add_subdirectory(programs)
 add_subdirectory(tests)
 
+# Store the package in the user registry.
+export(PACKAGE ROBOTICSLAB_YARP_DEVICES)
+
 # Create and install config files.
 include(InstallBasicPackageFiles)
 
@@ -108,7 +112,7 @@ install_basic_package_files(ROBOTICSLAB_YARP_DEVICES
                             NO_CHECK_REQUIRED_COMPONENTS_MACRO
                             NAMESPACE ROBOTICSLAB::
                             EXTRA_PATH_VARS_SUFFIX MODULE_DIR
-                            CONFIG_TEMPLATE ${CMAKE_SOURCE_DIR}/cmake/template/ROBOTICSLAB_YARP_DEVICESConfig.cmake.in
+                            CONFIG_TEMPLATE ${CMAKE_SOURCE_DIR}/cmake/templates/ROBOTICSLAB_YARP_DEVICESConfig.cmake.in
                             NO_COMPATIBILITY_VARS)
 
 # Configure and create uninstall target.
