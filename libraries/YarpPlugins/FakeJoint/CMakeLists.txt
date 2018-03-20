@@ -10,10 +10,7 @@ yarp_prepare_plugin(FakeJoint
 
 if(NOT SKIP_FakeJoint)
 
-get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
-                    ${_common_dirs})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}) # yarp plugin builder needs this
 
 yarp_add_plugin(FakeJoint FakeJoint.cpp
                           FakeJoint.hpp
@@ -32,7 +29,8 @@ yarp_add_plugin(FakeJoint FakeJoint.cpp
 add_dependencies(FakeJoint COLOR_DEBUG)
 
 target_link_libraries(FakeJoint YARP::YARP_OS
-                                YARP::YARP_dev)
+                                YARP::YARP_dev
+                                YarpDevicesInterfaces)
 
 yarp_install(TARGETS FakeJoint
              COMPONENT runtime

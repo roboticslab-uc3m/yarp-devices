@@ -16,10 +16,7 @@ yarp_prepare_plugin(SpaceNavigator
 
 if(NOT SKIP_SpaceNavigator)
 
-    get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
-
     include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
-                        ${_common_dirs}
                         ${SPNAV_INCLUDE_DIRS})
 
     yarp_add_plugin(SpaceNavigator SpaceNavigator.cpp
@@ -30,7 +27,8 @@ if(NOT SKIP_SpaceNavigator)
     add_dependencies(SpaceNavigator COLOR_DEBUG)
 
     target_link_libraries(SpaceNavigator YARP::YARP_dev
-                                         ${SPNAV_LIBRARIES})
+                                         ${SPNAV_LIBRARIES}
+                                         YarpDevicesInterfaces)
 
     yarp_install(TARGETS SpaceNavigator
                  COMPONENT runtime

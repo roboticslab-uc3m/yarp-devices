@@ -10,10 +10,7 @@ yarp_prepare_plugin(CanBusControlboard
 
 if(NOT SKIP_CanBusControlboard)
 
-get_property(_common_dirs GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_INCLUDE_DIRS)
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
-                    ${_common_dirs})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}) # yarp plugin builder needs this)
 
 yarp_add_plugin(CanBusControlboard CanBusControlboard.cpp
                                    CanBusControlboard.hpp
@@ -32,7 +29,8 @@ yarp_add_plugin(CanBusControlboard CanBusControlboard.cpp
 add_dependencies(CanBusControlboard COLOR_DEBUG)
 
 target_link_libraries(CanBusControlboard YARP::YARP_OS
-                                         YARP::YARP_dev)
+                                         YARP::YARP_dev
+                                         YarpDevicesInterfaces)
 
 yarp_install(TARGETS CanBusControlboard
              COMPONENT runtime

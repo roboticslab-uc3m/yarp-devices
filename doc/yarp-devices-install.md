@@ -40,7 +40,7 @@ cd  # go home
 mkdir -p repos; cd repos  # make $HOME/repos if it doesn't exist; then, enter it
 git clone https://github.com/roboticslab-uc3m/yarp-devices.git  # Download yarp-devices software from the repository
 cd yarp-devices; mkdir build; cd build; cmake ..  # Configure the yarp-devices software
-make  # Compile
+make -j$(nproc)  # Compile
 sudo make install  # Install :-)
 sudo ldconfig
 ```

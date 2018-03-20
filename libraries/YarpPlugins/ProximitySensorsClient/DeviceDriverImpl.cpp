@@ -25,8 +25,7 @@ bool roboticslab::ProximitySensorsClient::open(yarp::os::Searchable& config)
 
     std::string carrier;
 
-    if (config.check("usePortMonitor") || (config.check("portMonitorType") && config.check("portMonitorContext")
-            && config.check("portMonitorFile")))
+    if (config.check("usePortMonitor", "enable port monitoring and additional options"))
     {
         std::string pmType = config.check("portMonitorType", yarp::os::Value(DEFAULT_PORTMONITOR_TYPE),
                 "port monitor type").asString();
@@ -43,9 +42,12 @@ bool roboticslab::ProximitySensorsClient::open(yarp::os::Searchable& config)
         CD_INFO("Using carrier: %s\n", carrier.c_str());
     }
 
-    thresholdGripper = config.check("thresholdGripper", yarp::os::Value(DEFAULT_THRESHOLD_GRIPPER)).asDouble();
-    thresholdAlertHigh = config.check("thresholdAlertHigh", yarp::os::Value(DEFAULT_THRESHOLD_ALERT_HIGH)).asDouble();
-    thresholdAlertLow = config.check("thresholdAlertLow", yarp::os::Value(DEFAULT_THRESHOLD_ALERT_LOW)).asDouble();
+    thresholdGripper = config.check("thresholdGripper", yarp::os::Value(DEFAULT_THRESHOLD_GRIPPER),
+            "sensor threshold (gripper reach distance)").asDouble();
+    thresholdAlertHigh = config.check("thresholdAlertHigh", yarp::os::Value(DEFAULT_THRESHOLD_ALERT_HIGH),
+            "sensor threshold (proximity alert, high level)").asDouble();
+    thresholdAlertLow = config.check("thresholdAlertLow", yarp::os::Value(DEFAULT_THRESHOLD_ALERT_LOW),
+            "sensor threshold (proximity alert, low level)").asDouble();
 
     if (!yarp::os::Network::connect(remote, local, carrier))
     {
