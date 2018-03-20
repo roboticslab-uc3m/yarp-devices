@@ -30,7 +30,7 @@ bool roboticslab::TextilesHand::open(yarp::os::Searchable& config)
     if(!fd)
     {
         printf("NULL fd, bye!\n");
-        ::exit(-1);
+        return false;
     }
     CD_SUCCESS("open(), fd: %d\n",fd);
 
