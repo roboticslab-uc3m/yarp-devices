@@ -9,13 +9,6 @@ project(ROBOTICSLAB_YARP_DEVICES)
 # Force building shared libraries and YARP DL modules.
 set(BUILD_SHARED_LIBS TRUE CACHE INTERNAL "hide this!")
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -frtti")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti")
-
-# Hack to compile against YARP 2.3.68.
-# https://github.com/roboticslab-uc3m/yarp-devices/issues/89
-add_definitions(-DYARP_NO_DEPRECATED_WARNINGS=ON)
-
 # Add suffix for debug libraries.
 if(MSVC)
     message(STATUS "Running on windows")
