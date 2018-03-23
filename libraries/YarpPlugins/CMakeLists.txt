@@ -53,4 +53,4 @@ add_subdirectory(TextilesHand)
 add_subdirectory(WiimoteSensor)
 
 # Port monitor plugins.
-add_subdirectory(PortMonitorPlugins/lua)
+add_subdirectory(PortMonitorPlugins)
