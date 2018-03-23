@@ -2,8 +2,6 @@ option(ENABLE_OneCanBusOneWrapper "Enable/disable OneCanBusOneWrapper library" O
 
 if(ENABLE_OneCanBusOneWrapper)
 
-find_package(YARP REQUIRED)
-
 include_directories(${YARP_INCLUDE_DIRS}) # remove if YARP > v2.3.70
 
 add_library(OneCanBusOneWrapper OneCanBusOneWrapper.cpp
