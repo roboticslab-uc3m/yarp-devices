@@ -6,31 +6,31 @@
 
 bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 {
+    std::string mode = config.check("mode",yarp::os::Value("position"),"control mode on startup (position/velocity)").asString();
+    int16_t ptModeMs = config.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode (milliseconds)").asInt();
+    int timeCuiWait  = config.check("waitEncoder", yarp::os::Value(DEFAULT_TIME_TO_WAIT_CUI), "CUI timeout (seconds)").asInt();
 
-    std::string mode = config.check("mode",yarp::os::Value("position"),"position/velocity mode").asString();
-    int16_t ptModeMs = config.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode miliseconds").asInt();
-    int timeCuiWait  = config.check("waitEncoder", yarp::os::Value(DEFAULT_TIME_TO_WAIT_CUI), "CUI timeout seconds").asInt();
+    std::string canBusType = config.check("canBusType", yarp::os::Value(DEFAULT_CAN_BUS), "CAN bus device name").asString();
 
-    std::string canBusType = config.check("canBusType", yarp::os::Value(DEFAULT_CAN_BUS), "CAN bus device").asString();
+    yarp::os::Bottle ids = config.findGroup("ids", "CAN bus IDs").tail();  //-- e.g. 15
+    yarp::os::Bottle trs = config.findGroup("trs", "reductions").tail();  //-- e.g. 160
+    yarp::os::Bottle ks = config.findGroup("ks", "motor constants").tail();  //-- e.g. 0.0706
 
-    yarp::os::Bottle ids = config.findGroup("ids").tail();  //-- e.g. 15
-    yarp::os::Bottle trs = config.findGroup("trs").tail();  //-- e.g. 160
-    yarp::os::Bottle ks = config.findGroup("ks").tail();  //-- e.g. 0.0706
+    yarp::os::Bottle maxs = config.findGroup("maxs", "maximum joint limits (meters or degrees)").tail();  //-- e.g. 360
+    yarp::os::Bottle mins = config.findGroup("mins", "minimum joint limits (meters or degrees)").tail();  //-- e.g. -360
+    yarp::os::Bottle maxVels = config.findGroup("maxVels", "maximum joint velocities (meters/second or degrees/second)").tail();  //-- e.g. 1000
+    yarp::os::Bottle minVels = config.findGroup("minVels", "minimum joint velocities (meters/second or degrees/second)").tail();  //-- e.g. 0
+    yarp::os::Bottle refAccelerations = config.findGroup("refAccelerations", "ref accelerations (meters/second^2 or degrees/second^2)").tail();  //-- e.g. 0.575437
+    yarp::os::Bottle refSpeeds = config.findGroup("refSpeeds", "ref speeds (meters/second or degrees/second)").tail();  //-- e.g. 737.2798
+    yarp::os::Bottle encoderPulsess = config.findGroup("encoderPulsess", "encoder pulses (multiple nodes)").tail();  //-- e.g. 4096 (4 * 1024)
 
-    yarp::os::Bottle maxs = config.findGroup("maxs").tail();  //-- e.g. 360
-    yarp::os::Bottle mins = config.findGroup("mins").tail();  //-- e.g. -360
-    yarp::os::Bottle maxVels = config.findGroup("maxVels").tail();  //-- e.g. 1000
-    yarp::os::Bottle minVels = config.findGroup("minVels").tail();  //-- e.g. 0
-    yarp::os::Bottle refAccelerations = config.findGroup("refAccelerations").tail();  //-- e.g. 0.575437
-    yarp::os::Bottle refSpeeds = config.findGroup("refSpeeds").tail();  //-- e.g. 737.2798
-    yarp::os::Bottle encoderPulsess = config.findGroup("encoderPulsess").tail();  //-- e.g. 4096 (4 * 1024)
-
-    yarp::os::Bottle types = config.findGroup("types").tail();  //-- e.g. 15
+    yarp::os::Bottle types = config.findGroup("types", "device name of each node").tail();  //-- e.g. 15
 
     //-- Initialize the CAN device.
     yarp::os::Property canBusOptions;
     canBusOptions.fromString(config.toString());  // canDevice, canBitrate
     canBusOptions.put("device",canBusType);
+    canBusOptions.setMonitor(config.getMonitor(), canBusType.c_str());
     canBusDevice.open(canBusOptions);
     if( ! canBusDevice.isValid() )
     {
@@ -87,6 +87,9 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         options.put("refSpeed",refSpeeds.get(i).asDouble());
         options.put("encoderPulses",encoderPulsess.get(i).asDouble());
         options.put("ptModeMs",ptModeMs);
+        //std::stringstream ss; // Remember to #include <sstream>
+        //ss << types.get(i).asString() << "_" << ids.get(i).asInt();
+        //options.setMonitor(config.getMonitor(),ss.str().c_str());
 
         yarp::os::Value v(iCanBufferFactory, sizeof(yarp::dev::ICanBufferFactory));
         options.put("canBufferFactory", v);
@@ -158,7 +161,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         }
 
         //-- Pass CAN bus pointer to CAN node
-        iCanBusSharer[i]->setCanBusPtr( iCanBus );               
+        iCanBusSharer[i]->setCanBusPtr( iCanBus );
 
         //-- DRIVERS
         if(types.get(i).asString() == "TechnosoftIpos")
@@ -309,15 +312,15 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     yarp::os::Time::delay(2);
 
     //-- Homing
-    if( config.check("home") )
+    if( config.check("home", "perform homing maneuver on start") )
     {
         CD_DEBUG("Moving motors to zero.\n");
         for(int i=0; i<nodes.size(); i++)
-        {            
+        {
             if((nodes[i]->getValue("device")).asString() == "TechnosoftIpos"){
                 double val;
                 double time;
-                yarp::os::Time::delay(0.5);                                             
+                yarp::os::Time::delay(0.5);
                 iEncodersTimedRaw[i]->getEncoderTimedRaw(0,&val,&time); // -- getEncoderRaw(0,&value);
                 CD_DEBUG("Value of relative encoder ->%f\n", val);
                 if ( val>0.087873 || val< -0.087873 ){
@@ -348,7 +351,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         yarp::os::Time::delay(1);
     }
 
-    if( config.check("reset") )
+    if( config.check("reset", "reset encoders to zero") )
     {
         CD_DEBUG("Forcing encoders to zero.\n");
         if ( ! this->resetEncoders() )

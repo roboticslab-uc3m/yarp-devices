@@ -11,16 +11,20 @@
 
 bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
 {
-    axes = config.check("axes", DEFAULT_AXES, "number of axes to control").asInt();
-    jmcMs = config.check("jmcMs", DEFAULT_JMC_MS, "period of JMC rate thread").asInt();
+    CD_DEBUG("config: %s\n", config.toString().c_str());
+    yarp::os::SearchMonitor * monitor = config.getMonitor();
+    CD_WARNING("monitor: %d\n", monitor);
 
-    double genInitPos = config.check("genInitPos", DEFAULT_GEN_INIT_POS, "general initialization positions").asDouble();
-    double genJointTol = config.check("genJointTol", DEFAULT_GEN_JOINT_TOL, "general joint tolerances").asDouble();
-    double genMaxLimit = config.check("genMaxLimit", DEFAULT_GEN_MAX_LIMIT, "general max limits").asDouble();
-    double genMinLimit = config.check("genMinLimit", DEFAULT_GEN_MIN_LIMIT, "general min limits").asDouble();
-    double genRefSpeed = config.check("genRefSpeed", DEFAULT_GEN_REF_SPEED, "general ref speed").asDouble();
-    double genEncRawExposed = config.check("genEncRawExposed", DEFAULT_GEN_ENC_RAW_EXPOSED, "general EncRawExposed").asDouble();
-    double genVelRawExposed = config.check("genVelRawExposed", DEFAULT_GEN_VEL_RAW_EXPOSED, "general VelRawExposed").asDouble();
+    axes = config.check("axes", DEFAULT_AXES, "number of axes to control").asInt();
+    jmcMs = config.check("jmcMs", DEFAULT_JMC_MS, "period of JMC rate thread (milliseconds)").asInt();
+
+    double genInitPos = config.check("genInitPos", DEFAULT_GEN_INIT_POS, "general initialization positions (meters or degrees)").asDouble();
+    double genJointTol = config.check("genJointTol", DEFAULT_GEN_JOINT_TOL, "general joint tolerances (meters or degrees)").asDouble();
+    double genMaxLimit = config.check("genMaxLimit", DEFAULT_GEN_MAX_LIMIT, "general max limits (meters or degrees)").asDouble();
+    double genMinLimit = config.check("genMinLimit", DEFAULT_GEN_MIN_LIMIT, "general min limits (meters or degrees)").asDouble();
+    double genRefSpeed = config.check("genRefSpeed", DEFAULT_GEN_REF_SPEED, "general ref speed (meters/second or degrees/second)").asDouble();
+    double genEncRawExposed = config.check("genEncRawExposed", DEFAULT_GEN_ENC_RAW_EXPOSED, "general EncRawExposed (meters or degrees)").asDouble();
+    double genVelRawExposed = config.check("genVelRawExposed", DEFAULT_GEN_VEL_RAW_EXPOSED, "general VelRawExposed (meters/second or degrees/second)").asDouble();
     
     int modePosVelInt = config.check("modePosVel", DEFAULT_MODE_POS_VEL, "0:pos, 1:vel").asInt();
 
@@ -39,7 +43,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
 
     yarp::os::Bottle* initPoss;
 
-    if (config.check("initPoss"))
+    if (config.check("initPoss", "list of initialization positions (meters or degrees)"))
     {
         initPoss = config.find("initPoss").asList();
         CD_INFO("FakeControlboard using individual initPoss: %s\n", initPoss->toString().c_str());
@@ -57,7 +61,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
 
     yarp::os::Bottle* jointTols;
 
-    if (config.check("jointTols"))
+    if (config.check("jointTols", "list of joint tolerances (meters or degrees)"))
     {
         jointTols = config.find("jointTols").asList();
         CD_INFO("FakeControlboard using individual jointTols: %s\n", jointTols->toString().c_str());
@@ -75,7 +79,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
 
     yarp::os::Bottle* maxLimits;
 
-    if (config.check("maxLimits"))
+    if (config.check("maxLimits", "list of max limits (meters or degrees)"))
     {
         maxLimits = config.find("maxLimits").asList();
         CD_INFO("FakeControlboard using individual maxLimits: %s\n", maxLimits->toString().c_str());
@@ -93,7 +97,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
 
     yarp::os::Bottle* minLimits;
 
-    if (config.check("minLimits"))
+    if (config.check("minLimits", "list of min limits (meters or degrees)"))
     {
         minLimits = config.find("minLimits").asList();
         CD_INFO("FakeControlboard using individual minLimits: %s\n", minLimits->toString().c_str());
@@ -111,7 +115,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
 
     yarp::os::Bottle* refSpeeds;
 
-    if (config.check("refSpeeds"))
+    if (config.check("refSpeeds", "list of ref speeds (meters/second or degrees/second)"))
     {
         refSpeeds = config.find("refSpeeds").asList();
         CD_INFO("FakeControlboard using individual refSpeeds: %s\n", refSpeeds->toString().c_str());
@@ -129,7 +133,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
 
     yarp::os::Bottle* encRawExposeds;
 
-    if (config.check("encRawExposeds"))
+    if (config.check("encRawExposeds", "list of EncRawExposeds (meters or degrees)"))
     {
         encRawExposeds = config.find("encRawExposeds").asList();
         CD_INFO("FakeControlboard using individual encRawExposeds: %s\n", encRawExposeds->toString().c_str());
@@ -147,7 +151,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
 
     yarp::os::Bottle* velRawExposeds;
 
-    if (config.check("velRawExposeds"))
+    if (config.check("velRawExposeds", "list of VelRawExposed (meters/second or degrees/second)"))
     {
         velRawExposeds = config.find("velRawExposeds").asList();
         CD_INFO("FakeControlboard using individual velRawExposeds: %s\n", velRawExposeds->toString().c_str());
