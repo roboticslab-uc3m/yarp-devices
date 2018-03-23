@@ -51,3 +51,6 @@ add_subdirectory(SpaceNavigator)
 add_subdirectory(TechnosoftIpos)
 add_subdirectory(TextilesHand)
 add_subdirectory(WiimoteSensor)
+
+# Port monitor plugins.
+add_subdirectory(PortMonitorPlugins/lua)
