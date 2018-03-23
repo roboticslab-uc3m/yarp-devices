@@ -92,7 +92,7 @@ if(YARP_VERSION_SHORT VERSION_LESS 2.3.70)
 endif()
 
 # Configure installation paths for YARP resources.
-yarp_configure_external_installation(roboticslab-yarp-devices)
+yarp_configure_external_installation(roboticslab-yarp-devices WITH_PLUGINS)
 
 # Add main contents.
 add_subdirectory(cmake)
