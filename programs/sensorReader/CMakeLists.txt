@@ -10,7 +10,8 @@ cmake_dependent_option(ENABLE_sensorReader "Enable/disable sensorReader program"
 if(ENABLE_sensorReader)
 
     install(PROGRAMS sensorReader.py
-            DESTINATION ${CMAKE_INSTALL_BINDIR})
+            DESTINATION ${CMAKE_INSTALL_BINDIR}
+            RENAME sensorReader)
 
 else()
 
