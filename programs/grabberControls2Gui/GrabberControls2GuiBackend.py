@@ -32,7 +32,7 @@ class GrabberControls2GuiBackend:
         options = yarp.Property()
         options.put('device','remote_grabber')
         options.put('remote', self.remote_port)
-        options.put('local','/GrabberControls2Gui')
+        options.put('local','/grabberControls2Gui')
         self.dd = yarp.PolyDriver(options)
 
         # View driver as FrameGrabber

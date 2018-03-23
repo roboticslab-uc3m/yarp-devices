@@ -3,7 +3,7 @@
 
 add_subdirectory(checkCanBus)
 add_subdirectory(dumpCanBus)
-add_subdirectory(GrabberControls2Gui)
+add_subdirectory(grabberControls2Gui)
 add_subdirectory(launchLocomotion)
 add_subdirectory(launchManipulation)
 add_subdirectory(oneCanBusOneWrapper)
