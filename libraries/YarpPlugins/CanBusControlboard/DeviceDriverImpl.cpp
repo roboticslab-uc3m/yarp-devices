@@ -2,8 +2,6 @@
 
 #include "CanBusControlboard.hpp"
 
-#include <sstream>
-
 // ------------------- DeviceDriver Related ------------------------------------
 
 bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
@@ -78,9 +76,9 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         options.put("refSpeed",refSpeeds.get(i).asDouble());
         options.put("encoderPulses",encoderPulsess.get(i).asDouble());
         options.put("ptModeMs",ptModeMs);
-        std::stringstream ss;
-        ss << types.get(i).asString() << "_" << ids.get(i).asInt();
-        options.setMonitor(config.getMonitor(),ss.str().c_str());
+        //std::stringstream ss; // Remember to #include <sstream>
+        //ss << types.get(i).asString() << "_" << ids.get(i).asInt();
+        //options.setMonitor(config.getMonitor(),ss.str().c_str());
 
         // -- Configuramos todos los dispositivos (TechnosoftIpos, LacqueyFetch, CuiAbsolute)
         yarp::dev::PolyDriver* device = new yarp::dev::PolyDriver(options);

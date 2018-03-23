@@ -9,13 +9,6 @@ project(ROBOTICSLAB_YARP_DEVICES)
 # Force building shared libraries and YARP DL modules.
 set(BUILD_SHARED_LIBS TRUE CACHE INTERNAL "hide this!")
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -frtti")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti")
-
-# Hack to compile against YARP 2.3.68.
-# https://github.com/roboticslab-uc3m/yarp-devices/issues/89
-add_definitions(-DYARP_NO_DEPRECATED_WARNINGS=ON)
-
 # Add suffix for debug libraries.
 if(MSVC)
     message(STATUS "Running on windows")
@@ -88,11 +81,24 @@ set_property(GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_TARGETS)
 # Create targets if specific requirements are satisfied.
 include(CMakeDependentOption)
 
+# Find YARP (main dependency).
+find_package(YARP REQUIRED)
+
+# Load YARP modules.
+if(YARP_VERSION_SHORT VERSION_LESS 2.3.70)
+    list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
+    include(YarpPlugin)
+    include(YarpInstallationHelpers)
+endif()
+
+# Configure installation paths for YARP resources.
+yarp_configure_external_installation(roboticslab-yarp-devices WITH_PLUGINS)
+
 # Add main contents.
 add_subdirectory(cmake)
-add_subdirectory(share)
 add_subdirectory(libraries)
 add_subdirectory(programs)
+add_subdirectory(share)
 add_subdirectory(tests)
 
 # Store the package in the user registry.

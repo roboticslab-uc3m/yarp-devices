@@ -1,5 +1,3 @@
-find_package(YARP REQUIRED)
-
 include_directories(${YARP_INCLUDE_DIRS}) # remove if YARP > v2.3.70
 
 add_executable(testCuiAbsolute testCuiAbsolute.cpp)

@@ -10,7 +10,7 @@ if not yarp.Network.checkNetwork():
 options = yarp.Property()
 options.put('device','remote_grabber')
 options.put('remote', '/grabber')
-options.put('local','/GrabberControls2Gui')
+options.put('local','/grabberControls2Gui')
 dd = yarp.PolyDriver(options)
 
 # View driver as FrameGrabber
