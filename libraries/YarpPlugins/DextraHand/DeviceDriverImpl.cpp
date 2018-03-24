@@ -21,7 +21,7 @@ bool roboticslab::DextraHand::open(yarp::os::Searchable& config)
     CD_SUCCESS("Created DextraHand with canId %d and tr %f, and all local parameters set to 0.\n",canId,tr);
     */
 
-    char serialport[13] = "/dev/ttyUSB0";
+    char serialport[13] = "/dev/ttyACM0";  // Was /dev/ttyUSB0
     int baudrate = B115200;  // Should match https://github.com/Alvipe/Dextra/blob/master/Control/DextraControl.py
     char buf[256];
     int rc,n;
@@ -30,11 +30,11 @@ bool roboticslab::DextraHand::open(yarp::os::Searchable& config)
 
     if ( fd <= 0 )
     {
-        CD_ERROR("fd = %d <= 0, bye!\n",fd);
+        CD_ERROR("Could not open %s (fd = %d <= 0). Bye!\n",serialport,fd);
         return false;
     }
 
-    CD_SUCCESS("open(), fd: %d\n",fd);
+    CD_SUCCESS("Opened %s (fd: %d)\n",serialport,fd);
 
     return true;
 }
