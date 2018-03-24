@@ -27,11 +27,13 @@ bool roboticslab::DextraHand::open(yarp::os::Searchable& config)
     int rc,n;
 
     fd = serialport_init(serialport, baudrate);
-    if(!fd)
+
+    if ( fd <= 0 )
     {
-        printf("NULL fd, bye!\n");
+        CD_ERROR("fd = %d <= 0, bye!\n",fd);
         return false;
     }
+
     CD_SUCCESS("open(), fd: %d\n",fd);
 
     return true;
