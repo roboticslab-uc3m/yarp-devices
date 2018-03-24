@@ -39,11 +39,22 @@ bool roboticslab::DextraHand::positionMoveRaw(int j, double ref)    // encExpose
     }
 
     //-- Send target
-    cmdByte = ref;
-    if( serialport_writebyte(fd, cmdByte) != 0 )
+    size_t size = sizeof(float);
+    float refFloat = static_cast<float>(ref);
+
+    std::vector<uint8_t> msg_position_target;
+    msg_position_target.resize(size,0);
+
+    memcpy(msg_position_target.data(),&refFloat,size);
+
+    for( size_t i = 0; i<size; i++)
     {
-        CD_ERROR("Failed to send target\n");
-        return false;
+        cmdByte = msg_position_target[i];
+        if( serialport_writebyte(fd, cmdByte) != 0 )
+        {
+            CD_ERROR("Failed to send target [%d of %d]\n",i,size);
+            return false;
+        }
     }
 
     //-- Send footer
