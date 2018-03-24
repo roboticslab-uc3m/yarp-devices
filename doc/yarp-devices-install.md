@@ -42,7 +42,7 @@ git clone https://github.com/roboticslab-uc3m/yarp-devices.git  # Download yarp-
 cd yarp-devices; mkdir build; cd build; cmake ..  # Configure the yarp-devices software
 make -j$(nproc)  # Compile
 sudo make install  # Install :-)
-sudo ldconfig
+sudo ldconfig  # Just in case
 ```
 
 Remember to enable the devices you want to compile using `ccmake` instead of `cmake`.
