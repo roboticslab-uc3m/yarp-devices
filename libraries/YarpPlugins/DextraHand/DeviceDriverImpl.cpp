@@ -22,7 +22,7 @@ bool roboticslab::DextraHand::open(yarp::os::Searchable& config)
     */
 
     char serialport[13] = "/dev/ttyUSB0";
-    int baudrate = B9600;  // default
+    int baudrate = B115200;  // Should match https://github.com/Alvipe/Dextra/blob/master/Control/DextraControl.py
     char buf[256];
     int rc,n;
 
