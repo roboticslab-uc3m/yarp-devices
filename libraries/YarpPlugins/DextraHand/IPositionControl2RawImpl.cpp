@@ -19,15 +19,40 @@ bool roboticslab::DextraHand::positionMoveRaw(int j, double ref)    // encExpose
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    unsigned char cmdByte;
-    if (ref == 0)
-        cmdByte = 'a';
-    else if (ref == 1)
-        cmdByte = 'b';
-    else
+    uint8_t cmdByte;
+
+    //-- Send header
+    cmdByte = 0x7E;
+    if( serialport_writebyte(fd, cmdByte) != 0 )
+    {
+        CD_ERROR("Failed to send header\n");
         return false;
-    int res = serialport_writebyte(fd, cmdByte);
-    if(res==-1) return false;
+    }
+
+    //-- Send address
+    //-- Addresses: chr(0x01),chr(0x02),chr(0x03),chr(0x04),chr(0x05),chr(0x06)
+    cmdByte = static_cast<uint8_t>(j+1);  // tad bit hacki-ish
+    if( serialport_writebyte(fd, cmdByte) != 0 )
+    {
+        CD_ERROR("Failed to send address\n");
+        return false;
+    }
+
+    //-- Send target
+    cmdByte = ref;
+    if( serialport_writebyte(fd, cmdByte) != 0 )
+    {
+        CD_ERROR("Failed to send target\n");
+        return false;
+    }
+
+    //-- Send footer
+    cmdByte = 0x7E;
+    if( serialport_writebyte(fd, cmdByte) != 0 )
+    {
+        CD_ERROR("Failed to send footer\n");
+        return false;
+    }
 
     encoderReady.wait();
     this->encoder = ref;  // Already passed through Adjust range.
