@@ -10,6 +10,8 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     int16_t ptModeMs = config.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode (milliseconds)").asInt();
     int timeCuiWait  = config.check("waitEncoder", yarp::os::Value(DEFAULT_TIME_TO_WAIT_CUI), "CUI timeout (seconds)").asInt();
 
+    std::string canBusType = config.check("canBusType", yarp::os::Value(DEFAULT_CAN_BUS), "CAN bus device name").asString();
+
     yarp::os::Bottle ids = config.findGroup("ids", "CAN bus IDs").tail();  //-- e.g. 15
     yarp::os::Bottle trs = config.findGroup("trs", "reductions").tail();  //-- e.g. 160
     yarp::os::Bottle ks = config.findGroup("ks", "motor constants").tail();  //-- e.g. 0.0706
@@ -25,11 +27,10 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     yarp::os::Bottle types = config.findGroup("types", "device name of each node").tail();  //-- e.g. 15
 
     //-- Initialize the CAN device.
-    std::string canBusDeviceName = "CanBusHico";
     yarp::os::Property canBusOptions;
-    canBusOptions.put("device", canBusDeviceName);
-    canBusOptions.fromString(config.toString(), false);  // canDevice, canBitrate
-    canBusOptions.setMonitor(config.getMonitor(), canBusDeviceName.c_str());
+    canBusOptions.fromString(config.toString());  // canDevice, canBitrate
+    canBusOptions.put("device", canBusType);
+    canBusOptions.setMonitor(config.getMonitor(), canBusType.c_str());
     canBusDevice.open(canBusOptions);
     if( ! canBusDevice.isValid() )
     {
