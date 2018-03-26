@@ -83,6 +83,11 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
         // -- Configuramos todos los dispositivos (TechnosoftIpos, LacqueyFetch, CuiAbsolute)
         yarp::dev::PolyDriver* device = new yarp::dev::PolyDriver(options);
+        if( ! device->isValid() )
+        {
+            CD_ERROR("CAN node [%d] '%s' instantiation not worked.\n",i,types.get(i).asString());
+            return false;
+        }
 
         //-- Fill a map entry ( drivers.size() if before push_back, otherwise do drivers.size()-1).
         //-- Just "i" if resize already performed.
