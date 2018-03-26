@@ -85,7 +85,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         yarp::dev::PolyDriver* device = new yarp::dev::PolyDriver(options);
         if( ! device->isValid() )
         {
-            CD_ERROR("CAN node [%d] '%s' instantiation not worked.\n",i,types.get(i).asString());
+            CD_ERROR("CAN node [%d] '%s' instantiation not worked.\n",i,types.get(i).asString().c_str());
             return false;
         }
 
