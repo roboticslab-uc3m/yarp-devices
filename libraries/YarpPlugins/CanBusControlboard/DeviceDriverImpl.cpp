@@ -27,8 +27,8 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     //-- Initialize the CAN device.
     std::string canBusDeviceName = "CanBusHico";
     yarp::os::Property canBusOptions;
-    canBusOptions.fromString(config.toString());  // canDevice, canBitrate
     canBusOptions.put("device", canBusDeviceName);
+    canBusOptions.fromString(config.toString(), false);  // canDevice, canBitrate
     canBusOptions.setMonitor(config.getMonitor(), canBusDeviceName.c_str());
     canBusDevice.open(canBusOptions);
     if( ! canBusDevice.isValid() )
