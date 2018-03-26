@@ -33,6 +33,7 @@ set_property(GLOBAL APPEND PROPERTY ROBOTICSLAB_YARP_DEVICES_TARGETS YarpDevices
 # YARP devices.
 add_subdirectory(AravisGigE)
 add_subdirectory(CanBusControlboard)
+add_subdirectory(CanBusFake)
 add_subdirectory(CanBusHico)
 add_subdirectory(CuiAbsolute)
 add_subdirectory(DextraHand)
