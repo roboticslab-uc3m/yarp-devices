@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __CAN_BUS_HICO__
-#define __CAN_BUS_HICO__
+#ifndef __CAN_BUS_FAKE__
+#define __CAN_BUS_FAKE__
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,16 +60,11 @@ public:
      * @return Number on got, 0 on timeout, and errno on fail. */
     virtual int read_timeout(struct can_msg *buf, unsigned int timeout);
 
-protected:
-
-    /** CAN file descriptor */
-    int fileDescriptor;
-
-    yarp::os::Semaphore canBusReady;
+private:
 
 };
 
 }  // namespace roboticslab
 
-#endif  // __CAN_BUS_HICO__
+#endif  // __CAN_BUS_FAKE__
 
