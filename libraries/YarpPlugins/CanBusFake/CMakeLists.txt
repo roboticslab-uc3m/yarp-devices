@@ -6,8 +6,7 @@ yarp_prepare_plugin(CanBusFake
                     CATEGORY device
                     TYPE roboticslab::CanBusFake
                     INCLUDE CanBusFake.hpp
-                    DEFAULT ON
-                    DEPENDS UNIX)
+                    DEFAULT ON)
 
 if(NOT SKIP_CanBusFake)
 
