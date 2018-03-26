@@ -3,15 +3,6 @@
 #ifndef __CAN_BUS_FAKE__
 #define __CAN_BUS_FAKE__
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <unistd.h>  // just for ::write
-#include <err.h>
-#include <errno.h>
-#include <assert.h>
-#include <string>
-
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
 
@@ -30,7 +21,7 @@ namespace roboticslab
 
 /**
  * @ingroup CanBusFake
- * @brief Specifies the HicoCan (hcanpci) behaviour and specifications.
+ * @brief Fake CanBus driver, e.g. for testing CanBusControlboard with pure USB devices.
  */
 class CanBusFake : public yarp::dev::DeviceDriver, public ICanBusHico
 {
