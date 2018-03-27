@@ -4,5 +4,4 @@
 
 yarp_install(FILES conf/oneCanBusOneWrapper.ini
                    conf/oneCanBusOneWrapper-CuiAbsolute.ini
-                   conf/oneCanBusOneWrapper-DextraHand.ini
              DESTINATION ${ROBOTICSLAB-YARP-DEVICES_CONTEXTS_INSTALL_DIR}/oneCanBusOneWrapper)

@@ -1,22 +1,22 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraHand.hpp"
+#include "DextraControlboard.hpp"
 
-// ############################ IEncodersRaw Related ############################
+// ############################ IEncoders Related ############################
 
-bool roboticslab::DextraHand::resetEncoderRaw(int j)
+bool roboticslab::DextraControlboard::resetEncoder(int j)
 {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    return this->setEncoderRaw(j,0);
+    return this->setEncoder(j,0);
 }
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::resetEncodersRaw()
+bool roboticslab::DextraControlboard::resetEncoders()
 {
     CD_ERROR("\n");
     return false;
@@ -24,21 +24,21 @@ bool roboticslab::DextraHand::resetEncodersRaw()
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setEncoderRaw(int j, double val)    // encExposed = val;
+bool roboticslab::DextraControlboard::setEncoder(int j, double val)    // encExposed = val;
 {
     CD_INFO("(%d,%f)\n",j,val);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (DextraHand).\n");
+    CD_WARNING("Not implemented yet (DextraControlboard).\n");
 
     return true;
 }
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setEncodersRaw(const double *vals)
+bool roboticslab::DextraControlboard::setEncoders(const double *vals)
 {
     CD_ERROR("\n");
     return false;
@@ -46,7 +46,7 @@ bool roboticslab::DextraHand::setEncodersRaw(const double *vals)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getEncoderRaw(int j, double *v)
+bool roboticslab::DextraControlboard::getEncoder(int j, double *v)
 {
     //CD_INFO("%d\n",j);  //-- Too verbose in stream.
 
@@ -62,7 +62,7 @@ bool roboticslab::DextraHand::getEncoderRaw(int j, double *v)
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getEncodersRaw(double *encs)
+bool roboticslab::DextraControlboard::getEncoders(double *encs)
 {
     CD_ERROR("\n");
     return false;
@@ -70,14 +70,14 @@ bool roboticslab::DextraHand::getEncodersRaw(double *encs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getEncoderSpeedRaw(int j, double *sp)
+bool roboticslab::DextraControlboard::getEncoderSpeed(int j, double *sp)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    //CD_WARNING("Not implemented yet (DextraHand).\n");  //-- Too verbose in controlboardwrapper2 stream.
+    //CD_WARNING("Not implemented yet (DextraControlboard).\n");  //-- Too verbose in controlboardwrapper2 stream.
     *sp = 0;
 
     return true;
@@ -85,7 +85,7 @@ bool roboticslab::DextraHand::getEncoderSpeedRaw(int j, double *sp)
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getEncoderSpeedsRaw(double *spds)
+bool roboticslab::DextraControlboard::getEncoderSpeeds(double *spds)
 {
     CD_ERROR("\n");
     return false;
@@ -93,14 +93,14 @@ bool roboticslab::DextraHand::getEncoderSpeedsRaw(double *spds)
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getEncoderAccelerationRaw(int j, double *spds)
+bool roboticslab::DextraControlboard::getEncoderAcceleration(int j, double *spds)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
     if ( j = 0 ) return false;
 
-    //CD_WARNING("Not implemented yet (DextraHand).\n");  //-- Too verbose in controlboardwrapper2 stream.
+    //CD_WARNING("Not implemented yet (DextraControlboard).\n");  //-- Too verbose in controlboardwrapper2 stream.
     *spds = 0;
 
     return true;
@@ -108,7 +108,7 @@ bool roboticslab::DextraHand::getEncoderAccelerationRaw(int j, double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getEncoderAccelerationsRaw(double *accs)
+bool roboticslab::DextraControlboard::getEncoderAccelerations(double *accs)
 {
     CD_ERROR("\n");
     return false;

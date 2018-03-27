@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraHand.hpp"
+#include "DextraControlboard.hpp"
 
-// ############################## IPositionControlRaw Related ##############################
+// ############################## IPositionControl Related ##############################
 
-bool roboticslab::DextraHand::getAxes(int *ax)
+bool roboticslab::DextraControlboard::getAxes(int *ax)
 {
     *ax = 1;
     return true;
@@ -12,7 +12,7 @@ bool roboticslab::DextraHand::getAxes(int *ax)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::positionMoveRaw(int j, double ref)    // encExposed = ref;
+bool roboticslab::DextraControlboard::positionMove(int j, double ref)    // encExposed = ref;
 {
     CD_INFO("(%d,%f)\n",j,ref);
 
@@ -74,7 +74,7 @@ bool roboticslab::DextraHand::positionMoveRaw(int j, double ref)    // encExpose
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::positionMoveRaw(const double *refs)
+bool roboticslab::DextraControlboard::positionMove(const double *refs)
 {
     CD_ERROR("\n");
     return false;
@@ -82,21 +82,21 @@ bool roboticslab::DextraHand::positionMoveRaw(const double *refs)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::relativeMoveRaw(int j, double delta)
+bool roboticslab::DextraControlboard::relativeMove(int j, double delta)
 {
     CD_INFO("(%d, %f)\n",j,delta);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (DextraHand).\n");
+    CD_WARNING("Not implemented yet (DextraControlboard).\n");
 
     return true;
 }
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::relativeMoveRaw(const double *deltas)
+bool roboticslab::DextraControlboard::relativeMove(const double *deltas)
 {
     CD_ERROR("\n");
     return false;
@@ -104,7 +104,7 @@ bool roboticslab::DextraHand::relativeMoveRaw(const double *deltas)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::checkMotionDoneRaw(int j, bool *flag)
+bool roboticslab::DextraControlboard::checkMotionDone(int j, bool *flag)
 {
     CD_INFO("(%d)\n",j);
 
@@ -118,7 +118,7 @@ bool roboticslab::DextraHand::checkMotionDoneRaw(int j, bool *flag)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::checkMotionDoneRaw(bool *flag)
+bool roboticslab::DextraControlboard::checkMotionDone(bool *flag)
 {
     CD_ERROR("\n");
     return false;
@@ -126,7 +126,7 @@ bool roboticslab::DextraHand::checkMotionDoneRaw(bool *flag)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setRefSpeedRaw(int j, double sp)
+bool roboticslab::DextraControlboard::setRefSpeed(int j, double sp)
 {
     CD_INFO("(%d, %f)\n",j,sp);
 
@@ -138,7 +138,7 @@ bool roboticslab::DextraHand::setRefSpeedRaw(int j, double sp)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setRefSpeedsRaw(const double *spds)
+bool roboticslab::DextraControlboard::setRefSpeeds(const double *spds)
 {
     CD_ERROR("\n");
     return false;
@@ -146,7 +146,7 @@ bool roboticslab::DextraHand::setRefSpeedsRaw(const double *spds)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setRefAccelerationRaw(int j, double acc)
+bool roboticslab::DextraControlboard::setRefAcceleration(int j, double acc)
 {
     CD_INFO("(%d, %f)\n",j,acc);
 
@@ -158,7 +158,7 @@ bool roboticslab::DextraHand::setRefAccelerationRaw(int j, double acc)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setRefAccelerationsRaw(const double *accs)
+bool roboticslab::DextraControlboard::setRefAccelerations(const double *accs)
 {
     CD_ERROR("\n");
     return false;
@@ -166,7 +166,7 @@ bool roboticslab::DextraHand::setRefAccelerationsRaw(const double *accs)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getRefSpeedRaw(int j, double *ref)
+bool roboticslab::DextraControlboard::getRefSpeed(int j, double *ref)
 {
     CD_INFO("(%d)\n",j);
 
@@ -180,7 +180,7 @@ bool roboticslab::DextraHand::getRefSpeedRaw(int j, double *ref)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getRefSpeedsRaw(double *spds)
+bool roboticslab::DextraControlboard::getRefSpeeds(double *spds)
 {
     CD_ERROR("\n");
     return false;
@@ -188,7 +188,7 @@ bool roboticslab::DextraHand::getRefSpeedsRaw(double *spds)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getRefAccelerationRaw(int j, double *acc)
+bool roboticslab::DextraControlboard::getRefAcceleration(int j, double *acc)
 {
     CD_INFO("(%d)\n",j);
 
@@ -202,7 +202,7 @@ bool roboticslab::DextraHand::getRefAccelerationRaw(int j, double *acc)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getRefAccelerationsRaw(double *accs)
+bool roboticslab::DextraControlboard::getRefAccelerations(double *accs)
 {
     CD_ERROR("\n");
     return false;
@@ -210,7 +210,7 @@ bool roboticslab::DextraHand::getRefAccelerationsRaw(double *accs)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::stopRaw(int j)
+bool roboticslab::DextraControlboard::stop(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -222,17 +222,17 @@ bool roboticslab::DextraHand::stopRaw(int j)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::stopRaw()
+bool roboticslab::DextraControlboard::stop()
 {
     CD_ERROR("\n");
     return false;
 }
 
 
-// ############################## IPositionControl2Raw Related ##############################
+// ############################## IPositionControl2 Related ##############################
 
 
-bool roboticslab::DextraHand::positionMoveRaw(const int n_joint, const int *joints, const double *refs)
+bool roboticslab::DextraControlboard::positionMove(const int n_joint, const int *joints, const double *refs)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -241,7 +241,7 @@ bool roboticslab::DextraHand::positionMoveRaw(const int n_joint, const int *join
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)
+bool roboticslab::DextraControlboard::relativeMove(const int n_joint, const int *joints, const double *deltas)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -250,7 +250,7 @@ bool roboticslab::DextraHand::relativeMoveRaw(const int n_joint, const int *join
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags)
+bool roboticslab::DextraControlboard::checkMotionDone(const int n_joint, const int *joints, bool *flags)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -259,7 +259,7 @@ bool roboticslab::DextraHand::checkMotionDoneRaw(const int n_joint, const int *j
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)
+bool roboticslab::DextraControlboard::setRefSpeeds(const int n_joint, const int *joints, const double *spds)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -268,7 +268,7 @@ bool roboticslab::DextraHand::setRefSpeedsRaw(const int n_joint, const int *join
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
+bool roboticslab::DextraControlboard::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -277,7 +277,7 @@ bool roboticslab::DextraHand::setRefAccelerationsRaw(const int n_joint, const in
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)
+bool roboticslab::DextraControlboard::getRefSpeeds(const int n_joint, const int *joints, double *spds)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -286,7 +286,7 @@ bool roboticslab::DextraHand::getRefSpeedsRaw(const int n_joint, const int *join
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
+bool roboticslab::DextraControlboard::getRefAccelerations(const int n_joint, const int *joints, double *accs)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -295,7 +295,7 @@ bool roboticslab::DextraHand::getRefAccelerationsRaw(const int n_joint, const in
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::stopRaw(const int n_joint, const int *joints)
+bool roboticslab::DextraControlboard::stop(const int n_joint, const int *joints)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -304,7 +304,7 @@ bool roboticslab::DextraHand::stopRaw(const int n_joint, const int *joints)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getTargetPositionRaw(const int joint, double *ref)
+bool roboticslab::DextraControlboard::getTargetPosition(const int joint, double *ref)
 {
     CD_INFO("\n");
 
@@ -315,7 +315,7 @@ bool roboticslab::DextraHand::getTargetPositionRaw(const int joint, double *ref)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getTargetPositionsRaw(double *refs)
+bool roboticslab::DextraControlboard::getTargetPositions(double *refs)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -324,7 +324,7 @@ bool roboticslab::DextraHand::getTargetPositionsRaw(double *refs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getTargetPositionsRaw(const int n_joint, const int *joints, double *refs)
+bool roboticslab::DextraControlboard::getTargetPositions(const int n_joint, const int *joints, double *refs)
 {
     CD_WARNING("Missing implementation\n");
 

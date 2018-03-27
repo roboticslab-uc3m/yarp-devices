@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraHand.hpp"
+#include "DextraControlboard.hpp"
 
-// ############################ ITorqueControlRaw Related ############################
+// ############################ ITorqueControl Related ############################
 
-bool roboticslab::DextraHand::getRefTorquesRaw(double *t)
+bool roboticslab::DextraControlboard::getRefTorques(double *t)
 {
     CD_ERROR("\n");
     return false;
@@ -12,7 +12,7 @@ bool roboticslab::DextraHand::getRefTorquesRaw(double *t)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getRefTorqueRaw(int j, double *t)
+bool roboticslab::DextraControlboard::getRefTorque(int j, double *t)
 {
     CD_INFO("\n");
     return true;
@@ -20,7 +20,7 @@ bool roboticslab::DextraHand::getRefTorqueRaw(int j, double *t)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setRefTorquesRaw(const double *t)
+bool roboticslab::DextraControlboard::setRefTorques(const double *t)
 {
     CD_ERROR("\n");
     return false;
@@ -28,7 +28,7 @@ bool roboticslab::DextraHand::setRefTorquesRaw(const double *t)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setRefTorqueRaw(int j, double t)
+bool roboticslab::DextraControlboard::setRefTorque(int j, double t)
 {
     CD_INFO("\n");
     return true;
@@ -36,7 +36,7 @@ bool roboticslab::DextraHand::setRefTorqueRaw(int j, double t)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getBemfParamRaw(int j, double *bemf)
+bool roboticslab::DextraControlboard::getBemfParam(int j, double *bemf)
 {
     CD_INFO("\n");
     return true;
@@ -44,7 +44,7 @@ bool roboticslab::DextraHand::getBemfParamRaw(int j, double *bemf)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setBemfParamRaw(int j, double bemf)
+bool roboticslab::DextraControlboard::setBemfParam(int j, double bemf)
 {
     CD_INFO("\n");
     return true;
@@ -52,7 +52,7 @@ bool roboticslab::DextraHand::setBemfParamRaw(int j, double bemf)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
+bool roboticslab::DextraControlboard::setTorquePid(int j, const yarp::dev::Pid &pid)
 {
     CD_INFO("\n");
     return true;
@@ -60,7 +60,7 @@ bool roboticslab::DextraHand::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getTorqueRaw(int j, double *t)
+bool roboticslab::DextraControlboard::getTorque(int j, double *t)
 {
     //CD_INFO("\n");  //-- Too verbose in controlboardwrapper2 stream.
     return true;
@@ -68,7 +68,7 @@ bool roboticslab::DextraHand::getTorqueRaw(int j, double *t)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getTorquesRaw(double *t)
+bool roboticslab::DextraControlboard::getTorques(double *t)
 {
     CD_ERROR("\n");
     return false;
@@ -76,7 +76,7 @@ bool roboticslab::DextraHand::getTorquesRaw(double *t)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getTorqueRangeRaw(int j, double *min, double *max)
+bool roboticslab::DextraControlboard::getTorqueRange(int j, double *min, double *max)
 {
     CD_INFO("\n");
     return true;
@@ -84,7 +84,7 @@ bool roboticslab::DextraHand::getTorqueRangeRaw(int j, double *min, double *max)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getTorqueRangesRaw(double *min, double *max)
+bool roboticslab::DextraControlboard::getTorqueRanges(double *min, double *max)
 {
     CD_ERROR("\n");
     return false;
@@ -92,7 +92,7 @@ bool roboticslab::DextraHand::getTorqueRangesRaw(double *min, double *max)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setTorquePidsRaw(const yarp::dev::Pid *pids)
+bool roboticslab::DextraControlboard::setTorquePids(const yarp::dev::Pid *pids)
 {
     CD_ERROR("\n");
     return false;
@@ -100,7 +100,7 @@ bool roboticslab::DextraHand::setTorquePidsRaw(const yarp::dev::Pid *pids)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setTorqueErrorLimitRaw(int j, double limit)
+bool roboticslab::DextraControlboard::setTorqueErrorLimit(int j, double limit)
 {
     CD_INFO("\n");
     return true;
@@ -108,7 +108,7 @@ bool roboticslab::DextraHand::setTorqueErrorLimitRaw(int j, double limit)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setTorqueErrorLimitsRaw(const double *limits)
+bool roboticslab::DextraControlboard::setTorqueErrorLimits(const double *limits)
 {
     CD_ERROR("\n");
     return false;
@@ -116,7 +116,7 @@ bool roboticslab::DextraHand::setTorqueErrorLimitsRaw(const double *limits)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getTorqueErrorRaw(int j, double *err)
+bool roboticslab::DextraControlboard::getTorqueError(int j, double *err)
 {
     CD_INFO("\n");
     return true;
@@ -124,7 +124,7 @@ bool roboticslab::DextraHand::getTorqueErrorRaw(int j, double *err)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getTorqueErrorsRaw(double *errs)
+bool roboticslab::DextraControlboard::getTorqueErrors(double *errs)
 {
     CD_ERROR("\n");
     return false;
@@ -132,7 +132,7 @@ bool roboticslab::DextraHand::getTorqueErrorsRaw(double *errs)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getTorquePidOutputRaw(int j, double *out)
+bool roboticslab::DextraControlboard::getTorquePidOutput(int j, double *out)
 {
     CD_INFO("\n");
     return true;
@@ -140,7 +140,7 @@ bool roboticslab::DextraHand::getTorquePidOutputRaw(int j, double *out)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getTorquePidOutputsRaw(double *outs)
+bool roboticslab::DextraControlboard::getTorquePidOutputs(double *outs)
 {
     CD_ERROR("\n");
     return false;
@@ -148,7 +148,7 @@ bool roboticslab::DextraHand::getTorquePidOutputsRaw(double *outs)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getTorquePidRaw(int j, yarp::dev::Pid *pid)
+bool roboticslab::DextraControlboard::getTorquePid(int j, yarp::dev::Pid *pid)
 {
     CD_INFO("\n");
     return true;
@@ -156,7 +156,7 @@ bool roboticslab::DextraHand::getTorquePidRaw(int j, yarp::dev::Pid *pid)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getTorquePidsRaw(yarp::dev::Pid *pids)
+bool roboticslab::DextraControlboard::getTorquePids(yarp::dev::Pid *pids)
 {
     CD_ERROR("\n");
     return false;
@@ -164,7 +164,7 @@ bool roboticslab::DextraHand::getTorquePidsRaw(yarp::dev::Pid *pids)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getTorqueErrorLimitRaw(int j, double *limit)
+bool roboticslab::DextraControlboard::getTorqueErrorLimit(int j, double *limit)
 {
     CD_INFO("\n");
     return true;
@@ -172,7 +172,7 @@ bool roboticslab::DextraHand::getTorqueErrorLimitRaw(int j, double *limit)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getTorqueErrorLimitsRaw(double *limits)
+bool roboticslab::DextraControlboard::getTorqueErrorLimits(double *limits)
 {
     CD_ERROR("\n");
     return false;
@@ -180,7 +180,7 @@ bool roboticslab::DextraHand::getTorqueErrorLimitsRaw(double *limits)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::resetTorquePidRaw(int j)
+bool roboticslab::DextraControlboard::resetTorquePid(int j)
 {
     CD_INFO("\n");
     return true;
@@ -188,7 +188,7 @@ bool roboticslab::DextraHand::resetTorquePidRaw(int j)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::disableTorquePidRaw(int j)
+bool roboticslab::DextraControlboard::disableTorquePid(int j)
 {
     CD_INFO("\n");
     return true;
@@ -196,7 +196,7 @@ bool roboticslab::DextraHand::disableTorquePidRaw(int j)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::enableTorquePidRaw(int j)
+bool roboticslab::DextraControlboard::enableTorquePid(int j)
 {
     CD_INFO("\n");
     return true;
@@ -204,7 +204,7 @@ bool roboticslab::DextraHand::enableTorquePidRaw(int j)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setTorqueOffsetRaw(int j, double v)
+bool roboticslab::DextraControlboard::setTorqueOffset(int j, double v)
 {
     CD_INFO("\n");
     return true;
