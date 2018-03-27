@@ -25,8 +25,6 @@
 //#define CD_HIDE_WARNING  //-- Can be globally managed from father CMake.
 //#define CD_HIDE_ERROR  //-- Can be globally managed from father CMake.
 #include "ColorDebug.hpp"
-#include "ICanBusSharer.h"
-
 
 namespace roboticslab
 {
@@ -53,7 +51,6 @@ public:
 
     DextraControlboard()
     {
-        canDevicePtr = 0;
     }
 
     //  --------- DeviceDriver Declarations. Implementation in DextraControlboard.cpp ---------
@@ -207,17 +204,7 @@ protected:
 
     int fd;  // File descriptor for serial communications
 
-
-    /** pt-related **/
-    int ptPointCounter;
-    yarp::os::Semaphore ptBuffer;
-    bool ptMovementDone;
-
     bool targetReached;
-
-    int canId;
-
-    ICanBusHico *canDevicePtr;
 
     double max, min, refAcceleration, refSpeed, tr, targetPosition;
 
@@ -226,12 +213,6 @@ protected:
     double encoder;
     uint32_t encoderTimestamp;
     yarp::os::Semaphore encoderReady;
-
-    /** A helper function to display CAN messages. */
-    std::string msgToStr(can_msg* message);
-    std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
-
-    int16_t ptModeMs;  //-- [ms]
 
     //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
     yarp::dev::InteractionModeEnum interactionMode;
