@@ -1,9 +1,9 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraHand.hpp"
+#include "DextraControlboard.hpp"
 
 // -----------------------------------------------------------------------------
-bool roboticslab::DextraHand::open(yarp::os::Searchable& config)
+bool roboticslab::DextraControlboard::open(yarp::os::Searchable& config)
 {
 
     /*this->canId = config.check("canId",0,"can bus ID").asInt();
@@ -18,7 +18,7 @@ bool roboticslab::DextraHand::open(yarp::os::Searchable& config)
     this->refSpeed = 0;
     this->encoder = 0;
 
-    CD_SUCCESS("Created DextraHand with canId %d and tr %f, and all local parameters set to 0.\n",canId,tr);
+    CD_SUCCESS("Created DextraControlboard with canId %d and tr %f, and all local parameters set to 0.\n",canId,tr);
     */
 
     char serialport[13] = "/dev/ttyACM0";  // Was /dev/ttyUSB0
@@ -40,7 +40,7 @@ bool roboticslab::DextraHand::open(yarp::os::Searchable& config)
 }
 
 // -----------------------------------------------------------------------------
-bool roboticslab::DextraHand::close()
+bool roboticslab::DextraControlboard::close()
 {
     CD_INFO("\n");
     return true;

@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraHand.hpp"
+#include "DextraControlboard.hpp"
 
 // ############################## IControlModeRaw Related ##############################
 
-bool roboticslab::DextraHand::setPositionModeRaw(int j)
+bool roboticslab::DextraControlboard::setPositionModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -16,7 +16,7 @@ bool roboticslab::DextraHand::setPositionModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setVelocityModeRaw(int j)
+bool roboticslab::DextraControlboard::setVelocityModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -28,7 +28,7 @@ bool roboticslab::DextraHand::setVelocityModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setTorqueModeRaw(int j)
+bool roboticslab::DextraControlboard::setTorqueModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -40,7 +40,7 @@ bool roboticslab::DextraHand::setTorqueModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setImpedancePositionModeRaw(int j)
+bool roboticslab::DextraControlboard::setImpedancePositionModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -52,7 +52,7 @@ bool roboticslab::DextraHand::setImpedancePositionModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setImpedanceVelocityModeRaw(int j)
+bool roboticslab::DextraControlboard::setImpedanceVelocityModeRaw(int j)
 {
     CD_INFO("(%d)\n",j);
 
@@ -64,7 +64,7 @@ bool roboticslab::DextraHand::setImpedanceVelocityModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setOpenLoopModeRaw(int j)
+bool roboticslab::DextraControlboard::setOpenLoopModeRaw(int j)
 {
     CD_ERROR("(%d)\n",j);  //-- Removed in YARP 2.3.70
     return false;
@@ -72,7 +72,7 @@ bool roboticslab::DextraHand::setOpenLoopModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getControlModeRaw(int j, int *mode)
+bool roboticslab::DextraControlboard::getControlModeRaw(int j, int *mode)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
 
@@ -86,7 +86,7 @@ bool roboticslab::DextraHand::getControlModeRaw(int j, int *mode)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getControlModesRaw(int *modes)
+bool roboticslab::DextraControlboard::getControlModesRaw(int *modes)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -94,7 +94,7 @@ bool roboticslab::DextraHand::getControlModesRaw(int *modes)
 
 // ############################## IControlMode2Raw Related ##############################
 
-bool roboticslab::DextraHand::getControlModesRaw(const int n_joint, const int *joints, int *modes)
+bool roboticslab::DextraControlboard::getControlModesRaw(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("\n");
 
@@ -106,7 +106,7 @@ bool roboticslab::DextraHand::getControlModesRaw(const int n_joint, const int *j
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setControlModeRaw(const int j, const int mode)
+bool roboticslab::DextraControlboard::setControlModeRaw(const int j, const int mode)
 {
     CD_DEBUG("(%d, %d)\n",j,mode);
 
@@ -131,7 +131,7 @@ bool roboticslab::DextraHand::setControlModeRaw(const int j, const int mode)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setControlModesRaw(const int n_joint, const int *joints, int *modes)
+bool roboticslab::DextraControlboard::setControlModesRaw(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("(%d)\n",n_joint);
 
@@ -143,7 +143,7 @@ bool roboticslab::DextraHand::setControlModesRaw(const int n_joint, const int *j
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setControlModesRaw(int *modes)
+bool roboticslab::DextraControlboard::setControlModesRaw(int *modes)
 {
     CD_DEBUG("\n");
     return setControlModeRaw(0, modes[0]);

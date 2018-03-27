@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraHand.hpp"
+#include "DextraControlboard.hpp"
 
 //  ########################### IVelocityControlRaw implementations ###########################
 
-bool roboticslab::DextraHand::velocityMoveRaw(int j, double sp)
+bool roboticslab::DextraControlboard::velocityMoveRaw(int j, double sp)
 {
     CD_INFO("Missing implementation\n");
     return true;
@@ -12,7 +12,7 @@ bool roboticslab::DextraHand::velocityMoveRaw(int j, double sp)
 
 // --------------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::velocityMoveRaw(const double *sp)
+bool roboticslab::DextraControlboard::velocityMoveRaw(const double *sp)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -20,7 +20,7 @@ bool roboticslab::DextraHand::velocityMoveRaw(const double *sp)
 
 //  ########################### IVelocityControl2Raw implementations ###########################
 
-bool roboticslab::DextraHand::velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
+bool roboticslab::DextraControlboard::velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -28,7 +28,7 @@ bool roboticslab::DextraHand::velocityMoveRaw(const int n_joint, const int *join
 
 // --------------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getRefVelocityRaw(const int joint, double *vel)
+bool roboticslab::DextraControlboard::getRefVelocityRaw(const int joint, double *vel)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -36,7 +36,7 @@ bool roboticslab::DextraHand::getRefVelocityRaw(const int joint, double *vel)
 
 // --------------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getRefVelocitiesRaw(double *vels)
+bool roboticslab::DextraControlboard::getRefVelocitiesRaw(double *vels)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -44,7 +44,7 @@ bool roboticslab::DextraHand::getRefVelocitiesRaw(double *vels)
 
 // --------------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels)
+bool roboticslab::DextraControlboard::getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -52,7 +52,7 @@ bool roboticslab::DextraHand::getRefVelocitiesRaw(const int n_joint, const int *
 
 // --------------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setVelPidRaw(int j, const yarp::dev::Pid &pid)
+bool roboticslab::DextraControlboard::setVelPidRaw(int j, const yarp::dev::Pid &pid)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -60,7 +60,7 @@ bool roboticslab::DextraHand::setVelPidRaw(int j, const yarp::dev::Pid &pid)
 
 // --------------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setVelPidsRaw(const yarp::dev::Pid *pids)
+bool roboticslab::DextraControlboard::setVelPidsRaw(const yarp::dev::Pid *pids)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -68,7 +68,7 @@ bool roboticslab::DextraHand::setVelPidsRaw(const yarp::dev::Pid *pids)
 
 // --------------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getVelPidRaw(int j, yarp::dev::Pid *pid)
+bool roboticslab::DextraControlboard::getVelPidRaw(int j, yarp::dev::Pid *pid)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -76,7 +76,7 @@ bool roboticslab::DextraHand::getVelPidRaw(int j, yarp::dev::Pid *pid)
 
 // --------------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getVelPidsRaw(yarp::dev::Pid *pids)
+bool roboticslab::DextraControlboard::getVelPidsRaw(yarp::dev::Pid *pids)
 {
     CD_ERROR("Missing implementation\n");
     return false;

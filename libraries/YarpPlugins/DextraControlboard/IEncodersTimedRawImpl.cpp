@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraHand.hpp"
+#include "DextraControlboard.hpp"
 
 // ------------------ IEncodersTimedRaw Related -----------------------------------------
 
-bool roboticslab::DextraHand::getEncodersTimedRaw(double *encs, double *time)
+bool roboticslab::DextraControlboard::getEncodersTimedRaw(double *encs, double *time)
 {
     CD_ERROR("\n");
     return false;
@@ -12,7 +12,7 @@ bool roboticslab::DextraHand::getEncodersTimedRaw(double *encs, double *time)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getEncoderTimedRaw(int j, double *encs, double *time)
+bool roboticslab::DextraControlboard::getEncoderTimedRaw(int j, double *encs, double *time)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 

@@ -33,34 +33,34 @@ namespace roboticslab
 
 /**
  * @ingroup YarpPlugins
- * \defgroup DextraHand
- * @brief Contains roboticslab::DextraHand.
+ * \defgroup DextraControlboard
+ * @brief Contains roboticslab::DextraControlboard.
  */
 
 /**
-* @ingroup DextraHand
+* @ingroup DextraControlboard
 * @brief Implementation for the custom UC3M Dextra Hand as a single CAN bus joint (controlboard raw interfaces).
 *
 */
 // Note: IEncodersTimedRaw inherits from IEncodersRaw
 // Note: IControlLimits2Raw inherits from IControlLimitsRaw
-class DextraHand : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlMode2Raw, public yarp::dev::IEncodersTimedRaw,
+class DextraControlboard : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlMode2Raw, public yarp::dev::IEncodersTimedRaw,
     public yarp::dev::IPositionControl2Raw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControl2Raw, public yarp::dev::ITorqueControlRaw,
     public ICanBusSharer, public yarp::dev::IInteractionModeRaw
 {
 
 public:
 
-    DextraHand()
+    DextraControlboard()
     {
         canDevicePtr = 0;
     }
 
-    //  --------- DeviceDriver Declarations. Implementation in DextraHand.cpp ---------
+    //  --------- DeviceDriver Declarations. Implementation in DextraControlboard.cpp ---------
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
 
-    //  --------- ICanBusSharer Declarations. Implementation in DextraHand.cpp ---------
+    //  --------- ICanBusSharer Declarations. Implementation in DextraControlboard.cpp ---------
     virtual bool setCanBusPtr(ICanBusHico *canDevicePtr);
     virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
     {
@@ -210,7 +210,7 @@ public:
 
 protected:
 
-    //  --------- Implementation in DextraHand.cpp ---------
+    //  --------- Implementation in DextraControlboard.cpp ---------
     // takes the string name of the serial port (e.g. "/dev/tty.usbserial","COM1")
     // and a baud rate (bps) and connects to that port at that speed and 8N1.
     // opens the port in fully raw mode so you can send binary data.

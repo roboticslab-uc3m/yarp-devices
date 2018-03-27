@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraHand.hpp"
+#include "DextraControlboard.hpp"
 
 // ############################## IPositionDirectRaw Related ##############################
 
-bool roboticslab::DextraHand::setPositionRaw(int j, double ref)
+bool roboticslab::DextraControlboard::setPositionRaw(int j, double ref)
 {
     CD_DEBUG("\n");
     this->positionMoveRaw(0,ref);
@@ -13,7 +13,7 @@ bool roboticslab::DextraHand::setPositionRaw(int j, double ref)
 
 // ----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setPositionsRaw(const int n_joint, const int *joints, double *refs)
+bool roboticslab::DextraControlboard::setPositionsRaw(const int n_joint, const int *joints, double *refs)
 {
     CD_DEBUG("\n");
     this->positionMoveRaw(0,refs[0]);
@@ -22,7 +22,7 @@ bool roboticslab::DextraHand::setPositionsRaw(const int n_joint, const int *join
 
 // ----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setPositionsRaw(const double *refs)
+bool roboticslab::DextraControlboard::setPositionsRaw(const double *refs)
 {
     CD_DEBUG("\n");
     return true;

@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraHand.hpp"
+#include "DextraControlboard.hpp"
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setCanBusPtr(ICanBusHico *canDevicePtr)
+bool roboticslab::DextraControlboard::setCanBusPtr(ICanBusHico *canDevicePtr)
 {
 
     this->canDevicePtr = canDevicePtr;
@@ -14,7 +14,7 @@ bool roboticslab::DextraHand::setCanBusPtr(ICanBusHico *canDevicePtr)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::start()
+bool roboticslab::DextraControlboard::start()
 {
 
     return true;
@@ -22,7 +22,7 @@ bool roboticslab::DextraHand::start()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::readyToSwitchOn()
+bool roboticslab::DextraControlboard::readyToSwitchOn()
 {
 
     return true;
@@ -30,7 +30,7 @@ bool roboticslab::DextraHand::readyToSwitchOn()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::switchOn()
+bool roboticslab::DextraControlboard::switchOn()
 {
 
     return true;
@@ -38,7 +38,7 @@ bool roboticslab::DextraHand::switchOn()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::enable()
+bool roboticslab::DextraControlboard::enable()
 {
 
     return true;
@@ -46,7 +46,7 @@ bool roboticslab::DextraHand::enable()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::recoverFromError()
+bool roboticslab::DextraControlboard::recoverFromError()
 {
 
     return true;
@@ -54,7 +54,7 @@ bool roboticslab::DextraHand::recoverFromError()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::interpretMessage( can_msg * message)
+bool roboticslab::DextraControlboard::interpretMessage( can_msg * message)
 {
 
     return true;

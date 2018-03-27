@@ -1,7 +1,7 @@
 ```
-yarpdev --device DextraHand
+yarpdev --device DextraControlboard
 ```
 
 ```
-oneCanBusOneWrapper --from oneCanBusOneWrapper-DextraHand.ini
+oneCanBusOneWrapper --from oneCanBusOneWrapper-DextraControlboard.ini
 ```

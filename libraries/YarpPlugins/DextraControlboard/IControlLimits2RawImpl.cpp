@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraHand.hpp"
+#include "DextraControlboard.hpp"
 
 // ------------------- IControlLimitsRaw Related ------------------------------------
 
-bool roboticslab::DextraHand::setLimitsRaw(int axis, double min, double max)
+bool roboticslab::DextraControlboard::setLimitsRaw(int axis, double min, double max)
 {
     CD_INFO("(%d,%f,%f)\n",axis,min,max);
 
@@ -20,7 +20,7 @@ bool roboticslab::DextraHand::setLimitsRaw(int axis, double min, double max)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getLimitsRaw(int axis, double *min, double *max)
+bool roboticslab::DextraControlboard::getLimitsRaw(int axis, double *min, double *max)
 {
     CD_INFO("(%d)\n",axis);
 
@@ -36,7 +36,7 @@ bool roboticslab::DextraHand::getLimitsRaw(int axis, double *min, double *max)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::setVelLimitsRaw(int axis, double min, double max)
+bool roboticslab::DextraControlboard::setVelLimitsRaw(int axis, double min, double max)
 {
     CD_WARNING("Not implemented.\n");
     return true;
@@ -44,7 +44,7 @@ bool roboticslab::DextraHand::setVelLimitsRaw(int axis, double min, double max)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraHand::getVelLimitsRaw(int axis, double *min, double *max)
+bool roboticslab::DextraControlboard::getVelLimitsRaw(int axis, double *min, double *max)
 {
     CD_WARNING("Not implemented.\n");
     return true;
