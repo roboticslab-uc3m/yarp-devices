@@ -16,7 +16,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}) # yarp plugin builder needs thi
 yarp_add_plugin(DextraControlboard DextraControlboard.cpp
                            DextraControlboard.hpp
                            DeviceDriverImpl.cpp
-                           ICanBusSharerImpl.cpp
                            IControlLimits2Impl.cpp
                            IControlMode2Impl.cpp
                            IEncodersImpl.cpp
