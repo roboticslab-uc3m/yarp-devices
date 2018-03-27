@@ -39,7 +39,7 @@ namespace roboticslab
 
 /**
 * @ingroup DextraControlboard
-* @brief Implementation for the custom UC3M Dextra Hand as a single CAN bus joint (controlboard raw interfaces).
+* @brief Implementation for the custom UC3M Dextra Hand controlboard interfaces.
 *
 */
 // Note: IEncodersTimed inherits from IEncoders
