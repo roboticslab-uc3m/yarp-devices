@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __DEXTRA_HAND__
-#define __DEXTRA_HAND__
+#ifndef __DEXTRA_CONTROLBOARD__
+#define __DEXTRA_CONTROLBOARD__
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
@@ -260,5 +260,5 @@ protected:
 
 }  // namespace roboticslab
 
-#endif  // __DEXTRA_HAND__
+#endif  // __DEXTRA_CONTROLBOARD__
 
