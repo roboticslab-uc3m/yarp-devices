@@ -2,10 +2,10 @@
 
 #include "DextraControlboard.hpp"
 
-// ################################ IInteractionModeRaw Related ################################
+// ################################ IInteractionMode Related ################################
 
 
-bool roboticslab::DextraControlboard::getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode)
+bool roboticslab::DextraControlboard::getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
 {
     CD_INFO("(%d)\n",axis);
 
@@ -15,7 +15,7 @@ bool roboticslab::DextraControlboard::getInteractionModeRaw(int axis, yarp::dev:
 
 // ----------------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::DextraControlboard::getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -24,7 +24,7 @@ bool roboticslab::DextraControlboard::getInteractionModesRaw(int n_joints, int *
 
 // ----------------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::DextraControlboard::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -33,7 +33,7 @@ bool roboticslab::DextraControlboard::getInteractionModesRaw(yarp::dev::Interact
 
 // ----------------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
+bool roboticslab::DextraControlboard::setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode)
 {
     CD_INFO("(%d), (%s)\n",axis, mode); //-- I don't know if this is correct (if I want to print mode?)
 
@@ -46,7 +46,7 @@ bool roboticslab::DextraControlboard::setInteractionModeRaw(int axis, yarp::dev:
 
 // ----------------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::DextraControlboard::setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 
@@ -56,7 +56,7 @@ bool roboticslab::DextraControlboard::setInteractionModesRaw(int n_joints, int *
 
 // ----------------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
+bool roboticslab::DextraControlboard::setInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
 

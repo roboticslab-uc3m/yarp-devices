@@ -42,11 +42,11 @@ namespace roboticslab
 * @brief Implementation for the custom UC3M Dextra Hand as a single CAN bus joint (controlboard raw interfaces).
 *
 */
-// Note: IEncodersTimedRaw inherits from IEncodersRaw
-// Note: IControlLimits2Raw inherits from IControlLimitsRaw
-class DextraControlboard : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlMode2Raw, public yarp::dev::IEncodersTimedRaw,
-    public yarp::dev::IPositionControl2Raw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControl2Raw, public yarp::dev::ITorqueControlRaw,
-    public ICanBusSharer, public yarp::dev::IInteractionModeRaw
+// Note: IEncodersTimed inherits from IEncoders
+// Note: IControlLimits2 inherits from IControlLimits
+class DextraControlboard : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2, public yarp::dev::IControlMode2, public yarp::dev::IEncodersTimed,
+    public yarp::dev::IPositionControl2, public yarp::dev::IPositionDirect, public yarp::dev::IVelocityControl2, public yarp::dev::ITorqueControl,
+    public ICanBusSharer, public yarp::dev::IInteractionMode
 {
 
 public:
@@ -62,7 +62,7 @@ public:
 
     //  --------- ICanBusSharer Declarations. Implementation in DextraControlboard.cpp ---------
     virtual bool setCanBusPtr(ICanBusHico *canDevicePtr);
-    virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
+    virtual bool setIEncodersTimedExternal(IEncodersTimed * iEncodersTimed)
     {
         return true;
     }
@@ -78,135 +78,135 @@ public:
     /** recoverFromError */
     virtual bool recoverFromError();
 
-    //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
-    virtual bool setLimitsRaw(int axis, double min, double max);
-    virtual bool getLimitsRaw(int axis, double *min, double *max);
-    virtual bool setVelLimitsRaw(int axis, double min, double max);
-    virtual bool getVelLimitsRaw(int axis, double *min, double *max);
+    //  --------- IControlLimits Declarations. Implementation in IControlLimitsImpl.cpp ---------
+    virtual bool setLimits(int axis, double min, double max);
+    virtual bool getLimits(int axis, double *min, double *max);
+    virtual bool setVelLimits(int axis, double min, double max);
+    virtual bool getVelLimits(int axis, double *min, double *max);
 
-    //  --------- IControlModeRaw Declarations. Implementation in IControlMode2RawImpl.cpp ---------
-    virtual bool setPositionModeRaw(int j);
-    virtual bool setVelocityModeRaw(int j);
-    virtual bool setTorqueModeRaw(int j);
-    virtual bool setImpedancePositionModeRaw(int j);
-    virtual bool setImpedanceVelocityModeRaw(int j);
-    virtual bool setOpenLoopModeRaw(int j);
-    virtual bool getControlModeRaw(int j, int *mode);
-    virtual bool getControlModesRaw(int *modes);
+    //  --------- IControlMode Declarations. Implementation in IControlMode2Impl.cpp ---------
+    virtual bool setPositionMode(int j);
+    virtual bool setVelocityMode(int j);
+    virtual bool setTorqueMode(int j);
+    virtual bool setImpedancePositionMode(int j);
+    virtual bool setImpedanceVelocityMode(int j);
+    virtual bool setOpenLoopMode(int j);
+    virtual bool getControlMode(int j, int *mode);
+    virtual bool getControlModes(int *modes);
 
-    //  --------- IControlMode2Raw Declarations. Implementation in IControlMode2RawImpl.cpp ---------
-    virtual bool getControlModesRaw(const int n_joint, const int *joints, int *modes);
-    virtual bool setControlModeRaw(const int j, const int mode);
-    virtual bool setControlModesRaw(const int n_joint, const int *joints, int *modes);
-    virtual bool setControlModesRaw(int *modes);
+    //  --------- IControlMode2 Declarations. Implementation in IControlMode2Impl.cpp ---------
+    virtual bool getControlModes(const int n_joint, const int *joints, int *modes);
+    virtual bool setControlMode(const int j, const int mode);
+    virtual bool setControlModes(const int n_joint, const int *joints, int *modes);
+    virtual bool setControlModes(int *modes);
 
-    //  ---------- IEncodersRaw Declarations. Implementation in IEncodersRawImpl.cpp ----------
-    virtual bool resetEncoderRaw(int j);
-    virtual bool resetEncodersRaw();
-    virtual bool setEncoderRaw(int j, double val);
-    virtual bool setEncodersRaw(const double *vals);
-    virtual bool getEncoderRaw(int j, double *v);
-    virtual bool getEncodersRaw(double *encs);
-    virtual bool getEncoderSpeedRaw(int j, double *sp);
-    virtual bool getEncoderSpeedsRaw(double *spds);
-    virtual bool getEncoderAccelerationRaw(int j, double *spds);
-    virtual bool getEncoderAccelerationsRaw(double *accs);
+    //  ---------- IEncoders Declarations. Implementation in IEncodersImpl.cpp ----------
+    virtual bool resetEncoder(int j);
+    virtual bool resetEncoders();
+    virtual bool setEncoder(int j, double val);
+    virtual bool setEncoders(const double *vals);
+    virtual bool getEncoder(int j, double *v);
+    virtual bool getEncoders(double *encs);
+    virtual bool getEncoderSpeed(int j, double *sp);
+    virtual bool getEncoderSpeeds(double *spds);
+    virtual bool getEncoderAcceleration(int j, double *spds);
+    virtual bool getEncoderAccelerations(double *accs);
 
-    //  ---------- IEncodersTimedRaw Declarations. Implementation in IEncodersTimedRawImpl.cpp ----------
-    virtual bool getEncodersTimedRaw(double *encs, double *time);
-    virtual bool getEncoderTimedRaw(int j, double *encs, double *time);
+    //  ---------- IEncodersTimed Declarations. Implementation in IEncodersTimedImpl.cpp ----------
+    virtual bool getEncodersTimed(double *encs, double *time);
+    virtual bool getEncoderTimed(int j, double *encs, double *time);
 
-    // ------- IPositionControlRaw declarations. Implementation in IPositionControl2RawImpl.cpp -------
+    // ------- IPositionControl declarations. Implementation in IPositionControl2Impl.cpp -------
     virtual bool getAxes(int *ax);
-    virtual bool positionMoveRaw(int j, double ref);
-    virtual bool positionMoveRaw(const double *refs);
-    virtual bool relativeMoveRaw(int j, double delta);
-    virtual bool relativeMoveRaw(const double *deltas);
-    virtual bool checkMotionDoneRaw(int j, bool *flag);
-    virtual bool checkMotionDoneRaw(bool *flag);
-    virtual bool setRefSpeedRaw(int j, double sp);
-    virtual bool setRefSpeedsRaw(const double *spds);
-    virtual bool setRefAccelerationRaw(int j, double acc);
-    virtual bool setRefAccelerationsRaw(const double *accs);
-    virtual bool getRefSpeedRaw(int j, double *ref);
-    virtual bool getRefSpeedsRaw(double *spds);
-    virtual bool getRefAccelerationRaw(int j, double *acc);
-    virtual bool getRefAccelerationsRaw(double *accs);
-    virtual bool stopRaw(int j);
-    virtual bool stopRaw();
+    virtual bool positionMove(int j, double ref);
+    virtual bool positionMove(const double *refs);
+    virtual bool relativeMove(int j, double delta);
+    virtual bool relativeMove(const double *deltas);
+    virtual bool checkMotionDone(int j, bool *flag);
+    virtual bool checkMotionDone(bool *flag);
+    virtual bool setRefSpeed(int j, double sp);
+    virtual bool setRefSpeeds(const double *spds);
+    virtual bool setRefAcceleration(int j, double acc);
+    virtual bool setRefAccelerations(const double *accs);
+    virtual bool getRefSpeed(int j, double *ref);
+    virtual bool getRefSpeeds(double *spds);
+    virtual bool getRefAcceleration(int j, double *acc);
+    virtual bool getRefAccelerations(double *accs);
+    virtual bool stop(int j);
+    virtual bool stop();
 
-    // ------- IPositionControl2Raw declarations. Implementation in IPositionControl2RawImpl.cpp ---------
+    // ------- IPositionControl2 declarations. Implementation in IPositionControl2Impl.cpp ---------
 
-    virtual bool positionMoveRaw(const int n_joint, const int *joints, const double *refs);
-    virtual bool relativeMoveRaw(const int n_joint, const int *joints, const double *deltas);
-    virtual bool checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags);
-    virtual bool setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds);
-    virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs);
-    virtual bool getRefSpeedsRaw(const int n_joint, const int *joints, double *spds);
-    virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs);
-    virtual bool stopRaw(const int n_joint, const int *joints);
-    virtual bool getTargetPositionRaw(const int joint, double *ref);
-    virtual bool getTargetPositionsRaw(double *refs);
-    virtual bool getTargetPositionsRaw(const int n_joint, const int *joints, double *refs);
+    virtual bool positionMove(const int n_joint, const int *joints, const double *refs);
+    virtual bool relativeMove(const int n_joint, const int *joints, const double *deltas);
+    virtual bool checkMotionDone(const int n_joint, const int *joints, bool *flags);
+    virtual bool setRefSpeeds(const int n_joint, const int *joints, const double *spds);
+    virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs);
+    virtual bool getRefSpeeds(const int n_joint, const int *joints, double *spds);
+    virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs);
+    virtual bool stop(const int n_joint, const int *joints);
+    virtual bool getTargetPosition(const int joint, double *ref);
+    virtual bool getTargetPositions(double *refs);
+    virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs);
 
-    // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
-    virtual bool setPositionRaw(int j, double ref);
-    virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs);
-    virtual bool setPositionsRaw(const double *refs);
+    // ------- IPositionDirect declarations. Implementation in IPositionDirectImpl.cpp -------
+    virtual bool setPosition(int j, double ref);
+    virtual bool setPositions(const int n_joint, const int *joints, double *refs);
+    virtual bool setPositions(const double *refs);
 
-    // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
-    virtual bool getRefTorquesRaw(double *t);
-    virtual bool getRefTorqueRaw(int j, double *t);
-    virtual bool setRefTorquesRaw(const double *t);
-    virtual bool setRefTorqueRaw(int j, double t);
-    virtual bool getBemfParamRaw(int j, double *bemf);
-    virtual bool setBemfParamRaw(int j, double bemf);
-    virtual bool setTorquePidRaw(int j, const yarp::dev::Pid &pid);
-    virtual bool getTorqueRaw(int j, double *t);
-    virtual bool getTorquesRaw(double *t);
-    virtual bool getTorqueRangeRaw(int j, double *min, double *max);
-    virtual bool getTorqueRangesRaw(double *min, double *max);
-    virtual bool setTorquePidsRaw(const yarp::dev::Pid *pids);
-    virtual bool setTorqueErrorLimitRaw(int j, double limit);
-    virtual bool setTorqueErrorLimitsRaw(const double *limits);
-    virtual bool getTorqueErrorRaw(int j, double *err);
-    virtual bool getTorqueErrorsRaw(double *errs);
-    virtual bool getTorquePidOutputRaw(int j, double *out);
-    virtual bool getTorquePidOutputsRaw(double *outs);
-    virtual bool getTorquePidRaw(int j, yarp::dev::Pid *pid);
-    virtual bool getTorquePidsRaw(yarp::dev::Pid *pids);
-    virtual bool getTorqueErrorLimitRaw(int j, double *limit);
-    virtual bool getTorqueErrorLimitsRaw(double *limits);
-    virtual bool resetTorquePidRaw(int j);
-    virtual bool disableTorquePidRaw(int j);
-    virtual bool enableTorquePidRaw(int j);
-    virtual bool setTorqueOffsetRaw(int j, double v);
+    // -------- ITorqueControl declarations. Implementation in ITorqueControlImpl.cpp --------
+    virtual bool getRefTorques(double *t);
+    virtual bool getRefTorque(int j, double *t);
+    virtual bool setRefTorques(const double *t);
+    virtual bool setRefTorque(int j, double t);
+    virtual bool getBemfParam(int j, double *bemf);
+    virtual bool setBemfParam(int j, double bemf);
+    virtual bool setTorquePid(int j, const yarp::dev::Pid &pid);
+    virtual bool getTorque(int j, double *t);
+    virtual bool getTorques(double *t);
+    virtual bool getTorqueRange(int j, double *min, double *max);
+    virtual bool getTorqueRanges(double *min, double *max);
+    virtual bool setTorquePids(const yarp::dev::Pid *pids);
+    virtual bool setTorqueErrorLimit(int j, double limit);
+    virtual bool setTorqueErrorLimits(const double *limits);
+    virtual bool getTorqueError(int j, double *err);
+    virtual bool getTorqueErrors(double *errs);
+    virtual bool getTorquePidOutput(int j, double *out);
+    virtual bool getTorquePidOutputs(double *outs);
+    virtual bool getTorquePid(int j, yarp::dev::Pid *pid);
+    virtual bool getTorquePids(yarp::dev::Pid *pids);
+    virtual bool getTorqueErrorLimit(int j, double *limit);
+    virtual bool getTorqueErrorLimits(double *limits);
+    virtual bool resetTorquePid(int j);
+    virtual bool disableTorquePid(int j);
+    virtual bool enableTorquePid(int j);
+    virtual bool setTorqueOffset(int j, double v);
 
-    //  --------- IVelocityControlRaw Declarations. Implementation in IVelocityControl2RawImpl.cpp ---------
-    virtual bool velocityMoveRaw(int j, double sp);
-    virtual bool velocityMoveRaw(const double *sp);
+    //  --------- IVelocityControl Declarations. Implementation in IVelocityControl2Impl.cpp ---------
+    virtual bool velocityMove(int j, double sp);
+    virtual bool velocityMove(const double *sp);
 
-    //  --------- IVelocityControl2Raw Declarations. Implementation in IVelocityControl2RawImpl.cpp ---------
-    virtual bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds);
-    virtual bool getRefVelocityRaw(const int joint, double *vel);
-    virtual bool getRefVelocitiesRaw(double *vels);
-    virtual bool getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels);
-    // -- (just defined in IInteractionModeRaw) - virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs);
-    // -- (just defined in IInteractionModeRaw) - virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs);
-    // -- (just defined in IInteractionModeRaw) - virtual bool stopRaw(const int n_joint, const int *joints);
-    virtual bool setVelPidRaw(int j, const yarp::dev::Pid &pid);
-    virtual bool setVelPidsRaw(const yarp::dev::Pid *pids);
-    virtual bool getVelPidRaw(int j, yarp::dev::Pid *pid);
-    virtual bool getVelPidsRaw(yarp::dev::Pid *pids);
+    //  --------- IVelocityControl2 Declarations. Implementation in IVelocityControl2Impl.cpp ---------
+    virtual bool velocityMove(const int n_joint, const int *joints, const double *spds);
+    virtual bool getRefVelocity(const int joint, double *vel);
+    virtual bool getRefVelocities(double *vels);
+    virtual bool getRefVelocities(const int n_joint, const int *joints, double *vels);
+    // -- (just defined in IInteractionMode) - virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs);
+    // -- (just defined in IInteractionMode) - virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs);
+    // -- (just defined in IInteractionMode) - virtual bool stop(const int n_joint, const int *joints);
+    virtual bool setVelPid(int j, const yarp::dev::Pid &pid);
+    virtual bool setVelPids(const yarp::dev::Pid *pids);
+    virtual bool getVelPid(int j, yarp::dev::Pid *pid);
+    virtual bool getVelPids(yarp::dev::Pid *pids);
 
-    // ------- IInteractionModeRaw declarations. Implementation in IInteractionModeRawImpl.cpp -------
+    // ------- IInteractionMode declarations. Implementation in IInteractionModeImpl.cpp -------
 
-    virtual bool getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode);
-    virtual bool getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
-    virtual bool getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
-    virtual bool setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode);
-    virtual bool setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
-    virtual bool setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
+    virtual bool getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode);
+    virtual bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+    virtual bool getInteractionModes(yarp::dev::InteractionModeEnum* modes);
+    virtual bool setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode);
+    virtual bool setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+    virtual bool setInteractionModes(yarp::dev::InteractionModeEnum* modes);
 
 protected:
 

@@ -2,21 +2,21 @@
 
 #include "DextraControlboard.hpp"
 
-// ############################ IEncodersRaw Related ############################
+// ############################ IEncoders Related ############################
 
-bool roboticslab::DextraControlboard::resetEncoderRaw(int j)
+bool roboticslab::DextraControlboard::resetEncoder(int j)
 {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    return this->setEncoderRaw(j,0);
+    return this->setEncoder(j,0);
 }
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::resetEncodersRaw()
+bool roboticslab::DextraControlboard::resetEncoders()
 {
     CD_ERROR("\n");
     return false;
@@ -24,7 +24,7 @@ bool roboticslab::DextraControlboard::resetEncodersRaw()
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::setEncoderRaw(int j, double val)    // encExposed = val;
+bool roboticslab::DextraControlboard::setEncoder(int j, double val)    // encExposed = val;
 {
     CD_INFO("(%d,%f)\n",j,val);
 
@@ -38,7 +38,7 @@ bool roboticslab::DextraControlboard::setEncoderRaw(int j, double val)    // enc
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::setEncodersRaw(const double *vals)
+bool roboticslab::DextraControlboard::setEncoders(const double *vals)
 {
     CD_ERROR("\n");
     return false;
@@ -46,7 +46,7 @@ bool roboticslab::DextraControlboard::setEncodersRaw(const double *vals)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::getEncoderRaw(int j, double *v)
+bool roboticslab::DextraControlboard::getEncoder(int j, double *v)
 {
     //CD_INFO("%d\n",j);  //-- Too verbose in stream.
 
@@ -62,7 +62,7 @@ bool roboticslab::DextraControlboard::getEncoderRaw(int j, double *v)
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::getEncodersRaw(double *encs)
+bool roboticslab::DextraControlboard::getEncoders(double *encs)
 {
     CD_ERROR("\n");
     return false;
@@ -70,7 +70,7 @@ bool roboticslab::DextraControlboard::getEncodersRaw(double *encs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::getEncoderSpeedRaw(int j, double *sp)
+bool roboticslab::DextraControlboard::getEncoderSpeed(int j, double *sp)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
@@ -85,7 +85,7 @@ bool roboticslab::DextraControlboard::getEncoderSpeedRaw(int j, double *sp)
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::getEncoderSpeedsRaw(double *spds)
+bool roboticslab::DextraControlboard::getEncoderSpeeds(double *spds)
 {
     CD_ERROR("\n");
     return false;
@@ -93,7 +93,7 @@ bool roboticslab::DextraControlboard::getEncoderSpeedsRaw(double *spds)
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::getEncoderAccelerationRaw(int j, double *spds)
+bool roboticslab::DextraControlboard::getEncoderAcceleration(int j, double *spds)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
@@ -108,7 +108,7 @@ bool roboticslab::DextraControlboard::getEncoderAccelerationRaw(int j, double *s
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::getEncoderAccelerationsRaw(double *accs)
+bool roboticslab::DextraControlboard::getEncoderAccelerations(double *accs)
 {
     CD_ERROR("\n");
     return false;

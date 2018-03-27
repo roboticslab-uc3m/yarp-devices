@@ -2,9 +2,9 @@
 
 #include "DextraControlboard.hpp"
 
-// ------------------ IEncodersTimedRaw Related -----------------------------------------
+// ------------------ IEncodersTimed Related -----------------------------------------
 
-bool roboticslab::DextraControlboard::getEncodersTimedRaw(double *encs, double *time)
+bool roboticslab::DextraControlboard::getEncodersTimed(double *encs, double *time)
 {
     CD_ERROR("\n");
     return false;
@@ -12,7 +12,7 @@ bool roboticslab::DextraControlboard::getEncodersTimedRaw(double *encs, double *
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::getEncoderTimedRaw(int j, double *encs, double *time)
+bool roboticslab::DextraControlboard::getEncoderTimed(int j, double *encs, double *time)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 

@@ -2,9 +2,9 @@
 
 #include "DextraControlboard.hpp"
 
-// ------------------- IControlLimitsRaw Related ------------------------------------
+// ------------------- IControlLimits Related ------------------------------------
 
-bool roboticslab::DextraControlboard::setLimitsRaw(int axis, double min, double max)
+bool roboticslab::DextraControlboard::setLimits(int axis, double min, double max)
 {
     CD_INFO("(%d,%f,%f)\n",axis,min,max);
 
@@ -20,7 +20,7 @@ bool roboticslab::DextraControlboard::setLimitsRaw(int axis, double min, double 
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::getLimitsRaw(int axis, double *min, double *max)
+bool roboticslab::DextraControlboard::getLimits(int axis, double *min, double *max)
 {
     CD_INFO("(%d)\n",axis);
 
@@ -36,7 +36,7 @@ bool roboticslab::DextraControlboard::getLimitsRaw(int axis, double *min, double
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::setVelLimitsRaw(int axis, double min, double max)
+bool roboticslab::DextraControlboard::setVelLimits(int axis, double min, double max)
 {
     CD_WARNING("Not implemented.\n");
     return true;
@@ -44,7 +44,7 @@ bool roboticslab::DextraControlboard::setVelLimitsRaw(int axis, double min, doub
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::getVelLimitsRaw(int axis, double *min, double *max)
+bool roboticslab::DextraControlboard::getVelLimits(int axis, double *min, double *max)
 {
     CD_WARNING("Not implemented.\n");
     return true;

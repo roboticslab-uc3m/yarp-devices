@@ -17,15 +17,15 @@ yarp_add_plugin(DextraControlboard DextraControlboard.cpp
                            DextraControlboard.hpp
                            DeviceDriverImpl.cpp
                            ICanBusSharerImpl.cpp
-                           IControlLimits2RawImpl.cpp
-                           IControlMode2RawImpl.cpp
-                           IEncodersRawImpl.cpp
-                           IEncodersTimedRawImpl.cpp
-                           IInteractionModeRawImpl.cpp
-                           IPositionControl2RawImpl.cpp
-                           IPositionDirectRawImpl.cpp
-                           ITorqueControlRawImpl.cpp
-                           IVelocityControl2RawImpl.cpp)
+                           IControlLimits2Impl.cpp
+                           IControlMode2Impl.cpp
+                           IEncodersImpl.cpp
+                           IEncodersTimedImpl.cpp
+                           IInteractionModeImpl.cpp
+                           IPositionControl2Impl.cpp
+                           IPositionDirectImpl.cpp
+                           ITorqueControlImpl.cpp
+                           IVelocityControl2Impl.cpp)
 
 add_dependencies(DextraControlboard COLOR_DEBUG)
 
