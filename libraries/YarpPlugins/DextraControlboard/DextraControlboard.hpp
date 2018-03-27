@@ -46,7 +46,7 @@ namespace roboticslab
 // Note: IControlLimits2 inherits from IControlLimits
 class DextraControlboard : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2, public yarp::dev::IControlMode2, public yarp::dev::IEncodersTimed,
     public yarp::dev::IPositionControl2, public yarp::dev::IPositionDirect, public yarp::dev::IVelocityControl2, public yarp::dev::ITorqueControl,
-    public ICanBusSharer, public yarp::dev::IInteractionMode
+    public yarp::dev::IInteractionMode
 {
 
 public:
@@ -59,24 +59,6 @@ public:
     //  --------- DeviceDriver Declarations. Implementation in DextraControlboard.cpp ---------
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
-
-    //  --------- ICanBusSharer Declarations. Implementation in DextraControlboard.cpp ---------
-    virtual bool setCanBusPtr(ICanBusHico *canDevicePtr);
-    virtual bool setIEncodersTimedExternal(IEncodersTimed * iEncodersTimed)
-    {
-        return true;
-    }
-    virtual bool interpretMessage( can_msg * message);
-    /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
-    virtual bool start();
-    /** "ready to switch on", also acts as "shutdown" */
-    virtual bool readyToSwitchOn();
-    /** "switch on", also acts as "disable operation" */
-    virtual bool switchOn();
-    /** enable */
-    virtual bool enable();
-    /** recoverFromError */
-    virtual bool recoverFromError();
 
     //  --------- IControlLimits Declarations. Implementation in IControlLimitsImpl.cpp ---------
     virtual bool setLimits(int axis, double min, double max);
