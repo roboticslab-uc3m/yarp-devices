@@ -6,8 +6,7 @@ yarp_prepare_plugin(DextraControlboard
                     CATEGORY device
                     TYPE roboticslab::DextraControlboard
                     INCLUDE DextraControlboard.hpp
-                    DEFAULT ON
-                    DEPENDS UNIX)
+                    DEFAULT ON)
 
 if(NOT SKIP_DextraControlboard)
 
