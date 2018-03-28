@@ -6,7 +6,7 @@
 
 bool roboticslab::DextraControlboard::getAxes(int *ax)
 {
-    *ax = 1;
+    *ax = 6;
     return true;
 }
 
