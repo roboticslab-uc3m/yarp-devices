@@ -16,9 +16,6 @@ bool roboticslab::DextraControlboard::positionMove(int j, double ref)    // encE
 {
     CD_INFO("(%d,%f)\n",j,ref);
 
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
     uint8_t cmdByte;
 
     //-- Send header
