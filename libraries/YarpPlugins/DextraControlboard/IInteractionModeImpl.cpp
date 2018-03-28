@@ -7,7 +7,7 @@
 
 bool roboticslab::DextraControlboard::getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
 {
-    CD_INFO("(%d)\n",axis);
+    //CD_INFO("(%d)\n",axis);  // Too verbose.
 
     *mode = interactionMode;
     return true;
