@@ -73,8 +73,58 @@ bool roboticslab::DextraControlboard::positionMove(int j, double ref)    // encE
 
 bool roboticslab::DextraControlboard::positionMove(const double *refs)
 {
-    CD_ERROR("\n");
-    return false;
+    CD_INFO("\n");
+
+    uint8_t cmdByte;
+
+    //-- Send header
+    cmdByte = 0x7E;
+    if( serialport_writebyte(fd, cmdByte) != 0 )
+    {
+        CD_ERROR("Failed to send header\n");
+        return false;
+    }
+
+    for(int j=0; j<6;j++)
+    {
+        //-- Send address
+        //-- Addresses: chr(0x01),chr(0x02),chr(0x03),chr(0x04),chr(0x05),chr(0x06)
+        cmdByte = static_cast<uint8_t>(j+1);  // tad bit hacki-ish
+        if( serialport_writebyte(fd, cmdByte) != 0 )
+        {
+            CD_ERROR("Failed to send address\n");
+            return false;
+        }
+
+        //-- Send targets
+        size_t size = sizeof(float);
+        float refFloat = static_cast<float>(refs[j]);
+
+        std::vector<uint8_t> msg_position_target;
+        msg_position_target.resize(size,0);
+
+        memcpy(msg_position_target.data(),&refFloat,size);
+
+        for( size_t i = 0; i<size; i++)
+        {
+            cmdByte = msg_position_target[i];
+            if( serialport_writebyte(fd, cmdByte) != 0 )
+            {
+                CD_ERROR("Failed to send target [%d of %d]\n",i,size);
+                return false;
+            }
+        }
+    }
+
+    //-- Send footer
+    cmdByte = 0x7E;
+    if( serialport_writebyte(fd, cmdByte) != 0 )
+    {
+        CD_ERROR("Failed to send footer\n");
+        return false;
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------------------
