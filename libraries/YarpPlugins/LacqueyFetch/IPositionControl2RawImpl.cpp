@@ -19,43 +19,30 @@ bool roboticslab::LacqueyFetch::positionMoveRaw(int j, double ref)    // encExpo
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    //Adjust range:
-    if (ref > 1023)
+    /*  Hand values sended to mbed:
+        0 - loose hand
+        1 - open hand
+       -1 - close hand
+    */
+    if (ref > 1)
     {
-        ref=1023;
+        ref=1;
     }
-    else if (ref < -1023)
+    else if (ref < -1)
     {
-        ref=-1023;
-    }
-
-    //*************************************************************
-    uint8_t msg_position_target[]= {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}; // Position target
-    uint16_t pwm;
-    //Send appropriate message:
-    if (ref==0)
-    {
-        msg_position_target[0]=0xF0;
-    }
-    else if (ref>0)
-    {
-        pwm=ref;
-        msg_position_target[1]=pwm>>2;
-        msg_position_target[0]=0xA0 + (pwm & 0b0000000000000011);
-    }
-    else
-    {
-        pwm=abs(ref);
-        msg_position_target[1]=pwm>>2;
-        msg_position_target[0]=0xC0 + (pwm & 0b0000000000000011);
+        ref= -1;
     }
 
-    if( ! send( 0x600, 2, msg_position_target ) )
+    uint8_t msg_position_target[]= {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}; // Position target (8 bytes)
+
+    msg_position_target[0] = ref;
+
+    if( ! send( 0x600, 1, msg_position_target ) )
     {
-        CD_ERROR("Could not send \"position target8\". %s\n", msgToStr(0x600, 2, msg_position_target).c_str() );
+        CD_ERROR("Could not send \"position target8\". %s\n", msgToStr(0x600, 1, msg_position_target).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"position target8\". %s\n", msgToStr(0x600, 2, msg_position_target).c_str() );
+    CD_SUCCESS("Sent \"position target8\". %s\n", msgToStr(0x600, 1, msg_position_target).c_str() );
     //*************************************************************
 
     encoderReady.wait();
