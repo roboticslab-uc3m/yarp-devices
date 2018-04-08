@@ -85,5 +85,5 @@ What you are receiving is the raw image of the camera. To obtain a color image f
 
 ## Useful links
 
-* GrabberControls2GuiGUI program
+* [GrabberControls2GuiGUI](/programs/grabberControls2Gui) program
 * [yarp-devices-tricks](/doc/yarp-devices-tricks.md)
