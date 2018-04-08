@@ -77,27 +77,13 @@ This is probably due to a bad configuration of the camera parameters. Try to inc
 ```
 Gain: 10
 Exposure: 32000
-````
+```
 
 #### I cannot receive a color image, but I receive a grey image with a regular point pattern on it.
 
 What you are receiving is the raw image of the camera. To obtain a color image from it you need to decode it using a Bayer filter. Follow the steps in the section [Obtaining a color image from the device](#obtaining-a-color-image-from-the-device) in this very same guide to fix it.
 
-## GrabberControls2GuiGUI program
-
-To use the GrabberControls2GuiGUI you will need to be already running an instance of yarpserver and AravisGigE device. Once both are up and running, you can simply call the GrabberControls2GuiGUI:
-
-```bash
-GrabberControls2GuiGUI
-```
-
-By default it will try to connect to `/grabber`. If the port for the AravisGigE device is not `/grabber`, you can specify it when launching the `GrabberControls2GuiGUI`:
-
-```bash
-GrabberControls2GuiGUI --remote-port /whatever_port_you_want
-```
-
-
 ## Useful links
 
-* [yarp-devices-tricks](yarp-devices-tricks.md)
+* GrabberControls2GuiGUI program
+* [/doc/yarp-devices-tricks](yarp-devices-tricks.md)
