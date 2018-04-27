@@ -52,6 +52,7 @@ bool roboticslab::TextilesHand::getRefVelocitiesRaw(const int n_joint, const int
 
 // --------------------------------------------------------------------------------------------
 
+#if YARP_VERSION_MAJOR != 3
 bool roboticslab::TextilesHand::setVelPidRaw(int j, const yarp::dev::Pid &pid)
 {
     CD_ERROR("Missing implementation\n");
@@ -81,3 +82,4 @@ bool roboticslab::TextilesHand::getVelPidsRaw(yarp::dev::Pid *pids)
     CD_ERROR("Missing implementation\n");
     return false;
 }
+#endif // YARP_VERSION_MAJOR != 3

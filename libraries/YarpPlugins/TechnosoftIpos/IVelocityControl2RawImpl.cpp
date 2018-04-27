@@ -132,6 +132,7 @@ bool roboticslab::TechnosoftIpos::stopRaw(const int n_joint, const int *joints)
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_MAJOR != 3
 bool roboticslab::TechnosoftIpos::setVelPidRaw(int j, const yarp::dev::Pid &pid)
 {
     CD_WARNING("Missing implementation\n");
@@ -161,4 +162,4 @@ bool roboticslab::TechnosoftIpos::getVelPidsRaw(yarp::dev::Pid *pids)
     CD_WARNING("Missing implementation\n");
     return true;
 }
-
+#endif // YARP_VERSION_MAJOR != 3

@@ -148,13 +148,14 @@ public:
     virtual bool getRefTorqueRaw(int j, double *t);
     virtual bool setRefTorquesRaw(const double *t);
     virtual bool setRefTorqueRaw(int j, double t);
-    virtual bool getBemfParamRaw(int j, double *bemf);
-    virtual bool setBemfParamRaw(int j, double bemf);
-    virtual bool setTorquePidRaw(int j, const yarp::dev::Pid &pid);
     virtual bool getTorqueRaw(int j, double *t);
     virtual bool getTorquesRaw(double *t);
     virtual bool getTorqueRangeRaw(int j, double *min, double *max);
     virtual bool getTorqueRangesRaw(double *min, double *max);
+#if YARP_VERSION_MAJOR != 3
+    virtual bool getBemfParamRaw(int j, double *bemf);
+    virtual bool setBemfParamRaw(int j, double bemf);
+    virtual bool setTorquePidRaw(int j, const yarp::dev::Pid &pid);
     virtual bool setTorquePidsRaw(const yarp::dev::Pid *pids);
     virtual bool setTorqueErrorLimitRaw(int j, double limit);
     virtual bool setTorqueErrorLimitsRaw(const double *limits);
@@ -170,6 +171,7 @@ public:
     virtual bool disableTorquePidRaw(int j);
     virtual bool enableTorquePidRaw(int j);
     virtual bool setTorqueOffsetRaw(int j, double v);
+#endif // YARP_VERSION_MAJOR != 3
 
     //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
     virtual bool velocityMoveRaw(int j, double sp);
@@ -183,10 +185,12 @@ public:
     // -- (just defined in IInteractionModeRaw) - virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs);
     // -- (just defined in IInteractionModeRaw) - virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs);
     // -- (just defined in IInteractionModeRaw) - virtual bool stopRaw(const int n_joint, const int *joints);
+#if YARP_VERSION_MAJOR != 3
     virtual bool setVelPidRaw(int j, const yarp::dev::Pid &pid);
     virtual bool setVelPidsRaw(const yarp::dev::Pid *pids);
     virtual bool getVelPidRaw(int j, yarp::dev::Pid *pid);
     virtual bool getVelPidsRaw(yarp::dev::Pid *pids);
+#endif // YARP_VERSION_MAJOR != 3
 
     // ------- IInteractionModeRaw declarations. Implementation in IInteractionModeRawImpl.cpp -------
 

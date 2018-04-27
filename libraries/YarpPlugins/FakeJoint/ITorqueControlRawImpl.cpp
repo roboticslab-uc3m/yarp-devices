@@ -36,30 +36,6 @@ bool roboticslab::FakeJoint::setRefTorqueRaw(int j, double t)
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::FakeJoint::getBemfParamRaw(int j, double *bemf)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// ------------------------------------------------------------------------------
-
-bool roboticslab::FakeJoint::setBemfParamRaw(int j, double bemf)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// ------------------------------------------------------------------------------
-
-bool roboticslab::FakeJoint::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// ------------------------------------------------------------------------------
-
 bool roboticslab::FakeJoint::getTorqueRaw(int j, double *t)
 {
     //CD_INFO("\n");  //-- Too verbose in controlboardwrapper2 stream.
@@ -88,6 +64,31 @@ bool roboticslab::FakeJoint::getTorqueRangesRaw(double *min, double *max)
 {
     CD_ERROR("\n");
     return false;
+}
+
+// ------------------------------------------------------------------------------
+
+#if YARP_VERSION_MAJOR != 3
+bool roboticslab::FakeJoint::getBemfParamRaw(int j, double *bemf)
+{
+    CD_INFO("\n");
+    return true;
+}
+
+// ------------------------------------------------------------------------------
+
+bool roboticslab::FakeJoint::setBemfParamRaw(int j, double bemf)
+{
+    CD_INFO("\n");
+    return true;
+}
+
+// ------------------------------------------------------------------------------
+
+bool roboticslab::FakeJoint::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
+{
+    CD_INFO("\n");
+    return true;
 }
 
 // ------------------------------------------------------------------------------
@@ -209,3 +210,4 @@ bool roboticslab::FakeJoint::setTorqueOffsetRaw(int j, double v)
     CD_INFO("\n");
     return true;
 }
+#endif // YARP_VERSION_MAJOR != 3

@@ -36,30 +36,6 @@ bool roboticslab::LacqueyFetch::setRefTorqueRaw(int j, double t)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LacqueyFetch::getBemfParamRaw(int j, double *bemf)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::LacqueyFetch::setBemfParamRaw(int j, double bemf)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::LacqueyFetch::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
 bool roboticslab::LacqueyFetch::getTorqueRaw(int j, double *t)
 {
     //CD_INFO("\n");  //-- Too verbose in controlboardwrapper2 stream.
@@ -88,6 +64,31 @@ bool roboticslab::LacqueyFetch::getTorqueRangesRaw(double *min, double *max)
 {
     CD_ERROR("Missing implementation\n");
     return false;
+}
+
+// -----------------------------------------------------------------------------
+
+#if YARP_VERSION_MAJOR != 3
+bool roboticslab::LacqueyFetch::getBemfParamRaw(int j, double *bemf)
+{
+    CD_INFO("\n");
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::LacqueyFetch::setBemfParamRaw(int j, double bemf)
+{
+    CD_INFO("\n");
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::LacqueyFetch::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
+{
+    CD_INFO("\n");
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -209,3 +210,4 @@ bool roboticslab::LacqueyFetch::setTorqueOffsetRaw(int j, double v)
     CD_INFO("\n");
     return true;
 }
+#endif // YARP_VERSION_MAJOR != 3

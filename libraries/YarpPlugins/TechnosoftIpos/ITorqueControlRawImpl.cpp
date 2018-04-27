@@ -66,48 +66,6 @@ bool roboticslab::TechnosoftIpos::setRefTorqueRaw(int j, double t)
 
 // -------------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getBemfParamRaw(int j, double *bemf)
-{
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
-
-    return true;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::setBemfParamRaw(int j, double bemf)
-{
-    CD_INFO("(%d,%f)\n",j,bemf);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
-
-    return true;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
-{
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
-
-    return true;
-}
-
-// -------------------------------------------------------------------------------------
-
 bool roboticslab::TechnosoftIpos::getTorqueRaw(int j, double *t)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
@@ -164,6 +122,49 @@ bool roboticslab::TechnosoftIpos::getTorqueRangesRaw(double *min, double *max)
 {
     CD_ERROR("Missing implementation\n");
     return false;
+}
+
+// -------------------------------------------------------------------------------------
+
+#if YARP_VERSION_MAJOR != 3
+bool roboticslab::TechnosoftIpos::getBemfParamRaw(int j, double *bemf)
+{
+    CD_INFO("(%d)\n",j);
+
+    //-- Check index within range
+    if ( j != 0 ) return false;
+
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
+
+    return true;
+}
+
+// -------------------------------------------------------------------------------------
+
+bool roboticslab::TechnosoftIpos::setBemfParamRaw(int j, double bemf)
+{
+    CD_INFO("(%d,%f)\n",j,bemf);
+
+    //-- Check index within range
+    if ( j != 0 ) return false;
+
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
+
+    return true;
+}
+
+// -------------------------------------------------------------------------------------
+
+bool roboticslab::TechnosoftIpos::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
+{
+    CD_INFO("(%d)\n",j);
+
+    //-- Check index within range
+    if ( j != 0 ) return false;
+
+    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
+
+    return true;
 }
 
 // -------------------------------------------------------------------------------------
@@ -341,3 +342,4 @@ bool roboticslab::TechnosoftIpos::setTorqueOffsetRaw(int j, double v)
 }
 
 // -------------------------------------------------------------------------------------
+#endif // YARP_VERSION_MAJOR != 3

@@ -448,6 +448,7 @@ public:
      */
     virtual bool getRefVelocities(const int n_joint, const int *joints, double *vels);
 
+#if YARP_VERSION_MAJOR != 3
     /**
      * Set new velocity pid value for a joint
      * @param j joint number
@@ -477,6 +478,7 @@ public:
      * @return success/failure
      */
     virtual bool getVelPids(yarp::dev::Pid *pids);
+#endif // YARP_VERSION_MAJOR != 3
 
 //  --------- IControlLimits Declarations. Implementation in IControlLimitsImpl.cpp ---------
 
@@ -665,30 +667,6 @@ public:
     virtual bool setRefTorque(int j, double t);
 
     /**
-     * Set the back-efm compensation gain for a given joint.
-     * @param j joint number
-     * @param bemf the returned bemf gain of joint j
-     * @return true/false on success/failure
-     */
-    virtual bool getBemfParam(int j, double *bemf);
-
-    /**
-     * Set the back-efm compensation gain for a given joint.
-     * @param j joint number
-     * @param bemf new value
-     * @return true/false on success/failure
-     */
-    virtual bool setBemfParam(int j, double bemf);
-
-    /**
-     * Set new pid value for a joint axis.
-     * @param j joint number
-     * @param pid new pid value
-     * @return true/false on success/failure
-     */
-    virtual bool setTorquePid(int j, const yarp::dev::Pid &pid);
-
-    /**
      * Get the value of the torque on a given joint (this is the
      * feedback if you have a torque sensor).
      * @param j joint number
@@ -721,6 +699,31 @@ public:
      * @return true/false on success/failure
      */
     virtual bool getTorqueRanges(double *min, double *max);
+
+#if YARP_VERSION_MAJOR != 3
+    /**
+     * Set the back-efm compensation gain for a given joint.
+     * @param j joint number
+     * @param bemf the returned bemf gain of joint j
+     * @return true/false on success/failure
+     */
+    virtual bool getBemfParam(int j, double *bemf);
+
+    /**
+     * Set the back-efm compensation gain for a given joint.
+     * @param j joint number
+     * @param bemf new value
+     * @return true/false on success/failure
+     */
+    virtual bool setBemfParam(int j, double bemf);
+
+    /**
+     * Set new pid value for a joint axis.
+     * @param j joint number
+     * @param pid new pid value
+     * @return true/false on success/failure
+     */
+    virtual bool setTorquePid(int j, const yarp::dev::Pid &pid);
 
     /**
      * Set new pid value on multiple axes.
@@ -834,6 +837,7 @@ public:
      * @return true/false on success/failure
      */
     virtual bool setTorqueOffset(int j, double v);
+#endif // YARP_VERSION_MAJOR != 3
 
 // -------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp --------
 

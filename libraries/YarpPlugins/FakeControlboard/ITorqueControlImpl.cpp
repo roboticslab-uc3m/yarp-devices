@@ -35,27 +35,6 @@ bool roboticslab::FakeControlboard::setRefTorque(int j, double t)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getBemfParam(int j, double *bemf)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::setBemfParam(int j, double bemf)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::setTorquePid(int j, const yarp::dev::Pid &pid)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
 bool roboticslab::FakeControlboard::getTorque(int j, double *t)
 {
     //CD_DEBUG("joint: %d.\n",j);  //-- Way too verbose
@@ -80,6 +59,28 @@ bool roboticslab::FakeControlboard::getTorqueRange(int j, double *min, double *m
 // -----------------------------------------------------------------------------
 
 bool roboticslab::FakeControlboard::getTorqueRanges(double *min, double *max)
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+#if YARP_VERSION_MAJOR != 3
+bool roboticslab::FakeControlboard::getBemfParam(int j, double *bemf)
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::FakeControlboard::setBemfParam(int j, double bemf)
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::FakeControlboard::setTorquePid(int j, const yarp::dev::Pid &pid)
 {
     return true;
 }
@@ -190,3 +191,4 @@ bool roboticslab::FakeControlboard::setTorqueOffset(int j, double v)
 }
 
 // -----------------------------------------------------------------------------
+#endif // YARP_VERSION_MAJOR != 3

@@ -36,30 +36,6 @@ bool roboticslab::TextilesHand::setRefTorqueRaw(int j, double t)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::getBemfParamRaw(int j, double *bemf)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------------
-
-bool roboticslab::TextilesHand::setBemfParamRaw(int j, double bemf)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------------
-
-bool roboticslab::TextilesHand::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------------
-
 bool roboticslab::TextilesHand::getTorqueRaw(int j, double *t)
 {
     //CD_INFO("\n");  //-- Too verbose in controlboardwrapper2 stream.
@@ -88,6 +64,31 @@ bool roboticslab::TextilesHand::getTorqueRangesRaw(double *min, double *max)
 {
     CD_ERROR("\n");
     return false;
+}
+
+// -----------------------------------------------------------------------------------
+
+#if YARP_VERSION_MAJOR != 3
+bool roboticslab::TextilesHand::getBemfParamRaw(int j, double *bemf)
+{
+    CD_INFO("\n");
+    return true;
+}
+
+// -----------------------------------------------------------------------------------
+
+bool roboticslab::TextilesHand::setBemfParamRaw(int j, double bemf)
+{
+    CD_INFO("\n");
+    return true;
+}
+
+// -----------------------------------------------------------------------------------
+
+bool roboticslab::TextilesHand::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
+{
+    CD_INFO("\n");
+    return true;
 }
 
 // -----------------------------------------------------------------------------------
@@ -209,3 +210,4 @@ bool roboticslab::TextilesHand::setTorqueOffsetRaw(int j, double v)
     CD_INFO("\n");
     return true;
 }
+#endif // YARP_VERSION_MAJOR != 3

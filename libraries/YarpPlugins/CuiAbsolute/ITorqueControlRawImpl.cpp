@@ -26,24 +26,6 @@ bool roboticslab::CuiAbsolute::setRefTorqueRaw(int j, double t)
     return true;
 }
 
-bool roboticslab::CuiAbsolute::getBemfParamRaw(int j, double *bemf)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-bool roboticslab::CuiAbsolute::setBemfParamRaw(int j, double bemf)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-bool roboticslab::CuiAbsolute::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
-{
-    CD_INFO("\n");
-    return true;
-}
-
 bool roboticslab::CuiAbsolute::getTorqueRaw(int j, double *t)
 {
     //CD_INFO("\n");  //-- Too verbose in controlboardwrapper2 stream.
@@ -66,6 +48,25 @@ bool roboticslab::CuiAbsolute::getTorqueRangesRaw(double *min, double *max)
 {
     CD_ERROR("\n");
     return false;
+}
+
+#if YARP_VERSION_MAJOR != 3
+bool roboticslab::CuiAbsolute::getBemfParamRaw(int j, double *bemf)
+{
+    CD_INFO("\n");
+    return true;
+}
+
+bool roboticslab::CuiAbsolute::setBemfParamRaw(int j, double bemf)
+{
+    CD_INFO("\n");
+    return true;
+}
+
+bool roboticslab::CuiAbsolute::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
+{
+    CD_INFO("\n");
+    return true;
 }
 
 bool roboticslab::CuiAbsolute::setTorquePidsRaw(const yarp::dev::Pid *pids)
@@ -157,4 +158,4 @@ bool roboticslab::CuiAbsolute::setTorqueOffsetRaw(int j, double v)
     CD_INFO("\n");
     return true;
 }
-
+#endif // YARP_VERSION_MAJOR != 3

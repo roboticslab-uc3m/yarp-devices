@@ -52,6 +52,7 @@ bool roboticslab::FakeJoint::getRefVelocitiesRaw(const int n_joint, const int *j
 
 // --------------------------------------------------------------------------------------------
 
+#if YARP_VERSION_MAJOR != 3
 bool roboticslab::FakeJoint::setVelPidRaw(int j, const yarp::dev::Pid &pid)
 {
     CD_ERROR("Missing implementation\n");
@@ -81,3 +82,4 @@ bool roboticslab::FakeJoint::getVelPidsRaw(yarp::dev::Pid *pids)
     CD_ERROR("Missing implementation\n");
     return false;
 }
+#endif // YARP_VERSION_MAJOR != 3

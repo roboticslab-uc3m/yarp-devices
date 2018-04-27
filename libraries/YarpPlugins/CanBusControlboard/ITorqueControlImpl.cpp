@@ -57,42 +57,6 @@ bool roboticslab::CanBusControlboard::setRefTorque(int j, double t)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getBemfParam(int j, double *bemf)
-{
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->getBemfParamRaw( 0, bemf );;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setBemfParam(int j, double bemf)
-{
-    CD_DEBUG("(%d,%f)\n",j,bemf);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->setBemfParamRaw( 0, bemf );;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setTorquePid(int j, const yarp::dev::Pid &pid)
-{
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->setTorquePidRaw( 0, pid );;
-}
-
-// -----------------------------------------------------------------------------
-
 bool roboticslab::CanBusControlboard::getTorque(int j, double *t)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
@@ -141,6 +105,43 @@ bool roboticslab::CanBusControlboard::getTorqueRanges(double *min, double *max)
         ok &= this->getTorqueRange(j, min, max);
     }
     return ok;
+}
+
+// -----------------------------------------------------------------------------
+
+#if YARP_VERSION_MAJOR != 3
+bool roboticslab::CanBusControlboard::getBemfParam(int j, double *bemf)
+{
+    CD_DEBUG("(%d)\n",j);
+
+    //-- Check index within range
+    if ( ! this->indexWithinRange(j) ) return false;
+
+    return iTorqueControlRaw[j]->getBemfParamRaw( 0, bemf );;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::CanBusControlboard::setBemfParam(int j, double bemf)
+{
+    CD_DEBUG("(%d,%f)\n",j,bemf);
+
+    //-- Check index within range
+    if ( ! this->indexWithinRange(j) ) return false;
+
+    return iTorqueControlRaw[j]->setBemfParamRaw( 0, bemf );;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::CanBusControlboard::setTorquePid(int j, const yarp::dev::Pid &pid)
+{
+    CD_DEBUG("(%d)\n",j);
+
+    //-- Check index within range
+    if ( ! this->indexWithinRange(j) ) return false;
+
+    return iTorqueControlRaw[j]->setTorquePidRaw( 0, pid );;
 }
 
 // -----------------------------------------------------------------------------
@@ -336,3 +337,4 @@ bool roboticslab::CanBusControlboard::setTorqueOffset(int j, double v)
 }
 
 // -----------------------------------------------------------------------------
+#endif // YARP_VERSION_MAJOR != 3
