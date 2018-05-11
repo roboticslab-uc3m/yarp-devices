@@ -98,8 +98,8 @@ yarp_configure_external_installation(roboticslab-yarp-devices WITH_PLUGINS)
 add_subdirectory(cmake)
 add_subdirectory(libraries)
 add_subdirectory(programs)
-add_subdirectory(share)
 add_subdirectory(tests)
+add_subdirectory(share)
 
 # Store the package in the user registry.
 export(PACKAGE ROBOTICSLAB_YARP_DEVICES)

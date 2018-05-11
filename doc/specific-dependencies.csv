@@ -1,18 +1,19 @@
-Dependency ,Aravis 0.4,hcanpci,Python 3+ ,setuptools (pip3) ,YARP with Python 3 bindings ,Spacenav ,XWiimote ,Leap Motion SDK v2***
-Dependency (installation-guides),install-aravis.md,install-hcanpci.md,,install-setuptools.md#install-setuptools-using-pip3,install-yarp.md#install-python-bindings-with-iframegrabbercontrols2-support,install-spacenav.md#install-spacenav-ubuntu,install-xwiimote.md#install-xwiimote-ubuntu,https://developer.leapmotion.com/sdk/v2
- AravisGigE , yes , no , no , no , no , no , no , no 
-GrabberControls2Gui**,  no, no, yes, yes, yes, no, no, no
- CanBusControlboard ,  no , yes ,  no ,  no ,  no ,  no ,  no ,  no 
- CanBusHico , no , yes , no , no , no , no , no , no 
- CuiAbsolute , no , yes , no , no , no , no , no , no 
- FakeJoint , no , yes , no , no , no , no , no , no 
- Jr3 , no , yes , no , no , no , no , no , no 
- LacqueyFetch , no , yes , no , no , no , no , no , no 
- LeapMotionSensor* , no , no , no , no , no , no , no , yes 
- OneCanBusOneWrapper ,  no , yes ,  no ,  no , no ,  no ,  no ,  no 
- ProximitySensorsClient , no , no , no , no , no , no , no , no 
- SpaceNavigator , no , no , no , no , no , yes , no , no 
- TechnosoftIpos ,  no , yes ,  no ,  no ,  no ,  no ,  no ,  no 
- TextilesHand , no , yes , no , no , no , no , no , no 
- TwoCanBusThreeWrappers ,  no , yes ,  no ,  no ,  no ,  no ,  no ,  no 
- WiimoteSensor , no , no , no , no , no , no , yes , no 
+Dependency , AMOR API , Aravis 0.4 , hcanpci, Python 3+ , setuptools (pip3) , YARP with Python 3 bindings , Spacenav , XWiimote , Leap Motion SDK v2***
+Dependency (installation-guides) , , install-aravis.md , install-hcanpci.md , , install-setuptools.md#install-setuptools-using-pip3 , install-yarp.md#install-python-bindings-with-iframegrabbercontrols2-support , install-spacenav.md#install-spacenav-ubuntu , install-xwiimote.md#install-xwiimote-ubuntu , https://developer.leapmotion.com/sdk/v2
+ AmorControlboard , yes , no , no , no , no , no , no , no , no
+ AravisGigE , no , yes , no , no , no , no , no , no , no
+ GrabberControls2Gui** , no , no , no , yes , yes , yes , no , no , no
+ CanBusControlboard , no , no , yes , no , no , no , no , no , no
+ CanBusHico , no , no , yes , no , no , no , no , no , no
+ CuiAbsolute , no , no , yes , no , no , no , no , no , no
+ FakeJoint , no , no , yes , no , no , no , no , no , no
+ Jr3 , no , no , yes , no , no , no , no , no , no
+ LacqueyFetch , no , no , yes , no , no , no , no , no , no
+ LeapMotionSensor* , no , no , no , no , no , no , no , no , yes
+ OneCanBusOneWrapper , no , no , yes , no , no , no , no , no , no
+ ProximitySensorsClient , no , no , no , no , no , no , no , no , no
+ SpaceNavigator , no , no , no , no , no , no , yes , no , no
+ TechnosoftIpos , no , no , yes , no , no , no , no , no , no
+ TextilesHand , no , no , yes , no , no , no , no , no , no
+ TwoCanBusThreeWrappers , no , no , yes , no , no , no , no , no , no
+ WiimoteSensor , no , no , no , no , no , no , no , yes , no
