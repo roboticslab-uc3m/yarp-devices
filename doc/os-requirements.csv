@@ -1,4 +1,5 @@
 OS,Ubuntu 14.04 (and derivatives),Ubuntu 16.04 (and derivatives)
+ AmorControlboard, yes, yes
  AravisGigE, yes, yes
  CanBusControlboard, yes,yes
  CanBusHico, yes,?
