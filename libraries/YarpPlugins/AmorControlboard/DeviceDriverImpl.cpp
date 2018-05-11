@@ -79,12 +79,14 @@ bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
 
         usingCartesianController = true;
 
+        std::string subdevice = "AmorCartesianControl";
         yarp::os::Value vHandle(handle, sizeof handle);
         yarp::os::Property cartesianControllerOptions;
 
         cartesianControllerOptions.put("device", "CartesianControlServer");
-        cartesianControllerOptions.put("subdevice", "AmorCartesianControl");
+        cartesianControllerOptions.put("subdevice", subdevice);
         cartesianControllerOptions.put("handle", vHandle);
+        cartesianControllerOptions.setMonitor(config.getMonitor(), subdevice.c_str());
 
         cartesianControllerDevice.open(cartesianControllerOptions);
 
