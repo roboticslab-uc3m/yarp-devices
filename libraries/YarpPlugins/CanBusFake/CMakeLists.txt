@@ -12,9 +12,11 @@ if(NOT SKIP_CanBusFake)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}) # yarp plugin builder needs this
 
-yarp_add_plugin(CanBusFake CanBusFake.cpp
-                           CanBusFake.hpp
-                           DeviceDriverImpl.cpp)
+yarp_add_plugin(CanBusFake CanBusFake.hpp
+                           DeviceDriverImpl.cpp
+                           ICanBusImpl.cpp
+                           FakeCanMessage.hpp
+                           FakeCanMessage.cpp)
 
 add_dependencies(CanBusFake COLOR_DEBUG)
 

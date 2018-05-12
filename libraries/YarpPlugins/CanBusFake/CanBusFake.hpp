@@ -5,10 +5,11 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
+#include <yarp/dev/CanBusInterface.h>
 
-#include "ICanBusHico.h"
+#include <ColorDebug.hpp>
 
-#include "ColorDebug.hpp"
+#include "FakeCanMessage.hpp"
 
 namespace roboticslab
 {
@@ -23,7 +24,9 @@ namespace roboticslab
  * @ingroup CanBusFake
  * @brief Fake CanBus driver, e.g. for testing CanBusControlboard with pure USB devices.
  */
-class CanBusFake : public yarp::dev::DeviceDriver, public ICanBusHico
+class CanBusFake : public yarp::dev::DeviceDriver,
+                   public yarp::dev::ICanBus,
+                   public yarp::dev::ImplementCanBufferFactory<FakeCanMessage, struct fake_can_msg>
 {
 
 public:
@@ -38,24 +41,25 @@ public:
     /** Close the CAN device. */
     virtual bool close();
 
-    /**
-     * Write message to the CAN buffer.
-     * @param id Message's COB-id
-     * @param len Data field length
-     * @param msgData Data to send
-     * @return true/false on success/failure.
-     */
-    virtual bool sendRaw(uint32_t id, uint16_t len, uint8_t * msgData);
+    //  --------- ICanBus declarations. Implementation in ICanBusImpl.cpp ---------
 
-    /** Read data.
-     * @return Number on got, 0 on timeout, and errno on fail. */
-    virtual int read_timeout(struct can_msg *buf, unsigned int timeout);
+    virtual bool canSetBaudRate(unsigned int rate);
+
+    virtual bool canGetBaudRate(unsigned int * rate);
+
+    virtual bool canIdAdd(unsigned int id);
+
+    virtual bool canIdDelete(unsigned int id);
+
+    virtual bool canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait = false);
+
+    virtual bool canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait = false);
 
 private:
 
+    static const unsigned char FAKE_DATA[8]; // defined in DeviceDriverImpl.cpp
 };
 
 }  // namespace roboticslab
 
 #endif  // __CAN_BUS_FAKE__
-
