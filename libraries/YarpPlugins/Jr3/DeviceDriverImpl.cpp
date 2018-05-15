@@ -23,12 +23,12 @@ bool roboticslab::Jr3::open(yarp::os::Searchable& config)
     fs_w.m[1]=5.5;
     fs_w.m[2]=5.5;
 
-    fs_a.f[0]=250;
-    fs_a.f[1]=250;
-    fs_a.f[2]=500;
-    fs_a.m[0]=212;
-    fs_a.m[1]=212;
-    fs_a.m[2]=212;
+    fs_a.f[0]=317;
+    fs_a.f[1]=314;
+    fs_a.f[2]=845;
+    fs_a.m[0]=221;
+    fs_a.m[1]=219;
+    fs_a.m[2]=307;
 
     ioctl(fd,IOCTL0_JR3_SET_FULL_SCALES,&fs_a);
     ioctl(fd,IOCTL1_JR3_SET_FULL_SCALES,&fs_a);
