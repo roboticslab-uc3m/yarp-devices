@@ -15,18 +15,26 @@ bool roboticslab::Jr3::open(yarp::os::Searchable& config)
     int ret;
 
     //-- Force fullscales.
-    force_array fs;
-    fs.f[0]=110;
-    fs.f[1]=110;
-    fs.f[2]=220;
-    fs.m[0]=5.5;
-    fs.m[1]=5.5;
-    fs.m[2]=5.5;
+    force_array fs_w,fs_a;
+    fs_w.f[0]=110;
+    fs_w.f[1]=110;
+    fs_w.f[2]=220;
+    fs_w.m[0]=5.5;
+    fs_w.m[1]=5.5;
+    fs_w.m[2]=5.5;
 
-    ioctl(fd,IOCTL0_JR3_SET_FULL_SCALES,&fs);
-    ioctl(fd,IOCTL1_JR3_SET_FULL_SCALES,&fs);
-    ioctl(fd,IOCTL2_JR3_SET_FULL_SCALES,&fs);
-    ioctl(fd,IOCTL3_JR3_SET_FULL_SCALES,&fs);
+    fs_a.f[0]=250;
+    fs_a.f[1]=250;
+    fs_a.f[2]=500;
+    fs_a.m[0]=212;
+    fs_a.m[1]=212;
+    fs_a.m[2]=212;
+
+    ioctl(fd,IOCTL0_JR3_SET_FULL_SCALES,&fs_a);
+    ioctl(fd,IOCTL1_JR3_SET_FULL_SCALES,&fs_a);
+    ioctl(fd,IOCTL2_JR3_SET_FULL_SCALES,&fs_w);
+    ioctl(fd,IOCTL3_JR3_SET_FULL_SCALES,&fs_w);
+
 
     yarp::os::Time::delay(0.5);
 
