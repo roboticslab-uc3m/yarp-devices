@@ -449,41 +449,6 @@ public:
 //  --------- IControlMode declarations. Implementation in IControlModeImpl.cpp ---------
 
     /**
-    * Set position mode, single axis.
-    * @param j: joint number
-    * @return: true/false success failure.
-    */
-    virtual bool setPositionMode(int j);
-
-    /**
-    * Set velocity mode, single axis.
-    * @param j: joint number
-    * @return: true/false success failure.
-    */
-    virtual bool setVelocityMode(int j);
-
-    /**
-    * Set torque mode, single axis.
-    * @param j: joint number
-    * @return: true/false success failure.
-    */
-    virtual bool setTorqueMode(int j);
-
-    /**
-    * Set impedance position mode, single axis.
-    * @param j: joint number
-    * @return: true/false success failure.
-    */
-    virtual bool setImpedancePositionMode(int j);
-
-    /**
-    * Set impedance velocity mode, single axis.
-    * @param j: joint number
-    * @return: true/false success failure.
-    */
-    virtual bool setImpedanceVelocityMode(int j);
-
-    /**
     * Get the current control mode.
     * @param j: joint number
     * @param mode: a vocab of the current control mode for joint j.

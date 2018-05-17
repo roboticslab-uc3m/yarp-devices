@@ -4,56 +4,6 @@
 
 // ------------------- IControlMode related ------------------------------------
 
-bool roboticslab::AmorControlboard::setPositionMode(int j)
-{
-    CD_DEBUG("(%d)\n", j);
-    if (!indexWithinRange(j))
-        return false;
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::AmorControlboard::setVelocityMode(int j)
-{
-    CD_DEBUG("(%d)\n", j);
-    if (!indexWithinRange(j))
-        return false;
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::AmorControlboard::setTorqueMode(int j)
-{
-    CD_DEBUG("(%d)\n", j);
-    if (!indexWithinRange(j))
-        return false;
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::AmorControlboard::setImpedancePositionMode(int j)
-{
-    CD_DEBUG("(%d)\n", j);
-    if (!indexWithinRange(j))
-        return false;
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::AmorControlboard::setImpedanceVelocityMode(int j)
-{
-    CD_DEBUG("(%d)\n", j);
-    if (!indexWithinRange(j))
-        return false;
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
 bool roboticslab::AmorControlboard::getControlMode(int j, int *mode)
 {
     //CD_DEBUG("(%d)\n", j);  //-- Way too verbose.

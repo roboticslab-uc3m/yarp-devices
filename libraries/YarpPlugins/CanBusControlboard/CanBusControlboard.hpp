@@ -109,41 +109,6 @@ public:
     //  --------- IControlMode Declarations. Implementation in IControlMode2Impl.cpp ---------
 
     /**
-    * Set position mode, single axis.
-    * @param j: joint number
-    * @return: true/false success failure.
-    */
-    virtual bool setPositionMode(int j);
-
-    /**
-    * Set velocity mode, single axis.
-    * @param j: joint number
-    * @return: true/false success failure.
-    */
-    virtual bool setVelocityMode(int j);
-
-    /**
-    * Set torque mode, single axis.
-    * @param j: joint number
-    * @return: true/false success failure.
-    */
-    virtual bool setTorqueMode(int j);
-
-    /**
-    * Set impedance position mode, single axis.
-    * @param j: joint number
-    * @return: true/false success failure.
-    */
-    virtual bool setImpedancePositionMode(int j);
-
-    /**
-    * Set impedance velocity mode, single axis.
-    * @param j: joint number
-    * @return: true/false success failure.
-    */
-    virtual bool setImpedanceVelocityMode(int j);
-
-    /**
     * Get the current control mode.
     * @param j: joint number
     * @param mode: a vocab of the current control mode for joint j.
@@ -207,8 +172,6 @@ public:
     *         (e.g. the joint is on a fault condition or the desired mode is not implemented).
     */
     virtual bool setControlModes(int *modes);
-
-
 
     //  ---------- IEncoders Declarations. Implementation in IEncodersImpl.cpp ----------
 
@@ -756,7 +719,6 @@ public:
      * @return true or false on success or failure. If one or more joint fails, the return value will be false.
      */
     virtual bool setInteractionModes(yarp::dev::InteractionModeEnum* modes);
-
 
     // -------- Thread declarations. Implementation in ThreadImpl.cpp --------
 

@@ -81,11 +81,6 @@ public:
     virtual bool getVelLimitsRaw(int axis, double *min, double *max);
 
     //  --------- IControlModeRaw Declarations. Implementation in IControlMode2RawImpl.cpp ---------
-    virtual bool setPositionModeRaw(int j);
-    virtual bool setVelocityModeRaw(int j);
-    virtual bool setTorqueModeRaw(int j);
-    virtual bool setImpedancePositionModeRaw(int j);
-    virtual bool setImpedanceVelocityModeRaw(int j);
     virtual bool getControlModeRaw(int j, int *mode);
     virtual bool getControlModesRaw(int *modes);
 

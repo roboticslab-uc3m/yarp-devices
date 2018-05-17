@@ -493,41 +493,6 @@ public:
 //  --------- IControlMode Declarations. Implementation in IControlModeImpl.cpp ---------
 
     /**
-     * Set position mode, single axis.
-     * @param j joint number
-     * @return true/false success failure.
-     */
-    virtual bool setPositionMode(int j);
-
-    /**
-     * Set velocity mode, single axis.
-     * @param j joint number
-     * @return true/false success failure.
-     */
-    virtual bool setVelocityMode(int j);
-
-    /**
-     * Set torque mode, single axis.
-     * @param j joint number
-     * @return true/false success failure.
-     */
-    virtual bool setTorqueMode(int j);
-
-    /**
-     * Set impedance position mode, single axis.
-     * @param j joint number
-     * @return true/false success failure.
-     */
-    virtual bool setImpedancePositionMode(int j);
-
-    /**
-     * Set impedance velocity mode, single axis.
-     * @param j joint number
-     * @return true/false success failure.
-     */
-    virtual bool setImpedanceVelocityMode(int j);
-
-    /**
      * Get the current control mode.
      * @param j joint number
      * @param mode a vocab of the current control mode for joint j.
@@ -739,6 +704,10 @@ private:
 
     enum jmc_state { NOT_MOVING, POSITION_MOVE, RELATIVE_MOVE, VELOCITY_MOVE };
     enum jmc_mode { POSITION_MODE, VELOCITY_MODE };
+
+    bool setPositionMode(int j);
+    bool setVelocityMode(int j);
+    bool setTorqueMode(int j);
 
     // General Joint Motion Controller parameters //
     unsigned int axes;

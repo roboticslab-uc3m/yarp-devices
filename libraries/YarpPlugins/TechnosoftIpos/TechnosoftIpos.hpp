@@ -81,16 +81,16 @@ public:
     bool setMaxLimitRaw(double max);
 
     //  --------- IControlModeRaw Declarations. Implementation in IControlMode2RawImpl.cpp ---------
-    virtual bool setPositionModeRaw(int j);
-    virtual bool setVelocityModeRaw(int j);
-    virtual bool setTorqueModeRaw(int j);
+    bool setPositionModeRaw(int j);
+    bool setVelocityModeRaw(int j);
+    bool setTorqueModeRaw(int j);
     //-- Auxiliary functions (splitted) of setTorqueModeRaw
     bool setTorqueModeRaw1();
     bool setTorqueModeRaw2();
     bool setTorqueModeRaw3();
+    //-- Old yarp::dev::IPositionDirectRaw implementation
+    bool setPositionDirectModeRaw();
 
-    virtual bool setImpedancePositionModeRaw(int j);
-    virtual bool setImpedanceVelocityModeRaw(int j);
     virtual bool getControlModeRaw(int j, int *mode);
     //-- Auxiliary functions (splitted) of getControlModeRaw
     bool getControlModeRaw1();
@@ -217,9 +217,6 @@ protected:
     /** A helper function to display CAN messages. */
     std::string msgToStr(can_msg* message);
     std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
-
-    /** Old yarp::dev::IPositionDirectRaw implementation. */
-    bool setPositionDirectModeRaw();
 
     int canId;
     ICanBusHico *canDevicePtr;
