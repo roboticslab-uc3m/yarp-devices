@@ -1,5 +1,4 @@
-cmake_dependent_option(ENABLE_checkCanBus "Enable/disable checkCanBus program" ON
-                       ENABLE_YarpPlugins OFF)
+option(ENABLE_checkCanBus "Enable/disable checkCanBus program" ON)
 
 if(ENABLE_checkCanBus)
 

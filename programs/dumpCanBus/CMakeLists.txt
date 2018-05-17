@@ -1,5 +1,4 @@
-cmake_dependent_option(ENABLE_dumpCanBus "Enable/disable dumpCanBus program" ON
-                       ENABLE_YarpPlugins OFF)
+option(ENABLE_dumpCanBus "Enable/disable dumpCanBus program" ON)
 
 if(ENABLE_dumpCanBus)
 
