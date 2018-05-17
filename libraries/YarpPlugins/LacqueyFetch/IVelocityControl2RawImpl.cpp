@@ -75,35 +75,3 @@ bool roboticslab::LacqueyFetch::stopRaw(const int n_joint, const int *joints)
 }
 */
 // -----------------------------------------------------------------------------
-
-#if YARP_VERSION_MAJOR != 3
-bool roboticslab::LacqueyFetch::setVelPidRaw(int j, const yarp::dev::Pid &pid)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::LacqueyFetch::setVelPidsRaw(const yarp::dev::Pid *pids)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::LacqueyFetch::getVelPidRaw(int j, yarp::dev::Pid *pid)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::LacqueyFetch::getVelPidsRaw(yarp::dev::Pid *pids)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-#endif // YARP_VERSION_MAJOR != 3

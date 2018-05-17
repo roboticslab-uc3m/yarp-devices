@@ -38,37 +38,3 @@ bool roboticslab::FakeControlboard::getRefVelocities(const int n_joint, const in
 }
 
 // -----------------------------------------------------------------------------
-
-#if YARP_VERSION_MAJOR != 3
-bool roboticslab::FakeControlboard::setVelPid(int j, const yarp::dev::Pid &pid)
-{
-    CD_DEBUG("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::setVelPids(const yarp::dev::Pid *pids)
-{
-    CD_DEBUG("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::getVelPid(int j, yarp::dev::Pid *pid)
-{
-    CD_DEBUG("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::getVelPids(yarp::dev::Pid *pids)
-{
-    CD_DEBUG("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-#endif // YARP_VERSION_MAJOR != 3

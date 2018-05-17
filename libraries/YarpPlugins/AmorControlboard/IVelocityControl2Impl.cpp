@@ -103,37 +103,3 @@ bool roboticslab::AmorControlboard::getRefVelocities(const int n_joint, const in
 }
 
 // -----------------------------------------------------------------------------
-
-bool roboticslab::AmorControlboard::setVelPid(int j, const yarp::dev::Pid &pid)
-{
-    CD_ERROR("Not available (%d).\n", j);
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
-#if YARP_VERSION_MAJOR != 3
-bool roboticslab::AmorControlboard::setVelPids(const yarp::dev::Pid *pids)
-{
-    CD_ERROR("Not available.\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::AmorControlboard::getVelPid(int j, yarp::dev::Pid *pid)
-{
-    CD_ERROR("Not available (%d).\n", j);
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::AmorControlboard::getVelPids(yarp::dev::Pid *pids)
-{
-    CD_ERROR("Not available.\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-#endif // YARP_VERSION_MAJOR != 3

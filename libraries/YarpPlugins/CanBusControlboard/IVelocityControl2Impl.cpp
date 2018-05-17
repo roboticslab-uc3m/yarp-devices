@@ -84,33 +84,3 @@ bool roboticslab::CanBusControlboard::getRefVelocities(const int n_joint, const 
 }
 
 // -----------------------------------------------------------------------------
-
-#if YARP_VERSION_MAJOR != 3
-bool roboticslab::CanBusControlboard::setVelPid(int j, const yarp::dev::Pid &pid)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setVelPids(const yarp::dev::Pid *pids)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getVelPid(int j, yarp::dev::Pid *pid)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getVelPids(yarp::dev::Pid *pids)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-#endif // YARP_VERSION_MAJOR != 3
