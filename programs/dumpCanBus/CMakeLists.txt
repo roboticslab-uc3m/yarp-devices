@@ -2,8 +2,6 @@ option(ENABLE_dumpCanBus "Enable/disable dumpCanBus program" ON)
 
 if(ENABLE_dumpCanBus)
 
-include_directories(${YARP_INCLUDE_DIRS}) # remove if YARP > v2.3.70
-
 add_executable(dumpCanBus main.cpp
                           DumpCanBus.cpp
                           DumpCanBus.hpp
