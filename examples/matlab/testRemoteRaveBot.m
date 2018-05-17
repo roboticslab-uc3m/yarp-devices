@@ -5,6 +5,8 @@
 %>
 %> @brief This example connects to a running \ref testRaveBot or \ref cartesianServer module to move in Joint space.
 %>
+%> <b>Requires YARP 2.3.72.</b>
+%>
 %> <b>Legal</b> 
 %>
 %> Copyright: (C) 2012 Universidad Carlos III de Madrid
@@ -69,7 +71,7 @@ end
 
 axes = enc.getAxes();
 for i = 1:axes
-    mode.setPositionMode(i-1);  % use the object to set the device to position mode (as opposed to velocity mode) (note: stops the robot)
+    mode.setControlMode(i-1, yarp.Vocab_encode('pos'));  % use the object to set the device to position mode (as opposed to velocity mode) (note: stops the robot)
 end
 
 disp 'test positionMove(1,35) -> moves motor 1 (start count at motor 0) to 35 degrees';
@@ -83,7 +85,7 @@ enc.getEncoders(v);  % read the encoder values and put them into 'v'
 disp (strcat('v[1] is: ',num2str(v.get(1))));  % print element 1 of 'v', note that motors and encoders start at 0
 
 for i = 1:axes
-    mode.setVelocityMode(i-1);  % use the object to set the device to velocity mode (as opposed to position mode)
+    mode.setControlMode(i-1, yarp.Vocab_encode('vel'));  % use the object to set the device to velocity mode (as opposed to position mode)
 end
 
 disp 'test velocityMove(0,10) -> moves motor 0 (start count at motor 0) at 10 degrees per second';
