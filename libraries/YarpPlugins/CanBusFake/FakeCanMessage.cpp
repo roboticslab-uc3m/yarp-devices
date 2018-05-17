@@ -2,6 +2,8 @@
 
 #include "FakeCanMessage.hpp"
 
+#include <cstring> // std::memcpy
+
 // -----------------------------------------------------------------------------
 
 roboticslab::FakeCanMessage::FakeCanMessage()
