@@ -592,6 +592,27 @@ public:
      */
     virtual bool setRefTorque(int j, double t);
 
+    /** Set new torque reference for a subset of joints.
+     * @param joints pointer to the array of joint numbers
+     * @param refs   pointer to the array specifing the new torque reference
+     * @return true/false on success/failure
+     */
+    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t);
+
+    /** Get a subset of motor parameters (bemf, ktau etc) useful for torque control.
+     * @param j joint number
+     * @param params a struct containing the motor parameters to be retrieved
+     * @return true/false on success/failure
+     */
+    virtual bool getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params);
+
+    /** Set a subset of motor parameters (bemf, ktau etc) useful for torque control.
+     * @param j joint number
+     * @param params a struct containing the motor parameters to be set
+     * @return true/false on success/failure
+     */
+    virtual bool setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params);
+
     /**
      * Get the value of the torque on a given joint (this is the
      * feedback if you have a torque sensor).

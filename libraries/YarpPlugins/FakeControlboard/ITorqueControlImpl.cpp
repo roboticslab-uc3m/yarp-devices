@@ -35,6 +35,27 @@ bool roboticslab::FakeControlboard::setRefTorque(int j, double t)
 
 // -----------------------------------------------------------------------------
 
+bool roboticslab::FakeControlboard::setRefTorques(const int n_joint, const int *joints, const double *t)
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::FakeControlboard::getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params)
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::FakeControlboard::setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params)
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
 bool roboticslab::FakeControlboard::getTorque(int j, double *t)
 {
     //CD_DEBUG("joint: %d.\n",j);  //-- Way too verbose

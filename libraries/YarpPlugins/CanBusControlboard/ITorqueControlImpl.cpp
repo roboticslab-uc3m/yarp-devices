@@ -57,6 +57,44 @@ bool roboticslab::CanBusControlboard::setRefTorque(int j, double t)
 
 // -----------------------------------------------------------------------------
 
+bool roboticslab::CanBusControlboard::setRefTorques(const int n_joint, const int *joints, const double *t)
+{
+    CD_DEBUG("(%d)\n",n_joint);
+
+    bool ok = true;
+    for(int j=0; j<n_joint; j++)
+    {
+        ok &= this->setRefTorque(joints[j],t[j]);
+    }
+    return ok;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::CanBusControlboard::getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params)
+{
+    CD_DEBUG("(%d)\n",j);
+
+    //-- Check index within range
+    if ( ! this->indexWithinRange(j) ) return false;
+
+    return iTorqueControlRaw[j]->getMotorTorqueParamsRaw( 0, params );
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::CanBusControlboard::setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params)
+{
+    CD_DEBUG("(%d)\n",j);
+
+    //-- Check index within range
+    if ( ! this->indexWithinRange(j) ) return false;
+
+    return iTorqueControlRaw[j]->setMotorTorqueParamsRaw( 0, params );
+}
+
+// -----------------------------------------------------------------------------
+
 bool roboticslab::CanBusControlboard::getTorque(int j, double *t)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
