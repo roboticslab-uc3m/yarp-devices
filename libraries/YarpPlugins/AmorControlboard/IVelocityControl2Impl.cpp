@@ -112,6 +112,7 @@ bool roboticslab::AmorControlboard::setVelPid(int j, const yarp::dev::Pid &pid)
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_MAJOR != 3
 bool roboticslab::AmorControlboard::setVelPids(const yarp::dev::Pid *pids)
 {
     CD_ERROR("Not available.\n");
@@ -135,3 +136,4 @@ bool roboticslab::AmorControlboard::getVelPids(yarp::dev::Pid *pids)
 }
 
 // -----------------------------------------------------------------------------
+#endif // YARP_VERSION_MAJOR != 3

@@ -62,34 +62,6 @@ bool roboticslab::AmorControlboard::setRefTorques(const int n_joint, const int *
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getBemfParam(int j, double *bemf)
-{
-    CD_DEBUG("(%d)\n", j);
-
-    if (!indexWithinRange(j))
-    {
-        return false;
-    }
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::AmorControlboard::setBemfParam(int j, double bemf)
-{
-    CD_DEBUG("(%d, %f)\n", j, bemf);
-
-    if (!indexWithinRange(j))
-    {
-        return false;
-    }
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
 bool roboticslab::AmorControlboard::getMotorTorqueParams(int j, yarp::dev::MotorTorqueParameters *params)
 {
     CD_DEBUG("(%d)\n", j);
@@ -105,20 +77,6 @@ bool roboticslab::AmorControlboard::getMotorTorqueParams(int j, yarp::dev::Motor
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params)
-{
-    CD_DEBUG("(%d)\n", j);
-
-    if (!indexWithinRange(j))
-    {
-        return false;
-    }
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::AmorControlboard::setTorquePid(int j, const yarp::dev::Pid &pid)
 {
     CD_DEBUG("(%d)\n", j);
 
@@ -171,6 +129,49 @@ bool roboticslab::AmorControlboard::getTorqueRange(int j, double *min, double *m
 bool roboticslab::AmorControlboard::getTorqueRanges(double *min, double *max)
 {
     CD_DEBUG("\n");
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+#if YARP_VERSION_MAJOR != 3
+bool roboticslab::AmorControlboard::getBemfParam(int j, double *bemf)
+{
+    CD_DEBUG("(%d)\n", j);
+
+    if (!indexWithinRange(j))
+    {
+        return false;
+    }
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::AmorControlboard::setBemfParam(int j, double bemf)
+{
+    CD_DEBUG("(%d, %f)\n", j, bemf);
+
+    if (!indexWithinRange(j))
+    {
+        return false;
+    }
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::AmorControlboard::setTorquePid(int j, const yarp::dev::Pid &pid)
+{
+    CD_DEBUG("(%d)\n", j);
+
+    if (!indexWithinRange(j))
+    {
+        return false;
+    }
+
     return true;
 }
 
@@ -349,3 +350,4 @@ bool roboticslab::AmorControlboard::setTorqueOffset(int j, double v)
 }
 
 // -----------------------------------------------------------------------------
+#endif // YARP_VERSION_MAJOR != 3
