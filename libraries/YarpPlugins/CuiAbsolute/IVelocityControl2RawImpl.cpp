@@ -51,33 +51,3 @@ bool roboticslab::CuiAbsolute::getRefVelocitiesRaw(const int n_joint, const int 
 }
 
 // --------------------------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::setVelPidRaw(int j, const yarp::dev::Pid &pid)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// --------------------------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::setVelPidsRaw(const yarp::dev::Pid *pids)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// --------------------------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::getVelPidRaw(int j, yarp::dev::Pid *pid)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// --------------------------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::getVelPidsRaw(yarp::dev::Pid *pids)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}

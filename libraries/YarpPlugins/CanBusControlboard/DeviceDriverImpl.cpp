@@ -2,8 +2,6 @@
 
 #include "CanBusControlboard.hpp"
 
-#include <sstream>
-
 // ------------------- DeviceDriver Related ------------------------------------
 
 bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
@@ -11,6 +9,8 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     std::string mode = config.check("mode",yarp::os::Value("position"),"control mode on startup (position/velocity)").asString();
     int16_t ptModeMs = config.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode (milliseconds)").asInt();
     int timeCuiWait  = config.check("waitEncoder", yarp::os::Value(DEFAULT_TIME_TO_WAIT_CUI), "CUI timeout (seconds)").asInt();
+
+    std::string canBusType = config.check("canBusType", yarp::os::Value(DEFAULT_CAN_BUS), "CAN bus device name").asString();
 
     yarp::os::Bottle ids = config.findGroup("ids", "CAN bus IDs").tail();  //-- e.g. 15
     yarp::os::Bottle trs = config.findGroup("trs", "reductions").tail();  //-- e.g. 160
@@ -27,11 +27,10 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     yarp::os::Bottle types = config.findGroup("types", "device name of each node").tail();  //-- e.g. 15
 
     //-- Initialize the CAN device.
-    std::string canBusDeviceName = "CanBusHico";
     yarp::os::Property canBusOptions;
     canBusOptions.fromString(config.toString());  // canDevice, canBitrate
-    canBusOptions.put("device", canBusDeviceName);
-    canBusOptions.setMonitor(config.getMonitor(), canBusDeviceName.c_str());
+    canBusOptions.put("device", canBusType);
+    canBusOptions.setMonitor(config.getMonitor(), canBusType.c_str());
     canBusDevice.open(canBusOptions);
     if( ! canBusDevice.isValid() )
     {
@@ -78,12 +77,17 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         options.put("refSpeed",refSpeeds.get(i).asDouble());
         options.put("encoderPulses",encoderPulsess.get(i).asDouble());
         options.put("ptModeMs",ptModeMs);
-        std::stringstream ss;
-        ss << types.get(i).asString() << "_" << ids.get(i).asInt();
-        options.setMonitor(config.getMonitor(),ss.str().c_str());
+        //std::stringstream ss; // Remember to #include <sstream>
+        //ss << types.get(i).asString() << "_" << ids.get(i).asInt();
+        //options.setMonitor(config.getMonitor(),ss.str().c_str());
 
         // -- Configuramos todos los dispositivos (TechnosoftIpos, LacqueyFetch, CuiAbsolute)
         yarp::dev::PolyDriver* device = new yarp::dev::PolyDriver(options);
+        if( ! device->isValid() )
+        {
+            CD_ERROR("CAN node [%d] '%s' instantiation not worked.\n",i,types.get(i).asString().c_str());
+            return false;
+        }
 
         //-- Fill a map entry ( drivers.size() if before push_back, otherwise do drivers.size()-1).
         //-- Just "i" if resize already performed.

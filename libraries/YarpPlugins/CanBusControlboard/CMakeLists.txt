@@ -32,13 +32,19 @@ target_link_libraries(CanBusControlboard YARP::YARP_OS
                                          YARP::YARP_dev
                                          YarpDevicesInterfaces)
 
+# Hack, fool CMake to think that YARP already switched to 3.0 while still at devel.
+# https://github.com/roboticslab-uc3m/yarp-devices/issues/180
+if(NOT YARP_VERSION_SHORT VERSION_LESS 2.3.73)
+    target_compile_definitions(CanBusControlboard PUBLIC YARP_VERSION_MAJOR=3)
+endif()
+
 yarp_install(TARGETS CanBusControlboard
              COMPONENT runtime
-             LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
-             ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+             LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
+             ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
 
 yarp_install(FILES CanBusControlboard.ini
              COMPONENT runtime
-             DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+             DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
 
 endif()

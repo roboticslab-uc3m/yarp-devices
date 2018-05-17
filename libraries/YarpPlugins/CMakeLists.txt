@@ -2,15 +2,6 @@
 # Authors: Juan G. Victores & Raul de Santos Rico
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-# Find YARP (common dependency for all devices).
-find_package(YARP REQUIRED)
-
-if(YARP_VERSION_SHORT VERSION_LESS 2.3.70)
-    list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-    include(YarpPlugin)
-    include_directories(${YARP_INCLUDE_DIRS})
-endif()
-
 # Create device interface target.
 add_library(YarpDevicesInterfaces INTERFACE)
 
@@ -36,8 +27,10 @@ install(TARGETS YarpDevicesInterfaces
 set_property(GLOBAL APPEND PROPERTY ROBOTICSLAB_YARP_DEVICES_TARGETS YarpDevicesInterfaces)
 
 # YARP devices.
+add_subdirectory(AmorControlboard)
 add_subdirectory(AravisGigE)
 add_subdirectory(CanBusControlboard)
+add_subdirectory(CanBusFake)
 add_subdirectory(CanBusHico)
 add_subdirectory(CuiAbsolute)
 add_subdirectory(FakeControlboard)
@@ -51,3 +44,6 @@ add_subdirectory(SpaceNavigator)
 add_subdirectory(TechnosoftIpos)
 add_subdirectory(TextilesHand)
 add_subdirectory(WiimoteSensor)
+
+# Port monitor plugins.
+add_subdirectory(PortMonitorPlugins)

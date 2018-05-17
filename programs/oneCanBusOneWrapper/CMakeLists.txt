@@ -3,10 +3,6 @@ cmake_dependent_option(ENABLE_oneCanBusOneWrapper "Enable/disable oneCanBusOneWr
 
 if(ENABLE_oneCanBusOneWrapper)
 
-find_package(YARP REQUIRED)
-
-include_directories(${YARP_INCLUDE_DIRS}) # remove if YARP > v2.3.70
-
 add_executable(oneCanBusOneWrapper main.cpp)
 
 add_dependencies(oneCanBusOneWrapper COLOR_DEBUG)

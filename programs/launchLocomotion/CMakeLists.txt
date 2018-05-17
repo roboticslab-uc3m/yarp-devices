@@ -3,10 +3,6 @@ cmake_dependent_option(ENABLE_launchLocomotion "Enable/disable launchLocomotion 
 
 if(ENABLE_launchLocomotion)
 
-find_package(YARP REQUIRED)
-
-include_directories(${YARP_INCLUDE_DIRS}) # remove if YARP > v2.3.70
-
 add_executable(launchLocomotion main.cpp)
 
 add_dependencies(launchLocomotion COLOR_DEBUG)
