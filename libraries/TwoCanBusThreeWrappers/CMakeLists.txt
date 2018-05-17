@@ -2,8 +2,6 @@ option(ENABLE_TwoCanBusThreeWrappers "Enable/disable TwoCanBusThreeWrappers libr
 
 if(ENABLE_TwoCanBusThreeWrappers)
 
-include_directories(${YARP_INCLUDE_DIRS}) # remove if YARP > v2.3.70
-
 add_library(TwoCanBusThreeWrappers TwoCanBusThreeWrappers.cpp
                                    TwoCanBusThreeWrappers.hpp)
 

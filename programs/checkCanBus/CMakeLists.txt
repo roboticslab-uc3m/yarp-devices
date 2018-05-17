@@ -2,8 +2,6 @@ option(ENABLE_checkCanBus "Enable/disable checkCanBus program" ON)
 
 if(ENABLE_checkCanBus)
 
-include_directories(${YARP_INCLUDE_DIRS}) # remove if YARP > v2.3.70
-
 add_executable(checkCanBus main.cpp
                            CheckCanBus.cpp
                            CheckCanBus.hpp

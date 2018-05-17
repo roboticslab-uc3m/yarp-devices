@@ -57,38 +57,40 @@ bool roboticslab::CanBusControlboard::setRefTorque(int j, double t)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getBemfParam(int j, double *bemf)
+bool roboticslab::CanBusControlboard::setRefTorques(const int n_joint, const int *joints, const double *t)
+{
+    CD_DEBUG("(%d)\n",n_joint);
+
+    bool ok = true;
+    for(int j=0; j<n_joint; j++)
+    {
+        ok &= this->setRefTorque(joints[j],t[j]);
+    }
+    return ok;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::CanBusControlboard::getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params)
 {
     CD_DEBUG("(%d)\n",j);
 
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iTorqueControlRaw[j]->getBemfParamRaw( 0, bemf );;
+    return iTorqueControlRaw[j]->getMotorTorqueParamsRaw( 0, params );
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::setBemfParam(int j, double bemf)
-{
-    CD_DEBUG("(%d,%f)\n",j,bemf);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->setBemfParamRaw( 0, bemf );;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setTorquePid(int j, const yarp::dev::Pid &pid)
+bool roboticslab::CanBusControlboard::setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params)
 {
     CD_DEBUG("(%d)\n",j);
 
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iTorqueControlRaw[j]->setTorquePidRaw( 0, pid );;
+    return iTorqueControlRaw[j]->setMotorTorqueParamsRaw( 0, params );
 }
 
 // -----------------------------------------------------------------------------
@@ -145,194 +147,28 @@ bool roboticslab::CanBusControlboard::getTorqueRanges(double *min, double *max)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::setTorquePids(const yarp::dev::Pid *pids)
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        ok &= this->setTorquePid(j, pids[j]);
-    }
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setTorqueErrorLimit(int j, double limit)
-{
-    CD_DEBUG("(%d,%f)\n",j,limit);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->setTorqueErrorLimitRaw( 0, limit );
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setTorqueErrorLimits(const double *limits)
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        ok &= this->setTorqueErrorLimit(j, limits[j]);
-    }
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getTorqueError(int j, double *err)
+#if YARP_VERSION_MAJOR != 3
+bool roboticslab::CanBusControlboard::getBemfParam(int j, double *bemf)
 {
     CD_DEBUG("(%d)\n",j);
 
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iTorqueControlRaw[j]->getTorqueErrorRaw( 0, err );
+    return iTorqueControlRaw[j]->getBemfParamRaw( 0, bemf );;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getTorqueErrors(double *errs)
+bool roboticslab::CanBusControlboard::setBemfParam(int j, double bemf)
 {
-    CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        ok &= this->getTorqueError(j, &(errs[j]));
-    }
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getTorquePidOutput(int j, double *out)
-{
-    CD_DEBUG("(%d)\n",j);
+    CD_DEBUG("(%d,%f)\n",j,bemf);
 
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iTorqueControlRaw[j]->getTorquePidOutputRaw( 0, out );
+    return iTorqueControlRaw[j]->setBemfParamRaw( 0, bemf );;
 }
 
 // -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getTorquePidOutputs(double *outs)
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        ok &= this->getTorquePidOutput(j, &(outs[j]));
-    }
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getTorquePid(int j, yarp::dev::Pid *pid)
-{
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->getTorquePidRaw( 0, pid );
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getTorquePids(yarp::dev::Pid *pids)
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        ok &= this->getTorquePid(j, &(pids[j]));
-    }
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getTorqueErrorLimit(int j, double *limit)
-{
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->getTorqueErrorLimitRaw( 0, limit );
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getTorqueErrorLimits(double *limits)
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        ok &= this->getTorqueErrorLimit(j, &(limits[j]));
-    }
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::resetTorquePid(int j)
-{
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->resetTorquePidRaw(0);
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::disableTorquePid(int j)
-{
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->disableTorquePidRaw(0);
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::enableTorquePid(int j)
-{
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->enableTorquePidRaw(0);
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setTorqueOffset(int j, double v)
-{
-    CD_DEBUG("(%d,%f)\n",j,v);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->setTorqueOffsetRaw( 0, v );
-}
-
-// -----------------------------------------------------------------------------
+#endif // YARP_VERSION_MAJOR != 3

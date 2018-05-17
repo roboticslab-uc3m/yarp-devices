@@ -12,6 +12,7 @@ if(NOT SKIP_FakeControlboard)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}) # yarp plugin builder needs this
 
 yarp_add_plugin(FakeControlboard FakeControlboard.hpp
+                                 FakeControlboard.cpp
                                  DeviceDriverImpl.cpp
                                  IControlLimitsImpl.cpp
                                  IControlLimits2Impl.cpp
