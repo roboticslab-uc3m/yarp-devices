@@ -64,14 +64,6 @@ bool roboticslab::FakeJoint::setImpedanceVelocityModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeJoint::setOpenLoopModeRaw(int j)
-{
-    CD_ERROR("(%d)\n",j);  //-- Removed in YARP 2.3.70
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
 bool roboticslab::FakeJoint::getControlModeRaw(int j, int *mode)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
@@ -123,8 +115,6 @@ bool roboticslab::FakeJoint::setControlModeRaw(const int j, const int mode)
         return setImpedancePositionModeRaw(j);
     else if( mode == VOCAB_CM_IMPEDANCE_VEL )
         return setImpedanceVelocityModeRaw(j);
-    /*else if( mode == VOCAB_CM_OPENLOOP )
-        return setOpenLoopModeRaw(j);*/
 
     return false;
 }

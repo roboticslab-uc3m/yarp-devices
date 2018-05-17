@@ -54,16 +54,6 @@ bool roboticslab::AmorControlboard::setImpedanceVelocityMode(int j)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::setOpenLoopMode(int j)
-{
-    CD_DEBUG("(%d)\n", j);
-    if (!indexWithinRange(j))
-        return false;
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
 bool roboticslab::AmorControlboard::getControlMode(int j, int *mode)
 {
     //CD_DEBUG("(%d)\n", j);  //-- Way too verbose.

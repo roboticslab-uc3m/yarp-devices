@@ -145,14 +145,6 @@ bool roboticslab::TechnosoftIpos::setImpedanceVelocityModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setOpenLoopModeRaw(int j)
-{
-    CD_ERROR("(%d)\n",j);  //-- Removed in YARP 2.3.70
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
 bool roboticslab::TechnosoftIpos::getControlModeRaw(int j, int *mode)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
@@ -303,8 +295,6 @@ bool roboticslab::TechnosoftIpos::setControlModeRaw(const int j, const int mode)
         return setImpedanceVelocityModeRaw(j);
     else if( mode == VOCAB_CM_POSITION_DIRECT )
         return setPositionDirectModeRaw();
-    /*else if( mode == VOCAB_CM_OPENLOOP )
-        return setOpenLoopModeRaw(j);*/
 
     return false;
 }

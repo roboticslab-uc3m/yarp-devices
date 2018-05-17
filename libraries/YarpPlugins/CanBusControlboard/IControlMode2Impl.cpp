@@ -44,14 +44,6 @@ bool roboticslab::CanBusControlboard::setImpedanceVelocityMode(int j)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::setOpenLoopMode(int j)
-{
-    CD_ERROR("(%d)\n",j);  //-- Removed in YARP 2.3.70
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
 bool roboticslab::CanBusControlboard::getControlMode(int j, int *mode)
 {
     //CD_DEBUG("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream

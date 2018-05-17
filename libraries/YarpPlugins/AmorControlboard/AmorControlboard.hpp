@@ -512,13 +512,6 @@ public:
     virtual bool setImpedanceVelocityMode(int j);
 
     /**
-    * Set open loop mode, single axis.
-    * @param j: joint number
-    * @return: true/false success failure.
-    */
-    virtual bool setOpenLoopMode(int j);
-
-    /**
     * Get the current control mode.
     * @param j: joint number
     * @param mode: a vocab of the current control mode for joint j.

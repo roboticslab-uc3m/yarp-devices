@@ -64,14 +64,6 @@ bool roboticslab::LacqueyFetch::setImpedanceVelocityModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LacqueyFetch::setOpenLoopModeRaw(int j)
-{
-    CD_ERROR("(%d)\n",j);  //-- Removed in YARP 2.3.70
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
 bool roboticslab::LacqueyFetch::getControlModeRaw(int j, int *mode)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
@@ -123,8 +115,6 @@ bool roboticslab::LacqueyFetch::setControlModeRaw(const int j, const int mode)
         return setImpedancePositionModeRaw(j);
     else if( mode == VOCAB_CM_IMPEDANCE_VEL )
         return setImpedanceVelocityModeRaw(j);
-    /*else if( mode == VOCAB_CM_OPENLOOP )
-        return setOpenLoopModeRaw(j);*/
 
     return false;
 }

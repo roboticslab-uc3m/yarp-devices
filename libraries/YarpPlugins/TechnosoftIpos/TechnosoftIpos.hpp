@@ -91,7 +91,6 @@ public:
 
     virtual bool setImpedancePositionModeRaw(int j);
     virtual bool setImpedanceVelocityModeRaw(int j);
-    virtual bool setOpenLoopModeRaw(int j);
     virtual bool getControlModeRaw(int j, int *mode);
     //-- Auxiliary functions (splitted) of getControlModeRaw
     bool getControlModeRaw1();
