@@ -155,7 +155,16 @@ bool roboticslab::CanBusControlboard::getBemfParam(int j, double *bemf)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iTorqueControlRaw[j]->getBemfParamRaw( 0, bemf );;
+    yarp::dev::MotorTorqueParameters params;
+
+    if (!getMotorTorqueParams(j, &params))
+    {
+        return false;
+    }
+
+    *bemf = params.bemf;
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -167,7 +176,16 @@ bool roboticslab::CanBusControlboard::setBemfParam(int j, double bemf)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iTorqueControlRaw[j]->setBemfParamRaw( 0, bemf );;
+    yarp::dev::MotorTorqueParameters params;
+
+    if (!getMotorTorqueParams(j, &params))
+    {
+        return false;
+    }
+
+    params.bemf = bemf;
+
+    return setMotorTorqueParams(j, params);
 }
 
 // -----------------------------------------------------------------------------
