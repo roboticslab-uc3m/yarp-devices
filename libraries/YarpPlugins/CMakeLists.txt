@@ -2,10 +2,6 @@
 # Authors: Juan G. Victores & Raul de Santos Rico
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(YARP_VERSION_SHORT VERSION_LESS 2.3.70)
-    include_directories(${YARP_INCLUDE_DIRS})
-endif()
-
 # Create device interface target.
 add_library(YarpDevicesInterfaces INTERFACE)
 
@@ -31,6 +27,7 @@ install(TARGETS YarpDevicesInterfaces
 set_property(GLOBAL APPEND PROPERTY ROBOTICSLAB_YARP_DEVICES_TARGETS YarpDevicesInterfaces)
 
 # YARP devices.
+add_subdirectory(AmorControlboard)
 add_subdirectory(AravisGigE)
 add_subdirectory(CanBusControlboard)
 add_subdirectory(CanBusFake)

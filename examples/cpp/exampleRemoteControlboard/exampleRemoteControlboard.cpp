@@ -34,6 +34,8 @@ make -j3
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <vector>
+
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
 
@@ -61,10 +63,10 @@ int main(int argc, char *argv[]) {
       return 1;
     }
 
-    IPositionControl *pos;
-    IVelocityControl *vel;
-    IEncoders *enc;
-    IControlMode *mode;
+    IPositionControl2 *pos;
+    IVelocityControl2 *vel;
+    IEncodersTimed *enc;
+    IControlMode2 *mode;
 
     bool ok = true;
     ok &= dd.view(pos);
@@ -80,8 +82,8 @@ int main(int argc, char *argv[]) {
     int axes;
     pos->getAxes(&axes);
 
-    for (unsigned int i = 0; i < axes; i++)
-        mode->setPositionMode(i);
+    std::vector<int> posModes(axes, VOCAB_CM_POSITION);
+    mode->setControlModes(posModes.data());
 
     printf("test positionMove(1,35)\n");
     pos->positionMove(1, 35);
@@ -89,8 +91,8 @@ int main(int argc, char *argv[]) {
     printf("Delaying 5 seconds...\n");
     Time::delay(5);
 
-    for (unsigned int i = 0; i < axes; i++)
-        mode->setVelocityMode(i);
+    std::vector<int> velModes(axes, VOCAB_CM_VELOCITY);
+    mode->setControlModes(velModes.data());
 
     printf("test velocityMove(0,10)\n");
     vel->velocityMove(0,10);
@@ -102,5 +104,3 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-
-

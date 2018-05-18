@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
     }
     else std::printf("[success] Viewing IVelocityControlRaw.\n");
 
-    yarp::dev::IControlModeRaw *mode;
+    yarp::dev::IControlMode2Raw *mode;
     ok = dd.view(mode);
     if (!ok)
     {
@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
     iCanBusSharer->enable();
 
     //-- Commands on TechnosoftIpos.
-    ok = mode->setPositionModeRaw(0);
+    ok = mode->setControlModeRaw(0, VOCAB_CM_POSITION);
     if (!ok)
     {
         std::printf("[error] Problems in setPositionModeRaw.\n");

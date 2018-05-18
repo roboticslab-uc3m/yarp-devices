@@ -4,54 +4,6 @@
 
 // ------------------- IControlMode Related ------------------------------------
 
-bool roboticslab::CanBusControlboard::setPositionMode(int j)
-{
-    CD_DEBUG("(%d)\n",j);
-    return setControlMode(j, VOCAB_CM_POSITION);
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setVelocityMode(int j)
-{
-    CD_DEBUG("(%d)\n",j);
-    return setControlMode(j, VOCAB_CM_VELOCITY);
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setTorqueMode(int j)
-{
-    CD_DEBUG("(%d)\n",j);
-    return setControlMode(j, VOCAB_CM_TORQUE);
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setImpedancePositionMode(int j)
-{
-    CD_DEBUG("(%d)\n",j);
-    return setControlMode(j, VOCAB_CM_IMPEDANCE_POS);
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setImpedanceVelocityMode(int j)
-{
-    CD_DEBUG("(%d)\n",j);
-    return setControlMode(j, VOCAB_CM_IMPEDANCE_VEL);
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setOpenLoopMode(int j)
-{
-    CD_ERROR("(%d)\n",j);  //-- Removed in YARP 2.3.70
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
 bool roboticslab::CanBusControlboard::getControlMode(int j, int *mode)
 {
     //CD_DEBUG("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
