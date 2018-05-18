@@ -64,12 +64,6 @@ public:
     virtual bool getVelLimits(int axis, double *min, double *max);
 
     //  --------- IControlMode Declarations. Implementation in IControlMode2Impl.cpp ---------
-    virtual bool setPositionMode(int j);
-    virtual bool setVelocityMode(int j);
-    virtual bool setTorqueMode(int j);
-    virtual bool setImpedancePositionMode(int j);
-    virtual bool setImpedanceVelocityMode(int j);
-    virtual bool setOpenLoopMode(int j);
     virtual bool getControlMode(int j, int *mode);
     virtual bool getControlModes(int *modes);
 
