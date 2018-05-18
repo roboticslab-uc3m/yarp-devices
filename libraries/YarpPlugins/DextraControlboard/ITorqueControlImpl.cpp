@@ -36,30 +36,6 @@ bool roboticslab::DextraControlboard::setRefTorque(int j, double t)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::getBemfParam(int j, double *bemf)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::setBemfParam(int j, double bemf)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::setTorquePid(int j, const yarp::dev::Pid &pid)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------------
-
 bool roboticslab::DextraControlboard::getTorque(int j, double *t)
 {
     //CD_INFO("\n");  //-- Too verbose in controlboardwrapper2 stream.
@@ -91,16 +67,8 @@ bool roboticslab::DextraControlboard::getTorqueRanges(double *min, double *max)
 }
 
 // -----------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::setTorquePids(const yarp::dev::Pid *pids)
-{
-    CD_ERROR("\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::setTorqueErrorLimit(int j, double limit)
+#if YARP_VERSION_MAJOR != 3
+bool roboticslab::DextraControlboard::getBemfParam(int j, double *bemf)
 {
     CD_INFO("\n");
     return true;
@@ -108,104 +76,11 @@ bool roboticslab::DextraControlboard::setTorqueErrorLimit(int j, double limit)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::setTorqueErrorLimits(const double *limits)
-{
-    CD_ERROR("\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::getTorqueError(int j, double *err)
+bool roboticslab::DextraControlboard::setBemfParam(int j, double bemf)
 {
     CD_INFO("\n");
     return true;
 }
 
 // -----------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::getTorqueErrors(double *errs)
-{
-    CD_ERROR("\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::getTorquePidOutput(int j, double *out)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::getTorquePidOutputs(double *outs)
-{
-    CD_ERROR("\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::getTorquePid(int j, yarp::dev::Pid *pid)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::getTorquePids(yarp::dev::Pid *pids)
-{
-    CD_ERROR("\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::getTorqueErrorLimit(int j, double *limit)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::getTorqueErrorLimits(double *limits)
-{
-    CD_ERROR("\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::resetTorquePid(int j)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::disableTorquePid(int j)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::enableTorquePid(int j)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::setTorqueOffset(int j, double v)
-{
-    CD_INFO("\n");
-    return true;
-}
+#endif // YARP_VERSION_MAJOR != 3

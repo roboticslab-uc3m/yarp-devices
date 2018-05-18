@@ -51,33 +51,3 @@ bool roboticslab::DextraControlboard::getRefVelocities(const int n_joint, const 
 }
 
 // --------------------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::setVelPid(int j, const yarp::dev::Pid &pid)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// --------------------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::setVelPids(const yarp::dev::Pid *pids)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// --------------------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::getVelPid(int j, yarp::dev::Pid *pid)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// --------------------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboard::getVelPids(yarp::dev::Pid *pids)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}

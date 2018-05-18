@@ -138,28 +138,14 @@ public:
     virtual bool getRefTorque(int j, double *t);
     virtual bool setRefTorques(const double *t);
     virtual bool setRefTorque(int j, double t);
-    virtual bool getBemfParam(int j, double *bemf);
-    virtual bool setBemfParam(int j, double bemf);
-    virtual bool setTorquePid(int j, const yarp::dev::Pid &pid);
     virtual bool getTorque(int j, double *t);
     virtual bool getTorques(double *t);
     virtual bool getTorqueRange(int j, double *min, double *max);
     virtual bool getTorqueRanges(double *min, double *max);
-    virtual bool setTorquePids(const yarp::dev::Pid *pids);
-    virtual bool setTorqueErrorLimit(int j, double limit);
-    virtual bool setTorqueErrorLimits(const double *limits);
-    virtual bool getTorqueError(int j, double *err);
-    virtual bool getTorqueErrors(double *errs);
-    virtual bool getTorquePidOutput(int j, double *out);
-    virtual bool getTorquePidOutputs(double *outs);
-    virtual bool getTorquePid(int j, yarp::dev::Pid *pid);
-    virtual bool getTorquePids(yarp::dev::Pid *pids);
-    virtual bool getTorqueErrorLimit(int j, double *limit);
-    virtual bool getTorqueErrorLimits(double *limits);
-    virtual bool resetTorquePid(int j);
-    virtual bool disableTorquePid(int j);
-    virtual bool enableTorquePid(int j);
-    virtual bool setTorqueOffset(int j, double v);
+#if YARP_VERSION_MAJOR != 3
+    virtual bool getBemfParam(int j, double *bemf);
+    virtual bool setBemfParam(int j, double bemf);
+#endif // YARP_VERSION_MAJOR != 3
 
     //  --------- IVelocityControl Declarations. Implementation in IVelocityControl2Impl.cpp ---------
     virtual bool velocityMove(int j, double sp);
@@ -173,10 +159,6 @@ public:
     // -- (just defined in IInteractionMode) - virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs);
     // -- (just defined in IInteractionMode) - virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs);
     // -- (just defined in IInteractionMode) - virtual bool stop(const int n_joint, const int *joints);
-    virtual bool setVelPid(int j, const yarp::dev::Pid &pid);
-    virtual bool setVelPids(const yarp::dev::Pid *pids);
-    virtual bool getVelPid(int j, yarp::dev::Pid *pid);
-    virtual bool getVelPids(yarp::dev::Pid *pids);
 
     // ------- IInteractionMode declarations. Implementation in IInteractionModeImpl.cpp -------
 
