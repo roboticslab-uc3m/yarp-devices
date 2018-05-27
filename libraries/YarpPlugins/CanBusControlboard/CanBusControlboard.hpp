@@ -5,6 +5,7 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
+#include <yarp/dev/IControlLimits2.h>
 
 #include <stdlib.h>  //-- Just for ::exit()
 #include <fcntl.h>  //-- Just for O_RDWR
