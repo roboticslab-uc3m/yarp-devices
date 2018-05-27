@@ -5,6 +5,8 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
+#include <yarp/dev/IControlMode2.h>
+
 #include <sstream>
 
 #include <errno.h>    /* Error number definitions */
