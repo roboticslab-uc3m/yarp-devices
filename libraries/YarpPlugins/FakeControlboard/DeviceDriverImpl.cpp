@@ -15,18 +15,18 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
     yarp::os::SearchMonitor * monitor = config.getMonitor();
     CD_WARNING("monitor: %d\n", monitor);
 
-    axes = config.check("axes", DEFAULT_AXES, "number of axes to control").asInt();
-    jmcMs = config.check("jmcMs", DEFAULT_JMC_MS, "period of JMC rate thread (milliseconds)").asInt();
+    axes = config.check("axes", yarp::os::Value(DEFAULT_AXES), "number of axes to control").asInt();
+    jmcMs = config.check("jmcMs", yarp::os::Value(DEFAULT_JMC_MS), "period of JMC rate thread (milliseconds)").asInt();
 
-    double genInitPos = config.check("genInitPos", DEFAULT_GEN_INIT_POS, "general initialization positions (meters or degrees)").asDouble();
-    double genJointTol = config.check("genJointTol", DEFAULT_GEN_JOINT_TOL, "general joint tolerances (meters or degrees)").asDouble();
-    double genMaxLimit = config.check("genMaxLimit", DEFAULT_GEN_MAX_LIMIT, "general max limits (meters or degrees)").asDouble();
-    double genMinLimit = config.check("genMinLimit", DEFAULT_GEN_MIN_LIMIT, "general min limits (meters or degrees)").asDouble();
-    double genRefSpeed = config.check("genRefSpeed", DEFAULT_GEN_REF_SPEED, "general ref speed (meters/second or degrees/second)").asDouble();
-    double genEncRawExposed = config.check("genEncRawExposed", DEFAULT_GEN_ENC_RAW_EXPOSED, "general EncRawExposed (meters or degrees)").asDouble();
-    double genVelRawExposed = config.check("genVelRawExposed", DEFAULT_GEN_VEL_RAW_EXPOSED, "general VelRawExposed (meters/second or degrees/second)").asDouble();
+    double genInitPos = config.check("genInitPos", yarp::os::Value(DEFAULT_GEN_INIT_POS), "general initialization positions (meters or degrees)").asDouble();
+    double genJointTol = config.check("genJointTol", yarp::os::Value(DEFAULT_GEN_JOINT_TOL), "general joint tolerances (meters or degrees)").asDouble();
+    double genMaxLimit = config.check("genMaxLimit", yarp::os::Value(DEFAULT_GEN_MAX_LIMIT), "general max limits (meters or degrees)").asDouble();
+    double genMinLimit = config.check("genMinLimit", yarp::os::Value(DEFAULT_GEN_MIN_LIMIT), "general min limits (meters or degrees)").asDouble();
+    double genRefSpeed = config.check("genRefSpeed", yarp::os::Value(DEFAULT_GEN_REF_SPEED), "general ref speed (meters/second or degrees/second)").asDouble();
+    double genEncRawExposed = config.check("genEncRawExposed", yarp::os::Value(DEFAULT_GEN_ENC_RAW_EXPOSED), "general EncRawExposed (meters or degrees)").asDouble();
+    double genVelRawExposed = config.check("genVelRawExposed", yarp::os::Value(DEFAULT_GEN_VEL_RAW_EXPOSED), "general VelRawExposed (meters/second or degrees/second)").asDouble();
     
-    int modePosVelInt = config.check("modePosVel", DEFAULT_MODE_POS_VEL, "0:pos, 1:vel").asInt();
+    int modePosVelInt = config.check("modePosVel", yarp::os::Value(DEFAULT_MODE_POS_VEL), "0:pos, 1:vel").asInt();
 
     switch (modePosVelInt)
     {
