@@ -13,7 +13,7 @@ bool roboticslab::DextraControlboard::setPosition(int j, double ref)
 
 // ----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::setPositions(const int n_joint, const int *joints, double *refs)
+bool roboticslab::DextraControlboard::setPositions(const int n_joint, const int *joints, const double *refs)
 {
     CD_DEBUG("\n");
     this->positionMove(0,refs[0]);

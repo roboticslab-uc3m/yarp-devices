@@ -126,7 +126,13 @@ public:
 
     // ------- IPositionDirect declarations. Implementation in IPositionDirectImpl.cpp -------
     virtual bool setPosition(int j, double ref);
-    virtual bool setPositions(const int n_joint, const int *joints, double *refs);
+    virtual bool setPositions(const int n_joint, const int *joints, const double *refs);
+#if YARP_VERSION_MAJOR != 3
+    virtual bool setPositions(const int n_joint, const int *joints, double *refs)
+    {
+        return setPositions(n_joint, joints, const_cast<const double *>(refs));
+    }
+#endif // YARP_VERSION_MAJOR != 3
     virtual bool setPositions(const double *refs);
 
     // -------- ITorqueControl declarations. Implementation in ITorqueControlImpl.cpp --------
