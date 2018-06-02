@@ -32,6 +32,12 @@ target_link_libraries(FakeJoint YARP::YARP_OS
                                 YARP::YARP_dev
                                 YarpDevicesInterfaces)
 
+# Hack, fool CMake to think that YARP already switched to 3.0 while still at devel.
+# https://github.com/roboticslab-uc3m/yarp-devices/issues/180
+if(NOT YARP_VERSION_SHORT VERSION_LESS 2.3.73)
+    target_compile_definitions(FakeJoint PUBLIC YARP_VERSION_MAJOR=3)
+endif()
+
 yarp_install(TARGETS FakeJoint
              COMPONENT runtime
              LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
