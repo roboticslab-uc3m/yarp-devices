@@ -5,7 +5,7 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
-#include <yarp/dev/IControlMode2.h>
+#include <yarp/dev/IControlLimits2.h>
 
 #include <sstream>
 
