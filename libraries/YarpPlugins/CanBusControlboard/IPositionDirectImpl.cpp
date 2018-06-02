@@ -13,7 +13,7 @@ bool roboticslab::CanBusControlboard::setPosition(int j, double ref)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::setPositions(const int n_joint, const int *joints, double *refs)
+bool roboticslab::CanBusControlboard::setPositions(const int n_joint, const int *joints, const double *refs)
 {
     CD_DEBUG("n_joint:%d, drivers.size():" CD_SIZE_T "\n",n_joint,nodes.size());
 

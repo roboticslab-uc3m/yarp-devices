@@ -9,7 +9,7 @@ bool roboticslab::CuiAbsolute::setPositionRaw(int j, double ref)
     return true;
 }
 
-bool roboticslab::CuiAbsolute::setPositionsRaw(const int n_joint, const int *joints, double *refs)
+bool roboticslab::CuiAbsolute::setPositionsRaw(const int n_joint, const int *joints, const double *refs)
 {
     CD_DEBUG("\n");
     this->positionMoveRaw(0,refs[0]);
