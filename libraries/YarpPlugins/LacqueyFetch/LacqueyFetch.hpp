@@ -137,7 +137,13 @@ public:
 
     // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
     virtual bool setPositionRaw(int j, double ref);
-    virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs);
+    virtual bool setPositionsRaw(const int n_joint, const int *joints, const double *refs);
+#if YARP_VERSION_MAJOR != 3
+    virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs)
+    {
+        return setPositionsRaw(n_joint, joints, const_cast<const double *>(refs));
+    }
+#endif // YARP_VERSION_MAJOR != 3
     virtual bool setPositionsRaw(const double *refs);
 
     // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
