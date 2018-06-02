@@ -144,6 +144,15 @@ bool roboticslab::AmorControlboard::getBemfParam(int j, double *bemf)
         return false;
     }
 
+    yarp::dev::MotorTorqueParameters params;
+
+    if (!getMotorTorqueParams(j, &params))
+    {
+        return false;
+    }
+
+    *bemf = params.bemf;
+
     return true;
 }
 
@@ -158,7 +167,16 @@ bool roboticslab::AmorControlboard::setBemfParam(int j, double bemf)
         return false;
     }
 
-    return true;
+    yarp::dev::MotorTorqueParameters params;
+
+    if (!getMotorTorqueParams(j, &params))
+    {
+        return false;
+    }
+
+    params.bemf = bemf;
+
+    return setMotorTorqueParams(j, params);
 }
 
 // -----------------------------------------------------------------------------

@@ -5,6 +5,8 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
+#include <yarp/dev/IControlLimits2.h>
+
 #include <sstream>
 #include <math.h>
 
