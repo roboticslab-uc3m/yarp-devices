@@ -2,8 +2,8 @@ option(ENABLE_TwoCanBusThreeWrappers "Enable/disable TwoCanBusThreeWrappers libr
 
 if(ENABLE_TwoCanBusThreeWrappers)
 
-add_library(TwoCanBusThreeWrappers TwoCanBusThreeWrappers.cpp
-                                   TwoCanBusThreeWrappers.hpp)
+add_library(TwoCanBusThreeWrappers SHARED TwoCanBusThreeWrappers.cpp
+                                          TwoCanBusThreeWrappers.hpp)
 
 set_target_properties(TwoCanBusThreeWrappers PROPERTIES PUBLIC_HEADER TwoCanBusThreeWrappers.hpp)
 

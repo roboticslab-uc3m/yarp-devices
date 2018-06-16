@@ -2,8 +2,8 @@ option(ENABLE_OneCanBusOneWrapper "Enable/disable OneCanBusOneWrapper library" O
 
 if(ENABLE_OneCanBusOneWrapper)
 
-add_library(OneCanBusOneWrapper OneCanBusOneWrapper.cpp
-                                OneCanBusOneWrapper.hpp)
+add_library(OneCanBusOneWrapper SHARED OneCanBusOneWrapper.cpp
+                                       OneCanBusOneWrapper.hpp)
 
 set_target_properties(OneCanBusOneWrapper PROPERTIES PUBLIC_HEADER OneCanBusOneWrapper.hpp)
 

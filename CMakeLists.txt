@@ -6,9 +6,6 @@ cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 project(ROBOTICSLAB_YARP_DEVICES)
 
-# Force building shared libraries and YARP DL modules.
-set(BUILD_SHARED_LIBS TRUE CACHE INTERNAL "hide this!")
-
 # Add suffix for debug libraries.
 if(MSVC)
     message(STATUS "Running on windows")
@@ -49,6 +46,9 @@ if(NOT YARP_FOUND)
 endif()
 
 find_package(COLOR_DEBUG REQUIRED)
+
+# Always build YARP devices as MODULE libraries.
+set(YARP_FORCE_DYNAMIC_PLUGINS TRUE CACHE INTERNAL "Force dynamic plugins")
 
 # Configure installation paths for YARP resources.
 yarp_configure_external_installation(roboticslab-yarp-devices WITH_PLUGINS)
