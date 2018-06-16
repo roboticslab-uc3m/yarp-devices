@@ -31,12 +31,6 @@ target_link_libraries(CuiAbsolute YARP::YARP_OS
                                   ROBOTICSLAB::ColorDebug
                                   YarpDevicesInterfaces)
 
-# Hack, fool CMake to think that YARP already switched to 3.0 while still at devel.
-# https://github.com/roboticslab-uc3m/yarp-devices/issues/180
-if(NOT YARP_VERSION_SHORT VERSION_LESS 2.3.73)
-    target_compile_definitions(CuiAbsolute PUBLIC YARP_VERSION_MAJOR=3)
-endif()
-
 yarp_install(TARGETS CuiAbsolute
              COMPONENT runtime
              LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
