@@ -26,17 +26,10 @@ yarp_add_plugin(CanBusControlboard CanBusControlboard.cpp
                                    IVelocityControl2Impl.cpp
                                    ThreadImpl.cpp)
 
-add_dependencies(CanBusControlboard COLOR_DEBUG)
-
 target_link_libraries(CanBusControlboard YARP::YARP_OS
                                          YARP::YARP_dev
+                                         ROBOTICSLAB::ColorDebug
                                          YarpDevicesInterfaces)
-
-# Hack, fool CMake to think that YARP already switched to 3.0 while still at devel.
-# https://github.com/roboticslab-uc3m/yarp-devices/issues/180
-if(NOT YARP_VERSION_SHORT VERSION_LESS 2.3.73)
-    target_compile_definitions(CanBusControlboard PUBLIC YARP_VERSION_MAJOR=3)
-endif()
 
 yarp_install(TARGETS CanBusControlboard
              COMPONENT runtime

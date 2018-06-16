@@ -13,7 +13,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IControlLimits2.h>
 
-#include <ColorDebug.hpp>
+#include <ColorDebug.h>
 
 #include "ICanBusSharer.h"
 #include "ICuiAbsolute.h"

@@ -25,17 +25,10 @@ yarp_add_plugin(DextraControlboard DextraControlboard.cpp
                            ITorqueControlImpl.cpp
                            IVelocityControl2Impl.cpp)
 
-add_dependencies(DextraControlboard COLOR_DEBUG)
-
 target_link_libraries(DextraControlboard YARP::YARP_OS
-                                 YARP::YARP_dev
-                                 YarpDevicesInterfaces)
-
-# Hack, fool CMake to think that YARP already switched to 3.0 while still at devel.
-# https://github.com/roboticslab-uc3m/yarp-devices/issues/180
-if(NOT YARP_VERSION_SHORT VERSION_LESS 2.3.73)
-    target_compile_definitions(DextraControlboard PUBLIC YARP_VERSION_MAJOR=3)
-endif()
+                                         YARP::YARP_dev
+                                         ROBOTICSLAB::ColorDebug
+                                         YarpDevicesInterfaces)
 
 yarp_install(TARGETS DextraControlboard
              COMPONENT runtime

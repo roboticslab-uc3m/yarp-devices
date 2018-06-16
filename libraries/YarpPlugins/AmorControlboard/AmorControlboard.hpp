@@ -13,7 +13,7 @@
 
 #include <amor.h>
 
-#include "ColorDebug.hpp"
+#include "ColorDebug.h"
 
 #define DEFAULT_CAN_LIBRARY "libeddriver.so"
 #define DEFAULT_CAN_PORT 0
