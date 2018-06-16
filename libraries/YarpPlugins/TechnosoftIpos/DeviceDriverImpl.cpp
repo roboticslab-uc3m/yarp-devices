@@ -27,7 +27,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->refTorque = 0;
     this->refVelocity = 0; // if you want to test.. put 0.1
 
-    yarp::os::Value vCanBufferFactory = config.check("canBufferFactory", 0, "");
+    yarp::os::Value vCanBufferFactory = config.check("canBufferFactory", yarp::os::Value(0), "");
 
     if( 0 == this->canId )
     {

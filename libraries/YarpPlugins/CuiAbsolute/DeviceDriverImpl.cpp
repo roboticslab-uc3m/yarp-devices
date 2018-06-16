@@ -18,7 +18,7 @@ bool roboticslab::CuiAbsolute::open(yarp::os::Searchable& config)
     this->refSpeed = 0;
     this->encoder = sqrt (-1);  // NaN \todo{Investigate, debug and document the dangers of this use of NaN.}
 
-    yarp::os::Value vCanBufferFactory = config.check("canBufferFactory", 0, "");
+    yarp::os::Value vCanBufferFactory = config.check("canBufferFactory", yarp::os::Value(0), "");
 
     if( !vCanBufferFactory.isBlob() || vCanBufferFactory.asBlobLength() != sizeof(yarp::dev::ICanBufferFactory) )
     {

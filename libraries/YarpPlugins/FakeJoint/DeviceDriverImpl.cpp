@@ -20,7 +20,7 @@ bool roboticslab::FakeJoint::open(yarp::os::Searchable& config)
     this->refSpeed = 0;
     this->encoder = 0;
 
-    yarp::os::Value vCanBufferFactory = config.check("canBufferFactory", 0, "");
+    yarp::os::Value vCanBufferFactory = config.check("canBufferFactory", yarp::os::Value(0), "");
 
     if( !vCanBufferFactory.isBlob() || vCanBufferFactory.asBlobLength() != sizeof(yarp::dev::ICanBufferFactory) )
     {
