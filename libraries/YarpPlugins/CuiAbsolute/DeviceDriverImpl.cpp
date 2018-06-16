@@ -6,9 +6,9 @@
 bool roboticslab::CuiAbsolute::open(yarp::os::Searchable& config)
 {
 
-    this->canId = config.check("canId",0,"can bus ID").asInt();
-    this->tr = config.check("tr",1,"reduction").asInt();
-    this->ptModeMs  = config.check("ptModeMs",0,"ptMode (milliseconds)").asInt();
+    this->canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt();
+    this->tr = config.check("tr",yarp::os::Value(1),"reduction").asInt();
+    this->ptModeMs  = config.check("ptModeMs",yarp::os::Value(0),"ptMode (milliseconds)").asInt();
     this->ptPointCounter = 0;
     this->ptMovementDone = false;
     this->targetReached = false;
@@ -18,7 +18,7 @@ bool roboticslab::CuiAbsolute::open(yarp::os::Searchable& config)
     this->refSpeed = 0;
     this->encoder = sqrt (-1);  // NaN \todo{Investigate, debug and document the dangers of this use of NaN.}
 
-    yarp::os::Value vCanBufferFactory = config.check("canBufferFactory", 0, "");
+    yarp::os::Value vCanBufferFactory = config.check("canBufferFactory", yarp::os::Value(0), "");
 
     if( !vCanBufferFactory.isBlob() || vCanBufferFactory.asBlobLength() != sizeof(yarp::dev::ICanBufferFactory) )
     {

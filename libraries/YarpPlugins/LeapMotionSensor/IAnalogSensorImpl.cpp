@@ -4,7 +4,7 @@
 
 #include <yarp/sig/Vector.h>
 
-#include "ColorDebug.hpp"
+#include "ColorDebug.h"
 
 namespace
 {

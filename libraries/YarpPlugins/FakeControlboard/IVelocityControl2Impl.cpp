@@ -2,7 +2,7 @@
 
 #include "FakeControlboard.hpp"
 
-#include <ColorDebug.hpp>
+#include <ColorDebug.h>
 
 // ------------------ IVelocity2 Related ----------------------------------------
 
@@ -32,38 +32,6 @@ bool roboticslab::FakeControlboard::getRefVelocities(double *vels)
 // -----------------------------------------------------------------------------
 
 bool roboticslab::FakeControlboard::getRefVelocities(const int n_joint, const int *joints, double *vels)
-{
-    CD_DEBUG("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::setVelPid(int j, const yarp::dev::Pid &pid)
-{
-    CD_DEBUG("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::setVelPids(const yarp::dev::Pid *pids)
-{
-    CD_DEBUG("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::getVelPid(int j, yarp::dev::Pid *pid)
-{
-    CD_DEBUG("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::getVelPids(yarp::dev::Pid *pids)
 {
     CD_DEBUG("\n");
     return true;

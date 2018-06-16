@@ -18,10 +18,9 @@ yarp_add_plugin(CanBusFake CanBusFake.hpp
                            FakeCanMessage.hpp
                            FakeCanMessage.cpp)
 
-add_dependencies(CanBusFake COLOR_DEBUG)
-
 target_link_libraries(CanBusFake YARP::YARP_OS
                                  YARP::YARP_dev
+                                 ROBOTICSLAB::ColorDebug
                                  YarpDevicesInterfaces)
 
 yarp_install(TARGETS CanBusFake

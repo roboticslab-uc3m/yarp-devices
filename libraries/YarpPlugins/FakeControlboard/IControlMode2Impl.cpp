@@ -2,7 +2,7 @@
 
 #include "FakeControlboard.hpp"
 
-#include <ColorDebug.hpp>
+#include <ColorDebug.h>
 
 // ------------------- IControlMode2 Related ------------------------------------
 
@@ -39,10 +39,6 @@ bool roboticslab::FakeControlboard::setControlMode(const int j, const int mode)
         return setVelocityMode(j);
     case VOCAB_CM_TORQUE:
         return setTorqueMode(j);
-    case VOCAB_CM_IMPEDANCE_POS:
-        return setImpedancePositionMode(j);
-    case VOCAB_CM_IMPEDANCE_VEL:
-        return setImpedanceVelocityMode(j);
     default:
         return false;
     }

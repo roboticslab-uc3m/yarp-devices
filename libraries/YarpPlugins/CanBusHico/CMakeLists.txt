@@ -22,10 +22,9 @@ yarp_add_plugin(CanBusHico CanBusHico.cpp
                            HicoCanMessage.hpp
                            FilterManager.cpp)
 
-add_dependencies(CanBusHico COLOR_DEBUG)
-
 target_link_libraries(CanBusHico YARP::YARP_OS
                                  YARP::YARP_dev
+                                 ROBOTICSLAB::ColorDebug
                                  YarpDevicesInterfaces)
 
 yarp_install(TARGETS CanBusHico

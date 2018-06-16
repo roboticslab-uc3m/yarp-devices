@@ -10,7 +10,7 @@
 #include <yarp/dev/IControlLimits2.h>
 #include <yarp/dev/CanBusInterface.h>
 
-#include <ColorDebug.hpp>
+#include <ColorDebug.h>
 
 #include "ICanBusSharer.h"
 #include "ITechnosoftIpos.h"

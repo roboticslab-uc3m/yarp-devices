@@ -29,11 +29,10 @@ if(NOT SKIP_WiimoteSensor)
               IAnalogSensorImpl.cpp
               WiimoteDispatcherThread.cpp)
 
-    add_dependencies(WiimoteSensor COLOR_DEBUG)
-
     target_link_libraries(WiimoteSensor YARP::YARP_OS
                                         YARP::YARP_dev
                                         XWiimote::XWiimote
+                                        ROBOTICSLAB::ColorDebug
                                         YarpDevicesInterfaces)
 
     yarp_install(TARGETS WiimoteSensor

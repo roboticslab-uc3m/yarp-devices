@@ -11,7 +11,7 @@
 
 #include <yarp/os/Time.h>
 
-#include <ColorDebug.hpp>
+#include <ColorDebug.h>
 
 using namespace roboticslab;
 

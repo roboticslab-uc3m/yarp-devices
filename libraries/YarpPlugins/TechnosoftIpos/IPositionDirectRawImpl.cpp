@@ -59,7 +59,7 @@ bool roboticslab::TechnosoftIpos::setPositionRaw(int j, double ref)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setPositionsRaw(const int n_joint, const int *joints, double *refs)
+bool roboticslab::TechnosoftIpos::setPositionsRaw(const int n_joint, const int *joints, const double *refs)
 {
     //CD_INFO("n_joint:%d, drivers.size():" CD_SIZE_T "\n",n_joint,drivers.size());
 
