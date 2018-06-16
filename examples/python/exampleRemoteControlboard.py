@@ -6,6 +6,8 @@
 #
 # This example connects to a running \ref controlboardWrapper to move in Joint space.
 #
+# <b>Requires YARP 2.3.72.</b>
+#
 # <b>Legal</b> 
 #
 # Copyright: (C) 2017 Universidad Carlos III de Madrid
@@ -47,14 +49,13 @@ dd = yarp.PolyDriver(options)  # create a YARP multi-use driver with the given o
 pos = dd.viewIPositionControl()  # make a position controller object we call 'pos'
 vel = dd.viewIVelocityControl()  # make a velocity controller object we call 'vel'
 enc = dd.viewIEncoders()  # make an encoder controller object we call 'enc'
-mode = dd.viewIControlMode()  # make a operation mode controller object we call 'mode'
+mode = dd.viewIControlMode2()  # make a operation mode controller object we call 'mode'
 ll = dd.viewIControlLimits()  # make a limits controller object we call 'll'
 
 axes = enc.getAxes()  # retrieve number of joints
 
 # use the object to set the device to position mode (as opposed to velocity mode)(note: stops the robot)
-for j in range(axes):
-    mode.setPositionMode(j)
+mode.setControlModes(yarp.IVector(axes, yarp.Vocab_encode('pos')))
 
 print 'test positionMove(1,-35) -> moves motor 1 (start count at motor 0) to -35 degrees'
 pos.positionMove(1,-35)
@@ -71,8 +72,7 @@ max = yarp.DVector(1)
 ll.getLimits(0,min,max)
 
 # use the object to set the device to velocity mode (as opposed to position mode)
-for j in range(axes):
-    mode.setVelocityMode(j)
+mode.setControlModes(yarp.IVector(axes, yarp.Vocab_encode('vel')))
 
 print 'test velocityMove(0,10) -> moves motor 0 (start count at motor 0) at 10 degrees per second'
 vel.velocityMove(0,10)

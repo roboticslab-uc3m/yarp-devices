@@ -4,7 +4,7 @@
 
 #include <cstdlib>
 
-#include "ColorDebug.hpp"
+#include "ColorDebug.h"
 
 // -----------------------------------------------------------------------------
 

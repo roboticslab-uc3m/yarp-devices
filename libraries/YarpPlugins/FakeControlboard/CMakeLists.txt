@@ -12,6 +12,7 @@ if(NOT SKIP_FakeControlboard)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}) # yarp plugin builder needs this
 
 yarp_add_plugin(FakeControlboard FakeControlboard.hpp
+                                 FakeControlboard.cpp
                                  DeviceDriverImpl.cpp
                                  IControlLimitsImpl.cpp
                                  IControlLimits2Impl.cpp
@@ -27,10 +28,9 @@ yarp_add_plugin(FakeControlboard FakeControlboard.hpp
                                  RateThreadImpl.cpp
                                  SharedArea.cpp)
 
-add_dependencies(FakeControlboard COLOR_DEBUG)
-
 target_link_libraries(FakeControlboard YARP::YARP_OS
                                        YARP::YARP_dev
+                                       ROBOTICSLAB::ColorDebug
                                        YarpDevicesInterfaces)
 
 yarp_install(TARGETS FakeControlboard

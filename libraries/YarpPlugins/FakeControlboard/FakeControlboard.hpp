@@ -448,36 +448,6 @@ public:
      */
     virtual bool getRefVelocities(const int n_joint, const int *joints, double *vels);
 
-    /**
-     * Set new velocity pid value for a joint
-     * @param j joint number
-     * @param pid new pid value
-     * @return true/false on success/failure
-     */
-    virtual bool setVelPid(int j, const yarp::dev::Pid &pid);
-
-    /**
-     * Set new velocity pid value on multiple joints
-     * @param pids pointer to a vector of pids
-     * @return true/false upon success/failure
-     */
-    virtual bool setVelPids(const yarp::dev::Pid *pids);
-
-    /**
-     * Get current velocity pid value for a specific joint.
-     * @param j joint number
-     * @param pid pointer to storage for the return value.
-     * @return success/failure
-     */
-    virtual bool getVelPid(int j, yarp::dev::Pid *pid);
-
-    /**
-     * Get current velocity pid value for a specific subset of joints.
-     * @param pids vector that will store the values of the pids.
-     * @return success/failure
-     */
-    virtual bool getVelPids(yarp::dev::Pid *pids);
-
 //  --------- IControlLimits Declarations. Implementation in IControlLimitsImpl.cpp ---------
 
     /**
@@ -521,48 +491,6 @@ public:
     virtual bool getVelLimits(int axis, double *min, double *max);
 
 //  --------- IControlMode Declarations. Implementation in IControlModeImpl.cpp ---------
-
-    /**
-     * Set position mode, single axis.
-     * @param j joint number
-     * @return true/false success failure.
-     */
-    virtual bool setPositionMode(int j);
-
-    /**
-     * Set velocity mode, single axis.
-     * @param j joint number
-     * @return true/false success failure.
-     */
-    virtual bool setVelocityMode(int j);
-
-    /**
-     * Set torque mode, single axis.
-     * @param j joint number
-     * @return true/false success failure.
-     */
-    virtual bool setTorqueMode(int j);
-
-    /**
-     * Set impedance position mode, single axis.
-     * @param j joint number
-     * @return true/false success failure.
-     */
-    virtual bool setImpedancePositionMode(int j);
-
-    /**
-     * Set impedance velocity mode, single axis.
-     * @param j joint number
-     * @return true/false success failure.
-     */
-    virtual bool setImpedanceVelocityMode(int j);
-
-    /**
-     * Set open loop mode, single axis.
-     * @param j joint number
-     * @return true/false success failure.
-     */
-    virtual bool setOpenLoopMode(int j);
 
     /**
      * Get the current control mode.
@@ -664,29 +592,26 @@ public:
      */
     virtual bool setRefTorque(int j, double t);
 
-    /**
-     * Set the back-efm compensation gain for a given joint.
-     * @param j joint number
-     * @param bemf the returned bemf gain of joint j
+    /** Set new torque reference for a subset of joints.
+     * @param joints pointer to the array of joint numbers
+     * @param refs   pointer to the array specifing the new torque reference
      * @return true/false on success/failure
      */
-    virtual bool getBemfParam(int j, double *bemf);
+    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t);
 
-    /**
-     * Set the back-efm compensation gain for a given joint.
+    /** Get a subset of motor parameters (bemf, ktau etc) useful for torque control.
      * @param j joint number
-     * @param bemf new value
+     * @param params a struct containing the motor parameters to be retrieved
      * @return true/false on success/failure
      */
-    virtual bool setBemfParam(int j, double bemf);
+    virtual bool getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params);
 
-    /**
-     * Set new pid value for a joint axis.
+    /** Set a subset of motor parameters (bemf, ktau etc) useful for torque control.
      * @param j joint number
-     * @param pid new pid value
+     * @param params a struct containing the motor parameters to be set
      * @return true/false on success/failure
      */
-    virtual bool setTorquePid(int j, const yarp::dev::Pid &pid);
+    virtual bool setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params);
 
     /**
      * Get the value of the torque on a given joint (this is the
@@ -722,118 +647,23 @@ public:
      */
     virtual bool getTorqueRanges(double *min, double *max);
 
+#if YARP_VERSION_MAJOR != 3
     /**
-     * Set new pid value on multiple axes.
-     * @param pids pointer to a vector of pids
-     * @return true/false upon success/failure
-     */
-    virtual bool setTorquePids(const yarp::dev::Pid *pids);
-
-    /**
-     * Set the torque error limit for the controller on a specific joint
+     * Set the back-efm compensation gain for a given joint.
      * @param j joint number
-     * @param limit limit value
+     * @param bemf the returned bemf gain of joint j
      * @return true/false on success/failure
      */
-    virtual bool setTorqueErrorLimit(int j, double limit);
+    virtual bool getBemfParam(int j, double *bemf);
 
     /**
-     * Get the torque error limit for the controller on all joints.
-     * @param limits pointer to the vector with the new limits
-     * @return true/false on success/failure
-     */
-    virtual bool setTorqueErrorLimits(const double *limits);
-
-    /**
-     * Get the current torque error for a joint.
+     * Set the back-efm compensation gain for a given joint.
      * @param j joint number
-     * @param err pointer to the storage for the return value
-     * @return true/false on success failure
-     */
-    virtual bool getTorqueError(int j, double *err);
-
-    /**
-     * Get the torque error of all joints.
-     * @param errs pointer to the vector that will store the errors
+     * @param bemf new value
      * @return true/false on success/failure
      */
-    virtual bool getTorqueErrors(double *errs);
-
-    /**
-     * Get the output of the controller (e.g. pwm value)
-     * @param j joint number
-     * @param out pointer to storage for return value
-     * @return true/false on success/failure
-     */
-    virtual bool getTorquePidOutput(int j, double *out);
-
-    /**
-     * Get the output of the controllers (e.g. pwm value)
-     * @param outs pointer to the vector that will store the output values
-     * @return true/false on success/failure
-     */
-    virtual bool getTorquePidOutputs(double *outs);
-
-    /**
-     * Get current pid value for a specific joint.
-     * @param j joint number
-     * @param pid pointer to storage for the return value.
-     * @return true/false on success/failure
-     */
-    virtual bool getTorquePid(int j, yarp::dev::Pid *pid);
-
-    /**
-     * Get current pid value for a specific joint.
-     * @param pids vector that will store the values of the pids.
-     * @return true/false on success/failure
-     */
-    virtual bool getTorquePids(yarp::dev::Pid *pids);
-
-    /**
-     * Get the torque error limit for the controller on a specific joint
-     * @param j joint number
-     * @param limit pointer to the result value
-     * @return true/false on success/failure
-     */
-    virtual bool getTorqueErrorLimit(int j, double *limit);
-
-    /**
-     * Get the torque error limit for all controllers
-     * @param limits pointer to the array that will store the output
-     * @return true/false on success/failure
-     */
-    virtual bool getTorqueErrorLimits(double *limits);
-
-    /**
-     * Reset the controller of a given joint, usually sets the
-     * current position of the joint as the reference value for the PID, and resets
-     * the integrator.
-     * @param j joint number
-     * @return true/false on success/failure
-     */
-    virtual bool resetTorquePid(int j);
-
-    /**
-     * Disable the pid computation for a joint
-     * @param j joint number
-     * @return true/false on success/failure
-     */
-    virtual bool disableTorquePid(int j);
-
-    /**
-     * Enable the pid computation for a joint
-     * @param j joint number
-     * @return true/false on success/failure
-     */
-    virtual bool enableTorquePid(int j);
-
-    /**
-     * Set offset value for a given pid
-     * @param j joint number
-     * @param v the new value
-     * @return true/false on success/failure
-     */
-    virtual bool setTorqueOffset(int j, double v);
+    virtual bool setBemfParam(int j, double bemf);
+#endif // YARP_VERSION_MAJOR != 3
 
 // -------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp --------
 
@@ -895,6 +725,10 @@ private:
 
     enum jmc_state { NOT_MOVING, POSITION_MOVE, RELATIVE_MOVE, VELOCITY_MOVE };
     enum jmc_mode { POSITION_MODE, VELOCITY_MODE };
+
+    bool setPositionMode(int j);
+    bool setVelocityMode(int j);
+    bool setTorqueMode(int j);
 
     // General Joint Motion Controller parameters //
     unsigned int axes;

@@ -7,7 +7,7 @@
 #include <cerrno>
 #include <cstring>
 
-#include "ColorDebug.hpp"
+#include "ColorDebug.h"
 
 namespace
 {

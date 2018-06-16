@@ -35,11 +35,10 @@ if(NOT SKIP_AmorControlboard)
                                      ITorqueControlImpl.cpp
                                      IInteractionModeImpl.cpp)
 
-    add_dependencies(AmorControlboard COLOR_DEBUG)
-
     target_link_libraries(AmorControlboard YARP::YARP_OS
                                            YARP::YARP_dev
-                                           AMOR::amor_api)
+                                           AMOR::amor_api
+                                           ROBOTICSLAB::ColorDebug)
 
     yarp_install(TARGETS AmorControlboard
                  COMPONENT runtime

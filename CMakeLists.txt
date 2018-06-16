@@ -2,12 +2,9 @@
 # Authors: Juan G. Victores & Raúl de Santos Rico
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 project(ROBOTICSLAB_YARP_DEVICES)
-
-# Force building shared libraries and YARP DL modules.
-set(BUILD_SHARED_LIBS TRUE CACHE INTERNAL "hide this!")
 
 # Add suffix for debug libraries.
 if(MSVC)
@@ -37,12 +34,24 @@ endif()
 
 # Pick up our CMake modules.
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake
-                              ${CMAKE_SOURCE_DIR}/cmake/find-modules
-                              ${CMAKE_SOURCE_DIR}/cmake/ycm-modules)
+                              ${CMAKE_SOURCE_DIR}/cmake/find-modules)
 
-# Bootstrap YCM. Keep it compatible with cmake_minimum_required().
-set(YCM_TAG v0.6.0)
-include(YCMBootstrap)
+# Find project's hard dependencies.
+find_package(YCM 0.8 REQUIRED)
+
+# https://github.com/roboticslab-uc3m/questions-and-answers/issues/65
+find_package(YARP 3.0 QUIET COMPONENTS OS dev sig)
+if(NOT YARP_FOUND)
+    find_package(YARP 2.3.70 REQUIRED)
+endif()
+
+find_package(COLOR_DEBUG REQUIRED)
+
+# Always build YARP devices as MODULE libraries.
+set(YARP_FORCE_DYNAMIC_PLUGINS TRUE CACHE INTERNAL "Force dynamic plugins")
+
+# Configure installation paths for YARP resources.
+yarp_configure_external_installation(roboticslab-yarp-devices WITH_PLUGINS)
 
 # Standard installation directories.
 include(GNUInstallDirs)
@@ -62,37 +71,8 @@ if(ENABLE_coverage)
     endif()
 endif()
 
-# Superbuild phase - include color-debug.
-include(FindOrBuildPackage)
-find_or_build_package(COLOR_DEBUG)
-
-# find_or_build_package() doesn't bring into scope COLOR_DEBUG_INCLUDE_DIRS
-# nor other config variables. If a system copy is found, we have to call the
-# find_package() command and proceed as usual.
-if(USE_SYSTEM_COLOR_DEBUG)
-    find_package(COLOR_DEBUG REQUIRED)
-    include_directories(${COLOR_DEBUG_INCLUDE_DIRS})
-    add_library(COLOR_DEBUG UNKNOWN IMPORTED)
-endif()
-
-# Store list of exported targets in global scope.
-set_property(GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_TARGETS)
-
 # Create targets if specific requirements are satisfied.
 include(CMakeDependentOption)
-
-# Find YARP (main dependency).
-find_package(YARP REQUIRED)
-
-# Load YARP modules.
-if(YARP_VERSION_SHORT VERSION_LESS 2.3.70)
-    list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-    include(YarpPlugin)
-    include(YarpInstallationHelpers)
-endif()
-
-# Configure installation paths for YARP resources.
-yarp_configure_external_installation(roboticslab-yarp-devices WITH_PLUGINS)
 
 # Add main contents.
 add_subdirectory(cmake)
@@ -114,7 +94,7 @@ set(ROBOTICSLAB_YARP_DEVICES_INSTALL_MODULE_DIR ${CMAKE_INSTALL_DATADIR}/ROBOTIC
 install_basic_package_files(ROBOTICSLAB_YARP_DEVICES
                             VERSION 0.1.0
                             COMPATIBILITY AnyNewerVersion
-                            TARGETS_PROPERTY ROBOTICSLAB_YARP_DEVICES_TARGETS
+                            FIRST_TARGET YarpDevicesInterfaces
                             NO_CHECK_REQUIRED_COMPONENTS_MACRO
                             NAMESPACE ROBOTICSLAB::
                             EXTRA_PATH_VARS_SUFFIX MODULE_DIR

@@ -131,34 +131,3 @@ bool roboticslab::TechnosoftIpos::stopRaw(const int n_joint, const int *joints)
 }
 
 // -----------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::setVelPidRaw(int j, const yarp::dev::Pid &pid)
-{
-    CD_WARNING("Missing implementation\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::setVelPidsRaw(const yarp::dev::Pid *pids)
-{
-    CD_WARNING("Missing implementation\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getVelPidRaw(int j, yarp::dev::Pid *pid)
-{
-    CD_WARNING("Missing implementation\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getVelPidsRaw(yarp::dev::Pid *pids)
-{
-    CD_WARNING("Missing implementation\n");
-    return true;
-}
-

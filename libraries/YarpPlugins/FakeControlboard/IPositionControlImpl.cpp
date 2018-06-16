@@ -3,7 +3,7 @@
 #include "FakeControlboard.hpp"
 
 #include <cmath>
-#include <ColorDebug.hpp>
+#include <ColorDebug.h>
 
 // ------------------- IPositionControl Related --------------------------------
 

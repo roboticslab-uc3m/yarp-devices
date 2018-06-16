@@ -2,7 +2,7 @@
 
 #include "DumpCanBus.hpp"
 
-#include <ColorDebug.hpp>
+#include <ColorDebug.h>
 
 // ------------------ Thread Related -----------------------------------------
 

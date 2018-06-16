@@ -18,11 +18,10 @@ yarp_add_plugin(CanBusPeak CanBusPeak.cpp
                            PeakCanMessage.cpp
                            PeakCanMessage.hpp)
 
-add_dependencies(CanBusPeak COLOR_DEBUG)
-
 target_link_libraries(CanBusPeak YARP::YARP_OS
                                  YARP::YARP_dev
                                  PCan::PCanFD
+                                 ROBOTICSLAB::ColorDebug
                                  YarpDevicesInterfaces)
 
 yarp_install(TARGETS CanBusPeak

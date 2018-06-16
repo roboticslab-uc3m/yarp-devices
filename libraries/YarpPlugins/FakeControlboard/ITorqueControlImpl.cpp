@@ -2,7 +2,7 @@
 
 #include "FakeControlboard.hpp"
 
-#include <ColorDebug.hpp>
+#include <ColorDebug.h>
 
 // ------------------- IForceControl Related ------------------------------------
 
@@ -35,21 +35,21 @@ bool roboticslab::FakeControlboard::setRefTorque(int j, double t)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getBemfParam(int j, double *bemf)
+bool roboticslab::FakeControlboard::setRefTorques(const int n_joint, const int *joints, const double *t)
 {
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setBemfParam(int j, double bemf)
+bool roboticslab::FakeControlboard::getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params)
 {
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setTorquePid(int j, const yarp::dev::Pid &pid)
+bool roboticslab::FakeControlboard::setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params)
 {
     return true;
 }
@@ -86,107 +86,36 @@ bool roboticslab::FakeControlboard::getTorqueRanges(double *min, double *max)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setTorquePids(const yarp::dev::Pid *pids)
+#if YARP_VERSION_MAJOR != 3
+bool roboticslab::FakeControlboard::getBemfParam(int j, double *bemf)
 {
+    yarp::dev::MotorTorqueParameters params;
+
+    if (!getMotorTorqueParams(j, &params))
+    {
+        return false;
+    }
+
+    *bemf = params.bemf;
+
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setTorqueErrorLimit(int j, double limit)
+bool roboticslab::FakeControlboard::setBemfParam(int j, double bemf)
 {
-    return true;
+    yarp::dev::MotorTorqueParameters params;
+
+    if (!getMotorTorqueParams(j, &params))
+    {
+        return false;
+    }
+
+    params.bemf = bemf;
+
+    return setMotorTorqueParams(j, params);
 }
 
 // -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::setTorqueErrorLimits(const double *limits)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::getTorqueError(int j, double *err)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::getTorqueErrors(double *errs)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::getTorquePidOutput(int j, double *out)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::getTorquePidOutputs(double *outs)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::getTorquePid(int j, yarp::dev::Pid *pid)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::getTorquePids(yarp::dev::Pid *pids)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::getTorqueErrorLimit(int j, double *limit)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::getTorqueErrorLimits(double *limits)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::resetTorquePid(int j)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::disableTorquePid(int j)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::enableTorquePid(int j)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::setTorqueOffset(int j, double v)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
+#endif // YARP_VERSION_MAJOR != 3

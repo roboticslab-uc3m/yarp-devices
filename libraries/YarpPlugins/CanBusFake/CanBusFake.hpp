@@ -7,7 +7,7 @@
 #include <yarp/dev/all.h>
 #include <yarp/dev/CanBusInterface.h>
 
-#include <ColorDebug.hpp>
+#include <ColorDebug.h>
 
 #include "FakeCanMessage.hpp"
 
