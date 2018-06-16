@@ -37,12 +37,21 @@ endif()
 
 # Pick up our CMake modules.
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake
-                              ${CMAKE_SOURCE_DIR}/cmake/find-modules
-                              ${CMAKE_SOURCE_DIR}/cmake/ycm-modules)
+                              ${CMAKE_SOURCE_DIR}/cmake/find-modules)
 
-# Bootstrap YCM. Keep it compatible with cmake_minimum_required().
-set(YCM_TAG v0.6.0)
-include(YCMBootstrap)
+# Find project's hard dependencies.
+find_package(YCM 0.6 REQUIRED)
+
+# https://github.com/roboticslab-uc3m/questions-and-answers/issues/65
+find_package(YARP 3.0 QUIET COMPONENTS OS dev sig)
+if(NOT YARP_FOUND)
+    find_package(YARP 2.3.70 REQUIRED)
+endif()
+
+find_package(COLOR_DEBUG REQUIRED)
+
+# Configure installation paths for YARP resources.
+yarp_configure_external_installation(roboticslab-yarp-devices WITH_PLUGINS)
 
 # Standard installation directories.
 include(GNUInstallDirs)
@@ -67,18 +76,6 @@ set_property(GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_TARGETS)
 
 # Create targets if specific requirements are satisfied.
 include(CMakeDependentOption)
-
-# Find project's hard dependencies.
-find_package(COLOR_DEBUG REQUIRED)
-
-# https://github.com/roboticslab-uc3m/questions-and-answers/issues/65
-find_package(YARP 3.0 QUIET COMPONENTS OS dev sig)
-if(NOT YARP_FOUND)
-    find_package(YARP 2.3.70 REQUIRED)
-endif()
-
-# Configure installation paths for YARP resources.
-yarp_configure_external_installation(roboticslab-yarp-devices WITH_PLUGINS)
 
 # Add main contents.
 add_subdirectory(cmake)

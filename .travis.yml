@@ -10,7 +10,7 @@ compiler:
 
 before_install:
   - sudo apt-get -qq update # -qq No output except for errors
-  - '[[ "$TRAVIS_EVENT_TYPE" = cron ]] && export YARP_CHECKOUT=devel || export YARP_CHECKOUT=master'
+  - '[[ "$TRAVIS_EVENT_TYPE" = cron ]] && export ROBOTOLOGY_CHECKOUT=devel || export ROBOTOLOGY_CHECKOUT=master'
 
   #-- Register SSH deploy key for AMOR API private repository
   #-- https://gist.github.com/lukewpatterson/4242707#gistcomment-2382443
@@ -33,8 +33,15 @@ install:
   - cmake ..
   - sudo make install
   - cd ../..
+  #-- Install ycm
+  - git clone --branch="$ROBOTOLOGY_CHECKOUT" https://github.com/robotology/ycm
+  - cd ycm && mkdir build && cd build
+  - cmake ..
+  - make -j$(nproc)
+  - sudo make install
+  - cd ../..
   #-- Install yarp
-  - git clone --branch="$YARP_CHECKOUT" https://github.com/robotology/yarp
+  - git clone --branch="$ROBOTOLOGY_CHECKOUT" https://github.com/robotology/yarp
   - cd yarp && mkdir build && cd build
   - cmake .. -DSKIP_ACE=ON
   - make -j$(nproc)
