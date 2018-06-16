@@ -1,6 +1,6 @@
 # Installation from Source Code
 
-This repository stores different YARP devices for different actual devices used in different robots. This huge variability in hardware sometimes makes it complicated to track the dependencies for each device you may want to compile and install. 
+This repository stores different YARP devices for different actual devices used in different robots. This huge variability in hardware sometimes makes it complicated to track the dependencies for each device you may want to compile and install.
 
 This guide aims to simplify as much as possible the process of finding out which are the dependencies you actually need to install for the devices you want to use.
 
@@ -23,20 +23,7 @@ For unit testing, you'll need the googletest source package. Refer to [Install g
 
 ## Specific dependencies
 
-<<<<<<< HEAD
-| Dependency | OneCanBusOneWrapper | TwoCanBusThreeWrappers | AravisGigE | CanBusControlboard | CanBusHico | CanBusPeak | CanBusSocket | CuiAbsolute | FakeJoint | Jr3 | LacqueyFetch | LeapMotionSensor* | ProximitySensorsClient | SpaceNavigator | TechnosoftIpos | TextilesHand | WiimoteSensor | AravisGigEController** |
-| --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| [Aravis 0.4](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-aravis.md) |  :x: |  :x: | :white_check_mark: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: |  :x: | :x: | :x: |  :x: | :x: |  :x: |
-| [hcanpci (kernel module)](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-hcanpci.md) | :x: | :x: | :x: | :x: | :white_check_mark: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: |
-| Python 3+ |  :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: |  :x: | :x: |  :x: | :x: | :x: | :white_check_mark: |
-| [setuptools (pip3)](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-setuptools.md#install-setuptools-using-pip3) |  :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: |  :x: | :x: |  :x: | :x: | :x: | :white_check_mark: |
-| [Custom yarp Python 3 bindings](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md#install-python-bindings-with-iframegrabbercontrols2-support) | :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :white_check_mark: |
-| [Spacenav](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-spacenav.md#install-spacenav-ubuntu) |  :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :white_check_mark: |  :x: | :x: | :x: | :x: |
-| [XWiimote](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-xwiimote.md#install-xwiimote-ubuntu) |  :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :white_check_mark: | :x: |
-| [Leap Motion SDK v2](https://developer.leapmotion.com/sdk/v2)*** |  :x: |  :x: | :x: |  :x: | :x: | :x: | :x: | :x: | :x: | :x: | :x: | :white_check_mark: | :x: | :x: |  :x: | :x: | :x: | :x: |
-=======
 Some devices require specific dependencies to work that must be satisfied. Use the following table to locate and install the dependencies required for your concrete application: [specific-dependencies.csv](specific-dependencies.csv)
->>>>>>> fix-122-icanbus
 
 \* CMake find modules are smart enough to locate the SDK files in the usual paths. We recommend unzipping the `LeapSDK` folder in `/opt/LeapSDK` (make sure it contains `include/` and `lib/` at the top level).
 
