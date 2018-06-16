@@ -23,12 +23,11 @@ if(NOT SKIP_LeapMotionSensor)
                                      DeviceDriverImpl.cpp
                                      IAnalogSensorImpl.cpp)
 
-    add_dependencies(LeapMotionSensor COLOR_DEBUG)
-
     target_link_libraries(LeapMotionSensor YARP::YARP_OS
                                            YARP::YARP_dev
                                            YARP::YARP_sig
-                                           ${Leap_LIBRARY})
+                                           ${Leap_LIBRARY}
+                                           ROBOTICSLAB::ColorDebug)
 
     yarp_install(TARGETS LeapMotionSensor
                  COMPONENT runtime

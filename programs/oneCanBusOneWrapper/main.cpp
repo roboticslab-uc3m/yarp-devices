@@ -41,7 +41,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/ResourceFinder.h>
 
-#include <ColorDebug.hpp>
+#include <ColorDebug.h>
 
 #include "OneCanBusOneWrapper.hpp"
 

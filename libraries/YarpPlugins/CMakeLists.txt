@@ -23,9 +23,6 @@ install(FILES ICanBusHico.h
 install(TARGETS YarpDevicesInterfaces
         EXPORT ROBOTICSLAB_YARP_DEVICES)
 
-# Export variables to the global scope.
-set_property(GLOBAL APPEND PROPERTY ROBOTICSLAB_YARP_DEVICES_TARGETS YarpDevicesInterfaces)
-
 # YARP devices.
 add_subdirectory(AmorControlboard)
 add_subdirectory(AravisGigE)

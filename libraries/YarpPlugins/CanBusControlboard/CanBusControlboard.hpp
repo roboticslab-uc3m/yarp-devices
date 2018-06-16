@@ -24,7 +24,7 @@
 //#define CD_HIDE_INFO  //-- Can be managed from father CMake.
 //#define CD_HIDE_WARNING  //-- Can be managed from father CMake.
 //#define CD_HIDE_ERROR  //-- Can be managed from father CMake.
-#include "ColorDebug.hpp"
+#include "ColorDebug.h"
 
 #include "ICanBusSharer.h"
 

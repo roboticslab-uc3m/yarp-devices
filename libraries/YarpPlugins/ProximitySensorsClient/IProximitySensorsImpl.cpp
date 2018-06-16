@@ -2,7 +2,7 @@
 
 #include "ProximitySensorsClient.hpp"
 
-#include <ColorDebug.hpp>
+#include <ColorDebug.h>
 
 roboticslab::IProximitySensors::alert_level roboticslab::ProximitySensorsClient::getAlertLevel()
 {

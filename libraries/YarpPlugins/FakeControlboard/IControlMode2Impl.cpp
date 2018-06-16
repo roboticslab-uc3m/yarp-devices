@@ -2,7 +2,7 @@
 
 #include "FakeControlboard.hpp"
 
-#include <ColorDebug.hpp>
+#include <ColorDebug.h>
 
 // ------------------- IControlMode2 Related ------------------------------------
 

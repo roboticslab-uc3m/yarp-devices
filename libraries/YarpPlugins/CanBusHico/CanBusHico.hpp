@@ -17,7 +17,7 @@
 
 #include "ICanBusHico.h"
 
-#include "ColorDebug.hpp"
+#include "ColorDebug.h"
 
 namespace roboticslab
 {

@@ -7,11 +7,10 @@ add_executable(checkCanBus main.cpp
                            CheckCanBus.hpp
                            ThreadImpl.cpp)
 
-add_dependencies(checkCanBus COLOR_DEBUG)
-
 target_link_libraries(checkCanBus YARP::YARP_OS
                                   YARP::YARP_init
                                   YARP::YARP_dev
+                                  ROBOTICSLAB::ColorDebug
                                   YarpDevicesInterfaces)
 
 install(TARGETS checkCanBus
