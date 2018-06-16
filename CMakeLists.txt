@@ -82,7 +82,11 @@ set_property(GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_TARGETS)
 include(CMakeDependentOption)
 
 # Find YARP (main dependency).
-find_package(YARP 2.3.70 REQUIRED)
+# https://github.com/roboticslab-uc3m/questions-and-answers/issues/65
+find_package(YARP 3.0 QUIET COMPONENTS OS dev sig)
+if(NOT YARP_FOUND)
+    find_package(YARP 2.3.70 REQUIRED)
+endif()
 
 # Configure installation paths for YARP resources.
 yarp_configure_external_installation(roboticslab-yarp-devices WITH_PLUGINS)
