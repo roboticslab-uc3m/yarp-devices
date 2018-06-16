@@ -18,10 +18,9 @@ yarp_add_plugin(Jr3 Jr3.hpp
                     DeviceDriverImpl.cpp
                     IAnalogSensorImpl.cpp)
 
-add_dependencies(Jr3 COLOR_DEBUG)
-
 target_link_libraries(Jr3 YARP::YARP_OS
                           YARP::YARP_dev
+                          ROBOTICSLAB::ColorDebug
                           YarpDevicesInterfaces)
 
 yarp_install(TARGETS Jr3

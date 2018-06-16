@@ -12,7 +12,7 @@
 #include <yarp/dev/PolyDriverList.h>
 #include <yarp/dev/Wrapper.h>
 
-#include <ColorDebug.hpp>
+#include <ColorDebug.h>
 
 namespace roboticslab
 {

@@ -26,10 +26,9 @@ yarp_add_plugin(FakeJoint FakeJoint.cpp
                           ITorqueControlRawImpl.cpp
                           IVelocityControl2RawImpl.cpp)
 
-add_dependencies(FakeJoint COLOR_DEBUG)
-
 target_link_libraries(FakeJoint YARP::YARP_OS
                                 YARP::YARP_dev
+                                ROBOTICSLAB::ColorDebug
                                 YarpDevicesInterfaces)
 
 # Hack, fool CMake to think that YARP already switched to 3.0 while still at devel.
