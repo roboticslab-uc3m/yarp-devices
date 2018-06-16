@@ -10,7 +10,7 @@
 #include <cerrno>
 #include <cassert>
 
-#include <ColorDebug.hpp>
+#include <ColorDebug.h>
 
 // -----------------------------------------------------------------------------
 

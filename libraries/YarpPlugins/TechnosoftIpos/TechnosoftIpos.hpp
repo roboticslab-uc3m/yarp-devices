@@ -3,11 +3,11 @@
 #ifndef __TECHNOSOFT_IPOS__
 #define __TECHNOSOFT_IPOS__
 
+#include <sstream>
+
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
-
-#include <stdint.h>
-#include <sstream>
+#include <yarp/dev/IControlLimits2.h>
 
 //#define CD_FULL_FILE  //-- Can be globally managed from father CMake. Good for debugging with polymorphism.
 //#define CD_HIDE_DEBUG  //-- Can be globally managed from father CMake.
@@ -15,7 +15,7 @@
 //#define CD_HIDE_INFO  //-- Can be globally managed from father CMake.
 //#define CD_HIDE_WARNING  //-- Can be globally managed from father CMake.
 //#define CD_HIDE_ERROR  //-- Can be globally managed from father CMake.
-#include "ColorDebug.hpp"
+#include "ColorDebug.h"
 #include "ICanBusSharer.h"
 #include "ITechnosoftIpos.h"
 
@@ -83,17 +83,16 @@ public:
     bool setMaxLimitRaw(double max);
 
     //  --------- IControlModeRaw Declarations. Implementation in IControlMode2RawImpl.cpp ---------
-    virtual bool setPositionModeRaw(int j);
-    virtual bool setVelocityModeRaw(int j);
-    virtual bool setTorqueModeRaw(int j);
+    bool setPositionModeRaw(int j);
+    bool setVelocityModeRaw(int j);
+    bool setTorqueModeRaw(int j);
     //-- Auxiliary functions (splitted) of setTorqueModeRaw
     bool setTorqueModeRaw1();
     bool setTorqueModeRaw2();
     bool setTorqueModeRaw3();
+    //-- Old yarp::dev::IPositionDirectRaw implementation
+    bool setPositionDirectModeRaw();
 
-    virtual bool setImpedancePositionModeRaw(int j);
-    virtual bool setImpedanceVelocityModeRaw(int j);
-    virtual bool setOpenLoopModeRaw(int j);
     virtual bool getControlModeRaw(int j, int *mode);
     //-- Auxiliary functions (splitted) of getControlModeRaw
     bool getControlModeRaw1();
@@ -160,7 +159,13 @@ public:
 
     // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
     virtual bool setPositionRaw(int j, double ref);
-    virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs);
+    virtual bool setPositionsRaw(const int n_joint, const int *joints, const double *refs);
+#if YARP_VERSION_MAJOR != 3
+    virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs)
+    {
+        return setPositionsRaw(n_joint, joints, const_cast<const double *>(refs));
+    }
+#endif // YARP_VERSION_MAJOR != 3
     virtual bool setPositionsRaw(const double *refs);
 
     // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
@@ -168,28 +173,14 @@ public:
     virtual bool getRefTorqueRaw(int j, double *t);
     virtual bool setRefTorquesRaw(const double *t);
     virtual bool setRefTorqueRaw(int j, double t);
-    virtual bool getBemfParamRaw(int j, double *bemf);
-    virtual bool setBemfParamRaw(int j, double bemf);
-    virtual bool setTorquePidRaw(int j, const yarp::dev::Pid &pid);
     virtual bool getTorqueRaw(int j, double *t);
     virtual bool getTorquesRaw(double *t);
     virtual bool getTorqueRangeRaw(int j, double *min, double *max);
     virtual bool getTorqueRangesRaw(double *min, double *max);
-    virtual bool setTorquePidsRaw(const yarp::dev::Pid *pids);
-    virtual bool setTorqueErrorLimitRaw(int j, double limit);
-    virtual bool setTorqueErrorLimitsRaw(const double *limits);
-    virtual bool getTorqueErrorRaw(int j, double *err);
-    virtual bool getTorqueErrorsRaw(double *errs);
-    virtual bool getTorquePidOutputRaw(int j, double *out);
-    virtual bool getTorquePidOutputsRaw(double *outs);
-    virtual bool getTorquePidRaw(int j, yarp::dev::Pid *pid);
-    virtual bool getTorquePidsRaw(yarp::dev::Pid *pids);
-    virtual bool getTorqueErrorLimitRaw(int j, double *limit);
-    virtual bool getTorqueErrorLimitsRaw(double *limits);
-    virtual bool resetTorquePidRaw(int j);
-    virtual bool disableTorquePidRaw(int j);
-    virtual bool enableTorquePidRaw(int j);
-    virtual bool setTorqueOffsetRaw(int j, double v);
+#if YARP_VERSION_MAJOR != 3
+    virtual bool getBemfParamRaw(int j, double *bemf);
+    virtual bool setBemfParamRaw(int j, double bemf);
+#endif // YARP_VERSION_MAJOR != 3
 
     //  --------- IVelocityControlRaw Declarations. Implementation in IVelocityControl2RawImpl.cpp ---------
     virtual bool velocityMoveRaw(int j, double sp);
@@ -206,10 +197,6 @@ public:
     // -- virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs);
     // ------------------- Just declareted in IPositionControl2Raw
     // -- virtual bool stopRaw(const int n_joint, const int *joints);
-    virtual bool setVelPidRaw(int j, const yarp::dev::Pid &pid);
-    virtual bool setVelPidsRaw(const yarp::dev::Pid *pids);
-    virtual bool getVelPidRaw(int j, yarp::dev::Pid *pid);
-    virtual bool getVelPidsRaw(yarp::dev::Pid *pids);
 
     // ------- IInteractionModeRaw declarations. Implementation in IInteractionModeRawImpl.cpp -------
     virtual bool getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode);
@@ -238,9 +225,6 @@ protected:
     /** A helper function to display CAN messages. */
     std::string msgToStr(yarp::dev::CanMessage * message);
     std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
-
-    /** Old yarp::dev::IPositionDirectRaw implementation. */
-    bool setPositionDirectModeRaw();
 
     int canId;
     yarp::dev::ICanBus *canDevicePtr;

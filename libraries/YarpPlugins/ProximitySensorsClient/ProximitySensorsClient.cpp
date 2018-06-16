@@ -2,7 +2,7 @@
 
 #include "ProximitySensorsClient.hpp"
 
-#include <ColorDebug.hpp>
+#include <ColorDebug.h>
 
 void roboticslab::ProximitySensorsClient::SensorReader::onRead(yarp::os::Bottle& b)
 {

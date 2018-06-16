@@ -4,74 +4,6 @@
 
 // ############################## IControlModeRaw Related ##############################
 
-bool roboticslab::CuiAbsolute::setPositionModeRaw(int j)
-{
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::setVelocityModeRaw(int j)
-{
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::setTorqueModeRaw(int j)
-{
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::setImpedancePositionModeRaw(int j)
-{
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::setImpedanceVelocityModeRaw(int j)
-{
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::setOpenLoopModeRaw(int j)
-{
-    CD_ERROR("(%d)\n",j);  //-- Removed in YARP 2.3.70
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
 bool roboticslab::CuiAbsolute::getControlModeRaw(int j, int *mode)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
@@ -113,20 +45,7 @@ bool roboticslab::CuiAbsolute::setControlModeRaw(const int j, const int mode)
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    if( mode == VOCAB_CM_POSITION )
-        return setPositionModeRaw(j);
-    else if( mode == VOCAB_CM_VELOCITY )
-        return setVelocityModeRaw(j);
-    else if( mode == VOCAB_CM_TORQUE )
-        return setTorqueModeRaw(j);
-    else if( mode == VOCAB_CM_IMPEDANCE_POS )
-        return setImpedancePositionModeRaw(j);
-    else if( mode == VOCAB_CM_IMPEDANCE_VEL )
-        return setImpedanceVelocityModeRaw(j);
-    /*else if( mode == VOCAB_CM_OPENLOOP )
-        return setOpenLoopModeRaw(j);*/
-
-    return false;
+    return true;
 }
 
 // -----------------------------------------------------------------------------

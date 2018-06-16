@@ -24,10 +24,9 @@ if(NOT SKIP_SpaceNavigator)
                                    DeviceDriverImpl.cpp
                                    IAnalogSensorImpl.cpp)
 
-    add_dependencies(SpaceNavigator COLOR_DEBUG)
-
     target_link_libraries(SpaceNavigator YARP::YARP_dev
                                          ${SPNAV_LIBRARIES}
+                                         ROBOTICSLAB::ColorDebug
                                          YarpDevicesInterfaces)
 
     yarp_install(TARGETS SpaceNavigator

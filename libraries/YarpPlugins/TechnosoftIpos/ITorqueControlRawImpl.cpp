@@ -66,48 +66,6 @@ bool roboticslab::TechnosoftIpos::setRefTorqueRaw(int j, double t)
 
 // -------------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getBemfParamRaw(int j, double *bemf)
-{
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
-
-    return true;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::setBemfParamRaw(int j, double bemf)
-{
-    CD_INFO("(%d,%f)\n",j,bemf);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
-
-    return true;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::setTorquePidRaw(int j, const yarp::dev::Pid &pid)
-{
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
-
-    return true;
-}
-
-// -------------------------------------------------------------------------------------
-
 bool roboticslab::TechnosoftIpos::getTorqueRaw(int j, double *t)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
@@ -168,37 +126,8 @@ bool roboticslab::TechnosoftIpos::getTorqueRangesRaw(double *min, double *max)
 
 // -------------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setTorquePidsRaw(const yarp::dev::Pid *pids)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::setTorqueErrorLimitRaw(int j, double limit)
-{
-    CD_INFO("(%d,%f)\n",j,limit);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
-
-    return true;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::setTorqueErrorLimitsRaw(const double *limits)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getTorqueErrorRaw(int j, double *err)
+#if YARP_VERSION_MAJOR != 3
+bool roboticslab::TechnosoftIpos::getBemfParamRaw(int j, double *bemf)
 {
     CD_INFO("(%d)\n",j);
 
@@ -212,17 +141,9 @@ bool roboticslab::TechnosoftIpos::getTorqueErrorRaw(int j, double *err)
 
 // -------------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getTorqueErrorsRaw(double *errs)
+bool roboticslab::TechnosoftIpos::setBemfParamRaw(int j, double bemf)
 {
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getTorquePidOutputRaw(int j, double *out)
-{
-    CD_INFO("(%d)\n",j);
+    CD_INFO("(%d,%f)\n",j,bemf);
 
     //-- Check index within range
     if ( j != 0 ) return false;
@@ -233,111 +154,4 @@ bool roboticslab::TechnosoftIpos::getTorquePidOutputRaw(int j, double *out)
 }
 
 // -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getTorquePidRaw(int j, yarp::dev::Pid *pid)
-{
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
-
-    return true;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getTorquePidsRaw(yarp::dev::Pid *pids)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getTorquePidOutputsRaw(double *outs)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getTorqueErrorLimitRaw(int j, double *limit)
-{
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
-
-    return true;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getTorqueErrorLimitsRaw(double *limits)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::resetTorquePidRaw(int j)
-{
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
-
-    return true;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::disableTorquePidRaw(int j)
-{
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
-
-    return true;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::enableTorquePidRaw(int j)
-{
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
-
-    return true;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::setTorqueOffsetRaw(int j, double v)
-{
-    CD_INFO("(%d,%f)\n",j,v);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
-
-    return true;
-}
-
-// -------------------------------------------------------------------------------------
+#endif // YARP_VERSION_MAJOR != 3

@@ -27,10 +27,9 @@ yarp_add_plugin(TextilesHand TextilesHand.cpp
                              ITorqueControlRawImpl.cpp
                              IVelocityControl2RawImpl.cpp)
 
-add_dependencies(TextilesHand COLOR_DEBUG)
-
 target_link_libraries(TextilesHand YARP::YARP_OS
                                    YARP::YARP_dev
+                                   ROBOTICSLAB::ColorDebug
                                    YarpDevicesInterfaces)
 
 yarp_install(TARGETS TextilesHand

@@ -1,6 +1,6 @@
 # Installation from Source Code
 
-This repository stores different YARP devices for different actual devices used in different robots. This huge variability in hardware sometimes makes it complicated to track the dependencies for each device you may want to compile and install. 
+This repository stores different YARP devices for different actual devices used in different robots. This huge variability in hardware sometimes makes it complicated to track the dependencies for each device you may want to compile and install.
 
 This guide aims to simplify as much as possible the process of finding out which are the dependencies you actually need to install for the devices you want to use.
 
@@ -12,12 +12,10 @@ Some of the devices require a specific OS version to work. This table tracks the
 
 Some dependencies must be installed for all the devices:
 
-  - [Install CMake](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-cmake.md)
-  - [Install YARP](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md)
-
-Additionally, this project depends on YCM to download and build external packages. Although this process is intended to run automatically during the CMake configuration phase, you may still want to install YCM and said packages by yourself. In that respect, refer to [Install YCM](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-ycm.md) and to the installation guides of any package listed below:
-
-- [color-debug](https://github.com/roboticslab-uc3m/color-debug)
+- [Install CMake](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-cmake.md)
+- [Install YCM](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-ycm.md)
+- [Install YARP](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md)
+- [Install color-debug](https://github.com/roboticslab-uc3m/color-debug)
 
 For unit testing, you'll need the googletest source package. Refer to [Install googletest](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-googletest.md).
 

@@ -6,7 +6,7 @@
 #include <spnav.h>
 #include <yarp/dev/IAnalogSensor.h>
 
-#include "ColorDebug.hpp"
+#include "ColorDebug.h"
 
 #define DEFAULT_NUM_CHANNELS 8
 

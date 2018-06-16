@@ -9,7 +9,7 @@ bool roboticslab::CanBusControlboard::velocityMove(int j, double sp)
     CD_DEBUG("(%d), (%f)\n",j , sp);
 
     //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;    
+    if ( ! this->indexWithinRange(j) ) return false;
 
     return iVelocityControl2Raw[j]->velocityMoveRaw( 0, sp );
 }
@@ -84,29 +84,3 @@ bool roboticslab::CanBusControlboard::getRefVelocities(const int n_joint, const 
 }
 
 // -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setVelPid(int j, const yarp::dev::Pid &pid)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setVelPids(const yarp::dev::Pid *pids)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getVelPid(int j, yarp::dev::Pid *pid)
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getVelPids(yarp::dev::Pid *pids)
-{
-    return true;
-}

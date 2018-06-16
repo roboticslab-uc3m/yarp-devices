@@ -7,7 +7,7 @@
 
 #include <yarp/os/Value.h>
 
-#include <ColorDebug.hpp>
+#include <ColorDebug.h>
 
 // ------------------- DeviceDriver Related ------------------------------------
 

@@ -7,19 +7,19 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 {
 
     // -- .ini parameters (in order)
-    this->canId = config.check("canId",0,"can bus ID").asInt();    
-    this->max = config.check("max",0,"max (meters or degrees)").asDouble();
-    this->min = config.check("min",0,"min (meters or degrees)").asDouble();
-    this->maxVel = config.check("maxVel",1000,"maxVel (meters/second or degrees/second)").asDouble();
-    this->minVel = config.check("minVel",0,"minVel (meters/second or degrees/second)").asDouble();
-    this->tr = config.check("tr",0,"reduction").asDouble();
-    this->refAcceleration = config.check("refAcceleration",0,"ref acceleration (meters/second^2 or degrees/second^2)").asDouble();
-    this->refSpeed = config.check("refSpeed",0,"ref speed (meters/second or degrees/second)").asDouble();
-    this->encoderPulses = config.check("encoderPulses",0,"encoderPulses").asInt();
+    this->canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt();    
+    this->max = config.check("max",yarp::os::Value(0),"max (meters or degrees)").asDouble();
+    this->min = config.check("min",yarp::os::Value(0),"min (meters or degrees)").asDouble();
+    this->maxVel = config.check("maxVel",yarp::os::Value(1000),"maxVel (meters/second or degrees/second)").asDouble();
+    this->minVel = config.check("minVel",yarp::os::Value(0),"minVel (meters/second or degrees/second)").asDouble();
+    this->tr = config.check("tr",yarp::os::Value(0),"reduction").asDouble();
+    this->refAcceleration = config.check("refAcceleration",yarp::os::Value(0),"ref acceleration (meters/second^2 or degrees/second^2)").asDouble();
+    this->refSpeed = config.check("refSpeed",yarp::os::Value(0),"ref speed (meters/second or degrees/second)").asDouble();
+    this->encoderPulses = config.check("encoderPulses",yarp::os::Value(0),"encoderPulses").asInt();
 
     // -- other parameters...
-    this->k = config.check("k",0,"motor constant").asDouble();
-    this->ptModeMs  = config.check("ptModeMs",0,"ptMode (milliseconds)").asInt();
+    this->k = config.check("k",yarp::os::Value(0),"motor constant").asDouble();
+    this->ptModeMs  = config.check("ptModeMs",yarp::os::Value(0),"ptMode (milliseconds)").asInt();
     this->ptPointCounter = 0;
     this->ptMovementDone = false;
     this->targetReached = false;

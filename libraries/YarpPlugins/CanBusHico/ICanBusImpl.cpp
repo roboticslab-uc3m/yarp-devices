@@ -10,7 +10,7 @@
 
 #include <string>
 
-#include <ColorDebug.hpp>
+#include <ColorDebug.h>
 
 // -----------------------------------------------------------------------------
 

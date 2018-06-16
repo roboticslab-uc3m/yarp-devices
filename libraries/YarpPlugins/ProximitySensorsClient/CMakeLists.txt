@@ -17,10 +17,9 @@ yarp_add_plugin(ProximitySensorsClient ProximitySensorsClient.hpp
                                        DeviceDriverImpl.cpp
                                        IProximitySensorsImpl.cpp)
 
-add_dependencies(ProximitySensorsClient COLOR_DEBUG)
-
 target_link_libraries(ProximitySensorsClient YARP::YARP_OS
                                              YARP::YARP_dev
+                                             ROBOTICSLAB::ColorDebug
                                              YarpDevicesInterfaces)
 
 yarp_install(TARGETS ProximitySensorsClient

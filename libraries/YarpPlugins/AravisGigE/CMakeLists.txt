@@ -26,11 +26,10 @@ if(NOT SKIP_AravisGigE)
                                IFrameGrabberImageRawImpl.cpp
                                IFrameGrabberImpl.cpp)
 
-    add_dependencies(AravisGigE COLOR_DEBUG)
-
     target_link_libraries(AravisGigE YARP::YARP_OS
                                      YARP::YARP_dev
-                                     ${ARAVIS_LIBRARIES})
+                                     ${ARAVIS_LIBRARIES}
+                                     ROBOTICSLAB::ColorDebug)
 
     yarp_install(TARGETS AravisGigE
                  COMPONENT runtime
