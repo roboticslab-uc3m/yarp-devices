@@ -2,7 +2,7 @@
 # Authors: Juan G. Victores & Raúl de Santos Rico
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 project(ROBOTICSLAB_YARP_DEVICES)
 
@@ -40,7 +40,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake
                               ${CMAKE_SOURCE_DIR}/cmake/find-modules)
 
 # Find project's hard dependencies.
-find_package(YCM 0.6 REQUIRED)
+find_package(YCM 0.8 REQUIRED)
 
 # https://github.com/roboticslab-uc3m/questions-and-answers/issues/65
 find_package(YARP 3.0 QUIET COMPONENTS OS dev sig)
@@ -71,9 +71,6 @@ if(ENABLE_coverage)
     endif()
 endif()
 
-# Store list of exported targets in global scope.
-set_property(GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_TARGETS)
-
 # Create targets if specific requirements are satisfied.
 include(CMakeDependentOption)
 
@@ -97,7 +94,7 @@ set(ROBOTICSLAB_YARP_DEVICES_INSTALL_MODULE_DIR ${CMAKE_INSTALL_DATADIR}/ROBOTIC
 install_basic_package_files(ROBOTICSLAB_YARP_DEVICES
                             VERSION 0.1.0
                             COMPATIBILITY AnyNewerVersion
-                            TARGETS_PROPERTY ROBOTICSLAB_YARP_DEVICES_TARGETS
+                            FIRST_TARGET YarpDevicesInterfaces
                             NO_CHECK_REQUIRED_COMPONENTS_MACRO
                             NAMESPACE ROBOTICSLAB::
                             EXTRA_PATH_VARS_SUFFIX MODULE_DIR
