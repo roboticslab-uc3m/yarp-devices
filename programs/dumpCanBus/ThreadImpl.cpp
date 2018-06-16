@@ -3,7 +3,7 @@
 #include "DumpCanBus.hpp"
 #include "hico_api.h"
 
-#include <ColorDebug.hpp>
+#include <ColorDebug.h>
 
 // ------------------ Thread Related -----------------------------------------
 

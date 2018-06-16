@@ -5,10 +5,9 @@ if(ENABLE_launchManipulation)
 
 add_executable(launchManipulation main.cpp)
 
-add_dependencies(launchManipulation COLOR_DEBUG)
-
 target_link_libraries(launchManipulation YARP::YARP_OS
                                          YARP::YARP_init
+                                         ROBOTICSLAB::ColorDebug
                                          TwoCanBusThreeWrappers)
 
 install(TARGETS launchManipulation

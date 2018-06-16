@@ -16,10 +16,9 @@ yarp_add_plugin(CanBusFake CanBusFake.cpp
                            CanBusFake.hpp
                            DeviceDriverImpl.cpp)
 
-add_dependencies(CanBusFake COLOR_DEBUG)
-
 target_link_libraries(CanBusFake YARP::YARP_OS
                                  YARP::YARP_dev
+                                 ROBOTICSLAB::ColorDebug
                                  YarpDevicesInterfaces)
 
 yarp_install(TARGETS CanBusFake

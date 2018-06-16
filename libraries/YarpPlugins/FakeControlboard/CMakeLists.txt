@@ -28,10 +28,9 @@ yarp_add_plugin(FakeControlboard FakeControlboard.hpp
                                  RateThreadImpl.cpp
                                  SharedArea.cpp)
 
-add_dependencies(FakeControlboard COLOR_DEBUG)
-
 target_link_libraries(FakeControlboard YARP::YARP_OS
                                        YARP::YARP_dev
+                                       ROBOTICSLAB::ColorDebug
                                        YarpDevicesInterfaces)
 
 yarp_install(TARGETS FakeControlboard

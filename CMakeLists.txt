@@ -62,26 +62,15 @@ if(ENABLE_coverage)
     endif()
 endif()
 
-# Superbuild phase - include color-debug.
-include(FindOrBuildPackage)
-find_or_build_package(COLOR_DEBUG)
-
-# find_or_build_package() doesn't bring into scope COLOR_DEBUG_INCLUDE_DIRS
-# nor other config variables. If a system copy is found, we have to call the
-# find_package() command and proceed as usual.
-if(USE_SYSTEM_COLOR_DEBUG)
-    find_package(COLOR_DEBUG REQUIRED)
-    include_directories(${COLOR_DEBUG_INCLUDE_DIRS})
-    add_library(COLOR_DEBUG UNKNOWN IMPORTED)
-endif()
-
 # Store list of exported targets in global scope.
 set_property(GLOBAL PROPERTY ROBOTICSLAB_YARP_DEVICES_TARGETS)
 
 # Create targets if specific requirements are satisfied.
 include(CMakeDependentOption)
 
-# Find YARP (main dependency).
+# Find project's hard dependencies.
+find_package(COLOR_DEBUG REQUIRED)
+
 # https://github.com/roboticslab-uc3m/questions-and-answers/issues/65
 find_package(YARP 3.0 QUIET COMPONENTS OS dev sig)
 if(NOT YARP_FOUND)

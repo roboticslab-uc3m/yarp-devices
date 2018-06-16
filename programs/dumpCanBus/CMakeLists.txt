@@ -7,11 +7,10 @@ add_executable(dumpCanBus main.cpp
                           DumpCanBus.hpp
                           ThreadImpl.cpp)
 
-add_dependencies(dumpCanBus COLOR_DEBUG)
-
 target_link_libraries(dumpCanBus YARP::YARP_OS
                                  YARP::YARP_init
                                  YARP::YARP_dev
+                                 ROBOTICSLAB::ColorDebug
                                  YarpDevicesInterfaces)
 
 install(TARGETS dumpCanBus

@@ -5,10 +5,9 @@ if(ENABLE_launchLocomotion)
 
 add_executable(launchLocomotion main.cpp)
 
-add_dependencies(launchLocomotion COLOR_DEBUG)
-
 target_link_libraries(launchLocomotion YARP::YARP_OS
                                        YARP::YARP_init
+                                       ROBOTICSLAB::ColorDebug
                                        TwoCanBusThreeWrappers)
 
 install(TARGETS launchLocomotion

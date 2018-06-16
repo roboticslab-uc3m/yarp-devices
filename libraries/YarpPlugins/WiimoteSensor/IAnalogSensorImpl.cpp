@@ -2,7 +2,7 @@
 
 #include "WiimoteSensor.hpp"
 
-#include "ColorDebug.hpp"
+#include "ColorDebug.h"
 
 namespace
 {
