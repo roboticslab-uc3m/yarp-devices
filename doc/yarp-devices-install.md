@@ -12,9 +12,9 @@ Some of the devices require a specific OS version to work. This table tracks the
 
 Some dependencies must be installed for all the devices:
 
-- [Install CMake](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-cmake.md)
-- [Install YCM](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-ycm.md)
-- [Install YARP](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md)
+- [Install CMake 3.5+](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-cmake.md)
+- [Install YCM 0.8+](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-ycm.md)
+- [Install YARP 2.3.70+](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md)
 - [Install color-debug](https://github.com/roboticslab-uc3m/color-debug)
 
 For unit testing, you'll need the googletest source package. Refer to [Install googletest](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-googletest.md).
