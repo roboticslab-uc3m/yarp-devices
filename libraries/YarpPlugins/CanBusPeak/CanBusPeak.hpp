@@ -3,10 +3,22 @@
 #ifndef __CAN_BUS_PEAK__
 #define __CAN_BUS_PEAK__
 
+#include <set>
+
+#include <yarp/os/Semaphore.h>
+
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/CanBusInterface.h>
 
+#include <libpcanfd.h>
+
 #include "PeakCanMessage.hpp"
+
+#define DEFAULT_CAN_DEVICE "/dev/pcan0"
+#define DEFAULT_CAN_BITRATE 1000000
+
+#define DEFAULT_CAN_RX_TIMEOUT_MS 1
+#define DEFAULT_CAN_TX_TIMEOUT_MS 0  // '0' means no timeout
 
 namespace roboticslab
 {
@@ -24,7 +36,10 @@ class CanBusPeak : public yarp::dev::DeviceDriver,
 
 public:
 
-    CanBusPeak() {}
+    CanBusPeak() : fileDescriptor(0),
+                   rxTimeoutMs(DEFAULT_CAN_RX_TIMEOUT_MS),
+                   txTimeoutMs(DEFAULT_CAN_TX_TIMEOUT_MS)
+    {}
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 
@@ -54,6 +69,13 @@ public:
 
 protected:
 
+    int fileDescriptor;
+    int rxTimeoutMs;
+    int txTimeoutMs;
+
+    mutable yarp::os::Semaphore canBusReady;
+
+    std::set<unsigned int> activeFilters;
 };
 
 }  // namespace roboticslab
