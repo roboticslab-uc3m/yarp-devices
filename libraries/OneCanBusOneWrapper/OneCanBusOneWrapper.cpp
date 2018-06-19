@@ -26,21 +26,38 @@ bool OneCanBusOneWrapper::configure(yarp::os::ResourceFinder &rf)
     if(rf.check("help"))
     {
         std::printf("OneCanBusOneWrapper options:\n");
-        std::printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
+        std::printf("\t--help (this help)\t--from [file.ini]\t--context [path]\t--homePoss\t--externalEncoderWait [s]\n\n");
+        std::printf("Note: if the Absolute Encoder doesn't respond, use --externalEncoderWait [seconds] parameter for using default relative encoder position\n");
         CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
         return false;
+    }
+
+    if(rf.check("externalEncoderWait"))
+    {
+        timeEncoderWait = rf.find("externalEncoderWait").asInt();
+        std::printf("[INFO] Wait time for Absolute Encoder: %d [s]\n", timeEncoderWait);
+    }
+
+    if(rf.check("homePoss"))
+    {
+        homing = true;
     }
 
     //-- Variable that stores the mode
     CD_DEBUG("mode activated: %s\n", rf.find("mode").asString().c_str());
     std::string mode = rf.check("mode",yarp::os::Value("position"),"position/velocity mode").asString();
 
-
     //-- /dev/can0 --
     yarp::os::Bottle devCan0 = rf.findGroup("devCan0");
     CD_DEBUG("%s\n",devCan0.toString().c_str());
     yarp::os::Property optionsDevCan0;
     optionsDevCan0.fromString(devCan0.toString());
+    //Added mode option for optionsDevCan0 (for --mode parameter)
+    optionsDevCan0.put("mode", mode);
+    //Added waitEncoder for optionsDevCan0 (for --timeEncoderWait parameter)
+    optionsDevCan0.put("waitEncoder", timeEncoderWait);
+    //Added homing for optionsDevCan0 (for --homePoss parameter)
+    if(homing) optionsDevCan0.put("home", true);
     deviceDevCan0.open(optionsDevCan0);
     if (!deviceDevCan0.isValid())
     {

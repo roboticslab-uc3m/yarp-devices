@@ -36,7 +36,6 @@ bool TwoCanBusThreeWrappers::configure(yarp::os::ResourceFinder &rf)
         return false;
     }
 
-
     if(rf.check("externalEncoderWait"))
     {
         timeEncoderWait = rf.find("externalEncoderWait").asInt();
