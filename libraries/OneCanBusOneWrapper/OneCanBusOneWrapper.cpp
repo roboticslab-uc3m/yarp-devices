@@ -32,12 +32,14 @@ bool OneCanBusOneWrapper::configure(yarp::os::ResourceFinder &rf)
         return false;
     }
 
+    timeEncoderWait = 0;
     if(rf.check("externalEncoderWait"))
     {
         timeEncoderWait = rf.find("externalEncoderWait").asInt();
         std::printf("[INFO] Wait time for Absolute Encoder: %d [s]\n", timeEncoderWait);
     }
 
+    homing = false;
     if(rf.check("homePoss"))
     {
         homing = true;
