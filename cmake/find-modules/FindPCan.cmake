@@ -2,7 +2,7 @@
 #
 # Sets the following variables:
 #
-# PCAN_FOUND        - system has PCan
+# PCan_FOUND        - system has PCan
 # PCan_INCLUDE_DIRS - PCan include directories
 # PCan_LIBRARIES    - PCan libraries
 #
