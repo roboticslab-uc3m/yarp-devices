@@ -1,8 +1,6 @@
 # Copyright: (C) 2017 Universidad Carlos III de Madrid
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-find_package(Leap 2.3 EXACT QUIET)
-
 if(NOT Leap_FOUND AND (NOT DEFINED ENABLE_LeapMotionSensor OR ENABLE_LeapMotionSensor))
     message(WARNING "Leap package not found, disabling LeapMotionSensor")
 endif()
