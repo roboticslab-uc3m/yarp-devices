@@ -7,7 +7,7 @@ yarp_prepare_plugin(CanBusPeak
                     TYPE roboticslab::CanBusPeak
                     INCLUDE CanBusPeak.hpp
                     DEFAULT ON
-                    DEPENDS "UNIX;NOT CMAKE_VERSION VERSION_LESS 2.8.11;PCan_FOUND")
+                    DEPENDS "UNIX;PCan_FOUND")
 
 if(NOT SKIP_CanBusPeak)
 
