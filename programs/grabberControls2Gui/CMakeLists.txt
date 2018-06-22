@@ -1,5 +1,3 @@
-find_package(PythonInterp 3.0 QUIET)
-
 if("${PYTHON_VERSION_STRING}" VERSION_GREATER 3.4 AND (NOT DEFINED ENABLE_grabbercontrols2gui OR ENABLE_grabbercontrols2gui))
     message(WARNING "PythonInterp package not found or unsupported version (>3.4), disabling grabbercontrols2gui program")
 endif()
