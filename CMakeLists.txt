@@ -36,16 +36,24 @@ endif()
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake
                               ${CMAKE_SOURCE_DIR}/cmake/find-modules)
 
-# Find project's hard dependencies.
+# Hard dependencies.
 find_package(YCM 0.8 REQUIRED)
-
 # https://github.com/roboticslab-uc3m/questions-and-answers/issues/65
 find_package(YARP 3.0 QUIET COMPONENTS OS dev sig)
 if(NOT YARP_FOUND)
     find_package(YARP 2.3.70 REQUIRED)
 endif()
-
 find_package(COLOR_DEBUG REQUIRED)
+
+# Soft dependencies.
+find_package(AMOR_API QUIET)
+find_package(ARAVIS QUIET)
+find_package(Leap 2.3 EXACT QUIET)
+find_package(Phidgets 2.1 EXACT QUIET)
+find_package(PythonInterp 3.0 QUIET)
+find_package(Spnav QUIET)
+find_package(XWiimote 0.3 QUIET)
+find_package(GTestSources 1.6.0 QUIET)
 
 # Always build YARP devices as MODULE libraries.
 set(YARP_FORCE_DYNAMIC_PLUGINS TRUE CACHE INTERNAL "Force dynamic plugins")
