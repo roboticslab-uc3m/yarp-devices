@@ -1,9 +1,7 @@
-# Usage 
-
-## AravisGigE device
+# AravisGigE device
 To use this YARP device a GigE camera is required. Once connected, use the following commands to control the camera and receive images.
 
-### Running the device
+## Launching the device
 To run the device and connect to the camera, simply run:
 
 `yarpdev --name AravisGigE`
@@ -12,34 +10,34 @@ If you want to test the device without an actual camera, you can use a fake Arav
 
 `yarpdev --name AravisGigE --fake`
 
-### Obtaining a color image from the device
+## Obtaining a color image from the device
 This YARP device returns a raw 8-bit image from the camera, to obtain a color image from the image, the stream has to be connected using the [Bayer carrier ](http://www.yarp.it/carrier_config.html#carrier_config_bayer) to interpret the raw image as a RGB image. Given an `AravisGigE` device named `/grabber` and an input port named `/v` (from a viewer, for instance), the command to run to connect them is:
 
 `yarp connect /grabber /v udp+recv.bayer+order.gbrg` 
 
-### Camera parameters control
+## Camera parameters control
 The control of the camera parameters is performed from the image port (`/grabber` by default ), through a [RPC interface](http://www.yarp.it/rpc_ports.html).
 
 `yarp rpc /grabber`
 
 Once there one can send command to the camera. The most common commands are: `has`, `get` and `set`. 
 
-#### has
+### has
 With the `has` command one can query the device if it has some property. For instance, to check if the camera has zoom controls:
 
 `fgc2 has feat 16`
 
-#### get
+### get
 With the ' get' command one can query the *value* of some property. For instance, to check the current gain value:
 
 `fgc2 get feat 9`
 
-#### set 
+### set 
 With the `set` command one can change the *value* of some property. For instance, to set the zoom to the maximum value:
 
 `fgc2 set feat 16 100`
 
-#### Available features
+### Available features
 These are the features currently available in YARP. To check which ones are supported by the camera, the `has` command can be used:
 
 | Feature | Enum name | Enum value |
@@ -69,8 +67,8 @@ These are the features currently available in YARP. To check which ones are supp
 | Mirror | YARP_FEATURE_MIRROR | 22 |
 | Number of features | YARP_FEATURE_NUMBER_OF | 23 |
 
-### FAQ
-#### I can receive an image, but it is all dark, what can I do?
+## FAQ
+### I can receive an image, but it is all dark, what can I do?
 
 This is probably due to a bad configuration of the camera parameters. Try to increase the gain or exposure until the image starts looking brighter. For the 1.0.B06 lab, some values that work great are:
 
@@ -79,7 +77,7 @@ Gain: 10
 Exposure: 32000
 ```
 
-#### I cannot receive a color image, but I receive a grey image with a regular point pattern on it.
+### I cannot receive a color image, but I receive a grey image with a regular point pattern on it.
 
 What you are receiving is the raw image of the camera. To obtain a color image from it you need to decode it using a Bayer filter. Follow the steps in the section [Obtaining a color image from the device](#obtaining-a-color-image-from-the-device) in this very same guide to fix it.
 
