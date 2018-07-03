@@ -55,7 +55,7 @@ public:
     {
     }
 
-    //  --------- DeviceDriver Declarations. Implementation in DextraControlboard.cpp ---------
+    //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
 
