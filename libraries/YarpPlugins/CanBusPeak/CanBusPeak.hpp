@@ -38,7 +38,8 @@ public:
 
     CanBusPeak() : fileDescriptor(0),
                    rxTimeoutMs(DEFAULT_CAN_RX_TIMEOUT_MS),
-                   txTimeoutMs(DEFAULT_CAN_TX_TIMEOUT_MS)
+                   txTimeoutMs(DEFAULT_CAN_TX_TIMEOUT_MS),
+                   nonBlockingMode(false)
     {}
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -72,6 +73,8 @@ protected:
     int fileDescriptor;
     int rxTimeoutMs;
     int txTimeoutMs;
+
+    bool nonBlockingMode;
 
     mutable yarp::os::Semaphore canBusReady;
 

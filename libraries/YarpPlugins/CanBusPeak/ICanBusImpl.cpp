@@ -2,7 +2,8 @@
 
 #include "CanBusPeak.hpp"
 
-#include <cstring> // std::memset, std::strerror
+#include <cstring> // std::memset, std::memcpy, std::strerror
+#include <cerrno> // error codes
 
 #include <libpcanfd.h>
 
@@ -154,14 +155,86 @@ bool roboticslab::CanBusPeak::canIdDelete(unsigned int id)
 
 bool roboticslab::CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait)
 {
-    return false;
+    if (wait != nonBlockingMode)
+    {
+        CD_ERROR("Blocking mode configuration mismatch: requested=%d, enabled=%d.\n", wait, !nonBlockingMode);
+        return false;
+    }
+
+    struct pcanfd_msg * pfdm = new struct pcanfd_msg[size];
+
+    canBusReady.wait();
+    int res = pcanfd_recv_msgs_list(fileDescriptor, size, pfdm);
+    canBusReady.post();
+
+    if (nonBlockingMode && res == -EWOULDBLOCK)
+    {
+        *read = 0;
+        delete[] pfdm;
+        return true;
+    }
+    else if (res < 0)
+    {
+        CD_ERROR("Unable to read messages: %s.\n", std::strerror(-res));
+        delete[] pfdm;
+        return false;
+    }
+
+    *read = res;
+
+    for (unsigned int i = 0; i < res; i++)
+    {
+        yarp::dev::CanMessage & msg = msgs[i];
+        std::memcpy(msg.getData(), pfdm[i].data, pfdm[i].data_len);
+        msg.setLen(pfdm[i].data_len);
+        msg.setId(pfdm[i].id);
+    }
+
+    delete[] pfdm;
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait)
 {
-    return false;
+    if (wait != nonBlockingMode)
+    {
+        CD_ERROR("Blocking mode configuration mismatch: requested=%d, enabled=%d.\n", wait, !nonBlockingMode);
+        return false;
+    }
+
+    struct pcanfd_msg * pfdm = new struct pcanfd_msg[size];
+
+    for (unsigned int i = 0; i < size; i++)
+    {
+        const yarp::dev::CanMessage & msg = const_cast<yarp::dev::CanBuffer &>(msgs)[i];
+        std::memcpy(pfdm[i].data, msg.getData(), msg.getLen());
+        pfdm[i].data_len = msg.getLen();
+        pfdm[i].id = msg.getId();
+    }
+
+    canBusReady.wait();
+    int res = pcanfd_send_msgs_list(fileDescriptor, size, pfdm);
+    canBusReady.post();
+
+    delete[] pfdm;
+
+    if (nonBlockingMode && res == -EWOULDBLOCK)
+    {
+        *sent = 0;
+        return true;
+    }
+    else if (res < 0)
+    {
+        CD_ERROR("Unable to send messages: %s.\n", std::strerror(-res));
+        return false;
+    }
+
+    *sent = res;
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------

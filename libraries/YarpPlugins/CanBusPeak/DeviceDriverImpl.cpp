@@ -16,20 +16,32 @@ bool roboticslab::CanBusPeak::open(yarp::os::Searchable& config)
 
     int bitrate = config.check("canBitrate", yarp::os::Value(DEFAULT_CAN_BITRATE), "CAN bitrate").asInt();
 
-    rxTimeoutMs = config.check("canRxTimeoutMs", yarp::os::Value(DEFAULT_CAN_RX_TIMEOUT_MS), "RX timeout (milliseconds)").asInt();
-    txTimeoutMs = config.check("canTxTimeoutMs", yarp::os::Value(DEFAULT_CAN_TX_TIMEOUT_MS), "TX timeout (milliseconds)").asInt();
+    nonBlockingMode = config.check("canNonBlockingMode", "CAN non-blocking mode enabled");
 
-    if (rxTimeoutMs <= 0)
+    int flags = OFD_BITRATE;
+
+    if (!nonBlockingMode)
     {
-        CD_WARNING("RX timeout value <= 0, CAN read calls will block until the buffer is ready.\n");
+        rxTimeoutMs = config.check("canRxTimeoutMs", yarp::os::Value(DEFAULT_CAN_RX_TIMEOUT_MS), "RX timeout (milliseconds)").asInt();
+        txTimeoutMs = config.check("canTxTimeoutMs", yarp::os::Value(DEFAULT_CAN_TX_TIMEOUT_MS), "TX timeout (milliseconds)").asInt();
+
+        if (rxTimeoutMs <= 0)
+        {
+            CD_WARNING("RX timeout value <= 0, CAN read calls will block until the buffer is ready.\n");
+        }
+
+        if (txTimeoutMs <= 0)
+        {
+            CD_WARNING("TX timeout value <= 0, CAN write calls will block until the buffer is ready.\n");
+        }
+    }
+    else
+    {
+        CD_INFO("Non-blocking mode enabled.\n");
+        flags |= OFD_NONBLOCKING;
     }
 
-    if (txTimeoutMs <= 0)
-    {
-        CD_WARNING("TX timeout value <= 0, CAN write calls will block until the buffer is ready.\n");
-    }
-
-    int res = pcanfd_open(devicePath.c_str(), OFD_BITRATE, bitrate);
+    int res = pcanfd_open(devicePath.c_str(), flags, bitrate);
 
     if (res < 0)
     {
