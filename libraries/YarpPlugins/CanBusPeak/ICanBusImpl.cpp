@@ -164,7 +164,27 @@ bool roboticslab::CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
     struct pcanfd_msg * pfdm = new struct pcanfd_msg[size];
 
     canBusReady.wait();
+
+    if (wait && rxTimeoutMs > 0)
+    {
+        bool bufferReady;
+
+        if (!waitUntilTimeout(READ, &bufferReady)) {
+            canBusReady.post();
+            CD_ERROR("waitUntilTimeout() failed.\n");
+            return false;
+        }
+
+        if (!bufferReady)
+        {
+            canBusReady.post();
+            *read = 0;
+            return true;
+        }
+    }
+
     int res = pcanfd_recv_msgs_list(fileDescriptor, size, pfdm);
+
     canBusReady.post();
 
     if (nonBlockingMode && res == -EWOULDBLOCK)
@@ -216,7 +236,27 @@ bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsign
     }
 
     canBusReady.wait();
+
+    if (wait && txTimeoutMs > 0)
+    {
+        bool bufferReady;
+
+        if (!waitUntilTimeout(WRITE, &bufferReady)) {
+            canBusReady.post();
+            CD_ERROR("waitUntilTimeout() failed.\n");
+            return false;
+        }
+
+        if (!bufferReady)
+        {
+            canBusReady.post();
+            *sent = 0;
+            return true;
+        }
+    }
+
     int res = pcanfd_send_msgs_list(fileDescriptor, size, pfdm);
+
     canBusReady.post();
 
     delete[] pfdm;

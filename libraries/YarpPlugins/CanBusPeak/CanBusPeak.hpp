@@ -70,6 +70,10 @@ public:
 
 protected:
 
+    enum io_operation { READ, WRITE };
+
+    bool waitUntilTimeout(io_operation op, bool * bufferReady);
+
     int fileDescriptor;
     int rxTimeoutMs;
     int txTimeoutMs;
