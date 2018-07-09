@@ -155,7 +155,7 @@ bool roboticslab::CanBusPeak::canIdDelete(unsigned int id)
 
 bool roboticslab::CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait)
 {
-    if (wait != nonBlockingMode)
+    if (wait != !nonBlockingMode)
     {
         CD_ERROR("Blocking mode configuration mismatch: requested=%d, enabled=%d.\n", wait, !nonBlockingMode);
         return false;
@@ -172,6 +172,7 @@ bool roboticslab::CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
         if (!waitUntilTimeout(READ, &bufferReady)) {
             canBusReady.post();
             CD_ERROR("waitUntilTimeout() failed.\n");
+            delete[] pfdm;
             return false;
         }
 
@@ -179,6 +180,7 @@ bool roboticslab::CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
         {
             canBusReady.post();
             *read = 0;
+            delete[] pfdm;
             return true;
         }
     }
@@ -219,7 +221,7 @@ bool roboticslab::CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
 
 bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait)
 {
-    if (wait != nonBlockingMode)
+    if (wait != !nonBlockingMode)
     {
         CD_ERROR("Blocking mode configuration mismatch: requested=%d, enabled=%d.\n", wait, !nonBlockingMode);
         return false;
@@ -244,6 +246,7 @@ bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsign
         if (!waitUntilTimeout(WRITE, &bufferReady)) {
             canBusReady.post();
             CD_ERROR("waitUntilTimeout() failed.\n");
+            delete[] pfdm;
             return false;
         }
 
@@ -251,6 +254,7 @@ bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsign
         {
             canBusReady.post();
             *sent = 0;
+            delete[] pfdm;
             return true;
         }
     }
