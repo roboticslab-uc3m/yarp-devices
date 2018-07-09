@@ -49,6 +49,12 @@ bool roboticslab::CanBusPeak::canGetBaudRate(unsigned int * rate)
 
     *rate = pfdi.nominal.bitrate;
 
+    if (pfdi.nominal.bitrate != pfdi.nominal.bitrate_real)
+    {
+        CD_WARNING("User-defined nominal bitrate (%d) differs from real nominal bitrate (%d).\n",
+                   pfdi.nominal.bitrate, pfdi.nominal.bitrate_real);
+    }
+
     return true;
 }
 
