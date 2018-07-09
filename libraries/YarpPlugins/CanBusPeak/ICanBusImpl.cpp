@@ -2,7 +2,7 @@
 
 #include "CanBusPeak.hpp"
 
-#include <cstring> // std::strerror
+#include <cstring> // std::memset, std::strerror
 
 #include <libpcanfd.h>
 
@@ -13,8 +13,22 @@
 bool roboticslab::CanBusPeak::canSetBaudRate(unsigned int rate)
 {
     CD_DEBUG("(%d)\n", rate);
-    CD_WARNING("This device does not allow the modification of its bitrate once opened.\n");
-    return false;
+
+    struct pcanfd_init pfdi;
+    std::memset(&pfdi, '\0', sizeof(pfdi));
+    pfdi.nominal.bitrate = rate;
+
+    canBusReady.wait();
+    int res = pcanfd_set_init(fileDescriptor, &pfdi);
+    canBusReady.post();
+
+    if (res < 0)
+    {
+        CD_ERROR("Unable to set bitrate (%s).\n", std::strerror(-res));
+        return false;
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
