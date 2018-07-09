@@ -30,8 +30,8 @@ namespace roboticslab
  *
  */
 class CanBusPeak : public yarp::dev::DeviceDriver,
-                   public yarp::dev::ICanBus/*,
-                   private yarp::dev::ImplementCanBufferFactory<PeakCanMessage, struct can_msg>*/
+                   public yarp::dev::ICanBus,
+                   public yarp::dev::ImplementCanBufferFactory<PeakCanMessage, struct pcanfd_msg>
 {
 
 public:
