@@ -235,6 +235,7 @@ bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsign
         std::memcpy(pfdm[i].data, msg.getData(), msg.getLen());
         pfdm[i].data_len = msg.getLen();
         pfdm[i].id = msg.getId();
+        pfdm[i].type = PCANFD_TYPE_CAN20_MSG;
     }
 
     canBusReady.wait();
