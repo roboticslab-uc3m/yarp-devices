@@ -450,6 +450,7 @@ bool roboticslab::CanBusControlboard::close()
     //-- Delete the driver objects.
     for(int i=0; i<nodes.size(); i++)
     {
+        nodes[i]->close();
         delete nodes[i];
         nodes[i] = 0;
     }
