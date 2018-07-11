@@ -445,6 +445,8 @@ bool roboticslab::CanBusControlboard::close()
         }
     }
 
+    iCanBufferFactory->destroyBuffer(canInputBuffer);
+
     //-- Delete the driver objects.
     for(int i=0; i<nodes.size(); i++)
     {
@@ -452,7 +454,15 @@ bool roboticslab::CanBusControlboard::close()
         nodes[i] = 0;
     }
 
-    iCanBufferFactory->destroyBuffer(canInputBuffer);
+    //-- Clear CAN acceptance filters.
+    for(std::map<int,int>::const_iterator it = idxFromCanId.begin(); it != idxFromCanId.end(); ++it)
+    {
+        if (!iCanBus->canIdDelete(it->first))
+        {
+            CD_WARNING("Unable to clear acceptance filter (%d).\n", it->first);
+        }
+    }
+
     canBusDevice.close();
 
     CD_INFO("End.\n");
