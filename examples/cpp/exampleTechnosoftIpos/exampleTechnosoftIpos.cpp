@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     options.put("refAcceleration",0.575437);
     options.put("refSpeed",737.2798);
 
-    yarp::os::Value v(iCanBufferFactory, sizeof(yarp::dev::ICanBufferFactory));
+    yarp::os::Value v(&iCanBufferFactory, sizeof(iCanBufferFactory));
     options.put("canBufferFactory", v);
 
     yarp::dev::PolyDriver dd(options);

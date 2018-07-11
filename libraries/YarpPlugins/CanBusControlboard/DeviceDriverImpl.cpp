@@ -92,7 +92,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         //ss << types.get(i).asString() << "_" << ids.get(i).asInt();
         //options.setMonitor(config.getMonitor(),ss.str().c_str());
 
-        yarp::os::Value v(iCanBufferFactory, sizeof(yarp::dev::ICanBufferFactory));
+        yarp::os::Value v(&iCanBufferFactory, sizeof(iCanBufferFactory));
         options.put("canBufferFactory", v);
 
         // -- Configuramos todos los dispositivos (TechnosoftIpos, LacqueyFetch, CuiAbsolute)
