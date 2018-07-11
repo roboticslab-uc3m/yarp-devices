@@ -47,7 +47,7 @@ public:
      * Interpret a can bus message.
      * @return true/false.
      */
-    virtual bool interpretMessage(yarp::dev::CanMessage * message) = 0;
+    virtual bool interpretMessage(const yarp::dev::CanMessage & message) = 0;
 
 };
 

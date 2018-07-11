@@ -55,7 +55,7 @@ public:
     //  --------- ICanBusSharer Declarations. Implementation in TechnosoftIpos.cpp ---------
     virtual bool setCanBusPtr(yarp::dev::ICanBus *canDevicePtr);
     virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw); // -- ??
-    virtual bool interpretMessage(yarp::dev::CanMessage * message);
+    virtual bool interpretMessage(const yarp::dev::CanMessage & message);
     /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
     virtual bool start();
     /** "ready to switch on", also acts as "shutdown" */
@@ -223,7 +223,7 @@ protected:
     bool send(uint32_t cob, uint16_t len, uint8_t * msgData);
 
     /** A helper function to display CAN messages. */
-    std::string msgToStr(yarp::dev::CanMessage * message);
+    std::string msgToStr(const yarp::dev::CanMessage & message);
     std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
 
     int canId;

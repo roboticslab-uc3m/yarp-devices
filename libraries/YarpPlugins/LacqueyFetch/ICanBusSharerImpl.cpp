@@ -54,7 +54,7 @@ bool roboticslab::LacqueyFetch::recoverFromError()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LacqueyFetch::interpretMessage(yarp::dev::CanMessage * message)
+bool roboticslab::LacqueyFetch::interpretMessage(const yarp::dev::CanMessage & message)
 {
 
     return true;

@@ -112,18 +112,18 @@ protected:
     ITechnosoftIpos* technosoftIpos;
 
     /** Function definitions **/
-    std::string msgToStr(yarp::dev::CanMessage * message)
+    std::string msgToStr(const yarp::dev::CanMessage & message)
     {
         std::stringstream tmp;
-        for(int i=0; i < message->getLen()-1; i++)
+        for(int i=0; i < message.getLen()-1; i++)
         {
-            tmp << std::hex << static_cast<int>(message->getData()[i]) << " ";
+            tmp << std::hex << static_cast<int>(message.getData()[i]) << " ";
         }
-        tmp << std::hex << static_cast<int>(message->getData()[message->getLen()-1]);
+        tmp << std::hex << static_cast<int>(message.getData()[message.getLen()-1]);
         tmp << ". canId(";
-        tmp << std::dec << (message->getId() & 0x7F);
+        tmp << std::dec << (message.getId() & 0x7F);
         tmp << ") via(";
-        tmp << std::hex << (message->getId() & 0xFF80);
+        tmp << std::hex << (message.getId() & 0xFF80);
         tmp << ").";
         return tmp.str();
     }
@@ -208,10 +208,10 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetRefAccelerationRaw )
         if( !ok || read == 0 ) continue;    // -- is waiting for recive message
         canId = msg.getId()  & 0x7F;  // -- if it recive the message, it will get ID
     }
-    CD_DEBUG("Read: %s\n", msgToStr(&msg).c_str());
+    CD_DEBUG("Read: %s\n", msgToStr(msg).c_str());
 
     //-- Print interpretation of message
-    iCanBusSharer->interpretMessage(&msg); // without ASSERT (we don't need assert interpretMessage function)
+    iCanBusSharer->interpretMessage(msg); // without ASSERT (we don't need assert interpretMessage function)
 
     // Manual 8.2.3. 6083h: Profile acceleration (SDO ack \"posmode_acc\" from driver)
     ASSERT_EQ(msg.getData()[0] , 0x60);  //-- ??

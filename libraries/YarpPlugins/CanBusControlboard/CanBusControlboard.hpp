@@ -815,7 +815,7 @@ protected:
     std::map< int, int > idxFromCanId;
 
     /** A helper function to display CAN messages. */
-    std::string msgToStr(yarp::dev::CanMessage* message);
+    std::string msgToStr(const yarp::dev::CanMessage& message);
 
     /**
      * Check if index is within range (referred to driver vector size).
