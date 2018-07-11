@@ -16,9 +16,8 @@ namespace
 {
     void setTimeval(int timeMs, struct timeval * tv)
     {
-        int sec = timeMs / 1000;
-        tv->tv_sec = sec;
-        tv->tv_usec = (timeMs - (sec * 1000)) * 1000;
+        tv->tv_sec = timeMs / 1000;
+        tv->tv_usec = (timeMs % 1000) * 1000;
     }
 }
 
