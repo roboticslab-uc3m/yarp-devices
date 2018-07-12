@@ -122,6 +122,12 @@ bool roboticslab::CanBusPeak::canIdDelete(unsigned int id)
 
     activeFilters.erase(filterId);
 
+    if (activeFilters.empty())
+    {
+        canBusReady.post();
+        return true;
+    }
+
     struct pcanfd_msg_filter * pfl = new pcanfd_msg_filter[activeFilters.size()];
     std::set<unsigned int>::const_iterator it;
     int i = 0;
