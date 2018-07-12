@@ -8,6 +8,10 @@ compiler:
   - gcc
   - clang
 
+env:
+  global:
+    - PEAK_DRIVER_VER=8.5.1
+
 before_install:
   - sudo apt-get -qq update # -qq No output except for errors
   - '[[ "$TRAVIS_EVENT_TYPE" = cron ]] && export ROBOTOLOGY_CHECKOUT=devel || export ROBOTOLOGY_CHECKOUT=master'
@@ -55,6 +59,13 @@ install:
   - make -j$(nproc)
   - sudo make install
   - cd ../../..
+  #-- Download and install Peak CAN driver
+  - wget -O- https://www.peak-system.com/fileadmin/media/linux/files/peak-linux-driver-$PEAK_DRIVER_VER.tar.gz | tar xz
+  - cd peak-linux-driver-$PEAK_DRIVER_VER
+  - make -C lib
+  - sudo make -C lib install
+  - sudo cp -f driver/pcan.h driver/pcanfd.h /usr/include # hardcoded install path
+  - cd ..
   #-- Install AMOR API
   - git clone git@github.com:roboticslab-uc3m/amor-api
   - cd amor-api && mkdir build && cd build
