@@ -54,7 +54,7 @@ bool roboticslab::FakeJoint::recoverFromError()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeJoint::interpretMessage(yarp::dev::CanMessage * message)
+bool roboticslab::FakeJoint::interpretMessage(const yarp::dev::CanMessage & message)
 {
 
     return true;

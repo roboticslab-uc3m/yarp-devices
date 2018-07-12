@@ -31,7 +31,7 @@ void roboticslab::CanBusControlboard::run()
             //-- Intercept 700h 0 msg that just indicates presence.
             if( (msg.getId()-canId) == 0x700 )
             {
-                CD_SUCCESS("Device indicating presence. %s\n",msgToStr(&msg).c_str());
+                CD_SUCCESS("Device indicating presence. %s\n",msgToStr(msg).c_str());
                 continue;
             }
 
@@ -40,7 +40,7 @@ void roboticslab::CanBusControlboard::run()
         }
 
         //CD_DEBUG("idxFromCanIdFound->second: %d\n",idxFromCanIdFound->second);
-        iCanBusSharer[ idxFromCanIdFound->second ]->interpretMessage(&msg);  //-- Check if false?
+        iCanBusSharer[ idxFromCanIdFound->second ]->interpretMessage(msg);  //-- Check if false?
 
     }  //-- ends: while ( ! this->isStopping() ).
 

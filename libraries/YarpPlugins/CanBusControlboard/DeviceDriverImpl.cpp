@@ -92,7 +92,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         //ss << types.get(i).asString() << "_" << ids.get(i).asInt();
         //options.setMonitor(config.getMonitor(),ss.str().c_str());
 
-        yarp::os::Value v(iCanBufferFactory, sizeof(yarp::dev::ICanBufferFactory));
+        yarp::os::Value v(&iCanBufferFactory, sizeof(iCanBufferFactory));
         options.put("canBufferFactory", v);
 
         // -- Configuramos todos los dispositivos (TechnosoftIpos, LacqueyFetch, CuiAbsolute)
@@ -445,14 +445,25 @@ bool roboticslab::CanBusControlboard::close()
         }
     }
 
+    iCanBufferFactory->destroyBuffer(canInputBuffer);
+
     //-- Delete the driver objects.
     for(int i=0; i<nodes.size(); i++)
     {
+        nodes[i]->close();
         delete nodes[i];
         nodes[i] = 0;
     }
 
-    iCanBufferFactory->destroyBuffer(canInputBuffer);
+    //-- Clear CAN acceptance filters.
+    for(std::map<int,int>::const_iterator it = idxFromCanId.begin(); it != idxFromCanId.end(); ++it)
+    {
+        if (!iCanBus->canIdDelete(it->first))
+        {
+            CD_WARNING("Unable to clear acceptance filter (%d).\n", it->first);
+        }
+    }
+
     canBusDevice.close();
 
     CD_INFO("End.\n");

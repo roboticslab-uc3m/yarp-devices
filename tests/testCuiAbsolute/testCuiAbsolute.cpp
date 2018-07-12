@@ -122,18 +122,18 @@ protected:
     ICuiAbsolute* cuiAbsolute;
 
     /** Function definitions **/
-    std::string msgToStr(yarp::dev::CanMessage* message)
+    std::string msgToStr(const yarp::dev::CanMessage& message)
     {
         std::stringstream tmp;
-        for(int i=0; i < message->getLen()-1; i++)
+        for(int i=0; i < message.getLen()-1; i++)
         {
-            tmp << std::hex << static_cast<int>(message->getData()[i]) << " ";
+            tmp << std::hex << static_cast<int>(message.getData()[i]) << " ";
         }
-        tmp << std::hex << static_cast<int>(message->getData()[message->getLen()-1]);
+        tmp << std::hex << static_cast<int>(message.getData()[message.getLen()-1]);
         tmp << ". canId(";
-        tmp << std::dec << (message->getId() & 0x7F);
+        tmp << std::dec << (message.getId() & 0x7F);
         tmp << ") via(";
-        tmp << std::hex << (message->getId() & 0xFF80);
+        tmp << std::hex << (message.getId() & 0xFF80);
         tmp << ").";
         return tmp.str();
     }
@@ -178,7 +178,7 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInPullMode )
 
             if (canId == CAN_ID) {
                  // -- Reading Cui Absolute Encoder Value
-                iCanBusSharer->interpretMessage(&msg); // necessary for read CuiAbsolute
+                iCanBusSharer->interpretMessage(msg); // necessary for read CuiAbsolute
                 double value;
                 while( ! iEncodersTimedRaw->getEncoderRaw(0,&value) ){
                     CD_ERROR("Wrong value of Cui \n");
@@ -233,7 +233,7 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInContinuousMode )
             if (canId == CAN_ID)
             {
                 // -- Reading Cui Absolute Encoder Value
-                iCanBusSharer->interpretMessage(&msg); // necessary for read CuiAbsolute
+                iCanBusSharer->interpretMessage(msg); // necessary for read CuiAbsolute
                 double value = 0;
                 while( ! iEncodersTimedRaw->getEncoderRaw(0,&value) ){
                     CD_ERROR("Wrong value of Cui \n");

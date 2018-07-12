@@ -6,18 +6,18 @@
 
 // -----------------------------------------------------------------------------
 
-std::string roboticslab::TechnosoftIpos::msgToStr(yarp::dev::CanMessage * message)
+std::string roboticslab::TechnosoftIpos::msgToStr(const yarp::dev::CanMessage & message)
 {
     std::stringstream tmp;
-    for(int i=0; i < message->getLen()-1; i++)
+    for(int i=0; i < message.getLen()-1; i++)
     {
-        tmp << std::hex << static_cast<int>(message->getData()[i]) << " ";
+        tmp << std::hex << static_cast<int>(message.getData()[i]) << " ";
     }
-    tmp << std::hex << static_cast<int>(message->getData()[message->getLen()-1]);
+    tmp << std::hex << static_cast<int>(message.getData()[message.getLen()-1]);
     tmp << ". canId(";
-    tmp << std::dec << (message->getId() & 0x7F);
+    tmp << std::dec << (message.getId() & 0x7F);
     tmp << ") via(";
-    tmp << std::hex << (message->getId() & 0xFF80);
+    tmp << std::hex << (message.getId() & 0xFF80);
     tmp << ").";
     return tmp.str();
 }

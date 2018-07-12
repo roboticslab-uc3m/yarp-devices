@@ -54,7 +54,7 @@ bool roboticslab::TextilesHand::recoverFromError()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::interpretMessage(yarp::dev::CanMessage * message)
+bool roboticslab::TextilesHand::interpretMessage(const yarp::dev::CanMessage & message)
 {
 
     return true;
