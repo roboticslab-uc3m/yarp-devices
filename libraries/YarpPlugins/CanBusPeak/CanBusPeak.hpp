@@ -3,6 +3,8 @@
 #ifndef __CAN_BUS_PEAK__
 #define __CAN_BUS_PEAK__
 
+#include <cstdint>
+
 #include <set>
 
 #include <yarp/os/Semaphore.h>
@@ -73,6 +75,8 @@ protected:
     enum io_operation { READ, WRITE };
 
     bool waitUntilTimeout(io_operation op, bool * bufferReady);
+
+    uint64_t computeAcceptanceCodeAndMask();
 
     int fileDescriptor;
     int rxTimeoutMs;
