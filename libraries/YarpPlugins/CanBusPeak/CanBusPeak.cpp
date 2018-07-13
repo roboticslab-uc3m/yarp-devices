@@ -7,6 +7,7 @@
 
 #include <cstring>
 #include <cassert>
+#include <cerrno>
 
 #include <ColorDebug.h>
 
@@ -66,6 +67,47 @@ bool roboticslab::CanBusPeak::waitUntilTimeout(io_operation op, bool * bufferRea
     }
 
     return true;
+}
+
+// -----------------------------------------------------------------------------
+
+uint64_t roboticslab::CanBusPeak::computeAcceptanceCodeAndMask()
+{
+    // DISCARD message if the following holds true (from driver/pcan_main.c):
+    // (pf->id & ~dev->acc_11b.mask) != dev->acc_11b.code
+
+    // From PCAN-Parameter_Documentation.pdf (shipped with PCAN_Basic)
+    // Appendix D: Acceptance Code and Mask Calculation
+
+    uint32_t mask = ~0x7f & 0x07ff;
+
+    if (activeFilters.empty())
+    {
+        return (uint64_t)mask;
+    }
+
+    uint32_t code = ~0x0;
+    uint32_t prevId = 0x0;
+
+    bool firstRun = true;
+
+    for (std::set<unsigned int>::const_iterator it = activeFilters.begin(); it != activeFilters.end(); ++it)
+    {
+        // logical AND
+        code &= *it;
+
+        if (!firstRun)
+        {
+            // "kind of" logical XOR, only one difference between consecutive IDs
+            // is enough to set the "don't care" bit
+            mask |= (prevId & ~mask) ^ *it;
+        }
+
+        prevId = *it;
+        firstRun = false;
+    }
+
+    return ((uint64_t)code << 32) | mask;
 }
 
 // -----------------------------------------------------------------------------

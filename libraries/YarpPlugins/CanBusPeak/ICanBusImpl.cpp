@@ -74,20 +74,21 @@ bool roboticslab::CanBusPeak::canIdAdd(unsigned int id)
         return true;
     }
 
-    struct pcanfd_msg_filter pf;
-    pf.id_from = pf.id_to = id;
-    pf.msg_flags = MSGTYPE_STANDARD; // default, see pcan.h
+    activeFilters.insert(id);
 
-    int res = pcanfd_add_filter(fileDescriptor, &pf);
+    uint64_t acc = computeAcceptanceCodeAndMask();
+
+    CD_DEBUG("New acceptance code+mask: %016lxh.\n", acc);
+
+    int res = pcanfd_set_option(fileDescriptor, PCANFD_OPT_ACC_FILTER_11B, &acc, sizeof(acc));
 
     if (res < 0)
     {
         CD_ERROR("Unable to set filter: %d (%s).\n", id, std::strerror(-res));
+        activeFilters.erase(id);
         canBusReady.post();
         return false;
     }
-
-    activeFilters.insert(id);
 
     canBusReady.post();
 
@@ -104,53 +105,26 @@ bool roboticslab::CanBusPeak::canIdDelete(unsigned int id)
 
     std::set<unsigned int>::const_iterator filterId = activeFilters.find(id);
 
-    if (filterId == activeFilters.end())
+    if (activeFilters.erase(id) == 0)
     {
         CD_WARNING("Filter for id %d missing or already deleted.\n", id);
         canBusReady.post();
         return true;
     }
 
-    int res = pcanfd_del_filters(fileDescriptor);
+    uint64_t acc = computeAcceptanceCodeAndMask();
+
+    CD_DEBUG("New acceptance code+mask: %016lxh.\n", acc);
+
+    int res = pcanfd_set_option(fileDescriptor, PCANFD_OPT_ACC_FILTER_11B, &acc, sizeof(acc));
 
     if (res < 0)
     {
-        CD_ERROR("Unable to delete all filters (%s).\n", std::strerror(-res));
+        CD_ERROR("pcanfd_set_option() failed (%s).\n", std::strerror(-res));
+        activeFilters.insert(id);
         canBusReady.post();
         return false;
     }
-
-    activeFilters.erase(filterId);
-
-    if (activeFilters.empty())
-    {
-        canBusReady.post();
-        return true;
-    }
-
-    struct pcanfd_msg_filter * pfl = new pcanfd_msg_filter[activeFilters.size()];
-    std::set<unsigned int>::const_iterator it;
-    int i = 0;
-
-    for (it = activeFilters.begin(); it != activeFilters.end(); ++it)
-    {
-        pfl[i].id_from = pfl[i].id_to = *it;
-        pfl[i].msg_flags = MSGTYPE_STANDARD; // default, see pcan.h
-        i++;
-    }
-
-    res = pcanfd_add_filters_list(fileDescriptor, activeFilters.size(), pfl);
-
-    if (res < 0)
-    {
-        CD_ERROR("Unable to add active filters back (%s).\n", std::strerror(-res));
-        delete[] pfl;
-        activeFilters.clear();
-        canBusReady.post();
-        return false;
-    }
-
-    delete[] pfl;
 
     canBusReady.post();
 
