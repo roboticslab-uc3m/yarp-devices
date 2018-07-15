@@ -3,7 +3,7 @@
 #ifndef __TECHNOSOFT_IPOS__
 #define __TECHNOSOFT_IPOS__
 
-#include <cstdint>
+#include <stdint.h>
 #include <sstream>
 
 #include <yarp/os/all.h>
