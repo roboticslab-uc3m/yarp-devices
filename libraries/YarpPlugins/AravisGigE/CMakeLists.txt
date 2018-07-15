@@ -2,8 +2,6 @@
 # Authors: Juan G. Victores & David Estevez
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-find_package(ARAVIS QUIET)
-
 if(NOT ARAVIS_FOUND AND (NOT DEFINED ENABLE_AravisGigE OR ENABLE_AravisGigE))
     message(WARNING "ARAVIS package not found, disabling AravisGigE")
 endif()

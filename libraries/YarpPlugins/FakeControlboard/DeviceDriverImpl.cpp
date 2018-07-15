@@ -12,8 +12,6 @@
 bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
 {
     CD_DEBUG("config: %s\n", config.toString().c_str());
-    yarp::os::SearchMonitor * monitor = config.getMonitor();
-    CD_WARNING("monitor: %d\n", monitor);
 
     axes = config.check("axes", yarp::os::Value(DEFAULT_AXES), "number of axes to control").asInt();
     jmcMs = config.check("jmcMs", yarp::os::Value(DEFAULT_JMC_MS), "period of JMC rate thread (milliseconds)").asInt();

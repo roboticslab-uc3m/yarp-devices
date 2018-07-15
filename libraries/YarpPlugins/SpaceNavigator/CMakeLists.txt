@@ -1,8 +1,6 @@
 # Copyright: (C) 2017 Universidad Carlos III de Madrid
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-find_package(Spnav QUIET)
-
 if(NOT Spnav_FOUND AND (NOT DEFINED ENABLE_SpaceNavigator OR ENABLE_SpaceNavigator))
     message(WARNING "Spnav package not found, disabling SpaceNavigator")
 endif()

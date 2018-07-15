@@ -43,6 +43,8 @@ protected:
     virtual bool close();
 //        virtual bool interruptModule();
 //        virtual int period;
+    int timeEncoderWait;
+    bool homing;
 
 public:
     OneCanBusOneWrapper();

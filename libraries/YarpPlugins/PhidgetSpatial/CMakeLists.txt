@@ -1,8 +1,6 @@
 # Copyright: (C) 2017 Universidad Carlos III de Madrid
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-find_package(Phidgets 2.1 EXACT QUIET)
-
 if(NOT Phidgets_FOUND AND (NOT DEFINED ENABLE_PhidgetSpatial OR PhidgetSpatial))
     message(WARNING "Phidgets package not found, disabling PhidgetSpatial")
 endif()
@@ -12,7 +10,7 @@ yarp_prepare_plugin(PhidgetSpatial
                     TYPE roboticslab::PhidgetSpatial
                     INCLUDE PhidgetSpatial.hpp
                     DEFAULT ON
-                    DEPENDS "NOT CMAKE_VERSION VERSION_LESS 2.8.11;Phidgets_FOUND")
+                    DEPENDS Phidgets_FOUND)
 
 if(NOT SKIP_PhidgetSpatial)
 

@@ -1,5 +1,3 @@
-find_package(PythonInterp QUIET)
-
 if(NOT PYTHONINTERP_FOUND AND (NOT DEFINED ENABLE_sensorReader OR ENABLE_sensorReader))
     message(WARNING "PythonInterp package not found, disabling sensorReader program")
 endif()
