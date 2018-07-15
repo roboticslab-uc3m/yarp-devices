@@ -10,15 +10,24 @@
 #
 # PCan::PCan        - PCan library (old API)
 # PCan::PCanFD      - PCan library (v8+ API)
+#
+# Hints: PCan_ROOT
 
 if(UNIX)
     find_path(PCan_INCLUDE_DIR NAMES pcan.h
                                      pcanfd.h
                                      libpcan.h
-                                     libpcanfd.h)
+                                     libpcanfd.h
+                               HINTS $ENV{PCan_ROOT}
+                               PATH_SUFFIXES include)
 
-    find_library(PCan_LIBRARY pcan)
-    find_library(PCan_LIBRARY_FD pcanfd)
+    find_library(PCan_LIBRARY NAMES pcan
+                              HINTS $ENV{PCan_ROOT}
+                              PATH_SUFFIXES lib)
+
+    find_library(PCan_LIBRARY_FD NAMES pcanfd
+                                 HINTS $ENV{PCan_ROOT}
+                                 PATH_SUFFIXES lib)
 endif()
 
 include(FindPackageHandleStandardArgs)
@@ -38,7 +47,7 @@ if(PCan_FOUND)
                                                         INTERFACE_INCLUDE_DIRECTORIES "${PCan_INCLUDE_DIR}")
         endif()
 
-	    if(NOT TARGET PCan::PCanFD)
+        if(NOT TARGET PCan::PCanFD)
             add_library(PCan::PCanFD UNKNOWN IMPORTED)
 
             set_target_properties(PCan::PCanFD PROPERTIES IMPORTED_LOCATION "${PCan_LIBRARY_FD}"

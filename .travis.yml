@@ -86,13 +86,20 @@ install:
     fi
   - export PKG_CONFIG_PATH="$CACHE_DIR/libphidget_2.1.8/lib/pkgconfig:$PKG_CONFIG_PATH"
 
-  #-- Download and install Peak CAN driver
-  - wget -O- https://www.peak-system.com/fileadmin/media/linux/files/peak-linux-driver-$PEAK_DRIVER_VER.tar.gz | tar xz
-  - cd peak-linux-driver-$PEAK_DRIVER_VER
-  - make -C lib
-  - sudo make -C lib install
-  - sudo cp -f driver/pcan.h driver/pcanfd.h /usr/include # hardcoded install path
-  - cd ..
+  #-- Install Peak CAN driver
+  - >
+    if [ ! -d "$CACHE_DIR/peak-$PEAK_DRIVER_VER" ]; then
+        echo "peak-$PEAK_DRIVER_VER not in cache"
+        wget -O- -q https://www.peak-system.com/fileadmin/media/linux/files/peak-linux-driver-$PEAK_DRIVER_VER.tar.gz | tar -C ~ -xzf -
+        make -C ~/"peak-linux-driver-$PEAK_DRIVER_VER/lib" -j$(nproc)
+        mkdir -p "$CACHE_DIR/peak-$PEAK_DRIVER_VER/include" "$CACHE_DIR/peak-$PEAK_DRIVER_VER/lib"
+        cp -f ~/"peak-linux-driver-$PEAK_DRIVER_VER/lib"/libpcan*.h "$CACHE_DIR/peak-$PEAK_DRIVER_VER/include"
+        cp -d ~/"peak-linux-driver-$PEAK_DRIVER_VER/lib/lib"/* "$CACHE_DIR/peak-$PEAK_DRIVER_VER/lib"
+        cp -f ~/"peak-linux-driver-$PEAK_DRIVER_VER/driver"/pcan*.h "$CACHE_DIR/peak-$PEAK_DRIVER_VER/include"
+    else
+        echo "peak-$PEAK_DRIVER_VER already in cache"
+    fi
+  - export PCan_ROOT="$CACHE_DIR/peak-$PEAK_DRIVER_VER"
 
   #-- Install color-debug
   - >
