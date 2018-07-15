@@ -3,7 +3,7 @@
 #ifndef __CAN_BUS_PEAK__
 #define __CAN_BUS_PEAK__
 
-#include <cstdint>
+#include <stdint.h>
 
 #include <set>
 
