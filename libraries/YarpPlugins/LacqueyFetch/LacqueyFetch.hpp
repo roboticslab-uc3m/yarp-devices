@@ -3,6 +3,7 @@
 #ifndef __LACQUEY_FETCH__
 #define __LACQUEY_FETCH__
 
+#include <cstdint>
 #include <sstream>
 
 #include <yarp/os/all.h>
