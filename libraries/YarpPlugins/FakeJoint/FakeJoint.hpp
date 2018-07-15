@@ -3,6 +3,7 @@
 #ifndef __FAKE_JOINT__
 #define __FAKE_JOINT__
 
+#include <stdint.h>
 #include <sstream>
 
 #include <yarp/os/all.h>

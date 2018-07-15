@@ -10,7 +10,7 @@ yarp_prepare_plugin(WiimoteSensor
                     TYPE roboticslab::WiimoteSensor
                     INCLUDE WiimoteSensor.hpp
                     DEFAULT ON
-                    DEPENDS "UNIX;NOT CMAKE_VERSION VERSION_LESS 2.8.11;XWiimote_FOUND")
+                    DEPENDS "UNIX;XWiimote_FOUND")
 
 if(NOT SKIP_WiimoteSensor)
 

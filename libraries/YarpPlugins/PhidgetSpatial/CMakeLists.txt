@@ -10,7 +10,7 @@ yarp_prepare_plugin(PhidgetSpatial
                     TYPE roboticslab::PhidgetSpatial
                     INCLUDE PhidgetSpatial.hpp
                     DEFAULT ON
-                    DEPENDS "NOT CMAKE_VERSION VERSION_LESS 2.8.11;Phidgets_FOUND")
+                    DEPENDS Phidgets_FOUND)
 
 if(NOT SKIP_PhidgetSpatial)
 
