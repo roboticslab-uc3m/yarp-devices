@@ -74,13 +74,16 @@ install:
     --additional-export-paths "YARP_DATA_DIRS;share/yarp"
 
   #-- Install libphidget21
-  - cd extern/phidget
-  - tar xzf libphidget_2.1.8.20151217.tar.gz
-  - cd libphidget-2.1.8.20151217
-  - ./configure --enable-jni=no
-  - make -j$(nproc)
-  - sudo make install
-  - cd ../../..
+  - >
+    if [ ! -d "$CACHE_DIR/libphidget_2.1.8" ]; then
+        echo "libphidget_2.1.8 not in cache"
+        tar xzf "$TRAVIS_BUILD_DIR/extern/phidget/libphidget_2.1.8.20151217.tar.gz" -C ~
+        (cd ~/libphidget-2.1.8.20151217 && ./configure --enable-jni=no --prefix="$CACHE_DIR/libphidget_2.1.8")
+        make -C ~/libphidget-2.1.8.20151217 -j$(nproc) install
+    else
+        echo "libphidget_2.1.8 already in cache"
+    fi
+  - export PKG_CONFIG_PATH="$CACHE_DIR/libphidget_2.1.8/lib/pkgconfig:$PKG_CONFIG_PATH"
 
   #-- Install color-debug
   - >
