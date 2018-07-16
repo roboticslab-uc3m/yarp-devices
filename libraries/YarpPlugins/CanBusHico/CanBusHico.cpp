@@ -10,6 +10,8 @@
 #include <cerrno>
 #include <cassert>
 
+#include <exception>
+
 #include <ColorDebug.h>
 
 // -----------------------------------------------------------------------------
@@ -103,42 +105,50 @@ bool roboticslab::CanBusHico::waitUntilTimeout(io_operation op, bool * bufferRea
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::interpretBitrate(unsigned int rate, std::string & str)
+void roboticslab::CanBusHico::initBitrateMap()
 {
-    switch (rate)
+    idToBitrateMap[BITRATE_10k] = 10000;
+    idToBitrateMap[BITRATE_20k] = 20000;
+    idToBitrateMap[BITRATE_50k] = 50000;
+    idToBitrateMap[BITRATE_100k] = 100000;
+    idToBitrateMap[BITRATE_125k] = 125000;
+    idToBitrateMap[BITRATE_250k] = 250000;
+    idToBitrateMap[BITRATE_500k] = 500000;
+    idToBitrateMap[BITRATE_800k] = 800000;
+    idToBitrateMap[BITRATE_1000k] = 1000000;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::CanBusHico::bitrateToId(unsigned int bitrate, unsigned int * id)
+{
+    std::map<unsigned int, unsigned int>::const_iterator it;
+
+    for (it = idToBitrateMap.begin(); it != idToBitrateMap.end(); ++it)
     {
-    case BITRATE_10k:
-        str = "10k";
-        break;
-    case BITRATE_20k:
-        str = "20k";
-        break;
-    case BITRATE_50k:
-        str = "50k";
-        break;
-    case BITRATE_100k:
-        str = "100k";
-        break;
-    case BITRATE_125k:
-        str = "125k";
-        break;
-    case BITRATE_250k:
-        str = "250k";
-        break;
-    case BITRATE_500k:
-        str = "500k";
-        break;
-    case BITRATE_800k:
-        str = "800k";
-        break;
-    case BITRATE_1000k:
-        str = "1000k";
-        break;
-    default:
-        return false;
+        if (it->second == bitrate)
+        {
+            *id = it->first;
+            return true;
+        }
     }
 
-    return true;
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::CanBusHico::idToBitrate(unsigned int id, unsigned int * bitrate)
+{
+    try
+    {
+        *bitrate = idToBitrateMap.at(id);
+        return true;
+    }
+    catch (const std::out_of_range & exception)
+    {
+        return false;
+    }
 }
 
 // -----------------------------------------------------------------------------

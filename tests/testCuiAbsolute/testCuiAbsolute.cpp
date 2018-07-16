@@ -37,7 +37,7 @@ public:
     {
         // -- code here will execute just before the test ensues
 
-        yarp::os::Property canDeviceConf("(device CanBusHico) (canDevice /dev/can0) (canBitrate 8)");
+        yarp::os::Property canDeviceConf("(device CanBusHico) (canDevice /dev/can0) (canBitrate 1000000)");
         bool ok = true;
         ok &= canBusDevice.open(canDeviceConf);   // -- we introduce the configuration properties defined in property object (p) and them, we stard the device (HicoCAN)
         ok &= canBusDevice.view(iCanBus);

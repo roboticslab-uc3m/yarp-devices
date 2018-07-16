@@ -40,7 +40,7 @@ mode [position]
     position/velocity mode
 canDevice [/dev/can0]
     CAN device path
-canBitrate [8]
+canBitrate [1000000]
     CAN bitrate
 ptModeMs [50]
     PT mode miliseconds

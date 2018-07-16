@@ -62,6 +62,8 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
     yarp::os::Time::delay(DELAY);
 
+    initBitrateMap();
+
     //-- Set the CAN bitrate.
     if (!canSetBaudRate(bitrate))
     {

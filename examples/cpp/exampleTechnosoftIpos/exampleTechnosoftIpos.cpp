@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
     yarp::os::Property canBusOptions;
     canBusOptions.put("device","CanBusHico");
     canBusOptions.put("canDevice","/dev/can1");
-    canBusOptions.put("canBitrate",8);
+    canBusOptions.put("canBitrate",1000000);
     canBusDevice.open(canBusOptions);
     if( ! canBusDevice.isValid() )
     {

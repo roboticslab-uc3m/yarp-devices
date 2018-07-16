@@ -18,11 +18,11 @@ bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
 {
     CD_DEBUG("(%d)\n", rate);
 
-    std::string rateStr;
+    unsigned int id;
 
-    if (!interpretBitrate(rate, rateStr))
+    if (!bitrateToId(rate, &id))
     {
-        CD_ERROR("Unrecognized bitrate value.\n");
+        CD_ERROR("Unsupported bitrate value (%d).\n", rate);
         return false;
     }
 
@@ -30,7 +30,7 @@ bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
 
     if (bitrateState.first)
     {
-        if (bitrateState.second == rate)
+        if (bitrateState.second == id)
         {
             CD_WARNING("Bitrate already set.\n");
             canBusReady.post();
@@ -44,7 +44,7 @@ bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
         }
     }
 
-    if (::ioctl(fileDescriptor, IOC_SET_BITRATE, &rate) == -1)
+    if (::ioctl(fileDescriptor, IOC_SET_BITRATE, &id) == -1)
     {
         CD_ERROR("Could not set bitrate: %s.\n", std::strerror(errno));
         canBusReady.post();
@@ -52,7 +52,7 @@ bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
     }
 
     bitrateState.first = true;
-    bitrateState.second = rate;
+    bitrateState.second = id;
 
     canBusReady.post();
 
@@ -65,8 +65,10 @@ bool roboticslab::CanBusHico::canGetBaudRate(unsigned int * rate)
 {
     CD_DEBUG("\n");
 
+    unsigned int id;
+
     canBusReady.wait();
-    int ret = ::ioctl(fileDescriptor, IOC_GET_BITRATE, rate);
+    int ret = ::ioctl(fileDescriptor, IOC_GET_BITRATE, &id);
     canBusReady.post();
 
     if (ret == -1)
@@ -75,11 +77,10 @@ bool roboticslab::CanBusHico::canGetBaudRate(unsigned int * rate)
         return false;
     }
 
-    std::string rateStr;
-
-    if (interpretBitrate(*rate, rateStr))
+    if (!idToBitrate(id, rate))
     {
-        CD_DEBUG("Got bitrate: %s (%d).\n", rateStr.c_str(), *rate);
+        CD_ERROR("Unrecognized bitrate id (%d).\n", id);
+        return false;
     }
 
     return true;

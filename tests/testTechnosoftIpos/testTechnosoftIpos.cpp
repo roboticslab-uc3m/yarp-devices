@@ -33,7 +33,7 @@ public:
     {
         // -- code here will execute just before the test ensues
 
-        yarp::os::Property canDeviceConf("(device CanBusHico) (canDevice /dev/can1) (canBitrate 8)"); // -- truco para agregar directamente un conjunto de propiedades sin tener que llamar a la función "put"
+        yarp::os::Property canDeviceConf("(device CanBusHico) (canDevice /dev/can1) (canBitrate 1000000)"); // -- truco para agregar directamente un conjunto de propiedades sin tener que llamar a la función "put"
         bool ok = true;
         ok &= canBusDevice.open(canDeviceConf);   // -- we introduce the configuration properties defined in property object (p) and them, we stard the device (HicoCAN)
         ok &= canBusDevice.view(iCanBus);
