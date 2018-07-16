@@ -151,6 +151,21 @@ bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
 
     canBusReady.wait();
 
+    if (id == 0)
+    {
+        CD_INFO("Clearing filters previously set.\n");
+
+        if (!filterManager->clearFilters(true))
+        {
+            CD_ERROR("Unable to clear accceptance filters: %s", std::strerror(errno));
+            canBusReady.post();
+            return false;
+        }
+
+        canBusReady.post();
+        return true;
+    }
+
     if (!filterManager->hasId(id))
     {
         CD_WARNING("Filter for ID %d not found, doing nothing.\n", id);
