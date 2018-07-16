@@ -10,7 +10,7 @@
 #include <cerrno>
 #include <cassert>
 
-#include <exception>
+#include <stdexcept>
 
 #include <ColorDebug.h>
 
