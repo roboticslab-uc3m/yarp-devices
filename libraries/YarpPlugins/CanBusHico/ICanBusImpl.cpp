@@ -157,7 +157,7 @@ bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
 
         if (!filterManager->clearFilters(true))
         {
-            CD_ERROR("Unable to clear accceptance filters: %s", std::strerror(errno));
+            CD_ERROR("Unable to clear accceptance filters: %s.\n", std::strerror(errno));
             canBusReady.post();
             return false;
         }
