@@ -44,6 +44,7 @@ std::string roboticslab::FakeJoint::msgToStr(uint32_t cob, uint16_t len, uint8_t
 
 bool roboticslab::FakeJoint::send(uint32_t cob, uint16_t len, uint8_t * msgData)
 {
+    canBufferSemaphore.wait();
 
     if ( (lastUsage - yarp::os::Time::now()) < DELAY )
         yarp::os::Time::delay( lastUsage + DELAY - yarp::os::Time::now() );
@@ -59,6 +60,7 @@ bool roboticslab::FakeJoint::send(uint32_t cob, uint16_t len, uint8_t * msgData)
         return false;
 
     lastUsage = yarp::os::Time::now();
+    canBufferSemaphore.post();
     return true;
 }
 
