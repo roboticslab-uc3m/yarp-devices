@@ -229,7 +229,8 @@ protected:
     yarp::os::Semaphore interactionModeSemaphore;
     yarp::os::Semaphore targetPositionSemaphore;
 
-
+    //-- CAN output buffer
+    yarp::os::Semaphore canBufferSemaphore;
 };
 
 }  // namespace roboticslab

@@ -249,6 +249,9 @@ protected:
     //yarp::os::Semaphore targetReachedReady;
     //yarp::os::Semaphore refSpeedSemaphore;
     //yarp::os::Semaphore refAccelSemaphore;
+
+    //-- CAN output buffer
+    yarp::os::Semaphore canBufferSemaphore;
 };
 
 }  // namespace roboticslab

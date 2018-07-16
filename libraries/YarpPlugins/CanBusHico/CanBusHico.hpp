@@ -4,6 +4,7 @@
 #define __CAN_BUS_HICO__
 
 #include <set>
+#include <map>
 #include <string>
 #include <utility>
 
@@ -17,7 +18,7 @@
 #include "HicoCanMessage.hpp"
 
 #define DEFAULT_CAN_DEVICE "/dev/can0"
-#define DEFAULT_CAN_BITRATE BITRATE_1000k
+#define DEFAULT_CAN_BITRATE 1000000
 
 #define DEFAULT_CAN_RX_TIMEOUT_MS 1
 #define DEFAULT_CAN_TX_TIMEOUT_MS 0  // '0' means no timeout
@@ -115,7 +116,12 @@ protected:
 
     bool setFdMode(bool requestedBlocking);
     bool waitUntilTimeout(io_operation op, bool * bufferReady);
-    bool interpretBitrate(unsigned int rate, std::string & str);
+
+    static void initBitrateMap();
+    bool bitrateToId(unsigned int bitrate, unsigned int * id);
+    bool idToBitrate(unsigned int id, unsigned int * bitrate);
+
+    static std::map<unsigned int, unsigned int> idToBitrateMap;
 
     /** CAN file descriptor */
     int fileDescriptor;
