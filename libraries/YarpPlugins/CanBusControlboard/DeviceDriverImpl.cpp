@@ -455,13 +455,10 @@ bool roboticslab::CanBusControlboard::close()
         nodes[i] = 0;
     }
 
-    //-- Clear CAN acceptance filters.
-    for(std::map<int,int>::const_iterator it = idxFromCanId.begin(); it != idxFromCanId.end(); ++it)
+    //-- Clear CAN acceptance filters ('0' = all IDs that were previously set by canIdAdd).
+    if (!iCanBus->canIdDelete(0))
     {
-        if (!iCanBus->canIdDelete(it->first))
-        {
-            CD_WARNING("Unable to clear acceptance filter (%d).\n", it->first);
-        }
+        CD_WARNING("CAN filters may be preserved on the next run.\n");
     }
 
     canBusDevice.close();
