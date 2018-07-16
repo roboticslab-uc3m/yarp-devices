@@ -103,6 +103,24 @@ bool roboticslab::CanBusPeak::canIdDelete(unsigned int id)
 
     canBusReady.wait();
 
+    if (id == 0)
+    {
+        CD_INFO("Clearing filters previously set.\n");
+
+        int res = pcanfd_del_filters(fileDescriptor);
+
+        if (res < 0)
+        {
+            CD_ERROR("Unable to clear accceptance filters (%s).\n", std::strerror(-res));
+            canBusReady.post();
+            return false;
+        }
+
+        activeFilters.clear();
+        canBusReady.post();
+        return true;
+    }
+
     if (activeFilters.erase(id) == 0)
     {
         CD_WARNING("Filter for id %d missing or already deleted.\n", id);
