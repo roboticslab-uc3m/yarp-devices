@@ -77,6 +77,25 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
     {
         filterManager = new FilterManager(fileDescriptor, filterConfig == FilterManager::MASK_AND_RANGE);
 
+        if (!config.check("preserveFilters", "don't clear acceptance filters on init"))
+        {
+            if (!filterManager->clearFilters())
+            {
+                CD_ERROR("Unable to clear acceptance filters on CAN device: %s.\n", devicePath.c_str());
+                return false;
+            }
+            else
+            {
+                CD_SUCCESS("Acceptance filters cleared on CAN device: %s.\n", devicePath.c_str());
+            }
+
+            yarp::os::Time::delay(DELAY);
+        }
+        else
+        {
+            CD_WARNING("Preserving previous acceptance filters (if any): %s.\n", devicePath.c_str());
+        }
+
         //-- Load initial node IDs and set acceptance filters.
         if (config.check("ids", "initial node IDs"))
         {
@@ -105,6 +124,10 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
         }
 
         yarp::os::Time::delay(DELAY);
+    }
+    else
+    {
+        CD_INFO("Acceptance filters are disabled for CAN device: %s.\n", devicePath.c_str());
     }
 
     //-- Start the CAN device.
