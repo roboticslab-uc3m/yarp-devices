@@ -54,6 +54,60 @@ bool roboticslab::CanBusPeak::open(yarp::os::Searchable& config)
         fileDescriptor = res;
     }
 
+    if (!config.check("preserveFilters", "don't clear acceptance filters on init"))
+    {
+        res = pcanfd_del_filters(fileDescriptor);
+
+        if (res < 0)
+        {
+            CD_ERROR("Unable to clear acceptance filters on CAN device: %s (%s).\n", devicePath.c_str(), std::strerror(-res));
+            return false;
+        }
+        else
+        {
+            CD_SUCCESS("Acceptance filters cleared on CAN device: %s.\n", devicePath.c_str());
+        }
+    }
+    else
+    {
+        CD_WARNING("Preserving previous acceptance filters (if any): %s.\n", devicePath.c_str());
+    }
+
+    //-- Load initial node IDs and set acceptance filters.
+    if (config.check("ids", "initial node IDs"))
+    {
+        const yarp::os::Bottle & ids = config.findGroup("ids").tail();
+
+        if (ids.size() != 0)
+        {
+            CD_INFO("Parsing bottle of ids on CAN device: %s.\n", ids.toString().c_str());
+
+            for (int i = 0; i < ids.size(); i++)
+            {
+                activeFilters.insert(ids.get(i).asDouble());
+            }
+
+            uint64_t acc = computeAcceptanceCodeAndMask();
+
+            CD_DEBUG("New acceptance code+mask: %016lxh.\n", acc);
+
+            res = pcanfd_set_option(fileDescriptor, PCANFD_OPT_ACC_FILTER_11B, &acc, sizeof(acc));
+
+            if (res < 0)
+            {
+                CD_ERROR("Unable to set acceptance filters on CAN device: %s (%s)\n", devicePath.c_str(), std::strerror(-res));
+                activeFilters.clear();
+                return false;
+            }
+
+            CD_SUCCESS("Initial IDs added to set of acceptance filters: %s.\n", devicePath.c_str());
+        }
+        else
+        {
+            CD_INFO("No bottle of ids given to CAN device.\n");
+        }
+    }
+
     return true;
 }
 
@@ -61,7 +115,25 @@ bool roboticslab::CanBusPeak::open(yarp::os::Searchable& config)
 
 bool roboticslab::CanBusPeak::close()
 {
-    pcanfd_close(fileDescriptor);
+    if (fileDescriptor > 0)
+    {
+        if (!activeFilters.empty())
+        {
+            int res = pcanfd_del_filters(fileDescriptor);
+
+            if (res < 0)
+            {
+                CD_WARNING("Unable to clear acceptance filters (%s).\n", std::strerror(-res));
+            }
+            else
+            {
+                activeFilters.clear();
+            }
+        }
+
+        pcanfd_close(fileDescriptor);
+    }
+
     return true;
 }
 
