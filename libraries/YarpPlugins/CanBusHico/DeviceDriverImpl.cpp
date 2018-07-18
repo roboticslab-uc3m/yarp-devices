@@ -23,7 +23,7 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
     int bitrate = config.check("canBitrate", yarp::os::Value(DEFAULT_CAN_BITRATE), "CAN bitrate").asInt();
 
     blockingMode = config.check("canBlockingMode", yarp::os::Value(DEFAULT_CAN_BLOCKING_MODE), "CAN blocking mode enabled").asBool();
-    allowPermissive = config.check("canBlockingMode", yarp::os::Value(DEFAULT_CAN_ALLOW_PERMISSIVE), "CAN read/write permissive mode").asBool();
+    allowPermissive = config.check("canAllowPermissive", yarp::os::Value(DEFAULT_CAN_ALLOW_PERMISSIVE), "CAN read/write permissive mode").asBool();
 
     if (blockingMode)
     {
