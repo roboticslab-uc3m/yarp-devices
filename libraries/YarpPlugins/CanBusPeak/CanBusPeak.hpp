@@ -22,6 +22,9 @@
 #define DEFAULT_CAN_RX_TIMEOUT_MS 1
 #define DEFAULT_CAN_TX_TIMEOUT_MS 0  // '0' means no timeout
 
+#define DEFAULT_CAN_BLOCKING_MODE true
+#define DEFAULT_CAN_ALLOW_PERMISSIVE false
+
 namespace roboticslab
 {
 
@@ -41,7 +44,8 @@ public:
     CanBusPeak() : fileDescriptor(0),
                    rxTimeoutMs(DEFAULT_CAN_RX_TIMEOUT_MS),
                    txTimeoutMs(DEFAULT_CAN_TX_TIMEOUT_MS),
-                   nonBlockingMode(false)
+                   blockingMode(DEFAULT_CAN_BLOCKING_MODE),
+                   allowPermissive(DEFAULT_CAN_ALLOW_PERMISSIVE)
     {}
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -82,7 +86,8 @@ protected:
     int rxTimeoutMs;
     int txTimeoutMs;
 
-    bool nonBlockingMode;
+    bool blockingMode;
+    bool allowPermissive;
 
     mutable yarp::os::Semaphore canBusReady;
 

@@ -16,12 +16,15 @@ bool roboticslab::CanBusPeak::open(yarp::os::Searchable& config)
 
     int bitrate = config.check("canBitrate", yarp::os::Value(DEFAULT_CAN_BITRATE), "CAN bitrate").asInt();
 
-    nonBlockingMode = config.check("canNonBlockingMode", "CAN non-blocking mode enabled");
+    blockingMode = config.check("canBlockingMode", yarp::os::Value(DEFAULT_CAN_BLOCKING_MODE), "CAN blocking mode enabled").asBool();
+    allowPermissive = config.check("canAllowPermissive", yarp::os::Value(DEFAULT_CAN_ALLOW_PERMISSIVE), "CAN read/write permissive mode").asBool();
 
     int flags = OFD_BITRATE;
 
-    if (!nonBlockingMode)
+    if (blockingMode)
     {
+        CD_INFO("Blocking mode enabled for CAN device: %s.\n", devicePath.c_str());
+
         rxTimeoutMs = config.check("canRxTimeoutMs", yarp::os::Value(DEFAULT_CAN_RX_TIMEOUT_MS), "RX timeout (milliseconds)").asInt();
         txTimeoutMs = config.check("canTxTimeoutMs", yarp::os::Value(DEFAULT_CAN_TX_TIMEOUT_MS), "TX timeout (milliseconds)").asInt();
 
@@ -37,7 +40,7 @@ bool roboticslab::CanBusPeak::open(yarp::os::Searchable& config)
     }
     else
     {
-        CD_INFO("Non-blocking mode enabled.\n");
+        CD_INFO("Requested non-blocking mode for CAN device: %s.\n", devicePath.c_str());
         flags |= OFD_NONBLOCKING;
     }
 
