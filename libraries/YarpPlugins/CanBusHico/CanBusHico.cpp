@@ -2,7 +2,6 @@
 
 #include "CanBusHico.hpp"
 
-#include <fcntl.h>
 #include <sys/select.h>
 #include <sys/time.h>
 
@@ -23,37 +22,6 @@ namespace
         tv->tv_sec = timeMs / 1000;
         tv->tv_usec = (timeMs % 1000) * 1000;
     }
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusHico::setFdMode(bool requestedBlocking)
-{
-    bool currentlyBlocking = (fcntlFlags & O_NONBLOCK) == 0;
-
-    if (currentlyBlocking != requestedBlocking)
-    {
-        int flags = fcntlFlags;
-
-        if (requestedBlocking)
-        {
-            flags &= ~O_NONBLOCK;
-        }
-        else
-        {
-            flags |= O_NONBLOCK;
-        }
-
-        if (::fcntl(fileDescriptor, F_SETFL, flags) == -1)
-        {
-            CD_ERROR("fcntl() error: %s.\n", std::strerror(errno));
-            return false;
-        }
-
-        fcntlFlags = flags;
-    }
-
-    return true;
 }
 
 // -----------------------------------------------------------------------------

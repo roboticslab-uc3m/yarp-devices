@@ -23,6 +23,9 @@
 #define DEFAULT_CAN_RX_TIMEOUT_MS 1
 #define DEFAULT_CAN_TX_TIMEOUT_MS 0  // '0' means no timeout
 
+#define DEFAULT_CAN_BLOCKING_MODE true
+#define DEFAULT_CAN_ALLOW_PERMISSIVE false
+
 #define DELAY 0.001  // [s]
 
 #define DEFAULT_CAN_FILTER_CONFIGURATION "disabled"
@@ -48,9 +51,10 @@ class CanBusHico : public yarp::dev::DeviceDriver,
 public:
 
     CanBusHico() : fileDescriptor(0),
-                   fcntlFlags(0),
                    rxTimeoutMs(DEFAULT_CAN_RX_TIMEOUT_MS),
                    txTimeoutMs(DEFAULT_CAN_TX_TIMEOUT_MS),
+                   blockingMode(DEFAULT_CAN_BLOCKING_MODE),
+                   allowPermissive(DEFAULT_CAN_ALLOW_PERMISSIVE),
                    filterManager(NULL),
                    filterConfig(FilterManager::DISABLED)
     {}
@@ -114,7 +118,6 @@ protected:
 
     enum io_operation { READ, WRITE };
 
-    bool setFdMode(bool requestedBlocking);
     bool waitUntilTimeout(io_operation op, bool * bufferReady);
 
     static void initBitrateMap();
@@ -125,8 +128,10 @@ protected:
 
     /** CAN file descriptor */
     int fileDescriptor;
-    int fcntlFlags;
     int rxTimeoutMs, txTimeoutMs;
+
+    bool blockingMode;
+    bool allowPermissive;
 
     yarp::os::Semaphore canBusReady;
 

@@ -197,20 +197,19 @@ bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
 
 bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait)
 {
+    if (!allowPermissive && wait != blockingMode)
+    {
+        CD_ERROR("Blocking mode configuration mismatch: requested=%d, enabled=%d.\n", wait, blockingMode);
+        return false;
+    }
+
     *read = 0;
 
     canBusReady.wait();
 
-    if (!setFdMode(wait))
-    {
-        CD_ERROR("setFdMode() failed.\n");
-        canBusReady.post();
-        return false;
-    }
-
     for (unsigned int i = 0; i < size; i++)
     {
-        if (wait && rxTimeoutMs > 0)
+        if (blockingMode && rxTimeoutMs > 0)
         {
             bool bufferReady;
 
@@ -235,7 +234,7 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
 
         if (ret == -1)
         {
-            if (!wait && errno == EAGAIN)
+            if (!blockingMode && errno == EAGAIN)
             {
                 break;
             }
@@ -265,20 +264,19 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
 
 bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait)
 {
+    if (!allowPermissive && wait != blockingMode)
+    {
+        CD_ERROR("Blocking mode configuration mismatch: requested=%d, enabled=%d.\n", wait, blockingMode);
+        return false;
+    }
+
     *sent = 0;
 
     canBusReady.wait();
 
-    if (!setFdMode(wait))
-    {
-        CD_ERROR("setFdMode() failed.\n");
-        canBusReady.post();
-        return false;
-    }
-
     for (unsigned int i = 0; i < size; i++)
     {
-        if (wait && txTimeoutMs > 0)
+        if (blockingMode && txTimeoutMs > 0)
         {
             bool bufferReady;
 
@@ -303,7 +301,7 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
 
         if (ret == -1)
         {
-            if (!wait && errno == EAGAIN)
+            if (!blockingMode && errno == EAGAIN)
             {
                 break;
             }

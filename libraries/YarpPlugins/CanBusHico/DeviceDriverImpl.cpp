@@ -6,6 +6,9 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 
+#include <cstring> // std::strerror
+#include <cerrno>
+
 #include <string>
 
 #include <yarp/os/Time.h>
@@ -19,23 +22,36 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
     std::string devicePath = config.check("canDevice", yarp::os::Value(DEFAULT_CAN_DEVICE), "CAN device path").asString();
     int bitrate = config.check("canBitrate", yarp::os::Value(DEFAULT_CAN_BITRATE), "CAN bitrate").asInt();
 
-    rxTimeoutMs = config.check("canRxTimeoutMs", yarp::os::Value(DEFAULT_CAN_RX_TIMEOUT_MS), "RX timeout (milliseconds)").asInt();
-    txTimeoutMs = config.check("canTxTimeoutMs", yarp::os::Value(DEFAULT_CAN_TX_TIMEOUT_MS), "TX timeout (milliseconds)").asInt();
+    blockingMode = config.check("canBlockingMode", yarp::os::Value(DEFAULT_CAN_BLOCKING_MODE), "CAN blocking mode enabled").asBool();
+    allowPermissive = config.check("canBlockingMode", yarp::os::Value(DEFAULT_CAN_ALLOW_PERMISSIVE), "CAN read/write permissive mode").asBool();
 
-    if (rxTimeoutMs <= 0)
+    if (blockingMode)
     {
-        CD_WARNING("RX timeout value <= 0, CAN read calls will block until the buffer is ready.\n");
+        CD_INFO("Blocking mode enabled for CAN device: %s.\n", devicePath.c_str());
+
+        rxTimeoutMs = config.check("canRxTimeoutMs", yarp::os::Value(DEFAULT_CAN_RX_TIMEOUT_MS), "CAN RX timeout (milliseconds)").asInt();
+        txTimeoutMs = config.check("canTxTimeoutMs", yarp::os::Value(DEFAULT_CAN_TX_TIMEOUT_MS), "CAN TX timeout (milliseconds)").asInt();
+
+        if (rxTimeoutMs <= 0)
+        {
+            CD_WARNING("RX timeout value <= 0, CAN read calls will block until the buffer is ready: %s.\n", devicePath.c_str());
+        }
+
+        if (txTimeoutMs <= 0)
+        {
+            CD_WARNING("TX timeout value <= 0, CAN write calls will block until the buffer is ready: %s.\n", devicePath.c_str());
+        }
+    }
+    {
+        CD_INFO("Requested non-blocking mode for CAN device: %s.\n", devicePath.c_str());
     }
 
-    if (txTimeoutMs <= 0)
-    {
-        CD_WARNING("TX timeout value <= 0, CAN write calls will block until the buffer is ready.\n");
-    }
+    CD_INFO("Permissive mode flag for read/write operations on CAN device %s: %d.\n", devicePath.c_str(), allowPermissive);
 
     std::string filterConfigStr = config.check("canFilterConfiguration", yarp::os::Value(DEFAULT_CAN_FILTER_CONFIGURATION),
             "CAN filter configuration (disabled|noRange|maskAndRange)").asString();
 
-    CD_INFO("CAN filter configuration: %s.\n", filterConfigStr.c_str());
+    CD_INFO("CAN filter configuration for CAN device %s: %s.\n", devicePath.c_str(), filterConfigStr.c_str());
 
     filterConfig = FilterManager::parseFilterConfiguration(filterConfigStr);
 
@@ -52,28 +68,44 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
     yarp::os::Time::delay(DELAY);
 
-    fcntlFlags = ::fcntl(fileDescriptor, F_GETFL);
-
-    if (fcntlFlags == -1)
-    {
-        CD_ERROR("Could not retrieve FD flags\n");
-        return false;
-    }
-
-    yarp::os::Time::delay(DELAY);
 
     initBitrateMap();
 
     //-- Set the CAN bitrate.
     if (!canSetBaudRate(bitrate))
     {
-        CD_ERROR("Could not set bitrate on CAN device: %s\n", devicePath.c_str());
+        CD_ERROR("Could not set bitrate on CAN device: %s.\n", devicePath.c_str());
         return false;
     }
 
-    CD_SUCCESS("Bitrate set on CAN device: %s\n", devicePath.c_str());
+    CD_SUCCESS("Bitrate set on CAN device: %s.\n", devicePath.c_str());
 
     yarp::os::Time::delay(DELAY);
+
+    if (!blockingMode)
+    {
+        int fcntlFlags = ::fcntl(fileDescriptor, F_GETFL);
+
+        yarp::os::Time::delay(DELAY);
+
+        if (fcntlFlags == -1)
+        {
+            CD_ERROR("Unable to retrieve FD flags on CAN device %s.\n", devicePath.c_str());
+            return false;
+        }
+
+        fcntlFlags |= O_NONBLOCK;
+
+        if (::fcntl(fileDescriptor, F_SETFL, fcntlFlags) == -1)
+        {
+            CD_ERROR("Unable to set non-blocking mode on CAN device %s; fcntl() error: %s.\n", devicePath.c_str(), std::strerror(errno));
+            return false;
+        }
+
+        CD_SUCCESS("Non-blocking mode enabled on CAN device: %s.\n", devicePath.c_str());
+
+        yarp::os::Time::delay(DELAY);
+    }
 
     if (filterConfig != FilterManager::DISABLED)
     {
@@ -121,7 +153,7 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
             }
             else
             {
-                CD_INFO("No bottle of ids given to CAN device.\n");
+                CD_INFO("No bottle of ids given to CAN device: %s.\n", devicePath.c_str());
             }
         }
 
@@ -135,11 +167,11 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
     //-- Start the CAN device.
     if (::ioctl(fileDescriptor,IOC_START) == -1)
     {
-        CD_ERROR("IOC_START failed on CAN device: %s\n", devicePath.c_str());
+        CD_ERROR("IOC_START failed on CAN device: %s.\n", devicePath.c_str());
         return false;
     }
 
-    CD_SUCCESS("IOC_START ok on CAN device: %s\n", devicePath.c_str());
+    CD_SUCCESS("IOC_START ok on CAN device: %s.\n", devicePath.c_str());
 
     yarp::os::Time::delay(DELAY);
 
