@@ -19,7 +19,7 @@ bool roboticslab::CanBusPeak::open(yarp::os::Searchable& config)
     blockingMode = config.check("canBlockingMode", yarp::os::Value(DEFAULT_CAN_BLOCKING_MODE), "CAN blocking mode enabled").asBool();
     allowPermissive = config.check("canAllowPermissive", yarp::os::Value(DEFAULT_CAN_ALLOW_PERMISSIVE), "CAN read/write permissive mode").asBool();
 
-    int flags = OFD_BITRATE;
+    int flags = OFD_BITRATE | PCANFD_INIT_STD_MSG_ONLY;
 
     if (blockingMode)
     {
