@@ -5,12 +5,14 @@
 # PCan_FOUND        - system has PCan
 # PCan_INCLUDE_DIRS - PCan include directories
 # PCan_LIBRARIES    - PCan libraries
+# PCan_VERSION      - PCan version (if supported)
 #
 # ...and the following imported targets (requires CMake 2.8.11+):
 #
 # PCan::PCan        - PCan library (old API)
 # PCan::PCanFD      - PCan library (v8+ API)
 #
+# Supported versions: v8.5(.1).
 # Hints: PCan_ROOT
 
 if(UNIX)
@@ -30,10 +32,38 @@ if(UNIX)
                                  PATH_SUFFIXES lib)
 endif()
 
+set(PCan_VERSION PCan_VERSION-NOT_FOUND)
+
+if(PCan_INCLUDE_DIR AND PCan_LIBRARY_FD)
+    set(_cmake_include_dirs ${CMAKE_REQUIRED_INCLUDES})
+    set(_cmake_libraries ${CMAKE_REQUIRED_LIBRARIES})
+
+    list(APPEND CMAKE_REQUIRED_INCLUDES ${PCan_INCLUDE_DIR})
+    list(APPEND CMAKE_REQUIRED_LIBRARIES ${PCan_LIBRARY_FD})
+
+    include(CheckSymbolExists)
+
+    # needs <sys/time.h>, probably an upstream bug in the API header
+    check_symbol_exists(pcanfd_get_option "sys/time.h;libpcanfd.h" _pcan_compatible_8_5_1)
+
+    if(_pcan_compatible_8_5_1)
+        set(PCan_VERSION 8.5.1)
+    else()
+        message(STATUS "FindPCan.cmake reports unhandled PCan version (<8.5.1)")
+    endif()
+
+    set(CMAKE_REQUIRED_INCLUDES "${_cmake_include_dirs}")
+    set(CMAKE_REQUIRED_LIBRARIES "${_cmake_libraries}")
+    unset(_cmake_include_dirs)
+    unset(_cmake_libraries)
+endif()
+
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(PCan DEFAULT_MSG PCan_INCLUDE_DIR
-                                                   PCan_LIBRARY
-                                                   PCan_LIBRARY_FD)
+find_package_handle_standard_args(PCan FOUND_VAR PCan_FOUND
+                                       REQUIRED_VARS PCan_INCLUDE_DIR
+                                                     PCan_LIBRARY
+                                                     PCan_LIBRARY_FD
+                                       VERSION_VAR PCan_VERSION)
 
 if(PCan_FOUND)
     set(PCan_INCLUDE_DIRS ${PCan_INCLUDE_DIR})
