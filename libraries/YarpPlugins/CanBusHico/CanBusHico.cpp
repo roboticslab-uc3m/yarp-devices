@@ -26,6 +26,10 @@ namespace
 
 // -----------------------------------------------------------------------------
 
+std::map<unsigned int, unsigned int> roboticslab::CanBusHico::idToBitrateMap;
+
+// -----------------------------------------------------------------------------
+
 bool roboticslab::CanBusHico::waitUntilTimeout(io_operation op, bool * bufferReady)
 {
     fd_set fds;
