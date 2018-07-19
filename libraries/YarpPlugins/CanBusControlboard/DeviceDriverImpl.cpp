@@ -29,7 +29,6 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     //-- Initialize the CAN device.
     yarp::os::Property canBusOptions;
     canBusOptions.fromString(config.toString());  // canDevice, canBitrate
-    canBusOptions.put("device",canBusType);
     canBusOptions.put("device", canBusType);
     canBusOptions.setMonitor(config.getMonitor(), canBusType.c_str());
     canBusDevice.open(canBusOptions);
