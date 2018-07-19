@@ -2,6 +2,8 @@
 
 #include "CanBusFake.hpp"
 
+const unsigned char roboticslab::CanBusFake::FAKE_DATA[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
 // ------------------- DeviceDriver Related ------------------------------------
 
 bool roboticslab::CanBusFake::open(yarp::os::Searchable& config)

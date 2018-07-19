@@ -13,10 +13,10 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IControlLimits2.h>
+#include <yarp/dev/CanBusInterface.h>
 
 #include "ICanBusSharer.h"
 #include "ITechnosoftIpos.h"
-#include "hico_api.h"
 
 namespace roboticslab
 {
@@ -45,7 +45,9 @@ protected:
 
     /** CAN BUS device. */
     yarp::dev::PolyDriver deviceDevCan0; // -- Dispositivo (HicoCan) que se crea.
-    ICanBusHico* iCanBus;
+    yarp::dev::ICanBus* iCanBus;
+    yarp::dev::ICanBufferFactory* iCanBufferFactory;
+    yarp::dev::CanBuffer canInputBuffer;
 
     /** CAN node object. */
     yarp::dev::PolyDriver canNodeDevice;
@@ -60,10 +62,10 @@ protected:
     ITechnosoftIpos* technosoftIpos;    //-- ok practice?
 
     /** A helper function to display CAN messages. */
-    std::string msgToStr(can_msg* message); // -- Muestra los mensajes que vienen del CAN
+    std::string msgToStr(yarp::dev::CanMessage* message); // -- Muestra los mensajes que vienen del CAN
 
     // -- Funcion que se encargará de chekear los IDs introducidos e imprimir los detectados
-    void checkIds(can_msg* message); // --Declara función que encontraremos en el .hpp
+    void checkIds(yarp::dev::CanMessage* message); // --Declara función que encontraremos en el .hpp
 
     // -- Funcion que se encargará de imprimir los IDs no detectados
     void printWronglIds();

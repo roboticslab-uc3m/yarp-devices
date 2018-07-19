@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::setCanBusPtr(ICanBusHico *canDevicePtr)
+bool roboticslab::CuiAbsolute::setCanBusPtr(yarp::dev::ICanBus *canDevicePtr)
 {
 
     this->canDevicePtr = canDevicePtr;
@@ -122,14 +122,14 @@ bool roboticslab::CuiAbsolute::stopPublishingMessages()
 */
 // ------------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::interpretMessage( can_msg * message)
+bool roboticslab::CuiAbsolute::interpretMessage(const yarp::dev::CanMessage & message)
 {
 
     //CD_DEBUG("Got absolute encoder value. %s\n",msgToStr(message).c_str());
     float got;
-    memcpy(&got, message->data,4);
+    memcpy(&got, message.getData(),4);
 
-    if( (message->data[3]==0xc4) ) // If you want to print a specific Cui known error: Ex 113: (message->data[3]==0xc4) && (message->id & 0x7F == 113)
+    if( (message.getData()[3]==0xc4) ) // If you want to print a specific Cui known error: Ex 113: (message->data[3]==0xc4) && (message->id & 0x7F == 113)
     {
         CD_ERROR_NO_HEADER("Known PIC error: %f | %f | %s\n", encoder,got,msgToStr(message).c_str());
         return false;
@@ -144,7 +144,7 @@ bool roboticslab::CuiAbsolute::interpretMessage( can_msg * message)
     if (encoder > 180.0)  // maybe a while?
         encoder -= 360.0;
 
-    encoderTimestamp = message->ts;
+    encoderTimestamp = yarp::os::Time::now();
     encoderReady.post();
     firstHasReached = true;
     return true;

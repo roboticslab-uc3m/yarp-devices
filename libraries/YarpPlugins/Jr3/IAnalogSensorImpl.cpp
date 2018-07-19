@@ -2,6 +2,8 @@
 
 #include "Jr3.hpp"
 
+#include <sys/ioctl.h>
+
 // -----------------------------------------------------------------------------
 
 int roboticslab::Jr3::read(yarp::sig::Vector &out)

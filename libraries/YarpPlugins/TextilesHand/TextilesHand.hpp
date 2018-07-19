@@ -63,12 +63,12 @@ public:
     virtual bool close();
 
     //  --------- ICanBusSharer Declarations. Implementation in TextilesHand.cpp ---------
-    virtual bool setCanBusPtr(ICanBusHico *canDevicePtr);
+    virtual bool setCanBusPtr(yarp::dev::ICanBus *canDevicePtr);
     virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
     {
         return true;
     }
-    virtual bool interpretMessage( can_msg * message);
+    virtual bool interpretMessage(const yarp::dev::CanMessage & message);
     /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
     virtual bool start();
     /** "ready to switch on", also acts as "shutdown" */
@@ -219,7 +219,7 @@ protected:
 
     int canId;
 
-    ICanBusHico *canDevicePtr;
+    yarp::dev::ICanBus *canDevicePtr;
 
     double max, min, refAcceleration, refSpeed, tr, targetPosition;
 
@@ -230,7 +230,7 @@ protected:
     yarp::os::Semaphore encoderReady;
 
     /** A helper function to display CAN messages. */
-    std::string msgToStr(can_msg* message);
+    std::string msgToStr(yarp::dev::CanMessage * message);
     std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
 
     int16_t ptModeMs;  //-- [ms]

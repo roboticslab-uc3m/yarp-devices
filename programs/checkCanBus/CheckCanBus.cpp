@@ -61,6 +61,9 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf)
         return false;
     }
     deviceDevCan0.view(iCanBus);            // -- conecta el dispositivo (hicocan)
+    deviceDevCan0.view(iCanBufferFactory);
+
+    canInputBuffer = iCanBufferFactory->createBuffer(1);
 
     // -- adding configuration of TechnosoftIpos (se trata de la configuración mínima que necesita el driver)
     yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 24) (min -100) (max 10) (tr 160) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal left elbow (codo)
@@ -182,6 +185,7 @@ bool CheckCanBus::close()
 {
     this->stop();
 
+    iCanBufferFactory->destroyBuffer(canInputBuffer);
     deviceDevCan0.close();
 
     return true;
@@ -189,19 +193,19 @@ bool CheckCanBus::close()
 
 /************************************************************************/
 // -- Función que lee los mensajes que le llegan del CAN-BUS
-std::string CheckCanBus::msgToStr(can_msg* message)
+std::string CheckCanBus::msgToStr(yarp::dev::CanMessage* message)
 {
 
     std::stringstream tmp; // -- nos permite insertar cualquier tipo de dato dentro del flujo
-    for(int i=0; i < message->dlc-1; i++)
+    for(int i=0; i < message->getLen()-1; i++)
     {
-        tmp << std::hex << static_cast<int>(message->data[i]) << " ";
+        tmp << std::hex << static_cast<int>(message->getData()[i]) << " ";
     }
-    tmp << std::hex << static_cast<int>(message->data[message->dlc-1]);
+    tmp << std::hex << static_cast<int>(message->getData()[message->getLen()-1]);
     tmp << ". canId(";
-    tmp << std::dec << (message->id & 0x7F); // -- muestra en decimal el ID
+    tmp << std::dec << (message->getId() & 0x7F); // -- muestra en decimal el ID
     tmp << ") via(";
-    tmp << std::hex << (message->id & 0xFF80); // -- ???
+    tmp << std::hex << (message->getId() & 0xFF80); // -- ???
     tmp << "), t:" << yarp::os::Time::now() - lastNow << "[s]."; // -- diferencia entre el tiempo actual y el del último mensaje
 
     lastNow = yarp::os::Time::now();    // -- tiempo actual (aleatorio)
@@ -212,19 +216,19 @@ std::string CheckCanBus::msgToStr(can_msg* message)
 /*************************************************************************/
 
 // -- Función que comprueba los mensajes que recibe del CAN utilizando una cola de IDs
-void CheckCanBus::checkIds(can_msg* message)
+void CheckCanBus::checkIds(yarp::dev::CanMessage* message)
 {
     // -- Almacenamos el contenido del mensaje en un stream
     std::stringstream tmp; // -- stream que almacenará el mensaje recibido
-    for(int i=0; i < message->dlc-1; i++)
-        tmp << std::hex << static_cast<int>(message->data[i]) << " ";   // -- inserta los bytes del mensaje menos el último
-    tmp << std::hex << static_cast<int>(message->data[message->dlc-1]); // -- inserta último byte
+    for(int i=0; i < message->getLen()-1; i++)
+        tmp << std::hex << static_cast<int>(message->getData()[i]) << " ";   // -- inserta los bytes del mensaje menos el último
+    tmp << std::hex << static_cast<int>(message->getData()[message->getLen()-1]); // -- inserta último byte
 
     // -- Recorremos la cola en busca del ID que ha lanzado el CAN
     for(int i=0; i<queueIds.size(); i++)   // -- bucle que recorrerá la cola
     {
 
-        if(queueIds.front()== (message->id & 0x7F))     // -- si el ID coincide, lo saco de la cola
+        if(queueIds.front()== (message->getId() & 0x7F))     // -- si el ID coincide, lo saco de la cola
         {
             CD_SUCCESS_NO_HEADER("Detected ID: %i\n", queueIds.front());
             if(!tmp.str().compare("80 85 1 0 0 0 0 0")) CD_WARNING_NO_HEADER("[WARNING] Detected possible cleaning of driver settings: %i\n ", queueIds.front());
