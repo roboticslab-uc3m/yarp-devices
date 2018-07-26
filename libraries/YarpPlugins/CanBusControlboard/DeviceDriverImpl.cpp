@@ -375,7 +375,7 @@ bool roboticslab::CanBusControlboard::close()
     //-- Stop the read thread.
     this->Thread::stop();
 
-    yarp::dev::CanMessage &msg = canInputBuffer[0];
+    const yarp::dev::CanMessage &msg = canInputBuffer[0];
 
     //-- Disable and shutdown the physical drivers (and Cui Encoders).
     bool ok = true;

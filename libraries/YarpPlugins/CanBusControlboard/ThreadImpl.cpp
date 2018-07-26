@@ -18,7 +18,7 @@ void roboticslab::CanBusControlboard::run()
         //-- All debugging messages should be contained in canRead, so just loop again.
         if( !ok || read == 0 ) continue;
 
-        yarp::dev::CanMessage &msg = canInputBuffer[0];
+        const yarp::dev::CanMessage &msg = canInputBuffer[0];
         int canId = msg.getId() & 0x7F;
 
         //-- Commenting next line as way too verbose, happens all the time.
