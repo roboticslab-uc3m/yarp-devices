@@ -84,7 +84,6 @@ endif()
 include(CMakeDependentOption)
 
 # Add main contents.
-add_subdirectory(cmake)
 add_subdirectory(libraries)
 add_subdirectory(programs)
 add_subdirectory(tests)
@@ -104,10 +103,9 @@ install_basic_package_files(ROBOTICSLAB_YARP_DEVICES
                             VERSION 0.1.0
                             COMPATIBILITY AnyNewerVersion
                             FIRST_TARGET YarpDevicesInterfaces
+                            NO_SET_AND_CHECK_MACRO
                             NO_CHECK_REQUIRED_COMPONENTS_MACRO
                             NAMESPACE ROBOTICSLAB::
-                            EXTRA_PATH_VARS_SUFFIX MODULE_DIR
-                            CONFIG_TEMPLATE ${CMAKE_SOURCE_DIR}/cmake/templates/ROBOTICSLAB_YARP_DEVICESConfig.cmake.in
                             NO_COMPATIBILITY_VARS)
 
 # Configure and create uninstall target.
