@@ -12,6 +12,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Value.h>
 
 #include <ColorDebug.h>
 
@@ -66,7 +67,10 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf)
     canInputBuffer = iCanBufferFactory->createBuffer(1);
 
     // -- adding configuration of TechnosoftIpos (se trata de la configuración mínima que necesita el driver)
-    yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 24) (min -100) (max 10) (tr 160) (refAcceleration 0.575) (refSpeed 5.0)"); // -- frontal left elbow (codo)
+    yarp::os::Property TechnosoftIposConf("(device TechnosoftIpos) (canId 24) (min -100) (max 10) (tr 160) (refAcceleration 0.575) (refSpeed 5.0) (encoderPulses 1024)"); // -- frontal left elbow (codo)
+
+    yarp::os::Value v(&iCanBufferFactory, sizeof(iCanBufferFactory));
+    TechnosoftIposConf.put("canBufferFactory", v);
 
     bool ok = true;
     ok &= canNodeDevice.open( TechnosoftIposConf );   // -- we introduce the configuration properties defined ........
