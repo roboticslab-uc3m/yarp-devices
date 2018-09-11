@@ -2,6 +2,10 @@
 
 #include "CanBusControlboard.hpp"
 
+#include <limits>
+
+#include <yarp/os/Time.h>
+
 // ------------------ Thread Related -----------------------------------------
 
 void roboticslab::CanBusControlboard::run()
@@ -10,6 +14,8 @@ void roboticslab::CanBusControlboard::run()
 
     while ( ! this->isStopping() )
     {
+        yarp::os::Time::delay(std::numeric_limits<double>::min());
+
         unsigned int read;
 
         //-- Blocks with timeout until one message arrives, returns false on errors.
@@ -22,20 +28,20 @@ void roboticslab::CanBusControlboard::run()
         int canId = msg.getId() & 0x7F;
 
         //-- Commenting next line as way too verbose, happens all the time.
-        //CD_DEBUG("Read ok. %s\n", msgToStr(&buffer).c_str());
+        //CD_DEBUG("Read ok. %s\n", msgToStr(msg).c_str());
 
         std::map< int, int >::iterator idxFromCanIdFound = idxFromCanId.find(canId);
 
         if( idxFromCanIdFound == idxFromCanId.end() )  //-- Can ID not found
         {
             //-- Intercept 700h 0 msg that just indicates presence.
-            if( (msg.getId()-canId) == 0x700 )
+            if( msg.getId() - canId == 0x700 )
             {
-                CD_SUCCESS("Device indicating presence. %s\n",msgToStr(msg).c_str());
+                CD_SUCCESS("Device indicating presence. %s\n", msgToStr(msg).c_str());
                 continue;
             }
 
-            //CD_ERROR("Read CAN message from unknown device!!! %s\n", msgToStr(&buffer).c_str()); // --Commented this line to avoid filling the screen with error messages
+            //CD_ERROR("Read CAN message from unknown device!!! %s\n", msgToStr(msg).c_str()); // --Commented this line to avoid filling the screen with error messages
             continue;
         }
 
@@ -45,8 +51,6 @@ void roboticslab::CanBusControlboard::run()
     }  //-- ends: while ( ! this->isStopping() ).
 
     CD_INFO("Stopping CanBusControlboard reading thread run.\n");
-
-    return;
 }
 
 // -----------------------------------------------------------------------------
