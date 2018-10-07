@@ -75,18 +75,18 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
         //-- Create CAN node objects with a pointer to the CAN device, its id and tr (these are locally stored parameters).
         yarp::os::Property options;
-        options.put("device",types.get(i).asString());  //-- "TechnosoftIpos", "LacqueyFetch", "CuiAbsolute"
-        options.put("canId",ids.get(i).asInt());
-        options.put("tr",trs.get(i).asDouble());
-        options.put("min",mins.get(i).asDouble());
-        options.put("max",maxs.get(i).asDouble());
-        options.put("minVel",minVels.get(i).asDouble());
-        options.put("maxVel",maxVels.get(i).asDouble());
-        options.put("k",ks.get(i).asDouble());
-        options.put("refAcceleration",refAccelerations.get(i).asDouble());
-        options.put("refSpeed",refSpeeds.get(i).asDouble());
-        options.put("encoderPulses",encoderPulsess.get(i).asDouble());
-        options.put("ptModeMs",ptModeMs);
+        options.put("device", types.get(i));  //-- "TechnosoftIpos", "LacqueyFetch", "CuiAbsolute"
+        options.put("canId", ids.get(i));
+        options.put("tr", trs.get(i));
+        options.put("min", mins.get(i));
+        options.put("max", maxs.get(i));
+        options.put("minVel", minVels.get(i));
+        options.put("maxVel", maxVels.get(i));
+        options.put("k", ks.get(i));
+        options.put("refAcceleration", refAccelerations.get(i));
+        options.put("refSpeed", refSpeeds.get(i));
+        options.put("encoderPulses", encoderPulsess.get(i));
+        options.put("ptModeMs", ptModeMs);
         //std::stringstream ss; // Remember to #include <sstream>
         //ss << types.get(i).asString() << "_" << ids.get(i).asInt();
         //options.setMonitor(config.getMonitor(),ss.str().c_str());
