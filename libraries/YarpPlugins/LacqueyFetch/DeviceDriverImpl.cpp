@@ -12,8 +12,8 @@ bool roboticslab::LacqueyFetch::open(yarp::os::Searchable& config)
     this->ptPointCounter = 0;
     this->ptMovementDone = false;
     this->targetReached = false;
-    this->max = 0;
-    this->min = 0;
+    this->max = config.check("max",yarp::os::Value(0),"max").asDouble();
+    this->min = config.check("min",yarp::os::Value(0),"min").asDouble();
     this->refAcceleration = 0;
     this->refSpeed = 0;
     this->encoder = 0;
