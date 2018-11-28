@@ -11,8 +11,8 @@ CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 import os, sys
 
-from PySide import QtCore,QtGui
-from PySide import QtUiTools
+from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2 import QtUiTools
 
 
 def load_ui(file_name, where=None):
@@ -39,7 +39,7 @@ def load_ui(file_name, where=None):
 
 class GrabberControls2GuiGUI(QtGui.QWidget):
     def __init__(self, controller=None, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         self.zoomSlider = None
         self.zoomSpinBox = None
@@ -63,21 +63,21 @@ class GrabberControls2GuiGUI(QtGui.QWidget):
         # Load UI and set it as main layout
         ui_file_path = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'templates', 'GrabberControls2GuiGUI.ui')
         main_widget = load_ui(ui_file_path, self)
-        layout = QtGui.QVBoxLayout()
+        layout = QtWidgets.QVBoxLayout()
         layout.addWidget(main_widget)
         self.setLayout(layout)
 
         # Get a reference to all required widgets
-        self.zoomSlider = self.findChild(QtGui.QSlider, 'zoomSlider')
-        self.zoomSpinBox = self.findChild(QtGui.QDoubleSpinBox, 'zoomSpinBox')
-        self.focusSlider = self.findChild(QtGui.QSlider, 'focusSlider')
-        self.focusSpinBox = self.findChild(QtGui.QDoubleSpinBox, 'focusSpinBox')
-        self.gainSlider = self.findChild(QtGui.QSlider, 'gainSlider')
-        self.gainSpinBox = self.findChild(QtGui.QDoubleSpinBox, 'gainSpinBox')
-        self.exposureSlider = self.findChild(QtGui.QSlider, 'exposureSlider')
-        self.exposureSpinBox = self.findChild(QtGui.QDoubleSpinBox, 'exposureSpinBox')
-        self.fpsSlider = self.findChild(QtGui.QSlider, 'fpsSlider')
-        self.fpsSpinBox = self.findChild(QtGui.QDoubleSpinBox, 'fpsSpinBox')
+        self.zoomSlider = self.findChild(QtWidgets.QSlider, 'zoomSlider')
+        self.zoomSpinBox = self.findChild(QtWidgets.QDoubleSpinBox, 'zoomSpinBox')
+        self.focusSlider = self.findChild(QtWidgets.QSlider, 'focusSlider')
+        self.focusSpinBox = self.findChild(QtWidgets.QDoubleSpinBox, 'focusSpinBox')
+        self.gainSlider = self.findChild(QtWidgets.QSlider, 'gainSlider')
+        self.gainSpinBox = self.findChild(QtWidgets.QDoubleSpinBox, 'gainSpinBox')
+        self.exposureSlider = self.findChild(QtWidgets.QSlider, 'exposureSlider')
+        self.exposureSpinBox = self.findChild(QtWidgets.QDoubleSpinBox, 'exposureSpinBox')
+        self.fpsSlider = self.findChild(QtWidgets.QSlider, 'fpsSlider')
+        self.fpsSpinBox = self.findChild(QtWidgets.QDoubleSpinBox, 'fpsSpinBox')
 
         # Configure widget ranges:
         max_float = sys.float_info.max
