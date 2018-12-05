@@ -62,9 +62,9 @@ public:
     virtual bool close();
 
     //  --------- ICanBusSharer Declarations. Implementation in CuiAbsolute.cpp ---------
-    virtual bool setCanBusPtr(ICanBusHico *canDevicePtr);
+    virtual bool setCanBusPtr(yarp::dev::ICanBus *canDevicePtr);
     virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw);
-    virtual bool interpretMessage( can_msg * message);
+    virtual bool interpretMessage(const yarp::dev::CanMessage & message);
     /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
     virtual bool start();
     /** "ready to switch on", also acts as "shutdown" */
@@ -219,7 +219,9 @@ protected:
 
     int canId;
 
-    ICanBusHico *canDevicePtr;
+    yarp::dev::ICanBus *canDevicePtr;
+    yarp::dev::ICanBufferFactory *iCanBufferFactory;
+    yarp::dev::CanBuffer canOutputBuffer;
 
     double max, min, refAcceleration, refSpeed, tr, targetPosition;
 
@@ -228,12 +230,12 @@ protected:
 
     //-- Encoder stuff
     double encoder;
-    uint32_t encoderTimestamp;
+    double encoderTimestamp;
     yarp::os::Semaphore encoderReady;
     bool firstHasReached;
 
     /** A helper function to display CAN messages. */
-    std::string msgToStr(can_msg* message);
+    std::string msgToStr(const yarp::dev::CanMessage & message);
     std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
 
     int16_t ptModeMs;  //-- [ms]
@@ -247,6 +249,9 @@ protected:
     //yarp::os::Semaphore targetReachedReady;
     //yarp::os::Semaphore refSpeedSemaphore;
     //yarp::os::Semaphore refAccelSemaphore;
+
+    //-- CAN output buffer
+    yarp::os::Semaphore canBufferSemaphore;
 };
 
 }  // namespace roboticslab

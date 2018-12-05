@@ -25,7 +25,7 @@ if(UNIX)
                                       PATHS ${PC_XWiimote_LIBDIR})
     endif()
 
-    set(XWiimote_VERSION ${PC_Xwiimote_VERSION})
+    set(XWiimote_VERSION ${PC_XWiimote_VERSION})
 endif()
 
 include(FindPackageHandleStandardArgs)

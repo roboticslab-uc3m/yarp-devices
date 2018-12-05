@@ -36,6 +36,9 @@ bool DumpCanBus::configure(yarp::os::ResourceFinder &rf)
         return false;
     }
     deviceDevCan0.view(iCanBus);
+    deviceDevCan0.view(iCanBufferFactory);
+
+    canInputBuffer = iCanBufferFactory->createBuffer(1);
 
     lastNow = yarp::os::Time::now();
 
@@ -56,6 +59,7 @@ bool DumpCanBus::close()
 {
     this->stop();
 
+    iCanBufferFactory->destroyBuffer(canInputBuffer);
     deviceDevCan0.close();
 
     return true;
@@ -63,18 +67,18 @@ bool DumpCanBus::close()
 
 /************************************************************************/
 
-std::string DumpCanBus::msgToStr(can_msg* message)
+std::string DumpCanBus::msgToStr(yarp::dev::CanMessage* message)
 {
     std::stringstream tmp;
-    for(int i=0; i < message->dlc-1; i++)
+    for(int i=0; i < message->getLen()-1; i++)
     {
-        tmp << std::hex << static_cast<int>(message->data[i]) << " ";
+        tmp << std::hex << static_cast<int>(message->getData()[i]) << " ";
     }
-    tmp << std::hex << static_cast<int>(message->data[message->dlc-1]);
+    tmp << std::hex << static_cast<int>(message->getData()[message->getLen()-1]);
     tmp << ". canId(";
-    tmp << std::dec << (message->id & 0x7F);
+    tmp << std::dec << (message->getId() & 0x7F);
     tmp << ") via(";
-    tmp << std::hex << (message->id & 0xFF80);
+    tmp << std::hex << (message->getId() & 0xFF80);
     tmp << "), t:" << yarp::os::Time::now() - lastNow << "[s].";
 
     lastNow = yarp::os::Time::now();
