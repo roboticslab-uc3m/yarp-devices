@@ -185,10 +185,15 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     //-- Send the following message (SDO access to object 2079 h , 32-bit value 0 h ):
     //uint8_t initPos[]={0x23,0x79,0x20,0x00,0xE8,0x03,0x00,0x00};  // Put 3E8 h.
     uint8_t initPos[]= {0x23,0x79,0x20,0x00,0x00,0x00,0x00,0x00}; // Put 0 h instead.
+
+    double ref;
+    getEncoderRaw(0, &ref);
+    int position = ref * this->tr * (encoderPulses / 360.0);  // Appply tr & convert units to encoder increments
+    memcpy(initPos+4,&position,4); //Copy block of memory
     if ( ! send(0x600,8,initPos) )
         return false;
-    //*************************************************************
 
+    //*************************************************************
     yarp::os::Time::delay(1);  //-- Seems like a "must".
 
     return true;
