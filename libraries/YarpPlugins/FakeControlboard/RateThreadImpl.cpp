@@ -28,7 +28,7 @@ void roboticslab::FakeControlboard::run()
     {
         encsRaw[motor] += velRaw[motor] * (now - lastTime);
 
-        if (jointStatus[motor] != NOT_MOVING)  // if set to move...
+        if (jointStatus[motor] != NOT_CONTROLLING)  // if set to move...
         {
             if (encsExposed[motor] > maxLimit[motor] && velRaw[motor] > 0)  // SW max JL
             {
@@ -40,7 +40,7 @@ void roboticslab::FakeControlboard::run()
                 stop(motor);  // puts jointStatus[motor]=0;
                 CD_WARNING("Moving joint q%d at configured min joint limit, stopping.\n", motor + 1);
             }
-            else if (jointStatus[motor] == POSITION_MOVE || jointStatus[motor] == RELATIVE_MOVE)  // check if target reached in pos or rel
+            else if (jointStatus[motor] == POSITION_MOVE)  // check if target reached in pos or rel
             {
                 if (velRaw[motor] > 0 &&  // moving positive...
                     encsExposed[motor] > (targetExposed[motor] - jointTol[motor]))

@@ -25,7 +25,7 @@ bool roboticslab::FakeControlboard::positionMove(int j, double ref)  // encExpos
     }
 
     // Check if we are in position mode.
-    if (modePosVel != POSITION_MODE)
+    if (controlMode != POSITION_MODE)
     {  
         CD_ERROR("will not positionMove as not in positionMode\n");
         return false;
@@ -65,7 +65,7 @@ bool roboticslab::FakeControlboard::positionMove(int j, double ref)  // encExpos
 bool roboticslab::FakeControlboard::positionMove(const double *refs)  // encExposed = refs;
 {
     // Check if we are in position mode.
-    if (modePosVel != POSITION_MODE)
+    if (controlMode != POSITION_MODE)
     {
         CD_ERROR("Will not positionMove as not in positionMode\n");
         return false;
@@ -126,7 +126,7 @@ bool roboticslab::FakeControlboard::relativeMove(int j, double delta)
     }
 
     // Check if we are in position mode.
-    if (modePosVel != POSITION_MODE)
+    if (controlMode != POSITION_MODE)
     {
         CD_ERROR("FakeControlboard will not relativeMove as not in positionMode\n");
         return false;
@@ -155,7 +155,7 @@ bool roboticslab::FakeControlboard::relativeMove(int j, double delta)
         velRaw[j] = -(refSpeed[j] * velRawExposed[j]);
     }
 
-    jointStatus[j] = RELATIVE_MOVE;
+    jointStatus[j] = POSITION_MOVE;
     CD_INFO("relativeMove(%d,%f) f[end]\n", j, delta);
 
     return true;
@@ -166,7 +166,7 @@ bool roboticslab::FakeControlboard::relativeMove(int j, double delta)
 bool roboticslab::FakeControlboard::relativeMove(const double *deltas)  // encExposed = deltas + encExposed
 {
     // Check if we are in position mode.
-    if (modePosVel != POSITION_MODE)
+    if (controlMode != POSITION_MODE)
     {
         CD_ERROR("will not relativeMove as not in positionMode\n");
         return false;
@@ -195,7 +195,7 @@ bool roboticslab::FakeControlboard::relativeMove(const double *deltas)  // encEx
       targetExposed[motor] = encsExposed[motor] + deltas[motor];
       velRaw[motor] = ((deltas[motor]) / time_max_dist) * velRawExposed[motor];
       CD_INFO("velRaw[%d]: %f\n", motor, velRaw[motor]);
-      jointStatus[motor] = RELATIVE_MOVE;
+      jointStatus[motor] = POSITION_MOVE;
     }
 
     CD_INFO("relativeMove() f[end]\n");
@@ -213,7 +213,7 @@ bool roboticslab::FakeControlboard::checkMotionDone(int j, bool *flag)
 
     bool done = true;
     
-    if (jointStatus[j] != NOT_MOVING)
+    if (jointStatus[j] != NOT_CONTROLLING)
     {
         done = false;
     }
@@ -230,7 +230,7 @@ bool roboticslab::FakeControlboard::checkMotionDone(bool *flag)
 
     for (unsigned int i = 0; i < axes; i++)
     {
-        if (jointStatus[i] != NOT_MOVING)
+        if (jointStatus[i] != NOT_CONTROLLING)
         {
             done = false;
         }
@@ -360,7 +360,7 @@ bool roboticslab::FakeControlboard::stop(int j)
     }
 
     velRaw[j] = 0.0;
-    jointStatus[j] = NOT_MOVING;
+    jointStatus[j] = NOT_CONTROLLING;
 
     return true;
 }
