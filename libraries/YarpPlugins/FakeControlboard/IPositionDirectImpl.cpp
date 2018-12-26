@@ -28,7 +28,7 @@ bool roboticslab::FakeControlboard::setPosition(int j, double ref)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setPositions(const int n_joint, const int *joints, double *refs)
+bool roboticslab::FakeControlboard::setPositions(const int n_joint, const int *joints, const double *refs)
 {
     bool ok = true;
 
