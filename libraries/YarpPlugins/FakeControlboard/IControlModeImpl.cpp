@@ -9,13 +9,17 @@
 bool roboticslab::FakeControlboard::getControlMode(int j, int *mode)
 {
     // CD_DEBUG("\n");  //-- Way too verbose.
-    if (modePosVel == POSITION_MODE)
+    if (controlMode == POSITION_MODE)
     {
         *mode = VOCAB_CM_POSITION;
     }
-    else if (modePosVel == VELOCITY_MODE)
+    else if (controlMode == VELOCITY_MODE)
     {
         *mode = VOCAB_CM_VELOCITY;
+    }
+    else if (controlMode == POSITION_DIRECT_MODE)
+    {
+        *mode = VOCAB_CM_POSITION_DIRECT;
     }
     else
     {

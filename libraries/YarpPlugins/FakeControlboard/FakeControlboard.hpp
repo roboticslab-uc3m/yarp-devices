@@ -49,6 +49,7 @@ namespace roboticslab
  */
 class FakeControlboard : public yarp::dev::DeviceDriver,
                          public yarp::dev::IPositionControl2,
+                         public yarp::dev::IPositionDirect,
                          public yarp::dev::IVelocityControl2,
                          public yarp::dev::IEncodersTimed,
                          public yarp::dev::IControlLimits2,
@@ -298,6 +299,73 @@ public:
      * @return true/false on success/failure
      */
     virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs);
+
+// ------- IPositionDirect declarations. Implementation in IPositionDirectImpl.cpp -------
+
+    /**
+     * Set new position for a single axis.
+     * @param j joint number
+     * @param ref specifies the new ref point
+     * @return true/false on success/failure
+     */
+    virtual bool setPosition(int j, double ref);
+
+    /**
+     * Set new reference point for all axes.
+     * @param n_joint how many joints this command is referring to
+     * @param joints list of joints controlled. The size of this array is n_joints
+     * @param refs array, new reference points, one value for each joint, the size is n_joints.
+     *        The first value will be the new reference fot the joint joints[0].
+     *          for example:
+     *          n_joint  3
+     *          joints   0  2  4
+     *          refs    10 30 40
+     * @return true/false on success/failure
+     */
+    virtual bool setPositions(const int n_joint, const int *joints, double *refs);
+
+    /**
+     * Set new position for a set of axis.
+     * @param refs specifies the new reference points
+     * @return true/false on success/failure
+     */
+    virtual bool setPositions(const double *refs);
+
+    /**
+     * Get the last position reference for the specified axis.
+     *  This is the dual of setPositionsRaw and shall return only values sent using
+     *  IPositionDirect interface.
+     *  If other interfaces like IPositionControl are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionControl::PositionMove.
+     * @param ref last reference sent using setPosition(s) functions
+     * @return true/false on success/failure
+     */
+    virtual bool getRefPosition(const int joint, double *ref);
+
+    /**
+     * Get the last position reference for all axes.
+     *  This is the dual of setPositionsRaw and shall return only values sent using
+     *  IPositionDirect interface.
+     *  If other interfaces like IPositionControl are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionControl::PositionMove.
+     * @param ref array containing last reference sent using setPosition(s) functions
+     * @return true/false on success/failure
+     */
+    virtual bool getRefPositions(double *refs);
+
+    /**
+     * Get the last position reference for the specified group of axes.
+     *  This is the dual of setPositionsRaw and shall return only values sent using
+     *  IPositionDirect interface.
+     *  If other interfaces like IPositionControl are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionControl::PositionMove.
+     * @param ref array containing last reference sent using setPosition(s) functions
+     * @return true/false on success/failure
+     */
+    virtual bool getRefPositions(const int n_joint, const int *joints, double *refs);
 
 //  ---------- IEncodersTimed Declarations. Implementation in IEncoderImpl.cpp ----------
 
@@ -723,17 +791,18 @@ public:
 
 private:
 
-    enum jmc_state { NOT_MOVING, POSITION_MOVE, RELATIVE_MOVE, VELOCITY_MOVE };
-    enum jmc_mode { POSITION_MODE, VELOCITY_MODE };
+    enum jmc_state { NOT_CONTROLLING, POSITION_MOVE, RELATIVE_MOVE, VELOCITY_MOVE };
+    enum jmc_mode { POSITION_MODE, VELOCITY_MODE, POSITION_DIRECT_MODE };
 
     bool setPositionMode(int j);
     bool setVelocityMode(int j);
     bool setTorqueMode(int j);
+    bool setPositionDirectMode(int j);
 
     // General Joint Motion Controller parameters //
     unsigned int axes;
     double jmcMs;
-    jmc_mode modePosVel;
+    jmc_mode controlMode;
     double lastTime;
 
     yarp::os::Semaphore encRawMutex;  // SharedArea

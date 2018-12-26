@@ -14,7 +14,7 @@ bool roboticslab::FakeControlboard::velocityMove(int j, double sp)  // velExpose
     }
 
     // Check if we are in velocity mode.
-    if (modePosVel != VELOCITY_MODE)
+    if (controlMode != VELOCITY_MODE)
     {
         CD_ERROR("FakeControlboard will not velocityMove as not in velocityMode\n");
         return false;
