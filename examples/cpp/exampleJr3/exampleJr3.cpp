@@ -26,8 +26,6 @@ int main(int argc, char *argv[])
     }
     yarp::os::Property options;
     options.put("device","Jr3");
-    options.put("remote","/jr3:o");
-    options.put("local","/jr3:i");
 
     yarp::dev::PolyDriver dd(options);
     if(!dd.isValid()) {
@@ -49,42 +47,16 @@ int main(int argc, char *argv[])
     int channels = iAnalogSensor->getChannels();
     printf("channels: %d\n", channels);
 
-    if(argc > 1){
-        if(string(argv[1])=="reset"){
-            if(string(argv[2])=="all")
-            {
-                int ret = iAnalogSensor->calibrateSensor();
-                if (ret == yarp::dev::IAnalogSensor::AS_OK)
-                    printf("[OK] All channels reseted\n");
-                else
-                {
-                    printf("[ERROR] Calibrating sensor...\n");
-                    return 1;
-                }
-            }
-            if(string(argv[2])=="channel")
-            {
-                int ch = atoi(argv[3]);
-                int ret = iAnalogSensor->calibrateChannel(ch);
-                if (ret == yarp::dev::IAnalogSensor::AS_OK)
-                    printf("[OK] Channel (%d) reseted\n",ch);
-                else
-                {
-                    printf("[ERROR] Calibrating channel...\n");
-                    return 1;
-                }
-            }
-        }
-    }
-
     // The following delay should avoid 0 channels and bad read
     yarp::os::Time::delay(1);
 
     char ch;
     int cont=0;
+
     // Of course we dislike while(1)
     while(1)
     {
+        // every 500 readings of the sensor, the app asks you if you want to reset it (calibrate chennel's sensor to 0)
         if (cont>500) {
             printf("reset sensor? select channel (0,1,2,3) or 'a' to reset all\n");
             ch=getchar();
@@ -115,6 +87,7 @@ int main(int argc, char *argv[])
                 cont=0;
             }
 
+        // sensor reading
         yarp::sig::Vector vector;
         int ret = iAnalogSensor->read(vector);
         if (ret == yarp::dev::IAnalogSensor::AS_OK)
