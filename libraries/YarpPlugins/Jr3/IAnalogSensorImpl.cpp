@@ -83,7 +83,12 @@ int roboticslab::Jr3::calibrateSensor()
     ok=ioctl(fd,IOCTL2_JR3_ZEROOFFS);
     ok=ioctl(fd,IOCTL3_JR3_ZEROOFFS);
 
-    if(ok!=-1)
+    if ( ok == -1)
+    {
+        CD_ERROR("\n");
+        return yarp::dev::IAnalogSensor::AS_ERROR;
+    }
+    else
         return yarp::dev::IAnalogSensor::AS_OK;
 }
 
@@ -114,10 +119,14 @@ int roboticslab::Jr3::calibrateChannel(int ch)
             break;
         default:
             CD_ERROR("\n");
-            ok = false;
+            ok = -1;
     }
-
-    if(ok!=-1)
+    if ( ok == -1)
+    {
+        CD_ERROR("\n");
+        return yarp::dev::IAnalogSensor::AS_ERROR;
+    }
+    else
         return yarp::dev::IAnalogSensor::AS_OK;
 }
 
