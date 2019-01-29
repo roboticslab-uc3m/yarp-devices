@@ -1,9 +1,9 @@
-if("${PYTHON_VERSION_STRING}" VERSION_GREATER 3.4 AND (NOT DEFINED ENABLE_grabbercontrols2gui OR ENABLE_grabbercontrols2gui))
-    message(WARNING "PythonInterp package not found or unsupported version (>3.4), disabling grabbercontrols2gui program")
+if("${PYTHON_VERSION_STRING}" VERSION_LESS 3.5 AND (NOT DEFINED ENABLE_grabbercontrols2gui OR ENABLE_grabbercontrols2gui))
+    message(WARNING "PythonInterp package not found or unsupported version (only 2.7, 3.5+), disabling grabbercontrols2gui program")
 endif()
 
 cmake_dependent_option(ENABLE_grabbercontrols2gui "Enable/disable grabbercontrols2gui program" ON
-                       "PYTHONINTERP_FOUND;NOT PYTHON_VERSION_STRING VERSION_GREATER 3.4" OFF)
+                       "PYTHONINTERP_FOUND;NOT PYTHON_VERSION_STRING VERSION_LESS 3.5" OFF)
 
 if(ENABLE_grabbercontrols2gui)
 
