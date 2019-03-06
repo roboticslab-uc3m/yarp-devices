@@ -122,6 +122,8 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
 {
     CD_INFO("\n");
 
+    ptPointCounter = 0;
+
     //-- ptprepare: pg. 165 (181/263)
     //*************************************************************
     //-- 1. - 4. From start to enable.
