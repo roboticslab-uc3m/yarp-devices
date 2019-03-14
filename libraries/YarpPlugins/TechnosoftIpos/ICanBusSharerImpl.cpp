@@ -820,6 +820,31 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             CD_INFO("Got SDO ack \"Interpolation sub mode select.\" from driver. %s\n",msgToStr(message).c_str());
             return true;
         }
+        else if( (message.getData()[1]==0xC1)&&(message.getData()[2]==0x60) )      // Manual 60C1h: Interpolation data record
+        {
+            CD_INFO("Got SDO ack \"Interpolation data record.\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
+        }
+        else if( (message.getData()[1]==0x72)&&(message.getData()[2]==0x20) )      // Manual 6072h: Interpolated position mode status
+        {
+            CD_INFO("Got SDO ack \"Interpolated position mode status.\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
+        }
+        else if( (message.getData()[1]==0x73)&&(message.getData()[2]==0x20) )      // Manual 2073h: Interpolated position buffer length
+        {
+            CD_INFO("Got SDO ack \"Interpolated position buffer length.\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
+        }
+        else if( (message.getData()[1]==0x74)&&(message.getData()[2]==0x20) )      // Manual 2074h: Interpolated position buffer configuration
+        {
+            CD_INFO("Got SDO ack \"Interpolated position buffer configuration.\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
+        }
+        else if( (message.getData()[1]==0x7A)&&(message.getData()[2]==0x20) )      // Manual 207Ah: Interpolated position 1 st order time.
+        {
+            CD_INFO("Got SDO ack \"Interpolated position 1 st order time.\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
+        }
         else if( (message.getData()[1]==0x74)&&(message.getData()[2]==0x20) )      // Manual 2074h: Interpolated position buffer configuration
         {
             CD_INFO("Got SDO ack \"Interpolated position buffer configuration.\" from driver. %s\n",msgToStr(message).c_str());
