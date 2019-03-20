@@ -19,6 +19,17 @@ bool roboticslab::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encEx
     //-- Check index within range
     if ( j != 0 ) return false;
 
+    //-- Sets "Do not assume target position" so later it accepts "Assume target position (update the new motion parameters)".
+    //-- Mandatory if we issue this command right after the transition from [posd] to [pos] control mode.
+    //*************************************************************
+    uint8_t msg_pos_reset[]= {0x0F,0x00}; // Stop a position profile
+
+    if( ! send( 0x200, 2, msg_pos_reset) )
+    {
+        CD_ERROR("Could not send first \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent first \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
     //*************************************************************
     uint8_t msg_position_target[]= {0x23,0x7A,0x60,0x00,0x00,0x00,0x00,0x00}; // Position target
 
@@ -42,17 +53,13 @@ bool roboticslab::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encEx
     }
     CD_SUCCESS("Sent \"start position\". %s\n", msgToStr(0x200, 2, msg_start).c_str() );
     //*************************************************************
-
-    //-- Needed to send next. Sets "Do not assume target position" so later it accepts "Assume target position (update the new motion parameters)".
-    //*************************************************************
-    uint8_t msg_pos_reset[]= {0x0F,0x00}; // Stop a position profile
-
+    //-- Needed to accept next target. Sets "Do not assume target position" so later it accepts "Assume target position (update the new motion parameters)".
     if( ! send( 0x200, 2, msg_pos_reset) )
     {
-        CD_ERROR("Could not send \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
+        CD_ERROR("Could not send second \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
+    CD_SUCCESS("Sent second \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
     //*************************************************************
 
     //-- it will save the value
