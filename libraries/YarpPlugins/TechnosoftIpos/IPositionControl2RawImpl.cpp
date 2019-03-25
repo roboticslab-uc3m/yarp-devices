@@ -202,7 +202,7 @@ bool roboticslab::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
     //-- 0.01138 = ( 4 * 1024 pulse / 360 deg ) * (0.001 s / sample)   // deg/s -> pulse/sample  = UI (vel)
     //-- encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024)
     double val = (encoderPulses / 360.0) * 0.001;     //-- if encoderPulses is 4096 (4 * 1024), val = 0,011377778
-    int32_t sendRefSpeedFormated = sp * this->tr * (65536 * val); //-- if encoderPulses is 4096 -> 65536 * 0.01138 = 745.8
+    int32_t sendRefSpeedFormated = sp * abs(this->tr) * (65536 * val); //-- if encoderPulses is 4096 -> 65536 * 0.01138 = 745.8
     memcpy(msg_posmode_speed+4,&sendRefSpeedFormated,4);
 
     if( ! send( 0x600, 8, msg_posmode_speed) )
@@ -249,7 +249,7 @@ bool roboticslab::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
     //-- 0.00001138 = ( 4 * 1024 pulse / 360 deg ) * (0.000001 s^2 / sample^2)   // deg/s^2 -> pulse/sample^2 = UI (acc)
     //-- encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024)
     double val = (encoderPulses / 360.0) * 0.000001;     //-- if encoderPulses is 4096 (4 * 1024), val = 0.00001138
-    int32_t sendRefAccFormated = acc * this->tr * (65536 * val); //-- 65536 * 0.00001138 = 0.7458
+    int32_t sendRefAccFormated = acc * abs(this->tr) * (65536 * val); //-- 65536 * 0.00001138 = 0.7458
     memcpy(msg_posmode_acc+4,&sendRefAccFormated,4);
 
     if( ! send( 0x600, 8, msg_posmode_acc) )
