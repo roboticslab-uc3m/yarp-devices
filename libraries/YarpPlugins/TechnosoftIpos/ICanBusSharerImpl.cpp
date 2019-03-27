@@ -764,7 +764,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
                 memcpy(&got, message.getData()+4,4);
                 double val = (encoderPulses / 360.0) * 0.000001;  //-- if encoderPulses is 4096 (4 * 1024), val = 0.00001138
                 refAccelSemaphore.wait();
-                refAcceleration = got / (tr * 65536 * val);
+                refAcceleration = got / (std::abs(tr) * 65536 * val);
                 refAccelSemaphore.post();
                 CD_INFO("Got SDO \"posmode_acc\" response from driver. %s\n",msgToStr(message).c_str());
             }
@@ -782,7 +782,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
                 memcpy(&got, message.getData()+4,4);
                 double val = (encoderPulses / 360.0) * 0.001;  //-- if encoderPulses is 4096 (4 * 1024), val = 0.01138
                 refSpeedSemaphore.wait();
-                refSpeed = got / (tr * 65536 * val);
+                refSpeed = got / (std::abs(tr) * 65536 * val);
                 refSpeedSemaphore.post();
                 CD_INFO("Got SDO \"posmode_speed\" response from driver. %s\n",msgToStr(message).c_str());
             }

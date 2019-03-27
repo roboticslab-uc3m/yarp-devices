@@ -5,6 +5,7 @@
 
 #include <stdint.h>
 #include <sstream>
+#include <cmath>
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
