@@ -1,4 +1,4 @@
-#include "gtest/gtest.h"
+﻿#include "gtest/gtest.h"
 
 #include <cstdlib>
 #include <ios>
@@ -6,20 +6,15 @@
 #include <sstream>
 #include <map>
 
-#include <yarp/os/Property.h>
-#include <yarp/os/Time.h>
+#include <yarp/os/all.h>
+#include <yarp/dev/all.h>
 
-#include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/IControlLimits2.h>
-#include <yarp/dev/CanBusInterface.h>
-
-#include <ColorDebug.h>
+#include "ColorDebug.h"
 
 #include "ICanBusSharer.h"
 #include "ICuiAbsolute.h"
 
-#define CAN_ID 103 // ID of Cui Absolute encoder that you want to check...
+#define CAN_ID 126 // ID of Cui Absolute encoder that you want to check...
 
 namespace roboticslab
 {
@@ -37,9 +32,9 @@ public:
     {
         // -- code here will execute just before the test ensues
 
-        yarp::os::Property canDeviceConf("(device CanBusHico) (canDevice /dev/can0) (canBitrate 1000000)");
+        yarp::os::Property canDeviceConf("(device CanBusControlboard) (canDevice /dev/pcan3) (canBitrate 1000000)");
         bool ok = true;
-        ok &= canBusDevice.open(canDeviceConf);   // -- we introduce the configuration properties defined in property object (p) and them, we stard the device (HicoCAN)
+        ok &= canBusDevice.open(canDeviceConf);   // -- we introduce the configuration properties defined in property object (p) and them, we stard the device (CanBusPeak)
         ok &= canBusDevice.view(iCanBus);
         ok &= canBusDevice.view(iCanBufferFactory);
 

@@ -1,8 +1,15 @@
+cmake_minimum_required(VERSION 2.6)
+
 add_executable(testCuiAbsolute testCuiAbsolute.cpp)
 
-target_link_libraries(testCuiAbsolute YARP::YARP_OS
-                                      YARP::YARP_dev
+find_package(YARP REQUIRED)
+find_package(COLOR_DEBUG REQUIRED)
+find_package(GTest REQUIRED)
+
+include_directories(${GTEST_INCLUDE_DIRS} ${YARP_INCLUDE_DIRS} ${TEMPLATE_NAME_INCLUDE_DIRS}) 
+
+target_link_libraries(testCuiAbsolute ${YARP_LIBRARIES}
+                                      ${GTEST_BOTH_LIBRARIES}
                                       ROBOTICSLAB::ColorDebug
-                                      YarpDevicesInterfaces
-                                      gtest
-                                      gtest_main)
+                                      ${CMAKE_THREAD_LIBS_INIT}
+                                      )
