@@ -6,10 +6,15 @@
 #include <sstream>
 #include <map>
 
-#include <yarp/os/all.h>
-#include <yarp/dev/all.h>
+#include <yarp/os/Property.h>
+#include <yarp/os/Time.h>
 
-#include "ColorDebug.h"
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/IControlLimits2.h>
+#include <yarp/dev/CanBusInterface.h>
+
+#include <ColorDebug.h>
 
 #include "ICanBusSharer.h"
 #include "ICuiAbsolute.h"
@@ -180,7 +185,7 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInPullMode )
                 while( ! iEncodersTimedRaw->getEncoderRaw(0,&value) ){
                     CD_ERROR("Wrong value of Cui \n");
                 }
-                CD_DEBUG("Reading in pull mode from CuiAbsolute %d (Value: %f)\n", canId, value);                
+                CD_DEBUG("Reading in pull mode from CuiAbsolute %d (Value: %f)\n", canId, value);
             }
     }
 
