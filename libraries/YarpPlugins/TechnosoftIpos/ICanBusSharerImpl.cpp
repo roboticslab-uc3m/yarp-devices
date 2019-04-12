@@ -327,28 +327,28 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
                 getMode = VOCAB_CM_TORQUE;
                 getModeReady.post();
             }
-            else if(-4==got)
+            else if(252==got)  // -4
             {
                 CD_INFO("\t-iPOS specific: External Reference Speed Mode. canId: %d.\n",canId);
                 getModeReady.wait();
                 getMode = 0;
                 getModeReady.post();
             }
-            else if(-3==got)
+            else if(253==got)  // -3
             {
                 CD_INFO("\t-iPOS specific: External Reference Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
                 getMode = 0;
                 getModeReady.post();
             }
-            else if(-2==got)
+            else if(254==got)  // -2
             {
                 CD_INFO("\t-iPOS specific: Electronic Camming Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
                 getMode = 0;
                 getModeReady.post();
             }
-            else if(-1==got)
+            else if(255==got)  // -1
             {
                 CD_INFO("\t-iPOS specific: Electronic Gearing Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
