@@ -104,11 +104,9 @@ set(ROBOTICSLAB_YARP_DEVICES_INSTALL_MODULE_DIR ${CMAKE_INSTALL_DATADIR}/ROBOTIC
 install_basic_package_files(ROBOTICSLAB_YARP_DEVICES
                             VERSION 0.1.0
                             COMPATIBILITY AnyNewerVersion
-                            FIRST_TARGET YarpDevicesInterfaces
                             NO_SET_AND_CHECK_MACRO
                             NO_CHECK_REQUIRED_COMPONENTS_MACRO
-                            NAMESPACE ROBOTICSLAB::
-                            NO_COMPATIBILITY_VARS)
+                            NAMESPACE ROBOTICSLAB::)
 
 # Configure and create uninstall target.
 include(AddUninstallTarget)
