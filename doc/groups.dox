@@ -69,3 +69,8 @@ namespace roboticslab {}
  * \defgroup yarp_devices_examples_py roboticslab-uc3m/yarp-devices Python examples
  */
 
+/**
+ * \defgroup yarp_devices_tests roboticslab-uc3m/yarp-devices Tests
+ *
+ * @brief yarp-devices tests.
+ */
