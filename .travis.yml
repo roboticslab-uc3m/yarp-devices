@@ -39,6 +39,7 @@ addons:
     # device deps
     - libusb-1.0-0-dev # libphidget21
     - libspnav-dev # spacenavigator
+    - libxwiimote-dev
 
     - libgtest-dev # unit testing
     - lcov # code coverage
@@ -51,9 +52,6 @@ before_install:
   - if [ "$CXX" = "g++" ]; then gem install coveralls-lcov; fi
 
 install:
-  #-- Install device-related deps
-  - sudo apt-get install libxwiimote-dev
-
   #-- Install YCM
   - >
     source "$TRAVIS_BUILD_DIR/scripts/travis/git-cache-dependency.sh"
