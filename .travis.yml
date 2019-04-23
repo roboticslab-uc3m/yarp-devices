@@ -8,6 +8,7 @@ compiler:
 
 env:
   global:
+    - ARAVIS_VER=0.4.1
     - PEAK_DRIVER_VER=8.5.1
     - CACHE_DIR=~/cached-deps
   matrix:
@@ -35,6 +36,11 @@ addons:
     # AMOR API
     - libboost-thread-dev
     - libeigen3-dev
+
+    # ARAVIS
+    - intltool
+    - libxml2-dev
+    - libglib2.0-dev
 
     # device deps
     - libusb-1.0-0-dev # libphidget21
@@ -68,6 +74,19 @@ install:
     --additional-cmake-options "-DSKIP_ACE:BOOL=ON"
     --prepend-to-linker-path lib
     --additional-export-paths "YARP_DATA_DIRS;share/yarp"
+
+  #-- Install ARAVIS
+  - >
+    if [ ! -d "$CACHE_DIR/aravis-$ARAVIS_VER" ]; then
+        echo "aravis-$ARAVIS_VER not in cache"
+        # https://stackoverflow.com/a/6245903
+        wget -O- -q http://ftp.acc.umu.se/pub/GNOME/sources/aravis/${ARAVIS_VER%.*}/aravis-$ARAVIS_VER.tar.xz | tar -C ~ -xJf -
+        (cd ~/"aravis-$ARAVIS_VER" && ./configure --enable-gtk-doc-html=no --prefix="$CACHE_DIR/aravis-$ARAVIS_VER")
+        make -C ~/"aravis-$ARAVIS_VER" -j$(nproc) install
+    else
+        echo "aravis-$ARAVIS_VER already in cache"
+    fi
+  - export PKG_CONFIG_PATH="$CACHE_DIR/aravis-$ARAVIS_VER/lib/pkgconfig:$PKG_CONFIG_PATH"
 
   #-- Install libphidget21
   - >

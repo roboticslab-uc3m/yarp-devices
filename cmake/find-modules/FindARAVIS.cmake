@@ -1,37 +1,20 @@
-# - Try to find Aravis
-# Once done this will define
+# Try to find Aravis
+# Once done this will define:
 #  ARAVIS_FOUND - System has Aravis
 #  ARAVIS_INCLUDE_DIRS - The Aravis include directories
 #  ARAVIS_LIBRARIES - The libraries needed to use Aravis
-#  ARAVIS_DEFINITIONS - Compiler switches required for using Aravis
+#  ARAVIS_LIBRARY_DIRS - The libraries library directories
+#  ARAVIS_VERSION - The version of Aravis package
 
-include(CMakeFindDependencyMacro OPTIONAL) # available since CMake 3.0
+find_package(PkgConfig)
+pkg_check_modules(ARAVIS aravis-0.4)
 
-if(COMMAND find_dependency)
-  find_dependency(GLib)
-else()
-  find_package(GLib)
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(ARAVIS REQUIRED_VARS ARAVIS_INCLUDE_DIRS ARAVIS_LIBRARIES ARAVIS_LIBRARY_DIRS
+                                         VERSION_VAR ARAVIS_VERSION)
 
-  if(NOT GLib_FOUND)
-    return()
-  endif()
-endif()
+include(CMakeFindDependencyMacro)
+find_dependency(GLib)
 
-# This was used for debugging purposes:
-# message("--->")
-# message(${GLib_INCLUDE_DIRS})
-# message("--->")
-
-find_path(ARAVIS_INCLUDE_DIR arv.h
-  $ENV{ARAVIS_DIR}
-  /usr/local/include/aravis-0.4
-  /usr/include/aravis-0.4
-)
-
-find_library(ARAVIS_LIBRARY NAMES aravis-0.4 libaravis-0.4 )
-
-mark_as_advanced(ARAVIS_INCLUDE_DIR ARAVIS_LIBRARY )
-
-set(ARAVIS_INCLUDE_DIRS ${ARAVIS_INCLUDE_DIR} ${GLib_INCLUDE_DIRS})
-#set(ARAVIS_LINK_DIRS ${GLib_LIBDIR} )
-set(ARAVIS_LIBRARIES ${ARAVIS_LIBRARY} ${GLib_LIBRARY})
+list(APPEND ARAVIS_INCLUDE_DIRS ${GLib_INCLUDE_DIRS})
+list(APPEND ARAVIS_LIBRARIES ${GLib_LIBRARY})

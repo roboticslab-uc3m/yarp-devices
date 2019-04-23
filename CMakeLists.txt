@@ -52,7 +52,7 @@ find_package(COLOR_DEBUG REQUIRED)
 
 # Soft dependencies.
 find_package(AMOR_API QUIET)
-find_package(ARAVIS QUIET)
+find_package(ARAVIS 0.4 EXACT QUIET)
 find_package(Doxygen QUIET)
 find_package(GTestSources 1.6.0 QUIET)
 find_package(Leap 2.3 EXACT QUIET)
