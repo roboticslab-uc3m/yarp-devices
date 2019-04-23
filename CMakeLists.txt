@@ -58,7 +58,7 @@ find_package(GTestSources 1.6.0 QUIET)
 find_package(Leap 2.3 EXACT QUIET)
 find_package(PCan 8.5 EXACT QUIET)
 find_package(Phidgets 2.1 EXACT QUIET)
-find_package(PythonInterp 3.0 QUIET)
+find_package(Python QUIET)
 find_package(Spnav QUIET)
 find_package(XWiimote 0.3 QUIET)
 
