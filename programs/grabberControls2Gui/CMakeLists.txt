@@ -12,7 +12,7 @@ if(ENABLE_grabbercontrols2gui)
                    "${CMAKE_BINARY_DIR}/setup.py")
 
     # run setup.py (install rule)
-    install(CODE "EXECUTE_PROCESS(COMMAND python3 \"${CMAKE_BINARY_DIR}/setup.py\" install)")
+    install(CODE "EXECUTE_PROCESS(COMMAND \"${Python_EXECUTABLE}\" \"${CMAKE_BINARY_DIR}/setup.py\" install)")
 
 else()
 
