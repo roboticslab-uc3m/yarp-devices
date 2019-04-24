@@ -5,10 +5,13 @@
 # crontab -e
 # 30 2 * * * /your/command
 
-path="$HOME/roboticslab-uc3m/yarp-devices"
-echo "Update roboticslab-uc3m/yarp-devices..."
-git -C "$path" pull
-echo "Doxy roboticslab-uc3m/yarp-devices..."
-path="$path/doc/build"
-mkdir -p "$path"
-make -C "$path" clean && make -C "$path" dox
+proj="roboticslab-uc3m/yarp-devices"
+src="$HOME/$proj"
+build="$src/doc/build"
+
+echo "Update $proj..."
+git -C "$src" pull
+
+echo "Doxy $proj..."
+mkdir -p "$build"
+cmake -H"$src/doc" -B"$build" && make -C "$build" clean && make -C "$build" dox
