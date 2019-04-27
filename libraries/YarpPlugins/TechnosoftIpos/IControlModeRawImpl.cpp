@@ -122,6 +122,43 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
 {
     CD_INFO("\n");
 
+    //-- 5. External reference type. Slave receives reference through CAN (manual 208 of 263).
+    uint8_t msg_ref_type[]= {0x2B,0x1D,0x20,0x00,0x01,0x00,0x00,0x00}; //CAN
+
+    if( ! send( 0x600, 8, msg_ref_type) )
+    {
+        CD_ERROR("Could not send \"ref_type\". %s\n", msgToStr(0x600, 8, msg_ref_type).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent \"ref_type\". %s\n", msgToStr(0x600, 8, msg_ref_type).c_str() );
+
+    //-- Mode -3 (manual 209 of 263). Send the following message (SDO access to object 6060 h , 8-bit value -1)
+    uint8_t msg_mode_ext_ref_pos[]= {0x2F,0x60,0x60,0x00,0xFD,0x00,0x00,0x00};
+
+    if( ! send( 0x600, 8, msg_mode_ext_ref_pos) )
+    {
+        CD_ERROR("Could not send \"ext_ref_pos_mode\". %s\n", msgToStr(0x600, 8, msg_mode_ext_ref_pos).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent \"ext_ref_pos_mode\". %s\n", msgToStr(0x600, 8, msg_mode_ext_ref_pos).c_str() );
+
+    //-- Control word (manual 215 of 263).
+    uint8_t msg_position_word[] = {0x1F,0x00};
+
+    if( ! send( 0x200, 2, msg_position_word) )
+    {
+        CD_ERROR("Could not send position_word. %s\n", msgToStr(0x200, 2, msg_position_word).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent \"position_word\". %s\n", msgToStr(0x200, 2, msg_position_word).c_str() );
+
+    return true;
+}
+
+bool roboticslab::TechnosoftIpos::setTrajectoryModeRaw()
+{
+    CD_INFO("\n");
+
     ptPointCounter = 0;
 
     //-- ptprepare: pg. 165 (181/263)

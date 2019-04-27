@@ -338,7 +338,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             {
                 CD_INFO("\t-iPOS specific: External Reference Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                getMode = 0;
+                getMode = VOCAB_CM_POSITION_DIRECT;
                 getModeReady.post();
             }
             else if(254==got)  // -2
@@ -380,7 +380,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             {
                 CD_INFO("\t-Interpolated Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                getMode = VOCAB_CM_POSITION_DIRECT;
+                getMode = 0;
                 getModeReady.post();
             }
             else
