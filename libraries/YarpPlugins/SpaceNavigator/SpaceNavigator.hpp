@@ -4,9 +4,11 @@
 #define __SPACE_NAVIGATOR__
 
 #include <spnav.h>
+
+#include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
 
-#include "ColorDebug.h"
+#include <ColorDebug.h>
 
 #define DEFAULT_NUM_CHANNELS 8
 

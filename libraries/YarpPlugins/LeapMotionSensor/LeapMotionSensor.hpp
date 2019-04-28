@@ -5,6 +5,7 @@
 
 #include <Leap.h>
 
+#include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
 
 namespace roboticslab
