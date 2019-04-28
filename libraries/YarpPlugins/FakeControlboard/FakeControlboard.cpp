@@ -10,7 +10,7 @@ bool roboticslab::FakeControlboard::setPositionMode(int j)
 {
     CD_DEBUG("(%d)\n", j);
 
-    if (modePosVel == POSITION_MODE)
+    if (controlMode == POSITION_MODE)
     {
         return true;  // Simply return true if we were already in pos mode.
     }
@@ -22,7 +22,7 @@ bool roboticslab::FakeControlboard::setPositionMode(int j)
         return false;
     }
 
-    modePosVel = POSITION_MODE;
+    controlMode = POSITION_MODE;
     return true;
 }
 
@@ -31,7 +31,7 @@ bool roboticslab::FakeControlboard::setPositionMode(int j)
 bool roboticslab::FakeControlboard::setVelocityMode(int j)
 {
     CD_DEBUG("(%d)\n", j);
-    modePosVel = VELOCITY_MODE;
+    controlMode = VELOCITY_MODE;
     return true;
 }
 
@@ -40,6 +40,28 @@ bool roboticslab::FakeControlboard::setVelocityMode(int j)
 bool roboticslab::FakeControlboard::setTorqueMode(int j)
 {
     CD_DEBUG("(%d)\n", j);
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::FakeControlboard::setPositionDirectMode(int j)
+{
+    CD_DEBUG("(%d)\n", j);
+
+    if (controlMode == POSITION_DIRECT_MODE)
+    {
+        return true;  // Simply return true if we were already in posd mode.
+    }
+
+    // Do anything additional before setting flag to posd...
+    if (!stop(j))
+    {
+        CD_ERROR("failed to stop joint %d\n", j);
+        return false;
+    }
+
+    controlMode = POSITION_DIRECT_MODE;
     return true;
 }
 

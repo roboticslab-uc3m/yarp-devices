@@ -22,6 +22,7 @@ yarp_add_plugin(FakeControlboard FakeControlboard.hpp
                                  IEncodersTimedImpl.cpp
                                  IPositionControlImpl.cpp
                                  IPositionControl2Impl.cpp
+                                 IPositionDirectImpl.cpp
                                  ITorqueControlImpl.cpp
                                  IVelocityControlImpl.cpp
                                  IVelocityControl2Impl.cpp

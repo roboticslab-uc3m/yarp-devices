@@ -327,28 +327,28 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
                 getMode = VOCAB_CM_TORQUE;
                 getModeReady.post();
             }
-            else if(-4==got)
+            else if(252==got)  // -4
             {
                 CD_INFO("\t-iPOS specific: External Reference Speed Mode. canId: %d.\n",canId);
                 getModeReady.wait();
                 getMode = 0;
                 getModeReady.post();
             }
-            else if(-3==got)
+            else if(253==got)  // -3
             {
                 CD_INFO("\t-iPOS specific: External Reference Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
                 getMode = 0;
                 getModeReady.post();
             }
-            else if(-2==got)
+            else if(254==got)  // -2
             {
                 CD_INFO("\t-iPOS specific: Electronic Camming Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
                 getMode = 0;
                 getModeReady.post();
             }
-            else if(-1==got)
+            else if(255==got)  // -1
             {
                 CD_INFO("\t-iPOS specific: Electronic Gearing Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
@@ -764,7 +764,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
                 memcpy(&got, message.getData()+4,4);
                 double val = (encoderPulses / 360.0) * 0.000001;  //-- if encoderPulses is 4096 (4 * 1024), val = 0.00001138
                 refAccelSemaphore.wait();
-                refAcceleration = got / (tr * 65536 * val);
+                refAcceleration = got / (std::abs(tr) * 65536 * val);
                 refAccelSemaphore.post();
                 CD_INFO("Got SDO \"posmode_acc\" response from driver. %s\n",msgToStr(message).c_str());
             }
@@ -782,7 +782,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
                 memcpy(&got, message.getData()+4,4);
                 double val = (encoderPulses / 360.0) * 0.001;  //-- if encoderPulses is 4096 (4 * 1024), val = 0.01138
                 refSpeedSemaphore.wait();
-                refSpeed = got / (tr * 65536 * val);
+                refSpeed = got / (std::abs(tr) * 65536 * val);
                 refSpeedSemaphore.post();
                 CD_INFO("Got SDO \"posmode_speed\" response from driver. %s\n",msgToStr(message).c_str());
             }
@@ -818,6 +818,31 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
         else if( (message.getData()[1]==0xC0)&&(message.getData()[2]==0x60) )      // Manual 60C0h: Interpolation sub mode select
         {
             CD_INFO("Got SDO ack \"Interpolation sub mode select.\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
+        }
+        else if( (message.getData()[1]==0xC1)&&(message.getData()[2]==0x60) )      // Manual 60C1h: Interpolation data record
+        {
+            CD_INFO("Got SDO ack \"Interpolation data record.\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
+        }
+        else if( (message.getData()[1]==0x72)&&(message.getData()[2]==0x20) )      // Manual 6072h: Interpolated position mode status
+        {
+            CD_INFO("Got SDO ack \"Interpolated position mode status.\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
+        }
+        else if( (message.getData()[1]==0x73)&&(message.getData()[2]==0x20) )      // Manual 2073h: Interpolated position buffer length
+        {
+            CD_INFO("Got SDO ack \"Interpolated position buffer length.\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
+        }
+        else if( (message.getData()[1]==0x74)&&(message.getData()[2]==0x20) )      // Manual 2074h: Interpolated position buffer configuration
+        {
+            CD_INFO("Got SDO ack \"Interpolated position buffer configuration.\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
+        }
+        else if( (message.getData()[1]==0x7A)&&(message.getData()[2]==0x20) )      // Manual 207Ah: Interpolated position 1 st order time.
+        {
+            CD_INFO("Got SDO ack \"Interpolated position 1 st order time.\" from driver. %s\n",msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[1]==0x74)&&(message.getData()[2]==0x20) )      // Manual 2074h: Interpolated position buffer configuration

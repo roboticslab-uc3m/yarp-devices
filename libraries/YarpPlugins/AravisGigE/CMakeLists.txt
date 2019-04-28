@@ -18,6 +18,8 @@ if(NOT SKIP_AravisGigE)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
                         ${ARAVIS_INCLUDE_DIRS})
 
+    link_directories(${ARAVIS_LIBRARY_DIRS})
+
     yarp_add_plugin(AravisGigE AravisGigE.hpp
                                DeviceDriverImpl.cpp
                                IFrameGrabberControls2Impl.cpp

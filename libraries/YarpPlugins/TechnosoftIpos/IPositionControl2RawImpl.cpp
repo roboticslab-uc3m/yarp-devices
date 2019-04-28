@@ -19,6 +19,17 @@ bool roboticslab::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encEx
     //-- Check index within range
     if ( j != 0 ) return false;
 
+    //-- Sets "Do not assume target position" so later it accepts "Assume target position (update the new motion parameters)".
+    //-- Mandatory if we issue this command right after the transition from [posd] to [pos] control mode.
+    //*************************************************************
+    uint8_t msg_pos_reset[]= {0x0F,0x00}; // Stop a position profile
+
+    if( ! send( 0x200, 2, msg_pos_reset) )
+    {
+        CD_ERROR("Could not send first \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent first \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
     //*************************************************************
     uint8_t msg_position_target[]= {0x23,0x7A,0x60,0x00,0x00,0x00,0x00,0x00}; // Position target
 
@@ -42,17 +53,13 @@ bool roboticslab::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encEx
     }
     CD_SUCCESS("Sent \"start position\". %s\n", msgToStr(0x200, 2, msg_start).c_str() );
     //*************************************************************
-
-    //-- Needed to send next. Sets "Do not assume target position" so later it accepts "Assume target position (update the new motion parameters)".
-    //*************************************************************
-    uint8_t msg_pos_reset[]= {0x0F,0x00}; // Stop a position profile
-
+    //-- Needed to accept next target. Sets "Do not assume target position" so later it accepts "Assume target position (update the new motion parameters)".
     if( ! send( 0x200, 2, msg_pos_reset) )
     {
-        CD_ERROR("Could not send \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
+        CD_ERROR("Could not send second \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
+    CD_SUCCESS("Sent second \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
     //*************************************************************
 
     //-- it will save the value
@@ -155,7 +162,7 @@ bool roboticslab::TechnosoftIpos::checkMotionDoneRaw(int j, bool *flag)
     CD_SUCCESS("Sent \"msgStatus\". %s\n", msgToStr(0x600, 8, msgStatus).c_str() );
 
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(DELAY);  //-- Wait for read update. Could implement semaphore waiting for specific message...
+    yarp::os::Time::delay(DELAY*10);  //-- Wait for read update. Could implement semaphore waiting for specific message...
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     targetReachedReady.wait();
@@ -195,7 +202,7 @@ bool roboticslab::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
     //-- 0.01138 = ( 4 * 1024 pulse / 360 deg ) * (0.001 s / sample)   // deg/s -> pulse/sample  = UI (vel)
     //-- encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024)
     double val = (encoderPulses / 360.0) * 0.001;     //-- if encoderPulses is 4096 (4 * 1024), val = 0,011377778
-    int32_t sendRefSpeedFormated = sp * this->tr * (65536 * val); //-- if encoderPulses is 4096 -> 65536 * 0.01138 = 745.8
+    int32_t sendRefSpeedFormated = sp * std::abs(this->tr) * (65536 * val); //-- if encoderPulses is 4096 -> 65536 * 0.01138 = 745.8
     memcpy(msg_posmode_speed+4,&sendRefSpeedFormated,4);
 
     if( ! send( 0x600, 8, msg_posmode_speed) )
@@ -242,7 +249,7 @@ bool roboticslab::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
     //-- 0.00001138 = ( 4 * 1024 pulse / 360 deg ) * (0.000001 s^2 / sample^2)   // deg/s^2 -> pulse/sample^2 = UI (acc)
     //-- encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024)
     double val = (encoderPulses / 360.0) * 0.000001;     //-- if encoderPulses is 4096 (4 * 1024), val = 0.00001138
-    int32_t sendRefAccFormated = acc * this->tr * (65536 * val); //-- 65536 * 0.00001138 = 0.7458
+    int32_t sendRefAccFormated = acc * std::abs(this->tr) * (65536 * val); //-- 65536 * 0.00001138 = 0.7458
     memcpy(msg_posmode_acc+4,&sendRefAccFormated,4);
 
     if( ! send( 0x600, 8, msg_posmode_acc) )

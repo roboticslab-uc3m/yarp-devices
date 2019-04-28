@@ -4,6 +4,11 @@
 
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
+# Honor PCan_ROOT env variable in FindPCan.cmake (CMake 3.12).
+if(POLICY CMP0074)
+    cmake_policy(SET CMP0074 NEW)
+endif()
+
 project(ROBOTICSLAB_YARP_DEVICES)
 
 # Add suffix for debug libraries.
@@ -37,7 +42,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake
                               ${CMAKE_SOURCE_DIR}/cmake/find-modules)
 
 # Hard dependencies.
-find_package(YCM 0.8 REQUIRED)
+find_package(YCM 0.10 REQUIRED)
 # https://github.com/roboticslab-uc3m/questions-and-answers/issues/65
 find_package(YARP 3.0 QUIET)
 if(NOT YARP_FOUND)
@@ -47,14 +52,15 @@ find_package(COLOR_DEBUG REQUIRED)
 
 # Soft dependencies.
 find_package(AMOR_API QUIET)
-find_package(ARAVIS QUIET)
+find_package(ARAVIS 0.4 EXACT QUIET)
+find_package(Doxygen QUIET)
+find_package(GTestSources 1.6.0 QUIET)
 find_package(Leap 2.3 EXACT QUIET)
 find_package(PCan 8.5 EXACT QUIET)
 find_package(Phidgets 2.1 EXACT QUIET)
-find_package(PythonInterp 3.0 QUIET)
+find_package(Python QUIET)
 find_package(Spnav QUIET)
 find_package(XWiimote 0.3 QUIET)
-find_package(GTestSources 1.6.0 QUIET)
 
 # Always build YARP devices as MODULE libraries.
 set(YARP_FORCE_DYNAMIC_PLUGINS TRUE CACHE INTERNAL "Force dynamic plugins")
@@ -88,6 +94,7 @@ add_subdirectory(libraries)
 add_subdirectory(programs)
 add_subdirectory(tests)
 add_subdirectory(share)
+add_subdirectory(doc)
 
 # Store the package in the user registry.
 export(PACKAGE ROBOTICSLAB_YARP_DEVICES)
@@ -102,11 +109,9 @@ set(ROBOTICSLAB_YARP_DEVICES_INSTALL_MODULE_DIR ${CMAKE_INSTALL_DATADIR}/ROBOTIC
 install_basic_package_files(ROBOTICSLAB_YARP_DEVICES
                             VERSION 0.1.0
                             COMPATIBILITY AnyNewerVersion
-                            FIRST_TARGET YarpDevicesInterfaces
                             NO_SET_AND_CHECK_MACRO
                             NO_CHECK_REQUIRED_COMPONENTS_MACRO
-                            NAMESPACE ROBOTICSLAB::
-                            NO_COMPATIBILITY_VARS)
+                            NAMESPACE ROBOTICSLAB::)
 
 # Configure and create uninstall target.
 include(AddUninstallTarget)

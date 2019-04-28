@@ -1,4 +1,4 @@
-#include "gtest/gtest.h"
+﻿#include "gtest/gtest.h"
 
 #include <cstdlib>
 #include <ios>
@@ -19,7 +19,7 @@
 #include "ICanBusSharer.h"
 #include "ICuiAbsolute.h"
 
-#define CAN_ID 103 // ID of Cui Absolute encoder that you want to check...
+#define CAN_ID 126 // ID of Cui Absolute encoder that you want to check...
 
 namespace roboticslab
 {
@@ -37,9 +37,9 @@ public:
     {
         // -- code here will execute just before the test ensues
 
-        yarp::os::Property canDeviceConf("(device CanBusHico) (canDevice /dev/can0) (canBitrate 1000000)");
+        yarp::os::Property canDeviceConf("(device CanBusPeak) (canDevice /dev/pcan3) (canBitrate 1000000)");
         bool ok = true;
-        ok &= canBusDevice.open(canDeviceConf);   // -- we introduce the configuration properties defined in property object (p) and them, we stard the device (HicoCAN)
+        ok &= canBusDevice.open(canDeviceConf);   // -- we introduce the configuration properties defined in property object (p) and them, we stard the device (CanBusPeak)
         ok &= canBusDevice.view(iCanBus);
         ok &= canBusDevice.view(iCanBufferFactory);
 
@@ -57,9 +57,11 @@ public:
         std::stringstream strconf;
         strconf << "(device CuiAbsolute) (canId " << CAN_ID << ") (min 0) (max 0) (tr 1) (refAcceleration 0.0) (refSpeed 0.0)";
         CD_DEBUG("%s\n",strconf.str().c_str());
-        yarp::os::Property CuiAbsoluteConf (strconf.str().c_str());
 
-        ok &= canNodeDevice.open( CuiAbsoluteConf );   // -- we introduce the configuration properties defined ........
+        yarp::os::Property cuiAbsoluteConf (strconf.str().c_str());
+        yarp::os::Value v(&iCanBufferFactory, sizeof(iCanBufferFactory));
+        cuiAbsoluteConf.put("canBufferFactory", v);
+        ok &= canNodeDevice.open( cuiAbsoluteConf );   // -- we introduce the configuration properties defined ........
         if ( ! canNodeDevice.isValid() )
         {
             CD_ERROR("Bad device of CuiAbsolute :(\n");
@@ -183,7 +185,7 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInPullMode )
                 while( ! iEncodersTimedRaw->getEncoderRaw(0,&value) ){
                     CD_ERROR("Wrong value of Cui \n");
                 }
-                CD_DEBUG("Reading in pull mode from CuiAbsolute %d (Value: %f)\n", canId, value);                
+                CD_DEBUG("Reading in pull mode from CuiAbsolute %d (Value: %f)\n", canId, value);
             }
     }
 

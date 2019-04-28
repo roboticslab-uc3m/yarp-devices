@@ -29,10 +29,10 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
     switch (modePosVelInt)
     {
     case 0:
-        modePosVel = POSITION_MODE;
+        controlMode = POSITION_MODE;
         break;
     case 1:
-        modePosVel = VELOCITY_MODE;
+        controlMode = VELOCITY_MODE;
         break;
     default:
         CD_ERROR("Unrecognized mode identifier: %d (0:pos, 1:vel).\n", modePosVelInt);
@@ -176,7 +176,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
 
     for (unsigned int i = 0; i < axes; i++)
     {
-        jointStatus[i] = NOT_MOVING;
+        jointStatus[i] = NOT_CONTROLLING;
 
         refSpeed[i]      = refSpeeds      ? refSpeeds->get(i).asDouble()      : genRefSpeed;
         minLimit[i]      = minLimits      ? minLimits->get(i).asDouble()      : genMinLimit;

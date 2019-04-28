@@ -1,9 +1,9 @@
-if("${PYTHON_VERSION_STRING}" VERSION_GREATER 3.4 AND (NOT DEFINED ENABLE_grabbercontrols2gui OR ENABLE_grabbercontrols2gui))
-    message(WARNING "PythonInterp package not found or unsupported version (>3.4), disabling grabbercontrols2gui program")
+if(Python_VERSION VERSION_LESS 3.5 AND (NOT DEFINED ENABLE_grabbercontrols2gui OR ENABLE_grabbercontrols2gui))
+    message(WARNING "Python interpreter not found or unsupported version (only 3.5+), disabling grabbercontrols2gui program")
 endif()
 
 cmake_dependent_option(ENABLE_grabbercontrols2gui "Enable/disable grabbercontrols2gui program" ON
-                       "PYTHONINTERP_FOUND;NOT PYTHON_VERSION_STRING VERSION_GREATER 3.4" OFF)
+                       "Python_FOUND;NOT Python_VERSION VERSION_LESS 3.5" OFF)
 
 if(ENABLE_grabbercontrols2gui)
 
@@ -12,7 +12,7 @@ if(ENABLE_grabbercontrols2gui)
                    "${CMAKE_BINARY_DIR}/setup.py")
 
     # run setup.py (install rule)
-    install(CODE "EXECUTE_PROCESS(COMMAND python3 \"${CMAKE_BINARY_DIR}/setup.py\" install)")
+    install(CODE "EXECUTE_PROCESS(COMMAND \"${Python_EXECUTABLE}\" \"${CMAKE_BINARY_DIR}/setup.py\" install)")
 
 else()
 
