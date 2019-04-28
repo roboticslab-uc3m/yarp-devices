@@ -5,6 +5,9 @@
 
 #include <yarp/dev/CanBusInterface.h>
 
+// upstream bug in the Peak API header, v8.5.1
+#include <sys/time.h>
+
 #include <pcanfd.h>
 
 namespace roboticslab
