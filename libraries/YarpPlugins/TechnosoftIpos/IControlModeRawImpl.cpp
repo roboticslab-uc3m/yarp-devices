@@ -142,6 +142,10 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     }
     CD_SUCCESS("Sent \"ext_ref_pos_mode\". %s\n", msgToStr(0x600, 8, msg_mode_ext_ref_pos).c_str() );
 
+    double ref;
+    getEncoderRaw(0, &ref);
+    setPositionRaw(0, ref);
+
     //-- Control word (manual 215 of 263).
     uint8_t msg_position_word[] = {0x3F,0x00};
 
