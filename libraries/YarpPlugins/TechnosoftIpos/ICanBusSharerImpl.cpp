@@ -383,6 +383,13 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
                 getMode = 0;
                 getModeReady.post();
             }
+            else if(8==got)
+            {
+                CD_INFO("\t-Cyclic Synchronous Position Mode. canId: %d.\n",canId);
+                getModeReady.wait();
+                getMode = 0;
+                getModeReady.post();
+            }
             else
             {
                 CD_WARNING("\t-Mode \"%d\" not specified in manual, may be in Fault or not enabled yet. canId(%d).\n",got,(message.getId() & 0x7F));
