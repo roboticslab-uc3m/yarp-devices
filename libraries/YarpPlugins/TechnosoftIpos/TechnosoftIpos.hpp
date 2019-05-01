@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <sstream>
 #include <cmath>
+#include <deque>
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
@@ -34,6 +35,33 @@ namespace roboticslab
  * \defgroup TechnosoftIpos
  * @brief Contains roboticslab::TechnosoftIpos.
  */
+
+/**
+ * @ingroup YarpPlugins
+ * @brief Target point in PVT interpolation mode.
+ */
+struct PvtPoint
+{
+    double p, v, t;
+
+    static PvtPoint fromBottle(const yarp::os::Bottle & b)
+    {
+        PvtPoint pvtPoint;
+        pvtPoint.p = b.get(0).asDouble();
+        pvtPoint.v = b.get(1).asDouble();
+        pvtPoint.t = b.get(2).asDouble();
+        return pvtPoint;
+    }
+
+    yarp::os::Bottle toBottle() const
+    {
+        yarp::os::Bottle b;
+        b.addDouble(p);
+        b.addDouble(v);
+        b.addDouble(t);
+        return b;
+    }
+};
 
 /**
 * @ingroup TechnosoftIpos
@@ -282,6 +310,8 @@ protected:
 
     //-- CAN output buffer
     yarp::os::Semaphore canBufferSemaphore;
+
+    std::deque<PvtPoint> pvtQueue;
 };
 
 }  // namespace roboticslab
