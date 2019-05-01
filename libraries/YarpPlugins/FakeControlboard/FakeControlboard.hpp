@@ -52,6 +52,7 @@ class FakeControlboard : public yarp::dev::DeviceDriver,
                          public yarp::dev::IEncodersTimed,
                          public yarp::dev::IPositionControl,
                          public yarp::dev::IPositionDirect,
+                         public yarp::dev::IRemoteVariables,
                          public yarp::dev::ITorqueControl,
                          public yarp::dev::IVelocityControl,
                          public yarp::os::PeriodicThread
@@ -705,6 +706,14 @@ public:
      * @return true/false on success/failure
      */
     virtual bool getTorqueRanges(double *min, double *max);
+
+    // -----------IRemoteVariables Declarations. Implementation in IRemoteVariablesImpl.cpp --------------
+
+    virtual bool getRemoteVariable(std::string key, yarp::os::Bottle& val);
+
+    virtual bool setRemoteVariable(std::string key, const yarp::os::Bottle& val);
+
+    virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys);
 
 // -------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp --------
 

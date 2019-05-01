@@ -9,6 +9,8 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
+#include <yarp/dev/IControlLimits.h>
+#include <yarp/dev/IRemoteVariables.h>
 
 //#define CD_FULL_FILE  //-- Can be globally managed from father CMake. Good for debugging with polymorphism.
 //#define CD_HIDE_DEBUG  //-- Can be globally managed from father CMake.
@@ -19,6 +21,10 @@
 #include "ColorDebug.h"
 #include "ICanBusSharer.h"
 #include "ITechnosoftIpos.h"
+
+// https://github.com/roboticslab-uc3m/yarp-devices/issues/198#issuecomment-487279910
+#define PT_BUFFER_MAX_SIZE 285
+#define PVT_BUFFER_MAX_SIZE 222
 
 namespace roboticslab
 {
@@ -39,8 +45,9 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver,
                        public yarp::dev::IControlModeRaw,
                        public yarp::dev::IEncodersTimedRaw,
                        public yarp::dev::IInteractionModeRaw,
-                       public yarp::dev::IPositionControl2Raw,
+                       public yarp::dev::IPositionControlRaw,
                        public yarp::dev::IPositionDirectRaw,
+                       public yarp::dev::IRemoteVariablesRaw,
                        public yarp::dev::ITorqueControlRaw,
                        public yarp::dev::IVelocityControlRaw,
                        public ICanBusSharer,
@@ -80,7 +87,7 @@ public:
     /** reset communications */
     virtual bool resetCommunication();
 
-    //  --------- IControlLimits2Raw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
+    //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
     virtual bool setLimitsRaw(int axis, double min, double max);
     virtual bool getLimitsRaw(int axis, double *min, double *max);
     virtual bool setVelLimitsRaw(int axis, double min, double max);
@@ -199,7 +206,10 @@ public:
     virtual bool setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
     virtual bool setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
 
-
+    // ------- IRemoteVariablesRaw declarations. Implementation in IRemoteVariablesRawImpl.cpp -------
+    virtual bool getRemoteVariableRaw(std::string key, yarp::os::Bottle& val);
+    virtual bool setRemoteVariableRaw(std::string key, const yarp::os::Bottle& val);
+    virtual bool getRemoteVariablesListRaw(yarp::os::Bottle* listOfKeys);
 
 protected:
 

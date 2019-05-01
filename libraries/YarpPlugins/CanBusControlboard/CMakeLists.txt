@@ -22,6 +22,7 @@ yarp_add_plugin(CanBusControlboard CanBusControlboard.cpp
                                    IInteractionModeImpl.cpp
                                    IPositionControlImpl.cpp
                                    IPositionDirectImpl.cpp
+                                   IRemoteVariablesImpl.cpp
                                    ITorqueControlImpl.cpp
                                    IVelocityControlImpl.cpp
                                    ThreadImpl.cpp)

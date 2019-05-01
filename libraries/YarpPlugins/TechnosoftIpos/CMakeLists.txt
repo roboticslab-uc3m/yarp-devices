@@ -23,6 +23,7 @@ yarp_add_plugin(TechnosoftIpos TechnosoftIpos.cpp
                                IInteractionModeRawImpl.cpp
                                IPositionControlRawImpl.cpp
                                IPositionDirectRawImpl.cpp
+                               IRemoteVariablesRawImpl.cpp
                                ITorqueControlRawImpl.cpp
                                IVelocityControlRawImpl.cpp)
 

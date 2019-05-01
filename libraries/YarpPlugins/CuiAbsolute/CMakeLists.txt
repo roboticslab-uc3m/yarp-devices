@@ -23,6 +23,7 @@ yarp_add_plugin(CuiAbsolute CuiAbsolute.cpp
                             IInteractionModeRawImpl.cpp
                             IPositionControlRawImpl.cpp
                             IPositionDirectRawImpl.cpp
+                            IRemoteVariablesRawImpl.cpp
                             ITorqueControlRawImpl.cpp
                             IVelocityControlRawImpl.cpp)
 

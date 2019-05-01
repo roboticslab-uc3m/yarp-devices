@@ -128,15 +128,27 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             return false;
         }
 
+        if( !device->view( iInteractionModeRaw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iInteractionModeRaw interface\n");
+            return false;
+        }
+
         if( !device->view( iPositionControlRaw[i] ))
         {
-            CD_ERROR("[error] Problems acquiring iPositionControl2Raw interface\n");
+            CD_ERROR("[error] Problems acquiring iPositionControlRaw interface\n");
             return false;
         }
 
         if( !device->view( iPositionDirectRaw[i] ))
         {
             CD_ERROR("[error] Problems acquiring iPositionDirectRaw interface\n");
+            return false;
+        }
+
+        if( !device->view( iRemoteVariablesRaw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iRemoteVariablesRaw interface\n");
             return false;
         }
 
@@ -151,17 +163,12 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             CD_ERROR("[error] Problems acquiring iVelocityControl2Raw interface\n");
             return false;
         }
+
         // -- si el device es un Cui, este podrá "ver" las funciones programadas en iCanBusSharer (funciones que hemos añadido al encoder).
         // -- estas funciones se encuentran implementadas en el cpp correspondiente "ICanBusSharerImpl.cpp", por lo tanto le da la funcionalidad que deseamos
-        if(! device->view( iCanBusSharer[i] ))
+        if( !device->view( iCanBusSharer[i] ))
         {
             CD_ERROR("[error] Problems acquiring iCanBusSharer interface\n");
-            return false;
-        }
-
-        if(! device->view( iInteractionModeRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iInteractionModeRaw interface\n");
             return false;
         }
 

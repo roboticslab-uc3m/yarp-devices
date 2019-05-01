@@ -24,6 +24,7 @@ yarp_add_plugin(TextilesHand TextilesHand.cpp
                              IInteractionModeRawImpl.cpp
                              IPositionControlRawImpl.cpp
                              IPositionDirectRawImpl.cpp
+                             IRemoteVariablesRawImpl.cpp
                              ITorqueControlRawImpl.cpp
                              IVelocityControlRawImpl.cpp)
 

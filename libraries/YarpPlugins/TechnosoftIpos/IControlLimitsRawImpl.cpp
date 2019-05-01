@@ -81,7 +81,7 @@ bool roboticslab::TechnosoftIpos::getLimitsRaw(int axis, double *min, double *ma
     return true;
 }
 
-// -------------------  IControlLimits2Raw Related  ----------------------------
+// -----------------------------------------------------------------------------
 
 bool roboticslab::TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
 {
@@ -96,7 +96,6 @@ bool roboticslab::TechnosoftIpos::setVelLimitsRaw(int axis, double min, double m
 
     return true;
 }
-
 
 // -----------------------------------------------------------------------------
 

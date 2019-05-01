@@ -5,6 +5,8 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
+#include <yarp/dev/IControlLimits.h>
+#include <yarp/dev/IRemoteVariables.h>
 
 #include <sstream>
 #include <math.h>
@@ -40,6 +42,7 @@ class CuiAbsolute : public yarp::dev::DeviceDriver,
                     public yarp::dev::IInteractionModeRaw,
                     public yarp::dev::IPositionControlRaw,
                     public yarp::dev::IPositionDirectRaw,
+                    public yarp::dev::IRemoteVariablesRaw,
                     public yarp::dev::IVelocityControlRaw,
                     public yarp::dev::ITorqueControlRaw,
                     public ICanBusSharer,
@@ -172,6 +175,10 @@ public:
     virtual bool setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
     virtual bool setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
 
+    // ------- IRemoteVariablesRaw declarations. Implementation in IRemoteVariablesRawImpl.cpp -------
+    virtual bool getRemoteVariableRaw(std::string key, yarp::os::Bottle& val);
+    virtual bool setRemoteVariableRaw(std::string key, const yarp::os::Bottle& val);
+    virtual bool getRemoteVariablesListRaw(yarp::os::Bottle* listOfKeys);
 
     // -- Auxiliary functions: send data to PIC of Cui
 

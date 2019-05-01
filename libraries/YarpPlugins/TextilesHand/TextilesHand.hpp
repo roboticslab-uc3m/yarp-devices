@@ -5,6 +5,8 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
+#include <yarp/dev/IControlLimits.h>
+#include <yarp/dev/IRemoteVariables.h>
 
 #include <sstream>
 
@@ -50,6 +52,7 @@ class TextilesHand : public yarp::dev::DeviceDriver,
                      public yarp::dev::IInteractionModeRaw,
                      public yarp::dev::IPositionControlRaw,
                      public yarp::dev::IPositionDirectRaw,
+                     public yarp::dev::IRemoteVariablesRaw,
                      public yarp::dev::ITorqueControlRaw,
                      public yarp::dev::IVelocityControlRaw,
                      public ICanBusSharer
@@ -171,13 +174,17 @@ public:
     // -- (just defined in IInteractionModeRaw) - virtual bool stopRaw(const int n_joint, const int *joints);
 
     // ------- IInteractionModeRaw declarations. Implementation in IInteractionModeRawImpl.cpp -------
-
     virtual bool getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode);
     virtual bool getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
     virtual bool getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
     virtual bool setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode);
     virtual bool setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
     virtual bool setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
+
+    // ------- IRemoteVariablesRaw declarations. Implementation in IRemoteVariablesRawImpl.cpp -------
+    virtual bool getRemoteVariableRaw(std::string key, yarp::os::Bottle& val);
+    virtual bool setRemoteVariableRaw(std::string key, const yarp::os::Bottle& val);
+    virtual bool getRemoteVariablesListRaw(yarp::os::Bottle* listOfKeys);
 
 protected:
 
