@@ -98,3 +98,31 @@ void roboticslab::TechnosoftIpos::createPvtMessage(const PvtPoint & pvtPoint, ui
 }
 
 // -----------------------------------------------------------------------------
+
+bool roboticslab::TechnosoftIpos::fillPvtBuffer(const int max)
+{
+    CD_DEBUG("\n");
+
+    int sent = 0;
+    bool ret = true;
+
+    while (!pvtQueue.empty() && sent < max)
+    {
+        const PvtPoint & pvtPoint = pvtQueue.front();
+        uint8_t msg[8];
+        createPvtMessage(pvtPoint, msg);
+
+        if (!send(0x400, 8, msg))
+        {
+            CD_WARNING("PVT point message not sent: %s.\n", pvtPoint.toBottle().toString().c_str());
+            ret = false;
+        }
+
+        pvtQueue.pop_front();
+        sent++;
+    }
+
+    return ret;
+}
+
+// -----------------------------------------------------------------------------

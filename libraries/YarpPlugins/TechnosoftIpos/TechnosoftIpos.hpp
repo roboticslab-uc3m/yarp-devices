@@ -26,6 +26,7 @@
 // https://github.com/roboticslab-uc3m/yarp-devices/issues/198#issuecomment-487279910
 #define PT_BUFFER_MAX_SIZE 285
 #define PVT_BUFFER_MAX_SIZE 222
+#define PVT_BUFFER_LOW_SIGNAL 15 // max: 15
 
 namespace roboticslab
 {
@@ -257,6 +258,7 @@ protected:
     std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
 
     void createPvtMessage(const PvtPoint & pvtPoint, uint8_t * msg);
+    bool fillPvtBuffer(int max);
 
     int canId;
     yarp::dev::ICanBus *canDevicePtr;
@@ -290,8 +292,6 @@ protected:
 
     //-- PT stuff
     int pvtPointCounter;
-    bool ptMovementDone;
-    yarp::os::Semaphore ptBuffer;
 
     //-- More internal parameter stuff
     double max, min, maxVel, minVel, refAcceleration, refSpeed, refTorque, refVelocity, targetPosition, tr, k;

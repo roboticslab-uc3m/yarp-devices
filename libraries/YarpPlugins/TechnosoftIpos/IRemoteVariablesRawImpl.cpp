@@ -48,6 +48,12 @@ bool roboticslab::TechnosoftIpos::setRemoteVariableRaw(std::string key, const ya
 
             pvtQueue.push_back(PvtPoint::fromBottle(*pvtBottle));
         }
+
+        if (!pvtQueue.empty() && !fillPvtBuffer(PVT_BUFFER_MAX_SIZE))
+        {
+            CD_ERROR("Unable to send PVT messages.\n");
+            return false;
+        }
     }
     else
     {

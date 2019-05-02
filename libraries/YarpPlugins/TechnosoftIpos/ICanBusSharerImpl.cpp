@@ -250,34 +250,41 @@ bool roboticslab::TechnosoftIpos::resetNode(int id)
 bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage & message)
 {
 
-    //--------------- Give high priority to PT, override EMGY red -------------------------
+    //--------------- Give high priority to PT, override EMCY red -------------------------
 
-    if( (message.getData()[1]==0xFF)&&(message.getData()[2]==0x01)&&(message.getData()[4]==0x20) )
+    if (message.getData()[0] == 0x01 && message.getData()[1] == 0xFF && message.getData()[2] == 0x01)
     {
-        ptBuffer.wait();
-        CD_WARNING("pt buffer full! canId: %d.\n",canId);
-        return true;
-    }
-    else if( (message.getData()[1]==0xFF)&&(message.getData()[2]==0x01)&&(message.getData()[4]==0x00) )
-    {
-        ptBuffer.post();
-        CD_WARNING("pt buffer empty. canId: %d.\n",canId);
-        return true;
-    }
-    else if( (message.getData()[1]==0xFF)&&(message.getData()[2]==0x01)&&(message.getData()[3]==0x08) )
-    {
-        CD_WARNING("pt buffer message (don't know what it means). canId: %d.\n",canId);
+        if (message.getData()[4] == 0x20)
+        {
+            CD_WARNING("pt buffer full. canId: %d.\n",canId);
+        }
+        else if (message.getData()[4] == 0x40)
+        {
+            CD_WARNING("pt buffer low. canId: %d.\n",canId);
+
+            if (!fillPvtBuffer(PVT_BUFFER_MAX_SIZE - PVT_BUFFER_LOW_SIGNAL))
+            {
+                CD_ERROR("Cannot replenish PVT buffer.\n");
+            }
+        }
+        else if (message.getData()[4] & 0x80)
+        {
+            CD_WARNING("pt buffer empty. canId: %d.\n",canId);
+        }
+        else if (message.getData()[3] == 0x08)
+        {
+            CD_WARNING("pt buffer message (don't know what it means). canId: %d.\n",canId);
+        }
+        else
+        {
+            CD_INFO("PVT control message. canId: %d.\n",canId);
+        }
+
         return true;
     }
     else if( (message.getData()[0]==0x37)&&(message.getData()[1]==0x96) )
     {
         CD_WARNING("pt movement ended. canId: %d (via %X).\n",canId,message.getId()-canId);
-        ptMovementDone = true;
-        return true;
-    }
-    else if (message.getData()[0] == 0x01 && message.getData()[1] == 0xFF)
-    {
-        CD_INFO("PVT control message. canId: %d.\n",canId);
         return true;
     }
     else if( (message.getId()-canId) == 0x580 )  // -------------- SDO ----------------------
