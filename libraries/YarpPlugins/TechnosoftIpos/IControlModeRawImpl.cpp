@@ -165,7 +165,7 @@ bool roboticslab::TechnosoftIpos::setTrajectoryModeRaw()
 
     ptPointCounter = 0;
 
-    //-- ptprepare: pg. 165 (181/263)
+    //-- ptprepare: pg. 168 (184/263)
     //*************************************************************
     //-- 1. - 4. From start to enable.
     //*************************************************************
@@ -202,15 +202,16 @@ bool roboticslab::TechnosoftIpos::setTrajectoryModeRaw()
     if ( ! send(0x600,8,opMode) )
         return false;
     //*************************************************************
-    //-- 9. Interpolation sub mode select. Select PT interpolation position mode.
-    //-- Send the following message (SDO access to object 60C0 h , 16-bit value 0000 h ):
-    uint8_t subMode[]= {0x2E,0xC0,0x60,0x00,0x00,0x00,0x00,0x00};
+    //-- 9. Interpolation sub mode select. Select PVT interpolation position mode.
+    //-- Send the following message (SDO access to object 60C0 h , 16-bit value FFFF h ):
+    uint8_t subMode[]= {0x2E,0xC0,0x60,0x00,0xFF,0xFF,0x00,0x00};
     if ( ! send(0x600,8,subMode) )
         return false;
     //*************************************************************
-    //-- 10. Interpolated position buffer length. Set the buffer length to 12. The maximum length is 15.
-    //uint8_t buffLength[]={0x2B,0x74,0x20,0x00,0x00,0x0C,0x00,0x00};  //-- 12
-    uint8_t buffLength[]= {0x2B,0x74,0x20,0x00,0x00,0x0F,0x00,0x00}; //-- 15
+    //-- 10. Interpolated position buffer length. (...)
+    uint8_t buffLength[]= {0x2B,0x73,0x20,0x00,0x00,0x00,0x00,0x00};
+    uint16_t bufLen = PVT_BUFFER_MAX_SIZE;
+    memcpy(buffLength + 4, &bufLen, 2);
     if ( ! send(0x600,8,buffLength) )
         return false;
     //*************************************************************
