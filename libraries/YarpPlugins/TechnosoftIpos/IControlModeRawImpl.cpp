@@ -159,7 +159,7 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     return true;
 }
 
-bool roboticslab::TechnosoftIpos::setTrajectoryModeRaw()
+bool roboticslab::TechnosoftIpos::setMixedModeRaw()
 {
     CD_INFO("\n");
 
@@ -393,6 +393,8 @@ bool roboticslab::TechnosoftIpos::setControlModeRaw(const int j, const int mode)
         return setTorqueModeRaw(j);
     else if( mode == VOCAB_CM_POSITION_DIRECT )
         return setPositionDirectModeRaw();
+    else if( mode == VOCAB_CM_MIXED )
+        return setMixedModeRaw();
 
     return false;
 }

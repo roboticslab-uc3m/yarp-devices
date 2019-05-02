@@ -134,7 +134,7 @@ public:
     bool setTorqueModeRaw3();
     //-- Old yarp::dev::IPositionDirectRaw implementation
     bool setPositionDirectModeRaw();
-    bool setTrajectoryModeRaw();
+    bool setMixedModeRaw();
 
     virtual bool getControlModeRaw(int j, int *mode);
     //-- Auxiliary functions (splitted) of getControlModeRaw
