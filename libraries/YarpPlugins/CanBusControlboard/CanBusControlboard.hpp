@@ -32,8 +32,6 @@
 
 #define DEFAULT_MODE "position"
 
-#define DEFAULT_PT_MODE_MS 50  //-- Don't move more than 1 degree in 50 ms.
-
 #define DEFAULT_TIME_TO_WAIT_CUI 0
 
 #define DEFAULT_CAN_BUS "CanBusHico"

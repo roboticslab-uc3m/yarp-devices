@@ -198,7 +198,6 @@ public:
 
     // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
     virtual bool setPositionRaw(int j, double ref);
-    virtual bool setTrajectoryRaw(int j, double ref);
     virtual bool setPositionsRaw(const int n_joint, const int *joints, const double *refs);
     virtual bool setPositionsRaw(const double *refs);
 
@@ -257,6 +256,8 @@ protected:
     std::string msgToStr(const yarp::dev::CanMessage & message);
     std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
 
+    void createPvtMessage(const PvtPoint & pvtPoint, uint8_t * msg);
+
     int canId;
     yarp::dev::ICanBus *canDevicePtr;
     yarp::dev::ICanBufferFactory *iCanBufferFactory;
@@ -288,8 +289,7 @@ protected:
     yarp::os::Semaphore getEnableReady;
 
     //-- PT stuff
-    int16_t ptModeMs;  //-- [ms]
-    int ptPointCounter;
+    int pvtPointCounter;
     bool ptMovementDone;
     yarp::os::Semaphore ptBuffer;
 

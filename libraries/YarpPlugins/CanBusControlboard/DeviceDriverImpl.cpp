@@ -7,9 +7,7 @@
 bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 {
     std::string mode = config.check("mode",yarp::os::Value("position"),"control mode on startup (position/velocity)").asString();
-    int16_t ptModeMs = config.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode (milliseconds)").asInt();
     int timeCuiWait  = config.check("waitEncoder", yarp::os::Value(DEFAULT_TIME_TO_WAIT_CUI), "CUI timeout (seconds)").asInt();
-
     std::string canBusType = config.check("canBusType", yarp::os::Value(DEFAULT_CAN_BUS), "CAN bus device name").asString();
 
     yarp::os::Bottle ids = config.findGroup("ids", "CAN bus IDs").tail();  //-- e.g. 15
@@ -86,7 +84,6 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         options.put("refAcceleration", refAccelerations.get(i));
         options.put("refSpeed", refSpeeds.get(i));
         options.put("encoderPulses", encoderPulsess.get(i));
-        options.put("ptModeMs", ptModeMs);
         //std::stringstream ss; // Remember to #include <sstream>
         //ss << types.get(i).asString() << "_" << ids.get(i).asInt();
         //options.setMonitor(config.getMonitor(),ss.str().c_str());

@@ -203,12 +203,6 @@ protected:
 
     int fd;  // File descriptor for serial communications
 
-
-    /** pt-related **/
-    int ptPointCounter;
-    yarp::os::Semaphore ptBuffer;
-    bool ptMovementDone;
-
     bool targetReached;
 
     int canId;
@@ -226,8 +220,6 @@ protected:
     /** A helper function to display CAN messages. */
     std::string msgToStr(yarp::dev::CanMessage * message);
     std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
-
-    int16_t ptModeMs;  //-- [ms]
 
     //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
     yarp::dev::InteractionModeEnum interactionMode;

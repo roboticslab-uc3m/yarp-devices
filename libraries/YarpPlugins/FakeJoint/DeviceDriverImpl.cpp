@@ -8,9 +8,6 @@ bool roboticslab::FakeJoint::open(yarp::os::Searchable& config)
 
     this->canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt();
     this->tr = config.check("tr",yarp::os::Value(0),"reduction").asInt();
-    this->ptModeMs  = config.check("ptModeMs",yarp::os::Value(0),"ptMode (milliseconds)").asInt();
-    this->ptPointCounter = 0;
-    this->ptMovementDone = false;
     this->targetReached = false;
     this->max = config.check("max",yarp::os::Value(0),"max (meters or degrees)").asDouble();
     this->min = config.check("min",yarp::os::Value(0),"min (meters or degrees)").asDouble();

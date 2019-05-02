@@ -65,3 +65,36 @@ bool roboticslab::TechnosoftIpos::send(uint32_t cob, uint16_t len, uint8_t * msg
 }
 
 // -----------------------------------------------------------------------------
+
+void roboticslab::TechnosoftIpos::createPvtMessage(const PvtPoint & pvtPoint, uint8_t * msg)
+{
+    //*************************************************************
+    //-- 13. Send the 1 st PT point.
+    //-- Position = 88 IU (0x000058) 1IU = 1 encoder pulse
+    //-- Velocity = 3.33 IU (0x000354) 1IU = 1 encoder pulse/ 1 control loop
+    //-- Time = 55 IU (0x37) 1IU = 1 control loop = 1ms by default
+    //-- IC = 0 (0x00) IC=Integrity Counter
+    //-- Send the following message:
+    //uint8_t ptpoint1[]={0x58,0x00,0x54,0x00,0x03,0x00,0x37,0x00};
+
+    double factor = tr * (encoderPulses / 360.0);
+
+    int32_t position = pvtPoint.p * factor;  // Appply tr & convert units to encoder increments
+    int16_t positionLSB = (position << 16) >> 16;
+    int8_t positionMSB = (position << 8) >> 24;
+    memcpy(msg, &positionLSB, 2);
+    memcpy(msg + 3, &positionMSB, 1);
+
+    double velocity = pvtPoint.v * factor * 0.001;
+    int16_t velocityInt = (int16_t)velocity;
+    int8_t velocityFrac = (velocity - velocityInt) * 256;
+    memcpy(msg + 2, &velocityFrac, 1);
+    memcpy(msg + 4, &velocityInt, 2);
+
+    int16_t time = ((uint16_t)pvtPoint.t << 7) >> 7;
+    uint8_t ic = (++pvtPointCounter) << 1;
+    uint16_t timeAndIc = time + ic;
+    memcpy(msg + 6, &timeAndIc, 2);
+}
+
+// -----------------------------------------------------------------------------

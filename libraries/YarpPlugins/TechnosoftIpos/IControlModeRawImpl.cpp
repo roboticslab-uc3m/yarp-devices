@@ -163,7 +163,8 @@ bool roboticslab::TechnosoftIpos::setTrajectoryModeRaw()
 {
     CD_INFO("\n");
 
-    ptPointCounter = 0;
+    pvtPointCounter = 0;
+    pvtQueue.clear();
 
     //-- ptprepare: pg. 168 (184/263)
     //*************************************************************
