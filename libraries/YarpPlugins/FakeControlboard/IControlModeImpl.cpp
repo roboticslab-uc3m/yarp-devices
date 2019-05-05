@@ -8,7 +8,7 @@
 
 bool roboticslab::FakeControlboard::getControlMode(int j, int *mode)
 {
-    // CD_DEBUG("\n");  //-- Way too verbose.
+    //CD_DEBUG("\n"); //-- Way too verbose.
     if (controlMode == POSITION_MODE)
     {
         *mode = VOCAB_CM_POSITION;
@@ -34,7 +34,7 @@ bool roboticslab::FakeControlboard::getControlMode(int j, int *mode)
 
 bool roboticslab::FakeControlboard::getControlModes(int *modes)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n"); //-- Way too verbose.
     bool ok = true;
 
     for (unsigned int i = 0; i < axes; i++)

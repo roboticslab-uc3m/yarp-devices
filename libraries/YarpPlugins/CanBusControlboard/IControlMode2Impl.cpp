@@ -18,7 +18,7 @@ bool roboticslab::CanBusControlboard::getControlMode(int j, int *mode)
 
 bool roboticslab::CanBusControlboard::getControlModes(int *modes)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n");  //-- Too verbose in controlboardwrapper2 stream
 
     bool ok = true;
     for(unsigned int i=0; i < nodes.size(); i++)
@@ -58,7 +58,7 @@ bool roboticslab::CanBusControlboard::setControlModes(const int n_joint, const i
 
     bool ok = true;
     for(int j=0; j<n_joint; j++)
-    {                
+    {
         ok &= this->setControlMode(joints[j],modes[j]);
     }
     return ok;
