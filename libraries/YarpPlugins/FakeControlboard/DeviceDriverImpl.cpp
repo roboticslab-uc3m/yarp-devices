@@ -12,8 +12,6 @@
 bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
 {
     CD_DEBUG("config: %s\n", config.toString().c_str());
-    yarp::os::SearchMonitor * monitor = config.getMonitor();
-    CD_WARNING("monitor: %d\n", monitor);
 
     axes = config.check("axes", yarp::os::Value(DEFAULT_AXES), "number of axes to control").asInt();
     jmcMs = config.check("jmcMs", yarp::os::Value(DEFAULT_JMC_MS), "period of JMC rate thread (milliseconds)").asInt();
@@ -31,10 +29,10 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
     switch (modePosVelInt)
     {
     case 0:
-        modePosVel = POSITION_MODE;
+        controlMode = POSITION_MODE;
         break;
     case 1:
-        modePosVel = VELOCITY_MODE;
+        controlMode = VELOCITY_MODE;
         break;
     default:
         CD_ERROR("Unrecognized mode identifier: %d (0:pos, 1:vel).\n", modePosVelInt);
@@ -178,7 +176,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
 
     for (unsigned int i = 0; i < axes; i++)
     {
-        jointStatus[i] = NOT_MOVING;
+        jointStatus[i] = NOT_CONTROLLING;
 
         refSpeed[i]      = refSpeeds      ? refSpeeds->get(i).asDouble()      : genRefSpeed;
         minLimit[i]      = minLimits      ? minLimits->get(i).asDouble()      : genMinLimit;

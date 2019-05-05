@@ -8,14 +8,12 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IControlLimits2.h>
+#include <yarp/dev/CanBusInterface.h>
 
 #include <ColorDebug.h>
 
 #include "ICanBusSharer.h"
 #include "ITechnosoftIpos.h"
-#include "ICanBusHico.h"
-
-#include "hico_api.h"
 
 #define CAN_ID 124
 
@@ -35,17 +33,19 @@ public:
     {
         // -- code here will execute just before the test ensues
 
-        yarp::os::Property hicoCanConf ("(device CanBusHico) (canDevice /dev/can1) (canBitrate 8)"); // -- truco para agregar directamente un conjunto de propiedades sin tener que llamar a la función "put"
+        yarp::os::Property canDeviceConf("(device CanBusHico) (canDevice /dev/can1) (canBitrate 1000000)"); // -- truco para agregar directamente un conjunto de propiedades sin tener que llamar a la función "put"
         bool ok = true;
-        ok &= canBusDevice.open(hicoCanConf);   // -- we introduce the configuration properties defined in property object (p) and them, we stard the device (HicoCAN)
+        ok &= canBusDevice.open(canDeviceConf);   // -- we introduce the configuration properties defined in property object (p) and them, we stard the device (HicoCAN)
         ok &= canBusDevice.view(iCanBus);
+        ok &= canBusDevice.view(iCanBufferFactory);
+
         if(ok)
         {
-            CD_SUCCESS("Configuration of HicoCAN sucessfully :)\n");
+            CD_SUCCESS("Configuration of CAN device sucessfully :)\n");
         }
         else
         {
-            CD_ERROR("Bad Configuration of HicoCAN :(\n");
+            CD_ERROR("Bad Configuration of CAN device :(\n");
             std::exit(1);
         }
 
@@ -75,14 +75,18 @@ public:
             std::exit(1);
         }
 
-        //-- Pass CAN bus (HicoCAN) pointer to CAN node (TechnosoftIpos).
+        //-- Pass CAN bus pointer to CAN node (TechnosoftIpos).
         iCanBusSharer->setCanBusPtr( iCanBus );
+
+        canInputBuffer = iCanBufferFactory->createBuffer(1);
     }
 
     virtual void TearDown()
     {
         // -- code here will be called just after the test completes
         // -- ok to through exceptions from here if need be
+        iCanBufferFactory->destroyBuffer(canInputBuffer);
+
         canNodeDevice.close();
         canBusDevice.close();
     }
@@ -91,7 +95,9 @@ protected:
 
     /** CAN BUS device. */
     yarp::dev::PolyDriver canBusDevice;  //
-    ICanBusHico* iCanBus;
+    yarp::dev::ICanBus* iCanBus;
+    yarp::dev::ICanBufferFactory* iCanBufferFactory;
+    yarp::dev::CanBuffer canInputBuffer;
 
     /** CAN node object. */
     yarp::dev::PolyDriver canNodeDevice;
@@ -105,21 +111,19 @@ protected:
     ICanBusSharer* iCanBusSharer; // -- ??
     ITechnosoftIpos* technosoftIpos;
 
-    struct can_msg buffer;
-
     /** Function definitions **/
-    std::string msgToStr(can_msg* message)
+    std::string msgToStr(const yarp::dev::CanMessage & message)
     {
         std::stringstream tmp;
-        for(int i=0; i < message->dlc-1; i++)
+        for(int i=0; i < message.getLen()-1; i++)
         {
-            tmp << std::hex << static_cast<int>(message->data[i]) << " ";
+            tmp << std::hex << static_cast<int>(message.getData()[i]) << " ";
         }
-        tmp << std::hex << static_cast<int>(message->data[message->dlc-1]);
+        tmp << std::hex << static_cast<int>(message.getData()[message.getLen()-1]);
         tmp << ". canId(";
-        tmp << std::dec << (message->id & 0x7F);
+        tmp << std::dec << (message.getId() & 0x7F);
         tmp << ") via(";
-        tmp << std::hex << (message->id & 0xFF80);
+        tmp << std::hex << (message.getId() & 0xFF80);
         tmp << ").";
         return tmp.str();
     }
@@ -195,21 +199,24 @@ TEST_F( TechnosoftIposTest, TechnosoftIposSetRefAccelerationRaw )
     bool ok = iPositionControlRaw->setRefAccelerationRaw( 0, 0.575 );  //-- ok corresponds to send (not read)
     ASSERT_TRUE( ok );
 
+    yarp::dev::CanMessage &msg = canInputBuffer[0];
+
     while ( canId != CAN_ID ) // -- it will check the ID
     {
-        ret = iCanBus->read_timeout(&buffer,1); // -- return value of message with timeout of 1 [ms]
-        if( ret <= 0 ) continue;    // -- is waiting for recive message
-        canId = buffer.id  & 0x7F;  // -- if it recive the message, it will get ID
+        unsigned int read;
+        bool ok = iCanBus->canRead(canInputBuffer, 1, &read, true);
+        if( !ok || read == 0 ) continue;    // -- is waiting for recive message
+        canId = msg.getId()  & 0x7F;  // -- if it recive the message, it will get ID
     }
-    CD_DEBUG("Read: %s\n", msgToStr(&buffer).c_str());
+    CD_DEBUG("Read: %s\n", msgToStr(msg).c_str());
 
     //-- Print interpretation of message
-    iCanBusSharer->interpretMessage(&buffer); // without ASSERT (we don't need assert interpretMessage function)
+    iCanBusSharer->interpretMessage(msg); // without ASSERT (we don't need assert interpretMessage function)
 
     // Manual 8.2.3. 6083h: Profile acceleration (SDO ack \"posmode_acc\" from driver)
-    ASSERT_EQ(buffer.data[0] , 0x60);  //-- ??
-    ASSERT_EQ(buffer.data[1] , 0x83);  //-- 83
-    ASSERT_EQ(buffer.data[2] , 0x60);  //-- 60
+    ASSERT_EQ(msg.getData()[0] , 0x60);  //-- ??
+    ASSERT_EQ(msg.getData()[1] , 0x83);  //-- 83
+    ASSERT_EQ(msg.getData()[2] , 0x60);  //-- 60
 
 
 }

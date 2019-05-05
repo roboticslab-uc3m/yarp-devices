@@ -39,6 +39,8 @@ bool roboticslab::FakeControlboard::setControlMode(const int j, const int mode)
         return setVelocityMode(j);
     case VOCAB_CM_TORQUE:
         return setTorqueMode(j);
+    case VOCAB_CM_POSITION_DIRECT:
+        return setPositionDirectMode(j);
     default:
         return false;
     }

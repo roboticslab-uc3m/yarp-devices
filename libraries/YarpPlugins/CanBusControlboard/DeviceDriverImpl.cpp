@@ -37,10 +37,20 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         CD_ERROR("canBusDevice instantiation not worked.\n");
         return false;
     }
-    canBusDevice.view(iCanBus);
 
-    //-- We test if we recive messages of the Cui (in the start and in the end)
-    struct can_msg buffer;
+    if( !canBusDevice.view(iCanBus) )
+    {
+        CD_ERROR("Cannot view ICanBus interface in device: %s.\n", canBusType.c_str());
+        return false;
+    }
+
+    if( !canBusDevice.view(iCanBufferFactory) )
+    {
+        CD_ERROR("Cannot view ICanBufferFactory interface in device: %s.\n", canBusType.c_str());
+        return false;
+    }
+
+    canInputBuffer = iCanBufferFactory->createBuffer(1);
 
     //-- Start the reading thread (required for checkMotionDoneRaw).
     this->Thread::start();
@@ -65,21 +75,24 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
         //-- Create CAN node objects with a pointer to the CAN device, its id and tr (these are locally stored parameters).
         yarp::os::Property options;
-        options.put("device",types.get(i).asString());  //-- "TechnosoftIpos", "LacqueyFetch", "CuiAbsolute"
-        options.put("canId",ids.get(i).asInt());
-        options.put("tr",trs.get(i).asDouble());
-        options.put("min",mins.get(i).asDouble());
-        options.put("max",maxs.get(i).asDouble());
-        options.put("minVel",minVels.get(i).asDouble());
-        options.put("maxVel",maxVels.get(i).asDouble());
-        options.put("k",ks.get(i).asDouble());
-        options.put("refAcceleration",refAccelerations.get(i).asDouble());
-        options.put("refSpeed",refSpeeds.get(i).asDouble());
-        options.put("encoderPulses",encoderPulsess.get(i).asDouble());
-        options.put("ptModeMs",ptModeMs);
+        options.put("device", types.get(i));  //-- "TechnosoftIpos", "LacqueyFetch", "CuiAbsolute"
+        options.put("canId", ids.get(i));
+        options.put("tr", trs.get(i));
+        options.put("min", mins.get(i));
+        options.put("max", maxs.get(i));
+        options.put("minVel", minVels.get(i));
+        options.put("maxVel", maxVels.get(i));
+        options.put("k", ks.get(i));
+        options.put("refAcceleration", refAccelerations.get(i));
+        options.put("refSpeed", refSpeeds.get(i));
+        options.put("encoderPulses", encoderPulsess.get(i));
+        options.put("ptModeMs", ptModeMs);
         //std::stringstream ss; // Remember to #include <sstream>
         //ss << types.get(i).asString() << "_" << ids.get(i).asInt();
         //options.setMonitor(config.getMonitor(),ss.str().c_str());
+
+        yarp::os::Value v(&iCanBufferFactory, sizeof(iCanBufferFactory));
+        options.put("canBufferFactory", v);
 
         // -- Configuramos todos los dispositivos (TechnosoftIpos, LacqueyFetch, CuiAbsolute)
         yarp::dev::PolyDriver* device = new yarp::dev::PolyDriver(options);
@@ -242,6 +255,13 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             }
         }
 
+        //-- Enable acceptance filters for each node ID
+        if( !iCanBus->canIdAdd(ids.get(i).asInt()) )
+        {
+            CD_ERROR("Cannot register acceptance filter for node ID: %d.\n", ids.get(i).asInt());
+            return false;
+        }
+
     } // -- for(int i=0; i<nodes.size(); i++)
 
     //-- Set all motor drivers to mode.
@@ -350,13 +370,12 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
 bool roboticslab::CanBusControlboard::close()
 {
-    int ret = 0;
-    double timeOut = 1; // timeout (1 secod)
-    struct can_msg buffer;
-
+    const double timeOut = 1; // timeout (1 secod)
 
     //-- Stop the read thread.
     this->Thread::stop();
+
+    const yarp::dev::CanMessage &msg = canInputBuffer[0];
 
     //-- Disable and shutdown the physical drivers (and Cui Encoders).
     bool ok = true;
@@ -377,7 +396,6 @@ bool roboticslab::CanBusControlboard::close()
         // Absolute encoders:
         if(value.asString() == "CuiAbsolute")
         {
-
             int canId = 0;
             int CAN_ID = atoi(nodes[i]->getValue("canId").toString().c_str());
             bool timePassed = false;
@@ -405,13 +423,15 @@ bool roboticslab::CanBusControlboard::close()
                     timePassed = true;
                 }
 
-                ret = iCanBus->read_timeout(&buffer,1);         // -- return value of message with timeout of 1 [ms]
+                unsigned int read;
+                bool okRead = iCanBus->canRead(canInputBuffer, 1, &read, true);
 
                 // This line is needed to clear the buffer (old messages that has been received)
                 if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
 
-                if( ret <= 0 ) continue;                        // -- is waiting for recive message
-                canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
+                if( !okRead || read == 0 ) continue;              // -- is waiting for recive message
+
+                canId = msg.getId()  & 0x7F;                      // -- if it recive the message, it will get ID
                 //CD_DEBUG("Read a message from CuiAbsolute %d\n", canId);
 
                 //printf("timeOut: %d\n", int(yarp::os::Time::now()-timeStamp));
@@ -424,17 +444,26 @@ bool roboticslab::CanBusControlboard::close()
         }
     }
 
+    iCanBufferFactory->destroyBuffer(canInputBuffer);
+
     //-- Delete the driver objects.
     for(int i=0; i<nodes.size(); i++)
     {
+        nodes[i]->close();
         delete nodes[i];
         nodes[i] = 0;
     }
 
+    //-- Clear CAN acceptance filters ('0' = all IDs that were previously set by canIdAdd).
+    if (!iCanBus->canIdDelete(0))
+    {
+        CD_WARNING("CAN filters may be preserved on the next run.\n");
+    }
+
     canBusDevice.close();
+
     CD_INFO("End.\n");
     return ok;
 }
 
 // -----------------------------------------------------------------------------
-

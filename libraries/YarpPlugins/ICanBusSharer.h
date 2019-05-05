@@ -4,7 +4,9 @@
 #define __I_CAN_BUS_SHARER__
 
 #include <yarp/dev/IEncodersTimed.h>
-#include "ICanBusHico.h"
+#include <yarp/dev/CanBusInterface.h>
+
+#define DELAY 0.001  // [s] Required when using same driver.
 
 namespace roboticslab
 {
@@ -22,7 +24,7 @@ public:
      */
     virtual ~ICanBusSharer() {}
 
-    virtual bool setCanBusPtr(ICanBusHico *canDevicePtr) = 0;
+    virtual bool setCanBusPtr(yarp::dev::ICanBus * canDevicePtr) = 0;
 
     virtual bool setIEncodersTimedRawExternal(yarp::dev::IEncodersTimedRaw * iEncodersTimedRaw) = 0;
 
@@ -45,7 +47,7 @@ public:
      * Interpret a can bus message.
      * @return true/false.
      */
-    virtual bool interpretMessage( can_msg * message) = 0;
+    virtual bool interpretMessage(const yarp::dev::CanMessage & message) = 0;
 
 };
 

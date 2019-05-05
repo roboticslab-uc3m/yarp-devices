@@ -14,7 +14,7 @@ CopyPolicy: Released under the terms of the GNU GPL v2.0.
 import sys
 
 import begin
-from PySide import QtGui
+from PySide2 import QtWidgets
 
 from .GrabberControls2GuiBackend import GrabberControls2GuiBackend
 from .GrabberControls2GuiGUI import GrabberControls2GuiGUI
@@ -24,7 +24,7 @@ from .GrabberControls2GuiGUI import GrabberControls2GuiGUI
 @begin.logging
 def main(remote_port: 'Remote port running the AravisGigE grabber'='/grabber'):
     # Create Qt app
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
 
     # Create the widget and show it
     controller = GrabberControls2GuiBackend(remote_port)

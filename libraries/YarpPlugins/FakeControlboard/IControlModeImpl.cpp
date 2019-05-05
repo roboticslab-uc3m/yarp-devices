@@ -8,14 +8,18 @@
 
 bool roboticslab::FakeControlboard::getControlMode(int j, int *mode)
 {
-    // CD_DEBUG("\n");  //-- Way too verbose.
-    if (modePosVel == POSITION_MODE)
+    //CD_DEBUG("\n"); //-- Way too verbose.
+    if (controlMode == POSITION_MODE)
     {
         *mode = VOCAB_CM_POSITION;
     }
-    else if (modePosVel == VELOCITY_MODE)
+    else if (controlMode == VELOCITY_MODE)
     {
         *mode = VOCAB_CM_VELOCITY;
+    }
+    else if (controlMode == POSITION_DIRECT_MODE)
+    {
+        *mode = VOCAB_CM_POSITION_DIRECT;
     }
     else
     {
@@ -30,7 +34,7 @@ bool roboticslab::FakeControlboard::getControlMode(int j, int *mode)
 
 bool roboticslab::FakeControlboard::getControlModes(int *modes)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n"); //-- Way too verbose.
     bool ok = true;
 
     for (unsigned int i = 0; i < axes; i++)

@@ -1,5 +1,5 @@
 /*EM_LICENSE*/
-/*
+/* 
  * $Id: hico_api.h 1207 2009-05-11 13:36:51Z ny $
  * Author: Martin Nylund
  */
@@ -10,39 +10,47 @@
 
 /* hicocan_mpci 'magic' number for the ioctl calls */
 #ifdef __QNX__
-#define IOC_MAGIC _DCMD_MISC
-#include <ioctl.h>
-#include <devctl.h>
-#include <stdint.h>
+ #define IOC_MAGIC _DCMD_MISC
+ #include <ioctl.h>
+ #include <devctl.h>
+ #include <stdint.h>
 #else /* Linux */
-#define IOC_MAGIC 'E'
-#ifndef __KERNEL__
-#include <sys/ioctl.h>
-#include <stdint.h>
-#endif
+ #define IOC_MAGIC 'E'
+ #ifndef __KERNEL__
+  #include <sys/ioctl.h>
+  #include <stdint.h>
+ #endif
 #endif
 
 /* Macro for structure packing */
 #define PACKED __attribute__((packed))
 
 
+/* Endianness-related macros */
+/* http://esr.ibiblio.org/?p=5095 */
+#ifdef BSD
+ #include <sys/endian.h>
+#else
+ #include <endian.h>
+#endif
+
 /* Uncomment one of these if the test below fails for some reason */
 /* #define HICO_BE */
 /* #define HICO_LE */
 #if !defined(HICO_LE) && !defined(HICO_BE) && !defined(__KERNEL__)
-#ifdef __BYTE_ORDER
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-#define HICO_LE
-#elif __BYTE_ORDER == __BIG_ENDIAN
-#define HICO_BE
-#endif
-#else
-#error -- could not detect endianess!
-#endif
+ #ifdef __BYTE_ORDER
+  #if __BYTE_ORDER == __LITTLE_ENDIAN
+   #define HICO_LE
+  #elif __BYTE_ORDER == __BIG_ENDIAN
+   #define HICO_BE
+  #endif
+ #else
+  #error -- could not detect endianess!
+ #endif
 #endif
 
 #if defined(HICO_LE) && defined(HICO_BE)
-#error -- You cannot have both!
+ #error -- You cannot have both!
 #endif
 
 
@@ -88,7 +96,7 @@
 /* Retrieve the nodes operation mode */
 
 /* node is in baudscan mode */
-#define CM_BAUDSCAN 1
+#define CM_BAUDSCAN 1  
 
 /* node listens to the CAN bus traffic but don't affect it in any way */
 #define CM_PASSIVE  2
@@ -107,15 +115,15 @@
 /* Set the bitrate (aka. baudrate) for the given CAN nodes. Parameter is one
  * of the BITRATE_* macros below */
 
-#define BITRATE_10k	 0
-#define BITRATE_20k	 1
-#define BITRATE_50k	 2
-#define BITRATE_100k	 3
-#define BITRATE_125k	 4
-#define BITRATE_250k	 5
-#define BITRATE_500k	 6
-#define BITRATE_800k	 7
-#define BITRATE_1000k	 8
+#define BITRATE_10k	 0 
+#define BITRATE_20k	 1 
+#define BITRATE_50k	 2 
+#define BITRATE_100k	 3 
+#define BITRATE_125k	 4 
+#define BITRATE_250k	 5 
+#define BITRATE_500k	 6 
+#define BITRATE_800k	 7 
+#define BITRATE_1000k	 8 
 
 /**************************************************************************/
 #define IOC_SET_SJW_INCREMENT                  _IOW (IOC_MAGIC, 31, uint32_t)
@@ -244,7 +252,7 @@
 /* PCI-104 boards are identified with a jumpered value, which define their
  * location in the PCI-104 stack. This function returns a value from 0 to 3.
  * NOTE: this function doesn't have any meaning but for the PCI-104 boards */
-
+    
 /**************************************************************************/
 #define IOC_GET_IOPIN_STATUS	               _IOR (IOC_MAGIC, 80, uint32_t)
 /**************************************************************************/
@@ -256,8 +264,7 @@
 /**************************************************************************/
 #define IOC_GET_ERR_STAT	       _IOR (IOC_MAGIC, 81, struct err_stat)
 /**************************************************************************/
-struct err_stat
-{
+struct err_stat{
     uint32_t values[0x3f];
 };
 /**************************************************************************/
@@ -299,47 +306,43 @@ struct err_stat
 #define MSG_IOPIN(msg)(((msg)->fi&(1<<7))>>7)
 #define MSG_NODE(msg) (((msg)->fi&(3<<8))>>8)
 
-struct can_msg
-{
-    union
-    {
-        uint16_t fi;
+struct can_msg {
+    union{
+	uint16_t fi;
 #ifdef HICO_LE
-        struct
-        {
-            /* Data length 0 to 8 */
-            uint16_t dlc:4;
+	struct {
+	    /* Data length 0 to 8 */
+	    uint16_t dlc:4;  
 
-            /* remote transmission request flag */
-            uint16_t rtr:1;
+	    /* remote transmission request flag */
+	    uint16_t rtr:1;
 
-            /* Frame format flag 0=normal, 1=extended */
-            uint16_t ff:1;
+	    /* Frame format flag 0=normal, 1=extended */ 
+	    uint16_t ff:1;
 
-            /* Data overrun status flag */
-            uint16_t dos:1;
+	    /* Data overrun status flag */
+	    uint16_t dos:1;
 
-            /* io pin status or can error signal on fault tolerant can */
-            uint16_t iopin:1;
+	    /* io pin status or can error signal on fault tolerant can */
+	    uint16_t iopin:1;
 
-            /* CAN node number which received the message */
-            uint16_t node:2;
+	    /* CAN node number which received the message */
+	    uint16_t node:2;
 
-            uint16_t reserved:6;
-        } PACKED;
+	    uint16_t reserved:6;
+	}PACKED;
 #elif defined(HICO_BE)
-        struct
-        {
-            uint16_t reserved:6;
-            uint16_t node:2;
-            uint16_t iopin:1;
-            uint16_t dos:1;
-            uint16_t ff:1;
-            uint16_t rtr:1;
-            uint16_t dlc:4;
-        } PACKED;
+	struct {
+	    uint16_t reserved:6;
+	    uint16_t node:2;
+	    uint16_t iopin:1;
+	    uint16_t dos:1;
+	    uint16_t ff:1;
+	    uint16_t rtr:1;
+	    uint16_t dlc:4;
+	}PACKED;
 #endif
-    } PACKED;
+    }PACKED;
 
     /* Timestamp in microseconds */
     uint32_t ts;
@@ -349,27 +352,24 @@ struct can_msg
 
     /* CAN message data */
     uint8_t data[8];
-} PACKED;
+}PACKED;
 
 #define FF_NORMAL 0
 #define FF_EXTENDED 1
 
-struct can_filter
-{
+struct can_filter{
     int type;
-    union
-    {
-        uint32_t mask;
-        uint32_t upper;
+    union{
+	uint32_t mask;
+	uint32_t upper;
     };
-    union
-    {
-        uint32_t code;
-        uint32_t lower;
+    union{
+	uint32_t code;
+	uint32_t lower;
     };
 };
 #define FTYPE_AMASK 1
 #define FTYPE_RANGE 2
 
-
+ 
 #endif

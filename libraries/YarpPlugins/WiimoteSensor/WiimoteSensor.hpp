@@ -7,6 +7,8 @@
 
 #include <yarp/os/Thread.h>
 #include <yarp/os/Mutex.h>
+
+#include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
 
 #define DEFAULT_DEVICE 1

@@ -1,4 +1,4 @@
-#include "gtest/gtest.h"
+﻿#include "gtest/gtest.h"
 
 #include <cstdlib>
 #include <ios>
@@ -12,13 +12,14 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IControlLimits2.h>
+#include <yarp/dev/CanBusInterface.h>
 
 #include <ColorDebug.h>
 
 #include "ICanBusSharer.h"
 #include "ICuiAbsolute.h"
 
-#define CAN_ID 103 // ID of Cui Absolute encoder that you want to check...
+#define CAN_ID 126 // ID of Cui Absolute encoder that you want to check...
 
 namespace roboticslab
 {
@@ -36,18 +37,19 @@ public:
     {
         // -- code here will execute just before the test ensues
 
-        yarp::os::Property hicoCanConf ("(device CanBusHico) (canDevice /dev/can0) (canBitrate 8)");
+        yarp::os::Property canDeviceConf("(device CanBusPeak) (canDevice /dev/pcan3) (canBitrate 1000000)");
         bool ok = true;
-        ok &= canBusDevice.open(hicoCanConf);   // -- we introduce the configuration properties defined in property object (p) and them, we stard the device (HicoCAN)
+        ok &= canBusDevice.open(canDeviceConf);   // -- we introduce the configuration properties defined in property object (p) and them, we stard the device (CanBusPeak)
         ok &= canBusDevice.view(iCanBus);
+        ok &= canBusDevice.view(iCanBufferFactory);
 
         if(ok)
         {
-            CD_SUCCESS("Configuration of HicoCAN sucessfully :)\n");
+            CD_SUCCESS("Configuration of CAN device sucessfully :)\n");
         }
         else
         {
-            CD_ERROR("Bad Configuration of HicoCAN :(\n");
+            CD_ERROR("Bad Configuration of CAN device :(\n");
             std::exit(1);
         }
 
@@ -55,9 +57,11 @@ public:
         std::stringstream strconf;
         strconf << "(device CuiAbsolute) (canId " << CAN_ID << ") (min 0) (max 0) (tr 1) (refAcceleration 0.0) (refSpeed 0.0)";
         CD_DEBUG("%s\n",strconf.str().c_str());
-        yarp::os::Property CuiAbsoluteConf (strconf.str().c_str());
 
-        ok &= canNodeDevice.open( CuiAbsoluteConf );   // -- we introduce the configuration properties defined ........
+        yarp::os::Property cuiAbsoluteConf (strconf.str().c_str());
+        yarp::os::Value v(&iCanBufferFactory, sizeof(iCanBufferFactory));
+        cuiAbsoluteConf.put("canBufferFactory", v);
+        ok &= canNodeDevice.open( cuiAbsoluteConf );   // -- we introduce the configuration properties defined ........
         if ( ! canNodeDevice.isValid() )
         {
             CD_ERROR("Bad device of CuiAbsolute :(\n");
@@ -83,14 +87,18 @@ public:
             std::exit(1);
         }
 
-        //-- Pass CAN bus (HicoCAN) pointer to CAN node.
+        //-- Pass CAN bus pointer to CAN node.
         iCanBusSharer->setCanBusPtr( iCanBus );
+
+        canInputBuffer = iCanBufferFactory->createBuffer(1);
     }
 
     virtual void TearDown()
     {
         // -- code here will be called just after the test completes
         // -- ok to through exceptions from here if need be
+        iCanBufferFactory->destroyBuffer(canInputBuffer);
+
         canNodeDevice.close();
         canBusDevice.close();
     }
@@ -99,7 +107,9 @@ protected:
 
     /** CAN BUS device. */
     yarp::dev::PolyDriver canBusDevice;
-    ICanBusHico* iCanBus;
+    yarp::dev::ICanBus* iCanBus;
+    yarp::dev::ICanBufferFactory* iCanBufferFactory;
+    yarp::dev::CanBuffer canInputBuffer;
 
     /** CAN node object. */
     yarp::dev::PolyDriver canNodeDevice;
@@ -113,21 +123,19 @@ protected:
     ICanBusSharer* iCanBusSharer;
     ICuiAbsolute* cuiAbsolute;
 
-    struct can_msg buffer;
-
     /** Function definitions **/
-    std::string msgToStr(can_msg* message)
+    std::string msgToStr(const yarp::dev::CanMessage& message)
     {
         std::stringstream tmp;
-        for(int i=0; i < message->dlc-1; i++)
+        for(int i=0; i < message.getLen()-1; i++)
         {
-            tmp << std::hex << static_cast<int>(message->data[i]) << " ";
+            tmp << std::hex << static_cast<int>(message.getData()[i]) << " ";
         }
-        tmp << std::hex << static_cast<int>(message->data[message->dlc-1]);
+        tmp << std::hex << static_cast<int>(message.getData()[message.getLen()-1]);
         tmp << ". canId(";
-        tmp << std::dec << (message->id & 0x7F);
+        tmp << std::dec << (message.getId() & 0x7F);
         tmp << ") via(";
-        tmp << std::hex << (message->id & 0xFF80);
+        tmp << std::hex << (message.getId() & 0xFF80);
         tmp << ").";
         return tmp.str();
     }
@@ -138,7 +146,6 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInPullMode )
 {
 
     int canId = 0;
-    int ret = 0;
     double timeOut = 2;
     double timeStamp = 0.0;
     bool timePassed = false;
@@ -146,7 +153,9 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInPullMode )
     std::map< int, int > idxFromCanId;
 
     bool startSending = cuiAbsolute->startPullPublishing();
-    timeStamp = yarp::os::Time::now();    
+    timeStamp = yarp::os::Time::now();
+
+    yarp::dev::CanMessage &msg = canInputBuffer[0];
 
     //-- Blocking read until we get a message from the expected canId
     while ( (canId != CAN_ID) && !timePassed )          // -- it will check the ID (poner condición nAn)
@@ -159,23 +168,24 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInPullMode )
                 //continue;
             }
 
-            ret = iCanBus->read_timeout(&buffer, 0);         // -- return value of message with timeout of 0 [ms]
+            unsigned int read;
+            bool ok = iCanBus->canRead(canInputBuffer, 1, &read, true);
 
             // This line is needed to clear the buffer (old messages that has been received)
             // if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
 
-            if( ret <= 0 ) continue;                        // -- is waiting for recive message
-            canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
+            if( !ok || read == 0 ) continue;                 // -- is waiting for recive message
+            canId = msg.getId() & 0x7F;                      // -- if it recive the message, it will get ID
 
 
             if (canId == CAN_ID) {
                  // -- Reading Cui Absolute Encoder Value
-                iCanBusSharer->interpretMessage(&buffer); // necessary for read CuiAbsolute
+                iCanBusSharer->interpretMessage(msg); // necessary for read CuiAbsolute
                 double value;
                 while( ! iEncodersTimedRaw->getEncoderRaw(0,&value) ){
                     CD_ERROR("Wrong value of Cui \n");
                 }
-                CD_DEBUG("Reading in pull mode from CuiAbsolute %d (Value: %f)\n", canId, value);                
+                CD_DEBUG("Reading in pull mode from CuiAbsolute %d (Value: %f)\n", canId, value);
             }
     }
 
@@ -189,12 +199,13 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInContinuousMode )
 {
     bool startSending = cuiAbsolute->startContinuousPublishing(0);
 
+    yarp::dev::CanMessage &msg = canInputBuffer[0];
+
     // -- In continuous mode, we are goint to do three test to ensure that we are receiving multiple messages
     for(int i=1; i<4 ; i++)
     {
 
         int canId = 0;
-        int ret = 0;
         double timeOut = 5; // -- 2 seconds
         double timeStamp = 0.0;
         double cleaningTime = 0.5; // time to empty the buffer
@@ -213,17 +224,18 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInContinuousMode )
                 timePassed = true;
             }
 
-            ret = iCanBus->read_timeout(&buffer,0);         // -- return value of message with timeout of 1 [ms]
+            unsigned int read;
+            bool ok = iCanBus->canRead(canInputBuffer, 1, &read, true);
 
             // This line is needed to clear the buffer (old messages that has been received)
             if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
 
-            if( ret <= 0 ) continue;                        // -- is waiting for recive message
-            canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
+            if( !ok || read == 0 ) continue;                 // -- is waiting for recive message
+            canId = msg.getId() & 0x7F;                      // -- if it recive the message, it will get ID
             if (canId == CAN_ID)
             {
                 // -- Reading Cui Absolute Encoder Value
-                iCanBusSharer->interpretMessage(&buffer); // necessary for read CuiAbsolute
+                iCanBusSharer->interpretMessage(msg); // necessary for read CuiAbsolute
                 double value = 0;
                 while( ! iEncodersTimedRaw->getEncoderRaw(0,&value) ){
                     CD_ERROR("Wrong value of Cui \n");
@@ -243,7 +255,6 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInContinuousMode )
 TEST_F( CuiAbsoluteTest, CuiAbsoluteStopSendingMessage ) // -- we call the class that we want to do the test and we assign it a name
 {
     int canId = 0;
-    int ret = 0;
     double timeOut = 1;
     double timeStamp = 0.0;
     double cleaningTime = 0.5; // time to empty the buffer
@@ -253,6 +264,8 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteStopSendingMessage ) // -- we call the class
     yarp::os::Time::delay(1);                                     // -- one second delay to empty the buffer
 
     timeStamp = yarp::os::Time::now();
+
+    yarp::dev::CanMessage &msg = canInputBuffer[0];
 
     //-- Blocking read until we get a message from the expected canId
     while ( (canId != CAN_ID) && !timePassed ) // -- it will check the ID
@@ -266,13 +279,14 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteStopSendingMessage ) // -- we call the class
             timePassed = true;
         }
 
-        ret = iCanBus->read_timeout(&buffer,0);         // -- return value of message with timeout of 1 [ms]
+        unsigned int read;
+        bool ok = iCanBus->canRead(canInputBuffer, 1, &read, true);
 
         // This line is needed to clear the buffer (old messages that has been received)
         if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
 
-        if( ret <= 0 ) continue;                        // -- is waiting for recive message
-        canId = buffer.id  & 0x7F;                      // -- if it recive the message, it will get ID
+        if( !ok || read == 0 ) continue;                 // -- is waiting for recive message
+        canId = msg.getId() & 0x7F;                      // -- if it recive the message, it will get ID
         CD_DEBUG("Read a message from CuiAbsolute %d\n", canId);
 
     }

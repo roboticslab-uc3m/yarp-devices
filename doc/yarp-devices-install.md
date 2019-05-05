@@ -12,12 +12,12 @@ Some of the devices require a specific OS version to work. This table tracks the
 
 Some dependencies must be installed for all the devices:
 
-- [Install CMake](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-cmake.md)
-- [Install YCM](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-ycm.md)
-- [Install YARP](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md)
+- [Install CMake 3.5+](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-cmake.md/)
+- [Install YCM 0.10+](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-ycm.md/)
+- [Install YARP 2.3.70+](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md/)
 - [Install color-debug](https://github.com/roboticslab-uc3m/color-debug)
 
-For unit testing, you'll need the googletest source package. Refer to [Install googletest](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-googletest.md).
+For unit testing, you'll need the googletest source package. Refer to [Install googletest](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-googletest.md/).
 
 ## Specific dependencies
 
@@ -49,9 +49,9 @@ Remember to enable the devices you want to compile using `ccmake` instead of `cm
 
 When installing GrabberControls2Gui, take into account the following points:
 
-* GrabberControls2Gui requires Python 3+ with custom yarp Python bindings installed. Currently, installing them is not an easy task (see [comment348230791@roboticslab-uc3m/yarp-devices:145](https://github.com/roboticslab-uc3m/yarp-devices/issues/145#issuecomment-348230791) and [roboticslab-uc3m/installation-guides:26](https://github.com/roboticslab-uc3m/installation-guides/issues/26)) but we expect this to change in the future.
+* GrabberControls2Gui requires Python 3+ with custom yarp Python bindings installed. Currently, installing them is not an easy task (see [comment348230791@roboticslab-uc3m/yarp-devices#145](https://github.com/roboticslab-uc3m/yarp-devices/issues/145#issuecomment-348230791) and [roboticslab-uc3m/installation-guides#26](https://github.com/roboticslab-uc3m/installation-guides/issues/26)) but we expect this to change in the future.
 
-* Setup.py should take care of automatically installing the remaining dependencies for AravisGigEController. But it sometimes returns an error trying to install PySide. In that case, you can try to install it from the software repository: `sudo apt install python3-pyside`
+* Setup.py should take care of automatically installing the remaining dependencies for AravisGigEController (`sudo python3 setup.py install`).
 
 ## Useful links
 

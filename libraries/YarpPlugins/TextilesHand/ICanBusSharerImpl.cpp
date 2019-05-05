@@ -4,7 +4,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::setCanBusPtr(ICanBusHico *canDevicePtr)
+bool roboticslab::TextilesHand::setCanBusPtr(yarp::dev::ICanBus *canDevicePtr)
 {
 
     this->canDevicePtr = canDevicePtr;
@@ -54,7 +54,7 @@ bool roboticslab::TextilesHand::recoverFromError()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::interpretMessage( can_msg * message)
+bool roboticslab::TextilesHand::interpretMessage(const yarp::dev::CanMessage & message)
 {
 
     return true;

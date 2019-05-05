@@ -11,12 +11,10 @@ target_include_directories(YarpDevicesInterfaces INTERFACE ${YARP_INCLUDE_DIRS}
                                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 # Install interface headers.
-install(FILES ICanBusHico.h
-              ICanBusSharer.h
+install(FILES ICanBusSharer.h
               ICuiAbsolute.h
               IProximitySensors.h
               ITechnosoftIpos.h
-              hico_api.h # remove, see #122
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Register export set.
@@ -29,6 +27,8 @@ add_subdirectory(AravisGigE)
 add_subdirectory(CanBusControlboard)
 add_subdirectory(CanBusFake)
 add_subdirectory(CanBusHico)
+add_subdirectory(CanBusPeak)
+add_subdirectory(CanBusSocket)
 add_subdirectory(CuiAbsolute)
 add_subdirectory(DextraControlboard)
 add_subdirectory(FakeControlboard)

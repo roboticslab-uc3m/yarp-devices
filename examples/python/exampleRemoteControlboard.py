@@ -8,7 +8,7 @@
 #
 # <b>Requires YARP 2.3.72.</b>
 #
-# <b>Legal</b> 
+# <b>Legal</b>
 #
 # Copyright: (C) 2017 Universidad Carlos III de Madrid
 #
@@ -62,6 +62,10 @@ pos.positionMove(1,-35)
 
 print 'test delay(5)'
 yarp.Time.delay(5)
+
+targets = list(range(10,10+5*axes,5))
+print 'test positionMove(...) -> [multiple axes] moves motor 0 to 10 degrees, motor 1 to 15 degrees and so on'
+pos.positionMove(yarp.DVector(targets))
 
 v = yarp.DVector(axes)  # create a YARP vector of doubles the size of the number of elements read by enc, call it 'v'
 enc.getEncoders(v)  # read the encoder values and put them into 'v'

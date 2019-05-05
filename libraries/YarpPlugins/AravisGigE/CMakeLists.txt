@@ -2,8 +2,6 @@
 # Authors: Juan G. Victores & David Estevez
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-find_package(ARAVIS QUIET)
-
 if(NOT ARAVIS_FOUND AND (NOT DEFINED ENABLE_AravisGigE OR ENABLE_AravisGigE))
     message(WARNING "ARAVIS package not found, disabling AravisGigE")
 endif()
@@ -19,6 +17,8 @@ if(NOT SKIP_AravisGigE)
 
     include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
                         ${ARAVIS_INCLUDE_DIRS})
+
+    link_directories(${ARAVIS_LIBRARY_DIRS})
 
     yarp_add_plugin(AravisGigE AravisGigE.hpp
                                DeviceDriverImpl.cpp
