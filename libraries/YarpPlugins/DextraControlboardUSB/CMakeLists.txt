@@ -6,7 +6,8 @@ yarp_prepare_plugin(DextraControlboardUSB
                     CATEGORY device
                     TYPE roboticslab::DextraControlboardUSB
                     INCLUDE DextraControlboardUSB.hpp
-                    DEFAULT ON)
+                    DEFAULT ON
+                    DEPENDS UNIX)
 
 if(NOT SKIP_DextraControlboardUSB)
 

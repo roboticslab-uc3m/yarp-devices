@@ -208,4 +208,3 @@ protected:
 }  // namespace roboticslab
 
 #endif  // __DEXTRA_CONTROLBOARD_USB__
-
