@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraControlboard.hpp"
+#include "DextraControlboardUSB.hpp"
 
 // ############################## IPositionDirect Related ##############################
 
-bool roboticslab::DextraControlboard::setPosition(int j, double ref)
+bool roboticslab::DextraControlboardUSB::setPosition(int j, double ref)
 {
     CD_DEBUG("\n");
     this->positionMove(0,ref);
@@ -13,7 +13,7 @@ bool roboticslab::DextraControlboard::setPosition(int j, double ref)
 
 // ----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::setPositions(const int n_joint, const int *joints, const double *refs)
+bool roboticslab::DextraControlboardUSB::setPositions(const int n_joint, const int *joints, const double *refs)
 {
     CD_DEBUG("\n");
     this->positionMove(0,refs[0]);
@@ -22,7 +22,7 @@ bool roboticslab::DextraControlboard::setPositions(const int n_joint, const int 
 
 // ----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::setPositions(const double *refs)
+bool roboticslab::DextraControlboardUSB::setPositions(const double *refs)
 {
     CD_DEBUG("\n");
     return true;

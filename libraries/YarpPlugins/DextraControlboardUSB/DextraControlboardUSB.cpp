@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraControlboard.hpp"
+#include "DextraControlboardUSB.hpp"
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::DextraControlboard::serialport_writebyte( int fd, uint8_t b)
+int roboticslab::DextraControlboardUSB::serialport_writebyte( int fd, uint8_t b)
 {
     int n = write(fd,&b,1);
     if( n!=1)
@@ -14,7 +14,7 @@ int roboticslab::DextraControlboard::serialport_writebyte( int fd, uint8_t b)
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::DextraControlboard::serialport_write(int fd, const char* str)
+int roboticslab::DextraControlboardUSB::serialport_write(int fd, const char* str)
 {
     int len = strlen(str);
     int n = write(fd, str, len);
@@ -25,7 +25,7 @@ int roboticslab::DextraControlboard::serialport_write(int fd, const char* str)
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::DextraControlboard::serialport_read_until(int fd, char* buf, char until)
+int roboticslab::DextraControlboardUSB::serialport_read_until(int fd, char* buf, char until)
 {
     char b[1];
     int i=0;
@@ -49,7 +49,7 @@ int roboticslab::DextraControlboard::serialport_read_until(int fd, char* buf, ch
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::DextraControlboard::serialport_init(const char* serialport, int baud)
+int roboticslab::DextraControlboardUSB::serialport_init(const char* serialport, int baud)
 {
     struct termios toptions;
     int fd;

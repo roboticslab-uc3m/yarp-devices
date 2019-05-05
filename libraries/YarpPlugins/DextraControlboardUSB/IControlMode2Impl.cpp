@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraControlboard.hpp"
+#include "DextraControlboardUSB.hpp"
 
 // ############################## IControlMode Related ##############################
 
-bool roboticslab::DextraControlboard::getControlMode(int j, int *mode)
+bool roboticslab::DextraControlboardUSB::getControlMode(int j, int *mode)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
 
@@ -18,7 +18,7 @@ bool roboticslab::DextraControlboard::getControlMode(int j, int *mode)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::getControlModes(int *modes)
+bool roboticslab::DextraControlboardUSB::getControlModes(int *modes)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -26,7 +26,7 @@ bool roboticslab::DextraControlboard::getControlModes(int *modes)
 
 // ############################## IControlMode2 Related ##############################
 
-bool roboticslab::DextraControlboard::getControlModes(const int n_joint, const int *joints, int *modes)
+bool roboticslab::DextraControlboardUSB::getControlModes(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("\n");
 
@@ -38,7 +38,7 @@ bool roboticslab::DextraControlboard::getControlModes(const int n_joint, const i
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::setControlMode(const int j, const int mode)
+bool roboticslab::DextraControlboardUSB::setControlMode(const int j, const int mode)
 {
     CD_DEBUG("(%d, %d)\n",j,mode);
 
@@ -50,7 +50,7 @@ bool roboticslab::DextraControlboard::setControlMode(const int j, const int mode
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::setControlModes(const int n_joint, const int *joints, int *modes)
+bool roboticslab::DextraControlboardUSB::setControlModes(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("(%d)\n",n_joint);
 
@@ -62,7 +62,7 @@ bool roboticslab::DextraControlboard::setControlModes(const int n_joint, const i
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::setControlModes(int *modes)
+bool roboticslab::DextraControlboardUSB::setControlModes(int *modes)
 {
     CD_DEBUG("\n");
     return setControlMode(0, modes[0]);

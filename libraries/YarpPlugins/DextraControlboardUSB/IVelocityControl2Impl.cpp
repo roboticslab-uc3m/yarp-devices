@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraControlboard.hpp"
+#include "DextraControlboardUSB.hpp"
 
 //  ########################### IVelocityControl implementations ###########################
 
-bool roboticslab::DextraControlboard::velocityMove(int j, double sp)
+bool roboticslab::DextraControlboardUSB::velocityMove(int j, double sp)
 {
     CD_INFO("Missing implementation\n");
     return true;
@@ -12,7 +12,7 @@ bool roboticslab::DextraControlboard::velocityMove(int j, double sp)
 
 // --------------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::velocityMove(const double *sp)
+bool roboticslab::DextraControlboardUSB::velocityMove(const double *sp)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -20,7 +20,7 @@ bool roboticslab::DextraControlboard::velocityMove(const double *sp)
 
 //  ########################### IVelocityControl2 implementations ###########################
 
-bool roboticslab::DextraControlboard::velocityMove(const int n_joint, const int *joints, const double *spds)
+bool roboticslab::DextraControlboardUSB::velocityMove(const int n_joint, const int *joints, const double *spds)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -28,7 +28,7 @@ bool roboticslab::DextraControlboard::velocityMove(const int n_joint, const int 
 
 // --------------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::getRefVelocity(const int joint, double *vel)
+bool roboticslab::DextraControlboardUSB::getRefVelocity(const int joint, double *vel)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -36,7 +36,7 @@ bool roboticslab::DextraControlboard::getRefVelocity(const int joint, double *ve
 
 // --------------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::getRefVelocities(double *vels)
+bool roboticslab::DextraControlboardUSB::getRefVelocities(double *vels)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -44,7 +44,7 @@ bool roboticslab::DextraControlboard::getRefVelocities(double *vels)
 
 // --------------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::getRefVelocities(const int n_joint, const int *joints, double *vels)
+bool roboticslab::DextraControlboardUSB::getRefVelocities(const int n_joint, const int *joints, double *vels)
 {
     CD_ERROR("Missing implementation\n");
     return false;

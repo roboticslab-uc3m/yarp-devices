@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __DEXTRA_CONTROLBOARD__
-#define __DEXTRA_CONTROLBOARD__
+#ifndef __DEXTRA_CONTROLBOARD_USB__
+#define __DEXTRA_CONTROLBOARD_USB__
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
@@ -33,25 +33,25 @@ namespace roboticslab
 
 /**
  * @ingroup YarpPlugins
- * \defgroup DextraControlboard
- * @brief Contains roboticslab::DextraControlboard.
+ * \defgroup DextraControlboardUSB
+ * @brief Contains roboticslab::DextraControlboardUSB.
  */
 
 /**
-* @ingroup DextraControlboard
+* @ingroup DextraControlboardUSB
 * @brief Implementation for the custom UC3M Dextra Hand controlboard interfaces.
 *
 */
 // Note: IEncodersTimed inherits from IEncoders
 // Note: IControlLimits2 inherits from IControlLimits
-class DextraControlboard : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2, public yarp::dev::IControlMode2, public yarp::dev::IEncodersTimed,
+class DextraControlboardUSB : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2, public yarp::dev::IControlMode2, public yarp::dev::IEncodersTimed,
     public yarp::dev::IPositionControl2, public yarp::dev::IPositionDirect, public yarp::dev::IVelocityControl2, public yarp::dev::ITorqueControl,
     public yarp::dev::IInteractionMode
 {
 
 public:
 
-    DextraControlboard()
+    DextraControlboardUSB()
     {
     }
 
@@ -173,7 +173,7 @@ public:
 
 protected:
 
-    //  --------- Implementation in DextraControlboard.cpp ---------
+    //  --------- Implementation in DextraControlboardUSB.cpp ---------
     // takes the string name of the serial port (e.g. "/dev/tty.usbserial","COM1")
     // and a baud rate (bps) and connects to that port at that speed and 8N1.
     // opens the port in fully raw mode so you can send binary data.
@@ -207,5 +207,5 @@ protected:
 
 }  // namespace roboticslab
 
-#endif  // __DEXTRA_CONTROLBOARD__
+#endif  // __DEXTRA_CONTROLBOARD_USB__
 

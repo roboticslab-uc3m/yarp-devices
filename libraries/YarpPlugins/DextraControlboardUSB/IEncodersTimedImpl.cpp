@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraControlboard.hpp"
+#include "DextraControlboardUSB.hpp"
 
 // ------------------ IEncodersTimed Related -----------------------------------------
 
-bool roboticslab::DextraControlboard::getEncodersTimed(double *encs, double *time)
+bool roboticslab::DextraControlboardUSB::getEncodersTimed(double *encs, double *time)
 {
     CD_ERROR("\n");
     return false;
@@ -12,7 +12,7 @@ bool roboticslab::DextraControlboard::getEncodersTimed(double *encs, double *tim
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboard::getEncoderTimed(int j, double *encs, double *time)
+bool roboticslab::DextraControlboardUSB::getEncoderTimed(int j, double *encs, double *time)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
