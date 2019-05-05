@@ -20,8 +20,8 @@ bool roboticslab::DextraControlboardUSB::getControlMode(int j, int *mode)
 
 bool roboticslab::DextraControlboardUSB::getControlModes(int *modes)
 {
-    CD_ERROR("Missing implementation\n");
-    return false;
+    //CD_DEBUG("\n");  //-- Too verbose in controlboardwrapper2 stream
+    return getControlMode(0, &modes[0]);
 }
 
 // ############################## IControlMode2 Related ##############################
