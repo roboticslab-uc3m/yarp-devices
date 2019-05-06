@@ -13,6 +13,8 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     std::string mode = config.check("mode",yarp::os::Value("position"),"control mode on startup (position/velocity)").asString();
     int timeCuiWait  = config.check("waitEncoder", yarp::os::Value(DEFAULT_TIME_TO_WAIT_CUI), "CUI timeout (seconds)").asInt32();
     std::string canBusType = config.check("canBusType", yarp::os::Value(DEFAULT_CAN_BUS), "CAN bus device name").asString();
+    canRxBufferSize = config.check("canBusRxBufferSize", yarp::os::Value(DEFAULT_CAN_RX_BUFFER_SIZE), "CAN bus RX buffer size").asInt();
+    canTxBufferSize = config.check("canBusTxBufferSize", yarp::os::Value(DEFAULT_CAN_TX_BUFFER_SIZE), "CAN bus TX buffer size").asInt();
 
     linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(DEFAULT_LIN_INTERP_PERIOD_MS), "linear interpolation mode period (milliseconds)").asInt32();
     linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(DEFAULT_LIN_INTERP_BUFFER_SIZE), "linear interpolation mode buffer size").asInt32();
@@ -55,7 +57,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         return false;
     }
 
-    canInputBuffer = iCanBufferFactory->createBuffer(1);
+    canInputBuffer = iCanBufferFactory->createBuffer(canRxBufferSize);
 
     //-- Start the reading thread (required for checkMotionDoneRaw).
     this->Thread::start();
