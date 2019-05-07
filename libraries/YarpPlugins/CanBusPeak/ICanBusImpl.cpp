@@ -157,8 +157,6 @@ bool roboticslab::CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
         return false;
     }
 
-    struct pcanfd_msg * pfdm = new struct pcanfd_msg[size];
-
     canBusReady.wait();
 
     if (blockingMode && rxTimeoutMs > 0)
@@ -168,7 +166,6 @@ bool roboticslab::CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
         if (!waitUntilTimeout(READ, &bufferReady)) {
             canBusReady.post();
             CD_ERROR("waitUntilTimeout() failed.\n");
-            delete[] pfdm;
             return false;
         }
 
@@ -176,11 +173,12 @@ bool roboticslab::CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
         {
             canBusReady.post();
             *read = 0;
-            delete[] pfdm;
             return true;
         }
     }
 
+    // Point at first member of an internally defined array of pcandf_msg structs.
+    struct pcanfd_msg * pfdm = reinterpret_cast<struct pcanfd_msg *>(msgs.getPointer()[0]->getPointer());
     int res = pcanfd_recv_msgs_list(fileDescriptor, size, pfdm);
 
     canBusReady.post();
@@ -188,29 +186,18 @@ bool roboticslab::CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
     if (!blockingMode && res == -EWOULDBLOCK)
     {
         *read = 0;
-        delete[] pfdm;
         return true;
     }
     else if (res < 0)
     {
         CD_ERROR("Unable to read messages: %s.\n", std::strerror(-res));
-        delete[] pfdm;
         return false;
     }
-
-    *read = res;
-
-    for (unsigned int i = 0; i < res; i++)
+    else
     {
-        yarp::dev::CanMessage & msg = msgs[i];
-        std::memcpy(msg.getData(), pfdm[i].data, pfdm[i].data_len);
-        msg.setLen(pfdm[i].data_len);
-        msg.setId(pfdm[i].id);
+        *read = res;
+        return true;
     }
-
-    delete[] pfdm;
-
-    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -223,19 +210,17 @@ bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsign
         return false;
     }
 
-    struct pcanfd_msg * pfdm = new struct pcanfd_msg[size];
+    canBusReady.wait();
+
+    // Point at first member of an internally defined array of pcandf_msg structs.
+    yarp::dev::CanBuffer & msgs_not_const = const_cast<yarp::dev::CanBuffer &>(msgs);
+    struct pcanfd_msg * pfdm = reinterpret_cast<struct pcanfd_msg *>(msgs_not_const.getPointer()[0]->getPointer());
 
     for (unsigned int i = 0; i < size; i++)
     {
-        const yarp::dev::CanMessage & msg = msgs[i];
-        std::memcpy(pfdm[i].data, msg.getData(), msg.getLen());
-        pfdm[i].data_len = msg.getLen();
-        pfdm[i].id = msg.getId();
         pfdm[i].type = PCANFD_TYPE_CAN20_MSG;
         pfdm[i].flags = PCANFD_MSG_STD;
     }
-
-    canBusReady.wait();
 
     if (blockingMode && txTimeoutMs > 0)
     {
@@ -244,7 +229,6 @@ bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsign
         if (!waitUntilTimeout(WRITE, &bufferReady)) {
             canBusReady.post();
             CD_ERROR("waitUntilTimeout() failed.\n");
-            delete[] pfdm;
             return false;
         }
 
@@ -252,7 +236,6 @@ bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsign
         {
             canBusReady.post();
             *sent = 0;
-            delete[] pfdm;
             return true;
         }
     }
@@ -260,8 +243,6 @@ bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsign
     int res = pcanfd_send_msgs_list(fileDescriptor, size, pfdm);
 
     canBusReady.post();
-
-    delete[] pfdm;
 
     if (!blockingMode && res == -EWOULDBLOCK)
     {
@@ -273,10 +254,11 @@ bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsign
         CD_ERROR("Unable to send messages: %s.\n", std::strerror(-res));
         return false;
     }
-
-    *sent = res;
-
-    return true;
+    else
+    {
+        *sent = res;
+        return true;
+    }
 }
 
 // -----------------------------------------------------------------------------
