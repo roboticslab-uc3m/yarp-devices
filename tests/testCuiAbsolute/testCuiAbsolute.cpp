@@ -66,7 +66,7 @@ public:
             CD_ERROR("Bad device of CuiAbsolute :(\n");
             std::exit(1);
         }
-        ok &= canNodeDevice.view( iControlLimits2Raw );
+        ok &= canNodeDevice.view( iControlLimitsRaw );
         ok &= canNodeDevice.view( iControlModeRaw );
         ok &= canNodeDevice.view( iEncodersTimedRaw );
         ok &= canNodeDevice.view( iPositionControlRaw );
@@ -112,7 +112,7 @@ protected:
 
     /** CAN node object. */
     yarp::dev::PolyDriver canNodeDevice;
-    yarp::dev::IControlLimitsRaw* iControlLimits2Raw;
+    yarp::dev::IControlLimitsRaw* iControlLimitsRaw;
     yarp::dev::IControlModeRaw* iControlModeRaw;
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRaw;
     yarp::dev::IPositionControlRaw* iPositionControlRaw;

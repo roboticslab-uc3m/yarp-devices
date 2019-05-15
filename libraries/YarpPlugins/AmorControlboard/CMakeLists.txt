@@ -19,19 +19,15 @@ if(NOT SKIP_AmorControlboard)
     yarp_add_plugin(AmorControlboard AmorControlboard.cpp
                                      AmorControlboard.hpp
                                      DeviceDriverImpl.cpp
+                                     IAxisInfoImpl.cpp
                                      IControlLimitsImpl.cpp
-                                     IControlLimits2Impl.cpp
                                      IControlModeImpl.cpp
-                                     IControlMode2Impl.cpp
                                      IEncodersImpl.cpp
                                      IEncodersTimedImpl.cpp
+                                     IInteractionModeImpl.cpp
                                      IPositionControlImpl.cpp
-                                     IPositionControl2Impl.cpp
-                                     IVelocityControlImpl.cpp
-                                     IVelocityControl2Impl.cpp
-                                     IAxisInfoImpl.cpp
                                      ITorqueControlImpl.cpp
-                                     IInteractionModeImpl.cpp)
+                                     IVelocityControlImpl.cpp)
 
     target_link_libraries(AmorControlboard YARP::YARP_OS
                                            YARP::YARP_dev

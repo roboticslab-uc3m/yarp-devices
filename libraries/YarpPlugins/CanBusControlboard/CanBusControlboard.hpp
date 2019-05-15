@@ -69,7 +69,7 @@ class CanBusControlboard : public yarp::dev::DeviceDriver,
 
 public:
 
-    //  --------- IControlLimits Declarations. Implementation in IControlLimits2Impl.cpp ---------
+    //  --------- IControlLimits Declarations. Implementation in IControlLimitsImpl.cpp ---------
 
     /**
      * Set the software limits for a particular axis, the behavior of the
@@ -109,7 +109,7 @@ public:
      */
     virtual bool getVelLimits(int axis, double *min, double *max);
 
-    //  --------- IControlMode Declarations. Implementation in IControlMode2Impl.cpp ---------
+    //  --------- IControlMode Declarations. Implementation in IControlModeImpl.cpp ---------
 
     /**
     * Get the current control mode.
@@ -125,8 +125,6 @@ public:
     * @return: true/false success failure.
     */
     virtual bool getControlModes(int *modes);
-
-    //  --------- IControlMode2 Declarations. Implementation in IControlMode2Impl.cpp ---------
 
     /**
     * Get the current control mode for a subset of axes.
@@ -269,7 +267,7 @@ public:
     */
     virtual bool getEncoderTimed(int j, double *encs, double *time);
 
-    // ------- IPositionControl declarations. Implementation in IPositionControl2Impl.cpp -------
+    // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
 
     /**
      * Get the number of controlled axes. This command asks the number of controlled
@@ -385,8 +383,6 @@ public:
      * @return true/false on success/failure
      */
     virtual bool stop();
-
-    // ------- IPositionControl2 declarations. Implementation in IPositionControl2Impl.cpp -------
 
     /** Set new reference point for a subset of joints.
      * @param joints pointer to the array of joint numbers
@@ -589,7 +585,7 @@ public:
      */
     virtual bool getTorqueRanges(double *min, double *max);
 
-    //  --------- IVelocityControl Declarations. Implementation in IVelocityControl2Impl.cpp ---------
+    //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
 
     /**
      * Start motion at a given speed, single joint.
@@ -605,8 +601,6 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool velocityMove(const double *sp);
-
-    //  --------- IVelocityControl2 Declarations. Implementation in IVelocityControl2Impl.cpp ----------
 
     /** Start motion at a given speed for a subset of joints.
      * @param n_joint how many joints this command is referring to
@@ -673,7 +667,6 @@ public:
      */
     virtual bool getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode);
 
-
     /**
      * Get the current interaction mode of the robot for a set of joints, values can be stiff or compliant.
      * @param n_joints how many joints this command is referring to
@@ -687,14 +680,12 @@ public:
      */
     virtual bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
 
-
     /**
      * Get the current interaction mode of the robot for a all the joints, values can be stiff or compliant.
      * @param mode array containing the requested information about interaction mode, one value for each joint.
      * @return true or false on success or failure.
      */
     virtual bool getInteractionModes(yarp::dev::InteractionModeEnum* modes);
-
 
     /**
      * Set the interaction mode of the robot, values can be stiff or compliant.
@@ -704,7 +695,6 @@ public:
      * @return true or false on success or failure.
      */
     virtual bool setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode);
-
 
     /**
      * Set the interaction mode of the robot for a set of joints, values can be stiff or compliant.
@@ -779,14 +769,14 @@ protected:
 
     /** A vector of CAN node objects. */
     std::vector< yarp::dev::PolyDriver* > nodes;
-    std::vector< yarp::dev::IControlLimitsRaw* > iControlLimits2Raw;
-    std::vector< yarp::dev::IControlModeRaw* > iControlMode2Raw;
+    std::vector< yarp::dev::IControlLimitsRaw* > iControlLimitsRaw;
+    std::vector< yarp::dev::IControlModeRaw* > iControlModeRaw;
     std::vector< yarp::dev::IEncodersTimedRaw* > iEncodersTimedRaw;
     std::vector< yarp::dev::IInteractionModeRaw* > iInteractionModeRaw;
-    std::vector< yarp::dev::IPositionControlRaw* > iPositionControl2Raw;
+    std::vector< yarp::dev::IPositionControlRaw* > iPositionControlRaw;
     std::vector< yarp::dev::IPositionDirectRaw* > iPositionDirectRaw;
     std::vector< yarp::dev::ITorqueControlRaw* > iTorqueControlRaw;
-    std::vector< yarp::dev::IVelocityControlRaw* > iVelocityControl2Raw;
+    std::vector< yarp::dev::IVelocityControlRaw* > iVelocityControlRaw;
     std::vector< ICanBusSharer* > iCanBusSharer;
 
     std::map< int, int > idxFromCanId;

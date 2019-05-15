@@ -11,7 +11,7 @@ bool roboticslab::CanBusControlboard::velocityMove(int j, double sp)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iVelocityControl2Raw[j]->velocityMoveRaw( 0, sp );
+    return iVelocityControlRaw[j]->velocityMoveRaw( 0, sp );
 }
 
 // -----------------------------------------------------------------------------
@@ -52,7 +52,7 @@ bool roboticslab::CanBusControlboard::getRefVelocity(const int joint, double *ve
     if ( ! this->indexWithinRange(joint) ) return false;
 
     // -- Get the last reference speed set by velocityMove (see IVelocityControl2RawImpl.cpp contained in TechnosoftIpos ) for single joint
-    return iVelocityControl2Raw[joint]->getRefVelocityRaw(0, vel); // -- It can be... getRefVelocityRaw(joint, vel)
+    return iVelocityControlRaw[joint]->getRefVelocityRaw(0, vel); // -- It can be... getRefVelocityRaw(joint, vel)
 }
 
 // ------------------------------------------------------------------------------

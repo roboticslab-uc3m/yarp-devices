@@ -57,16 +57,16 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
     //-- Populate the CAN nodes vector.
     nodes.resize( ids.size() );
-    iControlLimits2Raw.resize( nodes.size() );
-    iControlMode2Raw.resize( nodes.size() );
+    iControlLimitsRaw.resize( nodes.size() );
+    iControlModeRaw.resize( nodes.size() );
     iEncodersTimedRaw.resize( nodes.size() );
-    iPositionControl2Raw.resize( nodes.size() );
+    iPositionControlRaw.resize( nodes.size() );
     iPositionDirectRaw.resize( nodes.size() );
     iTorqueControlRaw.resize( nodes.size() );
     iCanBusSharer.resize( nodes.size() );
 
     iInteractionModeRaw.resize( nodes.size() );
-    iVelocityControl2Raw.resize( nodes.size() ); // -- new
+    iVelocityControlRaw.resize( nodes.size() ); // -- new
 
     for(int i=0; i<nodes.size(); i++)
     {
@@ -110,13 +110,13 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         nodes[i] = device;
 
         //-- View interfaces
-        if( !device->view( iControlLimits2Raw[i] ))
+        if( !device->view( iControlLimitsRaw[i] ))
         {
             CD_ERROR("[error] Problems acquiring iControlLimits2Raw interface\n");
             return false;
         }
 
-        if( !device->view( iControlMode2Raw[i] ))
+        if( !device->view( iControlModeRaw[i] ))
         {
             CD_ERROR("[error] Problems acquiring iControlMode2Raw interface\n");
             return false;
@@ -128,7 +128,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             return false;
         }
 
-        if( !device->view( iPositionControl2Raw[i] ))
+        if( !device->view( iPositionControlRaw[i] ))
         {
             CD_ERROR("[error] Problems acquiring iPositionControl2Raw interface\n");
             return false;
@@ -146,7 +146,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             return false;
         }
 
-        if( !device->view( iVelocityControl2Raw[i] ))
+        if( !device->view( iVelocityControlRaw[i] ))
         {
             CD_ERROR("[error] Problems acquiring iVelocityControl2Raw interface\n");
             return false;
@@ -173,13 +173,13 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         {
             //-- Set initial parameters on physical motor drivers.
 
-            if ( ! iPositionControl2Raw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asDouble() ) )
+            if ( ! iPositionControlRaw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asDouble() ) )
                 return false;
 
-            if ( ! iPositionControl2Raw[i]->setRefSpeedRaw( 0, refSpeeds.get(i).asDouble() ) )
+            if ( ! iPositionControlRaw[i]->setRefSpeedRaw( 0, refSpeeds.get(i).asDouble() ) )
                 return false;
 
-            if ( ! iControlLimits2Raw[i]->setLimitsRaw( 0, mins.get(i).asDouble(), maxs.get(i).asDouble() ) )
+            if ( ! iControlLimitsRaw[i]->setLimitsRaw( 0, mins.get(i).asDouble(), maxs.get(i).asDouble() ) )
                 return false;
         }
 
@@ -330,7 +330,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
                 CD_DEBUG("Value of relative encoder ->%f\n", val);
                 if ( val>0.087873 || val< -0.087873 ){
                     CD_DEBUG("Moving (ID:%s) to zero...\n",nodes[i]->getValue("canId").toString().c_str());
-                    if ( ! iPositionControl2Raw[i]->positionMoveRaw(0,0) )
+                    if ( ! iPositionControlRaw[i]->positionMoveRaw(0,0) )
                         return false;
                 }
                 else
@@ -345,7 +345,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
                 bool motionDone = false;
                 yarp::os::Time::delay(0.2);  //-- [s]
                 CD_DEBUG("Testing (ID:%s) position... \n",nodes[i]->getValue("canId").toString().c_str());
-                if( ! iPositionControl2Raw[i]->checkMotionDoneRaw(0,&motionDone) )
+                if( ! iPositionControlRaw[i]->checkMotionDoneRaw(0,&motionDone) )
                     return false;
                 if(!motionDone)
                     CD_WARNING("Test motion fail (ID:%s) \n", nodes[i]->getValue("canId").toString().c_str());

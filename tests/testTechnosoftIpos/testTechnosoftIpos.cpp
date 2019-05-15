@@ -55,7 +55,7 @@ public:
 
         bool ok2 = true;
         ok2 &= canNodeDevice.open( TechnosoftIposConf );   // -- we introduce the configuration properties defined ........
-        //j//fail due to yarp non-public inheritance// ok2 &= canNodeDevice.view( iControlLimitsRaw );
+        ok2 &= canNodeDevice.view( iControlLimitsRaw );
         ok2 &= canNodeDevice.view( iControlModeRaw );
         ok2 &= canNodeDevice.view( iEncodersTimedRaw );
         ok2 &= canNodeDevice.view( iPositionControlRaw );
@@ -100,7 +100,7 @@ protected:
 
     /** CAN node object. */
     yarp::dev::PolyDriver canNodeDevice;
-    yarp::dev::IControlLimitsRaw* iControlLimits2Raw;
+    yarp::dev::IControlLimitsRaw* iControlLimitsRaw;
     yarp::dev::IControlModeRaw* iControlModeRaw;
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRaw;
     yarp::dev::IPositionControlRaw* iPositionControlRaw;

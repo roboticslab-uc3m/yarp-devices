@@ -15,17 +15,13 @@ yarp_add_plugin(FakeControlboard FakeControlboard.hpp
                                  FakeControlboard.cpp
                                  DeviceDriverImpl.cpp
                                  IControlLimitsImpl.cpp
-                                 IControlLimits2Impl.cpp
                                  IControlModeImpl.cpp
-                                 IControlMode2Impl.cpp
                                  IEncodersImpl.cpp
                                  IEncodersTimedImpl.cpp
                                  IPositionControlImpl.cpp
-                                 IPositionControl2Impl.cpp
                                  IPositionDirectImpl.cpp
                                  ITorqueControlImpl.cpp
                                  IVelocityControlImpl.cpp
-                                 IVelocityControl2Impl.cpp
                                  PeriodicThreadImpl.cpp
                                  SharedArea.cpp)
 

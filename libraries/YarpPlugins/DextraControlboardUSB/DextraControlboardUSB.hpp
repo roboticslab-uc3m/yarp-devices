@@ -68,11 +68,9 @@ public:
     virtual bool setVelLimits(int axis, double min, double max);
     virtual bool getVelLimits(int axis, double *min, double *max);
 
-    //  --------- IControlMode Declarations. Implementation in IControlMode2Impl.cpp ---------
+    //  --------- IControlMode Declarations. Implementation in IControlModeImpl.cpp ---------
     virtual bool getControlMode(int j, int *mode);
     virtual bool getControlModes(int *modes);
-
-    //  --------- IControlMode2 Declarations. Implementation in IControlMode2Impl.cpp ---------
     virtual bool getControlModes(const int n_joint, const int *joints, int *modes);
     virtual bool setControlMode(const int j, const int mode);
     virtual bool setControlModes(const int n_joint, const int *joints, int *modes);
@@ -94,7 +92,7 @@ public:
     virtual bool getEncodersTimed(double *encs, double *time);
     virtual bool getEncoderTimed(int j, double *encs, double *time);
 
-    // ------- IPositionControl declarations. Implementation in IPositionControl2Impl.cpp -------
+    // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
     virtual bool getAxes(int *ax);
     virtual bool positionMove(int j, double ref);
     virtual bool positionMove(const double *refs);
@@ -112,9 +110,6 @@ public:
     virtual bool getRefAccelerations(double *accs);
     virtual bool stop(int j);
     virtual bool stop();
-
-    // ------- IPositionControl2 declarations. Implementation in IPositionControl2Impl.cpp ---------
-
     virtual bool positionMove(const int n_joint, const int *joints, const double *refs);
     virtual bool relativeMove(const int n_joint, const int *joints, const double *deltas);
     virtual bool checkMotionDone(const int n_joint, const int *joints, bool *flags);
@@ -142,11 +137,9 @@ public:
     virtual bool getTorqueRange(int j, double *min, double *max);
     virtual bool getTorqueRanges(double *min, double *max);
 
-    //  --------- IVelocityControl Declarations. Implementation in IVelocityControl2Impl.cpp ---------
+    //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
     virtual bool velocityMove(int j, double sp);
     virtual bool velocityMove(const double *sp);
-
-    //  --------- IVelocityControl2 Declarations. Implementation in IVelocityControl2Impl.cpp ---------
     virtual bool velocityMove(const int n_joint, const int *joints, const double *spds);
     virtual bool getRefVelocity(const int joint, double *vel);
     virtual bool getRefVelocities(double *vels);

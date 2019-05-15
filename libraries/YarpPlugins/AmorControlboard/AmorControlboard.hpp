@@ -163,8 +163,6 @@ public:
      */
     virtual bool stop();
 
-// ------- IPositionControl2 declarations. Implementation in IPositionControl2Impl.cpp -------
-
     /** Set new reference point for a subset of joints.
      * @param joints pointer to the array of joint numbers
      * @param refs   pointer to the array specifing the new reference points
@@ -367,8 +365,6 @@ public:
      */
     virtual bool velocityMove(const double *sp);
 
-//  --------- IVelocityControl2 declarations. Implementation in IVelocityControl2Impl.cpp ---------
-
     /** Start motion at a given speed for a subset of joints.
      * @param n_joint how many joints this command is referring to
      * @param joints of joints controlled. The size of this array is n_joints
@@ -424,8 +420,6 @@ public:
      */
     virtual bool getLimits(int axis, double *min, double *max);
 
-//  --------- IControlLimits2 declarations. Implementation in IControlLimits2Impl.cpp ---------
-
     /**
      * Set the software speed limits for a particular axis, the behavior of the
      * control card when these limits are exceeded, depends on the implementation.
@@ -461,8 +455,6 @@ public:
     * @return: true/false success failure.
     */
     virtual bool getControlModes(int *modes);
-
-//  --------- IControlMode2 declarations. Implementation in IControlMode2Impl.cpp ---------
 
     /**
     * Get the current control mode for a subset of axes.
