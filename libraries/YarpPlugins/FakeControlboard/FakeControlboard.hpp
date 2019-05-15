@@ -5,13 +5,12 @@
 
 #include <vector>
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
 
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/IControlLimits2.h>
 
 #define DEFAULT_AXES 5
 
@@ -48,19 +47,19 @@ namespace roboticslab
  * interface class member functions.
  */
 class FakeControlboard : public yarp::dev::DeviceDriver,
-                         public yarp::dev::IPositionControl2,
-                         public yarp::dev::IPositionDirect,
-                         public yarp::dev::IVelocityControl2,
+                         public yarp::dev::IControlLimits,
+                         public yarp::dev::IControlMode,
                          public yarp::dev::IEncodersTimed,
-                         public yarp::dev::IControlLimits2,
-                         public yarp::dev::IControlMode2,
+                         public yarp::dev::IPositionControl,
+                         public yarp::dev::IPositionDirect,
                          public yarp::dev::ITorqueControl,
-                         public yarp::os::RateThread
+                         public yarp::dev::IVelocityControl,
+                         public yarp::os::PeriodicThread
 {
 public:
 
-    // Set the Thread Rate in the class constructor
-    FakeControlboard() : RateThread(DEFAULT_JMC_MS) {}  // In ms
+    // Set the thread period in the class constructor
+    FakeControlboard() : PeriodicThread(DEFAULT_JMC_MS * 0.001) {}  // In seconds
 
 // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
 
@@ -323,13 +322,6 @@ public:
      * @return true/false on success/failure
      */
     virtual bool setPositions(const int n_joint, const int *joints, const double *refs);
-
-#if YARP_VERSION_MAJOR != 3
-    virtual bool setPositions(const int n_joint, const int *joints, double *refs)
-    {
-        return setPositions(n_joint, joints, const_cast<const double *>(refs));
-    }
-#endif // YARP_VERSION_MAJOR != 3
 
     /**
      * Set new position for a set of axis.
@@ -722,24 +714,6 @@ public:
      */
     virtual bool getTorqueRanges(double *min, double *max);
 
-#if YARP_VERSION_MAJOR != 3
-    /**
-     * Set the back-efm compensation gain for a given joint.
-     * @param j joint number
-     * @param bemf the returned bemf gain of joint j
-     * @return true/false on success/failure
-     */
-    virtual bool getBemfParam(int j, double *bemf);
-
-    /**
-     * Set the back-efm compensation gain for a given joint.
-     * @param j joint number
-     * @param bemf new value
-     * @return true/false on success/failure
-     */
-    virtual bool setBemfParam(int j, double bemf);
-#endif // YARP_VERSION_MAJOR != 3
-
 // -------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp --------
 
     /**
@@ -763,7 +737,7 @@ public:
      */
     virtual bool close();
 
-// -------- RateThread declarations. Implementation in RateThreadImpl.cpp --------
+// -------- PeriodicThread declarations. Implementation in PeriodicThreadImpl.cpp --------
 
     /**
      * Initialization method. The thread executes this function

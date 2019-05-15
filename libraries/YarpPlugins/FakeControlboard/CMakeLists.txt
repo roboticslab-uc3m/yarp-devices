@@ -26,7 +26,7 @@ yarp_add_plugin(FakeControlboard FakeControlboard.hpp
                                  ITorqueControlImpl.cpp
                                  IVelocityControlImpl.cpp
                                  IVelocityControl2Impl.cpp
-                                 RateThreadImpl.cpp
+                                 PeriodicThreadImpl.cpp
                                  SharedArea.cpp)
 
 target_link_libraries(FakeControlboard YARP::YARP_OS

@@ -6,7 +6,7 @@
 add_library(YarpDevicesInterfaces INTERFACE)
 
 # Configure usage requirements.
-target_include_directories(YarpDevicesInterfaces INTERFACE ${YARP_INCLUDE_DIRS}
+target_include_directories(YarpDevicesInterfaces INTERFACE $<TARGET_PROPERTY:YARP::YARP_dev,INTERFACE_INCLUDE_DIRECTORIES>
                                                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 

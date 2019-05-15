@@ -8,7 +8,6 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
-#include <yarp/dev/IControlLimits2.h>
 
 //#define CD_FULL_FILE  //-- Can be globally managed from father CMake. Good for debugging with polymorphism.
 //#define CD_HIDE_DEBUG  //-- Can be globally managed from father CMake.
@@ -34,11 +33,16 @@ namespace roboticslab
 * @brief Implementation for a fake joint (instant movement) as a single CAN bus joint (controlboard raw interfaces).
 *
 */
-// Note: IEncodersTimedRaw inherits from IEncodersRaw
-// Note: IControlLimits2Raw inherits from IControlLimitsRaw
-class FakeJoint : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlMode2Raw, public yarp::dev::IEncodersTimedRaw,
-    public yarp::dev::IPositionControl2Raw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControl2Raw, public yarp::dev::ITorqueControlRaw,
-    public ICanBusSharer, public yarp::dev::IInteractionModeRaw
+class FakeJoint : public yarp::dev::DeviceDriver,
+                  public yarp::dev::IControlLimitsRaw,
+                  public yarp::dev::IControlModeRaw,
+                  public yarp::dev::IEncodersTimedRaw,
+                  public yarp::dev::IInteractionModeRaw,
+                  public yarp::dev::IPositionControlRaw,
+                  public yarp::dev::IPositionDirectRaw,
+                  public yarp::dev::ITorqueControlRaw,
+                  public yarp::dev::IVelocityControlRaw,
+                  public ICanBusSharer
 {
 
 public:
@@ -138,12 +142,6 @@ public:
     // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
     virtual bool setPositionRaw(int j, double ref);
     virtual bool setPositionsRaw(const int n_joint, const int *joints, const double *refs);
-#if YARP_VERSION_MAJOR != 3
-    virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs)
-    {
-        return setPositionsRaw(n_joint, joints, const_cast<const double *>(refs));
-    }
-#endif // YARP_VERSION_MAJOR != 3
     virtual bool setPositionsRaw(const double *refs);
 
     // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
@@ -155,10 +153,6 @@ public:
     virtual bool getTorquesRaw(double *t);
     virtual bool getTorqueRangeRaw(int j, double *min, double *max);
     virtual bool getTorqueRangesRaw(double *min, double *max);
-#if YARP_VERSION_MAJOR != 3
-    virtual bool getBemfParamRaw(int j, double *bemf);
-    virtual bool setBemfParamRaw(int j, double bemf);
-#endif // YARP_VERSION_MAJOR != 3
 
     //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
     virtual bool velocityMoveRaw(int j, double sp);

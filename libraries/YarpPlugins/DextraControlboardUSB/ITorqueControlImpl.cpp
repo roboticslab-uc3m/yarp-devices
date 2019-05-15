@@ -67,20 +67,3 @@ bool roboticslab::DextraControlboardUSB::getTorqueRanges(double *min, double *ma
 }
 
 // -----------------------------------------------------------------------------------
-#if YARP_VERSION_MAJOR != 3
-bool roboticslab::DextraControlboardUSB::getBemfParam(int j, double *bemf)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------------
-
-bool roboticslab::DextraControlboardUSB::setBemfParam(int j, double bemf)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------------
-#endif // YARP_VERSION_MAJOR != 3

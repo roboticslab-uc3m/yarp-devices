@@ -7,7 +7,6 @@
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/IControlLimits2.h>
 #include <yarp/dev/CanBusInterface.h>
 
 #include <ColorDebug.h>
@@ -101,7 +100,7 @@ protected:
 
     /** CAN node object. */
     yarp::dev::PolyDriver canNodeDevice;
-    yarp::dev::IControlLimits2Raw* iControlLimits2Raw;
+    yarp::dev::IControlLimitsRaw* iControlLimits2Raw;
     yarp::dev::IControlModeRaw* iControlModeRaw;
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRaw;
     yarp::dev::IPositionControlRaw* iPositionControlRaw;
