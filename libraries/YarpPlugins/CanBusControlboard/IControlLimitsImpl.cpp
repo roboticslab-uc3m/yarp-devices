@@ -11,7 +11,7 @@ bool roboticslab::CanBusControlboard::setLimits(int axis, double min, double max
     //-- Check index within range
     if ( ! this->indexWithinRange(axis) ) return false;
 
-    return iControlLimits2Raw[axis]->setLimitsRaw( 0, min, max );
+    return iControlLimitsRaw[axis]->setLimitsRaw( 0, min, max );
 }
 
 // -----------------------------------------------------------------------------
@@ -23,21 +23,21 @@ bool roboticslab::CanBusControlboard::getLimits(int axis, double *min, double *m
     //-- Check index within range
     if( axis >= nodes.size() ) return false;
 
-    return iControlLimits2Raw[axis]->getLimitsRaw( 0, min, max );
+    return iControlLimitsRaw[axis]->getLimitsRaw( 0, min, max );
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::CanBusControlboard::setVelLimits(int axis, double min, double max)
 {
-    return iControlLimits2Raw[axis]->setVelLimitsRaw( 0, min, max ); // May segfault in future if not impl?
+    return iControlLimitsRaw[axis]->setVelLimitsRaw( 0, min, max ); // May segfault in future if not impl?
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::CanBusControlboard::getVelLimits(int axis, double *min, double *max)
 {
-    return iControlLimits2Raw[axis]->getVelLimitsRaw( 0, min, max );  // May segfault in future if not impl?
+    return iControlLimitsRaw[axis]->getVelLimitsRaw( 0, min, max );  // May segfault in future if not impl?
 }
 
 // -----------------------------------------------------------------------------

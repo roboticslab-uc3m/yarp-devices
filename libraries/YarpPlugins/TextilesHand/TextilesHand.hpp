@@ -5,7 +5,6 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
-#include <yarp/dev/IControlLimits2.h>
 
 #include <sstream>
 
@@ -44,11 +43,16 @@ namespace roboticslab
 * @brief Implementation for the custom UC3M Textiles Hand as a single CAN bus joint (controlboard raw interfaces).
 *
 */
-// Note: IEncodersTimedRaw inherits from IEncodersRaw
-// Note: IControlLimits2Raw inherits from IControlLimitsRaw
-class TextilesHand : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2Raw, public yarp::dev::IControlMode2Raw, public yarp::dev::IEncodersTimedRaw,
-    public yarp::dev::IPositionControl2Raw, public yarp::dev::IPositionDirectRaw, public yarp::dev::IVelocityControl2Raw, public yarp::dev::ITorqueControlRaw,
-    public ICanBusSharer, public yarp::dev::IInteractionModeRaw
+class TextilesHand : public yarp::dev::DeviceDriver,
+                     public yarp::dev::IControlLimitsRaw,
+                     public yarp::dev::IControlModeRaw,
+                     public yarp::dev::IEncodersTimedRaw,
+                     public yarp::dev::IInteractionModeRaw,
+                     public yarp::dev::IPositionControlRaw,
+                     public yarp::dev::IPositionDirectRaw,
+                     public yarp::dev::ITorqueControlRaw,
+                     public yarp::dev::IVelocityControlRaw,
+                     public ICanBusSharer
 {
 
 public:
@@ -86,11 +90,9 @@ public:
     virtual bool setVelLimitsRaw(int axis, double min, double max);
     virtual bool getVelLimitsRaw(int axis, double *min, double *max);
 
-    //  --------- IControlModeRaw Declarations. Implementation in IControlMode2RawImpl.cpp ---------
+    //  --------- IControlModeRaw Declarations. Implementation in IControlModeRawImpl.cpp ---------
     virtual bool getControlModeRaw(int j, int *mode);
     virtual bool getControlModesRaw(int *modes);
-
-    //  --------- IControlMode2Raw Declarations. Implementation in IControlMode2RawImpl.cpp ---------
     virtual bool getControlModesRaw(const int n_joint, const int *joints, int *modes);
     virtual bool setControlModeRaw(const int j, const int mode);
     virtual bool setControlModesRaw(const int n_joint, const int *joints, int *modes);
@@ -112,7 +114,7 @@ public:
     virtual bool getEncodersTimedRaw(double *encs, double *time);
     virtual bool getEncoderTimedRaw(int j, double *encs, double *time);
 
-    // ------- IPositionControlRaw declarations. Implementation in IPositionControl2RawImpl.cpp -------
+    // ------- IPositionControlRaw declarations. Implementation in IPositionControlRawImpl.cpp -------
     virtual bool getAxes(int *ax);
     virtual bool positionMoveRaw(int j, double ref);
     virtual bool positionMoveRaw(const double *refs);
@@ -130,9 +132,6 @@ public:
     virtual bool getRefAccelerationsRaw(double *accs);
     virtual bool stopRaw(int j);
     virtual bool stopRaw();
-
-    // ------- IPositionControl2Raw declarations. Implementation in IPositionControl2RawImpl.cpp ---------
-
     virtual bool positionMoveRaw(const int n_joint, const int *joints, const double *refs);
     virtual bool relativeMoveRaw(const int n_joint, const int *joints, const double *deltas);
     virtual bool checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags);
@@ -148,12 +147,6 @@ public:
     // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
     virtual bool setPositionRaw(int j, double ref);
     virtual bool setPositionsRaw(const int n_joint, const int *joints, const double *refs);
-#if YARP_VERSION_MAJOR != 3
-    virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs)
-    {
-        return setPositionsRaw(n_joint, joints, const_cast<const double *>(refs));
-    }
-#endif // YARP_VERSION_MAJOR != 3
     virtual bool setPositionsRaw(const double *refs);
 
     // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
@@ -165,16 +158,10 @@ public:
     virtual bool getTorquesRaw(double *t);
     virtual bool getTorqueRangeRaw(int j, double *min, double *max);
     virtual bool getTorqueRangesRaw(double *min, double *max);
-#if YARP_VERSION_MAJOR != 3
-    virtual bool getBemfParamRaw(int j, double *bemf);
-    virtual bool setBemfParamRaw(int j, double bemf);
-#endif // YARP_VERSION_MAJOR != 3
 
-    //  --------- IVelocityControlRaw Declarations. Implementation in IVelocityControl2RawImpl.cpp ---------
+    //  --------- IVelocityControlRaw Declarations. Implementation in IVelocityControlRawImpl.cpp ---------
     virtual bool velocityMoveRaw(int j, double sp);
     virtual bool velocityMoveRaw(const double *sp);
-
-    //  --------- IVelocityControl2Raw Declarations. Implementation in IVelocityControl2RawImpl.cpp ---------
     virtual bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds);
     virtual bool getRefVelocityRaw(const int joint, double *vel);
     virtual bool getRefVelocitiesRaw(double *vels);

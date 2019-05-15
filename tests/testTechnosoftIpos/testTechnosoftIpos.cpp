@@ -7,7 +7,6 @@
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/IControlLimits2.h>
 #include <yarp/dev/CanBusInterface.h>
 
 #include <ColorDebug.h>
@@ -56,7 +55,7 @@ public:
 
         bool ok2 = true;
         ok2 &= canNodeDevice.open( TechnosoftIposConf );   // -- we introduce the configuration properties defined ........
-        //j//fail due to yarp non-public inheritance// ok2 &= canNodeDevice.view( iControlLimitsRaw );
+        ok2 &= canNodeDevice.view( iControlLimitsRaw );
         ok2 &= canNodeDevice.view( iControlModeRaw );
         ok2 &= canNodeDevice.view( iEncodersTimedRaw );
         ok2 &= canNodeDevice.view( iPositionControlRaw );
@@ -101,7 +100,7 @@ protected:
 
     /** CAN node object. */
     yarp::dev::PolyDriver canNodeDevice;
-    yarp::dev::IControlLimits2Raw* iControlLimits2Raw;
+    yarp::dev::IControlLimitsRaw* iControlLimitsRaw;
     yarp::dev::IControlModeRaw* iControlModeRaw;
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRaw;
     yarp::dev::IPositionControlRaw* iPositionControlRaw;

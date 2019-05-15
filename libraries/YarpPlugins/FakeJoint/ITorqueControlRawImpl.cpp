@@ -67,21 +67,3 @@ bool roboticslab::FakeJoint::getTorqueRangesRaw(double *min, double *max)
 }
 
 // ------------------------------------------------------------------------------
-
-#if YARP_VERSION_MAJOR != 3
-bool roboticslab::FakeJoint::getBemfParamRaw(int j, double *bemf)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// ------------------------------------------------------------------------------
-
-bool roboticslab::FakeJoint::setBemfParamRaw(int j, double bemf)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-// ------------------------------------------------------------------------------
-#endif // YARP_VERSION_MAJOR != 3

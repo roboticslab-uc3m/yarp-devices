@@ -15,15 +15,15 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}) # yarp plugin builder needs thi
 yarp_add_plugin(CanBusControlboard CanBusControlboard.cpp
                                    CanBusControlboard.hpp
                                    DeviceDriverImpl.cpp
-                                   IControlLimits2Impl.cpp
-                                   IControlMode2Impl.cpp
+                                   IControlLimitsImpl.cpp
+                                   IControlModeImpl.cpp
                                    IEncodersImpl.cpp
                                    IEncodersTimedImpl.cpp
                                    IInteractionModeImpl.cpp
-                                   IPositionControl2Impl.cpp
+                                   IPositionControlImpl.cpp
                                    IPositionDirectImpl.cpp
                                    ITorqueControlImpl.cpp
-                                   IVelocityControl2Impl.cpp
+                                   IVelocityControlImpl.cpp
                                    ThreadImpl.cpp)
 
 target_link_libraries(CanBusControlboard YARP::YARP_OS

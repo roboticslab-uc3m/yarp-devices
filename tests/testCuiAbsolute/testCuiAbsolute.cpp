@@ -11,7 +11,6 @@
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/IControlLimits2.h>
 #include <yarp/dev/CanBusInterface.h>
 
 #include <ColorDebug.h>
@@ -67,7 +66,7 @@ public:
             CD_ERROR("Bad device of CuiAbsolute :(\n");
             std::exit(1);
         }
-        ok &= canNodeDevice.view( iControlLimits2Raw );
+        ok &= canNodeDevice.view( iControlLimitsRaw );
         ok &= canNodeDevice.view( iControlModeRaw );
         ok &= canNodeDevice.view( iEncodersTimedRaw );
         ok &= canNodeDevice.view( iPositionControlRaw );
@@ -113,7 +112,7 @@ protected:
 
     /** CAN node object. */
     yarp::dev::PolyDriver canNodeDevice;
-    yarp::dev::IControlLimits2Raw* iControlLimits2Raw;
+    yarp::dev::IControlLimitsRaw* iControlLimitsRaw;
     yarp::dev::IControlModeRaw* iControlModeRaw;
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRaw;
     yarp::dev::IPositionControlRaw* iPositionControlRaw;

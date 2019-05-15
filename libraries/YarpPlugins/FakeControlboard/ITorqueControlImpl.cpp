@@ -85,37 +85,3 @@ bool roboticslab::FakeControlboard::getTorqueRanges(double *min, double *max)
 }
 
 // -----------------------------------------------------------------------------
-
-#if YARP_VERSION_MAJOR != 3
-bool roboticslab::FakeControlboard::getBemfParam(int j, double *bemf)
-{
-    yarp::dev::MotorTorqueParameters params;
-
-    if (!getMotorTorqueParams(j, &params))
-    {
-        return false;
-    }
-
-    *bemf = params.bemf;
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeControlboard::setBemfParam(int j, double bemf)
-{
-    yarp::dev::MotorTorqueParameters params;
-
-    if (!getMotorTorqueParams(j, &params))
-    {
-        return false;
-    }
-
-    params.bemf = bemf;
-
-    return setMotorTorqueParams(j, params);
-}
-
-// -----------------------------------------------------------------------------
-#endif // YARP_VERSION_MAJOR != 3

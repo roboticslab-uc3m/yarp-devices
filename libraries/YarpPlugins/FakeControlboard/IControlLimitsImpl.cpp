@@ -39,3 +39,27 @@ bool roboticslab::FakeControlboard::getLimits(int axis, double *min, double *max
 }
 
 // -----------------------------------------------------------------------------
+
+bool roboticslab::FakeControlboard::setVelLimits(int axis, double min, double max)
+{
+    CD_WARNING("Not implemented.\n");
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::FakeControlboard::getVelLimits(int axis, double *min, double *max)
+{
+    if (axis >= int(axes))
+    {
+        return false;
+    }
+
+    // yarpmotorgui's defaults (partitem.cpp)
+    *min = 0;
+    *max = 100;
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------

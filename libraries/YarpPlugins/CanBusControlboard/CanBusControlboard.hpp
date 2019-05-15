@@ -5,7 +5,6 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
-#include <yarp/dev/IControlLimits2.h>
 #include <yarp/dev/CanBusInterface.h>
 
 #include <stdlib.h>  //-- Just for ::exit()
@@ -54,21 +53,23 @@ namespace roboticslab
 * roboticslab::LacqueyFetch and/or roboticslab::FakeJoint raw implementations.
 *
 */
-// Note: IEncodersTimed inherits from IEncoders
-// Note: IControlLimits2 inherits from IControlLimits
-// Note: IPositionControl2 inherits from IPositionControl
-// Note: IControlMode2 inherits from IControlMode
-// Note: to fix [ERROR]iint->getInteractionlMode failed, we should inherit from IInteractionMode
-class CanBusControlboard : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2, public yarp::dev::IControlMode2, public yarp::dev::IEncodersTimed,
-    public yarp::dev::IPositionControl2, public yarp::dev::IPositionDirect, public yarp::dev::ITorqueControl, public yarp::dev::IVelocityControl2, public yarp::dev::IInteractionMode,
-    public yarp::os::Thread
+class CanBusControlboard : public yarp::dev::DeviceDriver,
+                           public yarp::dev::IControlLimits,
+                           public yarp::dev::IControlMode,
+                           public yarp::dev::IEncodersTimed,
+                           public yarp::dev::IInteractionMode,
+                           public yarp::dev::IPositionControl,
+                           public yarp::dev::IPositionDirect,
+                           public yarp::dev::ITorqueControl,
+                           public yarp::dev::IVelocityControl,
+                           public yarp::os::Thread
 {
 
     // ------------------------------- Public -------------------------------------
 
 public:
 
-    //  --------- IControlLimits Declarations. Implementation in IControlLimits2Impl.cpp ---------
+    //  --------- IControlLimits Declarations. Implementation in IControlLimitsImpl.cpp ---------
 
     /**
      * Set the software limits for a particular axis, the behavior of the
@@ -108,7 +109,7 @@ public:
      */
     virtual bool getVelLimits(int axis, double *min, double *max);
 
-    //  --------- IControlMode Declarations. Implementation in IControlMode2Impl.cpp ---------
+    //  --------- IControlMode Declarations. Implementation in IControlModeImpl.cpp ---------
 
     /**
     * Get the current control mode.
@@ -124,8 +125,6 @@ public:
     * @return: true/false success failure.
     */
     virtual bool getControlModes(int *modes);
-
-    //  --------- IControlMode2 Declarations. Implementation in IControlMode2Impl.cpp ---------
 
     /**
     * Get the current control mode for a subset of axes.
@@ -268,7 +267,7 @@ public:
     */
     virtual bool getEncoderTimed(int j, double *encs, double *time);
 
-    // ------- IPositionControl declarations. Implementation in IPositionControl2Impl.cpp -------
+    // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
 
     /**
      * Get the number of controlled axes. This command asks the number of controlled
@@ -385,8 +384,6 @@ public:
      */
     virtual bool stop();
 
-    // ------- IPositionControl2 declarations. Implementation in IPositionControl2Impl.cpp -------
-
     /** Set new reference point for a subset of joints.
      * @param joints pointer to the array of joint numbers
      * @param refs   pointer to the array specifing the new reference points
@@ -501,13 +498,6 @@ public:
      */
     virtual bool setPositions(const int n_joint, const int *joints, const double *refs);
 
-#if YARP_VERSION_MAJOR != 3
-    virtual bool setPositions(const int n_joint, const int *joints, double *refs)
-    {
-        return setPositions(n_joint, joints, const_cast<const double *>(refs));
-    }
-#endif // YARP_VERSION_MAJOR != 3
-
     /** Set new position for a set of axis.
      * @param refs specifies the new reference points
      * @return true/false on success/failure
@@ -595,23 +585,7 @@ public:
      */
     virtual bool getTorqueRanges(double *min, double *max);
 
-#if YARP_VERSION_MAJOR != 3
-    /** Set the back-efm compensation gain for a given joint.
-     * @param j joint number
-     * @param bemf the returned bemf gain of joint j
-     * @return true/false on success/failure
-     */
-    virtual bool getBemfParam(int j, double *bemf);
-
-    /** Set the back-efm compensation gain for a given joint.
-     * @param j joint number
-     * @param bemf new value
-     * @return true/false on success/failure
-     */
-    virtual bool setBemfParam(int j, double bemf);
-#endif // YARP_VERSION_MAJOR != 3
-
-    //  --------- IVelocityControl Declarations. Implementation in IVelocityControl2Impl.cpp ---------
+    //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
 
     /**
      * Start motion at a given speed, single joint.
@@ -627,8 +601,6 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool velocityMove(const double *sp);
-
-    //  --------- IVelocityControl2 Declarations. Implementation in IVelocityControl2Impl.cpp ----------
 
     /** Start motion at a given speed for a subset of joints.
      * @param n_joint how many joints this command is referring to
@@ -695,7 +667,6 @@ public:
      */
     virtual bool getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode);
 
-
     /**
      * Get the current interaction mode of the robot for a set of joints, values can be stiff or compliant.
      * @param n_joints how many joints this command is referring to
@@ -709,14 +680,12 @@ public:
      */
     virtual bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
 
-
     /**
      * Get the current interaction mode of the robot for a all the joints, values can be stiff or compliant.
      * @param mode array containing the requested information about interaction mode, one value for each joint.
      * @return true or false on success or failure.
      */
     virtual bool getInteractionModes(yarp::dev::InteractionModeEnum* modes);
-
 
     /**
      * Set the interaction mode of the robot, values can be stiff or compliant.
@@ -726,7 +695,6 @@ public:
      * @return true or false on success or failure.
      */
     virtual bool setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode);
-
 
     /**
      * Set the interaction mode of the robot for a set of joints, values can be stiff or compliant.
@@ -801,16 +769,15 @@ protected:
 
     /** A vector of CAN node objects. */
     std::vector< yarp::dev::PolyDriver* > nodes;
-    std::vector< yarp::dev::IControlLimits2Raw* > iControlLimits2Raw;
-    std::vector< yarp::dev::IControlMode2Raw* > iControlMode2Raw;
+    std::vector< yarp::dev::IControlLimitsRaw* > iControlLimitsRaw;
+    std::vector< yarp::dev::IControlModeRaw* > iControlModeRaw;
     std::vector< yarp::dev::IEncodersTimedRaw* > iEncodersTimedRaw;
-    std::vector< yarp::dev::IPositionControl2Raw* > iPositionControl2Raw;
+    std::vector< yarp::dev::IInteractionModeRaw* > iInteractionModeRaw;
+    std::vector< yarp::dev::IPositionControlRaw* > iPositionControlRaw;
     std::vector< yarp::dev::IPositionDirectRaw* > iPositionDirectRaw;
     std::vector< yarp::dev::ITorqueControlRaw* > iTorqueControlRaw;
+    std::vector< yarp::dev::IVelocityControlRaw* > iVelocityControlRaw;
     std::vector< ICanBusSharer* > iCanBusSharer;
-
-    std::vector< yarp::dev::IInteractionModeRaw* > iInteractionModeRaw;
-    std::vector< yarp::dev::IVelocityControl2Raw* > iVelocityControl2Raw;
 
     std::map< int, int > idxFromCanId;
 

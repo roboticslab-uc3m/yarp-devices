@@ -14,7 +14,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
     CD_DEBUG("config: %s\n", config.toString().c_str());
 
     axes = config.check("axes", yarp::os::Value(DEFAULT_AXES), "number of axes to control").asInt();
-    jmcMs = config.check("jmcMs", yarp::os::Value(DEFAULT_JMC_MS), "period of JMC rate thread (milliseconds)").asInt();
+    jmcMs = config.check("jmcMs", yarp::os::Value(DEFAULT_JMC_MS), "period of JMC periodic thread (milliseconds)").asInt();
 
     double genInitPos = config.check("genInitPos", yarp::os::Value(DEFAULT_GEN_INIT_POS), "general initialization positions (meters or degrees)").asDouble();
     double genJointTol = config.check("genJointTol", yarp::os::Value(DEFAULT_GEN_JOINT_TOL), "general joint tolerances (meters or degrees)").asDouble();
@@ -199,9 +199,9 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
 
     lastTime = yarp::os::Time::now();
 
-    // Start the RateThread
-    RateThread::setRate(jmcMs);
-    RateThread::start();
+    // Start the PeriodicThread
+    PeriodicThread::setPeriod(jmcMs * 0.001);
+    PeriodicThread::start();
     
     return true;
 }
@@ -210,7 +210,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
 
 bool roboticslab::FakeControlboard::close()
 {
-    RateThread::stop();
+    PeriodicThread::stop();
     CD_INFO("[FakeControlboard] close()\n");
     return true;
 }

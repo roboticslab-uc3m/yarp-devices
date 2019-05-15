@@ -1,10 +1,8 @@
-cmake_minimum_required(VERSION 2.8.9 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
-project(exampleJr3)
+project(exampleJr3 LANGUAGES CXX)
 
-find_package(YARP REQUIRED)
-
-include_directories(${YARP_INCLUDE_DIRS})
+find_package(YARP 3.0 REQUIRED COMPONENTS OS dev sig)
 
 add_executable(exampleJr3 exampleJr3.cpp)
   

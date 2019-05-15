@@ -49,17 +49,3 @@ bool roboticslab::CuiAbsolute::getTorqueRangesRaw(double *min, double *max)
     CD_ERROR("\n");
     return false;
 }
-
-#if YARP_VERSION_MAJOR != 3
-bool roboticslab::CuiAbsolute::getBemfParamRaw(int j, double *bemf)
-{
-    CD_INFO("\n");
-    return true;
-}
-
-bool roboticslab::CuiAbsolute::setBemfParamRaw(int j, double bemf)
-{
-    CD_INFO("\n");
-    return true;
-}
-#endif // YARP_VERSION_MAJOR != 3

@@ -125,33 +125,3 @@ bool roboticslab::TechnosoftIpos::getTorqueRangesRaw(double *min, double *max)
 }
 
 // -------------------------------------------------------------------------------------
-
-#if YARP_VERSION_MAJOR != 3
-bool roboticslab::TechnosoftIpos::getBemfParamRaw(int j, double *bemf)
-{
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
-
-    return true;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::setBemfParamRaw(int j, double bemf)
-{
-    CD_INFO("(%d,%f)\n",j,bemf);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
-
-    return true;
-}
-
-// -------------------------------------------------------------------------------------
-#endif // YARP_VERSION_MAJOR != 3

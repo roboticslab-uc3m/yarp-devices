@@ -1,11 +1,9 @@
-cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
-project(exampleTechnosoftIpos)
+project(exampleTechnosoftIpos LANGUAGES CXX)
 
-find_package(YARP REQUIRED)
+find_package(YARP 3.0 REQUIRED COMPONENTS OS dev)
 find_package(ROBOTICSLAB_YARP_DEVICES REQUIRED)
-
-include_directories(${YARP_INCLUDE_DIRS})
 
 add_executable(exampleTechnosoftIpos exampleTechnosoftIpos.cpp)
 

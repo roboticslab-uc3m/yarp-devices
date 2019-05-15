@@ -22,7 +22,7 @@ bool roboticslab::CanBusControlboard::positionMove(int j, double ref)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iPositionControl2Raw[j]->positionMoveRaw( 0, ref );
+    return iPositionControlRaw[j]->positionMoveRaw( 0, ref );
 }
 
 // -----------------------------------------------------------------------------
@@ -48,7 +48,7 @@ bool roboticslab::CanBusControlboard::relativeMove(int j, double delta)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iPositionControl2Raw[j]->relativeMoveRaw( 0, delta );
+    return iPositionControlRaw[j]->relativeMoveRaw( 0, delta );
 }
 
 // -----------------------------------------------------------------------------
@@ -74,7 +74,7 @@ bool roboticslab::CanBusControlboard::checkMotionDone(int j, bool *flag)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iPositionControl2Raw[j]->checkMotionDoneRaw( 0, flag );
+    return iPositionControlRaw[j]->checkMotionDoneRaw( 0, flag );
 }
 
 // -----------------------------------------------------------------------------
@@ -102,7 +102,7 @@ bool roboticslab::CanBusControlboard::setRefSpeed(int j, double sp)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iPositionControl2Raw[j]->setRefSpeedRaw( 0, sp );
+    return iPositionControlRaw[j]->setRefSpeedRaw( 0, sp );
 }
 
 // -----------------------------------------------------------------------------
@@ -126,7 +126,7 @@ bool roboticslab::CanBusControlboard::setRefAcceleration(int j, double acc)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iPositionControl2Raw[j]->setRefAccelerationRaw( 0, acc );
+    return iPositionControlRaw[j]->setRefAccelerationRaw( 0, acc );
 }
 
 // -----------------------------------------------------------------------------
@@ -150,7 +150,7 @@ bool roboticslab::CanBusControlboard::getRefSpeed(int j, double *ref)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iPositionControl2Raw[j]->getRefSpeedRaw( 0, ref);
+    return iPositionControlRaw[j]->getRefSpeedRaw( 0, ref);
 }
 
 // -----------------------------------------------------------------------------
@@ -174,7 +174,7 @@ bool roboticslab::CanBusControlboard::getRefAcceleration(int j, double *acc)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iPositionControl2Raw[j]->getRefAccelerationRaw( 0, acc );
+    return iPositionControlRaw[j]->getRefAccelerationRaw( 0, acc );
 }
 
 // -----------------------------------------------------------------------------
@@ -198,7 +198,7 @@ bool roboticslab::CanBusControlboard::stop(int j)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iPositionControl2Raw[j]->stopRaw (0);
+    return iPositionControlRaw[j]->stopRaw (0);
 }
 
 // -----------------------------------------------------------------------------
@@ -333,7 +333,7 @@ bool roboticslab::CanBusControlboard::getTargetPosition(const int joint, double 
 {
     CD_DEBUG("\n");
 
-    return iPositionControl2Raw[joint]->getTargetPositionRaw(0, ref);
+    return iPositionControlRaw[joint]->getTargetPositionRaw(0, ref);
 
 }
 

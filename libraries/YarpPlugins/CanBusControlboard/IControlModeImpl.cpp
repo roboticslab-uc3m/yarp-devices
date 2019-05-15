@@ -11,7 +11,7 @@ bool roboticslab::CanBusControlboard::getControlMode(int j, int *mode)
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iControlMode2Raw[j]->getControlModeRaw( 0, mode );
+    return iControlModeRaw[j]->getControlModeRaw( 0, mode );
 }
 
 // -----------------------------------------------------------------------------
@@ -47,7 +47,7 @@ bool roboticslab::CanBusControlboard::setControlMode(const int j, const int mode
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iControlMode2Raw[j]->setControlModeRaw( 0, mode );
+    return iControlModeRaw[j]->setControlModeRaw( 0, mode );
 }
 
 // -----------------------------------------------------------------------------

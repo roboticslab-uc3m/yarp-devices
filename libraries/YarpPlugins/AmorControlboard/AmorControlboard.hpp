@@ -8,7 +8,6 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/IControlLimits2.h>
 #include <yarp/dev/PolyDriver.h>
 
 #include <amor.h>
@@ -32,14 +31,14 @@ namespace roboticslab
 * @brief Implements several yarp::dev:: controlboard interfaces.
 */
 class AmorControlboard : public yarp::dev::DeviceDriver,
-                         public yarp::dev::IPositionControl2,
-                         public yarp::dev::IVelocityControl2,
-                         public yarp::dev::IEncodersTimed,
-                         public yarp::dev::IControlLimits2,
-                         public yarp::dev::IControlMode2,
                          public yarp::dev::IAxisInfo,
+                         public yarp::dev::IControlLimits,
+                         public yarp::dev::IControlMode,
+                         public yarp::dev::IEncodersTimed,
+                         public yarp::dev::IInteractionMode,
+                         public yarp::dev::IPositionControl,
                          public yarp::dev::ITorqueControl,
-                         public yarp::dev::IInteractionMode
+                         public yarp::dev::IVelocityControl
 {
 public:
 
@@ -163,8 +162,6 @@ public:
      * @return true/false on success/failure
      */
     virtual bool stop();
-
-// ------- IPositionControl2 declarations. Implementation in IPositionControl2Impl.cpp -------
 
     /** Set new reference point for a subset of joints.
      * @param joints pointer to the array of joint numbers
@@ -368,8 +365,6 @@ public:
      */
     virtual bool velocityMove(const double *sp);
 
-//  --------- IVelocityControl2 declarations. Implementation in IVelocityControl2Impl.cpp ---------
-
     /** Start motion at a given speed for a subset of joints.
      * @param n_joint how many joints this command is referring to
      * @param joints of joints controlled. The size of this array is n_joints
@@ -425,8 +420,6 @@ public:
      */
     virtual bool getLimits(int axis, double *min, double *max);
 
-//  --------- IControlLimits2 declarations. Implementation in IControlLimits2Impl.cpp ---------
-
     /**
      * Set the software speed limits for a particular axis, the behavior of the
      * control card when these limits are exceeded, depends on the implementation.
@@ -462,8 +455,6 @@ public:
     * @return: true/false success failure.
     */
     virtual bool getControlModes(int *modes);
-
-//  --------- IControlMode2 declarations. Implementation in IControlMode2Impl.cpp ---------
 
     /**
     * Get the current control mode for a subset of axes.
@@ -521,7 +512,7 @@ public:
      * @param name the axis name
      * @return true if everything goes fine, false otherwise.
      */
-    virtual bool getAxisName(int axis, yarp::os::ConstString& name);
+    virtual bool getAxisName(int axis, std::string& name);
 
     /**
      * Get the joint type (e.g. revolute/prismatic) for a particular axis.
@@ -611,22 +602,6 @@ public:
      * @return true/false on success/failure
      */
     virtual bool getTorqueRanges(double *min, double *max);
-
-#if YARP_VERSION_MAJOR != 3
-    /** Get the back-emf compensation gain for a given joint.
-     * @param j joint number
-     * @param bemf the returned bemf gain of joint j
-     * @return true/false on success/failure
-     */
-    virtual bool getBemfParam(int j, double *bemf);
-
-    /** Set the back-emf compensation gain for a given joint.
-     * @param j joint number
-     * @param bemf new value
-     * @return true/false on success/failure
-     */
-    virtual bool setBemfParam(int j, double bemf);
-#endif // YARP_VERSION_MAJOR != 3
 
 // -------- IInteractionMode declarations. Implementation in IInteractionModeImpl.cpp --------
 

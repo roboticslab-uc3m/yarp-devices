@@ -22,7 +22,7 @@ if(NOT SKIP_AravisGigE)
 
     yarp_add_plugin(AravisGigE AravisGigE.hpp
                                DeviceDriverImpl.cpp
-                               IFrameGrabberControls2Impl.cpp
+                               IFrameGrabberControlsImpl.cpp
                                IFrameGrabberImageRawImpl.cpp
                                IFrameGrabberImpl.cpp)
 

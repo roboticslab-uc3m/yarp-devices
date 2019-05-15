@@ -5,7 +5,6 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
-#include <yarp/dev/IControlLimits2.h>
 
 #include <sstream>
 
@@ -42,11 +41,15 @@ namespace roboticslab
 * @brief Implementation for the custom UC3M Dextra Hand controlboard interfaces.
 *
 */
-// Note: IEncodersTimed inherits from IEncoders
-// Note: IControlLimits2 inherits from IControlLimits
-class DextraControlboardUSB : public yarp::dev::DeviceDriver, public yarp::dev::IControlLimits2, public yarp::dev::IControlMode2, public yarp::dev::IEncodersTimed,
-    public yarp::dev::IPositionControl2, public yarp::dev::IPositionDirect, public yarp::dev::IVelocityControl2, public yarp::dev::ITorqueControl,
-    public yarp::dev::IInteractionMode
+class DextraControlboardUSB : public yarp::dev::DeviceDriver,
+                              public yarp::dev::IControlLimits,
+                              public yarp::dev::IControlMode,
+                              public yarp::dev::IEncodersTimed,
+                              public yarp::dev::IInteractionMode,
+                              public yarp::dev::IPositionControl,
+                              public yarp::dev::IPositionDirect,
+                              public yarp::dev::ITorqueControl,
+                              public yarp::dev::IVelocityControl
 {
 
 public:
@@ -65,11 +68,9 @@ public:
     virtual bool setVelLimits(int axis, double min, double max);
     virtual bool getVelLimits(int axis, double *min, double *max);
 
-    //  --------- IControlMode Declarations. Implementation in IControlMode2Impl.cpp ---------
+    //  --------- IControlMode Declarations. Implementation in IControlModeImpl.cpp ---------
     virtual bool getControlMode(int j, int *mode);
     virtual bool getControlModes(int *modes);
-
-    //  --------- IControlMode2 Declarations. Implementation in IControlMode2Impl.cpp ---------
     virtual bool getControlModes(const int n_joint, const int *joints, int *modes);
     virtual bool setControlMode(const int j, const int mode);
     virtual bool setControlModes(const int n_joint, const int *joints, int *modes);
@@ -91,7 +92,7 @@ public:
     virtual bool getEncodersTimed(double *encs, double *time);
     virtual bool getEncoderTimed(int j, double *encs, double *time);
 
-    // ------- IPositionControl declarations. Implementation in IPositionControl2Impl.cpp -------
+    // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
     virtual bool getAxes(int *ax);
     virtual bool positionMove(int j, double ref);
     virtual bool positionMove(const double *refs);
@@ -109,9 +110,6 @@ public:
     virtual bool getRefAccelerations(double *accs);
     virtual bool stop(int j);
     virtual bool stop();
-
-    // ------- IPositionControl2 declarations. Implementation in IPositionControl2Impl.cpp ---------
-
     virtual bool positionMove(const int n_joint, const int *joints, const double *refs);
     virtual bool relativeMove(const int n_joint, const int *joints, const double *deltas);
     virtual bool checkMotionDone(const int n_joint, const int *joints, bool *flags);
@@ -127,12 +125,6 @@ public:
     // ------- IPositionDirect declarations. Implementation in IPositionDirectImpl.cpp -------
     virtual bool setPosition(int j, double ref);
     virtual bool setPositions(const int n_joint, const int *joints, const double *refs);
-#if YARP_VERSION_MAJOR != 3
-    virtual bool setPositions(const int n_joint, const int *joints, double *refs)
-    {
-        return setPositions(n_joint, joints, const_cast<const double *>(refs));
-    }
-#endif // YARP_VERSION_MAJOR != 3
     virtual bool setPositions(const double *refs);
 
     // -------- ITorqueControl declarations. Implementation in ITorqueControlImpl.cpp --------
@@ -144,16 +136,10 @@ public:
     virtual bool getTorques(double *t);
     virtual bool getTorqueRange(int j, double *min, double *max);
     virtual bool getTorqueRanges(double *min, double *max);
-#if YARP_VERSION_MAJOR != 3
-    virtual bool getBemfParam(int j, double *bemf);
-    virtual bool setBemfParam(int j, double bemf);
-#endif // YARP_VERSION_MAJOR != 3
 
-    //  --------- IVelocityControl Declarations. Implementation in IVelocityControl2Impl.cpp ---------
+    //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
     virtual bool velocityMove(int j, double sp);
     virtual bool velocityMove(const double *sp);
-
-    //  --------- IVelocityControl2 Declarations. Implementation in IVelocityControl2Impl.cpp ---------
     virtual bool velocityMove(const int n_joint, const int *joints, const double *spds);
     virtual bool getRefVelocity(const int joint, double *vel);
     virtual bool getRefVelocities(double *vels);
