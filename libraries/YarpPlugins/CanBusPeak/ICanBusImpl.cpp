@@ -227,7 +227,7 @@ bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsign
 
     for (unsigned int i = 0; i < size; i++)
     {
-        const yarp::dev::CanMessage & msg = const_cast<yarp::dev::CanBuffer &>(msgs)[i];
+        const yarp::dev::CanMessage & msg = msgs[i];
         std::memcpy(pfdm[i].data, msg.getData(), msg.getLen());
         pfdm[i].data_len = msg.getLen();
         pfdm[i].id = msg.getId();
