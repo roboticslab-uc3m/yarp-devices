@@ -85,7 +85,15 @@ bool roboticslab::TechnosoftIpos::getLimitsRaw(int axis, double *min, double *ma
 
 bool roboticslab::TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
 {
-    CD_WARNING("Not implemented.\n");
+    CD_INFO("(%d,%f,%f)\n",axis,min,max);
+
+    //-- Check index within range
+    if ( axis != 0 ) return false;
+
+    //-- Update the limits that have been locally stored.
+    this->minVel = min;
+    this->maxVel = max;
+
     return true;
 }
 

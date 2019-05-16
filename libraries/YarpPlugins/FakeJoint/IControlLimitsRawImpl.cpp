@@ -12,8 +12,8 @@ bool roboticslab::FakeJoint::setLimitsRaw(int axis, double min, double max)
     if ( axis != 0 ) return false;
 
     //-- Store the new limits locally.
-    this->max;
-    this->min;
+    this->min = min;
+    this->max = max;
 
     return true;
 }
@@ -38,7 +38,15 @@ bool roboticslab::FakeJoint::getLimitsRaw(int axis, double *min, double *max)
 
 bool roboticslab::FakeJoint::setVelLimitsRaw(int axis, double min, double max)
 {
-    CD_WARNING("Not implemented.\n");
+    CD_INFO("(%d,%f,%f)\n",axis,min,max);
+
+    //-- Check index within range
+    if( axis != 0 ) return false;
+
+    //-- Update the limits that have been locally stored.
+    this->minVel = min;
+    this->maxVel = max;
+
     return true;
 }
 
