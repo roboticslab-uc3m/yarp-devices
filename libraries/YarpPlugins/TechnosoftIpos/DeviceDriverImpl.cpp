@@ -10,8 +10,8 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt();    
     this->max = config.check("max",yarp::os::Value(0),"max (meters or degrees)").asDouble();
     this->min = config.check("min",yarp::os::Value(0),"min (meters or degrees)").asDouble();
-    this->maxVel = config.check("maxVel",yarp::os::Value(1000),"maxVel (meters/second or degrees/second)").asDouble();
-    this->minVel = config.check("minVel",yarp::os::Value(0),"minVel (meters/second or degrees/second)").asDouble();
+    this->maxVel = config.check("maxVel",yarp::os::Value(10),"maxVel (meters/second or degrees/second)").asDouble();
+    this->minVel = config.check("minVel",yarp::os::Value(-10),"minVel (meters/second or degrees/second)").asDouble();
     this->tr = config.check("tr",yarp::os::Value(0),"reduction").asDouble();
     this->refAcceleration = config.check("refAcceleration",yarp::os::Value(0),"ref acceleration (meters/second^2 or degrees/second^2)").asDouble();
     this->refSpeed = config.check("refSpeed",yarp::os::Value(0),"ref speed (meters/second or degrees/second)").asDouble();
