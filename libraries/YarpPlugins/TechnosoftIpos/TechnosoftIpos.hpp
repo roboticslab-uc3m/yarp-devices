@@ -99,6 +99,7 @@ public:
     bool setTorqueModeRaw3();
     //-- Old yarp::dev::IPositionDirectRaw implementation
     bool setPositionDirectModeRaw();
+    bool setTrajectoryModeRaw();
 
     virtual bool getControlModeRaw(int j, int *mode);
     //-- Auxiliary functions (splitted) of getControlModeRaw
@@ -162,6 +163,7 @@ public:
 
     // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
     virtual bool setPositionRaw(int j, double ref);
+    virtual bool setTrajectoryRaw(int j, double ref);
     virtual bool setPositionsRaw(const int n_joint, const int *joints, const double *refs);
     virtual bool setPositionsRaw(const double *refs);
 
