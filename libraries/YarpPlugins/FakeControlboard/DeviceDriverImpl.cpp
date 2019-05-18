@@ -13,18 +13,18 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
 {
     CD_DEBUG("config: %s\n", config.toString().c_str());
 
-    axes = config.check("axes", yarp::os::Value(DEFAULT_AXES), "number of axes to control").asInt();
-    jmcMs = config.check("jmcMs", yarp::os::Value(DEFAULT_JMC_MS), "period of JMC periodic thread (milliseconds)").asInt();
+    axes = config.check("axes", yarp::os::Value(DEFAULT_AXES), "number of axes to control").asInt32();
+    jmcMs = config.check("jmcMs", yarp::os::Value(DEFAULT_JMC_MS), "period of JMC periodic thread (milliseconds)").asInt32();
 
-    double genInitPos = config.check("genInitPos", yarp::os::Value(DEFAULT_GEN_INIT_POS), "general initialization positions (meters or degrees)").asDouble();
-    double genJointTol = config.check("genJointTol", yarp::os::Value(DEFAULT_GEN_JOINT_TOL), "general joint tolerances (meters or degrees)").asDouble();
-    double genMaxLimit = config.check("genMaxLimit", yarp::os::Value(DEFAULT_GEN_MAX_LIMIT), "general max limits (meters or degrees)").asDouble();
-    double genMinLimit = config.check("genMinLimit", yarp::os::Value(DEFAULT_GEN_MIN_LIMIT), "general min limits (meters or degrees)").asDouble();
-    double genRefSpeed = config.check("genRefSpeed", yarp::os::Value(DEFAULT_GEN_REF_SPEED), "general ref speed (meters/second or degrees/second)").asDouble();
-    double genEncRawExposed = config.check("genEncRawExposed", yarp::os::Value(DEFAULT_GEN_ENC_RAW_EXPOSED), "general EncRawExposed (meters or degrees)").asDouble();
-    double genVelRawExposed = config.check("genVelRawExposed", yarp::os::Value(DEFAULT_GEN_VEL_RAW_EXPOSED), "general VelRawExposed (meters/second or degrees/second)").asDouble();
+    double genInitPos = config.check("genInitPos", yarp::os::Value(DEFAULT_GEN_INIT_POS), "general initialization positions (meters or degrees)").asFloat64();
+    double genJointTol = config.check("genJointTol", yarp::os::Value(DEFAULT_GEN_JOINT_TOL), "general joint tolerances (meters or degrees)").asFloat64();
+    double genMaxLimit = config.check("genMaxLimit", yarp::os::Value(DEFAULT_GEN_MAX_LIMIT), "general max limits (meters or degrees)").asFloat64();
+    double genMinLimit = config.check("genMinLimit", yarp::os::Value(DEFAULT_GEN_MIN_LIMIT), "general min limits (meters or degrees)").asFloat64();
+    double genRefSpeed = config.check("genRefSpeed", yarp::os::Value(DEFAULT_GEN_REF_SPEED), "general ref speed (meters/second or degrees/second)").asFloat64();
+    double genEncRawExposed = config.check("genEncRawExposed", yarp::os::Value(DEFAULT_GEN_ENC_RAW_EXPOSED), "general EncRawExposed (meters or degrees)").asFloat64();
+    double genVelRawExposed = config.check("genVelRawExposed", yarp::os::Value(DEFAULT_GEN_VEL_RAW_EXPOSED), "general VelRawExposed (meters/second or degrees/second)").asFloat64();
     
-    int modePosVelInt = config.check("modePosVel", yarp::os::Value(DEFAULT_MODE_POS_VEL), "0:pos, 1:vel").asInt();
+    int modePosVelInt = config.check("modePosVel", yarp::os::Value(DEFAULT_MODE_POS_VEL), "0:pos, 1:vel").asInt32();
 
     switch (modePosVelInt)
     {
@@ -178,13 +178,13 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
     {
         jointStatus[i] = NOT_CONTROLLING;
 
-        refSpeed[i]      = refSpeeds      ? refSpeeds->get(i).asDouble()      : genRefSpeed;
-        minLimit[i]      = minLimits      ? minLimits->get(i).asDouble()      : genMinLimit;
-        maxLimit[i]      = maxLimits      ? maxLimits->get(i).asDouble()      : genMaxLimit;
-        initPos[i]       = initPoss       ? initPoss->get(i).asDouble()       : genInitPos;
-        jointTol[i]      = jointTols      ? jointTols->get(i).asDouble()      : genJointTol;
-        encRawExposed[i] = encRawExposeds ? encRawExposeds->get(i).asDouble() : genEncRawExposed;
-        velRawExposed[i] = velRawExposeds ? velRawExposeds->get(i).asDouble() : genVelRawExposed;
+        refSpeed[i]      = refSpeeds      ? refSpeeds->get(i).asFloat64()      : genRefSpeed;
+        minLimit[i]      = minLimits      ? minLimits->get(i).asFloat64()      : genMinLimit;
+        maxLimit[i]      = maxLimits      ? maxLimits->get(i).asFloat64()      : genMaxLimit;
+        initPos[i]       = initPoss       ? initPoss->get(i).asFloat64()       : genInitPos;
+        jointTol[i]      = jointTols      ? jointTols->get(i).asFloat64()      : genJointTol;
+        encRawExposed[i] = encRawExposeds ? encRawExposeds->get(i).asFloat64() : genEncRawExposed;
+        velRawExposed[i] = velRawExposeds ? velRawExposeds->get(i).asFloat64() : genVelRawExposed;
     }
 
     encRaw.resize(axes, 0.0);

@@ -7,8 +7,8 @@
 bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 {
     std::string mode = config.check("mode",yarp::os::Value("position"),"control mode on startup (position/velocity)").asString();
-    int16_t ptModeMs = config.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode (milliseconds)").asInt();
-    int timeCuiWait  = config.check("waitEncoder", yarp::os::Value(DEFAULT_TIME_TO_WAIT_CUI), "CUI timeout (seconds)").asInt();
+    int16_t ptModeMs = config.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode (milliseconds)").asInt32();
+    int timeCuiWait  = config.check("waitEncoder", yarp::os::Value(DEFAULT_TIME_TO_WAIT_CUI), "CUI timeout (seconds)").asInt32();
 
     std::string canBusType = config.check("canBusType", yarp::os::Value(DEFAULT_CAN_BUS), "CAN bus device name").asString();
 
@@ -88,7 +88,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         options.put("encoderPulses", encoderPulsess.get(i));
         options.put("ptModeMs", ptModeMs);
         //std::stringstream ss; // Remember to #include <sstream>
-        //ss << types.get(i).asString() << "_" << ids.get(i).asInt();
+        //ss << types.get(i).asString() << "_" << ids.get(i).asInt32();
         //options.setMonitor(config.getMonitor(),ss.str().c_str());
 
         yarp::os::Value v(&iCanBufferFactory, sizeof(iCanBufferFactory));
@@ -104,7 +104,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
         //-- Fill a map entry ( drivers.size() if before push_back, otherwise do drivers.size()-1).
         //-- Just "i" if resize already performed.
-        idxFromCanId[ ids.get(i).asInt() ] = i;
+        idxFromCanId[ ids.get(i).asInt32() ] = i;
 
         //-- Push the motor driver and other devices (CuiAbsolute) on to the vectors.
         nodes[i] = device;
@@ -173,22 +173,22 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         {
             //-- Set initial parameters on physical motor drivers.
 
-            if ( ! iPositionControlRaw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asDouble() ) )
+            if ( ! iPositionControlRaw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asFloat64() ) )
                 return false;
 
-            if ( ! iPositionControlRaw[i]->setRefSpeedRaw( 0, refSpeeds.get(i).asDouble() ) )
+            if ( ! iPositionControlRaw[i]->setRefSpeedRaw( 0, refSpeeds.get(i).asFloat64() ) )
                 return false;
 
-            if ( ! iControlLimitsRaw[i]->setLimitsRaw( 0, mins.get(i).asDouble(), maxs.get(i).asDouble() ) )
+            if ( ! iControlLimitsRaw[i]->setLimitsRaw( 0, mins.get(i).asFloat64(), maxs.get(i).asFloat64() ) )
                 return false;
         }
 
         //-- Associate absolute encoders to motor drivers
         if( types.get(i).asString() == "CuiAbsolute" )
         {
-            int driverCanId = ids.get(i).asInt() - 100;  //-- \todo{Document the dangers: ID must be > 100, driver must be instanced.}
+            int driverCanId = ids.get(i).asInt32() - 100;  //-- \todo{Document the dangers: ID must be > 100, driver must be instanced.}
 
-            CD_INFO("Sending \"Start Continuous Publishing\" message to Cui Absolute (PIC ID: %d)\n", ids.get(i).asInt());
+            CD_INFO("Sending \"Start Continuous Publishing\" message to Cui Absolute (PIC ID: %d)\n", ids.get(i).asInt32());
 
             // Configuring Cui Absolute
             ICuiAbsolute* cuiAbsolute;
@@ -216,7 +216,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
                     // -- if it exceeds the timeCuiWait...
                     if(int(yarp::os::Time::now()-timeStamp)>=timeCuiWait)
                     {
-                        CD_ERROR("Time out passed and CuiAbsolute ID (%d) doesn't respond\n", ids.get(i).asInt() );
+                        CD_ERROR("Time out passed and CuiAbsolute ID (%d) doesn't respond\n", ids.get(i).asInt32() );
                         yarp::os::Time::delay(2);
                         CD_WARNING("Initializing with normal relative encoder configuration\n");
                         yarp::os::Time::delay(2);
@@ -249,16 +249,16 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
                 }
                 else                               // doesn't respond :(
                 {
-                    CD_ERROR("Cui Absolute (PIC ID: %d) doesn't respond. Try using --externalEncoderWait [seconds] parameter with timeout higher than 0 \n", ids.get(i).asInt());
+                    CD_ERROR("Cui Absolute (PIC ID: %d) doesn't respond. Try using --externalEncoderWait [seconds] parameter with timeout higher than 0 \n", ids.get(i).asInt32());
                     return false;
                 }
             }
         }
 
         //-- Enable acceptance filters for each node ID
-        if( !iCanBus->canIdAdd(ids.get(i).asInt()) )
+        if( !iCanBus->canIdAdd(ids.get(i).asInt32()) )
         {
-            CD_ERROR("Cannot register acceptance filter for node ID: %d.\n", ids.get(i).asInt());
+            CD_ERROR("Cannot register acceptance filter for node ID: %d.\n", ids.get(i).asInt32());
             return false;
         }
 

@@ -6,14 +6,14 @@
 bool roboticslab::LacqueyFetch::open(yarp::os::Searchable& config)
 {
 
-    this->canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt();
-    this->tr = config.check("tr",yarp::os::Value(0),"reduction").asInt();
-    this->ptModeMs  = config.check("ptModeMs",yarp::os::Value(0),"ptMode (milliseconds)").asInt();
+    this->canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt32();
+    this->tr = config.check("tr",yarp::os::Value(0),"reduction").asInt32();
+    this->ptModeMs  = config.check("ptModeMs",yarp::os::Value(0),"ptMode (milliseconds)").asInt32();
     this->ptPointCounter = 0;
     this->ptMovementDone = false;
     this->targetReached = false;
-    this->max = config.check("max",yarp::os::Value(0),"max").asDouble();
-    this->min = config.check("min",yarp::os::Value(0),"min").asDouble();
+    this->max = config.check("max",yarp::os::Value(0),"max").asFloat64();
+    this->min = config.check("min",yarp::os::Value(0),"min").asFloat64();
     this->refAcceleration = 0;
     this->refSpeed = 0;
     this->encoder = 0;

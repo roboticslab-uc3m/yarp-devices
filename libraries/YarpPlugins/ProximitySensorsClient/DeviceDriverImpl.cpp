@@ -43,11 +43,11 @@ bool roboticslab::ProximitySensorsClient::open(yarp::os::Searchable& config)
     }
 
     thresholdGripper = config.check("thresholdGripper", yarp::os::Value(DEFAULT_THRESHOLD_GRIPPER),
-            "sensor threshold (gripper reach distance)").asDouble();
+            "sensor threshold (gripper reach distance)").asFloat64();
     thresholdAlertHigh = config.check("thresholdAlertHigh", yarp::os::Value(DEFAULT_THRESHOLD_ALERT_HIGH),
-            "sensor threshold (proximity alert, high level)").asDouble();
+            "sensor threshold (proximity alert, high level)").asFloat64();
     thresholdAlertLow = config.check("thresholdAlertLow", yarp::os::Value(DEFAULT_THRESHOLD_ALERT_LOW),
-            "sensor threshold (proximity alert, low level)").asDouble();
+            "sensor threshold (proximity alert, low level)").asFloat64();
 
     if (!yarp::os::Network::connect(remote, local, carrier))
     {

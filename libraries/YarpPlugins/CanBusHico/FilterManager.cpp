@@ -49,7 +49,7 @@ bool CanBusHico::FilterManager::parseIds(const yarp::os::Bottle & b)
 
     for (int i = 0; i < b.size(); i++)
     {
-        modified |= stage.insert(b.get(i).asInt()).second;
+        modified |= stage.insert(b.get(i).asInt32()).second;
     }
 
     if (!stage.empty() && modified)

@@ -103,7 +103,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf)
     // -- Parametro: --timeout [s]
     if(rf.check("timeOut"))
     {
-        timeOut = rf.find("timeOut").asInt();
+        timeOut = rf.find("timeOut").asInt32();
         CD_INFO_NO_HEADER("[INFO] Timeout: %.2f [s]\n", timeOut);
     }
 
@@ -120,7 +120,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf)
     // -- Parametro: --resetNode
     if(rf.check("resetNode"))
     {
-        nodeForReset = rf.find("resetNode").asInt();
+        nodeForReset = rf.find("resetNode").asInt32();
         CD_INFO_NO_HEADER("[INFO] Reseting node number: %i\n", nodeForReset );
         // -- doing reset of node after delay
         yarp::os::Time::delay(1);
@@ -131,7 +131,7 @@ bool CheckCanBus::configure(yarp::os::ResourceFinder &rf)
     // -- Parametro: --cleaningTime [s]
     if(rf.check("cleaningTime"))
     {
-        cleaningTime = rf.find("cleaningTime").asInt();
+        cleaningTime = rf.find("cleaningTime").asInt32();
         CD_INFO_NO_HEADER("[INFO] Cleaning Time: %.2f [s]\n", cleaningTime);
     }
 

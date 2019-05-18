@@ -14,7 +14,7 @@ bool roboticslab::CanBusPeak::open(yarp::os::Searchable& config)
 {
     std::string devicePath = config.check("canDevice", yarp::os::Value(DEFAULT_CAN_DEVICE), "CAN device path").asString();
 
-    int bitrate = config.check("canBitrate", yarp::os::Value(DEFAULT_CAN_BITRATE), "CAN bitrate (bps)").asInt();
+    int bitrate = config.check("canBitrate", yarp::os::Value(DEFAULT_CAN_BITRATE), "CAN bitrate (bps)").asInt32();
 
     blockingMode = config.check("canBlockingMode", yarp::os::Value(DEFAULT_CAN_BLOCKING_MODE), "CAN blocking mode enabled").asBool();
     allowPermissive = config.check("canAllowPermissive", yarp::os::Value(DEFAULT_CAN_ALLOW_PERMISSIVE), "CAN read/write permissive mode").asBool();
@@ -25,8 +25,8 @@ bool roboticslab::CanBusPeak::open(yarp::os::Searchable& config)
     {
         CD_INFO("Blocking mode enabled for CAN device: %s.\n", devicePath.c_str());
 
-        rxTimeoutMs = config.check("canRxTimeoutMs", yarp::os::Value(DEFAULT_CAN_RX_TIMEOUT_MS), "RX timeout (milliseconds)").asInt();
-        txTimeoutMs = config.check("canTxTimeoutMs", yarp::os::Value(DEFAULT_CAN_TX_TIMEOUT_MS), "TX timeout (milliseconds)").asInt();
+        rxTimeoutMs = config.check("canRxTimeoutMs", yarp::os::Value(DEFAULT_CAN_RX_TIMEOUT_MS), "RX timeout (milliseconds)").asInt32();
+        txTimeoutMs = config.check("canTxTimeoutMs", yarp::os::Value(DEFAULT_CAN_TX_TIMEOUT_MS), "TX timeout (milliseconds)").asInt32();
 
         if (rxTimeoutMs <= 0)
         {
@@ -87,7 +87,7 @@ bool roboticslab::CanBusPeak::open(yarp::os::Searchable& config)
 
             for (int i = 0; i < ids.size(); i++)
             {
-                activeFilters.insert(ids.get(i).asDouble());
+                activeFilters.insert(ids.get(i).asFloat64());
             }
 
             uint64_t acc = computeAcceptanceCodeAndMask();

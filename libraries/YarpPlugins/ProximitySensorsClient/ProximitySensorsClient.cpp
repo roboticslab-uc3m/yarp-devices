@@ -13,7 +13,7 @@ void roboticslab::ProximitySensorsClient::SensorReader::onRead(yarp::os::Bottle&
 
     sens->gripperMutex.lock();
 
-    if (b.get(14).asDouble() > sens->thresholdGripper && b.get(14).asDouble() < 1000)
+    if (b.get(14).asFloat64() > sens->thresholdGripper && b.get(14).asFloat64() < 1000)
     {
         sens->gripper=true;
         CD_INFO("Target detected.\n");
@@ -29,9 +29,9 @@ void roboticslab::ProximitySensorsClient::SensorReader::onRead(yarp::os::Bottle&
 
     for (int i = 0; i < b.size(); i++)
     {
-        if (b.get(i).asDouble() > max)
+        if (b.get(i).asFloat64() > max)
         {
-            max = b.get(i).asDouble();
+            max = b.get(i).asFloat64();
         }
     }
 
