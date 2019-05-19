@@ -58,13 +58,12 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     iControlLimitsRaw.resize( nodes.size() );
     iControlModeRaw.resize( nodes.size() );
     iEncodersTimedRaw.resize( nodes.size() );
+    iInteractionModeRaw.resize( nodes.size() );
     iPositionControlRaw.resize( nodes.size() );
     iPositionDirectRaw.resize( nodes.size() );
     iTorqueControlRaw.resize( nodes.size() );
+    iVelocityControlRaw.resize( nodes.size() );
     iCanBusSharer.resize( nodes.size() );
-
-    iInteractionModeRaw.resize( nodes.size() );
-    iVelocityControlRaw.resize( nodes.size() ); // -- new
 
     for(int i=0; i<nodes.size(); i++)
     {
@@ -175,6 +174,8 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         //-- DRIVERS
         if(types.get(i).asString() == "TechnosoftIpos")
         {
+            motorIds.push_back(i);
+
             //-- Set initial parameters on physical motor drivers.
 
             if ( ! iPositionControlRaw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asDouble() ) )

@@ -40,13 +40,13 @@ bool roboticslab::TechnosoftIpos::setRemoteVariableRaw(std::string key, const ya
         {
             yarp::os::Bottle * pvtBottle = val.get(i).asList();
 
-            if (pvtBottle->isNull() || pvtBottle->size() != 3)
+            if (pvtBottle == 0 || pvtBottle->size() != 2 || pvtBottle->size() != 3)
             {
                 CD_WARNING("Illegal value: malformed bottle or wrong size: %s.\n", val.get(i).toString().c_str());
                 ret = false;
             }
 
-            pvtQueue.push_back(PvtPoint::fromBottle(*pvtBottle));
+            pvtQueue.push_back(PvtPoint::fromBottle(*pvtBottle, pvtBottle->size() == 3));
         }
 
         if (!pvtQueue.empty() && !fillPvtBuffer(PVT_BUFFER_MAX_SIZE))
@@ -70,6 +70,7 @@ bool roboticslab::TechnosoftIpos::getRemoteVariablesListRaw(yarp::os::Bottle* li
 {
     CD_DEBUG("\n");
     listOfKeys->clear();
+    // Place each key in its own list so that clients can just call check('<key>') or !find('<key>').isNull().
     listOfKeys->addString("pvtPoints");
     return true;
 }

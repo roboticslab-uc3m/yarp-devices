@@ -45,21 +45,21 @@ struct PvtPoint
 {
     double p, v, t;
 
-    static PvtPoint fromBottle(const yarp::os::Bottle & b)
+    static PvtPoint fromBottle(const yarp::os::Bottle & b, bool hasVelocity)
     {
         PvtPoint pvtPoint;
-        pvtPoint.p = b.get(0).asDouble();
-        pvtPoint.v = b.get(1).asDouble();
-        pvtPoint.t = b.get(2).asDouble();
+        pvtPoint.t = b.get(0).asFloat64();
+        pvtPoint.p = b.get(1).asFloat64();
+        pvtPoint.v = hasVelocity ? b.get(2).asFloat64() : 0.0;
         return pvtPoint;
     }
 
     yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle b;
-        b.addDouble(p);
-        b.addDouble(v);
-        b.addDouble(t);
+        b.addFloat64(t);
+        b.addFloat64(p);
+        b.addFloat64(v);
         return b;
     }
 };

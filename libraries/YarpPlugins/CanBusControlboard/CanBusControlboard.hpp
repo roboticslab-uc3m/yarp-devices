@@ -788,7 +788,10 @@ protected:
     std::vector< yarp::dev::IRemoteVariablesRaw* > iRemoteVariablesRaw;
     std::vector< yarp::dev::ITorqueControlRaw* > iTorqueControlRaw;
     std::vector< yarp::dev::IVelocityControlRaw* > iVelocityControlRaw;
+
     std::vector< ICanBusSharer* > iCanBusSharer;
+
+    std::vector< int > motorIds;
 
     std::map< int, int > idxFromCanId;
 
