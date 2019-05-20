@@ -38,6 +38,11 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
         CD_ERROR("Could not create TechnosoftIpos with min >= max\n");
         return false;
     }
+    if( 0 == this->maxVel )
+    {
+        CD_ERROR("Could not create TechnosoftIpos with maxVel 0\n");
+        return false;
+    }
     if( 0 == this->tr )
     {
         CD_ERROR("Could not create TechnosoftIpos with tr 0\n");
@@ -51,6 +56,11 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     if( 0 == this->refSpeed )
     {
         CD_ERROR("Could not create TechnosoftIpos with refSpeed 0\n");
+        return false;
+    }
+    if( this->refSpeed > this->maxVel )
+    {
+        CD_ERROR("Could not create TechnosoftIpos with refSpeed > maxVel\n");
         return false;
     }
     if( 0 == this->encoderPulses )
