@@ -62,8 +62,8 @@ bool roboticslab::AmorControlboard::getVelLimits(int axis, double *min, double *
         return false;
     }
 
-    *min = 0.0;
     *max = toDeg(parameters.maxVelocity);
+    *min = -(*max);
 
     return true;
 }
