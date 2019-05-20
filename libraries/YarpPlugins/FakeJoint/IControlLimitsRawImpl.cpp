@@ -44,8 +44,12 @@ bool roboticslab::FakeJoint::setVelLimitsRaw(int axis, double min, double max)
     if( axis != 0 ) return false;
 
     //-- Update the limits that have been locally stored.
-    this->minVel = min;
     this->maxVel = max;
+
+    if (min != -max)
+    {
+        CD_WARNING("Minimum value not equal to negative maximum value.\n");
+    }
 
     return true;
 }
@@ -60,7 +64,7 @@ bool roboticslab::FakeJoint::getVelLimitsRaw(int axis, double *min, double *max)
     if( axis != 0 ) return false;
 
     //-- Get the limits that have been locally stored.
-    *min = this->minVel;
+    *min = -this->maxVel;
     *max = this->maxVel;
 
     return true;
