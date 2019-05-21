@@ -11,6 +11,12 @@ bool roboticslab::TechnosoftIpos::velocityMoveRaw(int j, double sp)
     //-- Check index within range
     if ( j != 0 ) return false;
 
+    if ( sp > maxVel )
+    {
+        CD_WARNING("Requested speed exceeds maximum velocity (%f).\n", maxVel);
+        return false;
+    }
+
     //*************************************************************
     uint8_t msg_vel[]= {0x23,0xFF,0x60,0x00,0x00,0x00,0x00,0x00}; // Velocity target
 

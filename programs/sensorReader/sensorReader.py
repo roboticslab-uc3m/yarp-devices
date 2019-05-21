@@ -51,7 +51,7 @@ class DataProcessor(yarp.PortReader):
         
         for part in range(3):
             for sensor in range(16):
-                sensors[part][sensor]['text'] = 's%d: %d' % (sensor + 1, b.get(i).asDouble())
+                sensors[part][sensor]['text'] = 's%d: %d' % (sensor + 1, b.get(i).asFloat64())
                 i += 1
         
         return True

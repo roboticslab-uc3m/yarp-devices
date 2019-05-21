@@ -6,9 +6,9 @@
 bool roboticslab::TextilesHand::open(yarp::os::Searchable& config)
 {
 
-    /*this->canId = config.check("canId",0,"can bus ID").asInt();
-    this->tr = config.check("tr",0,"reduction").asInt();
-    this->ptModeMs  = config.check("ptModeMs",0,"ptMode ms").asInt();
+    /*this->canId = config.check("canId",0,"can bus ID").asInt32();
+    this->tr = config.check("tr",0,"reduction").asInt32();
+    this->ptModeMs  = config.check("ptModeMs",0,"ptMode ms").asInt32();
     this->ptPointCounter = 0;
     this->ptMovementDone = false;
     this->targetReached = false;

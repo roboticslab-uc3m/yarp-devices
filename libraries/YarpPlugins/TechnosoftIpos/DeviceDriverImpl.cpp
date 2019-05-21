@@ -7,18 +7,17 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 {
 
     // -- .ini parameters (in order)
-    this->canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt();    
-    this->max = config.check("max",yarp::os::Value(0),"max (meters or degrees)").asDouble();
-    this->min = config.check("min",yarp::os::Value(0),"min (meters or degrees)").asDouble();
-    this->maxVel = config.check("maxVel",yarp::os::Value(10),"maxVel (meters/second or degrees/second)").asDouble();
-    this->minVel = config.check("minVel",yarp::os::Value(-10),"minVel (meters/second or degrees/second)").asDouble();
-    this->tr = config.check("tr",yarp::os::Value(0),"reduction").asDouble();
-    this->refAcceleration = config.check("refAcceleration",yarp::os::Value(0),"ref acceleration (meters/second^2 or degrees/second^2)").asDouble();
-    this->refSpeed = config.check("refSpeed",yarp::os::Value(0),"ref speed (meters/second or degrees/second)").asDouble();
-    this->encoderPulses = config.check("encoderPulses",yarp::os::Value(0),"encoderPulses").asInt();
+    this->canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt32();    
+    this->max = config.check("max",yarp::os::Value(0),"max (meters or degrees)").asFloat64();
+    this->min = config.check("min",yarp::os::Value(0),"min (meters or degrees)").asFloat64();
+    this->maxVel = config.check("maxVel",yarp::os::Value(10),"maxVel (meters/second or degrees/second)").asFloat64();
+    this->tr = config.check("tr",yarp::os::Value(0),"reduction").asFloat64();
+    this->refAcceleration = config.check("refAcceleration",yarp::os::Value(0),"ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
+    this->refSpeed = config.check("refSpeed",yarp::os::Value(0),"ref speed (meters/second or degrees/second)").asFloat64();
+    this->encoderPulses = config.check("encoderPulses",yarp::os::Value(0),"encoderPulses").asInt32();
 
     // -- other parameters...
-    this->k = config.check("k",yarp::os::Value(0),"motor constant").asDouble();
+    this->k = config.check("k",yarp::os::Value(0),"motor constant").asFloat64();
     this->pvtPointCounter = 0;
     this->targetReached = false;
     this->encoder = 0;    
@@ -37,6 +36,11 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
         CD_ERROR("Could not create TechnosoftIpos with min >= max\n");
         return false;
     }
+    if( 0 == this->maxVel )
+    {
+        CD_ERROR("Could not create TechnosoftIpos with maxVel 0\n");
+        return false;
+    }
     if( 0 == this->tr )
     {
         CD_ERROR("Could not create TechnosoftIpos with tr 0\n");
@@ -50,6 +54,11 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     if( 0 == this->refSpeed )
     {
         CD_ERROR("Could not create TechnosoftIpos with refSpeed 0\n");
+        return false;
+    }
+    if( this->refSpeed > this->maxVel )
+    {
+        CD_ERROR("Could not create TechnosoftIpos with refSpeed > maxVel\n");
         return false;
     }
     if( 0 == this->encoderPulses )
