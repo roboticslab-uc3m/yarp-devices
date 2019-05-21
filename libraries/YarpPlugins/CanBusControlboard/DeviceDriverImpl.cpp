@@ -19,7 +19,6 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     yarp::os::Bottle maxs = config.findGroup("maxs", "maximum joint limits (meters or degrees)").tail();  //-- e.g. 360
     yarp::os::Bottle mins = config.findGroup("mins", "minimum joint limits (meters or degrees)").tail();  //-- e.g. -360
     yarp::os::Bottle maxVels = config.findGroup("maxVels", "maximum joint velocities (meters/second or degrees/second)").tail();  //-- e.g. 1000
-    yarp::os::Bottle minVels = config.findGroup("minVels", "minimum joint velocities (meters/second or degrees/second)").tail();  //-- e.g. 0
     yarp::os::Bottle refAccelerations = config.findGroup("refAccelerations", "ref accelerations (meters/second^2 or degrees/second^2)").tail();  //-- e.g. 0.575437
     yarp::os::Bottle refSpeeds = config.findGroup("refSpeeds", "ref speeds (meters/second or degrees/second)").tail();  //-- e.g. 737.2798
     yarp::os::Bottle encoderPulsess = config.findGroup("encoderPulsess", "encoder pulses (multiple nodes)").tail();  //-- e.g. 4096 (4 * 1024)
@@ -80,7 +79,6 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         options.put("tr", trs.get(i));
         options.put("min", mins.get(i));
         options.put("max", maxs.get(i));
-        options.put("minVel", minVels.get(i));
         options.put("maxVel", maxVels.get(i));
         options.put("k", ks.get(i));
         options.put("refAcceleration", refAccelerations.get(i));

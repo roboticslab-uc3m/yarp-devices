@@ -195,7 +195,7 @@ protected:
     yarp::dev::ICanBufferFactory *iCanBufferFactory;
     yarp::dev::CanBuffer canOutputBuffer;
 
-    double max, min, maxVel, minVel, refAcceleration, refSpeed, tr, targetPosition;
+    double max, min, maxVel, refAcceleration, refSpeed, tr, targetPosition;
 
     double lastUsage;
 

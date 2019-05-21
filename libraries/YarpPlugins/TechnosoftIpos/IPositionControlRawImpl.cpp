@@ -189,6 +189,12 @@ bool roboticslab::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
     //-- Check index within range
     if ( j != 0 ) return false;
 
+    if ( sp > maxVel )
+    {
+        CD_WARNING("Reference speed exceeds maximum velocity (%f).\n", maxVel);
+        return false;
+    }
+
     //*************************************************************
 
     uint8_t msg_posmode_speed[]= {0x23,0x81,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6081h: Profile velocity
