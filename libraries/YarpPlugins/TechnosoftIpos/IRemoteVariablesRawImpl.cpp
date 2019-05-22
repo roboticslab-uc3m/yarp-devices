@@ -10,7 +10,11 @@ bool roboticslab::TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os
 
     val.clear();
 
-    if (key == "pvtPoints")
+    if (key == "ptModeMs")
+    {
+        val.addInt32(ptModeMs);
+    }
+    else if (key == "pvtPoints")
     {
         for (unsigned int i = 0; i < pvtQueue.size(); i++)
         {
@@ -34,7 +38,23 @@ bool roboticslab::TechnosoftIpos::setRemoteVariableRaw(std::string key, const ya
 
     bool ret = true;
 
-    if (key == "pvtPoints")
+    if (key == "ptModeMs")
+    {
+        if (ptModeMs >= 0)
+        {
+            CD_WARNING("Illegal state, unable to change variable when currently used.\n");
+            return false;
+        }
+
+        ptModeMs = val.get(0).asInt32();
+
+        if (ptModeMs < 0)
+        {
+            CD_WARNING("Invalid %s: %d.\n", key.c_str(), ptModeMs);
+            return false;
+        }
+    }
+    else if (key == "pvtPoints")
     {
         for (int i = 0; i < val.size(); i++)
         {
@@ -71,6 +91,7 @@ bool roboticslab::TechnosoftIpos::getRemoteVariablesListRaw(yarp::os::Bottle* li
     CD_DEBUG("\n");
     listOfKeys->clear();
     // Place each key in its own list so that clients can just call check('<key>') or !find('<key>').isNull().
+    listOfKeys->addString("ptModeMs");
     listOfKeys->addString("pvtPoints");
     return true;
 }

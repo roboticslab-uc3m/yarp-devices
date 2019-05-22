@@ -136,6 +136,8 @@ public:
     bool setTorqueModeRaw3();
     //-- Old yarp::dev::IPositionDirectRaw implementation
     bool setPositionDirectModeRaw();
+    bool setExternalReferencePositionModeRaw();
+    bool setPtInterpolationModeRaw();
     bool setMixedModeRaw();
 
     virtual bool getControlModeRaw(int j, int *mode);
@@ -202,6 +204,9 @@ public:
     virtual bool setPositionRaw(int j, double ref);
     virtual bool setPositionsRaw(const int n_joint, const int *joints, const double *refs);
     virtual bool setPositionsRaw(const double *refs);
+    //-- Auxiliary functions of setPositionRaw()
+    bool setExternalReferenceRaw(int j, double ref);
+    bool setPtTargetRaw(int j, double ref);
 
     // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
     virtual bool getRefTorquesRaw(double *t);
@@ -292,6 +297,7 @@ protected:
     yarp::os::Semaphore getEnableReady;
 
     //-- PT stuff
+    int ptModeMs;
     int pvtPointCounter;
 
     //-- More internal parameter stuff

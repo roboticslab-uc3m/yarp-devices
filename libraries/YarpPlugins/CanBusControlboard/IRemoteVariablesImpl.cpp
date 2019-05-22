@@ -49,7 +49,18 @@ bool roboticslab::CanBusControlboard::setRemoteVariable(std::string key, const y
 {
     CD_DEBUG("%s\n", key.c_str());
 
-    if (key == "pvtPoints")
+    if (key == "ptModeMs")
+    {
+        for (unsigned int i = 0; i < motorIds.size(); i++)
+        {
+            if (!iRemoteVariablesRaw[motorIds[i]]->setRemoteVariableRaw(key, val))
+            {
+                CD_WARNING("Unable to set remote variable on node %d.\n", motorIds[i]);
+                return false;
+            }
+        }
+    }
+    else if (key == "pvtPoints")
     {
         yarp::os::Bottle pvtPointsPerJoint;
 
@@ -135,6 +146,7 @@ bool roboticslab::CanBusControlboard::getRemoteVariablesList(yarp::os::Bottle* l
     CD_DEBUG("\n");
     listOfKeys->clear();
     // Place each key in its own list so that clients can just call check('<key>') or !find('<key>').isNull().
+    listOfKeys->addString("ptModeMs");
     listOfKeys->addString("pvtPoints");
     return true;
 }
