@@ -91,7 +91,7 @@ void roboticslab::TechnosoftIpos::createPvtMessage(const PvtPoint & pvtPoint, ui
     memcpy(msg + 2, &velocityFrac, 1);
     memcpy(msg + 4, &velocityInt, 2);
 
-    int16_t time = ((uint16_t)pvtPoint.t << 7) >> 7;
+    int16_t time = (pvtPoint.t << 7) >> 7;
     uint8_t ic = (++pvtPointCounter) << 1;
     uint16_t timeAndIc = time + ic;
     memcpy(msg + 6, &timeAndIc, 2);

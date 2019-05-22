@@ -100,7 +100,7 @@ bool roboticslab::CanBusControlboard::setRemoteVariable(std::string key, const y
             for (unsigned int i = 0; i < motorIds.size(); i++)
             {
                 yarp::os::Bottle & pvt = pvtPointsPerJoint.get(i).asList()->addList();
-                pvt.addFloat64(time);
+                pvt.addInt32(time);
                 pvt.addFloat64(positions->get(i).asFloat64());
 
                 if (velocities != 0)

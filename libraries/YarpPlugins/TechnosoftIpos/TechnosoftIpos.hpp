@@ -43,12 +43,13 @@ namespace roboticslab
  */
 struct PvtPoint
 {
-    double p, v, t;
+    int t;
+    double p, v;
 
     static PvtPoint fromBottle(const yarp::os::Bottle & b, bool hasVelocity)
     {
         PvtPoint pvtPoint;
-        pvtPoint.t = b.get(0).asFloat64();
+        pvtPoint.t = b.get(0).asInt32();
         pvtPoint.p = b.get(1).asFloat64();
         pvtPoint.v = hasVelocity ? b.get(2).asFloat64() : 0.0;
         return pvtPoint;
@@ -57,7 +58,7 @@ struct PvtPoint
     yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle b;
-        b.addFloat64(t);
+        b.addInt32(t);
         b.addFloat64(p);
         b.addFloat64(v);
         return b;
