@@ -262,7 +262,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
         {
             CD_WARNING("pt buffer low. canId: %d.\n",canId);
 
-            if (!fillPvtBuffer(PVT_BUFFER_MAX_SIZE - PVT_BUFFER_LOW_SIGNAL))
+            if (ptModeMs > 0 && !fillPvtBuffer(PVT_BUFFER_MAX_SIZE - PVT_BUFFER_LOW_SIGNAL))
             {
                 CD_ERROR("Cannot replenish PVT buffer.\n");
             }
