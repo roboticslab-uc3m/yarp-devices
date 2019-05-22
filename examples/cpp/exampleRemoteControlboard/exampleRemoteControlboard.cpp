@@ -63,10 +63,10 @@ int main(int argc, char *argv[]) {
       return 1;
     }
 
-    IPositionControl2 *pos;
-    IVelocityControl2 *vel;
+    IPositionControl *pos;
+    IVelocityControl *vel;
     IEncodersTimed *enc;
-    IControlMode2 *mode;
+    IControlMode *mode;
 
     bool ok = true;
     ok &= dd.view(pos);

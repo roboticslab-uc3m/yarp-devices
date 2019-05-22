@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
     }
     else std::printf("[success] Viewing IVelocityControlRaw.\n");
 
-    yarp::dev::IControlMode2Raw *mode;
+    yarp::dev::IControlModeRaw *mode;
     ok = dd.view(mode);
     if (!ok)
     {

@@ -6,7 +6,7 @@
 #
 # This example connects to a running \ref controlboardWrapper to move in Joint space.
 #
-# <b>Requires YARP 2.3.72.</b>
+# <b>Requires YARP 3.0.</b>
 #
 # <b>Legal</b>
 #
@@ -49,7 +49,7 @@ dd = yarp.PolyDriver(options)  # create a YARP multi-use driver with the given o
 pos = dd.viewIPositionControl()  # make a position controller object we call 'pos'
 vel = dd.viewIVelocityControl()  # make a velocity controller object we call 'vel'
 enc = dd.viewIEncoders()  # make an encoder controller object we call 'enc'
-mode = dd.viewIControlMode2()  # make a operation mode controller object we call 'mode'
+mode = dd.viewIControlMode()  # make a operation mode controller object we call 'mode'
 ll = dd.viewIControlLimits()  # make a limits controller object we call 'll'
 
 axes = enc.getAxes()  # retrieve number of joints

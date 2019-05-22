@@ -34,10 +34,10 @@ int main(int argc, char *argv[]) {
     }
 
     IPositionDirect *posdir;
-    IPositionControl2 *pos;
-    IVelocityControl2 *vel;
+    IPositionControl *pos;
+    IVelocityControl *vel;
     IEncoders *enc;
-    IControlMode2 *mode;
+    IControlMode *mode;
 
     bool ok = true;
 

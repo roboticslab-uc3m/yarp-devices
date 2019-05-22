@@ -42,4 +42,3 @@ while 1:
     print '[%s]' % ', '.join(map(str, vector_list))
 
 print 'bye!'
-
