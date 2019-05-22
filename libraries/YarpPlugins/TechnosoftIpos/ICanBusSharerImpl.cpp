@@ -338,7 +338,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             {
                 CD_INFO("\t-iPOS specific: External Reference Speed Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                getMode = 0;
+                getMode = VOCAB_CM_UNKNOWN;
                 getModeReady.post();
             }
             else if(253==got)  // -3
@@ -352,14 +352,14 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             {
                 CD_INFO("\t-iPOS specific: Electronic Camming Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                getMode = 0;
+                getMode = VOCAB_CM_UNKNOWN;
                 getModeReady.post();
             }
             else if(255==got)  // -1
             {
                 CD_INFO("\t-iPOS specific: Electronic Gearing Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                getMode = 0;
+                getMode = VOCAB_CM_UNKNOWN;
                 getModeReady.post();
             }
             else if(1==got)
@@ -380,7 +380,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             {
                 CD_INFO("\t-Homing Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                getMode = 0;
+                getMode = VOCAB_CM_UNKNOWN;
                 getModeReady.post();
             }
             else if(7==got)
@@ -392,21 +392,21 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
                 else if (ptModeMs < 0)
                     getMode = VOCAB_CM_MIXED;
                 else
-                    getMode = 0;
+                    getMode = VOCAB_CM_UNKNOWN;
                 getModeReady.post();
             }
             else if(8==got)
             {
                 CD_INFO("\t-Cyclic Synchronous Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                getMode = 0;
+                getMode = VOCAB_CM_UNKNOWN;
                 getModeReady.post();
             }
             else
             {
                 CD_WARNING("\t-Mode \"%d\" not specified in manual, may be in Fault or not enabled yet. canId(%d).\n",got,(message.getId() & 0x7F));
                 getModeReady.wait();
-                getMode = VOCAB_FAILED;
+                getMode = VOCAB_CM_UNKNOWN;
                 getModeReady.post();
                 return true;
             }
