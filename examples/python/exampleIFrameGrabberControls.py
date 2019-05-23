@@ -14,7 +14,7 @@ options.put('local','/grabberControls2Gui')
 dd = yarp.PolyDriver(options)
 
 # View driver as FrameGrabber
-controls = dd.viewIFrameGrabberControls2()
+controls = dd.viewIFrameGrabberControls()
 
 # Check if a feature exists
 print(controls.hasFeature(yarp.YARP_FEATURE_GAIN))

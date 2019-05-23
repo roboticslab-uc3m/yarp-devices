@@ -54,11 +54,6 @@ int ExampleRemoteControlboard::run(int argc, char **argv)
         std::printf("[error] Problems acquiring position interface\n");
         return 1;
     }
-    if ( ! dd.view(pos2) )  // connect 'pos2' interface to 'dd' device
-    {
-        std::printf("[error] Problems acquiring position interface\n");
-        return 1;
-    }
     std::printf("[success] Acquired position interface\n");
 
     if ( ! dd.view(enc) ) // connect 'enc' interface to 'dd' device
@@ -170,7 +165,7 @@ int ExampleRemoteControlboard::run(int argc, char **argv)
         std::vector<int> mask(2,1);
         q[0] = -3.0;
         q[1] = -3.0;
-        pos2->positionMove( 2, mask.data(), q.data() );
+        pos->positionMove( 2, mask.data(), q.data() );
         std::printf("Wait to reach");
         bool done = false;
         while(!done)
