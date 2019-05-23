@@ -10,6 +10,7 @@
 #include <yarp/dev/IEncoders.h>
 #include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/IPositionDirect.h>
+#include <yarp/dev/IRemoteVariables.h>
 #include <yarp/dev/PolyDriver.h>
 
 #include <ColorDebug.h>
@@ -32,6 +33,7 @@ int main(int argc, char *argv[])
     double posdTarget = rf.check("posdTarget", yarp::os::Value(DEFAULT_POSD_TARGET), "target position for posd mode [deg]").asFloat64();
     int period = rf.check("period", yarp::os::Value(DEFAULT_POSD_PERIOD_MS), "posd command period [ms]").asInt32();
     double increment = rf.check("increment", yarp::os::Value(DEFAULT_POSD_INCREMENT), "posd command increment [deg]").asFloat64();
+    bool usePtMode = !rf.check("disablePT", "disable PT mode");
 
     if ((posdTarget - posTarget) * increment <= 0)
     {
@@ -70,6 +72,7 @@ int main(int argc, char *argv[])
     yarp::dev::IEncoders * enc;
     yarp::dev::IPositionControl * pos;
     yarp::dev::IPositionDirect * posd;
+    yarp::dev::IRemoteVariables * var;
 
     bool ok = true;
 
@@ -81,6 +84,12 @@ int main(int argc, char *argv[])
     if (!ok)
     {
         CD_ERROR("Problems acquiring robot interfaces.\n");
+        return 1;
+    }
+
+    if (usePtMode && !dd.view(var))
+    {
+        CD_ERROR("Remote variables interface not available, disable PT mode.\n");
         return 1;
     }
 
@@ -108,6 +117,20 @@ int main(int argc, char *argv[])
     getchar();
 
     CD_INFO("-- testing POSITION DIRECT --\n");
+
+    if (usePtMode)
+    {
+        yarp::os::Bottle val;
+        yarp::os::Bottle & b = val.addList();
+        b.addInt32(period);
+
+        if (!var->setRemoteVariable("ptModeMs", val))
+        {
+            CD_ERROR("Unable to set remote ptModeMs variable.\n");
+            return 1;
+        }
+    }
+
     std::vector<int> positionDirectMode(numJoints, VOCAB_CM_POSITION_DIRECT);
 
     if (!mode->setControlModes(positionDirectMode.data()))
