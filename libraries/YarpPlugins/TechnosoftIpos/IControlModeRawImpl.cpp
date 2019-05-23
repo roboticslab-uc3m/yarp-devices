@@ -185,6 +185,8 @@ bool roboticslab::TechnosoftIpos::setExternalReferencePositionModeRaw()
 
 bool roboticslab::TechnosoftIpos::setPtInterpolationModeRaw()
 {
+    pvtPointCounter = 0;
+
     //-- ptprepare: pg. 165 (181/263)
     //*************************************************************
     //-- 1. - 4. From start to enable.
@@ -249,17 +251,12 @@ bool roboticslab::TechnosoftIpos::setPtInterpolationModeRaw()
     //-- Send the following message (SDO access to object 2079 h , 32-bit value 0 h ):
     //uint8_t initPos[]={0x23,0x79,0x20,0x00,0xE8,0x03,0x00,0x00};  // Put 3E8 h.
     uint8_t initPos[]= {0x23,0x79,0x20,0x00,0x00,0x00,0x00,0x00}; // Put 0 h instead.
+
     double ref;
     getEncoderRaw(0, &ref);
     int position = ref * this->tr * (encoderPulses / 360.0);  // Appply tr & convert units to encoder increments
     memcpy(initPos+4,&position,4); //Copy block of memory
     if ( ! send(0x600,8,initPos) )
-        return false;
-    //*************************************************************
-    //-- xx. Interpolated position 1st order time
-    uint8_t firstOrderTime[]= {0x2B,0x7A,0x20,0x00,0x00,0x00,0x00,0x00};
-    memcpy(firstOrderTime + 4, &ptModeMs, 2);
-    if ( ! send(0x600,8,firstOrderTime) )
         return false;
     //*************************************************************
 

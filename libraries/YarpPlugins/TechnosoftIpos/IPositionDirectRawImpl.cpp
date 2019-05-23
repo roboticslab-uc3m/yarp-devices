@@ -58,6 +58,9 @@ bool roboticslab::TechnosoftIpos::setPtTargetRaw(int j, double ref)
     uint8_t msg_ptPoint[8];
     int32_t position = ref * this->tr * (encoderPulses / 360.0);  // Appply tr & convert units to encoder increments
     memcpy(msg_ptPoint+0,&position,4);
+    memcpy(msg_ptPoint+4,&ptModeMs,2);
+    uint8_t ic = (++pvtPointCounter) << 1;
+    memcpy(msg_ptPoint+7,&ic,1);
     yarp::os::Time::delay(0.001); // 0.01 okay for 1 arm (6 motors), had to reduce to 0.0075 for two arms (12 motors)
     if ( ! send(0x400,8,msg_ptPoint) )
     {
