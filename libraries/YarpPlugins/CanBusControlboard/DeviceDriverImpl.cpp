@@ -60,6 +60,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     iInteractionModeRaw.resize( nodes.size() );
     iPositionControlRaw.resize( nodes.size() );
     iPositionDirectRaw.resize( nodes.size() );
+    iRemoteVariablesRaw.resize( nodes.size() );
     iTorqueControlRaw.resize( nodes.size() );
     iVelocityControlRaw.resize( nodes.size() );
     iCanBusSharer.resize( nodes.size() );
