@@ -55,8 +55,14 @@ bool roboticslab::TechnosoftIpos::setPtTargetRaw(int j, double ref)
     //-- The drive motor will do 10 rotations (20000 counts) in 1000 milliseconds.
     //-- Send the following message:
     //uint8_t ptpoint1[]={0x20,0x4E,0x00,0x00,0xE8,0x03,0x00,0x02};
+    if (std::abs(ref - lastPtRef) > maxPtDistance)
+    {
+        CD_WARNING("Max velocity exceeded, clipping travelled distance.\n");
+        ref = lastPtRef + maxPtDistance * (ref >= lastPtRef ? 1 : -1);
+        CD_INFO("New ref: %f.\n", ref);
+    }
     uint8_t msg_ptPoint[8];
-    int32_t position = ref * this->tr * (encoderPulses / 360.0);  // Appply tr & convert units to encoder increments
+    int32_t position = ref * this->tr * (encoderPulses / 360.0); // Apply tr & convert units to encoder increments
     memcpy(msg_ptPoint+0,&position,4);
     memcpy(msg_ptPoint+4,&ptModeMs,2);
     uint8_t ic = (++pvtPointCounter) << 1;
@@ -68,6 +74,7 @@ bool roboticslab::TechnosoftIpos::setPtTargetRaw(int j, double ref)
         return false;
     }
     CD_SUCCESS("Sent to canId %d: pos %f, time %d, ic %d.\n",canId,ref,ptModeMs,ic);
+    lastPtRef = ref;
     return true;
 }
 

@@ -299,6 +299,8 @@ protected:
     //-- PT stuff
     int ptModeMs;
     int pvtPointCounter;
+    double lastPtRef;
+    double maxPtDistance;
 
     //-- More internal parameter stuff
     double max, min, maxVel, refAcceleration, refSpeed, refTorque, refVelocity, targetPosition, tr, k;
@@ -324,4 +326,3 @@ protected:
 }  // namespace roboticslab
 
 #endif  // __TECHNOSOFT_IPOS__
-

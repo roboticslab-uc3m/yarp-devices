@@ -263,6 +263,9 @@ bool roboticslab::TechnosoftIpos::setPtInterpolationModeRaw()
     yarp::os::Time::delay(1);  //-- Seems like a "must".
 
     //*************************************************************
+    lastPtRef = ref;
+    maxPtDistance = maxVel * ptModeMs * 0.001;
+
     uint8_t startPT[]= {0x1F,0x00};
     if( ! send(0x200,2,startPT) )
     {
