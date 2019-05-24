@@ -67,7 +67,7 @@ bool roboticslab::TechnosoftIpos::setPtTargetRaw(int j, double ref)
         CD_ERROR("msg_ptPoint in %d",canId);
         return false;
     }
-    CD_SUCCESS("Sent to canId %d: pos %f, time %d.\n",canId,ref,ptModeMs);
+    CD_SUCCESS("Sent to canId %d: pos %f, time %d, ic %d.\n",canId,ref,ptModeMs,ic);
     return true;
 }
 
