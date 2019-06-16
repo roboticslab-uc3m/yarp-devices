@@ -365,9 +365,16 @@ bool roboticslab::TechnosoftIpos::stopRaw(int j)
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
+    uint8_t msg_quickStop[] = {0x02,0x00};
+	
+	if (!this->send(0x200, 2, msg_quickStop))
+    {
+        CD_ERROR("Could not send \"quick stop\". %s\n", msgToStr(0x200, 2, msg_quickStop).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent \"quick stop\". %s\n", msgToStr(0x200, 2, msg_quickStop).c_str() );
 
-    return true;
+    return enable();
 }
 
 // --------------------------------------------------------------------------------
