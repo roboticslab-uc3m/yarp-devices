@@ -37,4 +37,3 @@ int main(int argc, char **argv)
     roboticslab::ExampleRemoteControlboard mod;
     return mod.run(argc,argv);
 }
-

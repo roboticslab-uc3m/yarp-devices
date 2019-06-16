@@ -48,7 +48,8 @@ make -j3
 int main(int argc, char *argv[])
 {
     yarp::os::Network yarp;
-    if (! yarp::os::Network::checkNetwork() )
+
+    if (!yarp::os::Network::checkNetwork())
     {
         std::printf("Please start a yarp name server first\n");
         return 1;
@@ -59,42 +60,44 @@ int main(int argc, char *argv[])
     yarp::dev::ICanBufferFactory* iCanBufferFactory;
 
     yarp::os::Property canBusOptions;
-    canBusOptions.put("device","CanBusHico");
-    canBusOptions.put("canDevice","/dev/can1");
-    canBusOptions.put("canBitrate",1000000);
+    canBusOptions.put("device", "CanBusHico");
+    canBusOptions.put("canDevice", "/dev/can1");
+    canBusOptions.put("canBitrate", 1000000);
     canBusDevice.open(canBusOptions);
-    if( ! canBusDevice.isValid() )
+
+    if (!canBusDevice.isValid())
     {
         std::printf("canBusDevice instantiation not worked.\n");
         return 1;
     }
+
     canBusDevice.view(iCanBus);
     canBusDevice.view(iCanBufferFactory);
 
     yarp::os::Property options;
-    options.put("device","TechnosoftIpos");
-    options.put("canId",23);
-    options.put("tr",120);
-    options.put("min",-60);
-    options.put("max",60);
-    options.put("refAcceleration",0.575437);
-    options.put("refSpeed",737.2798);
+    options.put("device", "TechnosoftIpos");
+    options.put("canId", 23);
+    options.put("tr", 120);
+    options.put("min", -60);
+    options.put("max", 60);
+    options.put("refAcceleration", 0.575437);
+    options.put("refSpeed", 737.2798);
 
     yarp::os::Value v(&iCanBufferFactory, sizeof(iCanBufferFactory));
     options.put("canBufferFactory", v);
 
     yarp::dev::PolyDriver dd(options);
-    if(!dd.isValid())
+
+    if (!dd.isValid())
     {
         std::printf("TechnosoftIpos device not available.\n");
-        dd.close();
-        yarp::os::Network::fini();
         return 1;
     }
 
     //-- View TechnosoftIpos interfaces.
     roboticslab::ICanBusSharer *iCanBusSharer;
     bool ok = dd.view(iCanBusSharer);
+
     if (!ok)
     {
         std::printf("[error] Problems viewing ICanBusSharer.\n");
@@ -104,6 +107,7 @@ int main(int argc, char *argv[])
 
     yarp::dev::IPositionControlRaw *pos;
     ok = dd.view(pos);
+
     if (!ok)
     {
         std::printf("[error] Problems viewing IPositionControlRaw.\n");
@@ -113,6 +117,7 @@ int main(int argc, char *argv[])
 
     yarp::dev::IEncodersRaw *enc;
     ok = dd.view(enc);
+
     if (!ok)
     {
         std::printf("[error] Problems viewing IEncodersRaw.\n");
@@ -122,6 +127,7 @@ int main(int argc, char *argv[])
 
     yarp::dev::IVelocityControlRaw *vel;
     ok = dd.view(vel);
+
     if (!ok)
     {
         std::printf("[error] Problems viewing IVelocityControlRaw.\n");
@@ -131,6 +137,7 @@ int main(int argc, char *argv[])
 
     yarp::dev::IControlModeRaw *mode;
     ok = dd.view(mode);
+
     if (!ok)
     {
         std::printf("[error] Problems viewing IControlModeRaw.\n");
@@ -154,6 +161,7 @@ int main(int argc, char *argv[])
 
     //-- Commands on TechnosoftIpos.
     ok = mode->setControlModeRaw(0, VOCAB_CM_POSITION);
+
     if (!ok)
     {
         std::printf("[error] Problems in setPositionModeRaw.\n");
@@ -163,6 +171,7 @@ int main(int argc, char *argv[])
 
     std::printf("test positionMove(0,-25)\n");
     ok = pos->positionMoveRaw(0, -25);
+
     if (!ok)
     {
         std::printf("[error] Problems in positionMove.\n");
