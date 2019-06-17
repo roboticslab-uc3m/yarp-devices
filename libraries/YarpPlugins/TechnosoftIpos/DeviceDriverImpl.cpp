@@ -7,7 +7,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 {
 
     // -- .ini parameters (in order)
-    this->canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt32();
+    this->canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt32();    
     this->max = config.check("max",yarp::os::Value(0),"max (meters or degrees)").asFloat64();
     this->min = config.check("min",yarp::os::Value(0),"min (meters or degrees)").asFloat64();
     this->maxVel = config.check("maxVel",yarp::os::Value(10),"maxVel (meters/second or degrees/second)").asFloat64();
@@ -22,7 +22,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->ptPointCounter = 0;
     this->ptMovementDone = false;
     this->targetReached = false;
-    this->encoder = 0;
+    this->encoder = 0;    
     this->refTorque = 0;
     this->refVelocity = 0; // if you want to test.. put 0.1
 
@@ -79,17 +79,6 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 
     CD_SUCCESS("Created TechnosoftIpos with canId %d, tr %f, k %f, refAcceleration %f, refSpeed %f, encoderPulses %d and all local parameters set to 0.\n",
                canId,tr,k,refAcceleration,refSpeed,encoderPulses);
-
-    uint8_t msg_quickStopOptionCode[] = {0x2B,0x5A,0x60,0x00,0x06,0x00,0x00,0x00};
-
-    if (!send(0x600, 8, msg_quickStopOptionCode))
-    {
-        CD_ERROR("Could not send \"Quick stop option code\". %s\n", msgToStr(0x600, 8, msg_quickStopOptionCode).c_str());
-        return false;
-    }
-
-    CD_SUCCESS("Sent \"Quick stop option code\". %s\n", msgToStr(0x600, 8, msg_quickStopOptionCode).c_str());
-
     return true;
 }
 

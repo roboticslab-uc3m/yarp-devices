@@ -63,6 +63,7 @@ public:
     virtual bool setCanBusPtr(yarp::dev::ICanBus *canDevicePtr);
     virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw); // -- ??
     virtual bool interpretMessage(const yarp::dev::CanMessage & message);
+    virtual bool initialize();
     /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
     virtual bool start();
     /** "ready to switch on", also acts as "shutdown" */

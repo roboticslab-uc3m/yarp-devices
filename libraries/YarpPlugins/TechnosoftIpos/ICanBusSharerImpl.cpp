@@ -34,6 +34,23 @@ bool roboticslab::TechnosoftIpos::setIEncodersTimedRawExternal(IEncodersTimedRaw
 }
 
 // -----------------------------------------------------------------------------
+
+bool roboticslab::TechnosoftIpos::initialize()
+{
+    uint8_t msg_quickStopOptionCode[] = {0x2B,0x5A,0x60,0x00,0x06,0x00,0x00,0x00};
+
+    if (!send(0x600, 8, msg_quickStopOptionCode))
+    {
+        CD_ERROR("Could not send \"Quick stop option code\". %s\n", msgToStr(0x600, 8, msg_quickStopOptionCode).c_str());
+        return false;
+    }
+
+    CD_SUCCESS("Sent \"Quick stop option code\". %s\n", msgToStr(0x600, 8, msg_quickStopOptionCode).c_str());
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
 /** -- Start Remote Node: Used to change NMT state of one or all NMT slaves to Operational.
  PDO communication will beallowed. */
 
