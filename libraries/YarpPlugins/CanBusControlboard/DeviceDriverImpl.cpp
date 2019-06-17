@@ -291,6 +291,12 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     //-- Initialize the drivers: start (0.1) ready (0.1) on (2) enable. Wait between each step.
     for(int i=0; i<nodes.size(); i++)
     {
+        if( ! iCanBusSharer[i]->initialize() )
+            return false;
+    }
+    yarp::os::Time::delay(0.1);
+    for(int i=0; i<nodes.size(); i++)
+    {
         if( ! iCanBusSharer[i]->start() )
             return false;
     }
