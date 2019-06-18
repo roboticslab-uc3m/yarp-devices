@@ -10,12 +10,12 @@ yarp_prepare_plugin(LeapMotionSensor
                     TYPE roboticslab::LeapMotionSensor
                     INCLUDE LeapMotionSensor.hpp
                     DEFAULT ON
-                    DEPENDS Leap_FOUND)
+                    DEPENDS Leap_FOUND
+                    EXTRA_CONFIG WRAPPER=analogServer)
 
 if(NOT SKIP_LeapMotionSensor)
 
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
-                        ${Leap_INCLUDE_DIR})
+    set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
 
     yarp_add_plugin(LeapMotionSensor LeapMotionSensor.hpp
                                      DeviceDriverImpl.cpp
@@ -27,14 +27,21 @@ if(NOT SKIP_LeapMotionSensor)
                                            ${Leap_LIBRARY}
                                            ROBOTICSLAB::ColorDebug)
 
-    yarp_install(TARGETS LeapMotionSensor
-                 COMPONENT runtime
-                 LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
-                 ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
+    target_include_directories(LeapMotionSensor PRIVATE ${Leap_INCLUDE_DIR})
 
-    yarp_install(FILES LeapMotionSensor.ini
-                 COMPONENT runtime
-                 DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+    if(NOT YARP_VERSION_SHORT VERSION_LESS 3.2)
+        yarp_install(TARGETS LeapMotionSensor
+                     LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
+                     ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR}
+                     YARP_INI DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+    else()
+        yarp_install(TARGETS LeapMotionSensor
+                     LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
+                     ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
+
+        yarp_install(FILES LeapMotionSensor.ini
+                     DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+    endif()
 
 else()
 

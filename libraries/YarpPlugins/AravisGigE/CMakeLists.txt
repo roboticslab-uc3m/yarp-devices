@@ -11,12 +11,12 @@ yarp_prepare_plugin(AravisGigE
                     TYPE roboticslab::AravisGigE
                     INCLUDE AravisGigE.hpp
                     DEFAULT ON
-                    DEPENDS ARAVIS_FOUND)
+                    DEPENDS ARAVIS_FOUND
+                    EXTRA_CONFIG WRAPPER=grabber)
 
 if(NOT SKIP_AravisGigE)
 
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
-                        ${ARAVIS_INCLUDE_DIRS})
+    set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
 
     link_directories(${ARAVIS_LIBRARY_DIRS})
 
@@ -31,14 +31,21 @@ if(NOT SKIP_AravisGigE)
                                      ${ARAVIS_LIBRARIES}
                                      ROBOTICSLAB::ColorDebug)
 
-    yarp_install(TARGETS AravisGigE
-                 COMPONENT runtime
-                 LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
-                 ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
+    target_include_directories(AravisGigE PRIVATE ${ARAVIS_INCLUDE_DIRS})
 
-    yarp_install(FILES AravisGigE.ini
-                 COMPONENT runtime
-                 DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+    if(NOT YARP_VERSION_SHORT VERSION_LESS 3.2)
+        yarp_install(TARGETS AravisGigE
+                     LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
+                     ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR}
+                     YARP_INI DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+    else()
+        yarp_install(TARGETS AravisGigE
+                     LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
+                     ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
+
+        yarp_install(FILES AravisGigE.ini
+                     DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+    endif()
 
 else()
 

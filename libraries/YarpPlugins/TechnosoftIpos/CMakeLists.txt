@@ -10,34 +10,39 @@ yarp_prepare_plugin(TechnosoftIpos
 
 if(NOT SKIP_TechnosoftIpos)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}) # yarp plugin builder needs this
+    set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
 
-yarp_add_plugin(TechnosoftIpos TechnosoftIpos.cpp
-                               TechnosoftIpos.hpp
-                               DeviceDriverImpl.cpp
-                               ICanBusSharerImpl.cpp
-                               IControlLimitsRawImpl.cpp
-                               IControlModeRawImpl.cpp
-                               IEncodersRawImpl.cpp
-                               IEncodersTimedRawImpl.cpp
-                               IInteractionModeRawImpl.cpp
-                               IPositionControlRawImpl.cpp
-                               IPositionDirectRawImpl.cpp
-                               ITorqueControlRawImpl.cpp
-                               IVelocityControlRawImpl.cpp)
+    yarp_add_plugin(TechnosoftIpos TechnosoftIpos.cpp
+                                   TechnosoftIpos.hpp
+                                   DeviceDriverImpl.cpp
+                                   ICanBusSharerImpl.cpp
+                                   IControlLimitsRawImpl.cpp
+                                   IControlModeRawImpl.cpp
+                                   IEncodersRawImpl.cpp
+                                   IEncodersTimedRawImpl.cpp
+                                   IInteractionModeRawImpl.cpp
+                                   IPositionControlRawImpl.cpp
+                                   IPositionDirectRawImpl.cpp
+                                   ITorqueControlRawImpl.cpp
+                                   IVelocityControlRawImpl.cpp)
 
-target_link_libraries(TechnosoftIpos YARP::YARP_OS
-                                     YARP::YARP_dev
-                                     ROBOTICSLAB::ColorDebug
-                                     YarpDevicesInterfaces)
+    target_link_libraries(TechnosoftIpos YARP::YARP_OS
+                                         YARP::YARP_dev
+                                         ROBOTICSLAB::ColorDebug
+                                         YarpDevicesInterfaces)
 
-yarp_install(TARGETS TechnosoftIpos
-             COMPONENT runtime
-             LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
-             ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
+    if(NOT YARP_VERSION_SHORT VERSION_LESS 3.2)
+        yarp_install(TARGETS TechnosoftIpos
+                     LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
+                     ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR}
+                     YARP_INI DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+    else()
+        yarp_install(TARGETS TechnosoftIpos
+                     LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
+                     ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
 
-yarp_install(FILES TechnosoftIpos.ini
-             COMPONENT runtime
-             DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+        yarp_install(FILES TechnosoftIpos.ini
+                     DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+    endif()
 
 endif()

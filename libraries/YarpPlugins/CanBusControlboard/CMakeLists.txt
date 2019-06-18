@@ -6,38 +6,44 @@ yarp_prepare_plugin(CanBusControlboard
                     CATEGORY device
                     TYPE roboticslab::CanBusControlboard
                     INCLUDE CanBusControlboard.hpp
-                    DEFAULT ON)
+                    DEFAULT ON
+                    EXTRA_CONFIG WRAPPER=controlboardwrapper2)
 
 if(NOT SKIP_CanBusControlboard)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}) # yarp plugin builder needs this)
+    set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
 
-yarp_add_plugin(CanBusControlboard CanBusControlboard.cpp
-                                   CanBusControlboard.hpp
-                                   DeviceDriverImpl.cpp
-                                   IControlLimitsImpl.cpp
-                                   IControlModeImpl.cpp
-                                   IEncodersImpl.cpp
-                                   IEncodersTimedImpl.cpp
-                                   IInteractionModeImpl.cpp
-                                   IPositionControlImpl.cpp
-                                   IPositionDirectImpl.cpp
-                                   ITorqueControlImpl.cpp
-                                   IVelocityControlImpl.cpp
-                                   ThreadImpl.cpp)
+    yarp_add_plugin(CanBusControlboard CanBusControlboard.cpp
+                                       CanBusControlboard.hpp
+                                       DeviceDriverImpl.cpp
+                                       IControlLimitsImpl.cpp
+                                       IControlModeImpl.cpp
+                                       IEncodersImpl.cpp
+                                       IEncodersTimedImpl.cpp
+                                       IInteractionModeImpl.cpp
+                                       IPositionControlImpl.cpp
+                                       IPositionDirectImpl.cpp
+                                       ITorqueControlImpl.cpp
+                                       IVelocityControlImpl.cpp
+                                       ThreadImpl.cpp)
 
-target_link_libraries(CanBusControlboard YARP::YARP_OS
-                                         YARP::YARP_dev
-                                         ROBOTICSLAB::ColorDebug
-                                         YarpDevicesInterfaces)
+    target_link_libraries(CanBusControlboard YARP::YARP_OS
+                                             YARP::YARP_dev
+                                             ROBOTICSLAB::ColorDebug
+                                             YarpDevicesInterfaces)
 
-yarp_install(TARGETS CanBusControlboard
-             COMPONENT runtime
-             LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
-             ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
+    if(NOT YARP_VERSION_SHORT VERSION_LESS 3.2)
+        yarp_install(TARGETS CanBusControlboard
+                     LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
+                     ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR}
+                     YARP_INI DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+    else()
+        yarp_install(TARGETS CanBusControlboard
+                     LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
+                     ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
 
-yarp_install(FILES CanBusControlboard.ini
-             COMPONENT runtime
-             DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+        yarp_install(FILES CanBusControlboard.ini
+                     DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+    endif()
 
 endif()
