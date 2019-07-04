@@ -8,6 +8,8 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
+#define DEFAULT_PORT "/dev/ttyACM0" // also /dev/ttyUSB0
+
 namespace roboticslab
 {
 

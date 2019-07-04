@@ -9,20 +9,20 @@
 // -----------------------------------------------------------------------------
 bool roboticslab::DextraControlboardUSB::open(yarp::os::Searchable& config)
 {
-    char serialport[13] = "/dev/ttyACM0";  // Was /dev/ttyUSB0
-    int baudrate = B115200;  // Should match https://github.com/Alvipe/Dextra/blob/master/Control/DextraControl.py
-    char buf[256];
-    int rc,n;
+    std::string port = config.check("port", yarp::os::Value(DEFAULT_PORT), "setial port").asString();
 
-    fd = serialport_init(serialport, baudrate);
+    // Should match https://github.com/roboticslab-uc3m/Dextra/blob/master/Control/synapse.py
+    const int baudrate = B115200;
 
-    if ( fd <= 0 )
+    fd = serialport_init(port.c_str(), baudrate);
+
+    if (fd <= 0)
     {
-        CD_ERROR("Could not open %s (fd = %d <= 0). Bye!\n",serialport,fd);
+        CD_ERROR("Could not open %s (fd = %d <= 0). Bye!\n", port.c_str(), fd);
         return false;
     }
 
-    CD_SUCCESS("Opened %s (fd: %d)\n",serialport,fd);
+    CD_SUCCESS("Opened %s (fd: %d)\n", port.c_str(), fd);
 
     return true;
 }
