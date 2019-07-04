@@ -149,6 +149,8 @@ protected:
     // returns valid fd, or -1 on error
     int serialport_init(const char* serialport, int baud);
 
+    void serialport_close(int fd);
+
     int serialport_writebyte(int fd, uint8_t b);
 
     int serialport_write(int fd, const char* str);

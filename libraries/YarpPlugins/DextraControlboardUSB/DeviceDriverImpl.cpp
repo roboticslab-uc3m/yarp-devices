@@ -31,6 +31,7 @@ bool roboticslab::DextraControlboardUSB::open(yarp::os::Searchable& config)
 bool roboticslab::DextraControlboardUSB::close()
 {
     CD_INFO("\n");
+    serialport_close(fd);
     return true;
 }
 
