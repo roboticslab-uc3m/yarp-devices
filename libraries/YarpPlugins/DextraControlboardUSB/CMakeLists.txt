@@ -25,7 +25,9 @@ if(NOT SKIP_DextraControlboardUSB)
                                           IPositionControlImpl.cpp
                                           IPositionDirectImpl.cpp
                                           ITorqueControlImpl.cpp
-                                          IVelocityControlImpl.cpp)
+                                          IVelocityControlImpl.cpp
+                                          Synapse.hpp
+                                          Synapse.cpp)
 
     target_link_libraries(DextraControlboardUSB YARP::YARP_OS
                                                 YARP::YARP_dev

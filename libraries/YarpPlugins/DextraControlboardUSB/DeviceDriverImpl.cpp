@@ -4,34 +4,48 @@
 
 #include <termios.h>
 
+#include <yarp/os/Property.h>
+
 #include <ColorDebug.h>
 
 // -----------------------------------------------------------------------------
+
 bool roboticslab::DextraControlboardUSB::open(yarp::os::Searchable& config)
 {
-    std::string port = config.check("port", yarp::os::Value(DEFAULT_PORT), "setial port").asString();
+    std::string port = config.check("port", yarp::os::Value(DEFAULT_PORT), "serial port").asString();
 
     // Should match https://github.com/roboticslab-uc3m/Dextra/blob/master/Control/synapse.py
-    const int baudrate = B115200;
+    yarp::os::Property serialOptions;
+    serialOptions.put("device", "serialport");
+    serialOptions.put("comport", port);
+    serialOptions.put("baudrate", 115200);
 
-    fd = serialport_init(port.c_str(), baudrate);
+    CD_DEBUG("Serial device options: %s\n", serialOptions.toString().c_str());
 
-    if (fd <= 0)
+    if (!serialDevice.open(serialOptions))
     {
-        CD_ERROR("Could not open %s (fd = %d <= 0). Bye!\n", port.c_str(), fd);
+        CD_ERROR("Unable to open %s device.\n", serialOptions.find("device").asString().c_str());
         return false;
     }
 
-    CD_SUCCESS("Opened %s (fd: %d)\n", port.c_str(), fd);
+    yarp::dev::ISerialDevice * iSerialDevice;
+
+    if (!serialDevice.view(iSerialDevice))
+    {
+        CD_ERROR("Unable to view iSerialDevice.\n");
+        return true;
+    }
+
+    synapse.setSerialDeviceHandle(iSerialDevice);
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
+
 bool roboticslab::DextraControlboardUSB::close()
 {
-    CD_INFO("\n");
-    serialport_close(fd);
+    serialDevice.close();
     return true;
 }
 

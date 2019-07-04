@@ -6,7 +6,11 @@
 #include <stdint.h>
 
 #include <yarp/os/Semaphore.h>
+
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/PolyDriver.h>
+
+#include "Synapse.hpp"
 
 #define DEFAULT_PORT "/dev/ttyACM0" // also /dev/ttyUSB0
 
@@ -156,6 +160,10 @@ protected:
     int serialport_write(int fd, const char* str);
 
     int serialport_read_until(int fd, char* buf, char until);
+
+    Synapse synapse;
+
+    yarp::dev::PolyDriver serialDevice;
 
     int fd;  // File descriptor for serial communications
 
