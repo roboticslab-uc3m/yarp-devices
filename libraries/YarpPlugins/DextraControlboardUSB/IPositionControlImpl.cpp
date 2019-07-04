@@ -21,8 +21,18 @@ bool roboticslab::DextraControlboardUSB::getAxes(int *ax)
 bool roboticslab::DextraControlboardUSB::positionMove(int j, double ref)    // encExposed = ref;
 {
     CD_DEBUG("(%d, %f)\n", j, ref);
+    CHECK_JOINT(j);
+
+    std::vector<double> setpoints = getSetpoints();
     setpoints[j] = ref;
-    return synapse.writeSetpointList(setpoints);
+
+    if (!synapse.writeSetpointList(setpoints))
+    {
+        return false;
+    }
+
+    setSetpoint(j, ref);
+    return true;
 }
 
 // -----------------------------------------------------------------------------------------
@@ -30,8 +40,16 @@ bool roboticslab::DextraControlboardUSB::positionMove(int j, double ref)    // e
 bool roboticslab::DextraControlboardUSB::positionMove(const double *refs)
 {
     CD_DEBUG("\n");
-    setpoints.assign(refs, refs + Synapse::DATA_POINTS);
-    return synapse.writeSetpointList(setpoints);
+
+    std::vector<double> setpoints(refs, refs + Synapse::DATA_POINTS);
+
+    if (!synapse.writeSetpointList(setpoints))
+    {
+        return false;
+    }
+
+    setSetpoints(setpoints);
+    return true;
 }
 
 // -----------------------------------------------------------------------------------------

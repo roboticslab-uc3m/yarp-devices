@@ -2,31 +2,27 @@
 
 #include "DextraControlboardUSB.hpp"
 
+#include <yarp/os/Time.h>
+
 #include <ColorDebug.h>
 
 // ------------------ IEncodersTimed Related -----------------------------------------
 
 bool roboticslab::DextraControlboardUSB::getEncodersTimed(double *encs, double *time)
 {
-    CD_ERROR("\n");
-    return false;
+    CD_DEBUG("\n");
+    *time = yarp::os::Time::now();
+    return getEncoders(encs);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getEncoderTimed(int j, double *encs, double *time)
+bool roboticslab::DextraControlboardUSB::getEncoderTimed(int j, double *enc, double *time)
 {
-    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    encoderReady.wait();
-    *encs = encoder;
-    *time = encoderTimestamp;
-    encoderReady.post();
-
-    return true;
+    //CD_DEBUG("(%d)\n", j);  //-- Too verbose in controlboardwrapper2 stream.
+    CHECK_JOINT(j);
+    *time = yarp::os::Time::now();
+    return getEncoder(j, enc);
 }
 
 // -----------------------------------------------------------------------------

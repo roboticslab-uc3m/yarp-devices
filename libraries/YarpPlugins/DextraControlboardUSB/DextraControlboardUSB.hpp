@@ -7,6 +7,7 @@
 
 #include <vector>
 
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Semaphore.h>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
@@ -14,6 +15,7 @@
 
 #include "Synapse.hpp"
 
+#define CHECK_JOINT(j) do { if ((j) < 0 || (j) >= Synapse::DATA_POINTS) return false; } while (0)
 #define DEFAULT_PORT "/dev/ttyACM0" // also /dev/ttyUSB0
 
 namespace roboticslab
@@ -148,20 +150,10 @@ public:
 
 protected:
 
-    //  --------- Implementation in DextraControlboardUSB.cpp ---------
-    // takes the string name of the serial port (e.g. "/dev/tty.usbserial","COM1")
-    // and a baud rate (bps) and connects to that port at that speed and 8N1.
-    // opens the port in fully raw mode so you can send binary data.
-    // returns valid fd, or -1 on error
-    int serialport_init(const char* serialport, int baud);
-
-    void serialport_close(int fd);
-
-    int serialport_writebyte(int fd, uint8_t b);
-
-    int serialport_write(int fd, const char* str);
-
-    int serialport_read_until(int fd, char* buf, char until);
+    double getSetpoint(int j);
+    std::vector<double> getSetpoints();
+    void setSetpoint(int j, double setpoint);
+    void setSetpoints(const std::vector<double> & setpoints);
 
     Synapse synapse;
 
@@ -169,7 +161,7 @@ protected:
 
     std::vector<double> setpoints;
 
-    int fd;  // File descriptor for serial communications
+    mutable yarp::os::Mutex setpointMutex;
 
     bool targetReached;
 
