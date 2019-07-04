@@ -5,6 +5,8 @@
 
 #include <stdint.h>
 
+#include <vector>
+
 #include <yarp/os/Semaphore.h>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
@@ -164,6 +166,8 @@ protected:
     Synapse synapse;
 
     yarp::dev::PolyDriver serialDevice;
+
+    std::vector<double> setpoints;
 
     int fd;  // File descriptor for serial communications
 

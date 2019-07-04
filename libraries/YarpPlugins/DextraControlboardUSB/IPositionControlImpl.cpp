@@ -12,7 +12,7 @@
 
 bool roboticslab::DextraControlboardUSB::getAxes(int *ax)
 {
-    *ax = 6;
+    *ax = Synapse::DATA_POINTS;
     return true;
 }
 
@@ -20,117 +20,18 @@ bool roboticslab::DextraControlboardUSB::getAxes(int *ax)
 
 bool roboticslab::DextraControlboardUSB::positionMove(int j, double ref)    // encExposed = ref;
 {
-    CD_INFO("(%d,%f)\n",j,ref);
-
-    uint8_t cmdByte;
-
-    //-- Send header
-    cmdByte = 0x7E;
-    if( serialport_writebyte(fd, cmdByte) != 0 )
-    {
-        CD_ERROR("Failed to send header\n");
-        return false;
-    }
-
-    //-- Send address
-    //-- Addresses: chr(0x01),chr(0x02),chr(0x03),chr(0x04),chr(0x05),chr(0x06)
-    cmdByte = static_cast<uint8_t>(j+1);  // tad bit hacki-ish
-    if( serialport_writebyte(fd, cmdByte) != 0 )
-    {
-        CD_ERROR("Failed to send address\n");
-        return false;
-    }
-
-    //-- Send target
-    size_t size = sizeof(float);
-    float refFloat = static_cast<float>(ref);
-
-    std::vector<uint8_t> msg_position_target;
-    msg_position_target.resize(size,0);
-
-    std::memcpy(msg_position_target.data(),&refFloat,size);
-
-    for( size_t i = 0; i<size; i++)
-    {
-        cmdByte = msg_position_target[i];
-        if( serialport_writebyte(fd, cmdByte) != 0 )
-        {
-            CD_ERROR("Failed to send target [%d of %d]\n",i,size);
-            return false;
-        }
-    }
-
-    //-- Send footer
-    cmdByte = 0x7E;
-    if( serialport_writebyte(fd, cmdByte) != 0 )
-    {
-        CD_ERROR("Failed to send footer\n");
-        return false;
-    }
-
-    encoderReady.wait();
-    this->encoder = ref;  // Already passed through Adjust range.
-    encoderReady.post();
-
-    return true;
+    CD_DEBUG("(%d, %f)\n", j, ref);
+    setpoints[j] = ref;
+    return synapse.writeSetpointList(setpoints);
 }
 
 // -----------------------------------------------------------------------------------------
 
 bool roboticslab::DextraControlboardUSB::positionMove(const double *refs)
 {
-    CD_INFO("\n");
-
-    uint8_t cmdByte;
-
-    //-- Send header
-    cmdByte = 0x7E;
-    if( serialport_writebyte(fd, cmdByte) != 0 )
-    {
-        CD_ERROR("Failed to send header\n");
-        return false;
-    }
-
-    for(int j=0; j<6;j++)
-    {
-        //-- Send address
-        //-- Addresses: chr(0x01),chr(0x02),chr(0x03),chr(0x04),chr(0x05),chr(0x06)
-        cmdByte = static_cast<uint8_t>(j+1);  // tad bit hacki-ish
-        if( serialport_writebyte(fd, cmdByte) != 0 )
-        {
-            CD_ERROR("Failed to send address\n");
-            return false;
-        }
-
-        //-- Send targets
-        size_t size = sizeof(float);
-        float refFloat = static_cast<float>(refs[j]);
-
-        std::vector<uint8_t> msg_position_target;
-        msg_position_target.resize(size,0);
-
-        std::memcpy(msg_position_target.data(),&refFloat,size);
-
-        for( size_t i = 0; i<size; i++)
-        {
-            cmdByte = msg_position_target[i];
-            if( serialport_writebyte(fd, cmdByte) != 0 )
-            {
-                CD_ERROR("Failed to send target [%d of %d]\n",i,size);
-                return false;
-            }
-        }
-    }
-
-    //-- Send footer
-    cmdByte = 0x7E;
-    if( serialport_writebyte(fd, cmdByte) != 0 )
-    {
-        CD_ERROR("Failed to send footer\n");
-        return false;
-    }
-
-    return true;
+    CD_DEBUG("\n");
+    setpoints.assign(refs, refs + Synapse::DATA_POINTS);
+    return synapse.writeSetpointList(setpoints);
 }
 
 // -----------------------------------------------------------------------------------------

@@ -38,6 +38,8 @@ bool roboticslab::DextraControlboardUSB::open(yarp::os::Searchable& config)
 
     synapse.setSerialDeviceHandle(iSerialDevice);
 
+    setpoints.resize(Synapse::DATA_POINTS, 0.0);
+
     return true;
 }
 
