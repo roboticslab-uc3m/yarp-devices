@@ -2,25 +2,13 @@
 
 #include "DextraControlboardUSB.hpp"
 
+#include <termios.h>
+
+#include <ColorDebug.h>
+
 // -----------------------------------------------------------------------------
 bool roboticslab::DextraControlboardUSB::open(yarp::os::Searchable& config)
 {
-
-    /*this->canId = config.check("canId",0,"can bus ID").asInt32();
-    this->tr = config.check("tr",0,"reduction").asInt32();
-    this->ptModeMs  = config.check("ptModeMs",0,"ptMode ms").asInt32();
-    this->ptPointCounter = 0;
-    this->ptMovementDone = false;
-    this->targetReached = false;
-    this->max = 0;
-    this->min = 0;
-    this->refAcceleration = 0;
-    this->refSpeed = 0;
-    this->encoder = 0;
-
-    CD_SUCCESS("Created DextraControlboardUSB with canId %d and tr %f, and all local parameters set to 0.\n",canId,tr);
-    */
-
     char serialport[13] = "/dev/ttyACM0";  // Was /dev/ttyUSB0
     int baudrate = B115200;  // Should match https://github.com/Alvipe/Dextra/blob/master/Control/DextraControl.py
     char buf[256];

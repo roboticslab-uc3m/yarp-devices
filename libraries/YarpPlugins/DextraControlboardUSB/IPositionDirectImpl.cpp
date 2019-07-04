@@ -2,6 +2,8 @@
 
 #include "DextraControlboardUSB.hpp"
 
+#include <ColorDebug.h>
+
 // ############################## IPositionDirect Related ##############################
 
 bool roboticslab::DextraControlboardUSB::setPosition(int j, double ref)

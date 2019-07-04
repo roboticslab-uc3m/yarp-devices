@@ -2,6 +2,8 @@
 
 #include "DextraControlboardUSB.hpp"
 
+#include <ColorDebug.h>
+
 // ------------------ IEncodersTimed Related -----------------------------------------
 
 bool roboticslab::DextraControlboardUSB::getEncodersTimed(double *encs, double *time)

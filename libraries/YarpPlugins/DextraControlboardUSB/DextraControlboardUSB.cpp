@@ -2,11 +2,19 @@
 
 #include "DextraControlboardUSB.hpp"
 
+#include <fcntl.h>    /* File control definitions */
+#include <termios.h>  /* POSIX terminal control definitions */
+#include <unistd.h>   /* UNIX standard function definitions */
+
+#include <cerrno>
+#include <cstdio>
+#include <cstring>
+
 // -----------------------------------------------------------------------------
 
 int roboticslab::DextraControlboardUSB::serialport_writebyte( int fd, uint8_t b)
 {
-    int n = write(fd,&b,1);
+    int n = ::write(fd,&b,1);
     if( n!=1)
         return -1;
     return 0;
@@ -16,8 +24,8 @@ int roboticslab::DextraControlboardUSB::serialport_writebyte( int fd, uint8_t b)
 
 int roboticslab::DextraControlboardUSB::serialport_write(int fd, const char* str)
 {
-    int len = strlen(str);
-    int n = write(fd, str, len);
+    int len = std::strlen(str);
+    int n = ::write(fd, str, len);
     if( n!=len )
         return -1;
     return 0;
@@ -31,11 +39,11 @@ int roboticslab::DextraControlboardUSB::serialport_read_until(int fd, char* buf,
     int i=0;
     do
     {
-        int n = read(fd, b, 1);  // read a char at a time
+        int n = ::read(fd, b, 1);  // read a char at a time
         if( n==-1) return -1;    // couldn't read
         if( n==0 )
         {
-            usleep( 10 * 1000 ); // wait 10 msec try again
+            ::usleep( 10 * 1000 ); // wait 10 msec try again
             continue;
         }
         buf[i] = b[0];
@@ -60,18 +68,18 @@ int roboticslab::DextraControlboardUSB::serialport_init(const char* serialport, 
     fd = ::open(serialport, O_RDWR | O_NOCTTY | O_NDELAY);
     if (fd == -1)
     {
-        perror("init_serialport: Unable to open port ");
+        std::perror("init_serialport: Unable to open port ");
         return -1;
     }
 
-    if (tcgetattr(fd, &toptions) < 0)
+    if (::tcgetattr(fd, &toptions) < 0)
     {
-        perror("init_serialport: Couldn't get term attributes");
+        std::perror("init_serialport: Couldn't get term attributes");
         return -1;
     }
     speed_t brate = baud; // let you override switch below if needed
-    cfsetispeed(&toptions, brate);
-    cfsetospeed(&toptions, brate);
+    ::cfsetispeed(&toptions, brate);
+    ::cfsetospeed(&toptions, brate);
 
     // 8N1
     toptions.c_cflag &= ~PARENB;
@@ -91,9 +99,9 @@ int roboticslab::DextraControlboardUSB::serialport_init(const char* serialport, 
     toptions.c_cc[VMIN]  = 0;
     toptions.c_cc[VTIME] = 20;
 
-    if( tcsetattr(fd, TCSANOW, &toptions) < 0)
+    if( ::tcsetattr(fd, TCSANOW, &toptions) < 0)
     {
-        perror("init_serialport: Couldn't set term attributes");
+        std::perror("init_serialport: Couldn't set term attributes");
         return -1;
     }
 

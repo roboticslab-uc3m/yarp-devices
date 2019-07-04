@@ -2,6 +2,8 @@
 
 #include "DextraControlboardUSB.hpp"
 
+#include <ColorDebug.h>
+
 // ############################ ITorqueControl Related ############################
 
 bool roboticslab::DextraControlboardUSB::getRefTorques(double *t)

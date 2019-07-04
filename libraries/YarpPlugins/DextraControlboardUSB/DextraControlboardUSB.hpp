@@ -3,29 +3,10 @@
 #ifndef __DEXTRA_CONTROLBOARD_USB__
 #define __DEXTRA_CONTROLBOARD_USB__
 
-#include <yarp/os/all.h>
-#include <yarp/dev/all.h>
+#include <stdint.h>
 
-#include <sstream>
-
-#include <errno.h>    /* Error number definitions */
-#include <fcntl.h>    /* File control definitions */
-#include <stdio.h>
-#include <stdint.h>   /* Standard types */
-#include <stdlib.h>
-#include <string.h>   /* String function definitions */
-#include <unistd.h>   /* UNIX standard function definitions */
-#include <termios.h>  /* POSIX terminal control definitions */
-#include <sys/ioctl.h>
-#include <getopt.h>
-
-//#define CD_FULL_FILE  //-- Can be globally managed from father CMake. Good for debugging with polymorphism.
-//#define CD_HIDE_DEBUG  //-- Can be globally managed from father CMake.
-//#define CD_HIDE_SUCCESS  //-- Can be globally managed from father CMake.
-//#define CD_HIDE_INFO  //-- Can be globally managed from father CMake.
-//#define CD_HIDE_WARNING  //-- Can be globally managed from father CMake.
-//#define CD_HIDE_ERROR  //-- Can be globally managed from father CMake.
-#include "ColorDebug.h"
+#include <yarp/os/Semaphore.h>
+#include <yarp/dev/ControlBoardInterfaces.h>
 
 namespace roboticslab
 {

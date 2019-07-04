@@ -2,6 +2,8 @@
 
 #include "DextraControlboardUSB.hpp"
 
+#include <ColorDebug.h>
+
 // ############################## IControlMode Related ##############################
 
 bool roboticslab::DextraControlboardUSB::getControlMode(int j, int *mode)

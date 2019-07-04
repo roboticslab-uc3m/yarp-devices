@@ -2,6 +2,8 @@
 
 #include "DextraControlboardUSB.hpp"
 
+#include <ColorDebug.h>
+
 // ------------------- IControlLimits Related ------------------------------------
 
 bool roboticslab::DextraControlboardUSB::setLimits(int axis, double min, double max)

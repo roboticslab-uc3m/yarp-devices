@@ -2,6 +2,8 @@
 
 #include "DextraControlboardUSB.hpp"
 
+#include <ColorDebug.h>
+
 // ############################ IEncoders Related ############################
 
 bool roboticslab::DextraControlboardUSB::resetEncoder(int j)

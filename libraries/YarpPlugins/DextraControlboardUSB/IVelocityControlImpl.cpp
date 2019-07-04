@@ -2,6 +2,8 @@
 
 #include "DextraControlboardUSB.hpp"
 
+#include <ColorDebug.h>
+
 //  ########################### IVelocityControl implementations ###########################
 
 bool roboticslab::DextraControlboardUSB::velocityMove(int j, double sp)
