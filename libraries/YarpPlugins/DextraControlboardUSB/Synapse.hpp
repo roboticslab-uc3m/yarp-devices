@@ -32,7 +32,7 @@ public:
 
 private:
 
-    void getMessage();
+    bool getMessage(unsigned char * msg);
 
     yarp::dev::ISerialDevice * iSerialDevice;
 };
