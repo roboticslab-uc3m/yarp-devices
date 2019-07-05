@@ -2,6 +2,8 @@
 
 #include "DextraControlboardUSB.hpp"
 
+#include <yarp/os/Vocab.h>
+
 #include <ColorDebug.h>
 
 // ############################## IControlMode Related ##############################
@@ -9,12 +11,8 @@
 bool roboticslab::DextraControlboardUSB::getControlMode(int j, int *mode)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    *mode = VOCAB_CM_POSITION;
-
+    CHECK_JOINT(j);
+    *mode = VOCAB_CM_POSITION_DIRECT;
     return true;
 }
 
@@ -23,43 +21,56 @@ bool roboticslab::DextraControlboardUSB::getControlMode(int j, int *mode)
 bool roboticslab::DextraControlboardUSB::getControlModes(int *modes)
 {
     //CD_DEBUG("\n");  //-- Too verbose in controlboardwrapper2 stream
-    return getControlMode(0, &modes[0]);
+
+    bool ok = true;
+
+    for (int j = 0; j < Synapse::DATA_POINTS; j++)
+    {
+        ok &= getControlMode(j, &modes[j]);
+    }
+
+    return ok;
 }
 
-// ############################## IControlMode2 Related ##############################
+// -----------------------------------------------------------------------------
 
 bool roboticslab::DextraControlboardUSB::getControlModes(const int n_joint, const int *joints, int *modes)
 {
-    CD_DEBUG("\n");
+    CD_DEBUG("%d\n", n_joint);
 
-    //-- Check array size
-    if ( n_joint != 1 ) return false;
+    bool ok = true;
 
-    return getControlMode(0, &modes[0]);
+    for (int i = 0; i < n_joint; i++)
+    {
+        ok &= getControlMode(joints[i], &modes[i]);
+    }
+
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::DextraControlboardUSB::setControlMode(const int j, const int mode)
 {
-    CD_DEBUG("(%d, %d)\n",j,mode);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    return true;
+    CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
+    CHECK_JOINT(j);
+    return false; // don't allow conteol modes other than position direct, for onw
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::DextraControlboardUSB::setControlModes(const int n_joint, const int *joints, int *modes)
 {
-    CD_DEBUG("(%d)\n",n_joint);
+    CD_DEBUG("(%d)\n", n_joint);
 
-    //-- Check array size
-    if ( n_joint != 1 ) return false;
+    bool ok = true;
 
-    return setControlMode(0, modes[0]);
+    for (int i = 0; i < n_joint; i++)
+    {
+        ok &= setControlMode(joints[i], modes[i]);
+    }
+
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
@@ -67,5 +78,13 @@ bool roboticslab::DextraControlboardUSB::setControlModes(const int n_joint, cons
 bool roboticslab::DextraControlboardUSB::setControlModes(int *modes)
 {
     CD_DEBUG("\n");
-    return setControlMode(0, modes[0]);
+
+    bool ok = true;
+
+    for (int j = 0; j < Synapse::DATA_POINTS; j++)
+    {
+        ok &= setControlMode(j, modes[j]);
+    }
+
+    return ok;
 }
