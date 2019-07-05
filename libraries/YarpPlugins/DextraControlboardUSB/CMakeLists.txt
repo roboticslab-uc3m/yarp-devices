@@ -20,13 +20,9 @@ if(NOT SKIP_DextraControlboardUSB)
                                           IAxisInfoImpl.cpp
                                           IControlLimitsImpl.cpp
                                           IControlModeImpl.cpp
-                                          IEncodersImpl.cpp
                                           IEncodersTimedImpl.cpp
-                                          IInteractionModeImpl.cpp
                                           IPositionControlImpl.cpp
                                           IPositionDirectImpl.cpp
-                                          ITorqueControlImpl.cpp
-                                          IVelocityControlImpl.cpp
                                           Synapse.hpp
                                           Synapse.cpp)
 

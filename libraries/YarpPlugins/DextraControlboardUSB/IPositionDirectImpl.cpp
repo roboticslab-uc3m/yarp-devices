@@ -4,22 +4,20 @@
 
 #include <ColorDebug.h>
 
-// ############################## IPositionDirect Related ##############################
+// ------------------- IPositionDirect Related ------------------------------------
 
 bool roboticslab::DextraControlboardUSB::setPosition(int j, double ref)
 {
-    CD_DEBUG("\n");
-    this->positionMove(0,ref);
-    return true;
+    CD_DEBUG("(%d, %f)\n", j, ref);
+    return positionMove(j, ref);
 }
 
 // ----------------------------------------------------------------------------------------
 
 bool roboticslab::DextraControlboardUSB::setPositions(const int n_joint, const int *joints, const double *refs)
 {
-    CD_DEBUG("\n");
-    this->positionMove(0,refs[0]);
-    return true;
+    CD_DEBUG("(%d)\n", n_joint);
+    return positionMove(n_joint, joints, refs);
 }
 
 // ----------------------------------------------------------------------------------------
@@ -27,7 +25,7 @@ bool roboticslab::DextraControlboardUSB::setPositions(const int n_joint, const i
 bool roboticslab::DextraControlboardUSB::setPositions(const double *refs)
 {
     CD_DEBUG("\n");
-    return true;
+    return positionMove(refs);
 }
 
 // ----------------------------------------------------------------------------------------

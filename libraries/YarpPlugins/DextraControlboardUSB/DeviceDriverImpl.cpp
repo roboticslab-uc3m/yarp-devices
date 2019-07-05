@@ -5,6 +5,7 @@
 #include <cstring>
 
 #include <yarp/os/Property.h>
+#include <yarp/os/Value.h>
 
 #include <ColorDebug.h>
 

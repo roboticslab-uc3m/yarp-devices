@@ -3,10 +3,7 @@
 #ifndef __DEXTRA_CONTROLBOARD_USB__
 #define __DEXTRA_CONTROLBOARD_USB__
 
-#include <stdint.h>
-
 #include <yarp/os/Mutex.h>
-#include <yarp/os/Semaphore.h>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
@@ -35,10 +32,8 @@ class DextraControlboardUSB : public yarp::dev::DeviceDriver,
                               public yarp::dev::IControlLimits,
                               public yarp::dev::IControlMode,
                               public yarp::dev::IEncodersTimed,
-                              public yarp::dev::IInteractionMode,
                               public yarp::dev::IPositionControl,
                               public yarp::dev::IPositionDirect,
-                              public yarp::dev::ITorqueControl,
                               public yarp::dev::IVelocityControl
 {
 
@@ -68,7 +63,7 @@ public:
     virtual bool setControlModes(const int n_joint, const int *joints, int *modes);
     virtual bool setControlModes(int *modes);
 
-    //  ---------- IEncoders Declarations. Implementation in IEncodersImpl.cpp ----------
+    //  ---------- IEncoders Declarations. Implementation in IEncodersTimedImpl.cpp ----------
     virtual bool resetEncoder(int j);
     virtual bool resetEncoders();
     virtual bool setEncoder(int j, double val);
@@ -119,35 +114,13 @@ public:
     virtual bool setPositions(const int n_joint, const int *joints, const double *refs);
     virtual bool setPositions(const double *refs);
 
-    // -------- ITorqueControl declarations. Implementation in ITorqueControlImpl.cpp --------
-    virtual bool getRefTorques(double *t);
-    virtual bool getRefTorque(int j, double *t);
-    virtual bool setRefTorques(const double *t);
-    virtual bool setRefTorque(int j, double t);
-    virtual bool getTorque(int j, double *t);
-    virtual bool getTorques(double *t);
-    virtual bool getTorqueRange(int j, double *min, double *max);
-    virtual bool getTorqueRanges(double *min, double *max);
-
-    //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
-    virtual bool velocityMove(int j, double sp);
-    virtual bool velocityMove(const double *sp);
-    virtual bool velocityMove(const int n_joint, const int *joints, const double *spds);
-    virtual bool getRefVelocity(const int joint, double *vel);
-    virtual bool getRefVelocities(double *vels);
-    virtual bool getRefVelocities(const int n_joint, const int *joints, double *vels);
-    // -- (just defined in IInteractionMode) - virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs);
-    // -- (just defined in IInteractionMode) - virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs);
-    // -- (just defined in IInteractionMode) - virtual bool stop(const int n_joint, const int *joints);
-
-    // ------- IInteractionMode declarations. Implementation in IInteractionModeImpl.cpp -------
-
-    virtual bool getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode);
-    virtual bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
-    virtual bool getInteractionModes(yarp::dev::InteractionModeEnum* modes);
-    virtual bool setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode);
-    virtual bool setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
-    virtual bool setInteractionModes(yarp::dev::InteractionModeEnum* modes);
+    //  --------- IVelocityControl declarations and stub implementations. ---------
+    virtual bool velocityMove(int j, double sp) { return false; }
+    virtual bool velocityMove(const double *sp) { return false; }
+    virtual bool velocityMove(const int n_joint, const int *joints, const double *spds) { return false; }
+    virtual bool getRefVelocity(const int joint, double *vel) { return false; }
+    virtual bool getRefVelocities(double *vels) { return false; }
+    virtual bool getRefVelocities(const int n_joint, const int *joints, double *vels) { return false; }
 
 protected:
 
@@ -157,28 +130,9 @@ protected:
     void setSetpoints(const Synapse::Setpoints & setpoints);
 
     Synapse * synapse;
-
     yarp::dev::PolyDriver serialDevice;
-
     Synapse::Setpoints setpoints;
-
     mutable yarp::os::Mutex setpointMutex;
-
-    bool targetReached;
-
-    double max, min, refAcceleration, refSpeed, tr, targetPosition;
-
-    double lastUsage;
-
-    double encoder;
-    uint32_t encoderTimestamp;
-    yarp::os::Semaphore encoderReady;
-
-    //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
-    yarp::dev::InteractionModeEnum interactionMode;
-
-    //-- Semaphores
-    yarp::os::Semaphore interactionModeSemaphore;
 };
 
 }  // namespace roboticslab

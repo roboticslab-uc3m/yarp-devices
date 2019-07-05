@@ -32,7 +32,7 @@ bool roboticslab::DextraControlboardUSB::getLimits(int axis, double *min, double
 bool roboticslab::DextraControlboardUSB::setVelLimits(int axis, double min, double max)
 {
     CD_WARNING("Not implemented.\n");
-    return true;
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -40,7 +40,7 @@ bool roboticslab::DextraControlboardUSB::setVelLimits(int axis, double min, doub
 bool roboticslab::DextraControlboardUSB::getVelLimits(int axis, double *min, double *max)
 {
     CD_WARNING("Not implemented.\n");
-    return true;
+    return false;
 }
 
 // -----------------------------------------------------------------------------

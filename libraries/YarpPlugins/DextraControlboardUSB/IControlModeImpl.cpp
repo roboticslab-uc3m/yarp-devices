@@ -6,7 +6,7 @@
 
 #include <ColorDebug.h>
 
-// ############################## IControlMode Related ##############################
+// ------------------- IControlMode Related ------------------------------------
 
 bool roboticslab::DextraControlboardUSB::getControlMode(int j, int *mode)
 {
@@ -54,7 +54,7 @@ bool roboticslab::DextraControlboardUSB::setControlMode(const int j, const int m
 {
     CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
     CHECK_JOINT(j);
-    return false; // don't allow conteol modes other than position direct, for onw
+    return false; // don't allow control modes other than position direct, for onw
 }
 
 // -----------------------------------------------------------------------------
@@ -88,3 +88,5 @@ bool roboticslab::DextraControlboardUSB::setControlModes(int *modes)
 
     return ok;
 }
+
+// -----------------------------------------------------------------------------
