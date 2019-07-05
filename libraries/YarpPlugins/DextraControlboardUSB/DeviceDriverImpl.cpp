@@ -15,10 +15,14 @@ bool roboticslab::DextraControlboardUSB::open(yarp::os::Searchable& config)
     std::string port = config.check("port", yarp::os::Value(DEFAULT_PORT), "serial port").asString();
 
     // Should match https://github.com/roboticslab-uc3m/Dextra/blob/master/Control/synapse.py
+    // See also https://github.com/pyserial/pyserial/blob/master/serial/serialposix.py
+
     yarp::os::Property serialOptions;
     serialOptions.put("device", "serialport");
     serialOptions.put("comport", port);
     serialOptions.put("baudrate", 115200);
+    serialOptions.put("paritymode", "NONE");
+    serialOptions.put("databits", 8);
 
     CD_DEBUG("Serial device options: %s\n", serialOptions.toString().c_str());
 
@@ -36,9 +40,9 @@ bool roboticslab::DextraControlboardUSB::open(yarp::os::Searchable& config)
         return true;
     }
 
-    synapse = new Synapse(iSerialDevice);
+    std::memset(setpoints, 0, sizeof(setpoints));
 
-    std::memset(setpoints, 0, Synapse::DATA_POINTS);
+    synapse = new Synapse(iSerialDevice);
 
     return true;
 }

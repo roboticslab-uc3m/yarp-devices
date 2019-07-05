@@ -72,19 +72,19 @@ bool Synapse::writeSetpointList(const Setpoints & setpoints)
 
     for (int i = 0; i < DATA_POINTS; i++)
     {
-        int j = 1 + (FLOAT_SIZE + 1) * i;
-        msg[j] = FINGER_ADDRESS[i];
-        std::memcpy(msg + j + 1, &setpoints[i], FLOAT_SIZE);
+        const int offset = 1 + (FLOAT_SIZE + 1) * i;
+        msg[offset] = FINGER_ADDRESS[i];
+        std::memcpy(msg + offset + 1, &setpoints[i], FLOAT_SIZE);
         check ^= FINGER_ADDRESS[i];
 
         for (int k = 0; k < FLOAT_SIZE; k++)
         {
-            check ^= msg[j + 1 + k];
+            check ^= msg[offset + 1 + k];
         }
     }
 
-    msg[MESSAGE_SIZE - 2] = check;
-    msg[MESSAGE_SIZE - 1] = FOOTER;
+    msg[MESSAGE_SIZE + 3 - 2] = check;
+    msg[MESSAGE_SIZE + 3 - 1] = FOOTER;
 
-    return iSerialDevice->send(msg, MESSAGE_SIZE);
+    return iSerialDevice->send(msg, MESSAGE_SIZE + 3);
 }
