@@ -8,30 +8,21 @@
 
 bool roboticslab::DextraControlboardUSB::setLimits(int axis, double min, double max)
 {
-    CD_INFO("(%d,%f,%f)\n",axis,min,max);
-
-    //-- Check index within range
-    if ( axis != 0 ) return false;
-
-    //-- Store the new limits locally.
-    this->max;
-    this->min;
-
-    return true;
+    CD_INFO("(%d, %f, %f)\n", axis, min, max);
+    CHECK_JOINT(axis);
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::DextraControlboardUSB::getLimits(int axis, double *min, double *max)
 {
-    CD_INFO("(%d)\n",axis);
+    CD_INFO("(%d)\n", axis);
+    CHECK_JOINT(axis);
 
-    //-- Check index within range
-    if( axis != 0 ) return false;
-
-    //-- Get the limits that have been locally stored.
-    *min = this->min;
-    *max = this->max;
+    std::pair<Synapse::setpoint_t, Synapse::setpoint_t> limits = Synapse::LIMITS[axis];
+    *min = limits.first;
+    *max = limits.second;
 
     return true;
 }

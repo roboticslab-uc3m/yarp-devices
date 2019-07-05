@@ -17,6 +17,15 @@ namespace
     const char FINGER_ADDRESS[Synapse::DATA_POINTS] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
 }
 
+const std::pair<Synapse::setpoint_t, Synapse::setpoint_t> Synapse::LIMITS[Synapse::DATA_POINTS] = {
+    std::make_pair(0, 90),
+    std::make_pair(0, 10),
+    std::make_pair(0, 20),
+    std::make_pair(0, 20),
+    std::make_pair(0, 20),
+    std::make_pair(0, 20)
+};
+
 Synapse::Synapse(yarp::dev::ISerialDevice * _iSerialDevice)
     : iSerialDevice(_iSerialDevice)
 {}

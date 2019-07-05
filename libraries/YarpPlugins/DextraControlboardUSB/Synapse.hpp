@@ -3,7 +3,7 @@
 #ifndef __SYNAPSE_HPP__
 #define __SYNAPSE_HPP__
 
-#include <vector>
+#include <utility>
 
 #include <yarp/dev/SerialInterfaces.h>
 
@@ -23,6 +23,8 @@ public:
 
     typedef float setpoint_t;
     typedef setpoint_t Setpoints[DATA_POINTS];
+
+    static const std::pair<setpoint_t, setpoint_t> LIMITS[DATA_POINTS];
 
     Synapse(yarp::dev::ISerialDevice * iSerialDevice);
 
