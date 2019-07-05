@@ -22,7 +22,7 @@ bool roboticslab::TechnosoftIpos::getCurrentRaw(int m, double *curr)
 
 bool roboticslab::TechnosoftIpos::getCurrentsRaw(double *currs)
 {
-    CD_DEBUG("\n");
+    CD_ERROR("\n");
     return false;
 }
 
@@ -38,7 +38,7 @@ bool roboticslab::TechnosoftIpos::getCurrentRangeRaw(int m, double *min, double 
 
 bool roboticslab::TechnosoftIpos::getCurrentRangesRaw(double *min, double *max)
 {
-    CD_DEBUG("\n");
+    CD_ERROR("\n");
     return false;
 }
 
@@ -46,7 +46,7 @@ bool roboticslab::TechnosoftIpos::getCurrentRangesRaw(double *min, double *max)
 
 bool roboticslab::TechnosoftIpos::setRefCurrentsRaw(const double *currs)
 {
-    CD_DEBUG("\n");
+    CD_ERROR("\n");
     return false;
 }
 
@@ -62,7 +62,7 @@ bool roboticslab::TechnosoftIpos::setRefCurrentRaw(int m, double curr)
 
 bool roboticslab::TechnosoftIpos::setRefCurrentsRaw(const int n_motor, const int *motors, const double *currs)
 {
-    CD_DEBUG("(%d)\n", n_motor);
+    CD_ERROR("(%d)\n", n_motor);
     return false;
 }
 
@@ -70,7 +70,7 @@ bool roboticslab::TechnosoftIpos::setRefCurrentsRaw(const int n_motor, const int
 
 bool roboticslab::TechnosoftIpos::getRefCurrentsRaw(double *currs)
 {
-    CD_DEBUG("\n");
+    CD_ERROR("\n");
     return false;
 }
 

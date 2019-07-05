@@ -27,7 +27,15 @@ bool roboticslab::CanBusControlboard::getCurrent(int m, double *curr)
 bool roboticslab::CanBusControlboard::getCurrents(double *currs)
 {
     CD_DEBUG("\n");
-    return true;
+
+    bool ok = true;
+
+    for (int j = 0; j < nodes.size(); j++)
+    {
+        ok &= getCurrent(j, &currs[j]);
+    }
+
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
@@ -47,7 +55,15 @@ bool roboticslab::CanBusControlboard::getCurrentRange(int m, double *min, double
 bool roboticslab::CanBusControlboard::getCurrentRanges(double *min, double *max)
 {
     CD_DEBUG("\n");
-    return true;
+
+    bool ok = true;
+
+    for (int j = 0; j < nodes.size(); j++)
+    {
+        ok &= getCurrentRange(j, &min[j], &max[j]);
+    }
+
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
@@ -55,7 +71,15 @@ bool roboticslab::CanBusControlboard::getCurrentRanges(double *min, double *max)
 bool roboticslab::CanBusControlboard::setRefCurrents(const double *currs)
 {
     CD_DEBUG("\n");
-    return true;
+
+    bool ok = true;
+
+    for (int j = 0; j < nodes.size(); j++)
+    {
+        ok &= setRefCurrent(j, currs[j]);
+    }
+
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
@@ -75,7 +99,15 @@ bool roboticslab::CanBusControlboard::setRefCurrent(int m, double curr)
 bool roboticslab::CanBusControlboard::setRefCurrents(const int n_motor, const int *motors, const double *currs)
 {
     CD_DEBUG("(%d)\n", n_motor);
-    return true;
+
+    bool ok = true;
+
+    for (int i = 0; i < n_motor; i++)
+    {
+        ok &= setRefCurrent(motors[i], currs[i]);
+    }
+
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
@@ -83,7 +115,15 @@ bool roboticslab::CanBusControlboard::setRefCurrents(const int n_motor, const in
 bool roboticslab::CanBusControlboard::getRefCurrents(double *currs)
 {
     CD_DEBUG("\n");
-    return true;
+
+    bool ok = true;
+
+    for (int j = 0; j < nodes.size(); j++)
+    {
+        ok &= getRefCurrent(j, &currs[j]);
+    }
+
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
