@@ -19,8 +19,9 @@ bool roboticslab::DextraControlboardUSB::resetEncoder(int j)
 bool roboticslab::DextraControlboardUSB::resetEncoders()
 {
     CD_DEBUG("\n");
-    std::vector<double> vals(Synapse::DATA_POINTS, 0.0);
-    return setEncoders(vals.data());
+    Synapse::Setpoints setpoints = {0};
+    setSetpoints(setpoints);
+    return true;
 }
 
 // ------------------------------------------------------------------------------
@@ -38,7 +39,8 @@ bool roboticslab::DextraControlboardUSB::setEncoder(int j, double val)
 bool roboticslab::DextraControlboardUSB::setEncoders(const double *vals)
 {
     CD_DEBUG("\n");
-    std::vector<double> setpoints(vals, vals + Synapse::DATA_POINTS);
+    Synapse::Setpoints setpoints;
+    std::copy(vals, vals + Synapse::DATA_POINTS, setpoints);
     setSetpoints(setpoints);
     return true;
 }
@@ -58,8 +60,9 @@ bool roboticslab::DextraControlboardUSB::getEncoder(int j, double *v)
 bool roboticslab::DextraControlboardUSB::getEncoders(double *encs)
 {
     //CD_DEBUG("\n");
-    std::vector<double> setpoints = getSetpoints();
-    std::copy(setpoints.begin(), setpoints.end(), encs);
+    Synapse::Setpoints setpoints;
+    getSetpoints(setpoints);
+    std::copy(setpoints, setpoints + Synapse::DATA_POINTS, encs);
     return true;
 }
 

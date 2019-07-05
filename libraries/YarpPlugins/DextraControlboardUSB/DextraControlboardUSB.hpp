@@ -5,8 +5,6 @@
 
 #include <stdint.h>
 
-#include <vector>
-
 #include <yarp/os/Mutex.h>
 #include <yarp/os/Semaphore.h>
 
@@ -151,15 +149,15 @@ public:
 protected:
 
     double getSetpoint(int j);
-    std::vector<double> getSetpoints();
-    void setSetpoint(int j, double setpoint);
-    void setSetpoints(const std::vector<double> & setpoints);
+    void getSetpoints(Synapse::Setpoints & setpoints);
+    void setSetpoint(int j, Synapse::setpoint_t setpoint);
+    void setSetpoints(const Synapse::Setpoints & setpoints);
 
     Synapse synapse;
 
     yarp::dev::PolyDriver serialDevice;
 
-    std::vector<double> setpoints;
+    Synapse::Setpoints setpoints;
 
     mutable yarp::os::Mutex setpointMutex;
 

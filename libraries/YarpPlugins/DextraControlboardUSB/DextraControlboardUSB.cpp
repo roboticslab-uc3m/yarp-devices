@@ -2,6 +2,8 @@
 
 #include "DextraControlboardUSB.hpp"
 
+#include <algorithm>
+
 #include <yarp/os/LockGuard.h>
 
 using namespace roboticslab;
@@ -16,15 +18,15 @@ double DextraControlboardUSB::getSetpoint(int j)
 
 // -----------------------------------------------------------------------------
 
-std::vector<double> DextraControlboardUSB::getSetpoints()
+void DextraControlboardUSB::getSetpoints(Synapse::Setpoints & setpoints)
 {
     yarp::os::LockGuard lock(setpointMutex);
-    return setpoints;
+    std::copy(this->setpoints, this->setpoints + Synapse::DATA_POINTS, setpoints);
 }
 
 // -----------------------------------------------------------------------------
 
-void DextraControlboardUSB::setSetpoint(int j, double setpoint)
+void DextraControlboardUSB::setSetpoint(int j, Synapse::setpoint_t setpoint)
 {
     yarp::os::LockGuard lock(setpointMutex);
     setpoints[j] = setpoint;
@@ -32,10 +34,10 @@ void DextraControlboardUSB::setSetpoint(int j, double setpoint)
 
 // -----------------------------------------------------------------------------
 
-void DextraControlboardUSB::setSetpoints(const std::vector<double> & setpoints)
+void DextraControlboardUSB::setSetpoints(const Synapse::Setpoints & setpoints)
 {
     yarp::os::LockGuard lock(setpointMutex);
-    this->setpoints = setpoints;
+    std::copy(setpoints, setpoints + Synapse::DATA_POINTS, this->setpoints);
 }
 
 // -----------------------------------------------------------------------------

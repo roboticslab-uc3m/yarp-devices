@@ -19,16 +19,19 @@ class Synapse
 
 public:
 
+    static const int DATA_POINTS = 6;
+
+    typedef float setpoint_t;
+    typedef setpoint_t Setpoints[DATA_POINTS];
+
     Synapse();
 
     void setSerialDeviceHandle(yarp::dev::ISerialDevice * iSerialDevice)
     { this->iSerialDevice = iSerialDevice; }
 
-    bool readDataList(std::vector<double> & setpoints);
+    bool readDataList(Setpoints & setpoints);
 
-    bool writeSetpointList(const std::vector<double> & setpoints);
-
-    static const int DATA_POINTS = 6;
+    bool writeSetpointList(const Setpoints & setpoints);
 
 private:
 

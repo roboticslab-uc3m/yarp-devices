@@ -12,7 +12,7 @@ namespace
 {
     const char HEADER = 0x7E;
     const char FOOTER = 0x7E;
-    const int FLOAT_SIZE = 4;
+    const int FLOAT_SIZE = sizeof(Synapse::setpoint_t);
     const int MESSAGE_SIZE = (FLOAT_SIZE + 1) * Synapse::DATA_POINTS;
     const char FINGER_ADDRESS[Synapse::DATA_POINTS] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
 }
@@ -28,7 +28,7 @@ bool Synapse::getMessage(unsigned char * msg)
     return iSerialDevice->receiveBytes(msg, MESSAGE_SIZE + 2) != 0;
 }
 
-bool Synapse::readDataList(std::vector<double> & setpoints)
+bool Synapse::readDataList(Setpoints & setpoints)
 {
     unsigned char msg[MESSAGE_SIZE + 2]; // data (MESSAGE_SIZE) + check (1) + footer (1)
 
@@ -41,7 +41,7 @@ bool Synapse::readDataList(std::vector<double> & setpoints)
 
     for (int j = 0; j < DATA_POINTS; j++)
     {
-        if (msg[i] = FINGER_ADDRESS[j])
+        if (msg[i] == FINGER_ADDRESS[j])
         {
             i++;
             double setpoint;
@@ -54,7 +54,7 @@ bool Synapse::readDataList(std::vector<double> & setpoints)
     return true;
 }
 
-bool Synapse::writeSetpointList(const std::vector<double> & setpoints)
+bool Synapse::writeSetpointList(const Setpoints & setpoints)
 {
     char check = 0x00;
     char msg[MESSAGE_SIZE + 3]; // header (1) + data (MESSAGE_SIZE) + check (1) + footer (1)

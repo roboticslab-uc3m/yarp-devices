@@ -4,7 +4,7 @@
 
 #include <cstring>
 
-#include <vector>
+#include <algorithm>
 
 #include <ColorDebug.h>
 
@@ -23,7 +23,8 @@ bool roboticslab::DextraControlboardUSB::positionMove(int j, double ref)    // e
     CD_DEBUG("(%d, %f)\n", j, ref);
     CHECK_JOINT(j);
 
-    std::vector<double> setpoints = getSetpoints();
+    Synapse::Setpoints setpoints;
+    getSetpoints(setpoints);
     setpoints[j] = ref;
 
     if (!synapse.writeSetpointList(setpoints))
@@ -41,7 +42,8 @@ bool roboticslab::DextraControlboardUSB::positionMove(const double *refs)
 {
     CD_DEBUG("\n");
 
-    std::vector<double> setpoints(refs, refs + Synapse::DATA_POINTS);
+    Synapse::Setpoints setpoints;
+    std::copy(refs, refs + Synapse::DATA_POINTS, setpoints);
 
     if (!synapse.writeSetpointList(setpoints))
     {
