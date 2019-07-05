@@ -10,31 +10,7 @@ bool roboticslab::DextraSerialControlboard::getAxisName(int axis, std::string &n
 {
     CD_DEBUG("axis\n");
     CHECK_JOINT(axis);
-
-    switch (axis)
-    {
-    case 0:
-        name = "abductor";
-        break;
-    case 1:
-        name = "thumb";
-        break;
-    case 2:
-        name = "index";
-        break;
-    case 3:
-        name = "middle";
-        break;
-    case 4:
-        name = "ring";
-        break;
-    case 5:
-        name = "pinky";
-        break;
-    default:
-        return false;
-    }
-
+    name = Synapse::LABELS[axis];
     return true;
 }
 

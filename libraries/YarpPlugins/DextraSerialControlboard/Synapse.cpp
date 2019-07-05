@@ -25,6 +25,15 @@ const std::pair<Synapse::setpoint_t, Synapse::setpoint_t> Synapse::LIMITS[Synaps
     std::make_pair(0, 20)
 };
 
+const char * Synapse::LABELS[Synapse::DATA_POINTS] = {
+    "abductor",
+    "thumb",
+    "index",
+    "middle",
+    "ring",
+    "pinky"
+};
+
 Synapse::Synapse(yarp::dev::ISerialDevice * _iSerialDevice)
     : iSerialDevice(_iSerialDevice)
 {}
@@ -55,7 +64,7 @@ bool Synapse::readDataList(Setpoints & setpoints)
             double setpoint;
             std::memcpy(&setpoint, msg + i, FLOAT_SIZE);
             i += FLOAT_SIZE;
-			setpoints[j] = setpoint;
+            setpoints[j] = setpoint;
         }
     }
 

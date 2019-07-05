@@ -25,6 +25,7 @@ public:
     typedef setpoint_t Setpoints[DATA_POINTS];
 
     static const std::pair<setpoint_t, setpoint_t> LIMITS[DATA_POINTS];
+    static const char * LABELS[DATA_POINTS];
 
     Synapse(yarp::dev::ISerialDevice * iSerialDevice);
 
