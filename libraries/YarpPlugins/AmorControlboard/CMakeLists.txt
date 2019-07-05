@@ -23,6 +23,7 @@ if(NOT SKIP_AmorControlboard)
                                      IAxisInfoImpl.cpp
                                      IControlLimitsImpl.cpp
                                      IControlModeImpl.cpp
+                                     ICurrentControlImpl.cpp
                                      IEncodersImpl.cpp
                                      IEncodersTimedImpl.cpp
                                      IInteractionModeImpl.cpp

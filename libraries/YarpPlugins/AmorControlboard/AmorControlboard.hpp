@@ -34,6 +34,7 @@ class AmorControlboard : public yarp::dev::DeviceDriver,
                          public yarp::dev::IAxisInfo,
                          public yarp::dev::IControlLimits,
                          public yarp::dev::IControlMode,
+                         public yarp::dev::ICurrentControl,
                          public yarp::dev::IEncodersTimed,
                          public yarp::dev::IInteractionMode,
                          public yarp::dev::IPositionControl,
@@ -663,6 +664,81 @@ public:
      * @return true or false on success or failure. If one or more joint fails, the return value will be false.
      */
     virtual bool setInteractionModes(yarp::dev::InteractionModeEnum* modes);
+
+//  --------- ICurrentControl Declarations. Implementation in ICurrentControlImpl.cpp ---------
+
+    /**
+     * Retrieves the number of controlled axes from the current physical interface.
+     * @param ax returns the number of controlled axes.
+     * @return true/false on success/failure
+     */
+    virtual bool getNumberOfMotors(int *ax);
+
+    /** Get the instantaneous current measurement for a single motor
+    * @param m motor number
+    * @param curr pointer to the result value. Value is expressed in amperes.
+    * @return true/false on success/failure
+    */
+    virtual bool getCurrent(int m, double *curr);
+
+    /** Get the instantaneous current measurement for all motors
+    * @param currs pointer to the array that will store the output. Values are expressed in amperes.
+    * @return true/false on success/failure
+    */
+    virtual bool getCurrents(double *currs);
+
+    /** Get the full scale of the current measurement for a given motor (e.g. -20A +20A)
+    * Reference values set by user with methods such as setRefCurrent() should be in this range.
+    * This method is not related to the current overload protection methods belonging to the iAmplifierControl interface.
+    * @param m motor number
+    * @param min minimum current of the motor m
+    * @param max maximum current of the motor m
+    * @return true/false on success/failure
+    */
+    virtual bool getCurrentRange(int m, double *min, double *max);
+
+    /** Get the full scale of the current measurements for all motors motor (e.g. -20A +20A)
+    * Reference values set by user with methods such as setRefCurrent() should be in this range.
+    * This method is not related to the current overload protection methods belonging to the iAmplifierControl interface.
+    * @param min pointer to the array that will store minimum currents
+    * @param max pointer to the array that will store maximum currents
+    * @return true/false on success/failure
+    */
+    virtual bool getCurrentRanges(double *min, double *max);
+
+    /** Set the reference value of the currents for all motors.
+    * @param currs the array containing the reference current values. Values are expressed in amperes.
+    * @return true/false on success/failure
+    */
+    virtual bool setRefCurrents(const double *currs);
+
+    /** Set the reference value of the current for a single motor.
+    * @param m motor number
+    * @param curr the current reference value for motor m. Value is expressed in amperes.
+    * @return true/false on success/failure
+    */
+    virtual bool setRefCurrent(int m, double curr);
+
+    /**  Set the reference value of the current for a group of motors.
+    * @param n_motor size of motors ans currs arrays
+    * @param motors  pointer to the array containing the list of motor numbers
+    * @param currs   pointer to the array specifying the new current references
+    * @return true/false on success/failure
+    */
+    virtual bool setRefCurrents(const int n_motor, const int *motors, const double *currs);
+
+   /** Get the reference value of the currents for all motors.
+     * @param currs pointer to the array to be filled with reference current values. Values are expressed in amperes.
+     * @return true/false on success/failure
+     */
+    virtual bool getRefCurrents(double *currs);
+
+    /** Get the reference value of the current for a single motor.
+    * @param m motor number
+    * @param curr the current reference value for motor m. Value is expressed in amperes.
+    * @return true/false on success/failure
+    */
+    virtual bool getRefCurrent(int m, double *curr);
 
 // -------- DeviceDriver declarations. Implementation in IDeviceDriverImpl.cpp --------
 
