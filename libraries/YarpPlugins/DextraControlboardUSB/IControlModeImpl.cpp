@@ -12,7 +12,7 @@ bool roboticslab::DextraControlboardUSB::getControlMode(int j, int *mode)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
-    *mode = VOCAB_CM_POSITION_DIRECT;
+    *mode = VOCAB_CM_POSITION;
     return true;
 }
 
