@@ -1,3 +1,7 @@
 ```
-yarpdev --device DextraSerialControlboard --port /dev/ttyACM0 --name /dextra
+yarpdev --device DextraSerialControlboard --port /dev/ttyACM0 --name /dextra/rightHand
+```
+
+```
+yarpmotorgui --robot dextra --parts "(rightHand)"
 ```
