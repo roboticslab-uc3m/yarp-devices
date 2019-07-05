@@ -31,6 +31,7 @@ namespace roboticslab
 *
 */
 class DextraControlboardUSB : public yarp::dev::DeviceDriver,
+                              public yarp::dev::IAxisInfo,
                               public yarp::dev::IControlLimits,
                               public yarp::dev::IControlMode,
                               public yarp::dev::IEncodersTimed,
@@ -48,6 +49,10 @@ public:
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
+
+    //  --------- IAxisInfo Declarations. Implementation in IAxisInfoImpl.cpp ---------
+    virtual bool getAxisName(int axis, std::string &name);
+    virtual bool getJointType(int axis, yarp::dev::JointTypeEnum &type);
 
     //  --------- IControlLimits Declarations. Implementation in IControlLimitsImpl.cpp ---------
     virtual bool setLimits(int axis, double min, double max);

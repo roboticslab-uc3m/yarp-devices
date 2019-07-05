@@ -17,6 +17,7 @@ if(NOT SKIP_DextraControlboardUSB)
     yarp_add_plugin(DextraControlboardUSB DextraControlboardUSB.cpp
                                           DextraControlboardUSB.hpp
                                           DeviceDriverImpl.cpp
+                                          IAxisInfoImpl.cpp
                                           IControlLimitsImpl.cpp
                                           IControlModeImpl.cpp
                                           IEncodersImpl.cpp
