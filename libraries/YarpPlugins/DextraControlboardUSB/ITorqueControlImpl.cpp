@@ -48,7 +48,7 @@ bool roboticslab::DextraControlboardUSB::getTorque(int j, double *t)
 
 bool roboticslab::DextraControlboardUSB::getTorques(double *t)
 {
-    CD_ERROR("\n");
+    //CD_ERROR("\n");
     return false;
 }
 

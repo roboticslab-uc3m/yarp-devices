@@ -26,7 +26,7 @@ bool roboticslab::DextraControlboardUSB::getInteractionModes(int n_joints, int *
 
 bool roboticslab::DextraControlboardUSB::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
-    CD_WARNING("Missing implementation\n");
+    //CD_WARNING("Missing implementation\n");
     return true;
 }
 
