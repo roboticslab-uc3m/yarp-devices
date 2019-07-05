@@ -120,6 +120,12 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             return false;
         }
 
+        if( !device->view( iCurrentControlRaw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iCurrentControlRaw interface\n");
+            return false;
+        }
+
         if( !device->view( iEncodersTimedRaw[i] ))
         {
             CD_ERROR("[error] Problems acquiring iEncodersTimedRaw interface\n");
