@@ -18,6 +18,7 @@ if(NOT SKIP_TechnosoftIpos)
                                    ICanBusSharerImpl.cpp
                                    IControlLimitsRawImpl.cpp
                                    IControlModeRawImpl.cpp
+                                   ICurrentControlRawImpl.cpp
                                    IEncodersRawImpl.cpp
                                    IEncodersTimedRawImpl.cpp
                                    IInteractionModeRawImpl.cpp
