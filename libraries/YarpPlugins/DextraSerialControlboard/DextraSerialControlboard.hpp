@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __DEXTRA_CONTROLBOARD_USB__
-#define __DEXTRA_CONTROLBOARD_USB__
+#ifndef __DEXTRA_SERIAL_CONTROLBOARD_HPP__
+#define __DEXTRA_SERIAL_CONTROLBOARD_HPP__
 
 #include <yarp/os/Mutex.h>
 
@@ -18,28 +18,27 @@ namespace roboticslab
 
 /**
  * @ingroup YarpPlugins
- * \defgroup DextraControlboardUSB
- * @brief Contains roboticslab::DextraControlboardUSB.
+ * \defgroup DextraSerialControlboard
+ * @brief Contains roboticslab::DextraSerialControlboard.
  */
 
 /**
-* @ingroup DextraControlboardUSB
-* @brief Implementation for the custom UC3M Dextra Hand controlboard interfaces.
-*
-*/
-class DextraControlboardUSB : public yarp::dev::DeviceDriver,
-                              public yarp::dev::IAxisInfo,
-                              public yarp::dev::IControlLimits,
-                              public yarp::dev::IControlMode,
-                              public yarp::dev::IEncodersTimed,
-                              public yarp::dev::IPositionControl,
-                              public yarp::dev::IPositionDirect,
-                              public yarp::dev::IVelocityControl
+ * @ingroup DextraSerialControlboard
+ * @brief Implementation for the custom UC3M Dextra Hand controlboard interfaces.
+ */
+class DextraSerialControlboard : public yarp::dev::DeviceDriver,
+                                 public yarp::dev::IAxisInfo,
+                                 public yarp::dev::IControlLimits,
+                                 public yarp::dev::IControlMode,
+                                 public yarp::dev::IEncodersTimed,
+                                 public yarp::dev::IPositionControl,
+                                 public yarp::dev::IPositionDirect,
+                                 public yarp::dev::IVelocityControl
 {
 
 public:
 
-    DextraControlboardUSB();
+    DextraSerialControlboard();
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
     virtual bool open(yarp::os::Searchable& config);
@@ -137,4 +136,4 @@ protected:
 
 }  // namespace roboticslab
 
-#endif  // __DEXTRA_CONTROLBOARD_USB__
+#endif  // __DEXTRA_SERIAL_CONTROLBOARD_HPP__

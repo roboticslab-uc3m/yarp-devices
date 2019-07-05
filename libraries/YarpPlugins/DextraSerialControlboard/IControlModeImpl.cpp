@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraControlboardUSB.hpp"
+#include "DextraSerialControlboard.hpp"
 
 #include <yarp/os/Vocab.h>
 
@@ -8,7 +8,7 @@
 
 // ------------------- IControlMode Related ------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getControlMode(int j, int *mode)
+bool roboticslab::DextraSerialControlboard::getControlMode(int j, int *mode)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
@@ -18,7 +18,7 @@ bool roboticslab::DextraControlboardUSB::getControlMode(int j, int *mode)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getControlModes(int *modes)
+bool roboticslab::DextraSerialControlboard::getControlModes(int *modes)
 {
     //CD_DEBUG("\n");  //-- Too verbose in controlboardwrapper2 stream
 
@@ -34,7 +34,7 @@ bool roboticslab::DextraControlboardUSB::getControlModes(int *modes)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getControlModes(const int n_joint, const int *joints, int *modes)
+bool roboticslab::DextraSerialControlboard::getControlModes(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("%d\n", n_joint);
 
@@ -50,7 +50,7 @@ bool roboticslab::DextraControlboardUSB::getControlModes(const int n_joint, cons
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::setControlMode(const int j, const int mode)
+bool roboticslab::DextraSerialControlboard::setControlMode(const int j, const int mode)
 {
     CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
     CHECK_JOINT(j);
@@ -59,7 +59,7 @@ bool roboticslab::DextraControlboardUSB::setControlMode(const int j, const int m
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::setControlModes(const int n_joint, const int *joints, int *modes)
+bool roboticslab::DextraSerialControlboard::setControlModes(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("(%d)\n", n_joint);
 
@@ -75,7 +75,7 @@ bool roboticslab::DextraControlboardUSB::setControlModes(const int n_joint, cons
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::setControlModes(int *modes)
+bool roboticslab::DextraSerialControlboard::setControlModes(int *modes)
 {
     CD_DEBUG("\n");
 

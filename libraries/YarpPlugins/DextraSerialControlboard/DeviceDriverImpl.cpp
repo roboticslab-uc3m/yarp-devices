@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraControlboardUSB.hpp"
+#include "DextraSerialControlboard.hpp"
 
 #include <cstring>
 
@@ -11,7 +11,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::open(yarp::os::Searchable& config)
+bool roboticslab::DextraSerialControlboard::open(yarp::os::Searchable& config)
 {
     std::string port = config.check("port", yarp::os::Value(DEFAULT_PORT), "serial port").asString();
 
@@ -50,7 +50,7 @@ bool roboticslab::DextraControlboardUSB::open(yarp::os::Searchable& config)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::close()
+bool roboticslab::DextraSerialControlboard::close()
 {
     delete synapse;
     serialDevice.close();

@@ -11,9 +11,9 @@ namespace roboticslab
 {
 
 /**
-* @ingroup DextraControlboardUSB
-* @brief Comms layer to interface with the onboard Arduino through serial port.
-*/
+ * @ingroup DextraSerialControlboard
+ * @brief Comms layer to interface with the onboard Arduino through serial port.
+ */
 class Synapse
 {
 

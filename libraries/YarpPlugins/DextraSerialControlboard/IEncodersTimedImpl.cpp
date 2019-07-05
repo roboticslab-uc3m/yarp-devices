@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraControlboardUSB.hpp"
+#include "DextraSerialControlboard.hpp"
 
 #include <algorithm>
 
@@ -10,7 +10,7 @@
 
 // ------------------ IEncoders Related -----------------------------------------
 
-bool roboticslab::DextraControlboardUSB::resetEncoder(int j)
+bool roboticslab::DextraSerialControlboard::resetEncoder(int j)
 {
     CD_DEBUG("(%d)\n",j);
     return setEncoder(j, 0.0);
@@ -18,7 +18,7 @@ bool roboticslab::DextraControlboardUSB::resetEncoder(int j)
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::resetEncoders()
+bool roboticslab::DextraSerialControlboard::resetEncoders()
 {
     CD_DEBUG("\n");
     Synapse::Setpoints setpoints = {0};
@@ -28,7 +28,7 @@ bool roboticslab::DextraControlboardUSB::resetEncoders()
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::setEncoder(int j, double val)
+bool roboticslab::DextraSerialControlboard::setEncoder(int j, double val)
 {
     CD_DEBUG("(%d, %f)\n", j, val);
     CHECK_JOINT(j);
@@ -38,7 +38,7 @@ bool roboticslab::DextraControlboardUSB::setEncoder(int j, double val)
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::setEncoders(const double *vals)
+bool roboticslab::DextraSerialControlboard::setEncoders(const double *vals)
 {
     CD_DEBUG("\n");
     Synapse::Setpoints setpoints;
@@ -49,7 +49,7 @@ bool roboticslab::DextraControlboardUSB::setEncoders(const double *vals)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getEncoder(int j, double *v)
+bool roboticslab::DextraSerialControlboard::getEncoder(int j, double *v)
 {
     //CD_DEBUG("%d\n", j);  //-- Too verbose in stream.
     CHECK_JOINT(j);
@@ -59,7 +59,7 @@ bool roboticslab::DextraControlboardUSB::getEncoder(int j, double *v)
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getEncoders(double *encs)
+bool roboticslab::DextraSerialControlboard::getEncoders(double *encs)
 {
     //CD_DEBUG("\n");
     Synapse::Setpoints setpoints;
@@ -70,7 +70,7 @@ bool roboticslab::DextraControlboardUSB::getEncoders(double *encs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getEncoderSpeed(int j, double *sp)
+bool roboticslab::DextraSerialControlboard::getEncoderSpeed(int j, double *sp)
 {
     //CD_DEBUG("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
     CHECK_JOINT(j);
@@ -79,7 +79,7 @@ bool roboticslab::DextraControlboardUSB::getEncoderSpeed(int j, double *sp)
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getEncoderSpeeds(double *spds)
+bool roboticslab::DextraSerialControlboard::getEncoderSpeeds(double *spds)
 {
     //CD_DEBUG("\n");
 
@@ -95,7 +95,7 @@ bool roboticslab::DextraControlboardUSB::getEncoderSpeeds(double *spds)
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getEncoderAcceleration(int j, double *accs)
+bool roboticslab::DextraSerialControlboard::getEncoderAcceleration(int j, double *accs)
 {
     //CD_DEBUG("(%d)\n", j);  //-- Too verbose in controlboardwrapper2 stream.
     CHECK_JOINT(j);
@@ -104,7 +104,7 @@ bool roboticslab::DextraControlboardUSB::getEncoderAcceleration(int j, double *a
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getEncoderAccelerations(double *accs)
+bool roboticslab::DextraSerialControlboard::getEncoderAccelerations(double *accs)
 {
     //CD_DEBUG("\n");
     bool ok = true;
@@ -119,7 +119,7 @@ bool roboticslab::DextraControlboardUSB::getEncoderAccelerations(double *accs)
 
 // ------------------ IEncodersTimed Related -----------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getEncodersTimed(double *encs, double *time)
+bool roboticslab::DextraSerialControlboard::getEncodersTimed(double *encs, double *time)
 {
     CD_DEBUG("\n");
     *time = yarp::os::Time::now();
@@ -128,7 +128,7 @@ bool roboticslab::DextraControlboardUSB::getEncodersTimed(double *encs, double *
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getEncoderTimed(int j, double *enc, double *time)
+bool roboticslab::DextraSerialControlboard::getEncoderTimed(int j, double *enc, double *time)
 {
     //CD_DEBUG("(%d)\n", j);  //-- Too verbose in controlboardwrapper2 stream.
     CHECK_JOINT(j);

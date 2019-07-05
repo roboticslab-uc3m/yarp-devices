@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraControlboardUSB.hpp"
+#include "DextraSerialControlboard.hpp"
 
 #include <cstring>
 
@@ -10,7 +10,7 @@
 
 // ------------------- IPositionControl Related ------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getAxes(int *ax)
+bool roboticslab::DextraSerialControlboard::getAxes(int *ax)
 {
     *ax = Synapse::DATA_POINTS;
     return true;
@@ -18,7 +18,7 @@ bool roboticslab::DextraControlboardUSB::getAxes(int *ax)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::positionMove(int j, double ref)    // encExposed = ref;
+bool roboticslab::DextraSerialControlboard::positionMove(int j, double ref)    // encExposed = ref;
 {
     CD_DEBUG("(%d, %f)\n", j, ref);
     CHECK_JOINT(j);
@@ -38,7 +38,7 @@ bool roboticslab::DextraControlboardUSB::positionMove(int j, double ref)    // e
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::positionMove(const double *refs)
+bool roboticslab::DextraSerialControlboard::positionMove(const double *refs)
 {
     CD_DEBUG("\n");
 
@@ -56,7 +56,7 @@ bool roboticslab::DextraControlboardUSB::positionMove(const double *refs)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::relativeMove(int j, double delta)
+bool roboticslab::DextraSerialControlboard::relativeMove(int j, double delta)
 {
     CD_DEBUG("(%d, %f)\n",j,delta);
     CHECK_JOINT(j);
@@ -73,7 +73,7 @@ bool roboticslab::DextraControlboardUSB::relativeMove(int j, double delta)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::relativeMove(const double *deltas)
+bool roboticslab::DextraSerialControlboard::relativeMove(const double *deltas)
 {
     CD_DEBUG("\n");
 
@@ -94,7 +94,7 @@ bool roboticslab::DextraControlboardUSB::relativeMove(const double *deltas)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::checkMotionDone(int j, bool *flag)
+bool roboticslab::DextraSerialControlboard::checkMotionDone(int j, bool *flag)
 {
     CD_DEBUG("(%d)\n",j);
     CHECK_JOINT(j);
@@ -104,7 +104,7 @@ bool roboticslab::DextraControlboardUSB::checkMotionDone(int j, bool *flag)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::checkMotionDone(bool *flag)
+bool roboticslab::DextraSerialControlboard::checkMotionDone(bool *flag)
 {
     CD_DEBUG("\n");
 
@@ -122,7 +122,7 @@ bool roboticslab::DextraControlboardUSB::checkMotionDone(bool *flag)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::setRefSpeed(int j, double sp)
+bool roboticslab::DextraSerialControlboard::setRefSpeed(int j, double sp)
 {
     CD_DEBUG("(%d, %f)\n", j ,sp);
     CHECK_JOINT(j);
@@ -131,7 +131,7 @@ bool roboticslab::DextraControlboardUSB::setRefSpeed(int j, double sp)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::setRefSpeeds(const double *spds)
+bool roboticslab::DextraSerialControlboard::setRefSpeeds(const double *spds)
 {
     CD_DEBUG("\n");
 
@@ -147,7 +147,7 @@ bool roboticslab::DextraControlboardUSB::setRefSpeeds(const double *spds)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::setRefAcceleration(int j, double acc)
+bool roboticslab::DextraSerialControlboard::setRefAcceleration(int j, double acc)
 {
     CD_DEBUG("(%d, %f)\n", j, acc);
     CHECK_JOINT(j);
@@ -156,7 +156,7 @@ bool roboticslab::DextraControlboardUSB::setRefAcceleration(int j, double acc)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::setRefAccelerations(const double *accs)
+bool roboticslab::DextraSerialControlboard::setRefAccelerations(const double *accs)
 {
     CD_DEBUG("\n");
 
@@ -172,7 +172,7 @@ bool roboticslab::DextraControlboardUSB::setRefAccelerations(const double *accs)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getRefSpeed(int j, double *ref)
+bool roboticslab::DextraSerialControlboard::getRefSpeed(int j, double *ref)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
@@ -181,7 +181,7 @@ bool roboticslab::DextraControlboardUSB::getRefSpeed(int j, double *ref)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getRefSpeeds(double *spds)
+bool roboticslab::DextraSerialControlboard::getRefSpeeds(double *spds)
 {
     CD_DEBUG("\n");
 
@@ -197,7 +197,7 @@ bool roboticslab::DextraControlboardUSB::getRefSpeeds(double *spds)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getRefAcceleration(int j, double *acc)
+bool roboticslab::DextraSerialControlboard::getRefAcceleration(int j, double *acc)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
@@ -206,7 +206,7 @@ bool roboticslab::DextraControlboardUSB::getRefAcceleration(int j, double *acc)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getRefAccelerations(double *accs)
+bool roboticslab::DextraSerialControlboard::getRefAccelerations(double *accs)
 {
     CD_DEBUG("\n");
 
@@ -222,7 +222,7 @@ bool roboticslab::DextraControlboardUSB::getRefAccelerations(double *accs)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::stop(int j)
+bool roboticslab::DextraSerialControlboard::stop(int j)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
@@ -231,7 +231,7 @@ bool roboticslab::DextraControlboardUSB::stop(int j)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::stop()
+bool roboticslab::DextraSerialControlboard::stop()
 {
     CD_DEBUG("\n");
 
@@ -247,7 +247,7 @@ bool roboticslab::DextraControlboardUSB::stop()
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::positionMove(const int n_joint, const int *joints, const double *refs)
+bool roboticslab::DextraSerialControlboard::positionMove(const int n_joint, const int *joints, const double *refs)
 {
     CD_DEBUG("(%d)\n", n_joint);
 
@@ -268,7 +268,7 @@ bool roboticslab::DextraControlboardUSB::positionMove(const int n_joint, const i
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::relativeMove(const int n_joint, const int *joints, const double *deltas)
+bool roboticslab::DextraSerialControlboard::relativeMove(const int n_joint, const int *joints, const double *deltas)
 {
     CD_DEBUG("(%d)\n", n_joint);
 
@@ -289,7 +289,7 @@ bool roboticslab::DextraControlboardUSB::relativeMove(const int n_joint, const i
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::checkMotionDone(const int n_joint, const int *joints, bool *flags)
+bool roboticslab::DextraSerialControlboard::checkMotionDone(const int n_joint, const int *joints, bool *flags)
 {
     CD_DEBUG("(%d)\n", n_joint);
 
@@ -307,7 +307,7 @@ bool roboticslab::DextraControlboardUSB::checkMotionDone(const int n_joint, cons
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::setRefSpeeds(const int n_joint, const int *joints, const double *spds)
+bool roboticslab::DextraSerialControlboard::setRefSpeeds(const int n_joint, const int *joints, const double *spds)
 {
     CD_DEBUG("(%d)\n", n_joint);
 
@@ -323,7 +323,7 @@ bool roboticslab::DextraControlboardUSB::setRefSpeeds(const int n_joint, const i
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
+bool roboticslab::DextraSerialControlboard::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
 {
     CD_DEBUG("(%d)\n", n_joint);
 
@@ -339,7 +339,7 @@ bool roboticslab::DextraControlboardUSB::setRefAccelerations(const int n_joint, 
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getRefSpeeds(const int n_joint, const int *joints, double *spds)
+bool roboticslab::DextraSerialControlboard::getRefSpeeds(const int n_joint, const int *joints, double *spds)
 {
     CD_DEBUG("(%d)\n", n_joint);
 
@@ -355,7 +355,7 @@ bool roboticslab::DextraControlboardUSB::getRefSpeeds(const int n_joint, const i
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getRefAccelerations(const int n_joint, const int *joints, double *accs)
+bool roboticslab::DextraSerialControlboard::getRefAccelerations(const int n_joint, const int *joints, double *accs)
 {
     CD_DEBUG("(%d)\n", n_joint);
 
@@ -371,7 +371,7 @@ bool roboticslab::DextraControlboardUSB::getRefAccelerations(const int n_joint, 
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::stop(const int n_joint, const int *joints)
+bool roboticslab::DextraSerialControlboard::stop(const int n_joint, const int *joints)
 {
     CD_DEBUG("(%d)\n", n_joint);
 
@@ -387,7 +387,7 @@ bool roboticslab::DextraControlboardUSB::stop(const int n_joint, const int *join
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getTargetPosition(const int joint, double *ref)
+bool roboticslab::DextraSerialControlboard::getTargetPosition(const int joint, double *ref)
 {
     CD_DEBUG("(%d)\n", joint);
     return false;
@@ -395,7 +395,7 @@ bool roboticslab::DextraControlboardUSB::getTargetPosition(const int joint, doub
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getTargetPositions(double *refs)
+bool roboticslab::DextraSerialControlboard::getTargetPositions(double *refs)
 {
     CD_DEBUG("\n");
 
@@ -411,7 +411,7 @@ bool roboticslab::DextraControlboardUSB::getTargetPositions(double *refs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraControlboardUSB::getTargetPositions(const int n_joint, const int *joints, double *refs)
+bool roboticslab::DextraSerialControlboard::getTargetPositions(const int n_joint, const int *joints, double *refs)
 {
     CD_DEBUG("(%d)\n", n_joint);
 
