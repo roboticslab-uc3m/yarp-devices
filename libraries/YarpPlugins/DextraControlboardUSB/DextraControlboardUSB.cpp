@@ -10,6 +10,12 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
+DextraControlboardUSB::DextraControlboardUSB()
+    : synapse(0)
+{}
+
+// -----------------------------------------------------------------------------
+
 double DextraControlboardUSB::getSetpoint(int j)
 {
     yarp::os::LockGuard lock(setpointMutex);

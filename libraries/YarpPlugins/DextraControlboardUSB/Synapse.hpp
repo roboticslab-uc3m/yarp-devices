@@ -24,10 +24,7 @@ public:
     typedef float setpoint_t;
     typedef setpoint_t Setpoints[DATA_POINTS];
 
-    Synapse();
-
-    void setSerialDeviceHandle(yarp::dev::ISerialDevice * iSerialDevice)
-    { this->iSerialDevice = iSerialDevice; }
+    Synapse(yarp::dev::ISerialDevice * iSerialDevice);
 
     bool readDataList(Setpoints & setpoints);
 

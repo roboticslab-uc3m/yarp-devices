@@ -43,9 +43,7 @@ class DextraControlboardUSB : public yarp::dev::DeviceDriver,
 
 public:
 
-    DextraControlboardUSB()
-    {
-    }
+    DextraControlboardUSB();
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
     virtual bool open(yarp::os::Searchable& config);
@@ -153,7 +151,7 @@ protected:
     void setSetpoint(int j, Synapse::setpoint_t setpoint);
     void setSetpoints(const Synapse::Setpoints & setpoints);
 
-    Synapse synapse;
+    Synapse * synapse;
 
     yarp::dev::PolyDriver serialDevice;
 

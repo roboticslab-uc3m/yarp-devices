@@ -36,7 +36,7 @@ bool roboticslab::DextraControlboardUSB::open(yarp::os::Searchable& config)
         return true;
     }
 
-    synapse.setSerialDeviceHandle(iSerialDevice);
+    synapse = new Synapse(iSerialDevice);
 
     std::memset(setpoints, 0, Synapse::DATA_POINTS);
 
@@ -47,6 +47,7 @@ bool roboticslab::DextraControlboardUSB::open(yarp::os::Searchable& config)
 
 bool roboticslab::DextraControlboardUSB::close()
 {
+    delete synapse;
     serialDevice.close();
     return true;
 }

@@ -27,7 +27,7 @@ bool roboticslab::DextraControlboardUSB::positionMove(int j, double ref)    // e
     getSetpoints(setpoints);
     setpoints[j] = ref;
 
-    if (!synapse.writeSetpointList(setpoints))
+    if (!synapse->writeSetpointList(setpoints))
     {
         return false;
     }
@@ -45,7 +45,7 @@ bool roboticslab::DextraControlboardUSB::positionMove(const double *refs)
     Synapse::Setpoints setpoints;
     std::copy(refs, refs + Synapse::DATA_POINTS, setpoints);
 
-    if (!synapse.writeSetpointList(setpoints))
+    if (!synapse->writeSetpointList(setpoints))
     {
         return false;
     }
