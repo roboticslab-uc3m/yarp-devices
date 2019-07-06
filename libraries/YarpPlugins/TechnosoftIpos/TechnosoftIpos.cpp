@@ -2,6 +2,7 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <cmath>
 #include <cstring>
 
 // -----------------------------------------------------------------------------
@@ -62,6 +63,32 @@ bool roboticslab::TechnosoftIpos::send(uint32_t cob, uint16_t len, uint8_t * msg
     lastUsage = yarp::os::Time::now();
     canBufferSemaphore.post();
     return true;
+}
+
+// -----------------------------------------------------------------------------
+
+template <typename T_int, typename T_frac>
+void roboticslab::TechnosoftIpos::encodeFixedPoint(double value, T_int * integer, T_frac * fractional)
+{
+    *integer = (T_int)value;
+    *fractional = std::abs(value - *integer) * (1 << 4 * sizeof(T_frac));
+}
+
+// -----------------------------------------------------------------------------
+
+template <typename T_int, typename T_frac>
+double roboticslab::TechnosoftIpos::decodeFixedPoint(T_int integer, T_frac fractional)
+{
+    double frac = (double)fractional / (1 << 4 * sizeof(fractional));
+
+    if (integer >= 0)
+    {
+        return integer + frac;
+    }
+    else
+    {
+        return integer - frac;
+    }
 }
 
 // -----------------------------------------------------------------------------

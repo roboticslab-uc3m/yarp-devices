@@ -943,9 +943,11 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             }
             else
             {
-                uint32_t got;
-                memcpy(&got, message.getData()+4,4);
-                double val = (got >> 16) + (double)((uint32_t)(got << 16) >> 16) / (1 << 16); // integer + fractional
+                uint16_t gotInteger;
+                uint16_t gotFractional;
+                memcpy(&gotFractional, message.getData() + 4, 2);
+                memcpy(&gotInteger, message.getData() + 6, 2);
+                double val = decodeFixedPoint(gotInteger, gotFractional);
                 refAccelSemaphore.wait();
                 refAcceleration = val / (std::abs(tr) * (encoderPulses / 360.0) * 0.000001);
                 refAccelSemaphore.post();
@@ -961,9 +963,11 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             }
             else      // Query
             {
-                uint32_t got;
-                memcpy(&got, message.getData()+4,4);
-                double val = (got >> 16) + (double)((uint32_t)(got << 16) >> 16) / (1 << 16); // integer + fractional
+                uint16_t gotInteger;
+                uint16_t gotFractional;
+                memcpy(&gotFractional, message.getData() + 4, 2);
+                memcpy(&gotInteger, message.getData() + 6, 2);
+                double val = decodeFixedPoint(gotInteger, gotFractional);
                 refSpeedSemaphore.wait();
                 refSpeed = val / (std::abs(tr) * (encoderPulses / 360.0) * 0.001);
                 refSpeedSemaphore.post();
@@ -1048,13 +1052,9 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             {
                 int16_t gotInteger;
                 uint16_t gotFractional;
-                memcpy(&gotFractional, message.getData()+4,2);
-                memcpy(&gotInteger, message.getData()+6,2);
-                double val;
-                if (gotInteger >= 0)
-                    val = gotInteger + (double)gotFractional / (1 << 16);
-                else
-                    val = gotInteger - (double)gotFractional / (1 << 16);
+                memcpy(&gotFractional, message.getData() + 4, 2);
+                memcpy(&gotInteger, message.getData() + 6, 2);
+                double val = decodeFixedPoint(gotInteger, gotFractional);
                 refVelocitySemaphore.wait();
                 refVelocity = val / (tr * (encoderPulses / 360.0) * 0.001);
                 refVelocitySemaphore.post();

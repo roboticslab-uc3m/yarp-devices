@@ -235,6 +235,12 @@ protected:
     std::string msgToStr(const yarp::dev::CanMessage & message);
     std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
 
+    template <typename T_int, typename T_frac>
+    static void encodeFixedPoint(double value, T_int * integer, T_frac * fractional);
+
+    template <typename T_int, typename T_frac>
+    static double decodeFixedPoint(T_int integer, T_frac fractional);
+
     int canId;
     yarp::dev::ICanBus *canDevicePtr;
     yarp::dev::ICanBufferFactory *iCanBufferFactory;

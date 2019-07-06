@@ -30,10 +30,11 @@ bool roboticslab::TechnosoftIpos::velocityMoveRaw(int j, double sp)
     //-- 0.01138 = ( 4 * 1024 pulse / 360 deg ) * (0.001 s / sample)   // deg/s -> pulse/sample  = UI (vel)
     // encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024)
     double sendRefSpeed = sp * this->tr * (encoderPulses / 360.0) * 0.001;
-    int16_t sendRefSpeedInteger = (int16_t)sendRefSpeed;
-    uint16_t sendRefSpeedFractional = std::abs(sendRefSpeed - sendRefSpeedInteger) * (1 << 16);
-    memcpy(msg_vel+4,&sendRefSpeedFractional,2);
-    memcpy(msg_vel+6,&sendRefSpeedInteger,2);
+    int16_t sendRefSpeedInteger;
+    uint16_t sendRefSpeedFractional;
+    encodeFixedPoint(sendRefSpeed, &sendRefSpeedInteger, &sendRefSpeedFractional);
+    memcpy(msg_vel + 4, &sendRefSpeedFractional, 2);
+    memcpy(msg_vel + 6, &sendRefSpeedInteger, 2);
 
     if( ! send(0x600, 8, msg_vel))
     {

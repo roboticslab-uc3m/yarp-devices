@@ -207,10 +207,11 @@ bool roboticslab::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
     //-- 0.01138 = ( 4 * 1024 pulse / 360 deg ) * (0.001 s / sample)   // deg/s -> pulse/sample  = UI (vel)
     //-- encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024)
     double sendRefSpeed = sp * std::abs(this->tr) * (encoderPulses / 360.0) * 0.001;
-    uint16_t sendRefSpeedInteger = sendRefSpeed;
-    uint16_t sendRefSpeedFractional = (sendRefSpeed - sendRefSpeedInteger) * (1 << 16);
-    uint32_t sendRefSpeedFormatted = ((uint32_t)sendRefSpeedInteger << 16) + sendRefSpeedFractional;
-    memcpy(msg_posmode_speed+4,&sendRefSpeedFormatted,4);
+    uint16_t sendRefSpeedInteger;
+    uint16_t sendRefSpeedFractional;
+    encodeFixedPoint(sendRefSpeed, &sendRefSpeedInteger, &sendRefSpeedFractional);
+    memcpy(msg_posmode_speed + 4, &sendRefSpeedFractional, 2);
+    memcpy(msg_posmode_speed + 6, &sendRefSpeedInteger, 2);
 
     if( ! send( 0x600, 8, msg_posmode_speed) )
     {
@@ -255,10 +256,11 @@ bool roboticslab::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
     //-- 0.00001138 = ( 4 * 1024 pulse / 360 deg ) * (0.000001 s^2 / sample^2)   // deg/s^2 -> pulse/sample^2 = UI (acc)
     //-- encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024)
     double sendRefAcc = acc * std::abs(this->tr) * (encoderPulses / 360.0) * 0.000001;
-    uint16_t sendRefAccInteger = sendRefAcc;
-    uint16_t sendRefAccFractional = (sendRefAcc - sendRefAccInteger) * (1 << 16);
-    uint32_t sendRefAccFormatted = ((uint32_t)sendRefAccInteger << 16) + sendRefAccFractional;
-    memcpy(msg_posmode_acc+4,&sendRefAccFormatted,4);
+    uint16_t sendRefAccInteger;
+    uint16_t sendRefAccFractional;
+    encodeFixedPoint(sendRefAcc, &sendRefAccInteger, &sendRefAccFractional);
+    memcpy(msg_posmode_acc + 4, &sendRefAccFractional, 2);
+    memcpy(msg_posmode_acc + 6, &sendRefAccInteger, 2);
 
     if( ! send( 0x600, 8, msg_posmode_acc) )
     {
