@@ -68,6 +68,17 @@ Note that this is a hack. VOCABs may be updated without warning. The recommended
 [set] [vmos] (800)
 ```
 
+### in torq mode
+* get actual torque/current
+```
+[get] [torq] [trq] 0
+```
+
+* set reference torque
+```
+[set] [torq] [ref] 0 1.0
+```
+
 ### limits
 * get pos limits:
 ```
