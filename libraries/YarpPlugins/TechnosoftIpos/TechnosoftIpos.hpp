@@ -239,13 +239,13 @@ protected:
     static void encodeFixedPoint(double value, T_int * integer, T_frac * fractional)
     {
         *integer = (T_int)value;
-        *fractional = std::abs(value - *integer) * (1 << 4 * sizeof(T_frac));
+        *fractional = std::abs(value - *integer) * (1 << 8 * sizeof(T_frac));
     }
 
     template <typename T_int, typename T_frac>
     static double decodeFixedPoint(T_int integer, T_frac fractional)
     {
-        double frac = (double)fractional / (1 << 4 * sizeof(fractional));
+        double frac = (double)fractional / (1 << 8 * sizeof(fractional));
         return integer + (integer >= 0) ? frac : -frac;
     }
 
