@@ -245,8 +245,8 @@ protected:
     template <typename T_int, typename T_frac>
     static double decodeFixedPoint(T_int integer, T_frac fractional)
     {
-        double frac = (double)fractional / (1 << 8 * sizeof(fractional));
-        return integer + (integer >= 0) ? frac : -frac;
+        double frac = (double)fractional / (1 << 8 * sizeof(T_frac));
+        return integer + (integer >= 0 ? frac : -frac);
     }
 
     int canId;
