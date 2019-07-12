@@ -236,10 +236,18 @@ protected:
     std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
 
     template <typename T_int, typename T_frac>
-    static void encodeFixedPoint(double value, T_int * integer, T_frac * fractional);
+    static void encodeFixedPoint(double value, T_int * integer, T_frac * fractional)
+    {
+        *integer = (T_int)value;
+        *fractional = std::abs(value - *integer) * (1 << 4 * sizeof(T_frac));
+    }
 
     template <typename T_int, typename T_frac>
-    static double decodeFixedPoint(T_int integer, T_frac fractional);
+    static double decodeFixedPoint(T_int integer, T_frac fractional)
+    {
+        double frac = (double)fractional / (1 << 4 * sizeof(fractional));
+        return integer + (integer >= 0) ? frac : -frac;
+    }
 
     int canId;
     yarp::dev::ICanBus *canDevicePtr;
