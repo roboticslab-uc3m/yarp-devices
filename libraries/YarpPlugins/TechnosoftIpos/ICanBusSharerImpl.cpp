@@ -37,6 +37,88 @@ bool roboticslab::TechnosoftIpos::setIEncodersTimedRawExternal(IEncodersTimedRaw
 
 bool roboticslab::TechnosoftIpos::initialize()
 {
+    uint8_t msg_deviceType[] = {0x40,0x00,0x10,0x00};
+
+    if (!send(0x600, 4, msg_deviceType))
+    {
+        CD_ERROR("Could not send \"Device Type\" query. %s\n", msgToStr(0x600, 4, msg_deviceType).c_str());
+        return false;
+    }
+
+    CD_SUCCESS("Sent \"Device Type\" query. %s\n", msgToStr(0x600, 4, msg_deviceType).c_str());
+
+    uint8_t msg_deviceName[] = {0x40,0x08,0x10,0x00};
+
+    if (!send(0x600, 4, msg_deviceName))
+    {
+        CD_ERROR("Could not send \"Manufacturer Device Name\" query. %s\n", msgToStr(0x600, 4, msg_deviceName).c_str());
+        return false;
+    }
+
+    CD_SUCCESS("Sent \"Manufacturer Device Name\" query. %s\n", msgToStr(0x600, 4, msg_deviceName).c_str());
+
+    uint8_t msg_softwareVersion[] = {0x40,0x0A,0x10,0x00};
+
+    if (!send(0x600, 4, msg_softwareVersion))
+    {
+        CD_ERROR("Could not send \"Manufacturer Software Version\" query. %s\n", msgToStr(0x600, 4, msg_softwareVersion).c_str());
+        return false;
+    }
+
+    CD_SUCCESS("Sent \"Manufacturer Software Version\" query. %s\n", msgToStr(0x600, 4, msg_softwareVersion).c_str());
+
+    uint8_t msg_supportedDriveModes[] = {0x40,0x02,0x65,0x00};
+
+    if (!send(0x600, 4, msg_supportedDriveModes))
+    {
+        CD_ERROR("Could not send \"Supported drive modes\" query. %s\n", msgToStr(0x600, 4, msg_supportedDriveModes).c_str());
+        return false;
+    }
+
+    CD_SUCCESS("Sent \"Supported drive modes\" query. %s\n", msgToStr(0x600, 4, msg_supportedDriveModes).c_str());
+
+    uint8_t msg_identityObject[] = {0x40,0x18,0x10,0x00};
+
+    msg_identityObject[3] = 0x01;
+
+    if (!send(0x600, 4, msg_identityObject))
+    {
+        CD_ERROR("Could not send \"Vendor ID\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
+        return false;
+    }
+
+    CD_SUCCESS("Sent \"Vendor ID\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
+
+    msg_identityObject[3] = 0x02;
+
+    if (!send(0x600, 4, msg_identityObject))
+    {
+        CD_ERROR("Could not send \"Product Code\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
+        return false;
+    }
+
+    CD_SUCCESS("Sent \"Product Code\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
+
+    msg_identityObject[3] = 0x03;
+
+    if (!send(0x600, 4, msg_identityObject))
+    {
+        CD_ERROR("Could not send \"Revision number\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
+        return false;
+    }
+
+    CD_SUCCESS("Sent \"Revision number\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
+
+    msg_identityObject[3] = 0x04;
+
+    if (!send(0x600, 4, msg_identityObject))
+    {
+        CD_ERROR("Could not send \"Serial number\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
+        return false;
+    }
+
+    CD_SUCCESS("Sent \"Serial number\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
+
     uint8_t msg_quickStopOptionCode[] = {0x2B,0x5A,0x60,0x00,0x06,0x00,0x00,0x00};
 
     if (!send(0x600, 8, msg_quickStopOptionCode))
@@ -909,6 +991,111 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
         else if( (message.getData()[1]==0x1D)&&(message.getData()[2]==0x20) )      // Manual 201Dh: External Reference Type
         {
             CD_INFO("Got SDO ack \"External Reference Type.\" from driver. %s\n",msgToStr(message).c_str());
+        }
+        else if( (message.getData()[1]==0x00)&&(message.getData()[2]==0x10) )      // Manual 1000h: Device Type
+        {
+            uint16_t ciaStandard;
+            memcpy(&ciaStandard, message.getData() + 4, 2);
+            CD_INFO("Got \"Device Type\" from driver. %s. CiA standard %d.\n",msgToStr(message).c_str(), ciaStandard);
+            return true;
+        }
+        else if( (message.getData()[1]==0x08)&&(message.getData()[2]==0x10) )      // Manual 1008h: Manufacturer Device Name
+        {
+            CD_INFO("Got \"Manufacturer Device Name\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
+        }
+        else if( (message.getData()[1]==0x0A)&&(message.getData()[2]==0x10) )      // Manual 100Ah: Manufacturer Software Version
+        {
+            CD_INFO("Got \"Manufacturer Software Version\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
+        }
+        else if( (message.getData()[1]==0x02)&&(message.getData()[2]==0x65) )      // Manual 6502h: Supported drive modes
+        {
+            CD_INFO("Got \"Supported drive modes\" from driver. %s\n",msgToStr(message).c_str());
+
+            if(message.getData()[4] & 1) // (bit 0)
+            {
+                CD_INFO("\t*profiled position (pp)\n");
+            }
+            if(message.getData()[4] & 2) // (bit 1)
+            {
+                CD_INFO("\t*velocity (vl)\n");
+            }
+            if(message.getData()[4] & 4) // (bit 2)
+            {
+                CD_INFO("\t*profiled velocity (pv)\n");
+            }
+            if(message.getData()[4] & 8) // (bit 3)
+            {
+                CD_INFO("\t*profiled torque (tq)\n");
+            }
+            if(message.getData()[4] & 32) // (bit 5)
+            {
+                CD_INFO("\t*homing (hm)\n");
+            }
+            if(message.getData()[4] & 64) // (bit 6)
+            {
+                CD_INFO("\t*interpolated position (ip)\n");
+            }
+            if(message.getData()[4] & 128) // (bit 7)
+            {
+                CD_INFO("\t*cyclic synchronous position\n");
+            }
+            if(message.getData()[5] & 1) // (bit 8)
+            {
+                CD_INFO("\t*cyclic synchronous velocity\n");
+            }
+            if(message.getData()[5] & 2) // (bit 9)
+            {
+                CD_INFO("\t*cyclic synchronous torque\n");
+            }
+            if(message.getData()[6] & 1) // (bit 16)
+            {
+                CD_INFO("\t*electronic camming position (manufacturer specific)\n");
+            }
+            if(message.getData()[6] & 2) // (bit 17)
+            {
+                CD_INFO("\t*electronic gearing position (manufacturer specific)\n");
+            }
+            if(message.getData()[6] & 4) // (bit 18)
+            {
+                CD_INFO("\t*external reference position (manufacturer specific)\n");
+            }
+            if(message.getData()[6] & 8) // (bit 19)
+            {
+                CD_INFO("\t*external reference speed (manufacturer specific)\n");
+            }
+            if(message.getData()[6] & 16) // (bit 20)
+            {
+                CD_INFO("\t*external reference torque (manufacturer specific)\n");
+            }
+
+            return true;
+        }
+        else if( (message.getData()[1]==0x18)&&(message.getData()[2]==0x10) )      // Manual 1018h: Identity Object
+        {
+            if( message.getData()[3]==0x01 )  // Vendor ID
+            {
+                CD_INFO("Got \"Vendor ID\" from driver. %s\n",msgToStr(message).c_str());
+            }
+            else if( message.getData()[3]==0x02 )  // Product Code
+            {
+                uint32_t code;
+                memcpy(&code, message.getData() + 4, 4);
+                CD_INFO("Got \"Product Code\" from driver. %s. P%d.%d.E%d.\n",msgToStr(message).c_str(),
+                        code / 1000000, (code / 1000) % 1000, code % 1000);
+            }
+            else if( message.getData()[3]==0x03 )  // Revision number
+            {
+                CD_INFO("Got \"Revision number\" from driver. %s. %c%c%c%c.\n",msgToStr(message).c_str(),
+                        message.getData()[4], message.getData()[5], message.getData()[6], message.getData()[7]);
+            }
+            else if( message.getData()[3]==0x04 )  // Serial number
+            {
+                CD_INFO("Got \"Serial number\" from driver. %s. %c%c%x%x.\n",msgToStr(message).c_str(),
+                        message.getData()[4], message.getData()[5], message.getData()[6], message.getData()[7]);
+            }
+
             return true;
         }
         CD_INFO("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
