@@ -174,6 +174,8 @@ bool roboticslab::TechnosoftIpos::initialize()
         return false;
     }
 
+    CD_SUCCESS("Retrieved drive peak current: %f A.\n", drivePeakCurrent);
+
     msg_identityObject[3] = 0x03;
 
     if (!send(0x600, 4, msg_identityObject))
