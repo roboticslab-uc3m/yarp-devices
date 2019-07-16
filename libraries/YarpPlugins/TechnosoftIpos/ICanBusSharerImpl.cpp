@@ -896,6 +896,21 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
                 CD_INFO("Got SDO \"Target velocity\" response from driver. %s\n",msgToStr(message).c_str());
             }
         }
+        else if( (message.getData()[1]==0x5A)&&(message.getData()[2]==0x60) )      // Manual 605Ah: Quick stop option code
+        {
+            CD_INFO("Got SDO ack \"Quick stop option code.\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
+        }
+        else if( (message.getData()[1]==0x1C)&&(message.getData()[2]==0x20) )      // Manual 201Ch: External On-Line Reference
+        {
+            CD_INFO("Got SDO ack \"External On-Line Reference.\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
+        }
+        else if( (message.getData()[1]==0x1D)&&(message.getData()[2]==0x20) )      // Manual 201Dh: External Reference Type
+        {
+            CD_INFO("Got SDO ack \"External Reference Type.\" from driver. %s\n",msgToStr(message).c_str());
+            return true;
+        }
         CD_INFO("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
         return false;
     }
