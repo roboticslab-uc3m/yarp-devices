@@ -252,9 +252,9 @@ protected:
     bool targetReached;
     yarp::os::Semaphore targetReachedReady;
 
-    //-- Torque stuff
-    double getTorque;
-    yarp::os::Semaphore getTorqueReady;
+    //-- Current stuff
+    double getCurrent;
+    yarp::os::Semaphore getCurrentReady;
 
     //-- Init stuff
     int getSwitchOn;
@@ -270,7 +270,7 @@ protected:
     yarp::os::Semaphore ptBuffer;
 
     //-- More internal parameter stuff
-    double max, min, maxVel, refAcceleration, refSpeed, refTorque, refVelocity, targetPosition, tr, k;
+    double max, min, maxVel, refAcceleration, refSpeed, refTorque, refCurrent, refVelocity, targetPosition, tr, k;
     int encoderPulses; // default: 4096 (1024 * 4)
 
     //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
@@ -280,6 +280,7 @@ protected:
     yarp::os::Semaphore refAccelSemaphore;
     yarp::os::Semaphore refSpeedSemaphore;
     yarp::os::Semaphore refTorqueSemaphore;
+    yarp::os::Semaphore refCurrentSemaphore;
     yarp::os::Semaphore refVelocitySemaphore;
     yarp::os::Semaphore interactionModeSemaphore;
     yarp::os::Semaphore targetPositionSemaphore;

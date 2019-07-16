@@ -313,13 +313,13 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
         }
         else if( (message.getData()[1]==0x7E) && (message.getData()[2]==0x20) )     // Manual 207Eh
         {
-            //-- Commenting torque value (response to petition) as way too verbose, happens all the time.
-            //CD_INFO("Got torque value (response to petition). %s\n",msgToStr(message).c_str());
+            //-- Commenting current value (response to petition) as way too verbose, happens all the time.
+            //CD_INFO("Got current value (response to petition). %s\n",msgToStr(message).c_str());
             int16_t got;
             memcpy(&got, message.getData()+4,2);
-            getTorqueReady.wait();
-            getTorque = got * (2.0 * 10.0) / 65520.0;
-            getTorqueReady.post();
+            getCurrentReady.wait();
+            getCurrent = got * 2.0 * 10.0 / 65520.0;
+            getCurrentReady.post();
             return true;
         }
         else if( (message.getData()[1]==0x7A)&&(message.getData()[2]==0x60) )      // Manual 607Ah
