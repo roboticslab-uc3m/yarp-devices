@@ -996,7 +996,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
         {
             uint16_t ciaStandard;
             memcpy(&ciaStandard, message.getData() + 4, 2);
-            CD_INFO("Got \"Device Type\" from driver. %s. CiA standard %d.\n",msgToStr(message).c_str(), ciaStandard);
+            CD_INFO("Got \"Device Type\" from driver. %s CiA standard %d.\n",msgToStr(message).c_str(), ciaStandard);
             return true;
         }
         else if( (message.getData()[1]==0x08)&&(message.getData()[2]==0x10) )      // Manual 1008h: Manufacturer Device Name
@@ -1082,18 +1082,18 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             {
                 uint32_t code;
                 memcpy(&code, message.getData() + 4, 4);
-                CD_INFO("Got \"Product Code\" from driver. %s. P%d.%d.E%d.\n",msgToStr(message).c_str(),
+                CD_INFO("Got \"Product Code\" from driver. %s P%03d.%03d.E%03d.\n",msgToStr(message).c_str(),
                         code / 1000000, (code / 1000) % 1000, code % 1000);
             }
             else if( message.getData()[3]==0x03 )  // Revision number
             {
-                CD_INFO("Got \"Revision number\" from driver. %s. %c%c%c%c.\n",msgToStr(message).c_str(),
-                        message.getData()[4], message.getData()[5], message.getData()[6], message.getData()[7]);
+                CD_INFO("Got \"Revision number\" from driver. %s %c%c%c%c.\n",msgToStr(message).c_str(),
+                        message.getData()[7], message.getData()[6], message.getData()[6], message.getData()[4]);
             }
             else if( message.getData()[3]==0x04 )  // Serial number
             {
-                CD_INFO("Got \"Serial number\" from driver. %s. %c%c%x%x.\n",msgToStr(message).c_str(),
-                        message.getData()[4], message.getData()[5], message.getData()[6], message.getData()[7]);
+                CD_INFO("Got \"Serial number\" from driver. %s %c%c%x%x.\n",msgToStr(message).c_str(),
+                        message.getData()[7], message.getData()[6], message.getData()[5], message.getData()[4]);
             }
 
             return true;
