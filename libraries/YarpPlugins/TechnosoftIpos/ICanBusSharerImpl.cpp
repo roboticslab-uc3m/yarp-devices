@@ -1166,6 +1166,22 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
 
             return true;
         }
+        else if( (message.getData()[1]==0x7F)&&(message.getData()[2]==0x20) )      // Manual 207Fh: Current limit
+        {
+            if (message.getData()[0]==0x60)      // SDO segment upload/acknowledge
+            {
+                CD_INFO("Got SDO ack \"Current limit\" from driver. %s\n",msgToStr(message).c_str());
+            }
+            else
+            {
+                uint16_t got;
+                memcpy(&got, message.getData() + 4, 2);
+                getCurrentLimitReady.wait();
+                getCurrentLimit = 2 * drivePeakCurrent * (32767 - got) / 65520;
+                getCurrentLimitReady.post();
+                CD_INFO("Got SDO \"Current limit.\" response from driver. %s\n",msgToStr(message).c_str());
+            }
+        }
         CD_INFO("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
         return false;
     }

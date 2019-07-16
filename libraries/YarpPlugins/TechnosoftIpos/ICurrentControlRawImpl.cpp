@@ -68,8 +68,26 @@ bool roboticslab::TechnosoftIpos::getCurrentRangeRaw(int m, double *min, double 
     //-- Check index within range
     if (m != 0) return false;
 
-    CD_ERROR("Not implemented yet.\n");
-    return false;
+    //*************************************************************
+    uint8_t msg_getCurrentLimit[]= {0x40,0x7F,0x20,0x00}; // Query current. Ok only 4.
+
+    if (!send(0x600, 4, msg_getCurrentLimit))
+    {
+        CD_ERROR("Could not send msg_getCurrentLimit. %s\n", msgToStr(0x600, 4, msg_getCurrentLimit).c_str());
+        return false;
+    }
+    CD_SUCCESS("Sent msg_getCurrentLimit. %s\n", msgToStr(0x600, 4, msg_getCurrentLimit).c_str());
+    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    yarp::os::Time::delay(DELAY);  // Must delay as it will be from same driver.
+    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+    getCurrentLimitReady.wait();
+    *max = getCurrentLimit;
+    getCurrentLimitReady.post();
+
+    *min = -(*max);
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------

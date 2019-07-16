@@ -93,7 +93,16 @@ bool roboticslab::TechnosoftIpos::getTorqueRangeRaw(int j, double *min, double *
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
+    double minCurrent, maxCurrent;
+
+    if (!getCurrentRangeRaw(j, &minCurrent, &maxCurrent))
+    {
+        CD_ERROR("getCurrentRangeRaw() failed.\n");
+        return false;
+    }
+
+    *max = maxCurrent * std::abs(tr) * k;
+    *min = -(*max);
 
     return true;
 }

@@ -256,8 +256,10 @@ protected:
 
     //-- Current stuff
     double getCurrent;
+    double getCurrentLimit;
     int modeCurrentTorque;
     yarp::os::Semaphore getCurrentReady;
+    yarp::os::Semaphore getCurrentLimitReady;
     double drivePeakCurrent;
 
     //-- Init stuff
