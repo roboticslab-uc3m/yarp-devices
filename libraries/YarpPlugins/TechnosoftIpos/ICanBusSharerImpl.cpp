@@ -24,7 +24,7 @@ bool roboticslab::TechnosoftIpos::setIEncodersTimedRawExternal(IEncodersTimedRaw
 
     CD_INFO("canId(%d) wait to get external encoder value...\n",this->canId);
     while( !iEncodersTimedRawExternal->getEncoderRaw(0,&v) )  //-- loop while v is still a NaN.
-    {        
+    {
         //CD_INFO("Wait to get external encoder value...\n"); //\todo{activate these lines if blocking is too much}
         //Time::delay(0.2);
     }
@@ -46,26 +46,6 @@ bool roboticslab::TechnosoftIpos::initialize()
     }
 
     CD_SUCCESS("Sent \"Device Type\" query. %s\n", msgToStr(0x600, 4, msg_deviceType).c_str());
-
-    uint8_t msg_deviceName[] = {0x40,0x08,0x10,0x00};
-
-    if (!send(0x600, 4, msg_deviceName))
-    {
-        CD_ERROR("Could not send \"Manufacturer Device Name\" query. %s\n", msgToStr(0x600, 4, msg_deviceName).c_str());
-        return false;
-    }
-
-    CD_SUCCESS("Sent \"Manufacturer Device Name\" query. %s\n", msgToStr(0x600, 4, msg_deviceName).c_str());
-
-    uint8_t msg_softwareVersion[] = {0x40,0x0A,0x10,0x00};
-
-    if (!send(0x600, 4, msg_softwareVersion))
-    {
-        CD_ERROR("Could not send \"Manufacturer Software Version\" query. %s\n", msgToStr(0x600, 4, msg_softwareVersion).c_str());
-        return false;
-    }
-
-    CD_SUCCESS("Sent \"Manufacturer Software Version\" query. %s\n", msgToStr(0x600, 4, msg_softwareVersion).c_str());
 
     uint8_t msg_supportedDriveModes[] = {0x40,0x02,0x65,0x00};
 
@@ -997,16 +977,6 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             uint16_t ciaStandard;
             memcpy(&ciaStandard, message.getData() + 4, 2);
             CD_INFO("Got \"Device Type\" from driver. %s CiA standard %d.\n",msgToStr(message).c_str(), ciaStandard);
-            return true;
-        }
-        else if( (message.getData()[1]==0x08)&&(message.getData()[2]==0x10) )      // Manual 1008h: Manufacturer Device Name
-        {
-            CD_INFO("Got \"Manufacturer Device Name\" from driver. %s\n",msgToStr(message).c_str());
-            return true;
-        }
-        else if( (message.getData()[1]==0x0A)&&(message.getData()[2]==0x10) )      // Manual 100Ah: Manufacturer Software Version
-        {
-            CD_INFO("Got \"Manufacturer Software Version\" from driver. %s\n",msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[1]==0x02)&&(message.getData()[2]==0x65) )      // Manual 6502h: Supported drive modes
