@@ -100,7 +100,7 @@ bool roboticslab::TechnosoftIpos::setRefCurrentRaw(int m, double curr)
     //*************************************************************
     uint8_t msg_ref_current[]= {0x23,0x1C,0x20,0x00,0x00,0x00,0x00,0x00}; // put 23 because it is a target
 
-    int sendRefCurrent = m * sgn(tr) * 65520.0 / (2 * 10.0); // Page 109 of 263, supposing 10 Ipeak.
+    int sendRefCurrent = m * sgn(tr) * 65520.0 / (2 * drivePeakCurrent); // Page 109 of 263.
     std::memcpy(msg_ref_current + 6, &sendRefCurrent, 2);
 
     if (!send(0x600, 8, msg_ref_current))

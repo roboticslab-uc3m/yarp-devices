@@ -258,6 +258,7 @@ protected:
     double getCurrent;
     int modeCurrentTorque;
     yarp::os::Semaphore getCurrentReady;
+    double drivePeakCurrent;
 
     //-- Init stuff
     int getSwitchOn;
