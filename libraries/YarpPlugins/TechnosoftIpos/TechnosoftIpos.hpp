@@ -177,6 +177,8 @@ public:
     virtual bool getTorquesRaw(double *t);
     virtual bool getTorqueRangeRaw(int j, double *min, double *max);
     virtual bool getTorqueRangesRaw(double *min, double *max);
+    virtual bool getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParameters *params);
+    virtual bool setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorqueParameters params);
 
     //  --------- IVelocityControlRaw Declarations. Implementation in IVelocityControlRawImpl.cpp ---------
     virtual bool velocityMoveRaw(int j, double sp);
