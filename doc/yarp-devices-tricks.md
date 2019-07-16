@@ -85,7 +85,7 @@ Note that this is a hack. VOCABs may be updated without warning. The recommended
 ```
 
 ### in icur mode
-* get actual current
+* get reference current
 ```
 [get] [icur] [ref] 0
 ```
