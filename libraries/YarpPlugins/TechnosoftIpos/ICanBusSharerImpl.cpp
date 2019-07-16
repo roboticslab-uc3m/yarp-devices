@@ -79,6 +79,33 @@ bool roboticslab::TechnosoftIpos::initialize()
 
     CD_SUCCESS("Sent \"Product Code\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
 
+    int count = 0;
+    const int retries = 10;
+    uint32_t productCode;
+
+    do
+    {
+        getProductCodeReady.wait();
+        productCode = getProductCode;
+        getProductCodeReady.post();
+
+        if (productCode)
+        {
+            break;
+        }
+
+        count++;
+
+        if (count == retries)
+        {
+            CD_ERROR("Max retries exceeded on awaiting for product code response.\n");
+            return false;
+        }
+
+        yarp::os::Time::delay(DELAY);
+    }
+    while (true);
+
     msg_identityObject[3] = 0x03;
 
     if (!send(0x600, 4, msg_identityObject))
@@ -1054,6 +1081,9 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
                 memcpy(&code, message.getData() + 4, 4);
                 CD_INFO("Got \"Product Code\" from driver. %s P%03d.%03d.E%03d.\n",msgToStr(message).c_str(),
                         code / 1000000, (code / 1000) % 1000, code % 1000);
+                getProductCodeReady.wait();
+                getProductCode = code;
+                getProductCodeReady.post();
             }
             else if( message.getData()[3]==0x03 )  // Revision number
             {

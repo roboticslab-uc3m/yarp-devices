@@ -276,6 +276,9 @@ protected:
     double max, min, maxVel, refAcceleration, refSpeed, refTorque, refCurrent, refVelocity, targetPosition, tr, k;
     int encoderPulses; // default: 4096 (1024 * 4)
 
+    uint32_t getProductCode;
+    yarp::os::Semaphore getProductCodeReady;
+
     //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
     yarp::dev::InteractionModeEnum interactionMode;
 
