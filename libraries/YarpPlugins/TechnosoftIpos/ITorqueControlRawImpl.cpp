@@ -107,3 +107,34 @@ bool roboticslab::TechnosoftIpos::getTorqueRangesRaw(double *min, double *max)
 }
 
 // -------------------------------------------------------------------------------------
+
+bool roboticslab::TechnosoftIpos::getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParameters *params)
+{
+    CD_INFO("(%d)\n", j);
+
+    //-- Check index within range
+    if ( j != 0 ) return false;
+
+    params->bemf = 0.0;
+    params->bemf_scale = 0.0;
+    params->ktau = k;
+    params->ktau_scale = 0.0;
+
+    return true;
+}
+
+// -------------------------------------------------------------------------------------
+
+bool roboticslab::TechnosoftIpos::setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorqueParameters params)
+{
+    CD_INFO("(%d)\n", j);
+
+    //-- Check index within range
+    if ( j != 0 ) return false;
+
+    k = params.ktau;
+
+    return true;
+}
+
+// -------------------------------------------------------------------------------------
