@@ -2,6 +2,8 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <cmath>
+
 // ############################# ITorqueControlRaw Related #############################
 
 bool roboticslab::TechnosoftIpos::getRefTorquesRaw(double *t)
@@ -40,7 +42,7 @@ bool roboticslab::TechnosoftIpos::setRefTorqueRaw(int j, double t)
 {
     CD_INFO("(%d, %f)\n", j, t);
 
-    double curr = t / (tr * k);
+    double curr = t / (std::abs(tr) * k);
 
     if (!setRefCurrentRaw(j, curr))
     {
@@ -69,7 +71,7 @@ bool roboticslab::TechnosoftIpos::getTorqueRaw(int j, double *t)
         return false;
     }
 
-    *t = curr * tr * k;
+    *t = curr * std::abs(tr) * k;
 
     return true;
 }

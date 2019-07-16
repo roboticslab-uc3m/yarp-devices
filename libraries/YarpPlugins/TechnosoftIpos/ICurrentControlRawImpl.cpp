@@ -2,6 +2,17 @@
 
 #include "TechnosoftIpos.hpp"
 
+namespace
+{
+    // return -1 for negative numbers, +1 for positive numbers, 0 for zero
+    // https://stackoverflow.com/a/4609795
+    template <typename T>
+    inline int sgn(T val)
+    {
+        return (T(0) < val) - (val < T(0));
+    }
+}
+
 // ------------------- ICurrentControlRaw Related ------------------------------------
 
 bool roboticslab::TechnosoftIpos::getNumberOfMotorsRaw(int *number)
@@ -33,7 +44,7 @@ bool roboticslab::TechnosoftIpos::getCurrentRaw(int m, double *curr)
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     getCurrentReady.wait();
-    *curr = getCurrent;
+    *curr = getCurrent * sgn(tr);
     getCurrentReady.post();
 
     //*************************************************************
@@ -89,8 +100,8 @@ bool roboticslab::TechnosoftIpos::setRefCurrentRaw(int m, double curr)
     //*************************************************************
     uint8_t msg_ref_current[]= {0x23,0x1C,0x20,0x00,0x00,0x00,0x00,0x00}; // put 23 because it is a target
 
-    int sendRefTorque = m * 65520.0 / (2 * 10.0); // Page 109 of 263, supposing 10 Ipeak.
-    std::memcpy(msg_ref_current + 6, &sendRefTorque, 2);
+    int sendRefCurrent = m * sgn(tr) * 65520.0 / (2 * 10.0); // Page 109 of 263, supposing 10 Ipeak.
+    std::memcpy(msg_ref_current + 6, &sendRefCurrent, 2);
 
     if (!send(0x600, 8, msg_ref_current))
     {
