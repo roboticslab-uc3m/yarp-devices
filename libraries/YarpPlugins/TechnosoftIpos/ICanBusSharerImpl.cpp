@@ -341,7 +341,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             {
                 CD_INFO("\t-iPOS specific: External Reference Torque Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                getMode = VOCAB_CM_TORQUE;
+                getMode = modeCurrentTorque == VOCAB_CM_TORQUE ? VOCAB_CM_TORQUE : VOCAB_CM_CURRENT;
                 getModeReady.post();
             }
             else if(252==got)  // -4

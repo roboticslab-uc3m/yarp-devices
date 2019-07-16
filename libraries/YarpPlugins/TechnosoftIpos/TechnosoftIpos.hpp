@@ -254,6 +254,7 @@ protected:
 
     //-- Current stuff
     double getCurrent;
+    int modeCurrentTorque;
     yarp::os::Semaphore getCurrentReady;
 
     //-- Init stuff

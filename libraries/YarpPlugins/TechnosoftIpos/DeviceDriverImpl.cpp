@@ -26,6 +26,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->refTorque = 0;
     this->refVelocity = 0; // if you want to test.. put 0.1
     this->refCurrent = 0;
+    this->modeCurrentTorque = VOCAB_CM_NOT_CONFIGURED;
 
     yarp::os::Value vCanBufferFactory = config.check("canBufferFactory", yarp::os::Value(0), "");
 
