@@ -52,8 +52,8 @@ namespace
                 break;
             case 29026201: // iPOS8020 BX-CAN
             case 29026221: // iPOS8020 BX-CAT
-            case 29026202: // iPOS8010 BA-CAN
-            case 29026222: // iPOS8010 BA-CAT
+            case 29026202: // iPOS8020 BA-CAN
+            case 29026222: // iPOS8020 BA-CAT
                 *peakCurrent = 40.0;
                 break;
             default:

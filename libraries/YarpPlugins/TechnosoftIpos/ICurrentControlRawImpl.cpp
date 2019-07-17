@@ -78,7 +78,7 @@ bool roboticslab::TechnosoftIpos::getCurrentRangeRaw(int m, double *min, double 
     }
     CD_SUCCESS("Sent msg_getCurrentLimit. %s\n", msgToStr(0x600, 4, msg_getCurrentLimit).c_str());
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(DELAY);  // Must delay as it will be from same driver.
+    yarp::os::Time::delay(5 * DELAY);  // Must delay as it will be from same driver.
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     getCurrentLimitReady.wait();
