@@ -943,11 +943,13 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             }
             else
             {
-                int32_t got;
-                memcpy(&got, message.getData()+4,4);
-                double val = (encoderPulses / 360.0) * 0.000001;  //-- if encoderPulses is 4096 (4 * 1024), val = 0.00001138
+                uint16_t gotInteger;
+                uint16_t gotFractional;
+                memcpy(&gotFractional, message.getData() + 4, 2);
+                memcpy(&gotInteger, message.getData() + 6, 2);
+                double val = decodeFixedPoint(gotInteger, gotFractional);
                 refAccelSemaphore.wait();
-                refAcceleration = got / (std::abs(tr) * 65536 * val);
+                refAcceleration = val / (std::abs(tr) * (encoderPulses / 360.0) * 0.000001);
                 refAccelSemaphore.post();
                 CD_INFO("Got SDO \"posmode_acc\" response from driver. %s\n",msgToStr(message).c_str());
             }
@@ -961,11 +963,13 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             }
             else      // Query
             {
-                int32_t got;
-                memcpy(&got, message.getData()+4,4);
-                double val = (encoderPulses / 360.0) * 0.001;  //-- if encoderPulses is 4096 (4 * 1024), val = 0.01138
+                uint16_t gotInteger;
+                uint16_t gotFractional;
+                memcpy(&gotFractional, message.getData() + 4, 2);
+                memcpy(&gotInteger, message.getData() + 6, 2);
+                double val = decodeFixedPoint(gotInteger, gotFractional);
                 refSpeedSemaphore.wait();
-                refSpeed = got / (std::abs(tr) * 65536 * val);
+                refSpeed = val / (std::abs(tr) * (encoderPulses / 360.0) * 0.001);
                 refSpeedSemaphore.post();
                 CD_INFO("Got SDO \"posmode_speed\" response from driver. %s\n",msgToStr(message).c_str());
             }
@@ -1046,11 +1050,13 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             }
             else
             {
-                int32_t got;
-                memcpy(&got, message.getData()+4,4);
-                double val = (encoderPulses / 360.0) * 0.001;  //-- if encoderPulses is 4096 (4 * 1024), val = 0.01138
+                int16_t gotInteger;
+                uint16_t gotFractional;
+                memcpy(&gotFractional, message.getData() + 4, 2);
+                memcpy(&gotInteger, message.getData() + 6, 2);
+                double val = decodeFixedPoint(gotInteger, gotFractional);
                 refVelocitySemaphore.wait();
-                refVelocity = got / (tr * 65536 * val);
+                refVelocity = val / (tr * (encoderPulses / 360.0) * 0.001);
                 refVelocitySemaphore.post();
                 CD_INFO("Got SDO \"Target velocity\" response from driver. %s\n",msgToStr(message).c_str());
             }
