@@ -37,6 +37,7 @@ namespace roboticslab
 class TechnosoftIpos : public yarp::dev::DeviceDriver,
                        public yarp::dev::IControlLimitsRaw,
                        public yarp::dev::IControlModeRaw,
+                       public yarp::dev::ICurrentControlRaw,
                        public yarp::dev::IEncodersTimedRaw,
                        public yarp::dev::IInteractionModeRaw,
                        public yarp::dev::IPositionControl2Raw,
@@ -115,6 +116,18 @@ public:
     virtual bool setControlModeRaw(const int j, const int mode);
     virtual bool setControlModesRaw(const int n_joint, const int *joints, int *modes);
     virtual bool setControlModesRaw(int *modes);
+
+    //  --------- ICurrentControlRaw Declarations. Implementation in ICurrentControlRawImpl.cpp ---------
+    virtual bool getNumberOfMotorsRaw(int *number);
+    virtual bool getCurrentRaw(int m, double *curr);
+    virtual bool getCurrentsRaw(double *currs);
+    virtual bool getCurrentRangeRaw(int m, double *min, double *max);
+    virtual bool getCurrentRangesRaw(double *min, double *max);
+    virtual bool setRefCurrentsRaw(const double *currs);
+    virtual bool setRefCurrentRaw(int m, double curr);
+    virtual bool setRefCurrentsRaw(const int n_motor, const int *motors, const double *currs);
+    virtual bool getRefCurrentsRaw(double *currs);
+    virtual bool getRefCurrentRaw(int m, double *curr);
 
     //  ---------- IEncodersRaw Declarations. Implementation in IEncodersRawImpl.cpp ----------
     virtual bool resetEncoderRaw(int j);
@@ -241,9 +254,13 @@ protected:
     bool targetReached;
     yarp::os::Semaphore targetReachedReady;
 
-    //-- Torque stuff
-    double getTorque;
-    yarp::os::Semaphore getTorqueReady;
+    //-- Current stuff
+    double getCurrent;
+    double getCurrentLimit;
+    int modeCurrentTorque;
+    yarp::os::Semaphore getCurrentReady;
+    yarp::os::Semaphore getCurrentLimitReady;
+    double drivePeakCurrent;
 
     //-- Init stuff
     int getSwitchOn;
@@ -259,8 +276,11 @@ protected:
     yarp::os::Semaphore ptBuffer;
 
     //-- More internal parameter stuff
-    double max, min, maxVel, refAcceleration, refSpeed, refTorque, refVelocity, targetPosition, tr, k;
+    double max, min, maxVel, refAcceleration, refSpeed, refTorque, refCurrent, refVelocity, targetPosition, tr, k;
     int encoderPulses; // default: 4096 (1024 * 4)
+
+    uint32_t getProductCode;
+    yarp::os::Semaphore getProductCodeReady;
 
     //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
     yarp::dev::InteractionModeEnum interactionMode;
@@ -269,6 +289,7 @@ protected:
     yarp::os::Semaphore refAccelSemaphore;
     yarp::os::Semaphore refSpeedSemaphore;
     yarp::os::Semaphore refTorqueSemaphore;
+    yarp::os::Semaphore refCurrentSemaphore;
     yarp::os::Semaphore refVelocitySemaphore;
     yarp::os::Semaphore interactionModeSemaphore;
     yarp::os::Semaphore targetPositionSemaphore;

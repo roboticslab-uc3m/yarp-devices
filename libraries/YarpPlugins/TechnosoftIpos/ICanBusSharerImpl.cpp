@@ -4,6 +4,68 @@
 
 // -----------------------------------------------------------------------------
 
+namespace
+{
+    bool retrieveDrivePeakCurrent(uint32_t productCode, double *peakCurrent)
+    {
+        switch (productCode)
+        {
+            case 24300101: // iPOS2401 MX-CAN
+            case 24200121: // iPOS2401 MX-CAT
+                *peakCurrent = 0.9;
+                break;
+            case 28001001: // iPOS3602 VX-CAN
+            case 28001021: // iPOS3602 VX-CAT
+            case 28001101: // iPOS3602 MX-CAN
+            case 28001201: // iPOS3602 BX-CAN
+            case 28001501: // iPOS3602 HX-CAN
+                *peakCurrent = 3.2;
+                break;
+            case 28002001: // iPOS3604 VX-CAN
+            case 28002021: // iPOS3604 VX-CAT
+            case 28002101: // iPOS3604 MX-CAN
+            case 28002201: // iPOS3604 BX-CAN
+            case 28002501: // iPOS3604 HX-CAN
+                *peakCurrent = 10.0;
+                break;
+            case 27014001: // iPOS4808 VX-CAN
+            case 27014101: // iPOS4808 MX-CAN
+            case 27014121: // iPOS4808 MX-CAT
+            case 27414101: // iPOS4808 MY-CAN (standard)
+            case 27424101: // iPOS4808 MY-CAN (extended)
+            case 27314111: // iPOS4808 MY-CAN-STO (standard)
+            case 27324111: // iPOS4808 MY-CAN-STO (extended)
+            case 27314121: // iPOS4808 MY-CAT-STO (standard)
+            case 27324121: // iPOS4808 MY-CAT-STO (extended)
+            case 27014201: // iPOS4808 BX-CAN
+            case 27214201: // iPOS4808 BX-CAN (standard)
+            case 27214701: // iPOS4808 BX-CAN (hall)
+            case 27214221: // iPOS4808 BX-CAT (standard)
+            case 27214721: // iPOS4808 BX-CAT (hall)
+            case 27314221: // iPOS4808 BX-CAT-STO (standard)
+            case 27314721: // iPOS4808 BX-CAT-STO (hall)
+            case 29025201: // iPOS8010 BX-CAN
+            case 29025221: // iPOS8010 BX-CAT
+            case 29025202: // iPOS8010 BA-CAN
+            case 29025222: // iPOS8010 BA-CAT
+                *peakCurrent = 20.0;
+                break;
+            case 29026201: // iPOS8020 BX-CAN
+            case 29026221: // iPOS8020 BX-CAT
+            case 29026202: // iPOS8020 BA-CAN
+            case 29026222: // iPOS8020 BA-CAT
+                *peakCurrent = 40.0;
+                break;
+            default:
+                return false;
+        }
+
+        return true;
+    }
+}
+
+// -----------------------------------------------------------------------------
+
 bool roboticslab::TechnosoftIpos::setCanBusPtr(yarp::dev::ICanBus *canDevicePtr)
 {
 
@@ -78,6 +140,41 @@ bool roboticslab::TechnosoftIpos::initialize()
     }
 
     CD_SUCCESS("Sent \"Product Code\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
+
+    int count = 0;
+    const int retries = 10;
+    uint32_t productCode;
+
+    do
+    {
+        getProductCodeReady.wait();
+        productCode = getProductCode;
+        getProductCodeReady.post();
+
+        if (productCode)
+        {
+            break;
+        }
+
+        count++;
+
+        if (count == retries)
+        {
+            CD_ERROR("Max retries exceeded on awaiting for product code response.\n");
+            return false;
+        }
+
+        yarp::os::Time::delay(DELAY);
+    }
+    while (true);
+
+    if (!retrieveDrivePeakCurrent(productCode, &drivePeakCurrent))
+    {
+        CD_ERROR("Unhandled iPOS model %d, unable to retrieve drive peak current.\n", productCode);
+        return false;
+    }
+
+    CD_SUCCESS("Retrieved drive peak current: %f A.\n", drivePeakCurrent);
 
     msg_identityObject[3] = 0x03;
 
@@ -375,13 +472,13 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
         }
         else if( (message.getData()[1]==0x7E) && (message.getData()[2]==0x20) )     // Manual 207Eh
         {
-            //-- Commenting torque value (response to petition) as way too verbose, happens all the time.
-            //CD_INFO("Got torque value (response to petition). %s\n",msgToStr(message).c_str());
+            //-- Commenting current value (response to petition) as way too verbose, happens all the time.
+            //CD_INFO("Got current value (response to petition). %s\n",msgToStr(message).c_str());
             int16_t got;
             memcpy(&got, message.getData()+4,2);
-            getTorqueReady.wait();
-            getTorque = got * (2.0 * 10.0) / 65520.0;
-            getTorqueReady.post();
+            getCurrentReady.wait();
+            getCurrent = got * 2.0 * drivePeakCurrent / 65520.0;
+            getCurrentReady.post();
             return true;
         }
         else if( (message.getData()[1]==0x7A)&&(message.getData()[2]==0x60) )      // Manual 607Ah
@@ -403,7 +500,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             {
                 CD_INFO("\t-iPOS specific: External Reference Torque Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                getMode = VOCAB_CM_TORQUE;
+                getMode = modeCurrentTorque == VOCAB_CM_TORQUE ? VOCAB_CM_TORQUE : VOCAB_CM_CURRENT;
                 getModeReady.post();
             }
             else if(252==got)  // -4
@@ -1054,6 +1151,9 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
                 memcpy(&code, message.getData() + 4, 4);
                 CD_INFO("Got \"Product Code\" from driver. %s P%03d.%03d.E%03d.\n",msgToStr(message).c_str(),
                         code / 1000000, (code / 1000) % 1000, code % 1000);
+                getProductCodeReady.wait();
+                getProductCode = code;
+                getProductCodeReady.post();
             }
             else if( message.getData()[3]==0x03 )  // Revision number
             {
@@ -1067,6 +1167,22 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             }
 
             return true;
+        }
+        else if( (message.getData()[1]==0x7F)&&(message.getData()[2]==0x20) )      // Manual 207Fh: Current limit
+        {
+            if (message.getData()[0]==0x60)      // SDO segment upload/acknowledge
+            {
+                CD_INFO("Got SDO ack \"Current limit\" from driver. %s\n",msgToStr(message).c_str());
+            }
+            else
+            {
+                uint16_t got;
+                memcpy(&got, message.getData() + 4, 2);
+                getCurrentLimitReady.wait();
+                getCurrentLimit = 2 * drivePeakCurrent * (32767 - got) / 65520;
+                getCurrentLimitReady.post();
+                CD_INFO("Got SDO \"Current limit.\" response from driver. %s\n",msgToStr(message).c_str());
+            }
         }
         CD_INFO("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
         return false;

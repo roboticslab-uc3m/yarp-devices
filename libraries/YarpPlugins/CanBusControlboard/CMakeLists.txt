@@ -18,6 +18,7 @@ if(NOT SKIP_CanBusControlboard)
                                        DeviceDriverImpl.cpp
                                        IControlLimitsImpl.cpp
                                        IControlModeImpl.cpp
+                                       ICurrentControlImpl.cpp
                                        IEncodersImpl.cpp
                                        IEncodersTimedImpl.cpp
                                        IInteractionModeImpl.cpp

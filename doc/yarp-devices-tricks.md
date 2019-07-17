@@ -33,6 +33,11 @@ Note that this is a hack. VOCABs may be updated without warning. The recommended
 [set] [icmd] [cmod] 0 [torq]
 ```
 
+* set current mode (same as torque mode in TechnosoftIpos)
+```
+[set] [icmd] [cmod] 0 [icur]
+```
+
 ### in pos mode
 * set pos (for pos mode)
 ```
@@ -69,7 +74,7 @@ Note that this is a hack. VOCABs may be updated without warning. The recommended
 ```
 
 ### in torq mode
-* get actual torque/current
+* get actual torque
 ```
 [get] [torq] [trq] 0
 ```
@@ -77,6 +82,12 @@ Note that this is a hack. VOCABs may be updated without warning. The recommended
 * set reference torque
 ```
 [set] [torq] [ref] 0 1.0
+```
+
+### in icur mode
+* get reference current
+```
+[get] [icur] [ref] 0
 ```
 
 ### limits

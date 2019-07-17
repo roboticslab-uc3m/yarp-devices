@@ -36,6 +36,7 @@ namespace roboticslab
 class LacqueyFetch : public yarp::dev::DeviceDriver,
                      public yarp::dev::IControlLimitsRaw,
                      public yarp::dev::IControlModeRaw,
+                     public yarp::dev::ICurrentControlRaw,
                      public yarp::dev::IEncodersTimedRaw,
                      public yarp::dev::IInteractionModeRaw,
                      public yarp::dev::IPositionControlRaw,
@@ -87,6 +88,18 @@ public:
     virtual bool setControlModeRaw(const int j, const int mode);
     virtual bool setControlModesRaw(const int n_joint, const int *joints, int *modes);
     virtual bool setControlModesRaw(int *modes);
+
+    //  --------- ICurrentControlRaw Declarations. Implementation in ICurrentControlRawImpl.cpp ---------
+    virtual bool getNumberOfMotorsRaw(int *number) { return false; }
+    virtual bool getCurrentRaw(int m, double *curr) { return false; }
+    virtual bool getCurrentsRaw(double *currs) { return false; }
+    virtual bool getCurrentRangeRaw(int m, double *min, double *max) { return false; }
+    virtual bool getCurrentRangesRaw(double *min, double *max) { return false; }
+    virtual bool setRefCurrentsRaw(const double *currs) { return false; }
+    virtual bool setRefCurrentRaw(int m, double curr) { return false; }
+    virtual bool setRefCurrentsRaw(const int n_motor, const int *motors, const double *currs) { return false; }
+    virtual bool getRefCurrentsRaw(double *currs) { return false; }
+    virtual bool getRefCurrentRaw(int m, double *curr) { return false; }
 
     //  ---------- IEncodersRaw Declarations. Implementation in IEncodersRawImpl.cpp ----------
     virtual bool resetEncoderRaw(int j);

@@ -378,21 +378,28 @@ bool roboticslab::TechnosoftIpos::getControlModesRaw(const int n_joint, const in
 
 bool roboticslab::TechnosoftIpos::setControlModeRaw(const int j, const int mode)
 {
-    CD_DEBUG("(%d, %d)\n",j,mode);
+    CD_DEBUG("(%d, %d)\n", j, mode);
 
     //-- Check index within range
-    if ( j != 0 ) return false;
+    if (j != 0) return false;
 
-    if( mode == VOCAB_CM_POSITION )
+    switch (mode)
+    {
+    case VOCAB_CM_POSITION:
         return setPositionModeRaw(j);
-    else if( mode == VOCAB_CM_VELOCITY )
+    case VOCAB_CM_VELOCITY:
         return setVelocityModeRaw(j);
-    else if( mode == VOCAB_CM_TORQUE )
+    case VOCAB_CM_CURRENT:
+    case VOCAB_CM_TORQUE:
+        modeCurrentTorque = mode;
         return setTorqueModeRaw(j);
-    else if( mode == VOCAB_CM_POSITION_DIRECT )
+    case VOCAB_CM_POSITION_DIRECT:
         return setPositionDirectModeRaw();
+    default:
+        return false;
+    }
 
-    return false;
+    return true;
 }
 
 // -----------------------------------------------------------------------------

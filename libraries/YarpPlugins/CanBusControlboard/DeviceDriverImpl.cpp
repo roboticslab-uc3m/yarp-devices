@@ -58,6 +58,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     nodes.resize( ids.size() );
     iControlLimitsRaw.resize( nodes.size() );
     iControlModeRaw.resize( nodes.size() );
+    iCurrentControlRaw.resize( nodes.size() );
     iEncodersTimedRaw.resize( nodes.size() );
     iPositionControlRaw.resize( nodes.size() );
     iPositionDirectRaw.resize( nodes.size() );
@@ -117,6 +118,12 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         if( !device->view( iControlModeRaw[i] ))
         {
             CD_ERROR("[error] Problems acquiring iControlMode2Raw interface\n");
+            return false;
+        }
+
+        if( !device->view( iCurrentControlRaw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iCurrentControlRaw interface\n");
             return false;
         }
 
