@@ -68,8 +68,26 @@ bool roboticslab::TechnosoftIpos::getCurrentRangeRaw(int m, double *min, double 
     //-- Check index within range
     if (m != 0) return false;
 
-    CD_ERROR("Not implemented yet.\n");
-    return false;
+    //*************************************************************
+    uint8_t msg_getCurrentLimit[]= {0x40,0x7F,0x20,0x00}; // Query current. Ok only 4.
+
+    if (!send(0x600, 4, msg_getCurrentLimit))
+    {
+        CD_ERROR("Could not send msg_getCurrentLimit. %s\n", msgToStr(0x600, 4, msg_getCurrentLimit).c_str());
+        return false;
+    }
+    CD_SUCCESS("Sent msg_getCurrentLimit. %s\n", msgToStr(0x600, 4, msg_getCurrentLimit).c_str());
+    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    yarp::os::Time::delay(DELAY);  // Must delay as it will be from same driver.
+    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+    getCurrentLimitReady.wait();
+    *max = getCurrentLimit;
+    getCurrentLimitReady.post();
+
+    *min = -(*max);
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -100,7 +118,7 @@ bool roboticslab::TechnosoftIpos::setRefCurrentRaw(int m, double curr)
     //*************************************************************
     uint8_t msg_ref_current[]= {0x23,0x1C,0x20,0x00,0x00,0x00,0x00,0x00}; // put 23 because it is a target
 
-    int sendRefCurrent = m * sgn(tr) * 65520.0 / (2 * 10.0); // Page 109 of 263, supposing 10 Ipeak.
+    int sendRefCurrent = m * sgn(tr) * 65520.0 / (2 * drivePeakCurrent); // Page 109 of 263.
     std::memcpy(msg_ref_current + 6, &sendRefCurrent, 2);
 
     if (!send(0x600, 8, msg_ref_current))

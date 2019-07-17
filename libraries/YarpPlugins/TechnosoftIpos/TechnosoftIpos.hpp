@@ -190,6 +190,8 @@ public:
     virtual bool getTorquesRaw(double *t);
     virtual bool getTorqueRangeRaw(int j, double *min, double *max);
     virtual bool getTorqueRangesRaw(double *min, double *max);
+    virtual bool getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParameters *params);
+    virtual bool setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorqueParameters params);
 
     //  --------- IVelocityControlRaw Declarations. Implementation in IVelocityControlRawImpl.cpp ---------
     virtual bool velocityMoveRaw(int j, double sp);
@@ -254,8 +256,11 @@ protected:
 
     //-- Current stuff
     double getCurrent;
+    double getCurrentLimit;
     int modeCurrentTorque;
     yarp::os::Semaphore getCurrentReady;
+    yarp::os::Semaphore getCurrentLimitReady;
+    double drivePeakCurrent;
 
     //-- Init stuff
     int getSwitchOn;
@@ -273,6 +278,9 @@ protected:
     //-- More internal parameter stuff
     double max, min, maxVel, refAcceleration, refSpeed, refTorque, refCurrent, refVelocity, targetPosition, tr, k;
     int encoderPulses; // default: 4096 (1024 * 4)
+
+    uint32_t getProductCode;
+    yarp::os::Semaphore getProductCodeReady;
 
     //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
     yarp::dev::InteractionModeEnum interactionMode;

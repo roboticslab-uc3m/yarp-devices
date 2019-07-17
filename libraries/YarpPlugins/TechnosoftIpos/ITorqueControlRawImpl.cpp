@@ -93,7 +93,16 @@ bool roboticslab::TechnosoftIpos::getTorqueRangeRaw(int j, double *min, double *
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
+    double minCurrent, maxCurrent;
+
+    if (!getCurrentRangeRaw(j, &minCurrent, &maxCurrent))
+    {
+        CD_ERROR("getCurrentRangeRaw() failed.\n");
+        return false;
+    }
+
+    *max = maxCurrent * std::abs(tr) * k;
+    *min = -(*max);
 
     return true;
 }
@@ -104,6 +113,37 @@ bool roboticslab::TechnosoftIpos::getTorqueRangesRaw(double *min, double *max)
 {
     CD_ERROR("Missing implementation\n");
     return false;
+}
+
+// -------------------------------------------------------------------------------------
+
+bool roboticslab::TechnosoftIpos::getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParameters *params)
+{
+    CD_INFO("(%d)\n", j);
+
+    //-- Check index within range
+    if ( j != 0 ) return false;
+
+    params->bemf = 0.0;
+    params->bemf_scale = 0.0;
+    params->ktau = k;
+    params->ktau_scale = 0.0;
+
+    return true;
+}
+
+// -------------------------------------------------------------------------------------
+
+bool roboticslab::TechnosoftIpos::setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorqueParameters params)
+{
+    CD_INFO("(%d)\n", j);
+
+    //-- Check index within range
+    if ( j != 0 ) return false;
+
+    k = params.ktau;
+
+    return true;
 }
 
 // -------------------------------------------------------------------------------------
