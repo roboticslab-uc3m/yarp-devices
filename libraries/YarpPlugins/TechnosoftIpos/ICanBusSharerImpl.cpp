@@ -1062,7 +1062,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             }
             else if( message.getData()[3]==0x04 )  // Serial number
             {
-                CD_INFO("Got \"Serial number\" from driver. %s %c%c%x%x.\n",msgToStr(message).c_str(),
+                CD_INFO("Got \"Serial number\" from driver. %s %c%c%02x%02x.\n",msgToStr(message).c_str(),
                         message.getData()[7], message.getData()[6], message.getData()[5], message.getData()[4]);
             }
 
