@@ -4,6 +4,8 @@
 
 #include <cstring>
 
+#include <yarp/os/LockGuard.h>
+
 // -----------------------------------------------------------------------------
 
 std::string roboticslab::TechnosoftIpos::msgToStr(const yarp::dev::CanMessage & message)
@@ -62,6 +64,49 @@ bool roboticslab::TechnosoftIpos::send(uint32_t cob, uint16_t len, uint8_t * msg
     lastUsage = yarp::os::Time::now();
     canBufferSemaphore.post();
     return true;
+}
+
+// -----------------------------------------------------------------------------
+
+roboticslab::EncoderRead::EncoderRead(double initialPos)
+{
+    buffer[LAST] = buffer[NEXT_TO_LAST] = buffer[NEXT_TO_NEXT_TO_LAST] = initialPos;
+}
+
+// -----------------------------------------------------------------------------
+
+void roboticslab::EncoderRead::update(double newPos)
+{
+    yarp::os::LockGuard guard(mutex);
+    buffer[NEXT_TO_NEXT_TO_LAST] = buffer[NEXT_TO_LAST];
+    buffer[NEXT_TO_LAST] = buffer[LAST];
+    buffer[LAST] = newPos;
+}
+
+// -----------------------------------------------------------------------------
+
+double roboticslab::EncoderRead::queryPosition() const
+{
+    yarp::os::LockGuard guard(mutex);
+    return buffer[LAST];
+}
+
+// -----------------------------------------------------------------------------
+
+double roboticslab::EncoderRead::querySpeed(double dt) const
+{
+    yarp::os::LockGuard guard(mutex);
+    return (buffer[LAST] - buffer[NEXT_TO_LAST]) / dt;
+}
+
+// -----------------------------------------------------------------------------
+
+double roboticslab::EncoderRead::queryAcceleration(double dt) const
+{
+    yarp::os::LockGuard guard(mutex);
+    double lastVel = (buffer[LAST] - buffer[NEXT_TO_LAST]) / dt;
+    double nextToLastVel = (buffer[NEXT_TO_LAST] - buffer[NEXT_TO_NEXT_TO_LAST]) / dt;
+    return (lastVel - nextToLastVel) / dt;
 }
 
 // -----------------------------------------------------------------------------
