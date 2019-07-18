@@ -75,11 +75,7 @@ bool roboticslab::TechnosoftIpos::getEncoderRaw(int j, double *v)
         //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         yarp::os::Time::delay(DELAY);  // Must delay as it will be from same driver.
         //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-        encoderReady.wait();
         *v = lastEncoderRead.queryPosition();
-        encoderReady.post();
-
         //*************************************************************
     }
     else

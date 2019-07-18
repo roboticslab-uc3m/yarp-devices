@@ -80,7 +80,7 @@ roboticslab::EncoderRead::EncoderRead(double initialPos)
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::EncoderRead::update(double newPos)
+void roboticslab::EncoderRead::update(double newPos, double newTime)
 {
     yarp::os::LockGuard guard(mutex);
 
@@ -89,7 +89,15 @@ void roboticslab::EncoderRead::update(double newPos)
     nextToLastPosition = lastPosition;
     nextToLastSpeed = lastSpeed;
 
-    lastStamp.update();
+    if (newTime)
+    {
+        lastStamp.update(newTime);
+    }
+    else
+    {
+        lastStamp.update();
+    }
+
     double dt = lastStamp.getTime() - lastTime;
 
     lastPosition = newPos;
@@ -123,10 +131,10 @@ double roboticslab::EncoderRead::queryAcceleration() const
 
 // -----------------------------------------------------------------------------
 
-yarp::os::Stamp roboticslab::EncoderRead::queryStamp() const
+double roboticslab::EncoderRead::queryTime() const
 {
     yarp::os::LockGuard guard(mutex);
-    return lastStamp;
+    return lastStamp.getTime();
 }
 
 // -----------------------------------------------------------------------------

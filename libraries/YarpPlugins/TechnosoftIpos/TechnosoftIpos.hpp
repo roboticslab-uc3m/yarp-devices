@@ -38,11 +38,11 @@ class EncoderRead
 {
 public:
     EncoderRead(double initialPos);
-    void update(double newPos);
+    void update(double newPos, double newTime = 0.0);
     double queryPosition() const;
     double querySpeed() const;
     double queryAcceleration() const;
-    yarp::os::Stamp queryStamp() const;
+    double queryTime() const;
 
 private:
     double lastPosition, nextToLastPosition;
@@ -279,9 +279,6 @@ protected:
     double lastUsage;
 
     //-- Encoder stuff
-    double encoder;
-    double encoderTimestamp;
-    yarp::os::Semaphore encoderReady;
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRawExternal;
     EncoderRead lastEncoderRead;
 

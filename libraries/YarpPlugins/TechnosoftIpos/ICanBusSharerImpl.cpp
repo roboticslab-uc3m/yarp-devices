@@ -464,10 +464,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             //CD_INFO("Got encoder value (response to petition). %s\n",msgToStr(message).c_str());
             int got;
             memcpy(&got, message.getData()+4,4);
-            encoderReady.wait();
             lastEncoderRead.update(got / ((encoderPulses / 360.0) * this->tr));
-            encoderTimestamp = yarp::os::Time::now();
-            encoderReady.post();
             return true;
         }
         else if( (message.getData()[1]==0x7E) && (message.getData()[2]==0x20) )     // Manual 207Eh

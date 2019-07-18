@@ -22,7 +22,6 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->ptPointCounter = 0;
     this->ptMovementDone = false;
     this->targetReached = false;
-    this->encoder = 0;
     this->refTorque = 0;
     this->refVelocity = 0; // if you want to test.. put 0.1
     this->refCurrent = 0;
