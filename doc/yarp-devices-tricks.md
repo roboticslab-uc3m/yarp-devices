@@ -12,6 +12,26 @@ uint8_t msg_stop[]={0x0F,0x00}; // Does not stop, but is required for next start
 Note that this is a hack. VOCABs may be updated without warning. The recommended YARP-ish way is via YARP_dev interfaces. An interactive way to do this is via an `ipython` console and following this repository's [Python examples](https://github.com/roboticslab-uc3m/yarp-devices/tree/develop/example/python).
 
 ## remote_controlboard
+
+### encoder commands
+* query encoder reads:
+```
+[get] [encs]
+[get] [enc] 0
+```
+
+* get estimated instantaneous speeds:
+```
+[get] [esps]
+[get] [esp] 0
+```
+
+* get estimated instantaneous accelerations:
+```
+[get] [eacs]
+[get] [eac] 0
+```
+
 ### control modes
 * get control modes:
 ```
@@ -93,12 +113,12 @@ Note that this is a hack. VOCABs may be updated without warning. The recommended
 ### limits
 * get pos limits:
 ```
-[get] [llim]
+[get] [llim] 0
 ```
 
 * get vel limits:
 ```
-[get] [vlim]
+[get] [vlim] 0
 ```
 
 # Edit .ini config files in Calc (Excel)

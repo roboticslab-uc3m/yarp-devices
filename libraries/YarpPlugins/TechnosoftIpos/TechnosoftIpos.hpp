@@ -30,6 +30,29 @@ namespace roboticslab
  */
 
 /**
+ * @ingroup TechnosoftIpos
+ * @brief Stores last encoder reads, obtains mean speeds and accelerations
+ * via differentiation.
+ */
+class EncoderRead
+{
+public:
+    EncoderRead(double initialPos);
+    void update(double newPos, double newTime = 0.0);
+    double queryPosition() const;
+    double querySpeed() const;
+    double queryAcceleration() const;
+    double queryTime() const;
+
+private:
+    double lastPosition, nextToLastPosition;
+    double lastSpeed, nextToLastSpeed;
+    double lastAcceleration;
+    yarp::os::Stamp lastStamp;
+    mutable yarp::os::Mutex mutex;
+};
+
+/**
 * @ingroup TechnosoftIpos
 * @brief Implementation for the Technosoft iPOS as a single CAN bus joint (controlboard raw interfaces).
 *
@@ -50,7 +73,7 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver,
 
 public:
 
-    TechnosoftIpos()
+    TechnosoftIpos() : lastEncoderRead(0.0)
     {
         canDevicePtr = 0;
         iEncodersTimedRawExternal = 0;
@@ -256,10 +279,8 @@ protected:
     double lastUsage;
 
     //-- Encoder stuff
-    double encoder;
-    double encoderTimestamp;
-    yarp::os::Semaphore encoderReady;
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRawExternal;
+    EncoderRead lastEncoderRead;
 
     //-- Mode stuff
     int getMode;
