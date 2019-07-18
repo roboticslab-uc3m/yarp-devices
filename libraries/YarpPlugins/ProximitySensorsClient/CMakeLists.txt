@@ -9,26 +9,30 @@ yarp_prepare_plugin(ProximitySensorsClient
 
 if(NOT SKIP_ProximitySensorsClient)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} # yarp plugin builder needs this
-                    ${Leap_INCLUDE_DIR})
+    set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
 
-yarp_add_plugin(ProximitySensorsClient ProximitySensorsClient.hpp
-                                       ProximitySensorsClient.cpp
-                                       DeviceDriverImpl.cpp
-                                       IProximitySensorsImpl.cpp)
+    yarp_add_plugin(ProximitySensorsClient ProximitySensorsClient.hpp
+                                           ProximitySensorsClient.cpp
+                                           DeviceDriverImpl.cpp
+                                           IProximitySensorsImpl.cpp)
 
-target_link_libraries(ProximitySensorsClient YARP::YARP_OS
-                                             YARP::YARP_dev
-                                             ROBOTICSLAB::ColorDebug
-                                             YarpDevicesInterfaces)
+    target_link_libraries(ProximitySensorsClient YARP::YARP_OS
+                                                 YARP::YARP_dev
+                                                 ROBOTICSLAB::ColorDebug
+                                                 YarpDevicesInterfaces)
 
-yarp_install(TARGETS ProximitySensorsClient
-             COMPONENT runtime
-             LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
-             ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
+    if(NOT YARP_VERSION_SHORT VERSION_LESS 3.2)
+        yarp_install(TARGETS ProximitySensorsClient
+                     LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
+                     ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR}
+                     YARP_INI DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+    else()
+        yarp_install(TARGETS ProximitySensorsClient
+                     LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
+                     ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
 
-yarp_install(FILES ProximitySensorsClient.ini
-             COMPONENT runtime
-             DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+        yarp_install(FILES ProximitySensorsClient.ini
+                     DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+    endif()
 
 endif()

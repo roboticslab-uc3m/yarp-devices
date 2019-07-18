@@ -499,10 +499,10 @@ bool roboticslab::TechnosoftIpos::getControlModesRaw(const int n_joint, const in
 
 bool roboticslab::TechnosoftIpos::setControlModeRaw(const int j, const int mode)
 {
-    CD_DEBUG("(%d, %d)\n",j,mode);
+    CD_DEBUG("(%d, %d)\n", j, mode);
 
     //-- Check index within range
-    if ( j != 0 ) return false;
+    if (j != 0) return false;
 
     //-- Reset mode-specific variables here
     if (mode != VOCAB_CM_POSITION_DIRECT)
@@ -516,15 +516,16 @@ bool roboticslab::TechnosoftIpos::setControlModeRaw(const int j, const int mode)
         return setPositionModeRaw(j);
     case VOCAB_CM_VELOCITY:
         return setVelocityModeRaw(j);
+    case VOCAB_CM_CURRENT:
     case VOCAB_CM_TORQUE:
         return setTorqueModeRaw(j);
     case VOCAB_CM_POSITION_DIRECT:
         return setPositionDirectModeRaw();
-    case VOCAB_CM_MIXED:
-        return setMixedModeRaw();
+    default:
+        return false;
     }
 
-    return false;
+    return true;
 }
 
 // -----------------------------------------------------------------------------

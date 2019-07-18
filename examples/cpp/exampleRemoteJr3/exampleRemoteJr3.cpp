@@ -16,31 +16,33 @@ int main(int argc, char *argv[])
 {
     yarp::os::Network yarp;
 
-    if ( ! yarp::os::Network::checkNetwork() )
+    if (!yarp::os::Network::checkNetwork())
     {
         std::printf("Please start a yarp name server first\n");
-        return(1);
+        return 1;
     }
+
     yarp::os::Property options;
-    options.put("device","analogsensorclient");
-    options.put("remote","/jr3/ch0:o");
-    options.put("local","/jr3/ch0:i");
+    options.put("device", "analogsensorclient");
+    options.put("remote", "/jr3/ch0:o");
+    options.put("local", "/jr3/ch0:i");
 
     yarp::dev::PolyDriver dd(options);
-    if(!dd.isValid()) {
-      std::printf("Device not available.\n");
-	  dd.close();
-      yarp::os::Network::fini();
-      return 1;
+
+    if (!dd.isValid())
+    {
+        std::printf("Device not available.\n");
+        return 1;
     }
 
     yarp::dev::IAnalogSensor *iAnalogSensor;
 
-    if ( ! dd.view(iAnalogSensor) )
+    if (!dd.view(iAnalogSensor))
     {
         std::printf("[error] Problems acquiring interface\n");
         return 1;
     }
+
     std::printf("[success] acquired interface\n");
 
     // The following delay should avoid 0 channels and bad read
@@ -50,24 +52,23 @@ int main(int argc, char *argv[])
     std::printf("channels: %d\n", channels);
 
     // Of course we dislike while(1)
-    while(1)
+    while (true)
     {
         yarp::sig::Vector vector;
         int ret = iAnalogSensor->read(vector);
+
         if (ret == yarp::dev::IAnalogSensor::AS_OK)
         {
-            std::printf("Good read, got: %s\n",vector.toString().c_str());
+            std::printf("Good read, got: %s\n", vector.toString().c_str());
         }
         else
         {
-            std::printf("Bad read, error: %d\n",ret);
+            std::printf("Bad read, error: %d\n", ret);
             //return 1;  // Commenting out, too draconian; on init there can be several until stabilized
         }
     }
 
-	dd.close();
+    dd.close();
 
     return 0;
 }
-
-

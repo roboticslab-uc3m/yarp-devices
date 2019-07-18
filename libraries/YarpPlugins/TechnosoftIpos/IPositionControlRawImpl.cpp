@@ -204,12 +204,14 @@ bool roboticslab::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
     //float sendRefSpeed = sp * this->tr / 22.5;  // Apply tr & convert units to encoder increments
     //int32_t sendRefSpeedFormated = roundf(sendRefSpeed * 65536);  // 65536 = 2^16
 
-    //-- 65536 for FIXED32
     //-- 0.01138 = ( 4 * 1024 pulse / 360 deg ) * (0.001 s / sample)   // deg/s -> pulse/sample  = UI (vel)
     //-- encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024)
-    double val = (encoderPulses / 360.0) * 0.001;     //-- if encoderPulses is 4096 (4 * 1024), val = 0,011377778
-    int32_t sendRefSpeedFormated = sp * std::abs(this->tr) * (65536 * val); //-- if encoderPulses is 4096 -> 65536 * 0.01138 = 745.8
-    memcpy(msg_posmode_speed+4,&sendRefSpeedFormated,4);
+    double sendRefSpeed = sp * std::abs(this->tr) * (encoderPulses / 360.0) * 0.001;
+    uint16_t sendRefSpeedInteger;
+    uint16_t sendRefSpeedFractional;
+    encodeFixedPoint(sendRefSpeed, &sendRefSpeedInteger, &sendRefSpeedFractional);
+    memcpy(msg_posmode_speed + 4, &sendRefSpeedFractional, 2);
+    memcpy(msg_posmode_speed + 6, &sendRefSpeedInteger, 2);
 
     if( ! send( 0x600, 8, msg_posmode_speed) )
     {
@@ -251,12 +253,14 @@ bool roboticslab::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
     //memcpy(msg_posmode_acc+4,&sendRefAcc,4);
     //int32_t sendRefAccFormated = roundf(sendRefAcc * 65536);  // 65536 = 2^16
 
-    //-- 65536 for FIXED32
     //-- 0.00001138 = ( 4 * 1024 pulse / 360 deg ) * (0.000001 s^2 / sample^2)   // deg/s^2 -> pulse/sample^2 = UI (acc)
     //-- encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024)
-    double val = (encoderPulses / 360.0) * 0.000001;     //-- if encoderPulses is 4096 (4 * 1024), val = 0.00001138
-    int32_t sendRefAccFormated = acc * std::abs(this->tr) * (65536 * val); //-- 65536 * 0.00001138 = 0.7458
-    memcpy(msg_posmode_acc+4,&sendRefAccFormated,4);
+    double sendRefAcc = acc * std::abs(this->tr) * (encoderPulses / 360.0) * 0.000001;
+    uint16_t sendRefAccInteger;
+    uint16_t sendRefAccFractional;
+    encodeFixedPoint(sendRefAcc, &sendRefAccInteger, &sendRefAccFractional);
+    memcpy(msg_posmode_acc + 4, &sendRefAccFractional, 2);
+    memcpy(msg_posmode_acc + 6, &sendRefAccInteger, 2);
 
     if( ! send( 0x600, 8, msg_posmode_acc) )
     {
@@ -365,9 +369,18 @@ bool roboticslab::TechnosoftIpos::stopRaw(int j)
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
+    uint8_t msg_quickStop[] = {0x02,0x00};
 
-    return true;
+    if (!this->send(0x200, 2, msg_quickStop))
+    {
+        CD_ERROR("Could not send \"quick stop\". %s\n", msgToStr(0x200, 2, msg_quickStop).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent \"quick stop\". %s\n", msgToStr(0x200, 2, msg_quickStop).c_str() );
+
+    yarp::os::Time::delay(DELAY);
+
+    return enable();
 }
 
 // --------------------------------------------------------------------------------

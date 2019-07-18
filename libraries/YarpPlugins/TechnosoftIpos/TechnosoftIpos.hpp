@@ -73,6 +73,7 @@ struct PvtPoint
 class TechnosoftIpos : public yarp::dev::DeviceDriver,
                        public yarp::dev::IControlLimitsRaw,
                        public yarp::dev::IControlModeRaw,
+                       public yarp::dev::ICurrentControlRaw,
                        public yarp::dev::IEncodersTimedRaw,
                        public yarp::dev::IInteractionModeRaw,
                        public yarp::dev::IPositionControlRaw,
@@ -100,6 +101,7 @@ public:
     virtual bool setCanBusPtr(yarp::dev::ICanBus *canDevicePtr);
     virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw); // -- ??
     virtual bool interpretMessage(const yarp::dev::CanMessage & message);
+    virtual bool initialize();
     /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
     virtual bool start();
     /** "ready to switch on", also acts as "shutdown" */
@@ -153,6 +155,18 @@ public:
     virtual bool setControlModeRaw(const int j, const int mode);
     virtual bool setControlModesRaw(const int n_joint, const int *joints, int *modes);
     virtual bool setControlModesRaw(int *modes);
+
+    //  --------- ICurrentControlRaw Declarations. Implementation in ICurrentControlRawImpl.cpp ---------
+    virtual bool getNumberOfMotorsRaw(int *number);
+    virtual bool getCurrentRaw(int m, double *curr);
+    virtual bool getCurrentsRaw(double *currs);
+    virtual bool getCurrentRangeRaw(int m, double *min, double *max);
+    virtual bool getCurrentRangesRaw(double *min, double *max);
+    virtual bool setRefCurrentsRaw(const double *currs);
+    virtual bool setRefCurrentRaw(int m, double curr);
+    virtual bool setRefCurrentsRaw(const int n_motor, const int *motors, const double *currs);
+    virtual bool getRefCurrentsRaw(double *currs);
+    virtual bool getRefCurrentRaw(int m, double *curr);
 
     //  ---------- IEncodersRaw Declarations. Implementation in IEncodersRawImpl.cpp ----------
     virtual bool resetEncoderRaw(int j);
@@ -217,6 +231,8 @@ public:
     virtual bool getTorquesRaw(double *t);
     virtual bool getTorqueRangeRaw(int j, double *min, double *max);
     virtual bool getTorqueRangesRaw(double *min, double *max);
+    virtual bool getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParameters *params);
+    virtual bool setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorqueParameters params);
 
     //  --------- IVelocityControlRaw Declarations. Implementation in IVelocityControlRawImpl.cpp ---------
     virtual bool velocityMoveRaw(int j, double sp);
@@ -263,6 +279,20 @@ protected:
     std::string msgToStr(const yarp::dev::CanMessage & message);
     std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
 
+    template <typename T_int, typename T_frac>
+    static void encodeFixedPoint(double value, T_int * integer, T_frac * fractional)
+    {
+        *integer = (T_int)value;
+        *fractional = std::abs(value - *integer) * (1 << 8 * sizeof(T_frac));
+    }
+
+    template <typename T_int, typename T_frac>
+    static double decodeFixedPoint(T_int integer, T_frac fractional)
+    {
+        double frac = (double)fractional / (1 << 8 * sizeof(T_frac));
+        return integer + (integer >= 0 ? frac : -frac);
+    }
+
     void createPvtMessage(const PvtPoint & pvtPoint, uint8_t * msg);
     bool fillPvtBuffer(int max);
 
@@ -285,9 +315,13 @@ protected:
     bool targetReached;
     yarp::os::Semaphore targetReachedReady;
 
-    //-- Torque stuff
-    double getTorque;
-    yarp::os::Semaphore getTorqueReady;
+    //-- Current stuff
+    double getCurrent;
+    double getCurrentLimit;
+    int modeCurrentTorque;
+    yarp::os::Semaphore getCurrentReady;
+    yarp::os::Semaphore getCurrentLimitReady;
+    double drivePeakCurrent;
 
     //-- Init stuff
     int getSwitchOn;
@@ -303,8 +337,11 @@ protected:
     double maxPtDistance;
 
     //-- More internal parameter stuff
-    double max, min, maxVel, refAcceleration, refSpeed, refTorque, refVelocity, targetPosition, tr, k;
+    double max, min, maxVel, refAcceleration, refSpeed, refTorque, refCurrent, refVelocity, targetPosition, tr, k;
     int encoderPulses; // default: 4096 (1024 * 4)
+
+    uint32_t getProductCode;
+    yarp::os::Semaphore getProductCodeReady;
 
     //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
     yarp::dev::InteractionModeEnum interactionMode;
@@ -313,6 +350,7 @@ protected:
     yarp::os::Semaphore refAccelSemaphore;
     yarp::os::Semaphore refSpeedSemaphore;
     yarp::os::Semaphore refTorqueSemaphore;
+    yarp::os::Semaphore refCurrentSemaphore;
     yarp::os::Semaphore refVelocitySemaphore;
     yarp::os::Semaphore interactionModeSemaphore;
     yarp::os::Semaphore targetPositionSemaphore;

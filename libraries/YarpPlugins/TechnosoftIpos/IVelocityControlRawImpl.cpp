@@ -2,6 +2,8 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <cmath>
+
 // ######################## IVelocityControlRaw Related #############################
 
 bool roboticslab::TechnosoftIpos::velocityMoveRaw(int j, double sp)
@@ -25,12 +27,14 @@ bool roboticslab::TechnosoftIpos::velocityMoveRaw(int j, double sp)
     //float sendRefSpeed = sp * this->tr / 22.5;  // Apply tr & convert units to encoder increments
     //int32_t sendRefSpeedFormated = roundf(sendRefSpeed * 65536);  // 65536 = 2^16
 
-    //-- 65536 for FIXED32
     //-- 0.01138 = ( 4 * 1024 pulse / 360 deg ) * (0.001 s / sample)   // deg/s -> pulse/sample  = UI (vel)
     // encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024)
-    double val = (encoderPulses / 360.0) * 0.001;     //-- if encoderPulses is 4096 (4 * 1024), val = 0,011377778
-    int32_t sendRefSpeedFormated = sp * this->tr * (65536 * val); //-- if encoderPulses is 4096 -> 65536 * 0.01138 = 745.8
-    memcpy(msg_vel+4,&sendRefSpeedFormated,4);
+    double sendRefSpeed = sp * this->tr * (encoderPulses / 360.0) * 0.001;
+    int16_t sendRefSpeedInteger;
+    uint16_t sendRefSpeedFractional;
+    encodeFixedPoint(sendRefSpeed, &sendRefSpeedInteger, &sendRefSpeedFractional);
+    memcpy(msg_vel + 4, &sendRefSpeedFractional, 2);
+    memcpy(msg_vel + 6, &sendRefSpeedInteger, 2);
 
     if( ! send(0x600, 8, msg_vel))
     {

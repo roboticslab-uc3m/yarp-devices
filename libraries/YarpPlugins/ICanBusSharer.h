@@ -28,6 +28,9 @@ public:
 
     virtual bool setIEncodersTimedRawExternal(yarp::dev::IEncodersTimedRaw * iEncodersTimedRaw) = 0;
 
+    /** initial configuration on pre-operational state (only SDOs allowed) */
+    virtual bool initialize() { return true; }
+
     /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
     virtual bool start() = 0;
 

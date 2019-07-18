@@ -11,7 +11,7 @@ yarp_prepare_plugin(CanBusPeak
 
 if(NOT SKIP_CanBusPeak)
 
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}) # yarp plugin builder needs this
+    set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
 
     yarp_add_plugin(CanBusPeak CanBusPeak.cpp
                                CanBusPeak.hpp
@@ -23,17 +23,21 @@ if(NOT SKIP_CanBusPeak)
     target_link_libraries(CanBusPeak YARP::YARP_OS
                                      YARP::YARP_dev
                                      PCan::PCanFD
-                                     ROBOTICSLAB::ColorDebug
-                                     YarpDevicesInterfaces)
+                                     ROBOTICSLAB::ColorDebug)
 
-    yarp_install(TARGETS CanBusPeak
-                 COMPONENT runtime
-                 LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
-                 ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
+    if(NOT YARP_VERSION_SHORT VERSION_LESS 3.2)
+        yarp_install(TARGETS CanBusPeak
+                     LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
+                     ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR}
+                     YARP_INI DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+    else()
+        yarp_install(TARGETS CanBusPeak
+                     LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
+                     ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
 
-    yarp_install(FILES CanBusPeak.ini
-                 COMPONENT runtime
-                 DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+        yarp_install(FILES CanBusPeak.ini
+                     DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+    endif()
 
 else()
 

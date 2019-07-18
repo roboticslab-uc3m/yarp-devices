@@ -7,7 +7,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 {
 
     // -- .ini parameters (in order)
-    this->canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt32();    
+    this->canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt32();
     this->max = config.check("max",yarp::os::Value(0),"max (meters or degrees)").asFloat64();
     this->min = config.check("min",yarp::os::Value(0),"min (meters or degrees)").asFloat64();
     this->maxVel = config.check("maxVel",yarp::os::Value(10),"maxVel (meters/second or degrees/second)").asFloat64();
@@ -21,9 +21,13 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->ptModeMs = -1;
     this->pvtPointCounter = 0;
     this->targetReached = false;
-    this->encoder = 0;    
+    this->encoder = 0;
     this->refTorque = 0;
     this->refVelocity = 0; // if you want to test.. put 0.1
+    this->refCurrent = 0;
+    this->modeCurrentTorque = VOCAB_CM_NOT_CONFIGURED;
+
+    this->getProductCode = 0;
 
     yarp::os::Value vCanBufferFactory = config.check("canBufferFactory", yarp::os::Value(0), "");
 
