@@ -77,21 +77,21 @@ void roboticslab::TechnosoftIpos::createPvtMessage(const PvtPoint & pvtPoint, ui
     //-- Send the following message:
     //uint8_t ptpoint1[]={0x58,0x00,0x54,0x00,0x03,0x00,0x37,0x00};
 
-    double factor = tr * (encoderPulses / 360.0);
+    const double factor = tr * (encoderPulses / 360.0);
 
     int32_t position = pvtPoint.p * factor;  // Appply tr & convert units to encoder increments
-    int16_t positionLSB = (position << 16) >> 16;
-    int8_t positionMSB = (position << 8) >> 24;
+    int16_t positionLSB = (int32_t)(position << 16) >> 16;
+    int8_t positionMSB = (int32_t)(position << 8) >> 24;
     memcpy(msg, &positionLSB, 2);
     memcpy(msg + 3, &positionMSB, 1);
 
     double velocity = pvtPoint.v * factor * 0.001;
-    int16_t velocityInt = (int16_t)velocity;
-    int8_t velocityFrac = (velocity - velocityInt) * 256;
+    int16_t velocityInt, velocityFrac;
+    encodeFixedPoint(velocity, &velocityInt, &velocityFrac);
     memcpy(msg + 2, &velocityFrac, 1);
     memcpy(msg + 4, &velocityInt, 2);
 
-    int16_t time = (pvtPoint.t << 7) >> 7;
+    int16_t time = (int16_t)(pvtPoint.t << 7) >> 7;
     uint8_t ic = (++pvtPointCounter) << 1;
     uint16_t timeAndIc = time + ic;
     memcpy(msg + 6, &timeAndIc, 2);
