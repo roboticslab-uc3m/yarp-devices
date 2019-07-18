@@ -69,8 +69,13 @@ bool roboticslab::TechnosoftIpos::send(uint32_t cob, uint16_t len, uint8_t * msg
 // -----------------------------------------------------------------------------
 
 roboticslab::EncoderRead::EncoderRead(double initialPos)
+    : lastPosition(initialPos),
+      nextToLastPosition(initialPos),
+      lastSpeed(0.0),
+      nextToLastSpeed(0.0),
+      lastAcceleration(0.0)
 {
-    buffer[LAST] = buffer[NEXT_TO_LAST] = buffer[NEXT_TO_NEXT_TO_LAST] = initialPos;
+    lastStamp.update();
 }
 
 // -----------------------------------------------------------------------------
@@ -78,9 +83,18 @@ roboticslab::EncoderRead::EncoderRead(double initialPos)
 void roboticslab::EncoderRead::update(double newPos)
 {
     yarp::os::LockGuard guard(mutex);
-    buffer[NEXT_TO_NEXT_TO_LAST] = buffer[NEXT_TO_LAST];
-    buffer[NEXT_TO_LAST] = buffer[LAST];
-    buffer[LAST] = newPos;
+
+    const double lastTime = lastStamp.getTime();
+
+    nextToLastPosition = lastPosition;
+    nextToLastSpeed = lastSpeed;
+
+    lastStamp.update();
+    double dt = lastStamp.getTime() - lastTime;
+
+    lastPosition = newPos;
+    lastSpeed = (lastPosition - nextToLastPosition) / dt;
+    lastAcceleration = (lastSpeed - nextToLastSpeed) / dt;
 }
 
 // -----------------------------------------------------------------------------
@@ -88,25 +102,31 @@ void roboticslab::EncoderRead::update(double newPos)
 double roboticslab::EncoderRead::queryPosition() const
 {
     yarp::os::LockGuard guard(mutex);
-    return buffer[LAST];
+    return lastPosition;
 }
 
 // -----------------------------------------------------------------------------
 
-double roboticslab::EncoderRead::querySpeed(double dt) const
+double roboticslab::EncoderRead::querySpeed() const
 {
     yarp::os::LockGuard guard(mutex);
-    return (buffer[LAST] - buffer[NEXT_TO_LAST]) / dt;
+    return lastSpeed;
 }
 
 // -----------------------------------------------------------------------------
 
-double roboticslab::EncoderRead::queryAcceleration(double dt) const
+double roboticslab::EncoderRead::queryAcceleration() const
 {
     yarp::os::LockGuard guard(mutex);
-    double lastVel = (buffer[LAST] - buffer[NEXT_TO_LAST]) / dt;
-    double nextToLastVel = (buffer[NEXT_TO_LAST] - buffer[NEXT_TO_NEXT_TO_LAST]) / dt;
-    return (lastVel - nextToLastVel) / dt;
+    return lastAcceleration;
+}
+
+// -----------------------------------------------------------------------------
+
+yarp::os::Stamp roboticslab::EncoderRead::queryStamp() const
+{
+    yarp::os::LockGuard guard(mutex);
+    return lastStamp;
 }
 
 // -----------------------------------------------------------------------------

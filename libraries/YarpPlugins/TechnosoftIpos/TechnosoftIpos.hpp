@@ -40,12 +40,15 @@ public:
     EncoderRead(double initialPos);
     void update(double newPos);
     double queryPosition() const;
-    double querySpeed(double dt) const;
-    double queryAcceleration(double dt) const;
+    double querySpeed() const;
+    double queryAcceleration() const;
+    yarp::os::Stamp queryStamp() const;
 
 private:
-    enum PositionBuffer { LAST, NEXT_TO_LAST, NEXT_TO_NEXT_TO_LAST, N_ELEMENTS };
-    double buffer[N_ELEMENTS];
+    double lastPosition, nextToLastPosition;
+    double lastSpeed, nextToLastSpeed;
+    double lastAcceleration;
+    yarp::os::Stamp lastStamp;
     mutable yarp::os::Mutex mutex;
 };
 
@@ -70,7 +73,7 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver,
 
 public:
 
-    TechnosoftIpos()
+    TechnosoftIpos() : lastEncoderRead(0.0)
     {
         canDevicePtr = 0;
         iEncodersTimedRawExternal = 0;
@@ -280,6 +283,7 @@ protected:
     double encoderTimestamp;
     yarp::os::Semaphore encoderReady;
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRawExternal;
+    EncoderRead lastEncoderRead;
 
     //-- Mode stuff
     int getMode;
