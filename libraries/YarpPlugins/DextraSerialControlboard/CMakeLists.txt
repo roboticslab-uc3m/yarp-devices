@@ -27,8 +27,7 @@ if(NOT SKIP_DextraSerialControlboard)
 
     target_link_libraries(DextraSerialControlboard YARP::YARP_OS
                                                    YARP::YARP_dev
-                                                   ROBOTICSLAB::ColorDebug
-                                                   YarpDevicesInterfaces)
+                                                   ROBOTICSLAB::ColorDebug)
 
     if(NOT YARP_VERSION_SHORT VERSION_LESS 3.2)
         yarp_install(TARGETS DextraSerialControlboard

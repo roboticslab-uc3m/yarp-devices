@@ -28,8 +28,7 @@ if(NOT SKIP_FakeControlboard)
 
     target_link_libraries(FakeControlboard YARP::YARP_OS
                                            YARP::YARP_dev
-                                           ROBOTICSLAB::ColorDebug
-                                           YarpDevicesInterfaces)
+                                           ROBOTICSLAB::ColorDebug)
 
     if(NOT YARP_VERSION_SHORT VERSION_LESS 3.2)
         yarp_install(TARGETS FakeControlboard

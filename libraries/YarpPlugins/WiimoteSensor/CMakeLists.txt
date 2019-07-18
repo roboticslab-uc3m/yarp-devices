@@ -26,8 +26,7 @@ if(NOT SKIP_WiimoteSensor)
     target_link_libraries(WiimoteSensor YARP::YARP_OS
                                         YARP::YARP_dev
                                         XWiimote::XWiimote
-                                        ROBOTICSLAB::ColorDebug
-                                        YarpDevicesInterfaces)
+                                        ROBOTICSLAB::ColorDebug)
 
     if(XWiimote_VERSION VERSION_LESS "2")
         target_compile_definitions(WiimoteSensor PRIVATE XWIIMOTE_LEGACY_INTERFACE)

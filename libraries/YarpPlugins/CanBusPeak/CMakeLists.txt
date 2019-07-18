@@ -23,8 +23,7 @@ if(NOT SKIP_CanBusPeak)
     target_link_libraries(CanBusPeak YARP::YARP_OS
                                      YARP::YARP_dev
                                      PCan::PCanFD
-                                     ROBOTICSLAB::ColorDebug
-                                     YarpDevicesInterfaces)
+                                     ROBOTICSLAB::ColorDebug)
 
     if(NOT YARP_VERSION_SHORT VERSION_LESS 3.2)
         yarp_install(TARGETS CanBusPeak

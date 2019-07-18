@@ -24,8 +24,7 @@ if(NOT SKIP_SpaceNavigator)
 
     target_link_libraries(SpaceNavigator YARP::YARP_dev
                                          ${SPNAV_LIBRARIES}
-                                         ROBOTICSLAB::ColorDebug
-                                         YarpDevicesInterfaces)
+                                         ROBOTICSLAB::ColorDebug)
 
     target_include_directories(SpaceNavigator PRIVATE ${SPNAV_INCLUDE_DIRS})
 

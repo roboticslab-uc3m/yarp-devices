@@ -20,7 +20,6 @@
 //#define CD_HIDE_WARNING  //-- Can be globally managed from father CMake.
 //#define CD_HIDE_ERROR  //-- Can be globally managed from father CMake.
 #include "ColorDebug.h"
-#include "ICanBusSharer.h"
 
 #define DEFAULT_NUM_CHANNELS 24
 

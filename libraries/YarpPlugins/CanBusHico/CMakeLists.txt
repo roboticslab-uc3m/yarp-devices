@@ -24,8 +24,7 @@ if(NOT SKIP_CanBusHico)
 
     target_link_libraries(CanBusHico YARP::YARP_OS
                                      YARP::YARP_dev
-                                     ROBOTICSLAB::ColorDebug
-                                     YarpDevicesInterfaces)
+                                     ROBOTICSLAB::ColorDebug)
 
     if(NOT YARP_VERSION_SHORT VERSION_LESS 3.2)
         yarp_install(TARGETS CanBusHico
