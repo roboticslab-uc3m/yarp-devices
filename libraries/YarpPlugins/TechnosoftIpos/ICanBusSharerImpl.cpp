@@ -430,25 +430,51 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
 
     if (message.getData()[0] == 0x01 && message.getData()[1] == 0xFF && message.getData()[2] == 0x01)
     {
-        if (message.getData()[4] == 0x20)
+        CD_INFO("PVT control message. canId: %d.\n",canId);
+
+        if ((message.getData()[4] & 0x80) == 0)
         {
-            CD_WARNING("pt buffer full. canId: %d.\n",canId);
-        }
-        else if (message.getData()[4] == 0x40)
-        {
-            CD_WARNING("pt buffer low. canId: %d.\n",canId);
-        }
-        else if (message.getData()[4] & 0x80)
-        {
-            CD_WARNING("pt buffer empty. canId: %d.\n",canId);
-        }
-        else if (message.getData()[3] == 0x08)
-        {
-            CD_WARNING("pt buffer message (don't know what it means). canId: %d.\n",canId);
+            CD_INFO("\t* pt buffer is not empty.\n");
         }
         else
         {
-            CD_INFO("PVT control message. canId: %d.\n",canId);
+            CD_INFO("\t* pt buffer is empty.\n");
+        }
+
+        if ((message.getData()[4] & 0x40) == 0)
+        {
+            CD_INFO("\t* pt buffer is not low.\n");
+        }
+        else
+        {
+            CD_INFO("\t* pt buffer is low.\n");
+        }
+
+        if ((message.getData()[4] & 0x20) == 0)
+        {
+            CD_INFO("\t* pt buffer is not full.\n");
+        }
+        else
+        {
+            CD_INFO("\t* pt buffer is full.\n");
+        }
+
+        if ((message.getData()[4] & 0x10) == 0)
+        {
+            CD_INFO("\t* pt no integrity counter error.\n");
+        }
+        else
+        {
+            CD_INFO("\t* pt integrity counter error.\n");
+        }
+
+        if ((message.getData()[4] & 0x08) == 0)
+        {
+            CD_INFO("\t* pvt maintained position on buffer empty (zero velocity).\n");
+        }
+        else
+        {
+            CD_INFO("\t* pvt performed quick stop on buffer empty (non-zero velocity).\n");
         }
 
         return true;
