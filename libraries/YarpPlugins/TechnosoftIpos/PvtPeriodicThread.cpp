@@ -45,7 +45,7 @@ void PvtPeriodicThread::run()
     mutex.unlock();
 
     pvtPoint.v = (lastTargetReceived - previousTarget) / period;
-    pvtPoint.t = period;
+    pvtPoint.t = period * 1000;
 
     createPvtMessage(pvtPoint, msg);
 
@@ -56,7 +56,7 @@ void PvtPeriodicThread::run()
     else
     {
         CD_SUCCESS("Sent to canId %d: pos %f, vel %f, time %d, ic %d.\n",
-            technosoftIpos->canId, pvtPoint.p, pvtPoint.v, period, technosoftIpos->pvtPointCounter);
+            technosoftIpos->canId, pvtPoint.p, pvtPoint.v, pvtPoint.t, technosoftIpos->pvtPointCounter);
     }
 }
 
