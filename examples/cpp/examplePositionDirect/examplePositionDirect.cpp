@@ -131,9 +131,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    std::vector<int> positionDirectMode(numJoints, VOCAB_CM_POSITION_DIRECT);
-
-    if (!mode->setControlModes(positionDirectMode.data()))
+    if (!mode->setControlMode(jointId, VOCAB_CM_POSITION_DIRECT))
     {
         CD_ERROR("Problems setting position control: POSITION_DIRECT.\n");
         return 1;
