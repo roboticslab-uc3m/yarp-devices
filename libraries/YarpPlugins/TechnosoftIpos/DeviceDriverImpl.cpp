@@ -80,6 +80,9 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     iCanBufferFactory = *reinterpret_cast<yarp::dev::ICanBufferFactory **>(const_cast<char *>(vCanBufferFactory.asBlob()));
     canOutputBuffer = iCanBufferFactory->createBuffer(1);
 
+    pvtThread = new PvtPeriodicThread(PVT_MODE_MS * 0.001);
+    pvtThread->registerDriveHandle(this);
+
     CD_SUCCESS("Created TechnosoftIpos with canId %d, tr %f, k %f, refAcceleration %f, refSpeed %f, encoderPulses %d and all local parameters set to 0.\n",
                canId,tr,k,refAcceleration,refSpeed,encoderPulses);
     return true;
@@ -89,7 +92,16 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 bool roboticslab::TechnosoftIpos::close()
 {
     CD_INFO("\n");
+
+    if (pvtThread && pvtThread->isRunning())
+    {
+        pvtThread->stop();
+    }
+
+    delete pvtThread;
+
     iCanBufferFactory->destroyBuffer(canOutputBuffer);
+
     return true;
 }
 

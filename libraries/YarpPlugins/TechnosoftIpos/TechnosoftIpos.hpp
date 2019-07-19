@@ -6,20 +6,15 @@
 #include <stdint.h>
 #include <sstream>
 #include <cmath>
-#include <deque>
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
 #include <yarp/dev/IControlLimits.h>
 #include <yarp/dev/IRemoteVariables.h>
 
-//#define CD_FULL_FILE  //-- Can be globally managed from father CMake. Good for debugging with polymorphism.
-//#define CD_HIDE_DEBUG  //-- Can be globally managed from father CMake.
-//#define CD_HIDE_SUCCESS  //-- Can be globally managed from father CMake.
-//#define CD_HIDE_INFO  //-- Can be globally managed from father CMake.
-//#define CD_HIDE_WARNING  //-- Can be globally managed from father CMake.
-//#define CD_HIDE_ERROR  //-- Can be globally managed from father CMake.
-#include "ColorDebug.h"
+#include <ColorDebug.h>
+
+#include "PvtPeriodicThread.hpp"
 #include "ICanBusSharer.h"
 #include "ITechnosoftIpos.h"
 
@@ -27,43 +22,18 @@
 #define PT_BUFFER_MAX_SIZE 285
 #define PVT_BUFFER_MAX_SIZE 222
 #define PVT_BUFFER_LOW_SIGNAL 15 // max: 15
+#define PVT_MODE_MS 50
 
 namespace roboticslab
 {
+
+class PvtPeriodicThread;
 
 /**
  * @ingroup YarpPlugins
  * \defgroup TechnosoftIpos
  * @brief Contains roboticslab::TechnosoftIpos.
  */
-
-/**
- * @ingroup YarpPlugins
- * @brief Target point in PVT interpolation mode.
- */
-struct PvtPoint
-{
-    int t;
-    double p, v;
-
-    static PvtPoint fromBottle(const yarp::os::Bottle & b, bool hasVelocity)
-    {
-        PvtPoint pvtPoint;
-        pvtPoint.t = b.get(0).asInt32();
-        pvtPoint.p = b.get(1).asFloat64();
-        pvtPoint.v = hasVelocity ? b.get(2).asFloat64() : 0.0;
-        return pvtPoint;
-    }
-
-    yarp::os::Bottle toBottle() const
-    {
-        yarp::os::Bottle b;
-        b.addInt32(t);
-        b.addFloat64(p);
-        b.addFloat64(v);
-        return b;
-    }
-};
 
 /**
 * @ingroup TechnosoftIpos
@@ -84,10 +54,11 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver,
                        public ICanBusSharer,
                        public ITechnosoftIpos
 {
+    friend PvtPeriodicThread;
 
 public:
 
-    TechnosoftIpos()
+    TechnosoftIpos() : pvtThread(0)
     {
         canDevicePtr = 0;
         iEncodersTimedRawExternal = 0;
@@ -131,16 +102,12 @@ public:
     //  --------- IControlModeRaw Declarations. Implementation in IControlModeRawImpl.cpp ---------
     bool setPositionModeRaw(int j);
     bool setVelocityModeRaw(int j);
+    bool setPositionDirectModeRaw();
     bool setTorqueModeRaw(int j);
     //-- Auxiliary functions (splitted) of setTorqueModeRaw
     bool setTorqueModeRaw1();
     bool setTorqueModeRaw2();
     bool setTorqueModeRaw3();
-    //-- Old yarp::dev::IPositionDirectRaw implementation
-    bool setPositionDirectModeRaw();
-    bool setExternalReferencePositionModeRaw();
-    bool setPtInterpolationModeRaw();
-    bool setMixedModeRaw();
 
     virtual bool getControlModeRaw(int j, int *mode);
     //-- Auxiliary functions (splitted) of getControlModeRaw
@@ -218,9 +185,6 @@ public:
     virtual bool setPositionRaw(int j, double ref);
     virtual bool setPositionsRaw(const int n_joint, const int *joints, const double *refs);
     virtual bool setPositionsRaw(const double *refs);
-    //-- Auxiliary functions of setPositionRaw()
-    bool setExternalReferenceRaw(int j, double ref);
-    bool setPtTargetRaw(int j, double ref);
 
     // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
     virtual bool getRefTorquesRaw(double *t);
@@ -293,9 +257,6 @@ protected:
         return integer + (integer >= 0 ? frac : -frac);
     }
 
-    void createPvtMessage(const PvtPoint & pvtPoint, uint8_t * msg);
-    bool fillPvtBuffer(int max);
-
     int canId;
     yarp::dev::ICanBus *canDevicePtr;
     yarp::dev::ICanBufferFactory *iCanBufferFactory;
@@ -335,6 +296,7 @@ protected:
     int pvtPointCounter;
     double lastPtRef;
     double maxPtDistance;
+    PvtPeriodicThread * pvtThread;
 
     //-- More internal parameter stuff
     double max, min, maxVel, refAcceleration, refSpeed, refTorque, refCurrent, refVelocity, targetPosition, tr, k;
@@ -357,8 +319,6 @@ protected:
 
     //-- CAN output buffer
     yarp::os::Semaphore canBufferSemaphore;
-
-    std::deque<PvtPoint> pvtQueue;
 };
 
 }  // namespace roboticslab

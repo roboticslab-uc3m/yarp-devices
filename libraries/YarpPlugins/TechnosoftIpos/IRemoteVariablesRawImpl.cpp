@@ -16,10 +16,10 @@ bool roboticslab::TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os
     }
     else if (key == "pvtPoints")
     {
-        for (unsigned int i = 0; i < pvtQueue.size(); i++)
+        /*for (unsigned int i = 0; i < pvtQueue.size(); i++)
         {
             val.addList() = pvtQueue[i].toBottle();
-        }
+        }*/
     }
     else
     {
@@ -66,14 +66,14 @@ bool roboticslab::TechnosoftIpos::setRemoteVariableRaw(std::string key, const ya
                 ret = false;
             }
 
-            pvtQueue.push_back(PvtPoint::fromBottle(*pvtBottle, pvtBottle->size() == 3));
+            //pvtQueue.push_back(PvtPoint::fromBottle(*pvtBottle, pvtBottle->size() == 3));
         }
 
-        if (!pvtQueue.empty() && !fillPvtBuffer(PVT_BUFFER_MAX_SIZE))
+        /*if (!pvtQueue.empty() && !fillPvtBuffer(PVT_BUFFER_MAX_SIZE))
         {
             CD_ERROR("Unable to send PVT messages.\n");
             return false;
-        }
+        }*/
     }
     else
     {

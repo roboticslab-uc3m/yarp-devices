@@ -120,74 +120,11 @@ bool roboticslab::TechnosoftIpos::setTorqueModeRaw3()
 
 bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
 {
-    CD_INFO("(%d)\n", ptModeMs);
+    CD_INFO("\n");
 
-    if (ptModeMs <= 0)
-    {
-        ptModeMs = 0; // override invalid default (-1), checked against in IRemoteVariablesRawImpl.cpp
-        return setExternalReferencePositionModeRaw();
-    }
-    else
-    {
-        return setPtInterpolationModeRaw();
-    }
-}
-
-bool roboticslab::TechnosoftIpos::setExternalReferencePositionModeRaw()
-{
-    //-- 5. External reference type. Slave receives reference through CAN (manual 208 of 263).
-    uint8_t msg_ref_type[]= {0x2B,0x1D,0x20,0x00,0x01,0x00,0x00,0x00}; //CAN
-
-    if( ! send( 0x600, 8, msg_ref_type) )
-    {
-        CD_ERROR("Could not send \"ref_type\". %s\n", msgToStr(0x600, 8, msg_ref_type).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"ref_type\". %s\n", msgToStr(0x600, 8, msg_ref_type).c_str() );
-
-    //-- Mode -3 (manual 209 of 263). Send the following message (SDO access to object 6060 h , 8-bit value -1)
-    uint8_t msg_mode_ext_ref_pos[]= {0x2F,0x60,0x60,0x00,0xFD,0x00,0x00,0x00};
-
-    if( ! send( 0x600, 8, msg_mode_ext_ref_pos) )
-    {
-        CD_ERROR("Could not send \"ext_ref_pos_mode\". %s\n", msgToStr(0x600, 8, msg_mode_ext_ref_pos).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"ext_ref_pos_mode\". %s\n", msgToStr(0x600, 8, msg_mode_ext_ref_pos).c_str() );
-
-    double ref;
-    getEncoderRaw(0, &ref);
-
-    uint8_t msg_ref_position[]= {0x23,0x1C,0x20,0x00,0x00,0x00,0x00,0x00}; // put 23 because it is a target
-
-    int position = ref * this->tr * (encoderPulses / 360.0);  // Appply tr & convert units to encoder increments
-    memcpy(msg_ref_position+4,&position,4);
-
-    if(! send(0x600, 8, msg_ref_position) )
-    {
-        CD_ERROR("Could not send ref_position. %s\n", msgToStr(0x600, 8, msg_ref_position).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent ref_position. %s\n", msgToStr(0x600, 8, msg_ref_position).c_str() );
-
-    //-- Control word (manual 215 of 263).
-    uint8_t msg_position_word[] = {0x3F,0x00};
-
-    if( ! send( 0x200, 2, msg_position_word) )
-    {
-        CD_ERROR("Could not send position_word. %s\n", msgToStr(0x200, 2, msg_position_word).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"position_word\". %s\n", msgToStr(0x200, 2, msg_position_word).c_str() );
-
-    return true;
-}
-
-bool roboticslab::TechnosoftIpos::setPtInterpolationModeRaw()
-{
     pvtPointCounter = 0;
 
-    //-- ptprepare: pg. 165 (181/263)
+    //-- ptprepare: pg. 168 (184/263)
     //*************************************************************
     //-- 1. - 4. From start to enable.
     //*************************************************************
@@ -205,14 +142,14 @@ bool roboticslab::TechnosoftIpos::setPtInterpolationModeRaw()
     if ( ! send(0x600,8,mapSDOsub1) )
         return false;
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    //-- b) Write in object 1601 h sub-index 2 the description of the interpolated data record
+    //-- b) Write in object 1602 h sub-index 2 the description of the interpolated data record
     //-- sub-index 2:
     //-- Send the following message (SDO access to object 1602 h sub-index 2, 32-bit value 60C10220 h ):
     uint8_t mapSDOsub2[]= {0x23,0x02,0x16,0x02,0x20,0x02,0xC1,0x60};
     if ( ! send(0x600,8,mapSDOsub2) )
         return false;
     //*************************************************************
-    //-- 7. Enable the RPDO3. Set the object 1601 h sub-index 0 with the value 2.
+    //-- 7. Enable the RPDO3. Set the object 1602 h sub-index 0 with the value 2.
     //-- Send the following message (SDO access to object 1601 h sub-index 0, 8-bit value 2):
     uint8_t enableRPDO3[]= {0x2F,0x02,0x16,0x00,0x02,0x00,0x00,0x00};
     if ( !  send(0x600,8,enableRPDO3) )
@@ -224,16 +161,14 @@ bool roboticslab::TechnosoftIpos::setPtInterpolationModeRaw()
     if ( ! send(0x600,8,opMode) )
         return false;
     //*************************************************************
-    //-- 9. Interpolation sub mode select. Select PT interpolation position mode.
-    //-- Send the following message (SDO access to object 60C0 h , 16-bit value 0000 h ):
-    uint8_t subMode[]= {0x2E,0xC0,0x60,0x00,0x00,0x00,0x00,0x00};
+    //-- 9. Interpolation sub mode select. Select PVT interpolation position mode.
+    //-- Send the following message (SDO access to object 60C0 h , 16-bit value FFFF h ):
+    uint8_t subMode[]= {0x2E,0xC0,0x60,0x00,0xFF,0xFF,0x00,0x00};
     if ( ! send(0x600,8,subMode) )
         return false;
     //*************************************************************
     //-- 10. Interpolated position buffer length. (...)
-    uint8_t buffLength[]= {0x2B,0x73,0x20,0x00,0x00,0x00,0x00,0x00};
-    uint16_t bufLen = PT_BUFFER_MAX_SIZE;
-    memcpy(buffLength + 4, &bufLen, 2);
+    uint8_t buffLength[]= {0x2B,0x73,0x20,0x00,0x01,0x00,0x00,0x00};
     if ( ! send(0x600,8,buffLength) )
         return false;
     //*************************************************************
@@ -258,15 +193,15 @@ bool roboticslab::TechnosoftIpos::setPtInterpolationModeRaw()
     memcpy(initPos+4,&position,4); //Copy block of memory
     if ( ! send(0x600,8,initPos) )
         return false;
-    //*************************************************************
 
     yarp::os::Time::delay(1);  //-- Seems like a "must".
 
-    //*************************************************************
-    lastPtRef = ref;
-    maxPtDistance = maxVel * ptModeMs * 0.001;
+    pvtThread->setInitialPose(ref);
+    pvtThread->updateTarget(ref);
+    pvtThread->step();
 
     uint8_t startPT[]= {0x1F,0x00};
+
     if( ! send(0x200,2,startPT) )
     {
         CD_ERROR("Could not send \"startPT\". %s\n", msgToStr(0x200,2,startPT).c_str() );
@@ -274,91 +209,13 @@ bool roboticslab::TechnosoftIpos::setPtInterpolationModeRaw()
     }
     CD_SUCCESS("Sent \"startPT\". %s\n", msgToStr(0x200,2,startPT).c_str() );
 
-    return true;
-}
+    yarp::os::Time::delay(PVT_MODE_MS * 0.001 / 2);
 
-bool roboticslab::TechnosoftIpos::setMixedModeRaw()
-{
-    CD_INFO("\n");
-
-    pvtPointCounter = 0;
-    pvtQueue.clear();
-
-    //-- ptprepare: pg. 168 (184/263)
-    //*************************************************************
-    //-- 1. - 4. From start to enable.
-    //*************************************************************
-    //-- 5. Disable the RPDO3. Write zero in object 1602 h sub-index 0, this will disable the PDO.
-    //-- Send the following message (SDO access to object 1602 h sub-index 0, 8-bit value 0):
-    uint8_t disableRPDO3[]= {0x2F,0x02,0x16,0x00,0x00,0x00,0x00,0x00};
-    if ( ! send(0x600,8,disableRPDO3) )
+    if (!pvtThread->start())
+    {
+        CD_ERROR("Unable to start PVT thread.\n");
         return false;
-    //*************************************************************
-    //-- 6. Map the new objects.
-    //-- a) Write in object 1602 h sub-index 1 the description of the interpolated data record
-    //-- sub-index 1:
-    //-- Send the following message (SDO access to object 1602 h sub-index 1, 32-bit value 60C10120 h ):
-    uint8_t mapSDOsub1[]= {0x23,0x02,0x16,0x01,0x20,0x01,0xC1,0x60};
-    if ( ! send(0x600,8,mapSDOsub1) )
-        return false;
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    //-- b) Write in object 1601 h sub-index 2 the description of the interpolated data record
-    //-- sub-index 2:
-    //-- Send the following message (SDO access to object 1602 h sub-index 2, 32-bit value 60C10220 h ):
-    uint8_t mapSDOsub2[]= {0x23,0x02,0x16,0x02,0x20,0x02,0xC1,0x60};
-    if ( ! send(0x600,8,mapSDOsub2) )
-        return false;
-    //*************************************************************
-    //-- 7. Enable the RPDO3. Set the object 1601 h sub-index 0 with the value 2.
-    //-- Send the following message (SDO access to object 1601 h sub-index 0, 8-bit value 2):
-    uint8_t enableRPDO3[]= {0x2F,0x02,0x16,0x00,0x02,0x00,0x00,0x00};
-    if ( !  send(0x600,8,enableRPDO3) )
-        return false;
-    //*************************************************************
-    //-- 8. Mode of operation. Select interpolation position mode.
-    //-- Send the following message (SDO access to object 6060 h , 8-bit value 7 h ):
-    uint8_t opMode[]= {0x2F,0x60,0x60,0x00,0x07,0x00,0x00,0x00};
-    if ( ! send(0x600,8,opMode) )
-        return false;
-    //*************************************************************
-    //-- 9. Interpolation sub mode select. Select PVT interpolation position mode.
-    //-- Send the following message (SDO access to object 60C0 h , 16-bit value FFFF h ):
-    uint8_t subMode[]= {0x2E,0xC0,0x60,0x00,0xFF,0xFF,0x00,0x00};
-    if ( ! send(0x600,8,subMode) )
-        return false;
-    //*************************************************************
-    //-- 10. Interpolated position buffer length. (...)
-    uint8_t buffLength[]= {0x2B,0x73,0x20,0x00,0x00,0x00,0x00,0x00};
-    uint16_t bufLen = PVT_BUFFER_MAX_SIZE;
-    memcpy(buffLength + 4, &bufLen, 2);
-    if ( ! send(0x600,8,buffLength) )
-        return false;
-    //*************************************************************
-    //-- 11. Interpolated position buffer configuration. By setting the value A001 h , the buffer is
-    //-- cleared and the integrity counter will be set to 1. Send the following message (SDO
-    //-- access to object 2074 h , 16-bit value C h ):
-    uint8_t buffConf[]= {0x2B,0x74,0x20,0x00,0x81,0xA0,0x00,0x00};
-    buffConf[5] += PVT_BUFFER_LOW_SIGNAL; // 0xA0-0xAF
-    if ( ! send(0x600,8,buffConf) )
-        return false;
-    //*************************************************************
-    //-- 12. Interpolated position initial position. Set the initial position to 0.5 rotations. By using a
-    //-- 500 lines incremental encoder the corresponding value of object 2079 h expressed in
-    //-- encoder counts is (1000 d ) 3E8 h . By using the settings done so far, if the final position
-    //-- command were to be 0, the drive would travel to (Actual position – 1000).
-    //-- Send the following message (SDO access to object 2079 h , 32-bit value 0 h ):
-    //uint8_t initPos[]={0x23,0x79,0x20,0x00,0xE8,0x03,0x00,0x00};  // Put 3E8 h.
-    uint8_t initPos[]= {0x23,0x79,0x20,0x00,0x00,0x00,0x00,0x00}; // Put 0 h instead.
-
-    double ref;
-    getEncoderRaw(0, &ref);
-    int position = ref * this->tr * (encoderPulses / 360.0);  // Appply tr & convert units to encoder increments
-    memcpy(initPos+4,&position,4); //Copy block of memory
-    if ( ! send(0x600,8,initPos) )
-        return false;
-
-    //*************************************************************
-    yarp::os::Time::delay(1);  //-- Seems like a "must".
+    }
 
     return true;
 }
@@ -504,10 +361,9 @@ bool roboticslab::TechnosoftIpos::setControlModeRaw(const int j, const int mode)
     //-- Check index within range
     if (j != 0) return false;
 
-    //-- Reset mode-specific variables here
-    if (mode != VOCAB_CM_POSITION_DIRECT)
+    if (pvtThread->isRunning())
     {
-        ptModeMs = -1; // must be set via remote variables before reaching this method
+        pvtThread->stop();
     }
 
     switch (mode)
