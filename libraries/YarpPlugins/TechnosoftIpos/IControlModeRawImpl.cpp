@@ -175,7 +175,7 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     //-- 11. Interpolated position buffer configuration. By setting the value A001 h , the buffer is
     //-- cleared and the integrity counter will be set to 1. Send the following message (SDO
     //-- access to object 2074 h , 16-bit value C h ):
-    uint8_t buffConf[]= {0x2B,0x74,0x20,0x00,0x01,0xA0,0x00,0x00};
+    uint8_t buffConf[]= {0x2B,0x74,0x20,0x00,0x01,0xC0,0x00,0x00};
     if ( ! send(0x600,8,buffConf) )
         return false;
     //*************************************************************
@@ -199,6 +199,15 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     pvtThread->setInitialPose(ref);
     pvtThread->updateTarget(ref);
     pvtThread->step();
+    pvtThread->step();
+
+    if (!pvtThread->start())
+    {
+        CD_ERROR("Unable to start PVT thread.\n");
+        return false;
+    }
+
+    yarp::os::Time::delay(PVT_MODE_MS * 0.001 / 2);
 
     uint8_t startPT[]= {0x1F,0x00};
 
@@ -208,14 +217,6 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
         return false;
     }
     CD_SUCCESS("Sent \"startPT\". %s\n", msgToStr(0x200,2,startPT).c_str() );
-
-    yarp::os::Time::delay(PVT_MODE_MS * 0.001 / 2);
-
-    if (!pvtThread->start())
-    {
-        CD_ERROR("Unable to start PVT thread.\n");
-        return false;
-    }
 
     return true;
 }
