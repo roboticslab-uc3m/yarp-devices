@@ -37,7 +37,8 @@ def load_ui(file_name, where=None):
 
     return ui
 
-class GrabberControls2GuiGUI(QtGui.QWidget):
+
+class GrabberControls2GuiGUI(QtWidgets.QWidget):
     def __init__(self, controller=None, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
 
@@ -57,7 +58,6 @@ class GrabberControls2GuiGUI(QtGui.QWidget):
 
         self.setupUI()
         self.resetValues()
-
 
     def setupUI(self):
         # Load UI and set it as main layout
