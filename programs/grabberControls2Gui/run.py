@@ -29,7 +29,7 @@ def main(remote_port: 'Remote port running the AravisGigE grabber'='/grabber'):
     yarp.Network.init()
     if not yarp.Network.checkNetwork():
         logging.error('Could not connect to YARP network. Please try running YARP server.')
-        quit()
+        sys.exit(1)
 
     # Create and configure driver
     options = yarp.Property()
@@ -54,4 +54,4 @@ def main(remote_port: 'Remote port running the AravisGigE grabber'='/grabber'):
 
     dd.close()
     yarp.Network.fini()  # disconnect from the YARP network
-    sys.exit()
+    sys.exit(exit_code)
