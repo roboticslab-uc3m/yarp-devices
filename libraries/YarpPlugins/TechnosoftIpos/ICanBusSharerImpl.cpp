@@ -468,13 +468,16 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             CD_INFO("\t* pt integrity counter error.\n");
         }
 
-        if ((message.getData()[4] & 0x08) == 0)
+        if ((message.getData()[4] & 0x80) != 0)
         {
-            CD_INFO("\t* pvt maintained position on buffer empty (zero velocity).\n");
-        }
-        else
-        {
-            CD_INFO("\t* pvt performed quick stop on buffer empty (non-zero velocity).\n");
+            if ((message.getData()[4] & 0x08) == 0)
+            {
+                CD_INFO("\t* pvt maintained position on buffer empty (zero velocity).\n");
+            }
+            else
+            {
+                CD_INFO("\t* pvt performed quick stop on buffer empty (non-zero velocity).\n");
+            }
         }
 
         return true;
