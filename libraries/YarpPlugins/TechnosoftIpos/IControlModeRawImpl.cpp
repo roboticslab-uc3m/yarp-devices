@@ -163,7 +163,8 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     //*************************************************************
     //-- 9. Interpolation sub mode select. Select PVT interpolation position mode.
     //-- Send the following message (SDO access to object 60C0 h , 16-bit value FFFF h ):
-    uint8_t subMode[]= {0x2E,0xC0,0x60,0x00,0xFF,0xFF,0x00,0x00};
+    uint8_t subMode[]= {0x2E,0xC0,0x60,0x00,0x00,0x00,0x00,0x00};
+    linInterpBuffer->setSubMode(subMode);
     if ( ! send(0x600,8,subMode) )
         return false;
     //*************************************************************

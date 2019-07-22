@@ -24,6 +24,7 @@ public:
     virtual ~LinearInterpolationBuffer() {}
     void setInitialReference(double target);
     void updateTarget(double target);
+    virtual void setSubMode(uint8_t * msg) = 0;
     virtual void createMessage(uint8_t * msg) = 0;
 
 protected:
@@ -41,6 +42,7 @@ class PtBuffer : public LinearInterpolationBuffer
 {
 public:
     PtBuffer(double periodMs, TechnosoftIpos * technosoftIpos);
+    virtual void setSubMode(uint8_t * msg);
     virtual void createMessage(uint8_t * msg);
 };
 
@@ -51,6 +53,7 @@ class PvtBuffer : public LinearInterpolationBuffer
 {
 public:
     PvtBuffer(double periodMs, TechnosoftIpos * technosoftIpos);
+    virtual void setSubMode(uint8_t * msg);
     virtual void createMessage(uint8_t * msg);
 };
 

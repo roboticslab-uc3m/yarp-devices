@@ -29,6 +29,12 @@ PtBuffer::PtBuffer(double periodMs, TechnosoftIpos * technosoftIpos)
     : LinearInterpolationBuffer(periodMs, technosoftIpos)
 {}
 
+void PtBuffer::setSubMode(uint8_t * msg)
+{
+    uint16_t submode = 0;
+    std::memcpy(msg + 4, &submode, 2);
+}
+
 void PtBuffer::createMessage(uint8_t * msg)
 {
     //*************************************************************
@@ -66,6 +72,13 @@ void PtBuffer::createMessage(uint8_t * msg)
 PvtBuffer::PvtBuffer(double periodMs, TechnosoftIpos * technosoftIpos)
     : LinearInterpolationBuffer(periodMs, technosoftIpos)
 {}
+
+void PvtBuffer::setSubMode(uint8_t * msg)
+{
+    uint16_t submode = -1;
+    std::memcpy(msg + 4, &submode, 2);
+}
+
 
 void PvtBuffer::createMessage(uint8_t * msg)
 {

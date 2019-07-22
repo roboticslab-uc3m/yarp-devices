@@ -96,8 +96,8 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     iCanBufferFactory = *reinterpret_cast<yarp::dev::ICanBufferFactory **>(const_cast<char *>(vCanBufferFactory.asBlob()));
     canOutputBuffer = iCanBufferFactory->createBuffer(1);
 
-    CD_SUCCESS("Created TechnosoftIpos with canId %d, tr %f, k %f, refAcceleration %f, refSpeed %f, encoderPulses %d, pvtModeMs %d and all local parameters set to 0.\n",
-               canId,tr,k,refAcceleration,refSpeed,encoderPulses,pvtModeMs);
+    CD_SUCCESS("Created TechnosoftIpos with canId %d, tr %f, k %f, refAcceleration %f, refSpeed %f, encoderPulses %d, pvtModeMs %d, linInterpMode %s and all local parameters set to 0.\n",
+               canId,tr,k,refAcceleration,refSpeed,encoderPulses,pvtModeMs,linInterpMode.c_str());
     return true;
 }
 
