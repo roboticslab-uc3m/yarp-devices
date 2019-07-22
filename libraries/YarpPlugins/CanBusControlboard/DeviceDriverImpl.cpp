@@ -58,6 +58,8 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     //-- Start the reading thread (required for checkMotionDoneRaw).
     this->Thread::start();
 
+    posdThread = new PositionDirectThread(0.05);
+
     //-- Populate the CAN nodes vector.
     nodes.resize( ids.size() );
     iControlLimitsRaw.resize( nodes.size() );
@@ -397,7 +399,6 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             return false;
     }
 
-    posdThread = new PositionDirectThread(0.05);
     posdThread->setNodeHandles(idToTechnosoftIpos);
     posdThread->start();
 
