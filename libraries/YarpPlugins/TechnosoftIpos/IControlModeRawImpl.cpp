@@ -199,15 +199,6 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     pvtThread->setInitialPose(ref);
     pvtThread->updateTarget(ref);
     pvtThread->step();
-    pvtThread->step();
-
-    if (!pvtThread->start())
-    {
-        CD_ERROR("Unable to start PVT thread.\n");
-        return false;
-    }
-
-    yarp::os::Time::delay(PVT_MODE_MS * 0.001 / 2);
 
     uint8_t startPT[]= {0x1F,0x00};
 
@@ -217,6 +208,14 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
         return false;
     }
     CD_SUCCESS("Sent \"startPT\". %s\n", msgToStr(0x200,2,startPT).c_str() );
+
+    yarp::os::Time::delay(PVT_MODE_MS * 0.001 / 2);
+
+    if (!pvtThread->start())
+    {
+        CD_ERROR("Unable to start PVT thread.\n");
+        return false;
+    }
 
     return true;
 }
