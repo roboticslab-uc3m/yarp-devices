@@ -12,7 +12,7 @@ bool roboticslab::TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os
 
     if (key == "ptModeMs")
     {
-        val.addInt32(ptModeMs);
+        val.addInt32(pvtModeMs);
     }
     else if (key == "pvtPoints")
     {
@@ -40,17 +40,17 @@ bool roboticslab::TechnosoftIpos::setRemoteVariableRaw(std::string key, const ya
 
     if (key == "ptModeMs")
     {
-        if (ptModeMs >= 0)
+        if (pvtModeMs >= 0)
         {
             CD_WARNING("Illegal state, unable to change variable when currently used.\n");
             return false;
         }
 
-        ptModeMs = val.get(0).asInt32();
+        pvtModeMs = val.get(0).asInt32();
 
-        if (ptModeMs < 0)
+        if (pvtModeMs < 0)
         {
-            CD_WARNING("Invalid %s: %d.\n", key.c_str(), ptModeMs);
+            CD_WARNING("Invalid %s: %d.\n", key.c_str(), pvtModeMs);
             return false;
         }
     }

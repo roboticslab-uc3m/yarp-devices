@@ -18,7 +18,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 
     // -- other parameters...
     this->k = config.check("k",yarp::os::Value(0),"motor constant").asFloat64();
-    this->ptModeMs = -1;
+    this->pvtModeMs = -1;
     this->pvtPointCounter = 0;
     this->targetReached = false;
     this->encoder = 0;
@@ -26,6 +26,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->refVelocity = 0; // if you want to test.. put 0.1
     this->refCurrent = 0;
     this->modeCurrentTorque = VOCAB_CM_NOT_CONFIGURED;
+    this->pvtModeMs = config.check("pvtModeMs",yarp::os::Value(PVT_MODE_MS),"PVT mode period (ms)").asInt32();
 
     this->getProductCode = 0;
 
@@ -80,9 +81,6 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     iCanBufferFactory = *reinterpret_cast<yarp::dev::ICanBufferFactory **>(const_cast<char *>(vCanBufferFactory.asBlob()));
     canOutputBuffer = iCanBufferFactory->createBuffer(1);
 
-    pvtThread = new PvtPeriodicThread(PVT_MODE_MS * 0.001);
-    pvtThread->registerDriveHandle(this);
-
     CD_SUCCESS("Created TechnosoftIpos with canId %d, tr %f, k %f, refAcceleration %f, refSpeed %f, encoderPulses %d and all local parameters set to 0.\n",
                canId,tr,k,refAcceleration,refSpeed,encoderPulses);
     return true;
@@ -92,18 +90,8 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 bool roboticslab::TechnosoftIpos::close()
 {
     CD_INFO("\n");
-
-    if (pvtThread && pvtThread->isRunning())
-    {
-        pvtThread->stop();
-    }
-
-    delete pvtThread;
-
     iCanBufferFactory->destroyBuffer(canOutputBuffer);
-
     return true;
 }
 
 // -----------------------------------------------------------------------------
-

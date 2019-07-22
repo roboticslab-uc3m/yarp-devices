@@ -2,6 +2,10 @@
 
 #include "CanBusControlboard.hpp"
 
+#include <map>
+
+#include "ITechnosoftIpos.h"
+
 // ------------------- DeviceDriver Related ------------------------------------
 
 bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
@@ -65,6 +69,8 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     iTorqueControlRaw.resize( nodes.size() );
     iVelocityControlRaw.resize( nodes.size() );
     iCanBusSharer.resize( nodes.size() );
+
+    std::map<int, ITechnosoftIpos *> idToTechnosoftIpos;
 
     for(int i=0; i<nodes.size(); i++)
     {
@@ -181,6 +187,10 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         if(types.get(i).asString() == "TechnosoftIpos")
         {
             motorIds.push_back(i);
+
+            ITechnosoftIpos * iTechnosoftIpos;
+            device->view(iTechnosoftIpos);
+            idToTechnosoftIpos.insert(std::make_pair(i, iTechnosoftIpos));
 
             //-- Set initial parameters on physical motor drivers.
 
@@ -380,6 +390,10 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             return false;
     }
 
+    posdThread = new PositionDirectThread(0.05);
+    posdThread->setNodeHandles(idToTechnosoftIpos);
+    posdThread->start();
+
     return true;
 }
 
@@ -391,6 +405,13 @@ bool roboticslab::CanBusControlboard::close()
 
     //-- Stop the read thread.
     this->Thread::stop();
+
+    if (posdThread && posdThread->isRunning())
+    {
+        posdThread->stop();
+    }
+
+    delete posdThread;
 
     const yarp::dev::CanMessage &msg = canInputBuffer[0];
 

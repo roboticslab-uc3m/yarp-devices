@@ -17,6 +17,8 @@
 #include <sstream>
 
 #include "ICuiAbsolute.h"
+#include "PositionDirectThread.hpp"
+
 // -- Pause
 #include <stdlib.h>
 #include <stdio.h>
@@ -871,6 +873,8 @@ protected:
     std::vector< int > motorIds;
 
     std::map< int, int > idxFromCanId;
+
+    PositionDirectThread * posdThread;
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(const yarp::dev::CanMessage& message);

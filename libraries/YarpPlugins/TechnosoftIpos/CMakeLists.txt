@@ -26,9 +26,7 @@ if(NOT SKIP_TechnosoftIpos)
                                    IPositionDirectRawImpl.cpp
                                    IRemoteVariablesRawImpl.cpp
                                    ITorqueControlRawImpl.cpp
-                                   IVelocityControlRawImpl.cpp
-                                   PvtPeriodicThread.hpp
-                                   PvtPeriodicThread.cpp)
+                                   IVelocityControlRawImpl.cpp)
 
     target_link_libraries(TechnosoftIpos YARP::YARP_OS
                                          YARP::YARP_dev

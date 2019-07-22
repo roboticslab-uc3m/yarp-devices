@@ -14,7 +14,6 @@
 
 #include <ColorDebug.h>
 
-#include "PvtPeriodicThread.hpp"
 #include "ICanBusSharer.h"
 #include "ITechnosoftIpos.h"
 
@@ -27,13 +26,39 @@
 namespace roboticslab
 {
 
-class PvtPeriodicThread;
-
 /**
  * @ingroup YarpPlugins
  * \defgroup TechnosoftIpos
  * @brief Contains roboticslab::TechnosoftIpos.
  */
+
+/**
+ * @ingroup TechnosoftIpos
+ * @brief Target point in PVT interpolation mode.
+ */
+struct PvtPoint
+{
+    int t;
+    double p, v;
+
+    static PvtPoint fromBottle(const yarp::os::Bottle & b, bool hasVelocity)
+    {
+        PvtPoint pvtPoint;
+        pvtPoint.t = b.get(0).asInt32();
+        pvtPoint.p = b.get(1).asFloat64();
+        pvtPoint.v = hasVelocity ? b.get(2).asFloat64() : 0.0;
+        return pvtPoint;
+    }
+
+    yarp::os::Bottle toBottle() const
+    {
+        yarp::os::Bottle b;
+        b.addInt32(t);
+        b.addFloat64(p);
+        b.addFloat64(v);
+        return b;
+    }
+};
 
 /**
 * @ingroup TechnosoftIpos
@@ -54,11 +79,9 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver,
                        public ICanBusSharer,
                        public ITechnosoftIpos
 {
-    friend PvtPeriodicThread;
-
 public:
 
-    TechnosoftIpos() : pvtThread(0)
+    TechnosoftIpos()
     {
         canDevicePtr = 0;
         iEncodersTimedRawExternal = 0;
@@ -89,6 +112,8 @@ public:
     virtual bool resetNodes();
     /** reset communications */
     virtual bool resetCommunication();
+    /** send new point to PT/PVT buffer */
+    virtual bool sendPvtTarget();
 
     //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
     virtual bool setLimitsRaw(int axis, double min, double max);
@@ -239,6 +264,8 @@ protected:
      */
     bool send(uint32_t cob, uint16_t len, uint8_t * msgData);
 
+    void createPvtMessage(const PvtPoint & pvtPoint, uint8_t * msg);
+
     /** A helper function to display CAN messages. */
     std::string msgToStr(const yarp::dev::CanMessage & message);
     std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
@@ -291,12 +318,14 @@ protected:
     int getEnable;
     yarp::os::Semaphore getEnableReady;
 
-    //-- PT stuff
-    int ptModeMs;
+    //-- PT/PVT stuff
+    int pvtModeMs;
     int pvtPointCounter;
     double lastPtRef;
     double maxPtDistance;
-    PvtPeriodicThread * pvtThread;
+    double lastPvtTargetSent;
+    double lastPvtTargetReceived;
+    yarp::os::Mutex pvtMutex;
 
     //-- More internal parameter stuff
     double max, min, maxVel, refAcceleration, refSpeed, refTorque, refCurrent, refVelocity, targetPosition, tr, k;

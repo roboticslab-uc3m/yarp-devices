@@ -27,7 +27,9 @@ if(NOT SKIP_CanBusControlboard)
                                        IRemoteVariablesImpl.cpp
                                        ITorqueControlImpl.cpp
                                        IVelocityControlImpl.cpp
-                                       ThreadImpl.cpp)
+                                       ThreadImpl.cpp
+                                       PositionDirectThread.hpp
+                                       PositionDirectThread.cpp)
 
     target_link_libraries(CanBusControlboard YARP::YARP_OS
                                              YARP::YARP_dev

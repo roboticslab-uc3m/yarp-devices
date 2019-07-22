@@ -23,7 +23,8 @@ public:
     virtual bool resetNode(int id) = 0;
     /** reset all nodes */
     virtual bool resetNodes() = 0;
-
+    /** send new point to PT/PVT buffer */
+    virtual bool sendPvtTarget() = 0;
 };
 
 }  // namespace roboticslab
