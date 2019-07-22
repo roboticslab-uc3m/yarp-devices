@@ -24,7 +24,7 @@ public:
     /** reset all nodes */
     virtual bool resetNodes() = 0;
     /** send new point to PT/PVT buffer */
-    virtual bool sendPvtTarget() = 0;
+    virtual bool sendLinearInterpolationTarget() = 0;
 };
 
 }  // namespace roboticslab

@@ -196,9 +196,10 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
 
     yarp::os::Time::delay(1);  //-- Seems like a "must".
 
-    lastPvtTargetSent = lastPvtTargetReceived = ref;
+    linInterpBuffer->setInitialReference(ref);
+    linInterpBuffer->updateTarget(ref);
 
-    if (!sendPvtTarget())
+    if (!sendLinearInterpolationTarget())
     {
         CD_ERROR("Unable to send initial point to buffer.\n");
         return false;

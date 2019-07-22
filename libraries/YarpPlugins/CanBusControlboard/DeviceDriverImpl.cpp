@@ -28,6 +28,8 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
     yarp::os::Bottle types = config.findGroup("types", "device name of each node").tail();  //-- e.g. 15
 
+    yarp::os::Value linInterpMode = config.check("linInterpMode", yarp::os::Value::getNullValue(), "linear interpolation mode (PT/PVT)");
+
     //-- Initialize the CAN device.
     yarp::os::Property canBusOptions;
     canBusOptions.fromString(config.toString());  // canDevice, canBitrate
@@ -96,6 +98,11 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         //std::stringstream ss; // Remember to #include <sstream>
         //ss << types.get(i).asString() << "_" << ids.get(i).asInt32();
         //options.setMonitor(config.getMonitor(),ss.str().c_str());
+
+        if (!linInterpMode.isNull())
+        {
+            options.put("linInterpMode", linInterpMode);
+        }
 
         yarp::os::Value v(&iCanBufferFactory, sizeof(iCanBufferFactory));
         options.put("canBufferFactory", v);

@@ -29,6 +29,22 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 
     this->getProductCode = 0;
 
+    std::string linInterpMode = config.check("linInterpMode",yarp::os::Value(LIN_INTERP_MODE), "linear interpolation mode (PT/PVT)").asString();
+
+    if (linInterpMode == "pt")
+    {
+        linInterpBuffer = new PtBuffer(pvtModeMs, this);
+    }
+    else if (linInterpMode == "pvt")
+    {
+        linInterpBuffer = new PvtBuffer(pvtModeMs, this);
+    }
+    else
+    {
+        CD_ERROR("Unsupported linear interpolation mode: %s.\n", linInterpMode.c_str());
+        return false;
+    }
+
     yarp::os::Value vCanBufferFactory = config.check("canBufferFactory", yarp::os::Value(0), "");
 
     if( 0 == this->canId )
@@ -89,6 +105,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 bool roboticslab::TechnosoftIpos::close()
 {
     CD_INFO("\n");
+    delete linInterpBuffer;
     iCanBufferFactory->destroyBuffer(canOutputBuffer);
     return true;
 }

@@ -47,6 +47,6 @@ void PositionDirectThread::run()
 
     for (std::set<int>::iterator it = ids.begin(); it != ids.end(); ++it)
     {
-        idToTechnosoftIpos[*it]->sendPvtTarget();
+        idToTechnosoftIpos[*it]->sendLinearInterpolationTarget();
     }
 }

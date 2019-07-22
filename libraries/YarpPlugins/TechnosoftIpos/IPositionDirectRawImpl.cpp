@@ -10,11 +10,7 @@ bool roboticslab::TechnosoftIpos::setPositionRaw(int j, double ref)
 
     //-- Check index within range
     if ( j != 0 ) return false;
-
-    pvtMutex.lock();
-    lastPvtTargetReceived = ref;
-    pvtMutex.unlock();
-
+    linInterpBuffer->updateTarget(ref);
     return true;
 }
 
