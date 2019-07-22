@@ -27,6 +27,8 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
     yarp::os::Bottle types = config.findGroup("types", "device name of each node").tail();  //-- e.g. 15
 
+    yarp::os::Value pvtModeMs = config.check("pvtModeMs", yarp::os::Value::getNullValue(), "PVT mode period (milliseconds)");
+
     //-- Initialize the CAN device.
     yarp::os::Property canBusOptions;
     canBusOptions.fromString(config.toString());  // canDevice, canBitrate
@@ -92,6 +94,11 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         //std::stringstream ss; // Remember to #include <sstream>
         //ss << types.get(i).asString() << "_" << ids.get(i).asInt32();
         //options.setMonitor(config.getMonitor(),ss.str().c_str());
+
+        if (!pvtModeMs.isNull())
+        {
+            options.put("pvtModeMs", pvtModeMs);
+        }
 
         yarp::os::Value v(&iCanBufferFactory, sizeof(iCanBufferFactory));
         options.put("canBufferFactory", v);

@@ -33,9 +33,7 @@
 #include "ICanBusSharer.h"
 
 #define DEFAULT_MODE "position"
-
 #define DEFAULT_TIME_TO_WAIT_CUI 0
-
 #define DEFAULT_CAN_BUS "CanBusHico"
 
 namespace roboticslab
