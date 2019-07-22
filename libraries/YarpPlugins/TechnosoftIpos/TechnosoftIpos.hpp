@@ -21,7 +21,6 @@
 #define PT_BUFFER_MAX_SIZE 285
 #define PVT_BUFFER_MAX_SIZE 222
 #define PVT_BUFFER_LOW_SIGNAL 15 // max: 15
-#define PVT_MODE_MS 50
 
 namespace roboticslab
 {

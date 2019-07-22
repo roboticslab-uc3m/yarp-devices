@@ -15,10 +15,10 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->refAcceleration = config.check("refAcceleration",yarp::os::Value(0),"ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
     this->refSpeed = config.check("refSpeed",yarp::os::Value(0),"ref speed (meters/second or degrees/second)").asFloat64();
     this->encoderPulses = config.check("encoderPulses",yarp::os::Value(0),"encoderPulses").asInt32();
+    this->k = config.check("k",yarp::os::Value(0),"motor constant").asFloat64();
+    this->pvtModeMs = config.check("pvtModeMs",yarp::os::Value(0),"PVT mode period (ms)").asInt32();
 
     // -- other parameters...
-    this->k = config.check("k",yarp::os::Value(0),"motor constant").asFloat64();
-    this->pvtModeMs = -1;
     this->pvtPointCounter = 0;
     this->targetReached = false;
     this->encoder = 0;
@@ -26,7 +26,6 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->refVelocity = 0; // if you want to test.. put 0.1
     this->refCurrent = 0;
     this->modeCurrentTorque = VOCAB_CM_NOT_CONFIGURED;
-    this->pvtModeMs = config.check("pvtModeMs",yarp::os::Value(PVT_MODE_MS),"PVT mode period (ms)").asInt32();
 
     this->getProductCode = 0;
 
