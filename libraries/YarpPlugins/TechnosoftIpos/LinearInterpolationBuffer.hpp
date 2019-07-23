@@ -30,6 +30,7 @@ class LinearInterpolationBuffer
 public:
     LinearInterpolationBuffer(double periodMs, double bufferSize, TechnosoftIpos * technosoftIpos);
     virtual ~LinearInterpolationBuffer() {}
+    void resetIntegrityCounter();
     void setInitialReference(double target);
     void updateTarget(double target);
     virtual void setSubMode(uint8_t * msg) = 0;
@@ -43,6 +44,7 @@ protected:
     double bufferSize;
     double lastSentTarget;
     double lastReceivedTarget;
+    int integrityCounter;
     mutable yarp::os::Mutex mutex;
 };
 

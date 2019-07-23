@@ -18,7 +18,6 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->k = config.check("k",yarp::os::Value(0),"motor constant").asFloat64();
 
     // -- other parameters...
-    this->integrityCounter = 0;
     this->targetReached = false;
     this->encoder = 0;
     this->refTorque = 0;

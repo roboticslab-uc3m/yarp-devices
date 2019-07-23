@@ -11,7 +11,8 @@ LinearInterpolationBuffer::LinearInterpolationBuffer(double _periodMs, double _b
       periodMs(_periodMs),
       bufferSize(_bufferSize),
       lastSentTarget(0.0),
-      lastReceivedTarget(0.0)
+      lastReceivedTarget(0.0),
+      integrityCounter(0)
 {}
 
 LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(yarp::os::Searchable& config, TechnosoftIpos * technosoftIpos)
@@ -62,6 +63,11 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(yarp::os::Se
     }
 }
 
+void LinearInterpolationBuffer::resetIntegrityCounter()
+{
+    integrityCounter = 0;
+}
+
 void LinearInterpolationBuffer::setInitialReference(double target)
 {
     lastSentTarget = target;
@@ -81,7 +87,9 @@ void LinearInterpolationBuffer::setBufferSize(uint8_t * msg)
 
 PtBuffer::PtBuffer(double periodMs, double bufferSize, TechnosoftIpos * technosoftIpos)
     : LinearInterpolationBuffer(periodMs, bufferSize, technosoftIpos)
-{}
+{
+    CD_SUCCESS("Created PT buffer with period %d (ms) and buffer size %d.\n", periodMs, bufferSize);
+}
 
 void PtBuffer::setSubMode(uint8_t * msg)
 {
@@ -116,16 +124,18 @@ void PtBuffer::createMessage(uint8_t * msg)
     int16_t time = t;
     std::memcpy(msg + 4, &time, 2);
 
-    uint8_t ic = (++technosoftIpos->integrityCounter) << 1;
+    uint8_t ic = (integrityCounter++) << 1;
     std::memcpy(msg + 7, &ic, 1);
 
     CD_DEBUG("Sending to canId %d: pos %f, time %d, ic %d.\n",
-                technosoftIpos->canId, p, t, technosoftIpos->integrityCounter);
+                technosoftIpos->canId, p, t, ic >> 1);
 }
 
 PvtBuffer::PvtBuffer(double periodMs, double bufferSize, TechnosoftIpos * technosoftIpos)
     : LinearInterpolationBuffer(periodMs, bufferSize, technosoftIpos)
-{}
+{
+    CD_SUCCESS("Created PVT buffer with period %d (ms) and buffer size %d.\n", periodMs, bufferSize);
+}
 
 void PvtBuffer::setSubMode(uint8_t * msg)
 {
@@ -168,10 +178,10 @@ void PvtBuffer::createMessage(uint8_t * msg)
     std::memcpy(msg + 4, &velocityInt, 2);
 
     int16_t time = (int16_t)(t << 7) >> 7;
-    uint8_t ic = (++technosoftIpos->integrityCounter) << 1;
+    uint8_t ic = (integrityCounter++) << 1;
     uint16_t timeAndIc = time + ic;
     std::memcpy(msg + 6, &timeAndIc, 2);
 
     CD_DEBUG("Sending to canId %d: pos %f, vel %f, time %d, ic %d.\n",
-                technosoftIpos->canId, p, v, t, technosoftIpos->integrityCounter);
+                technosoftIpos->canId, p, v, t, ic >> 1);
 }

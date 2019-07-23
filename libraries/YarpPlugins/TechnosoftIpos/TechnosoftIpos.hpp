@@ -291,7 +291,6 @@ protected:
     yarp::os::Semaphore getEnableReady;
 
     //-- PT/PVT stuff
-    uint8_t integrityCounter;
     LinearInterpolationBuffer * linInterpBuffer;
 
     //-- More internal parameter stuff
