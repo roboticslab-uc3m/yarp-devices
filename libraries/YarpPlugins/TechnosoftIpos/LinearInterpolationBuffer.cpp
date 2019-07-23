@@ -85,6 +85,8 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::
     buff->factor = factor;
     buff->maxVel = maxVel;
 
+    CD_SUCCESS("Created %s buffer with period %d (ms) and buffer size %d.\n", linInterpMode.c_str(), linInterpPeriodMs, linInterpBufferSize);
+
     return buff;
 }
 
@@ -117,9 +119,7 @@ void LinearInterpolationBuffer::configureBufferSize(uint8_t * msg)
 
 PtBuffer::PtBuffer()
     : maxDistance(maxVel * periodMs * 0.001)
-{
-    CD_SUCCESS("Created PT buffer with period %d (ms) and buffer size %d.\n", periodMs, bufferSize);
-}
+{}
 
 void PtBuffer::configureSubMode(uint8_t * msg)
 {
@@ -171,9 +171,7 @@ void PtBuffer::configureMessage(uint8_t * msg)
 PvtBuffer::PvtBuffer()
     : previousTarget(0.0),
       isFirstPoint(true)
-{
-    CD_SUCCESS("Created PVT buffer with period %d (ms) and buffer size %d.\n", periodMs, bufferSize);
-}
+{}
 
 void PvtBuffer::setInitialReference(double target)
 {

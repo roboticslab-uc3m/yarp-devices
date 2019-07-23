@@ -12,7 +12,7 @@
 #define PT_BUFFER_MAX_SIZE 285
 #define PVT_BUFFER_MAX_SIZE 222
 #define PT_PVT_BUFFER_LOW_SIGNAL 15 // max: 15
-#define DEFAULT_LIN_INTERP_MODE "pvt"
+#define DEFAULT_LIN_INTERP_MODE "pt"
 
 namespace roboticslab
 {
