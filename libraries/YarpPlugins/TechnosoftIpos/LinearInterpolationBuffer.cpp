@@ -61,7 +61,12 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::
     }
     else if (linInterpMode == "pvt")
     {
-        if (linInterpBufferSize > PVT_BUFFER_MAX_SIZE)
+        if (linInterpBufferSize < 2)
+        {
+            CD_ERROR("Invalid PVT mode buffer size: %d < 2.\n", linInterpBufferSize);
+            return 0;
+        }
+        else if (linInterpBufferSize > PVT_BUFFER_MAX_SIZE)
         {
             CD_ERROR("Invalid PVT mode buffer size: %d > %d.\n", linInterpBufferSize, PVT_BUFFER_MAX_SIZE);
             return 0;
@@ -136,23 +141,20 @@ void PtBuffer::configureMessage(uint8_t * msg)
     //uint8_t ptpoint1[]={0x20,0x4E,0x00,0x00,0xE8,0x03,0x00,0x02};
 
     mutex.lock();
-
-    if (std::abs(lastReceivedTarget - lastSentTarget) > maxDistance)
-    {
-        CD_WARNING("Max velocity exceeded, clipping travelled distance.\n");
-        lastReceivedTarget = lastSentTarget + maxDistance * (lastReceivedTarget >= lastSentTarget ? 1 : -1);
-        CD_INFO("New ref: %f.\n", lastReceivedTarget);
-    }
-
-    double p = lastReceivedTarget;
-
-    lastSentTarget = lastReceivedTarget;
-
+    double _lastReceivedTarget = lastReceivedTarget;
     mutex.unlock();
 
+    if (std::abs(_lastReceivedTarget - lastSentTarget) > maxDistance)
+    {
+        CD_WARNING("Max velocity exceeded, clipping travelled distance.\n");
+        _lastReceivedTarget = lastSentTarget + maxDistance * (_lastReceivedTarget >= lastSentTarget ? 1 : -1);
+        CD_INFO("New ref: %f.\n", _lastReceivedTarget);
+    }
+
+    double p = _lastReceivedTarget;
     int t = periodMs;
 
-    int32_t position = p * factor;  // Apply tr & convert units to encoder increments
+    int32_t position = p * factor;
     std::memcpy(msg, &position, 4);
 
     int16_t time = t;
@@ -162,11 +164,21 @@ void PtBuffer::configureMessage(uint8_t * msg)
     std::memcpy(msg + 7, &ic, 1);
 
     CD_DEBUG("Sending p %f t %d (ic %d).\n", p, t, ic >> 1);
+
+    lastSentTarget = _lastReceivedTarget;
 }
 
 PvtBuffer::PvtBuffer()
+    : previousTarget(0.0),
+      isFirstPoint(true)
 {
     CD_SUCCESS("Created PVT buffer with period %d (ms) and buffer size %d.\n", periodMs, bufferSize);
+}
+
+void PvtBuffer::setInitialReference(double target)
+{
+    LinearInterpolationBuffer::setInitialReference(target);
+    previousTarget = target;
 }
 
 void PvtBuffer::configureSubMode(uint8_t * msg)
@@ -188,15 +200,24 @@ void PvtBuffer::configureMessage(uint8_t * msg)
     //uint8_t ptpoint1[]={0x58,0x00,0x54,0x00,0x03,0x00,0x37,0x00};
 
     mutex.lock();
-    double p = lastReceivedTarget;
-    double previousTarget = lastSentTarget;
-    lastSentTarget = lastReceivedTarget;
+    double currentTarget = lastReceivedTarget;
     mutex.unlock();
 
-    double v = (lastReceivedTarget - previousTarget) / (periodMs / 1000.0);
+    double p = previousTarget;
+    double v;
     int t = periodMs;
 
-    int32_t position = p * factor;  // Apply tr & convert units to encoder increments
+    if (!isFirstPoint)
+    {
+        v = (currentTarget - lastSentTarget) / (2 * periodMs * 0.001);
+    }
+    else
+    {
+        v = 0.0;
+        isFirstPoint = false;
+    }
+
+    int32_t position = p * factor;
     int16_t positionLSB = (int32_t)(position << 16) >> 16;
     int8_t positionMSB = (int32_t)(position << 8) >> 24;
     std::memcpy(msg, &positionLSB, 2);
@@ -214,4 +235,7 @@ void PvtBuffer::configureMessage(uint8_t * msg)
     std::memcpy(msg + 6, &timeAndIc, 2);
 
     CD_DEBUG("Sending p %f v %f t %d (ic %d).\n", p, v, t, ic >> 1);
+
+    lastSentTarget = previousTarget;
+    previousTarget = currentTarget;
 }

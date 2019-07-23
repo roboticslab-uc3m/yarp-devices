@@ -26,7 +26,7 @@ public:
     LinearInterpolationBuffer();
     virtual ~LinearInterpolationBuffer() {}
     void resetIntegrityCounter();
-    void setInitialReference(double target);
+    virtual void setInitialReference(double target);
     void updateTarget(double target);
     int getBufferSize() const;
     virtual void configureSubMode(uint8_t * msg) = 0;
@@ -66,8 +66,13 @@ class PvtBuffer : public LinearInterpolationBuffer
 {
 public:
     PvtBuffer();
+    virtual void setInitialReference(double target);
     virtual void configureSubMode(uint8_t * msg);
     virtual void configureMessage(uint8_t * msg);
+
+private:
+    double previousTarget;
+    bool isFirstPoint;
 };
 
 } // namespace roboticslab
