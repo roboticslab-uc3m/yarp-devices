@@ -175,7 +175,7 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
         return false;
     //*************************************************************
     //-- 11. Interpolated position buffer configuration. By setting the value A001 h , the buffer is
-    //-- cleared and the integrity counter will be set to 0. Send the following message (SDO
+    //-- cleared and the integrity counter will be set to 1. Send the following message (SDO
     //-- access to object 2074 h , 16-bit value C h ):
     uint8_t buffConf[]= {0x2B,0x74,0x20,0x00,0x00,0xA0,0x00,0x00};
     if ( ! send(0x600,8,buffConf) )

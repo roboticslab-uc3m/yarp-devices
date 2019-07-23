@@ -24,7 +24,7 @@ namespace roboticslab
 class LinearInterpolationBuffer
 {
 public:
-    LinearInterpolationBuffer(double periodMs, double bufferSize, double factor);
+    LinearInterpolationBuffer();
     virtual ~LinearInterpolationBuffer() {}
     void resetIntegrityCounter();
     void setInitialReference(double target);
@@ -32,12 +32,13 @@ public:
     virtual void setSubMode(uint8_t * msg) = 0;
     void setBufferSize(uint8_t * msg);
     virtual void createMessage(uint8_t * msg) = 0;
-    static LinearInterpolationBuffer * createBuffer(yarp::os::Searchable& config);
+    static LinearInterpolationBuffer * createBuffer(const yarp::os::Searchable & config);
 
 protected:
     double periodMs;
-    double bufferSize;
+    int bufferSize;
     double factor;
+    double maxVel;
     double lastSentTarget;
     double lastReceivedTarget;
     int integrityCounter;
@@ -50,9 +51,12 @@ protected:
 class PtBuffer : public LinearInterpolationBuffer
 {
 public:
-    PtBuffer(double periodMs, double bufferSize, double factor);
+    PtBuffer();
     virtual void setSubMode(uint8_t * msg);
     virtual void createMessage(uint8_t * msg);
+
+private:
+    double maxDistance;
 };
 
 /**
@@ -61,7 +65,7 @@ public:
 class PvtBuffer : public LinearInterpolationBuffer
 {
 public:
-    PvtBuffer(double periodMs, double bufferSize, double factor);
+    PvtBuffer();
     virtual void setSubMode(uint8_t * msg);
     virtual void createMessage(uint8_t * msg);
 };

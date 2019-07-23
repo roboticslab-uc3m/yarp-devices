@@ -2,22 +2,25 @@
 
 #include "LinearInterpolationBuffer.hpp"
 
+#include <cmath>
+
 #include "TechnosoftIpos.hpp"
 
 #include <ColorDebug.h>
 
 using namespace roboticslab;
 
-LinearInterpolationBuffer::LinearInterpolationBuffer(double _periodMs, double _bufferSize, double _factor)
-    : periodMs(_periodMs),
-      bufferSize(_bufferSize),
-      factor(_factor),
+LinearInterpolationBuffer::LinearInterpolationBuffer()
+    : periodMs(0.0),
+      bufferSize(0),
+      factor(0.0),
+      maxVel(0.0),
       lastSentTarget(0.0),
       lastReceivedTarget(0.0),
       integrityCounter(0)
 {}
 
-LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(yarp::os::Searchable& config)
+LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::os::Searchable & config)
 {
     int linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(0),
             "linear interpolation mode period (ms)").asInt32();
@@ -28,6 +31,7 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(yarp::os::Se
 
     double tr = config.check("tr", yarp::os::Value(0.0)).asFloat64();
     int encoderPulses = config.check("encoderPulses", yarp::os::Value(0)).asInt32();
+    double maxVel = config.check("maxVel", yarp::os::Value(10.0)).asFloat64();
 
     double factor = tr * (encoderPulses / 360.0);
 
@@ -43,6 +47,8 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(yarp::os::Se
         return 0;
     }
 
+    LinearInterpolationBuffer * buff;
+
     if (linInterpMode == "pt")
     {
         if (linInterpBufferSize > PT_BUFFER_MAX_SIZE)
@@ -51,7 +57,7 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(yarp::os::Se
             return 0;
         }
 
-        return new PtBuffer(linInterpPeriodMs, linInterpBufferSize, factor);
+        buff = new PtBuffer;
     }
     else if (linInterpMode == "pvt")
     {
@@ -61,13 +67,20 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(yarp::os::Se
             return 0;
         }
 
-        return new PvtBuffer(linInterpPeriodMs, linInterpBufferSize, factor);
+        buff = new PvtBuffer;
     }
     else
     {
         CD_ERROR("Unsupported linear interpolation mode: %s.\n", linInterpMode.c_str());
         return 0;
     }
+
+    buff->periodMs = linInterpPeriodMs;
+    buff->bufferSize = linInterpBufferSize;
+    buff->factor = factor;
+    buff->maxVel = maxVel;
+
+    return buff;
 }
 
 void LinearInterpolationBuffer::resetIntegrityCounter()
@@ -92,8 +105,8 @@ void LinearInterpolationBuffer::setBufferSize(uint8_t * msg)
     std::memcpy(msg + 4, &bufferSize, 2);
 }
 
-PtBuffer::PtBuffer(double periodMs, double bufferSize, double factor)
-    : LinearInterpolationBuffer(periodMs, bufferSize, factor)
+PtBuffer::PtBuffer()
+    : maxDistance(maxVel * periodMs * 0.001)
 {
     CD_SUCCESS("Created PT buffer with period %d (ms) and buffer size %d.\n", periodMs, bufferSize);
 }
@@ -118,8 +131,18 @@ void PtBuffer::createMessage(uint8_t * msg)
     //uint8_t ptpoint1[]={0x20,0x4E,0x00,0x00,0xE8,0x03,0x00,0x02};
 
     mutex.lock();
+
+    if (std::abs(lastReceivedTarget - lastSentTarget) > maxDistance)
+    {
+        CD_WARNING("Max velocity exceeded, clipping travelled distance.\n");
+        lastReceivedTarget = lastSentTarget + maxDistance * (lastReceivedTarget >= lastSentTarget ? 1 : -1);
+        CD_INFO("New ref: %f.\n", lastReceivedTarget);
+    }
+
     double p = lastReceivedTarget;
+
     lastSentTarget = lastReceivedTarget;
+
     mutex.unlock();
 
     int t = periodMs;
@@ -136,8 +159,7 @@ void PtBuffer::createMessage(uint8_t * msg)
     CD_DEBUG("Sending p %f t %d (ic %d).\n", p, t, ic >> 1);
 }
 
-PvtBuffer::PvtBuffer(double periodMs, double bufferSize, double factor)
-    : LinearInterpolationBuffer(periodMs, bufferSize, factor)
+PvtBuffer::PvtBuffer()
 {
     CD_SUCCESS("Created PVT buffer with period %d (ms) and buffer size %d.\n", periodMs, bufferSize);
 }
