@@ -35,7 +35,7 @@
 #define DEFAULT_MODE "position"
 #define DEFAULT_TIME_TO_WAIT_CUI 0
 #define DEFAULT_CAN_BUS "CanBusHico"
-#define DEFAULT_PVT_MODE_MS 50
+#define DEFAULT_LIN_INTERP_PERIOD_MS 50
 
 namespace roboticslab
 {

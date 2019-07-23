@@ -16,10 +16,9 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->refSpeed = config.check("refSpeed",yarp::os::Value(0),"ref speed (meters/second or degrees/second)").asFloat64();
     this->encoderPulses = config.check("encoderPulses",yarp::os::Value(0),"encoderPulses").asInt32();
     this->k = config.check("k",yarp::os::Value(0),"motor constant").asFloat64();
-    this->pvtModeMs = config.check("pvtModeMs",yarp::os::Value(0),"PVT mode period (ms)").asInt32();
 
     // -- other parameters...
-    this->pvtPointCounter = 0;
+    this->integrityCounter = 0;
     this->targetReached = false;
     this->encoder = 0;
     this->refTorque = 0;
@@ -29,15 +28,16 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 
     this->getProductCode = 0;
 
+    int linInterpPeriodMs = config.check("linInterpPeriodMs",yarp::os::Value(0),"linear interpolation mode period (ms)").asInt32();
     std::string linInterpMode = config.check("linInterpMode",yarp::os::Value(LIN_INTERP_MODE), "linear interpolation mode (PT/PVT)").asString();
 
     if (linInterpMode == "pt")
     {
-        linInterpBuffer = new PtBuffer(pvtModeMs, this);
+        linInterpBuffer = new PtBuffer(linInterpPeriodMs, this);
     }
     else if (linInterpMode == "pvt")
     {
-        linInterpBuffer = new PvtBuffer(pvtModeMs, this);
+        linInterpBuffer = new PvtBuffer(linInterpPeriodMs, this);
     }
     else
     {
@@ -97,7 +97,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     canOutputBuffer = iCanBufferFactory->createBuffer(1);
 
     CD_SUCCESS("Created TechnosoftIpos with canId %d, tr %f, k %f, refAcceleration %f, refSpeed %f, encoderPulses %d, pvtModeMs %d, linInterpMode %s and all local parameters set to 0.\n",
-               canId,tr,k,refAcceleration,refSpeed,encoderPulses,pvtModeMs,linInterpMode.c_str());
+               canId,tr,k,refAcceleration,refSpeed,encoderPulses,linInterpPeriodMs,linInterpMode.c_str());
     return true;
 }
 

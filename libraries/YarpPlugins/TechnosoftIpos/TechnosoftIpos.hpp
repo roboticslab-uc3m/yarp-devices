@@ -21,7 +21,7 @@
 // https://github.com/roboticslab-uc3m/yarp-devices/issues/198#issuecomment-487279910
 #define PT_BUFFER_MAX_SIZE 285
 #define PVT_BUFFER_MAX_SIZE 222
-#define PVT_BUFFER_LOW_SIGNAL 15 // max: 15
+#define PT_PVT_BUFFER_LOW_SIGNAL 15 // max: 15
 #define LIN_INTERP_MODE "pvt"
 
 namespace roboticslab
@@ -297,10 +297,7 @@ protected:
     yarp::os::Semaphore getEnableReady;
 
     //-- PT/PVT stuff
-    int pvtModeMs;
-    uint8_t pvtPointCounter;
-    double lastPtRef;
-    double maxPtDistance;
+    uint8_t integrityCounter;
     LinearInterpolationBuffer * linInterpBuffer;
 
     //-- More internal parameter stuff

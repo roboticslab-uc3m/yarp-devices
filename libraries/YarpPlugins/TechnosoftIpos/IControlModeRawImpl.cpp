@@ -122,7 +122,7 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
 {
     CD_INFO("\n");
 
-    pvtPointCounter = 0;
+    integrityCounter = 0;
 
     //-- ptprepare: pg. 168 (184/263)
     //*************************************************************

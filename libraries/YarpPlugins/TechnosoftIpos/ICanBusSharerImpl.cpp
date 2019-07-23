@@ -587,12 +587,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             {
                 CD_INFO("\t-Interpolated Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                if (pvtModeMs > 0)
-                    getMode = VOCAB_CM_POSITION_DIRECT;
-                else if (pvtModeMs < 0)
-                    getMode = VOCAB_CM_MIXED;
-                else
-                    getMode = VOCAB_CM_UNKNOWN;
+                getMode = VOCAB_CM_POSITION_DIRECT;
                 getModeReady.post();
             }
             else if(8==got)

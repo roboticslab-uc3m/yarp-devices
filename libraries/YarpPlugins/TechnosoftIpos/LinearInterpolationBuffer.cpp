@@ -62,11 +62,11 @@ void PtBuffer::createMessage(uint8_t * msg)
     int16_t time = t;
     std::memcpy(msg + 4, &time, 2);
 
-    uint8_t ic = (++technosoftIpos->pvtPointCounter) << 1;
+    uint8_t ic = (++technosoftIpos->integrityCounter) << 1;
     std::memcpy(msg + 7, &ic, 1);
 
     CD_DEBUG("Sending to canId %d: pos %f, time %d, ic %d.\n",
-                technosoftIpos->canId, p, t, technosoftIpos->pvtPointCounter);
+                technosoftIpos->canId, p, t, technosoftIpos->integrityCounter);
 }
 
 PvtBuffer::PvtBuffer(double periodMs, TechnosoftIpos * technosoftIpos)
@@ -114,10 +114,10 @@ void PvtBuffer::createMessage(uint8_t * msg)
     std::memcpy(msg + 4, &velocityInt, 2);
 
     int16_t time = (int16_t)(t << 7) >> 7;
-    uint8_t ic = (++technosoftIpos->pvtPointCounter) << 1;
+    uint8_t ic = (++technosoftIpos->integrityCounter) << 1;
     uint16_t timeAndIc = time + ic;
     std::memcpy(msg + 6, &timeAndIc, 2);
 
     CD_DEBUG("Sending to canId %d: pos %f, vel %f, time %d, ic %d.\n",
-                technosoftIpos->canId, p, v, t, technosoftIpos->pvtPointCounter);
+                technosoftIpos->canId, p, v, t, technosoftIpos->integrityCounter);
 }

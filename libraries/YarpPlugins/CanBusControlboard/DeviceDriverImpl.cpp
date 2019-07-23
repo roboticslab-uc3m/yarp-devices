@@ -13,7 +13,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     std::string mode = config.check("mode",yarp::os::Value("position"),"control mode on startup (position/velocity)").asString();
     int timeCuiWait  = config.check("waitEncoder", yarp::os::Value(DEFAULT_TIME_TO_WAIT_CUI), "CUI timeout (seconds)").asInt32();
     std::string canBusType = config.check("canBusType", yarp::os::Value(DEFAULT_CAN_BUS), "CAN bus device name").asString();
-    int pvtModeMs = config.check("pvtModeMs", yarp::os::Value(DEFAULT_PVT_MODE_MS), "PVT mode period (milliseconds)").asInt32();
+    int linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(DEFAULT_LIN_INTERP_PERIOD_MS), "linear interpolation mode period (milliseconds)").asInt32();
 
     yarp::os::Bottle ids = config.findGroup("ids", "CAN bus IDs").tail();  //-- e.g. 15
     yarp::os::Bottle trs = config.findGroup("trs", "reductions").tail();  //-- e.g. 160
@@ -59,7 +59,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     //-- Start the reading thread (required for checkMotionDoneRaw).
     this->Thread::start();
 
-    posdThread = new PositionDirectThread(pvtModeMs * 0.001);
+    posdThread = new PositionDirectThread(linInterpPeriodMs * 0.001);
 
     //-- Populate the CAN nodes vector.
     nodes.resize( ids.size() );
@@ -94,7 +94,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         options.put("refAcceleration", refAccelerations.get(i));
         options.put("refSpeed", refSpeeds.get(i));
         options.put("encoderPulses", encoderPulsess.get(i));
-        options.put("pvtModeMs", pvtModeMs);
+        options.put("linInterpPeriodMs", linInterpPeriodMs);
         //std::stringstream ss; // Remember to #include <sstream>
         //ss << types.get(i).asString() << "_" << ids.get(i).asInt32();
         //options.setMonitor(config.getMonitor(),ss.str().c_str());
