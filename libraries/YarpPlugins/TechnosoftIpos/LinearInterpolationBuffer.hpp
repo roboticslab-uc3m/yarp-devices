@@ -13,7 +13,6 @@
 #define PVT_BUFFER_MAX_SIZE 222
 #define PT_PVT_BUFFER_LOW_SIGNAL 15 // max: 15
 #define DEFAULT_LIN_INTERP_MODE "pvt"
-#define DEFAULT_LIN_INTERP_BUFFER_SIZE 1
 
 namespace roboticslab
 {
@@ -29,9 +28,10 @@ public:
     void resetIntegrityCounter();
     void setInitialReference(double target);
     void updateTarget(double target);
-    virtual void setSubMode(uint8_t * msg) = 0;
-    void setBufferSize(uint8_t * msg);
-    virtual void createMessage(uint8_t * msg) = 0;
+    int getBufferSize() const;
+    virtual void configureSubMode(uint8_t * msg) = 0;
+    void configureBufferSize(uint8_t * msg);
+    virtual void configureMessage(uint8_t * msg) = 0;
     static LinearInterpolationBuffer * createBuffer(const yarp::os::Searchable & config);
 
 protected:
@@ -52,8 +52,8 @@ class PtBuffer : public LinearInterpolationBuffer
 {
 public:
     PtBuffer();
-    virtual void setSubMode(uint8_t * msg);
-    virtual void createMessage(uint8_t * msg);
+    virtual void configureSubMode(uint8_t * msg);
+    virtual void configureMessage(uint8_t * msg);
 
 private:
     double maxDistance;
@@ -66,8 +66,8 @@ class PvtBuffer : public LinearInterpolationBuffer
 {
 public:
     PvtBuffer();
-    virtual void setSubMode(uint8_t * msg);
-    virtual void createMessage(uint8_t * msg);
+    virtual void configureSubMode(uint8_t * msg);
+    virtual void configureMessage(uint8_t * msg);
 };
 
 } // namespace roboticslab

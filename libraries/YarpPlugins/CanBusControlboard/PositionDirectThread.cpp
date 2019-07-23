@@ -6,8 +6,9 @@
 
 using namespace roboticslab;
 
-PositionDirectThread::PositionDirectThread(double period)
-    : yarp::os::PeriodicThread(period)
+PositionDirectThread::PositionDirectThread(double period, int _deferIterations)
+    : yarp::os::PeriodicThread(period),
+      deferIterations(_deferIterations)
 {
     suspend();
 }
@@ -25,7 +26,7 @@ void PositionDirectThread::updateControlModeRegister(int j, bool enablePosd)
 
     if (enablePosd && !hasElement)
     {
-        activeIds.insert(j);
+        activeIds.insert(std::make_pair(j, 0));
         resume();
     }
     else if (!enablePosd && hasElement)
@@ -41,12 +42,29 @@ void PositionDirectThread::updateControlModeRegister(int j, bool enablePosd)
 
 void PositionDirectThread::run()
 {
-    mutex.lock();
-    std::set<int> ids = activeIds;
-    mutex.unlock();
+    std::map<int, int> ids = retrieveAndIncrementIds();
 
-    for (std::set<int>::iterator it = ids.begin(); it != ids.end(); ++it)
+    for (std::map<int, int>::iterator it = ids.begin(); it != ids.end(); ++it)
     {
-        idToTechnosoftIpos[*it]->sendLinearInterpolationTarget();
+        if (it->second == deferIterations)
+        {
+            idToTechnosoftIpos[it->first]->sendLinearInterpolationStart();
+        }
+
+        idToTechnosoftIpos[it->first]->sendLinearInterpolationTarget();
     }
+}
+
+std::map<int, int> PositionDirectThread::retrieveAndIncrementIds()
+{
+    std::map<int, int> ids;
+    yarp::os::LockGuard guard(mutex);
+
+    for (std::map<int, int>::iterator it = activeIds.begin(); it != activeIds.end(); ++it)
+    {
+        ++it->second;
+        ids.insert(*it);
+    }
+
+    return ids;
 }

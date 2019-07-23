@@ -81,6 +81,8 @@ public:
     virtual bool resetCommunication();
     /** send new point to PT/PVT buffer */
     virtual bool sendLinearInterpolationTarget();
+    /** send start signal to PT/PVT mode */
+    virtual bool sendLinearInterpolationStart();
 
     //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
     virtual bool setLimitsRaw(int axis, double min, double max);

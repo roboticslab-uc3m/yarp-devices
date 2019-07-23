@@ -24,7 +24,7 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::
 {
     int linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(0),
             "linear interpolation mode period (ms)").asInt32();
-    int linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(DEFAULT_LIN_INTERP_BUFFER_SIZE),
+    int linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(0),
             "linear interpolation mode buffer size").asInt32();
     std::string linInterpMode = config.check("linInterpMode", yarp::os::Value(DEFAULT_LIN_INTERP_MODE),
             "linear interpolation mode (PT/PVT)").asString();
@@ -100,7 +100,12 @@ void LinearInterpolationBuffer::updateTarget(double target)
     mutex.unlock();
 }
 
-void LinearInterpolationBuffer::setBufferSize(uint8_t * msg)
+int LinearInterpolationBuffer::getBufferSize() const
+{
+    return bufferSize;
+}
+
+void LinearInterpolationBuffer::configureBufferSize(uint8_t * msg)
 {
     std::memcpy(msg + 4, &bufferSize, 2);
 }
@@ -111,13 +116,13 @@ PtBuffer::PtBuffer()
     CD_SUCCESS("Created PT buffer with period %d (ms) and buffer size %d.\n", periodMs, bufferSize);
 }
 
-void PtBuffer::setSubMode(uint8_t * msg)
+void PtBuffer::configureSubMode(uint8_t * msg)
 {
     uint16_t submode = 0;
     std::memcpy(msg + 4, &submode, 2);
 }
 
-void PtBuffer::createMessage(uint8_t * msg)
+void PtBuffer::configureMessage(uint8_t * msg)
 {
     //*************************************************************
     //-- 14. Send the 1 st PT point.
@@ -164,14 +169,14 @@ PvtBuffer::PvtBuffer()
     CD_SUCCESS("Created PVT buffer with period %d (ms) and buffer size %d.\n", periodMs, bufferSize);
 }
 
-void PvtBuffer::setSubMode(uint8_t * msg)
+void PvtBuffer::configureSubMode(uint8_t * msg)
 {
     uint16_t submode = -1;
     std::memcpy(msg + 4, &submode, 2);
 }
 
 
-void PvtBuffer::createMessage(uint8_t * msg)
+void PvtBuffer::configureMessage(uint8_t * msg)
 {
     //*************************************************************
     //-- 13. Send the 1 st PT point.

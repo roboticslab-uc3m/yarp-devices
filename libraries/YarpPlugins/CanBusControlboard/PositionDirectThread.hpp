@@ -4,7 +4,6 @@
 #define __POSITION_DIRECT_THREAD_HPP__
 
 #include <map>
-#include <set>
 
 #include <yarp/os/Mutex.h>
 #include <yarp/os/PeriodicThread.h>
@@ -23,7 +22,7 @@ namespace roboticslab
 class PositionDirectThread : public yarp::os::PeriodicThread
 {
 public:
-    PositionDirectThread(double period);
+    PositionDirectThread(double period, int deferIterations);
     void setNodeHandles(const std::map<int, ITechnosoftIpos *> & idToTechnosoftIpos);
     void updateControlModeRegister(int j, bool enablePosd);
 
@@ -31,8 +30,11 @@ protected:
     void run();
 
 private:
+    std::map<int, int> retrieveAndIncrementIds();
+
+    int deferIterations;
     std::map<int, ITechnosoftIpos *> idToTechnosoftIpos;
-    std::set<int> activeIds;
+    std::map<int, int> activeIds;
     mutable yarp::os::Mutex mutex;
 };
 

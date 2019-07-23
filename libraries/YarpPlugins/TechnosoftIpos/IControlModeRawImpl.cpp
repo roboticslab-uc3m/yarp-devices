@@ -164,13 +164,13 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     //-- 9. Interpolation sub mode select. Select PVT interpolation position mode.
     //-- Send the following message (SDO access to object 60C0 h , 16-bit value FFFF h ):
     uint8_t subMode[]= {0x2E,0xC0,0x60,0x00,0x00,0x00,0x00,0x00};
-    linInterpBuffer->setSubMode(subMode);
+    linInterpBuffer->configureSubMode(subMode);
     if ( ! send(0x600,8,subMode) )
         return false;
     //*************************************************************
     //-- 10. Interpolated position buffer length. (...)
     uint8_t buffLength[]= {0x2B,0x73,0x20,0x00,0x00,0x00,0x00,0x00};
-    linInterpBuffer->setBufferSize(buffLength);
+    linInterpBuffer->configureBufferSize(buffLength);
     if ( ! send(0x600,8,buffLength) )
         return false;
     //*************************************************************
@@ -206,17 +206,6 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
         CD_ERROR("Unable to send initial point to buffer.\n");
         return false;
     }
-
-    uint8_t startPT[]= {0x1F,0x00};
-
-    if( ! send(0x200,2,startPT) )
-    {
-        CD_ERROR("Could not send \"startPT\". %s\n", msgToStr(0x200,2,startPT).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"startPT\". %s\n", msgToStr(0x200,2,startPT).c_str() );
-
-    return true;
 }
 
 /*************************************************************************/

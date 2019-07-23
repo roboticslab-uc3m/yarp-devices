@@ -36,6 +36,7 @@
 #define DEFAULT_TIME_TO_WAIT_CUI 0
 #define DEFAULT_CAN_BUS "CanBusHico"
 #define DEFAULT_LIN_INTERP_PERIOD_MS 50
+#define DEFAULT_LIN_INTERP_BUFFER_SIZE 1
 
 namespace roboticslab
 {
