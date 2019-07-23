@@ -10,11 +10,11 @@
 
 using namespace roboticslab;
 
-LinearInterpolationBuffer::LinearInterpolationBuffer()
-    : periodMs(0.0),
-      bufferSize(0),
-      factor(0.0),
-      maxVel(0.0),
+LinearInterpolationBuffer::LinearInterpolationBuffer(int _periodMs, int _bufferSize, double _factor, double _maxVel)
+    : periodMs(_periodMs),
+      bufferSize(_bufferSize),
+      factor(_factor),
+      maxVel(_maxVel),
       lastSentTarget(0.0),
       lastReceivedTarget(0.0),
       integrityCounter(0)
@@ -57,7 +57,7 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::
             return 0;
         }
 
-        buff = new PtBuffer;
+        return new PtBuffer(linInterpPeriodMs, linInterpBufferSize, factor, maxVel);
     }
     else if (linInterpMode == "pvt")
     {
@@ -72,22 +72,13 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::
             return 0;
         }
 
-        buff = new PvtBuffer;
+        return new PvtBuffer(linInterpPeriodMs, linInterpBufferSize, factor, maxVel);
     }
     else
     {
         CD_ERROR("Unsupported linear interpolation mode: %s.\n", linInterpMode.c_str());
         return 0;
     }
-
-    buff->periodMs = linInterpPeriodMs;
-    buff->bufferSize = linInterpBufferSize;
-    buff->factor = factor;
-    buff->maxVel = maxVel;
-
-    CD_SUCCESS("Created %s buffer with period %d (ms) and buffer size %d.\n", linInterpMode.c_str(), linInterpPeriodMs, linInterpBufferSize);
-
-    return buff;
 }
 
 void LinearInterpolationBuffer::resetIntegrityCounter()
@@ -117,9 +108,12 @@ void LinearInterpolationBuffer::configureBufferSize(uint8_t * msg)
     std::memcpy(msg + 4, &bufferSize, 2);
 }
 
-PtBuffer::PtBuffer()
-    : maxDistance(maxVel * periodMs * 0.001)
-{}
+PtBuffer::PtBuffer(int _periodMs, int _bufferSize, double _factor, double _maxVel)
+    : LinearInterpolationBuffer(_periodMs, _bufferSize, _factor, _maxVel),
+      maxDistance(_maxVel * _periodMs * 0.001)
+{
+    CD_SUCCESS("Created PT buffer with period %d (ms) and buffer size %d.\n", periodMs, bufferSize);
+}
 
 void PtBuffer::configureSubMode(uint8_t * msg)
 {
@@ -168,10 +162,13 @@ void PtBuffer::configureMessage(uint8_t * msg)
     lastSentTarget = _lastReceivedTarget;
 }
 
-PvtBuffer::PvtBuffer()
-    : previousTarget(0.0),
+PvtBuffer::PvtBuffer(int _periodMs, int _bufferSize, double _factor, double _maxVel)
+    : LinearInterpolationBuffer(_periodMs, _bufferSize, _factor, _maxVel),
+      previousTarget(0.0),
       isFirstPoint(true)
-{}
+{
+    CD_SUCCESS("Created PVT buffer with period %d (ms) and buffer size %d.\n", periodMs, bufferSize);
+}
 
 void PvtBuffer::setInitialReference(double target)
 {
