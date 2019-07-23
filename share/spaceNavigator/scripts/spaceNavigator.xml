@@ -1,9 +1,10 @@
 <application>
     <name>SpaceNavigator App</name>
     <module>
-        <name>yarpdev</name>
-        <parameters>--device SpaceNavigator --period 5 --name /spacenavigator --ports "(mouse buttons)" --channels 8 --mouse 0 5 0 5 --buttons 6 7 0 1</parameters>
+        <name>SpaceNavigator</name>
+        <parameters>--period 5 --name /spacenavigator --ports "(mouse buttons)" --channels 8 --mouse 0 5 0 5 --buttons 6 7 0 1</parameters>
         <node>localhost</node>
+        <deployer>yarpdev</deployer>
     </module>
     <module>
         <name>yarpscope</name>
@@ -12,4 +13,3 @@
         <node>localhost</node>
     </module>
 </application>
-

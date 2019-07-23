@@ -5,6 +5,6 @@
 yarp_install(FILES conf/checkCanBus.ini
                    conf/checkLocomotionCan0.ini
                    conf/checkLocomotionCan1.ini
-                   conf/checkManipulationCan0.ini
-                   conf/checkManipulationCan1.ini
+                   conf/checkManipulationCan2.ini
+                   conf/checkManipulationCan3.ini
              DESTINATION ${ROBOTICSLAB-YARP-DEVICES_CONTEXTS_INSTALL_DIR}/checkCanBus)
