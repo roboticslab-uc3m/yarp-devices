@@ -6,12 +6,61 @@
 
 using namespace roboticslab;
 
-LinearInterpolationBuffer::LinearInterpolationBuffer(double _periodMs, TechnosoftIpos * _technosoftIpos)
+LinearInterpolationBuffer::LinearInterpolationBuffer(double _periodMs, double _bufferSize, TechnosoftIpos * _technosoftIpos)
     : technosoftIpos(_technosoftIpos),
       periodMs(_periodMs),
+      bufferSize(_bufferSize),
       lastSentTarget(0.0),
       lastReceivedTarget(0.0)
 {}
+
+LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(yarp::os::Searchable& config, TechnosoftIpos * technosoftIpos)
+{
+    int linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(0),
+            "linear interpolation mode period (ms)").asInt32();
+    int linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(DEFAULT_LIN_INTERP_BUFFER_SIZE),
+            "linear interpolation mode buffer size").asInt32();
+    std::string linInterpMode = config.check("linInterpMode", yarp::os::Value(DEFAULT_LIN_INTERP_MODE),
+            "linear interpolation mode (PT/PVT)").asString();
+
+    if (linInterpPeriodMs <= 0)
+    {
+        CD_ERROR("Invalid linear interpolation mode period: %d.\n", linInterpPeriodMs);
+        return 0;
+    }
+
+    if (linInterpBufferSize <= 0)
+    {
+        CD_ERROR("Invalid linear interpolation mode buffer size: %d.\n", linInterpBufferSize);
+        return 0;
+    }
+
+    if (linInterpMode == "pt")
+    {
+        if (linInterpBufferSize > PT_BUFFER_MAX_SIZE)
+        {
+            CD_ERROR("Invalid PT mode buffer size: %d > %d.\n", linInterpBufferSize, PT_BUFFER_MAX_SIZE);
+            return 0;
+        }
+
+        return new PtBuffer(linInterpPeriodMs, linInterpBufferSize, technosoftIpos);
+    }
+    else if (linInterpMode == "pvt")
+    {
+        if (linInterpBufferSize > PVT_BUFFER_MAX_SIZE)
+        {
+            CD_ERROR("Invalid PVT mode buffer size: %d > %d.\n", linInterpBufferSize, PVT_BUFFER_MAX_SIZE);
+            return 0;
+        }
+
+        return new PvtBuffer(linInterpPeriodMs, linInterpBufferSize, technosoftIpos);
+    }
+    else
+    {
+        CD_ERROR("Unsupported linear interpolation mode: %s.\n", linInterpMode.c_str());
+        return 0;
+    }
+}
 
 void LinearInterpolationBuffer::setInitialReference(double target)
 {
@@ -25,8 +74,13 @@ void LinearInterpolationBuffer::updateTarget(double target)
     mutex.unlock();
 }
 
-PtBuffer::PtBuffer(double periodMs, TechnosoftIpos * technosoftIpos)
-    : LinearInterpolationBuffer(periodMs, technosoftIpos)
+void LinearInterpolationBuffer::setBufferSize(uint8_t * msg)
+{
+    std::memcpy(msg + 4, &bufferSize, 2);
+}
+
+PtBuffer::PtBuffer(double periodMs, double bufferSize, TechnosoftIpos * technosoftIpos)
+    : LinearInterpolationBuffer(periodMs, bufferSize, technosoftIpos)
 {}
 
 void PtBuffer::setSubMode(uint8_t * msg)
@@ -69,8 +123,8 @@ void PtBuffer::createMessage(uint8_t * msg)
                 technosoftIpos->canId, p, t, technosoftIpos->integrityCounter);
 }
 
-PvtBuffer::PvtBuffer(double periodMs, TechnosoftIpos * technosoftIpos)
-    : LinearInterpolationBuffer(periodMs, technosoftIpos)
+PvtBuffer::PvtBuffer(double periodMs, double bufferSize, TechnosoftIpos * technosoftIpos)
+    : LinearInterpolationBuffer(periodMs, bufferSize, technosoftIpos)
 {}
 
 void PvtBuffer::setSubMode(uint8_t * msg)

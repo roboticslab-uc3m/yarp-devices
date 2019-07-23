@@ -28,20 +28,10 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 
     this->getProductCode = 0;
 
-    int linInterpPeriodMs = config.check("linInterpPeriodMs",yarp::os::Value(0),"linear interpolation mode period (ms)").asInt32();
-    std::string linInterpMode = config.check("linInterpMode",yarp::os::Value(LIN_INTERP_MODE), "linear interpolation mode (PT/PVT)").asString();
+    linInterpBuffer = LinearInterpolationBuffer::createBuffer(config, this);
 
-    if (linInterpMode == "pt")
+    if (!linInterpBuffer)
     {
-        linInterpBuffer = new PtBuffer(linInterpPeriodMs, this);
-    }
-    else if (linInterpMode == "pvt")
-    {
-        linInterpBuffer = new PvtBuffer(linInterpPeriodMs, this);
-    }
-    else
-    {
-        CD_ERROR("Unsupported linear interpolation mode: %s.\n", linInterpMode.c_str());
         return false;
     }
 
@@ -96,8 +86,8 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     iCanBufferFactory = *reinterpret_cast<yarp::dev::ICanBufferFactory **>(const_cast<char *>(vCanBufferFactory.asBlob()));
     canOutputBuffer = iCanBufferFactory->createBuffer(1);
 
-    CD_SUCCESS("Created TechnosoftIpos with canId %d, tr %f, k %f, refAcceleration %f, refSpeed %f, encoderPulses %d, pvtModeMs %d, linInterpMode %s and all local parameters set to 0.\n",
-               canId,tr,k,refAcceleration,refSpeed,encoderPulses,linInterpPeriodMs,linInterpMode.c_str());
+    CD_SUCCESS("Created TechnosoftIpos with canId %d, tr %f, k %f, refAcceleration %f, refSpeed %f, encoderPulses %d and all local parameters set to 0.\n",
+               canId,tr,k,refAcceleration,refSpeed,encoderPulses);
     return true;
 }
 

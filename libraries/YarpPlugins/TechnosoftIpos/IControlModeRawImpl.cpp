@@ -169,7 +169,8 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
         return false;
     //*************************************************************
     //-- 10. Interpolated position buffer length. (...)
-    uint8_t buffLength[]= {0x2B,0x73,0x20,0x00,0x01,0x00,0x00,0x00};
+    uint8_t buffLength[]= {0x2B,0x73,0x20,0x00,0x00,0x00,0x00,0x00};
+    linInterpBuffer->setBufferSize(buffLength);
     if ( ! send(0x600,8,buffLength) )
         return false;
     //*************************************************************

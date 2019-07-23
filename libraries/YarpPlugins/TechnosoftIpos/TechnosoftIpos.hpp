@@ -18,12 +18,6 @@
 #include "ITechnosoftIpos.h"
 #include "LinearInterpolationBuffer.hpp"
 
-// https://github.com/roboticslab-uc3m/yarp-devices/issues/198#issuecomment-487279910
-#define PT_BUFFER_MAX_SIZE 285
-#define PVT_BUFFER_MAX_SIZE 222
-#define PT_PVT_BUFFER_LOW_SIGNAL 15 // max: 15
-#define LIN_INTERP_MODE "pvt"
-
 namespace roboticslab
 {
 

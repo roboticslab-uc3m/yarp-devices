@@ -29,6 +29,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     yarp::os::Bottle types = config.findGroup("types", "device name of each node").tail();  //-- e.g. 15
 
     yarp::os::Value linInterpMode = config.check("linInterpMode", yarp::os::Value::getNullValue(), "linear interpolation mode (PT/PVT)");
+    yarp::os::Value linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value::getNullValue(), "linear interpolation mode buffer size");
 
     //-- Initialize the CAN device.
     yarp::os::Property canBusOptions;
@@ -102,6 +103,11 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         if (!linInterpMode.isNull())
         {
             options.put("linInterpMode", linInterpMode);
+        }
+
+        if (!linInterpBufferSize.isNull())
+        {
+            options.put("linInterpBufferSize", linInterpBufferSize);
         }
 
         yarp::os::Value v(&iCanBufferFactory, sizeof(iCanBufferFactory));
