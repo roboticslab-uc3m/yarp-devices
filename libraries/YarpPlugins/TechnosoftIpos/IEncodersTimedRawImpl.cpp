@@ -12,7 +12,7 @@ bool roboticslab::TechnosoftIpos::getEncodersTimedRaw(double *encs, double *time
 
 //---------------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getEncoderTimedRaw(int j, double *encs, double *time)
+bool roboticslab::TechnosoftIpos::getEncoderTimedRaw(int j, double *enc, double *time)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
@@ -32,16 +32,15 @@ bool roboticslab::TechnosoftIpos::getEncoderTimedRaw(int j, double *encs, double
         yarp::os::Time::delay(DELAY);  // Must delay as it will be from same driver.
         //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-        encoderReady.wait();
-        *encs = encoder;
-        *time = encoderTimestamp;
-        encoderReady.post();
+        *enc = lastEncoderRead.queryPosition();
+        *time = lastEncoderRead.queryTime();
 
         //*************************************************************
     }
     else
     {
-        iEncodersTimedRawExternal->getEncoderTimedRaw(0,encs,time);
+        iEncodersTimedRawExternal->getEncoderTimedRaw(0, enc, time);
+        lastEncoderRead.update(*enc, *time);
     }
 
     return true;

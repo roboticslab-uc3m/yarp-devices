@@ -4,6 +4,8 @@
 
 #include <cstring>
 
+#include <yarp/os/LockGuard.h>
+
 // -----------------------------------------------------------------------------
 
 std::string roboticslab::TechnosoftIpos::msgToStr(const yarp::dev::CanMessage & message)
@@ -95,6 +97,77 @@ bool roboticslab::TechnosoftIpos::sendLinearInterpolationStart()
     CD_SUCCESS("Sent \"startPT\". %s\n", msgToStr(0x200, 2, startPT).c_str());
 
     return true;
+}
+
+// -----------------------------------------------------------------------------
+
+roboticslab::EncoderRead::EncoderRead(double initialPos)
+    : lastPosition(initialPos),
+      nextToLastPosition(initialPos),
+      lastSpeed(0.0),
+      nextToLastSpeed(0.0),
+      lastAcceleration(0.0)
+{
+    lastStamp.update();
+}
+
+// -----------------------------------------------------------------------------
+
+void roboticslab::EncoderRead::update(double newPos, double newTime)
+{
+    yarp::os::LockGuard guard(mutex);
+
+    const double lastTime = lastStamp.getTime();
+
+    nextToLastPosition = lastPosition;
+    nextToLastSpeed = lastSpeed;
+
+    if (newTime)
+    {
+        lastStamp.update(newTime);
+    }
+    else
+    {
+        lastStamp.update();
+    }
+
+    double dt = lastStamp.getTime() - lastTime;
+
+    lastPosition = newPos;
+    lastSpeed = (lastPosition - nextToLastPosition) / dt;
+    lastAcceleration = (lastSpeed - nextToLastSpeed) / dt;
+}
+
+// -----------------------------------------------------------------------------
+
+double roboticslab::EncoderRead::queryPosition() const
+{
+    yarp::os::LockGuard guard(mutex);
+    return lastPosition;
+}
+
+// -----------------------------------------------------------------------------
+
+double roboticslab::EncoderRead::querySpeed() const
+{
+    yarp::os::LockGuard guard(mutex);
+    return lastSpeed;
+}
+
+// -----------------------------------------------------------------------------
+
+double roboticslab::EncoderRead::queryAcceleration() const
+{
+    yarp::os::LockGuard guard(mutex);
+    return lastAcceleration;
+}
+
+// -----------------------------------------------------------------------------
+
+double roboticslab::EncoderRead::queryTime() const
+{
+    yarp::os::LockGuard guard(mutex);
+    return lastStamp.getTime();
 }
 
 // -----------------------------------------------------------------------------

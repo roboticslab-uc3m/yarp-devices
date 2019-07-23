@@ -75,16 +75,13 @@ bool roboticslab::TechnosoftIpos::getEncoderRaw(int j, double *v)
         //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         yarp::os::Time::delay(DELAY);  // Must delay as it will be from same driver.
         //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-        encoderReady.wait();
-        *v = encoder;
-        encoderReady.post();
-
+        *v = lastEncoderRead.queryPosition();
         //*************************************************************
     }
     else
     {
-        iEncodersTimedRawExternal->getEncoderRaw(0,v);
+        iEncodersTimedRawExternal->getEncoderRaw(0, v);
+        lastEncoderRead.update(*v);
     }
 
     return true;
@@ -107,8 +104,7 @@ bool roboticslab::TechnosoftIpos::getEncoderSpeedRaw(int j, double *sp)
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    //CD_WARNING("Not implemented yet (TechnosoftIpos).\n");  //-- Too verbose in controlboardwrapper2 stream.
-    *sp = 0;
+    *sp = lastEncoderRead.querySpeed();
 
     return true;
 }
@@ -123,15 +119,14 @@ bool roboticslab::TechnosoftIpos::getEncoderSpeedsRaw(double *spds)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getEncoderAccelerationRaw(int j, double *spds)
+bool roboticslab::TechnosoftIpos::getEncoderAccelerationRaw(int j, double *acc)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
-    if ( j = 0 ) return false;
+    if ( j != 0 ) return false;
 
-    //CD_WARNING("Not implemented yet (TechnosoftIpos).\n");  //-- Too verbose in controlboardwrapper2 stream.
-    *spds = 0;
+    *acc = lastEncoderRead.queryAcceleration();
 
     return true;
 }
