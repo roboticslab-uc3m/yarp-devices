@@ -27,7 +27,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 
     this->getProductCode = 0;
 
-    linInterpBuffer = LinearInterpolationBuffer::createBuffer(config, this);
+    linInterpBuffer = LinearInterpolationBuffer::createBuffer(config);
 
     if (!linInterpBuffer)
     {

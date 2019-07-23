@@ -8,8 +8,6 @@
 #include <yarp/os/Mutex.h>
 #include <yarp/os/Searchable.h>
 
-#include "TechnosoftIpos.hpp"
-
 // https://github.com/roboticslab-uc3m/yarp-devices/issues/198#issuecomment-487279910
 #define PT_BUFFER_MAX_SIZE 285
 #define PVT_BUFFER_MAX_SIZE 222
@@ -20,15 +18,13 @@
 namespace roboticslab
 {
 
-class TechnosoftIpos;
-
 /**
  * @ingroup TechnosoftIpos
  */
 class LinearInterpolationBuffer
 {
 public:
-    LinearInterpolationBuffer(double periodMs, double bufferSize, TechnosoftIpos * technosoftIpos);
+    LinearInterpolationBuffer(double periodMs, double bufferSize, double factor);
     virtual ~LinearInterpolationBuffer() {}
     void resetIntegrityCounter();
     void setInitialReference(double target);
@@ -36,12 +32,12 @@ public:
     virtual void setSubMode(uint8_t * msg) = 0;
     void setBufferSize(uint8_t * msg);
     virtual void createMessage(uint8_t * msg) = 0;
-    static LinearInterpolationBuffer * createBuffer(yarp::os::Searchable& config, TechnosoftIpos * technosoftIpos);
+    static LinearInterpolationBuffer * createBuffer(yarp::os::Searchable& config);
 
 protected:
-    TechnosoftIpos * technosoftIpos;
     double periodMs;
     double bufferSize;
+    double factor;
     double lastSentTarget;
     double lastReceivedTarget;
     int integrityCounter;
@@ -54,7 +50,7 @@ protected:
 class PtBuffer : public LinearInterpolationBuffer
 {
 public:
-    PtBuffer(double periodMs, double bufferSize, TechnosoftIpos * technosoftIpos);
+    PtBuffer(double periodMs, double bufferSize, double factor);
     virtual void setSubMode(uint8_t * msg);
     virtual void createMessage(uint8_t * msg);
 };
@@ -65,7 +61,7 @@ public:
 class PvtBuffer : public LinearInterpolationBuffer
 {
 public:
-    PvtBuffer(double periodMs, double bufferSize, TechnosoftIpos * technosoftIpos);
+    PvtBuffer(double periodMs, double bufferSize, double factor);
     virtual void setSubMode(uint8_t * msg);
     virtual void createMessage(uint8_t * msg);
 };

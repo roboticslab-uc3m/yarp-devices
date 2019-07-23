@@ -2,20 +2,22 @@
 
 #include "LinearInterpolationBuffer.hpp"
 
+#include "TechnosoftIpos.hpp"
+
 #include <ColorDebug.h>
 
 using namespace roboticslab;
 
-LinearInterpolationBuffer::LinearInterpolationBuffer(double _periodMs, double _bufferSize, TechnosoftIpos * _technosoftIpos)
-    : technosoftIpos(_technosoftIpos),
-      periodMs(_periodMs),
+LinearInterpolationBuffer::LinearInterpolationBuffer(double _periodMs, double _bufferSize, double _factor)
+    : periodMs(_periodMs),
       bufferSize(_bufferSize),
+      factor(_factor),
       lastSentTarget(0.0),
       lastReceivedTarget(0.0),
       integrityCounter(0)
 {}
 
-LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(yarp::os::Searchable& config, TechnosoftIpos * technosoftIpos)
+LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(yarp::os::Searchable& config)
 {
     int linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(0),
             "linear interpolation mode period (ms)").asInt32();
@@ -23,6 +25,11 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(yarp::os::Se
             "linear interpolation mode buffer size").asInt32();
     std::string linInterpMode = config.check("linInterpMode", yarp::os::Value(DEFAULT_LIN_INTERP_MODE),
             "linear interpolation mode (PT/PVT)").asString();
+
+    double tr = config.check("tr", yarp::os::Value(0.0)).asFloat64();
+    int encoderPulses = config.check("encoderPulses", yarp::os::Value(0)).asInt32();
+
+    double factor = tr * (encoderPulses / 360.0);
 
     if (linInterpPeriodMs <= 0)
     {
@@ -44,7 +51,7 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(yarp::os::Se
             return 0;
         }
 
-        return new PtBuffer(linInterpPeriodMs, linInterpBufferSize, technosoftIpos);
+        return new PtBuffer(linInterpPeriodMs, linInterpBufferSize, factor);
     }
     else if (linInterpMode == "pvt")
     {
@@ -54,7 +61,7 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(yarp::os::Se
             return 0;
         }
 
-        return new PvtBuffer(linInterpPeriodMs, linInterpBufferSize, technosoftIpos);
+        return new PvtBuffer(linInterpPeriodMs, linInterpBufferSize, factor);
     }
     else
     {
@@ -85,8 +92,8 @@ void LinearInterpolationBuffer::setBufferSize(uint8_t * msg)
     std::memcpy(msg + 4, &bufferSize, 2);
 }
 
-PtBuffer::PtBuffer(double periodMs, double bufferSize, TechnosoftIpos * technosoftIpos)
-    : LinearInterpolationBuffer(periodMs, bufferSize, technosoftIpos)
+PtBuffer::PtBuffer(double periodMs, double bufferSize, double factor)
+    : LinearInterpolationBuffer(periodMs, bufferSize, factor)
 {
     CD_SUCCESS("Created PT buffer with period %d (ms) and buffer size %d.\n", periodMs, bufferSize);
 }
@@ -116,7 +123,6 @@ void PtBuffer::createMessage(uint8_t * msg)
     mutex.unlock();
 
     int t = periodMs;
-    const double factor = technosoftIpos->tr * (technosoftIpos->encoderPulses / 360.0);
 
     int32_t position = p * factor;  // Apply tr & convert units to encoder increments
     std::memcpy(msg, &position, 4);
@@ -127,12 +133,11 @@ void PtBuffer::createMessage(uint8_t * msg)
     uint8_t ic = (integrityCounter++) << 1;
     std::memcpy(msg + 7, &ic, 1);
 
-    CD_DEBUG("Sending to canId %d: pos %f, time %d, ic %d.\n",
-                technosoftIpos->canId, p, t, ic >> 1);
+    CD_DEBUG("Sending p %f t %d (ic %d).\n", p, t, ic >> 1);
 }
 
-PvtBuffer::PvtBuffer(double periodMs, double bufferSize, TechnosoftIpos * technosoftIpos)
-    : LinearInterpolationBuffer(periodMs, bufferSize, technosoftIpos)
+PvtBuffer::PvtBuffer(double periodMs, double bufferSize, double factor)
+    : LinearInterpolationBuffer(periodMs, bufferSize, factor)
 {
     CD_SUCCESS("Created PVT buffer with period %d (ms) and buffer size %d.\n", periodMs, bufferSize);
 }
@@ -163,7 +168,6 @@ void PvtBuffer::createMessage(uint8_t * msg)
 
     double v = (lastReceivedTarget - previousTarget) / (periodMs / 1000.0);
     int t = periodMs;
-    const double factor = technosoftIpos->tr * (technosoftIpos->encoderPulses / 360.0);
 
     int32_t position = p * factor;  // Apply tr & convert units to encoder increments
     int16_t positionLSB = (int32_t)(position << 16) >> 16;
@@ -182,6 +186,5 @@ void PvtBuffer::createMessage(uint8_t * msg)
     uint16_t timeAndIc = time + ic;
     std::memcpy(msg + 6, &timeAndIc, 2);
 
-    CD_DEBUG("Sending to canId %d: pos %f, vel %f, time %d, ic %d.\n",
-                technosoftIpos->canId, p, v, t, ic >> 1);
+    CD_DEBUG("Sending p %f v %f t %d (ic %d).\n", p, v, t, ic >> 1);
 }

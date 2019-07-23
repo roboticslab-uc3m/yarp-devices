@@ -21,10 +21,6 @@
 namespace roboticslab
 {
 
-class LinearInterpolationBuffer;
-class PtBuffer;
-class PvtBuffer;
-
 /**
  * @ingroup YarpPlugins
  * \defgroup TechnosoftIpos
@@ -50,9 +46,6 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver,
                        public ICanBusSharer,
                        public ITechnosoftIpos
 {
-    friend PtBuffer;
-    friend PvtBuffer;
-
 public:
 
     TechnosoftIpos()
@@ -224,6 +217,21 @@ public:
     virtual bool setRemoteVariableRaw(std::string key, const yarp::os::Bottle& val);
     virtual bool getRemoteVariablesListRaw(yarp::os::Bottle* listOfKeys);
 
+    // helpers
+    template <typename T_int, typename T_frac>
+    static void encodeFixedPoint(double value, T_int * integer, T_frac * fractional)
+    {
+        *integer = (T_int)value;
+        *fractional = std::abs(value - *integer) * (1 << 8 * sizeof(T_frac));
+    }
+
+    template <typename T_int, typename T_frac>
+    static double decodeFixedPoint(T_int integer, T_frac fractional)
+    {
+        double frac = (double)fractional / (1 << 8 * sizeof(T_frac));
+        return integer + (integer >= 0 ? frac : -frac);
+    }
+
 protected:
 
     //  --------- Implementation in TechnosoftIpos.cpp ---------
@@ -241,20 +249,6 @@ protected:
     /** A helper function to display CAN messages. */
     std::string msgToStr(const yarp::dev::CanMessage & message);
     std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
-
-    template <typename T_int, typename T_frac>
-    static void encodeFixedPoint(double value, T_int * integer, T_frac * fractional)
-    {
-        *integer = (T_int)value;
-        *fractional = std::abs(value - *integer) * (1 << 8 * sizeof(T_frac));
-    }
-
-    template <typename T_int, typename T_frac>
-    static double decodeFixedPoint(T_int integer, T_frac fractional)
-    {
-        double frac = (double)fractional / (1 << 8 * sizeof(T_frac));
-        return integer + (integer >= 0 ? frac : -frac);
-    }
 
     int canId;
     yarp::dev::ICanBus *canDevicePtr;
