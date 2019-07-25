@@ -60,7 +60,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     //-- Start the reading thread (required for checkMotionDoneRaw).
     this->Thread::start();
 
-    posdThread = new PositionDirectThread(linInterpPeriodMs * 0.001, linInterpBufferSize);
+    posdThread = new PositionDirectThread(linInterpPeriodMs * 0.001);
 
     //-- Populate the CAN nodes vector.
     nodes.resize( ids.size() );

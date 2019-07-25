@@ -201,11 +201,16 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     linInterpBuffer->setInitialReference(ref);
     linInterpBuffer->updateTarget(ref);
 
-    if (!sendLinearInterpolationTarget())
+    for (int i = 0; i < linInterpBuffer->getBufferSize(); i++)
     {
-        CD_ERROR("Unable to send initial point to buffer.\n");
-        return false;
+        if (!sendLinearInterpolationTarget())
+        {
+            CD_ERROR("Unable to send point %d/%d to buffer.\n", i + 1, linInterpBuffer->getBufferSize());
+            return false;
+        }
     }
+
+    return true;
 }
 
 /*************************************************************************/
