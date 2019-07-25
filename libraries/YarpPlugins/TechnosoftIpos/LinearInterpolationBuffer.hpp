@@ -5,6 +5,8 @@
 
 #include <stdint.h>
 
+#include <string>
+
 #include <yarp/os/Mutex.h>
 #include <yarp/os/Searchable.h>
 
@@ -27,6 +29,7 @@ public:
     virtual ~LinearInterpolationBuffer() {}
     void resetIntegrityCounter();
     virtual void setInitialReference(double target);
+    virtual std::string getType() const = 0;
     void updateTarget(double target);
     int getBufferSize() const;
     virtual void configureSubMode(uint8_t * msg) = 0;
@@ -52,6 +55,7 @@ class PtBuffer : public LinearInterpolationBuffer
 {
 public:
     PtBuffer(int _periodMs, int _bufferSize, double _factor, double _maxVel);
+    virtual std::string getType() const;
     virtual void configureSubMode(uint8_t * msg);
     virtual void configureMessage(uint8_t * msg);
 
@@ -67,6 +71,7 @@ class PvtBuffer : public LinearInterpolationBuffer
 public:
     PvtBuffer(int _periodMs, int _bufferSize, double _factor, double _maxVel);
     virtual void setInitialReference(double target);
+    virtual std::string getType() const;
     virtual void configureSubMode(uint8_t * msg);
     virtual void configureMessage(uint8_t * msg);
 

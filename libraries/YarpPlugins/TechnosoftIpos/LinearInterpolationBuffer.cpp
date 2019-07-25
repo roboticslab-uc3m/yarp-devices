@@ -115,6 +115,11 @@ PtBuffer::PtBuffer(int _periodMs, int _bufferSize, double _factor, double _maxVe
     CD_SUCCESS("Created PT buffer with period %d (ms) and buffer size %d.\n", periodMs, bufferSize);
 }
 
+std::string PtBuffer::getType() const
+{
+    return "pt";
+}
+
 void PtBuffer::configureSubMode(uint8_t * msg)
 {
     uint16_t submode = 0;
@@ -174,6 +179,11 @@ void PvtBuffer::setInitialReference(double target)
 {
     LinearInterpolationBuffer::setInitialReference(target);
     previousTarget = target;
+}
+
+std::string PvtBuffer::getType() const
+{
+    return "pvt";
 }
 
 void PvtBuffer::configureSubMode(uint8_t * msg)
