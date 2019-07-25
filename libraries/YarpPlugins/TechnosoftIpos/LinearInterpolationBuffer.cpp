@@ -236,7 +236,7 @@ void PvtBuffer::configureMessage(uint8_t * msg)
 
     int16_t time = (int16_t)(t << 7) >> 7;
     uint8_t ic = (integrityCounter++) << 1;
-    uint16_t timeAndIc = time + ic;
+    uint16_t timeAndIc = time + (ic << 8);
     std::memcpy(msg + 6, &timeAndIc, 2);
 
     CD_DEBUG("Sending p %f v %f t %d (ic %d).\n", p, v, t, ic >> 1);
