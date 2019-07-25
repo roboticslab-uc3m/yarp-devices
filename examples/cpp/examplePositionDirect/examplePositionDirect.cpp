@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include <string>
 #include <vector>
 
@@ -10,17 +12,16 @@
 #include <yarp/dev/IEncoders.h>
 #include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/IPositionDirect.h>
-#include <yarp/dev/IRemoteVariables.h>
 #include <yarp/dev/PolyDriver.h>
 
 #include <ColorDebug.h>
 
 #define DEFAULT_REMOTE "/teo/leftArm"
 #define DEFAULT_JOINT 5
+#define DEFAULT_SPEED 2.0 // deg/s
 #define DEFAULT_POS_TARGET (-10.0)
 #define DEFAULT_POSD_TARGET (-20.0)
 #define DEFAULT_POSD_PERIOD_MS 50
-#define DEFAULT_POSD_INCREMENT (-0.1)
 
 int main(int argc, char *argv[])
 {
@@ -29,15 +30,14 @@ int main(int argc, char *argv[])
 
     std::string remote = rf.check("remote", yarp::os::Value(DEFAULT_REMOTE), "remote port").asString();
     int jointId = rf.check("id", yarp::os::Value(DEFAULT_JOINT), "joint id").asInt32();
+    double speed = rf.check("speed", yarp::os::Value(DEFAULT_SPEED), "trajectory speed (def/s)").asFloat64();
     double posTarget = rf.check("posTarget", yarp::os::Value(DEFAULT_POS_TARGET), "target position for pos mode [deg]").asFloat64();
     double posdTarget = rf.check("posdTarget", yarp::os::Value(DEFAULT_POSD_TARGET), "target position for posd mode [deg]").asFloat64();
     int period = rf.check("period", yarp::os::Value(DEFAULT_POSD_PERIOD_MS), "posd command period [ms]").asInt32();
-    double increment = rf.check("increment", yarp::os::Value(DEFAULT_POSD_INCREMENT), "posd command increment [deg]").asFloat64();
-    bool usePtMode = !rf.check("disablePT", "disable PT mode");
 
-    if ((posdTarget - posTarget) * increment <= 0)
+    if (speed <= 0)
     {
-        CD_ERROR("Illegal source and target positions with given increment.\n");
+        CD_ERROR("Illegal speed: %f.\n", speed);
         return 1;
     }
 
@@ -72,7 +72,6 @@ int main(int argc, char *argv[])
     yarp::dev::IEncoders * enc;
     yarp::dev::IPositionControl * pos;
     yarp::dev::IPositionDirect * posd;
-    yarp::dev::IRemoteVariables * var;
 
     bool ok = true;
 
@@ -84,12 +83,6 @@ int main(int argc, char *argv[])
     if (!ok)
     {
         CD_ERROR("Problems acquiring robot interfaces.\n");
-        return 1;
-    }
-
-    if (usePtMode && !dd.view(var))
-    {
-        CD_ERROR("Remote variables interface not available, disable PT mode.\n");
         return 1;
     }
 
@@ -118,43 +111,36 @@ int main(int argc, char *argv[])
 
     CD_INFO("-- testing POSITION DIRECT --\n");
 
-    if (usePtMode)
-    {
-        yarp::os::Bottle val;
-        yarp::os::Bottle & b = val.addList();
-        b.addInt32(period);
-
-        if (!var->setRemoteVariable("ptModeMs", val))
-        {
-            CD_ERROR("Unable to set remote ptModeMs variable.\n");
-            return 1;
-        }
-    }
-
     if (!mode->setControlMode(jointId, VOCAB_CM_POSITION_DIRECT))
     {
         CD_ERROR("Problems setting position control: POSITION_DIRECT.\n");
         return 1;
     }
 
-    double encValue;
+    double initialPos;
 
-    if (!enc->getEncoder(jointId, &encValue))
+    if (!enc->getEncoder(jointId, &initialPos))
     {
         CD_ERROR("getEncoders() failed.\n");
         return 1;
     }
 
-    CD_INFO("Current ENC value: %f\n", encValue);
+    CD_INFO("Current ENC value: %f\n", initialPos);
 
     getchar();
 
     CD_INFO("Moving joint %d to %f degrees...\n", jointId, posdTarget);
 
-    while ((posdTarget - encValue) * increment > 0.0)
+    const double distance = posdTarget - posTarget;
+    const double increment = (speed * period * 0.001) / distance;
+    double progress = 0.0;
+
+    while (std::abs(progress) < 1.0)
     {
-        encValue += increment;
-        posd->setPosition(jointId, encValue);
+        progress += increment;
+        double newPos = initialPos + progress * std::abs(distance);
+        CD_INFO("New target: %f\n", newPos);
+        posd->setPosition(jointId, newPos);
         yarp::os::Time::delay(period * 0.001);
     }
 
