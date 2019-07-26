@@ -196,7 +196,7 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     if ( ! send(0x600,8,initPos) )
         return false;
 
-    yarp::os::Time::delay(1);  //-- Seems like a "must".
+    yarp::os::Time::delay(0.1);  //-- Seems like a "must".
 
     linInterpBuffer->setInitialReference(ref);
     linInterpBuffer->updateTarget(ref);
