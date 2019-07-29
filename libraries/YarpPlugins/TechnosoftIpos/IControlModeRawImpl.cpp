@@ -362,6 +362,7 @@ bool roboticslab::TechnosoftIpos::setControlModeRaw(const int j, const int mode)
         return setVelocityModeRaw(j);
     case VOCAB_CM_CURRENT:
     case VOCAB_CM_TORQUE:
+        modeCurrentTorque = mode;
         return setTorqueModeRaw(j);
     case VOCAB_CM_POSITION_DIRECT:
         return setPositionDirectModeRaw();
