@@ -58,14 +58,14 @@ bool roboticslab::CanBusControlboard::setRemoteVariable(std::string key, const y
     {
         if (modes[i] == VOCAB_CM_POSITION_DIRECT)
         {
-            CD_ERROR("Joint %d currently in posd mode, cannot change config params right now.\n", i);
+            CD_ERROR("CAN ID %d currently in posd mode, cannot change config params right now.\n", nodes[motorIds[i]]->getValue("canId").asInt32());
             return false;
         }
     }
 
     for (int i = 0; i < motorIds.size(); i++)
     {
-        iRemoteVariablesRaw[i]->setRemoteVariableRaw(key, val);
+        iRemoteVariablesRaw[motorIds[i]]->setRemoteVariableRaw(key, val);
     }
 
     return true;
