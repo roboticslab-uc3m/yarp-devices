@@ -14,7 +14,6 @@
 #define PT_BUFFER_MAX_SIZE 285
 #define PVT_BUFFER_MAX_SIZE 222
 #define PT_PVT_BUFFER_LOW_SIGNAL 15 // max: 15
-#define DEFAULT_LIN_INTERP_MODE "pt"
 
 namespace roboticslab
 {
@@ -31,10 +30,14 @@ public:
     virtual void setInitialReference(double target);
     virtual std::string getType() const = 0;
     void updateTarget(double target);
+    int getPeriod() const;
+    void setPeriod(int periodMs);
     int getBufferSize() const;
+    void setBufferSize(int bufferSize);
     virtual void configureSubMode(uint8_t * msg) = 0;
     void configureBufferSize(uint8_t * msg);
     virtual void configureMessage(uint8_t * msg) = 0;
+    LinearInterpolationBuffer * cloneTo(const std::string & type);
     static LinearInterpolationBuffer * createBuffer(const yarp::os::Searchable & config);
 
 protected:

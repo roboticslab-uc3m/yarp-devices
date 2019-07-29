@@ -37,6 +37,7 @@
 #define DEFAULT_CAN_BUS "CanBusHico"
 #define DEFAULT_LIN_INTERP_PERIOD_MS 50
 #define DEFAULT_LIN_INTERP_BUFFER_SIZE 1
+#define DEFAULT_LIN_INTERP_MODE "pt"
 
 namespace roboticslab
 {
@@ -875,6 +876,9 @@ protected:
     std::map< int, int > idxFromCanId;
 
     PositionDirectThread * posdThread;
+    int linInterpPeriodMs;
+    int linInterpBufferSize;
+    std::string linInterpMode;
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(const yarp::dev::CanMessage& message);

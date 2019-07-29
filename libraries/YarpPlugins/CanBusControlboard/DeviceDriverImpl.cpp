@@ -13,8 +13,10 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     std::string mode = config.check("mode",yarp::os::Value("position"),"control mode on startup (position/velocity)").asString();
     int timeCuiWait  = config.check("waitEncoder", yarp::os::Value(DEFAULT_TIME_TO_WAIT_CUI), "CUI timeout (seconds)").asInt32();
     std::string canBusType = config.check("canBusType", yarp::os::Value(DEFAULT_CAN_BUS), "CAN bus device name").asString();
-    int linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(DEFAULT_LIN_INTERP_PERIOD_MS), "linear interpolation mode period (milliseconds)").asInt32();
-    int linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(DEFAULT_LIN_INTERP_BUFFER_SIZE), "linear interpolation mode buffer size").asInt32();
+
+    linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(DEFAULT_LIN_INTERP_PERIOD_MS), "linear interpolation mode period (milliseconds)").asInt32();
+    linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(DEFAULT_LIN_INTERP_BUFFER_SIZE), "linear interpolation mode buffer size").asInt32();
+    linInterpMode = config.check("linInterpMode", yarp::os::Value(DEFAULT_LIN_INTERP_MODE), "linear interpolation mode (pt/pvt)").asString();
 
     yarp::os::Bottle ids = config.findGroup("ids", "CAN bus IDs").tail();  //-- e.g. 15
     yarp::os::Bottle trs = config.findGroup("trs", "reductions").tail();  //-- e.g. 160
@@ -28,8 +30,6 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     yarp::os::Bottle encoderPulsess = config.findGroup("encoderPulsess", "encoder pulses (multiple nodes)").tail();  //-- e.g. 4096 (4 * 1024)
 
     yarp::os::Bottle types = config.findGroup("types", "device name of each node").tail();  //-- e.g. 15
-
-    yarp::os::Value linInterpMode = config.check("linInterpMode", yarp::os::Value::getNullValue(), "linear interpolation mode (PT/PVT)");
 
     //-- Initialize the CAN device.
     yarp::os::Property canBusOptions;
@@ -97,14 +97,10 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         options.put("encoderPulses", encoderPulsess.get(i));
         options.put("linInterpPeriodMs", linInterpPeriodMs);
         options.put("linInterpBufferSize", linInterpBufferSize);
+        options.put("linInterpMode", linInterpMode);
         //std::stringstream ss; // Remember to #include <sstream>
         //ss << types.get(i).asString() << "_" << ids.get(i).asInt32();
         //options.setMonitor(config.getMonitor(),ss.str().c_str());
-
-        if (!linInterpMode.isNull())
-        {
-            options.put("linInterpMode", linInterpMode);
-        }
 
         yarp::os::Value v(&iCanBufferFactory, sizeof(iCanBufferFactory));
         options.put("canBufferFactory", v);

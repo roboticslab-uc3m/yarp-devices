@@ -26,7 +26,7 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::
             "linear interpolation mode period (ms)").asInt32();
     int linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(0),
             "linear interpolation mode buffer size").asInt32();
-    std::string linInterpMode = config.check("linInterpMode", yarp::os::Value(DEFAULT_LIN_INTERP_MODE),
+    std::string linInterpMode = config.check("linInterpMode", yarp::os::Value(""),
             "linear interpolation mode (PT/PVT)").asString();
 
     double tr = config.check("tr", yarp::os::Value(0.0)).asFloat64();
@@ -76,7 +76,7 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::
     }
     else
     {
-        CD_ERROR("Unsupported linear interpolation mode: %s.\n", linInterpMode.c_str());
+        CD_ERROR("Unsupported linear interpolation mode: \"%s\".\n", linInterpMode.c_str());
         return 0;
     }
 }
@@ -98,14 +98,50 @@ void LinearInterpolationBuffer::updateTarget(double target)
     mutex.unlock();
 }
 
+int LinearInterpolationBuffer::getPeriod() const
+{
+    return periodMs;
+}
+
+void LinearInterpolationBuffer::setPeriod(int periodMs)
+{
+    this->periodMs = periodMs;
+}
+
 int LinearInterpolationBuffer::getBufferSize() const
 {
     return bufferSize;
 }
 
+void LinearInterpolationBuffer::setBufferSize(int bufferSize)
+{
+    this->bufferSize = bufferSize;
+}
+
 void LinearInterpolationBuffer::configureBufferSize(uint8_t * msg)
 {
     std::memcpy(msg + 4, &bufferSize, 2);
+}
+
+LinearInterpolationBuffer * LinearInterpolationBuffer::cloneTo(const std::string & type)
+{
+    LinearInterpolationBuffer * buffer;
+
+    if (type == "pt")
+    {
+        buffer = new PtBuffer(periodMs, bufferSize, factor, maxVel);
+    }
+    else if (type == "pvt")
+    {
+        buffer = new PvtBuffer(periodMs, bufferSize, factor, maxVel);
+    }
+    else
+    {
+        CD_ERROR("Unsupported linear interpolation mode: \"%s\".\n", type.c_str());
+        return 0;
+    }
+
+    return buffer;
 }
 
 PtBuffer::PtBuffer(int _periodMs, int _bufferSize, double _factor, double _maxVel)
