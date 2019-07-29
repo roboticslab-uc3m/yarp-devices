@@ -47,7 +47,14 @@ bool roboticslab::CanBusControlboard::setControlMode(const int j, const int mode
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;
 
-    return iControlModeRaw[j]->setControlModeRaw( 0, mode );
+    if (!iControlModeRaw[j]->setControlModeRaw( 0, mode ))
+    {
+        return false;
+    }
+
+    posdThread->updateControlModeRegister(j, mode == VOCAB_CM_POSITION_DIRECT);
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------

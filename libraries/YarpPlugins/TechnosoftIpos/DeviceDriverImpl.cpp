@@ -15,12 +15,9 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->refAcceleration = config.check("refAcceleration",yarp::os::Value(0),"ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
     this->refSpeed = config.check("refSpeed",yarp::os::Value(0),"ref speed (meters/second or degrees/second)").asFloat64();
     this->encoderPulses = config.check("encoderPulses",yarp::os::Value(0),"encoderPulses").asInt32();
+    this->k = config.check("k",yarp::os::Value(0),"motor constant").asFloat64();
 
     // -- other parameters...
-    this->k = config.check("k",yarp::os::Value(0),"motor constant").asFloat64();
-    this->ptModeMs  = config.check("ptModeMs",yarp::os::Value(0),"ptMode (milliseconds)").asInt32();
-    this->ptPointCounter = 0;
-    this->ptMovementDone = false;
     this->targetReached = false;
     this->refTorque = 0;
     this->refVelocity = 0; // if you want to test.. put 0.1
@@ -28,6 +25,13 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->modeCurrentTorque = VOCAB_CM_NOT_CONFIGURED;
 
     this->getProductCode = 0;
+
+    linInterpBuffer = LinearInterpolationBuffer::createBuffer(config);
+
+    if (!linInterpBuffer)
+    {
+        return false;
+    }
 
     yarp::os::Value vCanBufferFactory = config.check("canBufferFactory", yarp::os::Value(0), "");
 
@@ -89,9 +93,9 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 bool roboticslab::TechnosoftIpos::close()
 {
     CD_INFO("\n");
+    delete linInterpBuffer;
     iCanBufferFactory->destroyBuffer(canOutputBuffer);
     return true;
 }
 
 // -----------------------------------------------------------------------------
-

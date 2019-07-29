@@ -5,12 +5,8 @@
 // -----------------------------------------------------------------------------
 bool roboticslab::CuiAbsolute::open(yarp::os::Searchable& config)
 {
-
     this->canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt32();
     this->tr = config.check("tr",yarp::os::Value(1),"reduction").asInt32();
-    this->ptModeMs  = config.check("ptModeMs",yarp::os::Value(0),"ptMode (milliseconds)").asInt32();
-    this->ptPointCounter = 0;
-    this->ptMovementDone = false;
     this->targetReached = false;
     this->max = 0;
     this->min = 0;

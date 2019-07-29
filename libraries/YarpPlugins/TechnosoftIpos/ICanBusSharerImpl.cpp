@@ -426,34 +426,65 @@ bool roboticslab::TechnosoftIpos::resetNode(int id)
 bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage & message)
 {
 
-    //--------------- Give high priority to PT, override EMGY red -------------------------
+    //--------------- Give high priority to PT, override EMCY red -------------------------
 
-    if( (message.getData()[1]==0xFF)&&(message.getData()[2]==0x01)&&(message.getData()[4]==0x20) )
+    if (message.getData()[0] == 0x01 && message.getData()[1] == 0xFF && message.getData()[2] == 0x01)
     {
-        ptBuffer.wait();
-        CD_WARNING("pt buffer full! canId: %d.\n",canId);
-        return true;
-    }
-    else if( (message.getData()[1]==0xFF)&&(message.getData()[2]==0x01)&&(message.getData()[4]==0x00) )
-    {
-        ptBuffer.post();
-        CD_WARNING("pt buffer empty. canId: %d.\n",canId);
-        return true;
-    }
-    else if( (message.getData()[1]==0xFF)&&(message.getData()[2]==0x01)&&(message.getData()[3]==0x08) )
-    {
-        CD_WARNING("pt buffer message (don't know what it means). canId: %d.\n",canId);
+        CD_INFO("Interpolated position mode status. canId: %d.\n",canId);
+
+        if ((message.getData()[4] & 0x80) == 0)
+        {
+            CD_INFO("\t* buffer is not empty.\n");
+        }
+        else
+        {
+            CD_INFO("\t* buffer is empty.\n");
+
+            if (linInterpBuffer->getType() == "pvt")
+            {
+                if ((message.getData()[4] & 0x08) == 0)
+                {
+                    CD_INFO("\t* pvt maintained position on buffer empty (zero velocity).\n");
+                }
+                else
+                {
+                    CD_INFO("\t* pvt performed quick stop on buffer empty (non-zero velocity).\n");
+                }
+            }
+        }
+
+        if ((message.getData()[4] & 0x40) == 0)
+        {
+            CD_INFO("\t* buffer is not low.\n");
+        }
+        else
+        {
+            CD_INFO("\t* buffer is low.\n");
+        }
+
+        if ((message.getData()[4] & 0x20) == 0)
+        {
+            CD_INFO("\t* buffer is not full.\n");
+        }
+        else
+        {
+            CD_INFO("\t* buffer is full.\n");
+        }
+
+        if ((message.getData()[4] & 0x10) == 0)
+        {
+            CD_INFO("\t* no integrity counter error.\n");
+        }
+        else
+        {
+            CD_INFO("\t* integrity counter error.\n");
+        }
+
         return true;
     }
     else if( (message.getData()[0]==0x37)&&(message.getData()[1]==0x96) )
     {
         CD_WARNING("pt movement ended. canId: %d (via %X).\n",canId,message.getId()-canId);
-        ptMovementDone = true;
-        return true;
-    }
-    else if (message.getData()[0] == 0x01 && message.getData()[1] == 0xFF)
-    {
-        CD_INFO("PVT control message. canId: %d.\n",canId);
         return true;
     }
     else if( (message.getId()-canId) == 0x580 )  // -------------- SDO ----------------------
@@ -504,28 +535,28 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             {
                 CD_INFO("\t-iPOS specific: External Reference Speed Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                getMode = 0;
+                getMode = VOCAB_CM_UNKNOWN;
                 getModeReady.post();
             }
             else if(253==got)  // -3
             {
                 CD_INFO("\t-iPOS specific: External Reference Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                getMode = VOCAB_CM_POSITION_DIRECT;
+                getMode = VOCAB_CM_UNKNOWN;
                 getModeReady.post();
             }
             else if(254==got)  // -2
             {
                 CD_INFO("\t-iPOS specific: Electronic Camming Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                getMode = 0;
+                getMode = VOCAB_CM_UNKNOWN;
                 getModeReady.post();
             }
             else if(255==got)  // -1
             {
                 CD_INFO("\t-iPOS specific: Electronic Gearing Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                getMode = 0;
+                getMode = VOCAB_CM_UNKNOWN;
                 getModeReady.post();
             }
             else if(1==got)
@@ -546,28 +577,28 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             {
                 CD_INFO("\t-Homing Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                getMode = 0;
+                getMode = VOCAB_CM_UNKNOWN;
                 getModeReady.post();
             }
             else if(7==got)
             {
                 CD_INFO("\t-Interpolated Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                getMode = 0;
+                getMode = VOCAB_CM_POSITION_DIRECT;
                 getModeReady.post();
             }
             else if(8==got)
             {
                 CD_INFO("\t-Cyclic Synchronous Position Mode. canId: %d.\n",canId);
                 getModeReady.wait();
-                getMode = 0;
+                getMode = VOCAB_CM_UNKNOWN;
                 getModeReady.post();
             }
             else
             {
                 CD_WARNING("\t-Mode \"%d\" not specified in manual, may be in Fault or not enabled yet. canId(%d).\n",got,(message.getId() & 0x7F));
                 getModeReady.wait();
-                getMode = VOCAB_FAILED;
+                getMode = VOCAB_CM_UNKNOWN;
                 getModeReady.post();
                 return true;
             }

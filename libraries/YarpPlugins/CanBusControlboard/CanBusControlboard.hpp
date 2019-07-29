@@ -5,6 +5,8 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
+#include <yarp/dev/IControlLimits.h>
+#include <yarp/dev/IRemoteVariables.h>
 #include <yarp/dev/CanBusInterface.h>
 
 #include <stdlib.h>  //-- Just for ::exit()
@@ -15,6 +17,8 @@
 #include <sstream>
 
 #include "ICuiAbsolute.h"
+#include "PositionDirectThread.hpp"
+
 // -- Pause
 #include <stdlib.h>
 #include <stdio.h>
@@ -29,12 +33,11 @@
 #include "ICanBusSharer.h"
 
 #define DEFAULT_MODE "position"
-
-#define DEFAULT_PT_MODE_MS 50  //-- Don't move more than 1 degree in 50 ms.
-
 #define DEFAULT_TIME_TO_WAIT_CUI 0
-
 #define DEFAULT_CAN_BUS "CanBusHico"
+#define DEFAULT_LIN_INTERP_PERIOD_MS 50
+#define DEFAULT_LIN_INTERP_BUFFER_SIZE 1
+#define DEFAULT_LIN_INTERP_MODE "pt"
 
 namespace roboticslab
 {
@@ -61,6 +64,7 @@ class CanBusControlboard : public yarp::dev::DeviceDriver,
                            public yarp::dev::IInteractionMode,
                            public yarp::dev::IPositionControl,
                            public yarp::dev::IPositionDirect,
+                           public yarp::dev::IRemoteVariables,
                            public yarp::dev::ITorqueControl,
                            public yarp::dev::IVelocityControl,
                            public yarp::os::Thread
@@ -734,7 +738,8 @@ public:
      */
     // virtual bool stop(const int n_joint, const int *joints);
 
-    // -----------IInteracionMode Declarations. Implementation in IInteracionModeImpl.cpp --------------
+    // -----------IInteractionMode Declarations. Implementation in IInteractionModeImpl.cpp --------------
+
     /**
      * Get the current interaction mode of the robot, values can be stiff or compliant.
      * @param axis joint number
@@ -794,6 +799,14 @@ public:
      */
     virtual bool setInteractionModes(yarp::dev::InteractionModeEnum* modes);
 
+    // -----------IRemoteVariables Declarations. Implementation in IRemoteVariablesImpl.cpp --------------
+
+    virtual bool getRemoteVariable(std::string key, yarp::os::Bottle& val);
+
+    virtual bool setRemoteVariable(std::string key, const yarp::os::Bottle& val);
+
+    virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys);
+
     // -------- Thread declarations. Implementation in ThreadImpl.cpp --------
 
     /**
@@ -852,11 +865,20 @@ protected:
     std::vector< yarp::dev::IInteractionModeRaw* > iInteractionModeRaw;
     std::vector< yarp::dev::IPositionControlRaw* > iPositionControlRaw;
     std::vector< yarp::dev::IPositionDirectRaw* > iPositionDirectRaw;
+    std::vector< yarp::dev::IRemoteVariablesRaw* > iRemoteVariablesRaw;
     std::vector< yarp::dev::ITorqueControlRaw* > iTorqueControlRaw;
     std::vector< yarp::dev::IVelocityControlRaw* > iVelocityControlRaw;
+
     std::vector< ICanBusSharer* > iCanBusSharer;
 
+    std::vector< int > motorIds;
+
     std::map< int, int > idxFromCanId;
+
+    PositionDirectThread * posdThread;
+    int linInterpPeriodMs;
+    int linInterpBufferSize;
+    std::string linInterpMode;
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(const yarp::dev::CanMessage& message);

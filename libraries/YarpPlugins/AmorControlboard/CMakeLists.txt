@@ -28,6 +28,7 @@ if(NOT SKIP_AmorControlboard)
                                      IEncodersTimedImpl.cpp
                                      IInteractionModeImpl.cpp
                                      IPositionControlImpl.cpp
+                                     IRemoteVariablesImpl.cpp
                                      ITorqueControlImpl.cpp
                                      IVelocityControlImpl.cpp)
 

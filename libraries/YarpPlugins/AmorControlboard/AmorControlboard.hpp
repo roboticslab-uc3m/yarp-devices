@@ -38,6 +38,7 @@ class AmorControlboard : public yarp::dev::DeviceDriver,
                          public yarp::dev::IEncodersTimed,
                          public yarp::dev::IInteractionMode,
                          public yarp::dev::IPositionControl,
+                         public yarp::dev::IRemoteVariables,
                          public yarp::dev::ITorqueControl,
                          public yarp::dev::IVelocityControl
 {
@@ -740,6 +741,14 @@ public:
     * @return true/false on success/failure
     */
     virtual bool getRefCurrent(int m, double *curr);
+
+// -----------IRemoteVariables Declarations. Implementation in IRemoteVariablesImpl.cpp --------------
+
+    virtual bool getRemoteVariable(std::string key, yarp::os::Bottle& val);
+
+    virtual bool setRemoteVariable(std::string key, const yarp::os::Bottle& val);
+
+    virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys);
 
 // -------- DeviceDriver declarations. Implementation in IDeviceDriverImpl.cpp --------
 

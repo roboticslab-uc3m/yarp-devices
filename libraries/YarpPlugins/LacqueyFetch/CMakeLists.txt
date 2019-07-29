@@ -23,6 +23,7 @@ if(NOT SKIP_LacqueyFetch)
                                  IInteractionModeRawImpl.cpp
                                  IPositionControlRawImpl.cpp
                                  IPositionDirectRawImpl.cpp
+                                 IRemoteVariablesRawImpl.cpp
                                  ITorqueControlRawImpl.cpp
                                  IVelocityControlRawImpl.cpp)
 

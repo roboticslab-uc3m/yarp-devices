@@ -8,6 +8,8 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
+#include <yarp/dev/IControlLimits.h>
+#include <yarp/dev/IRemoteVariables.h>
 
 //#define CD_FULL_FILE  //-- Can be globally managed from father CMake. Good for debugging with polymorphism.
 //#define CD_HIDE_DEBUG  //-- Can be globally managed from father CMake.
@@ -41,6 +43,7 @@ class FakeJoint : public yarp::dev::DeviceDriver,
                   public yarp::dev::IInteractionModeRaw,
                   public yarp::dev::IPositionControlRaw,
                   public yarp::dev::IPositionDirectRaw,
+                  public yarp::dev::IRemoteVariablesRaw,
                   public yarp::dev::ITorqueControlRaw,
                   public yarp::dev::IVelocityControlRaw,
                   public ICanBusSharer
@@ -174,13 +177,17 @@ public:
     // -- (just defined in IInteractionModeRaw) - virtual bool stopRaw(const int n_joint, const int *joints);
 
     // ------- IInteractionModeRaw declarations. Implementation in IInteractionModeRawImpl.cpp -------
-
     virtual bool getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode);
     virtual bool getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
     virtual bool getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
     virtual bool setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode);
     virtual bool setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
     virtual bool setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
+
+    // ------- IRemoteVariablesRaw declarations. Implementation in IRemoteVariablesRawImpl.cpp -------
+    virtual bool getRemoteVariableRaw(std::string key, yarp::os::Bottle& val);
+    virtual bool setRemoteVariableRaw(std::string key, const yarp::os::Bottle& val);
+    virtual bool getRemoteVariablesListRaw(yarp::os::Bottle* listOfKeys);
 
 protected:
 
@@ -193,12 +200,6 @@ protected:
      * @return true/false on success/failure.
      */
     bool send(uint32_t cob, uint16_t len, uint8_t * msgData);
-
-
-    /** pt-related **/
-    int ptPointCounter;
-    yarp::os::Semaphore ptBuffer;
-    bool ptMovementDone;
 
     bool targetReached;
 
@@ -219,8 +220,6 @@ protected:
     /** A helper function to display CAN messages. */
     std::string msgToStr(const yarp::dev::CanMessage & message);
     std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
-
-    int16_t ptModeMs;  //-- [ms]
 
     //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
     yarp::dev::InteractionModeEnum interactionMode;

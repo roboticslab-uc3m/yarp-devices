@@ -122,50 +122,9 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
 {
     CD_INFO("\n");
 
-    //-- 5. External reference type. Slave receives reference through CAN (manual 208 of 263).
-    uint8_t msg_ref_type[]= {0x2B,0x1D,0x20,0x00,0x01,0x00,0x00,0x00}; //CAN
+    linInterpBuffer->resetIntegrityCounter();
 
-    if( ! send( 0x600, 8, msg_ref_type) )
-    {
-        CD_ERROR("Could not send \"ref_type\". %s\n", msgToStr(0x600, 8, msg_ref_type).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"ref_type\". %s\n", msgToStr(0x600, 8, msg_ref_type).c_str() );
-
-    //-- Mode -3 (manual 209 of 263). Send the following message (SDO access to object 6060 h , 8-bit value -1)
-    uint8_t msg_mode_ext_ref_pos[]= {0x2F,0x60,0x60,0x00,0xFD,0x00,0x00,0x00};
-
-    if( ! send( 0x600, 8, msg_mode_ext_ref_pos) )
-    {
-        CD_ERROR("Could not send \"ext_ref_pos_mode\". %s\n", msgToStr(0x600, 8, msg_mode_ext_ref_pos).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"ext_ref_pos_mode\". %s\n", msgToStr(0x600, 8, msg_mode_ext_ref_pos).c_str() );
-
-    double ref;
-    getEncoderRaw(0, &ref);
-    setPositionRaw(0, ref);
-
-    //-- Control word (manual 215 of 263).
-    uint8_t msg_position_word[] = {0x3F,0x00};
-
-    if( ! send( 0x200, 2, msg_position_word) )
-    {
-        CD_ERROR("Could not send position_word. %s\n", msgToStr(0x200, 2, msg_position_word).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"position_word\". %s\n", msgToStr(0x200, 2, msg_position_word).c_str() );
-
-    return true;
-}
-
-bool roboticslab::TechnosoftIpos::setTrajectoryModeRaw()
-{
-    CD_INFO("\n");
-
-    ptPointCounter = 0;
-
-    //-- ptprepare: pg. 165 (181/263)
+    //-- ptprepare: pg. 168 (184/263)
     //*************************************************************
     //-- 1. - 4. From start to enable.
     //*************************************************************
@@ -183,14 +142,14 @@ bool roboticslab::TechnosoftIpos::setTrajectoryModeRaw()
     if ( ! send(0x600,8,mapSDOsub1) )
         return false;
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    //-- b) Write in object 1601 h sub-index 2 the description of the interpolated data record
+    //-- b) Write in object 1602 h sub-index 2 the description of the interpolated data record
     //-- sub-index 2:
     //-- Send the following message (SDO access to object 1602 h sub-index 2, 32-bit value 60C10220 h ):
     uint8_t mapSDOsub2[]= {0x23,0x02,0x16,0x02,0x20,0x02,0xC1,0x60};
     if ( ! send(0x600,8,mapSDOsub2) )
         return false;
     //*************************************************************
-    //-- 7. Enable the RPDO3. Set the object 1601 h sub-index 0 with the value 2.
+    //-- 7. Enable the RPDO3. Set the object 1602 h sub-index 0 with the value 2.
     //-- Send the following message (SDO access to object 1601 h sub-index 0, 8-bit value 2):
     uint8_t enableRPDO3[]= {0x2F,0x02,0x16,0x00,0x02,0x00,0x00,0x00};
     if ( !  send(0x600,8,enableRPDO3) )
@@ -202,22 +161,23 @@ bool roboticslab::TechnosoftIpos::setTrajectoryModeRaw()
     if ( ! send(0x600,8,opMode) )
         return false;
     //*************************************************************
-    //-- 9. Interpolation sub mode select. Select PT interpolation position mode.
-    //-- Send the following message (SDO access to object 60C0 h , 16-bit value 0000 h ):
+    //-- 9. Interpolation sub mode select. Select PVT interpolation position mode.
+    //-- Send the following message (SDO access to object 60C0 h , 16-bit value FFFF h ):
     uint8_t subMode[]= {0x2E,0xC0,0x60,0x00,0x00,0x00,0x00,0x00};
+    linInterpBuffer->configureSubMode(subMode);
     if ( ! send(0x600,8,subMode) )
         return false;
     //*************************************************************
-    //-- 10. Interpolated position buffer length. Set the buffer length to 12. The maximum length is 15.
-    //uint8_t buffLength[]={0x2B,0x74,0x20,0x00,0x00,0x0C,0x00,0x00};  //-- 12
-    uint8_t buffLength[]= {0x2B,0x74,0x20,0x00,0x00,0x0F,0x00,0x00}; //-- 15
+    //-- 10. Interpolated position buffer length. (...)
+    uint8_t buffLength[]= {0x2B,0x73,0x20,0x00,0x00,0x00,0x00,0x00};
+    linInterpBuffer->configureBufferSize(buffLength);
     if ( ! send(0x600,8,buffLength) )
         return false;
     //*************************************************************
     //-- 11. Interpolated position buffer configuration. By setting the value A001 h , the buffer is
     //-- cleared and the integrity counter will be set to 1. Send the following message (SDO
     //-- access to object 2074 h , 16-bit value C h ):
-    uint8_t buffConf[]= {0x2B,0x74,0x20,0x00,0x01,0xA0,0x00,0x00};
+    uint8_t buffConf[]= {0x2B,0x74,0x20,0x00,0x00,0xA0,0x00,0x00};
     if ( ! send(0x600,8,buffConf) )
         return false;
     //*************************************************************
@@ -236,8 +196,19 @@ bool roboticslab::TechnosoftIpos::setTrajectoryModeRaw()
     if ( ! send(0x600,8,initPos) )
         return false;
 
-    //*************************************************************
-    yarp::os::Time::delay(1);  //-- Seems like a "must".
+    yarp::os::Time::delay(0.1);  //-- Seems like a "must".
+
+    linInterpBuffer->setInitialReference(ref);
+    linInterpBuffer->updateTarget(ref);
+
+    for (int i = 0; i < linInterpBuffer->getBufferSize(); i++)
+    {
+        if (!sendLinearInterpolationTarget())
+        {
+            CD_ERROR("Unable to send point %d/%d to buffer.\n", i + 1, linInterpBuffer->getBufferSize());
+            return false;
+        }
+    }
 
     return true;
 }

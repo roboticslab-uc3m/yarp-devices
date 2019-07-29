@@ -2,15 +2,21 @@
 
 #include "CanBusControlboard.hpp"
 
+#include <map>
+
+#include "ITechnosoftIpos.h"
+
 // ------------------- DeviceDriver Related ------------------------------------
 
 bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 {
     std::string mode = config.check("mode",yarp::os::Value("position"),"control mode on startup (position/velocity)").asString();
-    int16_t ptModeMs = config.check("ptModeMs",yarp::os::Value(DEFAULT_PT_MODE_MS),"PT mode (milliseconds)").asInt32();
     int timeCuiWait  = config.check("waitEncoder", yarp::os::Value(DEFAULT_TIME_TO_WAIT_CUI), "CUI timeout (seconds)").asInt32();
-
     std::string canBusType = config.check("canBusType", yarp::os::Value(DEFAULT_CAN_BUS), "CAN bus device name").asString();
+
+    linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(DEFAULT_LIN_INTERP_PERIOD_MS), "linear interpolation mode period (milliseconds)").asInt32();
+    linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(DEFAULT_LIN_INTERP_BUFFER_SIZE), "linear interpolation mode buffer size").asInt32();
+    linInterpMode = config.check("linInterpMode", yarp::os::Value(DEFAULT_LIN_INTERP_MODE), "linear interpolation mode (pt/pvt)").asString();
 
     yarp::os::Bottle ids = config.findGroup("ids", "CAN bus IDs").tail();  //-- e.g. 15
     yarp::os::Bottle trs = config.findGroup("trs", "reductions").tail();  //-- e.g. 160
@@ -54,19 +60,23 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     //-- Start the reading thread (required for checkMotionDoneRaw).
     this->Thread::start();
 
+    posdThread = new PositionDirectThread(linInterpPeriodMs * 0.001);
+
     //-- Populate the CAN nodes vector.
     nodes.resize( ids.size() );
     iControlLimitsRaw.resize( nodes.size() );
     iControlModeRaw.resize( nodes.size() );
     iCurrentControlRaw.resize( nodes.size() );
     iEncodersTimedRaw.resize( nodes.size() );
+    iInteractionModeRaw.resize( nodes.size() );
     iPositionControlRaw.resize( nodes.size() );
     iPositionDirectRaw.resize( nodes.size() );
+    iRemoteVariablesRaw.resize( nodes.size() );
     iTorqueControlRaw.resize( nodes.size() );
+    iVelocityControlRaw.resize( nodes.size() );
     iCanBusSharer.resize( nodes.size() );
 
-    iInteractionModeRaw.resize( nodes.size() );
-    iVelocityControlRaw.resize( nodes.size() ); // -- new
+    std::map<int, ITechnosoftIpos *> idToTechnosoftIpos;
 
     for(int i=0; i<nodes.size(); i++)
     {
@@ -85,7 +95,9 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         options.put("refAcceleration", refAccelerations.get(i));
         options.put("refSpeed", refSpeeds.get(i));
         options.put("encoderPulses", encoderPulsess.get(i));
-        options.put("ptModeMs", ptModeMs);
+        options.put("linInterpPeriodMs", linInterpPeriodMs);
+        options.put("linInterpBufferSize", linInterpBufferSize);
+        options.put("linInterpMode", linInterpMode);
         //std::stringstream ss; // Remember to #include <sstream>
         //ss << types.get(i).asString() << "_" << ids.get(i).asInt32();
         //options.setMonitor(config.getMonitor(),ss.str().c_str());
@@ -133,15 +145,27 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             return false;
         }
 
+        if( !device->view( iInteractionModeRaw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iInteractionModeRaw interface\n");
+            return false;
+        }
+
         if( !device->view( iPositionControlRaw[i] ))
         {
-            CD_ERROR("[error] Problems acquiring iPositionControl2Raw interface\n");
+            CD_ERROR("[error] Problems acquiring iPositionControlRaw interface\n");
             return false;
         }
 
         if( !device->view( iPositionDirectRaw[i] ))
         {
             CD_ERROR("[error] Problems acquiring iPositionDirectRaw interface\n");
+            return false;
+        }
+
+        if( !device->view( iRemoteVariablesRaw[i] ))
+        {
+            CD_ERROR("[error] Problems acquiring iRemoteVariablesRaw interface\n");
             return false;
         }
 
@@ -156,17 +180,12 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             CD_ERROR("[error] Problems acquiring iVelocityControl2Raw interface\n");
             return false;
         }
+
         // -- si el device es un Cui, este podrá "ver" las funciones programadas en iCanBusSharer (funciones que hemos añadido al encoder).
         // -- estas funciones se encuentran implementadas en el cpp correspondiente "ICanBusSharerImpl.cpp", por lo tanto le da la funcionalidad que deseamos
-        if(! device->view( iCanBusSharer[i] ))
+        if( !device->view( iCanBusSharer[i] ))
         {
             CD_ERROR("[error] Problems acquiring iCanBusSharer interface\n");
-            return false;
-        }
-
-        if(! device->view( iInteractionModeRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iInteractionModeRaw interface\n");
             return false;
         }
 
@@ -176,6 +195,12 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         //-- DRIVERS
         if(types.get(i).asString() == "TechnosoftIpos")
         {
+            motorIds.push_back(i);
+
+            ITechnosoftIpos * iTechnosoftIpos;
+            device->view(iTechnosoftIpos);
+            idToTechnosoftIpos.insert(std::make_pair(i, iTechnosoftIpos));
+
             //-- Set initial parameters on physical motor drivers.
 
             if ( ! iPositionControlRaw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asFloat64() ) )
@@ -374,6 +399,9 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             return false;
     }
 
+    posdThread->setNodeHandles(idToTechnosoftIpos);
+    posdThread->start();
+
     return true;
 }
 
@@ -385,6 +413,13 @@ bool roboticslab::CanBusControlboard::close()
 
     //-- Stop the read thread.
     this->Thread::stop();
+
+    if (posdThread && posdThread->isRunning())
+    {
+        posdThread->stop();
+    }
+
+    delete posdThread;
 
     const yarp::dev::CanMessage &msg = canInputBuffer[0];
 

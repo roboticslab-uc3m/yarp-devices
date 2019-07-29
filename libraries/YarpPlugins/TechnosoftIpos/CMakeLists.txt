@@ -24,8 +24,11 @@ if(NOT SKIP_TechnosoftIpos)
                                    IInteractionModeRawImpl.cpp
                                    IPositionControlRawImpl.cpp
                                    IPositionDirectRawImpl.cpp
+                                   IRemoteVariablesRawImpl.cpp
                                    ITorqueControlRawImpl.cpp
-                                   IVelocityControlRawImpl.cpp)
+                                   IVelocityControlRawImpl.cpp
+                                   LinearInterpolationBuffer.hpp
+                                   LinearInterpolationBuffer.cpp)
 
     target_link_libraries(TechnosoftIpos YARP::YARP_OS
                                          YARP::YARP_dev

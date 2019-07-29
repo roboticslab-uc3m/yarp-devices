@@ -21,6 +21,7 @@ if(NOT SKIP_FakeControlboard)
                                      IEncodersTimedImpl.cpp
                                      IPositionControlImpl.cpp
                                      IPositionDirectImpl.cpp
+                                     IRemoteVariablesImpl.cpp
                                      ITorqueControlImpl.cpp
                                      IVelocityControlImpl.cpp
                                      PeriodicThreadImpl.cpp

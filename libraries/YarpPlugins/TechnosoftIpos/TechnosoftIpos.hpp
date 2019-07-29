@@ -9,16 +9,14 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
+#include <yarp/dev/IControlLimits.h>
+#include <yarp/dev/IRemoteVariables.h>
 
-//#define CD_FULL_FILE  //-- Can be globally managed from father CMake. Good for debugging with polymorphism.
-//#define CD_HIDE_DEBUG  //-- Can be globally managed from father CMake.
-//#define CD_HIDE_SUCCESS  //-- Can be globally managed from father CMake.
-//#define CD_HIDE_INFO  //-- Can be globally managed from father CMake.
-//#define CD_HIDE_WARNING  //-- Can be globally managed from father CMake.
-//#define CD_HIDE_ERROR  //-- Can be globally managed from father CMake.
-#include "ColorDebug.h"
+#include <ColorDebug.h>
+
 #include "ICanBusSharer.h"
 #include "ITechnosoftIpos.h"
+#include "LinearInterpolationBuffer.hpp"
 
 namespace roboticslab
 {
@@ -63,14 +61,14 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver,
                        public yarp::dev::ICurrentControlRaw,
                        public yarp::dev::IEncodersTimedRaw,
                        public yarp::dev::IInteractionModeRaw,
-                       public yarp::dev::IPositionControl2Raw,
+                       public yarp::dev::IPositionControlRaw,
                        public yarp::dev::IPositionDirectRaw,
+                       public yarp::dev::IRemoteVariablesRaw,
                        public yarp::dev::ITorqueControlRaw,
                        public yarp::dev::IVelocityControlRaw,
                        public ICanBusSharer,
                        public ITechnosoftIpos
 {
-
 public:
 
     TechnosoftIpos() : lastEncoderRead(0.0)
@@ -104,8 +102,12 @@ public:
     virtual bool resetNodes();
     /** reset communications */
     virtual bool resetCommunication();
+    /** send new point to PT/PVT buffer */
+    virtual bool sendLinearInterpolationTarget();
+    /** send start signal to PT/PVT mode */
+    virtual bool sendLinearInterpolationStart();
 
-    //  --------- IControlLimits2Raw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
+    //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
     virtual bool setLimitsRaw(int axis, double min, double max);
     virtual bool getLimitsRaw(int axis, double *min, double *max);
     virtual bool setVelLimitsRaw(int axis, double min, double max);
@@ -117,14 +119,12 @@ public:
     //  --------- IControlModeRaw Declarations. Implementation in IControlModeRawImpl.cpp ---------
     bool setPositionModeRaw(int j);
     bool setVelocityModeRaw(int j);
+    bool setPositionDirectModeRaw();
     bool setTorqueModeRaw(int j);
     //-- Auxiliary functions (splitted) of setTorqueModeRaw
     bool setTorqueModeRaw1();
     bool setTorqueModeRaw2();
     bool setTorqueModeRaw3();
-    //-- Old yarp::dev::IPositionDirectRaw implementation
-    bool setPositionDirectModeRaw();
-    bool setTrajectoryModeRaw();
 
     virtual bool getControlModeRaw(int j, int *mode);
     //-- Auxiliary functions (splitted) of getControlModeRaw
@@ -200,7 +200,6 @@ public:
 
     // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
     virtual bool setPositionRaw(int j, double ref);
-    virtual bool setTrajectoryRaw(int j, double ref);
     virtual bool setPositionsRaw(const int n_joint, const int *joints, const double *refs);
     virtual bool setPositionsRaw(const double *refs);
 
@@ -238,7 +237,25 @@ public:
     virtual bool setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
     virtual bool setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
 
+    // ------- IRemoteVariablesRaw declarations. Implementation in IRemoteVariablesRawImpl.cpp -------
+    virtual bool getRemoteVariableRaw(std::string key, yarp::os::Bottle& val);
+    virtual bool setRemoteVariableRaw(std::string key, const yarp::os::Bottle& val);
+    virtual bool getRemoteVariablesListRaw(yarp::os::Bottle* listOfKeys);
 
+    // helpers
+    template <typename T_int, typename T_frac>
+    static void encodeFixedPoint(double value, T_int * integer, T_frac * fractional)
+    {
+        *integer = (T_int)value;
+        *fractional = std::abs(value - *integer) * (1 << 8 * sizeof(T_frac));
+    }
+
+    template <typename T_int, typename T_frac>
+    static double decodeFixedPoint(T_int integer, T_frac fractional)
+    {
+        double frac = (double)fractional / (1 << 8 * sizeof(T_frac));
+        return integer + (integer >= 0 ? frac : -frac);
+    }
 
 protected:
 
@@ -257,20 +274,6 @@ protected:
     /** A helper function to display CAN messages. */
     std::string msgToStr(const yarp::dev::CanMessage & message);
     std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
-
-    template <typename T_int, typename T_frac>
-    static void encodeFixedPoint(double value, T_int * integer, T_frac * fractional)
-    {
-        *integer = (T_int)value;
-        *fractional = std::abs(value - *integer) * (1 << 8 * sizeof(T_frac));
-    }
-
-    template <typename T_int, typename T_frac>
-    static double decodeFixedPoint(T_int integer, T_frac fractional)
-    {
-        double frac = (double)fractional / (1 << 8 * sizeof(T_frac));
-        return integer + (integer >= 0 ? frac : -frac);
-    }
 
     int canId;
     yarp::dev::ICanBus *canDevicePtr;
@@ -304,11 +307,8 @@ protected:
     int getEnable;
     yarp::os::Semaphore getEnableReady;
 
-    //-- PT stuff
-    int16_t ptModeMs;  //-- [ms]
-    int ptPointCounter;
-    bool ptMovementDone;
-    yarp::os::Semaphore ptBuffer;
+    //-- PT/PVT stuff
+    LinearInterpolationBuffer * linInterpBuffer;
 
     //-- More internal parameter stuff
     double max, min, maxVel, refAcceleration, refSpeed, refTorque, refCurrent, refVelocity, targetPosition, tr, k;
@@ -336,4 +336,3 @@ protected:
 }  // namespace roboticslab
 
 #endif  // __TECHNOSOFT_IPOS__
-
