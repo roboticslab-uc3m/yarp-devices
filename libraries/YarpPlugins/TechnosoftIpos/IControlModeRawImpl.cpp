@@ -2,6 +2,8 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <yarp/os/Vocab.h>
+
 // ############################## IControlModeRaw Related ##############################
 
 bool roboticslab::TechnosoftIpos::setPositionModeRaw(int j)
@@ -349,7 +351,7 @@ bool roboticslab::TechnosoftIpos::getControlModesRaw(const int n_joint, const in
 
 bool roboticslab::TechnosoftIpos::setControlModeRaw(const int j, const int mode)
 {
-    CD_DEBUG("(%d, %d)\n", j, mode);
+    CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
 
     //-- Check index within range
     if (j != 0) return false;

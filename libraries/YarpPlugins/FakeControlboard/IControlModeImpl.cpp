@@ -2,6 +2,7 @@
 
 #include "FakeControlboard.hpp"
 
+#include <yarp/os/Vocab.h>
 #include <ColorDebug.h>
 
 // ------------------- IControlMode Related ------------------------------------
@@ -64,7 +65,7 @@ bool roboticslab::FakeControlboard::getControlModes(const int n_joint, const int
 
 bool roboticslab::FakeControlboard::setControlMode(const int j, const int mode)
 {
-    CD_DEBUG("(%d)\n", j);
+    CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
 
     if ((unsigned int)j > axes)
     {

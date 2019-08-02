@@ -2,8 +2,9 @@
 
 #include "TextilesHand.hpp"
 
-// ################################ IInteractionModeRaw Related ################################
+#include <yarp/os/Vocab.h>
 
+// ################################ IInteractionModeRaw Related ################################
 
 bool roboticslab::TextilesHand::getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode)
 {
@@ -35,7 +36,7 @@ bool roboticslab::TextilesHand::getInteractionModesRaw(yarp::dev::InteractionMod
 
 bool roboticslab::TextilesHand::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
 {
-    CD_INFO("(%d), (%s)\n",axis, mode); //-- I don't know if this is correct (if I want to print mode?)
+    CD_INFO("(%d), (%s)\n", axis, yarp::os::Vocab::decode(mode).c_str());
 
     interactionModeSemaphore.wait();
     interactionMode = mode;

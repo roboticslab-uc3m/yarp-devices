@@ -2,6 +2,8 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <yarp/os/Vocab.h>
+
 // ------------------ IInteractionModeRaw Related ----------------------------------------
 
 
@@ -15,7 +17,6 @@ bool roboticslab::TechnosoftIpos::getInteractionModeRaw(int axis, yarp::dev::Int
 
     return true;
 }
-
 
 bool roboticslab::TechnosoftIpos::getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
@@ -33,7 +34,7 @@ bool roboticslab::TechnosoftIpos::getInteractionModesRaw(yarp::dev::InteractionM
 
 bool roboticslab::TechnosoftIpos::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
 {
-    CD_INFO("(%d), (%s)\n",axis, mode); //-- I don't know if this is correct (if I want to print mode?)
+    CD_INFO("(%d), (%s)\n", axis, yarp::os::Vocab::decode(mode).c_str());
 
     interactionModeSemaphore.wait();
     interactionMode = mode;
@@ -57,5 +58,3 @@ bool roboticslab::TechnosoftIpos::setInteractionModesRaw(yarp::dev::InteractionM
     return true;
 
 }
-
-

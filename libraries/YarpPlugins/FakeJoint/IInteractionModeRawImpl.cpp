@@ -2,8 +2,9 @@
 
 #include "FakeJoint.hpp"
 
-// ################################ IInteractionModeRaw Related ################################
+#include <yarp/os/Vocab.h>
 
+// ################################ IInteractionModeRaw Related ################################
 
 bool roboticslab::FakeJoint::getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode)
 {
@@ -35,7 +36,7 @@ bool roboticslab::FakeJoint::getInteractionModesRaw(yarp::dev::InteractionModeEn
 
 bool roboticslab::FakeJoint::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
 {
-    CD_INFO("(%d), (%s)\n",axis, mode); //-- I don't know if this is correct (if I want to print mode?)
+    CD_INFO("(%d), (%s)\n", axis, yarp::os::Vocab::decode(mode).c_str());
 
     interactionModeSemaphore.wait();
     interactionMode = mode;

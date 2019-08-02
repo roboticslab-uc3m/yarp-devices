@@ -2,6 +2,8 @@
 
 #include "CanBusControlboard.hpp"
 
+#include <yarp/os/Vocab.h>
+
 // ------------------- IControlMode Related ------------------------------------
 
 bool roboticslab::CanBusControlboard::getControlMode(int j, int *mode)
@@ -42,7 +44,7 @@ bool roboticslab::CanBusControlboard::getControlModes(const int n_joint, const i
 
 bool roboticslab::CanBusControlboard::setControlMode(const int j, const int mode)
 {
-    CD_DEBUG("(%d, %d)\n",j,mode);
+    CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
 
     //-- Check index within range
     if ( ! this->indexWithinRange(j) ) return false;

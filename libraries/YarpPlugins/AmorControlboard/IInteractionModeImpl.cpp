@@ -2,6 +2,8 @@
 
 #include "AmorControlboard.hpp"
 
+#include <yarp/os/Vocab.h>
+
 // ------------------ IInteractionMode related -----------------------------------------
 
 bool roboticslab::AmorControlboard::getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
@@ -42,7 +44,7 @@ bool roboticslab::AmorControlboard::getInteractionModes(yarp::dev::InteractionMo
 
 bool roboticslab::AmorControlboard::setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode)
 {
-    CD_DEBUG("(%d)\n", axis);
+    CD_DEBUG("(%d, %s)\n", axis, yarp::os::Vocab::decode(mode).c_str());
 
     if (!indexWithinRange(axis))
     {
