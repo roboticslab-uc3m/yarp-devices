@@ -2,8 +2,9 @@
 
 #include "CuiAbsolute.hpp"
 
-// ################################ IInteractionModeRaw Related ################################
+#include <yarp/os/Vocab.h>
 
+// ################################ IInteractionModeRaw Related ################################
 
 bool roboticslab::CuiAbsolute::getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode)
 {
@@ -35,7 +36,7 @@ bool roboticslab::CuiAbsolute::getInteractionModesRaw(yarp::dev::InteractionMode
 
 bool roboticslab::CuiAbsolute::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
 {
-    CD_INFO("(%d), (%s)\n",axis, mode); //-- I don't know if this is correct (if I want to print mode?)
+    CD_INFO("(%d), (%s)\n", axis, yarp::os::Vocab::decode(mode).c_str());
 
     interactionModeSemaphore.wait();
     interactionMode = mode;
@@ -65,4 +66,3 @@ bool roboticslab::CuiAbsolute::setInteractionModesRaw(yarp::dev::InteractionMode
 }
 
 // ----------------------------------------------------------------------------------------------
-
