@@ -5,6 +5,7 @@
 #include <cstring> // std::memset, std::memcpy, std::strerror
 #include <cerrno> // error codes
 
+#include <yarp/conf/version.h>
 #include <yarp/os/LockGuard.h>
 
 #include <libpcanfd.h>
@@ -208,8 +209,12 @@ bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsign
         yarp::os::LockGuard lockGuard(canBusReady);
 
         // Point at first member of an internally defined array of pcanfd_msg structs.
+#if YARP_VERSION_MINOR >= 2 // note: remove #include <yarp/conf/version.h>
+        struct pcanfd_msg * pfdm = reinterpret_cast<struct pcanfd_msg *>(msgs.getPointer()[0]->getPointer());
+#else
         yarp::dev::CanBuffer & msgs_not_const = const_cast<yarp::dev::CanBuffer &>(msgs);
         struct pcanfd_msg * pfdm = reinterpret_cast<struct pcanfd_msg *>(msgs_not_const.getPointer()[0]->getPointer());
+#endif
 
         for (unsigned int i = 0; i < size; i++)
         {
