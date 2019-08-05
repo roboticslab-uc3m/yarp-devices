@@ -9,7 +9,7 @@
 #include <utility>
 
 #include <yarp/os/Bottle.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/CanBusInterface.h>
@@ -133,7 +133,7 @@ protected:
     bool blockingMode;
     bool allowPermissive;
 
-    yarp::os::Semaphore canBusReady;
+    yarp::os::Mutex canBusReady;
 
     std::pair<bool, unsigned int> bitrateState;
 

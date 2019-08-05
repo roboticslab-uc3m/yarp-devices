@@ -72,14 +72,14 @@ unsigned char * roboticslab::FakeCanMessage::getData()
 
 unsigned char * roboticslab::FakeCanMessage::getPointer()
 {
-    return (unsigned char *) message;
+    return reinterpret_cast<unsigned char *>(message);
 }
 
 // -----------------------------------------------------------------------------
 
 const unsigned char * roboticslab::FakeCanMessage::getPointer() const
 {
-    return (const unsigned char *) message;
+    return reinterpret_cast<const unsigned char *>(message);
 }
 
 // -----------------------------------------------------------------------------
@@ -88,7 +88,7 @@ void roboticslab::FakeCanMessage::setBuffer(unsigned char * buf)
 {
     if (buf != 0)
     {
-        message = (struct fake_can_msg *) buf;
+        message = reinterpret_cast<struct fake_can_msg *>(buf);
     }
 }
 

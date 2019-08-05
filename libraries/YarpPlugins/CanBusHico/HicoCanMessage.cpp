@@ -72,14 +72,14 @@ unsigned char * roboticslab::HicoCanMessage::getData()
 
 unsigned char * roboticslab::HicoCanMessage::getPointer()
 {
-    return (unsigned char *) message;
+    return reinterpret_cast<unsigned char *>(message);
 }
 
 // -----------------------------------------------------------------------------
 
 const unsigned char * roboticslab::HicoCanMessage::getPointer() const
 {
-    return (const unsigned char *) message;
+    return reinterpret_cast<const unsigned char *>(message);
 }
 
 // -----------------------------------------------------------------------------
@@ -88,7 +88,7 @@ void roboticslab::HicoCanMessage::setBuffer(unsigned char * buf)
 {
     if (buf != 0)
     {
-        message = (struct can_msg *) buf;
+        message = reinterpret_cast<struct can_msg *>(buf);
     }
 }
 

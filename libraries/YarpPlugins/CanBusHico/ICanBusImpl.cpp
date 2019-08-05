@@ -10,6 +10,8 @@
 
 #include <string>
 
+#include <yarp/os/LockGuard.h>
+
 #include <ColorDebug.h>
 
 // -----------------------------------------------------------------------------
@@ -26,20 +28,18 @@ bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
         return false;
     }
 
-    canBusReady.wait();
+    yarp::os::LockGuard lockGuard(canBusReady);
 
     if (bitrateState.first)
     {
         if (bitrateState.second == id)
         {
             CD_WARNING("Bitrate already set.\n");
-            canBusReady.post();
             return true;
         }
         else
         {
             CD_ERROR("Bitrate already set to a different value: %d.\n", bitrateState.second);
-            canBusReady.post();
             return false;
         }
     }
@@ -47,14 +47,11 @@ bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
     if (::ioctl(fileDescriptor, IOC_SET_BITRATE, &id) == -1)
     {
         CD_ERROR("Could not set bitrate: %s.\n", std::strerror(errno));
-        canBusReady.post();
         return false;
     }
 
     bitrateState.first = true;
     bitrateState.second = id;
-
-    canBusReady.post();
 
     return true;
 }
@@ -67,9 +64,9 @@ bool roboticslab::CanBusHico::canGetBaudRate(unsigned int * rate)
 
     unsigned int id;
 
-    canBusReady.wait();
+    canBusReady.lock();
     int ret = ::ioctl(fileDescriptor, IOC_GET_BITRATE, &id);
-    canBusReady.post();
+    canBusReady.unlock();
 
     if (ret == -1)
     {
@@ -104,30 +101,25 @@ bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
         return false;
     }
 
-    canBusReady.wait();
+    yarp::os::LockGuard lockGuard(canBusReady);
 
     if (filterManager->hasId(id))
     {
         CD_WARNING("Filter for ID %d is already active.\n", id);
-        canBusReady.post();
         return true;
     }
 
     if (!filterManager->insertId(id))
     {
         CD_ERROR("Could not set filter: %s.\n", std::strerror(errno));
-        canBusReady.post();
         return false;
     }
 
     if (!filterManager->isValid())
     {
         CD_WARNING("Hardware limit was hit, not all requested filters are enabled.\n");
-        canBusReady.post();
         return true;
     }
-
-    canBusReady.post();
 
     return true;
 }
@@ -150,7 +142,7 @@ bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
         return false;
     }
 
-    canBusReady.wait();
+    yarp::os::LockGuard lockGuard(canBusReady);
 
     if (id == 0)
     {
@@ -159,36 +151,29 @@ bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
         if (!filterManager->clearFilters(true))
         {
             CD_ERROR("Unable to clear accceptance filters: %s.\n", std::strerror(errno));
-            canBusReady.post();
             return false;
         }
 
-        canBusReady.post();
         return true;
     }
 
     if (!filterManager->hasId(id))
     {
         CD_WARNING("Filter for ID %d not found, doing nothing.\n", id);
-        canBusReady.post();
         return true;
     }
 
     if (!filterManager->eraseId(id))
     {
         CD_ERROR("Could not remove filter: %s.\n", std::strerror(errno));
-        canBusReady.post();
         return false;
     }
 
     if (!filterManager->isValid())
     {
         CD_WARNING("Hardware limit was hit, not all requested filters are enabled.\n");
-        canBusReady.post();
         return false;
     }
-
-    canBusReady.post();
 
     return true;
 }
@@ -205,7 +190,7 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
 
     *read = 0;
 
-    canBusReady.wait();
+    yarp::os::LockGuard lockGuard(canBusReady);
 
     for (unsigned int i = 0; i < size; i++)
     {
@@ -216,7 +201,6 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
             if (!waitUntilTimeout(READ, &bufferReady))
             {
                 CD_ERROR("waitUntilTimeout() failed.\n");
-                canBusReady.post();
                 return false;
             }
 
@@ -241,7 +225,6 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
             else
             {
                 CD_ERROR("read() error: %s.\n", std::strerror(errno));
-                canBusReady.post();
                 return false;
             }
         }
@@ -254,8 +237,6 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
             (*read)++;
         }
     }
-
-    canBusReady.post();
 
     return true;
 }
@@ -272,7 +253,7 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
 
     *sent = 0;
 
-    canBusReady.wait();
+    yarp::os::LockGuard lockGuard(canBusReady);
 
     for (unsigned int i = 0; i < size; i++)
     {
@@ -283,7 +264,6 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
             if (!waitUntilTimeout(WRITE, &bufferReady))
             {
                 CD_ERROR("waitUntilTimeout() failed.\n");
-                canBusReady.post();
                 return false;
             }
 
@@ -307,7 +287,6 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
             else
             {
                 CD_ERROR("%s.\n", std::strerror(errno));
-                canBusReady.post();
                 return false;
             }
         }
@@ -320,8 +299,6 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
             (*sent)++;
         }
     }
-
-    canBusReady.post();
 
     return true;
 }
