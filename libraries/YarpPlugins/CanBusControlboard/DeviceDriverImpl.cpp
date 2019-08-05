@@ -12,6 +12,8 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 {
     std::string mode = config.check("mode",yarp::os::Value("position"),"control mode on startup (position/velocity)").asString();
     int timeCuiWait  = config.check("waitEncoder", yarp::os::Value(DEFAULT_TIME_TO_WAIT_CUI), "CUI timeout (seconds)").asInt32();
+    bool homing = config.check("home", yarp::os::Value(false), "perform homing maneuver on start").asBool();
+
     std::string canBusType = config.check("canBusType", yarp::os::Value(DEFAULT_CAN_BUS), "CAN bus device name").asString();
     canRxBufferSize = config.check("canBusRxBufferSize", yarp::os::Value(DEFAULT_CAN_RX_BUFFER_SIZE), "CAN bus RX buffer size").asInt();
     canTxBufferSize = config.check("canBusTxBufferSize", yarp::os::Value(DEFAULT_CAN_TX_BUFFER_SIZE), "CAN bus TX buffer size").asInt();
@@ -355,7 +357,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     yarp::os::Time::delay(2);
 
     //-- Homing
-    if( config.check("home", "perform homing maneuver on start") )
+    if( homing )
     {
         CD_DEBUG("Moving motors to zero.\n");
         for(int i=0; i<nodes.size(); i++)
