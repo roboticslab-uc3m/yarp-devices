@@ -112,8 +112,18 @@ bool CanBusLauncher::configure(yarp::os::ResourceFinder &rf)
         wrapperDevices.push(wrapperDevice, wrapperDeviceLabel.c_str());
 
         yarp::dev::IMultipleWrapper * iMultipleWrapper;
-        wrapperDevice->view(iMultipleWrapper);
-        iMultipleWrapper->attachAll(canDevices);
+
+        if (!wrapperDevice->view(iMultipleWrapper))
+        {
+            CD_ERROR("Unable to view IMultipleWrapper in %s.\n", wrapperDeviceLabel.c_str());
+            return false;
+        }
+
+        if (!iMultipleWrapper->attachAll(canDevices))
+        {
+            CD_ERROR("Unable to attach CAN devices in %s.\n", wrapperDeviceLabel.c_str());
+            return false;
+        }
 
         wrapperDeviceId++;
     }
