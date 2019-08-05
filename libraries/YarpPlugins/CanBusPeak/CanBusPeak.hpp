@@ -29,14 +29,49 @@ namespace roboticslab
 {
 
 /**
- *
+ * @ingroup YarpPlugins
+ * @defgroup CanBusPeak
+ * @brief Contains roboticslab::CanBusPeak.
+ */
+
+/**
+ * @ingroup CanBusPeak
+ * @brief Custom buffer of PeakCanMessage instances.
+ */
+class ImplementPeakCanBufferFactory : public yarp::dev::ImplementCanBufferFactory<PeakCanMessage, struct pcanfd_msg>
+{
+public:
+    virtual yarp::dev::CanBuffer createBuffer(int elem)
+    {
+        yarp::dev::CanBuffer ret;
+        struct pcanfd_msg * storage = new pcanfd_msg[elem];
+        yarp::dev::CanMessage ** messages = new yarp::dev::CanMessage *[elem];
+        PeakCanMessage * tmp = new PeakCanMessage[elem];
+
+        std::memset(storage, 0, sizeof(struct pcanfd_msg) * elem);
+
+        for (int k = 0; k < elem; k++)
+        {
+            messages[k] = &tmp[k];
+            messages[k]->setBuffer(reinterpret_cast<unsigned char *>(&storage[k]));
+
+            // Changes wrt default implementation:
+            storage[k].type = PCANFD_TYPE_CAN20_MSG;
+            storage[k].flags = PCANFD_MSG_STD;
+        }
+
+        ret.resize(messages, elem);
+        return ret;
+    }
+};
+
+/**
  * @ingroup CanBusPeak
  * @brief Specifies the PeakCan behaviour and specifications.
- *
  */
 class CanBusPeak : public yarp::dev::DeviceDriver,
                    public yarp::dev::ICanBus,
-                   public yarp::dev::ImplementCanBufferFactory<PeakCanMessage, struct pcanfd_msg>
+                   public ImplementPeakCanBufferFactory
 {
 
 public:
