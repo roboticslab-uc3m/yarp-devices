@@ -7,7 +7,7 @@
 
 #include <set>
 
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/CanBusInterface.h>
@@ -89,7 +89,7 @@ protected:
     bool blockingMode;
     bool allowPermissive;
 
-    mutable yarp::os::Semaphore canBusReady;
+    mutable yarp::os::Mutex canBusReady;
 
     std::set<unsigned int> activeFilters;
 };

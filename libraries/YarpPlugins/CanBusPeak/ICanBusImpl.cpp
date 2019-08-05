@@ -5,6 +5,8 @@
 #include <cstring> // std::memset, std::memcpy, std::strerror
 #include <cerrno> // error codes
 
+#include <yarp/os/LockGuard.h>
+
 #include <libpcanfd.h>
 
 #include <ColorDebug.h>
@@ -19,9 +21,9 @@ bool roboticslab::CanBusPeak::canSetBaudRate(unsigned int rate)
     std::memset(&pfdi, '\0', sizeof(pfdi));
     pfdi.nominal.bitrate = rate;
 
-    canBusReady.wait();
+    canBusReady.lock();
     int res = pcanfd_set_init(fileDescriptor, &pfdi);
-    canBusReady.post();
+    canBusReady.unlock();
 
     if (res < 0)
     {
@@ -38,9 +40,9 @@ bool roboticslab::CanBusPeak::canGetBaudRate(unsigned int * rate)
 {
     struct pcanfd_init pfdi;
 
-    canBusReady.wait();
+    canBusReady.lock();
     int res = pcanfd_get_init(fileDescriptor, &pfdi);
-    canBusReady.post();
+    canBusReady.unlock();
 
     if (res < 0)
     {
@@ -65,12 +67,11 @@ bool roboticslab::CanBusPeak::canIdAdd(unsigned int id)
 {
     CD_DEBUG("(%d)\n", id);
 
-    canBusReady.wait();
+    yarp::os::LockGuard lockGuard(canBusReady);
 
     if (activeFilters.find(id) != activeFilters.end())
     {
         CD_WARNING("Filter for id %d already set.\n", id);
-        canBusReady.post();
         return true;
     }
 
@@ -86,11 +87,8 @@ bool roboticslab::CanBusPeak::canIdAdd(unsigned int id)
     {
         CD_ERROR("pcanfd_set_option() failed (%s).\n", std::strerror(-res));
         activeFilters.erase(id);
-        canBusReady.post();
         return false;
     }
-
-    canBusReady.post();
 
     return true;
 }
@@ -101,7 +99,7 @@ bool roboticslab::CanBusPeak::canIdDelete(unsigned int id)
 {
     CD_DEBUG("(%d)\n", id);
 
-    canBusReady.wait();
+    yarp::os::LockGuard lockGuard(canBusReady);
 
     if (id == 0)
     {
@@ -112,19 +110,16 @@ bool roboticslab::CanBusPeak::canIdDelete(unsigned int id)
         if (res < 0)
         {
             CD_ERROR("Unable to clear accceptance filters (%s).\n", std::strerror(-res));
-            canBusReady.post();
             return false;
         }
 
         activeFilters.clear();
-        canBusReady.post();
         return true;
     }
 
     if (activeFilters.erase(id) == 0)
     {
         CD_WARNING("Filter for id %d missing or already deleted.\n", id);
-        canBusReady.post();
         return true;
     }
 
@@ -138,11 +133,8 @@ bool roboticslab::CanBusPeak::canIdDelete(unsigned int id)
     {
         CD_ERROR("pcanfd_set_option() failed (%s).\n", std::strerror(-res));
         activeFilters.insert(id);
-        canBusReady.post();
         return false;
     }
-
-    canBusReady.post();
 
     return true;
 }
@@ -157,31 +149,31 @@ bool roboticslab::CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
         return false;
     }
 
-    canBusReady.wait();
+    int res;
 
-    if (blockingMode && rxTimeoutMs > 0)
     {
-        bool bufferReady;
+        yarp::os::LockGuard lockGuard(canBusReady);
 
-        if (!waitUntilTimeout(READ, &bufferReady)) {
-            canBusReady.post();
-            CD_ERROR("waitUntilTimeout() failed.\n");
-            return false;
-        }
-
-        if (!bufferReady)
+        if (blockingMode && rxTimeoutMs > 0)
         {
-            canBusReady.post();
-            *read = 0;
-            return true;
+            bool bufferReady;
+
+            if (!waitUntilTimeout(READ, &bufferReady)) {
+                CD_ERROR("waitUntilTimeout() failed.\n");
+                return false;
+            }
+
+            if (!bufferReady)
+            {
+                *read = 0;
+                return true;
+            }
         }
+
+        // Point at first member of an internally defined array of pcanfd_msg structs.
+        struct pcanfd_msg * pfdm = reinterpret_cast<struct pcanfd_msg *>(msgs.getPointer()[0]->getPointer());
+        res = pcanfd_recv_msgs_list(fileDescriptor, size, pfdm);
     }
-
-    // Point at first member of an internally defined array of pcandf_msg structs.
-    struct pcanfd_msg * pfdm = reinterpret_cast<struct pcanfd_msg *>(msgs.getPointer()[0]->getPointer());
-    int res = pcanfd_recv_msgs_list(fileDescriptor, size, pfdm);
-
-    canBusReady.post();
 
     if (!blockingMode && res == -EWOULDBLOCK)
     {
@@ -210,39 +202,39 @@ bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsign
         return false;
     }
 
-    canBusReady.wait();
+    int res;
 
-    // Point at first member of an internally defined array of pcandf_msg structs.
-    yarp::dev::CanBuffer & msgs_not_const = const_cast<yarp::dev::CanBuffer &>(msgs);
-    struct pcanfd_msg * pfdm = reinterpret_cast<struct pcanfd_msg *>(msgs_not_const.getPointer()[0]->getPointer());
-
-    for (unsigned int i = 0; i < size; i++)
     {
-        pfdm[i].type = PCANFD_TYPE_CAN20_MSG;
-        pfdm[i].flags = PCANFD_MSG_STD;
-    }
+        yarp::os::LockGuard lockGuard(canBusReady);
 
-    if (blockingMode && txTimeoutMs > 0)
-    {
-        bool bufferReady;
+        // Point at first member of an internally defined array of pcanfd_msg structs.
+        yarp::dev::CanBuffer & msgs_not_const = const_cast<yarp::dev::CanBuffer &>(msgs);
+        struct pcanfd_msg * pfdm = reinterpret_cast<struct pcanfd_msg *>(msgs_not_const.getPointer()[0]->getPointer());
 
-        if (!waitUntilTimeout(WRITE, &bufferReady)) {
-            canBusReady.post();
-            CD_ERROR("waitUntilTimeout() failed.\n");
-            return false;
-        }
-
-        if (!bufferReady)
+        for (unsigned int i = 0; i < size; i++)
         {
-            canBusReady.post();
-            *sent = 0;
-            return true;
+            pfdm[i].type = PCANFD_TYPE_CAN20_MSG;
+            pfdm[i].flags = PCANFD_MSG_STD;
         }
+
+        if (blockingMode && txTimeoutMs > 0)
+        {
+            bool bufferReady;
+
+            if (!waitUntilTimeout(WRITE, &bufferReady)) {
+                CD_ERROR("waitUntilTimeout() failed.\n");
+                return false;
+            }
+
+            if (!bufferReady)
+            {
+                *sent = 0;
+                return true;
+            }
+        }
+
+        res = pcanfd_send_msgs_list(fileDescriptor, size, pfdm);
     }
-
-    int res = pcanfd_send_msgs_list(fileDescriptor, size, pfdm);
-
-    canBusReady.post();
 
     if (!blockingMode && res == -EWOULDBLOCK)
     {
