@@ -7,26 +7,22 @@ yarp_install(FILES ymanager.ini
 
 ### Go through single applications
 
-if(ENABLE_dumpCanBus)
-    add_subdirectory(dumpCanBus)
+if(ENABLE_canBusLauncher)
+    add_subdirectory(canBusLauncher)
 endif()
 
 if(ENABLE_checkCanBus)
     add_subdirectory(checkCanBus)
 endif()
 
-if(ENABLE_oneCanBusOneWrapper)
-    add_subdirectory(oneCanBusOneWrapper)
-endif()
-
-if(ENABLE_twoCanBusThreeWrappers)
-    add_subdirectory(twoCanBusThreeWrappers)
-endif()
-
-if(ENABLE_tests)
-    add_subdirectory(testCuiAbsolute)
+if(ENABLE_dumpCanBus)
+    add_subdirectory(dumpCanBus)
 endif()
 
 if(ENABLE_SpaceNavigator)
     add_subdirectory(spaceNavigator)
+endif()
+
+if(ENABLE_tests)
+    add_subdirectory(testCuiAbsolute)
 endif()
