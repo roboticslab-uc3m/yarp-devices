@@ -14,6 +14,8 @@ void roboticslab::CanBusControlboard::run()
 
     while ( ! this->isStopping() )
     {
+        //-- Lend CPU time to write threads.
+        // https://github.com/roboticslab-uc3m/yarp-devices/issues/191
         yarp::os::Time::delay(std::numeric_limits<double>::min());
 
         unsigned int read;
