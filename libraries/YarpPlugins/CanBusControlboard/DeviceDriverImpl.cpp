@@ -62,7 +62,9 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     canInputBuffer = iCanBufferFactory->createBuffer(canRxBufferSize);
 
     //-- Start the reading thread (required for checkMotionDoneRaw).
-    this->Thread::start();
+    canReaderThread = new CanReaderThread(canInputBuffer, canRxBufferSize, idxFromCanId, iCanBusSharer);
+    canReaderThread->setCanHandle(iCanBus);
+    canReaderThread->start();
 
     posdThread = new PositionDirectThread(linInterpPeriodMs * 0.001);
 
@@ -416,7 +418,7 @@ bool roboticslab::CanBusControlboard::close()
     const double timeOut = 1; // timeout (1 secod)
 
     //-- Stop the read thread.
-    this->Thread::stop();
+    canReaderThread->stop();
 
     if (posdThread && posdThread->isRunning())
     {
