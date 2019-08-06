@@ -10,10 +10,7 @@ using namespace roboticslab;
 
 CanReaderThread::CanReaderThread(const std::map<int, int> & _idxFromCanId, const std::vector<ICanBusSharer *> & _iCanBusSharer)
     : idxFromCanId(_idxFromCanId),
-      iCanBusSharer(_iCanBusSharer),
-      iCanBus(0),
-      iCanBufferFactory(0),
-      bufferSize(0)
+      iCanBusSharer(_iCanBusSharer)
 {}
 
 void CanReaderThread::run()
@@ -57,21 +54,6 @@ void CanReaderThread::run()
     }
 
     CD_INFO("Stopping CanBusControlboard reading thread run.\n");
-}
-
-// -----------------------------------------------------------------------------
-
-bool CanReaderThread::threadInit()
-{
-    canBuffer = iCanBufferFactory->createBuffer(bufferSize);
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-void CanReaderThread::threadRelease()
-{
-    iCanBufferFactory->destroyBuffer(canBuffer);
 }
 
 // -----------------------------------------------------------------------------

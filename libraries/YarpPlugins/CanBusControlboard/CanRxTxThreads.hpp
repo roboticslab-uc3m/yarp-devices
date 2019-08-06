@@ -17,27 +17,43 @@ namespace roboticslab
 /**
  * @ingroup CanBusControlboard
  */
-class CanReaderThread : public yarp::os::Thread
+class CanReaderWriterThread : public yarp::os::Thread
 {
 public:
-    CanReaderThread(const std::map<int, int> & idxFromCanId, const std::vector<ICanBusSharer *> & iCanBusSharer);
+    CanReaderWriterThread() : iCanBus(0), iCanBufferFactory(0), bufferSize(0)
+    {}
 
-    virtual void run();
-    virtual bool threadInit();
-    virtual void threadRelease();
+    virtual void run() = 0;
+
+    virtual bool threadInit()
+    { canBuffer = iCanBufferFactory->createBuffer(bufferSize); return true; }
+
+    virtual void threadRelease()
+    { iCanBufferFactory->destroyBuffer(canBuffer); }
 
     void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, int bufferSize)
     { this->iCanBus = iCanBus; this->iCanBufferFactory = iCanBufferFactory; this->bufferSize = bufferSize; }
 
-private:
-    const std::map<int, int> & idxFromCanId;
-    const std::vector<ICanBusSharer *> & iCanBusSharer;
-
+protected:
     yarp::dev::ICanBus * iCanBus;
     yarp::dev::ICanBufferFactory * iCanBufferFactory;
     yarp::dev::CanBuffer canBuffer;
 
     int bufferSize;
+};
+
+/**
+ * @ingroup CanBusControlboard
+ */
+class CanReaderThread : public CanReaderWriterThread
+{
+public:
+    CanReaderThread(const std::map<int, int> & idxFromCanId, const std::vector<ICanBusSharer *> & iCanBusSharer);
+    virtual void run();
+
+private:
+    const std::map<int, int> & idxFromCanId;
+    const std::vector<ICanBusSharer *> & iCanBusSharer;
 };
 
 } // namespace roboticslab

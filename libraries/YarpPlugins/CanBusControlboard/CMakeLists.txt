@@ -30,7 +30,7 @@ if(NOT SKIP_CanBusControlboard)
                                        PositionDirectThread.hpp
                                        PositionDirectThread.cpp
                                        CanRxTxThreads.hpp
-                                       CanReaderThread.cpp)
+                                       CanRxTxThreads.cpp)
 
     target_link_libraries(CanBusControlboard YARP::YARP_OS
                                              YARP::YARP_dev
