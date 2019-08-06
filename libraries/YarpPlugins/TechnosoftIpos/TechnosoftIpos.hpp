@@ -202,6 +202,9 @@ public:
     virtual bool setPositionRaw(int j, double ref);
     virtual bool setPositionsRaw(const int n_joint, const int *joints, const double *refs);
     virtual bool setPositionsRaw(const double *refs);
+    virtual bool getRefPositionRaw(const int joint, double *ref);
+    virtual bool getRefPositionsRaw(double *refs);
+    virtual bool getRefPositionsRaw(const int n_joint, const int *joints, double *refs);
 
     // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
     virtual bool getRefTorquesRaw(double *t);

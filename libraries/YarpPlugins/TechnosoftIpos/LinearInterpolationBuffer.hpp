@@ -30,6 +30,7 @@ public:
     virtual void setInitialReference(double target);
     virtual std::string getType() const = 0;
     void updateTarget(double target);
+    double getLastTarget() const;
     int getPeriod() const;
     void setPeriod(int periodMs);
     int getBufferSize() const;
