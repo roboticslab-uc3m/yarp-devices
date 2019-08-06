@@ -98,6 +98,17 @@ void LinearInterpolationBuffer::updateTarget(double target)
     mutex.unlock();
 }
 
+double LinearInterpolationBuffer::getLastTarget() const
+{
+    double tmp;
+
+    mutex.lock();
+    tmp = lastSentTarget;
+    mutex.unlock();
+
+    return tmp;
+}
+
 int LinearInterpolationBuffer::getPeriod() const
 {
     return periodMs;
