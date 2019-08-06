@@ -873,8 +873,6 @@ protected:
     /** A CAN device. */
     yarp::dev::PolyDriver canBusDevice;
     yarp::dev::ICanBus* iCanBus;
-    yarp::dev::ICanBufferFactory *iCanBufferFactory;
-    yarp::dev::CanBuffer canInputBuffer;
 
     /** A vector of CAN node objects. */
     std::vector< yarp::dev::PolyDriver* > nodes;
@@ -901,9 +899,6 @@ protected:
     int linInterpPeriodMs;
     int linInterpBufferSize;
     std::string linInterpMode;
-
-    int canRxBufferSize;
-    int canTxBufferSize;
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(const yarp::dev::CanMessage& message);

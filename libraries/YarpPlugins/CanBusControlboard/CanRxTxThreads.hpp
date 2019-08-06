@@ -20,21 +20,23 @@ namespace roboticslab
 class CanReaderThread : public yarp::os::Thread
 {
 public:
-    CanReaderThread(yarp::dev::CanBuffer & canBuffer,
-            int bufferSize,
-            const std::map<int, int> & idxFromCanId,
-            const std::vector<ICanBusSharer *> & iCanBusSharer);
+    CanReaderThread(const std::map<int, int> & idxFromCanId, const std::vector<ICanBusSharer *> & iCanBusSharer);
 
     virtual void run();
+    virtual bool threadInit();
+    virtual void threadRelease();
 
-    void setCanHandle(yarp::dev::ICanBus * iCanBus)
-    { this->iCanBus = iCanBus; }
+    void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, int bufferSize)
+    { this->iCanBus = iCanBus; this->iCanBufferFactory = iCanBufferFactory; this->bufferSize = bufferSize; }
 
 private:
-    yarp::dev::CanBuffer & canBuffer;
     const std::map<int, int> & idxFromCanId;
     const std::vector<ICanBusSharer *> & iCanBusSharer;
+
     yarp::dev::ICanBus * iCanBus;
+    yarp::dev::ICanBufferFactory * iCanBufferFactory;
+    yarp::dev::CanBuffer canBuffer;
+
     int bufferSize;
 };
 

@@ -15,8 +15,8 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     bool homing = config.check("home", yarp::os::Value(false), "perform homing maneuver on start").asBool();
 
     std::string canBusType = config.check("canBusType", yarp::os::Value(DEFAULT_CAN_BUS), "CAN bus device name").asString();
-    canRxBufferSize = config.check("canBusRxBufferSize", yarp::os::Value(DEFAULT_CAN_RX_BUFFER_SIZE), "CAN bus RX buffer size").asInt();
-    canTxBufferSize = config.check("canBusTxBufferSize", yarp::os::Value(DEFAULT_CAN_TX_BUFFER_SIZE), "CAN bus TX buffer size").asInt();
+    int canRxBufferSize = config.check("canBusRxBufferSize", yarp::os::Value(DEFAULT_CAN_RX_BUFFER_SIZE), "CAN bus RX buffer size").asInt();
+    int canTxBufferSize = config.check("canBusTxBufferSize", yarp::os::Value(DEFAULT_CAN_TX_BUFFER_SIZE), "CAN bus TX buffer size").asInt();
 
     linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(DEFAULT_LIN_INTERP_PERIOD_MS), "linear interpolation mode period (milliseconds)").asInt32();
     linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(DEFAULT_LIN_INTERP_BUFFER_SIZE), "linear interpolation mode buffer size").asInt32();
@@ -53,17 +53,17 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         return false;
     }
 
+    yarp::dev::ICanBufferFactory * iCanBufferFactory;
+
     if( !canBusDevice.view(iCanBufferFactory) )
     {
         CD_ERROR("Cannot view ICanBufferFactory interface in device: %s.\n", canBusType.c_str());
         return false;
     }
 
-    canInputBuffer = iCanBufferFactory->createBuffer(canRxBufferSize);
-
     //-- Start the reading thread (required for checkMotionDoneRaw).
-    canReaderThread = new CanReaderThread(canInputBuffer, canRxBufferSize, idxFromCanId, iCanBusSharer);
-    canReaderThread->setCanHandle(iCanBus);
+    canReaderThread = new CanReaderThread(idxFromCanId, iCanBusSharer);
+    canReaderThread->setCanHandles(iCanBus, iCanBufferFactory, canRxBufferSize);
     canReaderThread->start();
 
     posdThread = new PositionDirectThread(linInterpPeriodMs * 0.001);
@@ -427,7 +427,8 @@ bool roboticslab::CanBusControlboard::close()
 
     delete posdThread;
 
-    const yarp::dev::CanMessage &msg = canInputBuffer[0];
+    // FIXME
+    //const yarp::dev::CanMessage &msg = canInputBuffer[0];
 
     //-- Disable and shutdown the physical drivers (and Cui Encoders).
     bool ok = true;
@@ -476,14 +477,16 @@ bool roboticslab::CanBusControlboard::close()
                 }
 
                 unsigned int read;
-                bool okRead = iCanBus->canRead(canInputBuffer, 1, &read, true);
+                // FIXME
+                bool okRead = false; //iCanBus->canRead(canInputBuffer, 1, &read, true);
 
                 // This line is needed to clear the buffer (old messages that has been received)
                 if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
 
                 if( !okRead || read == 0 ) continue;              // -- is waiting for recive message
 
-                canId = msg.getId()  & 0x7F;                      // -- if it recive the message, it will get ID
+                // FIXME
+                canId = 0; //msg.getId()  & 0x7F;                 // -- if it recive the message, it will get ID
                 //CD_DEBUG("Read a message from CuiAbsolute %d\n", canId);
 
                 //printf("timeOut: %d\n", int(yarp::os::Time::now()-timeStamp));
@@ -495,8 +498,6 @@ bool roboticslab::CanBusControlboard::close()
             }
         }
     }
-
-    iCanBufferFactory->destroyBuffer(canInputBuffer);
 
     //-- Delete the driver objects.
     for(int i=0; i<nodes.size(); i++)
