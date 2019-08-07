@@ -4,8 +4,6 @@
 
 #include <algorithm>
 
-#include <yarp/os/LockGuard.h>
-
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
@@ -36,7 +34,7 @@ void DextraRawControlboard::destroySynapse()
 
 double DextraRawControlboard::getSetpoint(int j)
 {
-    yarp::os::LockGuard lock(setpointMutex);
+    std::lock_guard<std::mutex> lock(setpointMutex);
     return setpoints[j];
 }
 
@@ -44,7 +42,7 @@ double DextraRawControlboard::getSetpoint(int j)
 
 void DextraRawControlboard::getSetpoints(Synapse::Setpoints & setpoints)
 {
-    yarp::os::LockGuard lock(setpointMutex);
+    std::lock_guard<std::mutex> lock(setpointMutex);
     std::copy(this->setpoints, this->setpoints + Synapse::DATA_POINTS, setpoints);
 }
 
@@ -52,7 +50,7 @@ void DextraRawControlboard::getSetpoints(Synapse::Setpoints & setpoints)
 
 void DextraRawControlboard::setSetpoint(int j, Synapse::setpoint_t setpoint)
 {
-    yarp::os::LockGuard lock(setpointMutex);
+    std::lock_guard<std::mutex> lock(setpointMutex);
     setpoints[j] = setpoint;
 }
 
@@ -60,7 +58,7 @@ void DextraRawControlboard::setSetpoint(int j, Synapse::setpoint_t setpoint)
 
 void DextraRawControlboard::setSetpoints(const Synapse::Setpoints & setpoints)
 {
-    yarp::os::LockGuard lock(setpointMutex);
+    std::lock_guard<std::mutex> lock(setpointMutex);
     std::copy(setpoints, setpoints + Synapse::DATA_POINTS, this->setpoints);
 }
 

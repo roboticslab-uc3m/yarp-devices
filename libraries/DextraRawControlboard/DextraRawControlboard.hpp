@@ -3,7 +3,7 @@
 #ifndef __DEXTRA_RAW_CONTROLBOARD_HPP__
 #define __DEXTRA_RAW_CONTROLBOARD_HPP__
 
-#include <yarp/os/Mutex.h>
+#include <mutex>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 
@@ -128,7 +128,7 @@ private:
     void setSetpoints(const Synapse::Setpoints & setpoints);
 
     Synapse::Setpoints setpoints;
-    mutable yarp::os::Mutex setpointMutex;
+    mutable std::mutex setpointMutex;
 };
 
 }  // namespace roboticslab
