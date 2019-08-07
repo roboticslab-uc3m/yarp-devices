@@ -56,6 +56,15 @@ private:
     const std::vector<ICanBusSharer *> & iCanBusSharer;
 };
 
+/**
+ * @ingroup CanBusControlboard
+ */
+class CanWriterThread : public CanReaderWriterThread
+{
+public:
+    virtual void run();
+};
+
 } // namespace roboticslab
 
 #endif // __CAN_RX_TH_THREADS_HPP__

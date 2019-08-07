@@ -66,6 +66,10 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     canReaderThread->setCanHandles(iCanBus, iCanBufferFactory, canRxBufferSize);
     canReaderThread->start();
 
+    canWriterThread = new CanWriterThread;
+    canWriterThread->setCanHandles(iCanBus, iCanBufferFactory, canTxBufferSize);
+    canWriterThread->start();
+
     posdThread = new PositionDirectThread(linInterpPeriodMs * 0.001);
 
     //-- Populate the CAN nodes vector.
@@ -417,8 +421,19 @@ bool roboticslab::CanBusControlboard::close()
 {
     const double timeOut = 1; // timeout (1 secod)
 
-    //-- Stop the read thread.
-    canReaderThread->stop();
+    if (canWriterThread && canWriterThread->isRunning())
+    {
+        canWriterThread->stop();
+    }
+
+    delete canWriterThread;
+
+    if (canReaderThread && canReaderThread->isRunning())
+    {
+        canReaderThread->stop();
+    }
+
+    delete canReaderThread;
 
     if (posdThread && posdThread->isRunning())
     {

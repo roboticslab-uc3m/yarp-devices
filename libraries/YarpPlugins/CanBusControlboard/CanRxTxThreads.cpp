@@ -57,3 +57,20 @@ void CanReaderThread::run()
 }
 
 // -----------------------------------------------------------------------------
+
+void CanWriterThread::run()
+{
+    CD_INFO("Started CanBusControlboard writing thread run.\n");
+
+    while (!isStopping())
+    {
+        unsigned int sent;
+
+        //-- Blocks with timeout until a message is sent, returns false on errors.
+        iCanBus->canWrite(canBuffer, bufferSize, &sent, false);
+    }
+
+    CD_INFO("Stopping CanBusControlboard writing thread run.\n");
+}
+
+// -----------------------------------------------------------------------------

@@ -894,6 +894,7 @@ protected:
     std::map< int, int > idxFromCanId;
 
     CanReaderThread * canReaderThread;
+    CanWriterThread * canWriterThread;
 
     PositionDirectThread * posdThread;
     int linInterpPeriodMs;
