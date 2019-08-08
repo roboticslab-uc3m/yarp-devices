@@ -11,9 +11,9 @@ if(ENABLE_DextraRawControlboardLib)
                                                 IPositionControlRawImpl.cpp
                                                 IPositionDirectRawImpl.cpp)
 
-    target_link_libraries(DextraRawControlboardLib PUBLIC YARP::YARP_OS
-                                                          YARP::YARP_dev
-                                                   PRIVATE ROBOTICSLAB::ColorDebug)
+    target_link_libraries(DextraRawControlboardLib PUBLIC YARP::YARP_dev
+                                                   PRIVATE YARP::YARP_OS
+                                                           ROBOTICSLAB::ColorDebug)
 
     target_include_directories(DextraRawControlboardLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

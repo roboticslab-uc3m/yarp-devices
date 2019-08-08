@@ -13,7 +13,7 @@ namespace roboticslab
 /**
  * @ingroup DextraRawControlboard
  * @brief Comms layer to interface with the onboard Arduino through serial port.
- * C++ port of <a href="https://github.com/Alvipe/Dextra/blob/30c75249348a4b909967010410b62ecd8ab49e59/Control/synapse.py">synapse.py</a>.
+ * C++ port of <a href="https://github.com/Alvipe/Dextra/blob/30c7524/Control/synapse.py">synapse.py</a>.
  */
 class Synapse
 {

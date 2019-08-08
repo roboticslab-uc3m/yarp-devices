@@ -10,8 +10,7 @@
 
 bool roboticslab::DextraCanControlboard::open(yarp::os::Searchable& config)
 {
-    /*
-    canId = config.check("canId", yarp::os::Value(0), "can bus ID").asInt32();
+    int canId = config.check("canId", yarp::os::Value(0), "can bus ID").asInt32();
 
     if (canId == 0)
     {
@@ -27,11 +26,12 @@ bool roboticslab::DextraCanControlboard::open(yarp::os::Searchable& config)
         return false;
     }
 
-    iCanBufferFactory = *reinterpret_cast<yarp::dev::ICanBufferFactory **>(const_cast<char *>(vCanBufferFactory.asBlob()));
-    canOutputBuffer = iCanBufferFactory->createBuffer(1);
-    */
+    yarp::dev::ICanBufferFactory * iCanBufferFactory =
+            *reinterpret_cast<yarp::dev::ICanBufferFactory **>(const_cast<char *>(vCanBufferFactory.asBlob()));
 
-    acquireSynapseHandle(new CanSynapse);
+    yarp::dev::ICanBus * canDevicePtr; // FIXME: empty canDevicePtr
+
+    acquireSynapseHandle(new CanSynapse(canId, canDevicePtr, iCanBufferFactory));
 
     return true;
 }
@@ -41,7 +41,6 @@ bool roboticslab::DextraCanControlboard::open(yarp::os::Searchable& config)
 bool roboticslab::DextraCanControlboard::close()
 {
     destroySynapse();
-    //iCanBufferFactory->destroyBuffer(canOutputBuffer);
     return true;
 }
 
