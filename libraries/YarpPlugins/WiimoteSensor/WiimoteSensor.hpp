@@ -3,10 +3,11 @@
 #ifndef __WIIMOTE_SENSOR_HPP__
 #define __WIIMOTE_SENSOR_HPP__
 
+#include <mutex>
+
 #include <xwiimote.h>
 
 #include <yarp/os/Thread.h>
-#include <yarp/os/Mutex.h>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
@@ -86,7 +87,7 @@ private:
     struct xwii_event event;
 
     WiimoteEventData eventData;
-    mutable yarp::os::Mutex eventDataMutex;
+    mutable std::mutex eventDataMutex;
 };
 
 /**

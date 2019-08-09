@@ -4,8 +4,9 @@
 #define __TECHNOSOFT_IPOS__
 
 #include <stdint.h>
-#include <sstream>
 #include <cmath>
+#include <mutex>
+#include <sstream>
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
@@ -47,7 +48,7 @@ private:
     double lastSpeed, nextToLastSpeed;
     double lastAcceleration;
     yarp::os::Stamp lastStamp;
-    mutable yarp::os::Mutex mutex;
+    mutable std::mutex encoderMutex;
 };
 
 /**

@@ -105,12 +105,7 @@ void roboticslab::WiimoteDispatcherThread::run()
 
 roboticslab::WiimoteEventData roboticslab::WiimoteDispatcherThread::getEventData() const
 {
-    WiimoteEventData eventData;
-
-    eventDataMutex.lock();
-    eventData = this->eventData;
-    eventDataMutex.unlock();
-
+    std::lock_guard<std::mutex> lock(eventDataMutex);
     return eventData;
 }
 

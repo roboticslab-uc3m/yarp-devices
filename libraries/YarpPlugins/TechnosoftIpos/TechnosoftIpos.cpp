@@ -4,8 +4,6 @@
 
 #include <cstring>
 
-#include <yarp/os/LockGuard.h>
-
 // -----------------------------------------------------------------------------
 
 std::string roboticslab::TechnosoftIpos::msgToStr(const yarp::dev::CanMessage & message)
@@ -115,7 +113,7 @@ roboticslab::EncoderRead::EncoderRead(double initialPos)
 
 void roboticslab::EncoderRead::update(double newPos, double newTime)
 {
-    yarp::os::LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(encoderMutex);
 
     const double lastTime = lastStamp.getTime();
 
@@ -142,7 +140,7 @@ void roboticslab::EncoderRead::update(double newPos, double newTime)
 
 double roboticslab::EncoderRead::queryPosition() const
 {
-    yarp::os::LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(encoderMutex);
     return lastPosition;
 }
 
@@ -150,7 +148,7 @@ double roboticslab::EncoderRead::queryPosition() const
 
 double roboticslab::EncoderRead::querySpeed() const
 {
-    yarp::os::LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(encoderMutex);
     return lastSpeed;
 }
 
@@ -158,7 +156,7 @@ double roboticslab::EncoderRead::querySpeed() const
 
 double roboticslab::EncoderRead::queryAcceleration() const
 {
-    yarp::os::LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(encoderMutex);
     return lastAcceleration;
 }
 
@@ -166,7 +164,7 @@ double roboticslab::EncoderRead::queryAcceleration() const
 
 double roboticslab::EncoderRead::queryTime() const
 {
-    yarp::os::LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(encoderMutex);
     return lastStamp.getTime();
 }
 

@@ -4,9 +4,9 @@
 #define __POSITION_DIRECT_THREAD_HPP__
 
 #include <map>
+#include <mutex>
 #include <set>
 
-#include <yarp/os/Mutex.h>
 #include <yarp/os/PeriodicThread.h>
 
 #include <yarp/conf/version.h>
@@ -33,7 +33,7 @@ protected:
 private:
     std::map<int, ITechnosoftIpos *> idToTechnosoftIpos;
     std::set<int> activeIds;
-    mutable yarp::os::Mutex mutex;
+    mutable std::mutex mtx;
 };
 
 } // namespace roboticslab
