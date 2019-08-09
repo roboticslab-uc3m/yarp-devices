@@ -2,6 +2,7 @@
 
 #include "Synapse.hpp"
 
+#include <cassert>
 #include <cstring>
 
 #include <ColorDebug.h>
@@ -35,8 +36,17 @@ const char * Synapse::LABELS[Synapse::DATA_POINTS] = {
     "pinky"
 };
 
+Synapse::Synapse()
+    : configured(false)
+{}
+
+void Synapse::configure(void * handle)
+{}
+
 bool Synapse::readDataList(Setpoints & setpoints)
 {
+    assert(configured);
+
     unsigned char msg[MESSAGE_SIZE + 2]; // data (MESSAGE_SIZE) + check (1) + footer (1)
 
     if (!getMessage(msg, HEADER, MESSAGE_SIZE + 2))
@@ -63,6 +73,8 @@ bool Synapse::readDataList(Setpoints & setpoints)
 
 bool Synapse::writeSetpointList(const Setpoints & setpoints)
 {
+    assert(configured);
+
     char check = 0x00;
     char msg[MESSAGE_SIZE + 3]; // header (1) + data (MESSAGE_SIZE) + check (1) + footer (1)
 

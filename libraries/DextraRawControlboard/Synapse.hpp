@@ -5,8 +5,6 @@
 
 #include <utility>
 
-#include <yarp/dev/SerialInterfaces.h>
-
 namespace roboticslab
 {
 
@@ -26,7 +24,10 @@ public:
     static const std::pair<setpoint_t, setpoint_t> LIMITS[DATA_POINTS];
     static const char * LABELS[DATA_POINTS];
 
+    Synapse();
     virtual ~Synapse() {}
+
+    virtual void configure(void * handle);
 
     bool readDataList(Setpoints & setpoints);
     bool writeSetpointList(const Setpoints & setpoints);
@@ -34,6 +35,8 @@ public:
 protected:
     virtual bool getMessage(unsigned char * msg, char stopByte, int size) = 0;
     virtual bool sendMessage(char * msg, int size) = 0;
+
+    bool configured;
 };
 
 }  // namespace roboticslab

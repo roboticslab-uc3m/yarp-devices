@@ -15,6 +15,7 @@ if(NOT SKIP_DextraCanControlboard)
 
     yarp_add_plugin(DextraCanControlboard DextraCanControlboard.hpp
                                           DeviceDriverImpl.cpp
+                                          ICanBusSharerImpl.cpp
                                           CanSynapse.cpp)
 
     target_link_libraries(DextraCanControlboard DextraRawControlboardLib

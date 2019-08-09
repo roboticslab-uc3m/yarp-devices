@@ -28,8 +28,10 @@ namespace roboticslab
 class CanSynapse : public Synapse
 {
 public:
-    CanSynapse(int canId, yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory *iCanBufferFactory);
+    CanSynapse(int canId, yarp::dev::ICanBufferFactory *iCanBufferFactory);
     ~CanSynapse();
+
+    virtual void configure(void * handle);
 
 protected:
     virtual bool getMessage(unsigned char * msg, char stopByte, int size);
@@ -58,8 +60,8 @@ public:
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
 
-    //  --------- ICanBusSharer Declarations ---------
-    virtual bool setCanBusPtr(yarp::dev::ICanBus * canDevicePtr) { return true; }
+    //  --------- ICanBusSharer Declarations. Implementation in ICanBusSharerImpl.cpp ---------
+    virtual bool setCanBusPtr(yarp::dev::ICanBus * canDevicePtr);
     virtual bool setIEncodersTimedRawExternal(yarp::dev::IEncodersTimedRaw * iEncodersTimedRaw) { return true; };
     virtual bool initialize() { return true; }
     virtual bool start() { return true; };
@@ -67,7 +69,7 @@ public:
     virtual bool switchOn() { return true; };
     virtual bool enable() { return true; };
     virtual bool recoverFromError() { return true; };
-    virtual bool interpretMessage(const yarp::dev::CanMessage & message) { return true; }
+    virtual bool interpretMessage(const yarp::dev::CanMessage & message);
 
 protected:
 

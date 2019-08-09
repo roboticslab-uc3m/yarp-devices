@@ -6,7 +6,9 @@ using namespace roboticslab;
 
 SerialSynapse::SerialSynapse(yarp::dev::ISerialDevice * _iSerialDevice)
     : iSerialDevice(_iSerialDevice)
-{}
+{
+    configured = true;
+}
 
 bool SerialSynapse::getMessage(unsigned char * msg, char stopByte, int size)
 {

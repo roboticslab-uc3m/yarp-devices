@@ -10,9 +10,9 @@ using namespace roboticslab;
 
 #define BUFFER_SIZE 10
 
-CanSynapse::CanSynapse(int _canId, yarp::dev::ICanBus * _iCanBus, yarp::dev::ICanBufferFactory * _iCanBufferFactory)
+CanSynapse::CanSynapse(int _canId, yarp::dev::ICanBufferFactory * _iCanBufferFactory)
     : canId(_canId),
-      iCanBus(_iCanBus),
+      iCanBus(0),
       iCanBufferFactory(_iCanBufferFactory),
       canBuffer(iCanBufferFactory->createBuffer(BUFFER_SIZE))
 {}
@@ -20,6 +20,12 @@ CanSynapse::CanSynapse(int _canId, yarp::dev::ICanBus * _iCanBus, yarp::dev::ICa
 CanSynapse::~CanSynapse()
 {
     iCanBufferFactory->destroyBuffer(canBuffer);
+}
+
+void CanSynapse::configure(void * handle)
+{
+    iCanBus = reinterpret_cast<yarp::dev::ICanBus *>(handle);
+    configured = true;
 }
 
 bool CanSynapse::getMessage(unsigned char * msg, char stopByte, int size)

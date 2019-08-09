@@ -29,9 +29,7 @@ bool roboticslab::DextraCanControlboard::open(yarp::os::Searchable& config)
     yarp::dev::ICanBufferFactory * iCanBufferFactory =
             *reinterpret_cast<yarp::dev::ICanBufferFactory **>(const_cast<char *>(vCanBufferFactory.asBlob()));
 
-    yarp::dev::ICanBus * canDevicePtr; // FIXME: empty canDevicePtr
-
-    acquireSynapseHandle(new CanSynapse(canId, canDevicePtr, iCanBufferFactory));
+    acquireSynapseHandle(new CanSynapse(canId, iCanBufferFactory));
 
     return true;
 }
