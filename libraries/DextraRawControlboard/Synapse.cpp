@@ -2,6 +2,7 @@
 
 #include "Synapse.hpp"
 
+#include <cassert>
 #include <cstring>
 
 #include <ColorDebug.h>
@@ -35,22 +36,20 @@ const char * Synapse::LABELS[Synapse::DATA_POINTS] = {
     "pinky"
 };
 
-Synapse::Synapse(yarp::dev::ISerialDevice * _iSerialDevice)
-    : iSerialDevice(_iSerialDevice)
+Synapse::Synapse()
+    : configured(false)
 {}
 
-bool Synapse::getMessage(unsigned char * msg)
-{
-    char chr;
-    while (!iSerialDevice->receiveChar(chr) || chr != HEADER) {}
-    return iSerialDevice->receiveBytes(msg, MESSAGE_SIZE + 2) != 0;
-}
+void Synapse::configure(void * handle)
+{}
 
 bool Synapse::readDataList(Setpoints & setpoints)
 {
+    assert(configured);
+
     unsigned char msg[MESSAGE_SIZE + 2]; // data (MESSAGE_SIZE) + check (1) + footer (1)
 
-    if (!getMessage(msg))
+    if (!getMessage(msg, HEADER, MESSAGE_SIZE + 2))
     {
         return false;
     }
@@ -74,6 +73,8 @@ bool Synapse::readDataList(Setpoints & setpoints)
 
 bool Synapse::writeSetpointList(const Setpoints & setpoints)
 {
+    assert(configured);
+
     char check = 0x00;
     char msg[MESSAGE_SIZE + 3]; // header (1) + data (MESSAGE_SIZE) + check (1) + footer (1)
 
@@ -95,5 +96,5 @@ bool Synapse::writeSetpointList(const Setpoints & setpoints)
     msg[MESSAGE_SIZE + 3 - 2] = check;
     msg[MESSAGE_SIZE + 3 - 1] = FOOTER;
 
-    return iSerialDevice->send(msg, MESSAGE_SIZE + 3);
+    return sendMessage(msg, MESSAGE_SIZE + 3);
 }

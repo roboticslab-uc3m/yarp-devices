@@ -1,12 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraSerialControlboard.hpp"
+#include "DextraRawControlboard.hpp"
 
 #include <ColorDebug.h>
 
 // ------------------- IControlLimits Related ------------------------------------
 
-bool roboticslab::DextraSerialControlboard::setLimits(int axis, double min, double max)
+bool roboticslab::DextraRawControlboard::setLimitsRaw(int axis, double min, double max)
 {
     CD_INFO("(%d, %f, %f)\n", axis, min, max);
     CHECK_JOINT(axis);
@@ -15,7 +15,7 @@ bool roboticslab::DextraSerialControlboard::setLimits(int axis, double min, doub
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getLimits(int axis, double *min, double *max)
+bool roboticslab::DextraRawControlboard::getLimitsRaw(int axis, double *min, double *max)
 {
     CD_INFO("(%d)\n", axis);
     CHECK_JOINT(axis);
@@ -29,7 +29,7 @@ bool roboticslab::DextraSerialControlboard::getLimits(int axis, double *min, dou
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::setVelLimits(int axis, double min, double max)
+bool roboticslab::DextraRawControlboard::setVelLimitsRaw(int axis, double min, double max)
 {
     CD_WARNING("Not implemented.\n");
     return false;
@@ -37,7 +37,7 @@ bool roboticslab::DextraSerialControlboard::setVelLimits(int axis, double min, d
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getVelLimits(int axis, double *min, double *max)
+bool roboticslab::DextraRawControlboard::getVelLimitsRaw(int axis, double *min, double *max)
 {
     CD_WARNING("Not implemented.\n");
     return false;

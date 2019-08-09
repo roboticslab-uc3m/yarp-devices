@@ -5,21 +5,17 @@
 
 #include <utility>
 
-#include <yarp/dev/SerialInterfaces.h>
-
 namespace roboticslab
 {
 
 /**
- * @ingroup DextraSerialControlboard
+ * @ingroup DextraRawControlboard
  * @brief Comms layer to interface with the onboard Arduino through serial port.
- * C++ port of <a href="https://github.com/Alvipe/Dextra/blob/30c75249348a4b909967010410b62ecd8ab49e59/Control/synapse.py">synapse.py</a>.
+ * C++ port of <a href="https://github.com/Alvipe/Dextra/blob/30c7524/Control/synapse.py">synapse.py</a>.
  */
 class Synapse
 {
-
 public:
-
     static const int DATA_POINTS = 6;
 
     typedef float setpoint_t;
@@ -28,17 +24,19 @@ public:
     static const std::pair<setpoint_t, setpoint_t> LIMITS[DATA_POINTS];
     static const char * LABELS[DATA_POINTS];
 
-    Synapse(yarp::dev::ISerialDevice * iSerialDevice);
+    Synapse();
+    virtual ~Synapse() {}
+
+    virtual void configure(void * handle);
 
     bool readDataList(Setpoints & setpoints);
-
     bool writeSetpointList(const Setpoints & setpoints);
 
-private:
+protected:
+    virtual bool getMessage(unsigned char * msg, char stopByte, int size) = 0;
+    virtual bool sendMessage(char * msg, int size) = 0;
 
-    bool getMessage(unsigned char * msg);
-
-    yarp::dev::ISerialDevice * iSerialDevice;
+    bool configured;
 };
 
 }  // namespace roboticslab

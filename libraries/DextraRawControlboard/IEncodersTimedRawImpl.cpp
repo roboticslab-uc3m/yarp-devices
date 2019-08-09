@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraSerialControlboard.hpp"
+#include "DextraRawControlboard.hpp"
 
 #include <algorithm>
 
@@ -10,15 +10,15 @@
 
 // ------------------ IEncoders Related -----------------------------------------
 
-bool roboticslab::DextraSerialControlboard::resetEncoder(int j)
+bool roboticslab::DextraRawControlboard::resetEncoderRaw(int j)
 {
     CD_DEBUG("(%d)\n",j);
-    return setEncoder(j, 0.0);
+    return setEncoderRaw(j, 0.0);
 }
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::resetEncoders()
+bool roboticslab::DextraRawControlboard::resetEncodersRaw()
 {
     CD_DEBUG("\n");
     Synapse::Setpoints setpoints = {0};
@@ -28,7 +28,7 @@ bool roboticslab::DextraSerialControlboard::resetEncoders()
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::setEncoder(int j, double val)
+bool roboticslab::DextraRawControlboard::setEncoderRaw(int j, double val)
 {
     CD_DEBUG("(%d, %f)\n", j, val);
     CHECK_JOINT(j);
@@ -38,7 +38,7 @@ bool roboticslab::DextraSerialControlboard::setEncoder(int j, double val)
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::setEncoders(const double *vals)
+bool roboticslab::DextraRawControlboard::setEncodersRaw(const double *vals)
 {
     CD_DEBUG("\n");
     Synapse::Setpoints setpoints;
@@ -49,7 +49,7 @@ bool roboticslab::DextraSerialControlboard::setEncoders(const double *vals)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getEncoder(int j, double *v)
+bool roboticslab::DextraRawControlboard::getEncoderRaw(int j, double *v)
 {
     //CD_DEBUG("%d\n", j);  //-- Too verbose in stream.
     CHECK_JOINT(j);
@@ -59,7 +59,7 @@ bool roboticslab::DextraSerialControlboard::getEncoder(int j, double *v)
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getEncoders(double *encs)
+bool roboticslab::DextraRawControlboard::getEncodersRaw(double *encs)
 {
     //CD_DEBUG("\n");
     Synapse::Setpoints setpoints;
@@ -70,7 +70,7 @@ bool roboticslab::DextraSerialControlboard::getEncoders(double *encs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getEncoderSpeed(int j, double *sp)
+bool roboticslab::DextraRawControlboard::getEncoderSpeedRaw(int j, double *sp)
 {
     //CD_DEBUG("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
     CHECK_JOINT(j);
@@ -79,7 +79,7 @@ bool roboticslab::DextraSerialControlboard::getEncoderSpeed(int j, double *sp)
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getEncoderSpeeds(double *spds)
+bool roboticslab::DextraRawControlboard::getEncoderSpeedsRaw(double *spds)
 {
     //CD_DEBUG("\n");
 
@@ -87,7 +87,7 @@ bool roboticslab::DextraSerialControlboard::getEncoderSpeeds(double *spds)
 
     for (int j = 0; j < Synapse::DATA_POINTS; j++)
     {
-        ok &= getEncoderSpeed(j, &spds[j]);
+        ok &= getEncoderSpeedRaw(j, &spds[j]);
     }
 
     return ok;
@@ -95,7 +95,7 @@ bool roboticslab::DextraSerialControlboard::getEncoderSpeeds(double *spds)
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getEncoderAcceleration(int j, double *accs)
+bool roboticslab::DextraRawControlboard::getEncoderAccelerationRaw(int j, double *accs)
 {
     //CD_DEBUG("(%d)\n", j);  //-- Too verbose in controlboardwrapper2 stream.
     CHECK_JOINT(j);
@@ -104,14 +104,14 @@ bool roboticslab::DextraSerialControlboard::getEncoderAcceleration(int j, double
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getEncoderAccelerations(double *accs)
+bool roboticslab::DextraRawControlboard::getEncoderAccelerationsRaw(double *accs)
 {
     //CD_DEBUG("\n");
     bool ok = true;
 
     for (int j = 0; j < Synapse::DATA_POINTS; j++)
     {
-        ok &= getEncoderAcceleration(j, &accs[j]);
+        ok &= getEncoderAccelerationRaw(j, &accs[j]);
     }
 
     return ok;
@@ -119,21 +119,21 @@ bool roboticslab::DextraSerialControlboard::getEncoderAccelerations(double *accs
 
 // ------------------ IEncodersTimed Related -----------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getEncodersTimed(double *encs, double *time)
+bool roboticslab::DextraRawControlboard::getEncodersTimedRaw(double *encs, double *time)
 {
     CD_DEBUG("\n");
     *time = yarp::os::Time::now();
-    return getEncoders(encs);
+    return getEncodersRaw(encs);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getEncoderTimed(int j, double *enc, double *time)
+bool roboticslab::DextraRawControlboard::getEncoderTimedRaw(int j, double *enc, double *time)
 {
     //CD_DEBUG("(%d)\n", j);  //-- Too verbose in controlboardwrapper2 stream.
     CHECK_JOINT(j);
     *time = yarp::os::Time::now();
-    return getEncoder(j, enc);
+    return getEncoderRaw(j, enc);
 }
 
 // -----------------------------------------------------------------------------

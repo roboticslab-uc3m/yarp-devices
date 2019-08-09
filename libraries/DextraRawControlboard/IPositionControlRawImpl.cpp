@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraSerialControlboard.hpp"
+#include "DextraRawControlboard.hpp"
 
 #include <cstring>
 
@@ -10,7 +10,7 @@
 
 // ------------------- IPositionControl Related ------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getAxes(int *ax)
+bool roboticslab::DextraRawControlboard::getAxes(int *ax)
 {
     *ax = Synapse::DATA_POINTS;
     return true;
@@ -18,7 +18,7 @@ bool roboticslab::DextraSerialControlboard::getAxes(int *ax)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::positionMove(int j, double ref)    // encExposed = ref;
+bool roboticslab::DextraRawControlboard::positionMoveRaw(int j, double ref)
 {
     CD_DEBUG("(%d, %f)\n", j, ref);
     CHECK_JOINT(j);
@@ -38,7 +38,7 @@ bool roboticslab::DextraSerialControlboard::positionMove(int j, double ref)    /
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::positionMove(const double *refs)
+bool roboticslab::DextraRawControlboard::positionMoveRaw(const double *refs)
 {
     CD_DEBUG("\n");
 
@@ -56,30 +56,30 @@ bool roboticslab::DextraSerialControlboard::positionMove(const double *refs)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::relativeMove(int j, double delta)
+bool roboticslab::DextraRawControlboard::relativeMoveRaw(int j, double delta)
 {
     CD_DEBUG("(%d, %f)\n",j,delta);
     CHECK_JOINT(j);
 
     double ref;
 
-    if (!getEncoder(j, &ref))
+    if (!getEncoderRaw(j, &ref))
     {
         return false;
     }
 
-    return positionMove(j, ref + delta);
+    return positionMoveRaw(j, ref + delta);
 }
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::relativeMove(const double *deltas)
+bool roboticslab::DextraRawControlboard::relativeMoveRaw(const double *deltas)
 {
     CD_DEBUG("\n");
 
     double encs[Synapse::DATA_POINTS];
 
-    if (!getEncoders(encs))
+    if (!getEncodersRaw(encs))
     {
         return false;
     }
@@ -89,12 +89,12 @@ bool roboticslab::DextraSerialControlboard::relativeMove(const double *deltas)
         encs[j] += deltas[j];
     }
 
-    return positionMove(encs);
+    return positionMoveRaw(encs);
 }
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::checkMotionDone(int j, bool *flag)
+bool roboticslab::DextraRawControlboard::checkMotionDoneRaw(int j, bool *flag)
 {
     CD_DEBUG("(%d)\n",j);
     CHECK_JOINT(j);
@@ -104,7 +104,7 @@ bool roboticslab::DextraSerialControlboard::checkMotionDone(int j, bool *flag)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::checkMotionDone(bool *flag)
+bool roboticslab::DextraRawControlboard::checkMotionDoneRaw(bool *flag)
 {
     CD_DEBUG("\n");
 
@@ -113,7 +113,7 @@ bool roboticslab::DextraSerialControlboard::checkMotionDone(bool *flag)
     for (int j = 0; j < Synapse::DATA_POINTS; j++)
     {
         bool localFlag;
-        ok &= checkMotionDone(j, &localFlag);
+        ok &= checkMotionDoneRaw(j, &localFlag);
         *flag &= localFlag;
     }
 
@@ -122,7 +122,7 @@ bool roboticslab::DextraSerialControlboard::checkMotionDone(bool *flag)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::setRefSpeed(int j, double sp)
+bool roboticslab::DextraRawControlboard::setRefSpeedRaw(int j, double sp)
 {
     CD_DEBUG("(%d, %f)\n", j ,sp);
     CHECK_JOINT(j);
@@ -131,7 +131,7 @@ bool roboticslab::DextraSerialControlboard::setRefSpeed(int j, double sp)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::setRefSpeeds(const double *spds)
+bool roboticslab::DextraRawControlboard::setRefSpeedsRaw(const double *spds)
 {
     CD_DEBUG("\n");
 
@@ -139,7 +139,7 @@ bool roboticslab::DextraSerialControlboard::setRefSpeeds(const double *spds)
 
     for (int j = 0; j < Synapse::DATA_POINTS; j++)
     {
-        ok &= setRefSpeed(j, spds[j]);
+        ok &= setRefSpeedRaw(j, spds[j]);
     }
 
     return ok;
@@ -147,7 +147,7 @@ bool roboticslab::DextraSerialControlboard::setRefSpeeds(const double *spds)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::setRefAcceleration(int j, double acc)
+bool roboticslab::DextraRawControlboard::setRefAccelerationRaw(int j, double acc)
 {
     CD_DEBUG("(%d, %f)\n", j, acc);
     CHECK_JOINT(j);
@@ -156,7 +156,7 @@ bool roboticslab::DextraSerialControlboard::setRefAcceleration(int j, double acc
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::setRefAccelerations(const double *accs)
+bool roboticslab::DextraRawControlboard::setRefAccelerationsRaw(const double *accs)
 {
     CD_DEBUG("\n");
 
@@ -164,7 +164,7 @@ bool roboticslab::DextraSerialControlboard::setRefAccelerations(const double *ac
 
     for (int j = 0; j < Synapse::DATA_POINTS; j++)
     {
-        ok &= setRefAcceleration(j, accs[j]);
+        ok &= setRefAccelerationRaw(j, accs[j]);
     }
 
     return ok;
@@ -172,7 +172,7 @@ bool roboticslab::DextraSerialControlboard::setRefAccelerations(const double *ac
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getRefSpeed(int j, double *ref)
+bool roboticslab::DextraRawControlboard::getRefSpeedRaw(int j, double *ref)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
@@ -181,7 +181,7 @@ bool roboticslab::DextraSerialControlboard::getRefSpeed(int j, double *ref)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getRefSpeeds(double *spds)
+bool roboticslab::DextraRawControlboard::getRefSpeedsRaw(double *spds)
 {
     CD_DEBUG("\n");
 
@@ -189,7 +189,7 @@ bool roboticslab::DextraSerialControlboard::getRefSpeeds(double *spds)
 
     for (int j = 0; j < Synapse::DATA_POINTS; j++)
     {
-        ok &= getRefSpeed(j, &spds[j]);
+        ok &= getRefSpeedRaw(j, &spds[j]);
     }
 
     return ok;
@@ -197,7 +197,7 @@ bool roboticslab::DextraSerialControlboard::getRefSpeeds(double *spds)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getRefAcceleration(int j, double *acc)
+bool roboticslab::DextraRawControlboard::getRefAccelerationRaw(int j, double *acc)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
@@ -206,7 +206,7 @@ bool roboticslab::DextraSerialControlboard::getRefAcceleration(int j, double *ac
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getRefAccelerations(double *accs)
+bool roboticslab::DextraRawControlboard::getRefAccelerationsRaw(double *accs)
 {
     CD_DEBUG("\n");
 
@@ -214,7 +214,7 @@ bool roboticslab::DextraSerialControlboard::getRefAccelerations(double *accs)
 
     for (int j = 0; j < Synapse::DATA_POINTS; j++)
     {
-        ok &= getRefAcceleration(j, &accs[j]);
+        ok &= getRefAccelerationRaw(j, &accs[j]);
     }
 
     return ok;
@@ -222,7 +222,7 @@ bool roboticslab::DextraSerialControlboard::getRefAccelerations(double *accs)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::stop(int j)
+bool roboticslab::DextraRawControlboard::stopRaw(int j)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
@@ -231,7 +231,7 @@ bool roboticslab::DextraSerialControlboard::stop(int j)
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::stop()
+bool roboticslab::DextraRawControlboard::stopRaw()
 {
     CD_DEBUG("\n");
 
@@ -239,7 +239,7 @@ bool roboticslab::DextraSerialControlboard::stop()
 
     for (int j = 0; j < Synapse::DATA_POINTS; j++)
     {
-        ok &= stop(j);
+        ok &= stopRaw(j);
     }
 
     return ok;
@@ -247,13 +247,13 @@ bool roboticslab::DextraSerialControlboard::stop()
 
 // -----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::positionMove(const int n_joint, const int *joints, const double *refs)
+bool roboticslab::DextraRawControlboard::positionMoveRaw(const int n_joint, const int *joints, const double *refs)
 {
     CD_DEBUG("(%d)\n", n_joint);
 
     double encs[Synapse::DATA_POINTS];
 
-    if (!getEncoders(encs))
+    if (!getEncodersRaw(encs))
     {
         return false;
     }
@@ -263,18 +263,18 @@ bool roboticslab::DextraSerialControlboard::positionMove(const int n_joint, cons
         encs[joints[i]] = refs[i];
     }
 
-    return positionMove(encs);
+    return positionMoveRaw(encs);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::relativeMove(const int n_joint, const int *joints, const double *deltas)
+bool roboticslab::DextraRawControlboard::relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)
 {
     CD_DEBUG("(%d)\n", n_joint);
 
     double encs[Synapse::DATA_POINTS];
 
-    if (!getEncoders(encs))
+    if (!getEncodersRaw(encs))
     {
         return false;
     }
@@ -284,12 +284,12 @@ bool roboticslab::DextraSerialControlboard::relativeMove(const int n_joint, cons
         encs[joints[i]] += deltas[i];
     }
 
-    return positionMove(encs);
+    return positionMoveRaw(encs);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::checkMotionDone(const int n_joint, const int *joints, bool *flags)
+bool roboticslab::DextraRawControlboard::checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags)
 {
     CD_DEBUG("(%d)\n", n_joint);
 
@@ -298,7 +298,7 @@ bool roboticslab::DextraSerialControlboard::checkMotionDone(const int n_joint, c
     for (int i = 0; i < n_joint; i++)
     {
         bool localFlag;
-        ok &= checkMotionDone(joints[i], &localFlag);
+        ok &= checkMotionDoneRaw(joints[i], &localFlag);
         *flags &= localFlag;
     }
 
@@ -307,7 +307,7 @@ bool roboticslab::DextraSerialControlboard::checkMotionDone(const int n_joint, c
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::setRefSpeeds(const int n_joint, const int *joints, const double *spds)
+bool roboticslab::DextraRawControlboard::setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)
 {
     CD_DEBUG("(%d)\n", n_joint);
 
@@ -315,7 +315,7 @@ bool roboticslab::DextraSerialControlboard::setRefSpeeds(const int n_joint, cons
 
     for (int i = 0; i < n_joint; i++)
     {
-        ok &= setRefSpeed(joints[i], spds[i]);
+        ok &= setRefSpeedRaw(joints[i], spds[i]);
     }
 
     return ok;
@@ -323,7 +323,7 @@ bool roboticslab::DextraSerialControlboard::setRefSpeeds(const int n_joint, cons
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
+bool roboticslab::DextraRawControlboard::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
 {
     CD_DEBUG("(%d)\n", n_joint);
 
@@ -331,7 +331,7 @@ bool roboticslab::DextraSerialControlboard::setRefAccelerations(const int n_join
 
     for (int i = 0; i < n_joint; i++)
     {
-        ok &= setRefAcceleration(joints[i], accs[i]);
+        ok &= setRefAccelerationRaw(joints[i], accs[i]);
     }
 
     return ok;
@@ -339,7 +339,7 @@ bool roboticslab::DextraSerialControlboard::setRefAccelerations(const int n_join
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getRefSpeeds(const int n_joint, const int *joints, double *spds)
+bool roboticslab::DextraRawControlboard::getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)
 {
     CD_DEBUG("(%d)\n", n_joint);
 
@@ -347,7 +347,7 @@ bool roboticslab::DextraSerialControlboard::getRefSpeeds(const int n_joint, cons
 
     for (int i = 0; i < n_joint; i++)
     {
-        ok &= getRefSpeed(joints[i], &spds[i]);
+        ok &= getRefSpeedRaw(joints[i], &spds[i]);
     }
 
     return ok;
@@ -355,7 +355,7 @@ bool roboticslab::DextraSerialControlboard::getRefSpeeds(const int n_joint, cons
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getRefAccelerations(const int n_joint, const int *joints, double *accs)
+bool roboticslab::DextraRawControlboard::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
 {
     CD_DEBUG("(%d)\n", n_joint);
 
@@ -363,7 +363,7 @@ bool roboticslab::DextraSerialControlboard::getRefAccelerations(const int n_join
 
     for (int i = 0; i < n_joint; i++)
     {
-        ok &= getRefAcceleration(joints[i], &accs[i]);
+        ok &= getRefAccelerationRaw(joints[i], &accs[i]);
     }
 
     return ok;
@@ -371,7 +371,7 @@ bool roboticslab::DextraSerialControlboard::getRefAccelerations(const int n_join
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::stop(const int n_joint, const int *joints)
+bool roboticslab::DextraRawControlboard::stopRaw(const int n_joint, const int *joints)
 {
     CD_DEBUG("(%d)\n", n_joint);
 
@@ -379,7 +379,7 @@ bool roboticslab::DextraSerialControlboard::stop(const int n_joint, const int *j
 
     for (int i = 0; i < n_joint; i++)
     {
-        ok &= stop(joints[i]);
+        ok &= stopRaw(joints[i]);
     }
 
     return ok;
@@ -387,7 +387,7 @@ bool roboticslab::DextraSerialControlboard::stop(const int n_joint, const int *j
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getTargetPosition(const int joint, double *ref)
+bool roboticslab::DextraRawControlboard::getTargetPositionRaw(const int joint, double *ref)
 {
     CD_DEBUG("(%d)\n", joint);
     return false;
@@ -395,7 +395,7 @@ bool roboticslab::DextraSerialControlboard::getTargetPosition(const int joint, d
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getTargetPositions(double *refs)
+bool roboticslab::DextraRawControlboard::getTargetPositionsRaw(double *refs)
 {
     CD_DEBUG("\n");
 
@@ -403,7 +403,7 @@ bool roboticslab::DextraSerialControlboard::getTargetPositions(double *refs)
 
     for (int j = 0; j < Synapse::DATA_POINTS; j++)
     {
-        ok &= getTargetPosition(j, &refs[j]);
+        ok &= getTargetPositionRaw(j, &refs[j]);
     }
 
     return ok;
@@ -411,7 +411,7 @@ bool roboticslab::DextraSerialControlboard::getTargetPositions(double *refs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::getTargetPositions(const int n_joint, const int *joints, double *refs)
+bool roboticslab::DextraRawControlboard::getTargetPositionsRaw(const int n_joint, const int *joints, double *refs)
 {
     CD_DEBUG("(%d)\n", n_joint);
 
@@ -419,7 +419,7 @@ bool roboticslab::DextraSerialControlboard::getTargetPositions(const int n_joint
 
     for (int i = 0; i < n_joint; i++)
     {
-        ok &= getTargetPosition(joints[i], &refs[i]);
+        ok &= getTargetPositionRaw(joints[i], &refs[i]);
     }
 
     return ok;

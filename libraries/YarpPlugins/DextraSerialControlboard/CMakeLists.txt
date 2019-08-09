@@ -7,25 +7,19 @@ yarp_prepare_plugin(DextraSerialControlboard
                     TYPE roboticslab::DextraSerialControlboard
                     INCLUDE DextraSerialControlboard.hpp
                     DEFAULT ON
+                    DEPENDS ENABLE_DextraRawControlboardLib
                     EXTRA_CONFIG WRAPPER=controlboardwrapper2)
 
 if(NOT SKIP_DextraSerialControlboard)
 
     set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
 
-    yarp_add_plugin(DextraSerialControlboard DextraSerialControlboard.cpp
-                                             DextraSerialControlboard.hpp
+    yarp_add_plugin(DextraSerialControlboard DextraSerialControlboard.hpp
                                              DeviceDriverImpl.cpp
-                                             IAxisInfoImpl.cpp
-                                             IControlLimitsImpl.cpp
-                                             IControlModeImpl.cpp
-                                             IEncodersTimedImpl.cpp
-                                             IPositionControlImpl.cpp
-                                             IPositionDirectImpl.cpp
-                                             Synapse.hpp
-                                             Synapse.cpp)
+                                             SerialSynapse.cpp)
 
-    target_link_libraries(DextraSerialControlboard YARP::YARP_OS
+    target_link_libraries(DextraSerialControlboard DextraRawControlboardLib
+                                                   YARP::YARP_OS
                                                    YARP::YARP_dev
                                                    ROBOTICSLAB::ColorDebug)
 
