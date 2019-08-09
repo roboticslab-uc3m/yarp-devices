@@ -10,8 +10,6 @@
 
 #include <string>
 
-#include <yarp/os/LockGuard.h>
-
 #include <ColorDebug.h>
 
 // -----------------------------------------------------------------------------
@@ -28,7 +26,7 @@ bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
         return false;
     }
 
-    yarp::os::LockGuard lockGuard(canBusReady);
+    std::lock_guard<std::mutex> lockGuard(canBusReady);
 
     if (bitrateState.first)
     {
@@ -101,7 +99,7 @@ bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
         return false;
     }
 
-    yarp::os::LockGuard lockGuard(canBusReady);
+    std::lock_guard<std::mutex> lockGuard(canBusReady);
 
     if (filterManager->hasId(id))
     {
@@ -142,7 +140,7 @@ bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
         return false;
     }
 
-    yarp::os::LockGuard lockGuard(canBusReady);
+    std::lock_guard<std::mutex> lockGuard(canBusReady);
 
     if (id == 0)
     {
@@ -190,7 +188,7 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
 
     *read = 0;
 
-    yarp::os::LockGuard lockGuard(canBusReady);
+    std::lock_guard<std::mutex> lockGuard(canBusReady);
 
     for (unsigned int i = 0; i < size; i++)
     {
@@ -253,7 +251,7 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
 
     *sent = 0;
 
-    yarp::os::LockGuard lockGuard(canBusReady);
+    std::lock_guard<std::mutex> lockGuard(canBusReady);
 
     for (unsigned int i = 0; i < size; i++)
     {

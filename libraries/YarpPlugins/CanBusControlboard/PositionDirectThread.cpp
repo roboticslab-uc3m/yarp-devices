@@ -19,7 +19,7 @@ void PositionDirectThread::setNodeHandles(const std::map<int, ITechnosoftIpos *>
 
 void PositionDirectThread::updateControlModeRegister(int j, bool enablePosd)
 {
-    yarp::os::LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mtx);
 
     bool hasElement = activeIds.find(j) != activeIds.end();
 
@@ -42,9 +42,9 @@ void PositionDirectThread::updateControlModeRegister(int j, bool enablePosd)
 
 void PositionDirectThread::run()
 {
-    mutex.lock();
+    mtx.lock();
     std::set<int> ids = activeIds;
-    mutex.unlock();
+    mtx.unlock();
 
     for (std::set<int>::iterator it = ids.begin(); it != ids.end(); ++it)
     {

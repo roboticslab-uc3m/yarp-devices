@@ -5,9 +5,8 @@
 
 #include <stdint.h>
 
+#include <mutex>
 #include <set>
-
-#include <yarp/os/Mutex.h>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/CanBusInterface.h>
@@ -124,7 +123,7 @@ protected:
     bool blockingMode;
     bool allowPermissive;
 
-    mutable yarp::os::Mutex canBusReady;
+    mutable std::mutex canBusReady;
 
     std::set<unsigned int> activeFilters;
 };

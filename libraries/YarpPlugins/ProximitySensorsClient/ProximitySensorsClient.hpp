@@ -3,6 +3,8 @@
 #ifndef __PROXIMITY_SENSORS_CLIENT_HPP__
 #define __PROXIMITY_SENSORS_CLIENT_HPP__
 
+#include <mutex>
+
 #include <yarp/os/all.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
@@ -93,7 +95,7 @@ protected:
     alert_level alert;
     bool gripper;
 
-    yarp::os::Mutex alertMutex, gripperMutex;
+    std::mutex alertMutex, gripperMutex;
 
     int thresholdGripper, thresholdAlertHigh, thresholdAlertLow;
 };

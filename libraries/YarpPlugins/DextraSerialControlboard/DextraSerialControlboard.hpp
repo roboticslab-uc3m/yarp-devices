@@ -3,7 +3,7 @@
 #ifndef __DEXTRA_SERIAL_CONTROLBOARD_HPP__
 #define __DEXTRA_SERIAL_CONTROLBOARD_HPP__
 
-#include <yarp/os/Mutex.h>
+#include <mutex>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
@@ -131,7 +131,7 @@ protected:
     Synapse * synapse;
     yarp::dev::PolyDriver serialDevice;
     Synapse::Setpoints setpoints;
-    mutable yarp::os::Mutex setpointMutex;
+    mutable std::mutex setpointMutex;
 };
 
 }  // namespace roboticslab

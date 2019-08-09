@@ -5,11 +5,11 @@
 
 #include <set>
 #include <map>
+#include <mutex>
 #include <string>
 #include <utility>
 
 #include <yarp/os/Bottle.h>
-#include <yarp/os/Mutex.h>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/CanBusInterface.h>
@@ -133,7 +133,7 @@ protected:
     bool blockingMode;
     bool allowPermissive;
 
-    yarp::os::Mutex canBusReady;
+    mutable std::mutex canBusReady;
 
     std::pair<bool, unsigned int> bitrateState;
 

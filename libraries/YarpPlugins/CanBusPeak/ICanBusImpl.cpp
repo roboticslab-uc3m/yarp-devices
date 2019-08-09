@@ -6,7 +6,6 @@
 #include <cerrno> // error codes
 
 #include <yarp/conf/version.h>
-#include <yarp/os/LockGuard.h>
 
 #include <libpcanfd.h>
 
@@ -68,7 +67,7 @@ bool roboticslab::CanBusPeak::canIdAdd(unsigned int id)
 {
     CD_DEBUG("(%d)\n", id);
 
-    yarp::os::LockGuard lockGuard(canBusReady);
+    std::lock_guard<std::mutex> lockGuard(canBusReady);
 
     if (activeFilters.find(id) != activeFilters.end())
     {
@@ -100,7 +99,7 @@ bool roboticslab::CanBusPeak::canIdDelete(unsigned int id)
 {
     CD_DEBUG("(%d)\n", id);
 
-    yarp::os::LockGuard lockGuard(canBusReady);
+    std::lock_guard<std::mutex> lockGuard(canBusReady);
 
     if (id == 0)
     {
@@ -153,7 +152,7 @@ bool roboticslab::CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
     int res;
 
     {
-        yarp::os::LockGuard lockGuard(canBusReady);
+        std::lock_guard<std::mutex> lockGuard(canBusReady);
 
         if (blockingMode && rxTimeoutMs > 0)
         {
@@ -206,7 +205,7 @@ bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsign
     int res;
 
     {
-        yarp::os::LockGuard lockGuard(canBusReady);
+        std::lock_guard<std::mutex> lockGuard(canBusReady);
 
         // Point at first member of an internally defined array of pcanfd_msg structs.
 #if YARP_VERSION_MINOR >= 2 // note: remove #include <yarp/conf/version.h>

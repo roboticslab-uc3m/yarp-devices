@@ -93,20 +93,14 @@ void LinearInterpolationBuffer::setInitialReference(double target)
 
 void LinearInterpolationBuffer::updateTarget(double target)
 {
-    mutex.lock();
+    std::lock_guard<std::mutex> lock(mtx);
     lastReceivedTarget = target;
-    mutex.unlock();
 }
 
 double LinearInterpolationBuffer::getLastTarget() const
 {
-    double tmp;
-
-    mutex.lock();
-    tmp = lastSentTarget;
-    mutex.unlock();
-
-    return tmp;
+    std::lock_guard<std::mutex> lock(mtx);
+    return lastSentTarget;
 }
 
 int LinearInterpolationBuffer::getPeriod() const
@@ -186,9 +180,9 @@ void PtBuffer::configureMessage(uint8_t * msg)
     //-- Send the following message:
     //uint8_t ptpoint1[]={0x20,0x4E,0x00,0x00,0xE8,0x03,0x00,0x02};
 
-    mutex.lock();
+    mtx.lock();
     double _lastReceivedTarget = lastReceivedTarget;
-    mutex.unlock();
+    mtx.unlock();
 
     if (std::abs(_lastReceivedTarget - lastSentTarget) > maxDistance)
     {
@@ -251,9 +245,9 @@ void PvtBuffer::configureMessage(uint8_t * msg)
     //-- Send the following message:
     //uint8_t ptpoint1[]={0x58,0x00,0x54,0x00,0x03,0x00,0x37,0x00};
 
-    mutex.lock();
+    mtx.lock();
     double currentTarget = lastReceivedTarget;
-    mutex.unlock();
+    mtx.unlock();
 
     double p = previousTarget;
     double v;
