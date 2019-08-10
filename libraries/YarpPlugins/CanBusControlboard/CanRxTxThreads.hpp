@@ -9,7 +9,7 @@
 #include <yarp/os/Thread.h>
 #include <yarp/dev/CanBusInterface.h>
 
-#include "ICanBusSharer.h"
+#include "ICanBusSharer.hpp"
 
 namespace roboticslab
 {

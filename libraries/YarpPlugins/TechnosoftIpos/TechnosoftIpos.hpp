@@ -15,7 +15,7 @@
 
 #include <ColorDebug.h>
 
-#include "ICanBusSharer.h"
+#include "ICanBusSharer.hpp"
 #include "ITechnosoftIpos.h"
 #include "LinearInterpolationBuffer.hpp"
 

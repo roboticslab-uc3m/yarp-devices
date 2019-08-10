@@ -10,7 +10,7 @@
 
 #include "DextraRawControlboard.hpp"
 #include "Synapse.hpp"
-#include "ICanBusSharer.h"
+#include "ICanBusSharer.hpp"
 
 namespace roboticslab
 {

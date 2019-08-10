@@ -11,8 +11,7 @@ target_include_directories(YarpDevicesInterfaces INTERFACE $<TARGET_PROPERTY:YAR
                                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 # Install interface headers.
-install(FILES ICanBusSharer.h
-              ICuiAbsolute.h
+install(FILES ICuiAbsolute.h
               IProximitySensors.h
               ITechnosoftIpos.h
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

@@ -7,7 +7,7 @@ yarp_prepare_plugin(TextilesHand
                     TYPE roboticslab::TextilesHand
                     INCLUDE TextilesHand.hpp
                     DEFAULT ON
-                    DEPENDS UNIX)
+                    DEPENDS "UNIX;ENABLE_CanBusSharerLib")
 
 if(NOT SKIP_TextilesHand)
 
@@ -31,7 +31,7 @@ if(NOT SKIP_TextilesHand)
     target_link_libraries(TextilesHand YARP::YARP_OS
                                        YARP::YARP_dev
                                        ROBOTICSLAB::ColorDebug
-                                       YarpDevicesInterfaces)
+                                       CanBusSharerLib)
 
     if(NOT YARP_VERSION_SHORT VERSION_LESS 3.2)
         yarp_install(TARGETS TextilesHand
