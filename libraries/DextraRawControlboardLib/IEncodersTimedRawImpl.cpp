@@ -1,12 +1,11 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DextraRawControlboard.hpp"
-
 #include <algorithm>
 
 #include <yarp/os/Time.h>
 
 #include <ColorDebug.h>
+#include "../DextraRawControlboardLib/DextraRawControlboard.hpp"
 
 // ------------------ IEncoders Related -----------------------------------------
 

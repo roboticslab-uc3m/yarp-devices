@@ -8,10 +8,9 @@
 #include <yarp/dev/CanBusInterface.h>
 #include <yarp/dev/DeviceDriver.h>
 
-#include "DextraRawControlboard.hpp"
-#include "Synapse.hpp"
-
 #include "ICanBusSharer.h"
+#include "../../DextraRawControlboardLib/DextraRawControlboard.hpp"
+#include "../../DextraRawControlboardLib/Synapse.hpp"
 
 namespace roboticslab
 {
