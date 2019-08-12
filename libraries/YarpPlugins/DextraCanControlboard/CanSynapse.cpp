@@ -26,24 +26,20 @@ bool CanSynapse::getMessage(unsigned char * msg, char stopByte, int size)
     return false;
 }
 
-bool CanSynapse::sendMessage(char * msg, int size)
+bool CanSynapse::sendMessage(unsigned char * msg, int size)
 {
     int n = std::ceil(size / 8.0f);
     assert(BUFFER_SIZE >= n);
 
-    // FIXME
-    /*
     for (int i = 0; i < n; i++)
     {
         const int bytes = ((i + 1) * 8 <= size) ? 8 : size % 8;
-        yarp::dev::CanMessage & canMsg = canBuffer[i];
-        canMsg.setId(canId);
-        canMsg.setLen(bytes);
-        std::memcpy(canMsg.getData(), msg, bytes);
+
+        if (!sender->prepareMessage(message_builder(canId, bytes, msg)))
+        {
+            return false;
+        }
     }
 
-    unsigned int sent;
-    return iCanBus->canWrite(canBuffer, n, &sent, true) && sent != 0;
-    */
     return true;
 }

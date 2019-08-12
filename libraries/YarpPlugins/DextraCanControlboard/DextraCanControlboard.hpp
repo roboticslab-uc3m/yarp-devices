@@ -30,7 +30,7 @@ public:
 
 protected:
     virtual bool getMessage(unsigned char * msg, char stopByte, int size);
-    virtual bool sendMessage(char * msg, int size);
+    virtual bool sendMessage(unsigned char * msg, int size);
 
 private:
     int canId;
