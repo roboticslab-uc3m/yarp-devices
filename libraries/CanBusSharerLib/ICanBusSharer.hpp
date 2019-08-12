@@ -1,10 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __I_CAN_BUS_SHARER__
-#define __I_CAN_BUS_SHARER__
+#ifndef __I_CAN_BUS_SHARER_HPP__
+#define __I_CAN_BUS_SHARER_HPP__
 
 #include <yarp/dev/IEncodersTimed.h>
 #include <yarp/dev/CanBusInterface.h>
+
+#include "CanSenderDelegate.hpp"
 
 #define DELAY 0.001  // [s] Required when using same driver.
 
@@ -52,8 +54,10 @@ public:
      */
     virtual bool interpretMessage(const yarp::dev::CanMessage & message) = 0;
 
+    virtual bool registerSender(CanSenderDelegate * sender) { return true; };
+
 };
 
 }  // namespace roboticslab
 
-#endif  //  __I_CAN_BUS_SHARER__
+#endif  //  __I_CAN_BUS_SHARER_HPP__

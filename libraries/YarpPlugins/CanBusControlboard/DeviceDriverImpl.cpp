@@ -202,6 +202,8 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         //-- Pass CAN bus pointer to CAN node
         iCanBusSharer[i]->setCanBusPtr( iCanBus );
 
+        iCanBusSharer[i]->registerSender(canWriterThread->getDelegate());
+
         //-- DRIVERS
         if(types.get(i).asString() == "TechnosoftIpos")
         {

@@ -4,6 +4,7 @@
 #define __CAN_RX_TH_THREADS_HPP__
 
 #include <map>
+#include <mutex>
 #include <vector>
 
 #include <yarp/os/Thread.h>
@@ -62,7 +63,15 @@ private:
 class CanWriterThread : public CanReaderWriterThread
 {
 public:
+    CanWriterThread();
+    ~CanWriterThread();
+
     virtual void run();
+    CanSenderDelegate * getDelegate();
+
+private:
+    CanSenderDelegate * sender;
+    mutable std::mutex bufferMutex;
 };
 
 } // namespace roboticslab

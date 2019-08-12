@@ -3,6 +3,8 @@ option(ENABLE_CanBusSharerLib "Enable/disable CanBusSharerLib library" ON)
 if(ENABLE_CanBusSharerLib)
 
     add_library(CanBusSharerLib SHARED ICanBusSharer.hpp
+                                       CanSenderDelegate.hpp
+                                       CanSenderDelegate.cpp
                                        CanBusSharer.cpp)
 
     target_link_libraries(CanBusSharerLib PUBLIC YARP::YARP_dev
