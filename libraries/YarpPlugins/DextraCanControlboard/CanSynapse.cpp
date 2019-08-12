@@ -24,7 +24,7 @@ CanSynapse::~CanSynapse()
 
 void CanSynapse::configure(void * handle)
 {
-    iCanBus = reinterpret_cast<yarp::dev::ICanBus *>(handle);
+    iCanBus = static_cast<yarp::dev::ICanBus *>(handle);
     configured = true;
 }
 
