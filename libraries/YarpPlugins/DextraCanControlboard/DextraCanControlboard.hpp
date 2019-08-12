@@ -8,9 +8,9 @@
 #include <yarp/dev/CanBusInterface.h>
 #include <yarp/dev/DeviceDriver.h>
 
+#include "DextraRawControlboard.hpp"
+#include "Synapse.hpp"
 #include "ICanBusSharer.h"
-#include "../../DextraRawControlboardLib/DextraRawControlboard.hpp"
-#include "../../DextraRawControlboardLib/Synapse.hpp"
 
 namespace roboticslab
 {
@@ -49,7 +49,8 @@ private:
  * @brief CAN implementation for the custom UC3M Dextra Hand controlboard interfaces.
  */
 class DextraCanControlboard : public yarp::dev::DeviceDriver,
-                              public DextraRawControlboard
+                              public DextraRawControlboard,
+                              public ICanBusSharer
 {
 public:
 

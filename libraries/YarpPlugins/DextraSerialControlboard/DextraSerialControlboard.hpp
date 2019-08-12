@@ -7,8 +7,8 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/SerialInterfaces.h>
 
-#include "../../DextraRawControlboardLib/DextraRawControlboard.hpp"
-#include "../../DextraRawControlboardLib/Synapse.hpp"
+#include "DextraRawControlboard.hpp"
+#include "Synapse.hpp"
 
 #define DEFAULT_PORT "/dev/ttyACM0" // also /dev/ttyUSB0
 
