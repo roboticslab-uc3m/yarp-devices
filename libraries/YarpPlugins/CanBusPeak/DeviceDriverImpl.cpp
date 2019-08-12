@@ -44,6 +44,8 @@ bool roboticslab::CanBusPeak::open(yarp::os::Searchable& config)
         flags |= OFD_NONBLOCKING;
     }
 
+    CD_INFO("Permissive mode flag for read/write operations on CAN device %s: %d.\n", devicePath.c_str(), allowPermissive);
+
     int res = pcanfd_open(devicePath.c_str(), flags, bitrate);
 
     if (res < 0)
