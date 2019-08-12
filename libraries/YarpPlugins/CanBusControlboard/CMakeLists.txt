@@ -7,6 +7,7 @@ yarp_prepare_plugin(CanBusControlboard
                     TYPE roboticslab::CanBusControlboard
                     INCLUDE CanBusControlboard.hpp
                     DEFAULT ON
+                    DEPENDS ENABLE_CanBusSharerLib
                     EXTRA_CONFIG WRAPPER=controlboardwrapper2)
 
 if(NOT SKIP_CanBusControlboard)
@@ -27,13 +28,15 @@ if(NOT SKIP_CanBusControlboard)
                                        IRemoteVariablesImpl.cpp
                                        ITorqueControlImpl.cpp
                                        IVelocityControlImpl.cpp
-                                       ThreadImpl.cpp
                                        PositionDirectThread.hpp
-                                       PositionDirectThread.cpp)
+                                       PositionDirectThread.cpp
+                                       CanRxTxThreads.hpp
+                                       CanRxTxThreads.cpp)
 
     target_link_libraries(CanBusControlboard YARP::YARP_OS
                                              YARP::YARP_dev
                                              ROBOTICSLAB::ColorDebug
+                                             CanBusSharerLib
                                              YarpDevicesInterfaces)
 
     if(NOT YARP_VERSION_SHORT VERSION_LESS 3.2)

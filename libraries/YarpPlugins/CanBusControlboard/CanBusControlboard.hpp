@@ -30,7 +30,8 @@
 //#define CD_HIDE_ERROR  //-- Can be managed from father CMake.
 #include "ColorDebug.h"
 
-#include "ICanBusSharer.h"
+#include "CanRxTxThreads.hpp"
+#include "ICanBusSharer.hpp"
 
 #define DEFAULT_MODE "position"
 #define DEFAULT_TIME_TO_WAIT_CUI 0
@@ -69,8 +70,7 @@ class CanBusControlboard : public yarp::dev::DeviceDriver,
                            public yarp::dev::IPositionDirect,
                            public yarp::dev::IRemoteVariables,
                            public yarp::dev::ITorqueControl,
-                           public yarp::dev::IVelocityControl,
-                           public yarp::os::Thread
+                           public yarp::dev::IVelocityControl
 {
 
     // ------------------------------- Public -------------------------------------
@@ -843,22 +843,6 @@ public:
 
     virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys);
 
-    // -------- Thread declarations. Implementation in ThreadImpl.cpp --------
-
-    /**
-     * Main body of the new thread.
-     * Override this method to do what you want.
-     * After Thread::start is called, this
-     * method will start running in a separate thread.
-     * It is important that this method either keeps checking
-     * Thread::isStopping to see if it should stop, or
-     * you override the Thread::onStop method to interact
-     * with it in some way to shut the new thread down.
-     * There is no really reliable, portable way to stop
-     * a thread cleanly unless that thread cooperates.
-     */
-    virtual void run();
-
     // -------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp --------
 
     /**
@@ -889,8 +873,6 @@ protected:
     /** A CAN device. */
     yarp::dev::PolyDriver canBusDevice;
     yarp::dev::ICanBus* iCanBus;
-    yarp::dev::ICanBufferFactory *iCanBufferFactory;
-    yarp::dev::CanBuffer canInputBuffer;
 
     /** A vector of CAN node objects. */
     std::vector< yarp::dev::PolyDriver* > nodes;
@@ -911,14 +893,13 @@ protected:
 
     std::map< int, int > idxFromCanId;
 
+    CanReaderThread * canReaderThread;
+    CanWriterThread * canWriterThread;
 
     PositionDirectThread * posdThread;
     int linInterpPeriodMs;
     int linInterpBufferSize;
     std::string linInterpMode;
-
-    int canRxBufferSize;
-    int canTxBufferSize;
 
     /** A helper function to display CAN messages. */
     std::string msgToStr(const yarp::dev::CanMessage& message);

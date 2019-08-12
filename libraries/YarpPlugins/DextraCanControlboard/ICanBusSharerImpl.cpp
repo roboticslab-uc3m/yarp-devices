@@ -4,9 +4,9 @@
 
 using namespace roboticslab;
 
-bool DextraCanControlboard::setCanBusPtr(yarp::dev::ICanBus * canDevicePtr)
+bool DextraCanControlboard::registerSender(CanSenderDelegate * sender)
 {
-    synapse->configure(canDevicePtr);
+    synapse->configure(sender);
     return true;
 }
 

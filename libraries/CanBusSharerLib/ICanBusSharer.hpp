@@ -1,10 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __I_CAN_BUS_SHARER__
-#define __I_CAN_BUS_SHARER__
+#ifndef __I_CAN_BUS_SHARER_HPP__
+#define __I_CAN_BUS_SHARER_HPP__
 
 #include <yarp/dev/IEncodersTimed.h>
 #include <yarp/dev/CanBusInterface.h>
+
+#include "CanSenderDelegate.hpp"
 
 #define DELAY 0.001  // [s] Required when using same driver.
 
@@ -23,8 +25,6 @@ public:
      * Destructor.
      */
     virtual ~ICanBusSharer() {}
-
-    virtual bool setCanBusPtr(yarp::dev::ICanBus * canDevicePtr) = 0;
 
     virtual bool setIEncodersTimedRawExternal(yarp::dev::IEncodersTimedRaw * iEncodersTimedRaw) = 0;
 
@@ -52,8 +52,10 @@ public:
      */
     virtual bool interpretMessage(const yarp::dev::CanMessage & message) = 0;
 
+    virtual bool registerSender(CanSenderDelegate * sender) = 0;
+
 };
 
 }  // namespace roboticslab
 
-#endif  //  __I_CAN_BUS_SHARER__
+#endif  //  __I_CAN_BUS_SHARER_HPP__

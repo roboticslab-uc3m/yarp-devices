@@ -34,7 +34,7 @@ public:
 
 protected:
     virtual bool getMessage(unsigned char * msg, char stopByte, int size) = 0;
-    virtual bool sendMessage(char * msg, int size) = 0;
+    virtual bool sendMessage(unsigned char * msg, int size) = 0;
 
     bool configured;
 };

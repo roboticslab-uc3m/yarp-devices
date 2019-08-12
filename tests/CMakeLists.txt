@@ -10,8 +10,8 @@ if(ENABLE_tests)
 
     include_directories(${GTestSources_INCLUDE_DIR})
 
-    add_subdirectory(testTechnosoftIpos)
-    add_subdirectory(testCuiAbsolute)
+    #add_subdirectory(testTechnosoftIpos)
+    #add_subdirectory(testCuiAbsolute)
 else()
     set(ENABLE_tests OFF CACHE BOOL "Enable/disable unit tests" FORCE)
 endif()

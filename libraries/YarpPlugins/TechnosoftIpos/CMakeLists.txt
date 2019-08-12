@@ -6,7 +6,8 @@ yarp_prepare_plugin(TechnosoftIpos
                     CATEGORY device
                     TYPE roboticslab::TechnosoftIpos
                     INCLUDE TechnosoftIpos.hpp
-                    DEFAULT ON)
+                    DEFAULT ON
+                    DEPENDS ENABLE_CanBusSharerLib)
 
 if(NOT SKIP_TechnosoftIpos)
 
@@ -33,6 +34,7 @@ if(NOT SKIP_TechnosoftIpos)
     target_link_libraries(TechnosoftIpos YARP::YARP_OS
                                          YARP::YARP_dev
                                          ROBOTICSLAB::ColorDebug
+                                         CanBusSharerLib
                                          YarpDevicesInterfaces)
 
     if(NOT YARP_VERSION_SHORT VERSION_LESS 3.2)

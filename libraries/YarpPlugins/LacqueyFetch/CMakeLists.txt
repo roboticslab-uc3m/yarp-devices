@@ -6,7 +6,8 @@ yarp_prepare_plugin(LacqueyFetch
                     CATEGORY device
                     TYPE roboticslab::LacqueyFetch
                     INCLUDE LacqueyFetch.hpp
-                    DEFAULT ON)
+                    DEFAULT ON
+                    DEPENDS ENABLE_CanBusSharerLib)
 
 if(NOT SKIP_LacqueyFetch)
 
@@ -30,7 +31,7 @@ if(NOT SKIP_LacqueyFetch)
     target_link_libraries(LacqueyFetch YARP::YARP_OS
                                        YARP::YARP_dev
                                        ROBOTICSLAB::ColorDebug
-                                       YarpDevicesInterfaces)
+                                       CanBusSharerLib)
 
     if(NOT YARP_VERSION_SHORT VERSION_LESS 3.2)
         yarp_install(TARGETS LacqueyFetch

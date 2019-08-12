@@ -4,16 +4,6 @@
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::setCanBusPtr(yarp::dev::ICanBus *canDevicePtr)
-{
-
-    this->canDevicePtr = canDevicePtr;
-    CD_SUCCESS("Ok pointer to CAN bus device %d.\n",canId);
-
-}
-
-// -----------------------------------------------------------------------------
-
 bool roboticslab::TextilesHand::start()
 {
 
@@ -60,5 +50,12 @@ bool roboticslab::TextilesHand::interpretMessage(const yarp::dev::CanMessage & m
     return true;
 
 }  //-- ends interpretMessage
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::TextilesHand::registerSender(CanSenderDelegate * sender)
+{
+    return true;
+}
 
 // -----------------------------------------------------------------------------
