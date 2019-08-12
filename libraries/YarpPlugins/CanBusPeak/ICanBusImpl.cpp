@@ -151,7 +151,7 @@ bool roboticslab::CanBusPeak::canIdDelete(unsigned int id)
 
 bool roboticslab::CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait)
 {
-    if (wait != blockingMode)
+    if (!allowPermissive && wait != blockingMode)
     {
         CD_ERROR("Blocking mode configuration mismatch: requested=%d, enabled=%d.\n", wait, blockingMode);
         return false;
@@ -217,7 +217,7 @@ bool roboticslab::CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
 
 bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait)
 {
-    if (wait != blockingMode)
+    if (!allowPermissive && wait != blockingMode)
     {
         CD_ERROR("Blocking mode configuration mismatch: requested=%d, enabled=%d.\n", wait, blockingMode);
         return false;
