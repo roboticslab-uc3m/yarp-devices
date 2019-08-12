@@ -6,7 +6,8 @@ yarp_prepare_plugin(CuiAbsolute
                     CATEGORY device
                     TYPE roboticslab::CuiAbsolute
                     INCLUDE CuiAbsolute.hpp
-                    DEFAULT ON)
+                    DEFAULT ON
+                    DEPENDS ENABLE_CanBusSharerLib)
 
 if(NOT SKIP_CuiAbsolute)
 
@@ -30,6 +31,7 @@ if(NOT SKIP_CuiAbsolute)
     target_link_libraries(CuiAbsolute YARP::YARP_OS
                                       YARP::YARP_dev
                                       ROBOTICSLAB::ColorDebug
+                                      CanBusSharerLib
                                       YarpDevicesInterfaces)
 
     if(NOT YARP_VERSION_SHORT VERSION_LESS 3.2)

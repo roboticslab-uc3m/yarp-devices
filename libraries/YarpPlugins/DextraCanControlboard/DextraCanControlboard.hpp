@@ -3,14 +3,12 @@
 #ifndef __DEXTRA_CAN_CONTROLBOARD_HPP__
 #define __DEXTRA_CAN_CONTROLBOARD_HPP__
 
-#include <mutex>
-
 #include <yarp/dev/CanBusInterface.h>
 #include <yarp/dev/DeviceDriver.h>
 
 #include "DextraRawControlboard.hpp"
 #include "Synapse.hpp"
-#include "ICanBusSharer.h"
+#include "ICanBusSharer.hpp"
 
 namespace roboticslab
 {
@@ -27,21 +25,16 @@ namespace roboticslab
 class CanSynapse : public Synapse
 {
 public:
-    CanSynapse(int canId, yarp::dev::ICanBufferFactory *iCanBufferFactory);
-    ~CanSynapse();
-
+    CanSynapse(int canId);
     virtual void configure(void * handle);
 
 protected:
     virtual bool getMessage(unsigned char * msg, char stopByte, int size);
-    virtual bool sendMessage(char * msg, int size);
+    virtual bool sendMessage(unsigned char * msg, int size);
 
 private:
     int canId;
-    yarp::dev::ICanBus * iCanBus;
-    yarp::dev::ICanBufferFactory * iCanBufferFactory;
-    yarp::dev::CanBuffer canBuffer;
-    mutable std::mutex mtx;
+    CanSenderDelegate * sender;
 };
 
 /**
@@ -61,7 +54,6 @@ public:
     virtual bool close();
 
     //  --------- ICanBusSharer Declarations. Implementation in ICanBusSharerImpl.cpp ---------
-    virtual bool setCanBusPtr(yarp::dev::ICanBus * canDevicePtr);
     virtual bool setIEncodersTimedRawExternal(yarp::dev::IEncodersTimedRaw * iEncodersTimedRaw) { return true; };
     virtual bool initialize() { return true; }
     virtual bool start() { return true; };
@@ -70,6 +62,7 @@ public:
     virtual bool enable() { return true; };
     virtual bool recoverFromError() { return true; };
     virtual bool interpretMessage(const yarp::dev::CanMessage & message);
+    virtual bool registerSender(CanSenderDelegate * sender);
 
 protected:
 

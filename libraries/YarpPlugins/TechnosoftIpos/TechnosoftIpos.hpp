@@ -15,7 +15,7 @@
 
 #include <ColorDebug.h>
 
-#include "ICanBusSharer.h"
+#include "ICanBusSharer.hpp"
 #include "ITechnosoftIpos.h"
 #include "LinearInterpolationBuffer.hpp"
 
@@ -74,7 +74,7 @@ public:
 
     TechnosoftIpos() : lastEncoderRead(0.0)
     {
-        canDevicePtr = 0;
+        sender = 0;
         iEncodersTimedRawExternal = 0;
     }
 
@@ -83,7 +83,6 @@ public:
     virtual bool close();
 
     //  --------- ICanBusSharer Declarations. Implementation in TechnosoftIpos.cpp ---------
-    virtual bool setCanBusPtr(yarp::dev::ICanBus *canDevicePtr);
     virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw); // -- ??
     virtual bool interpretMessage(const yarp::dev::CanMessage & message);
     virtual bool initialize();
@@ -107,6 +106,7 @@ public:
     virtual bool sendLinearInterpolationTarget();
     /** send start signal to PT/PVT mode */
     virtual bool sendLinearInterpolationStart();
+    virtual bool registerSender(CanSenderDelegate * sender);
 
     //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
     virtual bool setLimitsRaw(int axis, double min, double max);
@@ -280,10 +280,7 @@ protected:
     std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
 
     int canId;
-    yarp::dev::ICanBus *canDevicePtr;
-    yarp::dev::ICanBufferFactory *iCanBufferFactory;
-    yarp::dev::CanBuffer canOutputBuffer;
-    double lastUsage;
+    CanSenderDelegate * sender;
 
     //-- Encoder stuff
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRawExternal;
@@ -332,9 +329,6 @@ protected:
     yarp::os::Semaphore refVelocitySemaphore;
     yarp::os::Semaphore interactionModeSemaphore;
     yarp::os::Semaphore targetPositionSemaphore;
-
-    //-- CAN output buffer
-    yarp::os::Semaphore canBufferSemaphore;
 };
 
 }  // namespace roboticslab

@@ -31,7 +31,7 @@
 #include "ColorDebug.h"
 
 #include "CanRxTxThreads.hpp"
-#include "ICanBusSharer.h"
+#include "ICanBusSharer.hpp"
 
 #define DEFAULT_MODE "position"
 #define DEFAULT_TIME_TO_WAIT_CUI 0

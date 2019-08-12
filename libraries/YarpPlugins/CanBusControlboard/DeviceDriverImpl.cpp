@@ -61,12 +61,14 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         return false;
     }
 
+    std::string canDevice = canBusOptions.find("canDevice").asString();
+
     //-- Start the reading thread (required for checkMotionDoneRaw).
-    canReaderThread = new CanReaderThread(idxFromCanId, iCanBusSharer);
+    canReaderThread = new CanReaderThread(canDevice, idxFromCanId, iCanBusSharer);
     canReaderThread->setCanHandles(iCanBus, iCanBufferFactory, canRxBufferSize);
     canReaderThread->start();
 
-    canWriterThread = new CanWriterThread;
+    canWriterThread = new CanWriterThread(canDevice);
     canWriterThread->setCanHandles(iCanBus, iCanBufferFactory, canTxBufferSize);
     canWriterThread->start();
 
@@ -111,9 +113,6 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         //std::stringstream ss; // Remember to #include <sstream>
         //ss << types.get(i).asString() << "_" << ids.get(i).asInt32();
         //options.setMonitor(config.getMonitor(),ss.str().c_str());
-
-        yarp::os::Value v(&iCanBufferFactory, sizeof(iCanBufferFactory));
-        options.put("canBufferFactory", v);
 
         // -- Configuramos todos los dispositivos (TechnosoftIpos, LacqueyFetch, CuiAbsolute)
         yarp::dev::PolyDriver* device = new yarp::dev::PolyDriver(options);
@@ -199,8 +198,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             return false;
         }
 
-        //-- Pass CAN bus pointer to CAN node
-        iCanBusSharer[i]->setCanBusPtr( iCanBus );
+        iCanBusSharer[i]->registerSender(canWriterThread->getDelegate());
 
         //-- DRIVERS
         if(types.get(i).asString() == "TechnosoftIpos")

@@ -28,7 +28,7 @@
 //#define CD_HIDE_WARNING  //-- Can be globally managed from father CMake.
 //#define CD_HIDE_ERROR  //-- Can be globally managed from father CMake.
 #include "ColorDebug.h"
-#include "ICanBusSharer.h"
+#include "ICanBusSharer.hpp"
 
 
 namespace roboticslab
@@ -62,16 +62,13 @@ class TextilesHand : public yarp::dev::DeviceDriver,
 public:
 
     TextilesHand()
-    {
-        canDevicePtr = 0;
-    }
+    {}
 
     //  --------- DeviceDriver Declarations. Implementation in TextilesHand.cpp ---------
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
 
     //  --------- ICanBusSharer Declarations. Implementation in TextilesHand.cpp ---------
-    virtual bool setCanBusPtr(yarp::dev::ICanBus *canDevicePtr);
     virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
     {
         return true;
@@ -87,6 +84,7 @@ public:
     virtual bool enable();
     /** recoverFromError */
     virtual bool recoverFromError();
+    virtual bool registerSender(CanSenderDelegate * sender);
 
     //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
     virtual bool setLimitsRaw(int axis, double min, double max);
@@ -219,8 +217,6 @@ protected:
     bool targetReached;
 
     int canId;
-
-    yarp::dev::ICanBus *canDevicePtr;
 
     double max, min, refAcceleration, refSpeed, tr, targetPosition;
 

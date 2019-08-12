@@ -66,12 +66,9 @@ namespace
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setCanBusPtr(yarp::dev::ICanBus *canDevicePtr)
+bool roboticslab::TechnosoftIpos::registerSender(CanSenderDelegate * sender)
 {
-
-    this->canDevicePtr = canDevicePtr;
-    CD_SUCCESS("Ok pointer to CAN bus device %d.\n",canId);
-
+    this->sender = sender;
     return true;
 }
 
@@ -215,35 +212,15 @@ bool roboticslab::TechnosoftIpos::initialize()
 
 bool roboticslab::TechnosoftIpos::start()
 {
-
-    yarp::dev::CanMessage &msg_start = canOutputBuffer[0];
-    msg_start.setId(0);
-    msg_start.setLen(2);
-
     // NMT Start Remote Node (to operational, Fig 4.1)
-    msg_start.getData()[0] = 0x01;
-    msg_start.getData()[1] = canId;
-
-    unsigned int sent;
-
-    if( ! canDevicePtr->canWrite(canOutputBuffer, 1, &sent, true) || sent == 0 )
-    {
-        CD_ERROR("Could not send \"start\". %s\n", msgToStr(msg_start).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"start\". %s\n", msgToStr(msg_start).c_str() );
-
-    //-- Do not force expect response as only happens upon transition.
-    //-- For example, if already started, function would get stuck.
-
-    return true;
+    uint8_t msg_start[] = {0x01, (uint8_t)canId};
+    return sender->prepareMessage(message_builder(0, 2, msg_start));
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::TechnosoftIpos::readyToSwitchOn()
 {
-
     uint8_t msg_readyToSwitchOn[] = {0x06,0x00}; //-- readyToSwitchOn, also acts as shutdown.
     // -- send se diferencia de senRaw en que tiene un delay y adems incluye el ID (mirar funcin)
     if( ! this->send( 0x200, 2, msg_readyToSwitchOn) ) // -- 0x200 (valor critico que se pone sin saber que significa) 2 (tamano del mensaje)
@@ -263,7 +240,6 @@ bool roboticslab::TechnosoftIpos::readyToSwitchOn()
 
 bool roboticslab::TechnosoftIpos::switchOn()
 {
-
     this->getSwitchOnReady.wait();
     this->getSwitchOn = false;
     this->getSwitchOnReady.post();
@@ -288,7 +264,6 @@ bool roboticslab::TechnosoftIpos::switchOn()
 
 bool roboticslab::TechnosoftIpos::enable()
 {
-
     this->getEnableReady.wait();
     this->getEnable = false;
     this->getEnableReady.post();
@@ -316,7 +291,6 @@ bool roboticslab::TechnosoftIpos::enable()
 
 bool roboticslab::TechnosoftIpos::recoverFromError()
 {
-
     //*************************************************************
     //j//uint8_t msg_recover[]={0x23,0xFF}; // Control word 6040
 
@@ -337,30 +311,9 @@ bool roboticslab::TechnosoftIpos::recoverFromError()
 
 bool roboticslab::TechnosoftIpos::resetNodes()
 {
-
     // NMT Reset Node (Manual 4.1.2.3)
-    yarp::dev::CanMessage &msg_resetNodes = canOutputBuffer[0];
-    msg_resetNodes.setId(0);
-    msg_resetNodes.setLen(2);
-
-    // reset all nodes ([0x00] = broadcast)
-    msg_resetNodes.getData()[0] = 0x81;
-    msg_resetNodes.getData()[1] = 0x00;
-
-    unsigned int sent;
-
-    //msg_resetNode[1]=this->canId; // -- It writes canId in byte 1
-    if( ! canDevicePtr->canWrite(canOutputBuffer, 1, &sent, true) || sent == 0 ) // -- 0 (hace referencia al ID. Si est en 0 es como un broadcast) 2 (tamao del mensaje)
-    {
-        CD_ERROR("Could not send \"reset node\". %s\n", msgToStr(msg_resetNodes).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"reset nodes\". %s\n", msgToStr(msg_resetNodes).c_str() );
-
-    //-- Do not force expect response as only happens upon transition.
-    //-- For example, if already started, function would get stuck.
-
-    return true;
+    uint8_t msg_resetNodes[] = {0x81,0x00};
+    return sender->prepareMessage(message_builder(0, 2, msg_resetNodes));
 }
 
 /** Manual: 4.1.2. Device control
@@ -370,7 +323,6 @@ bool roboticslab::TechnosoftIpos::resetNodes()
 
 bool roboticslab::TechnosoftIpos::resetCommunication()
 {
-
     uint8_t msg_resetCommunication[] = {0x82,0x00};  // NMT Reset Communications (Manual 4.1.2.2)
 
     //msg_resetNode[1]=this->canId; // -- It writes canId in byte 1
@@ -395,37 +347,16 @@ bool roboticslab::TechnosoftIpos::resetCommunication()
 
 bool roboticslab::TechnosoftIpos::resetNode(int id)
 {
-
-    yarp::dev::CanMessage &msg_resetNode = canOutputBuffer[0];
-    msg_resetNode.setId(id);
-    msg_resetNode.setLen(2);
-
     // NMT Reset Node (Manual 4.1.2.3)
-    msg_resetNode.getData()[0] = 0x81;
-    msg_resetNode.getData()[1] = id;
-
-    unsigned int sent;
-
-    if( ! canDevicePtr->canWrite(canOutputBuffer, 1, &sent, true) || sent == 0 ) // -- 0 (hace referencia al ID. Si est en 0 es como un broadcast) 2 (tamao del mensaje)
-    {
-        CD_ERROR("Could not send \"reset node\". %s\n", msgToStr(msg_resetNode).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"reset node\". %s\n", msgToStr(msg_resetNode).c_str() );
-
-    //-- Do not force expect response as only happens upon transition.
-    //-- For example, if already started, function would get stuck.
-
-    return true;
+    uint8_t msg_resetNode[] = {0x81, (uint8_t)id};
+    return sender->prepareMessage(message_builder(id, 2, msg_resetNode));
 }
-
 
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage & message)
 {
-
     //--------------- Give high priority to PT, override EMCY red -------------------------
 
     if (message.getData()[0] == 0x01 && message.getData()[1] == 0xFF && message.getData()[2] == 0x01)

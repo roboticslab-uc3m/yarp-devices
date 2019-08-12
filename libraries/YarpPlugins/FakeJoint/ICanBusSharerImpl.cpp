@@ -4,16 +4,6 @@
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeJoint::setCanBusPtr(yarp::dev::ICanBus *canDevicePtr)
-{
-
-    this->canDevicePtr = canDevicePtr;
-    CD_SUCCESS("Ok pointer to CAN bus device %d.\n",canId);
-
-}
-
-// -----------------------------------------------------------------------------
-
 bool roboticslab::FakeJoint::start()
 {
 
@@ -60,5 +50,13 @@ bool roboticslab::FakeJoint::interpretMessage(const yarp::dev::CanMessage & mess
     return true;
 
 }  //-- ends interpretMessage
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::FakeJoint::registerSender(CanSenderDelegate * sender)
+{
+    this->sender = sender;
+    return true;
+}
 
 // -----------------------------------------------------------------------------

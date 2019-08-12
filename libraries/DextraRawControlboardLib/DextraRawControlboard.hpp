@@ -7,7 +7,7 @@
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 
-#include "../DextraRawControlboardLib/Synapse.hpp"
+#include "Synapse.hpp"
 
 #define CHECK_JOINT(j) do { if ((j) < 0 || (j) >= Synapse::DATA_POINTS) return false; } while (0)
 

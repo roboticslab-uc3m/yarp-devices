@@ -155,8 +155,8 @@ before_script:
   - mkdir -p "$TRAVIS_BUILD_DIR/build/exampleRemoteJr3" && cd "$_"
   - cmake "$TRAVIS_BUILD_DIR/examples/cpp/exampleRemoteJr3" && make
 
-  - mkdir -p "$TRAVIS_BUILD_DIR/build/exampleTechnosoftIpos" && cd "$_"
-  - cmake "$TRAVIS_BUILD_DIR/examples/cpp/exampleTechnosoftIpos" && make
+  #- mkdir -p "$TRAVIS_BUILD_DIR/build/exampleTechnosoftIpos" && cd "$_"
+  #- cmake "$TRAVIS_BUILD_DIR/examples/cpp/exampleTechnosoftIpos" && make
 
 script:
   - echo "No unit tests available"

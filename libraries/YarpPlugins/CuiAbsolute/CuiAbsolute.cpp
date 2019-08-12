@@ -2,8 +2,6 @@
 
 #include "CuiAbsolute.hpp"
 
-#include <cstring>
-
 // -----------------------------------------------------------------------------
 // -- Lee un mensaje que proviene del CanBus (misma función utilizada en dumpCanBus y checkCanBus)
 std::string roboticslab::CuiAbsolute::msgToStr(const yarp::dev::CanMessage & message)
@@ -50,22 +48,5 @@ std::string roboticslab::CuiAbsolute::msgToStr(uint32_t cob, uint16_t len, uint8
 */
 bool roboticslab::CuiAbsolute::send(uint32_t cob, uint16_t len, uint8_t * msgData)
 {
-    canBufferSemaphore.wait();
-
-    if ( (lastUsage - yarp::os::Time::now()) < DELAY )
-        yarp::os::Time::delay( lastUsage + DELAY - yarp::os::Time::now() );
-
-    yarp::dev::CanMessage &msg = canOutputBuffer[0];
-    msg.setId(cob + canId);
-    msg.setLen(len);
-    std::memcpy(msg.getData(), msgData, len * sizeof(uint8_t));
-
-    unsigned int sent;
-
-    if( ! canDevicePtr->canWrite(canOutputBuffer, 1, &sent, true) || sent == 0 )
-        return false;
-
-    lastUsage = yarp::os::Time::now();
-    canBufferSemaphore.post();
-    return true;
+    return sender->prepareMessage(message_builder(cob + canId, len, msgData));
 }

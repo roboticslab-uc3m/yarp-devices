@@ -17,7 +17,7 @@ bool SerialSynapse::getMessage(unsigned char * msg, char stopByte, int size)
     return iSerialDevice->receiveBytes(msg, size) != 0;
 }
 
-bool SerialSynapse::sendMessage(char * msg, int size)
+bool SerialSynapse::sendMessage(unsigned char * msg, int size)
 {
-    return iSerialDevice->send(msg, size);
+    return iSerialDevice->send(reinterpret_cast<char *>(msg), size);
 }

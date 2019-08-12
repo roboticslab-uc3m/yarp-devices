@@ -7,7 +7,7 @@ yarp_prepare_plugin(DextraCanControlboard
                     TYPE roboticslab::DextraCanControlboard
                     INCLUDE DextraCanControlboard.hpp
                     DEFAULT ON
-                    DEPENDS ENABLE_DextraRawControlboardLib)
+                    DEPENDS "ENABLE_CanBusSharerLib;ENABLE_DextraRawControlboardLib")
 
 if(NOT SKIP_DextraCanControlboard)
 
@@ -22,7 +22,7 @@ if(NOT SKIP_DextraCanControlboard)
                                                 YARP::YARP_OS
                                                 YARP::YARP_dev
                                                 ROBOTICSLAB::ColorDebug
-                                                YarpDevicesInterfaces)
+                                                CanBusSharerLib)
 
     if(NOT YARP_VERSION_SHORT VERSION_LESS 3.2)
         yarp_install(TARGETS DextraCanControlboard

@@ -6,7 +6,8 @@ yarp_prepare_plugin(FakeJoint
                     CATEGORY device
                     TYPE roboticslab::FakeJoint
                     INCLUDE FakeJoint.hpp
-                    DEFAULT ON)
+                    DEFAULT ON
+                    DEPENDS ENABLE_CanBusSharerLib)
 
 if(NOT SKIP_FakeJoint)
 
@@ -30,7 +31,7 @@ if(NOT SKIP_FakeJoint)
     target_link_libraries(FakeJoint YARP::YARP_OS
                                     YARP::YARP_dev
                                     ROBOTICSLAB::ColorDebug
-                                    YarpDevicesInterfaces)
+                                    CanBusSharerLib)
 
     if(NOT YARP_VERSION_SHORT VERSION_LESS 3.2)
         yarp_install(TARGETS FakeJoint

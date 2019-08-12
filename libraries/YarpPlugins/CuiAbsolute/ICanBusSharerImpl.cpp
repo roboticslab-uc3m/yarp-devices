@@ -4,16 +4,6 @@
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::setCanBusPtr(yarp::dev::ICanBus *canDevicePtr)
-{
-
-    this->canDevicePtr = canDevicePtr;
-    CD_SUCCESS("Ok pointer to CAN bus device %d.\n",canId);
-
-}
-
-// -----------------------------------------------------------------------------
-
 bool roboticslab::CuiAbsolute::setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
 {
     return true;
@@ -150,5 +140,13 @@ bool roboticslab::CuiAbsolute::interpretMessage(const yarp::dev::CanMessage & me
     return true;
 
 }  //-- ends interpretMessage
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::CuiAbsolute::registerSender(CanSenderDelegate * sender)
+{
+    this->sender = sender;
+    return true;
+}
 
 // -----------------------------------------------------------------------------

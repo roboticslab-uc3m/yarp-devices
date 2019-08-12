@@ -4,16 +4,6 @@
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LacqueyFetch::setCanBusPtr(yarp::dev::ICanBus *canDevicePtr)
-{
-
-    this->canDevicePtr = canDevicePtr;
-    CD_SUCCESS("Ok pointer to CAN bus device %d.\n",canId);
-
-}
-
-// -----------------------------------------------------------------------------
-
 bool roboticslab::LacqueyFetch::start()
 {
 
@@ -60,5 +50,13 @@ bool roboticslab::LacqueyFetch::interpretMessage(const yarp::dev::CanMessage & m
     return true;
 
 }  //-- ends interpretMessage
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::LacqueyFetch::registerSender(CanSenderDelegate * sender)
+{
+    this->sender = sender;
+    return true;
+}
 
 // -----------------------------------------------------------------------------
