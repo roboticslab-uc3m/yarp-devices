@@ -8,8 +8,6 @@
 
 using namespace roboticslab;
 
-#define BUFFER_SIZE 10
-
 CanSynapse::CanSynapse(int _canId)
     : canId(_canId),
       sender(0)
@@ -28,8 +26,7 @@ bool CanSynapse::getMessage(unsigned char * msg, char stopByte, int size)
 
 bool CanSynapse::sendMessage(unsigned char * msg, int size)
 {
-    int n = std::ceil(size / 8.0f);
-    assert(BUFFER_SIZE >= n);
+    const int n = std::ceil(size / 8.0f);
 
     for (int i = 0; i < n; i++)
     {
