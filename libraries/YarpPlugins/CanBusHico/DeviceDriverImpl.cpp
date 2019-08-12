@@ -42,6 +42,7 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
             CD_WARNING("TX timeout value <= 0, CAN write calls will block until the buffer is ready: %s.\n", devicePath.c_str());
         }
     }
+    else
     {
         CD_INFO("Requested non-blocking mode for CAN device: %s.\n", devicePath.c_str());
     }
