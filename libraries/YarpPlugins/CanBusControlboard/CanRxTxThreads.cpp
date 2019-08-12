@@ -4,8 +4,6 @@
 
 #include <cstring>
 
-#include <limits>
-
 #include <yarp/os/Time.h>
 
 using namespace roboticslab;
@@ -27,7 +25,7 @@ void CanReaderThread::run()
     {
         //-- Lend CPU time to write threads.
         // https://github.com/roboticslab-uc3m/yarp-devices/issues/191
-        yarp::os::Time::delay(std::numeric_limits<double>::min());
+        yarp::os::Time::delay(period);
 
         //-- Return immediately if there is nothing to be read (non-blocking call), return false on errors.
         ok = iCanBus->canRead(canBuffer, bufferSize, &read);
@@ -88,7 +86,7 @@ void CanWriterThread::run()
     {
         //-- Lend CPU time to read threads.
         // https://github.com/roboticslab-uc3m/yarp-devices/issues/191
-        yarp::os::Time::delay(std::numeric_limits<double>::min());
+        yarp::os::Time::delay(period);
 
         std::lock_guard<std::mutex> lock(bufferMutex);
 

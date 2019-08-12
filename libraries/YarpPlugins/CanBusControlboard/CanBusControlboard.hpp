@@ -42,6 +42,8 @@
 
 #define DEFAULT_CAN_RX_BUFFER_SIZE 500
 #define DEFAULT_CAN_TX_BUFFER_SIZE 500
+#define DEFAULT_CAN_RX_PERIOD_MS -1
+#define DEFAULT_CAN_TX_PERIOD_MS 1.0
 
 namespace roboticslab
 {

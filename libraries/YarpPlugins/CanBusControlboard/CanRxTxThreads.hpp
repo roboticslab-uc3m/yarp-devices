@@ -3,6 +3,7 @@
 #ifndef __CAN_RX_TH_THREADS_HPP__
 #define __CAN_RX_TH_THREADS_HPP__
 
+#include <limits>
 #include <map>
 #include <mutex>
 #include <string>
@@ -25,7 +26,7 @@ class CanReaderWriterThread : public yarp::os::Thread
 {
 public:
     CanReaderWriterThread(const std::string & type, const std::string & id)
-        : iCanBus(0), iCanBufferFactory(0), type(type), id(id), bufferSize(0)
+        : iCanBus(0), iCanBufferFactory(0), type(type), id(id), bufferSize(0), period(0.0)
     {}
 
     virtual void run() = 0;
@@ -48,12 +49,16 @@ public:
     virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, int bufferSize)
     { this->iCanBus = iCanBus; this->iCanBufferFactory = iCanBufferFactory; this->bufferSize = bufferSize; }
 
+    void setPeriod(double periodMs)
+    { period = periodMs < 0 ? std::numeric_limits<double>::min() : periodMs * 0.001; }
+
 protected:
     yarp::dev::ICanBus * iCanBus;
     yarp::dev::ICanBufferFactory * iCanBufferFactory;
     yarp::dev::CanBuffer canBuffer;
 
     int bufferSize;
+    double period;
 
 private:
     std::string type;
