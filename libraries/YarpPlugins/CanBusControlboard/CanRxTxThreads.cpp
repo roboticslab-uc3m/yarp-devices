@@ -2,6 +2,8 @@
 
 #include "CanBusControlboard.hpp"
 
+#include <cstring>
+
 #include <limits>
 
 #include <yarp/os/Time.h>
@@ -18,7 +20,8 @@ CanReaderThread::CanReaderThread(const std::string & id,
 
 void CanReaderThread::run()
 {
-    CD_INFO("Started CanBusControlboard reading thread run.\n");
+    unsigned int read;
+    bool ok;
 
     while (!isStopping())
     {
@@ -26,10 +29,8 @@ void CanReaderThread::run()
         // https://github.com/roboticslab-uc3m/yarp-devices/issues/191
         yarp::os::Time::delay(std::numeric_limits<double>::min());
 
-        unsigned int read;
-
-        //-- Blocks with timeout until a message arrives, returns false on errors.
-        bool ok = iCanBus->canRead(canBuffer, bufferSize, &read);
+        //-- Return immediately if there is nothing to be read (non-blocking call), return false on errors.
+        ok = iCanBus->canRead(canBuffer, bufferSize, &read);
 
         //-- All debugging messages should be contained in canRead, so just loop again.
         if (!ok || read == 0) continue;
@@ -55,8 +56,6 @@ void CanReaderThread::run()
             iCanBusSharer[idxFromCanIdFound->second]->interpretMessage(msg);
         }
     }
-
-    CD_INFO("Stopping CanBusControlboard reading thread run.\n");
 }
 
 // -----------------------------------------------------------------------------
@@ -82,22 +81,50 @@ CanWriterThread::~CanWriterThread()
 
 void CanWriterThread::run()
 {
-    CD_INFO("Started CanBusControlboard writing thread run.\n");
+    unsigned int sent;
+    bool ok;
 
     while (!isStopping())
     {
-        unsigned int sent;
+        //-- Lend CPU time to read threads.
+        // https://github.com/roboticslab-uc3m/yarp-devices/issues/191
+        yarp::os::Time::delay(std::numeric_limits<double>::min());
 
-        bufferMutex.lock();
+        std::lock_guard<std::mutex> lock(bufferMutex);
 
-        //-- Blocks with timeout until a message is sent, returns false on errors.
-        iCanBus->canWrite(canBuffer, preparedMessages, &sent);
-        preparedMessages = 0;
+        //-- Nothing to write, just loop again.
+        if (preparedMessages == 0) continue;
 
-        bufferMutex.unlock();
+        //-- Write as many bytes as it can, return false on errors.
+        ok = iCanBus->canWrite(canBuffer, preparedMessages, &sent);
+
+        //-- Some bad happened, try again on the next iteration.
+        if (!ok) continue;
+
+        //-- Some messages could not be sent, preserve them for later.
+        if (sent != preparedMessages)
+        {
+            CD_WARNING("Partial write! Prepared: %d, sent: %d.\n", preparedMessages, sent);
+            handlePartialWrite(sent);
+        }
+
+        preparedMessages -= sent;
     }
+}
 
-    CD_INFO("Stopping CanBusControlboard writing thread run.\n");
+// -----------------------------------------------------------------------------
+
+void CanWriterThread::handlePartialWrite(unsigned int sent)
+{
+    for (int i = sent, j = 0; i < preparedMessages; i++, j++)
+    {
+        yarp::dev::CanMessage & msg = canBuffer[j];
+        const yarp::dev::CanMessage & pendingMsg = canBuffer[i];
+
+        msg.setId(pendingMsg.getId());
+        msg.setLen(pendingMsg.getLen());
+        std::memcpy(msg.getData(), pendingMsg.getData(), pendingMsg.getLen());
+    }
 }
 
 // -----------------------------------------------------------------------------

@@ -91,6 +91,8 @@ public:
     CanSenderDelegate * getDelegate();
 
 private:
+    void handlePartialWrite(unsigned int sent);
+
     CanSenderDelegate * sender;
     int preparedMessages;
     mutable std::mutex bufferMutex;
