@@ -222,8 +222,6 @@ protected:
 
     double max, min, refAcceleration, refSpeed, tr, targetPosition;
 
-    double lastUsage;
-
     //-- Encoder stuff
     double encoder;
     double encoderTimestamp;

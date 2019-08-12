@@ -10,7 +10,8 @@ CanSenderDelegate::CanSenderDelegate(yarp::dev::CanBuffer & _buffer, std::mutex 
       preparedMessages(0)
 {}
 
-bool CanSenderDelegate::prepareMessage(MessageFun callback)
+template <typename MessageConsumerT>
+bool CanSenderDelegate::prepareMessage(MessageConsumerT callback)
 {
     std::lock_guard<std::mutex> lock(bufferMutex);
     callback(buffer[preparedMessages++]);

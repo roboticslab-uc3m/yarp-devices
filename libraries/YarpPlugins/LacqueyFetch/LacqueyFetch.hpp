@@ -210,8 +210,6 @@ protected:
 
     double max, min, refAcceleration, refSpeed, tr, targetPosition;
 
-    double lastUsage;
-
     double encoder;
     uint32_t encoderTimestamp;
 

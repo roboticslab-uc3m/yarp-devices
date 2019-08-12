@@ -3,6 +3,8 @@
 #ifndef __CAN_SENDER_DELEGATE_HPP__
 #define __CAN_SENDER_DELEGATE_HPP__
 
+#include <stdint.h>
+
 #include <mutex>
 
 #include <yarp/dev/CanBusInterface.h>
@@ -10,17 +12,36 @@
 namespace roboticslab
 {
 
+class message_builder
+{
+public:
+    message_builder(int _id, int _len, uint8_t * _data) : id(_id), len(_len), data(_data)
+    {}
+
+    void operator()(yarp::dev::CanMessage & msg)
+    {
+        msg.setId(id);
+        msg.setLen(len);
+        std::memcpy(msg.getData(), data, len * sizeof(uint8_t));
+    }
+
+private:
+    int id;
+    int len;
+    uint8_t * data;
+};
+
 /**
  * @brief
  */
 class CanSenderDelegate
 {
 public:
-    typedef bool (*MessageFun)(yarp::dev::CanMessage &);
-
     CanSenderDelegate(yarp::dev::CanBuffer & buffer, std::mutex & bufferMutex);
 
-    bool prepareMessage(MessageFun callback);
+    template <typename MessageConsumerT>
+    bool prepareMessage(MessageConsumerT callback);
+
     int getPreparedMessages() const;
     void resetPreparedMessages();
 

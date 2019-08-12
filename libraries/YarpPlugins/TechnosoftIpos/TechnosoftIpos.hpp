@@ -281,7 +281,6 @@ protected:
 
     int canId;
     CanSenderDelegate * sender;
-    double lastUsage;
 
     //-- Encoder stuff
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRawExternal;

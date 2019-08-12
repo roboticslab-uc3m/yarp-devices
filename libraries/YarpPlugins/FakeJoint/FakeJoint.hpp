@@ -209,8 +209,6 @@ protected:
 
     double max, min, maxVel, refAcceleration, refSpeed, tr, targetPosition;
 
-    double lastUsage;
-
     double encoder;
     uint32_t encoderTimestamp;
     yarp::os::Semaphore encoderReady;
