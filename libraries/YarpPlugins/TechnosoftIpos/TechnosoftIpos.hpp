@@ -16,6 +16,7 @@
 #include <ColorDebug.h>
 
 #include "ICanBusSharer.hpp"
+#include "SdoSemaphore.hpp"
 #include "ITechnosoftIpos.h"
 #include "LinearInterpolationBuffer.hpp"
 
@@ -329,6 +330,8 @@ protected:
     yarp::os::Semaphore refVelocitySemaphore;
     yarp::os::Semaphore interactionModeSemaphore;
     yarp::os::Semaphore targetPositionSemaphore;
+
+    SdoSemaphore * sdoSemaphore;
 };
 
 }  // namespace roboticslab

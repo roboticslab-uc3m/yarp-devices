@@ -23,6 +23,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->refVelocity = 0; // if you want to test.. put 0.1
     this->refCurrent = 0;
     this->modeCurrentTorque = VOCAB_CM_NOT_CONFIGURED;
+    double canSdoTimeoutMs = config.check("canSdoTimeoutMs", yarp::os::Value(0.0), "CAN SDO timeout (ms)").asFloat64();
 
     this->getProductCode = 0;
 
@@ -74,6 +75,8 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
         return false;
     }
 
+    sdoSemaphore = new SdoSemaphore(canSdoTimeoutMs * 0.001);
+
     CD_SUCCESS("Created TechnosoftIpos with canId %d, tr %f, k %f, refAcceleration %f, refSpeed %f, encoderPulses %d and all local parameters set to 0.\n",
                canId,tr,k,refAcceleration,refSpeed,encoderPulses);
     return true;
@@ -83,7 +86,17 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 bool roboticslab::TechnosoftIpos::close()
 {
     CD_INFO("\n");
-    delete linInterpBuffer;
+
+    if (sdoSemaphore)
+    {
+        delete sdoSemaphore;
+    }
+
+    if (linInterpBuffer)
+    {
+        delete linInterpBuffer;
+    }
+
     return true;
 }
 
