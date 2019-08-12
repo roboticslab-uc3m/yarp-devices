@@ -39,6 +39,8 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     yarp::os::Property canBusOptions;
     canBusOptions.fromString(config.toString());  // canDevice, canBitrate
     canBusOptions.put("device", canBusType);
+    canBusOptions.put("canBlockingMode", false); // enforce non-blocking mode
+    canBusOptions.put("canAllowPermissive", false); // always check usage requirements
     canBusOptions.setMonitor(config.getMonitor(), canBusType.c_str());
     canBusDevice.open(canBusOptions);
     if( ! canBusDevice.isValid() )

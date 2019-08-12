@@ -29,7 +29,7 @@ void CanReaderThread::run()
         unsigned int read;
 
         //-- Blocks with timeout until a message arrives, returns false on errors.
-        bool ok = iCanBus->canRead(canBuffer, bufferSize, &read, true);
+        bool ok = iCanBus->canRead(canBuffer, bufferSize, &read);
 
         //-- All debugging messages should be contained in canRead, so just loop again.
         if (!ok || read == 0) continue;
@@ -91,7 +91,7 @@ void CanWriterThread::run()
         bufferMutex.lock();
 
         //-- Blocks with timeout until a message is sent, returns false on errors.
-        iCanBus->canWrite(canBuffer, preparedMessages, &sent, false);
+        iCanBus->canWrite(canBuffer, preparedMessages, &sent);
         preparedMessages = 0;
 
         bufferMutex.unlock();
