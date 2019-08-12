@@ -61,12 +61,14 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         return false;
     }
 
+    std::string canDevice = canBusOptions.find("canDevice").asString();
+
     //-- Start the reading thread (required for checkMotionDoneRaw).
-    canReaderThread = new CanReaderThread(idxFromCanId, iCanBusSharer);
+    canReaderThread = new CanReaderThread(canDevice, idxFromCanId, iCanBusSharer);
     canReaderThread->setCanHandles(iCanBus, iCanBufferFactory, canRxBufferSize);
     canReaderThread->start();
 
-    canWriterThread = new CanWriterThread;
+    canWriterThread = new CanWriterThread(canDevice);
     canWriterThread->setCanHandles(iCanBus, iCanBufferFactory, canTxBufferSize);
     canWriterThread->start();
 

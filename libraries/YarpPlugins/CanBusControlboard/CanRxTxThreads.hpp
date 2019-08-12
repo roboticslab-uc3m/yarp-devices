@@ -5,10 +5,13 @@
 
 #include <map>
 #include <mutex>
+#include <string>
 #include <vector>
 
 #include <yarp/os/Thread.h>
 #include <yarp/dev/CanBusInterface.h>
+
+#include <ColorDebug.h>
 
 #include "ICanBusSharer.hpp"
 
@@ -21,7 +24,8 @@ namespace roboticslab
 class CanReaderWriterThread : public yarp::os::Thread
 {
 public:
-    CanReaderWriterThread() : iCanBus(0), iCanBufferFactory(0), bufferSize(0)
+    CanReaderWriterThread(const std::string & type, const std::string & id)
+        : iCanBus(0), iCanBufferFactory(0), type(type), id(id), bufferSize(0)
     {}
 
     virtual void run() = 0;
@@ -32,7 +36,16 @@ public:
     virtual void threadRelease()
     { iCanBufferFactory->destroyBuffer(canBuffer); }
 
-    void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, int bufferSize)
+    virtual void beforeStart()
+    { CD_INFO("Initializing CanBusControlboard %s thread %s.\n", type.c_str(), id.c_str()); }
+
+    virtual void afterStart(bool success)
+    { CD_INFO("Configuring CanBusControlboard %s thread %s... %s\n", type.c_str(), id.c_str(), success ? "success" : "failure"); }
+
+    virtual void onStop()
+    { CD_INFO("Stopping CanBusControlboard %s thread %s.\n", type.c_str(), id.c_str()); }
+
+    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, int bufferSize)
     { this->iCanBus = iCanBus; this->iCanBufferFactory = iCanBufferFactory; this->bufferSize = bufferSize; }
 
 protected:
@@ -41,6 +54,10 @@ protected:
     yarp::dev::CanBuffer canBuffer;
 
     int bufferSize;
+
+private:
+    std::string type;
+    std::string id;
 };
 
 /**
@@ -49,7 +66,10 @@ protected:
 class CanReaderThread : public CanReaderWriterThread
 {
 public:
-    CanReaderThread(const std::map<int, int> & idxFromCanId, const std::vector<ICanBusSharer *> & iCanBusSharer);
+    CanReaderThread(const std::string & id,
+            const std::map<int, int> & idxFromCanId,
+            const std::vector<ICanBusSharer *> & iCanBusSharer);
+
     virtual void run();
 
 private:
@@ -63,14 +83,16 @@ private:
 class CanWriterThread : public CanReaderWriterThread
 {
 public:
-    CanWriterThread();
+    CanWriterThread(const std::string & id);
     ~CanWriterThread();
 
     virtual void run();
+    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, int bufferSize);
     CanSenderDelegate * getDelegate();
 
 private:
     CanSenderDelegate * sender;
+    int preparedMessages;
     mutable std::mutex bufferMutex;
 };
 

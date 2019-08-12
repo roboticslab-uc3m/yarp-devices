@@ -35,18 +35,25 @@ private:
 class CanSenderDelegate
 {
 public:
-    CanSenderDelegate(yarp::dev::CanBuffer & buffer, std::mutex & bufferMutex);
+    CanSenderDelegate(yarp::dev::CanBuffer & _buffer, std::mutex & _bufferMutex, int & n, int size)
+        : buffer(_buffer),
+          bufferMutex(_bufferMutex),
+          preparedMessages(n),
+          maxSize(size)
+    {}
 
     template <typename MessageConsumerT>
-    bool prepareMessage(MessageConsumerT callback);
-
-    int getPreparedMessages() const;
-    void resetPreparedMessages();
+    bool prepareMessage(MessageConsumerT callback)
+    {
+        std::lock_guard<std::mutex> lock(bufferMutex);
+        return preparedMessages < maxSize ? callback(buffer[preparedMessages++]), true : false;
+    }
 
 private:
     yarp::dev::CanBuffer & buffer;
     std::mutex & bufferMutex;
-    int preparedMessages;
+    int & preparedMessages;
+    int maxSize;
 };
 
 }  // namespace roboticslab

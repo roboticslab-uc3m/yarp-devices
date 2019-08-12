@@ -8,8 +8,11 @@
 
 using namespace roboticslab;
 
-CanReaderThread::CanReaderThread(const std::map<int, int> & _idxFromCanId, const std::vector<ICanBusSharer *> & _iCanBusSharer)
-    : idxFromCanId(_idxFromCanId),
+CanReaderThread::CanReaderThread(const std::string & id,
+        const std::map<int, int> & _idxFromCanId,
+        const std::vector<ICanBusSharer *> & _iCanBusSharer)
+    : CanReaderWriterThread("read", id),
+      idxFromCanId(_idxFromCanId),
       iCanBusSharer(_iCanBusSharer)
 {}
 
@@ -58,8 +61,10 @@ void CanReaderThread::run()
 
 // -----------------------------------------------------------------------------
 
-CanWriterThread::CanWriterThread()
-    : sender(0)
+CanWriterThread::CanWriterThread(const std::string & id)
+    : CanReaderWriterThread("write", id),
+      sender(0),
+      preparedMessages(0)
 {}
 
 // -----------------------------------------------------------------------------
@@ -86,8 +91,8 @@ void CanWriterThread::run()
         bufferMutex.lock();
 
         //-- Blocks with timeout until a message is sent, returns false on errors.
-        iCanBus->canWrite(canBuffer, sender->getPreparedMessages(), &sent, false);
-        sender->resetPreparedMessages();
+        iCanBus->canWrite(canBuffer, preparedMessages, &sent, false);
+        preparedMessages = 0;
 
         bufferMutex.unlock();
     }
@@ -97,13 +102,16 @@ void CanWriterThread::run()
 
 // -----------------------------------------------------------------------------
 
+void CanWriterThread::setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, int bufferSize)
+{
+    CanReaderWriterThread::setCanHandles(iCanBus, iCanBufferFactory, bufferSize);
+    sender = new CanSenderDelegate(canBuffer, bufferMutex, preparedMessages, bufferSize);
+}
+
+// -----------------------------------------------------------------------------
+
 CanSenderDelegate * CanWriterThread::getDelegate()
 {
-    if (!sender)
-    {
-        sender = new CanSenderDelegate(canBuffer, bufferMutex);
-    }
-
     return sender;
 }
 
