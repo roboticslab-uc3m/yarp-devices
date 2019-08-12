@@ -54,7 +54,7 @@ public:
 
     CuiAbsolute()
     {
-        canDevicePtr = 0;
+        sender = 0;
         firstHasReached = false;
     }
 
@@ -67,7 +67,6 @@ public:
     virtual bool close();
 
     //  --------- ICanBusSharer Declarations. Implementation in CuiAbsolute.cpp ---------
-    virtual bool setCanBusPtr(yarp::dev::ICanBus *canDevicePtr);
     virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw);
     virtual bool interpretMessage(const yarp::dev::CanMessage & message);
     /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
@@ -80,6 +79,7 @@ public:
     virtual bool enable();
     /** recoverFromError */
     virtual bool recoverFromError();
+    virtual bool registerSender(CanSenderDelegate * sender);
 
     //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
     virtual bool setLimitsRaw(int axis, double min, double max);
@@ -218,14 +218,11 @@ protected:
 
     int canId;
 
-    yarp::dev::ICanBus *canDevicePtr;
-    yarp::dev::ICanBufferFactory *iCanBufferFactory;
-    yarp::dev::CanBuffer canOutputBuffer;
+    CanSenderDelegate * sender;
 
     double max, min, refAcceleration, refSpeed, tr, targetPosition;
 
     double lastUsage;
-
 
     //-- Encoder stuff
     double encoder;
@@ -246,9 +243,6 @@ protected:
     //yarp::os::Semaphore targetReachedReady;
     //yarp::os::Semaphore refSpeedSemaphore;
     //yarp::os::Semaphore refAccelSemaphore;
-
-    //-- CAN output buffer
-    yarp::os::Semaphore canBufferSemaphore;
 };
 
 }  // namespace roboticslab

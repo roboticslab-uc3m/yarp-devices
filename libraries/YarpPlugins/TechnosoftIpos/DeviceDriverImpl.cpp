@@ -33,8 +33,6 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
         return false;
     }
 
-    yarp::os::Value vCanBufferFactory = config.check("canBufferFactory", yarp::os::Value(0), "");
-
     if( 0 == this->canId )
     {
         CD_ERROR("Could not create TechnosoftIpos with canId 0\n");
@@ -75,14 +73,6 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
         CD_ERROR("Could not create TechnosoftIpos with encoderPulses 0\n");
         return false;
     }
-    if( !vCanBufferFactory.isBlob() )
-    {
-        CD_ERROR("Could not create TechnosoftIpos with null or corrupt ICanBufferFactory handle\n");
-        return false;
-    }
-
-    iCanBufferFactory = *reinterpret_cast<yarp::dev::ICanBufferFactory **>(const_cast<char *>(vCanBufferFactory.asBlob()));
-    canOutputBuffer = iCanBufferFactory->createBuffer(1);
 
     CD_SUCCESS("Created TechnosoftIpos with canId %d, tr %f, k %f, refAcceleration %f, refSpeed %f, encoderPulses %d and all local parameters set to 0.\n",
                canId,tr,k,refAcceleration,refSpeed,encoderPulses);
@@ -94,7 +84,6 @@ bool roboticslab::TechnosoftIpos::close()
 {
     CD_INFO("\n");
     delete linInterpBuffer;
-    iCanBufferFactory->destroyBuffer(canOutputBuffer);
     return true;
 }
 

@@ -66,12 +66,9 @@ namespace
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setCanBusPtr(yarp::dev::ICanBus *canDevicePtr)
+bool roboticslab::TechnosoftIpos::registerSender(CanSenderDelegate * sender)
 {
-
-    this->canDevicePtr = canDevicePtr;
-    CD_SUCCESS("Ok pointer to CAN bus device %d.\n",canId);
-
+    this->sender = sender;
     return true;
 }
 
@@ -215,7 +212,9 @@ bool roboticslab::TechnosoftIpos::initialize()
 
 bool roboticslab::TechnosoftIpos::start()
 {
+    // FIXME
 
+    /*
     yarp::dev::CanMessage &msg_start = canOutputBuffer[0];
     msg_start.setId(0);
     msg_start.setLen(2);
@@ -235,6 +234,7 @@ bool roboticslab::TechnosoftIpos::start()
 
     //-- Do not force expect response as only happens upon transition.
     //-- For example, if already started, function would get stuck.
+    */
 
     return true;
 }
@@ -337,7 +337,9 @@ bool roboticslab::TechnosoftIpos::recoverFromError()
 
 bool roboticslab::TechnosoftIpos::resetNodes()
 {
+    // FIXME
 
+    /*
     // NMT Reset Node (Manual 4.1.2.3)
     yarp::dev::CanMessage &msg_resetNodes = canOutputBuffer[0];
     msg_resetNodes.setId(0);
@@ -359,6 +361,7 @@ bool roboticslab::TechnosoftIpos::resetNodes()
 
     //-- Do not force expect response as only happens upon transition.
     //-- For example, if already started, function would get stuck.
+    */
 
     return true;
 }
@@ -395,7 +398,9 @@ bool roboticslab::TechnosoftIpos::resetCommunication()
 
 bool roboticslab::TechnosoftIpos::resetNode(int id)
 {
+    // FIXME
 
+    /*
     yarp::dev::CanMessage &msg_resetNode = canOutputBuffer[0];
     msg_resetNode.setId(id);
     msg_resetNode.setLen(2);
@@ -415,6 +420,7 @@ bool roboticslab::TechnosoftIpos::resetNode(int id)
 
     //-- Do not force expect response as only happens upon transition.
     //-- For example, if already started, function would get stuck.
+    */
 
     return true;
 }

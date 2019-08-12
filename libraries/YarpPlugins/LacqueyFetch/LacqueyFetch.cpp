@@ -44,8 +44,7 @@ std::string roboticslab::LacqueyFetch::msgToStr(uint32_t cob, uint16_t len, uint
 
 bool roboticslab::LacqueyFetch::send(uint32_t cob, uint16_t len, uint8_t * msgData)
 {
-    canBufferSemaphore.wait();
-
+    /*
     if ( (lastUsage - yarp::os::Time::now()) < DELAY )
         yarp::os::Time::delay( lastUsage + DELAY - yarp::os::Time::now() );
 
@@ -60,7 +59,7 @@ bool roboticslab::LacqueyFetch::send(uint32_t cob, uint16_t len, uint8_t * msgDa
         return false;
 
     lastUsage = yarp::os::Time::now();
-    canBufferSemaphore.post();
+    */
     return true;
 }
 

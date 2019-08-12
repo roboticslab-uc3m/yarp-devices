@@ -53,7 +53,7 @@ public:
 
     LacqueyFetch()
     {
-        canDevicePtr = 0;
+        sender = 0;
     }
 
     //  --------- DeviceDriver Declarations. Implementation in LacqueyFetch.cpp ---------
@@ -61,7 +61,6 @@ public:
     virtual bool close();
 
     //  --------- ICanBusSharer Declarations. Implementation in LacqueyFetch.cpp ---------
-    virtual bool setCanBusPtr(yarp::dev::ICanBus *canDevicePtr);
     virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
     {
         return true;
@@ -77,6 +76,7 @@ public:
     virtual bool enable();
     /** recoverFromError */
     virtual bool recoverFromError();
+    virtual bool registerSender(CanSenderDelegate * sender);
 
     //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------
     virtual bool setLimitsRaw(int axis, double min, double max);
@@ -206,9 +206,7 @@ protected:
 
     int canId;
 
-    yarp::dev::ICanBus *canDevicePtr;
-    yarp::dev::ICanBufferFactory *iCanBufferFactory;
-    yarp::dev::CanBuffer canOutputBuffer;
+    CanSenderDelegate * sender;
 
     double max, min, refAcceleration, refSpeed, tr, targetPosition;
 
@@ -228,9 +226,6 @@ protected:
     yarp::os::Semaphore encoderReady;
     yarp::os::Semaphore interactionModeSemaphore;
     yarp::os::Semaphore targetPositionSemaphore;
-
-    //-- CAN output buffer
-    yarp::os::Semaphore canBufferSemaphore;
 };
 
 }  // namespace roboticslab

@@ -18,18 +18,7 @@ bool roboticslab::DextraCanControlboard::open(yarp::os::Searchable& config)
         return false;
     }
 
-    yarp::os::Value vCanBufferFactory = config.check("canBufferFactory", yarp::os::Value(0), "");
-
-    if (!vCanBufferFactory.isBlob())
-    {
-        CD_ERROR("Could not create device with null or corrupt ICanBufferFactory handle\n");
-        return false;
-    }
-
-    yarp::dev::ICanBufferFactory * iCanBufferFactory =
-            *reinterpret_cast<yarp::dev::ICanBufferFactory **>(const_cast<char *>(vCanBufferFactory.asBlob()));
-
-    acquireSynapseHandle(new CanSynapse(canId, iCanBufferFactory));
+    acquireSynapseHandle(new CanSynapse(canId));
 
     return true;
 }

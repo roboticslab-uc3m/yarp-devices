@@ -26,8 +26,6 @@ public:
      */
     virtual ~ICanBusSharer() {}
 
-    virtual bool setCanBusPtr(yarp::dev::ICanBus * canDevicePtr) = 0;
-
     virtual bool setIEncodersTimedRawExternal(yarp::dev::IEncodersTimedRaw * iEncodersTimedRaw) = 0;
 
     /** initial configuration on pre-operational state (only SDOs allowed) */
@@ -54,7 +52,7 @@ public:
      */
     virtual bool interpretMessage(const yarp::dev::CanMessage & message) = 0;
 
-    virtual bool registerSender(CanSenderDelegate * sender) { return true; };
+    virtual bool registerSender(CanSenderDelegate * sender) = 0;
 
 };
 

@@ -112,9 +112,6 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         //ss << types.get(i).asString() << "_" << ids.get(i).asInt32();
         //options.setMonitor(config.getMonitor(),ss.str().c_str());
 
-        yarp::os::Value v(&iCanBufferFactory, sizeof(iCanBufferFactory));
-        options.put("canBufferFactory", v);
-
         // -- Configuramos todos los dispositivos (TechnosoftIpos, LacqueyFetch, CuiAbsolute)
         yarp::dev::PolyDriver* device = new yarp::dev::PolyDriver(options);
         if( ! device->isValid() )
@@ -198,9 +195,6 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             CD_ERROR("[error] Problems acquiring iCanBusSharer interface\n");
             return false;
         }
-
-        //-- Pass CAN bus pointer to CAN node
-        iCanBusSharer[i]->setCanBusPtr( iCanBus );
 
         iCanBusSharer[i]->registerSender(canWriterThread->getDelegate());
 

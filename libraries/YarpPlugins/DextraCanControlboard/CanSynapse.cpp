@@ -10,21 +10,14 @@ using namespace roboticslab;
 
 #define BUFFER_SIZE 10
 
-CanSynapse::CanSynapse(int _canId, yarp::dev::ICanBufferFactory * _iCanBufferFactory)
+CanSynapse::CanSynapse(int _canId)
     : canId(_canId),
-      iCanBus(0),
-      iCanBufferFactory(_iCanBufferFactory),
-      canBuffer(iCanBufferFactory->createBuffer(BUFFER_SIZE))
+      sender(0)
 {}
-
-CanSynapse::~CanSynapse()
-{
-    iCanBufferFactory->destroyBuffer(canBuffer);
-}
 
 void CanSynapse::configure(void * handle)
 {
-    iCanBus = reinterpret_cast<yarp::dev::ICanBus *>(handle);
+    sender = reinterpret_cast<CanSenderDelegate *>(handle);
     configured = true;
 }
 
@@ -38,8 +31,8 @@ bool CanSynapse::sendMessage(char * msg, int size)
     int n = std::ceil(size / 8.0f);
     assert(BUFFER_SIZE >= n);
 
-    std::lock_guard<std::mutex> guard(mtx);
-
+    // FIXME
+    /*
     for (int i = 0; i < n; i++)
     {
         const int bytes = ((i + 1) * 8 <= size) ? 8 : size % 8;
@@ -51,4 +44,6 @@ bool CanSynapse::sendMessage(char * msg, int size)
 
     unsigned int sent;
     return iCanBus->canWrite(canBuffer, n, &sent, true) && sent != 0;
+    */
+    return true;
 }
