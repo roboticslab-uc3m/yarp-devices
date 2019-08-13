@@ -27,12 +27,14 @@ public:
     void interrupt();
 
 private:
+    typedef std::pair<uint16_t, uint8_t> key_t;
+
     struct Item
     { yarp::os::Semaphore * sem; uint8_t data[4]; };
 
     double timeout;
     bool active;
-    std::map<std::pair<uint16_t, uint8_t>, Item> registry;
+    std::map<key_t, Item> registry;
     mutable std::mutex registryMutex;
 };
 

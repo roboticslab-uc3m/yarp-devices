@@ -7,6 +7,15 @@
 
 using namespace roboticslab;
 
+namespace
+{
+    inline void retrieveIndexes(const uint8_t * msg, uint16_t * index, uint8_t * subindex)
+    {
+        *index = msg[1] + ((uint16_t)msg[2] << 8);
+        *subindex = msg[3];
+    }
+}
+
 SdoSemaphore::SdoSemaphore(double _timeout)
     : timeout(_timeout),
       active(true)
@@ -26,18 +35,19 @@ bool SdoSemaphore::await(uint8_t * data, uint16_t index, uint8_t subindex)
         return false;
     }
 
+    const key_t key = std::make_pair(index, subindex);
     yarp::os::Semaphore * semaphore;
-    std::pair<uint16_t, uint8_t> key = std::make_pair(index, subindex);
-    std::map<std::pair<uint16_t, uint8_t>, Item>::iterator it;
+    uint8_t * storedData;
 
     {
         std::lock_guard<std::mutex> lock(registryMutex);
-        it = registry.find(key);
+        std::map<key_t, Item>::iterator it = registry.find(key);
 
         if (it == registry.end())
         {
             Item item;
-            item.sem = semaphore = new yarp::os::Semaphore(0);
+            semaphore = item.sem = new yarp::os::Semaphore(0);
+            storedData = item.data;
             it = registry.insert(std::make_pair(key, item)).first;
         }
         else
@@ -53,7 +63,7 @@ bool SdoSemaphore::await(uint8_t * data, uint16_t index, uint8_t subindex)
 
         if (!timedOut)
         {
-            std::memcpy(data, it->second.data, 4);
+            std::memcpy(data, storedData, 4);
         }
 
         if (!semaphore->check()) // nobody is using this semaphore right now
@@ -68,8 +78,9 @@ bool SdoSemaphore::await(uint8_t * data, uint16_t index, uint8_t subindex)
 
 bool SdoSemaphore::await(uint8_t * msg)
 {
-    uint16_t index = msg[1] + ((uint16_t)msg[2] << 8);
-    uint8_t subindex = msg[3];
+    uint16_t index;
+    uint8_t subindex;
+    retrieveIndexes(msg, &index, &subindex);
     return await(msg + 4, index, subindex);
 }
 
@@ -80,9 +91,9 @@ void SdoSemaphore::notify(const uint8_t * data, uint16_t index, uint8_t subindex
         return;
     }
 
-    std::pair<uint16_t, uint8_t> key = std::make_pair(index, subindex);
+    const key_t key = std::make_pair(index, subindex);
     std::lock_guard<std::mutex> lock(registryMutex);
-    auto it = registry.find(key);
+    std::map<key_t, Item>::iterator it = registry.find(key);
 
     if (it != registry.end())
     {
@@ -93,8 +104,9 @@ void SdoSemaphore::notify(const uint8_t * data, uint16_t index, uint8_t subindex
 
 void SdoSemaphore::notify(const uint8_t * msg)
 {
-    uint16_t index = msg[1] + ((uint16_t)msg[2] << 8);
-    uint8_t subindex = msg[3];
+    uint16_t index;
+    uint8_t subindex;
+    retrieveIndexes(msg, &index, &subindex);
     notify(msg + 4, index, subindex);
 }
 
