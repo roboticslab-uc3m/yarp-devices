@@ -3,6 +3,7 @@
 #include "SdoSemaphore.hpp"
 
 #include <cassert>
+#include <cstring>
 
 using namespace roboticslab;
 
@@ -18,7 +19,7 @@ SdoSemaphore::~SdoSemaphore()
     interrupt();
 }
 
-bool SdoSemaphore::await(uint16_t index, uint8_t subindex)
+bool SdoSemaphore::await(uint8_t * data, uint16_t index, uint8_t subindex)
 {
     if (!active)
     {
@@ -27,19 +28,21 @@ bool SdoSemaphore::await(uint16_t index, uint8_t subindex)
 
     yarp::os::Semaphore * semaphore;
     std::pair<uint16_t, uint8_t> key = std::make_pair(index, subindex);
+    std::map<std::pair<uint16_t, uint8_t>, Item>::iterator it;
 
     {
         std::lock_guard<std::mutex> lock(registryMutex);
-        auto it = registry.find(key);
+        it = registry.find(key);
 
         if (it == registry.end())
         {
-            semaphore = new yarp::os::Semaphore(0);
-            registry.insert(std::make_pair(key, semaphore));
+            Item item;
+            item.sem = semaphore = new yarp::os::Semaphore(0);
+            it = registry.insert(std::make_pair(key, item)).first;
         }
         else
         {
-            semaphore = it->second;
+            semaphore = it->second.sem;
         }
     }
 
@@ -48,18 +51,29 @@ bool SdoSemaphore::await(uint16_t index, uint8_t subindex)
     {
         std::lock_guard<std::mutex> lock(registryMutex);
 
+        if (!timedOut)
+        {
+            std::memcpy(data, it->second.data, 4);
+        }
+
         if (!semaphore->check()) // nobody is using this semaphore right now
         {
             delete semaphore;
             registry.erase(key);
-            return true;
         }
     }
 
     return timedOut;
 }
 
-void SdoSemaphore::notify(uint16_t index, uint8_t subindex)
+bool SdoSemaphore::await(uint8_t * msg)
+{
+    uint16_t index = msg[1] + ((uint16_t)msg[2] << 8);
+    uint8_t subindex = msg[3];
+    return await(msg + 4, index, subindex);
+}
+
+void SdoSemaphore::notify(const uint8_t * data, uint16_t index, uint8_t subindex)
 {
     if (!active)
     {
@@ -72,15 +86,16 @@ void SdoSemaphore::notify(uint16_t index, uint8_t subindex)
 
     if (it != registry.end())
     {
-        it->second->post();
+        std::memcpy(it->second.data, data, 4);
+        it->second.sem->post();
     }
 }
 
-void SdoSemaphore::notify(uint8_t * canData)
+void SdoSemaphore::notify(const uint8_t * msg)
 {
-    uint16_t index = canData[1] + ((uint16_t)canData[2] << 8);
-    uint8_t subindex = canData[3];
-    notify(index, subindex);
+    uint16_t index = msg[1] + ((uint16_t)msg[2] << 8);
+    uint8_t subindex = msg[3];
+    notify(msg + 4, index, subindex);
 }
 
 void SdoSemaphore::interrupt()
@@ -93,7 +108,7 @@ void SdoSemaphore::interrupt()
 
         for (auto it : registry)
         {
-            it.second->post();
+            it.second.sem->post();
         }
     }
     while (!registry.empty());

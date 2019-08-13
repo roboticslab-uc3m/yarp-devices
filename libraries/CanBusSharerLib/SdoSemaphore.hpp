@@ -20,15 +20,19 @@ public:
     SdoSemaphore(double timeout);
     ~SdoSemaphore();
 
-    bool await(uint16_t index, uint8_t subindex = 0x00);
-    void notify(uint16_t index, uint8_t subindex);
-    void notify(uint8_t * canData);
+    bool await(uint8_t * data, uint16_t index, uint8_t subindex = 0x00);
+    bool await(uint8_t * msg);
+    void notify(const uint8_t * data, uint16_t index, uint8_t subindex = 0x00);
+    void notify(const uint8_t * msg);
     void interrupt();
 
 private:
+    struct Item
+    { yarp::os::Semaphore * sem; uint8_t data[4]; };
+
     double timeout;
     bool active;
-    std::map<std::pair<uint16_t, uint8_t>, yarp::os::Semaphore *> registry;
+    std::map<std::pair<uint16_t, uint8_t>, Item> registry;
     mutable std::mutex registryMutex;
 };
 
