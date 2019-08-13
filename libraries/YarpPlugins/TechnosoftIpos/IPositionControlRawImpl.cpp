@@ -71,11 +71,6 @@ bool roboticslab::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encEx
     CD_SUCCESS("Sent second \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
     //*************************************************************
 
-    //-- it will save the value
-    targetPositionSemaphore.wait();
-    targetPosition = ref;
-    targetPositionSemaphore.post();
-
     return true;
 }
 
@@ -141,11 +136,6 @@ bool roboticslab::TechnosoftIpos::relativeMoveRaw(int j, double delta)
     }
     CD_SUCCESS("Sent \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
     //*************************************************************
-
-    //-- it will save the value
-    targetPositionSemaphore.wait();
-    targetPosition = delta;
-    targetPositionSemaphore.post();
 
     return true;
 }
@@ -240,11 +230,6 @@ bool roboticslab::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
         return false;
     }
 
-    //-- it will save the value
-    refSpeedSemaphore.wait();
-    refSpeed = sp;
-    refSpeedSemaphore.post();
-
     return true;
 }
 
@@ -293,11 +278,6 @@ bool roboticslab::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
         CD_ERROR("Did not receive \"posmode_acc\" ack. %s\n", msgToStr(0x600, 8, msg_posmode_acc).c_str());
         return false;
     }
-
-    //-- it will save the value
-    refAccelSemaphore.wait();
-    refAcceleration = acc ;
-    refAccelSemaphore.post();
 
     return true;
 }
@@ -506,9 +486,24 @@ bool roboticslab::TechnosoftIpos::getTargetPositionRaw(const int joint, double *
 {
     CD_INFO("\n");
 
-    targetPositionSemaphore.wait();
-    *ref = targetPosition;
-    targetPositionSemaphore.post();
+    uint8_t msg_position_target[]= {0x40,0x7A,0x60,0x00,0x00,0x00,0x00,0x00}; // Position target
+
+    if( ! send( 0x600, 8, msg_position_target ) )
+    {
+        CD_ERROR("Could not send \"position target\" query. %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent \"position target\" query. %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
+
+    if (!sdoSemaphore->await(msg_position_target))
+    {
+        CD_ERROR("Did not receive \"position target\" query. %s\n", msgToStr(0x600, 8, msg_position_target).c_str());
+        return false;
+    }
+
+    int32_t got;
+    std::memcpy(&got, msg_position_target + 4, 4);
+    *ref = got / ((encoderPulses / 360.0) * this->tr);
 
     return true;
 }

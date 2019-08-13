@@ -142,10 +142,6 @@ bool roboticslab::TechnosoftIpos::setRefCurrentRaw(int m, double curr)
         return false;
     }
 
-    refCurrentSemaphore.wait();
-    refCurrent = curr;
-    refCurrentSemaphore.post();
-
     return true;
 }
 
@@ -171,9 +167,28 @@ bool roboticslab::TechnosoftIpos::getRefCurrentRaw(int m, double *curr)
 {
     CD_DEBUG("(%d)\n", m);
 
-    refCurrentSemaphore.wait();
-    *curr = refCurrent;
-    refCurrentSemaphore.post();
+    //-- Check index within range
+    if (m != 0) return false;
+
+    uint8_t msg_ref_current[]= {0x40,0x1C,0x20,0x00,0x00,0x00,0x00,0x00};
+
+    if (!send(0x600, 8, msg_ref_current))
+    {
+        CD_ERROR("Could not send refCurrent query. %s\n", msgToStr(0x600, 8, msg_ref_current).c_str());
+        return false;
+    }
+
+    CD_SUCCESS("Sent refCurrent query. %s\n", msgToStr(0x600, 8, msg_ref_current).c_str());
+
+    if (!sdoSemaphore->await(msg_ref_current))
+    {
+        CD_ERROR("Did not receive refCurrent response. %s\n", msgToStr(0x600, 8, msg_ref_current).c_str());
+        return false;
+    }
+
+    int16_t got;
+    std::memcpy(&got, msg_ref_current + 6, 2);
+    *curr = got * sgn(tr) * 2.0 * drivePeakCurrent / 65520.0;
 
     return true;
 }

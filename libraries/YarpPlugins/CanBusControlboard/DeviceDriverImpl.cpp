@@ -216,17 +216,6 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             ITechnosoftIpos * iTechnosoftIpos;
             device->view(iTechnosoftIpos);
             idToTechnosoftIpos.insert(std::make_pair(i, iTechnosoftIpos));
-
-            //-- Set initial parameters on physical motor drivers.
-
-            if ( ! iPositionControlRaw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asFloat64() ) )
-                return false;
-
-            if ( ! iPositionControlRaw[i]->setRefSpeedRaw( 0, refSpeeds.get(i).asFloat64() ) )
-                return false;
-
-            if ( ! iControlLimitsRaw[i]->setLimitsRaw( 0, mins.get(i).asFloat64(), maxs.get(i).asFloat64() ) )
-                return false;
         }
 
         //-- Associate absolute encoders to motor drivers

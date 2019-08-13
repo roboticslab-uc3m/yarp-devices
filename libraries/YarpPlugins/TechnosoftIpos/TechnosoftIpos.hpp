@@ -73,11 +73,20 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver,
 {
 public:
 
-    TechnosoftIpos() : lastEncoderRead(0.0)
-    {
-        sender = 0;
-        iEncodersTimedRawExternal = 0;
-    }
+    TechnosoftIpos()
+        : canId(0),
+          sender(0),
+          iEncodersTimedRawExternal(0),
+          lastEncoderRead(0.0),
+          modeCurrentTorque(0),
+          drivePeakCurrent(0.0),
+          linInterpBuffer(0),
+          maxVel(0.0),
+          tr(0.0),
+          k(0.0),
+          encoderPulses(0),
+          sdoSemaphore(0)
+    {}
 
     //  --------- DeviceDriver Declarations. Implementation in TechnosoftIpos.cpp ---------
     virtual bool open(yarp::os::Searchable& config);
@@ -117,6 +126,9 @@ public:
     //-- Auxiliary functions of setLimitsRaw
     bool setMinLimitRaw(double min);
     bool setMaxLimitRaw(double max);
+    //-- Auxiliary functions of getLimitsRaw
+    bool getMinLimitRaw(double *min);
+    bool getMaxLimitRaw(double *max);
 
     //  --------- IControlModeRaw Declarations. Implementation in IControlModeRawImpl.cpp ---------
     bool setPositionModeRaw(int j);
@@ -291,31 +303,12 @@ protected:
     int modeCurrentTorque;
     double drivePeakCurrent;
 
-    //-- Init stuff
-    int getSwitchOn;
-    yarp::os::Semaphore getSwitchOnReady;
-
-    int getEnable;
-    yarp::os::Semaphore getEnableReady;
-
     //-- PT/PVT stuff
     LinearInterpolationBuffer * linInterpBuffer;
 
     //-- More internal parameter stuff
-    double max, min, maxVel, refAcceleration, refSpeed, refTorque, refCurrent, refVelocity, targetPosition, tr, k;
+    double maxVel, tr, k;
     int encoderPulses; // default: 4096 (1024 * 4)
-
-    //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
-    yarp::dev::InteractionModeEnum interactionMode;
-
-    //-- Semaphores
-    yarp::os::Semaphore refAccelSemaphore;
-    yarp::os::Semaphore refSpeedSemaphore;
-    yarp::os::Semaphore refTorqueSemaphore;
-    yarp::os::Semaphore refCurrentSemaphore;
-    yarp::os::Semaphore refVelocitySemaphore;
-    yarp::os::Semaphore interactionModeSemaphore;
-    yarp::os::Semaphore targetPositionSemaphore;
 
     SdoSemaphore * sdoSemaphore;
 };

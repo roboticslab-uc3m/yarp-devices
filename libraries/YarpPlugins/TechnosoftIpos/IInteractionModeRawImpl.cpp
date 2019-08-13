@@ -10,51 +10,35 @@
 bool roboticslab::TechnosoftIpos::getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode)
 {
     CD_INFO("(%d)\n",axis);
-
-    interactionModeSemaphore.wait();
-    *mode = interactionMode;
-    interactionModeSemaphore.post();
-
     return true;
 }
 
 bool roboticslab::TechnosoftIpos::getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
-
     return true;
 }
 
 bool roboticslab::TechnosoftIpos::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
-
     return true;
 }
 
 bool roboticslab::TechnosoftIpos::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
 {
     CD_INFO("(%d), (%s)\n", axis, yarp::os::Vocab::decode(mode).c_str());
-
-    interactionModeSemaphore.wait();
-    interactionMode = mode;
-    interactionModeSemaphore.post();
-
     return true;
 }
 
 bool roboticslab::TechnosoftIpos::setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
-
     return true;
-
 }
 
 bool roboticslab::TechnosoftIpos::setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
     CD_WARNING("Missing implementation\n");
-
     return true;
-
 }

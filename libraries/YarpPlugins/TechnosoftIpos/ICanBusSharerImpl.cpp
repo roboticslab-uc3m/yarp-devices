@@ -230,10 +230,6 @@ bool roboticslab::TechnosoftIpos::readyToSwitchOn()
 
 bool roboticslab::TechnosoftIpos::switchOn()
 {
-    this->getSwitchOnReady.wait();
-    this->getSwitchOn = false;
-    this->getSwitchOnReady.post();
-
     uint8_t msg_switchOn[] = {0x07,0x00};  //-- switchOn, also acts as disableOperation
     if( ! this->send( 0x200, 2, msg_switchOn) )
     {
@@ -254,10 +250,6 @@ bool roboticslab::TechnosoftIpos::switchOn()
 
 bool roboticslab::TechnosoftIpos::enable()
 {
-    this->getEnableReady.wait();
-    this->getEnable = false;
-    this->getEnableReady.post();
-
     uint8_t msg_enable[] = {0x0F,0x00}; // enable
 
     if( ! this->send( 0x200, 2, msg_enable) )
@@ -275,7 +267,6 @@ bool roboticslab::TechnosoftIpos::enable()
 
     return true;
 }
-
 
 // -----------------------------------------------------------------------------
 
@@ -1001,17 +992,11 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
         }
         else if( (message.getData()[0]==0x21)&&(message.getData()[1]==0x03) )
         {
-            this->getSwitchOnReady.wait();
-            this->getSwitchOn = true;
-            this->getSwitchOnReady.post();
             CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"switchOn\". %s\n",msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x33)&&(message.getData()[1]==0x83) )
         {
-            this->getEnableReady.wait();
-            this->getEnable = true;
-            this->getEnableReady.post();
             CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"enable\". %s\n",msgToStr(message).c_str());
             return true;
         }
@@ -1047,17 +1032,11 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
         }
         else if( (message.getData()[0]==0x21)&&(message.getData()[1]==0x03) )
         {
-            this->getSwitchOnReady.wait();
-            this->getSwitchOn = true;
-            this->getSwitchOnReady.post();
             CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"switchOn\". %s\n",msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x83)&&(message.getData()[1]==0x83) )
         {
-            this->getEnableReady.wait();
-            this->getEnable = true;
-            this->getEnableReady.post();
             CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"enable\". %s\n",msgToStr(message).c_str());
             return true;
         }

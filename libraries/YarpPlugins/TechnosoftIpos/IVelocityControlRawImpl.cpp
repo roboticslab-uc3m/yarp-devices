@@ -50,11 +50,6 @@ bool roboticslab::TechnosoftIpos::velocityMoveRaw(int j, double sp)
         return false;
     }
 
-    // -- Save the last reference speed (double sp) for single joint (int j)
-    refVelocitySemaphore.wait();
-    refVelocity = sp;
-    refVelocitySemaphore.post();
-
     return true;
 }
 

@@ -21,7 +21,6 @@ bool roboticslab::TechnosoftIpos::setLimitsRaw(int axis, double min, double max)
 // -----------------------------------------------------------------------------
 bool roboticslab::TechnosoftIpos::setMinLimitRaw(double min)
 {
-    //*************************************************************
     uint8_t msg_position_min[]= {0x23,0x7D,0x60,0x01,0x00,0x00,0x00,0x00}; // 0x01 is subindex 1, Manual 607Dh: Software position limit
     if(this->tr < 0) msg_position_min[3] = 0x02;
 
@@ -41,16 +40,12 @@ bool roboticslab::TechnosoftIpos::setMinLimitRaw(double min)
         return false;
     }
 
-    //-- Store the new limits locally.
-    this->min = min;
-
     return true;
 }
 
 // -----------------------------------------------------------------------------
 bool roboticslab::TechnosoftIpos::setMaxLimitRaw(double max)
 {
-    //*************************************************************
     uint8_t msg_position_max[]= {0x23,0x7D,0x60,0x02,0x00,0x00,0x00,0x00}; // 0x02 is subindex 2, Manual 607Dh: Software position limit
     if(this->tr < 0) msg_position_max[3] = 0x01;
 
@@ -70,9 +65,6 @@ bool roboticslab::TechnosoftIpos::setMaxLimitRaw(double max)
         return false;
     }
 
-    //-- Store the new limits locally.
-    this->max = max;
-
     return true;
 }
 
@@ -85,9 +77,63 @@ bool roboticslab::TechnosoftIpos::getLimitsRaw(int axis, double *min, double *ma
     //-- Check index within range
     if( axis != 0 ) return false;
 
-    //-- Get the limits that have been locally stored.
-    *min = this->min;
-    *max = this->max;
+    bool ok = true;
+    ok &= getMinLimitRaw(min);
+    ok &= getMaxLimitRaw(max);
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::TechnosoftIpos::getMinLimitRaw(double *min)
+{
+    uint8_t msg_position_min[]= {0x40,0x7D,0x60,0x01,0x00,0x00,0x00,0x00}; // 0x01 is subindex 1, Manual 607Dh: Software position limit
+    if(this->tr < 0) msg_position_min[3] = 0x02;
+
+    if( ! send( 0x600, 8, msg_position_min ) )
+    {
+        CD_ERROR("Could not send position min query. %s\n", msgToStr(0x600, 8, msg_position_min).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent \"position min\" query. %s\n", msgToStr(0x600, 8, msg_position_min).c_str() );
+
+    if (!sdoSemaphore->await(msg_position_min))
+    {
+        CD_ERROR("Did not receive position min response. %s\n", msgToStr(0x600, 8, msg_position_min).c_str());
+        return false;
+    }
+
+    int32_t got;
+    std::memcpy(&got, msg_position_min + 4, 4);
+    *min = got / (tr * encoderPulses / 360.0);
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::TechnosoftIpos::getMaxLimitRaw(double *max)
+{
+    uint8_t msg_position_max[]= {0x40,0x7D,0x60,0x02,0x00,0x00,0x00,0x00}; // 0x02 is subindex 2, Manual 607Dh: Software position limit
+    if(this->tr < 0) msg_position_max[3] = 0x01;
+
+    if( ! send( 0x600, 8, msg_position_max ) )
+    {
+        CD_ERROR("Could not send position max query. %s\n", msgToStr(0x600, 8, msg_position_max).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent \"position max\" query. %s\n", msgToStr(0x600, 8, msg_position_max).c_str() );
+
+    if (!sdoSemaphore->await(msg_position_max))
+    {
+        CD_ERROR("Did not receive position max response. %s\n", msgToStr(0x600, 8, msg_position_max).c_str());
+        return false;
+    }
+
+    int32_t got;
+    std::memcpy(&got, msg_position_max + 4, 4);
+    *max = got / (tr * encoderPulses / 360.0);
 
     return true;
 }
