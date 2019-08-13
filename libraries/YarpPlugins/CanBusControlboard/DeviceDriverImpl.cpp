@@ -19,6 +19,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     int canTxBufferSize = config.check("canBusTxBufferSize", yarp::os::Value(DEFAULT_CAN_TX_BUFFER_SIZE), "CAN bus TX buffer size").asInt();
     double canRxPeriodMs = config.check("canRxPeriodMs", yarp::os::Value(DEFAULT_CAN_RX_PERIOD_MS), "CAN bus RX period (milliseconds)").asFloat64();
     double canTxPeriodMs = config.check("canTxPeriodMs", yarp::os::Value(DEFAULT_CAN_TX_PERIOD_MS), "CAN bus TX period (milliseconds)").asFloat64();
+    double canSdoTimeoutMs = config.check("canSdoTimeoutMs", yarp::os::Value(DEFAULT_CAN_SDO_TIMEOUT_MS), "CAN bus SDO timeout (milliseconds)").asFloat64();
 
     linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(DEFAULT_LIN_INTERP_PERIOD_MS), "linear interpolation mode period (milliseconds)").asInt32();
     linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(DEFAULT_LIN_INTERP_BUFFER_SIZE), "linear interpolation mode buffer size").asInt32();
@@ -116,6 +117,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         options.put("linInterpPeriodMs", linInterpPeriodMs);
         options.put("linInterpBufferSize", linInterpBufferSize);
         options.put("linInterpMode", linInterpMode);
+        options.put("canSdoTimeoutMs", canSdoTimeoutMs);
         //std::stringstream ss; // Remember to #include <sstream>
         //ss << types.get(i).asString() << "_" << ids.get(i).asInt32();
         //options.setMonitor(config.getMonitor(),ss.str().c_str());
@@ -214,17 +216,6 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             ITechnosoftIpos * iTechnosoftIpos;
             device->view(iTechnosoftIpos);
             idToTechnosoftIpos.insert(std::make_pair(i, iTechnosoftIpos));
-
-            //-- Set initial parameters on physical motor drivers.
-
-            if ( ! iPositionControlRaw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asFloat64() ) )
-                return false;
-
-            if ( ! iPositionControlRaw[i]->setRefSpeedRaw( 0, refSpeeds.get(i).asFloat64() ) )
-                return false;
-
-            if ( ! iControlLimitsRaw[i]->setLimitsRaw( 0, mins.get(i).asFloat64(), maxs.get(i).asFloat64() ) )
-                return false;
         }
 
         //-- Associate absolute encoders to motor drivers

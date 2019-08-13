@@ -21,9 +21,15 @@ bool roboticslab::TechnosoftIpos::getRefTorqueRaw(int j, double *t)
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    refTorqueSemaphore.wait();
-    *t = refTorque;
-    refTorqueSemaphore.post();
+    double curr;
+
+    if (!getRefCurrentRaw(j, &curr))
+    {
+        CD_ERROR("getRefCurrentRaw() failed.\n");
+        return false;
+    }
+
+    *t = curr * std::abs(tr) * k;
 
     return true;
 }
@@ -49,10 +55,6 @@ bool roboticslab::TechnosoftIpos::setRefTorqueRaw(int j, double t)
         CD_ERROR("setRefCurrentRaw() failed.\n");
         return false;
     }
-
-    refTorqueSemaphore.wait();
-    refTorque = t;
-    refTorqueSemaphore.post();
 
     return true;
 }

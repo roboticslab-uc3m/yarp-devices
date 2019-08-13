@@ -8,8 +8,6 @@
 
 #include "CanSenderDelegate.hpp"
 
-#define DELAY 0.001  // [s] Required when using same driver.
-
 namespace roboticslab
 {
 

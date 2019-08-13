@@ -8,23 +8,19 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 
     // -- .ini parameters (in order)
     this->canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt32();
-    this->max = config.check("max",yarp::os::Value(0),"max (meters or degrees)").asFloat64();
-    this->min = config.check("min",yarp::os::Value(0),"min (meters or degrees)").asFloat64();
     this->maxVel = config.check("maxVel",yarp::os::Value(10),"maxVel (meters/second or degrees/second)").asFloat64();
     this->tr = config.check("tr",yarp::os::Value(0),"reduction").asFloat64();
-    this->refAcceleration = config.check("refAcceleration",yarp::os::Value(0),"ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
-    this->refSpeed = config.check("refSpeed",yarp::os::Value(0),"ref speed (meters/second or degrees/second)").asFloat64();
     this->encoderPulses = config.check("encoderPulses",yarp::os::Value(0),"encoderPulses").asInt32();
     this->k = config.check("k",yarp::os::Value(0),"motor constant").asFloat64();
 
     // -- other parameters...
-    this->targetReached = false;
-    this->refTorque = 0;
-    this->refVelocity = 0; // if you want to test.. put 0.1
-    this->refCurrent = 0;
     this->modeCurrentTorque = VOCAB_CM_NOT_CONFIGURED;
+    double canSdoTimeoutMs = config.check("canSdoTimeoutMs", yarp::os::Value(0.0), "CAN SDO timeout (ms)").asFloat64();
 
-    this->getProductCode = 0;
+    double refAcceleration = config.check("refAcceleration",yarp::os::Value(0),"ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
+    double refSpeed = config.check("refSpeed",yarp::os::Value(0),"ref speed (meters/second or degrees/second)").asFloat64();
+    double max = config.check("max",yarp::os::Value(0),"max (meters or degrees)").asFloat64();
+    double min = config.check("min",yarp::os::Value(0),"min (meters or degrees)").asFloat64();
 
     linInterpBuffer = LinearInterpolationBuffer::createBuffer(config);
 
@@ -38,7 +34,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
         CD_ERROR("Could not create TechnosoftIpos with canId 0\n");
         return false;
     }
-    if( this->min >= this->max )
+    if( min >= max )
     {
         CD_ERROR("Could not create TechnosoftIpos with min >= max\n");
         return false;
@@ -53,17 +49,17 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
         CD_ERROR("Could not create TechnosoftIpos with tr 0\n");
         return false;
     }
-    if( 0 == this->refAcceleration )
+    if( 0 == refAcceleration )
     {
         CD_ERROR("Could not create TechnosoftIpos with refAcceleration 0\n");
         return false;
     }
-    if( 0 == this->refSpeed )
+    if( 0 == refSpeed )
     {
         CD_ERROR("Could not create TechnosoftIpos with refSpeed 0\n");
         return false;
     }
-    if( this->refSpeed > this->maxVel )
+    if( refSpeed > this->maxVel )
     {
         CD_ERROR("Could not create TechnosoftIpos with refSpeed > maxVel\n");
         return false;
@@ -71,6 +67,26 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     if( 0 == this->encoderPulses )
     {
         CD_ERROR("Could not create TechnosoftIpos with encoderPulses 0\n");
+        return false;
+    }
+
+    sdoSemaphore = new SdoSemaphore(canSdoTimeoutMs * 0.001);
+
+    if (!setRefSpeedRaw(0, refSpeed))
+    {
+        CD_ERROR("Unable to set reference speed.\n");
+        return false;
+    }
+
+    if (!setRefAccelerationRaw(0, refAcceleration))
+    {
+        CD_ERROR("Unable to set reference acceleration.\n");
+        return false;
+    }
+
+    if (!setLimitsRaw(0, min, max))
+    {
+        CD_ERROR("Unable to set software limits.\n");
         return false;
     }
 
@@ -83,7 +99,17 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 bool roboticslab::TechnosoftIpos::close()
 {
     CD_INFO("\n");
-    delete linInterpBuffer;
+
+    if (sdoSemaphore)
+    {
+        delete sdoSemaphore;
+    }
+
+    if (linInterpBuffer)
+    {
+        delete linInterpBuffer;
+    }
+
     return true;
 }
 

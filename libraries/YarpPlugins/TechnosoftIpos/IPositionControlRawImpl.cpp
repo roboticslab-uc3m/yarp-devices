@@ -2,6 +2,8 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <cstring>
+
 // ######################### IPositionControlRaw Related #########################
 
 bool roboticslab::TechnosoftIpos::getAxes(int *ax)
@@ -42,6 +44,13 @@ bool roboticslab::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encEx
         return false;
     }
     CD_SUCCESS("Sent \"position target\". %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
+
+    if (!sdoSemaphore->await(msg_position_target))
+    {
+        CD_ERROR("Did not receive \"position target\" ack. %s\n", msgToStr(0x600, 8, msg_position_target).c_str());
+        return false;
+    }
+
     //*************************************************************
     //uint8_t msg_start[]={0x1F,0x00}; // Start the movement with "Discrete motion profile (change set immediately = 0)".
     uint8_t msg_start[]= {0x3F,0x00}; // Start the movement with "Continuous motion profile (change set immediately = 1)".
@@ -61,11 +70,6 @@ bool roboticslab::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encEx
     }
     CD_SUCCESS("Sent second \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
     //*************************************************************
-
-    //-- it will save the value
-    targetPositionSemaphore.wait();
-    targetPosition = ref;
-    targetPositionSemaphore.post();
 
     return true;
 }
@@ -102,6 +106,12 @@ bool roboticslab::TechnosoftIpos::relativeMoveRaw(int j, double delta)
         return false;
     }
     CD_SUCCESS("Sent \"position target\". %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
+
+    if (!sdoSemaphore->await(msg_position_target))
+    {
+        CD_ERROR("Did not receive \"position target\" ack. %s\n", msgToStr(0x600, 8, msg_position_target).c_str());
+        return false;
+    }
     //*************************************************************
     //uint8_t msg_start_rel[]={0x5F,0x00}; // Start the movement with "Discrete motion profile (change set immediately = 0)".
     uint8_t msg_start_rel[]= {0x7F,0x00}; // Start the movement with "Continuous motion profile (change set immediately = 1)".
@@ -126,11 +136,6 @@ bool roboticslab::TechnosoftIpos::relativeMoveRaw(int j, double delta)
     }
     CD_SUCCESS("Sent \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
     //*************************************************************
-
-    //-- it will save the value
-    targetPositionSemaphore.wait();
-    targetPosition = delta;
-    targetPositionSemaphore.post();
 
     return true;
 }
@@ -161,14 +166,13 @@ bool roboticslab::TechnosoftIpos::checkMotionDoneRaw(int j, bool *flag)
     }
     CD_SUCCESS("Sent \"msgStatus\". %s\n", msgToStr(0x600, 8, msgStatus).c_str() );
 
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(DELAY*10);  //-- Wait for read update. Could implement semaphore waiting for specific message...
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    if (!sdoSemaphore->await(msgStatus))
+    {
+        CD_ERROR("Did not receive status query response. %s\n", msgToStr(0x600, 8, msgStatus).c_str());
+        return false;
+    }
 
-    targetReachedReady.wait();
-    *flag = targetReached;
-    targetReachedReady.post();
-
+    *flag = msgStatus[5] & 4;
     return true;
 }
 
@@ -219,12 +223,12 @@ bool roboticslab::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
         return false;
     }
     CD_SUCCESS("Sent \"posmode_speed\". %s\n", msgToStr(0x600, 8, msg_posmode_speed).c_str() );
-    //*************************************************************
 
-    //-- it will save the value
-    refSpeedSemaphore.wait();
-    refSpeed = sp;
-    refSpeedSemaphore.post();
+    if (!sdoSemaphore->await(msg_posmode_speed))
+    {
+        CD_ERROR("Did not receive \"posmode_speed\" ack. %s\n", msgToStr(0x600, 8, msg_posmode_speed).c_str());
+        return false;
+    }
 
     return true;
 }
@@ -268,12 +272,12 @@ bool roboticslab::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
         return false;
     }
     CD_SUCCESS("Sent \"posmode_acc\". %s\n", msgToStr(0x600, 8, msg_posmode_acc).c_str() );
-    //*************************************************************
 
-    //-- it will save the value
-    refAccelSemaphore.wait();
-    refAcceleration = acc ;
-    refAccelSemaphore.post();
+    if (!sdoSemaphore->await(msg_posmode_acc))
+    {
+        CD_ERROR("Did not receive \"posmode_acc\" ack. %s\n", msgToStr(0x600, 8, msg_posmode_acc).c_str());
+        return false;
+    }
 
     return true;
 }
@@ -304,13 +308,20 @@ bool roboticslab::TechnosoftIpos::getRefSpeedRaw(int j, double *ref)
     }
     CD_SUCCESS("Sent \"posmode_speed\" query. %s\n", msgToStr(0x600, 8, msg_posmode_speed).c_str() );
 
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(DELAY);  //-- Wait for read update. Could implement semaphore waiting for specific message...
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    if (!sdoSemaphore->await(msg_posmode_speed))
+    {
+        CD_ERROR("Did not receive \"posmode_speed\" response. %s\n", msgToStr(0x600, 8, msg_posmode_speed).c_str());
+        return false;
+    }
 
-    refSpeedSemaphore.wait();
-    *ref = refSpeed;
-    refSpeedSemaphore.post();
+    uint16_t gotInteger;
+    uint16_t gotFractional;
+
+    std::memcpy(&gotFractional, msg_posmode_speed + 4, 2);
+    std::memcpy(&gotInteger, msg_posmode_speed + 6, 2);
+
+    double val = decodeFixedPoint(gotInteger, gotFractional);
+    *ref = val / (std::abs(tr) * (encoderPulses / 360.0) * 0.001);
 
     return true;
 }
@@ -341,13 +352,20 @@ bool roboticslab::TechnosoftIpos::getRefAccelerationRaw(int j, double *acc)
     }
     CD_SUCCESS("Sent \"posmode_acc\" query. %s\n", msgToStr(0x600, 8, msg_posmode_acc).c_str() );
 
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(DELAY);  //-- Wait for read update. Could implement semaphore waiting for specific message...
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    if (!sdoSemaphore->await(msg_posmode_acc))
+    {
+        CD_ERROR("Did not receive \"posmde_acc\" response. %s\n", msgToStr(0x600, 8, msg_posmode_acc).c_str());
+        return false;
+    }
 
-    refAccelSemaphore.wait();
-    *acc = refAcceleration;
-    refAccelSemaphore.post();
+    uint16_t gotInteger;
+    uint16_t gotFractional;
+
+    std::memcpy(&gotFractional, msg_posmode_acc + 4, 2);
+    std::memcpy(&gotInteger, msg_posmode_acc + 6, 2);
+
+    double val = decodeFixedPoint(gotInteger, gotFractional);
+    *acc = val / (std::abs(tr) * (encoderPulses / 360.0) * 0.000001);
 
     return true;
 }
@@ -378,7 +396,7 @@ bool roboticslab::TechnosoftIpos::stopRaw(int j)
     }
     CD_SUCCESS("Sent \"quick stop\". %s\n", msgToStr(0x200, 2, msg_quickStop).c_str() );
 
-    yarp::os::Time::delay(DELAY);
+    yarp::os::Time::delay(0.01);
 
     return enable();
 }
@@ -468,9 +486,24 @@ bool roboticslab::TechnosoftIpos::getTargetPositionRaw(const int joint, double *
 {
     CD_INFO("\n");
 
-    targetPositionSemaphore.wait();
-    *ref = targetPosition;
-    targetPositionSemaphore.post();
+    uint8_t msg_position_target[]= {0x40,0x7A,0x60,0x00,0x00,0x00,0x00,0x00}; // Position target
+
+    if( ! send( 0x600, 8, msg_position_target ) )
+    {
+        CD_ERROR("Could not send \"position target\" query. %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
+        return false;
+    }
+    CD_SUCCESS("Sent \"position target\" query. %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
+
+    if (!sdoSemaphore->await(msg_position_target))
+    {
+        CD_ERROR("Did not receive \"position target\" query. %s\n", msgToStr(0x600, 8, msg_position_target).c_str());
+        return false;
+    }
+
+    int32_t got;
+    std::memcpy(&got, msg_position_target + 4, 4);
+    *ref = got / ((encoderPulses / 360.0) * this->tr);
 
     return true;
 }

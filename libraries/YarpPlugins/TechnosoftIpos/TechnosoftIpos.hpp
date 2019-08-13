@@ -16,6 +16,7 @@
 #include <ColorDebug.h>
 
 #include "ICanBusSharer.hpp"
+#include "SdoSemaphore.hpp"
 #include "ITechnosoftIpos.h"
 #include "LinearInterpolationBuffer.hpp"
 
@@ -72,11 +73,20 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver,
 {
 public:
 
-    TechnosoftIpos() : lastEncoderRead(0.0)
-    {
-        sender = 0;
-        iEncodersTimedRawExternal = 0;
-    }
+    TechnosoftIpos()
+        : canId(0),
+          sender(0),
+          iEncodersTimedRawExternal(0),
+          lastEncoderRead(0.0),
+          modeCurrentTorque(0),
+          drivePeakCurrent(0.0),
+          linInterpBuffer(0),
+          maxVel(0.0),
+          tr(0.0),
+          k(0.0),
+          encoderPulses(0),
+          sdoSemaphore(0)
+    {}
 
     //  --------- DeviceDriver Declarations. Implementation in TechnosoftIpos.cpp ---------
     virtual bool open(yarp::os::Searchable& config);
@@ -116,6 +126,9 @@ public:
     //-- Auxiliary functions of setLimitsRaw
     bool setMinLimitRaw(double min);
     bool setMaxLimitRaw(double max);
+    //-- Auxiliary functions of getLimitsRaw
+    bool getMinLimitRaw(double *min);
+    bool getMaxLimitRaw(double *max);
 
     //  --------- IControlModeRaw Declarations. Implementation in IControlModeRawImpl.cpp ---------
     bool setPositionModeRaw(int j);
@@ -129,7 +142,7 @@ public:
 
     virtual bool getControlModeRaw(int j, int *mode);
     //-- Auxiliary functions (splitted) of getControlModeRaw
-    bool getControlModeRaw1();
+    bool getControlModeRaw1(int *mode);
     bool getControlModeRaw2();
     bool getControlModeRaw3();
     bool getControlModeRaw4();
@@ -286,49 +299,18 @@ protected:
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRawExternal;
     EncoderRead lastEncoderRead;
 
-    //-- Mode stuff
-    int getMode;
-    yarp::os::Semaphore getModeReady;
-
-    bool targetReached;
-    yarp::os::Semaphore targetReachedReady;
-
     //-- Current stuff
-    double getCurrent;
-    double getCurrentLimit;
     int modeCurrentTorque;
-    yarp::os::Semaphore getCurrentReady;
-    yarp::os::Semaphore getCurrentLimitReady;
     double drivePeakCurrent;
-
-    //-- Init stuff
-    int getSwitchOn;
-    yarp::os::Semaphore getSwitchOnReady;
-
-    int getEnable;
-    yarp::os::Semaphore getEnableReady;
 
     //-- PT/PVT stuff
     LinearInterpolationBuffer * linInterpBuffer;
 
     //-- More internal parameter stuff
-    double max, min, maxVel, refAcceleration, refSpeed, refTorque, refCurrent, refVelocity, targetPosition, tr, k;
+    double maxVel, tr, k;
     int encoderPulses; // default: 4096 (1024 * 4)
 
-    uint32_t getProductCode;
-    yarp::os::Semaphore getProductCodeReady;
-
-    //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
-    yarp::dev::InteractionModeEnum interactionMode;
-
-    //-- Semaphores
-    yarp::os::Semaphore refAccelSemaphore;
-    yarp::os::Semaphore refSpeedSemaphore;
-    yarp::os::Semaphore refTorqueSemaphore;
-    yarp::os::Semaphore refCurrentSemaphore;
-    yarp::os::Semaphore refVelocitySemaphore;
-    yarp::os::Semaphore interactionModeSemaphore;
-    yarp::os::Semaphore targetPositionSemaphore;
+    SdoSemaphore * sdoSemaphore;
 };
 
 }  // namespace roboticslab

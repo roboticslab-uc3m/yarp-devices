@@ -116,7 +116,7 @@ bool roboticslab::TechnosoftIpos::initialize()
 
     CD_SUCCESS("Sent \"Supported drive modes\" query. %s\n", msgToStr(0x600, 4, msg_supportedDriveModes).c_str());
 
-    uint8_t msg_identityObject[] = {0x40,0x18,0x10,0x00};
+    uint8_t msg_identityObject[] = {0x40,0x18,0x10,0x00,0x00,0x00,0x00,0x00};
 
     msg_identityObject[3] = 0x01;
 
@@ -138,32 +138,16 @@ bool roboticslab::TechnosoftIpos::initialize()
 
     CD_SUCCESS("Sent \"Product Code\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
 
-    int count = 0;
-    const int retries = 10;
-    uint32_t productCode;
-
-    do
+    if (!sdoSemaphore->await(msg_identityObject))
     {
-        getProductCodeReady.wait();
-        productCode = getProductCode;
-        getProductCodeReady.post();
-
-        if (productCode)
-        {
-            break;
-        }
-
-        count++;
-
-        if (count == retries)
-        {
-            CD_ERROR("Max retries exceeded on awaiting for product code response.\n");
-            return false;
-        }
-
-        yarp::os::Time::delay(DELAY);
+        CD_ERROR("Did not receive \"Product Code\" response. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
+        return false;
     }
-    while (true);
+
+    uint32_t productCode;
+    std::memcpy(&productCode, msg_identityObject + 4, 4);
+
+    CD_INFO("Retrieved product code: P%03d.%03d.E%03d.\n", productCode / 1000000, (productCode / 1000) % 1000, productCode % 1000);
 
     if (!retrieveDrivePeakCurrent(productCode, &drivePeakCurrent))
     {
@@ -203,6 +187,12 @@ bool roboticslab::TechnosoftIpos::initialize()
 
     CD_SUCCESS("Sent \"Quick stop option code\". %s\n", msgToStr(0x600, 8, msg_quickStopOptionCode).c_str());
 
+    if (!sdoSemaphore->await(msg_quickStopOptionCode))
+    {
+        CD_ERROR("Did not receive \"Quick stop option code\" ack. %s\n", msgToStr(0x600, 8, msg_quickStopOptionCode).c_str());
+        return false;
+    }
+
     return true;
 }
 
@@ -240,10 +230,6 @@ bool roboticslab::TechnosoftIpos::readyToSwitchOn()
 
 bool roboticslab::TechnosoftIpos::switchOn()
 {
-    this->getSwitchOnReady.wait();
-    this->getSwitchOn = false;
-    this->getSwitchOnReady.post();
-
     uint8_t msg_switchOn[] = {0x07,0x00};  //-- switchOn, also acts as disableOperation
     if( ! this->send( 0x200, 2, msg_switchOn) )
     {
@@ -264,10 +250,6 @@ bool roboticslab::TechnosoftIpos::switchOn()
 
 bool roboticslab::TechnosoftIpos::enable()
 {
-    this->getEnableReady.wait();
-    this->getEnable = false;
-    this->getEnableReady.post();
-
     uint8_t msg_enable[] = {0x0F,0x00}; // enable
 
     if( ! this->send( 0x200, 2, msg_enable) )
@@ -285,7 +267,6 @@ bool roboticslab::TechnosoftIpos::enable()
 
     return true;
 }
-
 
 // -----------------------------------------------------------------------------
 
@@ -420,122 +401,28 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
     }
     else if( (message.getId()-canId) == 0x580 )  // -------------- SDO ----------------------
     {
-        if( (message.getData()[1]==0x64) && (message.getData()[2]==0x60) )  // Manual 6064h
+        const uint16_t index = message.getData()[1] + ((uint16_t)message.getData()[2] << 8);
+
+        switch (index)
         {
+        case 0x6064:
             //-- Commenting encoder value (response to petition) as way too verbose, happens all the time.
             //CD_INFO("Got encoder value (response to petition). %s\n",msgToStr(message).c_str());
-            int got;
-            memcpy(&got, message.getData()+4,4);
-            lastEncoderRead.update(got / ((encoderPulses / 360.0) * this->tr));
-            return true;
-        }
-        else if( (message.getData()[1]==0x7E) && (message.getData()[2]==0x20) )     // Manual 207Eh
-        {
+            break;
+        case 0x207E:
             //-- Commenting current value (response to petition) as way too verbose, happens all the time.
             //CD_INFO("Got current value (response to petition). %s\n",msgToStr(message).c_str());
-            int16_t got;
-            memcpy(&got, message.getData()+4,2);
-            getCurrentReady.wait();
-            getCurrent = got * 2.0 * drivePeakCurrent / 65520.0;
-            getCurrentReady.post();
-            return true;
-        }
-        else if( (message.getData()[1]==0x7A)&&(message.getData()[2]==0x60) )      // Manual 607Ah
-        {
+            break;
+        case 0x607A:
             CD_INFO("Got SDO ack \"position target\" from driver. %s\n",msgToStr(message).c_str());
-            return true;
-        }
-        else if( (message.getData()[1]==0x60)&&(message.getData()[2]==0x60) )      // Manual 6060h should behave like 6061h, but ack always says mode 0.
-        {
+            break;
+        case 0x6060: // Manual 6060h should behave like 6061h, but ack always says mode 0.
             CD_INFO("Got SDO ack \"modes of operation\" from driver. %s\n",msgToStr(message).c_str());
-            return true;
-        }
-        else if( (message.getData()[1]==0x61)&&(message.getData()[2]==0x60) )      // Manual 6060h/6061h
-        {
+            break;
+        case 0x6061:
             CD_INFO("Got SDO \"modes of operation display\" from driver. %s\n",msgToStr(message).c_str());
-            int got;
-            memcpy(&got, message.getData()+4,4);
-            if(251==got)  // -5
-            {
-                CD_INFO("\t-iPOS specific: External Reference Torque Mode. canId: %d.\n",canId);
-                getModeReady.wait();
-                getMode = modeCurrentTorque == VOCAB_CM_TORQUE ? VOCAB_CM_TORQUE : VOCAB_CM_CURRENT;
-                getModeReady.post();
-            }
-            else if(252==got)  // -4
-            {
-                CD_INFO("\t-iPOS specific: External Reference Speed Mode. canId: %d.\n",canId);
-                getModeReady.wait();
-                getMode = VOCAB_CM_UNKNOWN;
-                getModeReady.post();
-            }
-            else if(253==got)  // -3
-            {
-                CD_INFO("\t-iPOS specific: External Reference Position Mode. canId: %d.\n",canId);
-                getModeReady.wait();
-                getMode = VOCAB_CM_UNKNOWN;
-                getModeReady.post();
-            }
-            else if(254==got)  // -2
-            {
-                CD_INFO("\t-iPOS specific: Electronic Camming Position Mode. canId: %d.\n",canId);
-                getModeReady.wait();
-                getMode = VOCAB_CM_UNKNOWN;
-                getModeReady.post();
-            }
-            else if(255==got)  // -1
-            {
-                CD_INFO("\t-iPOS specific: Electronic Gearing Position Mode. canId: %d.\n",canId);
-                getModeReady.wait();
-                getMode = VOCAB_CM_UNKNOWN;
-                getModeReady.post();
-            }
-            else if(1==got)
-            {
-                CD_INFO("\t-Profile Position Mode. canId: %d.\n",canId);
-                getModeReady.wait();
-                getMode = VOCAB_CM_POSITION;
-                getModeReady.post();
-            }
-            else if(3==got)
-            {
-                CD_INFO("\t-Profile Velocity Mode. canId: %d.\n",canId);
-                getModeReady.wait();
-                getMode = VOCAB_CM_VELOCITY;
-                getModeReady.post();
-            }
-            else if(6==got)
-            {
-                CD_INFO("\t-Homing Mode. canId: %d.\n",canId);
-                getModeReady.wait();
-                getMode = VOCAB_CM_UNKNOWN;
-                getModeReady.post();
-            }
-            else if(7==got)
-            {
-                CD_INFO("\t-Interpolated Position Mode. canId: %d.\n",canId);
-                getModeReady.wait();
-                getMode = VOCAB_CM_POSITION_DIRECT;
-                getModeReady.post();
-            }
-            else if(8==got)
-            {
-                CD_INFO("\t-Cyclic Synchronous Position Mode. canId: %d.\n",canId);
-                getModeReady.wait();
-                getMode = VOCAB_CM_UNKNOWN;
-                getModeReady.post();
-            }
-            else
-            {
-                CD_WARNING("\t-Mode \"%d\" not specified in manual, may be in Fault or not enabled yet. canId(%d).\n",got,(message.getId() & 0x7F));
-                getModeReady.wait();
-                getMode = VOCAB_CM_UNKNOWN;
-                getModeReady.post();
-                return true;
-            }
-            return true;
-        }
-        else if( (message.getData()[1]==0x41)&&(message.getData()[2]==0x60) )      // Manual 6041h: Status word; Table 5.4 Bit Assignment in Status Word (also see 5.5)
+            break;
+        case 0x6041: // Manual 6041h: Status word; Table 5.4 Bit Assignment in Status Word (also see 5.5)
         {
             CD_INFO("Got \"status word\" from driver. %s\n",msgToStr(message).c_str());
 
@@ -589,17 +476,11 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             }
             if(message.getData()[5] & 4) //(bit 10)
             {
-                targetReachedReady.wait();
-                targetReached = true;
-                targetReachedReady.post();
                 CD_INFO("\t-Target reached. canId: %d.\n",canId);  // true
             }
             else
             {
                 CD_INFO("\t-Target not reached. canId: %d.\n",canId);  // false (improvised, not in manual, but reasonable).
-                targetReachedReady.wait();
-                targetReached = false;
-                targetReachedReady.post();
             }
             if(message.getData()[5] & 8) //(bit 11)
             {
@@ -621,9 +502,10 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             {
                 CD_INFO("\t-Axis off. Power stage is disabled. Motor control is not performed. canId: %d.\n",canId); // false
             }
-            return true;
+
+            break;
         }
-        else if( (message.getData()[1]==0x00)&&(message.getData()[2]==0x20) )      // Manual 2000h: Motion Error Register
+        case 0x2000:
         {
             CD_INFO("Got SDO ack \"Motion Error Register\" from driver. %s\n",msgToStr(message).c_str());
 
@@ -691,9 +573,10 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             {
                 CD_INFO("\t*Drive disabled due to enable input. Set when enable input is on disable state. canId: %d.\n",canId);
             }
-            return true;
+
+            break;
         }
-        else if( (message.getData()[1]==0x02)&&(message.getData()[2]==0x10) )      // Manual 1002h contains "6041h Status word" plus Table 5.6
+        case 0x1002: // Manual 1002h contains "6041h Status word" plus Table 5.6
         {
             CD_INFO("Got \"manufacturer status register\" from driver. %s\n",msgToStr(message).c_str());
 
@@ -834,9 +717,10 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             {
                 CD_INFO("\t*Drive/motor in fault status. canId: %d.\n",canId);
             }
-            return true;
+
+            break;
         }
-        else if( (message.getData()[1]==0x02)&&(message.getData()[2]==0x20) )      // 2002h: Detailed Error Register
+        case 0x2002:
         {
             CD_INFO("Got SDO ack \"Detailed Error Register\" from driver. %s\n",msgToStr(message).c_str());
 
@@ -892,50 +776,30 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             {
                 CD_INFO("\t**Self check error. canId: %d.\n",canId);
             }
-            return true;
+
+            break;
         }
-        else if( (message.getData()[1]==0x83)&&(message.getData()[2]==0x60) )      // Manual 8.2.3. 6083h: Profile acceleration
-        {
+        case 0x6083:
             if (message.getData()[0]==0x60)      // SDO segment upload/acknowledge
             {
                 CD_INFO("Got SDO ack \"posmode_acc\" from driver. %s\n",msgToStr(message).c_str());
             }
             else
             {
-                uint16_t gotInteger;
-                uint16_t gotFractional;
-                memcpy(&gotFractional, message.getData() + 4, 2);
-                memcpy(&gotInteger, message.getData() + 6, 2);
-                double val = decodeFixedPoint(gotInteger, gotFractional);
-                refAccelSemaphore.wait();
-                refAcceleration = val / (std::abs(tr) * (encoderPulses / 360.0) * 0.000001);
-                refAccelSemaphore.post();
                 CD_INFO("Got SDO \"posmode_acc\" response from driver. %s\n",msgToStr(message).c_str());
             }
-            return true;
-        }
-        else if( (message.getData()[1]==0x81)&&(message.getData()[2]==0x60) )      // Manual 8.2.2. 6081h: Profile velocity
-        {
+            break;
+        case 0x6081:
             if (message.getData()[0]==0x60)      // SDO segment upload/acknowledge
             {
                 CD_INFO("Got SDO ack \"posmode_speed\" from driver. %s\n",msgToStr(message).c_str());
             }
             else      // Query
             {
-                uint16_t gotInteger;
-                uint16_t gotFractional;
-                memcpy(&gotFractional, message.getData() + 4, 2);
-                memcpy(&gotInteger, message.getData() + 6, 2);
-                double val = decodeFixedPoint(gotInteger, gotFractional);
-                refSpeedSemaphore.wait();
-                refSpeed = val / (std::abs(tr) * (encoderPulses / 360.0) * 0.001);
-                refSpeedSemaphore.post();
                 CD_INFO("Got SDO \"posmode_speed\" response from driver. %s\n",msgToStr(message).c_str());
             }
-            return true;
-        }
-        else if( (message.getData()[1]==0x7D)&&(message.getData()[2]==0x60) )      // Manual 607Dh: Software position limit
-        {
+            break;
+        case 0x607D:
             if (message.getData()[3]==0x01)
             {
                 CD_INFO("Got SDO ack \"msg_position_min\" from driver. %s\n",msgToStr(message).c_str());
@@ -944,104 +808,61 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             {
                 CD_INFO("Got SDO ack \"msg_position_max\" from driver. %s\n",msgToStr(message).c_str());
             }
-            else
-            {
-                CD_WARNING("Got SDO ack \"msg_position_????\" from driver. %s\n",msgToStr(message).c_str());
-                return false;
-            }
-            return true;
-        }
-        else if( (message.getData()[1]==0x81)&&(message.getData()[2]==0x20) )      // Manual 2081h: Set/Change the actual motor position
-        {
+            break;
+        case 0x2081:
             CD_INFO("Got SDO ack \"set encoder\" from driver. %s\n",msgToStr(message).c_str());
-            return true;
-        }
-        else if( (message.getData()[1]==0x02)&&(message.getData()[2]==0x16) )      // Manual 1602h: Receive PDO3 Mapping Parameters
-        {
+            break;
+        case 0x1602:
             CD_INFO("Got SDO ack \"RPDO3 changes\" from driver. %s\n",msgToStr(message).c_str());
-            return true;
-        }
-        else if( (message.getData()[1]==0xC0)&&(message.getData()[2]==0x60) )      // Manual 60C0h: Interpolation sub mode select
-        {
+            break;
+        case 0x60C0:
             CD_INFO("Got SDO ack \"Interpolation sub mode select.\" from driver. %s\n",msgToStr(message).c_str());
-            return true;
-        }
-        else if( (message.getData()[1]==0xC1)&&(message.getData()[2]==0x60) )      // Manual 60C1h: Interpolation data record
-        {
+            break;
+        case 0x60C1:
             CD_INFO("Got SDO ack \"Interpolation data record.\" from driver. %s\n",msgToStr(message).c_str());
-            return true;
-        }
-        else if( (message.getData()[1]==0x72)&&(message.getData()[2]==0x20) )      // Manual 6072h: Interpolated position mode status
-        {
+            break;
+        case 0x2072:
             CD_INFO("Got SDO ack \"Interpolated position mode status.\" from driver. %s\n",msgToStr(message).c_str());
-            return true;
-        }
-        else if( (message.getData()[1]==0x73)&&(message.getData()[2]==0x20) )      // Manual 2073h: Interpolated position buffer length
-        {
+            break;
+        case 0x2073:
             CD_INFO("Got SDO ack \"Interpolated position buffer length.\" from driver. %s\n",msgToStr(message).c_str());
-            return true;
-        }
-        else if( (message.getData()[1]==0x74)&&(message.getData()[2]==0x20) )      // Manual 2074h: Interpolated position buffer configuration
-        {
+            break;
+        case 0x2074:
             CD_INFO("Got SDO ack \"Interpolated position buffer configuration.\" from driver. %s\n",msgToStr(message).c_str());
-            return true;
-        }
-        else if( (message.getData()[1]==0x7A)&&(message.getData()[2]==0x20) )      // Manual 207Ah: Interpolated position 1 st order time.
-        {
+            break;
+        case 0x207A:
             CD_INFO("Got SDO ack \"Interpolated position 1 st order time.\" from driver. %s\n",msgToStr(message).c_str());
-            return true;
-        }
-        else if( (message.getData()[1]==0x74)&&(message.getData()[2]==0x20) )      // Manual 2074h: Interpolated position buffer configuration
-        {
-            CD_INFO("Got SDO ack \"Interpolated position buffer configuration.\" from driver. %s\n",msgToStr(message).c_str());
-            return true;
-        }
-        else if( (message.getData()[1]==0x79)&&(message.getData()[2]==0x20) )      // Manual 2079h: Interpolated position initial position
-        {
+            break;
+        case 0x2079:
             CD_INFO("Got SDO ack \"Interpolated position initial position.\" from driver. %s\n",msgToStr(message).c_str());
-            return true;
-        }
-        else if( (message.getData()[1]==0xFF)&&(message.getData()[2]==0x60) )      // Manual 60FFh: Target velocity
-        {
+            break;
+        case 0x60FF:
             if (message.getData()[0]==0x60)      // SDO segment upload/acknowledge
             {
                 CD_INFO("Got SDO ack \"Target velocity.\" from driver. %s\n",msgToStr(message).c_str());
             }
             else
             {
-                int16_t gotInteger;
-                uint16_t gotFractional;
-                memcpy(&gotFractional, message.getData() + 4, 2);
-                memcpy(&gotInteger, message.getData() + 6, 2);
-                double val = decodeFixedPoint(gotInteger, gotFractional);
-                refVelocitySemaphore.wait();
-                refVelocity = val / (tr * (encoderPulses / 360.0) * 0.001);
-                refVelocitySemaphore.post();
                 CD_INFO("Got SDO \"Target velocity\" response from driver. %s\n",msgToStr(message).c_str());
             }
-        }
-        else if( (message.getData()[1]==0x5A)&&(message.getData()[2]==0x60) )      // Manual 605Ah: Quick stop option code
-        {
+            break;
+        case 0x605A:
             CD_INFO("Got SDO ack \"Quick stop option code.\" from driver. %s\n",msgToStr(message).c_str());
-            return true;
-        }
-        else if( (message.getData()[1]==0x1C)&&(message.getData()[2]==0x20) )      // Manual 201Ch: External On-Line Reference
-        {
+            break;
+        case 0x201C:
             CD_INFO("Got SDO ack \"External On-Line Reference.\" from driver. %s\n",msgToStr(message).c_str());
-            return true;
-        }
-        else if( (message.getData()[1]==0x1D)&&(message.getData()[2]==0x20) )      // Manual 201Dh: External Reference Type
-        {
+            break;
+        case 0x201D:
             CD_INFO("Got SDO ack \"External Reference Type.\" from driver. %s\n",msgToStr(message).c_str());
-        }
-        else if( (message.getData()[1]==0x00)&&(message.getData()[2]==0x10) )      // Manual 1000h: Device Type
+            break;
+        case 0x1000:
         {
             uint16_t ciaStandard;
             memcpy(&ciaStandard, message.getData() + 4, 2);
             CD_INFO("Got \"Device Type\" from driver. %s CiA standard %d.\n",msgToStr(message).c_str(), ciaStandard);
-            return true;
+            break;
         }
-        else if( (message.getData()[1]==0x02)&&(message.getData()[2]==0x65) )      // Manual 6502h: Supported drive modes
+        case 0x6502:
         {
             CD_INFO("Got \"Supported drive modes\" from driver. %s\n",msgToStr(message).c_str());
 
@@ -1102,55 +923,45 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
                 CD_INFO("\t*external reference torque (manufacturer specific)\n");
             }
 
-            return true;
+            break;
         }
-        else if( (message.getData()[1]==0x18)&&(message.getData()[2]==0x10) )      // Manual 1018h: Identity Object
-        {
-            if( message.getData()[3]==0x01 )  // Vendor ID
+        case 0x1018:
+            switch (message.getData()[3])
             {
+            case 0x01:
                 CD_INFO("Got \"Vendor ID\" from driver. %s\n",msgToStr(message).c_str());
-            }
-            else if( message.getData()[3]==0x02 )  // Product Code
-            {
-                uint32_t code;
-                memcpy(&code, message.getData() + 4, 4);
-                CD_INFO("Got \"Product Code\" from driver. %s P%03d.%03d.E%03d.\n",msgToStr(message).c_str(),
-                        code / 1000000, (code / 1000) % 1000, code % 1000);
-                getProductCodeReady.wait();
-                getProductCode = code;
-                getProductCodeReady.post();
-            }
-            else if( message.getData()[3]==0x03 )  // Revision number
-            {
+                break;
+            case 0x02:
+                CD_INFO("Got \"Product Code\" from driver. %s\n",msgToStr(message).c_str());
+                break;
+            case 0x03:
                 CD_INFO("Got \"Revision number\" from driver. %s %c%c%c%c.\n",msgToStr(message).c_str(),
                         message.getData()[7], message.getData()[6], message.getData()[6], message.getData()[4]);
-            }
-            else if( message.getData()[3]==0x04 )  // Serial number
-            {
+                break;
+            case 0x04:
                 CD_INFO("Got \"Serial number\" from driver. %s %c%c%02x%02x.\n",msgToStr(message).c_str(),
                         message.getData()[7], message.getData()[6], message.getData()[5], message.getData()[4]);
+                break;
             }
 
-            return true;
-        }
-        else if( (message.getData()[1]==0x7F)&&(message.getData()[2]==0x20) )      // Manual 207Fh: Current limit
-        {
+            break;
+        case 0x207F:
             if (message.getData()[0]==0x60)      // SDO segment upload/acknowledge
             {
                 CD_INFO("Got SDO ack \"Current limit\" from driver. %s\n",msgToStr(message).c_str());
             }
             else
             {
-                uint16_t got;
-                memcpy(&got, message.getData() + 4, 2);
-                getCurrentLimitReady.wait();
-                getCurrentLimit = 2 * drivePeakCurrent * (32767 - got) / 65520;
-                getCurrentLimitReady.post();
                 CD_INFO("Got SDO \"Current limit.\" response from driver. %s\n",msgToStr(message).c_str());
             }
+            break;
+        default:
+            CD_INFO("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
+            return false;
         }
-        CD_INFO("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
-        return false;
+
+        sdoSemaphore->notify(message.getData());
+        return true;
     }
     else if( (message.getId()-canId) == 0x180 )  // ---------------------- PDO1 ----------------------
     {
@@ -1181,17 +992,11 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
         }
         else if( (message.getData()[0]==0x21)&&(message.getData()[1]==0x03) )
         {
-            this->getSwitchOnReady.wait();
-            this->getSwitchOn = true;
-            this->getSwitchOnReady.post();
             CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"switchOn\". %s\n",msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x33)&&(message.getData()[1]==0x83) )
         {
-            this->getEnableReady.wait();
-            this->getEnable = true;
-            this->getEnableReady.post();
             CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"enable\". %s\n",msgToStr(message).c_str());
             return true;
         }
@@ -1227,17 +1032,11 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
         }
         else if( (message.getData()[0]==0x21)&&(message.getData()[1]==0x03) )
         {
-            this->getSwitchOnReady.wait();
-            this->getSwitchOn = true;
-            this->getSwitchOnReady.post();
             CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"switchOn\". %s\n",msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x83)&&(message.getData()[1]==0x83) )
         {
-            this->getEnableReady.wait();
-            this->getEnable = true;
-            this->getEnableReady.post();
             CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"enable\". %s\n",msgToStr(message).c_str());
             return true;
         }

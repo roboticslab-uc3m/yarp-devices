@@ -37,7 +37,15 @@ bool roboticslab::TechnosoftIpos::setRemoteVariableRaw(std::string key, const ya
 {
     CD_DEBUG("%s\n", key.c_str());
 
-    if (getMode == VOCAB_CM_POSITION_DIRECT)
+    int mode;
+
+    if (!getControlModeRaw1(&mode))
+    {
+        CD_ERROR("Unable to query control mode.\n");
+        return false;
+    }
+
+    if (mode == VOCAB_CM_POSITION_DIRECT)
     {
         CD_ERROR("Currently in posd mode, cannot change config params right now.\n");
         return false;

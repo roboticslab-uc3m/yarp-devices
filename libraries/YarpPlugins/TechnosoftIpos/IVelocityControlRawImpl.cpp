@@ -3,6 +3,7 @@
 #include "TechnosoftIpos.hpp"
 
 #include <cmath>
+#include <cstring>
 
 // ######################## IVelocityControlRaw Related #############################
 
@@ -42,12 +43,12 @@ bool roboticslab::TechnosoftIpos::velocityMoveRaw(int j, double sp)
         return false;
     }
     CD_SUCCESS("Sent \"velocity target\". %s\n", msgToStr(0x600, 8, msg_vel).c_str() );
-    //*************************************************************
 
-    // -- Save the last reference speed (double sp) for single joint (int j)
-    refVelocitySemaphore.wait();
-    refVelocity = sp;
-    refVelocitySemaphore.post();
+    if (!sdoSemaphore->await(msg_vel))
+    {
+        CD_ERROR("Did not receive \"velocity target\" ack. %s\n", msgToStr(0x600, 8, msg_vel).c_str());
+        return false;
+    }
 
     return true;
 }
@@ -88,14 +89,20 @@ bool roboticslab::TechnosoftIpos::getRefVelocityRaw(const int joint, double *vel
     CD_SUCCESS("Sent \"velocity target\" query. %s\n", msgToStr(0x600, 8, msg_vel).c_str() );
     //*************************************************************
 
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(DELAY);  //-- Wait for read update. Could implement semaphore waiting for specific message...
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    if (!sdoSemaphore->await(msg_vel))
+    {
+        CD_ERROR("Did not receive \"velocity target\" response. %s\n", msgToStr(0x600, 8, msg_vel).c_str());
+        return false;
+    }
 
-    // -- Get the last reference speed set by velocityMove for single joint (saved in double vector)
-    refVelocitySemaphore.wait();
-    *vel = refVelocity;
-    refVelocitySemaphore.post();
+    int16_t gotInteger;
+    uint16_t gotFractional;
+
+    std::memcpy(&gotFractional, msg_vel + 4, 2);
+    std::memcpy(&gotInteger, msg_vel + 6, 2);
+
+    double val = decodeFixedPoint(gotInteger, gotFractional);
+    *vel = val / (tr * (encoderPulses / 360.0) * 0.001);
 
     return true;
 }
