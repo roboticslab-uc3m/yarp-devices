@@ -396,7 +396,7 @@ bool roboticslab::TechnosoftIpos::stopRaw(int j)
     }
     CD_SUCCESS("Sent \"quick stop\". %s\n", msgToStr(0x200, 2, msg_quickStop).c_str() );
 
-    yarp::os::Time::delay(DELAY);
+    yarp::os::Time::delay(0.01);
 
     return enable();
 }

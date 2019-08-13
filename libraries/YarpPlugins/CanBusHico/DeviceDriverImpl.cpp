@@ -67,9 +67,6 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
     CD_SUCCESS("Opened CAN device of path: %s\n", devicePath.c_str());
 
-    yarp::os::Time::delay(DELAY);
-
-
     initBitrateMap();
 
     //-- Set the CAN bitrate.
@@ -81,13 +78,9 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
     CD_SUCCESS("Bitrate set on CAN device: %s.\n", devicePath.c_str());
 
-    yarp::os::Time::delay(DELAY);
-
     if (!blockingMode)
     {
         int fcntlFlags = ::fcntl(fileDescriptor, F_GETFL);
-
-        yarp::os::Time::delay(DELAY);
 
         if (fcntlFlags == -1)
         {
@@ -104,8 +97,6 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
         }
 
         CD_SUCCESS("Non-blocking mode enabled on CAN device: %s.\n", devicePath.c_str());
-
-        yarp::os::Time::delay(DELAY);
     }
 
     if (filterConfig != FilterManager::DISABLED)
@@ -123,8 +114,6 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
             {
                 CD_SUCCESS("Acceptance filters cleared on CAN device: %s.\n", devicePath.c_str());
             }
-
-            yarp::os::Time::delay(DELAY);
         }
         else
         {
@@ -157,8 +146,6 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
                 CD_INFO("No bottle of ids given to CAN device: %s.\n", devicePath.c_str());
             }
         }
-
-        yarp::os::Time::delay(DELAY);
     }
     else
     {
@@ -173,8 +160,6 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
     }
 
     CD_SUCCESS("IOC_START ok on CAN device: %s.\n", devicePath.c_str());
-
-    yarp::os::Time::delay(DELAY);
 
     return true;
 }
