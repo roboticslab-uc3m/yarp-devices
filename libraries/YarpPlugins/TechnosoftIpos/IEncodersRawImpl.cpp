@@ -43,7 +43,12 @@ bool roboticslab::TechnosoftIpos::setEncoderRaw(int j, double val)    // encExpo
         return false;
     }
     CD_SUCCESS("Sent \"set encoder\". %s\n", msgToStr(0x600, 8, msg_setEncoder).c_str() );
-    //*************************************************************
+
+    if (!sdoSemaphore->await(msg_setEncoder))
+    {
+        CD_ERROR("Did not receive \"set encoder\" ack. %s\n", msgToStr(0x600, 8, msg_setEncoder).c_str());
+        return false;
+    }
 
     return true;
 }

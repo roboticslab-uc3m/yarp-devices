@@ -135,7 +135,12 @@ bool roboticslab::TechnosoftIpos::setRefCurrentRaw(int m, double curr)
     }
 
     CD_SUCCESS("Sent refCurrent. %s\n", msgToStr(0x600, 8, msg_ref_current).c_str());
-    //*************************************************************
+
+    if (!sdoSemaphore->await(msg_ref_current))
+    {
+        CD_ERROR("Did not receive refCurrent ack. %s\n", msgToStr(0x600, 8, msg_ref_current).c_str());
+        return false;
+    }
 
     refCurrentSemaphore.wait();
     refCurrent = curr;

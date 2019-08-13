@@ -16,7 +16,7 @@ bool roboticslab::TechnosoftIpos::setPositionModeRaw(int j)
     if ( j != 0 ) return false;
 
     //*************************************************************
-    uint8_t msg_position_mode[] = {0x2F,0x60,0x60,0x00,0x01};  // Position mode
+    uint8_t msg_position_mode[] = {0x2F,0x60,0x60,0x00,0x01,0x00,0x00,0x00};  // Position mode
 
     if( ! send( 0x600, 5, msg_position_mode) )
     {
@@ -24,7 +24,12 @@ bool roboticslab::TechnosoftIpos::setPositionModeRaw(int j)
         return false;
     }
     CD_SUCCESS("Sent \"position_mode\". %s\n", msgToStr(0x600, 5, msg_position_mode).c_str() );
-    //*************************************************************
+
+    if (!sdoSemaphore->await(msg_position_mode))
+    {
+        CD_ERROR("Did not receive \"position_mode\" ack. %s\n", msgToStr(0x600, 5, msg_position_mode).c_str());
+        return false;
+    }
 
     return true;
 }
@@ -39,7 +44,7 @@ bool roboticslab::TechnosoftIpos::setVelocityModeRaw(int j)
     if ( j != 0 ) return false;
 
     //*************************************************************
-    uint8_t msg_velocity_mode[]= {0x2F,0x60,0x60,0x00,0x03}; // Velocity mode
+    uint8_t msg_velocity_mode[]= {0x2F,0x60,0x60,0x00,0x03,0x00,0x00,0x00}; // Velocity mode
 
     if( ! send( 0x600, 5, msg_velocity_mode) )
     {
@@ -47,7 +52,12 @@ bool roboticslab::TechnosoftIpos::setVelocityModeRaw(int j)
         return false;
     }
     CD_SUCCESS("Sent \"vel_mode\". %s\n", msgToStr(0x600, 5, msg_velocity_mode).c_str() );
-    //*************************************************************
+
+    if (!sdoSemaphore->await(msg_velocity_mode))
+    {
+        CD_ERROR("Did not receive \"vel_mode\" ack. %s\n", msgToStr(0x600, 5, msg_velocity_mode).c_str());
+        return false;
+    }
 
     return true;
 }
@@ -84,6 +94,12 @@ bool roboticslab::TechnosoftIpos::setTorqueModeRaw1()
     }
     CD_SUCCESS("Sent \"ref_type\". %s\n", msgToStr(0x600, 8, msg_ref_type).c_str() );
 
+    if (!sdoSemaphore->await(msg_ref_type))
+    {
+        CD_ERROR("Did not receive \"ref_type\" ack. %s\n", msgToStr(0x600, 8, msg_ref_type).c_str());
+        return false;
+    }
+
     return true;
 }
 
@@ -99,6 +115,12 @@ bool roboticslab::TechnosoftIpos::setTorqueModeRaw2()
         return false;
     }
     CD_SUCCESS("Sent \"mode_torque\". %s\n", msgToStr(0x600, 8, msg_mode_torque).c_str() );
+
+    if (!sdoSemaphore->await(msg_mode_torque))
+    {
+        CD_ERROR("Did not receive \"mode_torque\" ack. %s\n", msgToStr(0x600, 8, msg_mode_torque).c_str());
+        return false;
+    }
 
     return true;
 }
@@ -135,7 +157,7 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     //-- 5. Disable the RPDO3. Write zero in object 1602 h sub-index 0, this will disable the PDO.
     //-- Send the following message (SDO access to object 1602 h sub-index 0, 8-bit value 0):
     uint8_t disableRPDO3[]= {0x2F,0x02,0x16,0x00,0x00,0x00,0x00,0x00};
-    if ( ! send(0x600,8,disableRPDO3) )
+    if ( ! send(0x600,8,disableRPDO3) || !sdoSemaphore->await(disableRPDO3) )
         return false;
     //*************************************************************
     //-- 6. Map the new objects.
@@ -143,46 +165,46 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     //-- sub-index 1:
     //-- Send the following message (SDO access to object 1602 h sub-index 1, 32-bit value 60C10120 h ):
     uint8_t mapSDOsub1[]= {0x23,0x02,0x16,0x01,0x20,0x01,0xC1,0x60};
-    if ( ! send(0x600,8,mapSDOsub1) )
+    if ( ! send(0x600,8,mapSDOsub1) || !sdoSemaphore->await(mapSDOsub1) )
         return false;
     //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     //-- b) Write in object 1602 h sub-index 2 the description of the interpolated data record
     //-- sub-index 2:
     //-- Send the following message (SDO access to object 1602 h sub-index 2, 32-bit value 60C10220 h ):
     uint8_t mapSDOsub2[]= {0x23,0x02,0x16,0x02,0x20,0x02,0xC1,0x60};
-    if ( ! send(0x600,8,mapSDOsub2) )
+    if ( ! send(0x600,8,mapSDOsub2) || !sdoSemaphore->await(mapSDOsub2) )
         return false;
     //*************************************************************
     //-- 7. Enable the RPDO3. Set the object 1602 h sub-index 0 with the value 2.
     //-- Send the following message (SDO access to object 1601 h sub-index 0, 8-bit value 2):
     uint8_t enableRPDO3[]= {0x2F,0x02,0x16,0x00,0x02,0x00,0x00,0x00};
-    if ( !  send(0x600,8,enableRPDO3) )
+    if ( !  send(0x600,8,enableRPDO3) || !sdoSemaphore->await(enableRPDO3) )
         return false;
     //*************************************************************
     //-- 8. Mode of operation. Select interpolation position mode.
     //-- Send the following message (SDO access to object 6060 h , 8-bit value 7 h ):
     uint8_t opMode[]= {0x2F,0x60,0x60,0x00,0x07,0x00,0x00,0x00};
-    if ( ! send(0x600,8,opMode) )
+    if ( ! send(0x600,8,opMode) || !sdoSemaphore->await(opMode) )
         return false;
     //*************************************************************
     //-- 9. Interpolation sub mode select. Select PVT interpolation position mode.
     //-- Send the following message (SDO access to object 60C0 h , 16-bit value FFFF h ):
     uint8_t subMode[]= {0x2E,0xC0,0x60,0x00,0x00,0x00,0x00,0x00};
     linInterpBuffer->configureSubMode(subMode);
-    if ( ! send(0x600,8,subMode) )
+    if ( ! send(0x600,8,subMode) || !sdoSemaphore->await(subMode) )
         return false;
     //*************************************************************
     //-- 10. Interpolated position buffer length. (...)
     uint8_t buffLength[]= {0x2B,0x73,0x20,0x00,0x00,0x00,0x00,0x00};
     linInterpBuffer->configureBufferSize(buffLength);
-    if ( ! send(0x600,8,buffLength) )
+    if ( ! send(0x600,8,buffLength) || !sdoSemaphore->await(buffLength) )
         return false;
     //*************************************************************
     //-- 11. Interpolated position buffer configuration. By setting the value A001 h , the buffer is
     //-- cleared and the integrity counter will be set to 1. Send the following message (SDO
     //-- access to object 2074 h , 16-bit value C h ):
     uint8_t buffConf[]= {0x2B,0x74,0x20,0x00,0x00,0xA0,0x00,0x00};
-    if ( ! send(0x600,8,buffConf) )
+    if ( ! send(0x600,8,buffConf) || !sdoSemaphore->await(buffConf) )
         return false;
     //*************************************************************
     //-- 12. Interpolated position initial position. Set the initial position to 0.5 rotations. By using a
@@ -194,10 +216,10 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     uint8_t initPos[]= {0x23,0x79,0x20,0x00,0x00,0x00,0x00,0x00}; // Put 0 h instead.
 
     double ref;
-    getEncoderRaw(0, &ref);
+    if (!getEncoderRaw(0, &ref)) return false;
     int position = ref * this->tr * (encoderPulses / 360.0);  // Appply tr & convert units to encoder increments
     memcpy(initPos+4,&position,4); //Copy block of memory
-    if ( ! send(0x600,8,initPos) )
+    if ( ! send(0x600,8,initPos) || !sdoSemaphore->await(initPos) )
         return false;
 
     yarp::os::Time::delay(0.1);  //-- Seems like a "must".

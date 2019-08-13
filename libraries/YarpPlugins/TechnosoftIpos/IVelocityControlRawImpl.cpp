@@ -43,7 +43,12 @@ bool roboticslab::TechnosoftIpos::velocityMoveRaw(int j, double sp)
         return false;
     }
     CD_SUCCESS("Sent \"velocity target\". %s\n", msgToStr(0x600, 8, msg_vel).c_str() );
-    //*************************************************************
+
+    if (!sdoSemaphore->await(msg_vel))
+    {
+        CD_ERROR("Did not receive \"velocity target\" ack. %s\n", msgToStr(0x600, 8, msg_vel).c_str());
+        return false;
+    }
 
     // -- Save the last reference speed (double sp) for single joint (int j)
     refVelocitySemaphore.wait();

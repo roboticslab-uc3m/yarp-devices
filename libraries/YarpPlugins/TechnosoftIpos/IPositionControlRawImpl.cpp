@@ -44,6 +44,13 @@ bool roboticslab::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encEx
         return false;
     }
     CD_SUCCESS("Sent \"position target\". %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
+
+    if (!sdoSemaphore->await(msg_position_target))
+    {
+        CD_ERROR("Did not receive \"position target\" ack. %s\n", msgToStr(0x600, 8, msg_position_target).c_str());
+        return false;
+    }
+
     //*************************************************************
     //uint8_t msg_start[]={0x1F,0x00}; // Start the movement with "Discrete motion profile (change set immediately = 0)".
     uint8_t msg_start[]= {0x3F,0x00}; // Start the movement with "Continuous motion profile (change set immediately = 1)".
@@ -104,6 +111,12 @@ bool roboticslab::TechnosoftIpos::relativeMoveRaw(int j, double delta)
         return false;
     }
     CD_SUCCESS("Sent \"position target\". %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
+
+    if (!sdoSemaphore->await(msg_position_target))
+    {
+        CD_ERROR("Did not receive \"position target\" ack. %s\n", msgToStr(0x600, 8, msg_position_target).c_str());
+        return false;
+    }
     //*************************************************************
     //uint8_t msg_start_rel[]={0x5F,0x00}; // Start the movement with "Discrete motion profile (change set immediately = 0)".
     uint8_t msg_start_rel[]= {0x7F,0x00}; // Start the movement with "Continuous motion profile (change set immediately = 1)".
@@ -220,7 +233,12 @@ bool roboticslab::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
         return false;
     }
     CD_SUCCESS("Sent \"posmode_speed\". %s\n", msgToStr(0x600, 8, msg_posmode_speed).c_str() );
-    //*************************************************************
+
+    if (!sdoSemaphore->await(msg_posmode_speed))
+    {
+        CD_ERROR("Did not receive \"posmode_speed\" ack. %s\n", msgToStr(0x600, 8, msg_posmode_speed).c_str());
+        return false;
+    }
 
     //-- it will save the value
     refSpeedSemaphore.wait();
@@ -269,7 +287,12 @@ bool roboticslab::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
         return false;
     }
     CD_SUCCESS("Sent \"posmode_acc\". %s\n", msgToStr(0x600, 8, msg_posmode_acc).c_str() );
-    //*************************************************************
+
+    if (!sdoSemaphore->await(msg_posmode_acc))
+    {
+        CD_ERROR("Did not receive \"posmode_acc\" ack. %s\n", msgToStr(0x600, 8, msg_posmode_acc).c_str());
+        return false;
+    }
 
     //-- it will save the value
     refAccelSemaphore.wait();

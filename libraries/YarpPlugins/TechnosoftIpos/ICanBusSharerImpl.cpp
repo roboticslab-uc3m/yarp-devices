@@ -187,6 +187,12 @@ bool roboticslab::TechnosoftIpos::initialize()
 
     CD_SUCCESS("Sent \"Quick stop option code\". %s\n", msgToStr(0x600, 8, msg_quickStopOptionCode).c_str());
 
+    if (!sdoSemaphore->await(msg_quickStopOptionCode))
+    {
+        CD_ERROR("Did not receive \"Quick stop option code\" ack. %s\n", msgToStr(0x600, 8, msg_quickStopOptionCode).c_str());
+        return false;
+    }
+
     return true;
 }
 
@@ -426,6 +432,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
         else if( (message.getData()[1]==0x60)&&(message.getData()[2]==0x60) )      // Manual 6060h should behave like 6061h, but ack always says mode 0.
         {
             CD_INFO("Got SDO ack \"modes of operation\" from driver. %s\n",msgToStr(message).c_str());
+            sdoSemaphore->notify(message.getData());
             return true;
         }
         else if( (message.getData()[1]==0x61)&&(message.getData()[2]==0x60) )      // Manual 6060h/6061h
@@ -827,26 +834,26 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             {
                 CD_INFO("Got SDO ack \"msg_position_max\" from driver. %s\n",msgToStr(message).c_str());
             }
-            else
-            {
-                CD_WARNING("Got SDO ack \"msg_position_????\" from driver. %s\n",msgToStr(message).c_str());
-                return false;
-            }
+
+            sdoSemaphore->notify(message.getData());
             return true;
         }
         else if( (message.getData()[1]==0x81)&&(message.getData()[2]==0x20) )      // Manual 2081h: Set/Change the actual motor position
         {
             CD_INFO("Got SDO ack \"set encoder\" from driver. %s\n",msgToStr(message).c_str());
+            sdoSemaphore->notify(message.getData());
             return true;
         }
         else if( (message.getData()[1]==0x02)&&(message.getData()[2]==0x16) )      // Manual 1602h: Receive PDO3 Mapping Parameters
         {
             CD_INFO("Got SDO ack \"RPDO3 changes\" from driver. %s\n",msgToStr(message).c_str());
+            sdoSemaphore->notify(message.getData());
             return true;
         }
         else if( (message.getData()[1]==0xC0)&&(message.getData()[2]==0x60) )      // Manual 60C0h: Interpolation sub mode select
         {
             CD_INFO("Got SDO ack \"Interpolation sub mode select.\" from driver. %s\n",msgToStr(message).c_str());
+            sdoSemaphore->notify(message.getData());
             return true;
         }
         else if( (message.getData()[1]==0xC1)&&(message.getData()[2]==0x60) )      // Manual 60C1h: Interpolation data record
@@ -862,16 +869,19 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
         else if( (message.getData()[1]==0x73)&&(message.getData()[2]==0x20) )      // Manual 2073h: Interpolated position buffer length
         {
             CD_INFO("Got SDO ack \"Interpolated position buffer length.\" from driver. %s\n",msgToStr(message).c_str());
+            sdoSemaphore->notify(message.getData());
             return true;
         }
         else if( (message.getData()[1]==0x74)&&(message.getData()[2]==0x20) )      // Manual 2074h: Interpolated position buffer configuration
         {
             CD_INFO("Got SDO ack \"Interpolated position buffer configuration.\" from driver. %s\n",msgToStr(message).c_str());
+            sdoSemaphore->notify(message.getData());
             return true;
         }
         else if( (message.getData()[1]==0x7A)&&(message.getData()[2]==0x20) )      // Manual 207Ah: Interpolated position 1 st order time.
         {
             CD_INFO("Got SDO ack \"Interpolated position 1 st order time.\" from driver. %s\n",msgToStr(message).c_str());
+            sdoSemaphore->notify(message.getData());
             return true;
         }
         else if( (message.getData()[1]==0x74)&&(message.getData()[2]==0x20) )      // Manual 2074h: Interpolated position buffer configuration
@@ -882,6 +892,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
         else if( (message.getData()[1]==0x79)&&(message.getData()[2]==0x20) )      // Manual 2079h: Interpolated position initial position
         {
             CD_INFO("Got SDO ack \"Interpolated position initial position.\" from driver. %s\n",msgToStr(message).c_str());
+            sdoSemaphore->notify(message.getData());
             return true;
         }
         else if( (message.getData()[1]==0xFF)&&(message.getData()[2]==0x60) )      // Manual 60FFh: Target velocity
@@ -901,16 +912,20 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
         else if( (message.getData()[1]==0x5A)&&(message.getData()[2]==0x60) )      // Manual 605Ah: Quick stop option code
         {
             CD_INFO("Got SDO ack \"Quick stop option code.\" from driver. %s\n",msgToStr(message).c_str());
+            sdoSemaphore->notify(message.getData());
             return true;
         }
         else if( (message.getData()[1]==0x1C)&&(message.getData()[2]==0x20) )      // Manual 201Ch: External On-Line Reference
         {
             CD_INFO("Got SDO ack \"External On-Line Reference.\" from driver. %s\n",msgToStr(message).c_str());
+            sdoSemaphore->notify(message.getData());
             return true;
         }
         else if( (message.getData()[1]==0x1D)&&(message.getData()[2]==0x20) )      // Manual 201Dh: External Reference Type
         {
             CD_INFO("Got SDO ack \"External Reference Type.\" from driver. %s\n",msgToStr(message).c_str());
+            sdoSemaphore->notify(message.getData());
+            return true;
         }
         else if( (message.getData()[1]==0x00)&&(message.getData()[2]==0x10) )      // Manual 1000h: Device Type
         {

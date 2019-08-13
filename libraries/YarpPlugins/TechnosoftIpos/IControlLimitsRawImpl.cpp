@@ -35,7 +35,11 @@ bool roboticslab::TechnosoftIpos::setMinLimitRaw(double min)
     }
     CD_SUCCESS("Sent \"position min\". %s\n", msgToStr(0x600, 8, msg_position_min).c_str() );
 
-    //*************************************************************
+    if (!sdoSemaphore->await(msg_position_min))
+    {
+        CD_ERROR("Did not receive position min ack. %s\n", msgToStr(0x600, 8, msg_position_min).c_str());
+        return false;
+    }
 
     //-- Store the new limits locally.
     this->min = min;
@@ -59,7 +63,12 @@ bool roboticslab::TechnosoftIpos::setMaxLimitRaw(double max)
         return false;
     }
     CD_SUCCESS("Sent \"position max\". %s\n", msgToStr(0x600, 8, msg_position_max).c_str() );
-    //*************************************************************
+
+    if (!sdoSemaphore->await(msg_position_max))
+    {
+        CD_ERROR("Did not receive position max ack. %s\n", msgToStr(0x600, 8, msg_position_max).c_str());
+        return false;
+    }
 
     //-- Store the new limits locally.
     this->max = max;
