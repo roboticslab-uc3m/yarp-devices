@@ -2,6 +2,8 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <cstring>
+
 #include <yarp/os/Vocab.h>
 
 // ############################## IControlModeRaw Related ##############################
@@ -221,22 +223,21 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
 bool roboticslab::TechnosoftIpos::getControlModeRaw(int j, int *mode)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
-    bool ok = true;
+
     //-- Check index within range
     if ( j != 0 ) return false;
-    ok &= getControlModeRaw1();
+
+    bool ok = true;
+    ok &= getControlModeRaw1(mode);
     ok &= getControlModeRaw2();
     ok &= getControlModeRaw3();
     ok &= getControlModeRaw4();
-    getModeReady.wait();
-    *mode = getMode; // -- activate the sending of message mode
-    getModeReady.post();
 
     return ok;
 }
 
 /******************* getControlModeRaw Splited **********************/
-bool roboticslab::TechnosoftIpos::getControlModeRaw1()
+bool roboticslab::TechnosoftIpos::getControlModeRaw1(int *mode)
 {
     //*************************************************************
     uint8_t msgOperationDisplay[] = {0x40,0x61,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6061h: Modes of Operation display
@@ -248,9 +249,57 @@ bool roboticslab::TechnosoftIpos::getControlModeRaw1()
     CD_SUCCESS("Sent modes of operation display. %s\n", msgToStr(0x600, 8, msgOperationDisplay).c_str() );
     //*************************************************************
 
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(DELAY);  // Must delay as it will be from same driver.
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    if (!sdoSemaphore->await(msgOperationDisplay))
+    {
+        CD_ERROR("Did not receive modes of operation display response. %s\n", msgToStr(0x600, 8, msgOperationDisplay).c_str());
+        return false;
+    }
+
+    int8_t got;
+    std::memcpy(&got, msgOperationDisplay + 4, 1);
+
+    switch (got)
+    {
+    // handled
+    case -5:
+        CD_INFO("\t-iPOS specific: External Reference Torque Mode. canId: %d.\n", canId);
+        *mode = modeCurrentTorque == VOCAB_CM_TORQUE ? VOCAB_CM_TORQUE : VOCAB_CM_CURRENT;
+        break;
+    case 1:
+        CD_INFO("\t-Profile Position Mode. canId: %d.\n", canId);
+        *mode = VOCAB_CM_POSITION;
+        break;
+    case 3:
+        CD_INFO("\t-Profile Velocity Mode. canId: %d.\n", canId);
+        *mode = VOCAB_CM_VELOCITY;
+        break;
+    case 7:
+        CD_INFO("\t-Interpolated Position Mode. canId: %d.\n", canId);
+        *mode = VOCAB_CM_POSITION_DIRECT;
+        break;
+    // unhandled
+    case -4:
+        CD_INFO("\t-iPOS specific: External Reference Speed Mode. canId: %d.\n", canId);
+        // no break
+    case -3:
+        CD_INFO("\t-iPOS specific: External Reference Position Mode. canId: %d.\n", canId);
+        // no break
+    case -2:
+        CD_INFO("\t-iPOS specific: Electronic Camming Position Mode. canId: %d.\n", canId);
+        // no break
+    case -1:
+        CD_INFO("\t-iPOS specific: Electronic Gearing Position Mode. canId: %d.\n", canId);
+        // no break
+    case 6:
+        CD_INFO("\t-Homing Mode. canId: %d.\n", canId);
+        // no break
+    case 8:
+        CD_INFO("\t-Cyclic Synchronous Position Mode. canId: %d.\n", canId);
+        // no break
+    default:
+        CD_WARNING("\t-Mode \"%d\" not specified in manual, may be in Fault or not enabled yet. canId(%d).\n", got, canId);
+        *mode = VOCAB_CM_UNKNOWN;
+    }
 
     return true;
 }

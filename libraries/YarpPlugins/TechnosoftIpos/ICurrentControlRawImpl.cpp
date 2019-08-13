@@ -2,6 +2,8 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <cstring>
+
 namespace
 {
     // return -1 for negative numbers, +1 for positive numbers, 0 for zero
@@ -31,7 +33,7 @@ bool roboticslab::TechnosoftIpos::getCurrentRaw(int m, double *curr)
     if (m != 0) return false;
 
     //*************************************************************
-    uint8_t msg_getCurrent[]= {0x40,0x7E,0x20,0x00}; // Query current. Ok only 4.
+    uint8_t msg_getCurrent[]= {0x40,0x7E,0x20,0x00,0x00,0x00,0x00,0x00};
 
     if (!send(0x600, 4, msg_getCurrent))
     {
@@ -39,15 +41,17 @@ bool roboticslab::TechnosoftIpos::getCurrentRaw(int m, double *curr)
         return false;
     }
     //CD_SUCCESS("Sent msg_getCurrent. %s\n", msgToStr(0x600, 4, msg_getCurrent).c_str());    //-- Too verbose in controlboardwrapper2 stream.
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(DELAY);  // Must delay as it will be from same driver.
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    getCurrentReady.wait();
-    *curr = getCurrent * sgn(tr);
-    getCurrentReady.post();
+    if (!sdoSemaphore->await(msg_getCurrent))
+    {
+        CD_ERROR("Did not receive msg_getCurrent response. %s\n", msgToStr(0x600, 4, msg_getCurrent).c_str());
+        return false;
+    }
 
-    //*************************************************************
+    int16_t got;
+    std::memcpy(&got, msg_getCurrent + 4, 2);
+    *curr = got * sgn(tr) * 2.0 * drivePeakCurrent / 65520.0;
+
     return true;
 }
 
@@ -69,22 +73,25 @@ bool roboticslab::TechnosoftIpos::getCurrentRangeRaw(int m, double *min, double 
     if (m != 0) return false;
 
     //*************************************************************
-    uint8_t msg_getCurrentLimit[]= {0x40,0x7F,0x20,0x00}; // Query current. Ok only 4.
+    uint8_t msg_getCurrentLimit[]= {0x40,0x7F,0x20,0x00,0x00,0x00,0x00,0x00};
 
     if (!send(0x600, 4, msg_getCurrentLimit))
     {
-        CD_ERROR("Could not send msg_getCurrentLimit. %s\n", msgToStr(0x600, 4, msg_getCurrentLimit).c_str());
+        CD_ERROR("Could not send \"Current limit\" query. %s\n", msgToStr(0x600, 4, msg_getCurrentLimit).c_str());
         return false;
     }
     CD_SUCCESS("Sent msg_getCurrentLimit. %s\n", msgToStr(0x600, 4, msg_getCurrentLimit).c_str());
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(5 * DELAY);  // Must delay as it will be from same driver.
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    getCurrentLimitReady.wait();
-    *max = getCurrentLimit;
-    getCurrentLimitReady.post();
+    if (!sdoSemaphore->await(msg_getCurrentLimit))
+    {
+        CD_ERROR("Did not receive \"Current limit\" response. %s\n", msgToStr(0x600, 4, msg_getCurrentLimit).c_str());
+        return false;
+    }
 
+    uint16_t got;
+    std::memcpy(&got, msg_getCurrentLimit + 4, 2);
+
+    *max = 2 * drivePeakCurrent * (32767 - got) / 65520;
     *min = -(*max);
 
     return true;

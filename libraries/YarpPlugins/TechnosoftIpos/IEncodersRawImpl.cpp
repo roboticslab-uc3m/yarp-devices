@@ -2,6 +2,8 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <cstring>
+
 // -------------------------- IEncodersRaw Related ----------------------------------
 
 bool roboticslab::TechnosoftIpos::resetEncoderRaw(int j)
@@ -72,11 +74,18 @@ bool roboticslab::TechnosoftIpos::getEncoderRaw(int j, double *v)
             CD_ERROR("Could not send \"read encoder\". %s\n", msgToStr(0x600, 8, msg_read).c_str() );
             return false;
         }
-        //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-        yarp::os::Time::delay(DELAY);  // Must delay as it will be from same driver.
-        //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+        if (!sdoSemaphore->await(msg_read))
+        {
+            CD_ERROR("Did not receive \"read encoder\" response. %s\n", msgToStr(0x600, 8, msg_read).c_str());
+            return false;
+        }
+
+        int32_t got;
+        std::memcpy(&got, msg_read + 4, 4);
+        lastEncoderRead.update(got / ((encoderPulses / 360.0) * this->tr));
+
         *v = lastEncoderRead.queryPosition();
-        //*************************************************************
     }
     else
     {

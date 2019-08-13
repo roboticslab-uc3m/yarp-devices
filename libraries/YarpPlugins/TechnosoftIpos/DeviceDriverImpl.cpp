@@ -18,14 +18,11 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->k = config.check("k",yarp::os::Value(0),"motor constant").asFloat64();
 
     // -- other parameters...
-    this->targetReached = false;
     this->refTorque = 0;
     this->refVelocity = 0; // if you want to test.. put 0.1
     this->refCurrent = 0;
     this->modeCurrentTorque = VOCAB_CM_NOT_CONFIGURED;
     double canSdoTimeoutMs = config.check("canSdoTimeoutMs", yarp::os::Value(0.0), "CAN SDO timeout (ms)").asFloat64();
-
-    this->getProductCode = 0;
 
     linInterpBuffer = LinearInterpolationBuffer::createBuffer(config);
 

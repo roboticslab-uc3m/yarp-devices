@@ -130,7 +130,7 @@ public:
 
     virtual bool getControlModeRaw(int j, int *mode);
     //-- Auxiliary functions (splitted) of getControlModeRaw
-    bool getControlModeRaw1();
+    bool getControlModeRaw1(int *mode);
     bool getControlModeRaw2();
     bool getControlModeRaw3();
     bool getControlModeRaw4();
@@ -287,19 +287,8 @@ protected:
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRawExternal;
     EncoderRead lastEncoderRead;
 
-    //-- Mode stuff
-    int getMode;
-    yarp::os::Semaphore getModeReady;
-
-    bool targetReached;
-    yarp::os::Semaphore targetReachedReady;
-
     //-- Current stuff
-    double getCurrent;
-    double getCurrentLimit;
     int modeCurrentTorque;
-    yarp::os::Semaphore getCurrentReady;
-    yarp::os::Semaphore getCurrentLimitReady;
     double drivePeakCurrent;
 
     //-- Init stuff
@@ -315,9 +304,6 @@ protected:
     //-- More internal parameter stuff
     double max, min, maxVel, refAcceleration, refSpeed, refTorque, refCurrent, refVelocity, targetPosition, tr, k;
     int encoderPulses; // default: 4096 (1024 * 4)
-
-    uint32_t getProductCode;
-    yarp::os::Semaphore getProductCodeReady;
 
     //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
     yarp::dev::InteractionModeEnum interactionMode;

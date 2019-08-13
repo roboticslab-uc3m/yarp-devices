@@ -2,6 +2,8 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <cstring>
+
 // ######################### IPositionControlRaw Related #########################
 
 bool roboticslab::TechnosoftIpos::getAxes(int *ax)
@@ -161,14 +163,13 @@ bool roboticslab::TechnosoftIpos::checkMotionDoneRaw(int j, bool *flag)
     }
     CD_SUCCESS("Sent \"msgStatus\". %s\n", msgToStr(0x600, 8, msgStatus).c_str() );
 
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(DELAY*10);  //-- Wait for read update. Could implement semaphore waiting for specific message...
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    if (!sdoSemaphore->await(msgStatus))
+    {
+        CD_ERROR("Did not receive status query response. %s\n", msgToStr(0x600, 8, msgStatus).c_str());
+        return false;
+    }
 
-    targetReachedReady.wait();
-    *flag = targetReached;
-    targetReachedReady.post();
-
+    *flag = msgStatus[5] & 4;
     return true;
 }
 
@@ -304,13 +305,20 @@ bool roboticslab::TechnosoftIpos::getRefSpeedRaw(int j, double *ref)
     }
     CD_SUCCESS("Sent \"posmode_speed\" query. %s\n", msgToStr(0x600, 8, msg_posmode_speed).c_str() );
 
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(DELAY);  //-- Wait for read update. Could implement semaphore waiting for specific message...
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    if (!sdoSemaphore->await(msg_posmode_speed))
+    {
+        CD_ERROR("Did not receive \"posmode_speed\" response. %s\n", msgToStr(0x600, 8, msg_posmode_speed).c_str());
+        return false;
+    }
 
-    refSpeedSemaphore.wait();
-    *ref = refSpeed;
-    refSpeedSemaphore.post();
+    uint16_t gotInteger;
+    uint16_t gotFractional;
+
+    std::memcpy(&gotFractional, msg_posmode_speed + 4, 2);
+    std::memcpy(&gotInteger, msg_posmode_speed + 6, 2);
+
+    double val = decodeFixedPoint(gotInteger, gotFractional);
+    *ref = val / (std::abs(tr) * (encoderPulses / 360.0) * 0.001);
 
     return true;
 }
@@ -341,13 +349,20 @@ bool roboticslab::TechnosoftIpos::getRefAccelerationRaw(int j, double *acc)
     }
     CD_SUCCESS("Sent \"posmode_acc\" query. %s\n", msgToStr(0x600, 8, msg_posmode_acc).c_str() );
 
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(DELAY);  //-- Wait for read update. Could implement semaphore waiting for specific message...
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    if (!sdoSemaphore->await(msg_posmode_acc))
+    {
+        CD_ERROR("Did not receive \"posmde_acc\" response. %s\n", msgToStr(0x600, 8, msg_posmode_acc).c_str());
+        return false;
+    }
 
-    refAccelSemaphore.wait();
-    *acc = refAcceleration;
-    refAccelSemaphore.post();
+    uint16_t gotInteger;
+    uint16_t gotFractional;
+
+    std::memcpy(&gotFractional, msg_posmode_acc + 4, 2);
+    std::memcpy(&gotInteger, msg_posmode_acc + 6, 2);
+
+    double val = decodeFixedPoint(gotInteger, gotFractional);
+    *acc = val / (std::abs(tr) * (encoderPulses / 360.0) * 0.000001);
 
     return true;
 }
