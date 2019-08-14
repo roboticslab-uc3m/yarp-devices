@@ -280,48 +280,52 @@ bool roboticslab::TechnosoftIpos::getControlModeRaw1(int *mode)
     int8_t got;
     std::memcpy(&got, msgOperationDisplay + 4, 1);
 
+    int temp = VOCAB_CM_UNKNOWN;
+
     switch (got)
     {
     // handled
     case -5:
         CD_INFO("\t-iPOS specific: External Reference Torque Mode. canId: %d.\n", canId);
-        *mode = modeCurrentTorque == VOCAB_CM_TORQUE ? VOCAB_CM_TORQUE : VOCAB_CM_CURRENT;
+        temp = modeCurrentTorque == VOCAB_CM_TORQUE ? VOCAB_CM_TORQUE : VOCAB_CM_CURRENT;
         break;
     case 1:
         CD_INFO("\t-Profile Position Mode. canId: %d.\n", canId);
-        *mode = VOCAB_CM_POSITION;
+        temp = VOCAB_CM_POSITION;
         break;
     case 3:
         CD_INFO("\t-Profile Velocity Mode. canId: %d.\n", canId);
-        *mode = VOCAB_CM_VELOCITY;
+        temp = VOCAB_CM_VELOCITY;
         break;
     case 7:
         CD_INFO("\t-Interpolated Position Mode. canId: %d.\n", canId);
-        *mode = VOCAB_CM_POSITION_DIRECT;
+        temp = VOCAB_CM_POSITION_DIRECT;
         break;
     // unhandled
     case -4:
         CD_INFO("\t-iPOS specific: External Reference Speed Mode. canId: %d.\n", canId);
-        // no break
+        break;
     case -3:
         CD_INFO("\t-iPOS specific: External Reference Position Mode. canId: %d.\n", canId);
-        // no break
+        break;
     case -2:
         CD_INFO("\t-iPOS specific: Electronic Camming Position Mode. canId: %d.\n", canId);
-        // no break
+        break;
     case -1:
         CD_INFO("\t-iPOS specific: Electronic Gearing Position Mode. canId: %d.\n", canId);
-        // no break
+        break;
     case 6:
         CD_INFO("\t-Homing Mode. canId: %d.\n", canId);
-        // no break
+        break;
     case 8:
         CD_INFO("\t-Cyclic Synchronous Position Mode. canId: %d.\n", canId);
-        // no break
+        break;
     default:
         CD_WARNING("\t-Mode \"%d\" not specified in manual, may be in Fault or not enabled yet. canId(%d).\n", got, canId);
-        *mode = VOCAB_CM_UNKNOWN;
+        break;
     }
+
+    *mode = temp;
 
     return true;
 }
