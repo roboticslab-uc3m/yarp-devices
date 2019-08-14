@@ -350,8 +350,151 @@ bool roboticslab::TechnosoftIpos::getControlModeRaw2()
     }
     CD_SUCCESS("Sent manufacturer status query. %s\n", msgToStr(0x600, 8, msgManuStatus).c_str() );
 
+    if (!sdoSemaphore->await(msgManuStatus))
+    {
+        CD_ERROR("Did not receive manufacturer status response. %s\n", msgToStr(0x600, 8, msgManuStatus).c_str());
+        return false;
+    }
+
+    if(msgManuStatus[4] & 1) //0000 0001 (bit 0)
+    {
+        CD_INFO("\t-Ready to switch on. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[4] & 2) //0000 0010 (bit 1)
+    {
+        CD_INFO("\t-Switched on. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[4] & 4) //0000 0100 (bit 2)
+    {
+        CD_INFO("\t-Operation Enabled. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[4] & 8) //0000 1000 (bit 3)
+    {
+        CD_INFO("\t-Fault. If set, a fault condition is or was present in the drive. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[4] & 16) //0001 0000 (bit 4)
+    {
+        CD_INFO("\t-Motor supply voltage is present. canId: %d.\n", canId);//true
+    }
+    else
+    {
+        CD_INFO("\t-Motor supply voltage is absent. canId: %d.\n", canId);//false
+    }
+    if(!(msgManuStatus[4] & 32)) //0010 0000 (bit 5), negated.
+    {
+        CD_INFO("\t-Performing a quick stop. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[4] & 64) //0100 0000 (bit 6)
+    {
+        CD_INFO("\t-Switch on disabled. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[4] & 128) //1000 0000 (bit 7)
+    {
+        CD_INFO("\t-Warning. A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[5] & 1) //(bit 8)
+    {
+        CD_INFO("\t-A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[5] & 2) //(bit 9)
+    {
+        CD_INFO("\t-Remote: drive parameters may be modified via CAN and the drive will execute the command message. canId: %d.\n", canId); // true
+    }
+    else
+    {
+        CD_INFO("\t-Remote: drive is in local mode and will not execute the command message (only TML internal)."); // false
+    }
+    if(msgManuStatus[5] & 4) //(bit 10)
+    {
+        CD_INFO("\t-Target reached. canId: %d.\n", canId);  // true
+    }
+    else
+    {
+        CD_INFO("\t-Target not reached. canId: %d.\n", canId);  // false (improvised, not in manual, but reasonable).
+    }
+    if(msgManuStatus[5] & 8) //(bit 11)
+    {
+        CD_INFO("\t-Internal Limit Active. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[5] & 64) //(bit 14)
+    {
+        CD_INFO("\t-Last event set has ocurred. canId: %d.\n", canId); // true
+    }
+    else
+    {
+        CD_INFO("\t-No event set or the programmed event has not occurred yet. canId: %d.\n", canId); // false
+    }
+    if(msgManuStatus[5] & 128) //(bit 15)
+    {
+        CD_INFO("\t-Axis on. Power stage is enabled. Motor control is performed. canId: %d.\n", canId); // true
+    }
+    else
+    {
+        CD_INFO("\t-Axis off. Power stage is disabled. Motor control is not performed. canId: %d.\n", canId); // false
+    }
+    ////Much much more in Table 5.6
+    if(msgManuStatus[6] & 1) //(bit 16)
+    {
+        CD_INFO("\t*Drive/motor initialization performed. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[6] & 2) //(bit 17)
+    {
+        CD_INFO("\t*Position trigger 1 reached. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[6] & 4) //(bit 18)
+    {
+        CD_INFO("\t*Position trigger 2 reached. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[6] & 8) //(bit 19)
+    {
+        CD_INFO("\t*Position trigger 3 reached. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[6] & 16) //(bit 20)
+    {
+        CD_INFO("\t*Position trigger 4 reached. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[6] & 32) //(bit 21)
+    {
+        CD_INFO("\t*AUTORUN mode enabled. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[6] & 64) //(bit 22)
+    {
+        CD_INFO("\t*Limit switch positive event / interrupt triggered. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[6] & 128) //(bit 23)
+    {
+        CD_INFO("\t*Limit switch negative event / interrupt triggered. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[7] & 1) //(bit 24)
+    {
+        CD_INFO("\t*Capture event/interrupt triggered. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[7] & 2) //(bit 25)
+    {
+        CD_INFO("\t*Target command reached. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[7] & 4) //(bit 26)
+    {
+        CD_INFO("\t*Motor I2t protection warning level reached. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[7] & 8) //(bit 27)
+    {
+        CD_INFO("\t*Drive I2t protection warning level reached. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[7] & 16) //(bit 28)
+    {
+        CD_INFO("\t*Gear ratio in electronic gearing mode reached. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[7] & 64) //(bit 30)
+    {
+        CD_INFO("\t*Reference position in absolute electronic camming mode reached. canId: %d.\n", canId);
+    }
+    if(msgManuStatus[7] & 128) //(bit 31)
+    {
+        CD_INFO("\t*Drive/motor in fault status. canId: %d.\n", canId);
+    }
+
     return true;
-    /***************************************************************/
 }
 
 bool roboticslab::TechnosoftIpos::getControlModeRaw3()
@@ -366,8 +509,78 @@ bool roboticslab::TechnosoftIpos::getControlModeRaw3()
     }
     CD_SUCCESS("Sent Motion Error Register query. %s\n", msgToStr(0x600, 8, msgError).c_str() );
 
+    if (!sdoSemaphore->await(msgError))
+    {
+        CD_ERROR("Did not receive Motion Error Register response. %s\n", msgToStr(0x600, 8, msgError).c_str());
+        return false;
+    }
+
+    if (msgError[4] & 1) //0000 0001 (bit 0)
+    {
+        CD_INFO("\t*CAN error. Set when CAN controller is in error mode. canId: %d.\n", canId);
+    }
+    if (msgError[4] & 2) //0000 0010 (bit 1)
+    {
+        CD_INFO("\t*Short-circuit. Set when protection is triggered. canId: %d.\n", canId);
+    }
+    if (msgError[4] & 4) //0000 0100 (bit 2)
+    {
+        CD_INFO("\t*Invalid setup data. Set when the EEPROM stored setup data is not valid or not present. canId: %d.\n", canId);
+    }
+    if (msgError[4] & 8) //0000 1000 (bit 3)
+    {
+        CD_INFO("\t*Control error (position/speed error too big). Set when protection is triggered. canId: %d.\n", canId);
+    }
+    if (msgError[4] & 16) //0001 0000 (bit 4)
+    {
+        CD_INFO("\t*Communication error. Set when protection is triggered. canId: %d.\n", canId);//true
+    }
+    if (msgError[4] & 32) //0010 0000 (bit 5)
+    {
+        CD_INFO("\t*Motor position wraps around. Set when protection is triggered. canId: %d.\n", canId);
+    }
+    if (msgError[4] & 64) //0100 0000 (bit 6)
+    {
+        CD_INFO("\t*Positive limit switch active. Set when LSP input is in active state. canId: %d.\n", canId);
+    }
+    if (msgError[4] & 128) //1000 0000 (bit 7)
+    {
+        CD_INFO("\t*Negative limit switch active. Set when LSN input is in active state. canId: %d.\n", canId);
+    }
+    if (msgError[5] & 1) //(bit 8)
+    {
+        CD_INFO("\t*Over current. Set when protection is triggered. canId: %d.\n", canId);
+    }
+    if (msgError[5] & 2) //(bit 9)
+    {
+        CD_INFO("\t*I2t protection. Set when protection is triggered. canId: %d.\n", canId);
+    }
+    if (msgError[5] & 4) //(bit 10)
+    {
+        CD_INFO("\t*Over temperature motor. Set when protection is triggered. canId: %d.\n", canId);
+    }
+    if (msgError[5] & 8) //(bit 11)
+    {
+        CD_INFO("\t*Over temperature drive. Set when protection is triggered. canId: %d.\n", canId);
+    }
+    if (msgError[5] & 16) //(bit 12)
+    {
+        CD_INFO("\t*Over-voltage. Set when protection is triggered. canId: %d.\n", canId);
+    }
+    if (msgError[5] & 32) //(bit 13)
+    {
+        CD_INFO("\t*Under-voltage. Set when protection is triggered. canId: %d.\n", canId);
+    }
+    if (msgError[5] & 64) //(bit 14)
+    {
+        CD_INFO("\t*Command error. This bit is set in several situations. They can be distinguished either by the associated emergency code, or in conjunction with other bits. canId: %d.\n", canId);
+    }
+    if (msgError[5] & 128) //(bit 15)
+    {
+        CD_INFO("\t*Drive disabled due to enable input. Set when enable input is on disable state. canId: %d.\n", canId);
+    }
+
     return true;
-    //*************************************************************
 }
 
 bool roboticslab::TechnosoftIpos::getControlModeRaw4()
@@ -381,6 +594,65 @@ bool roboticslab::TechnosoftIpos::getControlModeRaw4()
         return false;
     }
     CD_SUCCESS("Sent Detailed Error Register query. %s\n", msgToStr(0x600, 8, msgErrorDetail).c_str() );
+
+    if (!sdoSemaphore->await(msgErrorDetail))
+    {
+        CD_ERROR("Did not receive Detailed Error Register response. %s\n", msgToStr(0x600, 8, msgErrorDetail).c_str());
+        return false;
+    }
+
+    if(msgErrorDetail[4] & 1) //0000 0001 (bit 0)
+    {
+        CD_INFO("\t**The number of nested function calls exceeded the length of TML stack. Last function call was ignored. canId: %d.\n", canId);
+    }
+    if(msgErrorDetail[4] & 2) //0000 0010 (bit 1)
+    {
+        CD_INFO("\t**A RET/RETI instruction was executed while no function/ISR was active. canId: %d.\n", canId);
+    }
+    if(msgErrorDetail[4] & 4) //0000 0100 (bit 2)
+    {
+        CD_INFO("\t**A call to an inexistent homing routine was received. canId: %d.\n", canId);
+    }
+    if(msgErrorDetail[4] & 8) //0000 1000 (bit 3)
+    {
+        CD_INFO("\t**A call to an inexistent function was received. canId: %d.\n", canId);
+    }
+    if(msgErrorDetail[4] & 16) //0001 0000 (bit 4)
+    {
+        CD_INFO("\t**UPD instruction received while AXISON was executed. The UPD instruction was ingnored and it must be sent again when AXISON is completed. canId: %d.\n", canId);
+    }
+    if(msgErrorDetail[4] & 32) //0010 0000 (bit 5)
+    {
+        CD_INFO("\t**Cancelable call instruction received while another cancelable function was active. canId: %d.\n", canId);
+    }
+    if(msgErrorDetail[4] & 64) //0100 0000 (bit 6)
+    {
+        CD_INFO("\t**Positive software limit switch is active. canId: %d.\n", canId);
+    }
+    if(msgErrorDetail[4] & 128) //1000 0000 (bit 7)
+    {
+        CD_INFO("\t**Negative software limit switch is active. canId: %d.\n", canId);
+    }
+    if(msgErrorDetail[5] & 1) //(bit 8)
+    {
+        CD_INFO("\t**S-curve parameters caused and invalid profile. UPD instruction was ignored. canId: %d.\n", canId);
+    }
+    if(msgErrorDetail[5] & 2) //(bit 9)
+    {
+        CD_INFO("\t**Update ignored for S-curve. canId: %d.\n", canId);
+    }
+    if(msgErrorDetail[5] & 4) //(bit 10)
+    {
+        CD_INFO("\t**Encoder broken wire. canId: %d.\n", canId);
+    }
+    if(msgErrorDetail[5] & 8) //(bit 11)
+    {
+        CD_INFO("\t**Motionless start failed. canId: %d.\n", canId);
+    }
+    if(msgErrorDetail[5] & 32) //(bit 13)
+    {
+        CD_INFO("\t**Self check error. canId: %d.\n", canId);
+    }
 
     return true;
     //*************************************************************
