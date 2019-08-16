@@ -5,7 +5,9 @@ if(ENABLE_CanBusSharerLib)
     add_library(CanBusSharerLib SHARED ICanBusSharer.hpp
                                        CanSenderDelegate.hpp
                                        SdoSemaphore.hpp
-                                       SdoSemaphore.cpp)
+                                       SdoSemaphore.cpp
+                                       CanUtils.hpp
+                                       CanUtils.cpp)
 
     target_link_libraries(CanBusSharerLib PUBLIC YARP::YARP_dev
                                           PRIVATE YARP::YARP_OS
