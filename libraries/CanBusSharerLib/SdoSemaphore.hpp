@@ -17,25 +17,34 @@ namespace roboticslab
 class SdoSemaphore
 {
 public:
+    struct sdo_data
+    {
+        uint8_t & operator[](int i) { return storage[i]; }
+        const uint8_t & operator[](int i) const { return storage[i]; }
+        operator uint8_t *() { return storage; }
+        uint8_t storage[8];
+    };
+
     SdoSemaphore(double timeout);
     ~SdoSemaphore();
 
-    bool await(uint8_t * msg); // TODO: remove
-    bool await(uint8_t * data, size_t * len);
-    void notify(const uint8_t * data, size_t len);
+    bool await(sdo_data & data); // TODO: remove
+    bool await(sdo_data & data, size_t * len);
+    void notify(const uint8_t * raw, size_t len);
     void interrupt();
 
 private:
     typedef std::pair<uint16_t, uint8_t> key_t;
 
-    struct Item
-    { yarp::os::Semaphore * sem; uint8_t * data; size_t len; };
+    typedef struct sdo_item
+    { yarp::os::Semaphore * sem; sdo_data data; size_t len; }
+    value_t;
 
-    key_t makeIndexPair(const uint8_t * msg);
+    key_t makeIndexPair(const uint8_t * raw);
 
     double timeout;
     bool active;
-    std::map<key_t, Item> registry;
+    std::map<key_t, value_t> registry;
     mutable std::mutex registryMutex;
 };
 

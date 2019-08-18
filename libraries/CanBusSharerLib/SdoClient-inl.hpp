@@ -30,7 +30,7 @@ bool roboticslab::SdoClient::upload(const std::string & name, T * data, uint16_t
 
     CD_INFO("Sent \"%s\" query. %s\n", name.c_str(), uploadStr.c_str());
 
-    uint8_t responseMsg[8];
+    SdoSemaphore::sdo_data responseMsg;
     size_t len;
     bool success = sdoSemaphore->await(responseMsg, &len);
     const std::string & responseStr = CanUtils::msgToStr(id, COB, len, responseMsg);
@@ -70,7 +70,7 @@ bool roboticslab::SdoClient::download(const std::string & name, T data, uint16_t
 
     CD_INFO("Sent \"%s\" request. %s\n", name.c_str(), downloadStr.c_str());
 
-    uint8_t responseMsg[8];
+    SdoSemaphore::sdo_data responseMsg;
     size_t len;
     bool success = sdoSemaphore->await(responseMsg, &len);
     const std::string & responseStr = CanUtils::msgToStr(id, COB, msgSize, responseMsg);

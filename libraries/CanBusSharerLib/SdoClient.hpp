@@ -16,8 +16,11 @@ namespace roboticslab
 class SdoClient
 {
 public:
-    SdoClient(unsigned int id, SdoSemaphore * sdoSemaphore) : id(id), sender(0), sdoSemaphore(sdoSemaphore)
+    SdoClient(unsigned int id, double timeout) : id(id), sender(0), sdoSemaphore(new SdoSemaphore(timeout))
     {}
+
+    ~SdoClient()
+    { delete sdoSemaphore; }
 
     void configureSender(CanSenderDelegate * sender)
     { this->sender = sender; }
