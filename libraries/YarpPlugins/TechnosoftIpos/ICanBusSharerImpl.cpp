@@ -695,7 +695,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
             return false;
         }
 
-        sdoSemaphore->notify(message.getData());
+        sdoSemaphore->notify(message.getData(), message.getLen());
         return true;
     }
     else if( (message.getId()-canId) == 0x180 )  // ---------------------- PDO1 ----------------------

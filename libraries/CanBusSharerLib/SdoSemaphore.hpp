@@ -20,17 +20,18 @@ public:
     SdoSemaphore(double timeout);
     ~SdoSemaphore();
 
-    bool await(uint8_t * data, uint16_t index, uint8_t subindex = 0x00);
-    bool await(uint8_t * msg);
-    void notify(const uint8_t * data, uint16_t index, uint8_t subindex = 0x00);
-    void notify(const uint8_t * msg);
+    bool await(uint8_t * msg); // TODO: remove
+    bool await(uint8_t * data, size_t * len);
+    void notify(const uint8_t * data, size_t len);
     void interrupt();
 
 private:
     typedef std::pair<uint16_t, uint8_t> key_t;
 
     struct Item
-    { yarp::os::Semaphore * sem; uint8_t data[4]; };
+    { yarp::os::Semaphore * sem; uint8_t * data; size_t len; };
+
+    key_t makeIndexPair(const uint8_t * msg);
 
     double timeout;
     bool active;

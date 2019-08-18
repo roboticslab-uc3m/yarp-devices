@@ -7,15 +7,6 @@
 
 using namespace roboticslab;
 
-namespace
-{
-    inline void retrieveIndexes(const uint8_t * msg, uint16_t * index, uint8_t * subindex)
-    {
-        *index = msg[1] + ((uint16_t)msg[2] << 8);
-        *subindex = msg[3];
-    }
-}
-
 SdoSemaphore::SdoSemaphore(double _timeout)
     : timeout(_timeout),
       active(true)
@@ -28,16 +19,28 @@ SdoSemaphore::~SdoSemaphore()
     interrupt();
 }
 
-bool SdoSemaphore::await(uint8_t * data, uint16_t index, uint8_t subindex)
+SdoSemaphore::key_t SdoSemaphore::makeIndexPair(const uint8_t * msg)
+{
+    uint16_t index = msg[1] + ((uint16_t)msg[2] << 8);
+    uint8_t subindex = msg[3];
+    return std::make_pair(index, subindex);
+}
+
+bool SdoSemaphore::await(uint8_t * msg)
+{
+    size_t len;
+    return await(msg, &len);
+}
+
+bool SdoSemaphore::await(uint8_t * data, size_t * len)
 {
     if (!active)
     {
         return false;
     }
 
-    const key_t key = std::make_pair(index, subindex);
-    yarp::os::Semaphore * semaphore;
-    uint8_t * storedData;
+    const key_t & key = makeIndexPair(data);
+    Item item;
 
     {
         std::lock_guard<std::mutex> lock(registryMutex);
@@ -45,69 +48,53 @@ bool SdoSemaphore::await(uint8_t * data, uint16_t index, uint8_t subindex)
 
         if (it == registry.end())
         {
-            Item item;
-            semaphore = item.sem = new yarp::os::Semaphore(0);
-            storedData = item.data;
+            item.sem = new yarp::os::Semaphore(0);
+            item.data = data;
             it = registry.insert(std::make_pair(key, item)).first;
         }
         else
         {
-            semaphore = it->second.sem;
+            item.sem = it->second.sem;
         }
     }
 
-    bool timedOut = semaphore->waitWithTimeout(timeout);
+    bool timedOut = !item.sem->waitWithTimeout(timeout);
 
     {
         std::lock_guard<std::mutex> lock(registryMutex);
 
         if (!timedOut)
         {
-            std::memcpy(data, storedData, 4);
+            *len = item.len;
         }
 
-        if (!semaphore->check()) // nobody is using this semaphore right now
+        if (!item.sem->check()) // nobody is using this semaphore right now
         {
-            delete semaphore;
+            delete item.sem;
             registry.erase(key);
         }
     }
 
-    return timedOut;
+    return !timedOut;
 }
 
-bool SdoSemaphore::await(uint8_t * msg)
-{
-    uint16_t index;
-    uint8_t subindex;
-    retrieveIndexes(msg, &index, &subindex);
-    return await(msg + 4, index, subindex);
-}
-
-void SdoSemaphore::notify(const uint8_t * data, uint16_t index, uint8_t subindex)
+void SdoSemaphore::notify(const uint8_t * data, size_t len)
 {
     if (!active)
     {
         return;
     }
 
-    const key_t key = std::make_pair(index, subindex);
+    const key_t key = makeIndexPair(data);
     std::lock_guard<std::mutex> lock(registryMutex);
     std::map<key_t, Item>::iterator it = registry.find(key);
 
     if (it != registry.end())
     {
-        std::memcpy(it->second.data, data, 4);
+        std::memcpy(it->second.data, data, len);
+        it->second.len = len;
         it->second.sem->post();
     }
-}
-
-void SdoSemaphore::notify(const uint8_t * msg)
-{
-    uint16_t index;
-    uint8_t subindex;
-    retrieveIndexes(msg, &index, &subindex);
-    notify(msg + 4, index, subindex);
 }
 
 void SdoSemaphore::interrupt()
