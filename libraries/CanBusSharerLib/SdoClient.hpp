@@ -41,7 +41,8 @@ private:
     CanSenderDelegate * sender;
     SdoSemaphore * sdoSemaphore;
 
-    static const uint16_t COB = 0x600;
+    static const uint16_t COB_D = 0x600;
+    static const uint16_t COB_U = 0x580;
 };
 
 } // namespace roboticslab
