@@ -46,6 +46,8 @@ private:
     bool active;
     std::map<key_t, value_t> registry;
     mutable std::mutex registryMutex;
+
+    static const key_t KEY_SEGMENTED;
 };
 
 }  // namespace roboticslab
