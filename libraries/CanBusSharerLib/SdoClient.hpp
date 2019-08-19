@@ -25,6 +25,9 @@ public:
     void configureSender(CanSenderDelegate * sender)
     { this->sender = sender; }
 
+    void notify(const uint8_t * raw, size_t len)
+    { sdoSemaphore->notify(raw, len); }
+
     template<typename T>
     bool upload(const std::string & name, T * data, uint16_t index, uint8_t subindex = 0x00);
 

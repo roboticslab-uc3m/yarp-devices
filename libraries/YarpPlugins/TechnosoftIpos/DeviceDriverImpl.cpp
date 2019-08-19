@@ -70,7 +70,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
         return false;
     }
 
-    sdoSemaphore = new SdoSemaphore(canSdoTimeoutMs * 0.001);
+    sdoClient = new SdoClient(canId, canSdoTimeoutMs * 0.001);
 
     if (!setRefSpeedRaw(0, refSpeed))
     {
@@ -100,9 +100,9 @@ bool roboticslab::TechnosoftIpos::close()
 {
     CD_INFO("\n");
 
-    if (sdoSemaphore)
+    if (sdoClient)
     {
-        delete sdoSemaphore;
+        delete sdoClient;
     }
 
     if (linInterpBuffer)

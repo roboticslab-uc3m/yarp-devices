@@ -19,6 +19,20 @@ std::string msgToStr(uint32_t id, uint32_t cob, unsigned char len, const uint8_t
 inline std::string msgToStr(const yarp::dev::CanMessage & message)
 { return msgToStr(message.getId() & 0x7F, message.getId() & 0xFF80, message.getLen(), message.getData()); }
 
+template<typename T_int, typename T_frac>
+void encodeFixedPoint(double value, T_int * integer, T_frac * fractional)
+{
+    *integer = (T_int)value;
+    *fractional = std::abs(value - *integer) * (1 << 8 * sizeof(T_frac));
+}
+
+template<typename T_int, typename T_frac>
+double decodeFixedPoint(T_int integer, T_frac fractional)
+{
+    double frac = (double)fractional / (1 << 8 * sizeof(T_frac));
+    return integer + (integer >= 0 ? frac : -frac);
+}
+
 } // namespace CanUtils
 } // namespace roboticslab
 

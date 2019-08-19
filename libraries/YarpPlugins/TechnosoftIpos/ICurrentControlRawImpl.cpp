@@ -27,31 +27,19 @@ bool roboticslab::TechnosoftIpos::getNumberOfMotorsRaw(int *number)
 
 bool roboticslab::TechnosoftIpos::getCurrentRaw(int m, double *curr)
 {
-    //CD_DEBUG("(%d)\n", m);  //-- Too verbose in controlboardwrapper2 stream.
+    CD_DEBUG("(%d)\n", m);
 
     //-- Check index within range
     if (m != 0) return false;
 
-    //*************************************************************
-    uint8_t msg_getCurrent[]= {0x40,0x7E,0x20,0x00,0x00,0x00,0x00,0x00};
+    int16_t data;
 
-    if (!send(0x600, 4, msg_getCurrent))
+    if (!sdoClient->upload("Current actual value", &data, 0x207E))
     {
-        CD_ERROR("Could not send msg_getCurrent. %s\n", msgToStr(0x600, 4, msg_getCurrent).c_str());
-        return false;
-    }
-    //CD_SUCCESS("Sent msg_getCurrent. %s\n", msgToStr(0x600, 4, msg_getCurrent).c_str());    //-- Too verbose in controlboardwrapper2 stream.
-
-    if (!sdoSemaphore->await(msg_getCurrent))
-    {
-        CD_ERROR("Did not receive msg_getCurrent response. %s\n", msgToStr(0x600, 4, msg_getCurrent).c_str());
         return false;
     }
 
-    int16_t got;
-    std::memcpy(&got, msg_getCurrent + 4, 2);
-    *curr = got * sgn(tr) * 2.0 * drivePeakCurrent / 65520.0;
-
+    *curr = data * sgn(tr) * 2.0 * drivePeakCurrent / 65520.0;
     return true;
 }
 
@@ -72,26 +60,14 @@ bool roboticslab::TechnosoftIpos::getCurrentRangeRaw(int m, double *min, double 
     //-- Check index within range
     if (m != 0) return false;
 
-    //*************************************************************
-    uint8_t msg_getCurrentLimit[]= {0x40,0x7F,0x20,0x00,0x00,0x00,0x00,0x00};
+    uint16_t data;
 
-    if (!send(0x600, 4, msg_getCurrentLimit))
+    if (!sdoClient->upload("Current limit", &data, 0x207F))
     {
-        CD_ERROR("Could not send \"Current limit\" query. %s\n", msgToStr(0x600, 4, msg_getCurrentLimit).c_str());
-        return false;
-    }
-    CD_SUCCESS("Sent msg_getCurrentLimit. %s\n", msgToStr(0x600, 4, msg_getCurrentLimit).c_str());
-
-    if (!sdoSemaphore->await(msg_getCurrentLimit))
-    {
-        CD_ERROR("Did not receive \"Current limit\" response. %s\n", msgToStr(0x600, 4, msg_getCurrentLimit).c_str());
         return false;
     }
 
-    uint16_t got;
-    std::memcpy(&got, msg_getCurrentLimit + 4, 2);
-
-    *max = 2 * drivePeakCurrent * (32767 - got) / 65520;
+    *max = 2 * drivePeakCurrent * (32767 - data) / 65520;
     *min = -(*max);
 
     return true;
@@ -122,27 +98,8 @@ bool roboticslab::TechnosoftIpos::setRefCurrentRaw(int m, double curr)
     //-- Check index within range
     if (m != 0) return false;
 
-    //*************************************************************
-    uint8_t msg_ref_current[]= {0x23,0x1C,0x20,0x00,0x00,0x00,0x00,0x00}; // put 23 because it is a target
-
-    int sendRefCurrent = curr * sgn(tr) * 65520.0 / (2 * drivePeakCurrent); // Page 109 of 263.
-    std::memcpy(msg_ref_current + 6, &sendRefCurrent, 2);
-
-    if (!send(0x600, 8, msg_ref_current))
-    {
-        CD_ERROR("Could not send refCurrent. %s\n", msgToStr(0x600, 8, msg_ref_current).c_str());
-        return false;
-    }
-
-    CD_SUCCESS("Sent refCurrent. %s\n", msgToStr(0x600, 8, msg_ref_current).c_str());
-
-    if (!sdoSemaphore->await(msg_ref_current))
-    {
-        CD_ERROR("Did not receive refCurrent ack. %s\n", msgToStr(0x600, 8, msg_ref_current).c_str());
-        return false;
-    }
-
-    return true;
+    int32_t data = curr * sgn(tr) * 65520.0 / (2 * drivePeakCurrent);
+    return sdoClient->download<int32_t>("External online reference", data << 16, 0x201C);
 }
 
 // -----------------------------------------------------------------------------
@@ -170,26 +127,14 @@ bool roboticslab::TechnosoftIpos::getRefCurrentRaw(int m, double *curr)
     //-- Check index within range
     if (m != 0) return false;
 
-    uint8_t msg_ref_current[]= {0x40,0x1C,0x20,0x00,0x00,0x00,0x00,0x00};
+    int32_t data;
 
-    if (!send(0x600, 8, msg_ref_current))
+    if (!sdoClient->upload("External online reference", &data, 0x201C))
     {
-        CD_ERROR("Could not send refCurrent query. %s\n", msgToStr(0x600, 8, msg_ref_current).c_str());
         return false;
     }
 
-    CD_SUCCESS("Sent refCurrent query. %s\n", msgToStr(0x600, 8, msg_ref_current).c_str());
-
-    if (!sdoSemaphore->await(msg_ref_current))
-    {
-        CD_ERROR("Did not receive refCurrent response. %s\n", msgToStr(0x600, 8, msg_ref_current).c_str());
-        return false;
-    }
-
-    int16_t got;
-    std::memcpy(&got, msg_ref_current + 6, 2);
-    *curr = got * sgn(tr) * 2.0 * drivePeakCurrent / 65520.0;
-
+    *curr = (data >> 16) * sgn(tr) * 2.0 * drivePeakCurrent / 65520.0;
     return true;
 }
 

@@ -5,6 +5,8 @@
 #include <cmath>
 #include <cstring>
 
+#include "CanUtils.hpp"
+
 // ######################## IVelocityControlRaw Related #############################
 
 bool roboticslab::TechnosoftIpos::velocityMoveRaw(int j, double sp)
@@ -20,37 +22,14 @@ bool roboticslab::TechnosoftIpos::velocityMoveRaw(int j, double sp)
         return false;
     }
 
-    //*************************************************************
-    uint8_t msg_vel[]= {0x23,0xFF,0x60,0x00,0x00,0x00,0x00,0x00}; // Velocity target
+    double value = sp * tr * (encoderPulses / 360.0) * 0.001;
 
-    //uint16_t sendRefSpeed = sp * this->tr * 0.01138;  // Appply tr & convert units to encoder increments
-    //memcpy(msg_posmode_speed+6,&sendRefSpeed,2);
-    //float sendRefSpeed = sp * this->tr / 22.5;  // Apply tr & convert units to encoder increments
-    //int32_t sendRefSpeedFormated = roundf(sendRefSpeed * 65536);  // 65536 = 2^16
+    int16_t dataInt;
+    uint16_t dataFrac;
+    CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
 
-    //-- 0.01138 = ( 4 * 1024 pulse / 360 deg ) * (0.001 s / sample)   // deg/s -> pulse/sample  = UI (vel)
-    // encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024)
-    double sendRefSpeed = sp * this->tr * (encoderPulses / 360.0) * 0.001;
-    int16_t sendRefSpeedInteger;
-    uint16_t sendRefSpeedFractional;
-    encodeFixedPoint(sendRefSpeed, &sendRefSpeedInteger, &sendRefSpeedFractional);
-    memcpy(msg_vel + 4, &sendRefSpeedFractional, 2);
-    memcpy(msg_vel + 6, &sendRefSpeedInteger, 2);
-
-    if( ! send(0x600, 8, msg_vel))
-    {
-        CD_ERROR("Sent \"velocity target\". %s\n", msgToStr(0x600, 8, msg_vel).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"velocity target\". %s\n", msgToStr(0x600, 8, msg_vel).c_str() );
-
-    if (!sdoSemaphore->await(msg_vel))
-    {
-        CD_ERROR("Did not receive \"velocity target\" ack. %s\n", msgToStr(0x600, 8, msg_vel).c_str());
-        return false;
-    }
-
-    return true;
+    int32_t data = (dataInt << 16) + dataFrac;
+    return sdoClient->download("Target velocity", data, 0x60FF);
 }
 
 // ----------------------------------------------------------------------------------
@@ -78,32 +57,18 @@ bool roboticslab::TechnosoftIpos::getRefVelocityRaw(const int joint, double *vel
     //-- Check index within range
     if ( joint != 0 ) return false;
 
-    //*************************************************************
-    uint8_t msg_vel[]= {0x40,0xFF,0x60,0x00,0x00,0x00,0x00,0x00}; // Velocity target
+    int32_t data;
 
-    if( ! send(0x600, 8, msg_vel))
+    if (!sdoClient->upload("Target velocity", &data, 0x60FF))
     {
-        CD_ERROR("Sent \"velocity target\" query. %s\n", msgToStr(0x600, 8, msg_vel).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"velocity target\" query. %s\n", msgToStr(0x600, 8, msg_vel).c_str() );
-    //*************************************************************
-
-    if (!sdoSemaphore->await(msg_vel))
-    {
-        CD_ERROR("Did not receive \"velocity target\" response. %s\n", msgToStr(0x600, 8, msg_vel).c_str());
         return false;
     }
 
-    int16_t gotInteger;
-    uint16_t gotFractional;
+    int16_t dataInt = data >> 16;
+    uint16_t dataFrac = data & 0xFFFF;
+    double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
 
-    std::memcpy(&gotFractional, msg_vel + 4, 2);
-    std::memcpy(&gotInteger, msg_vel + 6, 2);
-
-    double val = decodeFixedPoint(gotInteger, gotFractional);
-    *vel = val / (tr * (encoderPulses / 360.0) * 0.001);
-
+    *vel = value / (tr * (encoderPulses / 360.0) * 0.001);
     return true;
 }
 
