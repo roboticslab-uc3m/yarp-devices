@@ -33,8 +33,7 @@ bool roboticslab::TechnosoftIpos::setEncoderRaw(int j, double val)
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    int32_t data = val * this->tr * (encoderPulses / 360.0);
-
+    int32_t data = applyInternalUnits(val);
     return sdoClient->download("Set actual position", data, 0X2081);
 }
 
@@ -64,8 +63,7 @@ bool roboticslab::TechnosoftIpos::getEncoderRaw(int j, double *v)
             return false;
         }
 
-        lastEncoderRead.update(data / ((encoderPulses / 360.0) * this->tr));
-
+        lastEncoderRead.update(parseInternalUnits(data));
         *v = lastEncoderRead.queryPosition();
     }
     else

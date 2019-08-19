@@ -36,7 +36,7 @@ bool roboticslab::TechnosoftIpos::setLimitRaw(double limit, bool isMin)
         subindex = 0x02;
     }
 
-    int32_t data = limit * tr * (encoderPulses / 360.0);
+    int32_t data = applyInternalUnits(limit);
     return sdoClient->download(name, data, 0x607D, subindex);
 }
 
@@ -81,7 +81,7 @@ bool roboticslab::TechnosoftIpos::getLimitRaw(double * limit, bool isMin)
         return false;
     }
 
-    *limit = data / (tr * encoderPulses / 360.0);
+    *limit = parseInternalUnits(data);
     return true;
 }
 

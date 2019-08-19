@@ -39,7 +39,7 @@ bool roboticslab::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encEx
 
     //*************************************************************
 
-    int32_t data = ref * tr * (encoderPulses / 360.0);
+    int32_t data = applyInternalUnits(ref);
 
     if (!sdoClient->download("Target position", data, 0x607A))
     {
@@ -87,7 +87,7 @@ bool roboticslab::TechnosoftIpos::relativeMoveRaw(int j, double delta)
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    int32_t data = delta * tr * (encoderPulses / 360.0);
+    int32_t data = applyInternalUnits(delta);
 
     if (!sdoClient->download("Target position", data, 0x607A))
     {
@@ -252,7 +252,7 @@ bool roboticslab::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
         return false;
     }
 
-    double value = sp * std::abs(tr) * (encoderPulses / 360.0) * 0.001;
+    double value = std::abs(applyInternalUnits(sp, 1));
 
     uint16_t dataInt;
     uint16_t dataFrac;
@@ -279,7 +279,7 @@ bool roboticslab::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    double value = acc * std::abs(tr) * (encoderPulses / 360.0) * 0.000001;
+    double value = std::abs(applyInternalUnits(acc, 2));
 
     uint16_t dataInt;
     uint16_t dataFrac;
@@ -317,7 +317,7 @@ bool roboticslab::TechnosoftIpos::getRefSpeedRaw(int j, double *ref)
     uint16_t dataFrac = data & 0xFFFF;
     double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
 
-    *ref = value / (std::abs(tr) * (encoderPulses / 360.0) * 0.001);
+    *ref = std::abs(parseInternalUnits(value, 1));
     return true;
 }
 
@@ -349,7 +349,7 @@ bool roboticslab::TechnosoftIpos::getRefAccelerationRaw(int j, double *acc)
     uint16_t dataFrac = data & 0xFFFF;
     double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
 
-    *acc = value / (std::abs(tr) * (encoderPulses / 360.0) * 0.000001);
+    *acc = parseInternalUnits(value, 2);
     return true;
 }
 
@@ -479,7 +479,7 @@ bool roboticslab::TechnosoftIpos::getTargetPositionRaw(const int joint, double *
         return false;
     }
 
-    *ref = data / ((encoderPulses / 360.0) * this->tr);
+    *ref = parseInternalUnits(data);
     return true;
 }
 

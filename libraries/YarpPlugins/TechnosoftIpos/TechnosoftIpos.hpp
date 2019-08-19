@@ -85,7 +85,8 @@ public:
           maxVel(0.0),
           tr(0.0),
           k(0.0),
-          encoderPulses(0)
+          encoderPulses(0),
+          pulsesPerSample(0)
     {}
 
     //  --------- DeviceDriver Declarations. Implementation in TechnosoftIpos.cpp ---------
@@ -266,6 +267,18 @@ protected:
      */
     bool send(uint32_t cob, uint16_t len, uint8_t * msgData);
 
+    int32_t applyInternalUnits(double value, int derivativeOrder = 0)
+    { return value * tr * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder); }
+
+    double parseInternalUnits(int32_t value, int derivativeOrder = 0)
+    { return value / (tr * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder)); }
+
+    double currentToTorque(double current)
+    { return current * std::abs(tr) * k; }
+
+    double torqueToCurrent(double torque)
+    { return torque / (std::abs(tr) * k); }
+
     int canId;
     CanSenderDelegate * sender;
     SdoClient * sdoClient;
@@ -284,6 +297,7 @@ protected:
     //-- More internal parameter stuff
     double maxVel, tr, k;
     int encoderPulses; // default: 4096 (1024 * 4)
+    int pulsesPerSample;
 };
 
 }  // namespace roboticslab

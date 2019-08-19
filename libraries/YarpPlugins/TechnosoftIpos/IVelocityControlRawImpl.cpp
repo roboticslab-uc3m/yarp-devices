@@ -22,7 +22,7 @@ bool roboticslab::TechnosoftIpos::velocityMoveRaw(int j, double sp)
         return false;
     }
 
-    double value = sp * tr * (encoderPulses / 360.0) * 0.001;
+    double value = applyInternalUnits(sp, 1);
 
     int16_t dataInt;
     uint16_t dataFrac;
@@ -68,7 +68,7 @@ bool roboticslab::TechnosoftIpos::getRefVelocityRaw(const int joint, double *vel
     uint16_t dataFrac = data & 0xFFFF;
     double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
 
-    *vel = value / (tr * (encoderPulses / 360.0) * 0.001);
+    *vel = parseInternalUnits(value, 1);
     return true;
 }
 
