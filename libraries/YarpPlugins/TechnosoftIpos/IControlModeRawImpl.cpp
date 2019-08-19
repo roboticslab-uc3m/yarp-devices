@@ -8,6 +8,8 @@
 
 #include <yarp/os/Vocab.h>
 
+#include "CanUtils.hpp"
+
 // ############################## IControlModeRaw Related ##############################
 
 bool roboticslab::TechnosoftIpos::setPositionModeRaw(int j)

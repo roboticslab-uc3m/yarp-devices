@@ -1,18 +1,20 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __SDO_CLIENT_INL_HPP__
-#define __SDO_CLIENT_INL_HPP__
-
 #include "SdoClient.hpp"
-
-#include <string>
 
 #include <ColorDebug.h>
 
 #include "CanUtils.hpp"
 
+using namespace roboticslab;
+
+bool SdoClient::send(uint8_t * msg, int len)
+{
+    return sender->prepareMessage(message_builder(COB + id, len, msg));
+}
+
 template<typename T>
-bool roboticslab::SdoClient::upload(const std::string & name, T * data, uint16_t index, uint8_t subindex)
+bool SdoClient::upload(const std::string & name, T * data, uint16_t index, uint8_t subindex)
 {
     uint8_t uploadMsg[4];
 
@@ -49,7 +51,7 @@ bool roboticslab::SdoClient::upload(const std::string & name, T * data, uint16_t
 }
 
 template<typename T>
-bool roboticslab::SdoClient::download(const std::string & name, T data, uint16_t index, uint8_t subindex)
+bool SdoClient::download(const std::string & name, T data, uint16_t index, uint8_t subindex)
 {
     const size_t dataSize = sizeof(T);
     const size_t msgSize = dataSize + 4;
@@ -86,4 +88,18 @@ bool roboticslab::SdoClient::download(const std::string & name, T data, uint16_t
     return true;
 }
 
-#endif // __SDO_CLIENT_INL_HPP__
+template bool SdoClient::upload<uint8_t>(const std::string &, uint8_t *, uint16_t, uint8_t);
+template bool SdoClient::upload<uint16_t>(const std::string &, uint16_t *, uint16_t, uint8_t);
+template bool SdoClient::upload<uint32_t>(const std::string &, uint32_t *, uint16_t, uint8_t);
+
+template bool SdoClient::upload<int8_t>(const std::string &, int8_t *, uint16_t, uint8_t);
+template bool SdoClient::upload<int16_t>(const std::string &, int16_t *, uint16_t, uint8_t);
+template bool SdoClient::upload<int32_t>(const std::string &, int32_t *, uint16_t, uint8_t);
+
+template bool SdoClient::download<uint8_t>(const std::string &, uint8_t, uint16_t, uint8_t);
+template bool SdoClient::download<uint16_t>(const std::string &, uint16_t, uint16_t, uint8_t);
+template bool SdoClient::download<uint32_t>(const std::string &, uint32_t, uint16_t, uint8_t);
+
+template bool SdoClient::download<int8_t>(const std::string &, int8_t, uint16_t, uint8_t);
+template bool SdoClient::download<int16_t>(const std::string &, int16_t, uint16_t, uint8_t);
+template bool SdoClient::download<int32_t>(const std::string &, int32_t, uint16_t, uint8_t);

@@ -35,18 +35,15 @@ public:
     bool download(const std::string & name, T data, uint16_t index, uint8_t subindex = 0x00);
 
 private:
-    static const uint16_t COB = 0x600;
-
-    bool send(uint8_t * msg, int len)
-    { return sender->prepareMessage(message_builder(COB + id, len, msg)); }
+    bool send(uint8_t * msg, int len);
 
     unsigned int id;
     CanSenderDelegate * sender;
     SdoSemaphore * sdoSemaphore;
+
+    static const uint16_t COB = 0x600;
 };
 
 } // namespace roboticslab
-
-#include "SdoClient-inl.hpp"
 
 #endif // __SDO_CLIENT_HPP__

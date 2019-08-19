@@ -2,6 +2,8 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include "CanUtils.hpp"
+
 // -----------------------------------------------------------------------------
 
 bool roboticslab::TechnosoftIpos::send(uint32_t cob, uint16_t len, uint8_t * msgData)

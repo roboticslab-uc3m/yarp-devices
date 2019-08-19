@@ -5,7 +5,7 @@ if(ENABLE_CanBusSharerLib)
     add_library(CanBusSharerLib SHARED ICanBusSharer.hpp
                                        CanSenderDelegate.hpp
                                        SdoClient.hpp
-                                       SdoClient-inl.hpp
+                                       SdoClient.cpp
                                        SdoSemaphore.hpp
                                        SdoSemaphore.cpp
                                        CanUtils.hpp
