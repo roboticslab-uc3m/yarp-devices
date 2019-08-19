@@ -28,7 +28,6 @@ public:
     SdoSemaphore(double timeout);
     ~SdoSemaphore();
 
-    bool await(sdo_data & data); // TODO: remove
     bool await(sdo_data & data, size_t * len);
     void notify(const uint8_t * raw, size_t len);
     void interrupt();

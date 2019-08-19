@@ -39,12 +39,6 @@ SdoSemaphore::key_t SdoSemaphore::makeIndexPair(const uint8_t * raw)
     }
 }
 
-bool SdoSemaphore::await(sdo_data & msg)
-{
-    size_t len;
-    return await(msg, &len);
-}
-
 bool SdoSemaphore::await(sdo_data & data, size_t * len)
 {
     if (!active)
