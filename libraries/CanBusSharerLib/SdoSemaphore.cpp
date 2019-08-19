@@ -49,7 +49,7 @@ bool SdoSemaphore::await(sdo_data & data, size_t * len)
         if (it == registry.end())
         {
             value.sem = new yarp::os::Semaphore(0);
-            value.data = data;
+            value.raw = data.storage;
             it = registry.insert(std::make_pair(key, value)).first;
         }
         else
@@ -91,7 +91,7 @@ void SdoSemaphore::notify(const uint8_t * raw, size_t len)
 
     if (it != registry.end())
     {
-        std::memcpy(it->second.data.storage, raw, len);
+        std::memcpy(it->second.raw, raw, len);
         it->second.len = len;
         it->second.sem->post();
     }

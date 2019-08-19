@@ -37,7 +37,7 @@ private:
     typedef std::pair<uint16_t, uint8_t> key_t;
 
     typedef struct sdo_item
-    { yarp::os::Semaphore * sem; sdo_data data; size_t len; }
+    { yarp::os::Semaphore * sem; uint8_t * raw; size_t len; }
     value_t;
 
     key_t makeIndexPair(const uint8_t * raw);
