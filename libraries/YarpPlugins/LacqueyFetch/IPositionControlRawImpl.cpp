@@ -2,6 +2,8 @@
 
 #include "LacqueyFetch.hpp"
 
+#include "CanUtils.hpp"
+
 // ######################## IPositionControlRaw Related ############################
 
 bool roboticslab::LacqueyFetch::getAxes(int *ax)
@@ -52,10 +54,10 @@ bool roboticslab::LacqueyFetch::positionMoveRaw(int j, double ref)    // encExpo
 
     if( ! send( 0x600, 2, msg_position_target ) )
     {
-        CD_ERROR("Could not send \"position target8\". %s\n", msgToStr(0x600, 2, msg_position_target).c_str() );
+        CD_ERROR("Could not send \"position target8\". %s\n", CanUtils::msgToStr(canId, 0x600, 2, msg_position_target).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"position target8\". %s\n", msgToStr(0x600, 2, msg_position_target).c_str() );
+    CD_SUCCESS("Sent \"position target8\". %s\n", CanUtils::msgToStr(canId, 0x600, 2, msg_position_target).c_str() );
     //*************************************************************
 
     encoderReady.wait();

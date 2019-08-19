@@ -266,10 +266,6 @@ protected:
      */
     bool send(uint32_t cob, uint16_t len, uint8_t * msgData);
 
-    /** A helper function to display CAN messages. */
-    std::string msgToStr(const yarp::dev::CanMessage & message);
-    std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
-
     int canId;
     CanSenderDelegate * sender;
     SdoClient * sdoClient;

@@ -235,10 +235,10 @@ bool roboticslab::TechnosoftIpos::readyToSwitchOn()
     // -- send se diferencia de senRaw en que tiene un delay y adems incluye el ID (mirar funcin)
     if( ! this->send( 0x200, 2, msg_readyToSwitchOn) ) // -- 0x200 (valor critico que se pone sin saber que significa) 2 (tamano del mensaje)
     {
-        CD_ERROR("Could not send \"readyToSwitchOn/shutdown\". %s\n", msgToStr(0x200, 2, msg_readyToSwitchOn).c_str() );
+        CD_ERROR("Could not send \"readyToSwitchOn/shutdown\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_readyToSwitchOn).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"readyToSwitchOn/shutdown\". %s\n", msgToStr(0x200, 2, msg_readyToSwitchOn).c_str() );
+    CD_SUCCESS("Sent \"readyToSwitchOn/shutdown\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_readyToSwitchOn).c_str() );
 
     //-- Do not force expect response as only happens upon transition.
     //-- For example, if already on readyToSwitchOn, function would get stuck.
@@ -253,10 +253,10 @@ bool roboticslab::TechnosoftIpos::switchOn()
     uint8_t msg_switchOn[] = {0x07,0x00};  //-- switchOn, also acts as disableOperation
     if( ! this->send( 0x200, 2, msg_switchOn) )
     {
-        CD_ERROR("Could not send \"switchOn/disableOperation\". %s\n", msgToStr(0x200, 2, msg_switchOn).c_str() );
+        CD_ERROR("Could not send \"switchOn/disableOperation\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_switchOn).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"switchOn/disableOperation\". %s\n", msgToStr(0x200, 2, msg_switchOn).c_str() );
+    CD_SUCCESS("Sent \"switchOn/disableOperation\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_switchOn).c_str() );
 
     //while( (! this->getSwitchOn) ) {
     //    CD_INFO("Waiting for response to \"switchOn/disableOperation\" on id %d...\n", this->canId);
@@ -274,10 +274,10 @@ bool roboticslab::TechnosoftIpos::enable()
 
     if( ! this->send( 0x200, 2, msg_enable) )
     {
-        CD_ERROR("Could not send \"enable\". %s\n", msgToStr(0x200, 2, msg_enable).c_str() );
+        CD_ERROR("Could not send \"enable\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_enable).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"enable\". %s\n", msgToStr(0x200, 2, msg_enable).c_str() );
+    CD_SUCCESS("Sent \"enable\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_enable).c_str() );
     //*************************************************************
 
     //while( (! this->getEnable) ) {
@@ -329,10 +329,10 @@ bool roboticslab::TechnosoftIpos::resetCommunication()
     //msg_resetNode[1]=this->canId; // -- It writes canId in byte 1
     if( ! this->send(0x200, 2, msg_resetCommunication) ) // -- 0 (hace referencia al ID. Si est en 0 es como un broadcast) 2 (tamao del mensaje)
     {
-        CD_ERROR("Could not send \"reset communication\". %s\n", msgToStr(0, 2, msg_resetCommunication).c_str() );
+        CD_ERROR("Could not send \"reset communication\". %s\n", CanUtils::msgToStr(canId, 0, 2, msg_resetCommunication).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"reset communication\". %s\n", msgToStr(0, 2, msg_resetCommunication).c_str() );
+    CD_SUCCESS("Sent \"reset communication\". %s\n", CanUtils::msgToStr(canId, 0, 2, msg_resetCommunication).c_str() );
 
     //-- Do not force expect response as only happens upon transition.
     //-- For example, if already started, function would get stuck.
@@ -428,85 +428,85 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
     {
         if( (message.getData()[0]==0x37)&&(message.getData()[1]==0x92) )
         {
-            CD_INFO("Got PDO1 that it is observed as ack \"start position\" from driver. %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO1 that it is observed as ack \"start position\" from driver. %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x37)&&(message.getData()[1]==0x86) )
         {
-            CD_INFO("Got PDO1 that it is observed when driver arrives to position target. %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO1 that it is observed when driver arrives to position target. %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x40)&&(message.getData()[1]==0x02) )
         {
-            CD_INFO("Got PDO1 that it is observed as TRANSITION performed upon \"start\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO1 that it is observed as TRANSITION performed upon \"start\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x40)&&(message.getData()[1]==0x03) )
         {
-            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x21)&&(message.getData()[1]==0x02) )
         {
-            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x21)&&(message.getData()[1]==0x03) )
         {
-            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"switchOn\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"switchOn\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x33)&&(message.getData()[1]==0x83) )
         {
-            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"enable\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"enable\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
-        CD_INFO("Got PDO1 from driver side: unknown. %s\n",msgToStr(message).c_str());
+        CD_INFO("Got PDO1 from driver side: unknown. %s\n",CanUtils::msgToStr(message).c_str());
         return false;
     }
     else if( (message.getId()-canId) == 0x280 )  // PDO2
     {
         if( (message.getData()[0]==0x37)&&(message.getData()[1]==0x92) )
         {
-            CD_INFO("Got PDO2 that it is observed as ack \"start position\" from driver. %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO2 that it is observed as ack \"start position\" from driver. %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x37)&&(message.getData()[1]==0x86) )
         {
-            CD_INFO("Got PDO2 that it is observed when driver arrives to position target. %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO2 that it is observed when driver arrives to position target. %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x40)&&(message.getData()[1]==0x02) )
         {
-            CD_INFO("Got PDO2 that it is observed as TRANSITION performed upon \"start\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO2 that it is observed as TRANSITION performed upon \"start\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x40)&&(message.getData()[1]==0x03) )
         {
-            CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x21)&&(message.getData()[1]==0x02) )
         {
-            CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x21)&&(message.getData()[1]==0x03) )
         {
-            CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"switchOn\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"switchOn\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x83)&&(message.getData()[1]==0x83) )
         {
-            CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"enable\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"enable\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
-        CD_INFO("Got PDO2 from driver side: unknown. %s\n",msgToStr(message).c_str());
+        CD_INFO("Got PDO2 from driver side: unknown. %s\n",CanUtils::msgToStr(message).c_str());
         return false;
     }
     else if( (message.getId()-canId) == 0x80 )  // EMERGENCY (EMCY), Table 4.2 Emergency Error Codes (p57, 73/263)
     {
-        CD_ERROR("Got EMERGENCY from iPOS. %s ",msgToStr(message).c_str());
+        CD_ERROR("Got EMERGENCY from iPOS. %s ",CanUtils::msgToStr(message).c_str());
         if( (message.getData()[1]==0x00)&&(message.getData()[0]==0x00) )
         {
             CD_ERROR_NO_HEADER("Error Reset or No Error. canId: %d.\n",canId);
@@ -656,7 +656,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
         return false;
     }
 
-    CD_ERROR("Unknown message: %s\n", msgToStr(message).c_str());
+    CD_ERROR("Unknown message: %s\n", CanUtils::msgToStr(message).c_str());
 
     return false;
 

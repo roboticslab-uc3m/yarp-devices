@@ -55,10 +55,10 @@ bool roboticslab::TechnosoftIpos::setTorqueModeRaw(int j)
 
     if( ! send( 0x200, 2, msg_torque_word) )
     {
-        CD_ERROR("Could not send msg_torque_word. %s\n", msgToStr(0x200, 2, msg_torque_word).c_str() );
+        CD_ERROR("Could not send msg_torque_word. %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_torque_word).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"torque_word\". %s\n", msgToStr(0x200, 2, msg_torque_word).c_str() );
+    CD_SUCCESS("Sent \"torque_word\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_torque_word).c_str() );
 
     return true;
 }

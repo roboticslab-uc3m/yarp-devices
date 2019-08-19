@@ -32,10 +32,10 @@ bool roboticslab::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encEx
 
     if( ! send( 0x200, 2, msg_pos_reset) )
     {
-        CD_ERROR("Could not send first \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
+        CD_ERROR("Could not send first \"reset position\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_pos_reset).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent first \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
+    CD_SUCCESS("Sent first \"reset position\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_pos_reset).c_str() );
 
     //*************************************************************
 
@@ -52,20 +52,20 @@ bool roboticslab::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encEx
 
     if( ! send( 0x200, 2, msg_start ) )
     {
-        CD_ERROR("Could not send \"start position\". %s\n", msgToStr(0x200, 2, msg_start).c_str() );
+        CD_ERROR("Could not send \"start position\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_start).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"start position\". %s\n", msgToStr(0x200, 2, msg_start).c_str() );
+    CD_SUCCESS("Sent \"start position\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_start).c_str() );
 
     //*************************************************************
 
     //-- Needed to accept next target. Sets "Do not assume target position" so later it accepts "Assume target position (update the new motion parameters)".
     if( ! send( 0x200, 2, msg_pos_reset) )
     {
-        CD_ERROR("Could not send second \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
+        CD_ERROR("Could not send second \"reset position\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_pos_reset).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent second \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
+    CD_SUCCESS("Sent second \"reset position\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_pos_reset).c_str() );
 
     return true;
 }
@@ -101,10 +101,10 @@ bool roboticslab::TechnosoftIpos::relativeMoveRaw(int j, double delta)
 
     if( ! send( 0x200, 2, msg_start_rel ) )
     {
-        CD_ERROR("Could not send \"start rel position. %s\n", msgToStr(0x200, 2, msg_start_rel).c_str() );
+        CD_ERROR("Could not send \"start rel position. %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_start_rel).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"start rel position\". %s\n", msgToStr(0x200, 2, msg_start_rel).c_str() );;
+    CD_SUCCESS("Sent \"start rel position\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_start_rel).c_str() );;
     //*************************************************************
 
     //-- Needed to send next. Sets "Do not assume target position" so later it accepts "Assume target position (update the new motion parameters)".
@@ -113,10 +113,10 @@ bool roboticslab::TechnosoftIpos::relativeMoveRaw(int j, double delta)
 
     if( ! send( 0x200, 2, msg_pos_reset) )
     {
-        CD_ERROR("Could not send \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
+        CD_ERROR("Could not send \"reset position\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_pos_reset).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
+    CD_SUCCESS("Sent \"reset position\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_pos_reset).c_str() );
     //*************************************************************
 
     return true;
@@ -374,10 +374,10 @@ bool roboticslab::TechnosoftIpos::stopRaw(int j)
 
     if (!this->send(0x200, 2, msg_quickStop))
     {
-        CD_ERROR("Could not send \"quick stop\". %s\n", msgToStr(0x200, 2, msg_quickStop).c_str() );
+        CD_ERROR("Could not send \"quick stop\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_quickStop).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"quick stop\". %s\n", msgToStr(0x200, 2, msg_quickStop).c_str() );
+    CD_SUCCESS("Sent \"quick stop\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_quickStop).c_str() );
 
     yarp::os::Time::delay(0.01);
 

@@ -213,10 +213,6 @@ protected:
     double encoder;
     uint32_t encoderTimestamp;
 
-    /** A helper function to display CAN messages. */
-    std::string msgToStr(const yarp::dev::CanMessage & message);
-    std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
-
     //-- Set the interaction mode of the robot for a set of joints, values can be stiff or compliant
     yarp::dev::InteractionModeEnum interactionMode;
 
