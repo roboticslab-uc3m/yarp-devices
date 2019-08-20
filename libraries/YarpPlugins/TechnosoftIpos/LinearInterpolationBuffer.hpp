@@ -35,8 +35,7 @@ public:
     void setPeriod(int periodMs);
     int getBufferSize() const;
     void setBufferSize(int bufferSize);
-    virtual void configureSubMode(uint8_t * msg) = 0;
-    void configureBufferSize(uint8_t * msg);
+    virtual int getSubMode() const = 0;
     virtual void configureMessage(uint8_t * msg) = 0;
     LinearInterpolationBuffer * cloneTo(const std::string & type);
     static LinearInterpolationBuffer * createBuffer(const yarp::os::Searchable & config);
@@ -60,7 +59,7 @@ class PtBuffer : public LinearInterpolationBuffer
 public:
     PtBuffer(int _periodMs, int _bufferSize, double _factor, double _maxVel);
     virtual std::string getType() const;
-    virtual void configureSubMode(uint8_t * msg);
+    virtual int getSubMode() const;
     virtual void configureMessage(uint8_t * msg);
 
 private:
@@ -76,7 +75,7 @@ public:
     PvtBuffer(int _periodMs, int _bufferSize, double _factor, double _maxVel);
     virtual void setInitialReference(double target);
     virtual std::string getType() const;
-    virtual void configureSubMode(uint8_t * msg);
+    virtual int getSubMode() const;
     virtual void configureMessage(uint8_t * msg);
 
 private:

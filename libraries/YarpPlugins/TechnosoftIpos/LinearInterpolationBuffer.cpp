@@ -5,6 +5,7 @@
 #include <cmath>
 
 #include "TechnosoftIpos.hpp"
+#include "CanUtils.hpp"
 
 #include <ColorDebug.h>
 
@@ -123,11 +124,6 @@ void LinearInterpolationBuffer::setBufferSize(int bufferSize)
     this->bufferSize = bufferSize;
 }
 
-void LinearInterpolationBuffer::configureBufferSize(uint8_t * msg)
-{
-    std::memcpy(msg + 4, &bufferSize, 2);
-}
-
 LinearInterpolationBuffer * LinearInterpolationBuffer::cloneTo(const std::string & type)
 {
     LinearInterpolationBuffer * buffer;
@@ -161,10 +157,9 @@ std::string PtBuffer::getType() const
     return "pt";
 }
 
-void PtBuffer::configureSubMode(uint8_t * msg)
+int PtBuffer::getSubMode() const
 {
-    uint16_t submode = 0;
-    std::memcpy(msg + 4, &submode, 2);
+    return 0;
 }
 
 void PtBuffer::configureMessage(uint8_t * msg)
@@ -227,10 +222,9 @@ std::string PvtBuffer::getType() const
     return "pvt";
 }
 
-void PvtBuffer::configureSubMode(uint8_t * msg)
+int PvtBuffer::getSubMode() const
 {
-    uint16_t submode = -1;
-    std::memcpy(msg + 4, &submode, 2);
+    return -1;
 }
 
 
@@ -271,7 +265,7 @@ void PvtBuffer::configureMessage(uint8_t * msg)
 
     double velocity = v * factor * 0.001;
     int16_t velocityInt, velocityFrac;
-    TechnosoftIpos::encodeFixedPoint(velocity, &velocityInt, &velocityFrac);
+    CanUtils::encodeFixedPoint(velocity, &velocityInt, &velocityFrac);
     std::memcpy(msg + 2, &velocityFrac, 1);
     std::memcpy(msg + 4, &velocityInt, 2);
 

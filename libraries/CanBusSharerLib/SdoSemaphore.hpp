@@ -3,11 +3,10 @@
 #ifndef __SDO_SEMAPHORE_HPP__
 #define __SDO_SEMAPHORE_HPP__
 
-#include <stdint.h>
+#include <cstdint>
 
-#include <map>
+#include <atomic>
 #include <mutex>
-#include <utility>
 
 #include <yarp/os/Semaphore.h>
 
@@ -20,22 +19,18 @@ public:
     SdoSemaphore(double timeout);
     ~SdoSemaphore();
 
-    bool await(uint8_t * data, uint16_t index, uint8_t subindex = 0x00);
-    bool await(uint8_t * msg);
-    void notify(const uint8_t * data, uint16_t index, uint8_t subindex = 0x00);
-    void notify(const uint8_t * msg);
+    bool await(std::uint8_t * raw);
+    void notify(const std::uint8_t * raw);
     void interrupt();
 
 private:
-    typedef std::pair<uint16_t, uint8_t> key_t;
-
-    struct Item
-    { yarp::os::Semaphore * sem; uint8_t data[4]; };
-
     double timeout;
-    bool active;
-    std::map<key_t, Item> registry;
+    yarp::os::Semaphore * semaphore;
+    std::uint8_t * remoteStorage;
+
+    std::atomic_bool active;
     mutable std::mutex registryMutex;
+    mutable std::mutex awaitMutex;
 };
 
 }  // namespace roboticslab

@@ -16,7 +16,7 @@
 #include <ColorDebug.h>
 
 #include "ICanBusSharer.hpp"
-#include "SdoSemaphore.hpp"
+#include "SdoClient.hpp"
 #include "ITechnosoftIpos.h"
 #include "LinearInterpolationBuffer.hpp"
 
@@ -76,6 +76,7 @@ public:
     TechnosoftIpos()
         : canId(0),
           sender(0),
+          sdoClient(0),
           iEncodersTimedRawExternal(0),
           lastEncoderRead(0.0),
           modeCurrentTorque(0),
@@ -85,7 +86,7 @@ public:
           tr(0.0),
           k(0.0),
           encoderPulses(0),
-          sdoSemaphore(0)
+          pulsesPerSample(0)
     {}
 
     //  --------- DeviceDriver Declarations. Implementation in TechnosoftIpos.cpp ---------
@@ -123,22 +124,15 @@ public:
     virtual bool getLimitsRaw(int axis, double *min, double *max);
     virtual bool setVelLimitsRaw(int axis, double min, double max);
     virtual bool getVelLimitsRaw(int axis, double *min, double *max);
-    //-- Auxiliary functions of setLimitsRaw
-    bool setMinLimitRaw(double min);
-    bool setMaxLimitRaw(double max);
-    //-- Auxiliary functions of getLimitsRaw
-    bool getMinLimitRaw(double *min);
-    bool getMaxLimitRaw(double *max);
+    //-- Auxiliary functions
+    bool setLimitRaw(double limit, bool isMin);
+    bool getLimitRaw(double * limit, bool isMin);
 
     //  --------- IControlModeRaw Declarations. Implementation in IControlModeRawImpl.cpp ---------
     bool setPositionModeRaw(int j);
     bool setVelocityModeRaw(int j);
     bool setPositionDirectModeRaw();
     bool setTorqueModeRaw(int j);
-    //-- Auxiliary functions (splitted) of setTorqueModeRaw
-    bool setTorqueModeRaw1();
-    bool setTorqueModeRaw2();
-    bool setTorqueModeRaw3();
 
     virtual bool getControlModeRaw(int j, int *mode);
     //-- Auxiliary functions (splitted) of getControlModeRaw
@@ -259,21 +253,6 @@ public:
     virtual bool setRemoteVariableRaw(std::string key, const yarp::os::Bottle& val);
     virtual bool getRemoteVariablesListRaw(yarp::os::Bottle* listOfKeys);
 
-    // helpers
-    template <typename T_int, typename T_frac>
-    static void encodeFixedPoint(double value, T_int * integer, T_frac * fractional)
-    {
-        *integer = (T_int)value;
-        *fractional = std::abs(value - *integer) * (1 << 8 * sizeof(T_frac));
-    }
-
-    template <typename T_int, typename T_frac>
-    static double decodeFixedPoint(T_int integer, T_frac fractional)
-    {
-        double frac = (double)fractional / (1 << 8 * sizeof(T_frac));
-        return integer + (integer >= 0 ? frac : -frac);
-    }
-
 protected:
 
     //  --------- Implementation in TechnosoftIpos.cpp ---------
@@ -288,12 +267,21 @@ protected:
      */
     bool send(uint32_t cob, uint16_t len, uint8_t * msgData);
 
-    /** A helper function to display CAN messages. */
-    std::string msgToStr(const yarp::dev::CanMessage & message);
-    std::string msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData);
+    int32_t applyInternalUnits(double value, int derivativeOrder = 0)
+    { return value * tr * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder); }
+
+    double parseInternalUnits(int32_t value, int derivativeOrder = 0)
+    { return value / (tr * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder)); }
+
+    double currentToTorque(double current)
+    { return current * std::abs(tr) * k; }
+
+    double torqueToCurrent(double torque)
+    { return torque / (std::abs(tr) * k); }
 
     int canId;
     CanSenderDelegate * sender;
+    SdoClient * sdoClient;
 
     //-- Encoder stuff
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRawExternal;
@@ -309,8 +297,7 @@ protected:
     //-- More internal parameter stuff
     double maxVel, tr, k;
     int encoderPulses; // default: 4096 (1024 * 4)
-
-    SdoSemaphore * sdoSemaphore;
+    int pulsesPerSample;
 };
 
 }  // namespace roboticslab

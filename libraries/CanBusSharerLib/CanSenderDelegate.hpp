@@ -13,7 +13,7 @@ namespace roboticslab
 class message_builder
 {
 public:
-    message_builder(int _id, int _len, unsigned char * _data) : id(_id), len(_len), data(_data)
+    message_builder(int _id, int _len, const unsigned char * _data) : id(_id), len(_len), data(_data)
     {}
 
     void operator()(yarp::dev::CanMessage & msg)
@@ -26,7 +26,7 @@ public:
 private:
     int id;
     int len;
-    unsigned char * data;
+    const unsigned char * data;
 };
 
 /**

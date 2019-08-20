@@ -29,8 +29,7 @@ bool roboticslab::TechnosoftIpos::getRefTorqueRaw(int j, double *t)
         return false;
     }
 
-    *t = curr * std::abs(tr) * k;
-
+    *t = currentToTorque(curr);
     return true;
 }
 
@@ -48,7 +47,7 @@ bool roboticslab::TechnosoftIpos::setRefTorqueRaw(int j, double t)
 {
     CD_INFO("(%d, %f)\n", j, t);
 
-    double curr = t / (std::abs(tr) * k);
+    double curr = torqueToCurrent(t);
 
     if (!setRefCurrentRaw(j, curr))
     {
@@ -73,8 +72,7 @@ bool roboticslab::TechnosoftIpos::getTorqueRaw(int j, double *t)
         return false;
     }
 
-    *t = curr * std::abs(tr) * k;
-
+    *t = currentToTorque(curr);
     return true;
 }
 
@@ -103,7 +101,7 @@ bool roboticslab::TechnosoftIpos::getTorqueRangeRaw(int j, double *min, double *
         return false;
     }
 
-    *max = maxCurrent * std::abs(tr) * k;
+    *max = currentToTorque(maxCurrent);
     *min = -(*max);
 
     return true;
@@ -144,7 +142,6 @@ bool roboticslab::TechnosoftIpos::setMotorTorqueParamsRaw(int j, const yarp::dev
     if ( j != 0 ) return false;
 
     k = params.ktau;
-
     return true;
 }
 

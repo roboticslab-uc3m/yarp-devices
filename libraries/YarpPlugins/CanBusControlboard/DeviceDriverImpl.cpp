@@ -35,6 +35,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     yarp::os::Bottle refAccelerations = config.findGroup("refAccelerations", "ref accelerations (meters/second^2 or degrees/second^2)").tail();  //-- e.g. 0.575437
     yarp::os::Bottle refSpeeds = config.findGroup("refSpeeds", "ref speeds (meters/second or degrees/second)").tail();  //-- e.g. 737.2798
     yarp::os::Bottle encoderPulsess = config.findGroup("encoderPulsess", "encoder pulses (multiple nodes)").tail();  //-- e.g. 4096 (4 * 1024)
+    yarp::os::Bottle pulsesPerSamples = config.findGroup("pulsesPerSamples", "encoder pulses per sample (multiple nodes)").tail();  //-- e.g. 1000
 
     yarp::os::Bottle types = config.findGroup("types", "device name of each node").tail();  //-- e.g. 15
 
@@ -114,6 +115,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         options.put("refAcceleration", refAccelerations.get(i));
         options.put("refSpeed", refSpeeds.get(i));
         options.put("encoderPulses", encoderPulsess.get(i));
+        options.put("pulsesPerSample", pulsesPerSamples.get(i));
         options.put("linInterpPeriodMs", linInterpPeriodMs);
         options.put("linInterpBufferSize", linInterpBufferSize);
         options.put("linInterpMode", linInterpMode);

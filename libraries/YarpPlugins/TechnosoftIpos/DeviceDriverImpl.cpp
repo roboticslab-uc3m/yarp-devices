@@ -11,6 +11,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     this->maxVel = config.check("maxVel",yarp::os::Value(10),"maxVel (meters/second or degrees/second)").asFloat64();
     this->tr = config.check("tr",yarp::os::Value(0),"reduction").asFloat64();
     this->encoderPulses = config.check("encoderPulses",yarp::os::Value(0),"encoderPulses").asInt32();
+    this->pulsesPerSample = config.check("pulsesPerSample",yarp::os::Value(0),"pulsesPerSample").asInt32();
     this->k = config.check("k",yarp::os::Value(0),"motor constant").asFloat64();
 
     // -- other parameters...
@@ -69,8 +70,13 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
         CD_ERROR("Could not create TechnosoftIpos with encoderPulses 0\n");
         return false;
     }
+    if( 0 == this->pulsesPerSample )
+    {
+        CD_ERROR("Could not create TechnosoftIpos with pulsesPerSample 0\n");
+        return false;
+    }
 
-    sdoSemaphore = new SdoSemaphore(canSdoTimeoutMs * 0.001);
+    sdoClient = new SdoClient(canId, canSdoTimeoutMs * 0.001);
 
     if (!setRefSpeedRaw(0, refSpeed))
     {
@@ -90,8 +96,8 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
         return false;
     }
 
-    CD_SUCCESS("Created TechnosoftIpos with canId %d, tr %f, k %f, refAcceleration %f, refSpeed %f, encoderPulses %d and all local parameters set to 0.\n",
-               canId,tr,k,refAcceleration,refSpeed,encoderPulses);
+    CD_SUCCESS("Created TechnosoftIpos with canId %d, tr %f, k %f, refAcceleration %f, refSpeed %f, encoderPulses %d, pulsesPerSample %d and all local parameters set to 0.\n",
+               canId,tr,k,refAcceleration,refSpeed,encoderPulses,pulsesPerSample);
     return true;
 }
 
@@ -100,9 +106,9 @@ bool roboticslab::TechnosoftIpos::close()
 {
     CD_INFO("\n");
 
-    if (sdoSemaphore)
+    if (sdoClient)
     {
-        delete sdoSemaphore;
+        delete sdoClient;
     }
 
     if (linInterpBuffer)

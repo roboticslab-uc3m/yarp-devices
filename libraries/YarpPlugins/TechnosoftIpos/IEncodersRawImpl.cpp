@@ -2,6 +2,8 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <stdint.h>
+
 #include <cstring>
 
 // -------------------------- IEncodersRaw Related ----------------------------------
@@ -24,33 +26,15 @@ bool roboticslab::TechnosoftIpos::resetEncodersRaw()
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setEncoderRaw(int j, double val)    // encExposed = val;
+bool roboticslab::TechnosoftIpos::setEncoderRaw(int j, double val)
 {
     CD_INFO("(%d,%f)\n",j,val);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    //*************************************************************
-    uint8_t msg_setEncoder[]= {0x23,0x81,0x20,0x00,0x00,0x00,0x00,0x00}; // Manual 2081h: Set/Change the actual motor position
-
-    int sendEnc = val * this->tr * (encoderPulses / 360.0);  // Apply tr & convert units to encoder increments
-    memcpy(msg_setEncoder+4,&sendEnc,4);
-
-    if( ! send(0x600, 8, msg_setEncoder))
-    {
-        CD_ERROR("Sent \"set encoder\". %s\n", msgToStr(0x600, 8, msg_setEncoder).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"set encoder\". %s\n", msgToStr(0x600, 8, msg_setEncoder).c_str() );
-
-    if (!sdoSemaphore->await(msg_setEncoder))
-    {
-        CD_ERROR("Did not receive \"set encoder\" ack. %s\n", msgToStr(0x600, 8, msg_setEncoder).c_str());
-        return false;
-    }
-
-    return true;
+    int32_t data = applyInternalUnits(val);
+    return sdoClient->download("Set actual position", data, 0X2081);
 }
 
 // -----------------------------------------------------------------------------------
@@ -72,24 +56,14 @@ bool roboticslab::TechnosoftIpos::getEncoderRaw(int j, double *v)
 
     if( ! iEncodersTimedRawExternal )
     {
-        //*************************************************************
-        uint8_t msg_read[]= {0x40,0x64,0x60,0x00,0x00,0x00,0x00,0x00}; // Query position.
-        if( ! send( 0x600, 8, msg_read) )
+        int32_t data;
+
+        if (!sdoClient->upload("Position actual value", &data, 0x6064))
         {
-            CD_ERROR("Could not send \"read encoder\". %s\n", msgToStr(0x600, 8, msg_read).c_str() );
             return false;
         }
 
-        if (!sdoSemaphore->await(msg_read))
-        {
-            CD_ERROR("Did not receive \"read encoder\" response. %s\n", msgToStr(0x600, 8, msg_read).c_str());
-            return false;
-        }
-
-        int32_t got;
-        std::memcpy(&got, msg_read + 4, 4);
-        lastEncoderRead.update(got / ((encoderPulses / 360.0) * this->tr));
-
+        lastEncoderRead.update(parseInternalUnits(data));
         *v = lastEncoderRead.queryPosition();
     }
     else

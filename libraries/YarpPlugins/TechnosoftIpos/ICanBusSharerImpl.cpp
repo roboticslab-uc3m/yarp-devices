@@ -2,6 +2,10 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <bitset>
+
+#include "CanUtils.hpp"
+
 // -----------------------------------------------------------------------------
 
 namespace
@@ -62,6 +66,74 @@ namespace
 
         return true;
     }
+
+    void interpretSupportedDriveModes(uint32_t data)
+    {
+        std::bitset<32> bits(data);
+
+        if (bits.test(0))
+        {
+            CD_INFO("\t*profiled position (pp)\n");
+        }
+        if (bits.test(1))
+        {
+            CD_INFO("\t*velocity (vl)\n");
+        }
+        if (bits.test(2))
+        {
+            CD_INFO("\t*profiled velocity (pv)\n");
+        }
+        if (bits.test(3))
+        {
+            CD_INFO("\t*profiled torque (tq)\n");
+        }
+        if (bits.test(5))
+        {
+            CD_INFO("\t*homing (hm)\n");
+        }
+        if (bits.test(6))
+        {
+            CD_INFO("\t*interpolated position (ip)\n");
+        }
+        if (bits.test(7))
+        {
+            CD_INFO("\t*cyclic synchronous position\n");
+        }
+        if (bits.test(8))
+        {
+            CD_INFO("\t*cyclic synchronous velocity\n");
+        }
+        if (bits.test(9))
+        {
+            CD_INFO("\t*cyclic synchronous torque\n");
+        }
+        if (bits.test(16))
+        {
+            CD_INFO("\t*electronic camming position (manufacturer specific)\n");
+        }
+        if (bits.test(17))
+        {
+            CD_INFO("\t*electronic gearing position (manufacturer specific)\n");
+        }
+        if (bits.test(18))
+        {
+            CD_INFO("\t*external reference position (manufacturer specific)\n");
+        }
+        if (bits.test(19))
+        {
+            CD_INFO("\t*external reference speed (manufacturer specific)\n");
+        }
+        if (bits.test(20))
+        {
+            CD_INFO("\t*external reference torque (manufacturer specific)\n");
+        }
+    }
+
+    inline char getByte(uint32_t number, int n)
+    {
+        // https://stackoverflow.com/a/7787433
+        return (number >> (8 * n)) & 0xFF;
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -96,104 +168,54 @@ bool roboticslab::TechnosoftIpos::setIEncodersTimedRawExternal(IEncodersTimedRaw
 
 bool roboticslab::TechnosoftIpos::initialize()
 {
-    uint8_t msg_deviceType[] = {0x40,0x00,0x10,0x00};
+    uint32_t data;
 
-    if (!send(0x600, 4, msg_deviceType))
+    if (!sdoClient->upload("Device type", &data, 0x1000))
     {
-        CD_ERROR("Could not send \"Device Type\" query. %s\n", msgToStr(0x600, 4, msg_deviceType).c_str());
         return false;
     }
 
-    CD_SUCCESS("Sent \"Device Type\" query. %s\n", msgToStr(0x600, 4, msg_deviceType).c_str());
+    CD_INFO("CiA standard: %d.\n", data & 0xFFFF);
 
-    uint8_t msg_supportedDriveModes[] = {0x40,0x02,0x65,0x00};
-
-    if (!send(0x600, 4, msg_supportedDriveModes))
+    if (!sdoClient->upload("Supported drive modes", &data, 0x6502))
     {
-        CD_ERROR("Could not send \"Supported drive modes\" query. %s\n", msgToStr(0x600, 4, msg_supportedDriveModes).c_str());
         return false;
     }
 
-    CD_SUCCESS("Sent \"Supported drive modes\" query. %s\n", msgToStr(0x600, 4, msg_supportedDriveModes).c_str());
+    interpretSupportedDriveModes(data);
 
-    uint8_t msg_identityObject[] = {0x40,0x18,0x10,0x00,0x00,0x00,0x00,0x00};
+    sdoClient->upload("Identity Object: Vendor ID", &data, 0x1018, 0x01);
 
-    msg_identityObject[3] = 0x01;
-
-    if (!send(0x600, 4, msg_identityObject))
+    if (!sdoClient->upload("Identity Object: Product Code", &data, 0x1018, 0x02))
     {
-        CD_ERROR("Could not send \"Vendor ID\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
         return false;
     }
 
-    CD_SUCCESS("Sent \"Vendor ID\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
+    CD_INFO("Retrieved product code: P%03d.%03d.E%03d.\n", data / 1000000, (data / 1000) % 1000, data % 1000);
 
-    msg_identityObject[3] = 0x02;
-
-    if (!send(0x600, 4, msg_identityObject))
+    if (!retrieveDrivePeakCurrent(data, &drivePeakCurrent))
     {
-        CD_ERROR("Could not send \"Product Code\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
-        return false;
-    }
-
-    CD_SUCCESS("Sent \"Product Code\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
-
-    if (!sdoSemaphore->await(msg_identityObject))
-    {
-        CD_ERROR("Did not receive \"Product Code\" response. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
-        return false;
-    }
-
-    uint32_t productCode;
-    std::memcpy(&productCode, msg_identityObject + 4, 4);
-
-    CD_INFO("Retrieved product code: P%03d.%03d.E%03d.\n", productCode / 1000000, (productCode / 1000) % 1000, productCode % 1000);
-
-    if (!retrieveDrivePeakCurrent(productCode, &drivePeakCurrent))
-    {
-        CD_ERROR("Unhandled iPOS model %d, unable to retrieve drive peak current.\n", productCode);
+        CD_ERROR("Unhandled iPOS model %d, unable to retrieve drive peak current.\n", data);
         return false;
     }
 
     CD_SUCCESS("Retrieved drive peak current: %f A.\n", drivePeakCurrent);
 
-    msg_identityObject[3] = 0x03;
-
-    if (!send(0x600, 4, msg_identityObject))
+    if (!sdoClient->upload("Identity Object: Revision number", &data, 0x1018, 0x03))
     {
-        CD_ERROR("Could not send \"Revision number\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
         return false;
     }
 
-    CD_SUCCESS("Sent \"Revision number\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
+    CD_INFO("Revision number: %c%c%c%c.\n", getByte(data, 3), getByte(data, 2), getByte(data, 1), getByte(data, 0));
 
-    msg_identityObject[3] = 0x04;
-
-    if (!send(0x600, 4, msg_identityObject))
+    if (!sdoClient->upload("Identity Object: Serial number", &data, 0x1018, 0x04))
     {
-        CD_ERROR("Could not send \"Serial number\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
         return false;
     }
 
-    CD_SUCCESS("Sent \"Serial number\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
+    CD_INFO("Serial number: %c%c%02x%02x.\n", getByte(data, 3), getByte(data, 2), getByte(data, 1), getByte(data, 0));
 
-    uint8_t msg_quickStopOptionCode[] = {0x2B,0x5A,0x60,0x00,0x06,0x00,0x00,0x00};
-
-    if (!send(0x600, 8, msg_quickStopOptionCode))
-    {
-        CD_ERROR("Could not send \"Quick stop option code\". %s\n", msgToStr(0x600, 8, msg_quickStopOptionCode).c_str());
-        return false;
-    }
-
-    CD_SUCCESS("Sent \"Quick stop option code\". %s\n", msgToStr(0x600, 8, msg_quickStopOptionCode).c_str());
-
-    if (!sdoSemaphore->await(msg_quickStopOptionCode))
-    {
-        CD_ERROR("Did not receive \"Quick stop option code\" ack. %s\n", msgToStr(0x600, 8, msg_quickStopOptionCode).c_str());
-        return false;
-    }
-
-    return true;
+    return sdoClient->download<int16_t>("Quick stop option code", 6, 0x605A);
 }
 
 // -----------------------------------------------------------------------------
@@ -215,10 +237,10 @@ bool roboticslab::TechnosoftIpos::readyToSwitchOn()
     // -- send se diferencia de senRaw en que tiene un delay y adems incluye el ID (mirar funcin)
     if( ! this->send( 0x200, 2, msg_readyToSwitchOn) ) // -- 0x200 (valor critico que se pone sin saber que significa) 2 (tamano del mensaje)
     {
-        CD_ERROR("Could not send \"readyToSwitchOn/shutdown\". %s\n", msgToStr(0x200, 2, msg_readyToSwitchOn).c_str() );
+        CD_ERROR("Could not send \"readyToSwitchOn/shutdown\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_readyToSwitchOn).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"readyToSwitchOn/shutdown\". %s\n", msgToStr(0x200, 2, msg_readyToSwitchOn).c_str() );
+    CD_SUCCESS("Sent \"readyToSwitchOn/shutdown\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_readyToSwitchOn).c_str() );
 
     //-- Do not force expect response as only happens upon transition.
     //-- For example, if already on readyToSwitchOn, function would get stuck.
@@ -233,10 +255,10 @@ bool roboticslab::TechnosoftIpos::switchOn()
     uint8_t msg_switchOn[] = {0x07,0x00};  //-- switchOn, also acts as disableOperation
     if( ! this->send( 0x200, 2, msg_switchOn) )
     {
-        CD_ERROR("Could not send \"switchOn/disableOperation\". %s\n", msgToStr(0x200, 2, msg_switchOn).c_str() );
+        CD_ERROR("Could not send \"switchOn/disableOperation\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_switchOn).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"switchOn/disableOperation\". %s\n", msgToStr(0x200, 2, msg_switchOn).c_str() );
+    CD_SUCCESS("Sent \"switchOn/disableOperation\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_switchOn).c_str() );
 
     //while( (! this->getSwitchOn) ) {
     //    CD_INFO("Waiting for response to \"switchOn/disableOperation\" on id %d...\n", this->canId);
@@ -254,10 +276,10 @@ bool roboticslab::TechnosoftIpos::enable()
 
     if( ! this->send( 0x200, 2, msg_enable) )
     {
-        CD_ERROR("Could not send \"enable\". %s\n", msgToStr(0x200, 2, msg_enable).c_str() );
+        CD_ERROR("Could not send \"enable\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_enable).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"enable\". %s\n", msgToStr(0x200, 2, msg_enable).c_str() );
+    CD_SUCCESS("Sent \"enable\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_enable).c_str() );
     //*************************************************************
 
     //while( (! this->getEnable) ) {
@@ -309,10 +331,10 @@ bool roboticslab::TechnosoftIpos::resetCommunication()
     //msg_resetNode[1]=this->canId; // -- It writes canId in byte 1
     if( ! this->send(0x200, 2, msg_resetCommunication) ) // -- 0 (hace referencia al ID. Si est en 0 es como un broadcast) 2 (tamao del mensaje)
     {
-        CD_ERROR("Could not send \"reset communication\". %s\n", msgToStr(0, 2, msg_resetCommunication).c_str() );
+        CD_ERROR("Could not send \"reset communication\". %s\n", CanUtils::msgToStr(canId, 0, 2, msg_resetCommunication).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"reset communication\". %s\n", msgToStr(0, 2, msg_resetCommunication).c_str() );
+    CD_SUCCESS("Sent \"reset communication\". %s\n", CanUtils::msgToStr(canId, 0, 2, msg_resetCommunication).c_str() );
 
     //-- Do not force expect response as only happens upon transition.
     //-- For example, if already started, function would get stuck.
@@ -401,386 +423,92 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
     }
     else if( (message.getId()-canId) == 0x580 )  // -------------- SDO ----------------------
     {
-        const uint16_t index = message.getData()[1] + ((uint16_t)message.getData()[2] << 8);
-
-        switch (index)
-        {
-        case 0x6064:
-            //-- Commenting encoder value (response to petition) as way too verbose, happens all the time.
-            //CD_INFO("Got encoder value (response to petition). %s\n",msgToStr(message).c_str());
-            break;
-        case 0x207E:
-            //-- Commenting current value (response to petition) as way too verbose, happens all the time.
-            //CD_INFO("Got current value (response to petition). %s\n",msgToStr(message).c_str());
-            break;
-        case 0x607A:
-            CD_INFO("Got SDO ack \"position target\" from driver. %s\n",msgToStr(message).c_str());
-            break;
-        case 0x6060: // Manual 6060h should behave like 6061h, but ack always says mode 0.
-            CD_INFO("Got SDO ack \"modes of operation\" from driver. %s\n",msgToStr(message).c_str());
-            break;
-        case 0x6061:
-            CD_INFO("Got SDO \"modes of operation display\" from driver. %s\n",msgToStr(message).c_str());
-            break;
-        case 0x6041: // Manual 6041h: Status word; Table 5.4 Bit Assignment in Status Word (also see 5.5)
-        {
-            CD_INFO("Got \"status word\" from driver. %s\n",msgToStr(message).c_str());
-
-            if(message.getData()[4] & 1) //0000 0001 (bit 0)
-            {
-                CD_INFO("\t-Ready to switch on. canId: %d.\n",canId);
-            }
-            if(message.getData()[4] & 2) //0000 0010 (bit 1)
-            {
-                CD_INFO("\t-Switched on. canId: %d.\n",canId);
-            }
-            if(message.getData()[4] & 4) //0000 0100 (bit 2)
-            {
-                CD_INFO("\t-Operation Enabled. canId: %d.\n",canId);
-            }
-            if(message.getData()[4] & 8) //0000 1000 (bit 3)
-            {
-                CD_INFO("\t-Fault. If set, a fault condition is or was present in the drive. canId: %d.\n",canId);
-            }
-            if(message.getData()[4] & 16) //0001 0000 (bit 4)
-            {
-                CD_INFO("\t-Motor supply voltage is present. canId: %d.\n",canId);//true
-            }
-            else
-            {
-                CD_INFO("\t-Motor supply voltage is absent. canId: %d.\n",canId);//false
-            }
-            if(!(message.getData()[4] & 32)) //0010 0000 (bit 5), negated.
-            {
-                CD_INFO("\t-Performing a quick stop. canId: %d.\n",canId);
-            }
-            if(message.getData()[4] & 64) //0100 0000 (bit 6)
-            {
-                CD_INFO("\t-Switch on disabled. canId: %d.\n",canId);
-            }
-            if(message.getData()[4] & 128) //1000 0000 (bit 7)
-            {
-                CD_INFO("\t-Warning. A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored. canId: %d.\n",canId);
-            }
-            if(message.getData()[5] & 1) //(bit 8)
-            {
-                CD_INFO("\t-A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called. canId: %d.\n",canId);
-            }
-            if(message.getData()[5] & 2) //(bit 9)
-            {
-                CD_INFO("\t-Remote: drive parameters may be modified via CAN and the drive will execute the command message. canId: %d.\n",canId); // true
-            }
-            else
-            {
-                CD_INFO("\t-Remote: drive is in local mode and will not execute the command message (only TML internal)."); // false
-            }
-            if(message.getData()[5] & 4) //(bit 10)
-            {
-                CD_INFO("\t-Target reached. canId: %d.\n",canId);  // true
-            }
-            else
-            {
-                CD_INFO("\t-Target not reached. canId: %d.\n",canId);  // false (improvised, not in manual, but reasonable).
-            }
-            if(message.getData()[5] & 8) //(bit 11)
-            {
-                CD_INFO("\t-Internal Limit Active. canId: %d.\n",canId);
-            }
-            if(message.getData()[5] & 64) //(bit 14)
-            {
-                CD_INFO("\t-Last event set has ocurred. canId: %d.\n",canId); // true
-            }
-            else
-            {
-                CD_INFO("\t-No event set or the programmed event has not occurred yet. canId: %d.\n",canId); // false
-            }
-            if(message.getData()[5] & 128) //(bit 15)
-            {
-                CD_INFO("\t-Axis on. Power stage is enabled. Motor control is performed. canId: %d.\n",canId); // true
-            }
-            else
-            {
-                CD_INFO("\t-Axis off. Power stage is disabled. Motor control is not performed. canId: %d.\n",canId); // false
-            }
-
-            break;
-        }
-        case 0x2000:
-            CD_INFO("Got SDO ack \"Motion Error Register\" from driver. %s\n",msgToStr(message).c_str());
-            break;
-        case 0x1002: // Manual 1002h contains "6041h Status word" plus Table 5.6
-            CD_INFO("Got \"manufacturer status register\" from driver. %s\n",msgToStr(message).c_str());
-            break;
-        case 0x2002:
-            CD_INFO("Got SDO ack \"Detailed Error Register\" from driver. %s\n",msgToStr(message).c_str());
-            break;
-        case 0x6083:
-            if (message.getData()[0]==0x60)      // SDO segment upload/acknowledge
-            {
-                CD_INFO("Got SDO ack \"posmode_acc\" from driver. %s\n",msgToStr(message).c_str());
-            }
-            else
-            {
-                CD_INFO("Got SDO \"posmode_acc\" response from driver. %s\n",msgToStr(message).c_str());
-            }
-            break;
-        case 0x6081:
-            if (message.getData()[0]==0x60)      // SDO segment upload/acknowledge
-            {
-                CD_INFO("Got SDO ack \"posmode_speed\" from driver. %s\n",msgToStr(message).c_str());
-            }
-            else      // Query
-            {
-                CD_INFO("Got SDO \"posmode_speed\" response from driver. %s\n",msgToStr(message).c_str());
-            }
-            break;
-        case 0x607D:
-            if (message.getData()[3]==0x01)
-            {
-                CD_INFO("Got SDO ack \"msg_position_min\" from driver. %s\n",msgToStr(message).c_str());
-            }
-            else if (message.getData()[3]==0x02)
-            {
-                CD_INFO("Got SDO ack \"msg_position_max\" from driver. %s\n",msgToStr(message).c_str());
-            }
-            break;
-        case 0x2081:
-            CD_INFO("Got SDO ack \"set encoder\" from driver. %s\n",msgToStr(message).c_str());
-            break;
-        case 0x1602:
-            CD_INFO("Got SDO ack \"RPDO3 changes\" from driver. %s\n",msgToStr(message).c_str());
-            break;
-        case 0x60C0:
-            CD_INFO("Got SDO ack \"Interpolation sub mode select.\" from driver. %s\n",msgToStr(message).c_str());
-            break;
-        case 0x60C1:
-            CD_INFO("Got SDO ack \"Interpolation data record.\" from driver. %s\n",msgToStr(message).c_str());
-            break;
-        case 0x2072:
-            CD_INFO("Got SDO ack \"Interpolated position mode status.\" from driver. %s\n",msgToStr(message).c_str());
-            break;
-        case 0x2073:
-            CD_INFO("Got SDO ack \"Interpolated position buffer length.\" from driver. %s\n",msgToStr(message).c_str());
-            break;
-        case 0x2074:
-            CD_INFO("Got SDO ack \"Interpolated position buffer configuration.\" from driver. %s\n",msgToStr(message).c_str());
-            break;
-        case 0x207A:
-            CD_INFO("Got SDO ack \"Interpolated position 1 st order time.\" from driver. %s\n",msgToStr(message).c_str());
-            break;
-        case 0x2079:
-            CD_INFO("Got SDO ack \"Interpolated position initial position.\" from driver. %s\n",msgToStr(message).c_str());
-            break;
-        case 0x60FF:
-            if (message.getData()[0]==0x60)      // SDO segment upload/acknowledge
-            {
-                CD_INFO("Got SDO ack \"Target velocity.\" from driver. %s\n",msgToStr(message).c_str());
-            }
-            else
-            {
-                CD_INFO("Got SDO \"Target velocity\" response from driver. %s\n",msgToStr(message).c_str());
-            }
-            break;
-        case 0x605A:
-            CD_INFO("Got SDO ack \"Quick stop option code.\" from driver. %s\n",msgToStr(message).c_str());
-            break;
-        case 0x201C:
-            CD_INFO("Got SDO ack \"External On-Line Reference.\" from driver. %s\n",msgToStr(message).c_str());
-            break;
-        case 0x201D:
-            CD_INFO("Got SDO ack \"External Reference Type.\" from driver. %s\n",msgToStr(message).c_str());
-            break;
-        case 0x1000:
-        {
-            uint16_t ciaStandard;
-            memcpy(&ciaStandard, message.getData() + 4, 2);
-            CD_INFO("Got \"Device Type\" from driver. %s CiA standard %d.\n",msgToStr(message).c_str(), ciaStandard);
-            break;
-        }
-        case 0x6502:
-        {
-            CD_INFO("Got \"Supported drive modes\" from driver. %s\n",msgToStr(message).c_str());
-
-            if(message.getData()[4] & 1) // (bit 0)
-            {
-                CD_INFO("\t*profiled position (pp)\n");
-            }
-            if(message.getData()[4] & 2) // (bit 1)
-            {
-                CD_INFO("\t*velocity (vl)\n");
-            }
-            if(message.getData()[4] & 4) // (bit 2)
-            {
-                CD_INFO("\t*profiled velocity (pv)\n");
-            }
-            if(message.getData()[4] & 8) // (bit 3)
-            {
-                CD_INFO("\t*profiled torque (tq)\n");
-            }
-            if(message.getData()[4] & 32) // (bit 5)
-            {
-                CD_INFO("\t*homing (hm)\n");
-            }
-            if(message.getData()[4] & 64) // (bit 6)
-            {
-                CD_INFO("\t*interpolated position (ip)\n");
-            }
-            if(message.getData()[4] & 128) // (bit 7)
-            {
-                CD_INFO("\t*cyclic synchronous position\n");
-            }
-            if(message.getData()[5] & 1) // (bit 8)
-            {
-                CD_INFO("\t*cyclic synchronous velocity\n");
-            }
-            if(message.getData()[5] & 2) // (bit 9)
-            {
-                CD_INFO("\t*cyclic synchronous torque\n");
-            }
-            if(message.getData()[6] & 1) // (bit 16)
-            {
-                CD_INFO("\t*electronic camming position (manufacturer specific)\n");
-            }
-            if(message.getData()[6] & 2) // (bit 17)
-            {
-                CD_INFO("\t*electronic gearing position (manufacturer specific)\n");
-            }
-            if(message.getData()[6] & 4) // (bit 18)
-            {
-                CD_INFO("\t*external reference position (manufacturer specific)\n");
-            }
-            if(message.getData()[6] & 8) // (bit 19)
-            {
-                CD_INFO("\t*external reference speed (manufacturer specific)\n");
-            }
-            if(message.getData()[6] & 16) // (bit 20)
-            {
-                CD_INFO("\t*external reference torque (manufacturer specific)\n");
-            }
-
-            break;
-        }
-        case 0x1018:
-            switch (message.getData()[3])
-            {
-            case 0x01:
-                CD_INFO("Got \"Vendor ID\" from driver. %s\n",msgToStr(message).c_str());
-                break;
-            case 0x02:
-                CD_INFO("Got \"Product Code\" from driver. %s\n",msgToStr(message).c_str());
-                break;
-            case 0x03:
-                CD_INFO("Got \"Revision number\" from driver. %s %c%c%c%c.\n",msgToStr(message).c_str(),
-                        message.getData()[7], message.getData()[6], message.getData()[6], message.getData()[4]);
-                break;
-            case 0x04:
-                CD_INFO("Got \"Serial number\" from driver. %s %c%c%02x%02x.\n",msgToStr(message).c_str(),
-                        message.getData()[7], message.getData()[6], message.getData()[5], message.getData()[4]);
-                break;
-            }
-
-            break;
-        case 0x207F:
-            if (message.getData()[0]==0x60)      // SDO segment upload/acknowledge
-            {
-                CD_INFO("Got SDO ack \"Current limit\" from driver. %s\n",msgToStr(message).c_str());
-            }
-            else
-            {
-                CD_INFO("Got SDO \"Current limit.\" response from driver. %s\n",msgToStr(message).c_str());
-            }
-            break;
-        default:
-            CD_INFO("Got SDO ack from driver side: type not known. %s\n",msgToStr(message).c_str());
-            return false;
-        }
-
-        sdoSemaphore->notify(message.getData());
+        sdoClient->notify(message.getData());
         return true;
     }
     else if( (message.getId()-canId) == 0x180 )  // ---------------------- PDO1 ----------------------
     {
         if( (message.getData()[0]==0x37)&&(message.getData()[1]==0x92) )
         {
-            CD_INFO("Got PDO1 that it is observed as ack \"start position\" from driver. %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO1 that it is observed as ack \"start position\" from driver. %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x37)&&(message.getData()[1]==0x86) )
         {
-            CD_INFO("Got PDO1 that it is observed when driver arrives to position target. %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO1 that it is observed when driver arrives to position target. %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x40)&&(message.getData()[1]==0x02) )
         {
-            CD_INFO("Got PDO1 that it is observed as TRANSITION performed upon \"start\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO1 that it is observed as TRANSITION performed upon \"start\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x40)&&(message.getData()[1]==0x03) )
         {
-            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x21)&&(message.getData()[1]==0x02) )
         {
-            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x21)&&(message.getData()[1]==0x03) )
         {
-            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"switchOn\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"switchOn\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x33)&&(message.getData()[1]==0x83) )
         {
-            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"enable\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"enable\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
-        CD_INFO("Got PDO1 from driver side: unknown. %s\n",msgToStr(message).c_str());
+        CD_INFO("Got PDO1 from driver side: unknown. %s\n",CanUtils::msgToStr(message).c_str());
         return false;
     }
     else if( (message.getId()-canId) == 0x280 )  // PDO2
     {
         if( (message.getData()[0]==0x37)&&(message.getData()[1]==0x92) )
         {
-            CD_INFO("Got PDO2 that it is observed as ack \"start position\" from driver. %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO2 that it is observed as ack \"start position\" from driver. %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x37)&&(message.getData()[1]==0x86) )
         {
-            CD_INFO("Got PDO2 that it is observed when driver arrives to position target. %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO2 that it is observed when driver arrives to position target. %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x40)&&(message.getData()[1]==0x02) )
         {
-            CD_INFO("Got PDO2 that it is observed as TRANSITION performed upon \"start\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO2 that it is observed as TRANSITION performed upon \"start\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x40)&&(message.getData()[1]==0x03) )
         {
-            CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x21)&&(message.getData()[1]==0x02) )
         {
-            CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x21)&&(message.getData()[1]==0x03) )
         {
-            CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"switchOn\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"switchOn\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
         else if( (message.getData()[0]==0x83)&&(message.getData()[1]==0x83) )
         {
-            CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"enable\". %s\n",msgToStr(message).c_str());
+            CD_INFO("Got PDO2 that it is observed as part of TRANSITION performed upon \"enable\". %s\n",CanUtils::msgToStr(message).c_str());
             return true;
         }
-        CD_INFO("Got PDO2 from driver side: unknown. %s\n",msgToStr(message).c_str());
+        CD_INFO("Got PDO2 from driver side: unknown. %s\n",CanUtils::msgToStr(message).c_str());
         return false;
     }
     else if( (message.getId()-canId) == 0x80 )  // EMERGENCY (EMCY), Table 4.2 Emergency Error Codes (p57, 73/263)
     {
-        CD_ERROR("Got EMERGENCY from iPOS. %s ",msgToStr(message).c_str());
+        CD_ERROR("Got EMERGENCY from iPOS. %s ",CanUtils::msgToStr(message).c_str());
         if( (message.getData()[1]==0x00)&&(message.getData()[0]==0x00) )
         {
             CD_ERROR_NO_HEADER("Error Reset or No Error. canId: %d.\n",canId);
@@ -930,7 +658,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
         return false;
     }
 
-    CD_ERROR("Unknown message: %s\n", msgToStr(message).c_str());
+    CD_ERROR("Unknown message: %s\n", CanUtils::msgToStr(message).c_str());
 
     return false;
 
