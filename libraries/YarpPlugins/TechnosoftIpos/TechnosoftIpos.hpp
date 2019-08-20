@@ -267,11 +267,26 @@ protected:
      */
     bool send(uint32_t cob, uint16_t len, uint8_t * msgData);
 
-    int32_t applyInternalUnits(double value, int derivativeOrder = 0)
+    // return -1 for negative numbers, +1 for positive numbers, 0 for zero
+    // https://stackoverflow.com/a/4609795
+    template<typename T>
+    inline int sgn(T val)
+    { return (T(0) < val) - (val < T(0)); }
+
+    int32_t degreesToInternalUnits(double value, int derivativeOrder = 0)
     { return value * tr * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder); }
 
-    double parseInternalUnits(int32_t value, int derivativeOrder = 0)
+    double internalUnitsToDegrees(int32_t value, int derivativeOrder = 0)
     { return value / (tr * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder)); }
+
+    int16_t currentToInternalUnits(double value)
+    { return value * sgn(tr) * 65520.0 / (2.0 * drivePeakCurrent); }
+
+    double internalUnitsToCurrent(int16_t value)
+    { return value * sgn(tr) * 2.0 * drivePeakCurrent / 65520.0; }
+
+    double internalUnitsToPeakCurrent(int16_t value)
+    { return 2.0 * drivePeakCurrent * (32767.0 - value) / 65520.0; }
 
     double currentToTorque(double current)
     { return current * std::abs(tr) * k; }

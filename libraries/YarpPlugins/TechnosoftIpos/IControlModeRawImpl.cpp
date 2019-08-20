@@ -145,7 +145,7 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
 
     double ref;
     if (!getEncoderRaw(0, &ref)) return false;
-    int32_t data = applyInternalUnits(ref);
+    int32_t data = degreesToInternalUnits(ref);
 
     if (!sdoClient->download("Interpolated position initial position", data, 0x2079))
     {

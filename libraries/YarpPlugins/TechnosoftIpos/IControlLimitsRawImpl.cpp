@@ -36,7 +36,7 @@ bool roboticslab::TechnosoftIpos::setLimitRaw(double limit, bool isMin)
         subindex = 0x02;
     }
 
-    int32_t data = applyInternalUnits(limit);
+    int32_t data = degreesToInternalUnits(limit);
     return sdoClient->download(name, data, 0x607D, subindex);
 }
 
@@ -81,7 +81,7 @@ bool roboticslab::TechnosoftIpos::getLimitRaw(double * limit, bool isMin)
         return false;
     }
 
-    *limit = parseInternalUnits(data);
+    *limit = internalUnitsToDegrees(data);
     return true;
 }
 

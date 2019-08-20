@@ -4,17 +4,6 @@
 
 #include <cstring>
 
-namespace
-{
-    // return -1 for negative numbers, +1 for positive numbers, 0 for zero
-    // https://stackoverflow.com/a/4609795
-    template <typename T>
-    inline int sgn(T val)
-    {
-        return (T(0) < val) - (val < T(0));
-    }
-}
-
 // ------------------- ICurrentControlRaw Related ------------------------------------
 
 bool roboticslab::TechnosoftIpos::getNumberOfMotorsRaw(int *number)
@@ -39,7 +28,7 @@ bool roboticslab::TechnosoftIpos::getCurrentRaw(int m, double *curr)
         return false;
     }
 
-    *curr = data * sgn(tr) * 2.0 * drivePeakCurrent / 65520.0;
+    *curr = internalUnitsToCurrent(data);
     return true;
 }
 
@@ -67,7 +56,7 @@ bool roboticslab::TechnosoftIpos::getCurrentRangeRaw(int m, double *min, double 
         return false;
     }
 
-    *max = 2 * drivePeakCurrent * (32767 - data) / 65520;
+    *max = internalUnitsToPeakCurrent(data);
     *min = -(*max);
 
     return true;
@@ -98,8 +87,8 @@ bool roboticslab::TechnosoftIpos::setRefCurrentRaw(int m, double curr)
     //-- Check index within range
     if (m != 0) return false;
 
-    int32_t data = curr * sgn(tr) * 65520.0 / (2 * drivePeakCurrent);
-    return sdoClient->download<int32_t>("External online reference", data << 16, 0x201C);
+    int32_t data = currentToInternalUnits(curr) << 16;
+    return sdoClient->download("External online reference", data, 0x201C);
 }
 
 // -----------------------------------------------------------------------------
@@ -134,7 +123,7 @@ bool roboticslab::TechnosoftIpos::getRefCurrentRaw(int m, double *curr)
         return false;
     }
 
-    *curr = (data >> 16) * sgn(tr) * 2.0 * drivePeakCurrent / 65520.0;
+    *curr = internalUnitsToCurrent(data >> 16);
     return true;
 }
 
