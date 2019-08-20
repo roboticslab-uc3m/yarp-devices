@@ -184,6 +184,15 @@ bool roboticslab::TechnosoftIpos::initialize()
 
     interpretSupportedDriveModes(data);
 
+    std::string firmware;
+
+    if (!sdoClient->upload("Manufacturer software version", &firmware, 0x100A))
+    {
+        return false;
+    }
+
+    CD_INFO("Firmware version: %s.\n", firmware.c_str());
+
     sdoClient->upload("Identity Object: Vendor ID", &data, 0x1018, 0x01);
 
     if (!sdoClient->upload("Identity Object: Product Code", &data, 0x1018, 0x02))
