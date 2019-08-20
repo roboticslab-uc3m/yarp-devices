@@ -2,8 +2,6 @@
 
 #include "TechnosoftIpos.hpp"
 
-#include <cstring>
-
 // ------------------- ICurrentControlRaw Related ------------------------------------
 
 bool roboticslab::TechnosoftIpos::getNumberOfMotorsRaw(int *number)
@@ -17,19 +15,11 @@ bool roboticslab::TechnosoftIpos::getNumberOfMotorsRaw(int *number)
 bool roboticslab::TechnosoftIpos::getCurrentRaw(int m, double *curr)
 {
     CD_DEBUG("(%d)\n", m);
+    CHECK_JOINT(m);
 
-    //-- Check index within range
-    if (m != 0) return false;
-
-    int16_t data;
-
-    if (!sdoClient->upload("Current actual value", &data, 0x207E))
-    {
-        return false;
-    }
-
-    *curr = internalUnitsToCurrent(data);
-    return true;
+    return sdoClient->upload<int16_t>("Current actual value", [=](int16_t * data)
+            { *curr = internalUnitsToCurrent(*data); },
+            0x207E);
 }
 
 // -----------------------------------------------------------------------------
@@ -45,21 +35,12 @@ bool roboticslab::TechnosoftIpos::getCurrentsRaw(double *currs)
 bool roboticslab::TechnosoftIpos::getCurrentRangeRaw(int m, double *min, double *max)
 {
     CD_DEBUG("(%d)\n", m);
+    CHECK_JOINT(m);
 
-    //-- Check index within range
-    if (m != 0) return false;
-
-    uint16_t data;
-
-    if (!sdoClient->upload("Current limit", &data, 0x207F))
-    {
-        return false;
-    }
-
-    *max = internalUnitsToPeakCurrent(data);
-    *min = -(*max);
-
-    return true;
+    return sdoClient->upload<uint16_t>("Current limit", [=](uint16_t * data)
+            { *max = internalUnitsToPeakCurrent(*data);
+              *min = -(*max); },
+            0x207F);
 }
 
 // -----------------------------------------------------------------------------
@@ -83,10 +64,7 @@ bool roboticslab::TechnosoftIpos::setRefCurrentsRaw(const double *currs)
 bool roboticslab::TechnosoftIpos::setRefCurrentRaw(int m, double curr)
 {
     CD_DEBUG("(%d)\n", m);
-
-    //-- Check index within range
-    if (m != 0) return false;
-
+    CHECK_JOINT(m);
     int32_t data = currentToInternalUnits(curr) << 16;
     return sdoClient->download("External online reference", data, 0x201C);
 }
@@ -112,19 +90,11 @@ bool roboticslab::TechnosoftIpos::getRefCurrentsRaw(double *currs)
 bool roboticslab::TechnosoftIpos::getRefCurrentRaw(int m, double *curr)
 {
     CD_DEBUG("(%d)\n", m);
+    CHECK_JOINT(m);
 
-    //-- Check index within range
-    if (m != 0) return false;
-
-    int32_t data;
-
-    if (!sdoClient->upload("External online reference", &data, 0x201C))
-    {
-        return false;
-    }
-
-    *curr = internalUnitsToCurrent(data >> 16);
-    return true;
+    return sdoClient->upload<int32_t>("External online reference", [=](int32_t * data)
+            { *curr = internalUnitsToCurrent(*data >> 16); },
+            0x201C);
 }
 
 // -----------------------------------------------------------------------------

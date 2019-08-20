@@ -2,8 +2,6 @@
 
 #include "TechnosoftIpos.hpp"
 
-#include <cmath>
-
 // ############################# ITorqueControlRaw Related #############################
 
 bool roboticslab::TechnosoftIpos::getRefTorquesRaw(double *t)
@@ -17,9 +15,7 @@ bool roboticslab::TechnosoftIpos::getRefTorquesRaw(double *t)
 bool roboticslab::TechnosoftIpos::getRefTorqueRaw(int j, double *t)
 {
     CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
+    CHECK_JOINT(j);
 
     double curr;
 
@@ -46,6 +42,7 @@ bool roboticslab::TechnosoftIpos::setRefTorquesRaw(const double *t)
 bool roboticslab::TechnosoftIpos::setRefTorqueRaw(int j, double t)
 {
     CD_INFO("(%d, %f)\n", j, t);
+    CHECK_JOINT(j);
 
     double curr = torqueToCurrent(t);
 
@@ -63,6 +60,7 @@ bool roboticslab::TechnosoftIpos::setRefTorqueRaw(int j, double t)
 bool roboticslab::TechnosoftIpos::getTorqueRaw(int j, double *t)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
+    CHECK_JOINT(j);
 
     double curr;
 
@@ -89,9 +87,7 @@ bool roboticslab::TechnosoftIpos::getTorquesRaw(double *t)
 bool roboticslab::TechnosoftIpos::getTorqueRangeRaw(int j, double *min, double *max)
 {
     CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
+    CHECK_JOINT(j);
 
     double minCurrent, maxCurrent;
 
@@ -120,9 +116,7 @@ bool roboticslab::TechnosoftIpos::getTorqueRangesRaw(double *min, double *max)
 bool roboticslab::TechnosoftIpos::getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParameters *params)
 {
     CD_INFO("(%d)\n", j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
+    CHECK_JOINT(j);
 
     params->bemf = 0.0;
     params->bemf_scale = 0.0;
@@ -137,10 +131,7 @@ bool roboticslab::TechnosoftIpos::getMotorTorqueParamsRaw(int j, yarp::dev::Moto
 bool roboticslab::TechnosoftIpos::setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorqueParameters params)
 {
     CD_INFO("(%d)\n", j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
+    CHECK_JOINT(j);
     k = params.ktau;
     return true;
 }

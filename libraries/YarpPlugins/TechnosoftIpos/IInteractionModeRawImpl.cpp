@@ -6,10 +6,10 @@
 
 // ------------------ IInteractionModeRaw Related ----------------------------------------
 
-
 bool roboticslab::TechnosoftIpos::getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode)
 {
-    CD_INFO("(%d)\n",axis);
+    CD_INFO("(%d)\n", axis);
+    CHECK_JOINT(axis);
     return true;
 }
 
@@ -28,6 +28,7 @@ bool roboticslab::TechnosoftIpos::getInteractionModesRaw(yarp::dev::InteractionM
 bool roboticslab::TechnosoftIpos::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
 {
     CD_INFO("(%d), (%s)\n", axis, yarp::os::Vocab::decode(mode).c_str());
+    CHECK_JOINT(axis);
     return true;
 }
 

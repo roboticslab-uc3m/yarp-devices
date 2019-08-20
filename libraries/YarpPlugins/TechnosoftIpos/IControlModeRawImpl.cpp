@@ -2,8 +2,6 @@
 
 #include "TechnosoftIpos.hpp"
 
-#include <cstring>
-
 #include <bitset>
 
 #include <yarp/os/Vocab.h>
@@ -14,11 +12,8 @@
 
 bool roboticslab::TechnosoftIpos::setPositionModeRaw(int j)
 {
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
+    CD_INFO("(%d)\n", j);
+    CHECK_JOINT(j);
     return sdoClient->download<uint8_t>("Modes of Operation", 1, 0x6060);
 }
 
@@ -26,11 +21,8 @@ bool roboticslab::TechnosoftIpos::setPositionModeRaw(int j)
 
 bool roboticslab::TechnosoftIpos::setVelocityModeRaw(int j)
 {
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
+    CD_INFO("(%d)\n", j);
+    CHECK_JOINT(j);
     return sdoClient->download<uint8_t>("Modes of Operation", 3, 0x6060);
 }
 
@@ -38,10 +30,8 @@ bool roboticslab::TechnosoftIpos::setVelocityModeRaw(int j)
 
 bool roboticslab::TechnosoftIpos::setTorqueModeRaw(int j)
 {
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
+    CD_INFO("(%d)\n", j);
+    CHECK_JOINT(j);
 
     bool ok = true;
     ok = ok && sdoClient->download<uint16_t>("External Reference Type", 1, 0x201D);
@@ -53,19 +43,19 @@ bool roboticslab::TechnosoftIpos::setTorqueModeRaw(int j)
     }
 
     //-- Control word (manual 215 of 263).
-    uint8_t msg_torque_word[] = {0x1F,0x00};
+    uint8_t msg_torque_word[] = {0x1F, 0x00};
 
-    if( ! send( 0x200, 2, msg_torque_word) )
+    if (!send(0x200, 2, msg_torque_word))
     {
-        CD_ERROR("Could not send msg_torque_word. %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_torque_word).c_str() );
+        CD_ERROR("Could not send msg_torque_word. %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_torque_word).c_str());
         return false;
     }
-    CD_SUCCESS("Sent \"torque_word\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_torque_word).c_str() );
+
+    CD_SUCCESS("Sent \"torque_word\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_torque_word).c_str());
 
     return true;
 }
 
-/*************************************************************************/
 // -----------------------------------------------------------------------------
 
 bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
@@ -169,15 +159,12 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     return true;
 }
 
-/*************************************************************************/
 // -----------------------------------------------------------------------------
 
 bool roboticslab::TechnosoftIpos::getControlModeRaw(int j, int *mode)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
+    CHECK_JOINT(j);
 
     bool ok = true;
     ok &= getControlModeRaw1(mode);
@@ -244,7 +231,6 @@ bool roboticslab::TechnosoftIpos::getControlModeRaw1(int *mode)
     }
 
     *mode = temp;
-
     return true;
 }
 
@@ -547,7 +533,6 @@ bool roboticslab::TechnosoftIpos::getControlModeRaw4()
     return true;
 }
 
-/********************************************************************/
 // -----------------------------------------------------------------------------
 
 bool roboticslab::TechnosoftIpos::getControlModesRaw(int *modes)
@@ -556,15 +541,11 @@ bool roboticslab::TechnosoftIpos::getControlModesRaw(int *modes)
     return false;
 }
 
-// ############################## IControlMode2Raw Related ##############################
+// -----------------------------------------------------------------------------
 
 bool roboticslab::TechnosoftIpos::getControlModesRaw(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("\n");
-
-    //-- Check array size
-    if ( n_joint != 1 ) return false;
-
     return getControlModeRaw(0, &modes[0]);
 }
 
@@ -573,9 +554,7 @@ bool roboticslab::TechnosoftIpos::getControlModesRaw(const int n_joint, const in
 bool roboticslab::TechnosoftIpos::setControlModeRaw(const int j, const int mode)
 {
     CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
-
-    //-- Check index within range
-    if (j != 0) return false;
+    CHECK_JOINT(j);
 
     switch (mode)
     {
@@ -600,11 +579,7 @@ bool roboticslab::TechnosoftIpos::setControlModeRaw(const int j, const int mode)
 
 bool roboticslab::TechnosoftIpos::setControlModesRaw(const int n_joint, const int *joints, int *modes)
 {
-    CD_DEBUG("(%d)\n",n_joint);
-
-    //-- Check array size
-    if ( n_joint != 1 ) return false;
-
+    CD_DEBUG("(%d)\n", n_joint);
     return setControlModeRaw(0, modes[0]);
 }
 

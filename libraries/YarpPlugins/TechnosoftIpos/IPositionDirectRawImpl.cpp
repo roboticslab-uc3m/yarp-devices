@@ -6,11 +6,8 @@
 
 bool roboticslab::TechnosoftIpos::setPositionRaw(int j, double ref)
 {
-    CD_DEBUG("(%d,%f)\n", j, ref);
-
-    //-- Check index within range
-    if (j != 0) return false;
-
+    CD_DEBUG("(%d, %f)\n", j, ref);
+    CHECK_JOINT(j);
     linInterpBuffer->updateTarget(ref);
     return true;
 }
@@ -35,11 +32,8 @@ bool roboticslab::TechnosoftIpos::setPositionsRaw(const double *refs)
 
 bool roboticslab::TechnosoftIpos::getRefPositionRaw(const int joint, double *ref)
 {
-    CD_DEBUG("(&d)\n", joint);
-
-    //-- Check index within range
-    if (joint != 0) return false;
-
+    CD_DEBUG("(%d)\n", joint);
+    CHECK_JOINT(joint);
     *ref = linInterpBuffer->getLastTarget();
     return true;
 }

@@ -14,12 +14,10 @@ bool roboticslab::TechnosoftIpos::getEncodersTimedRaw(double *encs, double *time
 
 bool roboticslab::TechnosoftIpos::getEncoderTimedRaw(int j, double *enc, double *time)
 {
-    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
+    //CD_INFO("(%d)\n", j);  //-- Too verbose in controlboardwrapper2 stream.
+    CHECK_JOINT(j);
 
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    if( ! iEncodersTimedRawExternal )
+    if (!iEncodersTimedRawExternal)
     {
         if (!getEncoderRaw(j, enc))
         {

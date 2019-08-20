@@ -2,21 +2,16 @@
 
 #include "TechnosoftIpos.hpp"
 
-#include <cmath>
-#include <cstring>
-
 #include "CanUtils.hpp"
 
 // ######################## IVelocityControlRaw Related #############################
 
 bool roboticslab::TechnosoftIpos::velocityMoveRaw(int j, double sp)
 {
-    CD_DEBUG("(%d),(%f)\n",j,sp);
+    CD_DEBUG("(%d, %f)\n", j, sp);
+    CHECK_JOINT(j);
 
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    if ( sp > maxVel )
+    if (sp > maxVel)
     {
         CD_WARNING("Requested speed exceeds maximum velocity (%f).\n", maxVel);
         return false;
@@ -40,7 +35,7 @@ bool roboticslab::TechnosoftIpos::velocityMoveRaw(const double *sp)
     return false;
 }
 
-// ######################## IVelocityControlRaw2 Related ########################
+// ----------------------------------------------------------------------------------
 
 bool roboticslab::TechnosoftIpos::velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
 {
@@ -53,23 +48,16 @@ bool roboticslab::TechnosoftIpos::velocityMoveRaw(const int n_joint, const int *
 bool roboticslab::TechnosoftIpos::getRefVelocityRaw(const int joint, double *vel)
 {
     CD_DEBUG("(%d)\n",joint);
+    CHECK_JOINT(joint);
 
-    //-- Check index within range
-    if ( joint != 0 ) return false;
-
-    int32_t data;
-
-    if (!sdoClient->upload("Target velocity", &data, 0x60FF))
-    {
-        return false;
-    }
-
-    int16_t dataInt = data >> 16;
-    uint16_t dataFrac = data & 0xFFFF;
-    double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
-
-    *vel = internalUnitsToDegrees(value, 1);
-    return true;
+    return sdoClient->upload<int32_t>("Target velocity", [=](int32_t * data)
+            {
+                int16_t dataInt = *data >> 16;
+                uint16_t dataFrac = *data & 0xFFFF;
+                double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
+                *vel = internalUnitsToDegrees(value, 1);
+            },
+            0x60FF);
 }
 
 // ------------------------------------------------------------------------------

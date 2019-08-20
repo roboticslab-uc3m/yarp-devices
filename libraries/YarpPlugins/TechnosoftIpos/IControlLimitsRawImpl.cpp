@@ -6,16 +6,9 @@
 
 bool roboticslab::TechnosoftIpos::setLimitsRaw(int axis, double min, double max)
 {
-    CD_INFO("(%d,%f,%f)\n",axis,min,max);
-
-    //-- Check index within range
-    if ( axis != 0 ) return false;
-
-    bool ok = true;
-    ok &= setLimitRaw(min, true);
-    ok &= setLimitRaw(max, false);
-
-    return ok;
+    CD_INFO("(%d, %f, %f)\n", axis, min, max);
+    CHECK_JOINT(axis);
+    return setLimitRaw(min, true) & setLimitRaw(max, false);
 }
 
 // -----------------------------------------------------------------------------
@@ -44,16 +37,9 @@ bool roboticslab::TechnosoftIpos::setLimitRaw(double limit, bool isMin)
 
 bool roboticslab::TechnosoftIpos::getLimitsRaw(int axis, double *min, double *max)
 {
-    CD_INFO("(%d)\n",axis);
-
-    //-- Check index within range
-    if( axis != 0 ) return false;
-
-    bool ok = true;
-    ok &= getLimitRaw(min, true);
-    ok &= getLimitRaw(max, false);
-
-    return true;
+    CD_INFO("(%d)\n", axis);
+    CHECK_JOINT(axis);
+    return getLimitRaw(min, true) & getLimitRaw(max, false);
 }
 
 // -----------------------------------------------------------------------------
@@ -74,28 +60,19 @@ bool roboticslab::TechnosoftIpos::getLimitRaw(double * limit, bool isMin)
         subindex = 0x02;
     }
 
-    int32_t data;
-
-    if (!sdoClient->upload(name, &data, 0x607D, subindex))
-    {
-        return false;
-    }
-
-    *limit = internalUnitsToDegrees(data);
-    return true;
+    return sdoClient->upload<int32_t>(name, [=](int32_t * data)
+            { *limit = internalUnitsToDegrees(*data); },
+            0x607D, subindex);
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
 {
-    CD_INFO("(%d,%f,%f)\n",axis,min,max);
+    CD_INFO("(%d, %f, %f)\n", axis, min, max);
+    CHECK_JOINT(axis);
 
-    //-- Check index within range
-    if ( axis != 0 ) return false;
-
-    //-- Update the limits that have been locally stored.
-    this->maxVel = max;
+    maxVel = max;
 
     if (min != -max)
     {
@@ -109,14 +86,11 @@ bool roboticslab::TechnosoftIpos::setVelLimitsRaw(int axis, double min, double m
 
 bool roboticslab::TechnosoftIpos::getVelLimitsRaw(int axis, double *min, double *max)
 {
-    CD_INFO("(%d)\n",axis);
+    CD_INFO("(%d)\n", axis);
+    CHECK_JOINT(axis);
 
-    //-- Check index within range
-    if( axis != 0 ) return false;
-
-    //-- Get the limits that have been locally stored.
-    *min = -this->maxVel;
-    *max = this->maxVel;
+    *min = -maxVel;
+    *max = maxVel;
 
     return true;
 }
