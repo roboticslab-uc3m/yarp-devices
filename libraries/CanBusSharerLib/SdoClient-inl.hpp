@@ -5,8 +5,11 @@
 
 #include "SdoClient.hpp"
 
+namespace roboticslab // gcc <7 bug
+{
+
 template<>
-inline bool roboticslab::SdoClient::upload(const std::string & name, std::string * s, uint16_t index, uint8_t subindex)
+inline bool SdoClient::upload(const std::string & name, std::string * s, uint16_t index, uint8_t subindex)
 {
     const uint32_t maxLen = 100; // arbitrary high value
     char buf[maxLen] = {0};
@@ -21,7 +24,7 @@ inline bool roboticslab::SdoClient::upload(const std::string & name, std::string
 }
 
 template<>
-inline bool roboticslab::SdoClient::download(const std::string & name, const std::string & s, uint16_t index, uint8_t subindex)
+inline bool SdoClient::download(const std::string & name, const std::string & s, uint16_t index, uint8_t subindex)
 {
     char * buf = new char[s.size()];
     s.copy(buf, s.size());
@@ -29,5 +32,7 @@ inline bool roboticslab::SdoClient::download(const std::string & name, const std
     delete[] buf;
     return res;
 }
+
+} // namespace roboticslab
 
 #endif // __SDO_CLIENT_INL_HPP__
