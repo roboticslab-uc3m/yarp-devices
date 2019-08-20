@@ -24,6 +24,20 @@ inline bool SdoClient::upload(const std::string & name, std::string * s, uint16_
 }
 
 template<>
+inline bool SdoClient::upload(const std::string & name, std::function<void(std::string * s)> fn, uint16_t index, uint8_t subindex)
+{
+    std::string s;
+
+    if (!upload(name, &s, index, subindex))
+    {
+        return false;
+    }
+
+    fn(&s);
+    return true;
+}
+
+template<>
 inline bool SdoClient::download(const std::string & name, const std::string & s, uint16_t index, uint8_t subindex)
 {
     char * buf = new char[s.size()];

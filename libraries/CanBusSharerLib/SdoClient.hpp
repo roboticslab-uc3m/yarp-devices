@@ -5,6 +5,7 @@
 
 #include <stdint.h>
 
+#include <functional>
 #include <string>
 #include <type_traits>
 
@@ -34,6 +35,13 @@ public:
     {
         static_assert(std::is_integral<T>::value, "Integral required.");
         return uploadInternal(name, data, sizeof(T), index, subindex);
+    }
+
+    template<typename T>
+    bool upload(const std::string & name, std::function<void(T * data)> fn, uint16_t index, uint8_t subindex = 0x00)
+    {
+        T data; bool res;
+        return res = upload(name, &data, index, subindex), fn(&data), res;
     }
 
     template<typename T>
