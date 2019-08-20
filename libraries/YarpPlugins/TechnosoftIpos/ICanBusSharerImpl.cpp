@@ -423,7 +423,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
     }
     else if( (message.getId()-canId) == 0x580 )  // -------------- SDO ----------------------
     {
-        sdoClient->notify(message.getData(), message.getLen());
+        sdoClient->notify(message.getData());
         return true;
     }
     else if( (message.getId()-canId) == 0x180 )  // ---------------------- PDO1 ----------------------

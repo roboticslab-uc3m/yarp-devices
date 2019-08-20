@@ -39,14 +39,14 @@ SdoSemaphore::key_t SdoSemaphore::makeIndexPair(const uint8_t * raw)
     }
 }
 
-bool SdoSemaphore::await(sdo_data & data, size_t * len)
+bool SdoSemaphore::await(uint8_t * raw)
 {
     if (!active)
     {
         return false;
     }
 
-    const key_t & key = makeIndexPair(data);
+    const key_t & key = makeIndexPair(raw);
     value_t value;
 
     {
@@ -56,7 +56,7 @@ bool SdoSemaphore::await(sdo_data & data, size_t * len)
         if (it == registry.end())
         {
             value.sem = new yarp::os::Semaphore(0);
-            value.raw = data.storage;
+            value.raw = raw;
             it = registry.insert(std::make_pair(key, value)).first;
         }
         else
@@ -70,11 +70,6 @@ bool SdoSemaphore::await(sdo_data & data, size_t * len)
     {
         std::lock_guard<std::mutex> lock(registryMutex);
 
-        if (!timedOut)
-        {
-            *len = value.len;
-        }
-
         if (!value.sem->check()) // nobody is using this semaphore right now
         {
             delete value.sem;
@@ -85,7 +80,7 @@ bool SdoSemaphore::await(sdo_data & data, size_t * len)
     return !timedOut;
 }
 
-void SdoSemaphore::notify(const uint8_t * raw, size_t len)
+void SdoSemaphore::notify(const uint8_t * raw)
 {
     if (!active)
     {
@@ -98,8 +93,7 @@ void SdoSemaphore::notify(const uint8_t * raw, size_t len)
 
     if (it != registry.end())
     {
-        std::memcpy(it->second.raw, raw, len);
-        it->second.len = len;
+        std::memcpy(it->second.raw, raw, 8);
         it->second.sem->post();
     }
 }

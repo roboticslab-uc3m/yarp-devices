@@ -16,7 +16,7 @@ inline bool roboticslab::SdoClient::upload(const std::string & name, std::string
         return false;
     }
 
-    * data = std::string(buf);
+    *data = std::string(buf);
     return true;
 }
 

@@ -90,61 +90,92 @@ namespace
     }
 }
 
-bool SdoClient::send(const uint8_t * msg, int len)
+bool SdoClient::send(const uint8_t * msg)
 {
-    return sender->prepareMessage(message_builder(COB_D + id, len, msg));
+    return sender->prepareMessage(message_builder(COB_D + id, 8, msg));
+}
+
+std::string SdoClient::msgToStr(uint16_t cob, const uint8_t * msgData)
+{
+    return CanUtils::msgToStr(id, cob, 8, msgData);
 }
 
 bool SdoClient::uploadInternal(const std::string & name, void * data, size_t size, uint16_t index, uint8_t subindex)
 {
-    uint8_t uploadMsg[4];
+    uint8_t requestMsg[8] = {0};
 
-    uploadMsg[0] = 0x40; // client command specifier
-    std::memcpy(uploadMsg + 1, &index, 2);
-    uploadMsg[3] = subindex;
+    requestMsg[0] = 0x40; // client command specifier
+    std::memcpy(requestMsg + 1, &index, 2);
+    requestMsg[3] = subindex;
 
-    SdoSemaphore::sdo_data sdoResponse;
+    uint8_t responseMsg[8];
 
-    if (!performTransfer(name, uploadMsg, sizeof(uploadMsg), sdoResponse, size))
+    if (!performTransfer(name, requestMsg, responseMsg))
     {
         return false;
     }
 
-    if (std::bitset<8>(sdoResponse[0]).test(1)) // expedited
+    std::bitset<8> bitsReceived(responseMsg[0]);
+
+    if (bitsReceived.test(1)) // expedited trasfer
     {
-        std::memcpy(data, sdoResponse.storage + 4, size);
+        if (bitsReceived.test(0)) // data size is indicated in 'n'
+        {
+            const size_t n = ((bitsReceived << 4) >> 6).to_ulong();
+            const size_t actualSize = 4 - n;
+
+            if (size != actualSize)
+            {
+                CD_ERROR("SDO response size mismatch: expected %zu, got %zu.\n", size, actualSize);
+                return false;
+            }
+        }
+
+        std::memcpy(data, responseMsg + 4, size);
     }
     else
     {
         uint32_t len;
-        std::memcpy(&len, sdoResponse.storage + 4, sizeof(len));
-        uint32_t sent = 0;
+        std::memcpy(&len, responseMsg + 4, sizeof(len));
+
+        if (size < len)
+        {
+            CD_ERROR("Unsufficient memory allocated for segmented SDO transfer: expected %zu, got %zu.\n", len, size);
+            return false;
+        }
 
         CD_INFO("SDO segmented transfer begin: id %d.\n", id);
 
         std::bitset<8> bitsSent(0x60);
-        std::bitset<8> bitsReceived;
-        uint8_t segmentedMsg[1];
+        uint8_t segmentedMsg[8] = {0};
+        size_t sent = 0;
 
         do
         {
-            const uint32_t expectedSize = std::min(len - sent, static_cast<uint32_t>(7));
             segmentedMsg[0] = bitsSent.to_ulong();
 
-            if (!performTransfer(name, segmentedMsg, 1, sdoResponse, expectedSize))
+            if (!performTransfer(name, segmentedMsg, responseMsg))
             {
                 return false;
             }
 
-            bitsReceived = std::bitset<8>(sdoResponse[0]);
+            bitsReceived = std::bitset<8>(responseMsg[0]);
+
+            if (!bitsReceived.test(4) != bitsSent.test(4))
+            {
+                CD_ERROR("SDO segmented transfer: toggle bit mismatch.\n");
+                return false;
+            }
+
             const size_t n = ((bitsReceived << 4) >> 5).to_ulong();
+            const size_t actualSize = 7 - n;
 
-            std::memcpy(static_cast<uint8_t *>(data) + sent, sdoResponse.storage + 1, 7 - n);
+            std::memcpy(static_cast<uint8_t *>(data) + sent, responseMsg + 1, actualSize);
 
-            sent += 7;
+            sent += actualSize;
             bitsSent.flip(4);
         }
-        while (!bitsReceived.test(0));
+        while (!bitsReceived.test(0)); // continuation bit
 
         CD_INFO("SDO segmented transfer finish: id %d.\n", id);
     }
@@ -154,56 +185,46 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, size_t siz
 
 bool SdoClient::downloadInternal(const std::string & name, const void * data, size_t size, uint16_t index, uint8_t subindex)
 {
-    const size_t msgSize = size + 4;
-    uint8_t downloadMsg[msgSize];
+    uint8_t indicationMsg[8] = {0};
 
-    downloadMsg[0] = 0x23 + ((4 - size) << 2); // client command specifier
-    std::memcpy(downloadMsg + 1, &index, 2);
-    downloadMsg[3] = subindex;
-    std::memcpy(downloadMsg + 4, &data, size);
+    indicationMsg[0] = 0x23 + ((4 - size) << 2); // client command specifier
+    std::memcpy(indicationMsg + 1, &index, 2);
+    indicationMsg[3] = subindex;
+    std::memcpy(indicationMsg + 4, &data, size);
 
-    SdoSemaphore::sdo_data sdoResponse;
-    return performTransfer(name, downloadMsg, msgSize, sdoResponse);
+    uint8_t confirmMsg[8];
+    return performTransfer(name, indicationMsg, confirmMsg);
 }
 
-bool SdoClient::performTransfer(const std::string & name, const uint8_t * req, size_t reqSize,
-        SdoSemaphore::sdo_data & resp, size_t respSize)
+bool SdoClient::performTransfer(const std::string & name, const uint8_t * req, uint8_t * resp)
 {
-    const std::string & reqStr = CanUtils::msgToStr(id, COB_D, reqSize, req);
+    const std::string & reqStr = msgToStr(COB_D, req);
 
-    if (!send(req, reqSize))
+    if (!send(req))
     {
-        CD_ERROR("Unable to send \"%s\" request. %s\n", name.c_str(), reqStr.c_str());
+        CD_ERROR("SDO client request/indication (\"%s\"). %s\n", name.c_str(), reqStr.c_str());
         return false;
     }
 
-    CD_INFO("Sent \"%s\" request. %s\n", name.c_str(), reqStr.c_str());
+    CD_INFO("SDO client request/indication (\"%s\"). %s\n", name.c_str(), reqStr.c_str());
 
-    size_t len;
-    bool success = sdoSemaphore->await(resp, &len);
-    const std::string & respStr = CanUtils::msgToStr(id, COB_U, len, resp);
+    bool success = sdoSemaphore->await(resp);
+    const std::string & respStr = msgToStr(COB_U, resp);
 
     if (!success)
     {
-        CD_ERROR("Did not receive \"%s\" ack. %s\n", name.c_str(), respStr.c_str());
+        CD_ERROR("SDO client response/confirm (\"%s\"). %s\n", name.c_str(), respStr.c_str());
         return false;
     }
 
     if (resp[0] == 0x80) // SDO abort transfer (ccs)
     {
         uint32_t code;
-        std::memcpy(&code, resp.storage + 4, sizeof(code));
-        CD_ERROR("SDO transfer abort: %s. %s\n", parseAbortCode(code).c_str(), respStr.c_str());
+        std::memcpy(&code, resp + 4, sizeof(code));
+        CD_ERROR("SDO transfer abort (\"%s\"): %s. %s\n", name.c_str(), parseAbortCode(code).c_str(), respStr.c_str());
         return false;
     }
 
-    if (respSize != 0 && respSize != len - 4)
-    {
-        CD_ERROR("Expected response size %d, got %d.\n", respSize, len - 4);
-        return false;
-    }
-
-    CD_SUCCESS("Received \"%s\" ack. %s\n", name.c_str(), respStr.c_str());
-
+    CD_SUCCESS("SDO client response/confirm (\"%s\"). %s\n", name.c_str(), respStr.c_str());
     return true;
 }
