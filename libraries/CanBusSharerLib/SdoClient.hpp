@@ -47,8 +47,8 @@ private:
     bool send(const uint8_t * msg);
     std::string msgToStr(uint16_t cob, const uint8_t * msgData);
 
-    bool uploadInternal(const std::string & name, void * data, size_t size, uint16_t index, uint8_t subindex);
-    bool downloadInternal(const std::string & name, const void * data, size_t size, uint16_t index, uint8_t subindex);
+    bool uploadInternal(const std::string & name, void * data, uint32_t size, uint16_t index, uint8_t subindex);
+    bool downloadInternal(const std::string & name, const void * data, uint32_t size, uint16_t index, uint8_t subindex);
     bool performTransfer(const std::string & name, const uint8_t * req, uint8_t * resp);
 
     unsigned int id;

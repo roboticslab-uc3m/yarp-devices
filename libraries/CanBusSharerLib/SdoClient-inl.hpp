@@ -6,9 +6,9 @@
 #include "SdoClient.hpp"
 
 template<>
-inline bool roboticslab::SdoClient::upload(const std::string & name, std::string * data, uint16_t index, uint8_t subindex)
+inline bool roboticslab::SdoClient::upload(const std::string & name, std::string * s, uint16_t index, uint8_t subindex)
 {
-    const size_t maxLen = 100; // arbitrary high value
+    const uint32_t maxLen = 100; // arbitrary high value
     char buf[maxLen] = {0};
 
     if (!uploadInternal(name, buf, maxLen, index, subindex))
@@ -16,8 +16,18 @@ inline bool roboticslab::SdoClient::upload(const std::string & name, std::string
         return false;
     }
 
-    *data = std::string(buf);
+    *s = std::string(buf);
     return true;
+}
+
+template<>
+inline bool roboticslab::SdoClient::download(const std::string & name, const std::string & s, uint16_t index, uint8_t subindex)
+{
+    char * buf = new char[s.size()];
+    s.copy(buf, s.size());
+    bool res = downloadInternal(name, buf, s.size(), index, subindex);
+    delete[] buf;
+    return res;
 }
 
 #endif // __SDO_CLIENT_INL_HPP__

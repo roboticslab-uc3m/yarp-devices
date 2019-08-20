@@ -2,7 +2,6 @@
 
 #include "SdoClient.hpp"
 
-#include <cmath>
 #include <cstring>
 
 #include <bitset>
@@ -100,7 +99,7 @@ std::string SdoClient::msgToStr(uint16_t cob, const uint8_t * msgData)
     return CanUtils::msgToStr(id, cob, 8, msgData);
 }
 
-bool SdoClient::uploadInternal(const std::string & name, void * data, size_t size, uint16_t index, uint8_t subindex)
+bool SdoClient::uploadInternal(const std::string & name, void * data, uint32_t size, uint16_t index, uint8_t subindex)
 {
     uint8_t requestMsg[8] = {0};
 
@@ -121,8 +120,8 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, size_t siz
     {
         if (bitsReceived.test(0)) // data size is indicated in 'n'
         {
-            const size_t n = ((bitsReceived << 4) >> 6).to_ulong();
-            const size_t actualSize = 4 - n;
+            const uint8_t n = ((bitsReceived << 4) >> 6).to_ulong();
+            const uint8_t actualSize = 4 - n;
 
             if (size != actualSize)
             {
@@ -140,15 +139,15 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, size_t siz
 
         if (size < len)
         {
-            CD_ERROR("Unsufficient memory allocated for segmented SDO transfer: expected %zu, got %zu.\n", len, size);
+            CD_ERROR("Unsufficient memory allocated for segmented SDO upload: expected %zu, got %zu.\n", len, size);
             return false;
         }
 
-        CD_INFO("SDO segmented transfer begin: id %d.\n", id);
+        CD_INFO("SDO segmented upload begin: id %d.\n", id);
 
         std::bitset<8> bitsSent(0x60);
         uint8_t segmentedMsg[8] = {0};
-        size_t sent = 0;
+        uint32_t sent = 0;
 
         do
         {
@@ -163,12 +162,12 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, size_t siz
 
             if (!bitsReceived.test(4) != bitsSent.test(4))
             {
-                CD_ERROR("SDO segmented transfer: toggle bit mismatch.\n");
+                CD_ERROR("SDO segmented upload: toggle bit mismatch.\n");
                 return false;
             }
 
-            const size_t n = ((bitsReceived << 4) >> 5).to_ulong();
-            const size_t actualSize = 7 - n;
+            const uint8_t n = ((bitsReceived << 4) >> 5).to_ulong();
+            const uint8_t actualSize = 7 - n;
 
             std::memcpy(static_cast<uint8_t *>(data) + sent, responseMsg + 1, actualSize);
 
@@ -177,23 +176,87 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, size_t siz
         }
         while (!bitsReceived.test(0)); // continuation bit
 
-        CD_INFO("SDO segmented transfer finish: id %d.\n", id);
+        CD_INFO("SDO segmented upload finish: id %d.\n", id);
     }
 
     return true;
 }
 
-bool SdoClient::downloadInternal(const std::string & name, const void * data, size_t size, uint16_t index, uint8_t subindex)
+bool SdoClient::downloadInternal(const std::string & name, const void * data, uint32_t size, uint16_t index, uint8_t subindex)
 {
     uint8_t indicationMsg[8] = {0};
-
-    indicationMsg[0] = 0x23 + ((4 - size) << 2); // client command specifier
     std::memcpy(indicationMsg + 1, &index, 2);
     indicationMsg[3] = subindex;
-    std::memcpy(indicationMsg + 4, &data, size);
 
-    uint8_t confirmMsg[8];
-    return performTransfer(name, indicationMsg, confirmMsg);
+    std::bitset<8> indicationBits(0x21);
+
+    if (size <= 4) // expedited transfer
+    {
+        indicationBits.set(1); // e: transfer type
+        const uint8_t n = 4 - size;
+        indicationMsg[0] = indicationBits.to_ulong() + (n << 2);
+        std::memcpy(indicationMsg + 4, &data, size);
+
+        uint8_t confirmMsg[8];
+        return performTransfer(name, indicationMsg, confirmMsg);
+    }
+    else
+    {
+        indicationMsg[0] = indicationBits.to_ulong();
+        std::memcpy(indicationMsg + 4, &size, sizeof(size));
+
+        uint8_t confirmMsg[8];
+
+        if (!performTransfer(name, indicationMsg, confirmMsg))
+        {
+            return false;
+        }
+
+        std::bitset<8> bitsSent(0x00);
+        uint32_t sent = 0;
+
+        CD_INFO("SDO segmented download begin: id %d.\n", id);
+
+        do
+        {
+            uint32_t actualSize;
+
+            if (size - sent <= 7) // last message
+            {
+                actualSize = size - sent;
+                bitsSent.set(0);
+            }
+            else
+            {
+                actualSize = 7;
+            }
+
+            const uint8_t n = 7 - actualSize;
+            uint8_t segmentedMsg[8] = {0};
+            segmentedMsg[0] = bitsSent.to_ulong() + (n << 1);
+
+            std::memcpy(segmentedMsg + 1, static_cast<const uint8_t *>(data) + sent, actualSize);
+
+            if (!performTransfer(name, segmentedMsg, confirmMsg))
+            {
+                return false;
+            }
+
+            if (!std::bitset<8>(confirmMsg[0]).test(4) != bitsSent.test(4))
+            {
+                CD_ERROR("SDO segmented download: toggle bit mismatch.\n");
+                return false;
+            }
+
+            sent += actualSize;
+            bitsSent.flip(4);
+        }
+        while (!bitsSent.test(0)); // continuation bit
+
+        CD_INFO("SDO segmented download finish: id %d.\n", id);
+    }
+
+    return true;
 }
 
 bool SdoClient::performTransfer(const std::string & name, const uint8_t * req, uint8_t * resp)
