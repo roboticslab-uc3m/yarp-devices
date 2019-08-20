@@ -6,6 +6,7 @@
 #include <stdint.h>
 
 #include <string>
+#include <type_traits>
 
 #include "CanSenderDelegate.hpp"
 #include "SdoSemaphore.hpp"
@@ -30,11 +31,17 @@ public:
 
     template<typename T>
     bool upload(const std::string & name, T * data, uint16_t index, uint8_t subindex = 0x00)
-    { return uploadInternal(name, data, sizeof(T), index, subindex); }
+    {
+        static_assert(std::is_integral<T>::value, "Integral required.");
+        return uploadInternal(name, data, sizeof(T), index, subindex);
+    }
 
     template<typename T>
     bool download(const std::string & name, T data, uint16_t index, uint8_t subindex = 0x00)
-    { return downloadInternal(name, &data, sizeof(T), index, subindex); }
+    {
+        static_assert(std::is_integral<T>::value, "Integral required.");
+        return downloadInternal(name, &data, sizeof(T), index, subindex);
+    }
 
 private:
     bool send(const uint8_t * msg);
