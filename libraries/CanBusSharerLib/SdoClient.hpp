@@ -30,17 +30,17 @@ public:
 
     template<typename T>
     bool upload(const std::string & name, T * data, uint16_t index, uint8_t subindex = 0x00)
-    { return expeditedUpload(name, data, sizeof(T), index, subindex); }
+    { return uploadInternal(name, data, sizeof(T), index, subindex); }
 
     template<typename T>
     bool download(const std::string & name, T data, uint16_t index, uint8_t subindex = 0x00)
-    { return expeditedDownload(name, &data, sizeof(T), index, subindex); }
+    { return downloadInternal(name, &data, sizeof(T), index, subindex); }
 
 private:
     bool send(const uint8_t * msg, int len);
-    bool expeditedUpload(const std::string & name, void * data, size_t size, uint16_t index, uint8_t subindex);
-    bool expeditedDownload(const std::string & name, const void * data, size_t size, uint16_t index, uint8_t subindex);
-    bool performTransfer(const std::string & name, const uint8_t * req, size_t reqSize, void * resp = 0, size_t respSize = 0);
+    bool uploadInternal(const std::string & name, void * data, size_t size, uint16_t index, uint8_t subindex);
+    bool downloadInternal(const std::string & name, const void * data, size_t size, uint16_t index, uint8_t subindex);
+    bool performTransfer(const std::string & name, const uint8_t * req, size_t reqSize, SdoSemaphore::sdo_data & resp, size_t respSize = 0);
 
     unsigned int id;
     CanSenderDelegate * sender;
@@ -51,5 +51,8 @@ private:
 };
 
 } // namespace roboticslab
+
+// template specializations
+#include "SdoClient-inl.hpp"
 
 #endif // __SDO_CLIENT_HPP__

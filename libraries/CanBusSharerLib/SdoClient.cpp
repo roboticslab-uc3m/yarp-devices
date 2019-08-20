@@ -2,8 +2,10 @@
 
 #include "SdoClient.hpp"
 
+#include <cmath>
 #include <cstring>
 
+#include <bitset>
 #include <string>
 
 #include <ColorDebug.h>
@@ -93,7 +95,7 @@ bool SdoClient::send(const uint8_t * msg, int len)
     return sender->prepareMessage(message_builder(COB_D + id, len, msg));
 }
 
-bool SdoClient::expeditedUpload(const std::string & name, void * data, size_t size, uint16_t index, uint8_t subindex)
+bool SdoClient::uploadInternal(const std::string & name, void * data, size_t size, uint16_t index, uint8_t subindex)
 {
     uint8_t uploadMsg[4];
 
@@ -101,10 +103,56 @@ bool SdoClient::expeditedUpload(const std::string & name, void * data, size_t si
     std::memcpy(uploadMsg + 1, &index, 2);
     uploadMsg[3] = subindex;
 
-    return performTransfer(name, uploadMsg, sizeof(uploadMsg), data, size);
+    SdoSemaphore::sdo_data sdoResponse;
+
+    if (!performTransfer(name, uploadMsg, sizeof(uploadMsg), sdoResponse, size))
+    {
+        return false;
+    }
+
+    if (std::bitset<8>(sdoResponse[0]).test(1)) // expedited
+    {
+        std::memcpy(data, sdoResponse.storage + 4, size);
+    }
+    else
+    {
+        uint32_t len;
+        std::memcpy(&len, sdoResponse.storage + 4, sizeof(len));
+        uint32_t sent = 0;
+
+        CD_INFO("SDO segmented transfer begin: id %d.\n", id);
+
+        std::bitset<8> bitsSent(0x60);
+        std::bitset<8> bitsReceived;
+        uint8_t segmentedMsg[1];
+
+        do
+        {
+            const uint32_t expectedSize = std::min(len - sent, static_cast<uint32_t>(7));
+            segmentedMsg[0] = bitsSent.to_ulong();
+
+            if (!performTransfer(name, segmentedMsg, 1, sdoResponse, expectedSize))
+            {
+                return false;
+            }
+
+            bitsReceived = std::bitset<8>(sdoResponse[0]);
+            const size_t n = ((bitsReceived << 4) >> 5).to_ulong();
+
+            std::memcpy(static_cast<uint8_t *>(data) + sent, sdoResponse.storage + 1, 7 - n);
+
+            sent += 7;
+            bitsSent.flip(4);
+        }
+        while (!bitsReceived.test(0));
+
+        CD_INFO("SDO segmented transfer finish: id %d.\n", id);
+    }
+
+    return true;
 }
 
-bool SdoClient::expeditedDownload(const std::string & name, const void * data, size_t size, uint16_t index, uint8_t subindex)
+bool SdoClient::downloadInternal(const std::string & name, const void * data, size_t size, uint16_t index, uint8_t subindex)
 {
     const size_t msgSize = size + 4;
     uint8_t downloadMsg[msgSize];
@@ -114,10 +162,12 @@ bool SdoClient::expeditedDownload(const std::string & name, const void * data, s
     downloadMsg[3] = subindex;
     std::memcpy(downloadMsg + 4, &data, size);
 
-    return performTransfer(name, downloadMsg, msgSize);
+    SdoSemaphore::sdo_data sdoResponse;
+    return performTransfer(name, downloadMsg, msgSize, sdoResponse);
 }
 
-bool SdoClient::performTransfer(const std::string & name, const uint8_t * req, size_t reqSize, void * resp, size_t respSize)
+bool SdoClient::performTransfer(const std::string & name, const uint8_t * req, size_t reqSize,
+        SdoSemaphore::sdo_data & resp, size_t respSize)
 {
     const std::string & reqStr = CanUtils::msgToStr(id, COB_D, reqSize, req);
 
@@ -129,10 +179,9 @@ bool SdoClient::performTransfer(const std::string & name, const uint8_t * req, s
 
     CD_INFO("Sent \"%s\" request. %s\n", name.c_str(), reqStr.c_str());
 
-    SdoSemaphore::sdo_data sdoResponse;
     size_t len;
-    bool success = sdoSemaphore->await(sdoResponse, &len);
-    const std::string & respStr = CanUtils::msgToStr(id, COB_U, len, sdoResponse);
+    bool success = sdoSemaphore->await(resp, &len);
+    const std::string & respStr = CanUtils::msgToStr(id, COB_U, len, resp);
 
     if (!success)
     {
@@ -140,23 +189,18 @@ bool SdoClient::performTransfer(const std::string & name, const uint8_t * req, s
         return false;
     }
 
-    if (sdoResponse[0] == 0x80) // SDO abort transfer (ccs)
+    if (resp[0] == 0x80) // SDO abort transfer (ccs)
     {
         uint32_t code;
-        std::memcpy(&code, sdoResponse.storage + 4, sizeof(code));
+        std::memcpy(&code, resp.storage + 4, sizeof(code));
         CD_ERROR("SDO transfer abort: %s. %s\n", parseAbortCode(code).c_str(), respStr.c_str());
         return false;
     }
 
-    if (resp != 0)
+    if (respSize != 0 && respSize != len - 4)
     {
-        if (respSize != len - 4)
-        {
-            CD_ERROR("Expected response size %d, got %d.\n", respSize, len - 4);
-            return false;
-        }
-
-        std::memcpy(resp, sdoResponse.storage + 4, respSize);
+        CD_ERROR("Expected response size %d, got %d.\n", respSize, len - 4);
+        return false;
     }
 
     CD_SUCCESS("Received \"%s\" ack. %s\n", name.c_str(), respStr.c_str());
