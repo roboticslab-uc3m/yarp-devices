@@ -7,11 +7,11 @@
 
 using namespace roboticslab::CanUtils;
 
-std::string msgToStr(uint32_t id, uint32_t cob, unsigned char len, const uint8_t * msgData)
+std::string msgToStr(uint8_t id, uint16_t cob, size_t len, const uint8_t * msgData)
 {
     std::stringstream tmp;
 
-    for (int i = 0; i < len - 1; i++)
+    for (size_t i = 0; i < len - 1; i++)
     {
         tmp << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(msgData[i]) << " ";
     }

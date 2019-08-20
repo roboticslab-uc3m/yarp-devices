@@ -14,7 +14,7 @@ namespace roboticslab
 namespace CanUtils
 {
 
-std::string msgToStr(uint32_t id, uint32_t cob, unsigned char len, const uint8_t * msgData);
+std::string msgToStr(uint8_t id, uint16_t cob, size_t len, const uint8_t * msgData);
 
 inline std::string msgToStr(const yarp::dev::CanMessage & message)
 { return msgToStr(message.getId() & 0x7F, message.getId() & 0xFF80, message.getLen(), message.getData()); }
