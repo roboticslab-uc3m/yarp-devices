@@ -170,14 +170,14 @@ bool roboticslab::TechnosoftIpos::initialize()
 {
     uint32_t data;
 
-    if (!sdoClient->upload("Device type", &data, 0x1000))
+    if (!can->sdo()->upload("Device type", &data, 0x1000))
     {
         return false;
     }
 
     CD_INFO("CiA standard: %d.\n", data & 0xFFFF);
 
-    if (!sdoClient->upload("Supported drive modes", &data, 0x6502))
+    if (!can->sdo()->upload("Supported drive modes", &data, 0x6502))
     {
         return false;
     }
@@ -186,16 +186,16 @@ bool roboticslab::TechnosoftIpos::initialize()
 
     std::string firmware;
 
-    if (!sdoClient->upload("Manufacturer software version", &firmware, 0x100A))
+    if (!can->sdo()->upload("Manufacturer software version", &firmware, 0x100A))
     {
         return false;
     }
 
     CD_INFO("Firmware version: %s.\n", firmware.c_str());
 
-    sdoClient->upload("Identity Object: Vendor ID", &data, 0x1018, 0x01);
+    can->sdo()->upload("Identity Object: Vendor ID", &data, 0x1018, 0x01);
 
-    if (!sdoClient->upload("Identity Object: Product Code", &data, 0x1018, 0x02))
+    if (!can->sdo()->upload("Identity Object: Product Code", &data, 0x1018, 0x02))
     {
         return false;
     }
@@ -210,21 +210,21 @@ bool roboticslab::TechnosoftIpos::initialize()
 
     CD_SUCCESS("Retrieved drive peak current: %f A.\n", drivePeakCurrent);
 
-    if (!sdoClient->upload("Identity Object: Revision number", &data, 0x1018, 0x03))
+    if (!can->sdo()->upload("Identity Object: Revision number", &data, 0x1018, 0x03))
     {
         return false;
     }
 
     CD_INFO("Revision number: %c%c%c%c.\n", getByte(data, 3), getByte(data, 2), getByte(data, 1), getByte(data, 0));
 
-    if (!sdoClient->upload("Identity Object: Serial number", &data, 0x1018, 0x04))
+    if (!can->sdo()->upload("Identity Object: Serial number", &data, 0x1018, 0x04))
     {
         return false;
     }
 
     CD_INFO("Serial number: %c%c%02x%02x.\n", getByte(data, 3), getByte(data, 2), getByte(data, 1), getByte(data, 0));
 
-    return sdoClient->download<int16_t>("Quick stop option code", 6, 0x605A);
+    return can->sdo()->download<int16_t>("Quick stop option code", 6, 0x605A);
 }
 
 // -----------------------------------------------------------------------------
@@ -432,7 +432,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
     }
     else if( (message.getId()-canId) == 0x580 )  // -------------- SDO ----------------------
     {
-        sdoClient->notify(message.getData());
+        can->sdo()->notify(message.getData());
         return true;
     }
     else if( (message.getId()-canId) == 0x180 )  // ---------------------- PDO1 ----------------------

@@ -14,7 +14,7 @@ bool roboticslab::TechnosoftIpos::setPositionModeRaw(int j)
 {
     CD_INFO("(%d)\n", j);
     CHECK_JOINT(j);
-    return sdoClient->download<uint8_t>("Modes of Operation", 1, 0x6060);
+    return can->sdo()->download<uint8_t>("Modes of Operation", 1, 0x6060);
 }
 
 // -----------------------------------------------------------------------------
@@ -23,7 +23,7 @@ bool roboticslab::TechnosoftIpos::setVelocityModeRaw(int j)
 {
     CD_INFO("(%d)\n", j);
     CHECK_JOINT(j);
-    return sdoClient->download<uint8_t>("Modes of Operation", 3, 0x6060);
+    return can->sdo()->download<uint8_t>("Modes of Operation", 3, 0x6060);
 }
 
 // -----------------------------------------------------------------------------
@@ -34,8 +34,8 @@ bool roboticslab::TechnosoftIpos::setTorqueModeRaw(int j)
     CHECK_JOINT(j);
 
     bool ok = true;
-    ok = ok && sdoClient->download<uint16_t>("External Reference Type", 1, 0x201D);
-    ok = ok && sdoClient->download<uint8_t>("Modes of Operation", -5, 0x6060);
+    ok = ok && can->sdo()->download<uint16_t>("External Reference Type", 1, 0x201D);
+    ok = ok && can->sdo()->download<uint8_t>("Modes of Operation", -5, 0x6060);
 
     if (!ok)
     {
@@ -70,7 +70,7 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     //*************************************************************
     //-- 5. Disable the RPDO3. Write zero in object 1602 h sub-index 0, this will disable the PDO.
     //-- Send the following message (SDO access to object 1602 h sub-index 0, 8-bit value 0):
-    if (!sdoClient->download<uint8_t>("RPDO3 Mapping Parameter", 0, 0x1602))
+    if (!can->sdo()->download<uint8_t>("RPDO3 Mapping Parameter", 0, 0x1602))
     {
         return false;
     }
@@ -79,7 +79,7 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     //-- a) Write in object 1602 h sub-index 1 the description of the interpolated data record
     //-- sub-index 1:
     //-- Send the following message (SDO access to object 1602 h sub-index 1, 32-bit value 60C10120 h ):
-    if (!sdoClient->download<uint32_t>("RPDO3 Mapping Parameter: 1st mapped object", 0x60C10120, 0x1602, 0x01))
+    if (!can->sdo()->download<uint32_t>("RPDO3 Mapping Parameter: 1st mapped object", 0x60C10120, 0x1602, 0x01))
     {
         return false;
     }
@@ -87,34 +87,34 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     //-- b) Write in object 1602 h sub-index 2 the description of the interpolated data record
     //-- sub-index 2:
     //-- Send the following message (SDO access to object 1602 h sub-index 2, 32-bit value 60C10220 h ):
-    if (!sdoClient->download<uint32_t>("RPDO3 Mapping Parameter: 2nd mapped object", 0x60C10220, 0x1602, 0x02))
+    if (!can->sdo()->download<uint32_t>("RPDO3 Mapping Parameter: 2nd mapped object", 0x60C10220, 0x1602, 0x02))
     {
         return false;
     }
     //*************************************************************
     //-- 7. Enable the RPDO3. Set the object 1602 h sub-index 0 with the value 2.
     //-- Send the following message (SDO access to object 1601 h sub-index 0, 8-bit value 2):
-    if (!sdoClient->download<uint8_t>("RPDO3 Mapping Parameter", 2, 0x1602))
+    if (!can->sdo()->download<uint8_t>("RPDO3 Mapping Parameter", 2, 0x1602))
     {
         return false;
     }
     //*************************************************************
     //-- 8. Mode of operation. Select interpolation position mode.
     //-- Send the following message (SDO access to object 6060 h , 8-bit value 7 h ):
-    if (!sdoClient->download<uint8_t>("Modes of Operation", 7, 0x6060))
+    if (!can->sdo()->download<uint8_t>("Modes of Operation", 7, 0x6060))
     {
         return false;
     }
     //*************************************************************
     //-- 9. Interpolation sub mode select. Select PVT interpolation position mode.
     //-- Send the following message (SDO access to object 60C0 h , 16-bit value FFFF h ):
-    if (!sdoClient->download<int16_t>("Interpolation sub mode select", linInterpBuffer->getSubMode(), 0x60C0))
+    if (!can->sdo()->download<int16_t>("Interpolation sub mode select", linInterpBuffer->getSubMode(), 0x60C0))
     {
         return false;
     }
     //*************************************************************
     //-- 10. Interpolated position buffer length. (...)
-    if (!sdoClient->download<uint16_t>("Interpolated position buffer length", linInterpBuffer->getBufferSize(), 0x2073))
+    if (!can->sdo()->download<uint16_t>("Interpolated position buffer length", linInterpBuffer->getBufferSize(), 0x2073))
     {
         return false;
     }
@@ -122,7 +122,7 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     //-- 11. Interpolated position buffer configuration. By setting the value A001 h , the buffer is
     //-- cleared and the integrity counter will be set to 1. Send the following message (SDO
     //-- access to object 2074 h , 16-bit value C h ):
-    if (!sdoClient->download<uint16_t>("Interpolated position buffer configuration", 0xA000, 0x2074))
+    if (!can->sdo()->download<uint16_t>("Interpolated position buffer configuration", 0xA000, 0x2074))
     {
         return false;
     }
@@ -137,7 +137,7 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     if (!getEncoderRaw(0, &ref)) return false;
     int32_t data = degreesToInternalUnits(ref);
 
-    if (!sdoClient->download("Interpolated position initial position", data, 0x2079))
+    if (!can->sdo()->download("Interpolated position initial position", data, 0x2079))
     {
         return false;
     }
@@ -180,7 +180,7 @@ bool roboticslab::TechnosoftIpos::getControlModeRaw1(int *mode)
 {
     int8_t data;
 
-    if (!sdoClient->upload("Modes of Operation Display", &data, 0x6061))
+    if (!can->sdo()->upload("Modes of Operation Display", &data, 0x6061))
     {
         return false;
     }
@@ -239,7 +239,7 @@ bool roboticslab::TechnosoftIpos::getControlModeRaw2()
 {
     uint32_t data;
 
-    if (!sdoClient->upload("Manufacturer status register", &data, 0x1002))
+    if (!can->sdo()->upload("Manufacturer status register", &data, 0x1002))
     {
         return false;
     }
@@ -391,7 +391,7 @@ bool roboticslab::TechnosoftIpos::getControlModeRaw3()
 {
     uint16_t data;
 
-    if (!sdoClient->upload("Motion Error Register", &data, 0x2000))
+    if (!can->sdo()->upload("Motion Error Register", &data, 0x2000))
     {
         return false;
     }
@@ -470,7 +470,7 @@ bool roboticslab::TechnosoftIpos::getControlModeRaw4()
 {
     uint16_t data;
 
-    if (!sdoClient->upload("Detailed Error Register", &data, 0x2002))
+    if (!can->sdo()->upload("Detailed Error Register", &data, 0x2002))
     {
         return false;
     }

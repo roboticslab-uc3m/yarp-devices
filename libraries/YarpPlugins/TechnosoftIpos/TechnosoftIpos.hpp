@@ -16,7 +16,7 @@
 #include <ColorDebug.h>
 
 #include "ICanBusSharer.hpp"
-#include "SdoClient.hpp"
+#include "CanOpen.hpp"
 #include "ITechnosoftIpos.h"
 #include "LinearInterpolationBuffer.hpp"
 
@@ -78,7 +78,7 @@ public:
     TechnosoftIpos()
         : canId(0),
           sender(0),
-          sdoClient(0),
+          can(0),
           iEncodersTimedRawExternal(0),
           lastEncoderRead(0.0),
           modeCurrentTorque(0),
@@ -298,7 +298,7 @@ protected:
 
     int canId;
     CanSenderDelegate * sender;
-    SdoClient * sdoClient;
+    CanOpen * can;
 
     //-- Encoder stuff
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRawExternal;

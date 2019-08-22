@@ -3,6 +3,8 @@ option(ENABLE_CanBusSharerLib "Enable/disable CanBusSharerLib library" ON)
 if(ENABLE_CanBusSharerLib)
 
     add_library(CanBusSharerLib SHARED ICanBusSharer.hpp
+                                       CanOpen.hpp
+                                       CanOpen.cpp
                                        CanSenderDelegate.hpp
                                        SdoClient.hpp
                                        SdoClient-inl.hpp

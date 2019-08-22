@@ -89,17 +89,17 @@ namespace
     }
 }
 
-bool SdoClient::send(const uint8_t * msg)
+bool ConcreteSdoClient::send(const uint8_t * msg)
 {
     return sender->prepareMessage(message_builder(COB_D + id, 8, msg));
 }
 
-std::string SdoClient::msgToStr(uint16_t cob, const uint8_t * msgData)
+std::string ConcreteSdoClient::msgToStr(uint16_t cob, const uint8_t * msgData)
 {
     return CanUtils::msgToStr(id, cob, 8, msgData);
 }
 
-bool SdoClient::uploadInternal(const std::string & name, void * data, uint32_t size, uint16_t index, uint8_t subindex)
+bool ConcreteSdoClient::uploadInternal(const std::string & name, void * data, uint32_t size, uint16_t index, uint8_t subindex)
 {
     uint8_t requestMsg[8] = {0};
 
@@ -182,7 +182,7 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, uint32_t s
     return true;
 }
 
-bool SdoClient::downloadInternal(const std::string & name, const void * data, uint32_t size, uint16_t index, uint8_t subindex)
+bool ConcreteSdoClient::downloadInternal(const std::string & name, const void * data, uint32_t size, uint16_t index, uint8_t subindex)
 {
     uint8_t indicationMsg[8] = {0};
     std::memcpy(indicationMsg + 1, &index, 2);
@@ -259,7 +259,7 @@ bool SdoClient::downloadInternal(const std::string & name, const void * data, ui
     return true;
 }
 
-bool SdoClient::performTransfer(const std::string & name, const uint8_t * req, uint8_t * resp)
+bool ConcreteSdoClient::performTransfer(const std::string & name, const uint8_t * req, uint8_t * resp)
 {
     const std::string & reqStr = msgToStr(COB_D, req);
 
@@ -271,7 +271,7 @@ bool SdoClient::performTransfer(const std::string & name, const uint8_t * req, u
 
     CD_INFO("SDO client request/indication (\"%s\"). %s\n", name.c_str(), reqStr.c_str());
 
-    bool success = sdoSemaphore->await(resp);
+    bool success = sdoSemaphore.await(resp);
     const std::string & respStr = msgToStr(COB_U, resp);
 
     if (!success)
@@ -290,4 +290,16 @@ bool SdoClient::performTransfer(const std::string & name, const uint8_t * req, u
 
     CD_SUCCESS("SDO client response/confirm (\"%s\"). %s\n", name.c_str(), respStr.c_str());
     return true;
+}
+
+bool InvalidSdoClient::uploadInternal(const std::string & name, void * data, uint32_t size, uint16_t index, uint8_t subindex)
+{
+    CD_ERROR("Invalid SDO client.\n");
+    return false;
+}
+
+bool InvalidSdoClient::downloadInternal(const std::string & name, const void * data, uint32_t size, uint16_t index, uint8_t subindex)
+{
+    CD_ERROR("Invalid SDO client.\n");
+    return false;
 }

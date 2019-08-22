@@ -76,7 +76,8 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
         return false;
     }
 
-    sdoClient = new SdoClient(canId, canSdoTimeoutMs * 0.001);
+    can = new CanOpen(canId);
+    can->configureSdo(canSdoTimeoutMs * 0.001);
 
     if (!setRefSpeedRaw(0, refSpeed))
     {
@@ -105,17 +106,8 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 bool roboticslab::TechnosoftIpos::close()
 {
     CD_INFO("\n");
-
-    if (sdoClient)
-    {
-        delete sdoClient;
-    }
-
-    if (linInterpBuffer)
-    {
-        delete linInterpBuffer;
-    }
-
+    delete linInterpBuffer;
+    delete can;
     return true;
 }
 

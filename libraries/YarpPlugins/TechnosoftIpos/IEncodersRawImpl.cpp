@@ -24,7 +24,7 @@ bool roboticslab::TechnosoftIpos::setEncoderRaw(int j, double val)
     CD_INFO("(%d, %f)\n", j, val);
     CHECK_JOINT(j);
     int32_t data = degreesToInternalUnits(val);
-    return sdoClient->download("Set actual position", data, 0X2081);
+    return can->sdo()->download("Set actual position", data, 0X2081);
 }
 
 // -----------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ bool roboticslab::TechnosoftIpos::getEncoderRaw(int j, double *v)
 
     if (!iEncodersTimedRawExternal)
     {
-        return sdoClient->upload<int32_t>("Position actual value", [=](int32_t * data)
+        return can->sdo()->upload<int32_t>("Position actual value", [=](int32_t * data)
                 {
                     lastEncoderRead.update(internalUnitsToDegrees(*data));
                     *v = lastEncoderRead.queryPosition();

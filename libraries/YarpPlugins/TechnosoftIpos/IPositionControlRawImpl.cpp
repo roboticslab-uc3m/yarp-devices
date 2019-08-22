@@ -37,7 +37,7 @@ bool roboticslab::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encEx
 
     int32_t data = degreesToInternalUnits(ref);
 
-    if (!sdoClient->download("Target position", data, 0x607A))
+    if (!can->sdo()->download("Target position", data, 0x607A))
     {
         return false;
     }
@@ -83,7 +83,7 @@ bool roboticslab::TechnosoftIpos::relativeMoveRaw(int j, double delta)
 
     int32_t data = degreesToInternalUnits(delta);
 
-    if (!sdoClient->download("Target position", data, 0x607A))
+    if (!can->sdo()->download("Target position", data, 0x607A))
     {
         return false;
     }
@@ -131,7 +131,7 @@ bool roboticslab::TechnosoftIpos::checkMotionDoneRaw(int j, bool *flag)
 
     uint16_t data;
 
-    if (!sdoClient->upload("Statusword", &data, 0x6041))
+    if (!can->sdo()->upload("Statusword", &data, 0x6041))
     {
         return false;
     }
@@ -247,7 +247,7 @@ bool roboticslab::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
     CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
 
     uint32_t data = (dataInt << 16) + dataFrac;
-    return sdoClient->download("Profile velocity", data, 0x6081);
+    return can->sdo()->download("Profile velocity", data, 0x6081);
 }
 
 // --------------------------------------------------------------------------------
@@ -272,7 +272,7 @@ bool roboticslab::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
     CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
 
     uint32_t data = (dataInt << 16) + dataFrac;
-    return sdoClient->download("Profile acceleration", data, 0x6083);
+    return can->sdo()->download("Profile acceleration", data, 0x6083);
 }
 
 // --------------------------------------------------------------------------------
@@ -290,7 +290,7 @@ bool roboticslab::TechnosoftIpos::getRefSpeedRaw(int j, double *ref)
     CD_INFO("(%d)\n",j);
     CHECK_JOINT(j);
 
-    return sdoClient->upload<uint32_t>("Profile velocity", [=](uint32_t * data)
+    return can->sdo()->upload<uint32_t>("Profile velocity", [=](uint32_t * data)
             {
                 uint16_t dataInt = *data >> 16;
                 uint16_t dataFrac = *data & 0xFFFF;
@@ -315,7 +315,7 @@ bool roboticslab::TechnosoftIpos::getRefAccelerationRaw(int j, double *acc)
     CD_INFO("(%d)\n",j);
     CHECK_JOINT(j);
 
-    return sdoClient->upload<uint32_t>("Profile acceleration", [=](uint32_t * data)
+    return can->sdo()->upload<uint32_t>("Profile acceleration", [=](uint32_t * data)
             {
                 uint16_t dataInt = *data >> 16;
                 uint16_t dataFrac = *data & 0xFFFF;
@@ -435,7 +435,7 @@ bool roboticslab::TechnosoftIpos::getTargetPositionRaw(const int joint, double *
     CD_INFO("\n");
     CHECK_JOINT(joint);
 
-    return sdoClient->upload<int32_t>("Target position", [=](int32_t * data)
+    return can->sdo()->upload<int32_t>("Target position", [=](int32_t * data)
             { *ref = internalUnitsToDegrees(*data); },
             0x607A);
 }
