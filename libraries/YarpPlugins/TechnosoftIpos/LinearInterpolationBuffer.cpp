@@ -162,7 +162,7 @@ int PtBuffer::getSubMode() const
     return 0;
 }
 
-void PtBuffer::configureMessage(uint8_t * msg)
+uint64_t PtBuffer::makeDataRecord()
 {
     //*************************************************************
     //-- 14. Send the 1 st PT point.
@@ -186,21 +186,25 @@ void PtBuffer::configureMessage(uint8_t * msg)
         CD_INFO("New ref: %f.\n", _lastReceivedTarget);
     }
 
+    uint64_t data = 0;
+
     double p = _lastReceivedTarget;
     int t = periodMs;
 
     int32_t position = p * factor;
-    std::memcpy(msg, &position, 4);
+    data += position;
 
     int16_t time = t;
-    std::memcpy(msg + 4, &time, 2);
+    data += (uint64_t)time << 32;
 
-    uint8_t ic = (integrityCounter++) << 1;
-    std::memcpy(msg + 7, &ic, 1);
+    uint8_t ic = integrityCounter++ << 1;
+    data += (uint64_t)ic << 56;
 
     CD_DEBUG("Sending p %f t %d (ic %d).\n", p, t, ic >> 1);
 
     lastSentTarget = _lastReceivedTarget;
+
+    return data;
 }
 
 PvtBuffer::PvtBuffer(int _periodMs, int _bufferSize, double _factor, double _maxVel)
@@ -228,7 +232,7 @@ int PvtBuffer::getSubMode() const
 }
 
 
-void PvtBuffer::configureMessage(uint8_t * msg)
+uint64_t PvtBuffer::makeDataRecord()
 {
     //*************************************************************
     //-- 13. Send the 1 st PT point.
@@ -257,25 +261,27 @@ void PvtBuffer::configureMessage(uint8_t * msg)
         isFirstPoint = false;
     }
 
+    uint64_t data = 0;
+
     int32_t position = p * factor;
     int16_t positionLSB = (int32_t)(position << 16) >> 16;
     int8_t positionMSB = (int32_t)(position << 8) >> 24;
-    std::memcpy(msg, &positionLSB, 2);
-    std::memcpy(msg + 3, &positionMSB, 1);
+    data += ((uint64_t)positionMSB << 24) + positionLSB;
 
     double velocity = v * factor * 0.001;
     int16_t velocityInt, velocityFrac;
     CanUtils::encodeFixedPoint(velocity, &velocityInt, &velocityFrac);
-    std::memcpy(msg + 2, &velocityFrac, 1);
-    std::memcpy(msg + 4, &velocityInt, 2);
+    data += ((uint64_t)velocityInt << 32) + ((uint64_t)velocityFrac << 16);
 
     int16_t time = (int16_t)(t << 7) >> 7;
     uint8_t ic = (integrityCounter++) << 1;
     uint16_t timeAndIc = time + (ic << 8);
-    std::memcpy(msg + 6, &timeAndIc, 2);
+    data += (uint64_t)timeAndIc << 48;
 
     CD_DEBUG("Sending p %f v %f t %d (ic %d).\n", p, v, t, ic >> 1);
 
     lastSentTarget = previousTarget;
     previousTarget = currentTarget;
+
+    return data;
 }

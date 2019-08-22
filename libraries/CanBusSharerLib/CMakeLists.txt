@@ -9,6 +9,8 @@ if(ENABLE_CanBusSharerLib)
                                        SdoClient.hpp
                                        SdoClient-inl.hpp
                                        SdoClient.cpp
+                                       PdoProtocol.hpp
+                                       PdoProtocol.cpp
                                        SdoSemaphore.hpp
                                        SdoSemaphore.cpp
                                        CanUtils.hpp

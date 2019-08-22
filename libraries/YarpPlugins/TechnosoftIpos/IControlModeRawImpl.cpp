@@ -33,27 +33,9 @@ bool roboticslab::TechnosoftIpos::setTorqueModeRaw(int j)
     CD_INFO("(%d)\n", j);
     CHECK_JOINT(j);
 
-    bool ok = true;
-    ok = ok && can->sdo()->download<uint16_t>("External Reference Type", 1, 0x201D);
-    ok = ok && can->sdo()->download<uint8_t>("Modes of Operation", -5, 0x6060);
-
-    if (!ok)
-    {
-        return false;
-    }
-
-    //-- Control word (manual 215 of 263).
-    uint8_t msg_torque_word[] = {0x1F, 0x00};
-
-    if (!send(0x200, 2, msg_torque_word))
-    {
-        CD_ERROR("Could not send msg_torque_word. %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_torque_word).c_str());
-        return false;
-    }
-
-    CD_SUCCESS("Sent \"torque_word\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_torque_word).c_str());
-
-    return true;
+    return can->sdo()->download<uint16_t>("External Reference Type", 1, 0x201D)
+            && can->sdo()->download<uint8_t>("Modes of Operation", -5, 0x6060)
+            && can->rpdo(1)->write<uint16_t>(0x001F);
 }
 
 // -----------------------------------------------------------------------------

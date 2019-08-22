@@ -78,6 +78,8 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 
     can = new CanOpen(canId);
     can->configureSdo(canSdoTimeoutMs * 0.001);
+    can->configureRpdo(1);
+    can->configureRpdo(3);
 
     if (!setRefSpeedRaw(0, refSpeed))
     {

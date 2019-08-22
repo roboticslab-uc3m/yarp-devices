@@ -6,42 +6,16 @@
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::send(uint32_t cob, uint16_t len, uint8_t * msgData)
-{
-    return sender->prepareMessage(message_builder(cob + canId, len, msgData));
-}
-
-// -----------------------------------------------------------------------------
-
 bool roboticslab::TechnosoftIpos::sendLinearInterpolationTarget()
 {
-    uint8_t msg[8];
-    linInterpBuffer->configureMessage(msg);
-
-    if (!send(0x400, 8, msg))
-    {
-        CD_ERROR("Unable to send PVT point in %d.\n", canId);
-        return false;
-    }
-
-    return true;
+    return can->rpdo(3)->write<uint64_t>(linInterpBuffer->makeDataRecord());
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::TechnosoftIpos::sendLinearInterpolationStart()
 {
-    uint8_t startPT[]= {0x1F,0x00};
-
-    if (!send(0x200, 2, startPT))
-    {
-        CD_ERROR("Could not send \"startPT\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, startPT).c_str());
-        return false;
-    }
-
-    CD_SUCCESS("Sent \"startPT\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, startPT).c_str());
-
-    return true;
+    return can->rpdo(1)->write<uint16_t>(0x001F);
 }
 
 // -----------------------------------------------------------------------------

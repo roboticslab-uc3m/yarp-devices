@@ -3,7 +3,10 @@
 #ifndef __CAN_OPEN_HPP__
 #define __CAN_OPEN_HPP__
 
+#include <unordered_map>
+
 #include "SdoClient.hpp"
+#include "PdoProtocol.hpp"
 
 namespace roboticslab
 {
@@ -17,9 +20,13 @@ public:
     SdoClient * sdo();
     bool configureSdo(double timeout);
 
+    ReceivePdo * rpdo(unsigned int n);
+    bool configureRpdo(unsigned int n);
+
 private:
     int id;
     SdoClient * _sdo;
+    std::unordered_map<unsigned int, ReceivePdo *> rpdos;
 };
 
 }  // namespace roboticslab

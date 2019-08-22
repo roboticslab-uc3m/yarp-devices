@@ -14,6 +14,11 @@ CanOpen::CanOpen(int _id)
 CanOpen::~CanOpen()
 {
     delete _sdo;
+
+    for (auto it : rpdos)
+    {
+        delete it.second;
+    }
 }
 
 SdoClient * CanOpen::sdo()
@@ -38,6 +43,34 @@ bool CanOpen::configureSdo(double timeout)
     else
     {
         CD_WARNING("SDO client already configured.\n");
+        return false;
+    }
+}
+
+ReceivePdo * CanOpen::rpdo(unsigned int n)
+{
+    auto it = rpdos.find(n);
+
+    if (rpdos.find(n) != rpdos.end())
+    {
+        return it->second;
+    }
+    else
+    {
+        return new InvalidReceivePdo;
+    }
+}
+
+bool CanOpen::configureRpdo(unsigned int n)
+{
+    if (rpdos.find(n) == rpdos.end())
+    {
+        rpdos.insert(std::make_pair(n, new ConcreteReceivePdo(id)));
+        return true;
+    }
+    else
+    {
+        CD_WARNING("RPDO %d already configured.\n", n);
         return false;
     }
 }

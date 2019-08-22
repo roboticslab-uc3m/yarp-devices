@@ -242,61 +242,21 @@ bool roboticslab::TechnosoftIpos::start()
 
 bool roboticslab::TechnosoftIpos::readyToSwitchOn()
 {
-    uint8_t msg_readyToSwitchOn[] = {0x06,0x00}; //-- readyToSwitchOn, also acts as shutdown.
-    // -- send se diferencia de senRaw en que tiene un delay y adems incluye el ID (mirar funcin)
-    if( ! this->send( 0x200, 2, msg_readyToSwitchOn) ) // -- 0x200 (valor critico que se pone sin saber que significa) 2 (tamano del mensaje)
-    {
-        CD_ERROR("Could not send \"readyToSwitchOn/shutdown\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_readyToSwitchOn).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"readyToSwitchOn/shutdown\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_readyToSwitchOn).c_str() );
-
-    //-- Do not force expect response as only happens upon transition.
-    //-- For example, if already on readyToSwitchOn, function would get stuck.
-
-    return true;
+    return can->rpdo(1)->write<uint16_t>(0x0006);
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::TechnosoftIpos::switchOn()
 {
-    uint8_t msg_switchOn[] = {0x07,0x00};  //-- switchOn, also acts as disableOperation
-    if( ! this->send( 0x200, 2, msg_switchOn) )
-    {
-        CD_ERROR("Could not send \"switchOn/disableOperation\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_switchOn).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"switchOn/disableOperation\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_switchOn).c_str() );
-
-    //while( (! this->getSwitchOn) ) {
-    //    CD_INFO("Waiting for response to \"switchOn/disableOperation\" on id %d...\n", this->canId);
-    //    yarp::os::Time::delay(0.1);  //-- [s]
-    //}
-
-    return true;
+    return can->rpdo(1)->write<uint16_t>(0x0007);
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::TechnosoftIpos::enable()
 {
-    uint8_t msg_enable[] = {0x0F,0x00}; // enable
-
-    if( ! this->send( 0x200, 2, msg_enable) )
-    {
-        CD_ERROR("Could not send \"enable\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_enable).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"enable\". %s\n", CanUtils::msgToStr(canId, 0x200, 2, msg_enable).c_str() );
-    //*************************************************************
-
-    //while( (! this->getEnable) ) {
-    //    CD_INFO("Waiting for response to \"enable\" on id %d...\n", this->canId);
-    //    yarp::os::Time::delay(0.1);  //-- [s]
-    //}
-
-    return true;
+    return can->rpdo(1)->write<uint16_t>(0x000F);
 }
 
 // -----------------------------------------------------------------------------
@@ -335,20 +295,7 @@ bool roboticslab::TechnosoftIpos::resetNodes()
 
 bool roboticslab::TechnosoftIpos::resetCommunication()
 {
-    uint8_t msg_resetCommunication[] = {0x82,0x00};  // NMT Reset Communications (Manual 4.1.2.2)
-
-    //msg_resetNode[1]=this->canId; // -- It writes canId in byte 1
-    if( ! this->send(0x200, 2, msg_resetCommunication) ) // -- 0 (hace referencia al ID. Si est en 0 es como un broadcast) 2 (tamao del mensaje)
-    {
-        CD_ERROR("Could not send \"reset communication\". %s\n", CanUtils::msgToStr(canId, 0, 2, msg_resetCommunication).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"reset communication\". %s\n", CanUtils::msgToStr(canId, 0, 2, msg_resetCommunication).c_str() );
-
-    //-- Do not force expect response as only happens upon transition.
-    //-- For example, if already started, function would get stuck.
-
-    return true;
+    return can->rpdo(1)->write<uint16_t>(0x0002);
 }
 
 
