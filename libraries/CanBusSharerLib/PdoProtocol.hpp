@@ -26,7 +26,7 @@ public:
 class ReceivePdo : public PdoProtocol
 {
 public:
-    template<typename T, typename... Ts>
+    template<typename... Ts>
     bool write(Ts... data)
     {
         static_assert(sizeof...(Ts) > 0, "Empty list of parameters.");
@@ -39,12 +39,10 @@ protected:
     virtual bool writeInternal(const std::uint8_t * data, std::size_t size) = 0;
 
 private:
-    void write() { }
-
     static std::size_t accumulateSizes()
     { return 0; }
 
-    // pity this won't work: https://stackoverflow.com/a/8626450
+    // pity this won't work until C++14: https://stackoverflow.com/a/8626450
     template<typename T1, typename... Tn>
     static constexpr std::size_t accumulateSize(T1 t1, Tn... tn)
     { return sizeof(T1) + accumulateSizes(tn...); }
