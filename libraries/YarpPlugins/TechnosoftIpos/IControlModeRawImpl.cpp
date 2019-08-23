@@ -14,7 +14,7 @@ bool roboticslab::TechnosoftIpos::setPositionModeRaw(int j)
 {
     CD_INFO("(%d)\n", j);
     CHECK_JOINT(j);
-    return sdoClient->download<uint8_t>("Modes of Operation", 1, 0x6060);
+    return sdoClient->download<int8_t>("Modes of Operation", 1, 0x6060);
 }
 
 // -----------------------------------------------------------------------------
@@ -23,7 +23,7 @@ bool roboticslab::TechnosoftIpos::setVelocityModeRaw(int j)
 {
     CD_INFO("(%d)\n", j);
     CHECK_JOINT(j);
-    return sdoClient->download<uint8_t>("Modes of Operation", 3, 0x6060);
+    return sdoClient->download<int8_t>("Modes of Operation", 3, 0x6060);
 }
 
 // -----------------------------------------------------------------------------
@@ -35,7 +35,7 @@ bool roboticslab::TechnosoftIpos::setTorqueModeRaw(int j)
 
     bool ok = true;
     ok = ok && sdoClient->download<uint16_t>("External Reference Type", 1, 0x201D);
-    ok = ok && sdoClient->download<uint8_t>("Modes of Operation", -5, 0x6060);
+    ok = ok && sdoClient->download<int8_t>("Modes of Operation", -5, 0x6060);
 
     if (!ok)
     {
@@ -101,7 +101,7 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     //*************************************************************
     //-- 8. Mode of operation. Select interpolation position mode.
     //-- Send the following message (SDO access to object 6060 h , 8-bit value 7 h ):
-    if (!sdoClient->download<uint8_t>("Modes of Operation", 7, 0x6060))
+    if (!sdoClient->download<int8_t>("Modes of Operation", 7, 0x6060))
     {
         return false;
     }
