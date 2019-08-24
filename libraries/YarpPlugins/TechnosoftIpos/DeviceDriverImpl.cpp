@@ -2,7 +2,43 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <ColorDebug.h>
+
+namespace
+{
+    void interpretStatusword(uint16_t data)
+    {
+        switch (data)
+        {
+        case 0x9237:
+            CD_INFO("Got PDO1 that it is observed as ack \"start position\" from driver.\n");
+            break;
+        case 0x8637:
+            CD_INFO("Got PDO1 that it is observed when driver arrives to position target.\n");
+            break;
+        case 0x0240:
+            CD_INFO("Got PDO1 that it is observed as TRANSITION performed upon \"start\".\n");
+            break;
+        case 0x0340:
+            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\".\n");
+            break;
+        case 0x0221:
+            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\".\n");
+            break;
+        case 0x0321:
+            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"switchOn\".\n");
+            break;
+        case 0x8333:
+            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"enable\".\n");
+            break;
+        default:
+            CD_INFO("Got PDO1 from driver side: unknown.\n");
+        }
+    }
+}
+
 // -----------------------------------------------------------------------------
+
 bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 {
 
@@ -80,6 +116,8 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     can->configureSdo(canSdoTimeoutMs * 0.001);
     can->configureRpdo(1);
     can->configureRpdo(3);
+    can->configureTpdo(1);
+    can->tpdo(1)->registerHandler<uint16_t>(interpretStatusword);
 
     if (!setRefSpeedRaw(0, refSpeed))
     {
@@ -105,6 +143,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 }
 
 // -----------------------------------------------------------------------------
+
 bool roboticslab::TechnosoftIpos::close()
 {
     CD_INFO("\n");
