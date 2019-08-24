@@ -6,8 +6,9 @@
 #include <cstdint>
 #include <cstring>
 
-#include <stdexcept>
+#include <functional>
 #include <type_traits>
+#include <utility>
 
 #include "CanSenderDelegate.hpp"
 
@@ -20,7 +21,11 @@ public:
     virtual ~PdoProtocol()
     { }
 
-    virtual void configureSender(CanSenderDelegate * sender) = 0;
+protected:
+    // https://stackoverflow.com/a/38776200
+    template<typename T1 = std::uint8_t, typename... Tn>
+    static constexpr std::size_t size()
+    { return sizeof...(Tn) == 0 ? sizeof(T1) : sizeof(T1) + size<Tn...>(); }
 };
 
 class ReceivePdo : public PdoProtocol
@@ -29,32 +34,27 @@ public:
     template<typename... Ts>
     bool write(Ts... data)
     {
-        static_assert(sizeof...(Ts) > 0, "Empty list of parameters.");
-        std::uint8_t buffer[accumulateSize(data...)]; std::size_t count = 0;
-        pass{(addData(buffer, &count, data), 1)...}; // https://w.wiki/7M$
-        return count <= 8 && writeInternal(buffer, count);
+        // TODO: check against PDO mapping configuration?
+        static_assert(sizeof...(Ts) > 0 && size<Ts...>() <= 8, "Illegal cumulative size.");
+        std::uint8_t raw[size<Ts...>()]; std::size_t count = 0;
+        ordered_call{(pack(&data, raw, &count), 1)...}; // https://w.wiki/7M$
+        return writeInternal(raw, count);
     }
+
+    virtual void configureSender(CanSenderDelegate * sender) = 0;
 
 protected:
     virtual bool writeInternal(const std::uint8_t * data, std::size_t size) = 0;
 
 private:
-    static std::size_t accumulateSizes()
-    { return 0; }
-
-    // pity this won't work until C++14: https://stackoverflow.com/a/8626450
-    template<typename T1, typename... Tn>
-    static constexpr std::size_t accumulateSize(T1 t1, Tn... tn)
-    { return sizeof(T1) + accumulateSizes(tn...); }
-
-    struct pass
-    { template<typename... T> pass(T...) { } };
+    struct ordered_call
+    { template<typename... Ts> ordered_call(Ts...) { } };
 
     template<typename T>
-    void addData(std::uint8_t * buff, std::size_t * count, T data)
+    void pack(const T * data, std::uint8_t * buff, std::size_t * count)
     {
         static_assert(std::is_integral<T>::value, "Integral required.");
-        std::memcpy(buff + *count, &data, sizeof(T));
+        std::memcpy(buff + *count, data, sizeof(T));
         *count += sizeof(T);
     }
 };
@@ -89,8 +89,55 @@ protected:
 class TransmitPdo : public PdoProtocol
 {
 public:
-    bool read();
+    typedef std::function<bool(const std::uint8_t * data, std::size_t size)> HandlerFn;
+
+    bool accept(const std::uint8_t * data, std::size_t size)
+    { return callback(data, size); }
+
+    template<typename... Ts, typename Fn>
+    void registerHandler(Fn fn)
+    {
+        // TODO: check against PDO mapping configuration?
+        static_assert(sizeof...(Ts) > 0 && size<Ts...>() <= 8, "Illegal cumulative size.");
+        callback = [&](const std::uint8_t * raw, std::size_t len)
+            { std::size_t count = 0;
+              return size<Ts...>() == len && (ordered_call{fn, unpack<Ts>(raw, &count)...}, true); };
+    }
+
+private:
+    // https://stackoverflow.com/a/14058638
+    struct ordered_call
+    {
+        template<typename Fn, typename... Ts>
+        ordered_call(Fn fn, Ts &&... ts)
+        { fn(std::forward<Ts>(ts)...); }
+    };
+
+    template<typename T>
+    T unpack(const std::uint8_t * buff, std::size_t * count)
+    {
+        static_assert(std::is_integral<T>::value, "Integral required.");
+        T data;
+        std::memcpy(&data, buff + *count, sizeof(T));
+        *count += sizeof(T);
+        return data;
+    }
+
+    HandlerFn callback;
 };
+
+class ConcreteTransmitPdo : public TransmitPdo
+{
+public:
+    ConcreteTransmitPdo(unsigned int id) : id(id)
+    { }
+
+private:
+    unsigned int id;
+};
+
+class InvalidTransmitPdo : public TransmitPdo
+{};
 
 }  // namespace roboticslab
 

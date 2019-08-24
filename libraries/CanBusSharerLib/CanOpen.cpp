@@ -19,6 +19,11 @@ CanOpen::~CanOpen()
     {
         delete it.second;
     }
+
+    for (auto it : tpdos)
+    {
+        delete it.second;
+    }
 }
 
 SdoClient * CanOpen::sdo()
@@ -71,6 +76,34 @@ bool CanOpen::configureRpdo(unsigned int n)
     else
     {
         CD_WARNING("RPDO %d already configured.\n", n);
+        return false;
+    }
+}
+
+TransmitPdo * CanOpen::tpdo(unsigned int n)
+{
+    auto it = tpdos.find(n);
+
+    if (tpdos.find(n) != tpdos.end())
+    {
+        return it->second;
+    }
+    else
+    {
+        return new InvalidTransmitPdo;
+    }
+}
+
+bool CanOpen::configureTpdo(unsigned int n)
+{
+    if (tpdos.find(n) == tpdos.end())
+    {
+        tpdos.insert(std::make_pair(n, new ConcreteTransmitPdo(id)));
+        return true;
+    }
+    else
+    {
+        CD_WARNING("TPDO %d already configured.\n", n);
         return false;
     }
 }

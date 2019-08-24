@@ -23,10 +23,14 @@ public:
     ReceivePdo * rpdo(unsigned int n);
     bool configureRpdo(unsigned int n);
 
+    TransmitPdo * tpdo(unsigned int n);
+    bool configureTpdo(unsigned int n);
+
 private:
     int id;
     SdoClient * _sdo;
     std::unordered_map<unsigned int, ReceivePdo *> rpdos;
+    std::unordered_map<unsigned int, TransmitPdo *> tpdos;
 };
 
 }  // namespace roboticslab
