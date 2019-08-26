@@ -53,7 +53,8 @@ protected:
 class ConcreteSdoClient : public SdoClient
 {
 public:
-    ConcreteSdoClient(unsigned int id, double timeout) : id(id), sender(0), sdoSemaphore(timeout)
+    ConcreteSdoClient(std::uint8_t id, std::uint16_t cobRx, std::uint16_t cobTx, double timeout)
+        : id(id), cobRx(cobRx), cobTx(cobTx), sender(0), sdoSemaphore(timeout)
     {}
 
     virtual void configureSender(CanSenderDelegate * sender)
@@ -70,12 +71,12 @@ private:
     virtual bool downloadInternal(const std::string & name, const void * data, uint32_t size, uint16_t index, uint8_t subindex);
     bool performTransfer(const std::string & name, const uint8_t * req, uint8_t * resp);
 
-    unsigned int id;
+    std::uint8_t id;
+    std::uint16_t cobRx;
+    std::uint16_t cobTx;
+
     CanSenderDelegate * sender;
     SdoSemaphore sdoSemaphore;
-
-    static const uint16_t COB_D = 0x600;
-    static const uint16_t COB_U = 0x580;
 };
 
 class InvalidSdoClient : public SdoClient

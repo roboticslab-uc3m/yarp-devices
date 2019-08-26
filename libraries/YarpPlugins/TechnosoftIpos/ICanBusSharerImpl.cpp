@@ -242,21 +242,21 @@ bool roboticslab::TechnosoftIpos::start()
 
 bool roboticslab::TechnosoftIpos::readyToSwitchOn()
 {
-    return can->rpdo(1)->write<uint16_t>(0x0006);
+    return can->rpdo1()->write<uint16_t>(0x0006);
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::TechnosoftIpos::switchOn()
 {
-    return can->rpdo(1)->write<uint16_t>(0x0007);
+    return can->rpdo1()->write<uint16_t>(0x0007);
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::TechnosoftIpos::enable()
 {
-    return can->rpdo(1)->write<uint16_t>(0x000F);
+    return can->rpdo1()->write<uint16_t>(0x000F);
 }
 
 // -----------------------------------------------------------------------------
@@ -295,7 +295,7 @@ bool roboticslab::TechnosoftIpos::resetNodes()
 
 bool roboticslab::TechnosoftIpos::resetCommunication()
 {
-    return can->rpdo(1)->write<uint16_t>(0x0002);
+    return can->rpdo1()->write<uint16_t>(0x0002);
 }
 
 
@@ -384,7 +384,7 @@ bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage &
     }
     else if( (message.getId()-canId) == 0x180 )  // ---------------------- PDO1 ----------------------
     {
-        return can->tpdo(1)->accept(message.getData(), message.getLen());
+        return can->tpdo1()->accept(message.getData(), message.getLen());
     }
     else if( (message.getId()-canId) == 0x80 )  // EMERGENCY (EMCY), Table 4.2 Emergency Error Codes (p57, 73/263)
     {

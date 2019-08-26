@@ -62,7 +62,7 @@ private:
 class ConcreteReceivePdo : public ReceivePdo
 {
 public:
-    ConcreteReceivePdo(unsigned int id) : id(id), sender(0)
+    ConcreteReceivePdo(std::uint16_t cobId) : cobId(cobId), sender(0)
     { }
 
     virtual void configureSender(CanSenderDelegate * sender)
@@ -72,7 +72,7 @@ protected:
     virtual bool writeInternal(const std::uint8_t * data, std::size_t size);
 
 private:
-    unsigned int id;
+    std::uint16_t cobId;
     CanSenderDelegate * sender;
 };
 
@@ -129,11 +129,11 @@ private:
 class ConcreteTransmitPdo : public TransmitPdo
 {
 public:
-    ConcreteTransmitPdo(unsigned int id) : id(id)
+    ConcreteTransmitPdo(std::uint16_t cobId) : cobId(cobId)
     { }
 
 private:
-    unsigned int id;
+    std::uint16_t cobId;
 };
 
 class InvalidTransmitPdo : public TransmitPdo

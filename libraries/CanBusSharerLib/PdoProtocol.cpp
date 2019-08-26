@@ -8,7 +8,7 @@ using namespace roboticslab;
 
 bool ConcreteReceivePdo::writeInternal(const std::uint8_t * data, std::size_t size)
 {
-    return sender->prepareMessage(message_builder(id, size, data)); // TODO: COB
+    return sender->prepareMessage(message_builder(cobId, size, data)); // TODO: COB
 }
 
 bool InvalidReceivePdo::writeInternal(const std::uint8_t * data, std::size_t size)

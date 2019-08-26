@@ -21,10 +21,10 @@ bool roboticslab::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encEx
     CD_INFO("(%d, %f)\n", j, ref);
     CHECK_JOINT(j);
 
-    return can->rpdo(1)->write<uint16_t>(0x000F) // mandatory if we call this right after the [posd->pos] transition
+    return can->rpdo1()->write<uint16_t>(0x000F) // mandatory if we call this right after the [posd->pos] transition
             && can->sdo()->download("Target position", degreesToInternalUnits(ref), 0x607A)
-            && can->rpdo(1)->write<uint16_t>(0x003F)
-            && can->rpdo(1)->write<uint16_t>(0x000F); // needed to accept next target
+            && can->rpdo1()->write<uint16_t>(0x003F)
+            && can->rpdo1()->write<uint16_t>(0x000F); // needed to accept next target
 }
 
 // --------------------------------------------------------------------------------
@@ -42,10 +42,10 @@ bool roboticslab::TechnosoftIpos::relativeMoveRaw(int j, double delta)
     CD_INFO("(%d, %f)\n", j, delta);
     CHECK_JOINT(j);
 
-    return can->rpdo(1)->write<uint16_t>(0x000F) // mandatory if we call this right after the [posd->pos] transition
+    return can->rpdo1()->write<uint16_t>(0x000F) // mandatory if we call this right after the [posd->pos] transition
             && can->sdo()->download("Target position", degreesToInternalUnits(delta), 0x607A)
-            && can->rpdo(1)->write<uint16_t>(0x007F)
-            && can->rpdo(1)->write<uint16_t>(0x000F); // needed to accept next target
+            && can->rpdo1()->write<uint16_t>(0x007F)
+            && can->rpdo1()->write<uint16_t>(0x000F); // needed to accept next target
 }
 
 // --------------------------------------------------------------------------------
@@ -273,7 +273,7 @@ bool roboticslab::TechnosoftIpos::stopRaw(int j)
 {
     CD_INFO("(%d)\n",j);
     CHECK_JOINT(j);
-    return can->rpdo(1)->write<uint16_t>(0x0002) && can->rpdo(1)->write<uint16_t>(0x000F);
+    return can->rpdo1()->write<uint16_t>(0x0002) && can->rpdo1()->write<uint16_t>(0x000F);
 }
 
 // --------------------------------------------------------------------------------

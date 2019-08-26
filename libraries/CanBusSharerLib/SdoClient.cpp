@@ -91,7 +91,7 @@ namespace
 
 bool ConcreteSdoClient::send(const uint8_t * msg)
 {
-    return sender->prepareMessage(message_builder(COB_D + id, 8, msg));
+    return sender->prepareMessage(message_builder(cobRx, 8, msg));
 }
 
 std::string ConcreteSdoClient::msgToStr(uint16_t cob, const uint8_t * msgData)
@@ -261,7 +261,7 @@ bool ConcreteSdoClient::downloadInternal(const std::string & name, const void * 
 
 bool ConcreteSdoClient::performTransfer(const std::string & name, const uint8_t * req, uint8_t * resp)
 {
-    const std::string & reqStr = msgToStr(COB_D, req);
+    const std::string & reqStr = msgToStr(cobRx, req);
 
     if (!send(req))
     {
@@ -272,7 +272,7 @@ bool ConcreteSdoClient::performTransfer(const std::string & name, const uint8_t 
     CD_INFO("SDO client request/indication (\"%s\"). %s\n", name.c_str(), reqStr.c_str());
 
     bool success = sdoSemaphore.await(resp);
-    const std::string & respStr = msgToStr(COB_U, resp);
+    const std::string & respStr = msgToStr(cobTx, resp);
 
     if (!success)
     {
@@ -294,7 +294,7 @@ bool ConcreteSdoClient::performTransfer(const std::string & name, const uint8_t 
 
 bool InvalidSdoClient::uploadInternal(const std::string & name, void * data, uint32_t size, uint16_t index, uint8_t subindex)
 {
-    CD_ERROR("Invalid SDO client.\n");
+    CD_ERROR("Invalid SDO client.\n"); // TODO: move to CanOpen.cpp?
     return false;
 }
 

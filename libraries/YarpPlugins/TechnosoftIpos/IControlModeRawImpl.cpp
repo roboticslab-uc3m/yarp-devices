@@ -35,7 +35,7 @@ bool roboticslab::TechnosoftIpos::setTorqueModeRaw(int j)
 
     return can->sdo()->download<uint16_t>("External Reference Type", 1, 0x201D)
             && can->sdo()->download<uint8_t>("Modes of Operation", -5, 0x6060)
-            && can->rpdo(1)->write<uint16_t>(0x001F);
+            && can->rpdo1()->write<uint16_t>(0x001F);
 }
 
 // -----------------------------------------------------------------------------

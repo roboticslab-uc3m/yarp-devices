@@ -113,11 +113,11 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     }
 
     can = new CanOpen(canId);
-    can->configureSdo(canSdoTimeoutMs * 0.001);
-    can->configureRpdo(1);
-    can->configureRpdo(3);
-    can->configureTpdo(1);
-    can->tpdo(1)->registerHandler<uint16_t>(interpretStatusword);
+    can->createSdo(canSdoTimeoutMs * 0.001);
+    can->createRpdo1();
+    can->createRpdo3();
+    can->createTpdo1();
+    can->tpdo1()->registerHandler<uint16_t>(interpretStatusword);
 
     if (!setRefSpeedRaw(0, refSpeed))
     {

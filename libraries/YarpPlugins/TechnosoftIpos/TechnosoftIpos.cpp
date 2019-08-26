@@ -8,14 +8,14 @@
 
 bool roboticslab::TechnosoftIpos::sendLinearInterpolationTarget()
 {
-    return can->rpdo(3)->write<uint64_t>(linInterpBuffer->makeDataRecord());
+    return can->rpdo3()->write<uint64_t>(linInterpBuffer->makeDataRecord());
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::TechnosoftIpos::sendLinearInterpolationStart()
 {
-    return can->rpdo(1)->write<uint16_t>(0x001F);
+    return can->rpdo1()->write<uint16_t>(0x001F);
 }
 
 // -----------------------------------------------------------------------------
