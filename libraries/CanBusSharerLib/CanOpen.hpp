@@ -14,6 +14,11 @@
 namespace roboticslab
 {
 
+class SdoClient;
+class ReceivePdo;
+class TransmitPdo;
+class PdoConfiguration;
+
 // TODO: drop SDO/PDO overloads?
 class CanOpen final
 {
@@ -33,6 +38,7 @@ public:
 
     SdoClient * sdo(unsigned int n) const;
     bool createSdo(unsigned int n, std::uint16_t cobRx, std::uint16_t cobTx, double timeout);
+    // TODO: configureSdo?
 
     ReceivePdo * rpdo1() const;
     bool createRpdo1();
@@ -48,6 +54,7 @@ public:
 
     ReceivePdo * rpdo(unsigned int n) const;
     bool createRpdo(unsigned int n, std::uint16_t cob);
+    bool configureRpdo(unsigned int n, const PdoConfiguration & conf);
 
     TransmitPdo * tpdo1() const;
     bool createTpdo1();
@@ -63,8 +70,11 @@ public:
 
     TransmitPdo * tpdo(unsigned int n) const;
     bool createTpdo(unsigned int n, std::uint16_t cob);
+    bool configureTpdo(unsigned int n, const PdoConfiguration & conf);
 
 private:
+    bool configurePdo(unsigned int n, const PdoConfiguration & conf, bool isTpdo);
+
     int id;
     CanSenderDelegate * sender;
     bool hasSender;

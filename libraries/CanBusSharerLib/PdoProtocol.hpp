@@ -7,19 +7,58 @@
 #include <cstring>
 
 #include <functional>
+#include <set>
 #include <type_traits>
 #include <utility>
 
+#include "CanOpen.hpp"
 #include "CanSenderDelegate.hpp"
+#include "nonstd/optional.hpp"
 
 namespace roboticslab
 {
+
+class CanOpen;
+
+class PdoConfiguration final
+{
+    friend CanOpen;
+
+public:
+    PdoConfiguration & setValid(bool value);
+    PdoConfiguration & setRtr(bool value);
+    PdoConfiguration & setTransmissionType(std::uint8_t value);
+    PdoConfiguration & setInhibitTime(std::uint16_t value);
+    PdoConfiguration & setEventTimer(std::uint16_t value);
+    PdoConfiguration & setSyncStartValue(std::uint8_t value);
+
+    template<typename T>
+    PdoConfiguration & addMapping(std::uint16_t index, std::uint8_t subindex = 0x00)
+    {
+        static_assert(std::is_integral<T>::value, "Integral required.");
+        static_assert(sizeof(T) <= sizeof(std::uint32_t), "Size exceeds 4 bytes.");
+        mappings.insert((index << 16) + (subindex << 8) + sizeof(T) * 8);
+        return *this;
+    }
+
+private:
+    nonstd::optional<bool> valid;
+    nonstd::optional<bool> rtr;
+    nonstd::optional<std::uint8_t> transmissionType;
+    nonstd::optional<std::uint16_t> inhibitTime;
+    nonstd::optional<std::uint16_t> eventTimer;
+    nonstd::optional<std::uint8_t> syncStartValue;
+    std::set<std::uint32_t> mappings;
+};
 
 class PdoProtocol
 {
 public:
     virtual ~PdoProtocol()
     { }
+
+    virtual std::uint16_t getCob() const
+    { return 0; };
 
 protected:
     // https://stackoverflow.com/a/38776200
@@ -62,17 +101,21 @@ private:
 class ConcreteReceivePdo : public ReceivePdo
 {
 public:
-    ConcreteReceivePdo(std::uint16_t cobId) : cobId(cobId), sender(0)
+    ConcreteReceivePdo(std::uint8_t id, std::uint16_t cob) : id(id), cob(cob), sender(0)
     { }
 
-    virtual void configureSender(CanSenderDelegate * sender)
+    virtual void configureSender(CanSenderDelegate * sender) override
     { this->sender = sender; }
 
+    virtual std::uint16_t getCob() const override
+    { return cob; }
+
 protected:
-    virtual bool writeInternal(const std::uint8_t * data, std::size_t size);
+    virtual bool writeInternal(const std::uint8_t * data, std::size_t size) override;
 
 private:
-    std::uint16_t cobId;
+    std::uint8_t id;
+    std::uint16_t cob;
     CanSenderDelegate * sender;
 };
 
@@ -129,11 +172,15 @@ private:
 class ConcreteTransmitPdo : public TransmitPdo
 {
 public:
-    ConcreteTransmitPdo(std::uint16_t cobId) : cobId(cobId)
+    ConcreteTransmitPdo(std::uint8_t id, std::uint16_t cob) : id(id), cob(cob)
     { }
 
+    virtual std::uint16_t getCob() const override
+    { return cob; }
+
 private:
-    std::uint16_t cobId;
+    std::uint8_t id;
+    std::uint16_t cob;
 };
 
 class InvalidTransmitPdo : public TransmitPdo

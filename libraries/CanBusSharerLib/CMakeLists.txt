@@ -22,6 +22,8 @@ if(ENABLE_CanBusSharerLib)
 
     target_include_directories(CanBusSharerLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+    target_compile_definitions(CanBusSharerLib PUBLIC optional_CONFIG_NO_EXCEPTIONS=1)
+
     install(TARGETS CanBusSharerLib
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

@@ -2,6 +2,8 @@
 
 #include "CanOpen.hpp"
 
+#include <bitset>
+
 #include <ColorDebug.h>
 
 using namespace roboticslab;
@@ -32,19 +34,19 @@ CanOpen::CanOpen(int _id, CanSenderDelegate * _sender)
 
 CanOpen::~CanOpen()
 {
-    for (auto it : sdos)
+    for (auto entry : sdos)
     {
-        delete it.second;
+        delete entry.second;
     }
 
-    for (auto it : rpdos)
+    for (auto entry : rpdos)
     {
-        delete it.second;
+        delete entry.second;
     }
 
-    for (auto it : tpdos)
+    for (auto entry : tpdos)
     {
-        delete it.second;
+        delete entry.second;
     }
 }
 
@@ -142,7 +144,7 @@ bool CanOpen::createRpdo4()
 
 bool CanOpen::createRpdo(unsigned int n, std::uint16_t cob)
 {
-    if (n < 1 || n > 256)
+    if (n < 1 || n > 512)
     {
         CD_ERROR("Illegal RPDO index: %d.\n", n);
         return false;
@@ -152,7 +154,7 @@ bool CanOpen::createRpdo(unsigned int n, std::uint16_t cob)
 
     if (rpdos.find(idx) == rpdos.end())
     {
-        rpdos.insert(std::make_pair(idx, new ConcreteReceivePdo(cob + id)));
+        rpdos.insert(std::make_pair(idx, new ConcreteReceivePdo(id, cob)));
         return true;
     }
     else
@@ -211,7 +213,7 @@ bool CanOpen::createTpdo4()
 
 bool CanOpen::createTpdo(unsigned int n, std::uint16_t cob)
 {
-    if (n < 1 || n > 256)
+    if (n < 1 || n > 512)
     {
         CD_ERROR("Illegal TPDO index: %d.\n", n);
         return false;
@@ -221,7 +223,7 @@ bool CanOpen::createTpdo(unsigned int n, std::uint16_t cob)
 
     if (tpdos.find(idx) == tpdos.end())
     {
-        tpdos.insert(std::make_pair(idx, new ConcreteTransmitPdo(cob + id)));
+        tpdos.insert(std::make_pair(idx, new ConcreteTransmitPdo(id, cob)));
         return true;
     }
     else
@@ -229,4 +231,123 @@ bool CanOpen::createTpdo(unsigned int n, std::uint16_t cob)
         CD_WARNING("TPDO %d already created.\n", n);
         return false;
     }
+}
+
+bool CanOpen::configureRpdo(unsigned int n, const PdoConfiguration & conf)
+{
+    return configurePdo(n, conf, false);
+}
+
+bool CanOpen::configureTpdo(unsigned int n, const PdoConfiguration & conf)
+{
+    return configurePdo(n, conf, true);
+}
+
+bool CanOpen::configurePdo(unsigned int n, const PdoConfiguration & conf, bool isTpdo)
+{
+    std::string pdoType = isTpdo ? "TPDO" : "RPDO";
+    std::string pdoName = pdoType + std::to_string(n);
+
+    if (n < 1 || n > 512)
+    {
+        CD_ERROR("Illegal %s index: %d.\n", pdoType.c_str(), n);
+        return false;
+    }
+
+    const std::uint8_t idx = n - 1;
+    const std::uint16_t commIdx = (isTpdo  ? 0x1800 : 0x1400) + idx;
+    const std::uint16_t mappingIdx = (isTpdo ? 0x1A00 : 0x1600) + idx;
+
+    std::uint32_t cobId;
+
+    if (!sdo()->upload(std::string("COB-ID ") + pdoName, &cobId, commIdx, 0x01))
+    {
+        return false;
+    }
+
+    std::bitset<32>bits(cobId);
+    bits.set(31);
+
+    if (conf.rtr)
+    {
+        if (!isTpdo)
+        {
+            CD_ERROR("Illegal RTR usage on non-TPDO node.\n");
+            return false;
+        }
+
+        bits.set(30, !*conf.rtr);
+    }
+
+    if (!sdo()->download(std::string("COB-ID ") + pdoName, bits.to_ulong(), commIdx, 0x01))
+    {
+        return false;
+    }
+
+    if (conf.transmissionType && !sdo()->download("Transmission type", *conf.transmissionType, commIdx, 0x02))
+    {
+        return false;
+    }
+
+    if (conf.inhibitTime && !sdo()->download("Inhibit time", *conf.inhibitTime, commIdx, 0x03))
+    {
+        return false;
+    }
+
+    if (conf.eventTimer && !sdo()->download("Event timer", *conf.eventTimer, commIdx, 0x05))
+    {
+        return false;
+    }
+
+    if (conf.syncStartValue)
+    {
+        if (!isTpdo)
+        {
+            CD_ERROR("Illegal SYNC start value usage on non-TPDO node.\n");
+            return false;
+        }
+
+        if (!sdo()->download("SYNC start value", *conf.syncStartValue, commIdx, 0x06))
+        {
+            return false;
+        }
+    }
+
+    if (!conf.mappings.empty())
+    {
+        if (!sdo()->download<std::uint8_t>(pdoName + " mapping parameters", 0, mappingIdx))
+        {
+            return false;
+        }
+
+        unsigned int i = 0;
+
+        for (auto mapping : conf.mappings)
+        {
+            i++;
+            std::string name = pdoName + ": mapped object " + std::to_string(i);
+
+            if (!sdo()->download(name, mapping, mappingIdx, i))
+            {
+                return false;
+            }
+        }
+
+        if (!sdo()->download<std::uint8_t>(pdoName + " mapping parameters", i, mappingIdx))
+        {
+            return false;
+        }
+    }
+
+    if (!conf.valid || *conf.valid)
+    {
+        bits.reset(31);
+
+        if (!sdo()->download(std::string("COB-ID ") + pdoName, bits.to_ulong(), commIdx, 0x01))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }

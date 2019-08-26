@@ -46,74 +46,17 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
 
     linInterpBuffer->resetIntegrityCounter();
 
-    //-- ptprepare: pg. 168 (184/263)
-    //*************************************************************
-    //-- 1. - 4. From start to enable.
-    //*************************************************************
-    //-- 5. Disable the RPDO3. Write zero in object 1602 h sub-index 0, this will disable the PDO.
-    //-- Send the following message (SDO access to object 1602 h sub-index 0, 8-bit value 0):
-    if (!can->sdo()->download<uint8_t>("RPDO3 Mapping Parameter", 0, 0x1602))
-    {
-        return false;
-    }
-    //*************************************************************
-    //-- 6. Map the new objects.
-    //-- a) Write in object 1602 h sub-index 1 the description of the interpolated data record
-    //-- sub-index 1:
-    //-- Send the following message (SDO access to object 1602 h sub-index 1, 32-bit value 60C10120 h ):
-    if (!can->sdo()->download<uint32_t>("RPDO3 Mapping Parameter: 1st mapped object", 0x60C10120, 0x1602, 0x01))
-    {
-        return false;
-    }
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    //-- b) Write in object 1602 h sub-index 2 the description of the interpolated data record
-    //-- sub-index 2:
-    //-- Send the following message (SDO access to object 1602 h sub-index 2, 32-bit value 60C10220 h ):
-    if (!can->sdo()->download<uint32_t>("RPDO3 Mapping Parameter: 2nd mapped object", 0x60C10220, 0x1602, 0x02))
-    {
-        return false;
-    }
-    //*************************************************************
-    //-- 7. Enable the RPDO3. Set the object 1602 h sub-index 0 with the value 2.
-    //-- Send the following message (SDO access to object 1601 h sub-index 0, 8-bit value 2):
-    if (!can->sdo()->download<uint8_t>("RPDO3 Mapping Parameter", 2, 0x1602))
-    {
-        return false;
-    }
-    //*************************************************************
-    //-- 8. Mode of operation. Select interpolation position mode.
-    //-- Send the following message (SDO access to object 6060 h , 8-bit value 7 h ):
-    if (!can->sdo()->download<uint8_t>("Modes of Operation", 7, 0x6060))
-    {
-        return false;
-    }
-    //*************************************************************
-    //-- 9. Interpolation sub mode select. Select PVT interpolation position mode.
-    //-- Send the following message (SDO access to object 60C0 h , 16-bit value FFFF h ):
-    if (!can->sdo()->download<int16_t>("Interpolation sub mode select", linInterpBuffer->getSubMode(), 0x60C0))
-    {
-        return false;
-    }
-    //*************************************************************
-    //-- 10. Interpolated position buffer length. (...)
-    if (!can->sdo()->download<uint16_t>("Interpolated position buffer length", linInterpBuffer->getBufferSize(), 0x2073))
-    {
-        return false;
-    }
-    //*************************************************************
-    //-- 11. Interpolated position buffer configuration. By setting the value A001 h , the buffer is
-    //-- cleared and the integrity counter will be set to 1. Send the following message (SDO
-    //-- access to object 2074 h , 16-bit value C h ):
-    if (!can->sdo()->download<uint16_t>("Interpolated position buffer configuration", 0xA000, 0x2074))
-    {
-        return false;
-    }
-    //*************************************************************
-    //-- 12. Interpolated position initial position. Set the initial position to 0.5 rotations. By using a
-    //-- 500 lines incremental encoder the corresponding value of object 2079 h expressed in
-    //-- encoder counts is (1000 d ) 3E8 h . By using the settings done so far, if the final position
-    //-- command were to be 0, the drive would travel to (Actual position – 1000).
-    //-- Send the following message (SDO access to object 2079 h , 32-bit value 0 h ):
+    PdoConfiguration rpdo3Conf;
+    rpdo3Conf.addMapping<uint32_t>(0x60C1, 0x01);
+    rpdo3Conf.addMapping<uint32_t>(0x60C1, 0x02);
+
+    bool ok = true;
+    ok = ok && can->configureRpdo(3, rpdo3Conf);
+    ok = ok && can->sdo()->download<uint8_t>("Modes of Operation", 7, 0x6060);
+    ok = ok && can->sdo()->download<int16_t>("Interpolation sub mode select", linInterpBuffer->getSubMode(), 0x60C0);
+    ok = ok && can->sdo()->download<uint16_t>("Interpolated position buffer length", linInterpBuffer->getBufferSize(), 0x2073);
+    ok = ok && can->sdo()->download<uint16_t>("Interpolated position buffer configuration", 0xA000, 0x2074);
+    if (!ok) return false;
 
     double ref;
     if (!getEncoderRaw(0, &ref)) return false;
