@@ -10,6 +10,7 @@
 #include "CanSenderDelegate.hpp"
 #include "SdoClient.hpp"
 #include "PdoProtocol.hpp"
+#include "EmcyConsumer.hpp"
 
 namespace roboticslab
 {
@@ -72,6 +73,9 @@ public:
     bool createTpdo(unsigned int n, std::uint16_t cob);
     bool configureTpdo(unsigned int n, const PdoConfiguration & conf);
 
+    EmcyConsumer * emcy() const;
+    bool createEmcy();
+
 private:
     bool configurePdo(unsigned int n, const PdoConfiguration & conf, bool isTpdo);
 
@@ -82,6 +86,7 @@ private:
     std::unordered_map<std::uint8_t, SdoClient *> sdos;
     std::unordered_map<std::uint8_t, ReceivePdo *> rpdos;
     std::unordered_map<std::uint8_t, TransmitPdo *> tpdos;
+    EmcyConsumer * _emcy;
 };
 
 }  // namespace roboticslab

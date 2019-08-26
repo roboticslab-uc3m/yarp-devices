@@ -132,8 +132,6 @@ protected:
 class TransmitPdo : public PdoProtocol
 {
 public:
-    typedef std::function<bool(const std::uint8_t * data, std::size_t size)> HandlerFn;
-
     bool accept(const std::uint8_t * data, std::size_t size)
     { return callback(data, size); }
 
@@ -148,6 +146,8 @@ public:
     }
 
 private:
+    typedef std::function<bool(const std::uint8_t * data, std::size_t size)> HandlerFn;
+
     // https://stackoverflow.com/a/14058638
     struct ordered_call
     {

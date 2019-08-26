@@ -14,12 +14,14 @@ namespace
     InvalidSdoClient INVALID_SDO;
     InvalidReceivePdo INVALID_RPDO;
     InvalidTransmitPdo INVALID_TPDO;
+    InvalidEmcyConsumer INVALID_EMCY;
 }
 
 CanOpen::CanOpen(int _id)
     : id(_id),
       sender(nullptr),
-      hasSender(false)
+      hasSender(false),
+      _emcy(nullptr)
 {
     //createSdo(); // TODO
 }
@@ -27,7 +29,8 @@ CanOpen::CanOpen(int _id)
 CanOpen::CanOpen(int _id, CanSenderDelegate * _sender)
     : id(_id),
       sender(_sender),
-      hasSender(true)
+      hasSender(true),
+      _emcy(nullptr)
 {
     //createSdo(); // TODO
 }
@@ -350,4 +353,23 @@ bool CanOpen::configurePdo(unsigned int n, const PdoConfiguration & conf, bool i
     }
 
     return true;
+}
+
+EmcyConsumer * CanOpen::emcy() const
+{
+    return _emcy != nullptr ? _emcy : &INVALID_EMCY;
+}
+
+bool CanOpen::createEmcy()
+{
+    if (_emcy == nullptr)
+    {
+        _emcy = new EmcyConsumer;
+        return true;
+    }
+    else
+    {
+        CD_WARNING("EMCY already created.\n");
+        return false;
+    }
 }

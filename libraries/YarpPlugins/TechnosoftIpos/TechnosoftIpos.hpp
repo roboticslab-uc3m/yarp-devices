@@ -54,6 +54,12 @@ private:
     mutable std::mutex encoderMutex;
 };
 
+class TechnosoftIposEmcy : public EmcyCodeRegistry
+{
+public:
+    virtual std::string codeToMessage(std::uint16_t code);
+};
+
 /**
 * @ingroup TechnosoftIpos
 * @brief Implementation for the Technosoft iPOS as a single CAN bus joint (controlboard raw interfaces).
