@@ -18,17 +18,11 @@ namespace roboticslab
 class SdoClient
 {
 public:
-    SdoClient(unsigned int id, double timeout) : id(id), sender(0), sdoSemaphore(new SdoSemaphore(timeout))
-    {}
+    virtual ~SdoClient() { }
 
-    ~SdoClient()
-    { delete sdoSemaphore; }
+    virtual void configureSender(CanSenderDelegate * sender) = 0;
 
-    void configureSender(CanSenderDelegate * sender)
-    { this->sender = sender; }
-
-    void notify(const uint8_t * raw)
-    { sdoSemaphore->notify(raw); }
+    virtual void notify(const uint8_t * raw) = 0;
 
     template<typename T>
     bool upload(const std::string & name, T * data, uint16_t index, uint8_t subindex = 0x00)
@@ -51,20 +45,52 @@ public:
         return downloadInternal(name, &data, sizeof(T), index, subindex);
     }
 
+protected:
+    virtual bool uploadInternal(const std::string & name, void * data, uint32_t size, uint16_t index, uint8_t subindex) = 0;
+    virtual bool downloadInternal(const std::string & name, const void * data, uint32_t size, uint16_t index, uint8_t subindex) = 0;
+};
+
+class ConcreteSdoClient : public SdoClient
+{
+public:
+    ConcreteSdoClient(std::uint8_t id, std::uint16_t cobRx, std::uint16_t cobTx, double timeout)
+        : id(id), cobRx(cobRx), cobTx(cobTx), sender(0), sdoSemaphore(timeout)
+    {}
+
+    virtual void configureSender(CanSenderDelegate * sender)
+    { this->sender = sender; }
+
+    virtual void notify(const uint8_t * raw)
+    { sdoSemaphore.notify(raw); }
+
 private:
     bool send(const uint8_t * msg);
     std::string msgToStr(uint16_t cob, const uint8_t * msgData);
 
-    bool uploadInternal(const std::string & name, void * data, uint32_t size, uint16_t index, uint8_t subindex);
-    bool downloadInternal(const std::string & name, const void * data, uint32_t size, uint16_t index, uint8_t subindex);
+    virtual bool uploadInternal(const std::string & name, void * data, uint32_t size, uint16_t index, uint8_t subindex);
+    virtual bool downloadInternal(const std::string & name, const void * data, uint32_t size, uint16_t index, uint8_t subindex);
     bool performTransfer(const std::string & name, const uint8_t * req, uint8_t * resp);
 
-    unsigned int id;
-    CanSenderDelegate * sender;
-    SdoSemaphore * sdoSemaphore;
+    std::uint8_t id;
+    std::uint16_t cobRx;
+    std::uint16_t cobTx;
 
-    static const uint16_t COB_D = 0x600;
-    static const uint16_t COB_U = 0x580;
+    CanSenderDelegate * sender;
+    SdoSemaphore sdoSemaphore;
+};
+
+class InvalidSdoClient : public SdoClient
+{
+public:
+    virtual void configureSender(CanSenderDelegate * sender)
+    { }
+
+    virtual void notify(const uint8_t * raw)
+    { }
+
+private:
+    virtual bool uploadInternal(const std::string & name, void * data, uint32_t size, uint16_t index, uint8_t subindex);
+    virtual bool downloadInternal(const std::string & name, const void * data, uint32_t size, uint16_t index, uint8_t subindex);
 };
 
 } // namespace roboticslab

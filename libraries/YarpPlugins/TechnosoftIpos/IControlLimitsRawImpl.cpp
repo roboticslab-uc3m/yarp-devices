@@ -30,7 +30,7 @@ bool roboticslab::TechnosoftIpos::setLimitRaw(double limit, bool isMin)
     }
 
     int32_t data = degreesToInternalUnits(limit);
-    return sdoClient->download(name, data, 0x607D, subindex);
+    return can->sdo()->download(name, data, 0x607D, subindex);
 }
 
 // -----------------------------------------------------------------------------
@@ -60,7 +60,7 @@ bool roboticslab::TechnosoftIpos::getLimitRaw(double * limit, bool isMin)
         subindex = 0x02;
     }
 
-    return sdoClient->upload<int32_t>(name, [=](int32_t * data)
+    return can->sdo()->upload<int32_t>(name, [=](int32_t * data)
             { *limit = internalUnitsToDegrees(*data); },
             0x607D, subindex);
 }

@@ -36,7 +36,7 @@ public:
     int getBufferSize() const;
     void setBufferSize(int bufferSize);
     virtual int getSubMode() const = 0;
-    virtual void configureMessage(uint8_t * msg) = 0;
+    virtual uint64_t makeDataRecord() = 0;
     LinearInterpolationBuffer * cloneTo(const std::string & type);
     static LinearInterpolationBuffer * createBuffer(const yarp::os::Searchable & config);
 
@@ -60,7 +60,7 @@ public:
     PtBuffer(int _periodMs, int _bufferSize, double _factor, double _maxVel);
     virtual std::string getType() const;
     virtual int getSubMode() const;
-    virtual void configureMessage(uint8_t * msg);
+    virtual uint64_t makeDataRecord();
 
 private:
     double maxDistance;
@@ -76,7 +76,7 @@ public:
     virtual void setInitialReference(double target);
     virtual std::string getType() const;
     virtual int getSubMode() const;
-    virtual void configureMessage(uint8_t * msg);
+    virtual uint64_t makeDataRecord();
 
 private:
     double previousTarget;

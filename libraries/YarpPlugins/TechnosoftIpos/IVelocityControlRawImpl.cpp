@@ -24,7 +24,7 @@ bool roboticslab::TechnosoftIpos::velocityMoveRaw(int j, double sp)
     CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
 
     int32_t data = (dataInt << 16) + dataFrac;
-    return sdoClient->download("Target velocity", data, 0x60FF);
+    return can->sdo()->download("Target velocity", data, 0x60FF);
 }
 
 // ----------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ bool roboticslab::TechnosoftIpos::getRefVelocityRaw(const int joint, double *vel
     CD_DEBUG("(%d)\n",joint);
     CHECK_JOINT(joint);
 
-    return sdoClient->upload<int32_t>("Target velocity", [=](int32_t * data)
+    return can->sdo()->upload<int32_t>("Target velocity", [=](int32_t * data)
             {
                 int16_t dataInt = *data >> 16;
                 uint16_t dataFrac = *data & 0xFFFF;

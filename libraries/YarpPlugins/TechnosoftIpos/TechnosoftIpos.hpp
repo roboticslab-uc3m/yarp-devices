@@ -16,7 +16,7 @@
 #include <ColorDebug.h>
 
 #include "ICanBusSharer.hpp"
-#include "SdoClient.hpp"
+#include "CanOpen.hpp"
 #include "ITechnosoftIpos.h"
 #include "LinearInterpolationBuffer.hpp"
 
@@ -78,7 +78,7 @@ public:
     TechnosoftIpos()
         : canId(0),
           sender(0),
-          sdoClient(0),
+          can(0),
           iEncodersTimedRawExternal(0),
           lastEncoderRead(0.0),
           modeCurrentTorque(0),
@@ -257,18 +257,6 @@ public:
 
 protected:
 
-    //  --------- Implementation in TechnosoftIpos.cpp ---------
-
-    //-- CAN bus stuff
-    /**
-     * Write message to the CAN buffer.
-     * @param cob Message's COB
-     * @param len Data field length
-     * @param msgData Data to send
-     * @return true/false on success/failure.
-     */
-    bool send(uint32_t cob, uint16_t len, uint8_t * msgData);
-
     // return -1 for negative numbers, +1 for positive numbers, 0 for zero
     // https://stackoverflow.com/a/4609795
     template<typename T>
@@ -298,7 +286,7 @@ protected:
 
     int canId;
     CanSenderDelegate * sender;
-    SdoClient * sdoClient;
+    CanOpen * can;
 
     //-- Encoder stuff
     yarp::dev::IEncodersTimedRaw* iEncodersTimedRawExternal;

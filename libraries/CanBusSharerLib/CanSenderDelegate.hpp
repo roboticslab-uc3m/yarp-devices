@@ -43,7 +43,7 @@ public:
     {}
 
     template <typename MessageConsumerT>
-    bool prepareMessage(MessageConsumerT callback)
+    bool prepareMessage(MessageConsumerT callback) const
     {
         std::lock_guard<std::mutex> lock(bufferMutex);
         return preparedMessages < maxSize ? callback(buffer[preparedMessages++]), true : false;
