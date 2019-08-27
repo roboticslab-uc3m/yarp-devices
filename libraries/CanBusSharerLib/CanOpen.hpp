@@ -75,6 +75,7 @@ public:
 
     EmcyConsumer * emcy() const;
     bool createEmcy();
+    bool configureEmcy(std::uint16_t inhibitTime);
 
 private:
     bool configurePdo(unsigned int n, const PdoConfiguration & conf, bool isTpdo);

@@ -373,3 +373,8 @@ bool CanOpen::createEmcy()
         return false;
     }
 }
+
+bool CanOpen::configureEmcy(std::uint16_t inhibitTime)
+{
+    return sdo()->download("Inhibit time EMCY", inhibitTime, 0x1015);
+}
