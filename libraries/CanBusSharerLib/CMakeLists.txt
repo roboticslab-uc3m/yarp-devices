@@ -9,10 +9,12 @@ if(ENABLE_CanBusSharerLib)
                                        SdoClient.hpp
                                        SdoClient-inl.hpp
                                        SdoClient.cpp
-                                       PdoProtocol.hpp
-                                       PdoProtocol.cpp
                                        SdoSemaphore.hpp
                                        SdoSemaphore.cpp
+                                       PdoProtocol.hpp
+                                       PdoProtocol.cpp
+                                       EmcyConsumer.hpp
+                                       EmcyConsumer.cpp
                                        CanUtils.hpp
                                        CanUtils.cpp)
 

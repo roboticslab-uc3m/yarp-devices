@@ -2,6 +2,9 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <cstring>
+#include <bitset>
+
 #include <ColorDebug.h>
 
 namespace
@@ -33,6 +36,60 @@ namespace
             break;
         default:
             CD_INFO("Got PDO1 from driver side: unknown.\n");
+        }
+    }
+
+    void interpretPtEmcy(uint16_t status, int canId, const roboticslab::LinearInterpolationBuffer * buffer)
+    {
+        CD_INFO("Interpolated position mode status. canId: %d.\n", canId);
+        std::bitset<16> bits(status);
+
+        if (bits.test(15))
+        {
+            CD_INFO("\t* buffer is empty.\n");
+
+            if (buffer->getType() == "pvt")
+            {
+                if (bits.test(11))
+                {
+                    CD_INFO("\t* pvt maintained position on buffer empty (zero velocity).\n");
+                }
+                else
+                {
+                    CD_INFO("\t* pvt performed quick stop on buffer empty (non-zero velocity).\n");
+                }
+            }
+        }
+        else
+        {
+            CD_INFO("\t* buffer is not empty.\n");
+        }
+
+        if (bits.test(14))
+        {
+            CD_INFO("\t* buffer is low.\n");
+        }
+        else
+        {
+            CD_INFO("\t* buffer is not low.\n");
+        }
+
+        if (bits.test(13))
+        {
+            CD_INFO("\t* buffer is full.\n");
+        }
+        else
+        {
+            CD_INFO("\t* buffer is not full.\n");
+        }
+
+        if (bits.test(12))
+        {
+            CD_INFO("\t* integrity counter error.\n");
+        }
+        else
+        {
+            CD_INFO("\t* no integrity counter error.\n");
         }
     }
 }
@@ -118,6 +175,18 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     can->createRpdo3();
     can->createTpdo1();
     can->tpdo1()->registerHandler<uint16_t>(interpretStatusword);
+    can->createEmcy();
+    can->emcy()->setErrorCodeRegistry<TechnosoftIposEmcy>();
+
+    can->emcy()->registerHandler([=](EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef)
+            {
+                if (code.first == 0xFF01)
+                {
+                    uint16_t status;
+                    std::memcpy(&status, msef + 3, 2);
+                    interpretPtEmcy(status, canId, linInterpBuffer);
+                }
+            });
 
     if (!setRefSpeedRaw(0, refSpeed))
     {
