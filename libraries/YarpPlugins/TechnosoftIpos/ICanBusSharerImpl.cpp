@@ -142,7 +142,7 @@ bool roboticslab::TechnosoftIpos::initialize()
     CD_SUCCESS("Sent \"Product Code\" query. %s\n", msgToStr(0x600, 4, msg_identityObject).c_str());
 
     int count = 0;
-    const int retries = 10;
+    const int retries = 25;
     uint32_t productCode;
 
     do
