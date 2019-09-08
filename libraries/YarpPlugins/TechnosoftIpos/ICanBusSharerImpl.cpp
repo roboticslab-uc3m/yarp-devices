@@ -151,9 +151,9 @@ bool roboticslab::TechnosoftIpos::setIEncodersTimedRawExternal(IEncodersTimedRaw
     double v;
     this->iEncodersTimedRawExternal = iEncodersTimedRaw;
 
-    CD_SUCCESS("Ok pointer to external encoder interface %p (%d). Updating with latest external...\n",iEncodersTimedRaw,canId);
+    CD_SUCCESS("Ok pointer to external encoder interface %p (%d). Updating with latest external...\n",iEncodersTimedRaw,can->getId());
 
-    CD_INFO("canId(%d) wait to get external encoder value...\n",this->canId);
+    CD_INFO("canId(%d) wait to get external encoder value...\n", can->getId());
     while( !iEncodersTimedRawExternal->getEncoderRaw(0,&v) )  //-- loop while v is still a NaN.
     {
         //CD_INFO("Wait to get external encoder value...\n"); //\todo{activate these lines if blocking is too much}
@@ -234,7 +234,7 @@ bool roboticslab::TechnosoftIpos::initialize()
 bool roboticslab::TechnosoftIpos::start()
 {
     // NMT Start Remote Node (to operational, Fig 4.1)
-    uint8_t msg_start[] = {0x01, (uint8_t)canId};
+    uint8_t msg_start[] = {0x01, static_cast<uint8_t>(can->getId())};
     return sender->prepareMessage(message_builder(0, 2, msg_start));
 }
 
@@ -316,7 +316,7 @@ bool roboticslab::TechnosoftIpos::resetNode(int id)
 
 bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage & message)
 {
-    uint16_t op = message.getId() - canId;
+    uint16_t op = message.getId() - can->getId();
 
     switch (op)
     {

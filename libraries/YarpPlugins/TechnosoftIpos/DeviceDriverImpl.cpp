@@ -100,7 +100,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 {
 
     // -- .ini parameters (in order)
-    this->canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt32();
+    int canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt32();
     this->maxVel = config.check("maxVel",yarp::os::Value(10),"maxVel (meters/second or degrees/second)").asFloat64();
     this->tr = config.check("tr",yarp::os::Value(0),"reduction").asFloat64();
     this->encoderPulses = config.check("encoderPulses",yarp::os::Value(0),"encoderPulses").asInt32();
@@ -123,7 +123,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
         return false;
     }
 
-    if( 0 == this->canId )
+    if( 0 == canId )
     {
         CD_ERROR("Could not create TechnosoftIpos with canId 0\n");
         return false;
