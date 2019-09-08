@@ -13,73 +13,65 @@
 
 using namespace roboticslab;
 
-namespace
+struct PdoConfiguration::Private
 {
-    struct PdoConfigurationPrivate
-    {
-        nonstd::optional<bool> valid;
-        nonstd::optional<bool> rtr;
-        nonstd::optional<std::uint8_t> transmissionType;
-        nonstd::optional<std::uint16_t> inhibitTime;
-        nonstd::optional<std::uint16_t> eventTimer;
-        nonstd::optional<std::uint8_t> syncStartValue;
-        std::set<std::uint32_t> mappings;
-    };
-
-    constexpr PdoConfigurationPrivate * cast(void * ptr)
-    {
-        return static_cast<PdoConfigurationPrivate *>(ptr);
-    }
-}
+    nonstd::optional<bool> valid;
+    nonstd::optional<bool> rtr;
+    nonstd::optional<std::uint8_t> transmissionType;
+    nonstd::optional<std::uint16_t> inhibitTime;
+    nonstd::optional<std::uint16_t> eventTimer;
+    nonstd::optional<std::uint8_t> syncStartValue;
+    std::set<std::uint32_t> mappings;
+};
 
 PdoConfiguration::PdoConfiguration()
-    : priv(new PdoConfigurationPrivate)
+    : priv(new Private)
 { }
 
 PdoConfiguration::~PdoConfiguration()
 {
-    delete cast(priv);
+    delete priv;
 }
 
 PdoConfiguration & PdoConfiguration::setValid(bool value)
 {
-    cast(priv)->valid = value;
+    priv->valid = value;
     return *this;
 }
 
 PdoConfiguration & PdoConfiguration::setRtr(bool value)
 {
-    cast(priv)->rtr = value;
+    priv->rtr = value;
     return *this;
 }
 
 PdoConfiguration & PdoConfiguration::setTransmissionType(std::uint8_t value)
 {
-    cast(priv)->transmissionType = value;
+    priv->transmissionType = value;
     return *this;
 }
 
 PdoConfiguration & PdoConfiguration::setInhibitTime(std::uint16_t value)
 {
-    cast(priv)->inhibitTime = value;
+    priv->inhibitTime = value;
     return *this;
 }
 
 PdoConfiguration & PdoConfiguration::setEventTimer(std::uint16_t value)
 {
-    cast(priv)->eventTimer = value;
+    priv->eventTimer = value;
     return *this;
 }
 
 PdoConfiguration & PdoConfiguration::setSyncStartValue(std::uint8_t value)
 {
-    cast(priv)->syncStartValue = value;
+    priv->syncStartValue = value;
     return *this;
 }
 
 void PdoConfiguration::addMappingInternal(std::uint32_t value)
 {
-    cast(priv)->mappings.insert(value);
+    priv->mappings.insert(value);
 }
 
 bool PdoProtocol::configure(const PdoConfiguration & conf)
@@ -115,7 +107,7 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
     std::bitset<32>bits(cobId);
     bits.set(31);
 
-    if (cast(conf.priv)->rtr)
+    if (conf.priv->rtr)
     {
         if (getType() != PdoType::TPDO)
         {
@@ -123,7 +115,7 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
             return false;
         }
 
-        bits.set(30, !*cast(conf.priv)->rtr);
+        bits.set(30, !*conf.priv->rtr);
     }
 
     if (!sdo->download(std::string("COB-ID ") + pdoType, bits.to_ulong(), commIdx, 0x01))
@@ -131,22 +123,22 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
         return false;
     }
 
-    if (cast(conf.priv)->transmissionType && !sdo->download("Transmission type", *cast(conf.priv)->transmissionType, commIdx, 0x02))
+    if (conf.priv->transmissionType && !sdo->download("Transmission type", *conf.priv->transmissionType, commIdx, 0x02))
     {
         return false;
     }
 
-    if (cast(conf.priv)->inhibitTime && !sdo->download("Inhibit time", *cast(conf.priv)->inhibitTime, commIdx, 0x03))
+    if (conf.priv->inhibitTime && !sdo->download("Inhibit time", *conf.priv->inhibitTime, commIdx, 0x03))
     {
         return false;
     }
 
-    if (cast(conf.priv)->eventTimer && !sdo->download("Event timer", *cast(conf.priv)->eventTimer, commIdx, 0x05))
+    if (conf.priv->eventTimer && !sdo->download("Event timer", *conf.priv->eventTimer, commIdx, 0x05))
     {
         return false;
     }
 
-    if (cast(conf.priv)->syncStartValue)
+    if (conf.priv->syncStartValue)
     {
         if (getType() != PdoType::TPDO)
         {
@@ -154,13 +146,13 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
             return false;
         }
 
-        if (!sdo->download("SYNC start value", *cast(conf.priv)->syncStartValue, commIdx, 0x06))
+        if (!sdo->download("SYNC start value", *conf.priv->syncStartValue, commIdx, 0x06))
         {
             return false;
         }
     }
 
-    if (!cast(conf.priv)->mappings.empty())
+    if (!conf.priv->mappings.empty())
     {
         if (!sdo->download<std::uint8_t>(pdoType + " mapping parameters", 0, mappingIdx))
         {
@@ -169,7 +161,7 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
 
         unsigned int i = 0;
 
-        for (auto mapping : cast(conf.priv)->mappings)
+        for (auto mapping : conf.priv->mappings)
         {
             i++;
             std::string name = pdoType + ": mapped object " + std::to_string(i);
@@ -186,7 +178,7 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
         }
     }
 
-    if (!cast(conf.priv)->valid || *cast(conf.priv)->valid)
+    if (!conf.priv->valid || *conf.priv->valid)
     {
         bits.reset(31);
 

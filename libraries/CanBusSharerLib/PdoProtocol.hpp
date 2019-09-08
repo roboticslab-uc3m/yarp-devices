@@ -44,7 +44,8 @@ public:
 private:
     void addMappingInternal(std::uint32_t value);
 
-    void * priv;
+    class Private;
+    Private * priv;
 };
 
 class PdoProtocol
