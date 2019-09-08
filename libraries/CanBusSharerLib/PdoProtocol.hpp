@@ -132,7 +132,7 @@ public:
     { return callback(data, size); }
 
     template<typename... Ts, typename Fn>
-    void registerHandler(Fn fn)
+    void registerHandler(const Fn & fn)
     {
         // TODO: check against PDO mapping configuration?
         static_assert(sizeof...(Ts) > 0 && size<Ts...>() <= 8, "Illegal cumulative size.");
@@ -152,7 +152,7 @@ private:
     struct ordered_call
     {
         template<typename Fn, typename... Ts>
-        ordered_call(Fn fn, Ts &&... ts)
+        ordered_call(const Fn & fn, Ts &&... ts)
         { fn(std::forward<Ts>(ts)...); }
     };
 
