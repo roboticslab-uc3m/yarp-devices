@@ -170,12 +170,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     }
 
     can = new CanOpen(canId);
-    can->createSdo(canSdoTimeoutMs * 0.001);
-    can->createRpdo1();
-    can->createRpdo3();
-    can->createTpdo1();
     can->tpdo1()->registerHandler<uint16_t>(interpretStatusword);
-    can->createEmcy();
     can->emcy()->setErrorCodeRegistry<TechnosoftIposEmcy>();
 
     can->emcy()->registerHandler([=](EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef)

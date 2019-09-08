@@ -51,7 +51,7 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
     rpdo3Conf.addMapping<uint32_t>(0x60C1, 0x02);
 
     bool ok = true;
-    ok = ok && can->configureRpdo(3, rpdo3Conf);
+    ok = ok && can->rpdo3()->configure(rpdo3Conf);
     ok = ok && can->sdo()->download<uint8_t>("Modes of Operation", 7, 0x6060);
     ok = ok && can->sdo()->download<int16_t>("Interpolation sub mode select", linInterpBuffer->getSubMode(), 0x60C0);
     ok = ok && can->sdo()->download<uint16_t>("Interpolated position buffer length", linInterpBuffer->getBufferSize(), 0x2073);

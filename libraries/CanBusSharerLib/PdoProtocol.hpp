@@ -11,18 +11,18 @@
 #include <type_traits>
 #include <utility>
 
-#include "CanOpen.hpp"
 #include "CanSenderDelegate.hpp"
 #include "nonstd/optional.hpp"
+#include "SdoClient.hpp"
 
 namespace roboticslab
 {
 
-class CanOpen;
+class PdoProtocol;
 
 class PdoConfiguration final
 {
-    friend CanOpen;
+    friend PdoProtocol;
 
 public:
     PdoConfiguration & setValid(bool value);
@@ -54,22 +54,46 @@ private:
 class PdoProtocol
 {
 public:
+    PdoProtocol(std::uint8_t id, std::uint16_t cob, unsigned int n, SdoClient * sdo)
+        : id(id), cob(cob), n(n), sdo(sdo), sender(nullptr)
+    { }
+
     virtual ~PdoProtocol()
     { }
 
-    virtual std::uint16_t getCob() const
-    { return 0; };
+    std::uint16_t getCobId() const
+    { return cob + id; };
+
+    void configureSender(CanSenderDelegate * sender)
+    { this->sender = sender; }
+
+    virtual bool configure(const PdoConfiguration & config);
 
 protected:
+    enum class PdoType { RPDO, TPDO };
+
+    virtual PdoType getType() const = 0;
+
     // https://stackoverflow.com/a/38776200
     template<typename T1 = std::uint8_t, typename... Tn>
     static constexpr std::size_t size()
     { return sizeof...(Tn) == 0 ? sizeof(T1) : sizeof(T1) + size<Tn...>(); }
+
+    std::uint8_t id;
+    std::uint16_t cob;
+    unsigned int n;
+
+    SdoClient * sdo;
+    CanSenderDelegate * sender;
 };
 
-class ReceivePdo : public PdoProtocol
+class ReceivePdo final : public PdoProtocol
 {
 public:
+    ReceivePdo(std::uint8_t id, std::uint16_t cob, unsigned int n, SdoClient * sdo)
+        : PdoProtocol(id, cob, n, sdo)
+    { }
+
     template<typename... Ts>
     bool write(Ts... data)
     {
@@ -80,10 +104,9 @@ public:
         return writeInternal(raw, count);
     }
 
-    virtual void configureSender(CanSenderDelegate * sender) = 0;
-
 protected:
-    virtual bool writeInternal(const std::uint8_t * data, std::size_t size) = 0;
+    virtual PdoType getType() const override
+    { return PdoType::RPDO; }
 
 private:
     struct ordered_call
@@ -96,42 +119,17 @@ private:
         std::memcpy(buff + *count, data, sizeof(T));
         *count += sizeof(T);
     }
+
+    bool writeInternal(const std::uint8_t * data, std::size_t size);
 };
 
-class ConcreteReceivePdo : public ReceivePdo
+class TransmitPdo final : public PdoProtocol
 {
 public:
-    ConcreteReceivePdo(std::uint8_t id, std::uint16_t cob) : id(id), cob(cob), sender(0)
+    TransmitPdo(std::uint8_t id, std::uint16_t cob, unsigned int n, SdoClient * sdo)
+        : PdoProtocol(id, cob, n, sdo)
     { }
 
-    virtual void configureSender(CanSenderDelegate * sender) override
-    { this->sender = sender; }
-
-    virtual std::uint16_t getCob() const override
-    { return cob; }
-
-protected:
-    virtual bool writeInternal(const std::uint8_t * data, std::size_t size) override;
-
-private:
-    std::uint8_t id;
-    std::uint16_t cob;
-    CanSenderDelegate * sender;
-};
-
-class InvalidReceivePdo : public ReceivePdo
-{
-public:
-    virtual void configureSender(CanSenderDelegate * sender)
-    { }
-
-protected:
-    virtual bool writeInternal(const std::uint8_t * data, std::size_t size);
-};
-
-class TransmitPdo : public PdoProtocol
-{
-public:
     bool accept(const std::uint8_t * data, std::size_t size)
     { return callback(data, size); }
 
@@ -144,6 +142,10 @@ public:
             { std::size_t count = 0;
               return size<Ts...>() == len && (ordered_call{fn, unpack<Ts>(raw, &count)...}, true); };
     }
+
+protected:
+    virtual PdoType getType() const override
+    { return PdoType::TPDO; }
 
 private:
     typedef std::function<bool(const std::uint8_t * data, std::size_t size)> HandlerFn;
@@ -169,23 +171,6 @@ private:
     HandlerFn callback;
 };
 
-class ConcreteTransmitPdo : public TransmitPdo
-{
-public:
-    ConcreteTransmitPdo(std::uint8_t id, std::uint16_t cob) : id(id), cob(cob)
-    { }
-
-    virtual std::uint16_t getCob() const override
-    { return cob; }
-
-private:
-    std::uint8_t id;
-    std::uint16_t cob;
-};
-
-class InvalidTransmitPdo : public TransmitPdo
-{};
-
-}  // namespace roboticslab
+} // namespace roboticslab
 
 #endif // __PDO_PROTOCOL_HPP__

@@ -18,7 +18,7 @@ public:
     virtual std::string codeToMessage(std::uint16_t code);
 };
 
-class EmcyConsumer
+class EmcyConsumer final
 {
 public:
     typedef std::pair<std::uint16_t, std::string> code_t; // emergency error code
@@ -30,8 +30,7 @@ public:
     virtual ~EmcyConsumer()
     { delete codeRegistry; }
 
-    virtual void accept(const std::uint8_t * data)
-    { }
+    void accept(const std::uint8_t * data);
 
     template<typename T>
     void setErrorCodeRegistry()
@@ -46,15 +45,6 @@ protected:
     EmcyCodeRegistry * codeRegistry;
 };
 
-class ConcreteEmcyConsumer : public EmcyConsumer
-{
-public:
-    virtual void accept(const std::uint8_t * data) override;
-};
-
-class InvalidEmcyConsumer : public EmcyConsumer
-{ };
-
-}  // namespace roboticslab
+} // namespace roboticslab
 
 #endif // __EMCY_CONSUMER_HPP__
