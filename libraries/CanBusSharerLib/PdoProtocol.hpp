@@ -4,15 +4,12 @@
 #define __PDO_PROTOCOL_HPP__
 
 #include <cstdint>
-#include <cstring>
 
 #include <functional>
-#include <set>
 #include <type_traits>
-#include <utility>
+#include <utility> // std::forward
 
 #include "CanSenderDelegate.hpp"
-#include "nonstd/optional.hpp"
 #include "SdoClient.hpp"
 
 namespace roboticslab
@@ -25,6 +22,9 @@ class PdoConfiguration final
     friend PdoProtocol;
 
 public:
+    PdoConfiguration();
+    ~PdoConfiguration();
+
     PdoConfiguration & setValid(bool value);
     PdoConfiguration & setRtr(bool value);
     PdoConfiguration & setTransmissionType(std::uint8_t value);
@@ -37,18 +37,14 @@ public:
     {
         static_assert(std::is_integral<T>::value, "Integral required.");
         static_assert(sizeof(T) <= sizeof(std::uint32_t), "Size exceeds 4 bytes.");
-        mappings.insert((index << 16) + (subindex << 8) + sizeof(T) * 8);
+        addMappingInternal((index << 16) + (subindex << 8) + sizeof(T) * 8);
         return *this;
     }
 
 private:
-    nonstd::optional<bool> valid;
-    nonstd::optional<bool> rtr;
-    nonstd::optional<std::uint8_t> transmissionType;
-    nonstd::optional<std::uint16_t> inhibitTime;
-    nonstd::optional<std::uint16_t> eventTimer;
-    nonstd::optional<std::uint8_t> syncStartValue;
-    std::set<std::uint32_t> mappings;
+    void addMappingInternal(std::uint32_t value);
+
+    void * priv;
 };
 
 class PdoProtocol
@@ -116,10 +112,11 @@ private:
     void pack(const T * data, std::uint8_t * buff, std::size_t * count)
     {
         static_assert(std::is_integral<T>::value, "Integral required.");
-        std::memcpy(buff + *count, data, sizeof(T));
+        packInternal(buff + *count, data, sizeof(T));
         *count += sizeof(T);
     }
 
+    void packInternal(std::uint8_t * buff, const void * data, std::size_t size);
     bool writeInternal(const std::uint8_t * data, std::size_t size);
 };
 
@@ -163,10 +160,12 @@ private:
     {
         static_assert(std::is_integral<T>::value, "Integral required.");
         T data;
-        std::memcpy(&data, buff + *count, sizeof(T));
+        unpackInternal(&data, buff + *count, sizeof(T));
         *count += sizeof(T);
         return data;
     }
+
+    void unpackInternal(void * data, const std::uint8_t * buff, std::size_t size);
 
     HandlerFn callback;
 };
