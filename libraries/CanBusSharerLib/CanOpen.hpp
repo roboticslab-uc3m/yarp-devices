@@ -25,8 +25,7 @@ public:
 
     ~CanOpen();
 
-    void configureSender(CanSenderDelegate * sender)
-    { this->sender = sender; }
+    void configureSender(CanSenderDelegate * sender);
 
     unsigned int getId() const
     { return id; }

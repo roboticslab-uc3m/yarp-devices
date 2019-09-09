@@ -40,6 +40,20 @@ CanOpen::~CanOpen()
     delete _nmt;
 }
 
+void CanOpen::configureSender(CanSenderDelegate * sender)
+{
+    _sdo->configureSender(sender);
+    _rpdo1->configureSender(sender);
+    _rpdo2->configureSender(sender);
+    _rpdo3->configureSender(sender);
+    _rpdo4->configureSender(sender);
+    _tpdo1->configureSender(sender);
+    _tpdo2->configureSender(sender);
+    _tpdo3->configureSender(sender);
+    _tpdo4->configureSender(sender);
+    _nmt->configureSender(sender);
+}
+
 bool CanOpen::consumeMessage(std::uint16_t cobId, const std::uint8_t * data, std::size_t size)
 {
     std::uint16_t op = cobId - this->id;
