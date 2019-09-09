@@ -24,6 +24,8 @@ class PdoConfiguration final
 public:
     PdoConfiguration();
     ~PdoConfiguration();
+    PdoConfiguration(const PdoConfiguration &);
+    PdoConfiguration & operator=(const PdoConfiguration &);
 
     PdoConfiguration & setValid(bool value);
     PdoConfiguration & setRtr(bool value);

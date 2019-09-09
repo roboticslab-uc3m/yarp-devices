@@ -33,6 +33,21 @@ PdoConfiguration::~PdoConfiguration()
     delete priv;
 }
 
+PdoConfiguration::PdoConfiguration(const PdoConfiguration & other)
+    : priv(new Private(*other.priv))
+{ }
+
+PdoConfiguration & PdoConfiguration::operator=(const PdoConfiguration & other)
+{
+    if (this != &other)
+    {
+        delete priv;
+        priv = new Private(*other.priv);
+    }
+
+    return *this;
+}
+
 PdoConfiguration & PdoConfiguration::setValid(bool value)
 {
     priv->valid = value;
@@ -203,5 +218,5 @@ bool ReceivePdo::writeInternal(const std::uint8_t * data, std::size_t size)
 
 void TransmitPdo::unpackInternal(void * data, const std::uint8_t * buff, std::size_t size)
 {
-    std::memcpy(data, buff, size);;
+    std::memcpy(data, buff, size);
 }
