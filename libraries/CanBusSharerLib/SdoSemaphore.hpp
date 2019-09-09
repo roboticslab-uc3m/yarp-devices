@@ -20,7 +20,7 @@ public:
     ~SdoSemaphore();
 
     bool await(std::uint8_t * raw);
-    void notify(const std::uint8_t * raw);
+    bool notify(const std::uint8_t * raw);
     void interrupt();
 
 private:

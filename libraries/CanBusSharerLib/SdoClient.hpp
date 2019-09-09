@@ -3,7 +3,7 @@
 #ifndef __SDO_CLIENT_HPP__
 #define __SDO_CLIENT_HPP__
 
-#include <stdint.h>
+#include <cstdint>
 
 #include <functional>
 #include <string>
@@ -15,61 +15,53 @@
 namespace roboticslab
 {
 
-class SdoClient
+class SdoClient final
 {
 public:
-    virtual ~SdoClient() { }
+    SdoClient(std::uint8_t id, std::uint16_t cobRx, std::uint16_t cobTx, double timeout)
+        : id(id), cobRx(cobRx), cobTx(cobTx), sender(0), sdoSemaphore(timeout)
+    {}
 
-    virtual void configureSender(CanSenderDelegate * sender) = 0;
+    std::uint16_t getCobIdRx() const
+    { return cobRx + id; }
 
-    virtual void notify(const uint8_t * raw) = 0;
+    std::uint16_t getCobIdTx() const
+    { return cobTx + id; }
+
+    void configureSender(CanSenderDelegate * sender)
+    { this->sender = sender; }
+
+    bool notify(const std::uint8_t * raw)
+    { return sdoSemaphore.notify(raw); }
 
     template<typename T>
-    bool upload(const std::string & name, T * data, uint16_t index, uint8_t subindex = 0x00)
+    bool upload(const std::string & name, T * data, std::uint16_t index, std::uint8_t subindex = 0x00)
     {
         static_assert(std::is_integral<T>::value, "Integral required.");
         return uploadInternal(name, data, sizeof(T), index, subindex);
     }
 
     template<typename T>
-    bool upload(const std::string & name, std::function<void(T * data)> fn, uint16_t index, uint8_t subindex = 0x00)
+    bool upload(const std::string & name, std::function<void(T * data)> fn, std::uint16_t index, std::uint8_t subindex = 0x00)
     {
         T data; bool res;
         return res = upload(name, &data, index, subindex), fn(&data), res;
     }
 
     template<typename T>
-    bool download(const std::string & name, T data, uint16_t index, uint8_t subindex = 0x00)
+    bool download(const std::string & name, T data, std::uint16_t index, std::uint8_t subindex = 0x00)
     {
         static_assert(std::is_integral<T>::value, "Integral required.");
         return downloadInternal(name, &data, sizeof(T), index, subindex);
     }
 
-protected:
-    virtual bool uploadInternal(const std::string & name, void * data, uint32_t size, uint16_t index, uint8_t subindex) = 0;
-    virtual bool downloadInternal(const std::string & name, const void * data, uint32_t size, uint16_t index, uint8_t subindex) = 0;
-};
-
-class ConcreteSdoClient : public SdoClient
-{
-public:
-    ConcreteSdoClient(std::uint8_t id, std::uint16_t cobRx, std::uint16_t cobTx, double timeout)
-        : id(id), cobRx(cobRx), cobTx(cobTx), sender(0), sdoSemaphore(timeout)
-    {}
-
-    virtual void configureSender(CanSenderDelegate * sender)
-    { this->sender = sender; }
-
-    virtual void notify(const uint8_t * raw)
-    { sdoSemaphore.notify(raw); }
-
 private:
-    bool send(const uint8_t * msg);
-    std::string msgToStr(uint16_t cob, const uint8_t * msgData);
+    bool send(const std::uint8_t * msg);
+    std::string msgToStr(std::uint16_t cob, const std::uint8_t * msgData);
 
-    virtual bool uploadInternal(const std::string & name, void * data, uint32_t size, uint16_t index, uint8_t subindex);
-    virtual bool downloadInternal(const std::string & name, const void * data, uint32_t size, uint16_t index, uint8_t subindex);
-    bool performTransfer(const std::string & name, const uint8_t * req, uint8_t * resp);
+    bool uploadInternal(const std::string & name, void * data, std::uint32_t size, std::uint16_t index, std::uint8_t subindex);
+    bool downloadInternal(const std::string & name, const void * data, std::uint32_t size, std::uint16_t index, std::uint8_t subindex);
+    bool performTransfer(const std::string & name, const std::uint8_t * req, std::uint8_t * resp);
 
     std::uint8_t id;
     std::uint16_t cobRx;
@@ -77,20 +69,6 @@ private:
 
     CanSenderDelegate * sender;
     SdoSemaphore sdoSemaphore;
-};
-
-class InvalidSdoClient : public SdoClient
-{
-public:
-    virtual void configureSender(CanSenderDelegate * sender)
-    { }
-
-    virtual void notify(const uint8_t * raw)
-    { }
-
-private:
-    virtual bool uploadInternal(const std::string & name, void * data, uint32_t size, uint16_t index, uint8_t subindex);
-    virtual bool downloadInternal(const std::string & name, const void * data, uint32_t size, uint16_t index, uint8_t subindex);
 };
 
 } // namespace roboticslab

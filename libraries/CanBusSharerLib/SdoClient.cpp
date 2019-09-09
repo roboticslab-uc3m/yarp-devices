@@ -15,7 +15,7 @@ using namespace roboticslab;
 
 namespace
 {
-    std::string parseAbortCode(uint32_t code)
+    std::string parseAbortCode(std::uint32_t code)
     {
         // CiA 301 v4.2.0
         switch (code)
@@ -89,25 +89,25 @@ namespace
     }
 }
 
-bool ConcreteSdoClient::send(const uint8_t * msg)
+bool SdoClient::send(const std::uint8_t * msg)
 {
     return sender->prepareMessage(message_builder(cobRx, 8, msg));
 }
 
-std::string ConcreteSdoClient::msgToStr(uint16_t cob, const uint8_t * msgData)
+std::string SdoClient::msgToStr(std::uint16_t cob, const std::uint8_t * msgData)
 {
     return CanUtils::msgToStr(id, cob, 8, msgData);
 }
 
-bool ConcreteSdoClient::uploadInternal(const std::string & name, void * data, uint32_t size, uint16_t index, uint8_t subindex)
+bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint32_t size, std::uint16_t index, std::uint8_t subindex)
 {
-    uint8_t requestMsg[8] = {0};
+    std::uint8_t requestMsg[8] = {0};
 
     requestMsg[0] = 0x40; // client command specifier
     std::memcpy(requestMsg + 1, &index, 2);
     requestMsg[3] = subindex;
 
-    uint8_t responseMsg[8];
+    std::uint8_t responseMsg[8];
 
     if (!performTransfer(name, requestMsg, responseMsg))
     {
@@ -120,8 +120,8 @@ bool ConcreteSdoClient::uploadInternal(const std::string & name, void * data, ui
     {
         if (bitsReceived.test(0)) // data size is indicated in 'n'
         {
-            const uint8_t n = ((bitsReceived << 4) >> 6).to_ulong();
-            const uint8_t actualSize = 4 - n;
+            const std::uint8_t n = ((bitsReceived << 4) >> 6).to_ulong();
+            const std::uint8_t actualSize = 4 - n;
 
             if (size != actualSize)
             {
@@ -134,7 +134,7 @@ bool ConcreteSdoClient::uploadInternal(const std::string & name, void * data, ui
     }
     else
     {
-        uint32_t len;
+        std::uint32_t len;
         std::memcpy(&len, responseMsg + 4, sizeof(len));
 
         if (size < len)
@@ -146,8 +146,8 @@ bool ConcreteSdoClient::uploadInternal(const std::string & name, void * data, ui
         CD_INFO("SDO segmented upload begin: id %d.\n", id);
 
         std::bitset<8> bitsSent(0x60);
-        uint8_t segmentedMsg[8] = {0};
-        uint32_t sent = 0;
+        std::uint8_t segmentedMsg[8] = {0};
+        std::uint32_t sent = 0;
 
         do
         {
@@ -166,10 +166,10 @@ bool ConcreteSdoClient::uploadInternal(const std::string & name, void * data, ui
                 return false;
             }
 
-            const uint8_t n = ((bitsReceived << 4) >> 5).to_ulong();
-            const uint8_t actualSize = 7 - n;
+            const std::uint8_t n = ((bitsReceived << 4) >> 5).to_ulong();
+            const std::uint8_t actualSize = 7 - n;
 
-            std::memcpy(static_cast<uint8_t *>(data) + sent, responseMsg + 1, actualSize);
+            std::memcpy(static_cast<std::uint8_t *>(data) + sent, responseMsg + 1, actualSize);
 
             sent += actualSize;
             bitsSent.flip(4);
@@ -182,9 +182,9 @@ bool ConcreteSdoClient::uploadInternal(const std::string & name, void * data, ui
     return true;
 }
 
-bool ConcreteSdoClient::downloadInternal(const std::string & name, const void * data, uint32_t size, uint16_t index, uint8_t subindex)
+bool SdoClient::downloadInternal(const std::string & name, const void * data, std::uint32_t size, std::uint16_t index, std::uint8_t subindex)
 {
-    uint8_t indicationMsg[8] = {0};
+    std::uint8_t indicationMsg[8] = {0};
     std::memcpy(indicationMsg + 1, &index, 2);
     indicationMsg[3] = subindex;
 
@@ -193,11 +193,11 @@ bool ConcreteSdoClient::downloadInternal(const std::string & name, const void * 
     if (size <= 4) // expedited transfer
     {
         indicationBits.set(1); // e: transfer type
-        const uint8_t n = 4 - size;
+        const std::uint8_t n = 4 - size;
         indicationMsg[0] = indicationBits.to_ulong() + (n << 2);
         std::memcpy(indicationMsg + 4, &data, size);
 
-        uint8_t confirmMsg[8];
+        std::uint8_t confirmMsg[8];
         return performTransfer(name, indicationMsg, confirmMsg);
     }
     else
@@ -205,7 +205,7 @@ bool ConcreteSdoClient::downloadInternal(const std::string & name, const void * 
         indicationMsg[0] = indicationBits.to_ulong();
         std::memcpy(indicationMsg + 4, &size, sizeof(size));
 
-        uint8_t confirmMsg[8];
+        std::uint8_t confirmMsg[8];
 
         if (!performTransfer(name, indicationMsg, confirmMsg))
         {
@@ -213,13 +213,13 @@ bool ConcreteSdoClient::downloadInternal(const std::string & name, const void * 
         }
 
         std::bitset<8> bitsSent(0x00);
-        uint32_t sent = 0;
+        std::uint32_t sent = 0;
 
         CD_INFO("SDO segmented download begin: id %d.\n", id);
 
         do
         {
-            uint32_t actualSize;
+            std::uint32_t actualSize;
 
             if (size - sent <= 7) // last message
             {
@@ -231,11 +231,11 @@ bool ConcreteSdoClient::downloadInternal(const std::string & name, const void * 
                 actualSize = 7;
             }
 
-            const uint8_t n = 7 - actualSize;
-            uint8_t segmentedMsg[8] = {0};
+            const std::uint8_t n = 7 - actualSize;
+            std::uint8_t segmentedMsg[8] = {0};
             segmentedMsg[0] = bitsSent.to_ulong() + (n << 1);
 
-            std::memcpy(segmentedMsg + 1, static_cast<const uint8_t *>(data) + sent, actualSize);
+            std::memcpy(segmentedMsg + 1, static_cast<const std::uint8_t *>(data) + sent, actualSize);
 
             if (!performTransfer(name, segmentedMsg, confirmMsg))
             {
@@ -259,7 +259,7 @@ bool ConcreteSdoClient::downloadInternal(const std::string & name, const void * 
     return true;
 }
 
-bool ConcreteSdoClient::performTransfer(const std::string & name, const uint8_t * req, uint8_t * resp)
+bool SdoClient::performTransfer(const std::string & name, const std::uint8_t * req, std::uint8_t * resp)
 {
     const std::string & reqStr = msgToStr(cobRx, req);
 
@@ -282,7 +282,7 @@ bool ConcreteSdoClient::performTransfer(const std::string & name, const uint8_t 
 
     if (resp[0] == 0x80) // SDO abort transfer (ccs)
     {
-        uint32_t code;
+        std::uint32_t code;
         std::memcpy(&code, resp + 4, sizeof(code));
         CD_ERROR("SDO transfer abort (\"%s\"): %s. %s\n", name.c_str(), parseAbortCode(code).c_str(), respStr.c_str());
         return false;
@@ -290,16 +290,4 @@ bool ConcreteSdoClient::performTransfer(const std::string & name, const uint8_t 
 
     CD_SUCCESS("SDO client response/confirm (\"%s\"). %s\n", name.c_str(), respStr.c_str());
     return true;
-}
-
-bool InvalidSdoClient::uploadInternal(const std::string & name, void * data, uint32_t size, uint16_t index, uint8_t subindex)
-{
-    CD_ERROR("Invalid SDO client.\n"); // TODO: move to CanOpen.cpp?
-    return false;
-}
-
-bool InvalidSdoClient::downloadInternal(const std::string & name, const void * data, uint32_t size, uint16_t index, uint8_t subindex)
-{
-    CD_ERROR("Invalid SDO client.\n");
-    return false;
 }
