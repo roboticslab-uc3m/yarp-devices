@@ -15,6 +15,8 @@ if(ENABLE_CanBusSharerLib)
                                        PdoProtocol.cpp
                                        EmcyConsumer.hpp
                                        EmcyConsumer.cpp
+                                       NmtProtocol.hpp
+                                       NmtProtocol.cpp
                                        CanUtils.hpp
                                        CanUtils.cpp)
 

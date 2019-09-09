@@ -16,7 +16,8 @@ CanOpen::CanOpen(unsigned int _id, CanSenderDelegate * _sender)
       _tpdo2(new TransmitPdo(id, 0x280, 2, _sdo)),
       _tpdo3(new TransmitPdo(id, 0x380, 3, _sdo)),
       _tpdo4(new TransmitPdo(id, 0x480, 4, _sdo)),
-      _emcy(new EmcyConsumer(_sdo))
+      _emcy(new EmcyConsumer(_sdo)),
+      _nmt(new NmtProtocol(id))
 {
 }
 
@@ -35,6 +36,8 @@ CanOpen::~CanOpen()
     delete _tpdo4;
 
     delete _emcy;
+
+    delete _nmt;
 }
 
 bool CanOpen::consumeMessage(std::uint16_t cobId, const std::uint8_t * data, std::size_t size)

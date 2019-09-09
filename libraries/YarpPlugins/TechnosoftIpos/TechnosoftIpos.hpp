@@ -82,8 +82,7 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver,
 public:
 
     TechnosoftIpos()
-        : sender(0),
-          can(0),
+        : can(0),
           iEncodersTimedRawExternal(0),
           lastEncoderRead(0.0),
           modeCurrentTorque(0),
@@ -289,7 +288,6 @@ protected:
     double torqueToCurrent(double torque)
     { return torque / (std::abs(tr) * k); }
 
-    CanSenderDelegate * sender; // TODO: remove
     CanOpen * can;
 
     //-- Encoder stuff

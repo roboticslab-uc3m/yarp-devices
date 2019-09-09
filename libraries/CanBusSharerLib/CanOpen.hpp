@@ -10,6 +10,7 @@
 #include "SdoClient.hpp"
 #include "PdoProtocol.hpp"
 #include "EmcyConsumer.hpp"
+#include "NmtProtocol.hpp"
 
 namespace roboticslab
 {
@@ -55,6 +56,9 @@ public:
     EmcyConsumer * emcy() const
     { return _emcy; }
 
+    NmtProtocol * nmt() const
+    { return _nmt; }
+
     bool consumeMessage(std::uint16_t cobId, const std::uint8_t * data, std::size_t size);
 
 private:
@@ -74,6 +78,8 @@ private:
     TransmitPdo * _tpdo4;
 
     EmcyConsumer * _emcy;
+
+    NmtProtocol * _nmt;
 };
 
 } // namespace roboticslab
