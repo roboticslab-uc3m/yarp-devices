@@ -16,7 +16,7 @@ CanOpen::CanOpen(unsigned int _id, CanSenderDelegate * _sender)
       _tpdo2(new TransmitPdo(id, 0x280, 2, _sdo)),
       _tpdo3(new TransmitPdo(id, 0x380, 3, _sdo)),
       _tpdo4(new TransmitPdo(id, 0x480, 4, _sdo)),
-      _emcy(new EmcyConsumer)
+      _emcy(new EmcyConsumer(_sdo))
 {
 }
 

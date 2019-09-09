@@ -8,6 +8,8 @@
 #include <functional>
 #include <string>
 
+#include "SdoClient.hpp"
+
 namespace roboticslab
 {
 
@@ -24,11 +26,13 @@ public:
     typedef std::pair<std::uint16_t, std::string> code_t; // emergency error code
     typedef std::function<void(code_t, std::uint8_t, const std::uint8_t *)> HandlerFn;
 
-    EmcyConsumer() : codeRegistry(new EmcyCodeRegistry)
+    EmcyConsumer(SdoClient * sdo) : codeRegistry(new EmcyCodeRegistry), sdo(sdo)
     { }
 
     virtual ~EmcyConsumer()
     { delete codeRegistry; }
+
+    bool configure(std::uint16_t inhibitTime);
 
     void accept(const std::uint8_t * data);
 
@@ -43,6 +47,7 @@ public:
 protected:
     HandlerFn callback;
     EmcyCodeRegistry * codeRegistry;
+    SdoClient * sdo;
 };
 
 } // namespace roboticslab
