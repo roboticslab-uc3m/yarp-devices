@@ -17,7 +17,7 @@ CanOpen::CanOpen(unsigned int _id, CanSenderDelegate * _sender)
       _tpdo3(new TransmitPdo(id, 0x380, 3, _sdo)),
       _tpdo4(new TransmitPdo(id, 0x480, 4, _sdo)),
       _emcy(new EmcyConsumer(_sdo)),
-      _nmt(new NmtProtocol(id))
+      _nmt(new NmtProtocol(id, _sdo))
 {
 }
 
@@ -73,6 +73,8 @@ bool CanOpen::consumeMessage(std::uint16_t cobId, const std::uint8_t * data, std
         return _tpdo4->accept(data, size);
     case 0x580:
         return _sdo->notify(data);
+    case 0x700:
+        return _nmt->accept(data);
     default:
         return false;
     }

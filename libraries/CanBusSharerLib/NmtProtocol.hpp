@@ -5,7 +5,10 @@
 
 #include <cstdint>
 
+#include <functional>
+
 #include "CanSenderDelegate.hpp"
+#include "SdoClient.hpp"
 
 namespace roboticslab
 {
@@ -30,19 +33,31 @@ enum class NmtState
 class NmtProtocol final
 {
 public:
+    typedef std::function<void(NmtState)> HandlerFn;
+
     static constexpr std::uint8_t BROADCAST = 0;
 
-    NmtProtocol(std::uint8_t id) : id(id), sender(nullptr)
+    NmtProtocol(std::uint8_t id, SdoClient * sdo) : id(id), sdo(sdo), sender(nullptr)
     { }
-
-    bool issueServiceCommand(NmtService command);
 
     void configureSender(CanSenderDelegate * sender)
     { this->sender = sender; }
 
+    bool issueServiceCommand(NmtService command);
+
+    bool setupHeartbeat(std::uint16_t period);
+
+    bool accept(const std::uint8_t * data);
+
+    void registerHandler(const HandlerFn & fn)
+    { callback = fn; }
+
 private:
     std::uint8_t id;
+    SdoClient * sdo;
     CanSenderDelegate * sender;
+
+    HandlerFn callback;
 };
 
 } // namespace roboticslab
