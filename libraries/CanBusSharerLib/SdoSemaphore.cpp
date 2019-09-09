@@ -47,11 +47,11 @@ bool SdoSemaphore::await(std::uint8_t * raw)
     return !timedOut;
 }
 
-void SdoSemaphore::notify(const std::uint8_t * raw)
+bool SdoSemaphore::notify(const std::uint8_t * raw)
 {
     if (!active)
     {
-        return;
+        return false;
     }
 
     std::lock_guard<std::mutex> lock(registryMutex);
@@ -60,7 +60,10 @@ void SdoSemaphore::notify(const std::uint8_t * raw)
     {
         std::memcpy(remoteStorage, raw, 8);
         semaphore->post();
+        return true;
     }
+
+    return false;
 }
 
 void SdoSemaphore::interrupt()

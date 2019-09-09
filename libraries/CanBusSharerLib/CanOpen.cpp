@@ -36,3 +36,27 @@ CanOpen::~CanOpen()
 
     delete _emcy;
 }
+
+bool CanOpen::consumeMessage(std::uint16_t cobId, const std::uint8_t * data, std::size_t size)
+{
+    std::uint16_t op = cobId - this->id;
+
+    switch (op)
+    {
+    case 0x80:
+        _emcy->accept(data);
+        return true;
+    case 0x180:
+        return _tpdo1->accept(data, size);
+    case 0x280:
+        return _tpdo2->accept(data, size);
+    case 0x380:
+        return _tpdo3->accept(data, size);
+    case 0x480:
+        return _tpdo4->accept(data, size);
+    case 0x580:
+        return _sdo->notify(data);
+    default:
+        return false;
+    }
+}

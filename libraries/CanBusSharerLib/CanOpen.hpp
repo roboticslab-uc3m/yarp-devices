@@ -3,6 +3,9 @@
 #ifndef __CAN_OPEN_HPP__
 #define __CAN_OPEN_HPP__
 
+#include <cstddef>
+#include <cstdint>
+
 #include "CanSenderDelegate.hpp"
 #include "SdoClient.hpp"
 #include "PdoProtocol.hpp"
@@ -51,6 +54,8 @@ public:
 
     EmcyConsumer * emcy() const
     { return _emcy; }
+
+    bool consumeMessage(std::uint16_t cobId, const std::uint8_t * data, std::size_t size);
 
 private:
     unsigned int id;

@@ -96,7 +96,6 @@ public:
     template<typename... Ts>
     bool write(Ts... data)
     {
-        // TODO: check against PDO mapping configuration?
         static_assert(sizeof...(Ts) > 0 && size<Ts...>() <= 8, "Illegal cumulative size.");
         std::uint8_t raw[size<Ts...>()]; std::size_t count = 0;
         ordered_call{(pack(&data, raw, &count), 1)...}; // https://w.wiki/7M$
@@ -136,7 +135,6 @@ public:
     template<typename... Ts, typename Fn>
     void registerHandler(const Fn & fn)
     {
-        // TODO: check against PDO mapping configuration?
         static_assert(sizeof...(Ts) > 0 && size<Ts...>() <= 8, "Illegal cumulative size.");
         callback = [&](const std::uint8_t * raw, std::size_t len)
             { std::size_t count = 0;

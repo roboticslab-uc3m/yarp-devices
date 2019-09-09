@@ -316,23 +316,13 @@ bool roboticslab::TechnosoftIpos::resetNode(int id)
 
 bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage & message)
 {
-    uint16_t op = message.getId() - can->getId();
-
-    switch (op)
+    if (!can->consumeMessage(message.getId(), message.getData(), message.getLen()))
     {
-    case 0x580: // SDO
-        can->sdo()->notify(message.getData());
-        return true;
-    case 0x180: // PDO1
-        return can->tpdo1()->accept(message.getData(), message.getLen());
-    case 0x80: // EMCY
-        can->emcy()->accept(message.getData());
-        return true;
+        CD_ERROR("Unknown message: %s\n", CanUtils::msgToStr(message).c_str());
+        return false;
     }
 
-    CD_ERROR("Unknown message: %s\n", CanUtils::msgToStr(message).c_str());
-    return false;
-
+    return true;
 }
 
 // -----------------------------------------------------------------------------
