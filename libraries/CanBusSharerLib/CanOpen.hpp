@@ -28,9 +28,8 @@ public:
     void configureSender(CanSenderDelegate * sender);
 
     unsigned int getId() const
-    { return id; }
+    { return _id; }
 
-    // TODO: return const pointer?
     SdoClient * sdo() const
     { return _sdo; }
 
@@ -58,11 +57,10 @@ public:
     NmtProtocol * nmt() const
     { return _nmt; }
 
-    bool consumeMessage(std::uint16_t cobId, const std::uint8_t * data, std::size_t size);
+    bool consumeMessage(std::uint16_t cobId, const std::uint8_t * data, std::size_t size) const;
 
 private:
-    unsigned int id;
-    CanSenderDelegate * sender;
+    unsigned int _id;
 
     SdoClient * _sdo;
 

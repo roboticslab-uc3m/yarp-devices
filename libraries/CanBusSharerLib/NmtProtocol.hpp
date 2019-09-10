@@ -37,7 +37,8 @@ public:
 
     static constexpr std::uint8_t BROADCAST = 0;
 
-    NmtProtocol(std::uint8_t id, SdoClient * sdo) : id(id), sdo(sdo), sender(nullptr)
+    NmtProtocol(std::uint8_t id, SdoClient * sdo, CanSenderDelegate * sender = nullptr)
+        : id(id), sdo(sdo), sender(sender)
     { }
 
     void configureSender(CanSenderDelegate * sender)
