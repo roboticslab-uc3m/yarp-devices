@@ -211,9 +211,13 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 bool roboticslab::TechnosoftIpos::close()
 {
     CD_INFO("\n");
+
+    bool ok = switchOn() && readyToSwitchOn(); // disable and shutdown
+
     delete linInterpBuffer;
     delete can;
-    return true;
+
+    return ok;
 }
 
 // -----------------------------------------------------------------------------

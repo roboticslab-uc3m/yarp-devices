@@ -416,7 +416,20 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
 bool roboticslab::CanBusControlboard::close()
 {
-    const double timeOut = 1; // timeout (1 secod)
+    if (posdThread && posdThread->isRunning())
+    {
+        posdThread->stop();
+    }
+
+    delete posdThread;
+
+    //-- Delete the driver objects.
+    for (int i = 0; i < nodes.size(); i++)
+    {
+        nodes[i]->close();
+        delete nodes[i];
+        nodes[i] = 0;
+    }
 
     if (canWriterThread && canWriterThread->isRunning())
     {
@@ -432,93 +445,6 @@ bool roboticslab::CanBusControlboard::close()
 
     delete canReaderThread;
 
-    if (posdThread && posdThread->isRunning())
-    {
-        posdThread->stop();
-    }
-
-    delete posdThread;
-
-    // FIXME
-    //const yarp::dev::CanMessage &msg = canInputBuffer[0];
-
-    //-- Disable and shutdown the physical drivers (and Cui Encoders).
-    bool ok = true;
-    for(int i=0; i<nodes.size(); i++)
-    {
-        // -- Sending a stop message to PICs of Cui Encoders
-        yarp::os::Value value;
-        value = nodes[i]->getValue("device");
-
-        // Drivers:
-        if(value.asString() == "TechnosoftIpos")
-        {
-            CD_INFO("Stopping Driver (ID: %s)\n", nodes[i]->getValue("canId").toString().c_str());
-            ok &= iCanBusSharer[i]->switchOn();  //-- "switch on" also acts as "disable".
-            ok &= iCanBusSharer[i]->readyToSwitchOn();  //-- "ready to switch on" also acts as "shutdown".
-        }
-
-        // Absolute encoders:
-        if(value.asString() == "CuiAbsolute")
-        {
-            int canId = 0;
-            int CAN_ID = atoi(nodes[i]->getValue("canId").toString().c_str());
-            bool timePassed = false;
-            double timeStamp = 0.0;
-            double cleaningTime = 0.5; // time to empty the buffer
-
-            ICuiAbsolute* cuiAbsolute;
-            nodes[i]->view( cuiAbsolute );
-
-            CD_INFO("Stopping Cui Absolute PIC (ID: %d)\n", CAN_ID );
-
-            if (! cuiAbsolute->stopPublishingMessages() )
-                return false;
-
-            yarp::os::Time::delay(0.5);
-            timeStamp = yarp::os::Time::now();
-
-            // This part of the code checks if the encoders have stopped sending messages
-            while ( !timePassed )
-            {
-                // -- if it exceeds the timeout (1 secod) ...PASS the test
-                if(int(yarp::os::Time::now()-timeStamp)==timeOut)
-                {
-                    CD_SUCCESS("Time out passed and CuiAbsolute ID (%d) was stopped successfully\n", CAN_ID);
-                    timePassed = true;
-                }
-
-                unsigned int read;
-                // FIXME
-                bool okRead = false; //iCanBus->canRead(canInputBuffer, 1, &read, true);
-
-                // This line is needed to clear the buffer (old messages that has been received)
-                if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
-
-                if( !okRead || read == 0 ) continue;              // -- is waiting for recive message
-
-                // FIXME
-                canId = 0; //msg.getId()  & 0x7F;                 // -- if it recive the message, it will get ID
-                //CD_DEBUG("Read a message from CuiAbsolute %d\n", canId);
-
-                //printf("timeOut: %d\n", int(yarp::os::Time::now()-timeStamp));
-                if(canId == CAN_ID)
-                {
-                    CD_WARNING("Resending stop message to Cui Absolute PIC (ID: %d)\n", CAN_ID );
-                    cuiAbsolute->stopPublishingMessages();
-                }
-            }
-        }
-    }
-
-    //-- Delete the driver objects.
-    for(int i=0; i<nodes.size(); i++)
-    {
-        nodes[i]->close();
-        delete nodes[i];
-        nodes[i] = 0;
-    }
-
     //-- Clear CAN acceptance filters ('0' = all IDs that were previously set by canIdAdd).
     if (!iCanBus->canIdDelete(0))
     {
@@ -526,9 +452,7 @@ bool roboticslab::CanBusControlboard::close()
     }
 
     canBusDevice.close();
-
-    CD_INFO("End.\n");
-    return ok;
+    return true;
 }
 
 // -----------------------------------------------------------------------------
