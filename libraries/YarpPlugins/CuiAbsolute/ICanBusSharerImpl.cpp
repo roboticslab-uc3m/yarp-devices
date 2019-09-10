@@ -2,12 +2,50 @@
 
 #include "CuiAbsolute.hpp"
 
+#include <yarp/os/Time.h>
+
 #include "CanUtils.hpp"
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::CuiAbsolute::setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
 {
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::CuiAbsolute::initialize()
+{
+    CD_INFO("Sending \"Start Continuous Publishing\" message to Cui Absolute (PIC ID: %d)\n", canId);
+
+    if (!startContinuousPublishing(0))
+    {
+        return false;
+    }
+
+    yarp::os::Time::delay(0.2);
+
+    if (!HasFirstReached())
+    {
+        const double start = yarp::os::Time::now();
+
+        while (!HasFirstReached())
+        {
+            if (yarp::os::Time::now() - start > cuiTimeout)
+            {
+                CD_ERROR("Time out passed and CuiAbsolute ID (%d) doesn't respond\n", canId);
+                return false;
+            }
+
+            yarp::os::Time::delay(0.1);
+        }
+    }
+
+    double value;
+    getEncoderRaw(0, &value);
+
+    CD_INFO("Absolute encoder value -----> %f\n", value);
     return true;
 }
 

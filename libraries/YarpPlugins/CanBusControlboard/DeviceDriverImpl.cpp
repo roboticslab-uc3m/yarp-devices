@@ -3,6 +3,7 @@
 #include "CanBusControlboard.hpp"
 
 #include <map>
+#include <string>
 
 #include "ITechnosoftIpos.h"
 
@@ -11,7 +12,7 @@
 bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 {
     std::string mode = config.check("mode",yarp::os::Value("position"),"control mode on startup (position/velocity)").asString();
-    int timeCuiWait  = config.check("waitEncoder", yarp::os::Value(DEFAULT_TIME_TO_WAIT_CUI), "CUI timeout (seconds)").asInt32();
+    int cuiTimeout  = config.check("waitEncoder", yarp::os::Value(DEFAULT_CUI_TIMEOUT), "CUI timeout (seconds)").asInt32();
     bool homing = config.check("home", yarp::os::Value(false), "perform homing maneuver on start").asBool();
 
     std::string canBusType = config.check("canBusType", yarp::os::Value(DEFAULT_CAN_BUS), "CAN bus device name").asString();
@@ -97,6 +98,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     iCanBusSharer.resize( nodes.size() );
 
     std::map<int, ITechnosoftIpos *> idToTechnosoftIpos;
+    std::map<int, int> technosoftToNodeId;
 
     for(int i=0; i<nodes.size(); i++)
     {
@@ -120,9 +122,9 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         options.put("linInterpBufferSize", linInterpBufferSize);
         options.put("linInterpMode", linInterpMode);
         options.put("canSdoTimeoutMs", canSdoTimeoutMs);
-        //std::stringstream ss; // Remember to #include <sstream>
-        //ss << types.get(i).asString() << "_" << ids.get(i).asInt32();
-        //options.setMonitor(config.getMonitor(),ss.str().c_str());
+        options.put("cuiTimeout", cuiTimeout);
+        std::string context = types.get(i).asString() + "_" + std::to_string(ids.get(i).asInt32());
+        options.setMonitor(config.getMonitor(),context.c_str());
 
         // -- Configuramos todos los dispositivos (TechnosoftIpos, LacqueyFetch, CuiAbsolute)
         yarp::dev::PolyDriver* device = new yarp::dev::PolyDriver(options);
@@ -218,78 +220,15 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             ITechnosoftIpos * iTechnosoftIpos;
             device->view(iTechnosoftIpos);
             idToTechnosoftIpos.insert(std::make_pair(i, iTechnosoftIpos));
+
+            technosoftToNodeId.insert(std::make_pair(i, ids.get(i).asInt32()));
         }
 
         //-- Associate absolute encoders to motor drivers
         if( types.get(i).asString() == "CuiAbsolute" )
         {
             int driverCanId = ids.get(i).asInt32() - 100;  //-- \todo{Document the dangers: ID must be > 100, driver must be instanced.}
-
-            CD_INFO("Sending \"Start Continuous Publishing\" message to Cui Absolute (PIC ID: %d)\n", ids.get(i).asInt32());
-
-            // Configuring Cui Absolute
-            ICuiAbsolute* cuiAbsolute;
-            if( ! device->view( cuiAbsolute ) )
-            {
-                CD_ERROR("Could not view.\n");
-                return false;
-            }
-
-            if ( ! cuiAbsolute->startContinuousPublishing(0) ) // startContinuousPublishing(delay)
-                return false;
-
-            yarp::os::Time::delay(0.2);
-
-            if ( timeCuiWait > 0 && ( ! cuiAbsolute->HasFirstReached() ) ) // using --externalEncoderWait && doesn't respond
-            {
-                bool timePassed = false;
-                double timeStamp = 0.0;
-
-                timeStamp = yarp::os::Time::now();
-
-                // This part of the code checks if encoders
-                while ( !timePassed && ( ! cuiAbsolute->HasFirstReached() ) )
-                {
-                    // -- if it exceeds the timeCuiWait...
-                    if(int(yarp::os::Time::now()-timeStamp)>=timeCuiWait)
-                    {
-                        CD_ERROR("Time out passed and CuiAbsolute ID (%d) doesn't respond\n", ids.get(i).asInt32() );
-                        yarp::os::Time::delay(2);
-                        CD_WARNING("Initializing with normal relative encoder configuration\n");
-                        yarp::os::Time::delay(2);
-                        timePassed = true;
-                    }
-                }
-            }
-            else    // not used --externalEncoderWait (DEFAULT)
-            {
-                for ( int n=1; n<=5 && ( ! cuiAbsolute->HasFirstReached() ); n++ ) // doesn't respond && trying (5 trials)
-                {
-                    CD_WARNING("(%d) Resending start continuous publishing message \n", n);
-                    if ( ! cuiAbsolute->startContinuousPublishing(0))
-                        return false;
-
-                    yarp::os::Time::delay(0.2);
-                }
-
-                if( cuiAbsolute->HasFirstReached() ) // it responds! :)
-                {
-                    CD_DEBUG("---> First CUI message has been reached \n");
-                    double value;
-                    while( ! iEncodersTimedRaw[i]->getEncoderRaw(0,&value) ){
-                        CD_ERROR("Wrong value of Cui \n");
-                    }
-                    printf("Absolute encoder value -----> %f\n", value);
-                    //getchar(); // -- if you want to pause and return pressing any key
-                    yarp::os::Time::delay(0.2);
-                    iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
-                }
-                else                               // doesn't respond :(
-                {
-                    CD_ERROR("Cui Absolute (PIC ID: %d) doesn't respond. Try using --externalEncoderWait [seconds] parameter with timeout higher than 0 \n", ids.get(i).asInt32());
-                    return false;
-                }
-            }
+            iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
         }
 
         //-- Enable acceptance filters for each node ID
@@ -360,38 +299,53 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     yarp::os::Time::delay(2);
 
     //-- Homing
-    if( homing )
+    if (homing)
     {
         CD_DEBUG("Moving motors to zero.\n");
-        for(int i=0; i<nodes.size(); i++)
+
+        for (auto entry : technosoftToNodeId)
         {
-            if((nodes[i]->getValue("device")).asString() == "TechnosoftIpos"){
-                double val;
-                double time;
-                yarp::os::Time::delay(0.5);
-                iEncodersTimedRaw[i]->getEncoderTimedRaw(0,&val,&time); // -- getEncoderRaw(0,&value);
-                CD_DEBUG("Value of relative encoder ->%f\n", val);
-                if ( val>0.087873 || val< -0.087873 ){
-                    CD_DEBUG("Moving (ID:%s) to zero...\n",nodes[i]->getValue("canId").toString().c_str());
-                    if ( ! iPositionControlRaw[i]->positionMoveRaw(0,0) )
-                        return false;
+            int i = entry.first;
+            yarp::os::Time::delay(0.5);
+
+            double val;
+            double time;
+            iEncodersTimedRaw[i]->getEncoderTimedRaw(0, &val, &time);
+
+            CD_DEBUG("Value of relative encoder -> %f\n", val);
+
+            if (val > 0.087873 || val< -0.087873)
+            {
+                CD_DEBUG("Moving (ID:%d) to zero...\n", entry.second);
+
+                if (!iPositionControlRaw[i]->positionMoveRaw(0, 0))
+                {
+                    return false;
                 }
-                else
-                    CD_DEBUG("It's already in zero position\n");
+            }
+            else
+            {
+                CD_DEBUG("It's already in zero position.\n");
             }
         }
-        // -- Testing
 
-        for(int i=0; i<nodes.size(); i++)
+        // -- Testing
+        for (auto entry : technosoftToNodeId)
         {
-            if((nodes[i]->getValue("device")).asString() == "TechnosoftIpos"){
-                bool motionDone = false;
-                yarp::os::Time::delay(0.2);  //-- [s]
-                CD_DEBUG("Testing (ID:%s) position... \n",nodes[i]->getValue("canId").toString().c_str());
-                if( ! iPositionControlRaw[i]->checkMotionDoneRaw(0,&motionDone) )
-                    return false;
-                if(!motionDone)
-                    CD_WARNING("Test motion fail (ID:%s) \n", nodes[i]->getValue("canId").toString().c_str());
+            int i = entry.first;
+            bool motionDone = false;
+            yarp::os::Time::delay(0.2);
+
+            CD_DEBUG("Testing (ID:%s) position...\n", entry.second);
+
+            if (!iPositionControlRaw[i]->checkMotionDoneRaw(0, &motionDone))
+            {
+                return false;
+            }
+
+            if (!motionDone)
+            {
+                CD_WARNING("Test motion fail (ID:%d)\n", entry.second);
             }
         }
 
@@ -416,21 +370,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
 bool roboticslab::CanBusControlboard::close()
 {
-    const double timeOut = 1; // timeout (1 secod)
-
-    if (canWriterThread && canWriterThread->isRunning())
-    {
-        canWriterThread->stop();
-    }
-
-    delete canWriterThread;
-
-    if (canReaderThread && canReaderThread->isRunning())
-    {
-        canReaderThread->stop();
-    }
-
-    delete canReaderThread;
+    bool ok = true;
 
     if (posdThread && posdThread->isRunning())
     {
@@ -439,85 +379,27 @@ bool roboticslab::CanBusControlboard::close()
 
     delete posdThread;
 
-    // FIXME
-    //const yarp::dev::CanMessage &msg = canInputBuffer[0];
-
-    //-- Disable and shutdown the physical drivers (and Cui Encoders).
-    bool ok = true;
-    for(int i=0; i<nodes.size(); i++)
-    {
-        // -- Sending a stop message to PICs of Cui Encoders
-        yarp::os::Value value;
-        value = nodes[i]->getValue("device");
-
-        // Drivers:
-        if(value.asString() == "TechnosoftIpos")
-        {
-            CD_INFO("Stopping Driver (ID: %s)\n", nodes[i]->getValue("canId").toString().c_str());
-            ok &= iCanBusSharer[i]->switchOn();  //-- "switch on" also acts as "disable".
-            ok &= iCanBusSharer[i]->readyToSwitchOn();  //-- "ready to switch on" also acts as "shutdown".
-        }
-
-        // Absolute encoders:
-        if(value.asString() == "CuiAbsolute")
-        {
-            int canId = 0;
-            int CAN_ID = atoi(nodes[i]->getValue("canId").toString().c_str());
-            bool timePassed = false;
-            double timeStamp = 0.0;
-            double cleaningTime = 0.5; // time to empty the buffer
-
-            ICuiAbsolute* cuiAbsolute;
-            nodes[i]->view( cuiAbsolute );
-
-            CD_INFO("Stopping Cui Absolute PIC (ID: %d)\n", CAN_ID );
-
-            if (! cuiAbsolute->stopPublishingMessages() )
-                return false;
-
-            yarp::os::Time::delay(0.5);
-            timeStamp = yarp::os::Time::now();
-
-            // This part of the code checks if the encoders have stopped sending messages
-            while ( !timePassed )
-            {
-                // -- if it exceeds the timeout (1 secod) ...PASS the test
-                if(int(yarp::os::Time::now()-timeStamp)==timeOut)
-                {
-                    CD_SUCCESS("Time out passed and CuiAbsolute ID (%d) was stopped successfully\n", CAN_ID);
-                    timePassed = true;
-                }
-
-                unsigned int read;
-                // FIXME
-                bool okRead = false; //iCanBus->canRead(canInputBuffer, 1, &read, true);
-
-                // This line is needed to clear the buffer (old messages that has been received)
-                if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
-
-                if( !okRead || read == 0 ) continue;              // -- is waiting for recive message
-
-                // FIXME
-                canId = 0; //msg.getId()  & 0x7F;                 // -- if it recive the message, it will get ID
-                //CD_DEBUG("Read a message from CuiAbsolute %d\n", canId);
-
-                //printf("timeOut: %d\n", int(yarp::os::Time::now()-timeStamp));
-                if(canId == CAN_ID)
-                {
-                    CD_WARNING("Resending stop message to Cui Absolute PIC (ID: %d)\n", CAN_ID );
-                    cuiAbsolute->stopPublishingMessages();
-                }
-            }
-        }
-    }
-
     //-- Delete the driver objects.
-    for(int i=0; i<nodes.size(); i++)
+    for (int i = 0; i < nodes.size(); i++)
     {
-        nodes[i]->close();
+        ok &= nodes[i]->close();
         delete nodes[i];
         nodes[i] = 0;
     }
+
+    if (canWriterThread && canWriterThread->isRunning())
+    {
+        ok &= canWriterThread->stop();
+    }
+
+    delete canWriterThread;
+
+    if (canReaderThread && canReaderThread->isRunning())
+    {
+        ok &= canReaderThread->stop();
+    }
+
+    delete canReaderThread;
 
     //-- Clear CAN acceptance filters ('0' = all IDs that were previously set by canIdAdd).
     if (!iCanBus->canIdDelete(0))
@@ -525,9 +407,7 @@ bool roboticslab::CanBusControlboard::close()
         CD_WARNING("CAN filters may be preserved on the next run.\n");
     }
 
-    canBusDevice.close();
-
-    CD_INFO("End.\n");
+    ok &= canBusDevice.close();
     return ok;
 }
 
