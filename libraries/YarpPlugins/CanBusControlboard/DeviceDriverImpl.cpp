@@ -416,6 +416,8 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
 bool roboticslab::CanBusControlboard::close()
 {
+    bool ok = true;
+
     if (posdThread && posdThread->isRunning())
     {
         posdThread->stop();
@@ -426,21 +428,21 @@ bool roboticslab::CanBusControlboard::close()
     //-- Delete the driver objects.
     for (int i = 0; i < nodes.size(); i++)
     {
-        nodes[i]->close();
+        ok &= nodes[i]->close();
         delete nodes[i];
         nodes[i] = 0;
     }
 
     if (canWriterThread && canWriterThread->isRunning())
     {
-        canWriterThread->stop();
+        ok &= canWriterThread->stop();
     }
 
     delete canWriterThread;
 
     if (canReaderThread && canReaderThread->isRunning())
     {
-        canReaderThread->stop();
+        ok &= canReaderThread->stop();
     }
 
     delete canReaderThread;
@@ -451,8 +453,8 @@ bool roboticslab::CanBusControlboard::close()
         CD_WARNING("CAN filters may be preserved on the next run.\n");
     }
 
-    canBusDevice.close();
-    return true;
+    ok &= canBusDevice.close();
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
