@@ -18,7 +18,9 @@ namespace roboticslab
 class CanOpen final
 {
 public:
-    CanOpen(unsigned int id, CanSenderDelegate * sender = nullptr);
+    static constexpr double SDO_TIMEOUT = 0.1; // seconds
+
+    CanOpen(unsigned int id, double sdoTimeout = SDO_TIMEOUT, CanSenderDelegate * sender = nullptr);
 
     CanOpen(const CanOpen &) = delete;
     CanOpen & operator=(const CanOpen &) = delete;

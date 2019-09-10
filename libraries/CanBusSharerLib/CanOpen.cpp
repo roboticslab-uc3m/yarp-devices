@@ -4,9 +4,9 @@
 
 using namespace roboticslab;
 
-CanOpen::CanOpen(unsigned int id, CanSenderDelegate * sender)
+CanOpen::CanOpen(unsigned int id, double sdoTimeout, CanSenderDelegate * sender)
     : _id(id),
-      _sdo(new SdoClient(_id, 0x600, 0x580, 0.1, sender)), // TODO: timeout
+      _sdo(new SdoClient(_id, 0x600, 0x580, sdoTimeout, sender)),
       _rpdo1(new ReceivePdo(_id, 0x200, 1, _sdo, sender)),
       _rpdo2(new ReceivePdo(_id, 0x300, 2, _sdo, sender)),
       _rpdo3(new ReceivePdo(_id, 0x400, 3, _sdo, sender)),
