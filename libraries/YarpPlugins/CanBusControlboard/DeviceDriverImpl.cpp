@@ -12,7 +12,7 @@
 bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 {
     std::string mode = config.check("mode",yarp::os::Value("position"),"control mode on startup (position/velocity)").asString();
-    int timeCuiWait  = config.check("waitEncoder", yarp::os::Value(DEFAULT_TIME_TO_WAIT_CUI), "CUI timeout (seconds)").asInt32();
+    int cuiTimeout  = config.check("waitEncoder", yarp::os::Value(DEFAULT_CUI_TIMEOUT), "CUI timeout (seconds)").asInt32();
     bool homing = config.check("home", yarp::os::Value(false), "perform homing maneuver on start").asBool();
 
     std::string canBusType = config.check("canBusType", yarp::os::Value(DEFAULT_CAN_BUS), "CAN bus device name").asString();
@@ -122,6 +122,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         options.put("linInterpBufferSize", linInterpBufferSize);
         options.put("linInterpMode", linInterpMode);
         options.put("canSdoTimeoutMs", canSdoTimeoutMs);
+        options.put("cuiTimeout", cuiTimeout);
         std::string context = types.get(i).asString() + "_" + std::to_string(ids.get(i).asInt32());
         options.setMonitor(config.getMonitor(),context.c_str());
 
@@ -227,72 +228,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         if( types.get(i).asString() == "CuiAbsolute" )
         {
             int driverCanId = ids.get(i).asInt32() - 100;  //-- \todo{Document the dangers: ID must be > 100, driver must be instanced.}
-
-            CD_INFO("Sending \"Start Continuous Publishing\" message to Cui Absolute (PIC ID: %d)\n", ids.get(i).asInt32());
-
-            // Configuring Cui Absolute
-            ICuiAbsolute* cuiAbsolute;
-            if( ! device->view( cuiAbsolute ) )
-            {
-                CD_ERROR("Could not view.\n");
-                return false;
-            }
-
-            if ( ! cuiAbsolute->startContinuousPublishing(0) ) // startContinuousPublishing(delay)
-                return false;
-
-            yarp::os::Time::delay(0.2);
-
-            if ( timeCuiWait > 0 && ( ! cuiAbsolute->HasFirstReached() ) ) // using --externalEncoderWait && doesn't respond
-            {
-                bool timePassed = false;
-                double timeStamp = 0.0;
-
-                timeStamp = yarp::os::Time::now();
-
-                // This part of the code checks if encoders
-                while ( !timePassed && ( ! cuiAbsolute->HasFirstReached() ) )
-                {
-                    // -- if it exceeds the timeCuiWait...
-                    if(int(yarp::os::Time::now()-timeStamp)>=timeCuiWait)
-                    {
-                        CD_ERROR("Time out passed and CuiAbsolute ID (%d) doesn't respond\n", ids.get(i).asInt32() );
-                        yarp::os::Time::delay(2);
-                        CD_WARNING("Initializing with normal relative encoder configuration\n");
-                        yarp::os::Time::delay(2);
-                        timePassed = true;
-                    }
-                }
-            }
-            else    // not used --externalEncoderWait (DEFAULT)
-            {
-                for ( int n=1; n<=5 && ( ! cuiAbsolute->HasFirstReached() ); n++ ) // doesn't respond && trying (5 trials)
-                {
-                    CD_WARNING("(%d) Resending start continuous publishing message \n", n);
-                    if ( ! cuiAbsolute->startContinuousPublishing(0))
-                        return false;
-
-                    yarp::os::Time::delay(0.2);
-                }
-
-                if( cuiAbsolute->HasFirstReached() ) // it responds! :)
-                {
-                    CD_DEBUG("---> First CUI message has been reached \n");
-                    double value;
-                    while( ! iEncodersTimedRaw[i]->getEncoderRaw(0,&value) ){
-                        CD_ERROR("Wrong value of Cui \n");
-                    }
-                    printf("Absolute encoder value -----> %f\n", value);
-                    //getchar(); // -- if you want to pause and return pressing any key
-                    yarp::os::Time::delay(0.2);
-                    iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
-                }
-                else                               // doesn't respond :(
-                {
-                    CD_ERROR("Cui Absolute (PIC ID: %d) doesn't respond. Try using --externalEncoderWait [seconds] parameter with timeout higher than 0 \n", ids.get(i).asInt32());
-                    return false;
-                }
-            }
+            iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
         }
 
         //-- Enable acceptance filters for each node ID
