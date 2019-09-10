@@ -41,7 +41,7 @@ public:
     { delete codeRegistry;
       codeRegistry = new T; }
 
-    void registerHandler(HandlerFn fn)
+    void registerHandler(const HandlerFn & fn)
     { callback = fn; }
 
 protected:

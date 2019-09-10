@@ -140,7 +140,7 @@ namespace
 
 bool roboticslab::TechnosoftIpos::registerSender(CanSenderDelegate * sender)
 {
-    this->sender = sender;
+    can->configureSender(sender);
     return true;
 }
 
@@ -233,9 +233,7 @@ bool roboticslab::TechnosoftIpos::initialize()
 
 bool roboticslab::TechnosoftIpos::start()
 {
-    // NMT Start Remote Node (to operational, Fig 4.1)
-    uint8_t msg_start[] = {0x01, static_cast<uint8_t>(can->getId())};
-    return sender->prepareMessage(message_builder(0, 2, msg_start));
+    return can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE);
 }
 
 // -----------------------------------------------------------------------------
@@ -284,8 +282,9 @@ bool roboticslab::TechnosoftIpos::recoverFromError()
 bool roboticslab::TechnosoftIpos::resetNodes()
 {
     // NMT Reset Node (Manual 4.1.2.3)
-    uint8_t msg_resetNodes[] = {0x81,0x00};
-    return sender->prepareMessage(message_builder(0, 2, msg_resetNodes));
+    //uint8_t msg_resetNodes[] = {0x81,0x00};
+    //return sender->prepareMessage(message_builder(0, 2, msg_resetNodes));
+    return true;
 }
 
 /** Manual: 4.1.2. Device control
@@ -295,7 +294,7 @@ bool roboticslab::TechnosoftIpos::resetNodes()
 
 bool roboticslab::TechnosoftIpos::resetCommunication()
 {
-    return can->rpdo1()->write<uint16_t>(0x0002);
+    return can->nmt()->issueServiceCommand(NmtService::RESET_COMMUNICATION);
 }
 
 
@@ -306,9 +305,7 @@ bool roboticslab::TechnosoftIpos::resetCommunication()
 
 bool roboticslab::TechnosoftIpos::resetNode(int id)
 {
-    // NMT Reset Node (Manual 4.1.2.3)
-    uint8_t msg_resetNode[] = {0x81, (uint8_t)id};
-    return sender->prepareMessage(message_builder(id, 2, msg_resetNode));
+    return can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
 }
 
 

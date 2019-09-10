@@ -4,19 +4,19 @@
 
 using namespace roboticslab;
 
-CanOpen::CanOpen(unsigned int _id, CanSenderDelegate * _sender)
-    : id(_id),
-      sender(_sender),
-      _sdo(new SdoClient(id, 0x600, 0x580, 0.1)), // TODO: timeout
-      _rpdo1(new ReceivePdo(id, 0x200, 1, _sdo)),
-      _rpdo2(new ReceivePdo(id, 0x300, 2, _sdo)),
-      _rpdo3(new ReceivePdo(id, 0x400, 3, _sdo)),
-      _rpdo4(new ReceivePdo(id, 0x500, 4, _sdo)),
-      _tpdo1(new TransmitPdo(id, 0x180, 1, _sdo)),
-      _tpdo2(new TransmitPdo(id, 0x280, 2, _sdo)),
-      _tpdo3(new TransmitPdo(id, 0x380, 3, _sdo)),
-      _tpdo4(new TransmitPdo(id, 0x480, 4, _sdo)),
-      _emcy(new EmcyConsumer(_sdo))
+CanOpen::CanOpen(unsigned int id, double sdoTimeout, CanSenderDelegate * sender)
+    : _id(id),
+      _sdo(new SdoClient(_id, 0x600, 0x580, sdoTimeout, sender)),
+      _rpdo1(new ReceivePdo(_id, 0x200, 1, _sdo, sender)),
+      _rpdo2(new ReceivePdo(_id, 0x300, 2, _sdo, sender)),
+      _rpdo3(new ReceivePdo(_id, 0x400, 3, _sdo, sender)),
+      _rpdo4(new ReceivePdo(_id, 0x500, 4, _sdo, sender)),
+      _tpdo1(new TransmitPdo(_id, 0x180, 1, _sdo)),
+      _tpdo2(new TransmitPdo(_id, 0x280, 2, _sdo)),
+      _tpdo3(new TransmitPdo(_id, 0x380, 3, _sdo)),
+      _tpdo4(new TransmitPdo(_id, 0x480, 4, _sdo)),
+      _emcy(new EmcyConsumer(_sdo)),
+      _nmt(new NmtProtocol(_id, _sdo, sender))
 {
 }
 
@@ -35,11 +35,22 @@ CanOpen::~CanOpen()
     delete _tpdo4;
 
     delete _emcy;
+    delete _nmt;
 }
 
-bool CanOpen::consumeMessage(std::uint16_t cobId, const std::uint8_t * data, std::size_t size)
+void CanOpen::configureSender(CanSenderDelegate * sender)
 {
-    std::uint16_t op = cobId - this->id;
+    _sdo->configureSender(sender);
+    _rpdo1->configureSender(sender);
+    _rpdo2->configureSender(sender);
+    _rpdo3->configureSender(sender);
+    _rpdo4->configureSender(sender);
+    _nmt->configureSender(sender);
+}
+
+bool CanOpen::consumeMessage(std::uint16_t cobId, const std::uint8_t * data, std::size_t size) const
+{
+    const std::uint16_t op = cobId - _id;
 
     switch (op)
     {
@@ -56,6 +67,8 @@ bool CanOpen::consumeMessage(std::uint16_t cobId, const std::uint8_t * data, std
         return _tpdo4->accept(data, size);
     case 0x580:
         return _sdo->notify(data);
+    case 0x700:
+        return _nmt->accept(data);
     default:
         return false;
     }

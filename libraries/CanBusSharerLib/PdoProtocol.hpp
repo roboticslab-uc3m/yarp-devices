@@ -54,7 +54,7 @@ class PdoProtocol
 {
 public:
     PdoProtocol(std::uint8_t id, std::uint16_t cob, unsigned int n, SdoClient * sdo)
-        : id(id), cob(cob), n(n), sdo(sdo), sender(nullptr)
+        : id(id), cob(cob), n(n), sdo(sdo)
     { }
 
     virtual ~PdoProtocol()
@@ -62,9 +62,6 @@ public:
 
     std::uint16_t getCobId() const
     { return cob + id; };
-
-    void configureSender(CanSenderDelegate * sender)
-    { this->sender = sender; }
 
     virtual bool configure(const PdoConfiguration & config);
 
@@ -83,15 +80,17 @@ protected:
     unsigned int n;
 
     SdoClient * sdo;
-    CanSenderDelegate * sender;
 };
 
 class ReceivePdo final : public PdoProtocol
 {
 public:
-    ReceivePdo(std::uint8_t id, std::uint16_t cob, unsigned int n, SdoClient * sdo)
-        : PdoProtocol(id, cob, n, sdo)
+    ReceivePdo(std::uint8_t id, std::uint16_t cob, unsigned int n, SdoClient * sdo, CanSenderDelegate * sender = nullptr)
+        : PdoProtocol(id, cob, n, sdo), sender(sender)
     { }
+
+    void configureSender(CanSenderDelegate * sender)
+    { this->sender = sender; }
 
     template<typename... Ts>
     bool write(Ts... data)
@@ -120,6 +119,8 @@ private:
 
     void packInternal(std::uint8_t * buff, const void * data, std::size_t size);
     bool writeInternal(const std::uint8_t * data, std::size_t size);
+
+    CanSenderDelegate * sender;
 };
 
 class TransmitPdo final : public PdoProtocol

@@ -10,6 +10,7 @@
 #include "SdoClient.hpp"
 #include "PdoProtocol.hpp"
 #include "EmcyConsumer.hpp"
+#include "NmtProtocol.hpp"
 
 namespace roboticslab
 {
@@ -17,20 +18,20 @@ namespace roboticslab
 class CanOpen final
 {
 public:
-    CanOpen(unsigned int id, CanSenderDelegate * sender = nullptr);
+    static constexpr double SDO_TIMEOUT = 0.1; // seconds
+
+    CanOpen(unsigned int id, double sdoTimeout = SDO_TIMEOUT, CanSenderDelegate * sender = nullptr);
 
     CanOpen(const CanOpen &) = delete;
     CanOpen & operator=(const CanOpen &) = delete;
 
     ~CanOpen();
 
-    void configureSender(CanSenderDelegate * sender)
-    { this->sender = sender; }
+    void configureSender(CanSenderDelegate * sender);
 
     unsigned int getId() const
-    { return id; }
+    { return _id; }
 
-    // TODO: return const pointer?
     SdoClient * sdo() const
     { return _sdo; }
 
@@ -55,11 +56,13 @@ public:
     EmcyConsumer * emcy() const
     { return _emcy; }
 
-    bool consumeMessage(std::uint16_t cobId, const std::uint8_t * data, std::size_t size);
+    NmtProtocol * nmt() const
+    { return _nmt; }
+
+    bool consumeMessage(std::uint16_t cobId, const std::uint8_t * data, std::size_t size) const;
 
 private:
-    unsigned int id;
-    CanSenderDelegate * sender;
+    unsigned int _id;
 
     SdoClient * _sdo;
 
@@ -74,6 +77,8 @@ private:
     TransmitPdo * _tpdo4;
 
     EmcyConsumer * _emcy;
+
+    NmtProtocol * _nmt;
 };
 
 } // namespace roboticslab

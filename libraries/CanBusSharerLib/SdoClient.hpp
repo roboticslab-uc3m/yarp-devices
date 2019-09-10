@@ -18,8 +18,8 @@ namespace roboticslab
 class SdoClient final
 {
 public:
-    SdoClient(std::uint8_t id, std::uint16_t cobRx, std::uint16_t cobTx, double timeout)
-        : id(id), cobRx(cobRx), cobTx(cobTx), sender(0), sdoSemaphore(timeout)
+    SdoClient(std::uint8_t id, std::uint16_t cobRx, std::uint16_t cobTx, double timeout, CanSenderDelegate * sender = nullptr)
+        : id(id), cobRx(cobRx), cobTx(cobTx), sender(sender), sdoSemaphore(timeout)
     {}
 
     std::uint16_t getCobIdRx() const
