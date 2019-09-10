@@ -3,6 +3,7 @@
 #include "CanBusControlboard.hpp"
 
 #include <map>
+#include <string>
 
 #include "ITechnosoftIpos.h"
 
@@ -97,6 +98,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     iCanBusSharer.resize( nodes.size() );
 
     std::map<int, ITechnosoftIpos *> idToTechnosoftIpos;
+    std::map<int, int> technosoftToNodeId;
 
     for(int i=0; i<nodes.size(); i++)
     {
@@ -120,9 +122,8 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         options.put("linInterpBufferSize", linInterpBufferSize);
         options.put("linInterpMode", linInterpMode);
         options.put("canSdoTimeoutMs", canSdoTimeoutMs);
-        //std::stringstream ss; // Remember to #include <sstream>
-        //ss << types.get(i).asString() << "_" << ids.get(i).asInt32();
-        //options.setMonitor(config.getMonitor(),ss.str().c_str());
+        std::string context = types.get(i).asString() + "_" + std::to_string(ids.get(i).asInt32());
+        options.setMonitor(config.getMonitor(),context.c_str());
 
         // -- Configuramos todos los dispositivos (TechnosoftIpos, LacqueyFetch, CuiAbsolute)
         yarp::dev::PolyDriver* device = new yarp::dev::PolyDriver(options);
@@ -218,6 +219,8 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             ITechnosoftIpos * iTechnosoftIpos;
             device->view(iTechnosoftIpos);
             idToTechnosoftIpos.insert(std::make_pair(i, iTechnosoftIpos));
+
+            technosoftToNodeId.insert(std::make_pair(i, ids.get(i).asInt32()));
         }
 
         //-- Associate absolute encoders to motor drivers
@@ -360,38 +363,53 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     yarp::os::Time::delay(2);
 
     //-- Homing
-    if( homing )
+    if (homing)
     {
         CD_DEBUG("Moving motors to zero.\n");
-        for(int i=0; i<nodes.size(); i++)
+
+        for (auto entry : technosoftToNodeId)
         {
-            if((nodes[i]->getValue("device")).asString() == "TechnosoftIpos"){
-                double val;
-                double time;
-                yarp::os::Time::delay(0.5);
-                iEncodersTimedRaw[i]->getEncoderTimedRaw(0,&val,&time); // -- getEncoderRaw(0,&value);
-                CD_DEBUG("Value of relative encoder ->%f\n", val);
-                if ( val>0.087873 || val< -0.087873 ){
-                    CD_DEBUG("Moving (ID:%s) to zero...\n",nodes[i]->getValue("canId").toString().c_str());
-                    if ( ! iPositionControlRaw[i]->positionMoveRaw(0,0) )
-                        return false;
+            int i = entry.first;
+            yarp::os::Time::delay(0.5);
+
+            double val;
+            double time;
+            iEncodersTimedRaw[i]->getEncoderTimedRaw(0, &val, &time);
+
+            CD_DEBUG("Value of relative encoder -> %f\n", val);
+
+            if (val > 0.087873 || val< -0.087873)
+            {
+                CD_DEBUG("Moving (ID:%d) to zero...\n", entry.second);
+
+                if (!iPositionControlRaw[i]->positionMoveRaw(0, 0))
+                {
+                    return false;
                 }
-                else
-                    CD_DEBUG("It's already in zero position\n");
+            }
+            else
+            {
+                CD_DEBUG("It's already in zero position.\n");
             }
         }
-        // -- Testing
 
-        for(int i=0; i<nodes.size(); i++)
+        // -- Testing
+        for (auto entry : technosoftToNodeId)
         {
-            if((nodes[i]->getValue("device")).asString() == "TechnosoftIpos"){
-                bool motionDone = false;
-                yarp::os::Time::delay(0.2);  //-- [s]
-                CD_DEBUG("Testing (ID:%s) position... \n",nodes[i]->getValue("canId").toString().c_str());
-                if( ! iPositionControlRaw[i]->checkMotionDoneRaw(0,&motionDone) )
-                    return false;
-                if(!motionDone)
-                    CD_WARNING("Test motion fail (ID:%s) \n", nodes[i]->getValue("canId").toString().c_str());
+            int i = entry.first;
+            bool motionDone = false;
+            yarp::os::Time::delay(0.2);
+
+            CD_DEBUG("Testing (ID:%s) position...\n", entry.second);
+
+            if (!iPositionControlRaw[i]->checkMotionDoneRaw(0, &motionDone))
+            {
+                return false;
+            }
+
+            if (!motionDone)
+            {
+                CD_WARNING("Test motion fail (ID:%d)\n", entry.second);
             }
         }
 
