@@ -15,6 +15,8 @@ if(ENABLE_CanBusSharerLib)
                                        EmcyConsumer.cpp
                                        NmtProtocol.hpp
                                        NmtProtocol.cpp
+                                       DriveStatusMachine.hpp
+                                       DriveStatusMachine.hpp
                                        StateObserver.hpp
                                        StateObserver.cpp
                                        CanUtils.hpp
