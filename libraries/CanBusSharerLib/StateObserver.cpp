@@ -1,13 +1,13 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "SdoSemaphore.hpp"
+#include "StateObserver.hpp"
 
 #include <cassert>
 #include <cstring>
 
 using namespace roboticslab;
 
-SdoSemaphore::SdoSemaphore(double _timeout)
+StateObserver::StateObserver(double _timeout)
     : timeout(_timeout),
       semaphore(nullptr),
       remoteStorage(nullptr),
@@ -16,12 +16,12 @@ SdoSemaphore::SdoSemaphore(double _timeout)
     assert(("timeout > 0.0", timeout > 0.0));
 }
 
-SdoSemaphore::~SdoSemaphore()
+StateObserver::~StateObserver()
 {
     interrupt();
 }
 
-bool SdoSemaphore::await(std::uint8_t * raw)
+bool StateObserver::await(std::uint8_t * raw)
 {
     std::lock_guard<std::mutex> awaitLock(awaitMutex);
 
@@ -47,7 +47,7 @@ bool SdoSemaphore::await(std::uint8_t * raw)
     return !timedOut;
 }
 
-bool SdoSemaphore::notify(const std::uint8_t * raw)
+bool StateObserver::notify(const std::uint8_t * raw, std::size_t len)
 {
     if (!active)
     {
@@ -58,7 +58,7 @@ bool SdoSemaphore::notify(const std::uint8_t * raw)
 
     if (semaphore != nullptr)
     {
-        std::memcpy(remoteStorage, raw, 8);
+        std::memcpy(remoteStorage, raw, len);
         semaphore->post();
         return true;
     }
@@ -66,7 +66,7 @@ bool SdoSemaphore::notify(const std::uint8_t * raw)
     return false;
 }
 
-void SdoSemaphore::interrupt()
+void StateObserver::interrupt()
 {
     active = false;
     std::lock_guard<std::mutex> lock(registryMutex);

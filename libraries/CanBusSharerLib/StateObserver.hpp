@@ -1,9 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __SDO_SEMAPHORE_HPP__
-#define __SDO_SEMAPHORE_HPP__
+#ifndef __STATE_OBSERVER_HPP__
+#define __STATE_OBSERVER_HPP__
 
 #include <cstdint>
+#include <cstdlib>
 
 #include <atomic>
 #include <mutex>
@@ -13,14 +14,14 @@
 namespace roboticslab
 {
 
-class SdoSemaphore
+class StateObserver
 {
 public:
-    SdoSemaphore(double timeout);
-    ~SdoSemaphore();
+    StateObserver(double timeout);
+    ~StateObserver();
 
     bool await(std::uint8_t * raw);
-    bool notify(const std::uint8_t * raw);
+    bool notify(const std::uint8_t * raw, std::size_t len);
     void interrupt();
 
 private:
@@ -33,6 +34,6 @@ private:
     mutable std::mutex awaitMutex;
 };
 
-}  // namespace roboticslab
+} // namespace roboticslab
 
-#endif // __SDO_SEMAPHORE_HPP__
+#endif // __STATE_OBSERVER_HPP__
