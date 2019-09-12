@@ -2,77 +2,112 @@
 
 #include "StateObserver.hpp"
 
-#include <cassert>
 #include <cstring>
+
+#include <atomic>
+#include <mutex>
+
+#include <yarp/os/Semaphore.h>
 
 using namespace roboticslab;
 
-StateObserver::StateObserver(double _timeout)
-    : timeout(_timeout),
-      semaphore(nullptr),
-      remoteStorage(nullptr),
-      active(true)
+class StateObserverBase::Private
 {
-    assert(("timeout > 0.0", timeout > 0.0));
-}
+public:
+    Private(double timeout)
+        : timeout(timeout), semaphore(nullptr), remoteStorage(nullptr), active(true)
+    { }
 
-StateObserver::~StateObserver()
-{
-    interrupt();
-}
-
-bool StateObserver::await(std::uint8_t * raw)
-{
-    std::lock_guard<std::mutex> awaitLock(awaitMutex);
-
-    if (!active)
+    ~Private()
     {
+        interrupt();
+    }
+
+    bool await(void * raw)
+    {
+        std::lock_guard<std::mutex> awaitLock(awaitMutex);
+
+        if (!active)
+        {
+            return false;
+        }
+
+        {
+            std::lock_guard<std::mutex> registryLock(registryMutex);
+            semaphore = new yarp::os::Semaphore(0);
+            remoteStorage = raw;
+        }
+
+        bool timedOut = !semaphore->waitWithTimeout(timeout);
+
+        {
+            std::lock_guard<std::mutex> registryLock(registryMutex);
+            delete semaphore;
+            semaphore = nullptr;
+        }
+
+        return !timedOut;
+    }
+
+    bool notify(const void * raw, std::size_t len)
+    {
+        if (!active)
+        {
+            return false;
+        }
+
+        std::lock_guard<std::mutex> lock(registryMutex);
+
+        if (semaphore != nullptr)
+        {
+            if (raw != nullptr)
+            {
+                std::memcpy(remoteStorage, raw, len);
+            }
+
+            semaphore->post();
+            return true;
+        }
+
         return false;
     }
 
+    void interrupt()
     {
-        std::lock_guard<std::mutex> registryLock(registryMutex);
-        semaphore = new yarp::os::Semaphore(0);
-        remoteStorage = raw;
+        active = false;
+        std::lock_guard<std::mutex> lock(registryMutex);
+
+        if (semaphore != nullptr)
+        {
+            semaphore->post();
+        }
     }
 
-    bool timedOut = !semaphore->waitWithTimeout(timeout);
+private:
+    double timeout;
+    yarp::os::Semaphore * semaphore;
+    void * remoteStorage;
 
-    {
-        std::lock_guard<std::mutex> registryLock(registryMutex);
-        delete semaphore;
-        semaphore = nullptr;
-    }
+    std::atomic_bool active;
+    mutable std::mutex registryMutex;
+    mutable std::mutex awaitMutex;
+};
 
-    return !timedOut;
+StateObserverBase::StateObserverBase(double timeout)
+    : impl(new Private(timeout))
+{ }
+
+StateObserverBase::~StateObserverBase()
+{
+    delete impl;
 }
 
-bool StateObserver::notify(const std::uint8_t * raw, std::size_t len)
+bool StateObserverBase::await(void * raw)
 {
-    if (!active)
-    {
-        return false;
-    }
-
-    std::lock_guard<std::mutex> lock(registryMutex);
-
-    if (semaphore != nullptr)
-    {
-        std::memcpy(remoteStorage, raw, len);
-        semaphore->post();
-        return true;
-    }
-
-    return false;
+    return impl->await(raw);
 }
 
-void StateObserver::interrupt()
+bool StateObserverBase::notify(const void * raw, std::size_t len)
 {
-    active = false;
-    std::lock_guard<std::mutex> lock(registryMutex);
-
-    if (semaphore != nullptr)
-    {
-        semaphore->post();
-    }
+    return impl->notify(raw, len);
 }

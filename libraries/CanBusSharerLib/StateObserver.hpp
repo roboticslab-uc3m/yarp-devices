@@ -6,32 +6,48 @@
 #include <cstdint>
 #include <cstdlib>
 
-#include <atomic>
-#include <mutex>
-
-#include <yarp/os/Semaphore.h>
-
 namespace roboticslab
 {
 
-class StateObserver
+class StateObserverBase
 {
 public:
-    StateObserver(double timeout);
-    ~StateObserver();
+    StateObserverBase(double timeout);
+    virtual ~StateObserverBase() = 0;
 
-    bool await(std::uint8_t * raw);
-    bool notify(const std::uint8_t * raw, std::size_t len);
-    void interrupt();
+    bool await(void * raw = nullptr);
+    bool notify(const void * raw = nullptr, std::size_t len = 0);
 
 private:
-    double timeout;
-    yarp::os::Semaphore * semaphore;
-    std::uint8_t * remoteStorage;
+    class Private;
+    Private * impl;
+};
 
-    std::atomic_bool active;
-    mutable std::mutex registryMutex;
-    mutable std::mutex awaitMutex;
+class StateObserver : private StateObserverBase
+{
+public:
+    StateObserver(double timeout) : StateObserverBase(timeout)
+    { }
+
+    bool await()
+    { return StateObserverBase::await(); }
+
+    bool notify()
+    { return StateObserverBase::notify(); }
+};
+
+template<typename T>
+class TypedStateObserver : private StateObserverBase
+{
+public:
+    TypedStateObserver(double timeout) : StateObserverBase(timeout)
+    { }
+
+    bool await(T * raw)
+    { return StateObserverBase::await(raw); }
+
+    bool notify(const T * raw, std::size_t len = sizeof(T))
+    { return StateObserverBase::notify(raw, len); }
 };
 
 } // namespace roboticslab

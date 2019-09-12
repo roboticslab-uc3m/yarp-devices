@@ -46,7 +46,7 @@ public:
         : rpdo(rpdo), stateObserver(timeout)
     { }
 
-    void update(std::uint16_t statusword);
+    bool update(std::uint16_t statusword);
     std::bitset<16> & controlword();
     const std::bitset<16> & statusword() const;
     DriveState getCurrentState() const;
