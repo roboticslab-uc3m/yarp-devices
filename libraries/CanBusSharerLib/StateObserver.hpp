@@ -6,6 +6,8 @@
 #include <cstdint>
 #include <cstdlib>
 
+#include <type_traits>
+
 namespace roboticslab
 {
 
@@ -29,6 +31,9 @@ public:
     StateObserver(double timeout) : StateObserverBase(timeout)
     { }
 
+    StateObserver(const StateObserver &) = delete;
+    StateObserver & operator=(const StateObserver &) = delete;
+
     bool await()
     { return StateObserverBase::await(); }
 
@@ -43,11 +48,16 @@ public:
     TypedStateObserver(double timeout) : StateObserverBase(timeout)
     { }
 
+    TypedStateObserver(const TypedStateObserver &) = delete;
+    TypedStateObserver & operator=(const TypedStateObserver &) = delete;
+
     bool await(T * raw)
-    { return StateObserverBase::await(raw); }
+    { static_assert(std::is_fundamental<T>::value, "Fundamental type is required.");
+      return StateObserverBase::await(raw); }
 
     bool notify(const T * raw, std::size_t len = sizeof(T))
-    { return StateObserverBase::notify(raw, len); }
+    { static_assert(std::is_fundamental<T>::value, "Fundamental type is required.");
+      return StateObserverBase::notify(raw, len); }
 };
 
 } // namespace roboticslab
