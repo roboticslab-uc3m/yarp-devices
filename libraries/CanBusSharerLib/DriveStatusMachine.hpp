@@ -46,11 +46,14 @@ public:
         : rpdo(rpdo), stateObserver(timeout)
     { }
 
+    void configureRpdo(ReceivePdo * rpdo)
+    { this->rpdo = rpdo; }
+
     bool update(std::uint16_t statusword);
     std::bitset<16> & controlword();
     const std::bitset<16> & statusword() const;
     DriveState getCurrentState() const;
-    bool requestTransition(DriveTransition transition, bool wait);
+    bool requestTransition(DriveTransition transition, bool wait = true);
 
 private:
     std::bitset<16> _controlword;

@@ -240,21 +240,21 @@ bool roboticslab::TechnosoftIpos::start()
 
 bool roboticslab::TechnosoftIpos::readyToSwitchOn()
 {
-    return can->rpdo1()->write<uint16_t>(0x0006);
+    return can->driveStatus()->requestTransition(DriveTransition::SHUTDOWN);
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::TechnosoftIpos::switchOn()
 {
-    return can->rpdo1()->write<uint16_t>(0x0007);
+    return can->driveStatus()->requestTransition(DriveTransition::SWITCH_ON);
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::TechnosoftIpos::enable()
 {
-    return can->rpdo1()->write<uint16_t>(0x000F);
+    return can->driveStatus()->requestTransition(DriveTransition::ENABLE_OPERATION);
 }
 
 // -----------------------------------------------------------------------------

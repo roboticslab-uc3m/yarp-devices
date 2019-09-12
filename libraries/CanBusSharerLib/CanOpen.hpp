@@ -11,6 +11,7 @@
 #include "PdoProtocol.hpp"
 #include "EmcyConsumer.hpp"
 #include "NmtProtocol.hpp"
+#include "DriveStatusMachine.hpp"
 
 namespace roboticslab
 {
@@ -19,8 +20,10 @@ class CanOpen final
 {
 public:
     static constexpr double SDO_TIMEOUT = 0.1; // seconds
+    static constexpr double STATE_MACHINE_TIMEOUT = 2.0; // seconds
 
-    CanOpen(unsigned int id, double sdoTimeout = SDO_TIMEOUT, CanSenderDelegate * sender = nullptr);
+    CanOpen(unsigned int id, double sdoTimeout = SDO_TIMEOUT,
+            double stateTimeout = STATE_MACHINE_TIMEOUT, CanSenderDelegate * sender = nullptr);
 
     CanOpen(const CanOpen &) = delete;
     CanOpen & operator=(const CanOpen &) = delete;
@@ -59,6 +62,9 @@ public:
     NmtProtocol * nmt() const
     { return _nmt; }
 
+    DriveStatusMachine * driveStatus() const
+    { return _driveStatus; }
+
     bool consumeMessage(std::uint16_t cobId, const std::uint8_t * data, std::size_t size) const;
 
 private:
@@ -77,8 +83,8 @@ private:
     TransmitPdo * _tpdo4;
 
     EmcyConsumer * _emcy;
-
     NmtProtocol * _nmt;
+    DriveStatusMachine * _driveStatus;
 };
 
 } // namespace roboticslab
