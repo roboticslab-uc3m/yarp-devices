@@ -42,7 +42,7 @@ public:
     }
 
     template<typename T>
-    bool upload(const std::string & name, std::function<void(T * data)> fn, std::uint16_t index, std::uint8_t subindex = 0x00)
+    bool upload(const std::string & name, const std::function<void(T * data)> & fn, std::uint16_t index, std::uint8_t subindex = 0x00)
     {
         T data; bool res;
         return res = upload(name, &data, index, subindex), fn(&data), res;

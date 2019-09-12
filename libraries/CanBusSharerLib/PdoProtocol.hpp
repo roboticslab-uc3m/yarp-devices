@@ -142,6 +142,9 @@ public:
               return size<Ts...>() == len && (ordered_call{fn, unpack<Ts>(raw, &count)...}, true); };
     }
 
+    void unregisterHandler()
+    { callback = HandlerFn(); }
+
 protected:
     virtual PdoType getType() const override
     { return PdoType::TPDO; }

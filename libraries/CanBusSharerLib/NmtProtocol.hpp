@@ -33,8 +33,6 @@ enum class NmtState
 class NmtProtocol final
 {
 public:
-    typedef std::function<void(NmtState)> HandlerFn;
-
     static constexpr std::uint8_t BROADCAST = 0;
 
     NmtProtocol(std::uint8_t id, SdoClient * sdo, CanSenderDelegate * sender = nullptr)
@@ -50,10 +48,16 @@ public:
 
     bool accept(const std::uint8_t * data);
 
-    void registerHandler(const HandlerFn & fn)
+    template<typename Fn>
+    void registerHandler(const Fn & fn)
     { callback = fn; }
 
+    void unregisterHandler()
+    { callback = HandlerFn(); }
+
 private:
+    typedef std::function<void(NmtState)> HandlerFn;
+
     std::uint8_t id;
     SdoClient * sdo;
     CanSenderDelegate * sender;

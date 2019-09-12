@@ -24,7 +24,6 @@ class EmcyConsumer final
 {
 public:
     typedef std::pair<std::uint16_t, std::string> code_t; // emergency error code
-    typedef std::function<void(code_t, std::uint8_t, const std::uint8_t *)> HandlerFn;
 
     EmcyConsumer(SdoClient * sdo) : codeRegistry(new EmcyCodeRegistry), sdo(sdo)
     { }
@@ -41,10 +40,16 @@ public:
     { delete codeRegistry;
       codeRegistry = new T; }
 
-    void registerHandler(const HandlerFn & fn)
+    template<typename Fn>
+    void registerHandler(const Fn & fn)
     { callback = fn; }
 
-protected:
+    void unregisterHandler()
+    { callback = HandlerFn(); }
+
+private:
+    typedef std::function<void(code_t, std::uint8_t, const std::uint8_t *)> HandlerFn;
+
     HandlerFn callback;
     EmcyCodeRegistry * codeRegistry;
     SdoClient * sdo;

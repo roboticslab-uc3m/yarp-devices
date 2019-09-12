@@ -24,7 +24,7 @@ inline bool SdoClient::upload(const std::string & name, std::string * s, uint16_
 }
 
 template<>
-inline bool SdoClient::upload(const std::string & name, std::function<void(std::string * s)> fn, uint16_t index, uint8_t subindex)
+inline bool SdoClient::upload(const std::string & name, const std::function<void(std::string * s)> & fn, uint16_t index, uint8_t subindex)
 {
     std::string s;
 
