@@ -14,8 +14,8 @@ using namespace roboticslab;
 class StateObserverBase::Private
 {
 public:
-    Private(double timeout)
-        : timeout(timeout), semaphore(nullptr), remoteStorage(nullptr), active(true)
+    Private(StateObserverBase & _owner)
+        : owner(_owner), semaphore(nullptr), remoteStorage(nullptr), active(true)
     { }
 
     ~Private()
@@ -38,7 +38,7 @@ public:
             remoteStorage = raw;
         }
 
-        bool timedOut = !semaphore->waitWithTimeout(timeout);
+        bool timedOut = !semaphore->waitWithTimeout(owner.getTimeout());
 
         {
             std::lock_guard<std::mutex> registryLock(registryMutex);
@@ -62,7 +62,7 @@ public:
         {
             if (raw != nullptr)
             {
-                std::memcpy(remoteStorage, raw, len);
+                owner.setRemoteStorage(raw, len);
             }
 
             semaphore->post();
@@ -83,23 +83,49 @@ public:
         }
     }
 
+    void * getRemoteStorage()
+    {
+        return remoteStorage;
+    }
+
+    const void * getRemoteStorage() const
+    {
+        return remoteStorage;
+    }
+
 private:
-    double timeout;
+    StateObserverBase & owner;
+
     yarp::os::Semaphore * semaphore;
     void * remoteStorage;
 
     std::atomic_bool active;
-    mutable std::mutex registryMutex;
-    mutable std::mutex awaitMutex;
+    std::mutex registryMutex;
+    std::mutex awaitMutex;
 };
 
-StateObserverBase::StateObserverBase(double timeout)
-    : impl(new Private(timeout))
+StateObserverBase::StateObserverBase(double _timeout)
+    : timeout(_timeout), impl(new Private(*this))
 { }
 
 StateObserverBase::~StateObserverBase()
 {
     delete impl;
+}
+
+void * StateObserverBase::getRemoteStorage()
+{
+    return impl->getRemoteStorage();
+}
+
+const void * StateObserverBase::getRemoteStorage() const
+{
+    return impl->getRemoteStorage();
+}
+
+void StateObserverBase::setRemoteStorage(const void * raw, std::size_t len)
+{
+    std::memcpy(impl->getRemoteStorage(), raw, len);
 }
 
 bool StateObserverBase::await(void * raw)
