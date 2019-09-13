@@ -273,7 +273,9 @@ bool roboticslab::TechnosoftIpos::stopRaw(int j)
 {
     CD_INFO("(%d)\n",j);
     CHECK_JOINT(j);
-    return can->rpdo1()->write<uint16_t>(0x0002) && can->rpdo1()->write<uint16_t>(0x000F);
+
+    return can->driveStatus()->requestTransition(DriveTransition::QUICK_STOP)
+            && can->driveStatus()->requestTransition(DriveTransition::ENABLE_OPERATION);
 }
 
 // --------------------------------------------------------------------------------

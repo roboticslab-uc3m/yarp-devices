@@ -9,36 +9,6 @@
 
 namespace
 {
-    void interpretStatusword(uint16_t data)
-    {
-        switch (data)
-        {
-        case 0x9237:
-            CD_INFO("Got PDO1 that it is observed as ack \"start position\" from driver.\n");
-            break;
-        case 0x8637:
-            CD_INFO("Got PDO1 that it is observed when driver arrives to position target.\n");
-            break;
-        case 0x0240:
-            CD_INFO("Got PDO1 that it is observed as TRANSITION performed upon \"start\".\n");
-            break;
-        case 0x0340:
-            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\".\n");
-            break;
-        case 0x0221:
-            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"readyToSwitchOn\".\n");
-            break;
-        case 0x0321:
-            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"switchOn\".\n");
-            break;
-        case 0x8333:
-            CD_INFO("Got PDO1 that it is observed as part of TRANSITION performed upon \"enable\".\n");
-            break;
-        default:
-            CD_INFO("Got PDO1 from driver side: unknown.\n");
-        }
-    }
-
     void interpretPtEmcy(uint16_t status, int canId, const roboticslab::LinearInterpolationBuffer * buffer)
     {
         CD_INFO("Interpolated position mode status. canId: %d.\n", canId);
@@ -170,7 +140,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     }
 
     can = new CanOpen(canId, canSdoTimeoutMs * 0.001);
-    can->tpdo1()->registerHandler<uint16_t>(interpretStatusword);
+
     can->emcy()->setErrorCodeRegistry<TechnosoftIposEmcy>();
 
     can->emcy()->registerHandler([=](EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef)

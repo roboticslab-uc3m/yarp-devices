@@ -10,7 +10,7 @@
 #include <type_traits>
 
 #include "CanSenderDelegate.hpp"
-#include "SdoSemaphore.hpp"
+#include "StateObserver.hpp"
 
 namespace roboticslab
 {
@@ -19,7 +19,7 @@ class SdoClient final
 {
 public:
     SdoClient(std::uint8_t id, std::uint16_t cobRx, std::uint16_t cobTx, double timeout, CanSenderDelegate * sender = nullptr)
-        : id(id), cobRx(cobRx), cobTx(cobTx), sender(sender), sdoSemaphore(timeout)
+        : id(id), cobRx(cobRx), cobTx(cobTx), sender(sender), stateObserver(timeout)
     {}
 
     std::uint16_t getCobIdRx() const
@@ -32,7 +32,7 @@ public:
     { this->sender = sender; }
 
     bool notify(const std::uint8_t * raw)
-    { return sdoSemaphore.notify(raw); }
+    { return stateObserver.notify(raw, 8); }
 
     template<typename T>
     bool upload(const std::string & name, T * data, std::uint16_t index, std::uint8_t subindex = 0x00)
@@ -68,7 +68,7 @@ private:
     std::uint16_t cobTx;
 
     CanSenderDelegate * sender;
-    SdoSemaphore sdoSemaphore;
+    TypedStateObserver<std::uint8_t> stateObserver;
 };
 
 } // namespace roboticslab

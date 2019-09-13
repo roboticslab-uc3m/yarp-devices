@@ -271,7 +271,7 @@ bool SdoClient::performTransfer(const std::string & name, const std::uint8_t * r
 
     CD_INFO("SDO client request/indication (\"%s\"). %s\n", name.c_str(), reqStr.c_str());
 
-    bool success = sdoSemaphore.await(resp);
+    bool success = stateObserver.await(resp);
     const std::string & respStr = msgToStr(cobTx, resp);
 
     if (!success)

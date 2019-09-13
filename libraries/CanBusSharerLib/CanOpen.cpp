@@ -4,7 +4,7 @@
 
 using namespace roboticslab;
 
-CanOpen::CanOpen(unsigned int id, double sdoTimeout, CanSenderDelegate * sender)
+CanOpen::CanOpen(unsigned int id, double sdoTimeout, double stateTimeout, CanSenderDelegate * sender)
     : _id(id),
       _sdo(new SdoClient(_id, 0x600, 0x580, sdoTimeout, sender)),
       _rpdo1(new ReceivePdo(_id, 0x200, 1, _sdo, sender)),
@@ -16,13 +16,17 @@ CanOpen::CanOpen(unsigned int id, double sdoTimeout, CanSenderDelegate * sender)
       _tpdo3(new TransmitPdo(_id, 0x380, 3, _sdo)),
       _tpdo4(new TransmitPdo(_id, 0x480, 4, _sdo)),
       _emcy(new EmcyConsumer(_sdo)),
-      _nmt(new NmtProtocol(_id, _sdo, sender))
+      _nmt(new NmtProtocol(_id, _sdo, sender)),
+      _driveStatus(new DriveStatusMachine(_rpdo1, stateTimeout))
 {
+    _tpdo1->registerHandler<std::uint16_t>([this](std::uint16_t statusword) { _driveStatus->update(statusword); });
 }
 
 CanOpen::~CanOpen()
 {
-    delete _sdo;
+    delete _emcy;
+    delete _nmt;
+    delete _driveStatus;
 
     delete _rpdo1;
     delete _rpdo2;
@@ -34,8 +38,7 @@ CanOpen::~CanOpen()
     delete _tpdo3;
     delete _tpdo4;
 
-    delete _emcy;
-    delete _nmt;
+    delete _sdo;
 }
 
 void CanOpen::configureSender(CanSenderDelegate * sender)

@@ -9,20 +9,21 @@ if(ENABLE_CanBusSharerLib)
                                        SdoClient.hpp
                                        SdoClient-inl.hpp
                                        SdoClient.cpp
-                                       SdoSemaphore.hpp
-                                       SdoSemaphore.cpp
                                        PdoProtocol.hpp
                                        PdoProtocol.cpp
                                        EmcyConsumer.hpp
                                        EmcyConsumer.cpp
                                        NmtProtocol.hpp
                                        NmtProtocol.cpp
+                                       DriveStatusMachine.hpp
+                                       DriveStatusMachine.hpp
+                                       StateObserver.hpp
+                                       StateObserver.cpp
                                        CanUtils.hpp
                                        CanUtils.cpp)
 
     target_link_libraries(CanBusSharerLib PUBLIC YARP::YARP_dev
-                                          PRIVATE YARP::YARP_OS
-                                                  ROBOTICSLAB::ColorDebug)
+                                          PRIVATE ROBOTICSLAB::ColorDebug)
 
     target_include_directories(CanBusSharerLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

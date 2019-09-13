@@ -262,41 +262,14 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             return false;
     }
 
-    //-- Check the status of each driver.
-    std::vector<int> tmp( nodes.size() ); // -- creating a "tmp"vector with "nodes" vector size
-    this->getControlModes( tmp.data() );
-
-    //-- Initialize the drivers: start (0.1) ready (0.1) on (2) enable. Wait between each step.
-    for(int i=0; i<nodes.size(); i++)
+    //-- Initialize the drivers.
+    for (auto node : iCanBusSharer)
     {
-        if( ! iCanBusSharer[i]->initialize() )
+        if (!node->initialize() || !node->start() || !node->readyToSwitchOn() || !node->switchOn() || !node->enable())
+        {
             return false;
+        }
     }
-    yarp::os::Time::delay(0.1);
-    for(int i=0; i<nodes.size(); i++)
-    {
-        if( ! iCanBusSharer[i]->start() )
-            return false;
-    }
-    yarp::os::Time::delay(0.1);
-    for(int i=0; i<nodes.size(); i++)
-    {
-        if( ! iCanBusSharer[i]->readyToSwitchOn() )
-            return false;
-    }
-    yarp::os::Time::delay(0.1);
-    for(int i=0; i<nodes.size(); i++)
-    {
-        if( ! iCanBusSharer[i]->switchOn() )
-            return false;
-    }
-    yarp::os::Time::delay(2);
-    for(int i=0; i<nodes.size(); i++)
-    {
-        if( ! iCanBusSharer[i]->enable() )
-            return false;
-    }
-    yarp::os::Time::delay(2);
 
     //-- Homing
     if (homing)
