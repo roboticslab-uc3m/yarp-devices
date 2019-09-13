@@ -35,7 +35,7 @@ private:
     Private * impl;
 };
 
-class StateObserver : private StateObserverBase
+class StateObserver final : private StateObserverBase
 {
 public:
     StateObserver(double timeout) : StateObserverBase(timeout)
@@ -52,7 +52,7 @@ public:
 };
 
 template<typename T, typename NonFundamentalType = void>
-class TypedStateObserver : private StateObserverBase
+class TypedStateObserver final : private StateObserverBase
 {
 public:
     TypedStateObserver(double timeout) : StateObserverBase(timeout)
@@ -61,11 +61,11 @@ public:
     TypedStateObserver(const TypedStateObserver &) = delete;
     TypedStateObserver & operator=(const TypedStateObserver &) = delete;
 
-    bool await(T * remote)
-    { return StateObserverBase::await(remote); }
+    bool await(T & remote)
+    { return StateObserverBase::await(&remote); }
 
-    bool notify(const T * remote)
-    { return StateObserverBase::notify(remote); }
+    bool notify(const T & remote)
+    { return StateObserverBase::notify(&remote); }
 
 protected:
     virtual void setRemoteStorage(const void * remote, std::size_t len) override
@@ -73,7 +73,7 @@ protected:
 };
 
 template<typename T>
-class TypedStateObserver<T, std::enable_if<std::is_integral<T>::value>> : private StateObserverBase
+class TypedStateObserver<T, std::enable_if<std::is_integral<T>::value>> final : private StateObserverBase
 {
 public:
     TypedStateObserver(double timeout) : StateObserverBase(timeout)
