@@ -73,7 +73,7 @@ protected:
 };
 
 template<typename T>
-class TypedStateObserver<T, std::enable_if<std::is_integral<T>::value>> final : private StateObserverBase
+class TypedStateObserver<T, typename std::enable_if<std::is_integral<T>::value>::type> final : private StateObserverBase
 {
 public:
     TypedStateObserver(double timeout) : StateObserverBase(timeout)
