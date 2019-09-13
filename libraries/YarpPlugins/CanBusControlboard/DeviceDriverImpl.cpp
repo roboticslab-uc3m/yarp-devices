@@ -11,7 +11,6 @@
 
 bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 {
-    std::string mode = config.check("mode",yarp::os::Value("position"),"control mode on startup (position/velocity)").asString();
     int cuiTimeout  = config.check("waitEncoder", yarp::os::Value(DEFAULT_CUI_TIMEOUT), "CUI timeout (seconds)").asInt32();
     bool homing = config.check("home", yarp::os::Value(false), "perform homing maneuver on start").asBool();
 
@@ -242,28 +241,6 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
     } // -- for(int i=0; i<nodes.size(); i++)
 
-    //-- Set all motor drivers to mode.
-
-    int controlModeVocab = 0;
-
-    if( mode=="position" )
-        controlModeVocab = VOCAB_CM_POSITION;
-    else if( mode=="velocity" )
-        controlModeVocab = VOCAB_CM_VELOCITY;
-    else if( mode=="torque" )
-        controlModeVocab = VOCAB_CM_TORQUE;
-    else
-    {
-        CD_ERROR("Not prepared for initializing in mode %s.\n",mode.c_str());
-        return false;
-    }
-
-    for(int i=0; i<nodes.size(); i++)
-    {
-        if( ! this->setControlMode(i, controlModeVocab) )
-            return false;
-    }
-
     //-- Initialize the drivers.
     for (auto node : iCanBusSharer)
     {
@@ -326,13 +303,6 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
         CD_DEBUG("Moved motors to zero.\n");
         yarp::os::Time::delay(1);
-    }
-
-    if( config.check("reset", "reset encoders to zero") )
-    {
-        CD_DEBUG("Forcing encoders to zero.\n");
-        if ( ! this->resetEncoders() )
-            return false;
     }
 
     posdThread->setNodeHandles(idToTechnosoftIpos);

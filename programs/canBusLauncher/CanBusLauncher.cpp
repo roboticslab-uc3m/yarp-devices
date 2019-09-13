@@ -5,11 +5,15 @@
 #include <cstdio>
 #include <string>
 #include <sstream>
+#include <vector>
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Value.h>
+#include <yarp/os/Vocab.h>
 
+#include <yarp/dev/IControlMode.h>
+#include <yarp/dev/IEncoders.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
 
@@ -24,20 +28,13 @@ bool CanBusLauncher::configure(yarp::os::ResourceFinder &rf)
     if (rf.check("help"))
     {
         std::printf("CanBusLauncher options:\n");
-        std::printf("\t--help (this help)\t--from [file.ini]\t--context [path]\t--homePoss\t--externalEncoderWait [s]\n\n");
-        std::printf("Note: if the Absolute Encoder doesn't respond, use --externalEncoderWait [seconds] parameter for using default relative encoder position\n");
+        std::printf("\t--help (this help)\t--from [file.ini]\t--context [path]\t--mode [pos]\t--homePoss\n\n");
         CD_DEBUG_NO_HEADER("%s\n", rf.toString().c_str());
         return false;
     }
 
-    std::string mode = rf.check("mode", yarp::os::Value("position"), "initial mode of operation").asString();
+    yarp::conf::vocab32_t mode = rf.check("mode", yarp::os::Value(VOCAB_CM_POSITION), "initial mode of operation").asVocab();
     bool homing = rf.check("homePoss", yarp::os::Value(false), "perform initial homing procedure").asBool();
-    int timeEncoderWait = rf.check("externalEncoderWait", yarp::os::Value(0), "wait till absolute encoders are ready").asInt32();
-
-    if (timeEncoderWait != 0)
-    {
-        CD_INFO("Wait time for Absolute Encoder: %d [s]\n", timeEncoderWait);
-    }
 
     const std::string canDevicePrefix = "devCan";
     int canDeviceId = 0;
@@ -59,8 +56,6 @@ bool CanBusLauncher::configure(yarp::os::ResourceFinder &rf)
 
         yarp::os::Property canDeviceOptions;
         canDeviceOptions.fromString(canDeviceGroup.toString());
-        canDeviceOptions.put("mode", mode);
-        canDeviceOptions.put("waitEncoder", timeEncoderWait);
         canDeviceOptions.put("home", homing);
 
         yarp::dev::PolyDriver * canDevice = new yarp::dev::PolyDriver(canDeviceOptions);
@@ -132,6 +127,40 @@ bool CanBusLauncher::configure(yarp::os::ResourceFinder &rf)
     {
         CD_ERROR("Empty wrapper device list.\n");
         return false;
+    }
+
+    for (int i = 0; i < canDevices.size(); i++)
+    {
+        yarp::dev::IControlMode * iControlMode;
+        yarp::dev::IEncoders * iEncoders;
+
+        if (!canDevices[i]->poly->view(iControlMode))
+        {
+            CD_ERROR("Unable to view IControlMode in %s.\n", canDevices[i]->key.c_str());
+            return false;
+        }
+
+        if (!canDevices[i]->poly->view(iEncoders))
+        {
+            CD_ERROR("Unable to view IEncoders in %s.\n", canDevices[i]->key.c_str());
+            return false;
+        }
+
+        int axes;
+
+        if (!iEncoders->getAxes(&axes))
+        {
+            CD_ERROR("Unable to retrieve axes in %s.\n", canDevices[i]->key.c_str());
+            return false;
+        }
+
+        std::vector<yarp::conf::vocab32_t> modes(axes, mode);
+
+        if (!iControlMode->setControlModes(modes.data()))
+        {
+            CD_ERROR("Unable to set %s mode in %s.\n", yarp::os::Vocab::decode(mode).c_str(), canDevices[i]->key.c_str());
+            return false;
+        }
     }
 
     return true;
