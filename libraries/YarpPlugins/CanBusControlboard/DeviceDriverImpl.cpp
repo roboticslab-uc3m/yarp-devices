@@ -21,6 +21,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     double canRxPeriodMs = config.check("canRxPeriodMs", yarp::os::Value(DEFAULT_CAN_RX_PERIOD_MS), "CAN bus RX period (milliseconds)").asFloat64();
     double canTxPeriodMs = config.check("canTxPeriodMs", yarp::os::Value(DEFAULT_CAN_TX_PERIOD_MS), "CAN bus TX period (milliseconds)").asFloat64();
     double canSdoTimeoutMs = config.check("canSdoTimeoutMs", yarp::os::Value(DEFAULT_CAN_SDO_TIMEOUT_MS), "CAN bus SDO timeout (milliseconds)").asFloat64();
+    double canDriveStateTimeout = config.check("canDriveStateTimeout", yarp::os::Value(DEFAULT_CAN_DRIVE_STATE_TIMEOUT), "CAN drive state timeout (seconds)").asFloat64();
 
     linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(DEFAULT_LIN_INTERP_PERIOD_MS), "linear interpolation mode period (milliseconds)").asInt32();
     linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(DEFAULT_LIN_INTERP_BUFFER_SIZE), "linear interpolation mode buffer size").asInt32();
@@ -122,6 +123,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         options.put("linInterpBufferSize", linInterpBufferSize);
         options.put("linInterpMode", linInterpMode);
         options.put("canSdoTimeoutMs", canSdoTimeoutMs);
+        options.put("canDriveStateTimeout", canDriveStateTimeout);
         options.put("cuiTimeout", cuiTimeout);
         std::string context = types.get(i).asString() + "_" + std::to_string(ids.get(i).asInt32());
         options.setMonitor(config.getMonitor(),context.c_str());

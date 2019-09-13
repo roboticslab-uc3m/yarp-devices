@@ -80,6 +80,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     // -- other parameters...
     this->modeCurrentTorque = VOCAB_CM_NOT_CONFIGURED;
     double canSdoTimeoutMs = config.check("canSdoTimeoutMs", yarp::os::Value(0.0), "CAN SDO timeout (ms)").asFloat64();
+    double canDriveStateTimeout = config.check("canDriveStateTimeout", yarp::os::Value(0.0), "CAN drive state timeout (s)").asFloat64();
 
     double refAcceleration = config.check("refAcceleration",yarp::os::Value(0),"ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
     double refSpeed = config.check("refSpeed",yarp::os::Value(0),"ref speed (meters/second or degrees/second)").asFloat64();
@@ -139,7 +140,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
         return false;
     }
 
-    can = new CanOpen(canId, canSdoTimeoutMs * 0.001);
+    can = new CanOpen(canId, canSdoTimeoutMs * 0.001, canDriveStateTimeout);
 
     can->emcy()->setErrorCodeRegistry<TechnosoftIposEmcy>();
 
