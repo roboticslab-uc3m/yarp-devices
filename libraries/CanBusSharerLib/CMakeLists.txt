@@ -23,8 +23,7 @@ if(ENABLE_CanBusSharerLib)
                                        CanUtils.cpp)
 
     target_link_libraries(CanBusSharerLib PUBLIC YARP::YARP_dev
-                                          PRIVATE YARP::YARP_OS
-                                                  ROBOTICSLAB::ColorDebug)
+                                          PRIVATE ROBOTICSLAB::ColorDebug)
 
     target_include_directories(CanBusSharerLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

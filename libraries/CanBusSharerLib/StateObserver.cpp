@@ -5,11 +5,64 @@
 #include <cstring>
 
 #include <atomic>
+#include <condition_variable>
 #include <mutex>
 
-#include <yarp/os/Semaphore.h>
-
 using namespace roboticslab;
+
+namespace
+{
+    // https://github.com/robotology/yarp/blob/cc6dfdac/src/libYARP_OS/src/Semaphore.cpp
+    class BinaryTimedSemaphore
+    {
+    public:
+        BinaryTimedSemaphore(double timeout)
+            : timeout(timeout), count(0), wakeups(0)
+        { }
+
+        bool wait()
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            count--;
+
+            if (count < 0)
+            {
+                std::chrono::duration<double> ctime(timeout);
+                cond.wait_for(lock, ctime, [this] { return wakeups > 0; });
+
+                if (wakeups <= 0)
+                {
+                    count++;
+                    return false;
+                }
+
+                wakeups--;
+            }
+
+            return true;
+        }
+
+        void post()
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            count++;
+
+            if (count <= 0)
+            {
+                wakeups++;
+                cond.notify_one();
+            }
+        }
+
+    private:
+        double timeout;
+        int count;
+        int wakeups;
+
+        std::mutex mutex;
+        std::condition_variable cond;
+    };
+}
 
 class StateObserverBase::Private
 {
@@ -34,11 +87,11 @@ public:
 
         {
             std::lock_guard<std::mutex> registryLock(registryMutex);
-            semaphore = new yarp::os::Semaphore(0);
+            semaphore = new BinaryTimedSemaphore(owner.getTimeout());
             remoteStorage = raw;
         }
 
-        bool timedOut = !semaphore->waitWithTimeout(owner.getTimeout());
+        bool timedOut = !semaphore->wait();
 
         {
             std::lock_guard<std::mutex> registryLock(registryMutex);
@@ -96,7 +149,7 @@ public:
 private:
     StateObserverBase & owner;
 
-    yarp::os::Semaphore * semaphore;
+    BinaryTimedSemaphore * semaphore;
     void * remoteStorage;
 
     std::atomic_bool active;
