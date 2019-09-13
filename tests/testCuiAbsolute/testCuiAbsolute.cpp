@@ -18,7 +18,7 @@
 #include "ICanBusSharer.h"
 #include "ICuiAbsolute.h"
 
-#define CAN_ID 126 // ID of Cui Absolute encoder that you want to check...
+#define CAN_ID 124 // ID of Cui Absolute encoder that you want to check...
 
 namespace roboticslab
 {
@@ -196,7 +196,7 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInPullMode )
 
 TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInContinuousMode )
 {
-    bool startSending = cuiAbsolute->startContinuousPublishing(0);
+    bool startSending = cuiAbsolute->startPushPublishing(1);
 
     yarp::dev::CanMessage &msg = canInputBuffer[0];
 
@@ -243,7 +243,7 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInContinuousMode )
             }
         }
 
-        ASSERT_TRUE(startSending);  // -- testing startContinuousPublishing function
+        ASSERT_TRUE(startSending);  // -- testing startPushPublishing function
         ASSERT_FALSE(timePassed);   // -- testing the time (it have to be less than 2 sec)
         ASSERT_EQ(canId , CAN_ID);  // -- testing if the CAN ID of CUI is the same that it has received (3 tests)
         yarp::os::Time::delay(1);
