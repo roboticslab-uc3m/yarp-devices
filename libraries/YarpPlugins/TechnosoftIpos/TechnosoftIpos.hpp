@@ -143,10 +143,7 @@ public:
     virtual bool getControlModesRaw(int * modes) override;
     virtual bool getControlModesRaw(int n_joint, const int * joints, int * modes) override;
     virtual bool setControlModeRaw(int j, int mode) override;
-    bool setPositionModeRaw(int j);
-    bool setVelocityModeRaw(int j);
     bool setPositionDirectModeRaw();
-    bool setTorqueModeRaw(int j);
     virtual bool setControlModesRaw(int * modes) override;
     virtual bool setControlModesRaw(int n_joint, const int * joints, int * modes) override;
 

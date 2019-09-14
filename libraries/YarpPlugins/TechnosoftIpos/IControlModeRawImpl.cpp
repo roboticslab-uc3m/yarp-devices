@@ -14,36 +14,6 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::setPositionModeRaw(int j)
-{
-    CD_DEBUG("(%d)\n", j);
-    CHECK_JOINT(j);
-    return can->sdo()->download<int8_t>("Modes of Operation", 1, 0x6060);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::setVelocityModeRaw(int j)
-{
-    CD_DEBUG("(%d)\n", j);
-    CHECK_JOINT(j);
-    return can->sdo()->download<int8_t>("Modes of Operation", 3, 0x6060);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::setTorqueModeRaw(int j)
-{
-    CD_DEBUG("(%d)\n", j);
-    CHECK_JOINT(j);
-
-    return can->sdo()->download<uint16_t>("External Reference Type", 1, 0x201D)
-            && can->sdo()->download<int8_t>("Modes of Operation", -5, 0x6060)
-            && can->rpdo1()->write<uint16_t>(0x001F);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIpos::setPositionDirectModeRaw()
 {
     CD_DEBUG("\n");
@@ -494,20 +464,21 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     switch (mode)
     {
     case VOCAB_CM_POSITION:
-        return setPositionModeRaw(j);
+        return can->sdo()->download<int8_t>("Modes of Operation", 1, 0x6060);
     case VOCAB_CM_VELOCITY:
-        return setVelocityModeRaw(j);
+        return can->sdo()->download<int8_t>("Modes of Operation", 3, 0x6060);
     case VOCAB_CM_CURRENT:
     case VOCAB_CM_TORQUE:
         modeCurrentTorque = mode;
-        return setTorqueModeRaw(j);
+        return can->sdo()->download<uint16_t>("External Reference Type", 1, 0x201D)
+                && can->sdo()->download<int8_t>("Modes of Operation", -5, 0x6060)
+                && can->rpdo1()->write<uint16_t>(0x001F);
     case VOCAB_CM_POSITION_DIRECT:
         return setPositionDirectModeRaw();
     default:
+        CD_ERROR("Unsupported mode %s.\n", yarp::os::Vocab::decode(mode).c_str());
         return false;
     }
-
-    return true;
 }
 
 // -----------------------------------------------------------------------------
