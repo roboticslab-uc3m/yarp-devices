@@ -12,7 +12,6 @@
 bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 {
     int cuiTimeout  = config.check("waitEncoder", yarp::os::Value(DEFAULT_CUI_TIMEOUT), "CUI timeout (seconds)").asInt32();
-    bool homing = config.check("home", yarp::os::Value(false), "perform homing maneuver on start").asBool();
 
     std::string canBusType = config.check("canBusType", yarp::os::Value(DEFAULT_CAN_BUS), "CAN bus device name").asString();
     int canRxBufferSize = config.check("canBusRxBufferSize", yarp::os::Value(DEFAULT_CAN_RX_BUFFER_SIZE), "CAN bus RX buffer size").asInt();
@@ -98,7 +97,6 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
     iCanBusSharer.resize( nodes.size() );
 
     std::map<int, ITechnosoftIpos *> idToTechnosoftIpos;
-    std::map<int, int> technosoftToNodeId;
 
     for(int i=0; i<nodes.size(); i++)
     {
@@ -221,8 +219,6 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             ITechnosoftIpos * iTechnosoftIpos;
             device->view(iTechnosoftIpos);
             idToTechnosoftIpos.insert(std::make_pair(i, iTechnosoftIpos));
-
-            technosoftToNodeId.insert(std::make_pair(i, ids.get(i).asInt32()));
         }
 
         //-- Associate absolute encoders to motor drivers
@@ -248,61 +244,6 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         {
             return false;
         }
-    }
-
-    //-- Homing
-    if (homing)
-    {
-        CD_DEBUG("Moving motors to zero.\n");
-
-        for (auto entry : technosoftToNodeId)
-        {
-            int i = entry.first;
-            yarp::os::Time::delay(0.5);
-
-            double val;
-            double time;
-            iEncodersTimedRaw[i]->getEncoderTimedRaw(0, &val, &time);
-
-            CD_DEBUG("Value of relative encoder -> %f\n", val);
-
-            if (val > 0.087873 || val< -0.087873)
-            {
-                CD_DEBUG("Moving (ID:%d) to zero...\n", entry.second);
-
-                if (!iPositionControlRaw[i]->positionMoveRaw(0, 0))
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                CD_DEBUG("It's already in zero position.\n");
-            }
-        }
-
-        // -- Testing
-        for (auto entry : technosoftToNodeId)
-        {
-            int i = entry.first;
-            bool motionDone = false;
-            yarp::os::Time::delay(0.2);
-
-            CD_DEBUG("Testing (ID:%s) position...\n", entry.second);
-
-            if (!iPositionControlRaw[i]->checkMotionDoneRaw(0, &motionDone))
-            {
-                return false;
-            }
-
-            if (!motionDone)
-            {
-                CD_WARNING("Test motion fail (ID:%d)\n", entry.second);
-            }
-        }
-
-        CD_DEBUG("Moved motors to zero.\n");
-        yarp::os::Time::delay(1);
     }
 
     posdThread->setNodeHandles(idToTechnosoftIpos);
