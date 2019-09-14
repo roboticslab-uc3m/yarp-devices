@@ -40,6 +40,7 @@ add_subdirectory(PhidgetSpatial)
 add_subdirectory(ProximitySensorsClient)
 add_subdirectory(SpaceNavigator)
 add_subdirectory(TechnosoftIpos)
+add_subdirectory(TechnosoftIposCalibrator)
 add_subdirectory(TextilesHand)
 add_subdirectory(WiimoteSensor)
 
