@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __TECHNOSOFT_IPOS_CALIBRATOR_HPP__
-#define __TECHNOSOFT_IPOS_CALIBRATOR_HPP__
+#ifndef __JOINT_CALIBRATOR_HPP__
+#define __JOINT_CALIBRATOR_HPP__
 
 #include <yarp/dev/CalibratorInterfaces.h>
 #include <yarp/dev/DeviceDriver.h>
@@ -15,20 +15,20 @@ namespace roboticslab
 
 /**
  * @ingroup YarpPlugins
- * \defgroup TechnosoftIposCalibrator
- * @brief Contains roboticslab::TechnosoftIposCalibrator.
+ * \defgroup JointCalibrator
+ * @brief Contains roboticslab::JointCalibrator.
  */
 
 /**
- * @ingroup TechnosoftIposCalibrator
+ * @ingroup JointCalibrator
  * @brief ...
  */
-class TechnosoftIposCalibrator : public yarp::dev::DeviceDriver,
-                                 public yarp::dev::IRemoteCalibrator,
-                                 public yarp::dev::IWrapper
+class JointCalibrator : public yarp::dev::DeviceDriver,
+                        public yarp::dev::IRemoteCalibrator,
+                        public yarp::dev::IWrapper
 {
 public:
-    TechnosoftIposCalibrator()
+    JointCalibrator()
         : axes(0), iControlMode(nullptr), iEncoders(nullptr), iPositionControl(nullptr)
     { }
 
@@ -56,4 +56,4 @@ private:
 
 }  // namespace roboticslab
 
-#endif // __TECHNOSOFT_IPOS_CALIBRATOR_HPP__
+#endif // __JOINT_CALIBRATOR_HPP__

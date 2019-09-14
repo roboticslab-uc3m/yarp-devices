@@ -1,15 +1,15 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "TechnosoftIposCalibrator.hpp"
+#include "JointCalibrator.hpp"
 
 using namespace roboticslab;
 
-bool TechnosoftIposCalibrator::open(yarp::os::Searchable & config)
+bool JointCalibrator::open(yarp::os::Searchable & config)
 {
     return true;
 }
 
-bool TechnosoftIposCalibrator::close()
+bool JointCalibrator::close()
 {
     return true;
 }

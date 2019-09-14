@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "TechnosoftIposCalibrator.hpp"
+#include "JointCalibrator.hpp"
 
 using namespace roboticslab;
 
-bool TechnosoftIposCalibrator::attach(yarp::dev::PolyDriver * poly)
+bool JointCalibrator::attach(yarp::dev::PolyDriver * poly)
 {
     return poly->view(iControlMode)
             && poly->view(iEncoders)
@@ -12,7 +12,7 @@ bool TechnosoftIposCalibrator::attach(yarp::dev::PolyDriver * poly)
             && iEncoders->getAxes(&axes);
 }
 
-bool TechnosoftIposCalibrator::detach()
+bool JointCalibrator::detach()
 {
     return true;
 }

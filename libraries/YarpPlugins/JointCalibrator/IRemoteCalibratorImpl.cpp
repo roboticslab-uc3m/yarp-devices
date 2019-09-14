@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "TechnosoftIposCalibrator.hpp"
+#include "JointCalibrator.hpp"
 
 #include <vector>
 
@@ -8,19 +8,19 @@
 
 using namespace roboticslab;
 
-bool TechnosoftIposCalibrator::calibrateSingleJoint(int j)
+bool JointCalibrator::calibrateSingleJoint(int j)
 {
     CD_WARNING("Not supported.\n");
     return false;
 }
 
-bool TechnosoftIposCalibrator::calibrateWholePart()
+bool JointCalibrator::calibrateWholePart()
 {
     CD_WARNING("Not supported.\n");
     return false;
 }
 
-bool TechnosoftIposCalibrator::homingSingleJoint(int j)
+bool JointCalibrator::homingSingleJoint(int j)
 {
     if (j < 0 || j > axes - 1)
     {
@@ -78,7 +78,7 @@ bool TechnosoftIposCalibrator::homingSingleJoint(int j)
     return true;
 }
 
-bool TechnosoftIposCalibrator::homingWholePart()
+bool JointCalibrator::homingWholePart()
 {
     CD_INFO("Starting homing procedure.\n");
 
@@ -164,25 +164,25 @@ bool TechnosoftIposCalibrator::homingWholePart()
     return true;
 }
 
-bool TechnosoftIposCalibrator::parkSingleJoint(int j, bool wait)
+bool JointCalibrator::parkSingleJoint(int j, bool wait)
 {
     CD_WARNING("Not supported.\n");
     return false;
 }
 
-bool TechnosoftIposCalibrator::parkWholePart()
+bool JointCalibrator::parkWholePart()
 {
     CD_WARNING("Not supported.\n");
     return false;
 }
 
-bool TechnosoftIposCalibrator::quitCalibrate()
+bool JointCalibrator::quitCalibrate()
 {
     CD_WARNING("Not supported.\n");
     return false;
 }
 
-bool TechnosoftIposCalibrator::quitPark()
+bool JointCalibrator::quitPark()
 {
     CD_WARNING("Not supported.\n");
     return false;
