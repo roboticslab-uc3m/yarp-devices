@@ -100,7 +100,15 @@ bool CanBusLauncher::configure(yarp::os::ResourceFinder &rf)
             return false;
         }
 
-        calibratorDevices.push(calibratorDevice, "calibrator"); // key format enforced by CBW2.attachAll()
+        yarp::dev::IRemoteCalibrator * iRemoteCalibrator;
+
+        if (!calibratorDevice->view(iRemoteCalibrator))
+        {
+            CD_ERROR("Unable to view IRemoteCalibrator in %s.\n", calibratorDeviceLabel.c_str());
+            return false;
+        }
+
+        calibratorDevices.push(calibratorDevice, "calibrator"); // key value enforced by CBW2.attachAll()
     }
 
     const std::string wrapperDevicePrefix = "wrapper";
