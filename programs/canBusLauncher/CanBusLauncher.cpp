@@ -191,26 +191,6 @@ bool CanBusLauncher::configure(yarp::os::ResourceFinder &rf)
         return false;
     }
 
-    if (homing)
-    {
-        for (int i = 0; i < calibratorDevices.size(); i++)
-        {
-            yarp::dev::IRemoteCalibrator * iRemoteCalibrator;
-
-            if (!calibratorDevices[i]->poly->view(iRemoteCalibrator))
-            {
-                CD_ERROR("Unable to view IRemoteCalibrator in %s.\n", calibratorDevices[i]->key.c_str());
-                return false;
-            }
-
-            if (!iRemoteCalibrator->homingWholePart())
-            {
-                CD_ERROR("Homing procedure failed.\n");
-                return false;
-            }
-        }
-    }
-
     for (int i = 0; i < canDevices.size(); i++)
     {
         yarp::dev::IControlMode * iControlMode;
@@ -245,6 +225,26 @@ bool CanBusLauncher::configure(yarp::os::ResourceFinder &rf)
         }
 
         CD_SUCCESS("Set %s mode in %s.\n", yarp::os::Vocab::decode(mode).c_str(), canDevices[i]->key.c_str());
+    }
+
+    if (homing)
+    {
+        for (int i = 0; i < calibratorDevices.size(); i++)
+        {
+            yarp::dev::IRemoteCalibrator * iRemoteCalibrator;
+
+            if (!calibratorDevices[i]->poly->view(iRemoteCalibrator))
+            {
+                CD_ERROR("Unable to view IRemoteCalibrator in %s.\n", calibratorDevices[i]->key.c_str());
+                return false;
+            }
+
+            if (!iRemoteCalibrator->homingWholePart())
+            {
+                CD_ERROR("Homing procedure failed.\n");
+                return false;
+            }
+        }
     }
 
     return true;

@@ -2,11 +2,11 @@
 
 #include "TechnosoftIposCalibrator.hpp"
 
-using namespace roboticslab;
-
 #include <vector>
 
 #include <ColorDebug.h>
+
+using namespace roboticslab;
 
 bool TechnosoftIposCalibrator::calibrateSingleJoint(int j)
 {
@@ -30,7 +30,15 @@ bool TechnosoftIposCalibrator::homingSingleJoint(int j)
 
     CD_INFO("Starting homing procedure on joint %d.\n", j);
 
-    if (!iControlMode->setControlMode(j, VOCAB_CM_POSITION))
+    yarp::conf::vocab32_t initialMode;
+
+    if (!iControlMode->getControlMode(j, &initialMode))
+    {
+        CD_ERROR("Unable to retrieve initial control mode.\n");
+        return false;
+    }
+
+    if (initialMode != VOCAB_CM_POSITION && !iControlMode->setControlMode(j, VOCAB_CM_POSITION))
     {
         CD_ERROR("Unable to switch to position mode.\n");
         return false;
@@ -59,6 +67,12 @@ bool TechnosoftIposCalibrator::homingSingleJoint(int j)
         yarp::os::Time::delay(0.1);
     }
 
+    if (initialMode != VOCAB_CM_POSITION && !iControlMode->setControlMode(j, initialMode))
+    {
+        CD_ERROR("Unable to restore original control mode.\n");
+        return false;
+    }
+
     CD_INFO("Homing procedure on joint %d finished.\n", j);
 
     return true;
@@ -68,12 +82,33 @@ bool TechnosoftIposCalibrator::homingWholePart()
 {
     CD_INFO("Starting homing procedure.\n");
 
-    std::vector<yarp::conf::vocab32_t> modes(axes, VOCAB_CM_POSITION);
+    std::vector<yarp::conf::vocab32_t> initialModes(axes);
 
-    if (!iControlMode->setControlModes(modes.data()))
+    if (!iControlMode->getControlModes(initialModes.data()))
     {
-        CD_ERROR("Unable to switch to position mode.\n");
+        CD_ERROR("Unable to retrieve initial control modes.\n");
         return false;
+    }
+
+    std::vector<int> jointIds;
+
+    for (std::size_t i = 0; i < initialModes.size(); i++)
+    {
+        if (initialModes[i] != VOCAB_CM_POSITION)
+        {
+            jointIds.push_back(i);
+        }
+    }
+
+    if (!jointIds.empty())
+    {
+        std::vector<yarp::conf::vocab32_t> modes(jointIds.size(), VOCAB_CM_POSITION);
+
+        if (!iControlMode->setControlModes(jointIds.size(), jointIds.data(), modes.data()))
+        {
+            CD_ERROR("Unable to switch to position mode.\n");
+            return false;
+        }
     }
 
     std::vector<double> encs(axes);
@@ -106,6 +141,22 @@ bool TechnosoftIposCalibrator::homingWholePart()
     while (!iPositionControl->checkMotionDone(&done))
     {
         yarp::os::Time::delay(0.1);
+    }
+
+    if (!jointIds.empty())
+    {
+        std::vector<yarp::conf::vocab32_t> modes;
+
+        for (auto jointId : jointIds)
+        {
+            modes.push_back(initialModes[jointId]);
+        }
+
+        if (!iControlMode->setControlModes(jointIds.size(), jointIds.data(), modes.data()))
+        {
+            CD_ERROR("Unable to restore original control modes.\n");
+            return false;
+        }
     }
 
     CD_INFO("Homing procedure finished.\n");
