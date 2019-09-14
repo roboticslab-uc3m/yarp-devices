@@ -28,6 +28,7 @@ public:
 private:
     yarp::dev::PolyDriverList canDevices;
     yarp::dev::PolyDriverList wrapperDevices;
+    yarp::dev::PolyDriverList calibratorDevices;
 };
 
 }  // namespace roboticslab
