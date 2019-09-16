@@ -2,12 +2,12 @@
 
 /**
  *
- * @ingroup yarp_devices_cuiAbsolute
- * \defgroup yarp_devices_picFirmware PIC-Firmware
+ * @ingroup teo_body_cuiAbsolute
+ * \defgroup teo_body_picFirmware PIC-Firmware
  *
  * @brief Firmware that allows communication with the PIC and the publication of position messages. 
  *
- * @section yarp_devices_firmware_legal Legal
+ * @section teo_body_firmware_legal Legal
  *
  * Copyright: 2016 (C) Universidad Carlos III de Madrid
  *
@@ -64,32 +64,20 @@
 #pragma config PBADEN = OFF, LPT1OSC = OFF, MCLRE = ON
 #pragma config STVREN = OFF, LVP = OFF, XINST = OFF
 
-
-/***** Variables configurables (CAN_ID & ENCODER PULSES & SEND_DELAY) *******************************************************/
-
-// CAN ID (Ver correspondecia en http://robots.uc3m.es/index.php/CuiAbsolute_Documentation)
-unsigned long canId = 498; //508 (codo 124) 492 (pierna izquierda 108)
-
-// ENCODER PULSES (Valor compuesto por el factor de pulsos-por-slot (normalmente 4) y numero total de slots del encoder (actualmente: 4 * 1024))
-double encoderPulses = 4096;
-
-/* SEND DELAY (Valor que utilizará Delay10TCYx en el envío. Valor recomendado de 1 a 100)
- * El byte 3 (data[2]) que recibirá el PIC (valor comprendido entre [0-255]) se multiplicará por el tiempo que
- * tarde en ejecutar el delay marcado por la función Delay10TCYx(sendDelay)
- * A tener en cuenta:
-	- La velocidad de ejecución de cada ciclo de instrucción son 0.8 microsegundos
-        - Delay10TCYx(i) -> 10.Tcy.i genera una demora de 10 ciclos de instrucciones * i . Por tanto Delay10TCYc(1) equivale a 8 microsegundos (10 ciclos de reloj) */
-BYTE sendDelay = 1; //Default: 1 
-/***********************************************************************************************************/
+// Variable configurable (CAN_ID)
+// -----------------------
+unsigned long canId = 124;
+// ----------------------- 
 
 // -- Inicialización de variables para el envío
 int aux, message[2];
-int i=0;
 double degrees;
-double div = encoderPulses/360.0; // resultado dividir 4096/360 = 11.38
+double div = 11.38; // resultado dividir (2^12)/360 = 11.38
 BYTE x, y;
 ECAN_TX_MSG_FLAGS txFlags = ECAN_TX_PRIORITY_3 & ECAN_TX_STD_FRAME & ECAN_TX_NO_RTR_FRAME;
-int stop_flag=0; // -- flag para saber cuando se ha recibido un stop
+
+// int stop_flag=0; // -- flag para saber cuando se ha recibido un stop
+int pushFlag = 0; // flag para saber si está ejecutando el PUSH
 
 // -- Variables que almacenarán los datos a recibir:
 unsigned long picId;
@@ -100,8 +88,6 @@ ECAN_RX_MSG_FLAGS rxflags;
 // -- Prototipos de funciones
 void send(void);
 void cleanData(void);
-
-
 
 // -- Funcion principal
 void main(void)
@@ -151,53 +137,51 @@ void main(void)
     ECANSetOperationMode(ECAN_OP_MODE_NORMAL);
 
 
-    /* Mensaje compuesto por 3 bytes
+    /* Mensaje compuesto por 2 bytes
     -- data[0]: (Byte 1)
-    	* start (0x01)
-    	* stop  (0x02)
+    	* start push (0x01) publicación permanente		(necesita indicar periodo de publicación)
+    	* start pull (0x02) publicación por petición	(no necesita indicar velocidad de publicación)
+    	* stop  push (0x03) para la publicación por push
     -- data[1]: (Byte 2)
-    	* mode1 (0x01): publicación permanente		(necesita indicar velocidad de publicación)
-    	* mode2 (0x02): publicación por petición	(no necesita indicar velocidad de publicación)
-    -- data[2]: (Byte 3)
-    	* (0 - 255)
+    	* Periodo de publicación entre mensajes usando publicación tipo push. Valores (0 - 255)
     	A tener en cuenta:
     		- La frecuencia de oscilación se encuentra definida como Fosc = 5Mhz (20/4)
     		- La velocidad de ejecución de cada ciclo de instrucción son 0.8 microsegundos
-    		- Delay10TCYx(i) -> 10.Tcy.i genera una demora de 10 ciclos de instrucciones * i . Por tanto Delay10TCYc(1) equivale a 8 microsegundos (10 ciclos de reloj)
+    		- Delay10TCYx(i) -> 10*Tcy*i. Por tanto Delay10TCYc(1) equivale a 8 microsegundos (10 ciclos de reloj)
     */
-
+	
+	
     while(1)
     {
         // --------------- Recibo!!! ------------------
-        if(ECANReceiveMessage(&picId, data, &dataLen, &rxflags))
-        {
-            // ----------- Checkeamos ID Driver -----------
-            if(picId == canId-384)  		// -- (canId = picId + 0x180)
-            {
-                if(data[0]==0x01 && data[1]==0x01 && data[3]==0x00 && data[4]==0x00 && data[5]==0x00 && data[6]==0x00 && data[7]==0x00 )    // -- comienza publicación (start) modo permanente : if(data[0]==0x01 && data[1]==0x01)
-                {
-                    // -- mientras no mande un Stop, sigue publicando
-                    while(!stop_flag)
-                    {
-                        send();	// -- envia
-                        for( i=0; (i<= data[2]) && (!stop_flag) ; i++ )  // DELAY: data[2] recibirá un valor comprendido en [0 - 255]
-                        {
-                            Delay10TCYx(sendDelay);
-                            ECANReceiveMessage(&picId, data, &dataLen, &rxflags);
-                            if((data[0]==0x02 && data[1]==0x01 && data[3]==0x00 && data[4]==0x00 && data[5]==0x00 && data[6]==0x00 && data[7]==0x00) && (picId == canId-384)) 
-                            	stop_flag=1;
-                        }
-                    }
-                    cleanData(); // -- Se para, limpia las variables
-                    stop_flag=0;
-                }
-                if(data[0]==0x01 && data[1]==0x02 && data[2]==0x00 && data[3]==0x00 && data[4]==0x00 && data[5]==0x00 && data[6]==0x00 && data[7]==0x00)  	// -- publica por pulling (petición)
-                {
-                    send();		 // Manda una único mensaje
-                    cleanData(); // Limpia las variables
-                }
-            } // if(picId == canId-384)
-        } // if(ECANReceiveMessage(&picId, data, &dataLen, &flags))
+        BOOL ret = ECANReceiveMessage(&picId, data, &dataLen, &rxflags);
+        
+        // if (ret = 0) && (pushFlag = 0)
+        if(!ret && !pushFlag) 
+	        continue;
+	    
+	    if(picId != canId ) 
+	        continue;
+	  
+	    switch (data[0])
+	    {
+	    	case 0x01: // start push (continuous)			
+				send();
+	    		Delay100TCYx((unsigned char)data[1]); 
+				pushFlag = 1;	   
+	    	break;
+	    	
+	    	case 0x02: // start pull (polling)
+	    		send();
+	    		cleanData();
+	    	break;
+	    	
+	    	case 0x03: // (case 0x03)stop
+	    		cleanData();
+	    		pushFlag = 0;
+	    	break;
+	    		      	
+	    } // switch
     } // while
 } // main
 
@@ -208,24 +192,24 @@ void send()
     // - Manual: [1. The host issues the command, 0x10. The data read in at this time will be 0xa5 or 0x00 since this is the first SPI transfer]
     LATCbits.LATC2=0;			
     WriteSPI (0b00010000);      //Solicitación de posición (comando 0x10) 
-    Delay10TCYx(4);             // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Old delay: 3 ( 3 = 6us)
+    Delay10TCYx(5);             // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Old delay: 3 ( 3 = 6us)
     y=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
     LATCbits.LATC2=1;			
 
 	// - Manual: [2. The host waits a minimum of 5 µs then sends a “nop_a5” command: 0x00]
     LATCbits.LATC2=0;			
     WriteSPI (0b00000000);      //Comando 0x00 -> nop_a5
-    Delay10TCYx(4);             // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Old delay: 3 ( 3 = 6us)
+    Delay10TCYx(5);             // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Old delay: 3 ( 3 = 6us)
     y=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
     LATCbits.LATC2=1;
 
 	// - Manual: [3. The response to the “nop_a5” is either 0xa5 or an echo of the command, 0x10.]
     while(y==0b10100101)  		// - Manual: [a. If it is 0xa5, it will go back to step 2.]											
     {
-	    Delay10TCYx(3); 
+	    Delay10TCYx(5); 
         LATCbits.LATC2=0;
         WriteSPI (0b00000000);  // Comando 0x00 -> nop_a5)
-        Delay10TCYx(4); 		// Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Old delay: 3 ( 3 = 6us)
+        Delay10TCYx(5); 		// Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Old delay: 3 ( 3 = 6us)
         y=SSPBUF;				// Recoge los datos del SSPBUF que provienen del encoder (MISO)
         LATCbits.LATC2=1;
     }
@@ -234,7 +218,7 @@ void send()
 	// - Manual: [4. The host waits a minimum of 5 µs then sends “nop_a5”, the data read is the high byte of the position.]
     LATCbits.LATC2=0;			
     WriteSPI(0b00000000);		//Comando 0x00 -> nop_a5
-    Delay10TCYx(4);				// Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Old delay: 3 ( 3 = 6us)
+    Delay10TCYx(5);				// Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Old delay: 3 ( 3 = 6us)
     y=SSPBUF;					//Recoge los datos del SSPBUF que provienen del encoder (MISO)
     message[0]=y;				//Se almacena en el primer elemento del array que se enviará por CAN
     LATCbits.LATC2=1;
@@ -242,7 +226,7 @@ void send()
     // - Manual: [5. The host waits a minimum of 5 µs then sends “nop_a5”, the data read is the low byte of the position.]
     LATCbits.LATC2=0;
     WriteSPI(0b00000000);       //Espera para captar la parte baja del mensaje
-    Delay10TCYx(4);             // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Old delay: 3 ( 3 = 6us)
+    Delay10TCYx(5);             // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Old delay: 3 ( 3 = 6us)
     y=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
     message[1]=y;               //Se almacena en el segundo elemento del array que se enviará por CAN
 
@@ -254,7 +238,7 @@ void send()
     x=0;
     while( !x )
     {
-        x=ECANSendMessage(canId, &degrees, sizeof(degrees), txFlags);
+        x=ECANSendMessage(canId, &degrees, sizeof(degrees), txFlags);       
     }
 }
 
@@ -263,10 +247,4 @@ void cleanData()
 {
     data[0] = 0x00;
     data[1] = 0x00;
-    data[2] = 0x00;
-    data[3] = 0x00;
-    data[4] = 0x00;
-    data[5] = 0x00;
-    data[6] = 0x00;
-    data[7] = 0x00;
 }
