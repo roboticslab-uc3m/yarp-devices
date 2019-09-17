@@ -9,7 +9,6 @@
 #include <yarp/dev/IEncodersTimed.h>
 
 #include "ICanBusSharer.hpp"
-#include "ICuiAbsolute.h"
 
 #define CHECK_JOINT(j) do { int ax; if (getAxes(&ax), (j) != ax - 1) return false; } while (0)
 
@@ -29,8 +28,7 @@ namespace roboticslab
  */
 class CuiAbsolute : public yarp::dev::DeviceDriver,
                     public yarp::dev::IEncodersTimedRaw,
-                    public ICanBusSharer,
-                    public ICuiAbsolute
+                    public ICanBusSharer
 {
 public:
 
@@ -71,15 +69,12 @@ public:
     virtual bool getEncodersTimedRaw(double * encs, double * time);
     virtual bool getEncoderTimedRaw(int j, double * encs, double * time);
 
-    // -- Auxiliary functions: send data to PIC of Cui
-    virtual bool startContinuousPublishing(uint8_t time);
-    virtual bool startPullPublishing();
-    virtual bool stopPublishingMessages();
-
 private:
 
-    bool send(std::uint16_t len, std::uint8_t * msgData)
-    { return sender->prepareMessage(message_builder(canId, len, msgData)); }
+    bool send(std::uint16_t len, std::uint8_t * msgData);
+    bool startContinuousPublishing(uint8_t time);
+    bool startPullPublishing();
+    bool stopPublishingMessages();
 
     unsigned int canId;
     double cuiTimeout;

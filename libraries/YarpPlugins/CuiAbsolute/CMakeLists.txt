@@ -14,6 +14,7 @@ if(NOT SKIP_CuiAbsolute)
     set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
 
     yarp_add_plugin(CuiAbsolute CuiAbsolute.hpp
+                                CuiAbsolute.cpp
                                 DeviceDriverImpl.cpp
                                 ICanBusSharerImpl.cpp
                                 IEncodersTimedRawImpl.cpp)
