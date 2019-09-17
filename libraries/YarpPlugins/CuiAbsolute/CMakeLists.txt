@@ -17,16 +17,7 @@ if(NOT SKIP_CuiAbsolute)
                                 CuiAbsolute.hpp
                                 DeviceDriverImpl.cpp
                                 ICanBusSharerImpl.cpp
-                                IControlLimitsRawImpl.cpp
-                                IControlModeRawImpl.cpp
-                                IEncodersRawImpl.cpp
-                                IEncodersTimedRawImpl.cpp
-                                IInteractionModeRawImpl.cpp
-                                IPositionControlRawImpl.cpp
-                                IPositionDirectRawImpl.cpp
-                                IRemoteVariablesRawImpl.cpp
-                                ITorqueControlRawImpl.cpp
-                                IVelocityControlRawImpl.cpp)
+                                IEncodersTimedRawImpl.cpp)
 
     target_link_libraries(CuiAbsolute YARP::YARP_OS
                                       YARP::YARP_dev

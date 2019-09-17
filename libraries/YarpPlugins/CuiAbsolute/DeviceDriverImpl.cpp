@@ -14,8 +14,6 @@ bool roboticslab::CuiAbsolute::open(yarp::os::Searchable& config)
     canId = config.check("canId", yarp::os::Value(0), "can bus ID").asInt32();
     tr = config.check("tr", yarp::os::Value(1), "reduction").asInt32();
     cuiTimeout = config.check("cuiTimeout", yarp::os::Value(0), "CUI timeout (seconds)").asInt32();
-    targetReached = false;
-    max = min = refAcceleration = refSpeed = 0.0;
     encoder = std::sqrt(-1); // NaN \todo{Investigate, debug and document the dangers of this use of NaN.}
 
     if (cuiTimeout <= 0.0)
