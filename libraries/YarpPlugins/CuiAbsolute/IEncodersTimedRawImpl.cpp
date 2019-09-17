@@ -2,9 +2,13 @@
 
 #include "CuiAbsolute.hpp"
 
+#include <ColorDebug.h>
+
+using namespace roboticslab;
+
 // ------------------ IEncodersRaw Related -----------------------------------------
 
-bool roboticslab::CuiAbsolute::getAxes(int *ax)
+bool CuiAbsolute::getAxes(int * ax)
 {
     *ax = 1;
     return true;
@@ -12,138 +16,111 @@ bool roboticslab::CuiAbsolute::getAxes(int *ax)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::resetEncoderRaw(int j)
+bool CuiAbsolute::resetEncoderRaw(int j)
 {
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    return this->setEncoderRaw(j,0);
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return setEncoderRaw(j, 0.0);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::resetEncodersRaw()
+bool CuiAbsolute::resetEncodersRaw()
 {
-    CD_ERROR("Missing implementation\n");
+    CD_DEBUG("\n");
+    return resetEncoderRaw(0);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CuiAbsolute::setEncoderRaw(int j, double val)
+{
+    CD_DEBUG("(%d, %f)\n", j, val);
+    CHECK_JOINT(j);
+    CD_WARNING("Not supported.\n");
     return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::setEncoderRaw(int j, double val)    // encExposed = val;
+bool CuiAbsolute::setEncodersRaw(const double * vals)
 {
-    CD_INFO("(%d,%f)\n",j,val);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (CuiAbsolute).\n");
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::setEncodersRaw(const double *vals)
-{
-    CD_ERROR("Missing implementation\n");
+    CD_WARNING("Not supported.\n");
     return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::getEncoderRaw(int j, double *v)
+bool CuiAbsolute::getEncoderRaw(int j, double * v)
 {
-    //CD_INFO("%d\n",j);  //-- Too verbose in stream.
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    encoderReady.wait();
+    //CD_DEBUG("%d\n",j); //-- Too verbose in stream.
+    CHECK_JOINT(j);
+    std::lock_guard<std::mutex> lock(mutex);
     *v = encoder;
-    encoderReady.post();
-
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::getEncodersRaw(double *encs)
+bool CuiAbsolute::getEncodersRaw(double * encs)
 {
-    CD_ERROR("Missing implementation\n");
+    CD_DEBUG("\n");
+    return getEncoderRaw(0, &encs[0]);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CuiAbsolute::getEncoderSpeedRaw(int j, double * sp)
+{
+    //CD_DEBUG("(%d)\n",j); //-- Too verbose in controlboardwrapper2 stream.
+    CHECK_JOINT(j);
+    CD_WARNING("Not supported.\n");
     return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::getEncoderSpeedRaw(int j, double *sp)
+bool CuiAbsolute::getEncoderSpeedsRaw(double * spds)
 {
-    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    //CD_WARNING("Not implemented yet (CuiAbsolute).\n");  //-- Too verbose in controlboardwrapper2 stream.
-    *sp = 0;
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::getEncoderSpeedsRaw(double *spds)
-{
-    CD_ERROR("Missing implementation\n");
+    CD_WARNING("Not supported.\n");
     return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::getEncoderAccelerationRaw(int j, double *spds)
+bool CuiAbsolute::getEncoderAccelerationRaw(int j, double * spds)
 {
-    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
-
-    //-- Check index within range
-    if ( j = 0 ) return false;
-
-    //CD_WARNING("Not implemented yet (CuiAbsolute).\n");  //-- Too verbose in controlboardwrapper2 stream.
-    *spds = 0;
-
-    return true;
+    //CD_DEBUG("(%d)\n",j); //-- Too verbose in controlboardwrapper2 stream.
+    CHECK_JOINT(j);
+    CD_WARNING("Not supported.\n");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::getEncoderAccelerationsRaw(double *accs)
+bool CuiAbsolute::getEncoderAccelerationsRaw(double * accs)
 {
-    CD_ERROR("Missing implementation\n");
+    CD_WARNING("Not supported.\n");
     return false;
 }
 
 // ------------------ IEncodersTimedRaw Related -----------------------------------------
 
-bool roboticslab::CuiAbsolute::getEncodersTimedRaw(double *encs, double *time)
+bool CuiAbsolute::getEncodersTimedRaw(double * encs, double * times)
 {
-    CD_ERROR("Missing implementation\n");
-    return false;
+    CD_DEBUG("\n");
+    return getEncoderTimedRaw(0, &encs[0], &times[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::getEncoderTimedRaw(int j, double *encs, double *time)
+bool CuiAbsolute::getEncoderTimedRaw(int j, double * enc, double * time)
 {
-    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    encoderReady.wait();
-    *encs = encoder;
+    //CD_DEBUG("(%d)\n",j); //-- Too verbose in controlboardwrapper2 stream.
+    CHECK_JOINT(j);
+    std::lock_guard<std::mutex> lock(mutex);
+    *enc = encoder;
     *time = encoderTimestamp;
-    encoderReady.post();
-
     return true;
 }
 

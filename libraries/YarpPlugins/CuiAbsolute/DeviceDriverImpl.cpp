@@ -8,13 +8,17 @@
 
 #include <ColorDebug.h>
 
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
-bool roboticslab::CuiAbsolute::open(yarp::os::Searchable& config)
+
+bool CuiAbsolute::open(yarp::os::Searchable& config)
 {
-    canId = config.check("canId", yarp::os::Value(0), "can bus ID").asInt32();
-    tr = config.check("tr", yarp::os::Value(1), "reduction").asInt32();
+    CD_DEBUG("%s.\n", config.toString().c_str());
+
+    canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt32();
+    reverse = config.check("reverse", yarp::os::Value(false), "reverse").asBool();
     cuiTimeout = config.check("cuiTimeout", yarp::os::Value(0), "CUI timeout (seconds)").asInt32();
-    encoder = std::sqrt(-1); // NaN \todo{Investigate, debug and document the dangers of this use of NaN.}
 
     if (cuiTimeout <= 0.0)
     {
@@ -22,12 +26,13 @@ bool roboticslab::CuiAbsolute::open(yarp::os::Searchable& config)
         return false;
     }
 
-    CD_SUCCESS("Created CuiAbsolute with canId %d and tr %f, and all local parameters set to 0.\n", canId, tr);
+    CD_SUCCESS("Created CuiAbsolute with canId %d.\n", canId);
     return true;
 }
 
 // -----------------------------------------------------------------------------
-bool roboticslab::CuiAbsolute::close()
+
+bool CuiAbsolute::close()
 {
     CD_INFO("Stopping Cui Absolute PIC (ID: %d)\n", canId);
 
@@ -49,9 +54,9 @@ bool roboticslab::CuiAbsolute::close()
     {
         now = yarp::os::Time::now();
 
-        encoderReady.wait();
+        mutex.lock();
         lastRead = encoderTimestamp;
-        encoderReady.post();
+        mutex.unlock();
 
         if (now - lastRead > margin)
         {
@@ -65,7 +70,7 @@ bool roboticslab::CuiAbsolute::close()
     }
     while (now - start < timeOut);
 
-    CD_SUCCESS("Time out passed and CuiAbsolute ID (%d) was stopped successfully\n", canId);
+    CD_SUCCESS("Time out passed and CuiAbsolute ID %d was stopped successfully\n", canId);
     return true;
 }
 
