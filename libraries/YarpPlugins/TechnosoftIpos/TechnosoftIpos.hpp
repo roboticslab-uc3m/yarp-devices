@@ -84,6 +84,7 @@ public:
     TechnosoftIpos()
         : can(0),
           iEncodersTimedRawExternal(0),
+          iExternalEncoderCanBusSharer(0),
           lastEncoderRead(0.0),
           modeCurrentTorque(0),
           drivePeakCurrent(0.0),
@@ -100,7 +101,8 @@ public:
     virtual bool close();
 
     //  --------- ICanBusSharer Declarations. Implementation in TechnosoftIpos.cpp ---------
-    virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw); // -- ??
+    virtual unsigned int getId();
+    virtual std::vector<unsigned int> getAdditionalIds();
     virtual bool interpretMessage(const yarp::dev::CanMessage & message);
     virtual bool initialize();
     /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
@@ -291,7 +293,9 @@ protected:
     CanOpen * can;
 
     //-- Encoder stuff
-    yarp::dev::IEncodersTimedRaw* iEncodersTimedRawExternal;
+    yarp::dev::PolyDriver externalEncoderDevice;
+    yarp::dev::IEncodersTimedRaw * iEncodersTimedRawExternal;
+    roboticslab::ICanBusSharer * iExternalEncoderCanBusSharer;
     EncoderRead lastEncoderRead;
 
     //-- Current stuff

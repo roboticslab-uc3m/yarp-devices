@@ -21,9 +21,9 @@ namespace
 
 // -----------------------------------------------------------------------------
 
-bool CuiAbsolute::setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
+unsigned int CuiAbsolute::getId()
 {
-    return true;
+    return canId;
 }
 
 // -----------------------------------------------------------------------------

@@ -42,7 +42,7 @@ public:
     virtual bool close();
 
     //  --------- ICanBusSharer Declarations. Implementation in ICanBusSharerImpl.cpp ---------
-    virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw);
+    virtual unsigned int getId();
     virtual bool interpretMessage(const yarp::dev::CanMessage & message);
     virtual bool initialize();
     virtual bool start();

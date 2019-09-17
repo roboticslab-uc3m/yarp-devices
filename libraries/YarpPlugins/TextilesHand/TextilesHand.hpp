@@ -69,10 +69,7 @@ public:
     virtual bool close();
 
     //  --------- ICanBusSharer Declarations. Implementation in TextilesHand.cpp ---------
-    virtual bool setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
-    {
-        return true;
-    }
+    virtual unsigned int getId();
     virtual bool interpretMessage(const yarp::dev::CanMessage & message);
     /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
     virtual bool start();

@@ -3,7 +3,8 @@
 #ifndef __I_CAN_BUS_SHARER_HPP__
 #define __I_CAN_BUS_SHARER_HPP__
 
-#include <yarp/dev/IEncodersTimed.h>
+#include <vector>
+
 #include <yarp/dev/CanBusInterface.h>
 
 #include "CanSenderDelegate.hpp"
@@ -24,7 +25,10 @@ public:
      */
     virtual ~ICanBusSharer() {}
 
-    virtual bool setIEncodersTimedRawExternal(yarp::dev::IEncodersTimedRaw * iEncodersTimedRaw) = 0;
+    virtual unsigned int getId() = 0;
+
+    virtual std::vector<unsigned int> getAdditionalIds()
+    { return {}; }
 
     /** initial configuration on pre-operational state (only SDOs allowed) */
     virtual bool initialize() { return true; }
