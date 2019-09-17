@@ -121,14 +121,10 @@ void main(void) {
   ECANSetOperationMode(ECAN_OP_MODE_CONFIG);
 
   /* Manual (page 1):
-  ECAN provides three modes of operation – Mode 0, Mode 1 and Mode 2. Mode 0 is
-  fully backward compat-
-  ible with the legacy CAN module. Applications developed for the legacy CAN
-  module would continue to
-  work without any change using ECAN. Mode 1 is the Enhanced Legacy mode with
-  increased buffers and fil-
-  ters. Mode 2 has the same resources as Mode 1, but with a hardware managed
-  receive FIFO. Given its fea-
+  ECAN provides three modes of operation – Mode 0, Mode 1 and Mode 2. Mode 0 is fully backward compat-
+  ible with the legacy CAN module. Applications developed for the legacy CAN module would continue to
+  work without any change using ECAN. Mode 1 is the Enhanced Legacy mode with increased buffers and fil-
+  ters. Mode 2 has the same resources as Mode 1, but with a hardware managed receive FIFO. Given its fea-
   tures and flexibility, ECAN would prove useful to many CAN-based applications.
   */
   ECANSetFunctionalMode(ECAN_MODE_0);
@@ -163,21 +159,16 @@ void main(void) {
 
   /* Mensaje compuesto por 2 bytes
   -- data[0]: (Byte 1)
-      * start push (0x01) publicación permanente		(necesita indicar periodo de
-  publicación)
-      * start pull (0x02) publicación por petición	(no necesita indicar
-  velocidad de publicación)
+      * start push (0x01) publicación permanente (necesita indicar periodo de publicación)
+      * start pull (0x02) publicación por petición (no necesita indicar velocidad de publicación)
       * stop  push (0x03) para la publicación por push
   -- data[1]: (Byte 2)
       * Periodo de publicación entre mensajes usando publicación tipo push.
   Valores (0 - 255)
       A tener en cuenta:
-              - La frecuencia de oscilación se encuentra definida como Fosc =
-  5Mhz (20/4)
-              - La velocidad de ejecución de cada ciclo de instrucción son 0.8
-  microsegundos
-              - Delay10TCYx(i) -> 10*Tcy*i. Por tanto Delay10TCYc(1) equivale a
-  8 microsegundos (10 ciclos de reloj)
+              - La frecuencia de oscilación se encuentra definida como Fosc =  5Mhz (20/4)
+              - La velocidad de ejecución de cada ciclo de instrucción son 0.8 microsegundos
+              - Delay10TCYx(i) -> 10*Tcy*i. Por tanto Delay10TCYc(1) equivale a 8 microsegundos (10 ciclos de reloj)
   */
 
   while (1) {
