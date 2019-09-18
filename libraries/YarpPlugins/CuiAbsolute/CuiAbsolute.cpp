@@ -10,16 +10,18 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool CuiAbsolute::performRequest(const std::string & name, std::size_t len, const std::uint8_t * msgData)
+bool CuiAbsolute::performRequest(const std::string & name, std::size_t len, const std::uint8_t * data, double * v)
 {
-    if (!sender->prepareMessage(message_builder(canId, len, msgData)))
+    if (!sender->prepareMessage(message_builder(canId, len, data)))
     {
-        CD_ERROR("Unable to send \"%s\" command. %s\n", name.c_str(), CanUtils::msgToStr(canId, 0, len, msgData).c_str());
+        CD_ERROR("Unable to send \"%s\" command. %s\n", name.c_str(), CanUtils::msgToStr(canId, 0, len, data).c_str());
     }
 
-    CD_ERROR("Sent \"%s\" command. %s\n", name.c_str(), CanUtils::msgToStr(canId, 0, len, msgData).c_str());
+    CD_ERROR("Sent \"%s\" command. %s\n", name.c_str(), CanUtils::msgToStr(canId, 0, len, data).c_str());
 
-    if (!stateObserver->await())
+    bool await = v ? pollStateObserver->await(v) : pushStateObserver->await();
+
+    if (!await)
     {
         CD_ERROR("Command \"%s\" timed out.\n", name.c_str());
         return false;
@@ -47,10 +49,10 @@ bool CuiAbsolute::stopPushMode()
 
 // ------------------------------------------------------------------------------
 
-bool CuiAbsolute::pollEncoderRead()
+bool CuiAbsolute::pollEncoderRead(double * enc)
 {
     const std::uint8_t msgData[] = {static_cast<std::uint8_t>(CuiCommand::POLL)};
-    return performRequest("poll", 1, msgData);
+    return performRequest("poll", 1, msgData, enc);
 }
 
 // ------------------------------------------------------------------------------

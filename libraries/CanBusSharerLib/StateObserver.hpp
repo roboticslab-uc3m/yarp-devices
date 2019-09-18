@@ -73,7 +73,7 @@ protected:
 };
 
 template<typename T>
-class TypedStateObserver<T, typename std::enable_if<std::is_integral<T>::value>::type> final : private StateObserverBase
+class TypedStateObserver<T, typename std::enable_if<std::is_arithmetic<T>::value>::type> final : private StateObserverBase
 {
 public:
     TypedStateObserver(double timeout) : StateObserverBase(timeout)
@@ -86,6 +86,26 @@ public:
     { return StateObserverBase::await(raw); }
 
     bool notify(const T * raw, std::size_t len = sizeof(T))
+    { return StateObserverBase::notify(raw, len); }
+
+    bool notify(const std::uint8_t * raw, std::size_t len)
+    { return StateObserverBase::notify(raw, len); }
+};
+
+template<>
+class TypedStateObserver<std::uint8_t[]> final : private StateObserverBase
+{
+public:
+    TypedStateObserver(double timeout) : StateObserverBase(timeout)
+    { }
+
+    TypedStateObserver(const TypedStateObserver &) = delete;
+    TypedStateObserver & operator=(const TypedStateObserver &) = delete;
+
+    bool await(std::uint8_t * raw)
+    { return StateObserverBase::await(raw); }
+
+    bool notify(const std::uint8_t * raw, std::size_t len)
     { return StateObserverBase::notify(raw, len); }
 };
 

@@ -30,11 +30,13 @@ bool CuiAbsolute::open(yarp::os::Searchable& config)
 
     if (mode == "push")
     {
+        pushStateObserver = new StateObserver(timeout);
         cuiMode = CuiMode::PUSH;
         pushDelay = config.check("pushDelay", yarp::os::Value(0), "Cui push mode delay [0-255]").asInt8();
     }
     else if (mode == "pull")
     {
+        pollStateObserver = new TypedStateObserver<double>(timeout);
         cuiMode = CuiMode::PULL;
     }
     else
@@ -42,8 +44,6 @@ bool CuiAbsolute::open(yarp::os::Searchable& config)
         CD_ERROR("Unrecognized CUI mode: %s.\n", mode.c_str());
         return false;
     }
-
-    stateObserver = new StateObserver(timeout);
 
     CD_SUCCESS("Created CuiAbsolute with canId %d.\n", canId);
     return true;
@@ -53,20 +53,27 @@ bool CuiAbsolute::open(yarp::os::Searchable& config)
 
 bool CuiAbsolute::close()
 {
-    bool ok = true;
-
-    if (stateObserver)
+    switch (cuiMode)
     {
-        if (cuiMode == CuiMode::PUSH && !stopPushMode())
+    case CuiMode::PUSH:
         {
-            CD_ERROR("Unable to stop Cui with CAN id %d.\n", canId);
-            ok = false;
+            bool ok = true;
+
+            if (!stopPushMode())
+            {
+                CD_ERROR("Unable to stop Cui with CAN id %d.\n", canId);
+                ok = false;
+            }
+
+            delete pushStateObserver;
+            return ok;
         }
-
-        delete stateObserver;
+    case CuiMode::PULL:
+        delete pollStateObserver;
+        return true;
+    default:
+        return false;
     }
-
-    return ok;
 }
 
 // -----------------------------------------------------------------------------

@@ -44,7 +44,7 @@ public:
         : canId(0), timeout(0.0), reverse(false),
           cuiMode(CuiMode::OFF), pushDelay(0),
           encoder(0.0), encoderTimestamp(0.0),
-          sender(nullptr), stateObserver(nullptr)
+          sender(nullptr), pushStateObserver(nullptr), pollStateObserver(nullptr)
     { }
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -84,10 +84,10 @@ private:
     enum class CuiMode { PUSH, PULL, OFF };
     enum class CuiCommand : std::uint8_t { PUSH_START = 1, PUSH_STOP = 2, POLL = 3 };
 
-    bool performRequest(const std::string & name, std::size_t len, const std::uint8_t * msgData);
+    bool performRequest(const std::string & name, std::size_t len, const std::uint8_t * msgData, double * resp = nullptr);
     bool startPushMode();
     bool stopPushMode();
-    bool pollEncoderRead();
+    bool pollEncoderRead(double * enc);
 
     unsigned int canId;
     double timeout;
@@ -100,7 +100,8 @@ private:
     double encoderTimestamp;
 
     CanSenderDelegate * sender;
-    StateObserver * stateObserver;
+    StateObserver * pushStateObserver;
+    TypedStateObserver<double> * pollStateObserver;
 
     mutable std::mutex mutex;
 };

@@ -102,8 +102,11 @@ bool CuiAbsolute::interpretMessage(const yarp::dev::CanMessage & message)
             encoderTimestamp = yarp::os::Time::now();
         }
         break;
-    case 0x100: // mode-control response (start/stop/poll)
-        stateObserver->notify();
+    case 0x100: // start/stop push mode
+        pushStateObserver->notify();
+        break;
+    case 0x180: // polling
+        pollStateObserver->notify(message.getData(), message.getLen());
         break;
     default:
         return false;
