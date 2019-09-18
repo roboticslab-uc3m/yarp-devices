@@ -52,7 +52,11 @@ bool roboticslab::TechnosoftIpos::getEncoderRaw(int j, double *v)
                 0x6064);
     }
 
-    iEncodersTimedRawExternal->getEncoderRaw(0, v);
+    if (!iEncodersTimedRawExternal->getEncoderRaw(0, v))
+    {
+        return false;
+    }
+
     lastEncoderRead.update(*v);
     return true;
 }

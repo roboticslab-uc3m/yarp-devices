@@ -28,7 +28,11 @@ bool roboticslab::TechnosoftIpos::getEncoderTimedRaw(int j, double *enc, double 
     }
     else
     {
-        iEncodersTimedRawExternal->getEncoderTimedRaw(0, enc, time);
+        if (!iEncodersTimedRawExternal->getEncoderTimedRaw(0, enc, time))
+        {
+            return false;
+        }
+
         lastEncoderRead.update(*enc, *time);
     }
 

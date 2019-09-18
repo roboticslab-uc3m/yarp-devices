@@ -129,9 +129,15 @@ bool CuiAbsolute::getEncoderTimedRaw(int j, double * enc, double * time)
 
     if (cuiMode == CuiMode::PULL)
     {
-        bool ret = pollEncoderRead(enc);
-        *time = yarp::os::Time::now();
-        return ret;
+        if (pollEncoderRead(enc))
+        {
+            *time = yarp::os::Time::now();
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     std::lock_guard<std::mutex> lock(mutex);
