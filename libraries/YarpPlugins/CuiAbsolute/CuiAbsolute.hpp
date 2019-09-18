@@ -3,14 +3,22 @@
 #ifndef __CUI_ABSOLUTE_HPP__
 #define __CUI_ABSOLUTE_HPP__
 
+#include <cstddef>
+#include <cstdint>
+
 #include <mutex>
+#include <string>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IEncodersTimed.h>
 
 #include "ICanBusSharer.hpp"
+#include "StateObserver.hpp"
 
 #define CHECK_JOINT(j) do { int ax; if (getAxes(&ax), (j) != ax - 1) return false; } while (0)
+
+#define DEFAULT_MODE "push"
+#define DEFAULT_TIMEOUT 1.0 // [s]
 
 namespace roboticslab
 {
@@ -33,8 +41,10 @@ class CuiAbsolute : public yarp::dev::DeviceDriver,
 public:
 
     CuiAbsolute()
-        : canId(0), cuiTimeout(0.0), reverse(false), encoder(0.0), encoderTimestamp(0.0),
-          firstHasReached(false), sender(nullptr)
+        : canId(0), timeout(0.0), reverse(false),
+          cuiMode(CuiMode::OFF), pushDelay(0),
+          encoder(0.0), encoderTimestamp(0.0),
+          sender(nullptr), stateObserver(nullptr)
     { }
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -71,20 +81,26 @@ public:
 
 private:
 
-    bool send(std::uint16_t len, std::uint8_t * msgData);
-    bool startContinuousPublishing(uint8_t time);
-    bool startPullPublishing();
-    bool stopPublishingMessages();
+    enum class CuiMode { PUSH, PULL, OFF };
+    enum class CuiCommand : std::uint8_t { PUSH_START = 1, PUSH_STOP = 2, POLL = 3 };
+
+    bool performRequest(const std::string & name, std::size_t len, const std::uint8_t * msgData);
+    bool startPushMode();
+    bool stopPushMode();
+    bool pollEncoderRead();
 
     unsigned int canId;
-    double cuiTimeout;
+    double timeout;
     bool reverse;
+
+    CuiMode cuiMode;
+    std::uint8_t pushDelay;
 
     double encoder;
     double encoderTimestamp;
-    bool firstHasReached;
 
     CanSenderDelegate * sender;
+    StateObserver * stateObserver;
 
     mutable std::mutex mutex;
 };

@@ -4,8 +4,6 @@
 
 #include <cstring>
 
-#include <atomic>
-
 #include <yarp/os/Time.h>
 
 #include <ColorDebug.h>
@@ -13,11 +11,6 @@
 #include "CanUtils.hpp"
 
 using namespace roboticslab;
-
-namespace
-{
-    std::atomic_bool hasArrived(false);
-}
 
 // -----------------------------------------------------------------------------
 
@@ -30,35 +23,11 @@ unsigned int CuiAbsolute::getId()
 
 bool CuiAbsolute::initialize()
 {
-    CD_INFO("Sending \"Start Continuous Publishing\" message to Cui Absolute (PIC ID: %d)\n", canId);
-
-    if (!startContinuousPublishing(0))
+    if (cuiMode == CuiMode::PUSH)
     {
-        return false;
+        return startPushMode();
     }
 
-    yarp::os::Time::delay(0.2);
-
-    if (!hasArrived)
-    {
-        const double start = yarp::os::Time::now();
-
-        while (!hasArrived)
-        {
-            if (yarp::os::Time::now() - start > cuiTimeout)
-            {
-                CD_ERROR("Time out passed and CuiAbsolute ID (%d) doesn't respond\n", canId);
-                return false;
-            }
-
-            yarp::os::Time::delay(0.1);
-        }
-    }
-
-    double value;
-    getEncoderRaw(0, &value);
-
-    CD_INFO("Absolute encoder value: %f\n", value);
     return true;
 }
 
@@ -107,28 +76,39 @@ bool CuiAbsolute::interpretMessage(const yarp::dev::CanMessage & message)
         return false;
     }
 
+    std::uint16_t op = message.getId() - canId;
+
+    switch (op)
     {
-        std::lock_guard<std::mutex> lock(mutex);
-        std::memcpy(&encoder, message.getData(), 4);
-
-        if (reverse)
+    case 0x80: // push mode streaming data
         {
-            encoder = -encoder;
-        }
+            std::lock_guard<std::mutex> lock(mutex);
+            std::memcpy(&encoder, message.getData(), message.getLen());
 
-        if (encoder < -180.0)
-        {
-            encoder += 360.0;
-        }
-        else if (encoder > 180.0)
-        {
-            encoder -= 360.0;
-        }
+            if (reverse)
+            {
+                encoder = -encoder;
+            }
 
-        encoderTimestamp = yarp::os::Time::now();
+            if (encoder < -180.0)
+            {
+                encoder += 360.0;
+            }
+            else if (encoder > 180.0)
+            {
+                encoder -= 360.0;
+            }
+
+            encoderTimestamp = yarp::os::Time::now();
+        }
+        break;
+    case 0x100: // mode-control response (start/stop/poll)
+        stateObserver->notify();
+        break;
+    default:
+        return false;
     }
 
-    hasArrived = true;
     return true;
 }
 

@@ -16,15 +16,34 @@ bool CuiAbsolute::open(yarp::os::Searchable& config)
 {
     CD_DEBUG("%s.\n", config.toString().c_str());
 
-    canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt32();
+    canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt8();
     reverse = config.check("reverse", yarp::os::Value(false), "reverse").asBool();
-    cuiTimeout = config.check("cuiTimeout", yarp::os::Value(0), "CUI timeout (seconds)").asInt32();
+    timeout = config.check("timeout", yarp::os::Value(DEFAULT_TIMEOUT), "Cui timeout (seconds)").asFloat64();
 
-    if (cuiTimeout <= 0.0)
+    if (timeout <= 0.0)
     {
-        CD_ERROR("Illegal CUI timeout value: %f.\n", cuiTimeout);
+        CD_ERROR("Illegal CUI timeout value: %f.\n", timeout);
         return false;
     }
+
+    std::string mode = config.check("mode", yarp::os::Value(DEFAULT_MODE), "Cui mode [push|pull]").asString();
+
+    if (mode == "push")
+    {
+        cuiMode = CuiMode::PUSH;
+        pushDelay = config.check("pushDelay", yarp::os::Value(0), "Cui push mode delay [0-255]").asInt8();
+    }
+    else if (mode == "pull")
+    {
+        cuiMode = CuiMode::PULL;
+    }
+    else
+    {
+        CD_ERROR("Unrecognized CUI mode: %s.\n", mode.c_str());
+        return false;
+    }
+
+    stateObserver = new StateObserver(timeout);
 
     CD_SUCCESS("Created CuiAbsolute with canId %d.\n", canId);
     return true;
@@ -34,44 +53,20 @@ bool CuiAbsolute::open(yarp::os::Searchable& config)
 
 bool CuiAbsolute::close()
 {
-    CD_INFO("Stopping Cui Absolute PIC (ID: %d)\n", canId);
+    bool ok = true;
 
-    if (!stopPublishingMessages())
+    if (stateObserver)
     {
-        return false;
-    }
-
-    yarp::os::Time::delay(0.5);
-
-    const double start = yarp::os::Time::now();
-    const static double margin = 0.1; // seconds
-    const static double timeOut = 1.0; // seconds
-
-    double lastRead;
-    double now;
-
-    do
-    {
-        now = yarp::os::Time::now();
-
-        mutex.lock();
-        lastRead = encoderTimestamp;
-        mutex.unlock();
-
-        if (now - lastRead > margin)
+        if (cuiMode == CuiMode::PUSH && !stopPushMode())
         {
-            break;
+            CD_ERROR("Unable to stop Cui with CAN id %d.\n", canId);
+            ok = false;
         }
 
-        CD_WARNING("Resending stop message to Cui Absolute PIC (ID: %d)\n", canId);
-        stopPublishingMessages();
-
-        yarp::os::Time::delay(margin);
+        delete stateObserver;
     }
-    while (now - start < timeOut);
 
-    CD_SUCCESS("Time out passed and CuiAbsolute ID %d was stopped successfully\n", canId);
-    return true;
+    return ok;
 }
 
 // -----------------------------------------------------------------------------

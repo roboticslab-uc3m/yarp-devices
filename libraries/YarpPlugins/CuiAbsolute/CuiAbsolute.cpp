@@ -10,57 +10,47 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool CuiAbsolute::send(std::uint16_t len, std::uint8_t * msgData)
+bool CuiAbsolute::performRequest(const std::string & name, std::size_t len, const std::uint8_t * msgData)
 {
-    return sender->prepareMessage(message_builder(canId, len, msgData));
+    if (!sender->prepareMessage(message_builder(canId, len, msgData)))
+    {
+        CD_ERROR("Unable to send \"%s\" command. %s\n", name.c_str(), CanUtils::msgToStr(canId, 0, len, msgData).c_str());
+    }
+
+    CD_ERROR("Sent \"%s\" command. %s\n", name.c_str(), CanUtils::msgToStr(canId, 0, len, msgData).c_str());
+
+    if (!stateObserver->await())
+    {
+        CD_ERROR("Command \"%s\" timed out.\n", name.c_str());
+        return false;
+    }
+
+    CD_SUCCESS("Succesfully processed \"%s\" command.\n", name.c_str());
+    return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool CuiAbsolute::startContinuousPublishing(std::uint8_t delay)
+bool CuiAbsolute::startPushMode()
 {
-    std::uint8_t msgData[] = {0x01, 0x01, delay, 0x00, 0x00, 0x00, 0x00, 0x00};
-
-    if (!send(8, msgData))
-    {
-        CD_ERROR("Could not send \"startContinuousPublishing\" to Cui Absolute Encoder. %s\n", CanUtils::msgToStr(canId, 0, 8, msgData).c_str());
-        return false;
-    }
-
-    CD_SUCCESS("Sent \"startContinuousPublishing\" to Cui Absolute Encoder. %s\n", CanUtils::msgToStr(canId, 0, 8, msgData).c_str());
-    return true;
+    const std::uint8_t msgData[] = {static_cast<std::uint8_t>(CuiCommand::PUSH_START), pushDelay};
+    return performRequest("push start", 2, msgData);
 }
 
 // ------------------------------------------------------------------------------
 
-bool CuiAbsolute::startPullPublishing()
+bool CuiAbsolute::stopPushMode()
 {
-    std::uint8_t msgData[] = {0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
-    if (!send(8, msgData))
-    {
-        CD_ERROR("Could not send \"startPullPublishing\" to Cui Absolute Encoder. %s\n", CanUtils::msgToStr(canId, 0, 8, msgData).c_str());
-        return false;
-    }
-
-    CD_SUCCESS("Sent \"startPullPublishing\" to Cui Absolute Encoder. %s\n", CanUtils::msgToStr(canId, 0, 8, msgData).c_str());
-    return true;
+    const std::uint8_t msgData[] = {static_cast<std::uint8_t>(CuiCommand::PUSH_STOP)};
+    return performRequest("push stop", 1, msgData);
 }
 
 // ------------------------------------------------------------------------------
 
-bool CuiAbsolute::stopPublishingMessages()
+bool CuiAbsolute::pollEncoderRead()
 {
-    std::uint8_t msgData[] = {0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
-    if (!send(8, msgData))
-    {
-        CD_ERROR("Could not send \"stopPublishingMessages\" to Cui Absolute Encoder. %s\n", CanUtils::msgToStr(canId, 0, 8, msgData).c_str());
-        return false;
-    }
-
-    CD_SUCCESS("Sent \"stopPublishingMessages\" to Cui Absolute Encoder. %s\n", CanUtils::msgToStr(canId, 0, 8, msgData).c_str());
-    return true;
+    const std::uint8_t msgData[] = {static_cast<std::uint8_t>(CuiCommand::POLL)};
+    return performRequest("poll", 1, msgData);
 }
 
 // ------------------------------------------------------------------------------
