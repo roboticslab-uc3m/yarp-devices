@@ -2,6 +2,8 @@
 
 #include "CuiAbsolute.hpp"
 
+#include <yarp/os/Time.h>
+
 #include <ColorDebug.h>
 
 using namespace roboticslab;
@@ -55,6 +57,12 @@ bool CuiAbsolute::getEncoderRaw(int j, double * v)
 {
     //CD_DEBUG("%d\n",j); //-- Too verbose in stream.
     CHECK_JOINT(j);
+
+    if (cuiMode == CuiMode::PULL)
+    {
+        return pollEncoderRead(v);
+    }
+
     std::lock_guard<std::mutex> lock(mutex);
     *v = encoder;
     return true;
@@ -118,6 +126,14 @@ bool CuiAbsolute::getEncoderTimedRaw(int j, double * enc, double * time)
 {
     //CD_DEBUG("(%d)\n",j); //-- Too verbose in controlboardwrapper2 stream.
     CHECK_JOINT(j);
+
+    if (cuiMode == CuiMode::PULL)
+    {
+        bool ret = pollEncoderRead(enc);
+        *time = yarp::os::Time::now();
+        return ret;
+    }
+
     std::lock_guard<std::mutex> lock(mutex);
     *enc = encoder;
     *time = encoderTimestamp;
