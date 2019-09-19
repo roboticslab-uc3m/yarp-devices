@@ -133,10 +133,6 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             return false;
         }
 
-        //-- Fill a map entry ( drivers.size() if before push_back, otherwise do drivers.size()-1).
-        //-- Just "i" if resize already performed.
-        idxFromCanId[ ids.get(i).asInt32() ] = i;
-
         //-- Push the motor driver and other devices (CuiAbsolute) on to the vectors.
         nodes[i] = device;
 
@@ -209,6 +205,13 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             return false;
         }
 
+        idxFromCanId[iCanBusSharer[i]->getId()] = i;
+
+        for (auto additionalId : iCanBusSharer[i]->getAdditionalIds())
+        {
+            idxFromCanId[additionalId] = i;
+        }
+
         iCanBusSharer[i]->registerSender(canWriterThread->getDelegate());
 
         //-- DRIVERS
@@ -219,13 +222,6 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             ITechnosoftIpos * iTechnosoftIpos;
             device->view(iTechnosoftIpos);
             idToTechnosoftIpos.insert(std::make_pair(i, iTechnosoftIpos));
-        }
-
-        //-- Associate absolute encoders to motor drivers
-        if( types.get(i).asString() == "CuiAbsolute" )
-        {
-            int driverCanId = ids.get(i).asInt32() - 100;  //-- \todo{Document the dangers: ID must be > 100, driver must be instanced.}
-            iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
         }
 
         //-- Enable acceptance filters for each node ID

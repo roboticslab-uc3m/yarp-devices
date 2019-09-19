@@ -87,6 +87,29 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
     double max = config.check("max",yarp::os::Value(0),"max (meters or degrees)").asFloat64();
     double min = config.check("min",yarp::os::Value(0),"min (meters or degrees)").asFloat64();
 
+    if (config.check("externalEncoder", "external encoder device"))
+    {
+        std::string externalEncoder = config.find("externalEncoder").asString();
+
+        if (!externalEncoderDevice.open(externalEncoder))
+        {
+            CD_ERROR("Unable to open external encoder device: %s.\n", externalEncoder.c_str());
+            return false;
+        }
+
+        if (!externalEncoderDevice.view(iEncodersTimedRawExternal))
+        {
+            CD_ERROR("Unable to view IEncodersTimedRaw in %s.\n", externalEncoder.c_str());
+            return false;
+        }
+
+        if (!externalEncoderDevice.view(iExternalEncoderCanBusSharer))
+        {
+            CD_ERROR("Unable to view ICanBusSharer in %s.\n", externalEncoder.c_str());
+            return false;
+        }
+    }
+
     linInterpBuffer = LinearInterpolationBuffer::createBuffer(config);
 
     if (!linInterpBuffer)
@@ -183,7 +206,14 @@ bool roboticslab::TechnosoftIpos::close()
 {
     CD_INFO("\n");
 
-    bool ok = switchOn() && readyToSwitchOn(); // disable and shutdown
+    bool ok = true;
+
+    if (externalEncoderDevice.isValid())
+    {
+        ok = ok &= externalEncoderDevice.close();
+    }
+
+    ok &= switchOn() && readyToSwitchOn(); // disable and shutdown
 
     delete linInterpBuffer;
     delete can;

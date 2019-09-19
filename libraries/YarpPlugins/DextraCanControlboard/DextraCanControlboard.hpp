@@ -47,14 +47,15 @@ class DextraCanControlboard : public yarp::dev::DeviceDriver,
 {
 public:
 
-    DextraCanControlboard();
+    DextraCanControlboard() : canId(0)
+    { }
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
 
     //  --------- ICanBusSharer Declarations. Implementation in ICanBusSharerImpl.cpp ---------
-    virtual bool setIEncodersTimedRawExternal(yarp::dev::IEncodersTimedRaw * iEncodersTimedRaw) { return true; };
+    virtual unsigned int getId();
     virtual bool initialize() { return true; }
     virtual bool start() { return true; };
     virtual bool readyToSwitchOn() { return true; };
@@ -66,6 +67,7 @@ public:
 
 protected:
 
+    unsigned int canId;
     DextraRawControlboard raw;
 };
 

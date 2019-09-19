@@ -4,6 +4,11 @@
 
 using namespace roboticslab;
 
+unsigned int DextraCanControlboard::getId()
+{
+    return canId;
+}
+
 bool DextraCanControlboard::registerSender(CanSenderDelegate * sender)
 {
     synapse->configure(sender);

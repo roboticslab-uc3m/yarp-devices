@@ -16,7 +16,6 @@
 #include <list>
 #include <sstream>
 
-#include "ICuiAbsolute.h"
 #include "PositionDirectThread.hpp"
 
 // -- Pause

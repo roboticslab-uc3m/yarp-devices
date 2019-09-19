@@ -68,7 +68,7 @@ private:
     std::uint16_t cobTx;
 
     CanSenderDelegate * sender;
-    TypedStateObserver<std::uint8_t> stateObserver;
+    TypedStateObserver<std::uint8_t[]> stateObserver;
 };
 
 } // namespace roboticslab

@@ -41,19 +41,7 @@ bool roboticslab::TechnosoftIpos::getEncoderRaw(int j, double *v)
 {
     //CD_INFO("%d\n", j);  //-- Too verbose in stream.
     CHECK_JOINT(j);
-
-    if (!iEncodersTimedRawExternal)
-    {
-        return can->sdo()->upload<int32_t>("Position actual value", [=](int32_t * data)
-                {
-                    lastEncoderRead.update(internalUnitsToDegrees(*data));
-                    *v = lastEncoderRead.queryPosition();
-                },
-                0x6064);
-    }
-
-    iEncodersTimedRawExternal->getEncoderRaw(0, v);
-    lastEncoderRead.update(*v);
+    *v = lastEncoderRead.queryPosition();
     return true;
 }
 

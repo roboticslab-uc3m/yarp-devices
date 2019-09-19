@@ -138,36 +138,41 @@ namespace
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::registerSender(CanSenderDelegate * sender)
+unsigned int roboticslab::TechnosoftIpos::getId()
 {
-    can->configureSender(sender);
-    return true;
+    return can->getId();
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
+std::vector<unsigned int> roboticslab::TechnosoftIpos::getAdditionalIds()
 {
-    double v;
-    this->iEncodersTimedRawExternal = iEncodersTimedRaw;
-
-    CD_SUCCESS("Ok pointer to external encoder interface %p (%d). Updating with latest external...\n",iEncodersTimedRaw,can->getId());
-
-    CD_INFO("canId(%d) wait to get external encoder value...\n", can->getId());
-    while( !iEncodersTimedRawExternal->getEncoderRaw(0,&v) )  //-- loop while v is still a NaN.
+    if (iExternalEncoderCanBusSharer)
     {
-        //CD_INFO("Wait to get external encoder value...\n"); //\todo{activate these lines if blocking is too much}
-        //Time::delay(0.2);
+        return {iExternalEncoderCanBusSharer->getId()};
     }
-    this->setEncoderRaw(0,v);  //-- Forces the relative encoder to this value.
 
-    return true;
+    return {};
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::TechnosoftIpos::registerSender(CanSenderDelegate * sender)
+{
+    can->configureSender(sender);
+    return iExternalEncoderCanBusSharer && iExternalEncoderCanBusSharer->registerSender(sender);
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::TechnosoftIpos::initialize()
 {
+    if (iExternalEncoderCanBusSharer && !iExternalEncoderCanBusSharer->initialize())
+    {
+        CD_ERROR("Unable to initialize external encoder device.\n");
+        return false;
+    }
+
     uint32_t data;
 
     if (!can->sdo()->upload("Device type", &data, 0x1000))
@@ -224,7 +229,24 @@ bool roboticslab::TechnosoftIpos::initialize()
 
     CD_INFO("Serial number: %c%c%02x%02x.\n", getByte(data, 3), getByte(data, 2), getByte(data, 1), getByte(data, 0));
 
-    return can->sdo()->download<int16_t>("Quick stop option code", 6, 0x605A);
+    if (!can->sdo()->download<int16_t>("Quick stop option code", 6, 0x605A))
+    {
+        return false;
+    }
+
+    if (iEncodersTimedRawExternal)
+    {
+        double extEnc;
+
+        if (!iEncodersTimedRawExternal->getEncodersRaw(&extEnc))
+        {
+            return false;
+        }
+
+        lastEncoderRead.setOffset(extEnc);
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -313,6 +335,11 @@ bool roboticslab::TechnosoftIpos::resetNode(int id)
 
 bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage & message)
 {
+    if (iExternalEncoderCanBusSharer && message.getId() == iExternalEncoderCanBusSharer->getId())
+    {
+        return iExternalEncoderCanBusSharer->interpretMessage(message);
+    }
+
     if (!can->consumeMessage(message.getId(), message.getData(), message.getLen()))
     {
         CD_ERROR("Unknown message: %s\n", CanUtils::msgToStr(message).c_str());

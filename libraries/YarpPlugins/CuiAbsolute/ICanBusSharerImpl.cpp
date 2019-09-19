@@ -2,188 +2,122 @@
 
 #include "CuiAbsolute.hpp"
 
+#include <cstring>
+
 #include <yarp/os/Time.h>
+
+#include <ColorDebug.h>
 
 #include "CanUtils.hpp"
 
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::setIEncodersTimedRawExternal(IEncodersTimedRaw * iEncodersTimedRaw)
+unsigned int CuiAbsolute::getId()
+{
+    return canId;
+}
+
+// -----------------------------------------------------------------------------
+
+bool CuiAbsolute::initialize()
+{
+    if (cuiMode == CuiMode::PUSH)
+    {
+        return startPushMode();
+    }
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool CuiAbsolute::start()
 {
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::initialize()
+bool CuiAbsolute::readyToSwitchOn()
 {
-    CD_INFO("Sending \"Start Continuous Publishing\" message to Cui Absolute (PIC ID: %d)\n", canId);
+    return true;
+}
 
-    if (!startContinuousPublishing(0))
+// -----------------------------------------------------------------------------
+
+bool CuiAbsolute::switchOn()
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool CuiAbsolute::enable()
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool CuiAbsolute::recoverFromError()
+{
+    return true;
+}
+
+// ------------------------------------------------------------------------------
+
+bool CuiAbsolute::interpretMessage(const yarp::dev::CanMessage & message)
+{
+    if (message.getData()[3] == 0xc4)
     {
+        CD_ERROR_NO_HEADER("Known PIC error. %s\n", CanUtils::msgToStr(message).c_str());
         return false;
     }
 
-    yarp::os::Time::delay(0.2);
+    std::uint16_t op = message.getId() - canId;
 
-    if (!HasFirstReached())
+    switch (op)
     {
-        const double start = yarp::os::Time::now();
-
-        while (!HasFirstReached())
+    case 0x80: // push mode streaming data
         {
-            if (yarp::os::Time::now() - start > cuiTimeout)
+            std::lock_guard<std::mutex> lock(mutex);
+            std::memcpy(&encoder, message.getData(), message.getLen());
+
+            if (reverse)
             {
-                CD_ERROR("Time out passed and CuiAbsolute ID (%d) doesn't respond\n", canId);
-                return false;
+                encoder = -encoder;
             }
 
-            yarp::os::Time::delay(0.1);
+            if (encoder < -180.0)
+            {
+                encoder += 360.0;
+            }
+            else if (encoder > 180.0)
+            {
+                encoder -= 360.0;
+            }
+
+            encoderTimestamp = yarp::os::Time::now();
         }
-    }
-
-    double value;
-    getEncoderRaw(0, &value);
-
-    CD_INFO("Absolute encoder value -----> %f\n", value);
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::start()
-{
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::readyToSwitchOn()
-{
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::switchOn()
-{
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::enable()
-{
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::recoverFromError()
-{
-
-    return true;
-}
-
-// ------------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::startContinuousPublishing(uint8_t delay)
-{
-    // -- start message
-    uint8_t msgData[8] = {0x01, 0x01, delay, 0x00, 0x00, 0x00, 0x00, 0x00};
-    if( ! send(0 , 8, msgData) )   // -- primer campo "cob" lo dejamos a 0 (este campo resulta desconocido para nosotros)
-    {
-        CD_ERROR("Could not send \"startContinuousPublishing\" to Cui Absolute Encoder. %s\n", CanUtils::msgToStr(canId, 0, 8, msgData).c_str());
-        return false;
-    }
-    CD_SUCCESS("Sent \"startContinuousPublishing\" to Cui Absolute Encoder. %s\n", CanUtils::msgToStr(canId, 0, 8, msgData).c_str());
-    return true;
-}
-
-// ------------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::startPullPublishing()
-{
-
-    uint8_t msgData[8] = {0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; // -- Comienza a publicar mensajes en modo pulling (modo 2) sin delay
-    if( ! send(0, 8, msgData) )   // -- utilizaremos la funcion "send" por ser una funcion publica en vez de la funcion privada sendRaw
-    {
-        CD_ERROR("Could not send \"startPullPublishing\" to Cui Absolute Encoder. %s\n", CanUtils::msgToStr(canId, 0, 8, msgData).c_str());
-        return false;
-    }
-    CD_SUCCESS("Sent \"startPullPublishing\" to Cui Absolute Encoder. %s\n", CanUtils::msgToStr(canId, 0, 8, msgData).c_str());
-    return true;
-}
-
-// ------------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::stopPublishingMessages()
-{
-
-    uint8_t msgData[8] = {0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; // -- Para de publicar mensajes
-    if( ! send(0, 8, msgData) )
-    {
-        CD_ERROR("Could not send \"stopPublishingMessages\" to Cui Absolute Encoder. %s\n", CanUtils::msgToStr(canId, 0, 8, msgData).c_str());
-        return false;
-    }
-    CD_SUCCESS("Sent \"stopPublishingMessages\" to Cui Absolute Encoder. %s\n", CanUtils::msgToStr(canId, 0, 8, msgData).c_str());
-    return true;
-}
-
-// ------------------------------------------------------------------------------
-/*** Esta función actualmente no se utiliza debido a que implica cierta peligrosidad...
- *
- * bool roboticslab::CuiAbsolute::setZeroPosition()
- * {
- *
- *   uint8_t msgData[8] = {0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; // -- Homing
- *   if( ! send(0, 8, msgData) )
- *   {
- *       CD_ERROR("Could not send \"setZeroPosition\" to Cui Absolute Encoder. %s\n");
- *       return false;
- *   }
- *   CD_SUCCESS("Send: \"setZeroPosition\" to Cui Absolute Encoder. %s\n");
- *   return true;
- * }
-*/
-// ------------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::interpretMessage(const yarp::dev::CanMessage & message)
-{
-
-    //CD_DEBUG("Got absolute encoder value. %s\n",msgToStr(message).c_str());
-    float got;
-    memcpy(&got, message.getData(),4);
-
-    if( (message.getData()[3]==0xc4) ) // If you want to print a specific Cui known error: Ex 113: (message->data[3]==0xc4) && (message->id & 0x7F == 113)
-    {
-        CD_ERROR_NO_HEADER("Known PIC error: %f | %f | %s\n", encoder,got,CanUtils::msgToStr(message).c_str());
+        break;
+    case 0x100: // start/stop push mode
+        pushStateObserver->notify();
+        break;
+    case 0x180: // polling
+        pollStateObserver->notify(message.getData(), message.getLen());
+        break;
+    default:
         return false;
     }
 
-    encoderReady.wait();
-    encoder = got * this->tr;
-
-    if (encoder < -180.0)  // maybe a while?
-        encoder += 360.0;
-
-    if (encoder > 180.0)  // maybe a while?
-        encoder -= 360.0;
-
-    encoderTimestamp = yarp::os::Time::now();
-    encoderReady.post();
-    firstHasReached = true;
     return true;
-
-}  //-- ends interpretMessage
+}
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::registerSender(CanSenderDelegate * sender)
+bool CuiAbsolute::registerSender(CanSenderDelegate * sender)
 {
     this->sender = sender;
     return true;
