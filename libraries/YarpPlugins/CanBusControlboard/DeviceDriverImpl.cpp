@@ -453,7 +453,7 @@ bool roboticslab::CanBusControlboard::close()
 
             CD_INFO("Stopping Cui Absolute PIC (ID: %d)\n", CAN_ID );
 
-            if (! cuiAbsolute->stopPublishingMessages() )
+            if (! cuiAbsolute->stopPushPublishing() )
                 return false;
 
             yarp::os::Time::delay(0.5);
@@ -484,7 +484,7 @@ bool roboticslab::CanBusControlboard::close()
                 if(canId == CAN_ID)
                 {
                     CD_WARNING("Resending stop message to Cui Absolute PIC (ID: %d)\n", CAN_ID );
-                    cuiAbsolute->stopPublishingMessages();
+                    cuiAbsolute->stopPushPublishing();
                 }
             }
         }

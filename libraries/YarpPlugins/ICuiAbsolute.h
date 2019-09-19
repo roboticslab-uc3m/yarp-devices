@@ -22,8 +22,8 @@ public:
     virtual ~ICuiAbsolute() {}
 
     virtual bool startPushPublishing(uint8_t time) = 0;
-    virtual bool startPullPublishing() = 0;
-    virtual bool stopPublishingMessages() = 0;
+    virtual bool stopPushPublishing() = 0;
+    virtual bool getCurrentPosition() = 0;
     virtual bool HasFirstReached() = 0;
 
 };

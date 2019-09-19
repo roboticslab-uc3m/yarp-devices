@@ -65,7 +65,7 @@ bool roboticslab::CuiAbsolute::startPushPublishing(uint8_t delay)
 {
     // -- start message
     uint8_t msgData[2] = {0x01, delay};
-    if( ! send(0 , 2, msgData) )   // -- primer campo "cob" lo dejamos a 0 (este campo resulta desconocido para nosotros)
+    if( ! send(0 , 2, msgData) )   // -- primer campo "cob". En este campo se codifica un campo adicional al ID para indicar información adicional (0 - no se utiliza)
     {
         CD_ERROR("Could not send \"startPushPublishing\" (push mode) to Cui Absolute Encoder. %s\n", msgToStr(0, 2, msgData).c_str());
         return false;
@@ -76,31 +76,31 @@ bool roboticslab::CuiAbsolute::startPushPublishing(uint8_t delay)
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::startPullPublishing()
+bool roboticslab::CuiAbsolute::stopPushPublishing()
 {
 
-    uint8_t msgData[2] = {0x02, 0x00}; // -- Comienza a publicar mensajes en modo pulling (modo 2) sin delay
-    if( ! send(0, 2, msgData) )   // -- utilizaremos la funcion "send" por ser una funcion publica en vez de la funcion privada sendRaw
-    {
-        CD_ERROR("Could not send \"startPullPublishing\" to Cui Absolute Encoder. %s\n", msgToStr(0, 2, msgData).c_str());
-        return false;
-    }
-    CD_SUCCESS("Sent \"startPullPublishing\" to Cui Absolute Encoder. %s\n", msgToStr(0, 2, msgData).c_str());
-    return true;
-}
-
-// ------------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::stopPublishingMessages()
-{
-
-    uint8_t msgData[2] = {0x03, 0x00}; // -- Para de publicar mensajes
+    uint8_t msgData[2] = {0x02, 0x00}; // -- Para de publicar mensajes
     if( ! send(0, 2, msgData) )
     {
         CD_ERROR("Could not send \"stopPublishingMessages\" to Cui Absolute Encoder. %s\n", msgToStr(0, 2, msgData).c_str());
         return false;
     }
     CD_SUCCESS("Sent \"stopPublishingMessages\" to Cui Absolute Encoder. %s\n", msgToStr(0, 2, msgData).c_str());
+    return true;
+}
+
+// ------------------------------------------------------------------------------
+
+bool roboticslab::CuiAbsolute::getCurrentPosition() // polling mode
+{
+
+    uint8_t msgData[2] = {0x03, 0x00}; // -- Envia mensaje en modo pull
+    if( ! send(0, 2, msgData) )   // -- utilizaremos la funcion "send" por ser una funcion publica en vez de la funcion privada sendRaw
+    {
+        CD_ERROR("Could not send \"getCurrentPosition\" to Cui Absolute Encoder. %s\n", msgToStr(0, 2, msgData).c_str());
+        return false;
+    }
+    CD_SUCCESS("Sent \"getCurrentPosition\" to Cui Absolute Encoder. %s\n", msgToStr(0, 2, msgData).c_str());
     return true;
 }
 

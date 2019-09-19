@@ -196,8 +196,9 @@ public:
     // -- Auxiliary functions: send data to PIC of Cui
 
     virtual bool startPushPublishing(uint8_t time);
-    virtual bool startPullPublishing();
-    virtual bool stopPublishingMessages();
+    virtual bool stopPushPublishing();
+    virtual bool getCurrentPosition(); // pull mode
+
 
 
 
