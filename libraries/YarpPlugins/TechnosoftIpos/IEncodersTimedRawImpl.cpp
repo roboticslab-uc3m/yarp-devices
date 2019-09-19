@@ -16,26 +16,8 @@ bool roboticslab::TechnosoftIpos::getEncoderTimedRaw(int j, double *enc, double 
 {
     //CD_INFO("(%d)\n", j);  //-- Too verbose in controlboardwrapper2 stream.
     CHECK_JOINT(j);
-
-    if (!iEncodersTimedRawExternal)
-    {
-        if (!getEncoderRaw(j, enc))
-        {
-            return false;
-        }
-
-        *time = lastEncoderRead.queryTime();
-    }
-    else
-    {
-        if (!iEncodersTimedRawExternal->getEncoderTimedRaw(0, enc, time))
-        {
-            return false;
-        }
-
-        lastEncoderRead.update(*enc, *time);
-    }
-
+    *enc =  lastEncoderRead.queryPosition();
+    *time = lastEncoderRead.queryTime();
     return true;
 }
 

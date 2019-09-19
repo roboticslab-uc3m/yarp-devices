@@ -151,6 +151,8 @@ std::vector<unsigned int> roboticslab::TechnosoftIpos::getAdditionalIds()
     {
         return {iExternalEncoderCanBusSharer->getId()};
     }
+
+    return {};
 }
 
 // -----------------------------------------------------------------------------
@@ -227,7 +229,24 @@ bool roboticslab::TechnosoftIpos::initialize()
 
     CD_INFO("Serial number: %c%c%02x%02x.\n", getByte(data, 3), getByte(data, 2), getByte(data, 1), getByte(data, 0));
 
-    return can->sdo()->download<int16_t>("Quick stop option code", 6, 0x605A);
+    if (!can->sdo()->download<int16_t>("Quick stop option code", 6, 0x605A))
+    {
+        return false;
+    }
+
+    if (iEncodersTimedRawExternal)
+    {
+        double extEnc;
+
+        if (!iEncodersTimedRawExternal->getEncodersRaw(&extEnc))
+        {
+            return false;
+        }
+
+        lastEncoderRead.setOffset(extEnc);
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
