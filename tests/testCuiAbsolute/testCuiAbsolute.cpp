@@ -151,7 +151,7 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteSendingMessageInPullMode )
     double cleaningTime = 0.5; // time to empty the buffer
     std::map< int, int > idxFromCanId;
 
-    bool startSending = cuiAbsolute->startPullPublishing();
+    bool startSending = cuiAbsolute->getCurrentPosition();
     timeStamp = yarp::os::Time::now();
 
     yarp::dev::CanMessage &msg = canInputBuffer[0];
@@ -259,7 +259,7 @@ TEST_F( CuiAbsoluteTest, CuiAbsoluteStopSendingMessage ) // -- we call the class
     double cleaningTime = 0.5; // time to empty the buffer
     bool timePassed = false;
 
-    bool stopSending = cuiAbsolute->stopPublishingMessages();
+    bool stopSending = cuiAbsolute->stopPushPublishing();
     yarp::os::Time::delay(1);                                     // -- one second delay to empty the buffer
 
     timeStamp = yarp::os::Time::now();
