@@ -30,7 +30,7 @@ bool roboticslab::TechnosoftIpos::setEncoderRaw(int j, double val)
         return false;
     }
 
-    lastEncoderRead.reset();
+    lastEncoderRead.reset(val);
     return true;
 }
 

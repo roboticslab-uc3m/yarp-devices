@@ -41,7 +41,7 @@ class EncoderRead
 public:
     EncoderRead(double initialPos);
     void update(double newPos, double newTime = 0.0);
-    void reset();
+    void reset(double pos = 0.0);
     double queryPosition() const;
     double querySpeed() const;
     double queryAcceleration() const;

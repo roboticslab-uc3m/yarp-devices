@@ -32,10 +32,11 @@ roboticslab::EncoderRead::EncoderRead(double initialPos)
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::EncoderRead::reset()
+void roboticslab::EncoderRead::reset(double pos)
 {
     std::lock_guard<std::mutex> guard(encoderMutex);
-    lastPosition = nextToLastPosition = lastSpeed = nextToLastSpeed = lastAcceleration = 0.0;
+    lastPosition = nextToLastPosition = pos;
+    lastSpeed = nextToLastSpeed = lastAcceleration = 0.0;
 }
 
 // -----------------------------------------------------------------------------
