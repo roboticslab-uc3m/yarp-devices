@@ -9,6 +9,8 @@
 #include <mutex>
 #include <string>
 
+#include <yarp/conf/numeric.h>
+
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IEncodersTimed.h>
 
@@ -43,7 +45,7 @@ public:
     CuiAbsolute()
         : canId(0), timeout(0.0), reverse(false),
           cuiMode(CuiMode::OFF), pushDelay(0),
-          encoder(0.0), encoderTimestamp(0.0),
+          encoder(), encoderTimestamp(0.0),
           sender(nullptr), pushStateObserver(nullptr), pollStateObserver(nullptr)
     { }
 
@@ -96,7 +98,7 @@ private:
     CuiMode cuiMode;
     std::uint8_t pushDelay;
 
-    double encoder;
+    yarp::conf::float32_t encoder;
     double encoderTimestamp;
 
     CanSenderDelegate * sender;

@@ -83,7 +83,7 @@ bool CuiAbsolute::interpretMessage(const yarp::dev::CanMessage & message)
     case 0x80: // push mode streaming data
         {
             std::lock_guard<std::mutex> lock(mutex);
-            std::memcpy(&encoder, message.getData(), message.getLen());
+            std::memcpy(&encoder, message.getData(), message.getLen()); // getLen() = 4 bytes
 
             if (reverse)
             {
