@@ -243,7 +243,8 @@ bool roboticslab::TechnosoftIpos::initialize()
             return false;
         }
 
-        lastEncoderRead.setOffset(extEnc);
+        // synchronize absolute (master) and relative (slave) encoders
+        return setEncoderRaw(0, extEnc);
     }
 
     return true;

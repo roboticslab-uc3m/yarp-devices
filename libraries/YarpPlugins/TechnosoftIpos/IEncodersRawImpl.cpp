@@ -24,7 +24,14 @@ bool roboticslab::TechnosoftIpos::setEncoderRaw(int j, double val)
     CD_INFO("(%d, %f)\n", j, val);
     CHECK_JOINT(j);
     int32_t data = degreesToInternalUnits(val);
-    return can->sdo()->download("Set actual position", data, 0X2081);
+
+    if (!can->sdo()->download("Set actual position", data, 0X2081))
+    {
+        return false;
+    }
+
+    lastEncoderRead.reset();
+    return true;
 }
 
 // -----------------------------------------------------------------------------------

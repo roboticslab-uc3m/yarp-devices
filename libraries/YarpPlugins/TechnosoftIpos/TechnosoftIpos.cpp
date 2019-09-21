@@ -21,8 +21,7 @@ bool roboticslab::TechnosoftIpos::sendLinearInterpolationStart()
 // -----------------------------------------------------------------------------
 
 roboticslab::EncoderRead::EncoderRead(double initialPos)
-    : offset(0.0),
-      lastPosition(initialPos),
+    : lastPosition(initialPos),
       nextToLastPosition(initialPos),
       lastSpeed(0.0),
       nextToLastSpeed(0.0),
@@ -33,10 +32,10 @@ roboticslab::EncoderRead::EncoderRead(double initialPos)
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::EncoderRead::setOffset(double offset)
+void roboticslab::EncoderRead::reset()
 {
     std::lock_guard<std::mutex> guard(encoderMutex);
-    this->offset = offset;
+    lastPosition = nextToLastPosition = lastSpeed = nextToLastSpeed = lastAcceleration = 0.0;
 }
 
 // -----------------------------------------------------------------------------
@@ -61,7 +60,7 @@ void roboticslab::EncoderRead::update(double newPos, double newTime)
 
     double dt = lastStamp.getTime() - lastTime;
 
-    lastPosition = newPos + offset;
+    lastPosition = newPos;
     lastSpeed = (lastPosition - nextToLastPosition) / dt;
     lastAcceleration = (lastSpeed - nextToLastSpeed) / dt;
 }

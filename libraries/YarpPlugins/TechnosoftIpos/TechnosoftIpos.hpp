@@ -40,15 +40,14 @@ class EncoderRead
 {
 public:
     EncoderRead(double initialPos);
-    void setOffset(double offset);
     void update(double newPos, double newTime = 0.0);
+    void reset();
     double queryPosition() const;
     double querySpeed() const;
     double queryAcceleration() const;
     double queryTime() const;
 
 private:
-    double offset;
     double lastPosition, nextToLastPosition;
     double lastSpeed, nextToLastSpeed;
     double lastAcceleration;
