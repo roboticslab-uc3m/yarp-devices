@@ -13,20 +13,11 @@ if(NOT SKIP_LacqueyFetch)
 
     set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
 
-    yarp_add_plugin(LacqueyFetch LacqueyFetch.cpp
-                                 LacqueyFetch.hpp
+    yarp_add_plugin(LacqueyFetch LacqueyFetch.hpp
                                  DeviceDriverImpl.cpp
                                  ICanBusSharerImpl.cpp
-                                 IControlLimitsRawImpl.cpp
                                  IControlModeRawImpl.cpp
-                                 IEncodersRawImpl.cpp
-                                 IEncodersTimedRawImpl.cpp
-                                 IInteractionModeRawImpl.cpp
-                                 IPositionControlRawImpl.cpp
-                                 IPositionDirectRawImpl.cpp
-                                 IRemoteVariablesRawImpl.cpp
-                                 ITorqueControlRawImpl.cpp
-                                 IVelocityControlRawImpl.cpp)
+                                 IPWMControlRawImpl.cpp)
 
     target_link_libraries(LacqueyFetch YARP::YARP_OS
                                        YARP::YARP_dev

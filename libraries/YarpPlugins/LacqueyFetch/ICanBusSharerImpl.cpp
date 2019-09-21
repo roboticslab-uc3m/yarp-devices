@@ -2,65 +2,60 @@
 
 #include "LacqueyFetch.hpp"
 
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
 
-unsigned int roboticslab::LacqueyFetch::getId()
+unsigned int LacqueyFetch::getId()
 {
     return canId;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LacqueyFetch::start()
+bool LacqueyFetch::start()
 {
-
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LacqueyFetch::readyToSwitchOn()
+bool LacqueyFetch::readyToSwitchOn()
 {
-
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LacqueyFetch::switchOn()
+bool LacqueyFetch::switchOn()
 {
-
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LacqueyFetch::enable()
+bool LacqueyFetch::enable()
 {
-
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LacqueyFetch::recoverFromError()
+bool LacqueyFetch::recoverFromError()
 {
-
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LacqueyFetch::interpretMessage(const yarp::dev::CanMessage & message)
+bool LacqueyFetch::interpretMessage(const yarp::dev::CanMessage & message)
 {
-
     return true;
-
-}  //-- ends interpretMessage
+}
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LacqueyFetch::registerSender(CanSenderDelegate * sender)
+bool LacqueyFetch::registerSender(CanSenderDelegate * sender)
 {
     this->sender = sender;
     return true;
