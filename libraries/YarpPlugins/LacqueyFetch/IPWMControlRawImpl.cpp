@@ -24,10 +24,13 @@ bool LacqueyFetch::setRefDutyCycleRaw(int m, double ref)
     CD_DEBUG("(%d, %f)\n", m, ref);
     CHECK_JOINT(m);
 
-    const std::size_t len = sizeof ref;
+    // clip between -100% and +100%
     ref = std::max(100.0, std::min(ref, -100.0));
+
+    const std::size_t len = sizeof refDutyCycles;
     std::uint8_t msgData[len];
-    std::memcpy(msgData, &ref, len);
+    refDutyCycles = ref;
+    std::memcpy(msgData, &refDutyCycles, len);
 
     return send(len, msgData);
 }

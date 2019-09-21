@@ -6,6 +6,8 @@
 #include <cstddef>
 #include <cstdint>
 
+#include <yarp/conf/numeric.h>
+
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IPWMControl.h>
@@ -35,7 +37,7 @@ class LacqueyFetch : public yarp::dev::DeviceDriver,
 {
 public:
 
-    LacqueyFetch() : canId(0), refDutyCycles(0.0), sender(nullptr)
+    LacqueyFetch() : canId(0), refDutyCycles(), sender(nullptr)
     { }
 
     //  --------- DeviceDriver Declarations. Implementation in LacqueyFetch.cpp ---------
@@ -75,7 +77,7 @@ private:
     { return sender->prepareMessage(message_builder(canId, len, msgData)); }
 
     unsigned int canId;
-    double refDutyCycles;
+    yarp::conf::float32_t refDutyCycles;
     CanSenderDelegate * sender;
 };
 
