@@ -71,7 +71,6 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver,
                        public yarp::dev::IControlModeRaw,
                        public yarp::dev::ICurrentControlRaw,
                        public yarp::dev::IEncodersTimedRaw,
-                       public yarp::dev::IInteractionModeRaw,
                        public yarp::dev::IPositionControlRaw,
                        public yarp::dev::IPositionDirectRaw,
                        public yarp::dev::IRemoteVariablesRaw,
@@ -248,14 +247,6 @@ public:
     // -- virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs);
     // ------------------- Just declareted in IPositionControl2Raw
     // -- virtual bool stopRaw(const int n_joint, const int *joints);
-
-    // ------- IInteractionModeRaw declarations. Implementation in IInteractionModeRawImpl.cpp -------
-    virtual bool getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode);
-    virtual bool getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
-    virtual bool getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
-    virtual bool setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode);
-    virtual bool setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
-    virtual bool setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes);
 
     // ------- IRemoteVariablesRaw declarations. Implementation in IRemoteVariablesRawImpl.cpp -------
     virtual bool getRemoteVariableRaw(std::string key, yarp::os::Bottle& val);

@@ -22,7 +22,6 @@ if(NOT SKIP_TechnosoftIpos)
                                    ICurrentControlRawImpl.cpp
                                    IEncodersRawImpl.cpp
                                    IEncodersTimedRawImpl.cpp
-                                   IInteractionModeRawImpl.cpp
                                    IPositionControlRawImpl.cpp
                                    IPositionDirectRawImpl.cpp
                                    IRemoteVariablesRawImpl.cpp
