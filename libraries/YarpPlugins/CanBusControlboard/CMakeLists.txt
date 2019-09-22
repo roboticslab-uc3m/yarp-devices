@@ -33,6 +33,7 @@ if(NOT SKIP_CanBusControlboard)
                                        CanRxTxThreads.hpp
                                        CanRxTxThreads.cpp
                                        DeviceMapper.hpp
+                                       DeviceMapper-inl.hpp
                                        DeviceMapper.cpp)
 
     target_link_libraries(CanBusControlboard YARP::YARP_OS

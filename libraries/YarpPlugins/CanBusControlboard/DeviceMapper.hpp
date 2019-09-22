@@ -32,6 +32,10 @@ struct RawDevice
     yarp::dev::IRemoteVariablesRaw * iRemoteVariablesRaw;
     yarp::dev::IVelocityControlRaw * iVelocityControlRaw;
     yarp::dev::ITorqueControlRaw * iTorqueControlRaw;
+
+    template<typename T>
+    T * getHandle() const
+    { return nullptr; }
 };
 
 class DeviceMapper
@@ -53,6 +57,55 @@ public:
     int getControlledAxes() const
     { return totalAxes; }
 
+    template<typename T>
+    using single_mapping_fn = bool (T::*)(int, double);
+
+    template<typename T>
+    bool singleJointMapping(int j, double ref, single_mapping_fn<T> fn)
+    {
+        int localAxis;
+        T * p = getDevice(j, &localAxis).getHandle<T>();
+        return p ? (p->*fn)(localAxis, ref) : false;
+    }
+
+    template<typename T>
+    using full_mapping_fn = bool (T::*)(const double *);
+
+    template<typename T>
+    bool fullJointMapping(const double * refs, full_mapping_fn<T> fn)
+    {
+        const int * localAxisOffsets;
+        const std::vector<RawDevice> & rawDevices = getDevices(localAxisOffsets);
+
+        bool ok = true;
+
+        for (int i = 0; i < rawDevices.size(); i++)
+        {
+            T * p = rawDevices[i].getHandle<T>();
+            ok &= p ? (p->*fn)(refs + localAxisOffsets[i]) : false;
+        }
+
+        return ok;
+    }
+
+    template<typename T>
+    using multi_mapping_fn = bool (T::*)(int, const int *, const double *);
+
+    template<typename T>
+    bool multiJointMapping(int n_joint, const int * joints, const double * refs, multi_mapping_fn<T> fn)
+    {
+        bool ok = true;
+
+        for (const auto & t : getDevices(n_joint, joints))
+        {
+            T * p = std::get<0>(t)->getHandle<T>();
+            const auto & localIndices = computeLocalIndices(std::get<1>(t), joints, std::get<2>(t));
+            ok &= p ? (p->*fn)(std::get<1>(t), localIndices.data(), refs + std::get<2>(t)) : false;
+        }
+
+        return ok;
+    }
+
 private:
     bool queryControlledAxes(const RawDevice & rd, int * axes, bool * ret);
 
@@ -63,5 +116,8 @@ private:
 };
 
 } // namespace roboticslab
+
+// template specializations
+#include "DeviceMapper-inl.hpp"
 
 #endif // __DEVICE_MAPPER_HPP__
