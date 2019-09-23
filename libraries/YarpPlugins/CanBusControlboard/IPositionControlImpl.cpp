@@ -8,15 +8,6 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool CanBusControlboard::getAxes(int *axes)
-{
-    CD_DEBUG("\n");
-    *axes = deviceMapper.getControlledAxes();
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
 bool CanBusControlboard::positionMove(int j, double ref)
 {
     CD_DEBUG("(%d, %f)\n", j, ref);
