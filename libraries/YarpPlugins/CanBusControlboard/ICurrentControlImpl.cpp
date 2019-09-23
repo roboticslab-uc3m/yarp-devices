@@ -2,9 +2,13 @@
 
 #include "CanBusControlboard.hpp"
 
-// ------------------ ICurrentControl Related -----------------------------------------
+#include <ColorDebug.h>
 
-bool roboticslab::CanBusControlboard::getNumberOfMotors(int *ax)
+using namespace roboticslab;
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getNumberOfMotors(int * ax)
 {
     CD_DEBUG("\n");
     return getAxes(ax);
@@ -12,27 +16,48 @@ bool roboticslab::CanBusControlboard::getNumberOfMotors(int *ax)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getCurrent(int m, double *curr)
+bool CanBusControlboard::getCurrent(int m, double * curr)
 {
     CD_DEBUG("(%d)\n", m);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(m) ) return false;
-
-    return iCurrentControlRaw[m]->getCurrentRaw(0, curr);
+    CHECK_JOINT(m);
+    return deviceMapper.singleJointMapping(m, curr, &yarp::dev::ICurrentControlRaw::getCurrentRaw);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getCurrents(double *currs)
+bool CanBusControlboard::getCurrents(double * currs)
+{
+    CD_DEBUG("\n");
+    return deviceMapper.fullJointMapping(currs, &yarp::dev::ICurrentControlRaw::getCurrentsRaw);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getCurrentRange(int m, double * min, double * max)
+{
+    CD_DEBUG("(%d)\n", m);
+    CHECK_JOINT(m);
+
+    int localAxis;
+    yarp::dev::ICurrentControlRaw * p = deviceMapper.getDevice(m, &localAxis).iCurrentControlRaw;
+    return p ? p->getCurrentRangeRaw(localAxis, min, max) : false;
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getCurrentRanges(double * mins, double * maxs)
 {
     CD_DEBUG("\n");
 
+    const int * localAxisOffsets;
+    const std::vector<RawDevice> & rawDevices = deviceMapper.getDevices(localAxisOffsets);
+
     bool ok = true;
 
-    for (int j = 0; j < nodes.size(); j++)
+    for (int i = 0; i < rawDevices.size(); i++)
     {
-        ok &= getCurrent(j, &currs[j]);
+        yarp::dev::ICurrentControlRaw * p = rawDevices[i].iCurrentControlRaw;
+        ok &= p ? p->getCurrentRangesRaw(mins + localAxisOffsets[i], maxs + localAxisOffsets[i]) : false;
     }
 
     return ok;
@@ -40,102 +65,44 @@ bool roboticslab::CanBusControlboard::getCurrents(double *currs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getCurrentRange(int m, double *min, double *max)
+bool CanBusControlboard::setRefCurrent(int m, double curr)
 {
     CD_DEBUG("(%d)\n", m);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(m) ) return false;
-
-    return iCurrentControlRaw[m]->getCurrentRangeRaw(0, min, max);
+    CHECK_JOINT(m);
+    return deviceMapper.singleJointMapping(m, curr, &yarp::dev::ICurrentControlRaw::setRefCurrentRaw);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getCurrentRanges(double *min, double *max)
+bool CanBusControlboard::setRefCurrents(const double * currs)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-
-    for (int j = 0; j < nodes.size(); j++)
-    {
-        ok &= getCurrentRange(j, &min[j], &max[j]);
-    }
-
-    return ok;
+    return deviceMapper.fullJointMapping(currs, &yarp::dev::ICurrentControlRaw::setRefCurrentsRaw);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::setRefCurrents(const double *currs)
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-
-    for (int j = 0; j < nodes.size(); j++)
-    {
-        ok &= setRefCurrent(j, currs[j]);
-    }
-
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setRefCurrent(int m, double curr)
-{
-    CD_DEBUG("(%d)\n", m);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(m) ) return false;
-
-    return iCurrentControlRaw[m]->setRefCurrentRaw(0, curr);
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setRefCurrents(const int n_motor, const int *motors, const double *currs)
+bool CanBusControlboard::setRefCurrents(int n_motor, const int * motors, const double * currs)
 {
     CD_DEBUG("(%d)\n", n_motor);
-
-    bool ok = true;
-
-    for (int i = 0; i < n_motor; i++)
-    {
-        ok &= setRefCurrent(motors[i], currs[i]);
-    }
-
-    return ok;
+    return deviceMapper.multiJointMapping(n_motor, motors, currs, &yarp::dev::ICurrentControlRaw::setRefCurrentsRaw);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getRefCurrents(double *currs)
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-
-    for (int j = 0; j < nodes.size(); j++)
-    {
-        ok &= getRefCurrent(j, &currs[j]);
-    }
-
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getRefCurrent(int m, double *curr)
+bool CanBusControlboard::getRefCurrent(int m, double * curr)
 {
     CD_DEBUG("(%d)\n", m);
+    CHECK_JOINT(m);
+    return deviceMapper.singleJointMapping(m, curr, &yarp::dev::ICurrentControlRaw::getRefCurrentRaw);
+}
 
-    //-- Check index within range
-    if ( ! this->indexWithinRange(m) ) return false;
+// -----------------------------------------------------------------------------
 
-    return iCurrentControlRaw[m]->getRefCurrentRaw(0, curr);
+bool CanBusControlboard::getRefCurrents(double * currs)
+{
+    CD_DEBUG("\n");
+    return deviceMapper.fullJointMapping(currs, &yarp::dev::ICurrentControlRaw::getRefCurrentsRaw);
 }
 
 // -----------------------------------------------------------------------------

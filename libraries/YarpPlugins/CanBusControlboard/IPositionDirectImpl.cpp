@@ -2,86 +2,58 @@
 
 #include "CanBusControlboard.hpp"
 
-// ------------------ IPositionDirect Related ----------------------------------
+#include <ColorDebug.h>
 
-bool roboticslab::CanBusControlboard::setPosition(int j, double ref)
+using namespace roboticslab;
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::setPosition(int j, double ref)
+{
+    CD_DEBUG("(%d, %f)\n", j, ref);
+    CHECK_JOINT(j);
+    return deviceMapper.singleJointMapping(j, ref, &yarp::dev::IPositionDirectRaw::setPositionRaw);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::setPositions(const double * refs)
 {
     CD_DEBUG("\n");
-
-    return iPositionDirectRaw[j]->setPositionRaw(0, ref);
+    return deviceMapper.fullJointMapping(refs, &yarp::dev::IPositionDirectRaw::setPositionsRaw);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::setPositions(const int n_joint, const int *joints, const double *refs)
+bool CanBusControlboard::setPositions(int n_joint, const int * joints, const double * refs)
 {
-    CD_DEBUG("n_joint:%d, drivers.size():" CD_SIZE_T "\n",n_joint,nodes.size());
-
-    bool ok = true;
-
-    for (unsigned int i = 0; i < n_joint; i++)
-    {
-        ok &= this->setPosition(joints[i], refs[i]);
-    }
-
-    return ok;
+    CD_DEBUG("\n", n_joint);
+    return deviceMapper.multiJointMapping(n_joint, joints, refs, &yarp::dev::IPositionDirectRaw::setPositionsRaw);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::setPositions(const double *refs)
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-
-    for (unsigned int i = 0; i < nodes.size(); i++)
-    {
-        ok &= this->setPosition(i, refs[i]);
-    }
-
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getRefPosition(const int joint, double *ref)
+bool CanBusControlboard::getRefPosition(int joint, double * ref)
 {
     CD_DEBUG("(%d)\n", joint);
-
-    return iPositionDirectRaw[joint]->getRefPositionRaw(0, ref);
+    CHECK_JOINT(joint);
+    return deviceMapper.singleJointMapping(joint, ref, &yarp::dev::IPositionDirectRaw::getRefPositionRaw);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getRefPositions(double *refs)
+bool CanBusControlboard::getRefPositions(double * refs)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-
-    for (unsigned int i = 0; i < nodes.size(); i++)
-    {
-        ok &= this->getRefPosition(i, &refs[i]);
-    }
-
-    return ok;
+    return deviceMapper.fullJointMapping(refs, &yarp::dev::IPositionDirectRaw::getRefPositionsRaw);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getRefPositions(const int n_joint, const int *joints, double *refs)
+bool CanBusControlboard::getRefPositions(int n_joint, const int * joints, double * refs)
 {
     CD_DEBUG("(%d)\n", n_joint);
-
-    bool ok = true;
-
-    for (unsigned int i = 0; i < n_joint; i++)
-    {
-        ok &= this->getRefPosition(joints[i], &refs[i]);
-    }
-
-    return ok;
+    return deviceMapper.multiJointMapping(n_joint, joints, refs, &yarp::dev::IPositionDirectRaw::getRefPositionsRaw);
 }
 
 // -----------------------------------------------------------------------------

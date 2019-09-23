@@ -2,12 +2,13 @@
 
 #include "CanBusControlboard.hpp"
 
-#include <string>
 #include <ColorDebug.h>
 
-// ---------------------------- IRemoteVariables Related ----------------------------------
+using namespace roboticslab;
 
-bool roboticslab::CanBusControlboard::getRemoteVariable(std::string key, yarp::os::Bottle& val)
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getRemoteVariable(std::string key, yarp::os::Bottle & val)
 {
     CD_DEBUG("%s\n", key.c_str());
 
@@ -36,7 +37,7 @@ bool roboticslab::CanBusControlboard::getRemoteVariable(std::string key, yarp::o
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bottle& val)
+bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bottle & val)
 {
     CD_DEBUG("%s\n", key.c_str());
 
@@ -58,14 +59,14 @@ bool roboticslab::CanBusControlboard::setRemoteVariable(std::string key, const y
     {
         if (modes[i] == VOCAB_CM_POSITION_DIRECT)
         {
-            CD_ERROR("CAN ID %d currently in posd mode, cannot change config params right now.\n", nodes[motorIds[i]]->getValue("canId").asInt32());
+            CD_ERROR("CAN ID %d currently in posd mode, cannot change config params right now.\n", iCanBusSharer[i]->getId());
             return false;
         }
     }
 
-    for (int i = 0; i < motorIds.size(); i++)
+    for (const auto & device : deviceMapper.getDevices())
     {
-        iRemoteVariablesRaw[motorIds[i]]->setRemoteVariableRaw(key, val);
+        device.iRemoteVariablesRaw->setRemoteVariableRaw(key, val);
     }
 
     return true;
@@ -73,7 +74,7 @@ bool roboticslab::CanBusControlboard::setRemoteVariable(std::string key, const y
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)
+bool CanBusControlboard::getRemoteVariablesList(yarp::os::Bottle * listOfKeys)
 {
     CD_DEBUG("\n");
 

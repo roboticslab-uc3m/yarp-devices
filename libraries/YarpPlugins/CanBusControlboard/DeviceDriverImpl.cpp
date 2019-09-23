@@ -82,23 +82,9 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
     posdThread = new PositionDirectThread(linInterpPeriodMs * 0.001);
 
-    //-- Populate the CAN nodes vector.
-    nodes.resize( ids.size() );
-    iControlLimitsRaw.resize( nodes.size() );
-    iControlModeRaw.resize( nodes.size() );
-    iCurrentControlRaw.resize( nodes.size() );
-    iEncodersTimedRaw.resize( nodes.size() );
-    iInteractionModeRaw.resize( nodes.size() );
-    iPositionControlRaw.resize( nodes.size() );
-    iPositionDirectRaw.resize( nodes.size() );
-    iRemoteVariablesRaw.resize( nodes.size() );
-    iTorqueControlRaw.resize( nodes.size() );
-    iVelocityControlRaw.resize( nodes.size() );
-    iCanBusSharer.resize( nodes.size() );
-
     std::map<int, ITechnosoftIpos *> idToTechnosoftIpos;
 
-    for(int i=0; i<nodes.size(); i++)
+    for(int i=0; i<ids.size(); i++)
     {
         if(types.get(i).asString() == "")
             CD_WARNING("Argument \"types\" empty at %d.\n",i);
@@ -133,67 +119,11 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             return false;
         }
 
-        //-- Push the motor driver and other devices (CuiAbsolute) on to the vectors.
-        nodes[i] = device;
+        nodes.push(device, ""); // TODO: device key
 
-        //-- View interfaces
-        if( !device->view( iControlLimitsRaw[i] ))
+        if (!deviceMapper.registerDevice(device))
         {
-            CD_ERROR("[error] Problems acquiring iControlLimits2Raw interface\n");
-            return false;
-        }
-
-        if( !device->view( iControlModeRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iControlMode2Raw interface\n");
-            return false;
-        }
-
-        if( !device->view( iCurrentControlRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iCurrentControlRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iEncodersTimedRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iEncodersTimedRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iInteractionModeRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iInteractionModeRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iPositionControlRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iPositionControlRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iPositionDirectRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iPositionDirectRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iRemoteVariablesRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iRemoteVariablesRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iTorqueControlRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iTorqueControlRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iVelocityControlRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iVelocityControl2Raw interface\n");
+            CD_ERROR("Unable to register device.\n");
             return false;
         }
 
@@ -261,12 +191,10 @@ bool roboticslab::CanBusControlboard::close()
 
     delete posdThread;
 
-    //-- Delete the driver objects.
     for (int i = 0; i < nodes.size(); i++)
     {
-        ok &= nodes[i]->close();
-        delete nodes[i];
-        nodes[i] = 0;
+        ok &= nodes[i]->poly->close();
+        delete nodes[i]->poly;
     }
 
     if (canWriterThread && canWriterThread->isRunning())

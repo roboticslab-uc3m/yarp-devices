@@ -2,85 +2,58 @@
 
 #include "CanBusControlboard.hpp"
 
-// ------------------ IVelocityControl Related ----------------------------------------
+#include <ColorDebug.h>
 
-bool roboticslab::CanBusControlboard::velocityMove(int j, double sp)
+using namespace roboticslab;
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::velocityMove(int j, double spd)
 {
-    CD_DEBUG("(%d), (%f)\n",j , sp);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iVelocityControlRaw[j]->velocityMoveRaw( 0, sp );
+    CD_DEBUG("(%d, %f)\n", j, spd);
+    CHECK_JOINT(j);
+    return deviceMapper.singleJointMapping(j, spd, &yarp::dev::IVelocityControlRaw::velocityMoveRaw);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::velocityMove(const double *sp)
+bool CanBusControlboard::velocityMove(const double * spds)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        ok &= this->velocityMove(j,sp[j]);
-    }
-    return ok;
-}
-
-// ----------------------------  IVelocityControl2 Related  --------------------
-
-bool roboticslab::CanBusControlboard::velocityMove(const int n_joint, const int *joints, const double *spds)
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<n_joint; j++)
-    {
-        ok &= this->velocityMove(joints[j],spds[j]);
-    }
-    return ok;
+    return deviceMapper.fullJointMapping(spds, &yarp::dev::IVelocityControlRaw::velocityMoveRaw);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getRefVelocity(const int joint, double *vel)
+bool CanBusControlboard::velocityMove(int n_joint, const int * joints, const double * spds)
 {
-    CD_DEBUG("%d\n",joint);
+    CD_DEBUG("\n");
+    return deviceMapper.multiJointMapping(n_joint, joints, spds, &yarp::dev::IVelocityControlRaw::velocityMoveRaw);
+}
 
-    //-- Check index within range
-    if ( ! this->indexWithinRange(joint) ) return false;
+// -----------------------------------------------------------------------------
 
-    // -- Get the last reference speed set by velocityMove (see IVelocityControl2RawImpl.cpp contained in TechnosoftIpos ) for single joint
-    return iVelocityControlRaw[joint]->getRefVelocityRaw(0, vel); // -- It can be... getRefVelocityRaw(joint, vel)
+bool CanBusControlboard::getRefVelocity(int joint, double * vel)
+{
+    CD_DEBUG("%d\n", joint);
+    CHECK_JOINT(joint);
+    return deviceMapper.singleJointMapping(joint, vel, &yarp::dev::IVelocityControlRaw::getRefVelocityRaw);
 }
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getRefVelocities(double *vels)
+bool CanBusControlboard::getRefVelocities(double * vels)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i<nodes.size(); i++)
-    {
-        ok &= getRefVelocity(i,&(vels[i]));
-    }
-    return ok;
+    return deviceMapper.fullJointMapping(vels, &yarp::dev::IVelocityControlRaw::getRefVelocitiesRaw);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getRefVelocities(const int n_joint, const int *joints, double *vels)
+bool CanBusControlboard::getRefVelocities(int n_joint, const int * joints, double * vels)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i<n_joint; i++)
-    {
-        ok &= getRefVelocity(joints[i],&(vels[i]));
-    }
-    return ok;
+    return deviceMapper.multiJointMapping(n_joint, joints, vels, &yarp::dev::IVelocityControlRaw::getRefVelocitiesRaw);
 }
 
 // -----------------------------------------------------------------------------

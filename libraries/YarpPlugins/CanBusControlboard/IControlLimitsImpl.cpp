@@ -2,42 +2,56 @@
 
 #include "CanBusControlboard.hpp"
 
-// ------------------- IControlLimits Related ------------------------------------
+#include <ColorDebug.h>
 
-bool roboticslab::CanBusControlboard::setLimits(int axis, double min, double max)
+using namespace roboticslab;
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::setLimits(int axis, double min, double max)
 {
-    CD_DEBUG("(%d,%f,%f)\n",axis,min,max);
+    CD_DEBUG("(%d, %f, %f)\n", axis, min, max);
+    CHECK_JOINT(axis);
 
-    //-- Check index within range
-    if ( ! this->indexWithinRange(axis) ) return false;
-
-    return iControlLimitsRaw[axis]->setLimitsRaw( 0, min, max );
+    int localAxis;
+    yarp::dev::IControlLimitsRaw * p = deviceMapper.getDevice(axis, &localAxis).iControlLimitsRaw;
+    return p ? p->setLimitsRaw(localAxis, min, max) : false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getLimits(int axis, double *min, double *max)
+bool CanBusControlboard::getLimits(int axis, double * min, double * max)
 {
-    CD_DEBUG("(%d)\n",axis);
+    CD_DEBUG("(%d)\n", axis);
+    CHECK_JOINT(axis);
 
-    //-- Check index within range
-    if( axis >= nodes.size() ) return false;
-
-    return iControlLimitsRaw[axis]->getLimitsRaw( 0, min, max );
+    int localAxis;
+    yarp::dev::IControlLimitsRaw * p = deviceMapper.getDevice(axis, &localAxis).iControlLimitsRaw;
+    return p ? p->getLimitsRaw(localAxis, min, max) : false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::setVelLimits(int axis, double min, double max)
+bool CanBusControlboard::setVelLimits(int axis, double min, double max)
 {
-    return iControlLimitsRaw[axis]->setVelLimitsRaw( 0, min, max ); // May segfault in future if not impl?
+    CD_DEBUG("(%d)\n", axis);
+    CHECK_JOINT(axis);
+
+    int localAxis;
+    yarp::dev::IControlLimitsRaw * p = deviceMapper.getDevice(axis, &localAxis).iControlLimitsRaw;
+    return p ? p->setVelLimitsRaw(localAxis, min, max) : false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getVelLimits(int axis, double *min, double *max)
+bool CanBusControlboard::getVelLimits(int axis, double * min, double * max)
 {
-    return iControlLimitsRaw[axis]->getVelLimitsRaw( 0, min, max );  // May segfault in future if not impl?
+    CD_DEBUG("(%d)\n", axis);
+    CHECK_JOINT(axis);
+
+    int localAxis;
+    yarp::dev::IControlLimitsRaw * p = deviceMapper.getDevice(axis, &localAxis).iControlLimitsRaw;
+    return p ? p->getVelLimitsRaw(localAxis, min, max) : false;
 }
 
 // -----------------------------------------------------------------------------

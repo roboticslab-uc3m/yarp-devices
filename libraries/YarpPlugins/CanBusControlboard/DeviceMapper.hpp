@@ -57,22 +57,22 @@ public:
     int getControlledAxes() const
     { return totalAxes; }
 
-    template<typename T>
-    using single_mapping_fn = bool (T::*)(int, double);
+    template<typename T, typename T_ref>
+    using single_mapping_fn = bool (T::*)(int, T_ref);
 
-    template<typename T>
-    bool singleJointMapping(int j, double ref, single_mapping_fn<T> fn)
+    template<typename T, typename T_ref>
+    bool singleJointMapping(int j, T_ref ref, single_mapping_fn<T, T_ref> fn)
     {
         int localAxis;
         T * p = getDevice(j, &localAxis).getHandle<T>();
         return p ? (p->*fn)(localAxis, ref) : false;
     }
 
-    template<typename T>
-    using full_mapping_fn = bool (T::*)(const double *);
+    template<typename T, typename T_refs>
+    using full_mapping_fn = bool (T::*)(T_refs *);
 
-    template<typename T>
-    bool fullJointMapping(const double * refs, full_mapping_fn<T> fn)
+    template<typename T, typename T_refs>
+    bool fullJointMapping(T_refs * refs, full_mapping_fn<T, T_refs> fn)
     {
         const int * localAxisOffsets;
         const std::vector<RawDevice> & rawDevices = getDevices(localAxisOffsets);
@@ -88,11 +88,11 @@ public:
         return ok;
     }
 
-    template<typename T>
-    using multi_mapping_fn = bool (T::*)(int, const int *, const double *);
+    template<typename T, typename T_refs>
+    using multi_mapping_fn = bool (T::*)(int, const int *, T_refs *);
 
-    template<typename T>
-    bool multiJointMapping(int n_joint, const int * joints, const double * refs, multi_mapping_fn<T> fn)
+    template<typename T, typename T_refs>
+    bool multiJointMapping(int n_joint, const int * joints, T_refs * refs, multi_mapping_fn<T, T_refs> fn)
     {
         bool ok = true;
 

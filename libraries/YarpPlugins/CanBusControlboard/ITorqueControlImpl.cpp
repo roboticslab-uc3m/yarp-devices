@@ -2,146 +2,114 @@
 
 #include "CanBusControlboard.hpp"
 
-// ------------------- ITorqueControl Related ------------------------------------
+#include <ColorDebug.h>
 
-bool roboticslab::CanBusControlboard::getRefTorques(double *t)
+using namespace roboticslab;
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getRefTorque(int j, double * t)
+{
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return deviceMapper.singleJointMapping(j, t, &yarp::dev::ITorqueControlRaw::getRefTorqueRaw);
+}
+
+bool CanBusControlboard::getRefTorques(double * t)
+{
+    CD_DEBUG("\n");
+    return deviceMapper.fullJointMapping(t, &yarp::dev::ITorqueControlRaw::getRefTorquesRaw);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::setRefTorque(int j, double t)
+{
+    CD_DEBUG("(%d, %f)\n", j, t);
+    CHECK_JOINT(j);
+    return deviceMapper.singleJointMapping(j, t, &yarp::dev::ITorqueControlRaw::setRefTorqueRaw);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::setRefTorques(const double * t)
+{
+    CD_DEBUG("\n");
+    return deviceMapper.fullJointMapping(t, &yarp::dev::ITorqueControlRaw::setRefTorquesRaw);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::setRefTorques(int n_joint, const int * joints, const double * t)
+{
+    CD_DEBUG("(%d)\n", n_joint);
+    return deviceMapper.multiJointMapping(n_joint, joints, t, &yarp::dev::ITorqueControlRaw::setRefTorquesRaw);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters * params)
+{
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return deviceMapper.singleJointMapping(j, params, &yarp::dev::ITorqueControlRaw::getMotorTorqueParamsRaw);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params)
+{
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return deviceMapper.singleJointMapping(j, params, &yarp::dev::ITorqueControlRaw::setMotorTorqueParamsRaw);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getTorque(int j, double * t)
+{
+    //CD_DEBUG("(%d)\n",j); //-- Too verbose in controlboardwrapper2 stream.
+    CHECK_JOINT(j);
+    return deviceMapper.singleJointMapping(j, t, &yarp::dev::ITorqueControlRaw::getTorqueRaw);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getTorques(double * t)
+{
+    CD_DEBUG("\n");
+    return deviceMapper.fullJointMapping(t, &yarp::dev::ITorqueControlRaw::getTorquesRaw);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getTorqueRange(int j, double * min, double * max)
+{
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+
+    int localAxis;
+    yarp::dev::ITorqueControlRaw * p = deviceMapper.getDevice(j, &localAxis).iTorqueControlRaw;
+    return p ? p->getTorqueRangeRaw(localAxis, min, max) : false;
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getTorqueRanges(double * mins, double * maxs)
 {
     CD_DEBUG("\n");
 
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        ok &= this->getRefTorque(j, &(t[j]));
-    }
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getRefTorque(int j, double *t)
-{
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->getRefTorqueRaw( 0, t );
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setRefTorques(const double *t)
-{
-    CD_DEBUG("\n");
+    const int * localAxisOffsets;
+    const std::vector<RawDevice> & rawDevices = deviceMapper.getDevices(localAxisOffsets);
 
     bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
+
+    for (int i = 0; i < rawDevices.size(); i++)
     {
-        ok &= this->setRefTorque(j, t[j]);
+        yarp::dev::ITorqueControlRaw * p = rawDevices[i].iTorqueControlRaw;
+        ok &= p ? p->getTorqueRangesRaw(mins + localAxisOffsets[i], maxs + localAxisOffsets[i]) : false;
     }
-    return ok;
-}
 
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setRefTorque(int j, double t)
-{
-    CD_DEBUG("(%d,%f)\n",j,t);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->setRefTorqueRaw( 0, t );
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setRefTorques(const int n_joint, const int *joints, const double *t)
-{
-    CD_DEBUG("(%d)\n",n_joint);
-
-    bool ok = true;
-    for(int j=0; j<n_joint; j++)
-    {
-        ok &= this->setRefTorque(joints[j],t[j]);
-    }
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params)
-{
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->getMotorTorqueParamsRaw( 0, params );
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params)
-{
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->setMotorTorqueParamsRaw( 0, params );
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getTorque(int j, double *t)
-{
-    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->getTorqueRaw( 0, t );;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getTorques(double *t)
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        ok &= this->getTorque(j, &(t[j]));
-    }
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getTorqueRange(int j, double *min, double *max)
-{
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->getTorqueRangeRaw( 0, min, max );
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getTorqueRanges(double *min, double *max)
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        ok &= this->getTorqueRange(j, min, max);
-    }
     return ok;
 }
 

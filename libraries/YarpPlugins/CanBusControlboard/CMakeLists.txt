@@ -14,8 +14,7 @@ if(NOT SKIP_CanBusControlboard)
 
     set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
 
-    yarp_add_plugin(CanBusControlboard CanBusControlboard.cpp
-                                       CanBusControlboard.hpp
+    yarp_add_plugin(CanBusControlboard CanBusControlboard.hpp
                                        DeviceDriverImpl.cpp
                                        IControlLimitsImpl.cpp
                                        IControlModeImpl.cpp

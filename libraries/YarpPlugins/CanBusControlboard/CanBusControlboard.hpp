@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __CAN_BUS_CONTROLBOARD__
-#define __CAN_BUS_CONTROLBOARD__
+#ifndef __CAN_BUS_CONTROLBOARD_HPP__
+#define __CAN_BUS_CONTROLBOARD_HPP__
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
@@ -29,8 +29,11 @@
 //#define CD_HIDE_ERROR  //-- Can be managed from father CMake.
 #include "ColorDebug.h"
 
+#include "DeviceMapper.hpp"
 #include "CanRxTxThreads.hpp"
 #include "ICanBusSharer.hpp"
+
+#define CHECK_JOINT(j) do { int n = deviceMapper.getControlledAxes(); if ((j) < 0 || (j) > n - 1) return false; } while (0)
 
 #define DEFAULT_MODE "position"
 #define DEFAULT_CUI_TIMEOUT 1.0
@@ -75,9 +78,6 @@ class CanBusControlboard : public yarp::dev::DeviceDriver,
                            public yarp::dev::ITorqueControl,
                            public yarp::dev::IVelocityControl
 {
-
-    // ------------------------------- Public -------------------------------------
-
 public:
 
     //  --------- IControlLimits Declarations. Implementation in IControlLimitsImpl.cpp ---------
@@ -869,31 +869,17 @@ public:
      */
     virtual bool close();
 
-    // ------------------------------- Protected -------------------------------------
+private:
 
-protected:
-
-    /** A CAN device. */
     yarp::dev::PolyDriver canBusDevice;
     yarp::dev::ICanBus* iCanBus;
 
-    /** A vector of CAN node objects. */
-    std::vector< yarp::dev::PolyDriver* > nodes;
-    std::vector< yarp::dev::IControlLimitsRaw* > iControlLimitsRaw;
-    std::vector< yarp::dev::IControlModeRaw* > iControlModeRaw;
-    std::vector< yarp::dev::ICurrentControlRaw* > iCurrentControlRaw;
-    std::vector< yarp::dev::IEncodersTimedRaw* > iEncodersTimedRaw;
-    std::vector< yarp::dev::IInteractionModeRaw* > iInteractionModeRaw;
-    std::vector< yarp::dev::IPositionControlRaw* > iPositionControlRaw;
-    std::vector< yarp::dev::IPositionDirectRaw* > iPositionDirectRaw;
-    std::vector< yarp::dev::IRemoteVariablesRaw* > iRemoteVariablesRaw;
-    std::vector< yarp::dev::ITorqueControlRaw* > iTorqueControlRaw;
-    std::vector< yarp::dev::IVelocityControlRaw* > iVelocityControlRaw;
-
+    yarp::dev::PolyDriverList nodes;
     std::vector< ICanBusSharer* > iCanBusSharer;
 
-    std::vector< int > motorIds;
+    DeviceMapper deviceMapper;
 
+    std::vector< int > motorIds;
     std::map< int, int > idxFromCanId;
 
     CanReaderThread * canReaderThread;
@@ -903,18 +889,8 @@ protected:
     int linInterpPeriodMs;
     int linInterpBufferSize;
     std::string linInterpMode;
-
-    /** A helper function to display CAN messages. */
-    std::string msgToStr(const yarp::dev::CanMessage& message);
-
-    /**
-     * Check if index is within range (referred to driver vector size).
-     * @param idx index to check.
-     * @return true/false on success/failure.
-     */
-    bool indexWithinRange(const int& idx);
 };
 
-}  // namespace roboticslab
+} // namespace roboticslab
 
-#endif  //  __CAN_BUS_CONTROLBOARD__
+#endif //  __CAN_BUS_CONTROLBOARD_HPP__
