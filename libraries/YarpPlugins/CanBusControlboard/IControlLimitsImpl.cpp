@@ -34,7 +34,7 @@ bool CanBusControlboard::getLimits(int axis, double * min, double * max)
 
 bool CanBusControlboard::setVelLimits(int axis, double min, double max)
 {
-    CD_DEBUG("(%d)\n", axis);
+    CD_DEBUG("(%d, %f, %f)\n", axis, min, max);
     CHECK_JOINT(axis);
 
     int localAxis;

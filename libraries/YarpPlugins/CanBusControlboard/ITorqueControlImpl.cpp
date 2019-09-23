@@ -42,7 +42,7 @@ bool CanBusControlboard::setRefTorques(const double * t)
 
 bool CanBusControlboard::setRefTorques(int n_joint, const int * joints, const double * t)
 {
-    CD_DEBUG("(%d)\n", n_joint);
+    CD_DEBUG("\n");
     return deviceMapper.multiJointMapping(n_joint, joints, t, &yarp::dev::ITorqueControlRaw::setRefTorquesRaw);
 }
 

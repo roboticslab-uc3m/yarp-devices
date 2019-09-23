@@ -16,13 +16,21 @@ if(NOT SKIP_CanBusControlboard)
 
     yarp_add_plugin(CanBusControlboard CanBusControlboard.hpp
                                        DeviceDriverImpl.cpp
+                                       IAmplifierControlImpl.cpp
+                                       IAxisInfoImpl.cpp
+                                       IControlCalibrationImpl.cpp
                                        IControlLimitsImpl.cpp
                                        IControlModeImpl.cpp
                                        ICurrentControlImpl.cpp
                                        IEncodersImpl.cpp
+                                       IImpedanceControlImpl.cpp
                                        IInteractionModeImpl.cpp
+                                       IMotorImpl.cpp
+                                       IMotorEncodersImpl.cpp
+                                       IPidControlImpl.cpp
                                        IPositionControlImpl.cpp
                                        IPositionDirectImpl.cpp
+                                       IPWMControlImpl.cpp
                                        IRemoteVariablesImpl.cpp
                                        ITorqueControlImpl.cpp
                                        IVelocityControlImpl.cpp

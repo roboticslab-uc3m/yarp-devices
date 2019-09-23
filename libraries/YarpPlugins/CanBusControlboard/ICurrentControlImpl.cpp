@@ -8,14 +8,6 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool CanBusControlboard::getNumberOfMotors(int * ax)
-{
-    CD_DEBUG("\n");
-    return getAxes(ax);
-}
-
-// -----------------------------------------------------------------------------
-
 bool CanBusControlboard::getCurrent(int m, double * curr)
 {
     CD_DEBUG("(%d)\n", m);
@@ -67,7 +59,7 @@ bool CanBusControlboard::getCurrentRanges(double * mins, double * maxs)
 
 bool CanBusControlboard::setRefCurrent(int m, double curr)
 {
-    CD_DEBUG("(%d)\n", m);
+    CD_DEBUG("(%d, %f)\n", m, curr);
     CHECK_JOINT(m);
     return deviceMapper.singleJointMapping(m, curr, &yarp::dev::ICurrentControlRaw::setRefCurrentRaw);
 }

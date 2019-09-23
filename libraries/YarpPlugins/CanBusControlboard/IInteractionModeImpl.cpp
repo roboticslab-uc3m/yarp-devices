@@ -2,6 +2,8 @@
 
 #include "CanBusControlboard.hpp"
 
+#include <yarp/os/Vocab.h>
+
 #include <ColorDebug.h>
 
 using namespace roboticslab;
@@ -47,7 +49,7 @@ bool CanBusControlboard::getInteractionModes(int n_joints, int * joints, yarp::d
 
 bool CanBusControlboard::setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode)
 {
-    CD_DEBUG("(%d)\n", axis);
+    CD_DEBUG("(%d, %s)\n", axis, yarp::os::Vocab::decode(mode).c_str());
     CHECK_JOINT(axis);
     return deviceMapper.singleJointMapping(axis, mode, &yarp::dev::IInteractionModeRaw::setInteractionModeRaw);
 }
