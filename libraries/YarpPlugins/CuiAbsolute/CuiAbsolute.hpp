@@ -49,37 +49,41 @@ public:
           sender(nullptr), pushStateObserver(nullptr), pollStateObserver(nullptr)
     { }
 
-    //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
-    virtual bool open(yarp::os::Searchable& config);
-    virtual bool close();
+    //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 
-    //  --------- ICanBusSharer Declarations. Implementation in ICanBusSharerImpl.cpp ---------
-    virtual unsigned int getId();
-    virtual bool interpretMessage(const yarp::dev::CanMessage & message);
-    virtual bool initialize();
-    virtual bool start();
-    virtual bool readyToSwitchOn();
-    virtual bool switchOn();
-    virtual bool enable();
-    virtual bool recoverFromError();
-    virtual bool registerSender(CanSenderDelegate * sender);
+    virtual bool open(yarp::os::Searchable & config) override;
+    virtual bool close() override;
 
-    //  ---------- IEncodersRaw Declarations. Implementation in IEncodersTimedRawImpl.cpp ----------
-    virtual bool getAxes(int * ax);
-    virtual bool resetEncoderRaw(int j);
-    virtual bool resetEncodersRaw();
-    virtual bool setEncoderRaw(int j, double val);
-    virtual bool setEncodersRaw(const double * vals);
-    virtual bool getEncoderRaw(int j, double * v);
-    virtual bool getEncodersRaw(double * encs);
-    virtual bool getEncoderSpeedRaw(int j, double * sp);
-    virtual bool getEncoderSpeedsRaw(double * spds);
-    virtual bool getEncoderAccelerationRaw(int j, double * spds);
-    virtual bool getEncoderAccelerationsRaw(double * accs);
+    //  --------- ICanBusSharer declarations. Implementation in ICanBusSharerImpl.cpp ---------
 
-    //  ---------- IEncodersTimedRaw Declarations. Implementation in IEncodersTimedRawImpl.cpp ----------
-    virtual bool getEncodersTimedRaw(double * encs, double * time);
-    virtual bool getEncoderTimedRaw(int j, double * encs, double * time);
+    virtual unsigned int getId() override;
+    virtual bool interpretMessage(const yarp::dev::CanMessage & message) override;
+    virtual bool initialize() override;
+    virtual bool start() override;
+    virtual bool readyToSwitchOn() override;
+    virtual bool switchOn() override;
+    virtual bool enable() override;
+    virtual bool recoverFromError() override;
+    virtual bool registerSender(CanSenderDelegate * sender) override;
+
+    //  ---------- IEncodersRaw declarations. Implementation in IEncodersRawImpl.cpp ----------
+
+    virtual bool getAxes(int * ax) override;
+    virtual bool resetEncoderRaw(int j) override;
+    virtual bool resetEncodersRaw() override;
+    virtual bool setEncoderRaw(int j, double val) override;
+    virtual bool setEncodersRaw(const double * vals) override;
+    virtual bool getEncoderRaw(int j, double * v) override;
+    virtual bool getEncodersRaw(double * encs) override;
+    virtual bool getEncoderSpeedRaw(int j, double * sp) override;
+    virtual bool getEncoderSpeedsRaw(double * spds) override;
+    virtual bool getEncoderAccelerationRaw(int j, double * spds) override;
+    virtual bool getEncoderAccelerationsRaw(double * accs) override;
+
+    //  ---------- IEncodersTimedRaw declarations. Implementation in IEncodersRawImpl.cpp ----------
+
+    virtual bool getEncodersTimedRaw(double * encs, double * time) override;
+    virtual bool getEncoderTimedRaw(int j, double * encs, double * time) override;
 
 private:
 

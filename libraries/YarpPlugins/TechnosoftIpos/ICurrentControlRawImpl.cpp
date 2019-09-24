@@ -2,9 +2,13 @@
 
 #include "TechnosoftIpos.hpp"
 
-// ------------------- ICurrentControlRaw Related ------------------------------------
+#include <ColorDebug.h>
 
-bool roboticslab::TechnosoftIpos::getNumberOfMotorsRaw(int *number)
+using namespace roboticslab;
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::getNumberOfMotorsRaw(int * number)
 {
     CD_DEBUG("\n");
     return getAxes(number);
@@ -12,7 +16,7 @@ bool roboticslab::TechnosoftIpos::getNumberOfMotorsRaw(int *number)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getCurrentRaw(int m, double *curr)
+bool TechnosoftIpos::getCurrentRaw(int m, double * curr)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
@@ -24,15 +28,15 @@ bool roboticslab::TechnosoftIpos::getCurrentRaw(int m, double *curr)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getCurrentsRaw(double *currs)
+bool TechnosoftIpos::getCurrentsRaw(double * currs)
 {
-    CD_ERROR("Not implemented.\n");
-    return false;
+    CD_DEBUG("\n");
+    return getCurrentRaw(0, &currs[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getCurrentRangeRaw(int m, double *min, double *max)
+bool TechnosoftIpos::getCurrentRangeRaw(int m, double * min, double * max)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
@@ -45,23 +49,15 @@ bool roboticslab::TechnosoftIpos::getCurrentRangeRaw(int m, double *min, double 
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getCurrentRangesRaw(double *min, double *max)
+bool TechnosoftIpos::getCurrentRangesRaw(double * min, double * max)
 {
-    CD_ERROR("Not implemented.\n");
-    return false;
+    CD_DEBUG("\n");
+    return getCurrentRangeRaw(0, min, max);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setRefCurrentsRaw(const double *currs)
-{
-    CD_ERROR("Not implemented.\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::setRefCurrentRaw(int m, double curr)
+bool TechnosoftIpos::setRefCurrentRaw(int m, double curr)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
@@ -71,23 +67,23 @@ bool roboticslab::TechnosoftIpos::setRefCurrentRaw(int m, double curr)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setRefCurrentsRaw(const int n_motor, const int *motors, const double *currs)
+bool TechnosoftIpos::setRefCurrentsRaw(const double * currs)
 {
-    CD_ERROR("Not implemented.\n");
-    return false;
+    CD_DEBUG("\n");
+    return setRefCurrentRaw(0, currs[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getRefCurrentsRaw(double *currs)
+bool TechnosoftIpos::setRefCurrentsRaw(int n_motor, const int * motors, const double * currs)
 {
-    CD_ERROR("Not implemented.\n");
-    return false;
+    CD_DEBUG("\n");
+    return setRefCurrentRaw(motors[0], currs[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getRefCurrentRaw(int m, double *curr)
+bool TechnosoftIpos::getRefCurrentRaw(int m, double * curr)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
@@ -95,6 +91,14 @@ bool roboticslab::TechnosoftIpos::getRefCurrentRaw(int m, double *curr)
     return can->sdo()->upload<int32_t>("External online reference", [=](int32_t * data)
             { *curr = internalUnitsToCurrent(*data >> 16); },
             0x201C);
+}
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::getRefCurrentsRaw(double * currs)
+{
+    CD_DEBUG("\n");
+    return getRefCurrentRaw(0, &currs[0]);
 }
 
 // -----------------------------------------------------------------------------

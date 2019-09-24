@@ -21,20 +21,20 @@ bool LacqueyFetch::getControlModeRaw(int j, int * mode)
 bool LacqueyFetch::getControlModesRaw(int * modes)
 {
     CD_DEBUG("\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
-bool LacqueyFetch::getControlModesRaw(const int n_joint, const int * joints, int * modes)
-{
-    //CD_DEBUG("(%d)\n",j); //-- Too verbose in controlboardwrapper2 stream
     return getControlModeRaw(0, &modes[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool LacqueyFetch::setControlModeRaw(const int j, const int mode)
+bool LacqueyFetch::getControlModesRaw(int n_joint, const int * joints, int * modes)
+{
+    //CD_DEBUG("(%d)\n",j); //-- Too verbose in controlboardwrapper2 stream
+    return getControlModeRaw(joints[0], &modes[0]);
+}
+
+// -----------------------------------------------------------------------------
+
+bool LacqueyFetch::setControlModeRaw(int j, int mode)
 {
     CHECK_JOINT(j);
     CD_WARNING("Not supported.\n");
@@ -43,7 +43,7 @@ bool LacqueyFetch::setControlModeRaw(const int j, const int mode)
 
 // -----------------------------------------------------------------------------
 
-bool LacqueyFetch::setControlModesRaw(const int n_joint, const int * joints, int * modes)
+bool LacqueyFetch::setControlModesRaw(int * modes)
 {
     CD_WARNING("Not supported.\n");
     return false;
@@ -51,7 +51,7 @@ bool LacqueyFetch::setControlModesRaw(const int n_joint, const int * joints, int
 
 // -----------------------------------------------------------------------------
 
-bool LacqueyFetch::setControlModesRaw(int * modes)
+bool LacqueyFetch::setControlModesRaw(int n_joint, const int * joints, int * modes)
 {
     CD_WARNING("Not supported.\n");
     return false;

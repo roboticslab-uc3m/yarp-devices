@@ -8,7 +8,7 @@
 
 using namespace roboticslab;
 
-// ------------------ IEncodersRaw Related -----------------------------------------
+// -----------------------------------------------------------------------------
 
 bool CuiAbsolute::getAxes(int * ax)
 {
@@ -112,7 +112,7 @@ bool CuiAbsolute::getEncoderAccelerationsRaw(double * accs)
     return false;
 }
 
-// ------------------ IEncodersTimedRaw Related -----------------------------------------
+// -----------------------------------------------------------------------------
 
 bool CuiAbsolute::getEncodersTimedRaw(double * encs, double * times)
 {

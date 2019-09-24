@@ -17,7 +17,7 @@ if(NOT SKIP_CuiAbsolute)
                                 CuiAbsolute.cpp
                                 DeviceDriverImpl.cpp
                                 ICanBusSharerImpl.cpp
-                                IEncodersTimedRawImpl.cpp)
+                                IEncodersRawImpl.cpp)
 
     target_link_libraries(CuiAbsolute YARP::YARP_OS
                                       YARP::YARP_dev

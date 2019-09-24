@@ -5,11 +5,14 @@
 #include <map>
 #include <string>
 
+#include "ICanBusSharer.hpp"
 #include "ITechnosoftIpos.h"
 
-// ------------------- DeviceDriver Related ------------------------------------
+using namespace roboticslab;
 
-bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::open(yarp::os::Searchable & config)
 {
     int cuiTimeout  = config.check("waitEncoder", yarp::os::Value(DEFAULT_CUI_TIMEOUT), "CUI timeout (seconds)").asInt32();
 
@@ -39,21 +42,20 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
     yarp::os::Bottle types = config.findGroup("types", "device name of each node").tail();  //-- e.g. 15
 
-    //-- Initialize the CAN device.
     yarp::os::Property canBusOptions;
     canBusOptions.fromString(config.toString());  // canDevice, canBitrate
     canBusOptions.put("device", canBusType);
     canBusOptions.put("canBlockingMode", false); // enforce non-blocking mode
     canBusOptions.put("canAllowPermissive", false); // always check usage requirements
     canBusOptions.setMonitor(config.getMonitor(), canBusType.c_str());
-    canBusDevice.open(canBusOptions);
-    if( ! canBusDevice.isValid() )
+
+    if (!canBusDevice.open(canBusOptions))
     {
         CD_ERROR("canBusDevice instantiation not worked.\n");
         return false;
     }
 
-    if( !canBusDevice.view(iCanBus) )
+    if (!canBusDevice.view(iCanBus))
     {
         CD_ERROR("Cannot view ICanBus interface in device: %s.\n", canBusType.c_str());
         return false;
@@ -61,51 +63,25 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
     yarp::dev::ICanBufferFactory * iCanBufferFactory;
 
-    if( !canBusDevice.view(iCanBufferFactory) )
+    if (!canBusDevice.view(iCanBufferFactory))
     {
         CD_ERROR("Cannot view ICanBufferFactory interface in device: %s.\n", canBusType.c_str());
         return false;
     }
 
-    std::string canDevice = canBusOptions.find("canDevice").asString();
-
-    //-- Start the reading thread (required for checkMotionDoneRaw).
-    canReaderThread = new CanReaderThread(canDevice, idxFromCanId, iCanBusSharer);
-    canReaderThread->setCanHandles(iCanBus, iCanBufferFactory, canRxBufferSize);
-    canReaderThread->setPeriod(canRxPeriodMs);
-    canReaderThread->start();
-
-    canWriterThread = new CanWriterThread(canDevice);
-    canWriterThread->setCanHandles(iCanBus, iCanBufferFactory, canTxBufferSize);
-    canWriterThread->setPeriod(canTxPeriodMs);
-    canWriterThread->start();
-
-    posdThread = new PositionDirectThread(linInterpPeriodMs * 0.001);
-
-    //-- Populate the CAN nodes vector.
-    nodes.resize( ids.size() );
-    iControlLimitsRaw.resize( nodes.size() );
-    iControlModeRaw.resize( nodes.size() );
-    iCurrentControlRaw.resize( nodes.size() );
-    iEncodersTimedRaw.resize( nodes.size() );
-    iInteractionModeRaw.resize( nodes.size() );
-    iPositionControlRaw.resize( nodes.size() );
-    iPositionDirectRaw.resize( nodes.size() );
-    iRemoteVariablesRaw.resize( nodes.size() );
-    iTorqueControlRaw.resize( nodes.size() );
-    iVelocityControlRaw.resize( nodes.size() );
-    iCanBusSharer.resize( nodes.size() );
-
+    std::map<int, int> idxFromCanId;
     std::map<int, ITechnosoftIpos *> idToTechnosoftIpos;
+    std::vector<ICanBusSharer *> iCanBusSharers(ids.size());
 
-    for(int i=0; i<nodes.size(); i++)
+    for (int i = 0; i < ids.size(); i++)
     {
-        if(types.get(i).asString() == "")
-            CD_WARNING("Argument \"types\" empty at %d.\n",i);
+        if (types.get(i).asString().empty())
+        {
+            CD_WARNING("Argument \"types\" empty at %d.\n", i);
+        }
 
-        //-- Create CAN node objects with a pointer to the CAN device, its id and tr (these are locally stored parameters).
         yarp::os::Property options;
-        options.put("device", types.get(i));  //-- "TechnosoftIpos", "LacqueyFetch", "CuiAbsolute"
+        options.put("device", types.get(i));
         options.put("canId", ids.get(i));
         options.put("tr", trs.get(i));
         options.put("min", mins.get(i));
@@ -125,97 +101,38 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         std::string context = types.get(i).asString() + "_" + std::to_string(ids.get(i).asInt32());
         options.setMonitor(config.getMonitor(),context.c_str());
 
-        // -- Configuramos todos los dispositivos (TechnosoftIpos, LacqueyFetch, CuiAbsolute)
-        yarp::dev::PolyDriver* device = new yarp::dev::PolyDriver(options);
-        if( ! device->isValid() )
+        yarp::dev::PolyDriver * device = new yarp::dev::PolyDriver(options);
+
+        if (!device->isValid())
         {
-            CD_ERROR("CAN node [%d] '%s' instantiation not worked.\n",i,types.get(i).asString().c_str());
+            CD_ERROR("CAN node [%d] '%s' instantiation failure.\n", i, types.get(i).asString().c_str());
             return false;
         }
 
-        //-- Push the motor driver and other devices (CuiAbsolute) on to the vectors.
-        nodes[i] = device;
+        nodes.push(device, ""); // TODO: device key
 
-        //-- View interfaces
-        if( !device->view( iControlLimitsRaw[i] ))
+        if (!deviceMapper.registerDevice(device))
         {
-            CD_ERROR("[error] Problems acquiring iControlLimits2Raw interface\n");
+            CD_ERROR("Unable to register device.\n");
             return false;
         }
 
-        if( !device->view( iControlModeRaw[i] ))
+        if (!device->view(iCanBusSharers[i]))
         {
-            CD_ERROR("[error] Problems acquiring iControlMode2Raw interface\n");
+            CD_ERROR("Unable to view ICanBusSharer.\n");
             return false;
         }
 
-        if( !device->view( iCurrentControlRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iCurrentControlRaw interface\n");
-            return false;
-        }
+        idxFromCanId[iCanBusSharers[i]->getId()] = i;
 
-        if( !device->view( iEncodersTimedRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iEncodersTimedRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iInteractionModeRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iInteractionModeRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iPositionControlRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iPositionControlRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iPositionDirectRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iPositionDirectRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iRemoteVariablesRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iRemoteVariablesRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iTorqueControlRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iTorqueControlRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iVelocityControlRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iVelocityControl2Raw interface\n");
-            return false;
-        }
-
-        // -- si el device es un Cui, este podrá "ver" las funciones programadas en iCanBusSharer (funciones que hemos añadido al encoder).
-        // -- estas funciones se encuentran implementadas en el cpp correspondiente "ICanBusSharerImpl.cpp", por lo tanto le da la funcionalidad que deseamos
-        if( !device->view( iCanBusSharer[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iCanBusSharer interface\n");
-            return false;
-        }
-
-        idxFromCanId[iCanBusSharer[i]->getId()] = i;
-
-        for (auto additionalId : iCanBusSharer[i]->getAdditionalIds())
+        for (auto additionalId : iCanBusSharers[i]->getAdditionalIds())
         {
             idxFromCanId[additionalId] = i;
         }
 
-        iCanBusSharer[i]->registerSender(canWriterThread->getDelegate());
+        iCanBusSharers[i]->registerSender(canWriterThread->getDelegate());
 
-        //-- DRIVERS
-        if(types.get(i).asString() == "TechnosoftIpos")
+        if (types.get(i).asString() == "TechnosoftIpos")
         {
             motorIds.push_back(i);
 
@@ -224,17 +141,26 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
             idToTechnosoftIpos.insert(std::make_pair(i, iTechnosoftIpos));
         }
 
-        //-- Enable acceptance filters for each node ID
-        if( !iCanBus->canIdAdd(ids.get(i).asInt32()) )
+        if (!iCanBus->canIdAdd(ids.get(i).asInt32()))
         {
             CD_ERROR("Cannot register acceptance filter for node ID: %d.\n", ids.get(i).asInt32());
             return false;
         }
+    }
 
-    } // -- for(int i=0; i<nodes.size(); i++)
+    const std::string canDevice = canBusOptions.find("canDevice").asString();
 
-    //-- Initialize the drivers.
-    for (auto node : iCanBusSharer)
+    canReaderThread = new CanReaderThread(canDevice, idxFromCanId, iCanBusSharers);
+    canReaderThread->setCanHandles(iCanBus, iCanBufferFactory, canRxBufferSize);
+    canReaderThread->setPeriod(canRxPeriodMs);
+    canReaderThread->start();
+
+    canWriterThread = new CanWriterThread(canDevice);
+    canWriterThread->setCanHandles(iCanBus, iCanBufferFactory, canTxBufferSize);
+    canWriterThread->setPeriod(canTxPeriodMs);
+    canWriterThread->start();
+
+    for (auto node : iCanBusSharers)
     {
         if (!node->initialize() || !node->start() || !node->readyToSwitchOn() || !node->switchOn() || !node->enable())
         {
@@ -242,6 +168,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
         }
     }
 
+    posdThread = new PositionDirectThread(linInterpPeriodMs * 0.001);
     posdThread->setNodeHandles(idToTechnosoftIpos);
     posdThread->start();
 
@@ -250,7 +177,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::close()
+bool CanBusControlboard::close()
 {
     bool ok = true;
 
@@ -261,12 +188,10 @@ bool roboticslab::CanBusControlboard::close()
 
     delete posdThread;
 
-    //-- Delete the driver objects.
     for (int i = 0; i < nodes.size(); i++)
     {
-        ok &= nodes[i]->close();
-        delete nodes[i];
-        nodes[i] = 0;
+        ok &= nodes[i]->poly->close();
+        delete nodes[i]->poly;
     }
 
     if (canWriterThread && canWriterThread->isRunning())
@@ -283,7 +208,7 @@ bool roboticslab::CanBusControlboard::close()
 
     delete canReaderThread;
 
-    //-- Clear CAN acceptance filters ('0' = all IDs that were previously set by canIdAdd).
+    // Clear CAN acceptance filters ('0' = all IDs that were previously set by canIdAdd).
     if (!iCanBus->canIdDelete(0))
     {
         CD_WARNING("CAN filters may be preserved on the next run.\n");

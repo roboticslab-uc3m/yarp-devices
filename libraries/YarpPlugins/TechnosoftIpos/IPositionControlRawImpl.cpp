@@ -4,21 +4,17 @@
 
 #include <bitset>
 
+#include <ColorDebug.h>
+
 #include "CanUtils.hpp"
 
-// ######################### IPositionControlRaw Related #########################
-
-bool roboticslab::TechnosoftIpos::getAxes(int *ax)
-{
-    *ax = 1;
-    return true;
-}
+using namespace roboticslab;
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encExposed = ref;
+bool TechnosoftIpos::positionMoveRaw(int j, double ref)    // encExposed = ref;
 {
-    CD_INFO("(%d, %f)\n", j, ref);
+    CD_DEBUG("(%d, %f)\n", j, ref);
     CHECK_JOINT(j);
 
     return can->rpdo1()->write<uint16_t>(0x000F) // mandatory if we call this right after the [posd->pos] transition
@@ -29,17 +25,25 @@ bool roboticslab::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encEx
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::positionMoveRaw(const double *refs)
+bool TechnosoftIpos::positionMoveRaw(const double * refs)
 {
-    CD_ERROR("\n");
-    return false;
+    CD_DEBUG("\n");
+    return positionMoveRaw(0, refs[0]);
+}
+
+// --------------------------------------------------------------------------------
+
+bool TechnosoftIpos::positionMoveRaw(int n_joint, const int * joints, const double * refs)
+{
+    CD_DEBUG("\n");
+    return positionMoveRaw(joints[0], refs[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::relativeMoveRaw(int j, double delta)
+bool TechnosoftIpos::relativeMoveRaw(int j, double delta)
 {
-    CD_INFO("(%d, %f)\n", j, delta);
+    CD_DEBUG("(%d, %f)\n", j, delta);
     CHECK_JOINT(j);
 
     return can->rpdo1()->write<uint16_t>(0x000F) // mandatory if we call this right after the [posd->pos] transition
@@ -50,17 +54,25 @@ bool roboticslab::TechnosoftIpos::relativeMoveRaw(int j, double delta)
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::relativeMoveRaw(const double *deltas)
+bool TechnosoftIpos::relativeMoveRaw(const double * deltas)
 {
-    CD_ERROR("\n");
-    return false;
+    CD_DEBUG("\n");
+    return relativeMoveRaw(0, deltas[0]);
+}
+
+// --------------------------------------------------------------------------------
+
+bool TechnosoftIpos::relativeMoveRaw(int n_joint, const int * joints, const double * deltas)
+{
+    CD_DEBUG("\n");
+    return relativeMoveRaw(joints[0], deltas[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::checkMotionDoneRaw(int j, bool *flag)
+bool TechnosoftIpos::checkMotionDoneRaw(int j, bool * flag)
 {
-    CD_INFO("(%d)\n", j);
+    CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
 
     uint16_t data;
@@ -155,17 +167,25 @@ bool roboticslab::TechnosoftIpos::checkMotionDoneRaw(int j, bool *flag)
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::checkMotionDoneRaw(bool *flag)
+bool TechnosoftIpos::checkMotionDoneRaw(bool * flags)
 {
-    CD_ERROR("\n");
-    return false;
+    CD_DEBUG("\n");
+    return checkMotionDoneRaw(0, &flags[0]);
+}
+
+// --------------------------------------------------------------------------------
+
+bool TechnosoftIpos::checkMotionDoneRaw(int n_joint, const int * joints, bool * flags)
+{
+    CD_DEBUG("\n");
+    return checkMotionDoneRaw(joints[0], &flags[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
+bool TechnosoftIpos::setRefSpeedRaw(int j, double sp)
 {
-    CD_INFO("(%d, %f)\n",j,sp);
+    CD_DEBUG("(%d, %f)\n", j, sp);
     CHECK_JOINT(j);
 
     if (sp > maxVel)
@@ -186,17 +206,25 @@ bool roboticslab::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setRefSpeedsRaw(const double *spds)
+bool TechnosoftIpos::setRefSpeedsRaw(const double * spds)
 {
-    CD_ERROR("\n");
-    return false;
+    CD_DEBUG("\n");
+    return setRefSpeedRaw(0, spds[0]);
+}
+
+// --------------------------------------------------------------------------------
+
+bool TechnosoftIpos::setRefSpeedsRaw(int n_joint, const int * joints, const double * spds)
+{
+    CD_DEBUG("\n");
+    return setRefSpeedRaw(joints[0], spds[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
+bool TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
 {
-    CD_INFO("(%d, %f)\n", j, acc);
+    CD_DEBUG("(%d, %f)\n", j, acc);
     CHECK_JOINT(j);
 
     double value = std::abs(degreesToInternalUnits(acc, 2));
@@ -211,17 +239,25 @@ bool roboticslab::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setRefAccelerationsRaw(const double *accs)
+bool TechnosoftIpos::setRefAccelerationsRaw(const double * accs)
 {
-    CD_ERROR("\n");
-    return false;
+    CD_DEBUG("\n");
+    return setRefAccelerationRaw(0, accs[0]);
+}
+
+// --------------------------------------------------------------------------------
+
+bool TechnosoftIpos::setRefAccelerationsRaw(int n_joint, const int * joints, const double * accs)
+{
+    CD_DEBUG("\n");
+    return setRefAccelerationRaw(joints[0], accs[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getRefSpeedRaw(int j, double *ref)
+bool TechnosoftIpos::getRefSpeedRaw(int j, double * ref)
 {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
 
     return can->sdo()->upload<uint32_t>("Profile velocity", [=](uint32_t * data)
@@ -236,17 +272,25 @@ bool roboticslab::TechnosoftIpos::getRefSpeedRaw(int j, double *ref)
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getRefSpeedsRaw(double *spds)
+bool TechnosoftIpos::getRefSpeedsRaw(double * spds)
 {
-    CD_ERROR("\n");
-    return false;
+    CD_DEBUG("\n");
+    return getRefSpeedRaw(0, &spds[0]);
+}
+
+// --------------------------------------------------------------------------------
+
+bool TechnosoftIpos::getRefSpeedsRaw(int n_joint, const int * joints, double * spds)
+{
+    CD_DEBUG("\n");
+    return getRefSpeedRaw(joints[0], &spds[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getRefAccelerationRaw(int j, double *acc)
+bool TechnosoftIpos::getRefAccelerationRaw(int j, double * acc)
 {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
 
     return can->sdo()->upload<uint32_t>("Profile acceleration", [=](uint32_t * data)
@@ -261,17 +305,25 @@ bool roboticslab::TechnosoftIpos::getRefAccelerationRaw(int j, double *acc)
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getRefAccelerationsRaw(double *accs)
+bool TechnosoftIpos::getRefAccelerationsRaw(double * accs)
 {
-    CD_ERROR("\n");
-    return false;
+    CD_DEBUG("\n");
+    return getRefAccelerationRaw(0, &accs[0]);
+}
+
+// --------------------------------------------------------------------------------
+
+bool TechnosoftIpos::getRefAccelerationsRaw(int n_joint, const int * joints, double * accs)
+{
+    CD_DEBUG("\n");
+    return getRefAccelerationRaw(joints[0], &accs[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::stopRaw(int j)
+bool TechnosoftIpos::stopRaw(int j)
 {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
 
     return can->driveStatus()->requestTransition(DriveTransition::QUICK_STOP)
@@ -280,83 +332,25 @@ bool roboticslab::TechnosoftIpos::stopRaw(int j)
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::stopRaw()
+bool TechnosoftIpos::stopRaw()
 {
-    CD_ERROR("\n");
-    return false;
+    CD_DEBUG("\n");
+    return stopRaw(0);
 }
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::positionMoveRaw(const int n_joint, const int *joints, const double *refs)
+bool TechnosoftIpos::stopRaw(int n_joint, const int * joints)
 {
-    CD_WARNING("Missing implementation\n");
-    return true;
+    CD_DEBUG("\n");
+    return stopRaw(joints[0]);
 }
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)
+bool TechnosoftIpos::getTargetPositionRaw(int joint, double * ref)
 {
-    CD_WARNING("Missing implementation\n");
-    return true;
-}
-
-// --------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags)
-{
-    CD_WARNING("Missing implementation\n");
-    return true;
-}
-
-// --------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)
-{
-    CD_WARNING("Missing implementation\n");
-    return true;
-}
-
-// --------------------------------------------------------------------------------
-/*
-bool roboticslab::TechnosoftIpos::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
-{
-    return true;
-}
-*/
-
-// --------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)
-{
-    CD_WARNING("Missing implementation\n");
-    return true;
-}
-
-// --------------------------------------------------------------------------------
-
-/*
-bool roboticslab::TechnosoftIpos::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
-{
-    return true;
-}
-*/
-
-// --------------------------------------------------------------------------------
-
-/*
-bool roboticslab::TechnosoftIpos::stopRaw(const int n_joint, const int *joints)
-{
-    return true;
-}
-*/
-
-// --------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getTargetPositionRaw(const int joint, double *ref)
-{
-    CD_INFO("\n");
+    CD_DEBUG("\n");
     CHECK_JOINT(joint);
 
     return can->sdo()->upload<int32_t>("Target position", [=](int32_t * data)
@@ -366,16 +360,18 @@ bool roboticslab::TechnosoftIpos::getTargetPositionRaw(const int joint, double *
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getTargetPositionsRaw(double *refs)
+bool TechnosoftIpos::getTargetPositionsRaw(double * refs)
 {
-    CD_WARNING("Missing implementation\n");
-    return true;
+    CD_DEBUG("\n");
+    return getTargetPositionRaw(0, &refs[0]);
 }
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getTargetPositionsRaw(const int n_joint, const int *joints, double *refs)
+bool TechnosoftIpos::getTargetPositionsRaw(int n_joint, const int * joints, double * refs)
 {
-    CD_WARNING("Missing implementation\n");
-    return true;
+    CD_DEBUG("\n");
+    return getTargetPositionRaw(joints[0], &refs[0]);
 }
+
+// --------------------------------------------------------------------------------

@@ -2,18 +2,22 @@
 
 #include "TechnosoftIpos.hpp"
 
-// ------------------- IControlLimitsRaw Related ------------------------------------
+#include <ColorDebug.h>
 
-bool roboticslab::TechnosoftIpos::setLimitsRaw(int axis, double min, double max)
+using namespace roboticslab;
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::setLimitsRaw(int axis, double min, double max)
 {
-    CD_INFO("(%d, %f, %f)\n", axis, min, max);
+    CD_DEBUG("(%d, %f, %f)\n", axis, min, max);
     CHECK_JOINT(axis);
     return setLimitRaw(min, true) & setLimitRaw(max, false);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setLimitRaw(double limit, bool isMin)
+bool TechnosoftIpos::setLimitRaw(double limit, bool isMin)
 {
     std::string name = "Software position limit: ";
     uint8_t subindex;
@@ -35,16 +39,16 @@ bool roboticslab::TechnosoftIpos::setLimitRaw(double limit, bool isMin)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getLimitsRaw(int axis, double *min, double *max)
+bool TechnosoftIpos::getLimitsRaw(int axis, double * min, double * max)
 {
-    CD_INFO("(%d)\n", axis);
+    CD_DEBUG("(%d)\n", axis);
     CHECK_JOINT(axis);
     return getLimitRaw(min, true) & getLimitRaw(max, false);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getLimitRaw(double * limit, bool isMin)
+bool TechnosoftIpos::getLimitRaw(double * limit, bool isMin)
 {
     std::string name = "Software position limit: ";
     uint8_t subindex;
@@ -67,9 +71,9 @@ bool roboticslab::TechnosoftIpos::getLimitRaw(double * limit, bool isMin)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
+bool TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
 {
-    CD_INFO("(%d, %f, %f)\n", axis, min, max);
+    CD_DEBUG("(%d, %f, %f)\n", axis, min, max);
     CHECK_JOINT(axis);
 
     maxVel = max;
@@ -84,9 +88,9 @@ bool roboticslab::TechnosoftIpos::setVelLimitsRaw(int axis, double min, double m
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getVelLimitsRaw(int axis, double *min, double *max)
+bool TechnosoftIpos::getVelLimitsRaw(int axis, double * min, double * max)
 {
-    CD_INFO("(%d)\n", axis);
+    CD_DEBUG("(%d)\n", axis);
     CHECK_JOINT(axis);
 
     *min = -maxVel;

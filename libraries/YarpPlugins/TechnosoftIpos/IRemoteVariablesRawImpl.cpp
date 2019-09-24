@@ -2,9 +2,13 @@
 
 #include "TechnosoftIpos.hpp"
 
-// ------------------ IRemoteVariablesRaw Related ----------------------------------------
+#include <ColorDebug.h>
 
-bool roboticslab::TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle& val)
+using namespace roboticslab;
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & val)
 {
     CD_DEBUG("%s\n", key.c_str());
 
@@ -33,7 +37,7 @@ bool roboticslab::TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottle& val)
+bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val)
 {
     CD_DEBUG("%s\n", key.c_str());
 
@@ -89,7 +93,7 @@ bool roboticslab::TechnosoftIpos::setRemoteVariableRaw(std::string key, const ya
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getRemoteVariablesListRaw(yarp::os::Bottle* listOfKeys)
+bool TechnosoftIpos::getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys)
 {
     CD_DEBUG("\n");
 

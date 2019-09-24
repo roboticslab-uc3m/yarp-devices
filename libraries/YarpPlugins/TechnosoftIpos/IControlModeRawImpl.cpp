@@ -6,31 +6,35 @@
 
 #include <yarp/os/Vocab.h>
 
+#include <ColorDebug.h>
+
 #include "CanUtils.hpp"
 
-// ############################## IControlModeRaw Related ##############################
+using namespace roboticslab;
 
-bool roboticslab::TechnosoftIpos::setPositionModeRaw(int j)
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::setPositionModeRaw(int j)
 {
-    CD_INFO("(%d)\n", j);
+    CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
     return can->sdo()->download<int8_t>("Modes of Operation", 1, 0x6060);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setVelocityModeRaw(int j)
+bool TechnosoftIpos::setVelocityModeRaw(int j)
 {
-    CD_INFO("(%d)\n", j);
+    CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
     return can->sdo()->download<int8_t>("Modes of Operation", 3, 0x6060);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setTorqueModeRaw(int j)
+bool TechnosoftIpos::setTorqueModeRaw(int j)
 {
-    CD_INFO("(%d)\n", j);
+    CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
 
     return can->sdo()->download<uint16_t>("External Reference Type", 1, 0x201D)
@@ -40,9 +44,9 @@ bool roboticslab::TechnosoftIpos::setTorqueModeRaw(int j)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
+bool TechnosoftIpos::setPositionDirectModeRaw()
 {
-    CD_INFO("\n");
+    CD_DEBUG("\n");
 
     linInterpBuffer->resetIntegrityCounter();
 
@@ -86,9 +90,9 @@ bool roboticslab::TechnosoftIpos::setPositionDirectModeRaw()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getControlModeRaw(int j, int *mode)
+bool TechnosoftIpos::getControlModeRaw(int j, int * mode)
 {
-    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
+    //CD_DEBUG("(%d)\n",j); //-- Too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
 
     bool ok = true;
@@ -100,8 +104,9 @@ bool roboticslab::TechnosoftIpos::getControlModeRaw(int j, int *mode)
     return ok;
 }
 
-/******************* getControlModeRaw Splited **********************/
-bool roboticslab::TechnosoftIpos::getControlModeRaw1(int *mode)
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::getControlModeRaw1(int * mode)
 {
     int8_t data;
 
@@ -159,8 +164,9 @@ bool roboticslab::TechnosoftIpos::getControlModeRaw1(int *mode)
     return true;
 }
 
-//*************************************************************
-bool roboticslab::TechnosoftIpos::getControlModeRaw2()
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::getControlModeRaw2()
 {
     uint32_t data;
 
@@ -312,7 +318,9 @@ bool roboticslab::TechnosoftIpos::getControlModeRaw2()
     return true;
 }
 
-bool roboticslab::TechnosoftIpos::getControlModeRaw3()
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::getControlModeRaw3()
 {
     uint16_t data;
 
@@ -391,7 +399,9 @@ bool roboticslab::TechnosoftIpos::getControlModeRaw3()
     return true;
 }
 
-bool roboticslab::TechnosoftIpos::getControlModeRaw4()
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::getControlModeRaw4()
 {
     uint16_t data;
 
@@ -460,15 +470,7 @@ bool roboticslab::TechnosoftIpos::getControlModeRaw4()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getControlModesRaw(int *modes)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getControlModesRaw(const int n_joint, const int *joints, int *modes)
+bool TechnosoftIpos::getControlModesRaw(int * modes)
 {
     CD_DEBUG("\n");
     return getControlModeRaw(0, &modes[0]);
@@ -476,7 +478,15 @@ bool roboticslab::TechnosoftIpos::getControlModesRaw(const int n_joint, const in
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setControlModeRaw(const int j, const int mode)
+bool TechnosoftIpos::getControlModesRaw(int n_joint, const int * joints, int * modes)
+{
+    CD_DEBUG("\n");
+    return getControlModeRaw(joints[0], &modes[0]);
+}
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::setControlModeRaw(int j, int mode)
 {
     CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
     CHECK_JOINT(j);
@@ -502,16 +512,18 @@ bool roboticslab::TechnosoftIpos::setControlModeRaw(const int j, const int mode)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setControlModesRaw(const int n_joint, const int *joints, int *modes)
+bool TechnosoftIpos::setControlModesRaw(int * modes)
 {
-    CD_DEBUG("(%d)\n", n_joint);
+    CD_DEBUG("\n");
     return setControlModeRaw(0, modes[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setControlModesRaw(int *modes)
+bool TechnosoftIpos::setControlModesRaw(int n_joint, const int * joints, int * modes)
 {
     CD_DEBUG("\n");
-    return setControlModeRaw(0, modes[0]);
+    return setControlModeRaw(joints[0], modes[0]);
 }
+
+// -----------------------------------------------------------------------------

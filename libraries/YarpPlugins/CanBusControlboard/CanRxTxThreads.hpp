@@ -73,13 +73,13 @@ class CanReaderThread : public CanReaderWriterThread
 public:
     CanReaderThread(const std::string & id,
             const std::map<int, int> & idxFromCanId,
-            const std::vector<ICanBusSharer *> & iCanBusSharer);
+            const std::vector<ICanBusSharer *> & iCanBusSharers);
 
     virtual void run();
 
 private:
-    const std::map<int, int> & idxFromCanId;
-    const std::vector<ICanBusSharer *> & iCanBusSharer;
+    std::map<int, int> idxFromCanId;
+    std::vector<ICanBusSharer *> iCanBusSharers;
 };
 
 /**

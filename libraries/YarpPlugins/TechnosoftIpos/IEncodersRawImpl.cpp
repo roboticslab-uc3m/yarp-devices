@@ -2,26 +2,40 @@
 
 #include "TechnosoftIpos.hpp"
 
-// -------------------------- IEncodersRaw Related ----------------------------------
+#include <ColorDebug.h>
 
-bool roboticslab::TechnosoftIpos::resetEncoderRaw(int j)
-{
-    CD_INFO("(%d)\n", j);
-    CHECK_JOINT(j);
-    return setEncoderRaw(j, 0);
-}
+using namespace roboticslab;
 
-bool roboticslab::TechnosoftIpos::resetEncodersRaw()
+// --------------------------------------------------------------------------------
+
+bool TechnosoftIpos::getAxes(int *ax)
 {
-    CD_ERROR("Missing implementation\n");
-    return false;
+    *ax = 1;
+    return true;
 }
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setEncoderRaw(int j, double val)
+bool TechnosoftIpos::resetEncoderRaw(int j)
 {
-    CD_INFO("(%d, %f)\n", j, val);
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return setEncoderRaw(j, 0);
+}
+
+// -----------------------------------------------------------------------------------
+
+bool TechnosoftIpos::resetEncodersRaw()
+{
+    CD_DEBUG("\n");
+    return resetEncoderRaw(0);
+}
+
+// -----------------------------------------------------------------------------------
+
+bool TechnosoftIpos::setEncoderRaw(int j, double val)
+{
+    CD_DEBUG("(%d, %f)\n", j, val);
     CHECK_JOINT(j);
     int32_t data = degreesToInternalUnits(val);
 
@@ -36,17 +50,17 @@ bool roboticslab::TechnosoftIpos::setEncoderRaw(int j, double val)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setEncodersRaw(const double *vals)
+bool TechnosoftIpos::setEncodersRaw(const double *vals)
 {
-    CD_ERROR("Missing implementation\n");
-    return false;
+    CD_DEBUG("\n");
+    return setEncoderRaw(0, vals[0]);
 }
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getEncoderRaw(int j, double *v)
+bool TechnosoftIpos::getEncoderRaw(int j, double *v)
 {
-    //CD_INFO("%d\n", j);  //-- Too verbose in stream.
+    //CD_DEBUG("%d\n", j); //-- Too verbose in stream.
     CHECK_JOINT(j);
     *v = lastEncoderRead.queryPosition();
     return true;
@@ -54,17 +68,17 @@ bool roboticslab::TechnosoftIpos::getEncoderRaw(int j, double *v)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getEncodersRaw(double *encs)
+bool TechnosoftIpos::getEncodersRaw(double *encs)
 {
-    CD_ERROR("Missing implementation\n");
-    return false;
+    CD_DEBUG("\n");
+    return getEncoderRaw(0, &encs[0]);
 }
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getEncoderSpeedRaw(int j, double *sp)
+bool TechnosoftIpos::getEncoderSpeedRaw(int j, double *sp)
 {
-    //CD_INFO("(%d)\n", j);  //-- Too verbose in controlboardwrapper2 stream.
+    //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream.
     CHECK_JOINT(j);
     *sp = lastEncoderRead.querySpeed();
     return true;
@@ -72,17 +86,17 @@ bool roboticslab::TechnosoftIpos::getEncoderSpeedRaw(int j, double *sp)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getEncoderSpeedsRaw(double *spds)
+bool TechnosoftIpos::getEncoderSpeedsRaw(double *spds)
 {
-    CD_ERROR("Missing implementation\n");
-    return false;
+    CD_DEBUG("\n");
+    return getEncoderSpeedRaw(0, &spds[0]);
 }
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getEncoderAccelerationRaw(int j, double *acc)
+bool TechnosoftIpos::getEncoderAccelerationRaw(int j, double *acc)
 {
-    //CD_INFO("(%d)\n", j);  //-- Too verbose in controlboardwrapper2 stream.
+    //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream.
     CHECK_JOINT(j);
     *acc = lastEncoderRead.queryAcceleration();
     return true;
@@ -90,8 +104,29 @@ bool roboticslab::TechnosoftIpos::getEncoderAccelerationRaw(int j, double *acc)
 
 // -----------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getEncoderAccelerationsRaw(double *accs)
+bool TechnosoftIpos::getEncoderAccelerationsRaw(double *accs)
 {
-    CD_ERROR("Missing implementation\n");
-    return false;
+    CD_DEBUG("\n");
+    return getEncoderAccelerationRaw(0, &accs[0]);
 }
+
+//---------------------------------------------------------------------------------------
+
+bool TechnosoftIpos::getEncoderTimedRaw(int j, double * enc, double * time)
+{
+    //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream.
+    CHECK_JOINT(j);
+    *enc =  lastEncoderRead.queryPosition();
+    *time = lastEncoderRead.queryTime();
+    return true;
+}
+
+// -----------------------------------------------------------------------------------
+
+bool TechnosoftIpos::getEncodersTimedRaw(double * encs, double * times)
+{
+    CD_DEBUG("\n");
+    return getEncoderTimedRaw(0, &encs[0], &times[0]);
+}
+
+// -----------------------------------------------------------------------------
