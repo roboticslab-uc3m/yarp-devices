@@ -59,7 +59,7 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
     {
         if (modes[i] == VOCAB_CM_POSITION_DIRECT)
         {
-            CD_ERROR("CAN ID %d currently in posd mode, cannot change config params right now.\n", iCanBusSharer[i]->getId());
+            CD_ERROR("CAN device currently in posd mode, cannot change config params right now.\n");
             return false;
         }
     }

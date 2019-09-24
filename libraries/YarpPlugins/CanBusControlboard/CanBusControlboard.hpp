@@ -3,21 +3,18 @@
 #ifndef __CAN_BUS_CONTROLBOARD_HPP__
 #define __CAN_BUS_CONTROLBOARD_HPP__
 
+#include <vector>
+
 #include <yarp/dev/CanBusInterface.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/PolyDriverList.h>
-
-#include <map>
-#include <string>
-#include <vector>
 
 #include <ColorDebug.h>
 
 #include "PositionDirectThread.hpp"
 #include "DeviceMapper.hpp"
 #include "CanRxTxThreads.hpp"
-#include "ICanBusSharer.hpp"
 
 #define CHECK_JOINT(j) do { int n = deviceMapper.getControlledAxes(); if ((j) < 0 || (j) > n - 1) return false; } while (0)
 
@@ -322,14 +319,12 @@ public:
 private:
 
     yarp::dev::PolyDriver canBusDevice;
-    yarp::dev::ICanBus* iCanBus;
+    yarp::dev::ICanBus * iCanBus;
 
     yarp::dev::PolyDriverList nodes;
-    std::vector< ICanBusSharer* > iCanBusSharer;
 
     DeviceMapper deviceMapper;
-    std::vector< int > motorIds;
-    std::map< int, int > idxFromCanId;
+    std::vector<int> motorIds;
 
     CanReaderThread * canReaderThread;
     CanWriterThread * canWriterThread;

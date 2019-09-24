@@ -10,10 +10,10 @@ using namespace roboticslab;
 
 CanReaderThread::CanReaderThread(const std::string & id,
         const std::map<int, int> & _idxFromCanId,
-        const std::vector<ICanBusSharer *> & _iCanBusSharer)
+        const std::vector<ICanBusSharer *> & _iCanBusSharers)
     : CanReaderWriterThread("read", id),
       idxFromCanId(_idxFromCanId),
-      iCanBusSharer(_iCanBusSharer)
+      iCanBusSharers(_iCanBusSharers)
 {}
 
 void CanReaderThread::run()
@@ -51,7 +51,7 @@ void CanReaderThread::run()
                 continue;
             }
 
-            iCanBusSharer[idxFromCanIdFound->second]->interpretMessage(msg);
+            iCanBusSharers[idxFromCanIdFound->second]->interpretMessage(msg);
         }
     }
 }
