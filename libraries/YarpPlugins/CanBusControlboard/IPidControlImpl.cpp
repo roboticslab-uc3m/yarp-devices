@@ -8,16 +8,49 @@
 
 using namespace roboticslab;
 
+namespace
+{
+    using pid_t = yarp::dev::PidControlTypeEnum;
+
+    template<typename... T_ref>
+    using single_mapping_fn = bool (yarp::dev::IPidControlRaw::*)(const pid_t &, int, T_ref...);
+
+    template<typename... T_ref>
+    bool mapSingleJoint(const DeviceMapper & dm, single_mapping_fn<T_ref...> fn, const pid_t & type, int j, T_ref... ref)
+    {
+        int localAxis;
+        yarp::dev::IPidControlRaw * p = dm.getDevice(j, &localAxis).iPidControlRaw;
+        return p ? (p->*fn)(type, localAxis, ref...) : false;
+    }
+
+    template<typename T_refs>
+    using full_mapping_fn = bool (yarp::dev::IPidControlRaw::*)(const pid_t &, T_refs *);
+
+    template<typename T_refs>
+    bool mapAllJoints(const DeviceMapper & dm, full_mapping_fn<T_refs> fn, const pid_t & type, T_refs * refs)
+    {
+        const int * localAxisOffsets;
+        const std::vector<RawDevice> & rawDevices = dm.getDevices(localAxisOffsets);
+
+        bool ok = true;
+
+        for (int i = 0; i < rawDevices.size(); i++)
+        {
+            yarp::dev::IPidControlRaw * p = rawDevices[i].iPidControlRaw;
+            ok &= p ? (p->*fn)(type, refs + localAxisOffsets[i]) : false;
+        }
+
+        return ok;
+    }
+}
+
 // -----------------------------------------------------------------------------
 
 bool CanBusControlboard::setPid(const yarp::dev::PidControlTypeEnum & pidtype, int j, const yarp::dev::Pid & pid)
 {
     CD_DEBUG("(%s, %d)\n", yarp::os::Vocab::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::IPidControlRaw * p = deviceMapper.getDevice(j, &localAxis).iPidControlRaw;
-    return p ? p->setPidRaw(pidtype, localAxis, pid) : false;
+    return mapSingleJoint<const yarp::dev::Pid &>(deviceMapper, &yarp::dev::IPidControlRaw::setPidRaw, pidtype, j, pid);
 }
 
 // -----------------------------------------------------------------------------
@@ -25,19 +58,7 @@ bool CanBusControlboard::setPid(const yarp::dev::PidControlTypeEnum & pidtype, i
 bool CanBusControlboard::setPids(const yarp::dev::PidControlTypeEnum & pidtype, const yarp::dev::Pid * pids)
 {
     CD_DEBUG("(%s)\n", yarp::os::Vocab::decode(pidtype).c_str());
-
-    const int * localAxisOffsets;
-    const std::vector<RawDevice> & rawDevices = deviceMapper.getDevices(localAxisOffsets);
-
-    bool ok = true;
-
-    for (int i = 0; i < rawDevices.size(); i++)
-    {
-        yarp::dev::IPidControlRaw * p = rawDevices[i].iPidControlRaw;
-        ok &= p ? p->setPidsRaw(pidtype, pids + localAxisOffsets[i]) : false;
-    }
-
-    return ok;
+    return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::setPidsRaw, pidtype, pids);
 }
 
 // -----------------------------------------------------------------------------
@@ -46,10 +67,7 @@ bool CanBusControlboard::setPidReference(const yarp::dev::PidControlTypeEnum & p
 {
     CD_DEBUG("(%s, %d, %f)\n", yarp::os::Vocab::decode(pidtype).c_str(), j, ref);
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::IPidControlRaw * p = deviceMapper.getDevice(j, &localAxis).iPidControlRaw;
-    return p ? p->setPidReferenceRaw(pidtype, localAxis, ref) : false;
+    return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::setPidReferenceRaw, pidtype, j, ref);
 }
 
 // -----------------------------------------------------------------------------
@@ -57,19 +75,7 @@ bool CanBusControlboard::setPidReference(const yarp::dev::PidControlTypeEnum & p
 bool CanBusControlboard::setPidReferences(const yarp::dev::PidControlTypeEnum & pidtype, const double * refs)
 {
     CD_DEBUG("(%s)\n", yarp::os::Vocab::decode(pidtype).c_str());
-
-    const int * localAxisOffsets;
-    const std::vector<RawDevice> & rawDevices = deviceMapper.getDevices(localAxisOffsets);
-
-    bool ok = true;
-
-    for (int i = 0; i < rawDevices.size(); i++)
-    {
-        yarp::dev::IPidControlRaw * p = rawDevices[i].iPidControlRaw;
-        ok &= p ? p->setPidReferencesRaw(pidtype, refs + localAxisOffsets[i]) : false;
-    }
-
-    return ok;
+    return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::setPidReferencesRaw, pidtype, refs);
 }
 
 // -----------------------------------------------------------------------------
@@ -78,10 +84,7 @@ bool CanBusControlboard::setPidErrorLimit(const yarp::dev::PidControlTypeEnum & 
 {
     CD_DEBUG("(%s, %d, %f)\n", yarp::os::Vocab::decode(pidtype).c_str(), j, limit);
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::IPidControlRaw * p = deviceMapper.getDevice(j, &localAxis).iPidControlRaw;
-    return p ? p->setPidErrorLimitRaw(pidtype, localAxis, limit) : false;
+    return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::setPidErrorLimitRaw, pidtype, j, limit);
 }
 
 // -----------------------------------------------------------------------------
@@ -89,19 +92,7 @@ bool CanBusControlboard::setPidErrorLimit(const yarp::dev::PidControlTypeEnum & 
 bool CanBusControlboard::setPidErrorLimits(const yarp::dev::PidControlTypeEnum & pidtype, const double * limits)
 {
     CD_DEBUG("(%s)\n", yarp::os::Vocab::decode(pidtype).c_str());
-
-    const int * localAxisOffsets;
-    const std::vector<RawDevice> & rawDevices = deviceMapper.getDevices(localAxisOffsets);
-
-    bool ok = true;
-
-    for (int i = 0; i < rawDevices.size(); i++)
-    {
-        yarp::dev::IPidControlRaw * p = rawDevices[i].iPidControlRaw;
-        ok &= p ? p->setPidErrorLimitsRaw(pidtype, limits + localAxisOffsets[i]) : false;
-    }
-
-    return ok;
+    return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::setPidErrorLimitsRaw, pidtype, limits);
 }
 
 // -----------------------------------------------------------------------------
@@ -110,10 +101,7 @@ bool CanBusControlboard::getPidError(const yarp::dev::PidControlTypeEnum & pidty
 {
     CD_DEBUG("(%s, %d)\n", yarp::os::Vocab::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::IPidControlRaw * p = deviceMapper.getDevice(j, &localAxis).iPidControlRaw;
-    return p ? p->getPidErrorRaw(pidtype, localAxis, err) : false;
+    return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::getPidErrorRaw, pidtype, j, err);
 }
 
 // -----------------------------------------------------------------------------
@@ -121,19 +109,7 @@ bool CanBusControlboard::getPidError(const yarp::dev::PidControlTypeEnum & pidty
 bool CanBusControlboard::getPidErrors(const yarp::dev::PidControlTypeEnum & pidtype, double * errs)
 {
     CD_DEBUG("(%s)\n", yarp::os::Vocab::decode(pidtype).c_str());
-
-    const int * localAxisOffsets;
-    const std::vector<RawDevice> & rawDevices = deviceMapper.getDevices(localAxisOffsets);
-
-    bool ok = true;
-
-    for (int i = 0; i < rawDevices.size(); i++)
-    {
-        yarp::dev::IPidControlRaw * p = rawDevices[i].iPidControlRaw;
-        ok &= p ? p->getPidErrorsRaw(pidtype, errs + localAxisOffsets[i]) : false;
-    }
-
-    return ok;
+    return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::getPidErrorsRaw, pidtype, errs);
 }
 
 // -----------------------------------------------------------------------------
@@ -142,10 +118,7 @@ bool CanBusControlboard::getPidOutput(const yarp::dev::PidControlTypeEnum & pidt
 {
     CD_DEBUG("(%s, %d)\n", yarp::os::Vocab::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::IPidControlRaw * p = deviceMapper.getDevice(j, &localAxis).iPidControlRaw;
-    return p ? p->getPidOutputRaw(pidtype, localAxis, out) : false;
+    return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::getPidOutputRaw, pidtype, j, out);
 }
 
 // -----------------------------------------------------------------------------
@@ -153,19 +126,7 @@ bool CanBusControlboard::getPidOutput(const yarp::dev::PidControlTypeEnum & pidt
 bool CanBusControlboard::getPidOutputs(const yarp::dev::PidControlTypeEnum & pidtype, double * outs)
 {
     CD_DEBUG("(%s)\n", yarp::os::Vocab::decode(pidtype).c_str());
-
-    const int * localAxisOffsets;
-    const std::vector<RawDevice> & rawDevices = deviceMapper.getDevices(localAxisOffsets);
-
-    bool ok = true;
-
-    for (int i = 0; i < rawDevices.size(); i++)
-    {
-        yarp::dev::IPidControlRaw * p = rawDevices[i].iPidControlRaw;
-        ok &= p ? p->getPidOutputsRaw(pidtype, outs + localAxisOffsets[i]) : false;
-    }
-
-    return ok;
+    return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::getPidOutputsRaw, pidtype, outs);
 }
 
 // -----------------------------------------------------------------------------
@@ -174,10 +135,7 @@ bool CanBusControlboard::getPid(const yarp::dev::PidControlTypeEnum & pidtype, i
 {
     CD_DEBUG("(%s, %d)\n", yarp::os::Vocab::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::IPidControlRaw * p = deviceMapper.getDevice(j, &localAxis).iPidControlRaw;
-    return p ? p->getPidRaw(pidtype, localAxis, pid) : false;
+    return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::getPidRaw, pidtype, j, pid);
 }
 
 // -----------------------------------------------------------------------------
@@ -185,19 +143,7 @@ bool CanBusControlboard::getPid(const yarp::dev::PidControlTypeEnum & pidtype, i
 bool CanBusControlboard::getPids(const yarp::dev::PidControlTypeEnum & pidtype, yarp::dev::Pid * pids)
 {
     CD_DEBUG("(%s)\n", yarp::os::Vocab::decode(pidtype).c_str());
-
-    const int * localAxisOffsets;
-    const std::vector<RawDevice> & rawDevices = deviceMapper.getDevices(localAxisOffsets);
-
-    bool ok = true;
-
-    for (int i = 0; i < rawDevices.size(); i++)
-    {
-        yarp::dev::IPidControlRaw * p = rawDevices[i].iPidControlRaw;
-        ok &= p ? p->getPidsRaw(pidtype, pids + localAxisOffsets[i]) : false;
-    }
-
-    return ok;
+    return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::getPidsRaw, pidtype, pids);
 }
 
 // -----------------------------------------------------------------------------
@@ -206,10 +152,7 @@ bool CanBusControlboard::getPidReference(const yarp::dev::PidControlTypeEnum & p
 {
     CD_DEBUG("(%s, %d)\n", yarp::os::Vocab::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::IPidControlRaw * p = deviceMapper.getDevice(j, &localAxis).iPidControlRaw;
-    return p ? p->getPidReferenceRaw(pidtype, localAxis, ref) : false;
+    return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::getPidReferenceRaw, pidtype, j, ref);
 }
 
 // -----------------------------------------------------------------------------
@@ -217,19 +160,7 @@ bool CanBusControlboard::getPidReference(const yarp::dev::PidControlTypeEnum & p
 bool CanBusControlboard::getPidReferences(const yarp::dev::PidControlTypeEnum & pidtype, double * refs)
 {
     CD_DEBUG("(%s)\n", yarp::os::Vocab::decode(pidtype).c_str());
-
-    const int * localAxisOffsets;
-    const std::vector<RawDevice> & rawDevices = deviceMapper.getDevices(localAxisOffsets);
-
-    bool ok = true;
-
-    for (int i = 0; i < rawDevices.size(); i++)
-    {
-        yarp::dev::IPidControlRaw * p = rawDevices[i].iPidControlRaw;
-        ok &= p ? p->getPidReferencesRaw(pidtype, refs + localAxisOffsets[i]) : false;
-    }
-
-    return ok;
+    return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::getPidReferencesRaw, pidtype, refs);
 }
 
 // -----------------------------------------------------------------------------
@@ -238,10 +169,7 @@ bool CanBusControlboard::getPidErrorLimit(const yarp::dev::PidControlTypeEnum & 
 {
     CD_DEBUG("(%s, %d)\n", yarp::os::Vocab::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::IPidControlRaw * p = deviceMapper.getDevice(j, &localAxis).iPidControlRaw;
-    return p ? p->getPidErrorLimitRaw(pidtype, localAxis, limit) : false;
+    return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::getPidErrorLimitRaw, pidtype, j, limit);
 }
 
 // -----------------------------------------------------------------------------
@@ -249,19 +177,7 @@ bool CanBusControlboard::getPidErrorLimit(const yarp::dev::PidControlTypeEnum & 
 bool CanBusControlboard::getPidErrorLimits(const yarp::dev::PidControlTypeEnum & pidtype, double * limits)
 {
     CD_DEBUG("(%s)\n", yarp::os::Vocab::decode(pidtype).c_str());
-
-    const int * localAxisOffsets;
-    const std::vector<RawDevice> & rawDevices = deviceMapper.getDevices(localAxisOffsets);
-
-    bool ok = true;
-
-    for (int i = 0; i < rawDevices.size(); i++)
-    {
-        yarp::dev::IPidControlRaw * p = rawDevices[i].iPidControlRaw;
-        ok &= p ? p->getPidErrorLimitsRaw(pidtype, limits + localAxisOffsets[i]) : false;
-    }
-
-    return ok;
+    return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::getPidErrorLimitsRaw, pidtype, limits);
 }
 
 // -----------------------------------------------------------------------------
@@ -270,10 +186,7 @@ bool CanBusControlboard::resetPid(const yarp::dev::PidControlTypeEnum & pidtype,
 {
     CD_DEBUG("(%s, %d)\n", yarp::os::Vocab::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::IPidControlRaw * p = deviceMapper.getDevice(j, &localAxis).iPidControlRaw;
-    return p ? p->resetPidRaw(pidtype, localAxis) : false;
+    return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::resetPidRaw, pidtype, j);
 }
 
 // -----------------------------------------------------------------------------
@@ -282,10 +195,7 @@ bool CanBusControlboard::disablePid(const yarp::dev::PidControlTypeEnum & pidtyp
 {
     CD_DEBUG("(%s, %d)\n", yarp::os::Vocab::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::IPidControlRaw * p = deviceMapper.getDevice(j, &localAxis).iPidControlRaw;
-    return p ? p->disablePidRaw(pidtype, localAxis) : false;
+    return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::disablePidRaw, pidtype, j);
 }
 
 // -----------------------------------------------------------------------------
@@ -294,10 +204,7 @@ bool CanBusControlboard::enablePid(const yarp::dev::PidControlTypeEnum & pidtype
 {
     CD_DEBUG("(%s, %d)\n", yarp::os::Vocab::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::IPidControlRaw * p = deviceMapper.getDevice(j, &localAxis).iPidControlRaw;
-    return p ? p->enablePidRaw(pidtype, localAxis) : false;
+    return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::enablePidRaw, pidtype, j);
 }
 
 // -----------------------------------------------------------------------------
@@ -306,10 +213,7 @@ bool CanBusControlboard::setPidOffset(const yarp::dev::PidControlTypeEnum & pidt
 {
     CD_DEBUG("(%s, %d, %f)\n", yarp::os::Vocab::decode(pidtype).c_str(), j, v);
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::IPidControlRaw * p = deviceMapper.getDevice(j, &localAxis).iPidControlRaw;
-    return p ? p->setPidOffsetRaw(pidtype, localAxis, v) : false;
+    return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::setPidOffsetRaw, pidtype, j, v);
 }
 
 // -----------------------------------------------------------------------------
@@ -318,10 +222,7 @@ bool CanBusControlboard::isPidEnabled(const yarp::dev::PidControlTypeEnum & pidt
 {
     CD_DEBUG("(%s, %d)\n", yarp::os::Vocab::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::IPidControlRaw * p = deviceMapper.getDevice(j, &localAxis).iPidControlRaw;
-    return p ? p->isPidEnabledRaw(pidtype, localAxis, enabled) : false;
+    return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::isPidEnabledRaw, pidtype, j, enabled);
 }
 
 // -----------------------------------------------------------------------------
