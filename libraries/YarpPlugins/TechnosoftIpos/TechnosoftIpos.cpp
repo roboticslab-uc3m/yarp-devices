@@ -4,23 +4,25 @@
 
 #include "CanUtils.hpp"
 
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::sendLinearInterpolationTarget()
+bool TechnosoftIpos::sendLinearInterpolationTarget()
 {
     return can->rpdo3()->write<uint64_t>(linInterpBuffer->makeDataRecord());
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::sendLinearInterpolationStart()
+bool TechnosoftIpos::sendLinearInterpolationStart()
 {
     return can->rpdo1()->write<uint16_t>(0x001F);
 }
 
 // -----------------------------------------------------------------------------
 
-roboticslab::EncoderRead::EncoderRead(double initialPos)
+EncoderRead::EncoderRead(double initialPos)
     : lastPosition(initialPos),
       nextToLastPosition(initialPos),
       lastSpeed(0.0),
@@ -32,7 +34,7 @@ roboticslab::EncoderRead::EncoderRead(double initialPos)
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::EncoderRead::reset(double pos)
+void EncoderRead::reset(double pos)
 {
     std::lock_guard<std::mutex> guard(encoderMutex);
     lastPosition = nextToLastPosition = pos;
@@ -41,7 +43,7 @@ void roboticslab::EncoderRead::reset(double pos)
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::EncoderRead::update(double newPos, double newTime)
+void EncoderRead::update(double newPos, double newTime)
 {
     std::lock_guard<std::mutex> guard(encoderMutex);
 
@@ -68,7 +70,7 @@ void roboticslab::EncoderRead::update(double newPos, double newTime)
 
 // -----------------------------------------------------------------------------
 
-double roboticslab::EncoderRead::queryPosition() const
+double EncoderRead::queryPosition() const
 {
     std::lock_guard<std::mutex> guard(encoderMutex);
     return lastPosition;
@@ -76,7 +78,7 @@ double roboticslab::EncoderRead::queryPosition() const
 
 // -----------------------------------------------------------------------------
 
-double roboticslab::EncoderRead::querySpeed() const
+double EncoderRead::querySpeed() const
 {
     std::lock_guard<std::mutex> guard(encoderMutex);
     return lastSpeed;
@@ -84,7 +86,7 @@ double roboticslab::EncoderRead::querySpeed() const
 
 // -----------------------------------------------------------------------------
 
-double roboticslab::EncoderRead::queryAcceleration() const
+double EncoderRead::queryAcceleration() const
 {
     std::lock_guard<std::mutex> guard(encoderMutex);
     return lastAcceleration;
@@ -92,7 +94,7 @@ double roboticslab::EncoderRead::queryAcceleration() const
 
 // -----------------------------------------------------------------------------
 
-double roboticslab::EncoderRead::queryTime() const
+double EncoderRead::queryTime() const
 {
     std::lock_guard<std::mutex> guard(encoderMutex);
     return lastStamp.getTime();
@@ -100,7 +102,7 @@ double roboticslab::EncoderRead::queryTime() const
 
 // -----------------------------------------------------------------------------
 
-std::string roboticslab::TechnosoftIposEmcy::codeToMessage(std::uint16_t code)
+std::string TechnosoftIposEmcy::codeToMessage(std::uint16_t code)
 {
     switch (code)
     {

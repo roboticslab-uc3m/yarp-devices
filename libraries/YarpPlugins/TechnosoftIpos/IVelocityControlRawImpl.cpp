@@ -2,11 +2,15 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <ColorDebug.h>
+
 #include "CanUtils.hpp"
 
-// ######################## IVelocityControlRaw Related #############################
+using namespace roboticslab;
 
-bool roboticslab::TechnosoftIpos::velocityMoveRaw(int j, double sp)
+// ----------------------------------------------------------------------------------
+
+bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
 {
     CD_DEBUG("(%d, %f)\n", j, sp);
     CHECK_JOINT(j);
@@ -29,23 +33,23 @@ bool roboticslab::TechnosoftIpos::velocityMoveRaw(int j, double sp)
 
 // ----------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::velocityMoveRaw(const double *sp)
+bool TechnosoftIpos::velocityMoveRaw(const double * sp)
 {
-    CD_ERROR("Missing implementation\n");
-    return false;
+    CD_DEBUG("\n");
+    return velocityMoveRaw(0, sp[0]);
 }
 
 // ----------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
+bool TechnosoftIpos::velocityMoveRaw(int n_joint, const int * joints, const double * spds)
 {
-    CD_DEBUG("Missing implementation\n");
-    return true;
+    CD_DEBUG("\n");
+    return velocityMoveRaw(joints[0], spds[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getRefVelocityRaw(const int joint, double *vel)
+bool TechnosoftIpos::getRefVelocityRaw(int joint, double * vel)
 {
     CD_DEBUG("(%d)\n",joint);
     CHECK_JOINT(joint);
@@ -62,42 +66,18 @@ bool roboticslab::TechnosoftIpos::getRefVelocityRaw(const int joint, double *vel
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getRefVelocitiesRaw(double *vels)
+bool TechnosoftIpos::getRefVelocitiesRaw(double * vels)
 {
-    CD_WARNING("Missing implementation\n");
-    return true;
+    CD_DEBUG("\n");
+    return getRefVelocityRaw(0, &vels[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels)
+bool TechnosoftIpos::getRefVelocitiesRaw(int n_joint, const int * joints, double * vels)
 {
-    CD_WARNING("Missing implementation\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
-{
-    CD_WARNING("Missing implementation\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
-{
-    CD_WARNING("Missing implementation\n");
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::stopRaw(const int n_joint, const int *joints)
-{
-    CD_WARNING("Missing implementation\n");
-    return true;
+    CD_DEBUG("\n");
+    return getRefVelocityRaw(joints[0], &vels[0]);
 }
 
 // -----------------------------------------------------------------------------

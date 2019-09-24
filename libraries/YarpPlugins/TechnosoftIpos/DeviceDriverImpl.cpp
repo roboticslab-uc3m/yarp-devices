@@ -7,9 +7,11 @@
 
 #include <ColorDebug.h>
 
+using namespace roboticslab;
+
 namespace
 {
-    void interpretPtEmcy(uint16_t status, int canId, const roboticslab::LinearInterpolationBuffer * buffer)
+    void interpretPtEmcy(uint16_t status, int canId, const LinearInterpolationBuffer * buffer)
     {
         CD_INFO("Interpolated position mode status. canId: %d.\n", canId);
         std::bitset<16> bits(status);
@@ -66,8 +68,9 @@ namespace
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
+bool TechnosoftIpos::open(yarp::os::Searchable & config)
 {
+    CD_DEBUG("%s\n", config.toString().c_str());
 
     // -- .ini parameters (in order)
     int canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt32();
@@ -202,7 +205,7 @@ bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::close()
+bool TechnosoftIpos::close()
 {
     CD_INFO("\n");
 

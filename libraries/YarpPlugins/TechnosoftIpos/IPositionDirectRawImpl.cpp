@@ -2,35 +2,38 @@
 
 #include "TechnosoftIpos.hpp"
 
-// ------------------ IPositionDirect Related ----------------------------------
+#include <ColorDebug.h>
 
-bool roboticslab::TechnosoftIpos::setPositionRaw(int j, double ref)
+using namespace roboticslab;
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::setPositionRaw(int j, double ref)
 {
     CD_DEBUG("(%d, %f)\n", j, ref);
     CHECK_JOINT(j);
     linInterpBuffer->updateTarget(ref);
     return true;
 }
-
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setPositionsRaw(const int n_joint, const int *joints, const double *refs)
+bool TechnosoftIpos::setPositionsRaw(const double * refs)
 {
-    CD_WARNING("Not implemented.\n");
-    return false;
+    CD_DEBUG("\n");
+    return setPositionRaw(0, refs[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setPositionsRaw(const double *refs)
+bool TechnosoftIpos::setPositionsRaw(int n_joint, const int * joints, const double * refs)
 {
-    CD_WARNING("Not implemented.\n");
-    return false;
+    CD_DEBUG("\n");
+    return setPositionRaw(joints[0], refs[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getRefPositionRaw(const int joint, double *ref)
+bool TechnosoftIpos::getRefPositionRaw(int joint, double * ref)
 {
     CD_DEBUG("(%d)\n", joint);
     CHECK_JOINT(joint);
@@ -40,18 +43,18 @@ bool roboticslab::TechnosoftIpos::getRefPositionRaw(const int joint, double *ref
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getRefPositionsRaw(double *refs)
+bool TechnosoftIpos::getRefPositionsRaw(double * refs)
 {
-    CD_WARNING("Not implemented.\n");
-    return false;
+    CD_DEBUG("\n");
+    return getRefPositionRaw(0, &refs[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getRefPositionsRaw(const int n_joint, const int *joints, double *refs)
+bool TechnosoftIpos::getRefPositionsRaw(int n_joint, const int * joints, double * refs)
 {
-    CD_WARNING("Not implemented.\n");
-    return false;
+    CD_DEBUG("\n");
+    return getRefPositionRaw(joints[0], &refs[0]);
 }
 
 // -----------------------------------------------------------------------------

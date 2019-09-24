@@ -4,7 +4,11 @@
 
 #include <bitset>
 
+#include <ColorDebug.h>
+
 #include "CanUtils.hpp"
+
+using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
@@ -138,14 +142,14 @@ namespace
 
 // -----------------------------------------------------------------------------
 
-unsigned int roboticslab::TechnosoftIpos::getId()
+unsigned int TechnosoftIpos::getId()
 {
     return can->getId();
 }
 
 // -----------------------------------------------------------------------------
 
-std::vector<unsigned int> roboticslab::TechnosoftIpos::getAdditionalIds()
+std::vector<unsigned int> TechnosoftIpos::getAdditionalIds()
 {
     if (iExternalEncoderCanBusSharer)
     {
@@ -157,7 +161,7 @@ std::vector<unsigned int> roboticslab::TechnosoftIpos::getAdditionalIds()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::registerSender(CanSenderDelegate * sender)
+bool TechnosoftIpos::registerSender(CanSenderDelegate * sender)
 {
     can->configureSender(sender);
     return iExternalEncoderCanBusSharer && iExternalEncoderCanBusSharer->registerSender(sender);
@@ -165,7 +169,7 @@ bool roboticslab::TechnosoftIpos::registerSender(CanSenderDelegate * sender)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::initialize()
+bool TechnosoftIpos::initialize()
 {
     if (iExternalEncoderCanBusSharer && !iExternalEncoderCanBusSharer->initialize())
     {
@@ -254,35 +258,35 @@ bool roboticslab::TechnosoftIpos::initialize()
 /** -- Start Remote Node: Used to change NMT state of one or all NMT slaves to Operational.
  PDO communication will beallowed. */
 
-bool roboticslab::TechnosoftIpos::start()
+bool TechnosoftIpos::start()
 {
     return can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::readyToSwitchOn()
+bool TechnosoftIpos::readyToSwitchOn()
 {
     return can->driveStatus()->requestTransition(DriveTransition::SHUTDOWN);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::switchOn()
+bool TechnosoftIpos::switchOn()
 {
     return can->driveStatus()->requestTransition(DriveTransition::SWITCH_ON);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::enable()
+bool TechnosoftIpos::enable()
 {
     return can->driveStatus()->requestTransition(DriveTransition::ENABLE_OPERATION);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::recoverFromError()
+bool TechnosoftIpos::recoverFromError()
 {
     //*************************************************************
     //j//uint8_t msg_recover[]={0x23,0xFF}; // Control word 6040
@@ -302,7 +306,7 @@ bool roboticslab::TechnosoftIpos::recoverFromError()
     In this state the drives perform a software reset and enter the pre-operational state.
  **/
 
-bool roboticslab::TechnosoftIpos::resetNodes()
+bool TechnosoftIpos::resetNodes()
 {
     // NMT Reset Node (Manual 4.1.2.3)
     //uint8_t msg_resetNodes[] = {0x81,0x00};
@@ -315,7 +319,7 @@ bool roboticslab::TechnosoftIpos::resetNodes()
  * In this state the drives resets their communication and enter the pre-operational state.
  */
 
-bool roboticslab::TechnosoftIpos::resetCommunication()
+bool TechnosoftIpos::resetCommunication()
 {
     return can->nmt()->issueServiceCommand(NmtService::RESET_COMMUNICATION);
 }
@@ -326,7 +330,7 @@ bool roboticslab::TechnosoftIpos::resetCommunication()
     In this state the drives perform a software reset and enter the pre-operational state.
  **/
 
-bool roboticslab::TechnosoftIpos::resetNode(int id)
+bool TechnosoftIpos::resetNode(int id)
 {
     return can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
 }
@@ -334,7 +338,7 @@ bool roboticslab::TechnosoftIpos::resetNode(int id)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage & message)
+bool TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage & message)
 {
     if (iExternalEncoderCanBusSharer && message.getId() == iExternalEncoderCanBusSharer->getId())
     {
