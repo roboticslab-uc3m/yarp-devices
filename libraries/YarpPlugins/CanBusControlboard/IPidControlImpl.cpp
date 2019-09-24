@@ -325,4 +325,3 @@ bool CanBusControlboard::isPidEnabled(const yarp::dev::PidControlTypeEnum & pidt
 }
 
 // -----------------------------------------------------------------------------
-

@@ -14,7 +14,7 @@ bool CanBusControlboard::getControlMode(int j, int * mode)
 {
     //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
-    return deviceMapper.singleJointMapping(j, mode, &yarp::dev::IControlModeRaw::getControlModeRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IControlModeRaw::getControlModeRaw, j, mode);
 }
 
 // -----------------------------------------------------------------------------
@@ -22,7 +22,7 @@ bool CanBusControlboard::getControlMode(int j, int * mode)
 bool CanBusControlboard::getControlModes(int * modes)
 {
     //CD_DEBUG("\n"); //-- Too verbose in controlboardwrapper2 stream
-    return deviceMapper.fullJointMapping(modes, &yarp::dev::IControlModeRaw::getControlModesRaw);
+    return deviceMapper.mapAllJoints(&yarp::dev::IControlModeRaw::getControlModesRaw, modes);
 }
 
 // -----------------------------------------------------------------------------
@@ -30,7 +30,7 @@ bool CanBusControlboard::getControlModes(int * modes)
 bool CanBusControlboard::getControlModes(int n_joint, const int * joints, int * modes)
 {
     CD_DEBUG("\n");
-    return deviceMapper.multiJointMapping(n_joint, joints, modes, &yarp::dev::IControlModeRaw::getControlModesRaw);
+    return deviceMapper.mapJointGroup(&yarp::dev::IControlModeRaw::getControlModesRaw, n_joint, joints, modes);
 }
 
 // -----------------------------------------------------------------------------
@@ -40,7 +40,7 @@ bool CanBusControlboard::setControlMode(int j, int mode)
     CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
     CHECK_JOINT(j);
 
-    if (!deviceMapper.singleJointMapping(j, mode, &yarp::dev::IControlModeRaw::setControlModeRaw))
+    if (!deviceMapper.mapSingleJoint(&yarp::dev::IControlModeRaw::setControlModeRaw, j, mode))
     {
         return false;
     }
@@ -55,7 +55,7 @@ bool CanBusControlboard::setControlModes(int * modes)
 {
     CD_DEBUG("\n");
 
-    if (!deviceMapper.fullJointMapping(modes, &yarp::dev::IControlModeRaw::setControlModesRaw))
+    if (!deviceMapper.mapAllJoints(&yarp::dev::IControlModeRaw::setControlModesRaw, modes))
     {
         return false;
     }
@@ -74,7 +74,7 @@ bool CanBusControlboard::setControlModes(int n_joint, const int * joints, int * 
 {
     CD_DEBUG("(%d)\n",n_joint);
 
-    if (!deviceMapper.multiJointMapping(n_joint, joints, modes, &yarp::dev::IControlModeRaw::setControlModesRaw))
+    if (!deviceMapper.mapJointGroup(&yarp::dev::IControlModeRaw::setControlModesRaw, n_joint, joints, modes))
 
     for (int i = 0; i < n_joint; i++)
     {

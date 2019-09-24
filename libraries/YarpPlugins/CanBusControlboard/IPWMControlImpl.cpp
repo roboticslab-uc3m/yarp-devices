@@ -12,7 +12,7 @@ bool CanBusControlboard::setRefDutyCycle(int m, double ref)
 {
     CD_DEBUG("(%d, %f)\n", m, ref);
     CHECK_JOINT(m);
-    return deviceMapper.singleJointMapping(m, ref, &yarp::dev::IPWMControlRaw::setRefDutyCycleRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IPWMControlRaw::setRefDutyCycleRaw, m, ref);
 }
 
 // -----------------------------------------------------------------------------
@@ -20,7 +20,7 @@ bool CanBusControlboard::setRefDutyCycle(int m, double ref)
 bool CanBusControlboard::setRefDutyCycles(const double * refs)
 {
     CD_DEBUG("\n");
-    return deviceMapper.fullJointMapping(refs, &yarp::dev::IPWMControlRaw::setRefDutyCyclesRaw);
+    return deviceMapper.mapAllJoints(&yarp::dev::IPWMControlRaw::setRefDutyCyclesRaw, refs);
 }
 
 // -----------------------------------------------------------------------------
@@ -29,7 +29,7 @@ bool CanBusControlboard::getRefDutyCycle(int m, double * ref)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
-    return deviceMapper.singleJointMapping(m, ref, &yarp::dev::IPWMControlRaw::getRefDutyCycleRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IPWMControlRaw::getRefDutyCycleRaw, m, ref);
 }
 
 // -----------------------------------------------------------------------------
@@ -37,7 +37,7 @@ bool CanBusControlboard::getRefDutyCycle(int m, double * ref)
 bool CanBusControlboard::getRefDutyCycles(double * refs)
 {
     CD_DEBUG("\n");
-    return deviceMapper.fullJointMapping(refs, &yarp::dev::IPWMControlRaw::getRefDutyCyclesRaw);
+    return deviceMapper.mapAllJoints(&yarp::dev::IPWMControlRaw::getRefDutyCyclesRaw, refs);
 }
 
 // -----------------------------------------------------------------------------
@@ -46,7 +46,7 @@ bool CanBusControlboard::getDutyCycle(int m, double * val)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
-    return deviceMapper.singleJointMapping(m, val, &yarp::dev::IPWMControlRaw::getDutyCycleRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IPWMControlRaw::getDutyCycleRaw, m, val);
 }
 
 // -----------------------------------------------------------------------------
@@ -54,7 +54,7 @@ bool CanBusControlboard::getDutyCycle(int m, double * val)
 bool CanBusControlboard::getDutyCycles(double * vals)
 {
     CD_DEBUG("\n");
-    return deviceMapper.fullJointMapping(vals, &yarp::dev::IPWMControlRaw::getDutyCyclesRaw);
+    return deviceMapper.mapAllJoints(&yarp::dev::IPWMControlRaw::getDutyCyclesRaw, vals);
 }
 
 // -----------------------------------------------------------------------------

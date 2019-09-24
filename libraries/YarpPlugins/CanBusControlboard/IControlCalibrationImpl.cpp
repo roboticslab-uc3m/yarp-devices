@@ -5,6 +5,7 @@
 #include <ColorDebug.h>
 
 using namespace roboticslab;
+using raw_t = yarp::dev::IControlCalibrationRaw;
 
 // -----------------------------------------------------------------------------
 
@@ -12,10 +13,8 @@ bool CanBusControlboard::calibrateAxisWithParams(int axis, unsigned int type, do
 {
     CD_DEBUG("(%d, %d, %f, %f, %f)\n", axis, type, p1, p2, p3);
     CHECK_JOINT(axis);
-
-    int localAxis;
-    yarp::dev::IControlCalibrationRaw * p = deviceMapper.getDevice(axis, &localAxis).iControlCalibrationRaw;
-    return p ? p->calibrateAxisWithParamsRaw(localAxis, type, p1, p2, p3) : false;
+    auto fn = &yarp::dev::IControlCalibrationRaw::calibrateAxisWithParamsRaw;
+    return deviceMapper.mapSingleJoint(fn, axis, type, p1, p2, p3);
 }
 
 // -----------------------------------------------------------------------------
@@ -25,7 +24,7 @@ bool CanBusControlboard::setCalibrationParameters(int axis, const yarp::dev::Cal
     CD_DEBUG("(%d)\n", axis);
     CHECK_JOINT(axis);
     auto fn = &yarp::dev::IControlCalibrationRaw::setCalibrationParametersRaw;
-    return deviceMapper.singleJointMapping<yarp::dev::IControlCalibrationRaw, const yarp::dev::CalibrationParameters &>(axis, params, fn);
+    return deviceMapper.mapSingleJoint<raw_t, const yarp::dev::CalibrationParameters &>(fn, axis, params);
 }
 
 // -----------------------------------------------------------------------------
@@ -34,10 +33,7 @@ bool CanBusControlboard::calibrationDone(int j)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::IControlCalibrationRaw * p = deviceMapper.getDevice(j, &localAxis).iControlCalibrationRaw;
-    return p ? p->calibrationDoneRaw(localAxis) : false;
+    return deviceMapper.mapSingleJoint(&yarp::dev::IControlCalibrationRaw::calibrationDoneRaw, j);
 }
 
 // -----------------------------------------------------------------------------

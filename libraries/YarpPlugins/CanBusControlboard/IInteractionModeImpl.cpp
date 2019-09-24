@@ -14,7 +14,7 @@ bool CanBusControlboard::getInteractionMode(int axis, yarp::dev::InteractionMode
 {
     // CD_DEBUG("(%d)\n", axis);  // -- is printed too many times...
     CHECK_JOINT(axis);
-    return deviceMapper.singleJointMapping(axis, mode, &yarp::dev::IInteractionModeRaw::getInteractionModeRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IInteractionModeRaw::getInteractionModeRaw, axis, mode);
 }
 
 // -----------------------------------------------------------------------------
@@ -22,7 +22,7 @@ bool CanBusControlboard::getInteractionMode(int axis, yarp::dev::InteractionMode
 bool CanBusControlboard::getInteractionModes(yarp::dev::InteractionModeEnum * modes)
 {
     CD_DEBUG("\n");
-    return deviceMapper.fullJointMapping(modes, &yarp::dev::IInteractionModeRaw::getInteractionModesRaw);
+    return deviceMapper.mapAllJoints(&yarp::dev::IInteractionModeRaw::getInteractionModesRaw, modes);
 }
 
 // -----------------------------------------------------------------------------
@@ -51,7 +51,7 @@ bool CanBusControlboard::setInteractionMode(int axis, yarp::dev::InteractionMode
 {
     CD_DEBUG("(%d, %s)\n", axis, yarp::os::Vocab::decode(mode).c_str());
     CHECK_JOINT(axis);
-    return deviceMapper.singleJointMapping(axis, mode, &yarp::dev::IInteractionModeRaw::setInteractionModeRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IInteractionModeRaw::setInteractionModeRaw, axis, mode);
 }
 
 // -----------------------------------------------------------------------------
@@ -59,7 +59,7 @@ bool CanBusControlboard::setInteractionMode(int axis, yarp::dev::InteractionMode
 bool CanBusControlboard::setInteractionModes(yarp::dev::InteractionModeEnum * modes)
 {
     CD_DEBUG("\n");
-    return deviceMapper.fullJointMapping(modes, &yarp::dev::IInteractionModeRaw::setInteractionModesRaw);
+    return deviceMapper.mapAllJoints(&yarp::dev::IInteractionModeRaw::setInteractionModesRaw, modes);
 }
 
 // -----------------------------------------------------------------------------

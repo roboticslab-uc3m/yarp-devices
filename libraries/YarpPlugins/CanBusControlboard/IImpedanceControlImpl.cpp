@@ -12,10 +12,7 @@ bool CanBusControlboard::getImpedance(int j, double * stiffness, double * dampin
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::IImpedanceControlRaw * p = deviceMapper.getDevice(j, &localAxis).iImpedanceControlRaw;
-    return p ? p->getImpedanceRaw(localAxis, stiffness, damping) : false;
+    return deviceMapper.mapSingleJoint(&yarp::dev::IImpedanceControlRaw::getImpedanceRaw, j, stiffness, damping);
 }
 
 // -----------------------------------------------------------------------------
@@ -24,10 +21,7 @@ bool CanBusControlboard::setImpedance(int j, double stiffness, double damping)
 {
     CD_DEBUG("(%d, %f, %f)\n", j, stiffness, damping);
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::IImpedanceControlRaw * p = deviceMapper.getDevice(j, &localAxis).iImpedanceControlRaw;
-    return p ? p->setImpedanceRaw(localAxis, stiffness, damping) : false;
+    return deviceMapper.mapSingleJoint(&yarp::dev::IImpedanceControlRaw::setImpedanceRaw, j, stiffness, damping);
 }
 
 // -----------------------------------------------------------------------------
@@ -36,7 +30,7 @@ bool CanBusControlboard::setImpedanceOffset(int j, double offset)
 {
     CD_DEBUG("(%d, %f)\n", j, offset);
     CHECK_JOINT(j);
-    return deviceMapper.singleJointMapping(j, offset, &yarp::dev::IImpedanceControlRaw::setImpedanceOffsetRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IImpedanceControlRaw::setImpedanceOffsetRaw, j, offset);
 }
 
 // -----------------------------------------------------------------------------
@@ -45,7 +39,7 @@ bool CanBusControlboard::getImpedanceOffset(int j, double * offset)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-    return deviceMapper.singleJointMapping(j, offset, &yarp::dev::IImpedanceControlRaw::getImpedanceOffsetRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IImpedanceControlRaw::getImpedanceOffsetRaw, j, offset);
 }
 
 // -----------------------------------------------------------------------------
@@ -55,10 +49,8 @@ bool CanBusControlboard::getCurrentImpedanceLimit(int j, double * min_stiff, dou
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::IImpedanceControlRaw * p = deviceMapper.getDevice(j, &localAxis).iImpedanceControlRaw;
-    return p ? p->getCurrentImpedanceLimitRaw(localAxis, min_stiff, max_stiff, min_damp, max_damp) : false;
+    auto fn = &yarp::dev::IImpedanceControlRaw::getCurrentImpedanceLimitRaw;
+    return deviceMapper.mapSingleJoint(fn, j, min_stiff, max_stiff, min_damp, max_damp);
 }
 
 // -----------------------------------------------------------------------------

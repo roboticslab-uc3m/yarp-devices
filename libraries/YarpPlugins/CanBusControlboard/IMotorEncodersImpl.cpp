@@ -20,10 +20,7 @@ bool CanBusControlboard::resetMotorEncoder(int m)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
-
-    int localAxis;
-    yarp::dev::IMotorEncodersRaw * p = deviceMapper.getDevice(m, &localAxis).iMotorEncodersRaw;
-    return p ? p->resetMotorEncoderRaw(localAxis) : false;
+    return deviceMapper.mapSingleJoint(&yarp::dev::IMotorEncodersRaw::resetMotorEncoderRaw, m);
 }
 
 // -----------------------------------------------------------------------------
@@ -31,19 +28,7 @@ bool CanBusControlboard::resetMotorEncoder(int m)
 bool CanBusControlboard::resetMotorEncoders()
 {
     CD_DEBUG("\n");
-
-    const int * localAxisOffsets;
-    const std::vector<RawDevice> & rawDevices = deviceMapper.getDevices(localAxisOffsets);
-
-    bool ok = true;
-
-    for (int i = 0; i < rawDevices.size(); i++)
-    {
-        yarp::dev::IMotorEncodersRaw * p = rawDevices[i].iMotorEncodersRaw;
-        ok &= p ? p->resetMotorEncodersRaw() : false;
-    }
-
-    return ok;
+    return deviceMapper.mapAllJoints(&yarp::dev::IMotorEncodersRaw::resetMotorEncodersRaw);
 }
 
 // -----------------------------------------------------------------------------
@@ -52,7 +37,7 @@ bool CanBusControlboard::setMotorEncoderCountsPerRevolution(int m, double cpr)
 {
     CD_DEBUG("(%d, %f)\n", m, cpr);
     CHECK_JOINT(m);
-    return deviceMapper.singleJointMapping(m, cpr, &yarp::dev::IMotorEncodersRaw::setMotorEncoderCountsPerRevolutionRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IMotorEncodersRaw::setMotorEncoderCountsPerRevolutionRaw, m, cpr);
 }
 
 // -----------------------------------------------------------------------------
@@ -61,7 +46,7 @@ bool CanBusControlboard::getMotorEncoderCountsPerRevolution(int m, double * cpr)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
-    return deviceMapper.singleJointMapping(m, cpr, &yarp::dev::IMotorEncodersRaw::getMotorEncoderCountsPerRevolutionRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IMotorEncodersRaw::getMotorEncoderCountsPerRevolutionRaw, m, cpr);
 }
 
 // -----------------------------------------------------------------------------
@@ -70,7 +55,7 @@ bool CanBusControlboard::setMotorEncoder(int m, double val)
 {
     CD_DEBUG("(%d, %f)\n", m, val);
     CHECK_JOINT(m);
-    return deviceMapper.singleJointMapping(m, val, &yarp::dev::IMotorEncodersRaw::setMotorEncoderRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IMotorEncodersRaw::setMotorEncoderRaw, m, val);
 }
 
 // -----------------------------------------------------------------------------
@@ -78,7 +63,7 @@ bool CanBusControlboard::setMotorEncoder(int m, double val)
 bool CanBusControlboard::setMotorEncoders(const double * vals)
 {
     CD_DEBUG("\n");
-    return deviceMapper.fullJointMapping(vals, &yarp::dev::IMotorEncodersRaw::setMotorEncodersRaw);
+    return deviceMapper.mapAllJoints(&yarp::dev::IMotorEncodersRaw::setMotorEncodersRaw, vals);
 }
 
 // -----------------------------------------------------------------------------
@@ -87,7 +72,7 @@ bool CanBusControlboard::getMotorEncoder(int m, double * v)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
-    return deviceMapper.singleJointMapping(m, v, &yarp::dev::IMotorEncodersRaw::getMotorEncoderRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IMotorEncodersRaw::getMotorEncoderRaw, m, v);
 }
 
 // -----------------------------------------------------------------------------
@@ -95,7 +80,7 @@ bool CanBusControlboard::getMotorEncoder(int m, double * v)
 bool CanBusControlboard::getMotorEncoders(double * encs)
 {
     CD_DEBUG("\n");
-    return deviceMapper.fullJointMapping(encs, &yarp::dev::IMotorEncodersRaw::getMotorEncodersRaw);
+    return deviceMapper.mapAllJoints(&yarp::dev::IMotorEncodersRaw::getMotorEncodersRaw, encs);
 }
 
 // -----------------------------------------------------------------------------
@@ -104,10 +89,7 @@ bool CanBusControlboard::getMotorEncoderTimed(int m, double * enc, double * stam
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
-
-    int localAxis;
-    yarp::dev::IMotorEncodersRaw * p = deviceMapper.getDevice(m, &localAxis).iMotorEncodersRaw;
-    return p ? p->getMotorEncoderTimedRaw(localAxis, enc, stamp) : false;
+    return deviceMapper.mapSingleJoint(&yarp::dev::IMotorEncodersRaw::getMotorEncoderTimedRaw, m, enc, stamp);
 }
 
 // -----------------------------------------------------------------------------
@@ -115,19 +97,7 @@ bool CanBusControlboard::getMotorEncoderTimed(int m, double * enc, double * stam
 bool CanBusControlboard::getMotorEncodersTimed(double * encs, double * stamps)
 {
     CD_DEBUG("\n");
-
-    const int * localAxisOffsets;
-    const std::vector<RawDevice> & rawDevices = deviceMapper.getDevices(localAxisOffsets);
-
-    bool ok = true;
-
-    for (int i = 0; i < rawDevices.size(); i++)
-    {
-        yarp::dev::IMotorEncodersRaw * p = rawDevices[i].iMotorEncodersRaw;
-        ok &= p ? p->getMotorEncodersTimedRaw(encs + localAxisOffsets[i], stamps + localAxisOffsets[i]) : false;
-    }
-
-    return ok;
+    return deviceMapper.mapAllJoints(&yarp::dev::IMotorEncodersRaw::getMotorEncodersTimedRaw, encs, stamps);
 }
 
 // -----------------------------------------------------------------------------
@@ -136,7 +106,7 @@ bool CanBusControlboard::getMotorEncoderSpeed(int m, double * sp)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
-    return deviceMapper.singleJointMapping(m, sp, &yarp::dev::IMotorEncodersRaw::getMotorEncoderSpeedRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IMotorEncodersRaw::getMotorEncoderSpeedRaw, m, sp);
 }
 
 // -----------------------------------------------------------------------------
@@ -144,7 +114,7 @@ bool CanBusControlboard::getMotorEncoderSpeed(int m, double * sp)
 bool CanBusControlboard::getMotorEncoderSpeeds(double *spds)
 {
     CD_DEBUG("\n");
-    return deviceMapper.fullJointMapping(spds, &yarp::dev::IMotorEncodersRaw::getMotorEncoderSpeedsRaw);
+    return deviceMapper.mapAllJoints(&yarp::dev::IMotorEncodersRaw::getMotorEncoderSpeedsRaw, spds);
 }
 
 // -----------------------------------------------------------------------------
@@ -153,7 +123,7 @@ bool CanBusControlboard::getMotorEncoderAcceleration(int m, double * acc)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
-    return deviceMapper.singleJointMapping(m, acc, &yarp::dev::IMotorEncodersRaw::getMotorEncoderAccelerationRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IMotorEncodersRaw::getMotorEncoderAccelerationRaw, m, acc);
 }
 
 // -----------------------------------------------------------------------------
@@ -161,7 +131,7 @@ bool CanBusControlboard::getMotorEncoderAcceleration(int m, double * acc)
 bool CanBusControlboard::getMotorEncoderAccelerations(double * accs)
 {
     CD_DEBUG("\n");
-    return deviceMapper.fullJointMapping(accs, &yarp::dev::IMotorEncodersRaw::getMotorEncoderAccelerationsRaw);
+    return deviceMapper.mapAllJoints(&yarp::dev::IMotorEncodersRaw::getMotorEncoderAccelerationsRaw, accs);
 }
 
 // -----------------------------------------------------------------------------

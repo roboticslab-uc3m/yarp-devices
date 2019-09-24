@@ -21,10 +21,7 @@ bool CanBusControlboard::resetEncoder(int j)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::IEncodersTimedRaw * p = deviceMapper.getDevice(j, &localAxis).iEncodersTimedRaw;
-    return p ? p->resetEncoderRaw(localAxis) : false;
+    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersTimedRaw::resetEncoderRaw, j);
 }
 
 // -----------------------------------------------------------------------------
@@ -32,19 +29,7 @@ bool CanBusControlboard::resetEncoder(int j)
 bool CanBusControlboard::resetEncoders()
 {
     CD_DEBUG("\n");
-
-    const int * localAxisOffsets;
-    const std::vector<RawDevice> & rawDevices = deviceMapper.getDevices(localAxisOffsets);
-
-    bool ok = true;
-
-    for (int i = 0; i < rawDevices.size(); i++)
-    {
-        yarp::dev::IEncodersTimedRaw * p = rawDevices[i].iEncodersTimedRaw;
-        ok &= p ? p->resetEncodersRaw() : false;
-    }
-
-    return ok;
+    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersTimedRaw::resetEncodersRaw);
 }
 
 // -----------------------------------------------------------------------------
@@ -53,7 +38,7 @@ bool CanBusControlboard::setEncoder(int j, double val)
 {
     CD_DEBUG("(%d, %f)\n", j, val);
     CHECK_JOINT(j);
-    return deviceMapper.singleJointMapping(j, val, &yarp::dev::IEncodersRaw::setEncoderRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersTimedRaw::setEncoderRaw, j, val);
 }
 
 // -----------------------------------------------------------------------------
@@ -61,7 +46,7 @@ bool CanBusControlboard::setEncoder(int j, double val)
 bool CanBusControlboard::setEncoders(const double * vals)
 {
     CD_DEBUG("\n");
-    return deviceMapper.fullJointMapping(vals, &yarp::dev::IEncodersRaw::setEncodersRaw);
+    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersTimedRaw::setEncodersRaw, vals);
 }
 
 // -----------------------------------------------------------------------------
@@ -70,7 +55,7 @@ bool CanBusControlboard::getEncoder(int j, double * v)
 {
     //CD_DEBUG("%d\n", j); //-- Too verbose in stream.
     CHECK_JOINT(j);
-    return deviceMapper.singleJointMapping(j, v, &yarp::dev::IEncodersRaw::getEncoderRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersTimedRaw::getEncoderRaw, j, v);
 }
 
 // -----------------------------------------------------------------------------
@@ -78,7 +63,7 @@ bool CanBusControlboard::getEncoder(int j, double * v)
 bool CanBusControlboard::getEncoders(double * encs)
 {
     //CD_DEBUG("\n"); //-- Too verbose in stream.
-    return deviceMapper.fullJointMapping(encs, &yarp::dev::IEncodersRaw::getEncodersRaw);
+    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersTimedRaw::getEncodersRaw, encs);
 }
 
 // -----------------------------------------------------------------------------
@@ -87,7 +72,7 @@ bool CanBusControlboard::getEncoderSpeed(int j, double * sp)
 {
     //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream.
     CHECK_JOINT(j);
-    return deviceMapper.singleJointMapping(j, sp, &yarp::dev::IEncodersRaw::getEncoderSpeedRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersTimedRaw::getEncoderSpeedRaw, j, sp);
 }
 
 // -----------------------------------------------------------------------------
@@ -95,7 +80,7 @@ bool CanBusControlboard::getEncoderSpeed(int j, double * sp)
 bool CanBusControlboard::getEncoderSpeeds(double * spds)
 {
     CD_DEBUG("\n");
-    return deviceMapper.fullJointMapping(spds, &yarp::dev::IEncodersRaw::getEncoderSpeedsRaw);
+    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersTimedRaw::getEncoderSpeedsRaw, spds);
 }
 
 // -----------------------------------------------------------------------------
@@ -104,7 +89,7 @@ bool CanBusControlboard::getEncoderAcceleration(int j, double * spds)
 {
     //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream.
     CHECK_JOINT(j);
-    return deviceMapper.singleJointMapping(j, spds, &yarp::dev::IEncodersRaw::getEncoderAccelerationRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersTimedRaw::getEncoderAccelerationRaw, j, spds);
 }
 
 // -----------------------------------------------------------------------------
@@ -112,7 +97,7 @@ bool CanBusControlboard::getEncoderAcceleration(int j, double * spds)
 bool CanBusControlboard::getEncoderAccelerations(double * accs)
 {
     CD_DEBUG("\n");
-    return deviceMapper.fullJointMapping(accs, &yarp::dev::IEncodersRaw::getEncoderAccelerationsRaw);
+    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersTimedRaw::getEncoderAccelerationsRaw, accs);
 }
 
 // -----------------------------------------------------------------------------
@@ -121,10 +106,7 @@ bool CanBusControlboard::getEncoderTimed(int j, double * enc, double * stamp)
 {
     //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream.
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::IEncodersTimedRaw * p = deviceMapper.getDevice(j, &localAxis).iEncodersTimedRaw;
-    return p ? p->getEncoderTimedRaw(localAxis, enc, stamp) : false;
+    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersTimedRaw::getEncoderTimedRaw, j, enc, stamp);
 }
 
 // -----------------------------------------------------------------------------
@@ -132,19 +114,7 @@ bool CanBusControlboard::getEncoderTimed(int j, double * enc, double * stamp)
 bool CanBusControlboard::getEncodersTimed(double * encs, double * stamps)
 {
     CD_DEBUG("\n");
-
-    const int * localAxisOffsets;
-    const std::vector<RawDevice> & rawDevices = deviceMapper.getDevices(localAxisOffsets);
-
-    bool ok = true;
-
-    for (int i = 0; i < rawDevices.size(); i++)
-    {
-        yarp::dev::IEncodersTimedRaw * p = rawDevices[i].iEncodersTimedRaw;
-        ok &= p ? p->getEncodersTimedRaw(encs + localAxisOffsets[i], stamps + localAxisOffsets[i]) : false;
-    }
-
-    return ok;
+    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersTimedRaw::getEncodersTimedRaw, encs, stamps);
 }
 
 // -----------------------------------------------------------------------------

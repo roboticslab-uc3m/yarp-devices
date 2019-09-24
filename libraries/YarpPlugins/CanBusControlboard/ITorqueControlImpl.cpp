@@ -12,13 +12,13 @@ bool CanBusControlboard::getRefTorque(int j, double * t)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-    return deviceMapper.singleJointMapping(j, t, &yarp::dev::ITorqueControlRaw::getRefTorqueRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::ITorqueControlRaw::getRefTorqueRaw, j, t);
 }
 
 bool CanBusControlboard::getRefTorques(double * t)
 {
     CD_DEBUG("\n");
-    return deviceMapper.fullJointMapping(t, &yarp::dev::ITorqueControlRaw::getRefTorquesRaw);
+    return deviceMapper.mapAllJoints(&yarp::dev::ITorqueControlRaw::getRefTorquesRaw, t);
 }
 
 // -----------------------------------------------------------------------------
@@ -27,7 +27,7 @@ bool CanBusControlboard::setRefTorque(int j, double t)
 {
     CD_DEBUG("(%d, %f)\n", j, t);
     CHECK_JOINT(j);
-    return deviceMapper.singleJointMapping(j, t, &yarp::dev::ITorqueControlRaw::setRefTorqueRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::ITorqueControlRaw::setRefTorqueRaw, j, t);
 }
 
 // -----------------------------------------------------------------------------
@@ -35,7 +35,7 @@ bool CanBusControlboard::setRefTorque(int j, double t)
 bool CanBusControlboard::setRefTorques(const double * t)
 {
     CD_DEBUG("\n");
-    return deviceMapper.fullJointMapping(t, &yarp::dev::ITorqueControlRaw::setRefTorquesRaw);
+    return deviceMapper.mapAllJoints(&yarp::dev::ITorqueControlRaw::setRefTorquesRaw, t);
 }
 
 // -----------------------------------------------------------------------------
@@ -43,7 +43,7 @@ bool CanBusControlboard::setRefTorques(const double * t)
 bool CanBusControlboard::setRefTorques(int n_joint, const int * joints, const double * t)
 {
     CD_DEBUG("\n");
-    return deviceMapper.multiJointMapping(n_joint, joints, t, &yarp::dev::ITorqueControlRaw::setRefTorquesRaw);
+    return deviceMapper.mapJointGroup(&yarp::dev::ITorqueControlRaw::setRefTorquesRaw, n_joint, joints, t);
 }
 
 // -----------------------------------------------------------------------------
@@ -52,7 +52,7 @@ bool CanBusControlboard::getMotorTorqueParams(int j,  yarp::dev::MotorTorquePara
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-    return deviceMapper.singleJointMapping(j, params, &yarp::dev::ITorqueControlRaw::getMotorTorqueParamsRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::ITorqueControlRaw::getMotorTorqueParamsRaw, j, params);
 }
 
 // -----------------------------------------------------------------------------
@@ -61,7 +61,7 @@ bool CanBusControlboard::setMotorTorqueParams(int j, const yarp::dev::MotorTorqu
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-    return deviceMapper.singleJointMapping(j, params, &yarp::dev::ITorqueControlRaw::setMotorTorqueParamsRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::ITorqueControlRaw::setMotorTorqueParamsRaw, j, params);
 }
 
 // -----------------------------------------------------------------------------
@@ -70,7 +70,7 @@ bool CanBusControlboard::getTorque(int j, double * t)
 {
     //CD_DEBUG("(%d)\n",j); //-- Too verbose in controlboardwrapper2 stream.
     CHECK_JOINT(j);
-    return deviceMapper.singleJointMapping(j, t, &yarp::dev::ITorqueControlRaw::getTorqueRaw);
+    return deviceMapper.mapSingleJoint(&yarp::dev::ITorqueControlRaw::getTorqueRaw, j, t);
 }
 
 // -----------------------------------------------------------------------------
@@ -78,7 +78,7 @@ bool CanBusControlboard::getTorque(int j, double * t)
 bool CanBusControlboard::getTorques(double * t)
 {
     CD_DEBUG("\n");
-    return deviceMapper.fullJointMapping(t, &yarp::dev::ITorqueControlRaw::getTorquesRaw);
+    return deviceMapper.mapAllJoints(&yarp::dev::ITorqueControlRaw::getTorquesRaw, t);
 }
 
 // -----------------------------------------------------------------------------
@@ -87,10 +87,7 @@ bool CanBusControlboard::getTorqueRange(int j, double * min, double * max)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-
-    int localAxis;
-    yarp::dev::ITorqueControlRaw * p = deviceMapper.getDevice(j, &localAxis).iTorqueControlRaw;
-    return p ? p->getTorqueRangeRaw(localAxis, min, max) : false;
+    return deviceMapper.mapSingleJoint(&yarp::dev::ITorqueControlRaw::getTorqueRangeRaw, j, min, max);
 }
 
 // -----------------------------------------------------------------------------
@@ -98,19 +95,7 @@ bool CanBusControlboard::getTorqueRange(int j, double * min, double * max)
 bool CanBusControlboard::getTorqueRanges(double * mins, double * maxs)
 {
     CD_DEBUG("\n");
-
-    const int * localAxisOffsets;
-    const std::vector<RawDevice> & rawDevices = deviceMapper.getDevices(localAxisOffsets);
-
-    bool ok = true;
-
-    for (int i = 0; i < rawDevices.size(); i++)
-    {
-        yarp::dev::ITorqueControlRaw * p = rawDevices[i].iTorqueControlRaw;
-        ok &= p ? p->getTorqueRangesRaw(mins + localAxisOffsets[i], maxs + localAxisOffsets[i]) : false;
-    }
-
-    return ok;
+    return deviceMapper.mapAllJoints(&yarp::dev::ITorqueControlRaw::getTorqueRangesRaw, mins, maxs);
 }
 
 // -----------------------------------------------------------------------------

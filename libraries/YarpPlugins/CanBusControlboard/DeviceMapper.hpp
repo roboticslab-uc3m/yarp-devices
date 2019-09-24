@@ -57,22 +57,22 @@ public:
     int getControlledAxes() const
     { return totalAxes; }
 
-    template<typename T, typename T_ref>
-    using single_mapping_fn = bool (T::*)(int, T_ref);
+    template<typename T, typename... T_ref>
+    using single_mapping_fn = bool (T::*)(int, T_ref...);
 
-    template<typename T, typename T_ref>
-    bool singleJointMapping(int j, T_ref ref, single_mapping_fn<T, T_ref> fn)
+    template<typename T, typename... T_ref>
+    bool mapSingleJoint(single_mapping_fn<T, T_ref...> fn, int j, T_ref... ref)
     {
         int localAxis;
         T * p = getDevice(j, &localAxis).getHandle<T>();
-        return p ? (p->*fn)(localAxis, ref) : false;
+        return p ? (p->*fn)(localAxis, ref...) : false;
     }
 
-    template<typename T, typename T_refs>
-    using full_mapping_fn = bool (T::*)(T_refs *);
+    template<typename T, typename... T_refs>
+    using full_mapping_fn = bool (T::*)(T_refs *...);
 
-    template<typename T, typename T_refs>
-    bool fullJointMapping(T_refs * refs, full_mapping_fn<T, T_refs> fn)
+    template<typename T, typename... T_refs>
+    bool mapAllJoints(full_mapping_fn<T, T_refs...> fn, T_refs *... refs)
     {
         const int * localAxisOffsets;
         const std::vector<RawDevice> & rawDevices = getDevices(localAxisOffsets);
@@ -82,17 +82,17 @@ public:
         for (int i = 0; i < rawDevices.size(); i++)
         {
             T * p = rawDevices[i].getHandle<T>();
-            ok &= p ? (p->*fn)(refs + localAxisOffsets[i]) : false;
+            ok &= p ? (p->*fn)(refs + localAxisOffsets[i]...) : false;
         }
 
         return ok;
     }
 
-    template<typename T, typename T_refs>
-    using multi_mapping_fn = bool (T::*)(int, const int *, T_refs *);
+    template<typename T, typename... T_refs>
+    using multi_mapping_fn = bool (T::*)(int, const int *, T_refs *...);
 
-    template<typename T, typename T_refs>
-    bool multiJointMapping(int n_joint, const int * joints, T_refs * refs, multi_mapping_fn<T, T_refs> fn)
+    template<typename T, typename... T_refs>
+    bool mapJointGroup(multi_mapping_fn<T, T_refs...> fn, int n_joint, const int * joints, T_refs *... refs)
     {
         bool ok = true;
 
@@ -100,7 +100,7 @@ public:
         {
             T * p = std::get<0>(t)->getHandle<T>();
             const auto & localIndices = computeLocalIndices(std::get<1>(t), joints, std::get<2>(t));
-            ok &= p ? (p->*fn)(std::get<1>(t), localIndices.data(), refs + std::get<2>(t)) : false;
+            ok &= p ? (p->*fn)(std::get<1>(t), localIndices.data(), refs + std::get<2>(t)...) : false;
         }
 
         return ok;
