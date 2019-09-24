@@ -38,7 +38,7 @@ bool CanBusControlboard::relativeMove(int j, double delta)
 {
     CD_DEBUG("(%d, %f)\n", j, delta);
     CHECK_JOINT(j);
-    return deviceMapper.mapSingleJoint<raw_t>(&yarp::dev::IPositionControlRaw::relativeMoveRaw, j, delta);
+    return deviceMapper.mapSingleJoint<raw_t, double>(&yarp::dev::IPositionControlRaw::relativeMoveRaw, j, delta);
 }
 
 // -----------------------------------------------------------------------------
@@ -63,7 +63,7 @@ bool CanBusControlboard::checkMotionDone(int j, bool * flag)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-    return deviceMapper.mapSingleJoint<raw_t>(&yarp::dev::IPositionControlRaw::checkMotionDoneRaw, j, flag);
+    return deviceMapper.mapSingleJoint<raw_t, bool *>(&yarp::dev::IPositionControlRaw::checkMotionDoneRaw, j, flag);
 }
 
 // -----------------------------------------------------------------------------
