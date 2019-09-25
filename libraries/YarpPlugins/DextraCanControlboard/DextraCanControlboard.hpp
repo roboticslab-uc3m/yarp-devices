@@ -26,11 +26,11 @@ class CanSynapse : public Synapse
 {
 public:
     CanSynapse(int canId);
-    virtual void configure(void * handle);
+    virtual void configure(void * handle) override;
 
 protected:
-    virtual bool getMessage(unsigned char * msg, char stopByte, int size);
-    virtual bool sendMessage(unsigned char * msg, int size);
+    virtual bool getMessage(unsigned char * msg, char stopByte, int size) override;
+    virtual bool sendMessage(unsigned char * msg, int size) override;
 
 private:
     int canId;
@@ -50,20 +50,16 @@ public:
     DextraCanControlboard() : canId(0)
     { }
 
-    //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
-    virtual bool open(yarp::os::Searchable& config);
-    virtual bool close();
+    //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
+    virtual bool open(yarp::os::Searchable & config) override;
+    virtual bool close() override;
 
-    //  --------- ICanBusSharer Declarations. Implementation in ICanBusSharerImpl.cpp ---------
-    virtual unsigned int getId();
-    virtual bool initialize() { return true; }
-    virtual bool start() { return true; };
-    virtual bool readyToSwitchOn() { return true; };
-    virtual bool switchOn() { return true; };
-    virtual bool enable() { return true; };
-    virtual bool recoverFromError() { return true; };
-    virtual bool interpretMessage(const yarp::dev::CanMessage & message);
-    virtual bool registerSender(CanSenderDelegate * sender);
+    //  --------- ICanBusSharer declarations. Implementation in ICanBusSharerImpl.cpp ---------
+
+    virtual unsigned int getId() override;
+    virtual bool initialize() override;
+    virtual bool interpretMessage(const yarp::dev::CanMessage & message) override;
+    virtual bool registerSender(CanSenderDelegate * sender) override;
 
 protected:
 

@@ -213,10 +213,11 @@ bool TechnosoftIpos::close()
 
     if (externalEncoderDevice.isValid())
     {
-        ok = ok &= externalEncoderDevice.close();
+        ok &= externalEncoderDevice.close();
     }
 
-    ok &= switchOn() && readyToSwitchOn(); // disable and shutdown
+    ok &= can->driveStatus()->requestTransition(DriveTransition::SWITCH_ON)
+            && can->driveStatus()->requestTransition(DriveTransition::SHUTDOWN);
 
     delete linInterpBuffer;
     delete can;

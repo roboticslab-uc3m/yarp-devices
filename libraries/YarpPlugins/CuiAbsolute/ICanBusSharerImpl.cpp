@@ -31,41 +31,6 @@ bool CuiAbsolute::initialize()
     return true;
 }
 
-// -----------------------------------------------------------------------------
-
-bool CuiAbsolute::start()
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool CuiAbsolute::readyToSwitchOn()
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool CuiAbsolute::switchOn()
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool CuiAbsolute::enable()
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool CuiAbsolute::recoverFromError()
-{
-    return true;
-}
-
 // ------------------------------------------------------------------------------
 
 bool CuiAbsolute::interpretMessage(const yarp::dev::CanMessage & message)

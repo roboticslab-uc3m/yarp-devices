@@ -162,7 +162,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
     for (auto node : iCanBusSharers)
     {
-        if (!node->initialize() || !node->start() || !node->readyToSwitchOn() || !node->switchOn() || !node->enable())
+        if (!node->initialize())
         {
             return false;
         }

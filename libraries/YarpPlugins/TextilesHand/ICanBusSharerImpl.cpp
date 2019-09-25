@@ -11,41 +11,8 @@ unsigned int roboticslab::TextilesHand::getId()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::start()
+bool roboticslab::TextilesHand::initialize()
 {
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::TextilesHand::readyToSwitchOn()
-{
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::TextilesHand::switchOn()
-{
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::TextilesHand::enable()
-{
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::TextilesHand::recoverFromError()
-{
-
     return true;
 }
 
@@ -53,10 +20,9 @@ bool roboticslab::TextilesHand::recoverFromError()
 
 bool roboticslab::TextilesHand::interpretMessage(const yarp::dev::CanMessage & message)
 {
-
     return true;
 
-}  //-- ends interpretMessage
+}
 
 // -----------------------------------------------------------------------------
 

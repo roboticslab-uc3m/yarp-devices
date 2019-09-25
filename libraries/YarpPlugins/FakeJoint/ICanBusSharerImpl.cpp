@@ -11,41 +11,8 @@ unsigned int roboticslab::FakeJoint::getId()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeJoint::start()
+bool roboticslab::FakeJoint::initialize()
 {
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeJoint::readyToSwitchOn()
-{
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeJoint::switchOn()
-{
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeJoint::enable()
-{
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::FakeJoint::recoverFromError()
-{
-
     return true;
 }
 
@@ -53,10 +20,9 @@ bool roboticslab::FakeJoint::recoverFromError()
 
 bool roboticslab::FakeJoint::interpretMessage(const yarp::dev::CanMessage & message)
 {
-
     return true;
 
-}  //-- ends interpretMessage
+}
 
 // -----------------------------------------------------------------------------
 

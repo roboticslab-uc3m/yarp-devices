@@ -251,55 +251,13 @@ bool TechnosoftIpos::initialize()
         return setEncoderRaw(0, extEnc);
     }
 
-    return true;
+    return can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE)
+            && can->driveStatus()->requestTransition(DriveTransition::SHUTDOWN)
+            && can->driveStatus()->requestTransition(DriveTransition::SWITCH_ON)
+            && can->driveStatus()->requestTransition(DriveTransition::ENABLE_OPERATION);
 }
 
 // -----------------------------------------------------------------------------
-/** -- Start Remote Node: Used to change NMT state of one or all NMT slaves to Operational.
- PDO communication will beallowed. */
-
-bool TechnosoftIpos::start()
-{
-    return can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::readyToSwitchOn()
-{
-    return can->driveStatus()->requestTransition(DriveTransition::SHUTDOWN);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::switchOn()
-{
-    return can->driveStatus()->requestTransition(DriveTransition::SWITCH_ON);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::enable()
-{
-    return can->driveStatus()->requestTransition(DriveTransition::ENABLE_OPERATION);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::recoverFromError()
-{
-    //*************************************************************
-    //j//uint8_t msg_recover[]={0x23,0xFF}; // Control word 6040
-
-    //j//if( ! send(0x200, 2, msg_recover)){
-    //j//    CD_ERROR("Sent \"recover\". %s\n", msgToStr(0x200, 2, msg_recover).c_str() );
-    //j//    return false;
-    //j//}
-    //j//CD_SUCCESS("Sent \"recover\". %s\n", msgToStr(0x200, 2, msg_recover).c_str() );
-    //*************************************************************
-
-    return true;
-}
 
 /** Manual: 4.1.2. Device control
     Reset Node: The NMT master sets the state of the selected NMT slave to the reset application sub-state.

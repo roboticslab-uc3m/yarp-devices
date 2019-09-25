@@ -13,35 +13,7 @@ unsigned int LacqueyFetch::getId()
 
 // -----------------------------------------------------------------------------
 
-bool LacqueyFetch::start()
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool LacqueyFetch::readyToSwitchOn()
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool LacqueyFetch::switchOn()
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool LacqueyFetch::enable()
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool LacqueyFetch::recoverFromError()
+bool LacqueyFetch::initialize()
 {
     return true;
 }
