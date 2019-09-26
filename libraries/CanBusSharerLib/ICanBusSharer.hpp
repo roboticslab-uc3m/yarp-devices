@@ -28,6 +28,8 @@ public:
 
     virtual bool initialize() = 0;
 
+    virtual bool finalize() = 0;
+
     virtual bool interpretMessage(const yarp::dev::CanMessage & message) = 0;
 
     virtual bool registerSender(CanSenderDelegate * sender) = 0;

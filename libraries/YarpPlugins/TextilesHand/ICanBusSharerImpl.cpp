@@ -18,6 +18,13 @@ bool roboticslab::TextilesHand::initialize()
 
 // -----------------------------------------------------------------------------
 
+bool roboticslab::TextilesHand::finalize()
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
 bool roboticslab::TextilesHand::interpretMessage(const yarp::dev::CanMessage & message)
 {
     return true;

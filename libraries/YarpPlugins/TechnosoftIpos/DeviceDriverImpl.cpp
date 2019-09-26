@@ -209,20 +209,15 @@ bool TechnosoftIpos::close()
 {
     CD_INFO("\n");
 
-    bool ok = true;
-
-    if (externalEncoderDevice.isValid())
-    {
-        ok &= externalEncoderDevice.close();
-    }
-
-    ok &= can->driveStatus()->requestTransition(DriveTransition::SWITCH_ON)
-            && can->driveStatus()->requestTransition(DriveTransition::SHUTDOWN);
-
     delete linInterpBuffer;
     delete can;
 
-    return ok;
+    if (externalEncoderDevice.isValid())
+    {
+        return externalEncoderDevice.close();
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------

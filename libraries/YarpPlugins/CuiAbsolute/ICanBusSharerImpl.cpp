@@ -31,6 +31,20 @@ bool CuiAbsolute::initialize()
     return true;
 }
 
+// -----------------------------------------------------------------------------
+
+bool CuiAbsolute::finalize()
+{
+    if (cuiMode == CuiMode::PUSH && !stopPushMode())
+    {
+        CD_ERROR("Unable to stop Cui with CAN id %d.\n", canId);
+        return false;
+    }
+
+    return true;
+}
+
+
 // ------------------------------------------------------------------------------
 
 bool CuiAbsolute::interpretMessage(const yarp::dev::CanMessage & message)

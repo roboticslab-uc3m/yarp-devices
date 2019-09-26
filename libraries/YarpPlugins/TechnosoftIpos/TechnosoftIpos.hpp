@@ -112,6 +112,7 @@ public:
     virtual std::vector<unsigned int> getAdditionalIds() override;
     virtual bool interpretMessage(const yarp::dev::CanMessage & message) override;
     virtual bool initialize() override;
+    virtual bool finalize() override;
     virtual bool resetNode(int id) override;
     virtual bool resetNodes() override;
     virtual bool resetCommunication(); // orphan

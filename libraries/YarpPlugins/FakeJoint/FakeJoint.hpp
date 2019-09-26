@@ -64,6 +64,7 @@ public:
     virtual unsigned int getId();
     virtual bool interpretMessage(const yarp::dev::CanMessage & message);
     virtual bool initialize();
+    virtual bool finalize();
     virtual bool registerSender(CanSenderDelegate * sender);
 
     //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------

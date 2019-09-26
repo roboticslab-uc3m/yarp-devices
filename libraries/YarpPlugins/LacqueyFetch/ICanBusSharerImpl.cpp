@@ -20,6 +20,13 @@ bool LacqueyFetch::initialize()
 
 // -----------------------------------------------------------------------------
 
+bool LacqueyFetch::finalize()
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
 bool LacqueyFetch::interpretMessage(const yarp::dev::CanMessage & message)
 {
     return true;

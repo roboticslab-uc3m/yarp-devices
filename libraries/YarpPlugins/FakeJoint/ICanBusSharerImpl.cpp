@@ -18,6 +18,13 @@ bool roboticslab::FakeJoint::initialize()
 
 // -----------------------------------------------------------------------------
 
+bool roboticslab::FakeJoint::finalize()
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
 bool roboticslab::FakeJoint::interpretMessage(const yarp::dev::CanMessage & message)
 {
     return true;

@@ -5,7 +5,6 @@
 #include <map>
 #include <string>
 
-#include "ICanBusSharer.hpp"
 #include "ITechnosoftIpos.h"
 
 using namespace roboticslab;
@@ -69,9 +68,8 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         return false;
     }
 
-    std::map<int, int> idxFromCanId;
     std::map<int, ITechnosoftIpos *> idToTechnosoftIpos;
-    std::vector<ICanBusSharer *> iCanBusSharers(ids.size());
+    iCanBusSharers.resize(ids.size());
 
     for (int i = 0; i < ids.size(); i++)
     {
@@ -123,13 +121,6 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             return false;
         }
 
-        idxFromCanId[iCanBusSharers[i]->getId()] = i;
-
-        for (auto additionalId : iCanBusSharers[i]->getAdditionalIds())
-        {
-            idxFromCanId[additionalId] = i;
-        }
-
         iCanBusSharers[i]->registerSender(canWriterThread->getDelegate());
 
         if (types.get(i).asString() == "TechnosoftIpos")
@@ -150,7 +141,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
     const std::string canDevice = canBusOptions.find("canDevice").asString();
 
-    canReaderThread = new CanReaderThread(canDevice, idxFromCanId, iCanBusSharers);
+    canReaderThread = new CanReaderThread(canDevice, iCanBusSharers);
     canReaderThread->setCanHandles(iCanBus, iCanBufferFactory, canRxBufferSize);
     canReaderThread->setPeriod(canRxPeriodMs);
     canReaderThread->start();
@@ -160,9 +151,9 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
     canWriterThread->setPeriod(canTxPeriodMs);
     canWriterThread->start();
 
-    for (auto node : iCanBusSharers)
+    for (auto p : iCanBusSharers)
     {
-        if (!node->initialize())
+        if (!p->initialize())
         {
             return false;
         }
@@ -187,6 +178,11 @@ bool CanBusControlboard::close()
     }
 
     delete posdThread;
+
+    for (auto p : iCanBusSharers)
+    {
+        ok &= p->finalize();
+    }
 
     for (int i = 0; i < nodes.size(); i++)
     {

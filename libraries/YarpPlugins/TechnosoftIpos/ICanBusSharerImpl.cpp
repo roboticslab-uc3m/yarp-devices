@@ -259,6 +259,14 @@ bool TechnosoftIpos::initialize()
 
 // -----------------------------------------------------------------------------
 
+bool TechnosoftIpos::finalize()
+{
+    return can->driveStatus()->requestTransition(DriveTransition::SWITCH_ON)
+            && can->driveStatus()->requestTransition(DriveTransition::SHUTDOWN);
+}
+
+// -----------------------------------------------------------------------------
+
 /** Manual: 4.1.2. Device control
     Reset Node: The NMT master sets the state of the selected NMT slave to the reset application sub-state.
     In this state the drives perform a software reset and enter the pre-operational state.
