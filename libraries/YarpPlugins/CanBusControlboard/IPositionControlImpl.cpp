@@ -68,18 +68,55 @@ bool CanBusControlboard::checkMotionDone(int j, bool * flag)
 
 // -----------------------------------------------------------------------------
 
-bool CanBusControlboard::checkMotionDone(bool * flags)
+bool CanBusControlboard::checkMotionDone(bool * flag)
 {
     CD_DEBUG("\n");
-    return deviceMapper.mapAllJoints(&yarp::dev::IPositionControlRaw::checkMotionDoneRaw, flags);
+
+    bool ok = true;
+
+    for (const auto & rawDevice : deviceMapper.getDevices())
+    {
+        yarp::dev::IPositionControlRaw * p = rawDevice.iPositionControlRaw;
+        bool localFlag;
+
+        if (p && p->checkMotionDoneRaw(&localFlag))
+        {
+            *flag &= localFlag;
+        }
+        else
+        {
+            ok = false;
+        }
+    }
+
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
 
-bool CanBusControlboard::checkMotionDone(int n_joint, const int * joints, bool * flags)
+bool CanBusControlboard::checkMotionDone(int n_joint, const int * joints, bool * flag)
 {
     CD_DEBUG("\n");
-    return deviceMapper.mapJointGroup(&yarp::dev::IPositionControlRaw::checkMotionDoneRaw, n_joint, joints, flags);
+
+    bool ok = true;
+
+    for (const auto & t : deviceMapper.getDevices(n_joint, joints))
+    {
+        yarp::dev::IPositionControlRaw * p = std::get<0>(t)->iPositionControlRaw;
+        const auto & localIndices = deviceMapper.computeLocalIndices(std::get<1>(t), joints, std::get<2>(t));
+        bool localFlag;
+
+        if (p && p->checkMotionDoneRaw(std::get<1>(t), localIndices.data(), &localFlag))
+        {
+            *flag &= localFlag;
+        }
+        else
+        {
+            ok = false;
+        }
+    }
+
+    return ok;
 }
 
 // -----------------------------------------------------------------------------

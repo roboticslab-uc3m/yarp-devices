@@ -167,18 +167,18 @@ bool TechnosoftIpos::checkMotionDoneRaw(int j, bool * flag)
 
 // --------------------------------------------------------------------------------
 
-bool TechnosoftIpos::checkMotionDoneRaw(bool * flags)
+bool TechnosoftIpos::checkMotionDoneRaw(bool * flag)
 {
     CD_DEBUG("\n");
-    return checkMotionDoneRaw(0, &flags[0]);
+    return checkMotionDoneRaw(0, flag);
 }
 
 // --------------------------------------------------------------------------------
 
-bool TechnosoftIpos::checkMotionDoneRaw(int n_joint, const int * joints, bool * flags)
+bool TechnosoftIpos::checkMotionDoneRaw(int n_joint, const int * joints, bool * flag)
 {
     CD_DEBUG("\n");
-    return checkMotionDoneRaw(joints[0], &flags[0]);
+    return checkMotionDoneRaw(joints[0], flag);
 }
 
 // -----------------------------------------------------------------------------

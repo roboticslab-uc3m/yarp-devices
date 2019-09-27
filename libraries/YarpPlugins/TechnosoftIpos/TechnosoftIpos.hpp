@@ -193,7 +193,7 @@ public:
     virtual bool relativeMoveRaw(int n_joint, const int * joints, const double * deltas) override;
     virtual bool checkMotionDoneRaw(int j, bool * flag) override;
     virtual bool checkMotionDoneRaw(bool * flag) override;
-    virtual bool checkMotionDoneRaw(int n_joint, const int * joints, bool * flags) override;
+    virtual bool checkMotionDoneRaw(int n_joint, const int * joints, bool * flag) override;
     virtual bool setRefSpeedRaw(int j, double sp) override;
     virtual bool setRefSpeedsRaw(const double * spds) override;
     virtual bool setRefSpeedsRaw(int n_joint, const int * joints, const double * spds) override;

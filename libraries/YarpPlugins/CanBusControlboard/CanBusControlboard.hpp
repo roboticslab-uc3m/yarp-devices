@@ -236,7 +236,7 @@ public:
     virtual bool relativeMove(int n_joint, const int * joints, const double * deltas) override;
     virtual bool checkMotionDone(int j, bool * flag) override;
     virtual bool checkMotionDone(bool * flag) override;
-    virtual bool checkMotionDone(int n_joint, const int * joints, bool * flags) override;
+    virtual bool checkMotionDone(int n_joint, const int * joints, bool * flag) override;
     virtual bool setRefSpeed(int j, double sp) override;
     virtual bool setRefSpeeds(const double * spds) override;
     virtual bool setRefSpeeds(int n_joint, const int * joints, const double * spds) override;
