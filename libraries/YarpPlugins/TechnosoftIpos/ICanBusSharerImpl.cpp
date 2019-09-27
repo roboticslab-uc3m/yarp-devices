@@ -251,18 +251,25 @@ bool TechnosoftIpos::initialize()
         return setEncoderRaw(0, extEnc);
     }
 
-    return can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE)
-            && can->driveStatus()->requestTransition(DriveTransition::SHUTDOWN)
-            && can->driveStatus()->requestTransition(DriveTransition::SWITCH_ON)
-            && can->driveStatus()->requestTransition(DriveTransition::ENABLE_OPERATION);
+    if (!can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE))
+    {
+        return false;
+    }
+
+    if (!can->driveStatus()->requestState(DriveState::SWITCHED_ON))
+    {
+        return false;
+    }
+
+    modeCurrentTorque = VOCAB_CM_IDLE; // TODO: rename
+    return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool TechnosoftIpos::finalize()
 {
-    return can->driveStatus()->requestTransition(DriveTransition::SWITCH_ON)
-            && can->driveStatus()->requestTransition(DriveTransition::SHUTDOWN);
+    return can->driveStatus()->requestState(DriveState::SWITCH_ON_DISABLED);
 }
 
 // -----------------------------------------------------------------------------
