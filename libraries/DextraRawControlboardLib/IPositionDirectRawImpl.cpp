@@ -4,9 +4,11 @@
 
 #include <ColorDebug.h>
 
-// ------------------- IPositionDirect Related ------------------------------------
+using namespace roboticslab;
 
-bool roboticslab::DextraRawControlboard::setPositionRaw(int j, double ref)
+// ----------------------------------------------------------------------------------------
+
+bool DextraRawControlboard::setPositionRaw(int j, double ref)
 {
     CD_DEBUG("(%d, %f)\n", j, ref);
     return positionMoveRaw(j, ref);
@@ -14,18 +16,18 @@ bool roboticslab::DextraRawControlboard::setPositionRaw(int j, double ref)
 
 // ----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraRawControlboard::setPositionsRaw(const int n_joint, const int *joints, const double *refs)
+bool DextraRawControlboard::setPositionsRaw(const double * refs)
 {
-    CD_DEBUG("(%d)\n", n_joint);
-    return positionMoveRaw(n_joint, joints, refs);
+    CD_DEBUG("\n");
+    return positionMoveRaw(refs);
 }
 
 // ----------------------------------------------------------------------------------------
 
-bool roboticslab::DextraRawControlboard::setPositionsRaw(const double *refs)
+bool DextraRawControlboard::setPositionsRaw(int n_joint, const int * joints, const double * refs)
 {
     CD_DEBUG("\n");
-    return positionMoveRaw(refs);
+    return positionMoveRaw(n_joint, joints, refs);
 }
 
 // ----------------------------------------------------------------------------------------

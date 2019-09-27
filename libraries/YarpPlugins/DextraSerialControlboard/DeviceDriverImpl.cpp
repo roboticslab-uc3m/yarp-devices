@@ -7,9 +7,11 @@
 
 #include <ColorDebug.h>
 
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::open(yarp::os::Searchable& config)
+bool DextraSerialControlboard::open(yarp::os::Searchable & config)
 {
     std::string port = config.check("port", yarp::os::Value(DEFAULT_PORT), "serial port").asString();
 
@@ -46,7 +48,7 @@ bool roboticslab::DextraSerialControlboard::open(yarp::os::Searchable& config)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::close()
+bool DextraSerialControlboard::close()
 {
     raw.destroySynapse();
     serialDevice.close();

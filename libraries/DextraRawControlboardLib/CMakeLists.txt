@@ -7,7 +7,7 @@ if(ENABLE_DextraRawControlboardLib)
                                                 IAxisInfoRawImpl.cpp
                                                 IControlLimitsRawImpl.cpp
                                                 IControlModeRawImpl.cpp
-                                                IEncodersTimedRawImpl.cpp
+                                                IEncodersRawImpl.cpp
                                                 IPositionControlRawImpl.cpp
                                                 IPositionDirectRawImpl.cpp)
 

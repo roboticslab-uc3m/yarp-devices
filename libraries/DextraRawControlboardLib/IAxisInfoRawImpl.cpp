@@ -4,11 +4,13 @@
 
 #include <ColorDebug.h>
 
-// ------------------- IAxisInfo Related ------------------------------------
+using namespace roboticslab;
 
-bool roboticslab::DextraRawControlboard::getAxisNameRaw(int axis, std::string &name)
+// -----------------------------------------------------------------------------
+
+bool DextraRawControlboard::getAxisNameRaw(int axis, std::string & name)
 {
-    CD_DEBUG("axis\n");
+    CD_DEBUG("(%d)\n", axis);
     CHECK_JOINT(axis);
     name = Synapse::LABELS[axis];
     return true;
@@ -16,9 +18,9 @@ bool roboticslab::DextraRawControlboard::getAxisNameRaw(int axis, std::string &n
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraRawControlboard::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum &type)
+bool DextraRawControlboard::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type)
 {
-    CD_DEBUG("axis\n");
+    CD_DEBUG("(&d)\n", axis);
     CHECK_JOINT(axis);
     type = yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_REVOLUTE;
     return true;

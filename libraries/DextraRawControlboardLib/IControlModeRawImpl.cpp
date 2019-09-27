@@ -6,11 +6,13 @@
 
 #include <ColorDebug.h>
 
-// ------------------- IControlMode Related ------------------------------------
+using namespace roboticslab;
 
-bool roboticslab::DextraRawControlboard::getControlModeRaw(int j, int *mode)
+// -----------------------------------------------------------------------------
+
+bool DextraRawControlboard::getControlModeRaw(int j, int * mode)
 {
-    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
+    //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
     *mode = VOCAB_CM_POSITION;
     return true;
@@ -18,9 +20,9 @@ bool roboticslab::DextraRawControlboard::getControlModeRaw(int j, int *mode)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraRawControlboard::getControlModesRaw(int *modes)
+bool DextraRawControlboard::getControlModesRaw(int * modes)
 {
-    //CD_DEBUG("\n");  //-- Too verbose in controlboardwrapper2 stream
+    //CD_DEBUG("\n"); //-- Too verbose in controlboardwrapper2 stream
 
     bool ok = true;
 
@@ -34,9 +36,9 @@ bool roboticslab::DextraRawControlboard::getControlModesRaw(int *modes)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraRawControlboard::getControlModesRaw(const int n_joint, const int *joints, int *modes)
+bool DextraRawControlboard::getControlModesRaw(int n_joint, const int * joints, int * modes)
 {
-    CD_DEBUG("%d\n", n_joint);
+    CD_DEBUG("\n");
 
     bool ok = true;
 
@@ -50,7 +52,7 @@ bool roboticslab::DextraRawControlboard::getControlModesRaw(const int n_joint, c
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraRawControlboard::setControlModeRaw(const int j, const int mode)
+bool DextraRawControlboard::setControlModeRaw(int j, int mode)
 {
     CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
     CHECK_JOINT(j);
@@ -59,23 +61,7 @@ bool roboticslab::DextraRawControlboard::setControlModeRaw(const int j, const in
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraRawControlboard::setControlModesRaw(const int n_joint, const int *joints, int *modes)
-{
-    CD_DEBUG("(%d)\n", n_joint);
-
-    bool ok = true;
-
-    for (int i = 0; i < n_joint; i++)
-    {
-        ok &= setControlModeRaw(joints[i], modes[i]);
-    }
-
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::DextraRawControlboard::setControlModesRaw(int *modes)
+bool DextraRawControlboard::setControlModesRaw(int * modes)
 {
     CD_DEBUG("\n");
 
@@ -84,6 +70,22 @@ bool roboticslab::DextraRawControlboard::setControlModesRaw(int *modes)
     for (int j = 0; j < Synapse::DATA_POINTS; j++)
     {
         ok &= setControlModeRaw(j, modes[j]);
+    }
+
+    return ok;
+}
+
+// -----------------------------------------------------------------------------
+
+bool DextraRawControlboard::setControlModesRaw(int n_joint, const int * joints, int * modes)
+{
+    CD_DEBUG("\n");
+
+    bool ok = true;
+
+    for (int i = 0; i < n_joint; i++)
+    {
+        ok &= setControlModeRaw(joints[i], modes[i]);
     }
 
     return ok;

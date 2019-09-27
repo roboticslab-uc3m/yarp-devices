@@ -50,20 +50,22 @@ public:
     DextraCanControlboard() : canId(0)
     { }
 
-    //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
-    virtual bool open(yarp::os::Searchable& config);
-    virtual bool close();
+    //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 
-    //  --------- ICanBusSharer Declarations. Implementation in ICanBusSharerImpl.cpp ---------
-    virtual unsigned int getId();
-    virtual bool initialize() { return true; }
-    virtual bool start() { return true; };
-    virtual bool readyToSwitchOn() { return true; };
-    virtual bool switchOn() { return true; };
-    virtual bool enable() { return true; };
-    virtual bool recoverFromError() { return true; };
-    virtual bool interpretMessage(const yarp::dev::CanMessage & message);
-    virtual bool registerSender(CanSenderDelegate * sender);
+    virtual bool open(yarp::os::Searchable & config) override;
+    virtual bool close() override;
+
+    //  --------- ICanBusSharer declarations. Implementation in ICanBusSharerImpl.cpp ---------
+
+    virtual unsigned int getId() override;
+    virtual bool initialize() override { return true; }
+    virtual bool start() override { return true; };
+    virtual bool readyToSwitchOn() override { return true; };
+    virtual bool switchOn() override { return true; };
+    virtual bool enable() override { return true; };
+    virtual bool recoverFromError() override { return true; };
+    virtual bool interpretMessage(const yarp::dev::CanMessage & message) override;
+    virtual bool registerSender(CanSenderDelegate * sender) override;
 
 protected:
 
@@ -71,6 +73,6 @@ protected:
     DextraRawControlboard raw;
 };
 
-}  // namespace roboticslab
+} // namespace roboticslab
 
-#endif  // __DEXTRA_CAN_CONTROLBOARD_HPP__
+#endif // __DEXTRA_CAN_CONTROLBOARD_HPP__

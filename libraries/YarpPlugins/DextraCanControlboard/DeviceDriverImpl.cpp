@@ -6,9 +6,11 @@
 
 #include <ColorDebug.h>
 
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraCanControlboard::open(yarp::os::Searchable& config)
+bool DextraCanControlboard::open(yarp::os::Searchable & config)
 {
     int canId = config.check("canId", yarp::os::Value(0), "can bus ID").asInt32();
 
@@ -25,7 +27,7 @@ bool roboticslab::DextraCanControlboard::open(yarp::os::Searchable& config)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraCanControlboard::close()
+bool DextraCanControlboard::close()
 {
     destroySynapse();
     return true;

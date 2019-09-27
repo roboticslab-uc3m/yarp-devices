@@ -4,9 +4,11 @@
 
 #include <ColorDebug.h>
 
-// ------------------- IControlLimits Related ------------------------------------
+using namespace roboticslab;
 
-bool roboticslab::DextraRawControlboard::setLimitsRaw(int axis, double min, double max)
+// -----------------------------------------------------------------------------
+
+bool DextraRawControlboard::setLimitsRaw(int axis, double min, double max)
 {
     CD_INFO("(%d, %f, %f)\n", axis, min, max);
     CHECK_JOINT(axis);
@@ -15,7 +17,7 @@ bool roboticslab::DextraRawControlboard::setLimitsRaw(int axis, double min, doub
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraRawControlboard::getLimitsRaw(int axis, double *min, double *max)
+bool DextraRawControlboard::getLimitsRaw(int axis, double * min, double * max)
 {
     CD_INFO("(%d)\n", axis);
     CHECK_JOINT(axis);
@@ -29,17 +31,17 @@ bool roboticslab::DextraRawControlboard::getLimitsRaw(int axis, double *min, dou
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraRawControlboard::setVelLimitsRaw(int axis, double min, double max)
+bool DextraRawControlboard::setVelLimitsRaw(int axis, double min, double max)
 {
-    CD_WARNING("Not implemented.\n");
+    CD_WARNING("Not supported.\n");
     return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraRawControlboard::getVelLimitsRaw(int axis, double *min, double *max)
+bool DextraRawControlboard::getVelLimitsRaw(int axis, double * min, double * max)
 {
-    CD_WARNING("Not implemented.\n");
+    CD_WARNING("Not supported.\n");
     return false;
 }
 
