@@ -116,12 +116,12 @@ bool DriveStatusMachine::update(std::uint16_t statusword)
     return stateObserver.notify();
 }
 
-std::bitset<16> & DriveStatusMachine::controlword()
+DriveStatusMachine::word_t & DriveStatusMachine::controlword()
 {
     return _controlword;
 }
 
-const std::bitset<16> & DriveStatusMachine::statusword() const
+const DriveStatusMachine::word_t & DriveStatusMachine::statusword() const
 {
     std::lock_guard<std::mutex> lock(stateMutex);
     return _statusword;
@@ -147,17 +147,7 @@ bool DriveStatusMachine::requestTransition(DriveTransition transition, bool wait
     if (wait)
     {
         auto op = std::make_pair(initialState, transition);
-        std::uint16_t resp;
-
-        if (!stateObserver.await())
-        {
-            return false;
-        }
-
-        if (transitionToState[op] != resp)
-        {
-            return false;
-        }
+        return stateObserver.await() && transitionToState[op] == getCurrentState();
     }
 
     return true;
