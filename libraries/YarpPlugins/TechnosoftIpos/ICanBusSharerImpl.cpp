@@ -290,45 +290,9 @@ bool TechnosoftIpos::initialize()
 
 bool TechnosoftIpos::finalize()
 {
-    return can->driveStatus()->requestState(DriveState::SWITCH_ON_DISABLED);
+    return can->driveStatus()->requestState(DriveState::SWITCH_ON_DISABLED)
+            && can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
 }
-
-// -----------------------------------------------------------------------------
-
-/** Manual: 4.1.2. Device control
-    Reset Node: The NMT master sets the state of the selected NMT slave to the reset application sub-state.
-    In this state the drives perform a software reset and enter the pre-operational state.
- **/
-
-bool TechnosoftIpos::resetNodes()
-{
-    // NMT Reset Node (Manual 4.1.2.3)
-    //uint8_t msg_resetNodes[] = {0x81,0x00};
-    //return sender->prepareMessage(message_builder(0, 2, msg_resetNodes));
-    return true;
-}
-
-/** Manual: 4.1.2. Device control
- * The NMT master sets the state of the selected NMT slave to the “reset communication” sub-state.
- * In this state the drives resets their communication and enter the pre-operational state.
- */
-
-bool TechnosoftIpos::resetCommunication()
-{
-    return can->nmt()->issueServiceCommand(NmtService::RESET_COMMUNICATION);
-}
-
-
-/** Manual: 4.1.2. Device control
-    Reset Node: The NMT master sets the state of the selected NMT slave to the reset application sub-state.
-    In this state the drives perform a software reset and enter the pre-operational state.
- **/
-
-bool TechnosoftIpos::resetNode(int id)
-{
-    return can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
-}
-
 
 // -----------------------------------------------------------------------------
 

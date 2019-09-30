@@ -76,12 +76,9 @@ public:
     virtual bool interpretMessage(const yarp::dev::CanMessage & message) override;
     virtual bool initialize() override;
     virtual bool finalize() override;
-    virtual bool resetNode(int id) override;
-    virtual bool resetNodes() override;
-    virtual bool resetCommunication(); // orphan
+    virtual bool registerSender(CanSenderDelegate * sender) override;
     virtual bool sendLinearInterpolationTarget() override;
     virtual bool sendLinearInterpolationStart() override;
-    virtual bool registerSender(CanSenderDelegate * sender) override;
 
     //  --------- IControlLimitsRaw declarations. Implementation in IControlLimitsRawImpl.cpp ---------
 
