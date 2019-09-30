@@ -17,7 +17,6 @@
 
 #include "CanOpen.hpp"
 #include "ICanBusSharer.hpp"
-#include "ITechnosoftIpos.h"
 #include "LinearInterpolationBuffer.hpp"
 #include "StateVariables.hpp"
 
@@ -52,8 +51,7 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver,
                        public yarp::dev::IRemoteVariablesRaw,
                        public yarp::dev::ITorqueControlRaw,
                        public yarp::dev::IVelocityControlRaw,
-                       public ICanBusSharer,
-                       public ITechnosoftIpos
+                       public ICanBusSharer
 {
 public:
 
@@ -77,8 +75,6 @@ public:
     virtual bool initialize() override;
     virtual bool finalize() override;
     virtual bool registerSender(CanSenderDelegate * sender) override;
-    virtual bool sendLinearInterpolationTarget() override;
-    virtual bool sendLinearInterpolationStart() override;
 
     //  --------- IControlLimitsRaw declarations. Implementation in IControlLimitsRawImpl.cpp ---------
 

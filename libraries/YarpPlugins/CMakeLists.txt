@@ -12,7 +12,6 @@ target_include_directories(YarpDevicesInterfaces INTERFACE $<TARGET_PROPERTY:YAR
 
 # Install interface headers.
 install(FILES IProximitySensors.h
-              ITechnosoftIpos.h
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Register export set.

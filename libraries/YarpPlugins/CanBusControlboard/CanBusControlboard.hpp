@@ -326,7 +326,6 @@ private:
 
     DeviceMapper deviceMapper;
     std::vector<ICanBusSharer *> iCanBusSharers;
-    std::vector<int> motorIds;
 
     CanReaderThread * canReaderThread;
     CanWriterThread * canWriterThread;

@@ -2,31 +2,35 @@
 
 #include "PositionDirectThread.hpp"
 
-#include <yarp/os/LockGuard.h>
+#include <algorithm>
+#include <memory>
 
 using namespace roboticslab;
 
-PositionDirectThread::PositionDirectThread(double period)
-    : yarp::os::PeriodicThread(period)
+PositionDirectThread::PositionDirectThread(const DeviceMapper & _deviceMapper, double period)
+    : yarp::os::PeriodicThread(period),
+      deviceMapper(_deviceMapper)
 {
     suspend();
 }
 
-void PositionDirectThread::setNodeHandles(const std::map<int, ITechnosoftIpos *> & _idToTechnosoftIpos)
-{
-    this->idToTechnosoftIpos = _idToTechnosoftIpos;
-}
-
 void PositionDirectThread::updateControlModeRegister(int j, bool enablePosd)
 {
-    std::lock_guard<std::mutex> guard(mtx);
+    std::lock_guard<std::mutex> guard(mutex);
 
     bool hasElement = activeIds.find(j) != activeIds.end();
 
-    if (enablePosd && !hasElement)
+    int localAxis;
+    auto * p  = deviceMapper.getDevice(j, &localAxis).iRemoteVariablesRaw;
+
+    if (!p)
+    {
+        return;
+    }
+    else if (enablePosd && !hasElement)
     {
         activeIds.insert(j);
-        idToTechnosoftIpos[j]->sendLinearInterpolationStart();
+        p->setRemoteVariableRaw("linInterpStart", yarp::os::Bottle());
         resume();
     }
     else if (!enablePosd && hasElement)
@@ -42,12 +46,16 @@ void PositionDirectThread::updateControlModeRegister(int j, bool enablePosd)
 
 void PositionDirectThread::run()
 {
-    mtx.lock();
+    mutex.lock();
     std::set<int> ids = activeIds;
-    mtx.unlock();
+    mutex.unlock();
 
-    for (std::set<int>::iterator it = ids.begin(); it != ids.end(); ++it)
+    std::unique_ptr<int[]> arr(new int[ids.size()]);
+    std::copy(ids.begin(), ids.end(), arr.get());
+
+    for (const auto & t : deviceMapper.getDevices(ids.size(), arr.get()))
     {
-        idToTechnosoftIpos[*it]->sendLinearInterpolationTarget();
+        auto * p = std::get<0>(t)->iRemoteVariablesRaw;
+        p->setRemoteVariableRaw("linInterpTarget", yarp::os::Bottle());
     }
 }

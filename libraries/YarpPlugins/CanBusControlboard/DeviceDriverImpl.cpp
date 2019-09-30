@@ -5,8 +5,6 @@
 #include <map>
 #include <string>
 
-#include "ITechnosoftIpos.h"
-
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
@@ -68,7 +66,6 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         return false;
     }
 
-    std::map<int, ITechnosoftIpos *> idToTechnosoftIpos;
     iCanBusSharers.resize(ids.size());
 
     for (int i = 0; i < ids.size(); i++)
@@ -123,15 +120,6 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
         iCanBusSharers[i]->registerSender(canWriterThread->getDelegate());
 
-        if (types.get(i).asString() == "TechnosoftIpos")
-        {
-            motorIds.push_back(i);
-
-            ITechnosoftIpos * iTechnosoftIpos;
-            device->view(iTechnosoftIpos);
-            idToTechnosoftIpos.insert(std::make_pair(i, iTechnosoftIpos));
-        }
-
         if (!iCanBus->canIdAdd(ids.get(i).asInt32()))
         {
             CD_ERROR("Cannot register acceptance filter for node ID: %d.\n", ids.get(i).asInt32());
@@ -159,8 +147,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         }
     }
 
-    posdThread = new PositionDirectThread(linInterpPeriodMs * 0.001);
-    posdThread->setNodeHandles(idToTechnosoftIpos);
+    posdThread = new PositionDirectThread(deviceMapper, linInterpPeriodMs * 0.001);
     posdThread->start();
 
     return true;

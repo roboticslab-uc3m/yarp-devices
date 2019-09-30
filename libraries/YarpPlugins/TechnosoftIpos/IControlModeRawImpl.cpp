@@ -48,7 +48,7 @@ bool TechnosoftIpos::setPositionDirectModeRaw()
 
     for (int i = 0; i < linInterpBuffer->getBufferSize(); i++)
     {
-        if (!sendLinearInterpolationTarget())
+        if (!can->rpdo3()->write<uint64_t>(linInterpBuffer->makeDataRecord()))
         {
             CD_ERROR("Unable to send point %d/%d to buffer.\n", i + 1, linInterpBuffer->getBufferSize());
             return false;

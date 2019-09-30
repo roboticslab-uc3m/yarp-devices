@@ -47,6 +47,8 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
         return false;
     }
 
+    // TODO
+    /*
     int modes[motorIds.size()];
 
     if (!getControlModes(motorIds.size(), motorIds.data(), modes))
@@ -68,6 +70,7 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
     {
         device.iRemoteVariablesRaw->setRemoteVariableRaw(key, val);
     }
+    */
 
     return true;
 }

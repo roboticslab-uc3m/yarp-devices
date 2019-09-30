@@ -2,23 +2,7 @@
 
 #include "TechnosoftIpos.hpp"
 
-#include "CanUtils.hpp"
-
 using namespace roboticslab;
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::sendLinearInterpolationTarget()
-{
-    return can->rpdo3()->write<uint64_t>(linInterpBuffer->makeDataRecord());
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::sendLinearInterpolationStart()
-{
-    return can->rpdo1()->write<uint16_t>(0x001F);
-}
 
 // -----------------------------------------------------------------------------
 
