@@ -21,7 +21,7 @@ bool TechnosoftIpos::getRefTorqueRaw(int j, double * t)
         return false;
     }
 
-    *t = currentToTorque(curr);
+    *t = vars.currentToTorque(curr);
     return true;
 }
 
@@ -40,7 +40,7 @@ bool TechnosoftIpos::setRefTorqueRaw(int j, double t)
     CD_DEBUG("(%d, %f)\n", j, t);
     CHECK_JOINT(j);
 
-    double curr = torqueToCurrent(t);
+    double curr = vars.torqueToCurrent(t);
 
     if (!setRefCurrentRaw(j, curr))
     {
@@ -74,7 +74,7 @@ bool TechnosoftIpos::getTorqueRaw(int j, double * t)
         return false;
     }
 
-    *t = currentToTorque(curr);
+    *t = vars.currentToTorque(curr);
     return true;
 }
 
@@ -101,7 +101,7 @@ bool TechnosoftIpos::getTorqueRangeRaw(int j, double * min, double * max)
         return false;
     }
 
-    *max = currentToTorque(maxCurrent);
+    *max = vars.currentToTorque(maxCurrent);
     *min = -(*max);
 
     return true;
@@ -124,7 +124,7 @@ bool TechnosoftIpos::getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParame
 
     params->bemf = 0.0;
     params->bemf_scale = 0.0;
-    params->ktau = k;
+    params->ktau = vars.k;
     params->ktau_scale = 0.0;
 
     return true;
@@ -136,7 +136,7 @@ bool TechnosoftIpos::setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorque
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-    k = params.ktau;
+    vars.k = params.ktau;
     return true;
 }
 

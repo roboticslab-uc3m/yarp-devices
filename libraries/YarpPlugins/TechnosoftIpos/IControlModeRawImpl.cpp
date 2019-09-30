@@ -34,7 +34,7 @@ bool TechnosoftIpos::setPositionDirectModeRaw()
 
     double ref;
     if (!getEncoderRaw(0, &ref)) return false;
-    int32_t data = degreesToInternalUnits(ref);
+    int32_t data = vars.degreesToInternalUnits(ref);
 
     if (!can->sdo()->download("Interpolated position initial position", data, 0x2079))
     {
@@ -92,7 +92,7 @@ bool TechnosoftIpos::getControlModeRaw1(int * mode)
     // handled
     case -5:
         CD_INFO("\t-iPOS specific: External Reference Torque Mode. canId: %d.\n", can->getId());
-        temp = modeCurrentTorque == VOCAB_CM_TORQUE ? VOCAB_CM_TORQUE : VOCAB_CM_CURRENT;
+        temp = vars.controlMode == VOCAB_CM_TORQUE ? VOCAB_CM_TORQUE : VOCAB_CM_CURRENT;
         break;
     case 1:
         CD_INFO("\t-Profile Position Mode. canId: %d.\n", can->getId());
@@ -469,7 +469,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         return can->sdo()->download<int8_t>("Modes of Operation", 3, 0x6060);
     case VOCAB_CM_CURRENT:
     case VOCAB_CM_TORQUE:
-        modeCurrentTorque = mode;
+        vars.controlMode = mode;
         return can->sdo()->download<uint16_t>("External Reference Type", 1, 0x201D)
                 && can->sdo()->download<int8_t>("Modes of Operation", -5, 0x6060)
                 && can->rpdo1()->write<uint16_t>(0x001F);

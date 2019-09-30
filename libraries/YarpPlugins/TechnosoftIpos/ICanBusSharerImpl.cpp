@@ -211,13 +211,13 @@ bool TechnosoftIpos::initialize()
 
     CD_INFO("Retrieved product code: P%03d.%03d.E%03d.\n", data / 1000000, (data / 1000) % 1000, data % 1000);
 
-    if (!retrieveDrivePeakCurrent(data, &drivePeakCurrent))
+    if (!retrieveDrivePeakCurrent(data, &vars.drivePeakCurrent))
     {
         CD_ERROR("Unhandled iPOS model %d, unable to retrieve drive peak current.\n", data);
         return false;
     }
 
-    CD_SUCCESS("Retrieved drive peak current: %f A.\n", drivePeakCurrent);
+    CD_SUCCESS("Retrieved drive peak current: %f A.\n", vars.drivePeakCurrent);
 
     if (!can->sdo()->upload("Identity Object: Revision number", &data, 0x1018, 0x03))
     {
@@ -238,8 +238,27 @@ bool TechnosoftIpos::initialize()
         return false;
     }
 
+    if (!setLimitsRaw(0, vars.min, vars.max))
+    {
+        CD_ERROR("Unable to set software limits.\n");
+        return false;
+    }
+
+    if (!setRefSpeedRaw(0, vars.refSpeed))
+    {
+        CD_ERROR("Unable to set reference speed.\n");
+        return false;
+    }
+
+    if (!setRefAccelerationRaw(0, vars.refAcceleration))
+    {
+        CD_ERROR("Unable to set reference acceleration.\n");
+        return false;
+    }
+
     if (iEncodersTimedRawExternal)
     {
+        // synchronize absolute (master) and relative (slave) encoders
         double extEnc;
 
         if (!iEncodersTimedRawExternal->getEncodersRaw(&extEnc))
@@ -247,8 +266,10 @@ bool TechnosoftIpos::initialize()
             return false;
         }
 
-        // synchronize absolute (master) and relative (slave) encoders
-        return setEncoderRaw(0, extEnc);
+        if (!setEncoderRaw(0, extEnc))
+        {
+            return false;
+        }
     }
 
     if (!can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE))
@@ -261,7 +282,7 @@ bool TechnosoftIpos::initialize()
         return false;
     }
 
-    modeCurrentTorque = VOCAB_CM_IDLE; // TODO: rename
+    vars.controlMode = VOCAB_CM_IDLE;
     return true;
 }
 

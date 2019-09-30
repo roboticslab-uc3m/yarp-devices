@@ -22,7 +22,7 @@ bool TechnosoftIpos::setLimitRaw(double limit, bool isMin)
     std::string name = "Software position limit: ";
     uint8_t subindex;
 
-    if (isMin ^ tr < 0)
+    if (isMin ^ vars.tr < 0)
     {
         name += "minimal position limit";
         subindex = 0x01;
@@ -33,7 +33,7 @@ bool TechnosoftIpos::setLimitRaw(double limit, bool isMin)
         subindex = 0x02;
     }
 
-    int32_t data = degreesToInternalUnits(limit);
+    int32_t data = vars.degreesToInternalUnits(limit);
     return can->sdo()->download(name, data, 0x607D, subindex);
 }
 
@@ -53,7 +53,7 @@ bool TechnosoftIpos::getLimitRaw(double * limit, bool isMin)
     std::string name = "Software position limit: ";
     uint8_t subindex;
 
-    if (tr >= 0)
+    if (vars.tr >= 0)
     {
         name += "minimal position limit";
         subindex = 0x01;
@@ -65,7 +65,7 @@ bool TechnosoftIpos::getLimitRaw(double * limit, bool isMin)
     }
 
     return can->sdo()->upload<int32_t>(name, [=](int32_t * data)
-            { *limit = internalUnitsToDegrees(*data); },
+            { *limit = vars.internalUnitsToDegrees(*data); },
             0x607D, subindex);
 }
 
@@ -76,7 +76,7 @@ bool TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
     CD_DEBUG("(%d, %f, %f)\n", axis, min, max);
     CHECK_JOINT(axis);
 
-    maxVel = max;
+    vars.maxVel = max;
 
     if (min != -max)
     {
@@ -93,8 +93,8 @@ bool TechnosoftIpos::getVelLimitsRaw(int axis, double * min, double * max)
     CD_DEBUG("(%d)\n", axis);
     CHECK_JOINT(axis);
 
-    *min = -maxVel;
-    *max = maxVel;
+    *min = -vars.maxVel;
+    *max = vars.maxVel;
 
     return true;
 }

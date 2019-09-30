@@ -27,7 +27,9 @@ if(NOT SKIP_TechnosoftIpos)
                                    ITorqueControlRawImpl.cpp
                                    IVelocityControlRawImpl.cpp
                                    LinearInterpolationBuffer.hpp
-                                   LinearInterpolationBuffer.cpp)
+                                   LinearInterpolationBuffer.cpp
+                                   StateVariables.hpp
+                                   StateVariables.cpp)
 
     target_link_libraries(TechnosoftIpos YARP::YARP_OS
                                          YARP::YARP_dev

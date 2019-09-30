@@ -37,14 +37,14 @@ bool TechnosoftIpos::setEncoderRaw(int j, double val)
 {
     CD_DEBUG("(%d, %f)\n", j, val);
     CHECK_JOINT(j);
-    int32_t data = degreesToInternalUnits(val);
+    int32_t data = vars.degreesToInternalUnits(val);
 
     if (!can->sdo()->download("Set actual position", data, 0X2081))
     {
         return false;
     }
 
-    lastEncoderRead.reset(val);
+    vars.lastEncoderRead.reset(val);
     return true;
 }
 
@@ -62,7 +62,7 @@ bool TechnosoftIpos::getEncoderRaw(int j, double *v)
 {
     //CD_DEBUG("%d\n", j); //-- Too verbose in stream.
     CHECK_JOINT(j);
-    *v = lastEncoderRead.queryPosition();
+    *v = vars.lastEncoderRead.queryPosition();
     return true;
 }
 
@@ -80,7 +80,7 @@ bool TechnosoftIpos::getEncoderSpeedRaw(int j, double *sp)
 {
     //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream.
     CHECK_JOINT(j);
-    *sp = lastEncoderRead.querySpeed();
+    *sp = vars.lastEncoderRead.querySpeed();
     return true;
 }
 
@@ -98,7 +98,7 @@ bool TechnosoftIpos::getEncoderAccelerationRaw(int j, double *acc)
 {
     //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream.
     CHECK_JOINT(j);
-    *acc = lastEncoderRead.queryAcceleration();
+    *acc = vars.lastEncoderRead.queryAcceleration();
     return true;
 }
 
@@ -116,8 +116,8 @@ bool TechnosoftIpos::getEncoderTimedRaw(int j, double * enc, double * time)
 {
     //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream.
     CHECK_JOINT(j);
-    *enc =  lastEncoderRead.queryPosition();
-    *time = lastEncoderRead.queryTime();
+    *enc =  vars.lastEncoderRead.queryPosition();
+    *time = vars.lastEncoderRead.queryTime();
     return true;
 }
 

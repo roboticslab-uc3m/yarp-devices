@@ -3,12 +3,6 @@
 #ifndef __TECHNOSOFT_IPOS_HPP__
 #define __TECHNOSOFT_IPOS_HPP__
 
-#include <stdint.h>
-#include <cmath>
-#include <mutex>
-
-#include <yarp/os/Stamp.h>
-
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IControlLimits.h>
 #include <yarp/dev/IControlMode.h>
@@ -25,6 +19,7 @@
 #include "ICanBusSharer.hpp"
 #include "ITechnosoftIpos.h"
 #include "LinearInterpolationBuffer.hpp"
+#include "StateVariables.hpp"
 
 #define CHECK_JOINT(j) do { int ax; if (getAxes(&ax), (j) != ax - 1) return false; } while (0)
 
@@ -36,30 +31,6 @@ namespace roboticslab
  * \defgroup TechnosoftIpos
  * @brief Contains roboticslab::TechnosoftIpos.
  */
-
-/**
- * @ingroup TechnosoftIpos
- * @brief Stores last encoder reads, obtains mean speeds and accelerations
- * via differentiation.
- */
-class EncoderRead
-{
-public:
-    EncoderRead(double initialPos);
-    void update(double newPos, double newTime = 0.0);
-    void reset(double pos = 0.0);
-    double queryPosition() const;
-    double querySpeed() const;
-    double queryAcceleration() const;
-    double queryTime() const;
-
-private:
-    double lastPosition, nextToLastPosition;
-    double lastSpeed, nextToLastSpeed;
-    double lastAcceleration;
-    yarp::os::Stamp lastStamp;
-    mutable std::mutex encoderMutex;
-};
 
 class TechnosoftIposEmcy : public EmcyCodeRegistry
 {
@@ -90,15 +61,7 @@ public:
         : can(0),
           iEncodersTimedRawExternal(0),
           iExternalEncoderCanBusSharer(0),
-          lastEncoderRead(0.0),
-          modeCurrentTorque(0),
-          drivePeakCurrent(0.0),
-          linInterpBuffer(0),
-          maxVel(0.0),
-          tr(0.0),
-          k(0.0),
-          encoderPulses(0),
-          pulsesPerSample(0)
+          linInterpBuffer(0)
     {}
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -257,52 +220,15 @@ public:
 
 protected:
 
-    // return -1 for negative numbers, +1 for positive numbers, 0 for zero
-    // https://stackoverflow.com/a/4609795
-    template<typename T>
-    inline int sgn(T val)
-    { return (T(0) < val) - (val < T(0)); }
-
-    int32_t degreesToInternalUnits(double value, int derivativeOrder = 0)
-    { return value * tr * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder); }
-
-    double internalUnitsToDegrees(int32_t value, int derivativeOrder = 0)
-    { return value / (tr * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder)); }
-
-    int16_t currentToInternalUnits(double value)
-    { return value * sgn(tr) * 65520.0 / (2.0 * drivePeakCurrent); }
-
-    double internalUnitsToCurrent(int16_t value)
-    { return value * sgn(tr) * 2.0 * drivePeakCurrent / 65520.0; }
-
-    double internalUnitsToPeakCurrent(int16_t value)
-    { return 2.0 * drivePeakCurrent * (32767.0 - value) / 65520.0; }
-
-    double currentToTorque(double current)
-    { return current * std::abs(tr) * k; }
-
-    double torqueToCurrent(double torque)
-    { return torque / (std::abs(tr) * k); }
-
     CanOpen * can;
 
-    //-- Encoder stuff
     yarp::dev::PolyDriver externalEncoderDevice;
     yarp::dev::IEncodersTimedRaw * iEncodersTimedRawExternal;
     roboticslab::ICanBusSharer * iExternalEncoderCanBusSharer;
-    EncoderRead lastEncoderRead;
 
-    //-- Current stuff
-    int modeCurrentTorque;
-    double drivePeakCurrent;
+    StateVariables vars;
 
-    //-- PT/PVT stuff
     LinearInterpolationBuffer * linInterpBuffer;
-
-    //-- More internal parameter stuff
-    double maxVel, tr, k;
-    int encoderPulses; // default: 4096 (1024 * 4)
-    int pulsesPerSample;
 };
 
 } // namespace roboticslab
