@@ -8,6 +8,7 @@
 #include <initializer_list>
 #include <memory>
 #include <mutex>
+#include <string>
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/Stamp.h>
@@ -86,6 +87,9 @@ struct StateVariables
 
     int encoderPulses;
     int pulsesPerSample;
+
+    std::string axisName;
+    yarp::conf::vocab32_t jointType;
 
     std::unique_ptr<StateObserver> controlModeObserverPtr;
 };

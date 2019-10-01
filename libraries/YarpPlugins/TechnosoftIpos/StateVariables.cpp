@@ -4,6 +4,15 @@
 
 #include <cmath>
 
+// upstream bug in IAxisInfo.h, remove in YARP 3.2+
+#include <yarp/conf/version.h>
+#if YARP_VERSION_MINOR < 2
+# include <yarp/os/Log.h>
+#endif
+
+#include <yarp/os/Vocab.h>
+#include <yarp/dev/IAxisInfo.h>
+
 #include <ColorDebug.h>
 
 using namespace roboticslab;
@@ -117,6 +126,7 @@ StateVariables::StateVariables()
       refAcceleration(0.0),
       encoderPulses(0),
       pulsesPerSample(0),
+      jointType(0),
       controlModeObserverPtr(new StateObserver(1.0)) // arbitrary 1 second wait
 { }
 
@@ -187,6 +197,23 @@ bool StateVariables::validateInitialState()
     if (min >= max)
     {
         CD_WARNING("Illegal joint limits (min, max): %f >= %f.\n", min, max);
+        return false;
+    }
+
+    if (axisName.empty())
+    {
+        CD_WARNING("Empty string as axis name.\n");
+        return false;
+    }
+
+    switch (jointType)
+    {
+    case yarp::dev::VOCAB_JOINTTYPE_REVOLUTE:
+    case yarp::dev::VOCAB_JOINTTYPE_PRISMATIC:
+    case yarp::dev::VOCAB_JOINTTYPE_UNKNOWN:
+        break;
+    default:
+        CD_WARNING("Illegal joint type vocab: %s.\n", yarp::os::Vocab::decode(jointType).c_str());
         return false;
     }
 

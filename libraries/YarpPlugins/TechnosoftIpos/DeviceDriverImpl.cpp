@@ -29,6 +29,8 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     vars.max = config.check("max", yarp::os::Value(0.0), "max (meters or degrees)").asFloat64();
     vars.refSpeed = config.check("refSpeed", yarp::os::Value(0.0), "ref speed (meters/second or degrees/second)").asFloat64();
     vars.refAcceleration = config.check("refAcceleration", yarp::os::Value(0.0), "ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
+    vars.axisName = config.check("axisName", yarp::os::Value(""), "axis name").asString();
+    vars.jointType = config.check("jointType", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "joint type [atrv|atpr|unkn]").asVocab();
 
     vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
 
