@@ -177,7 +177,7 @@ bool DriveStatusMachine::requestTransition(DriveTransition transition, bool wait
     return true;
 }
 
-bool DriveStatusMachine::requestState(DriveState goalState, bool wait)
+bool DriveStatusMachine::requestState(DriveState goalState)
 {
     DriveState initialState = getCurrentState();
 
@@ -196,7 +196,7 @@ bool DriveStatusMachine::requestState(DriveState goalState, bool wait)
 
     for (const auto & transition : it->second)
     {
-        if (!requestTransition(transition, wait))
+        if (!requestTransition(transition, true))
         {
             return false;
         }

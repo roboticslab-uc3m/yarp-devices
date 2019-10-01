@@ -56,7 +56,7 @@ public:
     const word_t & statusword() const;
     DriveState getCurrentState() const;
     bool requestTransition(DriveTransition transition, bool wait = true);
-    bool requestState(DriveState goalState, bool wait = true);
+    bool requestState(DriveState goalState);
 
 private:
     word_t _controlword;
