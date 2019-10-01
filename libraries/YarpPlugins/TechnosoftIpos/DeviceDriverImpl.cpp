@@ -137,6 +137,42 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     can = new CanOpen(canId, canSdoTimeoutMs * 0.001, canDriveStateTimeout);
 
+    PdoConfiguration tpdo1Conf; // TODO
+    tpdo1Conf.addMapping<std::uint16_t>(0x6041);
+
+    PdoConfiguration tpdo2Conf; // TODO
+    tpdo2Conf.addMapping<std::int8_t>(0x6061);
+
+    if (!can->tpdo1()->configure(tpdo1Conf))
+    {
+        CD_ERROR("Unable to configure TPDO1.\n");
+        return false;
+    }
+
+    if (!can->tpdo2()->configure(tpdo2Conf))
+    {
+        CD_ERROR("Unable to configure TPDO2.\n");
+        return false;
+    }
+
+    can->tpdo1()->registerHandler<std::uint16_t>([=](std::uint16_t statusword)
+            {
+                can->driveStatus()->update(statusword);
+
+                switch (can->driveStatus()->getCurrentState())
+                {
+                case DriveState::FAULT_REACTION_ACTIVE:
+                case DriveState::FAULT:
+                    vars.controlMode = VOCAB_CM_HW_FAULT;
+                    break;
+                }
+            });
+
+    can->tpdo2()->registerHandler<std::int8_t>([=](std::int8_t modesOfOperation)
+            {
+                ; // TODO
+            });
+
     can->emcy()->setErrorCodeRegistry<TechnosoftIposEmcy>();
 
     can->emcy()->registerHandler([=](EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef)

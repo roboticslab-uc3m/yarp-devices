@@ -272,6 +272,8 @@ bool TechnosoftIpos::initialize()
         }
     }
 
+    vars.controlMode = VOCAB_CM_CONFIGURED;
+
     if (!can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE))
     {
         return false;
@@ -290,8 +292,29 @@ bool TechnosoftIpos::initialize()
 
 bool TechnosoftIpos::finalize()
 {
-    return can->driveStatus()->requestState(DriveState::SWITCH_ON_DISABLED)
-            && can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
+    bool ok = true;
+
+    if (!can->driveStatus()->requestState(DriveState::SWITCH_ON_DISABLED))
+    {
+        CD_WARNING("SWITCH_ON_DISABLED transition failed.\n");
+        ok = false;
+    }
+    else
+    {
+        vars.controlMode = VOCAB_CM_CONFIGURED;
+    }
+
+    if (!can->nmt()->issueServiceCommand(NmtService::RESET_NODE))
+    {
+        CD_WARNING("Reset node NMT service failed.\n");
+        ok = false;
+    }
+    else
+    {
+        vars.controlMode = VOCAB_CM_NOT_CONFIGURED;
+    }
+
+    return ok;
 }
 
 // -----------------------------------------------------------------------------
