@@ -14,6 +14,7 @@ if(NOT SKIP_TechnosoftIpos)
     set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
 
     yarp_add_plugin(TechnosoftIpos TechnosoftIpos.hpp
+                                   TechnosoftIpos.cpp
                                    TechnosoftIposEmcy.cpp
                                    DeviceDriverImpl.cpp
                                    ICanBusSharerImpl.cpp

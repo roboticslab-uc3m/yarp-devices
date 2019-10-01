@@ -215,6 +215,10 @@ public:
 
 protected:
 
+    void statuswordCb(std::uint16_t statusword);
+    void modesOfOperationCb(std::int8_t modesOfOperation);
+    void emcyCb(EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef);
+
     CanOpen * can;
 
     yarp::dev::PolyDriver externalEncoderDevice;
