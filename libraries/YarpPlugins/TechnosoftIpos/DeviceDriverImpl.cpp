@@ -11,7 +11,7 @@ using namespace roboticslab;
 
 namespace
 {
-    void interpretPtEmcy(uint16_t status, int canId, const LinearInterpolationBuffer * buffer)
+    void interpretPtEmcy(std::uint16_t status, int canId, const LinearInterpolationBuffer * buffer)
     {
         CD_INFO("Interpolated position mode status. canId: %d.\n", canId);
         std::bitset<16> bits(status);
@@ -232,7 +232,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
             {
                 if (code.first == 0xFF01)
                 {
-                    uint16_t status;
+                    std::uint16_t status;
                     std::memcpy(&status, msef + 3, 2);
                     interpretPtEmcy(status, canId, linInterpBuffer);
                 }

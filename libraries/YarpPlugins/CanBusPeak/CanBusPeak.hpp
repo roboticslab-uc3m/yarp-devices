@@ -3,7 +3,7 @@
 #ifndef __CAN_BUS_PEAK__
 #define __CAN_BUS_PEAK__
 
-#include <stdint.h>
+#include <cstdint>
 
 #include <mutex>
 #include <set>
@@ -114,7 +114,7 @@ protected:
 
     bool waitUntilTimeout(io_operation op, bool * bufferReady);
 
-    uint64_t computeAcceptanceCodeAndMask();
+    std::uint64_t computeAcceptanceCodeAndMask();
 
     int fileDescriptor;
     int rxTimeoutMs;

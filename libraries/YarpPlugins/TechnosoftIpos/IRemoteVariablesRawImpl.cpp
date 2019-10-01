@@ -53,11 +53,11 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
     {
         if (key == "linInterpStart")
         {
-            return can->rpdo1()->write<uint16_t>(0x001F);
+            return can->rpdo1()->write<std::uint16_t>(0x001F);
         }
         else if (key == "linInterpTarget")
         {
-            return can->rpdo3()->write<uint64_t>(linInterpBuffer->makeDataRecord());
+            return can->rpdo3()->write<std::uint64_t>(linInterpBuffer->makeDataRecord());
         }
         else
         {

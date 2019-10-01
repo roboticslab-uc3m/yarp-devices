@@ -24,11 +24,11 @@ bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
 
     double value = vars.degreesToInternalUnits(sp, 1);
 
-    int16_t dataInt;
-    uint16_t dataFrac;
+    std::int16_t dataInt;
+    std::uint16_t dataFrac;
     CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
 
-    int32_t data = (dataInt << 16) + dataFrac;
+    std::int32_t data = (dataInt << 16) + dataFrac;
     return can->sdo()->download("Target velocity", data, 0x60FF);
 }
 
@@ -56,10 +56,10 @@ bool TechnosoftIpos::getRefVelocityRaw(int joint, double * vel)
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_VELOCITY);
 
-    return can->sdo()->upload<int32_t>("Target velocity", [=](int32_t * data)
+    return can->sdo()->upload<std::int32_t>("Target velocity", [=](std::int32_t * data)
             {
-                int16_t dataInt = *data >> 16;
-                uint16_t dataFrac = *data & 0xFFFF;
+                std::int16_t dataInt = *data >> 16;
+                std::uint16_t dataFrac = *data & 0xFFFF;
                 double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
                 *vel = vars.internalUnitsToDegrees(value, 1);
             },

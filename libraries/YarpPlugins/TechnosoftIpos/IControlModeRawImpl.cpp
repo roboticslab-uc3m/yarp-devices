@@ -21,20 +21,20 @@ bool TechnosoftIpos::setPositionDirectModeRaw()
     linInterpBuffer->resetIntegrityCounter();
 
     PdoConfiguration rpdo3Conf;
-    rpdo3Conf.addMapping<uint32_t>(0x60C1, 0x01);
-    rpdo3Conf.addMapping<uint32_t>(0x60C1, 0x02);
+    rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x01);
+    rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x02);
 
     bool ok = true;
     ok = ok && can->rpdo3()->configure(rpdo3Conf);
-    ok = ok && can->sdo()->download<int8_t>("Modes of Operation", 7, 0x6060);
-    ok = ok && can->sdo()->download<int16_t>("Interpolation sub mode select", linInterpBuffer->getSubMode(), 0x60C0);
-    ok = ok && can->sdo()->download<uint16_t>("Interpolated position buffer length", linInterpBuffer->getBufferSize(), 0x2073);
-    ok = ok && can->sdo()->download<uint16_t>("Interpolated position buffer configuration", 0xA000, 0x2074);
+    ok = ok && can->sdo()->download<std::int8_t>("Modes of Operation", 7, 0x6060);
+    ok = ok && can->sdo()->download<std::int16_t>("Interpolation sub mode select", linInterpBuffer->getSubMode(), 0x60C0);
+    ok = ok && can->sdo()->download<std::uint16_t>("Interpolated position buffer length", linInterpBuffer->getBufferSize(), 0x2073);
+    ok = ok && can->sdo()->download<std::uint16_t>("Interpolated position buffer configuration", 0xA000, 0x2074);
     if (!ok) return false;
 
     double ref;
     if (!getEncoderRaw(0, &ref)) return false;
-    int32_t data = vars.degreesToInternalUnits(ref);
+    std::int32_t data = vars.degreesToInternalUnits(ref);
 
     if (!can->sdo()->download("Interpolated position initial position", data, 0x2079))
     {
@@ -48,7 +48,7 @@ bool TechnosoftIpos::setPositionDirectModeRaw()
 
     for (int i = 0; i < linInterpBuffer->getBufferSize(); i++)
     {
-        if (!can->rpdo3()->write<uint64_t>(linInterpBuffer->makeDataRecord()))
+        if (!can->rpdo3()->write<std::uint64_t>(linInterpBuffer->makeDataRecord()))
         {
             CD_ERROR("Unable to send point %d/%d to buffer.\n", i + 1, linInterpBuffer->getBufferSize());
             return false;
@@ -78,7 +78,7 @@ bool TechnosoftIpos::getControlModeRaw(int j, int * mode)
 
 bool TechnosoftIpos::getControlModeRaw2()
 {
-    uint32_t data;
+    std::uint32_t data;
 
     if (!can->sdo()->upload("Manufacturer status register", &data, 0x1002))
     {
@@ -232,7 +232,7 @@ bool TechnosoftIpos::getControlModeRaw2()
 
 bool TechnosoftIpos::getControlModeRaw3()
 {
-    uint16_t data;
+    std::uint16_t data;
 
     if (!can->sdo()->upload("Motion Error Register", &data, 0x2000))
     {
@@ -313,7 +313,7 @@ bool TechnosoftIpos::getControlModeRaw3()
 
 bool TechnosoftIpos::getControlModeRaw4()
 {
-    uint16_t data;
+    std::uint16_t data;
 
     if (!can->sdo()->upload("Detailed Error Register", &data, 0x2002))
     {
@@ -407,20 +407,20 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     {
     case VOCAB_CM_POSITION:
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-                && can->sdo()->download<int8_t>("Modes of Operation", 1, 0x6060)
+                && can->sdo()->download<std::int8_t>("Modes of Operation", 1, 0x6060)
                 && vars.awaitControlMode(mode);
 
     case VOCAB_CM_VELOCITY:
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-                && can->sdo()->download<int8_t>("Modes of Operation", 3, 0x6060)
+                && can->sdo()->download<std::int8_t>("Modes of Operation", 3, 0x6060)
                 && vars.awaitControlMode(mode);
 
     case VOCAB_CM_CURRENT:
     case VOCAB_CM_TORQUE:
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-                && can->sdo()->download<uint16_t>("External Reference Type", 1, 0x201D)
-                && can->sdo()->download<int8_t>("Modes of Operation", -5, 0x6060)
-                && can->rpdo1()->write<uint16_t>(0x001F)
+                && can->sdo()->download<std::uint16_t>("External Reference Type", 1, 0x201D)
+                && can->sdo()->download<std::int8_t>("Modes of Operation", -5, 0x6060)
+                && can->rpdo1()->write<std::uint16_t>(0x001F)
                 && vars.awaitControlMode(mode);
 
     case VOCAB_CM_POSITION_DIRECT:

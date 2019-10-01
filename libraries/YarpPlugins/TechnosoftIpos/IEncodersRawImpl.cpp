@@ -37,7 +37,7 @@ bool TechnosoftIpos::setEncoderRaw(int j, double val)
 {
     CD_DEBUG("(%d, %f)\n", j, val);
     CHECK_JOINT(j);
-    int32_t data = vars.degreesToInternalUnits(val);
+    std::int32_t data = vars.degreesToInternalUnits(val);
 
     if (!can->sdo()->download("Set actual position", data, 0X2081))
     {

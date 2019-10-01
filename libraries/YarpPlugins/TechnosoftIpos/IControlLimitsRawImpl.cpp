@@ -20,7 +20,7 @@ bool TechnosoftIpos::setLimitsRaw(int axis, double min, double max)
 bool TechnosoftIpos::setLimitRaw(double limit, bool isMin)
 {
     std::string name = "Software position limit: ";
-    uint8_t subindex;
+    std::uint8_t subindex;
 
     if (isMin ^ vars.tr < 0)
     {
@@ -33,7 +33,7 @@ bool TechnosoftIpos::setLimitRaw(double limit, bool isMin)
         subindex = 0x02;
     }
 
-    int32_t data = vars.degreesToInternalUnits(limit);
+    std::int32_t data = vars.degreesToInternalUnits(limit);
     return can->sdo()->download(name, data, 0x607D, subindex);
 }
 
@@ -51,7 +51,7 @@ bool TechnosoftIpos::getLimitsRaw(int axis, double * min, double * max)
 bool TechnosoftIpos::getLimitRaw(double * limit, bool isMin)
 {
     std::string name = "Software position limit: ";
-    uint8_t subindex;
+    std::uint8_t subindex;
 
     if (vars.tr >= 0)
     {
@@ -64,7 +64,7 @@ bool TechnosoftIpos::getLimitRaw(double * limit, bool isMin)
         subindex = 0x02;
     }
 
-    return can->sdo()->upload<int32_t>(name, [=](int32_t * data)
+    return can->sdo()->upload<std::int32_t>(name, [=](std::int32_t * data)
             { *limit = vars.internalUnitsToDegrees(*data); },
             0x607D, subindex);
 }

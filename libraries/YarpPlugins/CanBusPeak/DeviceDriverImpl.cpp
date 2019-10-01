@@ -92,7 +92,7 @@ bool roboticslab::CanBusPeak::open(yarp::os::Searchable& config)
                 activeFilters.insert(ids.get(i).asFloat64());
             }
 
-            uint64_t acc = computeAcceptanceCodeAndMask();
+            std::uint64_t acc = computeAcceptanceCodeAndMask();
 
             CD_DEBUG("New acceptance code+mask: %016lxh.\n", acc);
 

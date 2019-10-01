@@ -9,9 +9,9 @@ namespace roboticslab // gcc <7 bug
 {
 
 template<>
-inline bool SdoClient::upload(const std::string & name, std::string * s, uint16_t index, uint8_t subindex)
+inline bool SdoClient::upload(const std::string & name, std::string * s, std::uint16_t index, std::uint8_t subindex)
 {
-    const uint32_t maxLen = 100; // arbitrary high value
+    const std::uint32_t maxLen = 100; // arbitrary high value
     char buf[maxLen] = {0};
 
     if (!uploadInternal(name, buf, maxLen, index, subindex))
@@ -24,7 +24,7 @@ inline bool SdoClient::upload(const std::string & name, std::string * s, uint16_
 }
 
 template<>
-inline bool SdoClient::upload(const std::string & name, const std::function<void(std::string * s)> & fn, uint16_t index, uint8_t subindex)
+inline bool SdoClient::upload(const std::string & name, const std::function<void(std::string * s)> & fn, std::uint16_t index, std::uint8_t subindex)
 {
     std::string s;
 
@@ -38,7 +38,7 @@ inline bool SdoClient::upload(const std::string & name, const std::function<void
 }
 
 template<>
-inline bool SdoClient::download(const std::string & name, const std::string & s, uint16_t index, uint8_t subindex)
+inline bool SdoClient::download(const std::string & name, const std::string & s, std::uint16_t index, std::uint8_t subindex)
 {
     char * buf = new char[s.size()];
     s.copy(buf, s.size());

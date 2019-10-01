@@ -77,7 +77,7 @@ bool roboticslab::CanBusPeak::canIdAdd(unsigned int id)
 
     activeFilters.insert(id);
 
-    uint64_t acc = computeAcceptanceCodeAndMask();
+    std::uint64_t acc = computeAcceptanceCodeAndMask();
 
     CD_DEBUG("New acceptance code+mask: %016lxh.\n", acc);
 
@@ -123,7 +123,7 @@ bool roboticslab::CanBusPeak::canIdDelete(unsigned int id)
         return true;
     }
 
-    uint64_t acc = computeAcceptanceCodeAndMask();
+    std::uint64_t acc = computeAcceptanceCodeAndMask();
 
     CD_DEBUG("New acceptance code+mask: %016lxh.\n", acc);
 

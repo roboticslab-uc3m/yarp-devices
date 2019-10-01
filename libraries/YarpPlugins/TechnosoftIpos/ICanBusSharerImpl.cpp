@@ -14,7 +14,7 @@ using namespace roboticslab;
 
 namespace
 {
-    bool retrieveDrivePeakCurrent(uint32_t productCode, double *peakCurrent)
+    bool retrieveDrivePeakCurrent(std::uint32_t productCode, double *peakCurrent)
     {
         switch (productCode)
         {
@@ -71,7 +71,7 @@ namespace
         return true;
     }
 
-    void interpretSupportedDriveModes(uint32_t data)
+    void interpretSupportedDriveModes(std::uint32_t data)
     {
         std::bitset<32> bits(data);
 
@@ -133,7 +133,7 @@ namespace
         }
     }
 
-    inline char getByte(uint32_t number, int n)
+    inline char getByte(std::uint32_t number, int n)
     {
         // https://stackoverflow.com/a/7787433
         return (number >> (8 * n)) & 0xFF;
@@ -177,7 +177,7 @@ bool TechnosoftIpos::initialize()
         return false;
     }
 
-    uint32_t data;
+    std::uint32_t data;
 
     if (!can->sdo()->upload("Device type", &data, 0x1000))
     {
@@ -233,7 +233,7 @@ bool TechnosoftIpos::initialize()
 
     CD_INFO("Serial number: %c%c%02x%02x.\n", getByte(data, 3), getByte(data, 2), getByte(data, 1), getByte(data, 0));
 
-    if (!can->sdo()->download<int16_t>("Quick stop option code", 6, 0x605A))
+    if (!can->sdo()->download<std::int16_t>("Quick stop option code", 6, 0x605A))
     {
         return false;
     }

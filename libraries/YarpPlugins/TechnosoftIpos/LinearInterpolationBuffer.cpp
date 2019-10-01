@@ -162,7 +162,7 @@ int PtBuffer::getSubMode() const
     return 0;
 }
 
-uint64_t PtBuffer::makeDataRecord()
+std::uint64_t PtBuffer::makeDataRecord()
 {
     //*************************************************************
     //-- 14. Send the 1 st PT point.
@@ -186,19 +186,19 @@ uint64_t PtBuffer::makeDataRecord()
         CD_INFO("New ref: %f.\n", _lastReceivedTarget);
     }
 
-    uint64_t data = 0;
+    std::uint64_t data = 0;
 
     double p = _lastReceivedTarget;
     int t = periodMs;
 
-    int32_t position = p * factor;
+    std::int32_t position = p * factor;
     data += position;
 
-    int16_t time = t;
-    data += (uint64_t)time << 32;
+    std::int16_t time = t;
+    data += (std::uint64_t)time << 32;
 
-    uint8_t ic = integrityCounter++ << 1;
-    data += (uint64_t)ic << 56;
+    std::uint8_t ic = integrityCounter++ << 1;
+    data += (std::uint64_t)ic << 56;
 
     CD_DEBUG("Sending p %f t %d (ic %d).\n", p, t, ic >> 1);
 
@@ -232,7 +232,7 @@ int PvtBuffer::getSubMode() const
 }
 
 
-uint64_t PvtBuffer::makeDataRecord()
+std::uint64_t PvtBuffer::makeDataRecord()
 {
     //*************************************************************
     //-- 13. Send the 1 st PT point.
@@ -261,22 +261,22 @@ uint64_t PvtBuffer::makeDataRecord()
         isFirstPoint = false;
     }
 
-    uint64_t data = 0;
+    std::uint64_t data = 0;
 
-    int32_t position = p * factor;
-    int16_t positionLSB = (int32_t)(position << 16) >> 16;
-    int8_t positionMSB = (int32_t)(position << 8) >> 24;
-    data += ((uint64_t)positionMSB << 24) + positionLSB;
+    std::int32_t position = p * factor;
+    std::int16_t positionLSB = (std::int32_t)(position << 16) >> 16;
+    std::int8_t positionMSB = (std::int32_t)(position << 8) >> 24;
+    data += ((std::uint64_t)positionMSB << 24) + positionLSB;
 
     double velocity = v * factor * 0.001;
-    int16_t velocityInt, velocityFrac;
+    std::int16_t velocityInt, velocityFrac;
     CanUtils::encodeFixedPoint(velocity, &velocityInt, &velocityFrac);
-    data += ((uint64_t)velocityInt << 32) + ((uint64_t)velocityFrac << 16);
+    data += ((std::uint64_t)velocityInt << 32) + ((std::uint64_t)velocityFrac << 16);
 
-    int16_t time = (int16_t)(t << 7) >> 7;
-    uint8_t ic = (integrityCounter++) << 1;
-    uint16_t timeAndIc = time + (ic << 8);
-    data += (uint64_t)timeAndIc << 48;
+    std::int16_t time = (std::int16_t)(t << 7) >> 7;
+    std::uint8_t ic = (integrityCounter++) << 1;
+    std::uint16_t timeAndIc = time + (ic << 8);
+    data += (std::uint64_t)timeAndIc << 48;
 
     CD_DEBUG("Sending p %f v %f t %d (ic %d).\n", p, v, t, ic >> 1);
 
