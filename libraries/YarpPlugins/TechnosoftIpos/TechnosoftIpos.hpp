@@ -4,10 +4,13 @@
 #define __TECHNOSOFT_IPOS_HPP__
 
 #include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/IAxisInfo.h>
 #include <yarp/dev/IControlLimits.h>
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/ICurrentControl.h>
 #include <yarp/dev/IEncodersTimed.h>
+#include <yarp/dev/IMotor.h>
+#include <yarp/dev/IMotorEncoders.h>
 #include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/IPositionDirect.h>
 #include <yarp/dev/IRemoteVariables.h>
@@ -45,10 +48,13 @@ public:
  * @brief Implementation for the Technosoft iPOS as a single CAN bus joint (controlboard raw interfaces).
  */
 class TechnosoftIpos : public yarp::dev::DeviceDriver,
+                       public yarp::dev::IAxisInfoRaw,
                        public yarp::dev::IControlLimitsRaw,
                        public yarp::dev::IControlModeRaw,
                        public yarp::dev::ICurrentControlRaw,
                        public yarp::dev::IEncodersTimedRaw,
+                       public yarp::dev::IMotorRaw,
+                       public yarp::dev::IMotorEncodersRaw,
                        public yarp::dev::IPositionControlRaw,
                        public yarp::dev::IPositionDirectRaw,
                        public yarp::dev::IRemoteVariablesRaw,
@@ -79,6 +85,11 @@ public:
     virtual bool finalize() override;
     virtual bool registerSender(CanSenderDelegate * sender) override;
 
+    //  --------- IAxisInfoRaw declarations. Implementation in IAxisInfoRawImpl.cpp ---------
+
+    virtual bool getAxisNameRaw(int axis, std::string & name) override;
+    virtual bool getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type) override;
+
     //  --------- IControlLimitsRaw declarations. Implementation in IControlLimitsRawImpl.cpp ---------
 
     virtual bool setLimitsRaw(int axis, double min, double max) override;
@@ -103,7 +114,7 @@ public:
 
     //  --------- ICurrentControlRaw declarations. Implementation in ICurrentControlRawImpl.cpp ---------
 
-    virtual bool getNumberOfMotorsRaw(int * number) override;
+    //virtual bool getNumberOfMotorsRaw(int * number) override;
     virtual bool getCurrentRaw(int m, double * curr) override;
     virtual bool getCurrentsRaw(double * currs) override;
     virtual bool getCurrentRangeRaw(int m, double * min, double * max) override;
@@ -132,6 +143,34 @@ public:
 
     virtual bool getEncoderTimedRaw(int j, double * encs, double * time) override;
     virtual bool getEncodersTimedRaw(double * encs, double * time) override;
+
+    //  --------- IMotorRaw declarations. Implementation in IMotorRawImpl.cpp ---------
+
+    virtual bool getNumberOfMotorsRaw(int * num) override;
+    virtual bool getTemperatureRaw(int m, double * val) override;
+    virtual bool getTemperaturesRaw(double * vals) override;
+    virtual bool getTemperatureLimitRaw(int m, double * temp) override;
+    virtual bool setTemperatureLimitRaw(int m, double temp) override;
+    virtual bool getGearboxRatioRaw(int m, double * val) override;
+    virtual bool setGearboxRatioRaw(int m, const double val) override;
+
+    //  --------- IMotorEncodersRaw declarations. Implementation in IMotorEncodersRawImpl.cpp ---------
+
+    virtual bool getNumberOfMotorEncodersRaw(int * num) override;
+    virtual bool resetMotorEncoderRaw(int m) override;
+    virtual bool resetMotorEncodersRaw() override;
+    virtual bool setMotorEncoderCountsPerRevolutionRaw(int m, double cpr) override;
+    virtual bool getMotorEncoderCountsPerRevolutionRaw(int m, double * cpr) override;
+    virtual bool setMotorEncoderRaw(int m, double val) override;
+    virtual bool setMotorEncodersRaw(const double * vals) override;
+    virtual bool getMotorEncoderRaw(int m, double * v) override;
+    virtual bool getMotorEncodersRaw(double * encs) override;
+    virtual bool getMotorEncoderTimedRaw(int m, double * encs, double * stamp) override;
+    virtual bool getMotorEncodersTimedRaw(double * encs, double * stamps) override;
+    virtual bool getMotorEncoderSpeedRaw(int m, double * sp) override;
+    virtual bool getMotorEncoderSpeedsRaw(double * spds) override;
+    virtual bool getMotorEncoderAccelerationRaw(int m, double * spds) override;
+    virtual bool getMotorEncoderAccelerationsRaw(double * vaccs) override;
 
     // ------- IPositionControlRaw declarations. Implementation in IPositionControlRawImpl.cpp -------
 

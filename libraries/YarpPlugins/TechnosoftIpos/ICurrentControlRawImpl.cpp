@@ -8,14 +8,6 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getNumberOfMotorsRaw(int * number)
-{
-    CD_DEBUG("\n");
-    return getAxes(number);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIpos::getCurrentRaw(int m, double * curr)
 {
     CD_DEBUG("(%d)\n", m);
