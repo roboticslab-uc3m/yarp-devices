@@ -159,7 +159,7 @@ public:
     virtual bool getTemperatureLimitRaw(int m, double * temp) override;
     virtual bool setTemperatureLimitRaw(int m, double temp) override;
     virtual bool getGearboxRatioRaw(int m, double * val) override;
-    virtual bool setGearboxRatioRaw(int m, const double val) override;
+    virtual bool setGearboxRatioRaw(int m, double val) override;
 
     //  --------- IMotorEncodersRaw declarations. Implementation in IMotorEncodersRawImpl.cpp ---------
 
