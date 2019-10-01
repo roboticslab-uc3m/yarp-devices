@@ -272,7 +272,7 @@ bool TechnosoftIpos::initialize()
         }
     }
 
-    vars.controlMode = VOCAB_CM_CONFIGURED;
+    vars.actualControlMode = VOCAB_CM_CONFIGURED;
 
     if (!can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE))
     {
@@ -284,7 +284,7 @@ bool TechnosoftIpos::initialize()
         return false;
     }
 
-    vars.controlMode = VOCAB_CM_IDLE;
+    vars.actualControlMode = VOCAB_CM_IDLE;
     return true;
 }
 
@@ -301,7 +301,7 @@ bool TechnosoftIpos::finalize()
     }
     else
     {
-        vars.controlMode = VOCAB_CM_CONFIGURED;
+        vars.actualControlMode = VOCAB_CM_CONFIGURED;
     }
 
     if (!can->nmt()->issueServiceCommand(NmtService::RESET_NODE))
@@ -311,7 +311,7 @@ bool TechnosoftIpos::finalize()
     }
     else
     {
-        vars.controlMode = VOCAB_CM_NOT_CONFIGURED;
+        vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
     }
 
     return ok;

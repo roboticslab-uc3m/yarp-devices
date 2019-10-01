@@ -43,7 +43,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
 
     int mode;
 
-    if (!getControlModeRaw1(&mode))
+    if (!getControlModeRaw(0, &mode))
     {
         CD_ERROR("Unable to query control mode.\n");
         return false;

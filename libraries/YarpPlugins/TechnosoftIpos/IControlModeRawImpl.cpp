@@ -62,76 +62,16 @@ bool TechnosoftIpos::setPositionDirectModeRaw()
 
 bool TechnosoftIpos::getControlModeRaw(int j, int * mode)
 {
-    //CD_DEBUG("(%d)\n",j); //-- Too verbose in controlboardwrapper2 stream
+    //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
 
+    *mode = vars.actualControlMode;
+
     bool ok = true;
-    ok &= getControlModeRaw1(mode);
     ok &= getControlModeRaw2();
     ok &= getControlModeRaw3();
     ok &= getControlModeRaw4();
-
     return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::getControlModeRaw1(int * mode)
-{
-    int8_t data;
-
-    if (!can->sdo()->upload("Modes of Operation Display", &data, 0x6061))
-    {
-        return false;
-    }
-
-    int temp = VOCAB_CM_UNKNOWN;
-
-    switch (data)
-    {
-    // handled
-    case -5:
-        CD_INFO("\t-iPOS specific: External Reference Torque Mode. canId: %d.\n", can->getId());
-        temp = vars.controlMode == VOCAB_CM_TORQUE ? VOCAB_CM_TORQUE : VOCAB_CM_CURRENT;
-        break;
-    case 1:
-        CD_INFO("\t-Profile Position Mode. canId: %d.\n", can->getId());
-        temp = VOCAB_CM_POSITION;
-        break;
-    case 3:
-        CD_INFO("\t-Profile Velocity Mode. canId: %d.\n", can->getId());
-        temp = VOCAB_CM_VELOCITY;
-        break;
-    case 7:
-        CD_INFO("\t-Interpolated Position Mode. canId: %d.\n", can->getId());
-        temp = VOCAB_CM_POSITION_DIRECT;
-        break;
-    // unhandled
-    case -4:
-        CD_INFO("\t-iPOS specific: External Reference Speed Mode. canId: %d.\n", can->getId());
-        break;
-    case -3:
-        CD_INFO("\t-iPOS specific: External Reference Position Mode. canId: %d.\n", can->getId());
-        break;
-    case -2:
-        CD_INFO("\t-iPOS specific: Electronic Camming Position Mode. canId: %d.\n", can->getId());
-        break;
-    case -1:
-        CD_INFO("\t-iPOS specific: Electronic Gearing Position Mode. canId: %d.\n", can->getId());
-        break;
-    case 6:
-        CD_INFO("\t-Homing Mode. canId: %d.\n", can->getId());
-        break;
-    case 8:
-        CD_INFO("\t-Cyclic Synchronous Position Mode. canId: %d.\n", can->getId());
-        break;
-    default:
-        CD_WARNING("\t-Mode \"%d\" not specified in manual, may be in Fault or not enabled yet. canId(%d).\n", data, can->getId());
-        break;
-    }
-
-    *mode = temp;
-    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -461,6 +401,8 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
     CHECK_JOINT(j);
 
+    vars.requestedcontrolMode = mode;
+
     switch (mode)
     {
     case VOCAB_CM_POSITION:
@@ -469,7 +411,6 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         return can->sdo()->download<int8_t>("Modes of Operation", 3, 0x6060);
     case VOCAB_CM_CURRENT:
     case VOCAB_CM_TORQUE:
-        vars.controlMode = mode;
         return can->sdo()->download<uint16_t>("External Reference Type", 1, 0x201D)
                 && can->sdo()->download<int8_t>("Modes of Operation", -5, 0x6060)
                 && can->rpdo1()->write<uint16_t>(0x001F);

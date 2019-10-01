@@ -105,7 +105,8 @@ double EncoderRead::queryTime() const
 
 StateVariables::StateVariables()
     : lastEncoderRead(0.0),
-      controlMode(0),
+      actualControlMode(0),
+      requestedcontrolMode(0),
       drivePeakCurrent(0.0),
       maxVel(0.0),
       tr(0.0),
@@ -116,13 +117,13 @@ StateVariables::StateVariables()
       refAcceleration(0.0),
       encoderPulses(0),
       pulsesPerSample(0)
-{}
+{ }
 
 // -----------------------------------------------------------------------------
 
 bool StateVariables::validateInitialState()
 {
-    if (controlMode == 0)
+    if (actualControlMode == 0)
     {
         CD_WARNING("Illegal initial control mode.\n");
         return false;
@@ -187,6 +188,8 @@ bool StateVariables::validateInitialState()
         CD_WARNING("Illegal joint limits (min, max): %f >= %f.\n", min, max);
         return false;
     }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------

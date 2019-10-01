@@ -88,7 +88,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     vars.refSpeed = config.check("refSpeed", yarp::os::Value(0.0), "ref speed (meters/second or degrees/second)").asFloat64();
     vars.refAcceleration = config.check("refAcceleration", yarp::os::Value(0.0), "ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
 
-    vars.controlMode = VOCAB_CM_NOT_CONFIGURED;
+    vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
 
     if (canId == 0)
     {
@@ -163,14 +163,62 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
                 {
                 case DriveState::FAULT_REACTION_ACTIVE:
                 case DriveState::FAULT:
-                    vars.controlMode = VOCAB_CM_HW_FAULT;
+                    vars.actualControlMode = VOCAB_CM_HW_FAULT;
                     break;
                 }
             });
 
     can->tpdo2()->registerHandler<std::int8_t>([=](std::int8_t modesOfOperation)
             {
-                ; // TODO
+                switch (modesOfOperation)
+                {
+                // handled
+                case -5:
+                    CD_INFO("iPOS specific: External Reference Torque Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = vars.requestedcontrolMode == VOCAB_CM_TORQUE ? VOCAB_CM_TORQUE : VOCAB_CM_CURRENT;
+                    break;
+                case 1:
+                    CD_INFO("Profile Position Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = VOCAB_CM_POSITION;
+                    break;
+                case 3:
+                    CD_INFO("Profile Velocity Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = VOCAB_CM_VELOCITY;
+                    break;
+                case 7:
+                    CD_INFO("Interpolated Position Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = VOCAB_CM_POSITION_DIRECT;
+                    break;
+                // unhandled
+                case -4:
+                    CD_INFO("iPOS specific: External Reference Speed Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = VOCAB_CM_UNKNOWN;
+                    break;
+                case -3:
+                    CD_INFO("iPOS specific: External Reference Position Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = VOCAB_CM_UNKNOWN;
+                    break;
+                case -2:
+                    CD_INFO("iPOS specific: Electronic Camming Position Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = VOCAB_CM_UNKNOWN;
+                    break;
+                case -1:
+                    CD_INFO("iPOS specific: Electronic Gearing Position Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = VOCAB_CM_UNKNOWN;
+                    break;
+                case 6:
+                    CD_INFO("Homing Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = VOCAB_CM_UNKNOWN;
+                    break;
+                case 8:
+                    CD_INFO("Cyclic Synchronous Position Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = VOCAB_CM_UNKNOWN;
+                    break;
+                default:
+                    CD_WARNING("Mode \"%d\" not specified in manual, may be in Fault or not enabled yet. canId: %d.\n", modesOfOperation, can->getId());
+                    vars.actualControlMode = VOCAB_CM_UNKNOWN;
+                    break;
+                }
             });
 
     can->emcy()->setErrorCodeRegistry<TechnosoftIposEmcy>();

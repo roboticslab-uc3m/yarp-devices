@@ -88,7 +88,6 @@ public:
     //  --------- IControlModeRaw declarations. Implementation in IControlModeRawImpl.cpp ---------
 
     virtual bool getControlModeRaw(int j, int * mode) override;
-    bool getControlModeRaw1(int * mode);
     bool getControlModeRaw2();
     bool getControlModeRaw3();
     bool getControlModeRaw4();

@@ -63,7 +63,8 @@ struct StateVariables
 
     EncoderRead lastEncoderRead;
 
-    yarp::conf::vocab32_t controlMode;
+    yarp::conf::vocab32_t actualControlMode;
+    yarp::conf::vocab32_t requestedcontrolMode;
 
     double drivePeakCurrent;
     double maxVel;
