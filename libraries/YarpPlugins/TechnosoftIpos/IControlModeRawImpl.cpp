@@ -416,8 +416,18 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
                 && can->rpdo1()->write<uint16_t>(0x001F);
     case VOCAB_CM_POSITION_DIRECT:
         return setPositionDirectModeRaw();
+    case VOCAB_CM_FORCE_IDLE:
+        if (vars.actualControlMode == VOCAB_CM_HW_FAULT && !can->driveStatus()->requestTransition(DriveTransition::FAULT_RESET))
+        {
+            CD_ERROR("Unable to reset fault status.\n");
+            return false;
+        }
+
+        // no break
+    case VOCAB_CM_IDLE:
+        return can->driveStatus()->requestState(DriveState::SWITCHED_ON);
     default:
-        CD_ERROR("Unsupported mode %s.\n", yarp::os::Vocab::decode(mode).c_str());
+        CD_ERROR("Unsupported, unknown or read-only mode: %s.\n", yarp::os::Vocab::decode(mode).c_str());
         return false;
     }
 }
