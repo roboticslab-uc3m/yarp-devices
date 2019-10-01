@@ -61,6 +61,7 @@ bool TechnosoftIpos::setRefCurrentRaw(int m, double curr)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
+    CHECK_MODES(VOCAB_CM_CURRENT, VOCAB_CM_TORQUE);
     int32_t data = vars.currentToInternalUnits(curr) << 16;
     return can->sdo()->download("External online reference", data, 0x201C);
 }
@@ -87,6 +88,7 @@ bool TechnosoftIpos::getRefCurrentRaw(int m, double * curr)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
+    CHECK_MODES(VOCAB_CM_CURRENT, VOCAB_CM_TORQUE);
 
     return can->sdo()->upload<int32_t>("External online reference", [=](int32_t * data)
             { *curr = vars.internalUnitsToCurrent(*data >> 16); },

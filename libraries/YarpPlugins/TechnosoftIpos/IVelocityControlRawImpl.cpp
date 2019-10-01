@@ -14,6 +14,7 @@ bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
 {
     CD_DEBUG("(%d, %f)\n", j, sp);
     CHECK_JOINT(j);
+    CHECK_MODE(VOCAB_CM_VELOCITY);
 
     if (sp > vars.maxVel)
     {
@@ -53,6 +54,7 @@ bool TechnosoftIpos::getRefVelocityRaw(int joint, double * vel)
 {
     CD_DEBUG("(%d)\n",joint);
     CHECK_JOINT(joint);
+    CHECK_MODE(VOCAB_CM_VELOCITY);
 
     return can->sdo()->upload<int32_t>("Target velocity", [=](int32_t * data)
             {

@@ -12,6 +12,7 @@ bool TechnosoftIpos::getRefTorqueRaw(int j, double * t)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
+    CHECK_MODES(VOCAB_CM_TORQUE, VOCAB_CM_CURRENT);
 
     double curr;
 
@@ -39,6 +40,7 @@ bool TechnosoftIpos::setRefTorqueRaw(int j, double t)
 {
     CD_DEBUG("(%d, %f)\n", j, t);
     CHECK_JOINT(j);
+    CHECK_MODES(VOCAB_CM_TORQUE, VOCAB_CM_CURRENT);
 
     double curr = vars.torqueToCurrent(t);
 

@@ -5,6 +5,7 @@
 
 #include <cstdint>
 
+#include <initializer_list>
 #include <memory>
 #include <mutex>
 
@@ -51,6 +52,8 @@ struct StateVariables
     bool validateInitialState();
 
     bool awaitControlMode(yarp::conf::vocab32_t mode);
+
+    bool expectControlModes(std::initializer_list<yarp::conf::vocab32_t> modes);
 
     std::int32_t degreesToInternalUnits(double value, int derivativeOrder = 0);
 
