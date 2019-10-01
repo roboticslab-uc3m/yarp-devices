@@ -58,6 +58,8 @@ public:
     bool requestTransition(DriveTransition transition, bool wait = true);
     bool requestState(DriveState goalState);
 
+    static DriveState parseStatusword(std::uint16_t statusword);
+
 private:
     word_t _controlword;
     word_t _statusword;

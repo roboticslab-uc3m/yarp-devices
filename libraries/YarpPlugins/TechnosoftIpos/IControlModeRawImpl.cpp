@@ -407,22 +407,26 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     {
     case VOCAB_CM_POSITION:
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-                && can->sdo()->download<int8_t>("Modes of Operation", 1, 0x6060);
+                && can->sdo()->download<int8_t>("Modes of Operation", 1, 0x6060)
+                && vars.awaitControlMode(mode);
 
     case VOCAB_CM_VELOCITY:
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-                && can->sdo()->download<int8_t>("Modes of Operation", 3, 0x6060);
+                && can->sdo()->download<int8_t>("Modes of Operation", 3, 0x6060)
+                && vars.awaitControlMode(mode);
 
     case VOCAB_CM_CURRENT:
     case VOCAB_CM_TORQUE:
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
                 && can->sdo()->download<uint16_t>("External Reference Type", 1, 0x201D)
                 && can->sdo()->download<int8_t>("Modes of Operation", -5, 0x6060)
-                && can->rpdo1()->write<uint16_t>(0x001F);
+                && can->rpdo1()->write<uint16_t>(0x001F)
+                && vars.awaitControlMode(mode);
 
     case VOCAB_CM_POSITION_DIRECT:
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-                && setPositionDirectModeRaw();
+                && setPositionDirectModeRaw()
+                && vars.awaitControlMode(mode);
 
     case VOCAB_CM_FORCE_IDLE:
         if (vars.actualControlMode == VOCAB_CM_HW_FAULT

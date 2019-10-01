@@ -5,10 +5,13 @@
 
 #include <cstdint>
 
+#include <memory>
 #include <mutex>
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/Stamp.h>
+
+#include "StateObserver.hpp"
 
 namespace roboticslab
 {
@@ -47,6 +50,8 @@ struct StateVariables
 
     bool validateInitialState();
 
+    bool awaitControlMode(yarp::conf::vocab32_t mode);
+
     std::int32_t degreesToInternalUnits(double value, int derivativeOrder = 0);
 
     double internalUnitsToDegrees(std::int32_t value, int derivativeOrder = 0);
@@ -78,6 +83,8 @@ struct StateVariables
 
     int encoderPulses;
     int pulsesPerSample;
+
+    std::unique_ptr<StateObserver> controlModeObserverPtr;
 };
 
 } // namespace roboticslab

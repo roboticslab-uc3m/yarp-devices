@@ -116,7 +116,8 @@ StateVariables::StateVariables()
       refSpeed(0.0),
       refAcceleration(0.0),
       encoderPulses(0),
-      pulsesPerSample(0)
+      pulsesPerSample(0),
+      controlModeObserverPtr(new StateObserver(1.0)) // arbitrary 1 second wait
 { }
 
 // -----------------------------------------------------------------------------
@@ -190,6 +191,13 @@ bool StateVariables::validateInitialState()
     }
 
     return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool StateVariables::awaitControlMode(yarp::conf::vocab32_t mode)
+{
+    return actualControlMode == mode || controlModeObserverPtr->await();
 }
 
 // -----------------------------------------------------------------------------

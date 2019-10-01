@@ -157,9 +157,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     can->tpdo1()->registerHandler<std::uint16_t>([=](std::uint16_t statusword)
             {
-                can->driveStatus()->update(statusword);
-
-                switch (can->driveStatus()->getCurrentState())
+                switch (DriveStatusMachine::parseStatusword(statusword))
                 {
                 case DriveState::FAULT_REACTION_ACTIVE:
                 case DriveState::FAULT:
@@ -169,6 +167,8 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
                     vars.actualControlMode = VOCAB_CM_IDLE;
                     break;
                 }
+
+                can->driveStatus()->update(statusword);
             });
 
     can->tpdo2()->registerHandler<std::int8_t>([=](std::int8_t modesOfOperation)
@@ -222,6 +222,8 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
                     vars.actualControlMode = VOCAB_CM_UNKNOWN;
                     break;
                 }
+
+                vars.controlModeObserverPtr->notify();
             });
 
     can->emcy()->setErrorCodeRegistry<TechnosoftIposEmcy>();
