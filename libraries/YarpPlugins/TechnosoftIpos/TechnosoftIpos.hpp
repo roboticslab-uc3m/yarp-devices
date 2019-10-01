@@ -3,6 +3,13 @@
 #ifndef __TECHNOSOFT_IPOS_HPP__
 #define __TECHNOSOFT_IPOS_HPP__
 
+// upstream bug in IAxisInfo.h, remove in YARP 3.2+
+#include <yarp/conf/version.h>
+#if YARP_VERSION_MINOR < 2
+# include <yarp/os/Log.h>
+# include <yarp/os/Vocab.h>
+#endif
+
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAxisInfo.h>
 #include <yarp/dev/IControlLimits.h>
