@@ -165,6 +165,9 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
                 case DriveState::FAULT:
                     vars.actualControlMode = VOCAB_CM_HW_FAULT;
                     break;
+                case DriveState::SWITCHED_ON:
+                    vars.actualControlMode = VOCAB_CM_IDLE;
+                    break;
                 }
             });
 

@@ -284,7 +284,6 @@ bool TechnosoftIpos::initialize()
         return false;
     }
 
-    vars.actualControlMode = VOCAB_CM_IDLE;
     return true;
 }
 
