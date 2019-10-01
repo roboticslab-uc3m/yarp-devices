@@ -30,7 +30,7 @@ namespace
 
 // -----------------------------------------------------------------------------
 
-EncoderRead::EncoderRead(double initialPos)
+EncoderRead::EncoderRead(std::int32_t initialPos)
     : lastPosition(initialPos),
       nextToLastPosition(initialPos),
       lastSpeed(0.0),
@@ -42,16 +42,7 @@ EncoderRead::EncoderRead(double initialPos)
 
 // -----------------------------------------------------------------------------
 
-void EncoderRead::reset(double pos)
-{
-    std::lock_guard<std::mutex> guard(encoderMutex);
-    lastPosition = nextToLastPosition = pos;
-    lastSpeed = nextToLastSpeed = lastAcceleration = 0.0;
-}
-
-// -----------------------------------------------------------------------------
-
-void EncoderRead::update(double newPos, double newTime)
+void EncoderRead::update(std::int32_t newPos, double newTime)
 {
     std::lock_guard<std::mutex> guard(encoderMutex);
 
@@ -60,7 +51,7 @@ void EncoderRead::update(double newPos, double newTime)
     nextToLastPosition = lastPosition;
     nextToLastSpeed = lastSpeed;
 
-    if (newTime)
+    if (newTime != 0.0)
     {
         lastStamp.update(newTime);
     }
@@ -78,7 +69,16 @@ void EncoderRead::update(double newPos, double newTime)
 
 // -----------------------------------------------------------------------------
 
-double EncoderRead::queryPosition() const
+void EncoderRead::reset(std::int32_t pos)
+{
+    std::lock_guard<std::mutex> guard(encoderMutex);
+    lastPosition = nextToLastPosition = pos;
+    lastSpeed = nextToLastSpeed = lastAcceleration = 0.0;
+}
+
+// -----------------------------------------------------------------------------
+
+std::int32_t EncoderRead::queryPosition() const
 {
     std::lock_guard<std::mutex> guard(encoderMutex);
     return lastPosition;
@@ -113,7 +113,7 @@ double EncoderRead::queryTime() const
 // TODO: add mutex guards?
 
 StateVariables::StateVariables()
-    : lastEncoderRead(0.0),
+    : lastEncoderRead(0),
       actualControlMode(0),
       requestedcontrolMode(0),
       drivePeakCurrent(0.0),
@@ -127,6 +127,7 @@ StateVariables::StateVariables()
       encoderPulses(0),
       pulsesPerSample(0),
       jointType(0),
+      reverse(false),
       controlModeObserverPtr(new StateObserver(1.0)) // arbitrary 1 second wait
 { }
 
@@ -246,28 +247,28 @@ bool StateVariables::expectControlModes(std::initializer_list<yarp::conf::vocab3
 
 std::int32_t StateVariables::degreesToInternalUnits(double value, int derivativeOrder)
 {
-    return value * tr * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder);
+    return value * tr * (reverse ? -1 : 1) * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder);
 }
 
 // -----------------------------------------------------------------------------
 
 double StateVariables::internalUnitsToDegrees(std::int32_t value, int derivativeOrder)
 {
-    return value / (tr * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder));
+    return value / (tr * (reverse ? -1 : 1) * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder));
 }
 
 // -----------------------------------------------------------------------------
 
 std::int16_t StateVariables::currentToInternalUnits(double value)
 {
-    return value * sgn(tr) * 65520.0 / (2.0 * drivePeakCurrent);
+    return value * (reverse ? -1 : 1) * 65520.0 / (2.0 * drivePeakCurrent);
 }
 
 // -----------------------------------------------------------------------------
 
 double StateVariables::internalUnitsToCurrent(std::int16_t value)
 {
-    return value * sgn(tr) * 2.0 * drivePeakCurrent / 65520.0;
+    return value * (reverse ? -1 : 1) * 2.0 * drivePeakCurrent / 65520.0;
 }
 
 // -----------------------------------------------------------------------------
@@ -281,14 +282,14 @@ double StateVariables::internalUnitsToPeakCurrent(std::int16_t value)
 
 double StateVariables::currentToTorque(double current)
 {
-    return current * std::abs(tr) * k;
+    return current * tr * k;
 }
 
 // -----------------------------------------------------------------------------
 
 double StateVariables::torqueToCurrent(double torque)
 {
-    return torque / (std::abs(tr) * k);
+    return torque / (tr * k);
 }
 
 // -----------------------------------------------------------------------------

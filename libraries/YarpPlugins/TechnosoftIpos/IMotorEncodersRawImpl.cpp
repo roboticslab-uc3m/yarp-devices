@@ -19,6 +19,7 @@ bool TechnosoftIpos::resetMotorEncoderRaw(int m)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
+    return setMotorEncoderRaw(m, 0);
 }
 
 // -----------------------------------------------------------------------------
@@ -55,6 +56,15 @@ bool TechnosoftIpos::setMotorEncoderRaw(int m, double val)
 {
     CD_DEBUG("(%d, %f)\n", m, val);
     CHECK_JOINT(m);
+    std::int32_t data = vars.reverse ? -val : val;
+
+    if (!can->sdo()->download("Set actual position", data, 0X2081))
+    {
+        return false;
+    }
+
+    vars.lastEncoderRead.reset(data);
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -71,6 +81,9 @@ bool TechnosoftIpos::getMotorEncoderRaw(int m, double * v)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
+    std::int32_t temp = vars.lastEncoderRead.queryPosition();
+    *v = vars.reverse ? -temp : temp;
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -83,10 +96,14 @@ bool TechnosoftIpos::getMotorEncodersRaw(double * encs)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getMotorEncoderTimedRaw(int m, double * encs, double * stamp)
+bool TechnosoftIpos::getMotorEncoderTimedRaw(int m, double * enc, double * stamp)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
+    std::int32_t temp =  vars.lastEncoderRead.queryPosition();
+    *enc = vars.reverse ? -temp : temp;
+    *stamp = vars.lastEncoderRead.queryTime();
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -103,6 +120,9 @@ bool TechnosoftIpos::getMotorEncoderSpeedRaw(int m, double * sp)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
+    double temp = vars.lastEncoderRead.querySpeed();
+    *sp = vars.reverse ? -temp : temp;
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -115,18 +135,21 @@ bool TechnosoftIpos::getMotorEncoderSpeedsRaw(double * spds)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getMotorEncoderAccelerationRaw(int m, double * spds)
+bool TechnosoftIpos::getMotorEncoderAccelerationRaw(int m, double * acc)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
+    double temp = vars.lastEncoderRead.queryAcceleration();
+    *acc = vars.reverse ? -temp : temp;
+    return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getMotorEncoderAccelerationsRaw(double * vaccs)
+bool TechnosoftIpos::getMotorEncoderAccelerationsRaw(double * accs)
 {
     CD_DEBUG("\n");
-    return getMotorEncoderAccelerationRaw(0, &vaccs[0]);
+    return getMotorEncoderAccelerationRaw(0, &accs[0]);
 }
 
 // -----------------------------------------------------------------------------

@@ -26,16 +26,16 @@ namespace roboticslab
 class EncoderRead
 {
 public:
-    EncoderRead(double initialPos);
-    void update(double newPos, double newTime = 0.0);
-    void reset(double pos = 0.0);
-    double queryPosition() const;
+    EncoderRead(std::int32_t initialPos);
+    void update(std::int32_t newPos, double newTime = 0.0);
+    void reset(std::int32_t pos = 0.0);
+    std::int32_t queryPosition() const;
     double querySpeed() const;
     double queryAcceleration() const;
     double queryTime() const;
 
 private:
-    double lastPosition, nextToLastPosition;
+    std::int32_t lastPosition, nextToLastPosition;
     double lastSpeed, nextToLastSpeed;
     double lastAcceleration;
     yarp::os::Stamp lastStamp;
@@ -90,6 +90,8 @@ struct StateVariables
 
     std::string axisName;
     yarp::conf::vocab32_t jointType;
+
+    bool reverse;
 
     std::unique_ptr<StateObserver> controlModeObserverPtr;
 };
