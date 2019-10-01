@@ -211,13 +211,13 @@ bool TechnosoftIpos::initialize()
 
     CD_INFO("Retrieved product code: P%03d.%03d.E%03d.\n", data / 1000000, (data / 1000) % 1000, data % 1000);
 
-    if (!retrieveDrivePeakCurrent(data, &drivePeakCurrent))
+    if (!retrieveDrivePeakCurrent(data, &vars.drivePeakCurrent))
     {
         CD_ERROR("Unhandled iPOS model %d, unable to retrieve drive peak current.\n", data);
         return false;
     }
 
-    CD_SUCCESS("Retrieved drive peak current: %f A.\n", drivePeakCurrent);
+    CD_SUCCESS("Retrieved drive peak current: %f A.\n", vars.drivePeakCurrent);
 
     if (!can->sdo()->upload("Identity Object: Revision number", &data, 0x1018, 0x03))
     {
@@ -238,8 +238,27 @@ bool TechnosoftIpos::initialize()
         return false;
     }
 
+    if (!setLimitsRaw(0, vars.min, vars.max))
+    {
+        CD_ERROR("Unable to set software limits.\n");
+        return false;
+    }
+
+    if (!setRefSpeedRaw(0, vars.refSpeed))
+    {
+        CD_ERROR("Unable to set reference speed.\n");
+        return false;
+    }
+
+    if (!setRefAccelerationRaw(0, vars.refAcceleration))
+    {
+        CD_ERROR("Unable to set reference acceleration.\n");
+        return false;
+    }
+
     if (iEncodersTimedRawExternal)
     {
+        // synchronize absolute (master) and relative (slave) encoders
         double extEnc;
 
         if (!iEncodersTimedRawExternal->getEncodersRaw(&extEnc))
@@ -247,94 +266,55 @@ bool TechnosoftIpos::initialize()
             return false;
         }
 
-        // synchronize absolute (master) and relative (slave) encoders
-        return setEncoderRaw(0, extEnc);
+        if (!setEncoderRaw(0, extEnc))
+        {
+            return false;
+        }
+    }
+
+    vars.actualControlMode = VOCAB_CM_CONFIGURED;
+
+    if (!can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE))
+    {
+        return false;
+    }
+
+    if (!can->driveStatus()->requestState(DriveState::SWITCHED_ON))
+    {
+        return false;
     }
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
-/** -- Start Remote Node: Used to change NMT state of one or all NMT slaves to Operational.
- PDO communication will beallowed. */
 
-bool TechnosoftIpos::start()
+bool TechnosoftIpos::finalize()
 {
-    return can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE);
+    bool ok = true;
+
+    if (!can->driveStatus()->requestState(DriveState::SWITCH_ON_DISABLED))
+    {
+        CD_WARNING("SWITCH_ON_DISABLED transition failed.\n");
+        ok = false;
+    }
+    else
+    {
+        vars.actualControlMode = VOCAB_CM_CONFIGURED;
+    }
+
+    if (!can->nmt()->issueServiceCommand(NmtService::RESET_NODE))
+    {
+        CD_WARNING("Reset node NMT service failed.\n");
+        ok = false;
+    }
+    else
+    {
+        vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
+    }
+
+    return ok;
 }
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::readyToSwitchOn()
-{
-    return can->driveStatus()->requestTransition(DriveTransition::SHUTDOWN);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::switchOn()
-{
-    return can->driveStatus()->requestTransition(DriveTransition::SWITCH_ON);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::enable()
-{
-    return can->driveStatus()->requestTransition(DriveTransition::ENABLE_OPERATION);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::recoverFromError()
-{
-    //*************************************************************
-    //j//uint8_t msg_recover[]={0x23,0xFF}; // Control word 6040
-
-    //j//if( ! send(0x200, 2, msg_recover)){
-    //j//    CD_ERROR("Sent \"recover\". %s\n", msgToStr(0x200, 2, msg_recover).c_str() );
-    //j//    return false;
-    //j//}
-    //j//CD_SUCCESS("Sent \"recover\". %s\n", msgToStr(0x200, 2, msg_recover).c_str() );
-    //*************************************************************
-
-    return true;
-}
-
-/** Manual: 4.1.2. Device control
-    Reset Node: The NMT master sets the state of the selected NMT slave to the reset application sub-state.
-    In this state the drives perform a software reset and enter the pre-operational state.
- **/
-
-bool TechnosoftIpos::resetNodes()
-{
-    // NMT Reset Node (Manual 4.1.2.3)
-    //uint8_t msg_resetNodes[] = {0x81,0x00};
-    //return sender->prepareMessage(message_builder(0, 2, msg_resetNodes));
-    return true;
-}
-
-/** Manual: 4.1.2. Device control
- * The NMT master sets the state of the selected NMT slave to the “reset communication” sub-state.
- * In this state the drives resets their communication and enter the pre-operational state.
- */
-
-bool TechnosoftIpos::resetCommunication()
-{
-    return can->nmt()->issueServiceCommand(NmtService::RESET_COMMUNICATION);
-}
-
-
-/** Manual: 4.1.2. Device control
-    Reset Node: The NMT master sets the state of the selected NMT slave to the reset application sub-state.
-    In this state the drives perform a software reset and enter the pre-operational state.
- **/
-
-bool TechnosoftIpos::resetNode(int id)
-{
-    return can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
-}
-
 
 // -----------------------------------------------------------------------------
 

@@ -14,14 +14,15 @@ bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
 {
     CD_DEBUG("(%d, %f)\n", j, sp);
     CHECK_JOINT(j);
+    CHECK_MODE(VOCAB_CM_VELOCITY);
 
-    if (sp > maxVel)
+    if (sp > vars.maxVel)
     {
-        CD_WARNING("Requested speed exceeds maximum velocity (%f).\n", maxVel);
+        CD_WARNING("Requested speed exceeds maximum velocity (%f).\n", vars.maxVel);
         return false;
     }
 
-    double value = degreesToInternalUnits(sp, 1);
+    double value = vars.degreesToInternalUnits(sp, 1);
 
     int16_t dataInt;
     uint16_t dataFrac;
@@ -53,13 +54,14 @@ bool TechnosoftIpos::getRefVelocityRaw(int joint, double * vel)
 {
     CD_DEBUG("(%d)\n",joint);
     CHECK_JOINT(joint);
+    CHECK_MODE(VOCAB_CM_VELOCITY);
 
     return can->sdo()->upload<int32_t>("Target velocity", [=](int32_t * data)
             {
                 int16_t dataInt = *data >> 16;
                 uint16_t dataFrac = *data & 0xFFFF;
                 double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
-                *vel = internalUnitsToDegrees(value, 1);
+                *vel = vars.internalUnitsToDegrees(value, 1);
             },
             0x60FF);
 }

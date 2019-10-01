@@ -33,38 +33,17 @@ bool CuiAbsolute::initialize()
 
 // -----------------------------------------------------------------------------
 
-bool CuiAbsolute::start()
+bool CuiAbsolute::finalize()
 {
+    if (cuiMode == CuiMode::PUSH && !stopPushMode())
+    {
+        CD_ERROR("Unable to stop Cui with CAN id %d.\n", canId);
+        return false;
+    }
+
     return true;
 }
 
-// -----------------------------------------------------------------------------
-
-bool CuiAbsolute::readyToSwitchOn()
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool CuiAbsolute::switchOn()
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool CuiAbsolute::enable()
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool CuiAbsolute::recoverFromError()
-{
-    return true;
-}
 
 // ------------------------------------------------------------------------------
 

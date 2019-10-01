@@ -71,16 +71,8 @@ public:
     //  --------- ICanBusSharer Declarations. Implementation in TextilesHand.cpp ---------
     virtual unsigned int getId();
     virtual bool interpretMessage(const yarp::dev::CanMessage & message);
-    /** "start". Figure 5.1 Drive’s status machine. States and transitions (p68, 84/263). */
-    virtual bool start();
-    /** "ready to switch on", also acts as "shutdown" */
-    virtual bool readyToSwitchOn();
-    /** "switch on", also acts as "disable operation" */
-    virtual bool switchOn();
-    /** enable */
-    virtual bool enable();
-    /** recoverFromError */
-    virtual bool recoverFromError();
+    virtual bool initialize();
+    virtual bool finalize();
     virtual bool registerSender(CanSenderDelegate * sender);
 
     //  --------- IControlLimitsRaw Declarations. Implementation in IControlLimitsRawImpl.cpp ---------

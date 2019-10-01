@@ -43,7 +43,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
 
     int mode;
 
-    if (!getControlModeRaw1(&mode))
+    if (!getControlModeRaw(0, &mode))
     {
         CD_ERROR("Unable to query control mode.\n");
         return false;
@@ -51,8 +51,19 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
 
     if (mode == VOCAB_CM_POSITION_DIRECT)
     {
-        CD_ERROR("Currently in posd mode, cannot change config params right now.\n");
-        return false;
+        if (key == "linInterpStart")
+        {
+            return can->rpdo1()->write<uint16_t>(0x001F);
+        }
+        else if (key == "linInterpTarget")
+        {
+            return can->rpdo3()->write<uint64_t>(linInterpBuffer->makeDataRecord());
+        }
+        else
+        {
+            CD_ERROR("Currently in posd mode, cannot change config params right now.\n");
+            return false;
+        }
     }
 
     if (key == "linInterpPeriodMs")
@@ -103,6 +114,8 @@ bool TechnosoftIpos::getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys)
     listOfKeys->addString("linInterpPeriodMs");
     listOfKeys->addString("linInterpBufferSize");
     listOfKeys->addString("linInterpMode");
+    listOfKeys->addString("linInterpStart");
+    listOfKeys->addString("linInterpTarget");
 
     return true;
 }

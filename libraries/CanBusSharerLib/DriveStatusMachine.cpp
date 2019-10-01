@@ -4,6 +4,7 @@
 
 #include <bitset>
 #include <unordered_map>
+#include <vector>
 
 using namespace roboticslab;
 
@@ -89,7 +90,7 @@ namespace
         }
     }
 
-    std::unordered_map<std::pair<DriveState, DriveTransition>, DriveState> transitionToState = {
+    const std::unordered_map<std::pair<DriveState, DriveTransition>, DriveState> transitionToState = {
         {std::make_pair(DriveState::SWITCH_ON_DISABLED, DriveTransition::SHUTDOWN), DriveState::READY_TO_SWITCH_ON}, // 2
         {std::make_pair(DriveState::READY_TO_SWITCH_ON, DriveTransition::SWITCH_ON), DriveState::SWITCHED_ON}, // 3
         {std::make_pair(DriveState::SWITCHED_ON, DriveTransition::ENABLE_OPERATION), DriveState::OPERATION_ENABLED}, // 4
@@ -104,6 +105,23 @@ namespace
         {std::make_pair(DriveState::QUICK_STOP_ACTIVE, DriveTransition::DISABLE_VOLTAGE), DriveState::SWITCH_ON_DISABLED}, // 12
         {std::make_pair(DriveState::QUICK_STOP_ACTIVE, DriveTransition::ENABLE_OPERATION), DriveState::OPERATION_ENABLED}, // 16
     };
+
+    const std::unordered_map<std::pair<DriveState, DriveState>, std::vector<DriveTransition>> shortestPaths = {
+        {std::make_pair(DriveState::SWITCH_ON_DISABLED, DriveState::READY_TO_SWITCH_ON), {DriveTransition::SHUTDOWN}},
+        {std::make_pair(DriveState::SWITCH_ON_DISABLED, DriveState::SWITCHED_ON), {DriveTransition::SHUTDOWN, DriveTransition::SWITCH_ON}},
+        {std::make_pair(DriveState::SWITCH_ON_DISABLED, DriveState::OPERATION_ENABLED), {DriveTransition::SHUTDOWN, DriveTransition::SWITCH_ON, DriveTransition::ENABLE_OPERATION}},
+        {std::make_pair(DriveState::READY_TO_SWITCH_ON, DriveState::SWITCHED_ON), {DriveTransition::SWITCH_ON}},
+        {std::make_pair(DriveState::READY_TO_SWITCH_ON, DriveState::OPERATION_ENABLED), {DriveTransition::SWITCH_ON, DriveTransition::ENABLE_OPERATION}},
+        {std::make_pair(DriveState::SWITCHED_ON, DriveState::OPERATION_ENABLED), {DriveTransition::ENABLE_OPERATION}},
+        {std::make_pair(DriveState::OPERATION_ENABLED, DriveState::SWITCHED_ON), {DriveTransition::DISABLE_OPERATION}},
+        {std::make_pair(DriveState::OPERATION_ENABLED, DriveState::READY_TO_SWITCH_ON), {DriveTransition::SHUTDOWN}},
+        {std::make_pair(DriveState::OPERATION_ENABLED, DriveState::SWITCH_ON_DISABLED), {DriveTransition::DISABLE_VOLTAGE}},
+        {std::make_pair(DriveState::SWITCHED_ON, DriveState::READY_TO_SWITCH_ON), {DriveTransition::SHUTDOWN}},
+        {std::make_pair(DriveState::SWITCHED_ON, DriveState::SWITCH_ON_DISABLED), {DriveTransition::DISABLE_VOLTAGE}},
+        {std::make_pair(DriveState::READY_TO_SWITCH_ON, DriveState::SWITCH_ON_DISABLED), {DriveTransition::DISABLE_VOLTAGE}},
+        {std::make_pair(DriveState::READY_TO_SWITCH_ON, DriveState::SWITCHED_ON), {DriveTransition::SWITCH_ON}},
+        {std::make_pair(DriveState::QUICK_STOP_ACTIVE, DriveState::SWITCH_ON_DISABLED), {DriveTransition::DISABLE_VOLTAGE}}
+    };
 }
 
 bool DriveStatusMachine::update(std::uint16_t statusword)
@@ -116,12 +134,12 @@ bool DriveStatusMachine::update(std::uint16_t statusword)
     return stateObserver.notify();
 }
 
-std::bitset<16> & DriveStatusMachine::controlword()
+DriveStatusMachine::word_t & DriveStatusMachine::controlword()
 {
     return _controlword;
 }
 
-const std::bitset<16> & DriveStatusMachine::statusword() const
+const DriveStatusMachine::word_t & DriveStatusMachine::statusword() const
 {
     std::lock_guard<std::mutex> lock(stateMutex);
     return _statusword;
@@ -134,10 +152,17 @@ DriveState DriveStatusMachine::getCurrentState() const
 
 bool DriveStatusMachine::requestTransition(DriveTransition transition, bool wait)
 {
+    DriveState initialState = getCurrentState();
+    auto op = std::make_pair(initialState, transition);
+    auto it = transitionToState.find(op);
+
+    if (it == transitionToState.cend())
+    {
+        return false;
+    }
+
     prepareDriveTransition(transition, _controlword);
     std::uint16_t data = _controlword.to_ulong();
-
-    DriveState initialState = getCurrentState();
 
     if (!rpdo->write(data))
     {
@@ -146,19 +171,41 @@ bool DriveStatusMachine::requestTransition(DriveTransition transition, bool wait
 
     if (wait)
     {
-        auto op = std::make_pair(initialState, transition);
-        std::uint16_t resp;
+        return stateObserver.await() && it->second == getCurrentState();
+    }
 
-        if (!stateObserver.await())
-        {
-            return false;
-        }
+    return true;
+}
 
-        if (transitionToState[op] != resp)
+bool DriveStatusMachine::requestState(DriveState goalState)
+{
+    DriveState initialState = getCurrentState();
+
+    if (goalState == initialState)
+    {
+        return true;
+    }
+
+    auto op = std::make_pair(initialState, goalState);
+    auto it = shortestPaths.find(op);
+
+    if (it == shortestPaths.cend())
+    {
+        return false;
+    }
+
+    for (const auto & transition : it->second)
+    {
+        if (!requestTransition(transition, true))
         {
             return false;
         }
     }
 
     return true;
+}
+
+DriveState parseStatusword(std::uint16_t statusword)
+{
+    return parseDriveState(statusword);
 }

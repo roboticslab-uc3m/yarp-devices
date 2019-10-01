@@ -13,8 +13,8 @@ if(NOT SKIP_TechnosoftIpos)
 
     set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
 
-    yarp_add_plugin(TechnosoftIpos TechnosoftIpos.cpp
-                                   TechnosoftIpos.hpp
+    yarp_add_plugin(TechnosoftIpos TechnosoftIpos.hpp
+                                   TechnosoftIposEmcy.cpp
                                    DeviceDriverImpl.cpp
                                    ICanBusSharerImpl.cpp
                                    IControlLimitsRawImpl.cpp
@@ -27,7 +27,9 @@ if(NOT SKIP_TechnosoftIpos)
                                    ITorqueControlRawImpl.cpp
                                    IVelocityControlRawImpl.cpp
                                    LinearInterpolationBuffer.hpp
-                                   LinearInterpolationBuffer.cpp)
+                                   LinearInterpolationBuffer.cpp
+                                   StateVariables.hpp
+                                   StateVariables.cpp)
 
     target_link_libraries(TechnosoftIpos YARP::YARP_OS
                                          YARP::YARP_dev

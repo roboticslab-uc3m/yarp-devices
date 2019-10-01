@@ -8,13 +8,19 @@
 
 using namespace roboticslab;
 
-CanReaderThread::CanReaderThread(const std::string & id,
-        const std::map<int, int> & _idxFromCanId,
-        const std::vector<ICanBusSharer *> & _iCanBusSharers)
-    : CanReaderWriterThread("read", id),
-      idxFromCanId(_idxFromCanId),
-      iCanBusSharers(_iCanBusSharers)
-{}
+CanReaderThread::CanReaderThread(const std::string & id, const std::vector<ICanBusSharer *> & iCanBusSharers)
+    : CanReaderWriterThread("read", id)
+{
+    for (auto p : iCanBusSharers)
+    {
+        canIdToHandle[p->getId()] = p;
+
+        for (auto id : p->getAdditionalIds())
+        {
+            canIdToHandle[id] = p;
+        }
+    }
+}
 
 void CanReaderThread::run()
 {
@@ -36,11 +42,10 @@ void CanReaderThread::run()
         for (int i = 0; i < read; i++)
         {
             const yarp::dev::CanMessage & msg = canBuffer[i];
-            int canId = msg.getId() & 0x7F;
+            const int canId = msg.getId() & 0x7F;
+            auto it = canIdToHandle.find(canId);
 
-            std::map<int, int>::const_iterator idxFromCanIdFound = idxFromCanId.find(canId);
-
-            if (idxFromCanIdFound == idxFromCanId.end())  //-- Can ID not found
+            if (it == canIdToHandle.end())  //-- Can ID not found
             {
                 //-- Intercept 700h 0 msg that just indicates presence.
                 if (msg.getId() - canId == 0x700)
@@ -51,7 +56,7 @@ void CanReaderThread::run()
                 continue;
             }
 
-            iCanBusSharers[idxFromCanIdFound->second]->interpretMessage(msg);
+            it->second->interpretMessage(msg);
         }
     }
 }

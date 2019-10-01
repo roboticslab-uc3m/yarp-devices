@@ -56,24 +56,14 @@ bool CuiAbsolute::close()
     switch (cuiMode)
     {
     case CuiMode::PUSH:
-        {
-            bool ok = true;
-
-            if (!stopPushMode())
-            {
-                CD_ERROR("Unable to stop Cui with CAN id %d.\n", canId);
-                ok = false;
-            }
-
-            delete pushStateObserver;
-            return ok;
-        }
+        delete pushStateObserver;
+        break;
     case CuiMode::PULL:
         delete pollStateObserver;
-        return true;
-    default:
-        return false;
+        break;
     }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------

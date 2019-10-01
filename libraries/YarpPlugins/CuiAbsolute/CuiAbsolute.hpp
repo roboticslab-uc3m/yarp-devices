@@ -59,11 +59,7 @@ public:
     virtual unsigned int getId() override;
     virtual bool interpretMessage(const yarp::dev::CanMessage & message) override;
     virtual bool initialize() override;
-    virtual bool start() override;
-    virtual bool readyToSwitchOn() override;
-    virtual bool switchOn() override;
-    virtual bool enable() override;
-    virtual bool recoverFromError() override;
+    virtual bool finalize() override;
     virtual bool registerSender(CanSenderDelegate * sender) override;
 
     //  ---------- IEncodersRaw declarations. Implementation in IEncodersRawImpl.cpp ----------

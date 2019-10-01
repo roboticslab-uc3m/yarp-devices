@@ -3,19 +3,12 @@
 #ifndef __POSITION_DIRECT_THREAD_HPP__
 #define __POSITION_DIRECT_THREAD_HPP__
 
-#include <map>
 #include <mutex>
 #include <set>
 
 #include <yarp/os/PeriodicThread.h>
 
-#include <yarp/conf/version.h>
-#if YARP_VERSION_MINOR < 2
-# include <yarp/os/Vocab.h> // upstream bug, needed by the following header
-#endif
-#include <yarp/dev/IPositionDirect.h>
-
-#include "ITechnosoftIpos.h"
+#include "DeviceMapper.hpp"
 
 namespace roboticslab
 {
@@ -23,17 +16,16 @@ namespace roboticslab
 class PositionDirectThread : public yarp::os::PeriodicThread
 {
 public:
-    PositionDirectThread(double period);
-    void setNodeHandles(const std::map<int, ITechnosoftIpos *> & idToTechnosoftIpos);
+    PositionDirectThread(const DeviceMapper & deviceMapper, double period);
     void updateControlModeRegister(int j, bool enablePosd);
 
 protected:
     void run();
 
 private:
-    std::map<int, ITechnosoftIpos *> idToTechnosoftIpos;
+    const DeviceMapper & deviceMapper;
     std::set<int> activeIds;
-    mutable std::mutex mtx;
+    mutable std::mutex mutex;
 };
 
 } // namespace roboticslab

@@ -14,6 +14,7 @@
 
 #include <ColorDebug.h>
 
+#include "CanSenderDelegate.hpp"
 #include "ICanBusSharer.hpp"
 
 namespace roboticslab
@@ -29,21 +30,19 @@ public:
         : iCanBus(0), iCanBufferFactory(0), type(type), id(id), bufferSize(0), period(0.0)
     {}
 
-    virtual void run() = 0;
-
-    virtual bool threadInit()
+    virtual bool threadInit() override
     { canBuffer = iCanBufferFactory->createBuffer(bufferSize); return true; }
 
-    virtual void threadRelease()
+    virtual void threadRelease() override
     { iCanBufferFactory->destroyBuffer(canBuffer); }
 
-    virtual void beforeStart()
+    virtual void beforeStart() override
     { CD_INFO("Initializing CanBusControlboard %s thread %s.\n", type.c_str(), id.c_str()); }
 
-    virtual void afterStart(bool success)
+    virtual void afterStart(bool success) override
     { CD_INFO("Configuring CanBusControlboard %s thread %s... %s\n", type.c_str(), id.c_str(), success ? "success" : "failure"); }
 
-    virtual void onStop()
+    virtual void onStop() override
     { CD_INFO("Stopping CanBusControlboard %s thread %s.\n", type.c_str(), id.c_str()); }
 
     virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, int bufferSize)
@@ -71,15 +70,11 @@ private:
 class CanReaderThread : public CanReaderWriterThread
 {
 public:
-    CanReaderThread(const std::string & id,
-            const std::map<int, int> & idxFromCanId,
-            const std::vector<ICanBusSharer *> & iCanBusSharers);
-
-    virtual void run();
+    CanReaderThread(const std::string & id, const std::vector<ICanBusSharer *> & iCanBusSharers);
+    virtual void run() override;
 
 private:
-    std::map<int, int> idxFromCanId;
-    std::vector<ICanBusSharer *> iCanBusSharers;
+    std::map<unsigned int, ICanBusSharer *> canIdToHandle;
 };
 
 /**
@@ -91,8 +86,8 @@ public:
     CanWriterThread(const std::string & id);
     ~CanWriterThread();
 
-    virtual void run();
-    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, int bufferSize);
+    virtual void run() override;
+    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, int bufferSize) override;
     CanSenderDelegate * getDelegate();
 
 private:

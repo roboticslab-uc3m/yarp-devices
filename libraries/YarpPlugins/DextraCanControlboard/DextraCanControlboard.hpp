@@ -26,11 +26,11 @@ class CanSynapse : public Synapse
 {
 public:
     CanSynapse(int canId);
-    virtual void configure(void * handle);
+    virtual void configure(void * handle) override;
 
 protected:
-    virtual bool getMessage(unsigned char * msg, char stopByte, int size);
-    virtual bool sendMessage(unsigned char * msg, int size);
+    virtual bool getMessage(unsigned char * msg, char stopByte, int size) override;
+    virtual bool sendMessage(unsigned char * msg, int size) override;
 
 private:
     int canId;
@@ -58,12 +58,8 @@ public:
     //  --------- ICanBusSharer declarations. Implementation in ICanBusSharerImpl.cpp ---------
 
     virtual unsigned int getId() override;
-    virtual bool initialize() override { return true; }
-    virtual bool start() override { return true; };
-    virtual bool readyToSwitchOn() override { return true; };
-    virtual bool switchOn() override { return true; };
-    virtual bool enable() override { return true; };
-    virtual bool recoverFromError() override { return true; };
+    virtual bool initialize() override;
+    virtual bool finalize() override;
     virtual bool interpretMessage(const yarp::dev::CanMessage & message) override;
     virtual bool registerSender(CanSenderDelegate * sender) override;
 

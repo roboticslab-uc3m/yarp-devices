@@ -9,6 +9,16 @@ unsigned int DextraCanControlboard::getId()
     return canId;
 }
 
+bool DextraCanControlboard::initialize()
+{
+    return true;
+}
+
+bool DextraCanControlboard::finalize()
+{
+    return true;
+}
+
 bool DextraCanControlboard::registerSender(CanSenderDelegate * sender)
 {
     synapse->configure(sender);

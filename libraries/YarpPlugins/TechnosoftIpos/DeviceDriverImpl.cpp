@@ -72,23 +72,38 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 {
     CD_DEBUG("%s\n", config.toString().c_str());
 
-    // -- .ini parameters (in order)
-    int canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt32();
-    this->maxVel = config.check("maxVel",yarp::os::Value(10),"maxVel (meters/second or degrees/second)").asFloat64();
-    this->tr = config.check("tr",yarp::os::Value(0),"reduction").asFloat64();
-    this->encoderPulses = config.check("encoderPulses",yarp::os::Value(0),"encoderPulses").asInt32();
-    this->pulsesPerSample = config.check("pulsesPerSample",yarp::os::Value(0),"pulsesPerSample").asInt32();
-    this->k = config.check("k",yarp::os::Value(0),"motor constant").asFloat64();
+    int canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt32();
 
-    // -- other parameters...
-    this->modeCurrentTorque = VOCAB_CM_NOT_CONFIGURED;
+    // mutable variables
+    vars.drivePeakCurrent = config.check("drivePeakCurrent", yarp::os::Value(0.0), "peak drive current (amperes)").asFloat64();
+    vars.maxVel = config.check("maxVel", yarp::os::Value(0.0), "maxVel (meters/second or degrees/second)").asFloat64();
+    vars.tr = config.check("tr", yarp::os::Value(0.0), "reduction").asFloat64();
+    vars.k = config.check("k", yarp::os::Value(0.0), "motor constant").asFloat64();
+    vars.encoderPulses = config.check("encoderPulses", yarp::os::Value(0), "encoderPulses").asInt32();
+    vars.pulsesPerSample = config.check("pulsesPerSample", yarp::os::Value(0), "pulsesPerSample").asInt32();
+
+    // immutable variables
+    vars.min = config.check("min", yarp::os::Value(0.0), "min (meters or degrees)").asFloat64();
+    vars.max = config.check("max", yarp::os::Value(0.0), "max (meters or degrees)").asFloat64();
+    vars.refSpeed = config.check("refSpeed", yarp::os::Value(0.0), "ref speed (meters/second or degrees/second)").asFloat64();
+    vars.refAcceleration = config.check("refAcceleration", yarp::os::Value(0.0), "ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
+
+    vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
+
+    if (canId == 0)
+    {
+        CD_ERROR("Illegal CAN ID 0.\n");
+        return false;
+    }
+
+    if (!vars.validateInitialState())
+    {
+        CD_ERROR("Invalid configuration parameters.\n");
+        return false;
+    }
+
     double canSdoTimeoutMs = config.check("canSdoTimeoutMs", yarp::os::Value(0.0), "CAN SDO timeout (ms)").asFloat64();
     double canDriveStateTimeout = config.check("canDriveStateTimeout", yarp::os::Value(0.0), "CAN drive state timeout (s)").asFloat64();
-
-    double refAcceleration = config.check("refAcceleration",yarp::os::Value(0),"ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
-    double refSpeed = config.check("refSpeed",yarp::os::Value(0),"ref speed (meters/second or degrees/second)").asFloat64();
-    double max = config.check("max",yarp::os::Value(0),"max (meters or degrees)").asFloat64();
-    double min = config.check("min",yarp::os::Value(0),"min (meters or degrees)").asFloat64();
 
     if (config.check("externalEncoder", "external encoder device"))
     {
@@ -120,53 +135,96 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
         return false;
     }
 
-    if( 0 == canId )
+    can = new CanOpen(canId, canSdoTimeoutMs * 0.001, canDriveStateTimeout);
+
+    PdoConfiguration tpdo1Conf; // TODO
+    tpdo1Conf.addMapping<std::uint16_t>(0x6041);
+
+    PdoConfiguration tpdo2Conf; // TODO
+    tpdo2Conf.addMapping<std::int8_t>(0x6061);
+
+    if (!can->tpdo1()->configure(tpdo1Conf))
     {
-        CD_ERROR("Could not create TechnosoftIpos with canId 0\n");
-        return false;
-    }
-    if( min >= max )
-    {
-        CD_ERROR("Could not create TechnosoftIpos with min >= max\n");
-        return false;
-    }
-    if( 0 == this->maxVel )
-    {
-        CD_ERROR("Could not create TechnosoftIpos with maxVel 0\n");
-        return false;
-    }
-    if( 0 == this->tr )
-    {
-        CD_ERROR("Could not create TechnosoftIpos with tr 0\n");
-        return false;
-    }
-    if( 0 == refAcceleration )
-    {
-        CD_ERROR("Could not create TechnosoftIpos with refAcceleration 0\n");
-        return false;
-    }
-    if( 0 == refSpeed )
-    {
-        CD_ERROR("Could not create TechnosoftIpos with refSpeed 0\n");
-        return false;
-    }
-    if( refSpeed > this->maxVel )
-    {
-        CD_ERROR("Could not create TechnosoftIpos with refSpeed > maxVel\n");
-        return false;
-    }
-    if( 0 == this->encoderPulses )
-    {
-        CD_ERROR("Could not create TechnosoftIpos with encoderPulses 0\n");
-        return false;
-    }
-    if( 0 == this->pulsesPerSample )
-    {
-        CD_ERROR("Could not create TechnosoftIpos with pulsesPerSample 0\n");
+        CD_ERROR("Unable to configure TPDO1.\n");
         return false;
     }
 
-    can = new CanOpen(canId, canSdoTimeoutMs * 0.001, canDriveStateTimeout);
+    if (!can->tpdo2()->configure(tpdo2Conf))
+    {
+        CD_ERROR("Unable to configure TPDO2.\n");
+        return false;
+    }
+
+    can->tpdo1()->registerHandler<std::uint16_t>([=](std::uint16_t statusword)
+            {
+                switch (DriveStatusMachine::parseStatusword(statusword))
+                {
+                case DriveState::FAULT_REACTION_ACTIVE:
+                case DriveState::FAULT:
+                    vars.actualControlMode = VOCAB_CM_HW_FAULT;
+                    break;
+                case DriveState::SWITCHED_ON:
+                    vars.actualControlMode = VOCAB_CM_IDLE;
+                    break;
+                }
+
+                can->driveStatus()->update(statusword);
+            });
+
+    can->tpdo2()->registerHandler<std::int8_t>([=](std::int8_t modesOfOperation)
+            {
+                switch (modesOfOperation)
+                {
+                // handled
+                case -5:
+                    CD_INFO("iPOS specific: External Reference Torque Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = vars.requestedcontrolMode == VOCAB_CM_TORQUE ? VOCAB_CM_TORQUE : VOCAB_CM_CURRENT;
+                    break;
+                case 1:
+                    CD_INFO("Profile Position Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = VOCAB_CM_POSITION;
+                    break;
+                case 3:
+                    CD_INFO("Profile Velocity Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = VOCAB_CM_VELOCITY;
+                    break;
+                case 7:
+                    CD_INFO("Interpolated Position Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = VOCAB_CM_POSITION_DIRECT;
+                    break;
+                // unhandled
+                case -4:
+                    CD_INFO("iPOS specific: External Reference Speed Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = VOCAB_CM_UNKNOWN;
+                    break;
+                case -3:
+                    CD_INFO("iPOS specific: External Reference Position Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = VOCAB_CM_UNKNOWN;
+                    break;
+                case -2:
+                    CD_INFO("iPOS specific: Electronic Camming Position Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = VOCAB_CM_UNKNOWN;
+                    break;
+                case -1:
+                    CD_INFO("iPOS specific: Electronic Gearing Position Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = VOCAB_CM_UNKNOWN;
+                    break;
+                case 6:
+                    CD_INFO("Homing Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = VOCAB_CM_UNKNOWN;
+                    break;
+                case 8:
+                    CD_INFO("Cyclic Synchronous Position Mode. canId: %d.\n", can->getId());
+                    vars.actualControlMode = VOCAB_CM_UNKNOWN;
+                    break;
+                default:
+                    CD_WARNING("Mode \"%d\" not specified in manual, may be in Fault or not enabled yet. canId: %d.\n", modesOfOperation, can->getId());
+                    vars.actualControlMode = VOCAB_CM_UNKNOWN;
+                    break;
+                }
+
+                vars.controlModeObserverPtr->notify();
+            });
 
     can->emcy()->setErrorCodeRegistry<TechnosoftIposEmcy>();
 
@@ -180,26 +238,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
                 }
             });
 
-    if (!setRefSpeedRaw(0, refSpeed))
-    {
-        CD_ERROR("Unable to set reference speed.\n");
-        return false;
-    }
-
-    if (!setRefAccelerationRaw(0, refAcceleration))
-    {
-        CD_ERROR("Unable to set reference acceleration.\n");
-        return false;
-    }
-
-    if (!setLimitsRaw(0, min, max))
-    {
-        CD_ERROR("Unable to set software limits.\n");
-        return false;
-    }
-
-    CD_SUCCESS("Created TechnosoftIpos with canId %d, tr %f, k %f, refAcceleration %f, refSpeed %f, encoderPulses %d, pulsesPerSample %d and all local parameters set to 0.\n",
-               canId,tr,k,refAcceleration,refSpeed,encoderPulses,pulsesPerSample);
+    CD_SUCCESS("CAN ID %d.\n", canId);
     return true;
 }
 
@@ -209,19 +248,15 @@ bool TechnosoftIpos::close()
 {
     CD_INFO("\n");
 
-    bool ok = true;
-
-    if (externalEncoderDevice.isValid())
-    {
-        ok = ok &= externalEncoderDevice.close();
-    }
-
-    ok &= switchOn() && readyToSwitchOn(); // disable and shutdown
-
     delete linInterpBuffer;
     delete can;
 
-    return ok;
+    if (externalEncoderDevice.isValid())
+    {
+        return externalEncoderDevice.close();
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------

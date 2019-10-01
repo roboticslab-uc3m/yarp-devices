@@ -12,6 +12,7 @@
 
 #include <ColorDebug.h>
 
+#include "ICanBusSharer.hpp"
 #include "PositionDirectThread.hpp"
 #include "DeviceMapper.hpp"
 #include "CanRxTxThreads.hpp"
@@ -324,7 +325,7 @@ private:
     yarp::dev::PolyDriverList nodes;
 
     DeviceMapper deviceMapper;
-    std::vector<int> motorIds;
+    std::vector<ICanBusSharer *> iCanBusSharers;
 
     CanReaderThread * canReaderThread;
     CanWriterThread * canWriterThread;

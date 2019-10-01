@@ -42,6 +42,8 @@ enum class DriveTransition
 class DriveStatusMachine
 {
 public:
+    typedef std::bitset<16> word_t;
+
     DriveStatusMachine(ReceivePdo * rpdo, double timeout)
         : rpdo(rpdo), stateObserver(timeout)
     { }
@@ -50,14 +52,17 @@ public:
     { this->rpdo = rpdo; }
 
     bool update(std::uint16_t statusword);
-    std::bitset<16> & controlword();
-    const std::bitset<16> & statusword() const;
+    word_t & controlword();
+    const word_t & statusword() const;
     DriveState getCurrentState() const;
     bool requestTransition(DriveTransition transition, bool wait = true);
+    bool requestState(DriveState goalState);
+
+    static DriveState parseStatusword(std::uint16_t statusword);
 
 private:
-    std::bitset<16> _controlword;
-    std::bitset<16> _statusword;
+    word_t _controlword;
+    word_t _statusword;
     ReceivePdo * rpdo;
     StateObserver stateObserver;
     mutable std::mutex stateMutex;

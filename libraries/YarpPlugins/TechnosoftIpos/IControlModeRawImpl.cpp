@@ -14,36 +14,6 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::setPositionModeRaw(int j)
-{
-    CD_DEBUG("(%d)\n", j);
-    CHECK_JOINT(j);
-    return can->sdo()->download<int8_t>("Modes of Operation", 1, 0x6060);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::setVelocityModeRaw(int j)
-{
-    CD_DEBUG("(%d)\n", j);
-    CHECK_JOINT(j);
-    return can->sdo()->download<int8_t>("Modes of Operation", 3, 0x6060);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::setTorqueModeRaw(int j)
-{
-    CD_DEBUG("(%d)\n", j);
-    CHECK_JOINT(j);
-
-    return can->sdo()->download<uint16_t>("External Reference Type", 1, 0x201D)
-            && can->sdo()->download<int8_t>("Modes of Operation", -5, 0x6060)
-            && can->rpdo1()->write<uint16_t>(0x001F);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIpos::setPositionDirectModeRaw()
 {
     CD_DEBUG("\n");
@@ -64,7 +34,7 @@ bool TechnosoftIpos::setPositionDirectModeRaw()
 
     double ref;
     if (!getEncoderRaw(0, &ref)) return false;
-    int32_t data = degreesToInternalUnits(ref);
+    int32_t data = vars.degreesToInternalUnits(ref);
 
     if (!can->sdo()->download("Interpolated position initial position", data, 0x2079))
     {
@@ -78,7 +48,7 @@ bool TechnosoftIpos::setPositionDirectModeRaw()
 
     for (int i = 0; i < linInterpBuffer->getBufferSize(); i++)
     {
-        if (!sendLinearInterpolationTarget())
+        if (!can->rpdo3()->write<uint64_t>(linInterpBuffer->makeDataRecord()))
         {
             CD_ERROR("Unable to send point %d/%d to buffer.\n", i + 1, linInterpBuffer->getBufferSize());
             return false;
@@ -92,76 +62,16 @@ bool TechnosoftIpos::setPositionDirectModeRaw()
 
 bool TechnosoftIpos::getControlModeRaw(int j, int * mode)
 {
-    //CD_DEBUG("(%d)\n",j); //-- Too verbose in controlboardwrapper2 stream
+    //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
 
+    *mode = vars.actualControlMode;
+
     bool ok = true;
-    ok &= getControlModeRaw1(mode);
     ok &= getControlModeRaw2();
     ok &= getControlModeRaw3();
     ok &= getControlModeRaw4();
-
     return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::getControlModeRaw1(int * mode)
-{
-    int8_t data;
-
-    if (!can->sdo()->upload("Modes of Operation Display", &data, 0x6061))
-    {
-        return false;
-    }
-
-    int temp = VOCAB_CM_UNKNOWN;
-
-    switch (data)
-    {
-    // handled
-    case -5:
-        CD_INFO("\t-iPOS specific: External Reference Torque Mode. canId: %d.\n", can->getId());
-        temp = modeCurrentTorque == VOCAB_CM_TORQUE ? VOCAB_CM_TORQUE : VOCAB_CM_CURRENT;
-        break;
-    case 1:
-        CD_INFO("\t-Profile Position Mode. canId: %d.\n", can->getId());
-        temp = VOCAB_CM_POSITION;
-        break;
-    case 3:
-        CD_INFO("\t-Profile Velocity Mode. canId: %d.\n", can->getId());
-        temp = VOCAB_CM_VELOCITY;
-        break;
-    case 7:
-        CD_INFO("\t-Interpolated Position Mode. canId: %d.\n", can->getId());
-        temp = VOCAB_CM_POSITION_DIRECT;
-        break;
-    // unhandled
-    case -4:
-        CD_INFO("\t-iPOS specific: External Reference Speed Mode. canId: %d.\n", can->getId());
-        break;
-    case -3:
-        CD_INFO("\t-iPOS specific: External Reference Position Mode. canId: %d.\n", can->getId());
-        break;
-    case -2:
-        CD_INFO("\t-iPOS specific: Electronic Camming Position Mode. canId: %d.\n", can->getId());
-        break;
-    case -1:
-        CD_INFO("\t-iPOS specific: Electronic Gearing Position Mode. canId: %d.\n", can->getId());
-        break;
-    case 6:
-        CD_INFO("\t-Homing Mode. canId: %d.\n", can->getId());
-        break;
-    case 8:
-        CD_INFO("\t-Cyclic Synchronous Position Mode. canId: %d.\n", can->getId());
-        break;
-    default:
-        CD_WARNING("\t-Mode \"%d\" not specified in manual, may be in Fault or not enabled yet. canId(%d).\n", data, can->getId());
-        break;
-    }
-
-    *mode = temp;
-    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -491,23 +401,50 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
     CHECK_JOINT(j);
 
+    vars.requestedcontrolMode = mode;
+
     switch (mode)
     {
     case VOCAB_CM_POSITION:
-        return setPositionModeRaw(j);
+        return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
+                && can->sdo()->download<int8_t>("Modes of Operation", 1, 0x6060)
+                && vars.awaitControlMode(mode);
+
     case VOCAB_CM_VELOCITY:
-        return setVelocityModeRaw(j);
+        return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
+                && can->sdo()->download<int8_t>("Modes of Operation", 3, 0x6060)
+                && vars.awaitControlMode(mode);
+
     case VOCAB_CM_CURRENT:
     case VOCAB_CM_TORQUE:
-        modeCurrentTorque = mode;
-        return setTorqueModeRaw(j);
+        return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
+                && can->sdo()->download<uint16_t>("External Reference Type", 1, 0x201D)
+                && can->sdo()->download<int8_t>("Modes of Operation", -5, 0x6060)
+                && can->rpdo1()->write<uint16_t>(0x001F)
+                && vars.awaitControlMode(mode);
+
     case VOCAB_CM_POSITION_DIRECT:
-        return setPositionDirectModeRaw();
+        return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
+                && setPositionDirectModeRaw()
+                && vars.awaitControlMode(mode);
+
+    case VOCAB_CM_FORCE_IDLE:
+        if (vars.actualControlMode == VOCAB_CM_HW_FAULT
+                && !can->driveStatus()->requestTransition(DriveTransition::FAULT_RESET))
+        {
+            CD_ERROR("Unable to reset fault status.\n");
+            return false;
+        }
+
+        // no break
+
+    case VOCAB_CM_IDLE:
+        return can->driveStatus()->requestState(DriveState::SWITCHED_ON);
+
     default:
+        CD_ERROR("Unsupported, unknown or read-only mode: %s.\n", yarp::os::Vocab::decode(mode).c_str());
         return false;
     }
-
-    return true;
 }
 
 // -----------------------------------------------------------------------------

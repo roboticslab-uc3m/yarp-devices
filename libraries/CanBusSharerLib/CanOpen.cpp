@@ -18,9 +18,7 @@ CanOpen::CanOpen(unsigned int id, double sdoTimeout, double stateTimeout, CanSen
       _emcy(new EmcyConsumer(_sdo)),
       _nmt(new NmtProtocol(_id, _sdo, sender)),
       _driveStatus(new DriveStatusMachine(_rpdo1, stateTimeout))
-{
-    _tpdo1->registerHandler<std::uint16_t>([this](std::uint16_t statusword) { _driveStatus->update(statusword); });
-}
+{ }
 
 CanOpen::~CanOpen()
 {

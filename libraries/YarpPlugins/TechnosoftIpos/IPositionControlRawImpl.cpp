@@ -16,9 +16,10 @@ bool TechnosoftIpos::positionMoveRaw(int j, double ref)    // encExposed = ref;
 {
     CD_DEBUG("(%d, %f)\n", j, ref);
     CHECK_JOINT(j);
+    CHECK_MODE(VOCAB_CM_POSITION);
 
     return can->rpdo1()->write<uint16_t>(0x000F) // mandatory if we call this right after the [posd->pos] transition
-            && can->sdo()->download("Target position", degreesToInternalUnits(ref), 0x607A)
+            && can->sdo()->download("Target position", vars.degreesToInternalUnits(ref), 0x607A)
             && can->rpdo1()->write<uint16_t>(0x003F)
             && can->rpdo1()->write<uint16_t>(0x000F); // needed to accept next target
 }
@@ -45,9 +46,10 @@ bool TechnosoftIpos::relativeMoveRaw(int j, double delta)
 {
     CD_DEBUG("(%d, %f)\n", j, delta);
     CHECK_JOINT(j);
+    CHECK_MODE(VOCAB_CM_POSITION);
 
     return can->rpdo1()->write<uint16_t>(0x000F) // mandatory if we call this right after the [posd->pos] transition
-            && can->sdo()->download("Target position", degreesToInternalUnits(delta), 0x607A)
+            && can->sdo()->download("Target position", vars.degreesToInternalUnits(delta), 0x607A)
             && can->rpdo1()->write<uint16_t>(0x007F)
             && can->rpdo1()->write<uint16_t>(0x000F); // needed to accept next target
 }
@@ -188,13 +190,13 @@ bool TechnosoftIpos::setRefSpeedRaw(int j, double sp)
     CD_DEBUG("(%d, %f)\n", j, sp);
     CHECK_JOINT(j);
 
-    if (sp > maxVel)
+    if (sp > vars.maxVel)
     {
-        CD_WARNING("Reference speed exceeds maximum velocity (%f).\n", maxVel);
+        CD_WARNING("Reference speed exceeds maximum velocity (%f).\n", vars.maxVel);
         return false;
     }
 
-    double value = std::abs(degreesToInternalUnits(sp, 1));
+    double value = std::abs(vars.degreesToInternalUnits(sp, 1));
 
     uint16_t dataInt;
     uint16_t dataFrac;
@@ -227,7 +229,7 @@ bool TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
     CD_DEBUG("(%d, %f)\n", j, acc);
     CHECK_JOINT(j);
 
-    double value = std::abs(degreesToInternalUnits(acc, 2));
+    double value = std::abs(vars.degreesToInternalUnits(acc, 2));
 
     uint16_t dataInt;
     uint16_t dataFrac;
@@ -265,7 +267,7 @@ bool TechnosoftIpos::getRefSpeedRaw(int j, double * ref)
                 uint16_t dataInt = *data >> 16;
                 uint16_t dataFrac = *data & 0xFFFF;
                 double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
-                *ref = internalUnitsToDegrees(value, 1);
+                *ref = vars.internalUnitsToDegrees(value, 1);
             },
             0x6081);
 }
@@ -298,7 +300,7 @@ bool TechnosoftIpos::getRefAccelerationRaw(int j, double * acc)
                 uint16_t dataInt = *data >> 16;
                 uint16_t dataFrac = *data & 0xFFFF;
                 double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
-                *acc = internalUnitsToDegrees(value, 2);
+                *acc = vars.internalUnitsToDegrees(value, 2);
             },
             0x6083);
 }
@@ -354,7 +356,7 @@ bool TechnosoftIpos::getTargetPositionRaw(int joint, double * ref)
     CHECK_JOINT(joint);
 
     return can->sdo()->upload<int32_t>("Target position", [=](int32_t * data)
-            { *ref = internalUnitsToDegrees(*data); },
+            { *ref = vars.internalUnitsToDegrees(*data); },
             0x607A);
 }
 
