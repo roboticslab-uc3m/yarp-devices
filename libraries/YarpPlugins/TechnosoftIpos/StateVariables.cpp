@@ -4,6 +4,15 @@
 
 #include <cmath>
 
+// upstream bug in IAxisInfo.h, remove in YARP 3.2+
+#include <yarp/conf/version.h>
+#if YARP_VERSION_MINOR < 2
+# include <yarp/os/Log.h>
+#endif
+
+#include <yarp/os/Vocab.h>
+#include <yarp/dev/IAxisInfo.h>
+
 #include <ColorDebug.h>
 
 using namespace roboticslab;
@@ -21,7 +30,7 @@ namespace
 
 // -----------------------------------------------------------------------------
 
-EncoderRead::EncoderRead(double initialPos)
+EncoderRead::EncoderRead(std::int32_t initialPos)
     : lastPosition(initialPos),
       nextToLastPosition(initialPos),
       lastSpeed(0.0),
@@ -33,16 +42,7 @@ EncoderRead::EncoderRead(double initialPos)
 
 // -----------------------------------------------------------------------------
 
-void EncoderRead::reset(double pos)
-{
-    std::lock_guard<std::mutex> guard(encoderMutex);
-    lastPosition = nextToLastPosition = pos;
-    lastSpeed = nextToLastSpeed = lastAcceleration = 0.0;
-}
-
-// -----------------------------------------------------------------------------
-
-void EncoderRead::update(double newPos, double newTime)
+void EncoderRead::update(std::int32_t newPos, double newTime)
 {
     std::lock_guard<std::mutex> guard(encoderMutex);
 
@@ -51,7 +51,7 @@ void EncoderRead::update(double newPos, double newTime)
     nextToLastPosition = lastPosition;
     nextToLastSpeed = lastSpeed;
 
-    if (newTime)
+    if (newTime != 0.0)
     {
         lastStamp.update(newTime);
     }
@@ -69,7 +69,16 @@ void EncoderRead::update(double newPos, double newTime)
 
 // -----------------------------------------------------------------------------
 
-double EncoderRead::queryPosition() const
+void EncoderRead::reset(std::int32_t pos)
+{
+    std::lock_guard<std::mutex> guard(encoderMutex);
+    lastPosition = nextToLastPosition = pos;
+    lastSpeed = nextToLastSpeed = lastAcceleration = 0.0;
+}
+
+// -----------------------------------------------------------------------------
+
+std::int32_t EncoderRead::queryPosition() const
 {
     std::lock_guard<std::mutex> guard(encoderMutex);
     return lastPosition;
@@ -101,23 +110,24 @@ double EncoderRead::queryTime() const
 
 // -----------------------------------------------------------------------------
 
-// TODO: add mutex guards?
-
 StateVariables::StateVariables()
-    : lastEncoderRead(0.0),
+    : controlModeObserverPtr(new StateObserver(1.0)), // arbitrary 1 second wait
+      lastEncoderRead(0),
+      lastCurrentRead(0),
       actualControlMode(0),
       requestedcontrolMode(0),
-      drivePeakCurrent(0.0),
-      maxVel(0.0),
       tr(0.0),
       k(0.0),
+      encoderPulses(0),
+      drivePeakCurrent(0.0),
+      maxVel(0.0),
+      jointType(0),
+      reverse(false),
       min(0.0),
       max(0.0),
       refSpeed(0.0),
       refAcceleration(0.0),
-      encoderPulses(0),
-      pulsesPerSample(0),
-      controlModeObserverPtr(new StateObserver(1.0)) // arbitrary 1 second wait
+      pulsesPerSample(0)
 { }
 
 // -----------------------------------------------------------------------------
@@ -127,6 +137,24 @@ bool StateVariables::validateInitialState()
     if (actualControlMode == 0)
     {
         CD_WARNING("Illegal initial control mode.\n");
+        return false;
+    }
+
+    if (tr <= 0.0)
+    {
+        CD_WARNING("Illegal transmission ratio: %f.\n", tr.load());
+        return false;
+    }
+
+    if (k <= 0.0)
+    {
+        CD_WARNING("Illegal motor constant: %f.\n", k.load());
+        return false;
+    }
+
+    if (encoderPulses <= 0)
+    {
+        CD_WARNING("Illegal encoder pulses per revolution: %d.\n", encoderPulses.load());
         return false;
     }
 
@@ -142,18 +170,6 @@ bool StateVariables::validateInitialState()
         return false;
     }
 
-    if (tr <= 0.0)
-    {
-        CD_WARNING("Illegal transmission ratio: %f.\n", tr);
-        return false;
-    }
-
-    if (k <= 0.0)
-    {
-        CD_WARNING("Illegal motor constant: %f.\n", k);
-        return false;
-    }
-
     if (refSpeed <= 0.0)
     {
         CD_WARNING("Illegal reference speed: %f.\n", refSpeed);
@@ -163,12 +179,6 @@ bool StateVariables::validateInitialState()
     if (refAcceleration <= 0.0)
     {
         CD_WARNING("Illegal reference acceleration: %f.\n", refAcceleration);
-        return false;
-    }
-
-    if (encoderPulses <= 0)
-    {
-        CD_WARNING("Illegal encoder pulses per revolution: %d.\n", encoderPulses);
         return false;
     }
 
@@ -190,6 +200,23 @@ bool StateVariables::validateInitialState()
         return false;
     }
 
+    if (axisName.empty())
+    {
+        CD_WARNING("Empty string as axis name.\n");
+        return false;
+    }
+
+    switch (jointType)
+    {
+    case yarp::dev::VOCAB_JOINTTYPE_REVOLUTE:
+    case yarp::dev::VOCAB_JOINTTYPE_PRISMATIC:
+    case yarp::dev::VOCAB_JOINTTYPE_UNKNOWN:
+        break;
+    default:
+        CD_WARNING("Illegal joint type vocab: %s.\n", yarp::os::Vocab::decode(jointType).c_str());
+        return false;
+    }
+
     return true;
 }
 
@@ -202,45 +229,30 @@ bool StateVariables::awaitControlMode(yarp::conf::vocab32_t mode)
 
 // -----------------------------------------------------------------------------
 
-bool StateVariables::expectControlModes(std::initializer_list<yarp::conf::vocab32_t> modes)
-{
-    for (auto mode : modes)
-    {
-        if (mode == actualControlMode)
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
 std::int32_t StateVariables::degreesToInternalUnits(double value, int derivativeOrder)
 {
-    return value * tr * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder);
+    return value * tr * (reverse ? -1 : 1) * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder);
 }
 
 // -----------------------------------------------------------------------------
 
 double StateVariables::internalUnitsToDegrees(std::int32_t value, int derivativeOrder)
 {
-    return value / (tr * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder));
+    return value / (tr * (reverse ? -1 : 1) * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder));
 }
 
 // -----------------------------------------------------------------------------
 
 std::int16_t StateVariables::currentToInternalUnits(double value)
 {
-    return value * sgn(tr) * 65520.0 / (2.0 * drivePeakCurrent);
+    return value * (reverse ? -1 : 1) * 65520.0 / (2.0 * drivePeakCurrent);
 }
 
 // -----------------------------------------------------------------------------
 
 double StateVariables::internalUnitsToCurrent(std::int16_t value)
 {
-    return value * sgn(tr) * 2.0 * drivePeakCurrent / 65520.0;
+    return value * (reverse ? -1 : 1) * 2.0 * drivePeakCurrent / 65520.0;
 }
 
 // -----------------------------------------------------------------------------
@@ -254,14 +266,14 @@ double StateVariables::internalUnitsToPeakCurrent(std::int16_t value)
 
 double StateVariables::currentToTorque(double current)
 {
-    return current * std::abs(tr) * k;
+    return current * tr * k;
 }
 
 // -----------------------------------------------------------------------------
 
 double StateVariables::torqueToCurrent(double torque)
 {
-    return torque / (std::abs(tr) * k);
+    return torque / (tr * k);
 }
 
 // -----------------------------------------------------------------------------

@@ -17,11 +17,14 @@ if(NOT SKIP_TechnosoftIpos)
                                    TechnosoftIpos.cpp
                                    TechnosoftIposEmcy.cpp
                                    DeviceDriverImpl.cpp
+                                   IAxisInfoRawImpl.cpp
                                    ICanBusSharerImpl.cpp
                                    IControlLimitsRawImpl.cpp
                                    IControlModeRawImpl.cpp
                                    ICurrentControlRawImpl.cpp
                                    IEncodersRawImpl.cpp
+                                   IMotorRawImpl.cpp
+                                   IMotorEncodersRawImpl.cpp
                                    IPositionControlRawImpl.cpp
                                    IPositionDirectRawImpl.cpp
                                    IRemoteVariablesRawImpl.cpp

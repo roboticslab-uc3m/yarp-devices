@@ -12,18 +12,12 @@ bool TechnosoftIpos::getRefTorqueRaw(int j, double * t)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-    CHECK_MODES(VOCAB_CM_TORQUE, VOCAB_CM_CURRENT);
+    CHECK_MODE(VOCAB_CM_TORQUE);
 
-    double curr;
-
-    if (!getRefCurrentRaw(j, &curr))
-    {
-        CD_ERROR("getRefCurrentRaw() failed.\n");
-        return false;
-    }
-
-    *t = vars.currentToTorque(curr);
-    return true;
+    return can->sdo()->upload<std::int32_t>("External online reference", [=](std::int32_t * data)
+            { double curr = vars.internalUnitsToCurrent(*data >> 16);
+              *t = vars.currentToTorque(curr); },
+            0x201C);
 }
 
 // -------------------------------------------------------------------------------------
@@ -40,17 +34,10 @@ bool TechnosoftIpos::setRefTorqueRaw(int j, double t)
 {
     CD_DEBUG("(%d, %f)\n", j, t);
     CHECK_JOINT(j);
-    CHECK_MODES(VOCAB_CM_TORQUE, VOCAB_CM_CURRENT);
-
+    CHECK_MODE(VOCAB_CM_TORQUE);
     double curr = vars.torqueToCurrent(t);
-
-    if (!setRefCurrentRaw(j, curr))
-    {
-        CD_ERROR("setRefCurrentRaw() failed.\n");
-        return false;
-    }
-
-    return true;
+    std::int32_t data = vars.currentToInternalUnits(curr) << 16;
+    return can->sdo()->download("External online reference", data, 0x201C);
 }
 
 // -------------------------------------------------------------------------------------
@@ -67,15 +54,8 @@ bool TechnosoftIpos::getTorqueRaw(int j, double * t)
 {
     //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream.
     CHECK_JOINT(j);
-
-    double curr;
-
-    if (!getCurrentRaw(j, &curr))
-    {
-        CD_ERROR("getCurrentRaw() failed.\n");
-        return false;
-    }
-
+    std::int16_t temp = vars.lastCurrentRead;
+    double curr = vars.internalUnitsToCurrent(temp);
     *t = vars.currentToTorque(curr);
     return true;
 }
@@ -95,18 +75,11 @@ bool TechnosoftIpos::getTorqueRangeRaw(int j, double * min, double * max)
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
 
-    double minCurrent, maxCurrent;
-
-    if (!getCurrentRangeRaw(j, &minCurrent, &maxCurrent))
-    {
-        CD_ERROR("getCurrentRangeRaw() failed.\n");
-        return false;
-    }
-
-    *max = vars.currentToTorque(maxCurrent);
-    *min = -(*max);
-
-    return true;
+    return can->sdo()->upload<std::uint16_t>("Current limit", [=](std::uint16_t * data)
+            { double temp = vars.internalUnitsToPeakCurrent(*data);
+              *max = vars.currentToTorque(temp);
+              *min = -(*max); },
+            0x207F);
 }
 
 // -------------------------------------------------------------------------------------
