@@ -6,6 +6,7 @@
 #include <cstdint>
 
 #include <atomic>
+#include <bitset>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -46,13 +47,19 @@ private:
  * @ingroup TechnosoftIpos
  * @brief ...
  */
-struct StateVariables
+class StateVariables
 {
+public:
+
     StateVariables();
 
-    bool validateInitialState();
+    bool validateInitialState(unsigned int canId);
 
     bool awaitControlMode(yarp::conf::vocab32_t mode);
+
+    template<std::size_t N>
+    void reportBitToggle(const std::string & msg, const std::bitset<N> & actual, const std::bitset<N> & stored, std::size_t pos)
+    { if (actual.test(pos) != stored.test(pos)) reportBitToggleInternal(msg, actual.test(pos)); }
 
     double degreesToInternalUnits(double value, int derivativeOrder = 0);
 
@@ -69,6 +76,14 @@ struct StateVariables
     double torqueToCurrent(double torque);
 
     std::unique_ptr<StateObserver> controlModeObserverPtr;
+
+    // read/write, no concurrent access
+
+    std::bitset<16> msr;
+    std::bitset<16> mer;
+    std::bitset<16> der;
+    std::bitset<16> der2;
+    std::bitset<16> cer;
 
     // read/write, those require atomic access
 
@@ -100,6 +115,12 @@ struct StateVariables
     double refAcceleration;
 
     int pulsesPerSample;
+
+private:
+
+    void reportBitToggleInternal(const std::string & msg, bool isSet);
+
+    unsigned int canId;
 };
 
 } // namespace roboticslab

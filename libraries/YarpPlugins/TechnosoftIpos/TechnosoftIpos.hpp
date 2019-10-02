@@ -108,9 +108,6 @@ public:
     //  --------- IControlModeRaw declarations. Implementation in IControlModeRawImpl.cpp ---------
 
     virtual bool getControlModeRaw(int j, int * mode) override;
-    bool getControlModeRaw2();
-    bool getControlModeRaw3();
-    bool getControlModeRaw4();
     virtual bool getControlModesRaw(int * modes) override;
     virtual bool getControlModesRaw(int n_joint, const int * joints, int * modes) override;
     virtual bool setControlModeRaw(int j, int mode) override;
@@ -260,8 +257,14 @@ public:
 
 protected:
 
-    void statuswordCb(std::uint16_t statusword);
-    void modesOfOperationCb(std::int8_t modesOfOperation);
+    void interpretMsr(std::uint16_t msr);
+    void interpretMer(std::uint16_t mer);
+    void interpretDer(std::uint16_t der);
+    void interpretDer2(std::uint16_t der2);
+    void interpretCer(std::uint16_t cer);
+    void interpretStatusword(std::uint16_t statusword);
+    void interpretModesOfOperation(std::int8_t modesOfOperation);
+    void interpretPtStatus(std::uint16_t ptStatus);
     void emcyCb(EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef);
 
     CanOpen * can;

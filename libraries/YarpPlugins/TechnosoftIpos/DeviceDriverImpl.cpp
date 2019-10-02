@@ -35,13 +35,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
 
-    if (canId == 0)
-    {
-        CD_ERROR("Illegal CAN ID 0.\n");
-        return false;
-    }
-
-    if (!vars.validateInitialState())
+    if (!vars.validateInitialState(canId))
     {
         CD_ERROR("Invalid configuration parameters.\n");
         return false;
@@ -102,8 +96,8 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     using namespace std::placeholders;
 
-    can->tpdo1()->registerHandler<std::uint16_t>(std::bind(&TechnosoftIpos::statuswordCb, this, _1));
-    can->tpdo2()->registerHandler<std::int8_t>(std::bind(&TechnosoftIpos::modesOfOperationCb, this, _1));
+    can->tpdo1()->registerHandler<std::uint16_t>(std::bind(&TechnosoftIpos::interpretStatusword, this, _1));
+    can->tpdo2()->registerHandler<std::int8_t>(std::bind(&TechnosoftIpos::interpretModesOfOperation, this, _1));
     can->emcy()->registerHandler(std::bind(&TechnosoftIpos::emcyCb, this, _1, _2, _3));
     can->emcy()->setErrorCodeRegistry<TechnosoftIposEmcy>();
 
