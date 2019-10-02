@@ -229,14 +229,14 @@ bool StateVariables::awaitControlMode(yarp::conf::vocab32_t mode)
 
 // -----------------------------------------------------------------------------
 
-std::int32_t StateVariables::degreesToInternalUnits(double value, int derivativeOrder)
+double StateVariables::degreesToInternalUnits(double value, int derivativeOrder)
 {
     return value * tr * (reverse ? -1 : 1) * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder);
 }
 
 // -----------------------------------------------------------------------------
 
-double StateVariables::internalUnitsToDegrees(std::int32_t value, int derivativeOrder)
+double StateVariables::internalUnitsToDegrees(double value, int derivativeOrder)
 {
     return value / (tr * (reverse ? -1 : 1) * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder));
 }

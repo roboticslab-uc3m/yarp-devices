@@ -54,9 +54,9 @@ struct StateVariables
 
     bool awaitControlMode(yarp::conf::vocab32_t mode);
 
-    std::int32_t degreesToInternalUnits(double value, int derivativeOrder = 0);
+    double degreesToInternalUnits(double value, int derivativeOrder = 0);
 
-    double internalUnitsToDegrees(std::int32_t value, int derivativeOrder = 0);
+    double internalUnitsToDegrees(double value, int derivativeOrder = 0);
 
     std::int16_t currentToInternalUnits(double value);
 
