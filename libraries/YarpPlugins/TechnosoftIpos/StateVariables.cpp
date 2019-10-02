@@ -114,6 +114,7 @@ double EncoderRead::queryTime() const
 
 StateVariables::StateVariables()
     : lastEncoderRead(0),
+      lastCurrentRead(0),
       actualControlMode(0),
       requestedcontrolMode(0),
       drivePeakCurrent(0.0),
@@ -226,21 +227,6 @@ bool StateVariables::validateInitialState()
 bool StateVariables::awaitControlMode(yarp::conf::vocab32_t mode)
 {
     return actualControlMode == mode || controlModeObserverPtr->await();
-}
-
-// -----------------------------------------------------------------------------
-
-bool StateVariables::expectControlModes(std::initializer_list<yarp::conf::vocab32_t> modes)
-{
-    for (auto mode : modes)
-    {
-        if (mode == actualControlMode)
-        {
-            return true;
-        }
-    }
-
-    return false;
 }
 
 // -----------------------------------------------------------------------------

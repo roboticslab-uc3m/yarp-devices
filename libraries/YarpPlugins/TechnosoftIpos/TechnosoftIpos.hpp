@@ -32,8 +32,7 @@
 
 #define CHECK_JOINT(j) do { int ax; if (getAxes(&ax), (j) != ax - 1) return false; } while (0)
 
-#define CHECK_MODE(mode) do { if (!vars.expectControlModes({(mode)})) return false; } while (0)
-#define CHECK_MODES(mode1, mode2) do { if (!vars.expectControlModes({(mode1), (mode2)})) return false; } while (0)
+#define CHECK_MODE(mode) do { if (mode != vars.actualControlMode) return false; } while (0)
 
 namespace roboticslab
 {

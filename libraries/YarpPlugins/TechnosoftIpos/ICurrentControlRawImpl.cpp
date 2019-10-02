@@ -12,10 +12,9 @@ bool TechnosoftIpos::getCurrentRaw(int m, double * curr)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
-
-    return can->sdo()->upload<std::int16_t>("Current actual value", [=](std::int16_t * data)
-            { *curr = vars.internalUnitsToCurrent(*data); },
-            0x207E);
+    std::int16_t temp = vars.lastCurrentRead;
+    *curr = vars.internalUnitsToCurrent(temp);
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -53,7 +52,7 @@ bool TechnosoftIpos::setRefCurrentRaw(int m, double curr)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
-    CHECK_MODES(VOCAB_CM_CURRENT, VOCAB_CM_TORQUE);
+    CHECK_MODE(VOCAB_CM_CURRENT);
     std::int32_t data = vars.currentToInternalUnits(curr) << 16;
     return can->sdo()->download("External online reference", data, 0x201C);
 }
@@ -80,7 +79,7 @@ bool TechnosoftIpos::getRefCurrentRaw(int m, double * curr)
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
-    CHECK_MODES(VOCAB_CM_CURRENT, VOCAB_CM_TORQUE);
+    CHECK_MODE(VOCAB_CM_CURRENT);
 
     return can->sdo()->upload<std::int32_t>("External online reference", [=](std::int32_t * data)
             { *curr = vars.internalUnitsToCurrent(*data >> 16); },

@@ -5,7 +5,6 @@
 
 #include <cstdint>
 
-#include <initializer_list>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -54,8 +53,6 @@ struct StateVariables
 
     bool awaitControlMode(yarp::conf::vocab32_t mode);
 
-    bool expectControlModes(std::initializer_list<yarp::conf::vocab32_t> modes);
-
     std::int32_t degreesToInternalUnits(double value, int derivativeOrder = 0);
 
     double internalUnitsToDegrees(std::int32_t value, int derivativeOrder = 0);
@@ -71,6 +68,7 @@ struct StateVariables
     double torqueToCurrent(double torque);
 
     EncoderRead lastEncoderRead;
+    std::int16_t lastCurrentRead;
 
     yarp::conf::vocab32_t actualControlMode;
     yarp::conf::vocab32_t requestedcontrolMode;
