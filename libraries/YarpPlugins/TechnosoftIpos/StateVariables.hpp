@@ -5,6 +5,7 @@
 
 #include <cstdint>
 
+#include <atomic>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -27,7 +28,7 @@ class EncoderRead
 public:
     EncoderRead(std::int32_t initialPos);
     void update(std::int32_t newPos, double newTime = 0.0);
-    void reset(std::int32_t pos = 0.0);
+    void reset(std::int32_t pos = 0);
     std::int32_t queryPosition() const;
     double querySpeed() const;
     double queryAcceleration() const;
@@ -67,31 +68,38 @@ struct StateVariables
 
     double torqueToCurrent(double torque);
 
-    EncoderRead lastEncoderRead;
-    std::int16_t lastCurrentRead;
+    std::unique_ptr<StateObserver> controlModeObserverPtr;
 
-    yarp::conf::vocab32_t actualControlMode;
-    yarp::conf::vocab32_t requestedcontrolMode;
+    // read/write, those require atomic access
+
+    EncoderRead lastEncoderRead;
+    std::atomic<std::int16_t> lastCurrentRead;
+
+    std::atomic<yarp::conf::vocab32_t> actualControlMode;
+    std::atomic<yarp::conf::vocab32_t> requestedcontrolMode;
+
+    std::atomic<double> tr;
+    std::atomic<double> k;
+    std::atomic<int> encoderPulses;
+
+    // read only, conceptually immutable
 
     double drivePeakCurrent;
     double maxVel;
-    double tr;
-    double k;
-
-    double min;
-    double max;
-    double refSpeed;
-    double refAcceleration;
-
-    int encoderPulses;
-    int pulsesPerSample;
 
     std::string axisName;
     yarp::conf::vocab32_t jointType;
 
     bool reverse;
 
-    std::unique_ptr<StateObserver> controlModeObserverPtr;
+    // read only, fresh values queried from iPOS drive
+
+    double min;
+    double max;
+    double refSpeed;
+    double refAcceleration;
+
+    int pulsesPerSample;
 };
 
 } // namespace roboticslab

@@ -110,26 +110,24 @@ double EncoderRead::queryTime() const
 
 // -----------------------------------------------------------------------------
 
-// TODO: add mutex guards?
-
 StateVariables::StateVariables()
-    : lastEncoderRead(0),
+    : controlModeObserverPtr(new StateObserver(1.0)), // arbitrary 1 second wait
+      lastEncoderRead(0),
       lastCurrentRead(0),
       actualControlMode(0),
       requestedcontrolMode(0),
-      drivePeakCurrent(0.0),
-      maxVel(0.0),
       tr(0.0),
       k(0.0),
+      encoderPulses(0),
+      drivePeakCurrent(0.0),
+      maxVel(0.0),
+      jointType(0),
+      reverse(false),
       min(0.0),
       max(0.0),
       refSpeed(0.0),
       refAcceleration(0.0),
-      encoderPulses(0),
-      pulsesPerSample(0),
-      jointType(0),
-      reverse(false),
-      controlModeObserverPtr(new StateObserver(1.0)) // arbitrary 1 second wait
+      pulsesPerSample(0)
 { }
 
 // -----------------------------------------------------------------------------
@@ -139,6 +137,24 @@ bool StateVariables::validateInitialState()
     if (actualControlMode == 0)
     {
         CD_WARNING("Illegal initial control mode.\n");
+        return false;
+    }
+
+    if (tr <= 0.0)
+    {
+        CD_WARNING("Illegal transmission ratio: %f.\n", tr.load());
+        return false;
+    }
+
+    if (k <= 0.0)
+    {
+        CD_WARNING("Illegal motor constant: %f.\n", k.load());
+        return false;
+    }
+
+    if (encoderPulses <= 0)
+    {
+        CD_WARNING("Illegal encoder pulses per revolution: %d.\n", encoderPulses.load());
         return false;
     }
 
@@ -154,18 +170,6 @@ bool StateVariables::validateInitialState()
         return false;
     }
 
-    if (tr <= 0.0)
-    {
-        CD_WARNING("Illegal transmission ratio: %f.\n", tr);
-        return false;
-    }
-
-    if (k <= 0.0)
-    {
-        CD_WARNING("Illegal motor constant: %f.\n", k);
-        return false;
-    }
-
     if (refSpeed <= 0.0)
     {
         CD_WARNING("Illegal reference speed: %f.\n", refSpeed);
@@ -175,12 +179,6 @@ bool StateVariables::validateInitialState()
     if (refAcceleration <= 0.0)
     {
         CD_WARNING("Illegal reference acceleration: %f.\n", refAcceleration);
-        return false;
-    }
-
-    if (encoderPulses <= 0)
-    {
-        CD_WARNING("Illegal encoder pulses per revolution: %d.\n", encoderPulses);
         return false;
     }
 
