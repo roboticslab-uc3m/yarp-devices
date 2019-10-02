@@ -2,6 +2,8 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <cmath>
+
 #include <ColorDebug.h>
 
 #include "CanUtils.hpp"
@@ -16,7 +18,7 @@ bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_VELOCITY);
 
-    if (sp > vars.maxVel)
+    if (std::abs(sp) > vars.maxVel)
     {
         CD_WARNING("Requested speed exceeds maximum velocity (%f).\n", vars.maxVel);
         return false;

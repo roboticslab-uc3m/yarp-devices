@@ -8,6 +8,7 @@
 #include <cstdint>
 
 #include <string>
+#include <type_traits>
 
 #include <yarp/dev/CanBusInterface.h>
 
@@ -24,6 +25,7 @@ inline std::string msgToStr(const yarp::dev::CanMessage & message)
 template<typename T_int, typename T_frac>
 void encodeFixedPoint(double value, T_int * integer, T_frac * fractional)
 {
+    static_assert(std::is_integral<T_int>::value && std::is_integral<T_frac>::value, "Integral required.");
     *integer = static_cast<T_int>(value);
     *fractional = std::abs(value - *integer) * (1 << 8 * sizeof(T_frac));
 }
@@ -31,6 +33,7 @@ void encodeFixedPoint(double value, T_int * integer, T_frac * fractional)
 template<typename T_int, typename T_frac>
 double decodeFixedPoint(T_int integer, T_frac fractional)
 {
+    static_assert(std::is_integral<T_int>::value && std::is_integral<T_frac>::value, "Integral required.");
     double frac = static_cast<double>(fractional) / (1 << 8 * sizeof(T_frac));
     return integer + (integer >= 0 ? frac : -frac);
 }

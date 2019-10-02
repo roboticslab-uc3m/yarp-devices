@@ -2,6 +2,8 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <cmath>
+
 #include <bitset>
 
 #include <ColorDebug.h>
@@ -190,7 +192,12 @@ bool TechnosoftIpos::setRefSpeedRaw(int j, double sp)
     CD_DEBUG("(%d, %f)\n", j, sp);
     CHECK_JOINT(j);
 
-    if (sp > vars.maxVel)
+    if (sp < 0.0)
+    {
+        CD_WARNING("Illegal negative speed provided: %f.\n");
+        return false;
+    }
+    else if (sp > vars.maxVel)
     {
         CD_WARNING("Reference speed exceeds maximum velocity (%f).\n", vars.maxVel);
         return false;
@@ -228,6 +235,12 @@ bool TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
 {
     CD_DEBUG("(%d, %f)\n", j, acc);
     CHECK_JOINT(j);
+
+    if (acc < 0.0)
+    {
+        CD_WARNING("Illegal negative acceleration provided: %f.\n");
+        return false;
+    }
 
     double value = std::abs(vars.degreesToInternalUnits(acc, 2));
 
