@@ -265,6 +265,10 @@ protected:
     void interpretStatusword(std::uint16_t statusword);
     void interpretModesOfOperation(std::int8_t modesOfOperation);
     void interpretPtStatus(std::uint16_t ptStatus);
+
+    void handleTpdo1(std::uint16_t statusword, std::uint16_t msr, std::int8_t modesOfOperation);
+    void handleTpdo2(std::uint16_t mer, std::uint16_t der);
+    void handleTpdo3(std::int32_t position, std::int16_t current);
     void handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef);
 
     CanOpen * can;

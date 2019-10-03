@@ -272,6 +272,24 @@ bool TechnosoftIpos::initialize()
         }
     }
 
+    if (!can->tpdo1()->configure(vars.tpdo1Conf))
+    {
+        CD_ERROR("Unable to configure TPDO1.\n");
+        return false;
+    }
+
+    if (!can->tpdo2()->configure(vars.tpdo2Conf))
+    {
+        CD_ERROR("Unable to configure TPDO2.\n");
+        return false;
+    }
+
+    if (!can->tpdo3()->configure(vars.tpdo3Conf))
+    {
+        CD_ERROR("Unable to configure TPDO3.\n");
+        return false;
+    }
+
     vars.actualControlMode = VOCAB_CM_CONFIGURED;
 
     if (!can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE))

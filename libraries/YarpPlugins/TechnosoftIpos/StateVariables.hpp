@@ -14,6 +14,7 @@
 #include <yarp/conf/numeric.h>
 #include <yarp/os/Stamp.h>
 
+#include "PdoProtocol.hpp"
 #include "StateObserver.hpp"
 
 namespace roboticslab
@@ -106,6 +107,10 @@ public:
     yarp::conf::vocab32_t jointType;
 
     bool reverse;
+
+    PdoConfiguration tpdo1Conf;
+    PdoConfiguration tpdo2Conf;
+    PdoConfiguration tpdo3Conf;
 
     // read only, fresh values queried from iPOS drive
 

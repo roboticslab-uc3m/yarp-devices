@@ -337,6 +337,31 @@ void TechnosoftIpos::interpretPtStatus(std::uint16_t status)
 
 // -----------------------------------------------------------------------------
 
+void TechnosoftIpos::handleTpdo1(std::uint16_t statusword, std::uint16_t msr, std::int8_t modesOfOperation)
+{
+    interpretStatusword(statusword);
+    interpretMsr(msr);
+    interpretModesOfOperation(modesOfOperation);
+}
+
+// -----------------------------------------------------------------------------
+
+void TechnosoftIpos::handleTpdo2(std::uint16_t mer, std::uint16_t der)
+{
+    interpretMer(mer);
+    interpretDer(der);
+}
+
+// -----------------------------------------------------------------------------
+
+void TechnosoftIpos::handleTpdo3(std::int32_t position, std::int16_t current)
+{
+    vars.lastEncoderRead.update(position);
+    vars.lastCurrentRead = current;
+}
+
+// -----------------------------------------------------------------------------
+
 void TechnosoftIpos::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef)
 {
     CD_WARNING("EMCY: %s (canId %d)", code.second.c_str(), can->getId());
