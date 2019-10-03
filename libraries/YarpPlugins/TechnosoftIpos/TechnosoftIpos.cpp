@@ -337,13 +337,39 @@ void TechnosoftIpos::interpretPtStatus(std::uint16_t status)
 
 // -----------------------------------------------------------------------------
 
-void TechnosoftIpos::emcyCb(EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef)
+void TechnosoftIpos::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef)
 {
-    if (code.first == 0xFF01)
+    CD_WARNING("EMCY: %s (canId %d)", code.second.c_str(), can->getId());
+
+    switch (code.first)
     {
-        std::uint16_t status;
-        std::memcpy(&status, msef + 3, 2);
-        interpretPtStatus(status);
+    case 0x7300:
+        {
+            std::uint16_t der2;
+            std::memcpy(&der2, msef, 2);
+
+            if (der2 != 0) // available only in F514x
+            {
+                interpretDer2(der2);
+            }
+        }
+        break;
+
+    case 0x7500:
+        {
+            std::uint16_t cer;
+            std::memcpy(&cer, msef, 2);
+            interpretCer(cer);
+        }
+        break;
+
+    case 0xFF01:
+        {
+            std::uint16_t ptStatus;
+            std::memcpy(&ptStatus, msef, 2);
+            interpretPtStatus(ptStatus);
+        }
+        break;
     }
 }
 

@@ -265,7 +265,7 @@ protected:
     void interpretStatusword(std::uint16_t statusword);
     void interpretModesOfOperation(std::int8_t modesOfOperation);
     void interpretPtStatus(std::uint16_t ptStatus);
-    void emcyCb(EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef);
+    void handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef);
 
     CanOpen * can;
 

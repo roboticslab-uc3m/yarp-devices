@@ -98,7 +98,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     can->tpdo1()->registerHandler<std::uint16_t>(std::bind(&TechnosoftIpos::interpretStatusword, this, _1));
     can->tpdo2()->registerHandler<std::int8_t>(std::bind(&TechnosoftIpos::interpretModesOfOperation, this, _1));
-    can->emcy()->registerHandler(std::bind(&TechnosoftIpos::emcyCb, this, _1, _2, _3));
+    can->emcy()->registerHandler(std::bind(&TechnosoftIpos::handleEmcy, this, _1, _2, _3));
     can->emcy()->setErrorCodeRegistry<TechnosoftIposEmcy>();
 
     CD_SUCCESS("CAN ID %d.\n", canId);
