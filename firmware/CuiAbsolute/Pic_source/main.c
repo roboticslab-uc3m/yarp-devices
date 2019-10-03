@@ -79,7 +79,6 @@ double degrees;
 BYTE x, y;
 ECAN_TX_MSG_FLAGS txFlags = ECAN_TX_PRIORITY_3 & ECAN_TX_STD_FRAME & ECAN_TX_NO_RTR_FRAME;
 
-// int stop_flag=0; // -- flag para saber cuando se ha recibido un stop
 int pushFlag = 0; // flag para saber si está ejecutando el PUSH
 
 // -- Variables que almacenarán los datos a recibir:
@@ -89,8 +88,8 @@ BYTE dataLen;
 ECAN_RX_MSG_FLAGS rxflags;
 
 // -- Prototipos de funciones
-void sendData(BYTE);
-void sendAck(BYTE);
+void sendData(unsigned short);
+void sendAck(unsigned short);
 void setZero();
 void cleanData(void);
 
@@ -203,7 +202,7 @@ void main(void)
 
 
 // -- Funcion de envio de mensajes de posicion del Cui:
-void sendData(BYTE op)
+void sendData(unsigned short op)
 {
     // - Manual: [1. The host issues the command, 0x10. The data read in at this time will be 0xa5 or 0x00 since this is the first SPI transfer]
     LATCbits.LATC2=0;			
@@ -296,7 +295,7 @@ void setZero()
     }
 }	
 
-void sendAck(BYTE op)
+void sendAck(unsigned short op)
 {
 	x=0;
     while( !x )
