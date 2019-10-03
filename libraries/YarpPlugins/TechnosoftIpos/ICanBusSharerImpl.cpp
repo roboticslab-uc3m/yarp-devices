@@ -14,63 +14,6 @@ using namespace roboticslab;
 
 namespace
 {
-    bool retrieveDrivePeakCurrent(std::uint32_t productCode, double *peakCurrent)
-    {
-        switch (productCode)
-        {
-            case 24300101: // iPOS2401 MX-CAN
-            case 24200121: // iPOS2401 MX-CAT
-                *peakCurrent = 0.9;
-                break;
-            case 28001001: // iPOS3602 VX-CAN
-            case 28001021: // iPOS3602 VX-CAT
-            case 28001101: // iPOS3602 MX-CAN
-            case 28001201: // iPOS3602 BX-CAN
-            case 28001501: // iPOS3602 HX-CAN
-                *peakCurrent = 3.2;
-                break;
-            case 28002001: // iPOS3604 VX-CAN
-            case 28002021: // iPOS3604 VX-CAT
-            case 28002101: // iPOS3604 MX-CAN
-            case 28002201: // iPOS3604 BX-CAN
-            case 28002501: // iPOS3604 HX-CAN
-                *peakCurrent = 10.0;
-                break;
-            case 27014001: // iPOS4808 VX-CAN
-            case 27014101: // iPOS4808 MX-CAN
-            case 27014121: // iPOS4808 MX-CAT
-            case 27414101: // iPOS4808 MY-CAN (standard)
-            case 27424101: // iPOS4808 MY-CAN (extended)
-            case 27314111: // iPOS4808 MY-CAN-STO (standard)
-            case 27324111: // iPOS4808 MY-CAN-STO (extended)
-            case 27314121: // iPOS4808 MY-CAT-STO (standard)
-            case 27324121: // iPOS4808 MY-CAT-STO (extended)
-            case 27014201: // iPOS4808 BX-CAN
-            case 27214201: // iPOS4808 BX-CAN (standard)
-            case 27214701: // iPOS4808 BX-CAN (hall)
-            case 27214221: // iPOS4808 BX-CAT (standard)
-            case 27214721: // iPOS4808 BX-CAT (hall)
-            case 27314221: // iPOS4808 BX-CAT-STO (standard)
-            case 27314721: // iPOS4808 BX-CAT-STO (hall)
-            case 29025201: // iPOS8010 BX-CAN
-            case 29025221: // iPOS8010 BX-CAT
-            case 29025202: // iPOS8010 BA-CAN
-            case 29025222: // iPOS8010 BA-CAT
-                *peakCurrent = 20.0;
-                break;
-            case 29026201: // iPOS8020 BX-CAN
-            case 29026221: // iPOS8020 BX-CAT
-            case 29026202: // iPOS8020 BA-CAN
-            case 29026222: // iPOS8020 BA-CAT
-                *peakCurrent = 40.0;
-                break;
-            default:
-                return false;
-        }
-
-        return true;
-    }
-
     void interpretSupportedDriveModes(std::uint32_t data)
     {
         std::bitset<32> bits(data);
@@ -210,14 +153,6 @@ bool TechnosoftIpos::initialize()
     }
 
     CD_INFO("Retrieved product code: P%03d.%03d.E%03d.\n", data / 1000000, (data / 1000) % 1000, data % 1000);
-
-    if (!retrieveDrivePeakCurrent(data, &vars.drivePeakCurrent))
-    {
-        CD_ERROR("Unhandled iPOS model %d, unable to retrieve drive peak current.\n", data);
-        return false;
-    }
-
-    CD_SUCCESS("Retrieved drive peak current: %f A.\n", vars.drivePeakCurrent);
 
     if (!can->sdo()->upload("Identity Object: Revision number", &data, 0x1018, 0x03))
     {
