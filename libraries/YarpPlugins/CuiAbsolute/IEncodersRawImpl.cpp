@@ -55,7 +55,7 @@ bool CuiAbsolute::setEncodersRaw(const double * vals)
 
 bool CuiAbsolute::getEncoderRaw(int j, double * v)
 {
-    //CD_DEBUG("%d\n",j); //-- Too verbose in stream.
+    CD_DEBUG("%d\n", j);
     CHECK_JOINT(j);
 
     if (cuiMode == CuiMode::PULL)
@@ -80,7 +80,7 @@ bool CuiAbsolute::getEncodersRaw(double * encs)
 
 bool CuiAbsolute::getEncoderSpeedRaw(int j, double * sp)
 {
-    //CD_DEBUG("(%d)\n",j); //-- Too verbose in controlboardwrapper2 stream.
+    CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
     CD_WARNING("Not supported.\n");
     return false;
@@ -98,7 +98,7 @@ bool CuiAbsolute::getEncoderSpeedsRaw(double * spds)
 
 bool CuiAbsolute::getEncoderAccelerationRaw(int j, double * spds)
 {
-    //CD_DEBUG("(%d)\n",j); //-- Too verbose in controlboardwrapper2 stream.
+    CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
     CD_WARNING("Not supported.\n");
     return false;
@@ -124,7 +124,7 @@ bool CuiAbsolute::getEncodersTimedRaw(double * encs, double * times)
 
 bool CuiAbsolute::getEncoderTimedRaw(int j, double * enc, double * time)
 {
-    //CD_DEBUG("(%d)\n",j); //-- Too verbose in controlboardwrapper2 stream.
+    CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
 
     if (cuiMode == CuiMode::PULL)

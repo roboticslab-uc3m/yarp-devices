@@ -12,7 +12,7 @@ using namespace roboticslab;
 
 bool DextraRawControlboard::getControlModeRaw(int j, int * mode)
 {
-    //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream
+    //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
     *mode = VOCAB_CM_POSITION;
     return true;
@@ -22,7 +22,7 @@ bool DextraRawControlboard::getControlModeRaw(int j, int * mode)
 
 bool DextraRawControlboard::getControlModesRaw(int * modes)
 {
-    //CD_DEBUG("\n"); //-- Too verbose in controlboardwrapper2 stream
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
 
     bool ok = true;
 

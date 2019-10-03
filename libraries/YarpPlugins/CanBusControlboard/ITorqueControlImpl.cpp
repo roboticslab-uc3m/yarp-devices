@@ -68,7 +68,7 @@ bool CanBusControlboard::setMotorTorqueParams(int j, const yarp::dev::MotorTorqu
 
 bool CanBusControlboard::getTorque(int j, double * t)
 {
-    //CD_DEBUG("(%d)\n",j); //-- Too verbose in controlboardwrapper2 stream.
+    CD_DEBUG("(%d)\n",j);
     CHECK_JOINT(j);
     return deviceMapper.mapSingleJoint(&yarp::dev::ITorqueControlRaw::getTorqueRaw, j, t);
 }
@@ -77,7 +77,7 @@ bool CanBusControlboard::getTorque(int j, double * t)
 
 bool CanBusControlboard::getTorques(double * t)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return deviceMapper.mapAllJoints(&yarp::dev::ITorqueControlRaw::getTorquesRaw, t);
 }
 

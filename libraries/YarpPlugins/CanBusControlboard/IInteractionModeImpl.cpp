@@ -12,7 +12,7 @@ using namespace roboticslab;
 
 bool CanBusControlboard::getInteractionMode(int axis, yarp::dev::InteractionModeEnum * mode)
 {
-    // CD_DEBUG("(%d)\n", axis);  // -- is printed too many times...
+    CD_DEBUG("(%d)\n", axis);
     CHECK_JOINT(axis);
     return deviceMapper.mapSingleJoint(&yarp::dev::IInteractionModeRaw::getInteractionModeRaw, axis, mode);
 }
@@ -21,7 +21,7 @@ bool CanBusControlboard::getInteractionMode(int axis, yarp::dev::InteractionMode
 
 bool CanBusControlboard::getInteractionModes(yarp::dev::InteractionModeEnum * modes)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return deviceMapper.mapAllJoints(&yarp::dev::IInteractionModeRaw::getInteractionModesRaw, modes);
 }
 

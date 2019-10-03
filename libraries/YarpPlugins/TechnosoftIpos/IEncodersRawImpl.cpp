@@ -60,7 +60,7 @@ bool TechnosoftIpos::setEncodersRaw(const double * vals)
 
 bool TechnosoftIpos::getEncoderRaw(int j, double * v)
 {
-    //CD_DEBUG("%d\n", j); //-- Too verbose in stream.
+    CD_DEBUG("%d\n", j);
     CHECK_JOINT(j);
     std::int32_t temp = vars.lastEncoderRead.queryPosition();
     *v = vars.internalUnitsToDegrees(temp);
@@ -79,7 +79,7 @@ bool TechnosoftIpos::getEncodersRaw(double * encs)
 
 bool TechnosoftIpos::getEncoderSpeedRaw(int j, double * sp)
 {
-    //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream.
+    //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
     double temp = vars.lastEncoderRead.querySpeed();
     *sp = vars.internalUnitsToDegrees(temp, 1);
@@ -90,7 +90,7 @@ bool TechnosoftIpos::getEncoderSpeedRaw(int j, double * sp)
 
 bool TechnosoftIpos::getEncoderSpeedsRaw(double * spds)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return getEncoderSpeedRaw(0, &spds[0]);
 }
 
@@ -98,7 +98,7 @@ bool TechnosoftIpos::getEncoderSpeedsRaw(double * spds)
 
 bool TechnosoftIpos::getEncoderAccelerationRaw(int j, double * acc)
 {
-    //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream.
+    //CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
     double temp = vars.lastEncoderRead.queryAcceleration();
     *acc = vars.internalUnitsToDegrees(temp, 2);
@@ -109,7 +109,7 @@ bool TechnosoftIpos::getEncoderAccelerationRaw(int j, double * acc)
 
 bool TechnosoftIpos::getEncoderAccelerationsRaw(double * accs)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return getEncoderAccelerationRaw(0, &accs[0]);
 }
 
@@ -117,7 +117,7 @@ bool TechnosoftIpos::getEncoderAccelerationsRaw(double * accs)
 
 bool TechnosoftIpos::getEncoderTimedRaw(int j, double * enc, double * time)
 {
-    //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream.
+    //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
     std::int32_t temp = vars.lastEncoderRead.queryPosition();
     *enc = vars.internalUnitsToDegrees(temp);
@@ -129,7 +129,7 @@ bool TechnosoftIpos::getEncoderTimedRaw(int j, double * enc, double * time)
 
 bool TechnosoftIpos::getEncodersTimedRaw(double * encs, double * times)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return getEncoderTimedRaw(0, &encs[0], &times[0]);
 }
 

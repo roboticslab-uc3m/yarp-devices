@@ -79,7 +79,7 @@ bool CanBusControlboard::getMotorEncoder(int m, double * v)
 
 bool CanBusControlboard::getMotorEncoders(double * encs)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return deviceMapper.mapAllJoints(&yarp::dev::IMotorEncodersRaw::getMotorEncodersRaw, encs);
 }
 
@@ -113,7 +113,7 @@ bool CanBusControlboard::getMotorEncoderSpeed(int m, double * sp)
 
 bool CanBusControlboard::getMotorEncoderSpeeds(double *spds)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return deviceMapper.mapAllJoints(&yarp::dev::IMotorEncodersRaw::getMotorEncoderSpeedsRaw, spds);
 }
 
@@ -130,7 +130,7 @@ bool CanBusControlboard::getMotorEncoderAcceleration(int m, double * acc)
 
 bool CanBusControlboard::getMotorEncoderAccelerations(double * accs)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return deviceMapper.mapAllJoints(&yarp::dev::IMotorEncodersRaw::getMotorEncoderAccelerationsRaw, accs);
 }
 

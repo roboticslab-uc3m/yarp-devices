@@ -19,7 +19,7 @@ bool CanBusControlboard::getCurrent(int m, double * curr)
 
 bool CanBusControlboard::getCurrents(double * currs)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return deviceMapper.mapAllJoints(&yarp::dev::ICurrentControlRaw::getCurrentsRaw, currs);
 }
 

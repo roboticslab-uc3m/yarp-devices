@@ -12,7 +12,7 @@ using namespace roboticslab;
 
 bool CanBusControlboard::getControlMode(int j, int * mode)
 {
-    //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream
+    CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
     return deviceMapper.mapSingleJoint(&yarp::dev::IControlModeRaw::getControlModeRaw, j, mode);
 }
@@ -21,7 +21,7 @@ bool CanBusControlboard::getControlMode(int j, int * mode)
 
 bool CanBusControlboard::getControlModes(int * modes)
 {
-    //CD_DEBUG("\n"); //-- Too verbose in controlboardwrapper2 stream
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return deviceMapper.mapAllJoints(&yarp::dev::IControlModeRaw::getControlModesRaw, modes);
 }
 

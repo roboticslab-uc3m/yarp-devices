@@ -62,7 +62,7 @@ bool TechnosoftIpos::setPositionDirectModeRaw()
 
 bool TechnosoftIpos::getControlModeRaw(int j, int * mode)
 {
-    //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream
+    //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
 
     *mode = vars.actualControlMode;
@@ -382,7 +382,7 @@ bool TechnosoftIpos::getControlModeRaw4()
 
 bool TechnosoftIpos::getControlModesRaw(int * modes)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return getControlModeRaw(0, &modes[0]);
 }
 

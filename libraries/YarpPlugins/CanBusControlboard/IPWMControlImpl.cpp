@@ -53,7 +53,7 @@ bool CanBusControlboard::getDutyCycle(int m, double * val)
 
 bool CanBusControlboard::getDutyCycles(double * vals)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return deviceMapper.mapAllJoints(&yarp::dev::IPWMControlRaw::getDutyCyclesRaw, vals);
 }
 

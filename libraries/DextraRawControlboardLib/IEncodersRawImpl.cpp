@@ -53,7 +53,7 @@ bool DextraRawControlboard::setEncodersRaw(const double * vals)
 
 bool DextraRawControlboard::getEncoderRaw(int j, double * v)
 {
-    //CD_DEBUG("%d\n", j); //-- Too verbose in stream.
+    CD_DEBUG("%d\n", j);
     CHECK_JOINT(j);
     *v = getSetpoint(j);
     return true;
@@ -74,7 +74,7 @@ bool DextraRawControlboard::getEncodersRaw(double *encs)
 
 bool DextraRawControlboard::getEncoderSpeedRaw(int j, double * sp)
 {
-    //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream.
+    //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
     return false;
 }
@@ -83,7 +83,7 @@ bool DextraRawControlboard::getEncoderSpeedRaw(int j, double * sp)
 
 bool DextraRawControlboard::getEncoderSpeedsRaw(double * spds)
 {
-    //CD_DEBUG("\n");
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
 
     bool ok = true;
 
@@ -99,7 +99,7 @@ bool DextraRawControlboard::getEncoderSpeedsRaw(double * spds)
 
 bool DextraRawControlboard::getEncoderAccelerationRaw(int j, double * accs)
 {
-    //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream.
+    //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
     return false;
 }
@@ -108,7 +108,8 @@ bool DextraRawControlboard::getEncoderAccelerationRaw(int j, double * accs)
 
 bool DextraRawControlboard::getEncoderAccelerationsRaw(double * accs)
 {
-    //CD_DEBUG("\n");
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
+
     bool ok = true;
 
     for (int j = 0; j < Synapse::DATA_POINTS; j++)
@@ -123,7 +124,7 @@ bool DextraRawControlboard::getEncoderAccelerationsRaw(double * accs)
 
 bool DextraRawControlboard::getEncoderTimedRaw(int j, double * enc, double * time)
 {
-    //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream.
+    //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
     *time = yarp::os::Time::now();
     return getEncoderRaw(j, enc);
@@ -133,7 +134,7 @@ bool DextraRawControlboard::getEncoderTimedRaw(int j, double * enc, double * tim
 
 bool DextraRawControlboard::getEncodersTimedRaw(double * encs, double * time)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     *time = yarp::os::Time::now();
     return getEncodersRaw(encs);
 }

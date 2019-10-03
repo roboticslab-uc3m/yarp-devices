@@ -73,7 +73,7 @@ bool LacqueyFetch::getDutyCycleRaw(int m, double * val)
 
 bool LacqueyFetch::getDutyCyclesRaw(double * vals)
 {
-    CD_WARNING("Not supported.\n");
+    //CD_WARNING("Not supported.\n"); // too verbose in controlboardwrapper2 stream
     return false;
 }
 

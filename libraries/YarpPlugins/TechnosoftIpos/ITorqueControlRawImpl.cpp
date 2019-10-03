@@ -52,7 +52,7 @@ bool TechnosoftIpos::setRefTorquesRaw(const double * t)
 
 bool TechnosoftIpos::getTorqueRaw(int j, double * t)
 {
-    //CD_DEBUG("(%d)\n", j); //-- Too verbose in controlboardwrapper2 stream.
+    //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
     std::int16_t temp = vars.lastCurrentRead;
     double curr = vars.internalUnitsToCurrent(temp);
@@ -64,7 +64,7 @@ bool TechnosoftIpos::getTorqueRaw(int j, double * t)
 
 bool TechnosoftIpos::getTorquesRaw(double * t)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return getTorqueRaw(0, &t[0]);
 }
 

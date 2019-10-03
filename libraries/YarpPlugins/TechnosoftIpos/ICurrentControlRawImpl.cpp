@@ -10,7 +10,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::getCurrentRaw(int m, double * curr)
 {
-    CD_DEBUG("(%d)\n", m);
+    //CD_DEBUG("(%d)\n", m); // too verbose in controlboardwrapper2 stream
     CHECK_JOINT(m);
     std::int16_t temp = vars.lastCurrentRead;
     *curr = vars.internalUnitsToCurrent(temp);
@@ -21,7 +21,7 @@ bool TechnosoftIpos::getCurrentRaw(int m, double * curr)
 
 bool TechnosoftIpos::getCurrentsRaw(double * currs)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return getCurrentRaw(0, &currs[0]);
 }
 
