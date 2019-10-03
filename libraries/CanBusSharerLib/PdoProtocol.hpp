@@ -15,6 +15,36 @@
 namespace roboticslab
 {
 
+// https://stackoverflow.com/a/53284026
+class PdoTransmissionType final
+{
+public:
+    enum transmission_type : std::uint8_t
+    {
+        SYNCHRONOUS_ACYCLIC = 0x00,
+        SYNCHRONOUS_CYCLIC = 0x01,
+        RTR_SYNCHRONOUS = 0xFC,
+        RTR_EVENT_DRIVEN = 0xFD,
+        EVENT_DRIVEN_MANUFACTURER = 0xFE,
+        EVENT_DRIVEN_DEVICE_APP_PROFILE = 0xFF
+    };
+
+    constexpr PdoTransmissionType() : type(SYNCHRONOUS_ACYCLIC)
+    { }
+
+    constexpr PdoTransmissionType(transmission_type type) : type(type)
+    { }
+
+    constexpr operator std::uint8_t()
+    { return type; }
+
+    static constexpr PdoTransmissionType SYNCHRONOUS_CYCLIC_N(std::uint8_t n)
+    { return static_cast<transmission_type>(n); }
+
+private:
+    transmission_type type;
+};
+
 class PdoProtocol;
 
 class PdoConfiguration final
@@ -29,7 +59,7 @@ public:
 
     PdoConfiguration & setValid(bool value);
     PdoConfiguration & setRtr(bool value);
-    PdoConfiguration & setTransmissionType(std::uint8_t value);
+    PdoConfiguration & setTransmissionType(PdoTransmissionType value);
     PdoConfiguration & setInhibitTime(std::uint16_t value);
     PdoConfiguration & setEventTimer(std::uint16_t value);
     PdoConfiguration & setSyncStartValue(std::uint8_t value);

@@ -17,7 +17,7 @@ struct PdoConfiguration::Private
 {
     nonstd::optional<bool> valid;
     nonstd::optional<bool> rtr;
-    nonstd::optional<std::uint8_t> transmissionType;
+    nonstd::optional<PdoTransmissionType> transmissionType;
     nonstd::optional<std::uint16_t> inhibitTime;
     nonstd::optional<std::uint16_t> eventTimer;
     nonstd::optional<std::uint8_t> syncStartValue;
@@ -60,7 +60,7 @@ PdoConfiguration & PdoConfiguration::setRtr(bool value)
     return *this;
 }
 
-PdoConfiguration & PdoConfiguration::setTransmissionType(std::uint8_t value)
+PdoConfiguration & PdoConfiguration::setTransmissionType(PdoTransmissionType value)
 {
     priv->transmissionType = value;
     return *this;
@@ -138,7 +138,7 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
         return false;
     }
 
-    if (conf.priv->transmissionType && !sdo->download("Transmission type", *conf.priv->transmissionType, commIdx, 0x02))
+    if (conf.priv->transmissionType && !sdo->download("Transmission type", (std::uint8_t)*conf.priv->transmissionType, commIdx, 0x02))
     {
         return false;
     }
