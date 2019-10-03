@@ -16,22 +16,22 @@ void TechnosoftIpos::interpretMsr(std::uint16_t msr)
 {
     std::bitset<16> bits(msr);
 
-    vars.reportBitToggle("Drive/motor initialization performed.", bits, vars.msr, 0);
-    vars.reportBitToggle("Position trigger 1 reached.", bits, vars.msr, 1);
-    vars.reportBitToggle("Position trigger 2 reached.", bits, vars.msr, 2);
-    vars.reportBitToggle("Position trigger 3 reached.", bits, vars.msr, 3);
-    vars.reportBitToggle("Position trigger 4 reached.", bits, vars.msr, 4);
-    vars.reportBitToggle("AUTORUN mode enabled.", bits, vars.msr, 5);
-    vars.reportBitToggle("Limit switch positive event / interrupt triggered.", bits, vars.msr, 6);
-    vars.reportBitToggle("Limit switch negative event / interrupt triggered.", bits, vars.msr, 7);
-    vars.reportBitToggle("Capture event/interrupt triggered.", bits, vars.msr, 8);
-    vars.reportBitToggle("Target command reached.", bits, vars.msr, 9);
-    vars.reportBitToggle("Motor I2t protection warning level reached.", bits, vars.msr, 10);
-    vars.reportBitToggle("Drive I2t protection warning level reached.", bits, vars.msr, 11);
-    vars.reportBitToggle("Gear ratio in electronic gearing mode reached.", bits, vars.msr, 12);
+    vars.reportBitToggle(bits, vars.msr, 0, "Drive/motor initialization performed.");
+    vars.reportBitToggle(bits, vars.msr, 1, "Position trigger 1 reached.");
+    vars.reportBitToggle(bits, vars.msr, 2, "Position trigger 2 reached.");
+    vars.reportBitToggle(bits, vars.msr, 3, "Position trigger 3 reached.");
+    vars.reportBitToggle(bits, vars.msr, 4, "Position trigger 4 reached.");
+    vars.reportBitToggle(bits, vars.msr, 5, "AUTORUN mode enabled.");
+    vars.reportBitToggle(bits, vars.msr, 6, "Limit switch positive event / interrupt triggered.");
+    vars.reportBitToggle(bits, vars.msr, 7, "Limit switch negative event / interrupt triggered.");
+    vars.reportBitToggle(bits, vars.msr, 8, "Capture event/interrupt triggered.");
+    vars.reportBitToggle(bits, vars.msr, 9, "Target command reached.");
+    vars.reportBitToggle(bits, vars.msr, 10, "Motor I2t protection warning level reached.");
+    vars.reportBitToggle(bits, vars.msr, 11, "Drive I2t protection warning level reached.");
+    vars.reportBitToggle(bits, vars.msr, 12, "Gear ratio in electronic gearing mode reached.");
     // 13 (29): reserved
-    vars.reportBitToggle("Reference position in absolute electronic camming mode reached.", bits, vars.msr, 14);
-    vars.reportBitToggle("Drive/motor in fault status.", bits, vars.msr, 15);
+    vars.reportBitToggle(bits, vars.msr, 14, "Reference position in absolute electronic camming mode reached.");
+    vars.reportBitToggle(bits, vars.msr, 15, "Drive/motor in fault status.");
 
     vars.msr = msr;
 }
@@ -42,22 +42,22 @@ void TechnosoftIpos::interpretMer(std::uint16_t mer)
 {
     std::bitset<16> bits(mer);
 
-    vars.reportBitToggle("CAN error. Set when CAN controller is in error mode.", bits, vars.mer, 0);
-    vars.reportBitToggle("Short-circuit. Set when protection is triggered.", bits, vars.mer, 1);
-    vars.reportBitToggle("Invalid setup data. Set when the EEPROM stored setup data is not valid or not present.", bits, vars.mer, 2);
-    vars.reportBitToggle("Control error (position/speed error too big). Set when protection is triggered.", bits, vars.mer, 3);
-    vars.reportBitToggle("Communication error. Set when protection is triggered.", bits, vars.mer, 4);
-    vars.reportBitToggle("Motor position wraps around. Set when protection is triggered.", bits, vars.mer, 5);
-    vars.reportBitToggle("Positive limit switch active. Set when LSP input is in active state.", bits, vars.mer, 6);
-    vars.reportBitToggle("Negative limit switch active. Set when LSN input is in active state.", bits, vars.mer, 7);
-    vars.reportBitToggle("Over current. Set when protection is triggered.", bits, vars.mer, 8);
-    vars.reportBitToggle("I2t protection. Set when protection is triggered.", bits, vars.mer, 9);
-    vars.reportBitToggle("Over temperature motor. Set when protection is triggered.", bits, vars.mer, 10);
-    vars.reportBitToggle("Over temperature drive. Set when protection is triggered.", bits, vars.mer, 11);
-    vars.reportBitToggle("Over-voltage. Set when protection is triggered.", bits, vars.mer, 12);
-    vars.reportBitToggle("Under-voltage. Set when protection is triggered.", bits, vars.mer, 13);
-    vars.reportBitToggle("Command error, see DER2.", bits, vars.mer, 14);
-    vars.reportBitToggle("Drive disabled due to enable or STO input. Set when enable or STO input is on disable state.", bits, vars.mer, 15);
+    vars.reportBitToggle(bits, vars.mer, 0, "CAN error. Set when CAN controller is in error mode.");
+    vars.reportBitToggle(bits, vars.mer, 1, "Short-circuit. Set when protection is triggered.");
+    vars.reportBitToggle(bits, vars.mer, 2, "Invalid setup data. Set when the EEPROM stored setup data is not valid or not present.");
+    vars.reportBitToggle(bits, vars.mer, 3, "Control error (position/speed error too big). Set when protection is triggered.");
+    vars.reportBitToggle(bits, vars.mer, 4, "Communication error. Set when protection is triggered.");
+    vars.reportBitToggle(bits, vars.mer, 5, "Motor position wraps around. Set when protection is triggered.");
+    vars.reportBitToggle(bits, vars.mer, 6, "Positive limit switch active. Set when LSP input is in active state.");
+    vars.reportBitToggle(bits, vars.mer, 7, "Negative limit switch active. Set when LSN input is in active state.");
+    vars.reportBitToggle(bits, vars.mer, 8, "Over current. Set when protection is triggered.");
+    vars.reportBitToggle(bits, vars.mer, 9, "I2t protection. Set when protection is triggered.");
+    vars.reportBitToggle(bits, vars.mer, 10, "Over temperature motor. Set when protection is triggered.");
+    vars.reportBitToggle(bits, vars.mer, 11, "Over temperature drive. Set when protection is triggered.");
+    vars.reportBitToggle(bits, vars.mer, 12, "Over-voltage. Set when protection is triggered.");
+    vars.reportBitToggle(bits, vars.mer, 13, "Under-voltage. Set when protection is triggered.");
+    vars.reportBitToggle(bits, vars.mer, 14, "Command error.");
+    vars.reportBitToggle(bits, vars.mer, 15, "Drive disabled due to enable or STO input. Set when enable or STO input is on disable state.");
 
     vars.mer = mer;
 }
@@ -68,22 +68,22 @@ void TechnosoftIpos::interpretDer(std::uint16_t der)
 {
     std::bitset<16> bits(der);
 
-    vars.reportBitToggle("The number of nested function calls exceeded the length of TML stack. Last function call was ignored.", bits, vars.der, 0);
-    vars.reportBitToggle("A RET/RETI instruction was executed while no function/ISR was active.", bits, vars.der, 1);
-    vars.reportBitToggle("A call to an inexistent homing routine was received.", bits, vars.der, 2);
-    vars.reportBitToggle("A call to an inexistent function was received.", bits, vars.der, 3);
-    vars.reportBitToggle("UPD instruction received while AXISON was executed. The UPD instruction was ingnored and it must be sent again when AXISON is completed.", bits, vars.der, 4);
-    vars.reportBitToggle("Cancelable call instruction received while another cancelable function was active.", bits, vars.der, 5);
-    vars.reportBitToggle("Positive software limit switch is active.", bits, vars.der, 6);
-    vars.reportBitToggle("Negative software limit switch is active.", bits, vars.der, 7);
-    vars.reportBitToggle("S-curve parameters caused and invalid profile. UPD instruction was ignored.", bits, vars.der, 8);
-    vars.reportBitToggle("Update ignored for S-curve.", bits, vars.der, 9);
-    vars.reportBitToggle("Encoder broken wire. On a brushless motor, either the digital halls or the incremental encoder signal was interrupted.", bits, vars.der, 10);
-    vars.reportBitToggle("Start mode failed. Motionless start or pole lock minimum movement failed.", bits, vars.der, 11);
+    vars.reportBitToggle(bits, vars.der, 0, "The number of nested function calls exceeded the length of TML stack. Last function call was ignored.");
+    vars.reportBitToggle(bits, vars.der, 1, "A RET/RETI instruction was executed while no function/ISR was active.");
+    vars.reportBitToggle(bits, vars.der, 2, "A call to an inexistent homing routine was received.");
+    vars.reportBitToggle(bits, vars.der, 3, "A call to an inexistent function was received.");
+    vars.reportBitToggle(bits, vars.der, 4, "UPD instruction received while AXISON was executed. The UPD instruction was ignored and it must be sent again when AXISON is completed.");
+    vars.reportBitToggle(bits, vars.der, 5, "Cancelable call instruction received while another cancelable function was active.");
+    vars.reportBitToggle(bits, vars.der, 6, "Positive software limit switch is active.");
+    vars.reportBitToggle(bits, vars.der, 7, "Negative software limit switch is active.");
+    vars.reportBitToggle(bits, vars.der, 8, "S-curve parameters caused and invalid profile. UPD instruction was ignored.");
+    vars.reportBitToggle(bits, vars.der, 9, "Update ignored for S-curve.");
+    vars.reportBitToggle(bits, vars.der, 10, "Encoder broken wire; On a brushless motor, either the digital halls or the incremental encoder signal was interrupted.");
+    vars.reportBitToggle(bits, vars.der, 11, "Start mode failed. Motionless start or pole lock minimum movement failed.");
     // 12: reserved
-    vars.reportBitToggle("Self-check error. Internal memory (OTP) checksum error.", bits, vars.der, 13);
-    vars.reportBitToggle("STO or Enable circuit hardware error.", bits, vars.der, 14);
-    vars.reportBitToggle("EEPROM Locked. An attempt to write in the EEPROM will be ignored.", bits, vars.der, 15);
+    vars.reportBitToggle(bits, vars.der, 13, "Self-check error. Internal memory (OTP) checksum error.");
+    vars.reportBitToggle(bits, vars.der, 14, "STO or Enable circuit hardware error.");
+    vars.reportBitToggle(bits, vars.der, 15, "EEPROM Locked. An attempt to write in the EEPROM will be ignored.");
 
     vars.der = der;
 }
@@ -94,13 +94,13 @@ void TechnosoftIpos::interpretDer2(std::uint16_t der2)
 {
     std::bitset<16> bits(der2);
 
-    vars.reportBitToggle("BiSS data CRC error", bits, vars.der2, 0);
-    vars.reportBitToggle("BiSS data warning bit is set", bits, vars.der2, 1);
-    vars.reportBitToggle("BiSS data error bit is set", bits, vars.der2, 2);
-    vars.reportBitToggle("BiSS sensor missing. No BiSS sensor communication detected.", bits, vars.der2, 3);
-    vars.reportBitToggle("Absolute Encoder Interface (AEI) interface error.", bits, vars.der2, 4);
-    vars.reportBitToggle("Hall sensor missing. Can be either Digital or Linear analogue hall error.", bits, vars.der2, 5);
-    vars.reportBitToggle("Position wraparound.", bits, vars.der2, 6);
+    vars.reportBitToggle(bits, vars.der2, 0, "BiSS data CRC error");
+    vars.reportBitToggle(bits, vars.der2, 1, "BiSS data warning bit is set");
+    vars.reportBitToggle(bits, vars.der2, 2, "BiSS data error bit is set");
+    vars.reportBitToggle(bits, vars.der2, 3, "BiSS sensor missing. No BiSS sensor communication detected.");
+    vars.reportBitToggle(bits, vars.der2, 4, "Absolute Encoder Interface (AEI) interface error.");
+    vars.reportBitToggle(bits, vars.der2, 5, "Hall sensor missing. Can be either Digital or Linear analogue hall error.");
+    vars.reportBitToggle(bits, vars.der2, 6, "Position wraparound.");
     // 6-15: reserved
 
     vars.der2 = der2;
@@ -112,14 +112,14 @@ void TechnosoftIpos::interpretCer(std::uint16_t cer)
 {
     std::bitset<16> bits(cer);
 
-    vars.reportBitToggle("RS232 reception error.", bits, vars.cer, 0);
-    vars.reportBitToggle("RS232 transmission timeout error.", bits, vars.cer, 1);
-    vars.reportBitToggle("RS232 reception timeout error.", bits, vars.cer, 2);
-    vars.reportBitToggle("CAN reception timeout error.", bits, vars.cer, 3);
-    vars.reportBitToggle("CAN reception overrun error.", bits, vars.cer, 4);
-    vars.reportBitToggle("CAN transmission overrun error.", bits, vars.cer, 5);
-    vars.reportBitToggle("CAN bus off error.", bits, vars.cer, 6);
-    vars.reportBitToggle("SPI timeout on write operation.", bits, vars.cer, 7);
+    vars.reportBitToggle(bits, vars.cer, 0, "RS232 reception error.");
+    vars.reportBitToggle(bits, vars.cer, 1, "RS232 transmission timeout error.");
+    vars.reportBitToggle(bits, vars.cer, 2, "RS232 reception timeout error.");
+    vars.reportBitToggle(bits, vars.cer, 3, "CAN reception timeout error.");
+    vars.reportBitToggle(bits, vars.cer, 4, "CAN reception overrun error.");
+    vars.reportBitToggle(bits, vars.cer, 5, "CAN transmission overrun error.");
+    vars.reportBitToggle(bits, vars.cer, 6, "CAN bus off error.");
+    vars.reportBitToggle(bits, vars.cer, 7, "SPI timeout on write operation.");
     // 8-15: reserved
 
     vars.cer = cer;
@@ -140,86 +140,42 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
         break;
     }
 
-    can->driveStatus()->update(statusword);
-
     std::bitset<16> bits(statusword);
+    const std::bitset<16> & stored = can->driveStatus()->statusword();
 
-    if (bits.test(0))
+    vars.reportBitToggle(bits, stored, 0, "Ready to switch on.");
+    vars.reportBitToggle(bits, stored, 1, "Switched on.");
+    vars.reportBitToggle(bits, stored, 2, "Operation enabled.");
+    vars.reportBitToggle(bits, stored, 3, "Fault.");
+    vars.reportBitToggle(bits, stored, 4, "Motor supply voltage is present.", "Motor supply voltage is absent");
+    vars.reportBitToggle(bits, stored, 5, "Quick Stop.");
+    vars.reportBitToggle(bits, stored, 6, "Switch on disabled.");
+    vars.reportBitToggle(bits, stored, 7, "Warning. A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored.", "No warning.");
+    vars.reportBitToggle(bits, stored, 8, "A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called.", "No TML function or homing is executed. The execution of the last called TML function or homing is completed.");
+    vars.reportBitToggle(bits, stored, 9, "Remote - drive parameters may be modified via CAN and the drive will execute the command message.", "Remote – drive is in local mode and will not execute the command message.");
+    vars.reportBitToggle(bits, stored, 10, "Target reached.");
+    vars.reportBitToggle(bits, stored, 11, "Internal Limit Active.");
+
+    switch (vars.actualControlMode)
     {
-        CD_INFO("\t-Ready to switch on. canId: %d.\n", can->getId());
+    case VOCAB_CM_POSITION:
+        vars.reportBitToggle(bits, stored, 12, "Trajectory generator will not accept a new set-point.", "Trajectory generator will accept a new set-point.");
+        vars.reportBitToggle(bits, stored, 13, "Following error.", "No following error.");
+        break;
+    case VOCAB_CM_VELOCITY:
+        vars.reportBitToggle(bits, stored, 12, "Speed is equal to 0.", "Speed is not equal to 0.");
+        vars.reportBitToggle(bits, stored, 13, "Maximum slippage reached.", "Maximum slippage not reached.");
+        break;
+    case VOCAB_CM_POSITION_DIRECT:
+        vars.reportBitToggle(bits, stored, 12, "Interpolated position mode active.", "Interpolated position mode inactive.");
+        // 13: reserved
+        break;
     }
-    if (bits.test(1))
-    {
-        CD_INFO("\t-Switched on. canId: %d.\n", can->getId());
-    }
-    if (bits.test(2))
-    {
-        CD_INFO("\t-Operation Enabled. canId: %d.\n", can->getId());
-    }
-    if (bits.test(3))
-    {
-        CD_INFO("\t-Fault. If set, a fault condition is or was present in the drive. canId: %d.\n", can->getId());
-    }
-    if (bits.test(4))
-    {
-        CD_INFO("\t-Motor supply voltage is present. canId: %d.\n", can->getId());
-    }
-    else
-    {
-        CD_INFO("\t-Motor supply voltage is absent. canId: %d.\n", can->getId());
-    }
-    if (!bits.test(5)) // negated.
-    {
-        CD_INFO("\t-Performing a quick stop. canId: %d.\n", can->getId());
-    }
-    if (bits.test(6))
-    {
-        CD_INFO("\t-Switch on disabled. canId: %d.\n", can->getId());
-    }
-    if (bits.test(7))
-    {
-        CD_INFO("\t-Warning. A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored. canId: %d.\n", can->getId());
-    }
-    if (bits.test(8))
-    {
-        CD_INFO("\t-A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called. canId: %d.\n", can->getId());
-    }
-    if (bits.test(9))
-    {
-        CD_INFO("\t-Remote: drive parameters may be modified via CAN and the drive will execute the command message. canId: %d.\n", can->getId());
-    }
-    else
-    {
-        CD_INFO("\t-Remote: drive is in local mode and will not execute the command message (only TML internal).");
-    }
-    if (bits.test(10))
-    {
-        CD_INFO("\t-Target reached. canId: %d.\n", can->getId());
-    }
-    else
-    {
-        CD_INFO("\t-Target not reached. canId: %d.\n", can->getId());  // improvised, not in manual, but reasonable
-    }
-    if (bits.test(11))
-    {
-        CD_INFO("\t-Internal Limit Active. canId: %d.\n", can->getId());
-    }
-    if (bits.test(14))
-    {
-        CD_INFO("\t-Last event set has ocurred. canId: %d.\n", can->getId());
-    }
-    else
-    {
-        CD_INFO("\t-No event set or the programmed event has not occurred yet. canId: %d.\n", can->getId());
-    }
-    if (bits.test(15))
-    {
-        CD_INFO("\t-Axis on. Power stage is enabled. Motor control is performed. canId: %d.\n", can->getId());
-    }
-    else
-    {
-        CD_INFO("\t-Axis off. Power stage is disabled. Motor control is not performed. canId: %d.\n", can->getId());
-    }
+
+    vars.reportBitToggle(bits, stored, 14, "Last event set has occurred.", "No event set or the programmed event has not occurred yet.");
+    vars.reportBitToggle(bits, stored, 15, "Axis on. Power stage is enabled. Motor control is performed.", "Axis off. Power stage is disabled. Motor control is not performed.");
+
+    can->driveStatus()->update(statusword);
 }
 
 // -----------------------------------------------------------------------------

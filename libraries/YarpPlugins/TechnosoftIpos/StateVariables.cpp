@@ -287,15 +287,22 @@ double StateVariables::torqueToCurrent(double torque)
 
 // -----------------------------------------------------------------------------
 
-void StateVariables::reportBitToggleInternal(const std::string & msg, bool isSet)
+void StateVariables::reportBitToggleInternal(bool isSet, const std::string & msgSet, const std::string & msgReset)
 {
     if (isSet)
     {
-        CD_WARNING("%s (canId: %d)\n", msg.c_str(), canId);
+        CD_WARNING("%s (canId: %d)\n", msgSet.c_str(), canId);
     }
     else
     {
-        CD_INFO("Fault reset: %s (canId: %d)\n", msg.c_str(), canId);
+        if (!msgReset.empty())
+        {
+            CD_INFO("%s (canId: %d)\n", msgReset.c_str(), canId);
+        }
+        else
+        {
+            CD_INFO("Bit reset: %s (canId: %d)\n", msgSet.c_str(), canId);
+        }
     }
 }
 

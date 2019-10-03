@@ -59,8 +59,9 @@ public:
     bool awaitControlMode(yarp::conf::vocab32_t mode);
 
     template<std::size_t N>
-    void reportBitToggle(const std::string & msg, const std::bitset<N> & actual, const std::bitset<N> & stored, std::size_t pos)
-    { if (actual.test(pos) != stored.test(pos)) reportBitToggleInternal(msg, actual.test(pos)); }
+    void reportBitToggle(const std::bitset<N> & actual, const std::bitset<N> & stored, std::size_t pos,
+        const std::string & msgSet, const std::string & msgReset = "")
+    { if (actual.test(pos) != stored.test(pos)) reportBitToggleInternal(actual.test(pos), msgSet, msgReset); }
 
     double degreesToInternalUnits(double value, int derivativeOrder = 0);
 
@@ -123,7 +124,7 @@ public:
 
 private:
 
-    void reportBitToggleInternal(const std::string & msg, bool isSet);
+    void reportBitToggleInternal(bool isSet, const std::string & msgSet, const std::string & msgReset);
 
     unsigned int canId;
 };
