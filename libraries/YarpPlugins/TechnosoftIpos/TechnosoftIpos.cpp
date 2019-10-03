@@ -156,7 +156,7 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
     vars.reportBitToggle(bits, stored, 10, "Target reached.");
     vars.reportBitToggle(bits, stored, 11, "Internal Limit Active.");
 
-    switch (vars.actualControlMode)
+    switch (vars.actualControlMode.load())
     {
     case VOCAB_CM_POSITION:
         vars.reportBitToggle(bits, stored, 12, "Trajectory generator will not accept a new set-point.", "Trajectory generator will accept a new set-point.");
