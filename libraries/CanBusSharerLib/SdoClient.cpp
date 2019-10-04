@@ -116,9 +116,9 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
 
     std::bitset<8> bitsReceived(responseMsg[0]);
 
-    if (bitsReceived.test(1)) // expedited trasfer
+    if (bitsReceived[1]) // expedited trasfer
     {
-        if (bitsReceived.test(0)) // data size is indicated in 'n'
+        if (bitsReceived[0]) // data size is indicated in 'n'
         {
             const std::uint8_t n = ((bitsReceived << 4) >> 6).to_ulong();
             const std::uint8_t actualSize = 4 - n;
@@ -160,7 +160,7 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
 
             bitsReceived = std::bitset<8>(responseMsg[0]);
 
-            if (!bitsReceived.test(4) != bitsSent.test(4))
+            if (!bitsReceived[4] != bitsSent[4])
             {
                 CD_ERROR("SDO segmented upload: toggle bit mismatch.\n");
                 return false;
@@ -174,7 +174,7 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
             sent += actualSize;
             bitsSent.flip(4);
         }
-        while (!bitsReceived.test(0)); // continuation bit
+        while (!bitsReceived[0]); // continuation bit
 
         CD_INFO("SDO segmented upload finish: id %d.\n", id);
     }
@@ -242,7 +242,7 @@ bool SdoClient::downloadInternal(const std::string & name, const void * data, st
                 return false;
             }
 
-            if (!std::bitset<8>(confirmMsg[0]).test(4) != bitsSent.test(4))
+            if (!std::bitset<8>(confirmMsg[0])[4] != bitsSent[4])
             {
                 CD_ERROR("SDO segmented download: toggle bit mismatch.\n");
                 return false;
@@ -251,7 +251,7 @@ bool SdoClient::downloadInternal(const std::string & name, const void * data, st
             sent += actualSize;
             bitsSent.flip(4);
         }
-        while (!bitsSent.test(0)); // continuation bit
+        while (!bitsSent[0]); // continuation bit
 
         CD_INFO("SDO segmented download finish: id %d.\n", id);
     }

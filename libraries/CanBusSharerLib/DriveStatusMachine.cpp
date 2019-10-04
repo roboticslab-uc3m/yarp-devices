@@ -12,35 +12,35 @@ namespace
 {
     DriveState parseDriveState(const std::bitset<16> & bits)
     {
-        if (!bits.test(0) && !bits.test(1) && !bits.test(2) && !bits.test(3) && !bits.test(6))
+        if (!bits[0] && !bits[1] && !bits[2] && !bits[3] && !bits[6])
         {
             return DriveState::NOT_READY_TO_SWITCH_ON; // xxxx.xxxx.x0xx.0000
         }
-        else if (!bits.test(0) && !bits.test(1) && !bits.test(2) && !bits.test(3) && bits.test(6))
+        else if (!bits[0] && !bits[1] && !bits[2] && !bits[3] && bits[6])
         {
             return DriveState::SWITCH_ON_DISABLED; // xxxx.xxxx.x1xx.0000
         }
-        else if (bits.test(0) && !bits.test(1) && !bits.test(2) && !bits.test(3) && bits.test(5) && !bits.test(6))
+        else if (bits[0] && !bits[1] && !bits[2] && !bits[3] && bits[5] && !bits[6])
         {
             return DriveState::READY_TO_SWITCH_ON; // xxxx.xxxx.x01x.0001
         }
-        else if (bits.test(0) && bits.test(1) && !bits.test(2) && !bits.test(3) && bits.test(5) && !bits.test(6))
+        else if (bits[0] && bits[1] && !bits[2] && !bits[3] && bits[5] && !bits[6])
         {
             return DriveState::SWITCHED_ON; // xxxx.xxxx.x01x.0011
         }
-        else if (bits.test(0) && bits.test(1) && bits.test(2) && !bits.test(3) && bits.test(5) && !bits.test(6))
+        else if (bits[0] && bits[1] && bits[2] && !bits[3] && bits[5] && !bits[6])
         {
             return DriveState::OPERATION_ENABLED; // xxxx.xxxx.x01x.0111
         }
-        else if (bits.test(0) && bits.test(1) && bits.test(2) && !bits.test(3) && !bits.test(5) && !bits.test(6))
+        else if (bits[0] && bits[1] && bits[2] && !bits[3] && !bits[5] && !bits[6])
         {
             return DriveState::QUICK_STOP_ACTIVE; // xxxx.xxxx.x00x.0111
         }
-        else if (bits.test(0) && bits.test(1) && bits.test(2) && bits.test(3) && !bits.test(6))
+        else if (bits[0] && bits[1] && bits[2] && bits[3] && !bits[6])
         {
             return DriveState::FAULT_REACTION_ACTIVE; // xxxx.xxxx.x0xx.1111
         }
-        else if (!bits.test(0) && !bits.test(1) && !bits.test(2) && bits.test(3) && !bits.test(6))
+        else if (!bits[0] && !bits[1] && !bits[2] && bits[3] && !bits[6])
         {
             return DriveState::FAULT; // xxxx.xxxx.x0xx.1000
         }

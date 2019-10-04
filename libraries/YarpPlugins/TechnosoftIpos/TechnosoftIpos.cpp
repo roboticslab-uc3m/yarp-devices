@@ -242,13 +242,13 @@ void TechnosoftIpos::interpretPtStatus(std::uint16_t status)
     CD_INFO("Interpolated position mode status. canId: %d.\n", can->getId());
     std::bitset<16> bits(status);
 
-    if (bits.test(15))
+    if (bits[15])
     {
         CD_INFO("\t* buffer is empty.\n");
 
         if (linInterpBuffer->getType() == "pvt")
         {
-            if (bits.test(11))
+            if (bits[11])
             {
                 CD_INFO("\t* pvt maintained position on buffer empty (zero velocity).\n");
             }
@@ -263,7 +263,7 @@ void TechnosoftIpos::interpretPtStatus(std::uint16_t status)
         CD_INFO("\t* buffer is not empty.\n");
     }
 
-    if (bits.test(14))
+    if (bits[14])
     {
         CD_INFO("\t* buffer is low.\n");
     }
@@ -272,7 +272,7 @@ void TechnosoftIpos::interpretPtStatus(std::uint16_t status)
         CD_INFO("\t* buffer is not low.\n");
     }
 
-    if (bits.test(13))
+    if (bits[13])
     {
         CD_INFO("\t* buffer is full.\n");
     }
@@ -281,7 +281,7 @@ void TechnosoftIpos::interpretPtStatus(std::uint16_t status)
         CD_INFO("\t* buffer is not full.\n");
     }
 
-    if (bits.test(12))
+    if (bits[12])
     {
         CD_INFO("\t* integrity counter error.\n");
     }
