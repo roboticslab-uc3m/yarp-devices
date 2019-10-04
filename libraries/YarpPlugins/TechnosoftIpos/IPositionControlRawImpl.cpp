@@ -4,8 +4,6 @@
 
 #include <cmath>
 
-#include <bitset>
-
 #include <ColorDebug.h>
 
 #include "CanUtils.hpp"
@@ -78,94 +76,7 @@ bool TechnosoftIpos::checkMotionDoneRaw(int j, bool * flag)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-
-    std::uint16_t data;
-
-    if (!can->sdo()->upload("Statusword", &data, 0x6041))
-    {
-        return false;
-    }
-
-    std::bitset<16> bits(data);
-
-    if (bits.test(0))
-    {
-        CD_INFO("\t-Ready to switch on. canId: %d.\n", can->getId());
-    }
-    if (bits.test(1))
-    {
-        CD_INFO("\t-Switched on. canId: %d.\n", can->getId());
-    }
-    if (bits.test(2))
-    {
-        CD_INFO("\t-Operation Enabled. canId: %d.\n", can->getId());
-    }
-    if (bits.test(3))
-    {
-        CD_INFO("\t-Fault. If set, a fault condition is or was present in the drive. canId: %d.\n", can->getId());
-    }
-    if (bits.test(4))
-    {
-        CD_INFO("\t-Motor supply voltage is present. canId: %d.\n", can->getId());
-    }
-    else
-    {
-        CD_INFO("\t-Motor supply voltage is absent. canId: %d.\n", can->getId());
-    }
-    if (!bits.test(5)) // negated.
-    {
-        CD_INFO("\t-Performing a quick stop. canId: %d.\n", can->getId());
-    }
-    if (bits.test(6))
-    {
-        CD_INFO("\t-Switch on disabled. canId: %d.\n", can->getId());
-    }
-    if (bits.test(7))
-    {
-        CD_INFO("\t-Warning. A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored. canId: %d.\n", can->getId());
-    }
-    if (bits.test(8))
-    {
-        CD_INFO("\t-A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called. canId: %d.\n", can->getId());
-    }
-    if (bits.test(9))
-    {
-        CD_INFO("\t-Remote: drive parameters may be modified via CAN and the drive will execute the command message. canId: %d.\n", can->getId());
-    }
-    else
-    {
-        CD_INFO("\t-Remote: drive is in local mode and will not execute the command message (only TML internal).");
-    }
-    if (bits.test(10))
-    {
-        CD_INFO("\t-Target reached. canId: %d.\n", can->getId());
-    }
-    else
-    {
-        CD_INFO("\t-Target not reached. canId: %d.\n", can->getId());  // improvised, not in manual, but reasonable
-    }
-    if (bits.test(11))
-    {
-        CD_INFO("\t-Internal Limit Active. canId: %d.\n", can->getId());
-    }
-    if (bits.test(14))
-    {
-        CD_INFO("\t-Last event set has ocurred. canId: %d.\n", can->getId());
-    }
-    else
-    {
-        CD_INFO("\t-No event set or the programmed event has not occurred yet. canId: %d.\n", can->getId());
-    }
-    if (bits.test(15))
-    {
-        CD_INFO("\t-Axis on. Power stage is enabled. Motor control is performed. canId: %d.\n", can->getId());
-    }
-    else
-    {
-        CD_INFO("\t-Axis off. Power stage is disabled. Motor control is not performed. canId: %d.\n", can->getId());
-    }
-
-    *flag = bits.test(10);
+    *flag = can->driveStatus()->statusword()[10];
     return true;
 }
 

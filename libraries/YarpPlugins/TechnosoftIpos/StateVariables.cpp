@@ -127,12 +127,13 @@ StateVariables::StateVariables()
       max(0.0),
       refSpeed(0.0),
       refAcceleration(0.0),
-      pulsesPerSample(0)
+      pulsesPerSample(0),
+      canId(0)
 { }
 
 // -----------------------------------------------------------------------------
 
-bool StateVariables::validateInitialState()
+bool StateVariables::validateInitialState(unsigned int canId)
 {
     if (actualControlMode == 0)
     {
@@ -217,6 +218,14 @@ bool StateVariables::validateInitialState()
         return false;
     }
 
+    if (canId == 0)
+    {
+        CD_WARNING("Illegal CAN ID: %d.\n", canId);
+        return false;
+    }
+
+    this->canId = canId;
+
     return true;
 }
 
@@ -274,6 +283,27 @@ double StateVariables::currentToTorque(double current)
 double StateVariables::torqueToCurrent(double torque)
 {
     return torque / (tr * k);
+}
+
+// -----------------------------------------------------------------------------
+
+void StateVariables::reportBitToggleInternal(bool isSet, const std::string & msgSet, const std::string & msgReset)
+{
+    if (isSet)
+    {
+        CD_WARNING("%s (canId: %d)\n", msgSet.c_str(), canId);
+    }
+    else
+    {
+        if (!msgReset.empty())
+        {
+            CD_INFO("%s (canId: %d)\n", msgReset.c_str(), canId);
+        }
+        else
+        {
+            CD_INFO("Bit reset: %s (canId: %d)\n", msgSet.c_str(), canId);
+        }
+    }
 }
 
 // -----------------------------------------------------------------------------

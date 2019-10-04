@@ -6,6 +6,7 @@
 #include <cstdint>
 
 #include <atomic>
+#include <bitset>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -13,6 +14,7 @@
 #include <yarp/conf/numeric.h>
 #include <yarp/os/Stamp.h>
 
+#include "PdoProtocol.hpp"
 #include "StateObserver.hpp"
 
 namespace roboticslab
@@ -46,13 +48,20 @@ private:
  * @ingroup TechnosoftIpos
  * @brief ...
  */
-struct StateVariables
+class StateVariables
 {
+public:
+
     StateVariables();
 
-    bool validateInitialState();
+    bool validateInitialState(unsigned int canId);
 
     bool awaitControlMode(yarp::conf::vocab32_t mode);
+
+    template<std::size_t N>
+    void reportBitToggle(const std::bitset<N> & actual, const std::bitset<N> & stored, std::size_t pos,
+        const std::string & msgSet, const std::string & msgReset = "")
+    { if (actual.test(pos) != stored.test(pos)) reportBitToggleInternal(actual.test(pos), msgSet, msgReset); }
 
     double degreesToInternalUnits(double value, int derivativeOrder = 0);
 
@@ -69,6 +78,14 @@ struct StateVariables
     double torqueToCurrent(double torque);
 
     std::unique_ptr<StateObserver> controlModeObserverPtr;
+
+    // read/write, no concurrent access
+
+    std::bitset<16> msr;
+    std::bitset<16> mer;
+    std::bitset<16> der;
+    std::bitset<16> der2;
+    std::bitset<16> cer;
 
     // read/write, those require atomic access
 
@@ -92,6 +109,10 @@ struct StateVariables
 
     bool reverse;
 
+    PdoConfiguration tpdo1Conf;
+    PdoConfiguration tpdo2Conf;
+    PdoConfiguration tpdo3Conf;
+
     // read only, fresh values queried from iPOS drive
 
     double min;
@@ -100,6 +121,12 @@ struct StateVariables
     double refAcceleration;
 
     int pulsesPerSample;
+
+private:
+
+    void reportBitToggleInternal(bool isSet, const std::string & msgSet, const std::string & msgReset);
+
+    unsigned int canId;
 };
 
 } // namespace roboticslab
