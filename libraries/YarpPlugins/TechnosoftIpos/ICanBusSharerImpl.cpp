@@ -2,8 +2,6 @@
 
 #include "TechnosoftIpos.hpp"
 
-#include <bitset>
-
 #include <ColorDebug.h>
 
 #include "CanUtils.hpp"
@@ -14,68 +12,6 @@ using namespace roboticslab;
 
 namespace
 {
-    void interpretSupportedDriveModes(std::uint32_t data)
-    {
-        std::bitset<32> bits(data);
-
-        if (bits[0])
-        {
-            CD_INFO("\t*profiled position (pp)\n");
-        }
-        if (bits[1])
-        {
-            CD_INFO("\t*velocity (vl)\n");
-        }
-        if (bits[2])
-        {
-            CD_INFO("\t*profiled velocity (pv)\n");
-        }
-        if (bits[3])
-        {
-            CD_INFO("\t*profiled torque (tq)\n");
-        }
-        if (bits[5])
-        {
-            CD_INFO("\t*homing (hm)\n");
-        }
-        if (bits[6])
-        {
-            CD_INFO("\t*interpolated position (ip)\n");
-        }
-        if (bits[7])
-        {
-            CD_INFO("\t*cyclic synchronous position\n");
-        }
-        if (bits[8])
-        {
-            CD_INFO("\t*cyclic synchronous velocity\n");
-        }
-        if (bits[9])
-        {
-            CD_INFO("\t*cyclic synchronous torque\n");
-        }
-        if (bits[16])
-        {
-            CD_INFO("\t*electronic camming position (manufacturer specific)\n");
-        }
-        if (bits[17])
-        {
-            CD_INFO("\t*electronic gearing position (manufacturer specific)\n");
-        }
-        if (bits[18])
-        {
-            CD_INFO("\t*external reference position (manufacturer specific)\n");
-        }
-        if (bits[19])
-        {
-            CD_INFO("\t*external reference speed (manufacturer specific)\n");
-        }
-        if (bits[20])
-        {
-            CD_INFO("\t*external reference torque (manufacturer specific)\n");
-        }
-    }
-
     inline char getByte(std::uint32_t number, int n)
     {
         // https://stackoverflow.com/a/7787433
