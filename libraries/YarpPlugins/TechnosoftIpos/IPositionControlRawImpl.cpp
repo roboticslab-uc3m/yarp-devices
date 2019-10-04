@@ -76,7 +76,7 @@ bool TechnosoftIpos::checkMotionDoneRaw(int j, bool * flag)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-    *flag = can->driveStatus()->statusword()[10];
+    *flag = can->driveStatus()->getCurrentState() != DriveState::OPERATION_ENABLED || can->driveStatus()->statusword()[10];
     return true;
 }
 
