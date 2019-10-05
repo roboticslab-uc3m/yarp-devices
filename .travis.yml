@@ -159,7 +159,7 @@ before_script:
   #- cmake "$TRAVIS_BUILD_DIR/examples/cpp/exampleTechnosoftIpos" && make
 
 script:
-  - echo "No unit tests available"
+  - cd "$TRAVIS_BUILD_DIR/build/tests" && ctest -V
 
 after_success:
   #-- Code coverage
