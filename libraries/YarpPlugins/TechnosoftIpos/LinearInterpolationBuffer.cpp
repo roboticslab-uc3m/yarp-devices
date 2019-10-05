@@ -269,7 +269,8 @@ std::uint64_t PvtBuffer::makeDataRecord()
     data += ((std::uint64_t)positionMSB << 24) + positionLSB;
 
     double velocity = v * factor * 0.001;
-    std::int16_t velocityInt, velocityFrac;
+    std::int16_t velocityInt;
+    std::uint16_t velocityFrac;
     CanUtils::encodeFixedPoint(velocity, &velocityInt, &velocityFrac);
     data += ((std::uint64_t)velocityInt << 32) + ((std::uint64_t)velocityFrac << 16);
 
