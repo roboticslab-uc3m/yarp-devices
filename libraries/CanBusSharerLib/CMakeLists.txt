@@ -17,7 +17,7 @@ if(ENABLE_CanBusSharerLib)
                                        NmtProtocol.hpp
                                        NmtProtocol.cpp
                                        DriveStatusMachine.hpp
-                                       DriveStatusMachine.hpp
+                                       DriveStatusMachine.cpp
                                        StateObserver.hpp
                                        StateObserver.cpp
                                        CanUtils.hpp
