@@ -32,7 +32,7 @@ bool CanSynapse::sendMessage(unsigned char * msg, int size)
     {
         const int bytes = ((i + 1) * 8 <= size) ? 8 : size % 8;
 
-        if (!sender->prepareMessage(message_builder(canId, bytes, msg)))
+        if (!sender->prepareMessage({canId, bytes, msg}))
         {
             return false;
         }
