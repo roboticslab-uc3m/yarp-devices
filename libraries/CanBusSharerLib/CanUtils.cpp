@@ -5,9 +5,9 @@
 #include <iomanip>
 #include <sstream>
 
-using namespace roboticslab::CanUtils;
+using namespace roboticslab;
 
-std::string msgToStr(std::uint8_t id, std::uint16_t cob, std::size_t len, const std::uint8_t * msgData)
+std::string CanUtils::msgToStr(std::uint8_t id, std::uint16_t cob, std::size_t len, const std::uint8_t * msgData)
 {
     std::stringstream tmp;
 
