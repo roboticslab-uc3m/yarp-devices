@@ -14,8 +14,8 @@ struct message_builder
 {
     void operator ()(yarp::dev::CanMessage & msg) const;
 
-    int id;
-    int len;
+    unsigned int id;
+    unsigned int len;
     const unsigned char * data;
 };
 
@@ -25,7 +25,7 @@ struct message_builder
 class CanSenderDelegate
 {
 public:
-    CanSenderDelegate(yarp::dev::CanBuffer & _buffer, std::mutex & _bufferMutex, int & n, int size)
+    CanSenderDelegate(yarp::dev::CanBuffer & _buffer, std::mutex & _bufferMutex, unsigned int & n, unsigned int size)
         : buffer(_buffer),
           bufferMutex(_bufferMutex),
           preparedMessages(n),
@@ -41,8 +41,8 @@ public:
 private:
     yarp::dev::CanBuffer & buffer;
     std::mutex & bufferMutex;
-    int & preparedMessages;
-    int maxSize;
+    unsigned int & preparedMessages;
+    unsigned int maxSize;
 };
 
 }  // namespace roboticslab

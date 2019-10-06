@@ -3,6 +3,7 @@
 #ifndef __PDO_PROTOCOL_HPP__
 #define __PDO_PROTOCOL_HPP__
 
+#include <cstddef>
 #include <cstdint>
 
 #include <functional>
@@ -126,7 +127,7 @@ public:
     bool write(Ts... data)
     {
         static_assert(sizeof...(Ts) > 0 && size<Ts...>() <= 8, "Illegal cumulative size.");
-        std::uint8_t raw[size<Ts...>()]; std::size_t count = 0;
+        std::uint8_t raw[size<Ts...>()]; unsigned int count = 0;
         ordered_call{(pack(&data, raw, &count), 1)...}; // https://w.wiki/7M$
         return writeInternal(raw, count);
     }
@@ -140,15 +141,15 @@ private:
     { template<typename... Ts> ordered_call(Ts...) { } };
 
     template<typename T>
-    void pack(const T * data, std::uint8_t * buff, std::size_t * count)
+    void pack(const T * data, std::uint8_t * buff, unsigned int * count)
     {
         static_assert(std::is_integral<T>::value, "Integral required.");
         packInternal(buff + *count, data, sizeof(T));
         *count += sizeof(T);
     }
 
-    void packInternal(std::uint8_t * buff, const void * data, std::size_t size);
-    bool writeInternal(const std::uint8_t * data, std::size_t size);
+    void packInternal(std::uint8_t * buff, const void * data, unsigned int size);
+    bool writeInternal(const std::uint8_t * data, unsigned int size);
 
     CanSenderDelegate * sender;
 };
@@ -160,15 +161,15 @@ public:
         : PdoProtocol(id, cob, n, sdo)
     { }
 
-    bool accept(const std::uint8_t * data, std::size_t size)
+    bool accept(const std::uint8_t * data, unsigned int size)
     { return callback(data, size); }
 
     template<typename... Ts, typename Fn>
     void registerHandler(const Fn & fn)
     {
         static_assert(sizeof...(Ts) > 0 && size<Ts...>() <= 8, "Illegal cumulative size.");
-        callback = [&](const std::uint8_t * raw, std::size_t len)
-            { std::size_t count = 0;
+        callback = [&](const std::uint8_t * raw, unsigned int len)
+            { unsigned int count = 0;
               return size<Ts...>() == len && (ordered_call{fn, unpack<Ts>(raw, &count)...}, true); };
     }
 
@@ -180,7 +181,7 @@ protected:
     { return PdoType::TPDO; }
 
 private:
-    typedef std::function<bool(const std::uint8_t * data, std::size_t size)> HandlerFn;
+    typedef std::function<bool(const std::uint8_t * data, unsigned int size)> HandlerFn;
 
     // https://stackoverflow.com/a/14058638
     struct ordered_call
@@ -191,7 +192,7 @@ private:
     };
 
     template<typename T>
-    T unpack(const std::uint8_t * buff, std::size_t * count)
+    T unpack(const std::uint8_t * buff, unsigned int * count)
     {
         static_assert(std::is_integral<T>::value, "Integral required.");
         T data;
@@ -200,7 +201,7 @@ private:
         return data;
     }
 
-    void unpackInternal(void * data, const std::uint8_t * buff, std::size_t size);
+    void unpackInternal(void * data, const std::uint8_t * buff, unsigned int size);
 
     HandlerFn callback;
 };

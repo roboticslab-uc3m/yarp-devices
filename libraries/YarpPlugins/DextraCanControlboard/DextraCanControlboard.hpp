@@ -25,7 +25,7 @@ namespace roboticslab
 class CanSynapse : public Synapse
 {
 public:
-    CanSynapse(int canId);
+    CanSynapse(unsigned int canId);
     virtual void configure(void * handle) override;
 
 protected:
@@ -33,7 +33,7 @@ protected:
     virtual bool sendMessage(unsigned char * msg, int size) override;
 
 private:
-    int canId;
+    unsigned int canId;
     CanSenderDelegate * sender;
 };
 

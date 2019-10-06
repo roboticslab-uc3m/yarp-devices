@@ -12,7 +12,7 @@ using namespace roboticslab;
 
 bool DextraCanControlboard::open(yarp::os::Searchable & config)
 {
-    int canId = config.check("canId", yarp::os::Value(0), "can bus ID").asInt32();
+    canId = config.check("canId", yarp::os::Value(0), "can bus ID").asInt32();
 
     if (canId == 0)
     {

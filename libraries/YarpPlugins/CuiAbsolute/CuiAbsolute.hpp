@@ -3,7 +3,6 @@
 #ifndef __CUI_ABSOLUTE_HPP__
 #define __CUI_ABSOLUTE_HPP__
 
-#include <cstddef>
 #include <cstdint>
 
 #include <mutex>
@@ -86,7 +85,7 @@ private:
     enum class CuiMode { PUSH, PULL, OFF };
     enum class CuiCommand : std::uint8_t { PUSH_START = 1, PUSH_STOP = 2, POLL = 3 };
 
-    bool performRequest(const std::string & name, std::size_t len, const std::uint8_t * msgData, double * resp = nullptr);
+    bool performRequest(const std::string & name, unsigned int len, const std::uint8_t * msgData, double * resp = nullptr);
     bool startPushMode();
     bool stopPushMode();
     bool pollEncoderRead(double * enc);

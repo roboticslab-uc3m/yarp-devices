@@ -132,7 +132,7 @@ void CanWriterThread::handlePartialWrite(unsigned int sent)
 
 // -----------------------------------------------------------------------------
 
-void CanWriterThread::setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, int bufferSize)
+void CanWriterThread::setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize)
 {
     CanReaderWriterThread::setCanHandles(iCanBus, iCanBufferFactory, bufferSize);
     sender = new CanSenderDelegate(canBuffer, bufferMutex, preparedMessages, bufferSize);
