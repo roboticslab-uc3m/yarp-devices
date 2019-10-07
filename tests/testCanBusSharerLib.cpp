@@ -32,7 +32,7 @@ public:
     {
         if (f.valid())
         {
-            f.get();
+            f.wait();
         }
 
         delete senderDelegate;
@@ -75,7 +75,7 @@ public:
 
 private:
     int milliseconds;
-    const std::function<bool()> & fn;
+    std::function<bool()> fn;
 };
 
 TEST_F(CanBusSharerTest, CanUtils)
@@ -199,9 +199,9 @@ TEST_F(CanBusSharerTest, SdoClient)
     std::uint8_t response[8] = {0x4B, 0x00, 0x00, subindex1};
     std::memcpy(response + 1, &index1, 2);
     std::memcpy(response + 4, &expected1, 2);
-    /*f = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
+    f = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.upload("Upload test 1", &actual1, index1, subindex1));
-    ASSERT_EQ(actual1, expected1);*/
+    ASSERT_EQ(actual1, expected1);
 }
 
 } // namespace roboticslab
