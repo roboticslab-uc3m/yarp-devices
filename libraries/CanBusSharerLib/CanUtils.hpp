@@ -10,17 +10,15 @@
 #include <string>
 #include <type_traits>
 
-#include <yarp/dev/CanBusInterface.h>
-
 namespace roboticslab
 {
 namespace CanUtils
 {
 
-std::string msgToStr(std::uint8_t id, std::uint16_t cob, std::size_t len, const std::uint8_t * msgData);
+std::string msgToStr(std::uint8_t id, std::uint16_t cob, std::size_t len, const std::uint8_t * data);
 
-inline std::string msgToStr(const yarp::dev::CanMessage & message)
-{ return msgToStr(message.getId() & 0x7F, message.getId() & 0xFF80, message.getLen(), message.getData()); }
+inline std::string msgToStr(std::uint16_t cobId, std::size_t len, const std::uint8_t * data)
+{ return msgToStr(cobId & 0x7F, cobId & 0xFF80, len, data); }
 
 template<typename T_int, typename T_frac>
 void encodeFixedPoint(double value, T_int * integer, T_frac * fractional)

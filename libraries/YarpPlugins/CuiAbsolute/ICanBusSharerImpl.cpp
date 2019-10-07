@@ -51,7 +51,7 @@ bool CuiAbsolute::interpretMessage(const yarp::dev::CanMessage & message)
 {
     if (message.getData()[3] == 0xc4)
     {
-        CD_ERROR_NO_HEADER("Known PIC error. %s\n", CanUtils::msgToStr(message).c_str());
+        CD_ERROR("Known PIC error. %s\n", CanUtils::msgToStr(message.getId(), message.getLen(), message.getData()).c_str());
         return false;
     }
 
