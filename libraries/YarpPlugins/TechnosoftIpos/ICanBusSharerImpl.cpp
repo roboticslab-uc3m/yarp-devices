@@ -209,16 +209,14 @@ bool TechnosoftIpos::finalize()
 
 bool TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage & message)
 {
-    const std::uint8_t id = message.getId();
-
-    if (iExternalEncoderCanBusSharer && id == iExternalEncoderCanBusSharer->getId())
+    if (iExternalEncoderCanBusSharer && iExternalEncoderCanBusSharer->getId() == (message.getId() & 0x7F))
     {
         return iExternalEncoderCanBusSharer->interpretMessage(message);
     }
 
-    if (!can->consumeMessage(id, message.getData(), message.getLen()))
+    if (!can->consumeMessage(message.getId(), message.getData(), message.getLen()))
     {
-        CD_ERROR("Unknown message: %s\n", CanUtils::msgToStr(message).c_str());
+        CD_ERROR("Unknown message: %s\n", CanUtils::msgToStr(message.getId(), message.getLen(), message.getData()).c_str());
         return false;
     }
 
