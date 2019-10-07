@@ -45,7 +45,7 @@ public:
     virtual void onStop() override
     { CD_INFO("Stopping CanBusControlboard %s thread %s.\n", type.c_str(), id.c_str()); }
 
-    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, int bufferSize)
+    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize)
     { this->iCanBus = iCanBus; this->iCanBufferFactory = iCanBufferFactory; this->bufferSize = bufferSize; }
 
     void setPeriod(double periodMs)
@@ -56,7 +56,7 @@ protected:
     yarp::dev::ICanBufferFactory * iCanBufferFactory;
     yarp::dev::CanBuffer canBuffer;
 
-    int bufferSize;
+    unsigned int bufferSize;
     double period;
 
 private:
@@ -87,14 +87,14 @@ public:
     ~CanWriterThread();
 
     virtual void run() override;
-    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, int bufferSize) override;
+    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize) override;
     CanSenderDelegate * getDelegate();
 
 private:
     void handlePartialWrite(unsigned int sent);
 
     CanSenderDelegate * sender;
-    int preparedMessages;
+    unsigned int preparedMessages;
     mutable std::mutex bufferMutex;
 };
 

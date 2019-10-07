@@ -10,9 +10,9 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool CuiAbsolute::performRequest(const std::string & name, std::size_t len, const std::uint8_t * data, double * v)
+bool CuiAbsolute::performRequest(const std::string & name, unsigned int len, const std::uint8_t * data, double * v)
 {
-    if (!sender->prepareMessage(message_builder(canId, len, data)))
+    if (!sender->prepareMessage({canId, len, data}))
     {
         CD_ERROR("Unable to send \"%s\" command. %s\n", name.c_str(), CanUtils::msgToStr(canId, 0, len, data).c_str());
     }

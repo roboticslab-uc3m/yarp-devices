@@ -3,13 +3,45 @@
 #include "DriveStatusMachine.hpp"
 
 #include <bitset>
+#include <functional>
 #include <unordered_map>
 #include <vector>
 
 using namespace roboticslab;
 
+namespace std
+{
+    template<>
+    struct hash<roboticslab::DriveState>
+    {
+        std::size_t operator ()(roboticslab::DriveState state)
+        {
+            return static_cast<std::size_t>(state);
+        }
+    };
+
+    template<>
+    struct hash<roboticslab::DriveTransition>
+    {
+        std::size_t operator ()(roboticslab::DriveTransition transition)
+        {
+            return static_cast<std::size_t>(transition);
+        }
+    };
+}
+
 namespace
 {
+    // https://www.techiedelight.com/use-std-pair-key-std-unordered_map-cpp
+    struct pair_hash
+    {
+        template<typename T1, typename T2>
+        std::size_t operator ()(const std::pair<T1, T2> & pair) const
+        {
+            return std::hash<T1>()(pair.first) ^ std::hash<T2>()(pair.second);
+        }
+    };
+
     DriveState parseDriveState(const std::bitset<16> & bits)
     {
         if (!bits[0] && !bits[1] && !bits[2] && !bits[3] && !bits[6])
@@ -90,37 +122,37 @@ namespace
         }
     }
 
-    const std::unordered_map<std::pair<DriveState, DriveTransition>, DriveState> transitionToState = {
-        {std::make_pair(DriveState::SWITCH_ON_DISABLED, DriveTransition::SHUTDOWN), DriveState::READY_TO_SWITCH_ON}, // 2
-        {std::make_pair(DriveState::READY_TO_SWITCH_ON, DriveTransition::SWITCH_ON), DriveState::SWITCHED_ON}, // 3
-        {std::make_pair(DriveState::SWITCHED_ON, DriveTransition::ENABLE_OPERATION), DriveState::OPERATION_ENABLED}, // 4
-        {std::make_pair(DriveState::OPERATION_ENABLED, DriveTransition::DISABLE_OPERATION), DriveState::SWITCHED_ON}, // 5
-        {std::make_pair(DriveState::OPERATION_ENABLED, DriveTransition::SWITCH_ON), DriveState::SWITCHED_ON}, // 5 (alias)
-        {std::make_pair(DriveState::SWITCHED_ON, DriveTransition::SHUTDOWN), DriveState::READY_TO_SWITCH_ON}, // 6
-        {std::make_pair(DriveState::READY_TO_SWITCH_ON, DriveTransition::DISABLE_VOLTAGE), DriveState::SWITCH_ON_DISABLED}, // 7
-        {std::make_pair(DriveState::OPERATION_ENABLED, DriveTransition::SHUTDOWN), DriveState::READY_TO_SWITCH_ON}, // 8
-        {std::make_pair(DriveState::OPERATION_ENABLED, DriveTransition::DISABLE_VOLTAGE), DriveState::SWITCH_ON_DISABLED}, // 9
-        {std::make_pair(DriveState::SWITCHED_ON, DriveTransition::DISABLE_VOLTAGE), DriveState::SWITCH_ON_DISABLED}, // 10
-        {std::make_pair(DriveState::OPERATION_ENABLED, DriveTransition::QUICK_STOP), DriveState::QUICK_STOP_ACTIVE}, // 11
-        {std::make_pair(DriveState::QUICK_STOP_ACTIVE, DriveTransition::DISABLE_VOLTAGE), DriveState::SWITCH_ON_DISABLED}, // 12
-        {std::make_pair(DriveState::QUICK_STOP_ACTIVE, DriveTransition::ENABLE_OPERATION), DriveState::OPERATION_ENABLED}, // 16
+    const std::unordered_map<std::pair<DriveState, DriveTransition>, DriveState, pair_hash> transitionToState = {
+        {{DriveState::SWITCH_ON_DISABLED, DriveTransition::SHUTDOWN}, DriveState::READY_TO_SWITCH_ON}, // 2
+        {{DriveState::READY_TO_SWITCH_ON, DriveTransition::SWITCH_ON}, DriveState::SWITCHED_ON}, // 3
+        {{DriveState::SWITCHED_ON, DriveTransition::ENABLE_OPERATION}, DriveState::OPERATION_ENABLED}, // 4
+        {{DriveState::OPERATION_ENABLED, DriveTransition::DISABLE_OPERATION}, DriveState::SWITCHED_ON}, // 5
+        {{DriveState::OPERATION_ENABLED, DriveTransition::SWITCH_ON}, DriveState::SWITCHED_ON}, // 5 (alias)
+        {{DriveState::SWITCHED_ON, DriveTransition::SHUTDOWN}, DriveState::READY_TO_SWITCH_ON}, // 6
+        {{DriveState::READY_TO_SWITCH_ON, DriveTransition::DISABLE_VOLTAGE}, DriveState::SWITCH_ON_DISABLED}, // 7
+        {{DriveState::OPERATION_ENABLED, DriveTransition::SHUTDOWN}, DriveState::READY_TO_SWITCH_ON}, // 8
+        {{DriveState::OPERATION_ENABLED, DriveTransition::DISABLE_VOLTAGE}, DriveState::SWITCH_ON_DISABLED}, // 9
+        {{DriveState::SWITCHED_ON, DriveTransition::DISABLE_VOLTAGE}, DriveState::SWITCH_ON_DISABLED}, // 10
+        {{DriveState::OPERATION_ENABLED, DriveTransition::QUICK_STOP}, DriveState::QUICK_STOP_ACTIVE}, // 11
+        {{DriveState::QUICK_STOP_ACTIVE, DriveTransition::DISABLE_VOLTAGE}, DriveState::SWITCH_ON_DISABLED}, // 12
+        {{DriveState::QUICK_STOP_ACTIVE, DriveTransition::ENABLE_OPERATION}, DriveState::OPERATION_ENABLED}, // 16
     };
 
-    const std::unordered_map<std::pair<DriveState, DriveState>, std::vector<DriveTransition>> shortestPaths = {
-        {std::make_pair(DriveState::SWITCH_ON_DISABLED, DriveState::READY_TO_SWITCH_ON), {DriveTransition::SHUTDOWN}},
-        {std::make_pair(DriveState::SWITCH_ON_DISABLED, DriveState::SWITCHED_ON), {DriveTransition::SHUTDOWN, DriveTransition::SWITCH_ON}},
-        {std::make_pair(DriveState::SWITCH_ON_DISABLED, DriveState::OPERATION_ENABLED), {DriveTransition::SHUTDOWN, DriveTransition::SWITCH_ON, DriveTransition::ENABLE_OPERATION}},
-        {std::make_pair(DriveState::READY_TO_SWITCH_ON, DriveState::SWITCHED_ON), {DriveTransition::SWITCH_ON}},
-        {std::make_pair(DriveState::READY_TO_SWITCH_ON, DriveState::OPERATION_ENABLED), {DriveTransition::SWITCH_ON, DriveTransition::ENABLE_OPERATION}},
-        {std::make_pair(DriveState::SWITCHED_ON, DriveState::OPERATION_ENABLED), {DriveTransition::ENABLE_OPERATION}},
-        {std::make_pair(DriveState::OPERATION_ENABLED, DriveState::SWITCHED_ON), {DriveTransition::DISABLE_OPERATION}},
-        {std::make_pair(DriveState::OPERATION_ENABLED, DriveState::READY_TO_SWITCH_ON), {DriveTransition::SHUTDOWN}},
-        {std::make_pair(DriveState::OPERATION_ENABLED, DriveState::SWITCH_ON_DISABLED), {DriveTransition::DISABLE_VOLTAGE}},
-        {std::make_pair(DriveState::SWITCHED_ON, DriveState::READY_TO_SWITCH_ON), {DriveTransition::SHUTDOWN}},
-        {std::make_pair(DriveState::SWITCHED_ON, DriveState::SWITCH_ON_DISABLED), {DriveTransition::DISABLE_VOLTAGE}},
-        {std::make_pair(DriveState::READY_TO_SWITCH_ON, DriveState::SWITCH_ON_DISABLED), {DriveTransition::DISABLE_VOLTAGE}},
-        {std::make_pair(DriveState::READY_TO_SWITCH_ON, DriveState::SWITCHED_ON), {DriveTransition::SWITCH_ON}},
-        {std::make_pair(DriveState::QUICK_STOP_ACTIVE, DriveState::SWITCH_ON_DISABLED), {DriveTransition::DISABLE_VOLTAGE}}
+    const std::unordered_map<std::pair<DriveState, DriveState>, std::vector<DriveTransition>, pair_hash> shortestPaths = {
+        {{DriveState::SWITCH_ON_DISABLED, DriveState::READY_TO_SWITCH_ON}, {DriveTransition::SHUTDOWN}},
+        {{DriveState::SWITCH_ON_DISABLED, DriveState::SWITCHED_ON}, {DriveTransition::SHUTDOWN, DriveTransition::SWITCH_ON}},
+        {{DriveState::SWITCH_ON_DISABLED, DriveState::OPERATION_ENABLED}, {DriveTransition::SHUTDOWN, DriveTransition::SWITCH_ON, DriveTransition::ENABLE_OPERATION}},
+        {{DriveState::READY_TO_SWITCH_ON, DriveState::SWITCHED_ON}, {DriveTransition::SWITCH_ON}},
+        {{DriveState::READY_TO_SWITCH_ON, DriveState::OPERATION_ENABLED}, {DriveTransition::SWITCH_ON, DriveTransition::ENABLE_OPERATION}},
+        {{DriveState::SWITCHED_ON, DriveState::OPERATION_ENABLED}, {DriveTransition::ENABLE_OPERATION}},
+        {{DriveState::OPERATION_ENABLED, DriveState::SWITCHED_ON}, {DriveTransition::DISABLE_OPERATION}},
+        {{DriveState::OPERATION_ENABLED, DriveState::READY_TO_SWITCH_ON}, {DriveTransition::SHUTDOWN}},
+        {{DriveState::OPERATION_ENABLED, DriveState::SWITCH_ON_DISABLED}, {DriveTransition::DISABLE_VOLTAGE}},
+        {{DriveState::SWITCHED_ON, DriveState::READY_TO_SWITCH_ON}, {DriveTransition::SHUTDOWN}},
+        {{DriveState::SWITCHED_ON, DriveState::SWITCH_ON_DISABLED}, {DriveTransition::DISABLE_VOLTAGE}},
+        {{DriveState::READY_TO_SWITCH_ON, DriveState::SWITCH_ON_DISABLED}, {DriveTransition::DISABLE_VOLTAGE}},
+        {{DriveState::READY_TO_SWITCH_ON, DriveState::SWITCHED_ON}, {DriveTransition::SWITCH_ON}},
+        {{DriveState::QUICK_STOP_ACTIVE, DriveState::SWITCH_ON_DISABLED}, {DriveTransition::DISABLE_VOLTAGE}}
     };
 }
 

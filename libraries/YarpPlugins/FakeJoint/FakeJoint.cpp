@@ -6,7 +6,7 @@
 
 bool roboticslab::FakeJoint::send(uint32_t cob, uint16_t len, uint8_t * msgData)
 {
-    return sender->prepareMessage(message_builder(cob + canId, len, msgData));
+    return sender->prepareMessage({cob + canId, len, msgData});
 }
 
 // -----------------------------------------------------------------------------

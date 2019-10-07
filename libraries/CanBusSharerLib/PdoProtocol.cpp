@@ -206,17 +206,17 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
     return true;
 }
 
-void ReceivePdo::packInternal(std::uint8_t * buff, const void * data, std::size_t size)
+void ReceivePdo::packInternal(std::uint8_t * buff, const void * data, unsigned int size)
 {
     std::memcpy(buff, data, size);
 }
 
-bool ReceivePdo::writeInternal(const std::uint8_t * data, std::size_t size)
+bool ReceivePdo::writeInternal(const std::uint8_t * data, unsigned int size)
 {
-    return sender->prepareMessage(message_builder(cob + id, size, data));
+    return sender->prepareMessage({getCobId(), size, data});
 }
 
-void TransmitPdo::unpackInternal(void * data, const std::uint8_t * buff, std::size_t size)
+void TransmitPdo::unpackInternal(void * data, const std::uint8_t * buff, unsigned int size)
 {
     std::memcpy(data, buff, size);
 }

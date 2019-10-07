@@ -3,7 +3,6 @@
 #ifndef __LACQUEY_FETCH_HPP__
 #define __LACQUEY_FETCH_HPP__
 
-#include <cstddef>
 #include <cstdint>
 
 #include <yarp/conf/numeric.h>
@@ -74,8 +73,8 @@ public:
 
 private:
 
-    bool send(std::size_t len, const std::uint8_t * msgData)
-    { return sender->prepareMessage(message_builder(canId, len, msgData)); }
+    bool send(unsigned int len, const std::uint8_t * msgData)
+    { return sender->prepareMessage({canId, len, msgData}); }
 
     unsigned int canId;
     yarp::conf::float32_t refDutyCycles;

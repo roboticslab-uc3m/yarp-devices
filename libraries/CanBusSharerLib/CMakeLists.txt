@@ -6,6 +6,7 @@ if(ENABLE_CanBusSharerLib)
                                        CanOpen.hpp
                                        CanOpen.cpp
                                        CanSenderDelegate.hpp
+                                       CanSenderDelegate.cpp
                                        SdoClient.hpp
                                        SdoClient-inl.hpp
                                        SdoClient.cpp
@@ -16,7 +17,7 @@ if(ENABLE_CanBusSharerLib)
                                        NmtProtocol.hpp
                                        NmtProtocol.cpp
                                        DriveStatusMachine.hpp
-                                       DriveStatusMachine.hpp
+                                       DriveStatusMachine.cpp
                                        StateObserver.hpp
                                        StateObserver.cpp
                                        CanUtils.hpp
