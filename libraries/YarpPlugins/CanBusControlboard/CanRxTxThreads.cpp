@@ -6,6 +6,8 @@
 
 #include <yarp/os/Time.h>
 
+#include "YarpCanSenderDelegate.hpp"
+
 using namespace roboticslab;
 
 CanReaderThread::CanReaderThread(const std::string & id, const std::vector<ICanBusSharer *> & iCanBusSharers)
@@ -135,7 +137,7 @@ void CanWriterThread::handlePartialWrite(unsigned int sent)
 void CanWriterThread::setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize)
 {
     CanReaderWriterThread::setCanHandles(iCanBus, iCanBufferFactory, bufferSize);
-    sender = new CanSenderDelegate(canBuffer, bufferMutex, preparedMessages, bufferSize);
+    sender = new YarpCanSenderDelegate(canBuffer, bufferMutex, preparedMessages, bufferSize);
 }
 
 // -----------------------------------------------------------------------------
