@@ -1,13 +1,16 @@
 #include "gtest/gtest.h"
 
 #include <cstdint>
+#include <cstring>
 
 #include <chrono>
 #include <functional>
-#include <thread>
+#include <future>
 
-#include "CanUtils.hpp"
 #include "StateObserver.hpp"
+#include "CanSenderDelegate.hpp"
+#include "SdoClient.hpp"
+#include "CanUtils.hpp"
 
 namespace roboticslab
 {
@@ -22,16 +25,39 @@ public:
 
     virtual void SetUp()
     {
-
+        senderDelegate = new FakeCanSenderDelegate;
     }
 
     virtual void TearDown()
     {
+        if (f.valid())
+        {
+            f.get();
+        }
 
+        delete senderDelegate;
     }
 
 protected:
 
+    CanSenderDelegate * getSenderDelegate()
+    { return senderDelegate; }
+
+    static constexpr double TIMEOUT = 0.1; // [s]
+    static constexpr int MILLIS = 10;
+
+    std::future<void> f;
+
+private:
+
+    class FakeCanSenderDelegate : public CanSenderDelegate
+    {
+    public:
+        virtual bool prepareMessage(const can_message & msg) override
+        { return true; }
+    };
+
+    FakeCanSenderDelegate * senderDelegate;
 };
 
 class observer_timer
@@ -92,15 +118,11 @@ TEST_F(CanBusSharerTest, CanUtils)
 
 TEST_F(CanBusSharerTest, StateObserver)
 {
-    const double timeout = 0.1; // [s]
-    const int millis = 10;
-
     // test StateObserver
 
-    StateObserver emptyStateObserver(timeout);
-    std::thread thread1(observer_timer{millis, [&] { return emptyStateObserver.notify(); }});
+    StateObserver emptyStateObserver(TIMEOUT);
+    f = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return emptyStateObserver.notify(); }});
     ASSERT_TRUE(emptyStateObserver.await());
-    thread1.join();
 
     // test TypedStateObserver<dummy> with dummy = user-defined type
 
@@ -109,45 +131,41 @@ TEST_F(CanBusSharerTest, StateObserver)
 
     dummy d;
     const dummy _v1{4};
-    TypedStateObserver<dummy> dummyStateObserver(timeout);
-    std::thread thread2(observer_timer{millis, [&] { return dummyStateObserver.notify(_v1); }});
+    TypedStateObserver<dummy> dummyStateObserver(TIMEOUT);
+    f = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return dummyStateObserver.notify(_v1); }});
     ASSERT_TRUE(dummyStateObserver.await(d));
-    thread2.join();
     ASSERT_EQ(d.val, _v1.val);
 
     // test TypedStateObserver<int>, use notify(int)
 
     int val1;
     const int _v2 = 4;
-    TypedStateObserver<int> intStateObserver(timeout);
-    std::thread thread3(observer_timer{millis, [&] { return intStateObserver.notify(_v2); }});
+    TypedStateObserver<int> intStateObserver(TIMEOUT);
+    f = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return intStateObserver.notify(_v2); }});
     ASSERT_TRUE(intStateObserver.await(&val1));
-    thread3.join();
     ASSERT_EQ(val1, _v2);
 
     // test TypedStateObserver<int>, use notify(const std::uint8_t *, std::size_t)
 
     std::int8_t val2;
     const std::uint8_t _v3[] = {4};
-    TypedStateObserver<std::int8_t> intBuffStateObserver(timeout);
-    std::thread thread4(observer_timer{millis, [&] { return intBuffStateObserver.notify(_v3, 1); }});
+    TypedStateObserver<std::int8_t> intBuffStateObserver(TIMEOUT);
+    f = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return intBuffStateObserver.notify(_v3, 1); }});
     ASSERT_TRUE(intBuffStateObserver.await(&val2));
-    thread4.join();
     ASSERT_EQ(val2, _v3[0]);
 
     // test TypedStateObserver<std::uint8_t[]>
 
     std::uint8_t buff[1];
     const std::uint8_t _v4[] = {4};
-    TypedStateObserver<std::uint8_t[]> bufferStateObserver(timeout);
-    std::thread thread5(observer_timer{millis, [&] { return bufferStateObserver.notify(_v4, 1); }});
+    TypedStateObserver<std::uint8_t[]> bufferStateObserver(TIMEOUT);
+    f = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return bufferStateObserver.notify(_v4, 1); }});
     ASSERT_TRUE(bufferStateObserver.await(buff));
-    thread5.join();
     ASSERT_EQ(buff[0], _v4[0]);
 
     // test StateObserver, never call notify()
 
-    StateObserver orphanStateObserver(timeout);
+    StateObserver orphanStateObserver(TIMEOUT);
     ASSERT_FALSE(orphanStateObserver.await());
 
     // test StateObserver on existing instance, await() but don't notify()
@@ -156,13 +174,34 @@ TEST_F(CanBusSharerTest, StateObserver)
 
     // test StateObserver on existing instance, await() and notify()
 
-    std::thread thread6(observer_timer{millis, [&] { return emptyStateObserver.notify(); }});
+    f = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return emptyStateObserver.notify(); }});
     ASSERT_TRUE(emptyStateObserver.await());
-    thread6.join();
 
     // test StateObserver on existing instance, notify() but don't await()
 
     ASSERT_FALSE(emptyStateObserver.notify());
+}
+
+TEST_F(CanBusSharerTest, SdoClient)
+{
+    const std::uint8_t id = 0x05;
+    const std::uint16_t cobRx = 0x600;
+    const std::uint16_t cobTx = 0x580;
+
+    SdoClient sdo(id, cobRx, cobTx, TIMEOUT, getSenderDelegate());
+    ASSERT_EQ(sdo.getCobIdRx(), id + cobRx);
+    ASSERT_EQ(sdo.getCobIdTx(), id + cobTx);
+
+    std::uint16_t actual1;
+    std::uint16_t expected1 = 0x4444;
+    std::uint16_t index1 = 0x1234;
+    std::uint8_t subindex1 = 0x56;
+    std::uint8_t response[8] = {0x4B, 0x00, 0x00, subindex1};
+    std::memcpy(response + 1, &index1, 2);
+    std::memcpy(response + 4, &expected1, 2);
+    /*f = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
+    ASSERT_TRUE(sdo.upload("Upload test 1", &actual1, index1, subindex1));
+    ASSERT_EQ(actual1, expected1);*/
 }
 
 } // namespace roboticslab
