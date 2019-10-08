@@ -259,6 +259,42 @@ bool SdoClient::downloadInternal(const std::string & name, const void * data, st
     return true;
 }
 
+bool SdoClient::upload(const std::string & name, std::string & s, std::uint16_t index, std::uint8_t subindex)
+{
+    const std::uint32_t maxLen = 100; // arbitrary high value
+    char buf[maxLen] = {0};
+
+    if (!uploadInternal(name, buf, maxLen, index, subindex))
+    {
+        return false;
+    }
+
+    s = buf;
+    return true;
+}
+
+bool SdoClient::upload(const std::string & name, const std::function<void(const std::string & s)> & fn, std::uint16_t index, std::uint8_t subindex)
+{
+    std::string s;
+
+    if (!upload(name, s, index, subindex))
+    {
+        return false;
+    }
+
+    fn(s);
+    return true;
+}
+
+bool SdoClient::download(const std::string & name, const std::string & s, std::uint16_t index, std::uint8_t subindex)
+{
+    char * buf = new char[s.size()];
+    s.copy(buf, s.size());
+    bool res = downloadInternal(name, buf, s.size(), index, subindex);
+    delete[] buf;
+    return res;
+}
+
 bool SdoClient::performTransfer(const std::string & name, const std::uint8_t * req, std::uint8_t * resp)
 {
     const std::string & reqStr = msgToStr(cobRx, req);

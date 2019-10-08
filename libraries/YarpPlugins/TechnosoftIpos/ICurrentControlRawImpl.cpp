@@ -32,8 +32,8 @@ bool TechnosoftIpos::getCurrentRangeRaw(int m, double * min, double * max)
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
 
-    return can->sdo()->upload<std::uint16_t>("Current limit", [=](std::uint16_t * data)
-            { *max = vars.internalUnitsToPeakCurrent(*data);
+    return can->sdo()->upload<std::uint16_t>("Current limit", [=](std::uint16_t data)
+            { *max = vars.internalUnitsToPeakCurrent(data);
               *min = -(*max); },
             0x207F);
 }
@@ -81,8 +81,8 @@ bool TechnosoftIpos::getRefCurrentRaw(int m, double * curr)
     CHECK_JOINT(m);
     CHECK_MODE(VOCAB_CM_CURRENT);
 
-    return can->sdo()->upload<std::int32_t>("External online reference", [=](std::int32_t * data)
-            { *curr = vars.internalUnitsToCurrent(*data >> 16); },
+    return can->sdo()->upload<std::int32_t>("External online reference", [=](std::int32_t data)
+            { *curr = vars.internalUnitsToCurrent(data >> 16); },
             0x201C);
 }
 

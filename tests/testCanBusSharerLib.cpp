@@ -228,7 +228,7 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
 
     std::int8_t actual2;
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
-    ASSERT_TRUE(sdo.upload<std::int8_t>("Upload test 2", [&](std::int8_t * data) { actual2 = *data; }, index, subindex));
+    ASSERT_TRUE(sdo.upload<std::int8_t>("Upload test 2", [&](std::int8_t data) { actual2 = data; }, index, subindex));
     ASSERT_EQ(actual1, expected);
 
     // test SdoClient::upload(), size mismatch (expect 1 byte, receive 2 bytes)
@@ -298,7 +298,7 @@ TEST_F(CanBusSharerTest, SdoClientSegmented)
     f() = std::async(std::launch::async, observer_timer{MILLIS * 2, [&]{ return sdo.notify(response2); }});
     f() = std::async(std::launch::async, observer_timer{MILLIS * 3, [&]{ return sdo.notify(response3); }});
     f() = std::async(std::launch::async, observer_timer{MILLIS * 4, [&]{ return sdo.notify(response4); }});
-    ASSERT_TRUE(sdo.upload("Upload test 1", &actual1, index, subindex));
+    ASSERT_TRUE(sdo.upload("Upload test 1", actual1, index, subindex));
     ASSERT_EQ(actual1, expected);
 
     // test SdoClient::upload(), request string (lambda overload)
@@ -308,7 +308,7 @@ TEST_F(CanBusSharerTest, SdoClientSegmented)
     f() = std::async(std::launch::async, observer_timer{MILLIS * 2, [&]{ return sdo.notify(response2); }});
     f() = std::async(std::launch::async, observer_timer{MILLIS * 3, [&]{ return sdo.notify(response3); }});
     f() = std::async(std::launch::async, observer_timer{MILLIS * 4, [&]{ return sdo.notify(response4); }});
-    ASSERT_TRUE(sdo.upload<std::string>("Upload test 2", [&](std::string * data) { actual2 = *data; }, index, subindex));
+    ASSERT_TRUE(sdo.upload("Upload test 2", [&](const std::string & data) { actual2 = data; }, index, subindex));
     ASSERT_EQ(actual2, expected);
 
     // test SdoClient::download(), send string
@@ -322,7 +322,7 @@ TEST_F(CanBusSharerTest, SdoClientSegmented)
     f() = std::async(std::launch::async, observer_timer{MILLIS * 2, [&]{ return sdo.notify(response6); }});
     f() = std::async(std::launch::async, observer_timer{MILLIS * 3, [&]{ return sdo.notify(response7); }});
     f() = std::async(std::launch::async, observer_timer{MILLIS * 4, [&]{ return sdo.notify(response8); }});
-    ASSERT_TRUE(sdo.download<std::string>("Download test", expected, index, subindex));
+    ASSERT_TRUE(sdo.download("Download test", expected, index, subindex));
 }
 
 } // namespace roboticslab

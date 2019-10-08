@@ -74,7 +74,7 @@ bool TechnosoftIpos::initialize()
 
     std::string firmware;
 
-    if (!can->sdo()->upload("Manufacturer software version", &firmware, 0x100A))
+    if (!can->sdo()->upload("Manufacturer software version", firmware, 0x100A))
     {
         return false;
     }

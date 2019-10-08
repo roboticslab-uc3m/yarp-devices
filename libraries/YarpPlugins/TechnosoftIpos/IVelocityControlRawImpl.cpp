@@ -58,10 +58,10 @@ bool TechnosoftIpos::getRefVelocityRaw(int joint, double * vel)
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_VELOCITY);
 
-    return can->sdo()->upload<std::int32_t>("Target velocity", [=](std::int32_t * data)
+    return can->sdo()->upload<std::int32_t>("Target velocity", [=](std::int32_t data)
             {
-                std::int16_t dataInt = *data >> 16;
-                std::uint16_t dataFrac = *data & 0xFFFF;
+                std::int16_t dataInt = data >> 16;
+                std::uint16_t dataFrac = data & 0xFFFF;
                 double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
                 *vel = vars.internalUnitsToDegrees(value, 1);
             },
