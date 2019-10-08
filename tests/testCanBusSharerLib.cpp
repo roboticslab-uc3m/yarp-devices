@@ -192,16 +192,72 @@ TEST_F(CanBusSharerTest, SdoClient)
     ASSERT_EQ(sdo.getCobIdRx(), id + cobRx);
     ASSERT_EQ(sdo.getCobIdTx(), id + cobTx);
 
-    std::uint16_t actual1;
-    std::uint16_t expected1 = 0x4444;
-    std::uint16_t index1 = 0x1234;
-    std::uint8_t subindex1 = 0x56;
-    std::uint8_t response[8] = {0x4B, 0x00, 0x00, subindex1};
-    std::memcpy(response + 1, &index1, 2);
-    std::memcpy(response + 4, &expected1, 2);
+    const std::uint16_t index = 0x1234;
+    const std::uint8_t subindex = 0x56;
+
+    std::uint8_t response[8] = {0x00, 0x00, 0x00, subindex};
+    std::memcpy(response + 1, &index, 2);
+
+    std::int32_t expectedInt;
+
+    // test SdoClient::upload(), request 1 byte
+
+    std::int8_t actual1;
+    response[0] = 0x4F;
+    expectedInt = 0x44;
+    std::memcpy(response + 4, &expectedInt, 4);
     f = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
-    ASSERT_TRUE(sdo.upload("Upload test 1", &actual1, index1, subindex1));
-    ASSERT_EQ(actual1, expected1);
+    ASSERT_TRUE(sdo.upload("Upload test 1", &actual1, index, subindex));
+    ASSERT_EQ(actual1, expectedInt);
+
+    // test SdoClient::upload(), request 1 byte (lambda overload)
+
+    std::int8_t actual2;
+    f = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
+    ASSERT_TRUE(sdo.upload<std::int8_t>("Upload test 2", [&](std::int8_t * data) { actual2 = *data; }, index, subindex));
+    ASSERT_EQ(actual1, expectedInt);
+
+    // test SdoClient::upload(), size mismatch (expect 1 byte, receive 2 bytes)
+
+    response[0] = 0x4B;
+    f = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
+    ASSERT_FALSE(sdo.upload("Upload test 1b", &actual1, index, subindex));
+
+    // test SdoClient::upload(), request 2 bytes
+
+    std::int16_t actual3;
+    response[0] = 0x4B;
+    expectedInt = 0x4444;
+    std::memcpy(response + 4, &expectedInt, 4);
+    f = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
+    ASSERT_TRUE(sdo.upload("Upload test 2", &actual3, index, subindex));
+    ASSERT_EQ(actual3, expectedInt);
+
+    // test SdoClient::upload(), request 4 bytes
+
+    std::int32_t actual4;
+    response[0] = 0x43;
+    expectedInt = 0x44444444;
+    std::memcpy(response + 4, &expectedInt, 4);
+    f = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
+    ASSERT_TRUE(sdo.upload("Upload test 3", &actual4, index, subindex));
+    ASSERT_EQ(actual4, expectedInt);
+
+    std::memset(response, 0x00, 8); // reset
+
+    // test SdoClient::download(), send 1 byte
+
+    response[0] = 0x60;
+    f = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
+    ASSERT_TRUE(sdo.download<std::int8_t>("Download test 1", 0x44, index, subindex));
+
+    // test SDO abort transfer in download() operation
+
+    response[0] = 0x80;
+    std::uint32_t abortCode = 0x06090011; // "Sub-index does not exist"
+    std::memcpy(response + 4, &abortCode, 4);
+    f = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
+    ASSERT_FALSE(sdo.download<std::int8_t>("Download test 2", 0x44, index, subindex));
 }
 
 } // namespace roboticslab
