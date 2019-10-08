@@ -18,6 +18,37 @@
 namespace roboticslab
 {
 
+inline std::uint64_t toInt64(std::uint8_t op, std::uint16_t index, std::uint8_t subindex, std::uint32_t data = 0)
+{
+    return op + (index << 8) + (subindex << 24) + (static_cast<std::uint64_t>(data) << 32);
+}
+
+struct fake_message
+{
+    fake_message() : id(0), len(0), data(0)
+    { }
+
+    fake_message(const can_message & msg) : id(msg.id), len(msg.len), data(0)
+    { std::memcpy(&data, msg.data, len); }
+
+    unsigned int id;
+    unsigned int len;
+    uint64_t data;
+};
+
+class FakeCanSenderDelegate : public CanSenderDelegate
+{
+public:
+    virtual bool prepareMessage(const can_message & msg) override
+    { return this->msg = msg, true; }
+
+    fake_message getMessage() const
+    { return msg; }
+
+private:
+    fake_message msg;
+};
+
 /**
  * @ingroup yarp_devices_tests
  * @brief ...
@@ -48,7 +79,7 @@ public:
 
 protected:
 
-    CanSenderDelegate * getSenderDelegate()
+    FakeCanSenderDelegate * getSender()
     { return senderDelegate; }
 
     std::future<void> & f()
@@ -64,13 +95,6 @@ protected:
     static constexpr int MILLIS = 10;
 
 private:
-
-    class FakeCanSenderDelegate : public CanSenderDelegate
-    {
-    public:
-        virtual bool prepareMessage(const can_message & msg) override
-        { return true; }
-    };
 
     FakeCanSenderDelegate * senderDelegate;
 };
@@ -203,7 +227,7 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     const std::uint16_t cobRx = 0x600;
     const std::uint16_t cobTx = 0x580;
 
-    SdoClient sdo(id, cobRx, cobTx, TIMEOUT, getSenderDelegate());
+    SdoClient sdo(id, cobRx, cobTx, TIMEOUT, getSender());
     ASSERT_EQ(sdo.getCobIdRx(), id + cobRx);
     ASSERT_EQ(sdo.getCobIdTx(), id + cobTx);
 
@@ -223,6 +247,9 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     std::memcpy(response + 4, &expected, 4);
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.upload("Upload test 1", &actual1, index, subindex));
+    ASSERT_EQ(getSender()->getMessage().id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getMessage().len, 8);
+    ASSERT_EQ(getSender()->getMessage().data, toInt64(0x40, index, subindex));
     ASSERT_EQ(actual1, expected);
 
     // test SdoClient::upload(), request 1 byte (lambda overload)
@@ -230,13 +257,16 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     std::int8_t actual2;
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.upload<std::int8_t>("Upload test 2", [&](std::int8_t data) { actual2 = data; }, index, subindex));
+    ASSERT_EQ(getSender()->getMessage().id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getMessage().len, 8);
+    ASSERT_EQ(getSender()->getMessage().data, toInt64(0x40, index, subindex));
     ASSERT_EQ(actual1, expected);
 
     // test SdoClient::upload(), size mismatch (expect 1 byte, receive 2 bytes)
 
     response[0] = 0x4B;
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
-    ASSERT_FALSE(sdo.upload("Upload test 1b", &actual1, index, subindex));
+    ASSERT_FALSE(sdo.upload("Upload test 3", &actual1, index, subindex));
 
     // test SdoClient::upload(), request 2 bytes
 
@@ -245,7 +275,10 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     expected = 0x4444;
     std::memcpy(response + 4, &expected, 4);
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
-    ASSERT_TRUE(sdo.upload("Upload test 2", &actual3, index, subindex));
+    ASSERT_TRUE(sdo.upload("Upload test 4", &actual3, index, subindex));
+    ASSERT_EQ(getSender()->getMessage().id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getMessage().len, 8);
+    ASSERT_EQ(getSender()->getMessage().data, toInt64(0x40, index, subindex));
     ASSERT_EQ(actual3, expected);
 
     // test SdoClient::upload(), request 4 bytes
@@ -255,16 +288,43 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     expected = 0x44444444;
     std::memcpy(response + 4, &expected, 4);
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
-    ASSERT_TRUE(sdo.upload("Upload test 3", &actual4, index, subindex));
+    ASSERT_TRUE(sdo.upload("Upload test 5", &actual4, index, subindex));
+    ASSERT_EQ(getSender()->getMessage().id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getMessage().len, 8);
+    ASSERT_EQ(getSender()->getMessage().data, toInt64(0x40, index, subindex));
     ASSERT_EQ(actual4, expected);
 
     std::memset(response, 0x00, 8); // reset
 
     // test SdoClient::download(), send 1 byte
 
+    std::int8_t request1 = 0x44;
     response[0] = 0x60;
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
-    ASSERT_TRUE(sdo.download<std::int8_t>("Download test 1", 0x44, index, subindex));
+    ASSERT_TRUE(sdo.download("Download test 1", request1, index, subindex));
+    ASSERT_EQ(getSender()->getMessage().id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getMessage().len, 8);
+    ASSERT_EQ(getSender()->getMessage().data, toInt64(0x2F, index, subindex, request1));
+
+    // test SdoClient::download(), send 2 bytes
+
+    std::int16_t request2 = 0x4444;
+    response[0] = 0x60;
+    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
+    ASSERT_TRUE(sdo.download("Download test 2", request2, index, subindex));
+    ASSERT_EQ(getSender()->getMessage().id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getMessage().len, 8);
+    ASSERT_EQ(getSender()->getMessage().data, toInt64(0x2B, index, subindex, request2));
+
+    // test SdoClient::download(), send 4 bytes
+
+    std::int32_t request3 = 0x44444444;
+    response[0] = 0x60;
+    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
+    ASSERT_TRUE(sdo.download("Download test 3", request3, index, subindex));
+    ASSERT_EQ(getSender()->getMessage().id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getMessage().len, 8);
+    ASSERT_EQ(getSender()->getMessage().data, toInt64(0x23, index, subindex, request3));
 
     // test SDO abort transfer in download() operation
 
@@ -272,12 +332,12 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     std::uint32_t abortCode = 0x06090011; // "Sub-index does not exist"
     std::memcpy(response + 4, &abortCode, 4);
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
-    ASSERT_FALSE(sdo.download<std::int8_t>("Download test 2", 0x44, index, subindex));
+    ASSERT_FALSE(sdo.download<std::int8_t>("Download test 4", 0x44, index, subindex));
 }
 
 TEST_F(CanBusSharerTest, SdoClientSegmented)
 {
-    SdoClient sdo(0x05, 0x600, 0x580, TIMEOUT, getSenderDelegate());
+    SdoClient sdo(0x05, 0x600, 0x580, TIMEOUT, getSender());
 
     const std::uint8_t indexMSB = 0x12;
     const std::uint8_t indexLSB = 0x34;
@@ -328,7 +388,7 @@ TEST_F(CanBusSharerTest, SdoClientSegmented)
 
 TEST_F(CanBusSharerTest, ReceivePdo)
 {
-    SdoClient sdo(0x05, 0x600, 0x580, TIMEOUT, getSenderDelegate());
+    SdoClient sdo(0x05, 0x600, 0x580, TIMEOUT, getSender());
 
     const std::uint8_t id = 0x05;
     const std::uint16_t cob = 0x200;
@@ -337,7 +397,7 @@ TEST_F(CanBusSharerTest, ReceivePdo)
     const std::uint8_t cobIdMSB = cobId >> 8;
     const unsigned int n = 1;
 
-    ReceivePdo rpdo1(id, cob, n, &sdo, getSenderDelegate());
+    ReceivePdo rpdo1(id, cob, n, &sdo, getSender());
     ASSERT_EQ(rpdo1.getCobId(), cobId);
 
     const std::uint8_t responseUpload[8] = {0x43, static_cast<std::uint8_t>(n - 1), 0x14, 0x01, cobIdLSB, cobIdMSB};

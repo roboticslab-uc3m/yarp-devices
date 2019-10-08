@@ -91,7 +91,7 @@ namespace
 
 bool SdoClient::send(const std::uint8_t * msg)
 {
-    return sender->prepareMessage({cobRx, 8, msg});
+    return sender->prepareMessage({getCobIdRx(), 8, msg});
 }
 
 std::string SdoClient::msgToStr(std::uint16_t cob, const std::uint8_t * msgData)
@@ -195,7 +195,7 @@ bool SdoClient::downloadInternal(const std::string & name, const void * data, st
         indicationBits.set(1); // e: transfer type
         const std::uint8_t n = 4 - size;
         indicationMsg[0] = indicationBits.to_ulong() + (n << 2);
-        std::memcpy(indicationMsg + 4, &data, size);
+        std::memcpy(indicationMsg + 4, data, size);
 
         std::uint8_t confirmMsg[8];
         return performTransfer(name, indicationMsg, confirmMsg);
