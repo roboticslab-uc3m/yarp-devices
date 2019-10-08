@@ -72,16 +72,16 @@ const unsigned long canId = 124;
 // pulsos-por-slot * encoderPulses (numero-total-de-slots) / 360
 const double div = 4 * 1024 / 360.0; // approx. 11.38
 
-// -- InicializaciÛn de variables para el envÌo
+// -- Inicializaci√≥n de variables para el env√≠o
 BYTE delay;
 int aux, message[2];
 double degrees;
 BYTE x, y;
 ECAN_TX_MSG_FLAGS txFlags = ECAN_TX_PRIORITY_3 & ECAN_TX_STD_FRAME & ECAN_TX_NO_RTR_FRAME;
 
-int pushFlag = 0; // flag para saber si est· ejecutando el PUSH
+int pushFlag = 0; // flag para saber si est√° ejecutando el PUSH
 
-// -- Variables que almacenar·n los datos a recibir:
+// -- Variables que almacenar√°n los datos a recibir:
 unsigned long picId = 0;
 BYTE data[8];
 BYTE dataLen;
@@ -105,7 +105,7 @@ void main(void)
     TRISCbits.TRISC4=1;     // SDI  in
     LATCbits.LATC2=1;       //Disable del encoder al inicio
 
-    OSCCON=0b11110000;       //Primary oscillator.
+    OSCCON=0b11110000;      //Primary oscillator.
 
     // Manual (page 15): ECAN.def file must be set up correctly.
     ECANInitialize();
@@ -114,7 +114,7 @@ void main(void)
     ECANSetOperationMode(ECAN_OP_MODE_CONFIG);
 
     /* Manual (page 1):
-    ECAN provides three modes of operation ñ Mode 0, Mode 1 and Mode 2. Mode 0 is fully backward compat-
+    ECAN provides three modes of operation ‚Äì Mode 0, Mode 1 and Mode 2. Mode 0 is fully backward compat-
     ible with the legacy CAN module. Applications developed for the legacy CAN module would continue to
     work without any change using ECAN. Mode 1 is the Enhanced Legacy mode with increased buffers and fil-
     ters. Mode 2 has the same resources as Mode 1, but with a hardware managed receive FIFO. Given its fea-
@@ -143,60 +143,59 @@ void main(void)
 
     /* Mensaje compuesto por 2 bytes
     -- data[0]: (Byte 1)
-    	* start push (0x01) publicaciÛn permanente		(necesita indicar periodo de publicaciÛn)
-    	* start pull (0x02) publicaciÛn por peticiÛn	(no necesita indicar velocidad de publicaciÛn)
-    	* stop  push (0x03) para la publicaciÛn por push
+        * start push (0x01) publicaci√≥n permanente (necesita indicar periodo de publicaci√≥n)
+        * start pull (0x02) publicaci√≥n por petici√≥n (no necesita indicar velocidad de publicaci√≥n)
+        * stop  push (0x03) para la publicaci√≥n por push
     -- data[1]: (Byte 2)
-    	* Periodo de publicaciÛn entre mensajes usando publicaciÛn tipo push. Valores (0 - 255)
-    	A tener en cuenta:
-    		- La frecuencia de oscilaciÛn se encuentra definida como Fosc = 5Mhz (20/4)
-    		- La velocidad de ejecuciÛn de cada ciclo de instrucciÛn son 0.8 microsegundos
-    		- Delay10TCYx(i) -> 10*Tcy*i. Por tanto Delay10TCYc(1) equivale a 8 microsegundos (10 ciclos de reloj)
+        * Periodo de publicaci√≥n entre mensajes usando publicaci√≥n tipo push. Valores (0 - 255)
+        A tener en cuenta:
+            - La frecuencia de oscilaci√≥n se encuentra definida como Fosc = 5Mhz (20/4)
+            - La velocidad de ejecuci√≥n de cada ciclo de instrucci√≥n son 0.8 microsegundos
+            - Delay10TCYx(i) -> 10*Tcy*i. Por tanto Delay10TCYc(1) equivale a 8 microsegundos (10 ciclos de reloj)
     */
-	
-	delay = 0;
-	
+
+    delay = 0;
+
     while(1)
     {
         // --------------- Recibo!!! ------------------
         BOOL ret = ECANReceiveMessage(&picId, data, &dataLen, &rxflags);
 
-	    if (!ret || picId!=canId)
-	    {
-		    if (pushFlag)
-		    {
-			    sendData(0x80);
-			    Delay1KTCYx(delay);
-		    }
-		    
-		    continue;
-	    }
-	  	
-	    switch (data[0])
-	    {
-		    case 0x01: // start push (continuous mode)			
-		    	delay = data[1];
-				pushFlag = 1;	   
-				sendAck(0x100); 
-	    	break;	    		      	
-	    	
-	    	case 0x02: // stop push
-	    		pushFlag = 0;
-	    		sendAck(0x100); 
-	    	break;
-	    	
-			case 0x03: // pull (polling mode)
-	    		sendData(0x180); 
-	    	break;
-	    	
-	    	case 0xFF: // zero
-	    		setZero();
-	    		sendAck(0x200);
-	    	break;
-	    	
-	    } // switch
-	    
-	    cleanData();
+        if (!ret || picId!=canId)
+        {
+            if (pushFlag)
+            {
+                sendData(0x80);
+                Delay1KTCYx(delay);
+            }
+
+            continue;
+        }
+
+        switch (data[0])
+        {
+        case 0x01: // start push (continuous mode)
+            delay = data[1];
+            pushFlag = 1;	   
+            sendAck(0x100); 
+        break;	    		      	
+
+        case 0x02: // stop push
+            pushFlag = 0;
+            sendAck(0x100); 
+        break;
+
+        case 0x03: // pull (polling mode)
+            sendData(0x180); 
+        break;
+
+        case 0xFF: // zero
+            setZero();
+            sendAck(0x200);
+        break;
+        } // switch
+
+        cleanData();
     } // while
 } // main
 
@@ -205,59 +204,59 @@ void main(void)
 void sendData(unsigned short op)
 {
     // - Manual: [1. The host issues the command, 0x10. The data read in at this time will be 0xa5 or 0x00 since this is the first SPI transfer]
-    LATCbits.LATC2=0;			
-    WriteSPI (0b00010000);      //SolicitaciÛn de posiciÛn (comando 0x10) 
+    LATCbits.LATC2=0;
+    WriteSPI (0b00010000);      //Solicitaci√≥n de posici√≥n (comando 0x10) 
     Delay10TCYx(3);             // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Delay10TCYx(3)= 6us
     y=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
-    LATCbits.LATC2=1;			
+    LATCbits.LATC2=1;
 
-	// - Manual: [2. The host waits a minimum of 5 µs then sends a ìnop_a5î command: 0x00]
-    LATCbits.LATC2=0;			
+    // - Manual: [2. The host waits a minimum of 5 ¬µs then sends a ‚Äúnop_a5‚Äù command: 0x00]
+    LATCbits.LATC2=0;
     WriteSPI (0b00000000);      //Comando 0x00 -> nop_a5
     Delay10TCYx(3);             // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Delay10TCYx(3) = 6us
     y=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
     LATCbits.LATC2=1;
 
-	// - Manual: [3. The response to the ìnop_a5î is either 0xa5 or an echo of the command, 0x10.]
-    while(y==0b10100101)  		// - Manual: [a. If it is 0xa5, it will go back to step 2.]											
+    // - Manual: [3. The response to the ‚Äúnop_a5‚Äù is either 0xa5 or an echo of the command, 0x10.]
+    while(y==0b10100101)        // - Manual: [a. If it is 0xa5, it will go back to step 2.]
     {
 	    Delay10TCYx(5); 
         LATCbits.LATC2=0;
         WriteSPI (0b00000000);  // Comando 0x00 -> nop_a5)
-        Delay10TCYx(3); 		// Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Delay10TCYx(3) = 6us
-        y=SSPBUF;				// Recoge los datos del SSPBUF que provienen del encoder (MISO)
+        Delay10TCYx(3);         // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Delay10TCYx(3) = 6us
+        y=SSPBUF;               // Recoge los datos del SSPBUF que provienen del encoder (MISO)
         LATCbits.LATC2=1;
     }
 
-	// - Manual: [b. Otherwise it will go to step 4.] (echo of the command, 0x10.)
-	// - Manual: [4. The host waits a minimum of 5 µs then sends ìnop_a5î, the data read is the high byte of the position.]
-    LATCbits.LATC2=0;			
-    WriteSPI(0b00000000);		//Comando 0x00 -> nop_a5
-    Delay10TCYx(3);				// Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Delay10TCYx(3) = 6us
-    y=SSPBUF;					//Recoge los datos del SSPBUF que provienen del encoder (MISO)
-    message[0]=y;				//Se almacena en el primer elemento del array que se enviar· por CAN
+    // - Manual: [b. Otherwise it will go to step 4.] (echo of the command, 0x10.)
+    // - Manual: [4. The host waits a minimum of 5 ¬µs then sends ‚Äúnop_a5‚Äù, the data read is the high byte of the position.]
+    LATCbits.LATC2=0;
+    WriteSPI(0b00000000);       //Comando 0x00 -> nop_a5
+    Delay10TCYx(3);             // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Delay10TCYx(3) = 6us
+    y=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
+    message[0]=y;               //Se almacena en el primer elemento del array que se enviar√° por CAN
     LATCbits.LATC2=1;
     
-    // - Manual: [5. The host waits a minimum of 5 µs then sends ìnop_a5î, the data read is the low byte of the position.]
+    // - Manual: [5. The host waits a minimum of 5 ¬µs then sends ‚Äúnop_a5‚Äù, the data read is the low byte of the position.]
     LATCbits.LATC2=0;
     WriteSPI(0b00000000);       //Espera para captar la parte baja del mensaje
     Delay10TCYx(3);             // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Delay10TCYx(3) = 6us
     y=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
-    message[1]=y;               //Se almacena en el segundo elemento del array que se enviar· por CAN
+    message[1]=y;               //Se almacena en el segundo elemento del array que se enviar√° por CAN
 
-	// - Manual: [6. The host waits a minimum of 5 µs before sending another SPI command.]
+    // - Manual: [6. The host waits a minimum of 5 ¬µs before sending another SPI command.]
     LATCbits.LATC2=1;
-    aux=(message[0]<<8)+message[1];  //Se rota el byte alto de la posiciÛn 8 bits (2^8=256) y se suma al bajo
-    degrees = aux / div;            //Se divide para obtener la realacciÛn en grados
+    aux=(message[0]<<8)+message[1];  //Se rota el byte alto de la posici√≥n 8 bits (2^8=256) y se suma al bajo
+    degrees = aux / div;             //Se divide para obtener la realacci√≥n en grados
 
     x=0;
     while( !x )
     {
-        x=ECANSendMessage(op + canId, &degrees, sizeof(degrees), txFlags);       
+        x=ECANSendMessage(op + canId, &degrees, sizeof(degrees), txFlags);
     }
 }
 
-// FunciÛn para grabar el cero sobre el CUI
+// Funci√≥n para grabar el cero sobre el CUI
 void setZero()
 {
 	BYTE x;
@@ -272,35 +271,34 @@ void setZero()
     LATCbits.LATC2=1;           //Disable del encoder al inicio
 
     LATCbits.LATC2=0;
-    WriteSPI (0b01110000);      //Establece la posiciÛn actual como cero (comando 0x70)
+    WriteSPI (0b01110000);      //Establece la posici√≥n actual como cero (comando 0x70)
     Delay10TCYx(3);             //Wait 6us
     x=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
     LATCbits.LATC2=1;
 
     LATCbits.LATC2=0;
-    WriteSPI (0b00000000);      //Espera a que el encoder estÈ listo (comando 0x00)
+    WriteSPI (0b00000000);      //Espera a que el encoder est√© listo (comando 0x00)
     Delay10TCYx(3);             //Wait 6us
     x=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
     LATCbits.LATC2=1;
 
-    while(x!=0b10000000)        //Espera hasta que el encoder estÈ preparado para enviar algo (Respuesta 0x80)
+    while(x!=0b10000000)        //Espera hasta que el encoder est√© preparado para enviar algo (Respuesta 0x80)
     {
 
         LATCbits.LATC2=0;
-        WriteSPI (0b00000000);  //Espera a que el encoder estÈ listo (comando 0x00)
+        WriteSPI (0b00000000);  //Espera a que el encoder est√© listo (comando 0x00)
         Delay10TCYx(3);         //Wait 6us
         x=SSPBUF;               //Recoge los datos del SSPBUF que provienen del encoder (MISO)
         LATCbits.LATC2=1;
-
     }
-}	
+}
 
 void sendAck(unsigned short op)
 {
-	x=0;
+    x=0;
     while( !x )
     {
-        x=ECANSendMessage(op + canId, NULL, 0, txFlags);       
+        x=ECANSendMessage(op + canId, NULL, 0, txFlags);
     }
 }
 
