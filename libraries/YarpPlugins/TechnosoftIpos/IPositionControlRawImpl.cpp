@@ -186,7 +186,7 @@ bool TechnosoftIpos::getRefSpeedRaw(int j, double * ref)
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
 
-    return can->sdo()->upload<std::uint32_t>("Profile velocity", [=](std::uint32_t * data)
+    return can->sdo()->upload<std::uint32_t>("Profile velocity", [&](std::uint32_t * data)
             {
                 std::uint16_t dataInt = *data >> 16;
                 std::uint16_t dataFrac = *data & 0xFFFF;
@@ -219,7 +219,7 @@ bool TechnosoftIpos::getRefAccelerationRaw(int j, double * acc)
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
 
-    return can->sdo()->upload<std::uint32_t>("Profile acceleration", [=](std::uint32_t * data)
+    return can->sdo()->upload<std::uint32_t>("Profile acceleration", [&](std::uint32_t * data)
             {
                 std::uint16_t dataInt = *data >> 16;
                 std::uint16_t dataFrac = *data & 0xFFFF;
@@ -279,7 +279,7 @@ bool TechnosoftIpos::getTargetPositionRaw(int joint, double * ref)
     CD_DEBUG("\n");
     CHECK_JOINT(joint);
 
-    return can->sdo()->upload<std::int32_t>("Target position", [=](std::int32_t * data)
+    return can->sdo()->upload<std::int32_t>("Target position", [&](std::int32_t * data)
             { *ref = vars.internalUnitsToDegrees(*data); },
             0x607A);
 }
