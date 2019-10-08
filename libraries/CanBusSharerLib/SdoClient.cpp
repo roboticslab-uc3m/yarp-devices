@@ -116,7 +116,7 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
 
     std::bitset<8> bitsReceived(responseMsg[0]);
 
-    if (bitsReceived[1]) // expedited trasfer
+    if (bitsReceived[1]) // expedited transfer
     {
         if (bitsReceived[0]) // data size is indicated in 'n'
         {
@@ -242,7 +242,7 @@ bool SdoClient::downloadInternal(const std::string & name, const void * data, st
                 return false;
             }
 
-            if (!std::bitset<8>(confirmMsg[0])[4] != bitsSent[4])
+            if (std::bitset<8>(confirmMsg[0])[4] != bitsSent[4])
             {
                 CD_ERROR("SDO segmented download: toggle bit mismatch.\n");
                 return false;

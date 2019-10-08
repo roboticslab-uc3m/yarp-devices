@@ -38,7 +38,7 @@ inline bool SdoClient::upload(const std::string & name, const std::function<void
 }
 
 template<>
-inline bool SdoClient::download(const std::string & name, const std::string & s, std::uint16_t index, std::uint8_t subindex)
+inline bool SdoClient::download(const std::string & name, std::string s, std::uint16_t index, std::uint8_t subindex)
 {
     char * buf = new char[s.size()];
     s.copy(buf, s.size());
