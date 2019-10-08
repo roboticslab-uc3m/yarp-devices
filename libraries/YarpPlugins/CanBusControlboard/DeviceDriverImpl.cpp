@@ -228,7 +228,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
                 return false;
             }
 
-            if ( ! cuiAbsolute->startContinuousPublishing(0) ) // startContinuousPublishing(delay)
+            if ( ! cuiAbsolute->startPushPublishing(1) )
                 return false;
 
             yarp::os::Time::delay(0.2);
@@ -259,7 +259,7 @@ bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
                 for ( int n=1; n<=5 && ( ! cuiAbsolute->HasFirstReached() ); n++ ) // doesn't respond && trying (5 trials)
                 {
                     CD_WARNING("(%d) Resending start continuous publishing message \n", n);
-                    if ( ! cuiAbsolute->startContinuousPublishing(0))
+                    if ( ! cuiAbsolute->startPushPublishing(1))
                         return false;
 
                     yarp::os::Time::delay(0.2);
@@ -453,7 +453,7 @@ bool roboticslab::CanBusControlboard::close()
 
             CD_INFO("Stopping Cui Absolute PIC (ID: %d)\n", CAN_ID );
 
-            if (! cuiAbsolute->stopPublishingMessages() )
+            if (! cuiAbsolute->stopPushPublishing() )
                 return false;
 
             yarp::os::Time::delay(0.5);
@@ -484,7 +484,7 @@ bool roboticslab::CanBusControlboard::close()
                 if(canId == CAN_ID)
                 {
                     CD_WARNING("Resending stop message to Cui Absolute PIC (ID: %d)\n", CAN_ID );
-                    cuiAbsolute->stopPublishingMessages();
+                    cuiAbsolute->stopPushPublishing();
                 }
             }
         }
