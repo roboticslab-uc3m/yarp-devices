@@ -12,6 +12,7 @@
 #include "StateObserver.hpp"
 #include "CanSenderDelegate.hpp"
 #include "SdoClient.hpp"
+#include "PdoProtocol.hpp"
 #include "CanUtils.hpp"
 
 namespace roboticslab
@@ -323,6 +324,43 @@ TEST_F(CanBusSharerTest, SdoClientSegmented)
     f() = std::async(std::launch::async, observer_timer{MILLIS * 3, [&]{ return sdo.notify(response7); }});
     f() = std::async(std::launch::async, observer_timer{MILLIS * 4, [&]{ return sdo.notify(response8); }});
     ASSERT_TRUE(sdo.download("Download test", expected, index, subindex));
+}
+
+TEST_F(CanBusSharerTest, ReceivePdo)
+{
+    SdoClient sdo(0x05, 0x600, 0x580, TIMEOUT, getSenderDelegate());
+
+    const std::uint8_t id = 0x05;
+    const std::uint16_t cob = 0x200;
+    const std::uint16_t cobId = cob + id;
+    const std::uint8_t cobIdLSB = cobId & 0x00FF;
+    const std::uint8_t cobIdMSB = cobId >> 8;
+    const unsigned int n = 1;
+
+    ReceivePdo rpdo1(id, cob, n, &sdo, getSenderDelegate());
+    ASSERT_EQ(rpdo1.getCobId(), cobId);
+
+    const std::uint8_t responseUpload[8] = {0x43, static_cast<std::uint8_t>(n - 1), 0x14, 0x01, cobIdLSB, cobIdMSB};
+    const std::uint8_t responseDownload[8] = {0x60};
+
+    PdoConfiguration rpdo1Conf;
+    rpdo1Conf.setValid(true);
+    rpdo1Conf.setTransmissionType(PdoTransmissionType::SYNCHRONOUS_CYCLIC_N(0x04));
+    rpdo1Conf.setInhibitTime(0x1234);
+    rpdo1Conf.setEventTimer(0x5678);
+    rpdo1Conf.addMapping<std::int16_t>(0x1111, 0x45).addMapping<std::int32_t>(0x2000);
+
+    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(responseUpload); }});
+
+    for (int i = 2; i <= 10; i++)
+    {
+        f() = std::async(std::launch::async, observer_timer{MILLIS * i, [&]{ return sdo.notify(responseDownload); }});
+    }
+
+    ASSERT_TRUE(rpdo1.configure(rpdo1Conf));
+
+    bool res = rpdo1.write<std::int16_t, std::int32_t>(4444, 44444444);
+    ASSERT_TRUE(res); // strange compile bug
 }
 
 } // namespace roboticslab
