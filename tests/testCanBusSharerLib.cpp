@@ -29,7 +29,7 @@ inline std::uint64_t toInt64(std::uint8_t op, const std::string & s = "")
 {
     std::uint64_t v = op;
 
-    for (auto i = 0; i < s.size(); i++)
+    for (auto i = 0u; i < s.size(); i++)
     {
         v += static_cast<std::uint64_t>(s.data()[i]) << (8 * (i + 1));
     }
@@ -383,15 +383,11 @@ TEST_F(CanBusSharerTest, SdoClientSegmented)
 
     ASSERT_TRUE(sdo.upload("Upload test 1", actual1, index, subindex));
 
-    ASSERT_EQ(getSender()->getMessage(0).id, sdo.getCobIdRx());
-    ASSERT_EQ(getSender()->getMessage(1).id, sdo.getCobIdRx());
-    ASSERT_EQ(getSender()->getMessage(2).id, sdo.getCobIdRx());
-    ASSERT_EQ(getSender()->getMessage(3).id, sdo.getCobIdRx());
-
-    ASSERT_EQ(getSender()->getMessage(0).len, 8);
-    ASSERT_EQ(getSender()->getMessage(1).len, 8);
-    ASSERT_EQ(getSender()->getMessage(2).len, 8);
-    ASSERT_EQ(getSender()->getMessage(3).len, 8);
+    for (auto i = 0; i < 4; i++)
+    {
+        ASSERT_EQ(getSender()->getMessage(i).id, sdo.getCobIdRx());
+        ASSERT_EQ(getSender()->getMessage(i).len, 8);
+    }
 
     ASSERT_EQ(getSender()->getMessage(0).data, toInt64(0x40, index, subindex));
     ASSERT_EQ(getSender()->getMessage(1).data, toInt64(0x60));
@@ -413,15 +409,11 @@ TEST_F(CanBusSharerTest, SdoClientSegmented)
 
     ASSERT_TRUE(sdo.upload("Upload test 2", [&](const std::string & data) { actual2 = data; }, index, subindex));
 
-    ASSERT_EQ(getSender()->getMessage(0).id, sdo.getCobIdRx());
-    ASSERT_EQ(getSender()->getMessage(1).id, sdo.getCobIdRx());
-    ASSERT_EQ(getSender()->getMessage(2).id, sdo.getCobIdRx());
-    ASSERT_EQ(getSender()->getMessage(3).id, sdo.getCobIdRx());
-
-    ASSERT_EQ(getSender()->getMessage(0).len, 8);
-    ASSERT_EQ(getSender()->getMessage(1).len, 8);
-    ASSERT_EQ(getSender()->getMessage(2).len, 8);
-    ASSERT_EQ(getSender()->getMessage(3).len, 8);
+    for (auto i = 0; i < 4; i++)
+    {
+        ASSERT_EQ(getSender()->getMessage(i).id, sdo.getCobIdRx());
+        ASSERT_EQ(getSender()->getMessage(i).len, 8);
+    }
 
     ASSERT_EQ(getSender()->getMessage(0).data, toInt64(0x40, index, subindex));
     ASSERT_EQ(getSender()->getMessage(1).data, toInt64(0x60));
@@ -446,15 +438,11 @@ TEST_F(CanBusSharerTest, SdoClientSegmented)
 
     ASSERT_TRUE(sdo.download("Download test", expected, index, subindex));
 
-    ASSERT_EQ(getSender()->getMessage(0).id, sdo.getCobIdRx());
-    ASSERT_EQ(getSender()->getMessage(1).id, sdo.getCobIdRx());
-    ASSERT_EQ(getSender()->getMessage(2).id, sdo.getCobIdRx());
-    ASSERT_EQ(getSender()->getMessage(3).id, sdo.getCobIdRx());
-
-    ASSERT_EQ(getSender()->getMessage(0).len, 8);
-    ASSERT_EQ(getSender()->getMessage(1).len, 8);
-    ASSERT_EQ(getSender()->getMessage(2).len, 8);
-    ASSERT_EQ(getSender()->getMessage(3).len, 8);
+    for (auto i = 0; i < 4; i++)
+    {
+        ASSERT_EQ(getSender()->getMessage(i).id, sdo.getCobIdRx());
+        ASSERT_EQ(getSender()->getMessage(i).len, 8);
+    }
 
     ASSERT_EQ(getSender()->getMessage(0).data, toInt64(0x21, index, subindex, 15));
     ASSERT_EQ(getSender()->getMessage(1).data, toInt64(0x00, expected.substr(0, 7)));
@@ -471,32 +459,185 @@ TEST_F(CanBusSharerTest, ReceivePdo)
     const std::uint16_t cobId = cob + id;
     const std::uint8_t cobIdLSB = cobId & 0x00FF;
     const std::uint8_t cobIdMSB = cobId >> 8;
+
     const unsigned int n = 1;
+
+    PdoTransmissionType type = PdoTransmissionType::SYNCHRONOUS_ACYCLIC;
+
+    const std::uint16_t comm = 0x1400 + n - 1;
+    const std::uint8_t commLSB = comm & 0x00FF;
+    const std::uint8_t commMSB = comm >> 8;
+
+    const std::uint16_t mapper = 0x1600 + n - 1;
+    const std::uint16_t inhibitTime = 0x1234;
+    const std::uint16_t eventTimer = 0x5678;
+
+    const std::uint16_t mapping1 = 0x1111;
+    const std::uint8_t mapping1sub = 0x45;
+    const std::uint16_t mapping2 = 0x2000;
 
     ReceivePdo rpdo1(id, cob, n, &sdo, getSender());
     ASSERT_EQ(rpdo1.getCobId(), cobId);
 
-    const std::uint8_t responseUpload[8] = {0x43, static_cast<std::uint8_t>(n - 1), 0x14, 0x01, cobIdLSB, cobIdMSB};
+    // test ReceivePdo::configure()
+
+    const std::uint8_t responseUpload[8] = {0x43, commLSB, commMSB, 0x01, cobIdLSB, cobIdMSB};
     const std::uint8_t responseDownload[8] = {0x60};
 
     PdoConfiguration rpdo1Conf;
+    rpdo1Conf.setTransmissionType(type);
+    rpdo1Conf.setInhibitTime(inhibitTime);
+    rpdo1Conf.setEventTimer(eventTimer);
+    rpdo1Conf.addMapping<std::int16_t>(mapping1, mapping1sub).addMapping<std::int32_t>(mapping2);
     rpdo1Conf.setValid(true);
-    rpdo1Conf.setTransmissionType(PdoTransmissionType::SYNCHRONOUS_CYCLIC_N(0x04));
-    rpdo1Conf.setInhibitTime(0x1234);
-    rpdo1Conf.setEventTimer(0x5678);
-    rpdo1Conf.addMapping<std::int16_t>(0x1111, 0x45).addMapping<std::int32_t>(0x2000);
 
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(responseUpload); }});
 
-    for (int i = 2; i <= 10; i++)
+    for (int i = 2; i < 11; i++)
     {
         f() = std::async(std::launch::async, observer_timer{MILLIS * i, [&]{ return sdo.notify(responseDownload); }});
     }
 
     ASSERT_TRUE(rpdo1.configure(rpdo1Conf));
 
-    bool res = rpdo1.write<std::int16_t, std::int32_t>(4444, 44444444);
-    ASSERT_TRUE(res); // strange compile bug
+    for (auto i = 0; i < 10; i++)
+    {
+        ASSERT_EQ(getSender()->getMessage(i).id, sdo.getCobIdRx());
+        ASSERT_EQ(getSender()->getMessage(i).len, 8);
+    }
+
+    ASSERT_EQ(getSender()->getMessage(0).data, toInt64(0x40, comm, 0x01));
+    ASSERT_EQ(getSender()->getMessage(1).data, toInt64(0x23, comm, 0x01, cobId + (1 << 31)));
+    ASSERT_EQ(getSender()->getMessage(2).data, toInt64(0x2F, comm, 0x02, type));
+    ASSERT_EQ(getSender()->getMessage(3).data, toInt64(0x2B, comm, 0x03, inhibitTime));
+    ASSERT_EQ(getSender()->getMessage(4).data, toInt64(0x2B, comm, 0x05, eventTimer));
+    ASSERT_EQ(getSender()->getMessage(5).data, toInt64(0x2F, mapper, 0x00, 0));
+    ASSERT_EQ(getSender()->getMessage(6).data, toInt64(0x23, mapper, 0x01, (mapping1 << 16) + (mapping1sub << 8) + 16));
+    ASSERT_EQ(getSender()->getMessage(7).data, toInt64(0x23, mapper, 0x02, (mapping2 << 16) + 32));
+    ASSERT_EQ(getSender()->getMessage(8).data, toInt64(0x2F, mapper, 0x00, 2));
+    ASSERT_EQ(getSender()->getMessage(9).data, toInt64(0x23, comm, 0x01, cobId));
+
+    getSender()->flush();
+
+    // test ReceivePdo::write()
+
+    ASSERT_TRUE((rpdo1.write<std::int16_t, std::int32_t>(0x1234, 0x98765432))); // double parens are intentional
+
+    ASSERT_EQ(getSender()->getLastMessage().id, cobId);
+    ASSERT_EQ(getSender()->getLastMessage().len, 6);
+    ASSERT_EQ(getSender()->getLastMessage().data, 0x987654321234);
+
+    // test unsupported property in ReceivePdo::configure()
+
+    rpdo1Conf.setRtr(true);
+    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(responseUpload); }});
+    ASSERT_FALSE(rpdo1.configure(rpdo1Conf));
+}
+
+TEST_F(CanBusSharerTest, TransmitPdo)
+{
+    SdoClient sdo(0x05, 0x600, 0x580, TIMEOUT, getSender());
+
+    const std::uint8_t id = 0x05;
+    const std::uint16_t cob = 0x180;
+    const std::uint16_t cobId = cob + id;
+    const std::uint8_t cobIdLSB = cobId & 0x00FF;
+    const std::uint8_t cobIdMSB = cobId >> 8;
+
+    const unsigned int n = 1;
+
+    PdoTransmissionType type = PdoTransmissionType::SYNCHRONOUS_CYCLIC_N(0x04);
+
+    const std::uint16_t comm = 0x1800 + n - 1;
+    const std::uint8_t commLSB = comm & 0x00FF;
+    const std::uint8_t commMSB = comm >> 8;
+
+    const std::uint16_t mapper = 0x1A00 + n - 1;
+    const std::uint16_t inhibitTime = 0x1234;
+    const std::uint16_t eventTimer = 0x5678;
+    const std::uint8_t syncStartValue = 0x77;
+
+    const std::uint16_t mapping1 = 0x1111;
+    const std::uint8_t mapping1sub = 0x45;
+    const std::uint16_t mapping2 = 0x2000;
+
+    TransmitPdo tpdo1(id, cob, n, &sdo);
+    ASSERT_EQ(tpdo1.getCobId(), cobId);
+
+    // test TransmitPdo::configure()
+
+    const std::uint8_t responseUpload[8] = {0x43, commLSB, commMSB, 0x01, cobIdLSB, cobIdMSB};
+    const std::uint8_t responseDownload[8] = {0x60};
+
+    PdoConfiguration tpdo1Conf;
+    tpdo1Conf.setRtr(false);
+    tpdo1Conf.setTransmissionType(type);
+    tpdo1Conf.setInhibitTime(inhibitTime);
+    tpdo1Conf.setEventTimer(eventTimer);
+    tpdo1Conf.setSyncStartValue(syncStartValue);
+    tpdo1Conf.addMapping<std::int16_t>(mapping1, mapping1sub).addMapping<std::int32_t>(mapping2);
+    tpdo1Conf.setValid(true);
+
+    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(responseUpload); }});
+
+    for (int i = 2; i < 12; i++)
+    {
+        f() = std::async(std::launch::async, observer_timer{MILLIS * i, [&]{ return sdo.notify(responseDownload); }});
+    }
+
+    ASSERT_TRUE(tpdo1.configure(tpdo1Conf));
+
+    for (auto i = 0; i < 11; i++)
+    {
+        ASSERT_EQ(getSender()->getMessage(i).id, sdo.getCobIdRx());
+        ASSERT_EQ(getSender()->getMessage(i).len, 8);
+    }
+
+    ASSERT_EQ(getSender()->getMessage(0).data, toInt64(0x40, comm, 0x01));
+    ASSERT_EQ(getSender()->getMessage(1).data, toInt64(0x23, comm, 0x01, cobId + (1 << 31) + (1 << 30)));
+    ASSERT_EQ(getSender()->getMessage(2).data, toInt64(0x2F, comm, 0x02, type));
+    ASSERT_EQ(getSender()->getMessage(3).data, toInt64(0x2B, comm, 0x03, inhibitTime));
+    ASSERT_EQ(getSender()->getMessage(4).data, toInt64(0x2B, comm, 0x05, eventTimer));
+    ASSERT_EQ(getSender()->getMessage(5).data, toInt64(0x2F, comm, 0x06, syncStartValue));
+    ASSERT_EQ(getSender()->getMessage(6).data, toInt64(0x2F, mapper, 0x00, 0));
+    ASSERT_EQ(getSender()->getMessage(7).data, toInt64(0x23, mapper, 0x01, (mapping1 << 16) + (mapping1sub << 8) + 16));
+    ASSERT_EQ(getSender()->getMessage(8).data, toInt64(0x23, mapper, 0x02, (mapping2 << 16) + 32));
+    ASSERT_EQ(getSender()->getMessage(9).data, toInt64(0x2F, mapper, 0x00, 2));
+    ASSERT_EQ(getSender()->getMessage(10).data, toInt64(0x23, comm, 0x01, cobId + (1 << 30)));
+
+    getSender()->flush();
+
+    // test TransmitPdo::accept(), no handler attached
+
+    ASSERT_FALSE(tpdo1.accept(nullptr, 0));
+
+    // test TransmitPdo::registerHandler() and accept()
+
+    std::uint8_t actual1;
+    std::int16_t actual2;
+    std::uint32_t actual3;
+
+    tpdo1.registerHandler<std::uint8_t, std::int16_t, std::uint32_t>([&](std::uint8_t v1, std::int16_t v2, std::uint32_t v3)
+            { actual1 = v1; actual2 = v2; actual3 = v3; });
+
+    std::uint8_t expected1 = 0x12;
+    std::int16_t expected2 = 0x1234;
+    std::uint32_t expected3 = 0x12345678;
+
+    std::uint8_t raw[7];
+    std::memcpy(raw, &expected1, 1);
+    std::memcpy(raw + 1, &expected2, 2);
+    std::memcpy(raw + 3, &expected3, 4);
+    ASSERT_TRUE(tpdo1.accept(raw, 7));
+
+    ASSERT_EQ(actual1, expected1);
+    ASSERT_EQ(actual2, expected2);
+    ASSERT_EQ(actual3, expected3);
+
+    // test TransmitPdo::accept(), handler was detached
+
+    tpdo1.unregisterHandler();
+    ASSERT_FALSE(tpdo1.accept(nullptr, 0));
 }
 
 } // namespace roboticslab
