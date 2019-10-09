@@ -18,9 +18,23 @@
 namespace roboticslab
 {
 
+// expedited transfers
 inline std::uint64_t toInt64(std::uint8_t op, std::uint16_t index, std::uint8_t subindex, std::uint32_t data = 0)
 {
     return op + (index << 8) + (subindex << 24) + (static_cast<std::uint64_t>(data) << 32);
+}
+
+// segmented transfers
+inline std::uint64_t toInt64(std::uint8_t op, const std::string & s = "")
+{
+    std::uint64_t v = op;
+
+    for (auto i = 0; i < s.size(); i++)
+    {
+        v += static_cast<std::uint64_t>(s.data()[i]) << (8 * (i + 1));
+    }
+
+    return v;
 }
 
 struct fake_message
@@ -40,13 +54,19 @@ class FakeCanSenderDelegate : public CanSenderDelegate
 {
 public:
     virtual bool prepareMessage(const can_message & msg) override
-    { return this->msg = msg, true; }
+    { return messages.push_back(msg), true; }
 
-    fake_message getMessage() const
-    { return msg; }
+    const fake_message & getLastMessage() const
+    { return messages.back(); }
+
+    const fake_message & getMessage(std::size_t n) const
+    { return messages.at(n); }
+
+    void flush()
+    { messages.clear(); }
 
 private:
-    fake_message msg;
+    std::vector<fake_message> messages;
 };
 
 /**
@@ -247,9 +267,9 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     std::memcpy(response + 4, &expected, 4);
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.upload("Upload test 1", &actual1, index, subindex));
-    ASSERT_EQ(getSender()->getMessage().id, sdo.getCobIdRx());
-    ASSERT_EQ(getSender()->getMessage().len, 8);
-    ASSERT_EQ(getSender()->getMessage().data, toInt64(0x40, index, subindex));
+    ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getLastMessage().len, 8);
+    ASSERT_EQ(getSender()->getLastMessage().data, toInt64(0x40, index, subindex));
     ASSERT_EQ(actual1, expected);
 
     // test SdoClient::upload(), request 1 byte (lambda overload)
@@ -257,9 +277,9 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     std::int8_t actual2;
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.upload<std::int8_t>("Upload test 2", [&](std::int8_t data) { actual2 = data; }, index, subindex));
-    ASSERT_EQ(getSender()->getMessage().id, sdo.getCobIdRx());
-    ASSERT_EQ(getSender()->getMessage().len, 8);
-    ASSERT_EQ(getSender()->getMessage().data, toInt64(0x40, index, subindex));
+    ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getLastMessage().len, 8);
+    ASSERT_EQ(getSender()->getLastMessage().data, toInt64(0x40, index, subindex));
     ASSERT_EQ(actual1, expected);
 
     // test SdoClient::upload(), size mismatch (expect 1 byte, receive 2 bytes)
@@ -276,9 +296,9 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     std::memcpy(response + 4, &expected, 4);
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.upload("Upload test 4", &actual3, index, subindex));
-    ASSERT_EQ(getSender()->getMessage().id, sdo.getCobIdRx());
-    ASSERT_EQ(getSender()->getMessage().len, 8);
-    ASSERT_EQ(getSender()->getMessage().data, toInt64(0x40, index, subindex));
+    ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getLastMessage().len, 8);
+    ASSERT_EQ(getSender()->getLastMessage().data, toInt64(0x40, index, subindex));
     ASSERT_EQ(actual3, expected);
 
     // test SdoClient::upload(), request 4 bytes
@@ -289,9 +309,9 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     std::memcpy(response + 4, &expected, 4);
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.upload("Upload test 5", &actual4, index, subindex));
-    ASSERT_EQ(getSender()->getMessage().id, sdo.getCobIdRx());
-    ASSERT_EQ(getSender()->getMessage().len, 8);
-    ASSERT_EQ(getSender()->getMessage().data, toInt64(0x40, index, subindex));
+    ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getLastMessage().len, 8);
+    ASSERT_EQ(getSender()->getLastMessage().data, toInt64(0x40, index, subindex));
     ASSERT_EQ(actual4, expected);
 
     std::memset(response, 0x00, 8); // reset
@@ -302,9 +322,9 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     response[0] = 0x60;
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.download("Download test 1", request1, index, subindex));
-    ASSERT_EQ(getSender()->getMessage().id, sdo.getCobIdRx());
-    ASSERT_EQ(getSender()->getMessage().len, 8);
-    ASSERT_EQ(getSender()->getMessage().data, toInt64(0x2F, index, subindex, request1));
+    ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getLastMessage().len, 8);
+    ASSERT_EQ(getSender()->getLastMessage().data, toInt64(0x2F, index, subindex, request1));
 
     // test SdoClient::download(), send 2 bytes
 
@@ -312,9 +332,9 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     response[0] = 0x60;
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.download("Download test 2", request2, index, subindex));
-    ASSERT_EQ(getSender()->getMessage().id, sdo.getCobIdRx());
-    ASSERT_EQ(getSender()->getMessage().len, 8);
-    ASSERT_EQ(getSender()->getMessage().data, toInt64(0x2B, index, subindex, request2));
+    ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getLastMessage().len, 8);
+    ASSERT_EQ(getSender()->getLastMessage().data, toInt64(0x2B, index, subindex, request2));
 
     // test SdoClient::download(), send 4 bytes
 
@@ -322,9 +342,9 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     response[0] = 0x60;
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.download("Download test 3", request3, index, subindex));
-    ASSERT_EQ(getSender()->getMessage().id, sdo.getCobIdRx());
-    ASSERT_EQ(getSender()->getMessage().len, 8);
-    ASSERT_EQ(getSender()->getMessage().data, toInt64(0x23, index, subindex, request3));
+    ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getLastMessage().len, 8);
+    ASSERT_EQ(getSender()->getLastMessage().data, toInt64(0x23, index, subindex, request3));
 
     // test SDO abort transfer in download() operation
 
@@ -355,22 +375,62 @@ TEST_F(CanBusSharerTest, SdoClientSegmented)
     // test SdoClient::upload(), request string
 
     std::string actual1;
+
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response1); }});
     f() = std::async(std::launch::async, observer_timer{MILLIS * 2, [&]{ return sdo.notify(response2); }});
     f() = std::async(std::launch::async, observer_timer{MILLIS * 3, [&]{ return sdo.notify(response3); }});
     f() = std::async(std::launch::async, observer_timer{MILLIS * 4, [&]{ return sdo.notify(response4); }});
+
     ASSERT_TRUE(sdo.upload("Upload test 1", actual1, index, subindex));
+
+    ASSERT_EQ(getSender()->getMessage(0).id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getMessage(1).id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getMessage(2).id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getMessage(3).id, sdo.getCobIdRx());
+
+    ASSERT_EQ(getSender()->getMessage(0).len, 8);
+    ASSERT_EQ(getSender()->getMessage(1).len, 8);
+    ASSERT_EQ(getSender()->getMessage(2).len, 8);
+    ASSERT_EQ(getSender()->getMessage(3).len, 8);
+
+    ASSERT_EQ(getSender()->getMessage(0).data, toInt64(0x40, index, subindex));
+    ASSERT_EQ(getSender()->getMessage(1).data, toInt64(0x60));
+    ASSERT_EQ(getSender()->getMessage(2).data, toInt64(0x70));
+    ASSERT_EQ(getSender()->getMessage(3).data, toInt64(0x60));
+
     ASSERT_EQ(actual1, expected);
+
+    getSender()->flush();
 
     // test SdoClient::upload(), request string (lambda overload)
 
     std::string actual2;
+
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response1); }});
     f() = std::async(std::launch::async, observer_timer{MILLIS * 2, [&]{ return sdo.notify(response2); }});
     f() = std::async(std::launch::async, observer_timer{MILLIS * 3, [&]{ return sdo.notify(response3); }});
     f() = std::async(std::launch::async, observer_timer{MILLIS * 4, [&]{ return sdo.notify(response4); }});
+
     ASSERT_TRUE(sdo.upload("Upload test 2", [&](const std::string & data) { actual2 = data; }, index, subindex));
+
+    ASSERT_EQ(getSender()->getMessage(0).id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getMessage(1).id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getMessage(2).id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getMessage(3).id, sdo.getCobIdRx());
+
+    ASSERT_EQ(getSender()->getMessage(0).len, 8);
+    ASSERT_EQ(getSender()->getMessage(1).len, 8);
+    ASSERT_EQ(getSender()->getMessage(2).len, 8);
+    ASSERT_EQ(getSender()->getMessage(3).len, 8);
+
+    ASSERT_EQ(getSender()->getMessage(0).data, toInt64(0x40, index, subindex));
+    ASSERT_EQ(getSender()->getMessage(1).data, toInt64(0x60));
+    ASSERT_EQ(getSender()->getMessage(2).data, toInt64(0x70));
+    ASSERT_EQ(getSender()->getMessage(3).data, toInt64(0x60));
+
     ASSERT_EQ(actual2, expected);
+
+    getSender()->flush();
 
     // test SdoClient::download(), send string
 
@@ -383,7 +443,23 @@ TEST_F(CanBusSharerTest, SdoClientSegmented)
     f() = std::async(std::launch::async, observer_timer{MILLIS * 2, [&]{ return sdo.notify(response6); }});
     f() = std::async(std::launch::async, observer_timer{MILLIS * 3, [&]{ return sdo.notify(response7); }});
     f() = std::async(std::launch::async, observer_timer{MILLIS * 4, [&]{ return sdo.notify(response8); }});
+
     ASSERT_TRUE(sdo.download("Download test", expected, index, subindex));
+
+    ASSERT_EQ(getSender()->getMessage(0).id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getMessage(1).id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getMessage(2).id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getMessage(3).id, sdo.getCobIdRx());
+
+    ASSERT_EQ(getSender()->getMessage(0).len, 8);
+    ASSERT_EQ(getSender()->getMessage(1).len, 8);
+    ASSERT_EQ(getSender()->getMessage(2).len, 8);
+    ASSERT_EQ(getSender()->getMessage(3).len, 8);
+
+    ASSERT_EQ(getSender()->getMessage(0).data, toInt64(0x21, index, subindex, 15));
+    ASSERT_EQ(getSender()->getMessage(1).data, toInt64(0x00, expected.substr(0, 7)));
+    ASSERT_EQ(getSender()->getMessage(2).data, toInt64(0x10, expected.substr(7, 7)));
+    ASSERT_EQ(getSender()->getMessage(3).data, toInt64(0x0D, expected.substr(14, 1)));
 }
 
 TEST_F(CanBusSharerTest, ReceivePdo)

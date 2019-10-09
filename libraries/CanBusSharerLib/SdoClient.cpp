@@ -288,11 +288,7 @@ bool SdoClient::upload(const std::string & name, const std::function<void(const 
 
 bool SdoClient::download(const std::string & name, const std::string & s, std::uint16_t index, std::uint8_t subindex)
 {
-    char * buf = new char[s.size()];
-    s.copy(buf, s.size());
-    bool res = downloadInternal(name, buf, s.size(), index, subindex);
-    delete[] buf;
-    return res;
+    return downloadInternal(name, s.data(), s.size(), index, subindex);
 }
 
 bool SdoClient::performTransfer(const std::string & name, const std::uint8_t * req, std::uint8_t * resp)
