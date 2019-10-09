@@ -13,6 +13,7 @@
 #include "CanSenderDelegate.hpp"
 #include "SdoClient.hpp"
 #include "PdoProtocol.hpp"
+#include "NmtProtocol.hpp"
 #include "CanUtils.hpp"
 
 namespace roboticslab
@@ -257,20 +258,18 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     std::uint8_t response[8] = {0x00, 0x00, 0x00, subindex};
     std::memcpy(response + 1, &index, 2);
 
-    std::int32_t expected;
-
     // test SdoClient::upload(), request 1 byte
 
     std::int8_t actual1;
+    const std::int8_t expected1 = 0x44;
     response[0] = 0x4F;
-    expected = 0x44;
-    std::memcpy(response + 4, &expected, 4);
+    std::memcpy(response + 4, &expected1, 4);
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.upload("Upload test 1", &actual1, index, subindex));
     ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
     ASSERT_EQ(getSender()->getLastMessage().len, 8);
     ASSERT_EQ(getSender()->getLastMessage().data, toInt64(0x40, index, subindex));
-    ASSERT_EQ(actual1, expected);
+    ASSERT_EQ(actual1, expected1);
 
     // test SdoClient::upload(), request 1 byte (lambda overload)
 
@@ -280,7 +279,7 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
     ASSERT_EQ(getSender()->getLastMessage().len, 8);
     ASSERT_EQ(getSender()->getLastMessage().data, toInt64(0x40, index, subindex));
-    ASSERT_EQ(actual1, expected);
+    ASSERT_EQ(actual1, expected1);
 
     // test SdoClient::upload(), size mismatch (expect 1 byte, receive 2 bytes)
 
@@ -291,28 +290,28 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     // test SdoClient::upload(), request 2 bytes
 
     std::int16_t actual3;
+    const std::int16_t expected3 = 0x4444;
     response[0] = 0x4B;
-    expected = 0x4444;
-    std::memcpy(response + 4, &expected, 4);
+    std::memcpy(response + 4, &expected3, 4);
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.upload("Upload test 4", &actual3, index, subindex));
     ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
     ASSERT_EQ(getSender()->getLastMessage().len, 8);
     ASSERT_EQ(getSender()->getLastMessage().data, toInt64(0x40, index, subindex));
-    ASSERT_EQ(actual3, expected);
+    ASSERT_EQ(actual3, expected3);
 
     // test SdoClient::upload(), request 4 bytes
 
     std::int32_t actual4;
+    const std::int32_t expected4 = 0x44444444;
     response[0] = 0x43;
-    expected = 0x44444444;
-    std::memcpy(response + 4, &expected, 4);
+    std::memcpy(response + 4, &expected4, 4);
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.upload("Upload test 5", &actual4, index, subindex));
     ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
     ASSERT_EQ(getSender()->getLastMessage().len, 8);
     ASSERT_EQ(getSender()->getLastMessage().data, toInt64(0x40, index, subindex));
-    ASSERT_EQ(actual4, expected);
+    ASSERT_EQ(actual4, expected4);
 
     std::memset(response, 0x00, 8); // reset
 
@@ -620,9 +619,9 @@ TEST_F(CanBusSharerTest, TransmitPdo)
     tpdo1.registerHandler<std::uint8_t, std::int16_t, std::uint32_t>([&](std::uint8_t v1, std::int16_t v2, std::uint32_t v3)
             { actual1 = v1; actual2 = v2; actual3 = v3; });
 
-    std::uint8_t expected1 = 0x12;
-    std::int16_t expected2 = 0x1234;
-    std::uint32_t expected3 = 0x12345678;
+    const std::uint8_t expected1 = 0x12;
+    const std::int16_t expected2 = 0x1234;
+    const std::uint32_t expected3 = 0x12345678;
 
     std::uint8_t raw[7];
     std::memcpy(raw, &expected1, 1);
@@ -638,6 +637,83 @@ TEST_F(CanBusSharerTest, TransmitPdo)
 
     tpdo1.unregisterHandler();
     ASSERT_FALSE(tpdo1.accept(nullptr, 0));
+}
+
+TEST_F(CanBusSharerTest, NmtProtocol)
+{
+    const std::uint8_t id = 0x05;
+    SdoClient sdo(id, 0x600, 0x580, TIMEOUT, getSender());
+    NmtProtocol nmt(id, &sdo, getSender());
+
+    const uint16_t heartbeatPeriod = 0x1234;
+
+    // test NmtProtocol::setupHeartbeat()
+
+    const std::uint8_t response[8] = {0x40, 0x17, 0x10};
+    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
+    ASSERT_TRUE(nmt.setupHeartbeat(heartbeatPeriod));
+    ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getLastMessage().len, 8);
+    ASSERT_EQ(getSender()->getLastMessage().data, toInt64(0x2B, 0x1017, 0x00, heartbeatPeriod));
+
+    // test NmtProtocol::accept(), no handler attached
+
+    ASSERT_FALSE(nmt.accept(nullptr));
+
+    std::uint8_t temp[1];
+
+    // test NmtProtocol::registerHandler() and accept() in BOOTUP state
+
+    NmtState actual1;
+    const NmtState expected1 = NmtState::BOOTUP;
+    temp[0] = static_cast<std::uint8_t>(expected1);
+    nmt.registerHandler([&](NmtState s) { actual1 = s; });
+    ASSERT_TRUE(nmt.accept(temp));
+    ASSERT_EQ(actual1, expected1);
+
+    // test NmtProtocol::registerHandler() and accept() in STOPPED state
+
+    NmtState actual2;
+    const NmtState expected2 = NmtState::STOPPED;
+    temp[0] = static_cast<std::uint8_t>(expected2);
+    nmt.registerHandler([&](NmtState s) { actual2 = s; });
+    ASSERT_TRUE(nmt.accept(temp));
+    ASSERT_EQ(actual2, expected2);
+
+    // test NmtProtocol::registerHandler() and accept() in OPERATIONAL state
+
+    NmtState actual3;
+    const NmtState expected3 = NmtState::OPERATIONAL;
+    temp[0] = static_cast<std::uint8_t>(expected3);
+    nmt.registerHandler([&](NmtState s) { actual3 = s; });
+    ASSERT_TRUE(nmt.accept(temp));
+    ASSERT_EQ(actual3, expected3);
+
+    // test NmtProtocol::registerHandler() and accept() in PRE_OPERATIONAL state
+
+    NmtState actual4;
+    const NmtState expected4 = NmtState::PRE_OPERATIONAL;
+    temp[0] = static_cast<std::uint8_t>(expected4);
+    nmt.registerHandler([&](NmtState s) { actual4 = s; });
+    ASSERT_TRUE(nmt.accept(temp));
+    ASSERT_EQ(actual4, expected4);
+
+    // test NmtProtocol::registerHandler() and accept() in unknown state
+
+    temp[0] = 0xFF;
+    ASSERT_FALSE(nmt.accept(temp));
+
+    // test NmtProtocol::accept(), handler was detached
+
+    nmt.unregisterHandler();
+    ASSERT_FALSE(nmt.accept(nullptr));
+
+    // test NmtProtocol::issueServiceCommand()
+
+    ASSERT_TRUE(nmt.issueServiceCommand(NmtService::START_REMOTE_NODE));
+    ASSERT_EQ(getSender()->getLastMessage().id, 0);
+    ASSERT_EQ(getSender()->getLastMessage().len, 2);
+    ASSERT_EQ(getSender()->getLastMessage().data, static_cast<std::uint8_t>(NmtService::START_REMOTE_NODE) + (id << 8));
 }
 
 } // namespace roboticslab

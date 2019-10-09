@@ -17,6 +17,11 @@ bool NmtProtocol::setupHeartbeat(std::uint16_t period)
 
 bool NmtProtocol::accept(const std::uint8_t * data)
 {
+    if (!callback)
+    {
+        return false;
+    }
+
     NmtState state;
 
     switch (data[0])
