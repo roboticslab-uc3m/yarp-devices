@@ -76,37 +76,41 @@ namespace
         }
     }
 
+    using ds = DriveState;
+    using dt = DriveTransition;
+
     const std::unordered_map<std::pair<DriveState, DriveTransition>, DriveState, pair_hash> nextStateOnTransition = {
-        {{DriveState::SWITCH_ON_DISABLED, DriveTransition::SHUTDOWN}, DriveState::READY_TO_SWITCH_ON}, // 2
-        {{DriveState::READY_TO_SWITCH_ON, DriveTransition::SWITCH_ON}, DriveState::SWITCHED_ON}, // 3
-        {{DriveState::SWITCHED_ON, DriveTransition::ENABLE_OPERATION}, DriveState::OPERATION_ENABLED}, // 4
-        {{DriveState::OPERATION_ENABLED, DriveTransition::DISABLE_OPERATION}, DriveState::SWITCHED_ON}, // 5
-        //{{DriveState::OPERATION_ENABLED, DriveTransition::SWITCH_ON}, DriveState::SWITCHED_ON}, // 5 (alias)
-        {{DriveState::SWITCHED_ON, DriveTransition::SHUTDOWN}, DriveState::READY_TO_SWITCH_ON}, // 6
-        {{DriveState::READY_TO_SWITCH_ON, DriveTransition::DISABLE_VOLTAGE}, DriveState::SWITCH_ON_DISABLED}, // 7
-        {{DriveState::OPERATION_ENABLED, DriveTransition::SHUTDOWN}, DriveState::READY_TO_SWITCH_ON}, // 8
-        {{DriveState::OPERATION_ENABLED, DriveTransition::DISABLE_VOLTAGE}, DriveState::SWITCH_ON_DISABLED}, // 9
-        {{DriveState::SWITCHED_ON, DriveTransition::DISABLE_VOLTAGE}, DriveState::SWITCH_ON_DISABLED}, // 10
-        {{DriveState::OPERATION_ENABLED, DriveTransition::QUICK_STOP}, DriveState::QUICK_STOP_ACTIVE}, // 11
-        {{DriveState::QUICK_STOP_ACTIVE, DriveTransition::DISABLE_VOLTAGE}, DriveState::SWITCH_ON_DISABLED}, // 12
-        {{DriveState::QUICK_STOP_ACTIVE, DriveTransition::ENABLE_OPERATION}, DriveState::OPERATION_ENABLED}, // 16
+        {{ds::SWITCH_ON_DISABLED, dt::SHUTDOWN}, ds::READY_TO_SWITCH_ON}, // 2
+        {{ds::READY_TO_SWITCH_ON, dt::SWITCH_ON}, ds::SWITCHED_ON}, // 3
+        {{ds::SWITCHED_ON, dt::ENABLE_OPERATION}, ds::OPERATION_ENABLED}, // 4
+        {{ds::OPERATION_ENABLED, dt::DISABLE_OPERATION}, ds::SWITCHED_ON}, // 5
+        //{{ds::OPERATION_ENABLED, dt::SWITCH_ON}, ds::SWITCHED_ON}, // 5 (alias)
+        {{ds::SWITCHED_ON, dt::SHUTDOWN}, ds::READY_TO_SWITCH_ON}, // 6
+        {{ds::READY_TO_SWITCH_ON, dt::DISABLE_VOLTAGE}, ds::SWITCH_ON_DISABLED}, // 7
+        {{ds::OPERATION_ENABLED, dt::SHUTDOWN}, ds::READY_TO_SWITCH_ON}, // 8
+        {{ds::OPERATION_ENABLED, dt::DISABLE_VOLTAGE}, ds::SWITCH_ON_DISABLED}, // 9
+        {{ds::SWITCHED_ON, dt::DISABLE_VOLTAGE}, ds::SWITCH_ON_DISABLED}, // 10
+        {{ds::OPERATION_ENABLED, dt::QUICK_STOP}, ds::QUICK_STOP_ACTIVE}, // 11
+        {{ds::QUICK_STOP_ACTIVE, dt::DISABLE_VOLTAGE}, ds::SWITCH_ON_DISABLED}, // 12
+        {{ds::FAULT, dt::FAULT_RESET}, ds::SWITCH_ON_DISABLED}, // 15
+        {{ds::QUICK_STOP_ACTIVE, dt::ENABLE_OPERATION}, ds::OPERATION_ENABLED}, // 16
     };
 
     const std::unordered_map<std::pair<DriveState, DriveState>, std::vector<DriveTransition>, pair_hash> shortestPaths = {
-        {{DriveState::SWITCH_ON_DISABLED, DriveState::READY_TO_SWITCH_ON}, {DriveTransition::SHUTDOWN}},
-        {{DriveState::SWITCH_ON_DISABLED, DriveState::SWITCHED_ON}, {DriveTransition::SHUTDOWN, DriveTransition::SWITCH_ON}},
-        {{DriveState::SWITCH_ON_DISABLED, DriveState::OPERATION_ENABLED}, {DriveTransition::SHUTDOWN, DriveTransition::SWITCH_ON, DriveTransition::ENABLE_OPERATION}},
-        {{DriveState::READY_TO_SWITCH_ON, DriveState::SWITCHED_ON}, {DriveTransition::SWITCH_ON}},
-        {{DriveState::READY_TO_SWITCH_ON, DriveState::OPERATION_ENABLED}, {DriveTransition::SWITCH_ON, DriveTransition::ENABLE_OPERATION}},
-        {{DriveState::SWITCHED_ON, DriveState::OPERATION_ENABLED}, {DriveTransition::ENABLE_OPERATION}},
-        {{DriveState::OPERATION_ENABLED, DriveState::SWITCHED_ON}, {DriveTransition::DISABLE_OPERATION}},
-        //{{DriveState::OPERATION_ENABLED, DriveState::SWITCHED_ON}, {DriveTransition::SWITCH_ON}}, // alias
-        {{DriveState::OPERATION_ENABLED, DriveState::READY_TO_SWITCH_ON}, {DriveTransition::SHUTDOWN}},
-        {{DriveState::OPERATION_ENABLED, DriveState::SWITCH_ON_DISABLED}, {DriveTransition::DISABLE_VOLTAGE}},
-        {{DriveState::SWITCHED_ON, DriveState::READY_TO_SWITCH_ON}, {DriveTransition::SHUTDOWN}},
-        {{DriveState::SWITCHED_ON, DriveState::SWITCH_ON_DISABLED}, {DriveTransition::DISABLE_VOLTAGE}},
-        {{DriveState::READY_TO_SWITCH_ON, DriveState::SWITCH_ON_DISABLED}, {DriveTransition::DISABLE_VOLTAGE}},
-        {{DriveState::QUICK_STOP_ACTIVE, DriveState::SWITCH_ON_DISABLED}, {DriveTransition::DISABLE_VOLTAGE}}
+        {{ds::SWITCH_ON_DISABLED, ds::READY_TO_SWITCH_ON}, {dt::SHUTDOWN}},
+        {{ds::SWITCH_ON_DISABLED, ds::SWITCHED_ON}, {dt::SHUTDOWN, dt::SWITCH_ON}},
+        {{ds::SWITCH_ON_DISABLED, ds::OPERATION_ENABLED}, {dt::SHUTDOWN, dt::SWITCH_ON, dt::ENABLE_OPERATION}},
+        {{ds::READY_TO_SWITCH_ON, ds::SWITCHED_ON}, {dt::SWITCH_ON}},
+        {{ds::READY_TO_SWITCH_ON, ds::OPERATION_ENABLED}, {dt::SWITCH_ON, dt::ENABLE_OPERATION}},
+        {{ds::SWITCHED_ON, ds::OPERATION_ENABLED}, {dt::ENABLE_OPERATION}},
+        {{ds::OPERATION_ENABLED, ds::SWITCHED_ON}, {dt::DISABLE_OPERATION}},
+        //{{ds::OPERATION_ENABLED, ds::SWITCHED_ON}, {dt::SWITCH_ON}}, // alias
+        {{ds::OPERATION_ENABLED, ds::READY_TO_SWITCH_ON}, {dt::SHUTDOWN}},
+        {{ds::OPERATION_ENABLED, ds::SWITCH_ON_DISABLED}, {dt::DISABLE_VOLTAGE}},
+        {{ds::SWITCHED_ON, ds::READY_TO_SWITCH_ON}, {dt::SHUTDOWN}},
+        {{ds::SWITCHED_ON, ds::SWITCH_ON_DISABLED}, {dt::DISABLE_VOLTAGE}},
+        {{ds::READY_TO_SWITCH_ON, ds::SWITCH_ON_DISABLED}, {dt::DISABLE_VOLTAGE}},
+        {{ds::QUICK_STOP_ACTIVE, ds::SWITCH_ON_DISABLED}, {dt::DISABLE_VOLTAGE}}
     };
 }
 
@@ -160,8 +164,7 @@ DriveState DriveStatusMachine::getCurrentState() const
 bool DriveStatusMachine::requestTransition(DriveTransition transition, bool wait)
 {
     DriveState initialState = getCurrentState();
-    auto op = std::make_pair(initialState, transition);
-    auto it = nextStateOnTransition.find(op);
+    auto it = nextStateOnTransition.find({initialState, transition});
 
     return it != nextStateOnTransition.cend()
             && rpdo->write(static_cast<std::uint16_t>(transition))
@@ -177,8 +180,7 @@ bool DriveStatusMachine::requestState(DriveState goalState)
         return true;
     }
 
-    auto op = std::make_pair(initialState, goalState);
-    auto it = shortestPaths.find(op);
+    auto it = shortestPaths.find({initialState, goalState});
 
     if (it == shortestPaths.cend())
     {

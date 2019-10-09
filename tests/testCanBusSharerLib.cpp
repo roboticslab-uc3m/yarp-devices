@@ -989,6 +989,17 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
     ASSERT_EQ(status.controlword(), 0x0002);
     ASSERT_EQ(status.getCurrentState(), DriveState::QUICK_STOP_ACTIVE);
 
+    // test FAULT -> SWITCH_ON_DISABLED (transition 15: FAULT_RESET)
+
+    ASSERT_TRUE(status.update(fault));
+    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(switchOnDisabled); }});
+    ASSERT_TRUE(status.requestTransition(DriveTransition::FAULT_RESET));
+    ASSERT_EQ(getSender()->getLastMessage().id, rpdo.getCobId());
+    ASSERT_EQ(getSender()->getLastMessage().len, 2);
+    ASSERT_EQ(getSender()->getLastMessage().data, static_cast<std::uint16_t>(DriveTransition::FAULT_RESET)); // special case, rising edge
+    ASSERT_EQ(status.controlword(), 0x0000);
+    ASSERT_EQ(status.getCurrentState(), DriveState::SWITCH_ON_DISABLED);
+
     // test QUICK_STOP_ACTIVE -> OPERATION_ENABLED (transition 16: ENABLE_OPERATION)
 
     ASSERT_TRUE(status.update(quickStopActive));
