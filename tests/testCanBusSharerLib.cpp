@@ -14,6 +14,7 @@
 #include "SdoClient.hpp"
 #include "PdoProtocol.hpp"
 #include "NmtProtocol.hpp"
+#include "EmcyConsumer.hpp"
 #include "CanUtils.hpp"
 
 namespace roboticslab
@@ -714,6 +715,94 @@ TEST_F(CanBusSharerTest, NmtProtocol)
     ASSERT_EQ(getSender()->getLastMessage().id, 0);
     ASSERT_EQ(getSender()->getLastMessage().len, 2);
     ASSERT_EQ(getSender()->getLastMessage().data, static_cast<std::uint8_t>(NmtService::START_REMOTE_NODE) + (id << 8));
+}
+
+TEST_F(CanBusSharerTest, EmcyConsumer)
+{
+    SdoClient sdo(0x05, 0x600, 0x580, TIMEOUT, getSender());
+    EmcyConsumer emcy(&sdo);
+
+    const uint16_t inhibitTime = 0x1234;
+
+    // test EmcyConsumer::configure()
+
+    const std::uint8_t response[8] = {0x40, 0x15, 0x10};
+    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
+    ASSERT_TRUE(emcy.configure(inhibitTime));
+    ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
+    ASSERT_EQ(getSender()->getLastMessage().len, 8);
+    ASSERT_EQ(getSender()->getLastMessage().data, toInt64(0x2B, 0x1015, 0x00, inhibitTime));
+
+    // test EmcyConsumer::accept(), no handler attached
+
+    ASSERT_FALSE(emcy.accept(nullptr));
+
+    // test NmtProtocol::registerHandler() and accept()
+
+    EmcyConsumer::code_t actualCode1;
+    std::uint8_t actualReg1;
+    std::uint64_t actualMsef1 = 0;
+
+    const EmcyConsumer::code_t expectedCode1 = {0x1000, "Generic error"};
+    const std::uint8_t expectedReg1 = 0x04;
+    const std::uint64_t expectedMsef1 = 0x1234567890;
+
+    std::uint8_t raw1[8];
+    std::memcpy(raw1, &expectedCode1.first, 2);
+    raw1[2] = expectedReg1;
+    std::memcpy(raw1 + 3, &expectedMsef1, 5);
+
+    emcy.registerHandler([&](EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef)
+            {
+                actualCode1 = code;
+                actualReg1 = reg;
+                std::memcpy(&actualMsef1, msef, 5);
+            });
+
+    ASSERT_TRUE(emcy.accept(raw1));
+    ASSERT_EQ(actualCode1.first, expectedCode1.first);
+    ASSERT_EQ(actualReg1, expectedReg1);
+    ASSERT_EQ(actualMsef1, expectedMsef1);
+
+    // test NmtProtocol::registerHandler() and accept() with custom code registry
+
+    struct FakeCodeRegistry : public EmcyCodeRegistry
+    {
+        virtual std::string codeToMessage(std::uint16_t code) override
+        { return code == 0x1234 ? "pass" : "fail"; }
+    };
+
+    emcy.setErrorCodeRegistry<FakeCodeRegistry>();
+
+    EmcyConsumer::code_t actualCode2;
+    std::uint8_t actualReg2;
+    std::uint64_t actualMsef2;
+
+    const EmcyConsumer::code_t expectedCode2 = {0x1234, "pass"};
+    const std::uint8_t expectedReg2 = 0x04;
+    const std::uint64_t expectedMsef2 = 0x1234567890;
+
+    std::uint8_t raw2[8];
+    std::memcpy(raw2, &expectedCode2.first, 2);
+    raw2[2] = expectedReg1;
+    std::memcpy(raw2 + 3, &expectedMsef2, 5);
+
+    emcy.registerHandler([&](EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef)
+            {
+                actualCode2 = code;
+                actualReg2 = reg;
+                std::memcpy(&actualMsef2, msef, 5);
+            });
+
+    ASSERT_TRUE(emcy.accept(raw2));
+    ASSERT_EQ(actualCode2, expectedCode2);
+    ASSERT_EQ(actualReg2, expectedReg2);
+    ASSERT_EQ(actualMsef2, expectedMsef2);
+
+    // test EmcyConsumer::accept(), handler was detached
+
+    emcy.unregisterHandler();
+    ASSERT_FALSE(emcy.accept(nullptr));
 }
 
 } // namespace roboticslab

@@ -33,7 +33,7 @@ public:
 
     bool configure(std::uint16_t inhibitTime);
 
-    void accept(const std::uint8_t * data);
+    bool accept(const std::uint8_t * data);
 
     template<typename T>
     void setErrorCodeRegistry()

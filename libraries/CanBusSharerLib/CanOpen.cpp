@@ -56,8 +56,7 @@ bool CanOpen::consumeMessage(std::uint16_t cobId, const std::uint8_t * data, std
     switch (op)
     {
     case 0x80:
-        _emcy->accept(data);
-        return true;
+        return _emcy->accept(data);
     case 0x180:
         return _tpdo1->accept(data, size);
     case 0x280:
