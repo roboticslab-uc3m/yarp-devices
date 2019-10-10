@@ -231,7 +231,7 @@ bool DriveStatusMachine::requestState(DriveState goalState)
     return true;
 }
 
-DriveState parseStatusword(std::uint16_t statusword)
+DriveState DriveStatusMachine::parseStatusword(std::uint16_t statusword)
 {
     return parseDriveState(statusword);
 }
