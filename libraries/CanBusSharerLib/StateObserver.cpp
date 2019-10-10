@@ -119,10 +119,9 @@ public:
             }
 
             semaphore->post();
-            return true;
         }
 
-        return false;
+        return true;
     }
 
     void interrupt()

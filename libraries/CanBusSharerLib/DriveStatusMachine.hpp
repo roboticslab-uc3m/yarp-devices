@@ -35,8 +35,8 @@ enum class DriveTransition
     DISABLE_VOLTAGE,
     QUICK_STOP,
     ENABLE_OPERATION,
-    DISABLE_OPERATION, // same as switch on
-    FAULT_RESET
+    FAULT_RESET,
+    DISABLE_OPERATION = SWITCH_ON
 };
 
 class DriveStatusMachine
