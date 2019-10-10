@@ -784,7 +784,7 @@ TEST_F(CanBusSharerTest, EmcyConsumer)
 
     EmcyConsumer::code_t actualCode2;
     std::uint8_t actualReg2;
-    std::uint64_t actualMsef2;
+    std::uint64_t actualMsef2 = 0;
 
     const EmcyConsumer::code_t expectedCode2 = {0x1234, "pass"};
     const std::uint8_t expectedReg2 = 0x04;
@@ -1248,8 +1248,6 @@ TEST_F(CanBusSharerTest, CanOpen)
     ASSERT_TRUE(can.sdo()->download("Download test 1", 0x00, 0x1234));
 
     // test NMT
-
-    std::uint8_t temp[1];
 
     NmtState actualNmt;
     const NmtState expectedNmt = NmtState::OPERATIONAL;
