@@ -17,6 +17,7 @@
 #include "NmtProtocol.hpp"
 #include "EmcyConsumer.hpp"
 #include "DriveStatusMachine.hpp"
+#include "CanOpen.hpp"
 #include "CanUtils.hpp"
 
 namespace roboticslab
@@ -1142,6 +1143,120 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
     status.controlword() = 0x0000;
     ASSERT_TRUE(status.update(fault));
     ASSERT_FALSE(status.requestState(DriveState::SWITCH_ON_DISABLED));
+}
+
+TEST_F(CanBusSharerTest, CanOpen)
+{
+    std::uint8_t id = 0x05;
+    CanOpen can(id, TIMEOUT, TIMEOUT, getSender());
+
+    ASSERT_EQ(can.getId(), id);
+
+    ASSERT_NE(can.sdo(), nullptr);
+    ASSERT_NE(can.rpdo1(), nullptr);
+    ASSERT_NE(can.rpdo2(), nullptr);
+    ASSERT_NE(can.rpdo3(), nullptr);
+    ASSERT_NE(can.rpdo4(), nullptr);
+    ASSERT_NE(can.tpdo1(), nullptr);
+    ASSERT_NE(can.tpdo2(), nullptr);
+    ASSERT_NE(can.tpdo3(), nullptr);
+    ASSERT_NE(can.tpdo4(), nullptr);
+    ASSERT_NE(can.emcy(), nullptr);
+    ASSERT_NE(can.nmt(), nullptr);
+    ASSERT_NE(can.driveStatus(), nullptr);
+
+    ASSERT_EQ(can.sdo()->getCobIdRx(), 0x600 + id);
+    ASSERT_EQ(can.sdo()->getCobIdTx(), 0x580 + id);
+
+    ASSERT_EQ(can.rpdo1()->getCobId(), 0x200 + id);
+    ASSERT_EQ(can.rpdo2()->getCobId(), 0x300 + id);
+    ASSERT_EQ(can.rpdo3()->getCobId(), 0x400 + id);
+    ASSERT_EQ(can.rpdo4()->getCobId(), 0x500 + id);
+
+    ASSERT_EQ(can.tpdo1()->getCobId(), 0x180 + id);
+    ASSERT_EQ(can.tpdo2()->getCobId(), 0x280 + id);
+    ASSERT_EQ(can.tpdo3()->getCobId(), 0x380 + id);
+    ASSERT_EQ(can.tpdo4()->getCobId(), 0x480 + id);
+
+    // test EMCY
+
+    EmcyConsumer::code_t actualCode;
+    std::uint8_t actualReg;
+    std::uint64_t actualMsef = 0;
+
+    const EmcyConsumer::code_t expectedCode = {0x1000, "Generic error"};
+    const std::uint8_t expectedReg = 0x04;
+    const std::uint64_t expectedMsef = 0x1234567890;
+
+    std::uint8_t raw1[8];
+    std::memcpy(raw1, &expectedCode.first, 2);
+    raw1[2] = expectedReg;
+    std::memcpy(raw1 + 3, &expectedMsef, 5);
+
+    can.emcy()->registerHandler([&](EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef)
+            {
+                actualCode = code;
+                actualReg = reg;
+                std::memcpy(&actualMsef, msef, 5);
+            });
+
+    ASSERT_TRUE(can.consumeMessage(0x80 + id, raw1, 8));
+    ASSERT_EQ(actualCode.first, expectedCode.first);
+    ASSERT_EQ(actualReg, expectedReg);
+    ASSERT_EQ(actualMsef, expectedMsef);
+
+    // test TPDO1
+
+    std::uint8_t actualTpdo1;
+    const std::uint8_t expectedTpdo1 = 0x12;
+    const std::uint8_t raw2[] = {expectedTpdo1};
+    can.tpdo1()->registerHandler<std::uint8_t>([&](std::uint8_t v) { actualTpdo1 = v; });
+    ASSERT_TRUE(can.consumeMessage(0x180 + id, raw2, 1));
+    ASSERT_EQ(actualTpdo1, expectedTpdo1);
+
+    // test TPDO2
+
+    std::uint8_t actualTpdo2;
+    const std::uint8_t expectedTpdo2 = 0x34;
+    const std::uint8_t raw3[] = {expectedTpdo2};
+    can.tpdo2()->registerHandler<std::uint8_t>([&](std::uint8_t v) { actualTpdo2 = v; });
+    ASSERT_TRUE(can.consumeMessage(0x280 + id, raw3, 1));
+    ASSERT_EQ(actualTpdo2, expectedTpdo2);
+
+    // test TPDO3
+
+    std::uint8_t actualTpdo3;
+    const std::uint8_t expectedTpdo3 = 0x56;
+    const std::uint8_t raw4[] = {expectedTpdo3};
+    can.tpdo3()->registerHandler<std::uint8_t>([&](std::uint8_t v) { actualTpdo3 = v; });
+    ASSERT_TRUE(can.consumeMessage(0x380 + id, raw4, 1));
+    ASSERT_EQ(actualTpdo3, expectedTpdo3);
+
+    // test TPDO4
+
+    std::uint8_t actualTpdo4;
+    const std::uint8_t expectedTpdo4 = 0x78;
+    const std::uint8_t raw5[] = {expectedTpdo4};
+    can.tpdo4()->registerHandler<std::uint8_t>([&](std::uint8_t v) { actualTpdo4 = v; });
+    ASSERT_TRUE(can.consumeMessage(0x480 + id, raw5, 1));
+    ASSERT_EQ(actualTpdo4, expectedTpdo4);
+
+    // test SDO
+
+    const std::uint8_t raw6[8] = {0x60};
+    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return can.consumeMessage(0x580 + id, raw6, 8); }});
+    ASSERT_TRUE(can.sdo()->download("Download test 1", 0x00, 0x1234));
+
+    // test NMT
+
+    std::uint8_t temp[1];
+
+    NmtState actualNmt;
+    const NmtState expectedNmt = NmtState::OPERATIONAL;
+    const std::uint8_t raw7[] = {static_cast<std::uint8_t>(NmtState::OPERATIONAL), id};
+    can.nmt()->registerHandler([&](NmtState s) { actualNmt = s; });
+    ASSERT_TRUE(can.consumeMessage(0x700 + id, raw7, 2));
+    ASSERT_EQ(actualNmt, expectedNmt);
 }
 
 } // namespace roboticslab
