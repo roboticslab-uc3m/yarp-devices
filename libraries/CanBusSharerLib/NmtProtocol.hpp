@@ -13,7 +13,7 @@
 namespace roboticslab
 {
 
-enum class NmtService
+enum class NmtService : std::uint8_t
 {
     START_REMOTE_NODE = 1,
     STOP_REMOTE_NODE = 2,
@@ -22,7 +22,7 @@ enum class NmtService
     RESET_COMMUNICATION = 130
 };
 
-enum class NmtState
+enum class NmtState : std::uint8_t
 {
     BOOTUP = 0,
     STOPPED = 4,

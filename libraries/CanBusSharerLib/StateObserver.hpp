@@ -85,11 +85,11 @@ public:
     bool await(T * raw)
     { return StateObserverBase::await(raw); }
 
-    bool notify(const T * raw, std::size_t len = sizeof(T))
-    { return StateObserverBase::notify(raw, len); }
+    bool notify(T raw)
+    { return StateObserverBase::notify(&raw, sizeof(T)); }
 
     bool notify(const std::uint8_t * raw, std::size_t len)
-    { return StateObserverBase::notify(raw, len); }
+    { return len == sizeof(T) && StateObserverBase::notify(raw, len); }
 };
 
 template<>

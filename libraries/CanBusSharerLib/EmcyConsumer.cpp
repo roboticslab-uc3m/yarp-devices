@@ -90,8 +90,13 @@ bool EmcyConsumer::configure(std::uint16_t inhibitTime)
     return sdo->download("Inhibit time EMCY", inhibitTime, 0x1015);
 }
 
-void EmcyConsumer::accept(const std::uint8_t * data)
+bool EmcyConsumer::accept(const std::uint8_t * data)
 {
+    if (!callback)
+    {
+        return false;
+    }
+
     std::uint16_t code;
     std::uint8_t reg;
     std::uint8_t msef[5];
@@ -103,4 +108,5 @@ void EmcyConsumer::accept(const std::uint8_t * data)
     code_t codeToMsg = std::make_pair(code, codeRegistry->codeToMessage(code));
 
     callback(codeToMsg, reg, msef);
+    return true;
 }

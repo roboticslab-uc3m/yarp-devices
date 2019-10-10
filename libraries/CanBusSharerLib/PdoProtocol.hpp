@@ -162,7 +162,7 @@ public:
     { }
 
     bool accept(const std::uint8_t * data, unsigned int size)
-    { return callback(data, size); }
+    { return (bool)callback && callback(data, size); }
 
     template<typename... Ts, typename Fn>
     void registerHandler(const Fn & fn)

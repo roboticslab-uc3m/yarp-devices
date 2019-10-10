@@ -14,19 +14,15 @@ namespace std
     template<>
     struct hash<roboticslab::DriveState>
     {
-        std::size_t operator ()(roboticslab::DriveState state)
-        {
-            return static_cast<std::size_t>(state);
-        }
+        std::size_t operator()(roboticslab::DriveState state)
+        { return static_cast<std::size_t>(state); }
     };
 
     template<>
     struct hash<roboticslab::DriveTransition>
     {
-        std::size_t operator ()(roboticslab::DriveTransition transition)
-        {
-            return static_cast<std::size_t>(transition);
-        }
+        std::size_t operator()(roboticslab::DriveTransition transition)
+        { return static_cast<std::size_t>(transition); }
     };
 }
 
@@ -36,10 +32,8 @@ namespace
     struct pair_hash
     {
         template<typename T1, typename T2>
-        std::size_t operator ()(const std::pair<T1, T2> & pair) const
-        {
-            return std::hash<T1>()(pair.first) ^ std::hash<T2>()(pair.second);
-        }
+        std::size_t operator()(const std::pair<T1, T2> & pair) const
+        { return std::hash<T1>()(pair.first) ^ std::hash<T2>()(pair.second); }
     };
 
     DriveState parseDriveState(const std::bitset<16> & bits)
@@ -93,7 +87,7 @@ namespace
             bits.reset(7);
             break;
         case DriveTransition::SWITCH_ON: // xxxx.xxxx.0xxx.0111
-        case DriveTransition::DISABLE_OPERATION:
+        //case DriveTransition::DISABLE_OPERATION:
             bits.set(0);
             bits.set(1);
             bits.set(2);
@@ -127,7 +121,7 @@ namespace
         {{DriveState::READY_TO_SWITCH_ON, DriveTransition::SWITCH_ON}, DriveState::SWITCHED_ON}, // 3
         {{DriveState::SWITCHED_ON, DriveTransition::ENABLE_OPERATION}, DriveState::OPERATION_ENABLED}, // 4
         {{DriveState::OPERATION_ENABLED, DriveTransition::DISABLE_OPERATION}, DriveState::SWITCHED_ON}, // 5
-        {{DriveState::OPERATION_ENABLED, DriveTransition::SWITCH_ON}, DriveState::SWITCHED_ON}, // 5 (alias)
+        //{{DriveState::OPERATION_ENABLED, DriveTransition::SWITCH_ON}, DriveState::SWITCHED_ON}, // 5 (alias)
         {{DriveState::SWITCHED_ON, DriveTransition::SHUTDOWN}, DriveState::READY_TO_SWITCH_ON}, // 6
         {{DriveState::READY_TO_SWITCH_ON, DriveTransition::DISABLE_VOLTAGE}, DriveState::SWITCH_ON_DISABLED}, // 7
         {{DriveState::OPERATION_ENABLED, DriveTransition::SHUTDOWN}, DriveState::READY_TO_SWITCH_ON}, // 8
@@ -146,12 +140,12 @@ namespace
         {{DriveState::READY_TO_SWITCH_ON, DriveState::OPERATION_ENABLED}, {DriveTransition::SWITCH_ON, DriveTransition::ENABLE_OPERATION}},
         {{DriveState::SWITCHED_ON, DriveState::OPERATION_ENABLED}, {DriveTransition::ENABLE_OPERATION}},
         {{DriveState::OPERATION_ENABLED, DriveState::SWITCHED_ON}, {DriveTransition::DISABLE_OPERATION}},
+        //{{DriveState::OPERATION_ENABLED, DriveState::SWITCHED_ON}, {DriveTransition::SWITCH_ON}},
         {{DriveState::OPERATION_ENABLED, DriveState::READY_TO_SWITCH_ON}, {DriveTransition::SHUTDOWN}},
         {{DriveState::OPERATION_ENABLED, DriveState::SWITCH_ON_DISABLED}, {DriveTransition::DISABLE_VOLTAGE}},
         {{DriveState::SWITCHED_ON, DriveState::READY_TO_SWITCH_ON}, {DriveTransition::SHUTDOWN}},
         {{DriveState::SWITCHED_ON, DriveState::SWITCH_ON_DISABLED}, {DriveTransition::DISABLE_VOLTAGE}},
         {{DriveState::READY_TO_SWITCH_ON, DriveState::SWITCH_ON_DISABLED}, {DriveTransition::DISABLE_VOLTAGE}},
-        {{DriveState::READY_TO_SWITCH_ON, DriveState::SWITCHED_ON}, {DriveTransition::SWITCH_ON}},
         {{DriveState::QUICK_STOP_ACTIVE, DriveState::SWITCH_ON_DISABLED}, {DriveTransition::DISABLE_VOLTAGE}}
     };
 }
@@ -237,7 +231,7 @@ bool DriveStatusMachine::requestState(DriveState goalState)
     return true;
 }
 
-DriveState parseStatusword(std::uint16_t statusword)
+DriveState DriveStatusMachine::parseStatusword(std::uint16_t statusword)
 {
     return parseDriveState(statusword);
 }

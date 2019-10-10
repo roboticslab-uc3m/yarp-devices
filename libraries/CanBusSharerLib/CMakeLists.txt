@@ -7,7 +7,6 @@ if(ENABLE_CanBusSharerLib)
                                        CanOpen.cpp
                                        CanSenderDelegate.hpp
                                        SdoClient.hpp
-                                       SdoClient-inl.hpp
                                        SdoClient.cpp
                                        PdoProtocol.hpp
                                        PdoProtocol.cpp

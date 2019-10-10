@@ -14,8 +14,8 @@ bool TechnosoftIpos::getRefTorqueRaw(int j, double * t)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_TORQUE);
 
-    return can->sdo()->upload<std::int32_t>("External online reference", [&](std::int32_t * data)
-            { double curr = vars.internalUnitsToCurrent(*data >> 16);
+    return can->sdo()->upload<std::int32_t>("External online reference", [&](std::int32_t data)
+            { double curr = vars.internalUnitsToCurrent(data >> 16);
               *t = vars.currentToTorque(curr); },
             0x201C);
 }
@@ -75,8 +75,8 @@ bool TechnosoftIpos::getTorqueRangeRaw(int j, double * min, double * max)
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
 
-    return can->sdo()->upload<std::uint16_t>("Current limit", [&](std::uint16_t * data)
-            { double temp = vars.internalUnitsToPeakCurrent(*data);
+    return can->sdo()->upload<std::uint16_t>("Current limit", [&](std::uint16_t data)
+            { double temp = vars.internalUnitsToPeakCurrent(data);
               *max = vars.currentToTorque(temp);
               *min = -(*max); },
             0x207F);

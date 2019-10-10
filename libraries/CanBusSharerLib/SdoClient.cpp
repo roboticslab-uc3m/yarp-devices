@@ -91,7 +91,7 @@ namespace
 
 bool SdoClient::send(const std::uint8_t * msg)
 {
-    return sender->prepareMessage({cobRx, 8, msg});
+    return sender->prepareMessage({getCobIdRx(), 8, msg});
 }
 
 std::string SdoClient::msgToStr(std::uint16_t cob, const std::uint8_t * msgData)
@@ -116,7 +116,7 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
 
     std::bitset<8> bitsReceived(responseMsg[0]);
 
-    if (bitsReceived[1]) // expedited trasfer
+    if (bitsReceived[1]) // expedited transfer
     {
         if (bitsReceived[0]) // data size is indicated in 'n'
         {
@@ -195,7 +195,7 @@ bool SdoClient::downloadInternal(const std::string & name, const void * data, st
         indicationBits.set(1); // e: transfer type
         const std::uint8_t n = 4 - size;
         indicationMsg[0] = indicationBits.to_ulong() + (n << 2);
-        std::memcpy(indicationMsg + 4, &data, size);
+        std::memcpy(indicationMsg + 4, data, size);
 
         std::uint8_t confirmMsg[8];
         return performTransfer(name, indicationMsg, confirmMsg);
@@ -242,7 +242,7 @@ bool SdoClient::downloadInternal(const std::string & name, const void * data, st
                 return false;
             }
 
-            if (!std::bitset<8>(confirmMsg[0])[4] != bitsSent[4])
+            if (std::bitset<8>(confirmMsg[0])[4] != bitsSent[4])
             {
                 CD_ERROR("SDO segmented download: toggle bit mismatch.\n");
                 return false;
@@ -257,6 +257,38 @@ bool SdoClient::downloadInternal(const std::string & name, const void * data, st
     }
 
     return true;
+}
+
+bool SdoClient::upload(const std::string & name, std::string & s, std::uint16_t index, std::uint8_t subindex)
+{
+    const std::uint32_t maxLen = 100; // arbitrary high value
+    char buf[maxLen] = {0};
+
+    if (!uploadInternal(name, buf, maxLen, index, subindex))
+    {
+        return false;
+    }
+
+    s = buf;
+    return true;
+}
+
+bool SdoClient::upload(const std::string & name, const std::function<void(const std::string & s)> & fn, std::uint16_t index, std::uint8_t subindex)
+{
+    std::string s;
+
+    if (!upload(name, s, index, subindex))
+    {
+        return false;
+    }
+
+    fn(s);
+    return true;
+}
+
+bool SdoClient::download(const std::string & name, const std::string & s, std::uint16_t index, std::uint8_t subindex)
+{
+    return downloadInternal(name, s.data(), s.size(), index, subindex);
 }
 
 bool SdoClient::performTransfer(const std::string & name, const std::uint8_t * req, std::uint8_t * resp)

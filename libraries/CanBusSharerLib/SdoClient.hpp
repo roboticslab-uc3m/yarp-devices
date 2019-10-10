@@ -42,10 +42,10 @@ public:
     }
 
     template<typename T>
-    bool upload(const std::string & name, const std::function<void(T * data)> & fn, std::uint16_t index, std::uint8_t subindex = 0x00)
+    bool upload(const std::string & name, const std::function<void(T data)> & fn, std::uint16_t index, std::uint8_t subindex = 0x00)
     {
         T data; bool res;
-        return res = upload(name, &data, index, subindex), fn(&data), res;
+        return res = upload(name, &data, index, subindex), fn(data), res;
     }
 
     template<typename T>
@@ -54,6 +54,12 @@ public:
         static_assert(std::is_integral<T>::value, "Integral required.");
         return downloadInternal(name, &data, sizeof(T), index, subindex);
     }
+
+    bool upload(const std::string & name, std::string & s, std::uint16_t index, std::uint8_t subindex = 0x00);
+
+    bool upload(const std::string & name, const std::function<void(const std::string & data)> & fn, std::uint16_t index, std::uint8_t subindex = 0x00);
+
+    bool download(const std::string & name, const std::string & s, std::uint16_t index, std::uint8_t subindex = 0x00);
 
 private:
     bool send(const std::uint8_t * msg);
@@ -72,8 +78,5 @@ private:
 };
 
 } // namespace roboticslab
-
-// template specializations
-#include "SdoClient-inl.hpp"
 
 #endif // __SDO_CLIENT_HPP__

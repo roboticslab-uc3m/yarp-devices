@@ -133,12 +133,12 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
         bits.set(30, !*conf.priv->rtr);
     }
 
-    if (!sdo->download(std::string("COB-ID ") + pdoType, bits.to_ulong(), commIdx, 0x01))
+    if (!sdo->download<std::uint32_t>(std::string("COB-ID ") + pdoType, bits.to_ulong(), commIdx, 0x01))
     {
         return false;
     }
 
-    if (conf.priv->transmissionType && !sdo->download("Transmission type", (std::uint8_t)*conf.priv->transmissionType, commIdx, 0x02))
+    if (conf.priv->transmissionType && !sdo->download("Transmission type", static_cast<std::uint8_t>(*conf.priv->transmissionType), commIdx, 0x02))
     {
         return false;
     }
@@ -197,7 +197,7 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
     {
         bits.reset(31);
 
-        if (!sdo->download(std::string("COB-ID ") + pdoType, bits.to_ulong(), commIdx, 0x01))
+        if (!sdo->download<std::uint32_t>(std::string("COB-ID ") + pdoType, bits.to_ulong(), commIdx, 0x01))
         {
             return false;
         }
