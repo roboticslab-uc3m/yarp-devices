@@ -3,6 +3,8 @@
 #ifndef __DEVICE_MAPPER_HPP__
 #define __DEVICE_MAPPER_HPP__
 
+#include <future>
+#include <memory>
 #include <tuple>
 #include <vector>
 
@@ -38,12 +40,80 @@ struct RawDevice
     { return nullptr; }
 };
 
+class FutureTask
+{
+public:
+    virtual ~FutureTask();
+
+    template<typename T, typename Fn, typename... Args>
+    void add(T * p, Fn && fn, Args &&... args);
+
+    bool dispatch();
+
+protected:
+    virtual std::launch getPolicy() = 0;
+
+    std::vector<std::future<bool>> futures;
+};
+
+class SequentialTask : public FutureTask
+{
+protected:
+    virtual std::launch getPolicy() override
+    { return std::launch::deferred; }
+};
+
+class ParallelTask : public FutureTask
+{
+public:
+    ParallelTask(unsigned int concurrentTasks)
+        : _concurrentTasks(concurrentTasks)
+    { }
+
+protected:
+    virtual std::launch getPolicy() override
+    { return std::launch::async; }
+
+private:
+    unsigned int _concurrentTasks;
+};
+
+class FutureTaskFactory
+{
+public:
+    virtual ~FutureTaskFactory() {}
+    virtual std::unique_ptr<FutureTask> createTask() = 0;
+};
+
+class SequentialTaskFactory : public FutureTaskFactory
+{
+public:
+    virtual std::unique_ptr<FutureTask> createTask() override
+    { return std::unique_ptr<SequentialTask>(new SequentialTask); }
+};
+
+class ParallelTaskFactory : public FutureTaskFactory
+{
+public:
+    ParallelTaskFactory(unsigned int concurrentTasks)
+        : _concurrentTasks(concurrentTasks)
+    { }
+
+    virtual std::unique_ptr<FutureTask> createTask() override
+    { return std::unique_ptr<ParallelTask>(new ParallelTask(_concurrentTasks)); }
+
+private:
+    unsigned int _concurrentTasks;
+};
+
 class DeviceMapper
 {
 public:
-    DeviceMapper() : totalAxes(0)
+    DeviceMapper()
+        : totalAxes(0), taskFactory(new SequentialTaskFactory)
     { }
 
+    void enableParallelization(unsigned int concurrentTasks);
     bool registerDevice(yarp::dev::PolyDriver * driver);
     const RawDevice & getDevice(int deviceIndex) const;
     const RawDevice & getDevice(int globalAxis, int * localAxis) const;
@@ -76,16 +146,17 @@ public:
     {
         const int * localAxisOffsets;
         const std::vector<RawDevice> & rawDevices = getDevices(localAxisOffsets);
+        auto task = taskFactory->createTask();
 
         bool ok = true;
 
         for (int i = 0; i < rawDevices.size(); i++)
         {
             T * p = rawDevices[i].getHandle<T>();
-            ok &= p ? (p->*fn)(refs + localAxisOffsets[i]...) : false;
+            ok &= p ? task->add(p, fn, refs + localAxisOffsets[i]...), true : false;
         }
 
-        return ok;
+        return ok && task->dispatch();
     }
 
     template<typename T, typename... T_refs>
@@ -94,16 +165,17 @@ public:
     template<typename T, typename... T_refs>
     bool mapJointGroup(multi_mapping_fn<T, T_refs...> fn, int n_joint, const int * joints, T_refs *... refs)
     {
+        auto task = taskFactory->createTask();
         bool ok = true;
 
         for (const auto & t : getDevices(n_joint, joints))
         {
             T * p = std::get<0>(t)->getHandle<T>();
             const auto & localIndices = computeLocalIndices(std::get<1>(t), joints, std::get<2>(t));
-            ok &= p ? (p->*fn)(std::get<1>(t), localIndices.data(), refs + std::get<2>(t)...) : false;
+            ok &= p ? task->add(p, fn, std::get<1>(t), localIndices.data(), refs + std::get<2>(t)...), true : false;
         }
 
-        return ok;
+        return ok && task->dispatch();
     }
 
 private:
@@ -113,6 +185,8 @@ private:
     std::vector<int> localAxisOffset;
     std::vector<int> rawDeviceIndexAtGlobalAxisIndex;
     int totalAxes;
+
+    std::unique_ptr<FutureTaskFactory> taskFactory;
 };
 
 } // namespace roboticslab
