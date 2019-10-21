@@ -121,7 +121,7 @@ bool roboticslab::DextraSerialControlboard::getEncoderAccelerations(double *accs
 
 bool roboticslab::DextraSerialControlboard::getEncodersTimed(double *encs, double *time)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n");  //-- Too verbose in controlboardwrapper2 stream.
     *time = yarp::os::Time::now();
     return getEncoders(encs);
 }
