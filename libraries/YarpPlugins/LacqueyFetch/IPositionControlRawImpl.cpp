@@ -20,42 +20,28 @@ bool roboticslab::LacqueyFetch::positionMoveRaw(int j, double ref)    // encExpo
     if ( j != 0 ) return false;
 
     //Adjust range:
-    if (ref > 1023)
+    if (ref > 0)
     {
-        ref=1023;
+        ref=100;
     }
-    else if (ref < -1023)
+    else if (ref < 0)
     {
-        ref=-1023;
-    }
-
-    //*************************************************************
-    uint8_t msg_position_target[]= {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}; // Position target
-    uint16_t pwm;
-    //Send appropriate message:
-    if (ref==0)
-    {
-        msg_position_target[0]=0xF0;
-    }
-    else if (ref>0)
-    {
-        pwm=ref;
-        msg_position_target[1]=pwm>>2;
-        msg_position_target[0]=0xA0 + (pwm & 0b0000000000000011);
-    }
-    else
-    {
-        pwm=abs(ref);
-        msg_position_target[1]=pwm>>2;
-        msg_position_target[0]=0xC0 + (pwm & 0b0000000000000011);
+        ref=-100;
     }
 
-    if( ! send( 0x600, 2, msg_position_target ) )
+
+    uint8_t msg_position_target[]= {0x00,0x00,0x00,0x00}; // Position target
+
+    float tmpref = (float)ref;
+
+    std::memcpy(msg_position_target, &tmpref, sizeof(msg_position_target));
+
+    if( ! send( 0x600, 4, msg_position_target ) )
     {
-        CD_ERROR("Could not send \"position target8\". %s\n", msgToStr(0x600, 2, msg_position_target).c_str() );
+        CD_ERROR("Could not send \"position target8\". %s\n", msgToStr(0x600, 4, msg_position_target).c_str() );
         return false;
     }
-    CD_SUCCESS("Sent \"position target8\". %s\n", msgToStr(0x600, 2, msg_position_target).c_str() );
+    CD_SUCCESS("Sent \"position target8\". %s\n", msgToStr(0x600, 4, msg_position_target).c_str() );
     //*************************************************************
 
     encoderReady.wait();
