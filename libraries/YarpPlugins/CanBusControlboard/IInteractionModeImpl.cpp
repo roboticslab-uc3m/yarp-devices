@@ -36,7 +36,7 @@ bool CanBusControlboard::getInteractionModes(int n_joints, int * joints, yarp::d
 
     for (const auto & t : deviceMapper.getDevices(n_joints, c_joints))
     {
-        yarp::dev::IInteractionModeRaw * p = std::get<0>(t)->iInteractionModeRaw;
+        yarp::dev::IInteractionModeRaw * p = std::get<0>(t)->getHandle<yarp::dev::IInteractionModeRaw>();
         const auto & localIndices = deviceMapper.computeLocalIndices(std::get<1>(t), joints, std::get<2>(t));
         int * temp = const_cast<int *>(localIndices.data()); // workaround
         ok &= p ? p->getInteractionModesRaw(std::get<1>(t), temp, modes + std::get<2>(t)) : false;
@@ -73,7 +73,7 @@ bool CanBusControlboard::setInteractionModes(int n_joints, int * joints, yarp::d
 
     for (const auto & t : deviceMapper.getDevices(n_joints, c_joints))
     {
-        yarp::dev::IInteractionModeRaw * p = std::get<0>(t)->iInteractionModeRaw;
+        yarp::dev::IInteractionModeRaw * p = std::get<0>(t)->getHandle<yarp::dev::IInteractionModeRaw>();
         const auto & localIndices = deviceMapper.computeLocalIndices(std::get<1>(t), joints, std::get<2>(t));
         int * temp = const_cast<int *>(localIndices.data()); // workaround
         ok &= p ? p->setInteractionModesRaw(std::get<1>(t), temp, modes + std::get<2>(t)) : false;

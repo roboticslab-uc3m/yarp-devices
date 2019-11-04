@@ -76,7 +76,7 @@ bool CanBusControlboard::checkMotionDone(bool * flag)
 
     for (const auto & rawDevice : deviceMapper.getDevices())
     {
-        yarp::dev::IPositionControlRaw * p = rawDevice.iPositionControlRaw;
+        yarp::dev::IPositionControlRaw * p = rawDevice->getHandle<yarp::dev::IPositionControlRaw>();
         bool localFlag;
 
         if (p && p->checkMotionDoneRaw(&localFlag))
@@ -102,7 +102,7 @@ bool CanBusControlboard::checkMotionDone(int n_joint, const int * joints, bool *
 
     for (const auto & t : deviceMapper.getDevices(n_joint, joints))
     {
-        yarp::dev::IPositionControlRaw * p = std::get<0>(t)->iPositionControlRaw;
+        yarp::dev::IPositionControlRaw * p = std::get<0>(t)->getHandle<yarp::dev::IPositionControlRaw>();
         const auto & localIndices = deviceMapper.computeLocalIndices(std::get<1>(t), joints, std::get<2>(t));
         bool localFlag;
 

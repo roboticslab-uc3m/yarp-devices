@@ -5,9 +5,64 @@
 #include <algorithm>
 #include <functional>
 
+#include <yarp/dev/ControlBoardInterfaces.h>
+
 #include <ColorDebug.h>
 
 using namespace roboticslab;
+
+namespace
+{
+    bool queryControlledAxes(const RawDevice * rd, int * axes, bool * ret)
+    {
+        if (rd->getHandle<yarp::dev::ICurrentControlRaw>())
+        {
+            *ret = rd->getHandle<yarp::dev::ICurrentControlRaw>()->getNumberOfMotorsRaw(axes);
+        }
+        else if (rd->getHandle<yarp::dev::IEncodersTimedRaw>())
+        {
+            *ret = rd->getHandle<yarp::dev::IEncodersTimedRaw>()->getAxes(axes);
+        }
+        else if (rd->getHandle<yarp::dev::IImpedanceControlRaw>())
+        {
+            *ret = rd->getHandle<yarp::dev::IImpedanceControlRaw>()->getAxes(axes);
+        }
+        else if (rd->getHandle<yarp::dev::IMotorRaw>())
+        {
+            *ret = rd->getHandle<yarp::dev::IMotorRaw>()->getNumberOfMotorsRaw(axes);
+        }
+        else if (rd->getHandle<yarp::dev::IMotorEncodersRaw>())
+        {
+            *ret = rd->getHandle<yarp::dev::IMotorEncodersRaw>()->getNumberOfMotorEncodersRaw(axes);
+        }
+        else if (rd->getHandle<yarp::dev::IPositionControlRaw>())
+        {
+            *ret = rd->getHandle<yarp::dev::IPositionControlRaw>()->getAxes(axes);
+        }
+        else if (rd->getHandle<yarp::dev::IPositionDirectRaw>())
+        {
+            *ret = rd->getHandle<yarp::dev::IPositionDirectRaw>()->getAxes(axes);
+        }
+        else if (rd->getHandle<yarp::dev::IPWMControlRaw>())
+        {
+            *ret = rd->getHandle<yarp::dev::IPWMControlRaw>()->getNumberOfMotorsRaw(axes);
+        }
+        else if (rd->getHandle<yarp::dev::IVelocityControlRaw>())
+        {
+            *ret = rd->getHandle<yarp::dev::IVelocityControlRaw>()->getAxes(axes);
+        }
+        else if (rd->getHandle<yarp::dev::ITorqueControlRaw>())
+        {
+            *ret = rd->getHandle<yarp::dev::ITorqueControlRaw>()->getAxes(axes);
+        }
+        else
+        {
+            return false;
+        }
+
+        return true;
+    }
+}
 
 FutureTask::~FutureTask()
 {
@@ -28,6 +83,18 @@ bool FutureTask::dispatch()
     return std::all_of(futures.begin(), futures.end(), std::bind(&std::future<bool>::get, std::placeholders::_1));
 }
 
+DeviceMapper::DeviceMapper()
+    : totalAxes(0), taskFactory(new SequentialTaskFactory)
+{ }
+
+DeviceMapper::~DeviceMapper()
+{
+    for (auto rawDevice : rawDevices)
+    {
+        delete rawDevice;
+    }
+}
+
 void DeviceMapper::enableParallelization(unsigned int concurrentTasks)
 {
     taskFactory = std::unique_ptr<ParallelTaskFactory>(new ParallelTaskFactory(concurrentTasks));
@@ -35,26 +102,7 @@ void DeviceMapper::enableParallelization(unsigned int concurrentTasks)
 
 bool DeviceMapper::registerDevice(yarp::dev::PolyDriver * driver)
 {
-    RawDevice rd;
-
-    driver->view(rd.iAmplifierControlRaw);
-    driver->view(rd.iAxisInfoRaw);
-    driver->view(rd.iControlCalibrationRaw);
-    driver->view(rd.iControlLimitsRaw);
-    driver->view(rd.iControlModeRaw);
-    driver->view(rd.iCurrentControlRaw);
-    driver->view(rd.iEncodersTimedRaw);
-    driver->view(rd.iImpedanceControlRaw);
-    driver->view(rd.iInteractionModeRaw);
-    driver->view(rd.iMotorRaw);
-    driver->view(rd.iMotorEncodersRaw);
-    driver->view(rd.iPidControlRaw);
-    driver->view(rd.iPositionControlRaw);
-    driver->view(rd.iPositionDirectRaw);
-    driver->view(rd.iPWMControlRaw);
-    driver->view(rd.iRemoteVariablesRaw);
-    driver->view(rd.iVelocityControlRaw);
-    driver->view(rd.iTorqueControlRaw);
+    RawDevice * rd = new RawDevice(driver);
 
     int axes;
     bool ret;
@@ -80,74 +128,24 @@ bool DeviceMapper::registerDevice(yarp::dev::PolyDriver * driver)
     }
 }
 
-bool DeviceMapper::queryControlledAxes(const RawDevice & rd, int * axes, bool * ret)
-{
-    if (rd.iCurrentControlRaw)
-    {
-        *ret = rd.iCurrentControlRaw->getNumberOfMotorsRaw(axes);
-    }
-    else if (rd.iEncodersTimedRaw)
-    {
-        *ret = rd.iEncodersTimedRaw->getAxes(axes);
-    }
-    else if (rd.iImpedanceControlRaw)
-    {
-        *ret = rd.iImpedanceControlRaw->getAxes(axes);
-    }
-    else if (rd.iMotorRaw)
-    {
-        *ret = rd.iMotorRaw->getNumberOfMotorsRaw(axes);
-    }
-    else if (rd.iMotorEncodersRaw)
-    {
-        *ret = rd.iMotorEncodersRaw->getNumberOfMotorEncodersRaw(axes);
-    }
-    else if (rd.iPositionControlRaw)
-    {
-        *ret = rd.iPositionControlRaw->getAxes(axes);
-    }
-    else if (rd.iPositionDirectRaw)
-    {
-        *ret = rd.iPositionDirectRaw->getAxes(axes);
-    }
-    else if (rd.iPWMControlRaw)
-    {
-        *ret = rd.iPWMControlRaw->getNumberOfMotorsRaw(axes);
-    }
-    else if (rd.iVelocityControlRaw)
-    {
-        *ret = rd.iVelocityControlRaw->getAxes(axes);
-    }
-    else if (rd.iTorqueControlRaw)
-    {
-        *ret = rd.iTorqueControlRaw->getAxes(axes);
-    }
-    else
-    {
-        return false;
-    }
-
-    return true;
-}
-
 const RawDevice & DeviceMapper::getDevice(int deviceIndex) const
 {
-    return rawDevices[deviceIndex];
+    return *rawDevices[deviceIndex];
 }
 
 const RawDevice & DeviceMapper::getDevice(int globalAxis, int * localAxis) const
 {
     const int deviceIndex = rawDeviceIndexAtGlobalAxisIndex[globalAxis];
     *localAxis = globalAxis - localAxisOffset[deviceIndex];
-    return rawDevices[deviceIndex];
+    return *rawDevices[deviceIndex];
 }
 
-const std::vector<RawDevice> & DeviceMapper::getDevices() const
+const std::vector<const RawDevice *> & DeviceMapper::getDevices() const
 {
     return rawDevices;
 }
 
-const std::vector<RawDevice> & DeviceMapper::getDevices(const int *& localAxisOffsets) const
+const std::vector<const RawDevice *> & DeviceMapper::getDevices(const int *& localAxisOffsets) const
 {
     localAxisOffsets = localAxisOffset.data();
     return rawDevices;
@@ -164,7 +162,7 @@ DeviceMapper::device_tuple_t DeviceMapper::getDevices(int globalAxesCount, const
 
         if (deviceIndex != previousDeviceIndex)
         {
-            vec.push_back(std::make_tuple(&rawDevices[deviceIndex], 1, i));
+            vec.push_back(std::make_tuple(rawDevices[deviceIndex], 1, i));
             previousDeviceIndex = deviceIndex;
         }
         else

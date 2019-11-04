@@ -8,36 +8,23 @@
 #include <tuple>
 #include <vector>
 
-#include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
 namespace roboticslab
 {
 
-struct RawDevice
+class RawDevice final
 {
-    yarp::dev::IAmplifierControlRaw * iAmplifierControlRaw;
-    yarp::dev::IAxisInfoRaw * iAxisInfoRaw;
-    yarp::dev::IControlCalibrationRaw * iControlCalibrationRaw;
-    yarp::dev::IControlLimitsRaw * iControlLimitsRaw;
-    yarp::dev::IControlModeRaw * iControlModeRaw;
-    yarp::dev::ICurrentControlRaw * iCurrentControlRaw;
-    yarp::dev::IEncodersTimedRaw * iEncodersTimedRaw;
-    yarp::dev::IImpedanceControlRaw * iImpedanceControlRaw;
-    yarp::dev::IInteractionModeRaw * iInteractionModeRaw;
-    yarp::dev::IMotorRaw * iMotorRaw;
-    yarp::dev::IMotorEncodersRaw * iMotorEncodersRaw;
-    yarp::dev::IPidControlRaw * iPidControlRaw;
-    yarp::dev::IPositionControlRaw * iPositionControlRaw;
-    yarp::dev::IPositionDirectRaw * iPositionDirectRaw;
-    yarp::dev::IPWMControlRaw * iPWMControlRaw;
-    yarp::dev::IRemoteVariablesRaw * iRemoteVariablesRaw;
-    yarp::dev::IVelocityControlRaw * iVelocityControlRaw;
-    yarp::dev::ITorqueControlRaw * iTorqueControlRaw;
+public:
+    explicit RawDevice(yarp::dev::PolyDriver * driver);
+    ~RawDevice();
 
     template<typename T>
-    T * getHandle() const
-    { return nullptr; }
+    T * getHandle() const;
+
+private:
+    class Private;
+    Private * priv;
 };
 
 class FutureTask
@@ -109,16 +96,15 @@ private:
 class DeviceMapper
 {
 public:
-    DeviceMapper()
-        : totalAxes(0), taskFactory(new SequentialTaskFactory)
-    { }
+    DeviceMapper();
+    ~DeviceMapper();
 
     void enableParallelization(unsigned int concurrentTasks);
     bool registerDevice(yarp::dev::PolyDriver * driver);
     const RawDevice & getDevice(int deviceIndex) const;
     const RawDevice & getDevice(int globalAxis, int * localAxis) const;
-    const std::vector<RawDevice> & getDevices() const;
-    const std::vector<RawDevice> & getDevices(const int *& localAxisOffsets) const;
+    const std::vector<const RawDevice *> & getDevices() const;
+    const std::vector<const RawDevice *> & getDevices(const int *& localAxisOffsets) const;
     typedef std::vector<std::tuple<const RawDevice *, int, int>> device_tuple_t;
     device_tuple_t getDevices(int globalAxesCount, const int * globalAxes) const;
     int computeLocalIndex(int globalAxis) const;
@@ -145,14 +131,14 @@ public:
     bool mapAllJoints(full_mapping_fn<T, T_refs...> fn, T_refs *... refs)
     {
         const int * localAxisOffsets;
-        const std::vector<RawDevice> & rawDevices = getDevices(localAxisOffsets);
+        const std::vector<const RawDevice *> & rawDevices = getDevices(localAxisOffsets);
         auto task = taskFactory->createTask();
 
         bool ok = true;
 
         for (int i = 0; i < rawDevices.size(); i++)
         {
-            T * p = rawDevices[i].getHandle<T>();
+            T * p = rawDevices[i]->getHandle<T>();
             ok &= p ? task->add(p, fn, refs + localAxisOffsets[i]...), true : false;
         }
 
@@ -179,9 +165,7 @@ public:
     }
 
 private:
-    bool queryControlledAxes(const RawDevice & rd, int * axes, bool * ret);
-
-    std::vector<RawDevice> rawDevices;
+    std::vector<const RawDevice *> rawDevices;
     std::vector<int> localAxisOffset;
     std::vector<int> rawDeviceIndexAtGlobalAxisIndex;
     int totalAxes;
@@ -190,8 +174,5 @@ private:
 };
 
 } // namespace roboticslab
-
-// template specializations
-#include "DeviceMapper-inl.hpp"
 
 #endif // __DEVICE_MAPPER_HPP__

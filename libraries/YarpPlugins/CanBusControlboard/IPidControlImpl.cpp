@@ -19,7 +19,7 @@ namespace
     bool mapSingleJoint(const DeviceMapper & dm, single_mapping_fn<T_ref...> fn, const pid_t & type, int j, T_ref... ref)
     {
         int localAxis;
-        yarp::dev::IPidControlRaw * p = dm.getDevice(j, &localAxis).iPidControlRaw;
+        yarp::dev::IPidControlRaw * p = dm.getDevice(j, &localAxis).getHandle<yarp::dev::IPidControlRaw>();
         return p ? (p->*fn)(type, localAxis, ref...) : false;
     }
 
@@ -30,13 +30,13 @@ namespace
     bool mapAllJoints(const DeviceMapper & dm, full_mapping_fn<T_refs> fn, const pid_t & type, T_refs * refs)
     {
         const int * localAxisOffsets;
-        const std::vector<RawDevice> & rawDevices = dm.getDevices(localAxisOffsets);
+        const std::vector<const RawDevice *> & rawDevices = dm.getDevices(localAxisOffsets);
 
         bool ok = true;
 
         for (int i = 0; i < rawDevices.size(); i++)
         {
-            yarp::dev::IPidControlRaw * p = rawDevices[i].iPidControlRaw;
+            yarp::dev::IPidControlRaw * p = rawDevices[i]->getHandle<yarp::dev::IPidControlRaw>();
             ok &= p ? (p->*fn)(type, refs + localAxisOffsets[i]) : false;
         }
 

@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <memory>
 
+#include <yarp/dev/IRemoteVariables.h>
+
 using namespace roboticslab;
 
 PositionDirectThread::PositionDirectThread(const DeviceMapper & _deviceMapper, double period)
@@ -21,7 +23,7 @@ void PositionDirectThread::updateControlModeRegister(int j, bool enablePosd)
     bool hasElement = activeIds.find(j) != activeIds.end();
 
     int localAxis;
-    auto * p  = deviceMapper.getDevice(j, &localAxis).iRemoteVariablesRaw;
+    auto * p  = deviceMapper.getDevice(j, &localAxis).getHandle<yarp::dev::IRemoteVariablesRaw>();
 
     if (!p)
     {
@@ -55,7 +57,7 @@ void PositionDirectThread::run()
 
     for (const auto & t : deviceMapper.getDevices(ids.size(), arr.get()))
     {
-        auto * p = std::get<0>(t)->iRemoteVariablesRaw;
+        auto * p = std::get<0>(t)->getHandle<yarp::dev::IRemoteVariablesRaw>();
         p->setRemoteVariableRaw("linInterpTarget", yarp::os::Bottle());
     }
 }

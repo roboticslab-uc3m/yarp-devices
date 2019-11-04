@@ -3,8 +3,8 @@ option(ENABLE_DeviceMapperLib "Enable/disable DeviceMapperLib library" ON)
 if(ENABLE_DeviceMapperLib)
 
     add_library(DeviceMapperLib SHARED DeviceMapper.hpp
-                                       DeviceMapper-inl.hpp
-                                       DeviceMapper.cpp)
+                                       DeviceMapper.cpp
+                                       RawDevice.cpp)
 
     target_link_libraries(DeviceMapperLib PUBLIC YARP::YARP_dev
                                           PRIVATE ROBOTICSLAB::ColorDebug)
