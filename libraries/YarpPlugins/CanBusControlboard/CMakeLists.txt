@@ -7,7 +7,7 @@ yarp_prepare_plugin(CanBusControlboard
                     TYPE roboticslab::CanBusControlboard
                     INCLUDE CanBusControlboard.hpp
                     DEFAULT ON
-                    DEPENDS ENABLE_CanBusSharerLib
+                    DEPENDS "ENABLE_CanBusSharerLib;ENABLE_DeviceMapperLib"
                     EXTRA_CONFIG WRAPPER=controlboardwrapper2)
 
 if(NOT SKIP_CanBusControlboard)
@@ -38,9 +38,6 @@ if(NOT SKIP_CanBusControlboard)
                                        PositionDirectThread.cpp
                                        CanRxTxThreads.hpp
                                        CanRxTxThreads.cpp
-                                       DeviceMapper.hpp
-                                       DeviceMapper-inl.hpp
-                                       DeviceMapper.cpp
                                        YarpCanSenderDelegate.hpp
                                        YarpCanSenderDelegate.cpp)
 
@@ -48,6 +45,7 @@ if(NOT SKIP_CanBusControlboard)
                                              YARP::YARP_dev
                                              ROBOTICSLAB::ColorDebug
                                              CanBusSharerLib
+                                             DeviceMapperLib
                                              YarpDevicesInterfaces)
 
     if(NOT YARP_VERSION_SHORT VERSION_LESS 3.2)
