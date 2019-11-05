@@ -9,19 +9,25 @@ using namespace roboticslab;
 
 FutureTask::~FutureTask()
 {
-    for (auto && f : futures)
-    {
-        f.wait();
-    }
-}
-
-template<typename T, typename Fn, typename... Args>
-void FutureTask::add(T * p, Fn && fn, Args &&... args)
-{
-    futures.push_back(std::async(getPolicy(), std::bind(fn, p), args...));
+    join();
 }
 
 bool FutureTask::dispatch()
 {
     return std::all_of(futures.begin(), futures.end(), std::bind(&std::future<bool>::get, std::placeholders::_1));
+}
+
+void FutureTask::join() const
+{
+    std::for_each(futures.begin(), futures.end(), std::bind(&std::future<bool>::wait, std::placeholders::_1));
+}
+
+std::launch SequentialTask::getPolicy() const
+{
+    return std::launch::deferred;
+}
+
+std::launch ParallelTask::getPolicy() const
+{
+    return size() > _concurrentTasks ? std::launch::deferred : std::launch::async;
 }

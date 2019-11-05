@@ -16,21 +16,27 @@ public:
     virtual ~FutureTask();
 
     template<typename T, typename Fn, typename... Args>
-    void add(T * p, Fn && fn, Args &&... args);
+    void add(T * p, Fn && fn, Args &&... args)
+    { futures.push_back(std::async(getPolicy(), fn, p, args...)); }
 
     bool dispatch();
 
-protected:
-    virtual std::launch getPolicy() = 0;
+    void join() const;
 
+    unsigned int size() const
+    { return futures.size(); }
+
+protected:
+    virtual std::launch getPolicy() const = 0;
+
+private:
     std::vector<std::future<bool>> futures;
 };
 
 class SequentialTask : public FutureTask
 {
 protected:
-    virtual std::launch getPolicy() override
-    { return std::launch::deferred; }
+    virtual std::launch getPolicy() const override;
 };
 
 class ParallelTask : public FutureTask
@@ -41,11 +47,10 @@ public:
     { }
 
 protected:
-    virtual std::launch getPolicy() override
-    { return std::launch::async; }
+    virtual std::launch getPolicy() const override;
 
 private:
-    unsigned int _concurrentTasks;
+    const unsigned int _concurrentTasks;
 };
 
 class FutureTaskFactory
