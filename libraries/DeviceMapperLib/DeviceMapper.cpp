@@ -88,6 +88,7 @@ bool DeviceMapper::registerDevice(yarp::dev::PolyDriver * driver)
     if (!queryControlledAxes(rd, &axes, &ret))
     {
         CD_WARNING("Unable to get controlled axes: missing interface implementation.\n");
+        delete rd;
         return false;
     }
 
@@ -101,6 +102,7 @@ bool DeviceMapper::registerDevice(yarp::dev::PolyDriver * driver)
     else
     {
         CD_WARNING("Unable to get controlled axes: query failure.\n");
+        delete rd;
         return false;
     }
 }
