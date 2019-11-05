@@ -2,9 +2,6 @@
 
 #include "DeviceMapper.hpp"
 
-#include <algorithm>
-#include <functional>
-
 #include <yarp/dev/ControlBoardInterfaces.h>
 
 #include <ColorDebug.h>
@@ -62,25 +59,6 @@ namespace
 
         return true;
     }
-}
-
-FutureTask::~FutureTask()
-{
-    for (auto && f : futures)
-    {
-        f.wait();
-    }
-}
-
-template<typename T, typename Fn, typename... Args>
-void FutureTask::add(T * p, Fn && fn, Args &&... args)
-{
-    futures.push_back(std::async(getPolicy(), std::bind(fn, p), args...));
-}
-
-bool FutureTask::dispatch()
-{
-    return std::all_of(futures.begin(), futures.end(), std::bind(&std::future<bool>::get, std::placeholders::_1));
 }
 
 DeviceMapper::DeviceMapper()

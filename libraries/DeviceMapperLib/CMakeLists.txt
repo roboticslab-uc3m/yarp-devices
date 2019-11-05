@@ -4,7 +4,9 @@ if(ENABLE_DeviceMapperLib)
 
     add_library(DeviceMapperLib SHARED DeviceMapper.hpp
                                        DeviceMapper.cpp
-                                       RawDevice.cpp)
+                                       RawDevice.cpp
+                                       FutureTask.hpp
+                                       FutureTask.cpp)
 
     target_link_libraries(DeviceMapperLib PUBLIC YARP::YARP_dev
                                           PRIVATE ROBOTICSLAB::ColorDebug)
