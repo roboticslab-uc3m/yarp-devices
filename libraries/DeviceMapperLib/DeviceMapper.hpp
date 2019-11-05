@@ -20,6 +20,9 @@ public:
     explicit RawDevice(yarp::dev::PolyDriver * driver);
     ~RawDevice();
 
+    RawDevice(const RawDevice &) = delete;
+    RawDevice & operator=(const RawDevice &) = delete;
+
     template<typename T>
     T * getHandle() const;
 
@@ -28,7 +31,7 @@ private:
     Private * priv;
 };
 
-class DeviceMapper
+class DeviceMapper final
 {
 public:
     DeviceMapper();
@@ -36,12 +39,14 @@ public:
 
     void enableParallelization(unsigned int concurrentTasks);
     bool registerDevice(yarp::dev::PolyDriver * driver);
-    const RawDevice & getDevice(int deviceIndex) const;
-    const RawDevice & getDevice(int globalAxis, int * localAxis) const;
-    const std::vector<const RawDevice *> & getDevices() const;
-    const std::vector<const RawDevice *> & getDevices(const int *& localAxisOffsets) const;
-    typedef std::vector<std::tuple<const RawDevice *, int, int>> device_tuple_t;
-    device_tuple_t getDevices(int globalAxesCount, const int * globalAxes) const;
+
+    using dev_int_t = std::tuple<const RawDevice *, int>;
+    using dev_int2_t = std::tuple<const RawDevice *, int, int>;
+
+    dev_int_t getDevice(int globalAxis) const;
+    const std::vector<dev_int_t> & getDevicesWithOffsets() const;
+    std::vector<dev_int2_t> getDevices(int globalAxesCount, const int * globalAxes) const;
+
     int computeLocalIndex(int globalAxis) const;
     std::vector<int> computeLocalIndices(int localAxes, const int * globalAxes, int offset) const;
 
@@ -54,9 +59,9 @@ public:
     template<typename T, typename... T_ref>
     bool mapSingleJoint(single_mapping_fn<T, T_ref...> fn, int j, T_ref... ref)
     {
-        int localAxis;
-        T * p = getDevice(j, &localAxis).getHandle<T>();
-        return p ? (p->*fn)(localAxis, ref...) : false;
+        auto t = getDevice(j);
+        T * p = std::get<0>(t)->getHandle<T>();
+        return p ? (p->*fn)(std::get<1>(t), ref...) : false;
     }
 
     template<typename T, typename... T_refs>
@@ -65,16 +70,13 @@ public:
     template<typename T, typename... T_refs>
     bool mapAllJoints(full_mapping_fn<T, T_refs...> fn, T_refs *... refs)
     {
-        const int * localAxisOffsets;
-        const std::vector<const RawDevice *> & rawDevices = getDevices(localAxisOffsets);
         auto task = taskFactory->createTask();
-
         bool ok = true;
 
-        for (int i = 0; i < rawDevices.size(); i++)
+        for (const auto & t : getDevicesWithOffsets())
         {
-            T * p = rawDevices[i]->getHandle<T>();
-            ok &= p ? task->add(p, fn, refs + localAxisOffsets[i]...), true : false;
+            T * p = std::get<0>(t)->getHandle<T>();
+            ok &= p ? task->add(p, fn, refs + std::get<1>(t)...), true : false;
         }
 
         return ok && task->dispatch();
@@ -100,8 +102,7 @@ public:
     }
 
 private:
-    std::vector<const RawDevice *> rawDevices;
-    std::vector<int> localAxisOffset;
+    std::vector<dev_int_t> rawDevicesWithOffsets;
     std::vector<int> rawDeviceIndexAtGlobalAxisIndex;
     int totalAxes;
 

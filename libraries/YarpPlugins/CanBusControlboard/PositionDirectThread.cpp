@@ -23,7 +23,8 @@ void PositionDirectThread::updateControlModeRegister(int j, bool enablePosd)
     bool hasElement = activeIds.find(j) != activeIds.end();
 
     int localAxis;
-    auto * p  = deviceMapper.getDevice(j, &localAxis).getHandle<yarp::dev::IRemoteVariablesRaw>();
+    auto t = deviceMapper.getDevice(j);
+    auto * p  = std::get<0>(t)->getHandle<yarp::dev::IRemoteVariablesRaw>();
 
     if (!p)
     {

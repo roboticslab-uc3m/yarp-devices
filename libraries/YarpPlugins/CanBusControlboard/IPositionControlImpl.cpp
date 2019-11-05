@@ -74,9 +74,9 @@ bool CanBusControlboard::checkMotionDone(bool * flag)
 
     bool ok = true;
 
-    for (const auto & rawDevice : deviceMapper.getDevices())
+    for (const auto & t : deviceMapper.getDevicesWithOffsets())
     {
-        yarp::dev::IPositionControlRaw * p = rawDevice->getHandle<yarp::dev::IPositionControlRaw>();
+        yarp::dev::IPositionControlRaw * p = std::get<0>(t)->getHandle<yarp::dev::IPositionControlRaw>();
         bool localFlag;
 
         if (p && p->checkMotionDoneRaw(&localFlag))
