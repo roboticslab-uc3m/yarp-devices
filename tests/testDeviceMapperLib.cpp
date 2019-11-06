@@ -85,7 +85,7 @@ private:
     yarp::os::Property getDriverConfig()
     {
         yarp::os::Property config;
-        config.put("device", "fakeMotionControl4");
+        config.put("device", "fakeMotionControl");
         yarp::os::Property & general = config.addGroup("GENERAL");
         general.put("Joints", 5);
 
@@ -158,7 +158,6 @@ TEST_F(DeviceMapperTest, ParallelTask)
 TEST_F(DeviceMapperTest, RawDevice)
 {
     RawDevice rd(&getDriver());
-    // FIXME: compilation always succeeds regardless of the type
     auto * p = rd.getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p, nullptr);
 }

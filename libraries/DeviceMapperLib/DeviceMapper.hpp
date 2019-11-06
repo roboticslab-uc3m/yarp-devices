@@ -24,8 +24,7 @@ public:
     RawDevice & operator=(const RawDevice &) = delete;
 
     template<typename T>
-    T * getHandle() const
-    { return reinterpret_cast<T *>(priv); }
+    T * getHandle() const;
 
 private:
     class Private;
