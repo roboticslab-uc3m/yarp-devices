@@ -13,7 +13,8 @@ namespace roboticslab
 class FutureTask
 {
 public:
-    virtual ~FutureTask();
+    virtual ~FutureTask()
+    { }
 
     template<typename T, typename Fn, typename... Args>
     void add(T * p, Fn && fn, Args &&... args)
@@ -21,10 +22,11 @@ public:
 
     bool dispatch();
 
-    void join() const;
-
     unsigned int size() const
     { return futures.size(); }
+
+    void clear()
+    { futures.clear(); }
 
 protected:
     virtual std::launch getPolicy() const = 0;

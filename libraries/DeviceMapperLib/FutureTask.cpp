@@ -7,19 +7,9 @@
 
 using namespace roboticslab;
 
-FutureTask::~FutureTask()
-{
-    join();
-}
-
 bool FutureTask::dispatch()
 {
     return std::all_of(futures.begin(), futures.end(), std::bind(&std::future<bool>::get, std::placeholders::_1));
-}
-
-void FutureTask::join() const
-{
-    std::for_each(futures.begin(), futures.end(), std::bind(&std::future<bool>::wait, std::placeholders::_1));
 }
 
 std::launch SequentialTask::getPolicy() const
@@ -29,5 +19,5 @@ std::launch SequentialTask::getPolicy() const
 
 std::launch ParallelTask::getPolicy() const
 {
-    return size() > _concurrentTasks ? std::launch::deferred : std::launch::async;
+    return size() >= _concurrentTasks ? std::launch::deferred : std::launch::async;
 }
