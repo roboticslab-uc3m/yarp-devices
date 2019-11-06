@@ -18,13 +18,14 @@ class RawDevice final
 {
 public:
     explicit RawDevice(yarp::dev::PolyDriver * driver);
-    ~RawDevice();
+    virtual ~RawDevice();
 
     RawDevice(const RawDevice &) = delete;
     RawDevice & operator=(const RawDevice &) = delete;
 
     template<typename T>
-    T * getHandle() const;
+    T * getHandle() const
+    { return reinterpret_cast<T *>(priv); }
 
 private:
     class Private;

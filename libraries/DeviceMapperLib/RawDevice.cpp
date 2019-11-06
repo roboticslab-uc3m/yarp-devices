@@ -4,16 +4,66 @@
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 
-namespace roboticslab // gcc <7 bug
-{
+using namespace roboticslab;
 
 class RawDevice::Private
 {
 public:
     Private(yarp::dev::PolyDriver * driver);
 
-    template<typename T>
-    T * getHandle() const;
+    explicit operator yarp::dev::IAmplifierControlRaw *() const
+    { return iAmplifierControlRaw; }
+
+    explicit operator yarp::dev::IAxisInfoRaw *() const
+    { return iAxisInfoRaw; }
+
+    explicit operator yarp::dev::IControlCalibrationRaw *() const
+    { return iControlCalibrationRaw; }
+
+    explicit operator yarp::dev::IControlLimitsRaw *() const
+    { return iControlLimitsRaw; }
+
+    explicit operator yarp::dev::IControlModeRaw *() const
+    { return iControlModeRaw; }
+
+    explicit operator yarp::dev::ICurrentControlRaw *() const
+    { return iCurrentControlRaw; }
+
+    explicit operator yarp::dev::IEncodersTimedRaw *() const
+    { return iEncodersTimedRaw; }
+
+    explicit operator yarp::dev::IImpedanceControlRaw *() const
+    { return iImpedanceControlRaw; }
+
+    explicit operator yarp::dev::IInteractionModeRaw *() const
+    { return iInteractionModeRaw; }
+
+    explicit operator yarp::dev::IMotorRaw *() const
+    { return iMotorRaw; }
+
+    explicit operator yarp::dev::IMotorEncodersRaw *() const
+    { return iMotorEncodersRaw; }
+
+    explicit operator yarp::dev::IPidControlRaw *() const
+    { return iPidControlRaw; }
+
+    explicit operator yarp::dev::IPositionControlRaw *() const
+    { return iPositionControlRaw; }
+
+    explicit operator yarp::dev::IPositionDirectRaw *() const
+    { return iPositionDirectRaw; }
+
+    explicit operator yarp::dev::IPWMControlRaw *() const
+    { return iPWMControlRaw; }
+
+    explicit operator yarp::dev::IRemoteVariablesRaw *() const
+    { return iRemoteVariablesRaw; }
+
+    explicit operator yarp::dev::IVelocityControlRaw *() const
+    { return iVelocityControlRaw; }
+
+    explicit operator yarp::dev::ITorqueControlRaw *() const
+    { return iTorqueControlRaw; }
 
 private:
     yarp::dev::IAmplifierControlRaw * iAmplifierControlRaw;
@@ -35,78 +85,6 @@ private:
     yarp::dev::IVelocityControlRaw * iVelocityControlRaw;
     yarp::dev::ITorqueControlRaw * iTorqueControlRaw;
 };
-
-template<>
-inline yarp::dev::IAmplifierControlRaw * RawDevice::Private::getHandle() const
-{ return iAmplifierControlRaw; }
-
-template<>
-inline yarp::dev::IAxisInfoRaw * RawDevice::Private::getHandle() const
-{ return iAxisInfoRaw; }
-
-template<>
-inline yarp::dev::IControlCalibrationRaw * RawDevice::Private::getHandle() const
-{ return iControlCalibrationRaw; }
-
-template<>
-inline yarp::dev::IControlLimitsRaw * RawDevice::Private::getHandle() const
-{ return iControlLimitsRaw; }
-
-template<>
-inline yarp::dev::IControlModeRaw * RawDevice::Private::getHandle() const
-{ return iControlModeRaw; }
-
-template<>
-inline yarp::dev::ICurrentControlRaw * RawDevice::Private::getHandle() const
-{ return iCurrentControlRaw; }
-
-template<>
-inline yarp::dev::IEncodersTimedRaw * RawDevice::Private::getHandle() const
-{ return iEncodersTimedRaw; }
-
-template<>
-inline yarp::dev::IImpedanceControlRaw * RawDevice::Private::getHandle() const
-{ return iImpedanceControlRaw; }
-
-template<>
-inline yarp::dev::IInteractionModeRaw * RawDevice::Private::getHandle() const
-{ return iInteractionModeRaw; }
-
-template<>
-inline yarp::dev::IMotorRaw * RawDevice::Private::getHandle() const
-{ return iMotorRaw; }
-
-template<>
-inline yarp::dev::IMotorEncodersRaw * RawDevice::Private::getHandle() const
-{ return iMotorEncodersRaw; }
-
-template<>
-inline yarp::dev::IPidControlRaw * RawDevice::Private::getHandle() const
-{ return iPidControlRaw; }
-
-template<>
-inline yarp::dev::IPositionControlRaw * RawDevice::Private::getHandle() const
-{ return iPositionControlRaw; }
-
-template<>
-inline yarp::dev::IPositionDirectRaw * RawDevice::Private::getHandle() const
-{ return iPositionDirectRaw; }
-
-template<>
-inline yarp::dev::IPWMControlRaw * RawDevice::Private::getHandle() const
-{ return iPWMControlRaw; }
-
-template<>
-inline yarp::dev::IRemoteVariablesRaw * RawDevice::Private::getHandle() const
-{ return iRemoteVariablesRaw; }
-
-template<>
-inline yarp::dev::IVelocityControlRaw * RawDevice::Private::getHandle() const
-{ return iVelocityControlRaw; }
-
-template<>
-inline yarp::dev::ITorqueControlRaw * RawDevice::Private::getHandle() const
-{ return iTorqueControlRaw; }
 
 RawDevice::Private::Private(yarp::dev::PolyDriver * driver)
 {
@@ -136,27 +114,3 @@ RawDevice::RawDevice(yarp::dev::PolyDriver * driver)
 
 RawDevice::~RawDevice()
 { delete priv; }
-
-template<typename T>
-T * RawDevice::getHandle() const
-{ return priv->getHandle<T>(); }
-
-template yarp::dev::IAmplifierControlRaw * RawDevice::getHandle() const;
-template yarp::dev::IAxisInfoRaw * RawDevice::getHandle() const;
-template yarp::dev::IControlCalibrationRaw * RawDevice::getHandle() const;
-template yarp::dev::IControlLimitsRaw * RawDevice::getHandle() const;
-template yarp::dev::IControlModeRaw * RawDevice::getHandle() const;
-template yarp::dev::ICurrentControlRaw * RawDevice::getHandle() const;
-template yarp::dev::IEncodersTimedRaw * RawDevice::getHandle() const;
-template yarp::dev::IInteractionModeRaw * RawDevice::getHandle() const;
-template yarp::dev::IMotorRaw * RawDevice::getHandle() const;
-template yarp::dev::IMotorEncodersRaw * RawDevice::getHandle() const;
-template yarp::dev::IPidControlRaw * RawDevice::getHandle() const;
-template yarp::dev::IPositionControlRaw * RawDevice::getHandle() const;
-template yarp::dev::IPositionDirectRaw * RawDevice::getHandle() const;
-template yarp::dev::IPWMControlRaw * RawDevice::getHandle() const;
-template yarp::dev::IRemoteVariablesRaw * RawDevice::getHandle() const;
-template yarp::dev::IVelocityControlRaw * RawDevice::getHandle() const;
-template yarp::dev::ITorqueControlRaw * RawDevice::getHandle() const;
-
-} // namespace roboticslab
