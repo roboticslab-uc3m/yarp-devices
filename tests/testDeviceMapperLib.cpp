@@ -5,6 +5,7 @@
 #include <thread>
 
 #include <yarp/dev/IPositionDirect.h>
+#include <yarp/dev/PolyDriver.h>
 
 #include "FutureTask.hpp"
 #include "DeviceMapper.hpp"
@@ -49,6 +50,8 @@ public:
 class DeviceMapperTest : public testing::Test
 {
 public:
+    DeviceMapperTest() : dummy(nullptr)
+    { }
 
     virtual void SetUp()
     {
@@ -58,16 +61,39 @@ public:
     virtual void TearDown()
     {
         delete dummy;
+        driver.close();
     }
 
 protected:
-    yarp::dev::IPositionDirectRaw * getDummy() const
+    yarp::dev::IPositionDirectRaw * getDummy()
     { return dummy; }
+
+    yarp::dev::PolyDriver & getDriver()
+    {
+        if (!driver.isValid())
+        {
+            yarp::os::Property config = getDriverConfig();
+            driver.open(config);
+        }
+
+        return driver;
+    }
 
     static constexpr double EPSILON = 1e-9;
 
 private:
+    yarp::os::Property getDriverConfig()
+    {
+        yarp::os::Property config;
+        config.put("device", "fakeMotionControl4");
+        yarp::os::Property & general = config.addGroup("GENERAL");
+        general.put("Joints", 5);
+
+        return config;
+    }
+
     yarp::dev::IPositionDirectRaw * dummy;
+    yarp::dev::PolyDriver driver;
 };
 
 TEST_F(DeviceMapperTest, SequentialTask)
@@ -127,6 +153,14 @@ TEST_F(DeviceMapperTest, ParallelTask)
     ASSERT_NEAR(ref3, 0.0, EPSILON); // not dispatched yet
     ASSERT_TRUE(task->dispatch());
     ASSERT_NEAR(ref3, DUMMY_VALUE, EPSILON);
+}
+
+TEST_F(DeviceMapperTest, RawDevice)
+{
+    RawDevice rd(&getDriver());
+    // FIXME: compilation always succeeds regardless of the type
+    auto * p = rd.getHandle<yarp::dev::IPositionDirectRaw>();
+    ASSERT_NE(p, nullptr);
 }
 
 } // namespace roboticslab
