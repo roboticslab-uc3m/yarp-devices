@@ -2,6 +2,8 @@
 
 #include <chrono>
 #include <memory>
+#include <set>
+#include <string>
 #include <thread>
 
 // upstream bug in IPositionDirect.h, remove in YARP 3.2+
@@ -11,7 +13,10 @@
 #endif
 
 #include <yarp/dev/IPositionDirect.h>
+#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/PolyDriverList.h>
 
 #include "FutureTask.hpp"
 #include "DeviceMapper.hpp"
@@ -19,35 +24,48 @@
 namespace
 {
     constexpr double DUMMY_VALUE = 4.444;
+
+    struct DummyPositionDirectRawImpl : public yarp::dev::IPositionDirectRaw
+    {
+        virtual bool getAxes(int * axes) override
+        { return false; }
+
+        virtual bool setPositionRaw(int j, double ref) override
+        { return ref >= 0.0 ? true : false; }
+
+        virtual bool setPositionsRaw(int n_joint, const int * joints, const double * refs) override
+        { return false; }
+
+        virtual bool setPositionsRaw(const double * refs) override
+        { return false; }
+
+        virtual bool getRefPositionRaw(int joint, double * ref) override
+        { *ref = DUMMY_VALUE; return true; }
+
+        virtual bool getRefPositionsRaw(double * refs) override
+        { return false; };
+
+        virtual bool getRefPositionsRaw(int n_joint, const int * joints, double * refs) override
+        { return false; }
+    };
+
+    template<unsigned int N>
+    struct JointDriver : public yarp::dev::DeviceDriver,
+                         public DummyPositionDirectRawImpl
+    {
+        virtual bool getAxes(int * axes) override
+        { *axes = 1; return true; }
+
+        static std::string name()
+        { return "JointDriver" + std::to_string(N); }
+
+        static yarp::dev::DriverCreator * makeCreator()
+        { return new yarp::dev::DriverCreatorOf<JointDriver<N>>(name().c_str(), "", name().c_str()); }
+    };
 }
 
 namespace roboticslab
 {
-
-class DummyPositionDirectRawImpl : public yarp::dev::IPositionDirectRaw
-{
-public:
-    virtual bool getAxes(int * axes) override
-    { return false; }
-
-    virtual bool setPositionRaw(int j, double ref) override
-    { return ref >= 0.0 ? true : false; }
-
-    virtual bool setPositionsRaw(int n_joint, const int * joints, const double * refs) override
-    { return false; }
-
-    virtual bool setPositionsRaw(const double * refs) override
-    { return false; }
-
-    virtual bool getRefPositionRaw(int joint, double * ref) override
-    { *ref = DUMMY_VALUE; return true; }
-
-    virtual bool getRefPositionsRaw(double * refs) override
-    { return false; };
-
-    virtual bool getRefPositionsRaw(int n_joint, const int * joints, double * refs) override
-    { return false; }
-};
 
 /**
  * @ingroup yarp_devices_tests
@@ -60,46 +78,47 @@ public:
     { }
 
     virtual void SetUp()
-    {
-        dummy = new DummyPositionDirectRawImpl;
-    }
+    { }
 
     virtual void TearDown()
     {
         delete dummy;
-        driver.close();
+
+        for (int i = 0; i < drivers.size(); i++)
+        {
+            delete drivers[i]->poly;
+        }
     }
 
 protected:
     yarp::dev::IPositionDirectRaw * getDummy()
-    { return dummy; }
-
-    yarp::dev::PolyDriver & getDriver()
     {
-        if (!driver.isValid())
+        if (!dummy)
         {
-            yarp::os::Property config = getDriverConfig();
-            driver.open(config);
+            dummy = new DummyPositionDirectRawImpl;
         }
 
+        return dummy;
+    }
+
+    template<typename T>
+    yarp::dev::PolyDriver * getDriver()
+    {
+        yarp::dev::Drivers::factory().add(T::makeCreator());
+
+        yarp::os::Property config;
+        config.put("device", T::name());
+
+        auto * driver = new yarp::dev::PolyDriver(config);
+        drivers.push(driver, T::name().c_str());
         return driver;
     }
 
     static constexpr double EPSILON = 1e-9;
 
 private:
-    yarp::os::Property getDriverConfig()
-    {
-        yarp::os::Property config;
-        config.put("device", "fakeMotionControl");
-        yarp::os::Property & general = config.addGroup("GENERAL");
-        general.put("Joints", 5);
-
-        return config;
-    }
-
     yarp::dev::IPositionDirectRaw * dummy;
-    yarp::dev::PolyDriver driver;
+    yarp::dev::PolyDriverList drivers;
 };
 
 TEST_F(DeviceMapperTest, SequentialTask)
@@ -163,7 +182,7 @@ TEST_F(DeviceMapperTest, ParallelTask)
 
 TEST_F(DeviceMapperTest, RawDevice)
 {
-    RawDevice rd(&getDriver());
+    RawDevice rd(getDriver<JointDriver<1>>());
     auto * p = rd.getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p, nullptr);
 }
