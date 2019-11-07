@@ -4,6 +4,12 @@
 #include <memory>
 #include <thread>
 
+// upstream bug in IPositionDirect.h, remove in YARP 3.2+
+#include <yarp/conf/version.h>
+#if YARP_VERSION_MINOR < 2
+# include <yarp/os/Vocab.h>
+#endif
+
 #include <yarp/dev/IPositionDirect.h>
 #include <yarp/dev/PolyDriver.h>
 
