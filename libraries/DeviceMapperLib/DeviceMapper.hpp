@@ -47,7 +47,6 @@ public:
     const std::vector<dev_int_t> & getDevicesWithOffsets() const;
     std::vector<dev_int2_t> getDevices(int globalAxesCount, const int * globalAxes) const;
 
-    int computeLocalIndex(int globalAxis) const;
     std::vector<int> computeLocalIndices(int localAxes, const int * globalAxes, int offset) const;
 
     int getControlledAxes() const

@@ -119,11 +119,11 @@ const std::vector<DeviceMapper::dev_int_t> & DeviceMapper::getDevicesWithOffsets
     return rawDevicesWithOffsets;
 }
 
-std::vector<DeviceMapper::dev_int2_t> DeviceMapper::getDevices(int globalAxesCount,
-        const int * globalAxes) const
+std::vector<DeviceMapper::dev_int2_t> DeviceMapper::getDevices(int globalAxesCount, const int * globalAxes) const
 {
-    std::vector<dev_int2_t> vec(globalAxesCount);
+    std::vector<dev_int2_t> vec;
     int previousDeviceIndex = -1;
+    int offset = 0;
 
     for (int i = 0; i < globalAxesCount; i++)
     {
@@ -132,22 +132,16 @@ std::vector<DeviceMapper::dev_int2_t> DeviceMapper::getDevices(int globalAxesCou
         if (deviceIndex != previousDeviceIndex)
         {
             const auto & t = rawDevicesWithOffsets[deviceIndex];
-            vec[i] = std::make_tuple(std::get<0>(t), 1, i);
+            vec.push_back(std::make_tuple(std::get<0>(t), 1, i));
             previousDeviceIndex = deviceIndex;
         }
         else
         {
-            ++std::get<1>(vec[i]);
+            ++std::get<1>(vec.back());
         }
     }
 
     return vec;
-}
-
-int DeviceMapper::computeLocalIndex(int globalAxis) const
-{
-    const auto & t = rawDevicesWithOffsets[rawDeviceIndexAtGlobalAxisIndex[globalAxis]];
-    return globalAxis - std::get<1>(t);
 }
 
 std::vector<int> DeviceMapper::computeLocalIndices(int localAxesCount, const int * globalAxes, int offset) const
