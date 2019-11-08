@@ -46,6 +46,13 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
     canBusOptions.put("canAllowPermissive", false); // always check usage requirements
     canBusOptions.setMonitor(config.getMonitor(), canBusType.c_str());
 
+    int parallelCanThreadLimit = config.check("parallelCanThreadLimit", yarp::os::Value(0), "parallel CAN TX thread limit").asInt32();
+
+    if (parallelCanThreadLimit > 0)
+    {
+        deviceMapper.enableParallelization(parallelCanThreadLimit);
+    }
+
     if (!canBusDevice.open(canBusOptions))
     {
         CD_ERROR("canBusDevice instantiation not worked.\n");

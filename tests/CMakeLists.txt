@@ -20,6 +20,14 @@ if(ENABLE_tests)
         gtest_add_tests(testCanBusSharerLib "" AUTO)
     endif()
 
+    # testDeviceMapperLib
+
+    if(TARGET DeviceMapperLib)
+        add_executable(testDeviceMapperLib testDeviceMapperLib.cpp)
+        target_link_libraries(testDeviceMapperLib DeviceMapperLib YARP::YARP_dev gtest_main)
+        gtest_add_tests(testDeviceMapperLib "" AUTO)
+    endif()
+
     #add_subdirectory(testTechnosoftIpos)
     #add_subdirectory(testCuiAbsolute)
 else()

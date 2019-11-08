@@ -18,9 +18,9 @@ namespace
     template<typename... T_ref>
     bool mapSingleJoint(const DeviceMapper & dm, single_mapping_fn<T_ref...> fn, const pid_t & type, int j, T_ref... ref)
     {
-        int localAxis;
-        yarp::dev::IPidControlRaw * p = dm.getDevice(j, &localAxis).iPidControlRaw;
-        return p ? (p->*fn)(type, localAxis, ref...) : false;
+        auto t = dm.getDevice(j);
+        auto * p = std::get<0>(t)->getHandle<yarp::dev::IPidControlRaw>();
+        return p ? (p->*fn)(type, std::get<1>(t), ref...) : false;
     }
 
     template<typename T_refs>
@@ -29,18 +29,16 @@ namespace
     template<typename T_refs>
     bool mapAllJoints(const DeviceMapper & dm, full_mapping_fn<T_refs> fn, const pid_t & type, T_refs * refs)
     {
-        const int * localAxisOffsets;
-        const std::vector<RawDevice> & rawDevices = dm.getDevices(localAxisOffsets);
-
+        auto task = dm.createTask();
         bool ok = true;
 
-        for (int i = 0; i < rawDevices.size(); i++)
+        for (const auto & t : dm.getDevicesWithOffsets())
         {
-            yarp::dev::IPidControlRaw * p = rawDevices[i].iPidControlRaw;
-            ok &= p ? (p->*fn)(type, refs + localAxisOffsets[i]) : false;
+            auto * p = std::get<0>(t)->getHandle<yarp::dev::IPidControlRaw>();
+            ok &= p ? task->add(p, fn, type, refs + std::get<1>(t)), true : false;
         }
 
-        return ok;
+        return ok && task->dispatch();
     }
 }
 
