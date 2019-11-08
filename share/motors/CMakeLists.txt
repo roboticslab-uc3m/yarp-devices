@@ -1,0 +1,2 @@
+yarp_install(FILES ""
+             DESTINATION ${ROBOTICSLAB-YARP-DEVICES_CONTEXTS_INSTALL_DIR}/motors)
