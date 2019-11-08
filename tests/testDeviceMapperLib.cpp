@@ -1,10 +1,13 @@
 #include "gtest/gtest.h"
 
+#include <algorithm>
 #include <chrono>
 #include <memory>
+#include <numeric>
 #include <set>
 #include <string>
 #include <thread>
+#include <vector>
 
 // upstream bug in IPositionDirect.h, remove in YARP 3.2+
 #include <yarp/conf/version.h>
@@ -26,7 +29,7 @@ namespace
     struct DummyPositionDirectRawImpl : public yarp::dev::IPositionDirectRaw
     {
         virtual bool getAxes(int * axes) override
-        { return false; }
+        { *axes = 1; return true; }
 
         virtual bool setPositionRaw(int j, double ref) override
         { return ref >= 0.0 ? true : false; }
@@ -41,10 +44,10 @@ namespace
         { *ref = joint; return true; }
 
         virtual bool getRefPositionsRaw(double * refs) override
-        { return false; };
+        { int axes; bool ret; return ret = getAxes(&axes), std::iota(refs, refs + axes, 0.0), ret; };
 
         virtual bool getRefPositionsRaw(int n_joint, const int * joints, double * refs) override
-        { return false; }
+        { std::copy_n(joints, n_joint, refs); return true; }
     };
 
     template<unsigned int N>
@@ -345,23 +348,42 @@ TEST_F(DeviceMapperTest, DeviceMapper)
     ASSERT_EQ(std::get<0>(devices[2]), std::get<0>(devAtIndex6));
     ASSERT_EQ(std::get<0>(devices[2]), std::get<0>(devAtIndex8)); // same device
 
-    ASSERT_EQ(std::get<1>(devices[0]), 1);
-    ASSERT_EQ(std::get<1>(devices[1]), 2);
-    ASSERT_EQ(std::get<1>(devices[2]), 2);
+    ASSERT_EQ(std::get<1>(devices[0]).size(), 1);
+    ASSERT_EQ(std::get<1>(devices[1]).size(), 2);
+    ASSERT_EQ(std::get<1>(devices[2]).size(), 2);
+
+    ASSERT_EQ(std::get<1>(devices[0]), (std::vector<int>{1})); // parens intentional
+    ASSERT_EQ(std::get<1>(devices[1]), (std::vector<int>{1, 2}));
+    ASSERT_EQ(std::get<1>(devices[2]), (std::vector<int>{0, 2}));
 
     ASSERT_EQ(std::get<2>(devices[0]), 0);
     ASSERT_EQ(std::get<2>(devices[1]), 1);
     ASSERT_EQ(std::get<2>(devices[2]), 3);
 
-    // DeviceMapper::computeLocalIndices
+    // DeviceMapper::createTask
 
-    auto localIndices1 = mapper.computeLocalIndices(std::get<1>(devices[0]), globalAxes, std::get<2>(devices[0]));
-    auto localIndices2 = mapper.computeLocalIndices(std::get<1>(devices[1]), globalAxes, std::get<2>(devices[1]));
-    auto localIndices3 = mapper.computeLocalIndices(std::get<1>(devices[2]), globalAxes, std::get<2>(devices[2]));
+    auto task = mapper.createTask();
+    ASSERT_EQ(task->size(), 0);
 
-    ASSERT_EQ(localIndices1, std::vector<int>{1});
-    ASSERT_EQ(localIndices2, (std::vector<int>{1, 2})); // parens intentional
-    ASSERT_EQ(localIndices3, (std::vector<int>{0, 2})); // parens intentional
+    // DeviceMapper::mapSingleJoint
+
+    double ref_single;
+    ASSERT_TRUE(mapper.mapSingleJoint(&yarp::dev::IPositionDirectRaw::getRefPositionRaw, 8, &ref_single));
+    ASSERT_NEAR(ref_single, 2, EPSILON);
+
+    // DeviceMapper::mapAllJoints
+
+    double ref_full[10];
+    ASSERT_TRUE(mapper.mapAllJoints(&yarp::dev::IPositionDirectRaw::getRefPositionsRaw, ref_full));
+    ASSERT_EQ(std::vector<double>(ref_full, ref_full + 10), (std::vector<double>{0, 0, 1, 0, 1, 2, 0, 1, 2, 3})); // parens intentional
+
+    // DeviceMapper::mapJointGroup
+
+    const int jointCount = 5;
+    const int joints[jointCount] = {1, 3, 5, 7, 9};
+    double ref_group[jointCount];
+    ASSERT_TRUE(mapper.mapJointGroup(&yarp::dev::IPositionDirectRaw::getRefPositionsRaw, jointCount, joints, ref_group));
+    ASSERT_EQ(std::vector<double>(ref_group, ref_group + jointCount), (std::vector<double>{0, 0, 2, 1, 3})); // parens intentional
 }
 
 } // namespace roboticslab

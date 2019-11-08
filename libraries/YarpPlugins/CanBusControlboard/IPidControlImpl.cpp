@@ -29,15 +29,16 @@ namespace
     template<typename T_refs>
     bool mapAllJoints(const DeviceMapper & dm, full_mapping_fn<T_refs> fn, const pid_t & type, T_refs * refs)
     {
+        auto task = dm.createTask();
         bool ok = true;
 
         for (const auto & t : dm.getDevicesWithOffsets())
         {
             auto * p = std::get<0>(t)->getHandle<yarp::dev::IPidControlRaw>();
-            ok &= p ? (p->*fn)(type, refs + std::get<1>(t)) : false;
+            ok &= p ? task->add(p, fn, type, refs + std::get<1>(t)), true : false;
         }
 
-        return ok;
+        return ok && task->dispatch();
     }
 }
 

@@ -8,6 +8,10 @@
 
 using namespace roboticslab;
 
+using raw_t = yarp::dev::IInteractionModeRaw;
+using enum_t = yarp::dev::InteractionModeEnum;
+using multi_mapping_fn = bool (raw_t::*)(int, int *, enum_t *);
+
 // -----------------------------------------------------------------------------
 
 bool CanBusControlboard::getInteractionMode(int axis, yarp::dev::InteractionModeEnum * mode)
@@ -31,18 +35,20 @@ bool CanBusControlboard::getInteractionModes(int n_joints, int * joints, yarp::d
 {
     CD_DEBUG("\n");
 
-    bool ok = true;
+    auto task = deviceMapper.createTask();
     const int * c_joints = const_cast<const int *>(joints); // workaround
+    auto devices = deviceMapper.getDevices(n_joints, c_joints); // extend lifetime of local joint vector
+    bool ok = true;
 
-    for (const auto & t : deviceMapper.getDevices(n_joints, c_joints))
+    for (const auto & t : devices)
     {
         auto * p = std::get<0>(t)->getHandle<yarp::dev::IInteractionModeRaw>();
-        const auto & localIndices = deviceMapper.computeLocalIndices(std::get<1>(t), joints, std::get<2>(t));
-        int * temp = const_cast<int *>(localIndices.data()); // workaround
-        ok &= p ? p->getInteractionModesRaw(std::get<1>(t), temp, modes + std::get<2>(t)) : false;
+        int * temp = const_cast<int *>(std::get<1>(t).data()); // workaround
+        multi_mapping_fn fn = &raw_t::getInteractionModesRaw;
+        ok &= p ? p->getInteractionModesRaw(std::get<1>(t).size(), temp, modes + std::get<2>(t)) : false;
     }
 
-    return ok;
+    return ok && task->dispatch();
 }
 
 // -----------------------------------------------------------------------------
@@ -68,18 +74,20 @@ bool CanBusControlboard::setInteractionModes(int n_joints, int * joints, yarp::d
 {
     CD_DEBUG("\n");
 
-    bool ok = true;
+    auto task = deviceMapper.createTask();
     const int * c_joints = const_cast<const int *>(joints); // workaround
+    auto devices = deviceMapper.getDevices(n_joints, c_joints); // extend lifetime of local joint vector
+    bool ok = true;
 
-    for (const auto & t : deviceMapper.getDevices(n_joints, c_joints))
+    for (const auto & t : devices)
     {
         auto * p = std::get<0>(t)->getHandle<yarp::dev::IInteractionModeRaw>();
-        const auto & localIndices = deviceMapper.computeLocalIndices(std::get<1>(t), joints, std::get<2>(t));
-        int * temp = const_cast<int *>(localIndices.data()); // workaround
-        ok &= p ? p->setInteractionModesRaw(std::get<1>(t), temp, modes + std::get<2>(t)) : false;
+        int * temp = const_cast<int *>(std::get<1>(t).data()); // workaround
+        multi_mapping_fn fn = &raw_t::getInteractionModesRaw;
+        ok &= p ? task->add(p, fn, std::get<1>(t).size(), temp, modes + std::get<2>(t)), true : false;
     }
 
-    return ok;
+    return ok && task->dispatch();
 }
 
 // -----------------------------------------------------------------------------

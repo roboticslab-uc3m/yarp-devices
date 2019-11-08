@@ -2,6 +2,9 @@
 
 #include "CanBusControlboard.hpp"
 
+#include <algorithm>
+#include <memory>
+
 #include <ColorDebug.h>
 
 using namespace roboticslab;
@@ -72,24 +75,15 @@ bool CanBusControlboard::checkMotionDone(bool * flag)
 {
     CD_DEBUG("\n");
 
-    bool ok = true;
+    auto flags = std::unique_ptr<bool[]>(new bool[deviceMapper.getControlledAxes()]);
 
-    for (const auto & t : deviceMapper.getDevicesWithOffsets())
+    if (!deviceMapper.mapAllJoints(&yarp::dev::IPositionControlRaw::checkMotionDoneRaw, flags.get()))
     {
-        yarp::dev::IPositionControlRaw * p = std::get<0>(t)->getHandle<yarp::dev::IPositionControlRaw>();
-        bool localFlag;
-
-        if (p && p->checkMotionDoneRaw(&localFlag))
-        {
-            *flag &= localFlag;
-        }
-        else
-        {
-            ok = false;
-        }
+        return false;
     }
 
-    return ok;
+    *flag = std::all_of(flags.get(), flags.get() + deviceMapper.getControlledAxes(), [](bool b) { return b; });
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -98,25 +92,15 @@ bool CanBusControlboard::checkMotionDone(int n_joint, const int * joints, bool *
 {
     CD_DEBUG("\n");
 
-    bool ok = true;
+    auto flags = std::unique_ptr<bool[]>(new bool[n_joint]);
 
-    for (const auto & t : deviceMapper.getDevices(n_joint, joints))
+    if (!deviceMapper.mapJointGroup(&yarp::dev::IPositionControlRaw::checkMotionDoneRaw, n_joint, joints, flags.get()))
     {
-        yarp::dev::IPositionControlRaw * p = std::get<0>(t)->getHandle<yarp::dev::IPositionControlRaw>();
-        const auto & localIndices = deviceMapper.computeLocalIndices(std::get<1>(t), joints, std::get<2>(t));
-        bool localFlag;
-
-        if (p && p->checkMotionDoneRaw(std::get<1>(t), localIndices.data(), &localFlag))
-        {
-            *flag &= localFlag;
-        }
-        else
-        {
-            ok = false;
-        }
+        return false;
     }
 
-    return ok;
+    *flag = std::all_of(flags.get(), flags.get() + n_joint, [](bool b) { return b; });
+    return true;
 }
 
 // -----------------------------------------------------------------------------

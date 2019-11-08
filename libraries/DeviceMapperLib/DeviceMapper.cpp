@@ -107,53 +107,40 @@ bool DeviceMapper::registerDevice(yarp::dev::PolyDriver * driver)
     }
 }
 
-DeviceMapper::dev_int_t DeviceMapper::getDevice(int globalAxis) const
+DeviceMapper::dev_index_t DeviceMapper::getDevice(int globalAxis) const
 {
     const int deviceIndex = rawDeviceIndexAtGlobalAxisIndex[globalAxis];
     const auto & t = rawDevicesWithOffsets[deviceIndex];
     return std::make_tuple(std::get<0>(t), globalAxis - std::get<1>(t));
 }
 
-const std::vector<DeviceMapper::dev_int_t> & DeviceMapper::getDevicesWithOffsets() const
+const std::vector<DeviceMapper::dev_index_t> & DeviceMapper::getDevicesWithOffsets() const
 {
     return rawDevicesWithOffsets;
 }
 
-std::vector<DeviceMapper::dev_int2_t> DeviceMapper::getDevices(int globalAxesCount, const int * globalAxes) const
+std::vector<DeviceMapper::dev_group_t> DeviceMapper::getDevices(int globalAxesCount, const int * globalAxes) const
 {
-    std::vector<dev_int2_t> vec;
+    std::vector<dev_group_t> vec;
     int previousDeviceIndex = -1;
-    int offset = 0;
 
     for (int i = 0; i < globalAxesCount; i++)
     {
-        const int deviceIndex = rawDeviceIndexAtGlobalAxisIndex[globalAxes[i]];
+        const int globalAxis = globalAxes[i];
+        const int deviceIndex = rawDeviceIndexAtGlobalAxisIndex[globalAxis];
+        const auto & t = rawDevicesWithOffsets[deviceIndex];
+        const int localIndex = globalAxis - std::get<1>(t);
 
         if (deviceIndex != previousDeviceIndex)
         {
-            const auto & t = rawDevicesWithOffsets[deviceIndex];
-            vec.push_back(std::make_tuple(std::get<0>(t), 1, i));
+            vec.push_back(std::make_tuple(std::get<0>(t), std::vector<int>{localIndex}, i));
             previousDeviceIndex = deviceIndex;
         }
         else
         {
-            ++std::get<1>(vec.back());
+            std::get<1>(vec.back()).push_back(localIndex);
         }
     }
 
     return vec;
-}
-
-std::vector<int> DeviceMapper::computeLocalIndices(int localAxesCount, const int * globalAxes, int offset) const
-{
-    std::vector<int> v(localAxesCount);
-
-    for (int i = 0; i < localAxesCount; i++)
-    {
-        const int globalAxis = globalAxes[i + offset];
-        const auto & t = rawDevicesWithOffsets[rawDeviceIndexAtGlobalAxisIndex[globalAxis]];
-        v[i] = globalAxis - std::get<1>(t);
-    }
-
-    return v;
 }

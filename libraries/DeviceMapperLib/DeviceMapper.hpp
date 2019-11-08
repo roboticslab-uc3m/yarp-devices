@@ -40,17 +40,18 @@ public:
     void enableParallelization(unsigned int concurrentTasks);
     bool registerDevice(yarp::dev::PolyDriver * driver);
 
-    using dev_int_t = std::tuple<const RawDevice *, int>;
-    using dev_int2_t = std::tuple<const RawDevice *, int, int>;
+    using dev_index_t = std::tuple<const RawDevice *, int>;
+    using dev_group_t = std::tuple<const RawDevice *, std::vector<int>, int>;
 
-    dev_int_t getDevice(int globalAxis) const;
-    const std::vector<dev_int_t> & getDevicesWithOffsets() const;
-    std::vector<dev_int2_t> getDevices(int globalAxesCount, const int * globalAxes) const;
-
-    std::vector<int> computeLocalIndices(int localAxes, const int * globalAxes, int offset) const;
+    dev_index_t getDevice(int globalAxis) const;
+    const std::vector<dev_index_t> & getDevicesWithOffsets() const;
+    std::vector<dev_group_t> getDevices(int globalAxesCount, const int * globalAxes) const;
 
     int getControlledAxes() const
     { return totalAxes; }
+
+    std::unique_ptr<FutureTask> createTask() const
+    { return taskFactory->createTask(); }
 
     template<typename T, typename... T_ref>
     using single_mapping_fn = bool (T::*)(int, T_ref...);
@@ -69,7 +70,7 @@ public:
     template<typename T, typename... T_refs>
     bool mapAllJoints(full_mapping_fn<T, T_refs...> fn, T_refs *... refs)
     {
-        auto task = taskFactory->createTask();
+        auto task = createTask();
         bool ok = true;
 
         for (const auto & t : getDevicesWithOffsets())
@@ -87,21 +88,21 @@ public:
     template<typename T, typename... T_refs>
     bool mapJointGroup(multi_mapping_fn<T, T_refs...> fn, int n_joint, const int * joints, T_refs *... refs)
     {
-        auto task = taskFactory->createTask();
+        auto task = createTask();
+        auto devices = getDevices(n_joint, joints); // extend lifetime of local joint vector
         bool ok = true;
 
-        for (const auto & t : getDevices(n_joint, joints))
+        for (const auto & t : devices)
         {
             T * p = std::get<0>(t)->getHandle<T>();
-            const auto & localIndices = computeLocalIndices(std::get<1>(t), joints, std::get<2>(t));
-            ok &= p ? task->add(p, fn, std::get<1>(t), localIndices.data(), refs + std::get<2>(t)...), true : false;
+            ok &= p ? task->add(p, fn, std::get<1>(t).size(), std::get<1>(t).data(), refs + std::get<2>(t)...), true : false;
         }
 
         return ok && task->dispatch();
     }
 
 private:
-    std::vector<dev_int_t> rawDevicesWithOffsets;
+    std::vector<dev_index_t> rawDevicesWithOffsets;
     std::vector<int> rawDeviceIndexAtGlobalAxisIndex;
     int totalAxes;
 
