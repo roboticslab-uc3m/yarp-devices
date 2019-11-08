@@ -67,7 +67,7 @@ DeviceMapper::DeviceMapper()
 
 DeviceMapper::~DeviceMapper()
 {
-    for (auto t : rawDevicesWithOffsets)
+    for (const auto & t : rawDevicesWithOffsets)
     {
         delete std::get<0>(t);
     }

@@ -5,6 +5,7 @@
 
 #include <future>
 #include <memory>
+#include <utility>
 #include <vector>
 
 namespace roboticslab
@@ -17,8 +18,8 @@ public:
     { }
 
     template<typename T, typename Fn, typename... Args>
-    void add(T * p, Fn && fn, Args &&... args)
-    { futures.push_back(std::async(getPolicy(), fn, p, args...)); }
+    void add(T * p, Fn fn, Args &&... args)
+    { futures.push_back(std::async(getPolicy(), fn, p, std::forward<Args>(args)...)); }
 
     bool dispatch();
 

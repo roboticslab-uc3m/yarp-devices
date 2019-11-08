@@ -49,7 +49,7 @@ public:
     bool accept(const std::uint8_t * data);
 
     template<typename Fn>
-    void registerHandler(const Fn & fn)
+    void registerHandler(Fn && fn)
     { callback = fn; }
 
     void unregisterHandler()

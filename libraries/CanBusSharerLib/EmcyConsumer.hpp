@@ -41,7 +41,7 @@ public:
       codeRegistry = new T; }
 
     template<typename Fn>
-    void registerHandler(const Fn & fn)
+    void registerHandler(Fn && fn)
     { callback = fn; }
 
     void unregisterHandler()

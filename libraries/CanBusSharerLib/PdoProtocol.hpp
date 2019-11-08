@@ -165,12 +165,12 @@ public:
     { return (bool)callback && callback(data, size); }
 
     template<typename... Ts, typename Fn>
-    void registerHandler(const Fn & fn)
+    void registerHandler(Fn && fn)
     {
         static_assert(sizeof...(Ts) > 0 && size<Ts...>() <= 8, "Illegal cumulative size.");
         callback = [&](const std::uint8_t * raw, unsigned int len)
             { unsigned int count = 0;
-              return size<Ts...>() == len && (ordered_call{fn, unpack<Ts>(raw, &count)...}, true); };
+              return size<Ts...>() == len && (ordered_call{std::forward<Fn>(fn), unpack<Ts>(raw, &count)...}, true); };
     }
 
     void unregisterHandler()
@@ -187,8 +187,8 @@ private:
     struct ordered_call
     {
         template<typename Fn, typename... Ts>
-        ordered_call(const Fn & fn, Ts &&... ts)
-        { fn(std::forward<Ts>(ts)...); }
+        ordered_call(Fn && fn, Ts &&... ts)
+        { std::forward<Fn>(fn)(std::forward<Ts>(ts)...); }
     };
 
     template<typename T>
