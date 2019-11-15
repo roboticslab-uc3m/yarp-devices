@@ -20,11 +20,30 @@ Then we need to follow the next steps:
 
 ## Set the CUI to zero
 
-In this case we'll use the PCAN-View program. This is a tool included in the [Peak-CAN driver](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-pcan.md) (test utilities).
-The first window you can see is the `Connect` window. You need to choose the CAN channel in which the CUI is connected. Below it's important to set the `Bitrate to 1Mbps (1000000 bps)`.
+In this case we'll use the PCAN-View program. To install PCAN-View via repository you need to:
+
+Download and install the following file peak-system.list from the PEAK-System website:
+```bash
+$ wget -q http://www.peak-system.com/debian/dists/`lsb_release -cs`/peak-system.list -O- | sudo tee /etc/apt/sources.list.d/peak-system.list
+```
+Note: If the lsb_release tool is not installed on your Linux system then replace `lsb_release -cs` by the name of your Linux distribution. For example:
+```bash
+$ wget -q http://www.peak-system.com/debian/dists/wheezy/peak-system.list -O- | sudo tee /etc/apt/sources.list.d/peak-system.list
+```
+Then, download and install the PEAK-System public key for apt-secure, so that the repository is trusted:
+```bash
+$ wget -q http://www.peak-system.com/debian/peak-system-public-key.asc -O- | sudo apt-key add -
+```
+To install pcanview-ncurses next, do:
+```bash
+$ sudo apt-get update
+$ sudo apt-get install pcanview-ncurses
+```
+
+Run `pcanview` in a new terminal. The first window you can see is the `Connect` window. You need to choose the CAN channel in which the CUI is connected. Below it's important to set the `Bitrate to 1Mbps (1000000 bps)`.
 Then the reception and transmission window will be opened. In the transmission window we can see the last messages saved to send. If the message hasn't been created before, we must create it by selecting `Transmit> New Message`.
 We can set the encoder ID in decimal format by selecting `File> Settings> CAN ID Format> Decimal`. 
 Once the message window is opened with `New Message` or `Edit Message` you need to write or modify the ID to send the message by double clicking on the message or by pressing Enter on it. 
-Fields `Len: 1` and `Data: ff`. The rest of the fields must be unchecked, except `Paused`. Then you can press `Ok`. To confirm that it has been done correctly, we must receive a message in the Rx window with ID = OP (0x200) + canID. It will be an ACK message.
+Fields `Len: 1` and `Data: ff`. The rest of the fields **must be unchecked** except `Paused`. That is important because `CAN FD` is checked by default when you create a new message and this can produce communication errors. Then you can press `Ok`. To confirm that it has been done correctly, we must receive a message in the Rx window with ID = OP (0x200) + canID. It will be an ACK message.
 
 Another way to read the value of the CUI will be by sending a pull message with `Data: 03` and the same ID. We should get a message with **zeros** in the Data field of the received message and ID = OP(0x180) + canID.
