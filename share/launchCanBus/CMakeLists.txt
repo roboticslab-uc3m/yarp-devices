@@ -7,4 +7,4 @@ yarp_install(FILES conf/oneCanBusOneWrapper.ini
                    conf/oneCanBusOneWrapper-left-arm.ini
                    conf/oneCanBusOneWrapper-right-arm.ini
                    conf/twoCanBusThreeWrappers.ini
-             DESTINATION ${ROBOTICSLAB-YARP-DEVICES_CONTEXTS_INSTALL_DIR}/canBusLauncher)
+             DESTINATION ${ROBOTICSLAB-YARP-DEVICES_CONTEXTS_INSTALL_DIR}/launchCanBus)

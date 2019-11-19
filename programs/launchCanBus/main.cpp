@@ -3,9 +3,9 @@
 /**
  *
  * @ingroup yarp_devices_programs
- * \defgroup canBusLauncher canBusLauncher
+ * \defgroup launchCanBus launchCanBus
  *
- * @brief Creates an instance of roboticslab::CanBusLauncher.
+ * @brief Creates an instance of roboticslab::launchCanBus.
  */
 
 #include <yarp/os/Network.h>
@@ -13,14 +13,14 @@
 
 #include <ColorDebug.h>
 
-#include "CanBusLauncher.hpp"
+#include "LaunchCanBus.hpp"
 
 int main(int argc, char *argv[])
 {
     yarp::os::ResourceFinder rf;
     rf.setVerbose(true);
-    rf.setDefaultContext("canBusLauncher");
-    rf.setDefaultConfigFile("canBusLauncher.ini");
+    rf.setDefaultContext("launchCanBus");
+    rf.setDefaultConfigFile("launchCanBus.ini");
     rf.configure(argc, argv);
 
     CD_INFO("Checking for yarp network... ");
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 
     CD_SUCCESS_NO_HEADER("[ok]\n");
 
-    roboticslab::CanBusLauncher mod;
+    roboticslab::LaunchCanBus mod;
 
     if (mod.configure(rf))
     {

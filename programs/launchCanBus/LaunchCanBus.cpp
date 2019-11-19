@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "CanBusLauncher.hpp"
+#include "LaunchCanBus.hpp"
 
 #include <cstdio>
 #include <string>
@@ -23,11 +23,11 @@ using namespace roboticslab;
 
 /************************************************************************/
 
-bool CanBusLauncher::configure(yarp::os::ResourceFinder &rf)
+bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 {
     if (rf.check("help"))
     {
-        std::printf("CanBusLauncher options:\n");
+        std::printf("LaunchCanBus options:\n");
         std::printf("\t--help (this help)\t--from [file.ini]\t--context [path]\t--mode [pos]\t--homePoss\n\n");
         CD_DEBUG_NO_HEADER("%s\n", rf.toString().c_str());
         return false;
@@ -252,21 +252,21 @@ bool CanBusLauncher::configure(yarp::os::ResourceFinder &rf)
 
 /************************************************************************/
 
-bool CanBusLauncher::updateModule()
+bool LaunchCanBus::updateModule()
 {
     return true;
 }
 
 /************************************************************************/
 
-double CanBusLauncher::getPeriod()
+double LaunchCanBus::getPeriod()
 {
     return 3.0;
 }
 
 /************************************************************************/
 
-bool CanBusLauncher::close()
+bool LaunchCanBus::close()
 {
     for (int i = 0; i < wrapperDevices.size(); i++)
     {
