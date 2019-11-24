@@ -27,7 +27,8 @@ if(ENABLE_tests)
     add_subdirectory(testCuiAbsolute)
 endif()
 
-add_subdirectory(drivers)
-add_subdirectory(encoders)
-add_subdirectory(motors)
-add_subdirectory(transmissions)
+yarp_install(DIRECTORY drivers
+                       encoders
+                       motors
+                       transmissions
+             DESTINATION ${ROBOTICSLAB-YARP-DEVICES_CONTEXTS_INSTALL_DIR})
