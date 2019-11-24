@@ -36,108 +36,73 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
     yarp::conf::vocab32_t mode = rf.check("mode", yarp::os::Value(VOCAB_CM_POSITION), "initial mode of operation").asVocab();
     bool homing = rf.check("home", yarp::os::Value(false), "perform initial homing procedure").asBool();
 
-    const std::string canDevicePrefix = "devCan";
-    int canDeviceId = 0;
+    yarp::os::Bottle devCan = rf.findGroup("devCan", "CAN controlboard devices").tail();
+    yarp::os::Bottle wrapper = rf.findGroup("wrapper", "YARP wrappers devices").tail();
 
-    while (true)
+    if (devCan.isNull() || devCan.size() == 0)
     {
-        std::string canDeviceLabel = canDevicePrefix + std::to_string(canDeviceId);
+        CD_ERROR("Missing or empty \"devCan\" section collection.\n");
+        return false;
+    }
 
-        yarp::os::Bottle canDeviceGroup = rf.findGroup(canDeviceLabel);
+    if (wrapper.isNull() || wrapper.size() == 0)
+    {
+        CD_ERROR("Missing or empty \"wrapper\" section collection.\n");
+        return false;
+    }
+
+    // CAN devices
+
+    for (int i = 0; i < devCan.size(); i++)
+    {
+        std::string canDeviceLabel = devCan.get(i).asString();
+        const yarp::os::Bottle & canDeviceGroup = rf.findGroup(canDeviceLabel);
 
         if (canDeviceGroup.isNull())
         {
-            break;
+            CD_ERROR("Missing CAN device group %s.\n", canDeviceLabel.c_str());
+            return false;
         }
-
-        CD_DEBUG("%s\n", canDeviceGroup.toString().c_str());
 
         yarp::os::Property canDeviceOptions;
         canDeviceOptions.fromString(canDeviceGroup.toString());
         canDeviceOptions.put("home", homing);
 
         yarp::dev::PolyDriver * canDevice = new yarp::dev::PolyDriver(canDeviceOptions);
+        canDevices.push(canDevice, canDeviceLabel.c_str());
 
         if (!canDevice->isValid())
         {
             CD_ERROR("CAN device %s instantiation failure.\n", canDeviceLabel.c_str());
             return false;
         }
-
-        canDevices.push(canDevice, canDeviceLabel.c_str());
-        canDeviceId++;
     }
 
-    if (canDeviceId == 0)
+    // network wrappers
+
+    for (int i = 0; i < wrapper.size(); i++)
     {
-        CD_ERROR("Empty CAN device list.\n");
-        return false;
-    }
-
-    const std::string calibratorDevicePrefix = "calibrator";
-    int calibratorDeviceId = 0;
-
-    while (true)
-    {
-        std::string calibratorDeviceLabel = calibratorDevicePrefix + std::to_string(calibratorDeviceId);
-        yarp::os::Bottle calibratorDeviceGroup = rf.findGroup(calibratorDeviceLabel);
-
-        if (calibratorDeviceGroup.isNull())
-        {
-            break;
-        }
-
-        CD_DEBUG("%s\n", calibratorDeviceGroup.toString().c_str());
-
-        yarp::os::Property calibratorDeviceOptions;
-        calibratorDeviceOptions.fromString(calibratorDeviceGroup.toString());
-
-        yarp::dev::PolyDriver * calibratorDevice = new yarp::dev::PolyDriver(calibratorDeviceOptions);
-
-        if (!calibratorDevice->isValid())
-        {
-            CD_ERROR("Calibrator device %s instantiation failure.\n", calibratorDeviceLabel.c_str());
-            return false;
-        }
-
-        yarp::dev::IRemoteCalibrator * iRemoteCalibrator;
-
-        if (!calibratorDevice->view(iRemoteCalibrator))
-        {
-            CD_ERROR("Unable to view IRemoteCalibrator in %s.\n", calibratorDeviceLabel.c_str());
-            return false;
-        }
-
-        calibratorDevices.push(calibratorDevice, "calibrator"); // key value enforced by CBW2.attachAll()
-    }
-
-    const std::string wrapperDevicePrefix = "wrapper";
-    int wrapperDeviceId = 0;
-
-    while (true)
-    {
-        std::string wrapperDeviceLabel = wrapperDevicePrefix + std::to_string(wrapperDeviceId);
-        yarp::os::Bottle wrapperDeviceGroup = rf.findGroup(wrapperDeviceLabel);
+        std::string wrapperDeviceLabel = wrapper.get(i).asString();
+        const yarp::os::Bottle & wrapperDeviceGroup = rf.findGroup(wrapperDeviceLabel);
 
         if (wrapperDeviceGroup.isNull())
         {
-            break;
+            CD_ERROR("Missing wrapper device group %s.\n", wrapperDeviceLabel.c_str());
+            return false;
         }
-
-        CD_DEBUG("%s\n", wrapperDeviceGroup.toString().c_str());
 
         yarp::os::Property wrapperDeviceOptions;
         wrapperDeviceOptions.fromString(wrapperDeviceGroup.toString());
+        wrapperDeviceOptions.unput("calibrator"); // custom property added by us
 
         yarp::dev::PolyDriver * wrapperDevice = new yarp::dev::PolyDriver(wrapperDeviceOptions);
+        wrapperDevices.push(wrapperDevice, wrapperDeviceLabel.c_str());
 
         if (!wrapperDevice->isValid())
         {
             CD_ERROR("Wrapper device %s instantiation failure.\n", wrapperDeviceLabel.c_str());
             return false;
         }
-
-        wrapperDevices.push(wrapperDevice, wrapperDeviceLabel.c_str());
 
         yarp::dev::IMultipleWrapper * iMultipleWrapper;
 
@@ -150,14 +115,42 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
         yarp::dev::PolyDriverList temp;
         temp = canDevices;
 
-        if (calibratorDevices.size() - 1 >= wrapperDeviceId)
+        std::string calibratorDeviceLabel = wrapperDeviceGroup.find("calibrator").asString();
+
+        if (!calibratorDeviceLabel.empty())
         {
-            yarp::dev::PolyDriver * calibratorDevice = calibratorDevices[wrapperDeviceId]->poly;
+            std::string calibratorFilePath = rf.findFileByName("calibrators/" + calibratorDeviceLabel + ".ini");
+            yarp::os::Property calibratorDeviceOptions;
+
+            if (!calibratorDeviceOptions.fromConfigFile(calibratorFilePath))
+            {
+                CD_ERROR("File %s does not exist or unsufficient permissions.\n", calibratorFilePath.c_str());
+                return false;
+            }
+
+            yarp::dev::PolyDriver * calibratorDevice = new yarp::dev::PolyDriver(calibratorDeviceOptions);
+            yarp::dev::PolyDriverDescriptor descriptor(calibratorDevice, "calibrator"); // key name enforced by CBW2::attachAll()
+            calibratorDevices.push(descriptor);
+
+            if (!calibratorDevice->isValid())
+            {
+                CD_ERROR("Calibrator device %s instantiation failure.\n", calibratorDeviceLabel.c_str());
+                return false;
+            }
+
+            yarp::dev::IRemoteCalibrator * iRemoteCalibrator;
+
+            if (!calibratorDevice->view(iRemoteCalibrator))
+            {
+                CD_ERROR("Unable to view IRemoteCalibrator in calibrator device %s.\n", calibratorDeviceLabel.c_str());
+                return false;
+            }
+
             yarp::dev::IWrapper * iWrapper;
 
             if (!calibratorDevice->view(iWrapper))
             {
-                CD_ERROR("Unable to view IWrapper in calibrator device.\n");
+                CD_ERROR("Unable to view IWrapper in calibrator device %s.\n", calibratorDeviceLabel.c_str());
                 return false;
             }
 
@@ -167,7 +160,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
                 return false;
             }
 
-            temp.push(*calibratorDevices[wrapperDeviceId]);
+            temp.push(descriptor);
         }
 
         if (!iMultipleWrapper->attachAll(temp))
@@ -175,21 +168,9 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
             CD_ERROR("Unable to attach wrapper %s to CAN devices.\n", wrapperDeviceLabel.c_str());
             return false;
         }
-
-        wrapperDeviceId++;
     }
 
-    if (wrapperDeviceId == 0)
-    {
-        CD_ERROR("Empty wrapper device list.\n");
-        return false;
-    }
-
-    if (calibratorDeviceId != 0 && wrapperDeviceId != calibratorDeviceId)
-    {
-        CD_ERROR("Unbalanced number of wrapper devices (%d) and calibrators (%d).\n", wrapperDeviceId, calibratorDeviceId);
-        return false;
-    }
+    // initial control modes
 
     for (int i = 0; i < canDevices.size(); i++)
     {
@@ -227,17 +208,14 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
         CD_SUCCESS("Set %s mode in %s.\n", yarp::os::Vocab::decode(mode).c_str(), canDevices[i]->key.c_str());
     }
 
+    // homing on start
+
     if (homing)
     {
         for (int i = 0; i < calibratorDevices.size(); i++)
         {
             yarp::dev::IRemoteCalibrator * iRemoteCalibrator;
-
-            if (!calibratorDevices[i]->poly->view(iRemoteCalibrator))
-            {
-                CD_ERROR("Unable to view IRemoteCalibrator in %s.\n", calibratorDevices[i]->key.c_str());
-                return false;
-            }
+            calibratorDevices[i]->poly->view(iRemoteCalibrator);
 
             if (!iRemoteCalibrator->homingWholePart())
             {
@@ -268,14 +246,14 @@ double LaunchCanBus::getPeriod()
 
 bool LaunchCanBus::close()
 {
-    for (int i = 0; i < wrapperDevices.size(); i++)
-    {
-        delete wrapperDevices[i]->poly;
-    }
-
     for (int i = 0; i < calibratorDevices.size(); i++)
     {
         delete calibratorDevices[i]->poly;
+    }
+
+    for (int i = 0; i < wrapperDevices.size(); i++)
+    {
+        delete wrapperDevices[i]->poly;
     }
 
     for (int i = 0; i < canDevices.size(); i++)
