@@ -128,6 +128,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
                 return false;
             }
 
+            calibratorDeviceOptions.put("joints", wrapperDeviceOptions.find("joints"));
             yarp::dev::PolyDriver * calibratorDevice = new yarp::dev::PolyDriver(calibratorDeviceOptions);
             yarp::dev::PolyDriverDescriptor descriptor(calibratorDevice, "calibrator"); // key name enforced by CBW2::attachAll()
             calibratorDevices.push(descriptor);

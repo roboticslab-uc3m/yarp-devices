@@ -6,10 +6,13 @@ using namespace roboticslab;
 
 bool JointCalibrator::attach(yarp::dev::PolyDriver * poly)
 {
+    int localAxes;
+
     return poly->view(iControlMode)
             && poly->view(iEncoders)
             && poly->view(iPositionControl)
-            && iEncoders->getAxes(&axes);
+            && iEncoders->getAxes(&localAxes)
+            && localAxes == axes;
 }
 
 bool JointCalibrator::detach()

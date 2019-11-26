@@ -3,6 +3,8 @@
 #ifndef __JOINT_CALIBRATOR_HPP__
 #define __JOINT_CALIBRATOR_HPP__
 
+#include <vector>
+
 #include <yarp/dev/CalibratorInterfaces.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IControlMode.h>
@@ -18,6 +20,17 @@ namespace roboticslab
  * \defgroup JointCalibrator
  * @brief Contains roboticslab::JointCalibrator.
  */
+
+/**
+ * @ingroup JointCalibrator
+ * @brief ...
+ */
+struct MovementSpecs
+{
+    std::vector<double> pos;
+    std::vector<double> vel;
+    std::vector<double> acc;
+};
 
 /**
  * @ingroup JointCalibrator
@@ -48,7 +61,13 @@ public:
     virtual bool close();
 
 private:
+    bool move(const std::vector<int> & joints, const MovementSpecs & specs);
+
     int axes;
+
+    MovementSpecs homeSpecs;
+    MovementSpecs parkSpecs;
+
     yarp::dev::IControlMode * iControlMode;
     yarp::dev::IEncoders * iEncoders;
     yarp::dev::IPositionControl * iPositionControl;
