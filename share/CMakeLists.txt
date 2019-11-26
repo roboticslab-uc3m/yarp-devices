@@ -1,4 +1,4 @@
-# Copyright: 2017 UC3M
+# Copyright: 2019 UC3M
 # Author: Juan G Victores and Raul de Santos Rico
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
@@ -26,3 +26,9 @@ endif()
 if(ENABLE_tests)
     add_subdirectory(testCuiAbsolute)
 endif()
+
+yarp_install(DIRECTORY drivers
+                       encoders
+                       motors
+                       transmissions
+             DESTINATION ${ROBOTICSLAB-YARP-DEVICES_CONTEXTS_INSTALL_DIR})
