@@ -7,6 +7,7 @@
 #include <vector>
 
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Vocab.h>
@@ -68,12 +69,12 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
         canDeviceOptions.fromString(canDeviceGroup.toString());
         canDeviceOptions.put("home", homing);
 
-        yarp::dev::PolyDriver * canDevice = new yarp::dev::PolyDriver(canDeviceOptions);
+        yarp::dev::PolyDriver * canDevice = new yarp::dev::PolyDriver;
         canDevices.push(canDevice, canDeviceLabel.c_str());
 
-        if (!canDevice->isValid())
+        if (!canDevice->open(canDeviceOptions))
         {
-            CD_ERROR("CAN device %s instantiation failure.\n", canDeviceLabel.c_str());
+            CD_ERROR("CAN device %s configuration failure.\n", canDeviceLabel.c_str());
             return false;
         }
     }
@@ -95,12 +96,12 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
         wrapperDeviceOptions.fromString(wrapperDeviceGroup.toString());
         wrapperDeviceOptions.unput("calibrator"); // custom property added by us
 
-        yarp::dev::PolyDriver * wrapperDevice = new yarp::dev::PolyDriver(wrapperDeviceOptions);
+        yarp::dev::PolyDriver * wrapperDevice = new yarp::dev::PolyDriver;
         wrapperDevices.push(wrapperDevice, wrapperDeviceLabel.c_str());
 
-        if (!wrapperDevice->isValid())
+        if (!wrapperDevice->open(wrapperDeviceOptions))
         {
-            CD_ERROR("Wrapper device %s instantiation failure.\n", wrapperDeviceLabel.c_str());
+            CD_ERROR("Wrapper device %s configuration failure.\n", wrapperDeviceLabel.c_str());
             return false;
         }
 
@@ -119,7 +120,8 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
         if (!calibratorDeviceLabel.empty())
         {
-            std::string calibratorFilePath = rf.findFileByName("calibrators/" + calibratorDeviceLabel + ".ini");
+            std::string slash = yarp::os::NetworkBase::getPathSeparator();
+            std::string calibratorFilePath = rf.findFileByName("calibrators" + slash + calibratorDeviceLabel + ".ini");
             yarp::os::Property calibratorDeviceOptions;
 
             if (!calibratorDeviceOptions.fromConfigFile(calibratorFilePath))
@@ -129,13 +131,13 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
             }
 
             calibratorDeviceOptions.put("joints", wrapperDeviceOptions.find("joints"));
-            yarp::dev::PolyDriver * calibratorDevice = new yarp::dev::PolyDriver(calibratorDeviceOptions);
+            yarp::dev::PolyDriver * calibratorDevice = new yarp::dev::PolyDriver;
             yarp::dev::PolyDriverDescriptor descriptor(calibratorDevice, "calibrator"); // key name enforced by CBW2::attachAll()
             calibratorDevices.push(descriptor);
 
-            if (!calibratorDevice->isValid())
+            if (!calibratorDevice->open(calibratorDeviceOptions))
             {
-                CD_ERROR("Calibrator device %s instantiation failure.\n", calibratorDeviceLabel.c_str());
+                CD_ERROR("Calibrator device %s configuration failure.\n", calibratorDeviceLabel.c_str());
                 return false;
             }
 

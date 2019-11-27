@@ -322,7 +322,7 @@ private:
     yarp::dev::PolyDriver canBusDevice;
     yarp::dev::ICanBus * iCanBus;
 
-    yarp::dev::PolyDriverList nodes;
+    yarp::dev::PolyDriverList nodeDevices;
 
     DeviceMapper deviceMapper;
     std::vector<ICanBusSharer *> iCanBusSharers;
