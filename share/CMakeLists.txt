@@ -18,15 +18,18 @@ if(ENABLE_launchCanBus)
 endif()
 
 if(ENABLE_SpaceNavigator)
-    list(APPEND applications applications/spaceNavigator)
+    list(APPEND applications applications/yarpmanager/spaceNavigator)
 endif()
 
 if(ENABLE_tests)
     list(APPEND contexts contexts/testCuiAbsolute)
 endif()
 
+yarp_install(FILES applications/yarpmanager/ymanager.ini
+             DESTINATION ${ROBOTICSLAB-YARP-DEVICES_APPLICATIONS_INSTALL_DIR}/yarpmanager)
+
 yarp_install(DIRECTORY ${applications}
-             DESTINATION ${ROBOTICSLAB-YARP-DEVICES_APPLICATIONS_INSTALL_DIR})
+             DESTINATION ${ROBOTICSLAB-YARP-DEVICES_APPLICATIONS_INSTALL_DIR}/yarpmanager)
 
 yarp_install(DIRECTORY ${contexts}
              DESTINATION ${ROBOTICSLAB-YARP-DEVICES_CONTEXTS_INSTALL_DIR})
