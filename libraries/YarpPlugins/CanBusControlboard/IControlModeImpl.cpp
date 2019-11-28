@@ -60,7 +60,7 @@ bool CanBusControlboard::setControlModes(int * modes)
         return false;
     }
 
-    for (unsigned int i = 0; i < nodes.size(); i++)
+    for (unsigned int i = 0; i < nodeDevices.size(); i++)
     {
         posdThread->updateControlModeRegister(i, modes[i] == VOCAB_CM_POSITION_DIRECT);
     }

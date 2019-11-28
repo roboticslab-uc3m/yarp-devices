@@ -19,18 +19,18 @@
 
 bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 {
-    std::string devicePath = config.check("canDevice", yarp::os::Value(DEFAULT_CAN_DEVICE), "CAN device path").asString();
-    int bitrate = config.check("canBitrate", yarp::os::Value(DEFAULT_CAN_BITRATE), "CAN bitrate (bps)").asInt32();
+    std::string devicePath = config.check("port", yarp::os::Value(DEFAULT_PORT), "CAN device path").asString();
+    int bitrate = config.check("bitrate", yarp::os::Value(DEFAULT_BITRATE), "CAN bitrate (bps)").asInt32();
 
-    blockingMode = config.check("canBlockingMode", yarp::os::Value(DEFAULT_CAN_BLOCKING_MODE), "CAN blocking mode enabled").asBool();
-    allowPermissive = config.check("canAllowPermissive", yarp::os::Value(DEFAULT_CAN_ALLOW_PERMISSIVE), "CAN read/write permissive mode").asBool();
+    blockingMode = config.check("blockingMode", yarp::os::Value(DEFAULT_BLOCKING_MODE), "CAN blocking mode enabled").asBool();
+    allowPermissive = config.check("allowPermissive", yarp::os::Value(DEFAULT_ALLOW_PERMISSIVE), "CAN read/write permissive mode").asBool();
 
     if (blockingMode)
     {
         CD_INFO("Blocking mode enabled for CAN device: %s.\n", devicePath.c_str());
 
-        rxTimeoutMs = config.check("canRxTimeoutMs", yarp::os::Value(DEFAULT_CAN_RX_TIMEOUT_MS), "CAN RX timeout (milliseconds)").asInt32();
-        txTimeoutMs = config.check("canTxTimeoutMs", yarp::os::Value(DEFAULT_CAN_TX_TIMEOUT_MS), "CAN TX timeout (milliseconds)").asInt32();
+        rxTimeoutMs = config.check("rxTimeoutMs", yarp::os::Value(DEFAULT_RX_TIMEOUT_MS), "CAN RX timeout (milliseconds)").asInt32();
+        txTimeoutMs = config.check("txTimeoutMs", yarp::os::Value(DEFAULT_TX_TIMEOUT_MS), "CAN TX timeout (milliseconds)").asInt32();
 
         if (rxTimeoutMs <= 0)
         {
@@ -49,7 +49,7 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
     CD_INFO("Permissive mode flag for read/write operations on CAN device %s: %d.\n", devicePath.c_str(), allowPermissive);
 
-    std::string filterConfigStr = config.check("canFilterConfiguration", yarp::os::Value(DEFAULT_CAN_FILTER_CONFIGURATION),
+    std::string filterConfigStr = config.check("filterConfiguration", yarp::os::Value(DEFAULT_FILTER_CONFIGURATION),
             "CAN filter configuration (disabled|noRange|maskAndRange)").asString();
 
     CD_INFO("CAN filter configuration for CAN device %s: %s.\n", devicePath.c_str(), filterConfigStr.c_str());

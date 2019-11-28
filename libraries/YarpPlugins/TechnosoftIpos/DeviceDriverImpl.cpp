@@ -4,6 +4,8 @@
 
 #include <functional>
 
+#include <yarp/os/Property.h>
+
 #include <ColorDebug.h>
 
 using namespace roboticslab;
@@ -14,21 +16,27 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 {
     CD_DEBUG("%s\n", config.toString().c_str());
 
-    int canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt32();
+    int canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32();
+
+    yarp::os::Bottle & driverGroup = config.findGroup("driver");
+    yarp::os::Bottle & motorGroup = config.findGroup("motor");
+    yarp::os::Bottle & gearboxGroup = config.findGroup("gearbox");
+    yarp::os::Bottle & encoderGroup = config.findGroup("encoder");
 
     // mutable variables
-    vars.tr = config.check("tr", yarp::os::Value(0.0), "reduction").asFloat64();
-    vars.k = config.check("k", yarp::os::Value(0.0), "motor constant").asFloat64();
-    vars.encoderPulses = config.check("encoderPulses", yarp::os::Value(0), "encoderPulses").asInt32();
-    vars.pulsesPerSample = config.check("pulsesPerSample", yarp::os::Value(0), "pulsesPerSample").asInt32();
+    vars.tr = gearboxGroup.check("tr", yarp::os::Value(0.0), "reduction").asFloat64();
+    vars.k = motorGroup.check("k", yarp::os::Value(0.0), "motor constant").asFloat64();
+    vars.encoderPulses = encoderGroup.check("encoderPulses", yarp::os::Value(0), "encoderPulses").asInt32();
+    vars.pulsesPerSample = motorGroup.check("pulsesPerSample", yarp::os::Value(0), "pulsesPerSample").asInt32();
 
+    vars.tr = vars.tr * config.check("extraTr", yarp::os::Value(1.0), "extra reduction").asFloat64();
     vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
 
     // immutable variables
-    vars.drivePeakCurrent = config.check("drivePeakCurrent", yarp::os::Value(0.0), "peak drive current (amperes)").asFloat64();
+    vars.drivePeakCurrent = driverGroup.check("peakCurrent", yarp::os::Value(0.0), "peak drive current (amperes)").asFloat64();
     vars.maxVel = config.check("maxVel", yarp::os::Value(0.0), "maxVel (meters/second or degrees/second)").asFloat64();
-    vars.axisName = config.check("axisName", yarp::os::Value(""), "axis name").asString();
-    vars.jointType = config.check("jointType", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "joint type [atrv|atpr|unkn]").asVocab();
+    vars.axisName = config.check("name", yarp::os::Value(""), "axis name").asString();
+    vars.jointType = config.check("type", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "joint type [atrv|atpr|unkn]").asVocab();
     vars.reverse = config.check("reverse", yarp::os::Value(false), "reverse motor encoder counts").asBool();
     vars.min = config.check("min", yarp::os::Value(0.0), "min (meters or degrees)").asFloat64();
     vars.max = config.check("max", yarp::os::Value(0.0), "max (meters or degrees)").asFloat64();
@@ -41,11 +49,23 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
         return false;
     }
 
-    if (config.check("externalEncoder", "external encoder device"))
+    if (config.check("externalEncoder", "external encoder"))
     {
         std::string externalEncoder = config.find("externalEncoder").asString();
+        yarp::os::Bottle & externalEncoderGroup = config.findGroup(externalEncoder);
 
-        if (!externalEncoderDevice.open(externalEncoder))
+        if (externalEncoderGroup.isNull())
+        {
+            CD_ERROR("Missing external encoder device group %s.\n", externalEncoder.c_str());
+            return false;
+        }
+
+        yarp::os::Property externalEncoderOptions;
+        externalEncoderOptions.fromString(externalEncoderGroup.toString(), false);
+        externalEncoderOptions.fromString(config.toString(), false);
+        externalEncoderOptions.setMonitor(config.getMonitor(), externalEncoder.c_str());
+
+        if (!externalEncoderDevice.open(externalEncoderOptions))
         {
             CD_ERROR("Unable to open external encoder device: %s.\n", externalEncoder.c_str());
             return false;
