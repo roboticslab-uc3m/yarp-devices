@@ -20,20 +20,20 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         return false;
     }
 
-    std::string bus = config.find("bus").asString();
+    std::string canBus = config.find("bus").asString();
     yarp::os::Bottle * nodes = config.find("nodes").asList();
 
-    if (bus.empty() || nodes == nullptr)
+    if (canBus.empty() || nodes == nullptr)
     {
         CD_ERROR("Illegal key(s): empty \"bus\" or nullptr \"nodes\".\n");
         return false;
     }
 
-    yarp::os::Bottle & canBusGroup = config.findGroup(bus);
+    yarp::os::Bottle & canBusGroup = config.findGroup(canBus);
 
     if (canBusGroup.isNull())
     {
-        CD_ERROR("Missing CAN bus device group %s.\n", bus.c_str());
+        CD_ERROR("Missing CAN bus device group %s.\n", canBus.c_str());
         return false;
     }
 
@@ -42,7 +42,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
     canBusOptions.fromString(config.toString(), false);
     canBusOptions.put("canBlockingMode", false); // enforce non-blocking mode
     canBusOptions.put("canAllowPermissive", false); // always check usage requirements
-    canBusOptions.setMonitor(config.getMonitor(), bus.c_str());
+    canBusOptions.setMonitor(config.getMonitor(), canBus.c_str());
 
     if (!canBusDevice.open(canBusOptions))
     {
@@ -52,7 +52,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
     if (!canBusDevice.view(iCanBus))
     {
-        CD_ERROR("Cannot view ICanBus interface in device: %s.\n", bus.c_str());
+        CD_ERROR("Cannot view ICanBus interface in device: %s.\n", canBus.c_str());
         return false;
     }
 
@@ -60,21 +60,24 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
     if (!canBusDevice.view(iCanBufferFactory))
     {
-        CD_ERROR("Cannot view ICanBufferFactory interface in device: %s.\n", bus.c_str());
+        CD_ERROR("Cannot view ICanBufferFactory interface in device: %s.\n", canBus.c_str());
         return false;
     }
 
     iCanBusSharers.resize(nodes->size());
 
-    int cuiTimeout  = config.check("waitEncoder", yarp::os::Value(DEFAULT_CUI_TIMEOUT), "CUI timeout (seconds)").asInt32();
-
-    std::string canBusType = config.check("canBusType", yarp::os::Value(DEFAULT_CAN_BUS), "CAN bus device name").asString();
     int canRxBufferSize = config.check("canBusRxBufferSize", yarp::os::Value(DEFAULT_CAN_RX_BUFFER_SIZE), "CAN bus RX buffer size").asInt();
     int canTxBufferSize = config.check("canBusTxBufferSize", yarp::os::Value(DEFAULT_CAN_TX_BUFFER_SIZE), "CAN bus TX buffer size").asInt();
     double canRxPeriodMs = config.check("canRxPeriodMs", yarp::os::Value(DEFAULT_CAN_RX_PERIOD_MS), "CAN bus RX period (milliseconds)").asFloat64();
     double canTxPeriodMs = config.check("canTxPeriodMs", yarp::os::Value(DEFAULT_CAN_TX_PERIOD_MS), "CAN bus TX period (milliseconds)").asFloat64();
-    double canSdoTimeoutMs = config.check("canSdoTimeoutMs", yarp::os::Value(DEFAULT_CAN_SDO_TIMEOUT_MS), "CAN bus SDO timeout (milliseconds)").asFloat64();
-    double canDriveStateTimeout = config.check("canDriveStateTimeout", yarp::os::Value(DEFAULT_CAN_DRIVE_STATE_TIMEOUT), "CAN drive state timeout (seconds)").asFloat64();
+
+    canReaderThread = new CanReaderThread(canBus, iCanBusSharers);
+    canReaderThread->setCanHandles(iCanBus, iCanBufferFactory, canRxBufferSize);
+    canReaderThread->setPeriod(canRxPeriodMs);
+
+    canWriterThread = new CanWriterThread(canBus);
+    canWriterThread->setCanHandles(iCanBus, iCanBufferFactory, canTxBufferSize);
+    canWriterThread->setPeriod(canTxPeriodMs);
 
     linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(DEFAULT_LIN_INTERP_PERIOD_MS), "linear interpolation mode period (milliseconds)").asInt32();
     linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(DEFAULT_LIN_INTERP_BUFFER_SIZE), "linear interpolation mode buffer size").asInt32();
@@ -133,17 +136,17 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         }
     }
 
-    const std::string canDevice = canBusOptions.find("canDevice").asString();
+    if (!canReaderThread->start())
+    {
+        CD_ERROR("Unable to start reader thread.\n");
+        return false;
+    }
 
-    canReaderThread = new CanReaderThread(canDevice, iCanBusSharers);
-    canReaderThread->setCanHandles(iCanBus, iCanBufferFactory, canRxBufferSize);
-    canReaderThread->setPeriod(canRxPeriodMs);
-    canReaderThread->start();
-
-    canWriterThread = new CanWriterThread(canDevice);
-    canWriterThread->setCanHandles(iCanBus, iCanBufferFactory, canTxBufferSize);
-    canWriterThread->setPeriod(canTxPeriodMs);
-    canWriterThread->start();
+    if (!canWriterThread->start())
+    {
+        CD_ERROR("Unable to start writer thread.\n");
+        return false;
+    }
 
     for (auto p : iCanBusSharers)
     {

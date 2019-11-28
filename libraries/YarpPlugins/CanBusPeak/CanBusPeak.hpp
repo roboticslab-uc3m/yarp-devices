@@ -15,14 +15,14 @@
 
 #include "PeakCanMessage.hpp"
 
-#define DEFAULT_CAN_DEVICE "/dev/pcan0"
-#define DEFAULT_CAN_BITRATE 1000000
+#define DEFAULT_PORT "/dev/pcan0"
+#define DEFAULT_BITRATE 1000000
 
-#define DEFAULT_CAN_RX_TIMEOUT_MS 1
-#define DEFAULT_CAN_TX_TIMEOUT_MS 0  // '0' means no timeout
+#define DEFAULT_RX_TIMEOUT_MS 1
+#define DEFAULT_TX_TIMEOUT_MS 0  // '0' means no timeout
 
-#define DEFAULT_CAN_BLOCKING_MODE true
-#define DEFAULT_CAN_ALLOW_PERMISSIVE false
+#define DEFAULT_BLOCKING_MODE true
+#define DEFAULT_ALLOW_PERMISSIVE false
 
 namespace roboticslab
 {
@@ -76,10 +76,10 @@ class CanBusPeak : public yarp::dev::DeviceDriver,
 public:
 
     CanBusPeak() : fileDescriptor(0),
-                   rxTimeoutMs(DEFAULT_CAN_RX_TIMEOUT_MS),
-                   txTimeoutMs(DEFAULT_CAN_TX_TIMEOUT_MS),
-                   blockingMode(DEFAULT_CAN_BLOCKING_MODE),
-                   allowPermissive(DEFAULT_CAN_ALLOW_PERMISSIVE)
+                   rxTimeoutMs(DEFAULT_RX_TIMEOUT_MS),
+                   txTimeoutMs(DEFAULT_TX_TIMEOUT_MS),
+                   blockingMode(DEFAULT_BLOCKING_MODE),
+                   allowPermissive(DEFAULT_ALLOW_PERMISSIVE)
     {}
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------

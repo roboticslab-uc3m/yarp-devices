@@ -17,9 +17,6 @@
 
 #define CHECK_JOINT(j) do { int n = deviceMapper.getControlledAxes(); if ((j) < 0 || (j) > n - 1) return false; } while (0)
 
-#define DEFAULT_MODE "position"
-#define DEFAULT_CUI_TIMEOUT 1.0
-#define DEFAULT_CAN_BUS "CanBusHico"
 #define DEFAULT_LIN_INTERP_PERIOD_MS 50
 #define DEFAULT_LIN_INTERP_BUFFER_SIZE 1
 #define DEFAULT_LIN_INTERP_MODE "pt"
@@ -28,8 +25,8 @@
 #define DEFAULT_CAN_TX_BUFFER_SIZE 500
 #define DEFAULT_CAN_RX_PERIOD_MS -1
 #define DEFAULT_CAN_TX_PERIOD_MS 1.0
-#define DEFAULT_CAN_SDO_TIMEOUT_MS 25.0
-#define DEFAULT_CAN_DRIVE_STATE_TIMEOUT 2.5
+#define DEFAULT_CAN_SDO_TIMEOUT_MS 25.0 // FIXME unused
+#define DEFAULT_CAN_DRIVE_STATE_TIMEOUT 2.5 // FIXME unused
 
 namespace roboticslab
 {

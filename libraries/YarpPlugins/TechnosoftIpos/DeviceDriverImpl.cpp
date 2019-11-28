@@ -33,10 +33,10 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
 
     // immutable variables
-    vars.drivePeakCurrent = driverGroup.check("drivePeakCurrent", yarp::os::Value(0.0), "peak drive current (amperes)").asFloat64();
+    vars.drivePeakCurrent = driverGroup.check("peakCurrent", yarp::os::Value(0.0), "peak drive current (amperes)").asFloat64();
     vars.maxVel = config.check("maxVel", yarp::os::Value(0.0), "maxVel (meters/second or degrees/second)").asFloat64();
-    vars.axisName = config.check("axisName", yarp::os::Value(""), "axis name").asString();
-    vars.jointType = config.check("jointType", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "joint type [atrv|atpr|unkn]").asVocab();
+    vars.axisName = config.check("name", yarp::os::Value(""), "axis name").asString();
+    vars.jointType = config.check("type", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "joint type [atrv|atpr|unkn]").asVocab();
     vars.reverse = config.check("reverse", yarp::os::Value(false), "reverse motor encoder counts").asBool();
     vars.min = config.check("min", yarp::os::Value(0.0), "min (meters or degrees)").asFloat64();
     vars.max = config.check("max", yarp::os::Value(0.0), "max (meters or degrees)").asFloat64();
