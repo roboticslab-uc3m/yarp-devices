@@ -55,7 +55,7 @@ ll = dd.viewIControlLimits()  # make a limits controller object we call 'll'
 axes = enc.getAxes()  # retrieve number of joints
 
 # use the object to set the device to position mode (as opposed to velocity mode)(note: stops the robot)
-mode.setControlModes(yarp.IVector(axes, yarp.Vocab_encode('pos')))
+mode.setControlModes(yarp.IVector(axes, yarp.encode('pos')))
 
 print 'test positionMove(1,-35) -> moves motor 1 (start count at motor 0) to -35 degrees'
 pos.positionMove(1,-35)
@@ -76,7 +76,7 @@ max = yarp.DVector(1)
 ll.getLimits(0,min,max)
 
 # use the object to set the device to velocity mode (as opposed to position mode)
-mode.setControlModes(yarp.IVector(axes, yarp.Vocab_encode('vel')))
+mode.setControlModes(yarp.IVector(axes, yarp.encode('vel')))
 
 print 'test velocityMove(0,10) -> moves motor 0 (start count at motor 0) at 10 degrees per second'
 vel.velocityMove(0,10)
