@@ -20,15 +20,16 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     yarp::os::Bottle & driverGroup = config.findGroup("driver");
     yarp::os::Bottle & motorGroup = config.findGroup("motor");
-    yarp::os::Bottle & transmissionGroup = config.findGroup("transmission");
+    yarp::os::Bottle & gearboxGroup = config.findGroup("gearbox");
     yarp::os::Bottle & encoderGroup = config.findGroup("encoder");
 
     // mutable variables
-    vars.tr = transmissionGroup.check("tr", yarp::os::Value(0.0), "reduction").asFloat64();
+    vars.tr = gearboxGroup.check("tr", yarp::os::Value(0.0), "reduction").asFloat64();
     vars.k = motorGroup.check("k", yarp::os::Value(0.0), "motor constant").asFloat64();
     vars.encoderPulses = encoderGroup.check("encoderPulses", yarp::os::Value(0), "encoderPulses").asInt32();
     vars.pulsesPerSample = motorGroup.check("pulsesPerSample", yarp::os::Value(0), "pulsesPerSample").asInt32();
 
+    vars.tr = vars.tr * config.check("extraTr", yarp::os::Value(1.0), "extra reduction").asFloat64();
     vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
 
     // immutable variables
