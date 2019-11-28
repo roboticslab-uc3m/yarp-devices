@@ -4,36 +4,11 @@
 
 #include <functional>
 
-#include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/ResourceFinder.h>
 
 #include <ColorDebug.h>
 
 using namespace roboticslab;
-
-namespace
-{
-    yarp::os::Property getConfig(const yarp::os::Searchable & config, const std::string & key, const std::string & comment,
-            const std::string & dir)
-    {
-        yarp::os::ResourceFinder & rf = yarp::os::ResourceFinder::getResourceFinderSingleton();
-        const std::string slash = yarp::os::NetworkBase::getPathSeparator();
-
-        std::string value = config.check(key, yarp::os::Value(""), comment).asString();
-        std::string path = rf.findFileByName(dir + slash + value + ".ini");
-
-        yarp::os::Property nestedConfig;
-        nestedConfig.setMonitor(config.getMonitor(), value.c_str());
-
-        if (!nestedConfig.fromConfigFile(path))
-        {
-            CD_WARNING("File %s does not exist or unsufficient permissions.\n", path.c_str());
-        }
-
-        return nestedConfig;
-    }
-}
 
 // -----------------------------------------------------------------------------
 
@@ -41,38 +16,31 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 {
     CD_DEBUG("%s\n", config.toString().c_str());
 
-    yarp::os::ResourceFinder & rf = yarp::os::ResourceFinder::getResourceFinderSingleton();
-    const std::string slash = yarp::os::NetworkBase::getPathSeparator();
-
     int canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32();
 
-    std::string joint = config.check("joint", yarp::os::Value(""), "controlled joint").asString();
-    std::string jointPath = rf.findFileByName("joints/" + joint + ".ini");
-
-    yarp::os::Property jointConfig = getConfig(config, "joint", "controlled joint", "joints");
-    yarp::os::Property driverConfig = getConfig(jointConfig, "driver", "driver", "drivers");
-    yarp::os::Property motorConfig = getConfig(jointConfig, "motor", "motor", "motors");
-    yarp::os::Property transmissionConfig = getConfig(jointConfig, "transmission", "transmission", "transmissions");
-    yarp::os::Property encoderConfig = getConfig(jointConfig, "encoder", "internal encoder", "encoders");
+    yarp::os::Bottle & driverGroup = config.findGroup("driver");
+    yarp::os::Bottle & motorGroup = config.findGroup("motor");
+    yarp::os::Bottle & transmissionGroup = config.findGroup("transmission");
+    yarp::os::Bottle & encoderGroup = config.findGroup("encoder");
 
     // mutable variables
-    vars.tr = transmissionConfig.check("tr", yarp::os::Value(0.0), "reduction").asFloat64();
-    vars.k = driverConfig.check("k", yarp::os::Value(0.0), "motor constant").asFloat64();
-    vars.encoderPulses = encoderConfig.check("encoderPulses", yarp::os::Value(0), "encoderPulses").asInt32();
-    vars.pulsesPerSample = motorConfig.check("pulsesPerSample", yarp::os::Value(0), "pulsesPerSample").asInt32();
+    vars.tr = transmissionGroup.check("tr", yarp::os::Value(0.0), "reduction").asFloat64();
+    vars.k = motorGroup.check("k", yarp::os::Value(0.0), "motor constant").asFloat64();
+    vars.encoderPulses = encoderGroup.check("encoderPulses", yarp::os::Value(0), "encoderPulses").asInt32();
+    vars.pulsesPerSample = motorGroup.check("pulsesPerSample", yarp::os::Value(0), "pulsesPerSample").asInt32();
 
     vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
 
     // immutable variables
-    vars.drivePeakCurrent = driverConfig.check("drivePeakCurrent", yarp::os::Value(0.0), "peak drive current (amperes)").asFloat64();
-    vars.maxVel = jointConfig.check("maxVel", yarp::os::Value(0.0), "maxVel (meters/second or degrees/second)").asFloat64();
-    vars.axisName = jointConfig.check("axisName", yarp::os::Value(""), "axis name").asString();
-    vars.jointType = jointConfig.check("jointType", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "joint type [atrv|atpr|unkn]").asVocab();
-    vars.reverse = jointConfig.check("reverse", yarp::os::Value(false), "reverse motor encoder counts").asBool();
-    vars.min = jointConfig.check("min", yarp::os::Value(0.0), "min (meters or degrees)").asFloat64();
-    vars.max = jointConfig.check("max", yarp::os::Value(0.0), "max (meters or degrees)").asFloat64();
-    vars.refSpeed = jointConfig.check("refSpeed", yarp::os::Value(0.0), "ref speed (meters/second or degrees/second)").asFloat64();
-    vars.refAcceleration = jointConfig.check("refAcceleration", yarp::os::Value(0.0), "ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
+    vars.drivePeakCurrent = driverGroup.check("drivePeakCurrent", yarp::os::Value(0.0), "peak drive current (amperes)").asFloat64();
+    vars.maxVel = config.check("maxVel", yarp::os::Value(0.0), "maxVel (meters/second or degrees/second)").asFloat64();
+    vars.axisName = config.check("axisName", yarp::os::Value(""), "axis name").asString();
+    vars.jointType = config.check("jointType", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "joint type [atrv|atpr|unkn]").asVocab();
+    vars.reverse = config.check("reverse", yarp::os::Value(false), "reverse motor encoder counts").asBool();
+    vars.min = config.check("min", yarp::os::Value(0.0), "min (meters or degrees)").asFloat64();
+    vars.max = config.check("max", yarp::os::Value(0.0), "max (meters or degrees)").asFloat64();
+    vars.refSpeed = config.check("refSpeed", yarp::os::Value(0.0), "ref speed (meters/second or degrees/second)").asFloat64();
+    vars.refAcceleration = config.check("refAcceleration", yarp::os::Value(0.0), "ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
 
     if (!vars.validateInitialState(canId))
     {
@@ -82,8 +50,19 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     if (config.check("externalEncoder", "external encoder"))
     {
-        yarp::os::Property externalEncoderOptions = getConfig(config, "externalEncoder", "external encoder", "nodes");
         std::string externalEncoder = config.find("externalEncoder").asString();
+        yarp::os::Bottle & externalEncoderGroup = config.findGroup(externalEncoder);
+
+        if (externalEncoderGroup.isNull())
+        {
+            CD_ERROR("Missing external encoder device group %s.\n", externalEncoder.c_str());
+            return false;
+        }
+
+        yarp::os::Property externalEncoderOptions;
+        externalEncoderOptions.fromString(externalEncoderGroup.toString(), false);
+        externalEncoderOptions.fromString(config.toString(), false);
+        externalEncoderOptions.setMonitor(config.getMonitor(), externalEncoder.c_str());
 
         if (!externalEncoderDevice.open(externalEncoderOptions))
         {

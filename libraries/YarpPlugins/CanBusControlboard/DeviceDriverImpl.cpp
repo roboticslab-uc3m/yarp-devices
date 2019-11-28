@@ -2,12 +2,9 @@
 
 #include "CanBusControlboard.hpp"
 
-#include <map>
-#include <string>
-
-#include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/ResourceFinder.h>
+
+#include <ColorDebug.h>
 
 using namespace roboticslab;
 
@@ -16,9 +13,6 @@ using namespace roboticslab;
 bool CanBusControlboard::open(yarp::os::Searchable & config)
 {
     CD_DEBUG("%s\n", config.toString().c_str());
-
-    yarp::os::ResourceFinder & rf = yarp::os::ResourceFinder::getResourceFinderSingleton();
-    const std::string slash = yarp::os::NetworkBase::getPathSeparator();
 
     if (!config.check("bus", "CAN bus") || !config.check("nodes", "CAN nodes"))
     {
@@ -35,19 +29,20 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         return false;
     }
 
-    std::string busPath = rf.findFileByName("buses" + slash + bus + ".ini");
+    yarp::os::Bottle & canBusGroup = config.findGroup(bus);
 
-    yarp::os::Property canBusOptions;
-    canBusOptions.setMonitor(config.getMonitor(), bus.c_str());
-
-    if (!canBusOptions.fromConfigFile(busPath))
+    if (canBusGroup.isNull())
     {
-        CD_ERROR("File %s does not exist or unsufficient permissions.\n", busPath.c_str());
+        CD_ERROR("Missing CAN bus device group %s.\n", bus.c_str());
         return false;
     }
 
+    yarp::os::Property canBusOptions;
+    canBusOptions.fromString(canBusGroup.toString(), false);
+    canBusOptions.fromString(config.toString(), false);
     canBusOptions.put("canBlockingMode", false); // enforce non-blocking mode
     canBusOptions.put("canAllowPermissive", false); // always check usage requirements
+    canBusOptions.setMonitor(config.getMonitor(), bus.c_str());
 
     if (!canBusDevice.open(canBusOptions))
     {
@@ -95,16 +90,18 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
     for (int i = 0; i < nodes->size(); i++)
     {
         std::string node = nodes->get(i).asString();
-        std::string nodePath = rf.findFileByName("nodes" + slash + node + ".ini");
+        yarp::os::Bottle & nodeGroup = config.findGroup(node);
 
-        yarp::os::Property nodeOptions;
-        nodeOptions.setMonitor(config.getMonitor(), node.c_str());
-
-        if (!nodeOptions.fromConfigFile(nodePath))
+        if (nodeGroup.isNull())
         {
-            CD_ERROR("File %s does not exist or unsufficient permissions.\n", nodePath.c_str());
+            CD_ERROR("Missing CAN node device group %s.\n", node.c_str());
             return false;
         }
+
+        yarp::os::Property nodeOptions;
+        nodeOptions.fromString(nodeGroup.toString(), false);
+        nodeOptions.fromString(config.toString(), false);
+        nodeOptions.setMonitor(config.getMonitor(), node.c_str());
 
         yarp::dev::PolyDriver * device = new yarp::dev::PolyDriver;
         nodeDevices.push(device, node.c_str());

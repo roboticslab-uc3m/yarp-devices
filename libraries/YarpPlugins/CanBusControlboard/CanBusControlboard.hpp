@@ -10,8 +10,6 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/PolyDriverList.h>
 
-#include <ColorDebug.h>
-
 #include "ICanBusSharer.hpp"
 #include "PositionDirectThread.hpp"
 #include "DeviceMapper.hpp"

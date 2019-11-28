@@ -7,7 +7,6 @@
 #include <vector>
 
 #include <yarp/os/Bottle.h>
-#include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Vocab.h>
@@ -31,6 +30,15 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
         std::printf("LaunchCanBus options:\n");
         std::printf("\t--help (this help)\t--from [file.ini]\t--context [path]\t--mode [pos]\t--homePoss\n\n");
         CD_DEBUG_NO_HEADER("%s\n", rf.toString().c_str());
+        return false;
+    }
+
+    yarp::os::Property robotConfig;
+    std::string configPath = rf.findFileByName("config.ini");
+
+    if (configPath.empty() || !robotConfig.fromConfigFile(configPath))
+    {
+        CD_ERROR("File %s does not exist or unsufficient permissions.\n", configPath.c_str());
         return false;
     }
 
@@ -66,7 +74,8 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
         }
 
         yarp::os::Property canDeviceOptions;
-        canDeviceOptions.fromString(canDeviceGroup.toString());
+        canDeviceOptions.fromString(canDeviceGroup.toString(), false);
+        canDeviceOptions.fromString(robotConfig.toString(), false);
         canDeviceOptions.put("home", homing);
 
         yarp::dev::PolyDriver * canDevice = new yarp::dev::PolyDriver;
@@ -120,17 +129,19 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
         if (!calibratorDeviceLabel.empty())
         {
-            std::string slash = yarp::os::NetworkBase::getPathSeparator();
-            std::string calibratorFilePath = rf.findFileByName("calibrators" + slash + calibratorDeviceLabel + ".ini");
-            yarp::os::Property calibratorDeviceOptions;
+            yarp::os::Bottle & calibratorDeviceGroup = robotConfig.findGroup(calibratorDeviceLabel);
 
-            if (!calibratorDeviceOptions.fromConfigFile(calibratorFilePath))
+            if (calibratorDeviceGroup.isNull())
             {
-                CD_ERROR("File %s does not exist or unsufficient permissions.\n", calibratorFilePath.c_str());
+                CD_ERROR("Missing calibrator device group %s.\n", calibratorDeviceLabel.c_str());
                 return false;
             }
 
+            yarp::os::Property calibratorDeviceOptions;
+            calibratorDeviceOptions.fromString(calibratorDeviceGroup.toString(), false);
+            calibratorDeviceOptions.fromString(robotConfig.toString(), false);
             calibratorDeviceOptions.put("joints", wrapperDeviceOptions.find("joints"));
+
             yarp::dev::PolyDriver * calibratorDevice = new yarp::dev::PolyDriver;
             yarp::dev::PolyDriverDescriptor descriptor(calibratorDevice, "calibrator"); // key name enforced by CBW2::attachAll()
             calibratorDevices.push(descriptor);

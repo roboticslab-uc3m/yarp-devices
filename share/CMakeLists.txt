@@ -4,7 +4,6 @@
 
 set(applications)
 set(contexts)
-set(data)
 
 if(ENABLE_checkCanBus)
     list(APPEND contexts contexts/checkCanBus)
@@ -16,7 +15,6 @@ endif()
 
 if(ENABLE_launchCanBus)
     list(APPEND contexts contexts/launchCanBus)
-    list(APPEND data hardware)
 endif()
 
 if(ENABLE_SpaceNavigator)
@@ -32,6 +30,3 @@ yarp_install(DIRECTORY ${applications}
 
 yarp_install(DIRECTORY ${contexts}
              DESTINATION ${ROBOTICSLAB-YARP-DEVICES_CONTEXTS_INSTALL_DIR})
-
-yarp_install(DIRECTORY ${data}
-             DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DATA_INSTALL_DIR})
