@@ -37,7 +37,6 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
     for (int i = 0; i < canBuses->size(); i++)
     {
         std::string canBus = canBuses->get(i).asString();
-
         yarp::os::Bottle & canBusGroup = config.findGroup(canBus);
 
         if (canBusGroup.isNull())
@@ -78,19 +77,20 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             return false;
         }
 
-        int canRxBufferSize = config.check("canBusRxBufferSize", yarp::os::Value(DEFAULT_CAN_RX_BUFFER_SIZE), "CAN bus RX buffer size").asInt();
-        int canTxBufferSize = config.check("canBusTxBufferSize", yarp::os::Value(DEFAULT_CAN_TX_BUFFER_SIZE), "CAN bus TX buffer size").asInt();
-        double canRxPeriodMs = config.check("canRxPeriodMs", yarp::os::Value(DEFAULT_CAN_RX_PERIOD_MS), "CAN bus RX period (milliseconds)").asFloat64();
-        double canTxPeriodMs = config.check("canTxPeriodMs", yarp::os::Value(DEFAULT_CAN_TX_PERIOD_MS), "CAN bus TX period (milliseconds)").asFloat64();
+        int rxBufferSize = canBusGroup.check("rxBufferSize", yarp::os::Value(100), "CAN bus RX buffer size").asInt32();
+        int txBufferSize = canBusGroup.check("txBufferSize", yarp::os::Value(100), "CAN bus TX buffer size").asInt32();
+        double rxDelay = canBusGroup.check("rxDelay", yarp::os::Value(0.0), "CAN bus RX delay (seconds)").asFloat64();
+        double txDelay = canBusGroup.check("txDelay", yarp::os::Value(0.0), "CAN bus TX delay (seconds)").asFloat64();
 
         CanReaderThread * reader = new CanReaderThread(canBus);
-        reader->setCanHandles(iCanBus, iCanBufferFactory, canRxBufferSize);
-        reader->setPeriod(canRxPeriodMs);
+        reader->setCanHandles(iCanBus, iCanBufferFactory, rxBufferSize);
+        reader->setDelay(rxDelay);
 
         CanWriterThread * writer = new CanWriterThread(canBus);
-        writer->setCanHandles(iCanBus, iCanBufferFactory, canTxBufferSize);
-        writer->setPeriod(canTxPeriodMs);
+        writer->setCanHandles(iCanBus, iCanBufferFactory, txBufferSize);
+        writer->setDelay(txDelay);
 
+        canThreads[i].busName = canBus;
         canThreads[i].reader = reader;
         canThreads[i].writer = writer;
 
@@ -129,7 +129,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
             if (!deviceMapper.registerDevice(device))
             {
-                CD_ERROR("Unable to register device.\n");
+                CD_ERROR("Unable to register device %s.\n", node.c_str());
                 return false;
             }
 
@@ -137,7 +137,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
             if (!device->view(iCanBusSharer))
             {
-                CD_ERROR("Unable to view ICanBusSharer.\n");
+                CD_ERROR("Unable to view ICanBusSharer in %s.\n", node.c_str());
                 return false;
             }
 
@@ -146,15 +146,11 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
             if (!iCanBus->canIdAdd(iCanBusSharer->getId()))
             {
-                CD_ERROR("Cannot register acceptance filter for node ID: %d.\n", iCanBusSharer->getId());
+                CD_ERROR("Unable to register acceptance filter in %s.\n", node.c_str());
                 return false;
             }
         }
     }
-
-    linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(DEFAULT_LIN_INTERP_PERIOD_MS), "linear interpolation mode period (milliseconds)").asInt32();
-    linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(DEFAULT_LIN_INTERP_BUFFER_SIZE), "linear interpolation mode buffer size").asInt32();
-    linInterpMode = config.check("linInterpMode", yarp::os::Value(DEFAULT_LIN_INTERP_MODE), "linear interpolation mode (pt/pvt)").asString();
 
     for (const auto & bundle : canThreads)
     {
@@ -178,9 +174,14 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
         if (!iCanBusSharer->initialize())
         {
+            CD_ERROR("Node device %s could not initialize CAN comms.\n", nodeDevices[i]->key.c_str());
             return false;
         }
     }
+
+    linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(DEFAULT_LIN_INTERP_PERIOD_MS), "linear interpolation mode period (milliseconds)").asInt32();
+    linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(DEFAULT_LIN_INTERP_BUFFER_SIZE), "linear interpolation mode buffer size").asInt32();
+    linInterpMode = config.check("linInterpMode", yarp::os::Value(DEFAULT_LIN_INTERP_MODE), "linear interpolation mode (pt/pvt)").asString();
 
     posdThread = new PositionDirectThread(deviceMapper, linInterpPeriodMs * 0.001);
     posdThread->start();
@@ -205,7 +206,12 @@ bool CanBusControlboard::close()
     {
         ICanBusSharer * iCanBusSharer;
         nodeDevices[i]->poly->view(iCanBusSharer);
-        ok &= iCanBusSharer->finalize();
+
+        if (!iCanBusSharer->finalize())
+        {
+            CD_WARNING("Node device %s could not finalize CAN comms.\n", nodeDevices[i]->key.c_str());
+            ok = false;
+        }
 
         ok &= nodeDevices[i]->poly->close();
         delete nodeDevices[i]->poly;
@@ -236,7 +242,7 @@ bool CanBusControlboard::close()
         // Clear CAN acceptance filters ('0' = all IDs that were previously set by canIdAdd).
         if (!iCanBus->canIdDelete(0))
         {
-            CD_WARNING("CAN filters may be preserved on the next run.\n");
+            CD_WARNING("CAN filters on bus %s may be preserved on the next run.\n", busDevices[i]->key.c_str());
         }
 
         ok &= busDevices[i]->poly->close();

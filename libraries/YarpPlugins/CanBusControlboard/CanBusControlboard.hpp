@@ -3,6 +3,7 @@
 #ifndef __CAN_BUS_CONTROLBOARD_HPP__
 #define __CAN_BUS_CONTROLBOARD_HPP__
 
+#include <string>
 #include <vector>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
@@ -18,10 +19,6 @@
 #define DEFAULT_LIN_INTERP_BUFFER_SIZE 1
 #define DEFAULT_LIN_INTERP_MODE "pt"
 
-#define DEFAULT_CAN_RX_BUFFER_SIZE 500
-#define DEFAULT_CAN_TX_BUFFER_SIZE 500
-#define DEFAULT_CAN_RX_PERIOD_MS -1
-#define DEFAULT_CAN_TX_PERIOD_MS 1.0
 #define DEFAULT_CAN_SDO_TIMEOUT_MS 25.0 // FIXME unused
 #define DEFAULT_CAN_DRIVE_STATE_TIMEOUT 2.5 // FIXME unused
 
@@ -312,6 +309,7 @@ private:
 
     struct CanThreads
     {
+        std::string busName;
         CanReaderThread * reader = nullptr;
         CanWriterThread * writer = nullptr;
     };

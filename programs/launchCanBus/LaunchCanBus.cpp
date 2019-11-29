@@ -233,7 +233,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
             if (!iRemoteCalibrator->homingWholePart())
             {
-                CD_ERROR("Homing procedure failed.\n");
+                CD_ERROR("Homing procedure failed for calibrator id %d.\n", i);
                 return false;
             }
         }
@@ -262,16 +262,31 @@ bool LaunchCanBus::close()
 {
     for (int i = 0; i < calibratorDevices.size(); i++)
     {
+        if (!calibratorDevices[i]->poly->close())
+        {
+            CD_WARNING("Device %s did not close properly.\n", calibratorDevices[i]->key.c_str());
+        }
+
         delete calibratorDevices[i]->poly;
     }
 
     for (int i = 0; i < wrapperDevices.size(); i++)
     {
+        if (!wrapperDevices[i]->poly->close())
+        {
+            CD_WARNING("Device %s did not close properly.\n", wrapperDevices[i]->key.c_str());
+        }
+
         delete wrapperDevices[i]->poly;
     }
 
     for (int i = 0; i < canDevices.size(); i++)
     {
+        if (!canDevices[i]->poly->close())
+        {
+            CD_WARNING("Device %s did not close properly.\n", canDevices[i]->key.c_str());
+        }
+
         delete canDevices[i]->poly;
     }
 

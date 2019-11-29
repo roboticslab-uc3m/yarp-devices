@@ -33,7 +33,7 @@ void CanReaderThread::run()
     {
         //-- Lend CPU time to write threads.
         // https://github.com/roboticslab-uc3m/yarp-devices/issues/191
-        yarp::os::Time::delay(period);
+        yarp::os::Time::delay(delay);
 
         //-- Return immediately if there is nothing to be read (non-blocking call), return false on errors.
         ok = iCanBus->canRead(canBuffer, bufferSize, &read);
@@ -67,7 +67,7 @@ void CanReaderThread::run()
 
 CanWriterThread::CanWriterThread(const std::string & id)
     : CanReaderWriterThread("write", id),
-      sender(0),
+      sender(nullptr),
       preparedMessages(0)
 {}
 
@@ -75,11 +75,7 @@ CanWriterThread::CanWriterThread(const std::string & id)
 
 CanWriterThread::~CanWriterThread()
 {
-    if (sender)
-    {
-        delete sender;
-        sender = 0;
-    }
+    delete sender;
 }
 
 // -----------------------------------------------------------------------------
@@ -93,7 +89,7 @@ void CanWriterThread::run()
     {
         //-- Lend CPU time to read threads.
         // https://github.com/roboticslab-uc3m/yarp-devices/issues/191
-        yarp::os::Time::delay(period);
+        yarp::os::Time::delay(delay);
 
         std::lock_guard<std::mutex> lock(bufferMutex);
 
