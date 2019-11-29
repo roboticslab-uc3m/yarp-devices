@@ -7,7 +7,6 @@
 #include <map>
 #include <mutex>
 #include <string>
-#include <vector>
 
 #include <yarp/os/Thread.h>
 #include <yarp/dev/CanBusInterface.h>
@@ -70,7 +69,8 @@ private:
 class CanReaderThread : public CanReaderWriterThread
 {
 public:
-    CanReaderThread(const std::string & id, const std::vector<ICanBusSharer *> & iCanBusSharers);
+    CanReaderThread(const std::string & id);
+    void registerHandle(ICanBusSharer * p);
     virtual void run() override;
 
 private:

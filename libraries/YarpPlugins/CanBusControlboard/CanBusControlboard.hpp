@@ -5,12 +5,9 @@
 
 #include <vector>
 
-#include <yarp/dev/CanBusInterface.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/PolyDriverList.h>
 
-#include "ICanBusSharer.hpp"
 #include "PositionDirectThread.hpp"
 #include "DeviceMapper.hpp"
 #include "CanRxTxThreads.hpp"
@@ -64,8 +61,7 @@ class CanBusControlboard : public yarp::dev::DeviceDriver,
 public:
 
     CanBusControlboard()
-        : iCanBus(nullptr), canReaderThread(nullptr), canWriterThread(nullptr),
-          posdThread(nullptr), linInterpPeriodMs(0), linInterpBufferSize(0)
+        : posdThread(nullptr), linInterpPeriodMs(0), linInterpBufferSize(0)
     { }
 
     // -------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp --------
@@ -314,16 +310,17 @@ public:
 
 private:
 
-    yarp::dev::PolyDriver canBusDevice;
-    yarp::dev::ICanBus * iCanBus;
+    struct CanThreads
+    {
+        CanReaderThread * reader = nullptr;
+        CanWriterThread * writer = nullptr;
+    };
 
+    yarp::dev::PolyDriverList busDevices;
     yarp::dev::PolyDriverList nodeDevices;
 
     DeviceMapper deviceMapper;
-    std::vector<ICanBusSharer *> iCanBusSharers;
-
-    CanReaderThread * canReaderThread;
-    CanWriterThread * canWriterThread;
+    std::vector<CanThreads> canThreads;
 
     PositionDirectThread * posdThread;
     int linInterpPeriodMs;

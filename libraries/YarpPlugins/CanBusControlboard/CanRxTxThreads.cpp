@@ -10,17 +10,17 @@
 
 using namespace roboticslab;
 
-CanReaderThread::CanReaderThread(const std::string & id, const std::vector<ICanBusSharer *> & iCanBusSharers)
+CanReaderThread::CanReaderThread(const std::string & id)
     : CanReaderWriterThread("read", id)
-{
-    for (auto p : iCanBusSharers)
-    {
-        canIdToHandle[p->getId()] = p;
+{}
 
-        for (auto id : p->getAdditionalIds())
-        {
-            canIdToHandle[id] = p;
-        }
+void CanReaderThread::registerHandle(ICanBusSharer * p)
+{
+    canIdToHandle[p->getId()] = p;
+
+    for (auto id : p->getAdditionalIds())
+    {
+        canIdToHandle[id] = p;
     }
 }
 
