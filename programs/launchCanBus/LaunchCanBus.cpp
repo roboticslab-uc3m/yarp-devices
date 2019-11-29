@@ -74,8 +74,8 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
         }
 
         yarp::os::Property canDeviceOptions;
-        canDeviceOptions.fromString(canDeviceGroup.toString(), false);
-        canDeviceOptions.fromString(robotConfig.toString(), false);
+        canDeviceOptions.fromString(canDeviceGroup.toString());
+        canDeviceOptions.put("robotConfig", robotConfig.toString());
         canDeviceOptions.put("home", homing);
 
         yarp::dev::PolyDriver * canDevice = new yarp::dev::PolyDriver;
@@ -138,8 +138,8 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
             }
 
             yarp::os::Property calibratorDeviceOptions;
-            calibratorDeviceOptions.fromString(calibratorDeviceGroup.toString(), false);
-            calibratorDeviceOptions.fromString(robotConfig.toString(), false);
+            calibratorDeviceOptions.fromString(calibratorDeviceGroup.toString());
+            calibratorDeviceOptions.put("robotConfig", robotConfig.toString());
             calibratorDeviceOptions.put("joints", wrapperDeviceOptions.find("joints"));
 
             yarp::dev::PolyDriver * calibratorDevice = new yarp::dev::PolyDriver;

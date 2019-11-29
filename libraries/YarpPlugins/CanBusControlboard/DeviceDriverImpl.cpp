@@ -46,8 +46,8 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         }
 
         yarp::os::Property canBusOptions;
-        canBusOptions.fromString(canBusGroup.toString(), false);
-        canBusOptions.fromString(config.toString(), false);
+        canBusOptions.fromString(canBusGroup.toString());
+        canBusOptions.put("robotConfig", config.find("robotConfig"));
         canBusOptions.put("canBlockingMode", false); // enforce non-blocking mode
         canBusOptions.put("canAllowPermissive", false); // always check usage requirements
         canBusOptions.setMonitor(config.getMonitor(), canBus.c_str());
@@ -114,8 +114,8 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             }
 
             yarp::os::Property nodeOptions;
-            nodeOptions.fromString(nodeGroup.toString(), false);
-            nodeOptions.fromString(config.toString(), false);
+            nodeOptions.fromString(nodeGroup.toString());
+            nodeOptions.put("robotConfig", config.find("robotConfig"));
             nodeOptions.setMonitor(config.getMonitor(), node.c_str());
 
             yarp::dev::PolyDriver * device = new yarp::dev::PolyDriver;

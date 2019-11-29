@@ -61,8 +61,8 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
         }
 
         yarp::os::Property externalEncoderOptions;
-        externalEncoderOptions.fromString(externalEncoderGroup.toString(), false);
-        externalEncoderOptions.fromString(config.toString(), false);
+        externalEncoderOptions.fromString(externalEncoderGroup.toString());
+        externalEncoderOptions.put("robotConfig", config.find("robotConfig"));
         externalEncoderOptions.setMonitor(config.getMonitor(), externalEncoder.c_str());
 
         if (!externalEncoderDevice.open(externalEncoderOptions))
