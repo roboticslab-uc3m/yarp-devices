@@ -23,7 +23,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         return false;
     }
 
-    const auto * robotConfig = reinterpret_cast<const yarp::os::Property *>(config.find("robotConfig").asBlob());
+    const auto * robotConfig = *reinterpret_cast<yarp::os::Property * const *>(config.find("robotConfig").asBlob());
 
     int parallelCanThreadLimit = config.check("parallelCanThreadLimit", yarp::os::Value(0), "parallel CAN TX thread limit").asInt32();
 

@@ -22,7 +22,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
         return false;
     }
 
-    const auto * robotConfig = reinterpret_cast<const yarp::os::Property *>(config.find("robotConfig").asBlob());
+    const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
 
     int canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32();
 
@@ -92,12 +92,14 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
         }
     }
 
+    /* FIXME
     linInterpBuffer = LinearInterpolationBuffer::createBuffer(config);
 
     if (!linInterpBuffer)
     {
         return false;
     }
+    */
 
     double canSdoTimeoutMs = config.check("canSdoTimeoutMs", yarp::os::Value(0.0), "CAN SDO timeout (ms)").asFloat64();
     double canDriveStateTimeout = config.check("canDriveStateTimeout", yarp::os::Value(0.0), "CAN drive state timeout (s)").asFloat64();

@@ -34,6 +34,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
     }
 
     yarp::os::Property robotConfig;
+    const auto * robotConfigPtr = &robotConfig;
     std::string configPath = rf.findFileByName("config.ini");
 
     if (configPath.empty() || !robotConfig.fromConfigFile(configPath))
@@ -77,7 +78,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
         yarp::os::Property canDeviceOptions;
         canDeviceOptions.fromString(canDeviceGroup.toString());
-        canDeviceOptions.put("robotConfig", yarp::os::Value::makeBlob(&robotConfig, sizeof(robotConfig)));
+        canDeviceOptions.put("robotConfig", yarp::os::Value::makeBlob(&robotConfigPtr, sizeof(robotConfigPtr)));
         canDeviceOptions.put("home", homing);
 
         yarp::dev::PolyDriver * canDevice = new yarp::dev::PolyDriver;
@@ -141,7 +142,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
             yarp::os::Property calibratorDeviceOptions;
             calibratorDeviceOptions.fromString(calibratorDeviceGroup.toString());
-            calibratorDeviceOptions.put("robotConfig", yarp::os::Value::makeBlob(&robotConfig, sizeof(robotConfig)));
+            calibratorDeviceOptions.put("robotConfig", yarp::os::Value::makeBlob(&robotConfigPtr, sizeof(robotConfigPtr)));
             calibratorDeviceOptions.put("joints", wrapperDeviceOptions.find("joints"));
 
             yarp::dev::PolyDriver * calibratorDevice = new yarp::dev::PolyDriver;
