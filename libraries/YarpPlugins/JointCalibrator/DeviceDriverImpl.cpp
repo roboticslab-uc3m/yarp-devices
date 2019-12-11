@@ -36,7 +36,7 @@ namespace
 
 bool JointCalibrator::open(yarp::os::Searchable & config)
 {
-    CD_DEBUG("$s\n", config.toString().c_str());
+    CD_DEBUG("%s\n", config.toString().c_str());
 
     axes = config.check("joints", yarp::os::Value(0), "number of controlled axes").asInt32();
 

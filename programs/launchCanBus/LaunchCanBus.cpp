@@ -34,6 +34,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
     }
 
     yarp::os::Property robotConfig;
+    const auto * robotConfigPtr = &robotConfig;
     std::string configPath = rf.findFileByName("config.ini");
 
     if (configPath.empty() || !robotConfig.fromConfigFile(configPath))
@@ -41,6 +42,8 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
         CD_ERROR("File %s does not exist or unsufficient permissions.\n", configPath.c_str());
         return false;
     }
+
+    CD_DEBUG("%s\n", robotConfig.toString().c_str());
 
     yarp::conf::vocab32_t mode = rf.check("mode", yarp::os::Value(VOCAB_CM_POSITION), "initial mode of operation").asVocab();
     bool homing = rf.check("home", yarp::os::Value(false), "perform initial homing procedure").asBool();
@@ -74,8 +77,8 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
         }
 
         yarp::os::Property canDeviceOptions;
-        canDeviceOptions.fromString(canDeviceGroup.toString(), false);
-        canDeviceOptions.fromString(robotConfig.toString(), false);
+        canDeviceOptions.fromString(canDeviceGroup.toString());
+        canDeviceOptions.put("robotConfig", yarp::os::Value::makeBlob(&robotConfigPtr, sizeof(robotConfigPtr)));
         canDeviceOptions.put("home", homing);
 
         yarp::dev::PolyDriver * canDevice = new yarp::dev::PolyDriver;
@@ -138,8 +141,8 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
             }
 
             yarp::os::Property calibratorDeviceOptions;
-            calibratorDeviceOptions.fromString(calibratorDeviceGroup.toString(), false);
-            calibratorDeviceOptions.fromString(robotConfig.toString(), false);
+            calibratorDeviceOptions.fromString(calibratorDeviceGroup.toString());
+            calibratorDeviceOptions.put("robotConfig", yarp::os::Value::makeBlob(&robotConfigPtr, sizeof(robotConfigPtr)));
             calibratorDeviceOptions.put("joints", wrapperDeviceOptions.find("joints"));
 
             yarp::dev::PolyDriver * calibratorDevice = new yarp::dev::PolyDriver;

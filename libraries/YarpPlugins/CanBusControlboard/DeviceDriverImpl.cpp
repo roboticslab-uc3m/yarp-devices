@@ -17,6 +17,14 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 {
     CD_DEBUG("%s\n", config.toString().c_str());
 
+    if (!config.check("robotConfig") || !config.find("robotConfig").isBlob())
+    {
+        CD_ERROR("Missing \"robotConfig\" property or not a blob.\n");
+        return false;
+    }
+
+    const auto * robotConfig = *reinterpret_cast<yarp::os::Property * const *>(config.find("robotConfig").asBlob());
+
     int parallelCanThreadLimit = config.check("parallelCanThreadLimit", yarp::os::Value(0), "parallel CAN TX thread limit").asInt32();
 
     if (parallelCanThreadLimit > 0)
@@ -37,7 +45,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
     for (int i = 0; i < canBuses->size(); i++)
     {
         std::string canBus = canBuses->get(i).asString();
-        yarp::os::Bottle & canBusGroup = config.findGroup(canBus);
+        yarp::os::Bottle & canBusGroup = robotConfig->findGroup(canBus);
 
         if (canBusGroup.isNull())
         {
@@ -46,8 +54,8 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         }
 
         yarp::os::Property canBusOptions;
-        canBusOptions.fromString(canBusGroup.toString(), false);
-        canBusOptions.fromString(config.toString(), false);
+        canBusOptions.fromString(canBusGroup.toString());
+        canBusOptions.put("robotConfig", config.find("robotConfig"));
         canBusOptions.put("canBlockingMode", false); // enforce non-blocking mode
         canBusOptions.put("canAllowPermissive", false); // always check usage requirements
         canBusOptions.setMonitor(config.getMonitor(), canBus.c_str());
@@ -105,7 +113,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         for (int i = 0; i < nodes->size(); i++)
         {
             std::string node = nodes->get(i).asString();
-            yarp::os::Bottle & nodeGroup = config.findGroup(node);
+            yarp::os::Bottle & nodeGroup = robotConfig->findGroup(node);
 
             if (nodeGroup.isNull())
             {
@@ -114,8 +122,8 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             }
 
             yarp::os::Property nodeOptions;
-            nodeOptions.fromString(nodeGroup.toString(), false);
-            nodeOptions.fromString(config.toString(), false);
+            nodeOptions.fromString(nodeGroup.toString());
+            nodeOptions.put("robotConfig", config.find("robotConfig"));
             nodeOptions.setMonitor(config.getMonitor(), node.c_str());
 
             yarp::dev::PolyDriver * device = new yarp::dev::PolyDriver;
