@@ -16,12 +16,20 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 {
     CD_DEBUG("%s\n", config.toString().c_str());
 
+    if (!config.check("robotConfig") || !config.find("robotConfig").isBlob())
+    {
+        CD_ERROR("Missing \"robotConfig\" property or not a blob.\n");
+        return false;
+    }
+
+    const auto * robotConfig = reinterpret_cast<const yarp::os::Property *>(config.find("robotConfig").asBlob());
+
     int canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32();
 
-    yarp::os::Bottle & driverGroup = config.findGroup("driver");
-    yarp::os::Bottle & motorGroup = config.findGroup("motor");
-    yarp::os::Bottle & gearboxGroup = config.findGroup("gearbox");
-    yarp::os::Bottle & encoderGroup = config.findGroup("encoder");
+    yarp::os::Bottle & driverGroup = robotConfig->findGroup(config.find("driver").asString());
+    yarp::os::Bottle & motorGroup = robotConfig->findGroup(config.find("motor").asString());
+    yarp::os::Bottle & gearboxGroup = robotConfig->findGroup(config.find("gearbox").asString());
+    yarp::os::Bottle & encoderGroup = robotConfig->findGroup(config.find("encoder").asString());
 
     // mutable variables
     vars.tr = gearboxGroup.check("tr", yarp::os::Value(0.0), "reduction").asFloat64();
@@ -52,7 +60,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     if (config.check("externalEncoder", "external encoder"))
     {
         std::string externalEncoder = config.find("externalEncoder").asString();
-        yarp::os::Bottle & externalEncoderGroup = config.findGroup(externalEncoder);
+        yarp::os::Bottle & externalEncoderGroup = robotConfig->findGroup(externalEncoder);
 
         if (externalEncoderGroup.isNull())
         {

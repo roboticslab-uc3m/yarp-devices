@@ -14,7 +14,7 @@ using namespace roboticslab;
 
 bool CuiAbsolute::open(yarp::os::Searchable& config)
 {
-    CD_DEBUG("%s.\n", config.toString().c_str());
+    CD_DEBUG("%s\n", config.toString().c_str());
 
     canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt8();
     reverse = config.check("reverse", yarp::os::Value(false), "reverse").asBool();

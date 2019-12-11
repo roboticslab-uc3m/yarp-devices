@@ -42,6 +42,8 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
         return false;
     }
 
+    CD_DEBUG("%s\n", robotConfig.toString().c_str());
+
     yarp::conf::vocab32_t mode = rf.check("mode", yarp::os::Value(VOCAB_CM_POSITION), "initial mode of operation").asVocab();
     bool homing = rf.check("home", yarp::os::Value(false), "perform initial homing procedure").asBool();
 
@@ -75,7 +77,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
         yarp::os::Property canDeviceOptions;
         canDeviceOptions.fromString(canDeviceGroup.toString());
-        canDeviceOptions.put("robotConfig", robotConfig.toString());
+        canDeviceOptions.put("robotConfig", yarp::os::Value::makeBlob(&robotConfig, sizeof(robotConfig)));
         canDeviceOptions.put("home", homing);
 
         yarp::dev::PolyDriver * canDevice = new yarp::dev::PolyDriver;
@@ -139,7 +141,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
             yarp::os::Property calibratorDeviceOptions;
             calibratorDeviceOptions.fromString(calibratorDeviceGroup.toString());
-            calibratorDeviceOptions.put("robotConfig", robotConfig.toString());
+            calibratorDeviceOptions.put("robotConfig", yarp::os::Value::makeBlob(&robotConfig, sizeof(robotConfig)));
             calibratorDeviceOptions.put("joints", wrapperDeviceOptions.find("joints"));
 
             yarp::dev::PolyDriver * calibratorDevice = new yarp::dev::PolyDriver;

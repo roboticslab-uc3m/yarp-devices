@@ -48,7 +48,7 @@ public:
     { this->iCanBus = iCanBus; this->iCanBufferFactory = iCanBufferFactory; this->bufferSize = bufferSize; }
 
     void setDelay(double delay)
-    { this->delay = delay <= 0 ? std::numeric_limits<double>::min() : delay; }
+    { this->delay = delay <= 0.0 ? std::numeric_limits<double>::min() : delay; }
 
 protected:
     yarp::dev::ICanBus * iCanBus;

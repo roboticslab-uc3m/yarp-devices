@@ -10,6 +10,8 @@ using namespace roboticslab;
 
 bool LacqueyFetch::open(yarp::os::Searchable& config)
 {
+    CD_DEBUG("%s\n", config.toString().c_str());
+
     canId = config.check("canId", yarp::os::Value(0), "can bus ID").asInt8();
     CD_SUCCESS("Created LacqueyFetch with canId %d.\n", canId);
     return true;

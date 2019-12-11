@@ -12,6 +12,8 @@
 
 bool roboticslab::CanBusPeak::open(yarp::os::Searchable& config)
 {
+    CD_DEBUG("%s\n", config.toString().c_str());
+
     std::string devicePath = config.check("port", yarp::os::Value(DEFAULT_PORT), "CAN device path").asString();
 
     int bitrate = config.check("bitrate", yarp::os::Value(DEFAULT_BITRATE), "CAN bitrate (bps)").asInt32();
