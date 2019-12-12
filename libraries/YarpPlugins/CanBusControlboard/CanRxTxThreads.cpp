@@ -7,7 +7,6 @@
 #include <yarp/os/Time.h>
 
 #include "YarpCanSenderDelegate.hpp"
-#include "CanUtils.hpp"
 
 using namespace roboticslab;
 
