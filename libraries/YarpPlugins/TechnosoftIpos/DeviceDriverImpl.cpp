@@ -101,8 +101,8 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     }
     */
 
-    double canSdoTimeoutMs = config.check("canSdoTimeoutMs", yarp::os::Value(0.0), "CAN SDO timeout (ms)").asFloat64();
-    double canDriveStateTimeout = config.check("canDriveStateTimeout", yarp::os::Value(0.0), "CAN drive state timeout (s)").asFloat64();
+    double canSdoTimeoutMs = config.check("canSdoTimeoutMs", yarp::os::Value(20.0), "CAN SDO timeout (ms)").asFloat64();
+    double canDriveStateTimeout = config.check("canDriveStateTimeout", yarp::os::Value(2.0), "CAN drive state timeout (s)").asFloat64();
 
     can = new CanOpen(canId, canSdoTimeoutMs * 0.001, canDriveStateTimeout);
 
@@ -142,7 +142,6 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     can->emcy()->registerHandler(std::bind(&TechnosoftIpos::handleEmcy, this, _1, _2, _3));
     can->emcy()->setErrorCodeRegistry<TechnosoftIposEmcy>();
 
-    CD_SUCCESS("CAN ID %d.\n", canId);
     return true;
 }
 

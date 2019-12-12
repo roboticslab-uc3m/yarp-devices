@@ -18,7 +18,6 @@
 
 #define CHECK_JOINT(j) do { int ax; if (getAxes(&ax), (j) != ax - 1) return false; } while (0)
 
-#define DEFAULT_MODE "push"
 #define DEFAULT_TIMEOUT 1.0 // [s]
 
 namespace roboticslab
@@ -82,13 +81,15 @@ public:
 
 private:
 
+    typedef yarp::conf::float32_t encoder_t;
+
     enum class CuiMode { PUSH, PULL, OFF };
     enum class CuiCommand : std::uint8_t { PUSH_START = 1, PUSH_STOP = 2, POLL = 3 };
 
-    bool performRequest(const std::string & name, unsigned int len, const std::uint8_t * msgData, double * resp = nullptr);
+    bool performRequest(const std::string & name, unsigned int len, const std::uint8_t * msgData, encoder_t * resp = nullptr);
     bool startPushMode();
     bool stopPushMode();
-    bool pollEncoderRead(double * enc);
+    bool pollEncoderRead(encoder_t * enc);
 
     unsigned int canId;
     double timeout;
@@ -97,12 +98,12 @@ private:
     CuiMode cuiMode;
     std::uint8_t pushDelay;
 
-    yarp::conf::float32_t encoder;
+    encoder_t encoder;
     double encoderTimestamp;
 
     CanSenderDelegate * sender;
     StateObserver * pushStateObserver;
-    TypedStateObserver<double> * pollStateObserver;
+    TypedStateObserver<encoder_t> * pollStateObserver;
 
     mutable std::mutex mutex;
 };

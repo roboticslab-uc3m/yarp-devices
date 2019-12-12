@@ -36,7 +36,7 @@ void TechnosoftIpos::interpretSupportedDriveModes(std::uint32_t data)
     }
     if (bits[5])
     {
-        CD_INFO("\t *homing (hm)\n");
+        CD_INFO("\t* homing (hm)\n");
     }
     if (bits[6])
     {
@@ -48,7 +48,7 @@ void TechnosoftIpos::interpretSupportedDriveModes(std::uint32_t data)
     }
     if (bits[8])
     {
-        CD_INFO("\t*cyclic synchronous velocity\n");
+        CD_INFO("\t* cyclic synchronous velocity\n");
     }
     if (bits[9])
     {

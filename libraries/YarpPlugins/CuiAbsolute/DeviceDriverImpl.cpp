@@ -26,7 +26,13 @@ bool CuiAbsolute::open(yarp::os::Searchable& config)
         return false;
     }
 
-    std::string mode = config.check("mode", yarp::os::Value(DEFAULT_MODE), "Cui mode [push|pull]").asString();
+    if (!config.check("mode", "Cui mode [push|pull]"))
+    {
+        CD_ERROR("Missing \"mode\" property.\n");
+        return false;
+    }
+
+    std::string mode = config.find("mode").asString();
 
     if (mode == "push")
     {
@@ -36,7 +42,7 @@ bool CuiAbsolute::open(yarp::os::Searchable& config)
     }
     else if (mode == "pull")
     {
-        pollStateObserver = new TypedStateObserver<double>(timeout);
+        pollStateObserver = new TypedStateObserver<encoder_t>(timeout);
         cuiMode = CuiMode::PULL;
     }
     else
@@ -45,7 +51,6 @@ bool CuiAbsolute::open(yarp::os::Searchable& config)
         return false;
     }
 
-    CD_SUCCESS("Created CuiAbsolute with canId %d.\n", canId);
     return true;
 }
 

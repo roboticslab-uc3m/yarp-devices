@@ -7,6 +7,7 @@
 #include <yarp/os/Time.h>
 
 #include "YarpCanSenderDelegate.hpp"
+#include "CanUtils.hpp"
 
 using namespace roboticslab;
 
@@ -99,7 +100,7 @@ void CanWriterThread::run()
         //-- Write as many bytes as it can, return false on errors.
         ok = iCanBus->canWrite(canBuffer, preparedMessages, &sent);
 
-        //-- Some bad happened, try again on the next iteration.
+        //-- Something bad happened, try again on the next iteration.
         if (!ok) continue;
 
         //-- Some messages could not be sent, preserve them for later.

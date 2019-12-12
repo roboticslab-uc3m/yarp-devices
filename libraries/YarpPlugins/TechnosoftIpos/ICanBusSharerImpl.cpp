@@ -12,7 +12,7 @@ using namespace roboticslab;
 
 namespace
 {
-    inline char getByte(std::uint32_t number, int n)
+    inline std::uint8_t getByte(std::uint32_t number, int n)
     {
         // https://stackoverflow.com/a/7787433
         return (number >> (8 * n)) & 0xFF;

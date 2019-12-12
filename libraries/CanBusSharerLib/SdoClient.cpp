@@ -160,7 +160,7 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
 
             bitsReceived = std::bitset<8>(responseMsg[0]);
 
-            if (!bitsReceived[4] != bitsSent[4])
+            if (bitsReceived[4] != bitsSent[4])
             {
                 CD_ERROR("SDO segmented upload: toggle bit mismatch.\n");
                 return false;

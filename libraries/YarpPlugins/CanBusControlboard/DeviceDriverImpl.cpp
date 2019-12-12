@@ -110,6 +110,8 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             return false;
         }
 
+        std::vector<unsigned int> filterIds;
+
         for (int i = 0; i < nodes->size(); i++)
         {
             std::string node = nodes->get(i).asString();
@@ -152,9 +154,16 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             reader->registerHandle(iCanBusSharer);
             iCanBusSharer->registerSender(writer->getDelegate());
 
-            if (!iCanBus->canIdAdd(iCanBusSharer->getId()))
+            auto additionalIds = iCanBusSharer->getAdditionalIds();
+            filterIds.push_back(iCanBusSharer->getId());
+            filterIds.insert(filterIds.end(), additionalIds.begin(), additionalIds.end());
+        }
+
+        for (auto id : filterIds)
+        {
+            if (!iCanBus->canIdAdd(id))
             {
-                CD_ERROR("Unable to register acceptance filter in %s.\n", node.c_str());
+                CD_ERROR("Unable to register acceptance filter id %d in %s.\n", id, canBus.c_str());
                 return false;
             }
         }
@@ -175,7 +184,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         }
     }
 
-    for (int i = 0; i > nodeDevices.size(); i++)
+    for (int i = 0; i < nodeDevices.size(); i++)
     {
         ICanBusSharer * iCanBusSharer;
         nodeDevices[i]->poly->view(iCanBusSharer);
