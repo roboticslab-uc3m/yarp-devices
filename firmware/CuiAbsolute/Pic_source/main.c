@@ -88,8 +88,8 @@ BYTE dataLen;
 ECAN_RX_MSG_FLAGS rxflags;
 
 // -- Prototipos de funciones
-void sendData(unsigned short);
-void sendAck(unsigned short);
+void sendData(unsigned int);
+void sendAck(unsigned int);
 void setZero();
 void cleanData(void);
 
@@ -99,13 +99,13 @@ void main(void)
     SSPCON1bits.SSPEN=1;
     OpenSPI(SPI_FOSC_4, MODE_00, SMPEND);
 
-    TRISCbits.TRISC2=0;     // CS, out
-    TRISCbits.TRISC3=0;     // SCL, out
-    TRISCbits.TRISC5=0;     // SDO, out
-    TRISCbits.TRISC4=1;     // SDI  in
-    LATCbits.LATC2=1;       //Disable del encoder al inicio
+    TRISCbits.TRISC2 = 0;   // CS, out
+    TRISCbits.TRISC3 = 0;   // SCL, out
+    TRISCbits.TRISC5 = 0;   // SDO, out
+    TRISCbits.TRISC4 = 1;   // SDI  in
+    LATCbits.LATC2 = 1;     // Disable del encoder al inicio
 
-    OSCCON=0b11110000;      //Primary oscillator.
+    OSCCON = 0b11110000;    // Primary oscillator.
 
     // Manual (page 15): ECAN.def file must be set up correctly.
     ECANInitialize();
@@ -132,7 +132,7 @@ void main(void)
     ECANSetRXM0Value(-1, ECAN_MSG_STD);
 
     // Manual (page 42): RXB0 will receive all valid messages
-    ECANSetRxBnRxMode(RXB0, ECAN_RECEIVE_ALL_VALID); //ECAN_RECEIVE_ALL_VALID (funciona) ECAN_RECEIVE_STANDARD (inestable, se queda pillado) ECAN_RECEIVE_ALL (no funciona, el mensaje de STOP lo ignora)
+    ECANSetRxBnRxMode(RXB0, ECAN_RECEIVE_ALL_VALID); // ECAN_RECEIVE_ALL_VALID (funciona) ECAN_RECEIVE_STANDARD (inestable, se queda pillado) ECAN_RECEIVE_ALL (no funciona, el mensaje de STOP lo ignora)
 
     // Manual (page 36): This macro sets the CAN bus Wake-up Filter mode. Specifies that the low-pass filter be disabled
     ECANSetFilterMode(ECAN_FILTER_MODE_DISABLE);
@@ -156,12 +156,12 @@ void main(void)
 
     delay = 0;
 
-    while(1)
+    while (1)
     {
         // --------------- Recibo!!! ------------------
         BOOL ret = ECANReceiveMessage(&picId, data, &dataLen, &rxflags);
 
-        if (!ret || picId!=canId)
+        if (!ret || picId != canId)
         {
             if (pushFlag)
             {
@@ -201,104 +201,103 @@ void main(void)
 
 
 // -- Funcion de envio de mensajes de posicion del Cui:
-void sendData(unsigned short op)
+void sendData(unsigned int op)
 {
     // - Manual: [1. The host issues the command, 0x10. The data read in at this time will be 0xa5 or 0x00 since this is the first SPI transfer]
-    LATCbits.LATC2=0;
-    WriteSPI (0b00010000);      //Solicitación de posición (comando 0x10) 
+    LATCbits.LATC2 = 0;
+    WriteSPI(0b00010000);       // Solicitación de posición (comando 0x10) 
     Delay10TCYx(3);             // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Delay10TCYx(3)= 6us
-    y=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
-    LATCbits.LATC2=1;
+    y = SSPBUF;                 // Recoge los datos del SSPBUF que provienen del encoder (MISO)
+    LATCbits.LATC2 = 1;
 
     // - Manual: [2. The host waits a minimum of 5 µs then sends a “nop_a5” command: 0x00]
-    LATCbits.LATC2=0;
-    WriteSPI (0b00000000);      //Comando 0x00 -> nop_a5
+    LATCbits.LATC2 = 0;
+    WriteSPI(0b00000000);       // Comando 0x00 -> nop_a5
     Delay10TCYx(3);             // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Delay10TCYx(3) = 6us
-    y=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
-    LATCbits.LATC2=1;
+    y = SSPBUF;                 // Recoge los datos del SSPBUF que provienen del encoder (MISO)
+    LATCbits.LATC2 = 1;
 
     // - Manual: [3. The response to the “nop_a5” is either 0xa5 or an echo of the command, 0x10.]
-    while(y==0b10100101)        // - Manual: [a. If it is 0xa5, it will go back to step 2.]
+    while (y == 0b10100101)     // - Manual: [a. If it is 0xa5, it will go back to step 2.]
     {
-	    Delay10TCYx(5); 
-        LATCbits.LATC2=0;
-        WriteSPI (0b00000000);  // Comando 0x00 -> nop_a5)
+        Delay10TCYx(5); 
+        LATCbits.LATC2 = 0;
+        WriteSPI(0b00000000);   // Comando 0x00 -> nop_a5)
         Delay10TCYx(3);         // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Delay10TCYx(3) = 6us
-        y=SSPBUF;               // Recoge los datos del SSPBUF que provienen del encoder (MISO)
-        LATCbits.LATC2=1;
+        y = SSPBUF;             // Recoge los datos del SSPBUF que provienen del encoder (MISO)
+        LATCbits.LATC2 = 1;
     }
 
     // - Manual: [b. Otherwise it will go to step 4.] (echo of the command, 0x10.)
     // - Manual: [4. The host waits a minimum of 5 µs then sends “nop_a5”, the data read is the high byte of the position.]
-    LATCbits.LATC2=0;
-    WriteSPI(0b00000000);       //Comando 0x00 -> nop_a5
+    LATCbits.LATC2 = 0;
+    WriteSPI(0b00000000);       // Comando 0x00 -> nop_a5
     Delay10TCYx(3);             // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Delay10TCYx(3) = 6us
-    y=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
-    message[0]=y;               //Se almacena en el primer elemento del array que se enviará por CAN
-    LATCbits.LATC2=1;
+    y = SSPBUF;                 // Recoge los datos del SSPBUF que provienen del encoder (MISO)
+    message[0] = y;             // Se almacena en el primer elemento del array que se enviará por CAN
+    LATCbits.LATC2 = 1;
     
     // - Manual: [5. The host waits a minimum of 5 µs then sends “nop_a5”, the data read is the low byte of the position.]
-    LATCbits.LATC2=0;
-    WriteSPI(0b00000000);       //Espera para captar la parte baja del mensaje
+    LATCbits.LATC2 = 0;
+    WriteSPI(0b00000000);       // Espera para captar la parte baja del mensaje
     Delay10TCYx(3);             // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Delay10TCYx(3) = 6us
-    y=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
-    message[1]=y;               //Se almacena en el segundo elemento del array que se enviará por CAN
+    y = SSPBUF;                 // Recoge los datos del SSPBUF que provienen del encoder (MISO)
+    message[1] = y;             // Se almacena en el segundo elemento del array que se enviará por CAN
 
     // - Manual: [6. The host waits a minimum of 5 µs before sending another SPI command.]
-    LATCbits.LATC2=1;
-    aux=(message[0]<<8)+message[1];  //Se rota el byte alto de la posición 8 bits (2^8=256) y se suma al bajo
-    degrees = aux / div;             //Se divide para obtener la realacción en grados
+    LATCbits.LATC2 = 1;
+    aux = (message[0] << 8) + message[1];  // Se rota el byte alto de la posición 8 bits (2^8=256) y se suma al bajo
+    degrees = aux / div;             // Se divide para obtener la realacción en grados
 
-    x=0;
-    while( !x )
+    x = 0;
+    while (!x)
     {
-        x=ECANSendMessage(op + canId, &degrees, sizeof(degrees), txFlags);
+        x = ECANSendMessage(op + canId, &degrees, sizeof(degrees), txFlags);
     }
 }
 
 // Función para grabar el cero sobre el CUI
 void setZero()
 {
-	BYTE x;
-    SSPCON1bits.SSPEN=1;
+    BYTE x;
+    SSPCON1bits.SSPEN = 1;
     OpenSPI(SPI_FOSC_4, MODE_00, SMPEND);
-    OSCCON=0b11110000;          //Primary oscillator.
+    OSCCON = 0b11110000;        // Primary oscillator.
 
-    TRISCbits.TRISC2=0;         // CS, out
-    TRISCbits.TRISC3=0;         // SCL, out
-    TRISCbits.TRISC5=0;         // SDO, out
-    TRISCbits.TRISC4=1;         // SDI  in
-    LATCbits.LATC2=1;           //Disable del encoder al inicio
+    TRISCbits.TRISC2 = 0;       // CS, out
+    TRISCbits.TRISC3 = 0;       // SCL, out
+    TRISCbits.TRISC5 = 0;       // SDO, out
+    TRISCbits.TRISC4 = 1;       // SDI, in
+    LATCbits.LATC2 = 1;         // Disable del encoder al inicio
 
-    LATCbits.LATC2=0;
-    WriteSPI (0b01110000);      //Establece la posición actual como cero (comando 0x70)
-    Delay10TCYx(3);             //Wait 6us
-    x=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
-    LATCbits.LATC2=1;
+    LATCbits.LATC2 = 0;
+    WriteSPI(0b01110000);       // Establece la posición actual como cero (comando 0x70)
+    Delay10TCYx(3);             // Wait 6us
+    x = SSPBUF;                 // Recoge los datos del SSPBUF que provienen del encoder (MISO)
+    LATCbits.LATC2 = 1;
 
-    LATCbits.LATC2=0;
-    WriteSPI (0b00000000);      //Espera a que el encoder esté listo (comando 0x00)
-    Delay10TCYx(3);             //Wait 6us
-    x=SSPBUF;                   //Recoge los datos del SSPBUF que provienen del encoder (MISO)
-    LATCbits.LATC2=1;
+    LATCbits.LATC2 = 0;
+    WriteSPI(0b00000000);       // Espera a que el encoder esté listo (comando 0x00)
+    Delay10TCYx(3);             // Wait 6us
+    x = SSPBUF;                 // Recoge los datos del SSPBUF que provienen del encoder (MISO)
+    LATCbits.LATC2 = 1;
 
-    while(x!=0b10000000)        //Espera hasta que el encoder esté preparado para enviar algo (Respuesta 0x80)
+    while (x != 0b10000000)     // Espera hasta que el encoder esté preparado para enviar algo (Respuesta 0x80)
     {
-
-        LATCbits.LATC2=0;
-        WriteSPI (0b00000000);  //Espera a que el encoder esté listo (comando 0x00)
-        Delay10TCYx(3);         //Wait 6us
-        x=SSPBUF;               //Recoge los datos del SSPBUF que provienen del encoder (MISO)
-        LATCbits.LATC2=1;
+        LATCbits.LATC2 = 0;
+        WriteSPI(0b00000000);   // Espera a que el encoder esté listo (comando 0x00)
+        Delay10TCYx(3);         // Wait 6us
+        x = SSPBUF;             // Recoge los datos del SSPBUF que provienen del encoder (MISO)
+        LATCbits.LATC2 = 1;
     }
 }
 
-void sendAck(unsigned short op)
+void sendAck(unsigned int op)
 {
-    x=0;
-    while( !x )
+    x = 0;
+    while (!x)
     {
-        x=ECANSendMessage(op + canId, NULL, 0, txFlags);
+        x = ECANSendMessage(op + canId, NULL, 0, txFlags);
     }
 }
 
