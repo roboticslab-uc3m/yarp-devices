@@ -18,7 +18,8 @@ bool CuiAbsolute::open(yarp::os::Searchable& config)
 
     canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt8();
     reverse = config.check("reverse", yarp::os::Value(false), "reverse").asBool();
-    timeout = config.check("timeout", yarp::os::Value(DEFAULT_TIMEOUT), "Cui timeout (seconds)").asFloat64();
+    timeout = config.check("timeout", yarp::os::Value(DEFAULT_TIMEOUT), "timeout (seconds)").asFloat64();
+    maxRetries = config.check("maxRetries", yarp::os::Value(DEFAULT_MAX_RETRIES), "max retries on timeout").asFloat64();
 
     if (timeout <= 0.0)
     {
@@ -26,7 +27,7 @@ bool CuiAbsolute::open(yarp::os::Searchable& config)
         return false;
     }
 
-    if (!config.check("mode", "Cui mode [push|pull]"))
+    if (!config.check("mode", "publish mode [push|pull]"))
     {
         CD_ERROR("Missing \"mode\" property.\n");
         return false;

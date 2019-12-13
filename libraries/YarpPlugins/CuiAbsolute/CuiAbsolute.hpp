@@ -18,7 +18,8 @@
 
 #define CHECK_JOINT(j) do { int ax; if (getAxes(&ax), (j) != ax - 1) return false; } while (0)
 
-#define DEFAULT_TIMEOUT 1.0 // [s]
+#define DEFAULT_TIMEOUT 0.1 // [s]
+#define DEFAULT_MAX_RETRIES 5
 
 namespace roboticslab
 {
@@ -41,7 +42,7 @@ class CuiAbsolute : public yarp::dev::DeviceDriver,
 public:
 
     CuiAbsolute()
-        : canId(0), timeout(0.0), reverse(false),
+        : canId(0), timeout(0.0), maxRetries(0), retry(0), reverse(false),
           cuiMode(CuiMode::OFF), pushDelay(0),
           encoder(), encoderTimestamp(0.0),
           sender(nullptr), pushStateObserver(nullptr), pollStateObserver(nullptr)
@@ -93,6 +94,8 @@ private:
 
     unsigned int canId;
     double timeout;
+    int maxRetries;
+    int retry;
     bool reverse;
 
     CuiMode cuiMode;

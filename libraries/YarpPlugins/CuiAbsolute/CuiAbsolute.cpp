@@ -12,23 +12,29 @@ using namespace roboticslab;
 
 bool CuiAbsolute::performRequest(const std::string & name, unsigned int len, const std::uint8_t * data, encoder_t * v)
 {
-    if (!sender->prepareMessage({canId, len, data}))
+    retry = 0;
+
+    while (++retry <= maxRetries)
     {
-        CD_ERROR("Unable to send \"%s\" command. %s\n", name.c_str(), CanUtils::msgToStr(canId, 0, len, data).c_str());
+        if (!sender->prepareMessage({canId, len, data}))
+        {
+            CD_ERROR("Unable to register \"%s\" command. %s\n", name.c_str(), CanUtils::msgToStr(canId, 0, len, data).c_str());
+            return false;
+        }
+
+        CD_INFO("Registered \"%s\" command (%d/%d). %s\n", name.c_str(), retry, maxRetries, CanUtils::msgToStr(canId, 0, len, data).c_str());
+
+        if (v ? pollStateObserver->await(v) : pushStateObserver->await())
+        {
+            CD_SUCCESS("Succesfully processed \"%s\" command (%d/%d).\n", name.c_str(), retry, maxRetries);
+            return true;
+        }
+
+        CD_WARNING("Command \"%s\" timed out (%d/%d).\n", name.c_str(), retry, maxRetries);
     }
 
-    CD_SUCCESS("Sent \"%s\" command. %s\n", name.c_str(), CanUtils::msgToStr(canId, 0, len, data).c_str());
-
-    bool await = v ? pollStateObserver->await(v) : pushStateObserver->await();
-
-    if (!await)
-    {
-        CD_ERROR("Command \"%s\" timed out.\n", name.c_str());
-        return false;
-    }
-
-    CD_SUCCESS("Succesfully processed \"%s\" command.\n", name.c_str());
-    return true;
+    CD_ERROR("Max number of retries exceeded (%d).\n", maxRetries);
+    return false;
 }
 
 // -----------------------------------------------------------------------------
