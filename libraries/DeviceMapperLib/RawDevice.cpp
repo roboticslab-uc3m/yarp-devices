@@ -82,6 +82,10 @@ yarp::dev::ICurrentControlRaw * RawDevice::getHandle() const
 { return priv->iCurrentControlRaw; }
 
 template<>
+yarp::dev::IEncodersRaw * RawDevice::getHandle() const
+{ return priv->iEncodersTimedRaw; }
+
+template<>
 yarp::dev::IEncodersTimedRaw * RawDevice::getHandle() const
 { return priv->iEncodersTimedRaw; }
 
@@ -137,6 +141,7 @@ template yarp::dev::IControlCalibrationRaw * RawDevice::getHandle<>() const;
 template yarp::dev::IControlLimitsRaw * RawDevice::getHandle<>() const;
 template yarp::dev::IControlModeRaw * RawDevice::getHandle<>() const;
 template yarp::dev::ICurrentControlRaw * RawDevice::getHandle<>() const;
+template yarp::dev::IEncodersRaw * RawDevice::getHandle<>() const;
 template yarp::dev::IEncodersTimedRaw * RawDevice::getHandle<>() const;
 template yarp::dev::IImpedanceControlRaw * RawDevice::getHandle<>() const;
 template yarp::dev::IInteractionModeRaw * RawDevice::getHandle<>() const;

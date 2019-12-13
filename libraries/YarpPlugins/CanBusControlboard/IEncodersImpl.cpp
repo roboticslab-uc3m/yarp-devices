@@ -21,7 +21,7 @@ bool CanBusControlboard::resetEncoder(int j)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersTimedRaw::resetEncoderRaw, j);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersRaw::resetEncoderRaw, j);
 }
 
 // -----------------------------------------------------------------------------
@@ -29,7 +29,7 @@ bool CanBusControlboard::resetEncoder(int j)
 bool CanBusControlboard::resetEncoders()
 {
     CD_DEBUG("\n");
-    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersTimedRaw::resetEncodersRaw);
+    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersRaw::resetEncodersRaw);
 }
 
 // -----------------------------------------------------------------------------
@@ -38,7 +38,7 @@ bool CanBusControlboard::setEncoder(int j, double val)
 {
     CD_DEBUG("(%d, %f)\n", j, val);
     CHECK_JOINT(j);
-    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersTimedRaw::setEncoderRaw, j, val);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersRaw::setEncoderRaw, j, val);
 }
 
 // -----------------------------------------------------------------------------
@@ -46,7 +46,7 @@ bool CanBusControlboard::setEncoder(int j, double val)
 bool CanBusControlboard::setEncoders(const double * vals)
 {
     CD_DEBUG("\n");
-    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersTimedRaw::setEncodersRaw, vals);
+    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersRaw::setEncodersRaw, vals);
 }
 
 // -----------------------------------------------------------------------------
@@ -55,7 +55,7 @@ bool CanBusControlboard::getEncoder(int j, double * v)
 {
     CD_DEBUG("%d\n", j);
     CHECK_JOINT(j);
-    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersTimedRaw::getEncoderRaw, j, v);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersRaw::getEncoderRaw, j, v);
 }
 
 // -----------------------------------------------------------------------------
@@ -63,7 +63,7 @@ bool CanBusControlboard::getEncoder(int j, double * v)
 bool CanBusControlboard::getEncoders(double * encs)
 {
     CD_DEBUG("\n");
-    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersTimedRaw::getEncodersRaw, encs);
+    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersRaw::getEncodersRaw, encs);
 }
 
 // -----------------------------------------------------------------------------
@@ -72,7 +72,7 @@ bool CanBusControlboard::getEncoderSpeed(int j, double * sp)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersTimedRaw::getEncoderSpeedRaw, j, sp);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersRaw::getEncoderSpeedRaw, j, sp);
 }
 
 // -----------------------------------------------------------------------------
@@ -80,7 +80,7 @@ bool CanBusControlboard::getEncoderSpeed(int j, double * sp)
 bool CanBusControlboard::getEncoderSpeeds(double * spds)
 {
     //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
-    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersTimedRaw::getEncoderSpeedsRaw, spds);
+    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersRaw::getEncoderSpeedsRaw, spds);
 }
 
 // -----------------------------------------------------------------------------
@@ -89,7 +89,7 @@ bool CanBusControlboard::getEncoderAcceleration(int j, double * spds)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersTimedRaw::getEncoderAccelerationRaw, j, spds);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersRaw::getEncoderAccelerationRaw, j, spds);
 }
 
 // -----------------------------------------------------------------------------
@@ -97,7 +97,7 @@ bool CanBusControlboard::getEncoderAcceleration(int j, double * spds)
 bool CanBusControlboard::getEncoderAccelerations(double * accs)
 {
     //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
-    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersTimedRaw::getEncoderAccelerationsRaw, accs);
+    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersRaw::getEncoderAccelerationsRaw, accs);
 }
 
 // -----------------------------------------------------------------------------
