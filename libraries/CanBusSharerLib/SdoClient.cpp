@@ -308,7 +308,7 @@ bool SdoClient::performTransfer(const std::string & name, const std::uint8_t * r
 
     if (!success)
     {
-        CD_ERROR("SDO client response/confirm (\"%s\"). %s\n", name.c_str(), respStr.c_str());
+        CD_ERROR("SDO client response/confirm (\"%s\"). Inactive/timeout.\n", name.c_str());
         return false;
     }
 
