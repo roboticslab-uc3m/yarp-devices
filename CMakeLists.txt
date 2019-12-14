@@ -42,7 +42,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake
                               ${CMAKE_SOURCE_DIR}/cmake/find-modules)
 
 # Hard dependencies.
-find_package(YCM 0.10 REQUIRED)
+find_package(YCM 0.11 REQUIRED)
 find_package(YARP 3.1 REQUIRED COMPONENTS OS dev sig)
 find_package(COLOR_DEBUG REQUIRED)
 
@@ -93,7 +93,7 @@ add_subdirectory(share)
 add_subdirectory(doc)
 
 # Store the package in the user registry.
-export(PACKAGE ROBOTICSLAB_YARP_DEVICES)
+set(CMAKE_EXPORT_PACKAGE_REGISTRY ON)
 
 # Create and install config files.
 include(InstallBasicPackageFiles)
