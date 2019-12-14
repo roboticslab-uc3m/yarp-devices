@@ -4,12 +4,6 @@
 
 #include <cmath>
 
-// upstream bug in IAxisInfo.h, remove in YARP 3.2+
-#include <yarp/conf/version.h>
-#if YARP_VERSION_MINOR < 2
-# include <yarp/os/Log.h>
-#endif
-
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/IAxisInfo.h>
 

@@ -27,11 +27,7 @@ if(ENABLE_CanBusSharerLib)
 
     target_compile_definitions(CanBusSharerLib PRIVATE optional_CONFIG_NO_EXCEPTIONS=1)
 
-    if(NOT CMAKE_VERSION VERSION_LESS 3.8)
-        target_compile_features(CanBusSharerLib PUBLIC cxx_std_11)
-    else()
-        target_compile_features(CanBusSharerLib PUBLIC cxx_constexpr) # I'm too lazy
-    endif()
+    target_compile_features(CanBusSharerLib PUBLIC cxx_std_11)
 
     install(TARGETS CanBusSharerLib
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

@@ -5,8 +5,6 @@
 #include <cstring> // std::memset, std::memcpy, std::strerror
 #include <cerrno> // error codes
 
-#include <yarp/conf/version.h>
-
 #include <libpcanfd.h>
 
 #include <ColorDebug.h>
@@ -208,12 +206,7 @@ bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsign
         std::lock_guard<std::mutex> lockGuard(canBusReady);
 
         // Point at first member of an internally defined array of pcanfd_msg structs.
-#if YARP_VERSION_MINOR >= 2 // note: remove #include <yarp/conf/version.h>
         const struct pcanfd_msg * pfdm = reinterpret_cast<const struct pcanfd_msg *>(msgs.getPointer()[0]->getPointer());
-#else
-        yarp::dev::CanBuffer & msgs_not_const = const_cast<yarp::dev::CanBuffer &>(msgs);
-        const struct pcanfd_msg * pfdm = reinterpret_cast<const struct pcanfd_msg *>(msgs_not_const.getPointer()[0]->getPointer());
-#endif
 
         if (blockingMode && txTimeoutMs > 0)
         {
