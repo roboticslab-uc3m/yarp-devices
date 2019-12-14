@@ -2,14 +2,9 @@
 # Authors: Juan G. Victores & Raúl de Santos Rico
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
-# Honor PCan_ROOT env variable in FindPCan.cmake (CMake 3.12).
-if(POLICY CMP0074)
-    cmake_policy(SET CMP0074 NEW)
-endif()
-
-project(ROBOTICSLAB_YARP_DEVICES)
+project(ROBOTICSLAB_YARP_DEVICES LANGUAGES CXX)
 
 # Add suffix for debug libraries.
 if(MSVC)
@@ -42,8 +37,8 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake
                               ${CMAKE_SOURCE_DIR}/cmake/find-modules)
 
 # Hard dependencies.
-find_package(YCM 0.10 REQUIRED)
-find_package(YARP 3.1 REQUIRED COMPONENTS OS dev sig)
+find_package(YCM 0.11 REQUIRED)
+find_package(YARP 3.2 REQUIRED COMPONENTS OS dev sig)
 find_package(COLOR_DEBUG REQUIRED)
 
 # Soft dependencies.
@@ -93,7 +88,7 @@ add_subdirectory(share)
 add_subdirectory(doc)
 
 # Store the package in the user registry.
-export(PACKAGE ROBOTICSLAB_YARP_DEVICES)
+set(CMAKE_EXPORT_PACKAGE_REGISTRY ON)
 
 # Create and install config files.
 include(InstallBasicPackageFiles)

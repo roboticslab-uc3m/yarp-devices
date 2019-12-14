@@ -36,7 +36,7 @@ if(XWiimote_FOUND)
     set(XWiimote_INCLUDE_DIRS ${XWiimote_INCLUDE_DIR})
     set(XWiimote_LIBRARIES ${XWiimote_LIBRARY})
 
-    if(NOT CMAKE_VERSION VERSION_LESS 2.8.11 AND NOT TARGET XWiimote::XWiimote)
+    if(NOT TARGET XWiimote::XWiimote)
         add_library(XWiimote::XWiimote UNKNOWN IMPORTED)
 
         set_target_properties(XWiimote::XWiimote PROPERTIES IMPORTED_LOCATION "${XWiimote_LIBRARY}"
