@@ -5,7 +5,12 @@
 
 #include <utility>
 
-#include <yarp/dev/SerialInterfaces.h>
+#include <yarp/conf/version.h>
+#if YARP_VERSION_MINOR >= 3
+# include <yarp/dev/ISerialDevice.h>
+#else
+# include <yarp/dev/SerialInterfaces.h>
+#endif
 
 namespace roboticslab
 {

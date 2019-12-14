@@ -8,11 +8,6 @@
 #include <set>
 
 #include <yarp/os/PeriodicThread.h>
-
-#include <yarp/conf/version.h>
-#if YARP_VERSION_MINOR < 2
-# include <yarp/os/Vocab.h> // upstream bug, needed by the following header
-#endif
 #include <yarp/dev/IPositionDirect.h>
 
 #include "ITechnosoftIpos.h"
