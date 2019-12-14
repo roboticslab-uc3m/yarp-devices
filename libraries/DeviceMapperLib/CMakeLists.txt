@@ -6,7 +6,8 @@ if(ENABLE_DeviceMapperLib)
                                        DeviceMapper.cpp
                                        RawDevice.cpp
                                        FutureTask.hpp
-                                       FutureTask.cpp)
+                                       FutureTask.cpp
+                                       ctpl/ctpl_stl.h)
 
     target_link_libraries(DeviceMapperLib PUBLIC YARP::YARP_dev
                                           PRIVATE ROBOTICSLAB::ColorDebug)

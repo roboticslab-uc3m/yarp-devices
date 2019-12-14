@@ -3,9 +3,8 @@
 #ifndef __FUTURE_TASK_HPP__
 #define __FUTURE_TASK_HPP__
 
-#include <future>
+#include <functional>
 #include <memory>
-#include <utility>
 #include <vector>
 
 namespace roboticslab
@@ -18,42 +17,19 @@ public:
     { }
 
     template<typename T, typename Fn, typename... Args>
-    void add(T * p, Fn fn, Args &&... args)
-    { futures.push_back(std::async(getPolicy(), fn, p, std::forward<Args>(args)...)); }
+    void add(T * p, Fn && fn, Args &&... args)
+    { deferreds.push_back([=](int) { return (p->*fn)(args...); }); }
 
-    bool dispatch();
+    virtual bool dispatch() = 0;
 
     unsigned int size() const
-    { return futures.size(); }
+    { return deferreds.size(); }
 
     void clear()
-    { futures.clear(); }
+    { deferreds.clear(); }
 
 protected:
-    virtual std::launch getPolicy() const = 0;
-
-private:
-    std::vector<std::future<bool>> futures;
-};
-
-class SequentialTask : public FutureTask
-{
-protected:
-    virtual std::launch getPolicy() const override;
-};
-
-class ParallelTask : public FutureTask
-{
-public:
-    ParallelTask(unsigned int concurrentTasks)
-        : _concurrentTasks(concurrentTasks)
-    { }
-
-protected:
-    virtual std::launch getPolicy() const override;
-
-private:
-    const unsigned int _concurrentTasks;
+    std::vector<std::function<bool(int)>> deferreds;
 };
 
 class FutureTaskFactory
@@ -66,22 +42,20 @@ public:
 class SequentialTaskFactory : public FutureTaskFactory
 {
 public:
-    virtual std::unique_ptr<FutureTask> createTask() override
-    { return std::unique_ptr<SequentialTask>(new SequentialTask); }
+    virtual std::unique_ptr<FutureTask> createTask() override;
 };
 
 class ParallelTaskFactory : public FutureTaskFactory
 {
 public:
-    ParallelTaskFactory(unsigned int concurrentTasks)
-        : _concurrentTasks(concurrentTasks)
-    { }
+    ParallelTaskFactory(int threads);
+    ~ParallelTaskFactory();
 
-    virtual std::unique_ptr<FutureTask> createTask() override
-    { return std::unique_ptr<ParallelTask>(new ParallelTask(_concurrentTasks)); }
+    virtual std::unique_ptr<FutureTask> createTask() override;
 
 private:
-    unsigned int _concurrentTasks;
+    class Private;
+    Private * priv;
 };
 
 } // namespace roboticslab

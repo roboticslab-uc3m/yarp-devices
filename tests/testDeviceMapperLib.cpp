@@ -177,11 +177,12 @@ TEST_F(DeviceMapperTest, ParallelTask)
     task->add(getDummy(), &yarp::dev::IPositionDirectRaw::getRefPositionRaw, joint, &ref3);
 
     ASSERT_EQ(task->size(), 3);
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    ASSERT_NEAR(ref1, 0.0, EPSILON); // not dispatched yet
+    ASSERT_NEAR(ref2, 0.0, EPSILON); // not dispatched yet
+    ASSERT_NEAR(ref2, 0.0, EPSILON); // not dispatched yet
+    ASSERT_TRUE(task->dispatch());
     ASSERT_NEAR(ref1, joint, EPSILON);
     ASSERT_NEAR(ref2, joint, EPSILON);
-    ASSERT_NEAR(ref3, 0.0, EPSILON); // not dispatched yet
-    ASSERT_TRUE(task->dispatch());
     ASSERT_NEAR(ref3, joint, EPSILON);
 }
 
