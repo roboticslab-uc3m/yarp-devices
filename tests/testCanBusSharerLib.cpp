@@ -376,9 +376,9 @@ TEST_F(CanBusSharerTest, SdoClientSegmented)
     const std::string s = "abcdefghijklmno"; // 15 chars
 
     const std::uint8_t response1[8] = {0x41, indexLSB, indexMSB, subindex, static_cast<std::uint8_t>(s.size())};
-    const std::uint8_t response2[8] = {0x10, 'a', 'b', 'c', 'd', 'e', 'f', 'g'};
-    const std::uint8_t response3[8] = {0x00, 'h', 'i', 'j', 'k', 'l', 'm', 'n'};
-    const std::uint8_t response4[8] = {0x17, 'o'};
+    const std::uint8_t response2[8] = {0x00, 'a', 'b', 'c', 'd', 'e', 'f', 'g'};
+    const std::uint8_t response3[8] = {0x10, 'h', 'i', 'j', 'k', 'l', 'm', 'n'};
+    const std::uint8_t response4[8] = {0x07, 'o'};
 
     // test SdoClient::upload(), request string
 
