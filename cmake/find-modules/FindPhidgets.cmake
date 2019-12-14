@@ -49,7 +49,7 @@ if(Phidgets_FOUND)
     set(Phidgets_LIBRARIES ${Phidgets_LIBRARY})
     set(_target_name Phidget${_phidgets_version_suffix})
 
-    if(NOT CMAKE_VERSION VERSION_LESS 2.8.11 AND NOT TARGET Phidgets::${_target_name})
+    if(NOT TARGET Phidgets::${_target_name})
         add_library(Phidgets::${_target_name} UNKNOWN IMPORTED)
 
         set_target_properties(Phidgets::${_target_name} PROPERTIES IMPORTED_LOCATION "${Phidgets_LIBRARY}"

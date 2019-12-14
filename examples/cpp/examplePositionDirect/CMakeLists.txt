@@ -1,9 +1,9 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
 project(examplePositionDirect LANGUAGES CXX)
 
 find_package(COLOR_DEBUG REQUIRED)
-find_package(YARP 3.1 REQUIRED COMPONENTS OS dev)
+find_package(YARP 3.2 REQUIRED COMPONENTS OS dev)
 
 add_executable(examplePositionDirect examplePositionDirect.cpp)
 

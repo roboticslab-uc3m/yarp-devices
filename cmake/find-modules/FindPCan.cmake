@@ -69,20 +69,18 @@ if(PCan_FOUND)
     set(PCan_INCLUDE_DIRS ${PCan_INCLUDE_DIR})
     set(PCan_LIBRARIES ${PCan_LIBRARY} ${PCan_LIBRARY_FD})
 
-    if(NOT CMAKE_VERSION VERSION_LESS 2.8.11)
-        if(NOT TARGET PCan::PCan)
-            add_library(PCan::PCan UNKNOWN IMPORTED)
+    if(NOT TARGET PCan::PCan)
+        add_library(PCan::PCan UNKNOWN IMPORTED)
 
-            set_target_properties(PCan::PCan PROPERTIES IMPORTED_LOCATION "${PCan_LIBRARY}"
-                                                        INTERFACE_INCLUDE_DIRECTORIES "${PCan_INCLUDE_DIR}")
-        endif()
+        set_target_properties(PCan::PCan PROPERTIES IMPORTED_LOCATION "${PCan_LIBRARY}"
+                                                    INTERFACE_INCLUDE_DIRECTORIES "${PCan_INCLUDE_DIR}")
+    endif()
 
-        if(NOT TARGET PCan::PCanFD)
-            add_library(PCan::PCanFD UNKNOWN IMPORTED)
+    if(NOT TARGET PCan::PCanFD)
+        add_library(PCan::PCanFD UNKNOWN IMPORTED)
 
-            set_target_properties(PCan::PCanFD PROPERTIES IMPORTED_LOCATION "${PCan_LIBRARY_FD}"
-                                                          INTERFACE_INCLUDE_DIRECTORIES "${PCan_INCLUDE_DIR}")
-        endif()
+        set_target_properties(PCan::PCanFD PROPERTIES IMPORTED_LOCATION "${PCan_LIBRARY_FD}"
+                                                      INTERFACE_INCLUDE_DIRECTORIES "${PCan_INCLUDE_DIR}")
     endif()
 endif()
 
