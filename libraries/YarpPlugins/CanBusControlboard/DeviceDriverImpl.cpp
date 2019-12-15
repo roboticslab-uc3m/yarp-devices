@@ -25,13 +25,6 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
     const auto * robotConfig = *reinterpret_cast<yarp::os::Property * const *>(config.find("robotConfig").asBlob());
 
-    int parallelCanThreadLimit = config.check("parallelCanThreadLimit", yarp::os::Value(0), "parallel CAN TX thread limit").asInt32();
-
-    if (parallelCanThreadLimit > 0)
-    {
-        deviceMapper.enableParallelization(parallelCanThreadLimit);
-    }
-
     yarp::os::Bottle * canBuses = config.find("buses").asList();
 
     if (canBuses == nullptr)
@@ -167,6 +160,12 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
                 return false;
             }
         }
+    }
+
+    if (config.check("threaded", yarp::os::Value(false), "use threads to map joint calls").asBool())
+    {
+        // twice as many controlled axes to account for CBW's periodic thread and user RPC requests
+        deviceMapper.enableParallelization(deviceMapper.getControlledAxes() * 2);
     }
 
     for (const auto & bundle : canThreads)
