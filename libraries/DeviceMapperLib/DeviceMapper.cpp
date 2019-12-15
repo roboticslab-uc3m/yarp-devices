@@ -16,9 +16,9 @@ namespace
         {
             *ret = rd->getHandle<yarp::dev::ICurrentControlRaw>()->getNumberOfMotorsRaw(axes);
         }
-        else if (rd->getHandle<yarp::dev::IEncodersTimedRaw>())
+        else if (rd->getHandle<yarp::dev::IEncodersRaw>())
         {
-            *ret = rd->getHandle<yarp::dev::IEncodersTimedRaw>()->getAxes(axes);
+            *ret = rd->getHandle<yarp::dev::IEncodersRaw>()->getAxes(axes);
         }
         else if (rd->getHandle<yarp::dev::IImpedanceControlRaw>())
         {
