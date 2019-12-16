@@ -27,6 +27,7 @@ bool CuiAbsolute::performRequest(const std::string & name, unsigned int len, con
         if (v ? pollStateObserver->await(v) : pushStateObserver->await())
         {
             CD_SUCCESS("Succesfully processed \"%s\" command (%d/%d).\n", name.c_str(), retry, maxRetries);
+            normalize(v);
             return true;
         }
 
@@ -59,6 +60,25 @@ bool CuiAbsolute::pollEncoderRead(encoder_t * enc)
 {
     const std::uint8_t msgData[] = {static_cast<std::uint8_t>(CuiCommand::POLL)};
     return performRequest("poll", 1, msgData, enc);
+}
+
+// ------------------------------------------------------------------------------
+
+void CuiAbsolute::normalize(encoder_t * v)
+{
+    if (reverse)
+    {
+        *v = -(*v);
+    }
+
+    if (*v < -180.0)
+    {
+        *v += 360.0;
+    }
+    else if (*v > 180.0)
+    {
+        *v -= 360.0;
+    }
 }
 
 // ------------------------------------------------------------------------------

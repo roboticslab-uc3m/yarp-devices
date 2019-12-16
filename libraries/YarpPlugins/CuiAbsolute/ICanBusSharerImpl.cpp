@@ -60,27 +60,17 @@ bool CuiAbsolute::interpretMessage(const yarp::dev::CanMessage & message)
     switch (op)
     {
     case 0x80: // push mode streaming data
-        {
-            std::lock_guard<std::mutex> lock(mutex);
-            std::memcpy(&encoder, message.getData(), message.getLen()); // getLen() = 4 bytes
+    {
+        encoder_t v;
+        std::memcpy(&v, message.getData(), message.getLen()); // getLen() = 4 bytes
+        normalize(&v);
 
-            if (reverse)
-            {
-                encoder = -encoder;
-            }
+        std::lock_guard<std::mutex> lock(mutex);
+        encoder = v;
+        encoderTimestamp = yarp::os::Time::now();
 
-            if (encoder < -180.0)
-            {
-                encoder += 360.0;
-            }
-            else if (encoder > 180.0)
-            {
-                encoder -= 360.0;
-            }
-
-            encoderTimestamp = yarp::os::Time::now();
-        }
         return true;
+    }
     case 0x100: // start/stop push mode
         return pushStateObserver->notify();
     case 0x180: // polling

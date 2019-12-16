@@ -91,6 +91,7 @@ private:
     bool startPushMode();
     bool stopPushMode();
     bool pollEncoderRead(encoder_t * enc);
+    void normalize(encoder_t * v);
 
     unsigned int canId;
     double timeout;
