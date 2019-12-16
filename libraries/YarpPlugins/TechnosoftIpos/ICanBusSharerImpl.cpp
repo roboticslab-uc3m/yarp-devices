@@ -137,6 +137,8 @@ bool TechnosoftIpos::initialize()
             return false;
         }
 
+        CD_INFO("External absolute encoder read %f.\n", extEnc);
+
         if (!setEncoderRaw(0, extEnc))
         {
             return false;
@@ -216,7 +218,7 @@ bool TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage & message)
 
     if (!can->consumeMessage(message.getId(), message.getData(), message.getLen()))
     {
-        CD_ERROR("Unknown message: %s\n", CanUtils::msgToStr(message.getId(), message.getLen(), message.getData()).c_str());
+        CD_WARNING("Unknown message: %s\n", CanUtils::msgToStr(message.getId(), message.getLen(), message.getData()).c_str());
         return false;
     }
 

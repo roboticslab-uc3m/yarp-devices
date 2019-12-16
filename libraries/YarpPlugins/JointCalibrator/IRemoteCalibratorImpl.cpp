@@ -27,7 +27,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
         }
     }
 
-    std::vector<double> encs;
+    std::vector<double> encs(joints.size());
 
     if (!iEncoders->getEncoders(encs.data()))
     {

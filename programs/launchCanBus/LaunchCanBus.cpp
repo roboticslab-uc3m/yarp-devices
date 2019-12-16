@@ -46,7 +46,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
     CD_DEBUG("%s\n", robotConfig.toString().c_str());
 
     yarp::conf::vocab32_t mode = rf.check("mode", yarp::os::Value(VOCAB_CM_POSITION), "initial mode of operation").asVocab();
-    bool homing = rf.check("home", yarp::os::Value(false), "perform initial homing procedure").asBool();
+    bool homing = rf.check("home", "perform initial homing procedure");
 
     yarp::os::Bottle devCan = rf.findGroup("devCan", "CAN controlboard devices").tail();
     yarp::os::Bottle wrapper = rf.findGroup("wrapper", "YARP wrappers devices").tail();

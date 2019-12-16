@@ -386,7 +386,7 @@ void TechnosoftIpos::handleTpdo3(std::int32_t position, std::int16_t current)
 
 void TechnosoftIpos::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef)
 {
-    CD_WARNING("EMCY: %s (canId %d)", code.second.c_str(), can->getId());
+    CD_WARNING("EMCY: %s (canId %d)\n", code.second.c_str(), can->getId());
 
     switch (code.first)
     {
