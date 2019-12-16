@@ -168,9 +168,9 @@ public:
     void registerHandler(Fn && fn)
     {
         static_assert(sizeof...(Ts) > 0 && size<Ts...>() <= 8, "Illegal cumulative size.");
-        callback = [&](const std::uint8_t * raw, unsigned int len)
+        callback = [this, fn](const std::uint8_t * raw, unsigned int len)
             { unsigned int count = 0;
-              return size<Ts...>() == len && (ordered_call{std::forward<Fn>(fn), unpack<Ts>(raw, &count)...}, true); };
+              return size<Ts...>() == len && (ordered_call{fn, unpack<Ts>(raw, &count)...}, true); };
     }
 
     void unregisterHandler()
