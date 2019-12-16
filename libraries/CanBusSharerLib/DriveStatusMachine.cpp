@@ -81,34 +81,20 @@ namespace
         switch (transition)
         {
         case DriveTransition::SHUTDOWN: // xxxx.xxxx.0xxx.x110
-            bits.reset(0);
-            bits.set(1);
-            bits.set(2);
-            bits.reset(7);
+            bits.reset(0).set(1).set(2).reset(7);
             break;
         case DriveTransition::SWITCH_ON: // xxxx.xxxx.0xxx.0111
         //case DriveTransition::DISABLE_OPERATION:
-            bits.set(0);
-            bits.set(1);
-            bits.set(2);
-            bits.reset(3);
-            bits.reset(7);
+            bits.set(0).set(1).set(2).reset(3).reset(7);
             break;
         case DriveTransition::DISABLE_VOLTAGE: // xxxx.xxxx.0xxx.xx0x
-            bits.reset(1);
-            bits.reset(7);
+            bits.reset(1).reset(7);
             break;
         case DriveTransition::QUICK_STOP: // xxxx.xxxx.0xxx.x01x
-            bits.set(1);
-            bits.reset(2);
-            bits.reset(7);
+            bits.set(1).reset(2).reset(7);
             break;
         case DriveTransition::ENABLE_OPERATION: // xxxx.xxxx.0xxx.1111
-            bits.set(0);
-            bits.set(1);
-            bits.set(2);
-            bits.set(3);
-            bits.reset(7);
+            bits.set(0).set(1).set(2).set(3).reset(7);
             break;
         case DriveTransition::FAULT_RESET: // xxxx.xxxx.^xxx.xxxx
             bits.set(7); // FIXME: check this
@@ -140,7 +126,7 @@ namespace
         {{DriveState::READY_TO_SWITCH_ON, DriveState::OPERATION_ENABLED}, {DriveTransition::SWITCH_ON, DriveTransition::ENABLE_OPERATION}},
         {{DriveState::SWITCHED_ON, DriveState::OPERATION_ENABLED}, {DriveTransition::ENABLE_OPERATION}},
         {{DriveState::OPERATION_ENABLED, DriveState::SWITCHED_ON}, {DriveTransition::DISABLE_OPERATION}},
-        //{{DriveState::OPERATION_ENABLED, DriveState::SWITCHED_ON}, {DriveTransition::SWITCH_ON}},
+        //{{DriveState::OPERATION_ENABLED, DriveState::SWITCHED_ON}, {DriveTransition::SWITCH_ON}}, // alias
         {{DriveState::OPERATION_ENABLED, DriveState::READY_TO_SWITCH_ON}, {DriveTransition::SHUTDOWN}},
         {{DriveState::OPERATION_ENABLED, DriveState::SWITCH_ON_DISABLED}, {DriveTransition::DISABLE_VOLTAGE}},
         {{DriveState::SWITCHED_ON, DriveState::READY_TO_SWITCH_ON}, {DriveTransition::SHUTDOWN}},
@@ -152,12 +138,20 @@ namespace
 
 bool DriveStatusMachine::update(std::uint16_t statusword)
 {
+    static const word_t mask("0000000001101111"); // state machine-related bits
+    word_t _old;
+    word_t _new = statusword;
+
     {
         std::lock_guard<std::mutex> lock(stateMutex);
-        _statusword = statusword;
+        _old = _statusword;
+        _statusword = _new;
     }
 
-    return stateObserver.notify();
+    _old &= mask;
+    _new &= mask;
+
+    return _old == _new ? stateObserver.notify() : true;
 }
 
 DriveStatusMachine::word_t & DriveStatusMachine::controlword()
