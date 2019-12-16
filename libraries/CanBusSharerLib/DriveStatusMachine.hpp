@@ -57,6 +57,7 @@ public:
     DriveState getCurrentState() const;
     bool requestTransition(DriveTransition transition, bool wait = true);
     bool requestState(DriveState goalState);
+    bool awaitState(DriveState goalState);
 
     static DriveState parseStatusword(std::uint16_t statusword);
 

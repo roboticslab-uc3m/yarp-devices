@@ -170,6 +170,13 @@ bool TechnosoftIpos::initialize()
         return false;
     }
 
+    if (can->driveStatus()->getCurrentState() == DriveState::NOT_READY_TO_SWITCH_ON &&
+        !can->driveStatus()->awaitState(DriveState::SWITCH_ON_DISABLED))
+    {
+        CD_ERROR("SWITCH_ON_DISABLED state check failed.\n");
+        return false;
+    }
+
     if (!can->driveStatus()->requestState(DriveState::SWITCHED_ON))
     {
         return false;

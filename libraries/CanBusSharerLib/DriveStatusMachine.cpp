@@ -189,12 +189,7 @@ bool DriveStatusMachine::requestTransition(DriveTransition transition, bool wait
         return false;
     }
 
-    if (wait)
-    {
-        return stateObserver.await() && it->second == getCurrentState();
-    }
-
-    return true;
+    return wait ? awaitState(it->second) : true;
 }
 
 bool DriveStatusMachine::requestState(DriveState goalState)
@@ -223,6 +218,16 @@ bool DriveStatusMachine::requestState(DriveState goalState)
     }
 
     return true;
+}
+
+bool DriveStatusMachine::awaitState(DriveState goalState)
+{
+    if (goalState == getCurrentState())
+    {
+        return true;
+    }
+
+    return stateObserver.await() && goalState == getCurrentState();
 }
 
 DriveState DriveStatusMachine::parseStatusword(std::uint16_t statusword)
