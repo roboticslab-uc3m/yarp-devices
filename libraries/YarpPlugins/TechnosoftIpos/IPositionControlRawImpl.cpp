@@ -191,7 +191,7 @@ bool TechnosoftIpos::getRefSpeedRaw(int j, double * ref)
                 std::uint16_t dataInt = data >> 16;
                 std::uint16_t dataFrac = data & 0xFFFF;
                 double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
-                *ref = vars.internalUnitsToDegrees(value, 1);
+                *ref = std::abs(vars.internalUnitsToDegrees(value, 1));
             },
             0x6081);
 }
@@ -224,7 +224,7 @@ bool TechnosoftIpos::getRefAccelerationRaw(int j, double * acc)
                 std::uint16_t dataInt = data >> 16;
                 std::uint16_t dataFrac = data & 0xFFFF;
                 double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
-                *acc = vars.internalUnitsToDegrees(value, 2);
+                *acc = std::abs(vars.internalUnitsToDegrees(value, 2));
             },
             0x6083);
 }
