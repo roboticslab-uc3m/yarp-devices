@@ -27,7 +27,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
         }
     }
 
-    std::vector<double> encs(joints.size());
+    std::vector<double> encs(axes);
 
     if (!iEncoders->getEncoders(encs.data()))
     {
@@ -107,41 +107,50 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
         return false;
     }
 
-    bool done;
+    bool ok = true;
+    bool done = false;
 
-    while (!iPositionControl->checkMotionDone(ids.size(), ids.data(), &done))
+    do
     {
         yarp::os::Time::delay(MOTION_CHECK_INTERVAL);
+
+        if (!iPositionControl->checkMotionDone(ids.size(), ids.data(), &done))
+        {
+            CD_WARNING("Unable to check motion completion.\n");
+            ok = false;
+            break;
+        }
     }
+    while (!done);
 
     if (!iEncoders->getEncoders(encs.data()))
     {
-        CD_ERROR("Unable to retrieve target position.\n");
-        return false;
+        CD_WARNING("Unable to retrieve target position.\n");
+        ok = false;
     }
 
     for (int id : ids)
     {
         if (std::abs(encs[id] - specs.pos[id]) > POSITION_EPSILON)
         {
-            CD_ERROR("Joint %d has not reached the desired position.\n", id);
-            return false;
+            CD_WARNING("Joint %d has not reached the desired position.\n", id);
+            ok = false;
         }
     }
 
     if (!iPositionControl->setRefSpeeds(ids.size(), ids.data(), initialRefSpeeds.data()))
     {
-        CD_ERROR("Unable to restore initial reference speeds.\n");
-        return false;
+        CD_WARNING("Unable to restore initial reference speeds.\n");
+        ok = false;
     }
 
     if (!iPositionControl->setRefAccelerations(ids.size(), ids.data(), initialRefAccs.data()))
     {
-        CD_ERROR("Unable to restore initial reference accelerations.\n");
-        return false;
+        CD_WARNING("Unable to restore initial reference accelerations.\n");
+        ok = false;
     }
 
-    return true;
+    return ok;
 }
 
 bool JointCalibrator::calibrateSingleJoint(int j)
