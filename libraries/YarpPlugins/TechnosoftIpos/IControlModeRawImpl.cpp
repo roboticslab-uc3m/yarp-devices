@@ -108,7 +108,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
                 && can->sdo()->download<std::uint16_t>("External Reference Type", 1, 0x201D)
                 && can->sdo()->download<std::int8_t>("Modes of Operation", -5, 0x6060)
-                && can->rpdo1()->write<std::uint16_t>(0x001F)
+                && can->driveStatus()->setControlBit(4, true) // new setpoint (assume target position)
                 && vars.awaitControlMode(mode);
 
     case VOCAB_CM_POSITION_DIRECT:

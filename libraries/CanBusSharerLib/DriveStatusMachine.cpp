@@ -150,19 +150,33 @@ bool DriveStatusMachine::update(std::uint16_t statusword)
 
     _old &= mask;
     _new &= mask;
-
-    return _old == _new ? stateObserver.notify() : true;
+    return _old != _new ? stateObserver.notify() : true;
 }
 
-DriveStatusMachine::word_t & DriveStatusMachine::controlword()
+DriveStatusMachine::word_t DriveStatusMachine::controlword() const
 {
+    std::lock_guard<std::mutex> lock(stateMutex);
     return _controlword;
 }
 
-const DriveStatusMachine::word_t & DriveStatusMachine::statusword() const
+DriveStatusMachine::word_t DriveStatusMachine::statusword() const
 {
     std::lock_guard<std::mutex> lock(stateMutex);
     return _statusword;
+}
+
+bool DriveStatusMachine::setControlBit(std::size_t pos, bool value, bool write)
+{
+    std::lock_guard<std::mutex> lock(stateMutex);
+    _controlword.set(pos, value);
+    return write ? rpdo->write<std::uint16_t>(_controlword.to_ulong()) : true;
+}
+
+bool DriveStatusMachine::setControlBits(const word_t & value, bool write)
+{
+    std::lock_guard<std::mutex> lock(stateMutex);
+    _controlword = value;
+    return write ? rpdo->write<std::uint16_t>(_controlword.to_ulong()) : true;
 }
 
 DriveState DriveStatusMachine::getCurrentState() const
@@ -181,15 +195,9 @@ bool DriveStatusMachine::requestTransition(DriveTransition transition, bool wait
         return false;
     }
 
-    prepareDriveTransition(transition, _controlword);
-    std::uint16_t data = _controlword.to_ulong();
-
-    if (!rpdo->write(data))
-    {
-        return false;
-    }
-
-    return wait ? awaitState(it->second) : true;
+    word_t _new = controlword();
+    prepareDriveTransition(transition, _new);
+    return setControlBits(_new) && (wait ? awaitState(it->second) : true);
 }
 
 bool DriveStatusMachine::requestState(DriveState goalState)
