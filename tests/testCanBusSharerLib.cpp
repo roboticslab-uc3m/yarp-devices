@@ -870,7 +870,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test SWITCH_ON_DISABLED -> READY_TO_SWITCH_ON (transition 2: SHUTDOWN)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(switchOnDisabled));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(readyToSwitchOn); }});
     ASSERT_TRUE(status.requestTransition(DriveTransition::SHUTDOWN));
@@ -882,7 +882,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test READY_TO_SWITCH_ON -> SWITCHED_ON (transition 3: SWITCH_ON)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(readyToSwitchOn));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(switchedOn); }});
     ASSERT_TRUE(status.requestTransition(DriveTransition::SWITCH_ON));
@@ -894,7 +894,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test SWITCHED_ON -> OPERATION_ENABLED (transition 4: ENABLE_OPERATION)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(switchedOn));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(operationEnabled); }});
     ASSERT_TRUE(status.requestTransition(DriveTransition::ENABLE_OPERATION));
@@ -906,7 +906,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test OPERATION_ENABLED -> SWITCHED_ON (transition 5: SWITCH_ON)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(operationEnabled));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(switchedOn); }});
     ASSERT_TRUE(status.requestTransition(DriveTransition::SWITCH_ON));
@@ -918,7 +918,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test OPERATION_ENABLED -> SWITCHED_ON (transition 5, DISABLE_OPERATION (alias))
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(operationEnabled));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(switchedOn); }});
     ASSERT_TRUE(status.requestTransition(DriveTransition::DISABLE_OPERATION));
@@ -930,7 +930,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test SWITCHED_ON -> READY_TO_SWITCH_ON (transition 6: SHUTDOWN)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(switchedOn));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(readyToSwitchOn); }});
     ASSERT_TRUE(status.requestTransition(DriveTransition::SHUTDOWN));
@@ -942,7 +942,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test READY_TO_SWITCH_ON -> SWITCH_ON_DISABLED (transition 7: DISABLE_VOLTAGE)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(readyToSwitchOn));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(switchOnDisabled); }});
     ASSERT_TRUE(status.requestTransition(DriveTransition::DISABLE_VOLTAGE));
@@ -954,7 +954,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test OPERATION_ENABLED -> READY_TO_SWITCH_ON (transition 8: SHUTDOWN)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(operationEnabled));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(readyToSwitchOn); }});
     ASSERT_TRUE(status.requestTransition(DriveTransition::SHUTDOWN));
@@ -966,7 +966,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test OPERATION_ENABLED -> SWITCH_ON_DISABLED (transition 9: DISABLE_VOLTAGE)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(operationEnabled));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(switchOnDisabled); }});
     ASSERT_TRUE(status.requestTransition(DriveTransition::DISABLE_VOLTAGE));
@@ -978,7 +978,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test SWITCHED_ON -> SWITCH_ON_DISABLED (transition 10: DISABLE_VOLTAGE)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(switchedOn));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(switchOnDisabled); }});
     ASSERT_TRUE(status.requestTransition(DriveTransition::DISABLE_VOLTAGE));
@@ -990,7 +990,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test OPERATION_ENABLED -> QUICK_STOP_ACTIVE (transition 11: QUICK_STOP)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(operationEnabled));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(quickStopActive); }});
     ASSERT_TRUE(status.requestTransition(DriveTransition::QUICK_STOP));
@@ -1002,7 +1002,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test QUICK_STOP_ACTIVE -> OPERATION_ENABLED (transition 16: ENABLE_OPERATION)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(quickStopActive));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(operationEnabled); }});
     ASSERT_TRUE(status.requestTransition(DriveTransition::ENABLE_OPERATION));
@@ -1014,13 +1014,13 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test illegal transition SWITCH_ON_DISABLED -> OPERATION_ENABLED ("ENABLE_OPERATION")
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(switchOnDisabled));
     ASSERT_FALSE(status.requestTransition(DriveTransition::ENABLE_OPERATION));
 
     // test non-null controlword on transition SWITCH_ON_DISABLED -> READY_TO_SWITCH_ON (transition 2: SHUTDOWN)
 
-    status.controlword() = 0xFF00;
+    ASSERT_TRUE(status.setControlBits(0xFF00, false));
     ASSERT_TRUE(status.update(switchOnDisabled));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(readyToSwitchOn); }});
     ASSERT_TRUE(status.requestTransition(DriveTransition::SHUTDOWN));
@@ -1032,7 +1032,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test SWITCH_ON_DISABLED -> READY_TO_SWITCH_ON (state request)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(switchOnDisabled));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(readyToSwitchOn); }});
     ASSERT_TRUE(status.requestState(DriveState::READY_TO_SWITCH_ON));
@@ -1040,7 +1040,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test SWITCH_ON_DISABLED -> SWITCHED_ON (state request)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(switchOnDisabled));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(readyToSwitchOn); }});
     f() = std::async(std::launch::async, observer_timer{MILLIS * 2, [&]{ return status.update(switchedOn); }});
@@ -1049,7 +1049,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test SWITCH_ON_DISABLED -> OPERATION_ENABLED (state request)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(switchOnDisabled));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(readyToSwitchOn); }});
     f() = std::async(std::launch::async, observer_timer{MILLIS * 2, [&]{ return status.update(switchedOn); }});
@@ -1059,7 +1059,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test READY_TO_SWITCH_ON -> SWITCHED_ON (state request)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(readyToSwitchOn));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(switchedOn); }});
     ASSERT_TRUE(status.requestState(DriveState::SWITCHED_ON));
@@ -1067,7 +1067,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test READY_TO_SWITCH_ON -> OPERATION_ENABLED (state request)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(readyToSwitchOn));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(switchedOn); }});
     f() = std::async(std::launch::async, observer_timer{MILLIS * 2, [&]{ return status.update(operationEnabled); }});
@@ -1076,7 +1076,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test SWITCHED_ON -> OPERATION_ENABLED (state request)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(switchedOn));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(operationEnabled); }});
     ASSERT_TRUE(status.requestState(DriveState::OPERATION_ENABLED));
@@ -1084,7 +1084,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test OPERATION_ENABLED -> SWITCHED_ON (state request)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(operationEnabled));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(switchedOn); }});
     ASSERT_TRUE(status.requestState(DriveState::SWITCHED_ON));
@@ -1092,7 +1092,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test OPERATION_ENABLED -> READY_TO_SWITCH_ON (state request)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(operationEnabled));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(readyToSwitchOn); }});
     ASSERT_TRUE(status.requestState(DriveState::READY_TO_SWITCH_ON));
@@ -1100,7 +1100,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test OPERATION_ENABLED -> SWITCH_ON_DISABLED (state request)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(operationEnabled));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(switchOnDisabled); }});
     ASSERT_TRUE(status.requestState(DriveState::SWITCH_ON_DISABLED));
@@ -1108,7 +1108,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test SWITCHED_ON -> READY_TO_SWITCH_ON (state request)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(switchedOn));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(readyToSwitchOn); }});
     ASSERT_TRUE(status.requestState(DriveState::READY_TO_SWITCH_ON));
@@ -1116,7 +1116,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test SWITCHED_ON -> SWITCH_ON_DISABLED (state request)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(switchedOn));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(switchOnDisabled); }});
     ASSERT_TRUE(status.requestState(DriveState::SWITCH_ON_DISABLED));
@@ -1124,7 +1124,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test READY_TO_SWITCH_ON -> SWITCH_ON_DISABLED (state request)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(readyToSwitchOn));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(switchOnDisabled); }});
     ASSERT_TRUE(status.requestState(DriveState::SWITCH_ON_DISABLED));
@@ -1132,7 +1132,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test QUICK_STOP_ACTIVE -> SWITCH_ON_DISABLED (state request)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(quickStopActive));
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(switchOnDisabled); }});
     ASSERT_TRUE(status.requestState(DriveState::SWITCH_ON_DISABLED));
@@ -1140,7 +1140,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     // test FAULT -> SWITCH_ON_DISABLED (state request, unsupported)
 
-    status.controlword() = 0x0000;
+    ASSERT_TRUE(status.setControlBits(0x0000, false));
     ASSERT_TRUE(status.update(fault));
     ASSERT_FALSE(status.requestState(DriveState::SWITCH_ON_DISABLED));
 }

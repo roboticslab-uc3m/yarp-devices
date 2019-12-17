@@ -52,8 +52,10 @@ public:
     { this->rpdo = rpdo; }
 
     bool update(std::uint16_t statusword);
-    word_t & controlword();
-    const word_t & statusword() const;
+    word_t controlword() const;
+    word_t statusword() const;
+    bool setControlBit(std::size_t pos, bool value, bool write = true);
+    bool setControlBits(const word_t & value, bool write = true);
     DriveState getCurrentState() const;
     bool requestTransition(DriveTransition transition, bool wait = true);
     bool requestState(DriveState goalState);
