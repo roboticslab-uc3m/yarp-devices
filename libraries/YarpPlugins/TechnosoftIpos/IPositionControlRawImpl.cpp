@@ -18,10 +18,11 @@ bool TechnosoftIpos::positionMoveRaw(int j, double ref)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    return can->rpdo1()->write<std::uint16_t>(0x000F) // mandatory if we call this right after the [posd->pos] transition
+    // TODO
+    return can->driveStatus()->setControlBits(0x000F) // mandatory if we call this right after the [posd->pos] transition
             && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(ref), 0x607A)
-            && can->rpdo1()->write<std::uint16_t>(0x003F)
-            && can->rpdo1()->write<std::uint16_t>(0x000F); // needed to accept next target
+            && can->driveStatus()->setControlBits(0x003F)
+            && can->driveStatus()->setControlBits(0x000F); // needed to accept next target
 }
 
 // --------------------------------------------------------------------------------
@@ -48,10 +49,11 @@ bool TechnosoftIpos::relativeMoveRaw(int j, double delta)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    return can->rpdo1()->write<std::uint16_t>(0x000F) // mandatory if we call this right after the [posd->pos] transition
+    // TODO
+    return can->driveStatus()->setControlBits(0x000F) // mandatory if we call this right after the [posd->pos] transition
             && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(delta), 0x607A)
-            && can->rpdo1()->write<std::uint16_t>(0x007F)
-            && can->rpdo1()->write<std::uint16_t>(0x000F); // needed to accept next target
+            && can->driveStatus()->setControlBits(0x007F)
+            && can->driveStatus()->setControlBits(0x000F); // needed to accept next target
 }
 
 // --------------------------------------------------------------------------------
