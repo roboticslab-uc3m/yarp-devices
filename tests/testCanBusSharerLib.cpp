@@ -868,6 +868,29 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
     ASSERT_EQ(status.getCurrentState(), DriveState::FAULT);
     ASSERT_EQ(DriveStatusMachine::parseStatusword(fault), DriveState::FAULT);
 
+    // test controlword setters (offline)
+
+    ASSERT_TRUE(status.setControlBit(0, true, false));
+    ASSERT_EQ(status.controlword(), 0x0001);
+    ASSERT_TRUE(status.setControlBit(1, true, false));
+    ASSERT_EQ(status.controlword(), 0x0003);
+    ASSERT_TRUE(status.setControlBits(0x1234, false));
+    ASSERT_EQ(status.controlword(), 0x1234);
+
+    // test controlword setters (online)
+
+    ASSERT_TRUE(status.setControlBit(12, false));
+    ASSERT_EQ(getSender()->getLastMessage().id, rpdo.getCobId());
+    ASSERT_EQ(getSender()->getLastMessage().len, 2);
+    ASSERT_EQ(getSender()->getLastMessage().data, 0x0234);
+    ASSERT_EQ(status.controlword(), 0x0234);
+
+    ASSERT_TRUE(status.setControlBits(0x2234));
+    ASSERT_EQ(getSender()->getLastMessage().id, rpdo.getCobId());
+    ASSERT_EQ(getSender()->getLastMessage().len, 2);
+    ASSERT_EQ(getSender()->getLastMessage().data, 0x2234);
+    ASSERT_EQ(status.controlword(), 0x2234);
+
     // test SWITCH_ON_DISABLED -> READY_TO_SWITCH_ON (transition 2: SHUTDOWN)
 
     ASSERT_TRUE(status.setControlBits(0x0000, false));
