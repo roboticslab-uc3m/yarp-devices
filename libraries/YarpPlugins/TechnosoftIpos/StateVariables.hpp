@@ -48,20 +48,13 @@ private:
  * @ingroup TechnosoftIpos
  * @brief ...
  */
-class StateVariables
+struct StateVariables
 {
-public:
-
     StateVariables();
 
     bool validateInitialState(unsigned int canId);
 
     bool awaitControlMode(yarp::conf::vocab32_t mode);
-
-    template<std::size_t N>
-    void reportBitToggle(const std::bitset<N> & actual, const std::bitset<N> & stored, std::size_t pos,
-        const std::string & msgSet, const std::string & msgReset = "")
-    { if (actual.test(pos) != stored.test(pos)) reportBitToggleInternal(actual.test(pos), msgSet, msgReset); }
 
     double degreesToInternalUnits(double value, int derivativeOrder = 0);
 
@@ -86,6 +79,7 @@ public:
     std::bitset<16> der;
     std::bitset<16> der2;
     std::bitset<16> cer;
+    std::int8_t modesOfOperation;
 
     // read/write, those require atomic access
 
@@ -121,12 +115,6 @@ public:
     double refAcceleration;
 
     int pulsesPerSample;
-
-private:
-
-    void reportBitToggleInternal(bool isSet, const std::string & msgSet, const std::string & msgReset);
-
-    unsigned int canId;
 };
 
 } // namespace roboticslab
