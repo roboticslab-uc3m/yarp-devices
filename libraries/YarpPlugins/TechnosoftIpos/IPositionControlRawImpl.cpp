@@ -18,11 +18,9 @@ bool TechnosoftIpos::positionMoveRaw(int j, double ref)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    // TODO
-    return can->driveStatus()->setControlBits(0x000F) // mandatory if we call this right after the [posd->pos] transition
+    return can->driveStatus()->setControlBits(0x002F) // change set immediately
             && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(ref), 0x607A)
-            && can->driveStatus()->setControlBits(0x003F)
-            && can->driveStatus()->setControlBits(0x000F); // needed to accept next target
+            && can->driveStatus()->setControlBits(0x003F); // new setpoint (assume absolute target position)
 }
 
 // --------------------------------------------------------------------------------
@@ -49,11 +47,9 @@ bool TechnosoftIpos::relativeMoveRaw(int j, double delta)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    // TODO
-    return can->driveStatus()->setControlBits(0x000F) // mandatory if we call this right after the [posd->pos] transition
+    return can->driveStatus()->setControlBits(0x002F) // change set immediately
             && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(delta), 0x607A)
-            && can->driveStatus()->setControlBits(0x007F)
-            && can->driveStatus()->setControlBits(0x000F); // needed to accept next target
+            && can->driveStatus()->setControlBits(0x007F); // new setpoint (assume relative target position)
 }
 
 // --------------------------------------------------------------------------------
