@@ -28,14 +28,14 @@ enum class DriveState
 };
 
 // associated to controlword
-enum class DriveTransition
+enum class DriveTransition : std::uint16_t
 {
-    SHUTDOWN,
-    SWITCH_ON,
-    DISABLE_VOLTAGE,
-    QUICK_STOP,
-    ENABLE_OPERATION,
-    FAULT_RESET,
+    SHUTDOWN = 0x0006, // xxxx.xxxx.0xxx.x110
+    SWITCH_ON = 0x0007, // xxxx.xxxx.0xxx.0111
+    DISABLE_VOLTAGE = 0x0000, // xxxx.xxxx.0xxx.xx0x
+    QUICK_STOP = 0x0002, // xxxx.xxxx.0xxx.x01x
+    ENABLE_OPERATION = 0x000F, // xxxx.xxxx.0xxx.1111
+    FAULT_RESET = 0x0080, // xxxx.xxxx.1xxx.xxxx
     DISABLE_OPERATION = SWITCH_ON
 };
 
@@ -54,8 +54,6 @@ public:
     bool update(std::uint16_t statusword);
     word_t controlword() const;
     word_t statusword() const;
-    bool setControlBit(std::size_t pos, bool value, bool write = true);
-    bool setControlBits(const word_t & value, bool write = true);
     DriveState getCurrentState() const;
     bool requestTransition(DriveTransition transition, bool wait = true);
     bool requestState(DriveState goalState);

@@ -53,7 +53,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
     {
         if (key == "linInterpStart")
         {
-            return can->driveStatus()->setControlBit(4, true); // enable ip mode
+            return can->rpdo1()->write<std::uint16_t>(0x001F); // enable ip mode
         }
         else if (key == "linInterpTarget")
         {
