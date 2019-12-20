@@ -249,9 +249,7 @@ bool TechnosoftIpos::stopRaw(int j)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-
-    return can->driveStatus()->requestTransition(DriveTransition::QUICK_STOP)
-            && can->driveStatus()->requestTransition(DriveTransition::ENABLE_OPERATION);
+    return can->rpdo1()->write<std::uint16_t>(can->driveStatus()->controlword().set(8).to_ulong());
 }
 
 // --------------------------------------------------------------------------------
