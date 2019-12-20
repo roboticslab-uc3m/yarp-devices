@@ -53,6 +53,16 @@ bool TechnosoftIpos::setRefCurrentRaw(int m, double curr)
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
     CHECK_MODE(VOCAB_CM_CURRENT);
+
+    if (can->driveStatus()->controlword()[8])
+    {
+        if (!can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)))
+        {
+            CD_ERROR("Unable to reset halt bit.\n");
+            return false;
+        }
+    }
+
     std::int32_t data = vars.currentToInternalUnits(curr) << 16;
     return can->sdo()->download("External online reference", data, 0x201C);
 }

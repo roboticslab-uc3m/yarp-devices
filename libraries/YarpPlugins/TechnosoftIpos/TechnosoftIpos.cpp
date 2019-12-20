@@ -16,12 +16,12 @@ using namespace roboticslab;
 namespace
 {
     template<std::size_t N>
-    void reportBitToggle(unsigned int canId, const std::bitset<N> & actual, const std::bitset<N> & stored,
+    bool reportBitToggle(unsigned int canId, const std::bitset<N> & actual, const std::bitset<N> & stored,
             std::size_t pos, const std::string & msgSet, const std::string & msgReset = "")
     {
         if (actual.test(pos) == stored.test(pos))
         {
-            return;
+            return false;
         }
 
         if (actual.test(pos))
@@ -39,6 +39,8 @@ namespace
                 CD_INFO("Bit reset: %s (canId: %d)\n", msgSet.c_str(), canId);
             }
         }
+
+        return true;
     }
 }
 
@@ -262,7 +264,15 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
     reportBitToggle(id, bits, stored, 7, "Warning. A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored.", "No warning.");
     reportBitToggle(id, bits, stored, 8, "A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called.", "No TML function or homing is executed. The execution of the last called TML function or homing is completed.");
     reportBitToggle(id, bits, stored, 9, "Remote - drive parameters may be modified via CAN and the drive will execute the command message.", "Remote – drive is in local mode and will not execute the command message.");
-    reportBitToggle(id, bits, stored, 10, "Target reached.");
+
+    if (reportBitToggle(id, bits, stored, 10, "Target reached.") && can->driveStatus()->controlword()[8])
+    {
+        if (!can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)))
+        {
+            CD_WARNING("Unable to reset halt bit in controlword.\n");
+        }
+    }
+
     reportBitToggle(id, bits, stored, 11, "Internal Limit Active.");
 
     switch (vars.actualControlMode.load())

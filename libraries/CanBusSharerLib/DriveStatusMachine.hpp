@@ -53,6 +53,7 @@ public:
 
     bool update(std::uint16_t statusword);
     word_t controlword() const;
+    bool controlword(const word_t & controlbits);
     word_t statusword() const;
     DriveState getCurrentState() const;
     bool requestTransition(DriveTransition transition, bool wait = true);

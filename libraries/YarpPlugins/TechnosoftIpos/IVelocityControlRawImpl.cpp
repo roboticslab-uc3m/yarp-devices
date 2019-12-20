@@ -18,6 +18,12 @@ bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_VELOCITY);
 
+    if (can->driveStatus()->controlword()[8])
+    {
+        CD_WARNING("Currently halting.\n");
+        return false;
+    }
+
     if (std::abs(sp) > vars.maxVel)
     {
         CD_WARNING("Requested speed exceeds maximum velocity (%f).\n", vars.maxVel);
