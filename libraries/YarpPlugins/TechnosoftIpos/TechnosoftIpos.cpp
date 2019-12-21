@@ -264,15 +264,7 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
     reportBitToggle(id, bits, stored, 7, "Warning. A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored.", "No warning.");
     reportBitToggle(id, bits, stored, 8, "A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called.", "No TML function or homing is executed. The execution of the last called TML function or homing is completed.");
     reportBitToggle(id, bits, stored, 9, "Remote - drive parameters may be modified via CAN and the drive will execute the command message.", "Remote – drive is in local mode and will not execute the command message.");
-
-    if (reportBitToggle(id, bits, stored, 10, "Target reached.") && can->driveStatus()->controlword()[8])
-    {
-        if (!can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)))
-        {
-            CD_WARNING("Unable to reset halt bit in controlword.\n");
-        }
-    }
-
+    reportBitToggle(id, bits, stored, 10, "Target reached.");
     reportBitToggle(id, bits, stored, 11, "Internal Limit Active.");
 
     switch (vars.actualControlMode.load())
@@ -477,6 +469,26 @@ void TechnosoftIpos::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, con
         }
         break;
     }
+}
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::quitHaltState(int mode)
+{
+    if (!can->driveStatus()->controlword()[8])
+    {
+        return true;
+    }
+
+    if (mode == VOCAB_CM_POSITION || mode == VOCAB_CM_VELOCITY)
+    {
+        if (!can->driveStatus()->statusword()[10])
+        {
+            return false;
+        }
+    }
+
+    return can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8));
 }
 
 // -----------------------------------------------------------------------------

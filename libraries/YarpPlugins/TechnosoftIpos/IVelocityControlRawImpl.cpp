@@ -18,12 +18,6 @@ bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_VELOCITY);
 
-    if (can->driveStatus()->controlword()[8])
-    {
-        CD_WARNING("Currently halting.\n");
-        return false;
-    }
-
     if (std::abs(sp) > vars.maxVel)
     {
         CD_WARNING("Requested speed exceeds maximum velocity (%f).\n", vars.maxVel);
@@ -37,7 +31,7 @@ bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
     CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
 
     std::int32_t data = (dataInt << 16) + dataFrac;
-    return can->sdo()->download("Target velocity", data, 0x60FF);
+    return quitHaltState(VOCAB_CM_VELOCITY) && can->sdo()->download("Target velocity", data, 0x60FF);
 }
 
 // ----------------------------------------------------------------------------------
