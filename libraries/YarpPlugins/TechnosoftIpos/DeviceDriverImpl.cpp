@@ -116,18 +116,18 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     PdoConfiguration tpdo1Conf;
     tpdo1Conf.addMapping<std::uint32_t>(0x1002).addMapping<std::int8_t>(0x6061);
-    tpdo1Conf.setInhibitTime(tpdo1InhibitTime);
-    tpdo1Conf.setEventTimer(tpdo1EventTimer);
+    //tpdo1Conf.setInhibitTime(tpdo1InhibitTime); // TODO
+    //tpdo1Conf.setEventTimer(tpdo1EventTimer); // TODO
 
     PdoConfiguration tpdo2Conf;
     tpdo2Conf.addMapping<std::uint16_t>(0x2000).addMapping<std::uint16_t>(0x2002);
-    tpdo2Conf.setInhibitTime(tpdo2InhibitTime);
-    tpdo2Conf.setEventTimer(tpdo2EventTimer);
+    //tpdo2Conf.setInhibitTime(tpdo2InhibitTime); // TODO
+    //tpdo2Conf.setEventTimer(tpdo2EventTimer); // TODO
 
     PdoConfiguration tpdo3Conf;
     tpdo3Conf.addMapping<std::int32_t>(0x6063).addMapping<std::int16_t>(0x6077);
-    tpdo3Conf.setInhibitTime(tpdo3InhibitTime);
-    tpdo3Conf.setEventTimer(tpdo3EventTimer);
+    //tpdo3Conf.setInhibitTime(tpdo3InhibitTime); // TODO
+    //tpdo3Conf.setEventTimer(tpdo3EventTimer); // TODO
 
     vars.tpdo1Conf = tpdo1Conf;
     vars.tpdo2Conf = tpdo2Conf;
@@ -149,8 +149,6 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
 bool TechnosoftIpos::close()
 {
-    CD_INFO("\n");
-
     delete linInterpBuffer;
     delete can;
 

@@ -117,10 +117,10 @@ void TechnosoftIpos::interpretMsr(std::uint16_t msr)
     unsigned int id = can->getId();
 
     reportBitToggle(id, bits, stored, 0, "Drive/motor initialization performed.");
-    reportBitToggle(id, bits, stored, 1, "Position trigger 1 reached.");
-    reportBitToggle(id, bits, stored, 2, "Position trigger 2 reached.");
-    reportBitToggle(id, bits, stored, 3, "Position trigger 3 reached.");
-    reportBitToggle(id, bits, stored, 4, "Position trigger 4 reached.");
+    //reportBitToggle(id, bits, stored, 1, "Position trigger 1 reached."); // too verbose in position profile mode
+    //reportBitToggle(id, bits, stored, 2, "Position trigger 2 reached.");
+    //reportBitToggle(id, bits, stored, 3, "Position trigger 3 reached.");
+    //reportBitToggle(id, bits, stored, 4, "Position trigger 4 reached.");
     reportBitToggle(id, bits, stored, 5, "AUTORUN mode enabled.");
     reportBitToggle(id, bits, stored, 6, "Limit switch positive event / interrupt triggered.");
     reportBitToggle(id, bits, stored, 7, "Limit switch negative event / interrupt triggered.");
@@ -272,7 +272,7 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
         reportBitToggle(id, bits, stored, 13, "Following error.", "No following error.");
         break;
     case VOCAB_CM_VELOCITY:
-        reportBitToggle(id, bits, stored, 12, "Speed is equal to 0.", "Speed is not equal to 0.");
+        //reportBitToggle(id, bits, stored, 12, "Speed is equal to 0.", "Speed is not equal to 0."); // too verbose
         reportBitToggle(id, bits, stored, 13, "Maximum slippage reached.", "Maximum slippage not reached.");
         break;
     case VOCAB_CM_POSITION_DIRECT:

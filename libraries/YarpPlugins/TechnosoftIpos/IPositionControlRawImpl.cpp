@@ -72,7 +72,7 @@ bool TechnosoftIpos::relativeMoveRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::checkMotionDoneRaw(int j, bool * flag)
 {
-    CD_DEBUG("(%d)\n", j);
+    //CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
     *flag = can->driveStatus()->getCurrentState() != DriveState::OPERATION_ENABLED || can->driveStatus()->statusword()[10];
     return true;
@@ -82,7 +82,7 @@ bool TechnosoftIpos::checkMotionDoneRaw(int j, bool * flag)
 
 bool TechnosoftIpos::checkMotionDoneRaw(bool * flag)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n");
     return checkMotionDoneRaw(0, flag);
 }
 
@@ -90,7 +90,7 @@ bool TechnosoftIpos::checkMotionDoneRaw(bool * flag)
 
 bool TechnosoftIpos::checkMotionDoneRaw(int n_joint, const int * joints, bool * flag)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n");
     return checkMotionDoneRaw(joints[0], flag);
 }
 
