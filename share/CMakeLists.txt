@@ -7,11 +7,6 @@ if(ENABLE_dumpCanBus)
                  DESTINATION ${ROBOTICSLAB-YARP-DEVICES_CONTEXTS_INSTALL_DIR})
 endif()
 
-if(ENABLE_launchCanBus)
-    yarp_install(DIRECTORY contexts/launchCanBus
-                 DESTINATION ${ROBOTICSLAB-YARP-DEVICES_CONTEXTS_INSTALL_DIR})
-endif()
-
 if(ENABLE_SpaceNavigator)
     yarp_install(DIRECTORY applications/yarpmanager/spaceNavigator
                  DESTINATION ${ROBOTICSLAB-YARP-DEVICES_APPLICATIONS_INSTALL_DIR}/yarpmanager)
