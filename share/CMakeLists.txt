@@ -17,10 +17,6 @@ if(ENABLE_SpaceNavigator)
     list(APPEND applications applications/yarpmanager/spaceNavigator)
 endif()
 
-if(ENABLE_tests)
-    list(APPEND contexts contexts/testCuiAbsolute)
-endif()
-
 yarp_install(FILES applications/yarpmanager/ymanager.ini
              DESTINATION ${ROBOTICSLAB-YARP-DEVICES_APPLICATIONS_INSTALL_DIR}/yarpmanager)
 
