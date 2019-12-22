@@ -5,10 +5,6 @@
 set(applications)
 set(contexts)
 
-if(ENABLE_checkCanBus)
-    list(APPEND contexts contexts/checkCanBus)
-endif()
-
 if(ENABLE_dumpCanBus)
     list(APPEND contexts contexts/dumpCanBus)
 endif()
