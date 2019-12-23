@@ -4,25 +4,25 @@
 
 // ############################## IPositionDirectRaw Related ##############################
 
-bool roboticslab::TextilesHand::setPositionRaw(int j, double ref)
+bool roboticslab::TextilesHand::setPosition(int j, double ref)
 {
     CD_DEBUG("\n");
-    this->positionMoveRaw(0,ref);
+    this->positionMove(0,ref);
     return true;
 }
 
 // ----------------------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::setPositionsRaw(const int n_joint, const int *joints, const double *refs)
+bool roboticslab::TextilesHand::setPositions(const int n_joint, const int *joints, const double *refs)
 {
     CD_DEBUG("\n");
-    this->positionMoveRaw(0,refs[0]);
+    this->positionMove(0,refs[0]);
     return true;
 }
 
 // ----------------------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::setPositionsRaw(const double *refs)
+bool roboticslab::TextilesHand::setPositions(const double *refs)
 {
     CD_DEBUG("\n");
     return true;

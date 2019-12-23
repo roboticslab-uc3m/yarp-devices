@@ -4,19 +4,19 @@
 
 // ############################ IEncodersRaw Related ############################
 
-bool roboticslab::TextilesHand::resetEncoderRaw(int j)
+bool roboticslab::TextilesHand::resetEncoder(int j)
 {
     CD_INFO("(%d)\n",j);
 
     //-- Check index within range
     if ( j != 0 ) return false;
 
-    return this->setEncoderRaw(j,0);
+    return this->setEncoder(j,0);
 }
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::resetEncodersRaw()
+bool roboticslab::TextilesHand::resetEncoders()
 {
     CD_ERROR("\n");
     return false;
@@ -24,7 +24,7 @@ bool roboticslab::TextilesHand::resetEncodersRaw()
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::setEncoderRaw(int j, double val)    // encExposed = val;
+bool roboticslab::TextilesHand::setEncoder(int j, double val)    // encExposed = val;
 {
     CD_INFO("(%d,%f)\n",j,val);
 
@@ -38,7 +38,7 @@ bool roboticslab::TextilesHand::setEncoderRaw(int j, double val)    // encExpose
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::setEncodersRaw(const double *vals)
+bool roboticslab::TextilesHand::setEncoders(const double *vals)
 {
     CD_ERROR("\n");
     return false;
@@ -46,23 +46,18 @@ bool roboticslab::TextilesHand::setEncodersRaw(const double *vals)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::getEncoderRaw(int j, double *v)
+bool roboticslab::TextilesHand::getEncoder(int j, double *v)
 {
     //CD_INFO("%d\n",j);  //-- Too verbose in stream.
 
     //-- Check index within range
     if ( j != 0 ) return false;
-
-    encoderReady.wait();
-    *v = encoder;
-    encoderReady.post();
-
     return true;
 }
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::getEncodersRaw(double *encs)
+bool roboticslab::TextilesHand::getEncoders(double *encs)
 {
     CD_ERROR("\n");
     return false;
@@ -70,7 +65,7 @@ bool roboticslab::TextilesHand::getEncodersRaw(double *encs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::getEncoderSpeedRaw(int j, double *sp)
+bool roboticslab::TextilesHand::getEncoderSpeed(int j, double *sp)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
@@ -85,7 +80,7 @@ bool roboticslab::TextilesHand::getEncoderSpeedRaw(int j, double *sp)
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::getEncoderSpeedsRaw(double *spds)
+bool roboticslab::TextilesHand::getEncoderSpeeds(double *spds)
 {
     CD_ERROR("\n");
     return false;
@@ -93,7 +88,7 @@ bool roboticslab::TextilesHand::getEncoderSpeedsRaw(double *spds)
 
 // ------------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::getEncoderAccelerationRaw(int j, double *spds)
+bool roboticslab::TextilesHand::getEncoderAcceleration(int j, double *spds)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
@@ -108,7 +103,7 @@ bool roboticslab::TextilesHand::getEncoderAccelerationRaw(int j, double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::getEncoderAccelerationsRaw(double *accs)
+bool roboticslab::TextilesHand::getEncoderAccelerations(double *accs)
 {
     CD_ERROR("\n");
     return false;
@@ -116,7 +111,7 @@ bool roboticslab::TextilesHand::getEncoderAccelerationsRaw(double *accs)
 
 // ------------------ IEncodersTimedRaw Related -----------------------------------------
 
-bool roboticslab::TextilesHand::getEncodersTimedRaw(double *encs, double *time)
+bool roboticslab::TextilesHand::getEncodersTimed(double *encs, double *time)
 {
     CD_ERROR("\n");
     return false;
@@ -124,17 +119,12 @@ bool roboticslab::TextilesHand::getEncodersTimedRaw(double *encs, double *time)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::getEncoderTimedRaw(int j, double *encs, double *time)
+bool roboticslab::TextilesHand::getEncoderTimed(int j, double *encs, double *time)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
 
     //-- Check index within range
     if ( j != 0 ) return false;
-
-    encoderReady.wait();
-    *encs = encoder;
-    *time = encoderTimestamp;
-    encoderReady.post();
 
     return true;
 }

@@ -7,7 +7,8 @@ yarp_prepare_plugin(TextilesHand
                     TYPE roboticslab::TextilesHand
                     INCLUDE TextilesHand.hpp
                     DEFAULT ON
-                    DEPENDS "UNIX;ENABLE_CanBusSharerLib")
+                    DEPENDS "UNIX;ENABLE_CanBusSharerLib"
+                    EXTRA_CONFIG WRAPPER=controlboardwrapper2)
 
 if(NOT SKIP_TextilesHand)
 
@@ -16,10 +17,10 @@ if(NOT SKIP_TextilesHand)
     yarp_add_plugin(TextilesHand TextilesHand.cpp
                                  TextilesHand.hpp
                                  DeviceDriverImpl.cpp
-                                 IControlModeRawImpl.cpp
-                                 IEncodersRawImpl.cpp
-                                 IPositionControlRawImpl.cpp
-                                 IPositionDirectRawImpl.cpp)
+                                 IControlModeImpl.cpp
+                                 IEncodersImpl.cpp
+                                 IPositionControlImpl.cpp
+                                 IPositionDirectImpl.cpp)
 
     target_link_libraries(TextilesHand YARP::YARP_OS
                                        YARP::YARP_dev

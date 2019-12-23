@@ -6,7 +6,7 @@
 
 // ############################## IControlModeRaw Related ##############################
 
-bool roboticslab::TextilesHand::getControlModeRaw(int j, int *mode)
+bool roboticslab::TextilesHand::getControlMode(int j, int *mode)
 {
     //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
 
@@ -20,7 +20,7 @@ bool roboticslab::TextilesHand::getControlModeRaw(int j, int *mode)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::getControlModesRaw(int *modes)
+bool roboticslab::TextilesHand::getControlModes(int *modes)
 {
     CD_ERROR("Missing implementation\n");
     return false;
@@ -28,19 +28,19 @@ bool roboticslab::TextilesHand::getControlModesRaw(int *modes)
 
 // ############################## IControlMode2Raw Related ##############################
 
-bool roboticslab::TextilesHand::getControlModesRaw(const int n_joint, const int *joints, int *modes)
+bool roboticslab::TextilesHand::getControlModes(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("\n");
 
     //-- Check array size
     if ( n_joint != 1 ) return false;
 
-    return getControlModeRaw(0, &modes[0]);
+    return getControlMode(0, &modes[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::setControlModeRaw(const int j, const int mode)
+bool roboticslab::TextilesHand::setControlMode(const int j, const int mode)
 {
     CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
 
@@ -52,20 +52,20 @@ bool roboticslab::TextilesHand::setControlModeRaw(const int j, const int mode)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::setControlModesRaw(const int n_joint, const int *joints, int *modes)
+bool roboticslab::TextilesHand::setControlModes(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("(%d)\n",n_joint);
 
     //-- Check array size
     if ( n_joint != 1 ) return false;
 
-    return setControlModeRaw(0, modes[0]);
+    return setControlMode(0, modes[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::setControlModesRaw(int *modes)
+bool roboticslab::TextilesHand::setControlModes(int *modes)
 {
     CD_DEBUG("\n");
-    return setControlModeRaw(0, modes[0]);
+    return setControlMode(0, modes[0]);
 }
