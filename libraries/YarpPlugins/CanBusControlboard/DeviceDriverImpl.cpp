@@ -162,7 +162,8 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         }
     }
 
-    if (config.check("threaded", yarp::os::Value(false), "use threads to map joint calls").asBool())
+    // FIXME: temporarily disabled
+    if (false /*config.check("threaded", yarp::os::Value(false), "use threads to map joint calls").asBool()*/)
     {
         // twice as many controlled axes to account for CBW's periodic thread and user RPC requests
         deviceMapper.enableParallelization(deviceMapper.getControlledAxes() * 2);
