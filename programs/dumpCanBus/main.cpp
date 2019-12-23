@@ -53,14 +53,16 @@ int main(int argc, char *argv[])
     rf.setDefaultConfigFile("dumpCanBus.ini");
     rf.configure(argc, argv);
 
-    CD_INFO("Checking for yarp network...\n");
     yarp::os::Network yarp;
+    CD_INFO_NO_HEADER("Checking for yarp network... ");
+
     if (!yarp.checkNetwork())
     {
-        CD_ERROR("Found no yarp network (try running \"yarpserver &\"), bye!\n");
+        CD_ERROR("[fail]\n");
         return 1;
     }
-    CD_SUCCESS("Found yarp network.\n");
+
+    CD_SUCCESS_NO_HEADER("[ok]\n");
 
     roboticslab::DumpCanBus mod;
     return mod.runModule(rf);

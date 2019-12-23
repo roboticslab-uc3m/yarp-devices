@@ -2,44 +2,41 @@
 
 #include "DumpCanBus.hpp"
 
+#include <limits>
+
+#include <yarp/os/Time.h>
+
 #include <ColorDebug.h>
+
+#include "CanUtils.hpp"
+
+using namespace roboticslab;
 
 // ------------------ Thread Related -----------------------------------------
 
-void roboticslab::DumpCanBus::run()
+void DumpCanBus::run()
 {
     CD_INFO("Started DumpCanBus reading thread run.\n");
 
-    while ( ! this->RFModule::isStopping() )
+    while (!yarp::os::RFModule::isStopping())
     {
+        //-- Lend CPU time to write threads.
+        // https://github.com/roboticslab-uc3m/yarp-devices/issues/191
+        yarp::os::Time::delay(std::numeric_limits<double>::min());
+
         unsigned int read;
 
-        //-- Blocks with timeout until one message arrives, returns false on errors.
-        bool ok = iCanBus->canRead(canInputBuffer, 1, &read, true);
+        //-- Return immediately if there is nothing to be read (non-blocking call), return false on errors.
+        bool ok = iCanBus->canRead(canInputBuffer, 1, &read);
 
         //-- All debugging messages should be contained in canRead, so just loop again.
-        if( !ok || read == 0 ) continue;
+        if (!ok || read == 0) continue;
 
-        yarp::dev::CanMessage &msg = canInputBuffer[0];
-        int canId = msg.getId() & 0x7F;
-
-        //-- Commenting next line as way too verbose, happens all the time.
-        //CD_DEBUG("Read ok. %s\n", msgToStr(&buffer).c_str());
-
-        //-- Intercept 700h 0 msg that just indicates presence.
-        if( (msg.getId()-canId) == 0x700 )
-        {
-            CD_SUCCESS("Device indicating presence. %s\n",msgToStr(&msg).c_str());
-            continue;
-        }
-
-        CD_SUCCESS("Read CAN message: %s\n", msgToStr(&msg).c_str());
-
-    }  //-- ends: while ( ! this->isStopping() ).
+        const yarp::dev::CanMessage & msg = canInputBuffer[0];
+        CD_INFO("Read CAN message: %s\n", CanUtils::msgToStr(msg.getId(), msg.getLen(), msg.getData()).c_str());
+    }
 
     CD_INFO("Stopping DumpCanBus reading thread run.\n");
-
-    return;
 }
 
 // -----------------------------------------------------------------------------
