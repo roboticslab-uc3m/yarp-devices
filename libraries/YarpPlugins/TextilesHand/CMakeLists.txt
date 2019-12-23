@@ -16,17 +16,10 @@ if(NOT SKIP_TextilesHand)
     yarp_add_plugin(TextilesHand TextilesHand.cpp
                                  TextilesHand.hpp
                                  DeviceDriverImpl.cpp
-                                 ICanBusSharerImpl.cpp
-                                 IControlLimitsRawImpl.cpp
                                  IControlModeRawImpl.cpp
                                  IEncodersRawImpl.cpp
-                                 IEncodersTimedRawImpl.cpp
-                                 IInteractionModeRawImpl.cpp
                                  IPositionControlRawImpl.cpp
-                                 IPositionDirectRawImpl.cpp
-                                 IRemoteVariablesRawImpl.cpp
-                                 ITorqueControlRawImpl.cpp
-                                 IVelocityControlRawImpl.cpp)
+                                 IPositionDirectRawImpl.cpp)
 
     target_link_libraries(TextilesHand YARP::YARP_OS
                                        YARP::YARP_dev
