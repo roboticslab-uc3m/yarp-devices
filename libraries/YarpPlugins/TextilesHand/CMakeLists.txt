@@ -18,8 +18,6 @@ if(NOT SKIP_TextilesHand)
                                  TextilesHand.hpp
                                  DeviceDriverImpl.cpp
                                  IControlModeImpl.cpp
-                                 IEncodersImpl.cpp
-                                 IPositionControlImpl.cpp
                                  IPositionDirectImpl.cpp)
 
     target_link_libraries(TextilesHand YARP::YARP_OS
