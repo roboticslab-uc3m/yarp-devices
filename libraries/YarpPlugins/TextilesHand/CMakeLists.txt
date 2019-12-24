@@ -7,23 +7,20 @@ yarp_prepare_plugin(TextilesHand
                     TYPE roboticslab::TextilesHand
                     INCLUDE TextilesHand.hpp
                     DEFAULT ON
-                    DEPENDS "UNIX;ENABLE_CanBusSharerLib"
                     EXTRA_CONFIG WRAPPER=controlboardwrapper2)
 
 if(NOT SKIP_TextilesHand)
 
     set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
 
-    yarp_add_plugin(TextilesHand TextilesHand.cpp
-                                 TextilesHand.hpp
+    yarp_add_plugin(TextilesHand TextilesHand.hpp
                                  DeviceDriverImpl.cpp
                                  IControlModeImpl.cpp
                                  IPositionDirectImpl.cpp)
 
     target_link_libraries(TextilesHand YARP::YARP_OS
                                        YARP::YARP_dev
-                                       ROBOTICSLAB::ColorDebug
-                                       CanBusSharerLib)
+                                       ROBOTICSLAB::ColorDebug)
 
     yarp_install(TARGETS TextilesHand
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}

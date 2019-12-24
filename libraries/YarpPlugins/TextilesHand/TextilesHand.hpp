@@ -3,6 +3,7 @@
 #ifndef __TEXTILES_HAND_HPP__
 #define __TEXTILES_HAND_HPP__
 
+#include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IEncodersTimed.h>
@@ -10,25 +11,21 @@
 #include <yarp/dev/IPositionDirect.h>
 #include <yarp/dev/IVelocityControl.h>
 
-#include <sstream>
+#include <yarp/conf/version.h>
+#if YARP_VERSION_MINOR >= 3
+# include <yarp/dev/ISerialDevice.h>
+#else
+# include <yarp/dev/SerialInterfaces.h>
+#endif
 
-#include <errno.h>    /* Error number definitions */
-#include <fcntl.h>    /* File control definitions */
-#include <stdio.h>
-#include <stdint.h>   /* Standard types */
-#include <stdlib.h>
-#include <string.h>   /* String function definitions */
-#include <unistd.h>   /* UNIX standard function definitions */
-#include <termios.h>  /* POSIX terminal control definitions */
-#include <sys/ioctl.h>
-#include <getopt.h>
+#define DEFAULT_PORT "/dev/ttyUSB0"
 
 namespace roboticslab
 {
 
 /**
  * @ingroup YarpPlugins
- * \defgroup TextilesHand
+ * @defgroup TextilesHand
  * @brief Contains roboticslab::TextilesHand.
  */
 
@@ -46,7 +43,8 @@ class TextilesHand : public yarp::dev::DeviceDriver,
 public:
 
     TextilesHand()
-        : lastTarget(0.0)
+        : lastTarget(0.0),
+          iSerialDevice(nullptr)
     { }
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -144,18 +142,10 @@ public:
 
 private:
 
-    //  --------- Implementation in TextilesHand.cpp ---------
-    // takes the string name of the serial port (e.g. "/dev/tty.usbserial","COM1")
-    // and a baud rate (bps) and connects to that port at that speed and 8N1.
-    // opens the port in fully raw mode so you can send binary data.
-    // returns valid fd, or -1 on error
-    int serialport_init(const char * serialport, int baud);
-    int serialport_writebyte(int fd, uint8_t b);
-    int serialport_write(int fd, const char * str);
-    int serialport_read_until(int fd, char * buf, char until);
-
-    int fd;
     double lastTarget;
+
+    yarp::dev::PolyDriver serialDevice;
+    yarp::dev::ISerialDevice * iSerialDevice;
 };
 
 } // namespace roboticslab

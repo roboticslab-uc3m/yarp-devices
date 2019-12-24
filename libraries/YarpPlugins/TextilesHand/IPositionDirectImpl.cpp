@@ -22,22 +22,22 @@ bool TextilesHand::setPosition(int j, double ref)
 
     if (j != 0) return false;
 
-    unsigned char cmdByte;
+    char cmdByte[1];
 
     if (ref == 0.0)
     {
-        cmdByte = 'a';
+        cmdByte[0] = 'a';
     }
     else if (ref == 1.0)
     {
-        cmdByte = 'b';
+        cmdByte[0] = 'b';
     }
     else
     {
         return false;
     }
 
-    if (serialport_writebyte(fd, cmdByte) == -1)
+    if (!iSerialDevice->send(cmdByte, 1))
     {
         return false;
     }

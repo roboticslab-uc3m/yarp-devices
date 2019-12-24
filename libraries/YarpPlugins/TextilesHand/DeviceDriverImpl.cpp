@@ -2,6 +2,8 @@
 
 #include "TextilesHand.hpp"
 
+#include <yarp/os/Property.h>
+
 #include <ColorDebug.h>
 
 using namespace roboticslab;
@@ -12,20 +14,33 @@ bool TextilesHand::open(yarp::os::Searchable & config)
 {
     CD_DEBUG("%s\n", config.toString().c_str());
 
-    char serialport[13] = "/dev/ttyUSB0";
-    int baudrate = B9600; // default
-    char buf[256];
-    int rc,n;
+    std::string port = config.check("port", yarp::os::Value(DEFAULT_PORT), "serial port").asString();
 
-    fd = serialport_init(serialport, baudrate);
+    // check firmware/TextilesHand/pwmServer/pwmServer.ino
+    // ...and https://www.arduino.cc/reference/en/language/functions/communication/serial/begin/
+    // ...with: "The default is 8 data bits, no parity, one stop bit."
 
-    if (!fd)
+    yarp::os::Property serialOptions({
+        {"device", yarp::os::Value("serialport")},
+        {"comport", yarp::os::Value(port)},
+        {"baudrate", yarp::os::Value(9600)},
+        {"databits", yarp::os::Value(8)},
+        {"paritymode", yarp::os::Value("NONE")},
+        {"stopbits", yarp::os::Value(1)}
+    });
+
+    if (!serialDevice.open(serialOptions))
     {
-        CD_ERROR("NULL fd, bye!\n");
+        CD_ERROR("Unable to open serial device.\n");
         return false;
     }
 
-    CD_SUCCESS("open(), fd: %d\n", fd);
+    if (!serialDevice.view(iSerialDevice))
+    {
+        CD_ERROR("Unable to view iSerialDevice.\n");
+        return false;
+    }
+
     return true;
 }
 
@@ -33,7 +48,7 @@ bool TextilesHand::open(yarp::os::Searchable & config)
 
 bool TextilesHand::close()
 {
-    return true;
+    return serialDevice.close();
 }
 
 // -----------------------------------------------------------------------------
