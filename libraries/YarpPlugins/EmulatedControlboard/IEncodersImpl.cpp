@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "FakeControlboard.hpp"
+#include "EmulatedControlboard.hpp"
 
 // ------------------ IEncoders Related -----------------------------------------
 
-bool roboticslab::FakeControlboard::resetEncoder(int j)
+bool roboticslab::EmulatedControlboard::resetEncoder(int j)
 {
     if ((unsigned int)j > axes)
     {
@@ -16,7 +16,7 @@ bool roboticslab::FakeControlboard::resetEncoder(int j)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::resetEncoders()
+bool roboticslab::EmulatedControlboard::resetEncoders()
 {
     bool ok = true;
 
@@ -30,7 +30,7 @@ bool roboticslab::FakeControlboard::resetEncoders()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setEncoder(int j, double val)  // encExposed = val;
+bool roboticslab::EmulatedControlboard::setEncoder(int j, double val)  // encExposed = val;
 {
     setEncRaw(j, val * encRawExposed[j]);
     return true;
@@ -38,7 +38,7 @@ bool roboticslab::FakeControlboard::setEncoder(int j, double val)  // encExposed
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setEncoders(const double *vals)
+bool roboticslab::EmulatedControlboard::setEncoders(const double *vals)
 {
     std::vector<double> v(axes);
 
@@ -53,7 +53,7 @@ bool roboticslab::FakeControlboard::setEncoders(const double *vals)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getEncoder(int j, double *v)
+bool roboticslab::EmulatedControlboard::getEncoder(int j, double *v)
 {
     *v = getEncExposed(j);
     return true;
@@ -61,7 +61,7 @@ bool roboticslab::FakeControlboard::getEncoder(int j, double *v)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getEncoders(double *encs)
+bool roboticslab::EmulatedControlboard::getEncoders(double *encs)
 {
     std::vector<double> v = getEncsExposed();
 
@@ -75,7 +75,7 @@ bool roboticslab::FakeControlboard::getEncoders(double *encs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getEncoderSpeed(int j, double *sp)
+bool roboticslab::EmulatedControlboard::getEncoderSpeed(int j, double *sp)
 {
     // Make it easy, give the current reference speed.
     *sp = velRaw[j] / velRawExposed[j];  // begins to look like we should use semaphores.
@@ -84,7 +84,7 @@ bool roboticslab::FakeControlboard::getEncoderSpeed(int j, double *sp)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getEncoderSpeeds(double *spds)
+bool roboticslab::EmulatedControlboard::getEncoderSpeeds(double *spds)
 {
     bool ok = true;
 
@@ -98,14 +98,14 @@ bool roboticslab::FakeControlboard::getEncoderSpeeds(double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getEncoderAcceleration(int j, double *spds)
+bool roboticslab::EmulatedControlboard::getEncoderAcceleration(int j, double *spds)
 {
     return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getEncoderAccelerations(double *accs)
+bool roboticslab::EmulatedControlboard::getEncoderAccelerations(double *accs)
 {
     return false;
 }

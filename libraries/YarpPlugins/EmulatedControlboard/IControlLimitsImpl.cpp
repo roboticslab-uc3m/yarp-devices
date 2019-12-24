@@ -1,12 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "FakeControlboard.hpp"
+#include "EmulatedControlboard.hpp"
 
 #include <ColorDebug.h>
 
 // ------------------- IControlLimits Related ------------------------------------
 
-bool roboticslab::FakeControlboard::setLimits(int axis, double min, double max)
+bool roboticslab::EmulatedControlboard::setLimits(int axis, double min, double max)
 {
     if (axis >= int(axes))
     {
@@ -23,7 +23,7 @@ bool roboticslab::FakeControlboard::setLimits(int axis, double min, double max)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getLimits(int axis, double *min, double *max)
+bool roboticslab::EmulatedControlboard::getLimits(int axis, double *min, double *max)
 {
     if (axis >= int(axes))
     {
@@ -40,7 +40,7 @@ bool roboticslab::FakeControlboard::getLimits(int axis, double *min, double *max
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setVelLimits(int axis, double min, double max)
+bool roboticslab::EmulatedControlboard::setVelLimits(int axis, double min, double max)
 {
     CD_WARNING("Not implemented.\n");
     return true;
@@ -48,7 +48,7 @@ bool roboticslab::FakeControlboard::setVelLimits(int axis, double min, double ma
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getVelLimits(int axis, double *min, double *max)
+bool roboticslab::EmulatedControlboard::getVelLimits(int axis, double *min, double *max)
 {
     if (axis >= int(axes))
     {

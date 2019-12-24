@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "FakeControlboard.hpp"
+#include "EmulatedControlboard.hpp"
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
@@ -9,7 +9,7 @@
 
 // ------------------- DeviceDriver Related ------------------------------------
 
-bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
+bool roboticslab::EmulatedControlboard::open(yarp::os::Searchable& config)
 {
     CD_DEBUG("config: %s\n", config.toString().c_str());
 
@@ -44,7 +44,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
     if (config.check("initPoss", "list of initialization positions (meters or degrees)"))
     {
         initPoss = config.find("initPoss").asList();
-        CD_INFO("FakeControlboard using individual initPoss: %s\n", initPoss->toString().c_str());
+        CD_INFO("EmulatedControlboard using individual initPoss: %s\n", initPoss->toString().c_str());
 
         if ((unsigned)initPoss->size() != axes)
         {
@@ -54,7 +54,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
     else
     {
         initPoss = 0;
-        CD_INFO("FakeControlboard not using individual initPoss, defaulting to genInitPos.\n");
+        CD_INFO("EmulatedControlboard not using individual initPoss, defaulting to genInitPos.\n");
     }
 
     yarp::os::Bottle* jointTols;
@@ -62,7 +62,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
     if (config.check("jointTols", "list of joint tolerances (meters or degrees)"))
     {
         jointTols = config.find("jointTols").asList();
-        CD_INFO("FakeControlboard using individual jointTols: %s\n", jointTols->toString().c_str());
+        CD_INFO("EmulatedControlboard using individual jointTols: %s\n", jointTols->toString().c_str());
 
         if ((unsigned)jointTols->size() != axes)
         {
@@ -72,7 +72,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
     else
     {
         jointTols = 0;
-        CD_INFO("FakeControlboard not using individual jointTols, defaulting to genJointTol.\n");
+        CD_INFO("EmulatedControlboard not using individual jointTols, defaulting to genJointTol.\n");
     }
 
     yarp::os::Bottle* maxLimits;
@@ -80,7 +80,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
     if (config.check("maxLimits", "list of max limits (meters or degrees)"))
     {
         maxLimits = config.find("maxLimits").asList();
-        CD_INFO("FakeControlboard using individual maxLimits: %s\n", maxLimits->toString().c_str());
+        CD_INFO("EmulatedControlboard using individual maxLimits: %s\n", maxLimits->toString().c_str());
 
         if ((unsigned)maxLimits->size() != axes)
         {
@@ -90,7 +90,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
     else
     {
         maxLimits = 0;
-        CD_INFO("FakeControlboard not using individual maxLimits, defaulting to genMaxLimit.\n");
+        CD_INFO("EmulatedControlboard not using individual maxLimits, defaulting to genMaxLimit.\n");
     }
 
     yarp::os::Bottle* minLimits;
@@ -98,7 +98,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
     if (config.check("minLimits", "list of min limits (meters or degrees)"))
     {
         minLimits = config.find("minLimits").asList();
-        CD_INFO("FakeControlboard using individual minLimits: %s\n", minLimits->toString().c_str());
+        CD_INFO("EmulatedControlboard using individual minLimits: %s\n", minLimits->toString().c_str());
         
         if ((unsigned)minLimits->size() != axes)
         {
@@ -108,7 +108,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
     else
     {
         minLimits = 0;
-        CD_INFO("FakeControlboard not using individual minLimits, defaulting to genMinLimit.\n");
+        CD_INFO("EmulatedControlboard not using individual minLimits, defaulting to genMinLimit.\n");
     }
 
     yarp::os::Bottle* refSpeeds;
@@ -116,7 +116,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
     if (config.check("refSpeeds", "list of ref speeds (meters/second or degrees/second)"))
     {
         refSpeeds = config.find("refSpeeds").asList();
-        CD_INFO("FakeControlboard using individual refSpeeds: %s\n", refSpeeds->toString().c_str());
+        CD_INFO("EmulatedControlboard using individual refSpeeds: %s\n", refSpeeds->toString().c_str());
     
         if ((unsigned)refSpeeds->size() != axes)
         {
@@ -126,7 +126,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
     else
     {
         refSpeeds = 0;
-        CD_INFO("FakeControlboard not using individual refSpeeds, defaulting to genRefSpeed.\n");
+        CD_INFO("EmulatedControlboard not using individual refSpeeds, defaulting to genRefSpeed.\n");
     }
 
     yarp::os::Bottle* encRawExposeds;
@@ -134,7 +134,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
     if (config.check("encRawExposeds", "list of EncRawExposeds (meters or degrees)"))
     {
         encRawExposeds = config.find("encRawExposeds").asList();
-        CD_INFO("FakeControlboard using individual encRawExposeds: %s\n", encRawExposeds->toString().c_str());
+        CD_INFO("EmulatedControlboard using individual encRawExposeds: %s\n", encRawExposeds->toString().c_str());
      
         if ((unsigned)encRawExposeds->size() != axes)
         {
@@ -144,7 +144,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
     else
     {
         encRawExposeds = 0;
-        CD_INFO("FakeControlboard not using individual encRawExposeds, defaulting to genEncRawExposed.\n");
+        CD_INFO("EmulatedControlboard not using individual encRawExposeds, defaulting to genEncRawExposed.\n");
     }
 
     yarp::os::Bottle* velRawExposeds;
@@ -152,7 +152,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
     if (config.check("velRawExposeds", "list of VelRawExposed (meters/second or degrees/second)"))
     {
         velRawExposeds = config.find("velRawExposeds").asList();
-        CD_INFO("FakeControlboard using individual velRawExposeds: %s\n", velRawExposeds->toString().c_str());
+        CD_INFO("EmulatedControlboard using individual velRawExposeds: %s\n", velRawExposeds->toString().c_str());
 
         if ((unsigned)velRawExposeds->size() != axes)
         {
@@ -162,7 +162,7 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
     else
     {
         velRawExposeds = 0;
-        CD_INFO("FakeControlboard not using individual velRawExposeds, defaulting to genVelRawExposed.\n");
+        CD_INFO("EmulatedControlboard not using individual velRawExposeds, defaulting to genVelRawExposed.\n");
     }
 
     encRawExposed.resize(axes);
@@ -208,10 +208,10 @@ bool roboticslab::FakeControlboard::open(yarp::os::Searchable& config)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::close()
+bool roboticslab::EmulatedControlboard::close()
 {
     PeriodicThread::stop();
-    CD_INFO("[FakeControlboard] close()\n");
+    CD_INFO("[EmulatedControlboard] close()\n");
     return true;
 }
 

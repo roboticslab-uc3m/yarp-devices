@@ -1,12 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "FakeControlboard.hpp"
+#include "EmulatedControlboard.hpp"
 
 #include <ColorDebug.h>
 
 // ---------------------------- IRemoteVariables Related ----------------------------------
 
-bool roboticslab::FakeControlboard::getRemoteVariable(std::string key, yarp::os::Bottle& val)
+bool roboticslab::EmulatedControlboard::getRemoteVariable(std::string key, yarp::os::Bottle& val)
 {
     CD_DEBUG("%s\n", key.c_str());
     return false;
@@ -14,7 +14,7 @@ bool roboticslab::FakeControlboard::getRemoteVariable(std::string key, yarp::os:
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setRemoteVariable(std::string key, const yarp::os::Bottle& val)
+bool roboticslab::EmulatedControlboard::setRemoteVariable(std::string key, const yarp::os::Bottle& val)
 {
     CD_DEBUG("%s\n", key.c_str());
     return false;
@@ -22,7 +22,7 @@ bool roboticslab::FakeControlboard::setRemoteVariable(std::string key, const yar
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)
+bool roboticslab::EmulatedControlboard::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)
 {
     CD_DEBUG("\n");
     listOfKeys->clear();

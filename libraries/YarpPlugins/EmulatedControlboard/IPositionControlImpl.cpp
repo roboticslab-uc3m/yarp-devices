@@ -1,13 +1,13 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "FakeControlboard.hpp"
+#include "EmulatedControlboard.hpp"
 
 #include <cmath>
 #include <ColorDebug.h>
 
 // ------------------- IPositionControl Related --------------------------------
 
-bool roboticslab::FakeControlboard::getAxes(int *ax)
+bool roboticslab::EmulatedControlboard::getAxes(int *ax)
 {
     *ax = axes;
     CD_INFO("Reporting %d axes are present\n", *ax);
@@ -16,7 +16,7 @@ bool roboticslab::FakeControlboard::getAxes(int *ax)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::positionMove(int j, double ref)  // encExposed = ref;
+bool roboticslab::EmulatedControlboard::positionMove(int j, double ref)  // encExposed = ref;
 {
     if ((unsigned int)j > axes)
     {
@@ -62,7 +62,7 @@ bool roboticslab::FakeControlboard::positionMove(int j, double ref)  // encExpos
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::positionMove(const double *refs)  // encExposed = refs;
+bool roboticslab::EmulatedControlboard::positionMove(const double *refs)  // encExposed = refs;
 {
     // Check if we are in position mode.
     if (controlMode != POSITION_MODE)
@@ -118,7 +118,7 @@ bool roboticslab::FakeControlboard::positionMove(const double *refs)  // encExpo
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::relativeMove(int j, double delta)
+bool roboticslab::EmulatedControlboard::relativeMove(int j, double delta)
 {
     if ((unsigned int)j > axes)
     {
@@ -128,7 +128,7 @@ bool roboticslab::FakeControlboard::relativeMove(int j, double delta)
     // Check if we are in position mode.
     if (controlMode != POSITION_MODE)
     {
-        CD_ERROR("FakeControlboard will not relativeMove as not in positionMode\n");
+        CD_ERROR("EmulatedControlboard will not relativeMove as not in positionMode\n");
         return false;
     }
 
@@ -163,7 +163,7 @@ bool roboticslab::FakeControlboard::relativeMove(int j, double delta)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::relativeMove(const double *deltas)  // encExposed = deltas + encExposed
+bool roboticslab::EmulatedControlboard::relativeMove(const double *deltas)  // encExposed = deltas + encExposed
 {
     // Check if we are in position mode.
     if (controlMode != POSITION_MODE)
@@ -204,7 +204,7 @@ bool roboticslab::FakeControlboard::relativeMove(const double *deltas)  // encEx
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::checkMotionDone(int j, bool *flag)
+bool roboticslab::EmulatedControlboard::checkMotionDone(int j, bool *flag)
 {
     if ((unsigned int)j > axes)
     {
@@ -224,7 +224,7 @@ bool roboticslab::FakeControlboard::checkMotionDone(int j, bool *flag)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::checkMotionDone(bool *flag)
+bool roboticslab::EmulatedControlboard::checkMotionDone(bool *flag)
 {
     bool done = true;
 
@@ -242,7 +242,7 @@ bool roboticslab::FakeControlboard::checkMotionDone(bool *flag)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setRefSpeed(int j, double sp)
+bool roboticslab::EmulatedControlboard::setRefSpeed(int j, double sp)
 {
     if ((unsigned int)j > axes)
     {
@@ -255,7 +255,7 @@ bool roboticslab::FakeControlboard::setRefSpeed(int j, double sp)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setRefSpeeds(const double *spds)
+bool roboticslab::EmulatedControlboard::setRefSpeeds(const double *spds)
 {
     bool ok = true;
 
@@ -269,7 +269,7 @@ bool roboticslab::FakeControlboard::setRefSpeeds(const double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setRefAcceleration(int j, double acc)
+bool roboticslab::EmulatedControlboard::setRefAcceleration(int j, double acc)
 {
     if ((unsigned int)j > axes)
     {
@@ -282,7 +282,7 @@ bool roboticslab::FakeControlboard::setRefAcceleration(int j, double acc)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setRefAccelerations(const double *accs)
+bool roboticslab::EmulatedControlboard::setRefAccelerations(const double *accs)
 {
     bool ok = true;
 
@@ -296,7 +296,7 @@ bool roboticslab::FakeControlboard::setRefAccelerations(const double *accs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getRefSpeed(int j, double *ref)
+bool roboticslab::EmulatedControlboard::getRefSpeed(int j, double *ref)
 {
     if ((unsigned int)j > axes)
     {
@@ -309,7 +309,7 @@ bool roboticslab::FakeControlboard::getRefSpeed(int j, double *ref)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getRefSpeeds(double *spds)
+bool roboticslab::EmulatedControlboard::getRefSpeeds(double *spds)
 {
     bool ok = true;
 
@@ -323,7 +323,7 @@ bool roboticslab::FakeControlboard::getRefSpeeds(double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getRefAcceleration(int j, double *acc)
+bool roboticslab::EmulatedControlboard::getRefAcceleration(int j, double *acc)
 {
     if ((unsigned int)j > axes)
     {
@@ -336,7 +336,7 @@ bool roboticslab::FakeControlboard::getRefAcceleration(int j, double *acc)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getRefAccelerations(double *accs)
+bool roboticslab::EmulatedControlboard::getRefAccelerations(double *accs)
 {
     bool ok = true;
 
@@ -350,7 +350,7 @@ bool roboticslab::FakeControlboard::getRefAccelerations(double *accs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::stop(int j)
+bool roboticslab::EmulatedControlboard::stop(int j)
 {
     CD_DEBUG("stop(%d)\n", j);
 
@@ -367,7 +367,7 @@ bool roboticslab::FakeControlboard::stop(int j)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::stop()
+bool roboticslab::EmulatedControlboard::stop()
 {
     bool ok = true;
 
@@ -381,7 +381,7 @@ bool roboticslab::FakeControlboard::stop()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::positionMove(const int n_joint, const int *joints, const double *refs)
+bool roboticslab::EmulatedControlboard::positionMove(const int n_joint, const int *joints, const double *refs)
 {
     CD_DEBUG("\n");
     // must implement mask!
@@ -390,7 +390,7 @@ bool roboticslab::FakeControlboard::positionMove(const int n_joint, const int *j
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::relativeMove(const int n_joint, const int *joints, const double *deltas)
+bool roboticslab::EmulatedControlboard::relativeMove(const int n_joint, const int *joints, const double *deltas)
 {
     CD_DEBUG("\n");
     return true;
@@ -398,7 +398,7 @@ bool roboticslab::FakeControlboard::relativeMove(const int n_joint, const int *j
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::checkMotionDone(const int n_joint, const int *joints, bool *flags)
+bool roboticslab::EmulatedControlboard::checkMotionDone(const int n_joint, const int *joints, bool *flags)
 {
     CD_DEBUG("\n");
     return true;
@@ -406,7 +406,7 @@ bool roboticslab::FakeControlboard::checkMotionDone(const int n_joint, const int
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setRefSpeeds(const int n_joint, const int *joints, const double *spds)
+bool roboticslab::EmulatedControlboard::setRefSpeeds(const int n_joint, const int *joints, const double *spds)
 {
     CD_DEBUG("\n");
     return true;
@@ -414,7 +414,7 @@ bool roboticslab::FakeControlboard::setRefSpeeds(const int n_joint, const int *j
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
+bool roboticslab::EmulatedControlboard::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
 {
     CD_DEBUG("\n");
     return true;
@@ -422,7 +422,7 @@ bool roboticslab::FakeControlboard::setRefAccelerations(const int n_joint, const
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getRefSpeeds(const int n_joint, const int *joints, double *spds)
+bool roboticslab::EmulatedControlboard::getRefSpeeds(const int n_joint, const int *joints, double *spds)
 {
     CD_DEBUG("\n");
     return true;
@@ -430,7 +430,7 @@ bool roboticslab::FakeControlboard::getRefSpeeds(const int n_joint, const int *j
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getRefAccelerations(const int n_joint, const int *joints, double *accs)
+bool roboticslab::EmulatedControlboard::getRefAccelerations(const int n_joint, const int *joints, double *accs)
 {
     CD_DEBUG("\n");
     return true;
@@ -438,7 +438,7 @@ bool roboticslab::FakeControlboard::getRefAccelerations(const int n_joint, const
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::stop(const int n_joint, const int *joints)
+bool roboticslab::EmulatedControlboard::stop(const int n_joint, const int *joints)
 {
     CD_DEBUG("\n");
     return true;
@@ -446,14 +446,14 @@ bool roboticslab::FakeControlboard::stop(const int n_joint, const int *joints)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getTargetPosition(const int joint, double *ref)
+bool roboticslab::EmulatedControlboard::getTargetPosition(const int joint, double *ref)
 {
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getTargetPositions(double *refs)
+bool roboticslab::EmulatedControlboard::getTargetPositions(double *refs)
 {
     CD_DEBUG("\n");
     return true;
@@ -461,7 +461,7 @@ bool roboticslab::FakeControlboard::getTargetPositions(double *refs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getTargetPositions(const int n_joint, const int *joints, double *refs)
+bool roboticslab::EmulatedControlboard::getTargetPositions(const int n_joint, const int *joints, double *refs)
 {
     CD_DEBUG("\n");
     return true;

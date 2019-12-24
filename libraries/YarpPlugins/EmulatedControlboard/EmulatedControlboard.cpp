@@ -1,12 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "FakeControlboard.hpp"
+#include "EmulatedControlboard.hpp"
 
 #include <ColorDebug.h>
 
 // ------------------- Miscellanea ------------------------------------
 
-bool roboticslab::FakeControlboard::setPositionMode(int j)
+bool roboticslab::EmulatedControlboard::setPositionMode(int j)
 {
     CD_DEBUG("(%d)\n", j);
 
@@ -28,7 +28,7 @@ bool roboticslab::FakeControlboard::setPositionMode(int j)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setVelocityMode(int j)
+bool roboticslab::EmulatedControlboard::setVelocityMode(int j)
 {
     CD_DEBUG("(%d)\n", j);
     controlMode = VELOCITY_MODE;
@@ -37,7 +37,7 @@ bool roboticslab::FakeControlboard::setVelocityMode(int j)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setTorqueMode(int j)
+bool roboticslab::EmulatedControlboard::setTorqueMode(int j)
 {
     CD_DEBUG("(%d)\n", j);
     return true;
@@ -45,7 +45,7 @@ bool roboticslab::FakeControlboard::setTorqueMode(int j)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setPositionDirectMode(int j)
+bool roboticslab::EmulatedControlboard::setPositionDirectMode(int j)
 {
     CD_DEBUG("(%d)\n", j);
 
