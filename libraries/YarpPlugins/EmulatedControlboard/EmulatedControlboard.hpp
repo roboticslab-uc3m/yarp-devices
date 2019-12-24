@@ -31,22 +31,22 @@ namespace roboticslab
 
 /**
  * @ingroup TeoYarp
- * \defgroup FakeControlboard
+ * \defgroup EmulatedControlboard
  *
- * @brief Contains teo::FakeControlboard.
+ * @brief Contains teo::EmulatedControlboard.
  *
- * @section FakeControlboard_install Installation
+ * @section EmulatedControlboard_install Installation
  *
- * The plugin is compiled when ENABLE_TeoYarp_FakeControlboard is activated (not default). For further
+ * The plugin is compiled when ENABLE_TeoYarp_EmulatedControlboard is activated (not default). For further
  * installation steps refer to <a class="el" href="pages.html">your own system installation guidelines</a>.
  */
 
 /**
- * @ingroup FakeControlboard
+ * @ingroup EmulatedControlboard
  * @brief Implements the YARP_dev IPositionControl, IVelocityControl, IEncodersTimed, etc.
  * interface class member functions.
  */
-class FakeControlboard : public yarp::dev::DeviceDriver,
+class EmulatedControlboard : public yarp::dev::DeviceDriver,
                          public yarp::dev::IControlLimits,
                          public yarp::dev::IControlMode,
                          public yarp::dev::IEncodersTimed,
@@ -60,7 +60,7 @@ class FakeControlboard : public yarp::dev::DeviceDriver,
 public:
 
     // Set the thread period in the class constructor
-    FakeControlboard() : PeriodicThread(DEFAULT_JMC_MS * 0.001) {}  // In seconds
+    EmulatedControlboard() : PeriodicThread(DEFAULT_JMC_MS * 0.001) {}  // In seconds
 
 // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
 

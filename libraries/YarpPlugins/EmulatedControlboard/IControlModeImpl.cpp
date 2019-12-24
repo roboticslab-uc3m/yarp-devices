@@ -1,13 +1,13 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "FakeControlboard.hpp"
+#include "EmulatedControlboard.hpp"
 
 #include <yarp/os/Vocab.h>
 #include <ColorDebug.h>
 
 // ------------------- IControlMode Related ------------------------------------
 
-bool roboticslab::FakeControlboard::getControlMode(int j, int *mode)
+bool roboticslab::EmulatedControlboard::getControlMode(int j, int *mode)
 {
     //CD_DEBUG("\n"); //-- Way too verbose.
     if (controlMode == POSITION_MODE)
@@ -33,7 +33,7 @@ bool roboticslab::FakeControlboard::getControlMode(int j, int *mode)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getControlModes(int *modes)
+bool roboticslab::EmulatedControlboard::getControlModes(int *modes)
 {
     //CD_DEBUG("\n"); //-- Way too verbose.
     bool ok = true;
@@ -48,7 +48,7 @@ bool roboticslab::FakeControlboard::getControlModes(int *modes)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getControlModes(const int n_joint, const int *joints, int *modes)
+bool roboticslab::EmulatedControlboard::getControlModes(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("(%d)\n", n_joint);
     bool ok = true;
@@ -63,7 +63,7 @@ bool roboticslab::FakeControlboard::getControlModes(const int n_joint, const int
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setControlMode(const int j, const int mode)
+bool roboticslab::EmulatedControlboard::setControlMode(const int j, const int mode)
 {
     CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
 
@@ -90,7 +90,7 @@ bool roboticslab::FakeControlboard::setControlMode(const int j, const int mode)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setControlModes(const int n_joint, const int *joints, int *modes)
+bool roboticslab::EmulatedControlboard::setControlModes(const int n_joint, const int *joints, int *modes)
 {
     CD_DEBUG("(%d)\n", n_joint);
     bool ok = true;
@@ -105,7 +105,7 @@ bool roboticslab::FakeControlboard::setControlModes(const int n_joint, const int
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setControlModes(int *modes)
+bool roboticslab::EmulatedControlboard::setControlModes(int *modes)
 {
     CD_DEBUG("\n");
     bool ok = true;

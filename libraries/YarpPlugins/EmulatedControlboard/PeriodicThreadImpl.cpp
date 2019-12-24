@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "FakeControlboard.hpp"
+#include "EmulatedControlboard.hpp"
 
 #include <yarp/os/Time.h>
 
@@ -8,7 +8,7 @@
 
 // ------------------- PeriodicThread Related ------------------------------------
 
-bool roboticslab::FakeControlboard::threadInit()
+bool roboticslab::EmulatedControlboard::threadInit()
 {
     CD_SUCCESS("\n");
     lastTime = yarp::os::Time::now();
@@ -17,7 +17,7 @@ bool roboticslab::FakeControlboard::threadInit()
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::FakeControlboard::run()
+void roboticslab::EmulatedControlboard::run()
 {
     std::vector<double> encsRaw = getEncsRaw();
     std::vector<double> encsExposed = getEncsExposed();

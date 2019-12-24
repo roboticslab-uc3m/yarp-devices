@@ -1,12 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "FakeControlboard.hpp"
+#include "EmulatedControlboard.hpp"
 
 #include <ColorDebug.h>
 
 // ------------------- IPositionDirect Related --------------------------------
 
-bool roboticslab::FakeControlboard::setPosition(int j, double ref)
+bool roboticslab::EmulatedControlboard::setPosition(int j, double ref)
 {
     if ((unsigned int)j > axes)
     {
@@ -28,7 +28,7 @@ bool roboticslab::FakeControlboard::setPosition(int j, double ref)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setPositions(const int n_joint, const int *joints, const double *refs)
+bool roboticslab::EmulatedControlboard::setPositions(const int n_joint, const int *joints, const double *refs)
 {
     bool ok = true;
 
@@ -42,7 +42,7 @@ bool roboticslab::FakeControlboard::setPositions(const int n_joint, const int *j
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::setPositions(const double *refs)
+bool roboticslab::EmulatedControlboard::setPositions(const double *refs)
 {
     bool ok = true;
 
@@ -56,7 +56,7 @@ bool roboticslab::FakeControlboard::setPositions(const double *refs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getRefPosition(const int joint, double *ref)
+bool roboticslab::EmulatedControlboard::getRefPosition(const int joint, double *ref)
 {
     if ((unsigned int)joint > axes)
     {
@@ -77,7 +77,7 @@ bool roboticslab::FakeControlboard::getRefPosition(const int joint, double *ref)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getRefPositions(double *refs)
+bool roboticslab::EmulatedControlboard::getRefPositions(double *refs)
 {
     bool ok = true;
 
@@ -91,7 +91,7 @@ bool roboticslab::FakeControlboard::getRefPositions(double *refs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getRefPositions(const int n_joint, const int *joints, double *refs)
+bool roboticslab::EmulatedControlboard::getRefPositions(const int n_joint, const int *joints, double *refs)
 {
     bool ok = true;
 

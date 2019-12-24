@@ -1,12 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "FakeControlboard.hpp"
+#include "EmulatedControlboard.hpp"
 
 #include <ColorDebug.h>
 
 // ------------------ IVelocity Related ----------------------------------------
 
-bool roboticslab::FakeControlboard::velocityMove(int j, double sp)  // velExposed = sp;
+bool roboticslab::EmulatedControlboard::velocityMove(int j, double sp)  // velExposed = sp;
 {
     if ((unsigned int)j > axes)
     {
@@ -16,7 +16,7 @@ bool roboticslab::FakeControlboard::velocityMove(int j, double sp)  // velExpose
     // Check if we are in velocity mode.
     if (controlMode != VELOCITY_MODE)
     {
-        CD_ERROR("FakeControlboard will not velocityMove as not in velocityMode\n");
+        CD_ERROR("EmulatedControlboard will not velocityMove as not in velocityMode\n");
         return false;
     }
 
@@ -28,7 +28,7 @@ bool roboticslab::FakeControlboard::velocityMove(int j, double sp)  // velExpose
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::velocityMove(const double *sp)
+bool roboticslab::EmulatedControlboard::velocityMove(const double *sp)
 {
     CD_DEBUG("Vel:");
 
@@ -51,7 +51,7 @@ bool roboticslab::FakeControlboard::velocityMove(const double *sp)
 
 // ----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::velocityMove(const int n_joint, const int *joints, const double *spds)
+bool roboticslab::EmulatedControlboard::velocityMove(const int n_joint, const int *joints, const double *spds)
 {
     CD_DEBUG("\n");
     // must implement mask!
@@ -60,7 +60,7 @@ bool roboticslab::FakeControlboard::velocityMove(const int n_joint, const int *j
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getRefVelocity(const int joint, double *vel)
+bool roboticslab::EmulatedControlboard::getRefVelocity(const int joint, double *vel)
 {
     CD_DEBUG("\n");
     return true;
@@ -68,7 +68,7 @@ bool roboticslab::FakeControlboard::getRefVelocity(const int joint, double *vel)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getRefVelocities(double *vels)
+bool roboticslab::EmulatedControlboard::getRefVelocities(double *vels)
 {
     CD_DEBUG("\n");
     return true;
@@ -76,7 +76,7 @@ bool roboticslab::FakeControlboard::getRefVelocities(double *vels)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::FakeControlboard::getRefVelocities(const int n_joint, const int *joints, double *vels)
+bool roboticslab::EmulatedControlboard::getRefVelocities(const int n_joint, const int *joints, double *vels)
 {
     CD_DEBUG("\n");
     return true;
