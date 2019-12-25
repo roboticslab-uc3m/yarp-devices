@@ -21,13 +21,21 @@ namespace roboticslab
  * @brief Implementation for a fake joint Raw(instant movement) as a single CAN bus joint Raw(controlboard raw interfaces).
  */
 class FakeJoint : public yarp::dev::DeviceDriver,
+                  public yarp::dev::IAmplifierControlRaw,
+                  public yarp::dev::IAxisInfoRaw,
+                  public yarp::dev::IControlCalibrationRaw,
                   public yarp::dev::IControlLimitsRaw,
                   public yarp::dev::IControlModeRaw,
                   public yarp::dev::ICurrentControlRaw,
                   public yarp::dev::IEncodersTimedRaw,
+                  public yarp::dev::IImpedanceControlRaw,
                   public yarp::dev::IInteractionModeRaw,
+                  public yarp::dev::IMotorRaw,
+                  public yarp::dev::IMotorEncodersRaw,
+                  public yarp::dev::IPidControlRaw,
                   public yarp::dev::IPositionControlRaw,
                   public yarp::dev::IPositionDirectRaw,
+                  public yarp::dev::IPWMControlRaw,
                   public yarp::dev::IRemoteVariablesRaw,
                   public yarp::dev::ITorqueControlRaw,
                   public yarp::dev::IVelocityControlRaw,
@@ -42,7 +50,7 @@ public:
     virtual bool close() override
     { return true; }
 
-    //  --------- ICanBusSharer eclarations ---------
+    //  --------- ICanBusSharer declarations ---------
 
     virtual unsigned int getId() override
     { return 0; }
@@ -53,6 +61,55 @@ public:
     virtual bool finalize() override
     { return true; }
     virtual bool registerSender(CanSenderDelegate * sender) override
+    { return true; }
+
+    //  --------- IAmplifierControlRaw declarations ---------
+
+    virtual bool enableAmpRaw(int j) override
+    { return true; }
+    virtual bool disableAmpRaw(int j) override
+    { return true; }
+    virtual bool getAmpStatusRaw(int j, int * v) override
+    { *v = 0; return true; }
+    virtual bool getAmpStatusRaw(int * st) override
+    { *st = 0; return true; }
+    //virtual bool getCurrentRaw(int j, double * val) override;
+    //virtual bool getCurrentsRaw(double * vals) override;
+    virtual bool getMaxCurrentRaw(int j, double * v) override
+    { *v = 0.0; return true; }
+    virtual bool setMaxCurrentRaw(int j, double v) override
+    { return true; }
+    virtual bool getNominalCurrentRaw(int m, double * val) override
+    { *val = 0.0; return true; }
+    virtual bool setNominalCurrentRaw(int m, double val) override
+    { return true; }
+    virtual bool getPeakCurrentRaw(int m, double * val) override
+    { *val = 0.0; return true; }
+    virtual bool setPeakCurrentRaw(int m, double val) override
+    { return true; }
+    virtual bool getPWMRaw(int j, double * val) override
+    { *val = 0.0; return true; }
+    virtual bool getPWMLimitRaw(int j, double * val) override
+    { *val = 0.0; return true; }
+    virtual bool setPWMLimitRaw(int j, double val) override
+    { return true; }
+    virtual bool getPowerSupplyVoltageRaw(int j, double * val) override
+    { *val = 0.0; return true; }
+
+    //  --------- IAxisInfoRaw declarations ---------
+
+    virtual bool getAxisNameRaw(int axis, std::string & name) override
+    { return true; }
+    virtual bool getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type) override
+    { type = yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_UNKNOWN; return true; }
+
+    //  --------- IControlCalibrationRaw declarations ---------
+
+    virtual bool calibrateAxisWithParamsRaw(int axis, unsigned int type, double p1, double p2, double p3) override
+    { return true; }
+    virtual bool setCalibrationParametersRaw(int axis, const yarp::dev::CalibrationParameters & params) override
+    { return true; }
+    virtual bool calibrationDoneRaw(int j) override
     { return true; }
 
     //  --------- IControlLimitsRaw declarations ---------
@@ -83,8 +140,7 @@ public:
 
     //  --------- ICurrentControlRaw declarations ---------
 
-    virtual bool getNumberOfMotorsRaw(int * ax) override // TODO
-    { return getAxes(ax); }
+    //virtual bool getNumberOfMotorsRaw(int * ax) override;
     virtual bool getCurrentRaw(int m, double * curr) override
     { *curr = 0.0; return true; }
     virtual bool getCurrentsRaw(double * currs) override
@@ -136,6 +192,20 @@ public:
     virtual bool getEncodersTimedRaw(double * encs, double * times) override
     { return getEncoderTimedRaw(0, &encs[0], &times[0]); }
 
+    //  --------- IImpedanceControlRaw declarations ---------
+
+    //virtual bool getAxes(int * ax) override;
+    virtual bool getImpedanceRaw(int j, double * stiffness, double * damping) override
+    { *stiffness = *damping = 0.0; return true; }
+    virtual bool setImpedanceRaw(int j, double stiffness, double damping) override
+    { return true; }
+    virtual bool setImpedanceOffsetRaw(int j, double offset) override
+    { return true; }
+    virtual bool getImpedanceOffsetRaw(int j, double * offset) override
+    { *offset = 0.0; return true; }
+    virtual bool getCurrentImpedanceLimitRaw(int j, double * min_stiff, double * max_stiff, double * min_damp, double * max_damp) override
+    { *min_stiff = *max_stiff = *min_damp = *max_damp = 0.0; return true; }
+
     // ------- IInteractionModeRaw declarations -------
 
     virtual bool getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum * mode) override
@@ -150,6 +220,101 @@ public:
     { return true; }
     virtual bool setInteractionModesRaw(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes) override
     { return true; }
+
+    //  --------- IMotorRaw declarations ---------
+
+    virtual bool getNumberOfMotorsRaw(int * num) override
+    { return getAxes(num); }
+    virtual bool getTemperatureRaw(int m, double * val) override
+    { *val = 0.0; return true; }
+    virtual bool getTemperaturesRaw(double * vals) override
+    { return getTemperatureRaw(0, &vals[0]); }
+    virtual bool getTemperatureLimitRaw(int m, double * temp) override
+    { *temp = 0.0; return true; }
+    virtual bool setTemperatureLimitRaw(int m, double temp) override
+    { return true; }
+    virtual bool getGearboxRatioRaw(int m, double * val) override
+    { *val = 0.0; return true; }
+    virtual bool setGearboxRatioRaw(int m, double val) override
+    { return true; }
+
+    //  --------- IMotorEncodersRaw declarations ---------
+
+    virtual bool getNumberOfMotorEncodersRaw(int * num) override
+    { return getAxes(num); }
+    virtual bool resetMotorEncoderRaw(int m) override
+    { return true; }
+    virtual bool resetMotorEncodersRaw() override
+    { return true; }
+    virtual bool setMotorEncoderCountsPerRevolutionRaw(int m, double cpr) override
+    { return true; }
+    virtual bool getMotorEncoderCountsPerRevolutionRaw(int m, double * cpr) override
+    { *cpr = 0.0; return true; }
+    virtual bool setMotorEncoderRaw(int m, double val) override
+    { return true; }
+    virtual bool setMotorEncodersRaw(const double * vals) override
+    { return true; }
+    virtual bool getMotorEncoderRaw(int m, double * v) override
+    { *v = 0.0; return true; }
+    virtual bool getMotorEncodersRaw(double * encs) override
+    { return getMotorEncoderRaw(0, &encs[0]); }
+    virtual bool getMotorEncoderTimedRaw(int m, double * enc, double * stamp) override
+    { *enc = *stamp = 0.0; return true; }
+    virtual bool getMotorEncodersTimedRaw(double * encs, double * stamps) override
+    { return getMotorEncoderTimedRaw(0, &encs[0], &stamps[0]); }
+    virtual bool getMotorEncoderSpeedRaw(int m, double * sp) override
+    { *sp = 0.0; return true; }
+    virtual bool getMotorEncoderSpeedsRaw(double *spds) override
+    { return getMotorEncoderSpeedRaw(0, &spds[0]); }
+    virtual bool getMotorEncoderAccelerationRaw(int m, double * acc) override
+    { *acc = 0.0; return true; }
+    virtual bool getMotorEncoderAccelerationsRaw(double * accs) override
+    { return getMotorEncoderAccelerationRaw(0, &accs[0]); }
+
+    //  --------- IPidControlRaw declarations ---------
+
+    virtual bool setPidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, const yarp::dev::Pid & pid) override
+    { return true; }
+    virtual bool setPidsRaw(const yarp::dev::PidControlTypeEnum & pidtype, const yarp::dev::Pid * pids) override
+    { return true; }
+    virtual bool setPidReferenceRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double ref) override
+    { return true; }
+    virtual bool setPidReferencesRaw(const yarp::dev::PidControlTypeEnum & pidtype, const double * refs) override
+    { return true; }
+    virtual bool setPidErrorLimitRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double limit) override
+    { return true; }
+    virtual bool setPidErrorLimitsRaw(const yarp::dev::PidControlTypeEnum & pidtype, const double * limits) override
+    { return true; }
+    virtual bool getPidErrorRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * err) override
+    { *err = 0.0; return true; }
+    virtual bool getPidErrorsRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * errs) override
+    { return getPidErrorRaw(pidtype, 0, &errs[0]); }
+    virtual bool getPidOutputRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * out) override
+    { *out = 0.0; return true; }
+    virtual bool getPidOutputsRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * outs) override
+    { return getPidOutputRaw(pidtype, 0, &outs[0]); }
+    virtual bool getPidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, yarp::dev::Pid * pid) override
+    { return true; }
+    virtual bool getPidsRaw(const yarp::dev::PidControlTypeEnum & pidtype, yarp::dev::Pid * pids) override
+    { return true; }
+    virtual bool getPidReferenceRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * ref) override
+    { *ref = 0.0; return true; }
+    virtual bool getPidReferencesRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * refs) override
+    { return getPidReferenceRaw(pidtype, 0, &refs[0]); }
+    virtual bool getPidErrorLimitRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * limit) override
+    { *limit = 0.0; return true; }
+    virtual bool getPidErrorLimitsRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * limits) override
+    { return getPidErrorLimitRaw(pidtype, 0, &limits[0]); }
+    virtual bool resetPidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j) override
+    { return true; }
+    virtual bool disablePidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j) override
+    { return true; }
+    virtual bool enablePidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j) override
+    { return true; }
+    virtual bool setPidOffsetRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double v) override
+    { return true; }
+    virtual bool isPidEnabledRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, bool * enabled) override
+    { *enabled = true; return true; }
 
     // ------- IPositionControlRaw declarations -------
 
@@ -224,6 +389,22 @@ public:
     { return getRefPositionRaw(0, &refs[0]); }
     virtual bool getRefPositionsRaw(int n_joint, const int * joints, double * refs) override
     { return getRefPositionRaw(0, &refs[0]); }
+
+    //  --------- IPWMControl declarations ---------
+
+    //virtual bool getNumberOfMotorsRaw(int * number) override;
+    virtual bool setRefDutyCycleRaw(int m, double ref) override
+    { return true; }
+    virtual bool setRefDutyCyclesRaw(const double * refs) override
+    { return true; }
+    virtual bool getRefDutyCycleRaw(int m, double * ref) override
+    { *ref = 0.0; return true; }
+    virtual bool getRefDutyCyclesRaw(double * refs) override
+    { return getRefDutyCycleRaw(0, &refs[0]); }
+    virtual bool getDutyCycleRaw(int m, double * val) override
+    { *val = 0.0; return true; }
+    virtual bool getDutyCyclesRaw(double * vals) override
+    { return getDutyCycleRaw(0, &vals[0]); }
 
     // ------- IRemoteVariablesRaw declarations -------
 

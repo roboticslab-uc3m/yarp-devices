@@ -164,7 +164,7 @@ public:
 
     //  --------- IMotor declarations. Implementation in IMotorImpl.cpp ---------
 
-    virtual bool getNumberOfMotors(int *num) override;
+    virtual bool getNumberOfMotors(int * num) override;
     virtual bool getTemperature(int m, double * val) override;
     virtual bool getTemperatures(double * vals) override;
     virtual bool getTemperatureLimit(int m, double * temp) override;
@@ -200,7 +200,7 @@ public:
     virtual bool setPidErrorLimits(const yarp::dev::PidControlTypeEnum & pidtype, const double * limits) override;
     virtual bool getPidError(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * err) override;
     virtual bool getPidErrors(const yarp::dev::PidControlTypeEnum & pidtype, double * errs) override;
-    virtual bool getPidOutput(const yarp::dev::PidControlTypeEnum & pidtype, int j, double *out) override;
+    virtual bool getPidOutput(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * out) override;
     virtual bool getPidOutputs(const yarp::dev::PidControlTypeEnum & pidtype, double * outs) override;
     virtual bool getPid(const yarp::dev::PidControlTypeEnum & pidtype, int j, yarp::dev::Pid * pid) override;
     virtual bool getPids(const yarp::dev::PidControlTypeEnum & pidtype, yarp::dev::Pid * pids) override;
