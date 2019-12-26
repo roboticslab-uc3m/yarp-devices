@@ -565,7 +565,7 @@ TEST_F(CanBusSharerTest, TransmitPdo)
     const std::uint16_t eventTimer = 0x5678;
     const std::uint8_t syncStartValue = 0x77;
 
-    const std::uint16_t mapping1 = 0x1111;
+    const std::uint16_t mapping1 = 0x6111; // 0x6111 > 0x2000, testing PDO internals
     const std::uint8_t mapping1sub = 0x45;
     const std::uint16_t mapping2 = 0x2000;
 

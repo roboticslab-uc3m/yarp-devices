@@ -5,7 +5,7 @@
 #include <cstring>
 
 #include <bitset>
-#include <set>
+#include <vector>
 
 #include <ColorDebug.h>
 
@@ -21,7 +21,7 @@ struct PdoConfiguration::Private
     nonstd::optional<std::uint16_t> inhibitTime;
     nonstd::optional<std::uint16_t> eventTimer;
     nonstd::optional<std::uint8_t> syncStartValue;
-    std::set<std::uint32_t> mappings;
+    std::vector<std::uint32_t> mappings;
 };
 
 PdoConfiguration::PdoConfiguration()
@@ -86,7 +86,7 @@ PdoConfiguration & PdoConfiguration::setSyncStartValue(std::uint8_t value)
 
 void PdoConfiguration::addMappingInternal(std::uint32_t value)
 {
-    priv->mappings.insert(value);
+    priv->mappings.push_back(value);
 }
 
 bool PdoProtocol::configure(const PdoConfiguration & conf)
