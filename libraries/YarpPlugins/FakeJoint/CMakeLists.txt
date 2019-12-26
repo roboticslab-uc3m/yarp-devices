@@ -18,9 +18,7 @@ if(NOT SKIP_FakeJoint)
     yarp_add_plugin(FakeJoint FakeJoint.hpp
                               FakeJoint.cpp)
 
-    target_link_libraries(FakeJoint YARP::YARP_OS
-                                    YARP::YARP_dev
-                                    ROBOTICSLAB::ColorDebug
+    target_link_libraries(FakeJoint YARP::YARP_dev
                                     CanBusSharerLib)
 
     yarp_install(TARGETS FakeJoint

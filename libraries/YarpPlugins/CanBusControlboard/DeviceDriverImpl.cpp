@@ -3,6 +3,8 @@
 #include "CanBusControlboard.hpp"
 
 #include <yarp/os/Property.h>
+#include <yarp/os/Value.h>
+
 #include <yarp/dev/CanBusInterface.h>
 
 #include <ColorDebug.h>
@@ -34,6 +36,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
     }
 
     canThreads.resize(canBuses->size());
+    int fakeDeviceCount = 0;
 
     for (int i = 0; i < canBuses->size(); i++)
     {
@@ -108,18 +111,28 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         for (int i = 0; i < nodes->size(); i++)
         {
             std::string node = nodes->get(i).asString();
-            yarp::os::Bottle & nodeGroup = robotConfig->findGroup(node);
-
-            if (nodeGroup.isNull())
-            {
-                CD_ERROR("Missing CAN node device group %s.\n", node.c_str());
-                return false;
-            }
+            bool isFake = node.find("fake") != std::string::npos;
 
             yarp::os::Property nodeOptions;
-            nodeOptions.fromString(nodeGroup.toString());
-            nodeOptions.put("robotConfig", config.find("robotConfig"));
             nodeOptions.setMonitor(config.getMonitor(), node.c_str());
+
+            if (!isFake)
+            {
+                yarp::os::Bottle & nodeGroup = robotConfig->findGroup(node);
+
+                if (nodeGroup.isNull())
+                {
+                    CD_ERROR("Missing CAN node device group %s.\n", node.c_str());
+                    return false;
+                }
+
+                nodeOptions.fromString(nodeGroup.toString());
+                nodeOptions.put("robotConfig", config.find("robotConfig"));
+            }
+            else
+            {
+                nodeOptions.put("device", "FakeJoint");
+            }
 
             yarp::dev::PolyDriver * device = new yarp::dev::PolyDriver;
             nodeDevices.push(device, node.c_str());
@@ -136,20 +149,27 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
                 return false;
             }
 
-            ICanBusSharer * iCanBusSharer;
-
-            if (!device->view(iCanBusSharer))
+            if (!isFake)
             {
-                CD_ERROR("Unable to view ICanBusSharer in %s.\n", node.c_str());
-                return false;
+                ICanBusSharer * iCanBusSharer;
+
+                if (!device->view(iCanBusSharer))
+                {
+                    CD_ERROR("Unable to view ICanBusSharer in %s.\n", node.c_str());
+                    return false;
+                }
+
+                reader->registerHandle(iCanBusSharer);
+                iCanBusSharer->registerSender(writer->getDelegate());
+
+                auto additionalIds = iCanBusSharer->getAdditionalIds();
+                filterIds.push_back(iCanBusSharer->getId());
+                filterIds.insert(filterIds.end(), additionalIds.begin(), additionalIds.end());
             }
-
-            reader->registerHandle(iCanBusSharer);
-            iCanBusSharer->registerSender(writer->getDelegate());
-
-            auto additionalIds = iCanBusSharer->getAdditionalIds();
-            filterIds.push_back(iCanBusSharer->getId());
-            filterIds.insert(filterIds.end(), additionalIds.begin(), additionalIds.end());
+            else
+            {
+                fakeDeviceCount++;
+            }
         }
 
         for (auto id : filterIds)
@@ -162,11 +182,13 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         }
     }
 
+    int threadedAxes = deviceMapper.getControlledAxes() - fakeDeviceCount;
+
     // FIXME: temporarily disabled
-    if (false /*config.check("threaded", yarp::os::Value(false), "use threads to map joint calls").asBool()*/)
+    if (false /*config.check("threaded", yarp::os::Value(false), "use threads to map joint calls").asBool() && threadedAxes != 0*/)
     {
         // twice as many controlled axes to account for CBW's periodic thread and user RPC requests
-        deviceMapper.enableParallelization(deviceMapper.getControlledAxes() * 2);
+        deviceMapper.enableParallelization(threadedAxes * 2);
     }
 
     for (const auto & bundle : canThreads)
