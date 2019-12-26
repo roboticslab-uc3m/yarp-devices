@@ -35,26 +35,35 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         return false;
     }
 
-    canThreads.resize(canBuses->size());
-    int fakeDeviceCount = 0;
+    int fakeNodeCount = 0;
 
     for (int i = 0; i < canBuses->size(); i++)
     {
         std::string canBus = canBuses->get(i).asString();
-        yarp::os::Bottle & canBusGroup = robotConfig->findGroup(canBus);
-
-        if (canBusGroup.isNull())
-        {
-            CD_ERROR("Missing CAN bus device group %s.\n", canBus.c_str());
-            return false;
-        }
+        bool isFakeBus = canBus.find("fake") != std::string::npos;
 
         yarp::os::Property canBusOptions;
-        canBusOptions.fromString(canBusGroup.toString());
-        canBusOptions.put("robotConfig", config.find("robotConfig"));
-        canBusOptions.put("blockingMode", false); // enforce non-blocking mode
-        canBusOptions.put("allowPermissive", false); // always check usage requirements
         canBusOptions.setMonitor(config.getMonitor(), canBus.c_str());
+
+        if (!isFakeBus)
+        {
+            yarp::os::Bottle & canBusGroup = robotConfig->findGroup(canBus);
+
+            if (canBusGroup.isNull())
+            {
+                CD_ERROR("Missing CAN bus device group %s.\n", canBus.c_str());
+                return false;
+            }
+
+            canBusOptions.fromString(canBusGroup.toString());
+            canBusOptions.put("robotConfig", config.find("robotConfig"));
+            canBusOptions.put("blockingMode", false); // enforce non-blocking mode
+            canBusOptions.put("allowPermissive", false); // always check usage requirements
+        }
+        else
+        {
+            canBusOptions.put("device", "CanBusFake");
+        }
 
         yarp::dev::PolyDriver * canBusDevice = new yarp::dev::PolyDriver;
         busDevices.push(canBusDevice, canBus.c_str());
@@ -81,42 +90,68 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             return false;
         }
 
-        int rxBufferSize = canBusGroup.check("rxBufferSize", yarp::os::Value(100), "CAN bus RX buffer size").asInt32();
-        int txBufferSize = canBusGroup.check("txBufferSize", yarp::os::Value(100), "CAN bus TX buffer size").asInt32();
-        double rxDelay = canBusGroup.check("rxDelay", yarp::os::Value(0.0), "CAN bus RX delay (seconds)").asFloat64();
-        double txDelay = canBusGroup.check("txDelay", yarp::os::Value(0.0), "CAN bus TX delay (seconds)").asFloat64();
-
-        CanReaderThread * reader = new CanReaderThread(canBus);
-        reader->setCanHandles(iCanBus, iCanBufferFactory, rxBufferSize);
-        reader->setDelay(rxDelay);
-
-        CanWriterThread * writer = new CanWriterThread(canBus);
-        writer->setCanHandles(iCanBus, iCanBufferFactory, txBufferSize);
-        writer->setDelay(txDelay);
-
-        canThreads[i].busName = canBus;
-        canThreads[i].reader = reader;
-        canThreads[i].writer = writer;
-
-        yarp::os::Bottle * nodes = config.find(canBus).asList();
-
-        if (nodes == nullptr)
+        if (!isFakeBus)
         {
-            CD_ERROR("Missing key \"%s\" or not a list.\n", canBus.c_str());
+            int rxBufferSize = canBusOptions.check("rxBufferSize", yarp::os::Value(100), "CAN bus RX buffer size").asInt32();
+            int txBufferSize = canBusOptions.check("txBufferSize", yarp::os::Value(100), "CAN bus TX buffer size").asInt32();
+            double rxDelay = canBusOptions.check("rxDelay", yarp::os::Value(0.0), "CAN bus RX delay (seconds)").asFloat64();
+            double txDelay = canBusOptions.check("txDelay", yarp::os::Value(0.0), "CAN bus TX delay (seconds)").asFloat64();
+
+            CanReaderThread * reader = new CanReaderThread(canBus);
+            reader->setCanHandles(iCanBus, iCanBufferFactory, rxBufferSize);
+            reader->setDelay(rxDelay);
+
+            CanWriterThread * writer = new CanWriterThread(canBus);
+            writer->setCanHandles(iCanBus, iCanBufferFactory, txBufferSize);
+            writer->setDelay(txDelay);
+
+            canThreads.push_back({canBus, reader, writer});
+        }
+
+        if (!config.check(canBus))
+        {
+            CD_ERROR("Missing key \"%s\".\n", canBus.c_str());
             return false;
+        }
+
+        yarp::os::Value & nodesVal = config.find(canBus);
+        yarp::os::Bottle nodes;
+
+        if (!isFakeBus)
+        {
+            if (nodesVal.asList() == nullptr)
+            {
+                CD_ERROR("Key \"%s\" must be a list.\n", canBus.c_str());
+                return false;
+            }
+
+            nodes = yarp::os::Bottle(*nodesVal.asList());
+        }
+        else
+        {
+            if (!nodesVal.isInt32())
+            {
+                CD_ERROR("Key \"%s\" must hold an integer value (number of fake nodes).\n", canBus.c_str());
+                return false;
+            }
+
+            for (int i = 0; i < nodesVal.asInt32(); i++)
+            {
+                nodes.addString("fake-" + std::to_string(i + 1));
+            }
         }
 
         std::vector<unsigned int> filterIds;
 
-        for (int i = 0; i < nodes->size(); i++)
+        for (int i = 0; i < nodes.size(); i++)
         {
-            std::string node = nodes->get(i).asString();
-            bool isFake = node.find("fake") != std::string::npos;
+            std::string node = nodes.get(i).asString();
+            bool isFakeNode = node.find("fake") != std::string::npos;
 
             yarp::os::Property nodeOptions;
             nodeOptions.setMonitor(config.getMonitor(), node.c_str());
 
-            if (!isFake)
+            if (!isFakeNode)
             {
                 yarp::os::Bottle & nodeGroup = robotConfig->findGroup(node);
 
@@ -149,7 +184,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
                 return false;
             }
 
-            if (!isFake)
+            if (!isFakeNode)
             {
                 ICanBusSharer * iCanBusSharer;
 
@@ -159,8 +194,8 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
                     return false;
                 }
 
-                reader->registerHandle(iCanBusSharer);
-                iCanBusSharer->registerSender(writer->getDelegate());
+                canThreads.back().reader->registerHandle(iCanBusSharer);
+                iCanBusSharer->registerSender(canThreads.back().writer->getDelegate());
 
                 auto additionalIds = iCanBusSharer->getAdditionalIds();
                 filterIds.push_back(iCanBusSharer->getId());
@@ -168,7 +203,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             }
             else
             {
-                fakeDeviceCount++;
+                fakeNodeCount++;
             }
         }
 
@@ -182,7 +217,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         }
     }
 
-    int threadedAxes = deviceMapper.getControlledAxes() - fakeDeviceCount;
+    int threadedAxes = deviceMapper.getControlledAxes() - fakeNodeCount;
 
     // FIXME: temporarily disabled
     if (false /*config.check("threaded", yarp::os::Value(false), "use threads to map joint calls").asBool() && threadedAxes != 0*/)
