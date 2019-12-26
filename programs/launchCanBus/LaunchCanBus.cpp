@@ -39,11 +39,10 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
     if (configPath.empty() || !robotConfig.fromConfigFile(configPath))
     {
-        CD_ERROR("File %s does not exist or unsufficient permissions.\n", configPath.c_str());
-        return false;
+        CD_WARNING("Config file \"%s\" not found or unsufficient permissions.\n", configPath.c_str());
     }
 
-    CD_DEBUG("%s\n", robotConfig.toString().c_str());
+    CD_DEBUG("config.ini: %s\n", robotConfig.toString().c_str());
 
     yarp::conf::vocab32_t mode = rf.check("mode", yarp::os::Value(VOCAB_CM_POSITION), "initial mode of operation").asVocab();
     bool homing = rf.check("home", "perform initial homing procedure");
@@ -132,12 +131,18 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
         if (!calibratorDeviceLabel.empty())
         {
+            if (robotConfig.toString().empty())
+            {
+                CD_WARNING("Missing robot config, but calibrator device was requested.\n");
+                goto attachToWrapper; // ave Satanas
+            }
+
             yarp::os::Bottle & calibratorDeviceGroup = robotConfig.findGroup(calibratorDeviceLabel);
 
             if (calibratorDeviceGroup.isNull())
             {
-                CD_ERROR("Missing calibrator device group %s.\n", calibratorDeviceLabel.c_str());
-                return false;
+                CD_WARNING("Missing calibrator device group %s.\n", calibratorDeviceLabel.c_str());
+                goto attachToWrapper; // ave Satanas
             }
 
             yarp::os::Property calibratorDeviceOptions;
@@ -180,6 +185,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
             temp.push(descriptor);
         }
 
+        attachToWrapper:
         if (!iMultipleWrapper->attachAll(temp))
         {
             CD_ERROR("Unable to attach wrapper %s to CAN devices.\n", wrapperDeviceLabel.c_str());
@@ -229,6 +235,12 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
     if (homing)
     {
+        if (calibratorDevices.size() == 0)
+        {
+            CD_ERROR("Homing procedure requested, but no calibrator devices loaded.\n");
+            return false;
+        }
+
         for (int i = 0; i < calibratorDevices.size(); i++)
         {
             yarp::dev::IRemoteCalibrator * iRemoteCalibrator;

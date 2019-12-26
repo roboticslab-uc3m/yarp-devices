@@ -118,12 +118,12 @@ public:
     virtual bool getCurrent(int m, double * curr) override;
     virtual bool getCurrents(double * currs) override;
     virtual bool getCurrentRange(int m, double * min, double * max) override;
-    virtual bool getCurrentRanges(double * min, double * max) override;
+    virtual bool getCurrentRanges(double * mins, double * maxs) override;
     virtual bool setRefCurrent(int m, double curr) override;
     virtual bool setRefCurrents(const double * currs) override;
     virtual bool setRefCurrents(int n_motor, const int * motors, const double * currs) override;
+    virtual bool getRefCurrent(int m, double * curr) override;
     virtual bool getRefCurrents(double * currs) override;
-    virtual bool getRefCurrent(int m, double *curr) override;
 
     //  ---------- IEncoders declarations. Implementation in IEncodersImpl.cpp ----------
 
@@ -164,7 +164,7 @@ public:
 
     //  --------- IMotor declarations. Implementation in IMotorImpl.cpp ---------
 
-    virtual bool getNumberOfMotors(int *num) override;
+    virtual bool getNumberOfMotors(int * num) override;
     virtual bool getTemperature(int m, double * val) override;
     virtual bool getTemperatures(double * vals) override;
     virtual bool getTemperatureLimit(int m, double * temp) override;
@@ -200,7 +200,7 @@ public:
     virtual bool setPidErrorLimits(const yarp::dev::PidControlTypeEnum & pidtype, const double * limits) override;
     virtual bool getPidError(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * err) override;
     virtual bool getPidErrors(const yarp::dev::PidControlTypeEnum & pidtype, double * errs) override;
-    virtual bool getPidOutput(const yarp::dev::PidControlTypeEnum & pidtype, int j, double *out) override;
+    virtual bool getPidOutput(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * out) override;
     virtual bool getPidOutputs(const yarp::dev::PidControlTypeEnum & pidtype, double * outs) override;
     virtual bool getPid(const yarp::dev::PidControlTypeEnum & pidtype, int j, yarp::dev::Pid * pid) override;
     virtual bool getPids(const yarp::dev::PidControlTypeEnum & pidtype, yarp::dev::Pid * pids) override;
@@ -232,9 +232,9 @@ public:
     virtual bool setRefAcceleration(int j, double acc) override;
     virtual bool setRefAccelerations(const double * accs) override;
     virtual bool setRefAccelerations(int n_joint, const int * joints, const double * accs) override;
-    virtual bool getRefSpeeds(int n_joint, const int * joints, double * spds) override;
-    virtual bool getRefSpeed(int j, double * ref) override;
+    virtual bool getRefSpeed(int j, double * spd) override;
     virtual bool getRefSpeeds(double * spds) override;
+    virtual bool getRefSpeeds(int n_joint, const int * joints, double * spds) override;
     virtual bool getRefAcceleration(int j, double * acc) override;
     virtual bool getRefAccelerations(double * accs) override;
     virtual bool getRefAccelerations(int n_joint, const int * joints, double * accs) override;
@@ -252,7 +252,7 @@ public:
     virtual bool setPositions(const double * refs) override;
     virtual bool setPositions(int n_joint, const int * joints, const double * refs) override;
     virtual bool getRefPosition(int joint, double * ref) override;
-    virtual bool getRefPositions(double *refs) override;
+    virtual bool getRefPositions(double * refs) override;
     virtual bool getRefPositions(int n_joint, const int * joints, double * refs) override;
 
     //  --------- IPWMControl declarations. Implementation in IPWMControlImpl.cpp ---------
@@ -274,17 +274,17 @@ public:
     // -------- ITorqueControl declarations. Implementation in ITorqueControlImpl.cpp --------
 
     //virtual bool getAxes(int * ax) override;
-    virtual bool getRefTorques(double *t);
-    virtual bool getRefTorque(int j, double *t);
-    virtual bool setRefTorques(const double *t);
-    virtual bool setRefTorque(int j, double t);
-    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t);
-    virtual bool getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params);
-    virtual bool setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params);
-    virtual bool getTorque(int j, double *t);
-    virtual bool getTorques(double *t);
-    virtual bool getTorqueRange(int j, double *min, double *max);
-    virtual bool getTorqueRanges(double *min, double *max);
+    virtual bool getRefTorque(int j, double * t) override;
+    virtual bool getRefTorques(double * t) override;
+    virtual bool setRefTorque(int j, double t) override;
+    virtual bool setRefTorques(const double * t) override;
+    virtual bool setRefTorques(int n_joint, const int * joints, const double * t) override;
+    virtual bool getMotorTorqueParams(int j, yarp::dev::MotorTorqueParameters * params) override;
+    virtual bool setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params) override;
+    virtual bool getTorque(int j, double * t) override;
+    virtual bool getTorques(double * t) override;
+    virtual bool getTorqueRange(int j, double * min, double * max) override;
+    virtual bool getTorqueRanges(double * min, double * max) override;
 
     //  --------- IVelocityControl declarations. Implementation in IVelocityControlImpl.cpp ---------
 
@@ -310,8 +310,8 @@ private:
     struct CanThreads
     {
         std::string busName;
-        CanReaderThread * reader = nullptr;
-        CanWriterThread * writer = nullptr;
+        CanReaderThread * reader;
+        CanWriterThread * writer;
     };
 
     yarp::dev::PolyDriverList busDevices;

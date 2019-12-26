@@ -15,24 +15,10 @@ if(NOT SKIP_FakeJoint)
         set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
     endif()
 
-    yarp_add_plugin(FakeJoint FakeJoint.cpp
-                              FakeJoint.hpp
-                              DeviceDriverImpl.cpp
-                              ICanBusSharerImpl.cpp
-                              IControlLimitsRawImpl.cpp
-                              IControlModeRawImpl.cpp
-                              IEncodersRawImpl.cpp
-                              IEncodersTimedRawImpl.cpp
-                              IInteractionModeRawImpl.cpp
-                              IPositionControlRawImpl.cpp
-                              IPositionDirectRawImpl.cpp
-                              IRemoteVariablesRawImpl.cpp
-                              ITorqueControlRawImpl.cpp
-                              IVelocityControlRawImpl.cpp)
+    yarp_add_plugin(FakeJoint FakeJoint.hpp
+                              FakeJoint.cpp)
 
-    target_link_libraries(FakeJoint YARP::YARP_OS
-                                    YARP::YARP_dev
-                                    ROBOTICSLAB::ColorDebug
+    target_link_libraries(FakeJoint YARP::YARP_dev
                                     CanBusSharerLib)
 
     yarp_install(TARGETS FakeJoint
