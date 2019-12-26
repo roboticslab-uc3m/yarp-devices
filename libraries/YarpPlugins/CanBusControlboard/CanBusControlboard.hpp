@@ -310,8 +310,8 @@ private:
     struct CanThreads
     {
         std::string busName;
-        CanReaderThread * reader = nullptr;
-        CanWriterThread * writer = nullptr;
+        CanReaderThread * reader;
+        CanWriterThread * writer;
     };
 
     yarp::dev::PolyDriverList busDevices;
