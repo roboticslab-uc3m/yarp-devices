@@ -15,14 +15,11 @@ if(NOT SKIP_CanBusFake)
     endif()
 
     yarp_add_plugin(CanBusFake CanBusFake.hpp
-                               DeviceDriverImpl.cpp
-                               ICanBusImpl.cpp
+                               CanBusFake.cpp
                                FakeCanMessage.hpp
                                FakeCanMessage.cpp)
 
-    target_link_libraries(CanBusFake YARP::YARP_OS
-                                     YARP::YARP_dev
-                                     ROBOTICSLAB::ColorDebug)
+    target_link_libraries(CanBusFake YARP::YARP_dev)
 
     yarp_install(TARGETS CanBusFake
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
