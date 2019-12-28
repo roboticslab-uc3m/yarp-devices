@@ -50,134 +50,52 @@ bool TechnosoftIpos::registerSender(CanSenderDelegate * sender)
 
 bool TechnosoftIpos::initialize()
 {
-    if (iExternalEncoderCanBusSharer && !iExternalEncoderCanBusSharer->initialize())
-    {
-        CD_ERROR("Unable to initialize external encoder device.\n");
-        return false;
-    }
+    double extEnc;
 
-    std::uint32_t data;
-
-    if (!can->sdo()->upload("Device type", &data, 0x1000))
-    {
-        return false;
-    }
-
-    CD_INFO("CiA standard: %d.\n", data & 0xFFFF);
-
-    if (!can->sdo()->upload("Supported drive modes", &data, 0x6502))
-    {
-        return false;
-    }
-
-    interpretSupportedDriveModes(data);
-
-    std::string firmware;
-
-    if (!can->sdo()->upload("Manufacturer software version", firmware, 0x100A))
-    {
-        return false;
-    }
-
-    CD_INFO("Firmware version: %s.\n", firmware.c_str());
-
-    can->sdo()->upload("Identity Object: Vendor ID", &data, 0x1018, 0x01);
-
-    if (!can->sdo()->upload("Identity Object: Product Code", &data, 0x1018, 0x02))
-    {
-        return false;
-    }
-
-    CD_INFO("Retrieved product code: P%03d.%03d.E%03d.\n", data / 1000000, (data / 1000) % 1000, data % 1000);
-
-    if (!can->sdo()->upload("Identity Object: Revision number", &data, 0x1018, 0x03))
-    {
-        return false;
-    }
-
-    CD_INFO("Revision number: %c%c%c%c.\n", getByte(data, 3), getByte(data, 2), getByte(data, 1), getByte(data, 0));
-
-    if (!can->sdo()->upload("Identity Object: Serial number", &data, 0x1018, 0x04))
-    {
-        return false;
-    }
-
-    CD_INFO("Serial number: %c%c%02x%02x.\n", getByte(data, 3), getByte(data, 2), getByte(data, 1), getByte(data, 0));
-
-    if (!setLimitsRaw(0, vars.min, vars.max))
-    {
-        CD_ERROR("Unable to set software limits.\n");
-        return false;
-    }
-
-    if (!setRefSpeedRaw(0, vars.refSpeed))
-    {
-        CD_ERROR("Unable to set reference speed.\n");
-        return false;
-    }
-
-    if (!setRefAccelerationRaw(0, vars.refAcceleration))
-    {
-        CD_ERROR("Unable to set reference acceleration.\n");
-        return false;
-    }
-
-    if (iEncodersTimedRawExternal)
-    {
+    return (!iExternalEncoderCanBusSharer || iExternalEncoderCanBusSharer->initialize())
+        && can->sdo()->upload<std::uint32_t>("Device type",
+            [](std::uint32_t data)
+            {
+                CD_INFO("CiA standard: %d.\n", data & 0xFFFF);
+            },
+            0x1000)
+        && can->sdo()->upload<std::uint32_t>("Supported drive modes",
+            [this](std::uint32_t data)
+            {
+                interpretSupportedDriveModes(data);
+            },
+            0x6502)
+        && can->sdo()->upload("Manufacturer software version",
+            [](const std::string & firmware)
+            {
+                CD_INFO("Firmware version: %s.\n", firmware.c_str());
+            },
+            0x100A)
+        && can->sdo()->upload<std::uint32_t>("Identity Object: Product Code",
+            [](std::uint32_t data)
+            {
+                CD_INFO("Product code: P%03d.%03d.E%03d.\n", data / 1000000, (data / 1000) % 1000, data % 1000);
+            },
+            0x1018, 0x02)
+        && can->sdo()->upload<std::uint32_t>("Identity Object: Serial number",
+            [](std::uint32_t data)
+            {
+                CD_INFO("Serial number: %c%c%02x%02x.\n", getByte(data, 3), getByte(data, 2), getByte(data, 1), getByte(data, 0));
+            },
+            0x1018, 0x04)
+        && setLimitsRaw(0, vars.min, vars.max)
+        && setRefSpeedRaw(0, vars.refSpeed)
+        && setRefAccelerationRaw(0, vars.refAcceleration)
         // synchronize absolute (master) and relative (slave) encoders
-        double extEnc;
-
-        if (!iEncodersTimedRawExternal->getEncodersRaw(&extEnc))
-        {
-            return false;
-        }
-
-        CD_INFO("External absolute encoder read %f.\n", extEnc);
-
-        if (!setEncoderRaw(0, extEnc))
-        {
-            return false;
-        }
-    }
-
-    if (!can->tpdo1()->configure(vars.tpdo1Conf))
-    {
-        CD_ERROR("Unable to configure TPDO1.\n");
-        return false;
-    }
-
-    if (!can->tpdo2()->configure(vars.tpdo2Conf))
-    {
-        CD_ERROR("Unable to configure TPDO2.\n");
-        return false;
-    }
-
-    if (!can->tpdo3()->configure(vars.tpdo3Conf))
-    {
-        CD_ERROR("Unable to configure TPDO3.\n");
-        return false;
-    }
-
-    vars.actualControlMode = VOCAB_CM_CONFIGURED;
-
-    if (!can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE))
-    {
-        return false;
-    }
-
-    if (can->driveStatus()->getCurrentState() == DriveState::NOT_READY_TO_SWITCH_ON &&
-        !can->driveStatus()->awaitState(DriveState::SWITCH_ON_DISABLED))
-    {
-        CD_ERROR("SWITCH_ON_DISABLED state check failed.\n");
-        return false;
-    }
-
-    if (!can->driveStatus()->requestState(DriveState::SWITCHED_ON))
-    {
-        return false;
-    }
-
-    return true;
+        && (!iEncodersTimedRawExternal || (iEncodersTimedRawExternal->getEncodersRaw(&extEnc) && setEncoderRaw(0, extEnc)))
+        && can->tpdo1()->configure(vars.tpdo1Conf)
+        && can->tpdo2()->configure(vars.tpdo2Conf)
+        && can->tpdo3()->configure(vars.tpdo3Conf)
+        && (vars.actualControlMode = VOCAB_CM_CONFIGURED, true)
+        && can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE)
+        && (can->driveStatus()->getCurrentState() != DriveState::NOT_READY_TO_SWITCH_ON
+            || can->driveStatus()->awaitState(DriveState::SWITCH_ON_DISABLED))
+        && can->driveStatus()->requestState(DriveState::SWITCHED_ON);
 }
 
 // -----------------------------------------------------------------------------
