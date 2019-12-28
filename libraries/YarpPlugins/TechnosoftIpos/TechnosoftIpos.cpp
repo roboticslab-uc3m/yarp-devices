@@ -16,12 +16,12 @@ using namespace roboticslab;
 namespace
 {
     template<std::size_t N>
-    void reportBitToggle(unsigned int canId, const std::bitset<N> & actual, const std::bitset<N> & stored,
+    bool reportBitToggle(unsigned int canId, const std::bitset<N> & actual, const std::bitset<N> & stored,
             std::size_t pos, const std::string & msgSet, const std::string & msgReset = "")
     {
         if (actual.test(pos) == stored.test(pos))
         {
-            return;
+            return false;
         }
 
         if (actual.test(pos))
@@ -39,6 +39,8 @@ namespace
                 CD_INFO("Bit reset: %s (canId: %d)\n", msgSet.c_str(), canId);
             }
         }
+
+        return true;
     }
 }
 
@@ -467,6 +469,26 @@ void TechnosoftIpos::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, con
         }
         break;
     }
+}
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::quitHaltState(int mode)
+{
+    if (!can->driveStatus()->controlword()[8])
+    {
+        return true;
+    }
+
+    if (mode == VOCAB_CM_POSITION || mode == VOCAB_CM_VELOCITY)
+    {
+        if (!can->driveStatus()->statusword()[10])
+        {
+            return false;
+        }
+    }
+
+    return can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8));
 }
 
 // -----------------------------------------------------------------------------

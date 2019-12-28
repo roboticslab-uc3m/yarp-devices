@@ -35,9 +35,10 @@ bool TechnosoftIpos::setRefTorqueRaw(int j, double t)
     CD_DEBUG("(%d, %f)\n", j, t);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_TORQUE);
+
     double curr = vars.torqueToCurrent(t);
     std::int32_t data = vars.currentToInternalUnits(curr) << 16;
-    return can->sdo()->download("External online reference", data, 0x201C);
+    return quitHaltState(VOCAB_CM_TORQUE) && can->sdo()->download("External online reference", data, 0x201C);
 }
 
 // -------------------------------------------------------------------------------------

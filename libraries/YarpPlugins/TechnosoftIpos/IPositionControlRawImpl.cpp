@@ -18,7 +18,8 @@ bool TechnosoftIpos::positionMoveRaw(int j, double ref)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    return can->rpdo1()->write<std::uint16_t>(0x002F) // change set immediately
+    return quitHaltState(VOCAB_CM_POSITION)
+            && can->rpdo1()->write<std::uint16_t>(0x002F) // change set immediately
             && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(ref), 0x607A)
             && can->rpdo1()->write<std::uint16_t>(0x003F); // new setpoint (assume absolute target position)
 }
@@ -47,7 +48,8 @@ bool TechnosoftIpos::relativeMoveRaw(int j, double delta)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    return can->rpdo1()->write<std::uint16_t>(0x002F) // change set immediately
+    return quitHaltState(VOCAB_CM_POSITION)
+            && can->rpdo1()->write<std::uint16_t>(0x002F) // change set immediately
             && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(delta), 0x607A)
             && can->rpdo1()->write<std::uint16_t>(0x007F); // new setpoint (assume relative target position)
 }
@@ -249,9 +251,7 @@ bool TechnosoftIpos::stopRaw(int j)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-
-    return can->driveStatus()->requestTransition(DriveTransition::QUICK_STOP)
-            && can->driveStatus()->requestTransition(DriveTransition::ENABLE_OPERATION);
+    return can->driveStatus()->controlword(can->driveStatus()->controlword().set(8));
 }
 
 // --------------------------------------------------------------------------------

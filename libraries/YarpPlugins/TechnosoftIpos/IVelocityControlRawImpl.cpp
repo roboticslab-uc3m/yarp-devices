@@ -31,7 +31,7 @@ bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
     CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
 
     std::int32_t data = (dataInt << 16) + dataFrac;
-    return can->sdo()->download("Target velocity", data, 0x60FF);
+    return quitHaltState(VOCAB_CM_VELOCITY) && can->sdo()->download("Target velocity", data, 0x60FF);
 }
 
 // ----------------------------------------------------------------------------------

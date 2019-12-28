@@ -76,6 +76,33 @@ namespace
         }
     }
 
+    using word_t = DriveStatusMachine::word_t;
+
+    word_t stateToControlword(DriveState state)
+    {
+        switch (state)
+        {
+        case DriveState::SWITCH_ON_DISABLED:
+            return static_cast<std::uint16_t>(DriveTransition::DISABLE_VOLTAGE);
+        case DriveState::READY_TO_SWITCH_ON:
+            return static_cast<std::uint16_t>(DriveTransition::SHUTDOWN);
+        case DriveState::SWITCHED_ON:
+            return static_cast<std::uint16_t>(DriveTransition::SWITCH_ON); // same as DISABLE_OPERATION
+        case DriveState::OPERATION_ENABLED:
+            return static_cast<std::uint16_t>(DriveTransition::ENABLE_OPERATION);
+        case DriveState::QUICK_STOP_ACTIVE:
+            return static_cast<std::uint16_t>(DriveTransition::QUICK_STOP);
+        default: // NOT_READY_TO_SWITCH_ON and fault states
+            return 0x0000;
+        }
+    }
+
+    inline word_t updateStateBits(const word_t & stored, const word_t & requested)
+    {
+        static const word_t controlwordMaskNot = ~word_t("0000000010001111"); // state machine-related bits
+        return (stored & controlwordMaskNot) | requested;
+    }
+
     using ds = DriveState;
     using dt = DriveTransition;
 
@@ -116,38 +143,38 @@ namespace
 
 bool DriveStatusMachine::update(std::uint16_t statusword)
 {
-    static const word_t mask("0000000001101111"); // state machine-related bits
-    word_t _old;
-    word_t _new = statusword;
+    static const word_t statuswordMask("0000000001101111"); // state machine-related bits
 
+    std::lock_guard<std::mutex> lock(stateMutex);
+    const word_t old = _statusword;
+    _statusword = statusword;
+
+    if ((old & statuswordMask) != (_statusword & statuswordMask))
     {
-        std::lock_guard<std::mutex> lock(stateMutex);
-        _old = _statusword;
-        _statusword = _new;
+        word_t requested = stateToControlword(parseDriveState(_statusword));
+        _controlword = updateStateBits(_controlword, requested);
+        return stateObserver.notify();
     }
 
-    _old &= mask;
-    _new &= mask;
-    return _old != _new ? stateObserver.notify() : true;
+    return true;
 }
 
 DriveStatusMachine::word_t DriveStatusMachine::controlword() const
 {
-    switch (getCurrentState())
+    std::lock_guard<std::mutex> lock(stateMutex);
+    return _controlword;
+}
+
+bool DriveStatusMachine::controlword(const word_t & controlbits)
+{
+    if (!rpdo->write<std::uint16_t>(controlbits.to_ulong()))
     {
-    case DriveState::SWITCH_ON_DISABLED:
-        return static_cast<std::uint16_t>(DriveTransition::DISABLE_VOLTAGE);
-    case DriveState::READY_TO_SWITCH_ON:
-        return static_cast<std::uint16_t>(DriveTransition::SHUTDOWN);
-    case DriveState::SWITCHED_ON:
-        return static_cast<std::uint16_t>(DriveTransition::SWITCH_ON); // same as DISABLE_OPERATION
-    case DriveState::OPERATION_ENABLED:
-        return static_cast<std::uint16_t>(DriveTransition::ENABLE_OPERATION);
-    case DriveState::QUICK_STOP_ACTIVE:
-        return static_cast<std::uint16_t>(DriveTransition::QUICK_STOP);
-    default: // NOT_READY_TO_SWITCH_ON and fault states
-        return 0;
+        return false;
     }
+
+    std::lock_guard<std::mutex> lock(stateMutex);
+    _controlword = controlbits;
+    return true;
 }
 
 DriveStatusMachine::word_t DriveStatusMachine::statusword() const
@@ -165,9 +192,10 @@ bool DriveStatusMachine::requestTransition(DriveTransition transition, bool wait
 {
     DriveState initialState = getCurrentState();
     auto it = nextStateOnTransition.find({initialState, transition});
+    word_t requested = updateStateBits(controlword(), static_cast<std::uint16_t>(transition));
 
     return it != nextStateOnTransition.cend()
-            && rpdo->write(static_cast<std::uint16_t>(transition))
+            && controlword(requested)
             && (wait ? awaitState(it->second) : true);
 }
 

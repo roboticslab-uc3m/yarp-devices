@@ -837,36 +837,62 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
     // test known states
 
     ASSERT_TRUE(status.update(notReadyToSwitchOn));
+    ASSERT_EQ(status.statusword(), notReadyToSwitchOn);
     ASSERT_EQ(status.getCurrentState(), DriveState::NOT_READY_TO_SWITCH_ON);
     ASSERT_EQ(DriveStatusMachine::parseStatusword(notReadyToSwitchOn), DriveState::NOT_READY_TO_SWITCH_ON);
+    ASSERT_EQ(status.controlword(), 0x0000);
 
     ASSERT_TRUE(status.update(switchOnDisabled));
+    ASSERT_EQ(status.statusword(), switchOnDisabled);
     ASSERT_EQ(status.getCurrentState(), DriveState::SWITCH_ON_DISABLED);
     ASSERT_EQ(DriveStatusMachine::parseStatusword(switchOnDisabled), DriveState::SWITCH_ON_DISABLED);
+    ASSERT_EQ(status.controlword(), static_cast<std::uint16_t>(DriveTransition::DISABLE_VOLTAGE));
 
     ASSERT_TRUE(status.update(readyToSwitchOn));
+    ASSERT_EQ(status.statusword(), readyToSwitchOn);
     ASSERT_EQ(status.getCurrentState(), DriveState::READY_TO_SWITCH_ON);
     ASSERT_EQ(DriveStatusMachine::parseStatusword(readyToSwitchOn), DriveState::READY_TO_SWITCH_ON);
+    ASSERT_EQ(status.controlword(), static_cast<std::uint16_t>(DriveTransition::SHUTDOWN));
 
     ASSERT_TRUE(status.update(switchedOn));
+    ASSERT_EQ(status.statusword(), switchedOn);
     ASSERT_EQ(status.getCurrentState(), DriveState::SWITCHED_ON);
     ASSERT_EQ(DriveStatusMachine::parseStatusword(switchedOn), DriveState::SWITCHED_ON);
+    ASSERT_EQ(status.controlword(), static_cast<std::uint16_t>(DriveTransition::SWITCH_ON));
 
     ASSERT_TRUE(status.update(operationEnabled));
+    ASSERT_EQ(status.statusword(), operationEnabled);
     ASSERT_EQ(status.getCurrentState(), DriveState::OPERATION_ENABLED);
     ASSERT_EQ(DriveStatusMachine::parseStatusword(operationEnabled), DriveState::OPERATION_ENABLED);
+    ASSERT_EQ(status.controlword(), static_cast<std::uint16_t>(DriveTransition::ENABLE_OPERATION));
 
     ASSERT_TRUE(status.update(quickStopActive));
+    ASSERT_EQ(status.statusword(), quickStopActive);
     ASSERT_EQ(status.getCurrentState(), DriveState::QUICK_STOP_ACTIVE);
     ASSERT_EQ(DriveStatusMachine::parseStatusword(quickStopActive), DriveState::QUICK_STOP_ACTIVE);
+    ASSERT_EQ(status.controlword(), static_cast<std::uint16_t>(DriveTransition::QUICK_STOP));
 
     ASSERT_TRUE(status.update(faultReactionActive));
+    ASSERT_EQ(status.statusword(), faultReactionActive);
     ASSERT_EQ(status.getCurrentState(), DriveState::FAULT_REACTION_ACTIVE);
     ASSERT_EQ(DriveStatusMachine::parseStatusword(faultReactionActive), DriveState::FAULT_REACTION_ACTIVE);
+    ASSERT_EQ(status.controlword(), 0x0000);
 
     ASSERT_TRUE(status.update(fault));
+    ASSERT_EQ(status.statusword(), fault);
     ASSERT_EQ(status.getCurrentState(), DriveState::FAULT);
     ASSERT_EQ(DriveStatusMachine::parseStatusword(fault), DriveState::FAULT);
+    ASSERT_EQ(status.controlword(), 0x0000);
+
+    // test random controlword commands
+
+    ASSERT_TRUE(status.controlword(0x1234));
+    ASSERT_EQ(getSender()->getLastMessage().id, rpdo.getCobId());
+    ASSERT_EQ(getSender()->getLastMessage().len, 2);
+    ASSERT_EQ(getSender()->getLastMessage().data, status.controlword().to_ulong());
+    ASSERT_EQ(status.controlword(), 0x1234);
+
+    ASSERT_TRUE(status.controlword(0x0000)); // reset
 
     // test SWITCH_ON_DISABLED -> READY_TO_SWITCH_ON (transition 2: SHUTDOWN)
 
@@ -1015,6 +1041,19 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
 
     ASSERT_TRUE(status.update(switchOnDisabled));
     ASSERT_FALSE(status.requestTransition(DriveTransition::ENABLE_OPERATION));
+
+    // test non-null controlword on transition SWITCH_ON_DISABLED -> READY_TO_SWITCH_ON (transition 2: SHUTDOWN)
+
+    ASSERT_FALSE(status.controlword().test(14));
+    ASSERT_TRUE(status.controlword(status.controlword().set(14)));
+    ASSERT_TRUE(status.update(switchOnDisabled));
+    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(readyToSwitchOn); }});
+    ASSERT_TRUE(status.requestTransition(DriveTransition::SHUTDOWN));
+    ASSERT_EQ(getSender()->getLastMessage().id, rpdo.getCobId());
+    ASSERT_EQ(getSender()->getLastMessage().len, 2);
+    ASSERT_EQ(getSender()->getLastMessage().data, status.controlword().to_ulong());
+    ASSERT_EQ(status.controlword(), 0x4006);
+    ASSERT_EQ(status.getCurrentState(), DriveState::READY_TO_SWITCH_ON);
 
     // test SWITCH_ON_DISABLED -> READY_TO_SWITCH_ON (state request)
 

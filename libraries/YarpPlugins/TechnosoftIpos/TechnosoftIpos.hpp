@@ -266,6 +266,8 @@ protected:
     void handleTpdo3(std::int32_t position, std::int16_t current);
     void handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef);
 
+    bool quitHaltState(int mode);
+
     CanOpen * can;
 
     yarp::dev::PolyDriver externalEncoderDevice;

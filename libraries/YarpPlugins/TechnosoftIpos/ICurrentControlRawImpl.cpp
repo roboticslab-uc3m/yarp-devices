@@ -53,8 +53,9 @@ bool TechnosoftIpos::setRefCurrentRaw(int m, double curr)
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
     CHECK_MODE(VOCAB_CM_CURRENT);
+
     std::int32_t data = vars.currentToInternalUnits(curr) << 16;
-    return can->sdo()->download("External online reference", data, 0x201C);
+    return quitHaltState(VOCAB_CM_CURRENT) && can->sdo()->download("External online reference", data, 0x201C);
 }
 
 // -----------------------------------------------------------------------------
