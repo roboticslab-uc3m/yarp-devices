@@ -104,11 +104,6 @@ bool TechnosoftIpos::initialize()
 
     CD_INFO("Serial number: %c%c%02x%02x.\n", getByte(data, 3), getByte(data, 2), getByte(data, 1), getByte(data, 0));
 
-    if (!can->sdo()->download<std::int16_t>("Quick stop option code", 6, 0x605A))
-    {
-        return false;
-    }
-
     if (!setLimitsRaw(0, vars.min, vars.max))
     {
         CD_ERROR("Unable to set software limits.\n");
