@@ -3,17 +3,41 @@
 #include "PositionDirectThread.hpp"
 
 #include <algorithm>
-#include <memory>
+#include <iterator>
 
-#include <yarp/dev/IRemoteVariables.h>
+#include <yarp/os/Bottle.h>
+
+#include <ColorDebug.h>
 
 using namespace roboticslab;
 
-PositionDirectThread::PositionDirectThread(const DeviceMapper & _deviceMapper, double period)
-    : yarp::os::PeriodicThread(period),
-      deviceMapper(_deviceMapper)
+PositionDirectThread::PositionDirectThread(const DeviceMapper & deviceMapper)
+    : yarp::os::PeriodicThread(0.0)
 {
+    const auto & devices = deviceMapper.getDevicesWithOffsets();
+
+    std::transform(devices.cbegin(), devices.cend(), std::back_inserter(handles), [](const DeviceMapper::dev_index_t & t)
+            { return std::get<0>(t)->getHandle<yarp::dev::IRemoteVariablesRaw>(); });
+
     suspend();
+}
+
+bool PositionDirectThread::configure(const yarp::os::Searchable & config)
+{
+    int periodMs = config.check("linInterpPeriodMs", yarp::os::Value(0),
+            "linear interpolation mode period (milliseconds)").asInt32();
+
+    bool ok = setPeriod(periodMs * 0.001);
+
+    for (auto * p : handles)
+    {
+        if (p)
+        {
+            ok &= p->setRemoteVariableRaw("linInterpConfig", yarp::os::Bottle(config.toString()));
+        }
+    }
+
+    return ok;
 }
 
 void PositionDirectThread::updateControlModeRegister(int j, bool enablePosd)
@@ -21,10 +45,7 @@ void PositionDirectThread::updateControlModeRegister(int j, bool enablePosd)
     std::lock_guard<std::mutex> guard(mutex);
 
     bool hasElement = activeIds.find(j) != activeIds.end();
-
-    int localAxis;
-    auto t = deviceMapper.getDevice(j);
-    auto * p  = std::get<0>(t)->getHandle<yarp::dev::IRemoteVariablesRaw>();
+    auto * p  = handles[j];
 
     if (!p)
     {
@@ -33,7 +54,7 @@ void PositionDirectThread::updateControlModeRegister(int j, bool enablePosd)
     else if (enablePosd && !hasElement)
     {
         activeIds.insert(j);
-        p->setRemoteVariableRaw("linInterpStart", yarp::os::Bottle());
+        p->setRemoteVariableRaw("linInterpStart", {});
         resume();
     }
     else if (!enablePosd && hasElement)
@@ -53,12 +74,8 @@ void PositionDirectThread::run()
     std::set<int> ids = activeIds;
     mutex.unlock();
 
-    std::unique_ptr<int[]> arr(new int[ids.size()]);
-    std::copy(ids.begin(), ids.end(), arr.get());
-
-    for (const auto & t : deviceMapper.getDevices(ids.size(), arr.get()))
+    for (auto id : ids)
     {
-        auto * p = std::get<0>(t)->getHandle<yarp::dev::IRemoteVariablesRaw>();
-        p->setRemoteVariableRaw("linInterpTarget", yarp::os::Bottle());
+        handles[id]->setRemoteVariableRaw("linInterpTarget", {});
     }
 }

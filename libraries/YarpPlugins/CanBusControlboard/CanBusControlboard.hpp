@@ -3,7 +3,6 @@
 #ifndef __CAN_BUS_CONTROLBOARD_HPP__
 #define __CAN_BUS_CONTROLBOARD_HPP__
 
-#include <string>
 #include <vector>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
@@ -14,13 +13,6 @@
 #include "CanRxTxThreads.hpp"
 
 #define CHECK_JOINT(j) do { int n = deviceMapper.getControlledAxes(); if ((j) < 0 || (j) > n - 1) return false; } while (0)
-
-#define DEFAULT_LIN_INTERP_PERIOD_MS 50
-#define DEFAULT_LIN_INTERP_BUFFER_SIZE 1
-#define DEFAULT_LIN_INTERP_MODE "pt"
-
-#define DEFAULT_CAN_SDO_TIMEOUT_MS 25.0 // FIXME unused
-#define DEFAULT_CAN_DRIVE_STATE_TIMEOUT 2.5 // FIXME unused
 
 namespace roboticslab
 {
@@ -58,7 +50,7 @@ class CanBusControlboard : public yarp::dev::DeviceDriver,
 public:
 
     CanBusControlboard()
-        : posdThread(nullptr), linInterpPeriodMs(0), linInterpBufferSize(0)
+        : posdThread(nullptr)
     { }
 
     // -------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp --------
@@ -321,9 +313,6 @@ private:
     std::vector<CanThreads> canThreads;
 
     PositionDirectThread * posdThread;
-    int linInterpPeriodMs;
-    int linInterpBufferSize;
-    std::string linInterpMode;
 };
 
 } // namespace roboticslab

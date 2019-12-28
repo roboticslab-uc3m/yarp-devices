@@ -22,27 +22,21 @@ bool TechnosoftIpos::setPositionDirectModeRaw()
     rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x01);
     rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x02);
 
-    bool ok = true;
-    ok = ok && can->rpdo3()->configure(rpdo3Conf);
-    ok = ok && can->sdo()->download<std::int8_t>("Modes of Operation", 7, 0x6060);
-    ok = ok && can->sdo()->download<std::int16_t>("Interpolation sub mode select", linInterpBuffer->getSubMode(), 0x60C0);
-    ok = ok && can->sdo()->download<std::uint16_t>("Interpolated position buffer length", linInterpBuffer->getBufferSize(), 0x2073);
-    ok = ok && can->sdo()->download<std::uint16_t>("Interpolated position buffer configuration", 0xA000, 0x2074);
-    if (!ok) return false;
+    double refInternalUnits = vars.lastEncoderRead.queryPosition();
+    double refDegrees = vars.internalUnitsToDegrees(refInternalUnits);
 
-    double ref;
-    if (!getEncoderRaw(0, &ref)) return false;
-    std::int32_t data = vars.degreesToInternalUnits(ref);
-
-    if (!can->sdo()->download("Interpolated position initial position", data, 0x2079))
+    if (!can->rpdo3()->configure(rpdo3Conf)
+        || !can->sdo()->download<std::int8_t>("Modes of Operation", 7, 0x6060)
+        || !can->sdo()->download<std::int16_t>("Interpolation sub mode select", linInterpBuffer->getSubMode(), 0x60C0)
+        || !can->sdo()->download<std::uint16_t>("Interpolated position buffer length", linInterpBuffer->getBufferSize(), 0x2073)
+        || !can->sdo()->download<std::uint16_t>("Interpolated position buffer configuration", 0xA000, 0x2074)
+        || !can->sdo()->download<std::int32_t>("Interpolated position initial position", refInternalUnits, 0x2079))
     {
         return false;
     }
 
-    yarp::os::Time::delay(0.1);  //-- Seems like a "must".
-
-    linInterpBuffer->setInitialReference(ref);
-    linInterpBuffer->updateTarget(ref);
+    linInterpBuffer->setInitialReference(refDegrees);
+    linInterpBuffer->updateTarget(refDegrees);
 
     for (int i = 0; i < linInterpBuffer->getBufferSize(); i++)
     {
@@ -90,6 +84,17 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     CHECK_JOINT(j);
 
     vars.requestedcontrolMode = mode;
+
+    if (mode == vars.actualControlMode)
+    {
+        return true;
+    }
+
+    if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT
+        && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4))) // disable ip mode
+    {
+        return false;
+    }
 
     switch (mode)
     {

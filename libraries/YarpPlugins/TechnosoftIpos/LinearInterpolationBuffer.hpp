@@ -10,6 +10,12 @@
 
 #include <yarp/os/Searchable.h>
 
+#include "StateVariables.hpp"
+
+#define DEFAULT_PERIOD_MS 50
+#define DEFAULT_BUFFER_SIZE 1
+#define DEFAULT_MODE "pt"
+
 // https://github.com/roboticslab-uc3m/yarp-devices/issues/198#issuecomment-487279910
 #define PT_BUFFER_MAX_SIZE 285
 #define PVT_BUFFER_MAX_SIZE 222
@@ -38,7 +44,7 @@ public:
     virtual int getSubMode() const = 0;
     virtual std::uint64_t makeDataRecord() = 0;
     LinearInterpolationBuffer * cloneTo(const std::string & type);
-    static LinearInterpolationBuffer * createBuffer(const yarp::os::Searchable & config);
+    static LinearInterpolationBuffer * createBuffer(const yarp::os::Searchable & config, const StateVariables & vars);
 
 protected:
     int periodMs;
@@ -58,9 +64,9 @@ class PtBuffer : public LinearInterpolationBuffer
 {
 public:
     PtBuffer(int _periodMs, int _bufferSize, double _factor, double _maxVel);
-    virtual std::string getType() const;
-    virtual int getSubMode() const;
-    virtual std::uint64_t makeDataRecord();
+    virtual std::string getType() const override;
+    virtual int getSubMode() const override;
+    virtual std::uint64_t makeDataRecord() override;
 
 private:
     double maxDistance;
@@ -73,10 +79,10 @@ class PvtBuffer : public LinearInterpolationBuffer
 {
 public:
     PvtBuffer(int _periodMs, int _bufferSize, double _factor, double _maxVel);
-    virtual void setInitialReference(double target);
-    virtual std::string getType() const;
-    virtual int getSubMode() const;
-    virtual std::uint64_t makeDataRecord();
+    virtual void setInitialReference(double target) override;
+    virtual std::string getType() const override;
+    virtual int getSubMode() const override;
+    virtual std::uint64_t makeDataRecord() override;
 
 private:
     double previousTarget;

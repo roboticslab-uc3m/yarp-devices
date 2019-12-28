@@ -356,56 +356,18 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
 
 void TechnosoftIpos::interpretPtStatus(std::uint16_t status)
 {
-    CD_INFO("Interpolated position mode status. canId: %d.\n", can->getId());
     std::bitset<16> bits(status);
+    const std::bitset<16> & stored = vars.ptStatus;
+    unsigned int id = can->getId();
 
-    if (bits[15])
-    {
-        CD_INFO("\t* buffer is empty.\n");
-
-        if (linInterpBuffer->getType() == "pvt")
-        {
-            if (bits[11])
-            {
-                CD_INFO("\t* pvt maintained position on buffer empty (zero velocity).\n");
-            }
-            else
-            {
-                CD_INFO("\t* pvt performed quick stop on buffer empty (non-zero velocity).\n");
-            }
-        }
-    }
-    else
-    {
-        CD_INFO("\t* buffer is not empty.\n");
-    }
-
-    if (bits[14])
-    {
-        CD_INFO("\t* buffer is low.\n");
-    }
-    else
-    {
-        CD_INFO("\t* buffer is not low.\n");
-    }
-
-    if (bits[13])
-    {
-        CD_INFO("\t* buffer is full.\n");
-    }
-    else
-    {
-        CD_INFO("\t* buffer is not full.\n");
-    }
-
-    if (bits[12])
-    {
-        CD_INFO("\t* integrity counter error.\n");
-    }
-    else
-    {
-        CD_INFO("\t* no integrity counter error.\n");
-    }
+    std::uint8_t ic = status & 0x007F; // integrity counter
+    // 7-10: reserved
+    reportBitToggle(id, bits, stored, 11, "Drive has maintained interpolated position mode after a buffer empty condition.",
+            "Drive has performed a quick stop after a buffer empty condition (last velocity was non-zero).");
+    reportBitToggle(id, bits, stored, 12, "No integrity counter error.", "Integrity counter error.");
+    reportBitToggle(id, bits, stored, 13, "Buffer is not full.", "Buffer is full.");
+    reportBitToggle(id, bits, stored, 14, "Buffer is not low.", "Buffer is low.");
+    reportBitToggle(id, bits, stored, 15, "Buffer is empty.", "Buffer is not empty.");
 }
 
 // -----------------------------------------------------------------------------

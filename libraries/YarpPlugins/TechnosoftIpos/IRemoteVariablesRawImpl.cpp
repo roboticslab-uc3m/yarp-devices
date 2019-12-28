@@ -41,19 +41,28 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
 {
     CD_DEBUG("%s\n", key.c_str());
 
-    int mode;
-
-    if (!getControlModeRaw(0, &mode))
+    if (key == "linInterpConfig")
     {
-        CD_ERROR("Unable to query control mode.\n");
-        return false;
+        LinearInterpolationBuffer * newBuffer = LinearInterpolationBuffer::createBuffer(val, vars);
+
+        if (newBuffer)
+        {
+            delete linInterpBuffer;
+            linInterpBuffer = newBuffer;
+        }
+        else
+        {
+            return false;
+        }
+
+        return true;
     }
 
-    if (mode == VOCAB_CM_POSITION_DIRECT)
+    if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT)
     {
         if (key == "linInterpStart")
         {
-            return can->rpdo1()->write<std::uint16_t>(0x001F); // enable ip mode
+            return can->driveStatus()->controlword(0x001F); // enable ip mode
         }
         else if (key == "linInterpTarget")
         {
@@ -116,6 +125,7 @@ bool TechnosoftIpos::getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys)
     listOfKeys->addString("linInterpMode");
     listOfKeys->addString("linInterpStart");
     listOfKeys->addString("linInterpTarget");
+    listOfKeys->addString("linInterpConfig");
 
     return true;
 }

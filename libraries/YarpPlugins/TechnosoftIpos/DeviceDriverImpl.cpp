@@ -92,15 +92,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
         }
     }
 
-    /* FIXME
-    linInterpBuffer = LinearInterpolationBuffer::createBuffer(config);
-
-    if (!linInterpBuffer)
-    {
-        return false;
-    }
-    */
-
+    // TODO: hardcoded values
     double canSdoTimeoutMs = config.check("canSdoTimeoutMs", yarp::os::Value(20.0), "CAN SDO timeout (ms)").asFloat64();
     double canDriveStateTimeout = config.check("canDriveStateTimeout", yarp::os::Value(2.0), "CAN drive state timeout (s)").asFloat64();
 
@@ -142,7 +134,9 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     can->emcy()->registerHandler(std::bind(&TechnosoftIpos::handleEmcy, this, _1, _2, _3));
     can->emcy()->setErrorCodeRegistry<TechnosoftIposEmcy>();
 
-    return true;
+    linInterpBuffer = LinearInterpolationBuffer::createBuffer(config, vars); // pick defaults
+
+    return linInterpBuffer != nullptr;
 }
 
 // -----------------------------------------------------------------------------

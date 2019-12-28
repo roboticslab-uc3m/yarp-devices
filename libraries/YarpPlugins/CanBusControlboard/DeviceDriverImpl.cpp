@@ -253,14 +253,8 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         }
     }
 
-    linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(DEFAULT_LIN_INTERP_PERIOD_MS), "linear interpolation mode period (milliseconds)").asInt32();
-    linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(DEFAULT_LIN_INTERP_BUFFER_SIZE), "linear interpolation mode buffer size").asInt32();
-    linInterpMode = config.check("linInterpMode", yarp::os::Value(DEFAULT_LIN_INTERP_MODE), "linear interpolation mode (pt/pvt)").asString();
-
-    posdThread = new PositionDirectThread(deviceMapper, linInterpPeriodMs * 0.001);
-    posdThread->start();
-
-    return true;
+    posdThread = new PositionDirectThread(deviceMapper);
+    return posdThread->configure(config) && posdThread->start();
 }
 
 // -----------------------------------------------------------------------------

@@ -79,6 +79,7 @@ struct StateVariables
     std::bitset<16> der;
     std::bitset<16> der2;
     std::bitset<16> cer;
+    std::bitset<16> ptStatus;
     std::int8_t modesOfOperation;
 
     // read/write, those require atomic access

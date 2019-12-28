@@ -21,33 +21,29 @@ LinearInterpolationBuffer::LinearInterpolationBuffer(int _periodMs, int _bufferS
       integrityCounter(0)
 {}
 
-LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::os::Searchable & config)
+LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::os::Searchable & config,
+        const StateVariables & vars)
 {
-    int linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(0),
+    int linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(DEFAULT_PERIOD_MS),
             "linear interpolation mode period (ms)").asInt32();
-    int linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(0),
+    int linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(DEFAULT_BUFFER_SIZE),
             "linear interpolation mode buffer size").asInt32();
-    std::string linInterpMode = config.check("linInterpMode", yarp::os::Value(""),
-            "linear interpolation mode (PT/PVT)").asString();
-
-    double tr = config.check("tr", yarp::os::Value(0.0)).asFloat64();
-    int encoderPulses = config.check("encoderPulses", yarp::os::Value(0)).asInt32();
-    double maxVel = config.check("maxVel", yarp::os::Value(10.0)).asFloat64();
-
-    double factor = tr * (encoderPulses / 360.0);
+    std::string linInterpMode = config.check("linInterpMode", yarp::os::Value(DEFAULT_MODE),
+            "linear interpolation mode (pt/pvt)").asString();
 
     if (linInterpPeriodMs <= 0)
     {
         CD_ERROR("Invalid linear interpolation mode period: %d.\n", linInterpPeriodMs);
-        return 0;
+        return nullptr;
     }
 
     if (linInterpBufferSize <= 0)
     {
         CD_ERROR("Invalid linear interpolation mode buffer size: %d.\n", linInterpBufferSize);
-        return 0;
+        return nullptr;
     }
 
+    double factor = vars.tr * (vars.encoderPulses / 360.0);
     LinearInterpolationBuffer * buff;
 
     if (linInterpMode == "pt")
@@ -55,30 +51,30 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::
         if (linInterpBufferSize > PT_BUFFER_MAX_SIZE)
         {
             CD_ERROR("Invalid PT mode buffer size: %d > %d.\n", linInterpBufferSize, PT_BUFFER_MAX_SIZE);
-            return 0;
+            return nullptr;
         }
 
-        return new PtBuffer(linInterpPeriodMs, linInterpBufferSize, factor, maxVel);
+        return new PtBuffer(linInterpPeriodMs, linInterpBufferSize, factor, vars.maxVel);
     }
     else if (linInterpMode == "pvt")
     {
         if (linInterpBufferSize < 2)
         {
             CD_ERROR("Invalid PVT mode buffer size: %d < 2.\n", linInterpBufferSize);
-            return 0;
+            return nullptr;
         }
         else if (linInterpBufferSize > PVT_BUFFER_MAX_SIZE)
         {
             CD_ERROR("Invalid PVT mode buffer size: %d > %d.\n", linInterpBufferSize, PVT_BUFFER_MAX_SIZE);
-            return 0;
+            return nullptr;
         }
 
-        return new PvtBuffer(linInterpPeriodMs, linInterpBufferSize, factor, maxVel);
+        return new PvtBuffer(linInterpPeriodMs, linInterpBufferSize, factor, vars.maxVel);
     }
     else
     {
         CD_ERROR("Unsupported linear interpolation mode: \"%s\".\n", linInterpMode.c_str());
-        return 0;
+        return nullptr;
     }
 }
 
@@ -139,7 +135,7 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::cloneTo(const std::string
     else
     {
         CD_ERROR("Unsupported linear interpolation mode: \"%s\".\n", type.c_str());
-        return 0;
+        return nullptr;
     }
 
     return buffer;
@@ -230,7 +226,6 @@ int PvtBuffer::getSubMode() const
 {
     return -1;
 }
-
 
 std::uint64_t PvtBuffer::makeDataRecord()
 {

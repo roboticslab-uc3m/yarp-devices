@@ -5,8 +5,12 @@
 
 #include <mutex>
 #include <set>
+#include <vector>
 
 #include <yarp/os/PeriodicThread.h>
+#include <yarp/os/Searchable.h>
+
+#include <yarp/dev/IRemoteVariables.h>
 
 #include "DeviceMapper.hpp"
 
@@ -16,14 +20,15 @@ namespace roboticslab
 class PositionDirectThread : public yarp::os::PeriodicThread
 {
 public:
-    PositionDirectThread(const DeviceMapper & deviceMapper, double period);
+    PositionDirectThread(const DeviceMapper & deviceMapper);
+    bool configure(const yarp::os::Searchable & config);
     void updateControlModeRegister(int j, bool enablePosd);
 
 protected:
     void run();
 
 private:
-    const DeviceMapper & deviceMapper;
+    std::vector<yarp::dev::IRemoteVariablesRaw *> handles;
     std::set<int> activeIds;
     mutable std::mutex mutex;
 };
