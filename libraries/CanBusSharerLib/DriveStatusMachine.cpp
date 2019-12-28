@@ -76,7 +76,9 @@ namespace
         }
     }
 
-    DriveStatusMachine::word_t stateToControlword(DriveState state)
+    using word_t = DriveStatusMachine::word_t;
+
+    word_t stateToControlword(DriveState state)
     {
         switch (state)
         {
@@ -93,6 +95,12 @@ namespace
         default: // NOT_READY_TO_SWITCH_ON and fault states
             return 0x0000;
         }
+    }
+
+    inline word_t updateStateBits(const word_t & stored, const word_t & requested)
+    {
+        static const word_t controlwordMaskNot = ~word_t("0000000010001111"); // state machine-related bits
+        return (stored & controlwordMaskNot) | requested;
     }
 
     using ds = DriveState;
@@ -135,19 +143,16 @@ namespace
 
 bool DriveStatusMachine::update(std::uint16_t statusword)
 {
-    // state machine-related bits
-    static const word_t statuswordMask("0000000001101111");
-    static const word_t controlwordMask("0000000010001111");
-    static const word_t controlwordMaskNot = ~controlwordMask;
+    static const word_t statuswordMask("0000000001101111"); // state machine-related bits
 
     std::lock_guard<std::mutex> lock(stateMutex);
-    const word_t _old = _statusword;
+    const word_t old = _statusword;
     _statusword = statusword;
 
-    if ((_old & statuswordMask) != (_statusword & statuswordMask))
+    if ((old & statuswordMask) != (_statusword & statuswordMask))
     {
-        const word_t _bare = _controlword & controlwordMaskNot;
-        _controlword = _bare | stateToControlword(parseDriveState(_statusword));
+        word_t requested = stateToControlword(parseDriveState(_statusword));
+        _controlword = updateStateBits(_controlword, requested);
         return stateObserver.notify();
     }
 
@@ -187,9 +192,10 @@ bool DriveStatusMachine::requestTransition(DriveTransition transition, bool wait
 {
     DriveState initialState = getCurrentState();
     auto it = nextStateOnTransition.find({initialState, transition});
+    word_t requested = updateStateBits(controlword(), static_cast<std::uint16_t>(transition));
 
     return it != nextStateOnTransition.cend()
-            && controlword(static_cast<std::uint16_t>(transition))
+            && controlword(requested)
             && (wait ? awaitState(it->second) : true);
 }
 
