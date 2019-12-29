@@ -248,6 +248,8 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
     case DriveState::SWITCHED_ON:
         vars.actualControlMode = VOCAB_CM_IDLE;
         break;
+    default:
+        break;
     }
 
     std::bitset<16> bits(statusword);

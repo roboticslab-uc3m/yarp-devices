@@ -52,7 +52,7 @@ bool roboticslab::CanBusPeak::open(yarp::os::Searchable& config)
 
     if (res < 0)
     {
-        CD_ERROR("Could not open CAN device of path: %s.\n", devicePath.c_str(), std::strerror(-res));
+        CD_ERROR("Could not open CAN device of path: %s (%s).\n", devicePath.c_str(), std::strerror(-res));
         return false;
     }
     else

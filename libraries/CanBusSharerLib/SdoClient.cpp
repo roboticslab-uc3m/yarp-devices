@@ -125,7 +125,7 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
 
             if (size != actualSize)
             {
-                CD_ERROR("SDO response size mismatch: expected %zu, got %zu.\n", size, actualSize);
+                CD_ERROR("SDO response size mismatch: expected %u, got %u.\n", size, actualSize);
                 return false;
             }
         }
@@ -139,7 +139,7 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
 
         if (size < len)
         {
-            CD_ERROR("Unsufficient memory allocated for segmented SDO upload: expected %zu, got %zu.\n", len, size);
+            CD_ERROR("Unsufficient memory allocated for segmented SDO upload: expected %u, got %u.\n", len, size);
             return false;
         }
 

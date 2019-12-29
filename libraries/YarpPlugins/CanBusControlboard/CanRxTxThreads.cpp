@@ -74,7 +74,7 @@ void CanReaderThread::run()
                 //-- Intercept 700h 0 msg that just indicates presence.
                 if (msg.getId() - canId == 0x700)
                 {
-                    CD_SUCCESS("Device %d indicating presence. %s\n", canId);
+                    CD_SUCCESS("Device %d indicating presence.\n", canId);
                 }
 
                 continue;

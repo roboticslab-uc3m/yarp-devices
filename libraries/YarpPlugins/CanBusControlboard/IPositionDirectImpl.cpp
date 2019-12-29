@@ -27,7 +27,7 @@ bool CanBusControlboard::setPositions(const double * refs)
 
 bool CanBusControlboard::setPositions(int n_joint, const int * joints, const double * refs)
 {
-    CD_DEBUG("\n", n_joint);
+    CD_DEBUG("(%d)\n", n_joint);
     return deviceMapper.mapJointGroup(&yarp::dev::IPositionDirectRaw::setPositionsRaw, n_joint, joints, refs);
 }
 

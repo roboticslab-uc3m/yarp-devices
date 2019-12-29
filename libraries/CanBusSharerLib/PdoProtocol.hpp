@@ -36,7 +36,7 @@ public:
     constexpr PdoTransmissionType(transmission_type type) : type(type)
     { }
 
-    constexpr operator std::uint8_t()
+    constexpr operator std::uint8_t() const
     { return type; }
 
     static constexpr PdoTransmissionType SYNCHRONOUS_CYCLIC_N(std::uint8_t n)

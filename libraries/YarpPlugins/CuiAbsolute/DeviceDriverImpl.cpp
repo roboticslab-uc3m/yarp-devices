@@ -67,6 +67,8 @@ bool CuiAbsolute::close()
     case CuiMode::PULL:
         delete pollStateObserver;
         break;
+    default:
+        break;
     }
 
     return true;

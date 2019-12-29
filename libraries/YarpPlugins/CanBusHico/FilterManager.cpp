@@ -212,7 +212,7 @@ bool CanBusHico::FilterManager::bulkUpdate()
 
     if (sequences.size() > MAX_FILTERS)
     {
-        CD_WARNING("MAX_FILTERS exceeded (%d > %d).\n", sequences.size(), MAX_FILTERS);
+        CD_WARNING("MAX_FILTERS exceeded (%zu > %d).\n", sequences.size(), MAX_FILTERS);
         valid = false;
     }
     else

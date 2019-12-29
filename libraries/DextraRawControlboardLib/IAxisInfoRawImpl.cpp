@@ -20,7 +20,7 @@ bool DextraRawControlboard::getAxisNameRaw(int axis, std::string & name)
 
 bool DextraRawControlboard::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type)
 {
-    CD_DEBUG("(&d)\n", axis);
+    CD_DEBUG("(%d)\n", axis);
     CHECK_JOINT(axis);
     type = yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_REVOLUTE;
     return true;

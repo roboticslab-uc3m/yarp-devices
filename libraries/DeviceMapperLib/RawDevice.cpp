@@ -55,7 +55,7 @@ RawDevice::RawDevice(yarp::dev::PolyDriver * driver)
 RawDevice::~RawDevice()
 { delete priv; }
 
-// explicit (full) specializations
+// explicit (full) specializations, no explicit instantiations required
 
 template<>
 yarp::dev::IAmplifierControlRaw * RawDevice::getHandle() const
@@ -132,27 +132,5 @@ yarp::dev::IVelocityControlRaw * RawDevice::getHandle() const
 template<>
 yarp::dev::ITorqueControlRaw * RawDevice::getHandle() const
 { return priv->iTorqueControlRaw; }
-
-// explicit instantiations
-
-template yarp::dev::IAmplifierControlRaw * RawDevice::getHandle<>() const;
-template yarp::dev::IAxisInfoRaw * RawDevice::getHandle<>() const;
-template yarp::dev::IControlCalibrationRaw * RawDevice::getHandle<>() const;
-template yarp::dev::IControlLimitsRaw * RawDevice::getHandle<>() const;
-template yarp::dev::IControlModeRaw * RawDevice::getHandle<>() const;
-template yarp::dev::ICurrentControlRaw * RawDevice::getHandle<>() const;
-template yarp::dev::IEncodersRaw * RawDevice::getHandle<>() const;
-template yarp::dev::IEncodersTimedRaw * RawDevice::getHandle<>() const;
-template yarp::dev::IImpedanceControlRaw * RawDevice::getHandle<>() const;
-template yarp::dev::IInteractionModeRaw * RawDevice::getHandle<>() const;
-template yarp::dev::IMotorRaw * RawDevice::getHandle<>() const;
-template yarp::dev::IMotorEncodersRaw * RawDevice::getHandle<>() const;
-template yarp::dev::IPidControlRaw * RawDevice::getHandle<>() const;
-template yarp::dev::IPositionControlRaw * RawDevice::getHandle<>() const;
-template yarp::dev::IPositionDirectRaw * RawDevice::getHandle<>() const;
-template yarp::dev::IPWMControlRaw * RawDevice::getHandle<>() const;
-template yarp::dev::IRemoteVariablesRaw * RawDevice::getHandle<>() const;
-template yarp::dev::IVelocityControlRaw * RawDevice::getHandle<>() const;
-template yarp::dev::ITorqueControlRaw * RawDevice::getHandle<>() const;
 
 } // namespace roboticslab

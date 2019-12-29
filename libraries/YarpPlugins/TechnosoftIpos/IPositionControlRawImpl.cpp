@@ -105,7 +105,7 @@ bool TechnosoftIpos::setRefSpeedRaw(int j, double sp)
 
     if (sp < 0.0)
     {
-        CD_WARNING("Illegal negative speed provided: %f.\n");
+        CD_WARNING("Illegal negative speed provided: %f.\n", sp);
         return false;
     }
     else if (sp > vars.maxVel)
@@ -149,7 +149,7 @@ bool TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
 
     if (acc < 0.0)
     {
-        CD_WARNING("Illegal negative acceleration provided: %f.\n");
+        CD_WARNING("Illegal negative acceleration provided: %f.\n", acc);
         return false;
     }
 
