@@ -45,7 +45,7 @@ bool CanBusControlboard::getInteractionModes(int n_joints, int * joints, yarp::d
         auto * p = std::get<0>(t)->getHandle<yarp::dev::IInteractionModeRaw>();
         int * temp = const_cast<int *>(std::get<1>(t).data()); // workaround
         multi_mapping_fn fn = &raw_t::getInteractionModesRaw;
-        ok &= p ? p->getInteractionModesRaw(std::get<1>(t).size(), temp, modes + std::get<2>(t)) : false;
+        ok &= p && (task->add(p, fn, std::get<1>(t).size(), temp, modes + std::get<2>(t)), true);
     }
 
     return ok && task->dispatch();
@@ -84,7 +84,7 @@ bool CanBusControlboard::setInteractionModes(int n_joints, int * joints, yarp::d
         auto * p = std::get<0>(t)->getHandle<yarp::dev::IInteractionModeRaw>();
         int * temp = const_cast<int *>(std::get<1>(t).data()); // workaround
         multi_mapping_fn fn = &raw_t::getInteractionModesRaw;
-        ok &= p ? task->add(p, fn, std::get<1>(t).size(), temp, modes + std::get<2>(t)), true : false;
+        ok &= p && (task->add(p, fn, std::get<1>(t).size(), temp, modes + std::get<2>(t)), true);
     }
 
     return ok && task->dispatch();

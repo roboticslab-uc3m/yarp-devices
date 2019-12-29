@@ -93,10 +93,6 @@ set(CMAKE_EXPORT_PACKAGE_REGISTRY ON)
 # Create and install config files.
 include(InstallBasicPackageFiles)
 
-# Set exported variables.
-set(ROBOTICSLAB_YARP_DEVICES_BUILD_MODULE_DIR ${CMAKE_SOURCE_DIR}/cmake)
-set(ROBOTICSLAB_YARP_DEVICES_INSTALL_MODULE_DIR ${CMAKE_INSTALL_DATADIR}/ROBOTICSLAB_YARP_DEVICES/cmake)
-
 install_basic_package_files(ROBOTICSLAB_YARP_DEVICES
                             VERSION 0.1.0
                             COMPATIBILITY AnyNewerVersion

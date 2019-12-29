@@ -17,6 +17,8 @@ if(ENABLE_DextraRawControlboardLib)
 
     target_include_directories(DextraRawControlboardLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+    target_compile_features(DextraRawControlboardLib PUBLIC cxx_std_11)
+
     install(TARGETS DextraRawControlboardLib
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

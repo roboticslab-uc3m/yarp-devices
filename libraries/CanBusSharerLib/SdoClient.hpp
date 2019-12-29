@@ -5,9 +5,9 @@
 
 #include <cstdint>
 
-#include <functional>
 #include <string>
 #include <type_traits>
+#include <utility>
 
 #include "CanSenderDelegate.hpp"
 #include "StateObserver.hpp"
@@ -41,11 +41,11 @@ public:
         return uploadInternal(name, data, sizeof(T), index, subindex);
     }
 
-    template<typename T>
-    bool upload(const std::string & name, const std::function<void(T data)> & fn, std::uint16_t index, std::uint8_t subindex = 0x00)
+    template<typename T, typename Fn>
+    bool upload(const std::string & name, Fn && fn, std::uint16_t index, std::uint8_t subindex = 0x00)
     {
-        T data; bool res;
-        return res = upload(name, &data, index, subindex), fn(data), res;
+        T data;
+        return upload(name, &data, index, subindex) && (std::forward<Fn>(fn)(data), true);
     }
 
     template<typename T>
@@ -57,7 +57,12 @@ public:
 
     bool upload(const std::string & name, std::string & s, std::uint16_t index, std::uint8_t subindex = 0x00);
 
-    bool upload(const std::string & name, const std::function<void(const std::string & data)> & fn, std::uint16_t index, std::uint8_t subindex = 0x00);
+    template<typename Fn>
+    bool upload(const std::string & name, Fn && fn, std::uint16_t index, std::uint8_t subindex = 0x00)
+    {
+        std::string s;
+        return upload(name, s, index, subindex) && (std::forward<Fn>(fn)(s), true);
+    }
 
     bool download(const std::string & name, const std::string & s, std::uint16_t index, std::uint8_t subindex = 0x00);
 

@@ -45,20 +45,20 @@ public:
         : axes(0), iControlMode(nullptr), iEncoders(nullptr), iPositionControl(nullptr)
     { }
 
-    virtual bool calibrateSingleJoint(int j);
-    virtual bool calibrateWholePart();
-    virtual bool homingSingleJoint(int j);
-    virtual bool homingWholePart();
-    virtual bool parkSingleJoint(int j, bool wait);
-    virtual bool parkWholePart();
-    virtual bool quitCalibrate();
-    virtual bool quitPark();
+    virtual bool calibrateSingleJoint(int j) override;
+    virtual bool calibrateWholePart() override;
+    virtual bool homingSingleJoint(int j) override;
+    virtual bool homingWholePart() override;
+    virtual bool parkSingleJoint(int j, bool wait) override;
+    virtual bool parkWholePart() override;
+    virtual bool quitCalibrate() override;
+    virtual bool quitPark() override;
 
-    virtual bool attach(yarp::dev::PolyDriver * poly);
-    virtual bool detach();
+    virtual bool attach(yarp::dev::PolyDriver * poly) override;
+    virtual bool detach() override;
 
-    virtual bool open(yarp::os::Searchable & config);
-    virtual bool close();
+    virtual bool open(yarp::os::Searchable & config) override;
+    virtual bool close() override;
 
 private:
     bool move(const std::vector<int> & joints, const MovementSpecs & specs);

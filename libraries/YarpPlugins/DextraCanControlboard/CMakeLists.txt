@@ -26,6 +26,8 @@ if(NOT SKIP_DextraCanControlboard)
                                                 ROBOTICSLAB::ColorDebug
                                                 CanBusSharerLib)
 
+    target_compile_features(DextraCanControlboard PRIVATE cxx_std_11)
+
     yarp_install(TARGETS DextraCanControlboard
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
                  ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR}

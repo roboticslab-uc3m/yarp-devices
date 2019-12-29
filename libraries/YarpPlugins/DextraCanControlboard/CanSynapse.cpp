@@ -10,7 +10,7 @@ using namespace roboticslab;
 
 CanSynapse::CanSynapse(unsigned int _canId)
     : canId(_canId),
-      sender(0)
+      sender(nullptr)
 {}
 
 void CanSynapse::configure(void * handle)

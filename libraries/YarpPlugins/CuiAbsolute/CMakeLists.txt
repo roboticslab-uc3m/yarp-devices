@@ -27,6 +27,8 @@ if(NOT SKIP_CuiAbsolute)
                                       CanBusSharerLib
                                       YarpDevicesInterfaces)
 
+    target_compile_features(CuiAbsolute PRIVATE cxx_std_11)
+
     yarp_install(TARGETS CuiAbsolute
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
                  ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR}

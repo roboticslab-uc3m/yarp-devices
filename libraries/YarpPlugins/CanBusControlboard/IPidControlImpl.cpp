@@ -20,7 +20,7 @@ namespace
     {
         auto t = dm.getDevice(j);
         auto * p = std::get<0>(t)->getHandle<yarp::dev::IPidControlRaw>();
-        return p ? (p->*fn)(type, std::get<1>(t), ref...) : false;
+        return p && (p->*fn)(type, std::get<1>(t), ref...);
     }
 
     template<typename T_refs>
@@ -35,7 +35,7 @@ namespace
         for (const auto & t : dm.getDevicesWithOffsets())
         {
             auto * p = std::get<0>(t)->getHandle<yarp::dev::IPidControlRaw>();
-            ok &= p ? task->add(p, fn, type, refs + std::get<1>(t)), true : false;
+            ok &= p && (task->add(p, fn, type, refs + std::get<1>(t)), true);
         }
 
         return ok && task->dispatch();

@@ -25,6 +25,8 @@ if(NOT SKIP_DextraSerialControlboard)
                                                    YARP::YARP_dev
                                                    ROBOTICSLAB::ColorDebug)
 
+    target_compile_features(DextraSerialControlboard PUBLIC cxx_std_11)
+
     yarp_install(TARGETS DextraSerialControlboard
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
                  ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR}

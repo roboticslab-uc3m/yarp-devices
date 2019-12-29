@@ -76,7 +76,7 @@ public:
         for (const auto & t : getDevicesWithOffsets())
         {
             T * p = std::get<0>(t)->getHandle<T>();
-            ok &= p ? task->add(p, fn, refs + std::get<1>(t)...), true : false;
+            ok &= p && (task->add(p, fn, refs + std::get<1>(t)...), true);
         }
 
         return ok && task->dispatch();
@@ -95,7 +95,7 @@ public:
         for (const auto & t : devices)
         {
             T * p = std::get<0>(t)->getHandle<T>();
-            ok &= p ? task->add(p, fn, std::get<1>(t).size(), std::get<1>(t).data(), refs + std::get<2>(t)...), true : false;
+            ok &= p && (task->add(p, fn, std::get<1>(t).size(), std::get<1>(t).data(), refs + std::get<2>(t)...), true);
         }
 
         return ok && task->dispatch();

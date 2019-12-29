@@ -273,19 +273,6 @@ bool SdoClient::upload(const std::string & name, std::string & s, std::uint16_t 
     return true;
 }
 
-bool SdoClient::upload(const std::string & name, const std::function<void(const std::string & s)> & fn, std::uint16_t index, std::uint8_t subindex)
-{
-    std::string s;
-
-    if (!upload(name, s, index, subindex))
-    {
-        return false;
-    }
-
-    fn(s);
-    return true;
-}
-
 bool SdoClient::download(const std::string & name, const std::string & s, std::uint16_t index, std::uint8_t subindex)
 {
     return downloadInternal(name, s.data(), s.size(), index, subindex);

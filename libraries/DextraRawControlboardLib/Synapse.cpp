@@ -19,12 +19,12 @@ namespace
 }
 
 const std::pair<Synapse::setpoint_t, Synapse::setpoint_t> Synapse::LIMITS[Synapse::DATA_POINTS] = {
-    std::make_pair(0, 90),
-    std::make_pair(0, 10),
-    std::make_pair(0, 20),
-    std::make_pair(0, 20),
-    std::make_pair(0, 20),
-    std::make_pair(0, 20)
+    {0, 90},
+    {0, 10},
+    {0, 20},
+    {0, 20},
+    {0, 20},
+    {0, 20}
 };
 
 const char * Synapse::LABELS[Synapse::DATA_POINTS] = {

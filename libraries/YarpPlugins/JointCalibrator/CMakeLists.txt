@@ -22,6 +22,8 @@ if(NOT SKIP_JointCalibrator)
                                           YARP::YARP_dev
                                           ROBOTICSLAB::ColorDebug)
 
+    target_compile_features(JointCalibrator PUBLIC cxx_std_11)
+
     yarp_install(TARGETS JointCalibrator
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
                  ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR}

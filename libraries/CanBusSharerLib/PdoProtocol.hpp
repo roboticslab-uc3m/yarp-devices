@@ -30,7 +30,7 @@ public:
         EVENT_DRIVEN_DEVICE_APP_PROFILE = 0xFF
     };
 
-    constexpr PdoTransmissionType() : type(SYNCHRONOUS_ACYCLIC)
+    constexpr PdoTransmissionType()
     { }
 
     constexpr PdoTransmissionType(transmission_type type) : type(type)
@@ -43,7 +43,7 @@ public:
     { return static_cast<transmission_type>(n); }
 
 private:
-    transmission_type type;
+    transmission_type type = SYNCHRONOUS_ACYCLIC;
 };
 
 class PdoProtocol;
@@ -128,7 +128,7 @@ public:
     {
         static_assert(sizeof...(Ts) > 0 && size<Ts...>() <= 8, "Illegal cumulative size.");
         std::uint8_t raw[size<Ts...>()]; unsigned int count = 0;
-        ordered_call{(pack(&data, raw, &count), 1)...}; // https://w.wiki/7M$
+        ordered_call{(pack(&data, raw, &count), true)...}; // https://w.wiki/7M$
         return writeInternal(raw, count);
     }
 
@@ -157,9 +157,7 @@ private:
 class TransmitPdo final : public PdoProtocol
 {
 public:
-    TransmitPdo(std::uint8_t id, std::uint16_t cob, unsigned int n, SdoClient * sdo)
-        : PdoProtocol(id, cob, n, sdo)
-    { }
+    using PdoProtocol::PdoProtocol; // inherit parent constructor
 
     bool accept(const std::uint8_t * data, unsigned int size)
     { return (bool)callback && callback(data, size); }

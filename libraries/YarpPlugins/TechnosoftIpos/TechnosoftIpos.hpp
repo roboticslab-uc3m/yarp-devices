@@ -25,7 +25,7 @@
 
 #define CHECK_JOINT(j) do { int ax; if (getAxes(&ax), (j) != ax - 1) return false; } while (0)
 
-#define CHECK_MODE(mode) do { if (mode != vars.actualControlMode) return false; } while (0)
+#define CHECK_MODE(mode) do { if ((mode) != vars.actualControlMode) return false; } while (0)
 
 namespace roboticslab
 {
@@ -39,7 +39,7 @@ namespace roboticslab
 class TechnosoftIposEmcy : public EmcyCodeRegistry
 {
 public:
-    virtual std::string codeToMessage(std::uint16_t code);
+    virtual std::string codeToMessage(std::uint16_t code) override;
 };
 
 /**
@@ -64,10 +64,10 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver,
 public:
 
     TechnosoftIpos()
-        : can(0),
-          iEncodersTimedRawExternal(0),
-          iExternalEncoderCanBusSharer(0),
-          linInterpBuffer(0)
+        : can(nullptr),
+          iEncodersTimedRawExternal(nullptr),
+          iExternalEncoderCanBusSharer(nullptr),
+          linInterpBuffer(nullptr)
     {}
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------

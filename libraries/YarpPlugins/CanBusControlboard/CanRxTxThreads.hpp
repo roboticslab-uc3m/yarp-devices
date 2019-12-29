@@ -3,15 +3,12 @@
 #ifndef __CAN_RX_TH_THREADS_HPP__
 #define __CAN_RX_TH_THREADS_HPP__
 
-#include <limits>
 #include <map>
 #include <mutex>
 #include <string>
 
 #include <yarp/os/Thread.h>
 #include <yarp/dev/CanBusInterface.h>
-
-#include <ColorDebug.h>
 
 #include "CanSenderDelegate.hpp"
 #include "ICanBusSharer.hpp"
@@ -35,20 +32,16 @@ public:
     virtual void threadRelease() override
     { iCanBufferFactory->destroyBuffer(canBuffer); }
 
-    virtual void beforeStart() override
-    { CD_INFO("Initializing CanBusControlboard %s thread %s.\n", type.c_str(), id.c_str()); }
+    virtual void beforeStart() override;
 
-    virtual void afterStart(bool success) override
-    { CD_INFO("Configuring CanBusControlboard %s thread %s... %s\n", type.c_str(), id.c_str(), success ? "success" : "failure"); }
+    virtual void afterStart(bool success) override;
 
-    virtual void onStop() override
-    { CD_INFO("Stopping CanBusControlboard %s thread %s.\n", type.c_str(), id.c_str()); }
+    virtual void onStop() override;
 
     virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize)
     { this->iCanBus = iCanBus; this->iCanBufferFactory = iCanBufferFactory; this->bufferSize = bufferSize; }
 
-    void setDelay(double delay)
-    { this->delay = delay <= 0.0 ? std::numeric_limits<double>::min() : delay; }
+    void setDelay(double delay);
 
 protected:
     yarp::dev::ICanBus * iCanBus;

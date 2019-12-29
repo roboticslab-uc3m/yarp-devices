@@ -8,7 +8,7 @@
 
 roboticslab::FakeCanMessage::FakeCanMessage()
 {
-    message = 0;
+    message = nullptr;
 }
 
 // -----------------------------------------------------------------------------
@@ -86,7 +86,7 @@ const unsigned char * roboticslab::FakeCanMessage::getPointer() const
 
 void roboticslab::FakeCanMessage::setBuffer(unsigned char * buf)
 {
-    if (buf != 0)
+    if (buf != nullptr)
     {
         message = reinterpret_cast<struct fake_can_msg *>(buf);
     }

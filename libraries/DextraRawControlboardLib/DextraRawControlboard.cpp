@@ -9,7 +9,7 @@ using namespace roboticslab;
 // -----------------------------------------------------------------------------
 
 DextraRawControlboard::DextraRawControlboard()
-    : synapse(0)
+    : synapse(nullptr)
 {}
 
 // -----------------------------------------------------------------------------
@@ -26,7 +26,7 @@ void DextraRawControlboard::destroySynapse()
     if (synapse)
     {
         delete synapse;
-        synapse = 0;
+        synapse = nullptr;
     }
 }
 
