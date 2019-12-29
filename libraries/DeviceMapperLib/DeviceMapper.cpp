@@ -95,7 +95,7 @@ bool DeviceMapper::registerDevice(yarp::dev::PolyDriver * driver)
     if (ret)
     {
         rawDeviceIndexAtGlobalAxisIndex.insert(rawDeviceIndexAtGlobalAxisIndex.end(), axes, rawDevicesWithOffsets.size());
-        rawDevicesWithOffsets.push_back({rd, totalAxes});
+        rawDevicesWithOffsets.push_back(std::make_tuple(rd, totalAxes));
         totalAxes += axes;
         return true;
     }
@@ -111,7 +111,7 @@ DeviceMapper::dev_index_t DeviceMapper::getDevice(int globalAxis) const
 {
     const int deviceIndex = rawDeviceIndexAtGlobalAxisIndex[globalAxis];
     const auto & t = rawDevicesWithOffsets[deviceIndex];
-    return {std::get<0>(t), globalAxis - std::get<1>(t)};
+    return std::make_tuple(std::get<0>(t), globalAxis - std::get<1>(t));
 }
 
 const std::vector<DeviceMapper::dev_index_t> & DeviceMapper::getDevicesWithOffsets() const
@@ -133,7 +133,7 @@ std::vector<DeviceMapper::dev_group_t> DeviceMapper::getDevices(int globalAxesCo
 
         if (deviceIndex != previousDeviceIndex)
         {
-            vec.push_back({std::get<0>(t), {localIndex}, i});
+            vec.push_back(std::make_tuple(std::get<0>(t), std::vector<int>{localIndex}, i));
             previousDeviceIndex = deviceIndex;
         }
         else
