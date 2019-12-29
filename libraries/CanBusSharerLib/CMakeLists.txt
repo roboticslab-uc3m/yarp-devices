@@ -2,6 +2,9 @@ option(ENABLE_CanBusSharerLib "Enable/disable CanBusSharerLib library" ON)
 
 if(ENABLE_CanBusSharerLib)
 
+    include(CheckIncludeFileCXX)
+    check_include_file_cxx("optional" _has_optional)
+
     add_library(CanBusSharerLib SHARED ICanBusSharer.hpp
                                        CanOpen.hpp
                                        CanOpen.cpp
@@ -21,11 +24,17 @@ if(ENABLE_CanBusSharerLib)
                                        CanUtils.hpp
                                        CanUtils.cpp)
 
+    if(_has_optional AND _idx_cxx_std_17 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
+        target_compile_features(CanBusSharerLib PRIVATE cxx_std_17)
+    else()
+        target_sources(CanBusSharerLib PRIVATE nonstd/optional.hpp)
+        target_compile_definitions(CanBusSharerLib PRIVATE USE_NONSTD_OPTIONAL
+                                                           optional_CONFIG_NO_EXCEPTIONS=1)
+    endif()
+
     target_link_libraries(CanBusSharerLib PRIVATE ROBOTICSLAB::ColorDebug)
 
     target_include_directories(CanBusSharerLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
-    target_compile_definitions(CanBusSharerLib PRIVATE optional_CONFIG_NO_EXCEPTIONS=1)
 
     target_compile_features(CanBusSharerLib PUBLIC cxx_std_11)
 

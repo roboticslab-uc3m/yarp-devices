@@ -9,18 +9,24 @@
 
 #include <ColorDebug.h>
 
-#include "nonstd/optional.hpp"
+#if defined(USE_NONSTD_OPTIONAL)
+# include "nonstd/optional.hpp"
+using nonstd::optional;
+#else
+# include <optional>
+using std::optional;
+#endif
 
 using namespace roboticslab;
 
 struct PdoConfiguration::Private
 {
-    nonstd::optional<bool> valid;
-    nonstd::optional<bool> rtr;
-    nonstd::optional<PdoTransmissionType> transmissionType;
-    nonstd::optional<std::uint16_t> inhibitTime;
-    nonstd::optional<std::uint16_t> eventTimer;
-    nonstd::optional<std::uint8_t> syncStartValue;
+    optional<bool> valid;
+    optional<bool> rtr;
+    optional<PdoTransmissionType> transmissionType;
+    optional<std::uint16_t> inhibitTime;
+    optional<std::uint16_t> eventTimer;
+    optional<std::uint8_t> syncStartValue;
     std::vector<std::uint32_t> mappings;
 };
 
