@@ -25,11 +25,11 @@ if(ENABLE_CanBusSharerLib)
                                        CanUtils.cpp)
 
     if(_has_optional AND _idx_cxx_std_17 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
-        target_compile_features(CanBusSharerLib PRIVATE cxx_std_17)
+        set_source_files_properties(PdoProtocol.cpp PROPERTIES COMPILE_OPTIONS "-std=c++17")
     else()
         target_sources(CanBusSharerLib PRIVATE nonstd/optional.hpp)
-        target_compile_definitions(CanBusSharerLib PRIVATE USE_NONSTD_OPTIONAL
-                                                           optional_CONFIG_NO_EXCEPTIONS=1)
+        set_source_files_properties(PdoProtocol.cpp PROPERTIES COMPILE_DEFINITIONS
+            "USE_NONSTD_OPTIONAL;optional_CONFIG_NO_EXCEPTIONS=1")
     endif()
 
     target_link_libraries(CanBusSharerLib PRIVATE ROBOTICSLAB::ColorDebug)
