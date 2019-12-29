@@ -64,10 +64,7 @@ ParallelTaskFactory::ParallelTaskFactory(int threads)
     : priv(new Private(threads))
 { }
 
-ParallelTaskFactory::~ParallelTaskFactory()
-{
-    delete priv;
-}
+ParallelTaskFactory::~ParallelTaskFactory() = default;
 
 std::unique_ptr<FutureTask> SequentialTaskFactory::createTask()
 {

@@ -55,7 +55,7 @@ public:
 
 private:
     class Private;
-    Private * priv;
+    std::unique_ptr<Private> priv;
 };
 
 } // namespace roboticslab
