@@ -2,7 +2,13 @@
 /**
 @brief The main, catch-all namespace for Robotics Lab UC3M.
  */
-namespace roboticslab {}
+namespace roboticslab
+{
+    /**
+     * @brief Contains classes related to unit testing.
+     */
+    namespace test {}
+}
 
 /**
  * \defgroup yarp_devices_libraries roboticslab-uc3m/yarp-devices Libraries
