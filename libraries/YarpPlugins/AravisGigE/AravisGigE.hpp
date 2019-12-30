@@ -12,12 +12,16 @@
 
 namespace roboticslab {
 
- /**
- * @ingroup AravisGigE
- * @brief Implementation for GigE cameras using Aravis as driver.
- *
+/**
+ * @ingroup YarpPlugins
+ * @defgroup AravisGigE
+ * @brief Contains roboticslab::AravisGigE.
  */
 
+ /**
+  * @ingroup AravisGigE
+  * @brief Implementation for GigE cameras using Aravis as driver.
+  */
 class AravisGigE : public yarp::dev::DeviceDriver,
                    public yarp::dev::IFrameGrabberImageRaw,
                    public yarp::dev::IFrameGrabber,

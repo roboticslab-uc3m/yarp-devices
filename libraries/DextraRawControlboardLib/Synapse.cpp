@@ -36,10 +36,6 @@ const char * Synapse::LABELS[Synapse::DATA_POINTS] = {
     "pinky"
 };
 
-Synapse::Synapse()
-    : configured(false)
-{}
-
 void Synapse::configure(void * handle)
 {}
 

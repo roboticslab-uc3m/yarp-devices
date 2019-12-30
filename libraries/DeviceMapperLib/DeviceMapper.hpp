@@ -14,6 +14,11 @@
 namespace roboticslab
 {
 
+/**
+ * @ingroup yarp_devices_libraries
+ * @defgroup DeviceMapperLib
+ */
+
 class RawDevice final
 {
 public:

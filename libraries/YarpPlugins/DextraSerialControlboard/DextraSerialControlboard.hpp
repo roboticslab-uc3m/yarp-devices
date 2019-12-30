@@ -23,16 +23,18 @@ namespace roboticslab
 
 /**
  * @ingroup YarpPlugins
- * \defgroup DextraSerialControlboard
+ * @defgroup DextraSerialControlboard
  * @brief Contains roboticslab::DextraSerialControlboard.
  */
 
 /**
  * @ingroup DextraSerialControlboard
+ * @brief Synapse interface for a serial bus.
  */
 class SerialSynapse : public Synapse
 {
 public:
+    //! Constructor.
     SerialSynapse(yarp::dev::ISerialDevice * iSerialDevice);
 
 protected:
@@ -45,7 +47,7 @@ private:
 
 /**
  * @ingroup DextraSerialControlboard
- * @brief Serial implementation for the custom UC3M Dextra Hand controlboard interfaces.
+ * @brief Implementation of a serial-based stand-alone controlboard for a Dextra hand.
  */
 class DextraSerialControlboard : public yarp::dev::DeviceDriver,
                                  public yarp::dev::IAxisInfo,

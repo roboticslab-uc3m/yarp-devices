@@ -16,6 +16,11 @@
 namespace roboticslab
 {
 
+/**
+ * @ingroup yarp_devices_libraries
+ * @defgroup CanBusSharerLib
+ */
+
 class CanOpen final
 {
 public:

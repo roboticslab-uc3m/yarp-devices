@@ -24,6 +24,12 @@ namespace
 
 // -----------------------------------------------------------------------------
 
+EncoderRead::EncoderRead()
+    : EncoderRead(0.0)
+{ }
+
+// -----------------------------------------------------------------------------
+
 EncoderRead::EncoderRead(std::int32_t initialPos)
     : lastPosition(initialPos),
       nextToLastPosition(initialPos),
@@ -104,29 +110,6 @@ double EncoderRead::queryTime() const
 
 // -----------------------------------------------------------------------------
 
-StateVariables::StateVariables()
-    : controlModeObserverPtr(new StateObserver(1.0)), // arbitrary 1 second wait
-      modesOfOperation(0),
-      lastEncoderRead(0),
-      lastCurrentRead(0),
-      actualControlMode(0),
-      requestedcontrolMode(0),
-      tr(0.0),
-      k(0.0),
-      encoderPulses(0),
-      drivePeakCurrent(0.0),
-      maxVel(0.0),
-      jointType(0),
-      reverse(false),
-      min(0.0),
-      max(0.0),
-      refSpeed(0.0),
-      refAcceleration(0.0),
-      pulsesPerSample(0)
-{ }
-
-// -----------------------------------------------------------------------------
-
 bool StateVariables::validateInitialState(unsigned int canId)
 {
     if (actualControlMode == 0)
@@ -153,6 +136,12 @@ bool StateVariables::validateInitialState(unsigned int canId)
         return false;
     }
 
+    if (pulsesPerSample <= 0)
+    {
+        CD_WARNING("Illegal pulses per sample: %d.\n", pulsesPerSample.load());
+        return false;
+    }
+
     if (drivePeakCurrent <= 0.0)
     {
         CD_WARNING("Illegal drive peak current: %f.\n", drivePeakCurrent);
@@ -174,12 +163,6 @@ bool StateVariables::validateInitialState(unsigned int canId)
     if (refAcceleration <= 0.0)
     {
         CD_WARNING("Illegal reference acceleration: %f.\n", refAcceleration);
-        return false;
-    }
-
-    if (pulsesPerSample <= 0)
-    {
-        CD_WARNING("Illegal pulses per sample: %d.\n", pulsesPerSample);
         return false;
     }
 

@@ -90,13 +90,13 @@ void LinearInterpolationBuffer::setInitialReference(double target)
 
 void LinearInterpolationBuffer::updateTarget(double target)
 {
-    std::lock_guard<std::mutex> lock(mtx);
+    std::lock_guard<std::mutex> lock(mutex);
     lastReceivedTarget = target;
 }
 
 double LinearInterpolationBuffer::getLastTarget() const
 {
-    std::lock_guard<std::mutex> lock(mtx);
+    std::lock_guard<std::mutex> lock(mutex);
     return lastSentTarget;
 }
 
@@ -153,7 +153,7 @@ std::string PtBuffer::getType() const
     return "pt";
 }
 
-int PtBuffer::getSubMode() const
+std::int16_t PtBuffer::getSubMode() const
 {
     return 0;
 }
@@ -171,9 +171,9 @@ std::uint64_t PtBuffer::makeDataRecord()
     //-- Send the following message:
     //uint8_t ptpoint1[]={0x20,0x4E,0x00,0x00,0xE8,0x03,0x00,0x02};
 
-    mtx.lock();
+    mutex.lock();
     double _lastReceivedTarget = lastReceivedTarget;
-    mtx.unlock();
+    mutex.unlock();
 
     if (std::abs(_lastReceivedTarget - lastSentTarget) > maxDistance)
     {
@@ -222,7 +222,7 @@ std::string PvtBuffer::getType() const
     return "pvt";
 }
 
-int PvtBuffer::getSubMode() const
+std::int16_t PvtBuffer::getSubMode() const
 {
     return -1;
 }
@@ -238,9 +238,9 @@ std::uint64_t PvtBuffer::makeDataRecord()
     //-- Send the following message:
     //uint8_t ptpoint1[]={0x58,0x00,0x54,0x00,0x03,0x00,0x37,0x00};
 
-    mtx.lock();
+    mutex.lock();
     double currentTarget = lastReceivedTarget;
-    mtx.unlock();
+    mutex.unlock();
 
     double p = previousTarget;
     double v;
