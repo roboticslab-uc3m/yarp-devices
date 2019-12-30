@@ -17,6 +17,9 @@ public:
     StateObserverBase(double timeout);
     virtual ~StateObserverBase() = 0;
 
+    StateObserverBase(const StateObserverBase &) = delete;
+    StateObserverBase & operator=(const StateObserverBase &) = delete;
+
     double getTimeout() const
     { return timeout; }
 
@@ -41,9 +44,6 @@ public:
     StateObserver(double timeout) : StateObserverBase(timeout)
     { }
 
-    StateObserver(const StateObserver &) = delete;
-    StateObserver & operator=(const StateObserver &) = delete;
-
     bool await()
     { return StateObserverBase::await(); }
 
@@ -57,9 +57,6 @@ class TypedStateObserver final : private StateObserverBase
 public:
     TypedStateObserver(double timeout) : StateObserverBase(timeout)
     { }
-
-    TypedStateObserver(const TypedStateObserver &) = delete;
-    TypedStateObserver & operator=(const TypedStateObserver &) = delete;
 
     bool await(T & remote)
     { return StateObserverBase::await(&remote); }
@@ -79,9 +76,6 @@ public:
     TypedStateObserver(double timeout) : StateObserverBase(timeout)
     { }
 
-    TypedStateObserver(const TypedStateObserver &) = delete;
-    TypedStateObserver & operator=(const TypedStateObserver &) = delete;
-
     bool await(T * raw)
     { return StateObserverBase::await(raw); }
 
@@ -98,9 +92,6 @@ class TypedStateObserver<std::uint8_t[]> final : private StateObserverBase
 public:
     TypedStateObserver(double timeout) : StateObserverBase(timeout)
     { }
-
-    TypedStateObserver(const TypedStateObserver &) = delete;
-    TypedStateObserver & operator=(const TypedStateObserver &) = delete;
 
     bool await(std::uint8_t * raw)
     { return StateObserverBase::await(raw); }
