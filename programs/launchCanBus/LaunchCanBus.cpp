@@ -25,6 +25,8 @@ using namespace roboticslab;
 
 bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 {
+    CD_DEBUG("%s\n", rf.toString().c_str());
+
     if (rf.check("help"))
     {
         std::printf("LaunchCanBus options:\n");
