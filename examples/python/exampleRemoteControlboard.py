@@ -2,9 +2,9 @@
 
 ##
 # @ingroup yarp_devices_examples_py
-# \defgroup exampleRemoteControlboardPy exampleRemoteControlboard.py
+# @defgroup exampleRemoteControlboardPy exampleRemoteControlboard.py
 #
-# This example connects to a running \ref controlboardWrapper to move in Joint space.
+# @brief This example connects to a remote @ref controlboard to move in joint space.
 #
 # <b>Requires YARP 3.0.</b>
 #

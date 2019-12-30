@@ -5,7 +5,7 @@
  * @ingroup yarp_devices_programs
  * \defgroup launchCanBus launchCanBus
  *
- * @brief Creates an instance of roboticslab::launchCanBus.
+ * @brief Creates an instance of roboticslab::LaunchCanBus.
  */
 
 #include <yarp/os/Network.h>

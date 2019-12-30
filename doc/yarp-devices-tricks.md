@@ -1,12 +1,3 @@
-# Canbus commands
-
-Position movement:
-```c
-uint8_t msg_start[]={0x1F,0x00}; // Start the movement.
-//this->waitSequence(1);  // Not required.
-uint8_t msg_stop[]={0x0F,0x00}; // Does not stop, but is required for next start.
-```
-
 # Yarp RPC commands (VOCABs)
 
 Note that this is a hack. VOCABs may be updated without warning. The recommended YARP-ish way is via YARP_dev interfaces. An interactive way to do this is via an `ipython` console and following this repository's [Python examples](../examples/python).

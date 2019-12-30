@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /**
- * @ingroup asibot_examples_cpp
- * \defgroup testRemoteRaveBot testRemoteRaveBot
+ * @ingroup yarp_devices_examples_cpp
+ * @defgroup exampleRemoteControlboard exampleRemoteControlboard
  *
- * @brief This example connects to a running \ref testRaveBot or \ref cartesianServer module.
+ * @brief This example connects to a remote controlboard device (e.g. @ref CanBusControlboard).
  *
  * <b>Legal</b>
  *
