@@ -43,7 +43,6 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::
         return nullptr;
     }
 
-    double factor = vars.tr * (vars.encoderPulses / 360.0);
     LinearInterpolationBuffer * buff;
 
     if (linInterpMode == "pt")
@@ -54,7 +53,7 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::
             return nullptr;
         }
 
-        return new PtBuffer(linInterpPeriodMs, linInterpBufferSize, factor, vars.maxVel);
+        return new PtBuffer(linInterpPeriodMs, linInterpBufferSize, vars.degreesToInternalUnits(1.0), vars.maxVel);
     }
     else if (linInterpMode == "pvt")
     {
@@ -69,7 +68,7 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::
             return nullptr;
         }
 
-        return new PvtBuffer(linInterpPeriodMs, linInterpBufferSize, factor, vars.maxVel);
+        return new PvtBuffer(linInterpPeriodMs, linInterpBufferSize, vars.degreesToInternalUnits(1.0), vars.maxVel);
     }
     else
     {

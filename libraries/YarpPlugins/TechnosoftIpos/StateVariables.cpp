@@ -230,49 +230,49 @@ bool StateVariables::awaitControlMode(yarp::conf::vocab32_t mode)
 
 // -----------------------------------------------------------------------------
 
-double StateVariables::degreesToInternalUnits(double value, int derivativeOrder)
+double StateVariables::degreesToInternalUnits(double value, int derivativeOrder) const
 {
     return value * tr * (reverse ? -1 : 1) * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder);
 }
 
 // -----------------------------------------------------------------------------
 
-double StateVariables::internalUnitsToDegrees(double value, int derivativeOrder)
+double StateVariables::internalUnitsToDegrees(double value, int derivativeOrder) const
 {
     return value / (tr * (reverse ? -1 : 1) * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder));
 }
 
 // -----------------------------------------------------------------------------
 
-std::int16_t StateVariables::currentToInternalUnits(double value)
+std::int16_t StateVariables::currentToInternalUnits(double value) const
 {
     return value * (reverse ? -1 : 1) * 65520.0 / (2.0 * drivePeakCurrent);
 }
 
 // -----------------------------------------------------------------------------
 
-double StateVariables::internalUnitsToCurrent(std::int16_t value)
+double StateVariables::internalUnitsToCurrent(std::int16_t value) const
 {
     return value * (reverse ? -1 : 1) * 2.0 * drivePeakCurrent / 65520.0;
 }
 
 // -----------------------------------------------------------------------------
 
-double StateVariables::internalUnitsToPeakCurrent(std::int16_t value)
+double StateVariables::internalUnitsToPeakCurrent(std::int16_t value) const
 {
     return 2.0 * drivePeakCurrent * (32767.0 - value) / 65520.0;
 }
 
 // -----------------------------------------------------------------------------
 
-double StateVariables::currentToTorque(double current)
+double StateVariables::currentToTorque(double current) const
 {
     return current * tr * k;
 }
 
 // -----------------------------------------------------------------------------
 
-double StateVariables::torqueToCurrent(double torque)
+double StateVariables::torqueToCurrent(double torque) const
 {
     return torque / (tr * k);
 }

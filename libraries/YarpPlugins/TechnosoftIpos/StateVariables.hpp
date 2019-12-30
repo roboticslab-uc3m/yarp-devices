@@ -56,19 +56,19 @@ struct StateVariables
 
     bool awaitControlMode(yarp::conf::vocab32_t mode);
 
-    double degreesToInternalUnits(double value, int derivativeOrder = 0);
+    double degreesToInternalUnits(double value, int derivativeOrder = 0) const;
 
-    double internalUnitsToDegrees(double value, int derivativeOrder = 0);
+    double internalUnitsToDegrees(double value, int derivativeOrder = 0) const;
 
-    std::int16_t currentToInternalUnits(double value);
+    std::int16_t currentToInternalUnits(double value) const;
 
-    double internalUnitsToCurrent(std::int16_t value);
+    double internalUnitsToCurrent(std::int16_t value) const;
 
-    double internalUnitsToPeakCurrent(std::int16_t value);
+    double internalUnitsToPeakCurrent(std::int16_t value) const;
 
-    double currentToTorque(double current);
+    double currentToTorque(double current) const;
 
-    double torqueToCurrent(double torque);
+    double torqueToCurrent(double torque) const;
 
     std::unique_ptr<StateObserver> controlModeObserverPtr;
 
