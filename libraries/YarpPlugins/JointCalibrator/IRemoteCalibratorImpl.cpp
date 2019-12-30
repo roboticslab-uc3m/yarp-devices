@@ -13,7 +13,7 @@ using namespace roboticslab;
 namespace
 {
     constexpr double MOTION_CHECK_INTERVAL = 0.1; // seconds
-    constexpr double POSITION_EPSILON = 1e-3; // degrees
+    constexpr double POSITION_EPSILON = 0.01; // degrees
 }
 
 bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs & specs)
