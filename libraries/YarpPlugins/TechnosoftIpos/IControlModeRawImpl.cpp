@@ -22,7 +22,7 @@ bool TechnosoftIpos::setPositionDirectModeRaw()
     rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x01);
     rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x02);
 
-    double refInternalUnits = vars.lastEncoderRead.queryPosition();
+    std::int32_t refInternalUnits = vars.lastEncoderRead.queryPosition();
     double refDegrees = vars.internalUnitsToDegrees(refInternalUnits);
 
     if (!can->rpdo3()->configure(rpdo3Conf)

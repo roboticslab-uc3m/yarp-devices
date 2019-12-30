@@ -364,21 +364,23 @@ void TechnosoftIpos::interpretPtStatus(std::uint16_t status)
 
     std::uint8_t ic = status & 0x007F; // integrity counter
     // 7-10: reserved
-    reportBitToggle(id, bits, stored, 11, "Drive has maintained interpolated position mode after a buffer empty condition.",
-            "Drive has performed a quick stop after a buffer empty condition (last velocity was non-zero).");
-    reportBitToggle(id, bits, stored, 12, "No integrity counter error.", "Integrity counter error.");
-    reportBitToggle(id, bits, stored, 13, "Buffer is not full.", "Buffer is full.");
-    reportBitToggle(id, bits, stored, 14, "Buffer is not low.", "Buffer is low.");
+    reportBitToggle(id, bits, stored, 11, "Drive has performed a quick stop after a buffer empty condition (last velocity was non-zero).",
+            "Drive has maintained interpolated position mode after a buffer empty condition.");
+    reportBitToggle(id, bits, stored, 12, "Integrity counter error.", "No integrity counter error.");
+    reportBitToggle(id, bits, stored, 13, "Buffer is full.", "Buffer is not full.");
+    reportBitToggle(id, bits, stored, 14, "Buffer is low.", "Buffer is not low.");
     reportBitToggle(id, bits, stored, 15, "Buffer is empty.", "Buffer is not empty.");
+
+    vars.ptStatus = status;
 }
 
 // -----------------------------------------------------------------------------
 
 void TechnosoftIpos::handleTpdo1(std::uint16_t statusword, std::uint16_t msr, std::int8_t modesOfOperation)
 {
+    interpretModesOfOperation(modesOfOperation); // statusword callback depends on this
     interpretStatusword(statusword);
     interpretMsr(msr);
-    interpretModesOfOperation(modesOfOperation);
 }
 
 // -----------------------------------------------------------------------------
@@ -401,7 +403,7 @@ void TechnosoftIpos::handleTpdo3(std::int32_t position, std::int16_t current)
 
 void TechnosoftIpos::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef)
 {
-    CD_WARNING("EMCY: %s (canId %d)\n", code.second.c_str(), can->getId());
+    CD_WARNING("%s (canId %d)\n", code.second.c_str(), can->getId());
 
     switch (code.first)
     {

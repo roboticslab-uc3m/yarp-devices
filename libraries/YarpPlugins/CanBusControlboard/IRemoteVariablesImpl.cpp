@@ -62,6 +62,11 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
         p->setRemoteVariableRaw(key, val);
     }
 
+    if (key == "linInterpPeriodMs")
+    {
+        posdThread->setPeriod(val.get(0).asInt32() * 0.001);
+    }
+
     return true;
 }
 

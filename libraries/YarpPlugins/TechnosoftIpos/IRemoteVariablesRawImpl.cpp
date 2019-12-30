@@ -39,7 +39,7 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
 
 bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val)
 {
-    CD_DEBUG("%s\n", key.c_str());
+    //CD_DEBUG("%s\n", key.c_str()); // too verbose
 
     if (key == "linInterpConfig")
     {
