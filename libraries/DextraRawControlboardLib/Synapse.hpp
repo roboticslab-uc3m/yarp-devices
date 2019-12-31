@@ -3,6 +3,8 @@
 #ifndef __SYNAPSE_HPP__
 #define __SYNAPSE_HPP__
 
+#include <array>
+#include <string>
 #include <utility>
 
 namespace roboticslab
@@ -19,10 +21,10 @@ public:
     static const int DATA_POINTS = 6;
 
     typedef float setpoint_t;
-    typedef setpoint_t Setpoints[DATA_POINTS];
+    typedef std::array<setpoint_t, DATA_POINTS> Setpoints;
 
-    static const std::pair<setpoint_t, setpoint_t> LIMITS[DATA_POINTS];
-    static const char * LABELS[DATA_POINTS];
+    static const std::array<std::pair<setpoint_t, setpoint_t>, DATA_POINTS> LIMITS;
+    static const std::array<std::string, DATA_POINTS> LABELS;
 
     Synapse();
     virtual ~Synapse() {}
