@@ -22,12 +22,17 @@ class PositionDirectThread : public yarp::os::PeriodicThread
 public:
     PositionDirectThread(const DeviceMapper & deviceMapper);
     bool configure(const yarp::os::Searchable & config);
-    void updateControlModeRegister(int j, bool enablePosd);
+    bool updateControlModeRegister(int j, int mode);
+    bool updateControlModeRegister(int * modes, int size);
+    bool updateControlModeRegister(int n_joint, const int * joints, int * modes);
 
 protected:
-    void run();
+    virtual bool threadInit() override;
+    virtual void run() override;
 
 private:
+    bool updateControlModeRegister(const std::vector<std::pair<int, bool>> & ctrl);
+
     std::vector<yarp::dev::IRemoteVariablesRaw *> handles;
     std::set<int> activeIds;
     mutable std::mutex mutex;

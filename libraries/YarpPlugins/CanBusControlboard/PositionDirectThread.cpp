@@ -6,6 +6,9 @@
 #include <iterator>
 
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Time.h>
+
+#include <yarp/dev/IControlMode.h>
 
 #include <ColorDebug.h>
 
@@ -18,8 +21,6 @@ PositionDirectThread::PositionDirectThread(const DeviceMapper & deviceMapper)
 
     std::transform(devices.cbegin(), devices.cend(), std::back_inserter(handles), [](const DeviceMapper::dev_index_t & t)
             { return std::get<0>(t)->getHandle<yarp::dev::IRemoteVariablesRaw>(); });
-
-    suspend();
 }
 
 bool PositionDirectThread::configure(const yarp::os::Searchable & config)
@@ -40,32 +41,79 @@ bool PositionDirectThread::configure(const yarp::os::Searchable & config)
     return ok;
 }
 
-void PositionDirectThread::updateControlModeRegister(int j, bool enablePosd)
+bool PositionDirectThread::updateControlModeRegister(int j, int mode)
 {
-    std::lock_guard<std::mutex> guard(mutex);
+    return updateControlModeRegister({{j, mode == VOCAB_CM_POSITION_DIRECT}});
+}
 
-    bool hasElement = activeIds.find(j) != activeIds.end();
-    auto * p  = handles[j];
+bool PositionDirectThread::updateControlModeRegister(int * modes, int size)
+{
+    std::vector<std::pair<int, bool>> ctrl;
 
-    if (!p)
+    for (int i = 0; i < size; i++)
     {
-        return;
+        ctrl.push_back({i, modes[i] == VOCAB_CM_POSITION_DIRECT});
     }
-    else if (enablePosd && !hasElement)
-    {
-        activeIds.insert(j);
-        p->setRemoteVariableRaw("linInterpStart", {});
-        resume();
-    }
-    else if (!enablePosd && hasElement)
-    {
-        activeIds.erase(j);
 
-        if (activeIds.empty())
+    return updateControlModeRegister(ctrl);
+}
+
+bool PositionDirectThread::updateControlModeRegister(int n_joint, const int * joints, int * modes)
+{
+    std::vector<std::pair<int, bool>> ctrl;
+
+    for (int i = 0; i < n_joint; i++)
+    {
+        ctrl.push_back({joints[i], modes[i] == VOCAB_CM_POSITION_DIRECT});
+    }
+
+    return updateControlModeRegister(ctrl);
+}
+
+bool PositionDirectThread::updateControlModeRegister(const std::vector<std::pair<int, bool>> & ctrl)
+{
+    for (const auto & el : ctrl)
+    {
+        auto * p  = handles[el.first];
+
+        if (!p)
         {
-            suspend();
+            return false;
+        }
+
+        std::lock_guard<std::mutex> guard(mutex);
+
+        if (el.second)
+        {
+            if (activeIds.insert(el.first).second)
+            {
+                // if a new id has been registered, send start command
+                p->setRemoteVariableRaw("linInterpStart", {});
+            }
+        }
+        else
+        {
+            activeIds.erase(el.first);
         }
     }
+
+    if (isRunning() && activeIds.empty())
+    {
+        askToStop();
+    }
+    else if (!isRunning() && !activeIds.empty())
+    {
+        return start();
+    }
+
+    return true;
+}
+
+bool PositionDirectThread::threadInit()
+{
+    // wait a bit, then start bursting targets at a fixed period
+    yarp::os::Time::delay(getPeriod() * 0.5);
+    return true;
 }
 
 void PositionDirectThread::run()

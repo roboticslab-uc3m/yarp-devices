@@ -254,7 +254,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
     }
 
     posdThread = new PositionDirectThread(deviceMapper);
-    return posdThread->configure(config) && posdThread->start();
+    return posdThread->configure(config);
 }
 
 // -----------------------------------------------------------------------------
