@@ -136,7 +136,8 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         // no break
 
     case VOCAB_CM_IDLE:
-        return can->driveStatus()->requestState(DriveState::SWITCHED_ON);
+        return can->driveStatus()->requestState(DriveState::SWITCHED_ON)
+                && can->sdo()->download<std::int8_t>("Modes of Operation", 0, 0x6060); // reset drive mode
 
     default:
         CD_ERROR("Unsupported, unknown or read-only mode: %s.\n", yarp::os::Vocab::decode(mode).c_str());
