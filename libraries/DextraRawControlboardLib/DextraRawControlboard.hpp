@@ -35,6 +35,7 @@ class DextraRawControlboard : public yarp::dev::IAxisInfoRaw,
 public:
 
     DextraRawControlboard();
+    virtual ~DextraRawControlboard() = default;
 
     void acquireSynapseHandle(Synapse * synapse);
     void destroySynapse();

@@ -19,13 +19,23 @@ namespace roboticslab
 
 /**
  * @ingroup YarpPlugins
- * \defgroup CanBusControlboard
+ * @defgroup CanBusControlboard
  * @brief Contains roboticslab::CanBusControlboard.
  */
 
 /**
  * @ingroup CanBusControlboard
- * @brief Implements all motor interfaces.
+ * @brief CAN-oriented control board that implements all YARP motor interfaces.
+ *
+ * This controlboardwrapper2 subdevice exposes motor commands to CAN nodes
+ * modelled as wrapped motor raw subdevices (i.e. devices which implement the
+ * xxxRaw interface counterparts). At the core of this driver class, another set
+ * of wrapped devices implements hardware connection to a physical CAN bus, thus
+ * allowing CAN reads and writes that CanBusControlboard manages asynchronously
+ * with regard to exposed YARP commands (see @ref CanReaderWriterThread).
+ *
+ * This device also supports fake CAN buses and fake CAN nodes, see
+ * <a href="https://github.com/roboticslab-uc3m/yarp-devices/issues/241#issuecomment-569112698">instructions</a>.
  */
 class CanBusControlboard : public yarp::dev::DeviceDriver,
                            public yarp::dev::IAmplifierControl,
@@ -299,6 +309,7 @@ public:
 
 private:
 
+    //! Read/write threads bound to a specific CAN channel.
     struct CanThreads
     {
         std::string busName;

@@ -41,7 +41,7 @@ public:
     LinearInterpolationBuffer(int _periodMs, int _bufferSize, double _factor, double _maxVel);
 
     //! Virtual destructor.
-    virtual ~LinearInterpolationBuffer() {}
+    virtual ~LinearInterpolationBuffer() = default;
 
     //! Set integrity counter to zero.
     void resetIntegrityCounter();

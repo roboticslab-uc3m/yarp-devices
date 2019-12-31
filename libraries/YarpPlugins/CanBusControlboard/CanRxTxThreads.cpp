@@ -12,29 +12,41 @@
 
 using namespace roboticslab;
 
+// -----------------------------------------------------------------------------
+
 void CanReaderWriterThread::beforeStart()
 {
     CD_INFO("Initializing CanBusControlboard %s thread %s.\n", type.c_str(), id.c_str());
 }
+
+// -----------------------------------------------------------------------------
 
 void CanReaderWriterThread::afterStart(bool success)
 {
     CD_INFO("Configuring CanBusControlboard %s thread %s... %s\n", type.c_str(), id.c_str(), success ? "success" : "failure");
 }
 
+// -----------------------------------------------------------------------------
+
 void CanReaderWriterThread::onStop()
 {
     CD_INFO("Stopping CanBusControlboard %s thread %s.\n", type.c_str(), id.c_str());
 }
+
+// -----------------------------------------------------------------------------
 
 void CanReaderWriterThread::setDelay(double delay)
 {
     this->delay = delay <= 0.0 ? std::numeric_limits<double>::min() : delay;
 }
 
+// -----------------------------------------------------------------------------
+
 CanReaderThread::CanReaderThread(const std::string & id)
     : CanReaderWriterThread("read", id)
 {}
+
+// -----------------------------------------------------------------------------
 
 void CanReaderThread::registerHandle(ICanBusSharer * p)
 {
@@ -45,6 +57,8 @@ void CanReaderThread::registerHandle(ICanBusSharer * p)
         canIdToHandle[id] = p;
     }
 }
+
+// -----------------------------------------------------------------------------
 
 void CanReaderThread::run()
 {
