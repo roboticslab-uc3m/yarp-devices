@@ -52,8 +52,7 @@ RawDevice::RawDevice(yarp::dev::PolyDriver * driver)
     driver->view(priv->iTorqueControlRaw);
 }
 
-RawDevice::~RawDevice()
-{ delete priv; }
+RawDevice::~RawDevice() = default;
 
 // explicit (full) specializations, no explicit instantiations required
 

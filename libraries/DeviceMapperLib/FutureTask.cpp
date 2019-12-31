@@ -11,6 +11,10 @@
 
 using namespace roboticslab;
 
+/**
+ * @ingroup DeviceMapperLib
+ * @brief An implementation of a sequential deferred callback executor.
+ */
 class SequentialTask : public FutureTask
 {
 public:
@@ -22,6 +26,10 @@ public:
     }
 };
 
+/**
+ * @ingroup DeviceMapperLib
+ * @brief An implementation of an asynchronous deferred callback executor.
+ */
 class ParallelTask : public FutureTask
 {
 public:
