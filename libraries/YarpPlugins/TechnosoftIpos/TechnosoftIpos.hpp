@@ -32,10 +32,14 @@ namespace roboticslab
 
 /**
  * @ingroup YarpPlugins
- * \defgroup TechnosoftIpos
+ * @defgroup TechnosoftIpos
  * @brief Contains roboticslab::TechnosoftIpos.
  */
 
+/**
+ * @ingroup TechnosoftIpos
+ * @brief Custom EMCY messages.
+ */
 class TechnosoftIposEmcy : public EmcyCodeRegistry
 {
 public:

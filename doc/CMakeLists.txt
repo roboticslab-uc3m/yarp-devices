@@ -28,6 +28,7 @@ set(DOXYGEN_HAVE_DOT NO)
 
 set(_doxygen_input doc
                    examples
+                   firmware
                    libraries
                    programs
                    share

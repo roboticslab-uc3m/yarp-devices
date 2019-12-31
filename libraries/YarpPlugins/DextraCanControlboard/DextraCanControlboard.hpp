@@ -15,17 +15,20 @@ namespace roboticslab
 
 /**
  * @ingroup YarpPlugins
- * \defgroup DextraCanControlboard
+ * @defgroup DextraCanControlboard
  * @brief Contains roboticslab::DextraCanControlboard.
  */
 
 /**
  * @ingroup DextraCanControlboard
+ * @brief Synapse interface for a CAN network.
  */
 class CanSynapse : public Synapse
 {
 public:
+    //! Constructor.
     CanSynapse(unsigned int canId);
+
     virtual void configure(void * handle) override;
 
 protected:
@@ -39,7 +42,7 @@ private:
 
 /**
  * @ingroup DextraCanControlboard
- * @brief CAN implementation for the custom UC3M Dextra Hand controlboard interfaces.
+ * @brief Implementation of a CAN-based raw controlboard for a Dextra hand.
  */
 class DextraCanControlboard : public yarp::dev::DeviceDriver,
                               public DextraRawControlboard,

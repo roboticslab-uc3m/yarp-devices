@@ -30,32 +30,25 @@ namespace roboticslab
 {
 
 /**
- * @ingroup TeoYarp
- * \defgroup EmulatedControlboard
- *
- * @brief Contains teo::EmulatedControlboard.
- *
- * @section EmulatedControlboard_install Installation
- *
- * The plugin is compiled when ENABLE_TeoYarp_EmulatedControlboard is activated (not default). For further
- * installation steps refer to <a class="el" href="pages.html">your own system installation guidelines</a>.
+ * @ingroup YarpPlugins
+ * @defgroup EmulatedControlboard
+ * @brief Contains roboticslab::EmulatedControlboard.
  */
 
 /**
  * @ingroup EmulatedControlboard
- * @brief Implements the YARP_dev IPositionControl, IVelocityControl, IEncodersTimed, etc.
- * interface class member functions.
+ * @brief Implements several motor interfaces.
  */
 class EmulatedControlboard : public yarp::dev::DeviceDriver,
-                         public yarp::dev::IControlLimits,
-                         public yarp::dev::IControlMode,
-                         public yarp::dev::IEncodersTimed,
-                         public yarp::dev::IPositionControl,
-                         public yarp::dev::IPositionDirect,
-                         public yarp::dev::IRemoteVariables,
-                         public yarp::dev::ITorqueControl,
-                         public yarp::dev::IVelocityControl,
-                         public yarp::os::PeriodicThread
+                             public yarp::dev::IControlLimits,
+                             public yarp::dev::IControlMode,
+                             public yarp::dev::IEncodersTimed,
+                             public yarp::dev::IPositionControl,
+                             public yarp::dev::IPositionDirect,
+                             public yarp::dev::IRemoteVariables,
+                             public yarp::dev::ITorqueControl,
+                             public yarp::dev::IVelocityControl,
+                             public yarp::os::PeriodicThread
 {
 public:
 

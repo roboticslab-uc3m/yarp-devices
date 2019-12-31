@@ -12,14 +12,30 @@
 
 namespace roboticslab
 {
+
+//! Contains CAN-related utilities.
 namespace CanUtils
 {
 
+/**
+ * @ingroup CanBusSharerLib
+ * @brief Create a string representation of the given CAN message details.
+ */
 std::string msgToStr(std::uint8_t id, std::uint16_t cob, std::size_t len, const std::uint8_t * data);
 
+/**
+ * @ingroup CanBusSharerLib
+ * @brief Create a string representation of the given CAN message details.
+ */
 inline std::string msgToStr(std::uint16_t cobId, std::size_t len, const std::uint8_t * data)
 { return msgToStr(cobId & 0x7F, cobId & 0xFF80, len, data); }
 
+/**
+ * @ingroup CanBusSharerLib
+ * @brief Obtain a fixed-point representation given a float value.
+ * @tparam T_int Integer part, integral type expected.
+ * @tparam T_frac Fractional part, integral type expected.
+ */
 template<typename T_int, typename T_frac>
 void encodeFixedPoint(double value, T_int * integer, T_frac * fractional)
 {
@@ -30,6 +46,12 @@ void encodeFixedPoint(double value, T_int * integer, T_frac * fractional)
     *integer = static_cast<T_int>(_int);
 }
 
+/**
+ * @ingroup CanBusSharerLib
+ * @brief Obtain a float representation of a fixed-point value.
+ * @tparam T_int Integer part, integral type expected.
+ * @tparam T_frac Fractional part, integral type expected.
+ */
 template<typename T_int, typename T_frac>
 double decodeFixedPoint(T_int integer, T_frac fractional)
 {

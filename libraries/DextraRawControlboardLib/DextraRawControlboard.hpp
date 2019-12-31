@@ -16,13 +16,13 @@ namespace roboticslab
 
 /**
  * @ingroup yarp_devices_libraries
- * \defgroup DextraRawControlboard
+ * @defgroup DextraRawControlboard
  * @brief Contains roboticslab::DextraRawControlboard.
  */
 
 /**
  * @ingroup DextraRawControlboard
- * @brief Implementation for the custom UC3M Dextra Hand controlboard interfaces.
+ * @brief Base implementation for the custom UC3M Dextra Hand controlboard interfaces.
  */
 class DextraRawControlboard : public yarp::dev::IAxisInfoRaw,
                               public yarp::dev::IControlLimitsRaw,
@@ -35,6 +35,7 @@ class DextraRawControlboard : public yarp::dev::IAxisInfoRaw,
 public:
 
     DextraRawControlboard();
+    virtual ~DextraRawControlboard() = default;
 
     void acquireSynapseHandle(Synapse * synapse);
     void destroySynapse();

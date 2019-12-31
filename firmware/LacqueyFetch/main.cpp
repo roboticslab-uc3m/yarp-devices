@@ -1,7 +1,6 @@
 /**
- *
- * @ingroup teo_body_lacqueyFetch
- * \defgroup teo_body_MbedFirmware Mbed-Firmware
+ * @ingroup yarp_devices_firmware
+ * @defgroup yarp_devices_lacqueyFetch LacqueyFetch firmware
  *
  * @brief Firmware that allows to recieve CAN messages to open and close the hand
  *

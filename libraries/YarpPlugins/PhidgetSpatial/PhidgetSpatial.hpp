@@ -24,8 +24,14 @@ namespace roboticslab
 
 /**
  * @ingroup YarpPlugins
- * @brief PhidgetSpatial
+ * @defgroup PhidgetSpatial
+ * @brief Contains roboticslab::PhidgetSpatial.
  */
+
+ /**
+  * @ingroup PhidgetSpatial
+  * @brief Implementation of a Phidgets device.
+  */
 class PhidgetSpatial : public DeviceDriver, public yarp::dev::IAnalogSensor
 {
 public:
@@ -33,7 +39,7 @@ public:
     // -------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp --------
 
     /**
-     * Open the DeviceDriver. 
+     * Open the DeviceDriver.
      * @return true/false upon success/failure
      */
     virtual bool open(Searchable& config);
@@ -103,7 +109,7 @@ public:
     // encoder is attached. Once it is attached, the program will wait for user input so that
     // we can see the event data on the screen when using the encoder. Legal info:
     // Copyright 2008 Phidgets Inc.  All rights reserved.
-    // This work is licensed under the Creative Commons Attribution 2.5 Canada License. 
+    // This work is licensed under the Creative Commons Attribution 2.5 Canada License.
     // view a copy of this license, visit http://creativecommons.org/licenses/by/2.5/ca/
     static int AttachHandler(CPhidgetHandle ENC, void *userptr);
     static int DetachHandler(CPhidgetHandle ENC, void *userptr);

@@ -1,5 +1,10 @@
 #! /usr/bin/env python
 
+##
+# @ingroup yarp_devices_examples_py
+# @defgroup exampleIFrameGrabberControlsPy exampleIFrameGrabberControls.py
+# @brief This example connects to a remote grabber device.
+
 #Check for YARP network
 yarp.Network.init()
 if not yarp.Network.checkNetwork():

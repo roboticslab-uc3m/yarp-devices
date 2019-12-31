@@ -17,13 +17,13 @@ namespace roboticslab
 
 /**
  * @ingroup YarpPlugins
- * \defgroup JointCalibrator
+ * @defgroup JointCalibrator
  * @brief Contains roboticslab::JointCalibrator.
  */
 
 /**
  * @ingroup JointCalibrator
- * @brief ...
+ * @brief Stores movement specifications: position, velocity, acceleration.
  */
 struct MovementSpecs
 {
@@ -34,7 +34,7 @@ struct MovementSpecs
 
 /**
  * @ingroup JointCalibrator
- * @brief ...
+ * @brief Remote calibrator class for multi-joint homing and park.
  */
 class JointCalibrator : public yarp::dev::DeviceDriver,
                         public yarp::dev::IRemoteCalibrator,

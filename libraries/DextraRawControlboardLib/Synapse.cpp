@@ -36,10 +36,6 @@ const std::array<std::string, Synapse::DATA_POINTS> Synapse::LABELS = {
     "pinky"
 };
 
-Synapse::Synapse()
-    : configured(false)
-{}
-
 void Synapse::configure(void * handle)
 {}
 

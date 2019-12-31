@@ -2,9 +2,9 @@
 
 /**
  * @ingroup yarp_devices_examples_cpp
- * \defgroup exampleRemoteControlboard exampleRemoteControlboard
+ * @defgroup exampleRemoteControlboardModule exampleRemoteControlboardModule
  *
- * @brief This example connects to a running \ref roboticslabSim program.
+ * @brief This example connects to a remote controlboard device (e.g. @ref CanBusControlboard) as a module.
  *
  * <b>Legal</b>
  *

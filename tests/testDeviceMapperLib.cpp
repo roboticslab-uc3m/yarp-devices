@@ -18,53 +18,80 @@
 #include "FutureTask.hpp"
 #include "DeviceMapper.hpp"
 
-namespace
-{
-    struct DummyPositionDirectRawImpl : public yarp::dev::IPositionDirectRaw
-    {
-        virtual bool getAxes(int * axes) override
-        { *axes = 1; return true; }
-
-        virtual bool setPositionRaw(int j, double ref) override
-        { return ref >= 0.0 ? true : false; }
-
-        virtual bool setPositionsRaw(int n_joint, const int * joints, const double * refs) override
-        { return false; }
-
-        virtual bool setPositionsRaw(const double * refs) override
-        { return false; }
-
-        virtual bool getRefPositionRaw(int joint, double * ref) override
-        { *ref = joint; return true; }
-
-        virtual bool getRefPositionsRaw(double * refs) override
-        { int axes; bool ret; return ret = getAxes(&axes), std::iota(refs, refs + axes, 0.0), ret; };
-
-        virtual bool getRefPositionsRaw(int n_joint, const int * joints, double * refs) override
-        { std::copy_n(joints, n_joint, refs); return true; }
-    };
-
-    template<unsigned int N>
-    struct JointDriver : public yarp::dev::DeviceDriver,
-                         public DummyPositionDirectRawImpl
-    {
-        virtual bool getAxes(int * axes) override
-        { *axes = N; return true; }
-
-        static std::string name()
-        { return "JointDriver" + std::to_string(N); }
-
-        static yarp::dev::DriverCreator * makeCreator()
-        { return new yarp::dev::DriverCreatorOf<JointDriver<N>>(name().c_str(), "", name().c_str()); }
-    };
-}
-
 namespace roboticslab
+{
+
+namespace test
 {
 
 /**
  * @ingroup yarp_devices_tests
- * @brief ...
+ * @defgroup testDeviceMapperLib
+ * @brief Unit tests related to @ref DeviceMapperLib.
+ */
+
+/**
+ * @ingroup testDeviceMapperLib
+ * @brief Dummy implementation of a IPositionDirectRaw interface.
+ *
+ * Single-axis position-direct controller. Certain methods have been
+ * overriden to produce predictable fake results than can be later tracked
+ * by unit-testing client code.
+ */
+struct DummyPositionDirectRawImpl : public yarp::dev::IPositionDirectRaw
+{
+    virtual bool getAxes(int * axes) override
+    { *axes = 1; return true; }
+
+    virtual bool setPositionRaw(int j, double ref) override
+    { return ref >= 0.0 ? true : false; }
+
+    virtual bool setPositionsRaw(int n_joint, const int * joints, const double * refs) override
+    { return false; }
+
+    virtual bool setPositionsRaw(const double * refs) override
+    { return false; }
+
+    virtual bool getRefPositionRaw(int joint, double * ref) override
+    { *ref = joint; return true; }
+
+    virtual bool getRefPositionsRaw(double * refs) override
+    { int axes; bool ret; return ret = getAxes(&axes), std::iota(refs, refs + axes, 0.0), ret; };
+
+    virtual bool getRefPositionsRaw(int n_joint, const int * joints, double * refs) override
+    { std::copy_n(joints, n_joint, refs); return true; }
+};
+
+/**
+ * @ingroup testDeviceMapperLib
+ * @brief Dummy implementation of a N-axis position-direct device.
+ *
+ * This device provides utilities that help create static instances of itself
+ * via YARP device registry, thus avoiding the need of prior installation and
+ * consequent lookup in order to use them.
+ *
+ * @tparam N Number of controlled axes.
+ */
+template<unsigned int N>
+struct JointDriver : public yarp::dev::DeviceDriver,
+                     public DummyPositionDirectRawImpl
+{
+    //! Retrieve the number of controlled axes.
+    virtual bool getAxes(int * axes) override
+    { *axes = N; return true; }
+
+    //! Generate dummy name that identifies this device given the number of axes.
+    static std::string name()
+    { return "JointDriver" + std::to_string(N); }
+
+    //! Create specialized YARP driver factory that creates instances of JointDriver.
+    static yarp::dev::DriverCreator * makeCreator()
+    { return new yarp::dev::DriverCreatorOf<JointDriver<N>>(name().c_str(), "", name().c_str()); }
+};
+
+/**
+ * @ingroup testDeviceMapperLib
+ * @brief Wrapper class for DummyPositionDirectRawImpl and JointDriver instances.
  */
 class DeviceMapperTest : public testing::Test
 {
@@ -86,6 +113,7 @@ public:
     }
 
 protected:
+    //! Retrieve interface pointer to an DummyPositionDirectRawImpl instance.
     yarp::dev::IPositionDirectRaw * getDummy()
     {
         if (!dummy)
@@ -96,6 +124,13 @@ protected:
         return dummy;
     }
 
+    /**
+     * @brief Retrieve pointer to a wrapped JointDriver device.
+     *
+     * The lifetime of created devices ends by the destruction of this class.
+     *
+     * @tparam T Any specialized class template of JointDriver.
+     */
     template<typename T>
     yarp::dev::PolyDriver * getDriver()
     {
@@ -381,4 +416,5 @@ TEST_F(DeviceMapperTest, DeviceMapper)
     ASSERT_EQ(std::vector<double>(ref_group, ref_group + jointCount), (std::vector<double>{0, 0, 2, 1, 3})); // parens intentional
 }
 
+} // namespace test
 } // namespace roboticslab

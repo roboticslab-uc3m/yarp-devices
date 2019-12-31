@@ -1,3 +1,11 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+/**
+ * @ingroup yarp_devices_examples_cpp
+ * @defgroup examplePositionDirect examplePositionDirect
+ * @brief This example connects to a remote controlboard device and sends position direct commands.
+ */
+
 #include <cmath>
 
 #include <string>

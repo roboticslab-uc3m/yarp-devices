@@ -8,6 +8,7 @@
 #include <functional>
 #include <future>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "StateObserver.hpp"
@@ -23,13 +24,28 @@
 namespace roboticslab
 {
 
-// expedited transfers
+namespace test
+{
+
+/**
+ * @ingroup yarp_devices_tests
+ * @defgroup testCanBusSharerLib
+ * @brief Unit tests related to @ref CanBusSharerLib.
+ */
+
+/**
+ * @ingroup testCanBusSharerLib
+ * @brief Generate 8-byte SDO response data for expedited transfers.
+ */
 inline std::uint64_t toInt64(std::uint8_t op, std::uint16_t index, std::uint8_t subindex, std::uint32_t data = 0)
 {
     return op + (index << 8) + (subindex << 24) + (static_cast<std::uint64_t>(data) << 32);
 }
 
-// segmented transfers
+/**
+ * @ingroup testCanBusSharerLib
+ * @brief Generate 8-byte SDO response data for segmented (normal) transfers.
+ */
 inline std::uint64_t toInt64(std::uint8_t op, const std::string & s = "")
 {
     std::uint64_t v = op;
@@ -42,11 +58,19 @@ inline std::uint64_t toInt64(std::uint8_t op, const std::string & s = "")
     return v;
 }
 
+/**
+ * @ingroup testCanBusSharerLib
+ * @brief Dummy CAN message proxy container of can_message.
+ *
+ * Since can_message only holds a pointer to CAN message data stored somewhere
+ * else, this structure aims to preserve a local copy for later use.
+ */
 struct fake_message
 {
     fake_message() : id(0), len(0), data(0)
     { }
 
+    //! Copy message data into this instance.
     fake_message(const can_message & msg) : id(msg.id), len(msg.len), data(0)
     { std::memcpy(&data, msg.data, len); }
 
@@ -55,18 +79,26 @@ struct fake_message
     uint64_t data;
 };
 
+/**
+ * @ingroup testCanBusSharerLib
+ * @brief Stores registered fake CAN messages and eases access to them.
+ */
 class FakeCanSenderDelegate : public CanSenderDelegate
 {
 public:
+    //! Store message data internally.
     virtual bool prepareMessage(const can_message & msg) override
     { return messages.push_back(msg), true; }
 
+    //! Retrieve last message.
     const fake_message & getLastMessage() const
     { return messages.back(); }
 
+    //! Retrieve message at specified index.
     const fake_message & getMessage(std::size_t n) const
     { return messages.at(n); }
 
+    //! Empties internal message registry.
     void flush()
     { messages.clear(); }
 
@@ -75,13 +107,12 @@ private:
 };
 
 /**
- * @ingroup yarp_devices_tests
- * @brief ...
+ * @ingroup testCanBusSharerLib
+ * @brief Manages a FakeCanSenderDelegate and registers asynchronous operations.
  */
 class CanBusSharerTest : public testing::Test
 {
 public:
-
     virtual void SetUp()
     {
         senderDelegate = new FakeCanSenderDelegate;
@@ -103,10 +134,11 @@ public:
     }
 
 protected:
-
+    //! Retrieve a pointer to a FakeCanSenderDelegate instance.
     FakeCanSenderDelegate * getSender()
     { return senderDelegate; }
 
+    //! Register an asynchronous operation that can be assigned thereafter.
     std::future<void> & f()
     {
         auto * f = new std::future<void>;
@@ -114,23 +146,28 @@ protected:
         return *f;
     }
 
-    std::vector<std::future<void> *> futures;
-
     static constexpr double TIMEOUT = 0.1; // [s]
     static constexpr int MILLIS = 50;
 
 private:
-
     FakeCanSenderDelegate * senderDelegate;
+    std::vector<std::future<void> *> futures;
 };
 
+/**
+ * @ingroup testCanBusSharerLib
+ * @brief Functor wait-with-callback class.
+ */
 class observer_timer
 {
 public:
-    observer_timer(int _milliseconds, const std::function<bool()> & _fn)
-        : milliseconds(_milliseconds), fn(_fn)
+    //! Register function object and configure wait time.
+    template<typename Fn>
+    observer_timer(int _milliseconds, Fn && _fn)
+        : milliseconds(_milliseconds), fn(std::move(_fn))
     { }
 
+    //! Wait and call stored function.
     void operator()()
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
@@ -1268,4 +1305,5 @@ TEST_F(CanBusSharerTest, CanOpen)
     ASSERT_EQ(actualNmt, expectedNmt);
 }
 
+} // namespace test
 } // namespace roboticslab
