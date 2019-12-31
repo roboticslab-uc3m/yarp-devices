@@ -3,6 +3,7 @@
 #ifndef __POSITION_DIRECT_THREAD_HPP__
 #define __POSITION_DIRECT_THREAD_HPP__
 
+#include <map>
 #include <mutex>
 #include <set>
 #include <vector>
@@ -22,10 +23,11 @@ class PositionDirectThread : public yarp::os::PeriodicThread
 public:
     PositionDirectThread(const DeviceMapper & deviceMapper);
     bool configure(const yarp::os::Searchable & config);
-    void updateControlModeRegister(int j, bool enablePosd);
+    bool updateControlModeRegister(const std::map<int, bool> & ctrl);
 
 protected:
-    void run();
+    virtual bool threadInit() override;
+    virtual void run() override;
 
 private:
     std::vector<yarp::dev::IRemoteVariablesRaw *> handles;

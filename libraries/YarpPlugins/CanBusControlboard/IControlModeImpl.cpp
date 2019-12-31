@@ -45,8 +45,7 @@ bool CanBusControlboard::setControlMode(int j, int mode)
         return false;
     }
 
-    posdThread->updateControlModeRegister(j, mode == VOCAB_CM_POSITION_DIRECT);
-    return true;
+    return posdThread->updateControlModeRegister({{j, mode == VOCAB_CM_POSITION_DIRECT}});
 }
 
 // -----------------------------------------------------------------------------
@@ -60,12 +59,14 @@ bool CanBusControlboard::setControlModes(int * modes)
         return false;
     }
 
+    std::map<int, bool> ctrl;
+
     for (unsigned int i = 0; i < nodeDevices.size(); i++)
     {
-        posdThread->updateControlModeRegister(i, modes[i] == VOCAB_CM_POSITION_DIRECT);
+        ctrl.insert({i, modes[i] == VOCAB_CM_POSITION_DIRECT});
     }
 
-    return true;
+    return posdThread->updateControlModeRegister(ctrl);
 }
 
 // -----------------------------------------------------------------------------
@@ -75,13 +76,18 @@ bool CanBusControlboard::setControlModes(int n_joint, const int * joints, int * 
     CD_DEBUG("(%d)\n",n_joint);
 
     if (!deviceMapper.mapJointGroup(&yarp::dev::IControlModeRaw::setControlModesRaw, n_joint, joints, modes))
+    {
+        return false;
+    }
+
+    std::map<int, bool> ctrl;
 
     for (int i = 0; i < n_joint; i++)
     {
-        posdThread->updateControlModeRegister(joints[i], modes[i] == VOCAB_CM_POSITION_DIRECT);
+        ctrl.insert({joints[i], modes[i] == VOCAB_CM_POSITION_DIRECT});
     }
 
-    return true;
+    return posdThread->updateControlModeRegister(ctrl);
 }
 
 // -----------------------------------------------------------------------------
