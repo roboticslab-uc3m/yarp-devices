@@ -29,7 +29,7 @@ bool TechnosoftIpos::setPositionDirectModeRaw()
         || !can->sdo()->download<std::int8_t>("Modes of Operation", 7, 0x6060)
         || !can->sdo()->download<std::int16_t>("Interpolation sub mode select", linInterpBuffer->getSubMode(), 0x60C0)
         || !can->sdo()->download<std::uint16_t>("Interpolated position buffer length", linInterpBuffer->getBufferSize(), 0x2073)
-        || !can->sdo()->download<std::uint16_t>("Interpolated position buffer configuration", 0xA000, 0x2074)
+        || !can->sdo()->download<std::uint16_t>("Interpolated position buffer configuration", 0xA080, 0x2074)
         || !can->sdo()->download<std::int32_t>("Interpolated position initial position", refInternalUnits, 0x2079))
     {
         return false;
@@ -93,8 +93,8 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         return true;
     }
 
-    if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT
-        && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4))) // disable ip mode
+    // reset mode-specific bits in controlword
+    if (!can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4).reset(5).reset(6)))
     {
         return false;
     }
@@ -116,7 +116,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
                 && can->sdo()->download<std::uint16_t>("External Reference Type", 1, 0x201D)
                 && can->sdo()->download<std::int8_t>("Modes of Operation", -5, 0x6060)
-                && can->driveStatus()->controlword(0x001F) // new setpoint (assume target position)
+                && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4)) // new setpoint (assume target position)
                 && vars.awaitControlMode(mode);
 
     case VOCAB_CM_POSITION_DIRECT:
