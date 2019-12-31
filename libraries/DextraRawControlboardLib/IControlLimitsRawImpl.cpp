@@ -22,7 +22,7 @@ bool DextraRawControlboard::getLimitsRaw(int axis, double * min, double * max)
     CD_INFO("(%d)\n", axis);
     CHECK_JOINT(axis);
 
-    std::pair<Synapse::setpoint_t, Synapse::setpoint_t> limits = Synapse::LIMITS[axis];
+    auto limits = Synapse::LIMITS[axis];
     *min = limits.first;
     *max = limits.second;
 

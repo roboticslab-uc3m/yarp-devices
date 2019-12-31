@@ -22,7 +22,7 @@ bool TechnosoftIpos::setPositionDirectModeRaw()
     rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x01);
     rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x02);
 
-    double refInternalUnits = vars.lastEncoderRead.queryPosition();
+    std::int32_t refInternalUnits = vars.lastEncoderRead.queryPosition();
     double refDegrees = vars.internalUnitsToDegrees(refInternalUnits);
 
     if (!can->rpdo3()->configure(rpdo3Conf)
@@ -85,8 +85,11 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
 
     vars.requestedcontrolMode = mode;
 
-    if (mode == vars.actualControlMode)
+    if (mode == vars.actualControlMode
+        || (mode == VOCAB_CM_CURRENT && vars.actualControlMode == VOCAB_CM_TORQUE)
+        || (mode == VOCAB_CM_TORQUE && vars.actualControlMode == VOCAB_CM_CURRENT))
     {
+        vars.actualControlMode.store(vars.requestedcontrolMode.load()); // disambiguate torque/current modes
         return true;
     }
 
@@ -113,7 +116,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
                 && can->sdo()->download<std::uint16_t>("External Reference Type", 1, 0x201D)
                 && can->sdo()->download<std::int8_t>("Modes of Operation", -5, 0x6060)
-                && can->rpdo1()->write<std::uint16_t>(0x001F) // new setpoint (assume target position)
+                && can->driveStatus()->controlword(0x001F) // new setpoint (assume target position)
                 && vars.awaitControlMode(mode);
 
     case VOCAB_CM_POSITION_DIRECT:

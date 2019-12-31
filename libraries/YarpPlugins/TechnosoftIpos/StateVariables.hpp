@@ -73,25 +73,25 @@ struct StateVariables
     bool awaitControlMode(yarp::conf::vocab32_t mode);
 
     //! Convert position, speed or acceleration to internal units.
-    double degreesToInternalUnits(double value, int derivativeOrder = 0);
+    double degreesToInternalUnits(double value, int derivativeOrder = 0) const;
 
     //! Convert position, speed or acceleration to degrees.
-    double internalUnitsToDegrees(double value, int derivativeOrder = 0);
+    double internalUnitsToDegrees(double value, int derivativeOrder = 0) const;
 
     //! Convert current to internal units.
-    std::int16_t currentToInternalUnits(double value);
+    std::int16_t currentToInternalUnits(double value) const;
 
     //! Convert current to amperes.
-    double internalUnitsToCurrent(std::int16_t value);
+    double internalUnitsToCurrent(std::int16_t value) const;
 
     //! Apply internal iPOS conversion to express drive peak current in amperes.
-    double internalUnitsToPeakCurrent(std::int16_t value);
+    double internalUnitsToPeakCurrent(std::int16_t value) const;
 
     //! Convert current (amperes) to torque (Nm).
-    double currentToTorque(double current);
+    double currentToTorque(double current) const;
 
     //! Convert torque (Nm) to current (amperes).
-    double torqueToCurrent(double torque);
+    double torqueToCurrent(double torque) const;
 
     std::unique_ptr<StateObserver> controlModeObserverPtr {new StateObserver(1.0)}; // arbitrary 1 second wait
 

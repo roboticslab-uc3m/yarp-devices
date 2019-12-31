@@ -18,7 +18,7 @@ namespace
     const unsigned char FINGER_ADDRESS[Synapse::DATA_POINTS] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
 }
 
-const std::pair<Synapse::setpoint_t, Synapse::setpoint_t> Synapse::LIMITS[Synapse::DATA_POINTS] = {
+const std::array<std::pair<Synapse::setpoint_t, Synapse::setpoint_t>, Synapse::DATA_POINTS> Synapse::LIMITS = {
     {0, 90},
     {0, 10},
     {0, 20},
@@ -27,7 +27,7 @@ const std::pair<Synapse::setpoint_t, Synapse::setpoint_t> Synapse::LIMITS[Synaps
     {0, 20}
 };
 
-const char * Synapse::LABELS[Synapse::DATA_POINTS] = {
+const std::array<std::string, Synapse::DATA_POINTS> Synapse::LABELS = {
     "abductor",
     "thumb",
     "index",

@@ -5,6 +5,8 @@
 
 #include <yarp/conf/numeric.h>
 
+#include <array>
+#include <string>
 #include <utility>
 
 namespace roboticslab
@@ -21,11 +23,11 @@ class Synapse
 public:
     static const int DATA_POINTS = 6; ///< Number of controlled motors
 
-    typedef yarp::conf::float32_t setpoint_t; ///< 4-byte long float
-    typedef setpoint_t Setpoints[DATA_POINTS]; ///< Container of Dextra setpoints.
+    typedef float setpoint_t; ///< 4-byte long float
+    typedef std::array<setpoint_t, DATA_POINTS> Setpoints; ///< Container of Dextra setpoints.
 
-    static const std::pair<setpoint_t, setpoint_t> LIMITS[DATA_POINTS]; ///< Joint limits per motor
-    static const char * LABELS[DATA_POINTS]; ///< String labels that identify each motor
+    static const std::array<std::pair<setpoint_t, setpoint_t>, DATA_POINTS> LIMITS; ///< Joint limits per motor
+    static const std::array<std::string, DATA_POINTS> LABELS; ///< String labels that identify each motor
 
     //! Virtual destructor.
     virtual ~Synapse() {}

@@ -24,7 +24,7 @@ PositionDirectThread::PositionDirectThread(const DeviceMapper & deviceMapper)
 
 bool PositionDirectThread::configure(const yarp::os::Searchable & config)
 {
-    int periodMs = config.check("linInterpPeriodMs", yarp::os::Value(0),
+    int periodMs = config.check("linInterpPeriodMs", yarp::os::Value(50),
             "linear interpolation mode period (milliseconds)").asInt32();
 
     bool ok = setPeriod(periodMs * 0.001);

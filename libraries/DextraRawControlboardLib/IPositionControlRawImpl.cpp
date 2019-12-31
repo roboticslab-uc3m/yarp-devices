@@ -45,7 +45,7 @@ bool DextraRawControlboard::positionMoveRaw(const double * refs)
     CD_DEBUG("\n");
 
     Synapse::Setpoints setpoints;
-    std::copy(refs, refs + Synapse::DATA_POINTS, setpoints);
+    std::copy(refs, refs + Synapse::DATA_POINTS, std::begin(setpoints));
 
     if (!synapse->writeSetpointList(setpoints))
     {
