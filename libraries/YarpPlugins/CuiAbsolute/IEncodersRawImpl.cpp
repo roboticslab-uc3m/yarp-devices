@@ -2,117 +2,159 @@
 
 #include "CuiAbsolute.hpp"
 
-// ######################### IEncodersRaw Related ##############################
+#include <yarp/os/Time.h>
 
-bool roboticslab::CuiAbsolute::resetEncoderRaw(int j)
-{
-    CD_INFO("(%d)\n",j);
+#include <ColorDebug.h>
 
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    return this->setEncoderRaw(j,0);
-}
+using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::resetEncodersRaw()
+bool CuiAbsolute::getAxes(int * ax)
 {
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::setEncoderRaw(int j, double val)    // encExposed = val;
-{
-    CD_INFO("(%d,%f)\n",j,val);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (CuiAbsolute).\n");
-
+    *ax = 1;
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::setEncodersRaw(const double *vals)
+bool CuiAbsolute::resetEncoderRaw(int j)
 {
-    CD_ERROR("Missing implementation\n");
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return setEncoderRaw(j, 0.0);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CuiAbsolute::resetEncodersRaw()
+{
+    CD_DEBUG("\n");
+    return resetEncoderRaw(0);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CuiAbsolute::setEncoderRaw(int j, double val)
+{
+    CD_DEBUG("(%d, %f)\n", j, val);
+    CHECK_JOINT(j);
+    CD_WARNING("Not supported.\n");
     return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::getEncoderRaw(int j, double *v)
+bool CuiAbsolute::setEncodersRaw(const double * vals)
 {
-    //CD_INFO("%d\n",j);  //-- Too verbose in stream.
+    CD_WARNING("Not supported.\n");
+    return false;
+}
 
-    //-- Check index within range
-    if ( j != 0 ) return false;
+// -----------------------------------------------------------------------------
 
-    encoderReady.wait();
+bool CuiAbsolute::getEncoderRaw(int j, double * v)
+{
+    CD_DEBUG("%d\n", j);
+    CHECK_JOINT(j);
+
+    if (cuiMode == CuiMode::PULL)
+    {
+        encoder_t enc;
+
+        if (!pollEncoderRead(&enc))
+        {
+            return false;
+        }
+
+        *v = enc;
+        return true;
+    }
+
+    std::lock_guard<std::mutex> lock(mutex);
     *v = encoder;
-    encoderReady.post();
-
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::getEncodersRaw(double *encs)
+bool CuiAbsolute::getEncodersRaw(double * encs)
 {
-    CD_ERROR("Missing implementation\n");
+    CD_DEBUG("\n");
+    return getEncoderRaw(0, &encs[0]);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CuiAbsolute::getEncoderSpeedRaw(int j, double * sp)
+{
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    CD_WARNING("Not supported.\n");
     return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CuiAbsolute::getEncoderSpeedRaw(int j, double *sp)
+bool CuiAbsolute::getEncoderSpeedsRaw(double * spds)
 {
-    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
+    CD_WARNING("Not supported.\n");
+    return false;
+}
 
-    //-- Check index within range
-    if ( j != 0 ) return false;
+// -----------------------------------------------------------------------------
 
-    //CD_WARNING("Not implemented yet (CuiAbsolute).\n");  //-- Too verbose in controlboardwrapper2 stream.
-    *sp = 0;
+bool CuiAbsolute::getEncoderAccelerationRaw(int j, double * spds)
+{
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    CD_WARNING("Not supported.\n");
+    return false;
+}
 
+// -----------------------------------------------------------------------------
+
+bool CuiAbsolute::getEncoderAccelerationsRaw(double * accs)
+{
+    CD_WARNING("Not supported.\n");
+    return false;
+}
+
+// -----------------------------------------------------------------------------
+
+bool CuiAbsolute::getEncodersTimedRaw(double * encs, double * times)
+{
+    CD_DEBUG("\n");
+    return getEncoderTimedRaw(0, &encs[0], &times[0]);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CuiAbsolute::getEncoderTimedRaw(int j, double * enc, double * time)
+{
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+
+    if (cuiMode == CuiMode::PULL)
+    {
+        encoder_t v;
+
+        if (pollEncoderRead(&v))
+        {
+            *enc = v;
+            *time = yarp::os::Time::now();
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    std::lock_guard<std::mutex> lock(mutex);
+    *enc = encoder;
+    *time = encoderTimestamp;
     return true;
 }
 
 // -----------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::getEncoderSpeedsRaw(double *spds)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::getEncoderAccelerationRaw(int j, double *spds)
-{
-    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
-
-    //-- Check index within range
-    if ( j = 0 ) return false;
-
-    //CD_WARNING("Not implemented yet (CuiAbsolute).\n");  //-- Too verbose in controlboardwrapper2 stream.
-    *spds = 0;
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CuiAbsolute::getEncoderAccelerationsRaw(double *accs)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-

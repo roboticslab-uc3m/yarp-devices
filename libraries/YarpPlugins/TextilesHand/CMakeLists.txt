@@ -7,7 +7,7 @@ yarp_prepare_plugin(TextilesHand
                     TYPE roboticslab::TextilesHand
                     INCLUDE TextilesHand.hpp
                     DEFAULT ON
-                    DEPENDS UNIX)
+                    EXTRA_CONFIG WRAPPER=controlboardwrapper2)
 
 if(NOT SKIP_TextilesHand)
 
@@ -15,25 +15,16 @@ if(NOT SKIP_TextilesHand)
         set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
     endif()
 
-    yarp_add_plugin(TextilesHand TextilesHand.cpp
-                                 TextilesHand.hpp
+    yarp_add_plugin(TextilesHand TextilesHand.hpp
                                  DeviceDriverImpl.cpp
-                                 ICanBusSharerImpl.cpp
-                                 IControlLimitsRawImpl.cpp
-                                 IControlModeRawImpl.cpp
-                                 IEncodersRawImpl.cpp
-                                 IEncodersTimedRawImpl.cpp
-                                 IInteractionModeRawImpl.cpp
-                                 IPositionControlRawImpl.cpp
-                                 IPositionDirectRawImpl.cpp
-                                 IRemoteVariablesRawImpl.cpp
-                                 ITorqueControlRawImpl.cpp
-                                 IVelocityControlRawImpl.cpp)
+                                 IControlModeImpl.cpp
+                                 IPositionDirectImpl.cpp)
 
     target_link_libraries(TextilesHand YARP::YARP_OS
                                        YARP::YARP_dev
-                                       ROBOTICSLAB::ColorDebug
-                                       YarpDevicesInterfaces)
+                                       ROBOTICSLAB::ColorDebug)
+
+    target_compile_features(TextilesHand PUBLIC cxx_std_11)
 
     yarp_install(TARGETS TextilesHand
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}

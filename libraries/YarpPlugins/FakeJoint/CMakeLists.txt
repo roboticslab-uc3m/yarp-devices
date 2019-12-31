@@ -6,7 +6,8 @@ yarp_prepare_plugin(FakeJoint
                     CATEGORY device
                     TYPE roboticslab::FakeJoint
                     INCLUDE FakeJoint.hpp
-                    DEFAULT ON)
+                    DEFAULT ON
+                    DEPENDS ENABLE_CanBusSharerLib)
 
 if(NOT SKIP_FakeJoint)
 
@@ -14,25 +15,13 @@ if(NOT SKIP_FakeJoint)
         set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
     endif()
 
-    yarp_add_plugin(FakeJoint FakeJoint.cpp
-                              FakeJoint.hpp
-                              DeviceDriverImpl.cpp
-                              ICanBusSharerImpl.cpp
-                              IControlLimitsRawImpl.cpp
-                              IControlModeRawImpl.cpp
-                              IEncodersRawImpl.cpp
-                              IEncodersTimedRawImpl.cpp
-                              IInteractionModeRawImpl.cpp
-                              IPositionControlRawImpl.cpp
-                              IPositionDirectRawImpl.cpp
-                              IRemoteVariablesRawImpl.cpp
-                              ITorqueControlRawImpl.cpp
-                              IVelocityControlRawImpl.cpp)
+    yarp_add_plugin(FakeJoint FakeJoint.hpp
+                              FakeJoint.cpp)
 
-    target_link_libraries(FakeJoint YARP::YARP_OS
-                                    YARP::YARP_dev
-                                    ROBOTICSLAB::ColorDebug
-                                    YarpDevicesInterfaces)
+    target_link_libraries(FakeJoint YARP::YARP_dev
+                                    CanBusSharerLib)
+
+    target_compile_features(FakeJoint PUBLIC cxx_std_11)
 
     yarp_install(TARGETS FakeJoint
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}

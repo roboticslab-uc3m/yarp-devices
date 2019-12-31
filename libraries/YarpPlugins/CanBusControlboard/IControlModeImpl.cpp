@@ -4,83 +4,64 @@
 
 #include <yarp/os/Vocab.h>
 
-// ------------------- IControlMode Related ------------------------------------
+#include <ColorDebug.h>
 
-bool roboticslab::CanBusControlboard::getControlMode(int j, int *mode)
+using namespace roboticslab;
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getControlMode(int j, int * mode)
 {
-    //CD_DEBUG("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iControlModeRaw[j]->getControlModeRaw( 0, mode );
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IControlModeRaw::getControlModeRaw, j, mode);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getControlModes(int *modes)
+bool CanBusControlboard::getControlModes(int * modes)
 {
-    //CD_DEBUG("\n");  //-- Too verbose in controlboardwrapper2 stream
-
-    bool ok = true;
-    for(unsigned int i=0; i < nodes.size(); i++)
-        ok &= getControlMode(i,&modes[i]);
-    return ok;
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
+    return deviceMapper.mapAllJoints(&yarp::dev::IControlModeRaw::getControlModesRaw, modes);
 }
 
-// ---------------------- IControlMode2 Related  ---------------------------------
+// -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getControlModes(const int n_joint, const int *joints, int *modes)
+bool CanBusControlboard::getControlModes(int n_joint, const int * joints, int * modes)
+{
+    CD_DEBUG("\n");
+    return deviceMapper.mapJointGroup(&yarp::dev::IControlModeRaw::getControlModesRaw, n_joint, joints, modes);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::setControlMode(int j, int mode)
+{
+    CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
+    CHECK_JOINT(j);
+
+    return deviceMapper.mapSingleJoint(&yarp::dev::IControlModeRaw::setControlModeRaw, j, mode)
+            && posdThread->updateControlModeRegister(j, mode);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::setControlModes(int * modes)
 {
     CD_DEBUG("\n");
 
-    bool ok = true;
-    for(unsigned int i=0; i < n_joint; i++)
-        ok &= getControlMode(joints[i],&modes[i]);
-    return ok;
+    return deviceMapper.mapAllJoints(&yarp::dev::IControlModeRaw::setControlModesRaw, modes)
+            && posdThread->updateControlModeRegister(modes, nodeDevices.size());
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::setControlMode(const int j, const int mode)
-{
-    CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    if (!iControlModeRaw[j]->setControlModeRaw( 0, mode ))
-    {
-        return false;
-    }
-
-    posdThread->updateControlModeRegister(j, mode == VOCAB_CM_POSITION_DIRECT);
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setControlModes(const int n_joint, const int *joints, int *modes)
+bool CanBusControlboard::setControlModes(int n_joint, const int * joints, int * modes)
 {
     CD_DEBUG("(%d)\n",n_joint);
 
-    bool ok = true;
-    for(int j=0; j<n_joint; j++)
-    {
-        ok &= this->setControlMode(joints[j],modes[j]);
-    }
-    return ok;
+    return deviceMapper.mapJointGroup(&yarp::dev::IControlModeRaw::setControlModesRaw, n_joint, joints, modes)
+            && posdThread->updateControlModeRegister(n_joint, joints, modes);
 }
 
 // -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setControlModes(int *modes)
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i<nodes.size(); i++)
-        ok &= setControlMode(i,modes[i]);
-    return ok;
-}

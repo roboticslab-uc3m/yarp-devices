@@ -19,9 +19,9 @@ bool roboticslab::CanBusPeak::canSetBaudRate(unsigned int rate)
     std::memset(&pfdi, '\0', sizeof(pfdi));
     pfdi.nominal.bitrate = rate;
 
-    canBusReady.wait();
+    canBusReady.lock();
     int res = pcanfd_set_init(fileDescriptor, &pfdi);
-    canBusReady.post();
+    canBusReady.unlock();
 
     if (res < 0)
     {
@@ -38,9 +38,9 @@ bool roboticslab::CanBusPeak::canGetBaudRate(unsigned int * rate)
 {
     struct pcanfd_init pfdi;
 
-    canBusReady.wait();
+    canBusReady.lock();
     int res = pcanfd_get_init(fileDescriptor, &pfdi);
-    canBusReady.post();
+    canBusReady.unlock();
 
     if (res < 0)
     {
@@ -65,18 +65,17 @@ bool roboticslab::CanBusPeak::canIdAdd(unsigned int id)
 {
     CD_DEBUG("(%d)\n", id);
 
-    canBusReady.wait();
+    std::lock_guard<std::mutex> lockGuard(canBusReady);
 
     if (activeFilters.find(id) != activeFilters.end())
     {
         CD_WARNING("Filter for id %d already set.\n", id);
-        canBusReady.post();
         return true;
     }
 
     activeFilters.insert(id);
 
-    uint64_t acc = computeAcceptanceCodeAndMask();
+    std::uint64_t acc = computeAcceptanceCodeAndMask();
 
     CD_DEBUG("New acceptance code+mask: %016lxh.\n", acc);
 
@@ -86,11 +85,8 @@ bool roboticslab::CanBusPeak::canIdAdd(unsigned int id)
     {
         CD_ERROR("pcanfd_set_option() failed (%s).\n", std::strerror(-res));
         activeFilters.erase(id);
-        canBusReady.post();
         return false;
     }
-
-    canBusReady.post();
 
     return true;
 }
@@ -101,7 +97,7 @@ bool roboticslab::CanBusPeak::canIdDelete(unsigned int id)
 {
     CD_DEBUG("(%d)\n", id);
 
-    canBusReady.wait();
+    std::lock_guard<std::mutex> lockGuard(canBusReady);
 
     if (id == 0)
     {
@@ -112,23 +108,20 @@ bool roboticslab::CanBusPeak::canIdDelete(unsigned int id)
         if (res < 0)
         {
             CD_ERROR("Unable to clear accceptance filters (%s).\n", std::strerror(-res));
-            canBusReady.post();
             return false;
         }
 
         activeFilters.clear();
-        canBusReady.post();
         return true;
     }
 
     if (activeFilters.erase(id) == 0)
     {
         CD_WARNING("Filter for id %d missing or already deleted.\n", id);
-        canBusReady.post();
         return true;
     }
 
-    uint64_t acc = computeAcceptanceCodeAndMask();
+    std::uint64_t acc = computeAcceptanceCodeAndMask();
 
     CD_DEBUG("New acceptance code+mask: %016lxh.\n", acc);
 
@@ -138,11 +131,8 @@ bool roboticslab::CanBusPeak::canIdDelete(unsigned int id)
     {
         CD_ERROR("pcanfd_set_option() failed (%s).\n", std::strerror(-res));
         activeFilters.insert(id);
-        canBusReady.post();
         return false;
     }
-
-    canBusReady.post();
 
     return true;
 }
@@ -157,60 +147,47 @@ bool roboticslab::CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
         return false;
     }
 
-    struct pcanfd_msg * pfdm = new struct pcanfd_msg[size];
+    int res;
 
-    canBusReady.wait();
-
-    if (blockingMode && rxTimeoutMs > 0)
     {
-        bool bufferReady;
+        std::lock_guard<std::mutex> lockGuard(canBusReady);
 
-        if (!waitUntilTimeout(READ, &bufferReady)) {
-            canBusReady.post();
-            CD_ERROR("waitUntilTimeout() failed.\n");
-            delete[] pfdm;
-            return false;
-        }
-
-        if (!bufferReady)
+        if (blockingMode && rxTimeoutMs > 0)
         {
-            canBusReady.post();
-            *read = 0;
-            delete[] pfdm;
-            return true;
+            bool bufferReady;
+
+            if (!waitUntilTimeout(READ, &bufferReady)) {
+                CD_ERROR("waitUntilTimeout() failed.\n");
+                return false;
+            }
+
+            if (!bufferReady)
+            {
+                *read = 0;
+                return true;
+            }
         }
+
+        // Point at first member of an internally defined array of pcanfd_msg structs.
+        struct pcanfd_msg * pfdm = reinterpret_cast<struct pcanfd_msg *>(msgs.getPointer()[0]->getPointer());
+        res = pcanfd_recv_msgs_list(fileDescriptor, size, pfdm);
     }
-
-    int res = pcanfd_recv_msgs_list(fileDescriptor, size, pfdm);
-
-    canBusReady.post();
 
     if (!blockingMode && res == -EWOULDBLOCK)
     {
         *read = 0;
-        delete[] pfdm;
         return true;
     }
     else if (res < 0)
     {
         CD_ERROR("Unable to read messages: %s.\n", std::strerror(-res));
-        delete[] pfdm;
         return false;
     }
-
-    *read = res;
-
-    for (unsigned int i = 0; i < res; i++)
+    else
     {
-        yarp::dev::CanMessage & msg = msgs[i];
-        std::memcpy(msg.getData(), pfdm[i].data, pfdm[i].data_len);
-        msg.setLen(pfdm[i].data_len);
-        msg.setId(pfdm[i].id);
+        *read = res;
+        return true;
     }
-
-    delete[] pfdm;
-
-    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -223,45 +200,32 @@ bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsign
         return false;
     }
 
-    struct pcanfd_msg * pfdm = new struct pcanfd_msg[size];
+    int res;
 
-    for (unsigned int i = 0; i < size; i++)
     {
-        const yarp::dev::CanMessage & msg = msgs[i];
-        std::memcpy(pfdm[i].data, msg.getData(), msg.getLen());
-        pfdm[i].data_len = msg.getLen();
-        pfdm[i].id = msg.getId();
-        pfdm[i].type = PCANFD_TYPE_CAN20_MSG;
-        pfdm[i].flags = PCANFD_MSG_STD;
-    }
+        std::lock_guard<std::mutex> lockGuard(canBusReady);
 
-    canBusReady.wait();
+        // Point at first member of an internally defined array of pcanfd_msg structs.
+        const struct pcanfd_msg * pfdm = reinterpret_cast<const struct pcanfd_msg *>(msgs.getPointer()[0]->getPointer());
 
-    if (blockingMode && txTimeoutMs > 0)
-    {
-        bool bufferReady;
-
-        if (!waitUntilTimeout(WRITE, &bufferReady)) {
-            canBusReady.post();
-            CD_ERROR("waitUntilTimeout() failed.\n");
-            delete[] pfdm;
-            return false;
-        }
-
-        if (!bufferReady)
+        if (blockingMode && txTimeoutMs > 0)
         {
-            canBusReady.post();
-            *sent = 0;
-            delete[] pfdm;
-            return true;
+            bool bufferReady;
+
+            if (!waitUntilTimeout(WRITE, &bufferReady)) {
+                CD_ERROR("waitUntilTimeout() failed.\n");
+                return false;
+            }
+
+            if (!bufferReady)
+            {
+                *sent = 0;
+                return true;
+            }
         }
+
+        res = pcanfd_send_msgs_list(fileDescriptor, size, pfdm);
     }
-
-    int res = pcanfd_send_msgs_list(fileDescriptor, size, pfdm);
-
-    canBusReady.post();
-
-    delete[] pfdm;
 
     if (!blockingMode && res == -EWOULDBLOCK)
     {
@@ -273,10 +237,11 @@ bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsign
         CD_ERROR("Unable to send messages: %s.\n", std::strerror(-res));
         return false;
     }
-
-    *sent = res;
-
-    return true;
+    else
+    {
+        *sent = res;
+        return true;
+    }
 }
 
 // -----------------------------------------------------------------------------

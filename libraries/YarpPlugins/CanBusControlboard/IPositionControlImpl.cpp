@@ -2,365 +2,255 @@
 
 #include "CanBusControlboard.hpp"
 
-// ------------------ IPositionControl Related ----------------------------------------
+#include <algorithm>
+#include <memory>
 
-bool roboticslab::CanBusControlboard::getAxes(int *axes)
+#include <ColorDebug.h>
+
+using namespace roboticslab;
+using raw_t = yarp::dev::IPositionControlRaw;
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::positionMove(int j, double ref)
+{
+    CD_DEBUG("(%d, %f)\n", j, ref);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint<raw_t, double>(&yarp::dev::IPositionControlRaw::positionMoveRaw, j, ref);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::positionMove(const double * refs)
 {
     CD_DEBUG("\n");
+    return deviceMapper.mapAllJoints(&yarp::dev::IPositionControlRaw::positionMoveRaw, refs);
+}
 
-    *axes = nodes.size();
+// -----------------------------------------------------------------------------
 
+bool CanBusControlboard::positionMove(int n_joint, const int * joints, const double * refs)
+{
+    CD_DEBUG("\n");
+    return deviceMapper.mapJointGroup(&yarp::dev::IPositionControlRaw::positionMoveRaw, n_joint, joints, refs);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::relativeMove(int j, double delta)
+{
+    CD_DEBUG("(%d, %f)\n", j, delta);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint<raw_t, double>(&yarp::dev::IPositionControlRaw::relativeMoveRaw, j, delta);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::relativeMove(const double * deltas)
+{
+    CD_DEBUG("\n");
+    return deviceMapper.mapAllJoints(&yarp::dev::IPositionControlRaw::relativeMoveRaw, deltas);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::relativeMove(int n_joint, const int * joints, const double * deltas)
+{
+    CD_DEBUG("\n");
+    return deviceMapper.mapJointGroup(&yarp::dev::IPositionControlRaw::relativeMoveRaw, n_joint, joints, deltas);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::checkMotionDone(int j, bool * flag)
+{
+    //CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint<raw_t, bool *>(&yarp::dev::IPositionControlRaw::checkMotionDoneRaw, j, flag);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::checkMotionDone(bool * flag)
+{
+    //CD_DEBUG("\n");
+
+    auto flags = std::unique_ptr<bool[]>(new bool[deviceMapper.getControlledAxes()]);
+
+    if (!deviceMapper.mapAllJoints(&yarp::dev::IPositionControlRaw::checkMotionDoneRaw, flags.get()))
+    {
+        return false;
+    }
+
+    *flag = std::all_of(flags.get(), flags.get() + deviceMapper.getControlledAxes(), [](bool b) { return b; });
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::positionMove(int j, double ref)
+bool CanBusControlboard::checkMotionDone(int n_joint, const int * joints, bool * flag)
 {
-    CD_DEBUG("(%d, %f)\n",j,ref);
+    //CD_DEBUG("\n");
 
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
+    auto flags = std::unique_ptr<bool[]>(new bool[n_joint]);
 
-    return iPositionControlRaw[j]->positionMoveRaw( 0, ref );
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::positionMove(const double *refs)
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
+    if (!deviceMapper.mapJointGroup(&yarp::dev::IPositionControlRaw::checkMotionDoneRaw, n_joint, joints, flags.get()))
     {
-        ok &= this->positionMove(j,refs[j]);
+        return false;
     }
-    return ok;
+
+    *flag = std::all_of(flags.get(), flags.get() + n_joint, [](bool b) { return b; });
+    return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::relativeMove(int j, double delta)
+bool CanBusControlboard::setRefSpeed(int j, double spd)
 {
-    CD_DEBUG("(%d, %f)\n",j,delta);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iPositionControlRaw[j]->relativeMoveRaw( 0, delta );
+    CD_DEBUG("(%d, %f)\n", j, spd);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IPositionControlRaw::setRefSpeedRaw, j, spd);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::relativeMove(const double *deltas)
+bool CanBusControlboard::setRefSpeeds(const double * spds)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        ok &= this->relativeMove(j,deltas[j]);
-    }
-    return ok;
+    return deviceMapper.mapAllJoints(&yarp::dev::IPositionControlRaw::setRefSpeedsRaw, spds);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::checkMotionDone(int j, bool *flag)
-{
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iPositionControlRaw[j]->checkMotionDoneRaw( 0, flag );
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::checkMotionDone(bool *flag)
+bool CanBusControlboard::setRefSpeeds(int n_joint, const int * joints, const double * spds)
 {
     CD_DEBUG("\n");
-    *flag = true;
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        bool tmpFlag;
-        ok &= this->checkMotionDone(j,&tmpFlag);
-        *flag &= tmpFlag;
-    }
-    return ok;
+    return deviceMapper.mapJointGroup(&yarp::dev::IPositionControlRaw::setRefSpeedsRaw, n_joint, joints, spds);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::setRefSpeed(int j, double sp)
+bool CanBusControlboard::setRefAcceleration(int j, double acc)
 {
-    CD_DEBUG("(%d, %f)\n",j,sp);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iPositionControlRaw[j]->setRefSpeedRaw( 0, sp );
+    CD_DEBUG("(%d, %f)\n", j, acc);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IPositionControlRaw::setRefAccelerationRaw, j, acc);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::setRefSpeeds(const double *spds)
+bool CanBusControlboard::setRefAccelerations(const double * accs)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i<nodes.size(); i++)
-        ok &= setRefSpeed(i,spds[i]);
-    return ok;
+    return deviceMapper.mapAllJoints(&yarp::dev::IPositionControlRaw::setRefAccelerationsRaw, accs);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::setRefAcceleration(int j, double acc)
-{
-    CD_DEBUG("(%d, %f)\n",j,acc);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iPositionControlRaw[j]->setRefAccelerationRaw( 0, acc );
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setRefAccelerations(const double *accs)
+bool CanBusControlboard::setRefAccelerations(int n_joint, const int * joints, const double * accs)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i<nodes.size(); i++)
-        ok &= setRefAcceleration(i,accs[i]);
-    return ok;
+    return deviceMapper.mapJointGroup(&yarp::dev::IPositionControlRaw::setRefAccelerationsRaw, n_joint, joints, accs);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getRefSpeed(int j, double *ref)
+bool CanBusControlboard::getRefSpeed(int j, double * spd)
 {
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iPositionControlRaw[j]->getRefSpeedRaw( 0, ref);
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IPositionControlRaw::getRefSpeedRaw, j, spd);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getRefSpeeds(double *spds)
+bool CanBusControlboard::getRefSpeeds(double * spds)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i<nodes.size(); i++)
-        ok &= getRefSpeed(i,&spds[i]);
-    return ok;
+    return deviceMapper.mapAllJoints(&yarp::dev::IPositionControlRaw::getRefSpeedsRaw, spds);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getRefAcceleration(int j, double *acc)
-{
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iPositionControlRaw[j]->getRefAccelerationRaw( 0, acc );
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getRefAccelerations(double *accs)
+bool CanBusControlboard::getRefSpeeds(int n_joint, const int * joints, double * spds)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i<nodes.size(); i++)
-        ok &= getRefAcceleration(i,&accs[i]);
-    return ok;
+    return deviceMapper.mapJointGroup(&yarp::dev::IPositionControlRaw::getRefSpeedsRaw, n_joint, joints, spds);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::stop(int j)
+bool CanBusControlboard::getRefAcceleration(int j, double * acc)
 {
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iPositionControlRaw[j]->stopRaw (0);
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IPositionControlRaw::getRefAccelerationRaw, j, acc);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::stop()
+bool CanBusControlboard::getRefAccelerations(double * accs)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i<nodes.size(); i++)
-        ok &= stop(i);
-    return ok;
-}
-
-// ---------------------------- IPositionControl2 Related ---------------------
-
-bool roboticslab::CanBusControlboard::positionMove(const int n_joint, const int *joints, const double *refs)
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<n_joint; j++)
-    {
-        ok &= this->positionMove(joints[j],refs[j]);
-    }
-    return ok;
+    return deviceMapper.mapAllJoints(&yarp::dev::IPositionControlRaw::getRefAccelerationsRaw, accs);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::relativeMove(const int n_joint, const int *joints, const double *deltas)
+bool CanBusControlboard::getRefAccelerations(int n_joint, const int * joints, double * accs)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<n_joint; j++) // j<nodes.size()
-    {
-        ok &= this->relativeMove(joints[j],deltas[j]);
-    }
-    return ok;
+    return deviceMapper.mapJointGroup(&yarp::dev::IPositionControlRaw::getRefAccelerationsRaw, n_joint, joints, accs);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::checkMotionDone(const int n_joint, const int *joints, bool *flags)
+bool CanBusControlboard::stop(int j)
 {
-    CD_DEBUG("\n");
-    *flags = true;
-    bool ok = true;
-    for(int j=0; j<n_joint; j++)
-    {
-        bool tmpFlag;
-        ok &= this->checkMotionDone(joints[j],&tmpFlag);
-        *flags &= tmpFlag;
-    }
-    return ok;
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint<raw_t>(&yarp::dev::IPositionControlRaw::stopRaw, j);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::setRefSpeeds(const int n_joint, const int *joints, const double *spds)
+bool CanBusControlboard::stop()
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i<n_joint; i++)
-    {
-        ok &= setRefSpeed(joints[i],spds[i]);
-    }
-    return ok;
+    return deviceMapper.mapAllJoints(&yarp::dev::IPositionControlRaw::stopRaw);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
+bool CanBusControlboard::stop(int n_joint, const int * joints)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i<n_joint; i++)
-    {
-        ok &= setRefAcceleration(joints[i],accs[i]);
-    }
-    return ok;
+    return deviceMapper.mapJointGroup(&yarp::dev::IPositionControlRaw::stopRaw, n_joint, joints);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getRefSpeeds(const int n_joint, const int *joints, double *spds)
+bool CanBusControlboard::getTargetPosition(int joint, double * ref)
 {
-    CD_DEBUG("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i<n_joint; i++)
-    {
-        ok &= getRefSpeed(joints[i],&spds[i]);
-    }
-    return ok;
+    CD_DEBUG("(%d)\n", joint);
+    CHECK_JOINT(joint);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IPositionControlRaw::getTargetPositionRaw, joint, ref);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getRefAccelerations(const int n_joint, const int *joints, double *accs)
+bool CanBusControlboard::getTargetPositions(double * refs)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i<n_joint; i++)
-    {
-        ok &= getRefAcceleration(joints[i],&accs[i]);
-    }
-    return ok;
+    return deviceMapper.mapAllJoints(&yarp::dev::IPositionControlRaw::getTargetPositionsRaw, refs);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::stop(const int n_joint, const int *joints)
+bool CanBusControlboard::getTargetPositions(int n_joint, const int * joints, double * refs)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i<n_joint; i++)
-    {
-            ok &= stop(i);
-    }
-    return ok;
+    return deviceMapper.mapJointGroup(&yarp::dev::IPositionControlRaw::getTargetPositionsRaw, n_joint, joints, refs);
 }
 
 // -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getTargetPosition(const int joint, double *ref)
-{
-    CD_DEBUG("\n");
-
-    return iPositionControlRaw[joint]->getTargetPositionRaw(0, ref);
-
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getTargetPositions(double *refs)
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i<nodes.size(); i++)
-    {
-        ok &= getTargetPosition(i,&(refs[i]));
-    }
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getTargetPositions(const int n_joint, const int *joints, double *refs)
-{
-    CD_DEBUG("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i<n_joint; i++)
-    {
-        ok &= getTargetPosition(joints[i],&(refs[i]));
-    }
-    return ok;
-}

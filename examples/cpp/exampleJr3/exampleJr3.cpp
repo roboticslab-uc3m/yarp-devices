@@ -1,5 +1,11 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
+/**
+ * @ingroup yarp_devices_examples_cpp
+ * @defgroup exampleJr3 exampleJr3
+ * @brief This example instantiates a local @ref Jr3 device.
+ */
+
 #include <cstdio>
 
 #include <yarp/os/Network.h>

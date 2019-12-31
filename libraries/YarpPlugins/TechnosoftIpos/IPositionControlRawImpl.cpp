@@ -2,493 +2,300 @@
 
 #include "TechnosoftIpos.hpp"
 
-// ######################### IPositionControlRaw Related #########################
+#include <cmath>
 
-bool roboticslab::TechnosoftIpos::getAxes(int *ax)
+#include <ColorDebug.h>
+
+#include "CanUtils.hpp"
+
+using namespace roboticslab;
+
+// --------------------------------------------------------------------------------
+
+bool TechnosoftIpos::positionMoveRaw(int j, double ref)
 {
-    *ax = 1;
-    return true;
+    CD_DEBUG("(%d, %f)\n", j, ref);
+    CHECK_JOINT(j);
+    CHECK_MODE(VOCAB_CM_POSITION);
+
+    return quitHaltState(VOCAB_CM_POSITION)
+            && can->driveStatus()->controlword(0x002F) // change set immediately
+            && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(ref), 0x607A)
+            && can->driveStatus()->controlword(0x003F); // new setpoint (assume absolute target position)
 }
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::positionMoveRaw(int j, double ref)    // encExposed = ref;
+bool TechnosoftIpos::positionMoveRaw(const double * refs)
 {
-    CD_INFO("(%d,%f)\n",j,ref);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    //-- Sets "Do not assume target position" so later it accepts "Assume target position (update the new motion parameters)".
-    //-- Mandatory if we issue this command right after the transition from [posd] to [pos] control mode.
-    //*************************************************************
-    uint8_t msg_pos_reset[]= {0x0F,0x00}; // Stop a position profile
-
-    if( ! send( 0x200, 2, msg_pos_reset) )
-    {
-        CD_ERROR("Could not send first \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent first \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
-    //*************************************************************
-    uint8_t msg_position_target[]= {0x23,0x7A,0x60,0x00,0x00,0x00,0x00,0x00}; // Position target
-
-    int position = ref * this->tr * (encoderPulses / 360.0);  // Appply tr & convert units to encoder increments
-    memcpy(msg_position_target+4,&position,4);
-
-    if( ! send( 0x600, 8, msg_position_target ) )
-    {
-        CD_ERROR("Could not send \"position target\". %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"position target\". %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
-    //*************************************************************
-    //uint8_t msg_start[]={0x1F,0x00}; // Start the movement with "Discrete motion profile (change set immediately = 0)".
-    uint8_t msg_start[]= {0x3F,0x00}; // Start the movement with "Continuous motion profile (change set immediately = 1)".
-
-    if( ! send( 0x200, 2, msg_start ) )
-    {
-        CD_ERROR("Could not send \"start position\". %s\n", msgToStr(0x200, 2, msg_start).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"start position\". %s\n", msgToStr(0x200, 2, msg_start).c_str() );
-    //*************************************************************
-    //-- Needed to accept next target. Sets "Do not assume target position" so later it accepts "Assume target position (update the new motion parameters)".
-    if( ! send( 0x200, 2, msg_pos_reset) )
-    {
-        CD_ERROR("Could not send second \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent second \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
-    //*************************************************************
-
-    //-- it will save the value
-    targetPositionSemaphore.wait();
-    targetPosition = ref;
-    targetPositionSemaphore.post();
-
-    return true;
+    CD_DEBUG("\n");
+    return positionMoveRaw(0, refs[0]);
 }
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::positionMoveRaw(const double *refs)
+bool TechnosoftIpos::positionMoveRaw(int n_joint, const int * joints, const double * refs)
 {
-    CD_ERROR("\n");
-    return false;
+    CD_DEBUG("\n");
+    return positionMoveRaw(joints[0], refs[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::relativeMoveRaw(int j, double delta)
+bool TechnosoftIpos::relativeMoveRaw(int j, double delta)
 {
-    CD_INFO("(%d, %f)\n",j,delta);
+    CD_DEBUG("(%d, %f)\n", j, delta);
+    CHECK_JOINT(j);
+    CHECK_MODE(VOCAB_CM_POSITION);
 
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-
-    //*************************************************************
-    uint8_t msg_position_target[]= {0x23,0x7A,0x60,0x00,0x00,0x00,0x00,0x00}; // Position target
-
-    //-- 11.38 = ( 4 * 1024 pulse / 360 deg ) // deg -> pulse = UI (pos)
-    double val = encoderPulses / 360.0; // encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024).
-    int sendDelta = delta * this->tr * val;  // Appply tr & convert units to encoder increments
-    memcpy(msg_position_target+4,&sendDelta,4);
-
-    if( ! send( 0x600, 8, msg_position_target ) )
-    {
-        CD_ERROR("Could not send \"position target\". %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"position target\". %s\n", msgToStr(0x600, 8, msg_position_target).c_str() );
-    //*************************************************************
-    //uint8_t msg_start_rel[]={0x5F,0x00}; // Start the movement with "Discrete motion profile (change set immediately = 0)".
-    uint8_t msg_start_rel[]= {0x7F,0x00}; // Start the movement with "Continuous motion profile (change set immediately = 1)".
-
-
-    if( ! send( 0x200, 2, msg_start_rel ) )
-    {
-        CD_ERROR("Could not send \"start rel position. %s\n", msgToStr(0x200, 2, msg_start_rel).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"start rel position\". %s\n", msgToStr(0x200, 2, msg_start_rel).c_str() );;
-    //*************************************************************
-
-    //-- Needed to send next. Sets "Do not assume target position" so later it accepts "Assume target position (update the new motion parameters)".
-    //*************************************************************
-    uint8_t msg_pos_reset[]= {0x0F,0x00}; // Stop a position profile
-
-    if( ! send( 0x200, 2, msg_pos_reset) )
-    {
-        CD_ERROR("Could not send \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"reset position\". %s\n", msgToStr(0x200, 2, msg_pos_reset).c_str() );
-    //*************************************************************
-
-    //-- it will save the value
-    targetPositionSemaphore.wait();
-    targetPosition = delta;
-    targetPositionSemaphore.post();
-
-    return true;
+    return quitHaltState(VOCAB_CM_POSITION)
+            && can->driveStatus()->controlword(0x002F) // change set immediately
+            && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(delta), 0x607A)
+            && can->driveStatus()->controlword(0x007F); // new setpoint (assume relative target position)
 }
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::relativeMoveRaw(const double *deltas)
+bool TechnosoftIpos::relativeMoveRaw(const double * deltas)
 {
-    CD_ERROR("\n");
-    return false;
+    CD_DEBUG("\n");
+    return relativeMoveRaw(0, deltas[0]);
+}
+
+// --------------------------------------------------------------------------------
+
+bool TechnosoftIpos::relativeMoveRaw(int n_joint, const int * joints, const double * deltas)
+{
+    CD_DEBUG("\n");
+    return relativeMoveRaw(joints[0], deltas[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::checkMotionDoneRaw(int j, bool *flag)
+bool TechnosoftIpos::checkMotionDoneRaw(int j, bool * flag)
 {
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    //*************************************************************
-    uint8_t msgStatus[] = {0x40,0x41,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 2064h: Memory position
-    if( ! send( 0x600, 8, msgStatus))
-    {
-        CD_ERROR("Could not send status query. %s\n", msgToStr(0x600, 8, msgStatus).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"msgStatus\". %s\n", msgToStr(0x600, 8, msgStatus).c_str() );
-
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(DELAY*10);  //-- Wait for read update. Could implement semaphore waiting for specific message...
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-    targetReachedReady.wait();
-    *flag = targetReached;
-    targetReachedReady.post();
-
+    //CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    *flag = can->driveStatus()->getCurrentState() != DriveState::OPERATION_ENABLED || can->driveStatus()->statusword()[10];
     return true;
 }
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::checkMotionDoneRaw(bool *flag)
+bool TechnosoftIpos::checkMotionDoneRaw(bool * flag)
 {
-    CD_ERROR("\n");
-    return false;
+    //CD_DEBUG("\n");
+    return checkMotionDoneRaw(0, flag);
+}
+
+// --------------------------------------------------------------------------------
+
+bool TechnosoftIpos::checkMotionDoneRaw(int n_joint, const int * joints, bool * flag)
+{
+    //CD_DEBUG("\n");
+    return checkMotionDoneRaw(joints[0], flag);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setRefSpeedRaw(int j, double sp)
+bool TechnosoftIpos::setRefSpeedRaw(int j, double sp)
 {
-    CD_INFO("(%d, %f)\n",j,sp);
+    CD_DEBUG("(%d, %f)\n", j, sp);
+    CHECK_JOINT(j);
 
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    if ( sp > maxVel )
+    if (sp < 0.0)
     {
-        CD_WARNING("Reference speed exceeds maximum velocity (%f).\n", maxVel);
+        CD_WARNING("Illegal negative speed provided: %f.\n", sp);
+        return false;
+    }
+    else if (sp > vars.maxVel)
+    {
+        CD_WARNING("Reference speed exceeds maximum velocity (%f).\n", vars.maxVel);
         return false;
     }
 
-    //*************************************************************
+    double value = std::abs(vars.degreesToInternalUnits(sp, 1));
 
-    uint8_t msg_posmode_speed[]= {0x23,0x81,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6081h: Profile velocity
+    std::uint16_t dataInt;
+    std::uint16_t dataFrac;
+    CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
 
-    //uint16_t sendRefSpeed = sp * this->tr * 0.01138;  // Appply tr & convert units to encoder increments
-    //memcpy(msg_posmode_speed+6,&sendRefSpeed,2);
-    //float sendRefSpeed = sp * this->tr / 22.5;  // Apply tr & convert units to encoder increments
-    //int32_t sendRefSpeedFormated = roundf(sendRefSpeed * 65536);  // 65536 = 2^16
-
-    //-- 0.01138 = ( 4 * 1024 pulse / 360 deg ) * (0.001 s / sample)   // deg/s -> pulse/sample  = UI (vel)
-    //-- encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024)
-    double sendRefSpeed = sp * std::abs(this->tr) * (encoderPulses / 360.0) * 0.001;
-    uint16_t sendRefSpeedInteger;
-    uint16_t sendRefSpeedFractional;
-    encodeFixedPoint(sendRefSpeed, &sendRefSpeedInteger, &sendRefSpeedFractional);
-    memcpy(msg_posmode_speed + 4, &sendRefSpeedFractional, 2);
-    memcpy(msg_posmode_speed + 6, &sendRefSpeedInteger, 2);
-
-    if( ! send( 0x600, 8, msg_posmode_speed) )
-    {
-        CD_ERROR("Could not send \"posmode_speed\". %s\n", msgToStr(0x600, 8, msg_posmode_speed).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"posmode_speed\". %s\n", msgToStr(0x600, 8, msg_posmode_speed).c_str() );
-    //*************************************************************
-
-    //-- it will save the value
-    refSpeedSemaphore.wait();
-    refSpeed = sp;
-    refSpeedSemaphore.post();
-
-    return true;
+    std::uint32_t data = (dataInt << 16) + dataFrac;
+    return can->sdo()->download("Profile velocity", data, 0x6081);
 }
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setRefSpeedsRaw(const double *spds)
+bool TechnosoftIpos::setRefSpeedsRaw(const double * spds)
 {
-    CD_ERROR("\n");
-    return false;
+    CD_DEBUG("\n");
+    return setRefSpeedRaw(0, spds[0]);
+}
+
+// --------------------------------------------------------------------------------
+
+bool TechnosoftIpos::setRefSpeedsRaw(int n_joint, const int * joints, const double * spds)
+{
+    CD_DEBUG("\n");
+    return setRefSpeedRaw(joints[0], spds[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
+bool TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
 {
-    CD_INFO("(%d, %f)\n",j,acc);
+    CD_DEBUG("(%d, %f)\n", j, acc);
+    CHECK_JOINT(j);
 
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    //*************************************************************
-    uint8_t msg_posmode_acc[]= {0x23,0x83,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6083h: Profile acceleration
-
-    //int sendRefAcc = acc * this->tr * 0.00001138;  // Appply tr & convert units to encoder increments
-    //memcpy(msg_posmode_acc+4,&sendRefAcc,4);
-    //int32_t sendRefAccFormated = roundf(sendRefAcc * 65536);  // 65536 = 2^16
-
-    //-- 0.00001138 = ( 4 * 1024 pulse / 360 deg ) * (0.000001 s^2 / sample^2)   // deg/s^2 -> pulse/sample^2 = UI (acc)
-    //-- encoderPulses: value encompasses the pulses-per-slot factor (usually 4) and number of total slots of the encoder (currently: 4 * 1024)
-    double sendRefAcc = acc * std::abs(this->tr) * (encoderPulses / 360.0) * 0.000001;
-    uint16_t sendRefAccInteger;
-    uint16_t sendRefAccFractional;
-    encodeFixedPoint(sendRefAcc, &sendRefAccInteger, &sendRefAccFractional);
-    memcpy(msg_posmode_acc + 4, &sendRefAccFractional, 2);
-    memcpy(msg_posmode_acc + 6, &sendRefAccInteger, 2);
-
-    if( ! send( 0x600, 8, msg_posmode_acc) )
+    if (acc < 0.0)
     {
-        CD_ERROR("Could not send \"posmode_acc\". %s\n", msgToStr(0x600, 8, msg_posmode_acc).c_str() );
+        CD_WARNING("Illegal negative acceleration provided: %f.\n", acc);
         return false;
     }
-    CD_SUCCESS("Sent \"posmode_acc\". %s\n", msgToStr(0x600, 8, msg_posmode_acc).c_str() );
-    //*************************************************************
 
-    //-- it will save the value
-    refAccelSemaphore.wait();
-    refAcceleration = acc ;
-    refAccelSemaphore.post();
+    double value = std::abs(vars.degreesToInternalUnits(acc, 2));
 
-    return true;
+    std::uint16_t dataInt;
+    std::uint16_t dataFrac;
+    CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
+
+    std::uint32_t data = (dataInt << 16) + dataFrac;
+    return can->sdo()->download("Profile acceleration", data, 0x6083);
 }
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setRefAccelerationsRaw(const double *accs)
+bool TechnosoftIpos::setRefAccelerationsRaw(const double * accs)
 {
-    CD_ERROR("\n");
-    return false;
+    CD_DEBUG("\n");
+    return setRefAccelerationRaw(0, accs[0]);
+}
+
+// --------------------------------------------------------------------------------
+
+bool TechnosoftIpos::setRefAccelerationsRaw(int n_joint, const int * joints, const double * accs)
+{
+    CD_DEBUG("\n");
+    return setRefAccelerationRaw(joints[0], accs[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getRefSpeedRaw(int j, double *ref)
+bool TechnosoftIpos::getRefSpeedRaw(int j, double * ref)
 {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
 
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    uint8_t msg_posmode_speed[]= {0x40,0x81,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6081h: Profile velocity
-
-    if( ! send( 0x600, 8, msg_posmode_speed) )
-    {
-        CD_ERROR("Could not send \"posmode_speed\" query. %s\n", msgToStr(0x600, 8, msg_posmode_speed).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"posmode_speed\" query. %s\n", msgToStr(0x600, 8, msg_posmode_speed).c_str() );
-
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(DELAY);  //-- Wait for read update. Could implement semaphore waiting for specific message...
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-    refSpeedSemaphore.wait();
-    *ref = refSpeed;
-    refSpeedSemaphore.post();
-
-    return true;
+    return can->sdo()->upload<std::uint32_t>("Profile velocity", [&](std::uint32_t data)
+            {
+                std::uint16_t dataInt = data >> 16;
+                std::uint16_t dataFrac = data & 0xFFFF;
+                double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
+                *ref = std::abs(vars.internalUnitsToDegrees(value, 1));
+            },
+            0x6081);
 }
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getRefSpeedsRaw(double *spds)
+bool TechnosoftIpos::getRefSpeedsRaw(double * spds)
 {
-    CD_ERROR("\n");
-    return false;
+    CD_DEBUG("\n");
+    return getRefSpeedRaw(0, &spds[0]);
+}
+
+// --------------------------------------------------------------------------------
+
+bool TechnosoftIpos::getRefSpeedsRaw(int n_joint, const int * joints, double * spds)
+{
+    CD_DEBUG("\n");
+    return getRefSpeedRaw(joints[0], &spds[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getRefAccelerationRaw(int j, double *acc)
+bool TechnosoftIpos::getRefAccelerationRaw(int j, double * acc)
 {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
 
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    uint8_t msg_posmode_acc[]= {0x40,0x83,0x60,0x00,0x00,0x00,0x00,0x00}; // Manual 6083h: Profile acceleration
-
-    if( ! send( 0x600, 8, msg_posmode_acc) )
-    {
-        CD_ERROR("Could not send \"posmode_acc\" query. %s\n", msgToStr(0x600, 8, msg_posmode_acc).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"posmode_acc\" query. %s\n", msgToStr(0x600, 8, msg_posmode_acc).c_str() );
-
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(DELAY);  //-- Wait for read update. Could implement semaphore waiting for specific message...
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-    refAccelSemaphore.wait();
-    *acc = refAcceleration;
-    refAccelSemaphore.post();
-
-    return true;
+    return can->sdo()->upload<std::uint32_t>("Profile acceleration", [&](std::uint32_t data)
+            {
+                std::uint16_t dataInt = data >> 16;
+                std::uint16_t dataFrac = data & 0xFFFF;
+                double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
+                *acc = std::abs(vars.internalUnitsToDegrees(value, 2));
+            },
+            0x6083);
 }
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getRefAccelerationsRaw(double *accs)
+bool TechnosoftIpos::getRefAccelerationsRaw(double * accs)
 {
-    CD_ERROR("\n");
-    return false;
+    CD_DEBUG("\n");
+    return getRefAccelerationRaw(0, &accs[0]);
+}
+
+// --------------------------------------------------------------------------------
+
+bool TechnosoftIpos::getRefAccelerationsRaw(int n_joint, const int * joints, double * accs)
+{
+    CD_DEBUG("\n");
+    return getRefAccelerationRaw(joints[0], &accs[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::stopRaw(int j)
+bool TechnosoftIpos::stopRaw(int j)
 {
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    uint8_t msg_quickStop[] = {0x02,0x00};
-
-    if (!this->send(0x200, 2, msg_quickStop))
-    {
-        CD_ERROR("Could not send \"quick stop\". %s\n", msgToStr(0x200, 2, msg_quickStop).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent \"quick stop\". %s\n", msgToStr(0x200, 2, msg_quickStop).c_str() );
-
-    yarp::os::Time::delay(DELAY);
-
-    return enable();
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return can->driveStatus()->controlword(can->driveStatus()->controlword().set(8));
 }
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::stopRaw()
+bool TechnosoftIpos::stopRaw()
 {
-    CD_ERROR("\n");
-    return false;
-}
-
-// ######################### IPositionControl2Raw Related #########################
-
-bool roboticslab::TechnosoftIpos::positionMoveRaw(const int n_joint, const int *joints, const double *refs)
-{
-    CD_WARNING("Missing implementation\n");
-
-    return true;
+    CD_DEBUG("\n");
+    return stopRaw(0);
 }
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)
+bool TechnosoftIpos::stopRaw(int n_joint, const int * joints)
 {
-    CD_WARNING("Missing implementation\n");
-
-    return true;
+    CD_DEBUG("\n");
+    return stopRaw(joints[0]);
 }
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags)
+bool TechnosoftIpos::getTargetPositionRaw(int joint, double * ref)
 {
-    CD_WARNING("Missing implementation\n");
+    CD_DEBUG("\n");
+    CHECK_JOINT(joint);
 
-    return true;
+    return can->sdo()->upload<std::int32_t>("Target position", [&](std::int32_t data)
+            { *ref = vars.internalUnitsToDegrees(data); },
+            0x607A);
 }
 
 // --------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)
+bool TechnosoftIpos::getTargetPositionsRaw(double * refs)
 {
-    CD_WARNING("Missing implementation\n");
-
-    return true;
-}
-
-// --------------------------------------------------------------------------------
-/*
-bool roboticslab::TechnosoftIpos::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
-{
-    return true;
-}
-*/
-
-// --------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)
-{
-    CD_WARNING("Missing implementation\n");
-
-    return true;
+    CD_DEBUG("\n");
+    return getTargetPositionRaw(0, &refs[0]);
 }
 
 // --------------------------------------------------------------------------------
 
-/*
-bool roboticslab::TechnosoftIpos::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
+bool TechnosoftIpos::getTargetPositionsRaw(int n_joint, const int * joints, double * refs)
 {
-    return true;
-}
-*/
-
-// --------------------------------------------------------------------------------
-
-/*
-bool roboticslab::TechnosoftIpos::stopRaw(const int n_joint, const int *joints)
-{
-    return true;
-}
-*/
-
-// --------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getTargetPositionRaw(const int joint, double *ref)
-{
-    CD_INFO("\n");
-
-    targetPositionSemaphore.wait();
-    *ref = targetPosition;
-    targetPositionSemaphore.post();
-
-    return true;
+    CD_DEBUG("\n");
+    return getTargetPositionRaw(joints[0], &refs[0]);
 }
 
 // --------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getTargetPositionsRaw(double *refs)
-{
-    CD_WARNING("Missing implementation\n");
-
-    return true;
-}
-
-// --------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getTargetPositionsRaw(const int n_joint, const int *joints, double *refs)
-{
-    CD_WARNING("Missing implementation\n");
-
-    return true;
-}

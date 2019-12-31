@@ -2,147 +2,100 @@
 
 #include "CanBusControlboard.hpp"
 
-// ------------------- ITorqueControl Related ------------------------------------
+#include <ColorDebug.h>
 
-bool roboticslab::CanBusControlboard::getRefTorques(double *t)
+using namespace roboticslab;
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getRefTorque(int j, double * t)
+{
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint(&yarp::dev::ITorqueControlRaw::getRefTorqueRaw, j, t);
+}
+
+bool CanBusControlboard::getRefTorques(double * t)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        ok &= this->getRefTorque(j, &(t[j]));
-    }
-    return ok;
+    return deviceMapper.mapAllJoints(&yarp::dev::ITorqueControlRaw::getRefTorquesRaw, t);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getRefTorque(int j, double *t)
+bool CanBusControlboard::setRefTorque(int j, double t)
 {
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->getRefTorqueRaw( 0, t );
+    CD_DEBUG("(%d, %f)\n", j, t);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint(&yarp::dev::ITorqueControlRaw::setRefTorqueRaw, j, t);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::setRefTorques(const double *t)
+bool CanBusControlboard::setRefTorques(const double * t)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        ok &= this->setRefTorque(j, t[j]);
-    }
-    return ok;
-}
-
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setRefTorque(int j, double t)
-{
-    CD_DEBUG("(%d,%f)\n",j,t);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->setRefTorqueRaw( 0, t );
+    return deviceMapper.mapAllJoints(&yarp::dev::ITorqueControlRaw::setRefTorquesRaw, t);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::setRefTorques(const int n_joint, const int *joints, const double *t)
-{
-    CD_DEBUG("(%d)\n",n_joint);
-
-    bool ok = true;
-    for(int j=0; j<n_joint; j++)
-    {
-        ok &= this->setRefTorque(joints[j],t[j]);
-    }
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params)
-{
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->getMotorTorqueParamsRaw( 0, params );
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params)
-{
-    CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->setMotorTorqueParamsRaw( 0, params );
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getTorque(int j, double *t)
-{
-    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->getTorqueRaw( 0, t );;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getTorques(double *t)
+bool CanBusControlboard::setRefTorques(int n_joint, const int * joints, const double * t)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        ok &= this->getTorque(j, &(t[j]));
-    }
-    return ok;
+    return deviceMapper.mapJointGroup(&yarp::dev::ITorqueControlRaw::setRefTorquesRaw, n_joint, joints, t);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getTorqueRange(int j, double *min, double *max)
+bool CanBusControlboard::getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters * params)
+{
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint(&yarp::dev::ITorqueControlRaw::getMotorTorqueParamsRaw, j, params);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params)
+{
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint(&yarp::dev::ITorqueControlRaw::setMotorTorqueParamsRaw, j, params);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getTorque(int j, double * t)
 {
     CD_DEBUG("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iTorqueControlRaw[j]->getTorqueRangeRaw( 0, min, max );
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint(&yarp::dev::ITorqueControlRaw::getTorqueRaw, j, t);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getTorqueRanges(double *min, double *max)
+bool CanBusControlboard::getTorques(double * t)
+{
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
+    return deviceMapper.mapAllJoints(&yarp::dev::ITorqueControlRaw::getTorquesRaw, t);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getTorqueRange(int j, double * min, double * max)
+{
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint(&yarp::dev::ITorqueControlRaw::getTorqueRangeRaw, j, min, max);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getTorqueRanges(double * mins, double * maxs)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(int j=0; j<nodes.size(); j++)
-    {
-        ok &= this->getTorqueRange(j, min, max);
-    }
-    return ok;
+    return deviceMapper.mapAllJoints(&yarp::dev::ITorqueControlRaw::getTorqueRangesRaw, mins, maxs);
 }
 
 // -----------------------------------------------------------------------------

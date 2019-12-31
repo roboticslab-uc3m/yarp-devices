@@ -5,6 +5,7 @@
 #include <cmath>
 
 #include "TechnosoftIpos.hpp"
+#include "CanUtils.hpp"
 
 #include <ColorDebug.h>
 
@@ -20,64 +21,59 @@ LinearInterpolationBuffer::LinearInterpolationBuffer(int _periodMs, int _bufferS
       integrityCounter(0)
 {}
 
-LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::os::Searchable & config)
+LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::os::Searchable & config,
+        const StateVariables & vars)
 {
-    int linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(0),
+    int linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(DEFAULT_PERIOD_MS),
             "linear interpolation mode period (ms)").asInt32();
-    int linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(0),
+    int linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(DEFAULT_BUFFER_SIZE),
             "linear interpolation mode buffer size").asInt32();
-    std::string linInterpMode = config.check("linInterpMode", yarp::os::Value(""),
-            "linear interpolation mode (PT/PVT)").asString();
-
-    double tr = config.check("tr", yarp::os::Value(0.0)).asFloat64();
-    int encoderPulses = config.check("encoderPulses", yarp::os::Value(0)).asInt32();
-    double maxVel = config.check("maxVel", yarp::os::Value(10.0)).asFloat64();
-
-    double factor = tr * (encoderPulses / 360.0);
+    std::string linInterpMode = config.check("linInterpMode", yarp::os::Value(DEFAULT_MODE),
+            "linear interpolation mode (pt/pvt)").asString();
 
     if (linInterpPeriodMs <= 0)
     {
         CD_ERROR("Invalid linear interpolation mode period: %d.\n", linInterpPeriodMs);
-        return 0;
+        return nullptr;
     }
 
     if (linInterpBufferSize <= 0)
     {
         CD_ERROR("Invalid linear interpolation mode buffer size: %d.\n", linInterpBufferSize);
-        return 0;
+        return nullptr;
     }
 
     LinearInterpolationBuffer * buff;
 
     if (linInterpMode == "pt")
     {
-        if (linInterpBufferSize > PT_BUFFER_MAX_SIZE)
+        if (linInterpBufferSize > PT_BUFFER_MAX_SIZE - 1) // consume one additional slot to avoid annoying buffer full warnings
         {
             CD_ERROR("Invalid PT mode buffer size: %d > %d.\n", linInterpBufferSize, PT_BUFFER_MAX_SIZE);
-            return 0;
+            return nullptr;
         }
 
-        return new PtBuffer(linInterpPeriodMs, linInterpBufferSize, factor, maxVel);
+        return new PtBuffer(linInterpPeriodMs, linInterpBufferSize, vars.degreesToInternalUnits(1.0), vars.maxVel);
     }
     else if (linInterpMode == "pvt")
     {
         if (linInterpBufferSize < 2)
         {
             CD_ERROR("Invalid PVT mode buffer size: %d < 2.\n", linInterpBufferSize);
-            return 0;
+            return nullptr;
         }
         else if (linInterpBufferSize > PVT_BUFFER_MAX_SIZE)
         {
             CD_ERROR("Invalid PVT mode buffer size: %d > %d.\n", linInterpBufferSize, PVT_BUFFER_MAX_SIZE);
-            return 0;
+            return nullptr;
         }
 
-        return new PvtBuffer(linInterpPeriodMs, linInterpBufferSize, factor, maxVel);
+        return new PvtBuffer(linInterpPeriodMs, linInterpBufferSize, vars.degreesToInternalUnits(1.0), vars.maxVel);
     }
     else
     {
         CD_ERROR("Unsupported linear interpolation mode: \"%s\".\n", linInterpMode.c_str());
-        return 0;
+        return nullptr;
     }
 }
 
@@ -93,13 +89,13 @@ void LinearInterpolationBuffer::setInitialReference(double target)
 
 void LinearInterpolationBuffer::updateTarget(double target)
 {
-    std::lock_guard<std::mutex> lock(mtx);
+    std::lock_guard<std::mutex> lock(mutex);
     lastReceivedTarget = target;
 }
 
 double LinearInterpolationBuffer::getLastTarget() const
 {
-    std::lock_guard<std::mutex> lock(mtx);
+    std::lock_guard<std::mutex> lock(mutex);
     return lastSentTarget;
 }
 
@@ -123,11 +119,6 @@ void LinearInterpolationBuffer::setBufferSize(int bufferSize)
     this->bufferSize = bufferSize;
 }
 
-void LinearInterpolationBuffer::configureBufferSize(uint8_t * msg)
-{
-    std::memcpy(msg + 4, &bufferSize, 2);
-}
-
 LinearInterpolationBuffer * LinearInterpolationBuffer::cloneTo(const std::string & type)
 {
     LinearInterpolationBuffer * buffer;
@@ -143,7 +134,7 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::cloneTo(const std::string
     else
     {
         CD_ERROR("Unsupported linear interpolation mode: \"%s\".\n", type.c_str());
-        return 0;
+        return nullptr;
     }
 
     return buffer;
@@ -161,13 +152,12 @@ std::string PtBuffer::getType() const
     return "pt";
 }
 
-void PtBuffer::configureSubMode(uint8_t * msg)
+std::int16_t PtBuffer::getSubMode() const
 {
-    uint16_t submode = 0;
-    std::memcpy(msg + 4, &submode, 2);
+    return 0;
 }
 
-void PtBuffer::configureMessage(uint8_t * msg)
+std::uint64_t PtBuffer::makeDataRecord()
 {
     //*************************************************************
     //-- 14. Send the 1 st PT point.
@@ -180,9 +170,9 @@ void PtBuffer::configureMessage(uint8_t * msg)
     //-- Send the following message:
     //uint8_t ptpoint1[]={0x20,0x4E,0x00,0x00,0xE8,0x03,0x00,0x02};
 
-    mtx.lock();
+    mutex.lock();
     double _lastReceivedTarget = lastReceivedTarget;
-    mtx.unlock();
+    mutex.unlock();
 
     if (std::abs(_lastReceivedTarget - lastSentTarget) > maxDistance)
     {
@@ -191,21 +181,25 @@ void PtBuffer::configureMessage(uint8_t * msg)
         CD_INFO("New ref: %f.\n", _lastReceivedTarget);
     }
 
+    std::uint64_t data = 0;
+
     double p = _lastReceivedTarget;
     int t = periodMs;
 
-    int32_t position = p * factor;
-    std::memcpy(msg, &position, 4);
+    std::int32_t position = p * factor;
+    data += position;
 
-    int16_t time = t;
-    std::memcpy(msg + 4, &time, 2);
+    std::int16_t time = t;
+    data += (std::uint64_t)time << 32;
 
-    uint8_t ic = (integrityCounter++) << 1;
-    std::memcpy(msg + 7, &ic, 1);
+    std::uint8_t ic = integrityCounter++ << 1;
+    data += (std::uint64_t)ic << 56;
 
     CD_DEBUG("Sending p %f t %d (ic %d).\n", p, t, ic >> 1);
 
     lastSentTarget = _lastReceivedTarget;
+
+    return data;
 }
 
 PvtBuffer::PvtBuffer(int _periodMs, int _bufferSize, double _factor, double _maxVel)
@@ -227,14 +221,12 @@ std::string PvtBuffer::getType() const
     return "pvt";
 }
 
-void PvtBuffer::configureSubMode(uint8_t * msg)
+std::int16_t PvtBuffer::getSubMode() const
 {
-    uint16_t submode = -1;
-    std::memcpy(msg + 4, &submode, 2);
+    return -1;
 }
 
-
-void PvtBuffer::configureMessage(uint8_t * msg)
+std::uint64_t PvtBuffer::makeDataRecord()
 {
     //*************************************************************
     //-- 13. Send the 1 st PT point.
@@ -245,9 +237,9 @@ void PvtBuffer::configureMessage(uint8_t * msg)
     //-- Send the following message:
     //uint8_t ptpoint1[]={0x58,0x00,0x54,0x00,0x03,0x00,0x37,0x00};
 
-    mtx.lock();
+    mutex.lock();
     double currentTarget = lastReceivedTarget;
-    mtx.unlock();
+    mutex.unlock();
 
     double p = previousTarget;
     double v;
@@ -263,25 +255,28 @@ void PvtBuffer::configureMessage(uint8_t * msg)
         isFirstPoint = false;
     }
 
-    int32_t position = p * factor;
-    int16_t positionLSB = (int32_t)(position << 16) >> 16;
-    int8_t positionMSB = (int32_t)(position << 8) >> 24;
-    std::memcpy(msg, &positionLSB, 2);
-    std::memcpy(msg + 3, &positionMSB, 1);
+    std::uint64_t data = 0;
+
+    std::int32_t position = p * factor;
+    std::int16_t positionLSB = (std::int32_t)(position << 16) >> 16;
+    std::int8_t positionMSB = (std::int32_t)(position << 8) >> 24;
+    data += ((std::uint64_t)positionMSB << 24) + positionLSB;
 
     double velocity = v * factor * 0.001;
-    int16_t velocityInt, velocityFrac;
-    TechnosoftIpos::encodeFixedPoint(velocity, &velocityInt, &velocityFrac);
-    std::memcpy(msg + 2, &velocityFrac, 1);
-    std::memcpy(msg + 4, &velocityInt, 2);
+    std::int16_t velocityInt;
+    std::uint16_t velocityFrac;
+    CanUtils::encodeFixedPoint(velocity, &velocityInt, &velocityFrac);
+    data += ((std::uint64_t)velocityInt << 32) + ((std::uint64_t)velocityFrac << 16);
 
-    int16_t time = (int16_t)(t << 7) >> 7;
-    uint8_t ic = (integrityCounter++) << 1;
-    uint16_t timeAndIc = time + (ic << 8);
-    std::memcpy(msg + 6, &timeAndIc, 2);
+    std::int16_t time = (std::int16_t)(t << 7) >> 7;
+    std::uint8_t ic = (integrityCounter++) << 1;
+    std::uint16_t timeAndIc = time + (ic << 8);
+    data += (std::uint64_t)timeAndIc << 48;
 
     CD_DEBUG("Sending p %f v %f t %d (ic %d).\n", p, v, t, ic >> 1);
 
     lastSentTarget = previousTarget;
     previousTarget = currentTarget;
+
+    return data;
 }

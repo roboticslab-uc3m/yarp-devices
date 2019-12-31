@@ -2,99 +2,155 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <functional>
+
+#include <yarp/os/Property.h>
+
+#include <ColorDebug.h>
+
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
-bool roboticslab::TechnosoftIpos::open(yarp::os::Searchable& config)
+
+bool TechnosoftIpos::open(yarp::os::Searchable & config)
 {
+    CD_DEBUG("%s\n", config.toString().c_str());
 
-    // -- .ini parameters (in order)
-    this->canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt32();
-    this->max = config.check("max",yarp::os::Value(0),"max (meters or degrees)").asFloat64();
-    this->min = config.check("min",yarp::os::Value(0),"min (meters or degrees)").asFloat64();
-    this->maxVel = config.check("maxVel",yarp::os::Value(10),"maxVel (meters/second or degrees/second)").asFloat64();
-    this->tr = config.check("tr",yarp::os::Value(0),"reduction").asFloat64();
-    this->refAcceleration = config.check("refAcceleration",yarp::os::Value(0),"ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
-    this->refSpeed = config.check("refSpeed",yarp::os::Value(0),"ref speed (meters/second or degrees/second)").asFloat64();
-    this->encoderPulses = config.check("encoderPulses",yarp::os::Value(0),"encoderPulses").asInt32();
-    this->k = config.check("k",yarp::os::Value(0),"motor constant").asFloat64();
-
-    // -- other parameters...
-    this->targetReached = false;
-    this->refTorque = 0;
-    this->refVelocity = 0; // if you want to test.. put 0.1
-    this->refCurrent = 0;
-    this->modeCurrentTorque = VOCAB_CM_NOT_CONFIGURED;
-
-    this->getProductCode = 0;
-
-    linInterpBuffer = LinearInterpolationBuffer::createBuffer(config);
-
-    if (!linInterpBuffer)
+    if (!config.check("robotConfig") || !config.find("robotConfig").isBlob())
     {
+        CD_ERROR("Missing \"robotConfig\" property or not a blob.\n");
         return false;
     }
 
-    yarp::os::Value vCanBufferFactory = config.check("canBufferFactory", yarp::os::Value(0), "");
+    const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
 
-    if( 0 == this->canId )
+    int canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32();
+
+    yarp::os::Bottle & driverGroup = robotConfig->findGroup(config.find("driver").asString());
+    yarp::os::Bottle & motorGroup = robotConfig->findGroup(config.find("motor").asString());
+    yarp::os::Bottle & gearboxGroup = robotConfig->findGroup(config.find("gearbox").asString());
+    yarp::os::Bottle & encoderGroup = robotConfig->findGroup(config.find("encoder").asString());
+
+    // mutable variables
+    vars.tr = gearboxGroup.check("tr", yarp::os::Value(0.0), "reduction").asFloat64();
+    vars.k = motorGroup.check("k", yarp::os::Value(0.0), "motor constant").asFloat64();
+    vars.encoderPulses = encoderGroup.check("encoderPulses", yarp::os::Value(0), "encoderPulses").asInt32();
+    vars.pulsesPerSample = motorGroup.check("pulsesPerSample", yarp::os::Value(0), "pulsesPerSample").asInt32();
+
+    vars.tr = vars.tr * config.check("extraTr", yarp::os::Value(1.0), "extra reduction").asFloat64();
+    vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
+
+    // immutable variables
+    vars.drivePeakCurrent = driverGroup.check("peakCurrent", yarp::os::Value(0.0), "peak drive current (amperes)").asFloat64();
+    vars.maxVel = config.check("maxVel", yarp::os::Value(0.0), "maxVel (meters/second or degrees/second)").asFloat64();
+    vars.axisName = config.check("name", yarp::os::Value(""), "axis name").asString();
+    vars.jointType = config.check("type", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "joint type [atrv|atpr|unkn]").asVocab();
+    vars.reverse = config.check("reverse", yarp::os::Value(false), "reverse motor encoder counts").asBool();
+    vars.min = config.check("min", yarp::os::Value(0.0), "min (meters or degrees)").asFloat64();
+    vars.max = config.check("max", yarp::os::Value(0.0), "max (meters or degrees)").asFloat64();
+    vars.refSpeed = config.check("refSpeed", yarp::os::Value(0.0), "ref speed (meters/second or degrees/second)").asFloat64();
+    vars.refAcceleration = config.check("refAcceleration", yarp::os::Value(0.0), "ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
+
+    if (!vars.validateInitialState(canId))
     {
-        CD_ERROR("Could not create TechnosoftIpos with canId 0\n");
-        return false;
-    }
-    if( this->min >= this->max )
-    {
-        CD_ERROR("Could not create TechnosoftIpos with min >= max\n");
-        return false;
-    }
-    if( 0 == this->maxVel )
-    {
-        CD_ERROR("Could not create TechnosoftIpos with maxVel 0\n");
-        return false;
-    }
-    if( 0 == this->tr )
-    {
-        CD_ERROR("Could not create TechnosoftIpos with tr 0\n");
-        return false;
-    }
-    if( 0 == this->refAcceleration )
-    {
-        CD_ERROR("Could not create TechnosoftIpos with refAcceleration 0\n");
-        return false;
-    }
-    if( 0 == this->refSpeed )
-    {
-        CD_ERROR("Could not create TechnosoftIpos with refSpeed 0\n");
-        return false;
-    }
-    if( this->refSpeed > this->maxVel )
-    {
-        CD_ERROR("Could not create TechnosoftIpos with refSpeed > maxVel\n");
-        return false;
-    }
-    if( 0 == this->encoderPulses )
-    {
-        CD_ERROR("Could not create TechnosoftIpos with encoderPulses 0\n");
-        return false;
-    }
-    if( !vCanBufferFactory.isBlob() )
-    {
-        CD_ERROR("Could not create TechnosoftIpos with null or corrupt ICanBufferFactory handle\n");
+        CD_ERROR("Invalid configuration parameters.\n");
         return false;
     }
 
-    iCanBufferFactory = *reinterpret_cast<yarp::dev::ICanBufferFactory **>(const_cast<char *>(vCanBufferFactory.asBlob()));
-    canOutputBuffer = iCanBufferFactory->createBuffer(1);
+    if (config.check("externalEncoder", "external encoder"))
+    {
+        std::string externalEncoder = config.find("externalEncoder").asString();
+        yarp::os::Bottle & externalEncoderGroup = robotConfig->findGroup(externalEncoder);
 
-    CD_SUCCESS("Created TechnosoftIpos with canId %d, tr %f, k %f, refAcceleration %f, refSpeed %f, encoderPulses %d and all local parameters set to 0.\n",
-               canId,tr,k,refAcceleration,refSpeed,encoderPulses);
-    return true;
+        if (externalEncoderGroup.isNull())
+        {
+            CD_ERROR("Missing external encoder device group %s.\n", externalEncoder.c_str());
+            return false;
+        }
+
+        yarp::os::Property externalEncoderOptions;
+        externalEncoderOptions.fromString(externalEncoderGroup.toString());
+        externalEncoderOptions.put("robotConfig", config.find("robotConfig"));
+        externalEncoderOptions.setMonitor(config.getMonitor(), externalEncoder.c_str());
+
+        if (!externalEncoderDevice.open(externalEncoderOptions))
+        {
+            CD_ERROR("Unable to open external encoder device: %s.\n", externalEncoder.c_str());
+            return false;
+        }
+
+        if (!externalEncoderDevice.view(iEncodersTimedRawExternal))
+        {
+            CD_ERROR("Unable to view IEncodersTimedRaw in %s.\n", externalEncoder.c_str());
+            return false;
+        }
+
+        if (!externalEncoderDevice.view(iExternalEncoderCanBusSharer))
+        {
+            CD_ERROR("Unable to view ICanBusSharer in %s.\n", externalEncoder.c_str());
+            return false;
+        }
+    }
+
+    // TODO: hardcoded values
+    double canSdoTimeoutMs = config.check("canSdoTimeoutMs", yarp::os::Value(20.0), "CAN SDO timeout (ms)").asFloat64();
+    double canDriveStateTimeout = config.check("canDriveStateTimeout", yarp::os::Value(2.0), "CAN drive state timeout (s)").asFloat64();
+
+    can = new CanOpen(canId, canSdoTimeoutMs * 0.001, canDriveStateTimeout);
+
+    std::uint16_t tpdo1InhibitTime = config.check("tpdo1InhibitTime", yarp::os::Value(0), "TPDO1 inhibit time (x100 microseconds)").asInt32();
+    std::uint16_t tpdo2InhibitTime = config.check("tpdo2InhibitTime", yarp::os::Value(0), "TPDO2 inhibit time (x100 microseconds)").asInt32();
+    std::uint16_t tpdo3InhibitTime = config.check("tpdo3InhibitTime", yarp::os::Value(0), "TPDO3 inhibit time (x100 microseconds)").asInt32();
+
+    std::uint16_t tpdo1EventTimer = config.check("tpdo1EventTimer", yarp::os::Value(0), "TPDO1 event timer (milliseconds)").asInt32();
+    std::uint16_t tpdo2EventTimer = config.check("tpdo2EventTimer", yarp::os::Value(0), "TPDO2 event timer (milliseconds)").asInt32();
+    std::uint16_t tpdo3EventTimer = config.check("tpdo3EventTimer", yarp::os::Value(0), "TPDO3 event timer (milliseconds)").asInt32();
+
+    PdoConfiguration tpdo1Conf;
+    tpdo1Conf.addMapping<std::uint32_t>(0x1002).addMapping<std::int8_t>(0x6061);
+    //tpdo1Conf.setInhibitTime(tpdo1InhibitTime); // TODO
+    //tpdo1Conf.setEventTimer(tpdo1EventTimer); // TODO
+
+    PdoConfiguration tpdo2Conf;
+    tpdo2Conf.addMapping<std::uint16_t>(0x2000).addMapping<std::uint16_t>(0x2002);
+    //tpdo2Conf.setInhibitTime(tpdo2InhibitTime); // TODO
+    //tpdo2Conf.setEventTimer(tpdo2EventTimer); // TODO
+
+    PdoConfiguration tpdo3Conf;
+    tpdo3Conf.addMapping<std::int32_t>(0x6063).addMapping<std::int16_t>(0x6077);
+    //tpdo3Conf.setInhibitTime(tpdo3InhibitTime); // TODO
+    //tpdo3Conf.setEventTimer(tpdo3EventTimer); // TODO
+
+    vars.tpdo1Conf = tpdo1Conf;
+    vars.tpdo2Conf = tpdo2Conf;
+    vars.tpdo3Conf = tpdo3Conf;
+
+    using namespace std::placeholders;
+
+    can->tpdo1()->registerHandler<std::uint16_t, std::uint16_t, std::int8_t>(std::bind(&TechnosoftIpos::handleTpdo1, this, _1, _2, _3));
+    can->tpdo2()->registerHandler<std::uint16_t, std::uint16_t>(std::bind(&TechnosoftIpos::handleTpdo2, this, _1, _2));
+    can->tpdo3()->registerHandler<std::int32_t, std::int16_t>(std::bind(&TechnosoftIpos::handleTpdo3, this, _1, _2));
+
+    can->emcy()->registerHandler(std::bind(&TechnosoftIpos::handleEmcy, this, _1, _2, _3));
+    can->emcy()->setErrorCodeRegistry<TechnosoftIposEmcy>();
+
+    linInterpBuffer = LinearInterpolationBuffer::createBuffer(config, vars); // pick defaults
+
+    return linInterpBuffer != nullptr;
 }
 
 // -----------------------------------------------------------------------------
-bool roboticslab::TechnosoftIpos::close()
+
+bool TechnosoftIpos::close()
 {
-    CD_INFO("\n");
     delete linInterpBuffer;
-    iCanBufferFactory->destroyBuffer(canOutputBuffer);
+    delete can;
+
+    if (externalEncoderDevice.isValid())
+    {
+        return externalEncoderDevice.close();
+    }
+
     return true;
 }
 

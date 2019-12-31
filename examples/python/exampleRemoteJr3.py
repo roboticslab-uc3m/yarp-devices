@@ -1,5 +1,10 @@
 #! /usr/bin/env python
 
+##
+# @ingroup yarp_devices_examples_py
+# @defgroup exampleRemoteJr3Py exampleRemoteJr3.py
+# @brief This example connects to a remote @ref Jr3 device.
+
 import yarp
 
 yarp.Network.init()

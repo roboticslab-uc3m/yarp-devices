@@ -2,417 +2,266 @@
 
 #include "CanBusControlboard.hpp"
 
-#include <map>
+#include <yarp/os/Property.h>
+#include <yarp/os/Value.h>
 
-#include "ITechnosoftIpos.h"
+#include <yarp/dev/CanBusInterface.h>
 
-// ------------------- DeviceDriver Related ------------------------------------
+#include <ColorDebug.h>
 
-bool roboticslab::CanBusControlboard::open(yarp::os::Searchable& config)
+#include "ICanBusSharer.hpp"
+
+using namespace roboticslab;
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::open(yarp::os::Searchable & config)
 {
-    std::string mode = config.check("mode",yarp::os::Value("position"),"control mode on startup (position/velocity)").asString();
-    int timeCuiWait  = config.check("waitEncoder", yarp::os::Value(DEFAULT_TIME_TO_WAIT_CUI), "CUI timeout (seconds)").asInt32();
-    std::string canBusType = config.check("canBusType", yarp::os::Value(DEFAULT_CAN_BUS), "CAN bus device name").asString();
+    CD_DEBUG("%s\n", config.toString().c_str());
 
-    linInterpPeriodMs = config.check("linInterpPeriodMs", yarp::os::Value(DEFAULT_LIN_INTERP_PERIOD_MS), "linear interpolation mode period (milliseconds)").asInt32();
-    linInterpBufferSize = config.check("linInterpBufferSize", yarp::os::Value(DEFAULT_LIN_INTERP_BUFFER_SIZE), "linear interpolation mode buffer size").asInt32();
-    linInterpMode = config.check("linInterpMode", yarp::os::Value(DEFAULT_LIN_INTERP_MODE), "linear interpolation mode (pt/pvt)").asString();
-
-    yarp::os::Bottle ids = config.findGroup("ids", "CAN bus IDs").tail();  //-- e.g. 15
-    yarp::os::Bottle trs = config.findGroup("trs", "reductions").tail();  //-- e.g. 160
-    yarp::os::Bottle ks = config.findGroup("ks", "motor constants").tail();  //-- e.g. 0.0706
-
-    yarp::os::Bottle maxs = config.findGroup("maxs", "maximum joint limits (meters or degrees)").tail();  //-- e.g. 360
-    yarp::os::Bottle mins = config.findGroup("mins", "minimum joint limits (meters or degrees)").tail();  //-- e.g. -360
-    yarp::os::Bottle maxVels = config.findGroup("maxVels", "maximum joint velocities (meters/second or degrees/second)").tail();  //-- e.g. 1000
-    yarp::os::Bottle refAccelerations = config.findGroup("refAccelerations", "ref accelerations (meters/second^2 or degrees/second^2)").tail();  //-- e.g. 0.575437
-    yarp::os::Bottle refSpeeds = config.findGroup("refSpeeds", "ref speeds (meters/second or degrees/second)").tail();  //-- e.g. 737.2798
-    yarp::os::Bottle encoderPulsess = config.findGroup("encoderPulsess", "encoder pulses (multiple nodes)").tail();  //-- e.g. 4096 (4 * 1024)
-
-    yarp::os::Bottle types = config.findGroup("types", "device name of each node").tail();  //-- e.g. 15
-
-    //-- Initialize the CAN device.
-    yarp::os::Property canBusOptions;
-    canBusOptions.fromString(config.toString());  // canDevice, canBitrate
-    canBusOptions.put("device", canBusType);
-    canBusOptions.setMonitor(config.getMonitor(), canBusType.c_str());
-    canBusDevice.open(canBusOptions);
-    if( ! canBusDevice.isValid() )
+    if (!config.check("robotConfig") || !config.find("robotConfig").isBlob())
     {
-        CD_ERROR("canBusDevice instantiation not worked.\n");
+        CD_ERROR("Missing \"robotConfig\" property or not a blob.\n");
         return false;
     }
 
-    if( !canBusDevice.view(iCanBus) )
+    const auto * robotConfig = *reinterpret_cast<yarp::os::Property * const *>(config.find("robotConfig").asBlob());
+
+    yarp::os::Bottle * canBuses = config.find("buses").asList();
+
+    if (canBuses == nullptr)
     {
-        CD_ERROR("Cannot view ICanBus interface in device: %s.\n", canBusType.c_str());
+        CD_ERROR("Missing key \"buses\" or not a list.\n");
         return false;
     }
 
-    if( !canBusDevice.view(iCanBufferFactory) )
+    int fakeNodeCount = 0;
+
+    for (int i = 0; i < canBuses->size(); i++)
     {
-        CD_ERROR("Cannot view ICanBufferFactory interface in device: %s.\n", canBusType.c_str());
-        return false;
-    }
+        std::string canBus = canBuses->get(i).asString();
+        bool isFakeBus = canBus.find("fake") != std::string::npos;
 
-    canInputBuffer = iCanBufferFactory->createBuffer(1);
+        yarp::os::Property canBusOptions;
+        canBusOptions.setMonitor(config.getMonitor(), canBus.c_str());
 
-    //-- Start the reading thread (required for checkMotionDoneRaw).
-    this->Thread::start();
-
-    posdThread = new PositionDirectThread(linInterpPeriodMs * 0.001);
-
-    //-- Populate the CAN nodes vector.
-    nodes.resize( ids.size() );
-    iControlLimitsRaw.resize( nodes.size() );
-    iControlModeRaw.resize( nodes.size() );
-    iCurrentControlRaw.resize( nodes.size() );
-    iEncodersTimedRaw.resize( nodes.size() );
-    iInteractionModeRaw.resize( nodes.size() );
-    iPositionControlRaw.resize( nodes.size() );
-    iPositionDirectRaw.resize( nodes.size() );
-    iRemoteVariablesRaw.resize( nodes.size() );
-    iTorqueControlRaw.resize( nodes.size() );
-    iVelocityControlRaw.resize( nodes.size() );
-    iCanBusSharer.resize( nodes.size() );
-
-    std::map<int, ITechnosoftIpos *> idToTechnosoftIpos;
-
-    for(int i=0; i<nodes.size(); i++)
-    {
-        if(types.get(i).asString() == "")
-            CD_WARNING("Argument \"types\" empty at %d.\n",i);
-
-        //-- Create CAN node objects with a pointer to the CAN device, its id and tr (these are locally stored parameters).
-        yarp::os::Property options;
-        options.put("device", types.get(i));  //-- "TechnosoftIpos", "LacqueyFetch", "CuiAbsolute"
-        options.put("canId", ids.get(i));
-        options.put("tr", trs.get(i));
-        options.put("min", mins.get(i));
-        options.put("max", maxs.get(i));
-        options.put("maxVel", maxVels.get(i));
-        options.put("k", ks.get(i));
-        options.put("refAcceleration", refAccelerations.get(i));
-        options.put("refSpeed", refSpeeds.get(i));
-        options.put("encoderPulses", encoderPulsess.get(i));
-        options.put("linInterpPeriodMs", linInterpPeriodMs);
-        options.put("linInterpBufferSize", linInterpBufferSize);
-        options.put("linInterpMode", linInterpMode);
-        //std::stringstream ss; // Remember to #include <sstream>
-        //ss << types.get(i).asString() << "_" << ids.get(i).asInt32();
-        //options.setMonitor(config.getMonitor(),ss.str().c_str());
-
-        yarp::os::Value v(&iCanBufferFactory, sizeof(iCanBufferFactory));
-        options.put("canBufferFactory", v);
-
-        // -- Configuramos todos los dispositivos (TechnosoftIpos, LacqueyFetch, CuiAbsolute)
-        yarp::dev::PolyDriver* device = new yarp::dev::PolyDriver(options);
-        if( ! device->isValid() )
+        if (!isFakeBus)
         {
-            CD_ERROR("CAN node [%d] '%s' instantiation not worked.\n",i,types.get(i).asString().c_str());
-            return false;
-        }
+            yarp::os::Bottle & canBusGroup = robotConfig->findGroup(canBus);
 
-        //-- Fill a map entry ( drivers.size() if before push_back, otherwise do drivers.size()-1).
-        //-- Just "i" if resize already performed.
-        idxFromCanId[ ids.get(i).asInt32() ] = i;
-
-        //-- Push the motor driver and other devices (CuiAbsolute) on to the vectors.
-        nodes[i] = device;
-
-        //-- View interfaces
-        if( !device->view( iControlLimitsRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iControlLimits2Raw interface\n");
-            return false;
-        }
-
-        if( !device->view( iControlModeRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iControlMode2Raw interface\n");
-            return false;
-        }
-
-        if( !device->view( iCurrentControlRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iCurrentControlRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iEncodersTimedRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iEncodersTimedRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iInteractionModeRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iInteractionModeRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iPositionControlRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iPositionControlRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iPositionDirectRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iPositionDirectRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iRemoteVariablesRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iRemoteVariablesRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iTorqueControlRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iTorqueControlRaw interface\n");
-            return false;
-        }
-
-        if( !device->view( iVelocityControlRaw[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iVelocityControl2Raw interface\n");
-            return false;
-        }
-
-        // -- si el device es un Cui, este podrá "ver" las funciones programadas en iCanBusSharer (funciones que hemos añadido al encoder).
-        // -- estas funciones se encuentran implementadas en el cpp correspondiente "ICanBusSharerImpl.cpp", por lo tanto le da la funcionalidad que deseamos
-        if( !device->view( iCanBusSharer[i] ))
-        {
-            CD_ERROR("[error] Problems acquiring iCanBusSharer interface\n");
-            return false;
-        }
-
-        //-- Pass CAN bus pointer to CAN node
-        iCanBusSharer[i]->setCanBusPtr( iCanBus );
-
-        //-- DRIVERS
-        if(types.get(i).asString() == "TechnosoftIpos")
-        {
-            motorIds.push_back(i);
-
-            ITechnosoftIpos * iTechnosoftIpos;
-            device->view(iTechnosoftIpos);
-            idToTechnosoftIpos.insert(std::make_pair(i, iTechnosoftIpos));
-
-            //-- Set initial parameters on physical motor drivers.
-
-            if ( ! iPositionControlRaw[i]->setRefAccelerationRaw( 0, refAccelerations.get(i).asFloat64() ) )
-                return false;
-
-            if ( ! iPositionControlRaw[i]->setRefSpeedRaw( 0, refSpeeds.get(i).asFloat64() ) )
-                return false;
-
-            if ( ! iControlLimitsRaw[i]->setLimitsRaw( 0, mins.get(i).asFloat64(), maxs.get(i).asFloat64() ) )
-                return false;
-        }
-
-        //-- Associate absolute encoders to motor drivers
-        if( types.get(i).asString() == "CuiAbsolute" )
-        {
-            int driverCanId = ids.get(i).asInt32() - 100;  //-- \todo{Document the dangers: ID must be > 100, driver must be instanced.}
-
-            CD_INFO("Sending \"Start Continuous Publishing\" message to Cui Absolute (PIC ID: %d)\n", ids.get(i).asInt32());
-
-            // Configuring Cui Absolute
-            ICuiAbsolute* cuiAbsolute;
-            if( ! device->view( cuiAbsolute ) )
+            if (canBusGroup.isNull())
             {
-                CD_ERROR("Could not view.\n");
+                CD_ERROR("Missing CAN bus device group %s.\n", canBus.c_str());
                 return false;
             }
 
-            if ( ! cuiAbsolute->startPushPublishing(5) )
+            canBusOptions.fromString(canBusGroup.toString());
+            canBusOptions.put("robotConfig", config.find("robotConfig"));
+            canBusOptions.put("blockingMode", false); // enforce non-blocking mode
+            canBusOptions.put("allowPermissive", false); // always check usage requirements
+        }
+        else
+        {
+            canBusOptions.put("device", "CanBusFake");
+        }
+
+        yarp::dev::PolyDriver * canBusDevice = new yarp::dev::PolyDriver;
+        busDevices.push(canBusDevice, canBus.c_str());
+
+        if (!canBusDevice->open(canBusOptions))
+        {
+            CD_ERROR("canBusDevice instantiation not worked.\n");
+            return false;
+        }
+
+        yarp::dev::ICanBus * iCanBus;
+
+        if (!canBusDevice->view(iCanBus))
+        {
+            CD_ERROR("Cannot view ICanBus interface in device: %s.\n", canBus.c_str());
+            return false;
+        }
+
+        yarp::dev::ICanBufferFactory * iCanBufferFactory;
+
+        if (!canBusDevice->view(iCanBufferFactory))
+        {
+            CD_ERROR("Cannot view ICanBufferFactory interface in device: %s.\n", canBus.c_str());
+            return false;
+        }
+
+        if (!isFakeBus)
+        {
+            int rxBufferSize = canBusOptions.check("rxBufferSize", yarp::os::Value(100), "CAN bus RX buffer size").asInt32();
+            int txBufferSize = canBusOptions.check("txBufferSize", yarp::os::Value(100), "CAN bus TX buffer size").asInt32();
+            double rxDelay = canBusOptions.check("rxDelay", yarp::os::Value(0.0), "CAN bus RX delay (seconds)").asFloat64();
+            double txDelay = canBusOptions.check("txDelay", yarp::os::Value(0.0), "CAN bus TX delay (seconds)").asFloat64();
+
+            CanReaderThread * reader = new CanReaderThread(canBus);
+            reader->setCanHandles(iCanBus, iCanBufferFactory, rxBufferSize);
+            reader->setDelay(rxDelay);
+
+            CanWriterThread * writer = new CanWriterThread(canBus);
+            writer->setCanHandles(iCanBus, iCanBufferFactory, txBufferSize);
+            writer->setDelay(txDelay);
+
+            canThreads.push_back({canBus, reader, writer});
+        }
+
+        if (!config.check(canBus))
+        {
+            CD_ERROR("Missing key \"%s\".\n", canBus.c_str());
+            return false;
+        }
+
+        yarp::os::Value & nodesVal = config.find(canBus);
+        yarp::os::Bottle nodes;
+
+        if (!isFakeBus)
+        {
+            if (nodesVal.asList() == nullptr)
+            {
+                CD_ERROR("Key \"%s\" must be a list.\n", canBus.c_str());
                 return false;
-
-            yarp::os::Time::delay(0.2);
-
-            if ( timeCuiWait > 0 && ( ! cuiAbsolute->HasFirstReached() ) ) // using --externalEncoderWait && doesn't respond
-            {
-                bool timePassed = false;
-                double timeStamp = 0.0;
-
-                timeStamp = yarp::os::Time::now();
-
-                // This part of the code checks if encoders
-                while ( !timePassed && ( ! cuiAbsolute->HasFirstReached() ) )
-                {
-                    // -- if it exceeds the timeCuiWait...
-                    if(int(yarp::os::Time::now()-timeStamp)>=timeCuiWait)
-                    {
-                        CD_ERROR("Time out passed and CuiAbsolute ID (%d) doesn't respond\n", ids.get(i).asInt32() );
-                        yarp::os::Time::delay(2);
-                        CD_WARNING("Initializing with normal relative encoder configuration\n");
-                        yarp::os::Time::delay(2);
-                        timePassed = true;
-                    }
-                }
             }
-            else    // not used --externalEncoderWait (DEFAULT)
+
+            nodes = yarp::os::Bottle(*nodesVal.asList());
+        }
+        else
+        {
+            if (!nodesVal.isInt32())
             {
-                for ( int n=1; n<=5 && ( ! cuiAbsolute->HasFirstReached() ); n++ ) // doesn't respond && trying (5 trials)
-                {
-                    CD_WARNING("(%d) Resending start continuous publishing message \n", n);
-                    if ( ! cuiAbsolute->startPushPublishing(5))
-                        return false;
+                CD_ERROR("Key \"%s\" must hold an integer value (number of fake nodes).\n", canBus.c_str());
+                return false;
+            }
 
-                    yarp::os::Time::delay(0.2);
-                }
+            for (int i = 0; i < nodesVal.asInt32(); i++)
+            {
+                nodes.addString("fake-" + std::to_string(i + 1));
+            }
+        }
 
-                if( cuiAbsolute->HasFirstReached() ) // it responds! :)
+        std::vector<unsigned int> filterIds;
+
+        for (int i = 0; i < nodes.size(); i++)
+        {
+            std::string node = nodes.get(i).asString();
+            bool isFakeNode = node.find("fake") != std::string::npos;
+
+            yarp::os::Property nodeOptions;
+            nodeOptions.setMonitor(config.getMonitor(), node.c_str());
+
+            if (!isFakeNode)
+            {
+                yarp::os::Bottle & nodeGroup = robotConfig->findGroup(node);
+
+                if (nodeGroup.isNull())
                 {
-                    CD_DEBUG("---> First CUI message has been reached \n");
-                    double value;
-                    while( ! iEncodersTimedRaw[i]->getEncoderRaw(0,&value) ){
-                        CD_ERROR("Wrong value of Cui \n");
-                    }
-                    printf("Absolute encoder value -----> %f\n", value);
-                    //getchar(); // -- if you want to pause and return pressing any key
-                    yarp::os::Time::delay(0.2);
-                    iCanBusSharer[ idxFromCanId[driverCanId] ]->setIEncodersTimedRawExternal( iEncodersTimedRaw[i] );
-                }
-                else                               // doesn't respond :(
-                {
-                    CD_ERROR("Cui Absolute (PIC ID: %d) doesn't respond. Try using --externalEncoderWait [seconds] parameter with timeout higher than 0 \n", ids.get(i).asInt32());
+                    CD_ERROR("Missing CAN node device group %s.\n", node.c_str());
                     return false;
                 }
+
+                nodeOptions.fromString(nodeGroup.toString());
+                nodeOptions.put("robotConfig", config.find("robotConfig"));
             }
-        }
-
-        //-- Enable acceptance filters for each node ID
-        if( !iCanBus->canIdAdd(ids.get(i).asInt32()) )
-        {
-            CD_ERROR("Cannot register acceptance filter for node ID: %d.\n", ids.get(i).asInt32());
-            return false;
-        }
-
-    } // -- for(int i=0; i<nodes.size(); i++)
-
-    //-- Set all motor drivers to mode.
-
-    int controlModeVocab = 0;
-
-    if( mode=="position" )
-        controlModeVocab = VOCAB_CM_POSITION;
-    else if( mode=="velocity" )
-        controlModeVocab = VOCAB_CM_VELOCITY;
-    else if( mode=="torque" )
-        controlModeVocab = VOCAB_CM_TORQUE;
-    else
-    {
-        CD_ERROR("Not prepared for initializing in mode %s.\n",mode.c_str());
-        return false;
-    }
-
-    for(int i=0; i<nodes.size(); i++)
-    {
-        if( ! this->setControlMode(i, controlModeVocab) )
-            return false;
-    }
-
-    //-- Check the status of each driver.
-    std::vector<int> tmp( nodes.size() ); // -- creating a "tmp"vector with "nodes" vector size
-    this->getControlModes( tmp.data() );
-
-    //-- Initialize the drivers: start (0.1) ready (0.1) on (2) enable. Wait between each step.
-    for(int i=0; i<nodes.size(); i++)
-    {
-        if( ! iCanBusSharer[i]->initialize() )
-            return false;
-    }
-    yarp::os::Time::delay(0.1);
-    for(int i=0; i<nodes.size(); i++)
-    {
-        if( ! iCanBusSharer[i]->start() )
-            return false;
-    }
-    yarp::os::Time::delay(0.1);
-    for(int i=0; i<nodes.size(); i++)
-    {
-        if( ! iCanBusSharer[i]->readyToSwitchOn() )
-            return false;
-    }
-    yarp::os::Time::delay(0.1);
-    for(int i=0; i<nodes.size(); i++)
-    {
-        if( ! iCanBusSharer[i]->switchOn() )
-            return false;
-    }
-    yarp::os::Time::delay(2);
-    for(int i=0; i<nodes.size(); i++)
-    {
-        if( ! iCanBusSharer[i]->enable() )
-            return false;
-    }
-    yarp::os::Time::delay(2);
-
-    //-- Homing
-    if( config.check("home", "perform homing maneuver on start") )
-    {
-        CD_DEBUG("Moving motors to zero.\n");
-        for(int i=0; i<nodes.size(); i++)
-        {
-            if((nodes[i]->getValue("device")).asString() == "TechnosoftIpos"){
-                double val;
-                double time;
-                yarp::os::Time::delay(0.5);
-                iEncodersTimedRaw[i]->getEncoderTimedRaw(0,&val,&time); // -- getEncoderRaw(0,&value);
-                CD_DEBUG("Value of relative encoder ->%f\n", val);
-                if ( val>0.087873 || val< -0.087873 ){
-                    CD_DEBUG("Moving (ID:%s) to zero...\n",nodes[i]->getValue("canId").toString().c_str());
-                    if ( ! iPositionControlRaw[i]->positionMoveRaw(0,0) )
-                        return false;
-                }
-                else
-                    CD_DEBUG("It's already in zero position\n");
+            else
+            {
+                nodeOptions.put("device", "FakeJoint");
             }
-        }
-        // -- Testing
 
-        for(int i=0; i<nodes.size(); i++)
-        {
-            if((nodes[i]->getValue("device")).asString() == "TechnosoftIpos"){
-                bool motionDone = false;
-                yarp::os::Time::delay(0.2);  //-- [s]
-                CD_DEBUG("Testing (ID:%s) position... \n",nodes[i]->getValue("canId").toString().c_str());
-                if( ! iPositionControlRaw[i]->checkMotionDoneRaw(0,&motionDone) )
+            yarp::dev::PolyDriver * device = new yarp::dev::PolyDriver;
+            nodeDevices.push(device, node.c_str());
+
+            if (!device->open(nodeOptions))
+            {
+                CD_ERROR("CAN node device %s configuration failure.\n", node.c_str());
+                return false;
+            }
+
+            if (!deviceMapper.registerDevice(device))
+            {
+                CD_ERROR("Unable to register device %s.\n", node.c_str());
+                return false;
+            }
+
+            if (!isFakeNode)
+            {
+                ICanBusSharer * iCanBusSharer;
+
+                if (!device->view(iCanBusSharer))
+                {
+                    CD_ERROR("Unable to view ICanBusSharer in %s.\n", node.c_str());
                     return false;
-                if(!motionDone)
-                    CD_WARNING("Test motion fail (ID:%s) \n", nodes[i]->getValue("canId").toString().c_str());
+                }
+
+                canThreads.back().reader->registerHandle(iCanBusSharer);
+                iCanBusSharer->registerSender(canThreads.back().writer->getDelegate());
+
+                auto additionalIds = iCanBusSharer->getAdditionalIds();
+                filterIds.push_back(iCanBusSharer->getId());
+                filterIds.insert(filterIds.end(), additionalIds.begin(), additionalIds.end());
+            }
+            else
+            {
+                fakeNodeCount++;
             }
         }
 
-        CD_DEBUG("Moved motors to zero.\n");
-        yarp::os::Time::delay(1);
+        for (auto id : filterIds)
+        {
+            if (!iCanBus->canIdAdd(id))
+            {
+                CD_ERROR("Unable to register acceptance filter id %d in %s.\n", id, canBus.c_str());
+                return false;
+            }
+        }
     }
 
-    if( config.check("reset", "reset encoders to zero") )
+    int threadedAxes = deviceMapper.getControlledAxes() - fakeNodeCount;
+
+    // FIXME: temporarily disabled
+    if (false /*config.check("threaded", yarp::os::Value(false), "use threads to map joint calls").asBool() && threadedAxes != 0*/)
     {
-        CD_DEBUG("Forcing encoders to zero.\n");
-        if ( ! this->resetEncoders() )
-            return false;
+        // twice as many controlled axes to account for CBW's periodic thread and user RPC requests
+        deviceMapper.enableParallelization(threadedAxes * 2);
     }
 
-    posdThread->setNodeHandles(idToTechnosoftIpos);
-    posdThread->start();
+    for (const auto & bundle : canThreads)
+    {
+        if (!bundle.reader->start())
+        {
+            CD_ERROR("Unable to start reader thread.\n");
+            return false;
+        }
 
-    return true;
+        if (!bundle.writer->start())
+        {
+            CD_ERROR("Unable to start writer thread.\n");
+            return false;
+        }
+    }
+
+    for (int i = 0; i < nodeDevices.size(); i++)
+    {
+        ICanBusSharer * iCanBusSharer;
+        nodeDevices[i]->poly->view(iCanBusSharer);
+
+        if (!iCanBusSharer->initialize())
+        {
+            CD_ERROR("Node device %s could not initialize CAN comms.\n", nodeDevices[i]->key.c_str());
+            return false;
+        }
+    }
+
+    posdThread = new PositionDirectThread(deviceMapper);
+    return posdThread->configure(config);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::close()
+bool CanBusControlboard::close()
 {
-    const double timeOut = 1; // timeout (1 secod)
-
-    //-- Stop the read thread.
-    this->Thread::stop();
+    bool ok = true;
 
     if (posdThread && posdThread->isRunning())
     {
@@ -421,94 +270,53 @@ bool roboticslab::CanBusControlboard::close()
 
     delete posdThread;
 
-    const yarp::dev::CanMessage &msg = canInputBuffer[0];
-
-    //-- Disable and shutdown the physical drivers (and Cui Encoders).
-    bool ok = true;
-    for(int i=0; i<nodes.size(); i++)
+    for (int i = 0; i < nodeDevices.size(); i++)
     {
-        // -- Sending a stop message to PICs of Cui Encoders
-        yarp::os::Value value;
-        value = nodes[i]->getValue("device");
+        ICanBusSharer * iCanBusSharer;
+        nodeDevices[i]->poly->view(iCanBusSharer);
 
-        // Drivers:
-        if(value.asString() == "TechnosoftIpos")
+        if (!iCanBusSharer->finalize())
         {
-            CD_INFO("Stopping Driver (ID: %s)\n", nodes[i]->getValue("canId").toString().c_str());
-            ok &= iCanBusSharer[i]->switchOn();  //-- "switch on" also acts as "disable".
-            ok &= iCanBusSharer[i]->readyToSwitchOn();  //-- "ready to switch on" also acts as "shutdown".
+            CD_WARNING("Node device %s could not finalize CAN comms.\n", nodeDevices[i]->key.c_str());
+            ok = false;
         }
 
-        // Absolute encoders:
-        if(value.asString() == "CuiAbsolute")
+        ok &= nodeDevices[i]->poly->close();
+        delete nodeDevices[i]->poly;
+    }
+
+    for (const auto & bundle : canThreads)
+    {
+        if (bundle.reader && bundle.reader->isRunning())
         {
-            int canId = 0;
-            int CAN_ID = atoi(nodes[i]->getValue("canId").toString().c_str());
-            bool timePassed = false;
-            double timeStamp = 0.0;
-            double cleaningTime = 0.5; // time to empty the buffer
-
-            ICuiAbsolute* cuiAbsolute;
-            nodes[i]->view( cuiAbsolute );
-
-            CD_INFO("Stopping Cui Absolute PIC (ID: %d)\n", CAN_ID );
-
-            if (! cuiAbsolute->stopPushPublishing() )
-                return false;
-
-            yarp::os::Time::delay(0.5);
-            timeStamp = yarp::os::Time::now();
-
-            // This part of the code checks if the encoders have stopped sending messages
-            while ( !timePassed )
-            {
-                // -- if it exceeds the timeout (1 secod) ...PASS the test
-                if(int(yarp::os::Time::now()-timeStamp)==timeOut)
-                {
-                    CD_SUCCESS("Time out passed and CuiAbsolute ID (%d) was stopped successfully\n", CAN_ID);
-                    timePassed = true;
-                }
-
-                unsigned int read;
-                bool okRead = iCanBus->canRead(canInputBuffer, 1, &read, true);
-
-                // This line is needed to clear the buffer (old messages that has been received)
-                if((yarp::os::Time::now()-timeStamp) < cleaningTime) continue;
-
-                if( !okRead || read == 0 ) continue;              // -- is waiting for recive message
-
-                canId = msg.getId()  & 0x7F;                      // -- if it recive the message, it will get ID
-                //CD_DEBUG("Read a message from CuiAbsolute %d\n", canId);
-
-                //printf("timeOut: %d\n", int(yarp::os::Time::now()-timeStamp));
-                if(canId == CAN_ID)
-                {
-                    CD_WARNING("Resending stop message to Cui Absolute PIC (ID: %d)\n", CAN_ID );
-                    cuiAbsolute->stopPushPublishing();
-                }
-            }
+            ok &= bundle.reader->stop();
         }
+
+        delete bundle.reader;
+
+        if (bundle.writer && bundle.writer->isRunning())
+        {
+            ok &= bundle.writer->stop();
+        }
+
+        delete bundle.writer;
     }
 
-    iCanBufferFactory->destroyBuffer(canInputBuffer);
-
-    //-- Delete the driver objects.
-    for(int i=0; i<nodes.size(); i++)
+    for (int i = 0; i < busDevices.size(); i++)
     {
-        nodes[i]->close();
-        delete nodes[i];
-        nodes[i] = 0;
+        yarp::dev::ICanBus * iCanBus;
+        busDevices[i]->poly->view(iCanBus);
+
+        // Clear CAN acceptance filters ('0' = all IDs that were previously set by canIdAdd).
+        if (!iCanBus->canIdDelete(0))
+        {
+            CD_WARNING("CAN filters on bus %s may be preserved on the next run.\n", busDevices[i]->key.c_str());
+        }
+
+        ok &= busDevices[i]->poly->close();
+        delete busDevices[i]->poly;
     }
 
-    //-- Clear CAN acceptance filters ('0' = all IDs that were previously set by canIdAdd).
-    if (!iCanBus->canIdDelete(0))
-    {
-        CD_WARNING("CAN filters may be preserved on the next run.\n");
-    }
-
-    canBusDevice.close();
-
-    CD_INFO("End.\n");
     return ok;
 }
 

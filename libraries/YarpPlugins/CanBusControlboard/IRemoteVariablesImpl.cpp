@@ -2,12 +2,16 @@
 
 #include "CanBusControlboard.hpp"
 
-#include <string>
+#include <algorithm>
+#include <vector>
+
 #include <ColorDebug.h>
 
-// ---------------------------- IRemoteVariables Related ----------------------------------
+using namespace roboticslab;
 
-bool roboticslab::CanBusControlboard::getRemoteVariable(std::string key, yarp::os::Bottle& val)
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getRemoteVariable(std::string key, yarp::os::Bottle & val)
 {
     CD_DEBUG("%s\n", key.c_str());
 
@@ -15,15 +19,7 @@ bool roboticslab::CanBusControlboard::getRemoteVariable(std::string key, yarp::o
 
     if (key == "linInterpPeriodMs")
     {
-        val.addInt32(linInterpPeriodMs);
-    }
-    else if (key == "linInterpBufferSize")
-    {
-        val.addInt32(linInterpBufferSize);
-    }
-    else if (key == "linInterpMode")
-    {
-        val.addString(linInterpMode);
+        val.addInt32(posdThread->getPeriod());
     }
     else
     {
@@ -36,7 +32,7 @@ bool roboticslab::CanBusControlboard::getRemoteVariable(std::string key, yarp::o
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bottle& val)
+bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bottle & val)
 {
     CD_DEBUG("%s\n", key.c_str());
 
@@ -46,26 +42,29 @@ bool roboticslab::CanBusControlboard::setRemoteVariable(std::string key, const y
         return false;
     }
 
-    int modes[motorIds.size()];
+    std::vector<int> modes(nodeDevices.size());
 
-    if (!getControlModes(motorIds.size(), motorIds.data(), modes))
+    if (!getControlModes(modes.data()))
     {
         CD_ERROR("Unable to retrieve control modes.\n");
         return false;
     }
 
-    for (int i = 0; i < motorIds.size(); i++)
+    if (std::any_of(modes.begin(), modes.end(), [](int mode) { return mode == VOCAB_CM_POSITION_DIRECT; }))
     {
-        if (modes[i] == VOCAB_CM_POSITION_DIRECT)
-        {
-            CD_ERROR("CAN ID %d currently in posd mode, cannot change config params right now.\n", nodes[motorIds[i]]->getValue("canId").asInt32());
-            return false;
-        }
+        CD_ERROR("CAN device currently in posd mode, cannot change config params right now.\n");
+        return false;
     }
 
-    for (int i = 0; i < motorIds.size(); i++)
+    for (const auto & t : deviceMapper.getDevicesWithOffsets())
     {
-        iRemoteVariablesRaw[motorIds[i]]->setRemoteVariableRaw(key, val);
+        auto * p = std::get<0>(t)->getHandle<yarp::dev::IRemoteVariablesRaw>();
+        p->setRemoteVariableRaw(key, val);
+    }
+
+    if (key == "linInterpPeriodMs")
+    {
+        posdThread->setPeriod(val.get(0).asInt32() * 0.001);
     }
 
     return true;
@@ -73,7 +72,7 @@ bool roboticslab::CanBusControlboard::setRemoteVariable(std::string key, const y
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)
+bool CanBusControlboard::getRemoteVariablesList(yarp::os::Bottle * listOfKeys)
 {
     CD_DEBUG("\n");
 

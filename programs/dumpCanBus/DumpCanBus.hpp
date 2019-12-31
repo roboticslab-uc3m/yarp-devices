@@ -17,53 +17,31 @@ namespace roboticslab
 
 /**
  * @ingroup dumpCanBus
- *
  * @brief Launches one CAN bus driver, dumps output.
- *
  */
-class DumpCanBus : public yarp::os::RFModule, public yarp::os::Thread
+class DumpCanBus : public yarp::os::RFModule,
+                   public yarp::os::Thread
 {
 public:
+
     DumpCanBus();
-    bool configure(yarp::os::ResourceFinder &rf);
 
-protected:
-
-    yarp::dev::PolyDriver deviceDevCan0;
-    yarp::dev::ICanBus* iCanBus;
-    yarp::dev::ICanBufferFactory* iCanBufferFactory;
-    yarp::dev::CanBuffer canInputBuffer;
-
-    /** A helper function to display CAN messages. */
-    std::string msgToStr(yarp::dev::CanMessage* message);
-    double lastNow;
-
-    virtual double getPeriod()
-    {
-        return 3.0;
-    }
-    virtual bool updateModule();
+    virtual bool configure(yarp::os::ResourceFinder & rf);
+    virtual bool updateModule()
+    { return true; }
     virtual bool close();
-//        virtual bool interruptModule();
-//        virtual int period;
 
     // -------- Thread declarations. Implementation in ThreadImpl.cpp --------
-
-    /**
-     * Main body of the new thread.
-     * Override this method to do what you want.
-     * After Thread::start is called, this
-     * method will start running in a separate thread.
-     * It is important that this method either keeps checking
-     * Thread::isStopping to see if it should stop, or
-     * you override the Thread::onStop method to interact
-     * with it in some way to shut the new thread down.
-     * There is no really reliable, portable way to stop
-     * a thread cleanly unless that thread cooperates.
-     */
     virtual void run();
+
+private:
+
+    yarp::dev::PolyDriver canDevice;
+    yarp::dev::ICanBus * iCanBus;
+    yarp::dev::ICanBufferFactory * iCanBufferFactory;
+    yarp::dev::CanBuffer canInputBuffer;
 };
 
-}  // namespace roboticslab
+} // namespace roboticslab
 
-#endif  // __DUMP_CAN_BUS__
+#endif // __DUMP_CAN_BUS__

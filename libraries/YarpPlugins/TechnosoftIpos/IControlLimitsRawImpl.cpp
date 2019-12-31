@@ -2,98 +2,81 @@
 
 #include "TechnosoftIpos.hpp"
 
-// ------------------- IControlLimitsRaw Related ------------------------------------
+#include <ColorDebug.h>
 
-bool roboticslab::TechnosoftIpos::setLimitsRaw(int axis, double min, double max)
+using namespace roboticslab;
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::setLimitsRaw(int axis, double min, double max)
 {
-    CD_INFO("(%d,%f,%f)\n",axis,min,max);
-
-    //-- Check index within range
-    if ( axis != 0 ) return false;
-
-    bool ok = true;
-    ok &= setMinLimitRaw(min);
-    ok &= setMaxLimitRaw(max);
-
-    return ok;
+    CD_DEBUG("(%d, %f, %f)\n", axis, min, max);
+    CHECK_JOINT(axis);
+    return setLimitRaw(min, true) & setLimitRaw(max, false);
 }
 
 // -----------------------------------------------------------------------------
-bool roboticslab::TechnosoftIpos::setMinLimitRaw(double min)
+
+bool TechnosoftIpos::setLimitRaw(double limit, bool isMin)
 {
-    //*************************************************************
-    uint8_t msg_position_min[]= {0x23,0x7D,0x60,0x01,0x00,0x00,0x00,0x00}; // 0x01 is subindex 1, Manual 607Dh: Software position limit
-    if(this->tr < 0) msg_position_min[3] = 0x02;
+    std::string name = "Software position limit: ";
+    std::uint8_t subindex;
 
-    int sendMin = min * this->tr * (encoderPulses / 360.0);  // Appply tr & convert units to encoder increments
-    memcpy(msg_position_min+4,&sendMin,4);
-
-    if( ! send( 0x600, 8, msg_position_min ) )
+    if (isMin ^ vars.reverse)
     {
-        CD_ERROR("Could not send position min. %s\n", msgToStr(0x600, 8, msg_position_min).c_str() );
-        return false;
+        name += "minimal position limit";
+        subindex = 0x01;
     }
-    CD_SUCCESS("Sent \"position min\". %s\n", msgToStr(0x600, 8, msg_position_min).c_str() );
-
-    //*************************************************************
-
-    //-- Store the new limits locally.
-    this->min = min;
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-bool roboticslab::TechnosoftIpos::setMaxLimitRaw(double max)
-{
-    //*************************************************************
-    uint8_t msg_position_max[]= {0x23,0x7D,0x60,0x02,0x00,0x00,0x00,0x00}; // 0x02 is subindex 2, Manual 607Dh: Software position limit
-    if(this->tr < 0) msg_position_max[3] = 0x01;
-
-    int sendMax = max * this->tr * (encoderPulses / 360.0);  // Appply tr & convert units to encoder increments
-    memcpy(msg_position_max+4,&sendMax,4);
-
-    if( ! send( 0x600, 8, msg_position_max ) )
+    else
     {
-        CD_ERROR("Could not send position max. %s\n", msgToStr(0x600, 8, msg_position_max).c_str() );
-        return false;
+        name += "maximal position limit";
+        subindex = 0x02;
     }
-    CD_SUCCESS("Sent \"position max\". %s\n", msgToStr(0x600, 8, msg_position_max).c_str() );
-    //*************************************************************
 
-    //-- Store the new limits locally.
-    this->max = max;
-
-    return true;
+    std::int32_t data = vars.degreesToInternalUnits(limit);
+    return can->sdo()->download(name, data, 0x607D, subindex);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getLimitsRaw(int axis, double *min, double *max)
+bool TechnosoftIpos::getLimitsRaw(int axis, double * min, double * max)
 {
-    CD_INFO("(%d)\n",axis);
-
-    //-- Check index within range
-    if( axis != 0 ) return false;
-
-    //-- Get the limits that have been locally stored.
-    *min = this->min;
-    *max = this->max;
-
-    return true;
+    CD_DEBUG("(%d)\n", axis);
+    CHECK_JOINT(axis);
+    return getLimitRaw(min, true) & getLimitRaw(max, false);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
+bool TechnosoftIpos::getLimitRaw(double * limit, bool isMin)
 {
-    CD_INFO("(%d,%f,%f)\n",axis,min,max);
+    std::string name = "Software position limit: ";
+    std::uint8_t subindex;
 
-    //-- Check index within range
-    if ( axis != 0 ) return false;
+    if (isMin ^ vars.reverse)
+    {
+        name += "minimal position limit";
+        subindex = 0x01;
+    }
+    else
+    {
+        name += "maximal position limit";
+        subindex = 0x02;
+    }
 
-    //-- Update the limits that have been locally stored.
-    this->maxVel = max;
+    return can->sdo()->upload<std::int32_t>(name, [&](std::int32_t data)
+            { *limit = vars.internalUnitsToDegrees(data); },
+            0x607D, subindex);
+}
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
+{
+    CD_DEBUG("(%d, %f, %f)\n", axis, min, max);
+    CHECK_JOINT(axis);
+
+    vars.maxVel = max;
 
     if (min != -max)
     {
@@ -105,16 +88,13 @@ bool roboticslab::TechnosoftIpos::setVelLimitsRaw(int axis, double min, double m
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getVelLimitsRaw(int axis, double *min, double *max)
+bool TechnosoftIpos::getVelLimitsRaw(int axis, double * min, double * max)
 {
-    CD_INFO("(%d)\n",axis);
+    CD_DEBUG("(%d)\n", axis);
+    CHECK_JOINT(axis);
 
-    //-- Check index within range
-    if( axis != 0 ) return false;
-
-    //-- Get the limits that have been locally stored.
-    *min = -this->maxVel;
-    *max = this->maxVel;
+    *min = -vars.maxVel;
+    *max = vars.maxVel;
 
     return true;
 }

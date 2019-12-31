@@ -2,125 +2,119 @@
 
 #include "CanBusControlboard.hpp"
 
-// ------------------ IEncoders Related -----------------------------------------
+#include <ColorDebug.h>
 
-bool roboticslab::CanBusControlboard::resetEncoder(int j)
-{
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iEncodersTimedRaw[j]->resetEncoderRaw( 0 );
-}
+using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::resetEncoders()
-{
-    CD_INFO("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i < nodes.size(); i++)
-        ok &= resetEncoder(i);
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setEncoder(int j, double val)
-{
-    CD_INFO("(%d,%f)\n",j,val);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iEncodersTimedRaw[j]->setEncoderRaw( 0, val );
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::setEncoders(const double *vals)
-{
-    CD_INFO("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i < nodes.size(); i++)
-        ok &= setEncoder(i,vals[i]);
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getEncoder(int j, double *v)
-{
-    //CD_INFO("%d\n",j);  //-- Too verbose in stream.
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iEncodersTimedRaw[j]->getEncoderRaw( 0, v );
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getEncoders(double *encs)
-{
-    //CD_INFO("\n");  //-- Too verbose in stream.
-
-    bool ok = true;
-    for(unsigned int i=0; i < nodes.size(); i++)
-        ok &= getEncoder(i,&(encs[i]));
-    return ok;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getEncoderSpeed(int j, double *sp)
-{
-    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iEncodersTimedRaw[j]->getEncoderSpeedRaw( 0, sp );
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::CanBusControlboard::getEncoderSpeeds(double *spds)
+bool CanBusControlboard::getAxes(int *axes)
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i<nodes.size(); i++)
-        ok &= getEncoderSpeed(i,&spds[i]);
-    return ok;
+    *axes = deviceMapper.getControlledAxes();
+    return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getEncoderAcceleration(int j, double *spds)
+bool CanBusControlboard::resetEncoder(int j)
 {
-    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(j) ) return false;
-
-    return iEncodersTimedRaw[j]->getEncoderAccelerationRaw( 0, spds );
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersRaw::resetEncoderRaw, j);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getEncoderAccelerations(double *accs)
+bool CanBusControlboard::resetEncoders()
 {
     CD_DEBUG("\n");
-
-    bool ok = true;
-    for(unsigned int i=0; i<nodes.size(); i++)
-        ok &= getEncoderAcceleration(i,&accs[i]);
-    return ok;
+    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersRaw::resetEncodersRaw);
 }
 
 // -----------------------------------------------------------------------------
 
+bool CanBusControlboard::setEncoder(int j, double val)
+{
+    CD_DEBUG("(%d, %f)\n", j, val);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersRaw::setEncoderRaw, j, val);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::setEncoders(const double * vals)
+{
+    CD_DEBUG("\n");
+    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersRaw::setEncodersRaw, vals);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getEncoder(int j, double * v)
+{
+    CD_DEBUG("%d\n", j);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersRaw::getEncoderRaw, j, v);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getEncoders(double * encs)
+{
+    CD_DEBUG("\n");
+    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersRaw::getEncodersRaw, encs);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getEncoderSpeed(int j, double * sp)
+{
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersRaw::getEncoderSpeedRaw, j, sp);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getEncoderSpeeds(double * spds)
+{
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
+    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersRaw::getEncoderSpeedsRaw, spds);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getEncoderAcceleration(int j, double * spds)
+{
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersRaw::getEncoderAccelerationRaw, j, spds);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getEncoderAccelerations(double * accs)
+{
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
+    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersRaw::getEncoderAccelerationsRaw, accs);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getEncoderTimed(int j, double * enc, double * stamp)
+{
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IEncodersTimedRaw::getEncoderTimedRaw, j, enc, stamp);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getEncodersTimed(double * encs, double * stamps)
+{
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
+    return deviceMapper.mapAllJoints(&yarp::dev::IEncodersTimedRaw::getEncodersTimedRaw, encs, stamps);
+}
+
+// -----------------------------------------------------------------------------

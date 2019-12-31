@@ -2,168 +2,97 @@
 
 #include "TechnosoftIpos.hpp"
 
-namespace
+#include <ColorDebug.h>
+
+using namespace roboticslab;
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::getCurrentRaw(int m, double * curr)
 {
-    // return -1 for negative numbers, +1 for positive numbers, 0 for zero
-    // https://stackoverflow.com/a/4609795
-    template <typename T>
-    inline int sgn(T val)
-    {
-        return (T(0) < val) - (val < T(0));
-    }
+    //CD_DEBUG("(%d)\n", m); // too verbose in controlboardwrapper2 stream
+    CHECK_JOINT(m);
+    std::int16_t temp = vars.lastCurrentRead;
+    *curr = vars.internalUnitsToCurrent(temp);
+    return true;
 }
 
-// ------------------- ICurrentControlRaw Related ------------------------------------
+// -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getNumberOfMotorsRaw(int *number)
+bool TechnosoftIpos::getCurrentsRaw(double * currs)
+{
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
+    return getCurrentRaw(0, &currs[0]);
+}
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::getCurrentRangeRaw(int m, double * min, double * max)
+{
+    CD_DEBUG("(%d)\n", m);
+    CHECK_JOINT(m);
+
+    return can->sdo()->upload<std::uint16_t>("Current limit", [&](std::uint16_t data)
+            { *max = vars.internalUnitsToPeakCurrent(data);
+              *min = -(*max); },
+            0x207F);
+}
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::getCurrentRangesRaw(double * min, double * max)
 {
     CD_DEBUG("\n");
-    return getAxes(number);
+    return getCurrentRangeRaw(0, min, max);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getCurrentRaw(int m, double *curr)
-{
-    //CD_DEBUG("(%d)\n", m);  //-- Too verbose in controlboardwrapper2 stream.
-
-    //-- Check index within range
-    if (m != 0) return false;
-
-    //*************************************************************
-    uint8_t msg_getCurrent[]= {0x40,0x7E,0x20,0x00}; // Query current. Ok only 4.
-
-    if (!send(0x600, 4, msg_getCurrent))
-    {
-        CD_ERROR("Could not send msg_getCurrent. %s\n", msgToStr(0x600, 4, msg_getCurrent).c_str());
-        return false;
-    }
-    //CD_SUCCESS("Sent msg_getCurrent. %s\n", msgToStr(0x600, 4, msg_getCurrent).c_str());    //-- Too verbose in controlboardwrapper2 stream.
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(DELAY);  // Must delay as it will be from same driver.
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-    getCurrentReady.wait();
-    *curr = getCurrent * sgn(tr);
-    getCurrentReady.post();
-
-    //*************************************************************
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getCurrentsRaw(double *currs)
-{
-    CD_ERROR("Not implemented.\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getCurrentRangeRaw(int m, double *min, double *max)
+bool TechnosoftIpos::setRefCurrentRaw(int m, double curr)
 {
     CD_DEBUG("(%d)\n", m);
+    CHECK_JOINT(m);
+    CHECK_MODE(VOCAB_CM_CURRENT);
 
-    //-- Check index within range
-    if (m != 0) return false;
-
-    //*************************************************************
-    uint8_t msg_getCurrentLimit[]= {0x40,0x7F,0x20,0x00}; // Query current. Ok only 4.
-
-    if (!send(0x600, 4, msg_getCurrentLimit))
-    {
-        CD_ERROR("Could not send msg_getCurrentLimit. %s\n", msgToStr(0x600, 4, msg_getCurrentLimit).c_str());
-        return false;
-    }
-    CD_SUCCESS("Sent msg_getCurrentLimit. %s\n", msgToStr(0x600, 4, msg_getCurrentLimit).c_str());
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(5 * DELAY);  // Must delay as it will be from same driver.
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-    getCurrentLimitReady.wait();
-    *max = getCurrentLimit;
-    getCurrentLimitReady.post();
-
-    *min = -(*max);
-
-    return true;
+    std::int32_t data = vars.currentToInternalUnits(curr) << 16;
+    return quitHaltState(VOCAB_CM_CURRENT) && can->sdo()->download("External online reference", data, 0x201C);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getCurrentRangesRaw(double *min, double *max)
+bool TechnosoftIpos::setRefCurrentsRaw(const double * currs)
 {
-    CD_ERROR("Not implemented.\n");
-    return false;
+    CD_DEBUG("\n");
+    return setRefCurrentRaw(0, currs[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setRefCurrentsRaw(const double *currs)
+bool TechnosoftIpos::setRefCurrentsRaw(int n_motor, const int * motors, const double * currs)
 {
-    CD_ERROR("Not implemented.\n");
-    return false;
+    CD_DEBUG("\n");
+    return setRefCurrentRaw(motors[0], currs[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setRefCurrentRaw(int m, double curr)
+bool TechnosoftIpos::getRefCurrentRaw(int m, double * curr)
 {
     CD_DEBUG("(%d)\n", m);
+    CHECK_JOINT(m);
+    CHECK_MODE(VOCAB_CM_CURRENT);
 
-    //-- Check index within range
-    if (m != 0) return false;
-
-    //*************************************************************
-    uint8_t msg_ref_current[]= {0x23,0x1C,0x20,0x00,0x00,0x00,0x00,0x00}; // put 23 because it is a target
-
-    int sendRefCurrent = curr * sgn(tr) * 65520.0 / (2 * drivePeakCurrent); // Page 109 of 263.
-    std::memcpy(msg_ref_current + 6, &sendRefCurrent, 2);
-
-    if (!send(0x600, 8, msg_ref_current))
-    {
-        CD_ERROR("Could not send refCurrent. %s\n", msgToStr(0x600, 8, msg_ref_current).c_str());
-        return false;
-    }
-
-    CD_SUCCESS("Sent refCurrent. %s\n", msgToStr(0x600, 8, msg_ref_current).c_str());
-    //*************************************************************
-
-    refCurrentSemaphore.wait();
-    refCurrent = curr;
-    refCurrentSemaphore.post();
-
-    return true;
+    return can->sdo()->upload<std::int32_t>("External online reference", [&](std::int32_t data)
+            { *curr = vars.internalUnitsToCurrent(data >> 16); },
+            0x201C);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setRefCurrentsRaw(const int n_motor, const int *motors, const double *currs)
+bool TechnosoftIpos::getRefCurrentsRaw(double * currs)
 {
-    CD_ERROR("Not implemented.\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getRefCurrentsRaw(double *currs)
-{
-    CD_ERROR("Not implemented.\n");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getRefCurrentRaw(int m, double *curr)
-{
-    CD_DEBUG("(%d)\n", m);
-
-    refCurrentSemaphore.wait();
-    *curr = refCurrent;
-    refCurrentSemaphore.post();
-
-    return true;
+    CD_DEBUG("\n");
+    return getRefCurrentRaw(0, &currs[0]);
 }
 
 // -----------------------------------------------------------------------------

@@ -71,7 +71,7 @@ bool roboticslab::CanBusPeak::waitUntilTimeout(io_operation op, bool * bufferRea
 
 // -----------------------------------------------------------------------------
 
-uint64_t roboticslab::CanBusPeak::computeAcceptanceCodeAndMask()
+std::uint64_t roboticslab::CanBusPeak::computeAcceptanceCodeAndMask()
 {
     // DISCARD message if the following holds true (from driver/pcan_main.c):
     // (pf->id & ~dev->acc_11b.mask) != dev->acc_11b.code
@@ -79,15 +79,15 @@ uint64_t roboticslab::CanBusPeak::computeAcceptanceCodeAndMask()
     // From PCAN-Parameter_Documentation.pdf (shipped with PCAN_Basic)
     // Appendix D: Acceptance Code and Mask Calculation
 
-    uint32_t mask = ~0x7f & 0x07ff;
+    std::uint32_t mask = ~0x7f & 0x07ff;
 
     if (activeFilters.empty())
     {
-        return (uint64_t)mask;
+        return (std::uint64_t)mask;
     }
 
-    uint32_t code = ~0x0;
-    uint32_t prevId = 0x0;
+    std::uint32_t code = ~0x0;
+    std::uint32_t prevId = 0x0;
 
     bool firstRun = true;
 
@@ -107,7 +107,7 @@ uint64_t roboticslab::CanBusPeak::computeAcceptanceCodeAndMask()
         firstRun = false;
     }
 
-    return ((uint64_t)code << 32) | mask;
+    return ((std::uint64_t)code << 32) | mask;
 }
 
 // -----------------------------------------------------------------------------

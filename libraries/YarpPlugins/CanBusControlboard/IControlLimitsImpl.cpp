@@ -2,42 +2,44 @@
 
 #include "CanBusControlboard.hpp"
 
-// ------------------- IControlLimits Related ------------------------------------
+#include <ColorDebug.h>
 
-bool roboticslab::CanBusControlboard::setLimits(int axis, double min, double max)
+using namespace roboticslab;
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::setLimits(int axis, double min, double max)
 {
-    CD_DEBUG("(%d,%f,%f)\n",axis,min,max);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(axis) ) return false;
-
-    return iControlLimitsRaw[axis]->setLimitsRaw( 0, min, max );
+    CD_DEBUG("(%d, %f, %f)\n", axis, min, max);
+    CHECK_JOINT(axis);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IControlLimitsRaw::setLimitsRaw, axis, min, max);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getLimits(int axis, double *min, double *max)
+bool CanBusControlboard::getLimits(int axis, double * min, double * max)
 {
-    CD_DEBUG("(%d)\n",axis);
-
-    //-- Check index within range
-    if( axis >= nodes.size() ) return false;
-
-    return iControlLimitsRaw[axis]->getLimitsRaw( 0, min, max );
+    CD_DEBUG("(%d)\n", axis);
+    CHECK_JOINT(axis);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IControlLimitsRaw::getLimitsRaw, axis, min, max);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::setVelLimits(int axis, double min, double max)
+bool CanBusControlboard::setVelLimits(int axis, double min, double max)
 {
-    return iControlLimitsRaw[axis]->setVelLimitsRaw( 0, min, max ); // May segfault in future if not impl?
+    CD_DEBUG("(%d, %f, %f)\n", axis, min, max);
+    CHECK_JOINT(axis);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IControlLimitsRaw::setVelLimitsRaw, axis, min, max);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusControlboard::getVelLimits(int axis, double *min, double *max)
+bool CanBusControlboard::getVelLimits(int axis, double * min, double * max)
 {
-    return iControlLimitsRaw[axis]->getVelLimitsRaw( 0, min, max );  // May segfault in future if not impl?
+    CD_DEBUG("(%d)\n", axis);
+    CHECK_JOINT(axis);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IControlLimitsRaw::getVelLimitsRaw, axis, min, max);
 }
 
 // -----------------------------------------------------------------------------

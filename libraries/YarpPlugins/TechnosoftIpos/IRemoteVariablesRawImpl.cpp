@@ -2,9 +2,13 @@
 
 #include "TechnosoftIpos.hpp"
 
-// ------------------ IRemoteVariablesRaw Related ----------------------------------------
+#include <ColorDebug.h>
 
-bool roboticslab::TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle& val)
+using namespace roboticslab;
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & val)
 {
     CD_DEBUG("%s\n", key.c_str());
 
@@ -33,14 +37,42 @@ bool roboticslab::TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottle& val)
+bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val)
 {
-    CD_DEBUG("%s\n", key.c_str());
+    //CD_DEBUG("%s\n", key.c_str()); // too verbose
 
-    if (getMode == VOCAB_CM_POSITION_DIRECT)
+    if (key == "linInterpConfig")
     {
-        CD_ERROR("Currently in posd mode, cannot change config params right now.\n");
-        return false;
+        LinearInterpolationBuffer * newBuffer = LinearInterpolationBuffer::createBuffer(val, vars);
+
+        if (newBuffer)
+        {
+            delete linInterpBuffer;
+            linInterpBuffer = newBuffer;
+        }
+        else
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT)
+    {
+        if (key == "linInterpStart")
+        {
+            return can->driveStatus()->controlword(0x001F); // enable ip mode
+        }
+        else if (key == "linInterpTarget")
+        {
+            return can->rpdo3()->write<std::uint64_t>(linInterpBuffer->makeDataRecord());
+        }
+        else
+        {
+            CD_ERROR("Currently in posd mode, cannot change config params right now.\n");
+            return false;
+        }
     }
 
     if (key == "linInterpPeriodMs")
@@ -81,7 +113,7 @@ bool roboticslab::TechnosoftIpos::setRemoteVariableRaw(std::string key, const ya
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getRemoteVariablesListRaw(yarp::os::Bottle* listOfKeys)
+bool TechnosoftIpos::getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys)
 {
     CD_DEBUG("\n");
 
@@ -91,6 +123,9 @@ bool roboticslab::TechnosoftIpos::getRemoteVariablesListRaw(yarp::os::Bottle* li
     listOfKeys->addString("linInterpPeriodMs");
     listOfKeys->addString("linInterpBufferSize");
     listOfKeys->addString("linInterpMode");
+    listOfKeys->addString("linInterpStart");
+    listOfKeys->addString("linInterpTarget");
+    listOfKeys->addString("linInterpConfig");
 
     return true;
 }

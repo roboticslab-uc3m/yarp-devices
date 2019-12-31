@@ -2,40 +2,76 @@
 
 #include "CuiAbsolute.hpp"
 
+#include <cmath>
+
+#include <yarp/os/Time.h>
+
+#include <ColorDebug.h>
+
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
-bool roboticslab::CuiAbsolute::open(yarp::os::Searchable& config)
+
+bool CuiAbsolute::open(yarp::os::Searchable& config)
 {
-    this->canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt32();
-    this->tr = config.check("tr",yarp::os::Value(1),"reduction").asInt32();
-    this->targetReached = false;
-    this->max = 0;
-    this->min = 0;
-    this->refAcceleration = 0;
-    this->refSpeed = 0;
-    this->encoder = sqrt (-1);  // NaN \todo{Investigate, debug and document the dangers of this use of NaN.}
+    CD_DEBUG("%s\n", config.toString().c_str());
 
-    yarp::os::Value vCanBufferFactory = config.check("canBufferFactory", yarp::os::Value(0), "");
+    canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt8();
+    reverse = config.check("reverse", yarp::os::Value(false), "reverse").asBool();
+    timeout = config.check("timeout", yarp::os::Value(DEFAULT_TIMEOUT), "timeout (seconds)").asFloat64();
+    maxRetries = config.check("maxRetries", yarp::os::Value(DEFAULT_MAX_RETRIES), "max retries on timeout").asFloat64();
 
-    if( !vCanBufferFactory.isBlob() )
+    if (timeout <= 0.0)
     {
-        CD_ERROR("Could not create CuiAbsolute with null or corrupt ICanBufferFactory handle\n");
+        CD_ERROR("Illegal CUI timeout value: %f.\n", timeout);
         return false;
     }
 
-    iCanBufferFactory = *reinterpret_cast<yarp::dev::ICanBufferFactory **>(const_cast<char *>(vCanBufferFactory.asBlob()));
-    canOutputBuffer = iCanBufferFactory->createBuffer(1);
+    if (!config.check("mode", "publish mode [push|pull]"))
+    {
+        CD_ERROR("Missing \"mode\" property.\n");
+        return false;
+    }
 
-    CD_SUCCESS("Created CuiAbsolute with canId %d and tr %f, and all local parameters set to 0.\n",canId,tr);
+    std::string mode = config.find("mode").asString();
+
+    if (mode == "push")
+    {
+        pushStateObserver = new StateObserver(timeout);
+        cuiMode = CuiMode::PUSH;
+        pushDelay = config.check("pushDelay", yarp::os::Value(0), "Cui push mode delay [0-255]").asInt8();
+    }
+    else if (mode == "pull")
+    {
+        pollStateObserver = new TypedStateObserver<encoder_t>(timeout);
+        cuiMode = CuiMode::PULL;
+    }
+    else
+    {
+        CD_ERROR("Unrecognized CUI mode: %s.\n", mode.c_str());
+        return false;
+    }
+
     return true;
 }
 
 // -----------------------------------------------------------------------------
-bool roboticslab::CuiAbsolute::close()
+
+bool CuiAbsolute::close()
 {
-    CD_INFO("\n");
-    iCanBufferFactory->destroyBuffer(canOutputBuffer);
+    switch (cuiMode)
+    {
+    case CuiMode::PUSH:
+        delete pushStateObserver;
+        break;
+    case CuiMode::PULL:
+        delete pollStateObserver;
+        break;
+    default:
+        break;
+    }
+
     return true;
 }
 
 // -----------------------------------------------------------------------------
-

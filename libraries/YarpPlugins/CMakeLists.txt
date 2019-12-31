@@ -11,10 +11,7 @@ target_include_directories(YarpDevicesInterfaces INTERFACE $<TARGET_PROPERTY:YAR
                                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 # Install interface headers.
-install(FILES ICanBusSharer.h
-              ICuiAbsolute.h
-              IProximitySensors.h
-              ITechnosoftIpos.h
+install(FILES IProximitySensors.h
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Register export set.
@@ -30,9 +27,11 @@ add_subdirectory(CanBusHico)
 add_subdirectory(CanBusPeak)
 add_subdirectory(CanBusSocket)
 add_subdirectory(CuiAbsolute)
+add_subdirectory(DextraCanControlboard)
 add_subdirectory(DextraSerialControlboard)
 add_subdirectory(EmulatedControlboard)
 add_subdirectory(FakeJoint)
+add_subdirectory(JointCalibrator)
 add_subdirectory(Jr3)
 add_subdirectory(LacqueyFetch)
 add_subdirectory(LeapMotionSensor)

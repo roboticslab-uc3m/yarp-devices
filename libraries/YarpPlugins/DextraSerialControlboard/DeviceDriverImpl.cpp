@@ -2,16 +2,16 @@
 
 #include "DextraSerialControlboard.hpp"
 
-#include <cstring>
-
 #include <yarp/os/Property.h>
 #include <yarp/os/Value.h>
 
 #include <ColorDebug.h>
 
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::open(yarp::os::Searchable& config)
+bool DextraSerialControlboard::open(yarp::os::Searchable & config)
 {
     std::string port = config.check("port", yarp::os::Value(DEFAULT_PORT), "serial port").asString();
 
@@ -38,21 +38,19 @@ bool roboticslab::DextraSerialControlboard::open(yarp::os::Searchable& config)
     if (!serialDevice.view(iSerialDevice))
     {
         CD_ERROR("Unable to view iSerialDevice.\n");
-        return true;
+        return false;
     }
 
-    std::memset(setpoints, 0, sizeof(setpoints));
-
-    synapse = new Synapse(iSerialDevice);
+    raw.acquireSynapseHandle(new SerialSynapse(iSerialDevice));
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::DextraSerialControlboard::close()
+bool DextraSerialControlboard::close()
 {
-    delete synapse;
+    raw.destroySynapse();
     serialDevice.close();
     return true;
 }

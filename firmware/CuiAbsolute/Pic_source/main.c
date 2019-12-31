@@ -1,11 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /**
+ * @ingroup yarp_devices_firmware
+ * @defgroup yarp_devices_cuiAbsolute CuiAbsolute firmware
  *
- * @ingroup teo_body_cuiAbsolute
- * \defgroup teo_body_picFirmware PIC-Firmware
- *
- * @brief Firmware that allows communication with the PIC and the publication of position messages. 
+ * @brief Firmware that allows communication with the PIC and the publication of position messages.
  *
  * @section teo_body_firmware_legal Legal
  *
@@ -19,9 +18,9 @@
  *
  * You need to install MPLAB IDE v8.92 and MPLAB C Compiler for PIC18 MCUs. <br>
  * Open the proyect with MPLAB, open "main.c" file and change the value of "canId" variable (You can see <a class="el" href="http://robots.uc3m.es/index.php/CuiAbsolute_Documentation">correspondence</a>) <br>
- * Also, to increase the time between sending messages,  you can modify "sendDelay" value too (see code documentation in main.c). 
+ * Also, to increase the time between sending messages,  you can modify "sendDelay" value too (see code documentation in main.c).
  * Then, build all. <br>
- * Finally, select programmer "MPLAB ICD 2", disconnect CAN-BUS connections of the PIC, connect and program it. <br> 
+ * Finally, select programmer "MPLAB ICD 2", disconnect CAN-BUS connections of the PIC, connect and program it. <br>
  *
  * @section cuiAbsolute_running Running (assuming correct installation)
  *
@@ -67,7 +66,7 @@
 // Variable configurable (CAN_ID)
 // -----------------------
 const unsigned long canId = 124;
-// ----------------------- 
+// -----------------------
 
 // pulsos-por-slot * encoderPulses (numero-total-de-slots) / 360
 const double div = 4 * 1024 / 360.0; // approx. 11.38
@@ -176,17 +175,17 @@ void main(void)
         {
         case 0x01: // start push (continuous mode)
             delay = data[1];
-            pushFlag = 1;	   
-            sendAck(0x100); 
-        break;	    		      	
+            pushFlag = 1;
+            sendAck(0x100);
+        break;
 
         case 0x02: // stop push
             pushFlag = 0;
-            sendAck(0x100); 
+            sendAck(0x100);
         break;
 
         case 0x03: // pull (polling mode)
-            sendData(0x180); 
+            sendData(0x180);
         break;
 
         case 0xFF: // zero
@@ -205,7 +204,7 @@ void sendData(unsigned int op)
 {
     // - Manual: [1. The host issues the command, 0x10. The data read in at this time will be 0xa5 or 0x00 since this is the first SPI transfer]
     LATCbits.LATC2 = 0;
-    WriteSPI(0b00010000);       // Solicitación de posición (comando 0x10) 
+    WriteSPI(0b00010000);       // Solicitación de posición (comando 0x10)
     Delay10TCYx(3);             // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Delay10TCYx(3)= 6us
     y = SSPBUF;                 // Recoge los datos del SSPBUF que provienen del encoder (MISO)
     LATCbits.LATC2 = 1;
@@ -220,7 +219,7 @@ void sendData(unsigned int op)
     // - Manual: [3. The response to the “nop_a5” is either 0xa5 or an echo of the command, 0x10.]
     while (y == 0b10100101)     // - Manual: [a. If it is 0xa5, it will go back to step 2.]
     {
-        Delay10TCYx(5); 
+        Delay10TCYx(5);
         LATCbits.LATC2 = 0;
         WriteSPI(0b00000000);   // Comando 0x00 -> nop_a5)
         Delay10TCYx(3);         // Used 4 to fix Known error message (37 b6 ff c4) or (3c 13 fe c4). Delay10TCYx(3) = 6us
@@ -236,7 +235,7 @@ void sendData(unsigned int op)
     y = SSPBUF;                 // Recoge los datos del SSPBUF que provienen del encoder (MISO)
     message[0] = y;             // Se almacena en el primer elemento del array que se enviará por CAN
     LATCbits.LATC2 = 1;
-    
+
     // - Manual: [5. The host waits a minimum of 5 µs then sends “nop_a5”, the data read is the low byte of the position.]
     LATCbits.LATC2 = 0;
     WriteSPI(0b00000000);       // Espera para captar la parte baja del mensaje
