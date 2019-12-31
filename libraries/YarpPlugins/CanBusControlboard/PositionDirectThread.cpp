@@ -8,6 +8,8 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
 
+#include <yarp/dev/IControlMode.h>
+
 #include <ColorDebug.h>
 
 using namespace roboticslab;
@@ -39,7 +41,36 @@ bool PositionDirectThread::configure(const yarp::os::Searchable & config)
     return ok;
 }
 
-bool PositionDirectThread::updateControlModeRegister(const std::map<int, bool> & ctrl)
+bool PositionDirectThread::updateControlModeRegister(int j, int mode)
+{
+    return updateControlModeRegister({{j, mode == VOCAB_CM_POSITION_DIRECT}});
+}
+
+bool PositionDirectThread::updateControlModeRegister(int * modes, int size)
+{
+    std::vector<std::pair<int, bool>> ctrl;
+
+    for (int i = 0; i < size; i++)
+    {
+        ctrl.push_back({i, modes[i] == VOCAB_CM_POSITION_DIRECT});
+    }
+
+    return updateControlModeRegister(ctrl);
+}
+
+bool PositionDirectThread::updateControlModeRegister(int n_joint, const int * joints, int * modes)
+{
+    std::vector<std::pair<int, bool>> ctrl;
+
+    for (int i = 0; i < n_joint; i++)
+    {
+        ctrl.push_back({joints[i], modes[i] == VOCAB_CM_POSITION_DIRECT});
+    }
+
+    return updateControlModeRegister(ctrl);
+}
+
+bool PositionDirectThread::updateControlModeRegister(const std::vector<std::pair<int, bool>> & ctrl)
 {
     for (const auto & el : ctrl)
     {

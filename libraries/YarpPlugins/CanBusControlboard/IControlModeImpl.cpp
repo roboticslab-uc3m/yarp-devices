@@ -40,12 +40,8 @@ bool CanBusControlboard::setControlMode(int j, int mode)
     CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
     CHECK_JOINT(j);
 
-    if (!deviceMapper.mapSingleJoint(&yarp::dev::IControlModeRaw::setControlModeRaw, j, mode))
-    {
-        return false;
-    }
-
-    return posdThread->updateControlModeRegister({{j, mode == VOCAB_CM_POSITION_DIRECT}});
+    return deviceMapper.mapSingleJoint(&yarp::dev::IControlModeRaw::setControlModeRaw, j, mode)
+            && posdThread->updateControlModeRegister(j, mode);
 }
 
 // -----------------------------------------------------------------------------
@@ -54,19 +50,8 @@ bool CanBusControlboard::setControlModes(int * modes)
 {
     CD_DEBUG("\n");
 
-    if (!deviceMapper.mapAllJoints(&yarp::dev::IControlModeRaw::setControlModesRaw, modes))
-    {
-        return false;
-    }
-
-    std::map<int, bool> ctrl;
-
-    for (unsigned int i = 0; i < nodeDevices.size(); i++)
-    {
-        ctrl.insert({i, modes[i] == VOCAB_CM_POSITION_DIRECT});
-    }
-
-    return posdThread->updateControlModeRegister(ctrl);
+    return deviceMapper.mapAllJoints(&yarp::dev::IControlModeRaw::setControlModesRaw, modes)
+            && posdThread->updateControlModeRegister(modes, nodeDevices.size());
 }
 
 // -----------------------------------------------------------------------------
@@ -75,19 +60,8 @@ bool CanBusControlboard::setControlModes(int n_joint, const int * joints, int * 
 {
     CD_DEBUG("(%d)\n",n_joint);
 
-    if (!deviceMapper.mapJointGroup(&yarp::dev::IControlModeRaw::setControlModesRaw, n_joint, joints, modes))
-    {
-        return false;
-    }
-
-    std::map<int, bool> ctrl;
-
-    for (int i = 0; i < n_joint; i++)
-    {
-        ctrl.insert({joints[i], modes[i] == VOCAB_CM_POSITION_DIRECT});
-    }
-
-    return posdThread->updateControlModeRegister(ctrl);
+    return deviceMapper.mapJointGroup(&yarp::dev::IControlModeRaw::setControlModesRaw, n_joint, joints, modes)
+            && posdThread->updateControlModeRegister(n_joint, joints, modes);
 }
 
 // -----------------------------------------------------------------------------
