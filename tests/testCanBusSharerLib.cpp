@@ -117,7 +117,7 @@ protected:
     std::vector<std::future<void> *> futures;
 
     static constexpr double TIMEOUT = 0.1; // [s]
-    static constexpr int MILLIS = 10;
+    static constexpr int MILLIS = 50;
 
 private:
 
