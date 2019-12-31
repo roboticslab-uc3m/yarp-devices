@@ -11,6 +11,9 @@
 
 using namespace roboticslab;
 
+namespace roboticslab // make doxygen group these classes in the rl namespace
+{
+
 /**
  * @ingroup DeviceMapperLib
  * @brief An implementation of a sequential deferred callback executor.
@@ -53,6 +56,8 @@ public:
 private:
     ctpl::thread_pool & pool;
 };
+
+} // namespace roboticslab
 
 class ParallelTaskFactory::Private
 {

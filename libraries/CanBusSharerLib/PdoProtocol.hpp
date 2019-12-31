@@ -16,29 +16,38 @@
 namespace roboticslab
 {
 
-// https://stackoverflow.com/a/53284026
+/**
+ * @ingroup CanBusSharerLib
+ * @brief Wrapped enumeration of a PDO transmission type.
+ *
+ * Inspired by <a href="https://stackoverflow.com/a/53284026">this SO answer</a>.
+ */
 class PdoTransmissionType final
 {
 public:
+    //!
     enum transmission_type : std::uint8_t
     {
-        SYNCHRONOUS_ACYCLIC = 0x00,
-        SYNCHRONOUS_CYCLIC = 0x01,
-        RTR_SYNCHRONOUS = 0xFC,
-        RTR_EVENT_DRIVEN = 0xFD,
-        EVENT_DRIVEN_MANUFACTURER = 0xFE,
-        EVENT_DRIVEN_DEVICE_APP_PROFILE = 0xFF
+        SYNCHRONOUS_ACYCLIC = 0x00, ///< Synchronous acyclic
+        SYNCHRONOUS_CYCLIC = 0x01, ///< Synchronous cyclic
+        RTR_SYNCHRONOUS = 0xFC, ///< Synchronous RTR
+        RTR_EVENT_DRIVEN = 0xFD, ///< Event-driven RTR
+        EVENT_DRIVEN_MANUFACTURER = 0xFE, ///< Manufacturer-specific event-driven
+        EVENT_DRIVEN_DEVICE_APP_PROFILE = 0xFF ///< Device application profile-specific event-driven
     };
 
-    constexpr PdoTransmissionType()
-    { }
+    //! Default constructor.
+    constexpr PdoTransmissionType() = default;
 
+    //! Constructor, accepts initial transmission type.
     constexpr PdoTransmissionType(transmission_type type) : type(type)
     { }
 
+    //! User-defined conversion operator.
     constexpr operator std::uint8_t() const
     { return type; }
 
+    //! Cast input byte to an @ref PdoTransmissionType enumerator.
     static constexpr PdoTransmissionType SYNCHRONOUS_CYCLIC_N(std::uint8_t n)
     { return static_cast<transmission_type>(n); }
 
@@ -48,23 +57,52 @@ private:
 
 class PdoProtocol;
 
+/**
+ * @ingroup CanBusSharerLib
+ * @brief Set of SDO configuration values for a @ref PdoProtocol.
+ *
+ * This class manages optional values via chainable setters. Unless a setter has
+ * been called by client code, no configuration will be applied for its related
+ * value. For instance: if @ref setInhibitTime is never called, @ref PdoProtocol
+ * will not attempt to create and send a SDO package that configures the inhibit
+ * time of the RPDO on the drive side.
+ */
 class PdoConfiguration final
 {
     friend PdoProtocol;
 
 public:
+    //! Constructor.
     PdoConfiguration();
+
+    //! Destructor
     ~PdoConfiguration();
+
+    //! Copy constructor.
     PdoConfiguration(const PdoConfiguration &);
+
+    //! Copy assignment operator.
     PdoConfiguration & operator=(const PdoConfiguration &);
 
+    //! Set or reset valid bit.
     PdoConfiguration & setValid(bool value);
+
+    //! Set or reset RTR bit.
     PdoConfiguration & setRtr(bool value);
+
+    //! Set transmission type.
     PdoConfiguration & setTransmissionType(PdoTransmissionType value);
+
+    //! Set inhibit time.
     PdoConfiguration & setInhibitTime(std::uint16_t value);
+
+    //! Set event timer.
     PdoConfiguration & setEventTimer(std::uint16_t value);
+
+    //! Set sync start value.
     PdoConfiguration & setSyncStartValue(std::uint8_t value);
 
+    //! Configure PDO mapping, uses template parameter to deduce object size.
     template<typename T>
     PdoConfiguration & addMapping(std::uint16_t index, std::uint8_t subindex = 0x00)
     {
@@ -81,24 +119,35 @@ private:
     Private * priv;
 };
 
+/**
+ * @ingroup CanBusSharerLib
+ * @brief Abstract representation of PDO protocol.
+ *
+ * See @ref PdoConfiguration regarding how PDO configuration works.
+ */
 class PdoProtocol
 {
 public:
+    //! Constructor, registers SDO client handle.
     PdoProtocol(std::uint8_t id, std::uint16_t cob, unsigned int n, SdoClient * sdo)
         : id(id), cob(cob), n(n), sdo(sdo)
     { }
 
-    virtual ~PdoProtocol()
-    { }
+    //! Virtual destructor.
+    virtual ~PdoProtocol() = default;
 
+    //! Retrieve COB ID.
     std::uint16_t getCobId() const
     { return cob + id; };
 
+    //! Configure this PDO drive-side via SDO packages.
     virtual bool configure(const PdoConfiguration & config);
 
 protected:
+    //! PDO type.
     enum class PdoType { RPDO, TPDO };
 
+    //! Retrieve PDO type.
     virtual PdoType getType() const = 0;
 
     // https://stackoverflow.com/a/38776200
@@ -113,16 +162,29 @@ protected:
     SdoClient * sdo;
 };
 
+/**
+ * @ingroup CanBusSharerLib
+ * @brief Representation of RPDO protocol.
+ */
 class ReceivePdo final : public PdoProtocol
 {
 public:
+    //! Constructor, registers SDO and CAN sender handles.
     ReceivePdo(std::uint8_t id, std::uint16_t cob, unsigned int n, SdoClient * sdo, CanSenderDelegate * sender = nullptr)
         : PdoProtocol(id, cob, n, sdo), sender(sender)
     { }
 
+    //! Configure CAN sender delegate handle.
     void configureSender(CanSenderDelegate * sender)
     { this->sender = sender; }
 
+    /**
+     * @brief Send data to the drive.
+     *
+     * Usually, you'll want to pass as many parameters as CAN dictionary objects
+     * have been mapped. Only integral types allowed, cumulative size cannot
+     * exceed 8 bytes.
+     */
     template<typename... Ts>
     bool write(Ts... data)
     {
@@ -154,14 +216,26 @@ private:
     CanSenderDelegate * sender;
 };
 
+/**
+ * @ingroup CanBusSharerLib
+ * @brief Representation of TPDO protocol.
+ */
 class TransmitPdo final : public PdoProtocol
 {
 public:
     using PdoProtocol::PdoProtocol; // inherit parent constructor
 
+    //! Invoke registered callback on raw CAN message data.
     bool accept(const std::uint8_t * data, unsigned int size)
     { return (bool)callback && callback(data, size); }
 
+    /**
+     * @brief Register callback.
+     *
+     * Usually, you'll want to pass as many parameters to the callback function
+     * as CAN dictionary objects have been mapped. Only integral types allowed,
+     * cumulative size cannot exceed 8 bytes.
+     */
     template<typename... Ts, typename Fn>
     void registerHandler(Fn && fn)
     {
@@ -171,6 +245,7 @@ public:
               return size<Ts...>() == len && (ordered_call{fn, unpack<Ts>(raw, &count)...}, true); };
     }
 
+    //! Unregister callback.
     void unregisterHandler()
     { callback = HandlerFn(); }
 
