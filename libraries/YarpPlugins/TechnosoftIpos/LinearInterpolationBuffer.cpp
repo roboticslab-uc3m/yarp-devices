@@ -47,7 +47,7 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::
 
     if (linInterpMode == "pt")
     {
-        if (linInterpBufferSize > PT_BUFFER_MAX_SIZE)
+        if (linInterpBufferSize > PT_BUFFER_MAX_SIZE - 1) // consume one additional slot to avoid annoying buffer full warnings
         {
             CD_ERROR("Invalid PT mode buffer size: %d > %d.\n", linInterpBufferSize, PT_BUFFER_MAX_SIZE);
             return nullptr;

@@ -28,7 +28,8 @@ bool TechnosoftIpos::setPositionDirectModeRaw()
     if (!can->rpdo3()->configure(rpdo3Conf)
         || !can->sdo()->download<std::int8_t>("Modes of Operation", 7, 0x6060)
         || !can->sdo()->download<std::int16_t>("Interpolation sub mode select", linInterpBuffer->getSubMode(), 0x60C0)
-        || !can->sdo()->download<std::uint16_t>("Interpolated position buffer length", linInterpBuffer->getBufferSize(), 0x2073)
+        // consume one additional slot to avoid annoying buffer full warnings
+        || !can->sdo()->download<std::uint16_t>("Interpolated position buffer length", linInterpBuffer->getBufferSize() + 1, 0x2073)
         || !can->sdo()->download<std::uint16_t>("Interpolated position buffer configuration", 0xA080, 0x2074)
         || !can->sdo()->download<std::int32_t>("Interpolated position initial position", refInternalUnits, 0x2079))
     {
