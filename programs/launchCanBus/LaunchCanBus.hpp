@@ -16,6 +16,9 @@ namespace roboticslab
 class LaunchCanBus : public yarp::os::RFModule
 {
 public:
+    ~LaunchCanBus()
+    { close(); }
+
     bool configure(yarp::os::ResourceFinder &rf);
     virtual double getPeriod();
     virtual bool updateModule();

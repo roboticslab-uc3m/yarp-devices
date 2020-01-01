@@ -279,32 +279,35 @@ bool LaunchCanBus::close()
 {
     for (int i = 0; i < calibratorDevices.size(); i++)
     {
-        if (!calibratorDevices[i]->poly->close())
+        if (calibratorDevices[i]->poly)
         {
-            CD_WARNING("Device %s did not close properly.\n", calibratorDevices[i]->key.c_str());
+            calibratorDevices[i]->poly->close();
         }
 
         delete calibratorDevices[i]->poly;
+        calibratorDevices[i]->poly = nullptr;
     }
 
     for (int i = 0; i < wrapperDevices.size(); i++)
     {
-        if (!wrapperDevices[i]->poly->close())
+        if (wrapperDevices[i]->poly)
         {
-            CD_WARNING("Device %s did not close properly.\n", wrapperDevices[i]->key.c_str());
+            wrapperDevices[i]->poly->close();
         }
 
         delete wrapperDevices[i]->poly;
+        wrapperDevices[i]->poly = nullptr;
     }
 
     for (int i = 0; i < canDevices.size(); i++)
     {
-        if (!canDevices[i]->poly->close())
+        if (canDevices[i]->poly)
         {
-            CD_WARNING("Device %s did not close properly.\n", canDevices[i]->key.c_str());
+            canDevices[i]->poly->close();
         }
 
         delete canDevices[i]->poly;
+        canDevices[i]->poly = nullptr;
     }
 
     return true;

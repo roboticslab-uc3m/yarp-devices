@@ -80,7 +80,10 @@ public:
                    txTimeoutMs(DEFAULT_TX_TIMEOUT_MS),
                    blockingMode(DEFAULT_BLOCKING_MODE),
                    allowPermissive(DEFAULT_ALLOW_PERMISSIVE)
-    {}
+    { }
+
+    ~CanBusPeak()
+    { close(); }
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 

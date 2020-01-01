@@ -86,7 +86,12 @@ bool roboticslab::Jr3::open(yarp::os::Searchable& config)
 
 bool roboticslab::Jr3::close()
 {
-    ::close(fd);
+    if (fd)
+    {
+        ::close(fd);
+        fd = 0;
+    }
+
     return true;
 }
 

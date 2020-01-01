@@ -139,6 +139,7 @@ bool roboticslab::CanBusPeak::close()
         }
 
         pcanfd_close(fileDescriptor);
+        fileDescriptor = 0;
     }
 
     return true;

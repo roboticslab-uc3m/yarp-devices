@@ -47,7 +47,10 @@ public:
     AmorControlboard() : handle(AMOR_INVALID_HANDLE),
                          usingCartesianController(false),
                          controlMode(VOCAB_CM_POSITION)
-    {}
+    { }
+
+    ~AmorControlboard()
+    { close(); }
 
     // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
 

@@ -180,6 +180,7 @@ bool roboticslab::CanBusHico::close()
         }
 
         ::close(fileDescriptor);
+        fileDescriptor = 0;
     }
 
     return true;

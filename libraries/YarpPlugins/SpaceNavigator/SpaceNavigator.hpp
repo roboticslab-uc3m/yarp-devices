@@ -48,6 +48,7 @@ class SpaceNavigator : public yarp::dev::DeviceDriver, public yarp::dev::IAnalog
     public:
 
         SpaceNavigator();
+        ~SpaceNavigator();
 
         //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
         virtual bool open(yarp::os::Searchable& config);

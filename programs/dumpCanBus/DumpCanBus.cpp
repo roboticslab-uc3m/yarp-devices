@@ -15,6 +15,11 @@ DumpCanBus::DumpCanBus()
       iCanBufferFactory(nullptr)
 { }
 
+DumpCanBus::~DumpCanBus()
+{
+    close();
+}
+
 bool DumpCanBus::configure(yarp::os::ResourceFinder & rf)
 {
     CD_DEBUG("%s\n", rf.toString().c_str());
@@ -43,13 +48,20 @@ bool DumpCanBus::configure(yarp::os::ResourceFinder & rf)
 
     canInputBuffer = iCanBufferFactory->createBuffer(1);
 
-    return yarp::os::Thread::start() || close();
+    return yarp::os::Thread::start();
 }
 
 bool DumpCanBus::close()
 {
     yarp::os::Thread::stop();
-    iCanBufferFactory->destroyBuffer(canInputBuffer);
-    canDevice.close();
+
+    if (iCanBufferFactory)
+    {
+        iCanBufferFactory->destroyBuffer(canInputBuffer);
+        canInputBuffer.resize(0, 0);
+        canDevice.close();
+        iCanBufferFactory = 0;
+    }
+
     return true;
 }

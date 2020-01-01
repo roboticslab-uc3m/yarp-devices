@@ -57,7 +57,10 @@ public:
                    allowPermissive(DEFAULT_ALLOW_PERMISSIVE),
                    filterManager(NULL),
                    filterConfig(FilterManager::DISABLED)
-    {}
+    { }
+
+    ~CanBusHico()
+    { close(); }
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 

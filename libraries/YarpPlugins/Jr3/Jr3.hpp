@@ -44,8 +44,11 @@ class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor
     public:
 
         Jr3()
-        {
-        }
+            : fd(0)
+        { }
+
+        ~Jr3()
+        { close(); }
 
         //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
         virtual bool open(yarp::os::Searchable& config);

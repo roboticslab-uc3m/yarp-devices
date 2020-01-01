@@ -63,6 +63,9 @@ public:
         : posdThread(nullptr)
     { }
 
+    ~CanBusControlboard()
+    { close(); }
+
     // -------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp --------
 
     virtual bool open(yarp::os::Searchable & config) override;

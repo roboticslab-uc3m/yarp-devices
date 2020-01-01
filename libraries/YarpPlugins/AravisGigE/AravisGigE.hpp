@@ -30,6 +30,7 @@ class AravisGigE : public yarp::dev::DeviceDriver,
     public:
 
         AravisGigE() {}
+        ~AravisGigE() { close(); }
 
         //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
         virtual bool open(yarp::os::Searchable& config);

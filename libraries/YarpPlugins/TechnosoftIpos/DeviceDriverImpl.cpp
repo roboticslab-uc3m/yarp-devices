@@ -143,8 +143,17 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
 bool TechnosoftIpos::close()
 {
-    delete linInterpBuffer;
-    delete can;
+    if (linInterpBuffer)
+    {
+        delete linInterpBuffer;
+        linInterpBuffer = nullptr;
+    }
+
+    if (can)
+    {
+        delete can;
+        can = nullptr;
+    }
 
     if (externalEncoderDevice.isValid())
     {

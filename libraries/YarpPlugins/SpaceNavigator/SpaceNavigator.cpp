@@ -16,6 +16,13 @@ roboticslab::SpaceNavigator::SpaceNavigator()
 
 // -----------------------------------------------------------------------------
 
+roboticslab::SpaceNavigator::~SpaceNavigator()
+{
+    close();
+}
+
+// -----------------------------------------------------------------------------
+
 double roboticslab::SpaceNavigator::enforceRange(double in)
 {
     double out;

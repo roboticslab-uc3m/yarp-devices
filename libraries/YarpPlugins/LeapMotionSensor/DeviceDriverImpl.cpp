@@ -46,8 +46,12 @@ bool roboticslab::LeapMotionSensor::open(yarp::os::Searchable& config)
 
 bool roboticslab::LeapMotionSensor::close()
 {
-    delete controller;
-    controller = NULL;
+    if (controller)
+    {
+        delete controller;
+        controller = NULL;
+    }
+
     return true;
 }
 

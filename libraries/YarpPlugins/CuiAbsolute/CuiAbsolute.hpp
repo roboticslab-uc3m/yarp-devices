@@ -48,6 +48,9 @@ public:
           sender(nullptr), pushStateObserver(nullptr), pollStateObserver(nullptr)
     { }
 
+    ~CuiAbsolute()
+    { close(); }
+
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 
     virtual bool open(yarp::os::Searchable & config) override;

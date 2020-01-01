@@ -64,7 +64,7 @@ public:
 
     //! @brief Constructor.
     WiimoteDispatcherThread() : iface(NULL)
-    {}
+    { }
 
     //! @brief Called just before a new thread starts.
     virtual void beforeStart();
@@ -102,7 +102,10 @@ public:
         : iface(NULL),
           calibZeroX(0), calibZeroY(0), calibZeroZ(0),
           calibOneX(0), calibOneY(0), calibOneZ(0)
-    {}
+    { }
+
+    ~WiimoteSensor()
+    { close(); }
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
     virtual bool open(yarp::os::Searchable& config);

@@ -1,10 +1,8 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /**
- *
  * @ingroup yarp_devices_programs
- * \defgroup launchCanBus launchCanBus
- *
+ * @defgroup launchCanBus launchCanBus
  * @brief Creates an instance of roboticslab::LaunchCanBus.
  */
 
@@ -15,7 +13,7 @@
 
 #include "LaunchCanBus.hpp"
 
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
     yarp::os::ResourceFinder rf;
     rf.setVerbose(true);
@@ -36,13 +34,5 @@ int main(int argc, char *argv[])
     CD_SUCCESS_NO_HEADER("[ok]\n");
 
     roboticslab::LaunchCanBus mod;
-
-    if (mod.configure(rf))
-    {
-        return mod.runModule();
-    }
-    else
-    {
-        return mod.close() ? 0 : 1;
-    }
+    return mod.configure(rf);
 }

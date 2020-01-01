@@ -72,7 +72,10 @@ public:
           iEncodersTimedRawExternal(nullptr),
           iExternalEncoderCanBusSharer(nullptr),
           linInterpBuffer(nullptr)
-    {}
+    { }
+
+    ~TechnosoftIpos()
+    { close(); }
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 

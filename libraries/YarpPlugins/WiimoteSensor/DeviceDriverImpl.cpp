@@ -39,7 +39,6 @@ bool roboticslab::WiimoteSensor::open(yarp::os::Searchable& config)
     if (ret < 0)
     {
         CD_ERROR("Cannot open interface, did you launch with sudo? (%d).\n", ret);
-        close();
         return false;
     }
 
@@ -55,9 +54,7 @@ bool roboticslab::WiimoteSensor::open(yarp::os::Searchable& config)
     CD_INFO("Calibration (one): x = %d, y = %d, z = %d\n", calibOneX, calibOneY, calibOneZ);
 
     dispatcherThread.setInterfacePointer(iface);
-    dispatcherThread.start();
-
-    return true;
+    return dispatcherThread.start();
 }
 
 // -----------------------------------------------------------------------------
@@ -65,7 +62,13 @@ bool roboticslab::WiimoteSensor::open(yarp::os::Searchable& config)
 bool roboticslab::WiimoteSensor::close()
 {
     dispatcherThread.stop();
-    xwii_iface_unref(iface);
+
+    if (iface)
+    {
+        xwii_iface_unref(iface);
+        iface = NULL;
+    }
+
     return true;
 }
 

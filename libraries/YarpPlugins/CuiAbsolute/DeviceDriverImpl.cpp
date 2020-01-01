@@ -59,16 +59,16 @@ bool CuiAbsolute::open(yarp::os::Searchable& config)
 
 bool CuiAbsolute::close()
 {
-    switch (cuiMode)
+    if (pushStateObserver)
     {
-    case CuiMode::PUSH:
         delete pushStateObserver;
-        break;
-    case CuiMode::PULL:
+        pushStateObserver = nullptr;
+    }
+
+    if (pollStateObserver)
+    {
         delete pollStateObserver;
-        break;
-    default:
-        break;
+        pollStateObserver = nullptr;
     }
 
     return true;

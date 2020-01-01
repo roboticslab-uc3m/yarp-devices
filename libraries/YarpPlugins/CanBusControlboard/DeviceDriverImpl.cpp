@@ -269,20 +269,26 @@ bool CanBusControlboard::close()
     }
 
     delete posdThread;
+    posdThread = nullptr;
 
     for (int i = 0; i < nodeDevices.size(); i++)
     {
-        ICanBusSharer * iCanBusSharer;
-        nodeDevices[i]->poly->view(iCanBusSharer);
-
-        if (!iCanBusSharer->finalize())
+        if (nodeDevices[i]->poly)
         {
-            CD_WARNING("Node device %s could not finalize CAN comms.\n", nodeDevices[i]->key.c_str());
-            ok = false;
+            ICanBusSharer * iCanBusSharer;
+            nodeDevices[i]->poly->view(iCanBusSharer);
+
+            if (!iCanBusSharer->finalize())
+            {
+                CD_WARNING("Node device %s could not finalize CAN comms.\n", nodeDevices[i]->key.c_str());
+                ok = false;
+            }
+
+            ok &= nodeDevices[i]->poly->close();
         }
 
-        ok &= nodeDevices[i]->poly->close();
         delete nodeDevices[i]->poly;
+        nodeDevices[i]->poly = nullptr;
     }
 
     for (const auto & bundle : canThreads)
@@ -302,19 +308,26 @@ bool CanBusControlboard::close()
         delete bundle.writer;
     }
 
+    canThreads.clear();
+
     for (int i = 0; i < busDevices.size(); i++)
     {
-        yarp::dev::ICanBus * iCanBus;
-        busDevices[i]->poly->view(iCanBus);
-
-        // Clear CAN acceptance filters ('0' = all IDs that were previously set by canIdAdd).
-        if (!iCanBus->canIdDelete(0))
+        if (busDevices[i]->poly)
         {
-            CD_WARNING("CAN filters on bus %s may be preserved on the next run.\n", busDevices[i]->key.c_str());
+            yarp::dev::ICanBus * iCanBus;
+            busDevices[i]->poly->view(iCanBus);
+
+            // Clear CAN acceptance filters ('0' = all IDs that were previously set by canIdAdd).
+            if (!iCanBus->canIdDelete(0))
+            {
+                CD_WARNING("CAN filters on bus %s may be preserved on the next run.\n", busDevices[i]->key.c_str());
+            }
+
+            ok &= busDevices[i]->poly->close();
         }
 
-        ok &= busDevices[i]->poly->close();
         delete busDevices[i]->poly;
+        busDevices[i]->poly = nullptr;
     }
 
     return ok;

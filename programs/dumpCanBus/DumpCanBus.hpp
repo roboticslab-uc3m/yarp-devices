@@ -25,6 +25,7 @@ class DumpCanBus : public yarp::os::RFModule,
 public:
 
     DumpCanBus();
+    ~DumpCanBus();
 
     virtual bool configure(yarp::os::ResourceFinder & rf);
     virtual bool updateModule()
