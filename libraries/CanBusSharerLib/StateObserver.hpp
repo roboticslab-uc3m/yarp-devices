@@ -100,7 +100,7 @@ public:
 
 protected:
     virtual void setRemoteStorage(const void * remote, std::size_t len) override
-    { *reinterpret_cast<T *>(getRemoteStorage()) = *reinterpret_cast<const T *>(remote); }
+    { *static_cast<T *>(getRemoteStorage()) = *static_cast<const T *>(remote); }
 };
 
 /**
