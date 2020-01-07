@@ -105,7 +105,8 @@ bool TechnosoftIpos::finalize()
 {
     bool ok = true;
 
-    if (!can->driveStatus()->requestState(DriveState::SWITCH_ON_DISABLED))
+    if (can->driveStatus()->getCurrentState() != DriveState::NOT_READY_TO_SWITCH_ON
+        && !can->driveStatus()->requestState(DriveState::SWITCH_ON_DISABLED))
     {
         CD_WARNING("SWITCH_ON_DISABLED transition failed.\n");
         ok = false;
