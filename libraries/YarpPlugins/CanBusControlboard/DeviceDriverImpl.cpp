@@ -283,12 +283,7 @@ bool CanBusControlboard::close()
                 CD_WARNING("Node device %s could not finalize CAN comms.\n", nodeDevices[i]->key.c_str());
                 ok = false;
             }
-
-            ok &= nodeDevices[i]->poly->close();
         }
-
-        delete nodeDevices[i]->poly;
-        nodeDevices[i]->poly = nullptr;
     }
 
     for (const auto & bundle : canThreads)
@@ -309,6 +304,18 @@ bool CanBusControlboard::close()
     }
 
     canThreads.clear();
+
+    for (int i = 0; i < nodeDevices.size(); i++)
+    {
+        if (nodeDevices[i]->poly)
+        {
+            // CAN read threads must not live beyond this point.
+            ok &= nodeDevices[i]->poly->close();
+        }
+
+        delete nodeDevices[i]->poly;
+        nodeDevices[i]->poly = nullptr;
+    }
 
     for (int i = 0; i < busDevices.size(); i++)
     {
