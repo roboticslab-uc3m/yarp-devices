@@ -34,5 +34,5 @@ int main(int argc, char * argv[])
     CD_SUCCESS_NO_HEADER("[ok]\n");
 
     roboticslab::LaunchCanBus mod;
-    return mod.configure(rf);
+    return mod.runModule(rf);
 }
