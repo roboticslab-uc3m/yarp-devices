@@ -48,8 +48,13 @@ public:
     { return type; }
 
     //! Cast input byte to an @ref PdoTransmissionType enumerator.
-    static constexpr PdoTransmissionType SYNCHRONOUS_CYCLIC_N(std::uint8_t n)
-    { return static_cast<transmission_type>(n); }
+    template<std::uint8_t n>
+    static constexpr PdoTransmissionType SYNCHRONOUS_CYCLIC_N()
+    {
+        // https://stackoverflow.com/a/12109644
+        static_assert(n >= 0x01 && n <= 0xF0, "Illegal argument."); // [1-240]
+        return static_cast<transmission_type>(n);
+    }
 
 private:
     transmission_type type = SYNCHRONOUS_ACYCLIC;

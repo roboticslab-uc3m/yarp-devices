@@ -591,7 +591,7 @@ TEST_F(CanBusSharerTest, TransmitPdo)
 
     const unsigned int n = 1;
 
-    PdoTransmissionType type = PdoTransmissionType::SYNCHRONOUS_CYCLIC_N(0x04);
+    PdoTransmissionType type = PdoTransmissionType::SYNCHRONOUS_CYCLIC_N<0x04>();
 
     const std::uint16_t comm = 0x1800 + n - 1;
     const std::uint8_t commLSB = comm & 0x00FF;
