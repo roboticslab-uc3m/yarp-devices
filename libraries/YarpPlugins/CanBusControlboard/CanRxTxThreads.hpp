@@ -3,9 +3,9 @@
 #ifndef __CAN_RX_TH_THREADS_HPP__
 #define __CAN_RX_TH_THREADS_HPP__
 
-#include <map>
 #include <mutex>
 #include <string>
+#include <unordered_map>
 
 #include <yarp/os/Thread.h>
 #include <yarp/dev/CanBusInterface.h>
@@ -92,7 +92,7 @@ public:
     virtual void run() override;
 
 private:
-    std::map<unsigned int, ICanBusSharer *> canIdToHandle;
+    std::unordered_map<unsigned int, ICanBusSharer *> canIdToHandle;
 };
 
 /**
