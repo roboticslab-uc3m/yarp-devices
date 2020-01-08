@@ -48,11 +48,15 @@ public:
     { return type; }
 
     //! Cast input byte to an @ref PdoTransmissionType enumerator.
+    static constexpr PdoTransmissionType SYNCHRONOUS_CYCLIC_N(std::uint8_t n)
+    { return static_cast<transmission_type>(n); }
+
+    //! Cast input byte to an @ref PdoTransmissionType enumerator, performs static check on range [0x01-0xF0].
     template<std::uint8_t n>
     static constexpr PdoTransmissionType SYNCHRONOUS_CYCLIC_N()
     {
         // https://stackoverflow.com/a/12109644
-        static_assert(n >= 0x01 && n <= 0xF0, "Illegal argument."); // [1-240]
+        static_assert(n >= 0x01 && n <= 0xF0, "Illegal argument."); // same as [1-240]
         return static_cast<transmission_type>(n);
     }
 
