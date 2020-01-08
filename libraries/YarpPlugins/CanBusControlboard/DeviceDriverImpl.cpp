@@ -141,6 +141,9 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             }
         }
 
+        bool enableAcceptanceFilters = config.check("enableAcceptanceFilters", yarp::os::Value(false),
+                "enable CAN acceptance filters").asBool();
+
         std::vector<unsigned int> filterIds;
 
         for (int i = 0; i < nodes.size(); i++)
@@ -197,9 +200,12 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
                 canThreads.back().reader->registerHandle(iCanBusSharer);
                 iCanBusSharer->registerSender(canThreads.back().writer->getDelegate());
 
-                auto additionalIds = iCanBusSharer->getAdditionalIds();
-                filterIds.push_back(iCanBusSharer->getId());
-                filterIds.insert(filterIds.end(), additionalIds.begin(), additionalIds.end());
+                if (enableAcceptanceFilters)
+                {
+                    auto additionalIds = iCanBusSharer->getAdditionalIds();
+                    filterIds.push_back(iCanBusSharer->getId());
+                    filterIds.insert(filterIds.end(), additionalIds.begin(), additionalIds.end());
+                }
             }
             else
             {
@@ -321,13 +327,16 @@ bool CanBusControlboard::close()
     {
         if (busDevices[i]->poly)
         {
-            yarp::dev::ICanBus * iCanBus;
-            busDevices[i]->poly->view(iCanBus);
-
-            // Clear CAN acceptance filters ('0' = all IDs that were previously set by canIdAdd).
-            if (!iCanBus->canIdDelete(0))
+            if (busDevices[i]->poly->getValue("enableAcceptanceFilters").asBool())
             {
-                CD_WARNING("CAN filters on bus %s may be preserved on the next run.\n", busDevices[i]->key.c_str());
+                yarp::dev::ICanBus * iCanBus;
+                busDevices[i]->poly->view(iCanBus);
+
+                // Clear CAN acceptance filters ('0' = all IDs that were previously set by canIdAdd).
+                if (!iCanBus->canIdDelete(0))
+                {
+                    CD_WARNING("CAN filters on bus %s may be preserved on the next run.\n", busDevices[i]->key.c_str());
+                }
             }
 
             ok &= busDevices[i]->poly->close();
