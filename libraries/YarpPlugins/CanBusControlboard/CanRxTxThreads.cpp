@@ -116,36 +116,42 @@ CanWriterThread::~CanWriterThread()
 
 // -----------------------------------------------------------------------------
 
-void CanWriterThread::run()
+void CanWriterThread::flush()
 {
     unsigned int sent;
-    bool ok;
+    std::lock_guard<std::mutex> lock(bufferMutex);
 
+    //-- Nothing to write, exit.
+    if (preparedMessages == 0) return;
+
+    //-- Write as many bytes as it can, return false on errors.
+    bool ok = iCanBus->canWrite(canBuffer, preparedMessages, &sent);
+
+    //-- Something bad happened, try again on the next call.
+    if (!ok) return;
+
+    //-- Some messages could not be sent, preserve them for later.
+    if (sent != preparedMessages)
+    {
+        CD_WARNING("Partial write! Prepared: %d, sent: %d.\n", preparedMessages, sent);
+        handlePartialWrite(sent);
+    }
+
+    preparedMessages -= sent;
+}
+
+// -----------------------------------------------------------------------------
+
+void CanWriterThread::run()
+{
     while (!isStopping())
     {
         //-- Lend CPU time to read threads.
         // https://github.com/roboticslab-uc3m/yarp-devices/issues/191
         yarp::os::Time::delay(delay);
 
-        std::lock_guard<std::mutex> lock(bufferMutex);
-
-        //-- Nothing to write, just loop again.
-        if (preparedMessages == 0) continue;
-
-        //-- Write as many bytes as it can, return false on errors.
-        ok = iCanBus->canWrite(canBuffer, preparedMessages, &sent);
-
-        //-- Something bad happened, try again on the next iteration.
-        if (!ok) continue;
-
-        //-- Some messages could not be sent, preserve them for later.
-        if (sent != preparedMessages)
-        {
-            CD_WARNING("Partial write! Prepared: %d, sent: %d.\n", preparedMessages, sent);
-            handlePartialWrite(sent);
-        }
-
-        preparedMessages -= sent;
+        //-- Send everything and reset the queue.
+        flush();
     }
 }
 
