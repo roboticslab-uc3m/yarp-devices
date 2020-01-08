@@ -259,8 +259,27 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         }
     }
 
+    if (config.check("syncPeriod", "SYNC message period (s)"))
+    {
+        double syncPeriod = config.find("syncPeriod").asFloat64();
+
+        syncTimer = new yarp::os::Timer(yarp::os::TimerSettings(syncPeriod),
+                [this](const yarp::os::YarpTimerEvent & event)
+                {
+                    for (const auto & bundle : canThreads)
+                    {
+                        auto * writer = bundle.writer;
+                        writer->getDelegate()->prepareMessage({0x80, 0, nullptr}); // SYNC
+                        writer->flush();
+                    }
+
+                    return true;
+                },
+                true);
+    }
+
     posdThread = new PositionDirectThread(deviceMapper);
-    return posdThread->configure(config);
+    return posdThread->configure(config) && (!syncTimer || syncTimer->start());
 }
 
 // -----------------------------------------------------------------------------
@@ -268,6 +287,14 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 bool CanBusControlboard::close()
 {
     bool ok = true;
+
+    if (syncTimer && syncTimer->isRunning())
+    {
+        syncTimer->stop();
+    }
+
+    delete syncTimer;
+    syncTimer = nullptr;
 
     if (posdThread && posdThread->isRunning())
     {

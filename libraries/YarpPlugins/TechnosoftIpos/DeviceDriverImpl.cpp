@@ -100,11 +100,9 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     std::uint16_t tpdo1InhibitTime = config.check("tpdo1InhibitTime", yarp::os::Value(0), "TPDO1 inhibit time (x100 microseconds)").asInt32();
     std::uint16_t tpdo2InhibitTime = config.check("tpdo2InhibitTime", yarp::os::Value(0), "TPDO2 inhibit time (x100 microseconds)").asInt32();
-    std::uint16_t tpdo3InhibitTime = config.check("tpdo3InhibitTime", yarp::os::Value(0), "TPDO3 inhibit time (x100 microseconds)").asInt32();
 
     std::uint16_t tpdo1EventTimer = config.check("tpdo1EventTimer", yarp::os::Value(0), "TPDO1 event timer (milliseconds)").asInt32();
     std::uint16_t tpdo2EventTimer = config.check("tpdo2EventTimer", yarp::os::Value(0), "TPDO2 event timer (milliseconds)").asInt32();
-    std::uint16_t tpdo3EventTimer = config.check("tpdo3EventTimer", yarp::os::Value(0), "TPDO3 event timer (milliseconds)").asInt32();
 
     PdoConfiguration tpdo1Conf;
     tpdo1Conf.addMapping<std::uint32_t>(0x1002).addMapping<std::int8_t>(0x6061);
@@ -118,8 +116,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     PdoConfiguration tpdo3Conf;
     tpdo3Conf.addMapping<std::int32_t>(0x6063).addMapping<std::int16_t>(0x6077);
-    //tpdo3Conf.setInhibitTime(tpdo3InhibitTime); // TODO
-    //tpdo3Conf.setEventTimer(tpdo3EventTimer); // TODO
+    tpdo3Conf.setTransmissionType(PdoTransmissionType::SYNCHRONOUS_CYCLIC);
 
     vars.tpdo1Conf = tpdo1Conf;
     vars.tpdo2Conf = tpdo2Conf;
