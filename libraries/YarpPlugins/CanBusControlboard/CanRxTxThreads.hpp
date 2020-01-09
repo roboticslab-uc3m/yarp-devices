@@ -114,6 +114,9 @@ public:
     //! Retrieve a handle to the CAN sender delegate.
     CanSenderDelegate * getDelegate();
 
+    //! Send awaiting messages and clear the queue.
+    void flush();
+
     virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize) override;
 
     virtual void run() override;

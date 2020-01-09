@@ -5,6 +5,8 @@
 
 #include <vector>
 
+#include <yarp/os/Timer.h>
+
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriverList.h>
 
@@ -60,7 +62,8 @@ class CanBusControlboard : public yarp::dev::DeviceDriver,
 public:
 
     CanBusControlboard()
-        : posdThread(nullptr)
+        : syncTimer(nullptr),
+          posdThread(nullptr)
     { }
 
     ~CanBusControlboard()
@@ -326,6 +329,7 @@ private:
     DeviceMapper deviceMapper;
     std::vector<CanThreads> canThreads;
 
+    yarp::os::Timer * syncTimer;
     PositionDirectThread * posdThread;
 };
 
