@@ -80,21 +80,12 @@ void CanReaderThread::run()
         for (int i = 0; i < read; i++)
         {
             const yarp::dev::CanMessage & msg = canBuffer[i];
-            const int canId = msg.getId() & 0x7F;
-            auto it = canIdToHandle.find(canId);
+            auto it = canIdToHandle.find(msg.getId() & 0x7F);
 
-            if (it == canIdToHandle.end())  //-- Can ID not found
+            if (it != canIdToHandle.end())
             {
-                //-- Intercept 700h 0 msg that just indicates presence.
-                if (msg.getId() - canId == 0x700)
-                {
-                    CD_SUCCESS("Device %d indicating presence.\n", canId);
-                }
-
-                continue;
+                it->second->interpretMessage(msg);
             }
-
-            it->second->interpretMessage(msg);
         }
     }
 }
