@@ -25,7 +25,7 @@ namespace roboticslab
 class PdoTransmissionType final
 {
 public:
-    //!
+    //! Wrapped enumerators.
     enum transmission_type : std::uint8_t
     {
         SYNCHRONOUS_ACYCLIC = 0x00, ///< Synchronous acyclic
