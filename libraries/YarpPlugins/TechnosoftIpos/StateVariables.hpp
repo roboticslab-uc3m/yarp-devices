@@ -104,6 +104,7 @@ struct StateVariables
     std::bitset<16> cer;
     std::bitset<16> ptStatus;
     std::int8_t modesOfOperation = 0;
+    std::uint8_t nmtState = 0;
 
     // read/write, those require atomic access
 

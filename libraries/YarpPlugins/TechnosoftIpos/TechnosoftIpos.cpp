@@ -437,9 +437,46 @@ void TechnosoftIpos::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, con
         break;
     }
     default:
-        CD_WARNING("%s (canId %d)\n", code.second.c_str(), can->getId());
+        CD_WARNING("%s (canId %d).\n", code.second.c_str(), can->getId());
         break;
     }
+}
+
+// -----------------------------------------------------------------------------
+
+void TechnosoftIpos::handleNmt(NmtState state)
+{
+    std::uint8_t nmtState = static_cast<std::uint8_t>(state);
+
+    // always report boot-up
+    if (state != NmtState::BOOTUP && vars.nmtState == nmtState)
+    {
+        return;
+    }
+
+    std::string s;
+
+    switch (state)
+    {
+    case NmtState::BOOTUP:
+        s = "boot-up";
+        break;
+    case NmtState::STOPPED:
+        s = "stopped";
+        break;
+    case NmtState::OPERATIONAL:
+        s = "operational";
+        break;
+    case NmtState::PRE_OPERATIONAL:
+        s = "pre-operational";
+        break;
+    default:
+        CD_WARNING("Unhandled state: %d.\n", static_cast<std::uint8_t>(state));
+        return;
+    }
+
+    CD_INFO("State transition: %s (canId %d).\n", s.c_str(), can->getId());
+    vars.nmtState = nmtState;
 }
 
 // -----------------------------------------------------------------------------

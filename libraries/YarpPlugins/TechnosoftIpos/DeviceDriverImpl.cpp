@@ -131,6 +131,8 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     can->emcy()->registerHandler(std::bind(&TechnosoftIpos::handleEmcy, this, _1, _2, _3));
     can->emcy()->setErrorCodeRegistry<TechnosoftIposEmcy>();
 
+    can->nmt()->registerHandler(std::bind(&TechnosoftIpos::handleNmt, this, _1));
+
     linInterpBuffer = LinearInterpolationBuffer::createBuffer(config, vars); // pick defaults
 
     return linInterpBuffer != nullptr;

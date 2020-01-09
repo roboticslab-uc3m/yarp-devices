@@ -258,7 +258,6 @@ public:
 protected:
 
     void interpretSupportedDriveModes(std::uint32_t data);
-
     void interpretMsr(std::uint16_t msr);
     void interpretMer(std::uint16_t mer);
     void interpretDer(std::uint16_t der);
@@ -272,6 +271,7 @@ protected:
     void handleTpdo2(std::uint16_t mer, std::uint16_t der);
     void handleTpdo3(std::int32_t position, std::int16_t current);
     void handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef);
+    void handleNmt(NmtState state);
 
     bool quitHaltState(int mode);
 
