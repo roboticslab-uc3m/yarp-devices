@@ -478,7 +478,7 @@ void TechnosoftIpos::handleNmt(NmtState state)
         return;
     }
 
-    CD_INFO("State transition: %s (canId %d).\n", s.c_str(), can->getId());
+    CD_INFO("Heartbeat: %s (canId %d).\n", s.c_str(), can->getId());
 
     vars.lastNmtState = nmtState;
 }
