@@ -8,6 +8,8 @@
 #include <sstream>
 #include <string>
 
+#include <yarp/os/Time.h>
+
 #include <ColorDebug.h>
 
 using namespace roboticslab;
@@ -446,6 +448,7 @@ void TechnosoftIpos::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, con
 
 void TechnosoftIpos::handleNmt(NmtState state)
 {
+    vars.lastHeartbeat = yarp::os::Time::now();
     std::uint8_t nmtState = static_cast<std::uint8_t>(state);
 
     // always report boot-up
@@ -476,7 +479,24 @@ void TechnosoftIpos::handleNmt(NmtState state)
     }
 
     CD_INFO("State transition: %s (canId %d).\n", s.c_str(), can->getId());
+
     vars.nmtState = nmtState;
+}
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::monitorWorker(const yarp::os::YarpTimerEvent & event)
+{
+    double lastHeartbeat = vars.lastHeartbeat;
+
+    if (lastHeartbeat < event.lastReal && vars.actualControlMode != VOCAB_CM_HW_FAULT)
+    {
+        double elapsed = event.currentReal - lastHeartbeat;
+        CD_ERROR("Last heartbeat response was %f seconds ago (canId %d).\n", elapsed, can->getId());
+        vars.actualControlMode = VOCAB_CM_HW_FAULT;
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------

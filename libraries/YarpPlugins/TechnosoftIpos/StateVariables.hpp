@@ -119,6 +119,8 @@ struct StateVariables
     std::atomic<int> encoderPulses;
     std::atomic<int> pulsesPerSample;
 
+    std::atomic<double> lastHeartbeat;
+
     // read only, conceptually immutable
 
     double drivePeakCurrent = 0.0;
@@ -132,6 +134,8 @@ struct StateVariables
     PdoConfiguration tpdo1Conf;
     PdoConfiguration tpdo2Conf;
     PdoConfiguration tpdo3Conf;
+
+    std::uint16_t heartbeatPeriod = 0;
 
     // read only, fresh values queried from iPOS drive
 

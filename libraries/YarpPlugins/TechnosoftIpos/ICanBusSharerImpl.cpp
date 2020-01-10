@@ -2,6 +2,8 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <yarp/os/Time.h>
+
 #include <ColorDebug.h>
 
 #include "CanUtils.hpp"
@@ -92,11 +94,14 @@ bool TechnosoftIpos::initialize()
         && can->tpdo2()->configure(vars.tpdo2Conf)
         && can->tpdo3()->configure(vars.tpdo3Conf)
         && can->sdo()->download<std::uint16_t>("Auxiliary Settings Register", 0x0000, 0x208E) // legacy pt mode
+        && can->sdo()->download<std::uint16_t>("Producer Heartbeat Time", vars.heartbeatPeriod, 0x1017)
         && (vars.actualControlMode = VOCAB_CM_CONFIGURED, true)
+        && (vars.lastHeartbeat = yarp::os::Time::now(), true)
         && can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE)
         && (can->driveStatus()->getCurrentState() != DriveState::NOT_READY_TO_SWITCH_ON
             || can->driveStatus()->awaitState(DriveState::SWITCH_ON_DISABLED))
-        && can->driveStatus()->requestState(DriveState::SWITCHED_ON);
+        && can->driveStatus()->requestState(DriveState::SWITCHED_ON)
+        && monitorThread->start();
 }
 
 // -----------------------------------------------------------------------------
@@ -104,6 +109,8 @@ bool TechnosoftIpos::initialize()
 bool TechnosoftIpos::finalize()
 {
     bool ok = true;
+
+    monitorThread->stop();
 
     if (can->driveStatus()->getCurrentState() != DriveState::NOT_READY_TO_SWITCH_ON
         && !can->driveStatus()->requestState(DriveState::SWITCH_ON_DISABLED))

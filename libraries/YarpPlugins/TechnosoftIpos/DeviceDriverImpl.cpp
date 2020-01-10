@@ -95,6 +95,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     // TODO: hardcoded values
     double canSdoTimeoutMs = config.check("canSdoTimeoutMs", yarp::os::Value(20.0), "CAN SDO timeout (ms)").asFloat64();
     double canDriveStateTimeout = config.check("canDriveStateTimeout", yarp::os::Value(2.0), "CAN drive state timeout (s)").asFloat64();
+    double monitorPeriod = config.check("monitorPeriod", yarp::os::Value(0.5), "monitor thread period (s)").asFloat64();
 
     can = new CanOpen(canId, canSdoTimeoutMs * 0.001, canDriveStateTimeout);
 
@@ -133,8 +134,10 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     can->nmt()->registerHandler(std::bind(&TechnosoftIpos::handleNmt, this, _1));
 
-    linInterpBuffer = LinearInterpolationBuffer::createBuffer(config, vars); // pick defaults
+    vars.heartbeatPeriod = config.check("heartbeatPeriod", yarp::os::Value(100), "CAN heartbeat period (ms)").asInt32(); // TODO
+    monitorThread = new yarp::os::Timer(yarp::os::TimerSettings(monitorPeriod), std::bind(&TechnosoftIpos::monitorWorker, this, _1), true);
 
+    linInterpBuffer = LinearInterpolationBuffer::createBuffer(config, vars); // pick defaults
     return linInterpBuffer != nullptr;
 }
 
@@ -142,17 +145,19 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
 bool TechnosoftIpos::close()
 {
-    if (linInterpBuffer)
+    if (monitorThread && monitorThread->isRunning())
     {
-        delete linInterpBuffer;
-        linInterpBuffer = nullptr;
+        monitorThread->stop();
     }
 
-    if (can)
-    {
-        delete can;
-        can = nullptr;
-    }
+    delete monitorThread;
+    monitorThread = nullptr;
+
+    delete linInterpBuffer;
+    linInterpBuffer = nullptr;
+
+    delete can;
+    can = nullptr;
 
     if (externalEncoderDevice.isValid())
     {
