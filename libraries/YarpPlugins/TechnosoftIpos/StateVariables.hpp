@@ -104,7 +104,6 @@ struct StateVariables
     std::bitset<16> cer;
     std::bitset<16> ptStatus;
     std::int8_t modesOfOperation = 0;
-    std::uint8_t nmtState = 0;
 
     // read/write, those require atomic access
 
@@ -120,6 +119,7 @@ struct StateVariables
     std::atomic<int> pulsesPerSample;
 
     std::atomic<double> lastHeartbeat;
+    std::atomic<std::uint8_t> lastNmtState;
 
     // read only, conceptually immutable
 

@@ -452,7 +452,7 @@ void TechnosoftIpos::handleNmt(NmtState state)
     std::uint8_t nmtState = static_cast<std::uint8_t>(state);
 
     // always report boot-up
-    if (state != NmtState::BOOTUP && vars.nmtState == nmtState)
+    if (state != NmtState::BOOTUP && vars.lastNmtState == nmtState)
     {
         return;
     }
@@ -480,20 +480,28 @@ void TechnosoftIpos::handleNmt(NmtState state)
 
     CD_INFO("State transition: %s (canId %d).\n", s.c_str(), can->getId());
 
-    vars.nmtState = nmtState;
+    vars.lastNmtState = nmtState;
 }
 
 // -----------------------------------------------------------------------------
 
 bool TechnosoftIpos::monitorWorker(const yarp::os::YarpTimerEvent & event)
 {
-    double lastHeartbeat = vars.lastHeartbeat;
+    bool isConfigured = vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED;
+    double elapsed = event.currentReal - vars.lastHeartbeat;
 
-    if (lastHeartbeat < event.lastReal && vars.actualControlMode != VOCAB_CM_HW_FAULT)
+    if (isConfigured && elapsed > event.lastDuration)
     {
-        double elapsed = event.currentReal - lastHeartbeat;
         CD_ERROR("Last heartbeat response was %f seconds ago (canId %d).\n", elapsed, can->getId());
-        vars.actualControlMode = VOCAB_CM_HW_FAULT;
+        vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
+    }
+    else if (!isConfigured && elapsed <= event.lastDuration && vars.lastNmtState == 0) // boot-up event
+    {
+        if (!initialize())
+        {
+            CD_ERROR("Unable to initialize CAN comms (canId: %d).\n", can->getId());
+            finalize();
+        }
     }
 
     return true;

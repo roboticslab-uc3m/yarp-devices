@@ -95,13 +95,12 @@ bool TechnosoftIpos::initialize()
         && can->tpdo3()->configure(vars.tpdo3Conf)
         && can->sdo()->download<std::uint16_t>("Auxiliary Settings Register", 0x0000, 0x208E) // legacy pt mode
         && can->sdo()->download<std::uint16_t>("Producer Heartbeat Time", vars.heartbeatPeriod, 0x1017)
-        && (vars.actualControlMode = VOCAB_CM_CONFIGURED, true)
         && (vars.lastHeartbeat = yarp::os::Time::now(), true)
+        && (vars.actualControlMode = VOCAB_CM_CONFIGURED, true)
         && can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE)
         && (can->driveStatus()->getCurrentState() != DriveState::NOT_READY_TO_SWITCH_ON
             || can->driveStatus()->awaitState(DriveState::SWITCH_ON_DISABLED))
-        && can->driveStatus()->requestState(DriveState::SWITCHED_ON)
-        && monitorThread->start();
+        && can->driveStatus()->requestState(DriveState::SWITCHED_ON);
 }
 
 // -----------------------------------------------------------------------------
@@ -110,16 +109,19 @@ bool TechnosoftIpos::finalize()
 {
     bool ok = true;
 
-    monitorThread->stop();
+    if (can->driveStatus()->getCurrentState() != DriveState::NOT_READY_TO_SWITCH_ON)
+    {
+        if (can->driveStatus()->getCurrentState() == DriveState::OPERATION_ENABLED)
+        {
+            can->driveStatus()->requestTransition(DriveTransition::QUICK_STOP);
+        }
 
-    if (can->driveStatus()->getCurrentState() != DriveState::NOT_READY_TO_SWITCH_ON
-        && !can->driveStatus()->requestState(DriveState::SWITCH_ON_DISABLED))
-    {
-        CD_WARNING("SWITCH_ON_DISABLED transition failed.\n");
-        ok = false;
-    }
-    else
-    {
+        if (!can->driveStatus()->requestState(DriveState::SWITCH_ON_DISABLED))
+        {
+            CD_WARNING("SWITCH_ON_DISABLED transition failed.\n");
+            ok = false;
+        }
+
         vars.actualControlMode = VOCAB_CM_CONFIGURED;
     }
 
@@ -128,11 +130,8 @@ bool TechnosoftIpos::finalize()
         CD_WARNING("Reset node NMT service failed.\n");
         ok = false;
     }
-    else
-    {
-        vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
-    }
 
+    vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
     return ok;
 }
 

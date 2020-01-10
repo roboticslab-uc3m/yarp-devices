@@ -134,11 +134,17 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     can->nmt()->registerHandler(std::bind(&TechnosoftIpos::handleNmt, this, _1));
 
+    linInterpBuffer = LinearInterpolationBuffer::createBuffer(config, vars); // pick defaults
+
+    if (!linInterpBuffer)
+    {
+        return false;
+    }
+
     vars.heartbeatPeriod = config.check("heartbeatPeriod", yarp::os::Value(100), "CAN heartbeat period (ms)").asInt32(); // TODO
     monitorThread = new yarp::os::Timer(yarp::os::TimerSettings(monitorPeriod), std::bind(&TechnosoftIpos::monitorWorker, this, _1), true);
 
-    linInterpBuffer = LinearInterpolationBuffer::createBuffer(config, vars); // pick defaults
-    return linInterpBuffer != nullptr;
+    return monitorThread->start();
 }
 
 // -----------------------------------------------------------------------------
