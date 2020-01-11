@@ -34,7 +34,7 @@ bool CanBusPeak::canGetErrors(yarp::dev::CanErrors & err)
     err.rxCanFifoOvr = 0;
     err.txCanFifoOvr = 0;
 
-    err.busoff = pfds.can_status & CAN_ERR_ANYBUSERR;
+    err.busoff = pfds.bus_state == PCANFD_ERROR_PASSIVE || pfds.bus_state == PCANFD_ERROR_BUSOFF;
 
     return true;
 }

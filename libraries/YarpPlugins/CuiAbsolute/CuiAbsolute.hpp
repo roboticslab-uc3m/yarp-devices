@@ -18,8 +18,8 @@
 
 #define CHECK_JOINT(j) do { int ax; if (getAxes(&ax), (j) != ax - 1) return false; } while (0)
 
-#define DEFAULT_TIMEOUT 0.1 // [s]
-#define DEFAULT_MAX_RETRIES 5
+#define DEFAULT_TIMEOUT 0.25 // [s]
+#define DEFAULT_MAX_RETRIES 10
 
 namespace roboticslab
 {
