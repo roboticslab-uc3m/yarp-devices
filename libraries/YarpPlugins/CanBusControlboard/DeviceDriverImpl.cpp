@@ -82,6 +82,14 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             return false;
         }
 
+        yarp::dev::ICanBusErrors * iCanBusErrors;
+
+        if (!canBusDevice->view(iCanBusErrors))
+        {
+            CD_ERROR("Cannot view ICanBusErrors interface in device: %s.\n", canBus.c_str());
+            return false;
+        }
+
         yarp::dev::ICanBufferFactory * iCanBufferFactory;
 
         if (!canBusDevice->view(iCanBufferFactory))
@@ -98,11 +106,11 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             double txDelay = canBusOptions.check("txDelay", yarp::os::Value(0.0), "CAN bus TX delay (seconds)").asFloat64();
 
             CanReaderThread * reader = new CanReaderThread(canBus);
-            reader->setCanHandles(iCanBus, iCanBufferFactory, rxBufferSize);
+            reader->setCanHandles(iCanBus, iCanBusErrors, iCanBufferFactory, rxBufferSize);
             reader->setDelay(rxDelay);
 
             CanWriterThread * writer = new CanWriterThread(canBus);
-            writer->setCanHandles(iCanBus, iCanBufferFactory, txBufferSize);
+            writer->setCanHandles(iCanBus, iCanBusErrors, iCanBufferFactory, txBufferSize);
             writer->setDelay(txDelay);
 
             canThreads.push_back({canBus, reader, writer});
