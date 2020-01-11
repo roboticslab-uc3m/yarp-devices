@@ -354,7 +354,7 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     default:
-        CD_WARNING("No mode set set. canId: %d.\n", can->getId());
+        CD_WARNING("No mode set. canId: %d.\n", can->getId());
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     }

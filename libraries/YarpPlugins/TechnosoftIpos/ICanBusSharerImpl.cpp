@@ -52,39 +52,47 @@ bool TechnosoftIpos::registerSender(CanSenderDelegate * sender)
 
 bool TechnosoftIpos::initialize()
 {
+    static bool configuredOnce = false;
+
+    if (!configuredOnce)
+    {
+        // retrieve static drive info
+        configuredOnce = can->sdo()->upload<std::uint32_t>("Device type",
+                [](std::uint32_t data)
+                {
+                    CD_INFO("CiA standard: %d.\n", data & 0xFFFF);
+                },
+                0x1000)
+            && can->sdo()->upload<std::uint32_t>("Supported drive modes",
+                [this](std::uint32_t data)
+                {
+                    interpretSupportedDriveModes(data);
+                },
+                0x6502)
+            && can->sdo()->upload("Manufacturer software version",
+                [](const std::string & firmware)
+                {
+                    CD_INFO("Firmware version: %s.\n", firmware.c_str());
+                },
+                0x100A)
+            && can->sdo()->upload<std::uint32_t>("Identity Object: Product Code",
+                [](std::uint32_t data)
+                {
+                    CD_INFO("Product code: P%03d.%03d.E%03d.\n", data / 1000000, (data / 1000) % 1000, data % 1000);
+                },
+                0x1018, 0x02)
+            && can->sdo()->upload<std::uint32_t>("Identity Object: Serial number",
+                [](std::uint32_t data)
+                {
+                    CD_INFO("Serial number: %c%c%02x%02x.\n", getByte(data, 3), getByte(data, 2), getByte(data, 1), getByte(data, 0));
+                },
+                0x1018, 0x04);
+    }
+
     double extEnc;
 
-    return (!iExternalEncoderCanBusSharer || iExternalEncoderCanBusSharer->initialize())
-        && can->sdo()->upload<std::uint32_t>("Device type",
-            [](std::uint32_t data)
-            {
-                CD_INFO("CiA standard: %d.\n", data & 0xFFFF);
-            },
-            0x1000)
-        && can->sdo()->upload<std::uint32_t>("Supported drive modes",
-            [this](std::uint32_t data)
-            {
-                interpretSupportedDriveModes(data);
-            },
-            0x6502)
-        && can->sdo()->upload("Manufacturer software version",
-            [](const std::string & firmware)
-            {
-                CD_INFO("Firmware version: %s.\n", firmware.c_str());
-            },
-            0x100A)
-        && can->sdo()->upload<std::uint32_t>("Identity Object: Product Code",
-            [](std::uint32_t data)
-            {
-                CD_INFO("Product code: P%03d.%03d.E%03d.\n", data / 1000000, (data / 1000) % 1000, data % 1000);
-            },
-            0x1018, 0x02)
-        && can->sdo()->upload<std::uint32_t>("Identity Object: Serial number",
-            [](std::uint32_t data)
-            {
-                CD_INFO("Serial number: %c%c%02x%02x.\n", getByte(data, 3), getByte(data, 2), getByte(data, 1), getByte(data, 0));
-            },
-            0x1018, 0x04)
+    return configuredOnce
+        && (!iExternalEncoderCanBusSharer || iExternalEncoderCanBusSharer->initialize())
         && setLimitsRaw(0, vars.min, vars.max)
         && setRefSpeedRaw(0, vars.refSpeed)
         && setRefAccelerationRaw(0, vars.refAcceleration)
@@ -130,6 +138,11 @@ bool TechnosoftIpos::finalize()
     {
         CD_WARNING("Reset node NMT service failed.\n");
         ok = false;
+    }
+
+    if (iExternalEncoderCanBusSharer)
+    {
+        ok = ok && iExternalEncoderCanBusSharer->finalize();
     }
 
     vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
