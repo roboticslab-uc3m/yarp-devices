@@ -100,7 +100,8 @@ bool TechnosoftIpos::initialize()
         && can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE)
         && (can->driveStatus()->getCurrentState() != DriveState::NOT_READY_TO_SWITCH_ON
             || can->driveStatus()->awaitState(DriveState::SWITCH_ON_DISABLED))
-        && can->driveStatus()->requestState(DriveState::SWITCHED_ON);
+        && can->driveStatus()->requestState(DriveState::SWITCHED_ON)
+        && setControlModeRaw(0, vars.initialMode);
 }
 
 // -----------------------------------------------------------------------------

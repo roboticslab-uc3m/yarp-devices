@@ -123,6 +123,8 @@ struct StateVariables
 
     // read only, conceptually immutable
 
+    yarp::conf::vocab32_t initialMode = 0;
+
     double drivePeakCurrent = 0.0;
     double maxVel = 0.0;
 
