@@ -45,9 +45,9 @@ namespace roboticslab
  */
 class CanBusHico : public yarp::dev::DeviceDriver,
                    public yarp::dev::ICanBus,
+                   public yarp::dev::ICanBusErrors,
                    public yarp::dev::ImplementCanBufferFactory<HicoCanMessage, struct can_msg>
 {
-
 public:
 
     CanBusHico() : fileDescriptor(0),
@@ -87,6 +87,10 @@ public:
     virtual bool canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait = false);
 
     virtual bool canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait = false);
+
+    //  --------- ICanBusErrors declarations. Implementation in ICanBusErrorsImpl.cpp ---------
+
+    virtual bool canGetErrors(yarp::dev::CanErrors & err);
 
 protected:
 

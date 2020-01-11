@@ -20,6 +20,7 @@ if(NOT SKIP_CanBusHico)
                                hico_api.h
                                DeviceDriverImpl.cpp
                                ICanBusImpl.cpp
+                               ICanBusErrorsImpl.cpp
                                HicoCanMessage.cpp
                                HicoCanMessage.hpp
                                FilterManager.cpp)
