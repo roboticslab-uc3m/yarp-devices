@@ -109,6 +109,7 @@ bool TechnosoftIpos::initialize()
         && (can->driveStatus()->getCurrentState() != DriveState::NOT_READY_TO_SWITCH_ON
             || can->driveStatus()->awaitState(DriveState::SWITCH_ON_DISABLED))
         && can->driveStatus()->requestState(DriveState::SWITCHED_ON)
+        && (vars.actualControlMode = VOCAB_CM_IDLE, true)
         && setControlModeRaw(0, vars.initialMode);
 }
 
