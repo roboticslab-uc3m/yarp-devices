@@ -2,6 +2,10 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <cctype> // std::isspace
+
+#include <algorithm> // std::find_if
+
 #include <yarp/os/Time.h>
 
 #include <ColorDebug.h>
@@ -18,6 +22,14 @@ namespace
     {
         // https://stackoverflow.com/a/7787433
         return (number >> (8 * n)) & 0xFF;
+    }
+
+    // https://stackoverflow.com/a/217605
+    inline std::string rtrim(const std::string & orig)
+    {
+        std::string s(orig);
+        s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) { return !std::isspace(ch); }).base(), s.end());
+        return s;
     }
 }
 
@@ -70,7 +82,8 @@ bool TechnosoftIpos::initialize()
             && can->sdo()->upload("Manufacturer software version",
                 [](const std::string & firmware)
                 {
-                    CD_INFO("Firmware version: %s.\n", firmware.c_str());
+                    std::string s(firmware);
+                    CD_INFO("Firmware version: %s.\n", rtrim(s).c_str());
                 },
                 0x100A)
             && can->sdo()->upload<std::uint32_t>("Identity Object: Product Code",
