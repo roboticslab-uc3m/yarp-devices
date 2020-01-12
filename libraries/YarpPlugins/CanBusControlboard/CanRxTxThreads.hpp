@@ -28,7 +28,8 @@ class CanReaderWriterThread : public yarp::os::Thread
 public:
     //! Constructor.
     CanReaderWriterThread(const std::string & type, const std::string & id)
-        : iCanBus(nullptr), iCanBufferFactory(nullptr), type(type), id(id), bufferSize(0), delay(0.0)
+        : iCanBus(nullptr), iCanBusErrors(nullptr), iCanBufferFactory(nullptr),
+          type(type), id(id), bufferSize(0), delay(0.0)
     { }
 
     //! Virtual destructor.
@@ -55,14 +56,19 @@ public:
     virtual void run() override = 0;
 
     //! Configure CAN interface handles.
-    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize)
-    { this->iCanBus = iCanBus; this->iCanBufferFactory = iCanBufferFactory; this->bufferSize = bufferSize; }
+    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBusErrors * iCanBusErrors,
+            yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize)
+    {
+        this->iCanBus = iCanBus; this->iCanBusErrors = iCanBusErrors; this->iCanBufferFactory = iCanBufferFactory;
+        this->bufferSize = bufferSize;
+    }
 
     //! Configure a delay (in seconds) before each read/write.
     void setDelay(double delay);
 
 protected:
     yarp::dev::ICanBus * iCanBus;
+    yarp::dev::ICanBusErrors * iCanBusErrors;
     yarp::dev::ICanBufferFactory * iCanBufferFactory;
     yarp::dev::CanBuffer canBuffer;
 
@@ -117,7 +123,8 @@ public:
     //! Send awaiting messages and clear the queue.
     void flush();
 
-    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize) override;
+    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBusErrors * iCanBusErrors,
+            yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize) override;
 
     virtual void run() override;
 

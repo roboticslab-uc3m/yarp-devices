@@ -19,6 +19,7 @@ if(NOT SKIP_CanBusPeak)
                                CanBusPeak.hpp
                                DeviceDriverImpl.cpp
                                ICanBusImpl.cpp
+                               ICanBusErrorsImpl.cpp
                                PeakCanMessage.cpp
                                PeakCanMessage.hpp)
 

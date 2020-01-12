@@ -80,7 +80,6 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
         yarp::os::Property canDeviceOptions;
         canDeviceOptions.fromString(canDeviceGroup.toString());
         canDeviceOptions.put("robotConfig", yarp::os::Value::makeBlob(&robotConfigPtr, sizeof(robotConfigPtr)));
-        canDeviceOptions.put("home", homing);
 
         yarp::dev::PolyDriver * canDevice = new yarp::dev::PolyDriver;
         canDevices.push(canDevice, canDeviceLabel.c_str());
@@ -193,44 +192,6 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
             CD_ERROR("Unable to attach wrapper %s to CAN devices.\n", wrapperDeviceLabel.c_str());
             return false;
         }
-    }
-
-    // initial control modes
-
-    for (int i = 0; i < canDevices.size(); i++)
-    {
-        yarp::dev::IControlMode * iControlMode;
-        yarp::dev::IEncoders * iEncoders;
-
-        if (!canDevices[i]->poly->view(iControlMode))
-        {
-            CD_ERROR("Unable to view IControlMode in %s.\n", canDevices[i]->key.c_str());
-            return false;
-        }
-
-        if (!canDevices[i]->poly->view(iEncoders))
-        {
-            CD_ERROR("Unable to view IEncoders in %s.\n", canDevices[i]->key.c_str());
-            return false;
-        }
-
-        int axes;
-
-        if (!iEncoders->getAxes(&axes))
-        {
-            CD_ERROR("Unable to retrieve axes in %s.\n", canDevices[i]->key.c_str());
-            return false;
-        }
-
-        std::vector<yarp::conf::vocab32_t> modes(axes, mode);
-
-        if (!iControlMode->setControlModes(modes.data()))
-        {
-            CD_ERROR("Unable to set %s mode in %s.\n", yarp::os::Vocab::decode(mode).c_str(), canDevices[i]->key.c_str());
-            return false;
-        }
-
-        CD_SUCCESS("Set %s mode in %s.\n", yarp::os::Vocab::decode(mode).c_str(), canDevices[i]->key.c_str());
     }
 
     // homing on start

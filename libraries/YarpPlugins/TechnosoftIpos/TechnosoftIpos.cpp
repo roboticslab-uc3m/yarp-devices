@@ -8,6 +8,8 @@
 #include <sstream>
 #include <string>
 
+#include <yarp/os/Time.h>
+
 #include <ColorDebug.h>
 
 using namespace roboticslab;
@@ -352,7 +354,7 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     default:
-        CD_WARNING("No mode set set. canId: %d.\n", can->getId());
+        CD_WARNING("No mode set. canId: %d.\n", can->getId());
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     }
@@ -437,9 +439,73 @@ void TechnosoftIpos::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, con
         break;
     }
     default:
-        CD_WARNING("%s (canId %d)\n", code.second.c_str(), can->getId());
+        CD_WARNING("%s (canId %d).\n", code.second.c_str(), can->getId());
         break;
     }
+}
+
+// -----------------------------------------------------------------------------
+
+void TechnosoftIpos::handleNmt(NmtState state)
+{
+    vars.lastHeartbeat = yarp::os::Time::now();
+    std::uint8_t nmtState = static_cast<std::uint8_t>(state);
+
+    // always report boot-up
+    if (state != NmtState::BOOTUP && vars.lastNmtState == nmtState)
+    {
+        return;
+    }
+
+    std::string s;
+
+    switch (state)
+    {
+    case NmtState::BOOTUP:
+        s = "boot-up";
+        break;
+    case NmtState::STOPPED:
+        s = "stopped";
+        break;
+    case NmtState::OPERATIONAL:
+        s = "operational";
+        break;
+    case NmtState::PRE_OPERATIONAL:
+        s = "pre-operational";
+        break;
+    default:
+        CD_WARNING("Unhandled state: %d.\n", static_cast<std::uint8_t>(state));
+        return;
+    }
+
+    CD_INFO("Heartbeat: %s (canId %d).\n", s.c_str(), can->getId());
+
+    vars.lastNmtState = nmtState;
+}
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::monitorWorker(const yarp::os::YarpTimerEvent & event)
+{
+    bool isConfigured = vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED;
+    double elapsed = event.currentReal - vars.lastHeartbeat;
+
+    if (isConfigured && elapsed > event.lastDuration)
+    {
+        CD_ERROR("Last heartbeat response was %f seconds ago (canId %d).\n", elapsed, can->getId());
+        vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
+        can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
+    }
+    else if (!isConfigured && elapsed < event.lastDuration && vars.lastNmtState == 0) // boot-up event
+    {
+        if (!initialize())
+        {
+            CD_ERROR("Unable to initialize CAN comms (canId: %d).\n", can->getId());
+            can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
+        }
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------

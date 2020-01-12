@@ -80,21 +80,12 @@ void CanReaderThread::run()
         for (int i = 0; i < read; i++)
         {
             const yarp::dev::CanMessage & msg = canBuffer[i];
-            const int canId = msg.getId() & 0x7F;
-            auto it = canIdToHandle.find(canId);
+            auto it = canIdToHandle.find(msg.getId() & 0x7F);
 
-            if (it == canIdToHandle.end())  //-- Can ID not found
+            if (it != canIdToHandle.end())
             {
-                //-- Intercept 700h 0 msg that just indicates presence.
-                if (msg.getId() - canId == 0x700)
-                {
-                    CD_SUCCESS("Device %d indicating presence.\n", canId);
-                }
-
-                continue;
+                it->second->interpretMessage(msg);
             }
-
-            it->second->interpretMessage(msg);
         }
     }
 }
@@ -124,8 +115,13 @@ void CanWriterThread::flush()
     //-- Nothing to write, exit.
     if (preparedMessages == 0) return;
 
+    yarp::dev::CanErrors errors;
+
+    //-- Query bus state.
+    bool ok = iCanBusErrors->canGetErrors(errors) && !errors.busoff;
+
     //-- Write as many bytes as it can, return false on errors.
-    bool ok = iCanBus->canWrite(canBuffer, preparedMessages, &sent);
+    ok = ok && iCanBus->canWrite(canBuffer, preparedMessages, &sent);
 
     //-- Something bad happened, try again on the next call.
     if (!ok) return;
@@ -133,7 +129,6 @@ void CanWriterThread::flush()
     //-- Some messages could not be sent, preserve them for later.
     if (sent != preparedMessages)
     {
-        CD_WARNING("Partial write! Prepared: %d, sent: %d.\n", preparedMessages, sent);
         handlePartialWrite(sent);
     }
 
@@ -172,9 +167,10 @@ void CanWriterThread::handlePartialWrite(unsigned int sent)
 
 // -----------------------------------------------------------------------------
 
-void CanWriterThread::setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize)
+void CanWriterThread::setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBusErrors * iCanBusErrors,
+        yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize)
 {
-    CanReaderWriterThread::setCanHandles(iCanBus, iCanBufferFactory, bufferSize);
+    CanReaderWriterThread::setCanHandles(iCanBus, iCanBusErrors, iCanBufferFactory, bufferSize);
     sender = new YarpCanSenderDelegate(canBuffer, bufferMutex, preparedMessages, bufferSize);
 }
 

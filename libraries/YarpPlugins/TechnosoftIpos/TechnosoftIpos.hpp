@@ -3,6 +3,8 @@
 #ifndef __TECHNOSOFT_IPOS_HPP__
 #define __TECHNOSOFT_IPOS_HPP__
 
+#include <yarp/os/Timer.h>
+
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAxisInfo.h>
 #include <yarp/dev/IControlLimits.h>
@@ -71,7 +73,8 @@ public:
         : can(nullptr),
           iEncodersTimedRawExternal(nullptr),
           iExternalEncoderCanBusSharer(nullptr),
-          linInterpBuffer(nullptr)
+          linInterpBuffer(nullptr),
+          monitorThread(nullptr)
     { }
 
     ~TechnosoftIpos()
@@ -255,10 +258,9 @@ public:
     //virtual bool stopRaw() override;
     //virtual bool stopRaw(int n_joint, const int *joints) override;
 
-protected:
+private:
 
     void interpretSupportedDriveModes(std::uint32_t data);
-
     void interpretMsr(std::uint16_t msr);
     void interpretMer(std::uint16_t mer);
     void interpretDer(std::uint16_t der);
@@ -272,6 +274,9 @@ protected:
     void handleTpdo2(std::uint16_t mer, std::uint16_t der);
     void handleTpdo3(std::int32_t position, std::int16_t current);
     void handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef);
+    void handleNmt(NmtState state);
+
+    bool monitorWorker(const yarp::os::YarpTimerEvent & event);
 
     bool quitHaltState(int mode);
 
@@ -284,6 +289,8 @@ protected:
     StateVariables vars;
 
     LinearInterpolationBuffer * linInterpBuffer;
+
+    yarp::os::Timer * monitorThread;
 };
 
 } // namespace roboticslab

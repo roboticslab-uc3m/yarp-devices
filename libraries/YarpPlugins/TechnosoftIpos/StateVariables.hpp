@@ -105,6 +105,8 @@ struct StateVariables
     std::bitset<16> ptStatus;
     std::int8_t modesOfOperation = 0;
 
+    bool configuredOnce = false;
+
     // read/write, those require atomic access
 
     EncoderRead lastEncoderRead;
@@ -118,7 +120,12 @@ struct StateVariables
     std::atomic<int> encoderPulses;
     std::atomic<int> pulsesPerSample;
 
+    std::atomic<double> lastHeartbeat;
+    std::atomic<std::uint8_t> lastNmtState;
+
     // read only, conceptually immutable
+
+    yarp::conf::vocab32_t initialMode = 0;
 
     double drivePeakCurrent = 0.0;
     double maxVel = 0.0;
@@ -131,6 +138,8 @@ struct StateVariables
     PdoConfiguration tpdo1Conf;
     PdoConfiguration tpdo2Conf;
     PdoConfiguration tpdo3Conf;
+
+    std::uint16_t heartbeatPeriod = 0;
 
     // read only, fresh values queried from iPOS drive
 
