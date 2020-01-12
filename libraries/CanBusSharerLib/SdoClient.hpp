@@ -140,6 +140,10 @@ public:
      */
     bool download(const std::string & name, const std::string & s, std::uint16_t index, std::uint8_t subindex = 0x00);
 
+    //! String literal overload, overrides templated variant.
+    bool download(const std::string & name, const char * s, std::uint16_t index, std::uint8_t subindex = 0x00)
+    { return download(name, std::string(s), index, subindex); }
+
 private:
     bool send(const std::uint8_t * msg);
     std::string msgToStr(std::uint16_t cob, const std::uint8_t * msgData);
