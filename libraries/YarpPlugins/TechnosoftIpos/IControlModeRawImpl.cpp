@@ -26,6 +26,7 @@ bool TechnosoftIpos::setPositionDirectModeRaw()
     double refDegrees = vars.internalUnitsToDegrees(refInternalUnits);
 
     if (!can->rpdo3()->configure(rpdo3Conf)
+        || !can->sdo()->download<std::uint16_t>("Auxiliary Settings Register", 0x0000, 0x208E) // legacy pt mode
         || !can->sdo()->download<std::int8_t>("Modes of Operation", 7, 0x6060)
         || !can->sdo()->download<std::int16_t>("Interpolation sub mode select", linInterpBuffer->getSubMode(), 0x60C0)
         // consume one additional slot to avoid annoying buffer full warnings

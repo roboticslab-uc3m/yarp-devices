@@ -52,12 +52,10 @@ bool TechnosoftIpos::registerSender(CanSenderDelegate * sender)
 
 bool TechnosoftIpos::initialize()
 {
-    static bool configuredOnce = false;
-
-    if (!configuredOnce)
+    if (!vars.configuredOnce)
     {
         // retrieve static drive info
-        configuredOnce = can->sdo()->upload<std::uint32_t>("Device type",
+        vars.configuredOnce = can->sdo()->upload<std::uint32_t>("Device type",
                 [](std::uint32_t data)
                 {
                     CD_INFO("CiA standard: %d.\n", data & 0xFFFF);
@@ -91,7 +89,7 @@ bool TechnosoftIpos::initialize()
 
     double extEnc;
 
-    return configuredOnce
+    return vars.configuredOnce
         && (!iExternalEncoderCanBusSharer || iExternalEncoderCanBusSharer->initialize())
         && setLimitsRaw(0, vars.min, vars.max)
         && setRefSpeedRaw(0, vars.refSpeed)
@@ -101,7 +99,6 @@ bool TechnosoftIpos::initialize()
         && can->tpdo1()->configure(vars.tpdo1Conf)
         && can->tpdo2()->configure(vars.tpdo2Conf)
         && can->tpdo3()->configure(vars.tpdo3Conf)
-        && can->sdo()->download<std::uint16_t>("Auxiliary Settings Register", 0x0000, 0x208E) // legacy pt mode
         && can->sdo()->download<std::uint16_t>("Producer Heartbeat Time", vars.heartbeatPeriod, 0x1017)
         && (vars.lastHeartbeat = yarp::os::Time::now(), true)
         && (vars.actualControlMode = VOCAB_CM_CONFIGURED, true)
