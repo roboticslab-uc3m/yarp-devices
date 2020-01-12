@@ -8,9 +8,9 @@ if(ENABLE_dumpCanBus)
 endif()
 
 if(ENABLE_SpaceNavigator)
-    yarp_install(DIRECTORY applications/yarpmanager/spaceNavigator
-                 DESTINATION ${ROBOTICSLAB-YARP-DEVICES_APPLICATIONS_INSTALL_DIR}/yarpmanager)
+    yarp_install(FILES applications/spaceNavigator.xml
+                 DESTINATION ${ROBOTICSLAB-YARP-DEVICES_APPLICATIONS_INSTALL_DIR})
 endif()
 
-yarp_install(FILES applications/yarpmanager/ymanager.ini
-             DESTINATION ${ROBOTICSLAB-YARP-DEVICES_APPLICATIONS_INSTALL_DIR}/yarpmanager)
+yarp_install(FILES applications/ymanager.ini
+             DESTINATION ${ROBOTICSLAB-YARP-DEVICES_APPLICATIONS_INSTALL_DIR})
