@@ -263,7 +263,6 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         if (!iCanBusSharer->initialize())
         {
             CD_WARNING("Node device %s could not initialize CAN comms.\n", nodeDevices[i]->key.c_str());
-            iCanBusSharer->finalize();
         }
     }
 

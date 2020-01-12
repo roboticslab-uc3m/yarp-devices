@@ -494,13 +494,14 @@ bool TechnosoftIpos::monitorWorker(const yarp::os::YarpTimerEvent & event)
     {
         CD_ERROR("Last heartbeat response was %f seconds ago (canId %d).\n", elapsed, can->getId());
         vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
+        can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
     }
     else if (!isConfigured && elapsed < event.lastDuration && vars.lastNmtState == 0) // boot-up event
     {
         if (!initialize())
         {
             CD_ERROR("Unable to initialize CAN comms (canId: %d).\n", can->getId());
-            finalize();
+            can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
         }
     }
 
