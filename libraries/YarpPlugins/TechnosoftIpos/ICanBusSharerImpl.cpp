@@ -116,7 +116,7 @@ bool TechnosoftIpos::finalize()
 {
     bool ok = true;
 
-    if (can->driveStatus()->getCurrentState() != DriveState::NOT_READY_TO_SWITCH_ON)
+    if (vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED)
     {
         if (can->driveStatus()->getCurrentState() == DriveState::OPERATION_ENABLED)
         {
