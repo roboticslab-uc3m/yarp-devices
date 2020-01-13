@@ -149,7 +149,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             }
         }
 
-        bool enableAcceptanceFilters = config.check("enableAcceptanceFilters", yarp::os::Value(false),
+        bool enableAcceptanceFilters = canBusOptions.check("enableAcceptanceFilters", yarp::os::Value(false),
                 "enable CAN acceptance filters").asBool();
 
         std::vector<unsigned int> filterIds;
