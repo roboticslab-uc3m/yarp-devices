@@ -89,3 +89,10 @@ bool CuiAbsolute::registerSender(CanSenderDelegate * sender)
 }
 
 // -----------------------------------------------------------------------------
+
+bool CuiAbsolute:: synchronize()
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------

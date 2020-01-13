@@ -40,6 +40,9 @@ public:
 
     //! Pass a handle to a CAN sender delegate instance.
     virtual bool registerSender(CanSenderDelegate * sender) = 0;
+
+    //! Perform synchronized action on CAN master's request.
+    virtual bool synchronize() = 0;
 };
 
 } // namespace roboticslab

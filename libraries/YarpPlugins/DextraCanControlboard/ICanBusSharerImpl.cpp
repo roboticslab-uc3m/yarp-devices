@@ -29,3 +29,8 @@ bool DextraCanControlboard::interpretMessage(const yarp::dev::CanMessage & messa
 {
     return true;
 }
+
+bool DextraCanControlboard::synchronize()
+{
+    return true;
+}

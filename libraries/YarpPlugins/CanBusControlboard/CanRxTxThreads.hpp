@@ -95,6 +95,10 @@ public:
     //! Map CAN node ids with handles.
     void registerHandle(ICanBusSharer * p);
 
+    //! Retrieve internal map of CAN handles.
+    const std::unordered_map<unsigned int, ICanBusSharer *> & getHandleMap()
+    { return canIdToHandle; }
+
     virtual void run() override;
 
 private:

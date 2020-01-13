@@ -174,6 +174,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
                 nodeOptions.fromString(nodeGroup.toString());
                 nodeOptions.put("robotConfig", config.find("robotConfig"));
+                nodeOptions.put("syncPeriod", config.find("syncPeriod"));
             }
             else
             {
@@ -275,7 +276,14 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
                 {
                     for (const auto & bundle : canThreads)
                     {
+                        auto * reader = bundle.reader;
                         auto * writer = bundle.writer;
+
+                        for (const auto & entry : reader->getHandleMap())
+                        {
+                            entry.second->synchronize();
+                        }
+
                         writer->getDelegate()->prepareMessage({0x80, 0, nullptr}); // SYNC
                         writer->flush();
                     }

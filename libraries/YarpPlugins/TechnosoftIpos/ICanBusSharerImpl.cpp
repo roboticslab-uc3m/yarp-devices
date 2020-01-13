@@ -184,3 +184,10 @@ bool TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage & message)
 }
 
 // -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::synchronize()
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------
