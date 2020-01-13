@@ -64,6 +64,11 @@ bool TechnosoftIpos::registerSender(CanSenderDelegate * sender)
 
 bool TechnosoftIpos::initialize()
 {
+    if (!can->sdo()->ping())
+    {
+        return false;
+    }
+
     if (!vars.configuredOnce)
     {
         // retrieve static drive info

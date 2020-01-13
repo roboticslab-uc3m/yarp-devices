@@ -52,6 +52,9 @@ public:
     bool notify(const std::uint8_t * raw)
     { return stateObserver.notify(raw, 8); }
 
+    //! Test whether the node is available or not.
+    bool ping();
+
     /**
      * @brief Request an SDO package from the drive, only integral types.
      * @tparam T Integral data type.

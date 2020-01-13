@@ -99,6 +99,13 @@ std::string SdoClient::msgToStr(std::uint16_t cob, const std::uint8_t * msgData)
     return CanUtils::msgToStr(id, cob, 8, msgData);
 }
 
+bool SdoClient::ping()
+{
+    std::uint8_t requestMsg[8] = {0x40}; // index: 0x0000, subindex: 0x00
+    std::uint8_t responseMsg[8];
+    return send(requestMsg) && stateObserver.await(responseMsg);
+}
+
 bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint32_t size, std::uint16_t index, std::uint8_t subindex)
 {
     std::uint8_t requestMsg[8] = {0};

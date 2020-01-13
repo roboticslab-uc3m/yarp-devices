@@ -495,6 +495,27 @@ TEST_F(CanBusSharerTest, SdoClientSegmented)
     ASSERT_EQ(getSender()->getMessage(3).data, toInt64(0x0D, s.substr(14, 1)));
 }
 
+TEST_F(CanBusSharerTest, SdoClientPing)
+{
+    const std::uint8_t id = 0x05;
+    const std::uint16_t cobRx = 0x600;
+    const std::uint16_t cobTx = 0x580;
+
+    SdoClient sdo(id, cobRx, cobTx, TIMEOUT, getSender());
+    ASSERT_EQ(sdo.getCobIdRx(), id + cobRx);
+    ASSERT_EQ(sdo.getCobIdTx(), id + cobTx);
+
+    // test unsuccessful ping
+
+    ASSERT_FALSE(sdo.ping());
+
+    // test successful ping
+
+    std::uint8_t response[8] = {0x00};
+    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
+    ASSERT_TRUE(sdo.ping());
+}
+
 TEST_F(CanBusSharerTest, ReceivePdo)
 {
     SdoClient sdo(0x05, 0x600, 0x580, TIMEOUT, getSender());
