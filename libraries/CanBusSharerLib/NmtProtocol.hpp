@@ -8,7 +8,6 @@
 #include <functional>
 
 #include "CanSenderDelegate.hpp"
-#include "SdoClient.hpp"
 
 namespace roboticslab
 {
@@ -47,9 +46,9 @@ class NmtProtocol final
 public:
     static constexpr std::uint8_t BROADCAST = 0; ///< Broadcast CAN ID
 
-    //! Constructor, registers SDO client and CAN sender handles.
-    NmtProtocol(std::uint8_t id, SdoClient * sdo, CanSenderDelegate * sender = nullptr)
-        : id(id), sdo(sdo), sender(sender)
+    //! Constructor, registers CAN sender handle.
+    NmtProtocol(std::uint8_t id, CanSenderDelegate * sender = nullptr)
+        : id(id), sender(sender)
     { }
 
     //! Configure CAN sender delegate handle.
@@ -58,9 +57,6 @@ public:
 
     //! Send NMT service indication.
     bool issueServiceCommand(NmtService command);
-
-    //! Configure heartbeat-related CAN objects via SDO.
-    bool setupHeartbeat(std::uint16_t period);
 
     //! Invoke callback on parsed CAN message data.
     bool accept(const std::uint8_t * data);
@@ -78,7 +74,6 @@ private:
     typedef std::function<void(NmtState)> HandlerFn;
 
     std::uint8_t id;
-    SdoClient * sdo;
     CanSenderDelegate * sender;
 
     HandlerFn callback;

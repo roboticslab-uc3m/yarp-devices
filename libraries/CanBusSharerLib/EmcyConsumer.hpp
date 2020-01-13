@@ -8,8 +8,6 @@
 #include <functional>
 #include <string>
 
-#include "SdoClient.hpp"
-
 namespace roboticslab
 {
 
@@ -36,16 +34,13 @@ class EmcyConsumer final
 public:
     typedef std::pair<std::uint16_t, std::string> code_t; ///< Emergency error code
 
-    //! Constructor, registers SDO client handle.
-    EmcyConsumer(SdoClient * sdo) : codeRegistry(new EmcyCodeRegistry), sdo(sdo)
+    //! Constructor.
+    EmcyConsumer() : codeRegistry(new EmcyCodeRegistry)
     { }
 
     //! Destructor.
     ~EmcyConsumer()
     { delete codeRegistry; }
-
-    //! Configure EMCY-related CAN objects via SDO.
-    bool configure(std::uint16_t inhibitTime);
 
     //! Invoke callback on parsed CAN message data.
     bool accept(const std::uint8_t * data);
@@ -70,7 +65,6 @@ private:
 
     HandlerFn callback;
     EmcyCodeRegistry * codeRegistry;
-    SdoClient * sdo;
 };
 
 } // namespace roboticslab

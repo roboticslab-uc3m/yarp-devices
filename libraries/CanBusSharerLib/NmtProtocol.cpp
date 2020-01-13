@@ -10,11 +10,6 @@ bool NmtProtocol::issueServiceCommand(NmtService command)
     return sender->prepareMessage({0, 2, msg});
 }
 
-bool NmtProtocol::setupHeartbeat(std::uint16_t period)
-{
-    return sdo->download("Producer Heartbeat Time", period, 0x1017);
-}
-
 bool NmtProtocol::accept(const std::uint8_t * data)
 {
     if (!callback)

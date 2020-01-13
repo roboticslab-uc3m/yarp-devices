@@ -15,8 +15,8 @@ CanOpen::CanOpen(unsigned int id, double sdoTimeout, double stateTimeout, CanSen
       _tpdo2(new TransmitPdo(_id, 0x280, 2, _sdo)),
       _tpdo3(new TransmitPdo(_id, 0x380, 3, _sdo)),
       _tpdo4(new TransmitPdo(_id, 0x480, 4, _sdo)),
-      _emcy(new EmcyConsumer(_sdo)),
-      _nmt(new NmtProtocol(_id, _sdo, sender)),
+      _emcy(new EmcyConsumer),
+      _nmt(new NmtProtocol(_id, sender)),
       _driveStatus(new DriveStatusMachine(_rpdo1, stateTimeout))
 { }
 

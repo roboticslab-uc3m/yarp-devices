@@ -709,19 +709,9 @@ TEST_F(CanBusSharerTest, TransmitPdo)
 TEST_F(CanBusSharerTest, NmtProtocol)
 {
     const std::uint8_t id = 0x05;
-    SdoClient sdo(id, 0x600, 0x580, TIMEOUT, getSender());
-    NmtProtocol nmt(id, &sdo, getSender());
+    NmtProtocol nmt(id, getSender());
 
     const uint16_t heartbeatPeriod = 0x1234;
-
-    // test NmtProtocol::setupHeartbeat()
-
-    const std::uint8_t response[8] = {0x40, 0x17, 0x10};
-    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
-    ASSERT_TRUE(nmt.setupHeartbeat(heartbeatPeriod));
-    ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
-    ASSERT_EQ(getSender()->getLastMessage().len, 8);
-    ASSERT_EQ(getSender()->getLastMessage().data, toInt64(0x2B, 0x1017, 0x00, heartbeatPeriod));
 
     // test NmtProtocol::accept(), no handler attached
 
@@ -785,19 +775,7 @@ TEST_F(CanBusSharerTest, NmtProtocol)
 
 TEST_F(CanBusSharerTest, EmcyConsumer)
 {
-    SdoClient sdo(0x05, 0x600, 0x580, TIMEOUT, getSender());
-    EmcyConsumer emcy(&sdo);
-
-    const uint16_t inhibitTime = 0x1234;
-
-    // test EmcyConsumer::configure()
-
-    const std::uint8_t response[8] = {0x40, 0x15, 0x10};
-    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
-    ASSERT_TRUE(emcy.configure(inhibitTime));
-    ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
-    ASSERT_EQ(getSender()->getLastMessage().len, 8);
-    ASSERT_EQ(getSender()->getLastMessage().data, toInt64(0x2B, 0x1015, 0x00, inhibitTime));
+    EmcyConsumer emcy;
 
     // test EmcyConsumer::accept(), no handler attached
 
