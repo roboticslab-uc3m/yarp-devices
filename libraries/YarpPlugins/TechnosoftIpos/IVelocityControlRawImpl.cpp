@@ -20,7 +20,7 @@ bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
 
     if (std::abs(sp) > vars.maxVel)
     {
-        CD_WARNING("Requested speed exceeds maximum velocity (%f).\n", vars.maxVel);
+        CD_WARNING("Requested speed exceeds maximum velocity (%f).\n", vars.maxVel.load());
         return false;
     }
 

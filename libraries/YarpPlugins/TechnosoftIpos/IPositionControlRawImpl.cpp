@@ -110,7 +110,7 @@ bool TechnosoftIpos::setRefSpeedRaw(int j, double sp)
     }
     else if (sp > vars.maxVel)
     {
-        CD_WARNING("Reference speed exceeds maximum velocity (%f).\n", vars.maxVel);
+        CD_WARNING("Reference speed exceeds maximum velocity (%f).\n", vars.maxVel.load());
         return false;
     }
 
@@ -121,7 +121,14 @@ bool TechnosoftIpos::setRefSpeedRaw(int j, double sp)
     CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
 
     std::uint32_t data = (dataInt << 16) + dataFrac;
-    return can->sdo()->download("Profile velocity", data, 0x6081);
+
+    if (!can->sdo()->download("Profile velocity", data, 0x6081))
+    {
+        return false;
+    }
+
+    vars.refSpeed = sp;
+    return true;
 }
 
 // --------------------------------------------------------------------------------
@@ -160,7 +167,14 @@ bool TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
     CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
 
     std::uint32_t data = (dataInt << 16) + dataFrac;
-    return can->sdo()->download("Profile acceleration", data, 0x6083);
+
+    if (!can->sdo()->download("Profile acceleration", data, 0x6083))
+    {
+        return false;
+    }
+
+    vars.refAcceleration = acc;
+    return true;
 }
 
 // --------------------------------------------------------------------------------
@@ -185,6 +199,12 @@ bool TechnosoftIpos::getRefSpeedRaw(int j, double * ref)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
+
+    if (vars.actualControlMode == VOCAB_CM_NOT_CONFIGURED)
+    {
+        *ref = vars.refSpeed;
+        return true;
+    }
 
     return can->sdo()->upload<std::uint32_t>("Profile velocity", [&](std::uint32_t data)
             {
@@ -218,6 +238,12 @@ bool TechnosoftIpos::getRefAccelerationRaw(int j, double * acc)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
+
+    if (vars.actualControlMode == VOCAB_CM_NOT_CONFIGURED)
+    {
+        *acc = vars.refAcceleration;
+        return true;
+    }
 
     return can->sdo()->upload<std::uint32_t>("Profile acceleration", [&](std::uint32_t data)
             {

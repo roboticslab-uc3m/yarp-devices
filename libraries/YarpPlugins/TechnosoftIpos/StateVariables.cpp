@@ -136,9 +136,21 @@ bool StateVariables::validateInitialState(unsigned int canId)
         return false;
     }
 
-    if (pulsesPerSample <= 0)
+    if (maxVel <= 0.0)
     {
-        CD_WARNING("Illegal pulses per sample: %d.\n", pulsesPerSample.load());
+        CD_WARNING("Illegal maximum velocity: %f.\n", maxVel.load());
+        return false;
+    }
+
+    if (refSpeed <= 0.0)
+    {
+        CD_WARNING("Illegal reference speed: %f.\n", refSpeed.load());
+        return false;
+    }
+
+    if (refAcceleration <= 0.0)
+    {
+        CD_WARNING("Illegal reference acceleration: %f.\n", refAcceleration.load());
         return false;
     }
 
@@ -148,33 +160,21 @@ bool StateVariables::validateInitialState(unsigned int canId)
         return false;
     }
 
-    if (maxVel <= 0.0)
+    if (pulsesPerSample <= 0)
     {
-        CD_WARNING("Illegal maximum velocity: %f.\n", maxVel);
-        return false;
-    }
-
-    if (refSpeed <= 0.0)
-    {
-        CD_WARNING("Illegal reference speed: %f.\n", refSpeed);
-        return false;
-    }
-
-    if (refAcceleration <= 0.0)
-    {
-        CD_WARNING("Illegal reference acceleration: %f.\n", refAcceleration);
+        CD_WARNING("Illegal pulses per sample: %d.\n", pulsesPerSample);
         return false;
     }
 
     if (refSpeed > maxVel)
     {
-        CD_WARNING("Reference speed greater than maximum velocity: %f > %f.\n", refSpeed, maxVel);
+        CD_WARNING("Reference speed greater than maximum velocity: %f > %f.\n", refSpeed.load(), maxVel.load());
         return false;
     }
 
     if (min >= max)
     {
-        CD_WARNING("Illegal joint limits (min, max): %f >= %f.\n", min, max);
+        CD_WARNING("Illegal joint limits (min, max): %f >= %f.\n", min.load(), max.load());
         return false;
     }
 

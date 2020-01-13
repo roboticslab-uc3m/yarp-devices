@@ -118,7 +118,12 @@ struct StateVariables
     std::atomic<double> tr;
     std::atomic<double> k;
     std::atomic<int> encoderPulses;
-    std::atomic<int> pulsesPerSample;
+
+    std::atomic<double> maxVel;
+    std::atomic<double> min;
+    std::atomic<double> max;
+    std::atomic<double> refSpeed;
+    std::atomic<double> refAcceleration;
 
     std::atomic<double> lastHeartbeat;
     std::atomic<std::uint8_t> lastNmtState;
@@ -128,7 +133,7 @@ struct StateVariables
     yarp::conf::vocab32_t initialMode = 0;
 
     double drivePeakCurrent = 0.0;
-    double maxVel = 0.0;
+    int pulsesPerSample = 0;
 
     std::string axisName;
     yarp::conf::vocab32_t jointType = 0;
@@ -140,13 +145,6 @@ struct StateVariables
     PdoConfiguration tpdo3Conf;
 
     std::uint16_t heartbeatPeriod = 0;
-
-    // read only, fresh values queried from iPOS drive
-
-    double min = 0.0;
-    double max = 0.0;
-    double refSpeed = 0.0;
-    double refAcceleration = 0.0;
 };
 
 } // namespace roboticslab
