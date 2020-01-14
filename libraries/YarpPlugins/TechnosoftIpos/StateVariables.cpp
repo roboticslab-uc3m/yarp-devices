@@ -74,6 +74,7 @@ void EncoderRead::reset(std::int32_t pos)
     std::lock_guard<std::mutex> guard(encoderMutex);
     lastPosition = nextToLastPosition = pos;
     lastSpeed = nextToLastSpeed = lastAcceleration = 0.0;
+    lastStamp.update();
 }
 
 // -----------------------------------------------------------------------------
