@@ -42,8 +42,6 @@ bool BottleExtract::accept(yarp::os::Things& thing)
         return false;
     }
 
-    if(bt->toString() == "ignore")
-        return false;
     return true;
 }
 
