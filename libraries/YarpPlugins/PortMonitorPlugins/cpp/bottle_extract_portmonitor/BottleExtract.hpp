@@ -23,7 +23,7 @@ public:
     yarp::os::Things& update(yarp::os::Things& thing);
 
 private:
-    int index, subindex;
+    int index, subindex, subsubindex;
 
     static const int NOT_USED;
 };
