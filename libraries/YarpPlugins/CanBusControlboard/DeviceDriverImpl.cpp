@@ -293,8 +293,10 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
                 true);
     }
 
-    posdThread = new PositionDirectThread(deviceMapper);
-    return posdThread->configure(config) && (!syncTimer || syncTimer->start());
+    //posdThread = new PositionDirectThread(deviceMapper);
+    //return posdThread->configure(config) && (!syncTimer || syncTimer->start());
+
+    return !syncTimer || syncTimer->start();
 }
 
 // -----------------------------------------------------------------------------

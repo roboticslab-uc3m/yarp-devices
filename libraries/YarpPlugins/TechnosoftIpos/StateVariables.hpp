@@ -128,6 +128,8 @@ struct StateVariables
     std::atomic<double> lastHeartbeat;
     std::atomic<std::uint8_t> lastNmtState;
 
+    std::atomic<double> synchronousCommandTarget;
+
     // read only, conceptually immutable
 
     yarp::conf::vocab32_t initialMode = 0;
@@ -145,6 +147,7 @@ struct StateVariables
     PdoConfiguration tpdo3Conf;
 
     std::uint16_t heartbeatPeriod = 0;
+    double syncPeriod = 0.0;
 };
 
 } // namespace roboticslab

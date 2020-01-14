@@ -187,6 +187,12 @@ bool TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage & message)
 
 bool TechnosoftIpos::synchronize()
 {
+    if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT)
+    {
+        std::int32_t value = vars.degreesToInternalUnits(vars.synchronousCommandTarget);
+        return can->rpdo3()->write(value);
+    }
+
     return true;
 }
 

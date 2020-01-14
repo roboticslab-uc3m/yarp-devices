@@ -326,6 +326,10 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
         break;
     case 7:
         CD_INFO("Interpolated Position Mode. canId: %d.\n", can->getId());
+        vars.actualControlMode = VOCAB_CM_UNKNOWN; // FIXME
+        break;
+    case 8:
+        CD_INFO("Cyclic Synchronous Position Mode. canId: %d.\n", can->getId());
         vars.actualControlMode = VOCAB_CM_POSITION_DIRECT;
         break;
     // unhandled
@@ -347,10 +351,6 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
         break;
     case 6:
         CD_INFO("Homing Mode. canId: %d.\n", can->getId());
-        vars.actualControlMode = VOCAB_CM_UNKNOWN;
-        break;
-    case 8:
-        CD_INFO("Cyclic Synchronous Position Mode. canId: %d.\n", can->getId());
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     default:
