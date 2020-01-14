@@ -47,8 +47,8 @@ bool BottleExtract::create(const yarp::os::Property& options)
    }
    else
    {
-       index = parsed.find("subindex").asInt32();
-       yDebug("Using subindex: %d", index);
+       subindex = parsed.find("subindex").asInt32();
+       yDebug("Using subindex: %d\n", subindex);
    }
 
    return true;
@@ -87,6 +87,21 @@ bool BottleExtract::accept(yarp::os::Things& thing)
         return false;
     }
 
+    if(NOT_USED != subindex) // if there is a subindex
+    {
+        yarp::os::Bottle* list = bt->get(index).asList();
+        if(subindex >= list->size())
+        {
+            yWarning("BottleExtract: expected bigger list size (%d) given used subindex (%d)!\n", list->size(), subindex);
+            return false;
+        }
+        if(!list->get(subindex).isList())
+        {
+            yWarning("BottleExtract: expected list at index (%d) with subindex (%d)!\n", index, subindex);
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -98,16 +113,20 @@ yarp::os::Things& BottleExtract::update(yarp::os::Things& thing)
         return thing;
     }
 
-    if(NOT_USED == subindex)
+    if(NOT_USED == subindex) // if no subindex
     {
         yarp::os::Bottle listCopy;
         listCopy.copy(*(bt->get(index).asList())); // because copy constructor does not copy
         bt->clear();
         bt->append(listCopy);
     }
-    else
+    else // if there is a subindex
     {
-
+        yarp::os::Bottle* list = bt->get(index).asList();
+        yarp::os::Bottle sublistCopy;
+        sublistCopy.copy(*(list->get(subindex).asList())); // because copy constructor does not copy
+        bt->clear();
+        bt->append(sublistCopy);
     }
 
     return thing;
