@@ -12,6 +12,8 @@
 namespace roboticslab
 {
 
+const int BottleExtract::NOT_USED = -1;
+
 bool BottleExtract::create(const yarp::os::Property& options)
 {
    yDebug("created!\n");
@@ -37,6 +39,18 @@ bool BottleExtract::create(const yarp::os::Property& options)
    }
    index = parsed.find("index").asInt32();
    yDebug("Using index: %d", index);
+
+   subindex = NOT_USED;
+   if(!parsed.check("subindex"))
+   {
+       yDebug("Not using 'subindex'\n");
+   }
+   else
+   {
+       index = parsed.find("subindex").asInt32();
+       yDebug("Using subindex: %d", index);
+   }
+
    return true;
 }
 
@@ -84,10 +98,17 @@ yarp::os::Things& BottleExtract::update(yarp::os::Things& thing)
         return thing;
     }
 
-    yarp::os::Bottle listCopy;
-    listCopy.copy(*(bt->get(index).asList())); // because copy constructor does not copy
-    bt->clear();
-    bt->append(listCopy);
+    if(NOT_USED == subindex)
+    {
+        yarp::os::Bottle listCopy;
+        listCopy.copy(*(bt->get(index).asList())); // because copy constructor does not copy
+        bt->clear();
+        bt->append(listCopy);
+    }
+    else
+    {
+
+    }
 
     return thing;
 }

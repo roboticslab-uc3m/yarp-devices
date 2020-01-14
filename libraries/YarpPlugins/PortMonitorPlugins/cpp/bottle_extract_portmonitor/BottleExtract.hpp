@@ -23,7 +23,9 @@ public:
     yarp::os::Things& update(yarp::os::Things& thing);
 
 private:
-    int index;
+    int index, subindex;
+
+    static const int NOT_USED;
 };
 
 } // namespace roboticslab
