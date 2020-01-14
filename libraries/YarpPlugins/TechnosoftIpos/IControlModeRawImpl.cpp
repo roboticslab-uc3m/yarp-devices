@@ -109,13 +109,19 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
                 && vars.awaitControlMode(mode);
 
     case VOCAB_CM_VELOCITY:
+        vars.synchronousCommandTarget = 0.0;
+
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
+                && can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x60FF))
                 && can->sdo()->download<std::int8_t>("Modes of Operation", 3, 0x6060)
                 && vars.awaitControlMode(mode);
 
     case VOCAB_CM_CURRENT:
     case VOCAB_CM_TORQUE:
+        vars.synchronousCommandTarget = 0.0;
+
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
+                && can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x201C))
                 && can->sdo()->download<std::uint16_t>("External Reference Type", 1, 0x201D)
                 && can->sdo()->download<std::int8_t>("Modes of Operation", -5, 0x6060)
                 && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4)) // new setpoint (assume target position)
@@ -124,8 +130,8 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     case VOCAB_CM_POSITION_DIRECT:
         vars.synchronousCommandTarget = vars.internalUnitsToDegrees(vars.lastEncoderRead.queryPosition());
 
-        return can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x607A))
-                && can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
+        return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
+                && can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x607A))
                 && can->sdo()->download<std::uint8_t>("Interpolation time period", vars.syncPeriod * 1000, 0x60C2, 0x01)
                 && can->sdo()->download<std::int8_t>("Interpolation time period", -3, 0x60C2, 0x02)
                 && can->sdo()->download<std::int8_t>("Modes of Operation", 8, 0x6060)
