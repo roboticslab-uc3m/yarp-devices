@@ -53,8 +53,7 @@ bool TechnosoftIpos::setRefCurrentRaw(int m, double curr)
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
     CHECK_MODE(VOCAB_CM_CURRENT);
-    vars.synchronousCommandTarget = curr;
-    return quitHaltState(VOCAB_CM_CURRENT);
+    return quitHaltState(VOCAB_CM_CURRENT) && (vars.synchronousCommandTarget = curr, true);
 }
 
 // -----------------------------------------------------------------------------

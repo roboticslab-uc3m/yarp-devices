@@ -22,8 +22,7 @@ bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
         return false;
     }
 
-    vars.synchronousCommandTarget = sp;
-    return quitHaltState(VOCAB_CM_VELOCITY);
+    return quitHaltState(VOCAB_CM_VELOCITY) && (vars.synchronousCommandTarget = sp, true);
 }
 
 // ----------------------------------------------------------------------------------

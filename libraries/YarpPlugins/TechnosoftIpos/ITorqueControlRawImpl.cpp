@@ -32,8 +32,7 @@ bool TechnosoftIpos::setRefTorqueRaw(int j, double t)
     CD_DEBUG("(%d, %f)\n", j, t);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_TORQUE);
-    vars.synchronousCommandTarget = t;
-    return quitHaltState(VOCAB_CM_TORQUE);
+    return quitHaltState(VOCAB_CM_TORQUE) && (vars.synchronousCommandTarget = t, true);
 }
 
 // -------------------------------------------------------------------------------------
