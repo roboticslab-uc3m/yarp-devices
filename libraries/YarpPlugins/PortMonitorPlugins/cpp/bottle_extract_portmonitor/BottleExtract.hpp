@@ -21,6 +21,9 @@ public:
 
     bool accept(yarp::os::Things& thing);
     yarp::os::Things& update(yarp::os::Things& thing);
+
+private:
+    int index;
 };
 
 } // namespace roboticslab

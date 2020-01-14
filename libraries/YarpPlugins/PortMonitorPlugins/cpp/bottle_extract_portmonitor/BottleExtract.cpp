@@ -35,7 +35,7 @@ bool BottleExtract::create(const yarp::os::Property& options)
        yError("Missing 'index', bye!\n");
        return false;
    }
-   int index = parsed.find("index").asInt32();
+   index = parsed.find("index").asInt32();
    yDebug("Using index: %d", index);
    return true;
 }
