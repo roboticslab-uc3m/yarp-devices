@@ -62,6 +62,16 @@ bool BottleExtract::accept(yarp::os::Things& thing)
         yWarning("BottleExtract: expected type Bottle but got wrong data type!\n");
         return false;
     }
+    if(index >= bt->size())
+    {
+        yWarning("BottleExtract: expected bigger Bottle size (%d) given used index (%d)!\n", bt->size(), index);
+        return false;
+    }
+    if(!bt->get(index).isList())
+    {
+        yWarning("BottleExtract: expected list at index (%d)!\n", index);
+        return false;
+    }
 
     return true;
 }
@@ -74,7 +84,11 @@ yarp::os::Things& BottleExtract::update(yarp::os::Things& thing)
         return thing;
     }
 
-    bt->addString("Modified in DLL");
+    yarp::os::Bottle listCopy;
+    listCopy.copy(*(bt->get(index).asList())); // because copy constructor does not copy
+    bt->clear();
+    bt->append(listCopy);
+
     return thing;
 }
 
