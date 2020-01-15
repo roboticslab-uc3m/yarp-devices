@@ -36,8 +36,6 @@ if(NOT SKIP_CanBusControlboard)
                                        IRemoteVariablesImpl.cpp
                                        ITorqueControlImpl.cpp
                                        IVelocityControlImpl.cpp
-                                       PositionDirectThread.hpp
-                                       PositionDirectThread.cpp
                                        CanRxTxThreads.hpp
                                        CanRxTxThreads.cpp
                                        YarpCanSenderDelegate.hpp

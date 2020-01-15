@@ -293,9 +293,6 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
                 true);
     }
 
-    //posdThread = new PositionDirectThread(deviceMapper);
-    //return posdThread->configure(config) && (!syncTimer || syncTimer->start());
-
     return !syncTimer || syncTimer->start();
 }
 
@@ -312,14 +309,6 @@ bool CanBusControlboard::close()
 
     delete syncTimer;
     syncTimer = nullptr;
-
-    if (posdThread && posdThread->isRunning())
-    {
-        posdThread->stop();
-    }
-
-    delete posdThread;
-    posdThread = nullptr;
 
     for (int i = 0; i < nodeDevices.size(); i++)
     {

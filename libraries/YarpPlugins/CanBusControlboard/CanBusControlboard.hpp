@@ -10,7 +10,6 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriverList.h>
 
-#include "PositionDirectThread.hpp"
 #include "DeviceMapper.hpp"
 #include "CanRxTxThreads.hpp"
 
@@ -61,9 +60,7 @@ class CanBusControlboard : public yarp::dev::DeviceDriver,
 {
 public:
 
-    CanBusControlboard()
-        : syncTimer(nullptr),
-          posdThread(nullptr)
+    CanBusControlboard() : syncTimer(nullptr)
     { }
 
     ~CanBusControlboard()
@@ -330,7 +327,6 @@ private:
     std::vector<CanThreads> canThreads;
 
     yarp::os::Timer * syncTimer;
-    PositionDirectThread * posdThread;
 };
 
 } // namespace roboticslab

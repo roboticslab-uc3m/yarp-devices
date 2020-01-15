@@ -2,9 +2,6 @@
 
 #include "CanBusControlboard.hpp"
 
-#include <algorithm>
-#include <vector>
-
 #include <ColorDebug.h>
 
 using namespace roboticslab;
@@ -17,17 +14,33 @@ bool CanBusControlboard::getRemoteVariable(std::string key, yarp::os::Bottle & v
 
     val.clear();
 
-    if (key == "linInterpPeriodMs")
+    for (int i = 0; i < nodeDevices.size(); i++)
     {
-        val.addInt32(posdThread->getPeriod());
-    }
-    else
-    {
-        CD_ERROR("Unsupported key: %s.\n", key.c_str());
-        return false;
+        if (key == nodeDevices[i]->key)
+        {
+            auto t = deviceMapper.getDevice(i);
+            auto * p = std::get<0>(t)->getHandle<yarp::dev::IRemoteVariablesRaw>();
+            yarp::os::Bottle b;
+
+            if (p && p->getRemoteVariablesListRaw(&b))
+            {
+                bool ok = true;
+
+                for (int j = 0; j < b.size(); j++)
+                {
+                    ok &= p->getRemoteVariableRaw(b.get(i).asString(), val.addList());
+                }
+
+                return ok;
+            }
+
+            CD_ERROR("Unsupported interface or failed query: \"%s\".\n", key.c_str());
+            return false;
+        }
     }
 
-    return true;
+    CD_ERROR("Node \"%s\" not found.\n", key.c_str());
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -36,38 +49,34 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
 {
     CD_DEBUG("%s\n", key.c_str());
 
-    if (key != "linInterpPeriodMs" && key != "linInterpBufferSize" && key != "linInterpMode")
+    for (int i = 0; i < nodeDevices.size(); i++)
     {
-        CD_ERROR("Unsupported key: %s.\n", key.c_str());
-        return false;
+        if (key == nodeDevices[i]->key)
+        {
+            auto t = deviceMapper.getDevice(i);
+            auto * p = std::get<0>(t)->getHandle<yarp::dev::IRemoteVariablesRaw>();
+
+            if (p)
+            {
+                bool ok = true;
+
+                for (int j = 0; j < val.size(); j++)
+                {
+                    auto * b = val.get(j).asList();
+                    ok &= b && b->size() == 2 && b->get(1).isList()
+                            && p->setRemoteVariableRaw(b->get(0).asString(), *b->get(1).asList());
+                }
+
+                return ok;
+            }
+
+            CD_ERROR("Unsupported interface: \"%s\".\n", key.c_str());
+            return false;
+        }
     }
 
-    std::vector<int> modes(nodeDevices.size());
-
-    if (!getControlModes(modes.data()))
-    {
-        CD_ERROR("Unable to retrieve control modes.\n");
-        return false;
-    }
-
-    if (std::any_of(modes.begin(), modes.end(), [](int mode) { return mode == VOCAB_CM_POSITION_DIRECT; }))
-    {
-        CD_ERROR("CAN device currently in posd mode, cannot change config params right now.\n");
-        return false;
-    }
-
-    for (const auto & t : deviceMapper.getDevicesWithOffsets())
-    {
-        auto * p = std::get<0>(t)->getHandle<yarp::dev::IRemoteVariablesRaw>();
-        p->setRemoteVariableRaw(key, val);
-    }
-
-    if (key == "linInterpPeriodMs")
-    {
-        posdThread->setPeriod(val.get(0).asInt32() * 0.001);
-    }
-
-    return true;
+    CD_ERROR("Node \"%s\" not found.\n", key.c_str());
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -79,9 +88,10 @@ bool CanBusControlboard::getRemoteVariablesList(yarp::os::Bottle * listOfKeys)
     listOfKeys->clear();
 
     // Place each key in its own list so that clients can just call check('<key>') or !find('<key>').isNull().
-    listOfKeys->addString("linInterpPeriodMs");
-    listOfKeys->addString("linInterpBufferSize");
-    listOfKeys->addString("linInterpMode");
+    for (int i = 0; i < nodeDevices.size(); i++)
+    {
+        listOfKeys->addString(nodeDevices[i]->key);
+    }
 
     return true;
 }
