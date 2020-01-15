@@ -32,34 +32,35 @@ bool BottleExtract::create(const yarp::os::Property& options)
    yarp::os::Property parsed;
    parsed.fromString(textForProperty); // yDebug("textForProperty: %s\n", textForProperty.c_str());
 
-   if(!parsed.check("index"))
+   if(!parsed.check("index")) // only index is mandatory
    {
-       yError("Missing 'index', bye!\n");
+       yError("Missing index, bye!\n");
        return false;
    }
+
    index = parsed.find("index").asInt32();
    yDebug("Using index: %d", index);
 
-   subindex = NOT_USED;
-   if(!parsed.check("subindex"))
-   {
-       yDebug("Not using 'subindex'\n");
-   }
-   else
+   if(parsed.check("subindex"))
    {
        subindex = parsed.find("subindex").asInt32();
        yDebug("Using subindex: %d\n", subindex);
    }
-
-   subsubindex = NOT_USED;
-   if(!parsed.check("subsubindex"))
-   {
-       yDebug("Not using 'subsubindex'\n");
-   }
    else
+   {
+       subindex = NOT_USED;
+       yDebug("Not using subindex (will not use subsubindex either)\n");
+   }
+
+   if(hasSubindex() && parsed.check("subsubindex"))
    {
        subsubindex = parsed.find("subsubindex").asInt32();
        yDebug("Using subsubindex: %d\n", subsubindex);
+   }
+   else
+   {
+       subsubindex = NOT_USED;
+       yDebug("Not using subsubindex\n");
    }
 
    return true;
@@ -83,33 +84,50 @@ bool BottleExtract::getparam(yarp::os::Property& params)
 bool BottleExtract::accept(yarp::os::Things& thing)
 {   
     yarp::os::Bottle* bt = thing.cast_as<yarp::os::Bottle>();
-    if(bt == NULL) {
+
+    if(bt == NULL)
+    {
         yWarning("BottleExtract: expected type Bottle but got wrong data type!\n");
         return false;
     }
     if(index >= bt->size())
     {
-        yWarning("BottleExtract: expected bigger Bottle size (%d) given used index (%d)!\n", bt->size(), index);
+        yWarning("BottleExtract: index (%d) out of range of size (%zu)!\n", index, bt->size());
         return false;
     }
     if(!bt->get(index).isList())
     {
-        yWarning("BottleExtract: expected list at index (%d)!\n", index);
+        yWarning("BottleExtract: expected list at (%d)!\n", index);
         return false;
     }
 
-    if(NOT_USED != subindex) // if there is a subindex
+    if(hasSubindex())
     {
         yarp::os::Bottle* list = bt->get(index).asList();
         if(subindex >= list->size())
         {
-            yWarning("BottleExtract: expected bigger list size (%d) given used subindex (%d)!\n", list->size(), subindex);
+            yWarning("BottleExtract: subindex (%d) out of range of size (%zu)!\n", subindex, list->size());
             return false;
         }
         if(!list->get(subindex).isList())
         {
-            yWarning("BottleExtract: expected list at index (%d) with subindex (%d)!\n", index, subindex);
+            yWarning("BottleExtract: expected list at (%d, %d)!\n", index, subindex);
             return false;
+        }
+
+        if(hasSubsubindex())
+        {
+            yarp::os::Bottle* sublist = list->get(subindex).asList();
+            if(subsubindex >= sublist->size())
+            {
+                yWarning("BottleExtract: subsubindex (%d) out of range of size (%zu)!\n", subsubindex, sublist->size());
+                return false;
+            }
+            if(!sublist->get(subsubindex).isList())
+            {
+                yWarning("BottleExtract: expected list at (%d, %d, %d)!\n", index, subindex, subsubindex);
+                return false;
+            }
         }
     }
 
@@ -124,7 +142,7 @@ yarp::os::Things& BottleExtract::update(yarp::os::Things& thing)
         return thing;
     }
 
-    if(NOT_USED != subsubindex) // if there is a subsubindex
+    if(hasSubsubindex()) // from create(), this involes having a subindex too
     {
         yarp::os::Bottle* list = bt->get(index).asList();
         yarp::os::Bottle* sublist = list->get(subindex).asList();
@@ -133,7 +151,7 @@ yarp::os::Things& BottleExtract::update(yarp::os::Things& thing)
         bt->clear();
         bt->append(subsublistCopy);
     }
-    else if(NOT_USED != subindex) // if there is a subindex
+    else if(hasSubindex())
     {
         yarp::os::Bottle* list = bt->get(index).asList();
         yarp::os::Bottle sublistCopy;
@@ -141,7 +159,7 @@ yarp::os::Things& BottleExtract::update(yarp::os::Things& thing)
         bt->clear();
         bt->append(sublistCopy);
     }
-    else // if no subindex
+    else
     {
         yarp::os::Bottle listCopy;
         listCopy.copy(*(bt->get(index).asList())); // because copy constructor does not copy
