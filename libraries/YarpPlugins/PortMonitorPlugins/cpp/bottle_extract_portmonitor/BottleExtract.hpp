@@ -23,7 +23,9 @@ public:
     yarp::os::Things& update(yarp::os::Things& thing);
 
 private:
-    int index, subindex;
+    int index, subindex, subsubindex;
+    bool hasSubindex() { return (subindex != NOT_USED); }
+    bool hasSubsubindex() { return (subsubindex != NOT_USED); }
 
     static const int NOT_USED;
 };
