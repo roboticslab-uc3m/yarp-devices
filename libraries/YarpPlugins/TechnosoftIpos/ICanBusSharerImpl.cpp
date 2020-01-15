@@ -213,6 +213,12 @@ bool TechnosoftIpos::synchronize()
     }
     case VOCAB_CM_POSITION_DIRECT:
     {
+        if (linInterpBuffer)
+        {
+            std::uint64_t data = linInterpBuffer->makeDataRecord(vars.synchronousCommandTarget);
+            return can->rpdo3()->write(data);
+        }
+
         std::int32_t data = vars.degreesToInternalUnits(vars.synchronousCommandTarget);
         return can->rpdo3()->write(data);
     }

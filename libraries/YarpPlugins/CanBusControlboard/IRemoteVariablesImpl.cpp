@@ -28,7 +28,7 @@ bool CanBusControlboard::getRemoteVariable(std::string key, yarp::os::Bottle & v
 
                 for (int j = 0; j < b.size(); j++)
                 {
-                    ok &= p->getRemoteVariableRaw(b.get(i).asString(), val.addList());
+                    ok &= p->getRemoteVariableRaw(b.get(j).asString(), val.addList());
                 }
 
                 return ok;
@@ -49,6 +49,12 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
 {
     CD_DEBUG("%s\n", key.c_str());
 
+    if (val.size() != 2)
+    {
+        CD_ERROR("Illegal bottle format, expected single key-value list.\n");
+        return false;
+    }
+
     for (int i = 0; i < nodeDevices.size(); i++)
     {
         if (key == nodeDevices[i]->key)
@@ -58,16 +64,7 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
 
             if (p)
             {
-                bool ok = true;
-
-                for (int j = 0; j < val.size(); j++)
-                {
-                    auto * b = val.get(j).asList();
-                    ok &= b && b->size() == 2 && b->get(1).isList()
-                            && p->setRemoteVariableRaw(b->get(0).asString(), *b->get(1).asList());
-                }
-
-                return ok;
+                return p->setRemoteVariableRaw(val.get(0).asString(), *val.get(1).asList());
             }
 
             CD_ERROR("Unsupported interface: \"%s\".\n", key.c_str());
