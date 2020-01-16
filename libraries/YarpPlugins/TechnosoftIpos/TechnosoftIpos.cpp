@@ -281,7 +281,11 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
     switch (vars.actualControlMode.load())
     {
     case VOCAB_CM_POSITION:
-        reportBitToggle(report, INFO, 12, "Trajectory generator will not accept a new set-point.", "Trajectory generator will accept a new set-point.");
+        if (reportBitToggle(report, INFO, 12, "Trajectory generator will not accept a new set-point.",
+                "Trajectory generator will accept a new set-point."))
+        {
+            can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)); // finalize handshake
+        }
         reportBitToggle(report, WARN, 13, "Following error.", "No following error.");
         break;
     case VOCAB_CM_VELOCITY:

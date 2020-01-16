@@ -104,6 +104,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     case VOCAB_CM_POSITION:
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
                 && can->sdo()->download<std::int8_t>("Modes of Operation", 1, 0x6060)
+                && can->driveStatus()->controlword(can->driveStatus()->controlword().set(5)) // change set immediately
                 && vars.awaitControlMode(mode);
 
     case VOCAB_CM_VELOCITY:

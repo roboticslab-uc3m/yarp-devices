@@ -19,9 +19,9 @@ bool TechnosoftIpos::positionMoveRaw(int j, double ref)
     CHECK_MODE(VOCAB_CM_POSITION);
 
     return quitHaltState(VOCAB_CM_POSITION)
-            && can->driveStatus()->controlword(0x002F) // change set immediately
             && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(ref), 0x607A)
-            && can->driveStatus()->controlword(0x003F); // new setpoint (assume absolute target position)
+            // new setpoint (assume absolute target position)
+            && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4));
 }
 
 // --------------------------------------------------------------------------------
@@ -49,9 +49,9 @@ bool TechnosoftIpos::relativeMoveRaw(int j, double delta)
     CHECK_MODE(VOCAB_CM_POSITION);
 
     return quitHaltState(VOCAB_CM_POSITION)
-            && can->driveStatus()->controlword(0x002F) // change set immediately
             && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(delta), 0x607A)
-            && can->driveStatus()->controlword(0x007F); // new setpoint (assume relative target position)
+            // new setpoint (assume relative target position)
+            && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).set(6));
 }
 
 // --------------------------------------------------------------------------------
