@@ -184,3 +184,47 @@ bool TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage & message)
 }
 
 // -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::synchronize()
+{
+    switch (vars.actualControlMode.load())
+    {
+    case VOCAB_CM_VELOCITY:
+    {
+        double value = vars.degreesToInternalUnits(vars.synchronousCommandTarget, 1);
+
+        std::int16_t dataInt;
+        std::uint16_t dataFrac;
+        CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
+
+        std::int32_t data = (dataInt << 16) + dataFrac;
+        return can->rpdo3()->write(data);
+    }
+    case VOCAB_CM_TORQUE:
+    {
+        double curr = vars.torqueToCurrent(vars.synchronousCommandTarget);
+        std::int32_t data = vars.currentToInternalUnits(curr) << 16;
+        return can->rpdo3()->write(data);
+    }
+    case VOCAB_CM_CURRENT:
+    {
+        std::int32_t data = vars.currentToInternalUnits(vars.synchronousCommandTarget) << 16;
+        return can->rpdo3()->write(data);
+    }
+    case VOCAB_CM_POSITION_DIRECT:
+    {
+        if (linInterpBuffer)
+        {
+            std::uint64_t data = linInterpBuffer->makeDataRecord(vars.synchronousCommandTarget);
+            return can->rpdo3()->write(data);
+        }
+
+        std::int32_t data = vars.degreesToInternalUnits(vars.synchronousCommandTarget);
+        return can->rpdo3()->write(data);
+    }
+    default:
+        return true;
+    }
+}
+
+// -----------------------------------------------------------------------------

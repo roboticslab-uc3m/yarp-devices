@@ -2,6 +2,8 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <yarp/os/Property.h>
+
 #include <ColorDebug.h>
 
 using namespace roboticslab;
@@ -14,24 +16,25 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
 
     val.clear();
 
-    if (key == "linInterpPeriodMs")
+    if (key == "linInterp")
     {
-        val.addInt32(linInterpBuffer->getPeriod());
-    }
-    else if (key == "linInterpBufferSize")
-    {
-        val.addInt32(linInterpBuffer->getBufferSize());
-    }
-    else if (key == "linInterpMode")
-    {
-        val.addString(linInterpBuffer->getType());
-    }
-    else
-    {
-        CD_ERROR("Unsupported key: %s.\n", key.c_str());
-        return false;
+        if (!linInterpBuffer)
+        {
+            CD_ERROR("Linear interpolation mode disabled.\n");
+            return false;
+        }
+
+        yarp::os::Property config;
+        config.put("periodMs", linInterpBuffer->getPeriodMs());
+        config.put("bufferSize", linInterpBuffer->getBufferSize());
+        config.put("mode", linInterpBuffer->getType());
+
+        val.addString(key);
+        val.addList().fromString(config.toString());
+        return true;
     }
 
+    CD_ERROR("Unsupported key: \"%s\".\n", key.c_str());
     return false;
 }
 
@@ -39,76 +42,30 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
 
 bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val)
 {
-    //CD_DEBUG("%s\n", key.c_str()); // too verbose
+    CD_DEBUG("%s\n", key.c_str());
 
-    if (key == "linInterpConfig")
+    if (key == "linInterp")
     {
-        LinearInterpolationBuffer * newBuffer = LinearInterpolationBuffer::createBuffer(val, vars);
-
-        if (newBuffer)
+        if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT)
         {
-            delete linInterpBuffer;
-            linInterpBuffer = newBuffer;
-        }
-        else
-        {
+            CD_ERROR("Currently in posd mode, cannot change config params right now (canId: %d).\n", can->getId());
             return false;
         }
 
+        delete linInterpBuffer;
+
+        if (val.size() != 0)
+        {
+            linInterpBuffer = LinearInterpolationBuffer::createBuffer(val, vars, can->getId());
+            return linInterpBuffer != nullptr;
+        }
+
+        CD_SUCCESS("Switched back to CSP mode (canId: %d).\n", can->getId());
         return true;
     }
 
-    if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT)
-    {
-        if (key == "linInterpStart")
-        {
-            return can->driveStatus()->controlword(0x001F); // enable ip mode
-        }
-        else if (key == "linInterpTarget")
-        {
-            return can->rpdo3()->write<std::uint64_t>(linInterpBuffer->makeDataRecord());
-        }
-        else
-        {
-            CD_ERROR("Currently in posd mode, cannot change config params right now.\n");
-            return false;
-        }
-    }
-
-    if (key == "linInterpPeriodMs")
-    {
-        linInterpBuffer->setPeriod(val.get(0).asInt32());
-    }
-    else if (key == "linInterpBufferSize")
-    {
-        linInterpBuffer->setBufferSize(val.get(0).asInt32());
-    }
-    else if (key == "linInterpMode")
-    {
-        std::string type = val.get(0).asString();
-
-        if (type != linInterpBuffer->getType())
-        {
-            LinearInterpolationBuffer * newBuffer = linInterpBuffer->cloneTo(type);
-
-            if (newBuffer)
-            {
-                delete linInterpBuffer;
-                linInterpBuffer = newBuffer;
-            }
-            else
-            {
-                return false;
-            }
-        }
-    }
-    else
-    {
-        CD_ERROR("Unsupported key: %s.\n", key.c_str());
-        return false;
-    }
-
-    return true;
+    CD_ERROR("Unsupported key: \"%s\".\n", key.c_str());
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -120,12 +77,7 @@ bool TechnosoftIpos::getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys)
     listOfKeys->clear();
 
     // Place each key in its own list so that clients can just call check('<key>') or !find('<key>').isNull().
-    listOfKeys->addString("linInterpPeriodMs");
-    listOfKeys->addString("linInterpBufferSize");
-    listOfKeys->addString("linInterpMode");
-    listOfKeys->addString("linInterpStart");
-    listOfKeys->addString("linInterpTarget");
-    listOfKeys->addString("linInterpConfig");
+    listOfKeys->addString("linInterp");
 
     return true;
 }

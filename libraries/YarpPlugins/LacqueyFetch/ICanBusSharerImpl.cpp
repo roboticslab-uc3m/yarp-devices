@@ -41,3 +41,10 @@ bool LacqueyFetch::registerSender(CanSenderDelegate * sender)
 }
 
 // -----------------------------------------------------------------------------
+
+bool LacqueyFetch::synchronize()
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------

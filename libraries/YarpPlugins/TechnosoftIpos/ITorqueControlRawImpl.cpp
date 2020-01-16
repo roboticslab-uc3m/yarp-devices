@@ -13,11 +13,8 @@ bool TechnosoftIpos::getRefTorqueRaw(int j, double * t)
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_TORQUE);
-
-    return can->sdo()->upload<std::int32_t>("External online reference", [&](std::int32_t data)
-            { double curr = vars.internalUnitsToCurrent(data >> 16);
-              *t = vars.currentToTorque(curr); },
-            0x201C);
+    *t = vars.synchronousCommandTarget;
+    return true;
 }
 
 // -------------------------------------------------------------------------------------
@@ -35,10 +32,7 @@ bool TechnosoftIpos::setRefTorqueRaw(int j, double t)
     CD_DEBUG("(%d, %f)\n", j, t);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_TORQUE);
-
-    double curr = vars.torqueToCurrent(t);
-    std::int32_t data = vars.currentToInternalUnits(curr) << 16;
-    return quitHaltState(VOCAB_CM_TORQUE) && can->sdo()->download("External online reference", data, 0x201C);
+    return quitHaltState(VOCAB_CM_TORQUE) && (vars.synchronousCommandTarget = t, true);
 }
 
 // -------------------------------------------------------------------------------------

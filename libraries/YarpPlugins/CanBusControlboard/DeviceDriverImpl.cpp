@@ -174,6 +174,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
                 nodeOptions.fromString(nodeGroup.toString());
                 nodeOptions.put("robotConfig", config.find("robotConfig"));
+                nodeOptions.put("syncPeriod", config.find("syncPeriod"));
             }
             else
             {
@@ -275,7 +276,14 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
                 {
                     for (const auto & bundle : canThreads)
                     {
+                        auto * reader = bundle.reader;
                         auto * writer = bundle.writer;
+
+                        for (const auto & entry : reader->getHandleMap())
+                        {
+                            entry.second->synchronize();
+                        }
+
                         writer->getDelegate()->prepareMessage({0x80, 0, nullptr}); // SYNC
                         writer->flush();
                     }
@@ -285,8 +293,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
                 true);
     }
 
-    posdThread = new PositionDirectThread(deviceMapper);
-    return posdThread->configure(config) && (!syncTimer || syncTimer->start());
+    return !syncTimer || syncTimer->start();
 }
 
 // -----------------------------------------------------------------------------
@@ -302,14 +309,6 @@ bool CanBusControlboard::close()
 
     delete syncTimer;
     syncTimer = nullptr;
-
-    if (posdThread && posdThread->isRunning())
-    {
-        posdThread->stop();
-    }
-
-    delete posdThread;
-    posdThread = nullptr;
 
     for (int i = 0; i < nodeDevices.size(); i++)
     {

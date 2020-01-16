@@ -62,6 +62,8 @@ public:
     { return true; }
     virtual bool registerSender(CanSenderDelegate * sender) override
     { return true; }
+    virtual bool synchronize() override
+    { return true; }
 
     //  --------- IAmplifierControlRaw declarations ---------
 

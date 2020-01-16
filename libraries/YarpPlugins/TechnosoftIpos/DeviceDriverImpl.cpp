@@ -51,6 +51,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     vars.refSpeed = config.check("refSpeed", yarp::os::Value(0.0), "ref speed (meters/second or degrees/second)").asFloat64();
     vars.refAcceleration = config.check("refAcceleration", yarp::os::Value(0.0), "ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
     vars.heartbeatPeriod = config.check("heartbeatPeriod", yarp::os::Value(100), "CAN heartbeat period (ms)").asInt32(); // TODO
+    vars.syncPeriod = config.check("syncPeriod", yarp::os::Value(0.0), "SYNC message period (s)").asDouble(); // TODO
     vars.initialMode = config.check("initialMode", yarp::os::Value(VOCAB_CM_POSITION), "initial YARP control mode vocab").asVocab(); // TODO
 
     if (!vars.validateInitialState(canId))
@@ -135,13 +136,6 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     can->emcy()->setErrorCodeRegistry<TechnosoftIposEmcy>();
 
     can->nmt()->registerHandler(std::bind(&TechnosoftIpos::handleNmt, this, _1));
-
-    linInterpBuffer = LinearInterpolationBuffer::createBuffer(config, vars); // pick defaults
-
-    if (!linInterpBuffer)
-    {
-        return false;
-    }
 
     monitorThread = new yarp::os::Timer(yarp::os::TimerSettings(monitorPeriod), std::bind(&TechnosoftIpos::monitorWorker, this, _1), true);
 

@@ -93,6 +93,7 @@ public:
     virtual bool initialize() override;
     virtual bool finalize() override;
     virtual bool registerSender(CanSenderDelegate * sender) override;
+    virtual bool synchronize() override;
 
     //  --------- IAxisInfoRaw declarations. Implementation in IAxisInfoRawImpl.cpp ---------
 
@@ -114,7 +115,6 @@ public:
     virtual bool getControlModesRaw(int * modes) override;
     virtual bool getControlModesRaw(int n_joint, const int * joints, int * modes) override;
     virtual bool setControlModeRaw(int j, int mode) override;
-    bool setPositionDirectModeRaw();
     virtual bool setControlModesRaw(int * modes) override;
     virtual bool setControlModesRaw(int n_joint, const int * joints, int * modes) override;
 
@@ -259,6 +259,8 @@ public:
     //virtual bool stopRaw(int n_joint, const int *joints) override;
 
 private:
+
+    bool setLegacyPositionInterpolationMode();
 
     void interpretSupportedDriveModes(std::uint32_t data);
     void interpretMsr(std::uint16_t msr);

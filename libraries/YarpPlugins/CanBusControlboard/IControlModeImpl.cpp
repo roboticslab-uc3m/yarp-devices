@@ -39,9 +39,7 @@ bool CanBusControlboard::setControlMode(int j, int mode)
 {
     CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
     CHECK_JOINT(j);
-
-    return deviceMapper.mapSingleJoint(&yarp::dev::IControlModeRaw::setControlModeRaw, j, mode)
-            && posdThread->updateControlModeRegister(j, mode);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IControlModeRaw::setControlModeRaw, j, mode);
 }
 
 // -----------------------------------------------------------------------------
@@ -49,9 +47,7 @@ bool CanBusControlboard::setControlMode(int j, int mode)
 bool CanBusControlboard::setControlModes(int * modes)
 {
     CD_DEBUG("\n");
-
-    return deviceMapper.mapAllJoints(&yarp::dev::IControlModeRaw::setControlModesRaw, modes)
-            && posdThread->updateControlModeRegister(modes, nodeDevices.size());
+    return deviceMapper.mapAllJoints(&yarp::dev::IControlModeRaw::setControlModesRaw, modes);
 }
 
 // -----------------------------------------------------------------------------
@@ -59,9 +55,7 @@ bool CanBusControlboard::setControlModes(int * modes)
 bool CanBusControlboard::setControlModes(int n_joint, const int * joints, int * modes)
 {
     CD_DEBUG("(%d)\n",n_joint);
-
-    return deviceMapper.mapJointGroup(&yarp::dev::IControlModeRaw::setControlModesRaw, n_joint, joints, modes)
-            && posdThread->updateControlModeRegister(n_joint, joints, modes);
+    return deviceMapper.mapJointGroup(&yarp::dev::IControlModeRaw::setControlModesRaw, n_joint, joints, modes);
 }
 
 // -----------------------------------------------------------------------------

@@ -13,8 +13,7 @@ bool TechnosoftIpos::setPositionRaw(int j, double ref)
     CD_DEBUG("(%d, %f)\n", j, ref);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
-    linInterpBuffer->updateTarget(ref);
-    return true;
+    return quitHaltState(VOCAB_CM_POSITION_DIRECT) && (vars.synchronousCommandTarget = ref, true);
 }
 // -----------------------------------------------------------------------------
 
@@ -39,7 +38,7 @@ bool TechnosoftIpos::getRefPositionRaw(int joint, double * ref)
     CD_DEBUG("(%d)\n", joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
-    *ref = linInterpBuffer->getLastTarget();
+    *ref = vars.synchronousCommandTarget;
     return true;
 }
 

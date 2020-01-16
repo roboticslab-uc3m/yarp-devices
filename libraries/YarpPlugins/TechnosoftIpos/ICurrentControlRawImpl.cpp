@@ -53,9 +53,7 @@ bool TechnosoftIpos::setRefCurrentRaw(int m, double curr)
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
     CHECK_MODE(VOCAB_CM_CURRENT);
-
-    std::int32_t data = vars.currentToInternalUnits(curr) << 16;
-    return quitHaltState(VOCAB_CM_CURRENT) && can->sdo()->download("External online reference", data, 0x201C);
+    return quitHaltState(VOCAB_CM_CURRENT) && (vars.synchronousCommandTarget = curr, true);
 }
 
 // -----------------------------------------------------------------------------
@@ -81,10 +79,8 @@ bool TechnosoftIpos::getRefCurrentRaw(int m, double * curr)
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
     CHECK_MODE(VOCAB_CM_CURRENT);
-
-    return can->sdo()->upload<std::int32_t>("External online reference", [&](std::int32_t data)
-            { *curr = vars.internalUnitsToCurrent(data >> 16); },
-            0x201C);
+    *curr = vars.synchronousCommandTarget;
+    return true;
 }
 
 // -----------------------------------------------------------------------------
