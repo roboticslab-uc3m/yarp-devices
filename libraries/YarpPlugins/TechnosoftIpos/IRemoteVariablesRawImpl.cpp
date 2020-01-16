@@ -48,7 +48,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
     {
         if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT)
         {
-            CD_ERROR("Currently in posd mode, cannot change config params right now.\n");
+            CD_ERROR("Currently in posd mode, cannot change config params right now (canId: %d).\n", can->getId());
             return false;
         }
 
@@ -60,7 +60,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
             return linInterpBuffer != nullptr;
         }
 
-        // switch back to CSP
+        CD_SUCCESS("Switched back to CSP mode (canId: %d).\n", can->getId());
         return true;
     }
 
