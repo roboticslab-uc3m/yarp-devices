@@ -96,7 +96,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     // TODO: hardcoded values
     double canSdoTimeoutMs = config.check("canSdoTimeoutMs", yarp::os::Value(20.0), "CAN SDO timeout (ms)").asFloat64();
-    double canDriveStateTimeout = config.check("canDriveStateTimeout", yarp::os::Value(2.0), "CAN drive state timeout (s)").asFloat64();
+    double canDriveStateTimeout = config.check("canDriveStateTimeout", yarp::os::Value(3.0), "CAN drive state timeout (s)").asFloat64();
     double monitorPeriod = config.check("monitorPeriod", yarp::os::Value(0.5), "monitor thread period (s)").asFloat64();
 
     can = new CanOpen(canId, canSdoTimeoutMs * 0.001, canDriveStateTimeout);
