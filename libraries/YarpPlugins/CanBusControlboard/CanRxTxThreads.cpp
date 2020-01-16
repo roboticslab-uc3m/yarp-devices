@@ -4,8 +4,6 @@
 
 #include <cstring>
 
-#include <yarp/os/Time.h>
-
 #include <ColorDebug.h>
 
 #include "YarpCanSenderDelegate.hpp"
@@ -24,20 +22,6 @@ void CanReaderWriterThread::beforeStart()
 void CanReaderWriterThread::afterStart(bool success)
 {
     CD_INFO("Configuring CanBusControlboard %s thread %s... %s\n", type.c_str(), id.c_str(), success ? "success" : "failure");
-}
-
-// -----------------------------------------------------------------------------
-
-void CanReaderWriterThread::onStop()
-{
-    CD_INFO("Stopping CanBusControlboard %s thread %s.\n", type.c_str(), id.c_str());
-}
-
-// -----------------------------------------------------------------------------
-
-void CanReaderWriterThread::setDelay(double delay)
-{
-    this->delay = delay <= 0.0 ? std::numeric_limits<double>::min() : delay;
 }
 
 // -----------------------------------------------------------------------------
@@ -63,29 +47,21 @@ void CanReaderThread::registerHandle(ICanBusSharer * p)
 void CanReaderThread::run()
 {
     unsigned int read;
-    bool ok;
 
-    while (!isStopping())
+    //-- Return immediately if there is nothing to be read (non-blocking call), return false on errors.
+    bool ok = iCanBus->canRead(canBuffer, bufferSize, &read);
+
+    //-- All debugging messages should be contained in canRead, so just loop again.
+    if (!ok || read == 0) return;
+
+    for (int i = 0; i < read; i++)
     {
-        //-- Lend CPU time to write threads.
-        // https://github.com/roboticslab-uc3m/yarp-devices/issues/191
-        yarp::os::Time::delay(delay);
+        const yarp::dev::CanMessage & msg = canBuffer[i];
+        auto it = canIdToHandle.find(msg.getId() & 0x7F);
 
-        //-- Return immediately if there is nothing to be read (non-blocking call), return false on errors.
-        ok = iCanBus->canRead(canBuffer, bufferSize, &read);
-
-        //-- All debugging messages should be contained in canRead, so just loop again.
-        if (!ok || read == 0) continue;
-
-        for (int i = 0; i < read; i++)
+        if (it != canIdToHandle.end())
         {
-            const yarp::dev::CanMessage & msg = canBuffer[i];
-            auto it = canIdToHandle.find(msg.getId() & 0x7F);
-
-            if (it != canIdToHandle.end())
-            {
-                it->second->interpretMessage(msg);
-            }
+            it->second->interpretMessage(msg);
         }
     }
 }
@@ -107,11 +83,11 @@ CanWriterThread::~CanWriterThread()
 
 // -----------------------------------------------------------------------------
 
-void CanWriterThread::flush()
+void CanWriterThread::run()
 {
     std::lock_guard<std::mutex> lock(bufferMutex);
 
-    //-- Nothing to write, exit.
+    //-- Nothing to write, just loop again.
     if (preparedMessages == 0) return;
 
     yarp::dev::CanErrors errors;
@@ -140,21 +116,6 @@ void CanWriterThread::flush()
     }
 
     preparedMessages -= sent;
-}
-
-// -----------------------------------------------------------------------------
-
-void CanWriterThread::run()
-{
-    while (!isStopping())
-    {
-        //-- Lend CPU time to read threads.
-        // https://github.com/roboticslab-uc3m/yarp-devices/issues/191
-        yarp::os::Time::delay(delay);
-
-        //-- Send everything and reset the queue.
-        flush();
-    }
 }
 
 // -----------------------------------------------------------------------------
