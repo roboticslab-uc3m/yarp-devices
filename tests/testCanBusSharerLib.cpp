@@ -928,7 +928,11 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
     ASSERT_EQ(getSender()->getLastMessage().data, status.controlword().to_ulong());
     ASSERT_EQ(status.controlword(), 0x1234);
 
-    ASSERT_TRUE(status.controlword(0x0000)); // reset
+    // test reset
+
+    status.reset();
+    ASSERT_EQ(status.statusword(), 0);
+    ASSERT_EQ(status.controlword(), 0);
 
     // test SWITCH_ON_DISABLED -> READY_TO_SWITCH_ON (transition 2: SHUTDOWN)
 

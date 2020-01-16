@@ -74,6 +74,7 @@ void EncoderRead::reset(std::int32_t pos)
     std::lock_guard<std::mutex> guard(encoderMutex);
     lastPosition = nextToLastPosition = pos;
     lastSpeed = nextToLastSpeed = lastAcceleration = 0.0;
+    lastStamp.update();
 }
 
 // -----------------------------------------------------------------------------
@@ -202,6 +203,19 @@ bool StateVariables::validateInitialState(unsigned int canId)
     }
 
     return true;
+}
+
+// -----------------------------------------------------------------------------
+
+void StateVariables::reset()
+{
+    msr = mer = der = der2 = cer = ptStatus = 0;
+    modesOfOperation = 0;
+
+    lastEncoderRead.reset();
+    lastCurrentRead = 0.0;
+
+    requestedcontrolMode = 0;
 }
 
 // -----------------------------------------------------------------------------

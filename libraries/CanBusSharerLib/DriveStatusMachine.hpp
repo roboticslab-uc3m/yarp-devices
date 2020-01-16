@@ -74,6 +74,9 @@ public:
     //! Notify observers on a drive state change, if applicable.
     bool update(std::uint16_t statusword);
 
+    //! Reset internally stored state.
+    void reset();
+
     //! Retrieve stored controlword.
     word_t controlword() const;
 
