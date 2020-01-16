@@ -207,6 +207,19 @@ bool StateVariables::validateInitialState(unsigned int canId)
 
 // -----------------------------------------------------------------------------
 
+void StateVariables::reset()
+{
+    msr = mer = der = der2 = cer = ptStatus = 0;
+    modesOfOperation = 0;
+
+    lastEncoderRead.reset();
+    lastCurrentRead = 0.0;
+
+    requestedcontrolMode = 0;
+}
+
+// -----------------------------------------------------------------------------
+
 bool StateVariables::awaitControlMode(yarp::conf::vocab32_t mode)
 {
     return actualControlMode == mode || controlModeObserverPtr->await();

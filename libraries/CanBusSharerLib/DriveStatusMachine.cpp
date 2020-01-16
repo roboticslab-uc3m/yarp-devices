@@ -159,6 +159,13 @@ bool DriveStatusMachine::update(std::uint16_t statusword)
     return true;
 }
 
+void DriveStatusMachine::reset()
+{
+    std::lock_guard<std::mutex> lock(stateMutex);
+    _statusword = 0;
+    _controlword = 0;
+}
+
 DriveStatusMachine::word_t DriveStatusMachine::controlword() const
 {
     std::lock_guard<std::mutex> lock(stateMutex);

@@ -93,6 +93,9 @@ struct StateVariables
     //! Convert torque (Nm) to current (amperes).
     double torqueToCurrent(double torque) const;
 
+    //! Reset internal state.
+    void reset();
+
     std::unique_ptr<StateObserver> controlModeObserverPtr {new StateObserver(1.0)}; // arbitrary 1 second wait
 
     // read/write, no concurrent access
