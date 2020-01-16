@@ -187,7 +187,7 @@ bool TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage & message)
 
 bool TechnosoftIpos::synchronize()
 {
-    switch (vars.actualControlMode)
+    switch (vars.actualControlMode.load())
     {
     case VOCAB_CM_VELOCITY:
     {
