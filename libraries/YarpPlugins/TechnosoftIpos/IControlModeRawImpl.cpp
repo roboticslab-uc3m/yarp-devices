@@ -128,7 +128,8 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     case VOCAB_CM_POSITION_DIRECT:
         if (linInterpBuffer)
         {
-            return setLegacyPositionInterpolationMode();
+            // TODO: https://github.com/roboticslab-uc3m/yarp-devices/issues/222#issuecomment-575092455
+            return false; //setLegacyPositionInterpolationMode();
         }
 
         vars.synchronousCommandTarget = vars.internalUnitsToDegrees(vars.lastEncoderRead.queryPosition());
