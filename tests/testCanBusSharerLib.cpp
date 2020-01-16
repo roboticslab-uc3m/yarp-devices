@@ -146,7 +146,7 @@ protected:
         return *f;
     }
 
-    static constexpr double TIMEOUT = 0.1; // [s]
+    static constexpr double TIMEOUT = 0.125; // [s]
     static constexpr int MILLIS = 50;
 
 private:
@@ -912,13 +912,13 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
     ASSERT_EQ(status.statusword(), faultReactionActive);
     ASSERT_EQ(status.getCurrentState(), DriveState::FAULT_REACTION_ACTIVE);
     ASSERT_EQ(DriveStatusMachine::parseStatusword(faultReactionActive), DriveState::FAULT_REACTION_ACTIVE);
-    ASSERT_EQ(status.controlword(), 0x0000);
+    // controlword doesn't change
 
     ASSERT_TRUE(status.update(fault));
     ASSERT_EQ(status.statusword(), fault);
     ASSERT_EQ(status.getCurrentState(), DriveState::FAULT);
     ASSERT_EQ(DriveStatusMachine::parseStatusword(fault), DriveState::FAULT);
-    ASSERT_EQ(status.controlword(), 0x0000);
+    // controlword doesn't change
 
     // test random controlword commands
 
@@ -1058,7 +1058,8 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
     // test FAULT -> SWITCH_ON_DISABLED (transition 15: FAULT_RESET)
 
     ASSERT_TRUE(status.update(fault));
-    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(switchOnDisabled); }});
+    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return status.update(notReadyToSwitchOn); }}); // fault state resets
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 2, [&]{ return status.update(switchOnDisabled); }});
     ASSERT_TRUE(status.requestTransition(DriveTransition::FAULT_RESET));
     ASSERT_EQ(getSender()->getLastMessage().id, rpdo.getCobId());
     ASSERT_EQ(getSender()->getLastMessage().len, 2);

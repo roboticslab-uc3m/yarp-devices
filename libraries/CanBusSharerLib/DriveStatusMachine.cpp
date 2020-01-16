@@ -143,7 +143,8 @@ namespace
 
 bool DriveStatusMachine::update(std::uint16_t statusword)
 {
-    static const word_t statuswordMask("0000000001101111"); // state machine-related bits
+    // state machine-related bits (at least those we can transition to)
+    static const word_t statuswordMask("0000000001100111");
 
     std::lock_guard<std::mutex> lock(stateMutex);
     const word_t old = _statusword;
