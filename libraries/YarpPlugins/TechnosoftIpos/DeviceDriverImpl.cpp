@@ -50,8 +50,8 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     vars.max = config.check("max", yarp::os::Value(0.0), "max (meters or degrees)").asFloat64();
     vars.refSpeed = config.check("refSpeed", yarp::os::Value(0.0), "ref speed (meters/second or degrees/second)").asFloat64();
     vars.refAcceleration = config.check("refAcceleration", yarp::os::Value(0.0), "ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
-    vars.heartbeatPeriod = config.check("heartbeatPeriod", yarp::os::Value(100), "CAN heartbeat period (ms)").asInt32(); // TODO
-    vars.syncPeriod = config.check("syncPeriod", yarp::os::Value(0.0), "SYNC message period (s)").asDouble(); // TODO
+    vars.heartbeatPeriod = config.check("heartbeatPeriod", yarp::os::Value(0.0), "CAN heartbeat period (seconds)").asInt32();
+    vars.syncPeriod = config.check("syncPeriod", yarp::os::Value(0.0), "SYNC message period (seconds)").asDouble();
     vars.initialMode = config.check("initialMode", yarp::os::Value(VOCAB_CM_POSITION), "initial YARP control mode vocab").asVocab(); // TODO
 
     if (!vars.validateInitialState(canId))

@@ -26,7 +26,7 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::
 
     if (periodMs != static_cast<int>(periodMs))
     {
-        CD_ERROR("Discarded decimal values, only millisecond precision allowed: %f (ms).\n", periodMs);
+        CD_ERROR("Discarded decimal values, at most millisecond precision allowed: %f (ms).\n", periodMs);
         return nullptr;
     }
 

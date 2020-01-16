@@ -196,6 +196,30 @@ bool StateVariables::validateInitialState(unsigned int canId)
         return false;
     }
 
+    if (heartbeatPeriod <= 0.0)
+    {
+        CD_WARNING("Illegal heartbeat period: %f.\n", heartbeatPeriod);
+        return false;
+    }
+
+    if (heartbeatPeriod * 1e3 != static_cast<int>(heartbeatPeriod * 1e3))
+    {
+        CD_WARNING("Heartbeat period exceeds millisecond precision: %f (s).\n", heartbeatPeriod);
+        return false;
+    }
+
+    if (syncPeriod <= 0.0 || syncPeriod > 255.0)
+    {
+        CD_WARNING("Illegal SYNC period: %f.\n", syncPeriod);
+        return false;
+    }
+
+    if (syncPeriod * 1e3 != static_cast<int>(syncPeriod * 1e3))
+    {
+        CD_WARNING("SYNC period exceeds millisecond precision: %f (s).\n", syncPeriod);
+        return false;
+    }
+
     if (canId == 0)
     {
         CD_WARNING("Illegal CAN ID: %d.\n", canId);

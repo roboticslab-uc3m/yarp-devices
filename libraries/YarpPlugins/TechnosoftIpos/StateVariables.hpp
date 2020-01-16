@@ -149,7 +149,7 @@ struct StateVariables
     PdoConfiguration tpdo2Conf;
     PdoConfiguration tpdo3Conf;
 
-    std::uint16_t heartbeatPeriod = 0;
+    double heartbeatPeriod = 0.0;
     double syncPeriod = 0.0;
 };
 
