@@ -25,7 +25,7 @@ bool LacqueyFetch::setRefDutyCycleRaw(int m, double ref)
     CHECK_JOINT(m);
 
     // clip between -100% and +100%
-    ref = std::max(100.0, std::min(ref, -100.0));
+    ref = std::min(100.0, std::max(ref, -100.0));
 
     const std::size_t len = sizeof refDutyCycles;
     std::uint8_t msgData[len];
