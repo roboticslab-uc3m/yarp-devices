@@ -24,35 +24,31 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
 
-    int canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32();
-
     yarp::os::Bottle & driverGroup = robotConfig->findGroup(config.find("driver").asString());
     yarp::os::Bottle & motorGroup = robotConfig->findGroup(config.find("motor").asString());
     yarp::os::Bottle & gearboxGroup = robotConfig->findGroup(config.find("gearbox").asString());
     yarp::os::Bottle & encoderGroup = robotConfig->findGroup(config.find("encoder").asString());
 
-    // mutable variables
-    vars.tr = gearboxGroup.check("tr", yarp::os::Value(0.0), "reduction").asFloat64();
-    vars.k = motorGroup.check("k", yarp::os::Value(0.0), "motor constant").asFloat64();
-    vars.encoderPulses = encoderGroup.check("encoderPulses", yarp::os::Value(0), "encoderPulses").asInt32();
-    vars.pulsesPerSample = motorGroup.check("pulsesPerSample", yarp::os::Value(0), "pulsesPerSample").asInt32();
+    int canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32();
 
-    vars.tr = vars.tr * config.check("extraTr", yarp::os::Value(1.0), "extra reduction").asFloat64();
-    vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
-
-    // immutable variables
-    vars.drivePeakCurrent = driverGroup.check("peakCurrent", yarp::os::Value(0.0), "peak drive current (amperes)").asFloat64();
-    vars.maxVel = config.check("maxVel", yarp::os::Value(0.0), "maxVel (meters/second or degrees/second)").asFloat64();
     vars.axisName = config.check("name", yarp::os::Value(""), "axis name").asString();
     vars.jointType = config.check("type", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "joint type [atrv|atpr|unkn]").asVocab();
-    vars.reverse = config.check("reverse", yarp::os::Value(false), "reverse motor encoder counts").asBool();
-    vars.min = config.check("min", yarp::os::Value(0.0), "min (meters or degrees)").asFloat64();
     vars.max = config.check("max", yarp::os::Value(0.0), "max (meters or degrees)").asFloat64();
+    vars.min = config.check("min", yarp::os::Value(0.0), "min (meters or degrees)").asFloat64();
+    vars.maxVel = config.check("maxVel", yarp::os::Value(0.0), "maxVel (meters/second or degrees/second)").asFloat64();
     vars.refSpeed = config.check("refSpeed", yarp::os::Value(0.0), "ref speed (meters/second or degrees/second)").asFloat64();
     vars.refAcceleration = config.check("refAcceleration", yarp::os::Value(0.0), "ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
+    vars.drivePeakCurrent = driverGroup.check("peakCurrent", yarp::os::Value(0.0), "peak drive current (amperes)").asFloat64();
+    vars.k = motorGroup.check("k", yarp::os::Value(0.0), "motor constant").asFloat64();
+    vars.tr = gearboxGroup.check("tr", yarp::os::Value(0.0), "reduction").asFloat64();
+    vars.tr = vars.tr * config.check("extraTr", yarp::os::Value(1.0), "extra reduction").asFloat64();
+    vars.encoderPulses = encoderGroup.check("encoderPulses", yarp::os::Value(0), "encoderPulses").asInt32();
+    vars.pulsesPerSample = motorGroup.check("pulsesPerSample", yarp::os::Value(0), "pulsesPerSample").asInt32();
+    vars.reverse = config.check("reverse", yarp::os::Value(false), "reverse motor encoder counts").asBool();
+    vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
     vars.heartbeatPeriod = config.check("heartbeatPeriod", yarp::os::Value(0.0), "CAN heartbeat period (seconds)").asInt32();
     vars.syncPeriod = config.check("syncPeriod", yarp::os::Value(0.0), "SYNC message period (seconds)").asDouble();
-    vars.initialMode = config.check("initialMode", yarp::os::Value(VOCAB_CM_POSITION), "initial YARP control mode vocab").asVocab(); // TODO
+    vars.initialMode = config.check("initialMode", yarp::os::Value(VOCAB_CM_IDLE), "initial YARP control mode vocab").asVocab();
 
     if (!vars.validateInitialState(canId))
     {
@@ -95,12 +91,14 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
         }
     }
 
-    // TODO: hardcoded values
-    double canSdoTimeoutMs = config.check("canSdoTimeoutMs", yarp::os::Value(20.0), "CAN SDO timeout (ms)").asFloat64();
-    double canDriveStateTimeout = config.check("canDriveStateTimeout", yarp::os::Value(3.0), "CAN drive state timeout (s)").asFloat64();
-    double monitorPeriod = config.check("monitorPeriod", yarp::os::Value(0.5), "monitor thread period (s)").asFloat64();
+    double sdoTimeout = config.check("sdoTimeout", yarp::os::Value(DEFAULT_SDO_TIMEOUT),
+            "CAN SDO timeout (seconds)").asFloat64();
+    double driveStateTimeout = config.check("driveStateTimeout", yarp::os::Value(DEFAULT_DRIVE_STATE_TIMEOUT),
+            "CAN drive state timeout (seconds)").asFloat64();
+    double monitorPeriod = config.check("monitorPeriod", yarp::os::Value(DEFAULT_MONITOR_PERIOD),
+            "monitor thread period (seconds)").asFloat64();
 
-    can = new CanOpen(canId, canSdoTimeoutMs * 0.001, canDriveStateTimeout);
+    can = new CanOpen(canId, sdoTimeout, driveStateTimeout);
 
     std::uint16_t tpdo1InhibitTime = config.check("tpdo1InhibitTime", yarp::os::Value(0), "TPDO1 inhibit time (x100 microseconds)").asInt32();
     std::uint16_t tpdo2InhibitTime = config.check("tpdo2InhibitTime", yarp::os::Value(0), "TPDO2 inhibit time (x100 microseconds)").asInt32();
