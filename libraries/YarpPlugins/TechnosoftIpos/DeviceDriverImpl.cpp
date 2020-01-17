@@ -41,6 +41,8 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     int canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32(); // id-specific
 
+    vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
+
     vars.axisName = config.check("name", yarp::os::Value(""), "axis name").asString(); // id-specific
     vars.jointType = iposGroup.check("type", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "joint type [atrv|atpr|unkn]").asVocab();
     vars.max = iposGroup.check("max", yarp::os::Value(0.0), "max (meters or degrees)").asFloat64();
@@ -55,9 +57,8 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     vars.encoderPulses = encoderGroup.check("encoderPulses", yarp::os::Value(0), "encoderPulses").asInt32();
     vars.pulsesPerSample = motorGroup.check("pulsesPerSample", yarp::os::Value(0), "pulsesPerSample").asInt32();
     vars.reverse = iposGroup.check("reverse", yarp::os::Value(false), "reverse motor encoder counts").asBool();
-    vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
-    vars.heartbeatPeriod = iposGroup.check("heartbeatPeriod", yarp::os::Value(0.0), "CAN heartbeat period (seconds)").asInt32();
-    vars.syncPeriod = iposGroup.check("syncPeriod", yarp::os::Value(0.0), "SYNC message period (seconds)").asDouble();
+    vars.heartbeatPeriod = iposGroup.check("heartbeatPeriod", yarp::os::Value(0.0), "CAN heartbeat period (seconds)").asFloat64();
+    vars.syncPeriod = iposGroup.check("syncPeriod", yarp::os::Value(0.0), "SYNC message period (seconds)").asFloat64();
     vars.initialMode = iposGroup.check("initialMode", yarp::os::Value(VOCAB_CM_IDLE), "initial YARP control mode vocab").asVocab();
 
     if (!vars.validateInitialState(canId))
