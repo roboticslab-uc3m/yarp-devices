@@ -12,14 +12,32 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool CuiAbsolute::open(yarp::os::Searchable& config)
+bool CuiAbsolute::open(yarp::os::Searchable & config)
 {
-    CD_DEBUG("%s\n", config.toString().c_str());
+    if (!config.check("robotConfig") || !config.find("robotConfig").isBlob())
+    {
+        CD_ERROR("Missing \"robotConfig\" property or not a blob.\n");
+        return false;
+    }
 
-    canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt8();
-    reverse = config.check("reverse", yarp::os::Value(false), "reverse").asBool();
-    timeout = config.check("timeout", yarp::os::Value(DEFAULT_TIMEOUT), "timeout (seconds)").asFloat64();
-    maxRetries = config.check("maxRetries", yarp::os::Value(DEFAULT_MAX_RETRIES), "max retries on timeout").asFloat64();
+    const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
+
+    yarp::os::Bottle & commonGroup = robotConfig->findGroup("common-cui");
+    yarp::os::Property cuiGroup;
+
+    if (!commonGroup.isNull())
+    {
+        cuiGroup.fromString(commonGroup.toString());
+    }
+
+    cuiGroup.fromString(config.toString(), false); // override common options
+
+    CD_DEBUG("%s\n", cuiGroup.toString().c_str());
+
+    canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt8(); // id-specific
+    reverse = cuiGroup.check("reverse", yarp::os::Value(false), "reverse").asBool();
+    timeout = cuiGroup.check("timeout", yarp::os::Value(DEFAULT_TIMEOUT), "timeout (seconds)").asFloat64();
+    maxRetries = cuiGroup.check("maxRetries", yarp::os::Value(DEFAULT_MAX_RETRIES), "max retries on timeout").asFloat64();
 
     if (timeout <= 0.0)
     {
@@ -27,19 +45,19 @@ bool CuiAbsolute::open(yarp::os::Searchable& config)
         return false;
     }
 
-    if (!config.check("mode", "publish mode [push|pull]"))
+    if (!cuiGroup.check("mode", "publish mode [push|pull]"))
     {
         CD_ERROR("Missing \"mode\" property.\n");
         return false;
     }
 
-    std::string mode = config.find("mode").asString();
+    std::string mode = cuiGroup.find("mode").asString();
 
     if (mode == "push")
     {
         pushStateObserver = new StateObserver(timeout);
         cuiMode = CuiMode::PUSH;
-        pushDelay = config.check("pushDelay", yarp::os::Value(0), "Cui push mode delay [0-255]").asInt8();
+        pushDelay = cuiGroup.check("pushDelay", yarp::os::Value(0), "Cui push mode delay [0-255]").asInt8();
     }
     else if (mode == "pull")
     {
