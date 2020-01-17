@@ -109,7 +109,6 @@ CanWriterThread::~CanWriterThread()
 
 void CanWriterThread::flush()
 {
-    unsigned int sent;
     std::lock_guard<std::mutex> lock(bufferMutex);
 
     //-- Nothing to write, exit.
@@ -118,13 +117,21 @@ void CanWriterThread::flush()
     yarp::dev::CanErrors errors;
 
     //-- Query bus state.
-    bool ok = iCanBusErrors->canGetErrors(errors) && !errors.busoff;
+    if (!iCanBusErrors->canGetErrors(errors) || errors.busoff)
+    {
+        //-- Bus off, reset TX queue.
+        preparedMessages = 0;
+        return;
+    }
 
-    //-- Write as many bytes as it can, return false on errors.
-    ok = ok && iCanBus->canWrite(canBuffer, preparedMessages, &sent);
+    unsigned int sent;
 
-    //-- Something bad happened, try again on the next call.
-    if (!ok) return;
+    //-- Write as many bytes as possible, return false on errors.
+    if (!iCanBus->canWrite(canBuffer, preparedMessages, &sent))
+    {
+        //-- Something bad happened, try again on the next call.
+        return;
+    }
 
     //-- Some messages could not be sent, preserve them for later.
     if (sent != preparedMessages)
