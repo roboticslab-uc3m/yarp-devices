@@ -102,16 +102,16 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         {
             int rxBufferSize = canBusOptions.check("rxBufferSize", yarp::os::Value(100), "CAN bus RX buffer size").asInt32();
             int txBufferSize = canBusOptions.check("txBufferSize", yarp::os::Value(100), "CAN bus TX buffer size").asInt32();
-            double rxPeriod = canBusOptions.check("rxPeriod", yarp::os::Value(0.0), "CAN bus RX period (seconds)").asFloat64();
-            double txPeriod = canBusOptions.check("txPeriod", yarp::os::Value(0.0), "CAN bus TX period (seconds)").asFloat64();
+            double rxDelay = canBusOptions.check("rxDelay", yarp::os::Value(0.0), "CAN bus RX delay (seconds)").asFloat64();
+            double txDelay = canBusOptions.check("txDelay", yarp::os::Value(0.0), "CAN bus TX delay (seconds)").asFloat64();
 
             CanReaderThread * reader = new CanReaderThread(canBus);
             reader->setCanHandles(iCanBus, iCanBusErrors, iCanBufferFactory, rxBufferSize);
-            reader->setPeriod(rxPeriod);
+            reader->setDelay(rxDelay);
 
             CanWriterThread * writer = new CanWriterThread(canBus);
             writer->setCanHandles(iCanBus, iCanBusErrors, iCanBufferFactory, txBufferSize);
-            writer->setPeriod(txPeriod);
+            writer->setDelay(txDelay);
 
             canThreads.push_back({canBus, reader, writer});
         }
@@ -285,7 +285,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
                         }
 
                         writer->getDelegate()->prepareMessage({0x80, 0, nullptr}); // SYNC
-                        writer->step();
+                        writer->flush();
                     }
 
                     return true;
@@ -329,14 +329,14 @@ bool CanBusControlboard::close()
     {
         if (bundle.reader && bundle.reader->isRunning())
         {
-            bundle.reader->stop();
+            ok &= bundle.reader->stop();
         }
 
         delete bundle.reader;
 
         if (bundle.writer && bundle.writer->isRunning())
         {
-            bundle.writer->stop();
+            ok &= bundle.writer->stop();
         }
 
         delete bundle.writer;

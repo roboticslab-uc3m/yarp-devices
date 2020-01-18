@@ -7,7 +7,7 @@
 #include <string>
 #include <unordered_map>
 
-#include <yarp/os/PeriodicThread.h>
+#include <yarp/os/Thread.h>
 #include <yarp/dev/CanBusInterface.h>
 
 #include "CanSenderDelegate.hpp"
@@ -21,31 +21,20 @@ namespace roboticslab
  * @brief Base class for a thread that attends CAN reads or writes.
  *
  * Child classes take advantage of CAN message buffers to perform bulk reads
- * and writes. Non-zero wait periods aim to lend CPU time to other threads, see
- * <a href="https://github.com/roboticslab-uc3m/yarp-devices/issues/191">#191</a>.
+ * and writes.
  */
-class CanReaderWriterThread : public yarp::os::PeriodicThread
+class CanReaderWriterThread : public yarp::os::Thread
 {
 public:
     //! Constructor.
     CanReaderWriterThread(const std::string & type, const std::string & id)
-        : yarp::os::PeriodicThread(0.0),
-          iCanBus(nullptr), iCanBusErrors(nullptr), iCanBufferFactory(nullptr),
+        : iCanBus(nullptr), iCanBusErrors(nullptr), iCanBufferFactory(nullptr),
           type(type), id(id), bufferSize(0), delay(0.0)
     { }
 
     //! Virtual destructor.
     virtual ~CanReaderWriterThread() = default;
 
-    //! Configure CAN interface handles.
-    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBusErrors * iCanBusErrors,
-            yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize)
-    {
-        this->iCanBus = iCanBus; this->iCanBusErrors = iCanBusErrors; this->iCanBufferFactory = iCanBufferFactory;
-        this->bufferSize = bufferSize;
-    }
-
-protected:
     //! Invoked by the thread right before it is started.
     virtual bool threadInit() override
     { canBuffer = iCanBufferFactory->createBuffer(bufferSize); return true; }
@@ -60,9 +49,24 @@ protected:
     //! Invoked by the caller right after the thread is started.
     virtual void afterStart(bool success) override;
 
+    //! Callback on thread stop.
+    virtual void onStop() override;
+
     //! The thread will invoke this once.
     virtual void run() override = 0;
 
+    //! Configure CAN interface handles.
+    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBusErrors * iCanBusErrors,
+            yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize)
+    {
+        this->iCanBus = iCanBus; this->iCanBusErrors = iCanBusErrors; this->iCanBufferFactory = iCanBufferFactory;
+        this->bufferSize = bufferSize;
+    }
+
+    //! Configure a delay (in seconds) before each read/write.
+    void setDelay(double delay);
+
+protected:
     yarp::dev::ICanBus * iCanBus;
     yarp::dev::ICanBusErrors * iCanBusErrors;
     yarp::dev::ICanBufferFactory * iCanBufferFactory;
@@ -95,7 +99,6 @@ public:
     const std::unordered_map<unsigned int, ICanBusSharer *> & getHandleMap()
     { return canIdToHandle; }
 
-protected:
     virtual void run() override;
 
 private:
@@ -121,10 +124,12 @@ public:
     //! Retrieve a handle to the CAN sender delegate.
     CanSenderDelegate * getDelegate();
 
+    //! Send awaiting messages and clear the queue.
+    void flush();
+
     virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBusErrors * iCanBusErrors,
             yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize) override;
 
-protected:
     virtual void run() override;
 
 private:
