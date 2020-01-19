@@ -22,7 +22,15 @@ bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
         return false;
     }
 
-    return quitHaltState(VOCAB_CM_VELOCITY) && (vars.synchronousCommandTarget = sp, true);
+    // reset halt bit
+    if (can->driveStatus()->controlword()[8]
+            && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)))
+    {
+        return false;
+    }
+
+    vars.synchronousCommandTarget = sp;
+    return true;
 }
 
 // ----------------------------------------------------------------------------------

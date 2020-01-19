@@ -18,7 +18,7 @@ bool TechnosoftIpos::positionMoveRaw(int j, double ref)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    return quitHaltState(VOCAB_CM_POSITION)
+    return !can->driveStatus()->controlword()[8] // check halt bit
             && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(ref), 0x607A)
             // new setpoint (assume absolute target position)
             && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4));
@@ -48,7 +48,7 @@ bool TechnosoftIpos::relativeMoveRaw(int j, double delta)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    return quitHaltState(VOCAB_CM_POSITION)
+    return !can->driveStatus()->controlword()[8] // check halt bit
             && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(delta), 0x607A)
             // new setpoint (assume relative target position)
             && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).set(6));
@@ -277,7 +277,10 @@ bool TechnosoftIpos::stopRaw(int j)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-    return can->driveStatus()->controlword(can->driveStatus()->controlword().set(8));
+
+    return (vars.actualControlMode == VOCAB_CM_POSITION || vars.actualControlMode == VOCAB_CM_VELOCITY)
+            && can->driveStatus()->controlword(can->driveStatus()->controlword().set(8)) // stop with profile acceleration
+            && (vars.synchronousCommandTarget = 0.0, true);
 }
 
 // --------------------------------------------------------------------------------

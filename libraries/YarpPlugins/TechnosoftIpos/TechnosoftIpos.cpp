@@ -275,16 +275,25 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
     reportBitToggle(report, WARN, 7, "A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored.", "No warning.");
     reportBitToggle(report, INFO, 8, "A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called.", "No TML function or homing is executed. The execution of the last called TML function or homing is completed.");
     reportBitToggle(report, INFO, 9, "Remote - drive parameters may be modified via CAN and the drive will execute the command message.", "Remote – drive is in local mode and will not execute the command message.");
-    reportBitToggle(report, INFO, 10, "Target reached.");
+
+    if (reportBitToggle(report, INFO, 10, "Target reached.")
+            && vars.actualControlMode == VOCAB_CM_POSITION // does not work on velocity profile mode
+            && can->driveStatus()->controlword()[8]
+            && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)))
+    {
+        CD_WARNING("Unable to reset halt bit (canId: %d).\n", can->getId());
+    }
+
     reportBitToggle(report, INFO, 11, "Internal Limit Active.");
 
     switch (vars.actualControlMode.load())
     {
     case VOCAB_CM_POSITION:
         if (reportBitToggle(report, INFO, 12, "Trajectory generator will not accept a new set-point.",
-                "Trajectory generator will accept a new set-point."))
+                "Trajectory generator will accept a new set-point.")
+                && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)))
         {
-            can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)); // finalize handshake
+            CD_WARNING("Unable to finalize single set-point handshake (canId: %d).\n", can->getId());
         }
         reportBitToggle(report, WARN, 13, "Following error.", "No following error.");
         break;
@@ -512,26 +521,6 @@ bool TechnosoftIpos::monitorWorker(const yarp::os::YarpTimerEvent & event)
     }
 
     return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::quitHaltState(int mode)
-{
-    if (!can->driveStatus()->controlword()[8])
-    {
-        return true;
-    }
-
-    if (mode == VOCAB_CM_POSITION || mode == VOCAB_CM_VELOCITY)
-    {
-        if (!can->driveStatus()->statusword()[10])
-        {
-            return false;
-        }
-    }
-
-    return can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8));
 }
 
 // -----------------------------------------------------------------------------

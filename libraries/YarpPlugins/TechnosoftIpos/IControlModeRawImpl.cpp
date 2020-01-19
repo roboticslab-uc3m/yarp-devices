@@ -93,8 +93,8 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         return true;
     }
 
-    // reset mode-specific bits in controlword
-    if (!can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4).reset(5).reset(6)))
+    // reset mode-specific bits (4-6) and halt bit (8)
+    if (!can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4).reset(5).reset(6).reset(8)))
     {
         return false;
     }

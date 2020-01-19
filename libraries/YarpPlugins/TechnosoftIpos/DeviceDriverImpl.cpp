@@ -111,24 +111,41 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     can = new CanOpen(canId, sdoTimeout, driveStateTimeout);
 
-    std::uint16_t tpdo1InhibitTime = iposGroup.check("tpdo1InhibitTime", yarp::os::Value(0), "TPDO1 inhibit time (x100 microseconds)").asInt32();
-    std::uint16_t tpdo2InhibitTime = iposGroup.check("tpdo2InhibitTime", yarp::os::Value(0), "TPDO2 inhibit time (x100 microseconds)").asInt32();
-
-    std::uint16_t tpdo1EventTimer = iposGroup.check("tpdo1EventTimer", yarp::os::Value(0), "TPDO1 event timer (milliseconds)").asInt32();
-    std::uint16_t tpdo2EventTimer = iposGroup.check("tpdo2EventTimer", yarp::os::Value(0), "TPDO2 event timer (milliseconds)").asInt32();
-
     PdoConfiguration tpdo1Conf;
+
+    // Manufacturer Status Register (1002h) and Modes of Operation Display (6061h)
     tpdo1Conf.addMapping<std::uint32_t>(0x1002).addMapping<std::int8_t>(0x6061);
-    //tpdo1Conf.setInhibitTime(tpdo1InhibitTime); // TODO
-    //tpdo1Conf.setEventTimer(tpdo1EventTimer); // TODO
+
+    if (iposGroup.check("tpdo1InhibitTime", "TPDO1 inhibit time (seconds)"))
+    {
+        tpdo1Conf.setInhibitTime(iposGroup.find("tpdo1InhibitTime").asFloat64() * 1e4); // pass x100 microseconds
+    }
+
+    if (iposGroup.check("tpdo1EventTimer", "TPDO1 event timer (seconds)"))
+    {
+        tpdo1Conf.setInhibitTime(iposGroup.find("tpdo1EventTimer").asFloat64() * 1e3); // pass milliseconds
+    }
 
     PdoConfiguration tpdo2Conf;
+
+    // Motion Error Register (2000h) and Detailed Error Register (2002h)
     tpdo2Conf.addMapping<std::uint16_t>(0x2000).addMapping<std::uint16_t>(0x2002);
-    //tpdo2Conf.setInhibitTime(tpdo2InhibitTime); // TODO
-    //tpdo2Conf.setEventTimer(tpdo2EventTimer); // TODO
+
+    if (iposGroup.check("tpdo2InhibitTime", "TPDO2 inhibit time (seconds)"))
+    {
+        tpdo2Conf.setInhibitTime(iposGroup.find("tpdo2InhibitTime").asFloat64() * 1e4); // pass x100 microseconds
+    }
+
+    if (iposGroup.check("tpdo2EventTimer", "TPDO2 event timer (seconds)"))
+    {
+        tpdo2Conf.setInhibitTime(iposGroup.find("tpdo2EventTimer").asFloat64() * 1e3); // pass milliseconds
+    }
 
     PdoConfiguration tpdo3Conf;
+
+    // Position actual internal value (6063h) and Torque actual value (6077h)
     tpdo3Conf.addMapping<std::int32_t>(0x6063).addMapping<std::int16_t>(0x6077);
+
     tpdo3Conf.setTransmissionType(PdoTransmissionType::SYNCHRONOUS_CYCLIC);
 
     vars.tpdo1Conf = tpdo1Conf;

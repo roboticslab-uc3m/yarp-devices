@@ -29,6 +29,7 @@
 
 #define CHECK_MODE(mode) do { if ((mode) != vars.actualControlMode) return false; } while (0)
 
+// seconds
 #define DEFAULT_SDO_TIMEOUT 0.02
 #define DEFAULT_DRIVE_STATE_TIMEOUT 2.0
 #define DEFAULT_MONITOR_PERIOD 0.5
@@ -283,8 +284,6 @@ private:
     void handleNmt(NmtState state);
 
     bool monitorWorker(const yarp::os::YarpTimerEvent & event);
-
-    bool quitHaltState(int mode);
 
     CanOpen * can;
 

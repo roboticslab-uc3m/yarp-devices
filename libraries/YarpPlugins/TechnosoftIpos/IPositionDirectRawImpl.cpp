@@ -13,7 +13,8 @@ bool TechnosoftIpos::setPositionRaw(int j, double ref)
     CD_DEBUG("(%d, %f)\n", j, ref);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
-    return quitHaltState(VOCAB_CM_POSITION_DIRECT) && (vars.synchronousCommandTarget = ref, true);
+    vars.synchronousCommandTarget = ref;
+    return true;
 }
 // -----------------------------------------------------------------------------
 
