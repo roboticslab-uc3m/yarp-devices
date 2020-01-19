@@ -167,16 +167,16 @@ bool TechnosoftIpos::finalize()
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::interpretMessage(const yarp::dev::CanMessage & message)
+bool TechnosoftIpos::interpretMessage(const can_message & message)
 {
-    if (iExternalEncoderCanBusSharer && iExternalEncoderCanBusSharer->getId() == (message.getId() & 0x7F))
+    if (iExternalEncoderCanBusSharer && iExternalEncoderCanBusSharer->getId() == (message.id & 0x7F))
     {
         return iExternalEncoderCanBusSharer->interpretMessage(message);
     }
 
-    if (!can->consumeMessage(message.getId(), message.getData(), message.getLen()))
+    if (!can->consumeMessage(message))
     {
-        CD_WARNING("Unknown message: %s\n", CanUtils::msgToStr(message.getId(), message.getLen(), message.getData()).c_str());
+        CD_WARNING("Unknown message: %s\n", CanUtils::msgToStr(message).c_str());
         return false;
     }
 

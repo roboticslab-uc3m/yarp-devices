@@ -105,7 +105,7 @@ public:
     { return _driveStatus; }
 
     //! Process incoming CAN message and forward to the correct protocol.
-    bool consumeMessage(std::uint16_t cobId, const std::uint8_t * data, std::size_t size) const;
+    bool consumeMessage(const can_message & message) const;
 
 private:
     unsigned int _id;

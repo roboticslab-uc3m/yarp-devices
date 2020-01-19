@@ -1252,7 +1252,7 @@ TEST_F(CanBusSharerTest, CanOpen)
                 std::memcpy(&actualMsef, msef, 5);
             });
 
-    ASSERT_TRUE(can.consumeMessage(0x80 + id, raw1, 8));
+    ASSERT_TRUE(can.consumeMessage({0x80u + id, 8, raw1}));
     ASSERT_EQ(actualCode.first, expectedCode.first);
     ASSERT_EQ(actualReg, expectedReg);
     ASSERT_EQ(actualMsef, expectedMsef);
@@ -1263,7 +1263,7 @@ TEST_F(CanBusSharerTest, CanOpen)
     const std::uint8_t expectedTpdo1 = 0x12;
     const std::uint8_t raw2[] = {expectedTpdo1};
     can.tpdo1()->registerHandler<std::uint8_t>([&](std::uint8_t v) { actualTpdo1 = v; });
-    ASSERT_TRUE(can.consumeMessage(0x180 + id, raw2, 1));
+    ASSERT_TRUE(can.consumeMessage({0x180u + id, 1, raw2}));
     ASSERT_EQ(actualTpdo1, expectedTpdo1);
 
     // test TPDO2
@@ -1272,7 +1272,7 @@ TEST_F(CanBusSharerTest, CanOpen)
     const std::uint8_t expectedTpdo2 = 0x34;
     const std::uint8_t raw3[] = {expectedTpdo2};
     can.tpdo2()->registerHandler<std::uint8_t>([&](std::uint8_t v) { actualTpdo2 = v; });
-    ASSERT_TRUE(can.consumeMessage(0x280 + id, raw3, 1));
+    ASSERT_TRUE(can.consumeMessage({0x280u + id, 1, raw3}));
     ASSERT_EQ(actualTpdo2, expectedTpdo2);
 
     // test TPDO3
@@ -1281,7 +1281,7 @@ TEST_F(CanBusSharerTest, CanOpen)
     const std::uint8_t expectedTpdo3 = 0x56;
     const std::uint8_t raw4[] = {expectedTpdo3};
     can.tpdo3()->registerHandler<std::uint8_t>([&](std::uint8_t v) { actualTpdo3 = v; });
-    ASSERT_TRUE(can.consumeMessage(0x380 + id, raw4, 1));
+    ASSERT_TRUE(can.consumeMessage({0x380u + id, 1, raw4}));
     ASSERT_EQ(actualTpdo3, expectedTpdo3);
 
     // test TPDO4
@@ -1290,13 +1290,13 @@ TEST_F(CanBusSharerTest, CanOpen)
     const std::uint8_t expectedTpdo4 = 0x78;
     const std::uint8_t raw5[] = {expectedTpdo4};
     can.tpdo4()->registerHandler<std::uint8_t>([&](std::uint8_t v) { actualTpdo4 = v; });
-    ASSERT_TRUE(can.consumeMessage(0x480 + id, raw5, 1));
+    ASSERT_TRUE(can.consumeMessage({0x480u + id, 1, raw5}));
     ASSERT_EQ(actualTpdo4, expectedTpdo4);
 
     // test SDO
 
     const std::uint8_t raw6[8] = {0x60};
-    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return can.consumeMessage(0x580 + id, raw6, 8); }});
+    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return can.consumeMessage({0x580u + id, 8, raw6}); }});
     ASSERT_TRUE(can.sdo()->download("Download test 1", 0x00, 0x1234));
 
     // test NMT
@@ -1305,7 +1305,7 @@ TEST_F(CanBusSharerTest, CanOpen)
     const NmtState expectedNmt = NmtState::OPERATIONAL;
     const std::uint8_t raw7[] = {static_cast<std::uint8_t>(NmtState::OPERATIONAL), id};
     can.nmt()->registerHandler([&](NmtState s) { actualNmt = s; });
-    ASSERT_TRUE(can.consumeMessage(0x700 + id, raw7, 2));
+    ASSERT_TRUE(can.consumeMessage({0x700u + id, 2, raw7}));
     ASSERT_EQ(actualNmt, expectedNmt);
 }
 

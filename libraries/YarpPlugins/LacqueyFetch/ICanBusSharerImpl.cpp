@@ -27,7 +27,7 @@ bool LacqueyFetch::finalize()
 
 // -----------------------------------------------------------------------------
 
-bool LacqueyFetch::interpretMessage(const yarp::dev::CanMessage & message)
+bool LacqueyFetch::interpretMessage(const can_message & message)
 {
     return true;
 }

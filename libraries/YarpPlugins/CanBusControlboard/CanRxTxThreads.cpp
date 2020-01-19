@@ -84,7 +84,7 @@ void CanReaderThread::run()
 
             if (it != canIdToHandle.end())
             {
-                it->second->interpretMessage(msg);
+                it->second->interpretMessage({msg.getId(), msg.getLen(), msg.getData()});
             }
         }
     }

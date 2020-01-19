@@ -5,8 +5,6 @@
 
 #include <vector>
 
-#include <yarp/dev/CanBusInterface.h>
-
 #include "CanSenderDelegate.hpp"
 
 namespace roboticslab
@@ -36,7 +34,7 @@ public:
     virtual bool finalize() = 0;
 
     //! Parse incoming CAN message.
-    virtual bool interpretMessage(const yarp::dev::CanMessage & message) = 0;
+    virtual bool interpretMessage(const can_message & message) = 0;
 
     //! Pass a handle to a CAN sender delegate instance.
     virtual bool registerSender(CanSenderDelegate * sender) = 0;

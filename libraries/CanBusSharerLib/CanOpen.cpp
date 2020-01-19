@@ -49,26 +49,26 @@ void CanOpen::configureSender(CanSenderDelegate * sender)
     _nmt->configureSender(sender);
 }
 
-bool CanOpen::consumeMessage(std::uint16_t cobId, const std::uint8_t * data, std::size_t size) const
+bool CanOpen::consumeMessage(const can_message & message) const
 {
-    const std::uint16_t op = cobId - _id;
+    const std::uint16_t op = message.id - _id;
 
     switch (op)
     {
     case 0x80:
-        return _emcy->accept(data);
+        return _emcy->accept(message.data);
     case 0x180:
-        return _tpdo1->accept(data, size);
+        return _tpdo1->accept(message.data, message.len);
     case 0x280:
-        return _tpdo2->accept(data, size);
+        return _tpdo2->accept(message.data, message.len);
     case 0x380:
-        return _tpdo3->accept(data, size);
+        return _tpdo3->accept(message.data, message.len);
     case 0x480:
-        return _tpdo4->accept(data, size);
+        return _tpdo4->accept(message.data, message.len);
     case 0x580:
-        return _sdo->notify(data);
+        return _sdo->notify(message.data);
     case 0x700:
-        return _nmt->accept(data);
+        return _nmt->accept(message.data);
     default:
         return false;
     }

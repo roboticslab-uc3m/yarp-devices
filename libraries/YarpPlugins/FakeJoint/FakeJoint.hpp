@@ -54,7 +54,7 @@ public:
 
     virtual unsigned int getId() override
     { return 0; }
-    virtual bool interpretMessage(const yarp::dev::CanMessage & message) override
+    virtual bool interpretMessage(const can_message & message) override
     { return true; }
     virtual bool initialize() override
     { return true; }
