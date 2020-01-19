@@ -320,12 +320,14 @@ bool CanBusControlboard::close()
         if (nodeDevices[i]->poly)
         {
             ICanBusSharer * iCanBusSharer;
-            nodeDevices[i]->poly->view(iCanBusSharer);
 
-            if (!iCanBusSharer->finalize())
+            if (nodeDevices[i]->poly->view(iCanBusSharer))
             {
-                CD_WARNING("Node device %s could not finalize CAN comms.\n", nodeDevices[i]->key.c_str());
-                ok = false;
+                if (!iCanBusSharer->finalize())
+                {
+                    CD_WARNING("Node device %s could not finalize CAN comms.\n", nodeDevices[i]->key.c_str());
+                    ok = false;
+                }
             }
         }
     }
@@ -368,12 +370,14 @@ bool CanBusControlboard::close()
             if (busDevices[i]->poly->getValue("enableAcceptanceFilters").asBool())
             {
                 yarp::dev::ICanBus * iCanBus;
-                busDevices[i]->poly->view(iCanBus);
 
-                // Clear CAN acceptance filters ('0' = all IDs that were previously set by canIdAdd).
-                if (!iCanBus->canIdDelete(0))
+                if (busDevices[i]->poly->view(iCanBus))
                 {
-                    CD_WARNING("CAN filters on bus %s may be preserved on the next run.\n", busDevices[i]->key.c_str());
+                    // Clear CAN acceptance filters ('0' = all IDs that were previously set by canIdAdd).
+                    if (!iCanBus->canIdDelete(0))
+                    {
+                        CD_WARNING("CAN filters on bus %s may be preserved on the next run.\n", busDevices[i]->key.c_str());
+                    }
                 }
             }
 
