@@ -136,6 +136,13 @@ Note that this is a hack. VOCABs may be updated without warning. The recommended
 [set] [reca] [homs]
 ```
 
+### remote variables (some `CanBusControlboard`-specific)
+```
+[get] [ivar] [lvar]
+[get] [ivar] [mvar] id15-ipos
+[set] [ivar] [mvar] id15-ipos (linInterp ((mode pt) (bufferSize 1)))
+```
+
 ## analogsensorClient
 
 ### calibration
