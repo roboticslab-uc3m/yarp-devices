@@ -86,7 +86,23 @@ bool CanBusBroker::registerDevice(yarp::dev::PolyDriver * driver)
 
 bool CanBusBroker::createPorts(const std::string & name)
 {
-    return reader && reader->registerPort(name);
+    if (!dumpPort.open(name + "/dump:o"))
+    {
+        CD_WARNING("Cannot open dump port.\n");
+        return false;
+    }
+
+    if (reader)
+    {
+        reader->attachDumpPort(&dumpPort);
+    }
+
+    if (writer)
+    {
+        writer->attachDumpPort(&dumpPort);
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------

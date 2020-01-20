@@ -53,13 +53,6 @@ void CanReaderThread::registerHandle(ICanBusSharer * p)
 
 // -----------------------------------------------------------------------------
 
-bool CanReaderThread::registerPort(const std::string & name)
-{
-    return streamerPort.open(name + "/dump:o");
-}
-
-// -----------------------------------------------------------------------------
-
 void CanReaderThread::run()
 {
     unsigned int read;
@@ -87,19 +80,18 @@ void CanReaderThread::run()
                 it->second->interpretMessage({msg.getId(), msg.getLen(), msg.getData()});
             }
 
-            if (!streamerPort.isClosed())
+            if (dumpPort && !dumpPort->isClosed())
             {
-                yarp::os::Bottle & b = streamerPort.prepare();
+                yarp::os::Bottle & b = dumpPort->prepare();
                 b.clear();
                 b.addInt16(msg.getId());
-                b.addInt8(msg.getLen());
 
                 for (int j = 0; j < msg.getLen(); j++)
                 {
                     b.addInt8(msg.getData()[j]);
                 }
 
-                streamerPort.write();
+                dumpPort->write();
             }
         }
     }
@@ -146,6 +138,24 @@ void CanWriterThread::flush()
     {
         //-- Something bad happened, try again on the next call.
         return;
+    }
+
+    if (dumpPort && !dumpPort->isClosed())
+    {
+        for (int i = 0; i < sent; i++)
+        {
+            const yarp::dev::CanMessage & msg = canBuffer[i];
+            yarp::os::Bottle & b = dumpPort->prepare();
+            b.clear();
+            b.addInt16(msg.getId());
+
+            for (int j = 0; j < msg.getLen(); j++)
+            {
+                b.addInt8(msg.getData()[j]);
+            }
+
+            dumpPort->write();
+        }
     }
 
     //-- Some messages could not be sent, preserve them for later.

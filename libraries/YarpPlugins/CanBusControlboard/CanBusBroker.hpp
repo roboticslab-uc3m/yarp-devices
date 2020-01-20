@@ -5,6 +5,8 @@
 
 #include <string>
 
+#include <yarp/os/Bottle.h>
+#include <yarp/os/BufferedPort.h>
 #include <yarp/os/Searchable.h>
 
 #include <yarp/dev/CanBusInterface.h>
@@ -53,6 +55,8 @@ private:
     yarp::dev::ICanBus * iCanBus;
     yarp::dev::ICanBusErrors * iCanBusErrors;
     yarp::dev::ICanBufferFactory * iCanBufferFactory;
+
+    yarp::os::BufferedPort<yarp::os::Bottle> dumpPort;
 };
 
 } // namespace roboticslab

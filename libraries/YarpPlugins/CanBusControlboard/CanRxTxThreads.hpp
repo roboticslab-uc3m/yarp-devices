@@ -30,7 +30,7 @@ class CanReaderWriterThread : public yarp::os::Thread
 public:
     //! Constructor.
     CanReaderWriterThread(const std::string & type, const std::string & id, double delay, unsigned int bufferSize)
-        : iCanBus(nullptr), iCanBusErrors(nullptr), iCanBufferFactory(nullptr),
+        : iCanBus(nullptr), iCanBusErrors(nullptr), iCanBufferFactory(nullptr), dumpPort(nullptr),
           bufferSize(bufferSize), delay(delay), type(type), id(id)
     { }
 
@@ -64,11 +64,16 @@ public:
         this->iCanBus = iCanBus; this->iCanBusErrors = iCanBusErrors; this->iCanBufferFactory = iCanBufferFactory;
     }
 
+    void attachDumpPort(yarp::os::BufferedPort<yarp::os::Bottle> * dumpPort)
+    { this->dumpPort = dumpPort; }
+
 protected:
     yarp::dev::ICanBus * iCanBus;
     yarp::dev::ICanBusErrors * iCanBusErrors;
     yarp::dev::ICanBufferFactory * iCanBufferFactory;
     yarp::dev::CanBuffer canBuffer;
+
+    yarp::os::BufferedPort<yarp::os::Bottle> * dumpPort;
 
     unsigned int bufferSize;
     double delay;
@@ -97,14 +102,10 @@ public:
     const std::unordered_map<unsigned int, ICanBusSharer *> & getHandleMap()
     { return canIdToHandle; }
 
-    //! Open streamer port with given port name.
-    bool registerPort(const std::string & name);
-
     virtual void run() override;
 
 private:
     std::unordered_map<unsigned int, ICanBusSharer *> canIdToHandle;
-    yarp::os::BufferedPort<yarp::os::Bottle> streamerPort;
 };
 
 /**
