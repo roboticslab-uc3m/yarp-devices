@@ -106,51 +106,51 @@ struct StateVariables
     std::bitset<16> der2;
     std::bitset<16> cer;
     std::bitset<16> ptStatus;
-    std::int8_t modesOfOperation = 0;
+    std::int8_t modesOfOperation {0};
 
     bool configuredOnce = false;
 
     // read/write, those require atomic access
 
     EncoderRead lastEncoderRead;
-    std::atomic<std::int16_t> lastCurrentRead;
+    std::atomic<std::int16_t> lastCurrentRead {0};
 
-    std::atomic<yarp::conf::vocab32_t> actualControlMode;
-    std::atomic<yarp::conf::vocab32_t> requestedcontrolMode;
+    std::atomic<yarp::conf::vocab32_t> actualControlMode {0};
+    std::atomic<yarp::conf::vocab32_t> requestedcontrolMode {0};
 
-    std::atomic<double> tr;
-    std::atomic<double> k;
-    std::atomic<int> encoderPulses;
+    std::atomic<double> tr {0.0};
+    std::atomic<double> k {0.0};
+    std::atomic<int> encoderPulses {0};
 
-    std::atomic<double> maxVel;
-    std::atomic<double> min;
-    std::atomic<double> max;
-    std::atomic<double> refSpeed;
-    std::atomic<double> refAcceleration;
+    std::atomic<double> maxVel {0.0};
+    std::atomic<double> min {0.0};
+    std::atomic<double> max {0.0};
+    std::atomic<double> refSpeed {0.0};
+    std::atomic<double> refAcceleration {0.0};
 
-    std::atomic<double> lastHeartbeat;
-    std::atomic<std::uint8_t> lastNmtState;
+    std::atomic<double> lastHeartbeat {0.0};
+    std::atomic<std::uint8_t> lastNmtState {0};
 
-    std::atomic<double> synchronousCommandTarget;
+    std::atomic<double> synchronousCommandTarget {0.0};
 
     // read only, conceptually immutable
 
-    yarp::conf::vocab32_t initialMode = 0;
+    yarp::conf::vocab32_t initialMode {0};
 
-    double drivePeakCurrent = 0.0;
-    int pulsesPerSample = 0;
+    double drivePeakCurrent {0.0};
+    int pulsesPerSample {0};
 
     std::string axisName;
-    yarp::conf::vocab32_t jointType = 0;
+    yarp::conf::vocab32_t jointType {0};
 
-    bool reverse = false;
+    bool reverse {false};
 
     PdoConfiguration tpdo1Conf;
     PdoConfiguration tpdo2Conf;
     PdoConfiguration tpdo3Conf;
 
-    double heartbeatPeriod = 0.0;
-    double syncPeriod = 0.0;
+    double heartbeatPeriod {0.0};
+    double syncPeriod {0.0};
 };
 
 } // namespace roboticslab
