@@ -36,6 +36,8 @@ if(NOT SKIP_CanBusControlboard)
                                        IRemoteVariablesImpl.cpp
                                        ITorqueControlImpl.cpp
                                        IVelocityControlImpl.cpp
+                                       CanBusBroker.hpp
+                                       CanBusBroker.cpp
                                        CanRxTxThreads.hpp
                                        CanRxTxThreads.cpp
                                        YarpCanSenderDelegate.hpp

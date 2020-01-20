@@ -29,9 +29,9 @@ class CanReaderWriterThread : public yarp::os::Thread
 {
 public:
     //! Constructor.
-    CanReaderWriterThread(const std::string & type, const std::string & id)
+    CanReaderWriterThread(const std::string & type, const std::string & id, double delay, unsigned int bufferSize)
         : iCanBus(nullptr), iCanBusErrors(nullptr), iCanBufferFactory(nullptr),
-          type(type), id(id), bufferSize(0), delay(0.0)
+          bufferSize(bufferSize), delay(delay), type(type), id(id)
     { }
 
     //! Virtual destructor.
@@ -59,15 +59,10 @@ public:
 
     //! Configure CAN interface handles.
     virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBusErrors * iCanBusErrors,
-            yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize)
+            yarp::dev::ICanBufferFactory * iCanBufferFactory)
     {
         this->iCanBus = iCanBus; this->iCanBusErrors = iCanBusErrors; this->iCanBufferFactory = iCanBufferFactory;
-        this->bufferSize = bufferSize;
     }
-
-    //! Configure a delay (in seconds) before each read/write.
-    void setDelay(double delay)
-    { this->delay = delay; }
 
 protected:
     yarp::dev::ICanBus * iCanBus;
@@ -93,7 +88,7 @@ class CanReaderThread : public CanReaderWriterThread
 {
 public:
     //! Constructor.
-    CanReaderThread(const std::string & id);
+    CanReaderThread(const std::string & id, double delay, unsigned int bufferSize);
 
     //! Map CAN node ids with handles.
     void registerHandle(ICanBusSharer * p);
@@ -123,7 +118,7 @@ class CanWriterThread : public CanReaderWriterThread
 {
 public:
     //! Constructor.
-    CanWriterThread(const std::string & id);
+    CanWriterThread(const std::string & id, double delay, unsigned int bufferSize);
 
     //! Destructor.
     virtual ~CanWriterThread();
@@ -135,7 +130,7 @@ public:
     void flush();
 
     virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBusErrors * iCanBusErrors,
-            yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize) override;
+            yarp::dev::ICanBufferFactory * iCanBufferFactory) override;
 
     virtual void run() override;
 

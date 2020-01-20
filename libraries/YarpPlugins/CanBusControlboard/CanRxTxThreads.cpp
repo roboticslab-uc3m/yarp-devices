@@ -35,9 +35,9 @@ void CanReaderWriterThread::onStop()
 
 // -----------------------------------------------------------------------------
 
-CanReaderThread::CanReaderThread(const std::string & id)
-    : CanReaderWriterThread("read", id)
-{}
+CanReaderThread::CanReaderThread(const std::string & id, double delay, unsigned int bufferSize)
+    : CanReaderWriterThread("read", id, delay, bufferSize)
+{ }
 
 // -----------------------------------------------------------------------------
 
@@ -55,7 +55,7 @@ void CanReaderThread::registerHandle(ICanBusSharer * p)
 
 bool CanReaderThread::registerPort(const std::string & name)
 {
-    return streamerPort.open(name);
+    return streamerPort.open(name + "/dump:o");
 }
 
 // -----------------------------------------------------------------------------
@@ -107,11 +107,11 @@ void CanReaderThread::run()
 
 // -----------------------------------------------------------------------------
 
-CanWriterThread::CanWriterThread(const std::string & id)
-    : CanReaderWriterThread("write", id),
+CanWriterThread::CanWriterThread(const std::string & id, double delay, unsigned int bufferSize)
+    : CanReaderWriterThread("write", id, delay, bufferSize),
       sender(nullptr),
       preparedMessages(0)
-{}
+{ }
 
 // -----------------------------------------------------------------------------
 
@@ -190,9 +190,9 @@ void CanWriterThread::handlePartialWrite(unsigned int sent)
 // -----------------------------------------------------------------------------
 
 void CanWriterThread::setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBusErrors * iCanBusErrors,
-        yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize)
+        yarp::dev::ICanBufferFactory * iCanBufferFactory)
 {
-    CanReaderWriterThread::setCanHandles(iCanBus, iCanBusErrors, iCanBufferFactory, bufferSize);
+    CanReaderWriterThread::setCanHandles(iCanBus, iCanBusErrors, iCanBufferFactory);
     sender = new YarpCanSenderDelegate(canBuffer, bufferMutex, preparedMessages, bufferSize);
 }
 

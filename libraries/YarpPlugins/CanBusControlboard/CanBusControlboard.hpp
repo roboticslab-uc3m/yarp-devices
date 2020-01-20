@@ -11,7 +11,7 @@
 #include <yarp/dev/PolyDriverList.h>
 
 #include "DeviceMapper.hpp"
-#include "CanRxTxThreads.hpp"
+#include "CanBusBroker.hpp"
 
 #define CHECK_JOINT(j) do { int n = deviceMapper.getControlledAxes(); if ((j) < 0 || (j) > n - 1) return false; } while (0)
 
@@ -59,7 +59,6 @@ class CanBusControlboard : public yarp::dev::DeviceDriver,
                            public yarp::dev::IVelocityControl
 {
 public:
-
     CanBusControlboard() : syncTimer(nullptr)
     { }
 
@@ -311,20 +310,11 @@ public:
     //virtual bool stop(int n_joint, const int *joints) override;
 
 private:
-
-    //! Read/write threads bound to a specific CAN channel.
-    struct CanThreads
-    {
-        std::string busName;
-        CanReaderThread * reader;
-        CanWriterThread * writer;
-    };
-
     yarp::dev::PolyDriverList busDevices;
     yarp::dev::PolyDriverList nodeDevices;
 
     DeviceMapper deviceMapper;
-    std::vector<CanThreads> canThreads;
+    std::vector<CanBusBroker *> canBusBrokers;
 
     yarp::os::Timer * syncTimer;
 };
