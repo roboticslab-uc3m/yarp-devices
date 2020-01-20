@@ -12,7 +12,7 @@ Installation instructions for installing from source can be found [here](/doc/ya
 Usage instructions for the different devices contained in this repository can be found in each corresponding subdirectory.
 
 ## Tricks
-Some tricks for the different devices contained in this repository can be found [here](doc/yarp-devices-tricks.md).
+Some tricks for the different devices contained in this repository can be found at http://robots.uc3m.es/gitbook-developer-manual/appendix/yarp-tricks.html ([perma](https://github.com/roboticslab-uc3m/developer-manual/blob/9c11c75d4ef5de8ac43a90ab3184fdf8e85a3290/appendix/yarp-tricks.md)).
 
 ## Contributing
 

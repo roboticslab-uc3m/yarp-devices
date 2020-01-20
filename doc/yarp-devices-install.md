@@ -56,4 +56,3 @@ When installing GrabberControls2Gui, take into account the following points:
 ## Useful links
 
 * Usage instructions for the different devices contained in this repository can be found in each corresponding subdirectory.
-* [yarp-devices tricks](yarp-devices-tricks.md)
