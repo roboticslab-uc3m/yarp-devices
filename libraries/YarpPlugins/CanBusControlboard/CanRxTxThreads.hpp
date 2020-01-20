@@ -7,6 +7,8 @@
 #include <string>
 #include <unordered_map>
 
+#include <yarp/os/Bottle.h>
+#include <yarp/os/BufferedPort.h>
 #include <yarp/os/Thread.h>
 #include <yarp/dev/CanBusInterface.h>
 
@@ -46,7 +48,7 @@ public:
     //! Invoked by the caller right before the thread is started.
     virtual void beforeStart() override;
 
-    //! Invoked by the caller right after the thread is started.
+    //! Invoked by the caller right before the thread is joined.
     virtual void afterStart(bool success) override;
 
     //! Callback on thread stop.
@@ -64,7 +66,8 @@ public:
     }
 
     //! Configure a delay (in seconds) before each read/write.
-    void setDelay(double delay);
+    void setDelay(double delay)
+    { this->delay = delay; }
 
 protected:
     yarp::dev::ICanBus * iCanBus;
@@ -99,10 +102,14 @@ public:
     const std::unordered_map<unsigned int, ICanBusSharer *> & getHandleMap()
     { return canIdToHandle; }
 
+    //! Open streamer port with given port name.
+    bool registerPort(const std::string & name);
+
     virtual void run() override;
 
 private:
     std::unordered_map<unsigned int, ICanBusSharer *> canIdToHandle;
+    yarp::os::BufferedPort<yarp::os::Bottle> streamerPort;
 };
 
 /**

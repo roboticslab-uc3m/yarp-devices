@@ -2,6 +2,8 @@
 
 #include "CanBusControlboard.hpp"
 
+#include <cstdlib>
+
 #include <yarp/os/Property.h>
 #include <yarp/os/Value.h>
 
@@ -107,7 +109,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
             if (rxBufferSize == 0 || txBufferSize == 0 || rxDelay == 0.0 || txDelay == 0.0)
             {
-                CD_ERROR("Illegal CAN bus buffer size or delay options: %s.\n", canBus.c_str());
+                CD_ERROR("Illegal CAN bus buffer size or delay options in device: %s.\n", canBus.c_str());
             }
 
             CanReaderThread * reader = new CanReaderThread(canBus);
@@ -117,6 +119,17 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             CanWriterThread * writer = new CanWriterThread(canBus);
             writer->setCanHandles(iCanBus, iCanBusErrors, iCanBufferFactory, txBufferSize);
             writer->setDelay(txDelay);
+
+            if (canBusOptions.check("yarpPrefix", "YARP port prefix"))
+            {
+                std::string portName = canBusOptions.find("yarpPrefix").asString();
+
+                if (!reader->registerPort(portName))
+                {
+                    CD_ERROR("Unable to open streamer YARP port in device: %s.\n", canBus.c_str());
+                    return false;
+                }
+            }
 
             canThreads.push_back({canBus, reader, writer});
         }

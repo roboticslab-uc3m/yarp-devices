@@ -35,13 +35,6 @@ void CanReaderWriterThread::onStop()
 
 // -----------------------------------------------------------------------------
 
-void CanReaderWriterThread::setDelay(double delay)
-{
-    this->delay = delay <= 0.0 ? std::numeric_limits<double>::min() : delay;
-}
-
-// -----------------------------------------------------------------------------
-
 CanReaderThread::CanReaderThread(const std::string & id)
     : CanReaderWriterThread("read", id)
 {}
@@ -56,6 +49,13 @@ void CanReaderThread::registerHandle(ICanBusSharer * p)
     {
         canIdToHandle[id] = p;
     }
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanReaderThread::registerPort(const std::string & name)
+{
+    return streamerPort.open(name);
 }
 
 // -----------------------------------------------------------------------------
@@ -85,6 +85,21 @@ void CanReaderThread::run()
             if (it != canIdToHandle.end())
             {
                 it->second->interpretMessage({msg.getId(), msg.getLen(), msg.getData()});
+            }
+
+            if (!streamerPort.isClosed())
+            {
+                yarp::os::Bottle & b = streamerPort.prepare();
+                b.clear();
+                b.addInt16(msg.getId());
+                b.addInt8(msg.getLen());
+
+                for (int j = 0; j < msg.getLen(); j++)
+                {
+                    b.addInt8(msg.getData()[j]);
+                }
+
+                streamerPort.write();
             }
         }
     }
