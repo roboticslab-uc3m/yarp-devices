@@ -3,6 +3,7 @@
 #ifndef __CAN_BUS_BROKER_HPP__
 #define __CAN_BUS_BROKER_HPP__
 
+#include <mutex>
 #include <string>
 
 #include <yarp/os/Bottle.h>
@@ -63,6 +64,7 @@ private:
 
     yarp::os::Port dumpPort;
     yarp::os::PortWriterBuffer<yarp::os::Bottle> dumpWriter;
+    std::mutex dumpMutex;
 
     yarp::os::Port sendPort;
     yarp::os::PortReaderBuffer<yarp::os::Bottle> commandReader;

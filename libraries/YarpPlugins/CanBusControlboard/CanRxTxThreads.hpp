@@ -64,8 +64,8 @@ public:
         this->iCanBus = iCanBus; this->iCanBusErrors = iCanBusErrors; this->iCanBufferFactory = iCanBufferFactory;
     }
 
-    void attachDumpWriter(yarp::os::PortWriterBuffer<yarp::os::Bottle> * dumpWriter)
-    { this->dumpWriter = dumpWriter; }
+    void attachDumpWriter(yarp::os::PortWriterBuffer<yarp::os::Bottle> * dumpWriter, std::mutex * dumpMutex)
+    { this->dumpWriter = dumpWriter; this->dumpMutex = dumpMutex; }
 
 protected:
     yarp::dev::ICanBus * iCanBus;
@@ -74,6 +74,7 @@ protected:
     yarp::dev::CanBuffer canBuffer;
 
     yarp::os::PortWriterBuffer<yarp::os::Bottle> * dumpWriter;
+    std::mutex * dumpMutex;
 
     unsigned int bufferSize;
     double delay;

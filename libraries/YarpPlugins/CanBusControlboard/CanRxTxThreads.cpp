@@ -82,6 +82,7 @@ void CanReaderThread::run()
 
             if (dumpWriter)
             {
+                std::lock_guard<std::mutex> lock(*dumpMutex);
                 yarp::os::Bottle & b = dumpWriter->prepare();
                 b.clear();
                 b.addInt16(msg.getId());
@@ -150,6 +151,7 @@ void CanWriterThread::flush()
         for (int i = 0; i < sent; i++)
         {
             const yarp::dev::CanMessage & msg = canBuffer[i];
+            std::lock_guard<std::mutex> lock(*dumpMutex);
             yarp::os::Bottle & b = dumpWriter->prepare();
             b.clear();
             b.addInt16(msg.getId());

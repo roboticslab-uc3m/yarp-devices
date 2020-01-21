@@ -109,12 +109,12 @@ bool CanBusBroker::createPorts(const std::string & name)
 
     if (reader)
     {
-        reader->attachDumpWriter(&dumpWriter);
+        reader->attachDumpWriter(&dumpWriter, &dumpMutex);
     }
 
     if (writer)
     {
-        writer->attachDumpWriter(&dumpWriter);
+        writer->attachDumpWriter(&dumpWriter, &dumpMutex);
     }
 
     sendPort.setOutputMode(false);
