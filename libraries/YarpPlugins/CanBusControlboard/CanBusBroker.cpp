@@ -2,12 +2,7 @@
 
 #include "CanBusBroker.hpp"
 
-#include <cstdint>
-
-#include <ios>
-#include <iomanip>
 #include <memory>
-#include <sstream>
 
 #include <ColorDebug.h>
 
@@ -34,6 +29,7 @@ CanBusBroker::~CanBusBroker()
 
     dumpPort.close();
     sendPort.close();
+    sdoPort.close();
 
     delete readerThread;
     delete writerThread;
@@ -118,6 +114,18 @@ bool CanBusBroker::createPorts(const std::string & name)
         return false;
     }
 
+    if (readerThread)
+    {
+        readerThread->attachDumpWriter(&dumpWriter, &dumpMutex);
+        readerThread->attachCanNotifier(&sdoReplier);
+    }
+
+    if (writerThread)
+    {
+        writerThread->attachDumpWriter(&dumpWriter, &dumpMutex);
+        sdoReplier.configureSender(writerThread->getDelegate());
+    }
+
     dumpPort.setInputMode(false);
     dumpWriter.attach(dumpPort);
 
@@ -125,18 +133,7 @@ bool CanBusBroker::createPorts(const std::string & name)
     commandReader.attach(sendPort);
     commandReader.useCallback(*this);
 
-    sdoPort.setReader(*this);
-
-    if (readerThread)
-    {
-        readerThread->attachDumpWriter(&dumpWriter, &dumpMutex);
-        readerThread->attachSdoResponder(this);
-    }
-
-    if (writerThread)
-    {
-        writerThread->attachDumpWriter(&dumpWriter, &dumpMutex);
-    }
+    sdoPort.setReader(sdoReplier);
 
     return true;
 }
@@ -207,6 +204,8 @@ bool CanBusBroker::stopThreads()
     sendPort.interrupt();
     commandReader.disableCallback();
     dumpPort.interrupt();
+    sdoPort.interrupt();
+
     bool ok = true;
 
     if (readerThread && readerThread->isRunning() && !readerThread->stop())
@@ -272,196 +271,6 @@ void CanBusBroker::onRead(yarp::os::Bottle & b)
 
     writerThread->getDelegate()->prepareMessage({id, size, raw.get()});
     CD_INFO("Remote command: %s\n", CanUtils::msgToStr(id, size, raw.get()).c_str());
-}
-
-// -----------------------------------------------------------------------------
-
-bool CanBusBroker::read(yarp::os::ConnectionReader & reader)
-{
-    if (this->sdoRequest)
-    {
-        return false;
-    }
-
-    yarp::os::Bottle request;
-    yarp::os::Bottle response;
-
-    if (!request.read(reader))
-    {
-        return false;
-    }
-
-    if (request.size() < 5 || !request.get(0).isVocab() || !request.get(1).isInt32()
-            || !request.get(2).isInt32() || !request.get(3).isInt32() || !request.get(4).isVocab())
-    {
-        return false;
-    }
-
-    sdo_direction dir = static_cast<sdo_direction>(request.get(0).asVocab());
-    unsigned int id = request.get(1).asInt8();
-    unsigned int index = request.get(2).asInt16();
-    unsigned int subindex = request.get(3).asInt8();
-    data_type type = static_cast<data_type>(request.get(4).asVocab());
-
-    if (dir == sdo_direction::DOWNLOAD && request.size() < 6)
-    {
-        return false;
-    }
-
-    std::unique_ptr<SdoClient> sdoRequest(this->sdoRequest = allocateClient(id));
-    sdoRequest->configureSender(writerThread->getDelegate());
-
-    if (dir == sdo_direction::UPLOAD)
-    {
-        yarp::os::ConnectionWriter * writer = reader.getWriter();
-
-        if (!writer)
-        {
-            return false;
-        }
-
-        std::stringstream ss;
-        bool ok = false;
-
-        switch (type)
-        {
-        case data_type::INTEGER_8:
-        {
-            std::int8_t int8data;
-
-            if (sdoRequest->upload("Remote request", &int8data, index, subindex))
-            {
-                ss << std::setw(2) << std::hex << std::showbase << (static_cast<long>(int8data) & 0xFF);
-                response.addInt8(int8data);
-                ok = true;
-            }
-
-            break;
-        }
-        case data_type::UNSIGNED_INTEGER_8:
-        {
-            std::uint8_t uint8data;
-
-            if (sdoRequest->upload("Remote request", &uint8data, index, subindex))
-            {
-                ss << std::setw(2) << std::hex << std::showbase << (static_cast<unsigned long>(uint8data) & 0xFF);
-                response.addInt16(uint8data);
-                ok = true;
-            }
-
-            break;
-        }
-        case data_type::INTEGER_16:
-        {
-            std::int16_t int16data;
-
-            if (sdoRequest->upload("Remote request", &int16data, index, subindex))
-            {
-                ss << std::setw(4) << std::hex << std::showbase << (static_cast<long>(int16data) & 0xFFFF);
-                response.addInt16(int16data);
-                ok = true;
-            }
-
-            break;
-        }
-        case data_type::UNSIGNED_INTEGER_16:
-        {
-            std::uint16_t uint16data;
-
-            if (sdoRequest->upload("Remote request", &uint16data, index, subindex))
-            {
-                ss << std::setw(4) << std::hex << std::showbase << (static_cast<unsigned long>(uint16data) & 0xFFFF);
-                response.addInt32(uint16data);
-                ok = true;
-            }
-
-            break;
-        }
-        case data_type::INTEGER_32:
-        {
-            std::int32_t int32data;
-
-            if (sdoRequest->upload("Remote request", &int32data, index, subindex))
-            {
-                ss << std::setw(8) << std::hex << std::showbase << (static_cast<long>(int32data) & 0xFFFFFFFF);
-                response.addInt32(int32data);
-                ok = true;
-            }
-
-            break;
-        }
-        case data_type::UNSIGNED_INTEGER_32:
-        {
-            std::uint32_t uint32data;
-
-            if (sdoRequest->upload("Remote request", &uint32data, index, subindex))
-            {
-                ss << std::setw(8) << std::hex << std::showbase << (static_cast<unsigned long>(uint32data) & 0xFFFFFFFF);
-                response.addInt64(uint32data);
-                ok = true;
-            }
-
-            break;
-        }
-        case data_type::STRING:
-        {
-            std::string strData;
-
-            if (sdoRequest->upload("Remote request", strData, index, subindex))
-            {
-                ss << strData;
-                ok = true;
-            }
-
-            break;
-        }
-        default:
-            return false;
-        }
-
-        if (!ok)
-        {
-            return false;
-        }
-
-        response.addString(ss.str());
-        return response.write(*writer);
-    }
-    else if (dir == sdo_direction::DOWNLOAD)
-    {
-        switch (type)
-        {
-        case data_type::INTEGER_8:
-        case data_type::UNSIGNED_INTEGER_8:
-            return sdoRequest->download("Remote indication", request.get(5).asInt8(), index, subindex);
-        case data_type::INTEGER_16:
-        case data_type::UNSIGNED_INTEGER_16:
-            return sdoRequest->download("Remote indication", request.get(5).asInt16(), index, subindex);
-        case data_type::INTEGER_32:
-        case data_type::UNSIGNED_INTEGER_32:
-            return sdoRequest->download("Remote indication", request.get(5).asInt32(), index, subindex);
-        case data_type::STRING:
-            return sdoRequest->download("Remote indication", request.get(5).asString(), index, subindex);
-        default:
-            return false;
-        }
-    }
-    else
-    {
-        return false;
-    }
-}
-
-// -----------------------------------------------------------------------------
-
-bool CanBusBroker::notify(unsigned int cobId, const unsigned char * data)
-{
-    if (sdoRequest && sdoRequest->getCobIdTx() == cobId)
-    {
-        return sdoRequest->notify(data);
-    }
-
-    return false;
 }
 
 // -----------------------------------------------------------------------------

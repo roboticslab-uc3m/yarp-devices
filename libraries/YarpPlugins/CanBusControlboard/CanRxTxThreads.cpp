@@ -38,7 +38,7 @@ void CanReaderWriterThread::onStop()
 
 CanReaderThread::CanReaderThread(const std::string & id, double delay, unsigned int bufferSize)
     : CanReaderWriterThread("read", id, delay, bufferSize),
-      sdoResponder(nullptr)
+      canMessageNotifier(nullptr)
 { }
 
 // -----------------------------------------------------------------------------
@@ -102,9 +102,9 @@ void CanReaderThread::run()
                 dumpWriter->write();
             }
 
-            if (sdoResponder)
+            if (canMessageNotifier)
             {
-                sdoResponder->notify(msg.getId(), msg.getData());
+                canMessageNotifier->notifyMessage({msg.getId(), msg.getLen(), msg.getData()});
             }
         }
     }

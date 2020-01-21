@@ -18,8 +18,6 @@
 namespace roboticslab
 {
 
-class SdoResponder;
-
 /**
  * @ingroup CanBusControlboard
  * @brief Base class for a thread that attends CAN reads or writes.
@@ -32,7 +30,8 @@ class CanReaderWriterThread : public yarp::os::Thread
 public:
     //! Constructor.
     CanReaderWriterThread(const std::string & type, const std::string & id, double delay, unsigned int bufferSize)
-        : iCanBus(nullptr), iCanBusErrors(nullptr), iCanBufferFactory(nullptr), dumpWriter(nullptr),
+        : iCanBus(nullptr), iCanBusErrors(nullptr), iCanBufferFactory(nullptr),
+          dumpWriter(nullptr), dumpMutex(nullptr),
           bufferSize(bufferSize), delay(delay), type(type), id(id)
     { }
 
@@ -105,15 +104,15 @@ public:
     const std::unordered_map<unsigned int, ICanBusSharer *> & getHandleMap()
     { return canIdToHandle; }
 
-    //! Attach SDO responder handle.
-    void attachSdoResponder(SdoResponder * sdoResponder)
-    { this->sdoResponder = sdoResponder; }
+    //! Attach custom CAN message responder handle.
+    void attachCanNotifier(CanMessageNotifier * canMessageNotifier)
+    { this->canMessageNotifier = canMessageNotifier; }
 
     virtual void run() override;
 
 private:
     std::unordered_map<unsigned int, ICanBusSharer *> canIdToHandle;
-    SdoResponder * sdoResponder;
+    CanMessageNotifier * canMessageNotifier;
 };
 
 /**
