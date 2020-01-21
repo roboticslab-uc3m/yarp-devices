@@ -27,6 +27,11 @@ CanBusBroker::CanBusBroker(const std::string & _name)
 
 CanBusBroker::~CanBusBroker()
 {
+    stopThreads();
+
+    dumpPort.close();
+    sendPort.close();
+
     delete reader;
     delete writer;
 }
@@ -187,9 +192,9 @@ bool CanBusBroker::startThreads()
 
 bool CanBusBroker::stopThreads()
 {
-    dumpPort.interrupt();
     sendPort.interrupt();
-
+    commandReader.disableCallback();
+    dumpPort.interrupt();
     bool ok = true;
 
     if (reader && reader->isRunning() && !reader->stop())
