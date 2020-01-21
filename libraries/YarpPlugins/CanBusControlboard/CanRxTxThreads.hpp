@@ -8,7 +8,7 @@
 #include <unordered_map>
 
 #include <yarp/os/Bottle.h>
-#include <yarp/os/BufferedPort.h>
+#include <yarp/os/PortWriterBuffer.h>
 #include <yarp/os/Thread.h>
 #include <yarp/dev/CanBusInterface.h>
 
@@ -30,7 +30,7 @@ class CanReaderWriterThread : public yarp::os::Thread
 public:
     //! Constructor.
     CanReaderWriterThread(const std::string & type, const std::string & id, double delay, unsigned int bufferSize)
-        : iCanBus(nullptr), iCanBusErrors(nullptr), iCanBufferFactory(nullptr), dumpPort(nullptr),
+        : iCanBus(nullptr), iCanBusErrors(nullptr), iCanBufferFactory(nullptr), dumpWriter(nullptr),
           bufferSize(bufferSize), delay(delay), type(type), id(id)
     { }
 
@@ -64,8 +64,8 @@ public:
         this->iCanBus = iCanBus; this->iCanBusErrors = iCanBusErrors; this->iCanBufferFactory = iCanBufferFactory;
     }
 
-    void attachDumpPort(yarp::os::BufferedPort<yarp::os::Bottle> * dumpPort)
-    { this->dumpPort = dumpPort; }
+    void attachDumpWriter(yarp::os::PortWriterBuffer<yarp::os::Bottle> * dumpWriter)
+    { this->dumpWriter = dumpWriter; }
 
 protected:
     yarp::dev::ICanBus * iCanBus;
@@ -73,7 +73,7 @@ protected:
     yarp::dev::ICanBufferFactory * iCanBufferFactory;
     yarp::dev::CanBuffer canBuffer;
 
-    yarp::os::BufferedPort<yarp::os::Bottle> * dumpPort;
+    yarp::os::PortWriterBuffer<yarp::os::Bottle> * dumpWriter;
 
     unsigned int bufferSize;
     double delay;

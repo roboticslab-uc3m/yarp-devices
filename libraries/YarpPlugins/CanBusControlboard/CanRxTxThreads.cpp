@@ -80,18 +80,23 @@ void CanReaderThread::run()
                 it->second->interpretMessage({msg.getId(), msg.getLen(), msg.getData()});
             }
 
-            if (dumpPort && !dumpPort->isClosed())
+            if (dumpWriter)
             {
-                yarp::os::Bottle & b = dumpPort->prepare();
+                yarp::os::Bottle & b = dumpWriter->prepare();
                 b.clear();
                 b.addInt16(msg.getId());
 
-                for (int j = 0; j < msg.getLen(); j++)
+                if (msg.getLen() != 0)
                 {
-                    b.addInt8(msg.getData()[j]);
+                    yarp::os::Bottle & data = b.addList();
+
+                    for (int j = 0; j < msg.getLen(); j++)
+                    {
+                        data.addInt8(msg.getData()[j]);
+                    }
                 }
 
-                dumpPort->write();
+                dumpWriter->write();
             }
         }
     }
@@ -140,21 +145,26 @@ void CanWriterThread::flush()
         return;
     }
 
-    if (dumpPort && !dumpPort->isClosed())
+    if (dumpWriter)
     {
         for (int i = 0; i < sent; i++)
         {
             const yarp::dev::CanMessage & msg = canBuffer[i];
-            yarp::os::Bottle & b = dumpPort->prepare();
+            yarp::os::Bottle & b = dumpWriter->prepare();
             b.clear();
             b.addInt16(msg.getId());
 
-            for (int j = 0; j < msg.getLen(); j++)
+            if (msg.getLen() != 0)
             {
-                b.addInt8(msg.getData()[j]);
+                yarp::os::Bottle & data = b.addList();
+
+                for (int j = 0; j < msg.getLen(); j++)
+                {
+                    data.addInt8(msg.getData()[j]);
+                }
             }
 
-            dumpPort->write();
+            dumpWriter->write();
         }
     }
 

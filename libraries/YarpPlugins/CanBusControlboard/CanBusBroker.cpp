@@ -2,6 +2,10 @@
 
 #include "CanBusBroker.hpp"
 
+#include <cstdint>
+
+#include <memory>
+
 #include <ColorDebug.h>
 
 using namespace roboticslab;
@@ -92,15 +96,28 @@ bool CanBusBroker::createPorts(const std::string & name)
         return false;
     }
 
+    if (!sendPort.open(name + "/send:i"))
+    {
+        CD_WARNING("Cannot open send port.\n");
+        return false;
+    }
+
+    dumpPort.setInputMode(false);
+    dumpWriter.attach(dumpPort);
+
     if (reader)
     {
-        reader->attachDumpPort(&dumpPort);
+        reader->attachDumpWriter(&dumpWriter);
     }
 
     if (writer)
     {
-        writer->attachDumpPort(&dumpPort);
+        writer->attachDumpWriter(&dumpWriter);
     }
+
+    sendPort.setOutputMode(false);
+    commandReader.attach(sendPort);
+    commandReader.useCallback(*this);
 
     return true;
 }
@@ -168,6 +185,9 @@ bool CanBusBroker::startThreads()
 
 bool CanBusBroker::stopThreads()
 {
+    dumpPort.interrupt();
+    sendPort.interrupt();
+
     bool ok = true;
 
     if (reader && reader->isRunning() && !reader->stop())
@@ -183,6 +203,60 @@ bool CanBusBroker::stopThreads()
     }
 
     return ok;
+}
+
+// -----------------------------------------------------------------------------
+
+void CanBusBroker::onRead(yarp::os::Bottle & b)
+{
+    if (b.size() == 0 || b.size() > 2)
+    {
+        CD_WARNING("Illegal size %d, expected [1,2].\n", b.size());
+        return;
+    }
+
+    if (!b.get(0).asInt16())
+    {
+        CD_WARNING("First element is not an int16.\n");
+        return;
+    }
+
+    unsigned int id = b.get(0).asInt16();
+
+    if (b.size() == 1)
+    {
+        writer->getDelegate()->prepareMessage({id, 0, nullptr});
+    }
+    else if (b.get(1).isList())
+    {
+        yarp::os::Bottle * data = b.get(1).asList();
+        unsigned int size = data->size();
+
+        if (size > 8)
+        {
+            CD_WARNING("Data size exceeds 8 elements.\n");
+            return;
+        }
+
+        std::unique_ptr<std::uint8_t[]> raw(new std::uint8_t[size]);
+
+        for (int i = 0; i < size; i++)
+        {
+            if (data->get(i).isInt8())
+            {
+                CD_WARNING("Data element %d an int8.\n", i);
+                return;
+            }
+
+            raw[i] = data->get(i).asInt8();
+        }
+
+        writer->getDelegate()->prepareMessage({id, size, raw.get()});
+    }
+    else
+    {
+        CD_WARNING("Second element is not a list.\n");
+    }
 }
 
 // -----------------------------------------------------------------------------

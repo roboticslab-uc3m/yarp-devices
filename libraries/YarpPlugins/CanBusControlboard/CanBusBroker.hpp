@@ -6,8 +6,11 @@
 #include <string>
 
 #include <yarp/os/Bottle.h>
-#include <yarp/os/BufferedPort.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/PortReaderBuffer.h>
+#include <yarp/os/PortWriterBuffer.h>
 #include <yarp/os/Searchable.h>
+#include <yarp/os/TypedReaderCallback.h>
 
 #include <yarp/dev/CanBusInterface.h>
 #include <yarp/dev/PolyDriver.h>
@@ -23,7 +26,7 @@ namespace roboticslab
  *
  * TODO: https://whatis.techtarget.com/definition/message-broker
  */
-class CanBusBroker final
+class CanBusBroker final : yarp::os::TypedReaderCallback<yarp::os::Bottle>
 {
 public:
     CanBusBroker(const std::string & name);
@@ -46,6 +49,8 @@ public:
     std::string getName() const
     { return name; }
 
+    virtual void onRead(yarp::os::Bottle & b) override;
+
 private:
     std::string name;
 
@@ -56,7 +61,11 @@ private:
     yarp::dev::ICanBusErrors * iCanBusErrors;
     yarp::dev::ICanBufferFactory * iCanBufferFactory;
 
-    yarp::os::BufferedPort<yarp::os::Bottle> dumpPort;
+    yarp::os::Port dumpPort;
+    yarp::os::PortWriterBuffer<yarp::os::Bottle> dumpWriter;
+
+    yarp::os::Port sendPort;
+    yarp::os::PortReaderBuffer<yarp::os::Bottle> commandReader;
 };
 
 } // namespace roboticslab
