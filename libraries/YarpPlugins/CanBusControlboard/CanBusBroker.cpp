@@ -8,6 +8,8 @@
 
 #include <ColorDebug.h>
 
+#include "CanUtils.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
@@ -252,6 +254,7 @@ void CanBusBroker::onRead(yarp::os::Bottle & b)
         }
 
         writer->getDelegate()->prepareMessage({id, size, raw.get()});
+        CD_INFO("Remote command: %s\n", CanUtils::msgToStr(id, size, raw.get()).c_str());
     }
     else
     {

@@ -74,17 +74,6 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
         if (!isFakeBus)
         {
-            int rxBufferSize = canBusOptions.check("rxBufferSize", yarp::os::Value(0), "CAN bus RX buffer size").asInt32();
-            int txBufferSize = canBusOptions.check("txBufferSize", yarp::os::Value(0), "CAN bus TX buffer size").asInt32();
-            double rxDelay = canBusOptions.check("rxDelay", yarp::os::Value(0.0), "CAN bus RX delay (seconds)").asFloat64();
-            double txDelay = canBusOptions.check("txDelay", yarp::os::Value(0.0), "CAN bus TX delay (seconds)").asFloat64();
-
-            if (rxBufferSize == 0 || txBufferSize == 0 || rxDelay == 0.0 || txDelay == 0.0)
-            {
-                CD_ERROR("Illegal CAN bus buffer size or delay options in device: %s.\n", canBus.c_str());
-                return false;
-            }
-
             CanBusBroker * canBusBroker = new CanBusBroker(canBus);
             canBusBrokers.push_back(canBusBroker);
 
