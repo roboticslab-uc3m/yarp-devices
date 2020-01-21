@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "CanBusControlboard.hpp"
+#include "CanRxTxThreads.hpp"
 
 #include <cstring>
 
@@ -9,6 +9,7 @@
 #include <ColorDebug.h>
 
 #include "YarpCanSenderDelegate.hpp"
+#include "CanBusBroker.hpp"
 
 using namespace roboticslab;
 
@@ -36,7 +37,8 @@ void CanReaderWriterThread::onStop()
 // -----------------------------------------------------------------------------
 
 CanReaderThread::CanReaderThread(const std::string & id, double delay, unsigned int bufferSize)
-    : CanReaderWriterThread("read", id, delay, bufferSize)
+    : CanReaderWriterThread("read", id, delay, bufferSize),
+      sdoResponder(nullptr)
 { }
 
 // -----------------------------------------------------------------------------
@@ -98,6 +100,11 @@ void CanReaderThread::run()
                 }
 
                 dumpWriter->write();
+            }
+
+            if (sdoResponder)
+            {
+                sdoResponder->notify(msg.getId(), msg.getData());
             }
         }
     }

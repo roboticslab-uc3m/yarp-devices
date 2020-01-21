@@ -18,6 +18,8 @@
 namespace roboticslab
 {
 
+class SdoResponder;
+
 /**
  * @ingroup CanBusControlboard
  * @brief Base class for a thread that attends CAN reads or writes.
@@ -103,10 +105,15 @@ public:
     const std::unordered_map<unsigned int, ICanBusSharer *> & getHandleMap()
     { return canIdToHandle; }
 
+    //! Attach SDO responder handle.
+    void attachSdoResponder(SdoResponder * sdoResponder)
+    { this->sdoResponder = sdoResponder; }
+
     virtual void run() override;
 
 private:
     std::unordered_map<unsigned int, ICanBusSharer *> canIdToHandle;
+    SdoResponder * sdoResponder;
 };
 
 /**
