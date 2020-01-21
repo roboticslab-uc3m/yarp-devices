@@ -222,19 +222,7 @@ void CanBusBroker::onRead(yarp::os::Bottle & b)
         return;
     }
 
-    if (!b.get(0).asInt16())
-    {
-        CD_WARNING("First element is not an int16.\n");
-        return;
-    }
-
-    if (b.size() == 2 && !b.get(1).isList())
-    {
-        CD_WARNING("Second element is not a list.\n");
-        return;
-    }
-
-    unsigned int id = b.get(0).asInt16();
+    unsigned int id = b.get(0).asInt32();
 
     if (id > 0x7FF)
     {
@@ -247,6 +235,12 @@ void CanBusBroker::onRead(yarp::os::Bottle & b)
 
     if (b.size() == 2)
     {
+        if (!b.get(1).isList())
+        {
+            CD_WARNING("Second element is not a list.\n");
+            return;
+        }
+
         const yarp::os::Bottle * data = b.get(1).asList();
         size = data->size();
 
@@ -260,12 +254,6 @@ void CanBusBroker::onRead(yarp::os::Bottle & b)
 
         for (int i = 0; i < size; i++)
         {
-            if (!data->get(i).isInt8())
-            {
-                CD_WARNING("Data element %d is not an int8.\n", i);
-                return;
-            }
-
             raw[i] = data->get(i).asInt8();
         }
     }
