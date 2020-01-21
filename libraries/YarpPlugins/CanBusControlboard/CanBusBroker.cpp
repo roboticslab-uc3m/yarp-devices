@@ -211,7 +211,7 @@ bool CanBusBroker::stopThreads()
 
 void CanBusBroker::onRead(yarp::os::Bottle & b)
 {
-    if (b.size() == 0 || b.size() > 2)
+    if (b.size() != 1 && b.size() != 2)
     {
         CD_WARNING("Illegal size %d, expected [1,2].\n", b.size());
         return;
@@ -223,43 +223,50 @@ void CanBusBroker::onRead(yarp::os::Bottle & b)
         return;
     }
 
+    if (b.size() == 2 && !b.get(1).isList())
+    {
+        CD_WARNING("Second element is not a list.\n");
+        return;
+    }
+
     unsigned int id = b.get(0).asInt16();
 
-    if (b.size() == 1)
+    if (id > 0x7FF)
     {
-        writer->getDelegate()->prepareMessage({id, 0, nullptr});
+        CD_WARNING("Illegal COB-ID: 0x%x.\n", id);
+        return;
     }
-    else if (b.get(1).isList())
-    {
-        yarp::os::Bottle * data = b.get(1).asList();
-        unsigned int size = data->size();
 
-        if (size > 8)
+    unsigned int size = 0;
+    std::unique_ptr<std::uint8_t[]> raw;
+
+    if (b.size() == 2)
+    {
+        const yarp::os::Bottle * data = b.get(1).asList();
+        size = data->size();
+
+        if (size == 0 || size > 8)
         {
-            CD_WARNING("Data size exceeds 8 elements.\n");
+            CD_WARNING("Empty data or size exceeds 8 elements: %d.\n", size);
             return;
         }
 
-        std::unique_ptr<std::uint8_t[]> raw(new std::uint8_t[size]);
+        raw = std::unique_ptr<std::uint8_t[]>(new std::uint8_t[size]);
 
         for (int i = 0; i < size; i++)
         {
-            if (data->get(i).isInt8())
+            if (!data->get(i).isInt8())
             {
-                CD_WARNING("Data element %d an int8.\n", i);
+                CD_WARNING("Data element %d is not an int8.\n", i);
                 return;
             }
 
             raw[i] = data->get(i).asInt8();
         }
+    }
 
-        writer->getDelegate()->prepareMessage({id, size, raw.get()});
-        CD_INFO("Remote command: %s\n", CanUtils::msgToStr(id, size, raw.get()).c_str());
-    }
-    else
-    {
-        CD_WARNING("Second element is not a list.\n");
-    }
+    writer->getDelegate()->prepareMessage({id, size, raw.get()});
+    CD_INFO("Remote command: %s\n", CanUtils::msgToStr(id, size, raw.get()).c_str());
 }
 
 // -----------------------------------------------------------------------------
