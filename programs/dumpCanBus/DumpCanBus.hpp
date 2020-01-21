@@ -3,44 +3,41 @@
 #ifndef __DUMP_CAN_BUS__
 #define __DUMP_CAN_BUS__
 
-#include <string>
-
-#include <yarp/os/ResourceFinder.h>
+#include <yarp/os/Bottle.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/RFModule.h>
-#include <yarp/os/Thread.h>
+#include <yarp/os/TypedReaderCallback.h>
 
-#include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/CanBusInterface.h>
+#define DEFAULT_LOCAL_PORT "/dumpCanBus"
 
 namespace roboticslab
 {
 
 /**
  * @ingroup dumpCanBus
- * @brief Launches one CAN bus driver, dumps output.
+ * @brief Connects to a remote CAN publisher port and dumps output.
  */
 class DumpCanBus : public yarp::os::RFModule,
-                   public yarp::os::Thread
+                   public yarp::os::TypedReaderCallback<yarp::os::Bottle>
 {
 public:
+    ~DumpCanBus()
+    { close(); }
 
-    DumpCanBus();
-    ~DumpCanBus();
+    virtual bool configure(yarp::os::ResourceFinder & rf) override;
 
-    virtual bool configure(yarp::os::ResourceFinder & rf);
-    virtual bool updateModule()
+    virtual bool updateModule() override
     { return true; }
-    virtual bool close();
 
-    // -------- Thread declarations. Implementation in ThreadImpl.cpp --------
-    virtual void run();
+    virtual bool close() override;
+
+    virtual void onRead(yarp::os::Bottle & b) override;
 
 private:
-
-    yarp::dev::PolyDriver canDevice;
-    yarp::dev::ICanBus * iCanBus;
-    yarp::dev::ICanBufferFactory * iCanBufferFactory;
-    yarp::dev::CanBuffer canInputBuffer;
+    yarp::os::Port port;
+    yarp::os::PortReaderBuffer<yarp::os::Bottle> portReader;
+    bool useCanOpen;
 };
 
 } // namespace roboticslab
