@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "CanMessageNotifier.hpp"
 #include "CanSenderDelegate.hpp"
 #include "SdoClient.hpp"
 #include "PdoProtocol.hpp"
@@ -18,36 +19,36 @@ namespace roboticslab
 
 /**
  * @ingroup yarp_devices_libraries
- * @defgroup CanBusSharerLib
+ * @defgroup CanOpenNodeLib
  * @brief Collection of classes and utilities to interface with CANopen.
  */
 
 /**
- * @ingroup CanBusSharerLib
+ * @ingroup CanOpenNodeLib
  * @brief Wrapper for CAN protocol handles with handy accessors.
  *
  * On construction, this class initializes all handles that define CAN protocols,
  * even if clients are not going to use them all. Also, it forwards CAN messages
  * to their corresponding protocol instances given the COB-ID.
  */
-class CanOpen final
+class CanOpenNode final : public CanMessageNotifier
 {
 public:
     static constexpr double SDO_TIMEOUT = 0.1;  ///< Timeout on SDO transfers (seconds)
     static constexpr double STATE_MACHINE_TIMEOUT = 2.0; ///< Timeout on state machine transitions (seconds)
 
     //! Constructor, creates and configures all handles.
-    CanOpen(unsigned int id, double sdoTimeout = SDO_TIMEOUT,
+    CanOpenNode(unsigned int id, double sdoTimeout = SDO_TIMEOUT,
             double stateTimeout = STATE_MACHINE_TIMEOUT, CanSenderDelegate * sender = nullptr);
 
     //! Deleted copy constructor.
-    CanOpen(const CanOpen &) = delete;
+    CanOpenNode(const CanOpenNode &) = delete;
 
     //! Deleted copy assingment operator.
-    CanOpen & operator=(const CanOpen &) = delete;
+    CanOpenNode & operator=(const CanOpenNode &) = delete;
 
     //! Destructor.
-    ~CanOpen();
+    ~CanOpenNode();
 
     //! Pass sender handle to internal CAN protocol handles.
     void configureSender(CanSenderDelegate * sender);
@@ -104,8 +105,7 @@ public:
     DriveStatusMachine * driveStatus() const
     { return _driveStatus; }
 
-    //! Process incoming CAN message and forward to the correct protocol.
-    bool consumeMessage(const can_message & message) const;
+    virtual bool notifyMessage(const can_message & msg) override;
 
 private:
     unsigned int _id;

@@ -15,7 +15,7 @@ namespace roboticslab
 {
 
 /**
- * @ingroup CanBusSharerLib
+ * @ingroup CanOpenNodeLib
  * @brief CiA 402 drive states (associated to statusword).
  */
 enum class DriveState
@@ -31,7 +31,7 @@ enum class DriveState
 };
 
 /**
- * @ingroup CanBusSharerLib
+ * @ingroup CanOpenNodeLib
  * @brief CiA 402 drive transitions (associated to controlword).
  */
 enum class DriveTransition : std::uint16_t
@@ -46,7 +46,7 @@ enum class DriveTransition : std::uint16_t
 };
 
 /**
- * @ingroup CanBusSharerLib
+ * @ingroup CanOpenNodeLib
  * @brief Representation of a CiA 402 state machine controller.
  *
  * Manages internally a bit representation for both controlword (object 6040h)

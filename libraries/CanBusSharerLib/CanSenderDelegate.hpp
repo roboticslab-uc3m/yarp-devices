@@ -3,25 +3,10 @@
 #ifndef __CAN_SENDER_DELEGATE_HPP__
 #define __CAN_SENDER_DELEGATE_HPP__
 
+#include "CanMessage.hpp"
+
 namespace roboticslab
 {
-
-/**
- * @ingroup CanBusSharerLib
- * @brief Proxy CAN message structure.
- *
- * Note the data field points at externally stored bytes, therefore this
- * structure is a mere vehicle to pass CAN messages around without the
- * cost of copying too much stuff.
- *
- * See companion class @ref CanSenderDelegate.
- */
-struct can_message
-{
-    unsigned int id;
-    unsigned int len;
-    const unsigned char * data;
-};
 
 /**
  * @ingroup CanBusSharerLib
@@ -30,11 +15,12 @@ struct can_message
  * Implementors can use this class to forward implementation-specific CAN message
  * structures from the point of creation down to the internal RX buffer (if any)
  * and the final CAN write routines.
+ *
+ * Cf. @ref CanMessageNotifier.
  */
 class CanSenderDelegate
 {
 public:
-
     //! Virtual destructor.
     virtual ~CanSenderDelegate() = default;
 

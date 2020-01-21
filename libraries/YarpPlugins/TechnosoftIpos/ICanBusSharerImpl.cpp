@@ -167,14 +167,14 @@ bool TechnosoftIpos::finalize()
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::interpretMessage(const can_message & message)
+bool TechnosoftIpos::notifyMessage(const can_message & message)
 {
     if (iExternalEncoderCanBusSharer && iExternalEncoderCanBusSharer->getId() == (message.id & 0x7F))
     {
-        return iExternalEncoderCanBusSharer->interpretMessage(message);
+        return iExternalEncoderCanBusSharer->notifyMessage(message);
     }
 
-    if (!can->consumeMessage(message))
+    if (!can->notifyMessage(message))
     {
         CD_WARNING("Unknown message: %s\n", CanUtils::msgToStr(message).c_str());
         return false;

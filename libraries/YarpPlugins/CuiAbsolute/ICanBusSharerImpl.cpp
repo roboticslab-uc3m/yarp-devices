@@ -47,7 +47,7 @@ bool CuiAbsolute::finalize()
 
 // ------------------------------------------------------------------------------
 
-bool CuiAbsolute::interpretMessage(const can_message & message)
+bool CuiAbsolute::notifyMessage(const can_message & message)
 {
     if (message.data[3] == 0xc4)
     {

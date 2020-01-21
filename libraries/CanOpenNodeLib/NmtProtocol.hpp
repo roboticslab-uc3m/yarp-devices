@@ -13,7 +13,7 @@ namespace roboticslab
 {
 
 /**
- * @ingroup CanBusSharerLib
+ * @ingroup CanOpenNodeLib
  * @brief NMT service commands.
  */
 enum class NmtService : std::uint8_t
@@ -26,7 +26,7 @@ enum class NmtService : std::uint8_t
 };
 
 /**
- * @ingroup CanBusSharerLib
+ * @ingroup CanOpenNodeLib
  * @brief NMT state machine.
  */
 enum class NmtState : std::uint8_t
@@ -38,7 +38,7 @@ enum class NmtState : std::uint8_t
 };
 
 /**
- * @ingroup CanBusSharerLib
+ * @ingroup CanOpenNodeLib
  * @brief Representation of NMT protocol.
  */
 class NmtProtocol final

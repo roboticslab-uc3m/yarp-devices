@@ -20,7 +20,7 @@
 #include <yarp/dev/IVelocityControl.h>
 #include <yarp/dev/PolyDriver.h>
 
-#include "CanOpen.hpp"
+#include "CanOpenNode.hpp"
 #include "ICanBusSharer.hpp"
 #include "LinearInterpolationBuffer.hpp"
 #include "StateVariables.hpp"
@@ -94,7 +94,7 @@ public:
 
     virtual unsigned int getId() override;
     virtual std::vector<unsigned int> getAdditionalIds() override;
-    virtual bool interpretMessage(const can_message & message) override;
+    virtual bool notifyMessage(const can_message & message) override;
     virtual bool initialize() override;
     virtual bool finalize() override;
     virtual bool registerSender(CanSenderDelegate * sender) override;
@@ -285,7 +285,7 @@ private:
 
     bool monitorWorker(const yarp::os::YarpTimerEvent & event);
 
-    CanOpen * can;
+    CanOpenNode * can;
 
     yarp::dev::PolyDriver externalEncoderDevice;
     yarp::dev::IEncodersTimedRaw * iEncodersTimedRawExternal;

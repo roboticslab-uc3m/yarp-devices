@@ -17,7 +17,7 @@ namespace roboticslab
 {
 
 /**
- * @ingroup CanBusSharerLib
+ * @ingroup CanOpenNodeLib
  * @brief Wrapped enumeration of a PDO transmission type.
  *
  * Inspired by <a href="https://stackoverflow.com/a/53284026">this SO answer</a>.
@@ -67,7 +67,7 @@ private:
 class PdoProtocol;
 
 /**
- * @ingroup CanBusSharerLib
+ * @ingroup CanOpenNodeLib
  * @brief Set of SDO configuration values for a @ref PdoProtocol.
  *
  * This class manages optional values via chainable setters. Unless a setter has
@@ -129,7 +129,7 @@ private:
 };
 
 /**
- * @ingroup CanBusSharerLib
+ * @ingroup CanOpenNodeLib
  * @brief Abstract representation of PDO protocol.
  *
  * See @ref PdoConfiguration regarding how PDO configuration works.
@@ -172,7 +172,7 @@ protected:
 };
 
 /**
- * @ingroup CanBusSharerLib
+ * @ingroup CanOpenNodeLib
  * @brief Representation of RPDO protocol.
  */
 class ReceivePdo final : public PdoProtocol
@@ -226,7 +226,7 @@ private:
 };
 
 /**
- * @ingroup CanBusSharerLib
+ * @ingroup CanOpenNodeLib
  * @brief Representation of TPDO protocol.
  */
 class TransmitPdo final : public PdoProtocol

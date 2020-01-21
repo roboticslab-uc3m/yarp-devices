@@ -45,8 +45,7 @@ if(NOT SKIP_CanBusControlboard)
                                              YARP::YARP_dev
                                              ROBOTICSLAB::ColorDebug
                                              CanBusSharerLib
-                                             DeviceMapperLib
-                                             YarpDevicesInterfaces)
+                                             DeviceMapperLib)
 
     target_compile_features(CanBusControlboard PRIVATE cxx_std_11)
 
