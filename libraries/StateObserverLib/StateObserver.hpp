@@ -12,7 +12,12 @@ namespace roboticslab
 {
 
 /**
- * @ingroup CanBusSharerLib
+ * @defgroup StateObserverLib
+ * @brief Collection of state observers.
+ */
+
+/**
+ * @ingroup StateObserverLib
  * @brief Base class for a state observer.
  *
  * This monitor class provides a synchronized timeout mechanism for clients to
@@ -62,7 +67,7 @@ private:
 };
 
 /**
- * @ingroup CanBusSharerLib
+ * @ingroup StateObserverLib
  * @brief Data-free state observer.
  */
 class StateObserver final : private StateObserverBase
@@ -80,7 +85,7 @@ public:
 };
 
 /**
- * @ingroup CanBusSharerLib
+ * @ingroup StateObserverLib
  * @brief Type state observer for non-arithmetic types.
  * @tparam T Non-fundamental type, mainly user-defined classes.
  */
@@ -104,7 +109,7 @@ protected:
 };
 
 /**
- * @ingroup CanBusSharerLib
+ * @ingroup StateObserverLib
  * @brief Type state observer for arithmetic types.
  * @tparam T Arithmetic type, see <a href="https://en.cppreference.com/w/c/language/arithmetic_types">reference</a>.
  */
@@ -128,7 +133,7 @@ public:
 };
 
 /**
- * @ingroup CanBusSharerLib
+ * @ingroup StateObserverLib
  * @brief Type state observer for unsigned char arrays.
  */
 template<>

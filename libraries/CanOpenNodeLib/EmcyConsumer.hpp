@@ -12,7 +12,7 @@ namespace roboticslab
 {
 
 /**
- * @ingroup CanBusSharerLib
+ * @ingroup CanOpenNodeLib
  * @brief Generic EMCY message parser.
  */
 class EmcyCodeRegistry
@@ -26,7 +26,7 @@ public:
 };
 
 /**
- * @ingroup CanBusSharerLib
+ * @ingroup CanOpenNodeLib
  * @brief Representation of CAN EMCY protocol.
  */
 class EmcyConsumer final

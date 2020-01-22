@@ -79,7 +79,7 @@ void CanReaderThread::run()
 
             if (it != canIdToHandle.end())
             {
-                it->second->interpretMessage({msg.getId(), msg.getLen(), msg.getData()});
+                it->second->notifyMessage({msg.getId(), msg.getLen(), msg.getData()});
             }
 
             if (dumpWriter)

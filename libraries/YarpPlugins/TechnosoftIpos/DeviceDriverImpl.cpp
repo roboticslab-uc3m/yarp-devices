@@ -109,7 +109,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     double monitorPeriod = iposGroup.check("monitorPeriod", yarp::os::Value(DEFAULT_MONITOR_PERIOD),
             "monitor thread period (seconds)").asFloat64();
 
-    can = new CanOpen(canId, sdoTimeout, driveStateTimeout);
+    can = new CanOpenNode(canId, sdoTimeout, driveStateTimeout);
 
     PdoConfiguration tpdo1Conf;
 

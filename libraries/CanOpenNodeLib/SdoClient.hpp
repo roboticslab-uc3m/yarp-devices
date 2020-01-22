@@ -16,7 +16,7 @@ namespace roboticslab
 {
 
 /**
- * @ingroup CanBusSharerLib
+ * @ingroup CanOpenNodeLib
  * @brief Representation of SDO client protocol.
  *
  * Provides access to SDO reads and writes in a user-friendly manner, sparing

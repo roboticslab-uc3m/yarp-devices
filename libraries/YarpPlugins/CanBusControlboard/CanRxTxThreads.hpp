@@ -10,9 +10,9 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/PortWriterBuffer.h>
 #include <yarp/os/Thread.h>
+
 #include <yarp/dev/CanBusInterface.h>
 
-#include "CanSenderDelegate.hpp"
 #include "ICanBusSharer.hpp"
 
 namespace roboticslab
@@ -88,7 +88,7 @@ private:
 
 /**
  * @ingroup CanBusControlboard
- * @brief A thread that attends CAN reads.
+ * @brief A thread that deals with CAN reads.
  *
  * Messages are forwarded to each raw subdevice given the CAN node ID.
  */

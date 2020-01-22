@@ -27,7 +27,7 @@ bool LacqueyFetch::finalize()
 
 // -----------------------------------------------------------------------------
 
-bool LacqueyFetch::interpretMessage(const can_message & message)
+bool LacqueyFetch::notifyMessage(const can_message & message)
 {
     return true;
 }

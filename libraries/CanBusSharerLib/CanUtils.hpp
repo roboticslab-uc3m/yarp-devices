@@ -10,7 +10,7 @@
 #include <string>
 #include <type_traits>
 
-#include "CanSenderDelegate.hpp"
+#include "CanMessage.hpp"
 
 namespace roboticslab
 {

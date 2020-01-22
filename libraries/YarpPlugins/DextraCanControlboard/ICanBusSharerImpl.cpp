@@ -25,7 +25,7 @@ bool DextraCanControlboard::registerSender(CanSenderDelegate * sender)
     return true;
 }
 
-bool DextraCanControlboard::interpretMessage(const can_message & message)
+bool DextraCanControlboard::notifyMessage(const can_message & message)
 {
     return true;
 }

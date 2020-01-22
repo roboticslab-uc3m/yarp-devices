@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "CanOpen.hpp"
+#include "CanOpenNode.hpp"
 
 using namespace roboticslab;
 
-CanOpen::CanOpen(unsigned int id, double sdoTimeout, double stateTimeout, CanSenderDelegate * sender)
+CanOpenNode::CanOpenNode(unsigned int id, double sdoTimeout, double stateTimeout, CanSenderDelegate * sender)
     : _id(id),
       _sdo(new SdoClient(_id, 0x600, 0x580, sdoTimeout, sender)),
       _rpdo1(new ReceivePdo(_id, 0x200, 1, _sdo, sender)),
@@ -20,7 +20,7 @@ CanOpen::CanOpen(unsigned int id, double sdoTimeout, double stateTimeout, CanSen
       _driveStatus(new DriveStatusMachine(_rpdo1, stateTimeout))
 { }
 
-CanOpen::~CanOpen()
+CanOpenNode::~CanOpenNode()
 {
     delete _emcy;
     delete _nmt;
@@ -39,7 +39,7 @@ CanOpen::~CanOpen()
     delete _sdo;
 }
 
-void CanOpen::configureSender(CanSenderDelegate * sender)
+void CanOpenNode::configureSender(CanSenderDelegate * sender)
 {
     _sdo->configureSender(sender);
     _rpdo1->configureSender(sender);
@@ -49,7 +49,7 @@ void CanOpen::configureSender(CanSenderDelegate * sender)
     _nmt->configureSender(sender);
 }
 
-bool CanOpen::consumeMessage(const can_message & message) const
+bool CanOpenNode::notifyMessage(const can_message & message)
 {
     const std::uint16_t op = message.id - _id;
 

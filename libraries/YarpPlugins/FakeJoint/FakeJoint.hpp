@@ -54,7 +54,7 @@ public:
 
     virtual unsigned int getId() override
     { return 0; }
-    virtual bool interpretMessage(const can_message & message) override
+    virtual bool notifyMessage(const can_message & message) override
     { return true; }
     virtual bool initialize() override
     { return true; }
