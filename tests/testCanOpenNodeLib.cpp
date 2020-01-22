@@ -1043,7 +1043,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
     ASSERT_FALSE(status.requestState(DriveState::SWITCH_ON_DISABLED));
 }
 
-TEST_F(CanBusSharerTest, CanOpen)
+TEST_F(CanBusSharerTest, CanOpenNode)
 {
     std::uint8_t id = 0x05;
     CanOpenNode can(id, TIMEOUT, TIMEOUT, getSender());
