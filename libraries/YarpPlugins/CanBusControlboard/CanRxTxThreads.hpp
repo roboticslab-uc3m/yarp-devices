@@ -3,6 +3,7 @@
 #ifndef __CAN_RX_TH_THREADS_HPP__
 #define __CAN_RX_TH_THREADS_HPP__
 
+#include <atomic>
 #include <mutex>
 #include <string>
 #include <unordered_map>
@@ -65,10 +66,14 @@ public:
         this->iCanBus = iCanBus; this->iCanBusErrors = iCanBusErrors; this->iCanBufferFactory = iCanBufferFactory;
     }
 
+    //! Attach YARP port writer for CAN message dumping.
     void attachDumpWriter(yarp::os::PortWriterBuffer<yarp::os::Bottle> * dumpWriter, std::mutex * dumpMutex)
     { this->dumpWriter = dumpWriter; this->dumpMutex = dumpMutex; }
 
 protected:
+    //! Dump CAN message through a YARP port.
+    void dumpMessage(const yarp::dev::CanMessage & msg);
+
     yarp::dev::ICanBus * iCanBus;
     yarp::dev::ICanBusErrors * iCanBusErrors;
     yarp::dev::ICanBufferFactory * iCanBufferFactory;
@@ -137,17 +142,14 @@ public:
     //! Send awaiting messages and clear the queue.
     void flush();
 
-    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBusErrors * iCanBusErrors,
-            yarp::dev::ICanBufferFactory * iCanBufferFactory) override;
-
     virtual void run() override;
 
 private:
     //! In case a write did not succeed, rearrange the CAN message buffer.
-    void handlePartialWrite(unsigned int sent);
+    void handlePartialWrite(unsigned int prepared, unsigned int sent);
 
+    std::atomic<unsigned int> preparedMessages;
     CanSenderDelegate * sender;
-    unsigned int preparedMessages;
     mutable std::mutex bufferMutex;
 };
 

@@ -24,8 +24,6 @@ bool YarpCanSenderDelegate::prepareMessage(const can_message & msg)
 
         return true;
     }
-    else
-    {
-        return false;
-    }
+
+    return false;
 }

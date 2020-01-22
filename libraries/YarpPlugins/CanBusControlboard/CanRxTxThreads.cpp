@@ -36,6 +36,29 @@ void CanReaderWriterThread::onStop()
 
 // -----------------------------------------------------------------------------
 
+void CanReaderWriterThread::dumpMessage(const yarp::dev::CanMessage & msg)
+{
+    std::lock_guard<std::mutex> lock(*dumpMutex);
+
+    yarp::os::Bottle & b = dumpWriter->prepare();
+    b.clear();
+    b.addInt16(msg.getId());
+
+    if (msg.getLen() != 0)
+    {
+        yarp::os::Bottle & data = b.addList();
+
+        for (int j = 0; j < msg.getLen(); j++)
+        {
+            data.addInt8(msg.getData()[j]);
+        }
+    }
+
+    dumpWriter->write();
+}
+
+// -----------------------------------------------------------------------------
+
 CanReaderThread::CanReaderThread(const std::string & id, double delay, unsigned int bufferSize)
     : CanReaderWriterThread("read", id, delay, bufferSize),
       canMessageNotifier(nullptr)
@@ -84,22 +107,7 @@ void CanReaderThread::run()
 
             if (dumpWriter)
             {
-                std::lock_guard<std::mutex> lock(*dumpMutex);
-                yarp::os::Bottle & b = dumpWriter->prepare();
-                b.clear();
-                b.addInt16(msg.getId());
-
-                if (msg.getLen() != 0)
-                {
-                    yarp::os::Bottle & data = b.addList();
-
-                    for (int j = 0; j < msg.getLen(); j++)
-                    {
-                        data.addInt8(msg.getData()[j]);
-                    }
-                }
-
-                dumpWriter->write();
+                dumpMessage(msg);
             }
 
             if (canMessageNotifier)
@@ -114,8 +122,8 @@ void CanReaderThread::run()
 
 CanWriterThread::CanWriterThread(const std::string & id, double delay, unsigned int bufferSize)
     : CanReaderWriterThread("write", id, delay, bufferSize),
-      sender(nullptr),
-      preparedMessages(0)
+      preparedMessages(0),
+      sender(new YarpCanSenderDelegate(canBuffer, bufferMutex, preparedMessages, bufferSize))
 { }
 
 // -----------------------------------------------------------------------------
@@ -129,8 +137,6 @@ CanWriterThread::~CanWriterThread()
 
 void CanWriterThread::flush()
 {
-    std::lock_guard<std::mutex> lock(bufferMutex);
-
     //-- Nothing to write, exit.
     if (preparedMessages == 0) return;
 
@@ -144,10 +150,12 @@ void CanWriterThread::flush()
         return;
     }
 
+    unsigned int prepared = preparedMessages;
     unsigned int sent;
+    std::lock_guard<std::mutex> lock(bufferMutex);
 
     //-- Write as many bytes as possible, return false on errors.
-    if (!iCanBus->canWrite(canBuffer, preparedMessages, &sent))
+    if (!iCanBus->canWrite(canBuffer, prepared, &sent))
     {
         //-- Something bad happened, try again on the next call.
         return;
@@ -157,30 +165,14 @@ void CanWriterThread::flush()
     {
         for (int i = 0; i < sent; i++)
         {
-            const yarp::dev::CanMessage & msg = canBuffer[i];
-            std::lock_guard<std::mutex> lock(*dumpMutex);
-            yarp::os::Bottle & b = dumpWriter->prepare();
-            b.clear();
-            b.addInt16(msg.getId());
-
-            if (msg.getLen() != 0)
-            {
-                yarp::os::Bottle & data = b.addList();
-
-                for (int j = 0; j < msg.getLen(); j++)
-                {
-                    data.addInt8(msg.getData()[j]);
-                }
-            }
-
-            dumpWriter->write();
+            dumpMessage(canBuffer[i]);
         }
     }
 
     //-- Some messages could not be sent, preserve them for later.
-    if (sent != preparedMessages)
+    if (sent != prepared)
     {
-        handlePartialWrite(sent);
+        handlePartialWrite(prepared, sent);
     }
 
     preparedMessages -= sent;
@@ -203,9 +195,9 @@ void CanWriterThread::run()
 
 // -----------------------------------------------------------------------------
 
-void CanWriterThread::handlePartialWrite(unsigned int sent)
+void CanWriterThread::handlePartialWrite(unsigned int prepared, unsigned int sent)
 {
-    for (int i = sent, j = 0; i < preparedMessages; i++, j++)
+    for (int i = sent, j = 0; i < prepared; i++, j++)
     {
         yarp::dev::CanMessage & msg = canBuffer[j];
         const yarp::dev::CanMessage & pendingMsg = canBuffer[i];
@@ -214,15 +206,6 @@ void CanWriterThread::handlePartialWrite(unsigned int sent)
         msg.setLen(pendingMsg.getLen());
         std::memcpy(msg.getData(), pendingMsg.getData(), pendingMsg.getLen());
     }
-}
-
-// -----------------------------------------------------------------------------
-
-void CanWriterThread::setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBusErrors * iCanBusErrors,
-        yarp::dev::ICanBufferFactory * iCanBufferFactory)
-{
-    CanReaderWriterThread::setCanHandles(iCanBus, iCanBusErrors, iCanBufferFactory);
-    sender = new YarpCanSenderDelegate(canBuffer, bufferMutex, preparedMessages, bufferSize);
 }
 
 // -----------------------------------------------------------------------------
