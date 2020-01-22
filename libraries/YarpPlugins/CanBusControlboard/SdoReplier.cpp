@@ -12,6 +12,8 @@
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/Vocab.h>
 
+#include <ColorDebug.h>
+
 #include "SdoClient.hpp"
 
 using namespace roboticslab;
@@ -135,23 +137,32 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
         return false;
     }
 
+    if (request.size() < 5)
+    {
+        CD_WARNING("SDO requests require at least 5 elements, got %d.\n", request.size());
+        response.addVocab(VOCAB_SDO_FAIL);
+        response.write(*writer);
+    }
+
     sdo_direction dir = static_cast<sdo_direction>(request.get(0).asVocab());
     unsigned int id = request.get(1).asInt8();
     unsigned int index = request.get(2).asInt16();
     unsigned int subindex = request.get(3).asInt8();
     data_type type = static_cast<data_type>(request.get(4).asVocab());
 
-    if (dir == sdo_direction::DOWNLOAD && request.size() < 6)
-    {
-        return false;
-    }
-
     auto guard = priv->allocate(id, sender);
     guard->setResponseHandlers(&response, writer);
+
+    if (dir == sdo_direction::DOWNLOAD && request.size() != 6)
+    {
+        CD_WARNING("Download SDO requires exactly 6 elements, got %d.\n", request.size());
+        return false;
+    }
 
     if (dir == sdo_direction::UPLOAD)
     {
         std::stringstream ss;
+        ss << std::setfill('0') << std::internal << std::hex << std::showbase;
         bool ok = false;
 
         switch (type)
@@ -162,7 +173,7 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
 
             if (priv->sdo()->upload("Remote request", &int8data, index, subindex))
             {
-                ss << std::setw(2) << std::hex << std::showbase << (static_cast<long>(int8data) & 0xFF);
+                ss << std::setw(4) << (static_cast<long>(int8data) & 0xFF);
                 response.addInt8(int8data);
                 ok = true;
             }
@@ -175,7 +186,7 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
 
             if (priv->sdo()->upload("Remote request", &uint8data, index, subindex))
             {
-                ss << std::setw(2) << std::hex << std::showbase << (static_cast<unsigned long>(uint8data) & 0xFF);
+                ss << std::setw(4) << (static_cast<unsigned long>(uint8data) & 0xFF);
                 response.addInt16(uint8data);
                 ok = true;
             }
@@ -188,7 +199,7 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
 
             if (priv->sdo()->upload("Remote request", &int16data, index, subindex))
             {
-                ss << std::setw(4) << std::hex << std::showbase << (static_cast<long>(int16data) & 0xFFFF);
+                ss << std::setw(6) << (static_cast<long>(int16data) & 0xFFFF);
                 response.addInt16(int16data);
                 ok = true;
             }
@@ -201,7 +212,7 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
 
             if (priv->sdo()->upload("Remote request", &uint16data, index, subindex))
             {
-                ss << std::setw(4) << std::hex << std::showbase << (static_cast<unsigned long>(uint16data) & 0xFFFF);
+                ss << std::setw(6) << (static_cast<unsigned long>(uint16data) & 0xFFFF);
                 response.addInt32(uint16data);
                 ok = true;
             }
@@ -214,7 +225,7 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
 
             if (priv->sdo()->upload("Remote request", &int32data, index, subindex))
             {
-                ss << std::setw(8) << std::hex << std::showbase << (static_cast<long>(int32data) & 0xFFFFFFFF);
+                ss << std::setw(10) << (static_cast<long>(int32data) & 0xFFFFFFFF);
                 response.addInt32(int32data);
                 ok = true;
             }
@@ -227,7 +238,7 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
 
             if (priv->sdo()->upload("Remote request", &uint32data, index, subindex))
             {
-                ss << std::setw(8) << std::hex << std::showbase << (static_cast<unsigned long>(uint32data) & 0xFFFFFFFF);
+                ss << std::setw(10) << (static_cast<unsigned long>(uint32data) & 0xFFFFFFFF);
                 response.addInt64(uint32data);
                 ok = true;
             }
@@ -247,6 +258,7 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
             break;
         }
         default:
+            CD_WARNING("Invalid data type %s.\n", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
             return false;
         }
 
@@ -276,11 +288,13 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
         case data_type::STRING:
             return priv->sdo()->download("Remote indication", data.asString(), index, subindex) && guard->flip();
         default:
+            CD_WARNING("Invalid data type %s.\n", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
             return false;
         }
     }
     else
     {
+        CD_WARNING("Invalid SDO direction %s.\n", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(dir)).c_str());
         return false;
     }
 }
