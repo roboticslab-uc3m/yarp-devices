@@ -110,7 +110,7 @@ private:
 // -----------------------------------------------------------------------------
 
 SdoReplier::SdoReplier()
-    : priv(nullptr),
+    : priv(new Private),
       sender(nullptr)
 { }
 
