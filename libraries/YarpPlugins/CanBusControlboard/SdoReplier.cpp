@@ -54,14 +54,14 @@ namespace
     class ConnectionGuard
     {
     public:
-        ConnectionGuard(SdoClient *& _sdo)
-            : sdo(_sdo), response(nullptr), writer(nullptr), success(false)
+        ConnectionGuard(yarp::os::Bottle * _response, yarp::os::ConnectionWriter * _writer)
+            : response(_response), writer(_writer), sdo(nullptr), success(false)
         { }
 
         ~ConnectionGuard()
         {
-            delete sdo;
-            sdo = nullptr;
+            delete *sdo;
+            *sdo = nullptr;
 
             if (response && writer)
             {
@@ -70,8 +70,8 @@ namespace
             }
         }
 
-        void setResponseHandlers(yarp::os::Bottle * response, yarp::os::ConnectionWriter * writer)
-        { this->response = response; this->writer = writer; }
+        void attachSdoHandle(SdoClient ** sdo)
+        { this->sdo = sdo; }
 
         bool inhibit()
         { response = nullptr; writer = nullptr; return true; }
@@ -80,9 +80,9 @@ namespace
         { success = true; return true; }
 
     private:
-        SdoClient *& sdo;
         yarp::os::Bottle * response;
         yarp::os::ConnectionWriter * writer;
+        SdoClient ** sdo;
         bool success;
     };
 }
@@ -92,10 +92,10 @@ namespace
 class SdoReplier::Private
 {
 public:
-    std::unique_ptr<ConnectionGuard> allocate(unsigned int id, CanSenderDelegate * sender)
+    SdoClient ** allocate(unsigned int id, CanSenderDelegate * sender)
     {
         sdoClient = new SdoClient(id, SDO_COB_RX, SDO_COB_TX, SDO_TIMEOUT, sender);
-        return std::unique_ptr<ConnectionGuard>(new ConnectionGuard(sdoClient));
+        return &sdoClient;
     }
 
     SdoClient * sdo()
@@ -132,16 +132,17 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
     yarp::os::Bottle request;
     yarp::os::Bottle response;
 
-    if (!writer || !request.read(reader) || request.size() < 5)
+    if (!writer || !request.read(reader))
     {
         return false;
     }
 
+    ConnectionGuard guard(&response, writer);
+
     if (request.size() < 5)
     {
         CD_WARNING("SDO requests require at least 5 elements, got %d.\n", request.size());
-        response.addVocab(VOCAB_SDO_FAIL);
-        response.write(*writer);
+        return false;
     }
 
     sdo_direction dir = static_cast<sdo_direction>(request.get(0).asVocab());
@@ -150,14 +151,7 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
     unsigned int subindex = request.get(3).asInt8();
     data_type type = static_cast<data_type>(request.get(4).asVocab());
 
-    auto guard = priv->allocate(id, sender);
-    guard->setResponseHandlers(&response, writer);
-
-    if (dir == sdo_direction::DOWNLOAD && request.size() != 6)
-    {
-        CD_WARNING("Download SDO requires exactly 6 elements, got %d.\n", request.size());
-        return false;
-    }
+    guard.attachSdoHandle(priv->allocate(id, sender));
 
     if (dir == sdo_direction::UPLOAD)
     {
@@ -268,25 +262,31 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
         }
 
         response.addString(ss.str());
-        return response.write(*writer) && guard->inhibit();
+        return response.write(*writer) && guard.inhibit();
     }
     else if (dir == sdo_direction::DOWNLOAD)
     {
+        if (request.size() != 6)
+        {
+            CD_WARNING("Download SDO requires exactly 6 elements, got %d.\n", request.size());
+            return false;
+        }
+
         const yarp::os::Value & data = request.get(5);
 
         switch (type)
         {
         case data_type::INTEGER_8:
         case data_type::UNSIGNED_INTEGER_8:
-            return priv->sdo()->download("Remote indication", data.asInt8(), index, subindex) && guard->flip();
+            return priv->sdo()->download("Remote indication", data.asInt8(), index, subindex) && guard.flip();
         case data_type::INTEGER_16:
         case data_type::UNSIGNED_INTEGER_16:
-            return priv->sdo()->download("Remote indication", data.asInt16(), index, subindex) && guard->flip();
+            return priv->sdo()->download("Remote indication", data.asInt16(), index, subindex) && guard.flip();
         case data_type::INTEGER_32:
         case data_type::UNSIGNED_INTEGER_32:
-            return priv->sdo()->download("Remote indication", data.asInt32(), index, subindex) && guard->flip();
+            return priv->sdo()->download("Remote indication", data.asInt32(), index, subindex) && guard.flip();
         case data_type::STRING:
-            return priv->sdo()->download("Remote indication", data.asString(), index, subindex) && guard->flip();
+            return priv->sdo()->download("Remote indication", data.asString(), index, subindex) && guard.flip();
         default:
             CD_WARNING("Invalid data type %s.\n", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
             return false;
