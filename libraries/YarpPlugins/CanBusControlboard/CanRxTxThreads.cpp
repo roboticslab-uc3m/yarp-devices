@@ -137,6 +137,8 @@ CanWriterThread::~CanWriterThread()
 
 void CanWriterThread::flush()
 {
+    std::lock_guard<std::mutex> lock(bufferMutex);
+
     //-- Nothing to write, exit.
     if (preparedMessages == 0) return;
 
@@ -150,12 +152,10 @@ void CanWriterThread::flush()
         return;
     }
 
-    unsigned int prepared = preparedMessages;
     unsigned int sent;
-    std::lock_guard<std::mutex> lock(bufferMutex);
 
     //-- Write as many bytes as possible, return false on errors.
-    if (!iCanBus->canWrite(canBuffer, prepared, &sent))
+    if (!iCanBus->canWrite(canBuffer, preparedMessages, &sent))
     {
         //-- Something bad happened, try again on the next call.
         return;
@@ -170,9 +170,9 @@ void CanWriterThread::flush()
     }
 
     //-- Some messages could not be sent, preserve them for later.
-    if (sent != prepared)
+    if (sent != preparedMessages)
     {
-        handlePartialWrite(prepared, sent);
+        handlePartialWrite(sent);
     }
 
     preparedMessages -= sent;
@@ -195,9 +195,9 @@ void CanWriterThread::run()
 
 // -----------------------------------------------------------------------------
 
-void CanWriterThread::handlePartialWrite(unsigned int prepared, unsigned int sent)
+void CanWriterThread::handlePartialWrite(unsigned int sent)
 {
-    for (int i = sent, j = 0; i < prepared; i++, j++)
+    for (int i = sent, j = 0; i < preparedMessages; i++, j++)
     {
         yarp::dev::CanMessage & msg = canBuffer[j];
         const yarp::dev::CanMessage & pendingMsg = canBuffer[i];

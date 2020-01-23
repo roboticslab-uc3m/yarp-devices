@@ -3,7 +3,6 @@
 #ifndef __CAN_RX_TH_THREADS_HPP__
 #define __CAN_RX_TH_THREADS_HPP__
 
-#include <atomic>
 #include <mutex>
 #include <string>
 #include <unordered_map>
@@ -146,9 +145,9 @@ public:
 
 private:
     //! In case a write did not succeed, rearrange the CAN message buffer.
-    void handlePartialWrite(unsigned int prepared, unsigned int sent);
+    void handlePartialWrite(unsigned int sent);
 
-    std::atomic<unsigned int> preparedMessages;
+    unsigned int preparedMessages;
     CanSenderDelegate * sender;
     mutable std::mutex bufferMutex;
 };

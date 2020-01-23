@@ -3,7 +3,6 @@
 #ifndef __YARP_CAN_SENDER_DELEGATE_HPP__
 #define __YARP_CAN_SENDER_DELEGATE_HPP__
 
-#include <atomic>
 #include <mutex>
 
 #include <yarp/dev/CanBusInterface.h>
@@ -22,7 +21,7 @@ class YarpCanSenderDelegate : public CanSenderDelegate
 public:
     //! Constructor, takes a reference to an existing CAN message buffer.
     YarpCanSenderDelegate(yarp::dev::CanBuffer & _buffer, std::mutex & _bufferMutex,
-            std::atomic<unsigned int> & n, unsigned int size)
+            unsigned int & n, unsigned int size)
         : buffer(_buffer),
           bufferMutex(_bufferMutex),
           preparedMessages(n),
@@ -34,7 +33,7 @@ public:
 private:
     yarp::dev::CanBuffer & buffer;
     std::mutex & bufferMutex;
-    std::atomic<unsigned int> & preparedMessages;
+    unsigned int & preparedMessages;
     unsigned int maxSize;
 };
 
