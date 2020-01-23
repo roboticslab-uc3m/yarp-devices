@@ -13,18 +13,30 @@ namespace roboticslab
 
 /**
  * @ingroup CanBusControlboard
- * @brief ...
+ * @brief RPC replier for remote SDO transfers.
+ *
+ * This class provides a callback that allows clients to interface with a remote
+ * CAN network via SDO commands. Every transfer (either upload-from-drive request
+ * or download-to-drive indication) is confirmed and its response sent back to
+ * the RPC client.
  */
 class SdoReplier final : public yarp::os::PortReader,
                          public CanMessageNotifier
 {
 public:
+    //! Constructor.
     SdoReplier();
+
+    //! Destructor.
     ~SdoReplier();
 
+    //! Read this object from the network.
     virtual bool read(yarp::os::ConnectionReader & reader) override;
+
+    //! Tell observers a new CAN message has arrived.
     virtual bool notifyMessage(const can_message & msg) override;
 
+    //! Configure CAN sender handle.
     void configureSender(CanSenderDelegate * sender)
     { this->sender = sender; }
 
