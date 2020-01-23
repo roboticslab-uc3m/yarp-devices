@@ -2,9 +2,11 @@
 
 #include "SpaceNavigator.hpp"
 
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
 
-int roboticslab::SpaceNavigator::read(yarp::sig::Vector &out)
+int SpaceNavigator::read(yarp::sig::Vector &out)
 {
     spnav_event sev;
 
@@ -56,42 +58,42 @@ int roboticslab::SpaceNavigator::read(yarp::sig::Vector &out)
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::SpaceNavigator::getState(int ch)
+int SpaceNavigator::getState(int ch)
 {
     return yarp::dev::IAnalogSensor::AS_OK;
 }
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::SpaceNavigator::getChannels()
+int SpaceNavigator::getChannels()
 {
     return DEFAULT_NUM_CHANNELS;
 }
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::SpaceNavigator::calibrateSensor()
+int SpaceNavigator::calibrateSensor()
 {
     return yarp::dev::IAnalogSensor::AS_OK;
 }
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::SpaceNavigator::calibrateSensor(const yarp::sig::Vector& value)
+int SpaceNavigator::calibrateSensor(const yarp::sig::Vector& value)
 {
     return yarp::dev::IAnalogSensor::AS_OK;
 }
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::SpaceNavigator::calibrateChannel(int ch)
+int SpaceNavigator::calibrateChannel(int ch)
 {
     return yarp::dev::IAnalogSensor::AS_OK;
 }
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::SpaceNavigator::calibrateChannel(int ch, double value)
+int SpaceNavigator::calibrateChannel(int ch, double value)
 {
     return yarp::dev::IAnalogSensor::AS_OK;
 }

@@ -2,28 +2,31 @@
 
 #include "SpaceNavigator.hpp"
 
+using namespace roboticslab;
+
+// -----------------------------------------------------------------------------
+
 const unsigned int roboticslab::SpaceNavigator::MAX_NO_DATA_ITERATIONS = 10;
 
 // -----------------------------------------------------------------------------
 
-roboticslab::SpaceNavigator::SpaceNavigator()
+SpaceNavigator::SpaceNavigator()
     : dx(0.0), dy(0.0), dz(0.0),
       droll(0.0), dpitch(0.0), dyaw(0.0),
       button1(0), button2(0),
-      noDataCounter(0)
-{
-}
+      noDataCounter(0), deadband(0.0)
+{ }
 
 // -----------------------------------------------------------------------------
 
-roboticslab::SpaceNavigator::~SpaceNavigator()
+SpaceNavigator::~SpaceNavigator()
 {
     close();
 }
 
 // -----------------------------------------------------------------------------
 
-double roboticslab::SpaceNavigator::enforceRange(double in)
+double SpaceNavigator::enforceRange(double in)
 {
     double out;
 
@@ -47,17 +50,17 @@ double roboticslab::SpaceNavigator::enforceRange(double in)
 
 // -----------------------------------------------------------------------------
 
-double roboticslab::SpaceNavigator::enforceDeadband(double in)
+double SpaceNavigator::enforceDeadband(double in)
 {
     double out;
 
-    if (in > DEADBAND)
+    if (in > deadband)
     {
         out = in;
     }
     else
     {
-        if (in < -DEADBAND)
+        if (in < -deadband)
         {
             out = in;
         }
