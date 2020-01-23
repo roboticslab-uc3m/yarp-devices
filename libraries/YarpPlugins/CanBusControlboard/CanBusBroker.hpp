@@ -50,9 +50,6 @@ public:
     //! Register CAN handles associated to the input device driver.
     bool registerDevice(yarp::dev::PolyDriver * driver);
 
-    //! Open remote CAN interface ports.
-    bool createPorts(const std::string & name);
-
     //! Set CAN acceptance filters.
     bool addFilters();
 
@@ -81,6 +78,9 @@ public:
     virtual void onRead(yarp::os::Bottle & b) override;
 
 private:
+    //! Open remote CAN interface ports.
+    bool createPorts(const std::string & prefix);
+
     std::string name;
 
     CanReaderThread * readerThread;

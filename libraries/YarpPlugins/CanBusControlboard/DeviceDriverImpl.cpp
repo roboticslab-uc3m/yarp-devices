@@ -88,17 +88,6 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
                 CD_ERROR("Unable to register CAN bus device %s.\n", canBus.c_str());
                 return false;
             }
-
-            if (canBusOptions.check("yarpPrefix", "YARP port prefix"))
-            {
-                std::string yarpPortPrefix = canBusOptions.find("yarpPortPrefix").asString();
-
-                if (!canBusBroker->createPorts(yarpPortPrefix))
-                {
-                    CD_ERROR("Unable to open YARP ports in device: %s.\n", canBus.c_str());
-                    return false;
-                }
-            }
         }
 
         if (!config.check(canBus))

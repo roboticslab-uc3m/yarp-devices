@@ -54,6 +54,11 @@ bool CanBusBroker::configure(const yarp::os::Searchable & config)
     readerThread = new CanReaderThread(name, rxDelay, rxBufferSize);
     writerThread = new CanWriterThread(name, txDelay, txBufferSize);
 
+    if (config.check("name", "YARP port prefix for remote CAN interface"))
+    {
+        return createPorts(config.find("name").asString());
+    }
+
     return true;
 }
 
@@ -94,21 +99,21 @@ bool CanBusBroker::registerDevice(yarp::dev::PolyDriver * driver)
 
 // -----------------------------------------------------------------------------
 
-bool CanBusBroker::createPorts(const std::string & name)
+bool CanBusBroker::createPorts(const std::string & prefix)
 {
-    if (!dumpPort.open(name + "/dump:o"))
+    if (!dumpPort.open(prefix + "/dump:o"))
     {
         CD_WARNING("Cannot open dump port.\n");
         return false;
     }
 
-    if (!sendPort.open(name + "/send:i"))
+    if (!sendPort.open(prefix + "/send:i"))
     {
         CD_WARNING("Cannot open send port.\n");
         return false;
     }
 
-    if (!sdoPort.open(name + "/sdo:s"))
+    if (!sdoPort.open(prefix + "/sdo:s"))
     {
         CD_WARNING("Cannot open SDO port.\n");
         return false;
