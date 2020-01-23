@@ -7,7 +7,7 @@ yarp_prepare_plugin(CanBusControlboard
                     TYPE roboticslab::CanBusControlboard
                     INCLUDE CanBusControlboard.hpp
                     DEFAULT ON
-                    DEPENDS "ENABLE_CanBusSharerLib;ENABLE_DeviceMapperLib"
+                    DEPENDS "ENABLE_CanBusSharerLib;ENABLE_YarpDeviceMapperLib"
                     EXTRA_CONFIG WRAPPER=controlboardwrapper2)
 
 if(NOT SKIP_CanBusControlboard)
@@ -50,7 +50,7 @@ if(NOT SKIP_CanBusControlboard)
                                              ROBOTICSLAB::ColorDebug
                                              CanBusSharerLib
                                              CanOpenNodeLib
-                                             DeviceMapperLib)
+                                             YarpDeviceMapperLib)
 
     target_compile_features(CanBusControlboard PRIVATE cxx_std_11)
 

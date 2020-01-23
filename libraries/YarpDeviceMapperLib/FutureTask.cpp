@@ -15,7 +15,7 @@ namespace roboticslab // make doxygen group these classes in the rl namespace
 {
 
 /**
- * @ingroup DeviceMapperLib
+ * @ingroup YarpDeviceMapperLib
  * @brief An implementation of a sequential deferred callback executor.
  */
 class SequentialTask : public FutureTask
@@ -30,7 +30,7 @@ public:
 };
 
 /**
- * @ingroup DeviceMapperLib
+ * @ingroup YarpDeviceMapperLib
  * @brief An implementation of an asynchronous deferred callback executor.
  */
 class ParallelTask : public FutureTask

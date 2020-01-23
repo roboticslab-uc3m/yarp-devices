@@ -41,12 +41,12 @@ if(ENABLE_tests)
         gtest_add_tests(testCanOpenNodeLib "" AUTO)
     endif()
 
-    # testDeviceMapperLib
+    # testYarpDeviceMapperLib
 
-    if(TARGET DeviceMapperLib)
-        add_executable(testDeviceMapperLib testDeviceMapperLib.cpp)
-        target_link_libraries(testDeviceMapperLib DeviceMapperLib YARP::YARP_dev gtest_main)
-        gtest_add_tests(testDeviceMapperLib "" AUTO)
+    if(TARGET YarpDeviceMapperLib)
+        add_executable(testYarpDeviceMapperLib testYarpDeviceMapperLib.cpp)
+        target_link_libraries(testYarpDeviceMapperLib YarpDeviceMapperLib YARP::YARP_dev gtest_main)
+        gtest_add_tests(testYarpDeviceMapperLib "" AUTO)
     endif()
 else()
     set(ENABLE_tests OFF CACHE BOOL "Enable/disable unit tests" FORCE)

@@ -11,7 +11,7 @@ namespace roboticslab
 {
 
 /**
- * @ingroup DeviceMapperLib
+ * @ingroup YarpDeviceMapperLib
  * @brief Base class for a deferred task executor.
  *
  * This class features a callback registry for instance methods that return a
@@ -49,7 +49,7 @@ protected:
 };
 
 /**
- * @ingroup DeviceMapperLib
+ * @ingroup YarpDeviceMapperLib
  * @brief Base class for an abstract factory of @ref FutureTask.
  */
 class FutureTaskFactory
@@ -63,7 +63,7 @@ public:
 };
 
 /**
- * @ingroup DeviceMapperLib
+ * @ingroup YarpDeviceMapperLib
  * @brief Abstract factory of @ref SequentialTask.
  */
 class SequentialTaskFactory : public FutureTaskFactory
@@ -73,7 +73,7 @@ public:
 };
 
 /**
- * @ingroup DeviceMapperLib
+ * @ingroup YarpDeviceMapperLib
  * @brief Abstract factory of @ref ParallelTask.
  */
 class ParallelTaskFactory : public FutureTaskFactory

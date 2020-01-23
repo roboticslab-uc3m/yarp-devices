@@ -26,12 +26,12 @@ namespace test
 
 /**
  * @ingroup yarp_devices_tests
- * @defgroup testDeviceMapperLib
- * @brief Unit tests related to @ref DeviceMapperLib.
+ * @defgroup testYarpDeviceMapperLib
+ * @brief Unit tests related to @ref YarpDeviceMapperLib.
  */
 
 /**
- * @ingroup testDeviceMapperLib
+ * @ingroup testYarpDeviceMapperLib
  * @brief Dummy implementation of a IPositionDirectRaw interface.
  *
  * Single-axis position-direct controller. Certain methods have been
@@ -63,7 +63,7 @@ struct DummyPositionDirectRawImpl : public yarp::dev::IPositionDirectRaw
 };
 
 /**
- * @ingroup testDeviceMapperLib
+ * @ingroup testYarpDeviceMapperLib
  * @brief Dummy implementation of a N-axis position-direct device.
  *
  * This device provides utilities that help create static instances of itself
@@ -90,7 +90,7 @@ struct JointDriver : public yarp::dev::DeviceDriver,
 };
 
 /**
- * @ingroup testDeviceMapperLib
+ * @ingroup testYarpDeviceMapperLib
  * @brief Wrapper class for DummyPositionDirectRawImpl and JointDriver instances.
  */
 class DeviceMapperTest : public testing::Test

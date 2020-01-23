@@ -16,12 +16,12 @@ namespace roboticslab
 
 /**
  * @ingroup yarp_devices_libraries
- * @defgroup DeviceMapperLib
+ * @defgroup YarpDeviceMapperLib
  * @brief Aims to standardize the way most calls to YARP interfaces are forwarded.
  */
 
 /**
- * @ingroup DeviceMapperLib
+ * @ingroup YarpDeviceMapperLib
  * @brief Container for YARP raw motor interface handles.
  *
  * Performs all RTTI stuff on initial configuration to avoid dynamic_cast on
@@ -59,7 +59,7 @@ private:
 };
 
 /**
- * @ingroup DeviceMapperLib
+ * @ingroup YarpDeviceMapperLib
  * @brief Exposes raw subdevice interface handles on a per-axis manner.
  *
  * Some raw subdevices might control several axes. This class knows how to map
