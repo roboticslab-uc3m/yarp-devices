@@ -64,7 +64,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         }
 
         yarp::dev::PolyDriver * canBusDevice = new yarp::dev::PolyDriver;
-        busDevices.push(canBusDevice, canBus.c_str());
+        busDevices.push_back(canBusDevice);
 
         if (!canBusDevice->open(canBusOptions))
         {
@@ -151,7 +151,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             }
 
             yarp::dev::PolyDriver * device = new yarp::dev::PolyDriver;
-            nodeDevices.push(device, node.c_str());
+            nodeDevices.push_back(device);
 
             if (!device->open(nodeOptions))
             {
@@ -212,14 +212,13 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         }
     }
 
-    for (int i = 0; i < nodeDevices.size(); i++)
+    for (const auto & t : deviceMapper.getDevicesWithOffsets())
     {
-        ICanBusSharer * iCanBusSharer;
-        nodeDevices[i]->poly->view(iCanBusSharer);
+        auto * iCanBusSharer = std::get<0>(t)->castToType<ICanBusSharer>();
 
         if (!iCanBusSharer->initialize())
         {
-            CD_ERROR("Node device %s could not initialize CAN comms.\n", nodeDevices[i]->key.c_str());
+            CD_ERROR("Node device id %d could not initialize CAN comms.\n", iCanBusSharer->getId());
         }
     }
 
@@ -266,22 +265,18 @@ bool CanBusControlboard::close()
     delete syncTimer;
     syncTimer = nullptr;
 
-    for (int i = 0; i < nodeDevices.size(); i++)
+    for (const auto & t : deviceMapper.getDevicesWithOffsets())
     {
-        if (nodeDevices[i]->poly)
-        {
-            ICanBusSharer * iCanBusSharer;
+        auto * iCanBusSharer = std::get<0>(t)->castToType<ICanBusSharer>();
 
-            if (nodeDevices[i]->poly->view(iCanBusSharer))
-            {
-                if (!iCanBusSharer->finalize())
-                {
-                    CD_WARNING("Node device %s could not finalize CAN comms.\n", nodeDevices[i]->key.c_str());
-                    ok = false;
-                }
-            }
+        if (iCanBusSharer && !iCanBusSharer->finalize())
+        {
+            CD_WARNING("Node device id %d could not finalize CAN comms.\n", iCanBusSharer->getId());
+            ok = false;
         }
     }
+
+    deviceMapper.clear();
 
     for (auto * canBusBroker : canBusBrokers)
     {
@@ -292,28 +287,22 @@ bool CanBusControlboard::close()
 
     canBusBrokers.clear();
 
-    for (int i = 0; i < nodeDevices.size(); i++)
+    for (auto * device : nodeDevices)
     {
-        if (nodeDevices[i]->poly)
-        {
-            // CAN read threads must not live beyond this point.
-            ok &= nodeDevices[i]->poly->close();
-        }
-
-        delete nodeDevices[i]->poly;
-        nodeDevices[i]->poly = nullptr;
+        // CAN read threads must not live beyond this point.
+        ok &= device->close();
+        delete device;
     }
 
-    for (int i = 0; i < busDevices.size(); i++)
-    {
-        if (busDevices[i]->poly)
-        {
-            ok &= busDevices[i]->poly->close();
-        }
+    nodeDevices.clear();
 
-        delete busDevices[i]->poly;
-        busDevices[i]->poly = nullptr;
+    for (auto * device : busDevices)
+    {
+        ok &= device->close();
+        delete device;
     }
+
+    busDevices.clear();
 
     return ok;
 }

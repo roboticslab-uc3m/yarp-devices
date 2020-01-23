@@ -43,9 +43,19 @@ public:
     template<typename T>
     T * getHandle() const;
 
+    /**
+     * @brief Perform a dynamic cast on the given type.
+     * @tparam T A type the original driver should be able to be cast to.
+     */
+    template<typename T>
+    T * castToType() const
+    { return dynamic_cast<T *>(driver); }
+
 private:
     class Private;
     std::unique_ptr<Private> priv;
+
+    yarp::dev::DeviceDriver * driver;
 };
 
 /**
@@ -133,6 +143,9 @@ public:
       * and the associated parameter offsets.
       */
     std::vector<dev_group_t> getDevices(int globalAxesCount, const int * globalAxes) const;
+
+    //! Clear all internal handles.
+    void clear();
 
     //! Retrieve number of controlled axes across all subdevices.
     int getControlledAxes() const

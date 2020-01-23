@@ -6,9 +6,7 @@
 #include <vector>
 
 #include <yarp/os/Timer.h>
-
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/PolyDriverList.h>
 
 #include "DeviceMapper.hpp"
 #include "CanBusBroker.hpp"
@@ -310,10 +308,10 @@ public:
     //virtual bool stop(int n_joint, const int *joints) override;
 
 private:
-    yarp::dev::PolyDriverList busDevices;
-    yarp::dev::PolyDriverList nodeDevices;
-
     DeviceMapper deviceMapper;
+
+    std::vector<yarp::dev::PolyDriver *> busDevices;
+    std::vector<yarp::dev::PolyDriver *> nodeDevices;
     std::vector<CanBusBroker *> canBusBrokers;
 
     yarp::os::Timer * syncTimer;

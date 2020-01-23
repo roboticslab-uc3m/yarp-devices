@@ -220,6 +220,7 @@ TEST_F(DeviceMapperTest, RawDevice)
     RawDevice rd(getDriver<JointDriver<1>>());
     auto * p = rd.getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p, nullptr);
+    ASSERT_EQ(rd.castToType<std::string>(), nullptr);
 }
 
 TEST_F(DeviceMapperTest, DeviceMapper)

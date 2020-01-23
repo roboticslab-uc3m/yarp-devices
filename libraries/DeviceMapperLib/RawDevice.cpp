@@ -29,8 +29,9 @@ struct RawDevice::Private
     yarp::dev::ITorqueControlRaw * iTorqueControlRaw;
 };
 
-RawDevice::RawDevice(yarp::dev::PolyDriver * driver)
-    : priv(new Private)
+RawDevice::RawDevice(yarp::dev::PolyDriver * _driver)
+    : priv(new Private),
+      driver(_driver->getImplementation())
 {
     driver->view(priv->iAmplifierControlRaw);
     driver->view(priv->iAxisInfoRaw);

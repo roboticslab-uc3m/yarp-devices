@@ -67,10 +67,7 @@ DeviceMapper::DeviceMapper()
 
 DeviceMapper::~DeviceMapper()
 {
-    for (const auto & t : rawDevicesWithOffsets)
-    {
-        delete std::get<0>(t);
-    }
+    clear();
 }
 
 void DeviceMapper::enableParallelization(unsigned int concurrentTasks)
@@ -143,4 +140,16 @@ std::vector<DeviceMapper::dev_group_t> DeviceMapper::getDevices(int globalAxesCo
     }
 
     return vec;
+}
+
+void DeviceMapper::clear()
+{
+    for (const auto & t : rawDevicesWithOffsets)
+    {
+        delete std::get<0>(t);
+    }
+
+    rawDevicesWithOffsets.clear();
+    rawDeviceIndexAtGlobalAxisIndex.clear();
+    totalAxes = 0;
 }

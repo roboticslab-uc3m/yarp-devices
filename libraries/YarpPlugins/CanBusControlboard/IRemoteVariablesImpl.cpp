@@ -4,6 +4,8 @@
 
 #include <ColorDebug.h>
 
+#include "ICanBusSharer.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
@@ -14,11 +16,12 @@ bool CanBusControlboard::getRemoteVariable(std::string key, yarp::os::Bottle & v
 
     val.clear();
 
-    for (int i = 0; i < nodeDevices.size(); i++)
+    for (const auto & t : deviceMapper.getDevicesWithOffsets())
     {
-        if (key == nodeDevices[i]->key)
+        auto * iCanBusSharer = std::get<0>(t)->castToType<ICanBusSharer>();
+
+        if (key == "id" + std::to_string(iCanBusSharer->getId()))
         {
-            auto t = deviceMapper.getDevice(i);
             auto * p = std::get<0>(t)->getHandle<yarp::dev::IRemoteVariablesRaw>();
             yarp::os::Bottle b;
 
@@ -55,11 +58,12 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
         return false;
     }
 
-    for (int i = 0; i < nodeDevices.size(); i++)
+    for (const auto & t : deviceMapper.getDevicesWithOffsets())
     {
-        if (key == nodeDevices[i]->key)
+        auto * iCanBusSharer = std::get<0>(t)->castToType<ICanBusSharer>();
+
+        if (key == "id" + std::to_string(iCanBusSharer->getId()))
         {
-            auto t = deviceMapper.getDevice(i);
             auto * p = std::get<0>(t)->getHandle<yarp::dev::IRemoteVariablesRaw>();
 
             if (p)
@@ -85,9 +89,10 @@ bool CanBusControlboard::getRemoteVariablesList(yarp::os::Bottle * listOfKeys)
     listOfKeys->clear();
 
     // Place each key in its own list so that clients can just call check('<key>') or !find('<key>').isNull().
-    for (int i = 0; i < nodeDevices.size(); i++)
+    for (const auto & t : deviceMapper.getDevicesWithOffsets())
     {
-        listOfKeys->addString(nodeDevices[i]->key);
+        auto * iCanBusSharer = std::get<0>(t)->castToType<ICanBusSharer>();
+        listOfKeys->addString("id" + std::to_string(iCanBusSharer->getId()));
     }
 
     return true;
