@@ -205,12 +205,12 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     ASSERT_EQ(getSender()->getLastMessage().data, toInt64(0x40, index, subindex));
     ASSERT_EQ(actual4, expected4);
 
-    std::memset(response, 0x00, 8); // reset
+    std::memset(response + 4, 0x00, 4); // reset
+    response[0] = 0x60;
 
     // test SdoClient::download(), send 1 byte
 
     std::int8_t request1 = 0x44;
-    response[0] = 0x60;
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.download("Download test 1", request1, index, subindex));
     ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
@@ -220,7 +220,6 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     // test SdoClient::download(), send 2 bytes
 
     std::int16_t request2 = 0x4444;
-    response[0] = 0x60;
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.download("Download test 2", request2, index, subindex));
     ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
@@ -230,7 +229,6 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     // test SdoClient::download(), send 4 bytes
 
     std::int32_t request3 = 0x44444444;
-    response[0] = 0x60;
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.download("Download test 3", request3, index, subindex));
     ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
@@ -244,6 +242,22 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     std::memcpy(response + 4, &abortCode, 4);
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_FALSE(sdo.download<std::int8_t>("Download test 4", 0x44, index, subindex));
+
+    response[3] = 0x69; // different subindex
+
+    // test SdoClient::upload and SdoClient::download with overrun
+
+    std::uint8_t actualOvr;
+    response[0] = 0x4F;
+    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
+    ASSERT_FALSE(sdo.upload("Upload overrun test", &actualOvr, index, subindex));
+
+    // test SdoClient::upload and SdoClient::download with overrun
+
+    std::uint8_t requestOvr = 0x44;
+    response[0] = 0x60;
+    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
+    ASSERT_FALSE(sdo.download("Download overrun test", requestOvr, index, subindex));
 }
 
 TEST_F(CanBusSharerTest, SdoClientSegmented)
@@ -381,6 +395,9 @@ TEST_F(CanBusSharerTest, ReceivePdo)
     const std::uint8_t commMSB = comm >> 8;
 
     const std::uint16_t mapper = 0x1600 + n - 1;
+    const std::uint8_t mapperLSB = mapper & 0x00FF;
+    const std::uint8_t mapperMSB = mapper >> 8;
+
     const std::uint16_t inhibitTime = 0x1234;
     const std::uint16_t eventTimer = 0x5678;
 
@@ -393,9 +410,6 @@ TEST_F(CanBusSharerTest, ReceivePdo)
 
     // test ReceivePdo::configure()
 
-    const std::uint8_t responseUpload[8] = {0x43, commLSB, commMSB, 0x01, cobIdLSB, cobIdMSB};
-    const std::uint8_t responseDownload[8] = {0x60};
-
     PdoConfiguration rpdo1Conf;
     rpdo1Conf.setTransmissionType(type);
     rpdo1Conf.setInhibitTime(inhibitTime);
@@ -403,12 +417,27 @@ TEST_F(CanBusSharerTest, ReceivePdo)
     rpdo1Conf.addMapping<std::int16_t>(mapping1, mapping1sub).addMapping<std::int32_t>(mapping2);
     rpdo1Conf.setValid(true);
 
+    const std::uint8_t responseUpload[8] = {0x43, commLSB, commMSB, 0x01, cobIdLSB, cobIdMSB};
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(responseUpload); }});
 
-    for (int i = 2; i < 11; i++)
-    {
-        f() = std::async(std::launch::async, observer_timer{MILLIS * i, [&]{ return sdo.notify(responseDownload); }});
-    }
+    const std::uint8_t responseDownload1[8] = {0x60, commLSB, commMSB, 0x01}; // COB-ID
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 2, [&]{ return sdo.notify(responseDownload1); }});
+    const std::uint8_t responseDownload2[8] = {0x60, commLSB, commMSB, 0x02}; // transmission type
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 3, [&]{ return sdo.notify(responseDownload2); }});
+    const std::uint8_t responseDownload3[8] = {0x60, commLSB, commMSB, 0x03}; // inhibit time
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 4, [&]{ return sdo.notify(responseDownload3); }});
+    const std::uint8_t responseDownload4[8] = {0x60, commLSB, commMSB, 0x05}; // event timer
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 5, [&]{ return sdo.notify(responseDownload4); }});
+    const std::uint8_t responseDownload5[8] = {0x60, mapperLSB, mapperMSB, 0x00}; // start mapping
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 6, [&]{ return sdo.notify(responseDownload5); }});
+    const std::uint8_t responseDownload6[8] = {0x60, mapperLSB, mapperMSB, 0x01}; // first mapping
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 7, [&]{ return sdo.notify(responseDownload6); }});
+    const std::uint8_t responseDownload7[8] = {0x60, mapperLSB, mapperMSB, 0x02}; // second mapping
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 8, [&]{ return sdo.notify(responseDownload7); }});
+    const std::uint8_t responseDownload8[8] = {0x60, mapperLSB, mapperMSB, 0x00}; // end mapping
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 9, [&]{ return sdo.notify(responseDownload8); }});
+    const std::uint8_t responseDownload9[8] = {0x60, commLSB, commMSB, 0x01}; // set valid
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 10, [&]{ return sdo.notify(responseDownload9); }});
 
     ASSERT_TRUE(rpdo1.configure(rpdo1Conf));
 
@@ -465,6 +494,9 @@ TEST_F(CanBusSharerTest, TransmitPdo)
     const std::uint8_t commMSB = comm >> 8;
 
     const std::uint16_t mapper = 0x1A00 + n - 1;
+    const std::uint8_t mapperLSB = mapper & 0x00FF;
+    const std::uint8_t mapperMSB = mapper >> 8;
+
     const std::uint16_t inhibitTime = 0x1234;
     const std::uint16_t eventTimer = 0x5678;
     const std::uint8_t syncStartValue = 0x77;
@@ -478,9 +510,6 @@ TEST_F(CanBusSharerTest, TransmitPdo)
 
     // test TransmitPdo::configure()
 
-    const std::uint8_t responseUpload[8] = {0x43, commLSB, commMSB, 0x01, cobIdLSB, cobIdMSB};
-    const std::uint8_t responseDownload[8] = {0x60};
-
     PdoConfiguration tpdo1Conf;
     tpdo1Conf.setRtr(false);
     tpdo1Conf.setTransmissionType(type);
@@ -490,12 +519,29 @@ TEST_F(CanBusSharerTest, TransmitPdo)
     tpdo1Conf.addMapping<std::int16_t>(mapping1, mapping1sub).addMapping<std::int32_t>(mapping2);
     tpdo1Conf.setValid(true);
 
+    const std::uint8_t responseUpload[8] = {0x43, commLSB, commMSB, 0x01, cobIdLSB, cobIdMSB};
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(responseUpload); }});
 
-    for (int i = 2; i < 12; i++)
-    {
-        f() = std::async(std::launch::async, observer_timer{MILLIS * i, [&]{ return sdo.notify(responseDownload); }});
-    }
+    const std::uint8_t responseDownload1[8] = {0x60, commLSB, commMSB, 0x01}; // COB-ID
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 2, [&]{ return sdo.notify(responseDownload1); }});
+    const std::uint8_t responseDownload2[8] = {0x60, commLSB, commMSB, 0x02}; // transmission type
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 3, [&]{ return sdo.notify(responseDownload2); }});
+    const std::uint8_t responseDownload3[8] = {0x60, commLSB, commMSB, 0x03}; // inhibit time
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 4, [&]{ return sdo.notify(responseDownload3); }});
+    const std::uint8_t responseDownload4[8] = {0x60, commLSB, commMSB, 0x05}; // event timer
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 5, [&]{ return sdo.notify(responseDownload4); }});
+    const std::uint8_t responseDownload5[8] = {0x60, commLSB, commMSB, 0x06}; // SYNC start value
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 6, [&]{ return sdo.notify(responseDownload5); }});
+    const std::uint8_t responseDownload6[8] = {0x60, mapperLSB, mapperMSB, 0x00}; // start mapping
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 7, [&]{ return sdo.notify(responseDownload6); }});
+    const std::uint8_t responseDownload7[8] = {0x60, mapperLSB, mapperMSB, 0x01}; // first mapping
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 8, [&]{ return sdo.notify(responseDownload7); }});
+    const std::uint8_t responseDownload8[8] = {0x60, mapperLSB, mapperMSB, 0x02}; // second mapping
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 9, [&]{ return sdo.notify(responseDownload8); }});
+    const std::uint8_t responseDownload9[8] = {0x60, mapperLSB, mapperMSB, 0x00}; // end mapping
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 10, [&]{ return sdo.notify(responseDownload9); }});
+    const std::uint8_t responseDownload10[8] = {0x60, commLSB, commMSB, 0x01}; // set valid
+    f() = std::async(std::launch::async, observer_timer{MILLIS * 11, [&]{ return sdo.notify(responseDownload10); }});
 
     ASSERT_TRUE(tpdo1.configure(tpdo1Conf));
 
@@ -1141,9 +1187,9 @@ TEST_F(CanBusSharerTest, CanOpenNode)
 
     // test SDO
 
-    const std::uint8_t raw6[8] = {0x60};
+    const std::uint8_t raw6[8] = {0x60, 0x34, 0x12, 0x56};
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return can.notifyMessage({0x580u + id, 8, raw6}); }});
-    ASSERT_TRUE(can.sdo()->download("Download test 1", 0x00, 0x1234));
+    ASSERT_TRUE(can.sdo()->download("Download test 1", 0x00, 0x1234, 0x56));
 
     // test NMT
 

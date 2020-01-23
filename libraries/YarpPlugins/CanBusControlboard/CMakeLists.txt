@@ -36,8 +36,12 @@ if(NOT SKIP_CanBusControlboard)
                                        IRemoteVariablesImpl.cpp
                                        ITorqueControlImpl.cpp
                                        IVelocityControlImpl.cpp
+                                       CanBusBroker.hpp
+                                       CanBusBroker.cpp
                                        CanRxTxThreads.hpp
                                        CanRxTxThreads.cpp
+                                       SdoReplier.hpp
+                                       SdoReplier.cpp
                                        YarpCanSenderDelegate.hpp
                                        YarpCanSenderDelegate.cpp)
 
@@ -45,6 +49,7 @@ if(NOT SKIP_CanBusControlboard)
                                              YARP::YARP_dev
                                              ROBOTICSLAB::ColorDebug
                                              CanBusSharerLib
+                                             CanOpenNodeLib
                                              DeviceMapperLib)
 
     target_compile_features(CanBusControlboard PRIVATE cxx_std_11)

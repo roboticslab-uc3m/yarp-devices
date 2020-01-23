@@ -20,7 +20,8 @@ class YarpCanSenderDelegate : public CanSenderDelegate
 {
 public:
     //! Constructor, takes a reference to an existing CAN message buffer.
-    YarpCanSenderDelegate(yarp::dev::CanBuffer & _buffer, std::mutex & _bufferMutex, unsigned int & n, unsigned int size)
+    YarpCanSenderDelegate(yarp::dev::CanBuffer & _buffer, std::mutex & _bufferMutex,
+            unsigned int & n, unsigned int size)
         : buffer(_buffer),
           bufferMutex(_bufferMutex),
           preparedMessages(n),

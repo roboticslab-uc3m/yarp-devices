@@ -1,19 +1,16 @@
-cmake_dependent_option(ENABLE_dumpCanBus "Enable/disable dumpCanBus program" ON
-                       ENABLE_CanBusSharerLib OFF)
+option(ENABLE_dumpCanBus "Enable/disable dumpCanBus program" ON)
 
 if(ENABLE_dumpCanBus)
 
     add_executable(dumpCanBus main.cpp
                               DumpCanBus.cpp
-                              DumpCanBus.hpp
-                              ThreadImpl.cpp)
+                              DumpCanBus.hpp)
 
     target_link_libraries(dumpCanBus YARP::YARP_OS
                                      YARP::YARP_init
-                                     YARP::YARP_dev
-                                     CanBusSharerLib
-                                     ROBOTICSLAB::ColorDebug
-                                     YarpDevicesInterfaces)
+                                     ROBOTICSLAB::ColorDebug)
+
+    target_compile_features(dumpCanBus PRIVATE cxx_std_11)
 
     install(TARGETS dumpCanBus
             DESTINATION ${CMAKE_INSTALL_BINDIR})
