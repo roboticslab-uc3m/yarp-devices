@@ -33,8 +33,6 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         return false;
     }
 
-    int fakeNodeCount = 0;
-
     for (int i = 0; i < canBuses->size(); i++)
     {
         std::string canBus = canBuses->get(i).asString();
@@ -178,10 +176,6 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
                 canBusBrokers.back()->getReader()->registerHandle(iCanBusSharer);
                 iCanBusSharer->registerSender(canBusBrokers.back()->getWriter()->getDelegate());
             }
-            else
-            {
-                fakeNodeCount++;
-            }
         }
 
         bool enableAcceptanceFilters = canBusOptions.check("enableAcceptanceFilters", yarp::os::Value(false),
@@ -192,15 +186,6 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             CD_ERROR("Unable to register CAN acceptance filters in %s.\n", canBus.c_str());
             return false;
         }
-    }
-
-    int threadedAxes = deviceMapper.getControlledAxes() - fakeNodeCount;
-
-    // FIXME: temporarily disabled
-    if (false /*config.check("threaded", yarp::os::Value(false), "use threads to map joint calls").asBool() && threadedAxes != 0*/)
-    {
-        // twice as many controlled axes to account for CBW's periodic thread and user RPC requests
-        deviceMapper.enableParallelization(threadedAxes * 2);
     }
 
     for (auto * canBusBroker : canBusBrokers)
@@ -225,27 +210,44 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
     if (config.check("syncPeriod", "SYNC message period (s)"))
     {
         double syncPeriod = config.find("syncPeriod").asFloat64();
+        bool threadedSync = config.check("threadedSync", yarp::os::Value(false), "parallelize SYNC requests").asBool();
+
+        if (busDevices.size() > 1 && threadedSync)
+        {
+            taskFactory = new ParallelTaskFactory(busDevices.size());
+        }
+        else
+        {
+            taskFactory = new SequentialTaskFactory;
+        }
 
         syncTimer = new yarp::os::Timer(yarp::os::TimerSettings(syncPeriod),
-                [this](const yarp::os::YarpTimerEvent & event)
+            [this](const yarp::os::YarpTimerEvent & event)
+            {
+                auto task = taskFactory->createTask();
+
+                for (auto * canBusBroker : canBusBrokers)
                 {
-                    for (auto * canBusBroker : canBusBrokers)
-                    {
-                        auto * reader = canBusBroker->getReader();
-                        auto * writer = canBusBroker->getWriter();
-
-                        for (const auto & entry : reader->getHandleMap())
+                    task->add([canBusBroker]
                         {
-                            entry.second->synchronize();
-                        }
+                            auto * reader = canBusBroker->getReader();
+                            auto * writer = canBusBroker->getWriter();
 
-                        writer->getDelegate()->prepareMessage({0x80, 0, nullptr}); // SYNC
-                        writer->flush();
-                    }
+                            for (const auto & entry : reader->getHandleMap())
+                            {
+                                entry.second->synchronize();
+                            }
 
-                    return true;
-                },
-                true);
+                            writer->getDelegate()->prepareMessage({0x80, 0, nullptr}); // SYNC
+                            writer->flush();
+                            return true;
+                        });
+                }
+
+                task->dispatch();
+                return true;
+            },
+            true);
     }
 
     return !syncTimer || syncTimer->start();
@@ -264,6 +266,9 @@ bool CanBusControlboard::close()
 
     delete syncTimer;
     syncTimer = nullptr;
+
+    delete taskFactory;
+    taskFactory = nullptr;
 
     for (const auto & t : deviceMapper.getDevicesWithOffsets())
     {

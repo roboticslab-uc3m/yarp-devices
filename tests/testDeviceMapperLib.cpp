@@ -159,6 +159,24 @@ TEST_F(DeviceMapperTest, SequentialTask)
     auto task = taskFactory->createTask();
     ASSERT_EQ(task->size(), 0);
 
+    int a = 0;
+
+    task->add([&a] { a = 1; return true; });
+    ASSERT_EQ(task->size(), 1);
+    ASSERT_TRUE(task->dispatch());
+    ASSERT_EQ(a, 1);
+
+    task->clear();
+    ASSERT_EQ(task->size(), 0);
+
+    task->add([](int * _a) { *_a = 2; return true; }, &a);
+    ASSERT_EQ(task->size(), 1);
+    ASSERT_TRUE(task->dispatch());
+    ASSERT_EQ(a, 2);
+
+    task->clear();
+    ASSERT_EQ(task->size(), 0);
+
     task->add(getDummy(), &yarp::dev::IPositionDirectRaw::setPositionRaw, joint, 1);
     ASSERT_EQ(task->size(), 1);
     ASSERT_TRUE(task->dispatch());

@@ -8,6 +8,7 @@
 #include <yarp/os/Timer.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
+#include "FutureTask.hpp"
 #include "DeviceMapper.hpp"
 #include "CanBusBroker.hpp"
 
@@ -57,7 +58,7 @@ class CanBusControlboard : public yarp::dev::DeviceDriver,
                            public yarp::dev::IVelocityControl
 {
 public:
-    CanBusControlboard() : syncTimer(nullptr)
+    CanBusControlboard() : syncTimer(nullptr), taskFactory(nullptr)
     { }
 
     ~CanBusControlboard()
@@ -315,6 +316,7 @@ private:
     std::vector<CanBusBroker *> canBusBrokers;
 
     yarp::os::Timer * syncTimer;
+    FutureTaskFactory * taskFactory;
 };
 
 } // namespace roboticslab

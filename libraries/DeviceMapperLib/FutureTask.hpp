@@ -23,6 +23,11 @@ public:
     //! Virtual destructor.
     virtual ~FutureTask() = default;
 
+    //! Register a deferred callback given a free function.
+    template<typename Fn, typename... Args>
+    void add(Fn && fn, Args &&... args)
+    { deferreds.push_back([=](int) { return fn(args...); }); }
+
     //! Register a deferred callback given a generic class instance.
     template<typename T, typename Fn, typename... Args>
     void add(T * p, Fn && fn, Args &&... args)
