@@ -134,7 +134,7 @@ private:
     FakeCanSenderDelegate * senderDelegate;
 };
 
-TEST_F(CanBusSharerTest, SdoClientExpedited)
+TEST_F(CanBusSharerTest, SdoClientExpeditedUpload)
 {
     const std::uint8_t id = 0x05;
     const std::uint16_t cobRx = 0x600;
@@ -205,8 +205,30 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     ASSERT_EQ(getSender()->getLastMessage().data, toInt64(0x40, index, subindex));
     ASSERT_EQ(actual4, expected4);
 
-    std::memset(response + 4, 0x00, 4); // reset
-    response[0] = 0x60;
+    // test SdoClient::upload with overrun
+
+    std::uint8_t actualOvr;
+    response[0] = 0x4F;
+    response[3] = 0x69; // different subindex
+    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
+    ASSERT_FALSE(sdo.upload("Upload overrun test", &actualOvr, index, subindex));
+}
+
+TEST_F(CanBusSharerTest, SdoClientExpeditedDownload)
+{
+    const std::uint8_t id = 0x05;
+    const std::uint16_t cobRx = 0x600;
+    const std::uint16_t cobTx = 0x580;
+
+    SdoClient sdo(id, cobRx, cobTx, TIMEOUT, getSender());
+    ASSERT_EQ(sdo.getCobIdRx(), id + cobRx);
+    ASSERT_EQ(sdo.getCobIdTx(), id + cobTx);
+
+    const std::uint16_t index = 0x1234;
+    const std::uint8_t subindex = 0x56;
+
+    std::uint8_t response[8] = {0x60, 0x00, 0x00, subindex};
+    std::memcpy(response + 1, &index, 2);
 
     // test SdoClient::download(), send 1 byte
 
@@ -235,6 +257,13 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     ASSERT_EQ(getSender()->getLastMessage().len, 8);
     ASSERT_EQ(getSender()->getLastMessage().data, toInt64(0x23, index, subindex, request3));
 
+    // test SdoClient::download with overrun
+
+    std::uint8_t requestOvr = 0x44;
+    response[3] = 0x69; // different subindex
+    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
+    ASSERT_FALSE(sdo.download("Download overrun test", requestOvr, index, subindex));
+
     // test SDO abort transfer in download() operation
 
     response[0] = 0x80;
@@ -242,22 +271,6 @@ TEST_F(CanBusSharerTest, SdoClientExpedited)
     std::memcpy(response + 4, &abortCode, 4);
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_FALSE(sdo.download<std::int8_t>("Download test 4", 0x44, index, subindex));
-
-    response[3] = 0x69; // different subindex
-
-    // test SdoClient::upload and SdoClient::download with overrun
-
-    std::uint8_t actualOvr;
-    response[0] = 0x4F;
-    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
-    ASSERT_FALSE(sdo.upload("Upload overrun test", &actualOvr, index, subindex));
-
-    // test SdoClient::upload and SdoClient::download with overrun
-
-    std::uint8_t requestOvr = 0x44;
-    response[0] = 0x60;
-    f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
-    ASSERT_FALSE(sdo.download("Download overrun test", requestOvr, index, subindex));
 }
 
 TEST_F(CanBusSharerTest, SdoClientSegmented)
