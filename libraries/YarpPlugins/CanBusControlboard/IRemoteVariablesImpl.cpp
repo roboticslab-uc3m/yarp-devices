@@ -10,6 +10,66 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
+namespace
+{
+    bool setSingleKeyValuePair(const std::string & key, const yarp::os::Bottle & val, const DeviceMapper & mapper)
+    {
+        if (val.size() != 2 || !val.get(0).isString() || !val.get(1).isList())
+        {
+            CD_ERROR("Illegal bottle format, expected string key and list value.\n");
+            return false;
+        }
+
+        bool setAll = key == "all";
+        bool allOk = true;
+
+        for (const auto & t : mapper.getDevicesWithOffsets())
+        {
+            auto * iCanBusSharer = std::get<0>(t)->castToType<ICanBusSharer>();
+
+            if (setAll || key == "id" + std::to_string(iCanBusSharer->getId()))
+            {
+                auto * p = std::get<0>(t)->getHandle<yarp::dev::IRemoteVariablesRaw>();
+
+                if (!p)
+                {
+                    if (!setAll)
+                    {
+                        CD_ERROR("Unsupported interface: \"%s\".\n", key.c_str());
+                        return false;
+                    }
+
+                    CD_WARNING("Unsupported interface: \"id%d\".\n", iCanBusSharer->getId());
+                }
+                else if (!p->setRemoteVariableRaw(val.get(0).asString(), *val.get(1).asList()))
+                {
+                    if (!setAll)
+                    {
+                        return false;
+                    }
+
+                    CD_WARNING("Request failed: \"id%d\".\n", iCanBusSharer->getId());
+                    allOk = false;
+                }
+                else if (!setAll)
+                {
+                    return true;
+                }
+            }
+        }
+
+        if (!setAll)
+        {
+            CD_ERROR("Node \"%s\" not found, type e.g. \"id19\" or \"all\".\n", key.c_str());
+            return false;
+        }
+
+        return allOk;
+    }
+}
+
+// -----------------------------------------------------------------------------
+
 bool CanBusControlboard::getRemoteVariable(std::string key, yarp::os::Bottle & val)
 {
     CD_DEBUG("%s\n", key.c_str());
@@ -102,57 +162,31 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
         return ok;
     }
 
-    if (val.size() != 2 || !val.get(0).isString() || !val.get(1).isList())
+    if (val.size() == 0)
     {
-        CD_ERROR("Illegal bottle format, expected string key and list value.\n");
+        CD_ERROR("Empty value list.\n");
         return false;
     }
 
-    bool setAll = key == "all";
-    bool allOk = true;
-
-    for (const auto & t : deviceMapper.getDevicesWithOffsets())
+    if (val.get(0).isList())
     {
-        auto * iCanBusSharer = std::get<0>(t)->castToType<ICanBusSharer>();
+        bool ok = true;
 
-        if (setAll || key == "id" + std::to_string(iCanBusSharer->getId()))
+        for (int i = 0; i < val.size(); i++)
         {
-            auto * p = std::get<0>(t)->getHandle<yarp::dev::IRemoteVariablesRaw>();
-
-            if (!p)
+            if (!val.get(i).isList())
             {
-                if (!setAll)
-                {
-                    CD_ERROR("Unsupported interface: \"%s\".\n", key.c_str());
-                    return false;
-                }
+                CD_ERROR("Not a list: %s.\n", val.get(i).toString().c_str());
+                return false;
+            }
 
-                CD_WARNING("Unsupported interface: \"id%d\".\n", iCanBusSharer->getId());
-            }
-            else if (!p->setRemoteVariableRaw(val.get(0).asString(), *val.get(1).asList()))
-            {
-                if (!setAll)
-                {
-                    return false;
-                }
-
-                CD_WARNING("Request failed: \"id%d\".\n", iCanBusSharer->getId());
-                allOk = false;
-            }
-            else if (!setAll)
-            {
-                return true;
-            }
+            ok &= setSingleKeyValuePair(key, *val.get(i).asList(), deviceMapper);
         }
+
+        return ok;
     }
 
-    if (!setAll)
-    {
-        CD_ERROR("Node \"%s\" not found, type e.g. \"id19\" or \"all\".\n", key.c_str());
-        return false;
-    }
-
-    return allOk;
+    return setSingleKeyValuePair(key, val, deviceMapper);
 }
 
 // -----------------------------------------------------------------------------
