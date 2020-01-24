@@ -52,7 +52,7 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
 {
     CD_DEBUG("%s\n", key.c_str());
 
-    if (val.size() != 2)
+    if (val.size() != 2 || !val.get(1).isList())
     {
         CD_ERROR("Illegal bottle format, expected single key-value list.\n");
         return false;

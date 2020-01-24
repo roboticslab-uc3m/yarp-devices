@@ -15,13 +15,14 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
     CD_DEBUG("%s\n", key.c_str());
 
     val.clear();
+    val.addString(key);
 
     if (key == "linInterp")
     {
         if (!linInterpBuffer)
         {
-            CD_ERROR("Linear interpolation mode disabled.\n");
-            return false;
+            val.addList().addInt8(false);
+            return true;
         }
 
         yarp::os::Property config;
@@ -29,8 +30,12 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
         config.put("bufferSize", linInterpBuffer->getBufferSize());
         config.put("mode", linInterpBuffer->getType());
 
-        val.addString(key);
         val.addList().fromString(config.toString());
+        return true;
+    }
+    else if (key == "csv")
+    {
+        val.addList().addInt8(vars.enableCsv);
         return true;
     }
 
@@ -63,6 +68,33 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
         CD_SUCCESS("Switched back to CSP mode (canId: %d).\n", can->getId());
         return true;
     }
+    else if (key == "csv")
+    {
+        if (val.size() != 1)
+        {
+            CD_ERROR("One element required (true/false), %d given (canId: %d).\n", val.size(), can->getId());
+            return false;
+        }
+
+        bool requested = val.get(0).asBool();
+
+        if (requested ^ vars.enableCsv)
+        {
+            if (vars.actualControlMode == VOCAB_CM_VELOCITY)
+            {
+                CD_ERROR("Currently in vel mode, cannot change internal mode mapping right now (canId: %d).\n", can->getId());
+                return false;
+            }
+
+            vars.enableCsv = requested;
+        }
+        else
+        {
+            CD_WARNING("CSV mode already enabled/disabled (canId: %d).\n", can->getId());
+        }
+
+        return true;
+    }
 
     CD_ERROR("Unsupported key: \"%s\".\n", key.c_str());
     return false;
@@ -78,6 +110,7 @@ bool TechnosoftIpos::getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys)
 
     // Place each key in its own list so that clients can just call check('<key>') or !find('<key>').isNull().
     listOfKeys->addString("linInterp");
+    listOfKeys->addString("csv");
 
     return true;
 }
