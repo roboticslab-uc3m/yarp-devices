@@ -240,6 +240,7 @@ void StateVariables::reset()
     lastCurrentRead = 0.0;
 
     requestedcontrolMode = 0;
+    synchronousCommandTarget = 0.0;
 }
 
 // -----------------------------------------------------------------------------

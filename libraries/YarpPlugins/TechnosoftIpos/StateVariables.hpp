@@ -108,7 +108,7 @@ struct StateVariables
     std::bitset<16> ptStatus;
     std::int8_t modesOfOperation {0};
 
-    bool configuredOnce = false;
+    bool configuredOnce {false};
 
     // read/write, those require atomic access
 
