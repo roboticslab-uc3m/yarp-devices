@@ -90,7 +90,7 @@ public:
     DriveState getCurrentState() const;
 
     //! Request given drive transition via object 6040h, update stored controlword.
-    bool requestTransition(DriveTransition transition, bool wait = true);
+    bool requestTransition(DriveTransition transition);
 
     //! Request given drive state, update stored controlword.
     bool requestState(DriveState goalState);

@@ -196,7 +196,7 @@ DriveState DriveStatusMachine::getCurrentState() const
     return parseDriveState(statusword());
 }
 
-bool DriveStatusMachine::requestTransition(DriveTransition transition, bool wait)
+bool DriveStatusMachine::requestTransition(DriveTransition transition)
 {
     DriveState initialState = getCurrentState();
     auto it = nextStateOnTransition.find({initialState, transition});
@@ -204,7 +204,7 @@ bool DriveStatusMachine::requestTransition(DriveTransition transition, bool wait
 
     return it != nextStateOnTransition.cend()
             && controlword(requested)
-            && (wait ? awaitState(it->second) : true);
+            && awaitState(it->second);
 }
 
 bool DriveStatusMachine::requestState(DriveState goalState)
@@ -225,7 +225,7 @@ bool DriveStatusMachine::requestState(DriveState goalState)
 
     for (const auto & transition : it->second)
     {
-        if (!requestTransition(transition, true))
+        if (!requestTransition(transition))
         {
             return false;
         }
