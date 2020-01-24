@@ -123,7 +123,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     if (iposGroup.check("tpdo1EventTimer", "TPDO1 event timer (seconds)"))
     {
-        tpdo1Conf.setInhibitTime(iposGroup.find("tpdo1EventTimer").asFloat64() * 1e3); // pass milliseconds
+        tpdo1Conf.setEventTimer(iposGroup.find("tpdo1EventTimer").asFloat64() * 1e3); // pass milliseconds
     }
 
     PdoConfiguration tpdo2Conf;
@@ -138,7 +138,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     if (iposGroup.check("tpdo2EventTimer", "TPDO2 event timer (seconds)"))
     {
-        tpdo2Conf.setInhibitTime(iposGroup.find("tpdo2EventTimer").asFloat64() * 1e3); // pass milliseconds
+        tpdo2Conf.setEventTimer(iposGroup.find("tpdo2EventTimer").asFloat64() * 1e3); // pass milliseconds
     }
 
     PdoConfiguration tpdo3Conf;
