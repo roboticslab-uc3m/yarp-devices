@@ -83,7 +83,7 @@ bool TechnosoftIpos::getMotorEncoderRaw(int m, double * v)
     CHECK_JOINT(m);
     std::int32_t temp = vars.lastEncoderRead.queryPosition();
     *v = vars.reverse ? -temp : temp;
-    return true;
+    return vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED;
 }
 
 // -----------------------------------------------------------------------------
@@ -103,7 +103,7 @@ bool TechnosoftIpos::getMotorEncoderTimedRaw(int m, double * enc, double * stamp
     std::int32_t temp =  vars.lastEncoderRead.queryPosition();
     *enc = vars.reverse ? -temp : temp;
     *stamp = vars.lastEncoderRead.queryTime();
-    return true;
+    return vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED;
 }
 
 // -----------------------------------------------------------------------------
@@ -122,7 +122,7 @@ bool TechnosoftIpos::getMotorEncoderSpeedRaw(int m, double * sp)
     CHECK_JOINT(m);
     double temp = vars.lastEncoderRead.querySpeed();
     *sp = vars.reverse ? -temp : temp;
-    return true;
+    return vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED;
 }
 
 // -----------------------------------------------------------------------------
@@ -141,7 +141,7 @@ bool TechnosoftIpos::getMotorEncoderAccelerationRaw(int m, double * acc)
     CHECK_JOINT(m);
     double temp = vars.lastEncoderRead.queryAcceleration();
     *acc = vars.reverse ? -temp : temp;
-    return true;
+    return vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED;
 }
 
 // -----------------------------------------------------------------------------

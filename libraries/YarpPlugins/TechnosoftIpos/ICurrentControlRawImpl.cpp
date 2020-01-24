@@ -14,7 +14,7 @@ bool TechnosoftIpos::getCurrentRaw(int m, double * curr)
     CHECK_JOINT(m);
     std::int16_t temp = vars.lastCurrentRead;
     *curr = vars.internalUnitsToCurrent(temp);
-    return true;
+    return vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED;
 }
 
 // -----------------------------------------------------------------------------

@@ -64,7 +64,7 @@ bool TechnosoftIpos::getEncoderRaw(int j, double * v)
     CHECK_JOINT(j);
     std::int32_t temp = vars.lastEncoderRead.queryPosition();
     *v = vars.internalUnitsToDegrees(temp);
-    return true;
+    return vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED;
 }
 
 // -----------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ bool TechnosoftIpos::getEncoderSpeedRaw(int j, double * sp)
     CHECK_JOINT(j);
     double temp = vars.lastEncoderRead.querySpeed();
     *sp = vars.internalUnitsToDegrees(temp, 1);
-    return true;
+    return vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED;
 }
 
 // -----------------------------------------------------------------------------------
@@ -102,7 +102,7 @@ bool TechnosoftIpos::getEncoderAccelerationRaw(int j, double * acc)
     CHECK_JOINT(j);
     double temp = vars.lastEncoderRead.queryAcceleration();
     *acc = vars.internalUnitsToDegrees(temp, 2);
-    return true;
+    return vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED;
 }
 
 // -----------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ bool TechnosoftIpos::getEncoderTimedRaw(int j, double * enc, double * time)
     std::int32_t temp = vars.lastEncoderRead.queryPosition();
     *enc = vars.internalUnitsToDegrees(temp);
     *time = vars.lastEncoderRead.queryTime();
-    return true;
+    return vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED;
 }
 
 // -----------------------------------------------------------------------------------
