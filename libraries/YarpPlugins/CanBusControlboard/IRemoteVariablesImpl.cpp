@@ -14,36 +14,54 @@ bool CanBusControlboard::getRemoteVariable(std::string key, yarp::os::Bottle & v
 {
     CD_DEBUG("%s\n", key.c_str());
 
+    bool queryAll = key == "all";
     val.clear();
 
     for (const auto & t : deviceMapper.getDevicesWithOffsets())
     {
         auto * iCanBusSharer = std::get<0>(t)->castToType<ICanBusSharer>();
+        yarp::os::Bottle & nodeVal = queryAll ? val.addList() : val;
 
-        if (key == "id" + std::to_string(iCanBusSharer->getId()))
+        if (queryAll || key == "id" + std::to_string(iCanBusSharer->getId()))
         {
             auto * p = std::get<0>(t)->getHandle<yarp::dev::IRemoteVariablesRaw>();
             yarp::os::Bottle b;
 
             if (p && p->getRemoteVariablesListRaw(&b))
             {
+                nodeVal.addString("id" + std::to_string(iCanBusSharer->getId()));
                 bool ok = true;
 
                 for (int j = 0; j < b.size(); j++)
                 {
-                    ok &= p->getRemoteVariableRaw(b.get(j).asString(), val.addList());
+                    ok &= p->getRemoteVariableRaw(b.get(j).asString(), nodeVal.addList());
                 }
 
-                return ok;
+                if (!queryAll)
+                {
+                    return ok;
+                }
             }
 
-            CD_ERROR("Unsupported interface or failed query: \"%s\".\n", key.c_str());
-            return false;
+            if (!queryAll)
+            {
+                CD_ERROR("Unsupported interface: \"%s\".\n", key.c_str());
+                return false;
+            }
+            else if (!p)
+            {
+                CD_WARNING("Unsupported interface: \"id%d\".\n", iCanBusSharer->getId());
+            }
         }
     }
 
-    CD_ERROR("Node \"%s\" not found.\n", key.c_str());
-    return false;
+    if (!queryAll)
+    {
+        CD_ERROR("Node \"%s\" not found, type e.g. \"id19\" or \"all\".\n", key.c_str());
+        return false;
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
