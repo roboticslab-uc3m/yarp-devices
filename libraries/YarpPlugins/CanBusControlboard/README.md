@@ -1,4 +1,4 @@
-# YarpOpenraveGrabber
+# CanBusControlboard
 
 This device offers a custom way of interfacing with wrapped raw subdevices through [`yarp::dev::IRemoteVariables`](http://www.yarp.it/devel/classyarp_1_1dev_1_1IRemoteVariables.html). The exact output of the following command examples depends on the implementation of the subdevice. Variables `linInterp` and `csv` presented in the examples below are provided by the `TechnosoftIpos` device and parsed in the corresponding implementation of the `yarp::dev::IRemoteVariablesRaw` interface. Here, `linInterp` expects a dictionary (a list of lists), and `csv` parses a single-key-value-paired list.
 
