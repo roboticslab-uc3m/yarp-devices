@@ -110,10 +110,23 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     case VOCAB_CM_VELOCITY:
         vars.synchronousCommandTarget = 0.0;
 
-        return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-                && can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x60FF))
-                && can->sdo()->download<std::int8_t>("Modes of Operation", 3, 0x6060)
-                && vars.awaitControlMode(mode);
+        if (vars.enableCsv)
+        {
+            return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
+                    && can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x607A))
+                    && can->sdo()->download<std::uint8_t>("Interpolation time period", vars.syncPeriod * 1000, 0x60C2, 0x01)
+                    && can->sdo()->download<std::int8_t>("Interpolation time period", -3, 0x60C2, 0x02)
+                    && can->sdo()->download<std::int8_t>("Modes of Operation", 8, 0x6060)
+                    && can->driveStatus()->controlword(can->driveStatus()->controlword().set(6)) // relative position mode
+                    && vars.awaitControlMode(mode);
+        }
+        else
+        {
+            return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
+                    && can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x60FF))
+                    && can->sdo()->download<std::int8_t>("Modes of Operation", 3, 0x6060)
+                    && vars.awaitControlMode(mode);
+        }
 
     case VOCAB_CM_CURRENT:
     case VOCAB_CM_TORQUE:

@@ -19,7 +19,7 @@ bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
     if (std::abs(sp) > vars.maxVel)
     {
         CD_WARNING("Requested speed exceeds maximum velocity (%f).\n", vars.maxVel.load());
-        return false;
+        sp = std::min<double>(vars.maxVel, std::max<double>(-vars.maxVel, sp));
     }
 
     // reset halt bit

@@ -133,6 +133,8 @@ struct StateVariables
 
     std::atomic<double> synchronousCommandTarget {0.0};
 
+    std::atomic<bool> enableCsv {false};
+
     // read only, conceptually immutable
 
     yarp::conf::vocab32_t initialMode {0};

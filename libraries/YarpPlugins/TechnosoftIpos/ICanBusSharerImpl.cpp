@@ -191,14 +191,23 @@ bool TechnosoftIpos::synchronize()
     {
     case VOCAB_CM_VELOCITY:
     {
-        double value = vars.degreesToInternalUnits(vars.synchronousCommandTarget, 1);
+        if (vars.enableCsv)
+        {
+            double value = vars.synchronousCommandTarget * vars.syncPeriod;
+            std::int32_t data = vars.degreesToInternalUnits(value);
+            return can->rpdo3()->write(data);
+        }
+        else
+        {
+            double value = vars.degreesToInternalUnits(vars.synchronousCommandTarget, 1);
 
-        std::int16_t dataInt;
-        std::uint16_t dataFrac;
-        CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
+            std::int16_t dataInt;
+            std::uint16_t dataFrac;
+            CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
 
-        std::int32_t data = (dataInt << 16) + dataFrac;
-        return can->rpdo3()->write(data);
+            std::int32_t data = (dataInt << 16) + dataFrac;
+            return can->rpdo3()->write(data);
+        }
     }
     case VOCAB_CM_TORQUE:
     {
