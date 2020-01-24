@@ -67,7 +67,7 @@ private:
 struct StateVariables
 {
     //! Make sure stored variables actually make sense.
-    bool validateInitialState(unsigned int canId);
+    bool validateInitialState();
 
     //! Wait with timeout for requested control mode change.
     bool awaitControlMode(yarp::conf::vocab32_t mode);
@@ -92,6 +92,9 @@ struct StateVariables
 
     //! Convert torque (Nm) to current (amperes).
     double torqueToCurrent(double torque) const;
+
+    //! Clip travelled distance according to the maximum velocity allowed.
+    double clipSyncPositionTarget();
 
     //! Reset internal state.
     void reset();
@@ -132,6 +135,7 @@ struct StateVariables
     std::atomic<std::uint8_t> lastNmtState {0};
 
     std::atomic<double> synchronousCommandTarget {0.0};
+    std::atomic<double> prevSyncTarget {0.0};
 
     std::atomic<bool> enableCsv {false};
 
@@ -153,6 +157,8 @@ struct StateVariables
 
     double heartbeatPeriod {0.0};
     double syncPeriod {0.0};
+
+    unsigned int canId = 0;
 };
 
 } // namespace roboticslab

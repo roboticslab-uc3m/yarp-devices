@@ -39,7 +39,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     yarp::os::Bottle & gearboxGroup = robotConfig->findGroup(iposGroup.find("gearbox").asString());
     yarp::os::Bottle & encoderGroup = robotConfig->findGroup(iposGroup.find("encoder").asString());
 
-    int canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32(); // id-specific
+    vars.canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32(); // id-specific
 
     vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
 
@@ -61,7 +61,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     vars.syncPeriod = iposGroup.check("syncPeriod", yarp::os::Value(0.0), "SYNC message period (seconds)").asFloat64();
     vars.initialMode = iposGroup.check("initialMode", yarp::os::Value(VOCAB_CM_IDLE), "initial YARP control mode vocab").asVocab();
 
-    if (!vars.validateInitialState(canId))
+    if (!vars.validateInitialState())
     {
         CD_ERROR("Invalid configuration parameters.\n");
         return false;
@@ -109,7 +109,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     double monitorPeriod = iposGroup.check("monitorPeriod", yarp::os::Value(DEFAULT_MONITOR_PERIOD),
             "monitor thread period (seconds)").asFloat64();
 
-    can = new CanOpenNode(canId, sdoTimeout, driveStateTimeout);
+    can = new CanOpenNode(vars.canId, sdoTimeout, driveStateTimeout);
 
     PdoConfiguration tpdo1Conf;
 

@@ -147,6 +147,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         }
 
         vars.synchronousCommandTarget = vars.internalUnitsToDegrees(vars.lastEncoderRead.queryPosition());
+        vars.prevSyncTarget.store(vars.synchronousCommandTarget);
 
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
                 && can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x607A))

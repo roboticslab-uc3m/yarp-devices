@@ -111,7 +111,7 @@ double EncoderRead::queryTime() const
 
 // -----------------------------------------------------------------------------
 
-bool StateVariables::validateInitialState(unsigned int canId)
+bool StateVariables::validateInitialState()
 {
     if (actualControlMode == 0)
     {
@@ -231,6 +231,27 @@ bool StateVariables::validateInitialState(unsigned int canId)
 
 // -----------------------------------------------------------------------------
 
+double StateVariables::clipSyncPositionTarget()
+{
+    double requested = synchronousCommandTarget;
+    double previous = prevSyncTarget;
+    double diff = requested - previous;
+
+    if (std::abs(diff) > maxVel * syncPeriod)
+    {
+        CD_WARNING("Maximum velocity exceeded, clipping target position (canId: %d).\n", canId);
+        double newTarget = previous + maxVel * syncPeriod * sgn(diff);
+        prevSyncTarget = newTarget;
+        return newTarget;
+    }
+    else
+    {
+        return requested;
+    }
+}
+
+// -----------------------------------------------------------------------------
+
 void StateVariables::reset()
 {
     msr = mer = der = der2 = cer = ptStatus = 0;
@@ -240,7 +261,7 @@ void StateVariables::reset()
     lastCurrentRead = 0.0;
 
     requestedcontrolMode = 0;
-    synchronousCommandTarget = 0.0;
+    synchronousCommandTarget = prevSyncTarget = 0.0;
 }
 
 // -----------------------------------------------------------------------------

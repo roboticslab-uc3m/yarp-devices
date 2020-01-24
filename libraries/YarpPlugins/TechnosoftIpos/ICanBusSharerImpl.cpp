@@ -227,9 +227,12 @@ bool TechnosoftIpos::synchronize()
             std::uint64_t data = linInterpBuffer->makeDataRecord(vars.synchronousCommandTarget);
             return can->rpdo3()->write(data);
         }
-
-        std::int32_t data = vars.degreesToInternalUnits(vars.synchronousCommandTarget);
-        return can->rpdo3()->write(data);
+        else
+        {
+            double value = vars.clipSyncPositionTarget();
+            std::int32_t data = vars.degreesToInternalUnits(value);
+            return can->rpdo3()->write(data);
+        }
     }
     default:
         return true;
