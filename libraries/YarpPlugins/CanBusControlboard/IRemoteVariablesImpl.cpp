@@ -76,26 +76,51 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
         return false;
     }
 
+    bool setAll = key == "all";
+    bool allOk = true;
+
     for (const auto & t : deviceMapper.getDevicesWithOffsets())
     {
         auto * iCanBusSharer = std::get<0>(t)->castToType<ICanBusSharer>();
 
-        if (key == "id" + std::to_string(iCanBusSharer->getId()))
+        if (setAll || key == "id" + std::to_string(iCanBusSharer->getId()))
         {
             auto * p = std::get<0>(t)->getHandle<yarp::dev::IRemoteVariablesRaw>();
 
-            if (p)
+            if (!p)
             {
-                return p->setRemoteVariableRaw(val.get(0).asString(), *val.get(1).asList());
-            }
+                if (!setAll)
+                {
+                    CD_ERROR("Unsupported interface: \"%s\".\n", key.c_str());
+                    return false;
+                }
 
-            CD_ERROR("Unsupported interface: \"%s\".\n", key.c_str());
-            return false;
+                CD_WARNING("Unsupported interface: \"id%d\".\n", iCanBusSharer->getId());
+            }
+            else if (!p->setRemoteVariableRaw(val.get(0).asString(), *val.get(1).asList()))
+            {
+                if (!setAll)
+                {
+                    return false;
+                }
+
+                CD_WARNING("Request failed: \"id%d\".\n", iCanBusSharer->getId());
+                allOk = false;
+            }
+            else if (!setAll)
+            {
+                return true;
+            }
         }
     }
 
-    CD_ERROR("Node \"%s\" not found.\n", key.c_str());
-    return false;
+    if (!setAll)
+    {
+        CD_ERROR("Node \"%s\" not found, type e.g. \"id19\" or \"all\".\n", key.c_str());
+        return false;
+    }
+
+    return allOk;
 }
 
 // -----------------------------------------------------------------------------
