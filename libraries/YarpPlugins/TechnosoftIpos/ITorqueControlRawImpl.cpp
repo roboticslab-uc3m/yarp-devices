@@ -53,7 +53,7 @@ bool TechnosoftIpos::getTorqueRaw(int j, double * t)
     std::int16_t temp = vars.lastCurrentRead;
     double curr = vars.internalUnitsToCurrent(temp);
     *t = vars.currentToTorque(curr);
-    return vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED;
+    return true;
 }
 
 // -------------------------------------------------------------------------------------
