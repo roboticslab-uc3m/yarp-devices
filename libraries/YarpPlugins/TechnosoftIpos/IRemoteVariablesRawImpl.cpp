@@ -19,23 +19,25 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
 
     if (key == "linInterp")
     {
+        yarp::os::Property & dict = val.addDict();
+
         if (!linInterpBuffer)
         {
-            val.addList().addInt8(false);
+            dict.put("enable", false);
             return true;
         }
 
-        yarp::os::Property config;
-        config.put("periodMs", linInterpBuffer->getPeriodMs());
-        config.put("bufferSize", linInterpBuffer->getBufferSize());
-        config.put("mode", linInterpBuffer->getType());
-
-        val.addList().fromString(config.toString());
+        dict.put("enable", true);
+        dict.put("periodMs", linInterpBuffer->getPeriodMs());
+        dict.put("bufferSize", linInterpBuffer->getBufferSize());
+        dict.put("mode", linInterpBuffer->getType());
         return true;
     }
     else if (key == "csv")
     {
-        val.addList().addInt8(vars.enableCsv);
+        yarp::os::Bottle & list = val.addList();
+        list.addString("enable");
+        list.addInt8(vars.enableCsv);
         return true;
     }
 
@@ -51,32 +53,66 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
 
     if (key == "linInterp")
     {
-        if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT)
+        if (val.size() == 0 || (!val.get(0).isDict() && !val.get(0).isList()))
         {
-            CD_ERROR("Currently in posd mode, cannot change config params right now (canId: %d).\n", can->getId());
+            CD_ERROR("Empty value or not a dict (canId: %d).\n", can->getId());
             return false;
         }
 
-        delete linInterpBuffer;
+        yarp::os::Searchable * dict;
 
-        if (val.size() != 0)
+        if (val.get(0).isDict())
         {
-            linInterpBuffer = LinearInterpolationBuffer::createBuffer(val, vars, can->getId());
-            return linInterpBuffer != nullptr;
+            dict = val.get(0).asDict(); // C++ API
+        }
+        else
+        {
+            dict = val.get(0).asList(); // CLI (RPC via terminal)
         }
 
-        CD_SUCCESS("Switched back to CSP mode (canId: %d).\n", can->getId());
+        if (!dict->check("enable"))
+        {
+            CD_ERROR("Missing \"enable\" option (canId: %d).\n", can->getId());
+            return false;
+        }
+
+        bool requested = dict->find("enable").asBool();
+
+        if (requested ^ !!linInterpBuffer)
+        {
+            if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT)
+            {
+                CD_ERROR("Currently in posd mode, cannot change config params right now (canId: %d).\n", can->getId());
+                return false;
+            }
+
+            if (requested)
+            {
+                linInterpBuffer = LinearInterpolationBuffer::createBuffer(val, vars, can->getId());
+                return linInterpBuffer != nullptr;
+            }
+            else
+            {
+                delete linInterpBuffer;
+                CD_SUCCESS("Switched back to CSP mode (canId: %d).\n", can->getId());
+            }
+        }
+        else
+        {
+            CD_WARNING("Linear interpolation mode already enabled/disabled (canId: %d).\n", can->getId());
+        }
+
         return true;
     }
     else if (key == "csv")
     {
-        if (val.size() != 1)
+        if (!val.check("enable"))
         {
-            CD_ERROR("One element required (true/false), %d given (canId: %d).\n", val.size(), can->getId());
+            CD_ERROR("Missing \"enable\" option (canId: %d).\n", can->getId());
             return false;
         }
 
-        bool requested = val.get(0).asBool();
+        bool requested = val.find("enable").asBool();
 
         if (requested ^ vars.enableCsv)
         {
