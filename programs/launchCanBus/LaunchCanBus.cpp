@@ -198,22 +198,22 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
     if (homing)
     {
-        if (calibratorDevices.size() == 0)
+        if (calibratorDevices.size() != 0)
         {
-            CD_ERROR("Homing procedure requested, but no calibrator devices loaded.\n");
-            return false;
-        }
-
-        for (int i = 0; i < calibratorDevices.size(); i++)
-        {
-            yarp::dev::IRemoteCalibrator * iRemoteCalibrator;
-            calibratorDevices[i]->poly->view(iRemoteCalibrator);
-
-            if (!iRemoteCalibrator->homingWholePart())
+            for (int i = 0; i < calibratorDevices.size(); i++)
             {
-                CD_ERROR("Homing procedure failed for calibrator id %d.\n", i);
-                return false;
+                yarp::dev::IRemoteCalibrator * iRemoteCalibrator;
+                calibratorDevices[i]->poly->view(iRemoteCalibrator);
+
+                if (!iRemoteCalibrator->homingWholePart())
+                {
+                    CD_WARNING("Homing procedure failed for calibrator id %d.\n", i);
+                }
             }
+        }
+        else
+        {
+            CD_WARNING("Homing procedure requested, but no calibrator devices loaded.\n");
         }
     }
 
