@@ -70,9 +70,41 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
 {
     CD_DEBUG("%s\n", key.c_str());
 
-    if (val.size() != 2 || !val.get(1).isList())
+    if (key == "multi")
     {
-        CD_ERROR("Illegal bottle format, expected single key-value list.\n");
+        bool ok = true;
+
+        for (int i = 0; i < val.size(); i++)
+        {
+            if (!val.get(i).isList())
+            {
+                CD_ERROR("Not a list: %s\n.\n", val.get(i).toString().c_str());
+                return false;
+            }
+
+            yarp::os::Bottle * b = val.get(i).asList();
+
+            if (b->size() != 2 || !b->get(0).isString() || !b->get(1).isList())
+            {
+                CD_ERROR("Illegal bottle format, expected string key and list value: %s.\n", b->toString().c_str());
+                return false;
+            }
+
+            if (b->get(0).asString() == "all")
+            {
+                CD_ERROR("Cannot set all node vars in multi mode.\n");
+                return false;
+            }
+
+            ok &= setRemoteVariable(b->get(0).asString(), *b->get(1).asList());
+        }
+
+        return ok;
+    }
+
+    if (val.size() != 2 || !val.get(0).isString() || !val.get(1).isList())
+    {
+        CD_ERROR("Illegal bottle format, expected string key and list value.\n");
         return false;
     }
 
