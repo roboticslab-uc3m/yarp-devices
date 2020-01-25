@@ -246,6 +246,7 @@ double StateVariables::clipSyncPositionTarget()
     }
     else
     {
+        prevSyncTarget.store(synchronousCommandTarget);
         return requested;
     }
 }
