@@ -286,9 +286,9 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
 
     reportBitToggle(report, INFO, 11, "Internal Limit Active.");
 
-    switch (vars.actualControlMode.load())
+    switch (vars.modesOfOperation)
     {
-    case VOCAB_CM_POSITION:
+    case 1:
         if (reportBitToggle(report, INFO, 12, "Trajectory generator will not accept a new set-point.",
                 "Trajectory generator will accept a new set-point.")
                 && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)))
@@ -297,11 +297,11 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
         }
         reportBitToggle(report, WARN, 13, "Following error.", "No following error.");
         break;
-    case VOCAB_CM_VELOCITY:
+    case 3:
         //reportBitToggle(report, INFO, 12, "Speed is equal to 0.", "Speed is not equal to 0."); // too verbose
         reportBitToggle(report, WARN, 13, "Maximum slippage reached.", "Maximum slippage not reached.");
         break;
-    case VOCAB_CM_POSITION_DIRECT:
+    case 7:
         reportBitToggle(report, INFO, 12, "Interpolated position mode active.", "Interpolated position mode inactive.");
         // 13: reserved
         break;
