@@ -137,6 +137,7 @@ struct StateVariables
     std::atomic<double> synchronousCommandTarget {0.0};
     std::atomic<double> prevSyncTarget {0.0};
 
+    std::atomic<bool> enableSync {false};
     std::atomic<bool> enableCsv {false};
 
     // read only, conceptually immutable

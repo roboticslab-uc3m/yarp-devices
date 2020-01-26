@@ -187,6 +187,11 @@ bool TechnosoftIpos::notifyMessage(const can_message & message)
 
 bool TechnosoftIpos::synchronize()
 {
+    if (!vars.enableSync)
+    {
+        return true;
+    }
+
     switch (vars.actualControlMode.load())
     {
     case VOCAB_CM_VELOCITY:

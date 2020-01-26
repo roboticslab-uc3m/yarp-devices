@@ -84,17 +84,24 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     CHECK_JOINT(j);
 
     vars.requestedcontrolMode = mode;
+    bool extRefTorque = vars.actualControlMode == VOCAB_CM_TORQUE || vars.actualControlMode == VOCAB_CM_CURRENT;
 
-    if (mode == vars.actualControlMode
-        || (mode == VOCAB_CM_CURRENT && vars.actualControlMode == VOCAB_CM_TORQUE)
-        || (mode == VOCAB_CM_TORQUE && vars.actualControlMode == VOCAB_CM_CURRENT))
+    if (mode == vars.actualControlMode || extRefTorque && (mode == VOCAB_CM_CURRENT || mode == VOCAB_CM_TORQUE))
     {
         vars.actualControlMode.store(vars.requestedcontrolMode.load()); // disambiguate torque/current modes
         return true;
     }
 
+    vars.enableSync = false;
+
     // reset mode-specific bits (4-6) and halt bit (8)
     if (!can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4).reset(5).reset(6).reset(8)))
+    {
+        return false;
+    }
+
+    // before leaving external reference torque mode, go back to "switched on" state
+    if (extRefTorque && !can->driveStatus()->requestState(DriveState::SWITCHED_ON))
     {
         return false;
     }
@@ -103,6 +110,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     {
     case VOCAB_CM_POSITION:
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
+                && can->sdo()->download<std::int32_t>("Target position", vars.lastEncoderRead.queryPosition(), 0x607A)
                 && can->sdo()->download<std::int8_t>("Modes of Operation", 1, 0x6060)
                 && can->driveStatus()->controlword(can->driveStatus()->controlword().set(5)) // change set immediately
                 && vars.awaitControlMode(mode);
@@ -144,6 +152,14 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         {
             // TODO: https://github.com/roboticslab-uc3m/yarp-devices/issues/222#issuecomment-575092455
             return false; //setLegacyPositionInterpolationMode();
+        }
+
+        // switch to position profile mode first when in velocity profile mode
+        if (vars.actualControlMode == VOCAB_CM_VELOCITY && !vars.enableCsv
+                && (!can->sdo()->download<std::int8_t>("Modes of Operation", 1, 0x6060)
+                    || !vars.awaitControlMode(VOCAB_CM_POSITION)))
+        {
+            return false;
         }
 
         vars.synchronousCommandTarget = vars.internalUnitsToDegrees(vars.lastEncoderRead.queryPosition());

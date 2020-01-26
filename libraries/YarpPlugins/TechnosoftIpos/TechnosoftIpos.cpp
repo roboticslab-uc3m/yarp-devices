@@ -328,6 +328,7 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
     case -5:
         CD_INFO("iPOS specific: External Reference Torque Mode. canId: %d.\n", can->getId());
         vars.actualControlMode = vars.requestedcontrolMode == VOCAB_CM_TORQUE ? VOCAB_CM_TORQUE : VOCAB_CM_CURRENT;
+        vars.enableSync = true;
         break;
     case 1:
         CD_INFO("Profile Position Mode. canId: %d.\n", can->getId());
@@ -336,14 +337,17 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
     case 3:
         CD_INFO("Profile Velocity Mode. canId: %d.\n", can->getId());
         vars.actualControlMode = vars.enableCsv ? VOCAB_CM_UNKNOWN : VOCAB_CM_VELOCITY;
+        vars.enableSync = !vars.enableCsv;
         break;
     case 7:
         CD_INFO("Interpolated Position Mode. canId: %d.\n", can->getId());
         vars.actualControlMode = VOCAB_CM_POSITION_DIRECT;
+        vars.enableSync = true;
         break;
     case 8:
         CD_INFO("Cyclic Synchronous Position Mode. canId: %d.\n", can->getId());
         vars.actualControlMode = vars.enableCsv ? VOCAB_CM_VELOCITY : VOCAB_CM_POSITION_DIRECT;
+        vars.enableSync = true;
         break;
     // unhandled
     case -4:

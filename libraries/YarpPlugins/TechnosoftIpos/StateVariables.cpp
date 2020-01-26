@@ -263,6 +263,7 @@ void StateVariables::reset()
 
     requestedcontrolMode = 0;
     synchronousCommandTarget = prevSyncTarget = 0.0;
+    enableSync = false;
 }
 
 // -----------------------------------------------------------------------------
