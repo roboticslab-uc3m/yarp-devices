@@ -157,7 +157,8 @@ void CanWriterThread::flush()
     //-- Write as many bytes as possible, return false on errors.
     if (!iCanBus->canWrite(canBuffer, preparedMessages, &sent))
     {
-        //-- Something bad happened, try again on the next call.
+        //-- Something bad happened, abort queue and start anew.
+        preparedMessages = 0;
         return;
     }
 
