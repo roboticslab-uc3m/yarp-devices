@@ -7,6 +7,7 @@
 #include <algorithm> // std::find_if
 
 #include <yarp/os/Time.h>
+#include <yarp/os/Vocab.h>
 
 #include <ColorDebug.h>
 
@@ -107,25 +108,36 @@ bool TechnosoftIpos::initialize()
 
     double extEnc;
 
-    return vars.configuredOnce
-        && (!iExternalEncoderCanBusSharer || iExternalEncoderCanBusSharer->initialize())
-        && setLimitsRaw(0, vars.min, vars.max)
-        && setRefSpeedRaw(0, vars.refSpeed)
-        && setRefAccelerationRaw(0, vars.refAcceleration)
+    if (!vars.configuredOnce
+        || (iExternalEncoderCanBusSharer && !iExternalEncoderCanBusSharer->initialize())
+        || !setLimitsRaw(0, vars.min, vars.max)
+        || !setRefSpeedRaw(0, vars.refSpeed)
+        || !setRefAccelerationRaw(0, vars.refAcceleration)
         // synchronize absolute (master) and relative (slave) encoders
-        && (!iEncodersTimedRawExternal || (iEncodersTimedRawExternal->getEncodersRaw(&extEnc) && setEncoderRaw(0, extEnc)))
-        && can->tpdo1()->configure(vars.tpdo1Conf)
-        && can->tpdo2()->configure(vars.tpdo2Conf)
-        && can->tpdo3()->configure(vars.tpdo3Conf)
-        && can->sdo()->download<std::uint16_t>("Producer Heartbeat Time", vars.heartbeatPeriod * 1000, 0x1017)
-        && (vars.lastHeartbeat = yarp::os::Time::now(), true)
-        && (vars.actualControlMode = VOCAB_CM_CONFIGURED, true)
-        && can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE)
-        && (can->driveStatus()->getCurrentState() != DriveState::NOT_READY_TO_SWITCH_ON
-            || can->driveStatus()->awaitState(DriveState::SWITCH_ON_DISABLED))
-        && can->driveStatus()->requestState(DriveState::SWITCHED_ON)
-        && (vars.actualControlMode = VOCAB_CM_IDLE, true)
-        && setControlModeRaw(0, vars.initialMode);
+        || (iEncodersTimedRawExternal && (!iEncodersTimedRawExternal->getEncodersRaw(&extEnc) || !setEncoderRaw(0, extEnc)))
+        || !can->tpdo1()->configure(vars.tpdo1Conf)
+        || !can->tpdo2()->configure(vars.tpdo2Conf)
+        || !can->tpdo3()->configure(vars.tpdo3Conf)
+        || !can->sdo()->download<std::uint16_t>("Producer Heartbeat Time", vars.heartbeatPeriod * 1000, 0x1017)
+        || !can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE)
+        || (can->driveStatus()->getCurrentState() == DriveState::NOT_READY_TO_SWITCH_ON
+            && !can->driveStatus()->awaitState(DriveState::SWITCH_ON_DISABLED)))
+    {
+        CD_ERROR("Initial SDO configuration and/or node start failed (canId: %d).\n", can->getId());
+        return false;
+    }
+
+    vars.lastHeartbeat = yarp::os::Time::now();
+    vars.actualControlMode = VOCAB_CM_CONFIGURED;
+
+    if (!can->driveStatus()->requestState(DriveState::SWITCHED_ON)
+            || !vars.awaitControlMode(VOCAB_CM_IDLE)
+            || !setControlModeRaw(0, vars.initialMode))
+    {
+        CD_WARNING("Initial drive state transitions failed (canId: %d).\n", can->getId());
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
