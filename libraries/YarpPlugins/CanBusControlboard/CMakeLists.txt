@@ -42,6 +42,8 @@ if(NOT SKIP_CanBusControlboard)
                                        CanRxTxThreads.cpp
                                        SdoReplier.hpp
                                        SdoReplier.cpp
+                                       BusLoadMonitor.hpp
+                                       BusLoadMonitor.cpp
                                        YarpCanSenderDelegate.hpp
                                        YarpCanSenderDelegate.cpp)
 
