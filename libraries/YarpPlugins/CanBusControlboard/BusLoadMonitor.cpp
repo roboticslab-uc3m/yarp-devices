@@ -2,15 +2,18 @@
 
 #include "BusLoadMonitor.hpp"
 
+#include <cmath>
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
 namespace
 {
-    unsigned long computeLength(const can_message & frame)
+    inline unsigned long computeLength(unsigned int len)
     {
-        return 0;
+        // 44-bit base frame + 3-bit intermission field + stuff bits, see https://w.wiki/GDt
+        return 8 * len + 44 + std::floor((34 + 8 * len - 1) / 4.0) + 3;
     }
 }
 
@@ -18,7 +21,7 @@ namespace
 
 bool BusLoadMonitor::notifyMessage(const can_message & msg)
 {
-    bits += computeLength(msg);
+    bits += computeLength(msg.len);
     return true;
 }
 
@@ -26,7 +29,7 @@ bool BusLoadMonitor::notifyMessage(const can_message & msg)
 
 void BusLoadMonitor::run()
 {
-    double rate = bits.exchange(0) / yarp::os::PeriodicThread::getPeriod();
+    double rate = bits.exchange(0) / getPeriod();
     prepare().addFloat64(rate / bitrate);
     write();
 }
