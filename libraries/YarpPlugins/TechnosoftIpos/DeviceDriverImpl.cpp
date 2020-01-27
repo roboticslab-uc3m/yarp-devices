@@ -106,8 +106,6 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
             "CAN SDO timeout (seconds)").asFloat64();
     double driveStateTimeout = iposGroup.check("driveStateTimeout", yarp::os::Value(DEFAULT_DRIVE_STATE_TIMEOUT),
             "CAN drive state timeout (seconds)").asFloat64();
-    double monitorPeriod = iposGroup.check("monitorPeriod", yarp::os::Value(DEFAULT_MONITOR_PERIOD),
-            "monitor thread period (seconds)").asFloat64();
 
     can = new CanOpenNode(vars.canId, sdoTimeout, driveStateTimeout);
 
@@ -163,9 +161,13 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     can->nmt()->registerHandler(std::bind(&TechnosoftIpos::handleNmt, this, _1));
 
-    monitorThread = new yarp::os::Timer(yarp::os::TimerSettings(monitorPeriod), std::bind(&TechnosoftIpos::monitorWorker, this, _1), true);
+    if (iposGroup.check("monitorPeriod", "monitor thread period (seconds)"))
+    {
+        double monitorPeriod = iposGroup.find("monitorPeriod").asFloat64();
+        monitorThread = new yarp::os::Timer(yarp::os::TimerSettings(monitorPeriod), std::bind(&TechnosoftIpos::monitorWorker, this, _1), true);
+    }
 
-    return monitorThread->start();
+    return !monitorThread || monitorThread->start();
 }
 
 // -----------------------------------------------------------------------------
