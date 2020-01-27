@@ -100,8 +100,8 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         return false;
     }
 
-    // before leaving external reference torque mode, go back to "switched on" state
-    if (extRefTorque && !can->driveStatus()->requestState(DriveState::SWITCHED_ON))
+    // bug in F508M/F509M firmware, switch to homing mode to stop controlling external reference torque
+    if (extRefTorque && !can->sdo()->download<std::int8_t>("Modes of Operation", 6, 0x6060))
     {
         return false;
     }
@@ -154,10 +154,9 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
             return false; //setLegacyPositionInterpolationMode();
         }
 
-        // switch to position profile mode first when in velocity profile mode
+        // bug in F508M/F509M firmware, switch to homing mode to stop controlling profile velocity
         if (vars.actualControlMode == VOCAB_CM_VELOCITY && !vars.enableCsv
-                && (!can->sdo()->download<std::int8_t>("Modes of Operation", 1, 0x6060)
-                    || !vars.awaitControlMode(VOCAB_CM_POSITION)))
+                && !can->sdo()->download<std::int8_t>("Modes of Operation", 6, 0x6060))
         {
             return false;
         }
