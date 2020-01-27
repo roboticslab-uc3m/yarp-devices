@@ -257,9 +257,7 @@ bool CanBusBroker::stopThreads()
 {
     sendPort.interrupt();
     commandReader.disableCallback();
-    dumpPort.interrupt();
     sdoPort.interrupt();
-    busLoadPort.interrupt();
 
     if (busLoadMonitor && busLoadMonitor->isRunning())
     {
@@ -279,6 +277,10 @@ bool CanBusBroker::stopThreads()
         CD_WARNING("Cannot stop writer thread.\n");
         ok = false;
     }
+
+    // keep out ports last to avoid deadlock (happened sometimes with dumpPort)
+    dumpPort.interrupt();
+    busLoadPort.interrupt();
 
     return ok;
 }
