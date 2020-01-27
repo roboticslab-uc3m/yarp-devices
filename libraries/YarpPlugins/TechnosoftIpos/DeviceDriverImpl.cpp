@@ -174,6 +174,9 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
 bool TechnosoftIpos::close()
 {
+    // we need to do this in finalize(), too, since the monitor thread could be
+    // still requesting CAN transfers even after CAN RX/TX threads have been
+    // closed in CanBusControlboard::close()
     if (monitorThread && monitorThread->isRunning())
     {
         monitorThread->stop();

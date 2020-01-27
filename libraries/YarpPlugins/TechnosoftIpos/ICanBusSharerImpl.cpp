@@ -144,6 +144,11 @@ bool TechnosoftIpos::initialize()
 
 bool TechnosoftIpos::finalize()
 {
+    if (monitorThread && monitorThread->isRunning())
+    {
+        monitorThread->stop();
+    }
+
     bool ok = true;
 
     if (vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED)
