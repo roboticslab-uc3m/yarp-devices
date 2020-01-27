@@ -16,22 +16,41 @@ namespace roboticslab
 
 /**
  * @ingroup CanBusControlboard
+ * @brief Registers load statistics per single CAN bus.
+ */
+class OneWayMonitor : public CanMessageNotifier
+{
+public:
+    //! Tell observers a new CAN message has arrived.
+    virtual bool notifyMessage(const can_message & msg) override;
+
+    //! Return stored value and clear counter.
+    unsigned int reset();
+
+private:
+    std::atomic<unsigned int> bits;
+};
+
+/**
+ * @ingroup CanBusControlboard
  * @brief Periodically sends CAN bus load stats through a YARP port.
  */
 class BusLoadMonitor final : public yarp::os::PeriodicThread,
-                             public yarp::os::PortWriterBuffer<yarp::os::Bottle>,
-                             public CanMessageNotifier
+                             public yarp::os::PortWriterBuffer<yarp::os::Bottle>
 {
 public:
     //! Constructor.
     BusLoadMonitor(double period) : yarp::os::PeriodicThread(period), bitrate(1.0)
     { }
 
-    //! Tell observers a new CAN message has arrived.
-    virtual bool notifyMessage(const can_message & msg) override;
-
     void setBitrate(unsigned int bitrate)
     { this->bitrate = bitrate; }
+
+    CanMessageNotifier * getReadMonitor()
+    { return &readMonitor; }
+
+    CanMessageNotifier * getWriteMonitor()
+    { return &writeMonitor; }
 
 protected:
     //! The thread will invoke this periodically.
@@ -39,7 +58,9 @@ protected:
 
 private:
     unsigned int bitrate;
-    std::atomic<unsigned long> bits;
+
+    OneWayMonitor readMonitor;
+    OneWayMonitor writeMonitor;
 };
 
 } // namespace roboticslab

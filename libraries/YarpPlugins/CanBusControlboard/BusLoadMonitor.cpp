@@ -19,7 +19,7 @@ namespace
 
 // -----------------------------------------------------------------------------
 
-bool BusLoadMonitor::notifyMessage(const can_message & msg)
+bool OneWayMonitor::notifyMessage(const can_message & msg)
 {
     bits += computeLength(msg.len);
     return true;
@@ -27,12 +27,27 @@ bool BusLoadMonitor::notifyMessage(const can_message & msg)
 
 // -----------------------------------------------------------------------------
 
+unsigned int OneWayMonitor::reset()
+{
+    return bits.exchange(0);
+}
+
+// -----------------------------------------------------------------------------
+
 void BusLoadMonitor::run()
 {
-    double rate = bits.exchange(0) / getPeriod();
+    unsigned int readBits = readMonitor.reset();
+    unsigned int writtenBits = writeMonitor.reset();
+    unsigned int overallBits = readBits + writtenBits;
+
+    double limit = bitrate * getPeriod(); // bits per each thread step
+
     auto & b = prepare();
     b.clear();
-    b.addFloat64(rate / bitrate);
+    b.addFloat64(readBits / limit);
+    b.addFloat64(writtenBits / limit);
+    b.addFloat64(overallBits / limit);
+
     write();
 }
 
