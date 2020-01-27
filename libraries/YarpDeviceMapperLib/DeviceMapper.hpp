@@ -177,14 +177,15 @@ public:
     bool mapAllJoints(full_mapping_fn<T, T_refs...> fn, T_refs *... refs)
     {
         auto task = createTask();
-        bool ok = true;
+        bool ok = false;
 
         for (const auto & t : getDevicesWithOffsets())
         {
             T * p = std::get<0>(t)->getHandle<T>();
-            ok &= p && (task->add(p, fn, refs + std::get<1>(t)...), true);
+            ok |= p && (task->add(p, fn, refs + std::get<1>(t)...), true);
         }
 
+        // at least one targeted device must implement the 'T' iface
         return ok && task->dispatch();
     }
 
@@ -206,6 +207,7 @@ public:
             ok &= p && (task->add(p, fn, std::get<1>(t).size(), std::get<1>(t).data(), refs + std::get<2>(t)...), true);
         }
 
+        // all targeted devices must implement the 'T' iface
         return ok && task->dispatch();
     }
 
