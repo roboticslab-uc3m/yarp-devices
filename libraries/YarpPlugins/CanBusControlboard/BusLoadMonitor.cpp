@@ -30,7 +30,9 @@ bool BusLoadMonitor::notifyMessage(const can_message & msg)
 void BusLoadMonitor::run()
 {
     double rate = bits.exchange(0) / getPeriod();
-    prepare().addFloat64(rate / bitrate);
+    auto & b = prepare();
+    b.clear();
+    b.addFloat64(rate / bitrate);
     write();
 }
 
