@@ -18,7 +18,8 @@ CanBusBroker::CanBusBroker(const std::string & _name)
       writerThread(nullptr),
       iCanBus(nullptr),
       iCanBusErrors(nullptr),
-      iCanBufferFactory(nullptr)
+      iCanBufferFactory(nullptr),
+      busLoadMonitor(nullptr)
 { }
 
 // -----------------------------------------------------------------------------
@@ -30,7 +31,9 @@ CanBusBroker::~CanBusBroker()
     dumpPort.close();
     sendPort.close();
     sdoPort.close();
+    busLoadPort.close();
 
+    delete busLoadMonitor;
     delete readerThread;
     delete writerThread;
 }
@@ -49,6 +52,19 @@ bool CanBusBroker::configure(const yarp::os::Searchable & config)
     {
         CD_WARNING("Illegal CAN bus buffer size or delay options.\n");
         return false;
+    }
+
+    if (config.check("busLoadPeriod", "CAN bus load monitor period (seconds)"))
+    {
+        double busLoadPeriod = config.find("busLoadPeriod").asFloat64();
+
+        if (busLoadPeriod <= 0.0)
+        {
+            CD_WARNING("Illegal CAN bus load monitor option period: %f.\n", busLoadPeriod);
+            return false;
+        }
+
+        busLoadMonitor = new BusLoadMonitor(busLoadPeriod);
     }
 
     readerThread = new CanReaderThread(name, rxDelay, rxBufferSize);
@@ -119,15 +135,23 @@ bool CanBusBroker::createPorts(const std::string & prefix)
         return false;
     }
 
+    if (busLoadMonitor && !busLoadPort.open(prefix + "/load:o"))
+    {
+        CD_WARNING("Cannot open bus load port.\n");
+        return false;
+    }
+
     if (readerThread)
     {
         readerThread->attachDumpWriter(&dumpWriter, &dumpMutex);
         readerThread->attachCanNotifier(&sdoReplier);
+        readerThread->attachBusLoadMonitor(busLoadMonitor);
     }
 
     if (writerThread)
     {
         writerThread->attachDumpWriter(&dumpWriter, &dumpMutex);
+        writerThread->attachBusLoadMonitor(busLoadMonitor);
         sdoReplier.configureSender(writerThread->getDelegate());
     }
 
@@ -139,6 +163,12 @@ bool CanBusBroker::createPorts(const std::string & prefix)
     commandReader.useCallback(*this);
 
     sdoPort.setReader(sdoReplier);
+
+    if (busLoadMonitor)
+    {
+        busLoadPort.setInputMode(false);
+        busLoadMonitor->attach(busLoadPort);
+    }
 
     return true;
 }
@@ -187,6 +217,12 @@ bool CanBusBroker::clearFilters()
 
 bool CanBusBroker::startThreads()
 {
+    if (busLoadMonitor && !busLoadMonitor->start())
+    {
+        CD_WARNING("Cannot start bus load monitor thread.\n");
+        return false;
+    }
+
     if (!readerThread || !readerThread->start())
     {
         CD_WARNING("Cannot start reader thread.\n");
@@ -210,6 +246,12 @@ bool CanBusBroker::stopThreads()
     commandReader.disableCallback();
     dumpPort.interrupt();
     sdoPort.interrupt();
+    busLoadPort.interrupt();
+
+    if (busLoadMonitor && busLoadMonitor->isRunning())
+    {
+        busLoadMonitor->stop();
+    }
 
     bool ok = true;
 

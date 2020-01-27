@@ -19,6 +19,7 @@
 
 #include "CanRxTxThreads.hpp"
 #include "SdoReplier.hpp"
+#include "BusLoadMonitor.hpp"
 
 namespace roboticslab
 {
@@ -99,6 +100,9 @@ private:
 
     yarp::os::RpcServer sdoPort;
     SdoReplier sdoReplier;
+
+    yarp::os::Port busLoadPort;
+    BusLoadMonitor * busLoadMonitor;
 };
 
 } // namespace roboticslab

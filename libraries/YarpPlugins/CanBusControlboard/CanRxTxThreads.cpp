@@ -36,21 +36,21 @@ void CanReaderWriterThread::onStop()
 
 // -----------------------------------------------------------------------------
 
-void CanReaderWriterThread::dumpMessage(const yarp::dev::CanMessage & msg)
+void CanReaderWriterThread::dumpMessage(const can_message & msg)
 {
     std::lock_guard<std::mutex> lock(*dumpMutex);
 
     yarp::os::Bottle & b = dumpWriter->prepare();
     b.clear();
-    b.addInt16(msg.getId());
+    b.addInt16(msg.id);
 
-    if (msg.getLen() != 0)
+    if (msg.len != 0)
     {
         yarp::os::Bottle & data = b.addList();
 
-        for (int j = 0; j < msg.getLen(); j++)
+        for (int j = 0; j < msg.len; j++)
         {
-            data.addInt8(msg.getData()[j]);
+            data.addInt8(msg.data[j]);
         }
     }
 
@@ -97,12 +97,12 @@ void CanReaderThread::run()
 
         for (int i = 0; i < read; i++)
         {
-            const yarp::dev::CanMessage & msg = canBuffer[i];
-            auto it = canIdToHandle.find(msg.getId() & 0x7F);
+            can_message msg {canBuffer[i].getId(), canBuffer[i].getLen(), canBuffer[i].getData()};
+            auto it = canIdToHandle.find(msg.id & 0x7F);
 
             if (it != canIdToHandle.end())
             {
-                it->second->notifyMessage({msg.getId(), msg.getLen(), msg.getData()});
+                it->second->notifyMessage(msg);
             }
 
             if (dumpWriter)
@@ -112,7 +112,12 @@ void CanReaderThread::run()
 
             if (canMessageNotifier)
             {
-                canMessageNotifier->notifyMessage({msg.getId(), msg.getLen(), msg.getData()});
+                canMessageNotifier->notifyMessage(msg);
+            }
+
+            if (busLoadMonitor)
+            {
+                busLoadMonitor->notifyMessage(msg);
             }
         }
     }
@@ -162,11 +167,21 @@ void CanWriterThread::flush()
         return;
     }
 
-    if (dumpWriter)
+    if (dumpWriter || busLoadMonitor)
     {
         for (int i = 0; i < sent; i++)
         {
-            dumpMessage(canBuffer[i]);
+            can_message msg {canBuffer[i].getId(), canBuffer[i].getLen(), canBuffer[i].getData()};
+
+            if (dumpWriter)
+            {
+                dumpMessage(msg);
+            }
+
+            if (busLoadMonitor)
+            {
+                busLoadMonitor->notifyMessage(msg);
+            }
         }
     }
 

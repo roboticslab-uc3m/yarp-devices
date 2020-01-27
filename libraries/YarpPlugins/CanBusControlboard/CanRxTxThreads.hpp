@@ -31,7 +31,7 @@ public:
     //! Constructor.
     CanReaderWriterThread(const std::string & type, const std::string & id, double delay, unsigned int bufferSize)
         : iCanBus(nullptr), iCanBusErrors(nullptr), iCanBufferFactory(nullptr),
-          dumpWriter(nullptr), dumpMutex(nullptr),
+          dumpWriter(nullptr), dumpMutex(nullptr), busLoadMonitor(nullptr),
           bufferSize(bufferSize), delay(delay), type(type), id(id)
     { }
 
@@ -69,9 +69,13 @@ public:
     void attachDumpWriter(yarp::os::PortWriterBuffer<yarp::os::Bottle> * dumpWriter, std::mutex * dumpMutex)
     { this->dumpWriter = dumpWriter; this->dumpMutex = dumpMutex; }
 
+    //! Attach CAN bus load monitor.
+    void attachBusLoadMonitor(CanMessageNotifier * busLoadMonitor)
+    { this->busLoadMonitor = busLoadMonitor; }
+
 protected:
     //! Dump CAN message through a YARP port.
-    void dumpMessage(const yarp::dev::CanMessage & msg);
+    void dumpMessage(const can_message & msg);
 
     yarp::dev::ICanBus * iCanBus;
     yarp::dev::ICanBusErrors * iCanBusErrors;
@@ -80,6 +84,8 @@ protected:
 
     yarp::os::PortWriterBuffer<yarp::os::Bottle> * dumpWriter;
     std::mutex * dumpMutex;
+
+    CanMessageNotifier * busLoadMonitor;
 
     unsigned int bufferSize;
     double delay;
