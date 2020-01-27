@@ -100,6 +100,19 @@ bool CanBusBroker::registerDevice(yarp::dev::PolyDriver * driver)
         return false;
     }
 
+    if (busLoadMonitor)
+    {
+        unsigned int bitrate;
+
+        if (!iCanBus->canGetBaudRate(&bitrate))
+        {
+            CD_WARNING("Cannot get bitrate.\n");
+            return false;
+        }
+
+        busLoadMonitor->setBitrate(bitrate);
+    }
+
     if (readerThread)
     {
         readerThread->setCanHandles(iCanBus, iCanBusErrors, iCanBufferFactory);

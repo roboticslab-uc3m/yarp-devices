@@ -6,8 +6,19 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
+namespace
+{
+    unsigned long computeLength(const can_message & frame)
+    {
+        return 0;
+    }
+}
+
+// -----------------------------------------------------------------------------
+
 bool BusLoadMonitor::notifyMessage(const can_message & msg)
 {
+    bits += computeLength(msg);
     return true;
 }
 
@@ -15,7 +26,9 @@ bool BusLoadMonitor::notifyMessage(const can_message & msg)
 
 void BusLoadMonitor::run()
 {
-    ;
+    double rate = bits.exchange(0) / yarp::os::PeriodicThread::getPeriod();
+    prepare().addFloat64(rate / bitrate);
+    write();
 }
 
 // -----------------------------------------------------------------------------
