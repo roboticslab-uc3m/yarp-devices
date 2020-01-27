@@ -2,6 +2,8 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <yarp/os/Property.h>
+
 #include <ColorDebug.h>
 
 using namespace roboticslab;
@@ -13,25 +15,33 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
     CD_DEBUG("%s\n", key.c_str());
 
     val.clear();
+    val.addString(key);
 
-    if (key == "linInterpPeriodMs")
+    if (key == "linInterp")
     {
-        val.addInt32(linInterpBuffer->getPeriod());
+        yarp::os::Property & dict = val.addDict();
+
+        if (!linInterpBuffer)
+        {
+            dict.put("enable", false);
+            return true;
+        }
+
+        dict.put("enable", true);
+        dict.put("periodMs", linInterpBuffer->getPeriodMs());
+        dict.put("bufferSize", linInterpBuffer->getBufferSize());
+        dict.put("mode", linInterpBuffer->getType());
+        return true;
     }
-    else if (key == "linInterpBufferSize")
+    else if (key == "csv")
     {
-        val.addInt32(linInterpBuffer->getBufferSize());
-    }
-    else if (key == "linInterpMode")
-    {
-        val.addString(linInterpBuffer->getType());
-    }
-    else
-    {
-        CD_ERROR("Unsupported key: %s.\n", key.c_str());
-        return false;
+        yarp::os::Bottle & list = val.addList();
+        list.addString("enable");
+        list.addInt8(vars.enableCsv);
+        return true;
     }
 
+    CD_ERROR("Unsupported key: \"%s\".\n", key.c_str());
     return false;
 }
 
@@ -39,76 +49,91 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
 
 bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val)
 {
-    //CD_DEBUG("%s\n", key.c_str()); // too verbose
+    CD_DEBUG("%s\n", key.c_str());
 
-    if (key == "linInterpConfig")
+    if (key == "linInterp")
     {
-        LinearInterpolationBuffer * newBuffer = LinearInterpolationBuffer::createBuffer(val, vars);
-
-        if (newBuffer)
+        if (val.size() == 0 || (!val.get(0).isDict() && !val.get(0).isList()))
         {
-            delete linInterpBuffer;
-            linInterpBuffer = newBuffer;
+            CD_ERROR("Empty value or not a dict (canId: %d).\n", can->getId());
+            return false;
+        }
+
+        yarp::os::Searchable * dict;
+
+        if (val.get(0).isDict())
+        {
+            dict = val.get(0).asDict(); // C++ API
         }
         else
         {
+            dict = val.get(0).asList(); // CLI (RPC via terminal)
+        }
+
+        if (!dict->check("enable"))
+        {
+            CD_ERROR("Missing \"enable\" option (canId: %d).\n", can->getId());
             return false;
+        }
+
+        bool requested = dict->find("enable").asBool();
+
+        if (requested ^ !!linInterpBuffer)
+        {
+            if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT)
+            {
+                CD_ERROR("Currently in posd mode, cannot change config params right now (canId: %d).\n", can->getId());
+                return false;
+            }
+
+            if (requested)
+            {
+                linInterpBuffer = LinearInterpolationBuffer::createBuffer(val, vars, can->getId());
+                return linInterpBuffer != nullptr;
+            }
+            else
+            {
+                delete linInterpBuffer;
+                CD_SUCCESS("Switched back to CSP mode (canId: %d).\n", can->getId());
+            }
+        }
+        else
+        {
+            CD_WARNING("Linear interpolation mode already enabled/disabled (canId: %d).\n", can->getId());
+        }
+
+        return true;
+    }
+    else if (key == "csv")
+    {
+        if (!val.check("enable"))
+        {
+            CD_ERROR("Missing \"enable\" option (canId: %d).\n", can->getId());
+            return false;
+        }
+
+        bool requested = val.find("enable").asBool();
+
+        if (requested ^ vars.enableCsv)
+        {
+            if (vars.actualControlMode == VOCAB_CM_VELOCITY)
+            {
+                CD_ERROR("Currently in vel mode, cannot change internal mode mapping right now (canId: %d).\n", can->getId());
+                return false;
+            }
+
+            vars.enableCsv = requested;
+        }
+        else
+        {
+            CD_WARNING("CSV mode already enabled/disabled (canId: %d).\n", can->getId());
         }
 
         return true;
     }
 
-    if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT)
-    {
-        if (key == "linInterpStart")
-        {
-            return can->driveStatus()->controlword(0x001F); // enable ip mode
-        }
-        else if (key == "linInterpTarget")
-        {
-            return can->rpdo3()->write<std::uint64_t>(linInterpBuffer->makeDataRecord());
-        }
-        else
-        {
-            CD_ERROR("Currently in posd mode, cannot change config params right now.\n");
-            return false;
-        }
-    }
-
-    if (key == "linInterpPeriodMs")
-    {
-        linInterpBuffer->setPeriod(val.get(0).asInt32());
-    }
-    else if (key == "linInterpBufferSize")
-    {
-        linInterpBuffer->setBufferSize(val.get(0).asInt32());
-    }
-    else if (key == "linInterpMode")
-    {
-        std::string type = val.get(0).asString();
-
-        if (type != linInterpBuffer->getType())
-        {
-            LinearInterpolationBuffer * newBuffer = linInterpBuffer->cloneTo(type);
-
-            if (newBuffer)
-            {
-                delete linInterpBuffer;
-                linInterpBuffer = newBuffer;
-            }
-            else
-            {
-                return false;
-            }
-        }
-    }
-    else
-    {
-        CD_ERROR("Unsupported key: %s.\n", key.c_str());
-        return false;
-    }
-
-    return true;
+    CD_ERROR("Unsupported key: \"%s\".\n", key.c_str());
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -120,12 +145,8 @@ bool TechnosoftIpos::getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys)
     listOfKeys->clear();
 
     // Place each key in its own list so that clients can just call check('<key>') or !find('<key>').isNull().
-    listOfKeys->addString("linInterpPeriodMs");
-    listOfKeys->addString("linInterpBufferSize");
-    listOfKeys->addString("linInterpMode");
-    listOfKeys->addString("linInterpStart");
-    listOfKeys->addString("linInterpTarget");
-    listOfKeys->addString("linInterpConfig");
+    listOfKeys->addString("linInterp");
+    listOfKeys->addString("csv");
 
     return true;
 }

@@ -3,6 +3,8 @@
 #ifndef __TECHNOSOFT_IPOS_HPP__
 #define __TECHNOSOFT_IPOS_HPP__
 
+#include <yarp/os/Timer.h>
+
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAxisInfo.h>
 #include <yarp/dev/IControlLimits.h>
@@ -18,7 +20,7 @@
 #include <yarp/dev/IVelocityControl.h>
 #include <yarp/dev/PolyDriver.h>
 
-#include "CanOpen.hpp"
+#include "CanOpenNode.hpp"
 #include "ICanBusSharer.hpp"
 #include "LinearInterpolationBuffer.hpp"
 #include "StateVariables.hpp"
@@ -26,6 +28,10 @@
 #define CHECK_JOINT(j) do { int ax; if (getAxes(&ax), (j) != ax - 1) return false; } while (0)
 
 #define CHECK_MODE(mode) do { if ((mode) != vars.actualControlMode) return false; } while (0)
+
+// seconds
+#define DEFAULT_SDO_TIMEOUT 0.02
+#define DEFAULT_DRIVE_STATE_TIMEOUT 2.0
 
 namespace roboticslab
 {
@@ -71,7 +77,8 @@ public:
         : can(nullptr),
           iEncodersTimedRawExternal(nullptr),
           iExternalEncoderCanBusSharer(nullptr),
-          linInterpBuffer(nullptr)
+          linInterpBuffer(nullptr),
+          monitorThread(nullptr)
     { }
 
     ~TechnosoftIpos()
@@ -86,10 +93,11 @@ public:
 
     virtual unsigned int getId() override;
     virtual std::vector<unsigned int> getAdditionalIds() override;
-    virtual bool interpretMessage(const yarp::dev::CanMessage & message) override;
+    virtual bool notifyMessage(const can_message & message) override;
     virtual bool initialize() override;
     virtual bool finalize() override;
     virtual bool registerSender(CanSenderDelegate * sender) override;
+    virtual bool synchronize() override;
 
     //  --------- IAxisInfoRaw declarations. Implementation in IAxisInfoRawImpl.cpp ---------
 
@@ -111,7 +119,6 @@ public:
     virtual bool getControlModesRaw(int * modes) override;
     virtual bool getControlModesRaw(int n_joint, const int * joints, int * modes) override;
     virtual bool setControlModeRaw(int j, int mode) override;
-    bool setPositionDirectModeRaw();
     virtual bool setControlModesRaw(int * modes) override;
     virtual bool setControlModesRaw(int n_joint, const int * joints, int * modes) override;
 
@@ -255,10 +262,11 @@ public:
     //virtual bool stopRaw() override;
     //virtual bool stopRaw(int n_joint, const int *joints) override;
 
-protected:
+private:
+
+    bool setLegacyPositionInterpolationMode();
 
     void interpretSupportedDriveModes(std::uint32_t data);
-
     void interpretMsr(std::uint16_t msr);
     void interpretMer(std::uint16_t mer);
     void interpretDer(std::uint16_t der);
@@ -272,10 +280,11 @@ protected:
     void handleTpdo2(std::uint16_t mer, std::uint16_t der);
     void handleTpdo3(std::int32_t position, std::int16_t current);
     void handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef);
+    void handleNmt(NmtState state);
 
-    bool quitHaltState(int mode);
+    bool monitorWorker(const yarp::os::YarpTimerEvent & event);
 
-    CanOpen * can;
+    CanOpenNode * can;
 
     yarp::dev::PolyDriver externalEncoderDevice;
     yarp::dev::IEncodersTimedRaw * iEncodersTimedRawExternal;
@@ -284,6 +293,8 @@ protected:
     StateVariables vars;
 
     LinearInterpolationBuffer * linInterpBuffer;
+
+    yarp::os::Timer * monitorThread;
 };
 
 } // namespace roboticslab

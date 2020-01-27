@@ -5,18 +5,22 @@
 
 #include <vector>
 
-#include <yarp/dev/CanBusInterface.h>
-
+#include "CanMessageNotifier.hpp"
 #include "CanSenderDelegate.hpp"
 
 namespace roboticslab
 {
 
 /**
+ * @defgroup CanBusSharerLib
+ * @brief Common interfaces and utilities for a network of CAN nodes.
+ */
+
+/**
  * @ingroup CanBusSharerLib
  * @brief Abstract base for a CAN bus sharer.
  */
-class ICanBusSharer
+class ICanBusSharer : public CanMessageNotifier
 {
 public:
     //! Destructor.
@@ -35,11 +39,11 @@ public:
     //! Finalize CAN node communications.
     virtual bool finalize() = 0;
 
-    //! Parse incoming CAN message.
-    virtual bool interpretMessage(const yarp::dev::CanMessage & message) = 0;
-
     //! Pass a handle to a CAN sender delegate instance.
     virtual bool registerSender(CanSenderDelegate * sender) = 0;
+
+    //! Perform synchronized action on CAN master's request.
+    virtual bool synchronize() = 0;
 };
 
 } // namespace roboticslab

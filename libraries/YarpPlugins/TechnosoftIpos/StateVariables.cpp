@@ -74,6 +74,7 @@ void EncoderRead::reset(std::int32_t pos)
     std::lock_guard<std::mutex> guard(encoderMutex);
     lastPosition = nextToLastPosition = pos;
     lastSpeed = nextToLastSpeed = lastAcceleration = 0.0;
+    lastStamp.update();
 }
 
 // -----------------------------------------------------------------------------
@@ -110,7 +111,7 @@ double EncoderRead::queryTime() const
 
 // -----------------------------------------------------------------------------
 
-bool StateVariables::validateInitialState(unsigned int canId)
+bool StateVariables::validateInitialState()
 {
     if (actualControlMode == 0)
     {
@@ -136,9 +137,21 @@ bool StateVariables::validateInitialState(unsigned int canId)
         return false;
     }
 
-    if (pulsesPerSample <= 0)
+    if (maxVel <= 0.0)
     {
-        CD_WARNING("Illegal pulses per sample: %d.\n", pulsesPerSample.load());
+        CD_WARNING("Illegal maximum velocity: %f.\n", maxVel.load());
+        return false;
+    }
+
+    if (refSpeed <= 0.0)
+    {
+        CD_WARNING("Illegal reference speed: %f.\n", refSpeed.load());
+        return false;
+    }
+
+    if (refAcceleration <= 0.0)
+    {
+        CD_WARNING("Illegal reference acceleration: %f.\n", refAcceleration.load());
         return false;
     }
 
@@ -148,33 +161,21 @@ bool StateVariables::validateInitialState(unsigned int canId)
         return false;
     }
 
-    if (maxVel <= 0.0)
+    if (pulsesPerSample <= 0)
     {
-        CD_WARNING("Illegal maximum velocity: %f.\n", maxVel);
-        return false;
-    }
-
-    if (refSpeed <= 0.0)
-    {
-        CD_WARNING("Illegal reference speed: %f.\n", refSpeed);
-        return false;
-    }
-
-    if (refAcceleration <= 0.0)
-    {
-        CD_WARNING("Illegal reference acceleration: %f.\n", refAcceleration);
+        CD_WARNING("Illegal pulses per sample: %d.\n", pulsesPerSample);
         return false;
     }
 
     if (refSpeed > maxVel)
     {
-        CD_WARNING("Reference speed greater than maximum velocity: %f > %f.\n", refSpeed, maxVel);
+        CD_WARNING("Reference speed greater than maximum velocity: %f > %f.\n", refSpeed.load(), maxVel.load());
         return false;
     }
 
     if (min >= max)
     {
-        CD_WARNING("Illegal joint limits (min, max): %f >= %f.\n", min, max);
+        CD_WARNING("Illegal joint limits (min, max): %f >= %f.\n", min.load(), max.load());
         return false;
     }
 
@@ -195,6 +196,30 @@ bool StateVariables::validateInitialState(unsigned int canId)
         return false;
     }
 
+    if (heartbeatPeriod <= 0.0)
+    {
+        CD_WARNING("Illegal heartbeat period: %f.\n", heartbeatPeriod);
+        return false;
+    }
+
+    if (heartbeatPeriod * 1e3 != static_cast<int>(heartbeatPeriod * 1e3))
+    {
+        CD_WARNING("Heartbeat period exceeds millisecond precision: %f (s).\n", heartbeatPeriod);
+        return false;
+    }
+
+    if (syncPeriod <= 0.0 || syncPeriod > 255.0)
+    {
+        CD_WARNING("Illegal SYNC period: %f.\n", syncPeriod);
+        return false;
+    }
+
+    if (syncPeriod * 1e3 != static_cast<int>(syncPeriod * 1e3))
+    {
+        CD_WARNING("SYNC period exceeds millisecond precision: %f (s).\n", syncPeriod);
+        return false;
+    }
+
     if (canId == 0)
     {
         CD_WARNING("Illegal CAN ID: %d.\n", canId);
@@ -202,6 +227,43 @@ bool StateVariables::validateInitialState(unsigned int canId)
     }
 
     return true;
+}
+
+// -----------------------------------------------------------------------------
+
+double StateVariables::clipSyncPositionTarget()
+{
+    double requested = synchronousCommandTarget;
+    double previous = prevSyncTarget;
+    double diff = requested - previous;
+
+    if (std::abs(diff) > maxVel * syncPeriod)
+    {
+        CD_WARNING("Maximum velocity exceeded, clipping target position (canId: %d).\n", canId);
+        double newTarget = previous + maxVel * syncPeriod * sgn(diff);
+        prevSyncTarget = newTarget;
+        return newTarget;
+    }
+    else
+    {
+        prevSyncTarget.store(synchronousCommandTarget);
+        return requested;
+    }
+}
+
+// -----------------------------------------------------------------------------
+
+void StateVariables::reset()
+{
+    msr = mer = der = der2 = cer = ptStatus = 0;
+    modesOfOperation = 0;
+
+    lastEncoderRead.reset();
+    lastCurrentRead = 0.0;
+
+    requestedcontrolMode = 0;
+    synchronousCommandTarget = prevSyncTarget = 0.0;
+    enableSync = false;
 }
 
 // -----------------------------------------------------------------------------

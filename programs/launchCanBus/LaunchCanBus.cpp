@@ -80,7 +80,6 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
         yarp::os::Property canDeviceOptions;
         canDeviceOptions.fromString(canDeviceGroup.toString());
         canDeviceOptions.put("robotConfig", yarp::os::Value::makeBlob(&robotConfigPtr, sizeof(robotConfigPtr)));
-        canDeviceOptions.put("home", homing);
 
         yarp::dev::PolyDriver * canDevice = new yarp::dev::PolyDriver;
         canDevices.push(canDevice, canDeviceLabel.c_str());
@@ -195,64 +194,26 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
         }
     }
 
-    // initial control modes
-
-    for (int i = 0; i < canDevices.size(); i++)
-    {
-        yarp::dev::IControlMode * iControlMode;
-        yarp::dev::IEncoders * iEncoders;
-
-        if (!canDevices[i]->poly->view(iControlMode))
-        {
-            CD_ERROR("Unable to view IControlMode in %s.\n", canDevices[i]->key.c_str());
-            return false;
-        }
-
-        if (!canDevices[i]->poly->view(iEncoders))
-        {
-            CD_ERROR("Unable to view IEncoders in %s.\n", canDevices[i]->key.c_str());
-            return false;
-        }
-
-        int axes;
-
-        if (!iEncoders->getAxes(&axes))
-        {
-            CD_ERROR("Unable to retrieve axes in %s.\n", canDevices[i]->key.c_str());
-            return false;
-        }
-
-        std::vector<yarp::conf::vocab32_t> modes(axes, mode);
-
-        if (!iControlMode->setControlModes(modes.data()))
-        {
-            CD_ERROR("Unable to set %s mode in %s.\n", yarp::os::Vocab::decode(mode).c_str(), canDevices[i]->key.c_str());
-            return false;
-        }
-
-        CD_SUCCESS("Set %s mode in %s.\n", yarp::os::Vocab::decode(mode).c_str(), canDevices[i]->key.c_str());
-    }
-
     // homing on start
 
     if (homing)
     {
-        if (calibratorDevices.size() == 0)
+        if (calibratorDevices.size() != 0)
         {
-            CD_ERROR("Homing procedure requested, but no calibrator devices loaded.\n");
-            return false;
-        }
-
-        for (int i = 0; i < calibratorDevices.size(); i++)
-        {
-            yarp::dev::IRemoteCalibrator * iRemoteCalibrator;
-            calibratorDevices[i]->poly->view(iRemoteCalibrator);
-
-            if (!iRemoteCalibrator->homingWholePart())
+            for (int i = 0; i < calibratorDevices.size(); i++)
             {
-                CD_ERROR("Homing procedure failed for calibrator id %d.\n", i);
-                return false;
+                yarp::dev::IRemoteCalibrator * iRemoteCalibrator;
+                calibratorDevices[i]->poly->view(iRemoteCalibrator);
+
+                if (!iRemoteCalibrator->homingWholePart())
+                {
+                    CD_WARNING("Homing procedure failed for calibrator id %d.\n", i);
+                }
             }
+        }
+        else
+        {
+            CD_WARNING("Homing procedure requested, but no calibrator devices loaded.\n");
         }
     }
 

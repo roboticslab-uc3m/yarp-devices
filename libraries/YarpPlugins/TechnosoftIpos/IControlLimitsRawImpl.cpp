@@ -12,7 +12,23 @@ bool TechnosoftIpos::setLimitsRaw(int axis, double min, double max)
 {
     CD_DEBUG("(%d, %f, %f)\n", axis, min, max);
     CHECK_JOINT(axis);
-    return setLimitRaw(min, true) & setLimitRaw(max, false);
+
+    bool okMin = false;
+    bool okMax = false;
+
+    if (setLimitRaw(min, true))
+    {
+        vars.min = min;
+        okMin = true;
+    }
+
+    if (setLimitRaw(max, false))
+    {
+        vars.max = max;
+        okMax = true;
+    }
+
+    return okMin && okMax;
 }
 
 // -----------------------------------------------------------------------------
@@ -43,6 +59,14 @@ bool TechnosoftIpos::getLimitsRaw(int axis, double * min, double * max)
 {
     CD_DEBUG("(%d)\n", axis);
     CHECK_JOINT(axis);
+
+    if (vars.actualControlMode == VOCAB_CM_NOT_CONFIGURED)
+    {
+        *min = vars.min;
+        *max = vars.max;
+        return true;
+    }
+
     return getLimitRaw(min, true) & getLimitRaw(max, false);
 }
 

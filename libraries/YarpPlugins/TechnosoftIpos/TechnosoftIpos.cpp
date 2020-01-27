@@ -8,6 +8,8 @@
 #include <sstream>
 #include <string>
 
+#include <yarp/os/Time.h>
+
 #include <ColorDebug.h>
 
 using namespace roboticslab;
@@ -273,20 +275,33 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
     reportBitToggle(report, WARN, 7, "A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored.", "No warning.");
     reportBitToggle(report, INFO, 8, "A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called.", "No TML function or homing is executed. The execution of the last called TML function or homing is completed.");
     reportBitToggle(report, INFO, 9, "Remote - drive parameters may be modified via CAN and the drive will execute the command message.", "Remote – drive is in local mode and will not execute the command message.");
-    reportBitToggle(report, INFO, 10, "Target reached.");
+
+    if (reportBitToggle(report, INFO, 10, "Target reached.")
+            && vars.actualControlMode == VOCAB_CM_POSITION // does not work on velocity profile mode
+            && can->driveStatus()->controlword()[8]
+            && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)))
+    {
+        CD_WARNING("Unable to reset halt bit (canId: %d).\n", can->getId());
+    }
+
     reportBitToggle(report, INFO, 11, "Internal Limit Active.");
 
-    switch (vars.actualControlMode.load())
+    switch (vars.modesOfOperation)
     {
-    case VOCAB_CM_POSITION:
-        reportBitToggle(report, INFO, 12, "Trajectory generator will not accept a new set-point.", "Trajectory generator will accept a new set-point.");
+    case 1:
+        if (reportBitToggle(report, INFO, 12, "Trajectory generator will not accept a new set-point.",
+                "Trajectory generator will accept a new set-point.")
+                && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)))
+        {
+            CD_WARNING("Unable to finalize single set-point handshake (canId: %d).\n", can->getId());
+        }
         reportBitToggle(report, WARN, 13, "Following error.", "No following error.");
         break;
-    case VOCAB_CM_VELOCITY:
+    case 3:
         //reportBitToggle(report, INFO, 12, "Speed is equal to 0.", "Speed is not equal to 0."); // too verbose
         reportBitToggle(report, WARN, 13, "Maximum slippage reached.", "Maximum slippage not reached.");
         break;
-    case VOCAB_CM_POSITION_DIRECT:
+    case 7:
         reportBitToggle(report, INFO, 12, "Interpolated position mode active.", "Interpolated position mode inactive.");
         // 13: reserved
         break;
@@ -313,6 +328,7 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
     case -5:
         CD_INFO("iPOS specific: External Reference Torque Mode. canId: %d.\n", can->getId());
         vars.actualControlMode = vars.requestedcontrolMode == VOCAB_CM_TORQUE ? VOCAB_CM_TORQUE : VOCAB_CM_CURRENT;
+        vars.enableSync = true;
         break;
     case 1:
         CD_INFO("Profile Position Mode. canId: %d.\n", can->getId());
@@ -320,11 +336,18 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
         break;
     case 3:
         CD_INFO("Profile Velocity Mode. canId: %d.\n", can->getId());
-        vars.actualControlMode = VOCAB_CM_VELOCITY;
+        vars.actualControlMode = vars.enableCsv ? VOCAB_CM_UNKNOWN : VOCAB_CM_VELOCITY;
+        vars.enableSync = !vars.enableCsv;
         break;
     case 7:
         CD_INFO("Interpolated Position Mode. canId: %d.\n", can->getId());
         vars.actualControlMode = VOCAB_CM_POSITION_DIRECT;
+        vars.enableSync = true;
+        break;
+    case 8:
+        CD_INFO("Cyclic Synchronous Position Mode. canId: %d.\n", can->getId());
+        vars.actualControlMode = vars.enableCsv ? VOCAB_CM_VELOCITY : VOCAB_CM_POSITION_DIRECT;
+        vars.enableSync = true;
         break;
     // unhandled
     case -4:
@@ -347,12 +370,8 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
         CD_INFO("Homing Mode. canId: %d.\n", can->getId());
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
-    case 8:
-        CD_INFO("Cyclic Synchronous Position Mode. canId: %d.\n", can->getId());
-        vars.actualControlMode = VOCAB_CM_UNKNOWN;
-        break;
     default:
-        CD_WARNING("No mode set set. canId: %d.\n", can->getId());
+        CD_WARNING("No mode set. canId: %d.\n", can->getId());
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     }
@@ -437,29 +456,75 @@ void TechnosoftIpos::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, con
         break;
     }
     default:
-        CD_WARNING("%s (canId %d)\n", code.second.c_str(), can->getId());
+        CD_WARNING("%s (canId %d).\n", code.second.c_str(), can->getId());
         break;
     }
 }
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::quitHaltState(int mode)
+void TechnosoftIpos::handleNmt(NmtState state)
 {
-    if (!can->driveStatus()->controlword()[8])
+    vars.lastHeartbeat = yarp::os::Time::now();
+    std::uint8_t nmtState = static_cast<std::uint8_t>(state);
+
+    // always report boot-up
+    if (state != NmtState::BOOTUP && vars.lastNmtState == nmtState)
     {
-        return true;
+        return;
     }
 
-    if (mode == VOCAB_CM_POSITION || mode == VOCAB_CM_VELOCITY)
+    std::string s;
+
+    switch (state)
     {
-        if (!can->driveStatus()->statusword()[10])
+    case NmtState::BOOTUP:
+        s = "boot-up";
+        break;
+    case NmtState::STOPPED:
+        s = "stopped";
+        break;
+    case NmtState::OPERATIONAL:
+        s = "operational";
+        break;
+    case NmtState::PRE_OPERATIONAL:
+        s = "pre-operational";
+        break;
+    default:
+        CD_WARNING("Unhandled state: %d.\n", static_cast<std::uint8_t>(state));
+        return;
+    }
+
+    CD_INFO("Heartbeat: %s (canId %d).\n", s.c_str(), can->getId());
+
+    vars.lastNmtState = nmtState;
+}
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::monitorWorker(const yarp::os::YarpTimerEvent & event)
+{
+    bool isConfigured = vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED;
+    double elapsed = event.currentReal - vars.lastHeartbeat;
+
+    if (isConfigured && elapsed > event.lastDuration)
+    {
+        CD_ERROR("Last heartbeat response was %f seconds ago (canId %d).\n", elapsed, can->getId());
+        vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
+        can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
+        can->driveStatus()->reset();
+        vars.reset();
+    }
+    else if (!isConfigured && elapsed < event.lastDuration && vars.lastNmtState == 0) // boot-up event
+    {
+        if (!initialize())
         {
-            return false;
+            CD_ERROR("Unable to initialize CAN comms (canId: %d).\n", can->getId());
+            can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
         }
     }
 
-    return can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8));
+    return true;
 }
 
 // -----------------------------------------------------------------------------

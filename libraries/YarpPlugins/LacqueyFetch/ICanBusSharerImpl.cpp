@@ -27,7 +27,7 @@ bool LacqueyFetch::finalize()
 
 // -----------------------------------------------------------------------------
 
-bool LacqueyFetch::interpretMessage(const yarp::dev::CanMessage & message)
+bool LacqueyFetch::notifyMessage(const can_message & message)
 {
     return true;
 }
@@ -37,6 +37,13 @@ bool LacqueyFetch::interpretMessage(const yarp::dev::CanMessage & message)
 bool LacqueyFetch::registerSender(CanSenderDelegate * sender)
 {
     this->sender = sender;
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool LacqueyFetch::synchronize()
+{
     return true;
 }
 

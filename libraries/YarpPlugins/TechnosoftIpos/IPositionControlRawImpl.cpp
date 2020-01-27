@@ -18,10 +18,10 @@ bool TechnosoftIpos::positionMoveRaw(int j, double ref)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    return quitHaltState(VOCAB_CM_POSITION)
-            && can->driveStatus()->controlword(0x002F) // change set immediately
+    return !can->driveStatus()->controlword()[8] // check halt bit
             && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(ref), 0x607A)
-            && can->driveStatus()->controlword(0x003F); // new setpoint (assume absolute target position)
+            // new setpoint (assume absolute target position)
+            && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4));
 }
 
 // --------------------------------------------------------------------------------
@@ -48,10 +48,10 @@ bool TechnosoftIpos::relativeMoveRaw(int j, double delta)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    return quitHaltState(VOCAB_CM_POSITION)
-            && can->driveStatus()->controlword(0x002F) // change set immediately
+    return !can->driveStatus()->controlword()[8] // check halt bit
             && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(delta), 0x607A)
-            && can->driveStatus()->controlword(0x007F); // new setpoint (assume relative target position)
+            // new setpoint (assume relative target position)
+            && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).set(6));
 }
 
 // --------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ bool TechnosoftIpos::setRefSpeedRaw(int j, double sp)
     }
     else if (sp > vars.maxVel)
     {
-        CD_WARNING("Reference speed exceeds maximum velocity (%f).\n", vars.maxVel);
+        CD_WARNING("Reference speed exceeds maximum velocity (%f).\n", vars.maxVel.load());
         return false;
     }
 
@@ -121,7 +121,14 @@ bool TechnosoftIpos::setRefSpeedRaw(int j, double sp)
     CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
 
     std::uint32_t data = (dataInt << 16) + dataFrac;
-    return can->sdo()->download("Profile velocity", data, 0x6081);
+
+    if (!can->sdo()->download("Profile velocity", data, 0x6081))
+    {
+        return false;
+    }
+
+    vars.refSpeed = sp;
+    return true;
 }
 
 // --------------------------------------------------------------------------------
@@ -160,7 +167,14 @@ bool TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
     CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
 
     std::uint32_t data = (dataInt << 16) + dataFrac;
-    return can->sdo()->download("Profile acceleration", data, 0x6083);
+
+    if (!can->sdo()->download("Profile acceleration", data, 0x6083))
+    {
+        return false;
+    }
+
+    vars.refAcceleration = acc;
+    return true;
 }
 
 // --------------------------------------------------------------------------------
@@ -185,6 +199,12 @@ bool TechnosoftIpos::getRefSpeedRaw(int j, double * ref)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
+
+    if (vars.actualControlMode == VOCAB_CM_NOT_CONFIGURED)
+    {
+        *ref = vars.refSpeed;
+        return true;
+    }
 
     return can->sdo()->upload<std::uint32_t>("Profile velocity", [&](std::uint32_t data)
             {
@@ -219,6 +239,12 @@ bool TechnosoftIpos::getRefAccelerationRaw(int j, double * acc)
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
 
+    if (vars.actualControlMode == VOCAB_CM_NOT_CONFIGURED)
+    {
+        *acc = vars.refAcceleration;
+        return true;
+    }
+
     return can->sdo()->upload<std::uint32_t>("Profile acceleration", [&](std::uint32_t data)
             {
                 std::uint16_t dataInt = data >> 16;
@@ -251,7 +277,10 @@ bool TechnosoftIpos::stopRaw(int j)
 {
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-    return can->driveStatus()->controlword(can->driveStatus()->controlword().set(8));
+
+    return (vars.actualControlMode == VOCAB_CM_POSITION || vars.actualControlMode == VOCAB_CM_VELOCITY)
+            && can->driveStatus()->controlword(can->driveStatus()->controlword().set(8)) // stop with profile acceleration
+            && (vars.synchronousCommandTarget = 0.0, true);
 }
 
 // --------------------------------------------------------------------------------

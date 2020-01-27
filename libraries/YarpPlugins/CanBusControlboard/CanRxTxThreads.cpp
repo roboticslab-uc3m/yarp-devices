@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "CanBusControlboard.hpp"
+#include "CanRxTxThreads.hpp"
 
 #include <cstring>
 
@@ -9,6 +9,7 @@
 #include <ColorDebug.h>
 
 #include "YarpCanSenderDelegate.hpp"
+#include "CanBusBroker.hpp"
 
 using namespace roboticslab;
 
@@ -35,16 +36,33 @@ void CanReaderWriterThread::onStop()
 
 // -----------------------------------------------------------------------------
 
-void CanReaderWriterThread::setDelay(double delay)
+void CanReaderWriterThread::dumpMessage(const can_message & msg)
 {
-    this->delay = delay <= 0.0 ? std::numeric_limits<double>::min() : delay;
+    std::lock_guard<std::mutex> lock(*dumpMutex);
+
+    yarp::os::Bottle & b = dumpWriter->prepare();
+    b.clear();
+    b.addInt16(msg.id);
+
+    if (msg.len != 0)
+    {
+        yarp::os::Bottle & data = b.addList();
+
+        for (int j = 0; j < msg.len; j++)
+        {
+            data.addInt8(msg.data[j]);
+        }
+    }
+
+    dumpWriter->write();
 }
 
 // -----------------------------------------------------------------------------
 
-CanReaderThread::CanReaderThread(const std::string & id)
-    : CanReaderWriterThread("read", id)
-{}
+CanReaderThread::CanReaderThread(const std::string & id, double delay, unsigned int bufferSize)
+    : CanReaderWriterThread("read", id, delay, bufferSize),
+      canMessageNotifier(nullptr)
+{ }
 
 // -----------------------------------------------------------------------------
 
@@ -79,33 +97,39 @@ void CanReaderThread::run()
 
         for (int i = 0; i < read; i++)
         {
-            const yarp::dev::CanMessage & msg = canBuffer[i];
-            const int canId = msg.getId() & 0x7F;
-            auto it = canIdToHandle.find(canId);
+            can_message msg {canBuffer[i].getId(), canBuffer[i].getLen(), canBuffer[i].getData()};
+            auto it = canIdToHandle.find(msg.id & 0x7F);
 
-            if (it == canIdToHandle.end())  //-- Can ID not found
+            if (it != canIdToHandle.end())
             {
-                //-- Intercept 700h 0 msg that just indicates presence.
-                if (msg.getId() - canId == 0x700)
-                {
-                    CD_SUCCESS("Device %d indicating presence.\n", canId);
-                }
-
-                continue;
+                it->second->notifyMessage(msg);
             }
 
-            it->second->interpretMessage(msg);
+            if (dumpWriter)
+            {
+                dumpMessage(msg);
+            }
+
+            if (canMessageNotifier)
+            {
+                canMessageNotifier->notifyMessage(msg);
+            }
+
+            if (busLoadMonitor)
+            {
+                busLoadMonitor->notifyMessage(msg);
+            }
         }
     }
 }
 
 // -----------------------------------------------------------------------------
 
-CanWriterThread::CanWriterThread(const std::string & id)
-    : CanReaderWriterThread("write", id),
-      sender(nullptr),
-      preparedMessages(0)
-{}
+CanWriterThread::CanWriterThread(const std::string & id, double delay, unsigned int bufferSize)
+    : CanReaderWriterThread("write", id, delay, bufferSize),
+      preparedMessages(0),
+      sender(new YarpCanSenderDelegate(canBuffer, bufferMutex, preparedMessages, bufferSize))
+{ }
 
 // -----------------------------------------------------------------------------
 
@@ -116,36 +140,72 @@ CanWriterThread::~CanWriterThread()
 
 // -----------------------------------------------------------------------------
 
+void CanWriterThread::flush()
+{
+    std::lock_guard<std::mutex> lock(bufferMutex);
+
+    //-- Nothing to write, exit.
+    if (preparedMessages == 0) return;
+
+    yarp::dev::CanErrors errors;
+
+    //-- Query bus state.
+    if (!iCanBusErrors->canGetErrors(errors) || errors.busoff)
+    {
+        //-- Bus off, reset TX queue.
+        preparedMessages = 0;
+        return;
+    }
+
+    unsigned int sent;
+
+    //-- Write as many bytes as possible, return false on errors.
+    if (!iCanBus->canWrite(canBuffer, preparedMessages, &sent))
+    {
+        //-- Something bad happened, abort queue and start anew.
+        preparedMessages = 0;
+        return;
+    }
+
+    if (dumpWriter || busLoadMonitor)
+    {
+        for (int i = 0; i < sent; i++)
+        {
+            can_message msg {canBuffer[i].getId(), canBuffer[i].getLen(), canBuffer[i].getData()};
+
+            if (dumpWriter)
+            {
+                dumpMessage(msg);
+            }
+
+            if (busLoadMonitor)
+            {
+                busLoadMonitor->notifyMessage(msg);
+            }
+        }
+    }
+
+    //-- Some messages could not be sent, preserve them for later.
+    if (sent != preparedMessages)
+    {
+        handlePartialWrite(sent);
+    }
+
+    preparedMessages -= sent;
+}
+
+// -----------------------------------------------------------------------------
+
 void CanWriterThread::run()
 {
-    unsigned int sent;
-    bool ok;
-
     while (!isStopping())
     {
         //-- Lend CPU time to read threads.
         // https://github.com/roboticslab-uc3m/yarp-devices/issues/191
         yarp::os::Time::delay(delay);
 
-        std::lock_guard<std::mutex> lock(bufferMutex);
-
-        //-- Nothing to write, just loop again.
-        if (preparedMessages == 0) continue;
-
-        //-- Write as many bytes as it can, return false on errors.
-        ok = iCanBus->canWrite(canBuffer, preparedMessages, &sent);
-
-        //-- Something bad happened, try again on the next iteration.
-        if (!ok) continue;
-
-        //-- Some messages could not be sent, preserve them for later.
-        if (sent != preparedMessages)
-        {
-            CD_WARNING("Partial write! Prepared: %d, sent: %d.\n", preparedMessages, sent);
-            handlePartialWrite(sent);
-        }
-
-        preparedMessages -= sent;
+        //-- Send everything and reset the queue.
+        flush();
     }
 }
 
@@ -162,14 +222,6 @@ void CanWriterThread::handlePartialWrite(unsigned int sent)
         msg.setLen(pendingMsg.getLen());
         std::memcpy(msg.getData(), pendingMsg.getData(), pendingMsg.getLen());
     }
-}
-
-// -----------------------------------------------------------------------------
-
-void CanWriterThread::setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize)
-{
-    CanReaderWriterThread::setCanHandles(iCanBus, iCanBufferFactory, bufferSize);
-    sender = new YarpCanSenderDelegate(canBuffer, bufferMutex, preparedMessages, bufferSize);
 }
 
 // -----------------------------------------------------------------------------

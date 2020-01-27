@@ -41,7 +41,8 @@ if(NOT SKIP_TechnosoftIpos)
                                          YARP::YARP_dev
                                          ROBOTICSLAB::ColorDebug
                                          CanBusSharerLib
-                                         YarpDevicesInterfaces)
+                                         StateObserverLib
+                                         CanOpenNodeLib)
 
     target_compile_features(TechnosoftIpos PUBLIC cxx_std_11)
 

@@ -10,6 +10,8 @@
 #include <string>
 #include <type_traits>
 
+#include "CanMessage.hpp"
+
 namespace roboticslab
 {
 
@@ -29,6 +31,13 @@ std::string msgToStr(std::uint8_t id, std::uint16_t cob, std::size_t len, const 
  */
 inline std::string msgToStr(std::uint16_t cobId, std::size_t len, const std::uint8_t * data)
 { return msgToStr(cobId & 0x7F, cobId & 0xFF80, len, data); }
+
+/**
+ * @ingroup CanBusSharerLib
+ * @brief Create a string representation of the given CAN message details.
+ */
+inline std::string msgToStr(const can_message & msg)
+{ return msgToStr(msg.id & 0x7F, msg.id & 0xFF80, msg.len, msg.data); }
 
 /**
  * @ingroup CanBusSharerLib

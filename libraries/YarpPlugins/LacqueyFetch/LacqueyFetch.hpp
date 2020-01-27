@@ -47,10 +47,11 @@ public:
     //  --------- ICanBusSharer declarations. Implementation in LacqueyFetch.cpp ---------
 
     virtual unsigned int getId() override;
-    virtual bool interpretMessage(const yarp::dev::CanMessage & message) override;
+    virtual bool notifyMessage(const can_message & message) override;
     virtual bool initialize() override;
     virtual bool finalize() override;
     virtual bool registerSender(CanSenderDelegate * sender) override;
+    virtual bool synchronize() override;
 
     //  --------- IControlModeRaw declarations. Implementation in IControlModeRawImpl.cpp ---------
 

@@ -7,10 +7,12 @@
 #include <string>
 #include <unordered_map>
 
+#include <yarp/os/Bottle.h>
+#include <yarp/os/PortWriterBuffer.h>
 #include <yarp/os/Thread.h>
+
 #include <yarp/dev/CanBusInterface.h>
 
-#include "CanSenderDelegate.hpp"
 #include "ICanBusSharer.hpp"
 
 namespace roboticslab
@@ -27,8 +29,10 @@ class CanReaderWriterThread : public yarp::os::Thread
 {
 public:
     //! Constructor.
-    CanReaderWriterThread(const std::string & type, const std::string & id)
-        : iCanBus(nullptr), iCanBufferFactory(nullptr), type(type), id(id), bufferSize(0), delay(0.0)
+    CanReaderWriterThread(const std::string & type, const std::string & id, double delay, unsigned int bufferSize)
+        : iCanBus(nullptr), iCanBusErrors(nullptr), iCanBufferFactory(nullptr),
+          dumpWriter(nullptr), dumpMutex(nullptr), busLoadMonitor(nullptr),
+          bufferSize(bufferSize), delay(delay), type(type), id(id)
     { }
 
     //! Virtual destructor.
@@ -45,7 +49,7 @@ public:
     //! Invoked by the caller right before the thread is started.
     virtual void beforeStart() override;
 
-    //! Invoked by the caller right after the thread is started.
+    //! Invoked by the caller right before the thread is joined.
     virtual void afterStart(bool success) override;
 
     //! Callback on thread stop.
@@ -55,16 +59,33 @@ public:
     virtual void run() override = 0;
 
     //! Configure CAN interface handles.
-    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize)
-    { this->iCanBus = iCanBus; this->iCanBufferFactory = iCanBufferFactory; this->bufferSize = bufferSize; }
+    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBusErrors * iCanBusErrors,
+            yarp::dev::ICanBufferFactory * iCanBufferFactory)
+    {
+        this->iCanBus = iCanBus; this->iCanBusErrors = iCanBusErrors; this->iCanBufferFactory = iCanBufferFactory;
+    }
 
-    //! Configure a delay (in seconds) before each read/write.
-    void setDelay(double delay);
+    //! Attach YARP port writer for CAN message dumping.
+    void attachDumpWriter(yarp::os::PortWriterBuffer<yarp::os::Bottle> * dumpWriter, std::mutex * dumpMutex)
+    { this->dumpWriter = dumpWriter; this->dumpMutex = dumpMutex; }
+
+    //! Attach CAN bus load monitor.
+    void attachBusLoadMonitor(CanMessageNotifier * busLoadMonitor)
+    { this->busLoadMonitor = busLoadMonitor; }
 
 protected:
+    //! Dump CAN message through a YARP port.
+    void dumpMessage(const can_message & msg);
+
     yarp::dev::ICanBus * iCanBus;
+    yarp::dev::ICanBusErrors * iCanBusErrors;
     yarp::dev::ICanBufferFactory * iCanBufferFactory;
     yarp::dev::CanBuffer canBuffer;
+
+    yarp::os::PortWriterBuffer<yarp::os::Bottle> * dumpWriter;
+    std::mutex * dumpMutex;
+
+    CanMessageNotifier * busLoadMonitor;
 
     unsigned int bufferSize;
     double delay;
@@ -76,7 +97,7 @@ private:
 
 /**
  * @ingroup CanBusControlboard
- * @brief A thread that attends CAN reads.
+ * @brief A thread that deals with CAN reads.
  *
  * Messages are forwarded to each raw subdevice given the CAN node ID.
  */
@@ -84,15 +105,24 @@ class CanReaderThread : public CanReaderWriterThread
 {
 public:
     //! Constructor.
-    CanReaderThread(const std::string & id);
+    CanReaderThread(const std::string & id, double delay, unsigned int bufferSize);
 
     //! Map CAN node ids with handles.
     void registerHandle(ICanBusSharer * p);
+
+    //! Retrieve internal map of CAN handles.
+    const std::unordered_map<unsigned int, ICanBusSharer *> & getHandleMap()
+    { return canIdToHandle; }
+
+    //! Attach custom CAN message responder handle.
+    void attachCanNotifier(CanMessageNotifier * canMessageNotifier)
+    { this->canMessageNotifier = canMessageNotifier; }
 
     virtual void run() override;
 
 private:
     std::unordered_map<unsigned int, ICanBusSharer *> canIdToHandle;
+    CanMessageNotifier * canMessageNotifier;
 };
 
 /**
@@ -106,7 +136,7 @@ class CanWriterThread : public CanReaderWriterThread
 {
 public:
     //! Constructor.
-    CanWriterThread(const std::string & id);
+    CanWriterThread(const std::string & id, double delay, unsigned int bufferSize);
 
     //! Destructor.
     virtual ~CanWriterThread();
@@ -114,7 +144,8 @@ public:
     //! Retrieve a handle to the CAN sender delegate.
     CanSenderDelegate * getDelegate();
 
-    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory, unsigned int bufferSize) override;
+    //! Send awaiting messages and clear the queue.
+    void flush();
 
     virtual void run() override;
 
@@ -122,8 +153,8 @@ private:
     //! In case a write did not succeed, rearrange the CAN message buffer.
     void handlePartialWrite(unsigned int sent);
 
-    CanSenderDelegate * sender;
     unsigned int preparedMessages;
+    CanSenderDelegate * sender;
     mutable std::mutex bufferMutex;
 };
 

@@ -47,22 +47,22 @@ bool CuiAbsolute::finalize()
 
 // ------------------------------------------------------------------------------
 
-bool CuiAbsolute::interpretMessage(const yarp::dev::CanMessage & message)
+bool CuiAbsolute::notifyMessage(const can_message & message)
 {
-    if (message.getData()[3] == 0xc4)
+    if (message.data[3] == 0xc4)
     {
-        CD_ERROR("Known PIC error. %s\n", CanUtils::msgToStr(message.getId(), message.getLen(), message.getData()).c_str());
+        CD_ERROR("Known PIC error. %s\n", CanUtils::msgToStr(message).c_str());
         return false;
     }
 
-    std::uint16_t op = message.getId() - canId;
+    std::uint16_t op = message.id - canId;
 
     switch (op)
     {
     case 0x80: // push mode streaming data
     {
         encoder_t v;
-        std::memcpy(&v, message.getData(), message.getLen()); // getLen() = 4 bytes
+        std::memcpy(&v, message.data, message.len); // len = 4 bytes
         normalize(&v);
 
         std::lock_guard<std::mutex> lock(mutex);
@@ -74,7 +74,7 @@ bool CuiAbsolute::interpretMessage(const yarp::dev::CanMessage & message)
     case 0x100: // start/stop push mode
         return pushStateObserver->notify();
     case 0x180: // polling
-        return pollStateObserver->notify(message.getData(), message.getLen());
+        return pollStateObserver->notify(message.data, message.len);
     default:
         return false;
     }
@@ -85,6 +85,13 @@ bool CuiAbsolute::interpretMessage(const yarp::dev::CanMessage & message)
 bool CuiAbsolute::registerSender(CanSenderDelegate * sender)
 {
     this->sender = sender;
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool CuiAbsolute:: synchronize()
+{
     return true;
 }
 

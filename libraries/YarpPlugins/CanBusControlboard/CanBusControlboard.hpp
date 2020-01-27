@@ -5,12 +5,12 @@
 
 #include <vector>
 
+#include <yarp/os/Timer.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/PolyDriverList.h>
 
-#include "PositionDirectThread.hpp"
+#include "FutureTask.hpp"
 #include "DeviceMapper.hpp"
-#include "CanRxTxThreads.hpp"
+#include "CanBusBroker.hpp"
 
 #define CHECK_JOINT(j) do { int n = deviceMapper.getControlledAxes(); if ((j) < 0 || (j) > n - 1) return false; } while (0)
 
@@ -58,9 +58,7 @@ class CanBusControlboard : public yarp::dev::DeviceDriver,
                            public yarp::dev::IVelocityControl
 {
 public:
-
-    CanBusControlboard()
-        : posdThread(nullptr)
+    CanBusControlboard() : syncTimer(nullptr), taskFactory(nullptr)
     { }
 
     ~CanBusControlboard()
@@ -311,22 +309,14 @@ public:
     //virtual bool stop(int n_joint, const int *joints) override;
 
 private:
-
-    //! Read/write threads bound to a specific CAN channel.
-    struct CanThreads
-    {
-        std::string busName;
-        CanReaderThread * reader;
-        CanWriterThread * writer;
-    };
-
-    yarp::dev::PolyDriverList busDevices;
-    yarp::dev::PolyDriverList nodeDevices;
-
     DeviceMapper deviceMapper;
-    std::vector<CanThreads> canThreads;
 
-    PositionDirectThread * posdThread;
+    std::vector<yarp::dev::PolyDriver *> busDevices;
+    std::vector<yarp::dev::PolyDriver *> nodeDevices;
+    std::vector<CanBusBroker *> canBusBrokers;
+
+    yarp::os::Timer * syncTimer;
+    FutureTaskFactory * taskFactory;
 };
 
 } // namespace roboticslab

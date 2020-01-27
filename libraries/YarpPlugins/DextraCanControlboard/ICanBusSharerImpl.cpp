@@ -25,7 +25,12 @@ bool DextraCanControlboard::registerSender(CanSenderDelegate * sender)
     return true;
 }
 
-bool DextraCanControlboard::interpretMessage(const yarp::dev::CanMessage & message)
+bool DextraCanControlboard::notifyMessage(const can_message & message)
+{
+    return true;
+}
+
+bool DextraCanControlboard::synchronize()
 {
     return true;
 }

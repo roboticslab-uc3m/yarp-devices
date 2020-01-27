@@ -8,7 +8,14 @@ cmake_dependent_option(ENABLE_tests "Enable/disable unit tests" ON
 if(ENABLE_tests)
     enable_testing()
     add_subdirectory(${GTestSources_SOURCE_DIR} ${CMAKE_BINARY_DIR}/gtest)
-    include_directories(${GTestSources_INCLUDE_DIR})
+    include_directories(${GTestSources_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+    
+    # FutureObserverLib
+    
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/FutureObserverLib.cpp "#include \"FutureObserverLib.hpp\"")
+    add_library(FutureObserverLib STATIC FutureObserverLib.hpp
+                                         ${CMAKE_CURRENT_BINARY_DIR}/FutureObserverLib.cpp)
+    target_compile_features(FutureObserverLib PUBLIC cxx_std_11)
 
     # testCanBusSharerLib
 
@@ -17,13 +24,29 @@ if(ENABLE_tests)
         target_link_libraries(testCanBusSharerLib CanBusSharerLib gtest_main)
         gtest_add_tests(testCanBusSharerLib "" AUTO)
     endif()
+    
+    # testStateObserverLib
 
-    # testDeviceMapperLib
+    if(TARGET StateObserverLib)
+        add_executable(testStateObserverLib testStateObserverLib.cpp)
+        target_link_libraries(testStateObserverLib StateObserverLib FutureObserverLib gtest_main)
+        gtest_add_tests(testStateObserverLib "" AUTO)
+    endif()
+    
+    # testCanOpenNodeLib
 
-    if(TARGET DeviceMapperLib)
-        add_executable(testDeviceMapperLib testDeviceMapperLib.cpp)
-        target_link_libraries(testDeviceMapperLib DeviceMapperLib YARP::YARP_dev gtest_main)
-        gtest_add_tests(testDeviceMapperLib "" AUTO)
+    if(TARGET CanOpenNodeLib)
+        add_executable(testCanOpenNodeLib testCanOpenNodeLib.cpp)
+        target_link_libraries(testCanOpenNodeLib CanOpenNodeLib FutureObserverLib gtest_main)
+        gtest_add_tests(testCanOpenNodeLib "" AUTO)
+    endif()
+
+    # testYarpDeviceMapperLib
+
+    if(TARGET YarpDeviceMapperLib)
+        add_executable(testYarpDeviceMapperLib testYarpDeviceMapperLib.cpp)
+        target_link_libraries(testYarpDeviceMapperLib YarpDeviceMapperLib YARP::YARP_dev gtest_main)
+        gtest_add_tests(testYarpDeviceMapperLib "" AUTO)
     endif()
 else()
     set(ENABLE_tests OFF CACHE BOOL "Enable/disable unit tests" FORCE)

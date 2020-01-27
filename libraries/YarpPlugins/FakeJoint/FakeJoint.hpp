@@ -54,13 +54,15 @@ public:
 
     virtual unsigned int getId() override
     { return 0; }
-    virtual bool interpretMessage(const yarp::dev::CanMessage & message) override
+    virtual bool notifyMessage(const can_message & message) override
     { return true; }
     virtual bool initialize() override
     { return true; }
     virtual bool finalize() override
     { return true; }
     virtual bool registerSender(CanSenderDelegate * sender) override
+    { return true; }
+    virtual bool synchronize() override
     { return true; }
 
     //  --------- IAmplifierControlRaw declarations ---------

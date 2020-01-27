@@ -5,8 +5,6 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/Value.h>
 
-#include <yarp/dev/CanBusInterface.h>
-
 #include <ColorDebug.h>
 
 #include "ICanBusSharer.hpp"
@@ -34,8 +32,6 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         CD_ERROR("Missing key \"buses\" or not a list.\n");
         return false;
     }
-
-    int fakeNodeCount = 0;
 
     for (int i = 0; i < canBuses->size(); i++)
     {
@@ -66,46 +62,30 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         }
 
         yarp::dev::PolyDriver * canBusDevice = new yarp::dev::PolyDriver;
-        busDevices.push(canBusDevice, canBus.c_str());
+        busDevices.push_back(canBusDevice);
 
         if (!canBusDevice->open(canBusOptions))
         {
-            CD_ERROR("canBusDevice instantiation not worked.\n");
-            return false;
-        }
-
-        yarp::dev::ICanBus * iCanBus;
-
-        if (!canBusDevice->view(iCanBus))
-        {
-            CD_ERROR("Cannot view ICanBus interface in device: %s.\n", canBus.c_str());
-            return false;
-        }
-
-        yarp::dev::ICanBufferFactory * iCanBufferFactory;
-
-        if (!canBusDevice->view(iCanBufferFactory))
-        {
-            CD_ERROR("Cannot view ICanBufferFactory interface in device: %s.\n", canBus.c_str());
+            CD_ERROR("canBusDevice instantiation not worked: %s.\n", canBus.c_str());
             return false;
         }
 
         if (!isFakeBus)
         {
-            int rxBufferSize = canBusOptions.check("rxBufferSize", yarp::os::Value(100), "CAN bus RX buffer size").asInt32();
-            int txBufferSize = canBusOptions.check("txBufferSize", yarp::os::Value(100), "CAN bus TX buffer size").asInt32();
-            double rxDelay = canBusOptions.check("rxDelay", yarp::os::Value(0.0), "CAN bus RX delay (seconds)").asFloat64();
-            double txDelay = canBusOptions.check("txDelay", yarp::os::Value(0.0), "CAN bus TX delay (seconds)").asFloat64();
+            CanBusBroker * canBusBroker = new CanBusBroker(canBus);
+            canBusBrokers.push_back(canBusBroker);
 
-            CanReaderThread * reader = new CanReaderThread(canBus);
-            reader->setCanHandles(iCanBus, iCanBufferFactory, rxBufferSize);
-            reader->setDelay(rxDelay);
+            if (!canBusBroker->configure(canBusOptions))
+            {
+                CD_ERROR("Unable to configure broker of CAN bus device %s.\n", canBus.c_str());
+                return false;
+            }
 
-            CanWriterThread * writer = new CanWriterThread(canBus);
-            writer->setCanHandles(iCanBus, iCanBufferFactory, txBufferSize);
-            writer->setDelay(txDelay);
-
-            canThreads.push_back({canBus, reader, writer});
+            if (!canBusBroker->registerDevice(canBusDevice))
+            {
+                CD_ERROR("Unable to register CAN bus device %s.\n", canBus.c_str());
+                return false;
+            }
         }
 
         if (!config.check(canBus))
@@ -141,8 +121,6 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             }
         }
 
-        std::vector<unsigned int> filterIds;
-
         for (int i = 0; i < nodes.size(); i++)
         {
             std::string node = nodes.get(i).asString();
@@ -163,6 +141,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
                 nodeOptions.fromString(nodeGroup.toString());
                 nodeOptions.put("robotConfig", config.find("robotConfig"));
+                nodeOptions.put("syncPeriod", config.find("syncPeriod"));
             }
             else
             {
@@ -170,7 +149,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             }
 
             yarp::dev::PolyDriver * device = new yarp::dev::PolyDriver;
-            nodeDevices.push(device, node.c_str());
+            nodeDevices.push_back(device);
 
             if (!device->open(nodeOptions))
             {
@@ -180,7 +159,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
             if (!deviceMapper.registerDevice(device))
             {
-                CD_ERROR("Unable to register device %s.\n", node.c_str());
+                CD_ERROR("Unable to register CAN node device %s.\n", node.c_str());
                 return false;
             }
 
@@ -194,67 +173,84 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
                     return false;
                 }
 
-                canThreads.back().reader->registerHandle(iCanBusSharer);
-                iCanBusSharer->registerSender(canThreads.back().writer->getDelegate());
-
-                auto additionalIds = iCanBusSharer->getAdditionalIds();
-                filterIds.push_back(iCanBusSharer->getId());
-                filterIds.insert(filterIds.end(), additionalIds.begin(), additionalIds.end());
-            }
-            else
-            {
-                fakeNodeCount++;
+                canBusBrokers.back()->getReader()->registerHandle(iCanBusSharer);
+                iCanBusSharer->registerSender(canBusBrokers.back()->getWriter()->getDelegate());
             }
         }
 
-        for (auto id : filterIds)
+        bool enableAcceptanceFilters = canBusOptions.check("enableAcceptanceFilters", yarp::os::Value(false),
+                "enable CAN acceptance filters").asBool();
+
+        if (enableAcceptanceFilters && !canBusBrokers.back()->addFilters())
         {
-            if (!iCanBus->canIdAdd(id))
-            {
-                CD_ERROR("Unable to register acceptance filter id %d in %s.\n", id, canBus.c_str());
-                return false;
-            }
-        }
-    }
-
-    int threadedAxes = deviceMapper.getControlledAxes() - fakeNodeCount;
-
-    // FIXME: temporarily disabled
-    if (false /*config.check("threaded", yarp::os::Value(false), "use threads to map joint calls").asBool() && threadedAxes != 0*/)
-    {
-        // twice as many controlled axes to account for CBW's periodic thread and user RPC requests
-        deviceMapper.enableParallelization(threadedAxes * 2);
-    }
-
-    for (const auto & bundle : canThreads)
-    {
-        if (!bundle.reader->start())
-        {
-            CD_ERROR("Unable to start reader thread.\n");
-            return false;
-        }
-
-        if (!bundle.writer->start())
-        {
-            CD_ERROR("Unable to start writer thread.\n");
+            CD_ERROR("Unable to register CAN acceptance filters in %s.\n", canBus.c_str());
             return false;
         }
     }
 
-    for (int i = 0; i < nodeDevices.size(); i++)
+    for (auto * canBusBroker : canBusBrokers)
     {
-        ICanBusSharer * iCanBusSharer;
-        nodeDevices[i]->poly->view(iCanBusSharer);
+        if (!canBusBroker->startThreads())
+        {
+            CD_ERROR("Unable to start CAN threads in %s.\n", canBusBroker->getName().c_str());
+            return false;
+        }
+    }
+
+    for (const auto & t : deviceMapper.getDevicesWithOffsets())
+    {
+        auto * iCanBusSharer = std::get<0>(t)->castToType<ICanBusSharer>();
 
         if (!iCanBusSharer->initialize())
         {
-            CD_ERROR("Node device %s could not initialize CAN comms.\n", nodeDevices[i]->key.c_str());
-            return false;
+            CD_ERROR("Node device id %d could not initialize CAN comms.\n", iCanBusSharer->getId());
         }
     }
 
-    posdThread = new PositionDirectThread(deviceMapper);
-    return posdThread->configure(config);
+    if (config.check("syncPeriod", "SYNC message period (s)"))
+    {
+        double syncPeriod = config.find("syncPeriod").asFloat64();
+        bool threadedSync = config.check("threadedSync", yarp::os::Value(false), "parallelize SYNC requests").asBool();
+
+        if (busDevices.size() > 1 && threadedSync)
+        {
+            taskFactory = new ParallelTaskFactory(busDevices.size());
+        }
+        else
+        {
+            taskFactory = new SequentialTaskFactory;
+        }
+
+        syncTimer = new yarp::os::Timer(yarp::os::TimerSettings(syncPeriod),
+            [this](const yarp::os::YarpTimerEvent & event)
+            {
+                auto task = taskFactory->createTask();
+
+                for (auto * canBusBroker : canBusBrokers)
+                {
+                    task->add([canBusBroker]
+                        {
+                            auto * reader = canBusBroker->getReader();
+                            auto * writer = canBusBroker->getWriter();
+
+                            for (const auto & entry : reader->getHandleMap())
+                            {
+                                entry.second->synchronize();
+                            }
+
+                            writer->getDelegate()->prepareMessage({0x80, 0, nullptr}); // SYNC
+                            writer->flush();
+                            return true;
+                        });
+                }
+
+                task->dispatch();
+                return true;
+            },
+            true);
+    }
+
+    return !syncTimer || syncTimer->start();
 }
 
 // -----------------------------------------------------------------------------
@@ -263,79 +259,55 @@ bool CanBusControlboard::close()
 {
     bool ok = true;
 
-    if (posdThread && posdThread->isRunning())
+    if (syncTimer && syncTimer->isRunning())
     {
-        posdThread->stop();
+        syncTimer->stop();
     }
 
-    delete posdThread;
-    posdThread = nullptr;
+    delete syncTimer;
+    syncTimer = nullptr;
 
-    for (int i = 0; i < nodeDevices.size(); i++)
+    delete taskFactory;
+    taskFactory = nullptr;
+
+    for (const auto & t : deviceMapper.getDevicesWithOffsets())
     {
-        if (nodeDevices[i]->poly)
-        {
-            ICanBusSharer * iCanBusSharer;
-            nodeDevices[i]->poly->view(iCanBusSharer);
+        auto * iCanBusSharer = std::get<0>(t)->castToType<ICanBusSharer>();
 
-            if (!iCanBusSharer->finalize())
-            {
-                CD_WARNING("Node device %s could not finalize CAN comms.\n", nodeDevices[i]->key.c_str());
-                ok = false;
-            }
+        if (iCanBusSharer && !iCanBusSharer->finalize())
+        {
+            CD_WARNING("Node device id %d could not finalize CAN comms.\n", iCanBusSharer->getId());
+            ok = false;
         }
     }
 
-    for (const auto & bundle : canThreads)
+    deviceMapper.clear();
+
+    for (auto * canBusBroker : canBusBrokers)
     {
-        if (bundle.reader && bundle.reader->isRunning())
-        {
-            ok &= bundle.reader->stop();
-        }
-
-        delete bundle.reader;
-
-        if (bundle.writer && bundle.writer->isRunning())
-        {
-            ok &= bundle.writer->stop();
-        }
-
-        delete bundle.writer;
+        ok &= canBusBroker->stopThreads();
+        ok &= canBusBroker->clearFilters();
+        delete canBusBroker;
     }
 
-    canThreads.clear();
+    canBusBrokers.clear();
 
-    for (int i = 0; i < nodeDevices.size(); i++)
+    for (auto * device : nodeDevices)
     {
-        if (nodeDevices[i]->poly)
-        {
-            // CAN read threads must not live beyond this point.
-            ok &= nodeDevices[i]->poly->close();
-        }
-
-        delete nodeDevices[i]->poly;
-        nodeDevices[i]->poly = nullptr;
+        // CAN read threads must not live beyond this point.
+        ok &= device->close();
+        delete device;
     }
 
-    for (int i = 0; i < busDevices.size(); i++)
+    nodeDevices.clear();
+
+    for (auto * device : busDevices)
     {
-        if (busDevices[i]->poly)
-        {
-            yarp::dev::ICanBus * iCanBus;
-            busDevices[i]->poly->view(iCanBus);
-
-            // Clear CAN acceptance filters ('0' = all IDs that were previously set by canIdAdd).
-            if (!iCanBus->canIdDelete(0))
-            {
-                CD_WARNING("CAN filters on bus %s may be preserved on the next run.\n", busDevices[i]->key.c_str());
-            }
-
-            ok &= busDevices[i]->poly->close();
-        }
-
-        delete busDevices[i]->poly;
-        busDevices[i]->poly = nullptr;
+        ok &= device->close();
+        delete device;
     }
+
+    busDevices.clear();
 
     return ok;
 }

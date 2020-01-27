@@ -16,12 +16,14 @@ bool YarpCanSenderDelegate::prepareMessage(const can_message & msg)
 
         message.setId(msg.id);
         message.setLen(msg.len);
-        std::memcpy(message.getData(), msg.data, msg.len * sizeof(msg.data));
+
+        if (msg.data)
+        {
+            std::memcpy(message.getData(), msg.data, msg.len);
+        }
 
         return true;
     }
-    else
-    {
-        return false;
-    }
+
+    return false;
 }
