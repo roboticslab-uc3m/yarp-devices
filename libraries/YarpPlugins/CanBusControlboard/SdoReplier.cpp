@@ -141,7 +141,7 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
 
     if (request.size() < 5)
     {
-        CD_WARNING("SDO requests require at least 5 elements, got %d.\n", request.size());
+        CD_WARNING("SDO requests require at least 5 elements, got %zu.\n", request.size());
         return false;
     }
 
@@ -268,7 +268,7 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
     {
         if (request.size() != 6)
         {
-            CD_WARNING("Download SDO requires exactly 6 elements, got %d.\n", request.size());
+            CD_WARNING("Download SDO requires exactly 6 elements, got %zu.\n", request.size());
             return false;
         }
 

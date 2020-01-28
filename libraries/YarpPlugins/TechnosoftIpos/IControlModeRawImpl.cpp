@@ -86,7 +86,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     vars.requestedcontrolMode = mode;
     bool extRefTorque = vars.actualControlMode == VOCAB_CM_TORQUE || vars.actualControlMode == VOCAB_CM_CURRENT;
 
-    if (mode == vars.actualControlMode || extRefTorque && (mode == VOCAB_CM_CURRENT || mode == VOCAB_CM_TORQUE))
+    if (mode == vars.actualControlMode || (extRefTorque && (mode == VOCAB_CM_CURRENT || mode == VOCAB_CM_TORQUE)))
     {
         vars.actualControlMode.store(vars.requestedcontrolMode.load()); // disambiguate torque/current modes
         return true;

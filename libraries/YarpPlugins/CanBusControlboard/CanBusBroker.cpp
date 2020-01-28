@@ -291,7 +291,7 @@ void CanBusBroker::onRead(yarp::os::Bottle & b)
 {
     if (b.size() != 1 && b.size() != 2)
     {
-        CD_WARNING("Illegal size %d, expected [1,2].\n", b.size());
+        CD_WARNING("Illegal size %zu, expected [1,2].\n", b.size());
         return;
     }
 
