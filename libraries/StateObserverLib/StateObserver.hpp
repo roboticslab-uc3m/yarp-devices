@@ -12,6 +12,7 @@ namespace roboticslab
 {
 
 /**
+ * @ingroup yarp_devices_libraries
  * @defgroup StateObserverLib
  * @brief Collection of state observers.
  */

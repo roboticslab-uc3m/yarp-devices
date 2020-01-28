@@ -12,6 +12,7 @@ namespace roboticslab
 {
 
 /**
+ * @ingroup yarp_devices_libraries
  * @defgroup CanBusSharerLib
  * @brief Common interfaces and utilities for a network of CAN nodes.
  */
