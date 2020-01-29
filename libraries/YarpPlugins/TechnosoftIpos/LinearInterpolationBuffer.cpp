@@ -90,28 +90,27 @@ void LinearInterpolationBuffer::addSetpoint(double target, int n)
 
 std::vector<std::uint64_t> LinearInterpolationBuffer::popBatch(bool fullBuffer)
 {
-    const int count = fullBuffer ? getBufferSize() : getBufferSize() - BUFFER_LOW;
     std::vector<std::uint64_t> batch;
     std::lock_guard<std::mutex> lock(queueMutex);
 
-    std::generate_n(std::back_inserter(batch), std::min<int>(count, pendingSetpoints.size()),
+    std::generate_n(std::back_inserter(batch), fullBuffer ? getBufferSize() : getBufferSize() - BUFFER_LOW,
             [this]
             {
-                auto data = pendingSetpoints.front();
-                pendingSetpoints.pop_front();
+                std::uint64_t data;
+
+                if (!pendingSetpoints.empty())
+                {
+                    data = pendingSetpoints.front();
+                    pendingSetpoints.pop_front();
+                }
+                else
+                {
+                    data = makeDataRecord(lastTarget);
+                    integrityCounter++;
+                }
+
                 return data;
             });
-
-    if (pendingSetpoints.empty() && batch.size() < count)
-    {
-        std::generate_n(std::back_inserter(batch), count - batch.size(),
-                [this]
-                {
-                    auto data = makeDataRecord(lastTarget);
-                    integrityCounter++;
-                    return data;
-                });
-    }
 
     return batch;
 }
