@@ -24,13 +24,14 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
         if (!linInterpBuffer)
         {
             dict.put("enable", false);
-            return true;
+        }
+        else
+        {
+            dict.put("enable", true);
+            dict.put("periodMs", linInterpBuffer->getPeriodMs());
+            dict.put("mode", linInterpBuffer->getType());
         }
 
-        dict.put("enable", true);
-        dict.put("periodMs", linInterpBuffer->getPeriodMs());
-        dict.put("bufferSize", linInterpBuffer->getBufferSize());
-        dict.put("mode", linInterpBuffer->getType());
         return true;
     }
     else if (key == "csv")
@@ -80,7 +81,8 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
 
         if (requested ^ !!linInterpBuffer)
         {
-            if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT)
+            // check on vars.requestedControlMode to avoid race conditions during mode switch
+            if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT || vars.requestedcontrolMode == VOCAB_CM_POSITION_DIRECT)
             {
                 CD_ERROR("Currently in posd mode, cannot change config params right now (canId: %d).\n", can->getId());
                 return false;
@@ -88,8 +90,16 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
 
             if (requested)
             {
-                linInterpBuffer = LinearInterpolationBuffer::createBuffer(val, vars, can->getId());
-                return linInterpBuffer != nullptr;
+                linInterpBuffer = LinearInterpolationBuffer::createBuffer(val, vars);
+
+                if (!linInterpBuffer)
+                {
+                    CD_ERROR("Cannot create linear interpolation buffer (canId: %d).\n", can->getId());
+                    return false;
+                }
+
+                CD_SUCCESS("Created %s buffer with period %d ms (canId: %d).\n",
+                        linInterpBuffer->getType().c_str(), linInterpBuffer->getPeriodMs());
             }
             else
             {
