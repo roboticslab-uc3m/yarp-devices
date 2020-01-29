@@ -20,6 +20,7 @@
 #include <yarp/dev/IEncoders.h>
 #include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/IPositionDirect.h>
+#include <yarp/dev/IRemoteVariables.h>
 #include <yarp/dev/PolyDriver.h>
 
 #include <ColorDebug.h>
@@ -30,6 +31,7 @@
 #define DEFAULT_POS_TARGET (-10.0)
 #define DEFAULT_POSD_TARGET (-20.0)
 #define DEFAULT_POSD_PERIOD_MS 50
+#define DEFAULT_IP_MODE "pt"
 
 int main(int argc, char *argv[])
 {
@@ -42,6 +44,8 @@ int main(int argc, char *argv[])
     double posTarget = rf.check("posTarget", yarp::os::Value(DEFAULT_POS_TARGET), "target position for pos mode [deg]").asFloat64();
     double posdTarget = rf.check("posdTarget", yarp::os::Value(DEFAULT_POSD_TARGET), "target position for posd mode [deg]").asFloat64();
     int period = rf.check("period", yarp::os::Value(DEFAULT_POSD_PERIOD_MS), "posd command period [ms]").asInt32();
+    bool batch = rf.check("batch", "stream interpolation data in batches");
+    std::string ipMode = rf.check("ipMode", yarp::os::Value(DEFAULT_IP_MODE), "linear interpolation mode [pt|pvt]").asString();
 
     if (speed <= 0)
     {
@@ -51,7 +55,13 @@ int main(int argc, char *argv[])
 
     if (period <= 0)
     {
-        CD_ERROR("Illegal period.\n");
+        CD_ERROR("Illegal period: %d.\n", period);
+        return false;
+    }
+
+    if (ipMode != "pt" && ipMode != "pvt")
+    {
+        CD_ERROR("Illegal ipMode: %s.\n", ipMode.c_str());
         return false;
     }
 
@@ -80,6 +90,7 @@ int main(int argc, char *argv[])
     yarp::dev::IEncoders * enc;
     yarp::dev::IPositionControl * pos;
     yarp::dev::IPositionDirect * posd;
+    yarp::dev::IRemoteVariables * var;
 
     bool ok = true;
 
@@ -87,6 +98,7 @@ int main(int argc, char *argv[])
     ok &= dd.view(enc);
     ok &= dd.view(pos);
     ok &= dd.view(posd);
+    ok &= !batch || dd.view(var);
 
     if (!ok)
     {
@@ -119,6 +131,23 @@ int main(int argc, char *argv[])
 
     CD_INFO("-- testing POSITION DIRECT --\n");
 
+    if (batch)
+    {
+        yarp::os::Property dict {{"enable", yarp::os::Value(true)},
+                                 {"mode", yarp::os::Value(ipMode)},
+                                 {"periodMs", yarp::os::Value(period)}};
+
+        yarp::os::Value v;
+        v.asList()->addString("linInterp");
+        v.asList()->addList().fromString(dict.toString());
+
+        if (!var->setRemoteVariable("all", {v}))
+        {
+            CD_ERROR("Unable to set linear interpolation mode.\n");
+            return 1;
+        }
+    }
+
     if (!mode->setControlMode(jointId, VOCAB_CM_POSITION_DIRECT))
     {
         CD_ERROR("Problems setting position control: POSITION_DIRECT.\n");
@@ -149,7 +178,11 @@ int main(int argc, char *argv[])
         double newPos = initialPos + progress * std::abs(distance);
         CD_INFO("New target: %f\n", newPos);
         posd->setPosition(jointId, newPos);
-        yarp::os::Time::delay(period * 0.001);
+
+        if (!batch)
+        {
+            yarp::os::Time::delay(period * 0.001);
+        }
     }
 
     return 0;

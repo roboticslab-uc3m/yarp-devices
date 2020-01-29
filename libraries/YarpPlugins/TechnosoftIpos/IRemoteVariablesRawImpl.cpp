@@ -12,7 +12,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & val)
 {
-    CD_DEBUG("%s\n", key.c_str());
+    CD_DEBUG("%s: %s\n", key.c_str(), val.toString().c_str());
 
     val.clear();
     val.addString(key);
