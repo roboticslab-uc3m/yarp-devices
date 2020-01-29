@@ -60,6 +60,13 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
             return false;
         }
 
+        // check on vars.requestedControlMode to avoid race conditions during mode switch
+        if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT || vars.requestedcontrolMode == VOCAB_CM_POSITION_DIRECT)
+        {
+            CD_ERROR("Currently in posd mode, cannot change config params right now (canId: %d).\n", can->getId());
+            return false;
+        }
+
         yarp::os::Searchable * dict;
 
         if (val.get(0).isDict())
@@ -77,39 +84,25 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
             return false;
         }
 
-        bool requested = dict->find("enable").asBool();
+        delete linInterpBuffer;
+        linInterpBuffer = nullptr;
 
-        if (requested ^ !!linInterpBuffer)
+        if (dict->find("enable").asBool())
         {
-            // check on vars.requestedControlMode to avoid race conditions during mode switch
-            if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT || vars.requestedcontrolMode == VOCAB_CM_POSITION_DIRECT)
+            linInterpBuffer = LinearInterpolationBuffer::createBuffer(val, vars);
+
+            if (!linInterpBuffer)
             {
-                CD_ERROR("Currently in posd mode, cannot change config params right now (canId: %d).\n", can->getId());
+                CD_ERROR("Cannot create linear interpolation buffer (canId: %d).\n", can->getId());
                 return false;
             }
 
-            if (requested)
-            {
-                linInterpBuffer = LinearInterpolationBuffer::createBuffer(val, vars);
-
-                if (!linInterpBuffer)
-                {
-                    CD_ERROR("Cannot create linear interpolation buffer (canId: %d).\n", can->getId());
-                    return false;
-                }
-
-                CD_SUCCESS("Created %s buffer with period %d ms (canId: %d).\n",
-                        linInterpBuffer->getType().c_str(), linInterpBuffer->getPeriodMs());
-            }
-            else
-            {
-                delete linInterpBuffer;
-                CD_SUCCESS("Switched back to CSP mode (canId: %d).\n", can->getId());
-            }
+            CD_SUCCESS("Created %s buffer with period %d ms (canId: %d).\n",
+                    linInterpBuffer->getType().c_str(), linInterpBuffer->getPeriodMs(), can->getId());
         }
         else
         {
-            CD_WARNING("Linear interpolation mode already enabled/disabled (canId: %d).\n", can->getId());
+            CD_SUCCESS("Switched back to CSP mode (canId: %d).\n", can->getId());
         }
 
         return true;
