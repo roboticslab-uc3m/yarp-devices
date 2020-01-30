@@ -187,15 +187,16 @@ int main(int argc, char *argv[])
 
     if (batch)
     {
-        bool done;
+        bool done = false;
 
-        while (pos->checkMotionDone(&done) && !done)
+        do
         {
-            CD_INFO_NO_HEADER(". ");
+            CD_INFO_NO_HEADER(".");
             yarp::os::Time::delay(0.5);
         }
+        while (pos->checkMotionDone(&done) && !done);
 
-        CD_INFO("end\n");
+        CD_INFO_NO_HEADER("end\n");
     }
 
     return 0;

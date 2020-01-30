@@ -396,7 +396,14 @@ void TechnosoftIpos::interpretPtStatus(std::uint16_t status)
     reportBitToggle(report, WARN, 11, "Drive has performed a quick stop after a buffer empty condition (last velocity was non-zero).",
             "Drive has maintained interpolated position mode after a buffer empty condition.");
     reportBitToggle(report, WARN, 12, "Integrity counter error.", "No integrity counter error.");
-    reportBitToggle(report, NONE, 13, "Buffer is full.", "Buffer is not full.");
+
+    if (reportBitToggle(report, NONE, 13, "Buffer is full.", "Buffer is not full.") && linInterpBuffer
+            && !vars.ipMotionStarted
+            && linInterpBuffer->isMotionReady())
+    {
+        // buffer full, ready to enable ip mode
+        vars.ipMotionStarted = can->driveStatus()->controlword(can->driveStatus()->controlword().set(4));
+    }
 
     if (reportBitToggle(report, NONE, 14, "Buffer is low.", "Buffer is not low.") && linInterpBuffer
             && vars.ipMotionStarted

@@ -10,7 +10,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::setPositionRaw(int j, double ref)
 {
-    CD_DEBUG("(%d, %f)\n", j, ref);
+    //CD_DEBUG("(%d, %f)\n", j, ref);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
 
@@ -19,7 +19,7 @@ bool TechnosoftIpos::setPositionRaw(int j, double ref)
         linInterpBuffer->addSetpoint(ref); // register point in the internal queue
 
         // drive's buffer is empty, motion has not started yet, we have enough points in the queue
-        if (!vars.ipMotionStarted && linInterpBuffer->isMotionReady())
+        if (!vars.ipMotionStarted && !linInterpBuffer->isQueueRead() && linInterpBuffer->isMotionReady())
         {
             bool ok = true;
 
@@ -28,13 +28,7 @@ bool TechnosoftIpos::setPositionRaw(int j, double ref)
                 ok &= can->rpdo3()->write(setpoint); // load point into the buffer
             }
 
-            // enable ip mode
-            if (!ok || !can->driveStatus()->controlword(can->driveStatus()->controlword().set(4)))
-            {
-                return false;
-            }
-
-            vars.ipMotionStarted = true;
+            return ok;
         }
     }
     else
@@ -48,7 +42,7 @@ bool TechnosoftIpos::setPositionRaw(int j, double ref)
 
 bool TechnosoftIpos::setPositionsRaw(const double * refs)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n");
     return setPositionRaw(0, refs[0]);
 }
 
@@ -56,7 +50,7 @@ bool TechnosoftIpos::setPositionsRaw(const double * refs)
 
 bool TechnosoftIpos::setPositionsRaw(int n_joint, const int * joints, const double * refs)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n");
     return setPositionRaw(joints[0], refs[0]);
 }
 

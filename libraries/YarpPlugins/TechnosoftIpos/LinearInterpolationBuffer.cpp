@@ -25,7 +25,8 @@ LinearInterpolationBuffer::LinearInterpolationBuffer(const StateVariables & _var
     : vars(_vars),
       periodMs(_periodMs),
       integrityCounter(0),
-      initialTarget(0.0)
+      initialTarget(0.0),
+      queueRead(false)
 { }
 
 void LinearInterpolationBuffer::init(double _initialTarget)
@@ -34,6 +35,7 @@ void LinearInterpolationBuffer::init(double _initialTarget)
     integrityCounter = 0;
     initialTarget = _initialTarget;
     pendingTargets.clear();
+    queueRead = false;
 }
 
 std::uint16_t LinearInterpolationBuffer::getPeriodMs() const
@@ -43,7 +45,7 @@ std::uint16_t LinearInterpolationBuffer::getPeriodMs() const
 
 std::uint16_t LinearInterpolationBuffer::getBufferConfig() const
 {
-    std::bitset<16> bits("1010000010001000"); // 0xA088
+    std::bitset<16> bits("1010000010000000"); // 0xA080
     bits |= (BUFFER_LOW << 8);
     bits |= ((integrityCounter << 1) >> 1);
     return bits.to_ulong();
@@ -89,6 +91,7 @@ std::vector<std::uint64_t> LinearInterpolationBuffer::popBatch(bool fullBuffer)
                 return setpoint;
             });
 
+    queueRead |= !batch.empty();
     return batch;
 }
 
@@ -104,6 +107,12 @@ bool LinearInterpolationBuffer::isMotionDone() const
     int offset = getType() == "pvt" ? 1 : 0;
     std::lock_guard<std::mutex> lock(queueMutex);
     return pendingTargets.empty() || pendingTargets.size() <= offset;
+}
+
+bool LinearInterpolationBuffer::isQueueRead() const
+{
+    std::lock_guard<std::mutex> lock(queueMutex);
+    return queueRead;
 }
 
 std::uint8_t LinearInterpolationBuffer::getIntegrityCounter() const
@@ -160,7 +169,7 @@ std::uint64_t PvtBuffer::makeDataRecord(double previous, double current, double 
     data += positionLSB;
     data += static_cast<std::uint64_t>(positionMSB) << 24;
 
-    if (std::abs(next - current) < 1e-6)
+    if (std::abs(next - current) > 1e-6)
     {
         double prevVelocity = (current - previous) / (getPeriodMs() * 0.001);
         double nextVelocity = (next - current) / (getPeriodMs() * 0.001);
@@ -180,6 +189,9 @@ std::uint64_t PvtBuffer::makeDataRecord(double previous, double current, double 
 
     return data;
 }
+
+namespace roboticslab
+{
 
 LinearInterpolationBuffer * createInterpolationBuffer(const yarp::os::Searchable & config, const StateVariables & vars)
 {
@@ -206,3 +218,5 @@ LinearInterpolationBuffer * createInterpolationBuffer(const yarp::os::Searchable
         return nullptr;
     }
 }
+
+} // namespace roboticslab

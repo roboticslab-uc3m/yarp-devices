@@ -63,6 +63,9 @@ public:
     //! Report whether motion can be finished (no more points in the queue).
     bool isMotionDone() const;
 
+    //! Report whether the internal queue has been processed (read from) at least once.
+    bool isQueueRead() const;
+
 protected:
     //! Retrieve current integrity counter value.
     std::uint8_t getIntegrityCounter() const;
@@ -80,6 +83,7 @@ private:
     std::uint16_t periodMs;
     std::uint8_t integrityCounter;
     double initialTarget;
+    bool queueRead;
 
     std::deque<double> pendingTargets;
     mutable std::mutex queueMutex;
