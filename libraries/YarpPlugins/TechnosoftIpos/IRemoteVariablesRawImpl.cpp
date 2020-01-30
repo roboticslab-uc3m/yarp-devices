@@ -89,7 +89,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
 
         if (dict->find("enable").asBool())
         {
-            linInterpBuffer = LinearInterpolationBuffer::createBuffer(val, vars);
+            linInterpBuffer = createInterpolationBuffer(val, vars);
 
             if (!linInterpBuffer)
             {

@@ -19,7 +19,7 @@ bool TechnosoftIpos::setPositionRaw(int j, double ref)
         linInterpBuffer->addSetpoint(ref); // register point in the internal queue
 
         // drive's buffer is empty, motion has not started yet, we have enough points in the queue
-        if (!linInterpBuffer->isStarted() && linInterpBuffer->getQueueSize() >= linInterpBuffer->getBufferSize())
+        if (!vars.ipMotionStarted && linInterpBuffer->isMotionReady())
         {
             bool ok = true;
 
@@ -34,7 +34,7 @@ bool TechnosoftIpos::setPositionRaw(int j, double ref)
                 return false;
             }
 
-            linInterpBuffer->reportMotionStatus(true);
+            vars.ipMotionStarted = true;
         }
     }
     else

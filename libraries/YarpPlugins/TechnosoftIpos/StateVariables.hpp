@@ -140,6 +140,8 @@ struct StateVariables
     std::atomic<bool> enableSync {false};
     std::atomic<bool> enableCsv {false};
 
+    std::atomic<bool> ipMotionStarted {false};
+
     // read only, conceptually immutable
 
     yarp::conf::vocab32_t initialMode {0};

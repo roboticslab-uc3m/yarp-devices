@@ -110,7 +110,8 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     case VOCAB_CM_POSITION_DIRECT:
         if (linInterpBuffer)
         {
-            linInterpBuffer->reset();
+            std::int32_t refInternal = vars.lastEncoderRead.queryPosition();
+            linInterpBuffer->init(vars.internalUnitsToDegrees(refInternal));
 
             PdoConfiguration rpdo3Conf;
             rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x01);
@@ -122,7 +123,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
                     && can->sdo()->download("Interpolation sub mode select", linInterpBuffer->getSubMode(), 0x60C0)
                     && can->sdo()->download("Interpolated position buffer length", linInterpBuffer->getBufferSize(), 0x2073)
                     && can->sdo()->download("Interpolated position buffer configuration", linInterpBuffer->getBufferConfig(), 0x2074)
-                    && can->sdo()->download("Interpolated position initial position", vars.lastEncoderRead.queryPosition(), 0x2079)
+                    && can->sdo()->download("Interpolated position initial position", refInternal, 0x2079)
                     && can->sdo()->download<std::int8_t>("Modes of Operation", 7, 0x6060)
                     && vars.awaitControlMode(VOCAB_CM_POSITION_DIRECT);
         }

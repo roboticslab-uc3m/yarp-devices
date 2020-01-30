@@ -25,11 +25,163 @@ LinearInterpolationBuffer::LinearInterpolationBuffer(const StateVariables & _var
     : vars(_vars),
       periodMs(_periodMs),
       integrityCounter(0),
-      motionStarted(false)
+      initialTarget(0.0)
 { }
 
-LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::os::Searchable & config,
-        const StateVariables & vars)
+void LinearInterpolationBuffer::init(double _initialTarget)
+{
+    std::lock_guard<std::mutex> lock(queueMutex);
+    integrityCounter = 0;
+    initialTarget = _initialTarget;
+    pendingTargets.clear();
+}
+
+std::uint16_t LinearInterpolationBuffer::getPeriodMs() const
+{
+    return periodMs;
+}
+
+std::uint16_t LinearInterpolationBuffer::getBufferConfig() const
+{
+    std::bitset<16> bits("1010000010001000"); // 0xA088
+    bits |= (BUFFER_LOW << 8);
+    bits |= ((integrityCounter << 1) >> 1);
+    return bits.to_ulong();
+}
+
+void LinearInterpolationBuffer::addSetpoint(double target)
+{
+    std::lock_guard<std::mutex> lock(queueMutex);
+    pendingTargets.push_back(target);
+}
+
+std::vector<std::uint64_t> LinearInterpolationBuffer::popBatch(bool fullBuffer)
+{
+    const int batchSize = fullBuffer ? getBufferSize() : getBufferSize() - BUFFER_LOW;
+    int offset = getType() == "pvt" ? 1 : 0;
+    std::vector<std::uint64_t> batch;
+
+    std::lock_guard<std::mutex> lock(queueMutex);
+    double prevTarget = initialTarget;
+
+    std::generate_n(std::back_inserter(batch), std::min<int>(batchSize, pendingTargets.size() - offset),
+            [this, &prevTarget]
+            {
+                auto currTarget = pendingTargets.front();
+                pendingTargets.pop_front();
+                double nextTarget = 0.0;
+
+                if (!pendingTargets.empty())
+                {
+                    if (pendingTargets.size() == 1)
+                    {
+                        nextTarget = currTarget; // last point, assume velocity equal to zero
+                    }
+                    else
+                    {
+                        nextTarget = pendingTargets.front();
+                    }
+                }
+
+                auto setpoint = makeDataRecord(prevTarget, currTarget, nextTarget);
+                prevTarget = currTarget;
+                integrityCounter++;
+                return setpoint;
+            });
+
+    return batch;
+}
+
+bool LinearInterpolationBuffer::isMotionReady() const
+{
+    int offset = getType() == "pvt" ? 1 : 0;
+    std::lock_guard<std::mutex> lock(queueMutex);
+    return pendingTargets.size() >= getBufferSize() + offset;
+}
+
+bool LinearInterpolationBuffer::isMotionDone() const
+{
+    int offset = getType() == "pvt" ? 1 : 0;
+    std::lock_guard<std::mutex> lock(queueMutex);
+    return pendingTargets.empty() || pendingTargets.size() <= offset;
+}
+
+std::uint8_t LinearInterpolationBuffer::getIntegrityCounter() const
+{
+    return integrityCounter;
+}
+
+std::string PtBuffer::getType() const
+{
+    return "pt";
+}
+
+std::uint16_t PtBuffer::getBufferSize() const
+{
+    return PT_BUFFER_MAX;
+}
+
+std::int16_t PtBuffer::getSubMode() const
+{
+    return 0;
+}
+
+std::uint64_t PtBuffer::makeDataRecord(double previous, double current, double next)
+{
+    std::uint64_t data = 0;
+    data += static_cast<std::int32_t>(vars.degreesToInternalUnits(current));
+    data += static_cast<std::uint64_t>(getPeriodMs()) << 32;
+    data += static_cast<std::uint64_t>(getIntegrityCounter()) << 57;
+    return data;
+}
+
+std::string PvtBuffer::getType() const
+{
+    return "pvt";
+}
+
+std::uint16_t PvtBuffer::getBufferSize() const
+{
+    return PVT_BUFFER_MAX;
+}
+
+std::int16_t PvtBuffer::getSubMode() const
+{
+    return -1;
+}
+
+std::uint64_t PvtBuffer::makeDataRecord(double previous, double current, double next)
+{
+    std::uint64_t data = 0;
+
+    std::int32_t position = vars.degreesToInternalUnits(current);
+    std::int16_t positionLSB = static_cast<std::int32_t>(position << 16) >> 16;
+    std::int8_t positionMSB = static_cast<std::int32_t>(position << 8) >> 24;
+    data += positionLSB;
+    data += static_cast<std::uint64_t>(positionMSB) << 24;
+
+    if (std::abs(next - current) < 1e-6)
+    {
+        double prevVelocity = (current - previous) / (getPeriodMs() * 0.001);
+        double nextVelocity = (next - current) / (getPeriodMs() * 0.001);
+        double velocity = vars.degreesToInternalUnits((prevVelocity + nextVelocity) / 2.0, 1);
+
+        std::int16_t velocityInt;
+        std::uint16_t velocityFrac;
+        CanUtils::encodeFixedPoint(velocity, &velocityInt, &velocityFrac);
+        data += static_cast<std::uint64_t>(velocityFrac) << 16;
+        data += static_cast<std::uint64_t>(velocityInt) << 32;
+    }
+
+    std::int16_t time = static_cast<std::int16_t>(getPeriodMs() << 7) >> 7;
+    std::uint8_t ic = getIntegrityCounter() << 1;
+    std::uint16_t timeAndIc = time + (ic << 8);
+    data += static_cast<std::uint64_t>(timeAndIc) << 48;
+
+    return data;
+}
+
+LinearInterpolationBuffer * createInterpolationBuffer(const yarp::os::Searchable & config, const StateVariables & vars)
 {
     unsigned int periodMs = config.check("periodMs", yarp::os::Value(0), "pt/pvt time (ms)").asInt32();
     std::string mode = config.check("mode", yarp::os::Value(""), "linear interpolation mode [pt|pvt]").asString();
@@ -53,141 +205,4 @@ LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::
         CD_ERROR("Unsupported linear interpolation mode: \"%s\".\n", mode.c_str());
         return nullptr;
     }
-}
-
-void LinearInterpolationBuffer::reset()
-{
-    std::lock_guard<std::mutex> lock(queueMutex);
-    integrityCounter = 0;
-    pendingSetpoints.clear();
-}
-
-std::uint16_t LinearInterpolationBuffer::getPeriodMs() const
-{
-    return periodMs;
-}
-
-unsigned int LinearInterpolationBuffer::getQueueSize() const
-{
-    std::lock_guard<std::mutex> lock(queueMutex);
-    return pendingSetpoints.size();
-}
-
-std::uint16_t LinearInterpolationBuffer::getBufferConfig() const
-{
-    std::bitset<16> bits("1010000010001000"); // 0xA088
-    bits |= (BUFFER_LOW << 8);
-    bits |= ((integrityCounter << 1) >> 1);
-    return bits.to_ulong();
-}
-
-void LinearInterpolationBuffer::addSetpoint(double target)
-{
-    std::lock_guard<std::mutex> lock(queueMutex);
-    pendingSetpoints.push_back(makeDataRecord(target));
-    integrityCounter++;
-}
-
-std::vector<std::uint64_t> LinearInterpolationBuffer::popBatch(bool fullBuffer)
-{
-    const int count = fullBuffer ? getBufferSize() : getBufferSize() - BUFFER_LOW;
-    std::vector<std::uint64_t> batch;
-    std::lock_guard<std::mutex> lock(queueMutex);
-
-    std::generate_n(std::back_inserter(batch), std::min<int>(count, pendingSetpoints.size()),
-            [this]
-            {
-                auto data = pendingSetpoints.front();
-                pendingSetpoints.pop_front();
-                return data;
-            });
-
-    return batch;
-}
-
-bool LinearInterpolationBuffer::isStarted() const
-{
-    return motionStarted;
-}
-
-void LinearInterpolationBuffer::reportMotionStatus(bool isStarted)
-{
-    motionStarted = isStarted;
-}
-
-std::uint8_t LinearInterpolationBuffer::getIntegrityCounter() const
-{
-    return integrityCounter;
-}
-
-std::string PtBuffer::getType() const
-{
-    return "pt";
-}
-
-std::uint16_t PtBuffer::getBufferSize() const
-{
-    return PT_BUFFER_MAX;
-}
-
-std::int16_t PtBuffer::getSubMode() const
-{
-    return 0;
-}
-
-std::uint64_t PtBuffer::makeDataRecord(double target)
-{
-    std::uint64_t data = 0;
-
-    std::int32_t position = vars.degreesToInternalUnits(target);
-    data += position;
-
-    std::int16_t time = periodMs;
-    data += (std::uint64_t)time << 32;
-
-    std::uint8_t ic = getIntegrityCounter() << 1;
-    data += (std::uint64_t)ic << 56;
-
-    return data;
-}
-
-std::string PvtBuffer::getType() const
-{
-    return "pvt";
-}
-
-std::uint16_t PvtBuffer::getBufferSize() const
-{
-    return PVT_BUFFER_MAX;
-}
-
-std::int16_t PvtBuffer::getSubMode() const
-{
-    return -1;
-}
-
-std::uint64_t PvtBuffer::makeDataRecord(double target)
-{
-    double v = !isFirstPoint ? (target - previousTarget) / (2 * periodMs * 0.001) : 0.0;
-    std::uint64_t data = 0;
-
-    std::int32_t position = vars.degreesToInternalUnits(target);
-    std::int16_t positionLSB = (std::int32_t)(position << 16) >> 16;
-    std::int8_t positionMSB = (std::int32_t)(position << 8) >> 24;
-    data += ((std::uint64_t)positionMSB << 24) + positionLSB;
-
-    double velocity = vars.degreesToInternalUnits(v, 1);
-    std::int16_t velocityInt;
-    std::uint16_t velocityFrac;
-    CanUtils::encodeFixedPoint(velocity, &velocityInt, &velocityFrac);
-    data += ((std::uint64_t)velocityInt << 32) + ((std::uint64_t)velocityFrac << 16);
-
-    std::int16_t time = (std::int16_t)(periodMs << 7) >> 7;
-    std::uint8_t ic = getIntegrityCounter() << 1;
-    std::uint16_t timeAndIc = time + (ic << 8);
-    data += (std::uint64_t)timeAndIc << 48;
-
-    previousTarget = target;
-    isFirstPoint = false;
-    return data;
 }

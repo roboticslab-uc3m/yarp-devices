@@ -5,7 +5,6 @@
 
 #include <cstdint>
 
-#include <atomic>
 #include <deque>
 #include <mutex>
 #include <string>
@@ -22,20 +21,20 @@ namespace roboticslab
  * @ingroup TechnosoftIpos
  * @brief Base class for a PT/PVT buffer of setpoints.
  *
- * It is designed so that the current motor position can be continuously
- * commanded by a periodic thread governing this class.
+ * Stores an internal queue of setpoints aimed to be processed in batches on
+ * demand by client code.
  */
 class LinearInterpolationBuffer
 {
 public:
-    //! Constructor, set internal invariable parameters.
+    //! Constructor, sets internal invariable parameters.
     LinearInterpolationBuffer(const StateVariables & vars, std::uint16_t periodMs);
 
     //! Virtual destructor.
     virtual ~LinearInterpolationBuffer() = default;
 
     //! Set integrity counter to zero and clear internal setpoint queue.
-    void reset();
+    void init(double initialTarget);
 
     //! Get buffer type as string identifier (pt/pvt).
     virtual std::string getType() const = 0;
@@ -45,9 +44,6 @@ public:
 
     //! Get PT/PVT buffer size.
     virtual std::uint16_t getBufferSize() const = 0;
-
-    //! Get size of internal setpoint queue.
-    unsigned int getQueueSize() const;
 
     //! Get buffer configuration (object 2074h).
     std::uint16_t getBufferConfig() const;
@@ -61,35 +57,32 @@ public:
     //! Generate next batch of setpoints popped from the front of the queue.
     std::vector<std::uint64_t> popBatch(bool fullBuffer);
 
-    //! Report whether motion has started.
-    bool isStarted() const;
+    //! Report whether motion can be started (there are enough points in the queue).
+    bool isMotionReady() const;
 
-    //! Update motion status.
-    void reportMotionStatus(bool isStarted);
-
-    //! Factory method.
-    static LinearInterpolationBuffer * createBuffer(const yarp::os::Searchable & config,
-            const StateVariables & vars);
+    //! Report whether motion can be finished (no more points in the queue).
+    bool isMotionDone() const;
 
 protected:
     //! Retrieve current integrity counter value.
     std::uint8_t getIntegrityCounter() const;
 
-    //! Generate interpolation data record given a position target (object 60C1h).
-    virtual std::uint64_t makeDataRecord(double target) = 0;
+    //! Generate interpolation data record given three contiguous position target (object 60C1h).
+    virtual std::uint64_t makeDataRecord(double previous, double current, double next) = 0;
 
     const StateVariables & vars;
-    std::uint16_t periodMs;
-    std::deque<std::uint64_t> pendingSetpoints;
-    mutable std::mutex queueMutex;
 
     static const unsigned int PT_BUFFER_MAX;
     static const unsigned int PVT_BUFFER_MAX;
     static const unsigned int BUFFER_LOW;
 
 private:
+    std::uint16_t periodMs;
     std::uint8_t integrityCounter;
-    std::atomic<bool> motionStarted;
+    double initialTarget;
+
+    std::deque<double> pendingTargets;
+    mutable std::mutex queueMutex;
 };
 
 /**
@@ -106,15 +99,15 @@ public:
     virtual std::int16_t getSubMode() const override;
 
 protected:
-    virtual std::uint64_t makeDataRecord(double target) override;
+    virtual std::uint64_t makeDataRecord(double previous, double current, double next) override;
 };
 
 /**
  * @ingroup TechnosoftIpos
  * @brief Implementation of a PVT buffer.
  *
- * In contrast to @ref PtBuffer, this class stores the last reference setpoint in
- * order to compute the mean velocity target required by the linear interpolator.
+ * By using the lasts two position targets, this class computes the mean
+ * velocity target required by the linear interpolator.
  */
 class PvtBuffer : public LinearInterpolationBuffer
 {
@@ -126,12 +119,11 @@ public:
     virtual std::int16_t getSubMode() const override;
 
 protected:
-    virtual std::uint64_t makeDataRecord(double target) override;
-
-private:
-    double previousTarget = 0.0;
-    bool isFirstPoint = true;
+    virtual std::uint64_t makeDataRecord(double previous, double current, double next) override;
 };
+
+//! Factory method.
+LinearInterpolationBuffer * createInterpolationBuffer(const yarp::os::Searchable & config, const StateVariables & vars);
 
 } // namespace roboticslab
 

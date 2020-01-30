@@ -399,8 +399,8 @@ void TechnosoftIpos::interpretPtStatus(std::uint16_t status)
     reportBitToggle(report, NONE, 13, "Buffer is full.", "Buffer is not full.");
 
     if (reportBitToggle(report, NONE, 14, "Buffer is low.", "Buffer is not low.") && linInterpBuffer
-            && linInterpBuffer->isStarted()
-            && linInterpBuffer->getQueueSize() != 0)
+            && vars.ipMotionStarted
+            && !linInterpBuffer->isMotionDone())
     {
         // load next batch of points into the drive's buffer
         for (auto setpoint : linInterpBuffer->popBatch(false))
@@ -410,12 +410,12 @@ void TechnosoftIpos::interpretPtStatus(std::uint16_t status)
     }
 
     if (reportBitToggle(report, INFO, 15, "Buffer is empty.", "Buffer is not empty.") && linInterpBuffer
-            && linInterpBuffer->isStarted()
-            && linInterpBuffer->getQueueSize() == 0
+            && vars.ipMotionStarted
+            && linInterpBuffer->isMotionDone()
             && can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)))
     {
         // no elements in the queue and buffer is empty; stop motion
-        linInterpBuffer->reportMotionStatus(false);
+        vars.ipMotionStarted = false;
     }
 
     vars.ptStatus = status;
@@ -537,11 +537,6 @@ bool TechnosoftIpos::monitorWorker(const yarp::os::YarpTimerEvent & event)
         can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
         can->driveStatus()->reset();
         vars.reset();
-
-        if (linInterpBuffer)
-        {
-            linInterpBuffer->reset();
-        }
     }
     else if (!isConfigured && elapsed < event.lastDuration && vars.lastNmtState == 0) // boot-up event
     {
