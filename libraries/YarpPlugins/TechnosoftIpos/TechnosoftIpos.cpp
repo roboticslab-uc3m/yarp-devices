@@ -270,9 +270,12 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
     reportBitToggle(report, INFO, 4, "Motor supply voltage is present.", "Motor supply voltage is absent");
     reportBitToggle(report, INFO, 5, "Quick Stop.");
     reportBitToggle(report, INFO, 6, "Switch on disabled.");
-    reportBitToggle(report, WARN, 7, "A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored.", "No warning.");
-    reportBitToggle(report, INFO, 8, "A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called.", "No TML function or homing is executed. The execution of the last called TML function or homing is completed.");
-    reportBitToggle(report, INFO, 9, "Remote - drive parameters may be modified via CAN and the drive will execute the command message.", "Remote – drive is in local mode and will not execute the command message.");
+    reportBitToggle(report, WARN, 7, "A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored.",
+            "No warning.");
+    reportBitToggle(report, INFO, 8, "A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called.",
+            "No TML function or homing is executed. The execution of the last called TML function or homing is completed.");
+    reportBitToggle(report, INFO, 9, "Remote - drive parameters may be modified via CAN and the drive will execute the command message.",
+            "Remote – drive is in local mode and will not execute the command message.");
 
     if (reportBitToggle(report, INFO, 10, "Target reached.")
         && vars.actualControlMode == VOCAB_CM_POSITION // does not work on velocity profile mode
@@ -305,8 +308,10 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
         break;
     }
 
-    reportBitToggle(report, INFO, 14, "Last event set has occurred.", "No event set or the programmed event has not occurred yet.");
-    reportBitToggle(report, INFO, 15, "Axis on. Power stage is enabled. Motor control is performed.", "Axis off. Power stage is disabled. Motor control is not performed.");
+    reportBitToggle(report, INFO, 14, "Last event set has occurred.",
+            "No event set or the programmed event has not occurred yet.");
+    reportBitToggle(report, INFO, 15, "Axis on. Power stage is enabled. Motor control is performed.",
+            "Axis off. Power stage is disabled. Motor control is not performed.");
 
     can->driveStatus()->update(statusword);
 }
@@ -393,15 +398,25 @@ void TechnosoftIpos::interpretPtStatus(std::uint16_t status)
     reportBitToggle(report, WARN, 12, "Integrity counter error.", "No integrity counter error.");
     reportBitToggle(report, NONE, 13, "Buffer is full.", "Buffer is not full.");
 
-    if (reportBitToggle(report, NONE, 14, "Buffer is low.", "Buffer is not low.") && linInterpBuffer)
+    if (reportBitToggle(report, NONE, 14, "Buffer is low.", "Buffer is not low.") && linInterpBuffer
+            && linInterpBuffer->isStarted()
+            && linInterpBuffer->getQueueSize() != 0)
     {
+        // load next batch of points into the drive's buffer
         for (auto setpoint : linInterpBuffer->popBatch(false))
         {
             can->rpdo3()->write(setpoint);
         }
     }
 
-    reportBitToggle(report, WARN, 15, "Buffer is empty.", "Buffer is not empty.");
+    if (reportBitToggle(report, INFO, 15, "Buffer is empty.", "Buffer is not empty.") && linInterpBuffer
+            && linInterpBuffer->isStarted()
+            && linInterpBuffer->getQueueSize() == 0
+            && can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)))
+    {
+        // no elements in the queue and buffer is empty; stop motion
+        linInterpBuffer->reportMotionStatus(false);
+    }
 
     vars.ptStatus = status;
 }

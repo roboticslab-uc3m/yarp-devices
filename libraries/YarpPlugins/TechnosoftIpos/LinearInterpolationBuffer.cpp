@@ -19,13 +19,13 @@ using namespace roboticslab;
 // https://github.com/roboticslab-uc3m/yarp-devices/issues/198#issuecomment-487279910
 const unsigned int LinearInterpolationBuffer::PT_BUFFER_MAX = 9; // 285 if properly configured
 const unsigned int LinearInterpolationBuffer::PVT_BUFFER_MAX = 7; // 222 if properly configured
-const unsigned int LinearInterpolationBuffer::BUFFER_LOW = 4 ;// max: 15
+const unsigned int LinearInterpolationBuffer::BUFFER_LOW = 4;// max: 15
 
 LinearInterpolationBuffer::LinearInterpolationBuffer(const StateVariables & _vars, std::uint16_t _periodMs)
     : vars(_vars),
       periodMs(_periodMs),
-      lastTarget(0.0),
-      integrityCounter(0)
+      integrityCounter(0),
+      motionStarted(false)
 { }
 
 LinearInterpolationBuffer * LinearInterpolationBuffer::createBuffer(const yarp::os::Searchable & config,
@@ -67,6 +67,12 @@ std::uint16_t LinearInterpolationBuffer::getPeriodMs() const
     return periodMs;
 }
 
+unsigned int LinearInterpolationBuffer::getQueueSize() const
+{
+    std::lock_guard<std::mutex> lock(queueMutex);
+    return pendingSetpoints.size();
+}
+
 std::uint16_t LinearInterpolationBuffer::getBufferConfig() const
 {
     std::bitset<16> bits("1010000010001000"); // 0xA088
@@ -75,44 +81,38 @@ std::uint16_t LinearInterpolationBuffer::getBufferConfig() const
     return bits.to_ulong();
 }
 
-void LinearInterpolationBuffer::addSetpoint(double target, int n)
+void LinearInterpolationBuffer::addSetpoint(double target)
 {
     std::lock_guard<std::mutex> lock(queueMutex);
-
-    for (int i = 0; i < n; i++)
-    {
-        pendingSetpoints.push_back(makeDataRecord(target));
-        integrityCounter++;
-    }
-
-    lastTarget = target;
+    pendingSetpoints.push_back(makeDataRecord(target));
+    integrityCounter++;
 }
 
 std::vector<std::uint64_t> LinearInterpolationBuffer::popBatch(bool fullBuffer)
 {
+    const int count = fullBuffer ? getBufferSize() : getBufferSize() - BUFFER_LOW;
     std::vector<std::uint64_t> batch;
     std::lock_guard<std::mutex> lock(queueMutex);
 
-    std::generate_n(std::back_inserter(batch), fullBuffer ? getBufferSize() : getBufferSize() - BUFFER_LOW,
+    std::generate_n(std::back_inserter(batch), std::min<int>(count, pendingSetpoints.size()),
             [this]
             {
-                std::uint64_t data;
-
-                if (!pendingSetpoints.empty())
-                {
-                    data = pendingSetpoints.front();
-                    pendingSetpoints.pop_front();
-                }
-                else
-                {
-                    data = makeDataRecord(lastTarget);
-                    integrityCounter++;
-                }
-
+                auto data = pendingSetpoints.front();
+                pendingSetpoints.pop_front();
                 return data;
             });
 
     return batch;
+}
+
+bool LinearInterpolationBuffer::isStarted() const
+{
+    return motionStarted;
+}
+
+void LinearInterpolationBuffer::reportMotionStatus(bool isStarted)
+{
+    motionStarted = isStarted;
 }
 
 std::uint8_t LinearInterpolationBuffer::getIntegrityCounter() const

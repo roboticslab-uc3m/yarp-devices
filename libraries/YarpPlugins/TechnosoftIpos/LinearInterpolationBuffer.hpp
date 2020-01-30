@@ -5,6 +5,7 @@
 
 #include <cstdint>
 
+#include <atomic>
 #include <deque>
 #include <mutex>
 #include <string>
@@ -45,17 +46,26 @@ public:
     //! Get PT/PVT buffer size.
     virtual std::uint16_t getBufferSize() const = 0;
 
+    //! Get size of internal setpoint queue.
+    unsigned int getQueueSize() const;
+
     //! Get buffer configuration (object 2074h).
     std::uint16_t getBufferConfig() const;
 
     //! Generate interpolation submode register value (object 60C0h).
     virtual std::int16_t getSubMode() const = 0;
 
-    //! Place @p n copies of a setpoint at the end of the queue.
-    void addSetpoint(double target, int n = 1);
+    //! Place a new setpoint at the end of the queue.
+    void addSetpoint(double target);
 
     //! Generate next batch of setpoints popped from the front of the queue.
     std::vector<std::uint64_t> popBatch(bool fullBuffer);
+
+    //! Report whether motion has started.
+    bool isStarted() const;
+
+    //! Update motion status.
+    void reportMotionStatus(bool isStarted);
 
     //! Factory method.
     static LinearInterpolationBuffer * createBuffer(const yarp::os::Searchable & config,
@@ -71,7 +81,6 @@ protected:
     const StateVariables & vars;
     std::uint16_t periodMs;
     std::deque<std::uint64_t> pendingSetpoints;
-    double lastTarget;
     mutable std::mutex queueMutex;
 
     static const unsigned int PT_BUFFER_MAX;
@@ -80,6 +89,7 @@ protected:
 
 private:
     std::uint8_t integrityCounter;
+    std::atomic<bool> motionStarted;
 };
 
 /**

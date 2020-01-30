@@ -264,8 +264,6 @@ public:
 
 private:
 
-    bool setLegacyPositionInterpolationMode();
-
     void interpretSupportedDriveModes(std::uint32_t data);
     void interpretMsr(std::uint16_t msr);
     void interpretMer(std::uint16_t mer);

@@ -12,45 +12,6 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::setLegacyPositionInterpolationMode()
-{
-    linInterpBuffer->reset();
-
-    PdoConfiguration rpdo3Conf;
-    rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x01);
-    rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x02);
-
-    std::int32_t refInternalUnits = vars.lastEncoderRead.queryPosition();
-
-    if (!can->rpdo3()->configure(rpdo3Conf)
-        || !can->sdo()->download<std::uint16_t>("Auxiliary Settings Register", 0x0000, 0x208E) // legacy pt mode
-        || !can->sdo()->download("Interpolation sub mode select", linInterpBuffer->getSubMode(), 0x60C0)
-        || !can->sdo()->download("Interpolated position buffer length", linInterpBuffer->getBufferSize(), 0x2073)
-        || !can->sdo()->download("Interpolated position buffer configuration", linInterpBuffer->getBufferConfig(), 0x2074)
-        || !can->sdo()->download("Interpolated position initial position", refInternalUnits, 0x2079))
-    {
-        return false;
-    }
-
-    vars.synchronousCommandTarget = vars.internalUnitsToDegrees(refInternalUnits);
-    linInterpBuffer->addSetpoint(vars.synchronousCommandTarget, linInterpBuffer->getBufferSize());
-
-    for (auto setpoint : linInterpBuffer->popBatch(true))
-    {
-        if (!can->rpdo3()->write(setpoint))
-        {
-            return false;
-        }
-    }
-
-    return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-            && can->sdo()->download<std::int8_t>("Modes of Operation", 7, 0x6060)
-            && vars.awaitControlMode(VOCAB_CM_POSITION_DIRECT)
-            && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4)); // enable ip mode
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIpos::getControlModeRaw(int j, int * mode)
 {
     //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
@@ -149,7 +110,21 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     case VOCAB_CM_POSITION_DIRECT:
         if (linInterpBuffer)
         {
-            return setLegacyPositionInterpolationMode();
+            linInterpBuffer->reset();
+
+            PdoConfiguration rpdo3Conf;
+            rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x01);
+            rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x02);
+
+            return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
+                    && can->rpdo3()->configure(rpdo3Conf)
+                    && can->sdo()->download<std::uint16_t>("Auxiliary Settings Register", 0x0000, 0x208E) // legacy pt mode
+                    && can->sdo()->download("Interpolation sub mode select", linInterpBuffer->getSubMode(), 0x60C0)
+                    && can->sdo()->download("Interpolated position buffer length", linInterpBuffer->getBufferSize(), 0x2073)
+                    && can->sdo()->download("Interpolated position buffer configuration", linInterpBuffer->getBufferConfig(), 0x2074)
+                    && can->sdo()->download("Interpolated position initial position", vars.lastEncoderRead.queryPosition(), 0x2079)
+                    && can->sdo()->download<std::int8_t>("Modes of Operation", 7, 0x6060)
+                    && vars.awaitControlMode(VOCAB_CM_POSITION_DIRECT);
         }
 
         // bug in F508M/F509M firmware, switch to homing mode to stop controlling profile velocity

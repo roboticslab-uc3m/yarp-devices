@@ -16,7 +16,26 @@ bool TechnosoftIpos::setPositionRaw(int j, double ref)
 
     if (linInterpBuffer)
     {
-        linInterpBuffer->addSetpoint(ref);
+        linInterpBuffer->addSetpoint(ref); // register point in the internal queue
+
+        // drive's buffer is empty, motion has not started yet, we have enough points in the queue
+        if (!linInterpBuffer->isStarted() && linInterpBuffer->getQueueSize() >= linInterpBuffer->getBufferSize())
+        {
+            bool ok = true;
+
+            for (auto setpoint : linInterpBuffer->popBatch(true))
+            {
+                ok &= can->rpdo3()->write(setpoint); // load point into the buffer
+            }
+
+            // enable ip mode
+            if (!ok || !can->driveStatus()->controlword(can->driveStatus()->controlword().set(4)))
+            {
+                return false;
+            }
+
+            linInterpBuffer->reportMotionStatus(true);
+        }
     }
     else
     {

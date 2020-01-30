@@ -185,5 +185,18 @@ int main(int argc, char *argv[])
         }
     }
 
+    if (batch)
+    {
+        bool done;
+
+        while (pos->checkMotionDone(&done) && !done)
+        {
+            CD_INFO_NO_HEADER(". ");
+            yarp::os::Time::delay(0.5);
+        }
+
+        CD_INFO("end\n");
+    }
+
     return 0;
 }
