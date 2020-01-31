@@ -25,14 +25,14 @@ LinearInterpolationBuffer::LinearInterpolationBuffer(const StateVariables & _var
     : vars(_vars),
       periodMs(_periodMs),
       integrityCounter(0),
-      initialTarget(0.0)
+      prevTarget(0.0)
 { }
 
-void LinearInterpolationBuffer::init(double _initialTarget)
+void LinearInterpolationBuffer::init(double initialTarget)
 {
     std::lock_guard<std::mutex> lock(queueMutex);
     integrityCounter = 0;
-    initialTarget = _initialTarget;
+    prevTarget = initialTarget;
     pendingTargets.clear();
 }
 
@@ -59,13 +59,12 @@ std::vector<std::uint64_t> LinearInterpolationBuffer::popBatch(bool fullBuffer)
 {
     const int batchSize = fullBuffer ? getBufferSize() : getBufferSize() - BUFFER_LOW;
     int offset = getType() == "pvt" ? 1 : 0;
-    std::vector<std::uint64_t> batch;
 
+    std::vector<std::uint64_t> batch;
     std::lock_guard<std::mutex> lock(queueMutex);
-    double prevTarget = initialTarget;
 
     std::generate_n(std::back_inserter(batch), std::min<int>(batchSize, pendingTargets.size() - offset),
-            [this, &prevTarget]
+            [this]
             {
                 auto currTarget = pendingTargets.front();
                 pendingTargets.pop_front();
@@ -90,6 +89,12 @@ std::vector<std::uint64_t> LinearInterpolationBuffer::popBatch(bool fullBuffer)
             });
 
     return batch;
+}
+
+double LinearInterpolationBuffer::getPrevTarget() const
+{
+    std::lock_guard<std::mutex> lock(queueMutex);
+    return prevTarget;
 }
 
 bool LinearInterpolationBuffer::isQueueReady() const

@@ -62,7 +62,16 @@ bool TechnosoftIpos::getRefPositionRaw(int joint, double * ref)
     CD_DEBUG("(%d)\n", joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
-    *ref = vars.synchronousCommandTarget;
+
+    if (linInterpBuffer)
+    {
+        *ref = linInterpBuffer->getPrevTarget();
+    }
+    else
+    {
+        *ref = vars.synchronousCommandTarget;
+    }
+
     return true;
 }
 

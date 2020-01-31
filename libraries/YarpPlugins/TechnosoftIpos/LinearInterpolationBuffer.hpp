@@ -57,6 +57,9 @@ public:
     //! Generate next batch of setpoints popped from the front of the queue.
     std::vector<std::uint64_t> popBatch(bool fullBuffer);
 
+    //! Retrieve last point loaded into the buffer.
+    double getPrevTarget() const;
+
     //! Report whether there are enough points in the queue to fill the buffer.
     bool isQueueReady() const;
 
@@ -79,7 +82,7 @@ protected:
 private:
     std::uint16_t periodMs;
     std::uint8_t integrityCounter;
-    double initialTarget;
+    double prevTarget;
 
     std::deque<double> pendingTargets;
     mutable std::mutex queueMutex;
