@@ -19,7 +19,7 @@ bool TechnosoftIpos::setPositionRaw(int j, double ref)
         linInterpBuffer->addSetpoint(ref); // register point in the internal queue
 
         // drive's buffer is empty, motion has not started yet, we have enough points in the queue
-        if (!vars.ipMotionStarted && !linInterpBuffer->isQueueRead() && linInterpBuffer->isMotionReady())
+        if (!vars.ipBufferFilled && !vars.ipMotionStarted && linInterpBuffer->isQueueReady())
         {
             bool ok = true;
 
@@ -28,6 +28,7 @@ bool TechnosoftIpos::setPositionRaw(int j, double ref)
                 ok &= can->rpdo3()->write(setpoint); // load point into the buffer
             }
 
+            vars.ipBufferFilled = ok;
             return ok;
         }
     }

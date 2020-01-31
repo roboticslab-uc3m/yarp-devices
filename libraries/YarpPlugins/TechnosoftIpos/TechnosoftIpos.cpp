@@ -398,8 +398,7 @@ void TechnosoftIpos::interpretPtStatus(std::uint16_t status)
     reportBitToggle(report, WARN, 12, "Integrity counter error.", "No integrity counter error.");
 
     if (reportBitToggle(report, NONE, 13, "Buffer is full.", "Buffer is not full.") && linInterpBuffer
-            && !vars.ipMotionStarted
-            && linInterpBuffer->isMotionReady())
+            && !vars.ipMotionStarted)
     {
         // buffer full, ready to enable ip mode
         vars.ipMotionStarted = can->driveStatus()->controlword(can->driveStatus()->controlword().set(4));
@@ -407,7 +406,7 @@ void TechnosoftIpos::interpretPtStatus(std::uint16_t status)
 
     if (reportBitToggle(report, NONE, 14, "Buffer is low.", "Buffer is not low.") && linInterpBuffer
             && vars.ipMotionStarted
-            && !linInterpBuffer->isMotionDone())
+            && !linInterpBuffer->isQueueEmpty())
     {
         // load next batch of points into the drive's buffer
         for (auto setpoint : linInterpBuffer->popBatch(false))
@@ -418,11 +417,11 @@ void TechnosoftIpos::interpretPtStatus(std::uint16_t status)
 
     if (reportBitToggle(report, INFO, 15, "Buffer is empty.", "Buffer is not empty.") && linInterpBuffer
             && vars.ipMotionStarted
-            && linInterpBuffer->isMotionDone()
+            && linInterpBuffer->isQueueEmpty()
             && can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)))
     {
         // no elements in the queue and buffer is empty; stop motion
-        vars.ipMotionStarted = false;
+        vars.ipMotionStarted = vars.ipBufferFilled = false;
     }
 
     vars.ptStatus = status;

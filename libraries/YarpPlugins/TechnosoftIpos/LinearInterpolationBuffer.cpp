@@ -25,8 +25,7 @@ LinearInterpolationBuffer::LinearInterpolationBuffer(const StateVariables & _var
     : vars(_vars),
       periodMs(_periodMs),
       integrityCounter(0),
-      initialTarget(0.0),
-      queueRead(false)
+      initialTarget(0.0)
 { }
 
 void LinearInterpolationBuffer::init(double _initialTarget)
@@ -35,7 +34,6 @@ void LinearInterpolationBuffer::init(double _initialTarget)
     integrityCounter = 0;
     initialTarget = _initialTarget;
     pendingTargets.clear();
-    queueRead = false;
 }
 
 std::uint16_t LinearInterpolationBuffer::getPeriodMs() const
@@ -45,7 +43,7 @@ std::uint16_t LinearInterpolationBuffer::getPeriodMs() const
 
 std::uint16_t LinearInterpolationBuffer::getBufferConfig() const
 {
-    std::bitset<16> bits("1010000010000000"); // 0xA080
+    std::bitset<16> bits("1011000010000000"); // 0xA080
     bits |= (BUFFER_LOW << 8);
     bits |= ((integrityCounter << 1) >> 1);
     return bits.to_ulong();
@@ -91,28 +89,21 @@ std::vector<std::uint64_t> LinearInterpolationBuffer::popBatch(bool fullBuffer)
                 return setpoint;
             });
 
-    queueRead |= !batch.empty();
     return batch;
 }
 
-bool LinearInterpolationBuffer::isMotionReady() const
+bool LinearInterpolationBuffer::isQueueReady() const
 {
     int offset = getType() == "pvt" ? 1 : 0;
     std::lock_guard<std::mutex> lock(queueMutex);
     return pendingTargets.size() >= getBufferSize() + offset;
 }
 
-bool LinearInterpolationBuffer::isMotionDone() const
+bool LinearInterpolationBuffer::isQueueEmpty() const
 {
     int offset = getType() == "pvt" ? 1 : 0;
     std::lock_guard<std::mutex> lock(queueMutex);
     return pendingTargets.empty() || pendingTargets.size() <= offset;
-}
-
-bool LinearInterpolationBuffer::isQueueRead() const
-{
-    std::lock_guard<std::mutex> lock(queueMutex);
-    return queueRead;
 }
 
 std::uint8_t LinearInterpolationBuffer::getIntegrityCounter() const

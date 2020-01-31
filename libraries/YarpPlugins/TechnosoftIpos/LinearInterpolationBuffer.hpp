@@ -57,14 +57,11 @@ public:
     //! Generate next batch of setpoints popped from the front of the queue.
     std::vector<std::uint64_t> popBatch(bool fullBuffer);
 
-    //! Report whether motion can be started (there are enough points in the queue).
-    bool isMotionReady() const;
+    //! Report whether there are enough points in the queue to fill the buffer.
+    bool isQueueReady() const;
 
-    //! Report whether motion can be finished (no more points in the queue).
-    bool isMotionDone() const;
-
-    //! Report whether the internal queue has been processed (read from) at least once.
-    bool isQueueRead() const;
+    //! Report whether there are no more points in the queue.
+    bool isQueueEmpty() const;
 
 protected:
     //! Retrieve current integrity counter value.
@@ -83,7 +80,6 @@ private:
     std::uint16_t periodMs;
     std::uint8_t integrityCounter;
     double initialTarget;
-    bool queueRead;
 
     std::deque<double> pendingTargets;
     mutable std::mutex queueMutex;

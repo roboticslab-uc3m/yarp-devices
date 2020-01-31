@@ -141,6 +141,7 @@ struct StateVariables
     std::atomic<bool> enableCsv {false};
 
     std::atomic<bool> ipMotionStarted {false};
+    std::atomic<bool> ipBufferFilled {false};
 
     // read only, conceptually immutable
 
