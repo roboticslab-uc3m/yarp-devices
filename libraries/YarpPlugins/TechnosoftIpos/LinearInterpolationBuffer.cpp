@@ -160,10 +160,7 @@ std::uint64_t PvtBuffer::makeDataRecord(double previous, double current, double 
     std::uint64_t data = 0;
 
     std::int32_t position = vars.degreesToInternalUnits(current);
-    std::int16_t positionLSB = static_cast<std::int32_t>(position << 16) >> 16;
-    std::int8_t positionMSB = static_cast<std::int32_t>(position << 8) >> 24;
-    data += positionLSB;
-    data += static_cast<std::uint64_t>(positionMSB) << 24;
+    data += ((position & 0x00FF0000) << 8) + (position & 0x0000FFFF);
 
     if (std::abs(next - current) > 1e-6)
     {
@@ -172,16 +169,14 @@ std::uint64_t PvtBuffer::makeDataRecord(double previous, double current, double 
         double velocity = vars.degreesToInternalUnits((prevVelocity + nextVelocity) / 2.0, 1);
 
         std::int16_t velocityInt;
-        std::uint16_t velocityFrac;
+        std::uint8_t velocityFrac;
         CanUtils::encodeFixedPoint(velocity, &velocityInt, &velocityFrac);
         data += static_cast<std::uint64_t>(velocityFrac) << 16;
         data += static_cast<std::uint64_t>(velocityInt) << 32;
     }
 
-    std::int16_t time = static_cast<std::int16_t>(getPeriodMs() << 7) >> 7;
-    std::uint8_t ic = getIntegrityCounter() << 1;
-    std::uint16_t timeAndIc = time + (ic << 8);
-    data += static_cast<std::uint64_t>(timeAndIc) << 48;
+    data += static_cast<std::uint64_t>(getPeriodMs() & 0x1FF) << 48;
+    data += static_cast<std::uint64_t>(getIntegrityCounter()) << 57;
 
     return data;
 }
