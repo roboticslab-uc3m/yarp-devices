@@ -12,17 +12,18 @@ using namespace roboticslab;
 
 bool CuiAbsolute::performRequest(const std::string & name, unsigned int len, const std::uint8_t * data, encoder_t * v)
 {
+    const can_message msg {canId, len, data};
     retry = 0;
 
     while (++retry <= maxRetries)
     {
-        if (!sender->prepareMessage({canId, len, data}))
+        if (!sender->prepareMessage(msg))
         {
-            CD_ERROR("Unable to register \"%s\" command. %s\n", name.c_str(), CanUtils::msgToStr(canId, 0, len, data).c_str());
+            CD_ERROR("Unable to register \"%s\" command. %s\n", name.c_str(), CanUtils::msgToStr(msg).c_str());
             return false;
         }
 
-        CD_INFO("Registered \"%s\" command (%d/%d). %s\n", name.c_str(), retry, maxRetries, CanUtils::msgToStr(canId, 0, len, data).c_str());
+        CD_INFO("Registered \"%s\" command (%d/%d). %s\n", name.c_str(), retry, maxRetries, CanUtils::msgToStr(msg).c_str());
 
         if (v ? pollStateObserver->await(v) : pushStateObserver->await())
         {

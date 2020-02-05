@@ -331,8 +331,9 @@ void CanBusBroker::onRead(yarp::os::Bottle & b)
         }
     }
 
-    writerThread->getDelegate()->prepareMessage({id, size, raw.get()});
-    CD_INFO("Remote command: %s\n", CanUtils::msgToStr(id, size, raw.get()).c_str());
+    can_message msg {id, size, raw.get()};
+    writerThread->getDelegate()->prepareMessage(msg);
+    CD_INFO("Remote command: %s\n", CanUtils::msgToStr(msg).c_str());
 }
 
 // -----------------------------------------------------------------------------
