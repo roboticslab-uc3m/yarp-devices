@@ -71,9 +71,9 @@ v = yarp.DVector(axes)  # create a YARP vector of doubles the size of the number
 enc.getEncoders(v)  # read the encoder values and put them into 'v'
 print 'v[1] is: ' + str(v[1])  # print element 1 of 'v', note that motors and encoders start at 0
 
-min = yarp.DVector(1)
-max = yarp.DVector(1)
-ll.getLimits(0,min,max)
+lmin = yarp.DVector(1)
+lmax = yarp.DVector(1)
+ll.getLimits(0,lmin,lmax)
 
 # use the object to set the device to velocity mode (as opposed to position mode)
 mode.setControlModes(yarp.IVector(axes, yarp.encode('vel')))
