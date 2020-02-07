@@ -49,6 +49,7 @@ dd = yarp.PolyDriver(options)  # create a YARP multi-use driver with the given o
 
 pos = dd.viewIPositionControl()  # make a position controller object we call 'pos'
 vel = dd.viewIVelocityControl()  # make a velocity controller object we call 'vel'
+posd = dd.viewIPositionDirect()  # make a direct position controller object we call 'posd'
 enc = dd.viewIEncoders()  # make an encoder controller object we call 'enc'
 mode = dd.viewIControlMode()  # make a operation mode controller object we call 'mode'
 ll = dd.viewIControlLimits()  # make a limits controller object we call 'll'
@@ -89,13 +90,19 @@ while not done:
 # use the object to set the device to velocity mode (as opposed to position mode)
 mode.setControlModes(yarp.IVector(axes, yarp.encode('vel')))
 
-print 'test velocityMove(0,10) -> moves motor 0 (start count at motor 0) at 10 degrees per second'
+print 'velocityMove(0,10) -> moves motor 0 (start count at motor 0) at 10 degrees per second'
 vel.velocityMove(0,10)
 
-print 'test delay(5)'
+print 'delay(5)'
 yarp.delay(5)
 
 vel.velocityMove(0,0)  # stop the robot
+
+mode.setControlModes(yarp.IVector(axes, yarp.encode('posd')))
+home = [0] * axes
+print 'positionMove(home) -> [multiple axes] moves all to 0 immediately'
+posd.setPositions(yarp.DVector(home))
+
 dd.close()
 
 yarp.Network.fini()  # disconnect from the YARP network
