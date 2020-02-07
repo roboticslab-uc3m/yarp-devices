@@ -63,20 +63,28 @@ print('lmin',lmin[0],'lmax',lmax[0])
 # use the object to set the device to position mode (as opposed to velocity mode)(note: stops the robot)
 mode.setControlModes(yarp.IVector(axes, yarp.encode('pos')))
 
-print 'test positionMove(1,-35) -> moves motor 1 (start count at motor 0) to -35 degrees'
+print 'positionMove(1,-35) -> moves motor 1 (start count at motor 0) to -35 degrees'
 pos.positionMove(1,-35)
 
-print 'test delay(5)'
-yarp.delay(5)
+done = False
+while not done:
+    print 'wait to reach...'
+    yarp.delay(1.0) # [s]
+    done = pos.checkMotionDone()
 
-targets = list(range(10,10+5*axes,5))
-print 'test positionMove(...) -> [multiple axes] moves motor 0 to 10 degrees, motor 1 to 15 degrees and so on'
+targets = list(range(0,10+5*axes,5))
+print 'positionMove(...) -> [multiple axes] moves motor 0 to 10 degrees, motor 1 to 15 degrees and so on'
 pos.positionMove(yarp.DVector(targets))
+
+done = False
+while not done:
+    print 'wait to reach...'
+    yarp.delay(1.0) # [s]
+    done = pos.checkMotionDone()
 
 v = yarp.DVector(axes)  # create a YARP vector of doubles the size of the number of elements read by enc, call it 'v'
 enc.getEncoders(v)  # read the encoder values and put them into 'v'
 print 'v[1] is: ' + str(v[1])  # print element 1 of 'v', note that motors and encoders start at 0
-
 
 # use the object to set the device to velocity mode (as opposed to position mode)
 mode.setControlModes(yarp.IVector(axes, yarp.encode('vel')))
