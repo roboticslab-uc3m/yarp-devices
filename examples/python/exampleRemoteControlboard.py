@@ -27,6 +27,7 @@
 # <b>Running</b> (assuming correct installation)
 #
 #\verbatim
+#yarpdev --device YarpOpenraveControlboard --env data/lab1.env.xml --robotIndex 0 --manipulatorIndex 0 --name /BarrettWAM/arm --view
 #$YARP_DEVICES_ROOT/example/python/exampleRemoteControlboard.py
 #\endverbatim
 #
@@ -42,7 +43,7 @@ if yarp.Network.checkNetwork() != True:  # let's see if there was actually a rea
     quit()
 options = yarp.Property()  # create an instance of Property, a nice YARP class for storing name-value (key-value) pairs
 options.put('device','remote_controlboard')  # we add a name-value pair that indicates the YARP device
-options.put('remote','/robotName')  # we add info on to whom we will connect
+options.put('remote','/BarrettWAM/arm')  # we add info on to whom we will connect robotName
 options.put('local','/exampleRemoteControlboard')  # we add info on how we will call ourselves on the YARP network
 dd = yarp.PolyDriver(options)  # create a YARP multi-use driver with the given options
 
@@ -53,6 +54,11 @@ mode = dd.viewIControlMode()  # make a operation mode controller object we call 
 ll = dd.viewIControlLimits()  # make a limits controller object we call 'll'
 
 axes = enc.getAxes()  # retrieve number of joints
+
+lmin = yarp.DVector(1)
+lmax = yarp.DVector(1)
+ll.getLimits(0,lmin,lmax) # retrieve limits of joint 0
+print('lmin',lmin[0],'lmax',lmax[0])
 
 # use the object to set the device to position mode (as opposed to velocity mode)(note: stops the robot)
 mode.setControlModes(yarp.IVector(axes, yarp.encode('pos')))
@@ -71,9 +77,6 @@ v = yarp.DVector(axes)  # create a YARP vector of doubles the size of the number
 enc.getEncoders(v)  # read the encoder values and put them into 'v'
 print 'v[1] is: ' + str(v[1])  # print element 1 of 'v', note that motors and encoders start at 0
 
-lmin = yarp.DVector(1)
-lmax = yarp.DVector(1)
-ll.getLimits(0,lmin,lmax)
 
 # use the object to set the device to velocity mode (as opposed to position mode)
 mode.setControlModes(yarp.IVector(axes, yarp.encode('vel')))
