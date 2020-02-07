@@ -67,7 +67,7 @@ print 'test positionMove(1,-35) -> moves motor 1 (start count at motor 0) to -35
 pos.positionMove(1,-35)
 
 print 'test delay(5)'
-yarp.Time.delay(5)
+yarp.delay(5)
 
 targets = list(range(10,10+5*axes,5))
 print 'test positionMove(...) -> [multiple axes] moves motor 0 to 10 degrees, motor 1 to 15 degrees and so on'
@@ -85,7 +85,7 @@ print 'test velocityMove(0,10) -> moves motor 0 (start count at motor 0) at 10 d
 vel.velocityMove(0,10)
 
 print 'test delay(5)'
-yarp.Time.delay(5)
+yarp.delay(5)
 
 vel.velocityMove(0,0)  # stop the robot
 dd.close()
