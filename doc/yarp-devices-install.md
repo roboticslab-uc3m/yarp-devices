@@ -12,6 +12,7 @@ For unit testing, you'll need the googletest source package. Refer to [Install g
 
 - [../libraries/YarpPlugins/AmorControlboard](../libraries/YarpPlugins/AmorControlboard#requirements)
 - [../libraries/YarpPlugins/AravisGigE](../libraries/YarpPlugins/AravisGigE#requirements)
+- [../libraries/YarpPlugins/SpaceNavigator](../libraries/YarpPlugins/SpaceNavigator#requirements)
 - [../libraries/YarpPlugins/WiimoteSensor](../libraries/YarpPlugins/WiimoteSensor#requirements)
 - Even more: [specific-dependencies.csv](specific-dependencies.csv)
 
