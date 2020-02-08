@@ -15,6 +15,7 @@ For unit testing, you'll need the googletest source package. Refer to [Install g
 - [../libraries/YarpPlugins/LeapMotionSensor](../libraries/YarpPlugins/LeapMotionSensor#requirements)
 - [../libraries/YarpPlugins/SpaceNavigator](../libraries/YarpPlugins/SpaceNavigator#requirements)
 - [../libraries/YarpPlugins/WiimoteSensor](../libraries/YarpPlugins/WiimoteSensor#requirements)
+- [../programs/grabberControls2Gui](../programs/grabberControls2Gui#requirements)
 - Even more: [specific-dependencies.csv](specific-dependencies.csv)
 
 
