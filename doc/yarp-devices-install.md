@@ -10,7 +10,9 @@ For unit testing, you'll need the googletest source package. Refer to [Install g
 
 ### Components with known additional/specific dependencies
 
-Some devices require specific dependencies to work that must be satisfied. Use the following table to locate and install the dependencies required for your concrete application: [specific-dependencies.csv](specific-dependencies.csv)
+- [../libraries/YarpPlugins/AmorControlboard](../libraries/YarpPlugins/AmorControlboard#requirements)
+
+Even more: [specific-dependencies.csv](specific-dependencies.csv)
 
 \* CMake find modules are smart enough to locate the SDK files in the usual paths. We recommend unzipping the `LeapSDK` folder in `/opt/LeapSDK` (make sure it contains `include/` and `lib/` at the top level).
 
