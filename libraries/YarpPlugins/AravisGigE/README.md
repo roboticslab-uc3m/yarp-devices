@@ -32,17 +32,17 @@ Once there one can send command to the camera. The most common commands are: `ha
 ### has
 With the `has` command one can query the device if it has some property. For instance, to check if the camera has zoom controls:
 
-`fgc2 has feat 16`
+`fgc has feat 16`
 
 ### get
 With the ' get' command one can query the *value* of some property. For instance, to check the current gain value:
 
-`fgc2 get feat 9`
+`fgc get feat 9`
 
 ### set 
 With the `set` command one can change the *value* of some property. For instance, to set the zoom to the maximum value:
 
-`fgc2 set feat 16 100`
+`fgc set feat 16 100`
 
 ### Available features
 These are the features currently available in YARP. To check which ones are supported by the camera, the `has` command can be used:
