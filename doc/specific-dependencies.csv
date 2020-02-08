@@ -1,7 +1,6 @@
-Dependency , hcanpci
-Dependency (installation-guides) , install-hcanpci.md 
+Dependency ,CanBus*
+Dependency (installation-guides) ,
  CanBusControlboard , yes 
- CanBusHico , yes 
  CanBusPeak , no 
  CanBusSocket , no 
  CuiAbsolute , yes 
