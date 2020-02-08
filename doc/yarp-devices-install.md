@@ -19,8 +19,13 @@ For unit testing, you'll need the googletest source package. Refer to [Install g
 - [../libraries/YarpPlugins/SpaceNavigator](../libraries/YarpPlugins/SpaceNavigator#requirements)
 - [../libraries/YarpPlugins/WiimoteSensor](../libraries/YarpPlugins/WiimoteSensor#requirements)
 - [../programs/grabberControls2Gui](../programs/grabberControls2Gui#requirements)
-- Even more: [specific-dependencies.csv](specific-dependencies.csv)
-
+- The following components additionally need some kind of CAN Bus driver (e.g. a [CanBusHico](../libraries/YarpPlugins/CanBusHico) or [CanBusPeak](../libraries/YarpPlugins/CanBusPeak)):
+    - [../libraries/YarpPlugins/CanBusControlboard](../libraries/YarpPlugins/CanBusControlboard)
+    - [../libraries/YarpPlugins/CuiAbsolute](../libraries/YarpPlugins/CuiAbsolute)
+    - [../libraries/YarpPlugins/FakeJoint](../libraries/YarpPlugins/FakeJoint)
+    - [../libraries/YarpPlugins/LacqueyFetch](../libraries/YarpPlugins/LacqueyFetch)
+    - [../libraries/YarpPlugins/TechnosoftIpos](../libraries/YarpPlugins/TechnosoftIpos)
+    - [../libraries/YarpPlugins/TextilesHand](../libraries/YarpPlugins/TextilesHand)
 
 
 ## Installation (Ubuntu)
