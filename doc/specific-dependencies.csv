@@ -10,7 +10,6 @@ Dependency (installation-guides) , install-hcanpci.md , , install-setuptools.md#
  Jr3 , yes , no , no , no 
  LacqueyFetch , yes , no , no , no 
  OneCanBusOneWrapper , yes , no , no , no 
- ProximitySensorsClient , no , no , no , no 
  TechnosoftIpos , yes , no , no , no 
  TextilesHand , yes , no , no , no 
  TwoCanBusThreeWrappers , yes , no , no , no 
