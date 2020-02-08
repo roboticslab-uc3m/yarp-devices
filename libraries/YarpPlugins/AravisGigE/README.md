@@ -1,6 +1,11 @@
 # AravisGigE device
 To use this YARP device a GigE camera is required. Once connected, use the following commands to control the camera and receive images.
 
+
+## Requirements
+Depends on:
+- [Aravis 0.4](http://robots.uc3m.es/gitbook-installation-guides/install-aravis.html)
+
 ## Launching the device
 To run the device and connect to the camera, simply run:
 
@@ -10,10 +15,12 @@ If you want to test the device without an actual camera, you can use a fake Arav
 
 `yarpdev --device AravisGigE --fake`
 
+
 ## Obtaining a color image from the device
 This YARP device returns a raw 8-bit image from the camera, to obtain a color image from the image, the stream has to be connected using the [Bayer carrier ](http://www.yarp.it/carrier_config.html#carrier_config_bayer) to interpret the raw image as a RGB image. Given an `AravisGigE` device named `/grabber` and an input port named `/v` (from a viewer, for instance), the command to run to connect them is:
 
 `yarp connect /grabber /v udp+recv.bayer+order.gbrg` 
+
 
 ## Camera parameters control
 The control of the camera parameters is performed from the image port (`/grabber` by default ), through a [RPC interface](http://www.yarp.it/rpc_ports.html).
@@ -68,6 +75,7 @@ These are the features currently available in YARP. To check which ones are supp
 | Number of features | YARP_FEATURE_NUMBER_OF | 23 |
 
 ## FAQ
+
 ### I can receive an image, but it is all dark, what can I do?
 
 This is probably due to a bad configuration of the camera parameters. Try to increase the gain or exposure until the image starts looking brighter. For the 1.0.B06 lab, some values that work great are:
@@ -80,6 +88,7 @@ Exposure: 32000
 ### I cannot receive a color image, but I receive a grey image with a regular point pattern on it.
 
 What you are receiving is the raw image of the camera. To obtain a color image from it you need to decode it using a Bayer filter. Follow the steps in the section [Obtaining a color image from the device](#obtaining-a-color-image-from-the-device) in this very same guide to fix it.
+
 
 ## Useful links
 
