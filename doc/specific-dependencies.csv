@@ -1,8 +1,0 @@
-Dependency ,CanBus*
-Dependency (installation-guides) ,
- CanBusControlboard , yes 
- CuiAbsolute , yes 
- FakeJoint , yes 
- LacqueyFetch , yes 
- TechnosoftIpos , yes 
- TextilesHand , yes 
