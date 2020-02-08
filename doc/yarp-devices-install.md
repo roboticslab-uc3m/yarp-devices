@@ -1,17 +1,6 @@
 # Installation from Source Code
 
-This repository stores different YARP devices for different actual devices used in different robots. This huge variability in hardware sometimes makes it complicated to track the dependencies for each device you may want to compile and install.
-
-This guide aims to simplify as much as possible the process of finding out which are the dependencies you actually need to install for the devices you want to use.
-
-## OS Requirements
-
-Some of the devices require a specific OS version to work. This table tracks the OS requirements: [os-requirements.csv](os-requirements.csv)
-
-## Common dependencies (Ubuntu)
-
-Some dependencies must be installed for all the devices:
-
+First install the dependencies:
 - [Install CMake 3.12+](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-cmake.md/)
 - [Install YCM 0.11+](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-ycm.md/)
 - [Install YARP 3.2+](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md/)
@@ -19,15 +8,25 @@ Some dependencies must be installed for all the devices:
 
 For unit testing, you'll need the googletest source package. Refer to [Install googletest](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-googletest.md/).
 
-## Specific dependencies
+### Components with known additional/specific dependencies
 
-Some devices require specific dependencies to work that must be satisfied. Use the following table to locate and install the dependencies required for your concrete application: [specific-dependencies.csv](specific-dependencies.csv)
+- [../libraries/YarpPlugins/AmorControlboard](../libraries/YarpPlugins/AmorControlboard#requirements)
+- [../libraries/YarpPlugins/AravisGigE](../libraries/YarpPlugins/AravisGigE#requirements)
+- [../libraries/YarpPlugins/CanBusHico](../libraries/YarpPlugins/CanBusHico#requirements)
+- [../libraries/YarpPlugins/CanBusPeak](../libraries/YarpPlugins/CanBusPeak#requirements)
+- [../libraries/YarpPlugins/Jr3](../libraries/YarpPlugins/Jr3#requirements)
+- [../libraries/YarpPlugins/LeapMotionSensor](../libraries/YarpPlugins/LeapMotionSensor#requirements)
+- [../libraries/YarpPlugins/SpaceNavigator](../libraries/YarpPlugins/SpaceNavigator#requirements)
+- [../libraries/YarpPlugins/WiimoteSensor](../libraries/YarpPlugins/WiimoteSensor#requirements)
+- [../programs/grabberControls2Gui](../programs/grabberControls2Gui#requirements)
+- The following components additionally need some kind of CAN Bus driver (e.g. a [CanBusHico](../libraries/YarpPlugins/CanBusHico) or [CanBusPeak](../libraries/YarpPlugins/CanBusPeak)):
+    - [../libraries/YarpPlugins/CanBusControlboard](../libraries/YarpPlugins/CanBusControlboard)
+    - [../libraries/YarpPlugins/CuiAbsolute](../libraries/YarpPlugins/CuiAbsolute)
+    - [../libraries/YarpPlugins/FakeJoint](../libraries/YarpPlugins/FakeJoint)
+    - [../libraries/YarpPlugins/LacqueyFetch](../libraries/YarpPlugins/LacqueyFetch)
+    - [../libraries/YarpPlugins/TechnosoftIpos](../libraries/YarpPlugins/TechnosoftIpos)
+    - [../libraries/YarpPlugins/TextilesHand](../libraries/YarpPlugins/TextilesHand)
 
-\* CMake find modules are smart enough to locate the SDK files in the usual paths. We recommend unzipping the `LeapSDK` folder in `/opt/LeapSDK` (make sure it contains `include/` and `lib/` at the top level).
-
-\*\* See specific install instructions in the installation section.
-
-\*\*\* Download link requires registration.
 
 ## Installation (Ubuntu)
 
