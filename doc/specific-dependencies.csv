@@ -1,15 +1,14 @@
-Dependency , hcanpci, Python 3+ , setuptools (pip3) , YARP with Python 3 bindings 
-Dependency (installation-guides) , install-hcanpci.md , , install-setuptools.md#install-setuptools-using-pip3 , install-yarp.md#install-python-bindings-with-iframegrabbercontrols2-support 
- GrabberControls2Gui** , no , yes , yes , yes 
- CanBusControlboard , yes , no , no , no 
- CanBusHico , yes , no , no , no 
- CanBusPeak , no , no , no , no 
- CanBusSocket , no , no , no , no 
- CuiAbsolute , yes , no , no , no 
- FakeJoint , yes , no , no , no 
- Jr3 , yes , no , no , no 
- LacqueyFetch , yes , no , no , no 
- OneCanBusOneWrapper , yes , no , no , no 
- TechnosoftIpos , yes , no , no , no 
- TextilesHand , yes , no , no , no 
- TwoCanBusThreeWrappers , yes , no , no , no 
+Dependency , hcanpci
+Dependency (installation-guides) , install-hcanpci.md 
+ CanBusControlboard , yes 
+ CanBusHico , yes 
+ CanBusPeak , no 
+ CanBusSocket , no 
+ CuiAbsolute , yes 
+ FakeJoint , yes 
+ Jr3 , yes 
+ LacqueyFetch , yes 
+ OneCanBusOneWrapper , yes 
+ TechnosoftIpos , yes 
+ TextilesHand , yes 
+ TwoCanBusThreeWrappers , yes 
