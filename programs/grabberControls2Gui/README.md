@@ -5,7 +5,7 @@
 Depends on:
 - Python 3+
 - [setuptools using pip3](http://robots.uc3m.es/gitbook-installation-guides/install-setuptools.html#install-setuptools-using-pip3)
-- [YARP with Python 3 bindings](http://robots.uc3m.es/gitbook-installation-guides/install-yarp.html#install-python-bindings-with-iframegrabbercontrols2-support)
+- [YARP with Python 3 bindings](http://robots.uc3m.es/gitbook-installation-guides/install-yarp.html#install-python-bindings)
 
 
 ## Usage 
