@@ -3,7 +3,7 @@
 
 ## Requirements
 Depends on:
-- [Jr3 Driver](http://robots.uc3m.es/gitbook-installation-guides/install-jr3.html) (https://github.com/roboticslab-uc3m/jr3pci-linux)
+- [Jr3 Driver](http://robots.uc3m.es/gitbook-installation-guides/install-jr3.html)
 
 
 ## References
