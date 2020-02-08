@@ -6,7 +6,6 @@ Dependency (installation-guides) , install-hcanpci.md
  CanBusSocket , no 
  CuiAbsolute , yes 
  FakeJoint , yes 
- Jr3 , yes 
  LacqueyFetch , yes 
  OneCanBusOneWrapper , yes 
  TechnosoftIpos , yes 
