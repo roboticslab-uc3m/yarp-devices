@@ -5,8 +5,8 @@
 # @defgroup exampleIFrameGrabberControlsPy exampleIFrameGrabberControls.py
 # @brief This example connects to a remote grabber device.
 
-#Check for YARP network
-yarp.Network.init()
+import yarp  # imports YARP
+yarp.Network.init() #Check for YARP network
 if not yarp.Network.checkNetwork():
     print('Could not connect to YARP network. Please try running YARP server.')
     quit()
