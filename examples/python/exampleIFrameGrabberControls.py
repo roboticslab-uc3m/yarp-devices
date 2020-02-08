@@ -17,6 +17,9 @@ options.put('device','remote_grabber')
 options.put('remote', '/grabber')
 options.put('local','/grabberControls2Gui')
 dd = yarp.PolyDriver(options)
+if not dd.isValid():
+    print '[error] Please launch camera side'
+    quit()
 
 # View driver as FrameGrabber
 controls = dd.viewIFrameGrabberControls()
