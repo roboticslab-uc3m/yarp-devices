@@ -1,7 +1,6 @@
 Dependency ,CanBus*
 Dependency (installation-guides) ,
  CanBusControlboard , yes 
- CanBusSocket , no 
  CuiAbsolute , yes 
  FakeJoint , yes 
  LacqueyFetch , yes 
