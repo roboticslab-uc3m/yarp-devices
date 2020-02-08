@@ -43,7 +43,7 @@ if not yarp.Network.checkNetwork():  # let's see if there was actually a reachab
     quit()
 options = yarp.Property()  # create an instance of Property, a nice YARP class for storing name-value (key-value) pairs
 options.put('device','remote_controlboard')  # we add a name-value pair that indicates the YARP device
-options.put('remote','/BarrettWAM/arm')  # we add info on to whom we will connect robotName
+options.put('remote','/BarrettWAM/arm')  # we add info on to whom we will connect
 options.put('local','/exampleRemoteControlboard')  # we add info on how we will call ourselves on the YARP network
 dd = yarp.PolyDriver(options)  # create a YARP multi-use driver with the given options
 if not dd.isValid():
