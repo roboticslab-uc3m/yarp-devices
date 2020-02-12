@@ -2,7 +2,7 @@
 
 ##
 # @ingroup yarp_devices_examples_py
-# @defgroup exampleIFrameGrabberControlsPy exampleIFrameGrabberControls.py
+# @defgroup exampleRemoteGrabberPy exampleRemoteGrabber.py
 # @brief This example connects to a remote grabber device.
 
 import yarp  # imports YARP
@@ -15,24 +15,30 @@ if not yarp.Network.checkNetwork():
 options = yarp.Property()
 options.put('device','remote_grabber')
 options.put('remote', '/grabber')
-options.put('local','/grabberControls2Gui')
+options.put('local','/python/grabber')
 dd = yarp.PolyDriver(options)
 if not dd.isValid():
     print '[error] Please launch camera side'
     quit()
 
-# View driver as FrameGrabber
-controls = dd.viewIFrameGrabberControls()
+# View grabber interfaces
+grabberControls = dd.viewIFrameGrabberControls()
+grabber = grabberDevice.viewIFrameGrabberImage()
 
 # Check if a feature exists
-print(controls.hasFeature(yarp.YARP_FEATURE_GAIN))
+print(grabberControls.hasFeature(yarp.YARP_FEATURE_GAIN))
 
 # Get the current value of a feature
-gain = controls.getFeature(yarp.YARP_FEATURE_GAIN)
+gain = grabberControls.getFeature(yarp.YARP_FEATURE_GAIN)
 print(gain)
 
 # Set a new value for a feature
-controls.setFeature(yarp.YARP_FEATURE_GAIN, 10)
+grabberControls.setFeature(yarp.YARP_FEATURE_GAIN, 10)
+
+# Obtain an image
+yarp.delay(0.5) # May have to previously wait
+yarpImg = yarp.ImageRgb()
+grabber.getImage(yarpImg)
 
 # Close device and disconnect from the YARP network
 dd.close()
