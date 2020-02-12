@@ -23,7 +23,7 @@ if not dd.isValid():
 
 # View grabber interfaces
 grabberControls = dd.viewIFrameGrabberControls()
-grabber = grabberDevice.viewIFrameGrabberImage()
+grabber = dd.viewIFrameGrabberImage()
 
 # Check if a feature exists
 print(grabberControls.hasFeature(yarp.YARP_FEATURE_GAIN))
