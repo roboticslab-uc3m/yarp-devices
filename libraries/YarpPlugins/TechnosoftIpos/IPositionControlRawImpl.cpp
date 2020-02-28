@@ -21,7 +21,7 @@ bool TechnosoftIpos::positionMoveRaw(int j, double ref)
     return !can->driveStatus()->controlword()[8] // check halt bit
             && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(ref), 0x607A)
             // new setpoint (assume absolute target position)
-            && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4));
+            && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).reset(6));
 }
 
 // --------------------------------------------------------------------------------
