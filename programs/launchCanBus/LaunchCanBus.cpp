@@ -15,7 +15,14 @@
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IEncoders.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/Wrapper.h>
+
+#include <yarp/conf/version.h>
+#if YARP_VERSION_MINOR >= 3
+# include <yarp/dev/IWrapper.h>
+# include <yarp/dev/IMultipleWrapper.h>
+#else
+# include <yarp/dev/Wrapper.h>
+#endif
 
 #include <ColorDebug.h>
 

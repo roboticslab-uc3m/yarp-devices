@@ -10,7 +10,13 @@
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IEncoders.h>
 #include <yarp/dev/IPositionControl.h>
-#include <yarp/dev/Wrapper.h>
+
+#include <yarp/conf/version.h>
+#if YARP_VERSION_MINOR >= 3
+# include <yarp/dev/IWrapper.h>
+#else
+# include <yarp/dev/Wrapper.h>
+#endif
 
 namespace roboticslab
 {
