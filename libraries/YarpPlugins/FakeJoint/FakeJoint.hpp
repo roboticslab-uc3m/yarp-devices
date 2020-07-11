@@ -336,9 +336,9 @@ public:
     virtual bool checkMotionDoneRaw(int j, bool * flag) override
     { *flag = true; return true; }
     virtual bool checkMotionDoneRaw(bool * flag) override
-    { return checkMotionDoneRaw(flag); }
+    { return checkMotionDoneRaw(0, flag); }
     virtual bool checkMotionDoneRaw(int n_joint, const int * joints, bool * flag) override
-    { return checkMotionDoneRaw(flag); }
+    { return checkMotionDoneRaw(0, flag); }
     virtual bool setRefSpeedRaw(int j, double sp) override
     { return true; }
     virtual bool setRefSpeedsRaw(const double * spds) override
