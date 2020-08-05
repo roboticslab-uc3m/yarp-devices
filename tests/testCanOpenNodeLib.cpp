@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <cstring>
 
-#include <bitset>
 #include <future>
 #include <string>
 #include <utility>
