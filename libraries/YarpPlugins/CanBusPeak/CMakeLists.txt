@@ -23,7 +23,7 @@ if(NOT SKIP_CanBusPeak)
                                PeakCanMessage.cpp
                                PeakCanMessage.hpp)
 
-    target_link_libraries(CanBusPeak YARP::YARP_OS
+    target_link_libraries(CanBusPeak YARP::YARP_os
                                      YARP::YARP_dev
                                      PCan::PCanFD
                                      ROBOTICSLAB::ColorDebug)

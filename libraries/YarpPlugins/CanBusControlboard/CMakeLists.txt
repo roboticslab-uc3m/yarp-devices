@@ -47,7 +47,7 @@ if(NOT SKIP_CanBusControlboard)
                                        YarpCanSenderDelegate.hpp
                                        YarpCanSenderDelegate.cpp)
 
-    target_link_libraries(CanBusControlboard YARP::YARP_OS
+    target_link_libraries(CanBusControlboard YARP::YARP_os
                                              YARP::YARP_dev
                                              ROBOTICSLAB::ColorDebug
                                              CanBusSharerLib

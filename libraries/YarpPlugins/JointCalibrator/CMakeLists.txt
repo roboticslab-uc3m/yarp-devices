@@ -18,7 +18,7 @@ if(NOT SKIP_JointCalibrator)
                                     IRemoteCalibratorImpl.cpp
                                     IWrapperImpl.cpp)
 
-    target_link_libraries(JointCalibrator YARP::YARP_OS
+    target_link_libraries(JointCalibrator YARP::YARP_os
                                           YARP::YARP_dev
                                           ROBOTICSLAB::ColorDebug)
 

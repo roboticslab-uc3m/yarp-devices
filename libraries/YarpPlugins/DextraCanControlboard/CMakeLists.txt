@@ -21,7 +21,7 @@ if(NOT SKIP_DextraCanControlboard)
                                           CanSynapse.cpp)
 
     target_link_libraries(DextraCanControlboard DextraRawControlboardLib
-                                                YARP::YARP_OS
+                                                YARP::YARP_os
                                                 YARP::YARP_dev
                                                 ROBOTICSLAB::ColorDebug
                                                 CanBusSharerLib)

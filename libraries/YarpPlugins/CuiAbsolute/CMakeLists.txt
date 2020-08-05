@@ -21,7 +21,7 @@ if(NOT SKIP_CuiAbsolute)
                                 ICanBusSharerImpl.cpp
                                 IEncodersRawImpl.cpp)
 
-    target_link_libraries(CuiAbsolute YARP::YARP_OS
+    target_link_libraries(CuiAbsolute YARP::YARP_os
                                       YARP::YARP_dev
                                       ROBOTICSLAB::ColorDebug
                                       CanBusSharerLib

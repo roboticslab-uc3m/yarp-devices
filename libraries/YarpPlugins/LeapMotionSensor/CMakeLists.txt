@@ -23,7 +23,7 @@ if(NOT SKIP_LeapMotionSensor)
                                      DeviceDriverImpl.cpp
                                      IAnalogSensorImpl.cpp)
 
-    target_link_libraries(LeapMotionSensor YARP::YARP_OS
+    target_link_libraries(LeapMotionSensor YARP::YARP_os
                                            YARP::YARP_dev
                                            YARP::YARP_sig
                                            ${Leap_LIBRARY}

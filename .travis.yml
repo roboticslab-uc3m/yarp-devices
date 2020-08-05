@@ -13,8 +13,8 @@ env:
     - PEAK_DRIVER_VER=8.5.1
     - CACHE_DIR=~/cached-deps
   matrix:
+    - YARP_CHECKOUT=yarp-3.4
     - YARP_CHECKOUT=yarp-3.3
-    - YARP_CHECKOUT=yarp-3.2
 
 matrix:
   include:

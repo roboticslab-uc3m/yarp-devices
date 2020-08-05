@@ -37,7 +37,7 @@ if(NOT SKIP_TechnosoftIpos)
                                    StateVariables.hpp
                                    StateVariables.cpp)
 
-    target_link_libraries(TechnosoftIpos YARP::YARP_OS
+    target_link_libraries(TechnosoftIpos YARP::YARP_os
                                          YARP::YARP_dev
                                          ROBOTICSLAB::ColorDebug
                                          CanBusSharerLib
