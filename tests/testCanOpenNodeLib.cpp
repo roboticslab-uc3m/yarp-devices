@@ -166,7 +166,7 @@ TEST_F(CanBusSharerTest, SdoClientExpeditedUpload)
 
     std::int8_t actual2;
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
-    ASSERT_TRUE(sdo.upload<std::int8_t>("Upload test 2", [&](std::int8_t data) { actual2 = data; }, index, subindex));
+    ASSERT_TRUE(sdo.upload<std::int8_t>("Upload test 2", [&](auto data) { actual2 = data; }, index, subindex));
     ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
     ASSERT_EQ(getSender()->getLastMessage().len, 8);
     ASSERT_EQ(getSender()->getLastMessage().data, toInt64(0x40, index, subindex));
@@ -324,7 +324,7 @@ TEST_F(CanBusSharerTest, SdoClientSegmented)
     f() = std::async(std::launch::async, observer_timer{MILLIS * 3, [&]{ return sdo.notify(response3); }});
     f() = std::async(std::launch::async, observer_timer{MILLIS * 4, [&]{ return sdo.notify(response4); }});
 
-    ASSERT_TRUE(sdo.upload("Upload test 2", [&](const std::string & data) { actual2 = data; }, index, subindex));
+    ASSERT_TRUE(sdo.upload("Upload test 2", [&](const auto & data) { actual2 = data; }, index, subindex));
 
     for (auto i = 0; i < 4; i++)
     {
@@ -587,7 +587,7 @@ TEST_F(CanBusSharerTest, TransmitPdo)
     std::int16_t actual2;
     std::uint32_t actual3;
 
-    tpdo1.registerHandler<std::uint8_t, std::int16_t, std::uint32_t>([&](std::uint8_t v1, std::int16_t v2, std::uint32_t v3)
+    tpdo1.registerHandler<std::uint8_t, std::int16_t, std::uint32_t>([&](auto v1, auto v2, auto v3)
             { actual1 = v1; actual2 = v2; actual3 = v3; });
 
     const std::uint8_t expected1 = 0x12;
@@ -701,11 +701,11 @@ TEST_F(CanBusSharerTest, EmcyConsumer)
     std::memcpy(raw1 + 3, &expectedMsef1, 5);
 
     emcy.registerHandler([&](EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef)
-            {
-                actualCode1 = code;
-                actualReg1 = reg;
-                std::memcpy(&actualMsef1, msef, 5);
-            });
+        {
+            actualCode1 = code;
+            actualReg1 = reg;
+            std::memcpy(&actualMsef1, msef, 5);
+        });
 
     ASSERT_TRUE(emcy.accept(raw1));
     ASSERT_EQ(actualCode1.first, expectedCode1.first);
@@ -736,11 +736,11 @@ TEST_F(CanBusSharerTest, EmcyConsumer)
     std::memcpy(raw2 + 3, &expectedMsef2, 5);
 
     emcy.registerHandler([&](EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef)
-            {
-                actualCode2 = code;
-                actualReg2 = reg;
-                std::memcpy(&actualMsef2, msef, 5);
-            });
+        {
+            actualCode2 = code;
+            actualReg2 = reg;
+            std::memcpy(&actualMsef2, msef, 5);
+        });
 
     ASSERT_TRUE(emcy.accept(raw2));
     ASSERT_EQ(actualCode2, expectedCode2);
@@ -1150,11 +1150,11 @@ TEST_F(CanBusSharerTest, CanOpenNode)
     std::memcpy(raw1 + 3, &expectedMsef, 5);
 
     can.emcy()->registerHandler([&](EmcyConsumer::code_t code, std::uint8_t reg, const std::uint8_t * msef)
-            {
-                actualCode = code;
-                actualReg = reg;
-                std::memcpy(&actualMsef, msef, 5);
-            });
+        {
+            actualCode = code;
+            actualReg = reg;
+            std::memcpy(&actualMsef, msef, 5);
+        });
 
     ASSERT_TRUE(can.notifyMessage({0x80u + id, 8, raw1}));
     ASSERT_EQ(actualCode.first, expectedCode.first);
@@ -1166,7 +1166,7 @@ TEST_F(CanBusSharerTest, CanOpenNode)
     std::uint8_t actualTpdo1;
     const std::uint8_t expectedTpdo1 = 0x12;
     const std::uint8_t raw2[] = {expectedTpdo1};
-    can.tpdo1()->registerHandler<std::uint8_t>([&](std::uint8_t v) { actualTpdo1 = v; });
+    can.tpdo1()->registerHandler<std::uint8_t>([&](auto v) { actualTpdo1 = v; });
     ASSERT_TRUE(can.notifyMessage({0x180u + id, 1, raw2}));
     ASSERT_EQ(actualTpdo1, expectedTpdo1);
 
@@ -1175,7 +1175,7 @@ TEST_F(CanBusSharerTest, CanOpenNode)
     std::uint8_t actualTpdo2;
     const std::uint8_t expectedTpdo2 = 0x34;
     const std::uint8_t raw3[] = {expectedTpdo2};
-    can.tpdo2()->registerHandler<std::uint8_t>([&](std::uint8_t v) { actualTpdo2 = v; });
+    can.tpdo2()->registerHandler<std::uint8_t>([&](auto v) { actualTpdo2 = v; });
     ASSERT_TRUE(can.notifyMessage({0x280u + id, 1, raw3}));
     ASSERT_EQ(actualTpdo2, expectedTpdo2);
 
@@ -1184,7 +1184,7 @@ TEST_F(CanBusSharerTest, CanOpenNode)
     std::uint8_t actualTpdo3;
     const std::uint8_t expectedTpdo3 = 0x56;
     const std::uint8_t raw4[] = {expectedTpdo3};
-    can.tpdo3()->registerHandler<std::uint8_t>([&](std::uint8_t v) { actualTpdo3 = v; });
+    can.tpdo3()->registerHandler<std::uint8_t>([&](auto v) { actualTpdo3 = v; });
     ASSERT_TRUE(can.notifyMessage({0x380u + id, 1, raw4}));
     ASSERT_EQ(actualTpdo3, expectedTpdo3);
 
@@ -1193,7 +1193,7 @@ TEST_F(CanBusSharerTest, CanOpenNode)
     std::uint8_t actualTpdo4;
     const std::uint8_t expectedTpdo4 = 0x78;
     const std::uint8_t raw5[] = {expectedTpdo4};
-    can.tpdo4()->registerHandler<std::uint8_t>([&](std::uint8_t v) { actualTpdo4 = v; });
+    can.tpdo4()->registerHandler<std::uint8_t>([&](auto v) { actualTpdo4 = v; });
     ASSERT_TRUE(can.notifyMessage({0x480u + id, 1, raw5}));
     ASSERT_EQ(actualTpdo4, expectedTpdo4);
 

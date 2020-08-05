@@ -277,9 +277,9 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
     reportBitToggle(report, INFO, 9, "Remote - drive parameters may be modified via CAN and the drive will execute the command message.", "Remote – drive is in local mode and will not execute the command message.");
 
     if (reportBitToggle(report, INFO, 10, "Target reached.")
-            && vars.actualControlMode == VOCAB_CM_POSITION // does not work on velocity profile mode
-            && can->driveStatus()->controlword()[8]
-            && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)))
+        && vars.actualControlMode == VOCAB_CM_POSITION // does not work on velocity profile mode
+        && can->driveStatus()->controlword()[8]
+        && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)))
     {
         CD_WARNING("Unable to reset halt bit (canId: %d).\n", can->getId());
     }
@@ -290,8 +290,8 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
     {
     case 1:
         if (reportBitToggle(report, INFO, 12, "Trajectory generator will not accept a new set-point.",
-                "Trajectory generator will accept a new set-point.")
-                && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)))
+            "Trajectory generator will accept a new set-point.")
+            && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)))
         {
             CD_WARNING("Unable to finalize single set-point handshake (canId: %d).\n", can->getId());
         }

@@ -19,9 +19,9 @@ bool TechnosoftIpos::positionMoveRaw(int j, double ref)
     CHECK_MODE(VOCAB_CM_POSITION);
 
     return !can->driveStatus()->controlword()[8] // check halt bit
-            && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(ref), 0x607A)
-            // new setpoint (assume absolute target position)
-            && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).reset(6));
+        && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(ref), 0x607A)
+        // new setpoint (assume absolute target position)
+        && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).reset(6));
 }
 
 // --------------------------------------------------------------------------------
@@ -49,9 +49,9 @@ bool TechnosoftIpos::relativeMoveRaw(int j, double delta)
     CHECK_MODE(VOCAB_CM_POSITION);
 
     return !can->driveStatus()->controlword()[8] // check halt bit
-            && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(delta), 0x607A)
-            // new setpoint (assume relative target position)
-            && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).set(6));
+        && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(delta), 0x607A)
+        // new setpoint (assume relative target position)
+        && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).set(6));
 }
 
 // --------------------------------------------------------------------------------
@@ -206,14 +206,14 @@ bool TechnosoftIpos::getRefSpeedRaw(int j, double * ref)
         return true;
     }
 
-    return can->sdo()->upload<std::uint32_t>("Profile velocity", [&](std::uint32_t data)
-            {
-                std::uint16_t dataInt = data >> 16;
-                std::uint16_t dataFrac = data & 0xFFFF;
-                double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
-                *ref = std::abs(vars.internalUnitsToDegrees(value, 1));
-            },
-            0x6081);
+    return can->sdo()->upload<std::uint32_t>("Profile velocity", [this, ref](auto data)
+        {
+            std::uint16_t dataInt = data >> 16;
+            std::uint16_t dataFrac = data & 0xFFFF;
+            double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
+            *ref = std::abs(vars.internalUnitsToDegrees(value, 1));
+        },
+        0x6081);
 }
 
 // --------------------------------------------------------------------------------
@@ -245,14 +245,14 @@ bool TechnosoftIpos::getRefAccelerationRaw(int j, double * acc)
         return true;
     }
 
-    return can->sdo()->upload<std::uint32_t>("Profile acceleration", [&](std::uint32_t data)
-            {
-                std::uint16_t dataInt = data >> 16;
-                std::uint16_t dataFrac = data & 0xFFFF;
-                double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
-                *acc = std::abs(vars.internalUnitsToDegrees(value, 2));
-            },
-            0x6083);
+    return can->sdo()->upload<std::uint32_t>("Profile acceleration", [this, acc](auto data)
+        {
+            std::uint16_t dataInt = data >> 16;
+            std::uint16_t dataFrac = data & 0xFFFF;
+            double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
+            *acc = std::abs(vars.internalUnitsToDegrees(value, 2));
+        },
+        0x6083);
 }
 
 // --------------------------------------------------------------------------------
@@ -279,8 +279,8 @@ bool TechnosoftIpos::stopRaw(int j)
     CHECK_JOINT(j);
 
     return (vars.actualControlMode == VOCAB_CM_POSITION || vars.actualControlMode == VOCAB_CM_VELOCITY)
-            && can->driveStatus()->controlword(can->driveStatus()->controlword().set(8)) // stop with profile acceleration
-            && (vars.synchronousCommandTarget = 0.0, true);
+        && can->driveStatus()->controlword(can->driveStatus()->controlword().set(8)) // stop with profile acceleration
+        && (vars.synchronousCommandTarget = 0.0, true);
 }
 
 // --------------------------------------------------------------------------------
@@ -306,9 +306,9 @@ bool TechnosoftIpos::getTargetPositionRaw(int joint, double * ref)
     CD_DEBUG("\n");
     CHECK_JOINT(joint);
 
-    return can->sdo()->upload<std::int32_t>("Target position", [&](std::int32_t data)
-            { *ref = vars.internalUnitsToDegrees(data); },
-            0x607A);
+    return can->sdo()->upload<std::int32_t>("Target position", [this, ref](auto data)
+        { *ref = vars.internalUnitsToDegrees(data); },
+        0x607A);
 }
 
 // --------------------------------------------------------------------------------

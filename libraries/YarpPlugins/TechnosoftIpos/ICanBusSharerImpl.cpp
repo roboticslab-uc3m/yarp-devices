@@ -74,35 +74,24 @@ bool TechnosoftIpos::initialize()
     {
         // retrieve static drive info
         vars.configuredOnce = can->sdo()->upload<std::uint32_t>("Device type",
-                [](std::uint32_t data)
-                {
-                    CD_INFO("CiA standard: %d.\n", data & 0xFFFF);
-                },
+                [](auto data)
+                { CD_INFO("CiA standard: %d.\n", data & 0xFFFF); },
                 0x1000)
             && can->sdo()->upload<std::uint32_t>("Supported drive modes",
-                [this](std::uint32_t data)
-                {
-                    interpretSupportedDriveModes(data);
-                },
+                [this](auto data)
+                { interpretSupportedDriveModes(data); },
                 0x6502)
             && can->sdo()->upload("Manufacturer software version",
-                [](const std::string & firmware)
-                {
-                    std::string s(firmware);
-                    CD_INFO("Firmware version: %s.\n", rtrim(s).c_str());
-                },
+                [](const auto & data)
+                { CD_INFO("Firmware version: %s.\n", rtrim(data).c_str()); },
                 0x100A)
             && can->sdo()->upload<std::uint32_t>("Identity Object: Product Code",
-                [](std::uint32_t data)
-                {
-                    CD_INFO("Product code: P%03d.%03d.E%03d.\n", data / 1000000, (data / 1000) % 1000, data % 1000);
-                },
+                [](auto data)
+                { CD_INFO("Product code: P%03d.%03d.E%03d.\n", data / 1000000, (data / 1000) % 1000, data % 1000); },
                 0x1018, 0x02)
             && can->sdo()->upload<std::uint32_t>("Identity Object: Serial number",
-                [](std::uint32_t data)
-                {
-                    CD_INFO("Serial number: %c%c%02x%02x.\n", getByte(data, 3), getByte(data, 2), getByte(data, 1), getByte(data, 0));
-                },
+                [](auto data)
+                { CD_INFO("Serial number: %c%c%02x%02x.\n", getByte(data, 3), getByte(data, 2), getByte(data, 1), getByte(data, 0)); },
                 0x1018, 0x04);
     }
 

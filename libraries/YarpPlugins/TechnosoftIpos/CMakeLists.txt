@@ -44,7 +44,7 @@ if(NOT SKIP_TechnosoftIpos)
                                          StateObserverLib
                                          CanOpenNodeLib)
 
-    target_compile_features(TechnosoftIpos PUBLIC cxx_std_11)
+    target_compile_features(TechnosoftIpos PUBLIC cxx_std_14)
 
     yarp_install(TARGETS TechnosoftIpos
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
