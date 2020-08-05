@@ -761,14 +761,14 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
     ReceivePdo rpdo(id, 0x200, 1, &sdo, getSender());
     DriveStatusMachine status(&rpdo, TIMEOUT);
 
-    const std::uint16_t notReadyToSwitchOn = std::bitset<16>("0000000000000000").to_ulong();
-    const std::uint16_t switchOnDisabled = std::bitset<16>("0000000001000000").to_ulong();
-    const std::uint16_t readyToSwitchOn = std::bitset<16>("0000000000100001").to_ulong();
-    const std::uint16_t switchedOn = std::bitset<16>("0000000000100011").to_ulong();
-    const std::uint16_t operationEnabled = std::bitset<16>("0000000000100111").to_ulong();
-    const std::uint16_t quickStopActive = std::bitset<16>("0000000000000111").to_ulong();
-    const std::uint16_t faultReactionActive = std::bitset<16>("0000000000001111").to_ulong();
-    const std::uint16_t fault = std::bitset<16>("0000000000001000").to_ulong();
+    const std::uint16_t notReadyToSwitchOn = 0b0000'0000'0000'0000;
+    const std::uint16_t switchOnDisabled = 0b0000'0000'0100'0000;
+    const std::uint16_t readyToSwitchOn = 0b0000'0000'0010'0001;
+    const std::uint16_t switchedOn = 0b0000'0000'0010'0011;
+    const std::uint16_t operationEnabled = 0b0000'0000'0010'0111;
+    const std::uint16_t quickStopActive = 0b0000'0000'0000'0111;
+    const std::uint16_t faultReactionActive = 0b0000'0000'0000'1111;
+    const std::uint16_t fault = 0b0000'0000'0000'1000;
 
     // test initial state
 

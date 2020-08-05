@@ -41,7 +41,7 @@ if(ENABLE_CanOpenNodeLib)
     target_include_directories(CanOpenNodeLib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                                      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-    target_compile_features(CanOpenNodeLib PUBLIC cxx_std_11)
+    target_compile_features(CanOpenNodeLib PUBLIC cxx_std_14)
 
     install(TARGETS CanOpenNodeLib
             EXPORT ROBOTICSLAB_YARP_DEVICES

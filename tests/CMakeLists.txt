@@ -38,6 +38,7 @@ if(ENABLE_tests)
     if(TARGET CanOpenNodeLib)
         add_executable(testCanOpenNodeLib testCanOpenNodeLib.cpp)
         target_link_libraries(testCanOpenNodeLib CanOpenNodeLib FutureObserverLib gtest_main)
+        target_compile_features(testCanOpenNodeLib PUBLIC cxx_std_14)
         gtest_discover_tests(testCanOpenNodeLib)
     endif()
 
