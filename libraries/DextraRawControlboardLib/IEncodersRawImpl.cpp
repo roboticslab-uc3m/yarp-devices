@@ -66,7 +66,7 @@ bool DextraRawControlboard::getEncodersRaw(double *encs)
     //CD_DEBUG("\n");
     Synapse::Setpoints setpoints;
     getSetpoints(setpoints);
-    std::copy(std::begin(setpoints), std::end(setpoints), encs);
+    std::copy(std::cbegin(setpoints), std::cend(setpoints), encs);
     return true;
 }
 

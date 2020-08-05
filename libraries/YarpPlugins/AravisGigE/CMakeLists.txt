@@ -28,7 +28,7 @@ if(NOT SKIP_AravisGigE)
                                IFrameGrabberImageRawImpl.cpp
                                IFrameGrabberImpl.cpp)
 
-    target_link_libraries(AravisGigE YARP::YARP_OS
+    target_link_libraries(AravisGigE YARP::YARP_os
                                      YARP::YARP_dev
                                      ${ARAVIS_LIBRARIES}
                                      ROBOTICSLAB::ColorDebug)

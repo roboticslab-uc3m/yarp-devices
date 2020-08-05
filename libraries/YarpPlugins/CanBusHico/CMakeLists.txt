@@ -25,7 +25,7 @@ if(NOT SKIP_CanBusHico)
                                HicoCanMessage.hpp
                                FilterManager.cpp)
 
-    target_link_libraries(CanBusHico YARP::YARP_OS
+    target_link_libraries(CanBusHico YARP::YARP_os
                                      YARP::YARP_dev
                                      ROBOTICSLAB::ColorDebug)
 

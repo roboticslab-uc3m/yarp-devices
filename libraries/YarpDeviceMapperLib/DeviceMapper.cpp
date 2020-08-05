@@ -72,7 +72,7 @@ DeviceMapper::~DeviceMapper()
 
 void DeviceMapper::enableParallelization(unsigned int concurrentTasks)
 {
-    taskFactory = std::unique_ptr<ParallelTaskFactory>(new ParallelTaskFactory(concurrentTasks));
+    taskFactory = std::make_unique<ParallelTaskFactory>(concurrentTasks);
 }
 
 bool DeviceMapper::registerDevice(yarp::dev::PolyDriver * driver)

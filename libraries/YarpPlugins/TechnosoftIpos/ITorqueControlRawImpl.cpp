@@ -71,11 +71,11 @@ bool TechnosoftIpos::getTorqueRangeRaw(int j, double * min, double * max)
     CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
 
-    return can->sdo()->upload<std::uint16_t>("Current limit", [&](std::uint16_t data)
-            { double temp = vars.internalUnitsToPeakCurrent(data);
-              *max = vars.currentToTorque(temp);
-              *min = -(*max); },
-            0x207F);
+    return can->sdo()->upload<std::uint16_t>("Current limit", [this, min, max](auto data)
+        { double temp = vars.internalUnitsToPeakCurrent(data);
+          *max = vars.currentToTorque(temp);
+          *min = -(*max); },
+        0x207F);
 }
 
 // -------------------------------------------------------------------------------------

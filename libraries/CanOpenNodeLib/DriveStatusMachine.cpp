@@ -99,7 +99,7 @@ namespace
 
     inline word_t updateStateBits(const word_t & stored, const word_t & requested)
     {
-        static const word_t controlwordMaskNot = ~word_t("0000000010001111"); // state machine-related bits
+        static const word_t controlwordMaskNot(~0b0000'0000'1000'1111); // state machine-related bits
         return (stored & controlwordMaskNot) | requested;
     }
 
@@ -144,7 +144,7 @@ namespace
 bool DriveStatusMachine::update(std::uint16_t statusword)
 {
     // state machine-related bits (at least those we can transition to)
-    static const word_t statuswordMask("0000000001100111");
+    static const word_t statuswordMask(0b0000'0000'0110'0111);
 
     std::lock_guard<std::mutex> lock(stateMutex);
     const word_t old = _statusword;

@@ -4,14 +4,8 @@
 #define __DEXTRA_SERIAL_CONTROLBOARD_HPP__
 
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/ISerialDevice.h>
 #include <yarp/dev/PolyDriver.h>
-
-#include <yarp/conf/version.h>
-#if YARP_VERSION_MINOR >= 3
-# include <yarp/dev/ISerialDevice.h>
-#else
-# include <yarp/dev/SerialInterfaces.h>
-#endif
 
 #include "DextraRawControlboard.hpp"
 #include "Synapse.hpp"

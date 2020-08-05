@@ -110,10 +110,10 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     {
     case VOCAB_CM_POSITION:
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-                && can->sdo()->download<std::int32_t>("Target position", vars.lastEncoderRead.queryPosition(), 0x607A)
-                && can->sdo()->download<std::int8_t>("Modes of Operation", 1, 0x6060)
-                && can->driveStatus()->controlword(can->driveStatus()->controlword().set(5)) // change set immediately
-                && vars.awaitControlMode(mode);
+            && can->sdo()->download<std::int32_t>("Target position", vars.lastEncoderRead.queryPosition(), 0x607A)
+            && can->sdo()->download<std::int8_t>("Modes of Operation", 1, 0x6060)
+            && can->driveStatus()->controlword(can->driveStatus()->controlword().set(5)) // change set immediately
+            && vars.awaitControlMode(mode);
 
     case VOCAB_CM_VELOCITY:
         vars.synchronousCommandTarget = 0.0;
@@ -121,19 +121,19 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         if (vars.enableCsv)
         {
             return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-                    && can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x607A))
-                    && can->sdo()->download<std::uint8_t>("Interpolation time period", vars.syncPeriod * 1000, 0x60C2, 0x01)
-                    && can->sdo()->download<std::int8_t>("Interpolation time period", -3, 0x60C2, 0x02)
-                    && can->sdo()->download<std::int8_t>("Modes of Operation", 8, 0x6060)
-                    && can->driveStatus()->controlword(can->driveStatus()->controlword().set(6)) // relative position mode
-                    && vars.awaitControlMode(mode);
+                && can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x607A))
+                && can->sdo()->download<std::uint8_t>("Interpolation time period", vars.syncPeriod * 1000, 0x60C2, 0x01)
+                && can->sdo()->download<std::int8_t>("Interpolation time period", -3, 0x60C2, 0x02)
+                && can->sdo()->download<std::int8_t>("Modes of Operation", 8, 0x6060)
+                && can->driveStatus()->controlword(can->driveStatus()->controlword().set(6)) // relative position mode
+                && vars.awaitControlMode(mode);
         }
         else
         {
             return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-                    && can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x60FF))
-                    && can->sdo()->download<std::int8_t>("Modes of Operation", 3, 0x6060)
-                    && vars.awaitControlMode(mode);
+                && can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x60FF))
+                && can->sdo()->download<std::int8_t>("Modes of Operation", 3, 0x6060)
+                && vars.awaitControlMode(mode);
         }
 
     case VOCAB_CM_CURRENT:
@@ -141,11 +141,11 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         vars.synchronousCommandTarget = 0.0;
 
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-                && can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x201C))
-                && can->sdo()->download<std::uint16_t>("External Reference Type", 1, 0x201D)
-                && can->sdo()->download<std::int8_t>("Modes of Operation", -5, 0x6060)
-                && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4)) // new setpoint (assume target position)
-                && vars.awaitControlMode(mode);
+            && can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x201C))
+            && can->sdo()->download<std::uint16_t>("External Reference Type", 1, 0x201D)
+            && can->sdo()->download<std::int8_t>("Modes of Operation", -5, 0x6060)
+            && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4)) // new setpoint (assume target position)
+            && vars.awaitControlMode(mode);
 
     case VOCAB_CM_POSITION_DIRECT:
         if (linInterpBuffer)
@@ -156,7 +156,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
 
         // bug in F508M/F509M firmware, switch to homing mode to stop controlling profile velocity
         if (vars.actualControlMode == VOCAB_CM_VELOCITY && !vars.enableCsv
-                && !can->sdo()->download<std::int8_t>("Modes of Operation", 6, 0x6060))
+            && !can->sdo()->download<std::int8_t>("Modes of Operation", 6, 0x6060))
         {
             return false;
         }
@@ -165,15 +165,15 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         vars.prevSyncTarget.store(vars.synchronousCommandTarget);
 
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-                && can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x607A))
-                && can->sdo()->download<std::uint8_t>("Interpolation time period", vars.syncPeriod * 1000, 0x60C2, 0x01)
-                && can->sdo()->download<std::int8_t>("Interpolation time period", -3, 0x60C2, 0x02)
-                && can->sdo()->download<std::int8_t>("Modes of Operation", 8, 0x6060)
-                && vars.awaitControlMode(mode);
+            && can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x607A))
+            && can->sdo()->download<std::uint8_t>("Interpolation time period", vars.syncPeriod * 1000, 0x60C2, 0x01)
+            && can->sdo()->download<std::int8_t>("Interpolation time period", -3, 0x60C2, 0x02)
+            && can->sdo()->download<std::int8_t>("Modes of Operation", 8, 0x6060)
+            && vars.awaitControlMode(mode);
 
     case VOCAB_CM_FORCE_IDLE:
         if (vars.actualControlMode == VOCAB_CM_HW_FAULT
-                && !can->driveStatus()->requestTransition(DriveTransition::FAULT_RESET))
+            && !can->driveStatus()->requestTransition(DriveTransition::FAULT_RESET))
         {
             CD_ERROR("Unable to reset fault status.\n");
             return false;
@@ -183,7 +183,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
 
     case VOCAB_CM_IDLE:
         return can->driveStatus()->requestState(DriveState::SWITCHED_ON)
-                && can->sdo()->download<std::int8_t>("Modes of Operation", 0, 0x6060); // reset drive mode
+            && can->sdo()->download<std::int8_t>("Modes of Operation", 0, 0x6060); // reset drive mode
 
     default:
         CD_ERROR("Unsupported, unknown or read-only mode: %s.\n", yarp::os::Vocab::decode(mode).c_str());

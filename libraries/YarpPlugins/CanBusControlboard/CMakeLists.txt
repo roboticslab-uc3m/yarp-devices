@@ -47,14 +47,14 @@ if(NOT SKIP_CanBusControlboard)
                                        YarpCanSenderDelegate.hpp
                                        YarpCanSenderDelegate.cpp)
 
-    target_link_libraries(CanBusControlboard YARP::YARP_OS
+    target_link_libraries(CanBusControlboard YARP::YARP_os
                                              YARP::YARP_dev
                                              ROBOTICSLAB::ColorDebug
                                              CanBusSharerLib
                                              CanOpenNodeLib
                                              YarpDeviceMapperLib)
 
-    target_compile_features(CanBusControlboard PRIVATE cxx_std_11)
+    target_compile_features(CanBusControlboard PRIVATE cxx_std_14)
 
     yarp_install(TARGETS CanBusControlboard
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}

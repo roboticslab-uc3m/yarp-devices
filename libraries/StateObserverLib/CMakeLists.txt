@@ -10,7 +10,7 @@ if(ENABLE_StateObserverLib)
     target_include_directories(StateObserverLib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                                        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-    target_compile_features(StateObserverLib PUBLIC cxx_std_11)
+    target_compile_features(StateObserverLib PUBLIC cxx_std_14)
 
     install(TARGETS StateObserverLib
             EXPORT ROBOTICSLAB_YARP_DEVICES

@@ -21,7 +21,7 @@ if(NOT SKIP_LacqueyFetch)
                                  IControlModeRawImpl.cpp
                                  IPWMControlRawImpl.cpp)
 
-    target_link_libraries(LacqueyFetch YARP::YARP_OS
+    target_link_libraries(LacqueyFetch YARP::YARP_os
                                        YARP::YARP_dev
                                        ROBOTICSLAB::ColorDebug
                                        CanBusSharerLib)

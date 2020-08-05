@@ -88,9 +88,9 @@ bool TechnosoftIpos::getLimitRaw(double * limit, bool isMin)
         subindex = 0x02;
     }
 
-    return can->sdo()->upload<std::int32_t>(name, [&](std::int32_t data)
-            { *limit = vars.internalUnitsToDegrees(data); },
-            0x607D, subindex);
+    return can->sdo()->upload<std::int32_t>(name, [this, limit](auto data)
+        { *limit = vars.internalUnitsToDegrees(data); },
+        0x607D, subindex);
 }
 
 // -----------------------------------------------------------------------------

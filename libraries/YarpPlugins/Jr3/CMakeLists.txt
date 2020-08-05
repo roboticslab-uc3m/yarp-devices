@@ -21,7 +21,7 @@ if(NOT SKIP_Jr3)
                         DeviceDriverImpl.cpp
                         IAnalogSensorImpl.cpp)
 
-    target_link_libraries(Jr3 YARP::YARP_OS
+    target_link_libraries(Jr3 YARP::YARP_os
                               YARP::YARP_dev
                               ROBOTICSLAB::ColorDebug)
 

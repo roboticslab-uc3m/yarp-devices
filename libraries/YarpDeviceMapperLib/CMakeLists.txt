@@ -14,7 +14,7 @@ if(ENABLE_YarpDeviceMapperLib)
 
     target_include_directories(YarpDeviceMapperLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-    target_compile_features(YarpDeviceMapperLib PUBLIC cxx_std_11)
+    target_compile_features(YarpDeviceMapperLib PUBLIC cxx_std_14)
 
     install(TARGETS YarpDeviceMapperLib
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

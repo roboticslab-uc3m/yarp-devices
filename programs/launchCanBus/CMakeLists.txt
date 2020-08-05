@@ -6,7 +6,7 @@ if(ENABLE_launchCanBus)
                                 LaunchCanBus.hpp
                                 LaunchCanBus.cpp)
     
-    target_link_libraries(launchCanBus YARP::YARP_OS
+    target_link_libraries(launchCanBus YARP::YARP_os
                                        YARP::YARP_dev
                                        YARP::YARP_init
                                        ROBOTICSLAB::ColorDebug)

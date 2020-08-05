@@ -37,14 +37,14 @@ if(NOT SKIP_TechnosoftIpos)
                                    StateVariables.hpp
                                    StateVariables.cpp)
 
-    target_link_libraries(TechnosoftIpos YARP::YARP_OS
+    target_link_libraries(TechnosoftIpos YARP::YARP_os
                                          YARP::YARP_dev
                                          ROBOTICSLAB::ColorDebug
                                          CanBusSharerLib
                                          StateObserverLib
                                          CanOpenNodeLib)
 
-    target_compile_features(TechnosoftIpos PUBLIC cxx_std_11)
+    target_compile_features(TechnosoftIpos PUBLIC cxx_std_14)
 
     yarp_install(TARGETS TechnosoftIpos
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}

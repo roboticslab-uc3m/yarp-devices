@@ -24,7 +24,7 @@ bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
 
     // reset halt bit
     if (can->driveStatus()->controlword()[8]
-            && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)))
+        && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)))
     {
         return false;
     }

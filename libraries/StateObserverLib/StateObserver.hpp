@@ -115,7 +115,7 @@ protected:
  * @tparam T Arithmetic type, see <a href="https://en.cppreference.com/w/c/language/arithmetic_types">reference</a>.
  */
 template<typename T>
-class TypedStateObserver<T, typename std::enable_if<std::is_arithmetic<T>::value>::type> final : private StateObserverBase
+class TypedStateObserver<T, typename std::enable_if_t<std::is_arithmetic<T>::value>> final : private StateObserverBase
 {
 public:
     using StateObserverBase::StateObserverBase;

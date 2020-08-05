@@ -18,7 +18,7 @@ if(NOT SKIP_ProximitySensorsClient)
                                            DeviceDriverImpl.cpp
                                            IProximitySensorsImpl.cpp)
 
-    target_link_libraries(ProximitySensorsClient YARP::YARP_OS
+    target_link_libraries(ProximitySensorsClient YARP::YARP_os
                                                  YARP::YARP_dev
                                                  ROBOTICSLAB::ColorDebug
                                                  YarpDevicesInterfaces)

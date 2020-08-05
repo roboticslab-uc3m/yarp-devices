@@ -20,7 +20,7 @@ if(NOT SKIP_TextilesHand)
                                  IControlModeImpl.cpp
                                  IPositionDirectImpl.cpp)
 
-    target_link_libraries(TextilesHand YARP::YARP_OS
+    target_link_libraries(TextilesHand YARP::YARP_os
                                        YARP::YARP_dev
                                        ROBOTICSLAB::ColorDebug)
 

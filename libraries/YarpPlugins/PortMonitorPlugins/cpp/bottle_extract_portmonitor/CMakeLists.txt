@@ -17,7 +17,7 @@ if(NOT SKIP_BottleExtract)
 
     target_sources(roboticslab_pm_bottleextract PRIVATE BottleExtract.cpp
                                                         BottleExtract.hpp)
-    target_link_libraries(roboticslab_pm_bottleextract YARP::YARP_OS)
+    target_link_libraries(roboticslab_pm_bottleextract YARP::YARP_os)
 
     yarp_install(TARGETS roboticslab_pm_bottleextract
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}

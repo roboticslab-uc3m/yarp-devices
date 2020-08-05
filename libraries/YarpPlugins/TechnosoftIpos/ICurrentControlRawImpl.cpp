@@ -32,10 +32,10 @@ bool TechnosoftIpos::getCurrentRangeRaw(int m, double * min, double * max)
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
 
-    return can->sdo()->upload<std::uint16_t>("Current limit", [&](std::uint16_t data)
-            { *max = vars.internalUnitsToPeakCurrent(data);
-              *min = -(*max); },
-            0x207F);
+    return can->sdo()->upload<std::uint16_t>("Current limit", [this, min, max](auto data)
+        { *max = vars.internalUnitsToPeakCurrent(data);
+          *min = -(*max); },
+        0x207F);
 }
 
 // -----------------------------------------------------------------------------

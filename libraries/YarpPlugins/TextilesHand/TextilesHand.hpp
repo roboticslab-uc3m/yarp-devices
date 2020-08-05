@@ -9,14 +9,8 @@
 #include <yarp/dev/IEncodersTimed.h>
 #include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/IPositionDirect.h>
+#include <yarp/dev/ISerialDevice.h>
 #include <yarp/dev/IVelocityControl.h>
-
-#include <yarp/conf/version.h>
-#if YARP_VERSION_MINOR >= 3
-# include <yarp/dev/ISerialDevice.h>
-#else
-# include <yarp/dev/SerialInterfaces.h>
-#endif
 
 #define DEFAULT_PORT "/dev/ttyUSB0"
 

@@ -34,7 +34,7 @@ if(NOT SKIP_AmorControlboard)
                                      ITorqueControlImpl.cpp
                                      IVelocityControlImpl.cpp)
 
-    target_link_libraries(AmorControlboard YARP::YARP_OS
+    target_link_libraries(AmorControlboard YARP::YARP_os
                                            YARP::YARP_dev
                                            AMOR::amor_api
                                            ROBOTICSLAB::ColorDebug)

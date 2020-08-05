@@ -24,7 +24,7 @@ if(NOT SKIP_PhidgetSpatial)
                                    DeviceDriverImpl.cpp
                                    IAnalogSensorImpl.cpp)
 
-    target_link_libraries(PhidgetSpatial YARP::YARP_OS
+    target_link_libraries(PhidgetSpatial YARP::YARP_os
                                          YARP::YARP_dev
                                          Phidgets::Phidget21)
 

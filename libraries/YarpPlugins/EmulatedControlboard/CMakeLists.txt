@@ -29,7 +29,7 @@ if(NOT SKIP_EmulatedControlboard)
                                          PeriodicThreadImpl.cpp
                                          SharedArea.cpp)
 
-    target_link_libraries(EmulatedControlboard YARP::YARP_OS
+    target_link_libraries(EmulatedControlboard YARP::YARP_os
                                                YARP::YARP_dev
                                                ROBOTICSLAB::ColorDebug)
 
