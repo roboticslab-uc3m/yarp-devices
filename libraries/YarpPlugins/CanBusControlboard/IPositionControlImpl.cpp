@@ -75,7 +75,7 @@ bool CanBusControlboard::checkMotionDone(bool * flag)
 {
     //CD_DEBUG("\n");
 
-    auto flags = std::unique_ptr<bool[]>(new bool[deviceMapper.getControlledAxes()]);
+    auto flags = std::make_unique<bool[]>(deviceMapper.getControlledAxes());
 
     if (!deviceMapper.mapAllJoints(&yarp::dev::IPositionControlRaw::checkMotionDoneRaw, flags.get()))
     {
@@ -92,7 +92,7 @@ bool CanBusControlboard::checkMotionDone(int n_joint, const int * joints, bool *
 {
     //CD_DEBUG("\n");
 
-    auto flags = std::unique_ptr<bool[]>(new bool[n_joint]);
+    auto flags = std::make_unique<bool[]>(n_joint);
 
     if (!deviceMapper.mapJointGroup(&yarp::dev::IPositionControlRaw::checkMotionDoneRaw, n_joint, joints, flags.get()))
     {

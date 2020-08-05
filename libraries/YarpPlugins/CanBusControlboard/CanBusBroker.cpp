@@ -323,7 +323,7 @@ void CanBusBroker::onRead(yarp::os::Bottle & b)
             return;
         }
 
-        raw = std::unique_ptr<std::uint8_t[]>(new std::uint8_t[size]);
+        raw = std::make_unique<std::uint8_t[]>(size);
 
         for (int i = 0; i < size; i++)
         {

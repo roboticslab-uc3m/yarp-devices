@@ -155,7 +155,7 @@ TEST_F(DeviceMapperTest, SequentialTask)
 {
     const int joint = 4;
 
-    auto taskFactory = std::unique_ptr<FutureTaskFactory>(new SequentialTaskFactory);
+    auto taskFactory = std::make_unique<SequentialTaskFactory>();
     auto task = taskFactory->createTask();
     ASSERT_EQ(task->size(), 0);
 
@@ -212,7 +212,7 @@ TEST_F(DeviceMapperTest, ParallelTask)
 {
     const int joint = 4;
 
-    auto taskFactory = std::unique_ptr<FutureTaskFactory>(new ParallelTaskFactory(2));
+    auto taskFactory = std::make_unique<ParallelTaskFactory>(2);
     auto task = taskFactory->createTask();
     ASSERT_EQ(task->size(), 0);
 

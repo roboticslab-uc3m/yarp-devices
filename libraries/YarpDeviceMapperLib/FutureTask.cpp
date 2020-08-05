@@ -81,10 +81,10 @@ ParallelTaskFactory::~ParallelTaskFactory() = default;
 
 std::unique_ptr<FutureTask> SequentialTaskFactory::createTask()
 {
-    return std::unique_ptr<SequentialTask>(new SequentialTask);
+    return std::make_unique<SequentialTask>();
 }
 
 std::unique_ptr<FutureTask> ParallelTaskFactory::createTask()
 {
-    return std::unique_ptr<ParallelTask>(new ParallelTask(priv->getPool()));
+    return std::make_unique<ParallelTask>(priv->getPool());
 }

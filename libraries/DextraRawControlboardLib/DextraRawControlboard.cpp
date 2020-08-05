@@ -43,7 +43,7 @@ double DextraRawControlboard::getSetpoint(int j)
 void DextraRawControlboard::getSetpoints(Synapse::Setpoints & setpoints)
 {
     std::lock_guard<std::mutex> lock(setpointMutex);
-    std::copy(std::begin(this->setpoints), std::end(this->setpoints), std::begin(setpoints));
+    std::copy(std::cbegin(this->setpoints), std::cend(this->setpoints), std::begin(setpoints));
 }
 
 // -----------------------------------------------------------------------------
@@ -59,7 +59,7 @@ void DextraRawControlboard::setSetpoint(int j, Synapse::setpoint_t setpoint)
 void DextraRawControlboard::setSetpoints(const Synapse::Setpoints & setpoints)
 {
     std::lock_guard<std::mutex> lock(setpointMutex);
-    std::copy(std::begin(setpoints), std::end(setpoints), std::begin(this->setpoints));
+    std::copy(std::cbegin(setpoints), std::cend(setpoints), std::begin(this->setpoints));
 }
 
 // -----------------------------------------------------------------------------

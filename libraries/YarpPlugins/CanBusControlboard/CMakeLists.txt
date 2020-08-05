@@ -54,7 +54,7 @@ if(NOT SKIP_CanBusControlboard)
                                              CanOpenNodeLib
                                              YarpDeviceMapperLib)
 
-    target_compile_features(CanBusControlboard PRIVATE cxx_std_11)
+    target_compile_features(CanBusControlboard PRIVATE cxx_std_14)
 
     yarp_install(TARGETS CanBusControlboard
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
