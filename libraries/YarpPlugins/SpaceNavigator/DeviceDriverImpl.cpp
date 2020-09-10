@@ -2,21 +2,30 @@
 
 #include "SpaceNavigator.hpp"
 
+#include <yarp/os/Value.h>
+
+#include <ColorDebug.h>
+
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
 
-bool roboticslab::SpaceNavigator::open(yarp::os::Searchable& config)
+bool SpaceNavigator::open(yarp::os::Searchable & config)
 {
+    deadband = config.check("deadband", yarp::os::Value(DEFAULT_DEADBAND), "deadband [0,1]").asFloat64();
+
     if (spnav_open() == -1)
     {
         CD_ERROR("Failed to connect to the space navigator daemon\n");
         return false;
     }
+
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::SpaceNavigator::close()
+bool SpaceNavigator::close()
 {
     return spnav_close() != -1;
 }

@@ -31,7 +31,10 @@ class LeapMotionSensor : public yarp::dev::DeviceDriver, public yarp::dev::IAnal
 public:
 
     LeapMotionSensor() : controller(NULL)
-    {}
+    { }
+
+    ~LeapMotionSensor()
+    { close(); }
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
     virtual bool open(yarp::os::Searchable& config);

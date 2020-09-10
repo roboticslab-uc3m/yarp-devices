@@ -2,44 +2,94 @@
 
 #include "CuiAbsolute.hpp"
 
+#include <cmath>
+
+#include <yarp/os/Time.h>
+
+#include <ColorDebug.h>
+
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
-bool roboticslab::CuiAbsolute::open(yarp::os::Searchable& config)
+
+bool CuiAbsolute::open(yarp::os::Searchable & config)
 {
-
-    this->canId = config.check("canId",yarp::os::Value(0),"can bus ID").asInt();
-    this->tr = config.check("tr",yarp::os::Value(1),"reduction").asInt();
-    this->ptModeMs  = config.check("ptModeMs",yarp::os::Value(0),"ptMode (milliseconds)").asInt();
-    this->ptPointCounter = 0;
-    this->ptMovementDone = false;
-    this->targetReached = false;
-    this->max = 0;
-    this->min = 0;
-    this->refAcceleration = 0;
-    this->refSpeed = 0;
-    this->encoder = sqrt (-1);  // NaN \todo{Investigate, debug and document the dangers of this use of NaN.}
-
-    yarp::os::Value vCanBufferFactory = config.check("canBufferFactory", yarp::os::Value(0), "");
-
-    if( !vCanBufferFactory.isBlob() )
+    if (!config.check("robotConfig") || !config.find("robotConfig").isBlob())
     {
-        CD_ERROR("Could not create CuiAbsolute with null or corrupt ICanBufferFactory handle\n");
+        CD_ERROR("Missing \"robotConfig\" property or not a blob.\n");
         return false;
     }
 
-    iCanBufferFactory = *reinterpret_cast<yarp::dev::ICanBufferFactory **>(const_cast<char *>(vCanBufferFactory.asBlob()));
-    canOutputBuffer = iCanBufferFactory->createBuffer(1);
+    const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
 
-    CD_SUCCESS("Created CuiAbsolute with canId %d and tr %f, and all local parameters set to 0.\n",canId,tr);
+    yarp::os::Bottle & commonGroup = robotConfig->findGroup("common-cui");
+    yarp::os::Property cuiGroup;
+
+    if (!commonGroup.isNull())
+    {
+        cuiGroup.fromString(commonGroup.toString());
+    }
+
+    cuiGroup.fromString(config.toString(), false); // override common options
+
+    CD_DEBUG("%s\n", cuiGroup.toString().c_str());
+
+    canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt8(); // id-specific
+    reverse = cuiGroup.check("reverse", yarp::os::Value(false), "reverse").asBool();
+    timeout = cuiGroup.check("timeout", yarp::os::Value(DEFAULT_TIMEOUT), "timeout (seconds)").asFloat64();
+    maxRetries = cuiGroup.check("maxRetries", yarp::os::Value(DEFAULT_MAX_RETRIES), "max retries on timeout").asFloat64();
+
+    if (timeout <= 0.0)
+    {
+        CD_ERROR("Illegal CUI timeout value: %f.\n", timeout);
+        return false;
+    }
+
+    if (!cuiGroup.check("mode", "publish mode [push|pull]"))
+    {
+        CD_ERROR("Missing \"mode\" property.\n");
+        return false;
+    }
+
+    std::string mode = cuiGroup.find("mode").asString();
+
+    if (mode == "push")
+    {
+        pushStateObserver = new StateObserver(timeout);
+        cuiMode = CuiMode::PUSH;
+        pushDelay = cuiGroup.check("pushDelay", yarp::os::Value(0), "Cui push mode delay [0-255]").asInt8();
+    }
+    else if (mode == "pull")
+    {
+        pollStateObserver = new TypedStateObserver<encoder_t>(timeout);
+        cuiMode = CuiMode::PULL;
+    }
+    else
+    {
+        CD_ERROR("Unrecognized CUI mode: %s.\n", mode.c_str());
+        return false;
+    }
+
     return true;
 }
 
 // -----------------------------------------------------------------------------
-bool roboticslab::CuiAbsolute::close()
+
+bool CuiAbsolute::close()
 {
-    CD_INFO("\n");
-    iCanBufferFactory->destroyBuffer(canOutputBuffer);
+    if (pushStateObserver)
+    {
+        delete pushStateObserver;
+        pushStateObserver = nullptr;
+    }
+
+    if (pollStateObserver)
+    {
+        delete pollStateObserver;
+        pollStateObserver = nullptr;
+    }
+
     return true;
 }
 
 // -----------------------------------------------------------------------------
-

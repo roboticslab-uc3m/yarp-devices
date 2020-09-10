@@ -2,67 +2,92 @@
 
 #include "CanBusControlboard.hpp"
 
+#include <yarp/os/Vocab.h>
 
-// ---------------------------- IInteractionMode Related ----------------------------------
+#include <ColorDebug.h>
 
-bool roboticslab::CanBusControlboard::getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
+using namespace roboticslab;
+
+using raw_t = yarp::dev::IInteractionModeRaw;
+using enum_t = yarp::dev::InteractionModeEnum;
+using multi_mapping_fn = bool (raw_t::*)(int, int *, enum_t *);
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getInteractionMode(int axis, yarp::dev::InteractionModeEnum * mode)
 {
-    // CD_DEBUG("(%d)\n",axis);  // -- is printed too many times...
-    //*mode = interactionMode[axis];
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(axis) ) return false;
-
-    return iInteractionModeRaw[axis]->getInteractionModeRaw(0, mode);
+    CD_DEBUG("(%d)\n", axis);
+    CHECK_JOINT(axis);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IInteractionModeRaw::getInteractionModeRaw, axis, mode);
 }
 
-bool roboticslab::CanBusControlboard::getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getInteractionModes(yarp::dev::InteractionModeEnum * modes)
+{
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
+    return deviceMapper.mapAllJoints(&yarp::dev::IInteractionModeRaw::getInteractionModesRaw, modes);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::getInteractionModes(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes)
 {
     CD_DEBUG("\n");
 
-        bool ok = true;
-        for(unsigned int i=0; i < n_joints; i++)
-            ok &= getInteractionMode(joints[i],&modes[i]);
-        return ok;
-}
-
-bool roboticslab::CanBusControlboard::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
-{
-    CD_DEBUG("\n");
-
+    auto task = deviceMapper.createTask();
+    const int * c_joints = const_cast<const int *>(joints); // workaround
+    auto devices = deviceMapper.getDevices(n_joints, c_joints); // extend lifetime of local joint vector
     bool ok = true;
-    for(unsigned int i=0; i < nodes.size(); i++)
-        ok &= getInteractionMode(i,&modes[i]);
-    return ok;
+
+    for (const auto & t : devices)
+    {
+        auto * p = std::get<0>(t)->getHandle<yarp::dev::IInteractionModeRaw>();
+        int * temp = const_cast<int *>(std::get<1>(t).data()); // workaround
+        multi_mapping_fn fn = &raw_t::getInteractionModesRaw;
+        ok &= p && (task->add(p, fn, std::get<1>(t).size(), temp, modes + std::get<2>(t)), true);
+    }
+
+    return ok && task->dispatch();
 }
 
-bool roboticslab::CanBusControlboard::setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode)
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode)
 {
-    CD_DEBUG("(%d)\n",axis);
-
-    //-- Check index within range
-    if ( ! this->indexWithinRange(axis) ) return false;
-
-    return iInteractionModeRaw[axis]->setInteractionModeRaw(0, mode);
+    CD_DEBUG("(%d, %s)\n", axis, yarp::os::Vocab::decode(mode).c_str());
+    CHECK_JOINT(axis);
+    return deviceMapper.mapSingleJoint(&yarp::dev::IInteractionModeRaw::setInteractionModeRaw, axis, mode);
 }
 
-bool roboticslab::CanBusControlboard::setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::setInteractionModes(yarp::dev::InteractionModeEnum * modes)
+{
+    CD_DEBUG("\n");
+    return deviceMapper.mapAllJoints(&yarp::dev::IInteractionModeRaw::setInteractionModesRaw, modes);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusControlboard::setInteractionModes(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes)
 {
     CD_DEBUG("\n");
 
-       bool ok = true;
-       for(int j=0; j<n_joints; j++)
-            ok &= this->setInteractionMode(joints[j],modes[j]);
-
-       return ok;
-}
-
-bool roboticslab::CanBusControlboard::setInteractionModes(yarp::dev::InteractionModeEnum* modes)
-{
-    CD_DEBUG("\n");
-
+    auto task = deviceMapper.createTask();
+    const int * c_joints = const_cast<const int *>(joints); // workaround
+    auto devices = deviceMapper.getDevices(n_joints, c_joints); // extend lifetime of local joint vector
     bool ok = true;
-    for(unsigned int i=0; i<nodes.size(); i++)
-        ok &= setInteractionMode(i,modes[i]);
-    return ok;
+
+    for (const auto & t : devices)
+    {
+        auto * p = std::get<0>(t)->getHandle<yarp::dev::IInteractionModeRaw>();
+        int * temp = const_cast<int *>(std::get<1>(t).data()); // workaround
+        multi_mapping_fn fn = &raw_t::getInteractionModesRaw;
+        ok &= p && (task->add(p, fn, std::get<1>(t).size(), temp, modes + std::get<2>(t)), true);
+    }
+
+    return ok && task->dispatch();
 }
+
+// -----------------------------------------------------------------------------

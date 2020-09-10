@@ -3,11 +3,8 @@
 #ifndef __CAN_BUS_FAKE__
 #define __CAN_BUS_FAKE__
 
-#include <yarp/os/all.h>
-#include <yarp/dev/all.h>
+#include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/CanBusInterface.h>
-
-#include <ColorDebug.h>
 
 #include "FakeCanMessage.hpp"
 
@@ -26,40 +23,45 @@ namespace roboticslab
  */
 class CanBusFake : public yarp::dev::DeviceDriver,
                    public yarp::dev::ICanBus,
+                   public yarp::dev::ICanBusErrors,
                    public yarp::dev::ImplementCanBufferFactory<FakeCanMessage, struct fake_can_msg>
 {
-
 public:
 
-    /** Initialize the CAN device.
-     * @param device is the device path, such as "/dev/can0".
-     * @param bitrate is the bitrate, such as BITRATE_100k.
-     * @return true/false on success/failure.
-     */
-    virtual bool open(yarp::os::Searchable& config);
+    //  --------- DeviceDriver declarations ---------
 
-    /** Close the CAN device. */
-    virtual bool close();
+    virtual bool open(yarp::os::Searchable & config) override
+    { return true; }
 
-    //  --------- ICanBus declarations. Implementation in ICanBusImpl.cpp ---------
+    virtual bool close() override
+    { return true; }
 
-    virtual bool canSetBaudRate(unsigned int rate);
+    //  --------- ICanBus declarations ---------
 
-    virtual bool canGetBaudRate(unsigned int * rate);
+    virtual bool canSetBaudRate(unsigned int rate) override
+    { return true; }
 
-    virtual bool canIdAdd(unsigned int id);
+    virtual bool canGetBaudRate(unsigned int * rate) override
+    { *rate = 0; return true; }
 
-    virtual bool canIdDelete(unsigned int id);
+    virtual bool canIdAdd(unsigned int id) override
+    { return true; }
 
-    virtual bool canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait = false);
+    virtual bool canIdDelete(unsigned int id) override
+    { return true; }
 
-    virtual bool canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait = false);
+    virtual bool canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait = false) override
+    { return true; }
 
-private:
+    virtual bool canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait = false) override
+    { return true; }
 
-    static const unsigned char FAKE_DATA[8]; // defined in DeviceDriverImpl.cpp
+    //  --------- ICanBusErrors declarations ---------
+
+    virtual bool canGetErrors(yarp::dev::CanErrors & err) override
+    { return true; }
 };
 
-}  // namespace roboticslab
+} // namespace roboticslab
 
-#endif  // __CAN_BUS_FAKE__
+#endif // __CAN_BUS_FAKE__

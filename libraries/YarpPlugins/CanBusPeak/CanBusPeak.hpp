@@ -3,11 +3,10 @@
 #ifndef __CAN_BUS_PEAK__
 #define __CAN_BUS_PEAK__
 
-#include <stdint.h>
+#include <cstdint>
 
+#include <mutex>
 #include <set>
-
-#include <yarp/os/Semaphore.h>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/CanBusInterface.h>
@@ -16,37 +15,75 @@
 
 #include "PeakCanMessage.hpp"
 
-#define DEFAULT_CAN_DEVICE "/dev/pcan0"
-#define DEFAULT_CAN_BITRATE 1000000
+#define DEFAULT_PORT "/dev/pcan0"
+#define DEFAULT_BITRATE 1000000
 
-#define DEFAULT_CAN_RX_TIMEOUT_MS 1
-#define DEFAULT_CAN_TX_TIMEOUT_MS 0  // '0' means no timeout
+#define DEFAULT_RX_TIMEOUT_MS 1
+#define DEFAULT_TX_TIMEOUT_MS 0  // '0' means no timeout
 
-#define DEFAULT_CAN_BLOCKING_MODE true
-#define DEFAULT_CAN_ALLOW_PERMISSIVE false
+#define DEFAULT_BLOCKING_MODE true
+#define DEFAULT_ALLOW_PERMISSIVE false
 
 namespace roboticslab
 {
 
 /**
- *
+ * @ingroup YarpPlugins
+ * @defgroup CanBusPeak
+ * @brief Contains roboticslab::CanBusPeak.
+ */
+
+/**
+ * @ingroup CanBusPeak
+ * @brief Custom buffer of PeakCanMessage instances.
+ */
+class ImplementPeakCanBufferFactory : public yarp::dev::ImplementCanBufferFactory<PeakCanMessage, struct pcanfd_msg>
+{
+public:
+    virtual yarp::dev::CanBuffer createBuffer(int elem)
+    {
+        yarp::dev::CanBuffer ret;
+        struct pcanfd_msg * storage = new pcanfd_msg[elem];
+        yarp::dev::CanMessage ** messages = new yarp::dev::CanMessage *[elem];
+        PeakCanMessage * tmp = new PeakCanMessage[elem];
+
+        std::memset(storage, 0, sizeof(struct pcanfd_msg) * elem);
+
+        for (int k = 0; k < elem; k++)
+        {
+            messages[k] = &tmp[k];
+            messages[k]->setBuffer(reinterpret_cast<unsigned char *>(&storage[k]));
+
+            // Changes wrt default implementation:
+            storage[k].type = PCANFD_TYPE_CAN20_MSG;
+            storage[k].flags = PCANFD_MSG_STD;
+        }
+
+        ret.resize(messages, elem);
+        return ret;
+    }
+};
+
+/**
  * @ingroup CanBusPeak
  * @brief Specifies the PeakCan behaviour and specifications.
- *
  */
 class CanBusPeak : public yarp::dev::DeviceDriver,
                    public yarp::dev::ICanBus,
-                   public yarp::dev::ImplementCanBufferFactory<PeakCanMessage, struct pcanfd_msg>
+                   public yarp::dev::ICanBusErrors,
+                   public ImplementPeakCanBufferFactory
 {
-
 public:
 
     CanBusPeak() : fileDescriptor(0),
-                   rxTimeoutMs(DEFAULT_CAN_RX_TIMEOUT_MS),
-                   txTimeoutMs(DEFAULT_CAN_TX_TIMEOUT_MS),
-                   blockingMode(DEFAULT_CAN_BLOCKING_MODE),
-                   allowPermissive(DEFAULT_CAN_ALLOW_PERMISSIVE)
-    {}
+                   rxTimeoutMs(DEFAULT_RX_TIMEOUT_MS),
+                   txTimeoutMs(DEFAULT_TX_TIMEOUT_MS),
+                   blockingMode(DEFAULT_BLOCKING_MODE),
+                   allowPermissive(DEFAULT_ALLOW_PERMISSIVE)
+    { }
+
+    ~CanBusPeak()
+    { close(); }
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 
@@ -74,13 +111,17 @@ public:
 
     virtual bool canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait = false);
 
+    //  --------- ICanBusErrors declarations. Implementation in ICanBusErrorsImpl.cpp ---------
+
+    virtual bool canGetErrors(yarp::dev::CanErrors & err);
+
 protected:
 
     enum io_operation { READ, WRITE };
 
     bool waitUntilTimeout(io_operation op, bool * bufferReady);
 
-    uint64_t computeAcceptanceCodeAndMask();
+    std::uint64_t computeAcceptanceCodeAndMask();
 
     int fileDescriptor;
     int rxTimeoutMs;
@@ -89,7 +130,7 @@ protected:
     bool blockingMode;
     bool allowPermissive;
 
-    mutable yarp::os::Semaphore canBusReady;
+    mutable std::mutex canBusReady;
 
     std::set<unsigned int> activeFilters;
 };

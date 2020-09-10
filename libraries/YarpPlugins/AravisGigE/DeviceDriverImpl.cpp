@@ -127,7 +127,7 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
     if (zoomAvailable)
     {
         arv_device_get_integer_feature_bounds(arv_camera_get_device(camera), "Zoom", &zoomMin, &zoomMax);
-        CD_INFO("\tZoom range: min=%d max=%d\n", zoomMin, zoomMax);
+        CD_INFO("\tZoom range: min=%ld max=%ld\n", zoomMin, zoomMax);
     }
     else
         CD_WARNING("\tZoom property not available\n");
@@ -136,7 +136,7 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
     if (focusAvailable)
     {
         arv_device_get_integer_feature_bounds(arv_camera_get_device(camera), "Focus", &focusMin, &focusMax);
-        CD_INFO("\tFocus range: min=%d max=%d\n", focusMin, focusMax);
+        CD_INFO("\tFocus range: min=%ld max=%ld\n", focusMin, focusMax);
     }
     else
         CD_WARNING("\tFocus property not available\n");

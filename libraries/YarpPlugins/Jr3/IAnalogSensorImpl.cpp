@@ -10,10 +10,10 @@ int roboticslab::Jr3::read(yarp::sig::Vector &out)
 {
 
     int ret;
-    ret = ioctl(fd,IOCTL0_JR3_FILTER0,&fm0);
-    ret = ioctl(fd,IOCTL1_JR3_FILTER0,&fm1);
-    ret = ioctl(fd,IOCTL2_JR3_FILTER0,&fm2);
-    ret = ioctl(fd,IOCTL3_JR3_FILTER0,&fm3);    
+    ret = ioctl(fd,filters[0],&fm0);
+    ret = ioctl(fd,filters[1],&fm1);
+    ret = ioctl(fd,filters[2],&fm2);
+    ret = ioctl(fd,filters[3],&fm3);
 
     if ( ret == -1)
     {

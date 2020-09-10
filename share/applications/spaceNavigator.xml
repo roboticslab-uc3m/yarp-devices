@@ -1,0 +1,15 @@
+<application>
+    <name>SpaceNavigator App</name>
+    <module>
+        <name>SpaceNavigator</name>
+        <parameters>--period 5 --name /spacenavigator --ports "(mouse buttons)" --channels 8 --mouse 0 5 0 5 --buttons 6 7 0 1</parameters>
+        <node>localhost</node>
+        <deployer>yarpdev</deployer>
+    </module>
+    <module>
+        <name>yarpscope</name>
+        <parameters>--remote /spacenavigator/mouse --index "(0 1 2 3 4 5)" --color "(Red Green Blue LightRed LightGreen LightBlue)" --min -1 --max 1</parameters>
+        <prefix>/spacenavigator/mouse:o</prefix>
+        <node>localhost</node>
+    </module>
+</application>

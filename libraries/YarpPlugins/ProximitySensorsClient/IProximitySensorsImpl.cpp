@@ -6,16 +6,12 @@
 
 roboticslab::IProximitySensors::alert_level roboticslab::ProximitySensorsClient::getAlertLevel()
 {
-    alertMutex.lock();
-    alert_level alert_copy = alert;
-    alertMutex.unlock();
-    return alert_copy;
+    std::lock_guard<std::mutex> lock(alertMutex);
+    return alert;
 }
 
 bool roboticslab::ProximitySensorsClient::hasTarget()
 {
-    gripperMutex.lock();
-    bool gripper_copy = gripper;
-    gripperMutex.unlock();
-    return gripper_copy;
+    std::lock_guard<std::mutex> lock(alertMutex);
+    return gripper;
 }

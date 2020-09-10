@@ -4,10 +4,27 @@
 
 #include <sys/ioctl.h>
 
+#define INIT_FILTER_ARRAY(id) do { \
+        filters[0] = IOCTL0_JR3_FILTER ## id; \
+        filters[1] = IOCTL1_JR3_FILTER ## id; \
+        filters[2] = IOCTL2_JR3_FILTER ## id; \
+        filters[3] = IOCTL3_JR3_FILTER ## id; \
+    } while (0)
+
 // -----------------------------------------------------------------------------
 
 bool roboticslab::Jr3::open(yarp::os::Searchable& config)
 {
+    int filterId = config.check("filter", yarp::os::Value(DEFAULT_FILTER_ID), "filter id (0-6)").asInt32();
+
+    if (filterId < 0 || filterId > 6)
+    {
+        CD_ERROR("Illegal filter ID (<0 or >6): %d.\n", filterId);
+        return false;
+    }
+
+    loadFilters(filterId);
+
     if ( ( fd = ::open("/dev/jr3",O_RDWR) ) < 0) {
         CD_ERROR("Can't open device. No way to read force!\n");
         return false;
@@ -69,8 +86,43 @@ bool roboticslab::Jr3::open(yarp::os::Searchable& config)
 
 bool roboticslab::Jr3::close()
 {
-    ::close(fd);
+    if (fd)
+    {
+        ::close(fd);
+        fd = 0;
+    }
+
     return true;
+}
+
+// -----------------------------------------------------------------------------
+
+void roboticslab::Jr3::loadFilters(int id)
+{
+    switch (id)
+    {
+    case 0:
+        INIT_FILTER_ARRAY(0);
+        break;
+    case 1:
+        INIT_FILTER_ARRAY(1);
+        break;
+    case 2:
+        INIT_FILTER_ARRAY(2);
+        break;
+    case 3:
+        INIT_FILTER_ARRAY(3);
+        break;
+    case 4:
+        INIT_FILTER_ARRAY(4);
+        break;
+    case 5:
+        INIT_FILTER_ARRAY(5);
+        break;
+    case 6:
+        INIT_FILTER_ARRAY(6);
+        break;
+    }
 }
 
 // -----------------------------------------------------------------------------

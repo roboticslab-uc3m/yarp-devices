@@ -1,20 +1,18 @@
-cmake_minimum_required(VERSION 2.8.9 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
-project(exampleRemoteControlboard)
+project(exampleRemoteControlboard LANGUAGES CXX)
 
-find_package(YARP REQUIRED)
-
-include_directories(${YARP_INCLUDE_DIRS})
+find_package(YARP 3.2 REQUIRED COMPONENTS os dev)
 
 add_executable(exampleRemoteControlboard main.cpp
                                          ExampleRemoteControlboard.cpp
                                          ExampleRemoteControlboard.hpp)
-  
-target_link_libraries(exampleRemoteControlboard YARP::YARP_OS
+
+target_link_libraries(exampleRemoteControlboard YARP::YARP_os
                                                 YARP::YARP_init
                                                 YARP::YARP_dev)
 
 include(GNUInstallDirs)
 
 install(TARGETS exampleRemoteControlboard
-        DESTINATION ${CMAKE_INSTALL_BINDIR}) 
+        DESTINATION ${CMAKE_INSTALL_BINDIR})

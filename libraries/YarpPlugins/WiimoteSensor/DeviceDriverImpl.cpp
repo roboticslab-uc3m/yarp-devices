@@ -12,7 +12,7 @@
 
 bool roboticslab::WiimoteSensor::open(yarp::os::Searchable& config)
 {
-    int deviceId = config.check("deviceId", yarp::os::Value(DEFAULT_DEVICE), "Wiimote device number").asInt();
+    int deviceId = config.check("deviceId", yarp::os::Value(DEFAULT_DEVICE), "Wiimote device number").asInt32();
 
     char * syspath = getDevicePath(deviceId);
 
@@ -39,25 +39,22 @@ bool roboticslab::WiimoteSensor::open(yarp::os::Searchable& config)
     if (ret < 0)
     {
         CD_ERROR("Cannot open interface, did you launch with sudo? (%d).\n", ret);
-        close();
         return false;
     }
 
-    calibZeroX = config.check("calibZeroX", yarp::os::Value(DEFAULT_CALIB_ZERO_X), "normalization value for X axis (zero)").asInt();
-    calibZeroY = config.check("calibZeroY", yarp::os::Value(DEFAULT_CALIB_ZERO_Y), "normalization value for Y axis (zero)").asInt();
-    calibZeroZ = config.check("calibZeroZ", yarp::os::Value(DEFAULT_CALIB_ZERO_Z), "normalization value for Z axis (zero)").asInt();
+    calibZeroX = config.check("calibZeroX", yarp::os::Value(DEFAULT_CALIB_ZERO_X), "normalization value for X axis (zero)").asInt32();
+    calibZeroY = config.check("calibZeroY", yarp::os::Value(DEFAULT_CALIB_ZERO_Y), "normalization value for Y axis (zero)").asInt32();
+    calibZeroZ = config.check("calibZeroZ", yarp::os::Value(DEFAULT_CALIB_ZERO_Z), "normalization value for Z axis (zero)").asInt32();
 
-    calibOneX = config.check("calibOneX", yarp::os::Value(DEFAULT_CALIB_ONE_X), "normalization value for X axis (one)").asInt();
-    calibOneY = config.check("calibOneY", yarp::os::Value(DEFAULT_CALIB_ONE_Y), "normalization value for Y axis (one)").asInt();
-    calibOneZ = config.check("calibOneZ", yarp::os::Value(DEFAULT_CALIB_ONE_Z), "normalization value for Z axis (one)").asInt();
+    calibOneX = config.check("calibOneX", yarp::os::Value(DEFAULT_CALIB_ONE_X), "normalization value for X axis (one)").asInt32();
+    calibOneY = config.check("calibOneY", yarp::os::Value(DEFAULT_CALIB_ONE_Y), "normalization value for Y axis (one)").asInt32();
+    calibOneZ = config.check("calibOneZ", yarp::os::Value(DEFAULT_CALIB_ONE_Z), "normalization value for Z axis (one)").asInt32();
 
     CD_INFO("Calibration (zero): x = %d, y = %d, z = %d\n", calibZeroX, calibZeroY, calibZeroZ);
     CD_INFO("Calibration (one): x = %d, y = %d, z = %d\n", calibOneX, calibOneY, calibOneZ);
 
     dispatcherThread.setInterfacePointer(iface);
-    dispatcherThread.start();
-
-    return true;
+    return dispatcherThread.start();
 }
 
 // -----------------------------------------------------------------------------
@@ -65,7 +62,13 @@ bool roboticslab::WiimoteSensor::open(yarp::os::Searchable& config)
 bool roboticslab::WiimoteSensor::close()
 {
     dispatcherThread.stop();
-    xwii_iface_unref(iface);
+
+    if (iface)
+    {
+        xwii_iface_unref(iface);
+        iface = NULL;
+    }
+
     return true;
 }
 

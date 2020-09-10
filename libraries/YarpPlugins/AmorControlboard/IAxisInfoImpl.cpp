@@ -4,7 +4,7 @@
 
 // ------------------- IAxisInfo related ------------------------------------
 
-bool roboticslab::AmorControlboard::getAxisName(int axis, yarp::os::ConstString& name)
+bool roboticslab::AmorControlboard::getAxisName(int axis, std::string& name)
 {
     CD_DEBUG("(%d)\n", axis);
 

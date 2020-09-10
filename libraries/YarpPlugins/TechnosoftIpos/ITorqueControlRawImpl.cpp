@@ -2,156 +2,113 @@
 
 #include "TechnosoftIpos.hpp"
 
-// ############################# ITorqueControlRaw Related #############################
+#include <ColorDebug.h>
 
-bool roboticslab::TechnosoftIpos::getRefTorquesRaw(double *t)
+using namespace roboticslab;
+
+// -------------------------------------------------------------------------------------
+
+bool TechnosoftIpos::getRefTorqueRaw(int j, double * t)
 {
-    CD_ERROR("Missing implementation\n");
-    return false;
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    CHECK_MODE(VOCAB_CM_TORQUE);
+    *t = vars.synchronousCommandTarget;
+    return true;
 }
 
 // -------------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::getRefTorqueRaw(int j, double *t)
+bool TechnosoftIpos::getRefTorquesRaw(double * t)
 {
-    CD_INFO("(%d)\n",j);
+    CD_DEBUG("\n");
+    return getRefTorqueRaw(0, &t[0]);
+}
 
-    //-- Check index within range
-    if ( j != 0 ) return false;
+// -------------------------------------------------------------------------------------
 
-    *t = refTorque;
+bool TechnosoftIpos::setRefTorqueRaw(int j, double t)
+{
+    CD_DEBUG("(%d, %f)\n", j, t);
+    CHECK_JOINT(j);
+    CHECK_MODE(VOCAB_CM_TORQUE);
+    vars.synchronousCommandTarget = t;
+    return true;
+}
+
+// -------------------------------------------------------------------------------------
+
+bool TechnosoftIpos::setRefTorquesRaw(const double * t)
+{
+    CD_DEBUG("\n");
+    return setRefTorqueRaw(0, t[0]);
+}
+
+// -------------------------------------------------------------------------------------
+
+bool TechnosoftIpos::getTorqueRaw(int j, double * t)
+{
+    //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
+    CHECK_JOINT(j);
+    std::int16_t temp = vars.lastCurrentRead;
+    double curr = vars.internalUnitsToCurrent(temp);
+    *t = vars.currentToTorque(curr);
+    return true;
+}
+
+// -------------------------------------------------------------------------------------
+
+bool TechnosoftIpos::getTorquesRaw(double * t)
+{
+    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
+    return getTorqueRaw(0, &t[0]);
+}
+
+// -------------------------------------------------------------------------------------
+
+bool TechnosoftIpos::getTorqueRangeRaw(int j, double * min, double * max)
+{
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+
+    return can->sdo()->upload<std::uint16_t>("Current limit", [this, min, max](auto data)
+        { double temp = vars.internalUnitsToPeakCurrent(data);
+          *max = vars.currentToTorque(temp);
+          *min = -(*max); },
+        0x207F);
+}
+
+// -------------------------------------------------------------------------------------
+
+bool TechnosoftIpos::getTorqueRangesRaw(double * min, double * max)
+{
+    CD_DEBUG("\n");
+    return getTorqueRangeRaw(0, &min[0], &max[0]);
+}
+
+// -------------------------------------------------------------------------------------
+
+bool TechnosoftIpos::getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParameters * params)
+{
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+
+    params->bemf = 0.0;
+    params->bemf_scale = 0.0;
+    params->ktau = vars.k;
+    params->ktau_scale = 0.0;
 
     return true;
 }
 
 // -------------------------------------------------------------------------------------
 
-bool roboticslab::TechnosoftIpos::setRefTorquesRaw(const double *t)
+bool TechnosoftIpos::setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorqueParameters params)
 {
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::setRefTorqueRaw(int j, double t)
-{
-    CD_INFO("(%d,%f)\n",j,t);
-
-    //-- Check index within range
-    if ( j!= 0 ) return false;
-
-    //*************************************************************
-    uint8_t msg_ref_torque[]= {0x23,0x1C,0x20,0x00,0x00,0x00,0x00,0x00}; // put 23 because it is a target
-
-    int sendRefTorque = t * (65520.0/20.0) / (this->tr * this->k);  // Page 109 of 263, supposing 10 Ipeak.
-    //memcpy(msg_ref_torque+4,&sendRefTorque,4);  // was +6 not +4, but +6 seems terrible with 4!
-    memcpy(msg_ref_torque+6,&sendRefTorque,2);
-
-    if(! send(0x600, 8, msg_ref_torque) )
-    {
-        CD_ERROR("Could not send refTorque. %s\n", msgToStr(0x600, 8, msg_ref_torque).c_str() );
-        return false;
-    }
-    CD_SUCCESS("Sent refTorque. %s\n", msgToStr(0x600, 8, msg_ref_torque).c_str() );
-    //*************************************************************
-
-    refTorqueSemaphore.wait();
-    refTorque = t;
-    refTorqueSemaphore.post();
-
-
+    CD_DEBUG("(%d)\n", j);
+    CHECK_JOINT(j);
+    vars.k = params.ktau;
     return true;
 }
 
 // -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getTorqueRaw(int j, double *t)
-{
-    //CD_INFO("(%d)\n",j);  //-- Too verbose in controlboardwrapper2 stream.
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    //*************************************************************
-    uint8_t msg_getCurrent[]= {0x40,0x7E,0x20,0x00}; // Query current. Ok only 4.
-
-    if(! send(0x600, 4, msg_getCurrent) )
-    {
-        CD_ERROR("Could not send msg_getCurrent. %s\n", msgToStr(0x600, 4, msg_getCurrent).c_str() );
-        return false;
-    }
-    //CD_SUCCESS("Sent msg_getCurrent. %s\n", msgToStr(0x600, 4, msg_getCurrent).c_str() );    //-- Too verbose in controlboardwrapper2 stream.
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    yarp::os::Time::delay(DELAY);  // Must delay as it will be from same driver.
-    //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-    getTorqueReady.wait();
-    *t = getTorque;
-    getTorqueReady.post();
-
-    //*************************************************************
-    return true;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getTorquesRaw(double *t)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getTorqueRangeRaw(int j, double *min, double *max)
-{
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
-
-    return true;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::getTorqueRangesRaw(double *min, double *max)
-{
-    CD_ERROR("Missing implementation\n");
-    return false;
-}
-
-// -------------------------------------------------------------------------------------
-
-#if YARP_VERSION_MAJOR != 3
-bool roboticslab::TechnosoftIpos::getBemfParamRaw(int j, double *bemf)
-{
-    CD_INFO("(%d)\n",j);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
-
-    return true;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool roboticslab::TechnosoftIpos::setBemfParamRaw(int j, double bemf)
-{
-    CD_INFO("(%d,%f)\n",j,bemf);
-
-    //-- Check index within range
-    if ( j != 0 ) return false;
-
-    CD_WARNING("Not implemented yet (TechnosoftIpos).\n");
-
-    return true;
-}
-
-// -------------------------------------------------------------------------------------
-#endif // YARP_VERSION_MAJOR != 3

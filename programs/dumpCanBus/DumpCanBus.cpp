@@ -2,90 +2,156 @@
 
 #include "DumpCanBus.hpp"
 
-#include <cstdio>
 #include <ios>
-#include <sstream>
+#include <iomanip>
+#include <iostream>
 
-#include <yarp/os/Time.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Value.h>
 
 #include <ColorDebug.h>
 
-namespace roboticslab
+using namespace roboticslab;
+
+bool DumpCanBus::configure(yarp::os::ResourceFinder & rf)
 {
+    CD_DEBUG("%s\n", rf.toString().c_str());
 
-/************************************************************************/
-DumpCanBus::DumpCanBus() { }
-
-/************************************************************************/
-bool DumpCanBus::configure(yarp::os::ResourceFinder &rf)
-{
-
-    if(rf.check("help"))
+    if (!rf.check("remote", "remote port name"))
     {
-        std::printf("DumpCanBus options:\n");
-        std::printf("\t--help (this help)\t--from [file.ini]\t--context [path]\n");
-        CD_DEBUG_NO_HEADER("%s\n",rf.toString().c_str());
+        CD_ERROR("Missing remote port name.\n");
         return false;
     }
 
-    CD_DEBUG("%s\n",rf.toString().c_str());
-    deviceDevCan0.open(rf);
-    if (!deviceDevCan0.isValid())
+    std::string local = rf.check("local", yarp::os::Value(DEFAULT_LOCAL_PORT), "local port name").asString();
+    std::string remote = rf.find("remote").asString();
+    useCanOpen = !rf.check("no-can-open");
+
+    if (!port.open(local + "/dump:i"))
     {
-        CD_ERROR("deviceDevCan0 instantiation not worked.\n");
+        CD_ERROR("Unable to open local port.\n");
         return false;
     }
-    deviceDevCan0.view(iCanBus);
-    deviceDevCan0.view(iCanBufferFactory);
 
-    canInputBuffer = iCanBufferFactory->createBuffer(1);
+    port.setOutputMode(false);
 
-    lastNow = yarp::os::Time::now();
+    if (!yarp::os::Network::connect(remote + "/dump:o", port.getName(), "udp"))
+    {
+        CD_ERROR("Unable to connect to remote port.\n");
+        return false;
+    }
 
-    return this->start();
-}
+    portReader.attach(port);
+    portReader.useCallback(*this);
 
-/************************************************************************/
-
-bool DumpCanBus::updateModule()
-{
-    //printf("DumpCanBus alive...\n");
     return true;
 }
-
-/************************************************************************/
 
 bool DumpCanBus::close()
 {
-    this->stop();
-
-    iCanBufferFactory->destroyBuffer(canInputBuffer);
-    deviceDevCan0.close();
-
+    portReader.interrupt();
+    portReader.disableCallback();
+    port.close();
     return true;
 }
 
-/************************************************************************/
-
-std::string DumpCanBus::msgToStr(yarp::dev::CanMessage* message)
+void DumpCanBus::onRead(yarp::os::Bottle & b)
 {
-    std::stringstream tmp;
-    for(int i=0; i < message->getLen()-1; i++)
+    unsigned int cobId = b.get(0).asInt16();
+
+    std::cout << std::setfill(' ');
+
+    if (!useCanOpen)
     {
-        tmp << std::hex << static_cast<int>(message->getData()[i]) << " ";
+        std::cout << std::setw(3) << std::hex << cobId;
     }
-    tmp << std::hex << static_cast<int>(message->getData()[message->getLen()-1]);
-    tmp << ". canId(";
-    tmp << std::dec << (message->getId() & 0x7F);
-    tmp << ") via(";
-    tmp << std::hex << (message->getId() & 0xFF80);
-    tmp << "), t:" << yarp::os::Time::now() - lastNow << "[s].";
+    else
+    {
+        unsigned int id = cobId & 0x7F;
 
-    lastNow = yarp::os::Time::now();
+        if (id == 0)
+        {
+            std::cout << std::setw(10);
 
-    return tmp.str();
+            switch (cobId)
+            {
+            case 0x00:
+                std::cout << "NMT";
+                break;
+            case 0x80:
+                std::cout << "SYNC";
+                break;
+            case 0x100:
+                std::cout << "TIME";
+                break;
+            default:
+                std::cout << "UNK!";
+                break;
+            }
+        }
+        else
+        {
+            std::cout << std::setw(3) << std::dec << id;
+            std::cout << std::setw(7);
+
+            switch (cobId - id)
+            {
+            case 0x80:
+                std::cout << "EMCY";
+                break;
+            case 0x180:
+                std::cout << "TPDO1";
+                break;
+            case 0x200:
+                std::cout << "RPDO1";
+                break;
+            case 0x280:
+                std::cout << "TPDO2";
+                break;
+            case 0x300:
+                std::cout << "RPDO2";
+                break;
+            case 0x380:
+                std::cout << "TPDO3";
+                break;
+            case 0x400:
+                std::cout << "RPDO3";
+                break;
+            case 0x480:
+                std::cout << "TPDO4";
+                break;
+            case 0x500:
+                std::cout << "RPDO4";
+                break;
+            case 0x580:
+                std::cout << "SDO-U";
+                break;
+            case 0x600:
+                std::cout << "SDO-D";
+                break;
+            case 0x700:
+                std::cout << "HRTBT";
+                break;
+            default:
+                std::cout << "UNK!";
+                break;
+            }
+        }
+    }
+
+    if (b.size() == 2)
+    {
+        yarp::os::Bottle * data = b.get(1).asList();
+
+        std::cout << " ";
+        std::cout << std::setfill('0');
+
+        for (int i = 0; i < data->size(); i++)
+        {
+            std::cout << " ";
+            std::cout << std::setw(2) << std::hex << (static_cast<int>(data->get(i).asInt8()) & 0xFF);
+        }
+    }
+
+    std::cout << std::endl;
 }
-
-/************************************************************************/
-
-}  // namespace roboticslab

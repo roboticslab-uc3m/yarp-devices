@@ -2,47 +2,53 @@
 
 #include "TextilesHand.hpp"
 
+#include <yarp/os/Property.h>
+
+#include <ColorDebug.h>
+
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
-bool roboticslab::TextilesHand::open(yarp::os::Searchable& config)
+
+bool TextilesHand::open(yarp::os::Searchable & config)
 {
+    CD_DEBUG("%s\n", config.toString().c_str());
 
-    /*this->canId = config.check("canId",0,"can bus ID").asInt();
-    this->tr = config.check("tr",0,"reduction").asInt();
-    this->ptModeMs  = config.check("ptModeMs",0,"ptMode ms").asInt();
-    this->ptPointCounter = 0;
-    this->ptMovementDone = false;
-    this->targetReached = false;
-    this->max = 0;
-    this->min = 0;
-    this->refAcceleration = 0;
-    this->refSpeed = 0;
-    this->encoder = 0;
+    std::string port = config.check("port", yarp::os::Value(DEFAULT_PORT), "serial port").asString();
 
-    CD_SUCCESS("Created TextilesHand with canId %d and tr %f, and all local parameters set to 0.\n",canId,tr);
-    */
+    // check firmware/TextilesHand/pwmServer/pwmServer.ino
+    // ...and https://www.arduino.cc/reference/en/language/functions/communication/serial/begin/
+    // ...with: "The default is 8 data bits, no parity, one stop bit."
 
-    char serialport[13] = "/dev/ttyUSB0";
-    int baudrate = B9600;  // default
-    char buf[256];
-    int rc,n;
+    yarp::os::Property serialOptions({
+        {"device", yarp::os::Value("serialport")},
+        {"comport", yarp::os::Value(port)},
+        {"baudrate", yarp::os::Value(9600)},
+        {"databits", yarp::os::Value(8)},
+        {"paritymode", yarp::os::Value("NONE")},
+        {"stopbits", yarp::os::Value(1)}
+    });
 
-    fd = serialport_init(serialport, baudrate);
-    if(!fd)
+    if (!serialDevice.open(serialOptions))
     {
-        printf("NULL fd, bye!\n");
+        CD_ERROR("Unable to open serial device.\n");
         return false;
     }
-    CD_SUCCESS("open(), fd: %d\n",fd);
+
+    if (!serialDevice.view(iSerialDevice))
+    {
+        CD_ERROR("Unable to view iSerialDevice.\n");
+        return false;
+    }
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
-bool roboticslab::TextilesHand::close()
+
+bool TextilesHand::close()
 {
-    CD_INFO("\n");
-    return true;
+    return serialDevice.close();
 }
 
 // -----------------------------------------------------------------------------
-

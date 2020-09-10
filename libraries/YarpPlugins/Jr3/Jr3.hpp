@@ -20,9 +20,9 @@
 //#define CD_HIDE_WARNING  //-- Can be globally managed from father CMake.
 //#define CD_HIDE_ERROR  //-- Can be globally managed from father CMake.
 #include "ColorDebug.h"
-#include "ICanBusSharer.h"
 
 #define DEFAULT_NUM_CHANNELS 24
+#define DEFAULT_FILTER_ID 0
 
 namespace roboticslab
 {
@@ -44,8 +44,11 @@ class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor
     public:
 
         Jr3()
-        {
-        }
+            : fd(0)
+        { }
+
+        ~Jr3()
+        { close(); }
 
         //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
         virtual bool open(yarp::os::Searchable& config);
@@ -101,9 +104,12 @@ class Jr3 : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor
         virtual int calibrateChannel(int ch, double value);
 
     private:
+        void loadFilters(int id);
+
         six_axis_array fm0, fm1, fm2, fm3;
         force_array fs0, fs1, fs2, fs3;
         int fd;
+        unsigned long int filters[4];
 
 };
 

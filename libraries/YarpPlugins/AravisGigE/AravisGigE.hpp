@@ -12,18 +12,25 @@
 
 namespace roboticslab {
 
- /**
- * @ingroup AravisGigE
- * @brief Implementation for GigE cameras using Aravis as driver.
- *
+/**
+ * @ingroup YarpPlugins
+ * @defgroup AravisGigE
+ * @brief Contains roboticslab::AravisGigE.
  */
 
-class AravisGigE : public yarp::dev::DeviceDriver, public yarp::dev::IFrameGrabberImageRaw,
-        public yarp::dev::IFrameGrabber, public yarp::dev::IFrameGrabberControls2
+ /**
+  * @ingroup AravisGigE
+  * @brief Implementation for GigE cameras using Aravis as driver.
+  */
+class AravisGigE : public yarp::dev::DeviceDriver,
+                   public yarp::dev::IFrameGrabberImageRaw,
+                   public yarp::dev::IFrameGrabber,
+                   public yarp::dev::IFrameGrabberControls
 {
     public:
 
         AravisGigE() {}
+        ~AravisGigE() { close(); }
 
         //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
         virtual bool open(yarp::os::Searchable& config);
@@ -41,7 +48,7 @@ class AravisGigE : public yarp::dev::DeviceDriver, public yarp::dev::IFrameGrabb
         virtual int height() const;
         virtual int width() const;
 
-        // ---------- IFrameGrabberControls2 Declarations. Implementation in IFrameGrabberControls2Impl.cpp ---------
+        // ---------- IFrameGrabberControls Declarations. Implementation in IFrameGrabberControlsImpl.cpp ---------
         virtual bool getCameraDescription(CameraDescriptor *camera);
         virtual bool hasFeature(int feature, bool *hasFeature);
         virtual bool setFeature(int feature, double value);
@@ -122,6 +129,6 @@ class AravisGigE : public yarp::dev::DeviceDriver, public yarp::dev::IFrameGrabb
         std::map<cameraFeature_id_t, const char*> yarp_arv_float_feat_map;
 };
 
-
 }
+
 #endif // __ARAVIS_GIGE__

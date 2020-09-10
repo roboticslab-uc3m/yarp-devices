@@ -11,46 +11,46 @@ void roboticslab::ProximitySensorsClient::SensorReader::onRead(yarp::os::Bottle&
         return;
     }
 
-    sens->gripperMutex.lock();
-
-    if (b.get(14).asDouble() > sens->thresholdGripper && b.get(14).asDouble() < 1000)
     {
-        sens->gripper=true;
-        CD_INFO("Target detected.\n");
-    }
-    else
-    {
-       sens->gripper = false;
-    }
+        std::lock_guard<std::mutex> lock(sens->gripperMutex);
 
-    sens->gripperMutex.unlock();
+        if (b.get(14).asFloat64() > sens->thresholdGripper && b.get(14).asFloat64() < 1000)
+        {
+            sens->gripper=true;
+            CD_INFO("Target detected.\n");
+        }
+        else
+        {
+           sens->gripper = false;
+        }
+    }
 
     double max = 0;
 
     for (int i = 0; i < b.size(); i++)
     {
-        if (b.get(i).asDouble() > max)
+        if (b.get(i).asFloat64() > max)
         {
-            max = b.get(i).asDouble();
+            max = b.get(i).asFloat64();
         }
     }
 
     CD_INFO("Current maximum sensor value: %f.\n", max);
 
-    sens->alertMutex.lock();
+    {
+        std::lock_guard<std::mutex> lock(sens->alertMutex);
 
-    if (max > sens->thresholdAlertHigh)
-    {
-        sens->alert = HIGH;
+        if (max > sens->thresholdAlertHigh)
+        {
+            sens->alert = HIGH;
+        }
+        else if (max > sens->thresholdAlertLow)
+        {
+            sens->alert = LOW;
+        }
+        else
+        {
+            sens->alert = ZERO;
+        }
     }
-    else if (max > sens->thresholdAlertLow)
-    {
-        sens->alert = LOW;
-    }
-    else
-    {
-        sens->alert = ZERO;
-    }
-
-    sens->alertMutex.unlock();
 }

@@ -12,7 +12,7 @@ Installation instructions for installing from source can be found [here](/doc/ya
 Usage instructions for the different devices contained in this repository can be found in each corresponding subdirectory.
 
 ## Tricks
-Some tricks for the different devices contained in this repository can be found [here](doc/yarp-devices-tricks.md).
+Some tricks for the different devices contained in this repository can be found at http://robots.uc3m.es/gitbook-developer-manual/appendix/yarp-tricks.html ([perma](https://github.com/roboticslab-uc3m/developer-manual/blob/125713ab4c1b7b1eeefee68366d2494ad981b8bd/appendix/yarp-tricks.md)).
 
 ## Contributing
 
@@ -31,7 +31,7 @@ Some tricks for the different devices contained in this repository can be found 
 
 ## Status
 
-[![Build Status (Linux/OSX)](https://travis-ci.org/roboticslab-uc3m/yarp-devices.svg?branch=develop)](https://travis-ci.org/roboticslab-uc3m/yarp-devices)
+[![Build Status (Linux)](https://travis-ci.com/roboticslab-uc3m/yarp-devices.svg?branch=develop)](https://travis-ci.com/roboticslab-uc3m/yarp-devices)
 
 [![Coverage Status](https://coveralls.io/repos/roboticslab-uc3m/yarp-devices/badge.svg)](https://coveralls.io/r/roboticslab-uc3m/yarp-devices)
 

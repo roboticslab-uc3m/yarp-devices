@@ -10,30 +10,28 @@ yarp_prepare_plugin(PhidgetSpatial
                     TYPE roboticslab::PhidgetSpatial
                     INCLUDE PhidgetSpatial.hpp
                     DEFAULT ON
-                    DEPENDS Phidgets_FOUND)
+                    DEPENDS Phidgets_FOUND
+                    EXTRA_CONFIG WRAPPER=analogServer)
 
 if(NOT SKIP_PhidgetSpatial)
 
-    # Include any directories needed for YARP
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+    if(NOT YARP_VERSION VERSION_GREATER_EQUAL 3.4)
+        set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
+    endif()
 
     yarp_add_plugin(PhidgetSpatial PhidgetSpatial.hpp
                                    PhidgetSpatial.cpp
                                    DeviceDriverImpl.cpp
                                    IAnalogSensorImpl.cpp)
 
-    target_link_libraries(PhidgetSpatial YARP::YARP_OS
+    target_link_libraries(PhidgetSpatial YARP::YARP_os
                                          YARP::YARP_dev
                                          Phidgets::Phidget21)
 
     yarp_install(TARGETS PhidgetSpatial
-                 COMPONENT runtime
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
-                 ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
-
-    yarp_install(FILES PhidgetSpatial.ini
-                 COMPONENT runtime
-                 DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+                 ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR}
+                 YARP_INI DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
 
 else()
 

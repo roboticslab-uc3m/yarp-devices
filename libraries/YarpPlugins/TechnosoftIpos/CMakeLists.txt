@@ -6,38 +6,49 @@ yarp_prepare_plugin(TechnosoftIpos
                     CATEGORY device
                     TYPE roboticslab::TechnosoftIpos
                     INCLUDE TechnosoftIpos.hpp
-                    DEFAULT ON)
+                    DEFAULT ON
+                    DEPENDS ENABLE_CanBusSharerLib)
 
 if(NOT SKIP_TechnosoftIpos)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}) # yarp plugin builder needs this
+    if(NOT YARP_VERSION VERSION_GREATER_EQUAL 3.4)
+        set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
+    endif()
 
-yarp_add_plugin(TechnosoftIpos TechnosoftIpos.cpp
-                               TechnosoftIpos.hpp
-                               DeviceDriverImpl.cpp
-                               ICanBusSharerImpl.cpp
-                               IControlLimits2RawImpl.cpp
-                               IControlMode2RawImpl.cpp
-                               IEncodersRawImpl.cpp
-                               IEncodersTimedRawImpl.cpp
-                               IInteractionModeRawImpl.cpp
-                               IPositionControl2RawImpl.cpp
-                               IPositionDirectRawImpl.cpp
-                               ITorqueControlRawImpl.cpp
-                               IVelocityControl2RawImpl.cpp)
+    yarp_add_plugin(TechnosoftIpos TechnosoftIpos.hpp
+                                   TechnosoftIpos.cpp
+                                   TechnosoftIposEmcy.cpp
+                                   DeviceDriverImpl.cpp
+                                   IAxisInfoRawImpl.cpp
+                                   ICanBusSharerImpl.cpp
+                                   IControlLimitsRawImpl.cpp
+                                   IControlModeRawImpl.cpp
+                                   ICurrentControlRawImpl.cpp
+                                   IEncodersRawImpl.cpp
+                                   IMotorRawImpl.cpp
+                                   IMotorEncodersRawImpl.cpp
+                                   IPositionControlRawImpl.cpp
+                                   IPositionDirectRawImpl.cpp
+                                   IRemoteVariablesRawImpl.cpp
+                                   ITorqueControlRawImpl.cpp
+                                   IVelocityControlRawImpl.cpp
+                                   LinearInterpolationBuffer.hpp
+                                   LinearInterpolationBuffer.cpp
+                                   StateVariables.hpp
+                                   StateVariables.cpp)
 
-target_link_libraries(TechnosoftIpos YARP::YARP_OS
-                                     YARP::YARP_dev
-                                     ROBOTICSLAB::ColorDebug
-                                     YarpDevicesInterfaces)
+    target_link_libraries(TechnosoftIpos YARP::YARP_os
+                                         YARP::YARP_dev
+                                         ROBOTICSLAB::ColorDebug
+                                         CanBusSharerLib
+                                         StateObserverLib
+                                         CanOpenNodeLib)
 
-yarp_install(TARGETS TechnosoftIpos
-             COMPONENT runtime
-             LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
-             ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
+    target_compile_features(TechnosoftIpos PUBLIC cxx_std_14)
 
-yarp_install(FILES TechnosoftIpos.ini
-             COMPONENT runtime
-             DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+    yarp_install(TARGETS TechnosoftIpos
+                 LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR}
+                 YARP_INI DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
 
 endif()

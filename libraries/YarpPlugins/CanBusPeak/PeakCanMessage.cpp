@@ -72,14 +72,14 @@ unsigned char * roboticslab::PeakCanMessage::getData()
 
 unsigned char * roboticslab::PeakCanMessage::getPointer()
 {
-    return (unsigned char *)message;
+    return reinterpret_cast<unsigned char *>(message);
 }
 
 // -----------------------------------------------------------------------------
 
 const unsigned char * roboticslab::PeakCanMessage::getPointer() const
 {
-    return (const unsigned char *)message;
+    return reinterpret_cast<const unsigned char *>(message);
 }
 
 // -----------------------------------------------------------------------------
@@ -88,7 +88,7 @@ void roboticslab::PeakCanMessage::setBuffer(unsigned char * buf)
 {
     if (buf != 0)
     {
-        message = (struct pcanfd_msg *)buf;
+        message = reinterpret_cast<struct pcanfd_msg *>(buf);
     }
 }
 

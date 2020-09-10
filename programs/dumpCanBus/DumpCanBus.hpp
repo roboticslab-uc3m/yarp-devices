@@ -3,67 +3,43 @@
 #ifndef __DUMP_CAN_BUS__
 #define __DUMP_CAN_BUS__
 
-#include <string>
-
-#include <yarp/os/ResourceFinder.h>
+#include <yarp/os/Bottle.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/RFModule.h>
-#include <yarp/os/Thread.h>
+#include <yarp/os/TypedReaderCallback.h>
 
-#include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/CanBusInterface.h>
+#define DEFAULT_LOCAL_PORT "/dumpCanBus"
 
 namespace roboticslab
 {
 
 /**
  * @ingroup dumpCanBus
- *
- * @brief Launches one CAN bus driver, dumps output.
- *
+ * @brief Connects to a remote CAN publisher port and dumps output.
  */
-class DumpCanBus : public yarp::os::RFModule, public yarp::os::Thread
+class DumpCanBus : public yarp::os::RFModule,
+                   public yarp::os::TypedReaderCallback<yarp::os::Bottle>
 {
 public:
-    DumpCanBus();
-    bool configure(yarp::os::ResourceFinder &rf);
+    ~DumpCanBus()
+    { close(); }
 
-protected:
+    virtual bool configure(yarp::os::ResourceFinder & rf) override;
 
-    yarp::dev::PolyDriver deviceDevCan0;
-    yarp::dev::ICanBus* iCanBus;
-    yarp::dev::ICanBufferFactory* iCanBufferFactory;
-    yarp::dev::CanBuffer canInputBuffer;
+    virtual bool updateModule() override
+    { return true; }
 
-    /** A helper function to display CAN messages. */
-    std::string msgToStr(yarp::dev::CanMessage* message);
-    double lastNow;
+    virtual bool close() override;
 
-    virtual double getPeriod()
-    {
-        return 3.0;
-    }
-    virtual bool updateModule();
-    virtual bool close();
-//        virtual bool interruptModule();
-//        virtual int period;
+    virtual void onRead(yarp::os::Bottle & b) override;
 
-    // -------- Thread declarations. Implementation in ThreadImpl.cpp --------
-
-    /**
-     * Main body of the new thread.
-     * Override this method to do what you want.
-     * After Thread::start is called, this
-     * method will start running in a separate thread.
-     * It is important that this method either keeps checking
-     * Thread::isStopping to see if it should stop, or
-     * you override the Thread::onStop method to interact
-     * with it in some way to shut the new thread down.
-     * There is no really reliable, portable way to stop
-     * a thread cleanly unless that thread cooperates.
-     */
-    virtual void run();
+private:
+    yarp::os::Port port;
+    yarp::os::PortReaderBuffer<yarp::os::Bottle> portReader;
+    bool useCanOpen;
 };
 
-}  // namespace roboticslab
+} // namespace roboticslab
 
-#endif  // __DUMP_CAN_BUS__
+#endif // __DUMP_CAN_BUS__

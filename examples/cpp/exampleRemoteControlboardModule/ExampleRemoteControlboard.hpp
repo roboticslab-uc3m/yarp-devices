@@ -22,7 +22,6 @@ private:
     yarp::os::Network yarp; // connect to YARP network
     yarp::dev::PolyDriver dd; //create a YARP multi-use driver
     yarp::dev::IPositionControl *pos; //make a position controller object we call 'pos'
-    yarp::dev::IPositionControl2 *pos2; //make a position controller 2 object we call 'pos2'
     yarp::dev::IEncoders *enc; //make an encoder controller object we call 'enc'
     yarp::dev::IVelocityControl *vel; //make a velocity controller object we call 'vel'
 };

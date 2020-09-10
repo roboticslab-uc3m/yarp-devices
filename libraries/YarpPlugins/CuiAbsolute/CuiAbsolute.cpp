@@ -2,70 +2,84 @@
 
 #include "CuiAbsolute.hpp"
 
-#include <cstring>
+#include <ColorDebug.h>
+
+#include "CanUtils.hpp"
+
+using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
-// -- Lee un mensaje que proviene del CanBus (misma función utilizada en dumpCanBus y checkCanBus)
-std::string roboticslab::CuiAbsolute::msgToStr(const yarp::dev::CanMessage & message)
+
+bool CuiAbsolute::performRequest(const std::string & name, unsigned int len, const std::uint8_t * data, encoder_t * v)
 {
-    std::stringstream tmp;
-    for(int i=0; i < message.getLen()-1; i++)
+    const can_message msg {canId, len, data};
+    retry = 0;
+
+    while (++retry <= maxRetries)
     {
-        tmp << std::hex << static_cast<int>(message.getData()[i]) << " ";
+        if (!sender->prepareMessage(msg))
+        {
+            CD_ERROR("Unable to register \"%s\" command. %s\n", name.c_str(), CanUtils::msgToStr(msg).c_str());
+            return false;
+        }
+
+        CD_INFO("Registered \"%s\" command (%d/%d). %s\n", name.c_str(), retry, maxRetries, CanUtils::msgToStr(msg).c_str());
+
+        if (v ? pollStateObserver->await(v) : pushStateObserver->await())
+        {
+            CD_SUCCESS("Succesfully processed \"%s\" command (%d/%d).\n", name.c_str(), retry, maxRetries);
+            normalize(v);
+            return true;
+        }
+
+        CD_WARNING("Command \"%s\" timed out (%d/%d).\n", name.c_str(), retry, maxRetries);
     }
-    tmp << std::hex << static_cast<int>(message.getData()[message.getLen()-1]);
-    tmp << ". canId(";
-    tmp << std::dec << (message.getId() & 0x7F);
-    tmp << ") via(";
-    tmp << std::hex << (message.getId() & 0xFF80);
-    tmp << ").";
-    return tmp.str();
+
+    CD_ERROR("Max number of retries exceeded (%d).\n", maxRetries);
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
-std::string roboticslab::CuiAbsolute::msgToStr(uint32_t cob, uint16_t len, uint8_t * msgData)
+bool CuiAbsolute::startPushMode()
 {
-    std::stringstream tmp; // -- nos permite insertar cualquier tipo de dato dentro del flujo
-    for(int i=0; i < len-1; i++)
+    const std::uint8_t msgData[] = {static_cast<std::uint8_t>(CuiCommand::PUSH_START), pushDelay};
+    return performRequest("push start", 2, msgData);
+}
+
+// ------------------------------------------------------------------------------
+
+bool CuiAbsolute::stopPushMode()
+{
+    const std::uint8_t msgData[] = {static_cast<std::uint8_t>(CuiCommand::PUSH_STOP)};
+    return performRequest("push stop", 1, msgData);
+}
+
+// ------------------------------------------------------------------------------
+
+bool CuiAbsolute::pollEncoderRead(encoder_t * enc)
+{
+    const std::uint8_t msgData[] = {static_cast<std::uint8_t>(CuiCommand::POLL)};
+    return performRequest("poll", 1, msgData, enc);
+}
+
+// ------------------------------------------------------------------------------
+
+void CuiAbsolute::normalize(encoder_t * v)
+{
+    if (reverse)
     {
-        tmp << std::hex << static_cast<int>(*(msgData+i)) << " "; // -- nos permite acceder
+        *v = -(*v);
     }
-    tmp << std::hex << static_cast<int>(*(msgData+len-1));
-    tmp << ". canId(";
-    tmp << std::dec << canId;
-    tmp << ") via(";
-    tmp << std::hex << cob;
-    tmp << ").";
-    return tmp.str();
+
+    if (*v < -180.0)
+    {
+        *v += 360.0;
+    }
+    else if (*v > 180.0)
+    {
+        *v -= 360.0;
+    }
 }
 
-// -----------------------------------------------------------------------------
-/*
- * Write message to the CAN buffer.
- * @param cob Message's COB
- * @param len Data field length
- * @param msgData Data to send
- * @return true/false on success/failure.
-*/
-bool roboticslab::CuiAbsolute::send(uint32_t cob, uint16_t len, uint8_t * msgData)
-{
-    canBufferSemaphore.wait();
-
-    if ( (lastUsage - yarp::os::Time::now()) < DELAY )
-        yarp::os::Time::delay( lastUsage + DELAY - yarp::os::Time::now() );
-
-    yarp::dev::CanMessage &msg = canOutputBuffer[0];
-    msg.setId(cob + canId);
-    msg.setLen(len);
-    std::memcpy(msg.getData(), msgData, len * sizeof(uint8_t));
-
-    unsigned int sent;
-
-    if( ! canDevicePtr->canWrite(canOutputBuffer, 1, &sent, true) || sent == 0 )
-        return false;
-
-    lastUsage = yarp::os::Time::now();
-    canBufferSemaphore.post();
-    return true;
-}
+// ------------------------------------------------------------------------------

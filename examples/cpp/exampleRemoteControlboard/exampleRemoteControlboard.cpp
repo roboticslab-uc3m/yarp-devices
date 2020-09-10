@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /**
- * @ingroup asibot_examples_cpp
- * \defgroup testRemoteRaveBot testRemoteRaveBot
+ * @ingroup yarp_devices_examples_cpp
+ * @defgroup exampleRemoteControlboard exampleRemoteControlboard
  *
- * @brief This example connects to a running \ref testRaveBot or \ref cartesianServer module.
+ * @brief This example connects to a remote controlboard device (e.g. @ref CanBusControlboard).
  *
  * <b>Legal</b>
  *
@@ -31,42 +31,48 @@ make -j3
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
 
 #include <vector>
 
-#include <yarp/os/all.h>
-#include <yarp/dev/all.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Property.h>
+#include <yarp/os/Time.h>
 
-using namespace yarp::os;
-using namespace yarp::dev;
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/IControlMode.h>
+#include <yarp/dev/IEncodersTimed.h>
+#include <yarp/dev/IPositionControl.h>
+#include <yarp/dev/IVelocityControl.h>
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
+    std::printf("WARNING: requires a running instance of RaveBot (i.e. testRaveBot or cartesianServer)\n");
+    yarp::os::Network yarp;
 
-    printf("WARNING: requires a running instance of RaveBot (i.e. testRaveBot or cartesianServer)\n");
-    Network yarp;
-    if (!Network::checkNetwork()) {
-        printf("Please start a yarp name server first\n");
-        return(-1);
-    }
-    Property options;
-    options.put("device","remote_controlboard");
-    options.put("remote","/ravebot");
-    options.put("local","/local");
-
-    PolyDriver dd(options);
-    if(!dd.isValid()) {
-      printf("RaveBot device not available.\n");
-	  dd.close();
-      Network::fini();
-      return 1;
+    if (!yarp::os::Network::checkNetwork())
+    {
+        std::printf("Please start a yarp name server first\n");
+        return 1;
     }
 
-    IPositionControl2 *pos;
-    IVelocityControl2 *vel;
-    IEncodersTimed *enc;
-    IControlMode2 *mode;
+    yarp::os::Property options;
+    options.put("device", "remote_controlboard");
+    options.put("remote", "/ravebot");
+    options.put("local", "/local");
+
+    yarp::dev::PolyDriver dd(options);
+
+    if (!dd.isValid())
+    {
+        std::printf("RaveBot device not available.\n");
+        return 1;
+    }
+
+    yarp::dev::IPositionControl *pos;
+    yarp::dev::IVelocityControl *vel;
+    yarp::dev::IEncodersTimed *enc;
+    yarp::dev::IControlMode *mode;
 
     bool ok = true;
     ok &= dd.view(pos);
@@ -74,10 +80,11 @@ int main(int argc, char *argv[]) {
     ok &= dd.view(enc);
     ok &= dd.view(mode);
 
-    if (!ok) {
-        printf("[warning] Problems acquiring robot interface\n");
-        return false;
-    } else printf("[success] testAsibot acquired robot interface\n");
+    if (!ok)
+    {
+        std::printf("[warning] Problems acquiring robot interface\n");
+        return 1;
+    } else std::printf("[success] testAsibot acquired robot interface\n");
 
     int axes;
     pos->getAxes(&axes);
@@ -85,22 +92,22 @@ int main(int argc, char *argv[]) {
     std::vector<int> posModes(axes, VOCAB_CM_POSITION);
     mode->setControlModes(posModes.data());
 
-    printf("test positionMove(1,35)\n");
-    pos->positionMove(1, 35);
+    std::printf("test positionMove(1, 35.0)\n");
+    pos->positionMove(1, 35.0);
 
-    printf("Delaying 5 seconds...\n");
-    Time::delay(5);
+    std::printf("Delaying 5 seconds...\n");
+    yarp::os::Time::delay(5.0);
 
     std::vector<int> velModes(axes, VOCAB_CM_VELOCITY);
     mode->setControlModes(velModes.data());
 
-    printf("test velocityMove(0,10)\n");
-    vel->velocityMove(0,10);
+    std::printf("test velocityMove(0, 10.0)\n");
+    vel->velocityMove(0, 10.0);
 
-    printf("Delaying 5 seconds...\n");
-    Time::delay(5);
+    std::printf("Delaying 5 seconds...\n");
+    yarp::os::Time::delay(5.0);
 
-    vel->velocityMove(0,0); // stop the robot
+    vel->velocityMove(0, 0.0); // stop the robot
 
     return 0;
 }

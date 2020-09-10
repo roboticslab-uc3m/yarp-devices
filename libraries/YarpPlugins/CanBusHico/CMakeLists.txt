@@ -11,29 +11,27 @@ yarp_prepare_plugin(CanBusHico
 
 if(NOT SKIP_CanBusHico)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}) # yarp plugin builder needs this
+    if(NOT YARP_VERSION VERSION_GREATER_EQUAL 3.4)
+        set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
+    endif()
 
-yarp_add_plugin(CanBusHico CanBusHico.cpp
-                           CanBusHico.hpp
-                           hico_api.h
-                           DeviceDriverImpl.cpp
-                           ICanBusImpl.cpp
-                           HicoCanMessage.cpp
-                           HicoCanMessage.hpp
-                           FilterManager.cpp)
+    yarp_add_plugin(CanBusHico CanBusHico.cpp
+                               CanBusHico.hpp
+                               hico_api.h
+                               DeviceDriverImpl.cpp
+                               ICanBusImpl.cpp
+                               ICanBusErrorsImpl.cpp
+                               HicoCanMessage.cpp
+                               HicoCanMessage.hpp
+                               FilterManager.cpp)
 
-target_link_libraries(CanBusHico YARP::YARP_OS
-                                 YARP::YARP_dev
-                                 ROBOTICSLAB::ColorDebug
-                                 YarpDevicesInterfaces)
+    target_link_libraries(CanBusHico YARP::YARP_os
+                                     YARP::YARP_dev
+                                     ROBOTICSLAB::ColorDebug)
 
-yarp_install(TARGETS CanBusHico
-             COMPONENT runtime
-             LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
-             ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
-
-yarp_install(FILES CanBusHico.ini
-             COMPONENT runtime
-             DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+    yarp_install(TARGETS CanBusHico
+                 LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR}
+                 YARP_INI DESTINATION ${ROBOTICSLAB-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
 
 endif()

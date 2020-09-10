@@ -3,10 +3,11 @@
 #ifndef __WIIMOTE_SENSOR_HPP__
 #define __WIIMOTE_SENSOR_HPP__
 
+#include <mutex>
+
 #include <xwiimote.h>
 
 #include <yarp/os/Thread.h>
-#include <yarp/os/Mutex.h>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
@@ -63,7 +64,7 @@ public:
 
     //! @brief Constructor.
     WiimoteDispatcherThread() : iface(NULL)
-    {}
+    { }
 
     //! @brief Called just before a new thread starts.
     virtual void beforeStart();
@@ -86,7 +87,7 @@ private:
     struct xwii_event event;
 
     WiimoteEventData eventData;
-    mutable yarp::os::Mutex eventDataMutex;
+    mutable std::mutex eventDataMutex;
 };
 
 /**
@@ -101,7 +102,10 @@ public:
         : iface(NULL),
           calibZeroX(0), calibZeroY(0), calibZeroZ(0),
           calibOneX(0), calibOneY(0), calibOneZ(0)
-    {}
+    { }
+
+    ~WiimoteSensor()
+    { close(); }
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
     virtual bool open(yarp::os::Searchable& config);

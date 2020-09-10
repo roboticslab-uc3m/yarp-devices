@@ -2,63 +2,49 @@
 
 #include "LacqueyFetch.hpp"
 
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LacqueyFetch::setCanBusPtr(yarp::dev::ICanBus *canDevicePtr)
+unsigned int LacqueyFetch::getId()
 {
-
-    this->canDevicePtr = canDevicePtr;
-    CD_SUCCESS("Ok pointer to CAN bus device %d.\n",canId);
-
+    return canId;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LacqueyFetch::start()
+bool LacqueyFetch::initialize()
 {
-
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LacqueyFetch::readyToSwitchOn()
+bool LacqueyFetch::finalize()
 {
-
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LacqueyFetch::switchOn()
+bool LacqueyFetch::notifyMessage(const can_message & message)
 {
-
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LacqueyFetch::enable()
+bool LacqueyFetch::registerSender(CanSenderDelegate * sender)
 {
-
+    this->sender = sender;
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LacqueyFetch::recoverFromError()
+bool LacqueyFetch::synchronize()
 {
-
     return true;
 }
-
-// -----------------------------------------------------------------------------
-
-bool roboticslab::LacqueyFetch::interpretMessage(const yarp::dev::CanMessage & message)
-{
-
-    return true;
-
-}  //-- ends interpretMessage
 
 // -----------------------------------------------------------------------------
