@@ -107,10 +107,11 @@ bool TechnosoftIpos::initialize()
         || !can->tpdo1()->configure(vars.tpdo1Conf)
         || !can->tpdo2()->configure(vars.tpdo2Conf)
         || !can->tpdo3()->configure(vars.tpdo3Conf)
-        || !can->sdo()->download<std::uint16_t>("Producer Heartbeat Time", vars.heartbeatPeriod * 1000, 0x1017)
+        || (vars.heartbeatPeriod != 0.0
+                && !can->sdo()->download<std::uint16_t>("Producer Heartbeat Time", vars.heartbeatPeriod * 1000, 0x1017))
         || !can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE)
         || (can->driveStatus()->getCurrentState() == DriveState::NOT_READY_TO_SWITCH_ON
-            && !can->driveStatus()->awaitState(DriveState::SWITCH_ON_DISABLED)))
+                && !can->driveStatus()->awaitState(DriveState::SWITCH_ON_DISABLED)))
     {
         CD_ERROR("Initial SDO configuration and/or node start failed (canId: %d).\n", can->getId());
         return false;

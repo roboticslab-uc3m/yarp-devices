@@ -164,7 +164,15 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     if (iposGroup.check("monitorPeriod", "monitor thread period (seconds)"))
     {
         double monitorPeriod = iposGroup.find("monitorPeriod").asFloat64();
-        monitorThread = new yarp::os::Timer(yarp::os::TimerSettings(monitorPeriod), std::bind(&TechnosoftIpos::monitorWorker, this, _1), true);
+
+        if (monitorPeriod > 0.0)
+        {
+            monitorThread = new yarp::os::Timer(yarp::os::TimerSettings(monitorPeriod), std::bind(&TechnosoftIpos::monitorWorker, this, _1), true);
+        }
+        else
+        {
+            vars.heartbeatPeriod = 0.0; // disable
+        }
     }
 
     return !monitorThread || monitorThread->start();

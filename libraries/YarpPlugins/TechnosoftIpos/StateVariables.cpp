@@ -196,7 +196,7 @@ bool StateVariables::validateInitialState()
         return false;
     }
 
-    if (heartbeatPeriod <= 0.0)
+    if (heartbeatPeriod < 0.0)
     {
         CD_WARNING("Illegal heartbeat period: %f.\n", heartbeatPeriod);
         return false;
