@@ -1,11 +1,11 @@
 % MATLAB example
 
-%> @ingroup asibot_examples_m
-%> \defgroup testRemoteRaveBotM testRemoteRaveBot.m
+%> @ingroup yarp_devices_examples_m
+%> \defgroup exampleRemoteControlboardM exampleRemoteControlboard.m
 %>
-%> @brief This example connects to a running \ref testRaveBot or \ref cartesianServer module to move in Joint space.
+%> @brief This example connects to a remote #ref controlboard to move in Joint space.
 %>
-%> <b>Requires YARP 2.3.72.</b>
+%> <b>Requires YARP 3.0.</b>
 %>
 %> <b>Legal</b> 
 %>
@@ -17,12 +17,10 @@
 %>
 %> <b>Running</b> (assuming correct installation)
 %>
-%> From within MATLAB, navigate to the ASIBOT MATLAB examples path and run the program:
-%>
-%>\verbatim [MATLAB console] testRemoteRaveBot.m \endverbatim
+%>\verbatim [MATLAB console] exampleRemoteControlboard.m \endverbatim
 %> <b>Modify</b>
 %>
-%> This file can be edited at repos/asibot-main/example/matlab/testRemoteRaveBot.m
+%> This file can be edited at $YARP_DEVICES_ROOT/examples/matlab/exampleRemoteControlboard.m
 %>
 
 disp 'WARNING: requires a running instance of RaveBot (i.e. testRaveBot or cartesianServer)'
@@ -31,8 +29,8 @@ LoadYarp();  % imports YARP and connects to YARP network
 
 options = yarp.Property();  % create an instance of Property, a nice YARP class for storing name-value (key-value) pairs
 options.put('device','remote_controlboard');  % we add a name-value pair that indicates the YARP device
-options.put('remote','/ravebot');  % we add info on to whom we will connect
-options.put('local','/matlab');  % we add info on how we will call ourselves on the YARP network
+options.put('remote','/robotName/partName');  % we add info on to whom we will connect
+options.put('local','/exampleRemoteControlboard');  % we add info on how we will call ourselves on the YARP network
 
 dd = yarp.PolyDriver(options);  % create a YARP multi-use driver with the given options
 if isequal(dd.isValid(),1)
