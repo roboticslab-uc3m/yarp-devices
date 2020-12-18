@@ -507,7 +507,7 @@ bool TechnosoftIpos::monitorWorker(const yarp::os::YarpTimerEvent & event)
     bool isConfigured = vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED;
     double elapsed = event.currentReal - vars.lastHeartbeat;
 
-    if (isConfigured && elapsed > event.lastDuration)
+    if (vars.heartbeatPeriod != 0.0 && isConfigured && elapsed > event.lastDuration)
     {
         CD_ERROR("Last heartbeat response was %f seconds ago (canId %d).\n", elapsed, can->getId());
         vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
