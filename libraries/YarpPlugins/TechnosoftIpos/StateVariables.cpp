@@ -24,8 +24,8 @@ namespace
 
 // -----------------------------------------------------------------------------
 
-EncoderRead::EncoderRead(double pulsesPerSample)
-    : pulsesPerSample(pulsesPerSample),
+EncoderRead::EncoderRead(double samplingPeriod)
+    : samplingFreq(1.0 / samplingPeriod),
       lastPosition(0),
       lastSpeed(0.0),
       lastAcceleration(0.0)
@@ -44,7 +44,7 @@ void EncoderRead::update(std::int32_t newPos)
     const double nextToLastSpeed = lastSpeed;
 
     lastStamp.update();
-    const double samples = (lastStamp.getTime() - lastTime) * pulsesPerSample;
+    const double samples = (lastStamp.getTime() - lastTime) * samplingFreq;
 
     lastPosition = newPos;
     lastSpeed = (lastPosition - nextToLastPosition) / samples;
@@ -145,9 +145,9 @@ bool StateVariables::validateInitialState()
         return false;
     }
 
-    if (pulsesPerSample <= 0)
+    if (samplingPeriod <= 0.0)
     {
-        CD_WARNING("Illegal pulses per sample: %d.\n", pulsesPerSample);
+        CD_WARNING("Illegal sampling period: %f.\n", samplingPeriod);
         return false;
     }
 
@@ -210,7 +210,7 @@ bool StateVariables::validateInitialState()
         return false;
     }
 
-    lastEncoderRead = std::make_unique<EncoderRead>(pulsesPerSample);
+    lastEncoderRead = std::make_unique<EncoderRead>(samplingPeriod);
 
     return true;
 }
@@ -263,14 +263,14 @@ bool StateVariables::awaitControlMode(yarp::conf::vocab32_t mode)
 
 double StateVariables::degreesToInternalUnits(double value, int derivativeOrder) const
 {
-    return value * tr * (reverse ? -1 : 1) * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder);
+    return value * tr * (reverse ? -1 : 1) * (encoderPulses / 360.0) * std::pow(samplingPeriod, derivativeOrder);
 }
 
 // -----------------------------------------------------------------------------
 
 double StateVariables::internalUnitsToDegrees(double value, int derivativeOrder) const
 {
-    return value / (tr * (reverse ? -1 : 1) * (encoderPulses / 360.0) * std::pow(1.0 / pulsesPerSample, derivativeOrder));
+    return value / (tr * (reverse ? -1 : 1) * (encoderPulses / 360.0) * std::pow(samplingPeriod, derivativeOrder));
 }
 
 // -----------------------------------------------------------------------------

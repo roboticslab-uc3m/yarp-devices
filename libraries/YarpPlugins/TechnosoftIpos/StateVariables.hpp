@@ -29,7 +29,7 @@ class EncoderRead
 {
 public:
     //! Constructor.
-    EncoderRead(double pulsesPerSample);
+    EncoderRead(double samplingPeriod);
 
     //! Set new position (counts), update speeds (counts/sample) and accelerations (counts/sample^2).
     void update(std::int32_t newPos);
@@ -50,7 +50,7 @@ public:
     double queryTime() const;
 
 private:
-    const double pulsesPerSample; // TODO: actually "samples per second"
+    const double samplingFreq; // samples per second
     std::int32_t lastPosition;
     double lastSpeed;
     double lastAcceleration;
@@ -143,7 +143,7 @@ struct StateVariables
     yarp::conf::vocab32_t initialMode {0};
 
     double drivePeakCurrent {0.0};
-    int pulsesPerSample {0};
+    double samplingPeriod {0.0};
 
     std::string axisName;
     yarp::conf::vocab32_t jointType {0};
