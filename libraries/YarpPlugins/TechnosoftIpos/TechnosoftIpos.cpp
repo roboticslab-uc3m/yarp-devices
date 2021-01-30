@@ -419,7 +419,7 @@ void TechnosoftIpos::handleTpdo2(std::uint16_t mer, std::uint16_t der)
 
 void TechnosoftIpos::handleTpdo3(std::int32_t position, std::int16_t current)
 {
-    vars.lastEncoderRead.update(position);
+    vars.lastEncoderRead->update(position);
     vars.lastCurrentRead = current;
 }
 
