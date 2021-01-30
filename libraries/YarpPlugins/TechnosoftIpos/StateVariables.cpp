@@ -24,17 +24,10 @@ namespace
 
 // -----------------------------------------------------------------------------
 
-EncoderRead::EncoderRead()
-    : EncoderRead(0.0)
-{ }
-
-// -----------------------------------------------------------------------------
-
-EncoderRead::EncoderRead(std::int32_t initialPos)
-    : lastPosition(initialPos),
-      nextToLastPosition(initialPos),
+EncoderRead::EncoderRead(double pulsesPerSample)
+    : pulsesPerSample(pulsesPerSample),
+      lastPosition(0),
       lastSpeed(0.0),
-      nextToLastSpeed(0.0),
       lastAcceleration(0.0)
 {
     lastStamp.update();
@@ -42,29 +35,20 @@ EncoderRead::EncoderRead(std::int32_t initialPos)
 
 // -----------------------------------------------------------------------------
 
-void EncoderRead::update(std::int32_t newPos, double newTime)
+void EncoderRead::update(std::int32_t newPos)
 {
     std::lock_guard<std::mutex> guard(encoderMutex);
 
     const double lastTime = lastStamp.getTime();
+    const double nextToLastPosition = lastPosition;
+    const double nextToLastSpeed = lastSpeed;
 
-    nextToLastPosition = lastPosition;
-    nextToLastSpeed = lastSpeed;
-
-    if (newTime != 0.0)
-    {
-        lastStamp.update(newTime);
-    }
-    else
-    {
-        lastStamp.update();
-    }
-
-    double dt = lastStamp.getTime() - lastTime;
+    lastStamp.update();
+    const double samples = (lastStamp.getTime() - lastTime) * pulsesPerSample;
 
     lastPosition = newPos;
-    lastSpeed = (lastPosition - nextToLastPosition) / dt;
-    lastAcceleration = (lastSpeed - nextToLastSpeed) / dt;
+    lastSpeed = (lastPosition - nextToLastPosition) / samples;
+    lastAcceleration = (lastSpeed - nextToLastSpeed) / samples;
 }
 
 // -----------------------------------------------------------------------------
@@ -72,8 +56,8 @@ void EncoderRead::update(std::int32_t newPos, double newTime)
 void EncoderRead::reset(std::int32_t pos)
 {
     std::lock_guard<std::mutex> guard(encoderMutex);
-    lastPosition = nextToLastPosition = pos;
-    lastSpeed = nextToLastSpeed = lastAcceleration = 0.0;
+    lastPosition = pos;
+    lastSpeed = lastAcceleration = 0.0;
     lastStamp.update();
 }
 
@@ -226,6 +210,8 @@ bool StateVariables::validateInitialState()
         return false;
     }
 
+    lastEncoderRead = std::make_unique<EncoderRead>(pulsesPerSample);
+
     return true;
 }
 
@@ -258,7 +244,7 @@ void StateVariables::reset()
     msr = mer = der = der2 = cer = ptStatus = 0;
     modesOfOperation = 0;
 
-    lastEncoderRead.reset();
+    lastEncoderRead->reset();
     lastCurrentRead = 0.0;
 
     requestedcontrolMode = 0;

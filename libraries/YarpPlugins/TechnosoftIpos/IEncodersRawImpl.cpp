@@ -44,7 +44,7 @@ bool TechnosoftIpos::setEncoderRaw(int j, double val)
         return false;
     }
 
-    vars.lastEncoderRead.reset(data);
+    vars.lastEncoderRead->reset(data);
     return true;
 }
 
@@ -62,7 +62,7 @@ bool TechnosoftIpos::getEncoderRaw(int j, double * v)
 {
     CD_DEBUG("%d\n", j);
     CHECK_JOINT(j);
-    std::int32_t temp = vars.lastEncoderRead.queryPosition();
+    std::int32_t temp = vars.lastEncoderRead->queryPosition();
     *v = vars.internalUnitsToDegrees(temp);
     return true;
 }
@@ -81,7 +81,7 @@ bool TechnosoftIpos::getEncoderSpeedRaw(int j, double * sp)
 {
     //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
-    double temp = vars.lastEncoderRead.querySpeed();
+    double temp = vars.lastEncoderRead->querySpeed();
     *sp = vars.internalUnitsToDegrees(temp, 1);
     return true;
 }
@@ -100,7 +100,7 @@ bool TechnosoftIpos::getEncoderAccelerationRaw(int j, double * acc)
 {
     //CD_DEBUG("(%d)\n", j);
     CHECK_JOINT(j);
-    double temp = vars.lastEncoderRead.queryAcceleration();
+    double temp = vars.lastEncoderRead->queryAcceleration();
     *acc = vars.internalUnitsToDegrees(temp, 2);
     return true;
 }
@@ -119,9 +119,9 @@ bool TechnosoftIpos::getEncoderTimedRaw(int j, double * enc, double * time)
 {
     //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
-    std::int32_t temp = vars.lastEncoderRead.queryPosition();
+    std::int32_t temp = vars.lastEncoderRead->queryPosition();
     *enc = vars.internalUnitsToDegrees(temp);
-    *time = vars.lastEncoderRead.queryTime();
+    *time = vars.lastEncoderRead->queryTime();
     return true;
 }
 

@@ -20,7 +20,7 @@ bool TechnosoftIpos::setLegacyPositionInterpolationMode()
     rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x01);
     rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x02);
 
-    std::int32_t refInternalUnits = vars.lastEncoderRead.queryPosition();
+    std::int32_t refInternalUnits = vars.lastEncoderRead->queryPosition();
 
     if (!can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
         || !can->rpdo3()->configure(rpdo3Conf)
@@ -110,7 +110,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     {
     case VOCAB_CM_POSITION:
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-            && can->sdo()->download<std::int32_t>("Target position", vars.lastEncoderRead.queryPosition(), 0x607A)
+            && can->sdo()->download<std::int32_t>("Target position", vars.lastEncoderRead->queryPosition(), 0x607A)
             && can->sdo()->download<std::int8_t>("Modes of Operation", 1, 0x6060)
             && can->driveStatus()->controlword(can->driveStatus()->controlword().set(5)) // change set immediately
             && vars.awaitControlMode(mode);
@@ -161,7 +161,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
             return false;
         }
 
-        vars.synchronousCommandTarget = vars.internalUnitsToDegrees(vars.lastEncoderRead.queryPosition());
+        vars.synchronousCommandTarget = vars.internalUnitsToDegrees(vars.lastEncoderRead->queryPosition());
         vars.prevSyncTarget.store(vars.synchronousCommandTarget);
 
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)

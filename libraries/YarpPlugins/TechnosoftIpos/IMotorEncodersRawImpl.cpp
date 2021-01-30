@@ -63,7 +63,7 @@ bool TechnosoftIpos::setMotorEncoderRaw(int m, double val)
         return false;
     }
 
-    vars.lastEncoderRead.reset(data);
+    vars.lastEncoderRead->reset(data);
     return true;
 }
 
@@ -81,7 +81,7 @@ bool TechnosoftIpos::getMotorEncoderRaw(int m, double * v)
 {
     //CD_DEBUG("(%d)\n", m); // too verbose in controlboardwrapper2 stream
     CHECK_JOINT(m);
-    std::int32_t temp = vars.lastEncoderRead.queryPosition();
+    std::int32_t temp = vars.lastEncoderRead->queryPosition();
     *v = vars.reverse ? -temp : temp;
     return true;
 }
@@ -100,9 +100,9 @@ bool TechnosoftIpos::getMotorEncoderTimedRaw(int m, double * enc, double * stamp
 {
     CD_DEBUG("(%d)\n", m);
     CHECK_JOINT(m);
-    std::int32_t temp =  vars.lastEncoderRead.queryPosition();
+    std::int32_t temp =  vars.lastEncoderRead->queryPosition();
     *enc = vars.reverse ? -temp : temp;
-    *stamp = vars.lastEncoderRead.queryTime();
+    *stamp = vars.lastEncoderRead->queryTime();
     return true;
 }
 
@@ -120,7 +120,7 @@ bool TechnosoftIpos::getMotorEncoderSpeedRaw(int m, double * sp)
 {
     //CD_DEBUG("(%d)\n", m); // too verbose in controlboardwrapper2 stream
     CHECK_JOINT(m);
-    double temp = vars.lastEncoderRead.querySpeed();
+    double temp = vars.lastEncoderRead->querySpeed();
     *sp = vars.reverse ? -temp : temp;
     return true;
 }
@@ -139,7 +139,7 @@ bool TechnosoftIpos::getMotorEncoderAccelerationRaw(int m, double * acc)
 {
     //CD_DEBUG("(%d)\n", m); // too verbose in controlboardwrapper2 stream
     CHECK_JOINT(m);
-    double temp = vars.lastEncoderRead.queryAcceleration();
+    double temp = vars.lastEncoderRead->queryAcceleration();
     *acc = vars.reverse ? -temp : temp;
     return true;
 }

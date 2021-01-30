@@ -28,33 +28,31 @@ namespace roboticslab
 class EncoderRead
 {
 public:
-    //! Constructor, set internals to zero.
-    EncoderRead();
+    //! Constructor.
+    EncoderRead(double pulsesPerSample);
 
-    //! Constructor, set initial position (internal units).
-    EncoderRead(std::int32_t initialPos);
+    //! Set new position (counts), update speeds (counts/sample) and accelerations (counts/sample^2).
+    void update(std::int32_t newPos);
 
-    //! Set new position (internal units) with timestamp, update speeds and accelerations.
-    void update(std::int32_t newPos, double newTime = 0.0);
-
-    //! Reset internals to zero, pick provided position (internal units).
+    //! Reset internals to zero, pick provided position (encoder counts).
     void reset(std::int32_t pos = 0);
 
-    //! Retrieve current position (internal units).
+    //! Retrieve current position (encoder counts).
     std::int32_t queryPosition() const;
 
-    //! Retrieve instantaneous speed (internal units).
+    //! Retrieve instantaneous speed (encoder counts/sample).
     double querySpeed() const;
 
-    //! Retrieve instantaneous acceleration (internal units).
+    //! Retrieve instantaneous acceleration (encoder counts/sample^2).
     double queryAcceleration() const;
 
-    //! Retrieve last timestamp.
+    //! Retrieve last timestamp (seconds).
     double queryTime() const;
 
 private:
-    std::int32_t lastPosition, nextToLastPosition;
-    double lastSpeed, nextToLastSpeed;
+    const double pulsesPerSample; // TODO: actually "samples per second"
+    std::int32_t lastPosition;
+    double lastSpeed;
     double lastAcceleration;
     yarp::os::Stamp lastStamp;
     mutable std::mutex encoderMutex;
@@ -115,7 +113,7 @@ struct StateVariables
 
     // read/write, those require atomic access
 
-    EncoderRead lastEncoderRead;
+    std::unique_ptr<EncoderRead> lastEncoderRead {nullptr};
     std::atomic<std::int16_t> lastCurrentRead {0};
 
     std::atomic<yarp::conf::vocab32_t> actualControlMode {0};
