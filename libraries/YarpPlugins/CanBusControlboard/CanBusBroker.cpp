@@ -195,12 +195,18 @@ bool CanBusBroker::addFilters()
         return false;
     }
 
-    for (const auto & entry : readerThread->getHandleMap())
+    for (auto * handle : readerThread->getHandles())
     {
-        if (!iCanBus->canIdAdd(entry.first))
+        auto ids = handle->getAdditionalIds();
+        ids.push_back(handle->getId());
+
+        for (auto id : ids)
         {
-            CD_WARNING("Cannot add acceptance filter ID %d.\n", entry.first);
-            return false;
+            if (!iCanBus->canIdAdd(id))
+            {
+                CD_WARNING("Cannot add acceptance filter ID %d.\n", id);
+                return false;
+            }
         }
     }
 

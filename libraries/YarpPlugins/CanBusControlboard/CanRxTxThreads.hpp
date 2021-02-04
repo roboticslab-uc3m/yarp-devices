@@ -6,6 +6,7 @@
 #include <mutex>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/PortWriterBuffer.h>
@@ -110,9 +111,9 @@ public:
     //! Map CAN node ids with handles.
     void registerHandle(ICanBusSharer * p);
 
-    //! Retrieve internal map of CAN handles.
-    const std::unordered_map<unsigned int, ICanBusSharer *> & getHandleMap()
-    { return canIdToHandle; }
+    //! Retrieve collection of handles to wrapped CAN devices.
+    const std::vector<ICanBusSharer *> & getHandles()
+    { return handles; }
 
     //! Attach custom CAN message responder handle.
     void attachCanNotifier(CanMessageNotifier * canMessageNotifier)
@@ -121,6 +122,7 @@ public:
     virtual void run() override;
 
 private:
+    std::vector<ICanBusSharer *> handles;
     std::unordered_map<unsigned int, ICanBusSharer *> canIdToHandle;
     CanMessageNotifier * canMessageNotifier;
 };
