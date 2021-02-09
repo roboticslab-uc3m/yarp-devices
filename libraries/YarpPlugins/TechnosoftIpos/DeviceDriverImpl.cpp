@@ -167,7 +167,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
         if (monitorPeriod > 0.0)
         {
-            monitorThread = new yarp::os::Timer(yarp::os::TimerSettings(monitorPeriod), std::bind(&TechnosoftIpos::monitorWorker, this, _1), true);
+            monitorThread = new yarp::os::Timer(yarp::os::TimerSettings(monitorPeriod), std::bind(&TechnosoftIpos::monitorWorker, this, _1), false);
         }
         else
         {
