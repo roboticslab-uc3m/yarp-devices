@@ -5,6 +5,8 @@
 
 #include <vector>
 
+#include <yarp/os/BufferedPort.h>
+#include <yarp/os/Bottle.h>
 #include <yarp/os/Timer.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
@@ -315,6 +317,7 @@ private:
     std::vector<yarp::dev::PolyDriver *> nodeDevices;
     std::vector<CanBusBroker *> canBusBrokers;
 
+    yarp::os::BufferedPort<yarp::os::Bottle> syncPort;
     yarp::os::Timer * syncTimer;
     FutureTaskFactory * taskFactory;
 };

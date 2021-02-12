@@ -209,6 +209,12 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
     if (config.check("syncPeriod", "SYNC message period (s)"))
     {
+        if (config.check("enableSyncPort", yarp::os::Value(false), "enable sync port").asBool() && !syncPort.open("/sync:o"))
+        {
+            CD_ERROR("Sync port %s could not be opened.\n", syncPort.getName().c_str());
+            return false;
+        }
+
         double syncPeriod = config.find("syncPeriod").asFloat64();
         bool threadedSync = config.check("threadedSync", yarp::os::Value(false), "parallelize SYNC requests").asBool();
 
@@ -245,6 +251,13 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
                 }
 
                 task->dispatch();
+
+                if (!syncPort.isClosed())
+                {
+                    syncPort.prepare() = {yarp::os::Value(event.currentExpected), yarp::os::Value(event.currentReal)};
+                    syncPort.write();
+                }
+
                 return true;
             },
             true);
@@ -261,6 +274,8 @@ bool CanBusControlboard::close()
 
     if (syncTimer && syncTimer->isRunning())
     {
+        syncPort.interrupt();
+        syncPort.close();
         syncTimer->stop();
     }
 
