@@ -47,7 +47,7 @@ make -j3
 
 int main(int argc, char *argv[])
 {
-    std::printf("WARNING: requires a running instance of RaveBot (i.e. testRaveBot or cartesianServer)\n");
+    std::printf("INFO: requires a running robot counterpart.\n");
     yarp::os::Network yarp;
 
     if (!yarp::os::Network::checkNetwork())
@@ -58,14 +58,14 @@ int main(int argc, char *argv[])
 
     yarp::os::Property options;
     options.put("device", "remote_controlboard");
-    options.put("remote", "/ravebot");
+    options.put("remote", "/robot/limb");
     options.put("local", "/local");
 
     yarp::dev::PolyDriver dd(options);
 
     if (!dd.isValid())
     {
-        std::printf("RaveBot device not available.\n");
+        std::printf("Device not available.\n");
         return 1;
     }
 
@@ -82,9 +82,11 @@ int main(int argc, char *argv[])
 
     if (!ok)
     {
-        std::printf("[warning] Problems acquiring robot interface\n");
+        std::printf("ERROR: Problems acquiring robot interface\n");
         return 1;
-    } else std::printf("[success] testAsibot acquired robot interface\n");
+    }
+
+    std::printf("SUCCESS: Acquired robot interface\n");
 
     int axes;
     pos->getAxes(&axes);

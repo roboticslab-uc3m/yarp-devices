@@ -233,9 +233,9 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
                             auto * reader = canBusBroker->getReader();
                             auto * writer = canBusBroker->getWriter();
 
-                            for (const auto & entry : reader->getHandleMap())
+                            for (auto * handle : reader->getHandles())
                             {
-                                entry.second->synchronize();
+                                handle->synchronize();
                             }
 
                             writer->getDelegate()->prepareMessage({0x80, 0, nullptr}); // SYNC

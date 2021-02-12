@@ -55,7 +55,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     vars.tr = gearboxGroup.check("tr", yarp::os::Value(0.0), "reduction").asFloat64();
     vars.tr = vars.tr * iposGroup.check("extraTr", yarp::os::Value(1.0), "extra reduction").asFloat64();
     vars.encoderPulses = encoderGroup.check("encoderPulses", yarp::os::Value(0), "encoderPulses").asInt32();
-    vars.pulsesPerSample = driverGroup.check("pulsesPerSample", yarp::os::Value(0), "pulsesPerSample").asInt32();
+    vars.samplingPeriod = iposGroup.check("samplingPeriod", yarp::os::Value(0.0), "samplingPeriod (seconds)").asFloat64();
     vars.reverse = iposGroup.check("reverse", yarp::os::Value(false), "reverse motor encoder counts").asBool();
     vars.heartbeatPeriod = iposGroup.check("heartbeatPeriod", yarp::os::Value(0.0), "CAN heartbeat period (seconds)").asFloat64();
     vars.syncPeriod = iposGroup.check("syncPeriod", yarp::os::Value(0.0), "SYNC message period (seconds)").asFloat64();
@@ -167,7 +167,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
         if (monitorPeriod > 0.0)
         {
-            monitorThread = new yarp::os::Timer(yarp::os::TimerSettings(monitorPeriod), std::bind(&TechnosoftIpos::monitorWorker, this, _1), true);
+            monitorThread = new yarp::os::Timer(yarp::os::TimerSettings(monitorPeriod), std::bind(&TechnosoftIpos::monitorWorker, this, _1), false);
         }
         else
         {

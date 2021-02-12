@@ -448,7 +448,7 @@ void TechnosoftIpos::handleTpdo2(std::uint16_t mer, std::uint16_t der)
 
 void TechnosoftIpos::handleTpdo3(std::int32_t position, std::int16_t current)
 {
-    vars.lastEncoderRead.update(position);
+    vars.lastEncoderRead->update(position);
     vars.lastCurrentRead = current;
 }
 
@@ -536,7 +536,7 @@ bool TechnosoftIpos::monitorWorker(const yarp::os::YarpTimerEvent & event)
     bool isConfigured = vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED;
     double elapsed = event.currentReal - vars.lastHeartbeat;
 
-    if (isConfigured && elapsed > event.lastDuration)
+    if (vars.heartbeatPeriod != 0.0 && isConfigured && elapsed > event.lastDuration)
     {
         CD_ERROR("Last heartbeat response was %f seconds ago (canId %d).\n", elapsed, can->getId());
         vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;

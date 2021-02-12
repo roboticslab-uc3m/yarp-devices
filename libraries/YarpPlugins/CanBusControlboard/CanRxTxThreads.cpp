@@ -68,6 +68,7 @@ CanReaderThread::CanReaderThread(const std::string & id, double delay, unsigned 
 
 void CanReaderThread::registerHandle(ICanBusSharer * p)
 {
+    handles.push_back(p);
     canIdToHandle[p->getId()] = p;
 
     for (auto id : p->getAdditionalIds())
