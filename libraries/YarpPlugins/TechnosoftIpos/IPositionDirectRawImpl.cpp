@@ -21,6 +21,9 @@ bool TechnosoftIpos::setPositionRaw(int j, double ref)
         // drive's buffer is empty, motion has not started yet, we have enough points in the queue
         if (!vars.ipBufferFilled && !vars.ipMotionStarted && linInterpBuffer->isQueueReady())
         {
+            std::int32_t refInternal = vars.lastEncoderRead->queryPosition();
+            linInterpBuffer->setInitial(vars.internalUnitsToDegrees(refInternal));
+
             bool ok = true;
 
             for (auto setpoint : linInterpBuffer->popBatch(true))

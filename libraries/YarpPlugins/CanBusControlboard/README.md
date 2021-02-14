@@ -31,16 +31,16 @@ If `key` equals `all`, it returns remote vars for all available CAN nodes.
 
 Requires a key-value two-element bottle, value is a nested list.
 
-* RPC sample usage: `[set] [ivar] [mvar] id15 (linInterp ((enable 1) (mode pt) (periodMs 50)))`
+* RPC sample usage: `[set] [ivar] [mvar] id15 (linInterp ((enable 1) (mode pt)))`
 
 Multiple keys can be bound per call, just nest them within an additional layer of bottles.
 
-* RPC sample usage: `[set] [ivar] [mvar] id15 ((linInterp ((enable 1) (mode pt) (periodMs 50))) (csv (enable 1)))`
+* RPC sample usage: `[set] [ivar] [mvar] id15 ((linInterp ((enable 1) (mode pt))) (csv (enable 1)))`
 
 Same strategy works if you want to set the exact same remote variable (or variables) for all available nodes, just use `all` as key.
 
-* RPC sample usage: `[set] [ivar] [mvar] all (linInterp ((enable 1) (mode pt) (periodMs 50)))`
-* RPC sample usage: `[set] [ivar] [mvar] all ((linInterp ((enable 1) (mode pt) (periodMs 50))) (csv (enable 1)))`
+* RPC sample usage: `[set] [ivar] [mvar] all (linInterp ((enable 1) (mode pt)))`
+* RPC sample usage: `[set] [ivar] [mvar] all ((linInterp ((enable 1) (mode pt))) (csv (enable 1)))`
 
 It is also possible to target multiple nodes in a single call, and set one or more remote variables at once. Use `multi` as key.
 

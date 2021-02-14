@@ -28,7 +28,6 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
         else
         {
             dict.put("enable", true);
-            dict.put("periodMs", linInterpBuffer->getPeriodMs());
             dict.put("mode", linInterpBuffer->getType());
         }
 
@@ -97,8 +96,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
                 return false;
             }
 
-            CD_SUCCESS("Created %s buffer with period %d ms (canId: %d).\n",
-                    linInterpBuffer->getType().c_str(), linInterpBuffer->getPeriodMs(), can->getId());
+            CD_SUCCESS("Created %s buffer (canId: %d).\n", linInterpBuffer->getType().c_str(), can->getId());
         }
         else
         {

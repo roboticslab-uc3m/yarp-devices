@@ -28,19 +28,16 @@ class LinearInterpolationBuffer
 {
 public:
     //! Constructor, sets internal invariable parameters.
-    LinearInterpolationBuffer(const StateVariables & vars, std::uint16_t periodMs);
+    LinearInterpolationBuffer(const StateVariables & vars);
 
     //! Virtual destructor.
     virtual ~LinearInterpolationBuffer() = default;
 
-    //! Set integrity counter to zero and clear internal setpoint queue.
-    void init(double initialTarget);
+    //! Store initial position.
+    void setInitial(double initialTarget);
 
     //! Get buffer type as string identifier (pt/pvt).
     virtual std::string getType() const = 0;
-
-    //! Get PT/PVT mode period.
-    std::uint16_t getPeriodMs() const;
 
     //! Get PT/PVT buffer size.
     virtual std::uint16_t getBufferSize() const = 0;
@@ -67,24 +64,23 @@ public:
     bool isQueueEmpty() const;
 
 protected:
+    using ip_record = std::pair<double, double>;
+
     //! Retrieve current integrity counter value.
     std::uint8_t getIntegrityCounter() const;
 
+    //! Determine how many points should be left in the queue on each non-final batch update.
+    virtual std::size_t getOffset() const;
+
     //! Generate interpolation data record given three contiguous position target (object 60C1h).
-    virtual std::uint64_t makeDataRecord(double previous, double current, double next) = 0;
+    virtual std::uint64_t makeDataRecord(const ip_record & previous, const ip_record & current, const ip_record & next) = 0;
 
     const StateVariables & vars;
 
-    static const unsigned int PT_BUFFER_MAX;
-    static const unsigned int PVT_BUFFER_MAX;
-    static const unsigned int BUFFER_LOW;
-
 private:
-    std::uint16_t periodMs;
     std::uint8_t integrityCounter;
-    double prevTarget;
-
-    std::deque<double> pendingTargets;
+    ip_record prevTarget;
+    std::deque<ip_record> pendingTargets;
     mutable std::mutex queueMutex;
 };
 
@@ -97,12 +93,12 @@ class PtBuffer : public LinearInterpolationBuffer
 public:
     using LinearInterpolationBuffer::LinearInterpolationBuffer;
 
-    virtual std::string getType() const override;
-    virtual std::uint16_t getBufferSize() const override;
-    virtual std::int16_t getSubMode() const override;
+    std::string getType() const override;
+    std::uint16_t getBufferSize() const override;
+    std::int16_t getSubMode() const override;
 
 protected:
-    virtual std::uint64_t makeDataRecord(double previous, double current, double next) override;
+    std::uint64_t makeDataRecord(const ip_record & previous, const ip_record & current, const ip_record & next) override;
 };
 
 /**
@@ -117,12 +113,13 @@ class PvtBuffer : public LinearInterpolationBuffer
 public:
     using LinearInterpolationBuffer::LinearInterpolationBuffer;
 
-    virtual std::string getType() const override;
-    virtual std::uint16_t getBufferSize() const override;
-    virtual std::int16_t getSubMode() const override;
+    std::string getType() const override;
+    std::uint16_t getBufferSize() const override;
+    std::int16_t getSubMode() const override;
 
 protected:
-    virtual std::uint64_t makeDataRecord(double previous, double current, double next) override;
+    std::size_t getOffset() const override;
+    std::uint64_t makeDataRecord(const ip_record & previous, const ip_record & current, const ip_record & next) override;
 };
 
 //! Factory method.

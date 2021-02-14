@@ -417,7 +417,6 @@ void TechnosoftIpos::interpretPtStatus(std::uint16_t status)
 
     if (reportBitToggle(report, INFO, 15, "Buffer is empty.", "Buffer is not empty.") && linInterpBuffer
             && vars.ipMotionStarted
-            && linInterpBuffer->isQueueEmpty()
             && can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)))
     {
         // no elements in the queue and buffer is empty; stop motion

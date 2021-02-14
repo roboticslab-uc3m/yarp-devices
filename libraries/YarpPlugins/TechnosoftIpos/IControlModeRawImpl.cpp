@@ -112,9 +112,6 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         {
             vars.ipBufferFilled = vars.ipMotionStarted = false;
 
-            std::int32_t refInternal = vars.lastEncoderRead->queryPosition();
-            linInterpBuffer->init(vars.internalUnitsToDegrees(refInternal));
-
             PdoConfiguration rpdo3Conf;
             rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x01);
             rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x02);
