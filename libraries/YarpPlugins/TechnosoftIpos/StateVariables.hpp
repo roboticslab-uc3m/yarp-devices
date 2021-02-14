@@ -106,7 +106,7 @@ struct StateVariables
     std::bitset<16> der;
     std::bitset<16> der2;
     std::bitset<16> cer;
-    std::bitset<16> ptStatus;
+    std::bitset<16> ipStatus;
     std::int8_t modesOfOperation {0};
 
     bool configuredOnce {false};

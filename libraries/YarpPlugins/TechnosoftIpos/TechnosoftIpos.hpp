@@ -272,7 +272,7 @@ private:
     void interpretCer(std::uint16_t cer);
     void interpretStatusword(std::uint16_t statusword);
     void interpretModesOfOperation(std::int8_t modesOfOperation);
-    void interpretPtStatus(std::uint16_t ptStatus);
+    void interpretIpStatus(std::uint16_t ipStatus);
 
     void handleTpdo1(std::uint16_t statusword, std::uint16_t msr, std::int8_t modesOfOperation);
     void handleTpdo2(std::uint16_t mer, std::uint16_t der);

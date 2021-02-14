@@ -241,7 +241,7 @@ double StateVariables::clipSyncPositionTarget()
 
 void StateVariables::reset()
 {
-    msr = mer = der = der2 = cer = ptStatus = 0;
+    msr = mer = der = der2 = cer = ipStatus = 0;
     modesOfOperation = 0;
 
     lastEncoderRead->reset();

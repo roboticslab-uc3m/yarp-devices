@@ -386,9 +386,9 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
 
 // -----------------------------------------------------------------------------
 
-void TechnosoftIpos::interpretPtStatus(std::uint16_t status)
+void TechnosoftIpos::interpretIpStatus(std::uint16_t status)
 {
-    report_storage report{"pt", status, vars.ptStatus, can->getId()};
+    report_storage report{"ip", status, vars.ipStatus, can->getId()};
 
     std::uint8_t ic = status & 0x007F; // integrity counter
 
@@ -423,7 +423,7 @@ void TechnosoftIpos::interpretPtStatus(std::uint16_t status)
         vars.ipMotionStarted = vars.ipBufferFilled = false;
     }
 
-    vars.ptStatus = status;
+    vars.ipStatus = status;
 }
 
 // -----------------------------------------------------------------------------
@@ -478,9 +478,9 @@ void TechnosoftIpos::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, con
     }
     case 0xFF01:
     {
-        std::uint16_t ptStatus;
-        std::memcpy(&ptStatus, msef, 2);
-        interpretPtStatus(ptStatus);
+        std::uint16_t ipStatus;
+        std::memcpy(&ipStatus, msef, 2);
+        interpretIpStatus(ipStatus);
         break;
     }
     default:
