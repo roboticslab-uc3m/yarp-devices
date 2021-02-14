@@ -72,6 +72,9 @@ protected:
     //! Determine how many points should be left in the queue on each non-final batch update.
     virtual std::size_t getOffset() const;
 
+    //! Obtain time in UI samples for current segment, update internal counters.
+    std::uint16_t getSampledTime(double currentTimestamp);
+
     //! Generate interpolation data record given three contiguous position target (object 60C1h).
     virtual std::uint64_t makeDataRecord(const ip_record & previous, const ip_record & current, const ip_record & next) = 0;
 
@@ -80,6 +83,8 @@ protected:
 private:
     std::uint8_t integrityCounter;
     ip_record prevTarget;
+    double initialTimestamp;
+    int sampleCount;
     std::deque<ip_record> pendingTargets;
     mutable std::mutex queueMutex;
 };

@@ -28,13 +28,17 @@ namespace
 LinearInterpolationBuffer::LinearInterpolationBuffer(const StateVariables & _vars)
     : vars(_vars),
       integrityCounter(0),
-      prevTarget({0.0, 0.0})
+      prevTarget({0.0, 0.0}),
+      initialTimestamp(0.0),
+      sampleCount(0)
 { }
 
 void LinearInterpolationBuffer::setInitial(double initialTarget)
 {
     std::lock_guard<std::mutex> lock(queueMutex);
-    prevTarget = {initialTarget, 0.0}; // dummy timestamp, to be amended later on
+    initialTimestamp = 0.0; // dummy timestamp, to be amended later on
+    prevTarget = {initialTarget, initialTimestamp};
+    sampleCount = 0;
 }
 
 std::uint16_t LinearInterpolationBuffer::getBufferConfig() const
@@ -65,7 +69,7 @@ std::vector<std::uint64_t> LinearInterpolationBuffer::popBatch(bool fullBuffer)
         // Prior to initializing motion, prevTarget is a dummy setpoint referring to current
         // joint position. Infer timestamp from first two stored points.
         auto diff = pendingTargets[1].second - pendingTargets[0].second;
-        prevTarget.second = pendingTargets[0].second - diff;
+        initialTimestamp = prevTarget.second = pendingTargets[0].second - diff;
     }
 
     // This method may be called in any of these two circumstances:
@@ -128,6 +132,15 @@ std::size_t LinearInterpolationBuffer::getOffset() const
     return 0;
 }
 
+std::uint16_t LinearInterpolationBuffer::getSampledTime(double currentTimestamp)
+{
+    double elapsed = currentTimestamp - initialTimestamp;
+    int samplesSinceStart = elapsed / vars.samplingPeriod;
+    std::uint16_t currentWindow = samplesSinceStart - sampleCount;
+    sampleCount = samplesSinceStart;
+    return currentWindow;
+}
+
 std::string PtBuffer::getType() const
 {
     return "pt";
@@ -147,7 +160,7 @@ std::uint64_t PtBuffer::makeDataRecord(const ip_record & previous, const ip_reco
 {
     std::uint64_t data = 0;
     data += static_cast<std::int32_t>(vars.degreesToInternalUnits(current.first));
-    data += static_cast<std::uint64_t>((current.second - previous.second) / vars.samplingPeriod) << 32;
+    data += static_cast<std::uint64_t>(getSampledTime(current.second)) << 32;
     data += static_cast<std::uint64_t>(getIntegrityCounter()) << 57;
     return data;
 }
@@ -192,8 +205,7 @@ std::uint64_t PvtBuffer::makeDataRecord(const ip_record & previous, const ip_rec
         data += static_cast<std::uint64_t>(velocityInt) << 32;
     }
 
-    std::uint16_t time = static_cast<std::uint16_t>((current.second - previous.second) / vars.samplingPeriod) & 0x1FF;
-    data += static_cast<std::uint64_t>(time) << 48;
+    data += static_cast<std::uint64_t>(getSampledTime(current.second) & 0x1FF) << 48;
     data += static_cast<std::uint64_t>(getIntegrityCounter()) << 57;
 
     return data;
