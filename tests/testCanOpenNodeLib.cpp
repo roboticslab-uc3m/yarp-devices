@@ -154,7 +154,7 @@ TEST_F(CanBusSharerTest, SdoClientExpeditedUpload)
     std::int8_t actual1;
     const std::int8_t expected1 = 0x44;
     response[0] = 0x4F;
-    std::memcpy(response + 4, &expected1, 4);
+    std::memcpy(response + 4, &expected1, 1);
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.upload("Upload test 1", &actual1, index, subindex));
     ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
@@ -183,7 +183,7 @@ TEST_F(CanBusSharerTest, SdoClientExpeditedUpload)
     std::int16_t actual3;
     const std::int16_t expected3 = 0x4444;
     response[0] = 0x4B;
-    std::memcpy(response + 4, &expected3, 4);
+    std::memcpy(response + 4, &expected3, 2);
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.upload("Upload test 4", &actual3, index, subindex));
     ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
