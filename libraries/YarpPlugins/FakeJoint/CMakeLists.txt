@@ -19,7 +19,7 @@ if(NOT SKIP_FakeJoint)
                               FakeJoint.cpp)
 
     target_link_libraries(FakeJoint YARP::YARP_dev
-                                    CanBusSharerLib)
+                                    ROBOTICSLAB::CanBusSharerLib)
 
     target_compile_features(FakeJoint PUBLIC cxx_std_11)
 

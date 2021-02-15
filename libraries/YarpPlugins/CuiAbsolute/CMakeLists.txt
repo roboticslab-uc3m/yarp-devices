@@ -24,8 +24,8 @@ if(NOT SKIP_CuiAbsolute)
     target_link_libraries(CuiAbsolute YARP::YARP_os
                                       YARP::YARP_dev
                                       ROBOTICSLAB::ColorDebug
-                                      CanBusSharerLib
-                                      StateObserverLib)
+                                      ROBOTICSLAB::CanBusSharerLib
+                                      ROBOTICSLAB::StateObserverLib)
 
     target_compile_features(CuiAbsolute PRIVATE cxx_std_11)
 

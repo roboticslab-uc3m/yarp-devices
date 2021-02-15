@@ -19,34 +19,34 @@ if(ENABLE_tests)
 
     # testCanBusSharerLib
 
-    if(TARGET CanBusSharerLib)
+    if(ENABLE_CanBusSharerLib)
         add_executable(testCanBusSharerLib testCanBusSharerLib.cpp)
-        target_link_libraries(testCanBusSharerLib CanBusSharerLib gtest_main)
+        target_link_libraries(testCanBusSharerLib ROBOTICSLAB::CanBusSharerLib gtest_main)
         gtest_discover_tests(testCanBusSharerLib)
     endif()
 
     # testStateObserverLib
 
-    if(TARGET StateObserverLib)
+    if(ENABLE_StateObserverLib)
         add_executable(testStateObserverLib testStateObserverLib.cpp)
-        target_link_libraries(testStateObserverLib StateObserverLib FutureObserverLib gtest_main)
+        target_link_libraries(testStateObserverLib ROBOTICSLAB::StateObserverLib FutureObserverLib gtest_main)
         gtest_discover_tests(testStateObserverLib)
     endif()
 
     # testCanOpenNodeLib
 
-    if(TARGET CanOpenNodeLib)
+    if(ENABLE_CanOpenNodeLib)
         add_executable(testCanOpenNodeLib testCanOpenNodeLib.cpp)
-        target_link_libraries(testCanOpenNodeLib CanOpenNodeLib FutureObserverLib gtest_main)
+        target_link_libraries(testCanOpenNodeLib ROBOTICSLAB::CanOpenNodeLib FutureObserverLib gtest_main)
         target_compile_features(testCanOpenNodeLib PUBLIC cxx_std_14)
         gtest_discover_tests(testCanOpenNodeLib)
     endif()
 
     # testYarpDeviceMapperLib
 
-    if(TARGET YarpDeviceMapperLib)
+    if(ENABLE_YarpDeviceMapperLib)
         add_executable(testYarpDeviceMapperLib testYarpDeviceMapperLib.cpp)
-        target_link_libraries(testYarpDeviceMapperLib YarpDeviceMapperLib YARP::YARP_dev gtest_main)
+        target_link_libraries(testYarpDeviceMapperLib ROBOTICSLAB::YarpDeviceMapperLib YARP::YARP_dev gtest_main)
         target_compile_features(testYarpDeviceMapperLib PUBLIC cxx_std_14)
         gtest_discover_tests(testYarpDeviceMapperLib)
     endif()

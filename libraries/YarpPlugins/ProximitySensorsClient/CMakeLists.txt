@@ -21,7 +21,7 @@ if(NOT SKIP_ProximitySensorsClient)
     target_link_libraries(ProximitySensorsClient YARP::YARP_os
                                                  YARP::YARP_dev
                                                  ROBOTICSLAB::ColorDebug
-                                                 YarpDevicesInterfaces)
+                                                 ROBOTICSLAB::YarpDevicesInterfaces)
 
     yarp_install(TARGETS ProximitySensorsClient
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}

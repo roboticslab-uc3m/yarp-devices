@@ -20,11 +20,11 @@ if(NOT SKIP_DextraCanControlboard)
                                           ICanBusSharerImpl.cpp
                                           CanSynapse.cpp)
 
-    target_link_libraries(DextraCanControlboard DextraRawControlboardLib
+    target_link_libraries(DextraCanControlboard ROBOTICSLAB::DextraRawControlboardLib
                                                 YARP::YARP_os
                                                 YARP::YARP_dev
                                                 ROBOTICSLAB::ColorDebug
-                                                CanBusSharerLib)
+                                                ROBOTICSLAB::CanBusSharerLib)
 
     target_compile_features(DextraCanControlboard PRIVATE cxx_std_11)
 

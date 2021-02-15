@@ -21,6 +21,8 @@ if(ENABLE_YarpDeviceMapperLib)
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
+    add_library(ROBOTICSLAB::YarpDeviceMapperLib ALIAS YarpDeviceMapperLib)
+
 else()
 
     set(ENABLE_YarpDeviceMapperLib OFF CACHE BOOL "Enable/disable YarpDeviceMapperLib library" FORCE)

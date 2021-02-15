@@ -27,6 +27,8 @@ if(ENABLE_CanBusSharerLib)
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
             PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
+    add_library(ROBOTICSLAB::CanBusSharerLib ALIAS CanBusSharerLib)
+
 else()
 
     set(ENABLE_CanBusSharerLib OFF CACHE BOOL "Enable/disable CanBusSharerLib library" FORCE)
