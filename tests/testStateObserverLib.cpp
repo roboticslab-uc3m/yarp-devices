@@ -22,8 +22,8 @@ namespace test
  * @ingroup testStateObserverLib
  * @brief See @ref FutureObserver.
  */
-class CanBusSharerTest : public testing::Test,
-                         protected FutureObserver
+class StateObserverTest : public testing::Test,
+                          protected FutureObserver
 {
 public:
     virtual void SetUp()
@@ -39,7 +39,7 @@ protected:
     static constexpr double TIMEOUT = 0.125; // [s]
 };
 
-TEST_F(CanBusSharerTest, StateObserver)
+TEST_F(StateObserverTest, StateObserver)
 {
     // test StateObserver
 
