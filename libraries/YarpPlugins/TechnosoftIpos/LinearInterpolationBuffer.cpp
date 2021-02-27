@@ -25,8 +25,9 @@ namespace
     constexpr std::size_t BUFFER_LOW = 4; // max: 15
 }
 
-LinearInterpolationBuffer::LinearInterpolationBuffer(const StateVariables & _vars)
+LinearInterpolationBuffer::LinearInterpolationBuffer(const StateVariables & _vars, int periodMs)
     : vars(_vars),
+      fixedSamples(periodMs * 0.001 / vars.samplingPeriod),
       integrityCounter(0),
       prevTarget({0.0, 0.0}),
       initialTimestamp(0.0),
@@ -39,6 +40,11 @@ void LinearInterpolationBuffer::setInitial(double initialTarget)
     initialTimestamp = 0.0; // dummy timestamp, to be amended later on
     prevTarget = {initialTarget, initialTimestamp};
     sampleCount = 0;
+}
+
+int LinearInterpolationBuffer::getPeriodMs() const
+{
+    return fixedSamples * vars.samplingPeriod * 1000.0;
 }
 
 std::uint16_t LinearInterpolationBuffer::getBufferConfig() const
@@ -134,11 +140,34 @@ std::size_t LinearInterpolationBuffer::getOffset() const
 
 std::uint16_t LinearInterpolationBuffer::getSampledTime(double currentTimestamp)
 {
+    if (fixedSamples != 0)
+    {
+        // Synchronous interpolation.
+        return fixedSamples;
+    }
+
+    // Asynchronous interpolation.
     double elapsed = currentTimestamp - initialTimestamp;
     int samplesSinceStart = elapsed / vars.samplingPeriod;
     std::uint16_t currentWindow = samplesSinceStart - sampleCount;
     sampleCount = samplesSinceStart;
     return currentWindow;
+}
+
+double LinearInterpolationBuffer::getMeanVelocity(const ip_record & earliest, const ip_record & latest) const
+{
+    double distance = latest.first - earliest.first;
+
+    if (fixedSamples != 0)
+    {
+        // Synchronous interpolation.
+        return distance / (fixedSamples * vars.samplingPeriod);
+    }
+    else
+    {
+        // Asynchronous interpolation.
+        return distance / (latest.second - earliest.second);
+    }
 }
 
 std::string PtBuffer::getType() const
@@ -194,8 +223,8 @@ std::uint64_t PvtBuffer::makeDataRecord(const ip_record & previous, const ip_rec
 
     if (next.second != 0.0)
     {
-        double prevVelocity = (current.first - previous.first) / (current.second - previous.second);
-        double nextVelocity = (next.first - current.first) / (next.second - current.second);
+        double prevVelocity = getMeanVelocity(previous, current);
+        double nextVelocity = getMeanVelocity(current, next);
         double velocity = vars.degreesToInternalUnits((prevVelocity + nextVelocity) / 2.0, 1);
 
         std::int16_t velocityInt;
@@ -217,14 +246,21 @@ namespace roboticslab
 LinearInterpolationBuffer * createInterpolationBuffer(const yarp::os::Searchable & config, const StateVariables & vars)
 {
     std::string mode = config.check("mode", yarp::os::Value(""), "linear interpolation mode [pt|pvt]").asString();
+    int periodMs = config.check("periodMs", yarp::os::Value(0), "linear interpolation fixed period (ms)").asInt32();
+
+    if (periodMs < 0)
+    {
+        CD_ERROR("Illegal \"periodMs\": %d.\n", periodMs);
+        return nullptr;
+    }
 
     if (mode == "pt")
     {
-        return new PtBuffer(vars);
+        return new PtBuffer(vars, periodMs);
     }
     else if (mode == "pvt")
     {
-        return new PvtBuffer(vars);
+        return new PvtBuffer(vars, periodMs);
     }
     else
     {

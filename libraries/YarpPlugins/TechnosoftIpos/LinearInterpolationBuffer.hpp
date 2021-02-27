@@ -28,7 +28,7 @@ class LinearInterpolationBuffer
 {
 public:
     //! Constructor, sets internal invariable parameters.
-    LinearInterpolationBuffer(const StateVariables & vars);
+    LinearInterpolationBuffer(const StateVariables & vars, int periodMs);
 
     //! Virtual destructor.
     virtual ~LinearInterpolationBuffer() = default;
@@ -38,6 +38,9 @@ public:
 
     //! Get buffer type as string identifier (pt/pvt).
     virtual std::string getType() const = 0;
+
+    //! Get PT/PVT period if fixed (synchronous), zero otherwise (asynchronous).
+    int getPeriodMs() const;
 
     //! Get PT/PVT buffer size.
     virtual std::uint16_t getBufferSize() const = 0;
@@ -75,12 +78,16 @@ protected:
     //! Obtain time in UI samples for current segment, update internal counters.
     std::uint16_t getSampledTime(double currentTimestamp);
 
+    //! Compute mean velocity between two setpoints.
+    double getMeanVelocity(const ip_record & earliest, const ip_record & latest) const;
+
     //! Generate interpolation data record given three contiguous position target (object 60C1h).
     virtual std::uint64_t makeDataRecord(const ip_record & previous, const ip_record & current, const ip_record & next) = 0;
 
     const StateVariables & vars;
 
 private:
+    std::uint16_t fixedSamples;
     std::uint8_t integrityCounter;
     ip_record prevTarget;
     double initialTimestamp;
