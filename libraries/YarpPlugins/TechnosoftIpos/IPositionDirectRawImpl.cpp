@@ -14,19 +14,19 @@ bool TechnosoftIpos::setPositionRaw(int j, double ref)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
 
-    if (linInterpBuffer)
+    if (ipBuffer)
     {
-        linInterpBuffer->addSetpoint(ref); // register point in the internal queue
+        ipBuffer->addSetpoint(ref); // register point in the internal queue
 
         // drive's buffer is empty, motion has not started yet, we have enough points in the queue
-        if (!vars.ipBufferFilled && !vars.ipMotionStarted && linInterpBuffer->isQueueReady())
+        if (!vars.ipBufferFilled && !vars.ipMotionStarted && ipBuffer->isQueueReady())
         {
             std::int32_t refInternal = vars.lastEncoderRead->queryPosition();
-            linInterpBuffer->setInitial(vars.internalUnitsToDegrees(refInternal));
+            ipBuffer->setInitial(vars.internalUnitsToDegrees(refInternal));
 
             bool ok = true;
 
-            for (auto setpoint : linInterpBuffer->popBatch(true))
+            for (auto setpoint : ipBuffer->popBatch(true))
             {
                 ok &= can->rpdo3()->write(setpoint); // load point into the buffer
             }
@@ -66,9 +66,9 @@ bool TechnosoftIpos::getRefPositionRaw(int joint, double * ref)
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
 
-    if (linInterpBuffer)
+    if (ipBuffer)
     {
-        *ref = linInterpBuffer->getPrevTarget();
+        *ref = ipBuffer->getPrevTarget();
     }
     else
     {

@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __LINEAR_INTERPOLATION_BUFFER_HPP__
-#define __LINEAR_INTERPOLATION_BUFFER_HPP__
+#ifndef __INTERPOLATED_POSITION_BUFFER_HPP__
+#define __INTERPOLATED_POSITION_BUFFER_HPP__
 
 #include <cstdint>
 
@@ -24,14 +24,14 @@ namespace roboticslab
  * Stores an internal queue of setpoints aimed to be processed in batches on
  * demand by client code.
  */
-class LinearInterpolationBuffer
+class InterpolatedPositionBuffer
 {
 public:
     //! Constructor, sets internal invariable parameters.
-    LinearInterpolationBuffer(const StateVariables & vars, int periodMs);
+    InterpolatedPositionBuffer(const StateVariables & vars, int periodMs);
 
     //! Virtual destructor.
-    virtual ~LinearInterpolationBuffer() = default;
+    virtual ~InterpolatedPositionBuffer() = default;
 
     //! Store initial position.
     void setInitial(double initialTarget);
@@ -98,12 +98,12 @@ private:
 
 /**
  * @ingroup TechnosoftIpos
- * @brief Implementation of a PT buffer.
+ * @brief Implementation of a PT buffer (linear interpolation).
  */
-class PtBuffer : public LinearInterpolationBuffer
+class PtBuffer : public InterpolatedPositionBuffer
 {
 public:
-    using LinearInterpolationBuffer::LinearInterpolationBuffer;
+    using InterpolatedPositionBuffer::InterpolatedPositionBuffer;
 
     std::string getType() const override;
     std::uint16_t getBufferSize() const override;
@@ -115,15 +115,15 @@ protected:
 
 /**
  * @ingroup TechnosoftIpos
- * @brief Implementation of a PVT buffer.
+ * @brief Implementation of a PVT buffer (cubic interpolation).
  *
  * By using the lasts two position targets, this class computes the mean
  * velocity target required by the linear interpolator.
  */
-class PvtBuffer : public LinearInterpolationBuffer
+class PvtBuffer : public InterpolatedPositionBuffer
 {
 public:
-    using LinearInterpolationBuffer::LinearInterpolationBuffer;
+    using InterpolatedPositionBuffer::InterpolatedPositionBuffer;
 
     std::string getType() const override;
     std::uint16_t getBufferSize() const override;
@@ -135,8 +135,8 @@ protected:
 };
 
 //! Factory method.
-LinearInterpolationBuffer * createInterpolationBuffer(const yarp::os::Searchable & config, const StateVariables & vars);
+InterpolatedPositionBuffer * createInterpolationBuffer(const yarp::os::Searchable & config, const StateVariables & vars);
 
 } // namespace roboticslab
 
-#endif // __LINEAR_INTERPOLATION_BUFFER_HPP__
+#endif // __INTERPOLATED_POSITION_BUFFER_HPP__

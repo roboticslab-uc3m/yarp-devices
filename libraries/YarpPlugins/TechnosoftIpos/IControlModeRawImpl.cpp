@@ -108,7 +108,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
             && vars.awaitControlMode(mode);
 
     case VOCAB_CM_POSITION_DIRECT:
-        if (linInterpBuffer)
+        if (ipBuffer)
         {
             vars.ipBufferFilled = vars.ipMotionStarted = false;
 
@@ -119,9 +119,9 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
             return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
                     && can->rpdo3()->configure(rpdo3Conf)
                     && can->sdo()->download<std::uint16_t>("Auxiliary Settings Register", 0x0000, 0x208E) // legacy pt mode
-                    && can->sdo()->download("Interpolation sub mode select", linInterpBuffer->getSubMode(), 0x60C0)
-                    && can->sdo()->download("Interpolated position buffer length", linInterpBuffer->getBufferSize(), 0x2073)
-                    && can->sdo()->download("Interpolated position buffer configuration", linInterpBuffer->getBufferConfig(), 0x2074)
+                    && can->sdo()->download("Interpolation sub mode select", ipBuffer->getSubMode(), 0x60C0)
+                    && can->sdo()->download("Interpolated position buffer length", ipBuffer->getBufferSize(), 0x2073)
+                    && can->sdo()->download("Interpolated position buffer configuration", ipBuffer->getBufferConfig(), 0x2074)
                     && can->sdo()->download<std::int8_t>("Modes of Operation", 7, 0x6060)
                     && vars.awaitControlMode(VOCAB_CM_POSITION_DIRECT);
         }

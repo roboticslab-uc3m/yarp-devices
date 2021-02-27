@@ -21,15 +21,15 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
     {
         yarp::os::Property & dict = val.addDict();
 
-        if (!linInterpBuffer)
+        if (!ipBuffer)
         {
             dict.put("enable", false);
         }
         else
         {
             dict.put("enable", true);
-            dict.put("periodMs", linInterpBuffer->getPeriodMs());
-            dict.put("mode", linInterpBuffer->getType());
+            dict.put("periodMs", ipBuffer->getPeriodMs());
+            dict.put("mode", ipBuffer->getType());
         }
 
         return true;
@@ -84,21 +84,21 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
             return false;
         }
 
-        delete linInterpBuffer;
-        linInterpBuffer = nullptr;
+        delete ipBuffer;
+        ipBuffer = nullptr;
 
         if (dict->find("enable").asBool())
         {
-            linInterpBuffer = createInterpolationBuffer(val, vars);
+            ipBuffer = createInterpolationBuffer(val, vars);
 
-            if (!linInterpBuffer)
+            if (!ipBuffer)
             {
-                CD_ERROR("Cannot create linear interpolation buffer (canId: %d).\n", can->getId());
+                CD_ERROR("Cannot create ip buffer (canId: %d).\n", can->getId());
                 return false;
             }
 
             CD_SUCCESS("Created %s buffer with %d points and period %d ms (canId: %d).\n",
-                linInterpBuffer->getType().c_str(), linInterpBuffer->getBufferSize(), linInterpBuffer->getPeriodMs(), can->getId());
+                ipBuffer->getType().c_str(), ipBuffer->getBufferSize(), ipBuffer->getPeriodMs(), can->getId());
         }
         else
         {

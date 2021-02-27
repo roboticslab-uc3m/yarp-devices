@@ -193,8 +193,8 @@ bool TechnosoftIpos::close()
     delete monitorThread;
     monitorThread = nullptr;
 
-    delete linInterpBuffer;
-    linInterpBuffer = nullptr;
+    delete ipBuffer;
+    ipBuffer = nullptr;
 
     delete can;
     can = nullptr;

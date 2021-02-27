@@ -22,7 +22,8 @@
 
 #include "CanOpenNode.hpp"
 #include "ICanBusSharer.hpp"
-#include "LinearInterpolationBuffer.hpp"
+
+#include "InterpolatedPositionBuffer.hpp"
 #include "StateVariables.hpp"
 
 #define CHECK_JOINT(j) do { int ax; if (getAxes(&ax), (j) != ax - 1) return false; } while (0)
@@ -77,7 +78,7 @@ public:
         : can(nullptr),
           iEncodersTimedRawExternal(nullptr),
           iExternalEncoderCanBusSharer(nullptr),
-          linInterpBuffer(nullptr),
+          ipBuffer(nullptr),
           monitorThread(nullptr)
     { }
 
@@ -290,7 +291,7 @@ private:
 
     StateVariables vars;
 
-    LinearInterpolationBuffer * linInterpBuffer;
+    InterpolatedPositionBuffer * ipBuffer;
 
     yarp::os::Timer * monitorThread;
 };

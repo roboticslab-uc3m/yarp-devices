@@ -397,25 +397,25 @@ void TechnosoftIpos::interpretIpStatus(std::uint16_t status)
             "Drive has maintained interpolated position mode after a buffer empty condition.");
     reportBitToggle(report, WARN, 12, "Integrity counter error.", "No integrity counter error.");
 
-    if (reportBitToggle(report, NONE, 13, "Buffer is full.", "Buffer is not full.") && linInterpBuffer
+    if (reportBitToggle(report, NONE, 13, "Buffer is full.", "Buffer is not full.") && ipBuffer
             && !vars.ipMotionStarted)
     {
         // buffer full, ready to enable ip mode
         vars.ipMotionStarted = can->driveStatus()->controlword(can->driveStatus()->controlword().set(4));
     }
 
-    if (reportBitToggle(report, NONE, 14, "Buffer is low.", "Buffer is not low.") && linInterpBuffer
+    if (reportBitToggle(report, NONE, 14, "Buffer is low.", "Buffer is not low.") && ipBuffer
             && vars.ipMotionStarted
-            && !linInterpBuffer->isQueueEmpty())
+            && !ipBuffer->isQueueEmpty())
     {
         // load next batch of points into the drive's buffer
-        for (auto setpoint : linInterpBuffer->popBatch(false))
+        for (auto setpoint : ipBuffer->popBatch(false))
         {
             can->rpdo3()->write(setpoint);
         }
     }
 
-    if (reportBitToggle(report, INFO, 15, "Buffer is empty.", "Buffer is not empty.") && linInterpBuffer
+    if (reportBitToggle(report, INFO, 15, "Buffer is empty.", "Buffer is not empty.") && ipBuffer
             && vars.ipMotionStarted
             && can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)))
     {

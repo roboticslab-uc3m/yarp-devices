@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "LinearInterpolationBuffer.hpp"
+#include "InterpolatedPositionBuffer.hpp"
 
 #include <cmath>
 
@@ -25,7 +25,7 @@ namespace
     constexpr std::size_t BUFFER_LOW = 4; // max: 15
 }
 
-LinearInterpolationBuffer::LinearInterpolationBuffer(const StateVariables & _vars, int periodMs)
+InterpolatedPositionBuffer::InterpolatedPositionBuffer(const StateVariables & _vars, int periodMs)
     : vars(_vars),
       fixedSamples(periodMs * 0.001 / vars.samplingPeriod),
       integrityCounter(0),
@@ -34,7 +34,7 @@ LinearInterpolationBuffer::LinearInterpolationBuffer(const StateVariables & _var
       sampleCount(0)
 { }
 
-void LinearInterpolationBuffer::setInitial(double initialTarget)
+void InterpolatedPositionBuffer::setInitial(double initialTarget)
 {
     std::lock_guard<std::mutex> lock(queueMutex);
     initialTimestamp = 0.0; // dummy timestamp, to be amended later on
@@ -42,12 +42,12 @@ void LinearInterpolationBuffer::setInitial(double initialTarget)
     sampleCount = 0;
 }
 
-int LinearInterpolationBuffer::getPeriodMs() const
+int InterpolatedPositionBuffer::getPeriodMs() const
 {
     return fixedSamples * vars.samplingPeriod * 1000.0;
 }
 
-std::uint16_t LinearInterpolationBuffer::getBufferConfig() const
+std::uint16_t InterpolatedPositionBuffer::getBufferConfig() const
 {
     std::bitset<16> bits("1011000010000000"); // 0xB080
     bits |= (BUFFER_LOW << 8);
@@ -55,13 +55,13 @@ std::uint16_t LinearInterpolationBuffer::getBufferConfig() const
     return bits.to_ulong();
 }
 
-void LinearInterpolationBuffer::addSetpoint(double target)
+void InterpolatedPositionBuffer::addSetpoint(double target)
 {
     std::lock_guard<std::mutex> lock(queueMutex);
     pendingTargets.push_back({target, yarp::os::Time::now()});
 }
 
-std::vector<std::uint64_t> LinearInterpolationBuffer::popBatch(bool fullBuffer)
+std::vector<std::uint64_t> InterpolatedPositionBuffer::popBatch(bool fullBuffer)
 {
     std::lock_guard<std::mutex> lock(queueMutex);
 
@@ -110,35 +110,35 @@ std::vector<std::uint64_t> LinearInterpolationBuffer::popBatch(bool fullBuffer)
     return batch;
 }
 
-double LinearInterpolationBuffer::getPrevTarget() const
+double InterpolatedPositionBuffer::getPrevTarget() const
 {
     std::lock_guard<std::mutex> lock(queueMutex);
     return prevTarget.first;
 }
 
-bool LinearInterpolationBuffer::isQueueReady() const
+bool InterpolatedPositionBuffer::isQueueReady() const
 {
     std::lock_guard<std::mutex> lock(queueMutex);
     return pendingTargets.size() >= getBufferSize() + getOffset();
 }
 
-bool LinearInterpolationBuffer::isQueueEmpty() const
+bool InterpolatedPositionBuffer::isQueueEmpty() const
 {
     std::lock_guard<std::mutex> lock(queueMutex);
     return pendingTargets.empty();
 }
 
-std::uint8_t LinearInterpolationBuffer::getIntegrityCounter() const
+std::uint8_t InterpolatedPositionBuffer::getIntegrityCounter() const
 {
     return integrityCounter;
 }
 
-std::size_t LinearInterpolationBuffer::getOffset() const
+std::size_t InterpolatedPositionBuffer::getOffset() const
 {
     return 0;
 }
 
-std::uint16_t LinearInterpolationBuffer::getSampledTime(double currentTimestamp)
+std::uint16_t InterpolatedPositionBuffer::getSampledTime(double currentTimestamp)
 {
     if (fixedSamples != 0)
     {
@@ -154,7 +154,7 @@ std::uint16_t LinearInterpolationBuffer::getSampledTime(double currentTimestamp)
     return currentWindow;
 }
 
-double LinearInterpolationBuffer::getMeanVelocity(const ip_record & earliest, const ip_record & latest) const
+double InterpolatedPositionBuffer::getMeanVelocity(const ip_record & earliest, const ip_record & latest) const
 {
     double distance = latest.first - earliest.first;
 
@@ -243,10 +243,10 @@ std::uint64_t PvtBuffer::makeDataRecord(const ip_record & previous, const ip_rec
 namespace roboticslab
 {
 
-LinearInterpolationBuffer * createInterpolationBuffer(const yarp::os::Searchable & config, const StateVariables & vars)
+InterpolatedPositionBuffer * createInterpolationBuffer(const yarp::os::Searchable & config, const StateVariables & vars)
 {
-    std::string mode = config.check("mode", yarp::os::Value(""), "linear interpolation mode [pt|pvt]").asString();
-    int periodMs = config.check("periodMs", yarp::os::Value(0), "linear interpolation fixed period (ms)").asInt32();
+    std::string mode = config.check("mode", yarp::os::Value(""), "interpolated position submode [pt|pvt]").asString();
+    int periodMs = config.check("periodMs", yarp::os::Value(0), "interpolated position fixed period (ms)").asInt32();
 
     if (periodMs < 0)
     {
@@ -264,7 +264,7 @@ LinearInterpolationBuffer * createInterpolationBuffer(const yarp::os::Searchable
     }
     else
     {
-        CD_ERROR("Unsupported linear interpolation mode: \"%s\".\n", mode.c_str());
+        CD_ERROR("Unsupported interpolated position submode: \"%s\".\n", mode.c_str());
         return nullptr;
     }
 }
