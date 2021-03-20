@@ -75,8 +75,8 @@ public:
     { this->busLoadMonitor = busLoadMonitor; }
 
 protected:
-    //! Dump CAN message through a YARP port.
-    void dumpMessage(const can_message & msg);
+    //! Dump a CAN message to a YARP bottle.
+    static void dumpMessage(const can_message & msg, yarp::os::Bottle & b);
 
     yarp::dev::ICanBus * iCanBus;
     yarp::dev::ICanBusErrors * iCanBusErrors;

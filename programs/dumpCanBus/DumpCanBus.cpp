@@ -58,6 +58,19 @@ bool DumpCanBus::close()
 
 void DumpCanBus::onRead(yarp::os::Bottle & b)
 {
+    for (auto i = 0; i < b.size(); i++)
+    {
+        auto * msg = b.get(i).asList();
+
+        if (msg)
+        {
+            printMessage(*msg);
+        }
+    }
+}
+
+void DumpCanBus::printMessage(const yarp::os::Bottle & b)
+{
     unsigned int cobId = b.get(0).asInt16();
 
     std::cout << std::setfill(' ');

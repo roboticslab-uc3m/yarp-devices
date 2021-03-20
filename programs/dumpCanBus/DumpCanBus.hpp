@@ -25,16 +25,18 @@ public:
     ~DumpCanBus()
     { close(); }
 
-    virtual bool configure(yarp::os::ResourceFinder & rf) override;
+    bool configure(yarp::os::ResourceFinder & rf) override;
 
-    virtual bool updateModule() override
+    bool updateModule() override
     { return true; }
 
-    virtual bool close() override;
+    bool close() override;
 
-    virtual void onRead(yarp::os::Bottle & b) override;
+    void onRead(yarp::os::Bottle & b) override;
 
 private:
+    void printMessage(const yarp::os::Bottle & b);
+
     yarp::os::Port port;
     yarp::os::PortReaderBuffer<yarp::os::Bottle> portReader;
     bool useCanOpen;

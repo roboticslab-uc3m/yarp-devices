@@ -3,6 +3,7 @@
 #include "CanRxTxThreads.hpp"
 
 #include <cstring>
+#include <utility> // std::move
 
 #include <yarp/os/Time.h>
 
@@ -36,25 +37,19 @@ void CanReaderWriterThread::onStop()
 
 // -----------------------------------------------------------------------------
 
-void CanReaderWriterThread::dumpMessage(const can_message & msg)
+void CanReaderWriterThread::dumpMessage(const can_message & msg, yarp::os::Bottle & b)
 {
-    std::lock_guard<std::mutex> lock(*dumpMutex);
-
-    yarp::os::Bottle & b = dumpWriter->prepare();
-    b.clear();
     b.addInt16(msg.id);
 
     if (msg.len != 0)
     {
-        yarp::os::Bottle & data = b.addList();
+        auto & data = b.addList();
 
         for (int j = 0; j < msg.len; j++)
         {
             data.addInt8(msg.data[j]);
         }
     }
-
-    dumpWriter->write(true); // wait until any previous sends are complete
 }
 
 // -----------------------------------------------------------------------------
@@ -83,6 +78,7 @@ void CanReaderThread::run()
 {
     unsigned int read;
     bool ok;
+    yarp::os::Bottle dump;
 
     while (!isStopping())
     {
@@ -108,7 +104,7 @@ void CanReaderThread::run()
 
             if (dumpWriter)
             {
-                dumpMessage(msg);
+                dumpMessage(msg, dump.addList());
             }
 
             if (canMessageNotifier)
@@ -120,6 +116,14 @@ void CanReaderThread::run()
             {
                 busLoadMonitor->notifyMessage(msg);
             }
+        }
+
+        if (dumpWriter && dump.size() != 0)
+        {
+            std::lock_guard<std::mutex> lock(*dumpMutex);
+            dumpWriter->prepare() = std::move(dump);
+            dumpWriter->write(true); // wait until any previous sends are complete
+            dump.clear();
         }
     }
 }
@@ -170,19 +174,28 @@ void CanWriterThread::flush()
 
     if (dumpWriter || busLoadMonitor)
     {
+        yarp::os::Bottle dump;
+
         for (int i = 0; i < sent; i++)
         {
             can_message msg {canBuffer[i].getId(), canBuffer[i].getLen(), canBuffer[i].getData()};
 
             if (dumpWriter)
             {
-                dumpMessage(msg);
+                dumpMessage(msg, dump.addList());
             }
 
             if (busLoadMonitor)
             {
                 busLoadMonitor->notifyMessage(msg);
             }
+        }
+
+        if (dumpWriter && dump.size() != 0)
+        {
+            std::lock_guard<std::mutex> lock(*dumpMutex);
+            dumpWriter->prepare() = std::move(dump);
+            dumpWriter->write(true); // wait until any previous sends are complete
         }
     }
 
