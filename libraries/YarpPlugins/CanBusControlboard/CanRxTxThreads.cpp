@@ -41,14 +41,9 @@ void CanReaderWriterThread::dumpMessage(const can_message & msg, yarp::os::Bottl
 {
     b.addInt16(msg.id);
 
-    if (msg.len != 0)
+    for (int j = 0; j < msg.len; j++)
     {
-        auto & data = b.addList();
-
-        for (int j = 0; j < msg.len; j++)
-        {
-            data.addInt8(msg.data[j]);
-        }
+        b.addInt8(msg.data[j]);
     }
 }
 

@@ -153,17 +153,15 @@ void DumpCanBus::printMessage(const yarp::os::Bottle & b)
         }
     }
 
-    if (b.size() == 2)
+    if (b.size() > 1)
     {
-        yarp::os::Bottle * data = b.get(1).asList();
-
         std::cout << " ";
         std::cout << std::setfill('0');
 
-        for (int i = 0; i < data->size(); i++)
+        for (int i = 1; i < b.size(); i++)
         {
             std::cout << " ";
-            std::cout << std::setw(2) << std::hex << (static_cast<int>(data->get(i).asInt8()) & 0xFF);
+            std::cout << std::setw(2) << std::hex << (static_cast<int>(b.get(i).asInt8()) & 0xFF);
         }
     }
 
