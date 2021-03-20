@@ -35,7 +35,7 @@ bool DumpCanBus::configure(yarp::os::ResourceFinder & rf)
 
     port.setReadOnly();
 
-    if (!yarp::os::Network::connect(remote + "/dump:o", port.getName(), "udp"))
+    if (!yarp::os::Network::connect(remote + "/dump:o", port.getName(), "fast_tcp"))
     {
         CD_ERROR("Unable to connect to remote port.\n");
         return false;
