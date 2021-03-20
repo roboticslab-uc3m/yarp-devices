@@ -54,7 +54,7 @@ void CanReaderWriterThread::dumpMessage(const can_message & msg)
         }
     }
 
-    dumpWriter->write();
+    dumpWriter->write(true); // wait until any previous sends are complete
 }
 
 // -----------------------------------------------------------------------------

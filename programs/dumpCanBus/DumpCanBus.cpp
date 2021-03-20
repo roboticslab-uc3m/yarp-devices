@@ -33,7 +33,7 @@ bool DumpCanBus::configure(yarp::os::ResourceFinder & rf)
         return false;
     }
 
-    port.setOutputMode(false);
+    port.setReadOnly();
 
     if (!yarp::os::Network::connect(remote + "/dump:o", port.getName(), "udp"))
     {
@@ -43,6 +43,7 @@ bool DumpCanBus::configure(yarp::os::ResourceFinder & rf)
 
     portReader.attach(port);
     portReader.useCallback(*this);
+    portReader.setStrict();
 
     return true;
 }
