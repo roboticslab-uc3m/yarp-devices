@@ -168,7 +168,7 @@ bool CanBusBroker::createPorts(const std::string & prefix)
         sdoReplier.configureSender(writerThread->getDelegate());
     }
 
-    dumpPort.setInputMode(false);
+    dumpPort.setWriteOnly();
     dumpWriter.attach(dumpPort);
 
     sendPort.setOutputMode(false);
