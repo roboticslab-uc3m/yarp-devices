@@ -107,8 +107,8 @@ private:
  * @ingroup testCanOpenNodeLib
  * @brief Manages a FakeCanSenderDelegate and registers asynchronous operations.
  */
-class CanBusSharerTest : public testing::Test,
-                         protected FutureObserver
+class CanOpenNodeTest : public testing::Test,
+                        protected FutureObserver
 {
 public:
     virtual void SetUp()
@@ -133,7 +133,7 @@ private:
     FakeCanSenderDelegate * senderDelegate;
 };
 
-TEST_F(CanBusSharerTest, SdoClientExpeditedUpload)
+TEST_F(CanOpenNodeTest, SdoClientExpeditedUpload)
 {
     const std::uint8_t id = 0x05;
     const std::uint16_t cobRx = 0x600;
@@ -154,7 +154,7 @@ TEST_F(CanBusSharerTest, SdoClientExpeditedUpload)
     std::int8_t actual1;
     const std::int8_t expected1 = 0x44;
     response[0] = 0x4F;
-    std::memcpy(response + 4, &expected1, 4);
+    std::memcpy(response + 4, &expected1, 1);
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.upload("Upload test 1", &actual1, index, subindex));
     ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
@@ -183,7 +183,7 @@ TEST_F(CanBusSharerTest, SdoClientExpeditedUpload)
     std::int16_t actual3;
     const std::int16_t expected3 = 0x4444;
     response[0] = 0x4B;
-    std::memcpy(response + 4, &expected3, 4);
+    std::memcpy(response + 4, &expected3, 2);
     f() = std::async(std::launch::async, observer_timer{MILLIS, [&]{ return sdo.notify(response); }});
     ASSERT_TRUE(sdo.upload("Upload test 4", &actual3, index, subindex));
     ASSERT_EQ(getSender()->getLastMessage().id, sdo.getCobIdRx());
@@ -213,7 +213,7 @@ TEST_F(CanBusSharerTest, SdoClientExpeditedUpload)
     ASSERT_FALSE(sdo.upload("Upload overrun test", &actualOvr, index, subindex));
 }
 
-TEST_F(CanBusSharerTest, SdoClientExpeditedDownload)
+TEST_F(CanOpenNodeTest, SdoClientExpeditedDownload)
 {
     const std::uint8_t id = 0x05;
     const std::uint16_t cobRx = 0x600;
@@ -272,7 +272,7 @@ TEST_F(CanBusSharerTest, SdoClientExpeditedDownload)
     ASSERT_FALSE(sdo.download<std::int8_t>("Download test 4", 0x44, index, subindex));
 }
 
-TEST_F(CanBusSharerTest, SdoClientSegmented)
+TEST_F(CanOpenNodeTest, SdoClientSegmented)
 {
     SdoClient sdo(0x05, 0x600, 0x580, TIMEOUT, getSender());
 
@@ -367,7 +367,7 @@ TEST_F(CanBusSharerTest, SdoClientSegmented)
     ASSERT_EQ(getSender()->getMessage(3).data, toInt64(0x0D, s.substr(14, 1)));
 }
 
-TEST_F(CanBusSharerTest, SdoClientPing)
+TEST_F(CanOpenNodeTest, SdoClientPing)
 {
     const std::uint8_t id = 0x05;
     const std::uint16_t cobRx = 0x600;
@@ -388,7 +388,7 @@ TEST_F(CanBusSharerTest, SdoClientPing)
     ASSERT_TRUE(sdo.ping());
 }
 
-TEST_F(CanBusSharerTest, ReceivePdo)
+TEST_F(CanOpenNodeTest, ReceivePdo)
 {
     SdoClient sdo(0x05, 0x600, 0x580, TIMEOUT, getSender());
 
@@ -487,7 +487,7 @@ TEST_F(CanBusSharerTest, ReceivePdo)
     ASSERT_FALSE(rpdo1.configure(rpdo1Conf));
 }
 
-TEST_F(CanBusSharerTest, TransmitPdo)
+TEST_F(CanOpenNodeTest, TransmitPdo)
 {
     SdoClient sdo(0x05, 0x600, 0x580, TIMEOUT, getSender());
 
@@ -610,7 +610,7 @@ TEST_F(CanBusSharerTest, TransmitPdo)
     ASSERT_FALSE(tpdo1.accept(nullptr, 0));
 }
 
-TEST_F(CanBusSharerTest, NmtProtocol)
+TEST_F(CanOpenNodeTest, NmtProtocol)
 {
     const std::uint8_t id = 0x05;
     NmtProtocol nmt(id, getSender());
@@ -677,7 +677,7 @@ TEST_F(CanBusSharerTest, NmtProtocol)
     ASSERT_EQ(getSender()->getLastMessage().data, static_cast<std::uint8_t>(NmtService::START_REMOTE_NODE) + (id << 8));
 }
 
-TEST_F(CanBusSharerTest, EmcyConsumer)
+TEST_F(CanOpenNodeTest, EmcyConsumer)
 {
     EmcyConsumer emcy;
 
@@ -753,7 +753,7 @@ TEST_F(CanBusSharerTest, EmcyConsumer)
     ASSERT_FALSE(emcy.accept(nullptr));
 }
 
-TEST_F(CanBusSharerTest, DriveStatusMachine)
+TEST_F(CanOpenNodeTest, DriveStatusMachine)
 {
     const std::uint8_t id = 0x05;
     SdoClient sdo(id, 0x600, 0x580, TIMEOUT, getSender());
@@ -1101,7 +1101,7 @@ TEST_F(CanBusSharerTest, DriveStatusMachine)
     ASSERT_FALSE(status.requestState(DriveState::SWITCH_ON_DISABLED));
 }
 
-TEST_F(CanBusSharerTest, CanOpenNode)
+TEST_F(CanOpenNodeTest, CanOpenNode)
 {
     std::uint8_t id = 0x05;
     CanOpenNode can(id, TIMEOUT, TIMEOUT, getSender());

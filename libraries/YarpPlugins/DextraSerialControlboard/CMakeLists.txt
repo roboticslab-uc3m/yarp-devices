@@ -20,7 +20,7 @@ if(NOT SKIP_DextraSerialControlboard)
                                              DeviceDriverImpl.cpp
                                              SerialSynapse.cpp)
 
-    target_link_libraries(DextraSerialControlboard DextraRawControlboardLib
+    target_link_libraries(DextraSerialControlboard ROBOTICSLAB::DextraRawControlboardLib
                                                    YARP::YARP_os
                                                    YARP::YARP_dev
                                                    ROBOTICSLAB::ColorDebug)

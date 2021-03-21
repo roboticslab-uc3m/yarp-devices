@@ -93,10 +93,10 @@ struct JointDriver : public yarp::dev::DeviceDriver,
  * @ingroup testYarpDeviceMapperLib
  * @brief Wrapper class for DummyPositionDirectRawImpl and JointDriver instances.
  */
-class DeviceMapperTest : public testing::Test
+class YarpDeviceMapperTest : public testing::Test
 {
 public:
-    DeviceMapperTest() : dummy(nullptr)
+    YarpDeviceMapperTest() : dummy(nullptr)
     { }
 
     virtual void SetUp()
@@ -151,7 +151,7 @@ private:
     yarp::dev::PolyDriverList drivers;
 };
 
-TEST_F(DeviceMapperTest, SequentialTask)
+TEST_F(YarpDeviceMapperTest, SequentialTask)
 {
     const int joint = 4;
 
@@ -208,7 +208,7 @@ TEST_F(DeviceMapperTest, SequentialTask)
     ASSERT_NEAR(ref, joint, EPSILON);
 }
 
-TEST_F(DeviceMapperTest, ParallelTask)
+TEST_F(YarpDeviceMapperTest, ParallelTask)
 {
     const int joint = 4;
 
@@ -233,7 +233,7 @@ TEST_F(DeviceMapperTest, ParallelTask)
     ASSERT_NEAR(ref3, joint, EPSILON);
 }
 
-TEST_F(DeviceMapperTest, RawDevice)
+TEST_F(YarpDeviceMapperTest, RawDevice)
 {
     RawDevice rd(getDriver<JointDriver<1>>());
     auto * p = rd.getHandle<yarp::dev::IPositionDirectRaw>();
@@ -241,7 +241,7 @@ TEST_F(DeviceMapperTest, RawDevice)
     ASSERT_EQ(rd.castToType<std::string>(), nullptr);
 }
 
-TEST_F(DeviceMapperTest, DeviceMapper)
+TEST_F(YarpDeviceMapperTest, DeviceMapper)
 {
     DeviceMapper mapper;
 

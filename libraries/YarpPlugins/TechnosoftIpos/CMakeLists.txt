@@ -40,9 +40,9 @@ if(NOT SKIP_TechnosoftIpos)
     target_link_libraries(TechnosoftIpos YARP::YARP_os
                                          YARP::YARP_dev
                                          ROBOTICSLAB::ColorDebug
-                                         CanBusSharerLib
-                                         StateObserverLib
-                                         CanOpenNodeLib)
+                                         ROBOTICSLAB::CanBusSharerLib
+                                         ROBOTICSLAB::StateObserverLib
+                                         ROBOTICSLAB::CanOpenNodeLib)
 
     target_compile_features(TechnosoftIpos PUBLIC cxx_std_14)
 

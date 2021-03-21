@@ -50,9 +50,9 @@ if(NOT SKIP_CanBusControlboard)
     target_link_libraries(CanBusControlboard YARP::YARP_os
                                              YARP::YARP_dev
                                              ROBOTICSLAB::ColorDebug
-                                             CanBusSharerLib
-                                             CanOpenNodeLib
-                                             YarpDeviceMapperLib)
+                                             ROBOTICSLAB::CanBusSharerLib
+                                             ROBOTICSLAB::CanOpenNodeLib
+                                             ROBOTICSLAB::YarpDeviceMapperLib)
 
     target_compile_features(CanBusControlboard PRIVATE cxx_std_14)
 

@@ -24,6 +24,8 @@ if(ENABLE_DextraRawControlboardLib)
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
+    add_library(ROBOTICSLAB::DextraRawControlboardLib ALIAS DextraRawControlboardLib)
+
 else()
 
     set(ENABLE_DextraRawControlboardLib OFF CACHE BOOL "Enable/disable DextraRawControlboardLib library" FORCE)

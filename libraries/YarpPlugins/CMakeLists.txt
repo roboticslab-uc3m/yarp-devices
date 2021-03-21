@@ -18,6 +18,8 @@ install(FILES IProximitySensors.h
 install(TARGETS YarpDevicesInterfaces
         EXPORT ROBOTICSLAB_YARP_DEVICES)
 
+add_library(ROBOTICSLAB::YarpDevicesInterfaces ALIAS YarpDevicesInterfaces)
+
 # YARP devices.
 add_subdirectory(AmorControlboard)
 add_subdirectory(AravisGigE)

@@ -19,6 +19,8 @@ if(ENABLE_StateObserverLib)
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
             PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
+    add_library(ROBOTICSLAB::StateObserverLib ALIAS StateObserverLib)
+
 else()
 
     set(ENABLE_StateObserverLib OFF CACHE BOOL "Enable/disable StateObserverLib library" FORCE)

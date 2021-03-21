@@ -34,8 +34,8 @@ if(ENABLE_CanOpenNodeLib)
             "USE_NONSTD_OPTIONAL;optional_CONFIG_NO_EXCEPTIONS=1")
     endif()
 
-    target_link_libraries(CanOpenNodeLib PUBLIC CanBusSharerLib
-                                                StateObserverLib
+    target_link_libraries(CanOpenNodeLib PUBLIC ROBOTICSLAB::CanBusSharerLib
+                                                ROBOTICSLAB::StateObserverLib
                                          PRIVATE ROBOTICSLAB::ColorDebug)
 
     target_include_directories(CanOpenNodeLib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
@@ -49,6 +49,8 @@ if(ENABLE_CanOpenNodeLib)
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
             PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+    add_library(ROBOTICSLAB::CanOpenNodeLib ALIAS CanOpenNodeLib)
 
 else()
 
