@@ -87,6 +87,11 @@ void CanReaderThread::run()
         //-- All debugging messages should be contained in canRead, so just loop again.
         if (!ok || read == 0) continue;
 
+        if (dumpWriter)
+        {
+            lastStamp.update();
+        }
+
         for (int i = 0; i < read; i++)
         {
             can_message msg {canBuffer[i].getId(), canBuffer[i].getLen(), canBuffer[i].getData()};
@@ -116,6 +121,7 @@ void CanReaderThread::run()
         if (dumpWriter && dump.size() != 0)
         {
             std::lock_guard<std::mutex> lock(*dumpMutex);
+            dumpPort->setEnvelope(lastStamp);
             dumpWriter->prepare() = std::move(dump);
             dumpWriter->write(true); // wait until any previous sends are complete
             dump.clear();
@@ -171,6 +177,8 @@ void CanWriterThread::flush()
     {
         yarp::os::Bottle dump;
 
+        lastStamp.update();
+
         for (int i = 0; i < sent; i++)
         {
             can_message msg {canBuffer[i].getId(), canBuffer[i].getLen(), canBuffer[i].getData()};
@@ -189,6 +197,7 @@ void CanWriterThread::flush()
         if (dumpWriter && dump.size() != 0)
         {
             std::lock_guard<std::mutex> lock(*dumpMutex);
+            dumpPort->setEnvelope(lastStamp);
             dumpWriter->prepare() = std::move(dump);
             dumpWriter->write(true); // wait until any previous sends are complete
         }

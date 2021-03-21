@@ -9,7 +9,9 @@
 #include <vector>
 
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Contactable.h>
 #include <yarp/os/PortWriterBuffer.h>
+#include <yarp/os/Stamp.h>
 #include <yarp/os/Thread.h>
 
 #include <yarp/dev/CanBusInterface.h>
@@ -32,7 +34,7 @@ public:
     //! Constructor.
     CanReaderWriterThread(const std::string & type, const std::string & id, double delay, unsigned int bufferSize)
         : iCanBus(nullptr), iCanBusErrors(nullptr), iCanBufferFactory(nullptr),
-          dumpWriter(nullptr), dumpMutex(nullptr), busLoadMonitor(nullptr),
+          dumpPort(nullptr), dumpWriter(nullptr), dumpMutex(nullptr), busLoadMonitor(nullptr),
           bufferSize(bufferSize), delay(delay), type(type), id(id)
     { }
 
@@ -60,15 +62,20 @@ public:
     virtual void run() override = 0;
 
     //! Configure CAN interface handles.
-    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBusErrors * iCanBusErrors,
-            yarp::dev::ICanBufferFactory * iCanBufferFactory)
+    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus,
+                               yarp::dev::ICanBusErrors * iCanBusErrors,
+                               yarp::dev::ICanBufferFactory * iCanBufferFactory)
     {
         this->iCanBus = iCanBus; this->iCanBusErrors = iCanBusErrors; this->iCanBufferFactory = iCanBufferFactory;
     }
 
     //! Attach YARP port writer for CAN message dumping.
-    void attachDumpWriter(yarp::os::PortWriterBuffer<yarp::os::Bottle> * dumpWriter, std::mutex * dumpMutex)
-    { this->dumpWriter = dumpWriter; this->dumpMutex = dumpMutex; }
+    void attachDumpWriter(yarp::os::Contactable * dumpPort,
+                          yarp::os::PortWriterBuffer<yarp::os::Bottle> * dumpWriter,
+                          std::mutex * dumpMutex)
+    {
+        this->dumpPort = dumpPort; this->dumpWriter = dumpWriter; this->dumpMutex = dumpMutex;
+    }
 
     //! Attach CAN bus load monitor.
     void attachBusLoadMonitor(CanMessageNotifier * busLoadMonitor)
@@ -83,8 +90,11 @@ protected:
     yarp::dev::ICanBufferFactory * iCanBufferFactory;
     yarp::dev::CanBuffer canBuffer;
 
+    yarp::os::Contactable * dumpPort;
     yarp::os::PortWriterBuffer<yarp::os::Bottle> * dumpWriter;
     std::mutex * dumpMutex;
+
+    yarp::os::Stamp lastStamp;
 
     CanMessageNotifier * busLoadMonitor;
 

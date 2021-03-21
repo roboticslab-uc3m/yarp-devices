@@ -26,6 +26,7 @@ bool DumpCanBus::configure(yarp::os::ResourceFinder & rf)
     std::string local = rf.check("local", yarp::os::Value(DEFAULT_LOCAL_PORT), "local port name").asString();
     std::string remote = rf.find("remote").asString();
     useCanOpen = !rf.check("no-can-open");
+    printTimestamp = rf.check("with-ts");
 
     if (!port.open(local + "/dump:i"))
     {
@@ -58,19 +59,31 @@ bool DumpCanBus::close()
 
 void DumpCanBus::onRead(yarp::os::Bottle & b)
 {
+    yarp::os::Stamp lastStamp;
+    port.getEnvelope(lastStamp);
+
     for (auto i = 0; i < b.size(); i++)
     {
         auto * msg = b.get(i).asList();
 
         if (msg)
         {
-            printMessage(*msg);
+            printMessage(*msg, lastStamp);
         }
     }
 }
 
-void DumpCanBus::printMessage(const yarp::os::Bottle & b)
+void DumpCanBus::printMessage(const yarp::os::Bottle & b, const yarp::os::Stamp & stamp)
 {
+    if (printTimestamp)
+    {
+        std::cout << "[";
+        std::cout << std::fixed;
+        std::cout << std::setprecision(6);
+        std::cout << stamp.getTime();
+        std::cout << "] ";
+    }
+
     unsigned int cobId = b.get(0).asInt16();
 
     std::cout << std::setfill(' ');

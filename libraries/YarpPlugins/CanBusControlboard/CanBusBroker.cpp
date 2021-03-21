@@ -156,14 +156,14 @@ bool CanBusBroker::createPorts(const std::string & prefix)
 
     if (readerThread)
     {
-        readerThread->attachDumpWriter(&dumpWriter, &dumpMutex);
+        readerThread->attachDumpWriter(&dumpPort, &dumpWriter, &dumpMutex);
         readerThread->attachCanNotifier(&sdoReplier);
         readerThread->attachBusLoadMonitor(busLoadMonitor->getReadMonitor());
     }
 
     if (writerThread)
     {
-        writerThread->attachDumpWriter(&dumpWriter, &dumpMutex);
+        writerThread->attachDumpWriter(&dumpPort, &dumpWriter, &dumpMutex);
         writerThread->attachBusLoadMonitor(busLoadMonitor->getWriteMonitor());
         sdoReplier.configureSender(writerThread->getDelegate());
     }
