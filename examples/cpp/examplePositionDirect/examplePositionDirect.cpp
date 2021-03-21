@@ -104,9 +104,8 @@ int main(int argc, char *argv[])
     }
 
     CD_INFO("-- testing POSITION MODE --\n");
-    std::vector<int> positionMode(numJoints, VOCAB_CM_POSITION);
 
-    if (!mode->setControlModes(positionMode.data()))
+    if (!mode->setControlMode(jointId, VOCAB_CM_POSITION))
     {
         CD_ERROR("Problems setting position control: POSITION.\n");
         return 1;
