@@ -106,6 +106,9 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         return false;
     }
 
+    PdoConfiguration rpdo3conf;
+    rpdo3conf.setTransmissionType(PdoTransmissionType::SYNCHRONOUS_CYCLIC);
+
     switch (mode)
     {
     case VOCAB_CM_POSITION:
@@ -121,7 +124,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         if (vars.enableCsv)
         {
             return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-                && can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x607A))
+                && can->rpdo3()->configure(rpdo3conf.addMapping<std::int32_t>(0x607A))
                 && can->sdo()->download<std::uint8_t>("Interpolation time period", vars.syncPeriod * 1000, 0x60C2, 0x01)
                 && can->sdo()->download<std::int8_t>("Interpolation time period", -3, 0x60C2, 0x02)
                 && can->sdo()->download<std::int8_t>("Modes of Operation", 8, 0x6060)
@@ -131,7 +134,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         else
         {
             return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-                && can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x60FF))
+                && can->rpdo3()->configure(rpdo3conf.addMapping<std::int32_t>(0x60FF))
                 && can->sdo()->download<std::int8_t>("Modes of Operation", 3, 0x6060)
                 && vars.awaitControlMode(mode);
         }
@@ -141,7 +144,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         vars.synchronousCommandTarget = 0.0;
 
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-            && can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x201C))
+            && can->rpdo3()->configure(rpdo3conf.addMapping<std::int32_t>(0x201C))
             && can->sdo()->download<std::uint16_t>("External Reference Type", 1, 0x201D)
             && can->sdo()->download<std::int8_t>("Modes of Operation", -5, 0x6060)
             && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4)) // new setpoint (assume target position)
@@ -165,7 +168,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         vars.prevSyncTarget.store(vars.synchronousCommandTarget);
 
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-            && can->rpdo3()->configure(PdoConfiguration().addMapping<std::int32_t>(0x607A))
+            && can->rpdo3()->configure(rpdo3conf.addMapping<std::int32_t>(0x607A))
             && can->sdo()->download<std::uint8_t>("Interpolation time period", vars.syncPeriod * 1000, 0x60C2, 0x01)
             && can->sdo()->download<std::int8_t>("Interpolation time period", -3, 0x60C2, 0x02)
             && can->sdo()->download<std::int8_t>("Modes of Operation", 8, 0x6060)
