@@ -3,6 +3,7 @@
 #include "InterpolatedPositionBuffer.hpp"
 
 #include <cmath>
+#include <cstring>
 
 #include <algorithm>
 #include <bitset>
@@ -188,9 +189,15 @@ std::int16_t PtBuffer::getSubMode() const
 std::uint64_t PtBuffer::makeDataRecord(const ip_record & previous, const ip_record & current, const ip_record & next)
 {
     std::uint64_t data = 0;
-    data += static_cast<std::int32_t>(vars.degreesToInternalUnits(current.first));
-    data += static_cast<std::uint64_t>(getSampledTime(current.second)) << 32;
-    data += static_cast<std::uint64_t>(getIntegrityCounter()) << 57;
+
+    std::int32_t p = vars.degreesToInternalUnits(current.first);
+    std::uint16_t t = getSampledTime(current.second);
+    std::uint8_t ic = getIntegrityCounter() << 1;
+
+    std::memcpy((unsigned char *)&data, &p, sizeof(p));
+    std::memcpy((unsigned char *)&data + 4, &t, sizeof(t));
+    std::memcpy((unsigned char *)&data + 7, &ic, sizeof(ic));
+
     return data;
 }
 
@@ -219,7 +226,11 @@ std::uint64_t PvtBuffer::makeDataRecord(const ip_record & previous, const ip_rec
     std::uint64_t data = 0;
 
     std::int32_t position = vars.degreesToInternalUnits(current.first);
-    data += ((position & 0x00FF0000) << 8) + (position & 0x0000FFFF);
+    std::int16_t p_lsb = position & 0x0000FFFF;
+    std::int8_t p_msb = ((position & 0x00FF0000) << 8) >> 24;
+
+    std::memcpy((unsigned char *)&data, &p_lsb, sizeof(p_lsb));
+    std::memcpy((unsigned char *)&data + 3, &p_msb, sizeof(p_msb));
 
     if (next.second != 0.0)
     {
@@ -227,15 +238,20 @@ std::uint64_t PvtBuffer::makeDataRecord(const ip_record & previous, const ip_rec
         double nextVelocity = getMeanVelocity(current, next);
         double velocity = vars.degreesToInternalUnits((prevVelocity + nextVelocity) / 2.0, 1);
 
-        std::int16_t velocityInt;
-        std::uint8_t velocityFrac;
-        CanUtils::encodeFixedPoint(velocity, &velocityInt, &velocityFrac);
-        data += static_cast<std::uint64_t>(velocityFrac) << 16;
-        data += static_cast<std::uint64_t>(velocityInt) << 32;
+        std::int16_t v_int;
+        std::uint8_t v_frac;
+
+        CanUtils::encodeFixedPoint(velocity, &v_int, &v_frac);
+
+        std::memcpy((unsigned char *)&data + 2, &v_frac, sizeof(v_frac));
+        std::memcpy((unsigned char *)&data + 4, &v_int, sizeof(v_int));
     }
 
-    data += static_cast<std::uint64_t>(getSampledTime(current.second) & 0x1FF) << 48;
-    data += static_cast<std::uint64_t>(getIntegrityCounter()) << 57;
+    std::uint16_t t = getSampledTime(current.second) & 0x1FF;
+    std::uint8_t ic = getIntegrityCounter() << 1;
+    std::uint16_t tic = t + (static_cast<std::uint16_t>(ic) << 8);
+
+    std::memcpy((unsigned char *)&data + 6, &tic, sizeof(tic));
 
     return data;
 }
