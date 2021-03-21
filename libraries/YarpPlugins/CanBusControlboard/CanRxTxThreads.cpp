@@ -3,6 +3,7 @@
 #include "CanRxTxThreads.hpp"
 
 #include <cstring>
+#include <utility> // std::move
 
 #include <yarp/os/Time.h>
 
@@ -36,25 +37,14 @@ void CanReaderWriterThread::onStop()
 
 // -----------------------------------------------------------------------------
 
-void CanReaderWriterThread::dumpMessage(const can_message & msg)
+void CanReaderWriterThread::dumpMessage(const can_message & msg, yarp::os::Bottle & b)
 {
-    std::lock_guard<std::mutex> lock(*dumpMutex);
-
-    yarp::os::Bottle & b = dumpWriter->prepare();
-    b.clear();
     b.addInt16(msg.id);
 
-    if (msg.len != 0)
+    for (int j = 0; j < msg.len; j++)
     {
-        yarp::os::Bottle & data = b.addList();
-
-        for (int j = 0; j < msg.len; j++)
-        {
-            data.addInt8(msg.data[j]);
-        }
+        b.addInt8(msg.data[j]);
     }
-
-    dumpWriter->write();
 }
 
 // -----------------------------------------------------------------------------
@@ -83,6 +73,7 @@ void CanReaderThread::run()
 {
     unsigned int read;
     bool ok;
+    yarp::os::Bottle dump;
 
     while (!isStopping())
     {
@@ -96,6 +87,11 @@ void CanReaderThread::run()
         //-- All debugging messages should be contained in canRead, so just loop again.
         if (!ok || read == 0) continue;
 
+        if (dumpWriter)
+        {
+            lastStamp.update();
+        }
+
         for (int i = 0; i < read; i++)
         {
             can_message msg {canBuffer[i].getId(), canBuffer[i].getLen(), canBuffer[i].getData()};
@@ -108,7 +104,7 @@ void CanReaderThread::run()
 
             if (dumpWriter)
             {
-                dumpMessage(msg);
+                dumpMessage(msg, dump.addList());
             }
 
             if (canMessageNotifier)
@@ -120,6 +116,15 @@ void CanReaderThread::run()
             {
                 busLoadMonitor->notifyMessage(msg);
             }
+        }
+
+        if (dumpWriter && dump.size() != 0)
+        {
+            std::lock_guard<std::mutex> lock(*dumpMutex);
+            dumpPort->setEnvelope(lastStamp);
+            dumpWriter->prepare() = std::move(dump);
+            dumpWriter->write(true); // wait until any previous sends are complete
+            dump.clear();
         }
     }
 }
@@ -170,19 +175,31 @@ void CanWriterThread::flush()
 
     if (dumpWriter || busLoadMonitor)
     {
+        yarp::os::Bottle dump;
+
+        lastStamp.update();
+
         for (int i = 0; i < sent; i++)
         {
             can_message msg {canBuffer[i].getId(), canBuffer[i].getLen(), canBuffer[i].getData()};
 
             if (dumpWriter)
             {
-                dumpMessage(msg);
+                dumpMessage(msg, dump.addList());
             }
 
             if (busLoadMonitor)
             {
                 busLoadMonitor->notifyMessage(msg);
             }
+        }
+
+        if (dumpWriter && dump.size() != 0)
+        {
+            std::lock_guard<std::mutex> lock(*dumpMutex);
+            dumpPort->setEnvelope(lastStamp);
+            dumpWriter->prepare() = std::move(dump);
+            dumpWriter->write(true); // wait until any previous sends are complete
         }
     }
 

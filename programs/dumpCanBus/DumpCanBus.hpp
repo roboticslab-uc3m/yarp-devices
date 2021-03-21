@@ -6,6 +6,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/PortReaderBuffer.h>
+#include <yarp/os/Stamp.h>
 #include <yarp/os/RFModule.h>
 #include <yarp/os/TypedReaderCallback.h>
 
@@ -25,19 +26,22 @@ public:
     ~DumpCanBus()
     { close(); }
 
-    virtual bool configure(yarp::os::ResourceFinder & rf) override;
+    bool configure(yarp::os::ResourceFinder & rf) override;
 
-    virtual bool updateModule() override
+    bool updateModule() override
     { return true; }
 
-    virtual bool close() override;
+    bool close() override;
 
-    virtual void onRead(yarp::os::Bottle & b) override;
+    void onRead(yarp::os::Bottle & b) override;
 
 private:
+    void printMessage(const yarp::os::Bottle & b, const yarp::os::Stamp & stamp);
+
     yarp::os::Port port;
     yarp::os::PortReaderBuffer<yarp::os::Bottle> portReader;
     bool useCanOpen;
+    bool printTimestamp;
 };
 
 } // namespace roboticslab

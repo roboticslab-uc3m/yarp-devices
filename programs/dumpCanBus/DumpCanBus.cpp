@@ -26,6 +26,7 @@ bool DumpCanBus::configure(yarp::os::ResourceFinder & rf)
     std::string local = rf.check("local", yarp::os::Value(DEFAULT_LOCAL_PORT), "local port name").asString();
     std::string remote = rf.find("remote").asString();
     useCanOpen = !rf.check("no-can-open");
+    printTimestamp = rf.check("with-ts");
 
     if (!port.open(local + "/dump:i"))
     {
@@ -33,9 +34,9 @@ bool DumpCanBus::configure(yarp::os::ResourceFinder & rf)
         return false;
     }
 
-    port.setOutputMode(false);
+    port.setReadOnly();
 
-    if (!yarp::os::Network::connect(remote + "/dump:o", port.getName(), "udp"))
+    if (!yarp::os::Network::connect(remote + "/dump:o", port.getName(), "fast_tcp"))
     {
         CD_ERROR("Unable to connect to remote port.\n");
         return false;
@@ -43,6 +44,7 @@ bool DumpCanBus::configure(yarp::os::ResourceFinder & rf)
 
     portReader.attach(port);
     portReader.useCallback(*this);
+    portReader.setStrict();
 
     return true;
 }
@@ -57,6 +59,31 @@ bool DumpCanBus::close()
 
 void DumpCanBus::onRead(yarp::os::Bottle & b)
 {
+    yarp::os::Stamp lastStamp;
+    port.getEnvelope(lastStamp);
+
+    for (auto i = 0; i < b.size(); i++)
+    {
+        auto * msg = b.get(i).asList();
+
+        if (msg)
+        {
+            printMessage(*msg, lastStamp);
+        }
+    }
+}
+
+void DumpCanBus::printMessage(const yarp::os::Bottle & b, const yarp::os::Stamp & stamp)
+{
+    if (printTimestamp)
+    {
+        std::cout << "[";
+        std::cout << std::fixed;
+        std::cout << std::setprecision(6);
+        std::cout << stamp.getTime();
+        std::cout << "] ";
+    }
+
     unsigned int cobId = b.get(0).asInt16();
 
     std::cout << std::setfill(' ');
@@ -139,17 +166,15 @@ void DumpCanBus::onRead(yarp::os::Bottle & b)
         }
     }
 
-    if (b.size() == 2)
+    if (b.size() > 1)
     {
-        yarp::os::Bottle * data = b.get(1).asList();
-
         std::cout << " ";
         std::cout << std::setfill('0');
 
-        for (int i = 0; i < data->size(); i++)
+        for (int i = 1; i < b.size(); i++)
         {
             std::cout << " ";
-            std::cout << std::setw(2) << std::hex << (static_cast<int>(data->get(i).asInt8()) & 0xFF);
+            std::cout << std::setw(2) << std::hex << (static_cast<int>(b.get(i).asInt8()) & 0xFF);
         }
     }
 
