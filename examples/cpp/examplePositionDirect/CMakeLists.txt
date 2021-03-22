@@ -12,5 +12,4 @@ add_executable(examplePositionDirect examplePositionDirect.cpp)
 
 target_link_libraries(examplePositionDirect YARP::YARP_os
                                             YARP::YARP_init
-                                            YARP::YARP_dev
-                                            ROBOTICSLAB::ColorDebug)
+                                            YARP::YARP_dev)

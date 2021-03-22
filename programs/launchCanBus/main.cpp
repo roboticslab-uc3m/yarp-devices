@@ -6,10 +6,9 @@
  * @brief Creates an instance of roboticslab::LaunchCanBus.
  */
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/ResourceFinder.h>
-
-#include <ColorDebug.h>
 
 #include "LaunchCanBus.hpp"
 
@@ -21,17 +20,14 @@ int main(int argc, char * argv[])
     rf.setDefaultConfigFile("launchCanBus.ini");
     rf.configure(argc, argv);
 
-    CD_INFO("Checking for yarp network... ");
+    yInfo() << "Checking for yarp network...";
     yarp::os::Network yarp;
 
-    if (!yarp.checkNetwork())
+    if (!yarp::os::Network::checkNetwork())
     {
-        CD_ERROR_NO_HEADER("[fail]\n");
-        CD_INFO("Found no yarp network (try running \"yarpserver &\"), bye!\n");
+        yError() << "Found no yarp network (try running \"yarpserver &\"), bye!";
         return 1;
     }
-
-    CD_SUCCESS_NO_HEADER("[ok]\n");
 
     roboticslab::LaunchCanBus mod;
     return mod.runModule(rf);

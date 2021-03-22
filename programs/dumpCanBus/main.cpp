@@ -11,10 +11,9 @@
  * <code>--no-can-open</code> option.
  */
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/ResourceFinder.h>
-
-#include <ColorDebug.h>
 
 #include "DumpCanBus.hpp"
 
@@ -27,15 +26,13 @@ int main(int argc, char *argv[])
     rf.configure(argc, argv);
 
     yarp::os::Network yarp;
-    CD_INFO_NO_HEADER("Checking for yarp network... ");
+    yInfo() << "Checking for yarp network...";
 
-    if (!yarp.checkNetwork())
+    if (!yarp::os::Network::checkNetwork())
     {
-        CD_ERROR("[fail]\n");
+        yError() << "YARP network not found";
         return 1;
     }
-
-    CD_SUCCESS_NO_HEADER("[ok]\n");
 
     roboticslab::DumpCanBus mod;
     return mod.runModule(rf);

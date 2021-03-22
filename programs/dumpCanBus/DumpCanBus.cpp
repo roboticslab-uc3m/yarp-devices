@@ -6,20 +6,19 @@
 #include <iomanip>
 #include <iostream>
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Value.h>
-
-#include <ColorDebug.h>
 
 using namespace roboticslab;
 
 bool DumpCanBus::configure(yarp::os::ResourceFinder & rf)
 {
-    CD_DEBUG("%s\n", rf.toString().c_str());
+    yDebug() << "DumpCanBus config:" << rf.toString();
 
     if (!rf.check("remote", "remote port name"))
     {
-        CD_ERROR("Missing remote port name.\n");
+        yError() << "Missing remote port name";
         return false;
     }
 
@@ -30,15 +29,21 @@ bool DumpCanBus::configure(yarp::os::ResourceFinder & rf)
 
     if (!port.open(local + "/dump:i"))
     {
-        CD_ERROR("Unable to open local port.\n");
+        yError() << "Unable to open local port";
         return false;
     }
 
     port.setReadOnly();
 
-    if (!yarp::os::Network::connect(remote + "/dump:o", port.getName(), "fast_tcp"))
+    yarp::os::ContactStyle style;
+    style.carrier = "fast_tcp";
+    style.expectReply = false;
+    style.persistent = true;
+    style.persistenceType = yarp::os::ContactStyle::END_WITH_TO_PORT;
+
+    if (!yarp::os::Network::connect(remote + "/dump:o", port.getName(), style))
     {
-        CD_ERROR("Unable to connect to remote port.\n");
+        yError() << "Unable to connect to remote port";
         return false;
     }
 

@@ -7,6 +7,7 @@
 #include <vector>
 
 #include <yarp/os/Bottle.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Vocab.h>
@@ -18,21 +19,17 @@
 #include <yarp/dev/IWrapper.h>
 #include <yarp/dev/PolyDriver.h>
 
-#include <ColorDebug.h>
-
 using namespace roboticslab;
 
 /************************************************************************/
 
 bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 {
-    CD_DEBUG("%s\n", rf.toString().c_str());
-
     if (rf.check("help"))
     {
-        std::printf("LaunchCanBus options:\n");
-        std::printf("\t--help (this help)\t--from [file.ini]\t--context [path]\t--mode [pos]\t--homePoss\n\n");
-        CD_DEBUG_NO_HEADER("%s\n", rf.toString().c_str());
+        yInfo() << "LaunchCanBus options:";
+        yInfo() << "\t--help (this help)\t--from [file.ini]\t--context [path]\t--mode [pos]\t--homePoss";
+        yDebug() << rf.toString();
         return false;
     }
 
@@ -42,10 +39,8 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
     if (configPath.empty() || !robotConfig.fromConfigFile(configPath))
     {
-        CD_WARNING("Config file \"%s\" not found or unsufficient permissions.\n", configPath.c_str());
+        yWarning() << "Config file not found or unsufficient permissions:" << configPath;
     }
-
-    CD_DEBUG("config.ini: %s\n", robotConfig.toString().c_str());
 
     yarp::conf::vocab32_t mode = rf.check("mode", yarp::os::Value(VOCAB_CM_POSITION), "initial mode of operation").asVocab();
     bool homing = rf.check("home", "perform initial homing procedure");
@@ -55,13 +50,13 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
     if (devCan.isNull() || devCan.size() == 0)
     {
-        CD_ERROR("Missing or empty \"devCan\" section collection.\n");
+        yError() << "Missing or empty \"devCan\" section collection";
         return false;
     }
 
     if (wrapper.isNull() || wrapper.size() == 0)
     {
-        CD_ERROR("Missing or empty \"wrapper\" section collection.\n");
+        yError() << "Missing or empty \"wrapper\" section collection";
         return false;
     }
 
@@ -74,7 +69,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
         if (canDeviceGroup.isNull())
         {
-            CD_ERROR("Missing CAN device group %s.\n", canDeviceLabel.c_str());
+            yError() << "Missing CAN device group" << canDeviceLabel;
             return false;
         }
 
@@ -87,7 +82,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
         if (!canDevice->open(canDeviceOptions))
         {
-            CD_ERROR("CAN device %s configuration failure.\n", canDeviceLabel.c_str());
+            yError() << "CAN device" << canDeviceLabel << "configuration failure";
             return false;
         }
     }
@@ -101,7 +96,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
         if (wrapperDeviceGroup.isNull())
         {
-            CD_ERROR("Missing wrapper device group %s.\n", wrapperDeviceLabel.c_str());
+            yError() << "Missing wrapper device group" << wrapperDeviceLabel;
             return false;
         }
 
@@ -114,7 +109,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
         if (!wrapperDevice->open(wrapperDeviceOptions))
         {
-            CD_ERROR("Wrapper device %s configuration failure.\n", wrapperDeviceLabel.c_str());
+            yError() << "Wrapper device" << wrapperDeviceLabel << "configuration failure";
             return false;
         }
 
@@ -122,7 +117,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
         if (!wrapperDevice->view(iMultipleWrapper))
         {
-            CD_ERROR("Unable to view IMultipleWrapper in %s.\n", wrapperDeviceLabel.c_str());
+            yError() << "Unable to view IMultipleWrapper in" << wrapperDeviceLabel;
             return false;
         }
 
@@ -135,7 +130,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
         {
             if (robotConfig.toString().empty())
             {
-                CD_WARNING("Missing robot config, but calibrator device was requested.\n");
+                yWarning() << "Missing robot config, but calibrator device was requested";
                 goto attachToWrapper; // ave Satanas
             }
 
@@ -143,7 +138,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
             if (calibratorDeviceGroup.isNull())
             {
-                CD_WARNING("Missing calibrator device group %s.\n", calibratorDeviceLabel.c_str());
+                yWarning() << "Missing calibrator device group" << calibratorDeviceLabel;
                 goto attachToWrapper; // ave Satanas
             }
 
@@ -158,7 +153,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
             if (!calibratorDevice->open(calibratorDeviceOptions))
             {
-                CD_ERROR("Calibrator device %s configuration failure.\n", calibratorDeviceLabel.c_str());
+                yError() << "Calibrator device" << calibratorDeviceLabel << "configuration failure";
                 return false;
             }
 
@@ -166,7 +161,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
             if (!calibratorDevice->view(iRemoteCalibrator))
             {
-                CD_ERROR("Unable to view IRemoteCalibrator in calibrator device %s.\n", calibratorDeviceLabel.c_str());
+                yError() << "Unable to view IRemoteCalibrator in calibrator device" << calibratorDeviceLabel;
                 return false;
             }
 
@@ -174,13 +169,13 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
             if (!calibratorDevice->view(iWrapper))
             {
-                CD_ERROR("Unable to view IWrapper in calibrator device %s.\n", calibratorDeviceLabel.c_str());
+                yError() << "Unable to view IWrapper in calibrator device" << calibratorDeviceLabel;
                 return false;
             }
 
             if (!iWrapper->attach(wrapperDevice))
             {
-                CD_ERROR("Unable to attach calibrator to wrapper device %s.\n", wrapperDeviceLabel.c_str());
+                yError() << "Unable to attach calibrator to wrapper device" << wrapperDeviceLabel;
                 return false;
             }
 
@@ -190,7 +185,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
         attachToWrapper:
         if (!iMultipleWrapper->attachAll(temp))
         {
-            CD_ERROR("Unable to attach wrapper %s to CAN devices.\n", wrapperDeviceLabel.c_str());
+            yError() << "Unable to attach wrapper" << wrapperDeviceLabel << "to CAN devices";
             return false;
         }
     }
@@ -208,13 +203,13 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
                 if (!iRemoteCalibrator->homingWholePart())
                 {
-                    CD_WARNING("Homing procedure failed for calibrator id %d.\n", i);
+                    yWarning() << "Homing procedure failed for calibrator id" << i;
                 }
             }
         }
         else
         {
-            CD_WARNING("Homing procedure requested, but no calibrator devices loaded.\n");
+            yWarning() << "Homing procedure requested, but no calibrator devices loaded";
         }
     }
 

@@ -10,7 +10,7 @@ if(ENABLE_YarpDeviceMapperLib)
                                            ctpl/ctpl_stl.h)
 
     target_link_libraries(YarpDeviceMapperLib PUBLIC YARP::YARP_dev
-                                              PRIVATE ROBOTICSLAB::ColorDebug)
+                                              PRIVATE YARP::YARP_os)
 
     target_include_directories(YarpDeviceMapperLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

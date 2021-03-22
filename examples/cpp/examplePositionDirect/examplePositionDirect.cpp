@@ -8,9 +8,11 @@
 
 #include <cmath>
 
+#include <iostream>
 #include <string>
 #include <vector>
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
@@ -22,8 +24,6 @@
 #include <yarp/dev/IPositionDirect.h>
 #include <yarp/dev/IRemoteVariables.h>
 #include <yarp/dev/PolyDriver.h>
-
-#include <ColorDebug.h>
 
 #define DEFAULT_REMOTE "/teo/leftArm"
 #define DEFAULT_JOINT 5
@@ -49,19 +49,19 @@ int main(int argc, char *argv[])
 
     if (speed <= 0)
     {
-        CD_ERROR("Illegal speed: %f.\n", speed);
+        yError() << "Illegal speed:" << speed;
         return 1;
     }
 
     if (period <= 0)
     {
-        CD_ERROR("Illegal period: %d.\n", period);
+        yError() << "Illegal period:" << period;
         return false;
     }
 
     if (ipMode != "pt" && ipMode != "pvt")
     {
-        CD_ERROR("Illegal ipMode: %s.\n", ipMode.c_str());
+        yError() << "Illegal ipMode:" << ipMode;
         return false;
     }
 
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 
     if (!yarp::os::Network::checkNetwork())
     {
-        CD_ERROR("Please start a yarp name server first.\n");
+        yError() << "Please start a yarp name server first";
         return 1;
     }
 
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 
     if (!dd.isValid())
     {
-      CD_ERROR("Remote device not available.\n");
+      yError() << "Remote device not available";
       return 1;
     }
 
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 
     if (!ok)
     {
-        CD_ERROR("Problems acquiring robot interfaces.\n");
+        yError() << "Problems acquiring robot interfaces";
         return 1;
     }
 
@@ -111,25 +111,24 @@ int main(int argc, char *argv[])
 
     if (jointId < 0 || jointId > numJoints - 1)
     {
-        CD_ERROR("Illegal joint ID: %d (numJoints: %d).\n", jointId, numJoints);
+        yError("Illegal joint ID: %d (numJoints: %d)", jointId, numJoints);
         return 1;
     }
 
-    CD_INFO("-- testing POSITION MODE --\n");
-    std::vector<int> positionMode(numJoints, VOCAB_CM_POSITION);
+    yInfo() << "-- testing POSITION MODE --";
 
-    if (!mode->setControlModes(positionMode.data()))
+    if (!mode->setControlMode(jointId, VOCAB_CM_POSITION))
     {
-        CD_ERROR("Problems setting position control: POSITION.\n");
+        yError() << "Problems setting position control: POSITION";
         return 1;
     }
 
-    CD_INFO("Moving joint %d to %f degrees...\n", jointId, posTarget);
+    yInfo() << "Moving joint" << jointId << "to" << posTarget << "degrees...";
     pos->positionMove(jointId, posTarget);
 
     getchar();
 
-    CD_INFO("-- testing POSITION DIRECT --\n");
+    yInfo() << "-- testing POSITION DIRECT --";
 
     if (batch)
     {
@@ -143,14 +142,14 @@ int main(int argc, char *argv[])
 
         if (!var->setRemoteVariable("all", {v}))
         {
-            CD_ERROR("Unable to set linear interpolation mode.\n");
+            yError() << "Unable to set linear interpolation mode";
             return 1;
         }
     }
 
     if (!mode->setControlMode(jointId, VOCAB_CM_POSITION_DIRECT))
     {
-        CD_ERROR("Problems setting position control: POSITION_DIRECT.\n");
+        yError() << "Problems setting position control: POSITION_DIRECT";
         return 1;
     }
 
@@ -158,15 +157,15 @@ int main(int argc, char *argv[])
 
     if (!enc->getEncoder(jointId, &initialPos))
     {
-        CD_ERROR("getEncoders() failed.\n");
+        yError() << "getEncoders() failed";
         return 1;
     }
 
-    CD_INFO("Current ENC value: %f\n", initialPos);
+    yInfo() << "Current ENC value:" << initialPos;
 
     getchar();
 
-    CD_INFO("Moving joint %d to %f degrees...\n", jointId, posdTarget);
+    yInfo() << "Moving joint" << jointId << "to" << posdTarget << "degrees...";
 
     const double distance = posdTarget - posTarget;
     const double increment = (speed * period * 0.001) / distance;
@@ -176,7 +175,7 @@ int main(int argc, char *argv[])
     {
         progress += increment;
         double newPos = initialPos + progress * std::abs(distance);
-        CD_INFO("New target: %f\n", newPos);
+        yInfo() << "New target:" << newPos;
         posd->setPosition(jointId, newPos);
 
         if (!batch)
@@ -191,12 +190,12 @@ int main(int argc, char *argv[])
 
         do
         {
-            CD_INFO_NO_HEADER(".");
+            std::cout << ".";
             yarp::os::Time::delay(0.5);
         }
         while (pos->checkMotionDone(&done) && !done);
 
-        CD_INFO_NO_HEADER("end\n");
+        std::cout << " end" << std::endl;
     }
 
     return 0;
