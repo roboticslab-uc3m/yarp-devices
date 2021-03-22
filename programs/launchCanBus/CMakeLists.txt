@@ -8,8 +8,7 @@ if(ENABLE_launchCanBus)
     
     target_link_libraries(launchCanBus YARP::YARP_os
                                        YARP::YARP_dev
-                                       YARP::YARP_init
-                                       ROBOTICSLAB::ColorDebug)
+                                       YARP::YARP_init)
     
     install(TARGETS launchCanBus
             DESTINATION ${CMAKE_INSTALL_BINDIR})

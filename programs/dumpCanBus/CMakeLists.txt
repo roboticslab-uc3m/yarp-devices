@@ -7,8 +7,7 @@ if(ENABLE_dumpCanBus)
                               DumpCanBus.hpp)
 
     target_link_libraries(dumpCanBus YARP::YARP_os
-                                     YARP::YARP_init
-                                     ROBOTICSLAB::ColorDebug)
+                                     YARP::YARP_init)
 
     target_compile_features(dumpCanBus PRIVATE cxx_std_11)
 

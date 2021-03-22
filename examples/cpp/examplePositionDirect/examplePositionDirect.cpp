@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
@@ -21,8 +22,6 @@
 #include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/IPositionDirect.h>
 #include <yarp/dev/PolyDriver.h>
-
-#include <ColorDebug.h>
 
 #define DEFAULT_REMOTE "/teo/leftArm"
 #define DEFAULT_JOINT 5
@@ -45,13 +44,13 @@ int main(int argc, char *argv[])
 
     if (speed <= 0)
     {
-        CD_ERROR("Illegal speed: %f.\n", speed);
+        yError() << "Illegal speed:" << speed;
         return 1;
     }
 
     if (period <= 0)
     {
-        CD_ERROR("Illegal period.\n");
+        yError() << "Illegal period:" << period;
         return false;
     }
 
@@ -59,7 +58,7 @@ int main(int argc, char *argv[])
 
     if (!yarp::os::Network::checkNetwork())
     {
-        CD_ERROR("Please start a yarp name server first.\n");
+        yError() << "Please start a yarp name server first";
         return 1;
     }
 
@@ -72,7 +71,7 @@ int main(int argc, char *argv[])
 
     if (!dd.isValid())
     {
-      CD_ERROR("Remote device not available.\n");
+      yError() << "Remote device not available";
       return 1;
     }
 
@@ -90,7 +89,7 @@ int main(int argc, char *argv[])
 
     if (!ok)
     {
-        CD_ERROR("Problems acquiring robot interfaces.\n");
+        yError() << "Problems acquiring robot interfaces";
         return 1;
     }
 
@@ -99,28 +98,28 @@ int main(int argc, char *argv[])
 
     if (jointId < 0 || jointId > numJoints - 1)
     {
-        CD_ERROR("Illegal joint ID: %d (numJoints: %d).\n", jointId, numJoints);
+        yError("Illegal joint ID: %d (numJoints: %d)", jointId, numJoints);
         return 1;
     }
 
-    CD_INFO("-- testing POSITION MODE --\n");
+    yInfo() << "-- testing POSITION MODE --";
 
     if (!mode->setControlMode(jointId, VOCAB_CM_POSITION))
     {
-        CD_ERROR("Problems setting position control: POSITION.\n");
+        yError() << "Problems setting position control: POSITION";
         return 1;
     }
 
-    CD_INFO("Moving joint %d to %f degrees...\n", jointId, posTarget);
+    yInfo() << "Moving joint" << jointId << "to" << posTarget << "degrees...";
     pos->positionMove(jointId, posTarget);
 
     getchar();
 
-    CD_INFO("-- testing POSITION DIRECT --\n");
+    yInfo() << "-- testing POSITION DIRECT --";
 
     if (!mode->setControlMode(jointId, VOCAB_CM_POSITION_DIRECT))
     {
-        CD_ERROR("Problems setting position control: POSITION_DIRECT.\n");
+        yError() << "Problems setting position control: POSITION_DIRECT";
         return 1;
     }
 
@@ -128,15 +127,15 @@ int main(int argc, char *argv[])
 
     if (!enc->getEncoder(jointId, &initialPos))
     {
-        CD_ERROR("getEncoders() failed.\n");
+        yError() << "getEncoders() failed";
         return 1;
     }
 
-    CD_INFO("Current ENC value: %f\n", initialPos);
+    yInfo() << "Current ENC value:" << initialPos;
 
     getchar();
 
-    CD_INFO("Moving joint %d to %f degrees...\n", jointId, posdTarget);
+    yInfo() << "Moving joint" << jointId << "to" << posdTarget << "degrees...";
 
     const double distance = posdTarget - posTarget;
     const double increment = (speed * period * 0.001) / distance;
@@ -146,7 +145,7 @@ int main(int argc, char *argv[])
     {
         progress += increment;
         double newPos = initialPos + progress * std::abs(distance);
-        CD_INFO("New target: %f\n", newPos);
+        yInfo() << "New target:" << newPos;
         posd->setPosition(jointId, newPos);
         yarp::os::Time::delay(period * 0.001);
     }

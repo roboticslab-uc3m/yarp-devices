@@ -2,9 +2,8 @@
 
 #include "DeviceMapper.hpp"
 
+#include <yarp/os/LogStream.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-
-#include <ColorDebug.h>
 
 using namespace roboticslab;
 
@@ -84,7 +83,7 @@ bool DeviceMapper::registerDevice(yarp::dev::PolyDriver * driver)
 
     if (!queryControlledAxes(rd, &axes, &ret))
     {
-        CD_WARNING("Unable to get controlled axes: missing interface implementation.\n");
+        yWarning() << "Unable to get controlled axes: missing interface implementation";
         delete rd;
         return false;
     }
@@ -98,7 +97,7 @@ bool DeviceMapper::registerDevice(yarp::dev::PolyDriver * driver)
     }
     else
     {
-        CD_WARNING("Unable to get controlled axes: query failure.\n");
+        yWarning() << "Unable to get controlled axes: query failure";
         delete rd;
         return false;
     }
