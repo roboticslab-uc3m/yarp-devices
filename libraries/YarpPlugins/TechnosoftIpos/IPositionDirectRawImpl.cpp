@@ -18,8 +18,8 @@ bool TechnosoftIpos::setPositionRaw(int j, double ref)
     {
         ipBuffer->addSetpoint(ref); // register point in the internal queue
 
-        // drive's buffer is empty, motion has not started yet, we have enough points in the queue
-        if (!vars.ipBufferFilled && !vars.ipMotionStarted && ipBuffer->isQueueReady())
+        // ip mode is enabled, drive's buffer is empty, motion has not started yet, we have enough points in the queue
+        if (vars.ipBufferEnabled && !vars.ipBufferFilled && !vars.ipMotionStarted && ipBuffer->isQueueReady())
         {
             std::int32_t refInternal = vars.lastEncoderRead->queryPosition();
             ipBuffer->setInitial(vars.internalUnitsToDegrees(refInternal));

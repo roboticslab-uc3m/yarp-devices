@@ -393,21 +393,27 @@ void TechnosoftIpos::interpretIpStatus(std::uint16_t status)
     std::uint8_t ic = status & 0x007F; // integrity counter
 
     // 7-10: reserved
-    reportBitToggle(report, WARN, 11, "Drive has performed a quick stop after a buffer empty condition (last velocity was non-zero).",
+    reportBitToggle(report, INFO, 11, "Drive has performed a quick stop after a buffer empty condition (last velocity was non-zero).",
             "Drive has maintained interpolated position mode after a buffer empty condition.");
-    reportBitToggle(report, WARN, 12, "Integrity counter error.", "No integrity counter error.");
 
+    auto isBufferError = reportBitToggle(report, WARN, 12, "Integrity counter error.", "No integrity counter error.");
     auto isBufferFull = reportBitToggle(report, NONE, 13, "Buffer is full.", "Buffer is not full.");
     auto isBufferLow = reportBitToggle(report, NONE, 14, "Buffer is low.", "Buffer is not low."); // also true if empty!
     auto isBufferEmpty = reportBitToggle(report, INFO, 15, "Buffer is empty.", "Buffer is not empty.");
 
-    if (isBufferFull && ipBuffer && !vars.ipMotionStarted)
+    if (isBufferError && vars.ipBufferEnabled)
+    {
+        can->driveStatus()->controlword(can->driveStatus()->controlword().set(8)); // stop drive with profile acceleration
+        vars.ipBufferEnabled = false;
+    }
+
+    if (isBufferFull && vars.ipBufferEnabled && !vars.ipMotionStarted)
     {
         // enable ip mode
         vars.ipMotionStarted = can->driveStatus()->controlword(can->driveStatus()->controlword().set(4));
     }
 
-    if (isBufferLow && ipBuffer && vars.ipMotionStarted && !ipBuffer->isQueueEmpty() && !isBufferEmpty)
+    if (isBufferLow && vars.ipBufferEnabled && vars.ipMotionStarted && !ipBuffer->isQueueEmpty() && !isBufferEmpty)
     {
         // load next batch of points into the drive's buffer (unless reported empty, in which case stop motion and replenish again)
         for (auto setpoint : ipBuffer->popBatch(false))
@@ -416,7 +422,7 @@ void TechnosoftIpos::interpretIpStatus(std::uint16_t status)
         }
     }
 
-    if (isBufferEmpty && ipBuffer && vars.ipMotionStarted)
+    if (isBufferEmpty && vars.ipBufferEnabled && vars.ipMotionStarted)
     {
         // no elements in the queue and buffer is empty, disable ip mode
         vars.ipMotionStarted = !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4));

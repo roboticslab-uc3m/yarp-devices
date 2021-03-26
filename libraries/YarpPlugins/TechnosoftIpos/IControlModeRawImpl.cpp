@@ -114,6 +114,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         if (ipBuffer)
         {
             vars.ipBufferFilled = vars.ipMotionStarted = false;
+            vars.ipBufferEnabled = true;
             ipBuffer->clearQueue();
 
             PdoConfiguration rpdo3Conf;

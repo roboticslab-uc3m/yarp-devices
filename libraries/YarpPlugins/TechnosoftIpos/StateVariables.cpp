@@ -251,7 +251,7 @@ void StateVariables::reset()
     synchronousCommandTarget = prevSyncTarget = 0.0;
     enableSync = false;
 
-    ipBufferFilled = ipMotionStarted = false;
+    ipBufferFilled = ipMotionStarted = ipBufferEnabled = false;
 }
 
 // -----------------------------------------------------------------------------
