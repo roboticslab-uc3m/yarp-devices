@@ -397,30 +397,30 @@ void TechnosoftIpos::interpretIpStatus(std::uint16_t status)
             "Drive has maintained interpolated position mode after a buffer empty condition.");
     reportBitToggle(report, WARN, 12, "Integrity counter error.", "No integrity counter error.");
 
-    if (reportBitToggle(report, NONE, 13, "Buffer is full.", "Buffer is not full.") && ipBuffer
-            && !vars.ipMotionStarted)
+    auto isBufferFull = reportBitToggle(report, NONE, 13, "Buffer is full.", "Buffer is not full.");
+    auto isBufferLow = reportBitToggle(report, NONE, 14, "Buffer is low.", "Buffer is not low."); // also true if empty!
+    auto isBufferEmpty = reportBitToggle(report, INFO, 15, "Buffer is empty.", "Buffer is not empty.");
+
+    if (isBufferFull && ipBuffer && !vars.ipMotionStarted)
     {
-        // buffer full, ready to enable ip mode
+        // enable ip mode
         vars.ipMotionStarted = can->driveStatus()->controlword(can->driveStatus()->controlword().set(4));
     }
 
-    if (reportBitToggle(report, NONE, 14, "Buffer is low.", "Buffer is not low.") && ipBuffer
-            && vars.ipMotionStarted
-            && !ipBuffer->isQueueEmpty())
+    if (isBufferLow && ipBuffer && vars.ipMotionStarted && !ipBuffer->isQueueEmpty() && !isBufferEmpty)
     {
-        // load next batch of points into the drive's buffer
+        // load next batch of points into the drive's buffer (unless reported empty, in which case stop motion and replenish again)
         for (auto setpoint : ipBuffer->popBatch(false))
         {
             can->rpdo3()->write(setpoint);
         }
     }
 
-    if (reportBitToggle(report, INFO, 15, "Buffer is empty.", "Buffer is not empty.") && ipBuffer
-            && vars.ipMotionStarted
-            && can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)))
+    if (isBufferEmpty && ipBuffer && vars.ipMotionStarted)
     {
-        // no elements in the queue and buffer is empty; stop motion
-        vars.ipMotionStarted = vars.ipBufferFilled = false;
+        // no elements in the queue and buffer is empty, disable ip mode
+        vars.ipMotionStarted = !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4));
+        vars.ipBufferFilled = false;
     }
 
     vars.ipStatus = status;
