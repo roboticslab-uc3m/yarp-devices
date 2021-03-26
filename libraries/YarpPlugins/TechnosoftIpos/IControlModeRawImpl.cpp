@@ -114,19 +114,20 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         if (ipBuffer)
         {
             vars.ipBufferFilled = vars.ipMotionStarted = false;
+            ipBuffer->clearQueue();
 
             PdoConfiguration rpdo3Conf;
             rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x01);
             rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x02);
 
             return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-                    && can->rpdo3()->configure(rpdo3Conf)
-                    && can->sdo()->download<std::uint16_t>("Auxiliary Settings Register", 0x0000, 0x208E) // legacy pt mode
-                    && can->sdo()->download("Interpolation sub mode select", ipBuffer->getSubMode(), 0x60C0)
-                    && can->sdo()->download("Interpolated position buffer length", ipBuffer->getBufferSize(), 0x2073)
-                    && can->sdo()->download("Interpolated position buffer configuration", ipBuffer->getBufferConfig(), 0x2074)
-                    && can->sdo()->download<std::int8_t>("Modes of Operation", 7, 0x6060)
-                    && vars.awaitControlMode(VOCAB_CM_POSITION_DIRECT);
+                && can->rpdo3()->configure(rpdo3Conf)
+                && can->sdo()->download<std::uint16_t>("Auxiliary Settings Register", 0x0000, 0x208E) // legacy ip mode
+                && can->sdo()->download("Interpolation sub mode select", ipBuffer->getSubMode(), 0x60C0)
+                && can->sdo()->download("Interpolated position buffer length", ipBuffer->getBufferSize(), 0x2073)
+                && can->sdo()->download("Interpolated position buffer configuration", ipBuffer->getBufferConfig(), 0x2074)
+                && can->sdo()->download<std::int8_t>("Modes of Operation", 7, 0x6060)
+                && vars.awaitControlMode(VOCAB_CM_POSITION_DIRECT);
         }
 
         // bug in F508M/F509M firmware, switch to homing mode to stop controlling profile velocity

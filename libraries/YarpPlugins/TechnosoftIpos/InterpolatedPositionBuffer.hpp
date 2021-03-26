@@ -66,6 +66,9 @@ public:
     //! Report whether there are no more points in the queue.
     bool isQueueEmpty() const;
 
+    //! Clear internal queue.
+    void clearQueue();
+
 protected:
     using ip_record = std::pair<double, double>;
 
@@ -87,7 +90,7 @@ protected:
     const StateVariables & vars;
 
 private:
-    std::uint16_t fixedSamples;
+    const std::uint16_t fixedSamples;
     std::uint8_t integrityCounter;
     ip_record prevTarget;
     double initialTimestamp;

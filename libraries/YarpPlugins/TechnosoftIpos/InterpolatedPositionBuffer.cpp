@@ -129,6 +129,12 @@ bool InterpolatedPositionBuffer::isQueueEmpty() const
     return pendingTargets.empty();
 }
 
+void InterpolatedPositionBuffer::clearQueue()
+{
+    std::lock_guard<std::mutex> lock(queueMutex);
+    pendingTargets.clear();
+}
+
 std::uint8_t InterpolatedPositionBuffer::getIntegrityCounter() const
 {
     return integrityCounter;
