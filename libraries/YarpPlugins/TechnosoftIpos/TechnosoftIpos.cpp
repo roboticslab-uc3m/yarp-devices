@@ -18,7 +18,7 @@ using namespace roboticslab;
 
 namespace
 {
-    enum report_level { INFO, WARN };
+    enum report_level { INFO, WARN, NONE };
 
     struct report_storage
     {
@@ -31,37 +31,35 @@ namespace
     bool reportBitToggle(report_storage report, report_level level, std::size_t pos, const std::string & msgSet,
             const std::string & msgReset = "")
     {
-        if (report.actual.test(pos) == report.stored.test(pos))
+        bool isSet = report.actual.test(pos);
+
+        if (report.stored.test(pos) != isSet && level != NONE)
         {
-            return false;
+            std::stringstream ss;
+            ss << "[" << report.reg << "] ";
+
+            if (isSet)
+            {
+                ss << msgSet;
+            }
+            else
+            {
+                ss << (msgReset.empty() ? "Bit reset: " + msgSet : msgReset);
+            }
+
+            ss << " (canId: " << report.canId << ")";
+
+            if (isSet && level == WARN)
+            {
+                CD_WARNING("%s\n", ss.str().c_str());
+            }
+            else
+            {
+                CD_INFO("%s\n", ss.str().c_str());
+            }
         }
 
-        bool isSet = false;
-        std::stringstream ss;
-        ss << "[" << report.reg << "] ";
-
-        if (report.actual.test(pos))
-        {
-            isSet = true;
-            ss << msgSet;
-        }
-        else
-        {
-            ss << (msgReset.empty() ? "Bit reset: " + msgSet : msgReset);
-        }
-
-        ss << " (canId: " << report.canId << ")";
-
-        if (isSet && level == WARN)
-        {
-            CD_WARNING("%s\n", ss.str().c_str());
-        }
-        else
-        {
-            CD_INFO("%s\n", ss.str().c_str());
-        }
-
-        return true;
+        return isSet;
     }
 }
 
@@ -138,10 +136,10 @@ void TechnosoftIpos::interpretMsr(std::uint16_t msr)
     report_storage report{"MSR", msr, vars.msr, can->getId()};
 
     reportBitToggle(report, INFO, 0, "Drive/motor initialization performed.");
-    //reportBitToggle(report, INFO, 1, "Position trigger 1 reached."); // too verbose in position profile mode
-    //reportBitToggle(report, INFO, 2, "Position trigger 2 reached.");
-    //reportBitToggle(report, INFO, 3, "Position trigger 3 reached.");
-    //reportBitToggle(report, INFO, 4, "Position trigger 4 reached.");
+    reportBitToggle(report, NONE, 1, "Position trigger 1 reached.");
+    reportBitToggle(report, NONE, 2, "Position trigger 2 reached.");
+    reportBitToggle(report, NONE, 3, "Position trigger 3 reached.");
+    reportBitToggle(report, NONE, 4, "Position trigger 4 reached.");
     reportBitToggle(report, INFO, 5, "AUTORUN mode enabled.");
     reportBitToggle(report, INFO, 6, "Limit switch positive event / interrupt triggered.");
     reportBitToggle(report, INFO, 7, "Limit switch negative event / interrupt triggered.");
@@ -272,9 +270,12 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
     reportBitToggle(report, INFO, 4, "Motor supply voltage is present.", "Motor supply voltage is absent");
     reportBitToggle(report, INFO, 5, "Quick Stop.");
     reportBitToggle(report, INFO, 6, "Switch on disabled.");
-    reportBitToggle(report, WARN, 7, "A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored.", "No warning.");
-    reportBitToggle(report, INFO, 8, "A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called.", "No TML function or homing is executed. The execution of the last called TML function or homing is completed.");
-    reportBitToggle(report, INFO, 9, "Remote - drive parameters may be modified via CAN and the drive will execute the command message.", "Remote – drive is in local mode and will not execute the command message.");
+    reportBitToggle(report, WARN, 7, "A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored.",
+            "No warning.");
+    reportBitToggle(report, INFO, 8, "A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called.",
+            "No TML function or homing is executed. The execution of the last called TML function or homing is completed.");
+    reportBitToggle(report, INFO, 9, "Remote - drive parameters may be modified via CAN and the drive will execute the command message.",
+            "Remote – drive is in local mode and will not execute the command message.");
 
     if (reportBitToggle(report, INFO, 10, "Target reached.")
         && vars.actualControlMode == VOCAB_CM_POSITION // does not work on velocity profile mode
@@ -288,7 +289,7 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
 
     switch (vars.modesOfOperation)
     {
-    case 1:
+    case 1: // profile position
         if (reportBitToggle(report, INFO, 12, "Trajectory generator will not accept a new set-point.",
             "Trajectory generator will accept a new set-point.")
             && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)))
@@ -297,18 +298,20 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
         }
         reportBitToggle(report, WARN, 13, "Following error.", "No following error.");
         break;
-    case 3:
-        //reportBitToggle(report, INFO, 12, "Speed is equal to 0.", "Speed is not equal to 0."); // too verbose
+    case 3: // profile velocity
+        reportBitToggle(report, NONE, 12, "Speed is equal to 0.", "Speed is not equal to 0.");
         reportBitToggle(report, WARN, 13, "Maximum slippage reached.", "Maximum slippage not reached.");
         break;
-    case 7:
+    case 7: // linear interpolation
         reportBitToggle(report, INFO, 12, "Interpolated position mode active.", "Interpolated position mode inactive.");
         // 13: reserved
         break;
     }
 
-    reportBitToggle(report, INFO, 14, "Last event set has occurred.", "No event set or the programmed event has not occurred yet.");
-    reportBitToggle(report, INFO, 15, "Axis on. Power stage is enabled. Motor control is performed.", "Axis off. Power stage is disabled. Motor control is not performed.");
+    reportBitToggle(report, INFO, 14, "Last event set has occurred.",
+            "No event set or the programmed event has not occurred yet.");
+    reportBitToggle(report, INFO, 15, "Axis on. Power stage is enabled. Motor control is performed.",
+            "Axis off. Power stage is disabled. Motor control is not performed.");
 
     can->driveStatus()->update(statusword);
 }
@@ -333,6 +336,7 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
     case 1:
         CD_INFO("Profile Position Mode. canId: %d.\n", can->getId());
         vars.actualControlMode = VOCAB_CM_POSITION;
+        vars.enableSync = false;
         break;
     case 3:
         CD_INFO("Profile Velocity Mode. canId: %d.\n", can->getId());
@@ -342,7 +346,7 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
     case 7:
         CD_INFO("Interpolated Position Mode. canId: %d.\n", can->getId());
         vars.actualControlMode = VOCAB_CM_POSITION_DIRECT;
-        vars.enableSync = true;
+        vars.enableSync = false;
         break;
     case 8:
         CD_INFO("Cyclic Synchronous Position Mode. canId: %d.\n", can->getId());
@@ -382,20 +386,50 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
 
 // -----------------------------------------------------------------------------
 
-void TechnosoftIpos::interpretPtStatus(std::uint16_t status)
+void TechnosoftIpos::interpretIpStatus(std::uint16_t status)
 {
-    report_storage report{"pt", status, vars.ptStatus, can->getId()};
+    report_storage report{"ip", status, vars.ipStatus, can->getId()};
 
     std::uint8_t ic = status & 0x007F; // integrity counter
-    // 7-10: reserved
-    reportBitToggle(report, WARN, 11, "Drive has performed a quick stop after a buffer empty condition (last velocity was non-zero).",
-            "Drive has maintained interpolated position mode after a buffer empty condition.");
-    reportBitToggle(report, WARN, 12, "Integrity counter error.", "No integrity counter error.");
-    reportBitToggle(report, INFO, 13, "Buffer is full.", "Buffer is not full.");
-    reportBitToggle(report, INFO, 14, "Buffer is low.", "Buffer is not low.");
-    reportBitToggle(report, INFO, 15, "Buffer is empty.", "Buffer is not empty.");
 
-    vars.ptStatus = status;
+    // 7-10: reserved
+    reportBitToggle(report, INFO, 11, "Drive has performed a quick stop after a buffer empty condition (last velocity was non-zero).",
+            "Drive has maintained interpolated position mode after a buffer empty condition.");
+
+    auto isBufferError = reportBitToggle(report, WARN, 12, "Integrity counter error.", "No integrity counter error.");
+    auto isBufferFull = reportBitToggle(report, NONE, 13, "Buffer is full.", "Buffer is not full.");
+    auto isBufferLow = reportBitToggle(report, NONE, 14, "Buffer is low.", "Buffer is not low."); // also true if empty!
+    auto isBufferEmpty = reportBitToggle(report, INFO, 15, "Buffer is empty.", "Buffer is not empty.");
+
+    if (isBufferError && vars.ipBufferEnabled)
+    {
+        can->driveStatus()->controlword(can->driveStatus()->controlword().set(8)); // stop drive with profile acceleration
+        vars.ipBufferEnabled = false;
+    }
+
+    if (isBufferFull && vars.ipBufferEnabled && !vars.ipMotionStarted)
+    {
+        // enable ip mode
+        vars.ipMotionStarted = can->driveStatus()->controlword(can->driveStatus()->controlword().set(4));
+    }
+
+    if (isBufferLow && vars.ipBufferEnabled && vars.ipMotionStarted && !ipBuffer->isQueueEmpty() && !isBufferEmpty)
+    {
+        // load next batch of points into the drive's buffer (unless reported empty, in which case stop motion and replenish again)
+        for (auto setpoint : ipBuffer->popBatch(false))
+        {
+            can->rpdo3()->write(setpoint);
+        }
+    }
+
+    if (isBufferEmpty && vars.ipBufferEnabled && vars.ipMotionStarted)
+    {
+        // no elements in the queue and buffer is empty, disable ip mode
+        vars.ipMotionStarted = !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4));
+        vars.ipBufferFilled = false;
+    }
+
+    vars.ipStatus = status;
 }
 
 // -----------------------------------------------------------------------------
@@ -450,9 +484,9 @@ void TechnosoftIpos::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, con
     }
     case 0xFF01:
     {
-        std::uint16_t ptStatus;
-        std::memcpy(&ptStatus, msef, 2);
-        interpretPtStatus(ptStatus);
+        std::uint16_t ipStatus;
+        std::memcpy(&ipStatus, msef, 2);
+        interpretIpStatus(ipStatus);
         break;
     }
     default:

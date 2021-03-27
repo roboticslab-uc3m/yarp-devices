@@ -12,7 +12,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & val)
 {
-    CD_DEBUG("%s\n", key.c_str());
+    CD_DEBUG("%s: %s\n", key.c_str(), val.toString().c_str());
 
     val.clear();
     val.addString(key);
@@ -21,16 +21,17 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
     {
         yarp::os::Property & dict = val.addDict();
 
-        if (!linInterpBuffer)
+        if (!ipBuffer)
         {
             dict.put("enable", false);
-            return true;
+        }
+        else
+        {
+            dict.put("enable", true);
+            dict.put("periodMs", ipBuffer->getPeriodMs());
+            dict.put("mode", ipBuffer->getType());
         }
 
-        dict.put("enable", true);
-        dict.put("periodMs", linInterpBuffer->getPeriodMs());
-        dict.put("bufferSize", linInterpBuffer->getBufferSize());
-        dict.put("mode", linInterpBuffer->getType());
         return true;
     }
     else if (key == "csv")
@@ -59,6 +60,13 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
             return false;
         }
 
+        // check on vars.requestedControlMode to avoid race conditions during mode switch
+        if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT || vars.requestedcontrolMode == VOCAB_CM_POSITION_DIRECT)
+        {
+            CD_ERROR("Currently in posd mode, cannot change config params right now (canId: %d).\n", can->getId());
+            return false;
+        }
+
         yarp::os::Searchable * dict;
 
         if (val.get(0).isDict())
@@ -76,30 +84,25 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
             return false;
         }
 
-        bool requested = dict->find("enable").asBool();
+        delete ipBuffer;
+        ipBuffer = nullptr;
 
-        if (requested ^ !!linInterpBuffer)
+        if (dict->find("enable").asBool())
         {
-            if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT)
+            ipBuffer = createInterpolationBuffer(val, vars);
+
+            if (!ipBuffer)
             {
-                CD_ERROR("Currently in posd mode, cannot change config params right now (canId: %d).\n", can->getId());
+                CD_ERROR("Cannot create ip buffer (canId: %d).\n", can->getId());
                 return false;
             }
 
-            if (requested)
-            {
-                linInterpBuffer = LinearInterpolationBuffer::createBuffer(val, vars, can->getId());
-                return linInterpBuffer != nullptr;
-            }
-            else
-            {
-                delete linInterpBuffer;
-                CD_SUCCESS("Switched back to CSP mode (canId: %d).\n", can->getId());
-            }
+            CD_SUCCESS("Created %s buffer with %d points and period %d ms (canId: %d).\n",
+                ipBuffer->getType().c_str(), ipBuffer->getBufferSize(), ipBuffer->getPeriodMs(), can->getId());
         }
         else
         {
-            CD_WARNING("Linear interpolation mode already enabled/disabled (canId: %d).\n", can->getId());
+            CD_SUCCESS("Switched back to CSP mode (canId: %d).\n", can->getId());
         }
 
         return true;

@@ -32,8 +32,8 @@ if(NOT SKIP_TechnosoftIpos)
                                    IRemoteVariablesRawImpl.cpp
                                    ITorqueControlRawImpl.cpp
                                    IVelocityControlRawImpl.cpp
-                                   LinearInterpolationBuffer.hpp
-                                   LinearInterpolationBuffer.cpp
+                                   InterpolatedPositionBuffer.hpp
+                                   InterpolatedPositionBuffer.cpp
                                    StateVariables.hpp
                                    StateVariables.cpp)
 

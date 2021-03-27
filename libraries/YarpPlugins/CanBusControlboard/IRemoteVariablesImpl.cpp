@@ -128,7 +128,7 @@ bool CanBusControlboard::getRemoteVariable(std::string key, yarp::os::Bottle & v
 
 bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bottle & val)
 {
-    CD_DEBUG("%s\n", key.c_str());
+    CD_DEBUG("%s: %s\n", key.c_str(), val.toString().c_str());
 
     if (key == "multi")
     {

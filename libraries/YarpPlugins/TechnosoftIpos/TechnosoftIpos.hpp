@@ -22,7 +22,8 @@
 
 #include "CanOpenNode.hpp"
 #include "ICanBusSharer.hpp"
-#include "LinearInterpolationBuffer.hpp"
+
+#include "InterpolatedPositionBuffer.hpp"
 #include "StateVariables.hpp"
 
 #define CHECK_JOINT(j) do { int ax; if (getAxes(&ax), (j) != ax - 1) return false; } while (0)
@@ -77,7 +78,7 @@ public:
         : can(nullptr),
           iEncodersTimedRawExternal(nullptr),
           iExternalEncoderCanBusSharer(nullptr),
-          linInterpBuffer(nullptr),
+          ipBuffer(nullptr),
           monitorThread(nullptr)
     { }
 
@@ -264,8 +265,6 @@ public:
 
 private:
 
-    bool setLegacyPositionInterpolationMode();
-
     void interpretSupportedDriveModes(std::uint32_t data);
     void interpretMsr(std::uint16_t msr);
     void interpretMer(std::uint16_t mer);
@@ -274,7 +273,7 @@ private:
     void interpretCer(std::uint16_t cer);
     void interpretStatusword(std::uint16_t statusword);
     void interpretModesOfOperation(std::int8_t modesOfOperation);
-    void interpretPtStatus(std::uint16_t ptStatus);
+    void interpretIpStatus(std::uint16_t ipStatus);
 
     void handleTpdo1(std::uint16_t statusword, std::uint16_t msr, std::int8_t modesOfOperation);
     void handleTpdo2(std::uint16_t mer, std::uint16_t der);
@@ -292,7 +291,7 @@ private:
 
     StateVariables vars;
 
-    LinearInterpolationBuffer * linInterpBuffer;
+    InterpolatedPositionBuffer * ipBuffer;
 
     yarp::os::Timer * monitorThread;
 };

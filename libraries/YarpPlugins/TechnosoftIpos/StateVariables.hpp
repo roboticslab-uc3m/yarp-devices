@@ -106,7 +106,7 @@ struct StateVariables
     std::bitset<16> der;
     std::bitset<16> der2;
     std::bitset<16> cer;
-    std::bitset<16> ptStatus;
+    std::bitset<16> ipStatus;
     std::int8_t modesOfOperation {0};
 
     bool configuredOnce {false};
@@ -137,6 +137,10 @@ struct StateVariables
 
     std::atomic<bool> enableSync {false};
     std::atomic<bool> enableCsv {false};
+
+    std::atomic<bool> ipMotionStarted {false};
+    std::atomic<bool> ipBufferFilled {false};
+    std::atomic<bool> ipBufferEnabled {false};
 
     // read only, conceptually immutable
 

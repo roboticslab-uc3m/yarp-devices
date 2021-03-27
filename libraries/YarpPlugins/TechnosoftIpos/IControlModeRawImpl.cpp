@@ -12,46 +12,6 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::setLegacyPositionInterpolationMode()
-{
-    linInterpBuffer->resetIntegrityCounter();
-
-    PdoConfiguration rpdo3Conf;
-    rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x01);
-    rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x02);
-
-    std::int32_t refInternalUnits = vars.lastEncoderRead->queryPosition();
-
-    if (!can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-        || !can->rpdo3()->configure(rpdo3Conf)
-        || !can->sdo()->download<std::uint16_t>("Auxiliary Settings Register", 0x0000, 0x208E) // legacy pt mode
-        || !can->sdo()->download<std::int16_t>("Interpolation sub mode select", linInterpBuffer->getSubMode(), 0x60C0)
-        // consume one additional slot to avoid annoying buffer full warnings
-        || !can->sdo()->download<std::uint16_t>("Interpolated position buffer length", linInterpBuffer->getBufferSize() + 1, 0x2073)
-        || !can->sdo()->download<std::uint16_t>("Interpolated position buffer configuration", 0xA080, 0x2074)
-        || !can->sdo()->download<std::int32_t>("Interpolated position initial position", refInternalUnits, 0x2079)
-        || !can->sdo()->download<std::int8_t>("Modes of Operation", 7, 0x6060)
-        || !vars.awaitControlMode(VOCAB_CM_POSITION_DIRECT))
-    {
-        return false;
-    }
-
-    vars.synchronousCommandTarget = vars.internalUnitsToDegrees(refInternalUnits);
-
-    for (int i = 0; i < linInterpBuffer->getBufferSize(); i++)
-    {
-        if (!can->rpdo3()->write(linInterpBuffer->makeDataRecord(vars.synchronousCommandTarget)))
-        {
-            CD_ERROR("Unable to send point %d/%d to buffer.\n", i + 1, linInterpBuffer->getBufferSize());
-            return false;
-        }
-    }
-
-    return can->driveStatus()->controlword(can->driveStatus()->controlword().set(4)); // enable ip mode
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIpos::getControlModeRaw(int j, int * mode)
 {
     //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
@@ -151,10 +111,24 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
             && vars.awaitControlMode(mode);
 
     case VOCAB_CM_POSITION_DIRECT:
-        if (linInterpBuffer)
+        if (ipBuffer)
         {
-            // TODO: https://github.com/roboticslab-uc3m/yarp-devices/issues/222#issuecomment-575092455
-            return false; //setLegacyPositionInterpolationMode();
+            vars.ipBufferFilled = vars.ipMotionStarted = false;
+            vars.ipBufferEnabled = true;
+            ipBuffer->clearQueue();
+
+            PdoConfiguration rpdo3Conf;
+            rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x01);
+            rpdo3Conf.addMapping<std::uint32_t>(0x60C1, 0x02);
+
+            return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
+                && can->rpdo3()->configure(rpdo3Conf)
+                && can->sdo()->download<std::uint16_t>("Auxiliary Settings Register", 0x0000, 0x208E) // legacy ip mode
+                && can->sdo()->download("Interpolation sub mode select", ipBuffer->getSubMode(), 0x60C0)
+                && can->sdo()->download("Interpolated position buffer length", ipBuffer->getBufferSize(), 0x2073)
+                && can->sdo()->download("Interpolated position buffer configuration", ipBuffer->getBufferConfig(), 0x2074)
+                && can->sdo()->download<std::int8_t>("Modes of Operation", 7, 0x6060)
+                && vars.awaitControlMode(VOCAB_CM_POSITION_DIRECT);
         }
 
         // bug in F508M/F509M firmware, switch to homing mode to stop controlling profile velocity

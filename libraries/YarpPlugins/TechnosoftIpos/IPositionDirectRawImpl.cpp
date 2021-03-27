@@ -10,17 +10,43 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::setPositionRaw(int j, double ref)
 {
-    CD_DEBUG("(%d, %f)\n", j, ref);
+    //CD_DEBUG("(%d, %f)\n", j, ref);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
-    vars.synchronousCommandTarget = ref;
+
+    if (ipBuffer)
+    {
+        ipBuffer->addSetpoint(ref); // register point in the internal queue
+
+        // ip mode is enabled, drive's buffer is empty, motion has not started yet, we have enough points in the queue
+        if (vars.ipBufferEnabled && !vars.ipBufferFilled && !vars.ipMotionStarted && ipBuffer->isQueueReady())
+        {
+            std::int32_t refInternal = vars.lastEncoderRead->queryPosition();
+            ipBuffer->setInitial(vars.internalUnitsToDegrees(refInternal));
+
+            bool ok = true;
+
+            for (auto setpoint : ipBuffer->popBatch(true))
+            {
+                ok &= can->rpdo3()->write(setpoint); // load point into the buffer
+            }
+
+            vars.ipBufferFilled = ok;
+            return ok;
+        }
+    }
+    else
+    {
+        vars.synchronousCommandTarget = ref;
+    }
+
     return true;
 }
 // -----------------------------------------------------------------------------
 
 bool TechnosoftIpos::setPositionsRaw(const double * refs)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n");
     return setPositionRaw(0, refs[0]);
 }
 
@@ -28,7 +54,7 @@ bool TechnosoftIpos::setPositionsRaw(const double * refs)
 
 bool TechnosoftIpos::setPositionsRaw(int n_joint, const int * joints, const double * refs)
 {
-    CD_DEBUG("\n");
+    //CD_DEBUG("\n");
     return setPositionRaw(joints[0], refs[0]);
 }
 
@@ -39,7 +65,16 @@ bool TechnosoftIpos::getRefPositionRaw(int joint, double * ref)
     CD_DEBUG("(%d)\n", joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
-    *ref = vars.synchronousCommandTarget;
+
+    if (ipBuffer)
+    {
+        *ref = ipBuffer->getPrevTarget();
+    }
+    else
+    {
+        *ref = vars.synchronousCommandTarget;
+    }
+
     return true;
 }
 
