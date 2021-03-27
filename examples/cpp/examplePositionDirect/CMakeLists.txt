@@ -6,8 +6,6 @@ if(NOT YARP_FOUND)
     find_package(YARP 3.3 REQUIRED COMPONENTS os dev)
 endif()
 
-find_package(COLOR_DEBUG REQUIRED)
-
 add_executable(examplePositionDirect examplePositionDirect.cpp)
 
 target_link_libraries(examplePositionDirect YARP::YARP_os
