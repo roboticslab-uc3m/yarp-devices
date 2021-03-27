@@ -120,7 +120,8 @@ double InterpolatedPositionBuffer::getPrevTarget() const
 bool InterpolatedPositionBuffer::isQueueReady() const
 {
     std::lock_guard<std::mutex> lock(queueMutex);
-    return pendingTargets.size() >= getBufferSize() + getOffset();
+    // account for the offset (only PVT) and one extra point in async mode (`>` instead of `>=`)
+    return pendingTargets.size() > getBufferSize() + getOffset();
 }
 
 bool InterpolatedPositionBuffer::isQueueEmpty() const
