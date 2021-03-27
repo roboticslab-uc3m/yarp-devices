@@ -5,7 +5,7 @@
 #include <cmath>
 #include <cstring>
 
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 using namespace roboticslab;
 
@@ -21,7 +21,7 @@ bool LacqueyFetch::getNumberOfMotorsRaw(int * number)
 
 bool LacqueyFetch::setRefDutyCycleRaw(int m, double ref)
 {
-    CD_DEBUG("(%d, %f)\n", m, ref);
+    yTrace("%d %f", m, ref);
     CHECK_JOINT(m);
 
     // clip between -100% and +100%
@@ -39,7 +39,6 @@ bool LacqueyFetch::setRefDutyCycleRaw(int m, double ref)
 
 bool LacqueyFetch::setRefDutyCyclesRaw(const double * refs)
 {
-    CD_DEBUG("\n");
     return setRefDutyCycleRaw(0, refs[0]);
 }
 
@@ -56,7 +55,6 @@ bool LacqueyFetch::getRefDutyCycleRaw(int m, double * ref)
 
 bool LacqueyFetch::getRefDutyCyclesRaw(double * refs)
 {
-    CD_DEBUG("\n");
     return getRefDutyCycleRaw(0, &refs[0]);
 }
 
@@ -65,7 +63,7 @@ bool LacqueyFetch::getRefDutyCyclesRaw(double * refs)
 bool LacqueyFetch::getDutyCycleRaw(int m, double * val)
 {
     CHECK_JOINT(m);
-    CD_WARNING("Not supported.\n");
+    yWarning("getDutyCycleRaw() not supported");
     return false;
 }
 
@@ -73,7 +71,6 @@ bool LacqueyFetch::getDutyCycleRaw(int m, double * val)
 
 bool LacqueyFetch::getDutyCyclesRaw(double * vals)
 {
-    //CD_WARNING("Not supported.\n"); // too verbose in controlboardwrapper2 stream
     return false;
 }
 

@@ -20,7 +20,6 @@ if(NOT SKIP_ProximitySensorsClient)
 
     target_link_libraries(ProximitySensorsClient YARP::YARP_os
                                                  YARP::YARP_dev
-                                                 ROBOTICSLAB::ColorDebug
                                                  ROBOTICSLAB::YarpDevicesInterfaces)
 
     yarp_install(TARGETS ProximitySensorsClient

@@ -9,9 +9,8 @@
 #include <set>
 #include <vector>
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
-
-#include <ColorDebug.h>
 
 using namespace roboticslab;
 
@@ -111,11 +110,9 @@ bool CanBusHico::FilterManager::eraseId(unsigned int id)
 
 bool CanBusHico::FilterManager::clearFilters(bool clearStage)
 {
-    CD_DEBUG("(%d)\n", clearStage);
-
     if (::ioctl(fd, IOC_CLEAR_FILTERS) == -1)
     {
-        CD_ERROR("ioctl() error: %s\n", std::strerror(errno));
+        yError() << "ioctl() error while clearing filters:" << std::strerror(errno);
         return false;
     }
 
@@ -133,8 +130,6 @@ bool CanBusHico::FilterManager::clearFilters(bool clearStage)
 
 bool CanBusHico::FilterManager::setMaskedFilter(unsigned int id)
 {
-    CD_DEBUG("(%d)\n", id);
-
     struct can_filter filter;
     filter.type = FTYPE_AMASK;
     filter.mask = 0x7F;  //-- dsPIC style, mask specifies "do care" bits
@@ -142,7 +137,7 @@ bool CanBusHico::FilterManager::setMaskedFilter(unsigned int id)
 
     if (::ioctl(fd, IOC_SET_FILTER, &filter) == -1)
     {
-        CD_ERROR("Could not set filter: %s.\n", std::strerror(errno));
+        yError() << "Could not set filter:" << std::strerror(errno);
         return false;
     }
 
@@ -155,8 +150,6 @@ bool CanBusHico::FilterManager::setMaskedFilter(unsigned int id)
 
 bool roboticslab::CanBusHico::FilterManager::setRangedFilter(unsigned int lower, unsigned int upper)
 {
-    CD_DEBUG("(%d, %d)\n", lower, upper);
-
     struct can_filter filter;
     filter.type = FTYPE_RANGE;
     filter.lower = lower;
@@ -164,7 +157,7 @@ bool roboticslab::CanBusHico::FilterManager::setRangedFilter(unsigned int lower,
 
     if (::ioctl(fd, IOC_SET_FILTER, &filter) == -1)
     {
-        CD_ERROR("Could not set filter: %s.\n", std::strerror(errno));
+        yError() << "Could not set filter:" << std::strerror(errno);
         return false;
     }
 
@@ -212,7 +205,7 @@ bool CanBusHico::FilterManager::bulkUpdate()
 
     if (sequences.size() > MAX_FILTERS)
     {
-        CD_WARNING("MAX_FILTERS exceeded (%zu > %d).\n", sequences.size(), MAX_FILTERS);
+        yWarning("MAX_FILTERS exceeded (%zu > %d)", sequences.size(), MAX_FILTERS);
         valid = false;
     }
     else
@@ -265,7 +258,7 @@ CanBusHico::FilterManager::filter_config CanBusHico::FilterManager::parseFilterC
     }
     else
     {
-        CD_WARNING("Unrecognized filter configuration, setting DISABLED: %s.\n", str.c_str());
+        yWarning() << "Unrecognized filter configuration, setting DISABLED:" << str;
         return DISABLED;
     }
 }

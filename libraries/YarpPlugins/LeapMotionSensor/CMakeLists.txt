@@ -26,8 +26,7 @@ if(NOT SKIP_LeapMotionSensor)
     target_link_libraries(LeapMotionSensor YARP::YARP_os
                                            YARP::YARP_dev
                                            YARP::YARP_sig
-                                           ${Leap_LIBRARY}
-                                           ROBOTICSLAB::ColorDebug)
+                                           ${Leap_LIBRARY})
 
     target_include_directories(LeapMotionSensor PRIVATE ${Leap_INCLUDE_DIR})
 

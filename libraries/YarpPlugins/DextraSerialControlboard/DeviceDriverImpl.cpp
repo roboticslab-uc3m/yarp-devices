@@ -2,10 +2,9 @@
 
 #include "DextraSerialControlboard.hpp"
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Value.h>
-
-#include <ColorDebug.h>
 
 using namespace roboticslab;
 
@@ -13,6 +12,8 @@ using namespace roboticslab;
 
 bool DextraSerialControlboard::open(yarp::os::Searchable & config)
 {
+    yDebug() << "DextraSerialControlboard config:" << config.toString();
+
     std::string port = config.check("port", yarp::os::Value(DEFAULT_PORT), "serial port").asString();
 
     // Should match https://github.com/roboticslab-uc3m/Dextra/blob/master/Control/synapse.py
@@ -25,11 +26,11 @@ bool DextraSerialControlboard::open(yarp::os::Searchable & config)
     serialOptions.put("paritymode", "NONE");
     serialOptions.put("databits", 8);
 
-    CD_DEBUG("Serial device options: %s\n", serialOptions.toString().c_str());
+    yDebug() << "Serial device options:" << serialOptions.toString();
 
     if (!serialDevice.open(serialOptions))
     {
-        CD_ERROR("Unable to open %s device.\n", serialOptions.find("device").asString().c_str());
+        yError() << "Unable to open" << serialOptions.find("device").asString() << "device";
         return false;
     }
 
@@ -37,7 +38,7 @@ bool DextraSerialControlboard::open(yarp::os::Searchable & config)
 
     if (!serialDevice.view(iSerialDevice))
     {
-        CD_ERROR("Unable to view iSerialDevice.\n");
+        yError() << "Unable to view iSerialDevice";
         return false;
     }
 

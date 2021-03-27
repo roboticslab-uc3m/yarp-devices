@@ -2,7 +2,7 @@
 
 #include "TextilesHand.hpp"
 
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 using namespace roboticslab;
 
@@ -18,7 +18,7 @@ bool roboticslab::TextilesHand::getAxes(int * ax)
 
 bool TextilesHand::setPosition(int j, double ref)
 {
-    CD_DEBUG("(%d, %f)\n", j, ref);
+    yTrace("%d %f", j, ref);
 
     if (j != 0) return false;
 
@@ -50,7 +50,6 @@ bool TextilesHand::setPosition(int j, double ref)
 
 bool TextilesHand::setPositions(const double * refs)
 {
-    CD_DEBUG("\n");
     return setPosition(0, refs[0]);
 }
 
@@ -58,7 +57,6 @@ bool TextilesHand::setPositions(const double * refs)
 
 bool TextilesHand::setPositions(int n_joint, const int * joints, const double * refs)
 {
-    CD_DEBUG("(%d)\n", n_joint);
     return setPosition(joints[0], refs[0]);
 }
 
@@ -66,7 +64,7 @@ bool TextilesHand::setPositions(int n_joint, const int * joints, const double * 
 
 bool TextilesHand::getRefPosition(int joint, double * ref)
 {
-    CD_DEBUG("(%d)\n", joint);
+    yTrace("%d", joint);
     *ref = lastTarget;
     return true;
 }
@@ -75,7 +73,6 @@ bool TextilesHand::getRefPosition(int joint, double * ref)
 
 bool TextilesHand::getRefPositions(double * refs)
 {
-    CD_DEBUG("\n");
     return getRefPosition(0, &refs[0]);
 }
 
@@ -83,7 +80,6 @@ bool TextilesHand::getRefPositions(double * refs)
 
 bool TextilesHand::getRefPositions(int n_joint, const int * joints, double * refs)
 {
-    CD_DEBUG("(%d)\n", n_joint);
     return getRefPosition(joints[0], &refs[0]);
 }
 

@@ -2,9 +2,8 @@
 
 #include "DextraRawControlboard.hpp"
 
+#include <yarp/os/Log.h>
 #include <yarp/os/Vocab.h>
-
-#include <ColorDebug.h>
 
 using namespace roboticslab;
 
@@ -12,7 +11,7 @@ using namespace roboticslab;
 
 bool DextraRawControlboard::getControlModeRaw(int j, int * mode)
 {
-    //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
+    yTrace("%d", j);
     CHECK_JOINT(j);
     *mode = VOCAB_CM_POSITION;
     return true;
@@ -22,7 +21,7 @@ bool DextraRawControlboard::getControlModeRaw(int j, int * mode)
 
 bool DextraRawControlboard::getControlModesRaw(int * modes)
 {
-    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
+    yTrace("");
 
     bool ok = true;
 
@@ -38,7 +37,7 @@ bool DextraRawControlboard::getControlModesRaw(int * modes)
 
 bool DextraRawControlboard::getControlModesRaw(int n_joint, const int * joints, int * modes)
 {
-    CD_DEBUG("\n");
+    yTrace("%d", n_joint);
 
     bool ok = true;
 
@@ -54,7 +53,7 @@ bool DextraRawControlboard::getControlModesRaw(int n_joint, const int * joints, 
 
 bool DextraRawControlboard::setControlModeRaw(int j, int mode)
 {
-    CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
+    yTrace("%d %s", j, yarp::os::Vocab::decode(mode).c_str());
     CHECK_JOINT(j);
     return false; // don't allow control modes other than position direct, for onw
 }
@@ -63,7 +62,7 @@ bool DextraRawControlboard::setControlModeRaw(int j, int mode)
 
 bool DextraRawControlboard::setControlModesRaw(int * modes)
 {
-    CD_DEBUG("\n");
+    yTrace("");
 
     bool ok = true;
 
@@ -79,7 +78,7 @@ bool DextraRawControlboard::setControlModesRaw(int * modes)
 
 bool DextraRawControlboard::setControlModesRaw(int n_joint, const int * joints, int * modes)
 {
-    CD_DEBUG("\n");
+    yTrace("%d", n_joint);
 
     bool ok = true;
 

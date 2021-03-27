@@ -4,7 +4,7 @@
 
 #include <cstdlib>
 
-#include "ColorDebug.h"
+#include "yarp/os/LogStream.h"
 
 // -----------------------------------------------------------------------------
 
@@ -19,7 +19,7 @@ char * roboticslab::WiimoteSensor::getDevicePath(int id)
 
     if (monitor == NULL)
     {
-        CD_ERROR("Cannot create monitor.\n");
+        yError() << "Cannot create monitor";
         return NULL;
     }
 

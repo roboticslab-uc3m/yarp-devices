@@ -8,8 +8,6 @@
 
 #include <arv.h>
 
-#include "ColorDebug.h"
-
 namespace roboticslab {
 
 /**

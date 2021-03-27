@@ -4,9 +4,8 @@
 
 #include <cmath>
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
-
-#include <ColorDebug.h>
 
 using namespace roboticslab;
 
@@ -16,7 +15,7 @@ bool CuiAbsolute::open(yarp::os::Searchable & config)
 {
     if (!config.check("robotConfig") || !config.find("robotConfig").isBlob())
     {
-        CD_ERROR("Missing \"robotConfig\" property or not a blob.\n");
+        yError() << "Missing \"robotConfig\" property or not a blob";
         return false;
     }
 
@@ -32,7 +31,7 @@ bool CuiAbsolute::open(yarp::os::Searchable & config)
 
     cuiGroup.fromString(config.toString(), false); // override common options
 
-    CD_DEBUG("%s\n", cuiGroup.toString().c_str());
+    yDebug() << "CuiAbsolute config:" << cuiGroup.toString();
 
     canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt8(); // id-specific
     reverse = cuiGroup.check("reverse", yarp::os::Value(false), "reverse").asBool();
@@ -41,13 +40,13 @@ bool CuiAbsolute::open(yarp::os::Searchable & config)
 
     if (timeout <= 0.0)
     {
-        CD_ERROR("Illegal CUI timeout value: %f.\n", timeout);
+        yError() << "Illegal CUI timeout value:" << timeout;
         return false;
     }
 
     if (!cuiGroup.check("mode", "publish mode [push|pull]"))
     {
-        CD_ERROR("Missing \"mode\" property.\n");
+        yError() << "Missing \"mode\" property";
         return false;
     }
 
@@ -66,7 +65,7 @@ bool CuiAbsolute::open(yarp::os::Searchable & config)
     }
     else
     {
-        CD_ERROR("Unrecognized CUI mode: %s.\n", mode.c_str());
+        yError() << "Unrecognized CUI mode:" << mode;
         return false;
     }
 

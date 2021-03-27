@@ -5,16 +5,14 @@
 #include <string>
 #include <sstream>
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Value.h>
-
-#include <ColorDebug.h>
 
 // ------------------- DeviceDriver Related ------------------------------------
 
 bool roboticslab::ProximitySensorsClient::open(yarp::os::Searchable& config)
 {
-    CD_INFO("Starting ProximitySensorsClient plugin.\n");
-    CD_DEBUG("config: %s.\n", config.toString().c_str());
+    yDebug() << "ProximitySensorsClient config:" << config.toString();
 
     std::string local = config.check("local", yarp::os::Value(DEFAULT_LOCAL), "local port").asString();
     std::string remote = config.check("remote", yarp::os::Value(DEFAULT_REMOTE), "remote port").asString();
@@ -39,7 +37,7 @@ bool roboticslab::ProximitySensorsClient::open(yarp::os::Searchable& config)
 
         carrier = oss.str();
 
-        CD_INFO("Using carrier: %s\n", carrier.c_str());
+        yInfo() << "Using carrier:" << carrier;
     }
 
     thresholdGripper = config.check("thresholdGripper", yarp::os::Value(DEFAULT_THRESHOLD_GRIPPER),
@@ -51,7 +49,7 @@ bool roboticslab::ProximitySensorsClient::open(yarp::os::Searchable& config)
 
     if (!yarp::os::Network::connect(remote, local, carrier))
     {
-        CD_ERROR("Unable to connect to remote port \"%s\".\n", remote.c_str());
+        yError() << "Unable to connect to remote port" << remote;
         close();
         return false;
     }
@@ -63,7 +61,6 @@ bool roboticslab::ProximitySensorsClient::open(yarp::os::Searchable& config)
 
 bool roboticslab::ProximitySensorsClient::close()
 {
-    CD_INFO("Closing ProximitySensorsClient plugin.\n");
     sr.disableCallback();
     sr.close();
     return true;

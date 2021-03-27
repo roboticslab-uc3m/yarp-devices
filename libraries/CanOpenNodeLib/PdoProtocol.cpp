@@ -7,7 +7,7 @@
 #include <bitset>
 #include <vector>
 
-#include <ColorDebug.h>
+#include <yarp/os/LogStream.h>
 
 #if defined(USE_NONSTD_OPTIONAL)
 # include "nonstd/optional.hpp"
@@ -114,7 +114,7 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
         mappingIdx = 0x1A00 + n - 1;
         break;
     default:
-        CD_ERROR("Unknown PDO type.\n");
+        yError() << "Unknown PDO type";
         return false;
     }
 
@@ -132,7 +132,7 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
     {
         if (getType() != PdoType::TPDO)
         {
-            CD_ERROR("Illegal RTR usage on non-TPDO node.\n");
+            yError() << "Illegal RTR usage on non-TPDO node";
             return false;
         }
 
@@ -163,7 +163,7 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
     {
         if (getType() != PdoType::TPDO)
         {
-            CD_ERROR("Illegal SYNC start value usage on non-TPDO node.\n");
+            yError() << "Illegal SYNC start value usage on non-TPDO node";
             return false;
         }
 

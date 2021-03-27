@@ -2,7 +2,7 @@
 
 #include "TechnosoftIpos.hpp"
 
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 using namespace roboticslab;
 
@@ -10,7 +10,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::setLimitsRaw(int axis, double min, double max)
 {
-    CD_DEBUG("(%d, %f, %f)\n", axis, min, max);
+    yTrace("%d %f %f", axis, min, max);
     CHECK_JOINT(axis);
 
     bool okMin = false;
@@ -57,7 +57,7 @@ bool TechnosoftIpos::setLimitRaw(double limit, bool isMin)
 
 bool TechnosoftIpos::getLimitsRaw(int axis, double * min, double * max)
 {
-    CD_DEBUG("(%d)\n", axis);
+    yTrace("%d", axis);
     CHECK_JOINT(axis);
 
     if (vars.actualControlMode == VOCAB_CM_NOT_CONFIGURED)
@@ -97,14 +97,14 @@ bool TechnosoftIpos::getLimitRaw(double * limit, bool isMin)
 
 bool TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
 {
-    CD_DEBUG("(%d, %f, %f)\n", axis, min, max);
+    yTrace("%d %f %f", axis, min, max);
     CHECK_JOINT(axis);
 
     vars.maxVel = max;
 
     if (min != -max)
     {
-        CD_WARNING("Minimum value not equal to negative maximum value.\n");
+        yWarning("Minimum value not equal to negative maximum value");
     }
 
     return true;
@@ -114,7 +114,7 @@ bool TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
 
 bool TechnosoftIpos::getVelLimitsRaw(int axis, double * min, double * max)
 {
-    CD_DEBUG("(%d)\n", axis);
+    yTrace("%d", axis);
     CHECK_JOINT(axis);
 
     *min = -vars.maxVel;

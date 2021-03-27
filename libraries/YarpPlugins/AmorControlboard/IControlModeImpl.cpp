@@ -2,13 +2,15 @@
 
 #include "AmorControlboard.hpp"
 
+#include <yarp/os/Log.h>
 #include <yarp/os/Vocab.h>
 
 // ------------------- IControlMode related ------------------------------------
 
 bool roboticslab::AmorControlboard::getControlMode(int j, int *mode)
 {
-    //CD_DEBUG("(%d)\n", j);  //-- Way too verbose.
+    yTrace("%d", j);
+
     if (!indexWithinRange(j))
     {
         return false;
@@ -23,7 +25,6 @@ bool roboticslab::AmorControlboard::getControlMode(int j, int *mode)
 
 bool roboticslab::AmorControlboard::getControlModes(int *modes)
 {
-    //CD_DEBUG("\n");  //-- Way too verbose.
     bool ok = true;
 
     for (unsigned int i = 0; i < AMOR_NUM_JOINTS; i++)
@@ -38,8 +39,6 @@ bool roboticslab::AmorControlboard::getControlModes(int *modes)
 
 bool roboticslab::AmorControlboard::getControlModes(const int n_joint, const int *joints, int *modes)
 {
-    CD_DEBUG("(%d)\n", n_joint);
-
     if (!batchWithinRange(n_joint))
     {
         return false;
@@ -59,7 +58,7 @@ bool roboticslab::AmorControlboard::getControlModes(const int n_joint, const int
 
 bool roboticslab::AmorControlboard::setControlMode(const int j, const int mode)
 {
-    CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
+    yTrace("%d %s", j, yarp::os::Vocab::decode(mode).c_str());
 
     if (!indexWithinRange(j))
     {
@@ -75,8 +74,6 @@ bool roboticslab::AmorControlboard::setControlMode(const int j, const int mode)
 
 bool roboticslab::AmorControlboard::setControlModes(const int n_joint, const int *joints, int *modes)
 {
-    CD_DEBUG("(%d)\n", n_joint);
-
     if (!batchWithinRange(n_joint))
     {
         return false;
@@ -96,8 +93,6 @@ bool roboticslab::AmorControlboard::setControlModes(const int n_joint, const int
 
 bool roboticslab::AmorControlboard::setControlModes(int *modes)
 {
-    CD_DEBUG("\n");
-
     bool ok = true;
 
     for (unsigned int i = 0; i < AMOR_NUM_JOINTS; i++)

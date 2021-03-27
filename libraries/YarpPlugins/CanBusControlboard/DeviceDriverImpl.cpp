@@ -2,10 +2,9 @@
 
 #include "CanBusControlboard.hpp"
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Value.h>
-
-#include <ColorDebug.h>
 
 #include "ICanBusSharer.hpp"
 
@@ -15,11 +14,11 @@ using namespace roboticslab;
 
 bool CanBusControlboard::open(yarp::os::Searchable & config)
 {
-    CD_DEBUG("%s\n", config.toString().c_str());
+    yDebug() << "CanBusControlboard config:" << config.toString();
 
     if (!config.check("robotConfig") || !config.find("robotConfig").isBlob())
     {
-        CD_ERROR("Missing \"robotConfig\" property or not a blob.\n");
+        yError() << "Missing \"robotConfig\" property or not a blob";
         return false;
     }
 
@@ -29,7 +28,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
     if (canBuses == nullptr)
     {
-        CD_ERROR("Missing key \"buses\" or not a list.\n");
+        yError() << "Missing key \"buses\" or not a list";
         return false;
     }
 
@@ -47,7 +46,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
             if (canBusGroup.isNull())
             {
-                CD_ERROR("Missing CAN bus device group %s.\n", canBus.c_str());
+                yError() << "Missing CAN bus device group" << canBus;
                 return false;
             }
 
@@ -66,7 +65,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
         if (!canBusDevice->open(canBusOptions))
         {
-            CD_ERROR("canBusDevice instantiation not worked: %s.\n", canBus.c_str());
+            yError() << "canBusDevice instantiation failed:" << canBus;
             return false;
         }
 
@@ -77,20 +76,20 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
             if (!canBusBroker->configure(canBusOptions))
             {
-                CD_ERROR("Unable to configure broker of CAN bus device %s.\n", canBus.c_str());
+                yError() << "Unable to configure broker of CAN bus device" << canBus;
                 return false;
             }
 
             if (!canBusBroker->registerDevice(canBusDevice))
             {
-                CD_ERROR("Unable to register CAN bus device %s.\n", canBus.c_str());
+                yError() << "Unable to register CAN bus device" << canBus;
                 return false;
             }
         }
 
         if (!config.check(canBus))
         {
-            CD_ERROR("Missing key \"%s\".\n", canBus.c_str());
+            yError() << "Missing key" << canBus;
             return false;
         }
 
@@ -101,7 +100,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         {
             if (nodesVal.asList() == nullptr)
             {
-                CD_ERROR("Key \"%s\" must be a list.\n", canBus.c_str());
+                yError() << "Key" << canBus << "must be a list";
                 return false;
             }
 
@@ -111,7 +110,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         {
             if (!nodesVal.isInt32())
             {
-                CD_ERROR("Key \"%s\" must hold an integer value (number of fake nodes).\n", canBus.c_str());
+                yError() << "Key" << canBus << "must hold an integer value (number of fake nodes)";
                 return false;
             }
 
@@ -135,7 +134,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
                 if (nodeGroup.isNull())
                 {
-                    CD_ERROR("Missing CAN node device group %s.\n", node.c_str());
+                    yError() << "Missing CAN node device group" << node;
                     return false;
                 }
 
@@ -153,13 +152,13 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
             if (!device->open(nodeOptions))
             {
-                CD_ERROR("CAN node device %s configuration failure.\n", node.c_str());
+                yError() << "CAN node device" << node << "configuration failure";
                 return false;
             }
 
             if (!deviceMapper.registerDevice(device))
             {
-                CD_ERROR("Unable to register CAN node device %s.\n", node.c_str());
+                yError() << "Unable to register CAN node device" << node;
                 return false;
             }
 
@@ -169,7 +168,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
                 if (!device->view(iCanBusSharer))
                 {
-                    CD_ERROR("Unable to view ICanBusSharer in %s.\n", node.c_str());
+                    yError() << "Unable to view ICanBusSharer in" << node;
                     return false;
                 }
 
@@ -183,7 +182,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
         if (enableAcceptanceFilters && !canBusBrokers.back()->addFilters())
         {
-            CD_ERROR("Unable to register CAN acceptance filters in %s.\n", canBus.c_str());
+            yError() << "Unable to register CAN acceptance filters in" << canBus;
             return false;
         }
     }
@@ -192,7 +191,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
     {
         if (!canBusBroker->startThreads())
         {
-            CD_ERROR("Unable to start CAN threads in %s.\n", canBusBroker->getName().c_str());
+            yError() << "Unable to start CAN threads in" << canBusBroker->getName();
             return false;
         }
     }
@@ -203,7 +202,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
         if (!iCanBusSharer->initialize())
         {
-            CD_ERROR("Node device id %d could not initialize CAN comms.\n", iCanBusSharer->getId());
+            yError() << "Node device id" << iCanBusSharer->getId() << "could not initialize CAN comms";
         }
     }
 
@@ -276,7 +275,7 @@ bool CanBusControlboard::close()
 
         if (iCanBusSharer && !iCanBusSharer->finalize())
         {
-            CD_WARNING("Node device id %d could not finalize CAN comms.\n", iCanBusSharer->getId());
+            yWarning() << "Node device id" << iCanBusSharer->getId() << "could not finalize CAN comms";
             ok = false;
         }
     }

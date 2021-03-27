@@ -22,8 +22,7 @@ if(NOT SKIP_DextraSerialControlboard)
 
     target_link_libraries(DextraSerialControlboard ROBOTICSLAB::DextraRawControlboardLib
                                                    YARP::YARP_os
-                                                   YARP::YARP_dev
-                                                   ROBOTICSLAB::ColorDebug)
+                                                   YARP::YARP_dev)
 
     target_compile_features(DextraSerialControlboard PUBLIC cxx_std_11)
 

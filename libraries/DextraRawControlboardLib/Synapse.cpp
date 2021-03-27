@@ -5,8 +5,6 @@
 #include <cassert>
 #include <cstring>
 
-#include <ColorDebug.h>
-
 using namespace roboticslab;
 
 namespace

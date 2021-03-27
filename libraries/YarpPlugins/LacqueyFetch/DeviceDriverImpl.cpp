@@ -2,7 +2,7 @@
 
 #include "LacqueyFetch.hpp"
 
-#include <ColorDebug.h>
+#include <yarp/os/LogStream.h>
 
 using namespace roboticslab;
 
@@ -10,10 +10,10 @@ using namespace roboticslab;
 
 bool LacqueyFetch::open(yarp::os::Searchable& config)
 {
-    CD_DEBUG("%s\n", config.toString().c_str());
+    yDebug() << "LacqueyFetch config:" << config.toString();
 
     canId = config.check("canId", yarp::os::Value(0), "can bus ID").asInt8();
-    CD_SUCCESS("Created LacqueyFetch with canId %d.\n", canId);
+    yInfo() << "Created LacqueyFetch with canId" << canId;
     return true;
 }
 
@@ -21,7 +21,6 @@ bool LacqueyFetch::open(yarp::os::Searchable& config)
 
 bool LacqueyFetch::close()
 {
-    CD_INFO("\n");
     return true;
 }
 

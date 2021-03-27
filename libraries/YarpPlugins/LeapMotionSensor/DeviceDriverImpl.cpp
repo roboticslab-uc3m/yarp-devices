@@ -2,9 +2,8 @@
 
 #include "LeapMotionSensor.hpp"
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
-
-#include "ColorDebug.h"
 
 // -----------------------------------------------------------------------------
 
@@ -26,18 +25,18 @@ bool roboticslab::LeapMotionSensor::open(yarp::os::Searchable& config)
         }
 
         retries++;
-        CD_INFO("Connection failed, retrying... %d\n", retries);
+        yInfo() << "Connection failed, retrying... " << retries;
         yarp::os::Time::delay(1);
     }
 
     if (retries == maxRetries)
     {
-        CD_ERROR("Unable to connect to Leap device, max retries exceeded.\n");
+        yError() << "Unable to connect to Leap device, max retries exceeded";
         close();
         return false;
     }
 
-    CD_SUCCESS("Leap Motion device started and running.\n");
+    yInfo() << "Leap Motion device started and running";
 
     return true;
 }

@@ -26,8 +26,7 @@ if(NOT SKIP_CanBusHico)
                                FilterManager.cpp)
 
     target_link_libraries(CanBusHico YARP::YARP_os
-                                     YARP::YARP_dev
-                                     ROBOTICSLAB::ColorDebug)
+                                     YARP::YARP_dev)
 
     yarp_install(TARGETS CanBusHico
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}

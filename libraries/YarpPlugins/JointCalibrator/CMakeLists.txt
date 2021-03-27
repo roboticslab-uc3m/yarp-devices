@@ -19,8 +19,7 @@ if(NOT SKIP_JointCalibrator)
                                     IWrapperImpl.cpp)
 
     target_link_libraries(JointCalibrator YARP::YARP_os
-                                          YARP::YARP_dev
-                                          ROBOTICSLAB::ColorDebug)
+                                          YARP::YARP_dev)
 
     target_compile_features(JointCalibrator PUBLIC cxx_std_11)
 

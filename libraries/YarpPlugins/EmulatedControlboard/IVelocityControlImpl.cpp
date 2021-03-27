@@ -2,7 +2,7 @@
 
 #include "EmulatedControlboard.hpp"
 
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 // ------------------ IVelocity Related ----------------------------------------
 
@@ -16,7 +16,7 @@ bool roboticslab::EmulatedControlboard::velocityMove(int j, double sp)  // velEx
     // Check if we are in velocity mode.
     if (controlMode != VELOCITY_MODE)
     {
-        CD_ERROR("EmulatedControlboard will not velocityMove as not in velocityMode\n");
+        yError("EmulatedControlboard will not velocityMove as not in velocityMode");
         return false;
     }
 
@@ -30,15 +30,6 @@ bool roboticslab::EmulatedControlboard::velocityMove(int j, double sp)  // velEx
 
 bool roboticslab::EmulatedControlboard::velocityMove(const double *sp)
 {
-    CD_DEBUG("Vel:");
-
-    for (unsigned int i = 0; i < axes; i++)
-    {
-        CD_DEBUG_NO_HEADER(" %+.6f", velRaw[i]);
-    }
-
-    CD_DEBUG_NO_HEADER("\n");
-    
     bool ok = true;
 
     for (unsigned int i = 0; i < axes; i++)
@@ -53,7 +44,6 @@ bool roboticslab::EmulatedControlboard::velocityMove(const double *sp)
 
 bool roboticslab::EmulatedControlboard::velocityMove(const int n_joint, const int *joints, const double *spds)
 {
-    CD_DEBUG("\n");
     // must implement mask!
     return velocityMove(spds);
 }
@@ -62,24 +52,24 @@ bool roboticslab::EmulatedControlboard::velocityMove(const int n_joint, const in
 
 bool roboticslab::EmulatedControlboard::getRefVelocity(const int joint, double *vel)
 {
-    CD_DEBUG("\n");
-    return true;
+    yWarning("getRefVelocity() not implemented yet");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::EmulatedControlboard::getRefVelocities(double *vels)
 {
-    CD_DEBUG("\n");
-    return true;
+    yWarning("getRefVelocities() not implemented yet");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::EmulatedControlboard::getRefVelocities(const int n_joint, const int *joints, double *vels)
 {
-    CD_DEBUG("\n");
-    return true;
+    yWarning("getRefVelocities() not implemented yet");
+    return false;
 }
 
 // -----------------------------------------------------------------------------

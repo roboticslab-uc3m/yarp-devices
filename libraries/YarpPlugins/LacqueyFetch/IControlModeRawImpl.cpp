@@ -2,7 +2,7 @@
 
 #include "LacqueyFetch.hpp"
 
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 using namespace roboticslab;
 
@@ -10,7 +10,7 @@ using namespace roboticslab;
 
 bool LacqueyFetch::getControlModeRaw(int j, int * mode)
 {
-    //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
+    yTrace("%d", j);
     CHECK_JOINT(j);
     *mode = VOCAB_CM_PWM;
     return true;
@@ -20,7 +20,6 @@ bool LacqueyFetch::getControlModeRaw(int j, int * mode)
 
 bool LacqueyFetch::getControlModesRaw(int * modes)
 {
-    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return getControlModeRaw(0, &modes[0]);
 }
 
@@ -28,7 +27,6 @@ bool LacqueyFetch::getControlModesRaw(int * modes)
 
 bool LacqueyFetch::getControlModesRaw(int n_joint, const int * joints, int * modes)
 {
-    CD_DEBUG("\n");
     return getControlModeRaw(joints[0], &modes[0]);
 }
 
@@ -37,7 +35,7 @@ bool LacqueyFetch::getControlModesRaw(int n_joint, const int * joints, int * mod
 bool LacqueyFetch::setControlModeRaw(int j, int mode)
 {
     CHECK_JOINT(j);
-    CD_WARNING("Not supported.\n");
+    yWarning("setControlModeRaw() not supported");
     return false;
 }
 
@@ -45,7 +43,7 @@ bool LacqueyFetch::setControlModeRaw(int j, int mode)
 
 bool LacqueyFetch::setControlModesRaw(int * modes)
 {
-    CD_WARNING("Not supported.\n");
+    yWarning("setControlModesRaw() not supported");
     return false;
 }
 
@@ -53,7 +51,7 @@ bool LacqueyFetch::setControlModesRaw(int * modes)
 
 bool LacqueyFetch::setControlModesRaw(int n_joint, const int * joints, int * modes)
 {
-    CD_WARNING("Not supported.\n");
+    yWarning("setControlModesRaw() not supported");
     return false;
 }
 

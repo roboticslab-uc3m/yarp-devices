@@ -4,9 +4,8 @@
 
 #include <algorithm>
 
+#include <yarp/os/Log.h>
 #include <yarp/os/Time.h>
-
-#include <ColorDebug.h>
 
 using namespace roboticslab;
 
@@ -14,7 +13,7 @@ using namespace roboticslab;
 
 bool DextraRawControlboard::resetEncoderRaw(int j)
 {
-    CD_DEBUG("(%d)\n", j);
+    yTrace("%d", j);
     return setEncoderRaw(j, 0.0);
 }
 
@@ -22,7 +21,7 @@ bool DextraRawControlboard::resetEncoderRaw(int j)
 
 bool DextraRawControlboard::resetEncodersRaw()
 {
-    CD_DEBUG("\n");
+    yTrace("");
     Synapse::Setpoints setpoints = {0};
     setSetpoints(setpoints);
     return true;
@@ -32,7 +31,7 @@ bool DextraRawControlboard::resetEncodersRaw()
 
 bool DextraRawControlboard::setEncoderRaw(int j, double val)
 {
-    CD_DEBUG("(%d, %f)\n", j, val);
+    yTrace("%d %f", j, val);
     CHECK_JOINT(j);
     setSetpoint(j, val);
     return true;
@@ -42,7 +41,7 @@ bool DextraRawControlboard::setEncoderRaw(int j, double val)
 
 bool DextraRawControlboard::setEncodersRaw(const double * vals)
 {
-    CD_DEBUG("\n");
+    yTrace("");
     Synapse::Setpoints setpoints;
     std::copy(vals, vals + Synapse::DATA_POINTS, std::begin(setpoints));
     setSetpoints(setpoints);
@@ -53,7 +52,7 @@ bool DextraRawControlboard::setEncodersRaw(const double * vals)
 
 bool DextraRawControlboard::getEncoderRaw(int j, double * v)
 {
-    CD_DEBUG("%d\n", j);
+    yTrace("%d", j);
     CHECK_JOINT(j);
     *v = getSetpoint(j);
     return true;

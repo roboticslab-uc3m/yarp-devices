@@ -2,9 +2,8 @@
 
 #include "LeapMotionSensor.hpp"
 
+#include <yarp/os/LogStream.h>
 #include <yarp/sig/Vector.h>
-
-#include "ColorDebug.h"
 
 namespace
 {
@@ -21,13 +20,13 @@ int roboticslab::LeapMotionSensor::read(yarp::sig::Vector &out)
 
     if (currentHandId == Leap::Hand::invalid().id())
     {
-        CD_INFO("Invalid id.\n");
+        yInfo() << "Invalid hand id";
         hand = frame.hands()[0];
         currentHandId = hand.id();
     }
     else
     {
-        CD_INFO("Picking hand with id: %d.\n", currentHandId);
+        yInfo() << "Picking hand with id:" << currentHandId;
         hand = frame.hand(currentHandId);
     }
 

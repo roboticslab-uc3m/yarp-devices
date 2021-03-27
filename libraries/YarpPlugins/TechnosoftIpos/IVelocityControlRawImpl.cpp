@@ -4,7 +4,7 @@
 
 #include <cmath>
 
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 using namespace roboticslab;
 
@@ -12,13 +12,13 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
 {
-    CD_DEBUG("(%d, %f)\n", j, sp);
+    yTrace("%d %f", j, sp);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_VELOCITY);
 
     if (std::abs(sp) > vars.maxVel)
     {
-        CD_WARNING("Requested speed exceeds maximum velocity (%f).\n", vars.maxVel.load());
+        yWarning("Requested speed exceeds maximum velocity (%f)", vars.maxVel.load());
         sp = std::min<double>(vars.maxVel, std::max<double>(-vars.maxVel, sp));
     }
 
@@ -37,7 +37,6 @@ bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
 
 bool TechnosoftIpos::velocityMoveRaw(const double * sp)
 {
-    CD_DEBUG("\n");
     return velocityMoveRaw(0, sp[0]);
 }
 
@@ -45,7 +44,6 @@ bool TechnosoftIpos::velocityMoveRaw(const double * sp)
 
 bool TechnosoftIpos::velocityMoveRaw(int n_joint, const int * joints, const double * spds)
 {
-    CD_DEBUG("\n");
     return velocityMoveRaw(joints[0], spds[0]);
 }
 
@@ -53,7 +51,7 @@ bool TechnosoftIpos::velocityMoveRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::getRefVelocityRaw(int joint, double * vel)
 {
-    CD_DEBUG("(%d)\n",joint);
+    yTrace("%d",joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_VELOCITY);
     *vel = vars.synchronousCommandTarget;
@@ -64,7 +62,6 @@ bool TechnosoftIpos::getRefVelocityRaw(int joint, double * vel)
 
 bool TechnosoftIpos::getRefVelocitiesRaw(double * vels)
 {
-    CD_DEBUG("\n");
     return getRefVelocityRaw(0, &vels[0]);
 }
 
@@ -72,7 +69,6 @@ bool TechnosoftIpos::getRefVelocitiesRaw(double * vels)
 
 bool TechnosoftIpos::getRefVelocitiesRaw(int n_joint, const int * joints, double * vels)
 {
-    CD_DEBUG("\n");
     return getRefVelocityRaw(joints[0], &vels[0]);
 }
 

@@ -9,7 +9,7 @@
 #include <cassert>
 #include <cerrno>
 
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 // -----------------------------------------------------------------------------
 
@@ -47,13 +47,13 @@ bool roboticslab::CanBusPeak::waitUntilTimeout(io_operation op, bool * bufferRea
         ret = ::select(fileDescriptor + 1, 0, &fds, 0, &tv);
         break;
     default:
-        CD_ERROR("Unhandled IO operation on select().\n");
+        yError("Unhandled IO operation on select()");
         return false;
     }
 
     if (ret < 0)
     {
-        CD_ERROR("select() error: %s.\n", std::strerror(errno));
+        yError("select() error: %s", std::strerror(errno));
         return false;
     }
     else if (ret == 0)

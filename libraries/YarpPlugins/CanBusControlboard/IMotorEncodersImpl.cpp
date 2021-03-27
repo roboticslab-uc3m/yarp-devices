@@ -2,7 +2,7 @@
 
 #include "CanBusControlboard.hpp"
 
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 using namespace roboticslab;
 
@@ -10,7 +10,7 @@ using namespace roboticslab;
 
 bool CanBusControlboard::getNumberOfMotorEncoders(int * num)
 {
-    CD_DEBUG("\n");
+    yTrace("");
     return getAxes(num);
 }
 
@@ -18,7 +18,7 @@ bool CanBusControlboard::getNumberOfMotorEncoders(int * num)
 
 bool CanBusControlboard::resetMotorEncoder(int m)
 {
-    CD_DEBUG("(%d)\n", m);
+    yTrace("%d", m);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IMotorEncodersRaw::resetMotorEncoderRaw, m);
 }
@@ -27,7 +27,7 @@ bool CanBusControlboard::resetMotorEncoder(int m)
 
 bool CanBusControlboard::resetMotorEncoders()
 {
-    CD_DEBUG("\n");
+    yTrace("");
     return deviceMapper.mapAllJoints(&yarp::dev::IMotorEncodersRaw::resetMotorEncodersRaw);
 }
 
@@ -35,7 +35,7 @@ bool CanBusControlboard::resetMotorEncoders()
 
 bool CanBusControlboard::setMotorEncoderCountsPerRevolution(int m, double cpr)
 {
-    CD_DEBUG("(%d, %f)\n", m, cpr);
+    yTrace("%d %f", m, cpr);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IMotorEncodersRaw::setMotorEncoderCountsPerRevolutionRaw, m, cpr);
 }
@@ -44,7 +44,7 @@ bool CanBusControlboard::setMotorEncoderCountsPerRevolution(int m, double cpr)
 
 bool CanBusControlboard::getMotorEncoderCountsPerRevolution(int m, double * cpr)
 {
-    CD_DEBUG("(%d)\n", m);
+    yTrace("%d", m);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IMotorEncodersRaw::getMotorEncoderCountsPerRevolutionRaw, m, cpr);
 }
@@ -53,7 +53,7 @@ bool CanBusControlboard::getMotorEncoderCountsPerRevolution(int m, double * cpr)
 
 bool CanBusControlboard::setMotorEncoder(int m, double val)
 {
-    CD_DEBUG("(%d, %f)\n", m, val);
+    yTrace("%d %f", m, val);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IMotorEncodersRaw::setMotorEncoderRaw, m, val);
 }
@@ -62,7 +62,7 @@ bool CanBusControlboard::setMotorEncoder(int m, double val)
 
 bool CanBusControlboard::setMotorEncoders(const double * vals)
 {
-    CD_DEBUG("\n");
+    yTrace("");
     return deviceMapper.mapAllJoints(&yarp::dev::IMotorEncodersRaw::setMotorEncodersRaw, vals);
 }
 
@@ -70,7 +70,7 @@ bool CanBusControlboard::setMotorEncoders(const double * vals)
 
 bool CanBusControlboard::getMotorEncoder(int m, double * v)
 {
-    CD_DEBUG("(%d)\n", m);
+    yTrace("%d", m);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IMotorEncodersRaw::getMotorEncoderRaw, m, v);
 }
@@ -79,7 +79,7 @@ bool CanBusControlboard::getMotorEncoder(int m, double * v)
 
 bool CanBusControlboard::getMotorEncoders(double * encs)
 {
-    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
+    yTrace("");
     return deviceMapper.mapAllJoints(&yarp::dev::IMotorEncodersRaw::getMotorEncodersRaw, encs);
 }
 
@@ -87,7 +87,7 @@ bool CanBusControlboard::getMotorEncoders(double * encs)
 
 bool CanBusControlboard::getMotorEncoderTimed(int m, double * enc, double * stamp)
 {
-    CD_DEBUG("(%d)\n", m);
+    yTrace("%d", m);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IMotorEncodersRaw::getMotorEncoderTimedRaw, m, enc, stamp);
 }
@@ -96,7 +96,7 @@ bool CanBusControlboard::getMotorEncoderTimed(int m, double * enc, double * stam
 
 bool CanBusControlboard::getMotorEncodersTimed(double * encs, double * stamps)
 {
-    CD_DEBUG("\n");
+    yTrace("");
     return deviceMapper.mapAllJoints(&yarp::dev::IMotorEncodersRaw::getMotorEncodersTimedRaw, encs, stamps);
 }
 
@@ -104,7 +104,7 @@ bool CanBusControlboard::getMotorEncodersTimed(double * encs, double * stamps)
 
 bool CanBusControlboard::getMotorEncoderSpeed(int m, double * sp)
 {
-    CD_DEBUG("(%d)\n", m);
+    yTrace("%d", m);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IMotorEncodersRaw::getMotorEncoderSpeedRaw, m, sp);
 }
@@ -113,7 +113,7 @@ bool CanBusControlboard::getMotorEncoderSpeed(int m, double * sp)
 
 bool CanBusControlboard::getMotorEncoderSpeeds(double *spds)
 {
-    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
+    yTrace("");
     return deviceMapper.mapAllJoints(&yarp::dev::IMotorEncodersRaw::getMotorEncoderSpeedsRaw, spds);
 }
 
@@ -121,7 +121,7 @@ bool CanBusControlboard::getMotorEncoderSpeeds(double *spds)
 
 bool CanBusControlboard::getMotorEncoderAcceleration(int m, double * acc)
 {
-    CD_DEBUG("(%d)\n", m);
+    yTrace("%d", m);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IMotorEncodersRaw::getMotorEncoderAccelerationRaw, m, acc);
 }
@@ -130,7 +130,7 @@ bool CanBusControlboard::getMotorEncoderAcceleration(int m, double * acc)
 
 bool CanBusControlboard::getMotorEncoderAccelerations(double * accs)
 {
-    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
+    yTrace("");
     return deviceMapper.mapAllJoints(&yarp::dev::IMotorEncodersRaw::getMotorEncoderAccelerationsRaw, accs);
 }
 

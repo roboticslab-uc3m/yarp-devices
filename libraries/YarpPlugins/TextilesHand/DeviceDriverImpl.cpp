@@ -2,9 +2,8 @@
 
 #include "TextilesHand.hpp"
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
-
-#include <ColorDebug.h>
 
 using namespace roboticslab;
 
@@ -12,7 +11,7 @@ using namespace roboticslab;
 
 bool TextilesHand::open(yarp::os::Searchable & config)
 {
-    CD_DEBUG("%s\n", config.toString().c_str());
+    yDebug() << "TextilesHand config:" << config.toString();
 
     std::string port = config.check("port", yarp::os::Value(DEFAULT_PORT), "serial port").asString();
 
@@ -31,13 +30,13 @@ bool TextilesHand::open(yarp::os::Searchable & config)
 
     if (!serialDevice.open(serialOptions))
     {
-        CD_ERROR("Unable to open serial device.\n");
+        yError() << "Unable to open serial device";
         return false;
     }
 
     if (!serialDevice.view(iSerialDevice))
     {
-        CD_ERROR("Unable to view iSerialDevice.\n");
+        yError() << "Unable to view iSerialDevice";
         return false;
     }
 

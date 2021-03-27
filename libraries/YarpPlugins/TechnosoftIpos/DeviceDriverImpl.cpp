@@ -4,9 +4,8 @@
 
 #include <functional>
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
-
-#include <ColorDebug.h>
 
 using namespace roboticslab;
 
@@ -16,7 +15,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 {
     if (!config.check("robotConfig") || !config.find("robotConfig").isBlob())
     {
-        CD_ERROR("Missing \"robotConfig\" property or not a blob.\n");
+        yError() << "Missing \"robotConfig\" property or not a blob";
         return false;
     }
 
@@ -32,7 +31,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     iposGroup.fromString(config.toString(), false); // override common options
 
-    CD_DEBUG("%s\n", iposGroup.toString().c_str());
+    yDebug() << "TechnosoftIpos config:" << iposGroup.toString();
 
     yarp::os::Bottle & driverGroup = robotConfig->findGroup(iposGroup.find("driver").asString());
     yarp::os::Bottle & motorGroup = robotConfig->findGroup(iposGroup.find("motor").asString());
@@ -63,7 +62,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     if (!vars.validateInitialState())
     {
-        CD_ERROR("Invalid configuration parameters.\n");
+        yError() << "Invalid configuration parameters";
         return false;
     }
 
@@ -74,7 +73,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
         if (externalEncoderGroup.isNull())
         {
-            CD_ERROR("Missing external encoder device group %s.\n", externalEncoder.c_str());
+            yError() << "Missing external encoder device group" << externalEncoder;
             return false;
         }
 
@@ -85,19 +84,19 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
         if (!externalEncoderDevice.open(externalEncoderOptions))
         {
-            CD_ERROR("Unable to open external encoder device: %s.\n", externalEncoder.c_str());
+            yError() << "Unable to open external encoder device" << externalEncoder;
             return false;
         }
 
         if (!externalEncoderDevice.view(iEncodersTimedRawExternal))
         {
-            CD_ERROR("Unable to view IEncodersTimedRaw in %s.\n", externalEncoder.c_str());
+            yError() << "Unable to view IEncodersTimedRaw in" << externalEncoder;
             return false;
         }
 
         if (!externalEncoderDevice.view(iExternalEncoderCanBusSharer))
         {
-            CD_ERROR("Unable to view ICanBusSharer in %s.\n", externalEncoder.c_str());
+            yError() << "Unable to view ICanBusSharer in" << externalEncoder;
             return false;
         }
     }

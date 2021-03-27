@@ -2,7 +2,7 @@
 
 #include "TechnosoftIpos.hpp"
 
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 using namespace roboticslab;
 
@@ -10,7 +10,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::setPositionRaw(int j, double ref)
 {
-    //CD_DEBUG("(%d, %f)\n", j, ref);
+    yTrace("%d %f", j, ref);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
 
@@ -46,7 +46,6 @@ bool TechnosoftIpos::setPositionRaw(int j, double ref)
 
 bool TechnosoftIpos::setPositionsRaw(const double * refs)
 {
-    //CD_DEBUG("\n");
     return setPositionRaw(0, refs[0]);
 }
 
@@ -54,7 +53,6 @@ bool TechnosoftIpos::setPositionsRaw(const double * refs)
 
 bool TechnosoftIpos::setPositionsRaw(int n_joint, const int * joints, const double * refs)
 {
-    //CD_DEBUG("\n");
     return setPositionRaw(joints[0], refs[0]);
 }
 
@@ -62,7 +60,7 @@ bool TechnosoftIpos::setPositionsRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::getRefPositionRaw(int joint, double * ref)
 {
-    CD_DEBUG("(%d)\n", joint);
+    yTrace("%d", joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
 
@@ -82,7 +80,6 @@ bool TechnosoftIpos::getRefPositionRaw(int joint, double * ref)
 
 bool TechnosoftIpos::getRefPositionsRaw(double * refs)
 {
-    CD_DEBUG("\n");
     return getRefPositionRaw(0, &refs[0]);
 }
 
@@ -90,7 +87,6 @@ bool TechnosoftIpos::getRefPositionsRaw(double * refs)
 
 bool TechnosoftIpos::getRefPositionsRaw(int n_joint, const int * joints, double * refs)
 {
-    CD_DEBUG("\n");
     return getRefPositionRaw(joints[0], &refs[0]);
 }
 

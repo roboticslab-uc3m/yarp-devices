@@ -26,8 +26,7 @@ if(NOT SKIP_EmulatedControlboard)
                                          SharedArea.cpp)
 
     target_link_libraries(EmulatedControlboard YARP::YARP_os
-                                               YARP::YARP_dev
-                                               ROBOTICSLAB::ColorDebug)
+                                               YARP::YARP_dev)
 
     yarp_install(TARGETS EmulatedControlboard
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}

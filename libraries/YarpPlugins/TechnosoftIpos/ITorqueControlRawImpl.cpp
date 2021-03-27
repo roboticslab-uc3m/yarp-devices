@@ -2,7 +2,7 @@
 
 #include "TechnosoftIpos.hpp"
 
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 using namespace roboticslab;
 
@@ -10,7 +10,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::getRefTorqueRaw(int j, double * t)
 {
-    CD_DEBUG("(%d)\n", j);
+    yTrace("%d", j);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_TORQUE);
     *t = vars.synchronousCommandTarget;
@@ -21,7 +21,6 @@ bool TechnosoftIpos::getRefTorqueRaw(int j, double * t)
 
 bool TechnosoftIpos::getRefTorquesRaw(double * t)
 {
-    CD_DEBUG("\n");
     return getRefTorqueRaw(0, &t[0]);
 }
 
@@ -29,7 +28,7 @@ bool TechnosoftIpos::getRefTorquesRaw(double * t)
 
 bool TechnosoftIpos::setRefTorqueRaw(int j, double t)
 {
-    CD_DEBUG("(%d, %f)\n", j, t);
+    yTrace("%d %f", j, t);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_TORQUE);
     vars.synchronousCommandTarget = t;
@@ -40,7 +39,6 @@ bool TechnosoftIpos::setRefTorqueRaw(int j, double t)
 
 bool TechnosoftIpos::setRefTorquesRaw(const double * t)
 {
-    CD_DEBUG("\n");
     return setRefTorqueRaw(0, t[0]);
 }
 
@@ -48,7 +46,7 @@ bool TechnosoftIpos::setRefTorquesRaw(const double * t)
 
 bool TechnosoftIpos::getTorqueRaw(int j, double * t)
 {
-    //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
+    yTrace("%d", j);
     CHECK_JOINT(j);
     std::int16_t temp = vars.lastCurrentRead;
     double curr = vars.internalUnitsToCurrent(temp);
@@ -60,7 +58,6 @@ bool TechnosoftIpos::getTorqueRaw(int j, double * t)
 
 bool TechnosoftIpos::getTorquesRaw(double * t)
 {
-    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return getTorqueRaw(0, &t[0]);
 }
 
@@ -68,7 +65,7 @@ bool TechnosoftIpos::getTorquesRaw(double * t)
 
 bool TechnosoftIpos::getTorqueRangeRaw(int j, double * min, double * max)
 {
-    CD_DEBUG("(%d)\n", j);
+    yTrace("%d", j);
     CHECK_JOINT(j);
 
     return can->sdo()->upload<std::uint16_t>("Current limit", [this, min, max](auto data)
@@ -82,7 +79,6 @@ bool TechnosoftIpos::getTorqueRangeRaw(int j, double * min, double * max)
 
 bool TechnosoftIpos::getTorqueRangesRaw(double * min, double * max)
 {
-    CD_DEBUG("\n");
     return getTorqueRangeRaw(0, &min[0], &max[0]);
 }
 
@@ -90,7 +86,7 @@ bool TechnosoftIpos::getTorqueRangesRaw(double * min, double * max)
 
 bool TechnosoftIpos::getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParameters * params)
 {
-    CD_DEBUG("(%d)\n", j);
+    yTrace("%d", j);
     CHECK_JOINT(j);
 
     params->bemf = 0.0;
@@ -105,7 +101,7 @@ bool TechnosoftIpos::getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParame
 
 bool TechnosoftIpos::setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorqueParameters params)
 {
-    CD_DEBUG("(%d)\n", j);
+    yTrace("%d", j);
     CHECK_JOINT(j);
     vars.k = params.ktau;
     return true;

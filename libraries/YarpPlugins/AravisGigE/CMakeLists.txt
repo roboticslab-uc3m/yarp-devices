@@ -30,8 +30,7 @@ if(NOT SKIP_AravisGigE)
 
     target_link_libraries(AravisGigE YARP::YARP_os
                                      YARP::YARP_dev
-                                     ${ARAVIS_LIBRARIES}
-                                     ROBOTICSLAB::ColorDebug)
+                                     ${ARAVIS_LIBRARIES})
 
     target_include_directories(AravisGigE PRIVATE ${ARAVIS_INCLUDE_DIRS})
 

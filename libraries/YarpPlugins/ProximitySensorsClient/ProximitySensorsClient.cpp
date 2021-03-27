@@ -2,7 +2,7 @@
 
 #include "ProximitySensorsClient.hpp"
 
-#include <ColorDebug.h>
+#include <yarp/os/LogStream.h>
 
 void roboticslab::ProximitySensorsClient::SensorReader::onRead(yarp::os::Bottle& b)
 {
@@ -17,7 +17,7 @@ void roboticslab::ProximitySensorsClient::SensorReader::onRead(yarp::os::Bottle&
         if (b.get(14).asFloat64() > sens->thresholdGripper && b.get(14).asFloat64() < 1000)
         {
             sens->gripper=true;
-            CD_INFO("Target detected.\n");
+            yInfo() << "Target detected";
         }
         else
         {
@@ -35,7 +35,7 @@ void roboticslab::ProximitySensorsClient::SensorReader::onRead(yarp::os::Bottle&
         }
     }
 
-    CD_INFO("Current maximum sensor value: %f.\n", max);
+    yInfo() << "Current maximum sensor value:" << max;
 
     {
         std::lock_guard<std::mutex> lock(sens->alertMutex);

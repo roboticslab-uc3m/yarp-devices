@@ -10,9 +10,8 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
+#include <yarp/os/Log.h>
 #include <yarp/os/Vocab.h>
-
-#include <ColorDebug.h>
 
 #include "SdoClient.hpp"
 
@@ -141,7 +140,7 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
 
     if (request.size() < 5)
     {
-        CD_WARNING("SDO requests require at least 5 elements, got %zu.\n", request.size());
+        yWarning("SDO requests require at least 5 elements, got %zu", request.size());
         return false;
     }
 
@@ -252,7 +251,7 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
             break;
         }
         default:
-            CD_WARNING("Invalid data type %s.\n", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
+            yWarning("Invalid data type %s", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
             return false;
         }
 
@@ -268,7 +267,7 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
     {
         if (request.size() != 6)
         {
-            CD_WARNING("Download SDO requires exactly 6 elements, got %zu.\n", request.size());
+            yWarning("Download SDO requires exactly 6 elements, got %zu", request.size());
             return false;
         }
 
@@ -288,13 +287,13 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
         case data_type::STRING:
             return priv->sdo()->download("Remote indication", data.asString(), index, subindex) && guard.flip();
         default:
-            CD_WARNING("Invalid data type %s.\n", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
+            yWarning("Invalid data type %s", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
             return false;
         }
     }
     else
     {
-        CD_WARNING("Invalid SDO direction %s.\n", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(dir)).c_str());
+        yWarning("Invalid SDO direction %s", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(dir)).c_str());
         return false;
     }
 }

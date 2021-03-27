@@ -2,7 +2,7 @@
 
 #include "TechnosoftIpos.hpp"
 
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 using namespace roboticslab;
 
@@ -17,7 +17,7 @@ bool TechnosoftIpos::getNumberOfMotorsRaw(int * number)
 
 bool TechnosoftIpos::getTemperatureRaw(int m, double * val)
 {
-    CD_ERROR("Not supported.\n");
+    yError("getTemperatureRaw() not supported");
     return false;
 }
 
@@ -25,7 +25,7 @@ bool TechnosoftIpos::getTemperatureRaw(int m, double * val)
 
 bool TechnosoftIpos::getTemperaturesRaw(double * vals)
 {
-    CD_ERROR("Not supported.\n");
+    yError("getTemperaturesRaw() not supported");
     return false;
 }
 
@@ -33,7 +33,7 @@ bool TechnosoftIpos::getTemperaturesRaw(double * vals)
 
 bool TechnosoftIpos::getTemperatureLimitRaw(int m, double * temp)
 {
-    CD_ERROR("Not supported.\n");
+    yError("getTemperatureLimitRaw() not supported");
     return false;
 }
 
@@ -41,7 +41,7 @@ bool TechnosoftIpos::getTemperatureLimitRaw(int m, double * temp)
 
 bool TechnosoftIpos::setTemperatureLimitRaw(int m, double temp)
 {
-    CD_ERROR("Not supported.\n");
+    yError("setTemperatureLimitRaw() not supported");
     return false;
 }
 
@@ -49,7 +49,7 @@ bool TechnosoftIpos::setTemperatureLimitRaw(int m, double temp)
 
 bool TechnosoftIpos::getGearboxRatioRaw(int m, double * val)
 {
-    CD_DEBUG("(%d)\n", m);
+    yTrace("%d", m);
     CHECK_JOINT(m);
     *val = vars.tr;
     return true;
@@ -59,7 +59,7 @@ bool TechnosoftIpos::getGearboxRatioRaw(int m, double * val)
 
 bool TechnosoftIpos::setGearboxRatioRaw(int m, double val)
 {
-    CD_DEBUG("(%d, %f)\n", m, val);
+    yTrace("%d %f", m, val);
     CHECK_JOINT(m);
     vars.tr = val;
     return true;

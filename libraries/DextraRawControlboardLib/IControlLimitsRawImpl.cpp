@@ -2,7 +2,7 @@
 
 #include "DextraRawControlboard.hpp"
 
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 using namespace roboticslab;
 
@@ -10,7 +10,7 @@ using namespace roboticslab;
 
 bool DextraRawControlboard::setLimitsRaw(int axis, double min, double max)
 {
-    CD_INFO("(%d, %f, %f)\n", axis, min, max);
+    yTrace("%d %f %f", axis, min, max);
     CHECK_JOINT(axis);
     return false;
 }
@@ -19,7 +19,7 @@ bool DextraRawControlboard::setLimitsRaw(int axis, double min, double max)
 
 bool DextraRawControlboard::getLimitsRaw(int axis, double * min, double * max)
 {
-    CD_INFO("(%d)\n", axis);
+    yTrace("%d", axis);
     CHECK_JOINT(axis);
 
     auto limits = Synapse::LIMITS[axis];
@@ -33,7 +33,7 @@ bool DextraRawControlboard::getLimitsRaw(int axis, double * min, double * max)
 
 bool DextraRawControlboard::setVelLimitsRaw(int axis, double min, double max)
 {
-    CD_WARNING("Not supported.\n");
+    yWarning("setVelLimitsRaw() not supported");
     return false;
 }
 
@@ -41,7 +41,7 @@ bool DextraRawControlboard::setVelLimitsRaw(int axis, double min, double max)
 
 bool DextraRawControlboard::getVelLimitsRaw(int axis, double * min, double * max)
 {
-    CD_WARNING("Not supported.\n");
+    yWarning("getVelLimitsRaw() not supported");
     return false;
 }
 

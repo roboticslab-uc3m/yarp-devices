@@ -2,7 +2,7 @@
 
 #include "TechnosoftIpos.hpp"
 
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 using namespace roboticslab;
 
@@ -10,7 +10,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::getAxisNameRaw(int axis, std::string & name)
 {
-    CD_DEBUG("(%d)\n", axis);
+    yTrace("%d", axis);
     CHECK_JOINT(axis);
     name = vars.axisName;
     return true;
@@ -20,7 +20,7 @@ bool TechnosoftIpos::getAxisNameRaw(int axis, std::string & name)
 
 bool TechnosoftIpos::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type)
 {
-    CD_DEBUG("(%d)\n", axis);
+    yTrace("%d", axis);
     CHECK_JOINT(axis);
     type = static_cast<yarp::dev::JointTypeEnum>(vars.jointType);
     return true;

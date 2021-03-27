@@ -4,9 +4,8 @@
 
 #include <cstring>
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
-
-#include <ColorDebug.h>
 
 #include "CanUtils.hpp"
 
@@ -37,7 +36,7 @@ bool CuiAbsolute::finalize()
 {
     if (cuiMode == CuiMode::PUSH && !stopPushMode())
     {
-        CD_ERROR("Unable to stop Cui with CAN id %d.\n", canId);
+        yError() << "Unable to stop Cui with CAN id" << canId;
         return false;
     }
 
@@ -51,7 +50,7 @@ bool CuiAbsolute::notifyMessage(const can_message & message)
 {
     if (message.data[3] == 0xc4)
     {
-        CD_ERROR("Known PIC error. %s\n", CanUtils::msgToStr(message).c_str());
+        yError("Known PIC error. %s", CanUtils::msgToStr(message).c_str());
         return false;
     }
 

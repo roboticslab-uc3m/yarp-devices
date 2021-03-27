@@ -36,7 +36,7 @@ if(ENABLE_CanOpenNodeLib)
 
     target_link_libraries(CanOpenNodeLib PUBLIC ROBOTICSLAB::CanBusSharerLib
                                                 ROBOTICSLAB::StateObserverLib
-                                         PRIVATE ROBOTICSLAB::ColorDebug)
+                                         PRIVATE YARP::YARP_os)
 
     target_include_directories(CanOpenNodeLib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                                      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)

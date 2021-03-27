@@ -2,14 +2,15 @@
 
 #include "EmulatedControlboard.hpp"
 
+#include <yarp/os/Log.h>
 #include <yarp/os/Vocab.h>
-#include <ColorDebug.h>
 
 // ------------------- IControlMode Related ------------------------------------
 
 bool roboticslab::EmulatedControlboard::getControlMode(int j, int *mode)
 {
-    //CD_DEBUG("\n"); //-- Way too verbose.
+    yTrace("%d", j);
+
     if (controlMode == POSITION_MODE)
     {
         *mode = VOCAB_CM_POSITION;
@@ -24,7 +25,7 @@ bool roboticslab::EmulatedControlboard::getControlMode(int j, int *mode)
     }
     else
     {
-        CD_ERROR("Currently unsupported mode.\n");
+        yError("Currently unsupported mode: %s", yarp::os::Vocab::decode(controlMode).c_str());
         return false;
     }
 
@@ -35,7 +36,6 @@ bool roboticslab::EmulatedControlboard::getControlMode(int j, int *mode)
 
 bool roboticslab::EmulatedControlboard::getControlModes(int *modes)
 {
-    //CD_DEBUG("\n"); //-- Way too verbose.
     bool ok = true;
 
     for (unsigned int i = 0; i < axes; i++)
@@ -50,7 +50,6 @@ bool roboticslab::EmulatedControlboard::getControlModes(int *modes)
 
 bool roboticslab::EmulatedControlboard::getControlModes(const int n_joint, const int *joints, int *modes)
 {
-    CD_DEBUG("(%d)\n", n_joint);
     bool ok = true;
 
     for (int i = 0; i < n_joint; i++)
@@ -65,11 +64,11 @@ bool roboticslab::EmulatedControlboard::getControlModes(const int n_joint, const
 
 bool roboticslab::EmulatedControlboard::setControlMode(const int j, const int mode)
 {
-    CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
+    yTrace("%d %s", j, yarp::os::Vocab::decode(mode).c_str());
 
     if ((unsigned int)j > axes)
     {
-        CD_ERROR("axis index more than axes.\n");
+        yError("Axis index greater than number of axes (%d > %d)", j, axes);
         return false;
     }
 
@@ -92,7 +91,6 @@ bool roboticslab::EmulatedControlboard::setControlMode(const int j, const int mo
 
 bool roboticslab::EmulatedControlboard::setControlModes(const int n_joint, const int *joints, int *modes)
 {
-    CD_DEBUG("(%d)\n", n_joint);
     bool ok = true;
 
     for (int j = 0; j < n_joint; j++)
@@ -107,7 +105,6 @@ bool roboticslab::EmulatedControlboard::setControlModes(const int n_joint, const
 
 bool roboticslab::EmulatedControlboard::setControlModes(int *modes)
 {
-    CD_DEBUG("\n");
     bool ok = true;
 
     for (unsigned int i = 0; i < axes; i++)

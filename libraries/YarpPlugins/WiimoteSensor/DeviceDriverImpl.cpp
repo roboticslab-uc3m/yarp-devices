@@ -4,21 +4,22 @@
 
 #include <cstdlib>
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Value.h>
-
-#include "ColorDebug.h"
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::WiimoteSensor::open(yarp::os::Searchable& config)
 {
+    yDebug() << "WiimoteSensor config:" << config.toString();
+
     int deviceId = config.check("deviceId", yarp::os::Value(DEFAULT_DEVICE), "Wiimote device number").asInt32();
 
     char * syspath = getDevicePath(deviceId);
 
     if (syspath == NULL)
     {
-        CD_ERROR("Cannot find device with number %d.\n", deviceId);
+        yError() << "Cannot find device with number" << deviceId;
         return false;
     }
 
@@ -26,19 +27,19 @@ bool roboticslab::WiimoteSensor::open(yarp::os::Searchable& config)
 
     if (ret < 0)
     {
-        CD_ERROR("Cannot create xwii_iface '%s': %d.\n", syspath, ret);
+        yError("Cannot create xwii_iface %s: %d", syspath, ret);
         std::free(syspath);
         return false;
     }
 
-    CD_SUCCESS("Created xwii_iface '%s'.\n", syspath);
+    yInfo() << "Created xwii_iface" << syspath;
     std::free(syspath);
 
     ret = xwii_iface_open(iface, XWII_IFACE_CORE | XWII_IFACE_ACCEL);
 
     if (ret < 0)
     {
-        CD_ERROR("Cannot open interface, did you launch with sudo? (%d).\n", ret);
+        yError() << "Cannot open interface, did you launch with sudo?" << ret;
         return false;
     }
 
@@ -50,8 +51,8 @@ bool roboticslab::WiimoteSensor::open(yarp::os::Searchable& config)
     calibOneY = config.check("calibOneY", yarp::os::Value(DEFAULT_CALIB_ONE_Y), "normalization value for Y axis (one)").asInt32();
     calibOneZ = config.check("calibOneZ", yarp::os::Value(DEFAULT_CALIB_ONE_Z), "normalization value for Z axis (one)").asInt32();
 
-    CD_INFO("Calibration (zero): x = %d, y = %d, z = %d\n", calibZeroX, calibZeroY, calibZeroZ);
-    CD_INFO("Calibration (one): x = %d, y = %d, z = %d\n", calibOneX, calibOneY, calibOneZ);
+    yInfo("Calibration (zero): x = %d, y = %d, z = %d", calibZeroX, calibZeroY, calibZeroZ);
+    yInfo("Calibration (one): x = %d, y = %d, z = %d", calibOneX, calibOneY, calibOneZ);
 
     dispatcherThread.setInterfacePointer(iface);
     return dispatcherThread.start();

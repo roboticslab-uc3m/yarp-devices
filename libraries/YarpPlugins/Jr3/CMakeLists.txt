@@ -22,8 +22,7 @@ if(NOT SKIP_Jr3)
                         IAnalogSensorImpl.cpp)
 
     target_link_libraries(Jr3 YARP::YARP_os
-                              YARP::YARP_dev
-                              ROBOTICSLAB::ColorDebug)
+                              YARP::YARP_dev)
 
     yarp_install(TARGETS Jr3
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}

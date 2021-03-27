@@ -2,7 +2,7 @@
 
 #include "CuiAbsolute.hpp"
 
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 #include "CanUtils.hpp"
 
@@ -19,23 +19,23 @@ bool CuiAbsolute::performRequest(const std::string & name, unsigned int len, con
     {
         if (!sender->prepareMessage(msg))
         {
-            CD_ERROR("Unable to register \"%s\" command. %s\n", name.c_str(), CanUtils::msgToStr(msg).c_str());
+            yError("Unable to register \"%s\" command. %s", name.c_str(), CanUtils::msgToStr(msg).c_str());
             return false;
         }
 
-        CD_INFO("Registered \"%s\" command (%d/%d). %s\n", name.c_str(), retry, maxRetries, CanUtils::msgToStr(msg).c_str());
+        yInfo("Registered \"%s\" command (%d/%d). %s", name.c_str(), retry, maxRetries, CanUtils::msgToStr(msg).c_str());
 
         if (v ? pollStateObserver->await(v) : pushStateObserver->await())
         {
-            CD_SUCCESS("Succesfully processed \"%s\" command (%d/%d).\n", name.c_str(), retry, maxRetries);
+            yInfo("Succesfully processed \"%s\" command (%d/%d)", name.c_str(), retry, maxRetries);
             normalize(v);
             return true;
         }
 
-        CD_WARNING("Command \"%s\" timed out (%d/%d).\n", name.c_str(), retry, maxRetries);
+        yWarning("Command \"%s\" timed out (%d/%d)", name.c_str(), retry, maxRetries);
     }
 
-    CD_ERROR("Max number of retries exceeded (%d).\n", maxRetries);
+    yError("Max number of retries exceeded (%d)", maxRetries);
     return false;
 }
 

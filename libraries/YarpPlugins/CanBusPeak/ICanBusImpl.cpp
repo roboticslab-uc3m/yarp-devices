@@ -7,14 +7,12 @@
 
 #include <libpcanfd.h>
 
-#include <ColorDebug.h>
+#include <yarp/os/LogStream.h>
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::CanBusPeak::canSetBaudRate(unsigned int rate)
 {
-    CD_DEBUG("(%d)\n", rate);
-
     struct pcanfd_init pfdi;
     std::memset(&pfdi, '\0', sizeof(pfdi));
     pfdi.nominal.bitrate = rate;
@@ -25,7 +23,7 @@ bool roboticslab::CanBusPeak::canSetBaudRate(unsigned int rate)
 
     if (res < 0)
     {
-        CD_ERROR("Unable to set bitrate (%s).\n", std::strerror(-res));
+        yError() << "Unable to set bitrate:" << std::strerror(-res);
         return false;
     }
 
@@ -44,7 +42,7 @@ bool roboticslab::CanBusPeak::canGetBaudRate(unsigned int * rate)
 
     if (res < 0)
     {
-        CD_ERROR("Unable to retrieve bitrate (%s).\n", std::strerror(-res));
+        yError() << "Unable to retrieve bitrate:" << std::strerror(-res);
         return false;
     }
 
@@ -52,8 +50,7 @@ bool roboticslab::CanBusPeak::canGetBaudRate(unsigned int * rate)
 
     if (pfdi.nominal.bitrate != pfdi.nominal.bitrate_real)
     {
-        CD_WARNING("User-defined nominal bitrate (%d) differs from real nominal bitrate (%d).\n",
-                   pfdi.nominal.bitrate, pfdi.nominal.bitrate_real);
+        yWarning() << "User-defined nominal bitrate" << pfdi.nominal.bitrate << "differs from real nominal bitrate" << pfdi.nominal.bitrate_real;
     }
 
     return true;
@@ -63,13 +60,11 @@ bool roboticslab::CanBusPeak::canGetBaudRate(unsigned int * rate)
 
 bool roboticslab::CanBusPeak::canIdAdd(unsigned int id)
 {
-    CD_DEBUG("(%d)\n", id);
-
     std::lock_guard<std::mutex> lockGuard(canBusReady);
 
     if (activeFilters.find(id) != activeFilters.end())
     {
-        CD_WARNING("Filter for id %d already set.\n", id);
+        yWarning() << "Filter for id" << id << "already set";
         return true;
     }
 
@@ -77,13 +72,13 @@ bool roboticslab::CanBusPeak::canIdAdd(unsigned int id)
 
     std::uint64_t acc = computeAcceptanceCodeAndMask();
 
-    CD_DEBUG("New acceptance code+mask: %016lxh.\n", acc);
+    yDebug("New acceptance code+mask: %016lxh", acc);
 
     int res = pcanfd_set_option(fileDescriptor, PCANFD_OPT_ACC_FILTER_11B, &acc, sizeof(acc));
 
     if (res < 0)
     {
-        CD_ERROR("pcanfd_set_option() failed (%s).\n", std::strerror(-res));
+        yError() << "pcanfd_set_option() failed:" << std::strerror(-res);
         activeFilters.erase(id);
         return false;
     }
@@ -95,19 +90,17 @@ bool roboticslab::CanBusPeak::canIdAdd(unsigned int id)
 
 bool roboticslab::CanBusPeak::canIdDelete(unsigned int id)
 {
-    CD_DEBUG("(%d)\n", id);
-
     std::lock_guard<std::mutex> lockGuard(canBusReady);
 
     if (id == 0)
     {
-        CD_INFO("Clearing filters previously set.\n");
+        yInfo() << "Clearing filters previously set";
 
         int res = pcanfd_del_filters(fileDescriptor);
 
         if (res < 0)
         {
-            CD_ERROR("Unable to clear accceptance filters (%s).\n", std::strerror(-res));
+            yError() << "Unable to clear accceptance filters:" << std::strerror(-res);
             return false;
         }
 
@@ -117,19 +110,19 @@ bool roboticslab::CanBusPeak::canIdDelete(unsigned int id)
 
     if (activeFilters.erase(id) == 0)
     {
-        CD_WARNING("Filter for id %d missing or already deleted.\n", id);
+        yWarning() << "Filter for id" << id << "missing or already deleted";
         return true;
     }
 
     std::uint64_t acc = computeAcceptanceCodeAndMask();
 
-    CD_DEBUG("New acceptance code+mask: %016lxh.\n", acc);
+    yDebug("New acceptance code+mask: %016lxh", acc);
 
     int res = pcanfd_set_option(fileDescriptor, PCANFD_OPT_ACC_FILTER_11B, &acc, sizeof(acc));
 
     if (res < 0)
     {
-        CD_ERROR("pcanfd_set_option() failed (%s).\n", std::strerror(-res));
+        yError() << "pcanfd_set_option() failed:" << std::strerror(-res);
         activeFilters.insert(id);
         return false;
     }
@@ -143,7 +136,7 @@ bool roboticslab::CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
 {
     if (!allowPermissive && wait != blockingMode)
     {
-        CD_ERROR("Blocking mode configuration mismatch: requested=%d, enabled=%d.\n", wait, blockingMode);
+        yError("Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
         return false;
     }
 
@@ -157,7 +150,7 @@ bool roboticslab::CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
             bool bufferReady;
 
             if (!waitUntilTimeout(READ, &bufferReady)) {
-                CD_ERROR("waitUntilTimeout() failed.\n");
+                yError("waitUntilTimeout() failed");
                 return false;
             }
 
@@ -180,7 +173,7 @@ bool roboticslab::CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
     }
     else if (res < 0)
     {
-        CD_ERROR("Unable to read messages: %s.\n", std::strerror(-res));
+        yError("Unable to read messages: %s", std::strerror(-res));
         return false;
     }
     else
@@ -196,7 +189,7 @@ bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsign
 {
     if (!allowPermissive && wait != blockingMode)
     {
-        CD_ERROR("Blocking mode configuration mismatch: requested=%d, enabled=%d.\n", wait, blockingMode);
+        yError("Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
         return false;
     }
 
@@ -213,7 +206,7 @@ bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsign
             bool bufferReady;
 
             if (!waitUntilTimeout(WRITE, &bufferReady)) {
-                CD_ERROR("waitUntilTimeout() failed.\n");
+                yError("waitUntilTimeout() failed");
                 return false;
             }
 
@@ -234,7 +227,7 @@ bool roboticslab::CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsign
     }
     else if (res < 0)
     {
-        CD_ERROR("Unable to send messages: %s.\n", std::strerror(-res));
+        yError("Unable to send messages: %s", std::strerror(-res));
         return false;
     }
     else

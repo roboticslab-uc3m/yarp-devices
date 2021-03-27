@@ -6,10 +6,9 @@
 
 #include <algorithm> // std::find_if
 
+#include <yarp/os/Log.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>
-
-#include <ColorDebug.h>
 
 #include "CanUtils.hpp"
 
@@ -75,7 +74,7 @@ bool TechnosoftIpos::initialize()
         // retrieve static drive info
         vars.configuredOnce = can->sdo()->upload<std::uint32_t>("Device type",
                 [](auto data)
-                { CD_INFO("CiA standard: %d.\n", data & 0xFFFF); },
+                { yInfo("CiA standard: %d", data & 0xFFFF); },
                 0x1000)
             && can->sdo()->upload<std::uint32_t>("Supported drive modes",
                 [this](auto data)
@@ -83,15 +82,15 @@ bool TechnosoftIpos::initialize()
                 0x6502)
             && can->sdo()->upload("Manufacturer software version",
                 [](const auto & data)
-                { CD_INFO("Firmware version: %s.\n", rtrim(data).c_str()); },
+                { yInfo("Firmware version: %s", rtrim(data).c_str()); },
                 0x100A)
             && can->sdo()->upload<std::uint32_t>("Identity Object: Product Code",
                 [](auto data)
-                { CD_INFO("Product code: P%03d.%03d.E%03d.\n", data / 1000000, (data / 1000) % 1000, data % 1000); },
+                { yInfo("Product code: P%03d.%03d.E%03d", data / 1000000, (data / 1000) % 1000, data % 1000); },
                 0x1018, 0x02)
             && can->sdo()->upload<std::uint32_t>("Identity Object: Serial number",
                 [](auto data)
-                { CD_INFO("Serial number: %c%c%02x%02x.\n", getByte(data, 3), getByte(data, 2), getByte(data, 1), getByte(data, 0)); },
+                { yInfo("Serial number: %c%c%02x%02x", getByte(data, 3), getByte(data, 2), getByte(data, 1), getByte(data, 0)); },
                 0x1018, 0x04);
     }
 
@@ -113,7 +112,7 @@ bool TechnosoftIpos::initialize()
         || (can->driveStatus()->getCurrentState() == DriveState::NOT_READY_TO_SWITCH_ON
                 && !can->driveStatus()->awaitState(DriveState::SWITCH_ON_DISABLED)))
     {
-        CD_ERROR("Initial SDO configuration and/or node start failed (canId: %d).\n", can->getId());
+        yError("Initial SDO configuration and/or node start failed (canId %d)", can->getId());
         return false;
     }
 
@@ -124,7 +123,7 @@ bool TechnosoftIpos::initialize()
             || !vars.awaitControlMode(VOCAB_CM_IDLE)
             || !setControlModeRaw(0, vars.initialMode))
     {
-        CD_WARNING("Initial drive state transitions failed (canId: %d).\n", can->getId());
+        yWarning("Initial drive state transitions failed (canId %d)", can->getId());
     }
 
     return true;
@@ -150,7 +149,7 @@ bool TechnosoftIpos::finalize()
 
         if (!can->driveStatus()->requestState(DriveState::SWITCH_ON_DISABLED))
         {
-            CD_WARNING("SWITCH_ON_DISABLED transition failed.\n");
+            yWarning("SWITCH_ON_DISABLED transition failed (canId %d)", can->getId());
             ok = false;
         }
 
@@ -159,7 +158,7 @@ bool TechnosoftIpos::finalize()
 
     if (!can->nmt()->issueServiceCommand(NmtService::RESET_NODE))
     {
-        CD_WARNING("Reset node NMT service failed.\n");
+        yWarning("Reset node NMT service failed (canId %d)", can->getId());
         ok = false;
     }
 
@@ -183,7 +182,7 @@ bool TechnosoftIpos::notifyMessage(const can_message & message)
 
     if (!can->notifyMessage(message))
     {
-        CD_WARNING("Unknown message: %s\n", CanUtils::msgToStr(message).c_str());
+        yWarning("Unknown message: %s", CanUtils::msgToStr(message).c_str());
         return false;
     }
 

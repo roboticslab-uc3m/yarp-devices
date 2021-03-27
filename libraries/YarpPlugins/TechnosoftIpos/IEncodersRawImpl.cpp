@@ -2,7 +2,7 @@
 
 #include "TechnosoftIpos.hpp"
 
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 using namespace roboticslab;
 
@@ -18,7 +18,7 @@ bool TechnosoftIpos::getAxes(int * ax)
 
 bool TechnosoftIpos::resetEncoderRaw(int j)
 {
-    CD_DEBUG("(%d)\n", j);
+    yTrace("%d", j);
     CHECK_JOINT(j);
     return setEncoderRaw(j, 0.0);
 }
@@ -27,7 +27,6 @@ bool TechnosoftIpos::resetEncoderRaw(int j)
 
 bool TechnosoftIpos::resetEncodersRaw()
 {
-    CD_DEBUG("\n");
     return resetEncoderRaw(0);
 }
 
@@ -35,7 +34,7 @@ bool TechnosoftIpos::resetEncodersRaw()
 
 bool TechnosoftIpos::setEncoderRaw(int j, double val)
 {
-    CD_DEBUG("(%d, %f)\n", j, val);
+    yTrace("%d %f", j, val);
     CHECK_JOINT(j);
     std::int32_t data = vars.degreesToInternalUnits(val);
 
@@ -52,7 +51,6 @@ bool TechnosoftIpos::setEncoderRaw(int j, double val)
 
 bool TechnosoftIpos::setEncodersRaw(const double * vals)
 {
-    CD_DEBUG("\n");
     return setEncoderRaw(0, vals[0]);
 }
 
@@ -60,7 +58,7 @@ bool TechnosoftIpos::setEncodersRaw(const double * vals)
 
 bool TechnosoftIpos::getEncoderRaw(int j, double * v)
 {
-    CD_DEBUG("%d\n", j);
+    yTrace("%d", j);
     CHECK_JOINT(j);
     std::int32_t temp = vars.lastEncoderRead->queryPosition();
     *v = vars.internalUnitsToDegrees(temp);
@@ -71,7 +69,6 @@ bool TechnosoftIpos::getEncoderRaw(int j, double * v)
 
 bool TechnosoftIpos::getEncodersRaw(double * encs)
 {
-    CD_DEBUG("\n");
     return getEncoderRaw(0, &encs[0]);
 }
 
@@ -79,7 +76,7 @@ bool TechnosoftIpos::getEncodersRaw(double * encs)
 
 bool TechnosoftIpos::getEncoderSpeedRaw(int j, double * sp)
 {
-    //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
+    yTrace("%d", j);
     CHECK_JOINT(j);
     double temp = vars.lastEncoderRead->querySpeed();
     *sp = vars.internalUnitsToDegrees(temp, 1);
@@ -90,7 +87,6 @@ bool TechnosoftIpos::getEncoderSpeedRaw(int j, double * sp)
 
 bool TechnosoftIpos::getEncoderSpeedsRaw(double * spds)
 {
-    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return getEncoderSpeedRaw(0, &spds[0]);
 }
 
@@ -98,7 +94,7 @@ bool TechnosoftIpos::getEncoderSpeedsRaw(double * spds)
 
 bool TechnosoftIpos::getEncoderAccelerationRaw(int j, double * acc)
 {
-    //CD_DEBUG("(%d)\n", j);
+    yTrace("%d", j);
     CHECK_JOINT(j);
     double temp = vars.lastEncoderRead->queryAcceleration();
     *acc = vars.internalUnitsToDegrees(temp, 2);
@@ -109,7 +105,6 @@ bool TechnosoftIpos::getEncoderAccelerationRaw(int j, double * acc)
 
 bool TechnosoftIpos::getEncoderAccelerationsRaw(double * accs)
 {
-    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return getEncoderAccelerationRaw(0, &accs[0]);
 }
 
@@ -117,7 +112,7 @@ bool TechnosoftIpos::getEncoderAccelerationsRaw(double * accs)
 
 bool TechnosoftIpos::getEncoderTimedRaw(int j, double * enc, double * time)
 {
-    //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
+    yTrace("%d", j);
     CHECK_JOINT(j);
     std::int32_t temp = vars.lastEncoderRead->queryPosition();
     *enc = vars.internalUnitsToDegrees(temp);
@@ -129,7 +124,6 @@ bool TechnosoftIpos::getEncoderTimedRaw(int j, double * enc, double * time)
 
 bool TechnosoftIpos::getEncodersTimedRaw(double * encs, double * times)
 {
-    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return getEncoderTimedRaw(0, &encs[0], &times[0]);
 }
 

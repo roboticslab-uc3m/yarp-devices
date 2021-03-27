@@ -2,9 +2,8 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <yarp/os/Log.h>
 #include <yarp/os/Vocab.h>
-
-#include <ColorDebug.h>
 
 #include "CanUtils.hpp"
 
@@ -14,7 +13,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::getControlModeRaw(int j, int * mode)
 {
-    //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
+    yTrace("%d", j);
     CHECK_JOINT(j);
     *mode = vars.actualControlMode;
     return true;
@@ -24,7 +23,6 @@ bool TechnosoftIpos::getControlModeRaw(int j, int * mode)
 
 bool TechnosoftIpos::getControlModesRaw(int * modes)
 {
-    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     return getControlModeRaw(0, &modes[0]);
 }
 
@@ -32,7 +30,6 @@ bool TechnosoftIpos::getControlModesRaw(int * modes)
 
 bool TechnosoftIpos::getControlModesRaw(int n_joint, const int * joints, int * modes)
 {
-    CD_DEBUG("\n");
     return getControlModeRaw(joints[0], &modes[0]);
 }
 
@@ -40,7 +37,7 @@ bool TechnosoftIpos::getControlModesRaw(int n_joint, const int * joints, int * m
 
 bool TechnosoftIpos::setControlModeRaw(int j, int mode)
 {
-    CD_DEBUG("(%d, %s)\n", j, yarp::os::Vocab::decode(mode).c_str());
+    yTrace("%d %s", j, yarp::os::Vocab::decode(mode).c_str());
     CHECK_JOINT(j);
 
     vars.requestedcontrolMode = mode;
@@ -152,7 +149,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         if (vars.actualControlMode == VOCAB_CM_HW_FAULT
             && !can->driveStatus()->requestTransition(DriveTransition::FAULT_RESET))
         {
-            CD_ERROR("Unable to reset fault status.\n");
+            yError("Unable to reset fault status");
             return false;
         }
 
@@ -163,7 +160,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
             && can->sdo()->download<std::int8_t>("Modes of Operation", 0, 0x6060); // reset drive mode
 
     default:
-        CD_ERROR("Unsupported, unknown or read-only mode: %s.\n", yarp::os::Vocab::decode(mode).c_str());
+        yError("Unsupported, unknown or read-only mode: %s", yarp::os::Vocab::decode(mode).c_str());
         return false;
     }
 }
@@ -172,7 +169,6 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
 
 bool TechnosoftIpos::setControlModesRaw(int * modes)
 {
-    CD_DEBUG("\n");
     return setControlModeRaw(0, modes[0]);
 }
 
@@ -180,7 +176,6 @@ bool TechnosoftIpos::setControlModesRaw(int * modes)
 
 bool TechnosoftIpos::setControlModesRaw(int n_joint, const int * joints, int * modes)
 {
-    CD_DEBUG("\n");
     return setControlModeRaw(joints[0], modes[0]);
 }
 

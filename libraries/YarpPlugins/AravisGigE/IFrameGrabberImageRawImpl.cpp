@@ -1,5 +1,7 @@
 #include "AravisGigE.hpp"
 
+#include <yarp/os/LogStream.h>
+
 bool roboticslab::AravisGigE::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono> &image)
 {
     //-- Right now it is implemented as polling (grab + retrieve image)
@@ -20,7 +22,7 @@ bool roboticslab::AravisGigE::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono> 
         yarp::sig::Image raw_image;
         if (pixelFormat != ARV_PIXEL_FORMAT_MONO_8)
         {
-            CD_ERROR("Unsupported pixel format\n");
+            yError() << "Unsupported pixel format";
         }
 
         //-- Write data
@@ -30,7 +32,7 @@ bool roboticslab::AravisGigE::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono> 
     }
     else
     {
-        CD_ERROR("Framebuffer is empty\n");
+        yError() << "Framebuffer is empty";
         return false;
     }
 

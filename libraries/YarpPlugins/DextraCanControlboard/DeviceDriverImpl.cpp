@@ -2,9 +2,8 @@
 
 #include "DextraCanControlboard.hpp"
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Value.h>
-
-#include <ColorDebug.h>
 
 using namespace roboticslab;
 
@@ -12,13 +11,13 @@ using namespace roboticslab;
 
 bool DextraCanControlboard::open(yarp::os::Searchable & config)
 {
-    CD_DEBUG("%s\n", config.toString().c_str());
+    yDebug() << "DextraCanControlboard config:" << config.toString();
 
     canId = config.check("canId", yarp::os::Value(0), "can bus ID").asInt32();
 
     if (canId == 0)
     {
-        CD_ERROR("Could not create device with canId 0.\n");
+        yError() << "Could not create device with canId 0";
         return false;
     }
 

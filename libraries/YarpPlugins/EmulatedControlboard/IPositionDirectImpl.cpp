@@ -2,7 +2,7 @@
 
 #include "EmulatedControlboard.hpp"
 
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 // ------------------- IPositionDirect Related --------------------------------
 
@@ -10,13 +10,13 @@ bool roboticslab::EmulatedControlboard::setPosition(int j, double ref)
 {
     if ((unsigned int)j > axes)
     {
-        CD_ERROR("axis index more than axes.\n");
+        yError("Axis index exceeds number of axes");
         return false;
     }
 
     if (controlMode != POSITION_DIRECT_MODE)
     {
-        CD_ERROR("will not setPosition as not in positionDirectMode\n");
+        yError("will not setPosition() as not in positionDirectMode");
         return false;
     }
 
@@ -60,13 +60,13 @@ bool roboticslab::EmulatedControlboard::getRefPosition(const int joint, double *
 {
     if ((unsigned int)joint > axes)
     {
-        CD_ERROR("axis index more than axes.\n");
+        yError("Axis index exceeds number of axes");
         return false;
     }
 
     if (controlMode != POSITION_DIRECT_MODE)
     {
-        CD_ERROR("will not getRefPosition as not in positionDirectMode\n");
+        yError("will not getRefPosition() as not in positionDirectMode");
         return false;
     }
 

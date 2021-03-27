@@ -5,9 +5,8 @@
 #include <cstring>
 #include <utility> // std::move
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
-
-#include <ColorDebug.h>
 
 #include "YarpCanSenderDelegate.hpp"
 #include "CanBusBroker.hpp"
@@ -18,21 +17,21 @@ using namespace roboticslab;
 
 void CanReaderWriterThread::beforeStart()
 {
-    CD_INFO("Initializing CanBusControlboard %s thread %s.\n", type.c_str(), id.c_str());
+    yInfo() << "Initializing CanBusControlboard" << type << "thread" << id;
 }
 
 // -----------------------------------------------------------------------------
 
 void CanReaderWriterThread::afterStart(bool success)
 {
-    CD_INFO("Configuring CanBusControlboard %s thread %s... %s\n", type.c_str(), id.c_str(), success ? "success" : "failure");
+    yInfo() << "Configuring CanBusControlboard" << type << "thread" << id << "->" << (success ? "success" : "failure");
 }
 
 // -----------------------------------------------------------------------------
 
 void CanReaderWriterThread::onStop()
 {
-    CD_INFO("Stopping CanBusControlboard %s thread %s.\n", type.c_str(), id.c_str());
+    yInfo() << "Stopping CanBusControlboard" << type << "thread" << id;
 }
 
 // -----------------------------------------------------------------------------

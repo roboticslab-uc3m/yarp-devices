@@ -5,13 +5,15 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
+#include <yarp/os/Log.h>
+
 // -----------------------------------------------------------------------------
 
 bool roboticslab::AmorControlboard::indexWithinRange(const int& idx)
 {
     if (idx >= AMOR_NUM_JOINTS)
     {
-        CD_ERROR("Index out of range!! (%d >= %d)!!!\n", idx, AMOR_NUM_JOINTS);
+        yError("Index out of range: %d >= %d", idx, AMOR_NUM_JOINTS);
         return false;
     }
 
@@ -24,13 +26,13 @@ bool roboticslab::AmorControlboard::batchWithinRange(const int& n_joint)
 {
     if (n_joint == 0)
     {
-        CD_WARNING("Passed array of size (n_joint) equal to zero.\n");
+        yWarning("Passed array of size (n_joint) equal to zero");
         return true;
     }
 
     if (n_joint < 0 || n_joint > AMOR_NUM_JOINTS)
     {
-        CD_ERROR("n_joint out of range (< 0 or > %d): %d.\n", AMOR_NUM_JOINTS, n_joint);
+        yError("n_joint out of range (< 0 or > %d): %d", AMOR_NUM_JOINTS, n_joint);
         return false;
     }
 

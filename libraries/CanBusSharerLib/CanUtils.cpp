@@ -19,14 +19,14 @@ std::string CanUtils::msgToStr(std::uint8_t id, std::uint16_t cob, std::size_t l
         }
 
         tmp << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(data[len - 1]);
-        tmp << ". ";
+        tmp << " ";
     }
 
-    tmp << "canId(";
+    tmp << "id(";
     tmp << std::dec << static_cast<int>(id);
     tmp << ") via(0x";
     tmp << std::hex << cob;
-    tmp << ").";
+    tmp << ")";
 
     return tmp.str();
 }

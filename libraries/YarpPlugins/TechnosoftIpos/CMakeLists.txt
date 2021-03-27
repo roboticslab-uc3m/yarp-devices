@@ -39,7 +39,6 @@ if(NOT SKIP_TechnosoftIpos)
 
     target_link_libraries(TechnosoftIpos YARP::YARP_os
                                          YARP::YARP_dev
-                                         ROBOTICSLAB::ColorDebug
                                          ROBOTICSLAB::CanBusSharerLib
                                          ROBOTICSLAB::StateObserverLib
                                          ROBOTICSLAB::CanOpenNodeLib)

@@ -1,5 +1,7 @@
 #include "AravisGigE.hpp"
 
+#include <yarp/os/LogStream.h>
+
 bool roboticslab::AravisGigE::getRawBuffer(unsigned char *buffer)
 {
     //-- Right now it is implemented as polling
@@ -11,7 +13,7 @@ bool roboticslab::AravisGigE::getRawBuffer(unsigned char *buffer)
 
     if (stream == NULL)
     {
-        CD_ERROR("Stream was not initialized\n");
+        yError() << "Stream was not initialized";
         return false;
     }
 
@@ -40,7 +42,7 @@ bool roboticslab::AravisGigE::getRawBuffer(unsigned char *buffer)
     }
     else
     {
-        CD_ERROR("Timeout! Could not grab frame...\n");
+        yError() << "Timeout! Could not grab frame...";
         return false;
     }
 
@@ -56,7 +58,7 @@ int roboticslab::AravisGigE::getRawBufferSize()
     }
     else
     {
-        CD_ERROR("Unsupported pixel format\n");
+        yError() << "Unsupported pixel format";
         return -1;
     }
 }

@@ -3,14 +3,13 @@
 #include "EmulatedControlboard.hpp"
 
 #include <cmath>
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 // ------------------- IPositionControl Related --------------------------------
 
 bool roboticslab::EmulatedControlboard::getAxes(int *ax)
 {
     *ax = axes;
-    CD_INFO("Reporting %d axes are present\n", *ax);
     return true;
 }
 
@@ -20,18 +19,16 @@ bool roboticslab::EmulatedControlboard::positionMove(int j, double ref)  // encE
 {
     if ((unsigned int)j > axes)
     {
-        CD_ERROR("axis index more than axes.\n");
+        yError("Axis index exceeds number of axes");
         return false;
     }
 
     // Check if we are in position mode.
     if (controlMode != POSITION_MODE)
     {  
-        CD_ERROR("will not positionMove as not in positionMode\n");
+        yError("Will not positionMove as not in positionMode");
         return false;
     }
-
-    CD_INFO("positionMove(%d,%f) f[begin]\n", j, ref);
 
     // Set all the private parameters of the Rave class that correspond to this kind of movement!
     targetExposed[j] = ref;
@@ -40,7 +37,7 @@ bool roboticslab::EmulatedControlboard::positionMove(int j, double ref)  // encE
     if (std::abs(targetExposed[j] - encExposed) < jointTol[j])
     {
         stop(j);  // puts jointStatus[j] = 0;
-        CD_INFO("Joint q%d reached target.\n", j + 1);
+        yInfo("Joint q%d reached target", j + 1);
         return true;
     }
     else if (ref > encExposed)
@@ -55,7 +52,6 @@ bool roboticslab::EmulatedControlboard::positionMove(int j, double ref)  // encE
     }
 
     jointStatus[j] = POSITION_MOVE;
-    CD_INFO("positionMove(%d,%f) f[end]\n", j, ref);
 
     return true;
 }
@@ -67,11 +63,9 @@ bool roboticslab::EmulatedControlboard::positionMove(const double *refs)  // enc
     // Check if we are in position mode.
     if (controlMode != POSITION_MODE)
     {
-        CD_ERROR("Will not positionMove as not in positionMode\n");
+        yError("Will not positionMove as not in positionMode");
         return false;
     }
-
-    CD_INFO("positionMove() f[begin]\n");
 
     // Find out the maximum time to move
     double max_time = 0;
@@ -79,17 +73,17 @@ bool roboticslab::EmulatedControlboard::positionMove(const double *refs)  // enc
 
     for (unsigned int motor = 0; motor < axes; motor++)
     {
-        CD_INFO("dist[%d]: %f\n", motor, std::abs(refs[motor] - encsExposed[motor]));
-        CD_INFO("refSpeed[%d]: %f\n", motor, refSpeed[motor]);
+        yInfo("dist[%d]: %f", motor, std::abs(refs[motor] - encsExposed[motor]));
+        yInfo("refSpeed[%d]: %f", motor, refSpeed[motor]);
 
         if (std::abs((refs[motor] - encsExposed[motor]) / refSpeed[motor]) > max_time)
         {
             max_time = std::abs((refs[motor] - encsExposed[motor]) / refSpeed[motor]);
-            CD_INFO(" -->candidate: %f\n", max_time);
+            yInfo("candidate: %f", max_time);
         }
     }
 
-    CD_INFO("max_time[final]: %f\n", max_time);
+    yInfo("max_time[final]: %f", max_time);
 
     // Set all the private parameters of the Rave class that correspond to this kind of movement!
     for (unsigned int motor = 0; motor < axes; motor++)
@@ -102,17 +96,16 @@ bool roboticslab::EmulatedControlboard::positionMove(const double *refs)  // enc
             velRaw[motor] = 0;  // protect against NaN
         }
 
-        CD_INFO("velRaw[%d]: %f\n", motor, velRaw[motor]);
+        yInfo("velRaw[%d]: %f", motor, velRaw[motor]);
         jointStatus[motor] = POSITION_MOVE;
 
         if (std::abs(targetExposed[motor] - encsExposed[motor]) < jointTol[motor])
         {
             stop(motor);  // puts jointStatus[motor]=0;
-            CD_INFO("Joint q%d reached target.\n", motor + 1);
+            yInfo("Joint q%d reached target", motor + 1);
         }
     }
 
-    CD_INFO("positionMove() f[end]\n");
     return true;
 }
 
@@ -128,11 +121,9 @@ bool roboticslab::EmulatedControlboard::relativeMove(int j, double delta)
     // Check if we are in position mode.
     if (controlMode != POSITION_MODE)
     {
-        CD_ERROR("EmulatedControlboard will not relativeMove as not in positionMode\n");
+        yError("EmulatedControlboard will not relativeMove as not in positionMode");
         return false;
     }
-
-    CD_INFO("relativeMove(%d,%f) f[begin]\n", j, delta);
 
     // Set all the private parameters of the Rave class that correspond to this kind of movement!
     double encExposed = getEncExposed(j);
@@ -141,7 +132,7 @@ bool roboticslab::EmulatedControlboard::relativeMove(int j, double delta)
     if (std::abs(targetExposed[j] - encExposed) < jointTol[j])
     {
         stop(j);  // puts jointStatus[j]=0;
-        CD_INFO("Joint q%d already at target.\n", j + 1);
+        yInfo("Joint q%d already at target", j + 1);
         return true;
     }
     else if (targetExposed[j] > encExposed)
@@ -156,7 +147,6 @@ bool roboticslab::EmulatedControlboard::relativeMove(int j, double delta)
     }
 
     jointStatus[j] = POSITION_MOVE;
-    CD_INFO("relativeMove(%d,%f) f[end]\n", j, delta);
 
     return true;
 }
@@ -168,11 +158,9 @@ bool roboticslab::EmulatedControlboard::relativeMove(const double *deltas)  // e
     // Check if we are in position mode.
     if (controlMode != POSITION_MODE)
     {
-        CD_ERROR("will not relativeMove as not in positionMode\n");
+        yError("Will not relativeMove as not in positionMode");
         return false;
     }
-
-    CD_INFO("relativeMove() f[begin]\n");
 
     // Find out the maximum angle to move
     double max_dist = 0;
@@ -194,11 +182,10 @@ bool roboticslab::EmulatedControlboard::relativeMove(const double *deltas)  // e
     {
       targetExposed[motor] = encsExposed[motor] + deltas[motor];
       velRaw[motor] = ((deltas[motor]) / time_max_dist) * velRawExposed[motor];
-      CD_INFO("velRaw[%d]: %f\n", motor, velRaw[motor]);
+      yInfo("velRaw[%d]: %f", motor, velRaw[motor]);
       jointStatus[motor] = POSITION_MOVE;
     }
 
-    CD_INFO("relativeMove() f[end]\n");
     return true;
 }
 
@@ -352,8 +339,6 @@ bool roboticslab::EmulatedControlboard::getRefAccelerations(double *accs)
 
 bool roboticslab::EmulatedControlboard::stop(int j)
 {
-    CD_DEBUG("stop(%d)\n", j);
-
     if ((unsigned int)j > axes)
     {
         return false;
@@ -383,7 +368,6 @@ bool roboticslab::EmulatedControlboard::stop()
 
 bool roboticslab::EmulatedControlboard::positionMove(const int n_joint, const int *joints, const double *refs)
 {
-    CD_DEBUG("\n");
     // must implement mask!
     return positionMove(refs);
 }
@@ -392,79 +376,80 @@ bool roboticslab::EmulatedControlboard::positionMove(const int n_joint, const in
 
 bool roboticslab::EmulatedControlboard::relativeMove(const int n_joint, const int *joints, const double *deltas)
 {
-    CD_DEBUG("\n");
-    return true;
+    yWarning("Group relativeMove() not implemented yet");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::EmulatedControlboard::checkMotionDone(const int n_joint, const int *joints, bool *flags)
 {
-    CD_DEBUG("\n");
-    return true;
+    yWarning("Group checkMotionDone() not implemented yet");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::EmulatedControlboard::setRefSpeeds(const int n_joint, const int *joints, const double *spds)
 {
-    CD_DEBUG("\n");
-    return true;
+    yWarning("Group setRefSpeeds() not implemented yet");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::EmulatedControlboard::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
 {
-    CD_DEBUG("\n");
-    return true;
+    yWarning("Group setRefAccelerations() not implemented yet");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::EmulatedControlboard::getRefSpeeds(const int n_joint, const int *joints, double *spds)
 {
-    CD_DEBUG("\n");
-    return true;
+    yWarning("Group getRefSpeeds() not implemented yet");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::EmulatedControlboard::getRefAccelerations(const int n_joint, const int *joints, double *accs)
 {
-    CD_DEBUG("\n");
-    return true;
+    yWarning("Group getRefAccelerations() not implemented yet");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::EmulatedControlboard::stop(const int n_joint, const int *joints)
 {
-    CD_DEBUG("\n");
-    return true;
+    yWarning("Group stop() not implemented yet");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::EmulatedControlboard::getTargetPosition(const int joint, double *ref)
 {
-    return true;
+    yWarning("getTargetPosition() not implemented yet");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::EmulatedControlboard::getTargetPositions(double *refs)
 {
-    CD_DEBUG("\n");
-    return true;
+    yWarning("getTargetPositions() not implemented yet");
+    return false;
 }
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::EmulatedControlboard::getTargetPositions(const int n_joint, const int *joints, double *refs)
 {
-    CD_DEBUG("\n");
-    return true;
+    yWarning("getTargetPositions() not implemented yet");
+    return false;
 }
 
 // -----------------------------------------------------------------------------

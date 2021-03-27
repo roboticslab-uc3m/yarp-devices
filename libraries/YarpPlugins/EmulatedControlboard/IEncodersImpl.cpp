@@ -114,7 +114,6 @@ bool roboticslab::EmulatedControlboard::getEncoderAccelerations(double *accs)
 
 bool roboticslab::EmulatedControlboard::getEncodersTimed(double *encs, double *time)
 {
-    //CD_DEBUG("\n");  //-- Way too verbose
     bool ok = true;
 
     for (unsigned int i = 0; i < axes; i++)
@@ -129,8 +128,6 @@ bool roboticslab::EmulatedControlboard::getEncodersTimed(double *encs, double *t
 
 bool roboticslab::EmulatedControlboard::getEncoderTimed(int j, double *encs, double *time)
 {
-    //CD_DEBUG("(%d)\n",j);  //-- Way too verbose
-
     getEncoder(j, encs);
     *time = yarp::os::Time::now();
 

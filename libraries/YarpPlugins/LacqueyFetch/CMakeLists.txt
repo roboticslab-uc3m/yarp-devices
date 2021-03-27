@@ -23,7 +23,6 @@ if(NOT SKIP_LacqueyFetch)
 
     target_link_libraries(LacqueyFetch YARP::YARP_os
                                        YARP::YARP_dev
-                                       ROBOTICSLAB::ColorDebug
                                        ROBOTICSLAB::CanBusSharerLib)
 
     target_compile_features(LacqueyFetch PUBLIC cxx_std_11)

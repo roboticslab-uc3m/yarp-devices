@@ -2,8 +2,6 @@
 
 #include "WiimoteSensor.hpp"
 
-#include "ColorDebug.h"
-
 namespace
 {
     bool yawActive = false;

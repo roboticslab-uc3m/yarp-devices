@@ -32,8 +32,7 @@ if(NOT SKIP_AmorControlboard)
 
     target_link_libraries(AmorControlboard YARP::YARP_os
                                            YARP::YARP_dev
-                                           AMOR::amor_api
-                                           ROBOTICSLAB::ColorDebug)
+                                           AMOR::amor_api)
 
     yarp_install(TARGETS AmorControlboard
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}

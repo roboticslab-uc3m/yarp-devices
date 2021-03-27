@@ -23,7 +23,6 @@ if(NOT SKIP_DextraCanControlboard)
     target_link_libraries(DextraCanControlboard ROBOTICSLAB::DextraRawControlboardLib
                                                 YARP::YARP_os
                                                 YARP::YARP_dev
-                                                ROBOTICSLAB::ColorDebug
                                                 ROBOTICSLAB::CanBusSharerLib)
 
     target_compile_features(DextraCanControlboard PRIVATE cxx_std_11)

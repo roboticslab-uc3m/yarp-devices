@@ -5,7 +5,7 @@
 #include <cstring>
 #include <cerrno>
 
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 using namespace roboticslab;
 
@@ -19,7 +19,7 @@ bool CanBusHico::canGetErrors(yarp::dev::CanErrors & err)
 
     if (::ioctl(fileDescriptor, IOC_GET_CAN_STATUS, &status) == -1)
     {
-        CD_ERROR("Could not query CAN status: %s.\n", std::strerror(errno));
+        yError("Could not query CAN status: %s", std::strerror(errno));
         return false;
     }
 

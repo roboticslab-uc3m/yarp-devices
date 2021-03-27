@@ -13,14 +13,6 @@
 
 #include "jr3pci-ioctl.h"
 
-//#define CD_FULL_FILE  //-- Can be globally managed from father CMake. Good for debugging with polymorphism.
-//#define CD_HIDE_DEBUG  //-- Can be globally managed from father CMake.
-//#define CD_HIDE_SUCCESS  //-- Can be globally managed from father CMake.
-//#define CD_HIDE_INFO  //-- Can be globally managed from father CMake.
-//#define CD_HIDE_WARNING  //-- Can be globally managed from father CMake.
-//#define CD_HIDE_ERROR  //-- Can be globally managed from father CMake.
-#include "ColorDebug.h"
-
 #define DEFAULT_NUM_CHANNELS 24
 #define DEFAULT_FILTER_ID 0
 

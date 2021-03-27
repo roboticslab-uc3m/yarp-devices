@@ -2,25 +2,31 @@
 
 #include "AmorControlboard.hpp"
 
+#include <vector>
+
+#include <yarp/os/LogStream.h>
+
 // ------------------- DeviceDriver related ------------------------------------
 
 bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
 {
+    yDebug() << "AmorControlboard config:" << config.toString();
+
     int major, minor, build;
     amor_get_library_version(&major, &minor, &build);
 
-    CD_INFO("AMOR API library version %d.%d.%d\n", major, minor, build);
-    CD_INFO("Trying to connect to AMOR...\n");
+    yInfo("AMOR API library version %d.%d.%d", major, minor, build);
+    yInfo() << "Trying to connect to AMOR...";
 
     handle = amor_connect((char *)DEFAULT_CAN_LIBRARY, DEFAULT_CAN_PORT);
 
     if (handle == AMOR_INVALID_HANDLE)
     {
-        CD_ERROR("Could not get AMOR handle (%s)\n", amor_error());
+        yError() << "Could not get AMOR handle:" << amor_error();
         return false;
     }
 
-    CD_SUCCESS("Acquired AMOR handle!\n");
+    yInfo() << "Acquired AMOR handle!";
 
     AMOR_JOINT_INFO jointInfo[AMOR_NUM_JOINTS];
     int jointStatus[AMOR_NUM_JOINTS];
@@ -29,46 +35,34 @@ bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
     {
         if (amor_get_joint_info(handle, j, &jointInfo[j]) != AMOR_SUCCESS)
         {
-            CD_ERROR("%s (%d).\n", amor_error(), j);
+            yError() << "amor_get_joint_info() failed for joint" << j << "with error:" << amor_error();
             amor_release(handle);
             return false;
         }
 
         if (amor_get_status(handle, j, &jointStatus[j]) != AMOR_SUCCESS)
         {
-            CD_ERROR("%s (%d).\n", amor_error(), j);
+            yError() << "amor_get_status() failed for joint" << j << "with error:" << amor_error();
             amor_release(handle);
             return false;
         }
     }
 
-    AMOR_VECTOR7 positions;
+    std::vector<double> positions;
 
-    if (amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
+    if (!getEncoders(positions.data()))
     {
-        CD_ERROR("%s\n", amor_error());
+        yError() << "getEncoders() failed";
         amor_release(handle);
         return false;
     }
 
-    CD_INFO("Current positions (degrees): [");
-
-    for (int j = 0; j < AMOR_NUM_JOINTS; j++)
-    {
-        CD_INFO_NO_HEADER("%f", toDeg(positions[j]));
-
-        if (j != AMOR_NUM_JOINTS - 1)
-        {
-            CD_INFO_NO_HEADER(" ");
-        }
-    }
-
-    CD_INFO_NO_HEADER("]\n");
+    yInfo() << "Current positions (degrees):" << positions;
 
     // Set position mode.
-    if (amor_set_positions(handle, positions) != AMOR_SUCCESS)
+    if (!positionMove(positions.data()))
     {
-        CD_ERROR("%s\n", amor_error());
+        yError() << "positionMove() failed";
         amor_release(handle);
         return false;
     }
@@ -77,7 +71,7 @@ bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
 
     if (config.check("cartesianControllerName", cartesianControllerName, "cartesian controller port"))
     {
-        CD_INFO("Using AMOR cartesian controller device.\n");
+        yInfo() << "Using AMOR cartesian controller device";
 
         usingCartesianController = true;
 
@@ -96,7 +90,7 @@ bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
 
         if (!cartesianControllerDevice.isValid())
         {
-            CD_ERROR("AMOR cartesian controller device not valid.\n");
+            yError() << "AMOR cartesian controller device not valid";
             amor_release(handle);
             return false;
         }
@@ -109,8 +103,6 @@ bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
 
 bool roboticslab::AmorControlboard::close()
 {
-    CD_INFO("Closing AmorControlboard...\n");
-
     if (usingCartesianController)
     {
         cartesianControllerDevice.close();

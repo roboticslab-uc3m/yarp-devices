@@ -4,10 +4,9 @@
 
 #include <cmath>
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/IAxisInfo.h>
-
-#include <ColorDebug.h>
 
 using namespace roboticslab;
 
@@ -99,73 +98,73 @@ bool StateVariables::validateInitialState()
 {
     if (actualControlMode == 0)
     {
-        CD_WARNING("Illegal initial control mode.\n");
+        yWarning() << "Illegal initial control mode";
         return false;
     }
 
     if (tr <= 0.0)
     {
-        CD_WARNING("Illegal transmission ratio: %f.\n", tr.load());
+        yWarning() << "Illegal transmission ratio:" << tr.load();
         return false;
     }
 
     if (k <= 0.0)
     {
-        CD_WARNING("Illegal motor constant: %f.\n", k.load());
+        yWarning() << "Illegal motor constant:" << k.load();
         return false;
     }
 
     if (encoderPulses <= 0)
     {
-        CD_WARNING("Illegal encoder pulses per revolution: %d.\n", encoderPulses.load());
+        yWarning() << "Illegal encoder pulses per revolution:" << encoderPulses.load();
         return false;
     }
 
     if (maxVel <= 0.0)
     {
-        CD_WARNING("Illegal maximum velocity: %f.\n", maxVel.load());
+        yWarning() << "Illegal maximum velocity:" << maxVel.load();
         return false;
     }
 
     if (refSpeed <= 0.0)
     {
-        CD_WARNING("Illegal reference speed: %f.\n", refSpeed.load());
+        yWarning() << "Illegal reference speed:" << refSpeed.load();
         return false;
     }
 
     if (refAcceleration <= 0.0)
     {
-        CD_WARNING("Illegal reference acceleration: %f.\n", refAcceleration.load());
+        yWarning() << "Illegal reference acceleration:" << refAcceleration.load();
         return false;
     }
 
     if (drivePeakCurrent <= 0.0)
     {
-        CD_WARNING("Illegal drive peak current: %f.\n", drivePeakCurrent);
+        yWarning() << "Illegal drive peak current:" << drivePeakCurrent;
         return false;
     }
 
     if (samplingPeriod <= 0.0)
     {
-        CD_WARNING("Illegal sampling period: %f.\n", samplingPeriod);
+        yWarning() << "Illegal sampling period:" << samplingPeriod;
         return false;
     }
 
     if (refSpeed > maxVel)
     {
-        CD_WARNING("Reference speed greater than maximum velocity: %f > %f.\n", refSpeed.load(), maxVel.load());
+        yWarning() << "Reference speed greater than maximum velocity:" << refSpeed.load() << ">" << maxVel.load();
         return false;
     }
 
     if (min >= max)
     {
-        CD_WARNING("Illegal joint limits (min, max): %f >= %f.\n", min.load(), max.load());
+        yWarning() << "Illegal joint limits (min, max):" << min.load() << ">=" << max.load();
         return false;
     }
 
     if (axisName.empty())
     {
-        CD_WARNING("Empty string as axis name.\n");
+        yWarning() << "Empty string as axis name";
         return false;
     }
 
@@ -176,37 +175,37 @@ bool StateVariables::validateInitialState()
     case yarp::dev::VOCAB_JOINTTYPE_UNKNOWN:
         break;
     default:
-        CD_WARNING("Illegal joint type vocab: %s.\n", yarp::os::Vocab::decode(jointType).c_str());
+        yWarning() << "Illegal joint type vocab:" << yarp::os::Vocab::decode(jointType);
         return false;
     }
 
     if (heartbeatPeriod < 0.0)
     {
-        CD_WARNING("Illegal heartbeat period: %f.\n", heartbeatPeriod);
+        yWarning() << "Illegal heartbeat period:" << heartbeatPeriod;
         return false;
     }
 
     if (heartbeatPeriod * 1e3 != static_cast<int>(heartbeatPeriod * 1e3))
     {
-        CD_WARNING("Heartbeat period exceeds millisecond precision: %f (s).\n", heartbeatPeriod);
+        yWarning() << "Heartbeat period exceeds millisecond precision:" << heartbeatPeriod << "(s)";
         return false;
     }
 
     if (syncPeriod <= 0.0 || syncPeriod > 255.0)
     {
-        CD_WARNING("Illegal SYNC period: %f.\n", syncPeriod);
+        yWarning() << "Illegal SYNC period:" << syncPeriod;
         return false;
     }
 
     if (syncPeriod * 1e3 != static_cast<int>(syncPeriod * 1e3))
     {
-        CD_WARNING("SYNC period exceeds millisecond precision: %f (s).\n", syncPeriod);
+        yWarning() << "SYNC period exceeds millisecond precision:" << syncPeriod << "(s)";
         return false;
     }
 
     if (canId == 0)
     {
-        CD_WARNING("Illegal CAN ID: %d.\n", canId);
+        yWarning() << "Illegal CAN ID:" << canId;
         return false;
     }
 
@@ -225,7 +224,7 @@ double StateVariables::clipSyncPositionTarget()
 
     if (std::abs(diff) > maxVel * syncPeriod)
     {
-        CD_WARNING("Maximum velocity exceeded, clipping target position (canId: %d).\n", canId);
+        yWarning("Maximum velocity exceeded, clipping target position (canId %d)", canId);
         double newTarget = previous + maxVel * syncPeriod * sgn(diff);
         prevSyncTarget = newTarget;
         return newTarget;

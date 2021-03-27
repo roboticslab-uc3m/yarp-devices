@@ -16,25 +16,25 @@ const int BottleExtract::NOT_USED = -1;
 
 bool BottleExtract::create(const yarp::os::Property& options)
 {
-   yDebug("created!\n");
-   yDebug("I am attached to the %s\n",
+   yDebug("created!");
+   yDebug("I am attached to the %s",
           (options.find("sender_side").asBool()) ? "sender side" : "receiver side");
-   std::stringstream parsable(options.find("carrier").asString()); // yDebug("%s\n", parsable.str().c_str());
+   std::stringstream parsable(options.find("carrier").asString()); // yDebug("%s", parsable.str().c_str());
    std::string betweenPluses;
    std::string textForProperty;
    while(std::getline(parsable, betweenPluses, '+'))
    {
        textForProperty.append("(");
        std::replace(betweenPluses.begin(), betweenPluses.end(), '.', ' ');
-       textForProperty.append(betweenPluses); // yDebug("** %s\n", betweenPluses.c_str());
+       textForProperty.append(betweenPluses); // yDebug("** %s", betweenPluses.c_str());
        textForProperty.append(") ");
    }
    yarp::os::Property parsed;
-   parsed.fromString(textForProperty); // yDebug("textForProperty: %s\n", textForProperty.c_str());
+   parsed.fromString(textForProperty); // yDebug("textForProperty: %s", textForProperty.c_str());
 
    if(!parsed.check("index")) // only index is mandatory
    {
-       yError("Missing index, bye!\n");
+       yError("Missing index, bye!");
        return false;
    }
 
@@ -44,23 +44,23 @@ bool BottleExtract::create(const yarp::os::Property& options)
    if(parsed.check("subindex"))
    {
        subindex = parsed.find("subindex").asInt32();
-       yDebug("Using subindex: %d\n", subindex);
+       yDebug("Using subindex: %d", subindex);
    }
    else
    {
        subindex = NOT_USED;
-       yDebug("Not using subindex (will not use subsubindex either)\n");
+       yDebug("Not using subindex (will not use subsubindex either)");
    }
 
    if(hasSubindex() && parsed.check("subsubindex"))
    {
        subsubindex = parsed.find("subsubindex").asInt32();
-       yDebug("Using subsubindex: %d\n", subsubindex);
+       yDebug("Using subsubindex: %d", subsubindex);
    }
    else
    {
        subsubindex = NOT_USED;
-       yDebug("Not using subsubindex\n");
+       yDebug("Not using subsubindex");
    }
 
    return true;
@@ -68,7 +68,7 @@ bool BottleExtract::create(const yarp::os::Property& options)
 
 void BottleExtract::destroy(void)
 {
-    yDebug("destroyed!\n");
+    yDebug("destroyed!");
 }
 
 bool BottleExtract::setparam(const yarp::os::Property& params)
@@ -87,17 +87,17 @@ bool BottleExtract::accept(yarp::os::Things& thing)
 
     if(bt == NULL)
     {
-        yWarning("BottleExtract: expected type Bottle but got wrong data type!\n");
+        yWarning("BottleExtract: expected type Bottle but got wrong data type!");
         return false;
     }
     if(index >= bt->size())
     {
-        yWarning("BottleExtract: index (%d) out of range of size (%zu)!\n", index, bt->size());
+        yWarning("BottleExtract: index (%d) out of range of size (%zu)!", index, bt->size());
         return false;
     }
     if(!bt->get(index).isList())
     {
-        yWarning("BottleExtract: expected list at (%d)!\n", index);
+        yWarning("BottleExtract: expected list at (%d)!", index);
         return false;
     }
 
@@ -106,12 +106,12 @@ bool BottleExtract::accept(yarp::os::Things& thing)
         yarp::os::Bottle* list = bt->get(index).asList();
         if(subindex >= list->size())
         {
-            yWarning("BottleExtract: subindex (%d) out of range of size (%zu)!\n", subindex, list->size());
+            yWarning("BottleExtract: subindex (%d) out of range of size (%zu)!", subindex, list->size());
             return false;
         }
         if(!list->get(subindex).isList())
         {
-            yWarning("BottleExtract: expected list at (%d, %d)!\n", index, subindex);
+            yWarning("BottleExtract: expected list at (%d, %d)!", index, subindex);
             return false;
         }
 
@@ -120,12 +120,12 @@ bool BottleExtract::accept(yarp::os::Things& thing)
             yarp::os::Bottle* sublist = list->get(subindex).asList();
             if(subsubindex >= sublist->size())
             {
-                yWarning("BottleExtract: subsubindex (%d) out of range of size (%zu)!\n", subsubindex, sublist->size());
+                yWarning("BottleExtract: subsubindex (%d) out of range of size (%zu)!", subsubindex, sublist->size());
                 return false;
             }
             if(!sublist->get(subsubindex).isList())
             {
-                yWarning("BottleExtract: expected list at (%d, %d, %d)!\n", index, subindex, subsubindex);
+                yWarning("BottleExtract: expected list at (%d, %d, %d)!", index, subindex, subsubindex);
                 return false;
             }
         }
@@ -138,7 +138,7 @@ yarp::os::Things& BottleExtract::update(yarp::os::Things& thing)
 {
     yarp::os::Bottle* bt = thing.cast_as<yarp::os::Bottle>();
     if(bt == NULL) {
-        yWarning("BottleExtract: expected type Bottle but got wrong data type!\n");
+        yWarning("BottleExtract: expected type Bottle but got wrong data type!");
         return thing;
     }
 

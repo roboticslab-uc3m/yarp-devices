@@ -24,9 +24,9 @@ if(NOT SKIP_SpaceNavigator)
                                    DeviceDriverImpl.cpp
                                    IAnalogSensorImpl.cpp)
 
-    target_link_libraries(SpaceNavigator YARP::YARP_dev
-                                         ${SPNAV_LIBRARIES}
-                                         ROBOTICSLAB::ColorDebug)
+    target_link_libraries(SpaceNavigator YARP::YARP_os
+                                         YARP::YARP_dev
+                                         ${SPNAV_LIBRARIES})
 
     target_include_directories(SpaceNavigator PRIVATE ${SPNAV_INCLUDE_DIRS})
 

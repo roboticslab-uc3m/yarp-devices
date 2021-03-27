@@ -4,7 +4,7 @@
 
 #include <cmath>
 
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 #include "CanUtils.hpp"
 
@@ -14,7 +14,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::positionMoveRaw(int j, double ref)
 {
-    CD_DEBUG("(%d, %f)\n", j, ref);
+    yTrace("%d %f", j, ref);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
@@ -28,7 +28,6 @@ bool TechnosoftIpos::positionMoveRaw(int j, double ref)
 
 bool TechnosoftIpos::positionMoveRaw(const double * refs)
 {
-    CD_DEBUG("\n");
     return positionMoveRaw(0, refs[0]);
 }
 
@@ -36,7 +35,6 @@ bool TechnosoftIpos::positionMoveRaw(const double * refs)
 
 bool TechnosoftIpos::positionMoveRaw(int n_joint, const int * joints, const double * refs)
 {
-    CD_DEBUG("\n");
     return positionMoveRaw(joints[0], refs[0]);
 }
 
@@ -44,7 +42,7 @@ bool TechnosoftIpos::positionMoveRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::relativeMoveRaw(int j, double delta)
 {
-    CD_DEBUG("(%d, %f)\n", j, delta);
+    yTrace("%d %f", j, delta);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
@@ -58,7 +56,6 @@ bool TechnosoftIpos::relativeMoveRaw(int j, double delta)
 
 bool TechnosoftIpos::relativeMoveRaw(const double * deltas)
 {
-    CD_DEBUG("\n");
     return relativeMoveRaw(0, deltas[0]);
 }
 
@@ -66,7 +63,6 @@ bool TechnosoftIpos::relativeMoveRaw(const double * deltas)
 
 bool TechnosoftIpos::relativeMoveRaw(int n_joint, const int * joints, const double * deltas)
 {
-    CD_DEBUG("\n");
     return relativeMoveRaw(joints[0], deltas[0]);
 }
 
@@ -74,7 +70,7 @@ bool TechnosoftIpos::relativeMoveRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::checkMotionDoneRaw(int j, bool * flag)
 {
-    //CD_DEBUG("(%d)\n", j);
+    yTrace("%d", j);
     CHECK_JOINT(j);
     *flag = can->driveStatus()->getCurrentState() != DriveState::OPERATION_ENABLED || can->driveStatus()->statusword()[10];
     return true;
@@ -84,7 +80,6 @@ bool TechnosoftIpos::checkMotionDoneRaw(int j, bool * flag)
 
 bool TechnosoftIpos::checkMotionDoneRaw(bool * flag)
 {
-    //CD_DEBUG("\n");
     return checkMotionDoneRaw(0, flag);
 }
 
@@ -92,7 +87,6 @@ bool TechnosoftIpos::checkMotionDoneRaw(bool * flag)
 
 bool TechnosoftIpos::checkMotionDoneRaw(int n_joint, const int * joints, bool * flag)
 {
-    //CD_DEBUG("\n");
     return checkMotionDoneRaw(joints[0], flag);
 }
 
@@ -100,17 +94,17 @@ bool TechnosoftIpos::checkMotionDoneRaw(int n_joint, const int * joints, bool * 
 
 bool TechnosoftIpos::setRefSpeedRaw(int j, double sp)
 {
-    CD_DEBUG("(%d, %f)\n", j, sp);
+    yTrace("%d %f", j, sp);
     CHECK_JOINT(j);
 
     if (sp < 0.0)
     {
-        CD_WARNING("Illegal negative speed provided: %f.\n", sp);
+        yWarning("Illegal negative speed provided: %f", sp);
         return false;
     }
     else if (sp > vars.maxVel)
     {
-        CD_WARNING("Reference speed exceeds maximum velocity (%f).\n", vars.maxVel.load());
+        yWarning("Reference speed exceeds maximum velocity (%f)", vars.maxVel.load());
         return false;
     }
 
@@ -135,7 +129,6 @@ bool TechnosoftIpos::setRefSpeedRaw(int j, double sp)
 
 bool TechnosoftIpos::setRefSpeedsRaw(const double * spds)
 {
-    CD_DEBUG("\n");
     return setRefSpeedRaw(0, spds[0]);
 }
 
@@ -143,7 +136,6 @@ bool TechnosoftIpos::setRefSpeedsRaw(const double * spds)
 
 bool TechnosoftIpos::setRefSpeedsRaw(int n_joint, const int * joints, const double * spds)
 {
-    CD_DEBUG("\n");
     return setRefSpeedRaw(joints[0], spds[0]);
 }
 
@@ -151,12 +143,12 @@ bool TechnosoftIpos::setRefSpeedsRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
 {
-    CD_DEBUG("(%d, %f)\n", j, acc);
+    yTrace("%d %f", j, acc);
     CHECK_JOINT(j);
 
     if (acc < 0.0)
     {
-        CD_WARNING("Illegal negative acceleration provided: %f.\n", acc);
+        yWarning("Illegal negative acceleration provided: %f", acc);
         return false;
     }
 
@@ -181,7 +173,6 @@ bool TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
 
 bool TechnosoftIpos::setRefAccelerationsRaw(const double * accs)
 {
-    CD_DEBUG("\n");
     return setRefAccelerationRaw(0, accs[0]);
 }
 
@@ -189,7 +180,6 @@ bool TechnosoftIpos::setRefAccelerationsRaw(const double * accs)
 
 bool TechnosoftIpos::setRefAccelerationsRaw(int n_joint, const int * joints, const double * accs)
 {
-    CD_DEBUG("\n");
     return setRefAccelerationRaw(joints[0], accs[0]);
 }
 
@@ -197,7 +187,7 @@ bool TechnosoftIpos::setRefAccelerationsRaw(int n_joint, const int * joints, con
 
 bool TechnosoftIpos::getRefSpeedRaw(int j, double * ref)
 {
-    CD_DEBUG("(%d)\n", j);
+    yTrace("%d", j);
     CHECK_JOINT(j);
 
     if (vars.actualControlMode == VOCAB_CM_NOT_CONFIGURED)
@@ -220,7 +210,6 @@ bool TechnosoftIpos::getRefSpeedRaw(int j, double * ref)
 
 bool TechnosoftIpos::getRefSpeedsRaw(double * spds)
 {
-    CD_DEBUG("\n");
     return getRefSpeedRaw(0, &spds[0]);
 }
 
@@ -228,7 +217,6 @@ bool TechnosoftIpos::getRefSpeedsRaw(double * spds)
 
 bool TechnosoftIpos::getRefSpeedsRaw(int n_joint, const int * joints, double * spds)
 {
-    CD_DEBUG("\n");
     return getRefSpeedRaw(joints[0], &spds[0]);
 }
 
@@ -236,7 +224,7 @@ bool TechnosoftIpos::getRefSpeedsRaw(int n_joint, const int * joints, double * s
 
 bool TechnosoftIpos::getRefAccelerationRaw(int j, double * acc)
 {
-    CD_DEBUG("(%d)\n", j);
+    yTrace("%d", j);
     CHECK_JOINT(j);
 
     if (vars.actualControlMode == VOCAB_CM_NOT_CONFIGURED)
@@ -259,7 +247,6 @@ bool TechnosoftIpos::getRefAccelerationRaw(int j, double * acc)
 
 bool TechnosoftIpos::getRefAccelerationsRaw(double * accs)
 {
-    CD_DEBUG("\n");
     return getRefAccelerationRaw(0, &accs[0]);
 }
 
@@ -267,7 +254,6 @@ bool TechnosoftIpos::getRefAccelerationsRaw(double * accs)
 
 bool TechnosoftIpos::getRefAccelerationsRaw(int n_joint, const int * joints, double * accs)
 {
-    CD_DEBUG("\n");
     return getRefAccelerationRaw(joints[0], &accs[0]);
 }
 
@@ -275,7 +261,7 @@ bool TechnosoftIpos::getRefAccelerationsRaw(int n_joint, const int * joints, dou
 
 bool TechnosoftIpos::stopRaw(int j)
 {
-    CD_DEBUG("(%d)\n", j);
+    yTrace("%d", j);
     CHECK_JOINT(j);
 
     return (vars.actualControlMode == VOCAB_CM_POSITION || vars.actualControlMode == VOCAB_CM_VELOCITY)
@@ -287,7 +273,6 @@ bool TechnosoftIpos::stopRaw(int j)
 
 bool TechnosoftIpos::stopRaw()
 {
-    CD_DEBUG("\n");
     return stopRaw(0);
 }
 
@@ -295,7 +280,6 @@ bool TechnosoftIpos::stopRaw()
 
 bool TechnosoftIpos::stopRaw(int n_joint, const int * joints)
 {
-    CD_DEBUG("\n");
     return stopRaw(joints[0]);
 }
 
@@ -303,7 +287,7 @@ bool TechnosoftIpos::stopRaw(int n_joint, const int * joints)
 
 bool TechnosoftIpos::getTargetPositionRaw(int joint, double * ref)
 {
-    CD_DEBUG("\n");
+    yTrace("%d", joint);
     CHECK_JOINT(joint);
 
     return can->sdo()->upload<std::int32_t>("Target position", [this, ref](auto data)
@@ -315,7 +299,6 @@ bool TechnosoftIpos::getTargetPositionRaw(int joint, double * ref)
 
 bool TechnosoftIpos::getTargetPositionsRaw(double * refs)
 {
-    CD_DEBUG("\n");
     return getTargetPositionRaw(0, &refs[0]);
 }
 
@@ -323,7 +306,6 @@ bool TechnosoftIpos::getTargetPositionsRaw(double * refs)
 
 bool TechnosoftIpos::getTargetPositionsRaw(int n_joint, const int * joints, double * refs)
 {
-    CD_DEBUG("\n");
     return getTargetPositionRaw(joints[0], &refs[0]);
 }
 

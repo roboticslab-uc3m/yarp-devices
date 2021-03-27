@@ -2,11 +2,13 @@
 
 #include "AmorControlboard.hpp"
 
+#include <yarp/os/Log.h>
+
 // ------------------- IAxisInfo related ------------------------------------
 
 bool roboticslab::AmorControlboard::getAxisName(int axis, std::string& name)
 {
-    CD_DEBUG("(%d)\n", axis);
+    yTrace("%d", axis);
 
     if (!indexWithinRange(axis))
     {
@@ -37,7 +39,7 @@ bool roboticslab::AmorControlboard::getAxisName(int axis, std::string& name)
             name = "A6";
             break;
         default:
-            CD_ERROR("\n");
+            yError("Unrecognized axis: %d", axis);
             return false;
     }
 
@@ -48,7 +50,7 @@ bool roboticslab::AmorControlboard::getAxisName(int axis, std::string& name)
 
 bool roboticslab::AmorControlboard::getJointType(int axis, yarp::dev::JointTypeEnum& type)
 {
-    CD_DEBUG("(%d)\n", axis);
+    yTrace("%d", axis);
 
     if (!indexWithinRange(axis))
     {

@@ -2,8 +2,6 @@
 
 #include "ProximitySensorsClient.hpp"
 
-#include <ColorDebug.h>
-
 roboticslab::IProximitySensors::alert_level roboticslab::ProximitySensorsClient::getAlertLevel()
 {
     std::lock_guard<std::mutex> lock(alertMutex);

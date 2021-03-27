@@ -2,7 +2,7 @@
 
 #include "EmulatedControlboard.hpp"
 
-#include <ColorDebug.h>
+#include <yarp/os/Log.h>
 
 // ------------------- IControlLimits Related ------------------------------------
 
@@ -16,7 +16,7 @@ bool roboticslab::EmulatedControlboard::setLimits(int axis, double min, double m
     minLimit[axis] = min;
     maxLimit[axis] = max;
 
-    CD_DEBUG("Range of axis %d set to: %f to %f\n", axis, min, max);
+    yDebug("Range of axis %d set to: %f to %f", axis, min, max);
 
     return true;
 }
@@ -33,7 +33,7 @@ bool roboticslab::EmulatedControlboard::getLimits(int axis, double *min, double 
     *min = minLimit[axis];
     *max = maxLimit[axis];
     
-    CD_DEBUG("Range of axis %d read: %f to %f.\n", axis, *min, *max);
+    yDebug("Range of axis %d read: %f to %f", axis, *min, *max);
     
     return true;
 }
@@ -42,8 +42,8 @@ bool roboticslab::EmulatedControlboard::getLimits(int axis, double *min, double 
 
 bool roboticslab::EmulatedControlboard::setVelLimits(int axis, double min, double max)
 {
-    CD_WARNING("Not implemented.\n");
-    return true;
+    yWarning("setVelLimits() not implemented");
+    return false;
 }
 
 // -----------------------------------------------------------------------------

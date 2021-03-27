@@ -25,8 +25,7 @@ if(NOT SKIP_CanBusPeak)
 
     target_link_libraries(CanBusPeak YARP::YARP_os
                                      YARP::YARP_dev
-                                     PCan::PCanFD
-                                     ROBOTICSLAB::ColorDebug)
+                                     PCan::PCanFD)
 
     yarp_install(TARGETS CanBusPeak
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}

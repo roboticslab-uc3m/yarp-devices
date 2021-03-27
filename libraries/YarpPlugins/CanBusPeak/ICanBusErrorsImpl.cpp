@@ -4,7 +4,7 @@
 
 #include <cstring> // std::strerror
 
-#include <ColorDebug.h>
+#include <yarp/os/LogStream.h>
 
 using namespace roboticslab;
 
@@ -20,7 +20,7 @@ bool CanBusPeak::canGetErrors(yarp::dev::CanErrors & err)
 
         if (res < 0)
         {
-            CD_ERROR("pcanfd_get_state() failed (%s).\n", std::strerror(-res));
+            yError() << "pcanfd_get_state() failed:" << std::strerror(-res);
             return false;
         }
     }

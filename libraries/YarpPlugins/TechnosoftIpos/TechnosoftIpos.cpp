@@ -8,9 +8,8 @@
 #include <sstream>
 #include <string>
 
+#include <yarp/os/Log.h>
 #include <yarp/os/Time.h>
-
-#include <ColorDebug.h>
 
 using namespace roboticslab;
 
@@ -47,15 +46,15 @@ namespace
                 ss << (msgReset.empty() ? "Bit reset: " + msgSet : msgReset);
             }
 
-            ss << " (canId: " << report.canId << ")";
+            ss << " (canId " << report.canId << ")";
 
             if (isSet && level == WARN)
             {
-                CD_WARNING("%s\n", ss.str().c_str());
+                yWarning("%s", ss.str().c_str());
             }
             else
             {
-                CD_INFO("%s\n", ss.str().c_str());
+                yInfo("%s", ss.str().c_str());
             }
         }
 
@@ -67,65 +66,65 @@ namespace
 
 void TechnosoftIpos::interpretSupportedDriveModes(std::uint32_t data)
 {
-    CD_INFO("Supported drive modes (canId %d):\n", can->getId());
+    yInfo("Supported drive modes (canId %d):", can->getId());
 
     std::bitset<32> bits(data);
 
     if (bits[0])
     {
-        CD_INFO("\t* profiled position (pp)\n");
+        yInfo("* profiled position (pp)");
     }
     if (bits[1])
     {
-        CD_INFO("\t* velocity (vl)\n");
+        yInfo("* velocity (vl)");
     }
     if (bits[2])
     {
-        CD_INFO("\t* profiled velocity (pv)\n");
+        yInfo("* profiled velocity (pv)");
     }
     if (bits[3])
     {
-        CD_INFO("\t* profiled torque (tq)\n");
+        yInfo("* profiled torque (tq)");
     }
     if (bits[5])
     {
-        CD_INFO("\t* homing (hm)\n");
+        yInfo("* homing (hm)");
     }
     if (bits[6])
     {
-        CD_INFO("\t* interpolated position (ip)\n");
+        yInfo("* interpolated position (ip)");
     }
     if (bits[7])
     {
-        CD_INFO("\t* cyclic synchronous position\n");
+        yInfo("* cyclic synchronous position");
     }
     if (bits[8])
     {
-        CD_INFO("\t* cyclic synchronous velocity\n");
+        yInfo("* cyclic synchronous velocity");
     }
     if (bits[9])
     {
-        CD_INFO("\t* cyclic synchronous torque\n");
+        yInfo("* cyclic synchronous torque");
     }
     if (bits[16])
     {
-        CD_INFO("\t* electronic camming position (manufacturer specific)\n");
+        yInfo("* electronic camming position (manufacturer specific)");
     }
     if (bits[17])
     {
-        CD_INFO("\t* electronic gearing position (manufacturer specific)\n");
+        yInfo("* electronic gearing position (manufacturer specific)");
     }
     if (bits[18])
     {
-        CD_INFO("\t* external reference position (manufacturer specific)\n");
+        yInfo("* external reference position (manufacturer specific)");
     }
     if (bits[19])
     {
-        CD_INFO("\t* external reference speed (manufacturer specific)\n");
+        yInfo("* external reference speed (manufacturer specific)");
     }
     if (bits[20])
     {
-        CD_INFO("\t* external reference torque (manufacturer specific)\n");
+        yInfo("* external reference torque (manufacturer specific)");
     }
 }
 
@@ -282,7 +281,7 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
         && can->driveStatus()->controlword()[8]
         && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)))
     {
-        CD_WARNING("Unable to reset halt bit (canId: %d).\n", can->getId());
+        yWarning("Unable to reset halt bit (canId %d)", can->getId());
     }
 
     reportBitToggle(report, INFO, 11, "Internal Limit Active.");
@@ -294,7 +293,7 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
             "Trajectory generator will accept a new set-point.")
             && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)))
         {
-            CD_WARNING("Unable to finalize single set-point handshake (canId: %d).\n", can->getId());
+            yWarning("Unable to finalize single set-point handshake (canId %d)", can->getId());
         }
         reportBitToggle(report, WARN, 13, "Following error.", "No following error.");
         break;
@@ -329,53 +328,53 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
     {
     // handled
     case -5:
-        CD_INFO("iPOS specific: External Reference Torque Mode. canId: %d.\n", can->getId());
+        yInfo("iPOS specific: External Reference Torque Mode (canId %d)", can->getId());
         vars.actualControlMode = vars.requestedcontrolMode == VOCAB_CM_TORQUE ? VOCAB_CM_TORQUE : VOCAB_CM_CURRENT;
         vars.enableSync = true;
         break;
     case 1:
-        CD_INFO("Profile Position Mode. canId: %d.\n", can->getId());
+        yInfo("Profile Position Mode (canId %d)", can->getId());
         vars.actualControlMode = VOCAB_CM_POSITION;
         vars.enableSync = false;
         break;
     case 3:
-        CD_INFO("Profile Velocity Mode. canId: %d.\n", can->getId());
+        yInfo("Profile Velocity Mode (canId %d)", can->getId());
         vars.actualControlMode = vars.enableCsv ? VOCAB_CM_UNKNOWN : VOCAB_CM_VELOCITY;
         vars.enableSync = !vars.enableCsv;
         break;
     case 7:
-        CD_INFO("Interpolated Position Mode. canId: %d.\n", can->getId());
+        yInfo("Interpolated Position Mode (canId %d)", can->getId());
         vars.actualControlMode = VOCAB_CM_POSITION_DIRECT;
         vars.enableSync = false;
         break;
     case 8:
-        CD_INFO("Cyclic Synchronous Position Mode. canId: %d.\n", can->getId());
+        yInfo("Cyclic Synchronous Position Mode (canId %d)", can->getId());
         vars.actualControlMode = vars.enableCsv ? VOCAB_CM_VELOCITY : VOCAB_CM_POSITION_DIRECT;
         vars.enableSync = true;
         break;
     // unhandled
     case -4:
-        CD_INFO("iPOS specific: External Reference Speed Mode. canId: %d.\n", can->getId());
+        yInfo("iPOS specific: External Reference Speed Mode (canId %d)", can->getId());
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     case -3:
-        CD_INFO("iPOS specific: External Reference Position Mode. canId: %d.\n", can->getId());
+        yInfo("iPOS specific: External Reference Position Mode (canId %d)", can->getId());
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     case -2:
-        CD_INFO("iPOS specific: Electronic Camming Position Mode. canId: %d.\n", can->getId());
+        yInfo("iPOS specific: Electronic Camming Position Mode (canId %d)", can->getId());
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     case -1:
-        CD_INFO("iPOS specific: Electronic Gearing Position Mode. canId: %d.\n", can->getId());
+        yInfo("iPOS specific: Electronic Gearing Position Mode (canId %d)", can->getId());
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     case 6:
-        CD_INFO("Homing Mode. canId: %d.\n", can->getId());
+        yInfo("Homing Mode (canId %d)", can->getId());
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     default:
-        CD_WARNING("No mode set. canId: %d.\n", can->getId());
+        yWarning("No mode set (canId %d)", can->getId());
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     }
@@ -490,7 +489,7 @@ void TechnosoftIpos::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, con
         break;
     }
     default:
-        CD_WARNING("%s (canId %d).\n", code.second.c_str(), can->getId());
+        yWarning("%s (canId %d)", code.second.c_str(), can->getId());
         break;
     }
 }
@@ -525,11 +524,11 @@ void TechnosoftIpos::handleNmt(NmtState state)
         s = "pre-operational";
         break;
     default:
-        CD_WARNING("Unhandled state: %d.\n", static_cast<std::uint8_t>(state));
+        yWarning("Unhandled state: %d", static_cast<std::uint8_t>(state));
         return;
     }
 
-    CD_INFO("Heartbeat: %s (canId %d).\n", s.c_str(), can->getId());
+    yInfo("Heartbeat: %s (canId %d)", s.c_str(), can->getId());
 
     vars.lastNmtState = nmtState;
 }
@@ -543,7 +542,7 @@ bool TechnosoftIpos::monitorWorker(const yarp::os::YarpTimerEvent & event)
 
     if (vars.heartbeatPeriod != 0.0 && isConfigured && elapsed > event.lastDuration)
     {
-        CD_ERROR("Last heartbeat response was %f seconds ago (canId %d).\n", elapsed, can->getId());
+        yError("Last heartbeat response was %f seconds ago (canId %d)", elapsed, can->getId());
         vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
         can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
         can->driveStatus()->reset();
@@ -553,7 +552,7 @@ bool TechnosoftIpos::monitorWorker(const yarp::os::YarpTimerEvent & event)
     {
         if (!initialize())
         {
-            CD_ERROR("Unable to initialize CAN comms (canId: %d).\n", can->getId());
+            yError("Unable to initialize CAN comms (canId %d)", can->getId());
             can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
         }
     }

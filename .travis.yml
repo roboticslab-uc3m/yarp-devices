@@ -113,13 +113,6 @@ install:
     fi
   - export PCan_ROOT="$CACHE_DIR/peak-$PEAK_DRIVER_VER"
 
-  #-- Install color-debug
-  - >
-    source "$TRAVIS_BUILD_DIR/scripts/travis/git-cache-dependency.sh"
-    --package-name COLOR_DEBUG
-    --repo-url https://github.com/roboticslab-uc3m/color-debug
-    --repo-checkout master
-
   #-- Install AMOR API (for AmorCartesianControl)
   - >
     source "$TRAVIS_BUILD_DIR/scripts/travis/git-cache-dependency.sh"

@@ -7,7 +7,7 @@
 #include <cerrno>
 #include <cstring>
 
-#include "ColorDebug.h"
+#include <yarp/os/LogStream.h>
 
 namespace
 {
@@ -40,7 +40,7 @@ void roboticslab::WiimoteDispatcherThread::run()
     {
         if (poll(fds, fds_num, -1) < 0 && errno != EINTR)
         {
-            CD_ERROR("Cannot poll fds: %d.\n", -errno);
+            yError() << "Cannot poll fds:" << -errno;
             return;
         }
 
@@ -56,7 +56,7 @@ void roboticslab::WiimoteDispatcherThread::run()
         {
             if (ret != -EAGAIN)
             {
-                CD_ERROR("Read failed with err: %d.\n", ret);
+                yError() << "Read failed with err:" << ret;
                 return;
             }
         }
@@ -64,7 +64,7 @@ void roboticslab::WiimoteDispatcherThread::run()
         switch (event.type)
         {
         case XWII_EVENT_KEY:
-            CD_INFO("Keypress event: code %d, state %d\n", event.v.key.code, event.v.key.state);
+            yDebug("Keypress event: code %d, state %d", event.v.key.code, event.v.key.state);
 
             switch (event.v.key.code)
             {
@@ -86,7 +86,7 @@ void roboticslab::WiimoteDispatcherThread::run()
 
             break;
         case XWII_EVENT_ACCEL:
-            CD_INFO("Accel event: [x] %d, [y] %d, [z] %d\n", event.v.abs[0].x, event.v.abs[0].y, event.v.abs[0].z);
+            yDebug("Accel event: [x] %d, [y] %d, [z] %d", event.v.abs[0].x, event.v.abs[0].y, event.v.abs[0].z);
             localEventData.accelX = event.v.abs[0].x;
             localEventData.accelY = event.v.abs[0].y;
             localEventData.accelZ = event.v.abs[0].z;

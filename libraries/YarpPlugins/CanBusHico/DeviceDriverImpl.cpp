@@ -11,15 +11,14 @@
 
 #include <string>
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
-
-#include <ColorDebug.h>
 
 // ------------------- DeviceDriver Related ------------------------------------
 
 bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 {
-    CD_DEBUG("%s\n", config.toString().c_str());
+    yDebug() << "CanBusHico config:" << config.toString();
 
     std::string devicePath = config.check("port", yarp::os::Value(DEFAULT_PORT), "CAN device path").asString();
     int bitrate = config.check("bitrate", yarp::os::Value(DEFAULT_BITRATE), "CAN bitrate (bps)").asInt32();
@@ -29,32 +28,32 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
     if (blockingMode)
     {
-        CD_INFO("Blocking mode enabled for CAN device: %s.\n", devicePath.c_str());
+        yInfo() << "Blocking mode enabled for CAN device" << devicePath;
 
         rxTimeoutMs = config.check("rxTimeoutMs", yarp::os::Value(DEFAULT_RX_TIMEOUT_MS), "CAN RX timeout (milliseconds)").asInt32();
         txTimeoutMs = config.check("txTimeoutMs", yarp::os::Value(DEFAULT_TX_TIMEOUT_MS), "CAN TX timeout (milliseconds)").asInt32();
 
         if (rxTimeoutMs <= 0)
         {
-            CD_WARNING("RX timeout value <= 0, CAN read calls will block until the buffer is ready: %s.\n", devicePath.c_str());
+            yWarning() << "RX timeout value <= 0, CAN read calls will block until the buffer is ready:" << devicePath;
         }
 
         if (txTimeoutMs <= 0)
         {
-            CD_WARNING("TX timeout value <= 0, CAN write calls will block until the buffer is ready: %s.\n", devicePath.c_str());
+            yWarning() << "TX timeout value <= 0, CAN write calls will block until the buffer is ready:" << devicePath;
         }
     }
     else
     {
-        CD_INFO("Requested non-blocking mode for CAN device: %s.\n", devicePath.c_str());
+        yInfo() << "Requested non-blocking mode for CAN device" << devicePath;
     }
 
-    CD_INFO("Permissive mode flag for read/write operations on CAN device %s: %d.\n", devicePath.c_str(), allowPermissive);
+    yInfo("Permissive mode flag for read/write operations on CAN device %s: %d", devicePath.c_str(), allowPermissive);
 
     std::string filterConfigStr = config.check("filterConfiguration", yarp::os::Value(DEFAULT_FILTER_CONFIGURATION),
             "CAN filter configuration (disabled|noRange|maskAndRange)").asString();
 
-    CD_INFO("CAN filter configuration for CAN device %s: %s.\n", devicePath.c_str(), filterConfigStr.c_str());
+    yInfo("CAN filter configuration for CAN device %s: %s", devicePath.c_str(), filterConfigStr.c_str());
 
     filterConfig = FilterManager::parseFilterConfiguration(filterConfigStr);
 
@@ -63,22 +62,22 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
     if (fileDescriptor == -1)
     {
-        CD_ERROR("Could not open CAN device of path: %s\n", devicePath.c_str());
+        yError() << "Could not open CAN device" << devicePath;
         return false;
     }
 
-    CD_SUCCESS("Opened CAN device of path: %s\n", devicePath.c_str());
+    yInfo() << "Opened CAN device" << devicePath;
 
     initBitrateMap();
 
     //-- Set the CAN bitrate.
     if (!canSetBaudRate(bitrate))
     {
-        CD_ERROR("Could not set bitrate on CAN device: %s.\n", devicePath.c_str());
+        yError() << "Could not set bitrate on CAN device" << devicePath;
         return false;
     }
 
-    CD_SUCCESS("Bitrate set on CAN device: %s.\n", devicePath.c_str());
+    yInfo() << "Bitrate set on CAN device" << devicePath;
 
     if (!blockingMode)
     {
@@ -86,7 +85,7 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
         if (fcntlFlags == -1)
         {
-            CD_ERROR("Unable to retrieve FD flags on CAN device %s.\n", devicePath.c_str());
+            yError() << "Unable to retrieve FD flags on CAN device" << devicePath;
             return false;
         }
 
@@ -94,11 +93,11 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
         if (::fcntl(fileDescriptor, F_SETFL, fcntlFlags) == -1)
         {
-            CD_ERROR("Unable to set non-blocking mode on CAN device %s; fcntl() error: %s.\n", devicePath.c_str(), std::strerror(errno));
+            yError("Unable to set non-blocking mode on CAN device %s; fcntl() error: %s", devicePath.c_str(), std::strerror(errno));
             return false;
         }
 
-        CD_SUCCESS("Non-blocking mode enabled on CAN device: %s.\n", devicePath.c_str());
+        yInfo() << "Non-blocking mode enabled on CAN device" << devicePath;
     }
 
     if (filterConfig != FilterManager::DISABLED)
@@ -109,17 +108,17 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
         {
             if (!filterManager->clearFilters())
             {
-                CD_ERROR("Unable to clear acceptance filters on CAN device: %s.\n", devicePath.c_str());
+                yError() << "Unable to clear acceptance filters on CAN device" << devicePath;
                 return false;
             }
             else
             {
-                CD_SUCCESS("Acceptance filters cleared on CAN device: %s.\n", devicePath.c_str());
+                yInfo() << "Acceptance filters cleared on CAN device" << devicePath;
             }
         }
         else
         {
-            CD_WARNING("Preserving previous acceptance filters (if any): %s.\n", devicePath.c_str());
+            yWarning() << "Preserving previous acceptance filters (if any) on CAN device" << devicePath;
         }
 
         //-- Load initial node IDs and set acceptance filters.
@@ -129,39 +128,38 @@ bool roboticslab::CanBusHico::open(yarp::os::Searchable& config)
 
             if (ids.size() != 0)
             {
-                CD_INFO("Parsing bottle of ids on CAN device: %s.\n", ids.toString().c_str());
+                yInfo() << "Parsing bottle of ids on CAN device" << ids.toString();
 
                 if (!filterManager->parseIds(ids))
                 {
-                    CD_ERROR("Could not set acceptance filters on CAN device: %s\n", devicePath.c_str());
+                    yError() << "Could not set acceptance filters on CAN device" << devicePath;
                     return false;
                 }
 
                 if (!filterManager->isValid())
                 {
-                    CD_WARNING("Hardware limit was hit on CAN device %s, no acceptance filters are enabled.\n",
-                            devicePath.c_str());
+                    yWarning() << "Hardware limit was hit on CAN device" << devicePath << "and no acceptance filters are enabled";
                 }
             }
             else
             {
-                CD_INFO("No bottle of ids given to CAN device: %s.\n", devicePath.c_str());
+                yInfo() << "No bottle of ids given to CAN device" << devicePath;
             }
         }
     }
     else
     {
-        CD_INFO("Acceptance filters are disabled for CAN device: %s.\n", devicePath.c_str());
+        yInfo() << "Acceptance filters are disabled for CAN device" << devicePath;
     }
 
     //-- Start the CAN device.
     if (::ioctl(fileDescriptor,IOC_START) == -1)
     {
-        CD_ERROR("IOC_START failed on CAN device: %s.\n", devicePath.c_str());
+        yError() << "IOC_START failed on CAN device" << devicePath;
         return false;
     }
 
-    CD_SUCCESS("IOC_START ok on CAN device: %s.\n", devicePath.c_str());
+    yInfo() << "IOC_START ok on CAN device" << devicePath;
 
     return true;
 }

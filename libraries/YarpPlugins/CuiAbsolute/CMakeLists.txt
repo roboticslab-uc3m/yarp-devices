@@ -23,7 +23,6 @@ if(NOT SKIP_CuiAbsolute)
 
     target_link_libraries(CuiAbsolute YARP::YARP_os
                                       YARP::YARP_dev
-                                      ROBOTICSLAB::ColorDebug
                                       ROBOTICSLAB::CanBusSharerLib
                                       ROBOTICSLAB::StateObserverLib)
 

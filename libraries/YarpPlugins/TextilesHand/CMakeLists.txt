@@ -21,8 +21,7 @@ if(NOT SKIP_TextilesHand)
                                  IPositionDirectImpl.cpp)
 
     target_link_libraries(TextilesHand YARP::YARP_os
-                                       YARP::YARP_dev
-                                       ROBOTICSLAB::ColorDebug)
+                                       YARP::YARP_dev)
 
     target_compile_features(TextilesHand PUBLIC cxx_std_11)
 

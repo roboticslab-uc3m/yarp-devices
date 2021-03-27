@@ -2,7 +2,7 @@
 
 #include "JointCalibrator.hpp"
 
-#include <ColorDebug.h>
+#include <yarp/os/LogStream.h>
 
 using namespace roboticslab;
 
@@ -26,7 +26,7 @@ namespace
         }
         else
         {
-            CD_ERROR("Missing %s/%s key or size mismatch.\n", key.c_str(), keys.c_str());
+            yError() << "Missing" << key << "/" << keys << "key or size mismatch";
             return false;
         }
 
@@ -36,13 +36,13 @@ namespace
 
 bool JointCalibrator::open(yarp::os::Searchable & config)
 {
-    CD_DEBUG("%s\n", config.toString().c_str());
+    yDebug() << "JointCalibrator config:" << config.toString();
 
     axes = config.check("joints", yarp::os::Value(0), "number of controlled axes").asInt32();
 
     if (axes == 0)
     {
-        CD_ERROR("Illegal axis count: %d.\n", axes);
+        yError() << "Illegal axis count:" << axes;
         return false;
     }
 

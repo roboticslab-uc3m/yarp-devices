@@ -10,19 +10,17 @@
 
 #include <string>
 
-#include <ColorDebug.h>
+#include <yarp/os/LogStream.h>
 
 // -----------------------------------------------------------------------------
 
 bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
 {
-    CD_DEBUG("(%d)\n", rate);
-
     unsigned int id;
 
     if (!bitrateToId(rate, &id))
     {
-        CD_ERROR("Unsupported bitrate value (%d).\n", rate);
+        yError() << "Unsupported bitrate value:" << rate;
         return false;
     }
 
@@ -32,19 +30,19 @@ bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
     {
         if (bitrateState.second == id)
         {
-            CD_WARNING("Bitrate already set.\n");
+            yWarning() << "Bitrate already set";
             return true;
         }
         else
         {
-            CD_ERROR("Bitrate already set to a different value: %d.\n", bitrateState.second);
+            yError() << "Bitrate already set to a different value:" << bitrateState.second;
             return false;
         }
     }
 
     if (::ioctl(fileDescriptor, IOC_SET_BITRATE, &id) == -1)
     {
-        CD_ERROR("Could not set bitrate: %s.\n", std::strerror(errno));
+        yError() << "Could not set bitrate:" << std::strerror(errno);
         return false;
     }
 
@@ -58,8 +56,6 @@ bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
 
 bool roboticslab::CanBusHico::canGetBaudRate(unsigned int * rate)
 {
-    CD_DEBUG("\n");
-
     unsigned int id;
 
     canBusReady.lock();
@@ -68,13 +64,13 @@ bool roboticslab::CanBusHico::canGetBaudRate(unsigned int * rate)
 
     if (ret == -1)
     {
-        CD_ERROR("Could not set bitrate: %s.\n", std::strerror(errno));
+        yError() << "Could not get bitrate:" << std::strerror(errno);
         return false;
     }
 
     if (!idToBitrate(id, rate))
     {
-        CD_ERROR("Unrecognized bitrate id (%d).\n", id);
+        yError() << "Unrecognized bitrate id:" << id;
         return false;
     }
 
@@ -85,17 +81,15 @@ bool roboticslab::CanBusHico::canGetBaudRate(unsigned int * rate)
 
 bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
 {
-    CD_DEBUG("(%d)\n", id);
-
     if (filterConfig == FilterManager::DISABLED)
     {
-        CD_WARNING("CAN filters are not enabled in this device.\n");
+        yWarning() << "CAN filters are not enabled in this device";
         return true;
     }
 
     if (id > 0x7F)
     {
-        CD_ERROR("Invalid ID (%d > 0x7F).\n", id);
+        yError("Invalid ID (%d > 0x7F)", id);
         return false;
     }
 
@@ -103,19 +97,19 @@ bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
 
     if (filterManager->hasId(id))
     {
-        CD_WARNING("Filter for ID %d is already active.\n", id);
+        yWarning() << "Filter for ID" << id << "is already active";
         return true;
     }
 
     if (!filterManager->insertId(id))
     {
-        CD_ERROR("Could not set filter: %s.\n", std::strerror(errno));
+        yError() << "Could not set filter:" << std::strerror(errno);
         return false;
     }
 
     if (!filterManager->isValid())
     {
-        CD_WARNING("Hardware limit was hit, not all requested filters are enabled.\n");
+        yWarning() << "Hardware limit was hit, not all requested filters are enabled";
         return true;
     }
 
@@ -126,17 +120,15 @@ bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
 
 bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
 {
-    CD_DEBUG("(%d)\n", id);
-
     if (filterConfig == FilterManager::DISABLED)
     {
-        CD_WARNING("CAN filters are not enabled in this device.\n");
+        yWarning() << "CAN filters are not enabled in this device";
         return true;
     }
 
     if (id > 0x7F)
     {
-        CD_ERROR("Invalid ID (%d > 0x7F).\n", id);
+        yError("Invalid ID (%d > 0x7F)", id);
         return false;
     }
 
@@ -144,11 +136,11 @@ bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
 
     if (id == 0)
     {
-        CD_INFO("Clearing filters previously set.\n");
+        yInfo() << "Clearing filters previously set";
 
         if (!filterManager->clearFilters(true))
         {
-            CD_ERROR("Unable to clear accceptance filters: %s.\n", std::strerror(errno));
+            yError() << "Unable to clear accceptance filters:" << std::strerror(errno);
             return false;
         }
 
@@ -157,19 +149,19 @@ bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
 
     if (!filterManager->hasId(id))
     {
-        CD_WARNING("Filter for ID %d not found, doing nothing.\n", id);
+        yWarning() << "Filter for ID" << id << "not found, doing nothing";
         return true;
     }
 
     if (!filterManager->eraseId(id))
     {
-        CD_ERROR("Could not remove filter: %s.\n", std::strerror(errno));
+        yError() << "Could not remove filter:" << std::strerror(errno);
         return false;
     }
 
     if (!filterManager->isValid())
     {
-        CD_WARNING("Hardware limit was hit, not all requested filters are enabled.\n");
+        yWarning() << "Hardware limit was hit, not all requested filters are enabled";
         return false;
     }
 
@@ -182,7 +174,7 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
 {
     if (!allowPermissive && wait != blockingMode)
     {
-        CD_ERROR("Blocking mode configuration mismatch: requested=%d, enabled=%d.\n", wait, blockingMode);
+        yError("Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
         return false;
     }
 
@@ -198,7 +190,7 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
 
             if (!waitUntilTimeout(READ, &bufferReady))
             {
-                CD_ERROR("waitUntilTimeout() failed.\n");
+                yError("waitUntilTimeout() failed");
                 return false;
             }
 
@@ -222,7 +214,7 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
             }
             else
             {
-                CD_ERROR("read() error: %s.\n", std::strerror(errno));
+                yError("read() error: %s", std::strerror(errno));
                 return false;
             }
         }
@@ -245,7 +237,7 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
 {
     if (!allowPermissive && wait != blockingMode)
     {
-        CD_ERROR("Blocking mode configuration mismatch: requested=%d, enabled=%d.\n", wait, blockingMode);
+        yError("Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
         return false;
     }
 
@@ -261,7 +253,7 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
 
             if (!waitUntilTimeout(WRITE, &bufferReady))
             {
-                CD_ERROR("waitUntilTimeout() failed.\n");
+                yError("waitUntilTimeout() failed");
                 return false;
             }
 
@@ -284,7 +276,7 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
             }
             else
             {
-                CD_ERROR("%s.\n", std::strerror(errno));
+                yError("write() failed: %s", std::strerror(errno));
                 return false;
             }
         }

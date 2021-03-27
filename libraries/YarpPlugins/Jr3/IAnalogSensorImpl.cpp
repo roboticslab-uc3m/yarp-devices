@@ -4,6 +4,8 @@
 
 #include <sys/ioctl.h>
 
+#include <yarp/os/LogStream.h>
+
 // -----------------------------------------------------------------------------
 
 int roboticslab::Jr3::read(yarp::sig::Vector &out)
@@ -17,7 +19,7 @@ int roboticslab::Jr3::read(yarp::sig::Vector &out)
 
     if ( ret == -1)
     {
-        CD_ERROR("\n");
+        yError("ioctl() on read failed");
         return yarp::dev::IAnalogSensor::AS_ERROR;
     }
 
@@ -85,7 +87,7 @@ int roboticslab::Jr3::calibrateSensor()
 
     if ( ok == -1)
     {
-        CD_ERROR("\n");
+        yError() << "ioctl() on calibrate sensor failed";
         return yarp::dev::IAnalogSensor::AS_ERROR;
     }
     else
@@ -118,12 +120,12 @@ int roboticslab::Jr3::calibrateChannel(int ch)
           ok=ioctl(fd,IOCTL3_JR3_ZEROOFFS);
             break;
         default:
-            CD_ERROR("\n");
+            yError() << "Illegal channel" << ch;
             ok = -1;
     }
     if ( ok == -1)
     {
-        CD_ERROR("\n");
+        yError() << "ioctl() on calibrate channel failed";
         return yarp::dev::IAnalogSensor::AS_ERROR;
     }
     else

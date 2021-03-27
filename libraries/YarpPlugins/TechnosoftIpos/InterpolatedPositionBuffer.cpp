@@ -9,10 +9,9 @@
 #include <bitset>
 #include <iterator>
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
-
-#include <ColorDebug.h>
 
 #include "CanUtils.hpp"
 
@@ -270,7 +269,7 @@ InterpolatedPositionBuffer * createInterpolationBuffer(const yarp::os::Searchabl
 
     if (periodMs < 0)
     {
-        CD_ERROR("Illegal \"periodMs\": %d.\n", periodMs);
+        yError() << "Illegal \"periodMs\":" << periodMs;
         return nullptr;
     }
 
@@ -284,7 +283,7 @@ InterpolatedPositionBuffer * createInterpolationBuffer(const yarp::os::Searchabl
     }
     else
     {
-        CD_ERROR("Unsupported interpolated position submode: \"%s\".\n", mode.c_str());
+        yError() << "Unsupported interpolated position submode:" << mode;
         return nullptr;
     }
 }
