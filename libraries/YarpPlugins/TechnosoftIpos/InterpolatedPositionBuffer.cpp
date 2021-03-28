@@ -263,9 +263,6 @@ std::uint64_t PvtBuffer::makeDataRecord(const ip_record & previous, const ip_rec
     return data;
 }
 
-namespace roboticslab
-{
-
 InterpolatedPositionBuffer * createInterpolationBuffer(const yarp::os::Searchable & config, const StateVariables & vars)
 {
     std::string mode = config.check("mode", yarp::os::Value(""), "interpolated position submode [pt|pvt]").asString();
@@ -291,5 +288,3 @@ InterpolatedPositionBuffer * createInterpolationBuffer(const yarp::os::Searchabl
         return nullptr;
     }
 }
-
-} // namespace roboticslab
