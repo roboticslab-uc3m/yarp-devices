@@ -2,11 +2,11 @@
 
 A place for YARP devices.
 
-Link to Doxygen generated documentation: http://robots.uc3m.es/dox-yarp-devices
+Link to Doxygen generated documentation: https://roboticslab-uc3m.github.io/yarp-devices
 
 ## Installation
 
-Installation instructions for installing from source can be found [here](/doc/yarp-devices-install.md).
+Installation instructions for installing from source can be found [here](doc/yarp-devices-install.md).
 
 ## Usage
 Usage instructions for the different devices contained in this repository can be found in each corresponding subdirectory.
