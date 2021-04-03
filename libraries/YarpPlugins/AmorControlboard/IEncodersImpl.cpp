@@ -142,4 +142,23 @@ bool roboticslab::AmorControlboard::getEncoderAccelerations(double *accs)
     return false;
 }
 
+// ------------------ IEncodersTimed related -----------------------------------------
+
+bool roboticslab::AmorControlboard::getEncodersTimed(double *encs, double *time)
+{
+    CD_DEBUG("\n");
+    double now = yarp::os::Time::now();
+    std::fill_n(time, AMOR_NUM_JOINTS, now);
+    return getEncoders(encs);
+}
+
+// -----------------------------------------------------------------------------
+
+bool roboticslab::AmorControlboard::getEncoderTimed(int j, double *encs, double *time)
+{
+    //CD_DEBUG("(%d)\n", j);
+    *time = yarp::os::Time::now();
+    return getEncoder(j, encs);
+}
+
 // -----------------------------------------------------------------------------

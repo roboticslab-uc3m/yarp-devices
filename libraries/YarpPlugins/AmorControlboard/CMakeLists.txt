@@ -27,11 +27,7 @@ if(NOT SKIP_AmorControlboard)
                                      IControlModeImpl.cpp
                                      ICurrentControlImpl.cpp
                                      IEncodersImpl.cpp
-                                     IEncodersTimedImpl.cpp
-                                     IInteractionModeImpl.cpp
                                      IPositionControlImpl.cpp
-                                     IRemoteVariablesImpl.cpp
-                                     ITorqueControlImpl.cpp
                                      IVelocityControlImpl.cpp)
 
     target_link_libraries(AmorControlboard YARP::YARP_os

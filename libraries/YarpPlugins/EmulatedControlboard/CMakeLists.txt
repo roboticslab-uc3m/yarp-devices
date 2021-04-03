@@ -15,16 +15,12 @@ if(NOT SKIP_EmulatedControlboard)
     endif()
 
     yarp_add_plugin(EmulatedControlboard EmulatedControlboard.hpp
-                                         EmulatedControlboard.cpp
                                          DeviceDriverImpl.cpp
                                          IControlLimitsImpl.cpp
                                          IControlModeImpl.cpp
                                          IEncodersImpl.cpp
-                                         IEncodersTimedImpl.cpp
                                          IPositionControlImpl.cpp
                                          IPositionDirectImpl.cpp
-                                         IRemoteVariablesImpl.cpp
-                                         ITorqueControlImpl.cpp
                                          IVelocityControlImpl.cpp
                                          PeriodicThreadImpl.cpp
                                          SharedArea.cpp)
