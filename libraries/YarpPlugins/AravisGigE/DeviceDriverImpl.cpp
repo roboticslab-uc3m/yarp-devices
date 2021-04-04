@@ -74,7 +74,7 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
         //-- List all  available formats
         guint n_pixel_formats;
         const char ** available_formats = arv_camera_get_available_pixel_formats_as_display_names(camera, &n_pixel_formats);
-        yInfo() << "Available pixel formats:");
+        yInfo() << "Available pixel formats:";
         for (int i = 0; i < n_pixel_formats; i++)
              yInfo() << available_formats[i];
     }

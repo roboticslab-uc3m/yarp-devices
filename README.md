@@ -31,7 +31,7 @@ Some tricks for the different devices contained in this repository can be found 
 
 ## Status
 
-[![Build Status (Linux)](https://travis-ci.com/roboticslab-uc3m/yarp-devices.svg?branch=master)](https://travis-ci.com/roboticslab-uc3m/yarp-devices)
+[![CI (Linux)](https://github.com/roboticslab-uc3m/yarp-devices/workflows/Continuous%20Integration/badge.svg)](https://github.com/roboticslab-uc3m/yarp-devices/actions)
 
 [![Coverage Status](https://coveralls.io/repos/roboticslab-uc3m/yarp-devices/badge.svg)](https://coveralls.io/r/roboticslab-uc3m/yarp-devices)
 

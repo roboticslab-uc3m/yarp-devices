@@ -1,0 +1,159 @@
+name: Continuous Integration
+
+on:
+  push:
+    paths-ignore:
+    - 'doc/**'
+    - '**.md'
+    - 'firmware/**'
+  pull_request:
+  schedule:
+  - cron: '0 0 * * MON'
+  workflow_dispatch:
+
+env:
+  CMAKE_CCACHE_LAUNCHER: -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+  ARAVIS_VER: 0.4.1
+  PEAK_DRIVER_VER: 8.11.0
+
+jobs:
+  maybe_skip:
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{steps.skip_check.outputs.should_skip}}
+    steps:
+    - uses: fkirc/skip-duplicate-actions@master
+      id: skip_check
+      with:
+        cancel_others: 'true'
+
+  build:
+    name: build (${{matrix.os}}, ${{matrix.robotology.yarp}}, ${{matrix.compiler.cc}})
+    runs-on: ${{matrix.os}}
+    needs: maybe_skip
+    if: ${{needs.maybe_skip.outputs.should_skip != 'true'}}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-18.04, ubuntu-20.04]
+        robotology:
+        - { yarp: yarp-3.3, ycm: ycm-0.12, cmake: 3.12.x }
+        - { yarp: yarp-3.4, ycm: ycm-0.12, cmake: 3.12.x }
+        - { yarp: master, ycm: master, cmake: 3.12.x }
+        compiler:
+        - { cc: gcc, cxx: g++ }
+        - { cc: clang, cxx: clang++ }
+        experimental:
+        - ${{github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'}}
+        exclude:
+        - { experimental: false, robotology: { yarp: master } }
+
+    steps:
+    - name: Check out yarp-devices
+      uses: actions/checkout@v2
+
+    - name: Check out YCM
+      uses: actions/checkout@v2
+      with:
+        repository: robotology/ycm
+        ref: ${{matrix.robotology.ycm}}
+        path: .deps/ycm
+
+    - name: Check out YARP
+      uses: actions/checkout@v2
+      with:
+        repository: robotology/yarp
+        ref: ${{matrix.robotology.yarp}}
+        path: .deps/yarp
+
+    - name: Download ARAVIS
+      run: wget -O- -q http://ftp.acc.umu.se/pub/GNOME/sources/aravis/${ARAVIS_VER%.*}/aravis-$ARAVIS_VER.tar.xz | tar -C .deps -xJf -
+
+    - name: Unpack libphidget21
+      run: tar xzf extern/phidget/libphidget_2.1.8.20151217.tar.gz -C .deps
+
+    - name: Download Peak CAN driver
+      run: wget -O- -q https://www.peak-system.com/fileadmin/media/linux/files/peak-linux-driver-$PEAK_DRIVER_VER.tar.gz | tar -C .deps -xzf -
+
+    - name: Check out amor-api
+      uses: actions/checkout@v2
+      with:
+        repository: roboticslab-uc3m/amor-api
+        token: ${{secrets.AMOR_API}}
+        path: .deps/amor-api
+
+    - name: Install dependencies via apt
+      run: sudo apt-get install -qq ccache libboost-thread-dev libeigen3-dev intltool libxml2-dev libglib2.0-dev libusb-1.0-0-dev libspnav-dev libxwiimote-dev libgtest-dev
+
+    - name: Set up CMake 3.12
+      uses: jwlawson/actions-setup-cmake@v1.7
+      with:
+        cmake-version: ${{matrix.robotology.cmake}}
+
+    - name: Set up Ccache
+      uses: hendrikmuhs/ccache-action@v1
+      with:
+        key: ${{matrix.os}}-${{matrix.robotology.yarp}}-${{matrix.compiler.cc}}
+
+    - name: Create build trees
+      run: cmake -E make_directory build .deps/ycm/build .deps/yarp/build .deps/amor-api/build
+
+    - name: Set environment variables
+      run: echo "CMAKE_COMPILER=-DCMAKE_C_COMPILER=${{matrix.compiler.cc}} -DCMAKE_CXX_COMPILER=${{matrix.compiler.cxx}}" >> $GITHUB_ENV
+
+    - name: Build YCM
+      working-directory: ${{github.workspace}}/.deps/ycm/build
+      run: |
+        cmake ..
+        cmake --build .
+        sudo cmake --build . --target install
+
+    - name: Build YARP
+      working-directory: ${{github.workspace}}/.deps/yarp/build
+      run: |
+        cmake .. $CMAKE_COMPILER $CMAKE_CCACHE_LAUNCHER -DSKIP_ACE=ON -DYARP_DISABLE_VERSION_SOURCE=ON -DENABLE_yarpmod_fakeMotionControl=ON
+        cmake --build . --parallel
+        sudo cmake --build . --target install
+
+    - name: Build ARAVIS
+      working-directory: ${{github.workspace}}/.deps/aravis-${{env.ARAVIS_VER}}
+      run: |
+        CC="ccache ${{matrix.compiler.cc}}" CXX="ccache ${{matrix.compiler.cxx}}" ./configure --enable-gtk-doc-html=no
+        make -j && sudo make install
+
+    - name: Build libphidget21
+      working-directory: ${{github.workspace}}/.deps/libphidget-2.1.8.20151217
+      run: |
+        CC="ccache ${{matrix.compiler.cc}}" CXX="ccache ${{matrix.compiler.cxx}}" ./configure --enable-jni=no
+        make -j && sudo make install
+
+    - name: Build Peak CAN driver
+      working-directory: ${{github.workspace}}/.deps/peak-linux-driver-${{env.PEAK_DRIVER_VER}}
+      run: |
+        CC="ccache ${{matrix.compiler.cc}}" CXX="ccache ${{matrix.compiler.cxx}}" make -C lib -j
+        sudo make -C lib install
+        sudo cp -f driver/pcan*.h /usr/include
+
+    - name: Build amor-api
+      working-directory: ${{github.workspace}}/.deps/amor-api/build
+      run: |
+        cmake .. $CMAKE_COMPILER $CMAKE_CCACHE_LAUNCHER -DENABLE_udev_rules=OFF
+        cmake --build . --parallel
+        sudo cmake --build . --target install
+
+    - name: Build yarp-devices
+      working-directory: ${{github.workspace}}/build
+      run: |
+        cmake .. $CMAKE_COMPILER $CMAKE_CCACHE_LAUNCHER -DENABLE_examples=ON
+        cmake --build .
+        sudo cmake --build . --target install
+        sudo ldconfig
+
+    - name: Test yarp-devices
+      working-directory: ${{github.workspace}}/build/tests
+      run: ctest -V
+
+    - name: Uninstall yarp-devices
+      working-directory: ${{github.workspace}}/build
+      run: sudo cmake --build . --target uninstall
