@@ -5,12 +5,11 @@
 
 #include <vector>
 
-#include <yarp/os/Timer.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
-#include "FutureTask.hpp"
 #include "DeviceMapper.hpp"
 #include "CanBusBroker.hpp"
+#include "SyncPeriodicThread.hpp"
 
 #define CHECK_JOINT(j) do { int n = deviceMapper.getControlledAxes(); if ((j) < 0 || (j) > n - 1) return false; } while (0)
 
@@ -58,9 +57,6 @@ class CanBusControlboard : public yarp::dev::DeviceDriver,
                            public yarp::dev::IVelocityControl
 {
 public:
-    CanBusControlboard() : syncTimer(nullptr), taskFactory(nullptr)
-    { }
-
     ~CanBusControlboard()
     { close(); }
 
@@ -315,8 +311,7 @@ private:
     std::vector<yarp::dev::PolyDriver *> nodeDevices;
     std::vector<CanBusBroker *> canBusBrokers;
 
-    yarp::os::Timer * syncTimer;
-    FutureTaskFactory * taskFactory;
+    SyncPeriodicThread * syncThread {nullptr};
 };
 
 } // namespace roboticslab

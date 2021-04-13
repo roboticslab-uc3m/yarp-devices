@@ -45,7 +45,9 @@ if(NOT SKIP_CanBusControlboard)
                                        BusLoadMonitor.hpp
                                        BusLoadMonitor.cpp
                                        YarpCanSenderDelegate.hpp
-                                       YarpCanSenderDelegate.cpp)
+                                       YarpCanSenderDelegate.cpp
+                                       SyncPeriodicThread.hpp
+                                       SyncPeriodicThread.cpp)
 
     target_link_libraries(CanBusControlboard YARP::YARP_os
                                              YARP::YARP_dev

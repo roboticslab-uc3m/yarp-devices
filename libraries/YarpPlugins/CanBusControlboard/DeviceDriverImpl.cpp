@@ -208,8 +208,10 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
     if (config.check("syncPeriod", "SYNC message period (s)"))
     {
-        double syncPeriod = config.find("syncPeriod").asFloat64();
-        bool threadedSync = config.check("threadedSync", yarp::os::Value(false), "parallelize SYNC requests").asBool();
+        auto syncPeriod = config.find("syncPeriod").asFloat64();
+        auto threadedSync = config.check("threadedSync", yarp::os::Value(false), "parallelize SYNC requests").asBool();
+
+        FutureTaskFactory * taskFactory;
 
         if (busDevices.size() > 1 && threadedSync)
         {
@@ -220,36 +222,11 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             taskFactory = new SequentialTaskFactory;
         }
 
-        syncTimer = new yarp::os::Timer(yarp::os::TimerSettings(syncPeriod),
-            [this](const yarp::os::YarpTimerEvent & event)
-            {
-                auto task = taskFactory->createTask();
-
-                for (auto * canBusBroker : canBusBrokers)
-                {
-                    task->add([canBusBroker]
-                        {
-                            auto * reader = canBusBroker->getReader();
-                            auto * writer = canBusBroker->getWriter();
-
-                            for (auto * handle : reader->getHandles())
-                            {
-                                handle->synchronize();
-                            }
-
-                            writer->getDelegate()->prepareMessage({0x80, 0, nullptr}); // SYNC
-                            writer->flush();
-                            return true;
-                        });
-                }
-
-                task->dispatch();
-                return true;
-            },
-            true);
+        syncThread = new SyncPeriodicThread(canBusBrokers, taskFactory);
+        syncThread->setPeriod(syncPeriod);
     }
 
-    return !syncTimer || syncTimer->start();
+    return !syncThread || syncThread->start();
 }
 
 // -----------------------------------------------------------------------------
@@ -258,16 +235,13 @@ bool CanBusControlboard::close()
 {
     bool ok = true;
 
-    if (syncTimer && syncTimer->isRunning())
+    if (syncThread && syncThread->isRunning())
     {
-        syncTimer->stop();
+        syncThread->stop();
     }
 
-    delete syncTimer;
-    syncTimer = nullptr;
-
-    delete taskFactory;
-    taskFactory = nullptr;
+    delete syncThread;
+    syncThread = nullptr;
 
     for (const auto & t : deviceMapper.getDevicesWithOffsets())
     {
