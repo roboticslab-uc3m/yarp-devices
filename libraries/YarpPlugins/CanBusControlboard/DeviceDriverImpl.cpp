@@ -224,6 +224,12 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
         syncThread = new SyncPeriodicThread(canBusBrokers, taskFactory);
         syncThread->setPeriod(syncPeriod);
+
+        if (!syncThread->openPort("/sync:o"))
+        {
+            yError() << "Unable to open sync port";
+            return false;
+        }
     }
 
     return !syncThread || syncThread->start();

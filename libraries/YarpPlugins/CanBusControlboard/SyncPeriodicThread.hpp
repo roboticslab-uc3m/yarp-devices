@@ -3,9 +3,13 @@
 #ifndef __SYNC_PERIODIC_THREAD_HPP__
 #define __SYNC_PERIODIC_THREAD_HPP__
 
+#include <string>
 #include <vector>
 
+#include <yarp/os/Bottle.h>
 #include <yarp/os/PeriodicThread.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/PortWriterBuffer.h>
 
 #include "CanBusBroker.hpp"
 #include "FutureTask.hpp"
@@ -29,12 +33,17 @@ public:
     //! Destructor.
     ~SyncPeriodicThread();
 
+    //! Open synchronization port.
+    bool openPort(const std::string & name);
+
     //! Periodic task.
     void run() override;
 
 private:
     std::vector<CanBusBroker *> & canBusBrokers;
     FutureTaskFactory * taskFactory;
+    yarp::os::Port syncPort;
+    yarp::os::PortWriterBuffer<yarp::os::Bottle> syncWriter;
 };
 
 } // namespace roboticslab

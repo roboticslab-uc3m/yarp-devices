@@ -3,6 +3,7 @@
 #include "SyncPeriodicThread.hpp"
 
 #include <yarp/conf/version.h>
+#include <yarp/os/SystemClock.h>
 
 using namespace roboticslab;
 
@@ -22,7 +23,22 @@ SyncPeriodicThread::SyncPeriodicThread(std::vector<CanBusBroker *> & _canBusBrok
 
 SyncPeriodicThread::~SyncPeriodicThread()
 {
+    if (syncPort.isOpen())
+    {
+        syncPort.interrupt();
+        syncPort.close();
+    }
+
     delete taskFactory;
+}
+
+// -----------------------------------------------------------------------------
+
+bool SyncPeriodicThread::openPort(const std::string & name)
+{
+    syncPort.setWriteOnly();
+    syncWriter.attach(syncPort);
+    return syncPort.open(name);
 }
 
 // -----------------------------------------------------------------------------
@@ -50,6 +66,13 @@ void SyncPeriodicThread::run()
     }
 
     task->dispatch();
+
+    if (syncPort.isOpen())
+    {
+        auto now = yarp::os::SystemClock::nowSystem();
+        syncWriter.prepare() = {yarp::os::Value(now)};
+        syncWriter.write(true);
+    }
 }
 
 // -----------------------------------------------------------------------------
