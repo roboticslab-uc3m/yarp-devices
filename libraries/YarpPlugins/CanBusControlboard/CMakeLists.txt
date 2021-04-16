@@ -53,6 +53,7 @@ if(NOT SKIP_CanBusControlboard)
                                              YARP::YARP_dev
                                              ROBOTICSLAB::CanBusSharerLib
                                              ROBOTICSLAB::CanOpenNodeLib
+                                             ROBOTICSLAB::StateObserverLib
                                              ROBOTICSLAB::YarpDeviceMapperLib)
 
     target_compile_features(CanBusControlboard PRIVATE cxx_std_14)

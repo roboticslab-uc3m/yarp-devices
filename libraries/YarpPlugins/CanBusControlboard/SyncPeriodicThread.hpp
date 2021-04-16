@@ -13,6 +13,7 @@
 
 #include "CanBusBroker.hpp"
 #include "FutureTask.hpp"
+#include "StateObserver.hpp"
 
 namespace roboticslab
 {
@@ -36,12 +37,17 @@ public:
     //! Open synchronization port.
     bool openPort(const std::string & name);
 
+    //! Set synchronization observer.
+    void setObserver(StateObserver * syncObserver)
+    { this->syncObserver = syncObserver; }
+
     //! Periodic task.
     void run() override;
 
 private:
     std::vector<CanBusBroker *> & canBusBrokers;
     FutureTaskFactory * taskFactory;
+    StateObserver * syncObserver;
     yarp::os::Port syncPort;
     yarp::os::PortWriterBuffer<yarp::os::Bottle> syncWriter;
 };

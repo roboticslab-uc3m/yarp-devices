@@ -230,6 +230,14 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             yError() << "Unable to open sync port";
             return false;
         }
+
+        yarp::os::Value * obs;
+
+        if (config.check("syncObserver", obs, "synchronization signal observer"))
+        {
+            auto * observer = reinterpret_cast<StateObserver *>(const_cast<char *>(obs->asBlob()));
+            syncThread->setObserver(observer);
+        }
     }
 
     return !syncThread || syncThread->start();

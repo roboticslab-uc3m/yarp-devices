@@ -16,7 +16,8 @@ SyncPeriodicThread::SyncPeriodicThread(std::vector<CanBusBroker *> & _canBusBrok
     : yarp::os::PeriodicThread(1.0, yarp::os::ShouldUseSystemClock::Yes),
 #endif
       canBusBrokers(_canBusBrokers),
-      taskFactory(_taskFactory)
+      taskFactory(_taskFactory),
+      syncObserver(nullptr)
 {}
 
 // -----------------------------------------------------------------------------
@@ -72,6 +73,11 @@ void SyncPeriodicThread::run()
         auto now = yarp::os::SystemClock::nowSystem();
         syncWriter.prepare() = {yarp::os::Value(now)};
         syncWriter.write(true);
+    }
+
+    if (syncObserver)
+    {
+        syncObserver->notify();
     }
 }
 
