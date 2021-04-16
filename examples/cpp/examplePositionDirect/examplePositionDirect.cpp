@@ -23,7 +23,6 @@
 
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IEncoders.h>
-#include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/IPositionDirect.h>
 #include <yarp/dev/IRemoteVariables.h>
 #include <yarp/dev/PolyDriver.h>
@@ -31,9 +30,8 @@
 #define DEFAULT_REMOTE "/teo/leftArm"
 #define DEFAULT_JOINT 5
 #define DEFAULT_SPEED 2.0 // deg/s
-#define DEFAULT_POS_TARGET (-10.0)
-#define DEFAULT_POSD_TARGET (-20.0)
-#define DEFAULT_POSD_PERIOD_MS 50
+#define DEFAULT_TARGET (-20.0)
+#define DEFAULT_PERIOD_MS 50
 #define DEFAULT_IP_MODE "pt"
 
 class Worker : public yarp::os::PeriodicThread
@@ -81,9 +79,8 @@ int main(int argc, char * argv[])
     auto remote = rf.check("remote", yarp::os::Value(DEFAULT_REMOTE), "remote port").asString();
     auto jointId = rf.check("id", yarp::os::Value(DEFAULT_JOINT), "joint id").asInt32();
     auto speed = rf.check("speed", yarp::os::Value(DEFAULT_SPEED), "trajectory speed (deg/s)").asFloat64();
-    auto posTarget = rf.check("pos", yarp::os::Value(DEFAULT_POS_TARGET), "target position for pos mode (deg)").asFloat64();
-    auto posdTarget = rf.check("posd", yarp::os::Value(DEFAULT_POSD_TARGET), "target position for posd mode (deg)").asFloat64();
-    auto period = rf.check("period", yarp::os::Value(DEFAULT_POSD_PERIOD_MS), "posd command period (ms)").asInt32() * 0.001;
+    auto target = rf.check("target", yarp::os::Value(DEFAULT_TARGET), "target position (deg)").asFloat64();
+    auto period = rf.check("period", yarp::os::Value(DEFAULT_PERIOD_MS), "command period (ms)").asInt32() * 0.001;
     auto isBatch = rf.check("batch", "stream interpolation data in batches");
     auto ipMode = rf.check("ip", yarp::os::Value(DEFAULT_IP_MODE), "interpolation submode [pt|pvt]").asString();
 
@@ -138,54 +135,14 @@ int main(int argc, char * argv[])
 
     yarp::dev::IControlMode * mode;
     yarp::dev::IEncoders * enc;
-    yarp::dev::IPositionControl * pos;
     yarp::dev::IPositionDirect * posd;
     yarp::dev::IRemoteVariables * var;
 
-    if (!dd.view(mode) || !dd.view(enc) || !dd.view(pos) || !dd.view(posd) || (rf.check("ip") && !dd.view(var)))
+    if (!dd.view(mode) || !dd.view(enc) || !dd.view(posd) || (rf.check("ip") && !dd.view(var)))
     {
         yError() << "Problems acquiring robot interfaces";
         return 1;
     }
-
-    int numJoints;
-    enc->getAxes(&numJoints);
-
-    if (jointId < 0 || jointId > numJoints - 1)
-    {
-        yError("Illegal joint ID: %d (numJoints: %d)", jointId, numJoints);
-        return 1;
-    }
-
-    yInfo() << "-- testing POSITION MODE --";
-
-    if (!mode->setControlMode(jointId, VOCAB_CM_POSITION))
-    {
-        yError() << "Problems setting position control: POSITION";
-        return 1;
-    }
-
-    yInfo() << "Moving joint" << jointId << "to" << posTarget << "degrees...";
-
-    if (!pos->positionMove(jointId, posTarget))
-    {
-        yError() << "positionMove() failed";
-        return 1;
-    }
-
-    bool motionDone = false;
-
-    do
-    {
-        std::cout << "." << std::flush;
-        yarp::os::SystemClock::delaySystem(0.5);
-    }
-    while (pos->checkMotionDone(&motionDone) && !motionDone);
-
-    std::cout << " end" << std::endl;
-    std::cin.get();
-
-    yInfo() << "-- testing POSITION DIRECT --";
 
     if (rf.check("ip"))
     {
@@ -210,7 +167,7 @@ int main(int argc, char * argv[])
 
     if (!mode->setControlMode(jointId, VOCAB_CM_POSITION_DIRECT))
     {
-        yError() << "Problems setting position control: POSITION_DIRECT";
+        yError() << "Unable to set position direct mode";
         return 1;
     }
 
@@ -226,9 +183,9 @@ int main(int argc, char * argv[])
 
     std::cin.get();
 
-    yInfo() << "Moving joint" << jointId << "to" << posdTarget << "degrees...";
+    yInfo() << "Moving joint" << jointId << "to" << target << "degrees...";
 
-    const double distance = posdTarget - initialPos;
+    const double distance = target - initialPos;
     const double increment = std::copysign(speed * period, distance);
 
     if (isBatch)
@@ -245,12 +202,14 @@ int main(int argc, char * argv[])
         }
         while (std::abs(distance) - std::abs(newDistance) > 1e-6);
 
+        double lastRef;
+
         do
         {
             std::cout << "." << std::flush;
             yarp::os::SystemClock::delaySystem(0.5);
         }
-        while (pos->checkMotionDone(&motionDone) && !motionDone);
+        while (posd->getRefPosition(jointId, &lastRef) && std::abs(lastRef - target) > 1e-6);
 
         std::cout << " end" << std::endl;
     }
