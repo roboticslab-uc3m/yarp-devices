@@ -8,14 +8,18 @@
 
 #include <cmath>
 
+#include <functional>
 #include <iostream>
+#include <utility>
+
+#include <yarp/conf/version.h>
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/SystemClock.h>
-#include <yarp/os/Timer.h>
 
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IEncoders.h>
@@ -31,6 +35,43 @@
 #define DEFAULT_POSD_TARGET (-20.0)
 #define DEFAULT_POSD_PERIOD_MS 50
 #define DEFAULT_IP_MODE "pt"
+
+class Worker : public yarp::os::PeriodicThread
+{
+public:
+    Worker(double period, double initial, double increment, double distance, std::function<void(double)> cmd)
+#if YARP_VERSION_MINOR >= 5
+        : yarp::os::PeriodicThread(period, yarp::os::PeriodicThreadClock::Absolute),
+#else
+        : yarp::os::PeriodicThread(period),
+#endif
+          command(std::move(cmd)),
+          initial(initial),
+          current(initial),
+          increment(increment),
+          distance(distance)
+    {}
+
+protected:
+    void run() override
+    {
+        current += increment;
+        yInfo("[%d] New target: %f", getIterations() + 1, current);
+        command(current);
+
+        if (std::abs(distance) - std::abs(current - initial) < 1e-6)
+        {
+            askToStop();
+        }
+    }
+
+private:
+    std::function<void(double)> command;
+    const double initial;
+    double current;
+    const double increment;
+    const double distance;
+};
 
 int main(int argc, char * argv[])
 {
@@ -215,25 +256,15 @@ int main(int argc, char * argv[])
     }
     else
     {
-        yarp::os::Timer::TimerCallback callback = [=](const auto & event)
-            {
-                auto newDistance = event.runCount * increment;
-                auto position = initialPos + newDistance;
-                yInfo("[%d] New target: %f", event.runCount, position);
-                posd->setPosition(jointId, position);
-                return std::abs(distance) - std::abs(newDistance) > 1e-6;
-            };
+        Worker worker(period, initialPos, increment, distance, [=](auto pos) { posd->setPosition(jointId, pos); });
 
-        yarp::os::TimerSettings settings(period); // alternative ctor supports stop conditions
-        yarp::os::Timer timer(settings, callback, true);
-
-        if (!timer.start())
+        if (!worker.start())
         {
             yError() << "Unable to start trajectory thread";
             return 1;
         }
 
-        while (timer.isRunning())
+        while (worker.isRunning())
         {
             yarp::os::SystemClock::delaySystem(0.1);
         }
