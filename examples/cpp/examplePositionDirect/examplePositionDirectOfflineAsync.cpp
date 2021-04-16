@@ -2,24 +2,20 @@
 
 /**
  * @ingroup yarp_devices_examples_cpp
- * @defgroup examplePositionDirect examplePositionDirect
+ * @defgroup examplePositionDirectOfflineAsync examplePositionDirectOfflineAsync
  * @brief This example connects to a remote controlboard device and sends position direct commands.
  */
 
 #include <cmath>
 
-#include <functional>
 #include <iostream>
-#include <utility>
-
-#include <yarp/conf/version.h>
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/SystemClock.h>
+#include <yarp/os/Timer.h>
 
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IEncoders.h>
@@ -34,43 +30,6 @@
 #define DEFAULT_PERIOD_MS 50
 #define DEFAULT_IP_MODE "pt"
 
-class Worker : public yarp::os::PeriodicThread
-{
-public:
-    Worker(double period, double initial, double increment, double distance, std::function<void(double)> cmd)
-#if YARP_VERSION_MINOR >= 5
-        : yarp::os::PeriodicThread(period, yarp::os::PeriodicThreadClock::Absolute),
-#else
-        : yarp::os::PeriodicThread(period),
-#endif
-          command(std::move(cmd)),
-          initial(initial),
-          current(initial),
-          increment(increment),
-          distance(distance)
-    {}
-
-protected:
-    void run() override
-    {
-        current += increment;
-        yInfo("[%d] New target: %f", getIterations() + 1, current);
-        command(current);
-
-        if (std::abs(distance) - std::abs(current - initial) < 1e-6)
-        {
-            askToStop();
-        }
-    }
-
-private:
-    std::function<void(double)> command;
-    const double initial;
-    double current;
-    const double increment;
-    const double distance;
-};
-
 int main(int argc, char * argv[])
 {
     yarp::os::ResourceFinder rf;
@@ -81,7 +40,6 @@ int main(int argc, char * argv[])
     auto speed = rf.check("speed", yarp::os::Value(DEFAULT_SPEED), "trajectory speed (deg/s)").asFloat64();
     auto target = rf.check("target", yarp::os::Value(DEFAULT_TARGET), "target position (deg)").asFloat64();
     auto period = rf.check("period", yarp::os::Value(DEFAULT_PERIOD_MS), "command period (ms)").asInt32() * 0.001;
-    auto isBatch = rf.check("batch", "stream interpolation data in batches");
     auto ipMode = rf.check("ip", yarp::os::Value(DEFAULT_IP_MODE), "interpolation submode [pt|pvt]").asString();
 
     if (speed <= 0)
@@ -102,12 +60,6 @@ int main(int argc, char * argv[])
         return 1;
     }
 
-    if (isBatch && !rf.check("ip"))
-    {
-        yError() << "Option --batch only available in ip mode";
-        return 1;
-    }
-
     yarp::os::Network yarp;
 
     if (!yarp::os::Network::checkNetwork())
@@ -119,11 +71,6 @@ int main(int argc, char * argv[])
     yarp::os::Property options {{"device", yarp::os::Value("remote_controlboard")},
                                 {"local", yarp::os::Value("/examplePositionDirect")},
                                 {"remote", yarp::os::Value(remote)}};
-
-    if (isBatch)
-    {
-        options.put("writeStrict", "on");
-    }
 
     yarp::dev::PolyDriver dd(options);
 
@@ -138,31 +85,23 @@ int main(int argc, char * argv[])
     yarp::dev::IPositionDirect * posd;
     yarp::dev::IRemoteVariables * var;
 
-    if (!dd.view(mode) || !dd.view(enc) || !dd.view(posd) || (rf.check("ip") && !dd.view(var)))
+    if (!dd.view(mode) || !dd.view(enc) || !dd.view(posd) || !dd.view(var))
     {
         yError() << "Problems acquiring robot interfaces";
         return 1;
     }
 
-    if (rf.check("ip"))
+    yarp::os::Property dict {{"enable", yarp::os::Value(true)},
+                             {"mode", yarp::os::Value(ipMode)}};
+
+    yarp::os::Value v;
+    v.asList()->addString("linInterp");
+    v.asList()->addList().fromString(dict.toString());
+
+    if (!var->setRemoteVariable("all", {v}))
     {
-        yarp::os::Property dict {{"enable", yarp::os::Value(true)},
-                                 {"mode", yarp::os::Value(ipMode)}};
-
-        if (isBatch)
-        {
-            dict.put("periodMs", yarp::os::Value(period * 1000.0));
-        }
-
-        yarp::os::Value v;
-        v.asList()->addString("linInterp");
-        v.asList()->addList().fromString(dict.toString());
-
-        if (!var->setRemoteVariable("all", {v}))
-        {
-            yError() << "Unable to set interpolation mode";
-            return 1;
-        }
+        yError() << "Unable to set interpolation mode";
+        return 1;
     }
 
     if (!mode->setControlMode(jointId, VOCAB_CM_POSITION_DIRECT))
@@ -172,8 +111,14 @@ int main(int argc, char * argv[])
     }
 
     double initialPos;
+    int retries = 0;
 
-    if (!enc->getEncoder(jointId, &initialPos))
+    while (!enc->getEncoder(jointId, &initialPos) && retries++ < 10)
+    {
+        yarp::os::SystemClock::delaySystem(0.05);
+    }
+
+    if (!retries >= 10)
     {
         yError() << "getEncoders() failed";
         return 1;
@@ -188,45 +133,27 @@ int main(int argc, char * argv[])
     const double distance = target - initialPos;
     const double increment = std::copysign(speed * period, distance);
 
-    if (isBatch)
-    {
-        int count = 1;
-        double newDistance = 0.0;
-
-        do
+    yarp::os::Timer::TimerCallback callback = [=](const auto & event)
         {
-            newDistance = count * increment;
+            auto newDistance = event.runCount * increment;
             auto position = initialPos + newDistance;
-            yInfo("[%d] New target: %f", count++, position);
+            yInfo("[%d] New target: %f", event.runCount, position);
             posd->setPosition(jointId, position);
-        }
-        while (std::abs(distance) - std::abs(newDistance) > 1e-6);
+            return std::abs(distance) - std::abs(newDistance) > 1e-6;
+        };
 
-        double lastRef;
+    yarp::os::TimerSettings settings(period); // alternative ctor supports stop conditions
+    yarp::os::Timer timer(settings, callback, true);
 
-        do
-        {
-            std::cout << "." << std::flush;
-            yarp::os::SystemClock::delaySystem(0.5);
-        }
-        while (posd->getRefPosition(jointId, &lastRef) && std::abs(lastRef - target) > 1e-6);
-
-        std::cout << " end" << std::endl;
-    }
-    else
+    if (!timer.start())
     {
-        Worker worker(period, initialPos, increment, distance, [=](auto pos) { posd->setPosition(jointId, pos); });
+        yError() << "Unable to start trajectory thread";
+        return 1;
+    }
 
-        if (!worker.start())
-        {
-            yError() << "Unable to start trajectory thread";
-            return 1;
-        }
-
-        while (worker.isRunning())
-        {
-            yarp::os::SystemClock::delaySystem(0.1);
-        }
+    while (timer.isRunning())
+    {
+        yarp::os::SystemClock::delaySystem(0.1);
     }
 
     return 0;
