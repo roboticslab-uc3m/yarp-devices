@@ -7,7 +7,7 @@ using namespace roboticslab;
 bool NmtProtocol::issueServiceCommand(NmtService command)
 {
     std::uint8_t msg[] = {static_cast<std::uint8_t>(command), id};
-    return sender->prepareMessage({0, 2, msg});
+    return sender && sender->prepareMessage({0, 2, msg});
 }
 
 bool NmtProtocol::accept(const std::uint8_t * data)

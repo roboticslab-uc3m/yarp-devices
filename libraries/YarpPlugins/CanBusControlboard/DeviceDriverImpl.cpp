@@ -24,7 +24,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
     const auto * robotConfig = *reinterpret_cast<yarp::os::Property * const *>(config.find("robotConfig").asBlob());
 
-    yarp::os::Bottle * canBuses = config.find("buses").asList();
+    auto * canBuses = config.find("buses").asList();
 
     if (canBuses == nullptr)
     {
@@ -34,15 +34,15 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
     for (int i = 0; i < canBuses->size(); i++)
     {
-        std::string canBus = canBuses->get(i).asString();
-        bool isFakeBus = canBus.find("fake") != std::string::npos;
+        auto canBus = canBuses->get(i).asString();
+        auto isFakeBus = canBus.find("fake") != std::string::npos;
 
         yarp::os::Property canBusOptions;
         canBusOptions.setMonitor(config.getMonitor(), canBus.c_str());
 
         if (!isFakeBus)
         {
-            yarp::os::Bottle & canBusGroup = robotConfig->findGroup(canBus);
+            auto & canBusGroup = robotConfig->findGroup(canBus);
 
             if (canBusGroup.isNull())
             {
@@ -60,7 +60,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             canBusOptions.put("device", "CanBusFake");
         }
 
-        yarp::dev::PolyDriver * canBusDevice = new yarp::dev::PolyDriver;
+        auto * canBusDevice = new yarp::dev::PolyDriver;
         busDevices.push_back(canBusDevice);
 
         if (!canBusDevice->open(canBusOptions))
@@ -89,48 +89,31 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
         if (!config.check(canBus))
         {
-            yError() << "Missing key" << canBus;
+            yError() << "Missing key:" << canBus;
             return false;
         }
 
-        yarp::os::Value & nodesVal = config.find(canBus);
-        yarp::os::Bottle nodes;
+        auto & nodesVal = config.find(canBus);
 
-        if (!isFakeBus)
+        if (!nodesVal.isList())
         {
-            if (nodesVal.asList() == nullptr)
-            {
-                yError() << "Key" << canBus << "must be a list";
-                return false;
-            }
-
-            nodes = yarp::os::Bottle(*nodesVal.asList());
-        }
-        else
-        {
-            if (!nodesVal.isInt32())
-            {
-                yError() << "Key" << canBus << "must hold an integer value (number of fake nodes)";
-                return false;
-            }
-
-            for (int i = 0; i < nodesVal.asInt32(); i++)
-            {
-                nodes.addString("fake-" + std::to_string(i + 1));
-            }
+            yError() << "Key" << canBus << "must be a list";
+            return false;
         }
 
-        for (int i = 0; i < nodes.size(); i++)
+        auto * nodes = nodesVal.asList();
+
+        for (int i = 0; i < nodes->size(); i++)
         {
-            std::string node = nodes.get(i).asString();
-            bool isFakeNode = node.find("fake") != std::string::npos;
+            auto node = nodes->get(i).asString();
+            auto isFakeNode = node.find("fake") != std::string::npos;
 
             yarp::os::Property nodeOptions;
             nodeOptions.setMonitor(config.getMonitor(), node.c_str());
 
             if (!isFakeNode)
             {
-                yarp::os::Bottle & nodeGroup = robotConfig->findGroup(node);
+                auto & nodeGroup = robotConfig->findGroup(node);
 
                 if (nodeGroup.isNull())
                 {
@@ -147,7 +130,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
                 nodeOptions.put("device", "FakeJoint");
             }
 
-            yarp::dev::PolyDriver * device = new yarp::dev::PolyDriver;
+            auto * device = new yarp::dev::PolyDriver;
             nodeDevices.push_back(device);
 
             if (!device->open(nodeOptions))
@@ -162,7 +145,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
                 return false;
             }
 
-            if (!isFakeNode)
+            if (!isFakeBus && !isFakeNode)
             {
                 ICanBusSharer * iCanBusSharer;
 
@@ -180,7 +163,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         bool enableAcceptanceFilters = canBusOptions.check("enableAcceptanceFilters", yarp::os::Value(false),
                 "enable CAN acceptance filters").asBool();
 
-        if (enableAcceptanceFilters && !canBusBrokers.back()->addFilters())
+        if (enableAcceptanceFilters && !isFakeBus && !canBusBrokers.back()->addFilters())
         {
             yError() << "Unable to register CAN acceptance filters in" << canBus;
             return false;
