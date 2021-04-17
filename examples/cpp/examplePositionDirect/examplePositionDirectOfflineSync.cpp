@@ -18,6 +18,7 @@
 
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IEncoders.h>
+#include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/IPositionDirect.h>
 #include <yarp/dev/IRemoteVariables.h>
 #include <yarp/dev/PolyDriver.h>
@@ -68,7 +69,7 @@ int main(int argc, char * argv[])
     }
 
     yarp::os::Property options {{"device", yarp::os::Value("remote_controlboard")},
-                                {"local", yarp::os::Value("/examplePositionDirect")},
+                                {"local", yarp::os::Value("/examplePositionDirectOfflineSync")},
                                 {"remote", yarp::os::Value(remote)},
                                 {"writeStrict", yarp::os::Value("on")}};
 
@@ -82,10 +83,11 @@ int main(int argc, char * argv[])
 
     yarp::dev::IControlMode * mode;
     yarp::dev::IEncoders * enc;
+    yarp::dev::IPositionControl * pos;
     yarp::dev::IPositionDirect * posd;
     yarp::dev::IRemoteVariables * var;
 
-    if (!dd.view(mode) || !dd.view(enc) || !dd.view(posd) || !dd.view(var))
+    if (!dd.view(mode) || !dd.view(enc) || !dd.view(pos) || !dd.view(posd) || !dd.view(var))
     {
         yError() << "Problems acquiring robot interfaces";
         return 1;
@@ -144,16 +146,16 @@ int main(int argc, char * argv[])
         yInfo("[%d] New target: %f", count++, position);
         posd->setPosition(jointId, position);
     }
-    while (std::abs(distance) - std::abs(newDistance) > 1e-6);
+    while (std::abs(distance) > std::abs(newDistance));
 
-    double lastRef;
+    bool motionDone;
 
     do
     {
         std::cout << "." << std::flush;
         yarp::os::SystemClock::delaySystem(0.5);
     }
-    while (posd->getRefPosition(jointId, &lastRef) && std::abs(lastRef - target) > 1e-6);
+    while (pos->checkMotionDone(&motionDone) && !motionDone);
 
     std::cout << " end" << std::endl;
 

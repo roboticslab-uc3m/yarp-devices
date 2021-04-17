@@ -2,7 +2,7 @@
 
 /**
  * @ingroup yarp_devices_examples_cpp
- * @defgroup examplePositionDirectOnline examplePositionDirectOnline
+ * @defgroup examplePositionDirectOnlinePullRemote examplePositionDirectOnlinePullRemote
  * @brief This example connects to a remote controlboard device and sends position direct commands.
  */
 
@@ -12,61 +12,58 @@
 #include <iostream>
 #include <utility>
 
-#include <yarp/conf/version.h>
-
+#include <yarp/os/Bottle.h>
+#include <yarp/os/BufferedPort.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/SystemClock.h>
+#include <yarp/os/TypedReaderCallback.h>
 
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IEncoders.h>
 #include <yarp/dev/IPositionDirect.h>
 #include <yarp/dev/PolyDriver.h>
 
-#define DEFAULT_REMOTE "/teo/leftArm"
+#define DEFAULT_ROBOT "/teo"
+#define DEFAULT_PART "/leftArm"
 #define DEFAULT_JOINT 5
 #define DEFAULT_SPEED 2.0 // deg/s
 #define DEFAULT_TARGET (-20.0)
-#define DEFAULT_PERIOD_MS 50
 
-class Worker : public yarp::os::PeriodicThread
+class SyncCallback : public yarp::os::TypedReaderCallback<yarp::os::Bottle>
 {
 public:
-    Worker(double period, double initial, double increment, double distance, std::function<void(double)> cmd)
-#if YARP_VERSION_MINOR >= 5
-        : yarp::os::PeriodicThread(period, yarp::os::PeriodicThreadClock::Absolute),
-#else
-        : yarp::os::PeriodicThread(period),
-#endif
-          command(std::move(cmd)),
-          initial(initial),
-          current(initial),
-          increment(increment),
-          distance(distance)
+    SyncCallback(double initialPos, double speed, std::function<void(double)> cmd)
+        : count(0), e0(initialPos), v(speed), offset(0.0), command(std::move(cmd))
     {}
 
-protected:
-    void run() override
+    void onRead(yarp::os::Bottle & b) override
     {
-        current += increment;
-        yInfo("[%d] New target: %f", getIterations() + 1, current);
-        command(current);
-
-        if (std::abs(distance) - std::abs(current - initial) < 1e-6)
+        if (b.size() == 2)
         {
-            askToStop();
+            double time = b.get(0).asInt32() + b.get(1).asInt32() * 1e-9;
+
+            if (count == 0)
+            {
+                offset = time;
+            }
+
+            double t = time - offset;
+            double e = e0 + v * t;
+
+            yInfo("[%d] New target: %f", ++count, e);
+            command(e);
         }
     }
 
 private:
+    int count;
+    const double e0;
+    const double v;
+    double offset;
     std::function<void(double)> command;
-    const double initial;
-    double current;
-    const double increment;
-    const double distance;
 };
 
 int main(int argc, char * argv[])
@@ -74,21 +71,15 @@ int main(int argc, char * argv[])
     yarp::os::ResourceFinder rf;
     rf.configure(argc, argv);
 
-    auto remote = rf.check("remote", yarp::os::Value(DEFAULT_REMOTE), "remote port").asString();
+    auto robot = rf.check("robot", yarp::os::Value(DEFAULT_ROBOT), "robot port").asString();
+    auto part = rf.check("part", yarp::os::Value(DEFAULT_PART), "part port").asString();
     auto jointId = rf.check("id", yarp::os::Value(DEFAULT_JOINT), "joint id").asInt32();
     auto speed = rf.check("speed", yarp::os::Value(DEFAULT_SPEED), "trajectory speed (deg/s)").asFloat64();
     auto target = rf.check("target", yarp::os::Value(DEFAULT_TARGET), "target position (deg)").asFloat64();
-    auto period = rf.check("period", yarp::os::Value(DEFAULT_PERIOD_MS), "command period (ms)").asInt32() * 0.001;
 
     if (speed <= 0)
     {
         yError() << "Illegal speed (deg/s):" << speed;
-        return 1;
-    }
-
-    if (period <= 0)
-    {
-        yError() << "Illegal period (s):" << period;
         return 1;
     }
 
@@ -101,8 +92,8 @@ int main(int argc, char * argv[])
     }
 
     yarp::os::Property options {{"device", yarp::os::Value("remote_controlboard")},
-                                {"local", yarp::os::Value("/examplePositionDirect")},
-                                {"remote", yarp::os::Value(remote)}};
+                                {"local", yarp::os::Value("/examplePositionDirectPullRemote")},
+                                {"remote", yarp::os::Value(robot + part)}};
 
     yarp::dev::PolyDriver dd(options);
 
@@ -119,6 +110,21 @@ int main(int argc, char * argv[])
     if (!dd.view(mode) || !dd.view(enc) || !dd.view(posd))
     {
         yError() << "Problems acquiring robot interfaces";
+        return 1;
+    }
+
+    yarp::os::BufferedPort<yarp::os::Bottle> syncPort;
+    syncPort.setReadOnly();
+
+    if (!syncPort.open("/examplePositionDirectPullRemote/sync:i"))
+    {
+        yError() << "Unable to open local sync port";
+        return 1;
+    }
+
+    if (!yarp::os::Network::connect(robot + "/sync:o", syncPort.getName(), "fast_tcp"))
+    {
+        yError() << "Unable to connect to remote sync port";
         return 1;
     }
 
@@ -148,21 +154,20 @@ int main(int argc, char * argv[])
 
     yInfo() << "Moving joint" << jointId << "to" << target << "degrees...";
 
-    const double distance = target - initialPos;
-    const double increment = std::copysign(speed * period, distance);
+    double velocity = std::copysign(speed, target - initialPos);
 
-    Worker worker(period, initialPos, increment, distance, [=](auto pos) { posd->setPosition(jointId, pos); });
+    SyncCallback callback(initialPos, velocity, [=](auto pos) { posd->setPosition(jointId, pos); });
+    syncPort.useCallback(callback);
 
-    if (!worker.start())
+    double lastRef;
+
+    while (posd->getRefPosition(jointId, &lastRef) && std::abs(lastRef - initialPos) < std::abs(target - initialPos))
     {
-        yError() << "Unable to start trajectory thread";
-        return 1;
+        yarp::os::SystemClock::delaySystem(0.01);
     }
 
-    while (worker.isRunning())
-    {
-        yarp::os::SystemClock::delaySystem(0.1);
-    }
+    syncPort.interrupt();
+    syncPort.close();
 
     return 0;
 }

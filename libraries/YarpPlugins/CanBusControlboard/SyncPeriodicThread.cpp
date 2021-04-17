@@ -2,6 +2,8 @@
 
 #include "SyncPeriodicThread.hpp"
 
+#include <cmath> // std::modf
+
 #include <yarp/conf/version.h>
 #include <yarp/os/SystemClock.h>
 
@@ -71,7 +73,15 @@ void SyncPeriodicThread::run()
     if (syncPort.isOpen())
     {
         auto now = yarp::os::SystemClock::nowSystem();
-        syncWriter.prepare() = {yarp::os::Value(now)};
+
+        double sec;
+        double nsec = std::modf(now, &sec) * 1e9;
+
+        syncWriter.prepare() = {
+            yarp::os::Value(static_cast<std::int32_t>(sec)),
+            yarp::os::Value(static_cast<std::int32_t>(nsec))
+        };
+
         syncWriter.write(true);
     }
 
