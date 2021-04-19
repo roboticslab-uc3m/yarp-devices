@@ -191,12 +191,9 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
     if (config.check("syncPeriod", "SYNC message period (s)"))
     {
-        auto syncPeriod = config.find("syncPeriod").asFloat64();
-        auto threadedSync = config.check("threadedSync", yarp::os::Value(false), "parallelize SYNC requests").asBool();
-
         FutureTaskFactory * taskFactory;
 
-        if (busDevices.size() > 1 && threadedSync)
+        if (busDevices.size() > 1)
         {
             taskFactory = new ParallelTaskFactory(busDevices.size());
         }
@@ -206,7 +203,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         }
 
         syncThread = new SyncPeriodicThread(canBusBrokers, taskFactory);
-        syncThread->setPeriod(syncPeriod);
+        syncThread->setPeriod(config.find("syncPeriod").asFloat64());
     }
 
     return !syncThread || syncThread->start();
