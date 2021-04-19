@@ -11,7 +11,6 @@
 #include <iostream>
 
 #include <yarp/os/LogStream.h>
-#include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/SystemClock.h>
@@ -23,19 +22,22 @@
 
 #include <StateObserver.hpp>
 
-#define DEFAULT_REMOTE "/teo/leftArm"
-#define DEFAULT_JOINT 5
+#define DEFAULT_BUS "pcan-leftArm"
+#define DEFAULT_IPOS "id26-ipos"
 #define DEFAULT_SPEED 2.0 // deg/s
 #define DEFAULT_TARGET (-20.0)
+#define DEFAULT_PERIOD_MS 20
 
 int main(int argc, char * argv[])
 {
     yarp::os::ResourceFinder rf;
     rf.configure(argc, argv);
 
-    auto jointId = rf.check("id", yarp::os::Value(DEFAULT_JOINT), "joint id").asInt32();
+    auto bus = rf.check("bus", yarp::os::Value(DEFAULT_BUS), "CAN bus group name").asString();
+    auto ipos = rf.check("ipos", yarp::os::Value(DEFAULT_IPOS), "iPOS group name").asString();
     auto speed = rf.check("speed", yarp::os::Value(DEFAULT_SPEED), "trajectory speed (deg/s)").asFloat64();
     auto target = rf.check("target", yarp::os::Value(DEFAULT_TARGET), "target position (deg)").asFloat64();
+    auto period = rf.check("period", yarp::os::Value(DEFAULT_PERIOD_MS), "synchronization period (ms)").asInt32() * 0.001;
 
     if (speed <= 0)
     {
@@ -43,25 +45,38 @@ int main(int argc, char * argv[])
         return 1;
     }
 
-    yarp::os::Network yarp;
-
-    if (!yarp::os::Network::checkNetwork())
+    if (period <= 0)
     {
-        yError() << "Please start a yarp name server first";
+        yError() << "Illegal period (s):" << period;
+        return 1;
+    }
+
+    yarp::os::Property robotConfig;
+    auto * robotConfigPtr = &robotConfig;
+    auto path = rf.findFileByName("config.ini");
+
+    if (path.empty() || !robotConfig.fromConfigFile(path))
+    {
+        yError() << "Unable to load robot config file";
         return 1;
     }
 
     roboticslab::StateObserver syncObserver(1.0);
+    auto * syncObserverPtr = &syncObserver;
 
     yarp::os::Property options;
-    options.fromString(rf.toString());
-    options.put("syncObserver", yarp::os::Value::makeBlob(&syncObserver, sizeof(syncObserver)));
+    options.put("device", yarp::os::Value("CanBusControlboard"));
+    options.put("buses", yarp::os::Value::makeList(bus.c_str()));
+    options.put(bus, yarp::os::Value::makeList(ipos.c_str()));
+    options.put("syncPeriod", yarp::os::Value(period));
+    options.put("robotConfig", yarp::os::Value::makeBlob(&robotConfigPtr, sizeof(robotConfigPtr)));
+    options.put("syncObserver", yarp::os::Value::makeBlob(&syncObserverPtr, sizeof(syncObserverPtr)));
 
     yarp::dev::PolyDriver dd(options);
 
     if (!dd.isValid())
     {
-        yError() << "Remote device not available";
+        yError() << "Local device not available";
         return 1;
     }
 
@@ -75,7 +90,7 @@ int main(int argc, char * argv[])
         return 1;
     }
 
-    if (!mode->setControlMode(jointId, VOCAB_CM_POSITION_DIRECT))
+    if (!mode->setControlMode(0, VOCAB_CM_POSITION_DIRECT))
     {
         yError() << "Unable to set position direct mode";
         return 1;
@@ -84,7 +99,7 @@ int main(int argc, char * argv[])
     double initialPos;
     int retries = 0;
 
-    while (!enc->getEncoder(jointId, &initialPos) && retries++ < 10)
+    while (!enc->getEncoder(0, &initialPos) && retries++ < 10)
     {
         yarp::os::SystemClock::delaySystem(0.05);
     }
@@ -99,14 +114,14 @@ int main(int argc, char * argv[])
 
     std::cin.get();
 
-    yInfo() << "Moving joint" << jointId << "to" << target << "degrees...";
+    yInfo() << "Moving joint" << 0 << "to" << target << "degrees...";
 
     const double velocity = std::copysign(speed, target - initialPos);
     const double offset = yarp::os::SystemClock::nowSystem();
 
     double lastRef;
 
-    while (posd->getRefPosition(jointId, &lastRef) && std::abs(lastRef - initialPos) < std::abs(target - initialPos))
+    while (posd->getRefPosition(0, &lastRef) && std::abs(lastRef - initialPos) < std::abs(target - initialPos))
     {
         if (!syncObserver.await())
         {
@@ -116,7 +131,7 @@ int main(int argc, char * argv[])
 
         double t = yarp::os::SystemClock::nowSystem() - offset;
         double e = initialPos + velocity * t;
-        posd->setPosition(jointId, e);
+        posd->setPosition(0, e);
     }
 
     return 0;

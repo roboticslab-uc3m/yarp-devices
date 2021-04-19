@@ -153,7 +153,7 @@ int main(int argc, char * argv[])
     do
     {
         std::cout << "." << std::flush;
-        yarp::os::SystemClock::delaySystem(0.5);
+        yarp::os::SystemClock::delaySystem(0.1);
     }
     while (pos->checkMotionDone(&motionDone) && !motionDone);
 
