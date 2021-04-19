@@ -84,7 +84,7 @@ jobs:
         path: .deps/amor-api
 
     - name: Install dependencies via apt
-      run: sudo apt-get install -qq ccache libboost-thread-dev libeigen3-dev intltool libxml2-dev libglib2.0-dev libusb-1.0-0-dev libspnav-dev libxwiimote-dev libgtest-dev
+      run: sudo apt-get update && sudo apt-get install -qq ccache libboost-thread-dev libeigen3-dev intltool libxml2-dev libglib2.0-dev libusb-1.0-0-dev libspnav-dev libxwiimote-dev libgtest-dev
 
     - name: Set up CMake 3.12
       uses: jwlawson/actions-setup-cmake@v1.7
