@@ -91,7 +91,7 @@ namespace
 
 bool SdoClient::send(const std::uint8_t * msg)
 {
-    return sender->prepareMessage({getCobIdRx(), 8, msg});
+    return sender && sender->prepareMessage({getCobIdRx(), 8, msg});
 }
 
 std::string SdoClient::msgToStr(std::uint16_t cob, const std::uint8_t * msgData)

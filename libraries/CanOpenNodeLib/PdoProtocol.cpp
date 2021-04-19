@@ -219,7 +219,7 @@ void ReceivePdo::packInternal(std::uint8_t * buff, const void * data, unsigned i
 
 bool ReceivePdo::writeInternal(const std::uint8_t * data, unsigned int size)
 {
-    return sender->prepareMessage({getCobId(), size, data});
+    return sender && sender->prepareMessage({getCobId(), size, data});
 }
 
 void TransmitPdo::unpackInternal(void * data, const std::uint8_t * buff, unsigned int size)

@@ -17,7 +17,7 @@ bool CuiAbsolute::performRequest(const std::string & name, unsigned int len, con
 
     while (++retry <= maxRetries)
     {
-        if (!sender->prepareMessage(msg))
+        if (sender && !sender->prepareMessage(msg))
         {
             yError("Unable to register \"%s\" command. %s", name.c_str(), CanUtils::msgToStr(msg).c_str());
             return false;

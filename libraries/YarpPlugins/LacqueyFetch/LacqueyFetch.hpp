@@ -75,7 +75,7 @@ public:
 private:
 
     bool send(unsigned int len, const std::uint8_t * msgData)
-    { return sender->prepareMessage({canId, len, msgData}); }
+    { return sender && sender->prepareMessage({canId, len, msgData}); }
 
     unsigned int canId;
     yarp::conf::float32_t refDutyCycles;
