@@ -3,7 +3,28 @@
 /**
  * @ingroup yarp_devices_examples_cpp
  * @defgroup exampleOnlineTrajectoryRemotePull exampleOnlineTrajectoryRemotePull
- * @brief This example connects to a remote controlboard device and sends position direct commands.
+ * @brief Perform an online trajectory via position commands attending a remote callback.
+ *
+ * A constant-velocity, single-joint trajectory is generated with configurable final target and
+ * motion speed. The period between consecutive points is fixed (maps to cyclic synchronous
+ * position mode on the real robot, a.k.a. CSP). A callback is registered for listening to a
+ * remote synchronization port, position commands will be prepared and sent in response.
+ * Although prepared for remote execution, this application could be rewritten to connect to
+ * a local instance of @ref CanBusControlboard; however, a better alternative exists (see notes).
+ * The techniques showcased here are especially suited for online-generated trajectories, e.g.
+ * joystick teleoperation of visual servoing.
+ *
+ * Usage (showing default option values):
+@verbatim
+ exampleOnlineTrajectoryRemotePull --robot /teo --part /leftArm --id 5 --speed 2.0 --target -20.0
+@endverbatim
+ *
+ * @see exampleOnlineTrajectoryLocalPull Command a local instance of the real robot controller via
+ * callback.
+ * @see exampleOnlineTrajectoryRemotePush Command a remote robot via direct position commands.
+ * @note If you need to command a simulated robot, you must emulate the periodic synchronization
+ * port via `yarp clock --name /teoSim/sync:o --period XXX` with the desired period between points
+ * (in milliseconds) and assuming `--robot /teoSim` was passed in this example.
  */
 
 #include <cmath>
@@ -116,7 +137,7 @@ int main(int argc, char * argv[])
     yarp::os::BufferedPort<yarp::os::Bottle> syncPort;
     syncPort.setReadOnly();
 
-    if (!syncPort.open("/examplePositionDirectPullRemote/sync:i"))
+    if (!syncPort.open("/exampleOnlineTrajectoryRemotePull/sync:i"))
     {
         yError() << "Unable to open local sync port";
         return 1;

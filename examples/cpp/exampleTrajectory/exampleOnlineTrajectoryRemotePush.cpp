@@ -3,7 +3,26 @@
 /**
  * @ingroup yarp_devices_examples_cpp
  * @defgroup exampleOnlineTrajectoryRemotePush exampleOnlineTrajectoryRemotePush
- * @brief This example connects to a remote controlboard device and sends position direct commands.
+ * @brief Perform an online trajectory via position commands, pushing new setpoints at the sender's discretion.
+ *
+ * A constant-velocity, single-joint trajectory is generated with configurable final target, motion
+ * speed and period between consecutive points. The period is assumed constant and must be sent at
+ * precise intervals if commanding the real robot (maps to cyclic synchronous position mode, a.k.a.
+ * CSP). Although prepared for remote execution, this application could be rewritten to connect to
+ * a local instance of @ref CanBusControlboard; however, a better alternative exists (see notes).
+ * The techniques showcased here are especially suited for online-generated trajectories, e.g.
+ * joystick teleoperation of visual servoing.
+ *
+ * Usage (showing default option values):
+@verbatim
+ exampleOnlineTrajectoryRemotePush --remote /teo/leftArm --id 5 --speed 2.0 --target -20.0 --period 50
+@endverbatim
+ *
+ * @warning If commanding the real robot, it is paramount that the `--period` option (milliseconds)
+ * matches `--syncPeriod` (seconds) in @ref CanBusControlboard.
+ * @see exampleOnlineTrajectoryLocalPull Command a local instance of the real robot controller via
+ * callback.
+ * @see exampleOnlineTrajectoryRemotePull Command a remote robot via callback, be it real or simulated.
  */
 
 #include <cmath>

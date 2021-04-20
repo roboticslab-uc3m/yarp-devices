@@ -3,7 +3,24 @@
 /**
  * @ingroup yarp_devices_examples_cpp
  * @defgroup exampleOfflineTrajectorySync exampleOfflineTrajectorySync
- * @brief This example connects to a remote controlboard device and sends position direct commands.
+ * @brief Perform an offline trajectory via position commands with fixed period.
+ *
+ * A constant-velocity, single-joint trajectory is generated with configurable final target, motion
+ * speed and period between consecutive points. The `yarp::dev::IRemoteVariables` interface is used
+ * to configure and switch to interpolated position (pi) mode on the real robot. Although prepared
+ * for remote execution, this application could be rewritten to connect to a local instance of
+ * @ref CanBusControlboard. The techniques showcased here are best aimed at trajectories fully
+ * available offline (e.g. loaded from file) that assume a constant period between points. To fully
+ * take advantage of this fact, all points are sent to the robot in a single batch, hence the flow
+ * of the program is slightly different from what you'd expect (no delay function within a for-loop).
+ *
+ * Usage (showing default option values):
+@verbatim
+ exampleOfflineTrajectorySync --remote /teo/leftArm --id 5 --speed 2.0 --target -20.0 --period 50 --ip pt
+@endverbatim
+ *
+ * @see exampleOfflineTrajectoryAsync Use this if the period between points is variable.
+ * @note This application is not suitable for simulation.
  */
 
 #include <cmath>
