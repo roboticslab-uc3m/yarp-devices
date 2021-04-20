@@ -16,7 +16,7 @@
  *
  * Usage (showing default option values):
 @verbatim
- exampleOnlineTrajectoryRemotePull --robot /teo --part /leftArm --id 5 --speed 2.0 --target -20.0
+ exampleOnlineTrajectoryRemotePull --robot /teo --part /leftArm --joint 5 --speed 2.0 --target -20.0
 @endverbatim
  *
  * @see exampleOnlineTrajectoryLocalPull Command a local instance of the real robot controller via
@@ -94,7 +94,7 @@ int main(int argc, char * argv[])
 
     auto robot = rf.check("robot", yarp::os::Value(DEFAULT_ROBOT), "robot port").asString();
     auto part = rf.check("part", yarp::os::Value(DEFAULT_PART), "part port").asString();
-    auto jointId = rf.check("id", yarp::os::Value(DEFAULT_JOINT), "joint id").asInt32();
+    auto joint = rf.check("joint", yarp::os::Value(DEFAULT_JOINT), "joint id").asInt32();
     auto speed = rf.check("speed", yarp::os::Value(DEFAULT_SPEED), "trajectory speed (deg/s)").asFloat64();
     auto target = rf.check("target", yarp::os::Value(DEFAULT_TARGET), "target position (deg)").asFloat64();
 
@@ -149,7 +149,7 @@ int main(int argc, char * argv[])
         return 1;
     }
 
-    if (!mode->setControlMode(jointId, VOCAB_CM_POSITION_DIRECT))
+    if (!mode->setControlMode(joint, VOCAB_CM_POSITION_DIRECT))
     {
         yError() << "Unable to set position direct mode";
         return 1;
@@ -158,7 +158,7 @@ int main(int argc, char * argv[])
     double initialPos;
     int retries = 0;
 
-    while (!enc->getEncoder(jointId, &initialPos) && retries++ < 10)
+    while (!enc->getEncoder(joint, &initialPos) && retries++ < 10)
     {
         yarp::os::SystemClock::delaySystem(0.05);
     }
@@ -173,16 +173,16 @@ int main(int argc, char * argv[])
 
     std::cin.get();
 
-    yInfo() << "Moving joint" << jointId << "to" << target << "degrees...";
+    yInfo() << "Moving joint" << joint << "to" << target << "degrees...";
 
     double velocity = std::copysign(speed, target - initialPos);
 
-    SyncCallback callback(initialPos, velocity, [=](auto pos) { posd->setPosition(jointId, pos); });
+    SyncCallback callback(initialPos, velocity, [=](auto pos) { posd->setPosition(joint, pos); });
     syncPort.useCallback(callback);
 
     double lastRef;
 
-    while (posd->getRefPosition(jointId, &lastRef) && std::abs(lastRef - initialPos) < std::abs(target - initialPos))
+    while (posd->getRefPosition(joint, &lastRef) && std::abs(lastRef - initialPos) < std::abs(target - initialPos))
     {
         yarp::os::SystemClock::delaySystem(0.01);
     }

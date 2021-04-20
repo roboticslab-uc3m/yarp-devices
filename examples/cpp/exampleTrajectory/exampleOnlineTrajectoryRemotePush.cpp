@@ -15,7 +15,7 @@
  *
  * Usage (showing default option values):
 @verbatim
- exampleOnlineTrajectoryRemotePush --remote /teo/leftArm --id 5 --speed 2.0 --target -20.0 --period 50
+ exampleOnlineTrajectoryRemotePush --remote /teo/leftArm --joint 5 --speed 2.0 --target -20.0 --period 50
 @endverbatim
  *
  * @warning If commanding the real robot, it is paramount that the `--period` option (milliseconds)
@@ -74,7 +74,7 @@ protected:
         yInfo("[%d] New target: %f", getIterations() + 1, current);
         command(current);
 
-        if (std::abs(distance) - std::abs(current - initial) < 1e-6)
+        if (std::abs(current - initial) >= std::abs(distance))
         {
             askToStop();
         }
@@ -94,7 +94,7 @@ int main(int argc, char * argv[])
     rf.configure(argc, argv);
 
     auto remote = rf.check("remote", yarp::os::Value(DEFAULT_REMOTE), "remote port").asString();
-    auto jointId = rf.check("id", yarp::os::Value(DEFAULT_JOINT), "joint id").asInt32();
+    auto joint = rf.check("joint", yarp::os::Value(DEFAULT_JOINT), "joint id").asInt32();
     auto speed = rf.check("speed", yarp::os::Value(DEFAULT_SPEED), "trajectory speed (deg/s)").asFloat64();
     auto target = rf.check("target", yarp::os::Value(DEFAULT_TARGET), "target position (deg)").asFloat64();
     auto period = rf.check("period", yarp::os::Value(DEFAULT_PERIOD_MS), "command period (ms)").asInt32() * 0.001;
@@ -141,7 +141,7 @@ int main(int argc, char * argv[])
         return 1;
     }
 
-    if (!mode->setControlMode(jointId, VOCAB_CM_POSITION_DIRECT))
+    if (!mode->setControlMode(joint, VOCAB_CM_POSITION_DIRECT))
     {
         yError() << "Unable to set position direct mode";
         return 1;
@@ -150,7 +150,7 @@ int main(int argc, char * argv[])
     double initialPos;
     int retries = 0;
 
-    while (!enc->getEncoder(jointId, &initialPos) && retries++ < 10)
+    while (!enc->getEncoder(joint, &initialPos) && retries++ < 10)
     {
         yarp::os::SystemClock::delaySystem(0.05);
     }
@@ -165,12 +165,12 @@ int main(int argc, char * argv[])
 
     std::cin.get();
 
-    yInfo() << "Moving joint" << jointId << "to" << target << "degrees...";
+    yInfo() << "Moving joint" << joint << "to" << target << "degrees...";
 
     const double distance = target - initialPos;
     const double increment = std::copysign(speed * period, distance);
 
-    Worker worker(period, initialPos, increment, distance, [=](auto pos) { posd->setPosition(jointId, pos); });
+    Worker worker(period, initialPos, increment, distance, [=](auto pos) { posd->setPosition(joint, pos); });
 
     if (!worker.start())
     {
