@@ -57,7 +57,7 @@ int main(int argc, char * argv[])
     auto speed = rf.check("speed", yarp::os::Value(DEFAULT_SPEED), "trajectory speed (deg/s)").asFloat64();
     auto target = rf.check("target", yarp::os::Value(DEFAULT_TARGET), "target position (deg)").asFloat64();
     auto period = rf.check("period", yarp::os::Value(DEFAULT_PERIOD_MS), "command period (ms)").asInt32() * 0.001;
-    auto ipMode = rf.check("ip", yarp::os::Value(DEFAULT_IP_MODE), "interpolation submode [pt|pvt]").asString();
+    auto ip = rf.check("ip", yarp::os::Value(DEFAULT_IP_MODE), "interpolation submode [pt|pvt]").asString();
 
     if (speed <= 0)
     {
@@ -71,9 +71,9 @@ int main(int argc, char * argv[])
         return 1;
     }
 
-    if (ipMode != "pt" && ipMode != "pvt")
+    if (ip != "pt" && ip != "pvt")
     {
-        yError() << "Illegal ipMode:" << ipMode;
+        yError() << "Illegal ip mode:" << ip;
         return 1;
     }
 
@@ -111,7 +111,7 @@ int main(int argc, char * argv[])
     }
 
     yarp::os::Property dict {{"enable", yarp::os::Value(true)},
-                             {"mode", yarp::os::Value(ipMode)},
+                             {"mode", yarp::os::Value(ip)},
                              {"periodMs", yarp::os::Value(period * 1000.0)}};
 
     yarp::os::Value v;

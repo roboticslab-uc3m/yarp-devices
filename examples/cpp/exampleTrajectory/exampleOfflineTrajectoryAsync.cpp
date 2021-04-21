@@ -155,7 +155,7 @@ int main(int argc, char * argv[])
             auto position = initialPos + newDistance;
             yInfo("[%d] New target: %f", event.runCount, position);
             posd->setPosition(joint, position);
-            return std::abs(distance) - std::abs(newDistance) > 1e-6;
+            return std::abs(distance) > std::abs(newDistance);
         };
 
     yarp::os::TimerSettings settings(period); // alternative ctor supports stop conditions

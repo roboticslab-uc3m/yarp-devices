@@ -64,14 +64,14 @@ public:
     {
         if (b.size() == 2)
         {
-            double time = b.get(0).asInt32() + b.get(1).asInt32() * 1e-9;
+            double currentTime = b.get(0).asInt32() + b.get(1).asInt32() * 1e-9;
 
             if (count == 0)
             {
-                offset = time;
+                offset = currentTime;
             }
 
-            double t = time - offset;
+            double t = currentTime - offset;
             double e = e0 + v * t;
 
             yInfo("[%d] New target: %f", ++count, e);
@@ -175,14 +175,15 @@ int main(int argc, char * argv[])
 
     yInfo() << "Moving joint" << joint << "to" << target << "degrees...";
 
-    double velocity = std::copysign(speed, target - initialPos);
+    const double distance = target - initialPos;
+    double velocity = std::copysign(speed, distance);
 
     SyncCallback callback(initialPos, velocity, [=](auto pos) { posd->setPosition(joint, pos); });
     syncPort.useCallback(callback);
 
     double lastRef;
 
-    while (posd->getRefPosition(joint, &lastRef) && std::abs(lastRef - initialPos) < std::abs(target - initialPos))
+    while (posd->getRefPosition(joint, &lastRef) && std::abs(lastRef - initialPos) < std::abs(distance))
     {
         yarp::os::SystemClock::delaySystem(0.01);
     }
