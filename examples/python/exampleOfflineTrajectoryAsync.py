@@ -39,12 +39,17 @@ enc = dd.viewIEncoders()
 posd = dd.viewIPositionDirect()
 var = dd.viewIRemoteVariables()
 
-v = yarp.Value()
-v.asList().addString('linInterp')
+if mode is None or enc is None or posd is None or var is None:
+    print('Unable to acquire robot interfaces')
+    raise SystemExit
 
-p = v.asList().addDict()
+p = yarp.Property()
 p.put('enable', True)
 p.put('mode', args.ip)
+
+v = yarp.Value()
+v.asList().addString('linInterp')
+v.asList().addList().fromString(p.toString())
 
 b = yarp.Bottle()
 b.add(v)
@@ -68,6 +73,7 @@ distance = args.target - initialPos
 increment = math.copysign(args.speed * args.period * 0.001, distance)
 count = 1
 newDistance = 0.0
+start = time.time()
 
 while abs(distance) > abs(newDistance):
     newDistance = count * increment

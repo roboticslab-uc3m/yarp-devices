@@ -130,7 +130,7 @@ int main(int argc, char * argv[])
 
     if (!dd.view(mode) || !dd.view(enc) || !dd.view(posd))
     {
-        yError() << "Problems acquiring robot interfaces";
+        yError() << "Unable to acquire robot interfaces";
         return 1;
     }
 

@@ -37,6 +37,10 @@ mode = dd.viewIControlMode()
 enc = dd.viewIEncoders()
 posd = dd.viewIPositionDirect()
 
+if mode is None or enc is None or posd is None:
+    print('Unable to acquire robot interfaces')
+    raise SystemExit
+
 if not mode.setControlMode(args.joint, yarp.VOCAB_CM_POSITION_DIRECT):
     print('Unable to set position direct mode')
     raise SystemExit

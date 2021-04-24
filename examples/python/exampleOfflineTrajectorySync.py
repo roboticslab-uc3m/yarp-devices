@@ -41,13 +41,18 @@ pos = dd.viewIPositionControl()
 posd = dd.viewIPositionDirect()
 var = dd.viewIRemoteVariables()
 
-v = yarp.Value()
-v.asList().addString('linInterp')
+if mode is None or enc is None or pos is None or posd is None or var is None:
+    print('Unable to acquire robot interfaces')
+    raise SystemExit
 
-p = v.asList().addDict()
+p = yarp.Property()
 p.put('enable', True)
 p.put('mode', args.ip)
 p.put('periodMs', args.period)
+
+v = yarp.Value()
+v.asList().addString('linInterp')
+v.asList().addList().fromString(p.toString())
 
 b = yarp.Bottle()
 b.add(v)

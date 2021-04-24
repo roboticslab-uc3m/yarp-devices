@@ -103,16 +103,16 @@ int main(int argc, char * argv[])
 
     if (!dd.view(mode) || !dd.view(enc) || !dd.view(posd) || !dd.view(var))
     {
-        yError() << "Problems acquiring robot interfaces";
+        yError() << "Unable to acquire robot interfaces";
         return 1;
     }
 
-    yarp::os::Property dict {{"enable", yarp::os::Value(true)},
-                             {"mode", yarp::os::Value(ipMode)}};
+    yarp::os::Property p {{"enable", yarp::os::Value(true)},
+                          {"mode", yarp::os::Value(ipMode)}};
 
     yarp::os::Value v;
     v.asList()->addString("linInterp");
-    v.asList()->addList().fromString(dict.toString());
+    v.asList()->addList().fromString(p.toString());
 
     if (!var->setRemoteVariable("all", {v}))
     {

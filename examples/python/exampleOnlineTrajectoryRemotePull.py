@@ -60,6 +60,10 @@ mode = dd.viewIControlMode()
 enc = dd.viewIEncoders()
 posd = dd.viewIPositionDirect()
 
+if mode is None or enc is None or posd is None:
+    print('Unable to acquire robot interfaces')
+    raise SystemExit
+
 syncPort = yarp.BufferedPortBottle()
 syncPort.setReadOnly()
 
