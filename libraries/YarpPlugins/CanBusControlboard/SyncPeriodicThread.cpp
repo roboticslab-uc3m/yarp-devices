@@ -2,7 +2,10 @@
 
 #include "SyncPeriodicThread.hpp"
 
+#include <cmath> // std::modf
+
 #include <yarp/conf/version.h>
+#include <yarp/os/SystemClock.h>
 
 using namespace roboticslab;
 
@@ -15,14 +18,30 @@ SyncPeriodicThread::SyncPeriodicThread(std::vector<CanBusBroker *> & _canBusBrok
     : yarp::os::PeriodicThread(1.0, yarp::os::ShouldUseSystemClock::Yes),
 #endif
       canBusBrokers(_canBusBrokers),
-      taskFactory(_taskFactory)
+      taskFactory(_taskFactory),
+      syncObserver(nullptr)
 {}
 
 // -----------------------------------------------------------------------------
 
 SyncPeriodicThread::~SyncPeriodicThread()
 {
+    if (syncPort.isOpen())
+    {
+        syncPort.interrupt();
+        syncPort.close();
+    }
+
     delete taskFactory;
+}
+
+// -----------------------------------------------------------------------------
+
+bool SyncPeriodicThread::openPort(const std::string & name)
+{
+    syncPort.setWriteOnly();
+    syncWriter.attach(syncPort);
+    return syncPort.open(name);
 }
 
 // -----------------------------------------------------------------------------
@@ -50,6 +69,26 @@ void SyncPeriodicThread::run()
     }
 
     task->dispatch();
+
+    if (syncPort.isOpen())
+    {
+        auto now = yarp::os::SystemClock::nowSystem();
+
+        double sec;
+        double nsec = std::modf(now, &sec) * 1e9;
+
+        syncWriter.prepare() = {
+            yarp::os::Value(static_cast<std::int32_t>(sec)),
+            yarp::os::Value(static_cast<std::int32_t>(nsec))
+        };
+
+        syncWriter.write(true);
+    }
+
+    if (syncObserver)
+    {
+        syncObserver->notify();
+    }
 }
 
 // -----------------------------------------------------------------------------

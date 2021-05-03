@@ -11,49 +11,44 @@ namespace roboticslab
 }
 
 /**
- * @defgroup yarp_devices_libraries roboticslab-uc3m/yarp-devices Libraries
+ * @defgroup yarp_devices_libraries Libraries
  * @brief yarp-devices libraries.
  */
 
 /**
  * @ingroup yarp_devices_libraries
- * @defgroup YarpPlugins YarpPlugins
+ * @defgroup YarpPlugins YARP plugins
  *
  * @brief Contains libraries that implement YARP device interfaces
  * and therefore can be invoked as YARP plugins.
  */
 
 /**
- * @defgroup yarp_devices_firmware roboticslab-uc3m/yarp-devices Firmware
+ * @defgroup yarp_devices_firmware Firmware
  * @brief yarp-devices firmware.
  */
 
 /**
- * @defgroup yarp_devices_programs roboticslab-uc3m/yarp-devices Programs
+ * @defgroup yarp_devices_programs Programs
  * @brief yarp-devices programs.
  */
 
 /**
- * @defgroup yarp_devices_tests roboticslab-uc3m/yarp-devices Tests
+ * @defgroup yarp_devices_tests Tests
  * @brief yarp-devices tests.
  */
 
 /**
- * @defgroup yarp_devices_examples roboticslab-uc3m/yarp-devices Examples
+ * @defgroup yarp_devices_examples Examples
  * @brief yarp-devices examples.
  */
 
 /**
  * @ingroup yarp_devices_examples
- * @defgroup yarp_devices_examples_cpp roboticslab-uc3m/yarp-devices C++ examples
+ * @defgroup yarp_devices_examples_cpp C++ examples
  */
 
 /**
  * @ingroup yarp_devices_examples
- * @defgroup yarp_devices_examples_py roboticslab-uc3m/yarp-devices Python examples
- */
-
-/**
- * @defgroup yarp_devices_tests roboticslab-uc3m/yarp-devices Tests
- * @brief yarp-devices tests.
+ * @defgroup yarp_devices_examples_py Python examples
  */
