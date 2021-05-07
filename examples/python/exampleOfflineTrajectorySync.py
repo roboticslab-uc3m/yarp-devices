@@ -1,8 +1,10 @@
-##
-# @ingroup yarp_devices_examples_py
-# @defgroup exampleOfflineTrajectorySyncPy exampleOfflineTrajectorySync.py
-# @brief See @ref exampleOfflineTrajectorySync
-
+## @ingroup yarp_devices_examples_py
+#  @defgroup exampleOfflineTrajectorySyncPy exampleOfflineTrajectorySync.py
+#  @brief Perform an offline trajectory via position commands with a fixed period.
+#  @see @ref exampleOfflineTrajectorySync.py
+## @example{lineno} exampleOfflineTrajectorySync.py
+#  @see @ref exampleOfflineTrajectorySync.cpp
+#  @see [Tutorial: Trajectory Execution](https://roboticslab-uc3m.github.io/teo-developer-manual/tutorial/trajectories.html) (external)
 import argparse
 import math
 import time

@@ -4,6 +4,11 @@
  * @ingroup yarp_devices_examples_cpp
  * @defgroup exampleOfflineTrajectoryAsync exampleOfflineTrajectoryAsync
  * @brief Perform an offline trajectory via position commands with a variable period.
+ * @see @ref exampleOfflineTrajectoryAsync.cpp
+ */
+
+/**
+ * @example{lineno} exampleOfflineTrajectoryAsync.cpp
  *
  * A constant-velocity, single-joint trajectory is generated with configurable final target, motion
  * speed and period between consecutive points. The `yarp::dev::IRemoteVariables` interface is used
@@ -17,8 +22,10 @@
  exampleOfflineTrajectoryAsync --remote /teo/leftArm --joint 5 --speed 2.0 --target -20.0 --period 50 --ip pt
 @endverbatim
  *
- * @see exampleOfflineTrajectorySync Assumes the period between points is fixed, thus allowing batched
+ * @see @ref exampleOfflineTrajectorySync.cpp Assumes the period between points is fixed, thus allowing batched
  * execution.
+ * @see @ref exampleOfflineTrajectoryAsync.py
+ * @see [Tutorial: Trajectory Execution](https://roboticslab-uc3m.github.io/teo-developer-manual/tutorial/trajectories.html) (external)
  * @note This application is not suitable for simulation.
  */
 

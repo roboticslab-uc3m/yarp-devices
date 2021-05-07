@@ -4,6 +4,11 @@
  * @ingroup yarp_devices_examples_cpp
  * @defgroup exampleOnlineTrajectoryRemotePull exampleOnlineTrajectoryRemotePull
  * @brief Perform an online trajectory via position commands attending a remote callback.
+ * @see @ref exampleOnlineTrajectoryRemotePull.cpp
+ */
+
+/**
+ * @example{lineno} exampleOnlineTrajectoryRemotePull.cpp
  *
  * A constant-velocity, single-joint trajectory is generated with configurable final target and
  * motion speed. The period between consecutive points is fixed (maps to cyclic synchronous
@@ -19,9 +24,11 @@
  exampleOnlineTrajectoryRemotePull --robot /teo --part /leftArm --joint 5 --speed 2.0 --target -20.0
 @endverbatim
  *
- * @see exampleOnlineTrajectoryLocalPull Command a local instance of the real robot controller via
+ * @see @ref exampleOnlineTrajectoryLocalPull.cpp Command a local instance of the real robot controller via
  * callback.
- * @see exampleOnlineTrajectoryRemotePush Command a remote robot via direct position commands.
+ * @see @ref exampleOnlineTrajectoryRemotePush.cpp Command a remote robot via direct position commands.
+ * @see @ref exampleOnlineTrajectoryRemotePull.py
+ * @see [Tutorial: Trajectory Execution](https://roboticslab-uc3m.github.io/teo-developer-manual/tutorial/trajectories.html) (external)
  * @note If you need to command a simulated robot, you must emulate the periodic synchronization
  * port via `yarp clock --name /teoSim/sync:o --period XXX` with the desired period between points
  * (in milliseconds) and assuming `--robot /teoSim` was passed in this example.

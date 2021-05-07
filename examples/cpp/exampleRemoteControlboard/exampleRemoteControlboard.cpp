@@ -31,6 +31,10 @@ make -j3
  *
  */
 
+/**
+ * @example{lineno} exampleRemoteControlboard.cpp
+ */
+
 #include <cstdio>
 
 #include <vector>

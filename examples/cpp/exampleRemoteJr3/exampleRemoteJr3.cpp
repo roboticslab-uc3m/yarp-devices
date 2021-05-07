@@ -6,6 +6,10 @@
  * @brief This example connects to a remote @ref Jr3 device.
  */
 
+/**
+ * @example{lineno} exampleRemoteJr3.cpp
+ */
+
 #include <cstdio>
 
 #include <yarp/os/Network.h>

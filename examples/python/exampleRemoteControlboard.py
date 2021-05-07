@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 ##
 # @ingroup yarp_devices_examples_py
 # @defgroup exampleRemoteControlboardPy exampleRemoteControlboard.py
@@ -36,10 +34,12 @@
 # This file can be edited at $YARP_DEVICES_ROOT/example/python/exampleRemoteControlboard.py
 #
 
+## @example{lineno} exampleRemoteControlboard.py
+
 import yarp  # imports YARP
 yarp.Network.init()  # connect to YARP network
 if not yarp.Network.checkNetwork():  # let's see if there was actually a reachable YARP network
-    print '[error] Please try running yarp server'  # tell the user to start one with 'yarp server' if there isn't any
+    print('[error] Please try running yarp server')  # tell the user to start one with 'yarp server' if there isn't any
     quit()
 options = yarp.Property()  # create an instance of Property, a nice YARP class for storing name-value (key-value) pairs
 options.put('device','remote_controlboard')  # we add a name-value pair that indicates the YARP device
@@ -47,7 +47,7 @@ options.put('remote','/robotName/partName')  # we add info on to whom we will co
 options.put('local','/exampleRemoteControlboard')  # we add info on how we will call ourselves on the YARP network
 dd = yarp.PolyDriver(options)  # create a YARP multi-use driver with the given options
 if not dd.isValid():
-    print '[error] Please launch robot side'
+    print('[error] Please launch robot side')
     quit()
 
 pos = dd.viewIPositionControl()  # make a position controller object we call 'pos'
@@ -67,43 +67,43 @@ print('lmin',lmin[0],'lmax',lmax[0])
 # use the object to set the device to position mode (as opposed to velocity mode)(note: stops the robot)
 mode.setControlModes(yarp.IVector(axes, yarp.encode('pos')))
 
-print 'positionMove(1,-35) -> moves motor 1 (start count at motor 0) to -35 degrees'
+print('positionMove(1,-35) -> moves motor 1 (start count at motor 0) to -35 degrees')
 pos.positionMove(1,-35)
 
 done = False
 while not done:
-    print 'wait to reach...'
+    print('wait to reach...')
     yarp.delay(1.0) # [s]
     done = pos.checkMotionDone()
 
 v = yarp.DVector(axes)  # create a YARP vector of doubles the size of the number of elements read by enc, call it 'v'
 enc.getEncoders(v)  # read the encoder values and put them into 'v'
-print 'v[1] is: ' + str(v[1])  # print element 1 of 'v', note that motors and encoders start at 0
+print('v[1] is: ' + str(v[1]))  # print element 1 of 'v', note that motors and encoders start at 0
 
 targets = list(range(0,10+5*axes,5))
-print 'positionMove(...) -> [multiple axes] moves motor 0 to 10 degrees, motor 1 to 15 degrees and so on'
+print('positionMove(...) -> [multiple axes] moves motor 0 to 10 degrees, motor 1 to 15 degrees and so on')
 pos.positionMove(yarp.DVector(targets))
 
 done = False
 while not done:
-    print 'wait to reach...'
+    print('wait to reach...')
     yarp.delay(1.0) # [s]
     done = pos.checkMotionDone()
 
 # use the object to set the device to velocity mode (as opposed to position mode)
 mode.setControlModes(yarp.IVector(axes, yarp.encode('vel')))
 
-print 'velocityMove(0,10) -> moves motor 0 (start count at motor 0) at 10 degrees per second'
+print('velocityMove(0,10) -> moves motor 0 (start count at motor 0) at 10 degrees per second')
 vel.velocityMove(0,10)
 
-print 'delay(5)'
+print('delay(5)')
 yarp.delay(5)
 
 vel.velocityMove(0,0)  # stop the robot
 
 mode.setControlModes(yarp.IVector(axes, yarp.encode('posd')))
 home = [0] * axes
-print 'positionMove(home) -> [multiple axes] moves all to 0 immediately'
+print('positionMove(home) -> [multiple axes] moves all to 0 immediately')
 posd.setPositions(yarp.DVector(home))
 
 dd.close()

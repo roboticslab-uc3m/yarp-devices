@@ -1,9 +1,8 @@
-#! /usr/bin/env python
+## @ingroup yarp_devices_examples_py
+#  @defgroup exampleRemoteGrabberPy exampleRemoteGrabber.py
+#  @brief This example connects to a remote grabber device.
 
-##
-# @ingroup yarp_devices_examples_py
-# @defgroup exampleRemoteGrabberPy exampleRemoteGrabber.py
-# @brief This example connects to a remote grabber device.
+## @example{lineno} exampleRemoteGrabber.py
 
 import yarp  # imports YARP
 yarp.Network.init() #Check for YARP network
@@ -18,7 +17,7 @@ options.put('remote', '/grabber')
 options.put('local','/python/grabber')
 dd = yarp.PolyDriver(options)
 if not dd.isValid():
-    print '[error] Please launch camera side'
+    print('[error] Please launch camera side')
     quit()
 
 # View grabber interfaces

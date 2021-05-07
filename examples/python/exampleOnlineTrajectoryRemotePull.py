@@ -1,8 +1,10 @@
-##
-# @ingroup yarp_devices_examples_py
-# @defgroup exampleOnlineTrajectoryRemotePullPy exampleOnlineTrajectoryRemotePull.py
-# @brief See @ref exampleOnlineTrajectoryRemotePull
-
+## @ingroup yarp_devices_examples_py
+#  @defgroup exampleOnlineTrajectoryRemotePullPy exampleOnlineTrajectoryRemotePull.py
+#  @brief Perform an online trajectory via position commands attending a remote callback.
+#  @see @ref exampleOnlineTrajectoryRemotePull.py
+## @example{lineno} exampleOnlineTrajectoryRemotePull.py
+#  @see @ref exampleOnlineTrajectoryRemotePull.cpp
+#  @see [Tutorial: Trajectory Execution](https://roboticslab-uc3m.github.io/teo-developer-manual/tutorial/trajectories.html) (external)
 import argparse
 import math
 import time

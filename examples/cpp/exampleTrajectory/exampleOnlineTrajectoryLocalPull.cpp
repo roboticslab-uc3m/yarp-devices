@@ -4,6 +4,11 @@
  * @ingroup yarp_devices_examples_cpp
  * @defgroup exampleOnlineTrajectoryLocalPull exampleOnlineTrajectoryLocalPull
  * @brief Perform an online trajectory via position commands attending a local callback.
+ * @see @ref exampleOnlineTrajectoryLocalPull.cpp
+ */
+
+/**
+ * @example{lineno} exampleOnlineTrajectoryLocalPull.cpp
  *
  * A constant-velocity, single-joint trajectory is generated with configurable final target, motion
  * speed and period between consecutive points. The period is assumed constant (maps to cyclic
@@ -17,9 +22,10 @@
  exampleOnlineTrajectoryLocalPull --bus pcan-leftArm --ipos id26-ipos --speed 2.0 --target -20.0 --period 50
 @endverbatim
  *
- * @see exampleOnlineTrajectoryRemotePull Command a remote instance of the real or simulated robot
+ * @see @ref exampleOnlineTrajectoryRemotePull.cpp Command a remote instance of the real or simulated robot
  * via callback on a YARP synchronization port.
- * @see exampleOnlineTrajectoryRemotePush Command a remote robot via direct position commands.
+ * @see @ref exampleOnlineTrajectoryRemotePush.cpp Command a remote robot via direct position commands.
+ * @see [Tutorial: Trajectory Execution](https://roboticslab-uc3m.github.io/teo-developer-manual/tutorial/trajectories.html) (external)
  * @note This application is not suitable for simulation.
  */
 

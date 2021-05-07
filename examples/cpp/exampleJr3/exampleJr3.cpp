@@ -6,6 +6,10 @@
  * @brief This example instantiates a local @ref Jr3 device.
  */
 
+/**
+ * @example{lineno} exampleJr3.cpp
+ */
+
 #include <cstdio>
 
 #include <yarp/os/Network.h>

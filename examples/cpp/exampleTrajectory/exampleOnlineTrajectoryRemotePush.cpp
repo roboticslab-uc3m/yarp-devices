@@ -4,6 +4,11 @@
  * @ingroup yarp_devices_examples_cpp
  * @defgroup exampleOnlineTrajectoryRemotePush exampleOnlineTrajectoryRemotePush
  * @brief Perform an online trajectory via position commands, pushing new setpoints at the sender's discretion.
+ * @see @ref exampleOnlineTrajectoryRemotePush.cpp
+ */
+
+/**
+ * @example{lineno} exampleOnlineTrajectoryRemotePush.cpp
  *
  * A constant-velocity, single-joint trajectory is generated with configurable final target, motion
  * speed and period between consecutive points. The period is assumed constant and must be sent at
@@ -20,9 +25,11 @@
  *
  * @warning If commanding the real robot, it is paramount that the `--period` option (milliseconds)
  * matches `--syncPeriod` (seconds) in @ref CanBusControlboard.
- * @see exampleOnlineTrajectoryLocalPull Command a local instance of the real robot controller via
+ * @see @ref exampleOnlineTrajectoryLocalPull.cpp Command a local instance of the real robot controller via
  * callback.
- * @see exampleOnlineTrajectoryRemotePull Command a remote robot via callback, be it real or simulated.
+ * @see @ref exampleOnlineTrajectoryRemotePull.cpp Command a remote robot via callback, be it real or simulated.
+ * @see @ref exampleOnlineTrajectoryRemotePush.py
+ * @see [Tutorial: Trajectory Execution](https://roboticslab-uc3m.github.io/teo-developer-manual/tutorial/trajectories.html) (external)
  */
 
 #include <cmath>
