@@ -9,9 +9,11 @@ Link to Doxygen generated documentation: https://roboticslab-uc3m.github.io/yarp
 Installation instructions for installing from source can be found [here](doc/yarp-devices-install.md).
 
 ## Usage
+
 Usage instructions for the different devices contained in this repository can be found in each corresponding subdirectory.
 
 ## Tricks
+
 Some tricks for the different devices contained in this repository can be found at http://robots.uc3m.es/gitbook-developer-manual/appendix/yarp-tricks.html ([perma](https://github.com/roboticslab-uc3m/developer-manual/blob/125713ab4c1b7b1eeefee68366d2494ad981b8bd/appendix/yarp-tricks.md)).
 
 ## Contributing
@@ -36,3 +38,11 @@ Some tricks for the different devices contained in this repository can be found 
 [![Coverage Status](https://coveralls.io/repos/roboticslab-uc3m/yarp-devices/badge.svg)](https://coveralls.io/r/roboticslab-uc3m/yarp-devices)
 
 [![Issues](https://img.shields.io/github/issues/roboticslab-uc3m/yarp-devices.svg?label=Issues)](https://github.com/roboticslab-uc3m/yarp-devices/issues)
+
+## Similar and Related Projects
+
+- See [robotology/yarp#2372](https://github.com/robotology/yarp/issues/2372)
+- [asrob-uc3m/yarp-devices](https://github.com/asrob-uc3m/yarp-devices)
+- [HUMASoft/yarp-devices](https://github.com/HUMASoft/yarp-devices)
+- [HUMASoft/CiA402Device](https://github.com/HUMASoft/CiA402Device)
+- [rtlabs-com/c-open](https://github.com/rtlabs-com/c-open)
