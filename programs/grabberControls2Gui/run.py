@@ -39,7 +39,7 @@ def main(remote_port: 'Remote port running the AravisGigE grabber'='/grabber'):
     dd = yarp.PolyDriver(options)
 
     # View driver as FrameGrabber
-    controls = dd.viewIFrameGrabberControls2()
+    controls = dd.viewIFrameGrabberControls()
 
     # Create Qt app
     app = QtWidgets.QApplication(sys.argv)

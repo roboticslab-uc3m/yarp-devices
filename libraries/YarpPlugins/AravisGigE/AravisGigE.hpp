@@ -3,8 +3,16 @@
 
 #include <map>
 
+#include <yarp/conf/version.h>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
+
+#if YARP_VERSION_MINOR >= 5
+# include <yarp/dev/IFrameGrabber.h>
+# include <yarp/dev/IFrameGrabberControls.h>
+# include <yarp/dev/IFrameGrabberImageRaw.h>
+#else
+# include <yarp/dev/FrameGrabberInterfaces.h>
+#endif
 
 #include <arv.h>
 
