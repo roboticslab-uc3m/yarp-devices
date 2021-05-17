@@ -141,7 +141,7 @@ int main(int argc, char * argv[])
         yarp::os::SystemClock::delaySystem(0.05);
     }
 
-    if (!retries >= 10)
+    if (retries >= 10)
     {
         yError() << "getEncoders() failed";
         return 1;
