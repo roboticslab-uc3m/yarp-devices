@@ -12,7 +12,7 @@ yarp_prepare_plugin(AravisGigE
                     INCLUDE AravisGigE.hpp
                     DEFAULT ON
                     DEPENDS ARAVIS_FOUND
-                    EXTRA_CONFIG WRAPPER=grabber)
+                    EXTRA_CONFIG WRAPPER=grabberDual)
 
 if(NOT SKIP_AravisGigE)
 
@@ -25,8 +25,7 @@ if(NOT SKIP_AravisGigE)
     yarp_add_plugin(AravisGigE AravisGigE.hpp
                                DeviceDriverImpl.cpp
                                IFrameGrabberControlsImpl.cpp
-                               IFrameGrabberImageRawImpl.cpp
-                               IFrameGrabberImpl.cpp)
+                               IFrameGrabberImageRawImpl.cpp)
 
     target_link_libraries(AravisGigE YARP::YARP_os
                                      YARP::YARP_dev

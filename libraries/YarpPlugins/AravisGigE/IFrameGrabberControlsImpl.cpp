@@ -104,43 +104,6 @@ bool roboticslab::AravisGigE::getFeature(int feature, double *value)
     return true;
 }
 
-bool roboticslab::AravisGigE::getFeatureLimits(int feature, double *minValue, double *maxValue)
-{
-    yDebug() << "Property with yarp id" << feature << "requested";
-    //-- Check if YARP supports this feature
-    cameraFeature_id_t f;
-    f = static_cast<cameraFeature_id_t>(feature);
-    if (f < YARP_FEATURE_BRIGHTNESS || f > YARP_FEATURE_NUMBER_OF-1)
-    {
-        yError() << "Feature not supported by YARP";
-        return false;
-    }
-
-    std::map<cameraFeature_id_t, const char*>::iterator yarp_int_feature = yarp_arv_int_feature_map.find(f);
-    if (yarp_int_feature == yarp_arv_int_feature_map.end())
-    {
-        std::map<cameraFeature_id_t, const char*>::iterator yarp_float_feature = yarp_arv_float_feat_map.find(f);
-        if (yarp_float_feature == yarp_arv_float_feat_map.end())
-        {
-            yError() << "Property with yarp id" << f << "not available";
-            return false;
-        }
-
-        //-- Float feature
-        arv_device_get_float_feature_bounds(arv_camera_get_device(camera), yarp_float_feature->second, minValue, maxValue);
-    }
-    else
-    {
-        //-- Integer feature
-        gint64 min_value_int, max_value_int;
-        arv_device_get_integer_feature_bounds(arv_camera_get_device(camera), yarp_int_feature->second, &min_value_int, &max_value_int);
-        *minValue = (double)min_value_int;
-        *maxValue = (double)max_value_int;
-    }
-    yDebug() << "Limits:" << *minValue << *maxValue;
-    return true;
-}
-
 bool roboticslab::AravisGigE::setFeature(int feature, double value1, double value2)
 {
     yError() << "No features with 2 values supported!";
@@ -148,12 +111,6 @@ bool roboticslab::AravisGigE::setFeature(int feature, double value1, double valu
 }
 
 bool roboticslab::AravisGigE::getFeature(int feature, double *value1, double *value2)
-{
-    yError() << "No features with 2 values supported!";
-    return false;
-}
-
-bool roboticslab::AravisGigE::getFeatureLimits(int feature, double *minValue1, double *maxValue1, double *minValue2, double *maxValue2)
 {
     yError() << "No features with 2 values supported!";
     return false;
