@@ -2,24 +2,6 @@
 # Authors: Juan G. Victores & Raul de Santos Rico
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-# Create device interface target.
-add_library(YarpDevicesInterfaces INTERFACE)
-
-# Configure usage requirements.
-target_include_directories(YarpDevicesInterfaces INTERFACE $<TARGET_PROPERTY:YARP::YARP_dev,INTERFACE_INCLUDE_DIRECTORIES>
-                                                           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-                                                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-
-# Install interface headers.
-install(FILES IProximitySensors.h
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-
-# Register export set.
-install(TARGETS YarpDevicesInterfaces
-        EXPORT ROBOTICSLAB_YARP_DEVICES)
-
-add_library(ROBOTICSLAB::YarpDevicesInterfaces ALIAS YarpDevicesInterfaces)
-
 # YARP devices.
 add_subdirectory(AmorControlboard)
 add_subdirectory(AravisGigE)
@@ -38,7 +20,6 @@ add_subdirectory(Jr3)
 add_subdirectory(LacqueyFetch)
 add_subdirectory(LeapMotionSensor)
 add_subdirectory(PhidgetSpatial)
-add_subdirectory(ProximitySensorsClient)
 add_subdirectory(SpaceNavigator)
 add_subdirectory(TechnosoftIpos)
 add_subdirectory(TextilesHand)
