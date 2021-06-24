@@ -6,7 +6,7 @@
 #include <utility> // std::move
 
 #include <yarp/os/LogStream.h>
-#include <yarp/os/Time.h>
+#include <yarp/os/SystemClock.h>
 
 #include "YarpCanSenderDelegate.hpp"
 #include "CanBusBroker.hpp"
@@ -78,7 +78,7 @@ void CanReaderThread::run()
     {
         //-- Lend CPU time to write threads.
         // https://github.com/roboticslab-uc3m/yarp-devices/issues/191
-        yarp::os::Time::delay(delay);
+        yarp::os::SystemClock::delaySystem(delay);
 
         //-- Return immediately if there is nothing to be read (non-blocking call), return false on errors.
         ok = iCanBus->canRead(canBuffer, bufferSize, &read);
@@ -219,7 +219,7 @@ void CanWriterThread::run()
     {
         //-- Lend CPU time to read threads.
         // https://github.com/roboticslab-uc3m/yarp-devices/issues/191
-        yarp::os::Time::delay(delay);
+        yarp::os::SystemClock::delaySystem(delay);
 
         //-- Send everything and reset the queue.
         flush();
