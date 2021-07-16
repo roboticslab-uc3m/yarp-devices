@@ -2,6 +2,8 @@
 
 #include "CanBusControlboard.hpp"
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/Log.h>
 #include <yarp/os/Vocab.h>
 
@@ -54,7 +56,11 @@ bool CanBusControlboard::getInteractionModes(int n_joints, int * joints, yarp::d
 
 bool CanBusControlboard::setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode)
 {
+#if YARP_VERSION_MINOR >= 5
+    yTrace("%d %s", axis, yarp::os::Vocab32::decode(mode).c_str());
+#else
     yTrace("%d %s", axis, yarp::os::Vocab::decode(mode).c_str());
+#endif
     CHECK_JOINT(axis);
     return deviceMapper.mapSingleJoint(&yarp::dev::IInteractionModeRaw::setInteractionModeRaw, axis, mode);
 }

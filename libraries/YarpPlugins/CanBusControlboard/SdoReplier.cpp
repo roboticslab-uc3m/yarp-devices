@@ -7,6 +7,8 @@
 #include <memory>
 #include <sstream>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
@@ -19,20 +21,34 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_MINOR >= 5
+constexpr yarp::conf::vocab32_t VOCAB_SDO_UPLOAD = yarp::os::createVocab32('s', 'd', 'o', 'u');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_DOWNLOAD = yarp::os::createVocab32('s', 'd', 'o', 'd');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_I8_TYPE = yarp::os::createVocab32('i', '8');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_UI8_TYPE = yarp::os::createVocab32('u', 'i', '8');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_I16_TYPE = yarp::os::createVocab32('i', '1', '6');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_UI16_TYPE = yarp::os::createVocab32('u', 'i', '1', '6');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_I32_TYPE = yarp::os::createVocab32('i', '3', '2');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_UI32_TYPE = yarp::os::createVocab32('u', 'i', '3', '2');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_STRING_TYPE = yarp::os::createVocab32('s', 't', 'r');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_OK = yarp::os::createVocab32('o', 'k');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_FAIL = yarp::os::createVocab32('f', 'a', 'i', 'l');
+#else
+constexpr yarp::conf::vocab32_t VOCAB_SDO_UPLOAD = yarp::os::createVocab('s', 'd', 'o', 'u');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_DOWNLOAD = yarp::os::createVocab('s', 'd', 'o', 'd');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_I8_TYPE = yarp::os::createVocab('i', '8');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_UI8_TYPE = yarp::os::createVocab('u', 'i', '8');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_I16_TYPE = yarp::os::createVocab('i', '1', '6');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_UI16_TYPE = yarp::os::createVocab('u', 'i', '1', '6');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_I32_TYPE = yarp::os::createVocab('i', '3', '2');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_UI32_TYPE = yarp::os::createVocab('u', 'i', '3', '2');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_STRING_TYPE = yarp::os::createVocab('s', 't', 'r');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_OK = yarp::os::createVocab('o', 'k');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_FAIL = yarp::os::createVocab('f', 'a', 'i', 'l');
+#endif
+
 namespace
 {
-    constexpr yarp::conf::vocab32_t VOCAB_SDO_UPLOAD = yarp::os::createVocab('s', 'd', 'o', 'u');
-    constexpr yarp::conf::vocab32_t VOCAB_SDO_DOWNLOAD = yarp::os::createVocab('s', 'd', 'o', 'd');
-    constexpr yarp::conf::vocab32_t VOCAB_SDO_I8_TYPE = yarp::os::createVocab('i', '8');
-    constexpr yarp::conf::vocab32_t VOCAB_SDO_UI8_TYPE = yarp::os::createVocab('u', 'i', '8');
-    constexpr yarp::conf::vocab32_t VOCAB_SDO_I16_TYPE = yarp::os::createVocab('i', '1', '6');
-    constexpr yarp::conf::vocab32_t VOCAB_SDO_UI16_TYPE = yarp::os::createVocab('u', 'i', '1', '6');
-    constexpr yarp::conf::vocab32_t VOCAB_SDO_I32_TYPE = yarp::os::createVocab('i', '3', '2');
-    constexpr yarp::conf::vocab32_t VOCAB_SDO_UI32_TYPE = yarp::os::createVocab('u', 'i', '3', '2');
-    constexpr yarp::conf::vocab32_t VOCAB_SDO_STRING_TYPE = yarp::os::createVocab('s', 't', 'r');
-    constexpr yarp::conf::vocab32_t VOCAB_SDO_OK = yarp::os::createVocab('o', 'k');
-    constexpr yarp::conf::vocab32_t VOCAB_SDO_FAIL = yarp::os::createVocab('f', 'a', 'i', 'l');
-
     enum class sdo_direction : yarp::conf::vocab32_t
     {
         UPLOAD = VOCAB_SDO_UPLOAD,
@@ -64,7 +80,11 @@ namespace
 
             if (response && writer)
             {
+#if YARP_VERSION_MINOR >= 5
+                response->addVocab32(success ? VOCAB_SDO_OK : VOCAB_SDO_FAIL);
+#else
                 response->addVocab(success ? VOCAB_SDO_OK : VOCAB_SDO_FAIL);
+#endif
                 response->write(*writer);
             }
         }
@@ -144,11 +164,19 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
         return false;
     }
 
+#if YARP_VERSION_MINOR >= 5
+    sdo_direction dir = static_cast<sdo_direction>(request.get(0).asVocab32());
+#else
     sdo_direction dir = static_cast<sdo_direction>(request.get(0).asVocab());
+#endif
     unsigned int id = request.get(1).asInt8();
     unsigned int index = request.get(2).asInt16();
     unsigned int subindex = request.get(3).asInt8();
+#if YARP_VERSION_MINOR >= 5
+    data_type type = static_cast<data_type>(request.get(4).asVocab32());
+#else
     data_type type = static_cast<data_type>(request.get(4).asVocab());
+#endif
 
     guard.attachSdoHandle(priv->allocate(id, sender));
 
@@ -251,7 +279,11 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
             break;
         }
         default:
+#if YARP_VERSION_MINOR >= 5
+            yWarning("Invalid data type %s", yarp::os::Vocab32::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
+#else
             yWarning("Invalid data type %s", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
+#endif
             return false;
         }
 
@@ -287,13 +319,21 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
         case data_type::STRING:
             return priv->sdo()->download("Remote indication", data.asString(), index, subindex) && guard.flip();
         default:
+#if YARP_VERSION_MINOR >= 5
+            yWarning("Invalid data type %s", yarp::os::Vocab32::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
+#else
             yWarning("Invalid data type %s", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
+#endif
             return false;
         }
     }
     else
     {
+#if YARP_VERSION_MINOR >= 5
+        yWarning("Invalid SDO direction %s", yarp::os::Vocab32::decode(static_cast<yarp::conf::vocab32_t>(dir)).c_str());
+#else
         yWarning("Invalid SDO direction %s", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(dir)).c_str());
+#endif
         return false;
     }
 }

@@ -4,6 +4,8 @@
 
 #include <functional>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
 
@@ -43,7 +45,11 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
 
     vars.axisName = config.check("name", yarp::os::Value(""), "axis name").asString(); // id-specific
+#if YARP_VERSION_MINOR >= 5
+    vars.jointType = iposGroup.check("type", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "joint type [atrv|atpr|unkn]").asVocab32();
+#else
     vars.jointType = iposGroup.check("type", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "joint type [atrv|atpr|unkn]").asVocab();
+#endif
     vars.max = iposGroup.check("max", yarp::os::Value(0.0), "max (meters or degrees)").asFloat64();
     vars.min = iposGroup.check("min", yarp::os::Value(0.0), "min (meters or degrees)").asFloat64();
     vars.maxVel = iposGroup.check("maxVel", yarp::os::Value(0.0), "maxVel (meters/second or degrees/second)").asFloat64();
@@ -58,7 +64,11 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     vars.reverse = iposGroup.check("reverse", yarp::os::Value(false), "reverse motor encoder counts").asBool();
     vars.heartbeatPeriod = iposGroup.check("heartbeatPeriod", yarp::os::Value(0.0), "CAN heartbeat period (seconds)").asFloat64();
     vars.syncPeriod = iposGroup.check("syncPeriod", yarp::os::Value(0.0), "SYNC message period (seconds)").asFloat64();
+#if YARP_VERSION_MINOR >= 5
+    vars.initialMode = iposGroup.check("initialMode", yarp::os::Value(VOCAB_CM_IDLE), "initial YARP control mode vocab").asVocab32();
+#else
     vars.initialMode = iposGroup.check("initialMode", yarp::os::Value(VOCAB_CM_IDLE), "initial YARP control mode vocab").asVocab();
+#endif
 
     if (!vars.validateInitialState())
     {

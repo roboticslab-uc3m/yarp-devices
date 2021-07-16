@@ -2,6 +2,8 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/Log.h>
 #include <yarp/os/Vocab.h>
 
@@ -37,7 +39,11 @@ bool TechnosoftIpos::getControlModesRaw(int n_joint, const int * joints, int * m
 
 bool TechnosoftIpos::setControlModeRaw(int j, int mode)
 {
+#if YARP_VERSION_MINOR >= 5
+    yTrace("%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
+#else
     yTrace("%d %s", j, yarp::os::Vocab::decode(mode).c_str());
+#endif
     CHECK_JOINT(j);
 
     vars.requestedcontrolMode = mode;
@@ -160,7 +166,11 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
             && can->sdo()->download<std::int8_t>("Modes of Operation", 0, 0x6060); // reset drive mode
 
     default:
+#if YARP_VERSION_MINOR >= 5
+        yError("Unsupported, unknown or read-only mode: %s", yarp::os::Vocab32::decode(mode).c_str());
+#else
         yError("Unsupported, unknown or read-only mode: %s", yarp::os::Vocab::decode(mode).c_str());
+#endif
         return false;
     }
 }

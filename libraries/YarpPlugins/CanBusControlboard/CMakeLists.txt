@@ -12,10 +12,6 @@ yarp_prepare_plugin(CanBusControlboard
 
 if(NOT SKIP_CanBusControlboard)
 
-    if(NOT YARP_VERSION VERSION_GREATER_EQUAL 3.4)
-        set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
-    endif()
-
     yarp_add_plugin(CanBusControlboard CanBusControlboard.hpp
                                        DeviceDriverImpl.cpp
                                        IAmplifierControlImpl.cpp

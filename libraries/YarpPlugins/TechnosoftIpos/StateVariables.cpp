@@ -4,6 +4,8 @@
 
 #include <cmath>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/IAxisInfo.h>
@@ -175,7 +177,11 @@ bool StateVariables::validateInitialState()
     case yarp::dev::VOCAB_JOINTTYPE_UNKNOWN:
         break;
     default:
+#if YARP_VERSION_MINOR >= 5
+        yWarning() << "Illegal joint type vocab:" << yarp::os::Vocab32::decode(jointType);
+#else
         yWarning() << "Illegal joint type vocab:" << yarp::os::Vocab::decode(jointType);
+#endif
         return false;
     }
 

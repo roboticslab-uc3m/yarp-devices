@@ -10,17 +10,13 @@ yarp_prepare_plugin(CanBusFake
 
 if(NOT SKIP_CanBusFake)
 
-    if(NOT YARP_VERSION VERSION_GREATER_EQUAL 3.4)
-        set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
-    endif()
-
     yarp_add_plugin(CanBusFake CanBusFake.hpp
                                CanBusFake.cpp
                                FakeCanMessage.hpp
                                FakeCanMessage.cpp)
 
     target_link_libraries(CanBusFake YARP::YARP_dev)
-    
+
     target_compile_features(CanBusFake PRIVATE cxx_std_11)
 
     yarp_install(TARGETS CanBusFake

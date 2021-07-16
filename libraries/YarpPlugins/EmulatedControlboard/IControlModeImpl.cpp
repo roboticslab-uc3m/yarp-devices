@@ -2,6 +2,8 @@
 
 #include "EmulatedControlboard.hpp"
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/Log.h>
 #include <yarp/os/Vocab.h>
 
@@ -25,7 +27,11 @@ bool roboticslab::EmulatedControlboard::getControlMode(int j, int *mode)
     }
     else
     {
+#if YARP_VERSION_MINOR >= 5
+        yError("Currently unsupported mode: %s", yarp::os::Vocab32::decode(controlMode).c_str());
+#else
         yError("Currently unsupported mode: %s", yarp::os::Vocab::decode(controlMode).c_str());
+#endif
         return false;
     }
 
@@ -64,7 +70,11 @@ bool roboticslab::EmulatedControlboard::getControlModes(const int n_joint, const
 
 bool roboticslab::EmulatedControlboard::setControlMode(const int j, const int mode)
 {
+#if YARP_VERSION_MINOR >= 5
+    yTrace("%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
+#else
     yTrace("%d %s", j, yarp::os::Vocab::decode(mode).c_str());
+#endif
 
     if ((unsigned int)j > axes)
     {
