@@ -5,9 +5,13 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 
+#include "LogComponent.hpp"
+
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LeapMotionSensor::open(yarp::os::Searchable& config)
+bool LeapMotionSensor::open(yarp::os::Searchable& config)
 {
     controller = new Leap::Controller();
 
@@ -25,30 +29,33 @@ bool roboticslab::LeapMotionSensor::open(yarp::os::Searchable& config)
         }
 
         retries++;
-        yInfo() << "Connection failed, retrying... " << retries;
+        yCInfo(LEAP) << "Connection failed, retrying... " << retries;
         yarp::os::Time::delay(1);
     }
 
     if (retries == maxRetries)
     {
-        yError() << "Unable to connect to Leap device, max retries exceeded";
+        yCError(LEAP) << "Unable to connect to Leap device, max retries exceeded";
         close();
         return false;
     }
 
-    yInfo() << "Leap Motion device started and running";
+    currentHandId = Leap::Hand::invalid().id();
+    lastValidData.resize(6);
+
+    yCInfo(LEAP) << "Leap Motion device started and running";
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::LeapMotionSensor::close()
+bool LeapMotionSensor::close()
 {
     if (controller)
     {
         delete controller;
-        controller = NULL;
+        controller = nullptr;
     }
 
     return true;

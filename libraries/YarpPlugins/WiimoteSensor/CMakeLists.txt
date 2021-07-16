@@ -19,7 +19,9 @@ if(NOT SKIP_WiimoteSensor)
                                   WiimoteSensor.cpp
                                   DeviceDriverImpl.cpp
                                   IAnalogSensorImpl.cpp
-                                  WiimoteDispatcherThread.cpp)
+                                  WiimoteDispatcherThread.cpp
+                                  LogComponent.hpp
+                                  LogComponent.cpp)
 
     target_link_libraries(WiimoteSensor YARP::YARP_os
                                         YARP::YARP_dev

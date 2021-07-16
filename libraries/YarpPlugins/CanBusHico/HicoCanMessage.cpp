@@ -4,22 +4,24 @@
 
 #include <cstring>  // memcpy
 
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
 
-roboticslab::HicoCanMessage::HicoCanMessage()
+HicoCanMessage::HicoCanMessage()
 {
-    message = 0;
+    message = nullptr;
 }
 
 // -----------------------------------------------------------------------------
 
-roboticslab::HicoCanMessage::~HicoCanMessage()
+HicoCanMessage::~HicoCanMessage()
 {
 }
 
 // -----------------------------------------------------------------------------
 
-yarp::dev::CanMessage & roboticslab::HicoCanMessage::operator=(const yarp::dev::CanMessage & l)
+yarp::dev::CanMessage & HicoCanMessage::operator=(const yarp::dev::CanMessage & l)
 {
     const HicoCanMessage & tmp = dynamic_cast<const HicoCanMessage &>(l);
     std::memcpy(message, tmp.message, sizeof(struct can_msg));
@@ -28,65 +30,65 @@ yarp::dev::CanMessage & roboticslab::HicoCanMessage::operator=(const yarp::dev::
 
 // -----------------------------------------------------------------------------
 
-unsigned int roboticslab::HicoCanMessage::getId() const
+unsigned int HicoCanMessage::getId() const
 {
     return message->id;
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned char roboticslab::HicoCanMessage::getLen() const
+unsigned char HicoCanMessage::getLen() const
 {
     return message->dlc;
 }
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::HicoCanMessage::setLen(unsigned char len)
+void HicoCanMessage::setLen(unsigned char len)
 {
     message->dlc = len;
 }
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::HicoCanMessage::setId(unsigned int id)
+void HicoCanMessage::setId(unsigned int id)
 {
     message->id = id;
 }
 
 // -----------------------------------------------------------------------------
 
-const unsigned char * roboticslab::HicoCanMessage::getData() const
+const unsigned char * HicoCanMessage::getData() const
 {
     return message->data;
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned char * roboticslab::HicoCanMessage::getData()
+unsigned char * HicoCanMessage::getData()
 {
     return message->data;
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned char * roboticslab::HicoCanMessage::getPointer()
+unsigned char * HicoCanMessage::getPointer()
 {
     return reinterpret_cast<unsigned char *>(message);
 }
 
 // -----------------------------------------------------------------------------
 
-const unsigned char * roboticslab::HicoCanMessage::getPointer() const
+const unsigned char * HicoCanMessage::getPointer() const
 {
     return reinterpret_cast<const unsigned char *>(message);
 }
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::HicoCanMessage::setBuffer(unsigned char * buf)
+void HicoCanMessage::setBuffer(unsigned char * buf)
 {
-    if (buf != 0)
+    if (buf)
     {
         message = reinterpret_cast<struct can_msg *>(buf);
     }

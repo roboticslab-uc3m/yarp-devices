@@ -4,13 +4,15 @@
 
 #include <yarp/os/Log.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
 bool TextilesHand::getControlMode(int j, int * mode)
 {
-    yTrace("%d", j);
+    yCTrace(TXT, "%d", j);
     if (j != 0) return false;
     *mode = VOCAB_CM_POSITION_DIRECT;
     return true;
@@ -34,7 +36,7 @@ bool TextilesHand::getControlModes(int n_joint, const int * joints, int * modes)
 
 bool TextilesHand::setControlMode(int j, int mode)
 {
-    yWarning("setControlMode() not supported");
+    yCWarning(TXT, "setControlMode() not supported");
     return false;
 }
 
@@ -42,7 +44,7 @@ bool TextilesHand::setControlMode(int j, int mode)
 
 bool TextilesHand::setControlModes(int * modes)
 {
-    yWarning("setControlModes() not supported");
+    yCWarning(TXT, "setControlModes() not supported");
     return false;
 }
 
@@ -50,7 +52,7 @@ bool TextilesHand::setControlModes(int * modes)
 
 bool TextilesHand::setControlModes(int n_joint, const int * joints, int * modes)
 {
-    yWarning("setControlModes() not supported");
+    yCWarning(TXT, "setControlModes() not supported");
     return false;
 }
 

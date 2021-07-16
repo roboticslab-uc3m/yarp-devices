@@ -4,13 +4,15 @@
 
 #include <yarp/os/Log.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
 bool CanBusControlboard::setRefDutyCycle(int m, double ref)
 {
-    yTrace("%d %f", m, ref);
+    yCTrace(CBCB, "%d %f", m, ref);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IPWMControlRaw::setRefDutyCycleRaw, m, ref);
 }
@@ -19,7 +21,7 @@ bool CanBusControlboard::setRefDutyCycle(int m, double ref)
 
 bool CanBusControlboard::setRefDutyCycles(const double * refs)
 {
-    yTrace("");
+    yCTrace(CBCB, "");
     return deviceMapper.mapAllJoints(&yarp::dev::IPWMControlRaw::setRefDutyCyclesRaw, refs);
 }
 
@@ -27,7 +29,7 @@ bool CanBusControlboard::setRefDutyCycles(const double * refs)
 
 bool CanBusControlboard::getRefDutyCycle(int m, double * ref)
 {
-    yTrace("%d", m);
+    yCTrace(CBCB, "%d", m);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IPWMControlRaw::getRefDutyCycleRaw, m, ref);
 }
@@ -36,7 +38,7 @@ bool CanBusControlboard::getRefDutyCycle(int m, double * ref)
 
 bool CanBusControlboard::getRefDutyCycles(double * refs)
 {
-    yTrace("");
+    yCTrace(CBCB, "");
     return deviceMapper.mapAllJoints(&yarp::dev::IPWMControlRaw::getRefDutyCyclesRaw, refs);
 }
 
@@ -44,7 +46,7 @@ bool CanBusControlboard::getRefDutyCycles(double * refs)
 
 bool CanBusControlboard::getDutyCycle(int m, double * val)
 {
-    yTrace("%d", m);
+    yCTrace(CBCB, "%d", m);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IPWMControlRaw::getDutyCycleRaw, m, val);
 }
@@ -53,7 +55,7 @@ bool CanBusControlboard::getDutyCycle(int m, double * val)
 
 bool CanBusControlboard::getDutyCycles(double * vals)
 {
-    yTrace("");
+    yCTrace(CBCB, "");
     return deviceMapper.mapAllJoints(&yarp::dev::IPWMControlRaw::getDutyCyclesRaw, vals);
 }
 

@@ -9,7 +9,13 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
+
+// seconds
+constexpr auto DEFAULT_SDO_TIMEOUT = 0.02;
+constexpr auto DEFAULT_DRIVE_STATE_TIMEOUT = 2.0;
 
 // -----------------------------------------------------------------------------
 
@@ -17,7 +23,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 {
     if (!config.check("robotConfig") || !config.find("robotConfig").isBlob())
     {
-        yError() << "Missing \"robotConfig\" property or not a blob";
+        yCError(IPOS) << "Missing \"robotConfig\" property or not a blob";
         return false;
     }
 
@@ -33,7 +39,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     iposGroup.fromString(config.toString(), false); // override common options
 
-    yDebug() << "TechnosoftIpos config:" << iposGroup.toString();
+    yCDebug(IPOS) << "Config:" << iposGroup.toString();
 
     yarp::os::Bottle & driverGroup = robotConfig->findGroup(iposGroup.find("driver").asString());
     yarp::os::Bottle & motorGroup = robotConfig->findGroup(iposGroup.find("motor").asString());
@@ -72,7 +78,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     if (!vars.validateInitialState())
     {
-        yError() << "Invalid configuration parameters";
+        yCError(IPOS) << "Invalid configuration parameters";
         return false;
     }
 
@@ -83,7 +89,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
         if (externalEncoderGroup.isNull())
         {
-            yError() << "Missing external encoder device group" << externalEncoder;
+            yCError(IPOS) << "Missing external encoder device group" << externalEncoder;
             return false;
         }
 
@@ -94,19 +100,19 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
         if (!externalEncoderDevice.open(externalEncoderOptions))
         {
-            yError() << "Unable to open external encoder device" << externalEncoder;
+            yCError(IPOS) << "Unable to open external encoder device" << externalEncoder;
             return false;
         }
 
         if (!externalEncoderDevice.view(iEncodersTimedRawExternal))
         {
-            yError() << "Unable to view IEncodersTimedRaw in" << externalEncoder;
+            yCError(IPOS) << "Unable to view IEncodersTimedRaw in" << externalEncoder;
             return false;
         }
 
         if (!externalEncoderDevice.view(iExternalEncoderCanBusSharer))
         {
-            yError() << "Unable to view ICanBusSharer in" << externalEncoder;
+            yCError(IPOS) << "Unable to view ICanBusSharer in" << externalEncoder;
             return false;
         }
     }

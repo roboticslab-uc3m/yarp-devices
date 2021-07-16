@@ -1,5 +1,5 @@
-#ifndef __ARAVIS_GIGE__
-#define __ARAVIS_GIGE__
+#ifndef __ARAVIS_GIGE_HPP__
+#define __ARAVIS_GIGE_HPP__
 
 #include <map>
 
@@ -15,7 +15,8 @@
 
 #include <arv.h>
 
-namespace roboticslab {
+namespace roboticslab
+{
 
 /**
  * @ingroup YarpPlugins
@@ -33,7 +34,7 @@ class AravisGigE : public yarp::dev::DeviceDriver,
 {
 public:
 
-    ~AravisGigE() { close(); }
+    ~AravisGigE() override { close(); }
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
     bool open(yarp::os::Searchable& config) override;
@@ -125,4 +126,4 @@ private:
 
 }
 
-#endif // __ARAVIS_GIGE__
+#endif // __ARAVIS_GIGE_HPP__

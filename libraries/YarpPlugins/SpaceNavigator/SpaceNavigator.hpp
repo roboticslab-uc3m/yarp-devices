@@ -1,23 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __SPACE_NAVIGATOR__
-#define __SPACE_NAVIGATOR__
+#ifndef __SPACE_NAVIGATOR_HPP__
+#define __SPACE_NAVIGATOR_HPP__
 
 #include <spnav.h>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
-
-#define DEFAULT_NUM_CHANNELS 8
-
-#define FULL_SCALE_X 460.0
-#define FULL_SCALE_Y 430.0
-#define FULL_SCALE_Z 440.0
-#define FULL_SCALE_ROLL 415.0
-#define FULL_SCALE_PITCH 405.0
-#define FULL_SCALE_YAW 435.0
-
-#define DEFAULT_DEADBAND 0.125
 
 namespace roboticslab
 {
@@ -47,11 +36,11 @@ class SpaceNavigator : public yarp::dev::DeviceDriver,
 public:
 
     SpaceNavigator();
-    ~SpaceNavigator();
+    ~SpaceNavigator() override;
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
-    virtual bool open(yarp::os::Searchable& config);
-    virtual bool close();
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 
     //  --------- IAnalogSensor Declarations. Implementation in IAnalogSensorImpl.cpp ---------
     /**
@@ -59,40 +48,40 @@ public:
      * @param out a vector containing the sensor's last readings.
      * @return AS_OK or return code. AS_TIMEOUT if the sensor timed-out.
      */
-    virtual int read(yarp::sig::Vector &out);
+    int read(yarp::sig::Vector &out) override;
 
     /**
      * Check the state value of a given channel.
      * @param ch channel number.
      * @return status.
      */
-    virtual int getState(int ch);
+    int getState(int ch) override;
 
     /**
      * Get the number of channels of the sensor.
      * @return number of channels (0 in case of errors).
      */
-    virtual int getChannels();
+    int getChannels() override;
 
     /**
      * Calibrates the whole sensor.
      * @return status.
      */
-    virtual int calibrateSensor();
+    int calibrateSensor() override;
 
     /**
      * Calibrates the whole sensor, using an vector of calibration values.
      * @param value a vector of calibration values.
      * @return status.
      */
-    virtual int calibrateSensor(const yarp::sig::Vector& value);
+    int calibrateSensor(const yarp::sig::Vector& value) override;
 
     /**
      * Calibrates one single channel.
      * @param ch channel number.
      * @return status.
      */
-    virtual int calibrateChannel(int ch);
+    int calibrateChannel(int ch) override;
 
     /**
      * Calibrates one single channel, using a calibration value.
@@ -100,7 +89,7 @@ public:
      * @param value calibration value.
      * @return status.
      */
-    virtual int calibrateChannel(int ch, double value);
+    int calibrateChannel(int ch, double value) override;
 
 protected:
 
@@ -117,9 +106,8 @@ private:
     int button1, button2;
     unsigned int noDataCounter;
     double deadband;
-    static const unsigned int MAX_NO_DATA_ITERATIONS;
 };
 
 } // namespace roboticslab
 
-#endif // __SPACE_NAVIGATOR__
+#endif // __SPACE_NAVIGATOR_HPP__

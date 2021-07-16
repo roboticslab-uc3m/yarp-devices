@@ -5,6 +5,7 @@
 #include <yarp/os/Log.h>
 
 #include "ICanBusSharer.hpp"
+#include "LogComponent.hpp"
 
 using namespace roboticslab;
 
@@ -16,7 +17,7 @@ namespace
     {
         if (val.size() != 2 || !val.get(0).isString() || !val.get(1).isList())
         {
-            yError("Illegal bottle format, expected string key and list value");
+            yCError(CBCB, "Illegal bottle format, expected string key and list value");
             return false;
         }
 
@@ -35,11 +36,11 @@ namespace
                 {
                     if (!setAll)
                     {
-                        yError("Unsupported interface: \"%s\"", key.c_str());
+                        yCError(CBCB, "Unsupported interface: \"%s\"", key.c_str());
                         return false;
                     }
 
-                    yWarning("Unsupported interface: \"id%d\"", iCanBusSharer->getId());
+                    yCWarning(CBCB, "Unsupported interface: \"id%d\"", iCanBusSharer->getId());
                 }
                 else if (!p->setRemoteVariableRaw(val.get(0).asString(), *val.get(1).asList()))
                 {
@@ -48,7 +49,7 @@ namespace
                         return false;
                     }
 
-                    yWarning("Request failed: \"id%d\"", iCanBusSharer->getId());
+                    yCWarning(CBCB, "Request failed: \"id%d\"", iCanBusSharer->getId());
                     allOk = false;
                 }
                 else if (!setAll)
@@ -60,7 +61,7 @@ namespace
 
         if (!setAll)
         {
-            yError("Node \"%s\" not found, type e.g. \"id19\" or \"all\"", key.c_str());
+            yCError(CBCB, "Node \"%s\" not found, type e.g. \"id19\" or \"all\"", key.c_str());
             return false;
         }
 
@@ -72,7 +73,7 @@ namespace
 
 bool CanBusControlboard::getRemoteVariable(std::string key, yarp::os::Bottle & val)
 {
-    yTrace("%s", key.c_str());
+    yCTrace(CBCB, "%s", key.c_str());
 
     bool queryAll = key == "all";
     val.clear();
@@ -105,19 +106,19 @@ bool CanBusControlboard::getRemoteVariable(std::string key, yarp::os::Bottle & v
 
             if (!queryAll)
             {
-                yError("Unsupported interface: \"%s\"", key.c_str());
+                yCError(CBCB, "Unsupported interface: \"%s\"", key.c_str());
                 return false;
             }
             else if (!p)
             {
-                yWarning("Unsupported interface: \"id%d\"", iCanBusSharer->getId());
+                yCWarning(CBCB, "Unsupported interface: \"id%d\"", iCanBusSharer->getId());
             }
         }
     }
 
     if (!queryAll)
     {
-        yError("Node \"%s\" not found, type e.g. \"id19\" or \"all\"", key.c_str());
+        yCError(CBCB, "Node \"%s\" not found, type e.g. \"id19\" or \"all\"", key.c_str());
         return false;
     }
 
@@ -128,7 +129,7 @@ bool CanBusControlboard::getRemoteVariable(std::string key, yarp::os::Bottle & v
 
 bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bottle & val)
 {
-    yTrace("%s: %s", key.c_str(), val.toString().c_str());
+    yCTrace(CBCB, "%s: %s", key.c_str(), val.toString().c_str());
 
     if (key == "multi")
     {
@@ -138,7 +139,7 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
         {
             if (!val.get(i).isList())
             {
-                yError("Not a list: %s", val.get(i).toString().c_str());
+                yCError(CBCB, "Not a list: %s", val.get(i).toString().c_str());
                 return false;
             }
 
@@ -146,13 +147,13 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
 
             if (b->size() != 2 || !b->get(0).isString() || !b->get(1).isList())
             {
-                yError("Illegal bottle format, expected string key and list value: %s", b->toString().c_str());
+                yCError(CBCB, "Illegal bottle format, expected string key and list value: %s", b->toString().c_str());
                 return false;
             }
 
             if (b->get(0).asString() == "all")
             {
-                yError("Cannot set all node vars in multi mode");
+                yCError(CBCB, "Cannot set all node vars in multi mode");
                 return false;
             }
 
@@ -164,7 +165,7 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
 
     if (val.size() == 0)
     {
-        yError("Empty value list");
+        yCError(CBCB, "Empty value list");
         return false;
     }
 
@@ -176,7 +177,7 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
         {
             if (!val.get(i).isList())
             {
-                yError("Not a list: %s", val.get(i).toString().c_str());
+                yCError(CBCB, "Not a list: %s", val.get(i).toString().c_str());
                 return false;
             }
 
@@ -193,7 +194,7 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
 
 bool CanBusControlboard::getRemoteVariablesList(yarp::os::Bottle * listOfKeys)
 {
-    yTrace("");
+    yCTrace(CBCB, "");
 
     listOfKeys->clear();
 

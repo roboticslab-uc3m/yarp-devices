@@ -7,11 +7,15 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/Vocab.h>
 
+#include "LogComponent.hpp"
+
+using namespace roboticslab;
+
 // ------------------- IControlMode Related ------------------------------------
 
-bool roboticslab::EmulatedControlboard::getControlMode(int j, int *mode)
+bool EmulatedControlboard::getControlMode(int j, int *mode)
 {
-    yTrace("%d", j);
+    yCTrace(ECB, "%d", j);
 
     if (controlMode == POSITION_MODE)
     {
@@ -28,9 +32,9 @@ bool roboticslab::EmulatedControlboard::getControlMode(int j, int *mode)
     else
     {
 #if YARP_VERSION_MINOR >= 5
-        yError("Currently unsupported mode: %s", yarp::os::Vocab32::decode(controlMode).c_str());
+        yCError(ECB, "Currently unsupported mode: %s", yarp::os::Vocab32::decode(controlMode).c_str());
 #else
-        yError("Currently unsupported mode: %s", yarp::os::Vocab::decode(controlMode).c_str());
+        yCError(ECB, "Currently unsupported mode: %s", yarp::os::Vocab::decode(controlMode).c_str());
 #endif
         return false;
     }
@@ -40,7 +44,7 @@ bool roboticslab::EmulatedControlboard::getControlMode(int j, int *mode)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::getControlModes(int *modes)
+bool EmulatedControlboard::getControlModes(int *modes)
 {
     bool ok = true;
 
@@ -54,7 +58,7 @@ bool roboticslab::EmulatedControlboard::getControlModes(int *modes)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::getControlModes(const int n_joint, const int *joints, int *modes)
+bool EmulatedControlboard::getControlModes(const int n_joint, const int *joints, int *modes)
 {
     bool ok = true;
 
@@ -68,17 +72,17 @@ bool roboticslab::EmulatedControlboard::getControlModes(const int n_joint, const
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::setControlMode(const int j, const int mode)
+bool EmulatedControlboard::setControlMode(const int j, const int mode)
 {
 #if YARP_VERSION_MINOR >= 5
-    yTrace("%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
+    yCTrace(ECB, "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
 #else
-    yTrace("%d %s", j, yarp::os::Vocab::decode(mode).c_str());
+    yCTrace(ECB, "%d %s", j, yarp::os::Vocab::decode(mode).c_str());
 #endif
 
     if ((unsigned int)j > axes)
     {
-        yError("Axis index greater than number of axes (%d > %d)", j, axes);
+        yCError(ECB, "Axis index greater than number of axes (%d > %d)", j, axes);
         return false;
     }
 
@@ -99,7 +103,7 @@ bool roboticslab::EmulatedControlboard::setControlMode(const int j, const int mo
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::setControlModes(const int n_joint, const int *joints, int *modes)
+bool EmulatedControlboard::setControlModes(const int n_joint, const int *joints, int *modes)
 {
     bool ok = true;
 
@@ -113,7 +117,7 @@ bool roboticslab::EmulatedControlboard::setControlModes(const int n_joint, const
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::setControlModes(int *modes)
+bool EmulatedControlboard::setControlModes(int *modes)
 {
     bool ok = true;
 

@@ -6,11 +6,28 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 
+#include "LogComponent.hpp"
+
+using namespace roboticslab;
+
+constexpr auto DEFAULT_AXES = 5;
+constexpr auto DEFAULT_EXTRA_ROBOT = "none";
+constexpr auto DEFAULT_EXTERN_OBJ = "none";
+constexpr auto DEFAULT_GEN_ENC_RAW_EXPOSED = 0.0174532925199433; // Ratio, 0.0174532925199433 is pi/180 (raw/exp)<->(rad/deg)
+constexpr auto DEFAULT_GEN_INIT_POS = 0; // Exposed.
+constexpr auto DEFAULT_GEN_JOINT_TOL = 0.25; // Exposed.
+constexpr auto DEFAULT_GEN_MAX_LIMIT = 180.0; // Exposed.
+constexpr auto DEFAULT_GEN_MIN_LIMIT = -180.0; // Exposed.
+constexpr auto DEFAULT_GEN_REF_SPEED = 7.5; // Exposed.
+constexpr auto DEFAULT_GEN_VEL_RAW_EXPOSED = 0.0174532925199433; // Ratio, 0.0174532925199433 is pi/180 (raw/exp)<->(rad/deg)
+constexpr auto DEFAULT_JMC_MS = 20; // [ms]
+constexpr auto DEFAULT_MODE_POS_VEL = 0; // 0=Position, 1=Velocity.
+
 // ------------------- DeviceDriver Related ------------------------------------
 
-bool roboticslab::EmulatedControlboard::open(yarp::os::Searchable& config)
+bool EmulatedControlboard::open(yarp::os::Searchable& config)
 {
-    yDebug() << "EmulatedControlboard config:" << config.toString();
+    yCDebug(ECB) << "Config:" << config.toString();
 
     axes = config.check("axes", yarp::os::Value(DEFAULT_AXES), "number of axes to control").asInt32();
     jmcMs = config.check("jmcMs", yarp::os::Value(DEFAULT_JMC_MS), "period of JMC periodic thread (milliseconds)").asInt32();
@@ -22,7 +39,7 @@ bool roboticslab::EmulatedControlboard::open(yarp::os::Searchable& config)
     double genRefSpeed = config.check("genRefSpeed", yarp::os::Value(DEFAULT_GEN_REF_SPEED), "general ref speed (meters/second or degrees/second)").asFloat64();
     double genEncRawExposed = config.check("genEncRawExposed", yarp::os::Value(DEFAULT_GEN_ENC_RAW_EXPOSED), "general EncRawExposed (meters or degrees)").asFloat64();
     double genVelRawExposed = config.check("genVelRawExposed", yarp::os::Value(DEFAULT_GEN_VEL_RAW_EXPOSED), "general VelRawExposed (meters/second or degrees/second)").asFloat64();
-    
+
     int modePosVelInt = config.check("modePosVel", yarp::os::Value(DEFAULT_MODE_POS_VEL), "0:pos, 1:vel").asInt32();
 
     switch (modePosVelInt)
@@ -34,7 +51,7 @@ bool roboticslab::EmulatedControlboard::open(yarp::os::Searchable& config)
         controlMode = VELOCITY_MODE;
         break;
     default:
-        yError() << "Unrecognized mode identifier:" << modePosVelInt << "(0:pos, 1:vel)";
+        yCError(ECB) << "Unrecognized mode identifier:" << modePosVelInt << "(0:pos, 1:vel)";
         return false;
     }
 
@@ -43,17 +60,17 @@ bool roboticslab::EmulatedControlboard::open(yarp::os::Searchable& config)
     if (config.check("initPoss", "list of initialization positions (meters or degrees)"))
     {
         initPoss = config.find("initPoss").asList();
-        yInfo() << "Using individual initPoss:" << initPoss->toString();
+        yCInfo(ECB) << "Using individual initPoss:" << initPoss->toString();
 
         if ((unsigned)initPoss->size() != axes)
         {
-            yWarning() << "initPoss->size() != axes";
+            yCWarning(ECB) << "initPoss->size() != axes";
         }
     }
     else
     {
         initPoss = 0;
-        yInfo() << "EmulatedControlboard not using individual initPoss, defaulting to genInitPos";
+        yCInfo(ECB) << "EmulatedControlboard not using individual initPoss, defaulting to genInitPos";
     }
 
     yarp::os::Bottle* jointTols;
@@ -61,17 +78,17 @@ bool roboticslab::EmulatedControlboard::open(yarp::os::Searchable& config)
     if (config.check("jointTols", "list of joint tolerances (meters or degrees)"))
     {
         jointTols = config.find("jointTols").asList();
-        yInfo() << "EmulatedControlboard using individual jointTols:" << jointTols->toString();
+        yCInfo(ECB) << "EmulatedControlboard using individual jointTols:" << jointTols->toString();
 
         if ((unsigned)jointTols->size() != axes)
         {
-            yWarning() << "jointTols->size() != axes";
+            yCWarning(ECB) << "jointTols->size() != axes";
         }
     }
     else
     {
         jointTols = 0;
-        yInfo() << "EmulatedControlboard not using individual jointTols, defaulting to genJointTol";
+        yCInfo(ECB) << "EmulatedControlboard not using individual jointTols, defaulting to genJointTol";
     }
 
     yarp::os::Bottle* maxLimits;
@@ -79,17 +96,17 @@ bool roboticslab::EmulatedControlboard::open(yarp::os::Searchable& config)
     if (config.check("maxLimits", "list of max limits (meters or degrees)"))
     {
         maxLimits = config.find("maxLimits").asList();
-        yInfo() << "EmulatedControlboard using individual maxLimits:" << maxLimits->toString();
+        yCInfo(ECB) << "EmulatedControlboard using individual maxLimits:" << maxLimits->toString();
 
         if ((unsigned)maxLimits->size() != axes)
         {
-            yWarning() << "maxLimits->size() != axes";
+            yCWarning(ECB) << "maxLimits->size() != axes";
         }
     }
     else
     {
         maxLimits = 0;
-        yInfo() << "EmulatedControlboard not using individual maxLimits, defaulting to genMaxLimit";
+        yCInfo(ECB) << "EmulatedControlboard not using individual maxLimits, defaulting to genMaxLimit";
     }
 
     yarp::os::Bottle* minLimits;
@@ -97,17 +114,17 @@ bool roboticslab::EmulatedControlboard::open(yarp::os::Searchable& config)
     if (config.check("minLimits", "list of min limits (meters or degrees)"))
     {
         minLimits = config.find("minLimits").asList();
-        yInfo() << "EmulatedControlboard using individual minLimits:" << minLimits->toString();
-        
+        yCInfo(ECB) << "EmulatedControlboard using individual minLimits:" << minLimits->toString();
+
         if ((unsigned)minLimits->size() != axes)
         {
-            yWarning() << "minLimits->size() != axes";
+            yCWarning(ECB) << "minLimits->size() != axes";
         }
     }
     else
     {
         minLimits = 0;
-        yInfo() << "EmulatedControlboard not using individual minLimits, defaulting to genMinLimit";
+        yCInfo(ECB) << "EmulatedControlboard not using individual minLimits, defaulting to genMinLimit";
     }
 
     yarp::os::Bottle* refSpeeds;
@@ -115,17 +132,17 @@ bool roboticslab::EmulatedControlboard::open(yarp::os::Searchable& config)
     if (config.check("refSpeeds", "list of ref speeds (meters/second or degrees/second)"))
     {
         refSpeeds = config.find("refSpeeds").asList();
-        yInfo() << "EmulatedControlboard using individual refSpeeds:" << refSpeeds->toString();
-    
+        yCInfo(ECB) << "EmulatedControlboard using individual refSpeeds:" << refSpeeds->toString();
+
         if ((unsigned)refSpeeds->size() != axes)
         {
-            yWarning() << "refSpeeds->size() != axes";
+            yCWarning(ECB) << "refSpeeds->size() != axes";
         }
     }
     else
     {
         refSpeeds = 0;
-        yInfo() << "EmulatedControlboard not using individual refSpeeds, defaulting to genRefSpeed";
+        yCInfo(ECB) << "EmulatedControlboard not using individual refSpeeds, defaulting to genRefSpeed";
     }
 
     yarp::os::Bottle* encRawExposeds;
@@ -133,17 +150,17 @@ bool roboticslab::EmulatedControlboard::open(yarp::os::Searchable& config)
     if (config.check("encRawExposeds", "list of EncRawExposeds (meters or degrees)"))
     {
         encRawExposeds = config.find("encRawExposeds").asList();
-        yInfo() << "EmulatedControlboard using individual encRawExposeds:" << encRawExposeds->toString();
-     
+        yCInfo(ECB) << "EmulatedControlboard using individual encRawExposeds:" << encRawExposeds->toString();
+
         if ((unsigned)encRawExposeds->size() != axes)
         {
-            yWarning() << "encRawExposeds->size() != axes";
+            yCWarning(ECB) << "encRawExposeds->size() != axes";
         }
     }
     else
     {
         encRawExposeds = 0;
-        yInfo() << "EmulatedControlboard not using individual encRawExposeds, defaulting to genEncRawExposed";
+        yCInfo(ECB) << "EmulatedControlboard not using individual encRawExposeds, defaulting to genEncRawExposed";
     }
 
     yarp::os::Bottle* velRawExposeds;
@@ -151,17 +168,17 @@ bool roboticslab::EmulatedControlboard::open(yarp::os::Searchable& config)
     if (config.check("velRawExposeds", "list of VelRawExposed (meters/second or degrees/second)"))
     {
         velRawExposeds = config.find("velRawExposeds").asList();
-        yInfo() << "EmulatedControlboard using individual velRawExposeds:" << velRawExposeds->toString();
+        yCInfo(ECB) << "EmulatedControlboard using individual velRawExposeds:" << velRawExposeds->toString();
 
         if ((unsigned)velRawExposeds->size() != axes)
         {
-            yWarning() << "velRawExposeds->size() != axes";
+            yCWarning(ECB) << "velRawExposeds->size() != axes";
         }
     }
     else
     {
         velRawExposeds = 0;
-        yInfo() << "EmulatedControlboard not using individual velRawExposeds, defaulting to genVelRawExposed";
+        yCInfo(ECB) << "EmulatedControlboard not using individual velRawExposeds, defaulting to genVelRawExposed";
     }
 
     encRawExposed.resize(axes);
@@ -201,13 +218,13 @@ bool roboticslab::EmulatedControlboard::open(yarp::os::Searchable& config)
     // Start the PeriodicThread
     PeriodicThread::setPeriod(jmcMs * 0.001);
     PeriodicThread::start();
-    
+
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::close()
+bool EmulatedControlboard::close()
 {
     PeriodicThread::stop();
     return true;

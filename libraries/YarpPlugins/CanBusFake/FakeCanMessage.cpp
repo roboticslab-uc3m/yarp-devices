@@ -4,22 +4,24 @@
 
 #include <cstring> // std::memcpy
 
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
 
-roboticslab::FakeCanMessage::FakeCanMessage()
+FakeCanMessage::FakeCanMessage()
 {
     message = nullptr;
 }
 
 // -----------------------------------------------------------------------------
 
-roboticslab::FakeCanMessage::~FakeCanMessage()
+FakeCanMessage::~FakeCanMessage()
 {
 }
 
 // -----------------------------------------------------------------------------
 
-yarp::dev::CanMessage & roboticslab::FakeCanMessage::operator=(const yarp::dev::CanMessage & l)
+yarp::dev::CanMessage & FakeCanMessage::operator=(const yarp::dev::CanMessage & l)
 {
     const FakeCanMessage & tmp = dynamic_cast<const FakeCanMessage &>(l);
     std::memcpy(message, tmp.message, sizeof(struct fake_can_msg));
@@ -28,63 +30,63 @@ yarp::dev::CanMessage & roboticslab::FakeCanMessage::operator=(const yarp::dev::
 
 // -----------------------------------------------------------------------------
 
-unsigned int roboticslab::FakeCanMessage::getId() const
+unsigned int FakeCanMessage::getId() const
 {
     return message->id;
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned char roboticslab::FakeCanMessage::getLen() const
+unsigned char FakeCanMessage::getLen() const
 {
     return message->dlc;
 }
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::FakeCanMessage::setLen(unsigned char len)
+void FakeCanMessage::setLen(unsigned char len)
 {
     message->dlc = len;
 }
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::FakeCanMessage::setId(unsigned int id)
+void FakeCanMessage::setId(unsigned int id)
 {
     message->id = id;
 }
 
 // -----------------------------------------------------------------------------
 
-const unsigned char * roboticslab::FakeCanMessage::getData() const
+const unsigned char * FakeCanMessage::getData() const
 {
     return message->data;
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned char * roboticslab::FakeCanMessage::getData()
+unsigned char * FakeCanMessage::getData()
 {
     return message->data;
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned char * roboticslab::FakeCanMessage::getPointer()
+unsigned char * FakeCanMessage::getPointer()
 {
     return reinterpret_cast<unsigned char *>(message);
 }
 
 // -----------------------------------------------------------------------------
 
-const unsigned char * roboticslab::FakeCanMessage::getPointer() const
+const unsigned char * FakeCanMessage::getPointer() const
 {
     return reinterpret_cast<const unsigned char *>(message);
 }
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::FakeCanMessage::setBuffer(unsigned char * buf)
+void FakeCanMessage::setBuffer(unsigned char * buf)
 {
     if (buf != nullptr)
     {

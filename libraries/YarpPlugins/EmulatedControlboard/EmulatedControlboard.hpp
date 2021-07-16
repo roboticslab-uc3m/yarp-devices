@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __FAKE_CONTROLBOARD_HPP__
-#define __FAKE_CONTROLBOARD_HPP__
+#ifndef __EMULATED_CONTROLBOARD_HPP__
+#define __EMULATED_CONTROLBOARD_HPP__
 
 #include <vector>
 
@@ -11,20 +11,6 @@
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-
-#define DEFAULT_AXES 5
-
-#define DEFAULT_EXTRA_ROBOT "none"
-#define DEFAULT_EXTERN_OBJ "none"
-#define DEFAULT_GEN_ENC_RAW_EXPOSED 0.0174532925199433  // Ratio, 0.0174532925199433 is pi/180 (raw/exp)<->(rad/deg)
-#define DEFAULT_GEN_INIT_POS 0  // Exposed.
-#define DEFAULT_GEN_JOINT_TOL 0.25  // Exposed.
-#define DEFAULT_GEN_MAX_LIMIT 180.0  // Exposed.
-#define DEFAULT_GEN_MIN_LIMIT -180.0  // Exposed.
-#define DEFAULT_GEN_REF_SPEED 7.5  // Exposed.
-#define DEFAULT_GEN_VEL_RAW_EXPOSED 0.0174532925199433  // Ratio, 0.0174532925199433 is pi/180 (raw/exp)<->(rad/deg)
-#define DEFAULT_JMC_MS 20  // [ms]
-#define DEFAULT_MODE_POS_VEL 0  // 0=Position, 1=Velocity.
 
 namespace roboticslab
 {
@@ -51,7 +37,7 @@ class EmulatedControlboard : public yarp::dev::DeviceDriver,
 public:
 
     // Set the thread period in the class constructor
-    EmulatedControlboard() : PeriodicThread(DEFAULT_JMC_MS * 0.001) {}  // In seconds
+    EmulatedControlboard() : PeriodicThread(1.0) {} // In seconds
 
 // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
 
@@ -700,4 +686,4 @@ private:
 
 } // namespace roboticslab
 
-#endif // __FAKE_CONTROLBOARD_HPP__
+#endif // __EMULATED_CONTROLBOARD_HPP__

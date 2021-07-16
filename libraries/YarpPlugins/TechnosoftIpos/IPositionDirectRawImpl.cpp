@@ -4,13 +4,15 @@
 
 #include <yarp/os/Log.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
 bool TechnosoftIpos::setPositionRaw(int j, double ref)
 {
-    yTrace("%d %f", j, ref);
+    yCTrace(IPOS, "%d %f", j, ref);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
 
@@ -60,7 +62,7 @@ bool TechnosoftIpos::setPositionsRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::getRefPositionRaw(int joint, double * ref)
 {
-    yTrace("%d", joint);
+    yCTrace(IPOS, "%d", joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
 

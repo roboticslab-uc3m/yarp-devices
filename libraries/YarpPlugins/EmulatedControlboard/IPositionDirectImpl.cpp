@@ -4,19 +4,23 @@
 
 #include <yarp/os/Log.h>
 
+#include "LogComponent.hpp"
+
+using namespace roboticslab;
+
 // ------------------- IPositionDirect Related --------------------------------
 
-bool roboticslab::EmulatedControlboard::setPosition(int j, double ref)
+bool EmulatedControlboard::setPosition(int j, double ref)
 {
     if ((unsigned int)j > axes)
     {
-        yError("Axis index exceeds number of axes");
+        yCError(ECB, "Axis index exceeds number of axes");
         return false;
     }
 
     if (controlMode != POSITION_DIRECT_MODE)
     {
-        yError("will not setPosition() as not in positionDirectMode");
+        yCError(ECB, "will not setPosition() as not in positionDirectMode");
         return false;
     }
 
@@ -28,7 +32,7 @@ bool roboticslab::EmulatedControlboard::setPosition(int j, double ref)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::setPositions(const int n_joint, const int *joints, const double *refs)
+bool EmulatedControlboard::setPositions(const int n_joint, const int *joints, const double *refs)
 {
     bool ok = true;
 
@@ -42,7 +46,7 @@ bool roboticslab::EmulatedControlboard::setPositions(const int n_joint, const in
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::setPositions(const double *refs)
+bool EmulatedControlboard::setPositions(const double *refs)
 {
     bool ok = true;
 
@@ -56,17 +60,17 @@ bool roboticslab::EmulatedControlboard::setPositions(const double *refs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::getRefPosition(const int joint, double *ref)
+bool EmulatedControlboard::getRefPosition(const int joint, double *ref)
 {
     if ((unsigned int)joint > axes)
     {
-        yError("Axis index exceeds number of axes");
+        yCError(ECB, "Axis index exceeds number of axes");
         return false;
     }
 
     if (controlMode != POSITION_DIRECT_MODE)
     {
-        yError("will not getRefPosition() as not in positionDirectMode");
+        yCError(ECB, "will not getRefPosition() as not in positionDirectMode");
         return false;
     }
 
@@ -77,7 +81,7 @@ bool roboticslab::EmulatedControlboard::getRefPosition(const int joint, double *
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::getRefPositions(double *refs)
+bool EmulatedControlboard::getRefPositions(double *refs)
 {
     bool ok = true;
 
@@ -91,7 +95,7 @@ bool roboticslab::EmulatedControlboard::getRefPositions(double *refs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::getRefPositions(const int n_joint, const int *joints, double *refs)
+bool EmulatedControlboard::getRefPositions(const int n_joint, const int *joints, double *refs)
 {
     bool ok = true;
 

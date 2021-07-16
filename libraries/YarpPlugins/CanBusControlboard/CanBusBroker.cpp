@@ -7,6 +7,7 @@
 #include <yarp/os/LogStream.h>
 
 #include "CanUtils.hpp"
+#include "LogComponent.hpp"
 
 using namespace roboticslab;
 
@@ -50,7 +51,7 @@ bool CanBusBroker::configure(const yarp::os::Searchable & config)
 
     if (rxBufferSize <= 0 || txBufferSize <= 0 || rxDelay <= 0.0 || txDelay <= 0.0)
     {
-        yWarning() << "Illegal CAN bus buffer size or delay options";
+        yCWarning(CBCB) << "Illegal CAN bus buffer size or delay options";
         return false;
     }
 
@@ -60,7 +61,7 @@ bool CanBusBroker::configure(const yarp::os::Searchable & config)
 
         if (busLoadPeriod <= 0.0)
         {
-            yWarning() << "Illegal CAN bus load monitor option period:" << busLoadPeriod;
+            yCWarning(CBCB) << "Illegal CAN bus load monitor option period:" << busLoadPeriod;
             return false;
         }
 
@@ -84,19 +85,19 @@ bool CanBusBroker::registerDevice(yarp::dev::PolyDriver * driver)
 {
     if (!driver->view(iCanBus))
     {
-        yWarning() << "Cannot view ICanBus interface";
+        yCWarning(CBCB) << "Cannot view ICanBus interface";
         return false;
     }
 
     if (!driver->view(iCanBusErrors))
     {
-        yWarning() << "Cannot view ICanBusErrors interface";
+        yCWarning(CBCB) << "Cannot view ICanBusErrors interface";
         return false;
     }
 
     if (!driver->view(iCanBufferFactory))
     {
-        yWarning() << "Cannot view ICanBufferFactory interface";
+        yCWarning(CBCB) << "Cannot view ICanBufferFactory interface";
         return false;
     }
 
@@ -106,7 +107,7 @@ bool CanBusBroker::registerDevice(yarp::dev::PolyDriver * driver)
 
         if (!iCanBus->canGetBaudRate(&bitrate))
         {
-            yWarning() << "Cannot get bitrate";
+            yCWarning(CBCB) << "Cannot get bitrate";
             return false;
         }
 
@@ -132,25 +133,25 @@ bool CanBusBroker::createPorts(const std::string & prefix)
 {
     if (!dumpPort.open(prefix + "/dump:o"))
     {
-        yWarning() << "Cannot open dump port";
+        yCWarning(CBCB) << "Cannot open dump port";
         return false;
     }
 
     if (!sendPort.open(prefix + "/send:i"))
     {
-        yWarning() << "Cannot open send port";
+        yCWarning(CBCB) << "Cannot open send port";
         return false;
     }
 
     if (!sdoPort.open(prefix + "/sdo:s"))
     {
-        yWarning() << "Cannot open SDO port";
+        yCWarning(CBCB) << "Cannot open SDO port";
         return false;
     }
 
     if (busLoadMonitor && !busLoadPort.open(prefix + "/load:o"))
     {
-        yWarning() << "Cannot open bus load port";
+        yCWarning(CBCB) << "Cannot open bus load port";
         return false;
     }
 
@@ -204,7 +205,7 @@ bool CanBusBroker::addFilters()
         {
             if (!iCanBus->canIdAdd(id))
             {
-                yWarning() << "Cannot add acceptance filter ID" << id;
+                yCWarning(CBCB) << "Cannot add acceptance filter ID" << id;
                 return false;
             }
         }
@@ -225,7 +226,7 @@ bool CanBusBroker::clearFilters()
     // Clear CAN acceptance filters ('0' = all IDs that were previously set by canIdAdd).
     if (!iCanBus->canIdDelete(0))
     {
-        yWarning() << "CAN filters on bus" << name << "may be preserved on the next run";
+        yCWarning(CBCB) << "CAN filters on bus" << name << "may be preserved on the next run";
         return false;
     }
 
@@ -238,19 +239,19 @@ bool CanBusBroker::startThreads()
 {
     if (busLoadMonitor && !busLoadMonitor->start())
     {
-        yWarning() << "Cannot start bus load monitor thread";
+        yCWarning(CBCB) << "Cannot start bus load monitor thread";
         return false;
     }
 
     if (!readerThread || !readerThread->start())
     {
-        yWarning() << "Cannot start reader thread";
+        yCWarning(CBCB) << "Cannot start reader thread";
         return false;
     }
 
     if (!writerThread || !writerThread->start())
     {
-        yWarning() << "Cannot start writer thread";
+        yCWarning(CBCB) << "Cannot start writer thread";
         return false;
     }
 
@@ -274,13 +275,13 @@ bool CanBusBroker::stopThreads()
 
     if (readerThread && readerThread->isRunning() && !readerThread->stop())
     {
-        yWarning() << "Cannot stop reader thread";
+        yCWarning(CBCB) << "Cannot stop reader thread";
         ok = false;
     }
 
     if (writerThread && writerThread->isRunning() && !writerThread->stop())
     {
-        yWarning() << "Cannot stop writer thread";
+        yCWarning(CBCB) << "Cannot stop writer thread";
         ok = false;
     }
 
@@ -297,7 +298,7 @@ void CanBusBroker::onRead(yarp::os::Bottle & b)
 {
     if (b.size() != 1 && b.size() != 2)
     {
-        yWarning("Illegal size %zu, expected [1,2]", b.size());
+        yCWarning(CBCB, "Illegal size %zu, expected [1,2]", b.size());
         return;
     }
 
@@ -305,7 +306,7 @@ void CanBusBroker::onRead(yarp::os::Bottle & b)
 
     if (id > 0x7FF)
     {
-        yWarning("Illegal COB-ID: 0x%x", id);
+        yCWarning(CBCB, "Illegal COB-ID: 0x%x", id);
         return;
     }
 
@@ -316,7 +317,7 @@ void CanBusBroker::onRead(yarp::os::Bottle & b)
     {
         if (!b.get(1).isList())
         {
-            yWarning("Second element is not a list");
+            yCWarning(CBCB, "Second element is not a list");
             return;
         }
 
@@ -325,7 +326,7 @@ void CanBusBroker::onRead(yarp::os::Bottle & b)
 
         if (size == 0 || size > 8)
         {
-            yWarning("Empty data or size exceeds 8 elements: %d", size);
+            yCWarning(CBCB, "Empty data or size exceeds 8 elements: %d", size);
             return;
         }
 
@@ -339,7 +340,7 @@ void CanBusBroker::onRead(yarp::os::Bottle & b)
 
     can_message msg {id, size, raw.get()};
     writerThread->getDelegate()->prepareMessage(msg);
-    yInfo("Remote command: %s", CanUtils::msgToStr(msg).c_str());
+    yCInfo(CBCB, "Remote command: %s", CanUtils::msgToStr(msg).c_str());
 }
 
 // -----------------------------------------------------------------------------

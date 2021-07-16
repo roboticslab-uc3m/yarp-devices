@@ -4,13 +4,15 @@
 
 #include <yarp/os/Log.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
 bool CanBusControlboard::enableAmp(int j)
 {
-    yTrace("%d", j);
+    yCTrace(CBCB, "%d", j);
     CHECK_JOINT(j);
     return deviceMapper.mapSingleJoint(&yarp::dev::IAmplifierControlRaw::enableAmpRaw, j);
 }
@@ -19,7 +21,7 @@ bool CanBusControlboard::enableAmp(int j)
 
 bool CanBusControlboard::disableAmp(int j)
 {
-    yTrace("%d", j);
+    yCTrace(CBCB, "%d", j);
     CHECK_JOINT(j);
     return deviceMapper.mapSingleJoint(&yarp::dev::IAmplifierControlRaw::disableAmpRaw, j);
 }
@@ -28,7 +30,7 @@ bool CanBusControlboard::disableAmp(int j)
 
 bool CanBusControlboard::getAmpStatus(int j, int * v)
 {
-    yTrace("%d", j);
+    yCTrace(CBCB, "%d", j);
     CHECK_JOINT(j);
     return deviceMapper.mapSingleJoint(&yarp::dev::IAmplifierControlRaw::getAmpStatusRaw, j, v);
 }
@@ -37,7 +39,7 @@ bool CanBusControlboard::getAmpStatus(int j, int * v)
 
 bool CanBusControlboard::getAmpStatus(int * st)
 {
-    yTrace("");
+    yCTrace(CBCB, "");
     return deviceMapper.mapAllJoints(&yarp::dev::IAmplifierControlRaw::getAmpStatusRaw, st);
 }
 
@@ -45,7 +47,7 @@ bool CanBusControlboard::getAmpStatus(int * st)
 
 bool CanBusControlboard::getMaxCurrent(int j, double * v)
 {
-    yTrace("%d", j);
+    yCTrace(CBCB, "%d", j);
     CHECK_JOINT(j);
     return deviceMapper.mapSingleJoint(&yarp::dev::IAmplifierControlRaw::getMaxCurrentRaw, j, v);
 }
@@ -54,7 +56,7 @@ bool CanBusControlboard::getMaxCurrent(int j, double * v)
 
 bool CanBusControlboard::setMaxCurrent(int j, double v)
 {
-    yTrace("%d %f", j, v);
+    yCTrace(CBCB, "%d %f", j, v);
     CHECK_JOINT(j);
     return deviceMapper.mapSingleJoint(&yarp::dev::IAmplifierControlRaw::setMaxCurrentRaw, j, v);
 }
@@ -63,7 +65,7 @@ bool CanBusControlboard::setMaxCurrent(int j, double v)
 
 bool CanBusControlboard::getNominalCurrent(int m, double * val)
 {
-    yTrace("%d", m);
+    yCTrace(CBCB, "%d", m);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IAmplifierControlRaw::getNominalCurrentRaw, m, val);
 }
@@ -72,7 +74,7 @@ bool CanBusControlboard::getNominalCurrent(int m, double * val)
 
 bool CanBusControlboard::setNominalCurrent(int m, double val)
 {
-    yTrace("%d %f", m, val);
+    yCTrace(CBCB, "%d %f", m, val);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IAmplifierControlRaw::setNominalCurrentRaw, m, val);
 }
@@ -81,7 +83,7 @@ bool CanBusControlboard::setNominalCurrent(int m, double val)
 
 bool CanBusControlboard::getPeakCurrent(int m, double * val)
 {
-    yTrace("%d", m);
+    yCTrace(CBCB, "%d", m);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IAmplifierControlRaw::getPeakCurrentRaw, m, val);
 }
@@ -90,7 +92,7 @@ bool CanBusControlboard::getPeakCurrent(int m, double * val)
 
 bool CanBusControlboard::setPeakCurrent(int m, double val)
 {
-    yTrace("%d %f", m, val);
+    yCTrace(CBCB, "%d %f", m, val);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IAmplifierControlRaw::setPeakCurrentRaw, m, val);
 }
@@ -99,7 +101,7 @@ bool CanBusControlboard::setPeakCurrent(int m, double val)
 
 bool CanBusControlboard::getPWM(int j, double * val)
 {
-    yTrace("%d", j);
+    yCTrace(CBCB, "%d", j);
     CHECK_JOINT(j);
     return deviceMapper.mapSingleJoint(&yarp::dev::IAmplifierControlRaw::getPWMRaw, j, val);
 }
@@ -108,7 +110,7 @@ bool CanBusControlboard::getPWM(int j, double * val)
 
 bool CanBusControlboard::getPWMLimit(int j, double * val)
 {
-    yTrace("%d", j);
+    yCTrace(CBCB, "%d", j);
     CHECK_JOINT(j);
     return deviceMapper.mapSingleJoint(&yarp::dev::IAmplifierControlRaw::getPWMLimitRaw, j, val);
 }
@@ -117,7 +119,7 @@ bool CanBusControlboard::getPWMLimit(int j, double * val)
 
 bool CanBusControlboard::setPWMLimit(int j, double val)
 {
-    yTrace("%d %f", j, val);
+    yCTrace(CBCB, "%d %f", j, val);
     CHECK_JOINT(j);
     return deviceMapper.mapSingleJoint(&yarp::dev::IAmplifierControlRaw::setPWMLimitRaw, j, val);
 }
@@ -126,7 +128,7 @@ bool CanBusControlboard::setPWMLimit(int j, double val)
 
 bool CanBusControlboard::getPowerSupplyVoltage(int j, double * val)
 {
-    yTrace("%d", j);
+    yCTrace(CBCB, "%d", j);
     CHECK_JOINT(j);
     return deviceMapper.mapSingleJoint(&yarp::dev::IAmplifierControlRaw::getPowerSupplyVoltageRaw, j, val);
 }

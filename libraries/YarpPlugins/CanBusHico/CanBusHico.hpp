@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __CAN_BUS_HICO__
-#define __CAN_BUS_HICO__
+#ifndef __CAN_BUS_HICO_HPP__
+#define __CAN_BUS_HICO_HPP__
 
 #include <set>
 #include <map>
@@ -55,11 +55,11 @@ public:
                    txTimeoutMs(DEFAULT_TX_TIMEOUT_MS),
                    blockingMode(DEFAULT_BLOCKING_MODE),
                    allowPermissive(DEFAULT_ALLOW_PERMISSIVE),
-                   filterManager(NULL),
+                   filterManager(nullptr),
                    filterConfig(FilterManager::DISABLED)
     { }
 
-    ~CanBusHico()
+    ~CanBusHico() override
     { close(); }
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -69,28 +69,28 @@ public:
      * @param bitrate is the bitrate, such as BITRATE_100k.
      * @return true/false on success/failure.
      */
-    virtual bool open(yarp::os::Searchable& config);
+    bool open(yarp::os::Searchable& config) override;
 
     /** Close the CAN device. */
-    virtual bool close();
+    bool close() override;
 
     //  --------- ICanBus declarations. Implementation in ICanBusImpl.cpp ---------
 
-    virtual bool canSetBaudRate(unsigned int rate);
+    bool canSetBaudRate(unsigned int rate) override;
 
-    virtual bool canGetBaudRate(unsigned int * rate);
+    bool canGetBaudRate(unsigned int * rate) override;
 
-    virtual bool canIdAdd(unsigned int id);
+    bool canIdAdd(unsigned int id) override;
 
-    virtual bool canIdDelete(unsigned int id);
+    bool canIdDelete(unsigned int id) override;
 
-    virtual bool canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait = false);
+    bool canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait = false) override;
 
-    virtual bool canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait = false);
+    bool canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait = false) override;
 
     //  --------- ICanBusErrors declarations. Implementation in ICanBusErrorsImpl.cpp ---------
 
-    virtual bool canGetErrors(yarp::dev::CanErrors & err);
+    bool canGetErrors(yarp::dev::CanErrors & err) override;
 
 protected:
 
@@ -147,9 +147,8 @@ protected:
     FilterManager * filterManager;
 
     FilterManager::filter_config filterConfig;
-
 };
 
-}  // namespace roboticslab
+} // namespace roboticslab
 
-#endif  // __CAN_BUS_HICO__
+#endif // __CAN_BUS_HICO_HPP__

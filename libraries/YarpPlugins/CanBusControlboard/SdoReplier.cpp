@@ -15,6 +15,7 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/Vocab.h>
 
+#include "LogComponent.hpp"
 #include "SdoClient.hpp"
 
 using namespace roboticslab;
@@ -160,7 +161,7 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
 
     if (request.size() < 5)
     {
-        yWarning("SDO requests require at least 5 elements, got %zu", request.size());
+        yCWarning(CBCB, "SDO requests require at least 5 elements, got %zu", request.size());
         return false;
     }
 
@@ -280,9 +281,9 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
         }
         default:
 #if YARP_VERSION_MINOR >= 5
-            yWarning("Invalid data type %s", yarp::os::Vocab32::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
+            yCWarning(CBCB, "Invalid data type %s", yarp::os::Vocab32::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
 #else
-            yWarning("Invalid data type %s", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
+            yCWarning(CBCB, "Invalid data type %s", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
 #endif
             return false;
         }
@@ -299,7 +300,7 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
     {
         if (request.size() != 6)
         {
-            yWarning("Download SDO requires exactly 6 elements, got %zu", request.size());
+            yCWarning(CBCB, "Download SDO requires exactly 6 elements, got %zu", request.size());
             return false;
         }
 
@@ -320,9 +321,9 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
             return priv->sdo()->download("Remote indication", data.asString(), index, subindex) && guard.flip();
         default:
 #if YARP_VERSION_MINOR >= 5
-            yWarning("Invalid data type %s", yarp::os::Vocab32::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
+            yCWarning(CBCB, "Invalid data type %s", yarp::os::Vocab32::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
 #else
-            yWarning("Invalid data type %s", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
+            yCWarning(CBCB, "Invalid data type %s", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
 #endif
             return false;
         }
@@ -330,9 +331,9 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
     else
     {
 #if YARP_VERSION_MINOR >= 5
-        yWarning("Invalid SDO direction %s", yarp::os::Vocab32::decode(static_cast<yarp::conf::vocab32_t>(dir)).c_str());
+        yCWarning(CBCB, "Invalid SDO direction %s", yarp::os::Vocab32::decode(static_cast<yarp::conf::vocab32_t>(dir)).c_str());
 #else
-        yWarning("Invalid SDO direction %s", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(dir)).c_str());
+        yCWarning(CBCB, "Invalid SDO direction %s", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(dir)).c_str());
 #endif
         return false;
     }

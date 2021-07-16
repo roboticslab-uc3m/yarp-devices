@@ -14,16 +14,14 @@
 #include <yarp/os/Value.h>
 
 #include "CanUtils.hpp"
+#include "LogComponent.hpp"
 
 using namespace roboticslab;
 
-namespace
-{
-    // https://github.com/roboticslab-uc3m/yarp-devices/issues/198#issuecomment-487279910
-    constexpr std::size_t PT_BUFFER_MAX = 9; // 285 if properly configured
-    constexpr std::size_t PVT_BUFFER_MAX = 7; // 222 if properly configured
-    constexpr std::size_t BUFFER_LOW = 4; // max: 15
-}
+// https://github.com/roboticslab-uc3m/yarp-devices/issues/198#issuecomment-487279910
+constexpr std::size_t PT_BUFFER_MAX = 9; // 285 if properly configured
+constexpr std::size_t PVT_BUFFER_MAX = 7; // 222 if properly configured
+constexpr std::size_t BUFFER_LOW = 4; // max: 15
 
 InterpolatedPositionBuffer::InterpolatedPositionBuffer(const StateVariables & _vars, int periodMs)
     : vars(_vars),
@@ -272,7 +270,7 @@ InterpolatedPositionBuffer * createInterpolationBuffer(const yarp::os::Searchabl
 
     if (periodMs < 0)
     {
-        yError() << "Illegal \"periodMs\":" << periodMs;
+        yCError(IPOS) << "Illegal \"periodMs\":" << periodMs;
         return nullptr;
     }
 
@@ -286,7 +284,7 @@ InterpolatedPositionBuffer * createInterpolationBuffer(const yarp::os::Searchabl
     }
     else
     {
-        yError() << "Unsupported interpolated position submode:" << mode;
+        yCError(IPOS) << "Unsupported interpolated position submode:" << mode;
         return nullptr;
     }
 }

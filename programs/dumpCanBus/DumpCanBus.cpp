@@ -6,19 +6,25 @@
 #include <iomanip>
 #include <iostream>
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Value.h>
 
 using namespace roboticslab;
 
+namespace
+{
+    YARP_LOG_COMPONENT(DCB, "rl.DumpCanBus")
+}
+
 bool DumpCanBus::configure(yarp::os::ResourceFinder & rf)
 {
-    yDebug() << "DumpCanBus config:" << rf.toString();
+    yCDebug(DCB) << "Config:" << rf.toString();
 
     if (!rf.check("remote", "remote port name"))
     {
-        yError() << "Missing remote port name";
+        yCError(DCB) << "Missing remote port name";
         return false;
     }
 
@@ -29,7 +35,7 @@ bool DumpCanBus::configure(yarp::os::ResourceFinder & rf)
 
     if (!port.open(local + "/dump:i"))
     {
-        yError() << "Unable to open local port";
+        yCError(DCB) << "Unable to open local port";
         return false;
     }
 
@@ -43,7 +49,7 @@ bool DumpCanBus::configure(yarp::os::ResourceFinder & rf)
 
     if (!yarp::os::Network::connect(remote + "/dump:o", port.getName(), style))
     {
-        yError() << "Unable to connect to remote port";
+        yCError(DCB) << "Unable to connect to remote port";
         return false;
     }
 

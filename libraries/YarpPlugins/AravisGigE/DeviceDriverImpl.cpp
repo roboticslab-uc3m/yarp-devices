@@ -2,22 +2,26 @@
 
 #include <yarp/os/LogStream.h>
 
-bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
+#include "LogComponent.hpp"
+
+using namespace roboticslab;
+
+bool AravisGigE::open(yarp::os::Searchable &config)
 {
-    yDebug() << "AravisGigE config:" << config.toString();
+    yCDebug(ARV) << "Config:" << config.toString();
 
     //-- Configuration of Aravis GigE Camera device
     if (config.check("fake", "enable fake Aravis camera"))
     {
-        yInfo() << "Enabling fake Aravis camera";
+        yCInfo(ARV) << "Enabling fake Aravis camera";
         arv_enable_interface("Fake"); //-- Enables fake Aravis cameras (useful for debug / testing)
     }
 
     //-- Data initialization
     //-------------------------------------------------------------------------------
-    camera = NULL;
-    stream = NULL;
-    framebuffer = NULL;
+    camera = nullptr;
+    stream = nullptr;
+    framebuffer = nullptr;
 
     payload = 0;
 
@@ -49,20 +53,20 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
     arv_update_device_list();
     if ((index<0) || (index>=(int)arv_get_n_devices()))
     {
-        yError() << "Invalid device index, should be 0 <" << index << "< num_devices";
+        yCError(ARV) << "Invalid device index, should be 0 <" << index << "< num_devices";
         return false;
     }
     deviceName = arv_get_device_id(index);
 
     //-- Create Aravis camera
     camera = arv_camera_new(deviceName.c_str());
-    if (camera != NULL)
+    if (camera != nullptr)
     {
-        yInfo() << "Created Aravis camera with index" << index << "and name" << deviceName;
+        yCInfo(ARV) << "Created Aravis camera with index" << index << "and name" << deviceName;
     }
     else
     {
-        yError() << "Could not create Aravis camera";
+        yCError(ARV) << "Could not create Aravis camera";
         return false;
     }
 
@@ -74,74 +78,74 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
         //-- List all  available formats
         guint n_pixel_formats;
         const char ** available_formats = arv_camera_get_available_pixel_formats_as_display_names(camera, &n_pixel_formats);
-        yInfo() << "Available pixel formats:";
+        yCInfo(ARV) << "Available pixel formats:";
         for (int i = 0; i < n_pixel_formats; i++)
-             yInfo() << available_formats[i];
+             yCInfo(ARV) << available_formats[i];
     }
-    yInfo() << "Pixel format selected:" << arv_camera_get_pixel_format_as_string(camera);
+    yCInfo(ARV) << "Pixel format selected:" << arv_camera_get_pixel_format_as_string(camera);
 
     arv_camera_get_width_bounds(camera, &widthMin, &widthMax);
     arv_camera_get_height_bounds(camera, &heightMin, &heightMax);
     arv_camera_set_region(camera, 0, 0, widthMax, heightMax);
-    yInfo("Width range: min=%d max=%d", widthMin, widthMax);
-    yInfo("Height range: min=%d max=%d", heightMin, heightMax);
+    yCInfo(ARV, "Width range: min=%d max=%d", widthMin, widthMax);
+    yCInfo(ARV, "Height range: min=%d max=%d", heightMin, heightMax);
 
     fpsAvailable = arv_camera_is_frame_rate_available(camera);
     if (fpsAvailable)
     {
         arv_camera_get_frame_rate_bounds(camera, &fpsMin, &fpsMax);
-        yInfo("FPS range: min=%f max=%f", fpsMin, fpsMax);
+        yCInfo(ARV, "FPS range: min=%f max=%f", fpsMin, fpsMax);
 
         fps = arv_camera_get_frame_rate(camera);
-        yInfo() << "Current FPS value:" << fps;
+        yCInfo(ARV) << "Current FPS value:" << fps;
     }
     else
-        yWarning() << "FPS property not available";
+        yCWarning(ARV) << "FPS property not available";
 
 
     gainAvailable = arv_camera_is_gain_available(camera);
     if (gainAvailable)
     {
         arv_camera_get_gain_bounds (camera, &gainMin, &gainMax);
-        yInfo("Gain range: min=%f max=%f", gainMin, gainMax);
+        yCInfo(ARV, "Gain range: min=%f max=%f", gainMin, gainMax);
 
         gain = arv_camera_get_gain(camera);
-        yInfo() << "Current gain value:" << gain;
+        yCInfo(ARV) << "Current gain value:" << gain;
     }
     else
-        yWarning() << "Gain property not available";
+        yCWarning(ARV) << "Gain property not available";
 
     exposureAvailable = arv_camera_is_exposure_time_available(camera);
     if (exposureAvailable)
     {
         arv_camera_get_exposure_time_bounds (camera, &exposureMin, &exposureMax);
-        yInfo("Exposure range: min=%f max=%f", exposureMin, exposureMax);
+        yCInfo(ARV, "Exposure range: min=%f max=%f", exposureMin, exposureMax);
 
         exposure = arv_camera_get_exposure_time(camera);
-        yInfo() << "Current exposure value:" << exposure;
+        yCInfo(ARV) << "Current exposure value:" << exposure;
     }
     else
-        yWarning() << "Gain property not available";
+        yCWarning(ARV) << "Gain property not available";
 
     //-- Lens controls availability
-    yInfo() << "Checking Lens Controls availability";
-    arv_device_get_feature(arv_camera_get_device(camera), "Zoom") == NULL ? zoomAvailable = false : zoomAvailable = true;
+    yCInfo(ARV) << "Checking Lens Controls availability";
+    arv_device_get_feature(arv_camera_get_device(camera), "Zoom") == nullptr ? zoomAvailable = false : zoomAvailable = true;
     if (zoomAvailable)
     {
         arv_device_get_integer_feature_bounds(arv_camera_get_device(camera), "Zoom", &zoomMin, &zoomMax);
-        yInfo("Zoom range: min=%ld max=%ld", zoomMin, zoomMax);
+        yCInfo(ARV, "Zoom range: min=%ld max=%ld", zoomMin, zoomMax);
     }
     else
-        yWarning() << "Zoom property not available";
+        yCWarning(ARV) << "Zoom property not available";
 
-    arv_device_get_feature(arv_camera_get_device(camera), "Focus") == NULL ? focusAvailable = false : focusAvailable= true;
+    arv_device_get_feature(arv_camera_get_device(camera), "Focus") == nullptr ? focusAvailable = false : focusAvailable= true;
     if (focusAvailable)
     {
         arv_device_get_integer_feature_bounds(arv_camera_get_device(camera), "Focus", &focusMin, &focusMax);
-        yInfo("Focus range: min=%ld max=%ld", focusMin, focusMax);
+        yCInfo(ARV, "Focus range: min=%ld max=%ld", focusMin, focusMax);
     }
     else
-        yWarning() << "Focus property not available";
+        yCWarning(ARV) << "Focus property not available";
 
     //-- Start capturing images
     //-------------------------------------------------------------------------------
@@ -150,51 +154,51 @@ bool roboticslab::AravisGigE::open(yarp::os::Searchable &config)
     if (stream)
     {
         g_object_unref(stream);
-        stream = NULL;
+        stream = nullptr;
     }
-    stream = arv_camera_create_stream(camera, NULL, NULL);
-    if (stream == NULL)
+    stream = arv_camera_create_stream(camera, nullptr, nullptr);
+    if (stream == nullptr)
     {
-        yError() << "Could not create Aravis stream";
+        yCError(ARV) << "Could not create Aravis stream";
         return false;
     }
-    g_object_set(stream, "socket-buffer", ARV_GV_STREAM_SOCKET_BUFFER_AUTO, "socket-buffer-size", 0, NULL);
-    g_object_set(stream, "packet-resend", ARV_GV_STREAM_PACKET_RESEND_NEVER, NULL);
-    g_object_set(stream, "packet-timeout", (unsigned) 40000, "frame-retention", (unsigned) 200000, NULL);
+    g_object_set(stream, "socket-buffer", ARV_GV_STREAM_SOCKET_BUFFER_AUTO, "socket-buffer-size", 0, nullptr);
+    g_object_set(stream, "packet-resend", ARV_GV_STREAM_PACKET_RESEND_NEVER, nullptr);
+    g_object_set(stream, "packet-timeout", (unsigned) 40000, "frame-retention", (unsigned) 200000, nullptr);
 
     payload = arv_camera_get_payload (camera);
 
     for (int i = 0; i < num_buffers; i++)
-        arv_stream_push_buffer(stream, arv_buffer_new(payload, NULL));
+        arv_stream_push_buffer(stream, arv_buffer_new(payload, nullptr));
 
     //-- Start continuous acquisition
     arv_camera_set_acquisition_mode(camera, ARV_ACQUISITION_MODE_CONTINUOUS);
     arv_device_set_string_feature_value(arv_camera_get_device(camera), "TriggerMode" , "Off");
     arv_camera_start_acquisition(camera);
-    yInfo() << "Aravis Camera acquisition started!";
+    yCInfo(ARV) << "Aravis Camera acquisition started!";
     return true;
 }
 
-bool roboticslab::AravisGigE::close()
+bool AravisGigE::close()
 {
-    if(camera==NULL)
+    if(camera==nullptr)
     {
-        yError() << "Camera was not started!";
+        yCError(ARV) << "Camera was not started!";
         return false;
     }
 
     arv_camera_stop_acquisition(camera);
-    yInfo() << "Aravis Camera acquisition stopped!";
+    yCInfo(ARV) << "Aravis Camera acquisition stopped!";
 
     //-- Cleanup
     if(stream)
     {
         g_object_unref(stream);
-        stream = NULL;
+        stream = nullptr;
     }
 
     g_object_unref(camera);
-    camera = NULL;
+    camera = nullptr;
 
     return true;
 }

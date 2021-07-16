@@ -15,7 +15,9 @@ if(NOT SKIP_Jr3)
     yarp_add_plugin(Jr3 Jr3.hpp
                         jr3pci-ioctl.h
                         DeviceDriverImpl.cpp
-                        IAnalogSensorImpl.cpp)
+                        IAnalogSensorImpl.cpp
+                        LogComponent.hpp
+                        LogComponent.cpp)
 
     target_link_libraries(Jr3 YARP::YARP_os
                               YARP::YARP_dev)

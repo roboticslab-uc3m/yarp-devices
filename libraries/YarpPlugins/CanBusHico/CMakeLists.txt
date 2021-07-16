@@ -19,7 +19,9 @@ if(NOT SKIP_CanBusHico)
                                ICanBusErrorsImpl.cpp
                                HicoCanMessage.cpp
                                HicoCanMessage.hpp
-                               FilterManager.cpp)
+                               FilterManager.cpp
+                               LogComponent.hpp
+                               LogComponent.cpp)
 
     target_link_libraries(CanBusHico YARP::YARP_os
                                      YARP::YARP_dev)

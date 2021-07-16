@@ -2,8 +2,9 @@
 
 #include "PhidgetSpatial.hpp"
 
-namespace roboticslab
-{
+using namespace roboticslab;
+
+constexpr auto DEFAULT_NUM_CHANNELS = 11;
 
 // -----------------------------------------------------------------------------
 
@@ -89,5 +90,3 @@ int PhidgetSpatial::calibrateChannel(int ch, double value)
 }
 
 // -----------------------------------------------------------------------------
-
-}  // namespace roboticslab

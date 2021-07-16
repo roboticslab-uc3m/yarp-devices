@@ -30,10 +30,6 @@
 
 #define CHECK_MODE(mode) do { if ((mode) != vars.actualControlMode) return false; } while (0)
 
-// seconds
-#define DEFAULT_SDO_TIMEOUT 0.02
-#define DEFAULT_DRIVE_STATE_TIMEOUT 2.0
-
 namespace roboticslab
 {
 
@@ -50,7 +46,7 @@ namespace roboticslab
 class TechnosoftIposEmcy : public EmcyCodeRegistry
 {
 public:
-    virtual std::string codeToMessage(std::uint16_t code) override;
+    std::string codeToMessage(std::uint16_t code) override;
 };
 
 /**
@@ -82,186 +78,186 @@ public:
           monitorThread(nullptr)
     { }
 
-    ~TechnosoftIpos()
+    ~TechnosoftIpos() override
     { close(); }
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 
-    virtual bool open(yarp::os::Searchable & config) override;
-    virtual bool close() override;
+    bool open(yarp::os::Searchable & config) override;
+    bool close() override;
 
     //  --------- ICanBusSharer declarations. Implementation in ICanBusSharerImpl.cpp ---------
 
-    virtual unsigned int getId() override;
-    virtual std::vector<unsigned int> getAdditionalIds() override;
-    virtual bool notifyMessage(const can_message & message) override;
-    virtual bool initialize() override;
-    virtual bool finalize() override;
-    virtual bool registerSender(CanSenderDelegate * sender) override;
-    virtual bool synchronize() override;
+    unsigned int getId() override;
+    std::vector<unsigned int> getAdditionalIds() override;
+    bool notifyMessage(const can_message & message) override;
+    bool initialize() override;
+    bool finalize() override;
+    bool registerSender(CanSenderDelegate * sender) override;
+    bool synchronize() override;
 
     //  --------- IAxisInfoRaw declarations. Implementation in IAxisInfoRawImpl.cpp ---------
 
-    virtual bool getAxisNameRaw(int axis, std::string & name) override;
-    virtual bool getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type) override;
+    bool getAxisNameRaw(int axis, std::string & name) override;
+    bool getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type) override;
 
     //  --------- IControlLimitsRaw declarations. Implementation in IControlLimitsRawImpl.cpp ---------
 
-    virtual bool setLimitsRaw(int axis, double min, double max) override;
-    virtual bool getLimitsRaw(int axis, double * min, double * max) override;
-    virtual bool setVelLimitsRaw(int axis, double min, double max) override;
-    virtual bool getVelLimitsRaw(int axis, double * min, double * max) override;
+    bool setLimitsRaw(int axis, double min, double max) override;
+    bool getLimitsRaw(int axis, double * min, double * max) override;
+    bool setVelLimitsRaw(int axis, double min, double max) override;
+    bool getVelLimitsRaw(int axis, double * min, double * max) override;
     bool setLimitRaw(double limit, bool isMin);
     bool getLimitRaw(double * limit, bool isMin);
 
     //  --------- IControlModeRaw declarations. Implementation in IControlModeRawImpl.cpp ---------
 
-    virtual bool getControlModeRaw(int j, int * mode) override;
-    virtual bool getControlModesRaw(int * modes) override;
-    virtual bool getControlModesRaw(int n_joint, const int * joints, int * modes) override;
-    virtual bool setControlModeRaw(int j, int mode) override;
-    virtual bool setControlModesRaw(int * modes) override;
-    virtual bool setControlModesRaw(int n_joint, const int * joints, int * modes) override;
+    bool getControlModeRaw(int j, int * mode) override;
+    bool getControlModesRaw(int * modes) override;
+    bool getControlModesRaw(int n_joint, const int * joints, int * modes) override;
+    bool setControlModeRaw(int j, int mode) override;
+    bool setControlModesRaw(int * modes) override;
+    bool setControlModesRaw(int n_joint, const int * joints, int * modes) override;
 
     //  --------- ICurrentControlRaw declarations. Implementation in ICurrentControlRawImpl.cpp ---------
 
-    //virtual bool getNumberOfMotorsRaw(int * number) override;
-    virtual bool getCurrentRaw(int m, double * curr) override;
-    virtual bool getCurrentsRaw(double * currs) override;
-    virtual bool getCurrentRangeRaw(int m, double * min, double * max) override;
-    virtual bool getCurrentRangesRaw(double * min, double * max) override;
-    virtual bool setRefCurrentRaw(int m, double curr) override;
-    virtual bool setRefCurrentsRaw(const double * currs) override;
-    virtual bool setRefCurrentsRaw(int n_motor, const int * motors, const double * currs) override;
-    virtual bool getRefCurrentRaw(int m, double * curr) override;
-    virtual bool getRefCurrentsRaw(double * currs) override;
+    //bool getNumberOfMotorsRaw(int * number) override;
+    bool getCurrentRaw(int m, double * curr) override;
+    bool getCurrentsRaw(double * currs) override;
+    bool getCurrentRangeRaw(int m, double * min, double * max) override;
+    bool getCurrentRangesRaw(double * min, double * max) override;
+    bool setRefCurrentRaw(int m, double curr) override;
+    bool setRefCurrentsRaw(const double * currs) override;
+    bool setRefCurrentsRaw(int n_motor, const int * motors, const double * currs) override;
+    bool getRefCurrentRaw(int m, double * curr) override;
+    bool getRefCurrentsRaw(double * currs) override;
 
     //  ---------- IEncodersRaw declarations. Implementation in IEncodersRawImpl.cpp ----------
 
-    virtual bool getAxes(int * ax) override;
-    virtual bool resetEncoderRaw(int j) override;
-    virtual bool resetEncodersRaw() override;
-    virtual bool setEncoderRaw(int j, double val) override;
-    virtual bool setEncodersRaw(const double * vals) override;
-    virtual bool getEncoderRaw(int j, double * v) override;
-    virtual bool getEncodersRaw(double * encs) override;
-    virtual bool getEncoderSpeedRaw(int j, double * sp) override;
-    virtual bool getEncoderSpeedsRaw(double * spds) override;
-    virtual bool getEncoderAccelerationRaw(int j, double * spds) override;
-    virtual bool getEncoderAccelerationsRaw(double * accs) override;
+    bool getAxes(int * ax) override;
+    bool resetEncoderRaw(int j) override;
+    bool resetEncodersRaw() override;
+    bool setEncoderRaw(int j, double val) override;
+    bool setEncodersRaw(const double * vals) override;
+    bool getEncoderRaw(int j, double * v) override;
+    bool getEncodersRaw(double * encs) override;
+    bool getEncoderSpeedRaw(int j, double * sp) override;
+    bool getEncoderSpeedsRaw(double * spds) override;
+    bool getEncoderAccelerationRaw(int j, double * spds) override;
+    bool getEncoderAccelerationsRaw(double * accs) override;
 
     //  ---------- IEncodersTimedRaw declarations. Implementation in IEncodersRawImpl.cpp ----------
 
-    virtual bool getEncoderTimedRaw(int j, double * encs, double * time) override;
-    virtual bool getEncodersTimedRaw(double * encs, double * time) override;
+    bool getEncoderTimedRaw(int j, double * encs, double * time) override;
+    bool getEncodersTimedRaw(double * encs, double * time) override;
 
     //  --------- IMotorRaw declarations. Implementation in IMotorRawImpl.cpp ---------
 
-    virtual bool getNumberOfMotorsRaw(int * num) override;
-    virtual bool getTemperatureRaw(int m, double * val) override;
-    virtual bool getTemperaturesRaw(double * vals) override;
-    virtual bool getTemperatureLimitRaw(int m, double * temp) override;
-    virtual bool setTemperatureLimitRaw(int m, double temp) override;
-    virtual bool getGearboxRatioRaw(int m, double * val) override;
-    virtual bool setGearboxRatioRaw(int m, double val) override;
+    bool getNumberOfMotorsRaw(int * num) override;
+    bool getTemperatureRaw(int m, double * val) override;
+    bool getTemperaturesRaw(double * vals) override;
+    bool getTemperatureLimitRaw(int m, double * temp) override;
+    bool setTemperatureLimitRaw(int m, double temp) override;
+    bool getGearboxRatioRaw(int m, double * val) override;
+    bool setGearboxRatioRaw(int m, double val) override;
 
     //  --------- IMotorEncodersRaw declarations. Implementation in IMotorEncodersRawImpl.cpp ---------
 
-    virtual bool getNumberOfMotorEncodersRaw(int * num) override;
-    virtual bool resetMotorEncoderRaw(int m) override;
-    virtual bool resetMotorEncodersRaw() override;
-    virtual bool setMotorEncoderCountsPerRevolutionRaw(int m, double cpr) override;
-    virtual bool getMotorEncoderCountsPerRevolutionRaw(int m, double * cpr) override;
-    virtual bool setMotorEncoderRaw(int m, double val) override;
-    virtual bool setMotorEncodersRaw(const double * vals) override;
-    virtual bool getMotorEncoderRaw(int m, double * v) override;
-    virtual bool getMotorEncodersRaw(double * encs) override;
-    virtual bool getMotorEncoderTimedRaw(int m, double * encs, double * stamp) override;
-    virtual bool getMotorEncodersTimedRaw(double * encs, double * stamps) override;
-    virtual bool getMotorEncoderSpeedRaw(int m, double * sp) override;
-    virtual bool getMotorEncoderSpeedsRaw(double * spds) override;
-    virtual bool getMotorEncoderAccelerationRaw(int m, double * spds) override;
-    virtual bool getMotorEncoderAccelerationsRaw(double * vaccs) override;
+    bool getNumberOfMotorEncodersRaw(int * num) override;
+    bool resetMotorEncoderRaw(int m) override;
+    bool resetMotorEncodersRaw() override;
+    bool setMotorEncoderCountsPerRevolutionRaw(int m, double cpr) override;
+    bool getMotorEncoderCountsPerRevolutionRaw(int m, double * cpr) override;
+    bool setMotorEncoderRaw(int m, double val) override;
+    bool setMotorEncodersRaw(const double * vals) override;
+    bool getMotorEncoderRaw(int m, double * v) override;
+    bool getMotorEncodersRaw(double * encs) override;
+    bool getMotorEncoderTimedRaw(int m, double * encs, double * stamp) override;
+    bool getMotorEncodersTimedRaw(double * encs, double * stamps) override;
+    bool getMotorEncoderSpeedRaw(int m, double * sp) override;
+    bool getMotorEncoderSpeedsRaw(double * spds) override;
+    bool getMotorEncoderAccelerationRaw(int m, double * spds) override;
+    bool getMotorEncoderAccelerationsRaw(double * vaccs) override;
 
     // ------- IPositionControlRaw declarations. Implementation in IPositionControlRawImpl.cpp -------
 
-    //virtual bool getAxes(int * ax) override;
-    virtual bool positionMoveRaw(int j, double ref) override;
-    virtual bool positionMoveRaw(const double * refs) override;
-    virtual bool positionMoveRaw(int n_joint, const int * joints, const double * refs) override;
-    virtual bool relativeMoveRaw(int j, double delta) override;
-    virtual bool relativeMoveRaw(const double * deltas) override;
-    virtual bool relativeMoveRaw(int n_joint, const int * joints, const double * deltas) override;
-    virtual bool checkMotionDoneRaw(int j, bool * flag) override;
-    virtual bool checkMotionDoneRaw(bool * flag) override;
-    virtual bool checkMotionDoneRaw(int n_joint, const int * joints, bool * flag) override;
-    virtual bool setRefSpeedRaw(int j, double sp) override;
-    virtual bool setRefSpeedsRaw(const double * spds) override;
-    virtual bool setRefSpeedsRaw(int n_joint, const int * joints, const double * spds) override;
-    virtual bool setRefAccelerationRaw(int j, double acc) override;
-    virtual bool setRefAccelerationsRaw(const double * accs) override;
-    virtual bool setRefAccelerationsRaw(int n_joint, const int * joints, const double * accs) override;
-    virtual bool getRefSpeedRaw(int j, double * ref) override;
-    virtual bool getRefSpeedsRaw(double * spds) override;
-    virtual bool getRefSpeedsRaw(int n_joint, const int * joints, double * spds) override;
-    virtual bool getRefAccelerationRaw(int j, double * acc) override;
-    virtual bool getRefAccelerationsRaw(double * accs) override;
-    virtual bool getRefAccelerationsRaw(int n_joint, const int * joints, double * accs) override;
-    virtual bool stopRaw(int j) override;
-    virtual bool stopRaw() override;
-    virtual bool stopRaw(int n_joint, const int * joints) override;
-    virtual bool getTargetPositionRaw(int joint, double * ref) override;
-    virtual bool getTargetPositionsRaw(double * refs) override;
-    virtual bool getTargetPositionsRaw(int n_joint, const int * joints, double * refs) override;
+    //bool getAxes(int * ax) override;
+    bool positionMoveRaw(int j, double ref) override;
+    bool positionMoveRaw(const double * refs) override;
+    bool positionMoveRaw(int n_joint, const int * joints, const double * refs) override;
+    bool relativeMoveRaw(int j, double delta) override;
+    bool relativeMoveRaw(const double * deltas) override;
+    bool relativeMoveRaw(int n_joint, const int * joints, const double * deltas) override;
+    bool checkMotionDoneRaw(int j, bool * flag) override;
+    bool checkMotionDoneRaw(bool * flag) override;
+    bool checkMotionDoneRaw(int n_joint, const int * joints, bool * flag) override;
+    bool setRefSpeedRaw(int j, double sp) override;
+    bool setRefSpeedsRaw(const double * spds) override;
+    bool setRefSpeedsRaw(int n_joint, const int * joints, const double * spds) override;
+    bool setRefAccelerationRaw(int j, double acc) override;
+    bool setRefAccelerationsRaw(const double * accs) override;
+    bool setRefAccelerationsRaw(int n_joint, const int * joints, const double * accs) override;
+    bool getRefSpeedRaw(int j, double * ref) override;
+    bool getRefSpeedsRaw(double * spds) override;
+    bool getRefSpeedsRaw(int n_joint, const int * joints, double * spds) override;
+    bool getRefAccelerationRaw(int j, double * acc) override;
+    bool getRefAccelerationsRaw(double * accs) override;
+    bool getRefAccelerationsRaw(int n_joint, const int * joints, double * accs) override;
+    bool stopRaw(int j) override;
+    bool stopRaw() override;
+    bool stopRaw(int n_joint, const int * joints) override;
+    bool getTargetPositionRaw(int joint, double * ref) override;
+    bool getTargetPositionsRaw(double * refs) override;
+    bool getTargetPositionsRaw(int n_joint, const int * joints, double * refs) override;
 
     // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
 
-    //virtual bool getAxes(int * ax) override;
-    virtual bool setPositionRaw(int j, double ref) override;
-    virtual bool setPositionsRaw(const double * refs) override;
-    virtual bool setPositionsRaw(int n_joint, const int * joints, const double * refs) override;
-    virtual bool getRefPositionRaw(int joint, double * ref) override;
-    virtual bool getRefPositionsRaw(double * refs) override;
-    virtual bool getRefPositionsRaw(int n_joint, const int *joints, double * refs) override;
+    //bool getAxes(int * ax) override;
+    bool setPositionRaw(int j, double ref) override;
+    bool setPositionsRaw(const double * refs) override;
+    bool setPositionsRaw(int n_joint, const int * joints, const double * refs) override;
+    bool getRefPositionRaw(int joint, double * ref) override;
+    bool getRefPositionsRaw(double * refs) override;
+    bool getRefPositionsRaw(int n_joint, const int *joints, double * refs) override;
 
     // ------- IRemoteVariablesRaw declarations. Implementation in IRemoteVariablesRawImpl.cpp -------
 
-    virtual bool getRemoteVariableRaw(std::string key, yarp::os::Bottle & val) override;
-    virtual bool setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val) override;
-    virtual bool getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys) override;
+    bool getRemoteVariableRaw(std::string key, yarp::os::Bottle & val) override;
+    bool setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val) override;
+    bool getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys) override;
 
     // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
 
-    //virtual bool getAxes(int * ax) override;
-    virtual bool getRefTorqueRaw(int j, double * t) override;
-    virtual bool getRefTorquesRaw(double * t) override;
-    virtual bool setRefTorqueRaw(int j, double t) override;
-    virtual bool setRefTorquesRaw(const double * t) override;
-    virtual bool getTorqueRaw(int j, double * t) override;
-    virtual bool getTorquesRaw(double * t) override;
-    virtual bool getTorqueRangeRaw(int j, double * min, double * max) override;
-    virtual bool getTorqueRangesRaw(double * min, double * max) override;
-    virtual bool getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParameters * params) override;
-    virtual bool setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorqueParameters params) override;
+    //bool getAxes(int * ax) override;
+    bool getRefTorqueRaw(int j, double * t) override;
+    bool getRefTorquesRaw(double * t) override;
+    bool setRefTorqueRaw(int j, double t) override;
+    bool setRefTorquesRaw(const double * t) override;
+    bool getTorqueRaw(int j, double * t) override;
+    bool getTorquesRaw(double * t) override;
+    bool getTorqueRangeRaw(int j, double * min, double * max) override;
+    bool getTorqueRangesRaw(double * min, double * max) override;
+    bool getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParameters * params) override;
+    bool setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorqueParameters params) override;
 
     //  --------- IVelocityControlRaw declarations. Implementation in IVelocityControlRawImpl.cpp ---------
 
-    //virtual bool getAxes(int * ax) override;
-    virtual bool velocityMoveRaw(int j, double sp) override;
-    virtual bool velocityMoveRaw(const double * sp) override;
-    virtual bool velocityMoveRaw(int n_joint, const int * joints, const double * spds) override;
-    virtual bool getRefVelocityRaw(int joint, double * vel) override;
-    virtual bool getRefVelocitiesRaw(double * vels) override;
-    virtual bool getRefVelocitiesRaw(int n_joint, const int * joints, double * vels) override;
-    //virtual bool setRefAccelerationRaw(int j, double acc) override;
-    //virtual bool setRefAccelerationsRaw(const double * accs) override;
-    //virtual bool setRefAccelerationsRaw(int n_joint, const int * joints, const double * accs) override;
-    //virtual bool getRefAccelerationRaw(int j, double * acc) override;
-    //virtual bool getRefAccelerationsRaw(double * accs) override;
-    //virtual bool getRefAccelerationsRaw(int n_joint, const int * joints, double * accs) override;
-    //virtual bool stopRaw(int j) override;
-    //virtual bool stopRaw() override;
-    //virtual bool stopRaw(int n_joint, const int *joints) override;
+    //bool getAxes(int * ax) override;
+    bool velocityMoveRaw(int j, double sp) override;
+    bool velocityMoveRaw(const double * sp) override;
+    bool velocityMoveRaw(int n_joint, const int * joints, const double * spds) override;
+    bool getRefVelocityRaw(int joint, double * vel) override;
+    bool getRefVelocitiesRaw(double * vels) override;
+    bool getRefVelocitiesRaw(int n_joint, const int * joints, double * vels) override;
+    //bool setRefAccelerationRaw(int j, double acc) override;
+    //bool setRefAccelerationsRaw(const double * accs) override;
+    //bool setRefAccelerationsRaw(int n_joint, const int * joints, const double * accs) override;
+    //bool getRefAccelerationRaw(int j, double * acc) override;
+    //bool getRefAccelerationsRaw(double * accs) override;
+    //bool getRefAccelerationsRaw(int n_joint, const int * joints, double * accs) override;
+    //bool stopRaw(int j) override;
+    //bool stopRaw() override;
+    //bool stopRaw(int n_joint, const int *joints) override;
 
 private:
 

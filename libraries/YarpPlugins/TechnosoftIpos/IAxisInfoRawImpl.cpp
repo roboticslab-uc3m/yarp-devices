@@ -4,13 +4,15 @@
 
 #include <yarp/os/Log.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
 bool TechnosoftIpos::getAxisNameRaw(int axis, std::string & name)
 {
-    yTrace("%d", axis);
+    yCTrace(IPOS, "%d", axis);
     CHECK_JOINT(axis);
     name = vars.axisName;
     return true;
@@ -20,7 +22,7 @@ bool TechnosoftIpos::getAxisNameRaw(int axis, std::string & name)
 
 bool TechnosoftIpos::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type)
 {
-    yTrace("%d", axis);
+    yCTrace(IPOS, "%d", axis);
     CHECK_JOINT(axis);
     type = static_cast<yarp::dev::JointTypeEnum>(vars.jointType);
     return true;

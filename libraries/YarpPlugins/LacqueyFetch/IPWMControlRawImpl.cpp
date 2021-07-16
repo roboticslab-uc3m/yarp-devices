@@ -7,6 +7,8 @@
 
 #include <yarp/os/Log.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 //--------------------------------------------------------------------------------------
@@ -21,7 +23,7 @@ bool LacqueyFetch::getNumberOfMotorsRaw(int * number)
 
 bool LacqueyFetch::setRefDutyCycleRaw(int m, double ref)
 {
-    yTrace("%d %f", m, ref);
+    yCTrace(LCQ, "%d %f", m, ref);
     CHECK_JOINT(m);
 
     // clip between -100% and +100%
@@ -63,7 +65,7 @@ bool LacqueyFetch::getRefDutyCyclesRaw(double * refs)
 bool LacqueyFetch::getDutyCycleRaw(int m, double * val)
 {
     CHECK_JOINT(m);
-    yWarning("getDutyCycleRaw() not supported");
+    yCWarning(LCQ, "getDutyCycleRaw() not supported");
     return false;
 }
 

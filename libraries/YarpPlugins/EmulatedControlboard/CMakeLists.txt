@@ -19,7 +19,9 @@ if(NOT SKIP_EmulatedControlboard)
                                          IPositionDirectImpl.cpp
                                          IVelocityControlImpl.cpp
                                          PeriodicThreadImpl.cpp
-                                         SharedArea.cpp)
+                                         SharedArea.cpp
+                                         LogComponent.hpp
+                                         LogComponent.cpp)
 
     target_link_libraries(EmulatedControlboard YARP::YARP_os
                                                YARP::YARP_dev)

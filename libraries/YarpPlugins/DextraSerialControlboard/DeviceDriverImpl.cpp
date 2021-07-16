@@ -2,35 +2,44 @@
 
 #include "DextraSerialControlboard.hpp"
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Value.h>
 
 using namespace roboticslab;
 
+namespace
+{
+    YARP_LOG_COMPONENT(DEXTRA, "rl.DextraSerialControlboard")
+}
+
+constexpr auto DEFAULT_PORT = "/dev/ttyACM0"; // also /dev/ttyUSB0
+
 // -----------------------------------------------------------------------------
 
 bool DextraSerialControlboard::open(yarp::os::Searchable & config)
 {
-    yDebug() << "DextraSerialControlboard config:" << config.toString();
+    yCDebug(DEXTRA) << "Config:" << config.toString();
 
     std::string port = config.check("port", yarp::os::Value(DEFAULT_PORT), "serial port").asString();
 
     // Should match https://github.com/roboticslab-uc3m/Dextra/blob/master/Control/synapse.py
     // See also https://github.com/pyserial/pyserial/blob/master/serial/serialposix.py
 
-    yarp::os::Property serialOptions;
-    serialOptions.put("device", "serialport");
-    serialOptions.put("comport", port);
-    serialOptions.put("baudrate", 115200);
-    serialOptions.put("paritymode", "NONE");
-    serialOptions.put("databits", 8);
+    yarp::os::Property serialOptions {
+        {"device", yarp::os::Value("serialport")},
+        {"comport", yarp::os::Value(port)},
+        {"baudrate", yarp::os::Value(115200)},
+        {"paritymode", yarp::os::Value("NONE")},
+        {"databits", yarp::os::Value(8)},
+    };
 
-    yDebug() << "Serial device options:" << serialOptions.toString();
+    yCDebug(DEXTRA) << "Serial device options:" << serialOptions.toString();
 
     if (!serialDevice.open(serialOptions))
     {
-        yError() << "Unable to open" << serialOptions.find("device").asString() << "device";
+        yCError(DEXTRA) << "Unable to open" << serialOptions.find("device").asString() << "device";
         return false;
     }
 
@@ -38,7 +47,7 @@ bool DextraSerialControlboard::open(yarp::os::Searchable & config)
 
     if (!serialDevice.view(iSerialDevice))
     {
-        yError() << "Unable to view iSerialDevice";
+        yCError(DEXTRA) << "Unable to view iSerialDevice";
         return false;
     }
 

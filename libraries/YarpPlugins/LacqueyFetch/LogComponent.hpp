@@ -1,0 +1,8 @@
+#ifndef __LACQUEY_FETCH_LOG_COMPONENT_HPP__
+#define __LACQUEY_FETCH_LOG_COMPONENT_HPP__
+
+#include <yarp/os/LogComponent.h>
+
+YARP_DECLARE_LOG_COMPONENT(LCQ)
+
+#endif // __LACQUEY_FETCH_LOG_COMPONENT_HPP__

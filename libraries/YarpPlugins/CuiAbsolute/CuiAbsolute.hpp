@@ -18,15 +18,12 @@
 
 #define CHECK_JOINT(j) do { int ax; if (getAxes(&ax), (j) != ax - 1) return false; } while (0)
 
-#define DEFAULT_TIMEOUT 0.25 // [s]
-#define DEFAULT_MAX_RETRIES 10
-
 namespace roboticslab
 {
 
 /**
  * @ingroup YarpPlugins
- * \defgroup CuiAbsolute
+ * @defgroup CuiAbsolute
  * @brief Contains roboticslab::CuiAbsolute.
  */
 
@@ -48,41 +45,41 @@ public:
           sender(nullptr), pushStateObserver(nullptr), pollStateObserver(nullptr)
     { }
 
-    ~CuiAbsolute()
+    ~CuiAbsolute() override
     { close(); }
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 
-    virtual bool open(yarp::os::Searchable & config) override;
-    virtual bool close() override;
+    bool open(yarp::os::Searchable & config) override;
+    bool close() override;
 
     //  --------- ICanBusSharer declarations. Implementation in ICanBusSharerImpl.cpp ---------
 
-    virtual unsigned int getId() override;
-    virtual bool notifyMessage(const can_message & message) override;
-    virtual bool initialize() override;
-    virtual bool finalize() override;
-    virtual bool registerSender(CanSenderDelegate * sender) override;
-    virtual bool synchronize() override;
+    unsigned int getId() override;
+    bool notifyMessage(const can_message & message) override;
+    bool initialize() override;
+    bool finalize() override;
+    bool registerSender(CanSenderDelegate * sender) override;
+    bool synchronize() override;
 
     //  ---------- IEncodersRaw declarations. Implementation in IEncodersRawImpl.cpp ----------
 
-    virtual bool getAxes(int * ax) override;
-    virtual bool resetEncoderRaw(int j) override;
-    virtual bool resetEncodersRaw() override;
-    virtual bool setEncoderRaw(int j, double val) override;
-    virtual bool setEncodersRaw(const double * vals) override;
-    virtual bool getEncoderRaw(int j, double * v) override;
-    virtual bool getEncodersRaw(double * encs) override;
-    virtual bool getEncoderSpeedRaw(int j, double * sp) override;
-    virtual bool getEncoderSpeedsRaw(double * spds) override;
-    virtual bool getEncoderAccelerationRaw(int j, double * spds) override;
-    virtual bool getEncoderAccelerationsRaw(double * accs) override;
+    bool getAxes(int * ax) override;
+    bool resetEncoderRaw(int j) override;
+    bool resetEncodersRaw() override;
+    bool setEncoderRaw(int j, double val) override;
+    bool setEncodersRaw(const double * vals) override;
+    bool getEncoderRaw(int j, double * v) override;
+    bool getEncodersRaw(double * encs) override;
+    bool getEncoderSpeedRaw(int j, double * sp) override;
+    bool getEncoderSpeedsRaw(double * spds) override;
+    bool getEncoderAccelerationRaw(int j, double * spds) override;
+    bool getEncoderAccelerationsRaw(double * accs) override;
 
     //  ---------- IEncodersTimedRaw declarations. Implementation in IEncodersRawImpl.cpp ----------
 
-    virtual bool getEncodersTimedRaw(double * encs, double * time) override;
-    virtual bool getEncoderTimedRaw(int j, double * encs, double * time) override;
+    bool getEncodersTimedRaw(double * encs, double * time) override;
+    bool getEncoderTimedRaw(int j, double * encs, double * time) override;
 
 private:
 

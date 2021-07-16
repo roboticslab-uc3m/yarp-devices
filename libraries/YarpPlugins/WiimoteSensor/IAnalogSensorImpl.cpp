@@ -2,14 +2,11 @@
 
 #include "WiimoteSensor.hpp"
 
-namespace
-{
-    bool yawActive = false;
-}
+using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::WiimoteSensor::read(yarp::sig::Vector &out)
+int WiimoteSensor::read(yarp::sig::Vector &out)
 {
     WiimoteEventData eventData = dispatcherThread.getEventData();
 
@@ -39,42 +36,42 @@ int roboticslab::WiimoteSensor::read(yarp::sig::Vector &out)
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::WiimoteSensor::getState(int ch)
+int WiimoteSensor::getState(int ch)
 {
     return yarp::dev::IAnalogSensor::AS_OK;
 }
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::WiimoteSensor::getChannels()
+int WiimoteSensor::getChannels()
 {
     return 5;
 }
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::WiimoteSensor::calibrateSensor()
+int WiimoteSensor::calibrateSensor()
 {
     return yarp::dev::IAnalogSensor::AS_OK;
 }
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::WiimoteSensor::calibrateSensor(const yarp::sig::Vector& value)
+int WiimoteSensor::calibrateSensor(const yarp::sig::Vector& value)
 {
     return yarp::dev::IAnalogSensor::AS_OK;
 }
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::WiimoteSensor::calibrateChannel(int ch)
+int WiimoteSensor::calibrateChannel(int ch)
 {
     return yarp::dev::IAnalogSensor::AS_OK;
 }
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::WiimoteSensor::calibrateChannel(int ch, double value)
+int WiimoteSensor::calibrateChannel(int ch, double value)
 {
     return yarp::dev::IAnalogSensor::AS_OK;
 }

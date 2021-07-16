@@ -15,7 +15,9 @@ if(NOT SKIP_LacqueyFetch)
                                  DeviceDriverImpl.cpp
                                  ICanBusSharerImpl.cpp
                                  IControlModeRawImpl.cpp
-                                 IPWMControlRawImpl.cpp)
+                                 IPWMControlRawImpl.cpp
+                                 LogComponent.hpp
+                                 LogComponent.cpp)
 
     target_link_libraries(LacqueyFetch YARP::YARP_os
                                        YARP::YARP_dev

@@ -31,7 +31,9 @@ if(NOT SKIP_TechnosoftIpos)
                                    InterpolatedPositionBuffer.hpp
                                    InterpolatedPositionBuffer.cpp
                                    StateVariables.hpp
-                                   StateVariables.cpp)
+                                   StateVariables.cpp
+                                   LogComponent.hpp
+                                   LogComponent.cpp)
 
     target_link_libraries(TechnosoftIpos YARP::YARP_os
                                          YARP::YARP_dev

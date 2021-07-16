@@ -14,7 +14,9 @@ if(NOT SKIP_TextilesHand)
     yarp_add_plugin(TextilesHand TextilesHand.hpp
                                  DeviceDriverImpl.cpp
                                  IControlModeImpl.cpp
-                                 IPositionDirectImpl.cpp)
+                                 IPositionDirectImpl.cpp
+                                 LogComponent.hpp
+                                 LogComponent.cpp)
 
     target_link_libraries(TextilesHand YARP::YARP_os
                                        YARP::YARP_dev)

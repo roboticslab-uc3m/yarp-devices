@@ -4,6 +4,8 @@
 
 #include <yarp/os/Log.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
@@ -17,7 +19,7 @@ bool TechnosoftIpos::getNumberOfMotorEncodersRaw(int * num)
 
 bool TechnosoftIpos::resetMotorEncoderRaw(int m)
 {
-    yTrace("%d", m);
+    yCTrace(IPOS, "%d", m);
     CHECK_JOINT(m);
     return setMotorEncoderRaw(m, 0);
 }
@@ -33,7 +35,7 @@ bool TechnosoftIpos::resetMotorEncodersRaw()
 
 bool TechnosoftIpos::setMotorEncoderCountsPerRevolutionRaw(int m, double cpr)
 {
-    yTrace("%d %f", m, cpr);
+    yCTrace(IPOS, "%d %f", m, cpr);
     CHECK_JOINT(m);
     vars.encoderPulses = cpr;
     return true;
@@ -43,7 +45,7 @@ bool TechnosoftIpos::setMotorEncoderCountsPerRevolutionRaw(int m, double cpr)
 
 bool TechnosoftIpos::getMotorEncoderCountsPerRevolutionRaw(int m, double * cpr)
 {
-    yTrace("%d", m);
+    yCTrace(IPOS, "%d", m);
     CHECK_JOINT(m);
     *cpr = vars.encoderPulses;
     return true;
@@ -53,7 +55,7 @@ bool TechnosoftIpos::getMotorEncoderCountsPerRevolutionRaw(int m, double * cpr)
 
 bool TechnosoftIpos::setMotorEncoderRaw(int m, double val)
 {
-    yTrace("%d %f", m, val);
+    yCTrace(IPOS, "%d %f", m, val);
     CHECK_JOINT(m);
     std::int32_t data = vars.reverse ? -val : val;
 
@@ -77,7 +79,7 @@ bool TechnosoftIpos::setMotorEncodersRaw(const double * vals)
 
 bool TechnosoftIpos::getMotorEncoderRaw(int m, double * v)
 {
-    yTrace("%d", m);
+    yCTrace(IPOS, "%d", m);
     CHECK_JOINT(m);
     std::int32_t temp = vars.lastEncoderRead->queryPosition();
     *v = vars.reverse ? -temp : temp;
@@ -95,7 +97,7 @@ bool TechnosoftIpos::getMotorEncodersRaw(double * encs)
 
 bool TechnosoftIpos::getMotorEncoderTimedRaw(int m, double * enc, double * stamp)
 {
-    yTrace("%d", m);
+    yCTrace(IPOS, "%d", m);
     CHECK_JOINT(m);
     std::int32_t temp =  vars.lastEncoderRead->queryPosition();
     *enc = vars.reverse ? -temp : temp;
@@ -114,7 +116,7 @@ bool TechnosoftIpos::getMotorEncodersTimedRaw(double * encs, double * stamps)
 
 bool TechnosoftIpos::getMotorEncoderSpeedRaw(int m, double * sp)
 {
-    yTrace("%d", m);
+    yCTrace(IPOS, "%d", m);
     CHECK_JOINT(m);
     double temp = vars.lastEncoderRead->querySpeed();
     *sp = vars.reverse ? -temp : temp;
@@ -132,7 +134,7 @@ bool TechnosoftIpos::getMotorEncoderSpeedsRaw(double * spds)
 
 bool TechnosoftIpos::getMotorEncoderAccelerationRaw(int m, double * acc)
 {
-    yTrace("%d", m);
+    yCTrace(IPOS, "%d", m);
     CHECK_JOINT(m);
     double temp = vars.lastEncoderRead->queryAcceleration();
     *acc = vars.reverse ? -temp : temp;

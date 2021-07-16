@@ -5,6 +5,7 @@
 #include <yarp/os/Log.h>
 
 #include "CanUtils.hpp"
+#include "LogComponent.hpp"
 
 using namespace roboticslab;
 
@@ -19,23 +20,23 @@ bool CuiAbsolute::performRequest(const std::string & name, unsigned int len, con
     {
         if (sender && !sender->prepareMessage(msg))
         {
-            yError("Unable to register \"%s\" command. %s", name.c_str(), CanUtils::msgToStr(msg).c_str());
+            yCError(CUI, "Unable to register \"%s\" command. %s", name.c_str(), CanUtils::msgToStr(msg).c_str());
             return false;
         }
 
-        yInfo("Registered \"%s\" command (%d/%d). %s", name.c_str(), retry, maxRetries, CanUtils::msgToStr(msg).c_str());
+        yCInfo(CUI, "Registered \"%s\" command (%d/%d). %s", name.c_str(), retry, maxRetries, CanUtils::msgToStr(msg).c_str());
 
         if (v ? pollStateObserver->await(v) : pushStateObserver->await())
         {
-            yInfo("Succesfully processed \"%s\" command (%d/%d)", name.c_str(), retry, maxRetries);
+            yCInfo(CUI, "Succesfully processed \"%s\" command (%d/%d)", name.c_str(), retry, maxRetries);
             normalize(v);
             return true;
         }
 
-        yWarning("Command \"%s\" timed out (%d/%d)", name.c_str(), retry, maxRetries);
+        yCWarning(CUI, "Command \"%s\" timed out (%d/%d)", name.c_str(), retry, maxRetries);
     }
 
-    yError("Max number of retries exceeded (%d)", maxRetries);
+    yCError(CUI, "Max number of retries exceeded (%d)", maxRetries);
     return false;
 }
 

@@ -17,7 +17,9 @@ if(NOT SKIP_LeapMotionSensor)
 
     yarp_add_plugin(LeapMotionSensor LeapMotionSensor.hpp
                                      DeviceDriverImpl.cpp
-                                     IAnalogSensorImpl.cpp)
+                                     IAnalogSensorImpl.cpp
+                                     LogComponent.hpp
+                                     LogComponent.cpp)
 
     target_link_libraries(LeapMotionSensor YARP::YARP_os
                                            YARP::YARP_dev

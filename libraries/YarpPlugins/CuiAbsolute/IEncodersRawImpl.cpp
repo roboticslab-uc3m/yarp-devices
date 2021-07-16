@@ -5,6 +5,8 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/Time.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
@@ -19,7 +21,7 @@ bool CuiAbsolute::getAxes(int * ax)
 
 bool CuiAbsolute::resetEncoderRaw(int j)
 {
-    yTrace("%d", j);
+    yCTrace(CUI, "%d", j);
     CHECK_JOINT(j);
     return setEncoderRaw(j, 0.0);
 }
@@ -35,9 +37,9 @@ bool CuiAbsolute::resetEncodersRaw()
 
 bool CuiAbsolute::setEncoderRaw(int j, double val)
 {
-    yTrace("%d %f", j, val);
+    yCTrace(CUI, "%d %f", j, val);
     CHECK_JOINT(j);
-    yWarning("setEncoderRaw() not supported");
+    yCWarning(CUI, "setEncoderRaw() not supported");
     return false;
 }
 
@@ -45,7 +47,7 @@ bool CuiAbsolute::setEncoderRaw(int j, double val)
 
 bool CuiAbsolute::setEncodersRaw(const double * vals)
 {
-    yWarning("setEncodersRaw() not supported");
+    yCWarning(CUI, "setEncodersRaw() not supported");
     return false;
 }
 
@@ -53,7 +55,7 @@ bool CuiAbsolute::setEncodersRaw(const double * vals)
 
 bool CuiAbsolute::getEncoderRaw(int j, double * v)
 {
-    yTrace("%d", j);
+    yCTrace(CUI, "%d", j);
     CHECK_JOINT(j);
 
     if (cuiMode == CuiMode::PULL)
@@ -85,9 +87,9 @@ bool CuiAbsolute::getEncodersRaw(double * encs)
 
 bool CuiAbsolute::getEncoderSpeedRaw(int j, double * sp)
 {
-    yTrace("%d", j);
+    yCTrace(CUI, "%d", j);
     CHECK_JOINT(j);
-    yWarning("getEncoderSpeedRaw() not supported");
+    yCWarning(CUI, "getEncoderSpeedRaw() not supported");
     return false;
 }
 
@@ -95,7 +97,7 @@ bool CuiAbsolute::getEncoderSpeedRaw(int j, double * sp)
 
 bool CuiAbsolute::getEncoderSpeedsRaw(double * spds)
 {
-    yWarning("getEncoderSpeedsRaw() not supported");
+    yCWarning(CUI, "getEncoderSpeedsRaw() not supported");
     return false;
 }
 
@@ -103,9 +105,9 @@ bool CuiAbsolute::getEncoderSpeedsRaw(double * spds)
 
 bool CuiAbsolute::getEncoderAccelerationRaw(int j, double * spds)
 {
-    yTrace("%d", j);
+    yCTrace(CUI, "%d", j);
     CHECK_JOINT(j);
-    yWarning("getEncoderAccelerationRaw() not supported");
+    yCWarning(CUI, "getEncoderAccelerationRaw() not supported");
     return false;
 }
 
@@ -113,7 +115,7 @@ bool CuiAbsolute::getEncoderAccelerationRaw(int j, double * spds)
 
 bool CuiAbsolute::getEncoderAccelerationsRaw(double * accs)
 {
-    yWarning("getEncoderAccelerationsRaw() not supported");
+    yCWarning(CUI, "getEncoderAccelerationsRaw() not supported");
     return false;
 }
 
@@ -128,7 +130,7 @@ bool CuiAbsolute::getEncodersTimedRaw(double * encs, double * times)
 
 bool CuiAbsolute::getEncoderTimedRaw(int j, double * enc, double * time)
 {
-    yTrace("%d", j);
+    yCTrace(CUI, "%d", j);
     CHECK_JOINT(j);
 
     if (cuiMode == CuiMode::PULL)

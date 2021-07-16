@@ -4,13 +4,15 @@
 
 #include <yarp/os/Log.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
 bool CanBusControlboard::setLimits(int axis, double min, double max)
 {
-    yTrace("%d %f %f", axis, min, max);
+    yCTrace(CBCB, "%d %f %f", axis, min, max);
     CHECK_JOINT(axis);
     return deviceMapper.mapSingleJoint(&yarp::dev::IControlLimitsRaw::setLimitsRaw, axis, min, max);
 }
@@ -19,7 +21,7 @@ bool CanBusControlboard::setLimits(int axis, double min, double max)
 
 bool CanBusControlboard::getLimits(int axis, double * min, double * max)
 {
-    yTrace("%d", axis);
+    yCTrace(CBCB, "%d", axis);
     CHECK_JOINT(axis);
     return deviceMapper.mapSingleJoint(&yarp::dev::IControlLimitsRaw::getLimitsRaw, axis, min, max);
 }
@@ -28,7 +30,7 @@ bool CanBusControlboard::getLimits(int axis, double * min, double * max)
 
 bool CanBusControlboard::setVelLimits(int axis, double min, double max)
 {
-    yTrace("%d %f %f", axis, min, max);
+    yCTrace(CBCB, "%d %f %f", axis, min, max);
     CHECK_JOINT(axis);
     return deviceMapper.mapSingleJoint(&yarp::dev::IControlLimitsRaw::setVelLimitsRaw, axis, min, max);
 }
@@ -37,7 +39,7 @@ bool CanBusControlboard::setVelLimits(int axis, double min, double max)
 
 bool CanBusControlboard::getVelLimits(int axis, double * min, double * max)
 {
-    yTrace("%d", axis);
+    yCTrace(CBCB, "%d", axis);
     CHECK_JOINT(axis);
     return deviceMapper.mapSingleJoint(&yarp::dev::IControlLimitsRaw::getVelLimitsRaw, axis, min, max);
 }

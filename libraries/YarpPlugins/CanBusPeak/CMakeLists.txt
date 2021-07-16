@@ -17,7 +17,9 @@ if(NOT SKIP_CanBusPeak)
                                ICanBusImpl.cpp
                                ICanBusErrorsImpl.cpp
                                PeakCanMessage.cpp
-                               PeakCanMessage.hpp)
+                               PeakCanMessage.hpp
+                               LogComponent.hpp
+                               LogComponent.cpp)
 
     target_link_libraries(CanBusPeak YARP::YARP_os
                                      YARP::YARP_dev
