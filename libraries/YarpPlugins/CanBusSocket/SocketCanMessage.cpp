@@ -2,10 +2,13 @@
 
 #include <SocketCanMessage.hpp>
 
+#include <cstring>  // memcpy
+
 // -----------------------------------------------------------------------------
 
 roboticslab::SocketCanMessage::SocketCanMessage()
 {
+    message = 0;
 }
 
 // -----------------------------------------------------------------------------
@@ -18,6 +21,8 @@ roboticslab::SocketCanMessage::~SocketCanMessage()
 
 yarp::dev::CanMessage & roboticslab::SocketCanMessage::operator=(const yarp::dev::CanMessage & l)
 {
+    const SocketCanMessage & tmp = dynamic_cast<const SocketCanMessage &>(l);
+    std::memcpy(message, tmp.message, sizeof(struct can_frame));
     return *this;
 }
 
@@ -25,60 +30,66 @@ yarp::dev::CanMessage & roboticslab::SocketCanMessage::operator=(const yarp::dev
 
 unsigned int roboticslab::SocketCanMessage::getId() const
 {
-    return 0;
+    return message->can_id;
 }
 
 // -----------------------------------------------------------------------------
 
 unsigned char roboticslab::SocketCanMessage::getLen() const
 {
-    return 0;
+    return message->can_dlc;
 }
 
 // -----------------------------------------------------------------------------
 
 void roboticslab::SocketCanMessage::setLen(unsigned char len)
 {
+    message->can_dlc = len;
 }
 
 // -----------------------------------------------------------------------------
 
 void roboticslab::SocketCanMessage::setId(unsigned int id)
 {
+    message->can_id = id;
 }
 
 // -----------------------------------------------------------------------------
 
 const unsigned char * roboticslab::SocketCanMessage::getData() const
 {
-    return 0;
+    return message->data;
 }
 
 // -----------------------------------------------------------------------------
 
 unsigned char * roboticslab::SocketCanMessage::getData()
 {
-    return 0;
+    return message->data;
 }
 
 // -----------------------------------------------------------------------------
 
 unsigned char * roboticslab::SocketCanMessage::getPointer()
 {
-    return 0;
+    return (unsigned char *) message;
 }
 
 // -----------------------------------------------------------------------------
 
 const unsigned char * roboticslab::SocketCanMessage::getPointer() const
 {
-    return 0;
+    return (const unsigned char *) message;
 }
 
 // -----------------------------------------------------------------------------
 
 void roboticslab::SocketCanMessage::setBuffer(unsigned char * buf)
 {
+    if (buf != 0)
+    {
+        message = (struct can_frame *) buf;
+    }
 }
 
 // -----------------------------------------------------------------------------

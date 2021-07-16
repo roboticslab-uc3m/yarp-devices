@@ -3,6 +3,9 @@
 #ifndef __CAN_BUS_SOCKET__
 #define __CAN_BUS_SOCKET__
 
+#include <string.h>  // bug, missing in yarp/dev/CanBusInterface.h as of YARP v2.3.70.2
+#include <linux/can.h>
+
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/CanBusInterface.h>
 
@@ -18,8 +21,8 @@ namespace roboticslab
  *
  */
 class CanBusSocket : public yarp::dev::DeviceDriver,
-                     public yarp::dev::ICanBus/*,
-                     private yarp::dev::ImplementCanBufferFactory<SocketCanMessage, struct can_msg>*/
+                     public yarp::dev::ICanBus,
+                     private yarp::dev::ImplementCanBufferFactory<SocketCanMessage, struct can_frame>
 {
 
 public:

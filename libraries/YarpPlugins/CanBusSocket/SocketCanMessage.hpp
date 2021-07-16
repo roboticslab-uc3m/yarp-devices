@@ -3,6 +3,8 @@
 #ifndef __SOCKET_CAN_MESSAGE__
 #define __SOCKET_CAN_MESSAGE__
 
+#include <linux/can.h>
+
 #include <yarp/dev/CanBusInterface.h>
 
 namespace roboticslab
@@ -30,6 +32,7 @@ public:
     virtual void setBuffer(unsigned char * buf);
 
 private:
+    struct can_frame * message;
 };
 
 }  // namespace roboticslab
