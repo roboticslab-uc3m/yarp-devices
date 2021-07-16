@@ -30,7 +30,7 @@ yarp::dev::CanMessage & roboticslab::SocketCanMessage::operator=(const yarp::dev
 
 unsigned int roboticslab::SocketCanMessage::getId() const
 {
-    return message->can_id;
+    return message->can_id & 0x1FFFFFFF;
 }
 
 // -----------------------------------------------------------------------------
@@ -51,7 +51,8 @@ void roboticslab::SocketCanMessage::setLen(unsigned char len)
 
 void roboticslab::SocketCanMessage::setId(unsigned int id)
 {
-    message->can_id = id;
+    message->can_dlc &= 0xE0000000;
+    message->can_id |= id;
 }
 
 // -----------------------------------------------------------------------------
@@ -72,14 +73,14 @@ unsigned char * roboticslab::SocketCanMessage::getData()
 
 unsigned char * roboticslab::SocketCanMessage::getPointer()
 {
-    return (unsigned char *) message;
+    return (unsigned char *)message;
 }
 
 // -----------------------------------------------------------------------------
 
 const unsigned char * roboticslab::SocketCanMessage::getPointer() const
 {
-    return (const unsigned char *) message;
+    return (const unsigned char *)message;
 }
 
 // -----------------------------------------------------------------------------
@@ -88,7 +89,7 @@ void roboticslab::SocketCanMessage::setBuffer(unsigned char * buf)
 {
     if (buf != 0)
     {
-        message = (struct can_frame *) buf;
+        message = (struct can_frame *)buf;
     }
 }
 
