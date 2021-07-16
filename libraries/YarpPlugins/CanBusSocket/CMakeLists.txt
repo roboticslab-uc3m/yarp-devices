@@ -2,7 +2,8 @@ yarp_prepare_plugin(CanBusSocket
                     CATEGORY device
                     TYPE roboticslab::CanBusSocket
                     INCLUDE CanBusSocket.hpp
-                    DEFAULT ON)
+                    DEFAULT ON
+                    DEPENDS UNIX)
 
 if(NOT SKIP_CanBusSocket)
 
