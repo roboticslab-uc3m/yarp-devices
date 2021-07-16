@@ -17,24 +17,25 @@ namespace roboticslab
 class SocketCanMessage : public yarp::dev::CanMessage
 {
 public:
-    SocketCanMessage();
-    virtual ~SocketCanMessage();
-    virtual yarp::dev::CanMessage & operator=(const yarp::dev::CanMessage & l);
+    SocketCanMessage() : message(nullptr)
+    {}
 
-    virtual unsigned int getId() const;
-    virtual unsigned char getLen() const;
-    virtual void setLen(unsigned char len);
-    virtual void setId(unsigned int id);
-    virtual const unsigned char * getData() const;
-    virtual unsigned char * getData();
-    virtual unsigned char * getPointer();
-    virtual const unsigned char * getPointer() const;
-    virtual void setBuffer(unsigned char * buf);
+    yarp::dev::CanMessage & operator=(const yarp::dev::CanMessage & l) override;
+
+    unsigned int getId() const override;
+    unsigned char getLen() const override;
+    void setLen(unsigned char len) override;
+    void setId(unsigned int id) override;
+    const unsigned char * getData() const override;
+    unsigned char * getData() override;
+    unsigned char * getPointer() override;
+    const unsigned char * getPointer() const override;
+    void setBuffer(unsigned char * buf) override;
 
 private:
     struct can_frame * message;
 };
 
-}  // namespace roboticslab
+} // namespace roboticslab
 
-#endif  // __SOCKET_CAN_MESSAGE__
+#endif // __SOCKET_CAN_MESSAGE__

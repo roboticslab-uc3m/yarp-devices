@@ -15,12 +15,12 @@ if(NOT SKIP_CanBusSocket)
                                  CanBusSocket.hpp
                                  DeviceDriverImpl.cpp
                                  ICanBusImpl.cpp
+                                 ICanBusErrorsImpl.cpp
                                  SocketCanMessage.cpp
                                  SocketCanMessage.hpp)
 
-    target_link_libraries(CanBusSocket YARP::YARP_OS
-                                       YARP::YARP_dev
-                                       ROBOTICSLAB::ColorDebug)
+    target_link_libraries(CanBusSocket YARP::YARP_os
+                                       YARP::YARP_dev)
 
     yarp_install(TARGETS CanBusSocket
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}

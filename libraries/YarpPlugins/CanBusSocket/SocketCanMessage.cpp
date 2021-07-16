@@ -1,25 +1,14 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include <SocketCanMessage.hpp>
+#include "SocketCanMessage.hpp"
 
-#include <cstring>  // memcpy
+#include <cstring> // memcpy
 
-// -----------------------------------------------------------------------------
-
-roboticslab::SocketCanMessage::SocketCanMessage()
-{
-    message = 0;
-}
+using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-roboticslab::SocketCanMessage::~SocketCanMessage()
-{
-}
-
-// -----------------------------------------------------------------------------
-
-yarp::dev::CanMessage & roboticslab::SocketCanMessage::operator=(const yarp::dev::CanMessage & l)
+yarp::dev::CanMessage & SocketCanMessage::operator=(const yarp::dev::CanMessage & l)
 {
     const SocketCanMessage & tmp = dynamic_cast<const SocketCanMessage &>(l);
     std::memcpy(message, tmp.message, sizeof(struct can_frame));
@@ -28,28 +17,28 @@ yarp::dev::CanMessage & roboticslab::SocketCanMessage::operator=(const yarp::dev
 
 // -----------------------------------------------------------------------------
 
-unsigned int roboticslab::SocketCanMessage::getId() const
+unsigned int SocketCanMessage::getId() const
 {
     return message->can_id & 0x1FFFFFFF;
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned char roboticslab::SocketCanMessage::getLen() const
+unsigned char SocketCanMessage::getLen() const
 {
     return message->can_dlc;
 }
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::SocketCanMessage::setLen(unsigned char len)
+void SocketCanMessage::setLen(unsigned char len)
 {
     message->can_dlc = len;
 }
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::SocketCanMessage::setId(unsigned int id)
+void SocketCanMessage::setId(unsigned int id)
 {
     message->can_dlc &= 0xE0000000;
     message->can_id |= id;
@@ -57,39 +46,39 @@ void roboticslab::SocketCanMessage::setId(unsigned int id)
 
 // -----------------------------------------------------------------------------
 
-const unsigned char * roboticslab::SocketCanMessage::getData() const
+const unsigned char * SocketCanMessage::getData() const
 {
     return message->data;
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned char * roboticslab::SocketCanMessage::getData()
+unsigned char * SocketCanMessage::getData()
 {
     return message->data;
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned char * roboticslab::SocketCanMessage::getPointer()
+unsigned char * SocketCanMessage::getPointer()
 {
-    return (unsigned char *)message;
+    return reinterpret_cast<unsigned char *>(message);
 }
 
 // -----------------------------------------------------------------------------
 
-const unsigned char * roboticslab::SocketCanMessage::getPointer() const
+const unsigned char * SocketCanMessage::getPointer() const
 {
-    return (const unsigned char *)message;
+    return reinterpret_cast<const unsigned char *>(message);
 }
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::SocketCanMessage::setBuffer(unsigned char * buf)
+void SocketCanMessage::setBuffer(unsigned char * buf)
 {
-    if (buf != 0)
+    if (buf)
     {
-        message = (struct can_frame *)buf;
+        message = reinterpret_cast<struct can_frame *>(buf);
     }
 }
 

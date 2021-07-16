@@ -3,7 +3,6 @@
 #ifndef __CAN_BUS_SOCKET__
 #define __CAN_BUS_SOCKET__
 
-#include <string.h>  // bug, missing in yarp/dev/CanBusInterface.h as of YARP v2.3.70.2
 #include <linux/can.h>
 
 #include <yarp/dev/DeviceDriver.h>
@@ -15,50 +14,35 @@ namespace roboticslab
 {
 
 /**
- *
- * @ingroup CanBusSocket
- * @brief Specifies the SocketCan behaviour and specifications.
- *
+ * @ingroup YarpPlugins
+ * @defgroup CanBusSocket
+ * @brief Contains roboticslab::CanBusSocket.
  */
 class CanBusSocket : public yarp::dev::DeviceDriver,
                      public yarp::dev::ICanBus,
+                     public yarp::dev::ICanBusErrors,
                      private yarp::dev::ImplementCanBufferFactory<SocketCanMessage, struct can_frame>
 {
-
 public:
-
-    CanBusSocket() {}
+    ~CanBusSocket() override
+    { close(); }
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
-
-    /** Initialize the CAN device.
-     * @param device is the device path, such as "/dev/can0".
-     * @param bitrate is the bitrate, such as BITRATE_100k.
-     * @return true/false on success/failure.
-     */
-    virtual bool open(yarp::os::Searchable& config);
-
-    /** Close the CAN device. */
-    virtual bool close();
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 
     //  --------- ICanBus declarations. Implementation in ICanBusImpl.cpp ---------
+    bool canSetBaudRate(unsigned int rate) override;
+    bool canGetBaudRate(unsigned int * rate) override;
+    bool canIdAdd(unsigned int id) override;
+    bool canIdDelete(unsigned int id) override;
+    bool canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait = false) override;
+    bool canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait = false) override;
 
-    virtual bool canSetBaudRate(unsigned int rate);
-
-    virtual bool canGetBaudRate(unsigned int * rate);
-
-    virtual bool canIdAdd(unsigned int id);
-
-    virtual bool canIdDelete(unsigned int id);
-
-    virtual bool canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait = false);
-
-    virtual bool canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait = false);
-
-protected:
-
+    //  --------- ICanBusErrors declarations. Implementation in ICanBusErrorsImpl.cpp ---------
+    bool canGetErrors(yarp::dev::CanErrors & err) override;
 };
 
-}  // namespace roboticslab
+} // namespace roboticslab
 
-#endif  // __CAN_BUS_SOCKET__
+#endif // __CAN_BUS_SOCKET__

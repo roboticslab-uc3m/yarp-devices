@@ -4,18 +4,11 @@
 
 using namespace roboticslab;
 
-// ------------------- DeviceDriver Related ------------------------------------
-
-bool CanBusSocket::open(yarp::os::Searchable& config)
-{
-    return true;
-}
-
 // -----------------------------------------------------------------------------
 
-bool CanBusSocket::close()
+bool CanBusSocket::canGetErrors(yarp::dev::CanErrors & err)
 {
-    return true;
+    return false;
 }
 
 // -----------------------------------------------------------------------------
