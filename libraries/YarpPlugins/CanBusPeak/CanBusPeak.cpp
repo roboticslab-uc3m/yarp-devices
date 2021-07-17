@@ -11,6 +11,10 @@
 
 #include <yarp/os/Log.h>
 
+#include "LogComponent.hpp"
+
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
 
 namespace
@@ -24,7 +28,7 @@ namespace
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusPeak::waitUntilTimeout(io_operation op, bool * bufferReady)
+bool CanBusPeak::waitUntilTimeout(io_operation op, bool * bufferReady)
 {
     fd_set fds;
 
@@ -47,13 +51,13 @@ bool roboticslab::CanBusPeak::waitUntilTimeout(io_operation op, bool * bufferRea
         ret = ::select(fileDescriptor + 1, 0, &fds, 0, &tv);
         break;
     default:
-        yError("Unhandled IO operation on select()");
+        yCError(PEAK, "Unhandled IO operation on select()");
         return false;
     }
 
     if (ret < 0)
     {
-        yError("select() error: %s", std::strerror(errno));
+        yCError(PEAK, "select() error: %s", std::strerror(errno));
         return false;
     }
     else if (ret == 0)
@@ -71,7 +75,7 @@ bool roboticslab::CanBusPeak::waitUntilTimeout(io_operation op, bool * bufferRea
 
 // -----------------------------------------------------------------------------
 
-std::uint64_t roboticslab::CanBusPeak::computeAcceptanceCodeAndMask()
+std::uint64_t CanBusPeak::computeAcceptanceCodeAndMask()
 {
     // DISCARD message if the following holds true (from driver/pcan_main.c):
     // (pf->id & ~dev->acc_11b.mask) != dev->acc_11b.code

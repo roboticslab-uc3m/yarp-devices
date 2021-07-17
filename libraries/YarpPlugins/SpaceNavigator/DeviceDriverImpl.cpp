@@ -2,22 +2,30 @@
 
 #include "SpaceNavigator.hpp"
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Value.h>
 
 using namespace roboticslab;
 
+constexpr auto DEFAULT_DEADBAND = 0.125;
+
+namespace
+{
+    YARP_LOG_COMPONENT(SPNAV, "rl.SpaceNavigator")
+}
+
 // -----------------------------------------------------------------------------
 
 bool SpaceNavigator::open(yarp::os::Searchable & config)
 {
-    yDebug() << "SpaceNavigator config:" << config.toString();
+    yCDebug(SPNAV) << "Config:" << config.toString();
 
     deadband = config.check("deadband", yarp::os::Value(DEFAULT_DEADBAND), "deadband [0,1]").asFloat64();
 
     if (spnav_open() == -1)
     {
-        yError() << "Failed to connect to the space navigator daemon";
+        yCError(SPNAV) << "Failed to connect to the space navigator daemon";
         return false;
     }
 

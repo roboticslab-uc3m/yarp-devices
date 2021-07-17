@@ -4,9 +4,13 @@
 
 #include <yarp/os/Log.h>
 
+#include "LogComponent.hpp"
+
+using namespace roboticslab;
+
 // ------------------ IVelocity Related ----------------------------------------
 
-bool roboticslab::EmulatedControlboard::velocityMove(int j, double sp)  // velExposed = sp;
+bool EmulatedControlboard::velocityMove(int j, double sp)  // velExposed = sp;
 {
     if ((unsigned int)j > axes)
     {
@@ -16,7 +20,7 @@ bool roboticslab::EmulatedControlboard::velocityMove(int j, double sp)  // velEx
     // Check if we are in velocity mode.
     if (controlMode != VELOCITY_MODE)
     {
-        yError("EmulatedControlboard will not velocityMove as not in velocityMode");
+        yCError(ECB, "EmulatedControlboard will not velocityMove as not in velocityMode");
         return false;
     }
 
@@ -28,7 +32,7 @@ bool roboticslab::EmulatedControlboard::velocityMove(int j, double sp)  // velEx
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::velocityMove(const double *sp)
+bool EmulatedControlboard::velocityMove(const double *sp)
 {
     bool ok = true;
 
@@ -42,7 +46,7 @@ bool roboticslab::EmulatedControlboard::velocityMove(const double *sp)
 
 // ----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::velocityMove(const int n_joint, const int *joints, const double *spds)
+bool EmulatedControlboard::velocityMove(const int n_joint, const int *joints, const double *spds)
 {
     // must implement mask!
     return velocityMove(spds);
@@ -50,25 +54,25 @@ bool roboticslab::EmulatedControlboard::velocityMove(const int n_joint, const in
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::getRefVelocity(const int joint, double *vel)
+bool EmulatedControlboard::getRefVelocity(const int joint, double *vel)
 {
-    yWarning("getRefVelocity() not implemented yet");
+    yCWarning(ECB, "getRefVelocity() not implemented yet");
     return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::getRefVelocities(double *vels)
+bool EmulatedControlboard::getRefVelocities(double *vels)
 {
-    yWarning("getRefVelocities() not implemented yet");
+    yCWarning(ECB, "getRefVelocities() not implemented yet");
     return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::getRefVelocities(const int n_joint, const int *joints, double *vels)
+bool EmulatedControlboard::getRefVelocities(const int n_joint, const int *joints, double *vels)
 {
-    yWarning("getRefVelocities() not implemented yet");
+    yCWarning(ECB, "getRefVelocities() not implemented yet");
     return false;
 }
 

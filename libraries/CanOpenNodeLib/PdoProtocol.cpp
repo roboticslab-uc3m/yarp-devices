@@ -7,6 +7,7 @@
 #include <bitset>
 #include <vector>
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
 #if defined(USE_NONSTD_OPTIONAL)
@@ -18,6 +19,11 @@ using std::optional;
 #endif
 
 using namespace roboticslab;
+
+namespace
+{
+    YARP_LOG_COMPONENT(PDO, "rl.PdoProtocol")
+}
 
 struct PdoConfiguration::Private
 {
@@ -114,7 +120,7 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
         mappingIdx = 0x1A00 + n - 1;
         break;
     default:
-        yError() << "Unknown PDO type";
+        yCError(PDO) << "Unknown PDO type";
         return false;
     }
 
@@ -132,7 +138,7 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
     {
         if (getType() != PdoType::TPDO)
         {
-            yError() << "Illegal RTR usage on non-TPDO node";
+            yCError(PDO) << "Illegal RTR usage on non-TPDO node";
             return false;
         }
 
@@ -163,7 +169,7 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
     {
         if (getType() != PdoType::TPDO)
         {
-            yError() << "Illegal SYNC start value usage on non-TPDO node";
+            yCError(PDO) << "Illegal SYNC start value usage on non-TPDO node";
             return false;
         }
 

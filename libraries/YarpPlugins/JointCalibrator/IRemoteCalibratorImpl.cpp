@@ -8,13 +8,12 @@
 
 #include <yarp/os/LogStream.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
-namespace
-{
-    constexpr double MOTION_CHECK_INTERVAL = 0.1; // seconds
-    constexpr double POSITION_EPSILON = 0.01; // degrees
-}
+constexpr double MOTION_CHECK_INTERVAL = 0.1; // seconds
+constexpr double POSITION_EPSILON = 0.01; // degrees
 
 bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs & specs)
 {
@@ -22,7 +21,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
     {
         if (joint < 0 || joint > axes - 1)
         {
-            yError() << "Invalid joint id: %d" << joint;
+            yCError(JC) << "Invalid joint id: %d" << joint;
             return false;
         }
     }
@@ -31,7 +30,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
 
     if (!iEncoders->getEncoders(encs.data()))
     {
-        yError() << "Unable to retrieve initial position";
+        yCError(JC) << "Unable to retrieve initial position";
         return false;
     }
 
@@ -41,7 +40,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
     {
         if (std::abs(encs[joint] - specs.pos[joint]) < POSITION_EPSILON)
         {
-            yInfo() << "Joint" << joint << "already in target position";
+            yCInfo(JC) << "Joint" << joint << "already in target position";
             continue;
         }
 
@@ -50,7 +49,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
 
     if (ids.empty())
     {
-        yInfo() << "All joints in target position, not moving";
+        yCInfo(JC) << "All joints in target position, not moving";
         return true;
     }
 
@@ -58,7 +57,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
 
     if (!iPositionControl->getRefSpeeds(ids.size(), ids.data(), initialRefSpeeds.data()))
     {
-        yError() << "Unable to retrieve initial reference speeds";
+        yCError(JC) << "Unable to retrieve initial reference speeds";
         return false;
     }
 
@@ -66,7 +65,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
 
     if (!iPositionControl->getRefAccelerations(ids.size(), ids.data(), initialRefAccs.data()))
     {
-        yError() << "Unable to retrieve initial reference accelerations";
+        yCError(JC) << "Unable to retrieve initial reference accelerations";
         return false;
     }
 
@@ -74,7 +73,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
 
     if (!iControlMode->setControlModes(ids.size(), ids.data(), targetModes.data()))
     {
-        yError() << "Unable to switch to position mode";
+        yCError(JC) << "Unable to switch to position mode";
         return false;
     }
 
@@ -91,19 +90,19 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
 
     if (!iPositionControl->setRefSpeeds(ids.size(), ids.data(), targetRefSpeeds.data()))
     {
-        yError() << "Unable to set new reference speeds";
+        yCError(JC) << "Unable to set new reference speeds";
         return false;
     }
 
     if (!iPositionControl->setRefAccelerations(ids.size(), ids.data(), targetRefAccs.data()))
     {
-        yError() << "Unable to set new reference accelerations";
+        yCError(JC) << "Unable to set new reference accelerations";
         return false;
     }
 
     if (!iPositionControl->positionMove(ids.size(), ids.data(), targets.data()))
     {
-        yError() << "Unable to move motors to new position";
+        yCError(JC) << "Unable to move motors to new position";
         return false;
     }
 
@@ -116,7 +115,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
 
         if (!iPositionControl->checkMotionDone(ids.size(), ids.data(), &done))
         {
-            yWarning() << "Unable to check motion completion";
+            yCWarning(JC) << "Unable to check motion completion";
             ok = false;
             break;
         }
@@ -125,7 +124,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
 
     if (!iEncoders->getEncoders(encs.data()))
     {
-        yWarning() << "Unable to retrieve target position";
+        yCWarning(JC) << "Unable to retrieve target position";
         ok = false;
     }
 
@@ -133,20 +132,20 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
     {
         if (std::abs(encs[id] - specs.pos[id]) > POSITION_EPSILON)
         {
-            yWarning() << "Joint" << id << "has not reached the desired position";
+            yCWarning(JC) << "Joint" << id << "has not reached the desired position";
             ok = false;
         }
     }
 
     if (!iPositionControl->setRefSpeeds(ids.size(), ids.data(), initialRefSpeeds.data()))
     {
-        yWarning() << "Unable to restore initial reference speeds";
+        yCWarning(JC) << "Unable to restore initial reference speeds";
         ok = false;
     }
 
     if (!iPositionControl->setRefAccelerations(ids.size(), ids.data(), initialRefAccs.data()))
     {
-        yWarning() << "Unable to restore initial reference accelerations";
+        yCWarning(JC) << "Unable to restore initial reference accelerations";
         ok = false;
     }
 
@@ -155,26 +154,26 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
 
 bool JointCalibrator::calibrateSingleJoint(int j)
 {
-    yWarning() << "calibrateSingleJoint() not supported";
+    yCWarning(JC) << "calibrateSingleJoint() not supported";
     return false;
 }
 
 bool JointCalibrator::calibrateWholePart()
 {
-    yWarning() << "calibrateWholePart() not supported";
+    yCWarning(JC) << "calibrateWholePart() not supported";
     return false;
 }
 
 bool JointCalibrator::homingSingleJoint(int j)
 {
-    yInfo() << "Performing homing procedure on joint" << j;
+    yCInfo(JC) << "Performing homing procedure on joint" << j;
     std::vector<int> targets{j};
     return move(targets, homeSpecs);
 }
 
 bool JointCalibrator::homingWholePart()
 {
-    yInfo() << "Performing homing procedure on whole part";
+    yCInfo(JC) << "Performing homing procedure on whole part";
     std::vector<int> targets(axes);
     std::iota(targets.begin(), targets.end(), 0);
     return move(targets, homeSpecs);
@@ -182,14 +181,14 @@ bool JointCalibrator::homingWholePart()
 
 bool JointCalibrator::parkSingleJoint(int j, bool wait)
 {
-    yInfo() << "Performing park procedure on joint" << j;
+    yCInfo(JC) << "Performing park procedure on joint" << j;
     std::vector<int> targets{j};
     return move(targets, parkSpecs);
 }
 
 bool JointCalibrator::parkWholePart()
 {
-    yInfo() << "Performing park procedure on whole part";
+    yCInfo(JC) << "Performing park procedure on whole part";
     std::vector<int> targets(axes);
     std::iota(targets.begin(), targets.end(), 0);
     return move(targets, parkSpecs);
@@ -197,12 +196,12 @@ bool JointCalibrator::parkWholePart()
 
 bool JointCalibrator::quitCalibrate()
 {
-    yWarning() << "quitCalibrate() not supported";
+    yCWarning(JC) << "quitCalibrate() not supported";
     return false;
 }
 
 bool JointCalibrator::quitPark()
 {
-    yWarning() << "quitPark() not supported";
+    yCWarning(JC) << "quitPark() not supported";
     return false;
 }

@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __CAN_BUS_SOCKET__
-#define __CAN_BUS_SOCKET__
+#ifndef __CAN_BUS_SOCKET_HPP__
+#define __CAN_BUS_SOCKET_HPP__
 
 #include <linux/can.h>
 
@@ -45,4 +45,4 @@ public:
 
 } // namespace roboticslab
 
-#endif // __CAN_BUS_SOCKET__
+#endif // __CAN_BUS_SOCKET_HPP__

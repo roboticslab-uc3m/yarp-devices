@@ -4,6 +4,8 @@
 
 #include <yarp/os/LogStream.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 namespace
@@ -26,7 +28,7 @@ namespace
         }
         else
         {
-            yError() << "Missing" << key << "/" << keys << "key or size mismatch";
+            yCError(JC) << "Missing" << key << "/" << keys << "key or size mismatch";
             return false;
         }
 
@@ -36,13 +38,13 @@ namespace
 
 bool JointCalibrator::open(yarp::os::Searchable & config)
 {
-    yDebug() << "JointCalibrator config:" << config.toString();
+    yCDebug(JC) << "Config:" << config.toString();
 
     axes = config.check("joints", yarp::os::Value(0), "number of controlled axes").asInt32();
 
     if (axes == 0)
     {
-        yError() << "Illegal axis count:" << axes;
+        yCError(JC) << "Illegal axis count:" << axes;
         return false;
     }
 

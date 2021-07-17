@@ -10,8 +10,6 @@
 #include "DextraRawControlboard.hpp"
 #include "Synapse.hpp"
 
-#define DEFAULT_PORT "/dev/ttyACM0" // also /dev/ttyUSB0
-
 namespace roboticslab
 {
 
@@ -32,8 +30,8 @@ public:
     SerialSynapse(yarp::dev::ISerialDevice * iSerialDevice);
 
 protected:
-    virtual bool getMessage(unsigned char * msg, char stopByte, int size) override;
-    virtual bool sendMessage(unsigned char * msg, int size) override;
+    bool getMessage(unsigned char * msg, char stopByte, int size) override;
+    bool sendMessage(unsigned char * msg, int size) override;
 
 private:
     yarp::dev::ISerialDevice * iSerialDevice;

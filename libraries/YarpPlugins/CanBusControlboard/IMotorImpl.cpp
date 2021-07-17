@@ -4,13 +4,15 @@
 
 #include <yarp/os/Log.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
 bool CanBusControlboard::getNumberOfMotors(int * ax)
 {
-    yTrace("");
+    yCTrace(CBCB, "");
     return getAxes(ax);
 }
 
@@ -18,7 +20,7 @@ bool CanBusControlboard::getNumberOfMotors(int * ax)
 
 bool CanBusControlboard::getTemperature(int m, double * val)
 {
-    yTrace("%d", m);
+    yCTrace(CBCB, "%d", m);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IMotorRaw::getTemperatureRaw, m, val);
 }
@@ -27,7 +29,7 @@ bool CanBusControlboard::getTemperature(int m, double * val)
 
 bool CanBusControlboard::getTemperatures(double * vals)
 {
-    yTrace("");
+    yCTrace(CBCB, "");
     return deviceMapper.mapAllJoints(&yarp::dev::IMotorRaw::getTemperaturesRaw, vals);
 }
 
@@ -35,7 +37,7 @@ bool CanBusControlboard::getTemperatures(double * vals)
 
 bool CanBusControlboard::getTemperatureLimit(int m, double * temp)
 {
-    yTrace("%d", m);
+    yCTrace(CBCB, "%d", m);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IMotorRaw::getTemperatureLimitRaw, m, temp);
 }
@@ -44,7 +46,7 @@ bool CanBusControlboard::getTemperatureLimit(int m, double * temp)
 
 bool CanBusControlboard::setTemperatureLimit(int m, double temp)
 {
-    yTrace("%d %f", m, temp);
+    yCTrace(CBCB, "%d %f", m, temp);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IMotorRaw::setTemperatureLimitRaw, m, temp);
 }
@@ -53,7 +55,7 @@ bool CanBusControlboard::setTemperatureLimit(int m, double temp)
 
 bool CanBusControlboard::getGearboxRatio(int m, double * val)
 {
-    yTrace("%d", m);
+    yCTrace(CBCB, "%d", m);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IMotorRaw::getGearboxRatioRaw, m, val);
 }
@@ -62,7 +64,7 @@ bool CanBusControlboard::getGearboxRatio(int m, double * val)
 
 bool CanBusControlboard::setGearboxRatio(int m, double val)
 {
-    yTrace("%d %f", m, val);
+    yCTrace(CBCB, "%d %f", m, val);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IMotorRaw::setGearboxRatioRaw, m, val);
 }

@@ -11,15 +11,13 @@ yarp_prepare_plugin(LacqueyFetch
 
 if(NOT SKIP_LacqueyFetch)
 
-    if(NOT YARP_VERSION VERSION_GREATER_EQUAL 3.4)
-        set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
-    endif()
-
     yarp_add_plugin(LacqueyFetch LacqueyFetch.hpp
                                  DeviceDriverImpl.cpp
                                  ICanBusSharerImpl.cpp
                                  IControlModeRawImpl.cpp
-                                 IPWMControlRawImpl.cpp)
+                                 IPWMControlRawImpl.cpp
+                                 LogComponent.hpp
+                                 LogComponent.cpp)
 
     target_link_libraries(LacqueyFetch YARP::YARP_os
                                        YARP::YARP_dev

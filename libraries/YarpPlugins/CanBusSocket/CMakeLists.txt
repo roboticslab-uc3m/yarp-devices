@@ -17,7 +17,9 @@ if(NOT SKIP_CanBusSocket)
                                  ICanBusImpl.cpp
                                  ICanBusErrorsImpl.cpp
                                  SocketCanMessage.cpp
-                                 SocketCanMessage.hpp)
+                                 SocketCanMessage.hpp
+                                 LogComponent.hpp
+                                 LogComponent.cpp)
 
     target_link_libraries(CanBusSocket YARP::YARP_os
                                        YARP::YARP_dev)

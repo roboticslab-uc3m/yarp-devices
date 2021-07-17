@@ -20,7 +20,7 @@ namespace roboticslab
 
 /**
  * @ingroup YarpPlugins
- * \defgroup LacqueyFetch
+ * @defgroup LacqueyFetch
  * @brief Contains roboticslab::LacqueyFetch.
  */
 
@@ -41,36 +41,36 @@ public:
 
     //  --------- DeviceDriver declarations. Implementation in LacqueyFetch.cpp ---------
 
-    virtual bool open(yarp::os::Searchable & config) override;
-    virtual bool close() override;
+    bool open(yarp::os::Searchable & config) override;
+    bool close() override;
 
     //  --------- ICanBusSharer declarations. Implementation in LacqueyFetch.cpp ---------
 
-    virtual unsigned int getId() override;
-    virtual bool notifyMessage(const can_message & message) override;
-    virtual bool initialize() override;
-    virtual bool finalize() override;
-    virtual bool registerSender(CanSenderDelegate * sender) override;
-    virtual bool synchronize() override;
+    unsigned int getId() override;
+    bool notifyMessage(const can_message & message) override;
+    bool initialize() override;
+    bool finalize() override;
+    bool registerSender(CanSenderDelegate * sender) override;
+    bool synchronize() override;
 
     //  --------- IControlModeRaw declarations. Implementation in IControlModeRawImpl.cpp ---------
 
-    virtual bool getControlModeRaw(int j, int * mode) override;
-    virtual bool getControlModesRaw(int * modes) override;
-    virtual bool getControlModesRaw(int n_joint, const int * joints, int * modes) override;
-    virtual bool setControlModeRaw(int j, int mode) override;
-    virtual bool setControlModesRaw(int * modes) override;
-    virtual bool setControlModesRaw(int n_joint, const int * joints, int * modes) override;
+    bool getControlModeRaw(int j, int * mode) override;
+    bool getControlModesRaw(int * modes) override;
+    bool getControlModesRaw(int n_joint, const int * joints, int * modes) override;
+    bool setControlModeRaw(int j, int mode) override;
+    bool setControlModesRaw(int * modes) override;
+    bool setControlModesRaw(int n_joint, const int * joints, int * modes) override;
 
     // ------- IPWMControlRaw declarations. Implementation in IPWMControlRawImpl.cpp -------
 
-    virtual bool getNumberOfMotorsRaw(int * number) override;
-    virtual bool setRefDutyCycleRaw(int m, double ref) override;
-    virtual bool setRefDutyCyclesRaw(const double * refs) override;
-    virtual bool getRefDutyCycleRaw(int m, double * ref) override;
-    virtual bool getRefDutyCyclesRaw(double * refs) override;
-    virtual bool getDutyCycleRaw(int m, double * val) override;
-    virtual bool getDutyCyclesRaw(double * vals) override;
+    bool getNumberOfMotorsRaw(int * number) override;
+    bool setRefDutyCycleRaw(int m, double ref) override;
+    bool setRefDutyCyclesRaw(const double * refs) override;
+    bool getRefDutyCycleRaw(int m, double * ref) override;
+    bool getRefDutyCyclesRaw(double * refs) override;
+    bool getDutyCycleRaw(int m, double * val) override;
+    bool getDutyCyclesRaw(double * vals) override;
 
 private:
 

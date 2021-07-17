@@ -15,10 +15,6 @@ yarp_prepare_plugin(PhidgetSpatial
 
 if(NOT SKIP_PhidgetSpatial)
 
-    if(NOT YARP_VERSION VERSION_GREATER_EQUAL 3.4)
-        set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
-    endif()
-
     yarp_add_plugin(PhidgetSpatial PhidgetSpatial.hpp
                                    PhidgetSpatial.cpp
                                    DeviceDriverImpl.cpp

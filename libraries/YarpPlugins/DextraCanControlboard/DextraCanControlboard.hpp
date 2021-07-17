@@ -29,11 +29,11 @@ public:
     //! Constructor.
     CanSynapse(unsigned int canId);
 
-    virtual void configure(void * handle) override;
+    void configure(void * handle) override;
 
 protected:
-    virtual bool getMessage(unsigned char * msg, char stopByte, int size) override;
-    virtual bool sendMessage(unsigned char * msg, int size) override;
+    bool getMessage(unsigned char * msg, char stopByte, int size) override;
+    bool sendMessage(unsigned char * msg, int size) override;
 
 private:
     unsigned int canId;
@@ -55,17 +55,17 @@ public:
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 
-    virtual bool open(yarp::os::Searchable & config) override;
-    virtual bool close() override;
+    bool open(yarp::os::Searchable & config) override;
+    bool close() override;
 
     //  --------- ICanBusSharer declarations. Implementation in ICanBusSharerImpl.cpp ---------
 
-    virtual unsigned int getId() override;
-    virtual bool initialize() override;
-    virtual bool finalize() override;
-    virtual bool notifyMessage(const can_message & message) override;
-    virtual bool registerSender(CanSenderDelegate * sender) override;
-    virtual bool synchronize() override;
+    unsigned int getId() override;
+    bool initialize() override;
+    bool finalize() override;
+    bool notifyMessage(const can_message & message) override;
+    bool registerSender(CanSenderDelegate * sender) override;
+    bool synchronize() override;
 
 protected:
 

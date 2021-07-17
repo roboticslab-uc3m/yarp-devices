@@ -7,6 +7,7 @@
 #include <yarp/os/Log.h>
 
 #include "CanUtils.hpp"
+#include "LogComponent.hpp"
 
 using namespace roboticslab;
 
@@ -14,7 +15,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::positionMoveRaw(int j, double ref)
 {
-    yTrace("%d %f", j, ref);
+    yCTrace(IPOS, "%d %f", j, ref);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
@@ -42,7 +43,7 @@ bool TechnosoftIpos::positionMoveRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::relativeMoveRaw(int j, double delta)
 {
-    yTrace("%d %f", j, delta);
+    yCTrace(IPOS, "%d %f", j, delta);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
@@ -70,7 +71,7 @@ bool TechnosoftIpos::relativeMoveRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::checkMotionDoneRaw(int j, bool * flag)
 {
-    yTrace("%d", j);
+    yCTrace(IPOS, "%d", j);
     CHECK_JOINT(j);
     *flag = can->driveStatus()->getCurrentState() != DriveState::OPERATION_ENABLED || can->driveStatus()->statusword()[10];
     return true;
@@ -94,17 +95,17 @@ bool TechnosoftIpos::checkMotionDoneRaw(int n_joint, const int * joints, bool * 
 
 bool TechnosoftIpos::setRefSpeedRaw(int j, double sp)
 {
-    yTrace("%d %f", j, sp);
+    yCTrace(IPOS, "%d %f", j, sp);
     CHECK_JOINT(j);
 
     if (sp < 0.0)
     {
-        yWarning("Illegal negative speed provided: %f", sp);
+        yCWarning(IPOS, "Illegal negative speed provided: %f", sp);
         return false;
     }
     else if (sp > vars.maxVel)
     {
-        yWarning("Reference speed exceeds maximum velocity (%f)", vars.maxVel.load());
+        yCWarning(IPOS, "Reference speed exceeds maximum velocity (%f)", vars.maxVel.load());
         return false;
     }
 
@@ -143,12 +144,12 @@ bool TechnosoftIpos::setRefSpeedsRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
 {
-    yTrace("%d %f", j, acc);
+    yCTrace(IPOS, "%d %f", j, acc);
     CHECK_JOINT(j);
 
     if (acc < 0.0)
     {
-        yWarning("Illegal negative acceleration provided: %f", acc);
+        yCWarning(IPOS, "Illegal negative acceleration provided: %f", acc);
         return false;
     }
 
@@ -187,7 +188,7 @@ bool TechnosoftIpos::setRefAccelerationsRaw(int n_joint, const int * joints, con
 
 bool TechnosoftIpos::getRefSpeedRaw(int j, double * ref)
 {
-    yTrace("%d", j);
+    yCTrace(IPOS, "%d", j);
     CHECK_JOINT(j);
 
     if (vars.actualControlMode == VOCAB_CM_NOT_CONFIGURED)
@@ -224,7 +225,7 @@ bool TechnosoftIpos::getRefSpeedsRaw(int n_joint, const int * joints, double * s
 
 bool TechnosoftIpos::getRefAccelerationRaw(int j, double * acc)
 {
-    yTrace("%d", j);
+    yCTrace(IPOS, "%d", j);
     CHECK_JOINT(j);
 
     if (vars.actualControlMode == VOCAB_CM_NOT_CONFIGURED)
@@ -261,7 +262,7 @@ bool TechnosoftIpos::getRefAccelerationsRaw(int n_joint, const int * joints, dou
 
 bool TechnosoftIpos::stopRaw(int j)
 {
-    yTrace("%d", j);
+    yCTrace(IPOS, "%d", j);
     CHECK_JOINT(j);
 
     return (vars.actualControlMode == VOCAB_CM_POSITION || vars.actualControlMode == VOCAB_CM_VELOCITY)
@@ -287,7 +288,7 @@ bool TechnosoftIpos::stopRaw(int n_joint, const int * joints)
 
 bool TechnosoftIpos::getTargetPositionRaw(int joint, double * ref)
 {
-    yTrace("%d", joint);
+    yCTrace(IPOS, "%d", joint);
     CHECK_JOINT(joint);
 
     return can->sdo()->upload<std::int32_t>("Target position", [this, ref](auto data)

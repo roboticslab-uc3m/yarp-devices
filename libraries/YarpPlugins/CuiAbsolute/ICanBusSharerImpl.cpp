@@ -8,6 +8,7 @@
 #include <yarp/os/Time.h>
 
 #include "CanUtils.hpp"
+#include "LogComponent.hpp"
 
 using namespace roboticslab;
 
@@ -36,7 +37,7 @@ bool CuiAbsolute::finalize()
 {
     if (cuiMode == CuiMode::PUSH && !stopPushMode())
     {
-        yError() << "Unable to stop Cui with CAN id" << canId;
+        yCError(CUI) << "Unable to stop Cui with CAN id" << canId;
         return false;
     }
 
@@ -50,7 +51,7 @@ bool CuiAbsolute::notifyMessage(const can_message & message)
 {
     if (message.data[3] == 0xc4)
     {
-        yError("Known PIC error. %s", CanUtils::msgToStr(message).c_str());
+        yCError(CUI, "Known PIC error. %s", CanUtils::msgToStr(message).c_str());
         return false;
     }
 

@@ -6,19 +6,21 @@
 
 #include <yarp/os/Log.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // ----------------------------------------------------------------------------------
 
 bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
 {
-    yTrace("%d %f", j, sp);
+    yCTrace(IPOS, "%d %f", j, sp);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_VELOCITY);
 
     if (std::abs(sp) > vars.maxVel)
     {
-        yWarning("Requested speed exceeds maximum velocity (%f)", vars.maxVel.load());
+        yCWarning(IPOS, "Requested speed exceeds maximum velocity (%f)", vars.maxVel.load());
         sp = std::min<double>(vars.maxVel, std::max<double>(-vars.maxVel, sp));
     }
 
@@ -51,7 +53,7 @@ bool TechnosoftIpos::velocityMoveRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::getRefVelocityRaw(int joint, double * vel)
 {
-    yTrace("%d",joint);
+    yCTrace(IPOS, "%d",joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_VELOCITY);
     *vel = vars.synchronousCommandTarget;

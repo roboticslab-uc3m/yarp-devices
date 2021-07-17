@@ -13,6 +13,10 @@
 
 #include <yarp/os/Log.h>
 
+#include "LogComponent.hpp"
+
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
 
 namespace
@@ -26,11 +30,11 @@ namespace
 
 // -----------------------------------------------------------------------------
 
-std::map<unsigned int, unsigned int> roboticslab::CanBusHico::idToBitrateMap;
+std::map<unsigned int, unsigned int> CanBusHico::idToBitrateMap;
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::waitUntilTimeout(io_operation op, bool * bufferReady)
+bool CanBusHico::waitUntilTimeout(io_operation op, bool * bufferReady)
 {
     fd_set fds;
 
@@ -53,13 +57,13 @@ bool roboticslab::CanBusHico::waitUntilTimeout(io_operation op, bool * bufferRea
         ret = ::select(fileDescriptor + 1, 0, &fds, 0, &tv);
         break;
     default:
-        yError("Unhandled IO operation on select()");
+        yCError(HICO, "Unhandled IO operation on select()");
         return false;
     }
 
     if (ret < 0)
     {
-        yError("select() error: %s", std::strerror(errno));
+        yCError(HICO, "select() error: %s", std::strerror(errno));
         return false;
     }
     else if (ret == 0)
@@ -77,7 +81,7 @@ bool roboticslab::CanBusHico::waitUntilTimeout(io_operation op, bool * bufferRea
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::CanBusHico::initBitrateMap()
+void CanBusHico::initBitrateMap()
 {
     idToBitrateMap[BITRATE_10k] = 10000;
     idToBitrateMap[BITRATE_20k] = 20000;
@@ -92,7 +96,7 @@ void roboticslab::CanBusHico::initBitrateMap()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::bitrateToId(unsigned int bitrate, unsigned int * id)
+bool CanBusHico::bitrateToId(unsigned int bitrate, unsigned int * id)
 {
     std::map<unsigned int, unsigned int>::const_iterator it;
 
@@ -110,7 +114,7 @@ bool roboticslab::CanBusHico::bitrateToId(unsigned int bitrate, unsigned int * i
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::idToBitrate(unsigned int id, unsigned int * bitrate)
+bool CanBusHico::idToBitrate(unsigned int id, unsigned int * bitrate)
 {
     try
     {

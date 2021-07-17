@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __PHIDGET_SPATIAL__
-#define __PHIDGET_SPATIAL__
+#ifndef __PHIDGET_SPATIAL_HPP__
+#define __PHIDGET_SPATIAL_HPP__
 
 #include <yarp/os/all.h>
 #include <yarp/dev/Drivers.h>
@@ -12,12 +12,6 @@
 #include <math.h>
 
 #include <phidget21.h>
-
-using namespace yarp::os;
-using namespace yarp::dev;
-
-#define DEFAULT_RATE_MS 20.0
-#define DEFAULT_NUM_CHANNELS 11
 
 namespace roboticslab
 {
@@ -32,7 +26,8 @@ namespace roboticslab
   * @ingroup PhidgetSpatial
   * @brief Implementation of a Phidgets device.
   */
-class PhidgetSpatial : public DeviceDriver, public yarp::dev::IAnalogSensor
+class PhidgetSpatial : public yarp::dev::DeviceDriver,
+                       public yarp::dev::IAnalogSensor
 {
 public:
 
@@ -42,13 +37,13 @@ public:
      * Open the DeviceDriver.
      * @return true/false upon success/failure
      */
-    virtual bool open(Searchable& config);
-    virtual bool close();
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 
     /**
      * Destructor.
      */
-     ~PhidgetSpatial() {}
+     ~PhidgetSpatial() override = default;
 
     //  --------- IAnalogSensor Declarations. Implementation in IAnalogSensorImpl.cpp ---------
 
@@ -57,40 +52,40 @@ public:
      * @param out a vector containing the sensor's last readings.
      * @return AS_OK or return code. AS_TIMEOUT if the sensor timed-out.
      */
-    virtual int read(yarp::sig::Vector &out);
+    int read(yarp::sig::Vector &out) override;
 
     /**
      * Check the state value of a given channel.
      * @param ch channel number.
      * @return status.
      */
-    virtual int getState(int ch);
+    int getState(int ch) override;
 
     /**
      * Get the number of channels of the sensor.
      * @return number of channels (0 in case of errors).
      */
-    virtual int getChannels();
+    int getChannels() override;
 
     /**
      * Calibrates the whole sensor.
      * @return status.
      */
-    virtual int calibrateSensor();
+    int calibrateSensor() override;
 
     /**
      * Calibrates the whole sensor, using an vector of calibration values.
      * @param value a vector of calibration values.
      * @return status.
      */
-    virtual int calibrateSensor(const yarp::sig::Vector& value);
+    int calibrateSensor(const yarp::sig::Vector& value) override;
 
     /**
      * Calibrates one single channel.
      * @param ch channel number.
      * @return status.
      */
-    virtual int calibrateChannel(int ch);
+    int calibrateChannel(int ch) override;
 
     /**
      * Calibrates one single channel, using a calibration value.
@@ -98,7 +93,7 @@ public:
      * @param value calibration value.
      * @return status.
      */
-    virtual int calibrateChannel(int ch, double value);
+    int calibrateChannel(int ch, double value) override;
 
 
     // -- Helper Funcion declarations. Implementation in PhidgetSpatial.cpp --
@@ -127,10 +122,8 @@ private:
     double acceleration[3];
     double angularRate[3];
     double magneticField[3];
-
 };
 
-}  // namespace roboticslab
+} // namespace roboticslab
 
-#endif
-
+#endif // __PHIDGET_SPATIAL_HPP__

@@ -4,10 +4,18 @@
 
 #include <functional>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
+
+// seconds
+constexpr auto DEFAULT_SDO_TIMEOUT = 0.02;
+constexpr auto DEFAULT_DRIVE_STATE_TIMEOUT = 2.0;
 
 // -----------------------------------------------------------------------------
 
@@ -15,7 +23,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 {
     if (!config.check("robotConfig") || !config.find("robotConfig").isBlob())
     {
-        yError() << "Missing \"robotConfig\" property or not a blob";
+        yCError(IPOS) << "Missing \"robotConfig\" property or not a blob";
         return false;
     }
 
@@ -31,7 +39,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     iposGroup.fromString(config.toString(), false); // override common options
 
-    yDebug() << "TechnosoftIpos config:" << iposGroup.toString();
+    yCDebug(IPOS) << "Config:" << iposGroup.toString();
 
     yarp::os::Bottle & driverGroup = robotConfig->findGroup(iposGroup.find("driver").asString());
     yarp::os::Bottle & motorGroup = robotConfig->findGroup(iposGroup.find("motor").asString());
@@ -43,7 +51,11 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
 
     vars.axisName = config.check("name", yarp::os::Value(""), "axis name").asString(); // id-specific
+#if YARP_VERSION_MINOR >= 5
+    vars.jointType = iposGroup.check("type", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "joint type [atrv|atpr|unkn]").asVocab32();
+#else
     vars.jointType = iposGroup.check("type", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "joint type [atrv|atpr|unkn]").asVocab();
+#endif
     vars.max = iposGroup.check("max", yarp::os::Value(0.0), "max (meters or degrees)").asFloat64();
     vars.min = iposGroup.check("min", yarp::os::Value(0.0), "min (meters or degrees)").asFloat64();
     vars.maxVel = iposGroup.check("maxVel", yarp::os::Value(0.0), "maxVel (meters/second or degrees/second)").asFloat64();
@@ -58,11 +70,15 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     vars.reverse = iposGroup.check("reverse", yarp::os::Value(false), "reverse motor encoder counts").asBool();
     vars.heartbeatPeriod = iposGroup.check("heartbeatPeriod", yarp::os::Value(0.0), "CAN heartbeat period (seconds)").asFloat64();
     vars.syncPeriod = iposGroup.check("syncPeriod", yarp::os::Value(0.0), "SYNC message period (seconds)").asFloat64();
+#if YARP_VERSION_MINOR >= 5
+    vars.initialMode = iposGroup.check("initialMode", yarp::os::Value(VOCAB_CM_IDLE), "initial YARP control mode vocab").asVocab32();
+#else
     vars.initialMode = iposGroup.check("initialMode", yarp::os::Value(VOCAB_CM_IDLE), "initial YARP control mode vocab").asVocab();
+#endif
 
     if (!vars.validateInitialState())
     {
-        yError() << "Invalid configuration parameters";
+        yCError(IPOS) << "Invalid configuration parameters";
         return false;
     }
 
@@ -73,7 +89,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
         if (externalEncoderGroup.isNull())
         {
-            yError() << "Missing external encoder device group" << externalEncoder;
+            yCError(IPOS) << "Missing external encoder device group" << externalEncoder;
             return false;
         }
 
@@ -84,19 +100,19 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
         if (!externalEncoderDevice.open(externalEncoderOptions))
         {
-            yError() << "Unable to open external encoder device" << externalEncoder;
+            yCError(IPOS) << "Unable to open external encoder device" << externalEncoder;
             return false;
         }
 
         if (!externalEncoderDevice.view(iEncodersTimedRawExternal))
         {
-            yError() << "Unable to view IEncodersTimedRaw in" << externalEncoder;
+            yCError(IPOS) << "Unable to view IEncodersTimedRaw in" << externalEncoder;
             return false;
         }
 
         if (!externalEncoderDevice.view(iExternalEncoderCanBusSharer))
         {
-            yError() << "Unable to view ICanBusSharer in" << externalEncoder;
+            yCError(IPOS) << "Unable to view ICanBusSharer in" << externalEncoder;
             return false;
         }
     }

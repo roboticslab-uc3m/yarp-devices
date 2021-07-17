@@ -4,6 +4,8 @@
 
 #include <yarp/os/Log.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // ----------------------------------------------------------------------------------------
@@ -18,7 +20,7 @@ bool roboticslab::TextilesHand::getAxes(int * ax)
 
 bool TextilesHand::setPosition(int j, double ref)
 {
-    yTrace("%d %f", j, ref);
+    yCTrace(TXT, "%d %f", j, ref);
 
     if (j != 0) return false;
 
@@ -64,7 +66,7 @@ bool TextilesHand::setPositions(int n_joint, const int * joints, const double * 
 
 bool TextilesHand::getRefPosition(int joint, double * ref)
 {
-    yTrace("%d", joint);
+    yCTrace(TXT, "%d", joint);
     *ref = lastTarget;
     return true;
 }

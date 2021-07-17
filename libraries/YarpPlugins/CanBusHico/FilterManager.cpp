@@ -12,6 +12,8 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
@@ -112,7 +114,7 @@ bool CanBusHico::FilterManager::clearFilters(bool clearStage)
 {
     if (::ioctl(fd, IOC_CLEAR_FILTERS) == -1)
     {
-        yError() << "ioctl() error while clearing filters:" << std::strerror(errno);
+        yCError(HICO) << "ioctl() error while clearing filters:" << std::strerror(errno);
         return false;
     }
 
@@ -137,7 +139,7 @@ bool CanBusHico::FilterManager::setMaskedFilter(unsigned int id)
 
     if (::ioctl(fd, IOC_SET_FILTER, &filter) == -1)
     {
-        yError() << "Could not set filter:" << std::strerror(errno);
+        yCError(HICO) << "Could not set filter:" << std::strerror(errno);
         return false;
     }
 
@@ -157,7 +159,7 @@ bool roboticslab::CanBusHico::FilterManager::setRangedFilter(unsigned int lower,
 
     if (::ioctl(fd, IOC_SET_FILTER, &filter) == -1)
     {
-        yError() << "Could not set filter:" << std::strerror(errno);
+        yCError(HICO) << "Could not set filter:" << std::strerror(errno);
         return false;
     }
 
@@ -173,7 +175,7 @@ bool roboticslab::CanBusHico::FilterManager::setRangedFilter(unsigned int lower,
 
 bool CanBusHico::FilterManager::bulkUpdate()
 {
-    std::vector< std::vector<unsigned int> > sequences;
+    std::vector<std::vector<unsigned int>> sequences;
 
     if (enableRanges)
     {
@@ -205,7 +207,7 @@ bool CanBusHico::FilterManager::bulkUpdate()
 
     if (sequences.size() > MAX_FILTERS)
     {
-        yWarning("MAX_FILTERS exceeded (%zu > %d)", sequences.size(), MAX_FILTERS);
+        yCWarning(HICO, "MAX_FILTERS exceeded (%zu > %d)", sequences.size(), MAX_FILTERS);
         valid = false;
     }
     else
@@ -258,7 +260,7 @@ CanBusHico::FilterManager::filter_config CanBusHico::FilterManager::parseFilterC
     }
     else
     {
-        yWarning() << "Unrecognized filter configuration, setting DISABLED:" << str;
+        yCWarning(HICO) << "Unrecognized filter configuration, setting DISABLED:" << str;
         return DISABLED;
     }
 }

@@ -5,22 +5,13 @@
 
 #include <mutex>
 
+#include <poll.h>
 #include <xwiimote.h>
 
 #include <yarp/os/Thread.h>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
-
-#define DEFAULT_DEVICE 1
-
-#define DEFAULT_CALIB_ZERO_X -30
-#define DEFAULT_CALIB_ZERO_Y -22
-#define DEFAULT_CALIB_ZERO_Z 72
-
-#define DEFAULT_CALIB_ONE_X 69
-#define DEFAULT_CALIB_ONE_Y -123
-#define DEFAULT_CALIB_ONE_Z -25
 
 namespace roboticslab
 {
@@ -63,14 +54,14 @@ class WiimoteDispatcherThread : public yarp::os::Thread
 public:
 
     //! @brief Constructor.
-    WiimoteDispatcherThread() : iface(NULL)
+    WiimoteDispatcherThread() : iface(nullptr)
     { }
 
     //! @brief Called just before a new thread starts.
-    virtual void beforeStart();
+    void beforeStart() override;
 
     //! @brief Main body of the new thread.
-    virtual void run();
+    void run() override;
 
     //! @brief Set pointer to @ref xwii_iface.
     void setInterfacePointer(struct xwii_iface * iface)
@@ -88,28 +79,32 @@ private:
 
     WiimoteEventData eventData;
     mutable std::mutex eventDataMutex;
+
+    struct pollfd fds[2];
+    int fds_num;
 };
 
 /**
  * @ingroup WiimoteSensor
  * @brief Implementation for the Wiimote controller.
  */
-class WiimoteSensor : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor
+class WiimoteSensor : public yarp::dev::DeviceDriver,
+                      public yarp::dev::IAnalogSensor
 {
 public:
 
     WiimoteSensor()
-        : iface(NULL),
+        : iface(nullptr),
           calibZeroX(0), calibZeroY(0), calibZeroZ(0),
           calibOneX(0), calibOneY(0), calibOneZ(0)
     { }
 
-    ~WiimoteSensor()
+    ~WiimoteSensor() override
     { close(); }
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
-    virtual bool open(yarp::os::Searchable& config);
-    virtual bool close();
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 
     //  --------- IAnalogSensor Declarations. Implementation in IAnalogSensorImpl.cpp ---------
     /**
@@ -117,40 +112,40 @@ public:
      * @param out a vector containing the sensor's last readings.
      * @return AS_OK or return code. AS_TIMEOUT if the sensor timed-out.
      */
-    virtual int read(yarp::sig::Vector &out);
+    int read(yarp::sig::Vector &out) override;
 
     /**
      * Check the state value of a given channel.
      * @param ch channel number.
      * @return status.
      */
-    virtual int getState(int ch);
+    int getState(int ch) override;
 
     /**
      * Get the number of channels of the sensor.
      * @return number of channels (0 in case of errors).
      */
-    virtual int getChannels();
+    int getChannels() override;
 
     /**
      * Calibrates the whole sensor.
      * @return status.
      */
-    virtual int calibrateSensor();
+    int calibrateSensor() override;
 
     /**
      * Calibrates the whole sensor, using an vector of calibration values.
      * @param value a vector of calibration values.
      * @return status.
      */
-    virtual int calibrateSensor(const yarp::sig::Vector& value);
+    int calibrateSensor(const yarp::sig::Vector& value) override;
 
     /**
      * Calibrates one single channel.
      * @param ch channel number.
      * @return status.
      */
-    virtual int calibrateChannel(int ch);
+    int calibrateChannel(int ch) override;
 
     /**
      * Calibrates one single channel, using a calibration value.
@@ -158,7 +153,7 @@ public:
      * @param value calibration value.
      * @return status.
      */
-    virtual int calibrateChannel(int ch, double value);
+    int calibrateChannel(int ch, double value) override;
 
 private:
 
@@ -168,10 +163,11 @@ private:
 
     int calibZeroX, calibZeroY, calibZeroZ;
     int calibOneX, calibOneY, calibOneZ;
+    bool yawActive;
 
     WiimoteDispatcherThread dispatcherThread;
 };
 
-}  // namespace roboticslab
+} // namespace roboticslab
 
-#endif  // __WIIMOTE_SENSOR_HPP__
+#endif // __WIIMOTE_SENSOR_HPP__

@@ -2,24 +2,26 @@
 
 #include "PeakCanMessage.hpp"
 
-#include <cstring>  // memcpy
+#include <cstring> // memcpy
+
+using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-roboticslab::PeakCanMessage::PeakCanMessage()
+PeakCanMessage::PeakCanMessage()
 {
-    message = 0;
+    message = nullptr;
 }
 
 // -----------------------------------------------------------------------------
 
-roboticslab::PeakCanMessage::~PeakCanMessage()
+PeakCanMessage::~PeakCanMessage()
 {
 }
 
 // -----------------------------------------------------------------------------
 
-yarp::dev::CanMessage & roboticslab::PeakCanMessage::operator=(const yarp::dev::CanMessage & l)
+yarp::dev::CanMessage & PeakCanMessage::operator=(const yarp::dev::CanMessage & l)
 {
     const PeakCanMessage & tmp = dynamic_cast<const PeakCanMessage &>(l);
     std::memcpy(message, tmp.message, sizeof(struct pcanfd_msg));
@@ -28,65 +30,65 @@ yarp::dev::CanMessage & roboticslab::PeakCanMessage::operator=(const yarp::dev::
 
 // -----------------------------------------------------------------------------
 
-unsigned int roboticslab::PeakCanMessage::getId() const
+unsigned int PeakCanMessage::getId() const
 {
     return message->id;
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned char roboticslab::PeakCanMessage::getLen() const
+unsigned char PeakCanMessage::getLen() const
 {
     return message->data_len;
 }
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::PeakCanMessage::setLen(unsigned char len)
+void PeakCanMessage::setLen(unsigned char len)
 {
     message->data_len = len;
 }
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::PeakCanMessage::setId(unsigned int id)
+void PeakCanMessage::setId(unsigned int id)
 {
     message->id = id;
 }
 
 // -----------------------------------------------------------------------------
 
-const unsigned char * roboticslab::PeakCanMessage::getData() const
+const unsigned char * PeakCanMessage::getData() const
 {
     return message->data;
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned char * roboticslab::PeakCanMessage::getData()
+unsigned char * PeakCanMessage::getData()
 {
     return message->data;
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned char * roboticslab::PeakCanMessage::getPointer()
+unsigned char * PeakCanMessage::getPointer()
 {
     return reinterpret_cast<unsigned char *>(message);
 }
 
 // -----------------------------------------------------------------------------
 
-const unsigned char * roboticslab::PeakCanMessage::getPointer() const
+const unsigned char * PeakCanMessage::getPointer() const
 {
     return reinterpret_cast<const unsigned char *>(message);
 }
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::PeakCanMessage::setBuffer(unsigned char * buf)
+void PeakCanMessage::setBuffer(unsigned char * buf)
 {
-    if (buf != 0)
+    if (buf)
     {
         message = reinterpret_cast<struct pcanfd_msg *>(buf);
     }

@@ -4,9 +4,13 @@
 
 #include <yarp/os/Log.h>
 
+#include "LogComponent.hpp"
+
+using namespace roboticslab;
+
 // ------------------- IControlLimits Related ------------------------------------
 
-bool roboticslab::EmulatedControlboard::setLimits(int axis, double min, double max)
+bool EmulatedControlboard::setLimits(int axis, double min, double max)
 {
     if (axis >= int(axes))
     {
@@ -16,14 +20,14 @@ bool roboticslab::EmulatedControlboard::setLimits(int axis, double min, double m
     minLimit[axis] = min;
     maxLimit[axis] = max;
 
-    yDebug("Range of axis %d set to: %f to %f", axis, min, max);
+    yCDebug(ECB, "Range of axis %d set to: %f to %f", axis, min, max);
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::getLimits(int axis, double *min, double *max)
+bool EmulatedControlboard::getLimits(int axis, double *min, double *max)
 {
     if (axis >= int(axes))
     {
@@ -32,23 +36,23 @@ bool roboticslab::EmulatedControlboard::getLimits(int axis, double *min, double 
 
     *min = minLimit[axis];
     *max = maxLimit[axis];
-    
-    yDebug("Range of axis %d read: %f to %f", axis, *min, *max);
-    
+
+    yCDebug(ECB, "Range of axis %d read: %f to %f", axis, *min, *max);
+
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::setVelLimits(int axis, double min, double max)
+bool EmulatedControlboard::setVelLimits(int axis, double min, double max)
 {
-    yWarning("setVelLimits() not implemented");
+    yCWarning(ECB, "setVelLimits() not implemented");
     return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::getVelLimits(int axis, double *min, double *max)
+bool EmulatedControlboard::getVelLimits(int axis, double *min, double *max)
 {
     if (axis >= int(axes))
     {

@@ -4,13 +4,15 @@
 
 #include <yarp/os/Log.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
 bool LacqueyFetch::getControlModeRaw(int j, int * mode)
 {
-    yTrace("%d", j);
+    yCTrace(LCQ, "%d", j);
     CHECK_JOINT(j);
     *mode = VOCAB_CM_PWM;
     return true;
@@ -35,7 +37,7 @@ bool LacqueyFetch::getControlModesRaw(int n_joint, const int * joints, int * mod
 bool LacqueyFetch::setControlModeRaw(int j, int mode)
 {
     CHECK_JOINT(j);
-    yWarning("setControlModeRaw() not supported");
+    yCWarning(LCQ, "setControlModeRaw() not supported");
     return false;
 }
 
@@ -43,7 +45,7 @@ bool LacqueyFetch::setControlModeRaw(int j, int mode)
 
 bool LacqueyFetch::setControlModesRaw(int * modes)
 {
-    yWarning("setControlModesRaw() not supported");
+    yCWarning(LCQ, "setControlModesRaw() not supported");
     return false;
 }
 
@@ -51,7 +53,7 @@ bool LacqueyFetch::setControlModesRaw(int * modes)
 
 bool LacqueyFetch::setControlModesRaw(int n_joint, const int * joints, int * modes)
 {
-    yWarning("setControlModesRaw() not supported");
+    yCWarning(LCQ, "setControlModesRaw() not supported");
     return false;
 }
 

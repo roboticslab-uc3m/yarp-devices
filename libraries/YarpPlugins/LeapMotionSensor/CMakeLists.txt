@@ -15,13 +15,11 @@ yarp_prepare_plugin(LeapMotionSensor
 
 if(NOT SKIP_LeapMotionSensor)
 
-    if(NOT YARP_VERSION VERSION_GREATER_EQUAL 3.4)
-        set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
-    endif()
-
     yarp_add_plugin(LeapMotionSensor LeapMotionSensor.hpp
                                      DeviceDriverImpl.cpp
-                                     IAnalogSensorImpl.cpp)
+                                     IAnalogSensorImpl.cpp
+                                     LogComponent.hpp
+                                     LogComponent.cpp)
 
     target_link_libraries(LeapMotionSensor YARP::YARP_os
                                            YARP::YARP_dev

@@ -2,29 +2,33 @@
 
 #include <yarp/os/LogStream.h>
 
-bool roboticslab::AravisGigE::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono> &image)
+#include "LogComponent.hpp"
+
+using namespace roboticslab;
+
+bool AravisGigE::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono> &image)
 {
     //-- Right now it is implemented as polling (grab + retrieve image)
     //-- I think it could be also implemented with callbacks with ArvStreamCallback
 
     //-- Grab frame (get raw image)
     //--------------------------------------------------------------------------------
-    framebuffer = NULL;
+    framebuffer = nullptr;
 
-    if (stream == NULL)
+    if (stream == nullptr)
     {
-        yError() << "Stream was not initialized";
+        yCError(ARV) << "Stream was not initialized";
         return false;
     }
 
-    ArvBuffer *arvBuffer = NULL;
+    ArvBuffer *arvBuffer = nullptr;
     int max_tries = 10;
     int tries = 0;
     int success = false;
     while (!success && tries < max_tries)
     {
         arvBuffer = arv_stream_timeout_pop_buffer(stream, 200000);
-        if (arvBuffer != NULL && arv_buffer_get_status(arvBuffer) != ARV_BUFFER_STATUS_SUCCESS)
+        if (arvBuffer != nullptr && arv_buffer_get_status(arvBuffer) != ARV_BUFFER_STATUS_SUCCESS)
         {
             arv_stream_push_buffer(stream, arvBuffer);
         }
@@ -32,7 +36,7 @@ bool roboticslab::AravisGigE::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono> 
             success = true;
     }
 
-    if (arvBuffer != NULL && success)
+    if (arvBuffer != nullptr && success)
     {
         size_t buffer_size;
         framebuffer = (void *)arv_buffer_get_data(arvBuffer, &buffer_size);
@@ -42,19 +46,19 @@ bool roboticslab::AravisGigE::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono> 
     }
     else
     {
-        yError() << "Timeout! Could not grab frame...";
+        yCError(ARV) << "Timeout! Could not grab frame...";
         return false;
     }
 
     //-- Retrieve frame (convert and send as yarp image)
     //--------------------------------------------------------------------------------
-    if (framebuffer!=NULL)
+    if (framebuffer!=nullptr)
     {
         //-- Create a yarp image container according with the current pixel format
         yarp::sig::Image raw_image;
         if (pixelFormat != ARV_PIXEL_FORMAT_MONO_8)
         {
-            yError() << "Unsupported pixel format";
+            yCError(ARV) << "Unsupported pixel format";
         }
 
         //-- Write data
@@ -64,19 +68,19 @@ bool roboticslab::AravisGigE::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono> 
     }
     else
     {
-        yError() << "Framebuffer is empty";
+        yCError(ARV) << "Framebuffer is empty";
         return false;
     }
 
     return true;
 }
 
-int roboticslab::AravisGigE::height() const
+int AravisGigE::height() const
 {
     return _height;
 }
 
-int roboticslab::AravisGigE::width() const
+int AravisGigE::width() const
 {
     return _width;
 }
