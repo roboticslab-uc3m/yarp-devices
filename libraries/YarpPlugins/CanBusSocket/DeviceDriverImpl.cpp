@@ -2,12 +2,55 @@
 
 #include "CanBusSocket.hpp"
 
+#include <net/if.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
+#include <cerrno>
+#include <cstring>
+
+#include <yarp/os/LogStream.h>
+
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
+
+constexpr auto DEFAULT_PORT = "can0";
 
 // ------------------- DeviceDriver Related ------------------------------------
 
 bool CanBusSocket::open(yarp::os::Searchable& config)
 {
+    yCDebug(SCK) << "Config:" << config.toString();
+
+    iface = config.check("port", yarp::os::Value(DEFAULT_PORT), "CAN socket interface").asString();
+
+    if ((s = ::socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
+    {
+        yCError(SCK) << "Unable to open socket for iface" << iface << "with error:" << std::strerror(errno);
+        return false;
+    }
+
+    struct ifreq ifr;
+    std::strcpy(ifr.ifr_name, iface.c_str());
+
+    if (::ioctl(s, SIOCGIFINDEX, &ifr) < 0)
+    {
+        yCError(SCK) << "Unable to determine index for iface" << iface << "with error:" << std::strerror(errno);
+        return false;
+    }
+
+    struct sockaddr_can addr;
+    addr.can_family = AF_CAN;
+    addr.can_ifindex = ifr.ifr_ifindex;
+
+    if (::bind(s, (struct sockaddr *)&addr, sizeof(addr)) < 0)
+    {
+        yCError(SCK) << "Unable to bind address for iface" << iface << "with error:" << std::strerror(errno);
+        return false;
+    }
+
     return true;
 }
 
@@ -15,6 +58,12 @@ bool CanBusSocket::open(yarp::os::Searchable& config)
 
 bool CanBusSocket::close()
 {
+    if (s > 0 && ::close(s) < 0)
+    {
+        yCError(SCK) << "Unable to close socket for iface" << iface << "with error:" << std::strerror(errno);
+        return false;
+    }
+
     return true;
 }
 

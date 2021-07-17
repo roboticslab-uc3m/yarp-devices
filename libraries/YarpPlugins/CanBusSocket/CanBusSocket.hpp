@@ -4,6 +4,9 @@
 #define __CAN_BUS_SOCKET_HPP__
 
 #include <linux/can.h>
+#include <linux/can/raw.h>
+
+#include <string>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/CanBusInterface.h>
@@ -17,6 +20,8 @@ namespace roboticslab
  * @ingroup YarpPlugins
  * @defgroup CanBusSocket
  * @brief Contains roboticslab::CanBusSocket.
+ *
+ * See <a href="https://www.kernel.org/doc/html/latest/networking/can.html">documentation</a>.
  */
 class CanBusSocket : public yarp::dev::DeviceDriver,
                      public yarp::dev::ICanBus,
@@ -41,6 +46,10 @@ public:
 
     //  --------- ICanBusErrors declarations. Implementation in ICanBusErrorsImpl.cpp ---------
     bool canGetErrors(yarp::dev::CanErrors & err) override;
+
+private:
+    std::string iface;
+    int s {0};
 };
 
 } // namespace roboticslab
