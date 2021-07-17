@@ -45,20 +45,20 @@ public:
         : axes(0), iControlMode(nullptr), iEncoders(nullptr), iPositionControl(nullptr)
     { }
 
-    virtual bool calibrateSingleJoint(int j) override;
-    virtual bool calibrateWholePart() override;
-    virtual bool homingSingleJoint(int j) override;
-    virtual bool homingWholePart() override;
-    virtual bool parkSingleJoint(int j, bool wait) override;
-    virtual bool parkWholePart() override;
-    virtual bool quitCalibrate() override;
-    virtual bool quitPark() override;
+    bool calibrateSingleJoint(int j) override;
+    bool calibrateWholePart() override;
+    bool homingSingleJoint(int j) override;
+    bool homingWholePart() override;
+    bool parkSingleJoint(int j, bool wait) override;
+    bool parkWholePart() override;
+    bool quitCalibrate() override;
+    bool quitPark() override;
 
-    virtual bool attach(yarp::dev::PolyDriver * poly) override;
-    virtual bool detach() override;
+    bool attach(yarp::dev::PolyDriver * poly) override;
+    bool detach() override;
 
-    virtual bool open(yarp::os::Searchable & config) override;
-    virtual bool close() override;
+    bool open(yarp::os::Searchable & config) override;
+    bool close() override;
 
 private:
     bool move(const std::vector<int> & joints, const MovementSpecs & specs);
@@ -73,6 +73,6 @@ private:
     yarp::dev::IPositionControl * iPositionControl;
 };
 
-}  // namespace roboticslab
+} // namespace roboticslab
 
 #endif // __JOINT_CALIBRATOR_HPP__

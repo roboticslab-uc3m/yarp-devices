@@ -4,6 +4,15 @@
 
 using namespace roboticslab;
 
+constexpr auto NUM_CHANNELS = 8;
+constexpr auto FULL_SCALE_X = 460.0;
+constexpr auto FULL_SCALE_Y = 430.0;
+constexpr auto FULL_SCALE_Z = 440.0;
+constexpr auto FULL_SCALE_ROLL = 415.0;
+constexpr auto FULL_SCALE_PITCH = 405.0;
+constexpr auto FULL_SCALE_YAW = 435.0;
+constexpr auto MAX_NO_DATA_ITERATIONS = 10;
+
 // -----------------------------------------------------------------------------
 
 int SpaceNavigator::read(yarp::sig::Vector &out)
@@ -41,7 +50,7 @@ int SpaceNavigator::read(yarp::sig::Vector &out)
         //button1 = button2 = 0; // buttons should preserve pressed/released state
     }
 
-    out.resize(DEFAULT_NUM_CHANNELS);
+    out.resize(NUM_CHANNELS);
 
     out[0] = enforceDeadband(enforceRange(dx / FULL_SCALE_X));
     out[1] = enforceDeadband(enforceRange(dy / FULL_SCALE_Y));
@@ -67,7 +76,7 @@ int SpaceNavigator::getState(int ch)
 
 int SpaceNavigator::getChannels()
 {
-    return DEFAULT_NUM_CHANNELS;
+    return NUM_CHANNELS;
 }
 
 // -----------------------------------------------------------------------------

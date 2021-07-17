@@ -5,13 +5,15 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
 bool TextilesHand::open(yarp::os::Searchable & config)
 {
-    yDebug() << "TextilesHand config:" << config.toString();
+    yCDebug(TXT) << "Config:" << config.toString();
 
     std::string port = config.check("port", yarp::os::Value(DEFAULT_PORT), "serial port").asString();
 
@@ -30,13 +32,13 @@ bool TextilesHand::open(yarp::os::Searchable & config)
 
     if (!serialDevice.open(serialOptions))
     {
-        yError() << "Unable to open serial device";
+        yCError(TXT) << "Unable to open serial device";
         return false;
     }
 
     if (!serialDevice.view(iSerialDevice))
     {
-        yError() << "Unable to view iSerialDevice";
+        yCError(TXT) << "Unable to view iSerialDevice";
         return false;
     }
 

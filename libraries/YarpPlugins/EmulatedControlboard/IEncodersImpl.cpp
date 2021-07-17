@@ -2,9 +2,11 @@
 
 #include "EmulatedControlboard.hpp"
 
+using namespace roboticslab;
+
 // ------------------ IEncoders Related -----------------------------------------
 
-bool roboticslab::EmulatedControlboard::resetEncoder(int j)
+bool EmulatedControlboard::resetEncoder(int j)
 {
     if ((unsigned int)j > axes)
     {
@@ -16,7 +18,7 @@ bool roboticslab::EmulatedControlboard::resetEncoder(int j)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::resetEncoders()
+bool EmulatedControlboard::resetEncoders()
 {
     bool ok = true;
 
@@ -30,7 +32,7 @@ bool roboticslab::EmulatedControlboard::resetEncoders()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::setEncoder(int j, double val)  // encExposed = val;
+bool EmulatedControlboard::setEncoder(int j, double val)  // encExposed = val;
 {
     setEncRaw(j, val * encRawExposed[j]);
     return true;
@@ -38,7 +40,7 @@ bool roboticslab::EmulatedControlboard::setEncoder(int j, double val)  // encExp
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::setEncoders(const double *vals)
+bool EmulatedControlboard::setEncoders(const double *vals)
 {
     std::vector<double> v(axes);
 
@@ -53,7 +55,7 @@ bool roboticslab::EmulatedControlboard::setEncoders(const double *vals)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::getEncoder(int j, double *v)
+bool EmulatedControlboard::getEncoder(int j, double *v)
 {
     *v = getEncExposed(j);
     return true;
@@ -61,7 +63,7 @@ bool roboticslab::EmulatedControlboard::getEncoder(int j, double *v)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::getEncoders(double *encs)
+bool EmulatedControlboard::getEncoders(double *encs)
 {
     std::vector<double> v = getEncsExposed();
 
@@ -75,7 +77,7 @@ bool roboticslab::EmulatedControlboard::getEncoders(double *encs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::getEncoderSpeed(int j, double *sp)
+bool EmulatedControlboard::getEncoderSpeed(int j, double *sp)
 {
     // Make it easy, give the current reference speed.
     *sp = velRaw[j] / velRawExposed[j];  // begins to look like we should use semaphores.
@@ -84,7 +86,7 @@ bool roboticslab::EmulatedControlboard::getEncoderSpeed(int j, double *sp)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::getEncoderSpeeds(double *spds)
+bool EmulatedControlboard::getEncoderSpeeds(double *spds)
 {
     bool ok = true;
 
@@ -98,21 +100,21 @@ bool roboticslab::EmulatedControlboard::getEncoderSpeeds(double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::getEncoderAcceleration(int j, double *spds)
+bool EmulatedControlboard::getEncoderAcceleration(int j, double *spds)
 {
     return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::getEncoderAccelerations(double *accs)
+bool EmulatedControlboard::getEncoderAccelerations(double *accs)
 {
     return false;
 }
 
 // ------------------ IEncodersTimed Related -----------------------------------------
 
-bool roboticslab::EmulatedControlboard::getEncodersTimed(double *encs, double *time)
+bool EmulatedControlboard::getEncodersTimed(double *encs, double *time)
 {
     bool ok = true;
 
@@ -126,7 +128,7 @@ bool roboticslab::EmulatedControlboard::getEncodersTimed(double *encs, double *t
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::EmulatedControlboard::getEncoderTimed(int j, double *encs, double *time)
+bool EmulatedControlboard::getEncoderTimed(int j, double *encs, double *time)
 {
     getEncoder(j, encs);
     *time = yarp::os::Time::now();

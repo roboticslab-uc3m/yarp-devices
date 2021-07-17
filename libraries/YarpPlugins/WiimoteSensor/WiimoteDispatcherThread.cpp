@@ -2,22 +2,18 @@
 
 #include "WiimoteSensor.hpp"
 
-#include <poll.h>
-
 #include <cerrno>
 #include <cstring>
 
 #include <yarp/os/LogStream.h>
 
-namespace
-{
-    struct pollfd fds[2];
-    int fds_num;
-}
+#include "LogComponent.hpp"
+
+using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::WiimoteDispatcherThread::beforeStart()
+void WiimoteDispatcherThread::beforeStart()
 {
     std::memset(fds, 0, sizeof(fds));
 
@@ -32,7 +28,7 @@ void roboticslab::WiimoteDispatcherThread::beforeStart()
 
 // -----------------------------------------------------------------------------
 
-void roboticslab::WiimoteDispatcherThread::run()
+void WiimoteDispatcherThread::run()
 {
     WiimoteEventData localEventData;
 
@@ -40,7 +36,7 @@ void roboticslab::WiimoteDispatcherThread::run()
     {
         if (poll(fds, fds_num, -1) < 0 && errno != EINTR)
         {
-            yError() << "Cannot poll fds:" << -errno;
+            yCError(WII) << "Cannot poll fds:" << -errno;
             return;
         }
 
@@ -56,7 +52,7 @@ void roboticslab::WiimoteDispatcherThread::run()
         {
             if (ret != -EAGAIN)
             {
-                yError() << "Read failed with err:" << ret;
+                yCError(WII) << "Read failed with err:" << ret;
                 return;
             }
         }
@@ -64,7 +60,7 @@ void roboticslab::WiimoteDispatcherThread::run()
         switch (event.type)
         {
         case XWII_EVENT_KEY:
-            yDebug("Keypress event: code %d, state %d", event.v.key.code, event.v.key.state);
+            yCDebug(WII, "Keypress event: code %d, state %d", event.v.key.code, event.v.key.state);
 
             switch (event.v.key.code)
             {
@@ -86,7 +82,7 @@ void roboticslab::WiimoteDispatcherThread::run()
 
             break;
         case XWII_EVENT_ACCEL:
-            yDebug("Accel event: [x] %d, [y] %d, [z] %d", event.v.abs[0].x, event.v.abs[0].y, event.v.abs[0].z);
+            yCDebug(WII, "Accel event: [x] %d, [y] %d, [z] %d", event.v.abs[0].x, event.v.abs[0].y, event.v.abs[0].z);
             localEventData.accelX = event.v.abs[0].x;
             localEventData.accelY = event.v.abs[0].y;
             localEventData.accelZ = event.v.abs[0].z;
@@ -103,7 +99,7 @@ void roboticslab::WiimoteDispatcherThread::run()
 
 // -----------------------------------------------------------------------------
 
-roboticslab::WiimoteEventData roboticslab::WiimoteDispatcherThread::getEventData() const
+WiimoteEventData WiimoteDispatcherThread::getEventData() const
 {
     std::lock_guard<std::mutex> lock(eventDataMutex);
     return eventData;

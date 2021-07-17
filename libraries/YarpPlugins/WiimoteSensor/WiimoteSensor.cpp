@@ -6,10 +6,14 @@
 
 #include "yarp/os/LogStream.h"
 
+#include "LogComponent.hpp"
+
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
 
 // Copy-paste from xwiishow.c.
-char * roboticslab::WiimoteSensor::getDevicePath(int id)
+char * WiimoteSensor::getDevicePath(int id)
 {
     struct xwii_monitor * monitor;
     char * ent;
@@ -19,7 +23,7 @@ char * roboticslab::WiimoteSensor::getDevicePath(int id)
 
     if (monitor == NULL)
     {
-        yError() << "Cannot create monitor";
+        yCError(WII) << "Cannot create monitor";
         return NULL;
     }
 

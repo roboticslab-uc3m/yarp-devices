@@ -1,12 +1,14 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __LEAP_MOTION_SENSOR__
-#define __LEAP_MOTION_SENSOR__
+#ifndef __LEAP_MOTION_SENSOR_HPP__
+#define __LEAP_MOTION_SENSOR_HPP__
 
 #include <Leap.h>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
+
+#include <yarp/sig/Vector.h>
 
 namespace roboticslab
 {
@@ -26,19 +28,20 @@ namespace roboticslab
 yarpdev --device LeapMotionSensor --period 5 --name /leapmotion
 @endverbatim
  */
-class LeapMotionSensor : public yarp::dev::DeviceDriver, public yarp::dev::IAnalogSensor
+class LeapMotionSensor : public yarp::dev::DeviceDriver,
+                         public yarp::dev::IAnalogSensor
 {
 public:
 
-    LeapMotionSensor() : controller(NULL)
+    LeapMotionSensor() : controller(nullptr)
     { }
 
-    ~LeapMotionSensor()
+    ~LeapMotionSensor() override
     { close(); }
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
-    virtual bool open(yarp::os::Searchable& config);
-    virtual bool close();
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 
     //  --------- IAnalogSensor Declarations. Implementation in IAnalogSensorImpl.cpp ---------
     /**
@@ -46,40 +49,40 @@ public:
      * @param out a vector containing the sensor's last readings.
      * @return AS_OK or return code. AS_TIMEOUT if the sensor timed-out.
      */
-    virtual int read(yarp::sig::Vector &out);
+    int read(yarp::sig::Vector &out) override;
 
     /**
      * Check the state value of a given channel.
      * @param ch channel number.
      * @return status.
      */
-    virtual int getState(int ch);
+    int getState(int ch) override;
 
     /**
      * Get the number of channels of the sensor.
      * @return number of channels (0 in case of errors).
      */
-    virtual int getChannels();
+    int getChannels() override;
 
     /**
      * Calibrates the whole sensor.
      * @return status.
      */
-    virtual int calibrateSensor();
+    int calibrateSensor() override;
 
     /**
      * Calibrates the whole sensor, using an vector of calibration values.
      * @param value a vector of calibration values.
      * @return status.
      */
-    virtual int calibrateSensor(const yarp::sig::Vector& value);
+    int calibrateSensor(const yarp::sig::Vector& value) override;
 
     /**
      * Calibrates one single channel.
      * @param ch channel number.
      * @return status.
      */
-    virtual int calibrateChannel(int ch);
+    int calibrateChannel(int ch) override;
 
     /**
      * Calibrates one single channel, using a calibration value.
@@ -87,13 +90,15 @@ public:
      * @param value calibration value.
      * @return status.
      */
-    virtual int calibrateChannel(int ch, double value);
+    int calibrateChannel(int ch, double value) override;
 
 protected:
 
     Leap::Controller * controller;
+    int32_t currentHandId;
+    yarp::sig::Vector lastValidData;
 };
 
-}  // namespace roboticslab
+} // namespace roboticslab
 
-#endif  // __LEAP_MOTION_SENSOR__
+#endif // __LEAP_MOTION_SENSOR_HPP__

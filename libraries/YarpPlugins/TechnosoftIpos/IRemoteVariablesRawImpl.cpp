@@ -5,13 +5,15 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/Property.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
 bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & val)
 {
-    yTrace("%s: %s", key.c_str(), val.toString().c_str());
+    yCTrace(IPOS, "%s: %s", key.c_str(), val.toString().c_str());
 
     val.clear();
     val.addString(key);
@@ -41,7 +43,7 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
         return true;
     }
 
-    yError("Unsupported key: \"%s\"", key.c_str());
+    yCError(IPOS, "Unsupported key: \"%s\"", key.c_str());
     return false;
 }
 
@@ -49,20 +51,20 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
 
 bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val)
 {
-    yTrace("%s", key.c_str());
+    yCTrace(IPOS, "%s", key.c_str());
 
     if (key == "linInterp")
     {
         if (val.size() == 0 || (!val.get(0).isDict() && !val.get(0).isList()))
         {
-            yError("Empty value or not a dict (canId %d)", can->getId());
+            yCError(IPOS, "Empty value or not a dict (canId %d)", can->getId());
             return false;
         }
 
         // check on vars.requestedControlMode to avoid race conditions during mode switch
         if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT || vars.requestedcontrolMode == VOCAB_CM_POSITION_DIRECT)
         {
-            yError("Currently in posd mode, cannot change config params right now (canId %d)", can->getId());
+            yCError(IPOS, "Currently in posd mode, cannot change config params right now (canId %d)", can->getId());
             return false;
         }
 
@@ -79,7 +81,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
 
         if (!dict->check("enable"))
         {
-            yError("Missing \"enable\" option (canId %d)", can->getId());
+            yCError(IPOS, "Missing \"enable\" option (canId %d)", can->getId());
             return false;
         }
 
@@ -92,16 +94,16 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
 
             if (!ipBuffer)
             {
-                yError("Cannot create ip buffer (canId %d)", can->getId());
+                yCError(IPOS, "Cannot create ip buffer (canId %d)", can->getId());
                 return false;
             }
 
-            yInfo("Created %s buffer with %d points and period %d ms (canId %d)",
+            yCInfo(IPOS, "Created %s buffer with %d points and period %d ms (canId %d)",
                 ipBuffer->getType().c_str(), ipBuffer->getBufferSize(), ipBuffer->getPeriodMs(), can->getId());
         }
         else
         {
-            yInfo("Switched back to CSP mode (canId %d)", can->getId());
+            yCInfo(IPOS, "Switched back to CSP mode (canId %d)", can->getId());
         }
 
         return true;
@@ -110,7 +112,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
     {
         if (!val.check("enable"))
         {
-            yError("Missing \"enable\" option (canId %d)", can->getId());
+            yCError(IPOS, "Missing \"enable\" option (canId %d)", can->getId());
             return false;
         }
 
@@ -120,7 +122,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
         {
             if (vars.actualControlMode == VOCAB_CM_VELOCITY)
             {
-                yError("Currently in vel mode, cannot change internal mode mapping right now (canId %d)", can->getId());
+                yCError(IPOS, "Currently in vel mode, cannot change internal mode mapping right now (canId %d)", can->getId());
                 return false;
             }
 
@@ -128,13 +130,13 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
         }
         else
         {
-            yWarning("CSV mode already enabled/disabled (canId %d)", can->getId());
+            yCWarning(IPOS, "CSV mode already enabled/disabled (canId %d)", can->getId());
         }
 
         return true;
     }
 
-    yError("Unsupported key: \"%s\"", key.c_str());
+    yCError(IPOS, "Unsupported key: \"%s\"", key.c_str());
     return false;
 }
 
@@ -142,7 +144,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
 
 bool TechnosoftIpos::getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys)
 {
-    yTrace("");
+    yCTrace(IPOS, "");
 
     listOfKeys->clear();
 

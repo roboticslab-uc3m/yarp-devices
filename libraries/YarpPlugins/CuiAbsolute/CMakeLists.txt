@@ -11,15 +11,13 @@ yarp_prepare_plugin(CuiAbsolute
 
 if(NOT SKIP_CuiAbsolute)
 
-    if(NOT YARP_VERSION VERSION_GREATER_EQUAL 3.4)
-        set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
-    endif()
-
     yarp_add_plugin(CuiAbsolute CuiAbsolute.hpp
                                 CuiAbsolute.cpp
                                 DeviceDriverImpl.cpp
                                 ICanBusSharerImpl.cpp
-                                IEncodersRawImpl.cpp)
+                                IEncodersRawImpl.cpp
+                                LogComponent.hpp
+                                LogComponent.cpp)
 
     target_link_libraries(CuiAbsolute YARP::YARP_os
                                       YARP::YARP_dev

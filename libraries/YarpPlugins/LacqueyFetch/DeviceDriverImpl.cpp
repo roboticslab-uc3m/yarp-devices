@@ -4,16 +4,18 @@
 
 #include <yarp/os/LogStream.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
 bool LacqueyFetch::open(yarp::os::Searchable& config)
 {
-    yDebug() << "LacqueyFetch config:" << config.toString();
+    yCDebug(LCQ) << "Config:" << config.toString();
 
     canId = config.check("canId", yarp::os::Value(0), "can bus ID").asInt8();
-    yInfo() << "Created LacqueyFetch with canId" << canId;
+    yCInfo(LCQ) << "Created LacqueyFetch with canId" << canId;
     return true;
 }
 

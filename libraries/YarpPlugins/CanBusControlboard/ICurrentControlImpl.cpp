@@ -4,13 +4,15 @@
 
 #include <yarp/os/Log.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
 bool CanBusControlboard::getCurrent(int m, double * curr)
 {
-    yTrace("%d", m);
+    yCTrace(CBCB, "%d", m);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::ICurrentControlRaw::getCurrentRaw, m, curr);
 }
@@ -19,7 +21,7 @@ bool CanBusControlboard::getCurrent(int m, double * curr)
 
 bool CanBusControlboard::getCurrents(double * currs)
 {
-    yTrace("");
+    yCTrace(CBCB, "");
     return deviceMapper.mapAllJoints(&yarp::dev::ICurrentControlRaw::getCurrentsRaw, currs);
 }
 
@@ -27,7 +29,7 @@ bool CanBusControlboard::getCurrents(double * currs)
 
 bool CanBusControlboard::getCurrentRange(int m, double * min, double * max)
 {
-    yTrace("%d", m);
+    yCTrace(CBCB, "%d", m);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::ICurrentControlRaw::getCurrentRangeRaw, m, min, max);
 }
@@ -36,7 +38,7 @@ bool CanBusControlboard::getCurrentRange(int m, double * min, double * max)
 
 bool CanBusControlboard::getCurrentRanges(double * mins, double * maxs)
 {
-    yTrace("");
+    yCTrace(CBCB, "");
     return deviceMapper.mapAllJoints(&yarp::dev::ICurrentControlRaw::getCurrentRangesRaw, mins, maxs);
 }
 
@@ -44,7 +46,7 @@ bool CanBusControlboard::getCurrentRanges(double * mins, double * maxs)
 
 bool CanBusControlboard::setRefCurrent(int m, double curr)
 {
-    yTrace("%d %f", m, curr);
+    yCTrace(CBCB, "%d %f", m, curr);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::ICurrentControlRaw::setRefCurrentRaw, m, curr);
 }
@@ -53,7 +55,7 @@ bool CanBusControlboard::setRefCurrent(int m, double curr)
 
 bool CanBusControlboard::setRefCurrents(const double * currs)
 {
-    yTrace("");
+    yCTrace(CBCB, "");
     return deviceMapper.mapAllJoints(&yarp::dev::ICurrentControlRaw::setRefCurrentsRaw, currs);
 }
 
@@ -61,7 +63,7 @@ bool CanBusControlboard::setRefCurrents(const double * currs)
 
 bool CanBusControlboard::setRefCurrents(int n_motor, const int * motors, const double * currs)
 {
-    yTrace("%d", n_motor);
+    yCTrace(CBCB, "%d", n_motor);
     return deviceMapper.mapJointGroup(&yarp::dev::ICurrentControlRaw::setRefCurrentsRaw, n_motor, motors, currs);
 }
 
@@ -69,7 +71,7 @@ bool CanBusControlboard::setRefCurrents(int n_motor, const int * motors, const d
 
 bool CanBusControlboard::getRefCurrent(int m, double * curr)
 {
-    yTrace("%d", m);
+    yCTrace(CBCB, "%d", m);
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::ICurrentControlRaw::getRefCurrentRaw, m, curr);
 }
@@ -78,7 +80,7 @@ bool CanBusControlboard::getRefCurrent(int m, double * curr)
 
 bool CanBusControlboard::getRefCurrents(double * currs)
 {
-    yTrace("");
+    yCTrace(CBCB, "");
     return deviceMapper.mapAllJoints(&yarp::dev::ICurrentControlRaw::getRefCurrentsRaw, currs);
 }
 

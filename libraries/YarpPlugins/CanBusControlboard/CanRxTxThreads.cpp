@@ -10,6 +10,7 @@
 
 #include "YarpCanSenderDelegate.hpp"
 #include "CanBusBroker.hpp"
+#include "LogComponent.hpp"
 
 using namespace roboticslab;
 
@@ -17,21 +18,21 @@ using namespace roboticslab;
 
 void CanReaderWriterThread::beforeStart()
 {
-    yInfo() << "Initializing CanBusControlboard" << type << "thread" << id;
+    yCInfo(CBCB) << "Initializing CanBusControlboard" << type << "thread" << id;
 }
 
 // -----------------------------------------------------------------------------
 
 void CanReaderWriterThread::afterStart(bool success)
 {
-    yInfo() << "Configuring CanBusControlboard" << type << "thread" << id << "->" << (success ? "success" : "failure");
+    yCInfo(CBCB) << "Configuring CanBusControlboard" << type << "thread" << id << "->" << (success ? "success" : "failure");
 }
 
 // -----------------------------------------------------------------------------
 
 void CanReaderWriterThread::onStop()
 {
-    yInfo() << "Stopping CanBusControlboard" << type << "thread" << id;
+    yCInfo(CBCB) << "Stopping CanBusControlboard" << type << "thread" << id;
 }
 
 // -----------------------------------------------------------------------------

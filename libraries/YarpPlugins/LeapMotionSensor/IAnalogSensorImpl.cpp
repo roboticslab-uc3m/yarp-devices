@@ -3,30 +3,27 @@
 #include "LeapMotionSensor.hpp"
 
 #include <yarp/os/LogStream.h>
-#include <yarp/sig/Vector.h>
 
-namespace
-{
-    int32_t currentHandId = Leap::Hand::invalid().id();
-    yarp::sig::Vector lastValidData(6);
-}
+#include "LogComponent.hpp"
+
+using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::LeapMotionSensor::read(yarp::sig::Vector &out)
+int LeapMotionSensor::read(yarp::sig::Vector &out)
 {
     Leap::Frame frame = controller->frame();
     Leap::Hand hand = controller->frame().hand(currentHandId);
 
     if (currentHandId == Leap::Hand::invalid().id())
     {
-        yInfo() << "Invalid hand id";
+        yCInfo(LEAP) << "Invalid hand id";
         hand = frame.hands()[0];
         currentHandId = hand.id();
     }
     else
     {
-        yInfo() << "Picking hand with id:" << currentHandId;
+        yCInfo(LEAP) << "Picking hand with id:" << currentHandId;
         hand = frame.hand(currentHandId);
     }
 
@@ -66,42 +63,42 @@ int roboticslab::LeapMotionSensor::read(yarp::sig::Vector &out)
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::LeapMotionSensor::getState(int ch)
+int LeapMotionSensor::getState(int ch)
 {
     return yarp::dev::IAnalogSensor::AS_OK;
 }
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::LeapMotionSensor::getChannels()
+int LeapMotionSensor::getChannels()
 {
     return 8;
 }
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::LeapMotionSensor::calibrateSensor()
+int LeapMotionSensor::calibrateSensor()
 {
     return yarp::dev::IAnalogSensor::AS_OK;
 }
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::LeapMotionSensor::calibrateSensor(const yarp::sig::Vector& value)
+int LeapMotionSensor::calibrateSensor(const yarp::sig::Vector& value)
 {
     return yarp::dev::IAnalogSensor::AS_OK;
 }
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::LeapMotionSensor::calibrateChannel(int ch)
+int LeapMotionSensor::calibrateChannel(int ch)
 {
     return yarp::dev::IAnalogSensor::AS_OK;
 }
 
 // -----------------------------------------------------------------------------
 
-int roboticslab::LeapMotionSensor::calibrateChannel(int ch, double value)
+int LeapMotionSensor::calibrateChannel(int ch, double value)
 {
     return yarp::dev::IAnalogSensor::AS_OK;
 }

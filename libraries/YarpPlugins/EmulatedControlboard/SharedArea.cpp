@@ -2,9 +2,11 @@
 
 #include "EmulatedControlboard.hpp"
 
+using namespace roboticslab;
+
 // ----------------------------------------------------------------------------
 
-void roboticslab::EmulatedControlboard::setEncRaw(const int index, const double position)
+void EmulatedControlboard::setEncRaw(const int index, const double position)
 {
     encRawMutex.wait();
     encRaw[index] = position;
@@ -13,7 +15,7 @@ void roboticslab::EmulatedControlboard::setEncRaw(const int index, const double 
 
 // ----------------------------------------------------------------------------
 
-void roboticslab::EmulatedControlboard::setEncsRaw(const std::vector<double> & positions)
+void EmulatedControlboard::setEncsRaw(const std::vector<double> & positions)
 {
     encRawMutex.wait();
     encRaw = positions;
@@ -22,7 +24,7 @@ void roboticslab::EmulatedControlboard::setEncsRaw(const std::vector<double> & p
 
 // ----------------------------------------------------------------------------
 
-double roboticslab::EmulatedControlboard::getEncRaw(const int index)
+double EmulatedControlboard::getEncRaw(const int index)
 {
     double position;
     encRawMutex.wait();
@@ -33,7 +35,7 @@ double roboticslab::EmulatedControlboard::getEncRaw(const int index)
 
 // ----------------------------------------------------------------------------
 
-std::vector<double> roboticslab::EmulatedControlboard::getEncsRaw()
+std::vector<double> EmulatedControlboard::getEncsRaw()
 {
     std::vector<double> positions;
     encRawMutex.wait();
@@ -44,7 +46,7 @@ std::vector<double> roboticslab::EmulatedControlboard::getEncsRaw()
 
 // ----------------------------------------------------------------------------
 
-double roboticslab::EmulatedControlboard::getEncExposed(const int index)
+double EmulatedControlboard::getEncExposed(const int index)
 {
     double rawPosition = getEncRaw(index);
     return rawPosition / encRawExposed[index];
@@ -52,7 +54,7 @@ double roboticslab::EmulatedControlboard::getEncExposed(const int index)
 
 // ----------------------------------------------------------------------------
 
-std::vector<double> roboticslab::EmulatedControlboard::getEncsExposed()
+std::vector<double> EmulatedControlboard::getEncsExposed()
 {
     std::vector<double> rawPositions = getEncsRaw();
 

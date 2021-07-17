@@ -12,15 +12,19 @@
 
 #include <yarp/os/LogStream.h>
 
+#include "LogComponent.hpp"
+
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
+bool CanBusHico::canSetBaudRate(unsigned int rate)
 {
     unsigned int id;
 
     if (!bitrateToId(rate, &id))
     {
-        yError() << "Unsupported bitrate value:" << rate;
+        yCError(HICO) << "Unsupported bitrate value:" << rate;
         return false;
     }
 
@@ -30,19 +34,19 @@ bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
     {
         if (bitrateState.second == id)
         {
-            yWarning() << "Bitrate already set";
+            yCWarning(HICO) << "Bitrate already set";
             return true;
         }
         else
         {
-            yError() << "Bitrate already set to a different value:" << bitrateState.second;
+            yCError(HICO) << "Bitrate already set to a different value:" << bitrateState.second;
             return false;
         }
     }
 
     if (::ioctl(fileDescriptor, IOC_SET_BITRATE, &id) == -1)
     {
-        yError() << "Could not set bitrate:" << std::strerror(errno);
+        yCError(HICO) << "Could not set bitrate:" << std::strerror(errno);
         return false;
     }
 
@@ -54,7 +58,7 @@ bool roboticslab::CanBusHico::canSetBaudRate(unsigned int rate)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::canGetBaudRate(unsigned int * rate)
+bool CanBusHico::canGetBaudRate(unsigned int * rate)
 {
     unsigned int id;
 
@@ -64,13 +68,13 @@ bool roboticslab::CanBusHico::canGetBaudRate(unsigned int * rate)
 
     if (ret == -1)
     {
-        yError() << "Could not get bitrate:" << std::strerror(errno);
+        yCError(HICO) << "Could not get bitrate:" << std::strerror(errno);
         return false;
     }
 
     if (!idToBitrate(id, rate))
     {
-        yError() << "Unrecognized bitrate id:" << id;
+        yCError(HICO) << "Unrecognized bitrate id:" << id;
         return false;
     }
 
@@ -79,17 +83,17 @@ bool roboticslab::CanBusHico::canGetBaudRate(unsigned int * rate)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
+bool CanBusHico::canIdAdd(unsigned int id)
 {
     if (filterConfig == FilterManager::DISABLED)
     {
-        yWarning() << "CAN filters are not enabled in this device";
+        yCWarning(HICO) << "CAN filters are not enabled in this device";
         return true;
     }
 
     if (id > 0x7F)
     {
-        yError("Invalid ID (%d > 0x7F)", id);
+        yCError(HICO, "Invalid ID (%d > 0x7F)", id);
         return false;
     }
 
@@ -97,19 +101,19 @@ bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
 
     if (filterManager->hasId(id))
     {
-        yWarning() << "Filter for ID" << id << "is already active";
+        yCWarning(HICO) << "Filter for ID" << id << "is already active";
         return true;
     }
 
     if (!filterManager->insertId(id))
     {
-        yError() << "Could not set filter:" << std::strerror(errno);
+        yCError(HICO) << "Could not set filter:" << std::strerror(errno);
         return false;
     }
 
     if (!filterManager->isValid())
     {
-        yWarning() << "Hardware limit was hit, not all requested filters are enabled";
+        yCWarning(HICO) << "Hardware limit was hit, not all requested filters are enabled";
         return true;
     }
 
@@ -118,17 +122,17 @@ bool roboticslab::CanBusHico::canIdAdd(unsigned int id)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
+bool CanBusHico::canIdDelete(unsigned int id)
 {
     if (filterConfig == FilterManager::DISABLED)
     {
-        yWarning() << "CAN filters are not enabled in this device";
+        yCWarning(HICO) << "CAN filters are not enabled in this device";
         return true;
     }
 
     if (id > 0x7F)
     {
-        yError("Invalid ID (%d > 0x7F)", id);
+        yCError(HICO, "Invalid ID (%d > 0x7F)", id);
         return false;
     }
 
@@ -136,11 +140,11 @@ bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
 
     if (id == 0)
     {
-        yInfo() << "Clearing filters previously set";
+        yCInfo(HICO) << "Clearing filters previously set";
 
         if (!filterManager->clearFilters(true))
         {
-            yError() << "Unable to clear accceptance filters:" << std::strerror(errno);
+            yCError(HICO) << "Unable to clear accceptance filters:" << std::strerror(errno);
             return false;
         }
 
@@ -149,19 +153,19 @@ bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
 
     if (!filterManager->hasId(id))
     {
-        yWarning() << "Filter for ID" << id << "not found, doing nothing";
+        yCWarning(HICO) << "Filter for ID" << id << "not found, doing nothing";
         return true;
     }
 
     if (!filterManager->eraseId(id))
     {
-        yError() << "Could not remove filter:" << std::strerror(errno);
+        yCError(HICO) << "Could not remove filter:" << std::strerror(errno);
         return false;
     }
 
     if (!filterManager->isValid())
     {
-        yWarning() << "Hardware limit was hit, not all requested filters are enabled";
+        yCWarning(HICO) << "Hardware limit was hit, not all requested filters are enabled";
         return false;
     }
 
@@ -170,11 +174,11 @@ bool roboticslab::CanBusHico::canIdDelete(unsigned int id)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait)
+bool CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait)
 {
     if (!allowPermissive && wait != blockingMode)
     {
-        yError("Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
+        yCError(HICO, "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
         return false;
     }
 
@@ -190,7 +194,7 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
 
             if (!waitUntilTimeout(READ, &bufferReady))
             {
-                yError("waitUntilTimeout() failed");
+                yCError(HICO, "waitUntilTimeout() failed");
                 return false;
             }
 
@@ -214,7 +218,7 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
             }
             else
             {
-                yError("read() error: %s", std::strerror(errno));
+                yCError(HICO, "read() error: %s", std::strerror(errno));
                 return false;
             }
         }
@@ -233,11 +237,11 @@ bool roboticslab::CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int 
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait)
+bool CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait)
 {
     if (!allowPermissive && wait != blockingMode)
     {
-        yError("Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
+        yCError(HICO, "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
         return false;
     }
 
@@ -253,7 +257,7 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
 
             if (!waitUntilTimeout(WRITE, &bufferReady))
             {
-                yError("waitUntilTimeout() failed");
+                yCError(HICO, "waitUntilTimeout() failed");
                 return false;
             }
 
@@ -276,7 +280,7 @@ bool roboticslab::CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsign
             }
             else
             {
-                yError("write() failed: %s", std::strerror(errno));
+                yCError(HICO, "write() failed: %s", std::strerror(errno));
                 return false;
             }
         }

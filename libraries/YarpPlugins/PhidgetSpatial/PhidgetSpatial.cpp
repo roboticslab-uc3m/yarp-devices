@@ -2,46 +2,48 @@
 
 #include "PhidgetSpatial.hpp"
 
-namespace roboticslab
-{
+using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-int PhidgetSpatial::AttachHandler(CPhidgetHandle ENC, void *userptr) {
-        int serialNo;
-        CPhidget_DeviceID deviceID;
-        int i, inputcount;
+int PhidgetSpatial::AttachHandler(CPhidgetHandle ENC, void *userptr)
+{
+    int serialNo;
+    CPhidget_DeviceID deviceID;
+    int i, inputcount;
 
-        CPhidget_getSerialNumber(ENC, &serialNo);
+    CPhidget_getSerialNumber(ENC, &serialNo);
 
-        //Retrieve the device ID and number of encoders so that we can set the enables if needed
-        CPhidget_getDeviceID(ENC, &deviceID);
-        //CPhidgetSpatial_getSpatialCount((CPhidgetSpatialHandle)ENC, &inputcount);
-        printf("Spatial %10d attached! \n", serialNo);
+    //Retrieve the device ID and number of encoders so that we can set the enables if needed
+    CPhidget_getDeviceID(ENC, &deviceID);
+    //CPhidgetSpatial_getSpatialCount((CPhidgetSpatialHandle)ENC, &inputcount);
+    printf("Spatial %10d attached! \n", serialNo);
 
-        //the 1047 requires enabling of the encoder inputs, so enable them if this is a 1047    
-        /*if (deviceID == PHIDID_ENCODER_HS_4ENCODER_4INPUT) {
-                printf("Spatial requires Enable. Enabling inputs....\n");
-                for (i = 0 ; i < inputcount ; i++)
-                        CPhidgetSpatial_setEnabled((CPhidgetSpatialHandle)ENC, i, 1);
-        }*/
-        return 0;
+    //the 1047 requires enabling of the encoder inputs, so enable them if this is a 1047
+    /*if (deviceID == PHIDID_ENCODER_HS_4ENCODER_4INPUT) {
+        printf("Spatial requires Enable. Enabling inputs....\n");
+        for (i = 0 ; i < inputcount ; i++)
+            CPhidgetSpatial_setEnabled((CPhidgetSpatialHandle)ENC, i, 1);
+    }*/
+    return 0;
 }
 
 // ----------------------------------------------------------------------------
 
-int PhidgetSpatial::DetachHandler(CPhidgetHandle ENC, void *userptr) {
-	int serialNo;
-	CPhidget_getSerialNumber(ENC, &serialNo);
-	printf("Spatial %10d detached! \n", serialNo);
-	return 0;
+int PhidgetSpatial::DetachHandler(CPhidgetHandle ENC, void *userptr)
+{
+    int serialNo;
+    CPhidget_getSerialNumber(ENC, &serialNo);
+    printf("Spatial %10d detached! \n", serialNo);
+    return 0;
 }
 
 // ----------------------------------------------------------------------------
 
-int PhidgetSpatial::ErrorHandler(CPhidgetHandle ENC, void *userptr, int ErrorCode, const char *Description) {
-	printf("Error handled. %d - %s \n", ErrorCode, Description);
-	return 0;
+int PhidgetSpatial::ErrorHandler(CPhidgetHandle ENC, void *userptr, int ErrorCode, const char *Description)
+{
+    printf("Error handled. %d - %s \n", ErrorCode, Description);
+    return 0;
 }
 
 // ----------------------------------------------------------------------------
@@ -93,24 +95,23 @@ int PhidgetSpatial::SpatialDataHandler(CPhidgetSpatialHandle spatial, void *user
 // Display the properties of the attached phidget to the screen.
 // We will be displaying the name, serial number and version of the attached device.
 // Will also display the number of inputs and encoders on this device.
-int PhidgetSpatial::display_properties(CPhidgetSpatialHandle phid) {
-	int serialNo, version, num_inputs, num_encoders;
-	const char* ptr;
+int PhidgetSpatial::display_properties(CPhidgetSpatialHandle phid)
+{
+    int serialNo, version, num_inputs, num_encoders;
+    const char* ptr;
 
-	//CPhidget_getDeviceType((CPhidgetHandle)phid, &ptr);
-	//CPhidget_getSerialNumber((CPhidgetHandle)phid, &serialNo);
-	//CPhidget_getDeviceVersion((CPhidgetHandle)phid, &version);
+    //CPhidget_getDeviceType((CPhidgetHandle)phid, &ptr);
+    //CPhidget_getSerialNumber((CPhidgetHandle)phid, &serialNo);
+    //CPhidget_getDeviceVersion((CPhidgetHandle)phid, &version);
 
-	//CPhidgetSpatial_getInputCount(phid, &num_inputs);
-	//CPhidgetSpatial_getSpatialCount(phid, &num_encoders);
+    //CPhidgetSpatial_getInputCount(phid, &num_inputs);
+    //CPhidgetSpatial_getSpatialCount(phid, &num_encoders);
 
-	printf("Phidget Device: %s\n", ptr);
-	//printf("Serial Number: %10d\tVersion: %8d\n", serialNo, version);
-	//printf("Num Spatials: %d\tNum Inputs: %d\n", num_encoders, num_inputs);
+    printf("Phidget Device: %s\n", ptr);
+    //printf("Serial Number: %10d\tVersion: %8d\n", serialNo, version);
+    //printf("Num Spatials: %d\tNum Inputs: %d\n", num_encoders, num_inputs);
 
-	return 0;
+    return 0;
 }
 
 // ----------------------------------------------------------------------------
-
-}  // namespace roboticslab

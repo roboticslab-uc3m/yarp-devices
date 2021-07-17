@@ -7,6 +7,7 @@
 #include <yarp/os/Value.h>
 
 #include "ICanBusSharer.hpp"
+#include "LogComponent.hpp"
 
 using namespace roboticslab;
 
@@ -14,11 +15,11 @@ using namespace roboticslab;
 
 bool CanBusControlboard::open(yarp::os::Searchable & config)
 {
-    yDebug() << "CanBusControlboard config:" << config.toString();
+    yCDebug(CBCB) << "Config:" << config.toString();
 
     if (!config.check("robotConfig") || !config.find("robotConfig").isBlob())
     {
-        yError() << "Missing \"robotConfig\" property or not a blob";
+        yCError(CBCB) << "Missing \"robotConfig\" property or not a blob";
         return false;
     }
 
@@ -28,7 +29,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
     if (canBuses == nullptr)
     {
-        yError() << "Missing key \"buses\" or not a list";
+        yCError(CBCB) << "Missing key \"buses\" or not a list";
         return false;
     }
 
@@ -46,7 +47,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
             if (canBusGroup.isNull())
             {
-                yError() << "Missing CAN bus device group" << canBus;
+                yCError(CBCB) << "Missing CAN bus device group" << canBus;
                 return false;
             }
 
@@ -65,7 +66,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
         if (!canBusDevice->open(canBusOptions))
         {
-            yError() << "canBusDevice instantiation failed:" << canBus;
+            yCError(CBCB) << "canBusDevice instantiation failed:" << canBus;
             return false;
         }
 
@@ -76,20 +77,20 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
             if (!canBusBroker->configure(canBusOptions))
             {
-                yError() << "Unable to configure broker of CAN bus device" << canBus;
+                yCError(CBCB) << "Unable to configure broker of CAN bus device" << canBus;
                 return false;
             }
 
             if (!canBusBroker->registerDevice(canBusDevice))
             {
-                yError() << "Unable to register CAN bus device" << canBus;
+                yCError(CBCB) << "Unable to register CAN bus device" << canBus;
                 return false;
             }
         }
 
         if (!config.check(canBus))
         {
-            yError() << "Missing key:" << canBus;
+            yCError(CBCB) << "Missing key:" << canBus;
             return false;
         }
 
@@ -97,7 +98,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
         if (!nodesVal.isList())
         {
-            yError() << "Key" << canBus << "must be a list";
+            yCError(CBCB) << "Key" << canBus << "must be a list";
             return false;
         }
 
@@ -117,7 +118,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
                 if (nodeGroup.isNull())
                 {
-                    yError() << "Missing CAN node device group" << node;
+                    yCError(CBCB) << "Missing CAN node device group" << node;
                     return false;
                 }
 
@@ -135,13 +136,13 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
             if (!device->open(nodeOptions))
             {
-                yError() << "CAN node device" << node << "configuration failure";
+                yCError(CBCB) << "CAN node device" << node << "configuration failure";
                 return false;
             }
 
             if (!deviceMapper.registerDevice(device))
             {
-                yError() << "Unable to register CAN node device" << node;
+                yCError(CBCB) << "Unable to register CAN node device" << node;
                 return false;
             }
 
@@ -151,7 +152,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
                 if (!device->view(iCanBusSharer))
                 {
-                    yError() << "Unable to view ICanBusSharer in" << node;
+                    yCError(CBCB) << "Unable to view ICanBusSharer in" << node;
                     return false;
                 }
 
@@ -165,7 +166,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
         if (enableAcceptanceFilters && !isFakeBus && !canBusBrokers.back()->addFilters())
         {
-            yError() << "Unable to register CAN acceptance filters in" << canBus;
+            yCError(CBCB) << "Unable to register CAN acceptance filters in" << canBus;
             return false;
         }
     }
@@ -174,7 +175,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
     {
         if (!canBusBroker->startThreads())
         {
-            yError() << "Unable to start CAN threads in" << canBusBroker->getName();
+            yCError(CBCB) << "Unable to start CAN threads in" << canBusBroker->getName();
             return false;
         }
     }
@@ -185,7 +186,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
         if (!iCanBusSharer->initialize())
         {
-            yError() << "Node device id" << iCanBusSharer->getId() << "could not initialize CAN comms";
+            yCError(CBCB) << "Node device id" << iCanBusSharer->getId() << "could not initialize CAN comms";
         }
     }
 
@@ -207,7 +208,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
         if (!syncThread->openPort("/sync:o"))
         {
-            yError() << "Unable to open sync port";
+            yCError(CBCB) << "Unable to open sync port";
             return false;
         }
 
@@ -243,7 +244,7 @@ bool CanBusControlboard::close()
 
         if (iCanBusSharer && !iCanBusSharer->finalize())
         {
-            yWarning() << "Node device id" << iCanBusSharer->getId() << "could not finalize CAN comms";
+            yCWarning(CBCB) << "Node device id" << iCanBusSharer->getId() << "could not finalize CAN comms";
             ok = false;
         }
     }

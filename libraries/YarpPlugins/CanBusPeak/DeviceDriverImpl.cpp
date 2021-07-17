@@ -8,11 +8,15 @@
 
 #include <yarp/os/LogStream.h>
 
+#include "LogComponent.hpp"
+
+using namespace roboticslab;
+
 // ------------------- DeviceDriver Related ------------------------------------
 
-bool roboticslab::CanBusPeak::open(yarp::os::Searchable& config)
+bool CanBusPeak::open(yarp::os::Searchable& config)
 {
-    yDebug() << "CanBusPeak config:" << config.toString();
+    yCDebug(PEAK) << "Config:" << config.toString();
 
     std::string devicePath = config.check("port", yarp::os::Value(DEFAULT_PORT), "CAN device path").asString();
 
@@ -25,39 +29,39 @@ bool roboticslab::CanBusPeak::open(yarp::os::Searchable& config)
 
     if (blockingMode)
     {
-        yInfo() << "Blocking mode enabled for CAN device" << devicePath;
+        yCInfo(PEAK) << "Blocking mode enabled for CAN device" << devicePath;
 
         rxTimeoutMs = config.check("rxTimeoutMs", yarp::os::Value(DEFAULT_RX_TIMEOUT_MS), "RX timeout (milliseconds)").asInt32();
         txTimeoutMs = config.check("txTimeoutMs", yarp::os::Value(DEFAULT_TX_TIMEOUT_MS), "TX timeout (milliseconds)").asInt32();
 
         if (rxTimeoutMs <= 0)
         {
-            yWarning() << "RX timeout value <= 0, CAN read calls will block until the buffer is ready";
+            yCWarning(PEAK) << "RX timeout value <= 0, CAN read calls will block until the buffer is ready";
         }
 
         if (txTimeoutMs <= 0)
         {
-            yWarning() << "TX timeout value <= 0, CAN write calls will block until the buffer is ready";
+            yCWarning(PEAK) << "TX timeout value <= 0, CAN write calls will block until the buffer is ready";
         }
     }
     else
     {
-        yInfo() << "Requested non-blocking mode for CAN device" << devicePath;
+        yCInfo(PEAK) << "Requested non-blocking mode for CAN device" << devicePath;
         flags |= OFD_NONBLOCKING;
     }
 
-    yInfo() << "Permissive mode flag for read/write operations on CAN device" << devicePath << "set to" << allowPermissive;
+    yCInfo(PEAK) << "Permissive mode flag for read/write operations on CAN device" << devicePath << "set to" << allowPermissive;
 
     int res = pcanfd_open(devicePath.c_str(), flags, bitrate);
 
     if (res < 0)
     {
-        yError("Unable to open CAN device %s (%s)", devicePath.c_str(), std::strerror(-res));
+        yCError(PEAK, "Unable to open CAN device %s (%s)", devicePath.c_str(), std::strerror(-res));
         return false;
     }
     else
     {
-        yInfo() << "Successfully opened CAN device" << devicePath;
+        yCInfo(PEAK) << "Successfully opened CAN device" << devicePath;
         fileDescriptor = res;
     }
 
@@ -67,17 +71,17 @@ bool roboticslab::CanBusPeak::open(yarp::os::Searchable& config)
 
         if (res < 0)
         {
-            yError("Unable to clear acceptance filters on CAN device %s (%s)", devicePath.c_str(), std::strerror(-res));
+            yCError(PEAK, "Unable to clear acceptance filters on CAN device %s (%s)", devicePath.c_str(), std::strerror(-res));
             return false;
         }
         else
         {
-            yInfo() << "Acceptance filters cleared on CAN device" << devicePath;
+            yCInfo(PEAK) << "Acceptance filters cleared on CAN device" << devicePath;
         }
     }
     else
     {
-        yWarning() << "Preserving previous acceptance filters (if any) on" << devicePath;
+        yCWarning(PEAK) << "Preserving previous acceptance filters (if any) on" << devicePath;
     }
 
     //-- Load initial node IDs and set acceptance filters.
@@ -87,7 +91,7 @@ bool roboticslab::CanBusPeak::open(yarp::os::Searchable& config)
 
         if (ids.size() != 0)
         {
-            yInfo() << "Parsing bottle of ids on CAN device" << ids.toString();
+            yCInfo(PEAK) << "Parsing bottle of ids on CAN device" << ids.toString();
 
             for (int i = 0; i < ids.size(); i++)
             {
@@ -96,22 +100,22 @@ bool roboticslab::CanBusPeak::open(yarp::os::Searchable& config)
 
             std::uint64_t acc = computeAcceptanceCodeAndMask();
 
-            yDebug("New acceptance code+mask: %016lxh", acc);
+            yCDebug(PEAK, "New acceptance code+mask: %016lxh", acc);
 
             res = pcanfd_set_option(fileDescriptor, PCANFD_OPT_ACC_FILTER_11B, &acc, sizeof(acc));
 
             if (res < 0)
             {
-                yError("Unable to set acceptance filters on CAN device: %s (%s)", devicePath.c_str(), std::strerror(-res));
+                yCError(PEAK, "Unable to set acceptance filters on CAN device: %s (%s)", devicePath.c_str(), std::strerror(-res));
                 activeFilters.clear();
                 return false;
             }
 
-            yInfo() << "Initial IDs added to set of acceptance filters in CAN device" << devicePath;
+            yCInfo(PEAK) << "Initial IDs added to set of acceptance filters in CAN device" << devicePath;
         }
         else
         {
-            yInfo() << "No bottle of ids given to CAN device" << devicePath;
+            yCInfo(PEAK) << "No bottle of ids given to CAN device" << devicePath;
         }
     }
 
@@ -120,7 +124,7 @@ bool roboticslab::CanBusPeak::open(yarp::os::Searchable& config)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusPeak::close()
+bool CanBusPeak::close()
 {
     if (fileDescriptor > 0)
     {
@@ -130,7 +134,7 @@ bool roboticslab::CanBusPeak::close()
 
             if (res < 0)
             {
-                yWarning() << "Unable to clear acceptance filters:" << std::strerror(-res);
+                yCWarning(PEAK) << "Unable to clear acceptance filters:" << std::strerror(-res);
             }
             else
             {

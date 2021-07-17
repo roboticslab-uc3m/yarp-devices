@@ -1,0 +1,8 @@
+#ifndef __CUI_ABSOLUTE_LOG_COMPONENT_HPP__
+#define __CUI_ABSOLUTE_LOG_COMPONENT_HPP__
+
+#include <yarp/os/LogComponent.h>
+
+YARP_DECLARE_LOG_COMPONENT(CUI)
+
+#endif // __CUI_ABSOLUTE_LOG_COMPONENT_HPP__

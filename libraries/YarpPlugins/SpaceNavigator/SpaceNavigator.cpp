@@ -6,10 +6,6 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-const unsigned int roboticslab::SpaceNavigator::MAX_NO_DATA_ITERATIONS = 10;
-
-// -----------------------------------------------------------------------------
-
 SpaceNavigator::SpaceNavigator()
     : dx(0.0), dy(0.0), dz(0.0),
       droll(0.0), dpitch(0.0), dyaw(0.0),

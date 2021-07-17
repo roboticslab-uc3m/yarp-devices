@@ -11,17 +11,15 @@ yarp_prepare_plugin(CanBusPeak
 
 if(NOT SKIP_CanBusPeak)
 
-    if(NOT YARP_VERSION VERSION_GREATER_EQUAL 3.4)
-        set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
-    endif()
-
     yarp_add_plugin(CanBusPeak CanBusPeak.cpp
                                CanBusPeak.hpp
                                DeviceDriverImpl.cpp
                                ICanBusImpl.cpp
                                ICanBusErrorsImpl.cpp
                                PeakCanMessage.cpp
-                               PeakCanMessage.hpp)
+                               PeakCanMessage.hpp
+                               LogComponent.hpp
+                               LogComponent.cpp)
 
     target_link_libraries(CanBusPeak YARP::YARP_os
                                      YARP::YARP_dev

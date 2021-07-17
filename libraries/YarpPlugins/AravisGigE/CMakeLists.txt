@@ -16,16 +16,14 @@ yarp_prepare_plugin(AravisGigE
 
 if(NOT SKIP_AravisGigE)
 
-    if(NOT YARP_VERSION VERSION_GREATER_EQUAL 3.4)
-        set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
-    endif()
-
     link_directories(${ARAVIS_LIBRARY_DIRS})
 
     yarp_add_plugin(AravisGigE AravisGigE.hpp
                                DeviceDriverImpl.cpp
                                IFrameGrabberControlsImpl.cpp
-                               IFrameGrabberImageRawImpl.cpp)
+                               IFrameGrabberImageRawImpl.cpp
+                               LogComponent.hpp
+                               LogComponent.cpp)
 
     target_link_libraries(AravisGigE YARP::YARP_os
                                      YARP::YARP_dev

@@ -43,96 +43,96 @@ public:
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
 
-    virtual bool open(yarp::os::Searchable & config) override;
-    virtual bool close() override;
+    bool open(yarp::os::Searchable & config) override;
+    bool close() override;
 
     //  --------- IControlMode Declarations. Implementation in IControlModeImpl.cpp ---------
 
-    virtual bool getControlMode(int j, int * mode) override;
-    virtual bool getControlModes(int * modes) override;
-    virtual bool getControlModes(int n_joint, const int * joints, int * modes) override;
-    virtual bool setControlMode(int j, int mode) override;
-    virtual bool setControlModes(int * modes) override;
-    virtual bool setControlModes(int n_joint, const int * joints, int * modes) override;
+    bool getControlMode(int j, int * mode) override;
+    bool getControlModes(int * modes) override;
+    bool getControlModes(int n_joint, const int * joints, int * modes) override;
+    bool setControlMode(int j, int mode) override;
+    bool setControlModes(int * modes) override;
+    bool setControlModes(int n_joint, const int * joints, int * modes) override;
 
     //  ---------- IEncoders Declarations. Implementation in IEncodersImpl.cpp ----------
 
-    //virtual bool getAxes(int * ax) override;
-    virtual bool resetEncoder(int j) override { return false; }
-    virtual bool resetEncoders() override { return false; }
-    virtual bool setEncoder(int j, double val) override { return false; }
-    virtual bool setEncoders(const double * vals) override { return false; }
-    virtual bool getEncoder(int j, double * v) override { return false; }
-    virtual bool getEncoders(double * encs) override { return false; }
-    virtual bool getEncoderSpeed(int j, double * sp) override { return false; }
-    virtual bool getEncoderSpeeds(double * spds) override { return false; }
-    virtual bool getEncoderAcceleration(int j, double * spds) override { return false; }
-    virtual bool getEncoderAccelerations(double * accs) override { return false; }
+    //bool getAxes(int * ax) override;
+    bool resetEncoder(int j) override { return false; }
+    bool resetEncoders() override { return false; }
+    bool setEncoder(int j, double val) override { return false; }
+    bool setEncoders(const double * vals) override { return false; }
+    bool getEncoder(int j, double * v) override { return false; }
+    bool getEncoders(double * encs) override { return false; }
+    bool getEncoderSpeed(int j, double * sp) override { return false; }
+    bool getEncoderSpeeds(double * spds) override { return false; }
+    bool getEncoderAcceleration(int j, double * spds) override { return false; }
+    bool getEncoderAccelerations(double * accs) override { return false; }
 
     //  ---------- IEncodersTimed Declarations. Implementation in IEncodersImpl.cpp ----------
 
-    virtual bool getEncoderTimed(int j, double * encs, double * time) override { return false; }
-    virtual bool getEncodersTimed(double * encs, double * time) override { return false; }
+    bool getEncoderTimed(int j, double * encs, double * time) override { return false; }
+    bool getEncodersTimed(double * encs, double * time) override { return false; }
 
     // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
 
-    //virtual bool getAxes(int * ax) override;
-    virtual bool positionMove(int j, double ref) override { return false; }
-    virtual bool positionMove(const double * refs) override { return false; }
-    virtual bool positionMove(int n_joint, const int * joints, const double * refs) override { return false; }
-    virtual bool relativeMove(int j, double delta) override { return false; }
-    virtual bool relativeMove(const double * deltas) override { return false; }
-    virtual bool relativeMove(int n_joint, const int * joints, const double * deltas) override { return false; }
-    virtual bool checkMotionDone(int j, bool * flag) override { return false; }
-    virtual bool checkMotionDone(bool * flag) override { return false; }
-    virtual bool checkMotionDone(int n_joint, const int * joints, bool * flag) override { return false; }
-    virtual bool setRefSpeed(int j, double sp) override { return false; }
-    virtual bool setRefSpeeds(const double * spds) override { return false; }
-    virtual bool setRefSpeeds(int n_joint, const int * joints, const double * spds) override { return false; }
-    virtual bool setRefAcceleration(int j, double acc) override { return false; }
-    virtual bool setRefAccelerations(const double * accs) override { return false; }
-    virtual bool setRefAccelerations(int n_joint, const int * joints, const double * accs) override { return false; }
-    virtual bool getRefSpeeds(int n_joint, const int * joints, double * spds) override { return false; }
-    virtual bool getRefSpeed(int j, double * ref) override { return false; }
-    virtual bool getRefSpeeds(double * spds) override { return false; }
-    virtual bool getRefAcceleration(int j, double * acc) override { return false; }
-    virtual bool getRefAccelerations(double * accs) override { return false; }
-    virtual bool getRefAccelerations(int n_joint, const int * joints, double * accs) override { return false; }
-    virtual bool stop(int j) override { return false; }
-    virtual bool stop() override { return false; }
-    virtual bool stop(int n_joint, const int *joints) override { return false; }
-    virtual bool getTargetPosition(int joint, double * ref) override { return false; }
-    virtual bool getTargetPositions(double * refs) override { return false; }
-    virtual bool getTargetPositions(int n_joint, const int * joints, double * refs) override { return false; }
+    //bool getAxes(int * ax) override;
+    bool positionMove(int j, double ref) override { return false; }
+    bool positionMove(const double * refs) override { return false; }
+    bool positionMove(int n_joint, const int * joints, const double * refs) override { return false; }
+    bool relativeMove(int j, double delta) override { return false; }
+    bool relativeMove(const double * deltas) override { return false; }
+    bool relativeMove(int n_joint, const int * joints, const double * deltas) override { return false; }
+    bool checkMotionDone(int j, bool * flag) override { return false; }
+    bool checkMotionDone(bool * flag) override { return false; }
+    bool checkMotionDone(int n_joint, const int * joints, bool * flag) override { return false; }
+    bool setRefSpeed(int j, double sp) override { return false; }
+    bool setRefSpeeds(const double * spds) override { return false; }
+    bool setRefSpeeds(int n_joint, const int * joints, const double * spds) override { return false; }
+    bool setRefAcceleration(int j, double acc) override { return false; }
+    bool setRefAccelerations(const double * accs) override { return false; }
+    bool setRefAccelerations(int n_joint, const int * joints, const double * accs) override { return false; }
+    bool getRefSpeeds(int n_joint, const int * joints, double * spds) override { return false; }
+    bool getRefSpeed(int j, double * ref) override { return false; }
+    bool getRefSpeeds(double * spds) override { return false; }
+    bool getRefAcceleration(int j, double * acc) override { return false; }
+    bool getRefAccelerations(double * accs) override { return false; }
+    bool getRefAccelerations(int n_joint, const int * joints, double * accs) override { return false; }
+    bool stop(int j) override { return false; }
+    bool stop() override { return false; }
+    bool stop(int n_joint, const int *joints) override { return false; }
+    bool getTargetPosition(int joint, double * ref) override { return false; }
+    bool getTargetPositions(double * refs) override { return false; }
+    bool getTargetPositions(int n_joint, const int * joints, double * refs) override { return false; }
 
     // ------- IPositionDirect declarations. Implementation in IPositionDirectImpl.cpp -------
 
-    virtual bool getAxes(int * ax) override;
-    virtual bool setPosition(int j, double ref) override;
-    virtual bool setPositions(const double * refs) override;
-    virtual bool setPositions(int n_joint, const int * joints, const double * refs) override;
-    virtual bool getRefPosition(int joint, double * ref) override;
-    virtual bool getRefPositions(double * refs) override;
-    virtual bool getRefPositions(int n_joint, const int * joints, double * refs) override;
+    bool getAxes(int * ax) override;
+    bool setPosition(int j, double ref) override;
+    bool setPositions(const double * refs) override;
+    bool setPositions(int n_joint, const int * joints, const double * refs) override;
+    bool getRefPosition(int joint, double * ref) override;
+    bool getRefPositions(double * refs) override;
+    bool getRefPositions(int n_joint, const int * joints, double * refs) override;
 
     //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
 
-    //virtual bool getAxes(int * ax) override;
-    virtual bool velocityMove(int j, double spd) override { return false; }
-    virtual bool velocityMove(const double * spds) override { return false; }
-    virtual bool velocityMove(int n_joint, const int * joints, const double * spds) override { return false; }
-    virtual bool getRefVelocity(int joint, double * vel) override { return false; }
-    virtual bool getRefVelocities(double * vels) override { return false; }
-    virtual bool getRefVelocities(int n_joint, const int * joints, double * vels) override { return false; }
-    //virtual bool setRefAcceleration(int j, double acc) override;
-    //virtual bool setRefAccelerations(const double * accs) override;
-    //virtual bool setRefAccelerations(int n_joint, const int * joints, const double * accs) override;
-    //virtual bool getRefAcceleration(int j, double * acc) override;
-    //virtual bool getRefAccelerations(double * accs) override;
-    //virtual bool getRefAccelerations(int n_joint, const int * joints, double * accs) override;
-    //virtual bool stop(int j) override;
-    //virtual bool stop() override;
-    //virtual bool stop(int n_joint, const int *joints) override;
+    //bool getAxes(int * ax) override;
+    bool velocityMove(int j, double spd) override { return false; }
+    bool velocityMove(const double * spds) override { return false; }
+    bool velocityMove(int n_joint, const int * joints, const double * spds) override { return false; }
+    bool getRefVelocity(int joint, double * vel) override { return false; }
+    bool getRefVelocities(double * vels) override { return false; }
+    bool getRefVelocities(int n_joint, const int * joints, double * vels) override { return false; }
+    //bool setRefAcceleration(int j, double acc) override;
+    //bool setRefAccelerations(const double * accs) override;
+    //bool setRefAccelerations(int n_joint, const int * joints, const double * accs) override;
+    //bool getRefAcceleration(int j, double * acc) override;
+    //bool getRefAccelerations(double * accs) override;
+    //bool getRefAccelerations(int n_joint, const int * joints, double * accs) override;
+    //bool stop(int j) override;
+    //bool stop() override;
+    //bool stop(int n_joint, const int *joints) override;
 
 private:
 

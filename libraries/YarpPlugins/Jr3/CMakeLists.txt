@@ -12,14 +12,12 @@ yarp_prepare_plugin(Jr3
 
 if(NOT SKIP_Jr3)
 
-    if(NOT YARP_VERSION VERSION_GREATER_EQUAL 3.4)
-        set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
-    endif()
-
     yarp_add_plugin(Jr3 Jr3.hpp
                         jr3pci-ioctl.h
                         DeviceDriverImpl.cpp
-                        IAnalogSensorImpl.cpp)
+                        IAnalogSensorImpl.cpp
+                        LogComponent.hpp
+                        LogComponent.cpp)
 
     target_link_libraries(Jr3 YARP::YARP_os
                               YARP::YARP_dev)

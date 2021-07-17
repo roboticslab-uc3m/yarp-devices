@@ -6,6 +6,8 @@
 
 #include <yarp/os/LogStream.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
@@ -20,7 +22,7 @@ bool CanBusPeak::canGetErrors(yarp::dev::CanErrors & err)
 
         if (res < 0)
         {
-            yError() << "pcanfd_get_state() failed:" << std::strerror(-res);
+            yCError(PEAK) << "pcanfd_get_state() failed:" << std::strerror(-res);
             return false;
         }
     }

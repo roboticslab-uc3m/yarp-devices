@@ -7,6 +7,8 @@
 
 #include <yarp/os/Log.h>
 
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
@@ -19,7 +21,7 @@ bool CanBusHico::canGetErrors(yarp::dev::CanErrors & err)
 
     if (::ioctl(fileDescriptor, IOC_GET_CAN_STATUS, &status) == -1)
     {
-        yError("Could not query CAN status: %s", std::strerror(errno));
+        yCError(HICO, "Could not query CAN status: %s", std::strerror(errno));
         return false;
     }
 
