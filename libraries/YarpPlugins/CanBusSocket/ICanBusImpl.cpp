@@ -2,12 +2,17 @@
 
 #include "CanBusSocket.hpp"
 
+#include <yarp/os/LogStream.h>
+
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
 bool CanBusSocket::canSetBaudRate(unsigned int rate)
 {
+    yCError(SCK) << "canSetBaudRate() not available";
     return false;
 }
 
@@ -15,6 +20,7 @@ bool CanBusSocket::canSetBaudRate(unsigned int rate)
 
 bool CanBusSocket::canGetBaudRate(unsigned int * rate)
 {
+    yCError(SCK) << "canGetBaudRate() not available";
     return false;
 }
 
