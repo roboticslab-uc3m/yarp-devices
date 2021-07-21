@@ -49,6 +49,8 @@ public:
 
 private:
     std::string iface;
+    bool blockingMode;
+    bool allowPermissive;
     int s {0};
 };
 

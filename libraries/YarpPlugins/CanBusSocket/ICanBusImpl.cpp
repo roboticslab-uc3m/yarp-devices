@@ -42,6 +42,12 @@ bool CanBusSocket::canIdDelete(unsigned int id)
 
 bool CanBusSocket::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait)
 {
+    if (!allowPermissive && wait != blockingMode)
+    {
+        yCError(SCK, "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
+        return false;
+    }
+
     return false;
 }
 
@@ -49,6 +55,12 @@ bool CanBusSocket::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsig
 
 bool CanBusSocket::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait)
 {
+    if (!allowPermissive && wait != blockingMode)
+    {
+        yCError(SCK, "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
+        return false;
+    }
+
     return false;
 }
 
