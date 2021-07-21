@@ -4,9 +4,9 @@
 #define __CAN_BUS_SOCKET_HPP__
 
 #include <linux/can.h>
-#include <linux/can/raw.h>
 
 #include <string>
+#include <vector>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/CanBusInterface.h>
@@ -52,6 +52,7 @@ private:
     bool blockingMode;
     bool allowPermissive;
     int s {0};
+    std::vector<struct can_filter> filters;
 };
 
 } // namespace roboticslab
