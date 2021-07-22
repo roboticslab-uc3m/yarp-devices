@@ -90,6 +90,7 @@ bool CanBusSocket::close()
         return false;
     }
 
+    s = 0;
     return true;
 }
 

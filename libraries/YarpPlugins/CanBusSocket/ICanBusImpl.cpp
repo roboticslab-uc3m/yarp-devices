@@ -55,6 +55,8 @@ bool CanBusSocket::canIdAdd(unsigned int id)
         return false;
     }
 
+    yCInfo(SCK) << "Added filter for id" << id << "at iface" << iface;
+
     return true;
 }
 
@@ -101,6 +103,8 @@ bool CanBusSocket::canIdDelete(unsigned int id)
             return false;
         }
     }
+
+    yCInfo(SCK) << "Deleted filter for id" << id << "at iface" << iface;
 
     return true;
 }
