@@ -10,6 +10,15 @@
 
 #include "LogComponent.hpp"
 
+constexpr auto DEFAULT_PORT = "/dev/pcan0";
+constexpr auto DEFAULT_BITRATE = 1000000;
+
+constexpr auto DEFAULT_RX_TIMEOUT_MS = 1;
+constexpr auto DEFAULT_TX_TIMEOUT_MS = 0; // '0' means no timeout
+
+constexpr auto DEFAULT_BLOCKING_MODE = true;
+constexpr auto DEFAULT_ALLOW_PERMISSIVE = false;
+
 using namespace roboticslab;
 
 // ------------------- DeviceDriver Related ------------------------------------

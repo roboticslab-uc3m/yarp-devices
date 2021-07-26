@@ -8,7 +8,7 @@ using namespace roboticslab;
 
 bool CanBusSocket::canGetErrors(yarp::dev::CanErrors & err)
 {
-    return false;
+    return true;
 }
 
 // -----------------------------------------------------------------------------

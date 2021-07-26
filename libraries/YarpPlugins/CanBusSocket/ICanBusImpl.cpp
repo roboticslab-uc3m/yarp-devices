@@ -29,8 +29,14 @@ bool CanBusSocket::canSetBaudRate(unsigned int rate)
 
 bool CanBusSocket::canGetBaudRate(unsigned int * rate)
 {
-    yCError(SCK) << "canGetBaudRate() not available";
-    return false;
+    if (bitrate == 0)
+    {
+        yCError(SCK) << "Bitrate not available for iface" << iface;
+        return false;
+    }
+
+    *rate = bitrate;
+    return true;
 }
 
 // -----------------------------------------------------------------------------

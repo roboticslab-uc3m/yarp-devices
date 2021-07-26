@@ -32,6 +32,7 @@ bool CanBusSocket::open(yarp::os::Searchable& config)
     iface = config.check("port", yarp::os::Value(DEFAULT_PORT), "CAN socket interface").asString();
     blockingMode = config.check("blockingMode", yarp::os::Value(DEFAULT_BLOCKING_MODE), "blocking mode enabled").asBool();
     allowPermissive = config.check("allowPermissive", yarp::os::Value(DEFAULT_ALLOW_PERMISSIVE), "read/write permissive mode").asBool();
+    bitrate = config.check("bitrate", yarp::os::Value(0), "CAN bitrate (bps)").asInt32();
 
     if (blockingMode)
     {
@@ -113,6 +114,7 @@ bool CanBusSocket::close()
     }
 
     s = 0;
+    filters.clear();
     return true;
 }
 

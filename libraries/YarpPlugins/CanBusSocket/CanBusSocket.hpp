@@ -54,6 +54,7 @@ private:
     std::string iface;
     bool blockingMode;
     bool allowPermissive;
+    unsigned int bitrate {0};
     int rxTimeoutMs {0};
     int txTimeoutMs {0};
     int s {0};
