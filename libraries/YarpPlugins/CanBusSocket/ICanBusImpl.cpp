@@ -4,6 +4,7 @@
 
 #include <linux/can/raw.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
 #include <cerrno>
 #include <cstring>
@@ -119,7 +120,38 @@ bool CanBusSocket::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsig
         return false;
     }
 
-    return false;
+    *read = 0;
+
+    for (unsigned int i = 0; i < size; i++)
+    {
+        auto * _msg = reinterpret_cast<struct can_frame *>(msgs[i].getPointer());
+
+        //-- read() returns the number of bytes read, -1 for errors, 0 for EOF.
+        int ret = ::read(s, _msg, sizeof(struct can_frame));
+
+        if (ret == -1)
+        {
+            if (!blockingMode && errno == EAGAIN)
+            {
+                break;
+            }
+            else
+            {
+                yCError(SCK, "read() error: %s", std::strerror(errno));
+                return false;
+            }
+        }
+        else if (ret == 0)
+        {
+            break;
+        }
+        else
+        {
+            (*read)++;
+        }
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -132,7 +164,43 @@ bool CanBusSocket::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size
         return false;
     }
 
-    return false;
+    *sent = 0;
+
+    for (unsigned int i = 0; i < size; i++)
+    {
+        const auto * _msg = reinterpret_cast<const struct can_frame *>(msgs[i].getPointer());
+
+        //-- write() returns the number of bytes sent or -1 for errors.
+        int ret = ::write(s, _msg, sizeof(struct can_frame));
+
+        if (ret == -1)
+        {
+            if (!blockingMode && errno == EAGAIN)
+            {
+                break;
+            }
+            else
+            {
+                yCError(SCK, "write() failed: %s", std::strerror(errno));
+                return false;
+            }
+        }
+        else if (ret == 0)
+        {
+            break;
+        }
+        else
+        {
+            (*sent)++;
+        }
+    }
+
+    if (*sent < size)
+    {
+        yCWarning(SCK, "Not all messages were sent: %d/%d", *sent, size);
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------

@@ -19,7 +19,7 @@ yarp::dev::CanMessage & SocketCanMessage::operator=(const yarp::dev::CanMessage 
 
 unsigned int SocketCanMessage::getId() const
 {
-    return message->can_id & 0x1FFFFFFF;
+    return message->can_id & CAN_SFF_MASK;
 }
 
 // -----------------------------------------------------------------------------
@@ -40,8 +40,7 @@ void SocketCanMessage::setLen(unsigned char len)
 
 void SocketCanMessage::setId(unsigned int id)
 {
-    message->can_dlc &= 0xE0000000;
-    message->can_id |= id;
+    message->can_id = id;
 }
 
 // -----------------------------------------------------------------------------

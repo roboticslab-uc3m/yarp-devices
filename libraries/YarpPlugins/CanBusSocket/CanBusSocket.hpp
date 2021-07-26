@@ -26,7 +26,7 @@ namespace roboticslab
 class CanBusSocket : public yarp::dev::DeviceDriver,
                      public yarp::dev::ICanBus,
                      public yarp::dev::ICanBusErrors,
-                     private yarp::dev::ImplementCanBufferFactory<SocketCanMessage, struct can_frame>
+                     public yarp::dev::ImplementCanBufferFactory<SocketCanMessage, struct can_frame>
 {
 public:
     ~CanBusSocket() override
