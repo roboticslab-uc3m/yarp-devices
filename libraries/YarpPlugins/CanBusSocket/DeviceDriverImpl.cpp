@@ -20,6 +20,8 @@ using namespace roboticslab;
 constexpr auto DEFAULT_PORT = "can0";
 constexpr auto DEFAULT_BLOCKING_MODE = true;
 constexpr auto DEFAULT_ALLOW_PERMISSIVE = false;
+constexpr auto DEFAULT_RX_TIMEOUT_MS = 1;
+constexpr auto DEFAULT_TX_TIMEOUT_MS = 0; // '0' means no timeout
 
 // ------------------- DeviceDriver Related ------------------------------------
 
@@ -30,6 +32,24 @@ bool CanBusSocket::open(yarp::os::Searchable& config)
     iface = config.check("port", yarp::os::Value(DEFAULT_PORT), "CAN socket interface").asString();
     blockingMode = config.check("blockingMode", yarp::os::Value(DEFAULT_BLOCKING_MODE), "blocking mode enabled").asBool();
     allowPermissive = config.check("allowPermissive", yarp::os::Value(DEFAULT_ALLOW_PERMISSIVE), "read/write permissive mode").asBool();
+
+    if (blockingMode)
+    {
+        rxTimeoutMs = config.check("rxTimeoutMs", yarp::os::Value(DEFAULT_RX_TIMEOUT_MS), "CAN RX timeout (milliseconds)").asInt32();
+        txTimeoutMs = config.check("txTimeoutMs", yarp::os::Value(DEFAULT_TX_TIMEOUT_MS), "CAN TX timeout (milliseconds)").asInt32();
+
+        if (rxTimeoutMs <= 0)
+        {
+            yCWarning(SCK) << "RX timeout value <= 0, CAN read calls will block until the buffer is ready:" << iface;
+        }
+
+        if (txTimeoutMs <= 0)
+        {
+            yCWarning(SCK) << "TX timeout value <= 0, CAN write calls will block until the buffer is ready:" << iface;
+        }
+    }
+
+    yCInfo(SCK) << "Permissive mode flag for read/write operations on iface" << iface << "set to" << allowPermissive;
 
     if ((s = ::socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
     {
@@ -74,8 +94,10 @@ bool CanBusSocket::open(yarp::os::Searchable& config)
 
         yCInfo(SCK) << "Non-blocking mode enabled for iface" << iface;
     }
-
-    yCInfo(SCK) << "Permissive mode flag for read/write operations on iface" << iface << "set to" << allowPermissive;
+    else
+    {
+        yCInfo(SCK) << "Blocking mode enabled for iface" << iface;
+    }
 
     return true;
 }

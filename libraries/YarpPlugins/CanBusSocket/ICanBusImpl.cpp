@@ -122,6 +122,22 @@ bool CanBusSocket::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsig
 
     *read = 0;
 
+    if (blockingMode && rxTimeoutMs > 0)
+    {
+        bool bufferReady;
+
+        if (!waitUntilTimeout(READ, &bufferReady))
+        {
+            yCError(SCK, "waitUntilTimeout() failed");
+            return false;
+        }
+
+        if (!bufferReady)
+        {
+            return true;
+        }
+    }
+
     for (unsigned int i = 0; i < size; i++)
     {
         auto * _msg = reinterpret_cast<struct can_frame *>(msgs[i].getPointer());
@@ -166,6 +182,22 @@ bool CanBusSocket::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size
 
     *sent = 0;
 
+    if (blockingMode && txTimeoutMs > 0)
+    {
+        bool bufferReady;
+
+        if (!waitUntilTimeout(WRITE, &bufferReady))
+        {
+            yCError(SCK, "waitUntilTimeout() failed");
+            return false;
+        }
+
+        if (!bufferReady)
+        {
+            return true;
+        }
+    }
+
     for (unsigned int i = 0; i < size; i++)
     {
         const auto * _msg = reinterpret_cast<const struct can_frame *>(msgs[i].getPointer());
@@ -193,11 +225,6 @@ bool CanBusSocket::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size
         {
             (*sent)++;
         }
-    }
-
-    if (*sent < size)
-    {
-        yCWarning(SCK, "Not all messages were sent: %d/%d", *sent, size);
     }
 
     return true;

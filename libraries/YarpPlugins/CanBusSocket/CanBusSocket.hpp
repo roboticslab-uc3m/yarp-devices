@@ -48,9 +48,14 @@ public:
     bool canGetErrors(yarp::dev::CanErrors & err) override;
 
 private:
+    enum io_operation { READ, WRITE };
+    bool waitUntilTimeout(io_operation op, bool * bufferReady);
+
     std::string iface;
     bool blockingMode;
     bool allowPermissive;
+    int rxTimeoutMs {0};
+    int txTimeoutMs {0};
     int s {0};
     std::vector<struct can_filter> filters;
 };
