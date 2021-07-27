@@ -47,7 +47,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
     if (configPath.empty() || !robotConfig.fromConfigFile(configPath))
     {
-        yCWarning(LCB) << "Config file not found or unsufficient permissions:" << configPath;
+        yCWarning(LCB) << "Config file not found or insufficient permissions:" << configPath;
     }
 
 #if YARP_VERSION_MINOR >= 5
