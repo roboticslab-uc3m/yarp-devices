@@ -166,14 +166,16 @@ bool CanBusSocket::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsig
         {
             break;
         }
+        else if (_msg->can_id & CAN_ERR_FLAG)
+        {
+            interpretErrorFrame(_msg);
+            // same CAN message object will be pulled again from the `msgs` buffer and overwritten
+            size--;
+            i--;
+        }
         else
         {
             (*read)++;
-
-            if (_msg->can_id & CAN_ERR_FLAG)
-            {
-                interpretErrorFrame(_msg);
-            }
         }
     }
 
