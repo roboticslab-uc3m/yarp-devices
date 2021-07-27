@@ -81,7 +81,7 @@ bool CanBusSocket::waitUntilTimeout(io_operation op, bool * bufferReady)
 
 // -----------------------------------------------------------------------------
 
-void CanBusSocket::interpretErrorFrame(const struct can_frame * msg) const
+void CanBusSocket::interpretErrorFrame(const struct can_frame * msg)
 {
     if (msg->can_id & CAN_ERR_TX_TIMEOUT)
     {
@@ -325,6 +325,8 @@ void CanBusSocket::interpretErrorFrame(const struct can_frame * msg) const
     if (msg->can_id & CAN_ERR_BUSOFF)
     {
         yCWarning(SCK, "Bus off (%s)", iface.c_str());
+        std::lock_guard<std::mutex> lock(errorMutex);
+        errors.busoff = true;
     }
 
     if (msg->can_id & CAN_ERR_BUSERROR)

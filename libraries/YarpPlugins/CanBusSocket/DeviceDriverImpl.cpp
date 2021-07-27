@@ -123,6 +123,8 @@ bool CanBusSocket::close()
 
     s = 0;
     filters.clear();
+    errors = yarp::dev::CanErrors(); // reset
+
     return true;
 }
 

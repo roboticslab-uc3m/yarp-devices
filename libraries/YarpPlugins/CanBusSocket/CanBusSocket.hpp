@@ -6,6 +6,7 @@
 #include <linux/can.h>
 #include <linux/can/raw.h>
 
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -52,7 +53,7 @@ private:
     enum io_operation { READ, WRITE };
 
     bool waitUntilTimeout(io_operation op, bool * bufferReady);
-    void interpretErrorFrame(const struct can_frame * msg) const;
+    void interpretErrorFrame(const struct can_frame * msg);
 
     std::string iface;
     bool blockingMode;
@@ -62,6 +63,8 @@ private:
     int txTimeoutMs {0};
     int s {0};
     std::vector<struct can_filter> filters;
+    yarp::dev::CanErrors errors;
+    mutable std::mutex errorMutex;
 };
 
 } // namespace roboticslab

@@ -8,6 +8,8 @@ using namespace roboticslab;
 
 bool CanBusSocket::canGetErrors(yarp::dev::CanErrors & err)
 {
+    std::lock_guard<std::mutex> lock(errorMutex);
+    err = errors;
     return true;
 }
 
