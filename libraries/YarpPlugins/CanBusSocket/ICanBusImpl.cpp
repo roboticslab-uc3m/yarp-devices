@@ -2,7 +2,6 @@
 
 #include "CanBusSocket.hpp"
 
-#include <linux/can/raw.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
@@ -170,6 +169,11 @@ bool CanBusSocket::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsig
         else
         {
             (*read)++;
+
+            if (_msg->can_id & CAN_ERR_FLAG)
+            {
+                interpretErrorFrame(_msg);
+            }
         }
     }
 

@@ -100,6 +100,14 @@ bool CanBusSocket::open(yarp::os::Searchable& config)
         yCInfo(SCK) << "Blocking mode enabled for iface" << iface;
     }
 
+    can_err_mask_t errorMask = CAN_ERR_MASK;
+
+    if (::setsockopt(s, SOL_CAN_RAW, CAN_RAW_ERR_FILTER, &errorMask, sizeof(errorMask)) < 0)
+    {
+        yCError(SCK) << "Unable to enable error frames for iface" << iface << "with error:" << std::strerror(errno);
+        return false;
+    }
+
     return true;
 }
 

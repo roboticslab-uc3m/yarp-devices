@@ -4,6 +4,7 @@
 #define __CAN_BUS_SOCKET_HPP__
 
 #include <linux/can.h>
+#include <linux/can/raw.h>
 
 #include <string>
 #include <vector>
@@ -49,7 +50,9 @@ public:
 
 private:
     enum io_operation { READ, WRITE };
+
     bool waitUntilTimeout(io_operation op, bool * bufferReady);
+    void interpretErrorFrame(const struct can_frame * msg) const;
 
     std::string iface;
     bool blockingMode;
