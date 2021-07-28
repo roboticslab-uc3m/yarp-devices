@@ -121,7 +121,7 @@ bool CanBusSocket::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsig
 {
     if (!allowPermissive && wait != blockingMode)
     {
-        yCError(SCK, "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
+        yCError(SCK, "Blocking mode configuration mismatch: requested=%d, enabled=%d (%s)", wait, blockingMode, iface.c_str());
         return false;
     }
 
@@ -133,7 +133,7 @@ bool CanBusSocket::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsig
 
         if (!waitUntilTimeout(READ, &bufferReady))
         {
-            yCError(SCK, "waitUntilTimeout() failed");
+            yCError(SCK, "waitUntilTimeout() failed at iface %s", iface.c_str());
             return false;
         }
 
@@ -158,7 +158,7 @@ bool CanBusSocket::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsig
             }
             else
             {
-                yCError(SCK, "read() error: %s", std::strerror(errno));
+                yCError(SCK, "read() error at iface %s: %s", iface.c_str(), std::strerror(errno));
                 return false;
             }
         }
@@ -188,7 +188,7 @@ bool CanBusSocket::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size
 {
     if (!allowPermissive && wait != blockingMode)
     {
-        yCError(SCK, "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
+        yCError(SCK, "Blocking mode configuration mismatch: requested=%d, enabled=%d (%s)", wait, blockingMode, iface.c_str());
         return false;
     }
 
@@ -200,7 +200,7 @@ bool CanBusSocket::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size
 
         if (!waitUntilTimeout(WRITE, &bufferReady))
         {
-            yCError(SCK, "waitUntilTimeout() failed");
+            yCError(SCK, "waitUntilTimeout() failed at iface %s", iface.c_str());
             return false;
         }
 
@@ -225,7 +225,7 @@ bool CanBusSocket::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size
             }
             else
             {
-                yCError(SCK, "write() failed: %s", std::strerror(errno));
+                yCError(SCK, "write() failed at iface %s: %s", iface.c_str(), std::strerror(errno));
                 return false;
             }
         }
