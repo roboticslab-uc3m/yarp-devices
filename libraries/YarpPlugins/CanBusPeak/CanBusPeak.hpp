@@ -15,15 +15,6 @@
 
 #include "PeakCanMessage.hpp"
 
-#define DEFAULT_PORT "/dev/pcan0"
-#define DEFAULT_BITRATE 1000000
-
-#define DEFAULT_RX_TIMEOUT_MS 1
-#define DEFAULT_TX_TIMEOUT_MS 0  // '0' means no timeout
-
-#define DEFAULT_BLOCKING_MODE true
-#define DEFAULT_ALLOW_PERMISSIVE false
-
 namespace roboticslab
 {
 
@@ -75,26 +66,13 @@ class CanBusPeak : public yarp::dev::DeviceDriver,
 {
 public:
 
-    CanBusPeak() : fileDescriptor(0),
-                   rxTimeoutMs(DEFAULT_RX_TIMEOUT_MS),
-                   txTimeoutMs(DEFAULT_TX_TIMEOUT_MS),
-                   blockingMode(DEFAULT_BLOCKING_MODE),
-                   allowPermissive(DEFAULT_ALLOW_PERMISSIVE)
-    { }
-
     ~CanBusPeak() override
     { close(); }
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 
-    /** Initialize the CAN device.
-     * @param device is the device path, such as "/dev/can0".
-     * @param bitrate is the bitrate, such as BITRATE_100k.
-     * @return true/false on success/failure.
-     */
     bool open(yarp::os::Searchable& config) override;
 
-    /** Close the CAN device. */
     bool close() override;
 
     //  --------- ICanBus declarations. Implementation in ICanBusImpl.cpp ---------
@@ -115,7 +93,7 @@ public:
 
     bool canGetErrors(yarp::dev::CanErrors & err) override;
 
-protected:
+private:
 
     enum io_operation { READ, WRITE };
 
@@ -123,9 +101,9 @@ protected:
 
     std::uint64_t computeAcceptanceCodeAndMask();
 
-    int fileDescriptor;
-    int rxTimeoutMs;
-    int txTimeoutMs;
+    int fileDescriptor {0};
+    int rxTimeoutMs {0};
+    int txTimeoutMs {0};
 
     bool blockingMode;
     bool allowPermissive;

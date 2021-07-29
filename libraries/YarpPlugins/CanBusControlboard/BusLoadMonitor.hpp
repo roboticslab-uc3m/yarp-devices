@@ -54,7 +54,7 @@ public:
 
 protected:
     //! The thread will invoke this periodically.
-    virtual void run() override;
+    void run() override;
 
 private:
     unsigned int bitrate;

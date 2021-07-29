@@ -37,6 +37,10 @@ CanBusBroker::~CanBusBroker()
     delete busLoadMonitor;
     delete readerThread;
     delete writerThread;
+
+    busLoadMonitor = nullptr;
+    readerThread = nullptr;
+    writerThread = nullptr;
 }
 
 // -----------------------------------------------------------------------------
@@ -55,24 +59,24 @@ bool CanBusBroker::configure(const yarp::os::Searchable & config)
         return false;
     }
 
-    if (config.check("busLoadPeriod", "CAN bus load monitor period (seconds)"))
-    {
-        double busLoadPeriod = config.find("busLoadPeriod").asFloat64();
-
-        if (busLoadPeriod <= 0.0)
-        {
-            yCWarning(CBCB) << "Illegal CAN bus load monitor option period:" << busLoadPeriod;
-            return false;
-        }
-
-        busLoadMonitor = new BusLoadMonitor(busLoadPeriod);
-    }
-
     readerThread = new CanReaderThread(name, rxDelay, rxBufferSize);
     writerThread = new CanWriterThread(name, txDelay, txBufferSize);
 
     if (config.check("name", "YARP port prefix for remote CAN interface"))
     {
+        if (config.check("busLoadPeriod", "CAN bus load monitor period (seconds)"))
+        {
+            double busLoadPeriod = config.find("busLoadPeriod").asFloat64();
+
+            if (busLoadPeriod <= 0.0)
+            {
+                yCWarning(CBCB) << "Illegal CAN bus load monitor option period:" << busLoadPeriod;
+                return false;
+            }
+
+            busLoadMonitor = new BusLoadMonitor(busLoadPeriod);
+        }
+
         return createPorts(config.find("name").asString());
     }
 
@@ -159,13 +163,22 @@ bool CanBusBroker::createPorts(const std::string & prefix)
     {
         readerThread->attachDumpWriter(&dumpPort, &dumpWriter, &dumpMutex);
         readerThread->attachCanNotifier(&sdoReplier);
-        readerThread->attachBusLoadMonitor(busLoadMonitor->getReadMonitor());
+
+        if (busLoadMonitor)
+        {
+            readerThread->attachBusLoadMonitor(busLoadMonitor->getReadMonitor());
+        }
     }
 
     if (writerThread)
     {
         writerThread->attachDumpWriter(&dumpPort, &dumpWriter, &dumpMutex);
-        writerThread->attachBusLoadMonitor(busLoadMonitor->getWriteMonitor());
+
+        if (busLoadMonitor)
+        {
+            writerThread->attachBusLoadMonitor(busLoadMonitor->getWriteMonitor());
+        }
+
         sdoReplier.configureSender(writerThread->getDelegate());
     }
 
