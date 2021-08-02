@@ -4,6 +4,7 @@
 
 #include <cmath>
 
+#include <yarp/conf/numeric.h>
 #include <yarp/os/Log.h>
 
 #include "LogComponent.hpp"
@@ -18,10 +19,12 @@ bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_VELOCITY);
 
-    if (std::abs(sp) > vars.maxVel)
+    const auto maxVel = vars.maxVel.load();
+
+    if (std::abs(sp) > maxVel)
     {
-        yCWarning(IPOS, "Requested speed exceeds maximum velocity (%f)", vars.maxVel.load());
-        sp = std::min<double>(vars.maxVel, std::max<double>(-vars.maxVel, sp));
+        yCWarning(IPOS, "Requested speed exceeds maximum velocity (%f)", maxVel);
+        sp = yarp::conf::clamp(sp, -maxVel, maxVel);
     }
 
     // reset halt bit

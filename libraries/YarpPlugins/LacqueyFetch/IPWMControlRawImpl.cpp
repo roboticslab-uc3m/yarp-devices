@@ -2,9 +2,9 @@
 
 #include "LacqueyFetch.hpp"
 
-#include <cmath>
 #include <cstring>
 
+#include <yarp/conf/numeric.h>
 #include <yarp/os/Log.h>
 
 #include "LogComponent.hpp"
@@ -26,8 +26,7 @@ bool LacqueyFetch::setRefDutyCycleRaw(int m, double ref)
     yCTrace(LCQ, "%d %f", m, ref);
     CHECK_JOINT(m);
 
-    // clip between -100% and +100%
-    ref = std::min(100.0, std::max(ref, -100.0));
+    ref = yarp::conf::clamp(ref, -100.0, 100.0);
 
     const std::size_t len = sizeof refDutyCycles;
     std::uint8_t msgData[len];
