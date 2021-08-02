@@ -76,8 +76,11 @@ namespace
 
         ~ConnectionGuard()
         {
-            delete *sdo;
-            *sdo = nullptr;
+            if (sdo)
+            {
+                delete *sdo;
+                *sdo = nullptr;
+            }
 
             if (response && writer)
             {
