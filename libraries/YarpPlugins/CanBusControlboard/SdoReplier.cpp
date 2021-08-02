@@ -34,6 +34,7 @@ constexpr yarp::conf::vocab32_t VOCAB_SDO_UI32_TYPE = yarp::os::createVocab32('u
 constexpr yarp::conf::vocab32_t VOCAB_SDO_STRING_TYPE = yarp::os::createVocab32('s', 't', 'r');
 constexpr yarp::conf::vocab32_t VOCAB_SDO_OK = yarp::os::createVocab32('o', 'k');
 constexpr yarp::conf::vocab32_t VOCAB_SDO_FAIL = yarp::os::createVocab32('f', 'a', 'i', 'l');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_HELP = yarp::os::createVocab32('h', 'e', 'l', 'p');
 #else
 constexpr yarp::conf::vocab32_t VOCAB_SDO_UPLOAD = yarp::os::createVocab('s', 'd', 'o', 'u');
 constexpr yarp::conf::vocab32_t VOCAB_SDO_DOWNLOAD = yarp::os::createVocab('s', 'd', 'o', 'd');
@@ -46,10 +47,29 @@ constexpr yarp::conf::vocab32_t VOCAB_SDO_UI32_TYPE = yarp::os::createVocab('u',
 constexpr yarp::conf::vocab32_t VOCAB_SDO_STRING_TYPE = yarp::os::createVocab('s', 't', 'r');
 constexpr yarp::conf::vocab32_t VOCAB_SDO_OK = yarp::os::createVocab('o', 'k');
 constexpr yarp::conf::vocab32_t VOCAB_SDO_FAIL = yarp::os::createVocab('f', 'a', 'i', 'l');
+constexpr yarp::conf::vocab32_t VOCAB_SDO_HELP = yarp::os::createVocab('h', 'e', 'l', 'p');
 #endif
 
 namespace
 {
+    yarp::os::Bottle makeUsage()
+    {
+        return {
+            yarp::os::Value("format: <direction> <id> <index> <subindex> <type> [<data (only download)>]"),
+            yarp::os::Value("> direction ([u]pload: request from drive; [d]ownload: send to drive):"),
+            yarp::os::Value(VOCAB_SDO_UPLOAD, true),
+            yarp::os::Value(VOCAB_SDO_DOWNLOAD, true),
+            yarp::os::Value("> available types ([i]nteger, [u]nsigned integer, [str]ing):"),
+            yarp::os::Value(VOCAB_SDO_I8_TYPE, true),
+            yarp::os::Value(VOCAB_SDO_UI8_TYPE, true),
+            yarp::os::Value(VOCAB_SDO_I16_TYPE, true),
+            yarp::os::Value(VOCAB_SDO_UI16_TYPE, true),
+            yarp::os::Value(VOCAB_SDO_I32_TYPE, true),
+            yarp::os::Value(VOCAB_SDO_UI32_TYPE, true),
+            yarp::os::Value(VOCAB_SDO_STRING_TYPE, true)
+        };
+    }
+
     enum class sdo_direction : yarp::conf::vocab32_t
     {
         UPLOAD = VOCAB_SDO_UPLOAD,
@@ -158,6 +178,22 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
     if (!writer || !request.read(reader))
     {
         return false;
+    }
+
+#if YARP_VERSION_MINOR >= 5
+    if (request.size() == 1 && request.get(0).asVocab32() == VOCAB_SDO_HELP)
+#else
+    if (request.size() == 1 && request.get(0).asVocab() == VOCAB_SDO_HELP)
+#endif
+    {
+        static auto usage = makeUsage();
+#if YARP_VERSION_MINOR >= 5
+        yarp::os::Bottle reply {yarp::os::Value(yarp::os::createVocab32('m','a','n','y'), true)};
+#else
+        yarp::os::Bottle reply {yarp::os::Value(yarp::os::createVocab('m','a','n','y'), true)};
+#endif
+        reply.append(usage);
+        return reply.write(*writer);
     }
 
     ConnectionGuard guard(&response, writer);
