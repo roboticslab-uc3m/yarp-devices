@@ -36,7 +36,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
     if (rf.check("help"))
     {
         yCInfo(LCB) << "LaunchCanBus options:";
-        yCInfo(LCB) << "\t--help (this help)\t--from [file.ini]\t--context [path]\t--mode [pos]\t--homePoss";
+        yCInfo(LCB) << "\t--help (this help)\t--from [file.ini]\t--context [path]\t--home";
         yCDebug(LCB) << rf.toString();
         return false;
     }
@@ -55,9 +55,9 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 #else
     yarp::conf::vocab32_t mode = rf.check("mode", yarp::os::Value(VOCAB_CM_POSITION), "initial mode of operation").asVocab();
 #endif
-    bool homing = rf.check("home", "perform initial homing procedure");
 
     yarp::os::Bottle devCan = rf.findGroup("devCan", "CAN controlboard devices").tail();
+    yarp::os::Bottle mapper = rf.findGroup("mapper", "YARP mapper devices").tail();
     yarp::os::Bottle wrapper = rf.findGroup("wrapper", "YARP wrappers devices").tail();
 
     if (devCan.isNull() || devCan.size() == 0)
@@ -66,9 +66,21 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
         return false;
     }
 
+    if (mapper.isNull() || mapper.size() == 0)
+    {
+        yCError(LCB) << "Missing or empty \"mapper\" section collection";
+        return false;
+    }
+
     if (wrapper.isNull() || wrapper.size() == 0)
     {
         yCError(LCB) << "Missing or empty \"wrapper\" section collection";
+        return false;
+    }
+
+    if (mapper.size() != wrapper.size())
+    {
+        yCError(LCB) << "Number of mapper and wrapper devices must match: got" << mapper.size() << "vs" << wrapper.size();
         return false;
     }
 
@@ -99,51 +111,51 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
         }
     }
 
-    // network wrappers
+    // joint mappers
 
-    for (int i = 0; i < wrapper.size(); i++)
+    for (int i = 0; i < mapper.size(); i++)
     {
-        std::string wrapperDeviceLabel = wrapper.get(i).asString();
-        const yarp::os::Bottle & wrapperDeviceGroup = rf.findGroup(wrapperDeviceLabel);
+        std::string mapperDeviceLabel = mapper.get(i).asString();
+        const yarp::os::Bottle & mapperDeviceGroup = rf.findGroup(mapperDeviceLabel);
 
-        if (wrapperDeviceGroup.isNull())
+        if (mapperDeviceGroup.isNull())
         {
-            yCError(LCB) << "Missing wrapper device group" << wrapperDeviceLabel;
+            yCError(LCB) << "Missing mapper device group" << mapperDeviceLabel;
             return false;
         }
 
-        yarp::os::Property wrapperDeviceOptions;
-        wrapperDeviceOptions.fromString(wrapperDeviceGroup.toString());
-        wrapperDeviceOptions.unput("calibrator"); // custom property added by us
+        yarp::os::Property mapperDeviceOptions;
+        mapperDeviceOptions.fromString(mapperDeviceGroup.toString());
+        mapperDeviceOptions.unput("calibrator"); // custom property added by us
 
-        yarp::dev::PolyDriver * wrapperDevice = new yarp::dev::PolyDriver;
-        wrapperDevices.push(wrapperDevice, wrapperDeviceLabel.c_str());
+        yarp::dev::PolyDriver * mapperDevice = new yarp::dev::PolyDriver;
+        mapperDevices.push(mapperDevice, mapperDeviceLabel.c_str());
 
-        if (!wrapperDevice->open(wrapperDeviceOptions))
+        if (!mapperDevice->open(mapperDeviceOptions))
         {
-            yCError(LCB) << "Wrapper device" << wrapperDeviceLabel << "configuration failure";
+            yCError(LCB) << "Mapper device" << mapperDeviceLabel << "configuration failure";
             return false;
         }
 
         yarp::dev::IMultipleWrapper * iMultipleWrapper;
 
-        if (!wrapperDevice->view(iMultipleWrapper))
+        if (!mapperDevice->view(iMultipleWrapper))
         {
-            yCError(LCB) << "Unable to view IMultipleWrapper in" << wrapperDeviceLabel;
+            yCError(LCB) << "Unable to view IMultipleWrapper in" << mapperDeviceLabel;
             return false;
         }
 
         yarp::dev::PolyDriverList temp;
         temp = canDevices;
 
-        std::string calibratorDeviceLabel = wrapperDeviceGroup.find("calibrator").asString();
+        std::string calibratorDeviceLabel = mapperDeviceGroup.find("calibrator").asString();
 
         if (!calibratorDeviceLabel.empty())
         {
             if (robotConfig.toString().empty())
             {
                 yCWarning(LCB) << "Missing robot config, but calibrator device was requested";
-                goto attachToWrapper; // ave Satanas
+                goto attachToMapper; // ave Satanas
             }
 
             yarp::os::Bottle & calibratorDeviceGroup = robotConfig.findGroup(calibratorDeviceLabel);
@@ -151,16 +163,16 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
             if (calibratorDeviceGroup.isNull())
             {
                 yCWarning(LCB) << "Missing calibrator device group" << calibratorDeviceLabel;
-                goto attachToWrapper; // ave Satanas
+                goto attachToMapper; // ave Satanas
             }
 
             yarp::os::Property calibratorDeviceOptions;
             calibratorDeviceOptions.fromString(calibratorDeviceGroup.toString());
             calibratorDeviceOptions.put("robotConfig", yarp::os::Value::makeBlob(&robotConfigPtr, sizeof(robotConfigPtr)));
-            calibratorDeviceOptions.put("joints", wrapperDeviceOptions.find("joints"));
+            calibratorDeviceOptions.put("joints", mapperDeviceOptions.find("joints"));
 
             yarp::dev::PolyDriver * calibratorDevice = new yarp::dev::PolyDriver;
-            yarp::dev::PolyDriverDescriptor descriptor(calibratorDevice, "calibrator"); // key name enforced by CBW2::attachAll()
+            yarp::dev::PolyDriverDescriptor descriptor(calibratorDevice, "calibrator"); // key name enforced by ControlBoardRemapper::attachAllXxx()
             calibratorDevices.push(descriptor);
 
             if (!calibratorDevice->open(calibratorDeviceOptions))
@@ -185,26 +197,68 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
                 return false;
             }
 
-            if (!iWrapper->attach(wrapperDevice))
+            if (!iWrapper->attach(mapperDevice))
             {
-                yCError(LCB) << "Unable to attach calibrator to wrapper device" << wrapperDeviceLabel;
+                yCError(LCB) << "Unable to attach mapper device" << mapperDeviceLabel << "to calibrator";
                 return false;
             }
 
             temp.push(descriptor);
         }
 
-        attachToWrapper:
+        attachToMapper:
         if (!iMultipleWrapper->attachAll(temp))
         {
-            yCError(LCB) << "Unable to attach wrapper" << wrapperDeviceLabel << "to CAN devices";
+            yCError(LCB) << "Unable to attach CAN devices to mapper device" << mapperDeviceLabel;
+            return false;
+        }
+    }
+
+    // network wrappers
+
+    for (int i = 0; i < wrapper.size(); i++)
+    {
+        std::string wrapperDeviceLabel = wrapper.get(i).asString();
+        const yarp::os::Bottle & wrapperDeviceGroup = rf.findGroup(wrapperDeviceLabel);
+
+        if (wrapperDeviceGroup.isNull())
+        {
+            yCError(LCB) << "Missing wrapper device group" << wrapperDeviceLabel;
+            return false;
+        }
+
+        yarp::os::Property wrapperDeviceOptions;
+        wrapperDeviceOptions.fromString(wrapperDeviceGroup.toString());
+
+        yarp::dev::PolyDriver * wrapperDevice = new yarp::dev::PolyDriver;
+        wrapperDevices.push(wrapperDevice, wrapperDeviceLabel.c_str());
+
+        if (!wrapperDevice->open(wrapperDeviceOptions))
+        {
+            yCError(LCB) << "Wrapper device" << wrapperDeviceLabel << "configuration failure";
+            return false;
+        }
+
+        yarp::dev::IWrapper * iWrapper;
+
+        if (!wrapperDevice->view(iWrapper))
+        {
+            yCError(LCB) << "Unable to view IWrapper in" << wrapperDeviceLabel;
+            return false;
+        }
+
+        yarp::dev::PolyDriverDescriptor * linkedMapperDevice = mapperDevices[i];
+
+        if (!iWrapper->attach(linkedMapperDevice->poly))
+        {
+            yCError(LCB) << "Unable to attach mapper device" << linkedMapperDevice->key << "to wrapper device" << wrapperDeviceLabel;
             return false;
         }
     }
 
     // homing on start
 
-    if (homing)
+    if (rf.check("home", "perform initial homing procedure"))
     {
         if (calibratorDevices.size() != 0)
         {
@@ -266,6 +320,17 @@ bool LaunchCanBus::close()
 
         delete wrapperDevices[i]->poly;
         wrapperDevices[i]->poly = nullptr;
+    }
+
+    for (int i = 0; i < mapperDevices.size(); i++)
+    {
+        if (mapperDevices[i]->poly)
+        {
+            mapperDevices[i]->poly->close();
+        }
+
+        delete mapperDevices[i]->poly;
+        mapperDevices[i]->poly = nullptr;
     }
 
     for (int i = 0; i < canDevices.size(); i++)
