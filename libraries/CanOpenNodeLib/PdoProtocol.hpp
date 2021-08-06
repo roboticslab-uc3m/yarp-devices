@@ -150,7 +150,7 @@ public:
     { return cob + id; };
 
     //! Configure this PDO drive-side via SDO packages.
-    virtual bool configure(const PdoConfiguration & config);
+    bool configure(const PdoConfiguration & config);
 
 protected:
     //! PDO type.
@@ -204,7 +204,7 @@ public:
     }
 
 protected:
-    virtual PdoType getType() const override
+    PdoType getType() const override
     { return PdoType::RPDO; }
 
 private:
@@ -259,7 +259,7 @@ public:
     { callback = HandlerFn(); }
 
 protected:
-    virtual PdoType getType() const override
+    PdoType getType() const override
     { return PdoType::TPDO; }
 
 private:

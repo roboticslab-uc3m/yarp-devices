@@ -28,13 +28,13 @@ public:
     SdoReplier();
 
     //! Destructor.
-    ~SdoReplier();
+    ~SdoReplier() override;
 
     //! Read this object from the network.
-    virtual bool read(yarp::os::ConnectionReader & reader) override;
+    bool read(yarp::os::ConnectionReader & reader) override;
 
     //! Tell observers a new CAN message has arrived.
-    virtual bool notifyMessage(const can_message & msg) override;
+    bool notifyMessage(const can_message & msg) override;
 
     //! Configure CAN sender handle.
     void configureSender(CanSenderDelegate * sender)

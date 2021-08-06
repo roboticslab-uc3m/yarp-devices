@@ -45,11 +45,11 @@
 
 #include <StateObserver.hpp>
 
-#define DEFAULT_BUS "pcan-leftArm"
-#define DEFAULT_IPOS "id26-ipos"
-#define DEFAULT_SPEED 2.0 // deg/s
-#define DEFAULT_TARGET (-20.0)
-#define DEFAULT_PERIOD_MS 20
+constexpr auto DEFAULT_BUS = "pcan-leftArm";
+constexpr auto DEFAULT_IPOS = "id26-ipos";
+constexpr auto DEFAULT_SPEED = 2.0; // deg/s
+constexpr auto DEFAULT_TARGET = (-20.0);
+constexpr auto DEFAULT_PERIOD_MS = 20;
 
 int main(int argc, char * argv[])
 {

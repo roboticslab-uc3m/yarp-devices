@@ -33,8 +33,6 @@ class DextraRawControlboard : public yarp::dev::IAxisInfoRaw,
                               public yarp::dev::IVelocityControlRaw
 {
 public:
-
-    DextraRawControlboard();
     ~DextraRawControlboard() override = default;
 
     void acquireSynapseHandle(Synapse * synapse);
@@ -128,11 +126,9 @@ public:
     bool getRefVelocitiesRaw(int n_joint, const int * joints, double * vels) override { return false; }
 
 protected:
-
-    Synapse * synapse;
+    Synapse * synapse {nullptr};
 
 private:
-
     double getSetpoint(int j);
     void getSetpoints(Synapse::Setpoints & setpoints);
     void setSetpoint(int j, Synapse::setpoint_t setpoint);

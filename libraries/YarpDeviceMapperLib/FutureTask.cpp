@@ -21,7 +21,7 @@ namespace roboticslab // make doxygen group these classes in the rl namespace
 class SequentialTask : public FutureTask
 {
 public:
-    virtual bool dispatch() override
+    bool dispatch() override
     {
         return std::accumulate(deferreds.begin(), deferreds.end(), true,
                 [](bool acc, const std::function<bool(int)> & fn)
@@ -40,7 +40,7 @@ public:
         : pool(_pool)
     { }
 
-    virtual bool dispatch() override
+    bool dispatch() override
     {
         std::vector<std::future<bool>> futures;
 

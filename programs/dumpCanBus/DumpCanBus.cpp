@@ -13,6 +13,8 @@
 
 using namespace roboticslab;
 
+constexpr auto DEFAULT_LOCAL_PORT = "/dumpCanBus";
+
 namespace
 {
     YARP_LOG_COMPONENT(DCB, "rl.DumpCanBus")

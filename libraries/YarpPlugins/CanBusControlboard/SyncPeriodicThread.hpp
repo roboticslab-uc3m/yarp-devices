@@ -32,7 +32,7 @@ public:
     SyncPeriodicThread(std::vector<CanBusBroker *> & canBusBrokers, FutureTaskFactory * taskFactory);
 
     //! Destructor.
-    ~SyncPeriodicThread();
+    ~SyncPeriodicThread() override;
 
     //! Open synchronization port.
     bool openPort(const std::string & name);

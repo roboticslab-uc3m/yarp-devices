@@ -28,7 +28,7 @@ public:
           maxSize(size)
     {}
 
-    virtual bool prepareMessage(const can_message & msg) override;
+    bool prepareMessage(const can_message & msg) override;
 
 private:
     yarp::dev::CanBuffer & buffer;

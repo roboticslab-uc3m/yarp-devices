@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __DUMP_CAN_BUS__
-#define __DUMP_CAN_BUS__
+#ifndef __DUMP_CAN_BUS_HPP__
+#define __DUMP_CAN_BUS_HPP__
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Port.h>
@@ -9,8 +9,6 @@
 #include <yarp/os/Stamp.h>
 #include <yarp/os/RFModule.h>
 #include <yarp/os/TypedReaderCallback.h>
-
-#define DEFAULT_LOCAL_PORT "/dumpCanBus"
 
 namespace roboticslab
 {
@@ -23,7 +21,7 @@ class DumpCanBus : public yarp::os::RFModule,
                    public yarp::os::TypedReaderCallback<yarp::os::Bottle>
 {
 public:
-    ~DumpCanBus()
+    ~DumpCanBus() override
     { close(); }
 
     bool configure(yarp::os::ResourceFinder & rf) override;
@@ -46,4 +44,4 @@ private:
 
 } // namespace roboticslab
 
-#endif // __DUMP_CAN_BUS__
+#endif // __DUMP_CAN_BUS_HPP__

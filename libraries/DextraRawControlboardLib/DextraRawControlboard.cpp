@@ -8,12 +8,6 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-DextraRawControlboard::DextraRawControlboard()
-    : synapse(nullptr)
-{}
-
-// -----------------------------------------------------------------------------
-
 void DextraRawControlboard::acquireSynapseHandle(Synapse * _synapse)
 {
     synapse = _synapse;

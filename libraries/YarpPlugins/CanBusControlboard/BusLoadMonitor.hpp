@@ -22,7 +22,7 @@ class OneWayMonitor : public CanMessageNotifier
 {
 public:
     //! Tell observers a new CAN message has arrived.
-    virtual bool notifyMessage(const can_message & msg) override;
+    bool notifyMessage(const can_message & msg) override;
 
     //! Return stored value and clear counter.
     unsigned int reset();

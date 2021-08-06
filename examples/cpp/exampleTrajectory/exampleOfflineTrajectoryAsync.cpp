@@ -46,12 +46,12 @@
 #include <yarp/dev/IRemoteVariables.h>
 #include <yarp/dev/PolyDriver.h>
 
-#define DEFAULT_REMOTE "/teo/leftArm"
-#define DEFAULT_JOINT 5
-#define DEFAULT_SPEED 2.0 // deg/s
-#define DEFAULT_TARGET (-20.0)
-#define DEFAULT_PERIOD_MS 50
-#define DEFAULT_IP_MODE "pt"
+constexpr auto DEFAULT_REMOTE = "/teo/leftArm";
+constexpr auto DEFAULT_JOINT = 5;
+constexpr auto DEFAULT_SPEED = 2.0; // deg/s
+constexpr auto DEFAULT_TARGET = (-20.0);
+constexpr auto DEFAULT_PERIOD_MS = 50;
+constexpr auto DEFAULT_IP_MODE = "pt";
 
 int main(int argc, char * argv[])
 {

@@ -243,10 +243,3 @@ void CanWriterThread::handlePartialWrite(unsigned int sent)
 }
 
 // -----------------------------------------------------------------------------
-
-CanSenderDelegate * CanWriterThread::getDelegate()
-{
-    return sender;
-}
-
-// -----------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __LAUNCH_CAN_BUS__
-#define __LAUNCH_CAN_BUS__
+#ifndef __LAUNCH_CAN_BUS_HPP__
+#define __LAUNCH_CAN_BUS_HPP__
 
 #include <yarp/os/RFModule.h>
 #include <yarp/dev/PolyDriverList.h>
@@ -16,13 +16,13 @@ namespace roboticslab
 class LaunchCanBus : public yarp::os::RFModule
 {
 public:
-    ~LaunchCanBus()
+    ~LaunchCanBus() override
     { close(); }
 
-    bool configure(yarp::os::ResourceFinder &rf);
-    virtual double getPeriod();
-    virtual bool updateModule();
-    virtual bool close();
+    bool configure(yarp::os::ResourceFinder &rf) override;
+    double getPeriod() override;
+    bool updateModule() override;
+    bool close() override;
 
 private:
     yarp::dev::PolyDriverList canDevices;
@@ -30,6 +30,6 @@ private:
     yarp::dev::PolyDriverList calibratorDevices;
 };
 
-}  // namespace roboticslab
+} // namespace roboticslab
 
-#endif  // __LAUNCH_CAN_BUS__
+#endif // __LAUNCH_CAN_BUS_HPP__

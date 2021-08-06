@@ -39,32 +39,29 @@ public:
     { }
 
     //! Virtual destructor.
-    virtual ~CanReaderWriterThread() = default;
+    ~CanReaderWriterThread() override = default;
 
     //! Invoked by the thread right before it is started.
-    virtual bool threadInit() override
+    bool threadInit() override
     { canBuffer = iCanBufferFactory->createBuffer(bufferSize); return true; }
 
     //! Invoked by the thread right after it is started.
-    virtual void threadRelease() override
+    void threadRelease() override
     { iCanBufferFactory->destroyBuffer(canBuffer); }
 
     //! Invoked by the caller right before the thread is started.
-    virtual void beforeStart() override;
+    void beforeStart() override;
 
     //! Invoked by the caller right before the thread is joined.
-    virtual void afterStart(bool success) override;
+    void afterStart(bool success) override;
 
     //! Callback on thread stop.
-    virtual void onStop() override;
-
-    //! The thread will invoke this once.
-    virtual void run() override = 0;
+    void onStop() override;
 
     //! Configure CAN interface handles.
-    virtual void setCanHandles(yarp::dev::ICanBus * iCanBus,
-                               yarp::dev::ICanBusErrors * iCanBusErrors,
-                               yarp::dev::ICanBufferFactory * iCanBufferFactory)
+    void setCanHandles(yarp::dev::ICanBus * iCanBus,
+                       yarp::dev::ICanBusErrors * iCanBusErrors,
+                       yarp::dev::ICanBufferFactory * iCanBufferFactory)
     {
         this->iCanBus = iCanBus; this->iCanBusErrors = iCanBusErrors; this->iCanBufferFactory = iCanBufferFactory;
     }
@@ -122,14 +119,14 @@ public:
     void registerHandle(ICanBusSharer * p);
 
     //! Retrieve collection of handles to wrapped CAN devices.
-    const std::vector<ICanBusSharer *> & getHandles()
+    const std::vector<ICanBusSharer *> & getHandles() const
     { return handles; }
 
     //! Attach custom CAN message responder handle.
     void attachCanNotifier(CanMessageNotifier * canMessageNotifier)
     { this->canMessageNotifier = canMessageNotifier; }
 
-    virtual void run() override;
+    void run() override;
 
 private:
     std::vector<ICanBusSharer *> handles;
@@ -151,15 +148,16 @@ public:
     CanWriterThread(const std::string & id, double delay, unsigned int bufferSize);
 
     //! Destructor.
-    virtual ~CanWriterThread();
+    ~CanWriterThread() override;
 
     //! Retrieve a handle to the CAN sender delegate.
-    CanSenderDelegate * getDelegate();
+    CanSenderDelegate * getDelegate()
+    { return sender; }
 
     //! Send awaiting messages and clear the queue.
     void flush();
 
-    virtual void run() override;
+    void run() override;
 
 private:
     //! In case a write did not succeed, rearrange the CAN message buffer.

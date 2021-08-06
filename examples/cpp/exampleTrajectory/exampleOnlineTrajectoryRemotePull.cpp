@@ -54,11 +54,11 @@
 #include <yarp/dev/IPositionDirect.h>
 #include <yarp/dev/PolyDriver.h>
 
-#define DEFAULT_ROBOT "/teo"
-#define DEFAULT_PART "/leftArm"
-#define DEFAULT_JOINT 5
-#define DEFAULT_SPEED 2.0 // deg/s
-#define DEFAULT_TARGET (-20.0)
+constexpr auto DEFAULT_ROBOT = "/teo";
+constexpr auto DEFAULT_PART = "/leftArm";
+constexpr auto DEFAULT_JOINT = 5;
+constexpr auto DEFAULT_SPEED = 2.0; // deg/s
+constexpr auto DEFAULT_TARGET = (-20.0);
 
 class SyncCallback : public yarp::os::TypedReaderCallback<yarp::os::Bottle>
 {

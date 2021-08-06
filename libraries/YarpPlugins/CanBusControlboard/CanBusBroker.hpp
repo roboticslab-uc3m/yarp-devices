@@ -43,7 +43,7 @@ public:
     CanBusBroker(const std::string & name);
 
     //! Destructor.
-    ~CanBusBroker();
+    ~CanBusBroker() override;
 
     //! Configure this CAN bus.
     bool configure(const yarp::os::Searchable & config);
@@ -76,7 +76,7 @@ public:
     { return name; }
 
     //! Callback on incoming remote CAN commands.
-    virtual void onRead(yarp::os::Bottle & b) override;
+    void onRead(yarp::os::Bottle & b) override;
 
 private:
     //! Open remote CAN interface ports.

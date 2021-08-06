@@ -8,7 +8,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
-#define DEFAULT_ROBOT "/robot/part"
+constexpr auto DEFAULT_ROBOT = "/robot/part";
 
 namespace roboticslab
 {

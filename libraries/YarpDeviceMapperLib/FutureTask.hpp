@@ -69,7 +69,7 @@ public:
 class SequentialTaskFactory : public FutureTaskFactory
 {
 public:
-    virtual std::unique_ptr<FutureTask> createTask() override;
+    std::unique_ptr<FutureTask> createTask() override;
 };
 
 /**
@@ -82,9 +82,9 @@ public:
     //! Constructor, creates a pool of threads.
     ParallelTaskFactory(int threads);
 
-    virtual ~ParallelTaskFactory();
+    ~ParallelTaskFactory() override;
 
-    virtual std::unique_ptr<FutureTask> createTask() override;
+    std::unique_ptr<FutureTask> createTask() override;
 
 private:
     class Private;
