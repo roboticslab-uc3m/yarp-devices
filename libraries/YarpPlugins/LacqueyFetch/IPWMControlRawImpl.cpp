@@ -64,7 +64,6 @@ bool LacqueyFetch::getRefDutyCyclesRaw(double * refs)
 bool LacqueyFetch::getDutyCycleRaw(int m, double * val)
 {
     CHECK_JOINT(m);
-    yCWarning(LCQ, "getDutyCycleRaw() not supported");
     return false;
 }
 
