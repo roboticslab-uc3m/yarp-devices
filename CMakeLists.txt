@@ -44,7 +44,7 @@ find_package(YARP 3.4 REQUIRED COMPONENTS os dev sig)
 find_package(AMOR_API QUIET)
 find_package(ARAVIS 0.4 EXACT QUIET)
 find_package(Doxygen QUIET)
-find_package(GTestSources 1.6.0 QUIET)
+find_package(GTestSources 1.8 QUIET)
 find_package(Leap 2.3 EXACT QUIET)
 find_package(PCan 8.5 EXACT QUIET)
 find_package(Phidgets 2.1 EXACT QUIET)
@@ -78,6 +78,9 @@ endif()
 
 # Create targets if specific requirements are satisfied.
 include(CMakeDependentOption)
+
+# Acknowledge this is a CTest-friendly project.
+enable_testing()
 
 # Add main contents.
 add_subdirectory(libraries)
