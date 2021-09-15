@@ -153,16 +153,6 @@ void CanWriterThread::flush()
     //-- Nothing to write, exit.
     if (preparedMessages == 0) return;
 
-    yarp::dev::CanErrors errors;
-
-    //-- Query bus state.
-    if (!iCanBusErrors->canGetErrors(errors) || errors.busoff)
-    {
-        //-- Bus off, reset TX queue.
-        preparedMessages = 0;
-        return;
-    }
-
     unsigned int sent;
 
     //-- Write as many bytes as possible, return false on errors.

@@ -88,7 +88,6 @@ private:
     CanWriterThread * writerThread;
 
     yarp::dev::ICanBus * iCanBus;
-    yarp::dev::ICanBusErrors * iCanBusErrors;
     yarp::dev::ICanBufferFactory * iCanBufferFactory;
 
     yarp::os::Port dumpPort;

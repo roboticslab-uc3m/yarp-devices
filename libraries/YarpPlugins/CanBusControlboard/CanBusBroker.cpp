@@ -18,7 +18,6 @@ CanBusBroker::CanBusBroker(const std::string & _name)
       readerThread(nullptr),
       writerThread(nullptr),
       iCanBus(nullptr),
-      iCanBusErrors(nullptr),
       iCanBufferFactory(nullptr),
       busLoadMonitor(nullptr)
 { }
@@ -93,12 +92,6 @@ bool CanBusBroker::registerDevice(yarp::dev::PolyDriver * driver)
         return false;
     }
 
-    if (!driver->view(iCanBusErrors))
-    {
-        yCWarning(CBCB) << "Cannot view ICanBusErrors interface";
-        return false;
-    }
-
     if (!driver->view(iCanBufferFactory))
     {
         yCWarning(CBCB) << "Cannot view ICanBufferFactory interface";
@@ -120,12 +113,12 @@ bool CanBusBroker::registerDevice(yarp::dev::PolyDriver * driver)
 
     if (readerThread)
     {
-        readerThread->setCanHandles(iCanBus, iCanBusErrors, iCanBufferFactory);
+        readerThread->setCanHandles(iCanBus, iCanBufferFactory);
     }
 
     if (writerThread)
     {
-        writerThread->setCanHandles(iCanBus, iCanBusErrors, iCanBufferFactory);
+        writerThread->setCanHandles(iCanBus, iCanBufferFactory);
     }
 
     return true;

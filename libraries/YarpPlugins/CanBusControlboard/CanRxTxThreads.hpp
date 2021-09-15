@@ -33,7 +33,7 @@ class CanReaderWriterThread : public yarp::os::Thread
 public:
     //! Constructor.
     CanReaderWriterThread(const std::string & type, const std::string & id, double delay, unsigned int bufferSize)
-        : iCanBus(nullptr), iCanBusErrors(nullptr), iCanBufferFactory(nullptr),
+        : iCanBus(nullptr), iCanBufferFactory(nullptr),
           dumpPort(nullptr), dumpWriter(nullptr), dumpMutex(nullptr), busLoadMonitor(nullptr),
           bufferSize(bufferSize), delay(delay), type(type), id(id)
     { }
@@ -59,11 +59,9 @@ public:
     void onStop() override;
 
     //! Configure CAN interface handles.
-    void setCanHandles(yarp::dev::ICanBus * iCanBus,
-                       yarp::dev::ICanBusErrors * iCanBusErrors,
-                       yarp::dev::ICanBufferFactory * iCanBufferFactory)
+    void setCanHandles(yarp::dev::ICanBus * iCanBus, yarp::dev::ICanBufferFactory * iCanBufferFactory)
     {
-        this->iCanBus = iCanBus; this->iCanBusErrors = iCanBusErrors; this->iCanBufferFactory = iCanBufferFactory;
+        this->iCanBus = iCanBus; this->iCanBufferFactory = iCanBufferFactory;
     }
 
     //! Attach YARP port writer for CAN message dumping.
@@ -83,7 +81,6 @@ protected:
     static void dumpMessage(const can_message & msg, yarp::os::Bottle & b);
 
     yarp::dev::ICanBus * iCanBus;
-    yarp::dev::ICanBusErrors * iCanBusErrors;
     yarp::dev::ICanBufferFactory * iCanBufferFactory;
     yarp::dev::CanBuffer canBuffer;
 

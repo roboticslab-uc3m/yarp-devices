@@ -6,7 +6,6 @@
 #include <linux/can.h>
 #include <linux/can/raw.h>
 
-#include <mutex>
 #include <string>
 #include <vector>
 
@@ -27,7 +26,6 @@ namespace roboticslab
  */
 class CanBusSocket : public yarp::dev::DeviceDriver,
                      public yarp::dev::ICanBus,
-                     public yarp::dev::ICanBusErrors,
                      public yarp::dev::ImplementCanBufferFactory<SocketCanMessage, struct can_frame>
 {
 public:
@@ -46,9 +44,6 @@ public:
     bool canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait = false) override;
     bool canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait = false) override;
 
-    //  --------- ICanBusErrors declarations. Implementation in ICanBusErrorsImpl.cpp ---------
-    bool canGetErrors(yarp::dev::CanErrors & err) override;
-
 private:
     enum io_operation { READ, WRITE };
 
@@ -63,8 +58,6 @@ private:
     int txTimeoutMs {0};
     int s {0};
     std::vector<struct can_filter> filters;
-    yarp::dev::CanErrors errors;
-    mutable std::mutex errorMutex;
 };
 
 } // namespace roboticslab

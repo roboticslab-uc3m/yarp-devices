@@ -15,7 +15,6 @@ if(NOT SKIP_CanBusSocket)
                                  CanBusSocket.hpp
                                  DeviceDriverImpl.cpp
                                  ICanBusImpl.cpp
-                                 ICanBusErrorsImpl.cpp
                                  SocketCanMessage.cpp
                                  SocketCanMessage.hpp
                                  LogComponent.hpp
