@@ -108,6 +108,31 @@ bool CanBusSocket::open(yarp::os::Searchable& config)
         return false;
     }
 
+    if (config.check("filteredIds", "filtered node IDs"))
+    {
+        const auto * ids = config.findGroup("filteredIds").get(1).asList();
+
+        if (ids->size() != 0)
+        {
+            for (int i = 0; i < ids->size(); i++)
+            {
+                struct can_filter filter;
+                filter.can_id = ids->get(i).asInt32();
+                filter.can_mask = (CAN_EFF_FLAG | CAN_RTR_FLAG | CAN_SFF_MASK);
+                filters.push_back(filter);
+            }
+
+            if (::setsockopt(s, SOL_CAN_RAW, CAN_RAW_FILTER, filters.data(), sizeof(struct can_filter) * filters.size()) < 0)
+            {
+                yCError(SCK) << "Unable to configure set of initial acceptance filters at iface" << iface;
+                filters.clear();
+                return false;
+            }
+
+            yCInfo(SCK) << "Initial IDs added to set of acceptance filters for iface" << iface;
+        }
+    }
+
     return true;
 }
 

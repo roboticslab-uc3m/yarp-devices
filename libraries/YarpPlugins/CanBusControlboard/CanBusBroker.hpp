@@ -51,9 +51,6 @@ public:
     //! Register CAN handles associated to the input device driver.
     bool registerDevice(yarp::dev::PolyDriver * driver);
 
-    //! Set CAN acceptance filters.
-    bool addFilters();
-
     //! Clear CAN acceptance filters.
     bool clearFilters();
 
