@@ -94,17 +94,17 @@ bool CanBusPeak::open(yarp::os::Searchable& config)
     }
 
     //-- Load initial node IDs and set acceptance filters.
-    if (config.check("ids", "initial node IDs"))
+    if (config.check("filteredIds", "filtered node IDs"))
     {
-        const yarp::os::Bottle & ids = config.findGroup("ids").tail();
+        const yarp::os::Bottle * ids = config.findGroup("filteredIds").get(1).asList();
 
-        if (ids.size() != 0)
+        if (ids->size() != 0)
         {
-            yCInfo(PEAK) << "Parsing bottle of ids on CAN device" << ids.toString();
+            yCInfo(PEAK) << "Parsing bottle of ids on CAN device" << devicePath;
 
-            for (int i = 0; i < ids.size(); i++)
+            for (int i = 0; i < ids->size(); i++)
             {
-                activeFilters.insert(ids.get(i).asFloat64());
+                activeFilters.insert(ids->get(i).asInt32());
             }
 
             std::uint64_t acc = computeAcceptanceCodeAndMask();

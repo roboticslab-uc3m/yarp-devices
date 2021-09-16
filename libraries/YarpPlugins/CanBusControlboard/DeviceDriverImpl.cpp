@@ -27,7 +27,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
     auto * canBuses = config.find("buses").asList();
 
-    if (canBuses == nullptr)
+    if (!canBuses)
     {
         yCError(CBCB) << "Missing key \"buses\" or not a list";
         return false;
@@ -36,65 +36,14 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
     for (int i = 0; i < canBuses->size(); i++)
     {
         auto canBus = canBuses->get(i).asString();
-        auto isFakeBus = canBus.find("fake") != std::string::npos;
-
-        yarp::os::Property canBusOptions;
-        canBusOptions.setMonitor(config.getMonitor(), canBus.c_str());
-
-        if (!isFakeBus)
-        {
-            auto & canBusGroup = robotConfig->findGroup(canBus);
-
-            if (canBusGroup.isNull())
-            {
-                yCError(CBCB) << "Missing CAN bus device group" << canBus;
-                return false;
-            }
-
-            canBusOptions.fromString(canBusGroup.toString());
-            canBusOptions.put("robotConfig", config.find("robotConfig"));
-            canBusOptions.put("blockingMode", false); // enforce non-blocking mode
-            canBusOptions.put("allowPermissive", false); // always check usage requirements
-        }
-        else
-        {
-            canBusOptions.put("device", "CanBusFake");
-        }
-
-        auto * canBusDevice = new yarp::dev::PolyDriver;
-        busDevices.push_back(canBusDevice);
-
-        if (!canBusDevice->open(canBusOptions))
-        {
-            yCError(CBCB) << "canBusDevice instantiation failed:" << canBus;
-            return false;
-        }
-
-        if (!isFakeBus)
-        {
-            CanBusBroker * canBusBroker = new CanBusBroker(canBus);
-            canBusBrokers.push_back(canBusBroker);
-
-            if (!canBusBroker->configure(canBusOptions))
-            {
-                yCError(CBCB) << "Unable to configure broker of CAN bus device" << canBus;
-                return false;
-            }
-
-            if (!canBusBroker->registerDevice(canBusDevice))
-            {
-                yCError(CBCB) << "Unable to register CAN bus device" << canBus;
-                return false;
-            }
-        }
 
         if (!config.check(canBus))
         {
-            yCError(CBCB) << "Missing key:" << canBus;
+            yCError(CBCB) << "Missing CAN bus key:" << canBus;
             return false;
         }
 
-        auto & nodesVal = config.find(canBus);
+        const auto & nodesVal = config.find(canBus);
 
         if (!nodesVal.isList())
         {
@@ -102,7 +51,10 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             return false;
         }
 
-        auto * nodes = nodesVal.asList();
+        const auto * nodes = nodesVal.asList();
+        auto isFakeBus = canBus.find("fake") != std::string::npos;
+        std::vector<ICanBusSharer *> busSharers;
+        yarp::os::Bottle nodeIds;
 
         for (int i = 0; i < nodes->size(); i++)
         {
@@ -156,18 +108,78 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
                     return false;
                 }
 
-                canBusBrokers.back()->getReader()->registerHandle(iCanBusSharer);
-                iCanBusSharer->registerSender(canBusBrokers.back()->getWriter()->getDelegate());
+                busSharers.push_back(iCanBusSharer);
+                nodeIds.addInt32(iCanBusSharer->getId());
+
+                for (auto id : iCanBusSharer->getAdditionalIds())
+                {
+                    nodeIds.addInt32(id);
+                }
             }
         }
 
-        bool enableAcceptanceFilters = canBusOptions.check("enableAcceptanceFilters", yarp::os::Value(false),
+        yarp::os::Property canBusOptions;
+        canBusOptions.setMonitor(config.getMonitor(), canBus.c_str());
+
+        if (!isFakeBus)
+        {
+            auto & canBusGroup = robotConfig->findGroup(canBus);
+
+            if (canBusGroup.isNull())
+            {
+                yCError(CBCB) << "Missing CAN bus device group" << canBus;
+                return false;
+            }
+
+            canBusOptions.fromString(canBusGroup.toString());
+            canBusOptions.put("robotConfig", config.find("robotConfig"));
+            canBusOptions.put("blockingMode", false); // enforce non-blocking mode
+            canBusOptions.put("allowPermissive", false); // always check usage requirements
+
+            auto enableAcceptanceFilters = canBusOptions.check("enableAcceptanceFilters", yarp::os::Value(false),
                 "enable CAN acceptance filters").asBool();
 
-        if (enableAcceptanceFilters && !isFakeBus && !canBusBrokers.back()->addFilters())
+            if (enableAcceptanceFilters && nodeIds.size() != 0)
+            {
+                canBusOptions.put("filteredIds", yarp::os::Value::makeList(nodeIds.toString().c_str()));
+            }
+        }
+        else
         {
-            yCError(CBCB) << "Unable to register CAN acceptance filters in" << canBus;
+            canBusOptions.put("device", "CanBusFake");
+        }
+
+        auto * canBusDevice = new yarp::dev::PolyDriver;
+        busDevices.push_back(canBusDevice);
+
+        if (!canBusDevice->open(canBusOptions))
+        {
+            yCError(CBCB) << "canBusDevice instantiation failed:" << canBus;
             return false;
+        }
+
+        if (!isFakeBus)
+        {
+            auto * canBusBroker = new CanBusBroker(canBus);
+            canBusBrokers.push_back(canBusBroker);
+
+            if (!canBusBroker->configure(canBusOptions))
+            {
+                yCError(CBCB) << "Unable to configure broker of CAN bus device" << canBus;
+                return false;
+            }
+
+            if (!canBusBroker->registerDevice(canBusDevice))
+            {
+                yCError(CBCB) << "Unable to register CAN bus device" << canBus;
+                return false;
+            }
+
+            for (auto * iCanBusSharer : busSharers)
+            {
+                canBusBroker->getReader()->registerHandle(iCanBusSharer);
+                iCanBusSharer->registerSender(canBusBroker->getWriter()->getDelegate());
+            }
         }
     }
 

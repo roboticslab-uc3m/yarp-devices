@@ -46,6 +46,11 @@ bool CanBusSocket::canIdAdd(unsigned int id)
     filter.can_id = id;
     filter.can_mask = (CAN_EFF_FLAG | CAN_RTR_FLAG | CAN_SFF_MASK);
 
+    if (filterFunctionCodes)
+    {
+        filter.can_mask &= ~0x780; // function codes, e.g. 0x580, are ignored in CANopen mode
+    }
+
     if (std::find_if(filters.begin(), filters.end(), [id](const auto & f) { return f.can_id == id; }) != filters.end())
     {
         yCWarning(SCK) << "Filter for id" << id << "already set in iface" << iface;

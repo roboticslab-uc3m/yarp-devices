@@ -32,6 +32,7 @@ bool CanBusSocket::open(yarp::os::Searchable& config)
     iface = config.check("port", yarp::os::Value(DEFAULT_PORT), "CAN socket interface").asString();
     blockingMode = config.check("blockingMode", yarp::os::Value(DEFAULT_BLOCKING_MODE), "blocking mode enabled").asBool();
     allowPermissive = config.check("allowPermissive", yarp::os::Value(DEFAULT_ALLOW_PERMISSIVE), "read/write permissive mode").asBool();
+    filterFunctionCodes = config.check("filterFunctionCodes", yarp::os::Value(true), "filter mask ignores CANopen function codes").asBool();
     bitrate = config.check("bitrate", yarp::os::Value(0), "CAN bitrate (bps)").asInt32();
 
     if (blockingMode)
@@ -106,6 +107,37 @@ bool CanBusSocket::open(yarp::os::Searchable& config)
     {
         yCError(SCK) << "Unable to enable error frames for iface" << iface << "with error:" << std::strerror(errno);
         return false;
+    }
+
+    if (config.check("filteredIds", "filtered node IDs"))
+    {
+        const auto * ids = config.findGroup("filteredIds").get(1).asList();
+
+        if (ids->size() != 0)
+        {
+            for (int i = 0; i < ids->size(); i++)
+            {
+                struct can_filter filter;
+                filter.can_id = ids->get(i).asInt32();
+                filter.can_mask = (CAN_EFF_FLAG | CAN_RTR_FLAG | CAN_SFF_MASK);
+
+                if (filterFunctionCodes)
+                {
+                    filter.can_mask &= ~0x780; // function codes, e.g. 0x580, are ignored in CANopen mode
+                }
+
+                filters.push_back(filter);
+            }
+
+            if (::setsockopt(s, SOL_CAN_RAW, CAN_RAW_FILTER, filters.data(), sizeof(struct can_filter) * filters.size()) < 0)
+            {
+                yCError(SCK) << "Unable to configure set of initial acceptance filters at iface" << iface;
+                filters.clear();
+                return false;
+            }
+
+            yCInfo(SCK) << "Initial IDs added to set of acceptance filters for iface" << iface;
+        }
     }
 
     return true;

@@ -195,33 +195,6 @@ bool CanBusBroker::createPorts(const std::string & prefix)
 
 // -----------------------------------------------------------------------------
 
-bool CanBusBroker::addFilters()
-{
-    if (!iCanBus || !readerThread)
-    {
-        return false;
-    }
-
-    for (auto * handle : readerThread->getHandles())
-    {
-        auto ids = handle->getAdditionalIds();
-        ids.push_back(handle->getId());
-
-        for (auto id : ids)
-        {
-            if (!iCanBus->canIdAdd(id))
-            {
-                yCWarning(CBCB) << "Cannot add acceptance filter ID" << id;
-                return false;
-            }
-        }
-    }
-
-    return true;
-}
-
-// -----------------------------------------------------------------------------
-
 bool CanBusBroker::clearFilters()
 {
     if (!iCanBus)

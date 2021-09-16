@@ -139,15 +139,15 @@ bool CanBusHico::open(yarp::os::Searchable& config)
         }
 
         //-- Load initial node IDs and set acceptance filters.
-        if (config.check("ids", "initial node IDs"))
+        if (config.check("filteredIds", "filtered node IDs"))
         {
-            const yarp::os::Bottle & ids = config.findGroup("ids").tail();
+            const yarp::os::Bottle * ids = config.findGroup("filteredIds").get(1).asList();
 
-            if (ids.size() != 0)
+            if (ids->size() != 0)
             {
-                yCInfo(HICO) << "Parsing bottle of ids on CAN device" << ids.toString();
+                yCInfo(HICO) << "Parsing bottle of ids on CAN device" << devicePath;
 
-                if (!filterManager->parseIds(ids))
+                if (!filterManager->parseIds(*ids))
                 {
                     yCError(HICO) << "Could not set acceptance filters on CAN device" << devicePath;
                     return false;
