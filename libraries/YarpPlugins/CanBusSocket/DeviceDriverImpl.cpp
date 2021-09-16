@@ -32,6 +32,7 @@ bool CanBusSocket::open(yarp::os::Searchable& config)
     iface = config.check("port", yarp::os::Value(DEFAULT_PORT), "CAN socket interface").asString();
     blockingMode = config.check("blockingMode", yarp::os::Value(DEFAULT_BLOCKING_MODE), "blocking mode enabled").asBool();
     allowPermissive = config.check("allowPermissive", yarp::os::Value(DEFAULT_ALLOW_PERMISSIVE), "read/write permissive mode").asBool();
+    filterFunctionCodes = config.check("filterFunctionCodes", yarp::os::Value(true), "filter mask ignores CANopen function codes").asBool();
     bitrate = config.check("bitrate", yarp::os::Value(0), "CAN bitrate (bps)").asInt32();
 
     if (blockingMode)
@@ -119,6 +120,12 @@ bool CanBusSocket::open(yarp::os::Searchable& config)
                 struct can_filter filter;
                 filter.can_id = ids->get(i).asInt32();
                 filter.can_mask = (CAN_EFF_FLAG | CAN_RTR_FLAG | CAN_SFF_MASK);
+
+                if (filterFunctionCodes)
+                {
+                    filter.can_mask &= ~0x780; // function codes, e.g. 0x580, are ignored in CANopen mode
+                }
+
                 filters.push_back(filter);
             }
 
