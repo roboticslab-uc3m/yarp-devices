@@ -73,15 +73,7 @@ bool TechnosoftIpos::initialize()
     if (!vars.configuredOnce)
     {
         // retrieve static drive info
-        vars.configuredOnce = can->sdo()->upload<std::uint32_t>("Device type",
-                [](auto data)
-                { yCInfo(IPOS, "CiA standard: %d", data & 0xFFFF); },
-                0x1000)
-            && can->sdo()->upload<std::uint32_t>("Supported drive modes",
-                [this](auto data)
-                { interpretSupportedDriveModes(data); },
-                0x6502)
-            && can->sdo()->upload("Manufacturer software version",
+        vars.configuredOnce = can->sdo()->upload("Manufacturer software version",
                 [](const auto & data)
                 { yCInfo(IPOS, "Firmware version: %s", rtrim(data).c_str()); },
                 0x100A)

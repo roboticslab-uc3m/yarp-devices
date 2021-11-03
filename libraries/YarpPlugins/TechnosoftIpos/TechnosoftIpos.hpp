@@ -261,7 +261,6 @@ public:
 
 private:
 
-    void interpretSupportedDriveModes(std::uint32_t data);
     void interpretMsr(std::uint16_t msr);
     void interpretMer(std::uint16_t mer);
     void interpretDer(std::uint16_t der);
