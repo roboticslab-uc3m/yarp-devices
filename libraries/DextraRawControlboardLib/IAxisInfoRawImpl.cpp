@@ -2,6 +2,7 @@
 
 #include "DextraRawControlboard.hpp"
 
+#include <yarp/conf/version.h>
 #include <yarp/os/Log.h>
 
 #include "LogComponent.hpp"
@@ -12,7 +13,11 @@ using namespace roboticslab;
 
 bool DextraRawControlboard::getAxisNameRaw(int axis, std::string & name)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(DEXTRA, id(), "%d", axis);
+#else
     yCTrace(DEXTRA, "%d", axis);
+#endif
     CHECK_JOINT(axis);
     name = Synapse::LABELS[axis];
     return true;
@@ -22,7 +27,11 @@ bool DextraRawControlboard::getAxisNameRaw(int axis, std::string & name)
 
 bool DextraRawControlboard::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(DEXTRA, id(), "%d", axis);
+#else
     yCTrace(DEXTRA, "%d", axis);
+#endif
     CHECK_JOINT(axis);
     type = yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_REVOLUTE;
     return true;

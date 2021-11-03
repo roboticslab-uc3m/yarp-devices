@@ -11,7 +11,8 @@
 
 #include <stdexcept>
 
-#include <yarp/os/Log.h>
+#include <yarp/conf/version.h>
+#include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
 
@@ -57,13 +58,21 @@ bool CanBusHico::waitUntilTimeout(io_operation op, bool * bufferReady)
         ret = ::select(fileDescriptor + 1, 0, &fds, 0, &tv);
         break;
     default:
+#if YARP_VERSION_MINOR >= 6
+        yCIError(HICO, id(), "Unhandled IO operation on select()");
+#else
         yCError(HICO, "Unhandled IO operation on select()");
+#endif
         return false;
     }
 
     if (ret < 0)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIError(HICO, id(), "select() error: %s", std::strerror(errno));
+#else
         yCError(HICO, "select() error: %s", std::strerror(errno));
+#endif
         return false;
     }
     else if (ret == 0)
@@ -124,6 +133,33 @@ bool CanBusHico::idToBitrate(unsigned int id, unsigned int * bitrate)
     catch (const std::out_of_range & exception)
     {
         return false;
+    }
+}
+
+// -----------------------------------------------------------------------------
+
+CanBusHico::FilterManager::filter_config CanBusHico::parseFilterConfiguration(const std::string & str)
+{
+    if (str == "disabled")
+    {
+        return FilterManager::DISABLED;
+    }
+    else if (str == "noRange")
+    {
+        return FilterManager::NO_RANGE;
+    }
+    else if (str == "maskAndRange")
+    {
+        return FilterManager::MASK_AND_RANGE;
+    }
+    else
+    {
+#if YARP_VERSION_MINOR >= 6
+        yCIWarning(HICO, id()) << "Unrecognized filter configuration, setting DISABLED:" << str;
+#else
+        yCWarning(HICO) << "Unrecognized filter configuration, setting DISABLED:" << str;
+#endif
+        return FilterManager::DISABLED;
     }
 }
 

@@ -5,6 +5,8 @@
 #include <cstring>
 
 #include <yarp/conf/numeric.h>
+#include <yarp/conf/version.h>
+
 #include <yarp/os/Log.h>
 
 #include "LogComponent.hpp"
@@ -23,7 +25,11 @@ bool LacqueyFetch::getNumberOfMotorsRaw(int * number)
 
 bool LacqueyFetch::setRefDutyCycleRaw(int m, double ref)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(LCQ, id(), "%d %f", m, ref);
+#else
     yCTrace(LCQ, "%d %f", m, ref);
+#endif
     CHECK_JOINT(m);
 
     ref = yarp::conf::clamp(ref, -100.0, 100.0);

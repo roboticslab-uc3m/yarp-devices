@@ -5,6 +5,7 @@
 #include <cmath>
 
 #include <yarp/conf/numeric.h>
+#include <yarp/conf/version.h>
 #include <yarp/os/Log.h>
 
 #include "LogComponent.hpp"
@@ -15,7 +16,11 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d %f", j, sp);
+#else
     yCTrace(IPOS, "%d %f", j, sp);
+#endif
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_VELOCITY);
 
@@ -23,7 +28,11 @@ bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
 
     if (std::abs(sp) > maxVel)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIWarning(IPOS, id(), "Requested speed exceeds maximum velocity (%f)", maxVel);
+#else
         yCWarning(IPOS, "Requested speed exceeds maximum velocity (%f)", maxVel);
+#endif
         sp = yarp::conf::clamp(sp, -maxVel, maxVel);
     }
 
@@ -56,7 +65,11 @@ bool TechnosoftIpos::velocityMoveRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::getRefVelocityRaw(int joint, double * vel)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d",joint);
+#else
     yCTrace(IPOS, "%d",joint);
+#endif
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_VELOCITY);
     *vel = vars.synchronousCommandTarget;

@@ -4,6 +4,7 @@
 
 #include <cstring> // std::strerror
 
+#include <yarp/conf/version.h>
 #include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
@@ -22,7 +23,11 @@ bool CanBusPeak::canGetErrors(yarp::dev::CanErrors & err)
 
         if (res < 0)
         {
+#if YARP_VERSION_MINOR >= 6
+            yCIError(PEAK, id()) << "pcanfd_get_state() failed:" << std::strerror(-res);
+#else
             yCError(PEAK) << "pcanfd_get_state() failed:" << std::strerror(-res);
+#endif
             return false;
         }
     }

@@ -31,6 +31,10 @@ bool DextraCanControlboard::open(yarp::os::Searchable & config)
         return false;
     }
 
+#if YARP_VERSION_MINOR >= 6
+    yarp::dev::DeviceDriver::setId("ID" + std::to_string(canId));
+#endif
+
     acquireSynapseHandle(new CanSynapse(canId));
 
     return true;

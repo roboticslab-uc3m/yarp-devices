@@ -50,15 +50,33 @@ bool CuiAbsolute::open(yarp::os::Searchable & config)
     timeout = cuiGroup.check("timeout", yarp::os::Value(DEFAULT_TIMEOUT), "timeout (seconds)").asFloat64();
     maxRetries = cuiGroup.check("maxRetries", yarp::os::Value(DEFAULT_MAX_RETRIES), "max retries on timeout").asFloat64();
 
+    if (canId <= 0)
+    {
+        yCError(CUI) << "Illegal CAN ID:" << canId;
+        return false;
+    }
+
+#if YARP_VERSION_MINOR >= 6
+    yarp::dev::DeviceDriver::setId("ID" + std::to_string(canId));
+#endif
+
     if (timeout <= 0.0)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIError(CUI, id()) << "Illegal CUI timeout value:" << timeout;
+#else
         yCError(CUI) << "Illegal CUI timeout value:" << timeout;
+#endif
         return false;
     }
 
     if (!cuiGroup.check("mode", "publish mode [push|pull]"))
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIError(CUI, id()) << "Missing \"mode\" property";
+#else
         yCError(CUI) << "Missing \"mode\" property";
+#endif
         return false;
     }
 
@@ -77,7 +95,11 @@ bool CuiAbsolute::open(yarp::os::Searchable & config)
     }
     else
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIError(CUI, id()) << "Unrecognized CUI mode:" << mode;
+#else
         yCError(CUI) << "Unrecognized CUI mode:" << mode;
+#endif
         return false;
     }
 

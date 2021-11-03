@@ -4,7 +4,6 @@
 #define __DEXTRA_CAN_CONTROLBOARD_HPP__
 
 #include <yarp/dev/CanBusInterface.h>
-#include <yarp/dev/DeviceDriver.h>
 
 #include "DextraRawControlboard.hpp"
 #include "Synapse.hpp"
@@ -44,22 +43,18 @@ private:
  * @ingroup DextraCanControlboard
  * @brief Implementation of a CAN-based raw controlboard for a Dextra hand.
  */
-class DextraCanControlboard : public yarp::dev::DeviceDriver,
-                              public DextraRawControlboard,
+class DextraCanControlboard : public DextraRawControlboard,
                               public ICanBusSharer
 {
 public:
-
     DextraCanControlboard() : canId(0)
     { }
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
-
     bool open(yarp::os::Searchable & config) override;
     bool close() override;
 
     //  --------- ICanBusSharer declarations. Implementation in ICanBusSharerImpl.cpp ---------
-
     unsigned int getId() override;
     bool initialize() override;
     bool finalize() override;
@@ -68,7 +63,6 @@ public:
     bool synchronize() override;
 
 protected:
-
     unsigned int canId;
     DextraRawControlboard raw;
 };

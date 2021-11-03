@@ -24,7 +24,8 @@ namespace roboticslab
  * @ingroup DextraRawControlboard
  * @brief Base implementation for the custom UC3M Dextra Hand controlboard interfaces.
  */
-class DextraRawControlboard : public yarp::dev::IAxisInfoRaw,
+class DextraRawControlboard : public yarp::dev::DeviceDriver,
+                              public yarp::dev::IAxisInfoRaw,
                               public yarp::dev::IControlLimitsRaw,
                               public yarp::dev::IControlModeRaw,
                               public yarp::dev::IEncodersTimedRaw,

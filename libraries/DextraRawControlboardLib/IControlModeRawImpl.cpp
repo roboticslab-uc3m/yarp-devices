@@ -15,7 +15,11 @@ using namespace roboticslab;
 
 bool DextraRawControlboard::getControlModeRaw(int j, int * mode)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(DEXTRA, id(), "%d", j);
+#else
     yCTrace(DEXTRA, "%d", j);
+#endif
     CHECK_JOINT(j);
     *mode = VOCAB_CM_POSITION;
     return true;
@@ -25,8 +29,6 @@ bool DextraRawControlboard::getControlModeRaw(int j, int * mode)
 
 bool DextraRawControlboard::getControlModesRaw(int * modes)
 {
-    yCTrace(DEXTRA, "");
-
     bool ok = true;
 
     for (int j = 0; j < Synapse::DATA_POINTS; j++)
@@ -41,8 +43,6 @@ bool DextraRawControlboard::getControlModesRaw(int * modes)
 
 bool DextraRawControlboard::getControlModesRaw(int n_joint, const int * joints, int * modes)
 {
-    yCTrace(DEXTRA, "%d", n_joint);
-
     bool ok = true;
 
     for (int i = 0; i < n_joint; i++)
@@ -57,7 +57,9 @@ bool DextraRawControlboard::getControlModesRaw(int n_joint, const int * joints, 
 
 bool DextraRawControlboard::setControlModeRaw(int j, int mode)
 {
-#if YARP_VERSION_MINOR >= 5
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(DEXTRA, id(), "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
+#elif YARP_VERSION_MINOR >= 5
     yCTrace(DEXTRA, "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
 #else
     yCTrace(DEXTRA, "%d %s", j, yarp::os::Vocab::decode(mode).c_str());
@@ -70,8 +72,6 @@ bool DextraRawControlboard::setControlModeRaw(int j, int mode)
 
 bool DextraRawControlboard::setControlModesRaw(int * modes)
 {
-    yCTrace(DEXTRA, "");
-
     bool ok = true;
 
     for (int j = 0; j < Synapse::DATA_POINTS; j++)
@@ -86,8 +86,6 @@ bool DextraRawControlboard::setControlModesRaw(int * modes)
 
 bool DextraRawControlboard::setControlModesRaw(int n_joint, const int * joints, int * modes)
 {
-    yCTrace(DEXTRA, "%d", n_joint);
-
     bool ok = true;
 
     for (int i = 0; i < n_joint; i++)

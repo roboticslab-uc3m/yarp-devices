@@ -87,6 +87,10 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
         return false;
     }
 
+#if YARP_VERSION_MINOR >= 6
+    yarp::dev::DeviceDriver::setId("ID" + std::to_string(vars.canId));
+#endif
+
     if (iposGroup.check("externalEncoder", "external encoder"))
     {
         std::string externalEncoder = iposGroup.find("externalEncoder").asString();
@@ -94,7 +98,11 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
         if (externalEncoderGroup.isNull())
         {
+#if YARP_VERSION_MINOR >= 6
+            yCIError(IPOS, id()) << "Missing external encoder device group" << externalEncoder;
+#else
             yCError(IPOS) << "Missing external encoder device group" << externalEncoder;
+#endif
             return false;
         }
 
@@ -105,19 +113,31 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
         if (!externalEncoderDevice.open(externalEncoderOptions))
         {
+#if YARP_VERSION_MINOR >= 6
+            yCIError(IPOS, id()) << "Unable to open external encoder device" << externalEncoder;
+#else
             yCError(IPOS) << "Unable to open external encoder device" << externalEncoder;
+#endif
             return false;
         }
 
         if (!externalEncoderDevice.view(iEncodersTimedRawExternal))
         {
+#if YARP_VERSION_MINOR >= 6
+            yCIError(IPOS, id()) << "Unable to view IEncodersTimedRaw in" << externalEncoder;
+#else
             yCError(IPOS) << "Unable to view IEncodersTimedRaw in" << externalEncoder;
+#endif
             return false;
         }
 
         if (!externalEncoderDevice.view(iExternalEncoderCanBusSharer))
         {
+#if YARP_VERSION_MINOR >= 6
+            yCIError(IPOS, id()) << "Unable to view ICanBusSharer in" << externalEncoder;
+#else
             yCError(IPOS) << "Unable to view ICanBusSharer in" << externalEncoder;
+#endif
             return false;
         }
     }

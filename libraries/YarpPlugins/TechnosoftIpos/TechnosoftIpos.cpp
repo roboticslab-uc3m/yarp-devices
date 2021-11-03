@@ -8,7 +8,9 @@
 #include <sstream>
 #include <string>
 
-#include <yarp/os/Log.h>
+#include <yarp/conf/version.h>
+
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 
 #include "LogComponent.hpp"
@@ -26,11 +28,14 @@ namespace
         std::string reg;
         std::bitset<16> actual;
         std::bitset<16> stored;
-        unsigned int canId;
+        std::string canId;
     };
 
-    bool reportBitToggle(report_storage report, report_level level, std::size_t pos, const std::string & msgSet,
-            const std::string & msgReset = "")
+    bool reportBitToggle(report_storage report,
+                         report_level level,
+                         std::size_t pos,
+                         const std::string & msgSet,
+                         const std::string & msgReset = "")
     {
         bool isSet = report.actual.test(pos);
 
@@ -48,15 +53,25 @@ namespace
                 ss << (msgReset.empty() ? "Bit reset: " + msgSet : msgReset);
             }
 
+#if YARP_VERSION_MINOR < 6
             ss << " (canId " << report.canId << ")";
+#endif
 
             if (isSet && level == WARN)
             {
+#if YARP_VERSION_MINOR >= 6
+                yCIWarning(IPOS, report.canId, "%s", ss.str().c_str());
+#else
                 yCWarning(IPOS, "%s", ss.str().c_str());
+#endif
             }
             else
             {
+#if YARP_VERSION_MINOR >= 6
+                yCIInfo(IPOS, report.canId, "%s", ss.str().c_str());
+#else
                 yCInfo(IPOS, "%s", ss.str().c_str());
+#endif
             }
         }
 
@@ -68,7 +83,11 @@ namespace
 
 void TechnosoftIpos::interpretMsr(std::uint16_t msr)
 {
-    report_storage report{"MSR", msr, vars.msr, can->getId()};
+#if YARP_VERSION_MINOR >= 6
+    report_storage report{"MSR", msr, vars.msr, id()};
+#else
+    report_storage report{"MSR", msr, vars.msr, std::to_string(can->getId())};
+#endif
 
     reportBitToggle(report, INFO, 0, "Drive/motor initialization performed.");
     reportBitToggle(report, NONE, 1, "Position trigger 1 reached.");
@@ -94,7 +113,11 @@ void TechnosoftIpos::interpretMsr(std::uint16_t msr)
 
 void TechnosoftIpos::interpretMer(std::uint16_t mer)
 {
-    report_storage report{"MER", mer, vars.mer, can->getId()};
+#if YARP_VERSION_MINOR >= 6
+    report_storage report{"MER", mer, vars.mer, id()};
+#else
+    report_storage report{"MER", mer, vars.mer, std::to_string(can->getId())};
+#endif
 
     reportBitToggle(report, WARN, 0, "CAN error. Set when CAN controller is in error mode.");
     reportBitToggle(report, WARN, 1, "Short-circuit. Set when protection is triggered.");
@@ -120,7 +143,11 @@ void TechnosoftIpos::interpretMer(std::uint16_t mer)
 
 void TechnosoftIpos::interpretDer(std::uint16_t der)
 {
-    report_storage report{"DER", der, vars.der, can->getId()};
+#if YARP_VERSION_MINOR >= 6
+    report_storage report{"DER", der, vars.der, id()};
+#else
+    report_storage report{"DER", der, vars.der, std::to_string(can->getId())};
+#endif
 
     reportBitToggle(report, WARN, 0, "The number of nested function calls exceeded the length of TML stack. Last function call was ignored.");
     reportBitToggle(report, WARN, 1, "A RET/RETI instruction was executed while no function/ISR was active.");
@@ -146,7 +173,11 @@ void TechnosoftIpos::interpretDer(std::uint16_t der)
 
 void TechnosoftIpos::interpretDer2(std::uint16_t der2)
 {
-    report_storage report{"DER2", der2, vars.der2, can->getId()};
+#if YARP_VERSION_MINOR >= 6
+    report_storage report{"DER2", der2, vars.der2, id()};
+#else
+    report_storage report{"DER2", der2, vars.der2, std::to_string(can->getId())};
+#endif
 
     reportBitToggle(report, WARN, 0, "BiSS data CRC error");
     reportBitToggle(report, WARN, 1, "BiSS data warning bit is set");
@@ -164,7 +195,11 @@ void TechnosoftIpos::interpretDer2(std::uint16_t der2)
 
 void TechnosoftIpos::interpretCer(std::uint16_t cer)
 {
-    report_storage report{"CER", cer, vars.cer, can->getId()};
+#if YARP_VERSION_MINOR >= 6
+    report_storage report{"CER", cer, vars.cer, id()};
+#else
+    report_storage report{"CER", cer, vars.cer, std::to_string(can->getId())};
+#endif
 
     reportBitToggle(report, WARN, 0, "RS232 reception error.");
     reportBitToggle(report, WARN, 1, "RS232 transmission timeout error.");
@@ -196,7 +231,11 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
         break;
     }
 
-    report_storage report{"status", statusword, can->driveStatus()->statusword(), can->getId()};
+#if YARP_VERSION_MINOR >= 6
+    report_storage report{"status", statusword, can->driveStatus()->statusword(), id()};
+#else
+    report_storage report{"status", statusword, can->driveStatus()->statusword(), std::to_string(can->getId())};
+#endif
 
     reportBitToggle(report, INFO, 0, "Ready to switch on.");
     reportBitToggle(report, INFO, 1, "Switched on.");
@@ -217,7 +256,11 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
         && can->driveStatus()->controlword()[8]
         && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)))
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIWarning(IPOS, id()) << "Unable to reset halt bit";
+#else
         yCWarning(IPOS, "Unable to reset halt bit (canId %d)", can->getId());
+#endif
     }
 
     reportBitToggle(report, INFO, 11, "Internal Limit Active.");
@@ -229,7 +272,11 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
             "Trajectory generator will accept a new set-point.")
             && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)))
         {
+#if YARP_VERSION_MINOR >= 6
+            yCIWarning(IPOS, id()) << "Unable to finalize single set-point handshake";
+#else
             yCWarning(IPOS, "Unable to finalize single set-point handshake (canId %d)", can->getId());
+#endif
         }
         reportBitToggle(report, WARN, 13, "Following error.", "No following error.");
         break;
@@ -264,53 +311,97 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
     {
     // handled
     case -5:
+#if YARP_VERSION_MINOR >= 6
+        yCIInfo(IPOS, id()) << "iPOS specific: External Reference Torque Mode";
+#else
         yCInfo(IPOS, "iPOS specific: External Reference Torque Mode (canId %d)", can->getId());
+#endif
         vars.actualControlMode = vars.requestedcontrolMode == VOCAB_CM_TORQUE ? VOCAB_CM_TORQUE : VOCAB_CM_CURRENT;
         vars.enableSync = true;
         break;
     case 1:
+#if YARP_VERSION_MINOR >= 6
+        yCIInfo(IPOS, id()) << "Profile Position Mode";
+#else
         yCInfo(IPOS, "Profile Position Mode (canId %d)", can->getId());
+#endif
         vars.actualControlMode = VOCAB_CM_POSITION;
         vars.enableSync = false;
         break;
     case 3:
+#if YARP_VERSION_MINOR >= 6
+        yCIInfo(IPOS, id()) << "Profile Velocity Mode";
+#else
         yCInfo(IPOS, "Profile Velocity Mode (canId %d)", can->getId());
+#endif
         vars.actualControlMode = vars.enableCsv ? VOCAB_CM_UNKNOWN : VOCAB_CM_VELOCITY;
         vars.enableSync = !vars.enableCsv;
         break;
     case 7:
+#if YARP_VERSION_MINOR >= 6
+        yCIInfo(IPOS, id()) << "Interpolated Position Mode";
+#else
         yCInfo(IPOS, "Interpolated Position Mode (canId %d)", can->getId());
+#endif
         vars.actualControlMode = VOCAB_CM_POSITION_DIRECT;
         vars.enableSync = false;
         break;
     case 8:
+#if YARP_VERSION_MINOR >= 6
+        yCIInfo(IPOS, id()) << "Cyclic Synchronous Position Mode";
+#else
         yCInfo(IPOS, "Cyclic Synchronous Position Mode (canId %d)", can->getId());
+#endif
         vars.actualControlMode = vars.enableCsv ? VOCAB_CM_VELOCITY : VOCAB_CM_POSITION_DIRECT;
         vars.enableSync = true;
         break;
     // unhandled
     case -4:
+#if YARP_VERSION_MINOR >= 6
+        yCIInfo(IPOS, id()) << "iPOS specific: External Reference Speed Mode";
+#else
         yCInfo(IPOS, "iPOS specific: External Reference Speed Mode (canId %d)", can->getId());
+#endif
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     case -3:
+#if YARP_VERSION_MINOR >= 6
+        yCIInfo(IPOS, id()) << "iPOS specific: External Reference Position Mode";
+#else
         yCInfo(IPOS, "iPOS specific: External Reference Position Mode (canId %d)", can->getId());
+#endif
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     case -2:
+#if YARP_VERSION_MINOR >= 6
+        yCIInfo(IPOS, id()) << "iPOS specific: Electronic Camming Position Mode";
+#else
         yCInfo(IPOS, "iPOS specific: Electronic Camming Position Mode (canId %d)", can->getId());
+#endif
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     case -1:
+#if YARP_VERSION_MINOR >= 6
+        yCIInfo(IPOS, id()) << "iPOS specific: Electronic Gearing Position Mode";
+#else
         yCInfo(IPOS, "iPOS specific: Electronic Gearing Position Mode (canId %d)", can->getId());
+#endif
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     case 6:
+#if YARP_VERSION_MINOR >= 6
+        yCIInfo(IPOS, id()) << "Homing Mode";
+#else
         yCInfo(IPOS, "Homing Mode (canId %d)", can->getId());
+#endif
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     default:
+#if YARP_VERSION_MINOR >= 6
+        yCIWarning(IPOS, id()) << "No mode set";
+#else
         yCWarning(IPOS, "No mode set (canId %d)", can->getId());
+#endif
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     }
@@ -323,7 +414,11 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
 
 void TechnosoftIpos::interpretIpStatus(std::uint16_t status)
 {
-    report_storage report{"ip", status, vars.ipStatus, can->getId()};
+#if YARP_VERSION_MINOR >= 6
+    report_storage report{"ip", status, vars.ipStatus, id()};
+#else
+    report_storage report{"ip", status, vars.ipStatus, std::to_string(can->getId())};
+#endif
 
     std::uint8_t ic = status & 0x007F; // integrity counter
 
@@ -425,7 +520,11 @@ void TechnosoftIpos::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, con
         break;
     }
     default:
+#if YARP_VERSION_MINOR >= 6
+        yCIWarning(IPOS, id()) << code.second;
+#else
         yCWarning(IPOS, "%s (canId %d)", code.second.c_str(), can->getId());
+#endif
         break;
     }
 }
@@ -460,11 +559,19 @@ void TechnosoftIpos::handleNmt(NmtState state)
         s = "pre-operational";
         break;
     default:
+#if YARP_VERSION_MINOR >= 6
+        yCIWarning(IPOS, id()) << "Unhandled state:" << static_cast<std::uint8_t>(state);
+#else
         yCWarning(IPOS, "Unhandled state: %d", static_cast<std::uint8_t>(state));
+#endif
         return;
     }
 
+#if YARP_VERSION_MINOR >= 6
+    yCIInfo(IPOS, id()) << "Heartbeat:" << s;
+#else
     yCInfo(IPOS, "Heartbeat: %s (canId %d)", s.c_str(), can->getId());
+#endif
 
     vars.lastNmtState = nmtState;
 }
@@ -478,7 +585,11 @@ bool TechnosoftIpos::monitorWorker(const yarp::os::YarpTimerEvent & event)
 
     if (vars.heartbeatPeriod != 0.0 && isConfigured && elapsed > event.lastDuration)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIError(IPOS, id()) << "Last heartbeat response was" << elapsed << "seconds ago";
+#else
         yCError(IPOS, "Last heartbeat response was %f seconds ago (canId %d)", elapsed, can->getId());
+#endif
         vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
         can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
         can->driveStatus()->reset();
@@ -488,7 +599,11 @@ bool TechnosoftIpos::monitorWorker(const yarp::os::YarpTimerEvent & event)
     {
         if (!initialize())
         {
+#if YARP_VERSION_MINOR >= 6
+            yCIError(IPOS, id()) << "Unable to initialize CAN comms";
+#else
             yCError(IPOS, "Unable to initialize CAN comms (canId %d)", can->getId());
+#endif
             can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
         }
     }

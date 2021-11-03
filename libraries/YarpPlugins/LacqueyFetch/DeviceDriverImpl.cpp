@@ -19,7 +19,11 @@ bool LacqueyFetch::open(yarp::os::Searchable& config)
 #endif
 
     canId = config.check("canId", yarp::os::Value(0), "can bus ID").asInt8();
-    yCInfo(LCQ) << "Created LacqueyFetch with canId" << canId;
+
+#if YARP_VERSION_MINOR >= 6
+    yarp::dev::DeviceDriver::setId("ID" + std::to_string(canId));
+#endif
+
     return true;
 }
 

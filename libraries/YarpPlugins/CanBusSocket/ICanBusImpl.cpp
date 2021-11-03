@@ -10,6 +10,7 @@
 
 #include <algorithm>
 
+#include <yarp/conf/version.h>
 #include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
@@ -30,7 +31,11 @@ bool CanBusSocket::canGetBaudRate(unsigned int * rate)
 {
     if (bitrate == 0)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIError(SCK, id()) << "Bitrate not available";
+#else
         yCError(SCK) << "Bitrate not available for iface" << iface;
+#endif
         return false;
     }
 
@@ -40,10 +45,10 @@ bool CanBusSocket::canGetBaudRate(unsigned int * rate)
 
 // -----------------------------------------------------------------------------
 
-bool CanBusSocket::canIdAdd(unsigned int id)
+bool CanBusSocket::canIdAdd(unsigned int _id)
 {
     struct can_filter filter;
-    filter.can_id = id;
+    filter.can_id = _id;
     filter.can_mask = (CAN_EFF_FLAG | CAN_RTR_FLAG | CAN_SFF_MASK);
 
     if (filterFunctionCodes)
@@ -51,9 +56,13 @@ bool CanBusSocket::canIdAdd(unsigned int id)
         filter.can_mask &= ~0x780; // function codes, e.g. 0x580, are ignored in CANopen mode
     }
 
-    if (std::find_if(filters.begin(), filters.end(), [id](const auto & f) { return f.can_id == id; }) != filters.end())
+    if (std::find_if(filters.begin(), filters.end(), [_id](const auto & f) { return f.can_id == _id; }) != filters.end())
     {
-        yCWarning(SCK) << "Filter for id" << id << "already set in iface" << iface;
+#if YARP_VERSION_MINOR >= 6
+        yCIWarning(SCK, id()) << "Filter for id" << _id << "already set";
+#else
+        yCWarning(SCK) << "Filter for id" << _id << "already set in iface" << iface;
+#endif
         return true;
     }
 
@@ -61,23 +70,31 @@ bool CanBusSocket::canIdAdd(unsigned int id)
 
     if (::setsockopt(s, SOL_CAN_RAW, CAN_RAW_FILTER, filters.data(), sizeof(struct can_filter) * filters.size()) < 0)
     {
-        yCError(SCK) << "Unable to add filter for id" << id << "at iface" << iface;
+#if YARP_VERSION_MINOR >= 6
+        yCIError(SCK, id()) << "Unable to add filter for id" << _id;
+#else
+        yCError(SCK) << "Unable to add filter for id" << _id << "at iface" << iface;
+#endif
         filters.pop_back();
         return false;
     }
 
-    yCInfo(SCK) << "Added filter for id" << id << "at iface" << iface;
+#if YARP_VERSION_MINOR >= 6
+    yCIInfo(SCK, id()) << "Added filter for id" << _id;
+#else
+    yCInfo(SCK) << "Added filter for id" << _id << "at iface" << iface;
+#endif
 
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool CanBusSocket::canIdDelete(unsigned int id)
+bool CanBusSocket::canIdDelete(unsigned int _id)
 {
-    auto it = std::find_if(filters.begin(), filters.end(), [id](const auto & f) { return f.can_id == id; });
+    auto it = std::find_if(filters.begin(), filters.end(), [_id](const auto & f) { return f.can_id == _id; });
 
-    if (id == 0 || it != filters.end() && filters.size() == 1)
+    if (_id == 0 || it != filters.end() && filters.size() == 1)
     {
         struct can_filter filter;
         filter.can_id = 0 | CAN_INV_FILTER;
@@ -85,7 +102,11 @@ bool CanBusSocket::canIdDelete(unsigned int id)
 
         if (::setsockopt(s, SOL_CAN_RAW, CAN_RAW_FILTER, &filter, sizeof(filter)) < 0)
         {
+#if YARP_VERSION_MINOR >= 6
+            yCIError(SCK, id()) << "Unable to reset filters";
+#else
             yCError(SCK) << "Unable to reset filters at iface" << iface;
+#endif
             return false;
         }
 
@@ -95,13 +116,21 @@ bool CanBusSocket::canIdDelete(unsigned int id)
     {
         if (it == filters.end())
         {
-            yCWarning(SCK) << "Filter for id" << id << "missing or already deleted in iface" << iface;
+#if YARP_VERSION_MINOR >= 6
+            yCIWarning(SCK, id()) << "Filter for id" << _id << "missing or already deleted";
+#else
+            yCWarning(SCK) << "Filter for id" << _id << "missing or already deleted in iface" << iface;
+#endif
             return true;
         }
 
         if (::setsockopt(s, SOL_CAN_RAW, CAN_RAW_FILTER, nullptr, 0) < 0)
         {
+#if YARP_VERSION_MINOR >= 6
+            yCIError(SCK, id()) << "Unable to clear filters";
+#else
             yCError(SCK) << "Unable to clear filters at iface" << iface;
+#endif
             return false;
         }
 
@@ -109,13 +138,21 @@ bool CanBusSocket::canIdDelete(unsigned int id)
 
         if (::setsockopt(s, SOL_CAN_RAW, CAN_RAW_FILTER, filters.data(), sizeof(struct can_filter) * filters.size()) < 0)
         {
-            yCError(SCK) << "Unable to add filters back while deleting id" << id << "at iface" << iface;
+#if YARP_VERSION_MINOR >= 6
+            yCIError(SCK, id()) << "Unable to add filters back while deleting id" << _id;
+#else
+            yCError(SCK) << "Unable to add filters back while deleting id" << _id << "at iface" << iface;
+#endif
             filters.clear();
             return false;
         }
     }
 
-    yCInfo(SCK) << "Deleted filter for id" << id << "at iface" << iface;
+#if YARP_VERSION_MINOR >= 6
+    yCIInfo(SCK, id()) << "Deleted filter for id" << _id;
+#else
+    yCInfo(SCK) << "Deleted filter for id" << _id << "at iface" << iface;
+#endif
 
     return true;
 }
@@ -126,7 +163,11 @@ bool CanBusSocket::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsig
 {
     if (!allowPermissive && wait != blockingMode)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIError(SCK, id(), "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
+#else
         yCError(SCK, "Blocking mode configuration mismatch: requested=%d, enabled=%d (%s)", wait, blockingMode, iface.c_str());
+#endif
         return false;
     }
 
@@ -138,7 +179,11 @@ bool CanBusSocket::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsig
 
         if (!waitUntilTimeout(READ, &bufferReady))
         {
+#if YARP_VERSION_MINOR >= 6
+            yCIError(SCK, id(), "waitUntilTimeout() failed");
+#else
             yCError(SCK, "waitUntilTimeout() failed at iface %s", iface.c_str());
+#endif
             return false;
         }
 
@@ -163,7 +208,11 @@ bool CanBusSocket::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsig
             }
             else
             {
+#if YARP_VERSION_MINOR >= 6
+                yCIError(SCK, id(), "read() error: %s", std::strerror(errno));
+#else
                 yCError(SCK, "read() error at iface %s: %s", iface.c_str(), std::strerror(errno));
+#endif
                 return false;
             }
         }
@@ -193,7 +242,11 @@ bool CanBusSocket::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size
 {
     if (!allowPermissive && wait != blockingMode)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIError(SCK, id(), "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
+#else
         yCError(SCK, "Blocking mode configuration mismatch: requested=%d, enabled=%d (%s)", wait, blockingMode, iface.c_str());
+#endif
         return false;
     }
 
@@ -205,7 +258,11 @@ bool CanBusSocket::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size
 
         if (!waitUntilTimeout(WRITE, &bufferReady))
         {
+#if YARP_VERSION_MINOR >= 6
+            yCIError(SCK, id(), "waitUntilTimeout() failed");
+#else
             yCError(SCK, "waitUntilTimeout() failed at iface %s", iface.c_str());
+#endif
             return false;
         }
 
@@ -230,7 +287,11 @@ bool CanBusSocket::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size
             }
             else
             {
+#if YARP_VERSION_MINOR >= 6
+                yCIError(SCK, id(), "write() failed: %s", std::strerror(errno));
+#else
                 yCError(SCK, "write() failed at iface %s: %s", iface.c_str(), std::strerror(errno));
+#endif
                 return false;
             }
         }
