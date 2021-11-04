@@ -9,6 +9,7 @@
 #include <cassert>
 #include <cerrno>
 
+#include <yarp/conf/version.h>
 #include <yarp/os/Log.h>
 
 #include "LogComponent.hpp"
@@ -51,13 +52,21 @@ bool CanBusPeak::waitUntilTimeout(io_operation op, bool * bufferReady)
         ret = ::select(fileDescriptor + 1, 0, &fds, 0, &tv);
         break;
     default:
+#if YARP_VERSION_MINOR >= 6
+        yCIError(PEAK, id(), "Unhandled IO operation on select()");
+#else
         yCError(PEAK, "Unhandled IO operation on select()");
+#endif
         return false;
     }
 
     if (ret < 0)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIError(PEAK, id(), "select() error: %s", std::strerror(errno));
+#else
         yCError(PEAK, "select() error: %s", std::strerror(errno));
+#endif
         return false;
     }
     else if (ret == 0)

@@ -9,9 +9,11 @@
 
 #include "LogComponent.hpp"
 
+using namespace roboticslab;
+
 // ------------------- IControlMode related ------------------------------------
 
-bool roboticslab::AmorControlboard::getControlMode(int j, int *mode)
+bool AmorControlboard::getControlMode(int j, int *mode)
 {
     yCTrace(AMOR, "%d", j);
 
@@ -27,7 +29,7 @@ bool roboticslab::AmorControlboard::getControlMode(int j, int *mode)
 // -----------------------------------------------------------------------------
 
 
-bool roboticslab::AmorControlboard::getControlModes(int *modes)
+bool AmorControlboard::getControlModes(int *modes)
 {
     bool ok = true;
 
@@ -41,7 +43,7 @@ bool roboticslab::AmorControlboard::getControlModes(int *modes)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getControlModes(const int n_joint, const int *joints, int *modes)
+bool AmorControlboard::getControlModes(const int n_joint, const int *joints, int *modes)
 {
     if (!batchWithinRange(n_joint))
     {
@@ -60,7 +62,7 @@ bool roboticslab::AmorControlboard::getControlModes(const int n_joint, const int
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::setControlMode(const int j, const int mode)
+bool AmorControlboard::setControlMode(const int j, const int mode)
 {
 #if YARP_VERSION_MINOR >= 5
     yCTrace(AMOR, "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
@@ -80,7 +82,7 @@ bool roboticslab::AmorControlboard::setControlMode(const int j, const int mode)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::setControlModes(const int n_joint, const int *joints, int *modes)
+bool AmorControlboard::setControlModes(const int n_joint, const int *joints, int *modes)
 {
     if (!batchWithinRange(n_joint))
     {
@@ -99,7 +101,7 @@ bool roboticslab::AmorControlboard::setControlModes(const int n_joint, const int
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::setControlModes(int *modes)
+bool AmorControlboard::setControlModes(int *modes)
 {
     bool ok = true;
 

@@ -4,6 +4,8 @@
 
 #include <algorithm>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/Log.h>
 #include <yarp/os/Time.h>
 
@@ -15,7 +17,11 @@ using namespace roboticslab;
 
 bool DextraRawControlboard::resetEncoderRaw(int j)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(DEXTRA, id(), "%d", j);
+#else
     yCTrace(DEXTRA, "%d", j);
+#endif
     return setEncoderRaw(j, 0.0);
 }
 
@@ -23,7 +29,11 @@ bool DextraRawControlboard::resetEncoderRaw(int j)
 
 bool DextraRawControlboard::resetEncodersRaw()
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(DEXTRA, id(), "");
+#else
     yCTrace(DEXTRA, "");
+#endif
     Synapse::Setpoints setpoints = {0};
     setSetpoints(setpoints);
     return true;
@@ -33,7 +43,11 @@ bool DextraRawControlboard::resetEncodersRaw()
 
 bool DextraRawControlboard::setEncoderRaw(int j, double val)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(DEXTRA, id(), "%d %f", j, val);
+#else
     yCTrace(DEXTRA, "%d %f", j, val);
+#endif
     CHECK_JOINT(j);
     setSetpoint(j, val);
     return true;
@@ -43,7 +57,11 @@ bool DextraRawControlboard::setEncoderRaw(int j, double val)
 
 bool DextraRawControlboard::setEncodersRaw(const double * vals)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(DEXTRA, id(), "");
+#else
     yCTrace(DEXTRA, "");
+#endif
     Synapse::Setpoints setpoints;
     std::copy(vals, vals + Synapse::DATA_POINTS, std::begin(setpoints));
     setSetpoints(setpoints);
@@ -54,7 +72,11 @@ bool DextraRawControlboard::setEncodersRaw(const double * vals)
 
 bool DextraRawControlboard::getEncoderRaw(int j, double * v)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(DEXTRA, id(), "%d", j);
+#else
     yCTrace(DEXTRA, "%d", j);
+#endif
     CHECK_JOINT(j);
     *v = getSetpoint(j);
     return true;
@@ -64,7 +86,6 @@ bool DextraRawControlboard::getEncoderRaw(int j, double * v)
 
 bool DextraRawControlboard::getEncodersRaw(double *encs)
 {
-    //CD_DEBUG("\n");
     Synapse::Setpoints setpoints;
     getSetpoints(setpoints);
     std::copy(std::cbegin(setpoints), std::cend(setpoints), encs);
@@ -75,7 +96,6 @@ bool DextraRawControlboard::getEncodersRaw(double *encs)
 
 bool DextraRawControlboard::getEncoderSpeedRaw(int j, double * sp)
 {
-    //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
     return false;
 }
@@ -84,8 +104,6 @@ bool DextraRawControlboard::getEncoderSpeedRaw(int j, double * sp)
 
 bool DextraRawControlboard::getEncoderSpeedsRaw(double * spds)
 {
-    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
-
     bool ok = true;
 
     for (int j = 0; j < Synapse::DATA_POINTS; j++)
@@ -100,7 +118,6 @@ bool DextraRawControlboard::getEncoderSpeedsRaw(double * spds)
 
 bool DextraRawControlboard::getEncoderAccelerationRaw(int j, double * accs)
 {
-    //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
     return false;
 }
@@ -109,8 +126,6 @@ bool DextraRawControlboard::getEncoderAccelerationRaw(int j, double * accs)
 
 bool DextraRawControlboard::getEncoderAccelerationsRaw(double * accs)
 {
-    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
-
     bool ok = true;
 
     for (int j = 0; j < Synapse::DATA_POINTS; j++)
@@ -125,7 +140,6 @@ bool DextraRawControlboard::getEncoderAccelerationsRaw(double * accs)
 
 bool DextraRawControlboard::getEncoderTimedRaw(int j, double * enc, double * time)
 {
-    //CD_DEBUG("(%d)\n", j); // too verbose in controlboardwrapper2 stream
     CHECK_JOINT(j);
     *time = yarp::os::Time::now();
     return getEncoderRaw(j, enc);
@@ -135,7 +149,6 @@ bool DextraRawControlboard::getEncoderTimedRaw(int j, double * enc, double * tim
 
 bool DextraRawControlboard::getEncodersTimedRaw(double * encs, double * time)
 {
-    //CD_DEBUG("\n"); // too verbose in controlboardwrapper2 stream
     *time = yarp::os::Time::now();
     return getEncodersRaw(encs);
 }

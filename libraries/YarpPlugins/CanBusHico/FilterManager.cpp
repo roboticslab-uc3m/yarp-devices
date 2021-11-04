@@ -9,6 +9,7 @@
 #include <set>
 #include <vector>
 
+#include <yarp/conf/version.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 
@@ -35,8 +36,9 @@ const int roboticslab::CanBusHico::FilterManager::MAX_FILTERS = 4;
 
 // -----------------------------------------------------------------------------
 
-CanBusHico::FilterManager::FilterManager(int fileDescriptor, bool enableRanges)
-    : fd(fileDescriptor),
+CanBusHico::FilterManager::FilterManager(const CanBusHico & owner, int fileDescriptor, bool enableRanges)
+    : owner(owner),
+      fd(fileDescriptor),
       valid(true),
       enableRanges(enableRanges)
 {
@@ -114,7 +116,11 @@ bool CanBusHico::FilterManager::clearFilters(bool clearStage)
 {
     if (::ioctl(fd, IOC_CLEAR_FILTERS) == -1)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIError(HICO, owner.id()) << "ioctl() error while clearing filters:" << std::strerror(errno);
+#else
         yCError(HICO) << "ioctl() error while clearing filters:" << std::strerror(errno);
+#endif
         return false;
     }
 
@@ -139,7 +145,11 @@ bool CanBusHico::FilterManager::setMaskedFilter(unsigned int id)
 
     if (::ioctl(fd, IOC_SET_FILTER, &filter) == -1)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIError(HICO, owner.id()) << "Could not set filter:" << std::strerror(errno);
+#else
         yCError(HICO) << "Could not set filter:" << std::strerror(errno);
+#endif
         return false;
     }
 
@@ -159,7 +169,11 @@ bool roboticslab::CanBusHico::FilterManager::setRangedFilter(unsigned int lower,
 
     if (::ioctl(fd, IOC_SET_FILTER, &filter) == -1)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIError(HICO, owner.id()) << "Could not set filter:" << std::strerror(errno);
+#else
         yCError(HICO) << "Could not set filter:" << std::strerror(errno);
+#endif
         return false;
     }
 
@@ -207,7 +221,11 @@ bool CanBusHico::FilterManager::bulkUpdate()
 
     if (sequences.size() > MAX_FILTERS)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIWarning(HICO, owner.id(), "MAX_FILTERS exceeded (%zu > %d)", sequences.size(), MAX_FILTERS);
+#else
         yCWarning(HICO, "MAX_FILTERS exceeded (%zu > %d)", sequences.size(), MAX_FILTERS);
+#endif
         valid = false;
     }
     else
@@ -240,29 +258,6 @@ bool CanBusHico::FilterManager::bulkUpdate()
     }
 
     return true;
-}
-
-// -----------------------------------------------------------------------------
-
-CanBusHico::FilterManager::filter_config CanBusHico::FilterManager::parseFilterConfiguration(const std::string & str)
-{
-    if (str == "disabled")
-    {
-        return DISABLED;
-    }
-    else if (str == "noRange")
-    {
-        return NO_RANGE;
-    }
-    else if (str == "maskAndRange")
-    {
-        return MASK_AND_RANGE;
-    }
-    else
-    {
-        yCWarning(HICO) << "Unrecognized filter configuration, setting DISABLED:" << str;
-        return DISABLED;
-    }
 }
 
 // -----------------------------------------------------------------------------

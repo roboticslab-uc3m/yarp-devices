@@ -9,6 +9,8 @@
 #include <bitset>
 #include <iterator>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogStream.h>
 #include <yarp/os/SystemClock.h>
 #include <yarp/os/Value.h>
@@ -270,7 +272,11 @@ InterpolatedPositionBuffer * createInterpolationBuffer(const yarp::os::Searchabl
 
     if (periodMs < 0)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIError(IPOS, "ID" + std::to_string(vars.canId)) << "Illegal \"periodMs\":" << periodMs;
+#else
         yCError(IPOS) << "Illegal \"periodMs\":" << periodMs;
+#endif
         return nullptr;
     }
 
@@ -284,7 +290,11 @@ InterpolatedPositionBuffer * createInterpolationBuffer(const yarp::os::Searchabl
     }
     else
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIError(IPOS, "ID" + std::to_string(vars.canId)) << "Unsupported interpolated position submode:" << mode;
+#else
         yCError(IPOS) << "Unsupported interpolated position submode:" << mode;
+#endif
         return nullptr;
     }
 }

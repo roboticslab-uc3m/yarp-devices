@@ -71,7 +71,7 @@ private:
     public:
         enum filter_config { DISABLED, NO_RANGE, MASK_AND_RANGE };
 
-        explicit FilterManager(int fileDescriptor, bool enableRanges);
+        explicit FilterManager(const CanBusHico & owner, int fileDescriptor, bool enableRanges);
 
         bool parseIds(const yarp::os::Bottle & b);
         bool hasId(unsigned int id) const;
@@ -80,8 +80,6 @@ private:
         bool eraseId(unsigned int id);
         bool clearFilters(bool clearStage = true);
 
-        static filter_config parseFilterConfiguration(const std::string & str);
-
         static const int MAX_FILTERS;
 
     private:
@@ -89,11 +87,14 @@ private:
         bool setRangedFilter(unsigned int lower, unsigned int upper);
         bool bulkUpdate();
 
+        const CanBusHico & owner;
         int fd;
         bool valid;
         bool enableRanges;
         std::set<unsigned int> stage, currentlyActive;
     };
+
+    FilterManager::filter_config parseFilterConfiguration(const std::string & str);
 
     enum io_operation { READ, WRITE };
 

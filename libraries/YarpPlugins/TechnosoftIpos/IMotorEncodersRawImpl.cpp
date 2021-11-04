@@ -2,6 +2,7 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <yarp/conf/version.h>
 #include <yarp/os/Log.h>
 
 #include "LogComponent.hpp"
@@ -19,7 +20,11 @@ bool TechnosoftIpos::getNumberOfMotorEncodersRaw(int * num)
 
 bool TechnosoftIpos::resetMotorEncoderRaw(int m)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d", m);
+#else
     yCTrace(IPOS, "%d", m);
+#endif
     CHECK_JOINT(m);
     return setMotorEncoderRaw(m, 0);
 }
@@ -35,7 +40,11 @@ bool TechnosoftIpos::resetMotorEncodersRaw()
 
 bool TechnosoftIpos::setMotorEncoderCountsPerRevolutionRaw(int m, double cpr)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d %f", m, cpr);
+#else
     yCTrace(IPOS, "%d %f", m, cpr);
+#endif
     CHECK_JOINT(m);
     vars.encoderPulses = cpr;
     return true;
@@ -45,7 +54,11 @@ bool TechnosoftIpos::setMotorEncoderCountsPerRevolutionRaw(int m, double cpr)
 
 bool TechnosoftIpos::getMotorEncoderCountsPerRevolutionRaw(int m, double * cpr)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d", m);
+#else
     yCTrace(IPOS, "%d", m);
+#endif
     CHECK_JOINT(m);
     *cpr = vars.encoderPulses;
     return true;
@@ -55,7 +68,11 @@ bool TechnosoftIpos::getMotorEncoderCountsPerRevolutionRaw(int m, double * cpr)
 
 bool TechnosoftIpos::setMotorEncoderRaw(int m, double val)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d %f", m, val);
+#else
     yCTrace(IPOS, "%d %f", m, val);
+#endif
     CHECK_JOINT(m);
     std::int32_t data = vars.reverse ? -val : val;
 
@@ -79,7 +96,11 @@ bool TechnosoftIpos::setMotorEncodersRaw(const double * vals)
 
 bool TechnosoftIpos::getMotorEncoderRaw(int m, double * v)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d", m);
+#else
     yCTrace(IPOS, "%d", m);
+#endif
     CHECK_JOINT(m);
     std::int32_t temp = vars.lastEncoderRead->queryPosition();
     *v = vars.reverse ? -temp : temp;
@@ -97,7 +118,11 @@ bool TechnosoftIpos::getMotorEncodersRaw(double * encs)
 
 bool TechnosoftIpos::getMotorEncoderTimedRaw(int m, double * enc, double * stamp)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d", m);
+#else
     yCTrace(IPOS, "%d", m);
+#endif
     CHECK_JOINT(m);
     std::int32_t temp =  vars.lastEncoderRead->queryPosition();
     *enc = vars.reverse ? -temp : temp;
@@ -116,7 +141,11 @@ bool TechnosoftIpos::getMotorEncodersTimedRaw(double * encs, double * stamps)
 
 bool TechnosoftIpos::getMotorEncoderSpeedRaw(int m, double * sp)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d", m);
+#else
     yCTrace(IPOS, "%d", m);
+#endif
     CHECK_JOINT(m);
     double temp = vars.lastEncoderRead->querySpeed();
     *sp = vars.reverse ? -temp : temp;
@@ -134,7 +163,11 @@ bool TechnosoftIpos::getMotorEncoderSpeedsRaw(double * spds)
 
 bool TechnosoftIpos::getMotorEncoderAccelerationRaw(int m, double * acc)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d", m);
+#else
     yCTrace(IPOS, "%d", m);
+#endif
     CHECK_JOINT(m);
     double temp = vars.lastEncoderRead->queryAcceleration();
     *acc = vars.reverse ? -temp : temp;

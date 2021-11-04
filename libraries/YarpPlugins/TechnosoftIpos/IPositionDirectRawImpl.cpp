@@ -2,6 +2,7 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <yarp/conf/version.h>
 #include <yarp/os/Log.h>
 
 #include "LogComponent.hpp"
@@ -12,7 +13,11 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::setPositionRaw(int j, double ref)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d %f", j, ref);
+#else
     yCTrace(IPOS, "%d %f", j, ref);
+#endif
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
 
@@ -62,7 +67,11 @@ bool TechnosoftIpos::setPositionsRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::getRefPositionRaw(int joint, double * ref)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d", joint);
+#else
     yCTrace(IPOS, "%d", joint);
+#endif
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
 

@@ -6,9 +6,11 @@
 
 #include "LogComponent.hpp"
 
+using namespace roboticslab;
+
 // ------------------- IControlLimits related ------------------------------------
 
-bool roboticslab::AmorControlboard::setLimits(int axis, double min, double max)
+bool AmorControlboard::setLimits(int axis, double min, double max)
 {
     yCError(AMOR, "setLimits() not available");
     return false;
@@ -16,7 +18,7 @@ bool roboticslab::AmorControlboard::setLimits(int axis, double min, double max)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getLimits(int axis, double *min, double *max)
+bool AmorControlboard::getLimits(int axis, double *min, double *max)
 {
     yCTrace(AMOR, "%d", axis);
 
@@ -41,7 +43,7 @@ bool roboticslab::AmorControlboard::getLimits(int axis, double *min, double *max
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::setVelLimits(int axis, double min, double max)
+bool AmorControlboard::setVelLimits(int axis, double min, double max)
 {
     yCError(AMOR, "setVelLimits() not available");
     return false;
@@ -49,7 +51,7 @@ bool roboticslab::AmorControlboard::setVelLimits(int axis, double min, double ma
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getVelLimits(int axis, double *min, double *max)
+bool AmorControlboard::getVelLimits(int axis, double *min, double *max)
 {
     yCTrace(AMOR, "%d", axis);
 

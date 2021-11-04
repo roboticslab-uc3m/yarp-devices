@@ -29,22 +29,27 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
 
-    yarp::os::Bottle & commonGroup = robotConfig->findGroup("common-ipos");
+    const auto & commonGroup = robotConfig->findGroup("common-ipos");
     yarp::os::Property iposGroup;
 
     if (!commonGroup.isNull())
     {
+#if YARP_VERSION_MINOR >= 6
+        yCDebugOnce(IPOS) << commonGroup.toString();
+#endif
         iposGroup.fromString(commonGroup.toString());
     }
 
     iposGroup.fromString(config.toString(), false); // override common options
 
+#if YARP_VERSION_MINOR < 6
     yCDebug(IPOS) << "Config:" << iposGroup.toString();
+#endif
 
-    yarp::os::Bottle & driverGroup = robotConfig->findGroup(iposGroup.find("driver").asString());
-    yarp::os::Bottle & motorGroup = robotConfig->findGroup(iposGroup.find("motor").asString());
-    yarp::os::Bottle & gearboxGroup = robotConfig->findGroup(iposGroup.find("gearbox").asString());
-    yarp::os::Bottle & encoderGroup = robotConfig->findGroup(iposGroup.find("encoder").asString());
+    const auto & driverGroup = robotConfig->findGroup(iposGroup.find("driver").asString());
+    const auto & motorGroup = robotConfig->findGroup(iposGroup.find("motor").asString());
+    const auto & gearboxGroup = robotConfig->findGroup(iposGroup.find("gearbox").asString());
+    const auto & encoderGroup = robotConfig->findGroup(iposGroup.find("encoder").asString());
 
     vars.canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32(); // id-specific
 
@@ -82,6 +87,10 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
         return false;
     }
 
+#if YARP_VERSION_MINOR >= 6
+    yarp::dev::DeviceDriver::setId("ID" + std::to_string(vars.canId));
+#endif
+
     if (iposGroup.check("externalEncoder", "external encoder"))
     {
         std::string externalEncoder = iposGroup.find("externalEncoder").asString();
@@ -89,7 +98,11 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
         if (externalEncoderGroup.isNull())
         {
+#if YARP_VERSION_MINOR >= 6
+            yCIError(IPOS, id()) << "Missing external encoder device group" << externalEncoder;
+#else
             yCError(IPOS) << "Missing external encoder device group" << externalEncoder;
+#endif
             return false;
         }
 
@@ -100,19 +113,31 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
         if (!externalEncoderDevice.open(externalEncoderOptions))
         {
+#if YARP_VERSION_MINOR >= 6
+            yCIError(IPOS, id()) << "Unable to open external encoder device" << externalEncoder;
+#else
             yCError(IPOS) << "Unable to open external encoder device" << externalEncoder;
+#endif
             return false;
         }
 
         if (!externalEncoderDevice.view(iEncodersTimedRawExternal))
         {
+#if YARP_VERSION_MINOR >= 6
+            yCIError(IPOS, id()) << "Unable to view IEncodersTimedRaw in" << externalEncoder;
+#else
             yCError(IPOS) << "Unable to view IEncodersTimedRaw in" << externalEncoder;
+#endif
             return false;
         }
 
         if (!externalEncoderDevice.view(iExternalEncoderCanBusSharer))
         {
+#if YARP_VERSION_MINOR >= 6
+            yCIError(IPOS, id()) << "Unable to view ICanBusSharer in" << externalEncoder;
+#else
             yCError(IPOS) << "Unable to view ICanBusSharer in" << externalEncoder;
+#endif
             return false;
         }
     }

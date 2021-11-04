@@ -4,7 +4,8 @@
 
 #include <cmath>
 
-#include <yarp/os/Log.h>
+#include <yarp/conf/version.h>
+#include <yarp/os/LogStream.h>
 
 #include "CanUtils.hpp"
 #include "LogComponent.hpp"
@@ -15,7 +16,11 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::positionMoveRaw(int j, double ref)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d %f", j, ref);
+#else
     yCTrace(IPOS, "%d %f", j, ref);
+#endif
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
@@ -43,7 +48,11 @@ bool TechnosoftIpos::positionMoveRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::relativeMoveRaw(int j, double delta)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d %f", j, delta);
+#else
     yCTrace(IPOS, "%d %f", j, delta);
+#endif
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
@@ -71,7 +80,11 @@ bool TechnosoftIpos::relativeMoveRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::checkMotionDoneRaw(int j, bool * flag)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d", j);
+#else
     yCTrace(IPOS, "%d", j);
+#endif
     CHECK_JOINT(j);
     *flag = can->driveStatus()->getCurrentState() != DriveState::OPERATION_ENABLED || can->driveStatus()->statusword()[10];
     return true;
@@ -95,17 +108,29 @@ bool TechnosoftIpos::checkMotionDoneRaw(int n_joint, const int * joints, bool * 
 
 bool TechnosoftIpos::setRefSpeedRaw(int j, double sp)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d %f", j, sp);
+#else
     yCTrace(IPOS, "%d %f", j, sp);
+#endif
     CHECK_JOINT(j);
 
     if (sp < 0.0)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIWarning(IPOS, id()) << "Illegal negative speed provided:" << sp;
+#else
         yCWarning(IPOS, "Illegal negative speed provided: %f", sp);
+#endif
         return false;
     }
     else if (sp > vars.maxVel)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIWarning(IPOS, id()) << "Reference speed exceeds maximum velocity, i.e." << vars.maxVel.load();
+#else
         yCWarning(IPOS, "Reference speed exceeds maximum velocity (%f)", vars.maxVel.load());
+#endif
         return false;
     }
 
@@ -144,12 +169,20 @@ bool TechnosoftIpos::setRefSpeedsRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d %f", j, acc);
+#else
     yCTrace(IPOS, "%d %f", j, acc);
+#endif
     CHECK_JOINT(j);
 
     if (acc < 0.0)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIWarning(IPOS, id()) << "Illegal negative acceleration provided:" << acc;
+#else
         yCWarning(IPOS, "Illegal negative acceleration provided: %f", acc);
+#endif
         return false;
     }
 
@@ -188,7 +221,11 @@ bool TechnosoftIpos::setRefAccelerationsRaw(int n_joint, const int * joints, con
 
 bool TechnosoftIpos::getRefSpeedRaw(int j, double * ref)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d", j);
+#else
     yCTrace(IPOS, "%d", j);
+#endif
     CHECK_JOINT(j);
 
     if (vars.actualControlMode == VOCAB_CM_NOT_CONFIGURED)
@@ -225,7 +262,11 @@ bool TechnosoftIpos::getRefSpeedsRaw(int n_joint, const int * joints, double * s
 
 bool TechnosoftIpos::getRefAccelerationRaw(int j, double * acc)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d", j);
+#else
     yCTrace(IPOS, "%d", j);
+#endif
     CHECK_JOINT(j);
 
     if (vars.actualControlMode == VOCAB_CM_NOT_CONFIGURED)
@@ -262,7 +303,11 @@ bool TechnosoftIpos::getRefAccelerationsRaw(int n_joint, const int * joints, dou
 
 bool TechnosoftIpos::stopRaw(int j)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d", j);
+#else
     yCTrace(IPOS, "%d", j);
+#endif
     CHECK_JOINT(j);
 
     return (vars.actualControlMode == VOCAB_CM_POSITION || vars.actualControlMode == VOCAB_CM_VELOCITY)
@@ -288,7 +333,11 @@ bool TechnosoftIpos::stopRaw(int n_joint, const int * joints)
 
 bool TechnosoftIpos::getTargetPositionRaw(int joint, double * ref)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d", joint);
+#else
     yCTrace(IPOS, "%d", joint);
+#endif
     CHECK_JOINT(joint);
 
     return can->sdo()->upload<std::int32_t>("Target position", [this, ref](auto data)

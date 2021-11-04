@@ -4,6 +4,8 @@
 
 #include <cmath>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 
@@ -31,27 +33,50 @@ bool CuiAbsolute::open(yarp::os::Searchable & config)
 
     if (!commonGroup.isNull())
     {
+#if YARP_VERSION_MINOR >= 6
+        yCDebugOnce(IPOS) << commonGroup.toString();
+#endif
         cuiGroup.fromString(commonGroup.toString());
     }
 
     cuiGroup.fromString(config.toString(), false); // override common options
 
+#if YARP_VERSION_MINOR < 6
     yCDebug(CUI) << "Config:" << cuiGroup.toString();
+#endif
 
     canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt8(); // id-specific
     reverse = cuiGroup.check("reverse", yarp::os::Value(false), "reverse").asBool();
     timeout = cuiGroup.check("timeout", yarp::os::Value(DEFAULT_TIMEOUT), "timeout (seconds)").asFloat64();
     maxRetries = cuiGroup.check("maxRetries", yarp::os::Value(DEFAULT_MAX_RETRIES), "max retries on timeout").asFloat64();
 
+    if (canId <= 0)
+    {
+        yCError(CUI) << "Illegal CAN ID:" << canId;
+        return false;
+    }
+
+#if YARP_VERSION_MINOR >= 6
+    yarp::dev::DeviceDriver::setId("ID" + std::to_string(canId));
+#endif
+
     if (timeout <= 0.0)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIError(CUI, id()) << "Illegal CUI timeout value:" << timeout;
+#else
         yCError(CUI) << "Illegal CUI timeout value:" << timeout;
+#endif
         return false;
     }
 
     if (!cuiGroup.check("mode", "publish mode [push|pull]"))
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIError(CUI, id()) << "Missing \"mode\" property";
+#else
         yCError(CUI) << "Missing \"mode\" property";
+#endif
         return false;
     }
 
@@ -70,7 +95,11 @@ bool CuiAbsolute::open(yarp::os::Searchable & config)
     }
     else
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIError(CUI, id()) << "Unrecognized CUI mode:" << mode;
+#else
         yCError(CUI) << "Unrecognized CUI mode:" << mode;
+#endif
         return false;
     }
 

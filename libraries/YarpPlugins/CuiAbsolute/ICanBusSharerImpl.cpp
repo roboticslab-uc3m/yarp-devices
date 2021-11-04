@@ -4,6 +4,8 @@
 
 #include <cstring>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 
@@ -37,13 +39,16 @@ bool CuiAbsolute::finalize()
 {
     if (cuiMode == CuiMode::PUSH && !stopPushMode())
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIError(CUI, id()) << "Unable to stop";
+#else
         yCError(CUI) << "Unable to stop Cui with CAN id" << canId;
+#endif
         return false;
     }
 
     return true;
 }
-
 
 // ------------------------------------------------------------------------------
 
@@ -51,7 +56,11 @@ bool CuiAbsolute::notifyMessage(const can_message & message)
 {
     if (message.data[3] == 0xc4)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIError(CUI, id(), "Known PIC error. %s", CanUtils::msgToStr(message).c_str());
+#else
         yCError(CUI, "Known PIC error. %s", CanUtils::msgToStr(message).c_str());
+#endif
         return false;
     }
 

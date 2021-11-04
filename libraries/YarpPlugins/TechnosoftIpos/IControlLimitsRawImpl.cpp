@@ -2,7 +2,8 @@
 
 #include "TechnosoftIpos.hpp"
 
-#include <yarp/os/Log.h>
+#include <yarp/conf/version.h>
+#include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
 
@@ -12,7 +13,11 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::setLimitsRaw(int axis, double min, double max)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d %f %f", axis, min, max);
+#else
     yCTrace(IPOS, "%d %f %f", axis, min, max);
+#endif
     CHECK_JOINT(axis);
 
     bool okMin = false;
@@ -59,7 +64,11 @@ bool TechnosoftIpos::setLimitRaw(double limit, bool isMin)
 
 bool TechnosoftIpos::getLimitsRaw(int axis, double * min, double * max)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d", axis);
+#else
     yCTrace(IPOS, "%d", axis);
+#endif
     CHECK_JOINT(axis);
 
     if (vars.actualControlMode == VOCAB_CM_NOT_CONFIGURED)
@@ -99,14 +108,22 @@ bool TechnosoftIpos::getLimitRaw(double * limit, bool isMin)
 
 bool TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d %f %f", axis, min, max);
+#else
     yCTrace(IPOS, "%d %f %f", axis, min, max);
+#endif
     CHECK_JOINT(axis);
 
     vars.maxVel = max;
 
     if (min != -max)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIWarning(IPOS, id()) << "Minimum value not equal to negative maximum value";
+#else
         yCWarning(IPOS, "Minimum value not equal to negative maximum value");
+#endif
     }
 
     return true;
@@ -116,7 +133,11 @@ bool TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
 
 bool TechnosoftIpos::getVelLimitsRaw(int axis, double * min, double * max)
 {
+#if YARP_VERSION_MINOR >= 6
+    yCITrace(IPOS, id(), "%d", axis);
+#else
     yCTrace(IPOS, "%d", axis);
+#endif
     CHECK_JOINT(axis);
 
     *min = -vars.maxVel;

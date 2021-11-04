@@ -232,7 +232,11 @@ double StateVariables::clipSyncPositionTarget()
 
     if (std::abs(diff) > maxVel * syncPeriod)
     {
+#if YARP_VERSION_MINOR >= 6
+        yCIWarning(IPOS, "ID" + std::to_string(canId), "Maximum velocity exceeded, clipping target position");
+#else
         yCWarning(IPOS, "Maximum velocity exceeded, clipping target position (canId %d)", canId);
+#endif
         double newTarget = previous + maxVel * syncPeriod * sgn(diff);
         prevSyncTarget = newTarget;
         return newTarget;

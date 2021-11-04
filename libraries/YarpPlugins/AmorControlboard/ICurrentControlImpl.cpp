@@ -8,16 +8,18 @@
 
 #include "LogComponent.hpp"
 
+using namespace roboticslab;
+
 // ------------------ ICurrentControl Related -----------------------------------------
 
-bool roboticslab::AmorControlboard::getNumberOfMotors(int *ax)
+bool AmorControlboard::getNumberOfMotors(int *ax)
 {
     return getAxes(ax);
 }
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getCurrent(int m, double *curr)
+bool AmorControlboard::getCurrent(int m, double *curr)
 {
     yCTrace(AMOR, "%d", m);
 
@@ -41,7 +43,7 @@ bool roboticslab::AmorControlboard::getCurrent(int m, double *curr)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getCurrents(double *currs)
+bool AmorControlboard::getCurrents(double *currs)
 {
     yCTrace(AMOR, "");
 
@@ -60,7 +62,7 @@ bool roboticslab::AmorControlboard::getCurrents(double *currs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getCurrentRange(int m, double *min, double *max)
+bool AmorControlboard::getCurrentRange(int m, double *min, double *max)
 {
     yCTrace(AMOR, "%d", m);
 
@@ -85,7 +87,7 @@ bool roboticslab::AmorControlboard::getCurrentRange(int m, double *min, double *
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getCurrentRanges(double *min, double *max)
+bool AmorControlboard::getCurrentRanges(double *min, double *max)
 {
     yCTrace(AMOR, "");
 
@@ -101,7 +103,7 @@ bool roboticslab::AmorControlboard::getCurrentRanges(double *min, double *max)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::setRefCurrents(const double *currs)
+bool AmorControlboard::setRefCurrents(const double *currs)
 {
     yCTrace(AMOR, "");
 
@@ -120,7 +122,7 @@ bool roboticslab::AmorControlboard::setRefCurrents(const double *currs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::setRefCurrent(int m, double curr)
+bool AmorControlboard::setRefCurrent(int m, double curr)
 {
     yCTrace(AMOR, "%d", m);
 
@@ -150,7 +152,7 @@ bool roboticslab::AmorControlboard::setRefCurrent(int m, double curr)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::setRefCurrents(const int n_motor, const int *motors, const double *currs)
+bool AmorControlboard::setRefCurrents(const int n_motor, const int *motors, const double *currs)
 {
     yCTrace(AMOR, "%d", n_motor);
 
@@ -178,7 +180,7 @@ bool roboticslab::AmorControlboard::setRefCurrents(const int n_motor, const int 
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getRefCurrents(double *currs)
+bool AmorControlboard::getRefCurrents(double *currs)
 {
     yCTrace(AMOR, "");
 
@@ -197,7 +199,7 @@ bool roboticslab::AmorControlboard::getRefCurrents(double *currs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getRefCurrent(int m, double *curr)
+bool AmorControlboard::getRefCurrent(int m, double *curr)
 {
     yCTrace(AMOR, "%d", m);
 

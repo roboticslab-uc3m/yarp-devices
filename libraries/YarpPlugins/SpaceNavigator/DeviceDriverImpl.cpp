@@ -2,6 +2,8 @@
 
 #include "SpaceNavigator.hpp"
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Value.h>
@@ -19,7 +21,9 @@ namespace
 
 bool SpaceNavigator::open(yarp::os::Searchable & config)
 {
+#if YARP_VERSION_MINOR < 6
     yCDebug(SPNAV) << "Config:" << config.toString();
+#endif
 
     deadband = config.check("deadband", yarp::os::Value(DEFAULT_DEADBAND), "deadband [0,1]").asFloat64();
 

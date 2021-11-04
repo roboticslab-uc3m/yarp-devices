@@ -33,7 +33,7 @@ class SdoClient final
 public:
     //! Constructor, registers CAN sender handle.
     SdoClient(std::uint8_t id, std::uint16_t cobRx, std::uint16_t cobTx, double timeout, CanSenderDelegate * sender = nullptr)
-        : id(id), cobRx(cobRx), cobTx(cobTx), sender(sender), stateObserver(timeout)
+        : id(id), cobRx(cobRx), cobTx(cobTx), logId("ID" + std::to_string(id)), sender(sender), stateObserver(timeout)
     {}
 
     //! Retrieve COB ID of SDO packages received by the drive.
@@ -158,6 +158,7 @@ private:
     std::uint8_t id;
     std::uint16_t cobRx;
     std::uint16_t cobTx;
+    std::string logId;
 
     CanSenderDelegate * sender;
     TypedStateObserver<std::uint8_t[]> stateObserver;

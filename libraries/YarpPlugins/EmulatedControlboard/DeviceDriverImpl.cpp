@@ -2,6 +2,8 @@
 
 #include "EmulatedControlboard.hpp"
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/Bottle.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
@@ -27,7 +29,9 @@ constexpr auto DEFAULT_MODE_POS_VEL = 0; // 0=Position, 1=Velocity.
 
 bool EmulatedControlboard::open(yarp::os::Searchable& config)
 {
+#if YARP_VERSION_MINOR < 6
     yCDebug(ECB) << "Config:" << config.toString();
+#endif
 
     axes = config.check("axes", yarp::os::Value(DEFAULT_AXES), "number of axes to control").asInt32();
     jmcMs = config.check("jmcMs", yarp::os::Value(DEFAULT_JMC_MS), "period of JMC periodic thread (milliseconds)").asInt32();

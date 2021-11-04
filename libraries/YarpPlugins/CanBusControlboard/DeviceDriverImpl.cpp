@@ -2,6 +2,8 @@
 
 #include "CanBusControlboard.hpp"
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Value.h>
@@ -15,7 +17,9 @@ using namespace roboticslab;
 
 bool CanBusControlboard::open(yarp::os::Searchable & config)
 {
+#if YARP_VERSION_MINOR < 6
     yCDebug(CBCB) << "Config:" << config.toString();
+#endif
 
     if (!config.check("robotConfig") || !config.find("robotConfig").isBlob())
     {

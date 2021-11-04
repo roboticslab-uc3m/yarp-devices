@@ -7,6 +7,8 @@
 #include <bitset>
 #include <vector>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
@@ -107,6 +109,8 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
     std::uint16_t commIdx;
     std::uint16_t mappingIdx;
 
+    std::string logId = "ID" + std::to_string(id);
+
     switch (getType())
     {
     case PdoType::RPDO:
@@ -120,9 +124,15 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
         mappingIdx = 0x1A00 + n - 1;
         break;
     default:
+#if YARP_VERSION_MINOR >= 6
+        yCIError(PDO, logId) << "Unknown PDO type";
+#else
         yCError(PDO) << "Unknown PDO type";
+#endif
         return false;
     }
+
+    logId += "/" + pdoType;
 
     std::uint32_t cobId;
 
@@ -138,7 +148,11 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
     {
         if (getType() != PdoType::TPDO)
         {
+#if YARP_VERSION_MINOR >= 6
+            yCIError(PDO, logId) << "Illegal RTR usage on non-TPDO node";
+#else
             yCError(PDO) << "Illegal RTR usage on non-TPDO node";
+#endif
             return false;
         }
 
@@ -169,7 +183,11 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
     {
         if (getType() != PdoType::TPDO)
         {
+#if YARP_VERSION_MINOR >= 6
+            yCIError(PDO, logId) << "Illegal SYNC start value usage on non-TPDO node";
+#else
             yCError(PDO) << "Illegal SYNC start value usage on non-TPDO node";
+#endif
             return false;
         }
 

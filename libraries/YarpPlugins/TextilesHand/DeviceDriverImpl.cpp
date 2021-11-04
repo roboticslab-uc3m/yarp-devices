@@ -2,6 +2,8 @@
 
 #include "TextilesHand.hpp"
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
 
@@ -13,7 +15,9 @@ using namespace roboticslab;
 
 bool TextilesHand::open(yarp::os::Searchable & config)
 {
+#if YARP_VERSION_MINOR < 6
     yCDebug(TXT) << "Config:" << config.toString();
+#endif
 
     std::string port = config.check("port", yarp::os::Value(DEFAULT_PORT), "serial port").asString();
 
