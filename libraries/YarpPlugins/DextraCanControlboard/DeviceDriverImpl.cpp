@@ -2,6 +2,8 @@
 
 #include "DextraCanControlboard.hpp"
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Value.h>
@@ -17,7 +19,9 @@ namespace
 
 bool DextraCanControlboard::open(yarp::os::Searchable & config)
 {
+#if YARP_VERSION_MINOR < 6
     yCDebug(DEXTRA) << "Config:" << config.toString();
+#endif
 
     canId = config.check("canId", yarp::os::Value(0), "can bus ID").asInt32();
 

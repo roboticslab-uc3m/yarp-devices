@@ -4,6 +4,8 @@
 
 #include <cmath>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 
@@ -31,12 +33,17 @@ bool CuiAbsolute::open(yarp::os::Searchable & config)
 
     if (!commonGroup.isNull())
     {
+#if YARP_VERSION_MINOR >= 6
+        yCDebugOnce(IPOS) << commonGroup.toString();
+#endif
         cuiGroup.fromString(commonGroup.toString());
     }
 
     cuiGroup.fromString(config.toString(), false); // override common options
 
+#if YARP_VERSION_MINOR < 6
     yCDebug(CUI) << "Config:" << cuiGroup.toString();
+#endif
 
     canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt8(); // id-specific
     reverse = cuiGroup.check("reverse", yarp::os::Value(false), "reverse").asBool();

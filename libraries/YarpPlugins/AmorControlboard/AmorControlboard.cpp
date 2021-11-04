@@ -9,9 +9,11 @@
 
 #include "LogComponent.hpp"
 
+using namespace roboticslab;
+
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::indexWithinRange(const int& idx)
+bool AmorControlboard::indexWithinRange(const int& idx)
 {
     if (idx >= AMOR_NUM_JOINTS)
     {
@@ -24,7 +26,7 @@ bool roboticslab::AmorControlboard::indexWithinRange(const int& idx)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::batchWithinRange(const int& n_joint)
+bool AmorControlboard::batchWithinRange(const int& n_joint)
 {
     if (n_joint == 0)
     {
@@ -43,14 +45,14 @@ bool roboticslab::AmorControlboard::batchWithinRange(const int& n_joint)
 
 // -----------------------------------------------------------------------------
 
-double roboticslab::AmorControlboard::toDeg(double rad)
+double AmorControlboard::toDeg(double rad)
 {
     return rad * 180 / M_PI;
 }
 
 // -----------------------------------------------------------------------------
 
-double roboticslab::AmorControlboard::toRad(double deg)
+double AmorControlboard::toRad(double deg)
 {
     return deg * M_PI / 180;
 }

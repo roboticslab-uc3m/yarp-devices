@@ -11,6 +11,8 @@
 #include <cerrno>
 #include <cstring>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
@@ -27,7 +29,9 @@ constexpr auto DEFAULT_TX_TIMEOUT_MS = 0; // '0' means no timeout
 
 bool CanBusSocket::open(yarp::os::Searchable& config)
 {
+#if YARP_VERSION_MINOR < 6
     yCDebug(SCK) << "Config:" << config.toString();
+#endif
 
     iface = config.check("port", yarp::os::Value(DEFAULT_PORT), "CAN socket interface").asString();
     blockingMode = config.check("blockingMode", yarp::os::Value(DEFAULT_BLOCKING_MODE), "blocking mode enabled").asBool();

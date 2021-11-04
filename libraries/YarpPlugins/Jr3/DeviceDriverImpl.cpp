@@ -4,6 +4,8 @@
 
 #include <sys/ioctl.h>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
@@ -23,7 +25,9 @@ constexpr auto DEFAULT_FILTER_ID = 0;
 
 bool Jr3::open(yarp::os::Searchable& config)
 {
+#if YARP_VERSION_MINOR < 6
     yCDebug(JR3) << "Config:" << config.toString();
+#endif
 
     int filterId = config.check("filter", yarp::os::Value(DEFAULT_FILTER_ID), "filter id (0-6)").asInt32();
 
@@ -35,7 +39,7 @@ bool Jr3::open(yarp::os::Searchable& config)
 
     loadFilters(filterId);
 
-    if (( fd = ::open("/dev/jr3", O_RDWR)) < 0)
+    if ((fd = ::open("/dev/jr3", O_RDWR)) < 0)
     {
         yCError(JR3) << "Can't open device, no way to read force!";
         return false;
@@ -71,7 +75,6 @@ bool Jr3::open(yarp::os::Searchable& config)
     ioctl(fd, IOCTL1_JR3_SET_FULL_SCALES, &fs_a1);
     ioctl(fd, IOCTL2_JR3_SET_FULL_SCALES, &fs_w);
     ioctl(fd, IOCTL3_JR3_SET_FULL_SCALES, &fs_w);
-
 
     yarp::os::Time::delay(0.5);
 

@@ -2,6 +2,8 @@
 
 #include "LeapMotionSensor.hpp"
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 
@@ -13,6 +15,10 @@ using namespace roboticslab;
 
 bool LeapMotionSensor::open(yarp::os::Searchable& config)
 {
+#if YARP_VERSION_MINOR < 6
+    yCDebug(LEAP) << "Config:" << config.toString();
+#endif
+
     controller = new Leap::Controller();
 
     Leap::Controller::PolicyFlag leapPolicies = Leap::Controller::POLICY_BACKGROUND_FRAMES;

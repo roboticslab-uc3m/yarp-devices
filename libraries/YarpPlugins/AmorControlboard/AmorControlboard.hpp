@@ -12,9 +12,6 @@
 
 #include <amor.h>
 
-#define DEFAULT_CAN_LIBRARY "libeddriver.so"
-#define DEFAULT_CAN_PORT 0
-
 namespace roboticslab
 {
 
@@ -652,8 +649,6 @@ protected:
      * @return radians
      */
     static double toRad(double deg);
-
-// ------------------------------- Private -------------------------------------
 
 private:
 

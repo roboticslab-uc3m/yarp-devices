@@ -29,22 +29,27 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
 
-    yarp::os::Bottle & commonGroup = robotConfig->findGroup("common-ipos");
+    const auto & commonGroup = robotConfig->findGroup("common-ipos");
     yarp::os::Property iposGroup;
 
     if (!commonGroup.isNull())
     {
+#if YARP_VERSION_MINOR >= 6
+        yCDebugOnce(IPOS) << commonGroup.toString();
+#endif
         iposGroup.fromString(commonGroup.toString());
     }
 
     iposGroup.fromString(config.toString(), false); // override common options
 
+#if YARP_VERSION_MINOR < 6
     yCDebug(IPOS) << "Config:" << iposGroup.toString();
+#endif
 
-    yarp::os::Bottle & driverGroup = robotConfig->findGroup(iposGroup.find("driver").asString());
-    yarp::os::Bottle & motorGroup = robotConfig->findGroup(iposGroup.find("motor").asString());
-    yarp::os::Bottle & gearboxGroup = robotConfig->findGroup(iposGroup.find("gearbox").asString());
-    yarp::os::Bottle & encoderGroup = robotConfig->findGroup(iposGroup.find("encoder").asString());
+    const auto & driverGroup = robotConfig->findGroup(iposGroup.find("driver").asString());
+    const auto & motorGroup = robotConfig->findGroup(iposGroup.find("motor").asString());
+    const auto & gearboxGroup = robotConfig->findGroup(iposGroup.find("gearbox").asString());
+    const auto & encoderGroup = robotConfig->findGroup(iposGroup.find("encoder").asString());
 
     vars.canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32(); // id-specific
 

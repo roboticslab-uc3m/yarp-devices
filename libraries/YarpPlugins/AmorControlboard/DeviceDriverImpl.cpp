@@ -4,15 +4,24 @@
 
 #include <vector>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
 
+using namespace roboticslab;
+
+constexpr auto DEFAULT_CAN_LIBRARY = "libeddriver.so";
+constexpr auto DEFAULT_CAN_PORT = 0;
+
 // ------------------- DeviceDriver related ------------------------------------
 
-bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
+bool AmorControlboard::open(yarp::os::Searchable& config)
 {
-    yCDebug(AMOR) << "AmorControlboard config:" << config.toString();
+#if YARP_VERSION_MINOR < 6
+    yCDebug(AMOR) << "Config:" << config.toString();
+#endif
 
     int major, minor, build;
     amor_get_library_version(&major, &minor, &build);
@@ -103,7 +112,7 @@ bool roboticslab::AmorControlboard::open(yarp::os::Searchable& config)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::close()
+bool AmorControlboard::close()
 {
     if (usingCartesianController)
     {

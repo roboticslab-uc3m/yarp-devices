@@ -11,6 +11,8 @@
 
 #include <string>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 
@@ -35,7 +37,9 @@ using namespace roboticslab;
 
 bool CanBusHico::open(yarp::os::Searchable& config)
 {
+#if YARP_VERSION_MINOR < 6
     yCDebug(HICO) << "Config:" << config.toString();
+#endif
 
     std::string devicePath = config.check("port", yarp::os::Value(DEFAULT_PORT), "CAN device path").asString();
     int bitrate = config.check("bitrate", yarp::os::Value(DEFAULT_BITRATE), "CAN bitrate (bps)").asInt32();

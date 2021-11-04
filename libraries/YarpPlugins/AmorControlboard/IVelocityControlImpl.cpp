@@ -6,9 +6,11 @@
 
 #include "LogComponent.hpp"
 
+using namespace roboticslab;
+
 // ------------------ IVelocityControl related ----------------------------------------
 
-bool roboticslab::AmorControlboard::velocityMove(int j, double sp)
+bool AmorControlboard::velocityMove(int j, double sp)
 {
     yCTrace(AMOR, "%d %f", j, sp);
 
@@ -32,7 +34,7 @@ bool roboticslab::AmorControlboard::velocityMove(int j, double sp)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::velocityMove(const double *sp)
+bool AmorControlboard::velocityMove(const double *sp)
 {
     AMOR_VECTOR7 velocities;
 
@@ -46,7 +48,7 @@ bool roboticslab::AmorControlboard::velocityMove(const double *sp)
 
 // ----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::velocityMove(const int n_joint, const int *joints, const double *spds)
+bool AmorControlboard::velocityMove(const int n_joint, const int *joints, const double *spds)
 {
     yCTrace(AMOR, "%d", n_joint);
 
@@ -73,7 +75,7 @@ bool roboticslab::AmorControlboard::velocityMove(const int n_joint, const int *j
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getRefVelocity(const int joint, double *vel)
+bool AmorControlboard::getRefVelocity(const int joint, double *vel)
 {
     yCTrace(AMOR, "%d", joint);
 
@@ -97,7 +99,7 @@ bool roboticslab::AmorControlboard::getRefVelocity(const int joint, double *vel)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getRefVelocities(double *vels)
+bool AmorControlboard::getRefVelocities(double *vels)
 {
     yCTrace(AMOR, "");
 
@@ -119,7 +121,7 @@ bool roboticslab::AmorControlboard::getRefVelocities(double *vels)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getRefVelocities(const int n_joint, const int *joints, double *vels)
+bool AmorControlboard::getRefVelocities(const int n_joint, const int *joints, double *vels)
 {
     yCTrace(AMOR, "%d", n_joint);
 

@@ -6,9 +6,11 @@
 
 #include "LogComponent.hpp"
 
+using namespace roboticslab;
+
 // ------------------- IAxisInfo related ------------------------------------
 
-bool roboticslab::AmorControlboard::getAxisName(int axis, std::string& name)
+bool AmorControlboard::getAxisName(int axis, std::string& name)
 {
     yCTrace(AMOR, "%d", axis);
 
@@ -50,7 +52,7 @@ bool roboticslab::AmorControlboard::getAxisName(int axis, std::string& name)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getJointType(int axis, yarp::dev::JointTypeEnum& type)
+bool AmorControlboard::getJointType(int axis, yarp::dev::JointTypeEnum& type)
 {
     yCTrace(AMOR, "%d", axis);
 

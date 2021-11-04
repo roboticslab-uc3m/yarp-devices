@@ -6,6 +6,8 @@
 
 #include <string>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
@@ -25,7 +27,9 @@ using namespace roboticslab;
 
 bool CanBusPeak::open(yarp::os::Searchable& config)
 {
+#if YARP_VERSION_MINOR < 6
     yCDebug(PEAK) << "Config:" << config.toString();
+#endif
 
     std::string devicePath = config.check("port", yarp::os::Value(DEFAULT_PORT), "CAN device path").asString();
 

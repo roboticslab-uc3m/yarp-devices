@@ -6,9 +6,11 @@
 
 #include "LogComponent.hpp"
 
+using namespace roboticslab;
+
 // ------------------- IPositionControl related --------------------------------
 
-bool roboticslab::AmorControlboard::getAxes(int *ax)
+bool AmorControlboard::getAxes(int *ax)
 {
     *ax = AMOR_NUM_JOINTS;
     return true;
@@ -16,7 +18,7 @@ bool roboticslab::AmorControlboard::getAxes(int *ax)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::positionMove(int j, double ref)
+bool AmorControlboard::positionMove(int j, double ref)
 {
     yCTrace(AMOR, "%d %f", j, ref);
 
@@ -40,7 +42,7 @@ bool roboticslab::AmorControlboard::positionMove(int j, double ref)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::positionMove(const double *refs)
+bool AmorControlboard::positionMove(const double *refs)
 {
     AMOR_VECTOR7 positions;
 
@@ -54,7 +56,7 @@ bool roboticslab::AmorControlboard::positionMove(const double *refs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::relativeMove(int j, double delta)
+bool AmorControlboard::relativeMove(int j, double delta)
 {
     yCTrace(AMOR, "%d %f", j, delta);
 
@@ -78,7 +80,7 @@ bool roboticslab::AmorControlboard::relativeMove(int j, double delta)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::relativeMove(const double *deltas)
+bool AmorControlboard::relativeMove(const double *deltas)
 {
     AMOR_VECTOR7 positions;
 
@@ -92,7 +94,7 @@ bool roboticslab::AmorControlboard::relativeMove(const double *deltas)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::checkMotionDone(int j, bool *flag)
+bool AmorControlboard::checkMotionDone(int j, bool *flag)
 {
     if (!indexWithinRange(j))
     {
@@ -104,7 +106,7 @@ bool roboticslab::AmorControlboard::checkMotionDone(int j, bool *flag)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::checkMotionDone(bool *flag)
+bool AmorControlboard::checkMotionDone(bool *flag)
 {
     yCTrace(AMOR, "");
 
@@ -123,7 +125,7 @@ bool roboticslab::AmorControlboard::checkMotionDone(bool *flag)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::setRefSpeed(int j, double sp)
+bool AmorControlboard::setRefSpeed(int j, double sp)
 {
     yCError(AMOR, "setRefSpeed() not available");
     return false;
@@ -131,7 +133,7 @@ bool roboticslab::AmorControlboard::setRefSpeed(int j, double sp)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::setRefSpeeds(const double *spds)
+bool AmorControlboard::setRefSpeeds(const double *spds)
 {
     yCError(AMOR, "setRefSpeeds() not available");
     return false;
@@ -139,7 +141,7 @@ bool roboticslab::AmorControlboard::setRefSpeeds(const double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::setRefAcceleration(int j, double acc)
+bool AmorControlboard::setRefAcceleration(int j, double acc)
 {
     yCError(AMOR, "setRefAcceleration() not available");
     return false;
@@ -147,7 +149,7 @@ bool roboticslab::AmorControlboard::setRefAcceleration(int j, double acc)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::setRefAccelerations(const double *accs)
+bool AmorControlboard::setRefAccelerations(const double *accs)
 {
     yCError(AMOR, "setRefAccelerations() not available");
     return false;
@@ -155,7 +157,7 @@ bool roboticslab::AmorControlboard::setRefAccelerations(const double *accs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getRefSpeed(int j, double *ref)
+bool AmorControlboard::getRefSpeed(int j, double *ref)
 {
     yCTrace(AMOR, "%d", j);
 
@@ -179,7 +181,7 @@ bool roboticslab::AmorControlboard::getRefSpeed(int j, double *ref)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getRefSpeeds(double *spds)
+bool AmorControlboard::getRefSpeeds(double *spds)
 {
     yCTrace(AMOR, "");
 
@@ -201,7 +203,7 @@ bool roboticslab::AmorControlboard::getRefSpeeds(double *spds)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getRefAcceleration(int j, double *acc)
+bool AmorControlboard::getRefAcceleration(int j, double *acc)
 {
     yCTrace(AMOR, "%d", j);
 
@@ -225,7 +227,7 @@ bool roboticslab::AmorControlboard::getRefAcceleration(int j, double *acc)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getRefAccelerations(double *accs)
+bool AmorControlboard::getRefAccelerations(double *accs)
 {
     yCTrace(AMOR, "");
 
@@ -247,7 +249,7 @@ bool roboticslab::AmorControlboard::getRefAccelerations(double *accs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::stop(int j)
+bool AmorControlboard::stop(int j)
 {
     yCWarning(AMOR, "Selective stop not available, stopping all joints at once (%d)", j);
 
@@ -261,7 +263,7 @@ bool roboticslab::AmorControlboard::stop(int j)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::stop()
+bool AmorControlboard::stop()
 {
     yCTrace(AMOR, "");
     return amor_controlled_stop(handle) == AMOR_SUCCESS;
@@ -269,7 +271,7 @@ bool roboticslab::AmorControlboard::stop()
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::positionMove(const int n_joint, const int *joints, const double *refs)
+bool AmorControlboard::positionMove(const int n_joint, const int *joints, const double *refs)
 {
     yCTrace(AMOR, "%d", n_joint);
 
@@ -296,7 +298,7 @@ bool roboticslab::AmorControlboard::positionMove(const int n_joint, const int *j
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::relativeMove(const int n_joint, const int *joints, const double *deltas)
+bool AmorControlboard::relativeMove(const int n_joint, const int *joints, const double *deltas)
 {
     yCTrace(AMOR, "%d", n_joint);
 
@@ -323,7 +325,7 @@ bool roboticslab::AmorControlboard::relativeMove(const int n_joint, const int *j
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::checkMotionDone(const int n_joint, const int *joints, bool *flags)
+bool AmorControlboard::checkMotionDone(const int n_joint, const int *joints, bool *flags)
 {
     yCTrace(AMOR, "%d", n_joint);
 
@@ -352,7 +354,7 @@ bool roboticslab::AmorControlboard::checkMotionDone(const int n_joint, const int
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::setRefSpeeds(const int n_joint, const int *joints, const double *spds)
+bool AmorControlboard::setRefSpeeds(const int n_joint, const int *joints, const double *spds)
 {
     yCError(AMOR, "setRefSpeeds() not available");
     return false;
@@ -360,7 +362,7 @@ bool roboticslab::AmorControlboard::setRefSpeeds(const int n_joint, const int *j
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
+bool AmorControlboard::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
 {
     yCError(AMOR, "setRefAccelerations() not available");
     return false;
@@ -368,7 +370,7 @@ bool roboticslab::AmorControlboard::setRefAccelerations(const int n_joint, const
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getRefSpeeds(const int n_joint, const int *joints, double *spds)
+bool AmorControlboard::getRefSpeeds(const int n_joint, const int *joints, double *spds)
 {
     yCTrace(AMOR, "%d", n_joint);
 
@@ -395,7 +397,7 @@ bool roboticslab::AmorControlboard::getRefSpeeds(const int n_joint, const int *j
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getRefAccelerations(const int n_joint, const int *joints, double *accs)
+bool AmorControlboard::getRefAccelerations(const int n_joint, const int *joints, double *accs)
 {
     yCTrace(AMOR, "%d", n_joint);
 
@@ -422,7 +424,7 @@ bool roboticslab::AmorControlboard::getRefAccelerations(const int n_joint, const
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::stop(const int n_joint, const int *joints)
+bool AmorControlboard::stop(const int n_joint, const int *joints)
 {
     yCWarning(AMOR, "Selective stop not available, stopping all joints at once (%d)", n_joint);
 
@@ -436,7 +438,7 @@ bool roboticslab::AmorControlboard::stop(const int n_joint, const int *joints)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getTargetPosition(const int joint, double *ref)
+bool AmorControlboard::getTargetPosition(const int joint, double *ref)
 {
     yCTrace(AMOR, "%d", joint);
 
@@ -460,7 +462,7 @@ bool roboticslab::AmorControlboard::getTargetPosition(const int joint, double *r
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getTargetPositions(double *refs)
+bool AmorControlboard::getTargetPositions(double *refs)
 {
     yCTrace(AMOR, "");
 
@@ -482,7 +484,7 @@ bool roboticslab::AmorControlboard::getTargetPositions(double *refs)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::AmorControlboard::getTargetPositions(const int n_joint, const int *joints, double *refs)
+bool AmorControlboard::getTargetPositions(const int n_joint, const int *joints, double *refs)
 {
     yCTrace(AMOR, "%d", n_joint);
 
