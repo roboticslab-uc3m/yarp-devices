@@ -3,10 +3,13 @@
 #include "Jr3.hpp"
 
 #include <sys/ioctl.h>
+#include <fcntl.h> // ::open
+#include <unistd.h> // ::close
 
 #include <yarp/conf/version.h>
 
 #include <yarp/os/LogStream.h>
+#include <yarp/os/SystemClock.h>
 
 #include "LogComponent.hpp"
 
@@ -71,27 +74,27 @@ bool Jr3::open(yarp::os::Searchable& config)
     fs_a1.m[1] = 224;
     fs_a1.m[2] = 309;
 
-    ioctl(fd, IOCTL0_JR3_SET_FULL_SCALES, &fs_a0);
-    ioctl(fd, IOCTL1_JR3_SET_FULL_SCALES, &fs_a1);
-    ioctl(fd, IOCTL2_JR3_SET_FULL_SCALES, &fs_w);
-    ioctl(fd, IOCTL3_JR3_SET_FULL_SCALES, &fs_w);
+    ::ioctl(fd, IOCTL0_JR3_SET_FULL_SCALES, &fs_a0);
+    ::ioctl(fd, IOCTL1_JR3_SET_FULL_SCALES, &fs_a1);
+    ::ioctl(fd, IOCTL2_JR3_SET_FULL_SCALES, &fs_w);
+    ::ioctl(fd, IOCTL3_JR3_SET_FULL_SCALES, &fs_w);
 
-    yarp::os::Time::delay(0.5);
+    yarp::os::SystemClock::delaySystem(0.5);
 
     //-- Make sure fullscales were set.
-    ret=ioctl(fd,IOCTL0_JR3_GET_FULL_SCALES,&fs0);
+    ret = ::ioctl(fd, IOCTL0_JR3_GET_FULL_SCALES, &fs0);
     yCInfo(JR3) << "Full scales of Sensor 0 are:" << fs0.f[0] << fs0.f[1] << fs0.f[2] << fs0.m[0] << fs0.m[1] << fs0.m[2];
-    ret=ioctl(fd,IOCTL1_JR3_GET_FULL_SCALES,&fs1);
+    ret = ::ioctl(fd, IOCTL1_JR3_GET_FULL_SCALES, &fs1);
     yCInfo(JR3) << "Full scales of Sensor 1 are:" << fs1.f[0] << fs1.f[1] << fs1.f[2] << fs1.m[0] << fs1.m[1] << fs1.m[2];
-    ret=ioctl(fd,IOCTL2_JR3_GET_FULL_SCALES,&fs2);
+    ret = ::ioctl(fd, IOCTL2_JR3_GET_FULL_SCALES, &fs2);
     yCInfo(JR3) << "Full scales of Sensor 2 are:" << fs2.f[0] << fs2.f[1] << fs2.f[2] << fs2.m[0] << fs2.m[1] << fs2.m[2];
-    ret=ioctl(fd,IOCTL3_JR3_GET_FULL_SCALES,&fs3);
+    ret = ::ioctl(fd, IOCTL3_JR3_GET_FULL_SCALES, &fs3);
     yCInfo(JR3) << "Full scales of Sensor 3 are:" << fs3.f[0] << fs3.f[1] << fs3.f[2] << fs3.m[0] << fs3.m[1] << fs3.m[2];
 
-    ret = ioctl(fd, IOCTL0_JR3_ZEROOFFS);
-    ret = ioctl(fd, IOCTL1_JR3_ZEROOFFS);
-    ret = ioctl(fd, IOCTL2_JR3_ZEROOFFS);
-    ret = ioctl(fd, IOCTL3_JR3_ZEROOFFS);
+    ret = ::ioctl(fd, IOCTL0_JR3_ZEROOFFS);
+    ret = ::ioctl(fd, IOCTL1_JR3_ZEROOFFS);
+    ret = ::ioctl(fd, IOCTL2_JR3_ZEROOFFS);
+    ret = ::ioctl(fd, IOCTL3_JR3_ZEROOFFS);
 
     return true;
 }

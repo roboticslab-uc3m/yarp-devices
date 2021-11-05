@@ -3,13 +3,8 @@
 #ifndef __JR3_HPP__
 #define __JR3_HPP__
 
-#include <yarp/os/all.h>
-#include <yarp/dev/all.h>
+#include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
-#include <sstream>
-
-#include <fcntl.h>  // ::open
-#include <unistd.h>  // ::close
 
 #include "jr3pci-ioctl.h"
 
@@ -25,15 +20,12 @@ namespace roboticslab
  /**
  * @ingroup Jr3
  * @brief Implementation for the JR3 sensor. Launch as in: yarpdev --device Jr3 --period 20 --name /jr3:o
- *
  */
 class Jr3 : public yarp::dev::DeviceDriver,
             public yarp::dev::IAnalogSensor
 {
 public:
-
-    Jr3()
-        : fd(0)
+    Jr3() : fd(0)
     { }
 
     ~Jr3() override
@@ -104,4 +96,3 @@ private:
 } // namespace roboticslab
 
 #endif // __JR3_HPP__
-

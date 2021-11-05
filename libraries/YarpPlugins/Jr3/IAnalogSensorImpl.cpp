@@ -17,10 +17,10 @@ constexpr auto DEFAULT_NUM_CHANNELS = 24;
 int Jr3::read(yarp::sig::Vector &out)
 {
     int ret;
-    ret = ioctl(fd, filters[0], &fm0);
-    ret = ioctl(fd, filters[1], &fm1);
-    ret = ioctl(fd, filters[2], &fm2);
-    ret = ioctl(fd, filters[3], &fm3);
+    ret = ::ioctl(fd, filters[0], &fm0);
+    ret = ::ioctl(fd, filters[1], &fm1);
+    ret = ::ioctl(fd, filters[2], &fm2);
+    ret = ::ioctl(fd, filters[3], &fm3);
 
     if (ret == -1)
     {
@@ -84,10 +84,10 @@ int Jr3::getChannels()
 int Jr3::calibrateSensor()
 {
     int ok;
-    ok = ioctl(fd, IOCTL0_JR3_ZEROOFFS);
-    ok = ioctl(fd, IOCTL1_JR3_ZEROOFFS);
-    ok = ioctl(fd, IOCTL2_JR3_ZEROOFFS);
-    ok = ioctl(fd, IOCTL3_JR3_ZEROOFFS);
+    ok = ::ioctl(fd, IOCTL0_JR3_ZEROOFFS);
+    ok = ::ioctl(fd, IOCTL1_JR3_ZEROOFFS);
+    ok = ::ioctl(fd, IOCTL2_JR3_ZEROOFFS);
+    ok = ::ioctl(fd, IOCTL3_JR3_ZEROOFFS);
 
     if (ok == -1)
     {
@@ -114,16 +114,16 @@ int Jr3::calibrateChannel(int ch)
     switch(ch)
     {
         case 0:
-          ok = ioctl(fd, IOCTL0_JR3_ZEROOFFS);
+          ok = ::ioctl(fd, IOCTL0_JR3_ZEROOFFS);
             break;
         case 1:
-          ok = ioctl(fd, IOCTL1_JR3_ZEROOFFS);
+          ok = ::ioctl(fd, IOCTL1_JR3_ZEROOFFS);
             break;
         case 2:
-          ok = ioctl(fd, IOCTL2_JR3_ZEROOFFS);
+          ok = ::ioctl(fd, IOCTL2_JR3_ZEROOFFS);
             break;
         case 3:
-          ok = ioctl(fd, IOCTL3_JR3_ZEROOFFS);
+          ok = ::ioctl(fd, IOCTL3_JR3_ZEROOFFS);
             break;
         default:
             yCError(JR3) << "Illegal channel" << ch;
