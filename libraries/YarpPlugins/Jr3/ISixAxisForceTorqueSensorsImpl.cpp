@@ -34,7 +34,7 @@ yarp::dev::MAS_status Jr3::getSixAxisForceTorqueSensorStatus(std::size_t sens_in
 bool Jr3::getSixAxisForceTorqueSensorName(std::size_t sens_index, std::string & name) const
 {
     CHECK_SENSOR(sens_index);
-    name = "channel" + std::to_string(sens_index);
+    name = names[sens_index];
     return true;
 }
 

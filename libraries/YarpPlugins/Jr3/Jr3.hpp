@@ -3,6 +3,9 @@
 #ifndef __JR3_HPP__
 #define __JR3_HPP__
 
+#include <string>
+#include <vector>
+
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
@@ -96,9 +99,10 @@ public:
 private:
     void loadFilters(int id);
 
-    int fd;
+    int fd {0};
     force_array fs[4];
     unsigned long int filters[4];
+    std::vector<std::string> names {"ch0", "ch1", "ch2", "ch3"};
 };
 
 } // namespace roboticslab

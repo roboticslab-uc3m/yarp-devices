@@ -32,6 +32,38 @@ bool Jr3::open(yarp::os::Searchable& config)
     yCDebug(JR3) << "Config:" << config.toString();
 #endif
 
+    yarp::os::Value * vNames;
+
+    if (config.check("names", vNames, "sensor names"))
+    {
+        if (!vNames->isList())
+        {
+            yCError(JR3) << "Parameter --names must be a list";
+            return false;
+        }
+
+        const auto b = vNames->asList();
+
+        if (b->size() > 4)
+        {
+            yCError(JR3) << "Too many sensors:" << b->size();
+            return false;
+        }
+
+        for (auto i = 0; i < b->size(); ++i)
+        {
+            if (!b->get(i).isString())
+            {
+                yCError(JR3) << "Sensor name must be a string";
+                return false;
+            }
+
+            names[i] = b->get(i).asString();
+        }
+
+        yCInfo(JR3) << "Using sensor names:" << names;
+    }
+
     int filterId = config.check("filter", yarp::os::Value(DEFAULT_FILTER_ID), "filter id (0-6)").asInt32();
 
     if (filterId < 0 || filterId > 6)
