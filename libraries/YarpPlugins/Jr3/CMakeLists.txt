@@ -16,6 +16,7 @@ if(NOT SKIP_Jr3)
                         jr3pci-ioctl.h
                         DeviceDriverImpl.cpp
                         IAnalogSensorImpl.cpp
+                        ISixAxisForceTorqueSensorsImpl.cpp
                         LogComponent.hpp
                         LogComponent.cpp)
 

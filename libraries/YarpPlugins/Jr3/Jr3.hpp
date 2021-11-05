@@ -5,6 +5,7 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
+#include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
 #include "jr3pci-ioctl.h"
 
@@ -22,7 +23,8 @@ namespace roboticslab
  * @brief Implementation for the JR3 sensor. Launch as in: yarpdev --device Jr3 --period 20 --name /jr3:o
  */
 class Jr3 : public yarp::dev::DeviceDriver,
-            public yarp::dev::IAnalogSensor
+            public yarp::dev::IAnalogSensor,
+            public yarp::dev::ISixAxisForceTorqueSensors
 {
 public:
     Jr3() : fd(0)
@@ -84,12 +86,18 @@ public:
      */
     int calibrateChannel(int ch, double value) override;
 
+    //  --------- ISixAxisForceTorqueSensors Declarations. Implementation in ISixAxisForceTorqueSensorsImpl.cpp ---------
+    std::size_t getNrOfSixAxisForceTorqueSensors() const override;
+    yarp::dev::MAS_status getSixAxisForceTorqueSensorStatus(std::size_t sens_index) const override;
+    bool getSixAxisForceTorqueSensorName(std::size_t sens_index, std::string & name) const override;
+    bool getSixAxisForceTorqueSensorFrameName(std::size_t sens_index, std::string & name) const override;
+    bool getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+
 private:
     void loadFilters(int id);
 
-    six_axis_array fm0, fm1, fm2, fm3;
-    force_array fs0, fs1, fs2, fs3;
     int fd;
+    force_array fs[4];
     unsigned long int filters[4];
 };
 
