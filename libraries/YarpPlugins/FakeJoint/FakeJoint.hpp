@@ -3,6 +3,8 @@
 #ifndef __FAKE_JOINT_HPP__
 #define __FAKE_JOINT_HPP__
 
+#include <string>
+
 #include <yarp/dev/ControlBoardInterfaces.h>
 
 #include "ICanBusSharer.hpp"
@@ -42,11 +44,10 @@ class FakeJoint : public yarp::dev::DeviceDriver,
                   public ICanBusSharer
 {
 public:
-
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 
-    bool open(yarp::os::Searchable & config) override
-    { return true; }
+    bool open(yarp::os::Searchable & config) override;
+
     bool close() override
     { return true; }
 
@@ -101,7 +102,7 @@ public:
     //  --------- IAxisInfoRaw declarations ---------
 
     bool getAxisNameRaw(int axis, std::string & name) override
-    { return true; }
+    {  name = jointName; return true; }
     bool getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type) override
     { type = yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_UNKNOWN; return true; }
 
@@ -467,6 +468,9 @@ public:
     //bool stopRaw(int j) override;
     //bool stopRaw() override;
     //bool stopRaw(int n_joint, const int *joints) override;
+
+private:
+    std::string jointName;
 };
 
 } // namespace roboticslab

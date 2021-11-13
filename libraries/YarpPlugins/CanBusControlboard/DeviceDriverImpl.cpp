@@ -56,14 +56,14 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         }
 
         const auto * nodes = nodesVal.asList();
-        auto isFakeBus = canBus.find("fake") != std::string::npos;
+        auto isFakeBus = canBus.rfind("fake-", 0) == 0; // starts with "fake-"?
         std::vector<ICanBusSharer *> busSharers;
         yarp::os::Bottle nodeIds;
 
         for (int i = 0; i < nodes->size(); i++)
         {
             auto node = nodes->get(i).asString();
-            auto isFakeNode = node.find("fake") != std::string::npos;
+            auto isFakeNode = node.rfind("fake-", 0) == 0; // starts with "fake-"?
 
             yarp::os::Property nodeOptions;
             nodeOptions.setMonitor(config.getMonitor(), node.c_str());
@@ -85,6 +85,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             else
             {
                 nodeOptions.put("device", "FakeJoint");
+                nodeOptions.put("jointName", node.substr(5));
             }
 
             auto * device = new yarp::dev::PolyDriver;
