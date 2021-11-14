@@ -4,15 +4,17 @@
 
 #include <yarp/conf/version.h>
 
+using namespace roboticslab;
+
+#if YARP_VERSION_MINOR < 6
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
-
-using namespace roboticslab;
 
 namespace
 {
     YARP_LOG_COMPONENT(FAKE, "rl.FakeJoint")
 }
+#endif
 
 // -----------------------------------------------------------------------------
 
