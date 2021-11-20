@@ -28,7 +28,7 @@ bool CanBusPeak::canSetBaudRate(unsigned int rate)
 
     if (res < 0)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(PEAK, id()) << "Unable to set bitrate:" << std::strerror(-res);
 #else
         yCError(PEAK) << "Unable to set bitrate:" << std::strerror(-res);
@@ -51,7 +51,7 @@ bool CanBusPeak::canGetBaudRate(unsigned int * rate)
 
     if (res < 0)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(PEAK, id()) << "Unable to retrieve bitrate:" << std::strerror(-res);
 #else
         yCError(PEAK) << "Unable to retrieve bitrate:" << std::strerror(-res);
@@ -63,7 +63,7 @@ bool CanBusPeak::canGetBaudRate(unsigned int * rate)
 
     if (pfdi.nominal.bitrate != pfdi.nominal.bitrate_real)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(PEAK, id()) << "User-defined nominal bitrate" << pfdi.nominal.bitrate << "differs from real nominal bitrate" << pfdi.nominal.bitrate_real;
 #else
         yCWarning(PEAK) << "User-defined nominal bitrate" << pfdi.nominal.bitrate << "differs from real nominal bitrate" << pfdi.nominal.bitrate_real;
@@ -81,7 +81,7 @@ bool CanBusPeak::canIdAdd(unsigned int _id)
 
     if (activeFilters.find(_id) != activeFilters.end())
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(PEAK, id()) << "Filter for id" << _id << "already set";
 #else
         yCWarning(PEAK) << "Filter for id" << _id << "already set";
@@ -93,7 +93,7 @@ bool CanBusPeak::canIdAdd(unsigned int _id)
 
     std::uint64_t acc = computeAcceptanceCodeAndMask();
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIDebug(PEAK, id(), "New acceptance code+mask: %016lxh", acc);
 #else
     yCDebug(PEAK, "New acceptance code+mask: %016lxh", acc);
@@ -103,7 +103,7 @@ bool CanBusPeak::canIdAdd(unsigned int _id)
 
     if (res < 0)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(PEAK, id()) << "pcanfd_set_option() failed:" << std::strerror(-res);
 #else
         yCError(PEAK) << "pcanfd_set_option() failed:" << std::strerror(-res);
@@ -123,7 +123,7 @@ bool CanBusPeak::canIdDelete(unsigned int _id)
 
     if (_id == 0)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(PEAK, id()) << "Clearing filters previously set";
 #else
         yCInfo(PEAK) << "Clearing filters previously set";
@@ -133,7 +133,7 @@ bool CanBusPeak::canIdDelete(unsigned int _id)
 
         if (res < 0)
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(PEAK, id()) << "Unable to clear accceptance filters:" << std::strerror(-res);
 #else
             yCError(PEAK) << "Unable to clear accceptance filters:" << std::strerror(-res);
@@ -147,7 +147,7 @@ bool CanBusPeak::canIdDelete(unsigned int _id)
 
     if (activeFilters.erase(_id) == 0)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(PEAK, id()) << "Filter for id" << _id << "missing or already deleted";
 #else
         yCWarning(PEAK) << "Filter for id" << _id << "missing or already deleted";
@@ -157,7 +157,7 @@ bool CanBusPeak::canIdDelete(unsigned int _id)
 
     std::uint64_t acc = computeAcceptanceCodeAndMask();
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIDebug(PEAK, id(), "New acceptance code+mask: %016lxh", acc);
 #else
     yCDebug(PEAK, "New acceptance code+mask: %016lxh", acc);
@@ -167,7 +167,7 @@ bool CanBusPeak::canIdDelete(unsigned int _id)
 
     if (res < 0)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(PEAK, id()) << "pcanfd_set_option() failed:" << std::strerror(-res);
 #else
         yCError(PEAK) << "pcanfd_set_option() failed:" << std::strerror(-res);
@@ -185,7 +185,7 @@ bool CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigne
 {
     if (!allowPermissive && wait != blockingMode)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(PEAK, id(), "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
 #else
         yCError(PEAK, "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
@@ -203,7 +203,7 @@ bool CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigne
             bool bufferReady;
 
             if (!waitUntilTimeout(READ, &bufferReady)) {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIError(PEAK, id(), "waitUntilTimeout() failed");
 #else
                 yCError(PEAK, "waitUntilTimeout() failed");
@@ -230,7 +230,7 @@ bool CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigne
     }
     else if (res < 0)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(PEAK, id(), "Unable to read messages: %s", std::strerror(-res));
 #else
         yCError(PEAK, "Unable to read messages: %s", std::strerror(-res));
@@ -250,7 +250,7 @@ bool CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, 
 {
     if (!allowPermissive && wait != blockingMode)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(PEAK, id(), "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
 #else
         yCError(PEAK, "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
@@ -271,7 +271,7 @@ bool CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, 
             bool bufferReady;
 
             if (!waitUntilTimeout(WRITE, &bufferReady)) {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIError(PEAK, id(), "waitUntilTimeout() failed");
 #else
                 yCError(PEAK, "waitUntilTimeout() failed");
@@ -296,7 +296,7 @@ bool CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, 
     }
     else if (res < 0)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(PEAK, id(), "Unable to send messages: %s", std::strerror(-res));
 #else
         yCError(PEAK, "Unable to send messages: %s", std::strerror(-res));

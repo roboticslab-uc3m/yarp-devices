@@ -34,7 +34,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     if (!commonGroup.isNull())
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCDebugOnce(IPOS) << commonGroup.toString();
 #endif
         iposGroup.fromString(commonGroup.toString());
@@ -42,7 +42,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     iposGroup.fromString(config.toString(), false); // override common options
 
-#if YARP_VERSION_MINOR < 6
+#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
     yCDebug(IPOS) << "Config:" << iposGroup.toString();
 #endif
 
@@ -87,7 +87,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
         return false;
     }
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yarp::dev::DeviceDriver::setId("ID" + std::to_string(vars.canId));
 #endif
 
@@ -98,7 +98,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
         if (externalEncoderGroup.isNull())
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(IPOS, id()) << "Missing external encoder device group" << externalEncoder;
 #else
             yCError(IPOS) << "Missing external encoder device group" << externalEncoder;
@@ -113,7 +113,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
         if (!externalEncoderDevice.open(externalEncoderOptions))
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(IPOS, id()) << "Unable to open external encoder device" << externalEncoder;
 #else
             yCError(IPOS) << "Unable to open external encoder device" << externalEncoder;
@@ -123,7 +123,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
         if (!externalEncoderDevice.view(iEncodersTimedRawExternal))
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(IPOS, id()) << "Unable to view IEncodersTimedRaw in" << externalEncoder;
 #else
             yCError(IPOS) << "Unable to view IEncodersTimedRaw in" << externalEncoder;
@@ -133,7 +133,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
         if (!externalEncoderDevice.view(iExternalEncoderCanBusSharer))
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(IPOS, id()) << "Unable to view ICanBusSharer in" << externalEncoder;
 #else
             yCError(IPOS) << "Unable to view ICanBusSharer in" << externalEncoder;

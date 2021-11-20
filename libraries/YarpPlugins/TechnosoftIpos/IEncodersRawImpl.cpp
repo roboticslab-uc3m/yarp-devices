@@ -21,7 +21,7 @@ bool TechnosoftIpos::getAxes(int * ax)
 
 bool TechnosoftIpos::resetEncoderRaw(int j)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
 #else
     yCTrace(IPOS, "%d", j);
@@ -41,7 +41,7 @@ bool TechnosoftIpos::resetEncodersRaw()
 
 bool TechnosoftIpos::setEncoderRaw(int j, double val)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d %f", j, val);
 #else
     yCTrace(IPOS, "%d %f", j, val);
@@ -69,7 +69,7 @@ bool TechnosoftIpos::setEncodersRaw(const double * vals)
 
 bool TechnosoftIpos::getEncoderRaw(int j, double * v)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
 #else
     yCTrace(IPOS, "%d", j);
@@ -91,7 +91,7 @@ bool TechnosoftIpos::getEncodersRaw(double * encs)
 
 bool TechnosoftIpos::getEncoderSpeedRaw(int j, double * sp)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
 #else
     yCTrace(IPOS, "%d", j);
@@ -113,7 +113,7 @@ bool TechnosoftIpos::getEncoderSpeedsRaw(double * spds)
 
 bool TechnosoftIpos::getEncoderAccelerationRaw(int j, double * acc)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
 #else
     yCTrace(IPOS, "%d", j);
@@ -135,7 +135,7 @@ bool TechnosoftIpos::getEncoderAccelerationsRaw(double * accs)
 
 bool TechnosoftIpos::getEncoderTimedRaw(int j, double * enc, double * time)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
 #else
     yCTrace(IPOS, "%d", j);

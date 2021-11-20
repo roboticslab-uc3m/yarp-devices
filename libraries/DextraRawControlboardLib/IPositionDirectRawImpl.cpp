@@ -13,7 +13,7 @@ using namespace roboticslab;
 
 bool DextraRawControlboard::setPositionRaw(int j, double ref)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCTrace(DEXTRA, "%d %f", j, ref);
 #else
     yCTrace(DEXTRA, "%d %f", j, ref);

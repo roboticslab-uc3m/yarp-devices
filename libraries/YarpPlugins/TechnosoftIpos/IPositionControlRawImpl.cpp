@@ -16,7 +16,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::positionMoveRaw(int j, double ref)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d %f", j, ref);
 #else
     yCTrace(IPOS, "%d %f", j, ref);
@@ -48,7 +48,7 @@ bool TechnosoftIpos::positionMoveRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::relativeMoveRaw(int j, double delta)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d %f", j, delta);
 #else
     yCTrace(IPOS, "%d %f", j, delta);
@@ -80,7 +80,7 @@ bool TechnosoftIpos::relativeMoveRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::checkMotionDoneRaw(int j, bool * flag)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
 #else
     yCTrace(IPOS, "%d", j);
@@ -108,7 +108,7 @@ bool TechnosoftIpos::checkMotionDoneRaw(int n_joint, const int * joints, bool * 
 
 bool TechnosoftIpos::setRefSpeedRaw(int j, double sp)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d %f", j, sp);
 #else
     yCTrace(IPOS, "%d %f", j, sp);
@@ -117,7 +117,7 @@ bool TechnosoftIpos::setRefSpeedRaw(int j, double sp)
 
     if (sp < 0.0)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(IPOS, id()) << "Illegal negative speed provided:" << sp;
 #else
         yCWarning(IPOS, "Illegal negative speed provided: %f", sp);
@@ -126,7 +126,7 @@ bool TechnosoftIpos::setRefSpeedRaw(int j, double sp)
     }
     else if (sp > vars.maxVel)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(IPOS, id()) << "Reference speed exceeds maximum velocity, i.e." << vars.maxVel.load();
 #else
         yCWarning(IPOS, "Reference speed exceeds maximum velocity (%f)", vars.maxVel.load());
@@ -169,7 +169,7 @@ bool TechnosoftIpos::setRefSpeedsRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d %f", j, acc);
 #else
     yCTrace(IPOS, "%d %f", j, acc);
@@ -178,7 +178,7 @@ bool TechnosoftIpos::setRefAccelerationRaw(int j, double acc)
 
     if (acc < 0.0)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(IPOS, id()) << "Illegal negative acceleration provided:" << acc;
 #else
         yCWarning(IPOS, "Illegal negative acceleration provided: %f", acc);
@@ -221,7 +221,7 @@ bool TechnosoftIpos::setRefAccelerationsRaw(int n_joint, const int * joints, con
 
 bool TechnosoftIpos::getRefSpeedRaw(int j, double * ref)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
 #else
     yCTrace(IPOS, "%d", j);
@@ -262,7 +262,7 @@ bool TechnosoftIpos::getRefSpeedsRaw(int n_joint, const int * joints, double * s
 
 bool TechnosoftIpos::getRefAccelerationRaw(int j, double * acc)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
 #else
     yCTrace(IPOS, "%d", j);
@@ -303,7 +303,7 @@ bool TechnosoftIpos::getRefAccelerationsRaw(int n_joint, const int * joints, dou
 
 bool TechnosoftIpos::stopRaw(int j)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
 #else
     yCTrace(IPOS, "%d", j);
@@ -333,7 +333,7 @@ bool TechnosoftIpos::stopRaw(int n_joint, const int * joints)
 
 bool TechnosoftIpos::getTargetPositionRaw(int joint, double * ref)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", joint);
 #else
     yCTrace(IPOS, "%d", joint);

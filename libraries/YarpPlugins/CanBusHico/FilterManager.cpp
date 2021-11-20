@@ -116,7 +116,7 @@ bool CanBusHico::FilterManager::clearFilters(bool clearStage)
 {
     if (::ioctl(fd, IOC_CLEAR_FILTERS) == -1)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, owner.id()) << "ioctl() error while clearing filters:" << std::strerror(errno);
 #else
         yCError(HICO) << "ioctl() error while clearing filters:" << std::strerror(errno);
@@ -145,7 +145,7 @@ bool CanBusHico::FilterManager::setMaskedFilter(unsigned int id)
 
     if (::ioctl(fd, IOC_SET_FILTER, &filter) == -1)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, owner.id()) << "Could not set filter:" << std::strerror(errno);
 #else
         yCError(HICO) << "Could not set filter:" << std::strerror(errno);
@@ -169,7 +169,7 @@ bool roboticslab::CanBusHico::FilterManager::setRangedFilter(unsigned int lower,
 
     if (::ioctl(fd, IOC_SET_FILTER, &filter) == -1)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, owner.id()) << "Could not set filter:" << std::strerror(errno);
 #else
         yCError(HICO) << "Could not set filter:" << std::strerror(errno);
@@ -221,7 +221,7 @@ bool CanBusHico::FilterManager::bulkUpdate()
 
     if (sequences.size() > MAX_FILTERS)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(HICO, owner.id(), "MAX_FILTERS exceeded (%zu > %d)", sequences.size(), MAX_FILTERS);
 #else
         yCWarning(HICO, "MAX_FILTERS exceeded (%zu > %d)", sequences.size(), MAX_FILTERS);

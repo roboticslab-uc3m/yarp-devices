@@ -20,7 +20,7 @@ bool TechnosoftIpos::getNumberOfMotorsRaw(int * number)
 
 bool TechnosoftIpos::getTemperatureRaw(int m, double * val)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIError(IPOS, id(), "getTemperatureRaw() not supported");
 #else
     yCError(IPOS, "getTemperatureRaw() not supported");
@@ -32,7 +32,7 @@ bool TechnosoftIpos::getTemperatureRaw(int m, double * val)
 
 bool TechnosoftIpos::getTemperaturesRaw(double * vals)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIError(IPOS, id(), "getTemperaturesRaw() not supported");
 #else
     yCError(IPOS, "getTemperaturesRaw() not supported");
@@ -44,7 +44,7 @@ bool TechnosoftIpos::getTemperaturesRaw(double * vals)
 
 bool TechnosoftIpos::getTemperatureLimitRaw(int m, double * temp)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIError(IPOS, id(), "getTemperatureLimitRaw() not supported");
 #else
     yCError(IPOS, "getTemperatureLimitRaw() not supported");
@@ -56,7 +56,7 @@ bool TechnosoftIpos::getTemperatureLimitRaw(int m, double * temp)
 
 bool TechnosoftIpos::setTemperatureLimitRaw(int m, double temp)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIError(IPOS, id(), "setTemperatureLimitRaw() not supported");
 #else
     yCError(IPOS, "setTemperatureLimitRaw() not supported");
@@ -68,7 +68,7 @@ bool TechnosoftIpos::setTemperatureLimitRaw(int m, double temp)
 
 bool TechnosoftIpos::getGearboxRatioRaw(int m, double * val)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", m);
 #else
     yCTrace(IPOS, "%d", m);
@@ -82,7 +82,7 @@ bool TechnosoftIpos::getGearboxRatioRaw(int m, double * val)
 
 bool TechnosoftIpos::setGearboxRatioRaw(int m, double val)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d %f", m, val);
 #else
     yCTrace(IPOS, "%d %f", m, val);

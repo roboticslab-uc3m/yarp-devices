@@ -13,7 +13,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::setPositionRaw(int j, double ref)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d %f", j, ref);
 #else
     yCTrace(IPOS, "%d %f", j, ref);
@@ -67,7 +67,7 @@ bool TechnosoftIpos::setPositionsRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::getRefPositionRaw(int joint, double * ref)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", joint);
 #else
     yCTrace(IPOS, "%d", joint);

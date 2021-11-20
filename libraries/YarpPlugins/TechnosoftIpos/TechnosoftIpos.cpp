@@ -53,13 +53,13 @@ namespace
                 ss << (msgReset.empty() ? "Bit reset: " + msgSet : msgReset);
             }
 
-#if YARP_VERSION_MINOR < 6
+#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
             ss << " (canId " << report.canId << ")";
 #endif
 
             if (isSet && level == WARN)
             {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIWarning(IPOS, report.canId, "%s", ss.str().c_str());
 #else
                 yCWarning(IPOS, "%s", ss.str().c_str());
@@ -67,7 +67,7 @@ namespace
             }
             else
             {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIInfo(IPOS, report.canId, "%s", ss.str().c_str());
 #else
                 yCInfo(IPOS, "%s", ss.str().c_str());
@@ -83,7 +83,7 @@ namespace
 
 void TechnosoftIpos::interpretMsr(std::uint16_t msr)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     report_storage report{"MSR", msr, vars.msr, id()};
 #else
     report_storage report{"MSR", msr, vars.msr, std::to_string(can->getId())};
@@ -113,7 +113,7 @@ void TechnosoftIpos::interpretMsr(std::uint16_t msr)
 
 void TechnosoftIpos::interpretMer(std::uint16_t mer)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     report_storage report{"MER", mer, vars.mer, id()};
 #else
     report_storage report{"MER", mer, vars.mer, std::to_string(can->getId())};
@@ -143,7 +143,7 @@ void TechnosoftIpos::interpretMer(std::uint16_t mer)
 
 void TechnosoftIpos::interpretDer(std::uint16_t der)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     report_storage report{"DER", der, vars.der, id()};
 #else
     report_storage report{"DER", der, vars.der, std::to_string(can->getId())};
@@ -173,7 +173,7 @@ void TechnosoftIpos::interpretDer(std::uint16_t der)
 
 void TechnosoftIpos::interpretDer2(std::uint16_t der2)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     report_storage report{"DER2", der2, vars.der2, id()};
 #else
     report_storage report{"DER2", der2, vars.der2, std::to_string(can->getId())};
@@ -195,7 +195,7 @@ void TechnosoftIpos::interpretDer2(std::uint16_t der2)
 
 void TechnosoftIpos::interpretCer(std::uint16_t cer)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     report_storage report{"CER", cer, vars.cer, id()};
 #else
     report_storage report{"CER", cer, vars.cer, std::to_string(can->getId())};
@@ -231,7 +231,7 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
         break;
     }
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     report_storage report{"status", statusword, can->driveStatus()->statusword(), id()};
 #else
     report_storage report{"status", statusword, can->driveStatus()->statusword(), std::to_string(can->getId())};
@@ -256,7 +256,7 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
         && can->driveStatus()->controlword()[8]
         && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)))
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(IPOS, id()) << "Unable to reset halt bit";
 #else
         yCWarning(IPOS, "Unable to reset halt bit (canId %d)", can->getId());
@@ -272,7 +272,7 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
             "Trajectory generator will accept a new set-point.")
             && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)))
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIWarning(IPOS, id()) << "Unable to finalize single set-point handshake";
 #else
             yCWarning(IPOS, "Unable to finalize single set-point handshake (canId %d)", can->getId());
@@ -311,7 +311,7 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
     {
     // handled
     case -5:
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(IPOS, id()) << "iPOS specific: External Reference Torque Mode";
 #else
         yCInfo(IPOS, "iPOS specific: External Reference Torque Mode (canId %d)", can->getId());
@@ -320,7 +320,7 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
         vars.enableSync = true;
         break;
     case 1:
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(IPOS, id()) << "Profile Position Mode";
 #else
         yCInfo(IPOS, "Profile Position Mode (canId %d)", can->getId());
@@ -329,7 +329,7 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
         vars.enableSync = false;
         break;
     case 3:
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(IPOS, id()) << "Profile Velocity Mode";
 #else
         yCInfo(IPOS, "Profile Velocity Mode (canId %d)", can->getId());
@@ -338,7 +338,7 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
         vars.enableSync = !vars.enableCsv;
         break;
     case 7:
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(IPOS, id()) << "Interpolated Position Mode";
 #else
         yCInfo(IPOS, "Interpolated Position Mode (canId %d)", can->getId());
@@ -347,7 +347,7 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
         vars.enableSync = false;
         break;
     case 8:
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(IPOS, id()) << "Cyclic Synchronous Position Mode";
 #else
         yCInfo(IPOS, "Cyclic Synchronous Position Mode (canId %d)", can->getId());
@@ -357,7 +357,7 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
         break;
     // unhandled
     case -4:
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(IPOS, id()) << "iPOS specific: External Reference Speed Mode";
 #else
         yCInfo(IPOS, "iPOS specific: External Reference Speed Mode (canId %d)", can->getId());
@@ -365,7 +365,7 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     case -3:
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(IPOS, id()) << "iPOS specific: External Reference Position Mode";
 #else
         yCInfo(IPOS, "iPOS specific: External Reference Position Mode (canId %d)", can->getId());
@@ -373,7 +373,7 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     case -2:
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(IPOS, id()) << "iPOS specific: Electronic Camming Position Mode";
 #else
         yCInfo(IPOS, "iPOS specific: Electronic Camming Position Mode (canId %d)", can->getId());
@@ -381,7 +381,7 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     case -1:
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(IPOS, id()) << "iPOS specific: Electronic Gearing Position Mode";
 #else
         yCInfo(IPOS, "iPOS specific: Electronic Gearing Position Mode (canId %d)", can->getId());
@@ -389,7 +389,7 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     case 6:
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(IPOS, id()) << "Homing Mode";
 #else
         yCInfo(IPOS, "Homing Mode (canId %d)", can->getId());
@@ -397,7 +397,7 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
         vars.actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     default:
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(IPOS, id()) << "No mode set";
 #else
         yCWarning(IPOS, "No mode set (canId %d)", can->getId());
@@ -414,7 +414,7 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
 
 void TechnosoftIpos::interpretIpStatus(std::uint16_t status)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     report_storage report{"ip", status, vars.ipStatus, id()};
 #else
     report_storage report{"ip", status, vars.ipStatus, std::to_string(can->getId())};
@@ -520,7 +520,7 @@ void TechnosoftIpos::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, con
         break;
     }
     default:
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(IPOS, id()) << code.second;
 #else
         yCWarning(IPOS, "%s (canId %d)", code.second.c_str(), can->getId());
@@ -559,7 +559,7 @@ void TechnosoftIpos::handleNmt(NmtState state)
         s = "pre-operational";
         break;
     default:
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(IPOS, id()) << "Unhandled state:" << static_cast<std::uint8_t>(state);
 #else
         yCWarning(IPOS, "Unhandled state: %d", static_cast<std::uint8_t>(state));
@@ -567,7 +567,7 @@ void TechnosoftIpos::handleNmt(NmtState state)
         return;
     }
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIInfo(IPOS, id()) << "Heartbeat:" << s;
 #else
     yCInfo(IPOS, "Heartbeat: %s (canId %d)", s.c_str(), can->getId());
@@ -585,7 +585,7 @@ bool TechnosoftIpos::monitorWorker(const yarp::os::YarpTimerEvent & event)
 
     if (vars.heartbeatPeriod != 0.0 && isConfigured && elapsed > event.lastDuration)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(IPOS, id()) << "Last heartbeat response was" << elapsed << "seconds ago";
 #else
         yCError(IPOS, "Last heartbeat response was %f seconds ago (canId %d)", elapsed, can->getId());
@@ -599,7 +599,7 @@ bool TechnosoftIpos::monitorWorker(const yarp::os::YarpTimerEvent & event)
     {
         if (!initialize())
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(IPOS, id()) << "Unable to initialize CAN comms";
 #else
             yCError(IPOS, "Unable to initialize CAN comms (canId %d)", can->getId());

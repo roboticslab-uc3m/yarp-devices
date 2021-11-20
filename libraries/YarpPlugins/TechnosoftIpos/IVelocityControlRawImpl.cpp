@@ -16,7 +16,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d %f", j, sp);
 #else
     yCTrace(IPOS, "%d %f", j, sp);
@@ -28,7 +28,7 @@ bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
 
     if (std::abs(sp) > maxVel)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(IPOS, id(), "Requested speed exceeds maximum velocity (%f)", maxVel);
 #else
         yCWarning(IPOS, "Requested speed exceeds maximum velocity (%f)", maxVel);
@@ -65,7 +65,7 @@ bool TechnosoftIpos::velocityMoveRaw(int n_joint, const int * joints, const doub
 
 bool TechnosoftIpos::getRefVelocityRaw(int joint, double * vel)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d",joint);
 #else
     yCTrace(IPOS, "%d",joint);

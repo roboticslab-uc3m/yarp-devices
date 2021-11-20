@@ -6,7 +6,7 @@
 
 using namespace roboticslab;
 
-#if YARP_VERSION_MINOR < 6
+#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
@@ -20,7 +20,7 @@ namespace
 
 bool FakeJoint::open(yarp::os::Searchable & config)
 {
-#if YARP_VERSION_MINOR < 6
+#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
     yCDebug(FAKE) << "Config:" << config.toString();
 #endif
 

@@ -13,7 +13,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::getCurrentRaw(int m, double * curr)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", m);
 #else
     yCTrace(IPOS, "%d", m);
@@ -35,7 +35,7 @@ bool TechnosoftIpos::getCurrentsRaw(double * currs)
 
 bool TechnosoftIpos::getCurrentRangeRaw(int m, double * min, double * max)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", m);
 #else
     yCTrace(IPOS, "%d", m);
@@ -59,7 +59,7 @@ bool TechnosoftIpos::getCurrentRangesRaw(double * min, double * max)
 
 bool TechnosoftIpos::setRefCurrentRaw(int m, double curr)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", m);
 #else
     yCTrace(IPOS, "%d", m);
@@ -88,7 +88,7 @@ bool TechnosoftIpos::setRefCurrentsRaw(int n_motor, const int * motors, const do
 
 bool TechnosoftIpos::getRefCurrentRaw(int m, double * curr)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", m);
 #else
     yCTrace(IPOS, "%d", m);

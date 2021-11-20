@@ -19,7 +19,7 @@ namespace
 
 bool DextraCanControlboard::open(yarp::os::Searchable & config)
 {
-#if YARP_VERSION_MINOR < 6
+#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
     yCDebug(DEXTRA) << "Config:" << config.toString();
 #endif
 
@@ -31,7 +31,7 @@ bool DextraCanControlboard::open(yarp::os::Searchable & config)
         return false;
     }
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yarp::dev::DeviceDriver::setId("ID" + std::to_string(canId));
 #endif
 

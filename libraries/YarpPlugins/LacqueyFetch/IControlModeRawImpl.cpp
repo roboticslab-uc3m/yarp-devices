@@ -13,7 +13,7 @@ using namespace roboticslab;
 
 bool LacqueyFetch::getControlModeRaw(int j, int * mode)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(LCQ, id(), "%d", j);
 #else
     yCTrace(LCQ, "%d", j);
@@ -42,7 +42,7 @@ bool LacqueyFetch::getControlModesRaw(int n_joint, const int * joints, int * mod
 bool LacqueyFetch::setControlModeRaw(int j, int mode)
 {
     CHECK_JOINT(j);
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIWarning(LCQ, id(), "setControlModeRaw() not supported");
 #else
     yCWarning(LCQ, "setControlModeRaw() not supported");
@@ -54,7 +54,7 @@ bool LacqueyFetch::setControlModeRaw(int j, int mode)
 
 bool LacqueyFetch::setControlModesRaw(int * modes)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIWarning(LCQ, id(), "setControlModesRaw() not supported");
 #else
     yCWarning(LCQ, "setControlModesRaw() not supported");
@@ -66,7 +66,7 @@ bool LacqueyFetch::setControlModesRaw(int * modes)
 
 bool LacqueyFetch::setControlModesRaw(int n_joint, const int * joints, int * modes)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIWarning(LCQ, id(), "setControlModesRaw() not supported");
 #else
     yCWarning(LCQ, "setControlModesRaw() not supported");

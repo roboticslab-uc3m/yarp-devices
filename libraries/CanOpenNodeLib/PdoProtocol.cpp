@@ -124,7 +124,7 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
         mappingIdx = 0x1A00 + n - 1;
         break;
     default:
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(PDO, logId) << "Unknown PDO type";
 #else
         yCError(PDO) << "Unknown PDO type";
@@ -148,7 +148,7 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
     {
         if (getType() != PdoType::TPDO)
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(PDO, logId) << "Illegal RTR usage on non-TPDO node";
 #else
             yCError(PDO) << "Illegal RTR usage on non-TPDO node";
@@ -183,7 +183,7 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
     {
         if (getType() != PdoType::TPDO)
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(PDO, logId) << "Illegal SYNC start value usage on non-TPDO node";
 #else
             yCError(PDO) << "Illegal SYNC start value usage on non-TPDO node";

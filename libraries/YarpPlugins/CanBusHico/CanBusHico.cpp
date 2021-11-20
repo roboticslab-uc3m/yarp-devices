@@ -58,7 +58,7 @@ bool CanBusHico::waitUntilTimeout(io_operation op, bool * bufferReady)
         ret = ::select(fileDescriptor + 1, 0, &fds, 0, &tv);
         break;
     default:
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, id(), "Unhandled IO operation on select()");
 #else
         yCError(HICO, "Unhandled IO operation on select()");
@@ -68,7 +68,7 @@ bool CanBusHico::waitUntilTimeout(io_operation op, bool * bufferReady)
 
     if (ret < 0)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, id(), "select() error: %s", std::strerror(errno));
 #else
         yCError(HICO, "select() error: %s", std::strerror(errno));
@@ -154,7 +154,7 @@ CanBusHico::FilterManager::filter_config CanBusHico::parseFilterConfiguration(co
     }
     else
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(HICO, id()) << "Unrecognized filter configuration, setting DISABLED:" << str;
 #else
         yCWarning(HICO) << "Unrecognized filter configuration, setting DISABLED:" << str;

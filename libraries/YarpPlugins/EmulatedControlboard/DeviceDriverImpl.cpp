@@ -29,7 +29,7 @@ constexpr auto DEFAULT_MODE_POS_VEL = 0; // 0=Position, 1=Velocity.
 
 bool EmulatedControlboard::open(yarp::os::Searchable& config)
 {
-#if YARP_VERSION_MINOR < 6
+#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
     yCDebug(ECB) << "Config:" << config.toString();
 #endif
 

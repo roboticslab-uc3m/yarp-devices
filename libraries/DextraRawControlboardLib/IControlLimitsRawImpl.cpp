@@ -13,7 +13,7 @@ using namespace roboticslab;
 
 bool DextraRawControlboard::setLimitsRaw(int axis, double min, double max)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d %f %f", axis, min, max);
 #else
     yCTrace(DEXTRA, "%d %f %f", axis, min, max);
@@ -26,7 +26,7 @@ bool DextraRawControlboard::setLimitsRaw(int axis, double min, double max)
 
 bool DextraRawControlboard::getLimitsRaw(int axis, double * min, double * max)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", axis);
 #else
     yCTrace(DEXTRA, "%d", axis);
@@ -44,7 +44,7 @@ bool DextraRawControlboard::getLimitsRaw(int axis, double * min, double * max)
 
 bool DextraRawControlboard::setVelLimitsRaw(int axis, double min, double max)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIWarning(DEXTRA, id(), "setVelLimitsRaw() not supported");
 #else
     yCWarning(DEXTRA, "setVelLimitsRaw() not supported");
@@ -56,7 +56,7 @@ bool DextraRawControlboard::setVelLimitsRaw(int axis, double min, double max)
 
 bool DextraRawControlboard::getVelLimitsRaw(int axis, double * min, double * max)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIWarning(DEXTRA, id(), "getVelLimitsRaw() not supported");
 #else
     yCWarning(DEXTRA, "getVelLimitsRaw() not supported");

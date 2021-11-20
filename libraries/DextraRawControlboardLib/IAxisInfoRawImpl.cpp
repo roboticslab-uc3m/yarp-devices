@@ -13,7 +13,7 @@ using namespace roboticslab;
 
 bool DextraRawControlboard::getAxisNameRaw(int axis, std::string & name)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", axis);
 #else
     yCTrace(DEXTRA, "%d", axis);
@@ -27,7 +27,7 @@ bool DextraRawControlboard::getAxisNameRaw(int axis, std::string & name)
 
 bool DextraRawControlboard::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", axis);
 #else
     yCTrace(DEXTRA, "%d", axis);

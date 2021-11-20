@@ -25,7 +25,7 @@ bool CanBusHico::canSetBaudRate(unsigned int rate)
 
     if (!bitrateToId(rate, &_id))
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, id()) << "Unsupported bitrate value:" << rate;
 #else
         yCError(HICO) << "Unsupported bitrate value:" << rate;
@@ -39,7 +39,7 @@ bool CanBusHico::canSetBaudRate(unsigned int rate)
     {
         if (bitrateState.second == _id)
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIWarning(HICO, id()) << "Bitrate already set";
 #else
             yCWarning(HICO) << "Bitrate already set";
@@ -48,7 +48,7 @@ bool CanBusHico::canSetBaudRate(unsigned int rate)
         }
         else
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(HICO, id()) << "Bitrate already set to a different value:" << bitrateState.second;
 #else
             yCError(HICO) << "Bitrate already set to a different value:" << bitrateState.second;
@@ -59,7 +59,7 @@ bool CanBusHico::canSetBaudRate(unsigned int rate)
 
     if (::ioctl(fileDescriptor, IOC_SET_BITRATE, &_id) == -1)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, id()) << "Could not set bitrate:" << std::strerror(errno);
 #else
         yCError(HICO) << "Could not set bitrate:" << std::strerror(errno);
@@ -85,7 +85,7 @@ bool CanBusHico::canGetBaudRate(unsigned int * rate)
 
     if (ret == -1)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, id()) << "Could not get bitrate:" << std::strerror(errno);
 #else
         yCError(HICO) << "Could not get bitrate:" << std::strerror(errno);
@@ -95,7 +95,7 @@ bool CanBusHico::canGetBaudRate(unsigned int * rate)
 
     if (!idToBitrate(_id, rate))
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, id()) << "Unrecognized bitrate id:" << _id;
 #else
         yCError(HICO) << "Unrecognized bitrate id:" << _id;
@@ -112,7 +112,7 @@ bool CanBusHico::canIdAdd(unsigned int _id)
 {
     if (filterConfig == FilterManager::DISABLED)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(HICO, id()) << "CAN filters are not enabled in this device";
 #else
         yCWarning(HICO) << "CAN filters are not enabled in this device";
@@ -122,7 +122,7 @@ bool CanBusHico::canIdAdd(unsigned int _id)
 
     if (_id > 0x7F)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, id(), "Invalid ID (%d > 0x7F)", _id);
 #else
         yCError(HICO, "Invalid ID (%d > 0x7F)", _id);
@@ -134,7 +134,7 @@ bool CanBusHico::canIdAdd(unsigned int _id)
 
     if (filterManager->hasId(_id))
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(HICO, id()) << "Filter for ID" << _id << "is already active";
 #else
         yCWarning(HICO) << "Filter for ID" << _id << "is already active";
@@ -144,7 +144,7 @@ bool CanBusHico::canIdAdd(unsigned int _id)
 
     if (!filterManager->insertId(_id))
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, id()) << "Could not set filter:" << std::strerror(errno);
 #else
         yCError(HICO) << "Could not set filter:" << std::strerror(errno);
@@ -154,7 +154,7 @@ bool CanBusHico::canIdAdd(unsigned int _id)
 
     if (!filterManager->isValid())
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(HICO, id()) << "Hardware limit was hit, not all requested filters are enabled";
 #else
         yCWarning(HICO) << "Hardware limit was hit, not all requested filters are enabled";
@@ -171,7 +171,7 @@ bool CanBusHico::canIdDelete(unsigned int _id)
 {
     if (filterConfig == FilterManager::DISABLED)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(HICO, id()) << "CAN filters are not enabled in this device";
 #else
         yCWarning(HICO) << "CAN filters are not enabled in this device";
@@ -181,7 +181,7 @@ bool CanBusHico::canIdDelete(unsigned int _id)
 
     if (_id > 0x7F)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, id(), "Invalid ID (%d > 0x7F)", _id);
 #else
         yCError(HICO, "Invalid ID (%d > 0x7F)", _id);
@@ -197,7 +197,7 @@ bool CanBusHico::canIdDelete(unsigned int _id)
 
         if (!filterManager->clearFilters(true))
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(HICO, id()) << "Unable to clear accceptance filters:" << std::strerror(errno);
 #else
             yCError(HICO) << "Unable to clear accceptance filters:" << std::strerror(errno);
@@ -210,7 +210,7 @@ bool CanBusHico::canIdDelete(unsigned int _id)
 
     if (!filterManager->hasId(_id))
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(HICO, id()) << "Filter for ID" << _id << "not found, doing nothing";
 #else
         yCWarning(HICO) << "Filter for ID" << _id << "not found, doing nothing";
@@ -220,7 +220,7 @@ bool CanBusHico::canIdDelete(unsigned int _id)
 
     if (!filterManager->eraseId(_id))
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, id()) << "Could not remove filter:" << std::strerror(errno);
 #else
         yCError(HICO) << "Could not remove filter:" << std::strerror(errno);
@@ -230,7 +230,7 @@ bool CanBusHico::canIdDelete(unsigned int _id)
 
     if (!filterManager->isValid())
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(HICO, id()) << "Hardware limit was hit, not all requested filters are enabled";
 #else
         yCWarning(HICO) << "Hardware limit was hit, not all requested filters are enabled";
@@ -247,7 +247,7 @@ bool CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigne
 {
     if (!allowPermissive && wait != blockingMode)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, id(), "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
 #else
         yCError(HICO, "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
@@ -267,7 +267,7 @@ bool CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigne
 
             if (!waitUntilTimeout(READ, &bufferReady))
             {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIError(HICO, id(), "waitUntilTimeout() failed");
 #else
                 yCError(HICO, "waitUntilTimeout() failed");
@@ -295,7 +295,7 @@ bool CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigne
             }
             else
             {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIError(HICO, id(), "read() error: %s", std::strerror(errno));
 #else
                 yCError(HICO, "read() error: %s", std::strerror(errno));
@@ -322,7 +322,7 @@ bool CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, 
 {
     if (!allowPermissive && wait != blockingMode)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, id(), "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
 #else
         yCError(HICO, "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
@@ -342,7 +342,7 @@ bool CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, 
 
             if (!waitUntilTimeout(WRITE, &bufferReady))
             {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIError(HICO, id(), "waitUntilTimeout() failed");
 #else
                 yCError(HICO, "waitUntilTimeout() failed");
@@ -369,7 +369,7 @@ bool CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, 
             }
             else
             {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIError(HICO, id(), "write() failed: %s", std::strerror(errno));
 #else
                 yCError(HICO, "write() failed: %s", std::strerror(errno));

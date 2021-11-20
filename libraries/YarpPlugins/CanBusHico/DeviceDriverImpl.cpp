@@ -37,14 +37,14 @@ using namespace roboticslab;
 
 bool CanBusHico::open(yarp::os::Searchable& config)
 {
-#if YARP_VERSION_MINOR < 6
+#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
     yCDebug(HICO) << "Config:" << config.toString();
 #endif
 
     std::string devicePath = config.check("port", yarp::os::Value(DEFAULT_PORT), "CAN device path").asString();
     int bitrate = config.check("bitrate", yarp::os::Value(DEFAULT_BITRATE), "CAN bitrate (bps)").asInt32();
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yarp::dev::DeviceDriver::setId(devicePath);
 #endif
 
@@ -53,7 +53,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
 
     if (blockingMode)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(HICO, id()) << "Blocking mode enabled";
 #else
         yCInfo(HICO) << "Blocking mode enabled for CAN device" << devicePath;
@@ -64,7 +64,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
 
         if (rxTimeoutMs <= 0)
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIWarning(HICO, id()) << "RX timeout value <= 0, CAN read calls will block until the buffer is ready";
 #else
             yCWarning(HICO) << "RX timeout value <= 0, CAN read calls will block until the buffer is ready:" << devicePath;
@@ -73,7 +73,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
 
         if (txTimeoutMs <= 0)
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIWarning(HICO, id()) << "TX timeout value <= 0, CAN write calls will block until the buffer is ready";
 #else
             yCWarning(HICO) << "TX timeout value <= 0, CAN write calls will block until the buffer is ready:" << devicePath;
@@ -82,14 +82,14 @@ bool CanBusHico::open(yarp::os::Searchable& config)
     }
     else
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(HICO, id()) << "Requested non-blocking mode";
 #else
         yCInfo(HICO) << "Requested non-blocking mode for CAN device" << devicePath;
 #endif
     }
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIInfo(HICO, id()) << "Permissive mode flag for read/write operations:" << allowPermissive;
 #else
     yCInfo(HICO, "Permissive mode flag for read/write operations on CAN device %s: %d", devicePath.c_str(), allowPermissive);
@@ -98,7 +98,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
     std::string filterConfigStr = config.check("filterConfiguration", yarp::os::Value(DEFAULT_FILTER_CONFIGURATION),
             "CAN filter configuration (disabled|noRange|maskAndRange)").asString();
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIInfo(HICO, id()) << "CAN filter configuration:" << filterConfigStr;
 #else
     yCInfo(HICO, "CAN filter configuration for CAN device %s: %s", devicePath.c_str(), filterConfigStr.c_str());
@@ -111,7 +111,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
 
     if (fileDescriptor == -1)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, id()) << "Could not open";
 #else
         yCError(HICO) << "Could not open CAN device" << devicePath;
@@ -119,7 +119,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
         return false;
     }
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIInfo(HICO, id()) << "Successfully opened";
 #else
     yCInfo(HICO) << "Opened CAN device" << devicePath;
@@ -130,7 +130,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
     //-- Set the CAN bitrate.
     if (!canSetBaudRate(bitrate))
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, id()) << "Could not set bitrate";
 #else
         yCError(HICO) << "Could not set bitrate on CAN device" << devicePath;
@@ -138,7 +138,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
         return false;
     }
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIInfo(HICO, id()) << "Bitrate set";
 #else
     yCInfo(HICO) << "Bitrate set on CAN device" << devicePath;
@@ -150,7 +150,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
 
         if (fcntlFlags == -1)
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(HICO, id()) << "Unable to retrieve FD flags";
 #else
             yCError(HICO) << "Unable to retrieve FD flags on CAN device" << devicePath;
@@ -162,7 +162,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
 
         if (::fcntl(fileDescriptor, F_SETFL, fcntlFlags) == -1)
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(HICO, id()) << "Unable to set non-blocking mode:" << std::strerror(errno);
 #else
             yCError(HICO, "Unable to set non-blocking mode on CAN device %s; fcntl() error: %s", devicePath.c_str(), std::strerror(errno));
@@ -170,7 +170,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
             return false;
         }
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(HICO, id()) << "Non-blocking mode enabled";
 #else
         yCInfo(HICO) << "Non-blocking mode enabled on CAN device" << devicePath;
@@ -185,7 +185,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
         {
             if (!filterManager->clearFilters())
             {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIError(HICO, id()) << "Unable to clear acceptance filters";
 #else
                 yCError(HICO) << "Unable to clear acceptance filters on CAN device" << devicePath;
@@ -194,7 +194,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
             }
             else
             {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIInfo(HICO, id()) << "Acceptance filters cleared";
 #else
                 yCInfo(HICO) << "Acceptance filters cleared on CAN device" << devicePath;
@@ -203,7 +203,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
         }
         else
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIWarning(HICO, id()) << "Preserving previous acceptance filters (if any)";
 #else
             yCWarning(HICO) << "Preserving previous acceptance filters (if any) on CAN device" << devicePath;
@@ -217,7 +217,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
 
             if (ids->size() != 0)
             {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIInfo(HICO, id()) << "Parsing bottle of ids";
 #else
                 yCInfo(HICO) << "Parsing bottle of ids on CAN device" << devicePath;
@@ -225,7 +225,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
 
                 if (!filterManager->parseIds(*ids))
                 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                     yCIError(HICO, id()) << "Could not set acceptance filters";
 #else
                     yCError(HICO) << "Could not set acceptance filters on CAN device" << devicePath;
@@ -235,7 +235,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
 
                 if (!filterManager->isValid())
                 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                     yCIWarning(HICO, id()) << "Hardware limit was hit and no acceptance filters are enabled";
 #else
                     yCWarning(HICO) << "Hardware limit was hit on CAN device" << devicePath << "and no acceptance filters are enabled";
@@ -244,7 +244,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
             }
             else
             {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIInfo(HICO, id()) << "No bottle of ids provided";
 #else
                 yCInfo(HICO) << "No bottle of ids given to CAN device" << devicePath;
@@ -254,7 +254,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
     }
     else
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(HICO, id()) << "Acceptance filters are disabled";
 #else
         yCInfo(HICO) << "Acceptance filters are disabled for CAN device" << devicePath;
@@ -264,7 +264,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
     //-- Start the CAN device.
     if (::ioctl(fileDescriptor,IOC_START) == -1)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, id()) << "IOC_START failed";
 #else
         yCError(HICO) << "IOC_START failed on CAN device" << devicePath;
@@ -272,7 +272,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
         return false;
     }
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIInfo(HICO, id()) << "IOC_START ok";
 #else
     yCInfo(HICO) << "IOC_START ok on CAN device" << devicePath;

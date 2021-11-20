@@ -22,7 +22,7 @@ constexpr auto DEFAULT_PORT = "/dev/ttyACM0"; // also /dev/ttyUSB0
 
 bool DextraSerialControlboard::open(yarp::os::Searchable & config)
 {
-#if YARP_VERSION_MINOR < 6
+#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
     yCDebug(DEXTRA) << "Config:" << config.toString();
 #endif
 

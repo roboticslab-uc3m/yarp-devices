@@ -13,7 +13,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::getRefTorqueRaw(int j, double * t)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
 #else
     yCTrace(IPOS, "%d", j);
@@ -35,7 +35,7 @@ bool TechnosoftIpos::getRefTorquesRaw(double * t)
 
 bool TechnosoftIpos::setRefTorqueRaw(int j, double t)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d %f", j, t);
 #else
     yCTrace(IPOS, "%d %f", j, t);
@@ -57,7 +57,7 @@ bool TechnosoftIpos::setRefTorquesRaw(const double * t)
 
 bool TechnosoftIpos::getTorqueRaw(int j, double * t)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
 #else
     yCTrace(IPOS, "%d", j);
@@ -80,7 +80,7 @@ bool TechnosoftIpos::getTorquesRaw(double * t)
 
 bool TechnosoftIpos::getTorqueRangeRaw(int j, double * min, double * max)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
 #else
     yCTrace(IPOS, "%d", j);
@@ -105,7 +105,7 @@ bool TechnosoftIpos::getTorqueRangesRaw(double * min, double * max)
 
 bool TechnosoftIpos::getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParameters * params)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
 #else
     yCTrace(IPOS, "%d", j);
@@ -124,7 +124,7 @@ bool TechnosoftIpos::getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParame
 
 bool TechnosoftIpos::setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorqueParameters params)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
 #else
     yCTrace(IPOS, "%d", j);

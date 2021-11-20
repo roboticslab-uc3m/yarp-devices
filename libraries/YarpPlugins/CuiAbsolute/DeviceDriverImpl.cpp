@@ -33,7 +33,7 @@ bool CuiAbsolute::open(yarp::os::Searchable & config)
 
     if (!commonGroup.isNull())
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCDebugOnce(IPOS) << commonGroup.toString();
 #endif
         cuiGroup.fromString(commonGroup.toString());
@@ -41,7 +41,7 @@ bool CuiAbsolute::open(yarp::os::Searchable & config)
 
     cuiGroup.fromString(config.toString(), false); // override common options
 
-#if YARP_VERSION_MINOR < 6
+#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
     yCDebug(CUI) << "Config:" << cuiGroup.toString();
 #endif
 
@@ -56,13 +56,13 @@ bool CuiAbsolute::open(yarp::os::Searchable & config)
         return false;
     }
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yarp::dev::DeviceDriver::setId("ID" + std::to_string(canId));
 #endif
 
     if (timeout <= 0.0)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(CUI, id()) << "Illegal CUI timeout value:" << timeout;
 #else
         yCError(CUI) << "Illegal CUI timeout value:" << timeout;
@@ -72,7 +72,7 @@ bool CuiAbsolute::open(yarp::os::Searchable & config)
 
     if (!cuiGroup.check("mode", "publish mode [push|pull]"))
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(CUI, id()) << "Missing \"mode\" property";
 #else
         yCError(CUI) << "Missing \"mode\" property";
@@ -95,7 +95,7 @@ bool CuiAbsolute::open(yarp::os::Searchable & config)
     }
     else
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(CUI, id()) << "Unrecognized CUI mode:" << mode;
 #else
         yCError(CUI) << "Unrecognized CUI mode:" << mode;

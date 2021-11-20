@@ -15,7 +15,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & val)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%s: %s", key.c_str(), val.toString().c_str());
 #else
     yCTrace(IPOS, "%s: %s", key.c_str(), val.toString().c_str());
@@ -49,7 +49,7 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
         return true;
     }
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIError(IPOS, id()) << "Unsupported key:" << key;
 #else
     yCError(IPOS, "Unsupported key: \"%s\"", key.c_str());
@@ -61,7 +61,7 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
 
 bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%s", key.c_str());
 #else
     yCTrace(IPOS, "%s", key.c_str());
@@ -71,7 +71,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
     {
         if (val.size() == 0 || (!val.get(0).isDict() && !val.get(0).isList()))
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(IPOS, id()) << "Empty value or not a dict";
 #else
             yCError(IPOS, "Empty value or not a dict (canId %d)", can->getId());
@@ -82,7 +82,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
         // check on vars.requestedControlMode to avoid race conditions during mode switch
         if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT || vars.requestedcontrolMode == VOCAB_CM_POSITION_DIRECT)
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(IPOS, id()) << "Currently in posd mode, cannot change config params right now";
 #else
             yCError(IPOS, "Currently in posd mode, cannot change config params right now (canId %d)", can->getId());
@@ -103,7 +103,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
 
         if (!dict->check("enable"))
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(IPOS, id()) << "Missing \"enable\" option";
 #else
             yCError(IPOS, "Missing \"enable\" option (canId %d)", can->getId());
@@ -120,7 +120,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
 
             if (!ipBuffer)
             {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIError(IPOS, id()) << "Cannot create ip buffer";
 #else
                 yCError(IPOS, "Cannot create ip buffer (canId %d)", can->getId());
@@ -128,7 +128,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
                 return false;
             }
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIInfo(IPOS, id()) << "Created" << ipBuffer->getType() << "buffer with" << ipBuffer->getBufferSize()
                                 << "points and period" << ipBuffer->getPeriodMs() << "ms";
 #else
@@ -138,7 +138,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
         }
         else
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIInfo(IPOS, id()) << "Switched back to CSP mode";
 #else
             yCInfo(IPOS, "Switched back to CSP mode (canId %d)", can->getId());
@@ -151,7 +151,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
     {
         if (!val.check("enable"))
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(IPOS, id()) << "Missing \"enable\" option";
 #else
             yCError(IPOS, "Missing \"enable\" option (canId %d)", can->getId());
@@ -165,7 +165,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
         {
             if (vars.actualControlMode == VOCAB_CM_VELOCITY)
             {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIError(IPOS, id()) << "Currently in vel mode, cannot change internal mode mapping right now";
 #else
                 yCError(IPOS, "Currently in vel mode, cannot change internal mode mapping right now (canId %d)", can->getId());
@@ -177,7 +177,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
         }
         else
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIWarning(IPOS, id()) << "CSV mode already enabled/disabled";
 #else
             yCWarning(IPOS, "CSV mode already enabled/disabled (canId %d)", can->getId());
@@ -187,7 +187,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
         return true;
     }
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIError(IPOS, id()) << "Unsupported key:" << key;
 #else
     yCError(IPOS, "Unsupported key: \"%s\"", key.c_str());
@@ -199,7 +199,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
 
 bool TechnosoftIpos::getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id());
 #else
     yCTrace(IPOS, "");

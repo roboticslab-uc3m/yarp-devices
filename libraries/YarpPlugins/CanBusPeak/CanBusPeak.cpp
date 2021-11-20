@@ -52,7 +52,7 @@ bool CanBusPeak::waitUntilTimeout(io_operation op, bool * bufferReady)
         ret = ::select(fileDescriptor + 1, 0, &fds, 0, &tv);
         break;
     default:
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(PEAK, id(), "Unhandled IO operation on select()");
 #else
         yCError(PEAK, "Unhandled IO operation on select()");
@@ -62,7 +62,7 @@ bool CanBusPeak::waitUntilTimeout(io_operation op, bool * bufferReady)
 
     if (ret < 0)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(PEAK, id(), "select() error: %s", std::strerror(errno));
 #else
         yCError(PEAK, "select() error: %s", std::strerror(errno));

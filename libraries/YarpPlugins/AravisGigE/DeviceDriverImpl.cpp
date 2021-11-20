@@ -10,7 +10,7 @@ using namespace roboticslab;
 
 bool AravisGigE::open(yarp::os::Searchable &config)
 {
-#if YARP_VERSION_MINOR < 6
+#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
     yCDebug(ARV) << "Config:" << config.toString();
 #endif
 

@@ -20,7 +20,7 @@ bool TechnosoftIpos::getNumberOfMotorEncodersRaw(int * num)
 
 bool TechnosoftIpos::resetMotorEncoderRaw(int m)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", m);
 #else
     yCTrace(IPOS, "%d", m);
@@ -40,7 +40,7 @@ bool TechnosoftIpos::resetMotorEncodersRaw()
 
 bool TechnosoftIpos::setMotorEncoderCountsPerRevolutionRaw(int m, double cpr)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d %f", m, cpr);
 #else
     yCTrace(IPOS, "%d %f", m, cpr);
@@ -54,7 +54,7 @@ bool TechnosoftIpos::setMotorEncoderCountsPerRevolutionRaw(int m, double cpr)
 
 bool TechnosoftIpos::getMotorEncoderCountsPerRevolutionRaw(int m, double * cpr)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", m);
 #else
     yCTrace(IPOS, "%d", m);
@@ -68,7 +68,7 @@ bool TechnosoftIpos::getMotorEncoderCountsPerRevolutionRaw(int m, double * cpr)
 
 bool TechnosoftIpos::setMotorEncoderRaw(int m, double val)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d %f", m, val);
 #else
     yCTrace(IPOS, "%d %f", m, val);
@@ -96,7 +96,7 @@ bool TechnosoftIpos::setMotorEncodersRaw(const double * vals)
 
 bool TechnosoftIpos::getMotorEncoderRaw(int m, double * v)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", m);
 #else
     yCTrace(IPOS, "%d", m);
@@ -118,7 +118,7 @@ bool TechnosoftIpos::getMotorEncodersRaw(double * encs)
 
 bool TechnosoftIpos::getMotorEncoderTimedRaw(int m, double * enc, double * stamp)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", m);
 #else
     yCTrace(IPOS, "%d", m);
@@ -141,7 +141,7 @@ bool TechnosoftIpos::getMotorEncodersTimedRaw(double * encs, double * stamps)
 
 bool TechnosoftIpos::getMotorEncoderSpeedRaw(int m, double * sp)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", m);
 #else
     yCTrace(IPOS, "%d", m);
@@ -163,7 +163,7 @@ bool TechnosoftIpos::getMotorEncoderSpeedsRaw(double * spds)
 
 bool TechnosoftIpos::getMotorEncoderAccelerationRaw(int m, double * acc)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", m);
 #else
     yCTrace(IPOS, "%d", m);

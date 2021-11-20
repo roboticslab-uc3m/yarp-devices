@@ -27,7 +27,7 @@ constexpr auto DEFAULT_CALIB_ONE_Z = -25;
 
 bool WiimoteSensor::open(yarp::os::Searchable& config)
 {
-#if YARP_VERSION_MINOR < 6
+#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
     yCDebug(WII) << "Config:" << config.toString();
 #endif
 

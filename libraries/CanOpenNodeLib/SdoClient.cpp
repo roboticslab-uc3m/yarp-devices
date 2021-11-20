@@ -104,7 +104,7 @@ bool SdoClient::send(const std::uint8_t * msg)
 
 std::string SdoClient::msgToStr(std::uint16_t cob, const std::uint8_t * msgData)
 {
-#if YARP_VERSION_MINOR < 6
+#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
     return CanUtils::msgToStr(id, cob, 8, msgData);
 #else
     return ""; // TODO: remove this entire method
@@ -139,7 +139,7 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
 
     if ((bitsReceived >> 5) != 2 || expectedIndex != index || responseMsg[3] != subindex)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(SDO, logId, "Client request (\"%s\") overrun", name.c_str());
 #else
         yCError(SDO, "Client request (\"%s\") overrun (id %d)", name.c_str(), id);
@@ -156,7 +156,7 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
 
             if (size != actualSize)
             {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIError(SDO, logId, "Client request (\"%s\") size mismatch: expected %u, got %u", name.c_str(), size, actualSize);
 #else
                 yCError(SDO, "Client request (\"%s\") size mismatch: expected %u, got %u (id %d)", name.c_str(), size, actualSize, id);
@@ -174,7 +174,7 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
 
         if (size < len)
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(SDO, logId, "Segmented upload (\"%s\") insufficient memory allocated: expected %u, got %u", name.c_str(), len, size);
 #else
             yCError(SDO, "Segmented upload (\"%s\") insufficient memory allocated: expected %u, got %u (id %d)", name.c_str(), len, size, id);
@@ -182,7 +182,7 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
             return false;
         }
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(SDO, logId, "Segmented upload (\"%s\") begin", name.c_str());
 #else
         yCInfo(SDO, "Segmented upload (\"%s\") begin (id %d)", name.c_str(), id);
@@ -205,7 +205,7 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
 
             if ((bitsReceived >> 5) != 0)
             {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIError(SDO, logId, "Segmented upload (\"%s\") overrun", name.c_str());
 #else
                 yCError(SDO, "Segmented upload (\"%s\") overrun (id %d)", name.c_str(), id);
@@ -215,7 +215,7 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
 
             if (bitsReceived[4] != bitsSent[4])
             {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIError(SDO, logId, "Segmented upload (\"%s\") toggle bit mismatch", name.c_str());
 #else
                 yCError(SDO, "Segmented upload (\"%s\") toggle bit mismatch (id %d)", name.c_str(), id);
@@ -233,7 +233,7 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
         }
         while (!bitsReceived[0]); // continuation bit
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(SDO, logId, "Segmented upload (\"%s\") end", name.c_str());
 #else
         yCInfo(SDO, "Segmented upload (\"%s\") end (id %d)", name.c_str(), id);
@@ -272,7 +272,7 @@ bool SdoClient::downloadInternal(const std::string & name, const void * data, st
 
         if ((bitsReceived >> 5) != 3 || expectedIndex != index || confirmMsg[3] != subindex)
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIWarning(SDO, logId, "Client indication (\"%s\") overrun", name.c_str());
 #else
             yCWarning(SDO, "Client indication (\"%s\") overrun (id %d)", name.c_str(), id);
@@ -297,7 +297,7 @@ bool SdoClient::downloadInternal(const std::string & name, const void * data, st
 
         if ((bitsReceived >> 5) != 3 || expectedIndex != index || confirmMsg[3] != subindex)
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(SDO, logId, "Client indication (\"%s\") overrun", name.c_str());
 #else
             yCError(SDO, "Client indication (\"%s\") overrun (id %d)", name.c_str(), id);
@@ -308,7 +308,7 @@ bool SdoClient::downloadInternal(const std::string & name, const void * data, st
         std::bitset<8> bitsSent(0x00);
         std::uint32_t sent = 0;
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(SDO, logId, "Segmented download (\"%s\") begin", name.c_str());
 #else
         yCInfo(SDO, "Segmented download (\"%s\") begin (id %d)", name.c_str(), id);
@@ -343,7 +343,7 @@ bool SdoClient::downloadInternal(const std::string & name, const void * data, st
 
             if ((bitsReceived >> 5) != 1)
             {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIError(SDO, logId, "Segmented download (\"%s\") overrun", name.c_str());
 #else
                 yCError(SDO, "Segmented download (\"%s\") overrun (id %d)", name.c_str(), id);
@@ -353,7 +353,7 @@ bool SdoClient::downloadInternal(const std::string & name, const void * data, st
 
             if (bitsReceived[4] != bitsSent[4])
             {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIError(SDO, logId, "Segmented download (\"%s\") toggle bit mismatch", name.c_str());
 #else
                 yCError(SDO, "Segmented download (\"%s\") toggle bit mismatch (id %d)", name.c_str(), id);
@@ -366,7 +366,7 @@ bool SdoClient::downloadInternal(const std::string & name, const void * data, st
         }
         while (!bitsSent[0]); // continuation bit
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(SDO, logId, "Segmented download (\"%s\") end", name.c_str());
 #else
         yCInfo(SDO, "Segmented download (\"%s\") end (id %d)", name.c_str(), id);
@@ -397,7 +397,7 @@ bool SdoClient::download(const std::string & name, const std::string & s, std::u
 
 bool SdoClient::performTransfer(const std::string & name, const std::uint8_t * req, std::uint8_t * resp)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIInfo(SDO, logId, "Client transfer (\"%s\"): %s", name.c_str(), CanUtils::msgToStr(8, req).c_str());
 #else
     yCInfo(SDO, "Client transfer (\"%s\") %s", name.c_str(), msgToStr(cobRx, req).c_str());
@@ -405,7 +405,7 @@ bool SdoClient::performTransfer(const std::string & name, const std::uint8_t * r
 
     if (!send(req))
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(SDO, logId, "Client request/indication (\"%s\") unable to send packet", name.c_str());
 #else
         yCError(SDO, "Client request/indication (\"%s\") unable to send packet (id %d)", name.c_str(), id);
@@ -415,7 +415,7 @@ bool SdoClient::performTransfer(const std::string & name, const std::uint8_t * r
 
     if (!stateObserver.await(resp))
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(SDO, logId, "Client request/indication (\"%s\") inactive/timeout", name.c_str());
 #else
         yCError(SDO, "Client request/indication (\"%s\") inactive/timeout (id %d)", name.c_str(), id);
@@ -427,7 +427,7 @@ bool SdoClient::performTransfer(const std::string & name, const std::uint8_t * r
     {
         std::uint32_t code;
         std::memcpy(&code, resp + 4, sizeof(code));
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(SDO, logId, "Transfer abort (\"%s\"): %s", name.c_str(), parseAbortCode(code).c_str());
 #else
         yCError(SDO, "Transfer abort (\"%s\"): %s (id %d)", name.c_str(), parseAbortCode(code).c_str(), id);
@@ -435,7 +435,7 @@ bool SdoClient::performTransfer(const std::string & name, const std::uint8_t * r
         return false;
     }
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIInfo(SDO, logId, "Server transfer (\"%s\"): %s", name.c_str(), CanUtils::msgToStr(8, resp).c_str());
 #else
     yCInfo(SDO, "Server transfer (\"%s\") %s", name.c_str(), msgToStr(cobTx, resp).c_str());

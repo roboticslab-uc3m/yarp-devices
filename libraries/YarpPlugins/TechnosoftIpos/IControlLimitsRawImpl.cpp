@@ -13,7 +13,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::setLimitsRaw(int axis, double min, double max)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d %f %f", axis, min, max);
 #else
     yCTrace(IPOS, "%d %f %f", axis, min, max);
@@ -64,7 +64,7 @@ bool TechnosoftIpos::setLimitRaw(double limit, bool isMin)
 
 bool TechnosoftIpos::getLimitsRaw(int axis, double * min, double * max)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", axis);
 #else
     yCTrace(IPOS, "%d", axis);
@@ -108,7 +108,7 @@ bool TechnosoftIpos::getLimitRaw(double * limit, bool isMin)
 
 bool TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d %f %f", axis, min, max);
 #else
     yCTrace(IPOS, "%d %f %f", axis, min, max);
@@ -119,7 +119,7 @@ bool TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
 
     if (min != -max)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(IPOS, id()) << "Minimum value not equal to negative maximum value";
 #else
         yCWarning(IPOS, "Minimum value not equal to negative maximum value");
@@ -133,7 +133,7 @@ bool TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
 
 bool TechnosoftIpos::getVelLimitsRaw(int axis, double * min, double * max)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", axis);
 #else
     yCTrace(IPOS, "%d", axis);

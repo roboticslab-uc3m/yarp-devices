@@ -25,7 +25,7 @@ bool LacqueyFetch::getNumberOfMotorsRaw(int * number)
 
 bool LacqueyFetch::setRefDutyCycleRaw(int m, double ref)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(LCQ, id(), "%d %f", m, ref);
 #else
     yCTrace(LCQ, "%d %f", m, ref);

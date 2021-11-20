@@ -22,7 +22,7 @@ bool CanBusHico::canGetErrors(yarp::dev::CanErrors & err)
 
     if (::ioctl(fileDescriptor, IOC_GET_CAN_STATUS, &status) == -1)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, id(), "Could not query CAN status: %s", std::strerror(errno));
 #else
         yCError(HICO, "Could not query CAN status: %s", std::strerror(errno));

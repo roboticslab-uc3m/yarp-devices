@@ -23,7 +23,7 @@ bool CanBusPeak::canGetErrors(yarp::dev::CanErrors & err)
 
         if (res < 0)
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(PEAK, id()) << "pcanfd_get_state() failed:" << std::strerror(-res);
 #else
             yCError(PEAK) << "pcanfd_get_state() failed:" << std::strerror(-res);

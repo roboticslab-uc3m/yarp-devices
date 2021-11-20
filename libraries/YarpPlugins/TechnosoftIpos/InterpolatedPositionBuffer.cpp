@@ -272,7 +272,7 @@ InterpolatedPositionBuffer * createInterpolationBuffer(const yarp::os::Searchabl
 
     if (periodMs < 0)
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(IPOS, "ID" + std::to_string(vars.canId)) << "Illegal \"periodMs\":" << periodMs;
 #else
         yCError(IPOS) << "Illegal \"periodMs\":" << periodMs;
@@ -290,7 +290,7 @@ InterpolatedPositionBuffer * createInterpolationBuffer(const yarp::os::Searchabl
     }
     else
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(IPOS, "ID" + std::to_string(vars.canId)) << "Unsupported interpolated position submode:" << mode;
 #else
         yCError(IPOS) << "Unsupported interpolated position submode:" << mode;

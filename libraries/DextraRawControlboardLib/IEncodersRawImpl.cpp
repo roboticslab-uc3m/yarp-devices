@@ -17,7 +17,7 @@ using namespace roboticslab;
 
 bool DextraRawControlboard::resetEncoderRaw(int j)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", j);
 #else
     yCTrace(DEXTRA, "%d", j);
@@ -29,7 +29,7 @@ bool DextraRawControlboard::resetEncoderRaw(int j)
 
 bool DextraRawControlboard::resetEncodersRaw()
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "");
 #else
     yCTrace(DEXTRA, "");
@@ -43,7 +43,7 @@ bool DextraRawControlboard::resetEncodersRaw()
 
 bool DextraRawControlboard::setEncoderRaw(int j, double val)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d %f", j, val);
 #else
     yCTrace(DEXTRA, "%d %f", j, val);
@@ -57,7 +57,7 @@ bool DextraRawControlboard::setEncoderRaw(int j, double val)
 
 bool DextraRawControlboard::setEncodersRaw(const double * vals)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "");
 #else
     yCTrace(DEXTRA, "");
@@ -72,7 +72,7 @@ bool DextraRawControlboard::setEncodersRaw(const double * vals)
 
 bool DextraRawControlboard::getEncoderRaw(int j, double * v)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", j);
 #else
     yCTrace(DEXTRA, "%d", j);

@@ -25,7 +25,7 @@ bool DextraRawControlboard::getAxes(int *ax)
 
 bool DextraRawControlboard::positionMoveRaw(int j, double ref)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d %f", j, ref);
 #else
     yCTrace(DEXTRA, "%d %f", j, ref);
@@ -49,7 +49,7 @@ bool DextraRawControlboard::positionMoveRaw(int j, double ref)
 
 bool DextraRawControlboard::positionMoveRaw(const double * refs)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "");
 #else
     yCTrace(DEXTRA, "");
@@ -71,7 +71,7 @@ bool DextraRawControlboard::positionMoveRaw(const double * refs)
 
 bool DextraRawControlboard::positionMoveRaw(int n_joint, const int * joints, const double * refs)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", n_joint);
 #else
     yCTrace(DEXTRA, "%d", n_joint);
@@ -96,7 +96,7 @@ bool DextraRawControlboard::positionMoveRaw(int n_joint, const int * joints, con
 
 bool DextraRawControlboard::relativeMoveRaw(int j, double delta)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d %f", j, delta);
 #else
     yCTrace(DEXTRA, "%d %f", j, delta);
@@ -117,7 +117,7 @@ bool DextraRawControlboard::relativeMoveRaw(int j, double delta)
 
 bool DextraRawControlboard::relativeMoveRaw(const double * deltas)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "");
 #else
     yCTrace(DEXTRA, "");
@@ -142,7 +142,7 @@ bool DextraRawControlboard::relativeMoveRaw(const double * deltas)
 
 bool DextraRawControlboard::relativeMoveRaw(int n_joint, const int * joints, const double * deltas)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", n_joint);
 #else
     yCTrace(DEXTRA, "%d", n_joint);
@@ -167,7 +167,7 @@ bool DextraRawControlboard::relativeMoveRaw(int n_joint, const int * joints, con
 
 bool DextraRawControlboard::checkMotionDoneRaw(int j, bool * flag)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", j);
 #else
     yCTrace(DEXTRA, "%d", j);
@@ -181,7 +181,7 @@ bool DextraRawControlboard::checkMotionDoneRaw(int j, bool * flag)
 
 bool DextraRawControlboard::checkMotionDoneRaw(bool * flag)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "");
 #else
     yCTrace(DEXTRA, "");
@@ -203,7 +203,7 @@ bool DextraRawControlboard::checkMotionDoneRaw(bool * flag)
 
 bool DextraRawControlboard::checkMotionDoneRaw(int n_joint, const int * joints, bool * flag)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", n_joint);
 #else
     yCTrace(DEXTRA, "%d", n_joint);
@@ -225,7 +225,7 @@ bool DextraRawControlboard::checkMotionDoneRaw(int n_joint, const int * joints, 
 
 bool DextraRawControlboard::setRefSpeedRaw(int j, double sp)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d %f", j ,sp);
 #else
     yCTrace(DEXTRA, "%d %f", j ,sp);
@@ -238,7 +238,7 @@ bool DextraRawControlboard::setRefSpeedRaw(int j, double sp)
 
 bool DextraRawControlboard::setRefSpeedsRaw(const double * spds)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "");
 #else
     yCTrace(DEXTRA, "");
@@ -258,7 +258,7 @@ bool DextraRawControlboard::setRefSpeedsRaw(const double * spds)
 
 bool DextraRawControlboard::setRefSpeedsRaw(int n_joint, const int * joints, const double * spds)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "");
 #else
     yCTrace(DEXTRA, "");
@@ -278,7 +278,7 @@ bool DextraRawControlboard::setRefSpeedsRaw(int n_joint, const int * joints, con
 
 bool DextraRawControlboard::setRefAccelerationRaw(int j, double acc)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d %f", j, acc);
 #else
     yCTrace(DEXTRA, "%d %f", j, acc);
@@ -291,7 +291,7 @@ bool DextraRawControlboard::setRefAccelerationRaw(int j, double acc)
 
 bool DextraRawControlboard::setRefAccelerationsRaw(const double * accs)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "");
 #else
     yCTrace(DEXTRA, "");
@@ -311,7 +311,7 @@ bool DextraRawControlboard::setRefAccelerationsRaw(const double * accs)
 
 bool DextraRawControlboard::setRefAccelerationsRaw(int n_joint, const int * joints, const double * accs)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", n_joint);
 #else
     yCTrace(DEXTRA, "%d", n_joint);
@@ -331,7 +331,7 @@ bool DextraRawControlboard::setRefAccelerationsRaw(int n_joint, const int * join
 
 bool DextraRawControlboard::getRefSpeedRaw(int j, double * ref)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", j);
 #else
     yCTrace(DEXTRA, "%d", j);
@@ -344,7 +344,7 @@ bool DextraRawControlboard::getRefSpeedRaw(int j, double * ref)
 
 bool DextraRawControlboard::getRefSpeedsRaw(double * spds)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "");
 #else
     yCTrace(DEXTRA, "");
@@ -364,7 +364,7 @@ bool DextraRawControlboard::getRefSpeedsRaw(double * spds)
 
 bool DextraRawControlboard::getRefSpeedsRaw(int n_joint, const int * joints, double * spds)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", n_joint);
 #else
     yCTrace(DEXTRA, "%d", n_joint);
@@ -384,7 +384,7 @@ bool DextraRawControlboard::getRefSpeedsRaw(int n_joint, const int * joints, dou
 
 bool DextraRawControlboard::getRefAccelerationRaw(int j, double * acc)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", j);
 #else
     yCTrace(DEXTRA, "%d", j);
@@ -397,7 +397,7 @@ bool DextraRawControlboard::getRefAccelerationRaw(int j, double * acc)
 
 bool DextraRawControlboard::getRefAccelerationsRaw(double * accs)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "");
 #else
     yCTrace(DEXTRA, "");
@@ -417,7 +417,7 @@ bool DextraRawControlboard::getRefAccelerationsRaw(double * accs)
 
 bool DextraRawControlboard::getRefAccelerationsRaw(int n_joint, const int * joints, double * accs)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", n_joint);
 #else
     yCTrace(DEXTRA, "%d", n_joint);
@@ -437,7 +437,7 @@ bool DextraRawControlboard::getRefAccelerationsRaw(int n_joint, const int * join
 
 bool DextraRawControlboard::stopRaw(int j)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", j);
 #else
     yCTrace(DEXTRA, "%d", j);
@@ -450,7 +450,7 @@ bool DextraRawControlboard::stopRaw(int j)
 
 bool DextraRawControlboard::stopRaw()
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "");
 #else
     yCTrace(DEXTRA, "");
@@ -470,7 +470,7 @@ bool DextraRawControlboard::stopRaw()
 
 bool DextraRawControlboard::stopRaw(int n_joint, const int * joints)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", n_joint);
 #else
     yCTrace(DEXTRA, "%d", n_joint);
@@ -490,7 +490,7 @@ bool DextraRawControlboard::stopRaw(int n_joint, const int * joints)
 
 bool DextraRawControlboard::getTargetPositionRaw(int joint, double * ref)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", joint);
 #else
     yCTrace(DEXTRA, "%d", joint);
@@ -502,7 +502,7 @@ bool DextraRawControlboard::getTargetPositionRaw(int joint, double * ref)
 
 bool DextraRawControlboard::getTargetPositionsRaw(double * refs)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "");
 #else
     yCTrace(DEXTRA, "");
@@ -522,7 +522,7 @@ bool DextraRawControlboard::getTargetPositionsRaw(double * refs)
 
 bool DextraRawControlboard::getTargetPositionsRaw(int n_joint, const int * joints, double * refs)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", n_joint);
 #else
     yCTrace(DEXTRA, "%d", n_joint);

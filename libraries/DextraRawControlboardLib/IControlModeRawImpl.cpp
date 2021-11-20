@@ -15,7 +15,7 @@ using namespace roboticslab;
 
 bool DextraRawControlboard::getControlModeRaw(int j, int * mode)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", j);
 #else
     yCTrace(DEXTRA, "%d", j);
@@ -57,7 +57,7 @@ bool DextraRawControlboard::getControlModesRaw(int n_joint, const int * joints, 
 
 bool DextraRawControlboard::setControlModeRaw(int j, int mode)
 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
 #elif YARP_VERSION_MINOR >= 5
     yCTrace(DEXTRA, "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());

@@ -78,7 +78,7 @@ bool TechnosoftIpos::initialize()
         vars.configuredOnce = can->sdo()->upload("Manufacturer software version",
                 [this](const auto & data)
                 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                     yCIInfo(IPOS, id()) << "Firmware version:" << rtrim(data);
 #else
                     yCInfo(IPOS, "Firmware version: %s", rtrim(data).c_str());
@@ -88,7 +88,7 @@ bool TechnosoftIpos::initialize()
             && can->sdo()->upload<std::uint32_t>("Identity Object: Product Code",
                 [this](auto data)
                 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                     yCIInfo(IPOS, id(), "Product code: P%03d.%03d.E%03d", data / 1000000, (data / 1000) % 1000, data % 1000);
 #else
                     yCInfo(IPOS, "Product code: P%03d.%03d.E%03d", data / 1000000, (data / 1000) % 1000, data % 1000);
@@ -98,7 +98,7 @@ bool TechnosoftIpos::initialize()
             && can->sdo()->upload<std::uint32_t>("Identity Object: Serial number",
                 [this](auto data)
                 {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                     yCIInfo(IPOS, id(), "Serial number: %c%c%02x%02x", getByte(data, 3), getByte(data, 2), getByte(data, 1), getByte(data, 0));
 #else
                     yCInfo(IPOS, "Serial number: %c%c%02x%02x", getByte(data, 3), getByte(data, 2), getByte(data, 1), getByte(data, 0));
@@ -125,7 +125,7 @@ bool TechnosoftIpos::initialize()
         || (can->driveStatus()->getCurrentState() == DriveState::NOT_READY_TO_SWITCH_ON
                 && !can->driveStatus()->awaitState(DriveState::SWITCH_ON_DISABLED)))
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(IPOS, id()) << "Initial SDO configuration and/or node start failed";
 #else
         yCError(IPOS, "Initial SDO configuration and/or node start failed (canId %d)", can->getId());
@@ -140,7 +140,7 @@ bool TechnosoftIpos::initialize()
             || !vars.awaitControlMode(VOCAB_CM_IDLE)
             || !setControlModeRaw(0, vars.initialMode))
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(IPOS, id()) << "Initial drive state transitions failed";
 #else
         yCWarning(IPOS, "Initial drive state transitions failed (canId %d)", can->getId());
@@ -170,7 +170,7 @@ bool TechnosoftIpos::finalize()
 
         if (!can->driveStatus()->requestState(DriveState::SWITCH_ON_DISABLED))
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIWarning(IPOS, id()) << "SWITCH_ON_DISABLED transition failed";
 #else
             yCWarning(IPOS, "SWITCH_ON_DISABLED transition failed (canId %d)", can->getId());
@@ -183,7 +183,7 @@ bool TechnosoftIpos::finalize()
 
     if (!can->nmt()->issueServiceCommand(NmtService::RESET_NODE))
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(IPOS, id()) << "Reset node NMT service failed";
 #else
         yCWarning(IPOS, "Reset node NMT service failed (canId %d)", can->getId());
@@ -211,7 +211,7 @@ bool TechnosoftIpos::notifyMessage(const can_message & message)
 
     if (!can->notifyMessage(message))
     {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(IPOS, id(), "Unknown message: %s", CanUtils::msgToStr(message).c_str());
 #else
         yCWarning(IPOS, "Unknown message: %s", CanUtils::msgToStr(message).c_str());

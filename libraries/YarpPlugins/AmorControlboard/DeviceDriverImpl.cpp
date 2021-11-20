@@ -19,7 +19,7 @@ constexpr auto DEFAULT_CAN_PORT = 0;
 
 bool AmorControlboard::open(yarp::os::Searchable& config)
 {
-#if YARP_VERSION_MINOR < 6
+#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
     yCDebug(AMOR) << "Config:" << config.toString();
 #endif
 

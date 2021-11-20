@@ -21,7 +21,7 @@ bool CuiAbsolute::performRequest(const std::string & name, unsigned int len, con
     {
         if (sender && !sender->prepareMessage(msg))
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(CUI, id(), "Unable to register \"%s\" command: %s", name.c_str(), CanUtils::msgToStr(len, data).c_str());
 #else
             yCError(CUI, "Unable to register \"%s\" command. %s", name.c_str(), CanUtils::msgToStr(msg).c_str());
@@ -29,7 +29,7 @@ bool CuiAbsolute::performRequest(const std::string & name, unsigned int len, con
             return false;
         }
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(CUI, id(), "Registered \"%s\" command (%d/%d): %s", name.c_str(), retry, maxRetries, CanUtils::msgToStr(len, data).c_str());
 #else
         yCInfo(CUI, "Registered \"%s\" command (%d/%d). %s", name.c_str(), retry, maxRetries, CanUtils::msgToStr(msg).c_str());
@@ -37,7 +37,7 @@ bool CuiAbsolute::performRequest(const std::string & name, unsigned int len, con
 
         if (v ? pollStateObserver->await(v) : pushStateObserver->await())
         {
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIInfo(CUI, id(), "Succesfully processed \"%s\" command (%d/%d)", name.c_str(), retry, maxRetries);
 #else
             yCInfo(CUI, "Succesfully processed \"%s\" command (%d/%d)", name.c_str(), retry, maxRetries);
@@ -46,14 +46,14 @@ bool CuiAbsolute::performRequest(const std::string & name, unsigned int len, con
             return true;
         }
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(CUI, id(), "Command \"%s\" timed out (%d/%d)", name.c_str(), retry, maxRetries);
 #else
         yCWarning(CUI, "Command \"%s\" timed out (%d/%d)", name.c_str(), retry, maxRetries);
 #endif
     }
 
-#if YARP_VERSION_MINOR >= 6
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIError(CUI, id(), "Max number of retries exceeded (%d)", maxRetries);
 #else
     yCError(CUI, "Max number of retries exceeded (%d)", maxRetries);
