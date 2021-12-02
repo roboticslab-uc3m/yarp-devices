@@ -19,9 +19,8 @@ bool TechnosoftIpos::getLastJointFaultRaw(int axis, int & fault, std::string & m
     yCTrace(IPOS, "%d", axis);
 #endif
     CHECK_JOINT(axis);
-    // TODO
-    fault = 0;
-    message = "none";
+    fault = vars.lastFaultCode;
+    message = vars.lastFaultMessage;
     return true;
 }
 

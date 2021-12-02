@@ -131,6 +131,8 @@ struct StateVariables
 
     std::atomic<double> lastHeartbeat {0.0};
     std::atomic<std::uint8_t> lastNmtState {0};
+    std::atomic<std::uint16_t> lastFaultCode {0};
+    std::atomic<const char *> lastFaultMessage;
 
     std::atomic<double> synchronousCommandTarget {0.0};
     std::atomic<double> prevSyncTarget {0.0};

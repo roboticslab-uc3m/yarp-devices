@@ -275,6 +275,9 @@ public:
 
 private:
 
+    class report_storage;
+    bool reportBitToggle(report_storage report, int level, std::size_t pos, const char * msgSet, const char * msgReset = nullptr);
+
     void interpretMsr(std::uint16_t msr);
     void interpretMer(std::uint16_t mer);
     void interpretDer(std::uint16_t der);
