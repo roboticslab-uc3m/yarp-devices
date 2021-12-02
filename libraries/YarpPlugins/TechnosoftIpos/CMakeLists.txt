@@ -35,6 +35,10 @@ if(NOT SKIP_TechnosoftIpos)
                                    LogComponent.hpp
                                    LogComponent.cpp)
 
+    if(YARP_VERSION_SHORT VERSION_GREATER_EQUAL 3.5.100)
+        target_sources(TechnosoftIpos PRIVATE IJointFaultRawImpl.cpp)
+    endif()
+
     target_link_libraries(TechnosoftIpos YARP::YARP_os
                                          YARP::YARP_dev
                                          ROBOTICSLAB::CanBusSharerLib
