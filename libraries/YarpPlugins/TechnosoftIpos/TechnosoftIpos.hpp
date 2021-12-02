@@ -3,6 +3,8 @@
 #ifndef __TECHNOSOFT_IPOS_HPP__
 #define __TECHNOSOFT_IPOS_HPP__
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/Timer.h>
 
 #include <yarp/dev/DeviceDriver.h>
@@ -11,6 +13,9 @@
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/ICurrentControl.h>
 #include <yarp/dev/IEncodersTimed.h>
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
+# include <yarp/dev/IJointFault.h>
+#endif
 #include <yarp/dev/IMotor.h>
 #include <yarp/dev/IMotorEncoders.h>
 #include <yarp/dev/IPositionControl.h>
@@ -59,6 +64,9 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver,
                        public yarp::dev::IControlModeRaw,
                        public yarp::dev::ICurrentControlRaw,
                        public yarp::dev::IEncodersTimedRaw,
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
+                       public yarp::dev::IJointFaultRaw,
+#endif
                        public yarp::dev::IMotorRaw,
                        public yarp::dev::IMotorEncodersRaw,
                        public yarp::dev::IPositionControlRaw,
@@ -150,6 +158,12 @@ public:
 
     bool getEncoderTimedRaw(int j, double * encs, double * time) override;
     bool getEncodersTimedRaw(double * encs, double * time) override;
+
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
+    //  ---------- IJointFaultRaw declarations. Implementation in IJointFaultRawImpl.cpp ----------
+
+    bool getLastJointFaultRaw(int j, int & fault, std::string & message) override;
+#endif
 
     //  --------- IMotorRaw declarations. Implementation in IMotorRawImpl.cpp ---------
 
@@ -260,6 +274,9 @@ public:
     //bool stopRaw(int n_joint, const int *joints) override;
 
 private:
+
+    class report_storage;
+    bool reportBitToggle(report_storage report, int level, std::size_t pos, const char * msgSet, const char * msgReset = nullptr);
 
     void interpretMsr(std::uint16_t msr);
     void interpretMer(std::uint16_t mer);

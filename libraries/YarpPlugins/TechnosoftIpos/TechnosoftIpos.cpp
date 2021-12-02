@@ -21,73 +21,73 @@ using namespace roboticslab;
 
 namespace
 {
-    enum report_level { INFO, WARN, NONE };
+    enum report_level { NONE, INFO, WARN, FAULT };
+}
 
-    struct report_storage
+// -----------------------------------------------------------------------------
+
+struct TechnosoftIpos::report_storage
+{
+    const char * reg;
+    const std::bitset<16> & actual;
+    const std::bitset<16> & stored;
+};
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIpos::reportBitToggle(report_storage report, int level, std::size_t pos, const char * msgSet, const char * msgReset)
+{
+    bool isSet = report.actual.test(pos);
+
+    if (report.stored.test(pos) != isSet && level != NONE)
     {
-        std::string reg;
-        std::bitset<16> actual;
-        std::bitset<16> stored;
-        std::string canId;
-    };
+        std::stringstream ss;
+        ss << "[" << report.reg << "] ";
 
-    bool reportBitToggle(report_storage report,
-                         report_level level,
-                         std::size_t pos,
-                         const std::string & msgSet,
-                         const std::string & msgReset = "")
-    {
-        bool isSet = report.actual.test(pos);
-
-        if (report.stored.test(pos) != isSet && level != NONE)
+        if (isSet)
         {
-            std::stringstream ss;
-            ss << "[" << report.reg << "] ";
-
-            if (isSet)
-            {
-                ss << msgSet;
-            }
-            else
-            {
-                ss << (msgReset.empty() ? "Bit reset: " + msgSet : msgReset);
-            }
-
-#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
-            ss << " (canId " << report.canId << ")";
-#endif
-
-            if (isSet && level == WARN)
-            {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
-                yCIWarning(IPOS, report.canId, "%s", ss.str().c_str());
-#else
-                yCWarning(IPOS, "%s", ss.str().c_str());
-#endif
-            }
-            else
-            {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
-                yCIInfo(IPOS, report.canId, "%s", ss.str().c_str());
-#else
-                yCInfo(IPOS, "%s", ss.str().c_str());
-#endif
-            }
+            ss << msgSet;
+        }
+        else
+        {
+            ss << (!msgReset ? std::string("Bit reset: ") + msgSet : msgReset);
         }
 
-        return isSet;
+#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
+        ss << " (canId " << vars.canId << ")";
+#endif
+
+        if (isSet && level != INFO)
+        {
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
+            yCIWarning(IPOS, id(), "%s", ss.str().c_str());
+#else
+            yCWarning(IPOS, "%s", ss.str().c_str());
+#endif
+
+            if (level == FAULT)
+            {
+                vars.lastFaultMessage = msgSet;
+            }
+        }
+        else
+        {
+#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
+            yCIInfo(IPOS, id(), "%s", ss.str().c_str());
+#else
+            yCInfo(IPOS, "%s", ss.str().c_str());
+#endif
+        }
     }
+
+    return isSet;
 }
 
 // -----------------------------------------------------------------------------
 
 void TechnosoftIpos::interpretMsr(std::uint16_t msr)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
-    report_storage report{"MSR", msr, vars.msr, id()};
-#else
-    report_storage report{"MSR", msr, vars.msr, std::to_string(can->getId())};
-#endif
+    report_storage report{"MSR", msr, vars.msr};
 
     reportBitToggle(report, INFO, 0, "Drive/motor initialization performed.");
     reportBitToggle(report, NONE, 1, "Position trigger 1 reached.");
@@ -113,28 +113,31 @@ void TechnosoftIpos::interpretMsr(std::uint16_t msr)
 
 void TechnosoftIpos::interpretMer(std::uint16_t mer)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
-    report_storage report{"MER", mer, vars.mer, id()};
-#else
-    report_storage report{"MER", mer, vars.mer, std::to_string(can->getId())};
-#endif
+    report_storage report{"MER", mer, vars.mer};
 
-    reportBitToggle(report, WARN, 0, "CAN error. Set when CAN controller is in error mode.");
-    reportBitToggle(report, WARN, 1, "Short-circuit. Set when protection is triggered.");
-    reportBitToggle(report, WARN, 2, "Invalid setup data. Set when the EEPROM stored setup data is not valid or not present.");
-    reportBitToggle(report, WARN, 3, "Control error (position/speed error too big). Set when protection is triggered.");
-    reportBitToggle(report, WARN, 4, "Communication error. Set when protection is triggered.");
-    reportBitToggle(report, WARN, 5, "Motor position wraps around. Set when protection is triggered.");
-    reportBitToggle(report, WARN, 6, "Positive limit switch active. Set when LSP input is in active state.");
-    reportBitToggle(report, WARN, 7, "Negative limit switch active. Set when LSN input is in active state.");
-    reportBitToggle(report, WARN, 8, "Over current. Set when protection is triggered.");
-    reportBitToggle(report, WARN, 9, "I2t protection. Set when protection is triggered.");
-    reportBitToggle(report, WARN, 10, "Over temperature motor. Set when protection is triggered.");
-    reportBitToggle(report, WARN, 11, "Over temperature drive. Set when protection is triggered.");
-    reportBitToggle(report, WARN, 12, "Over-voltage. Set when protection is triggered.");
-    reportBitToggle(report, WARN, 13, "Under-voltage. Set when protection is triggered.");
-    reportBitToggle(report, WARN, 14, "Command error.");
-    reportBitToggle(report, WARN, 15, "Drive disabled due to enable or STO input. Set when enable or STO input is on disable state.");
+    bool isSet = false;
+
+    isSet |= reportBitToggle(report, FAULT, 0, "CAN error.");
+    isSet |= reportBitToggle(report, FAULT, 1, "Short-circuit.");
+    isSet |= reportBitToggle(report, FAULT, 2, "Invalid setup data.");
+    isSet |= reportBitToggle(report, FAULT, 3, "Control error (position/speed error too big).");
+    isSet |= reportBitToggle(report, FAULT, 4, "Communication error.");
+    isSet |= reportBitToggle(report, FAULT, 5, "Motor position wraps around.");
+    isSet |= reportBitToggle(report, FAULT, 6, "Positive limit switch active.");
+    isSet |= reportBitToggle(report, FAULT, 7, "Negative limit switch active.");
+    isSet |= reportBitToggle(report, FAULT, 8, "Over current.");
+    isSet |= reportBitToggle(report, FAULT, 9, "I2t protection.");
+    isSet |= reportBitToggle(report, FAULT, 10, "Over temperature motor.");
+    isSet |= reportBitToggle(report, FAULT, 11, "Over temperature drive.");
+    isSet |= reportBitToggle(report, FAULT, 12, "Over-voltage.");
+    isSet |= reportBitToggle(report, FAULT, 13, "Under-voltage.");
+    isSet |= reportBitToggle(report, FAULT, 14, "Command error.");
+    isSet |= reportBitToggle(report, FAULT, 15, "Drive disabled due to enable or STO input.");
+
+    if (isSet)
+    {
+        vars.lastFaultCode = mer;
+    }
 
     vars.mer = mer;
 }
@@ -143,11 +146,7 @@ void TechnosoftIpos::interpretMer(std::uint16_t mer)
 
 void TechnosoftIpos::interpretDer(std::uint16_t der)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
-    report_storage report{"DER", der, vars.der, id()};
-#else
-    report_storage report{"DER", der, vars.der, std::to_string(can->getId())};
-#endif
+    report_storage report{"DER", der, vars.der};
 
     reportBitToggle(report, WARN, 0, "The number of nested function calls exceeded the length of TML stack. Last function call was ignored.");
     reportBitToggle(report, WARN, 1, "A RET/RETI instruction was executed while no function/ISR was active.");
@@ -173,11 +172,7 @@ void TechnosoftIpos::interpretDer(std::uint16_t der)
 
 void TechnosoftIpos::interpretDer2(std::uint16_t der2)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
-    report_storage report{"DER2", der2, vars.der2, id()};
-#else
-    report_storage report{"DER2", der2, vars.der2, std::to_string(can->getId())};
-#endif
+    report_storage report{"DER2", der2, vars.der2};
 
     reportBitToggle(report, WARN, 0, "BiSS data CRC error");
     reportBitToggle(report, WARN, 1, "BiSS data warning bit is set");
@@ -195,11 +190,7 @@ void TechnosoftIpos::interpretDer2(std::uint16_t der2)
 
 void TechnosoftIpos::interpretCer(std::uint16_t cer)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
-    report_storage report{"CER", cer, vars.cer, id()};
-#else
-    report_storage report{"CER", cer, vars.cer, std::to_string(can->getId())};
-#endif
+    report_storage report{"CER", cer, vars.cer};
 
     reportBitToggle(report, WARN, 0, "RS232 reception error.");
     reportBitToggle(report, WARN, 1, "RS232 transmission timeout error.");
@@ -231,11 +222,7 @@ void TechnosoftIpos::interpretStatusword(std::uint16_t statusword)
         break;
     }
 
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
-    report_storage report{"status", statusword, can->driveStatus()->statusword(), id()};
-#else
-    report_storage report{"status", statusword, can->driveStatus()->statusword(), std::to_string(can->getId())};
-#endif
+    report_storage report{"status", statusword, can->driveStatus()->statusword()};
 
     reportBitToggle(report, INFO, 0, "Ready to switch on.");
     reportBitToggle(report, INFO, 1, "Switched on.");
@@ -414,11 +401,7 @@ void TechnosoftIpos::interpretModesOfOperation(std::int8_t modesOfOperation)
 
 void TechnosoftIpos::interpretIpStatus(std::uint16_t status)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
-    report_storage report{"ip", status, vars.ipStatus, id()};
-#else
-    report_storage report{"ip", status, vars.ipStatus, std::to_string(can->getId())};
-#endif
+    report_storage report{"ip", status, vars.ipStatus};
 
     std::uint8_t ic = status & 0x007F; // integrity counter
 

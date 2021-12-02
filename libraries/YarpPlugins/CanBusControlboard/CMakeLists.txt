@@ -47,6 +47,10 @@ if(NOT SKIP_CanBusControlboard)
                                        LogComponent.hpp
                                        LogComponent.cpp)
 
+    if(YARP_VERSION_SHORT VERSION_GREATER_EQUAL 3.5.100)
+        target_sources(CanBusControlboard PRIVATE IJointFaultImpl.cpp)
+    endif()
+
     target_link_libraries(CanBusControlboard YARP::YARP_os
                                              YARP::YARP_dev
                                              ROBOTICSLAB::CanBusSharerLib
