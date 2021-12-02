@@ -34,7 +34,7 @@ bool CuiAbsolute::open(yarp::os::Searchable & config)
     if (!commonGroup.isNull())
     {
 #if defined(YARP_VERSION_COMPARE) // >= 3.6.0
-        yCDebugOnce(IPOS) << commonGroup.toString();
+        yCDebugOnce(CUI) << commonGroup.toString();
 #endif
         cuiGroup.fromString(commonGroup.toString());
     }
