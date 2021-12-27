@@ -2,4 +2,4 @@
 
 ## Requirements
 Depends on:
-- [Spacenav](http://robots.uc3m.es/gitbook-installation-guides/install-spacenav.html)
+- [Spacenav](https://robots.uc3m.es/installation-guides/install-spacenav.html)

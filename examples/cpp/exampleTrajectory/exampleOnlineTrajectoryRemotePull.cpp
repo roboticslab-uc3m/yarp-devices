@@ -28,7 +28,7 @@
  * callback.
  * @see @ref exampleOnlineTrajectoryRemotePush.cpp Command a remote robot via direct position commands.
  * @see @ref exampleOnlineTrajectoryRemotePull.py
- * @see [Tutorial: Trajectory Execution](https://roboticslab-uc3m.github.io/teo-developer-manual/tutorial/trajectories.html) (external)
+ * @see [Tutorial: Trajectory Execution](https://robots.uc3m.es/teo-developer-manual/tutorial/trajectories.html) (external)
  * @note If you need to command a simulated robot, you must emulate the periodic synchronization
  * port via `yarp clock --name /teoSim/sync:o --period XXX` with the desired period between points
  * (in milliseconds) and assuming `--robot /teoSim` was passed in this example.

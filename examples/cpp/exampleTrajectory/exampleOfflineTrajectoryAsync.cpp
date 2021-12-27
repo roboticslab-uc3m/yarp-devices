@@ -25,7 +25,7 @@
  * @see @ref exampleOfflineTrajectorySync.cpp Assumes the period between points is fixed, thus allowing batched
  * execution.
  * @see @ref exampleOfflineTrajectoryAsync.py
- * @see [Tutorial: Trajectory Execution](https://roboticslab-uc3m.github.io/teo-developer-manual/tutorial/trajectories.html) (external)
+ * @see [Tutorial: Trajectory Execution](https://robots.uc3m.es/teo-developer-manual/tutorial/trajectories.html) (external)
  * @note This application is not suitable for simulation.
  */
 

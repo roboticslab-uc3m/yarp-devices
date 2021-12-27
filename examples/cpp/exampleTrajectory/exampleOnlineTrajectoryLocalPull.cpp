@@ -25,7 +25,7 @@
  * @see @ref exampleOnlineTrajectoryRemotePull.cpp Command a remote instance of the real or simulated robot
  * via callback on a YARP synchronization port.
  * @see @ref exampleOnlineTrajectoryRemotePush.cpp Command a remote robot via direct position commands.
- * @see [Tutorial: Trajectory Execution](https://roboticslab-uc3m.github.io/teo-developer-manual/tutorial/trajectories.html) (external)
+ * @see [Tutorial: Trajectory Execution](https://robots.uc3m.es/teo-developer-manual/tutorial/trajectories.html) (external)
  * @note This application is not suitable for simulation.
  */
 

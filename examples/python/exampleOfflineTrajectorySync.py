@@ -4,7 +4,7 @@
 #  @see @ref exampleOfflineTrajectorySync.py
 ## @example{lineno} exampleOfflineTrajectorySync.py
 #  @see @ref exampleOfflineTrajectorySync.cpp
-#  @see [Tutorial: Trajectory Execution](https://roboticslab-uc3m.github.io/teo-developer-manual/tutorial/trajectories.html) (external)
+#  @see [Tutorial: Trajectory Execution](https://robots.uc3m.es/teo-developer-manual/tutorial/trajectories.html) (external)
 import argparse
 import math
 import time

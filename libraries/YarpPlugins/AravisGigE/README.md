@@ -4,7 +4,7 @@ To use this YARP device a GigE camera is required. Once connected, use the follo
 
 ## Requirements
 Depends on:
-- [Aravis 0.4](http://robots.uc3m.es/gitbook-installation-guides/install-aravis.html)
+- [Aravis 0.4](https://robots.uc3m.es/installation-guides/install-aravis.html)
 
 ## Launching the device
 To run the device and connect to the camera, simply run:
@@ -19,7 +19,7 @@ If you want to test the device without an actual camera, you can use a fake Arav
 ## Obtaining a color image from the device
 This YARP device returns a raw 8-bit image from the camera, to obtain a color image from the image, the stream has to be connected using the [Bayer carrier ](http://www.yarp.it/carrier_config.html#carrier_config_bayer) to interpret the raw image as a RGB image. Given an `AravisGigE` device named `/grabber` and an input port named `/v` (from a viewer, for instance), the command to run to connect them is:
 
-`yarp connect /grabber /v udp+recv.bayer+order.gbrg` 
+`yarp connect /grabber /v udp+recv.bayer+order.gbrg`
 
 
 ## Camera parameters control
@@ -27,7 +27,7 @@ The control of the camera parameters is performed from the image port (`/grabber
 
 `yarp rpc /grabber`
 
-Once there one can send command to the camera. The most common commands are: `has`, `get` and `set`. 
+Once there one can send command to the camera. The most common commands are: `has`, `get` and `set`.
 
 ### has
 With the `has` command one can query the device if it has some property. For instance, to check if the camera has zoom controls:
@@ -39,7 +39,7 @@ With the ' get' command one can query the *value* of some property. For instance
 
 `fgc get feat 9`
 
-### set 
+### set
 With the `set` command one can change the *value* of some property. For instance, to set the zoom to the maximum value:
 
 `fgc set feat 16 100`
@@ -48,7 +48,7 @@ With the `set` command one can change the *value* of some property. For instance
 These are the features currently available in YARP. To check which ones are supported by the camera, the `has` command can be used:
 
 | Feature | Enum name | Enum value |
-| --- | --- | ---| 
+| --- | --- | ---|
 | Brightness | YARP_FEATURE_BRIGHTNESS | 0 |
 | Exposure |YARP_FEATURE_EXPOSURE | 1 |
 | Sharpness | YARP_FEATURE_SHARPNESS | 2 |

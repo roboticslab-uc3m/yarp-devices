@@ -29,7 +29,7 @@
  * callback.
  * @see @ref exampleOnlineTrajectoryRemotePull.cpp Command a remote robot via callback, be it real or simulated.
  * @see @ref exampleOnlineTrajectoryRemotePush.py
- * @see [Tutorial: Trajectory Execution](https://roboticslab-uc3m.github.io/teo-developer-manual/tutorial/trajectories.html) (external)
+ * @see [Tutorial: Trajectory Execution](https://robots.uc3m.es/teo-developer-manual/tutorial/trajectories.html) (external)
  */
 
 #include <cmath>

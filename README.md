@@ -1,8 +1,8 @@
-[![Yarp-devices Homepage](https://img.shields.io/badge/yarp-devices-orange.svg)](http://robots.uc3m.es/dox-yarp-devices) [![Latest Release](https://img.shields.io/github/tag/roboticslab-uc3m/yarp-devices.svg?label=Latest%20Release)](https://github.com/roboticslab-uc3m/yarp-devices/tags)
+[![Yarp-devices Homepage](https://img.shields.io/badge/yarp-devices-orange.svg)](https://robots.uc3m.es/yarp-devices/) [![Latest Release](https://img.shields.io/github/tag/roboticslab-uc3m/yarp-devices.svg?label=Latest%20Release)](https://github.com/roboticslab-uc3m/yarp-devices/tags)
 
 A place for YARP devices.
 
-Link to Doxygen generated documentation: https://roboticslab-uc3m.github.io/yarp-devices
+Link to Doxygen generated documentation: https://robots.uc3m.es/yarp-devices/
 
 ## Installation
 
@@ -14,7 +14,7 @@ Usage instructions for the different devices contained in this repository can be
 
 ## Tricks
 
-Some tricks for the different devices contained in this repository can be found at http://robots.uc3m.es/gitbook-developer-manual/appendix/yarp-tricks.html ([perma](https://github.com/roboticslab-uc3m/developer-manual/blob/125713ab4c1b7b1eeefee68366d2494ad981b8bd/appendix/yarp-tricks.md)).
+Some tricks for the different devices contained in this repository can be found at https://robots.uc3m.es/developer-manual/appendix/yarp-tricks.html ([perma](https://github.com/roboticslab-uc3m/developer-manual/blob/125713ab4c1b7b1eeefee68366d2494ad981b8bd/appendix/yarp-tricks.md)).
 
 ## Contributing
 
