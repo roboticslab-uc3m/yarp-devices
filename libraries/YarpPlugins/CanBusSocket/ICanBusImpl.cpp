@@ -9,6 +9,7 @@
 #include <cstring>
 
 #include <algorithm>
+#include <utility>
 
 #include <yarp/conf/version.h>
 #include <yarp/os/LogStream.h>
@@ -66,7 +67,7 @@ bool CanBusSocket::canIdAdd(unsigned int _id)
         return true;
     }
 
-    filters.push_back(filter);
+    filters.push_back(std::move(filter));
 
     if (::setsockopt(s, SOL_CAN_RAW, CAN_RAW_FILTER, filters.data(), sizeof(struct can_filter) * filters.size()) < 0)
     {

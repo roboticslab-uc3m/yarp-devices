@@ -205,8 +205,7 @@ bool CanBusHico::FilterManager::bulkUpdate()
                 ++itNext;
             }
 
-            std::vector<unsigned int> sequence(itSeq, itNext);
-            sequences.push_back(sequence);
+            sequences.emplace_back(itSeq, itNext);
             itSeq = itNext;
         }
     }
@@ -214,8 +213,7 @@ bool CanBusHico::FilterManager::bulkUpdate()
     {
         for (std::set<unsigned int>::const_iterator it = stage.begin(); it != stage.end(); ++it)
         {
-            std::vector<unsigned int> sequence(1, *it);
-            sequences.push_back(sequence);
+            sequences.emplace_back(1, *it);
         }
     }
 

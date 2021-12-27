@@ -58,7 +58,7 @@ std::uint16_t InterpolatedPositionBuffer::getBufferConfig() const
 void InterpolatedPositionBuffer::addSetpoint(double target)
 {
     std::lock_guard<std::mutex> lock(queueMutex);
-    pendingTargets.push_back({target, yarp::os::SystemClock::nowSystem()});
+    pendingTargets.emplace_back(target, yarp::os::SystemClock::nowSystem());
 }
 
 std::vector<std::uint64_t> InterpolatedPositionBuffer::popBatch(bool fullBuffer)
