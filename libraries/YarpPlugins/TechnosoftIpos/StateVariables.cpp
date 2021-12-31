@@ -179,11 +179,7 @@ bool StateVariables::validateInitialState()
     case yarp::dev::VOCAB_JOINTTYPE_UNKNOWN:
         break;
     default:
-#if YARP_VERSION_MINOR >= 5
         yCWarning(IPOS) << "Illegal joint type vocab:" << yarp::os::Vocab32::decode(jointType);
-#else
-        yCWarning(IPOS) << "Illegal joint type vocab:" << yarp::os::Vocab::decode(jointType);
-#endif
         return false;
     }
 

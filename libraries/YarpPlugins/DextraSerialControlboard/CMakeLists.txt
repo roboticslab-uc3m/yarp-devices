@@ -8,7 +8,7 @@ yarp_prepare_plugin(DextraSerialControlboard
                     INCLUDE DextraSerialControlboard.hpp
                     DEFAULT ON
                     DEPENDS ENABLE_DextraRawControlboardLib
-                    EXTRA_CONFIG WRAPPER=controlboardwrapper2)
+                    EXTRA_CONFIG WRAPPER=controlBoard_nws_yarp)
 
 if(NOT SKIP_DextraSerialControlboard)
 

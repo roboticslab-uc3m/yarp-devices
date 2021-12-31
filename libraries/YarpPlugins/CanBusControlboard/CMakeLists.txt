@@ -8,7 +8,7 @@ yarp_prepare_plugin(CanBusControlboard
                     INCLUDE CanBusControlboard.hpp
                     DEFAULT ON
                     DEPENDS "ENABLE_CanBusSharerLib;ENABLE_YarpDeviceMapperLib"
-                    EXTRA_CONFIG WRAPPER=controlboardwrapper2)
+                    EXTRA_CONFIG WRAPPER=controlBoard_nws_yarp)
 
 if(NOT SKIP_CanBusControlboard)
 
@@ -47,7 +47,7 @@ if(NOT SKIP_CanBusControlboard)
                                        LogComponent.hpp
                                        LogComponent.cpp)
 
-    if(YARP_VERSION_SHORT VERSION_GREATER_EQUAL 3.5.100)
+    if(YARP_VERSION_SHORT VERSION_GREATER_EQUAL 3.6)
         target_sources(CanBusControlboard PRIVATE IJointFaultImpl.cpp)
     endif()
 

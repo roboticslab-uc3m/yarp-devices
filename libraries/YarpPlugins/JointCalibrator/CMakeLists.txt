@@ -12,7 +12,7 @@ if(NOT SKIP_JointCalibrator)
     yarp_add_plugin(JointCalibrator JointCalibrator.hpp
                                     DeviceDriverImpl.cpp
                                     IRemoteCalibratorImpl.cpp
-                                    IWrapperImpl.cpp
+                                    WrapperSingleImpl.cpp
                                     LogComponent.hpp
                                     LogComponent.cpp)
 

@@ -12,7 +12,7 @@ yarp_prepare_plugin(AravisGigE
                     INCLUDE AravisGigE.hpp
                     DEFAULT ON
                     DEPENDS ARAVIS_FOUND
-                    EXTRA_CONFIG WRAPPER=grabberDual)
+                    EXTRA_CONFIG WRAPPER=frameGrabber_nws_yarp)
 
 if(NOT SKIP_AravisGigE)
 

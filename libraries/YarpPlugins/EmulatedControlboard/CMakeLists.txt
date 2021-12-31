@@ -6,7 +6,7 @@ yarp_prepare_plugin(EmulatedControlboard
                     TYPE roboticslab::EmulatedControlboard
                     INCLUDE EmulatedControlboard.hpp
                     DEFAULT ON
-                    EXTRA_CONFIG WRAPPER=controlboardwrapper2)
+                    EXTRA_CONFIG WRAPPER=controlBoard_nws_yarp)
 
 if(NOT SKIP_EmulatedControlboard)
 

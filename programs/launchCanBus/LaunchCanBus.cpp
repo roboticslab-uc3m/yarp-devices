@@ -6,8 +6,6 @@
 #include <string>
 #include <vector>
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/Bottle.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
@@ -50,11 +48,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
         yCWarning(LCB) << "Config file not found or insufficient permissions:" << configPath;
     }
 
-#if YARP_VERSION_MINOR >= 5
-    yarp::conf::vocab32_t mode = rf.check("mode", yarp::os::Value(VOCAB_CM_POSITION), "initial mode of operation").asVocab32();
-#else
-    yarp::conf::vocab32_t mode = rf.check("mode", yarp::os::Value(VOCAB_CM_POSITION), "initial mode of operation").asVocab();
-#endif
+    auto mode = rf.check("mode", yarp::os::Value(VOCAB_CM_POSITION), "initial mode of operation").asVocab32();
 
     yarp::os::Bottle devCan = rf.findGroup("devCan", "CAN controlboard devices").tail();
     yarp::os::Bottle mapper = rf.findGroup("mapper", "YARP mapper devices").tail();
@@ -206,7 +200,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
             temp.push(descriptor);
         }
 
-        attachToMapper:
+attachToMapper:
         if (!iMultipleWrapper->attachAll(temp))
         {
             yCError(LCB) << "Unable to attach CAN devices to mapper device" << mapperDeviceLabel;

@@ -59,10 +59,8 @@ bool DextraRawControlboard::setControlModeRaw(int j, int mode)
 {
 #if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
-#elif YARP_VERSION_MINOR >= 5
-    yCTrace(DEXTRA, "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
 #else
-    yCTrace(DEXTRA, "%d %s", j, yarp::os::Vocab::decode(mode).c_str());
+    yCTrace(DEXTRA, "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
 #endif
     CHECK_JOINT(j);
     return false; // don't allow control modes other than position direct, for onw

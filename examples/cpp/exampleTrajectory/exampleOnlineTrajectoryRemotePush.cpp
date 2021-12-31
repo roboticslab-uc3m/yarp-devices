@@ -38,8 +38,6 @@
 #include <iostream>
 #include <utility>
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/PeriodicThread.h>
@@ -62,11 +60,7 @@ class Worker : public yarp::os::PeriodicThread
 {
 public:
     Worker(double period, double initial, double increment, double distance, std::function<void(double)> cmd)
-#if YARP_VERSION_MINOR >= 5
         : yarp::os::PeriodicThread(period, yarp::os::PeriodicThreadClock::Absolute),
-#else
-        : yarp::os::PeriodicThread(period),
-#endif
           command(std::move(cmd)),
           initial(initial),
           current(initial),

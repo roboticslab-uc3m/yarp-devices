@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.12)
 project(exampleJr3 LANGUAGES CXX)
 
 if(NOT YARP_FOUND)
-    find_package(YARP 3.4 REQUIRED COMPONENTS os dev sig)
+    find_package(YARP 3.5 REQUIRED COMPONENTS os dev sig)
 endif()
 
 add_executable(exampleJr3 exampleJr3.cpp)

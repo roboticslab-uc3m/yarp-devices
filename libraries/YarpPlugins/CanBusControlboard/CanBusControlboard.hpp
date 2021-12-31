@@ -28,7 +28,7 @@ namespace roboticslab
  * @ingroup CanBusControlboard
  * @brief CAN-oriented control board that implements all YARP motor interfaces.
  *
- * This controlboardwrapper2 subdevice exposes motor commands to CAN nodes
+ * This control board wrapper subdevice exposes motor commands to CAN nodes
  * modelled as wrapped motor raw subdevices (i.e. devices which implement the
  * xxxRaw interface counterparts). At the core of this driver class, another set
  * of wrapped devices implements hardware connection to a physical CAN bus, thus

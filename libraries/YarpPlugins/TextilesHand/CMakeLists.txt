@@ -7,7 +7,7 @@ yarp_prepare_plugin(TextilesHand
                     TYPE roboticslab::TextilesHand
                     INCLUDE TextilesHand.hpp
                     DEFAULT ON
-                    EXTRA_CONFIG WRAPPER=controlboardwrapper2)
+                    EXTRA_CONFIG WRAPPER=controlBoard_nws_yarp)
 
 if(NOT SKIP_TextilesHand)
 

@@ -2,8 +2,6 @@
 
 #include "AmorControlboard.hpp"
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/Log.h>
 #include <yarp/os/Vocab.h>
 
@@ -64,11 +62,7 @@ bool AmorControlboard::getControlModes(const int n_joint, const int *joints, int
 
 bool AmorControlboard::setControlMode(const int j, const int mode)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(AMOR, "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
-#else
-    yCTrace(AMOR, "%d %s", j, yarp::os::Vocab::decode(mode).c_str());
-#endif
 
     if (!indexWithinRange(j))
     {

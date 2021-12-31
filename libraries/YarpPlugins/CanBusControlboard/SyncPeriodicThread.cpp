@@ -4,7 +4,6 @@
 
 #include <cmath> // std::modf
 
-#include <yarp/conf/version.h>
 #include <yarp/os/SystemClock.h>
 
 using namespace roboticslab;
@@ -12,11 +11,7 @@ using namespace roboticslab;
 // -----------------------------------------------------------------------------
 
 SyncPeriodicThread::SyncPeriodicThread(std::vector<CanBusBroker *> & _canBusBrokers, FutureTaskFactory * _taskFactory)
-#if YARP_VERSION_MINOR >= 5
     : yarp::os::PeriodicThread(1.0, yarp::os::ShouldUseSystemClock::Yes, yarp::os::PeriodicThreadClock::Absolute),
-#else
-    : yarp::os::PeriodicThread(1.0, yarp::os::ShouldUseSystemClock::Yes),
-#endif
       canBusBrokers(_canBusBrokers),
       taskFactory(_taskFactory),
       syncObserver(nullptr)

@@ -35,7 +35,7 @@ if(NOT SKIP_TechnosoftIpos)
                                    LogComponent.hpp
                                    LogComponent.cpp)
 
-    if(YARP_VERSION_SHORT VERSION_GREATER_EQUAL 3.5.100)
+    if(YARP_VERSION_SHORT VERSION_GREATER_EQUAL 3.6)
         target_sources(TechnosoftIpos PRIVATE IJointFaultRawImpl.cpp)
     endif()
 

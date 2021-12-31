@@ -10,7 +10,7 @@
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IEncoders.h>
 #include <yarp/dev/IPositionControl.h>
-#include <yarp/dev/IWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 
 namespace roboticslab
 {

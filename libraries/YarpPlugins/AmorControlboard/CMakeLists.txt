@@ -11,7 +11,7 @@ yarp_prepare_plugin(AmorControlboard
                     INCLUDE AmorControlboard.hpp
                     DEFAULT ON
                     DEPENDS AMOR_API_FOUND
-                    EXTRA_CONFIG WRAPPER=controlboardwrapper2)
+                    EXTRA_CONFIG WRAPPER=controlBoard_nws_yarp)
 
 if(NOT SKIP_AmorControlboard)
 

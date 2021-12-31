@@ -7,12 +7,10 @@
 #include <memory>
 #include <sstream>
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
-#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Vocab.h>
 
 #include "LogComponent.hpp"
@@ -22,7 +20,6 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-#if YARP_VERSION_MINOR >= 5
 constexpr yarp::conf::vocab32_t VOCAB_SDO_UPLOAD = yarp::os::createVocab32('s', 'd', 'o', 'u');
 constexpr yarp::conf::vocab32_t VOCAB_SDO_DOWNLOAD = yarp::os::createVocab32('s', 'd', 'o', 'd');
 constexpr yarp::conf::vocab32_t VOCAB_SDO_I8_TYPE = yarp::os::createVocab32('i', '8');
@@ -35,20 +32,6 @@ constexpr yarp::conf::vocab32_t VOCAB_SDO_STRING_TYPE = yarp::os::createVocab32(
 constexpr yarp::conf::vocab32_t VOCAB_SDO_OK = yarp::os::createVocab32('o', 'k');
 constexpr yarp::conf::vocab32_t VOCAB_SDO_FAIL = yarp::os::createVocab32('f', 'a', 'i', 'l');
 constexpr yarp::conf::vocab32_t VOCAB_SDO_HELP = yarp::os::createVocab32('h', 'e', 'l', 'p');
-#else
-constexpr yarp::conf::vocab32_t VOCAB_SDO_UPLOAD = yarp::os::createVocab('s', 'd', 'o', 'u');
-constexpr yarp::conf::vocab32_t VOCAB_SDO_DOWNLOAD = yarp::os::createVocab('s', 'd', 'o', 'd');
-constexpr yarp::conf::vocab32_t VOCAB_SDO_I8_TYPE = yarp::os::createVocab('i', '8');
-constexpr yarp::conf::vocab32_t VOCAB_SDO_UI8_TYPE = yarp::os::createVocab('u', 'i', '8');
-constexpr yarp::conf::vocab32_t VOCAB_SDO_I16_TYPE = yarp::os::createVocab('i', '1', '6');
-constexpr yarp::conf::vocab32_t VOCAB_SDO_UI16_TYPE = yarp::os::createVocab('u', 'i', '1', '6');
-constexpr yarp::conf::vocab32_t VOCAB_SDO_I32_TYPE = yarp::os::createVocab('i', '3', '2');
-constexpr yarp::conf::vocab32_t VOCAB_SDO_UI32_TYPE = yarp::os::createVocab('u', 'i', '3', '2');
-constexpr yarp::conf::vocab32_t VOCAB_SDO_STRING_TYPE = yarp::os::createVocab('s', 't', 'r');
-constexpr yarp::conf::vocab32_t VOCAB_SDO_OK = yarp::os::createVocab('o', 'k');
-constexpr yarp::conf::vocab32_t VOCAB_SDO_FAIL = yarp::os::createVocab('f', 'a', 'i', 'l');
-constexpr yarp::conf::vocab32_t VOCAB_SDO_HELP = yarp::os::createVocab('h', 'e', 'l', 'p');
-#endif
 
 namespace
 {
@@ -104,11 +87,7 @@ namespace
 
             if (response && writer)
             {
-#if YARP_VERSION_MINOR >= 5
                 response->addVocab32(success ? VOCAB_SDO_OK : VOCAB_SDO_FAIL);
-#else
-                response->addVocab(success ? VOCAB_SDO_OK : VOCAB_SDO_FAIL);
-#endif
                 response->write(*writer);
             }
         }
@@ -180,18 +159,11 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
         return false;
     }
 
-#if YARP_VERSION_MINOR >= 5
     if (request.size() == 1 && request.get(0).asVocab32() == VOCAB_SDO_HELP)
-#else
-    if (request.size() == 1 && request.get(0).asVocab() == VOCAB_SDO_HELP)
-#endif
     {
         static auto usage = makeUsage();
-#if YARP_VERSION_MINOR >= 5
-        yarp::os::Bottle reply {yarp::os::Value(yarp::os::createVocab32('m','a','n','y'), true)};
-#else
-        yarp::os::Bottle reply {yarp::os::Value(yarp::os::createVocab('m','a','n','y'), true)};
-#endif
+        yarp::os::Bottle reply;
+        reply.addVocab32('m', 'a', 'n', 'y');
         reply.append(usage);
         return reply.write(*writer);
     }
@@ -200,23 +172,15 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
 
     if (request.size() < 5)
     {
-        yCWarning(CBCB, "SDO requests require at least 5 elements, got %zu", request.size());
+        yCWarning(CBCB) << "SDO requests require at least 5 elements, got" << request.size();
         return false;
     }
 
-#if YARP_VERSION_MINOR >= 5
     sdo_direction dir = static_cast<sdo_direction>(request.get(0).asVocab32());
-#else
-    sdo_direction dir = static_cast<sdo_direction>(request.get(0).asVocab());
-#endif
     unsigned int id = request.get(1).asInt8();
     unsigned int index = request.get(2).asInt16();
     unsigned int subindex = request.get(3).asInt8();
-#if YARP_VERSION_MINOR >= 5
     data_type type = static_cast<data_type>(request.get(4).asVocab32());
-#else
-    data_type type = static_cast<data_type>(request.get(4).asVocab());
-#endif
 
     guard.attachSdoHandle(priv->allocate(id, sender));
 
@@ -319,11 +283,7 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
             break;
         }
         default:
-#if YARP_VERSION_MINOR >= 5
-            yCWarning(CBCB, "Invalid data type %s", yarp::os::Vocab32::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
-#else
-            yCWarning(CBCB, "Invalid data type %s", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
-#endif
+            yCWarning(CBCB) << "Invalid data type" << yarp::os::Vocab32::decode(static_cast<yarp::conf::vocab32_t>(type));
             return false;
         }
 
@@ -339,7 +299,7 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
     {
         if (request.size() != 6)
         {
-            yCWarning(CBCB, "Download SDO requires exactly 6 elements, got %zu", request.size());
+            yCWarning(CBCB) << "Download SDO requires exactly 6 elements, got" << request.size();
             return false;
         }
 
@@ -359,21 +319,13 @@ bool SdoReplier::read(yarp::os::ConnectionReader & reader)
         case data_type::STRING:
             return priv->sdo()->download("Remote indication", data.asString(), index, subindex) && guard.flip();
         default:
-#if YARP_VERSION_MINOR >= 5
-            yCWarning(CBCB, "Invalid data type %s", yarp::os::Vocab32::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
-#else
-            yCWarning(CBCB, "Invalid data type %s", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(type)).c_str());
-#endif
+            yCWarning(CBCB) << "Invalid data type" << yarp::os::Vocab32::decode(static_cast<yarp::conf::vocab32_t>(type));
             return false;
         }
     }
     else
     {
-#if YARP_VERSION_MINOR >= 5
-        yCWarning(CBCB, "Invalid SDO direction %s", yarp::os::Vocab32::decode(static_cast<yarp::conf::vocab32_t>(dir)).c_str());
-#else
-        yCWarning(CBCB, "Invalid SDO direction %s", yarp::os::Vocab::decode(static_cast<yarp::conf::vocab32_t>(dir)).c_str());
-#endif
+        yCWarning(CBCB) << "Invalid SDO direction" << yarp::os::Vocab32::decode(static_cast<yarp::conf::vocab32_t>(dir));
         return false;
     }
 }

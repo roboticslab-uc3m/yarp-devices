@@ -2,8 +2,6 @@
 
 #include "CanBusControlboard.hpp"
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/Log.h>
 #include <yarp/os/Vocab.h>
 
@@ -49,11 +47,7 @@ namespace
 
 bool CanBusControlboard::setPid(const yarp::dev::PidControlTypeEnum & pidtype, int j, const yarp::dev::Pid & pid)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
-#else
-    yCTrace(CBCB, "%s %d", yarp::os::Vocab::decode(pidtype).c_str(), j);
-#endif
     CHECK_JOINT(j);
     return mapSingleJoint<const yarp::dev::Pid &>(deviceMapper, &yarp::dev::IPidControlRaw::setPidRaw, pidtype, j, pid);
 }
@@ -62,11 +56,7 @@ bool CanBusControlboard::setPid(const yarp::dev::PidControlTypeEnum & pidtype, i
 
 bool CanBusControlboard::setPids(const yarp::dev::PidControlTypeEnum & pidtype, const yarp::dev::Pid * pids)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s", yarp::os::Vocab32::decode(pidtype).c_str());
-#else
-    yCTrace(CBCB, "%s", yarp::os::Vocab::decode(pidtype).c_str());
-#endif
     return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::setPidsRaw, pidtype, pids);
 }
 
@@ -74,11 +64,7 @@ bool CanBusControlboard::setPids(const yarp::dev::PidControlTypeEnum & pidtype, 
 
 bool CanBusControlboard::setPidReference(const yarp::dev::PidControlTypeEnum & pidtype, int j, double ref)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s %d %f", yarp::os::Vocab32::decode(pidtype).c_str(), j, ref);
-#else
-    yCTrace(CBCB, "%s %d %f", yarp::os::Vocab::decode(pidtype).c_str(), j, ref);
-#endif
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::setPidReferenceRaw, pidtype, j, ref);
 }
@@ -87,11 +73,7 @@ bool CanBusControlboard::setPidReference(const yarp::dev::PidControlTypeEnum & p
 
 bool CanBusControlboard::setPidReferences(const yarp::dev::PidControlTypeEnum & pidtype, const double * refs)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s", yarp::os::Vocab32::decode(pidtype).c_str());
-#else
-    yCTrace(CBCB, "%s", yarp::os::Vocab::decode(pidtype).c_str());
-#endif
     return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::setPidReferencesRaw, pidtype, refs);
 }
 
@@ -99,11 +81,7 @@ bool CanBusControlboard::setPidReferences(const yarp::dev::PidControlTypeEnum & 
 
 bool CanBusControlboard::setPidErrorLimit(const yarp::dev::PidControlTypeEnum & pidtype, int j, double limit)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s %d %f", yarp::os::Vocab32::decode(pidtype).c_str(), j, limit);
-#else
-    yCTrace(CBCB, "%s %d %f", yarp::os::Vocab::decode(pidtype).c_str(), j, limit);
-#endif
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::setPidErrorLimitRaw, pidtype, j, limit);
 }
@@ -112,11 +90,7 @@ bool CanBusControlboard::setPidErrorLimit(const yarp::dev::PidControlTypeEnum & 
 
 bool CanBusControlboard::setPidErrorLimits(const yarp::dev::PidControlTypeEnum & pidtype, const double * limits)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s", yarp::os::Vocab32::decode(pidtype).c_str());
-#else
-    yCTrace(CBCB, "%s", yarp::os::Vocab::decode(pidtype).c_str());
-#endif
     return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::setPidErrorLimitsRaw, pidtype, limits);
 }
 
@@ -124,11 +98,7 @@ bool CanBusControlboard::setPidErrorLimits(const yarp::dev::PidControlTypeEnum &
 
 bool CanBusControlboard::getPidError(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * err)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
-#else
-    yCTrace(CBCB, "%s %d", yarp::os::Vocab::decode(pidtype).c_str(), j);
-#endif
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::getPidErrorRaw, pidtype, j, err);
 }
@@ -137,11 +107,7 @@ bool CanBusControlboard::getPidError(const yarp::dev::PidControlTypeEnum & pidty
 
 bool CanBusControlboard::getPidErrors(const yarp::dev::PidControlTypeEnum & pidtype, double * errs)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s", yarp::os::Vocab32::decode(pidtype).c_str());
-#else
-    yCTrace(CBCB, "%s", yarp::os::Vocab::decode(pidtype).c_str());
-#endif
     return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::getPidErrorsRaw, pidtype, errs);
 }
 
@@ -149,11 +115,7 @@ bool CanBusControlboard::getPidErrors(const yarp::dev::PidControlTypeEnum & pidt
 
 bool CanBusControlboard::getPidOutput(const yarp::dev::PidControlTypeEnum & pidtype, int j, double *out)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
-#else
-    yCTrace(CBCB, "%s %d", yarp::os::Vocab::decode(pidtype).c_str(), j);
-#endif
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::getPidOutputRaw, pidtype, j, out);
 }
@@ -162,11 +124,7 @@ bool CanBusControlboard::getPidOutput(const yarp::dev::PidControlTypeEnum & pidt
 
 bool CanBusControlboard::getPidOutputs(const yarp::dev::PidControlTypeEnum & pidtype, double * outs)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s", yarp::os::Vocab32::decode(pidtype).c_str());
-#else
-    yCTrace(CBCB, "%s", yarp::os::Vocab::decode(pidtype).c_str());
-#endif
     return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::getPidOutputsRaw, pidtype, outs);
 }
 
@@ -174,11 +132,7 @@ bool CanBusControlboard::getPidOutputs(const yarp::dev::PidControlTypeEnum & pid
 
 bool CanBusControlboard::getPid(const yarp::dev::PidControlTypeEnum & pidtype, int j, yarp::dev::Pid * pid)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
-#else
-    yCTrace(CBCB, "%s %d", yarp::os::Vocab::decode(pidtype).c_str(), j);
-#endif
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::getPidRaw, pidtype, j, pid);
 }
@@ -187,11 +141,7 @@ bool CanBusControlboard::getPid(const yarp::dev::PidControlTypeEnum & pidtype, i
 
 bool CanBusControlboard::getPids(const yarp::dev::PidControlTypeEnum & pidtype, yarp::dev::Pid * pids)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s", yarp::os::Vocab32::decode(pidtype).c_str());
-#else
-    yCTrace(CBCB, "%s", yarp::os::Vocab::decode(pidtype).c_str());
-#endif
     return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::getPidsRaw, pidtype, pids);
 }
 
@@ -199,11 +149,7 @@ bool CanBusControlboard::getPids(const yarp::dev::PidControlTypeEnum & pidtype, 
 
 bool CanBusControlboard::getPidReference(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * ref)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
-#else
-    yCTrace(CBCB, "%s %d", yarp::os::Vocab::decode(pidtype).c_str(), j);
-#endif
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::getPidReferenceRaw, pidtype, j, ref);
 }
@@ -212,11 +158,7 @@ bool CanBusControlboard::getPidReference(const yarp::dev::PidControlTypeEnum & p
 
 bool CanBusControlboard::getPidReferences(const yarp::dev::PidControlTypeEnum & pidtype, double * refs)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s", yarp::os::Vocab32::decode(pidtype).c_str());
-#else
-    yCTrace(CBCB, "%s", yarp::os::Vocab::decode(pidtype).c_str());
-#endif
     return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::getPidReferencesRaw, pidtype, refs);
 }
 
@@ -224,11 +166,7 @@ bool CanBusControlboard::getPidReferences(const yarp::dev::PidControlTypeEnum & 
 
 bool CanBusControlboard::getPidErrorLimit(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * limit)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
-#else
-    yCTrace(CBCB, "%s %d", yarp::os::Vocab::decode(pidtype).c_str(), j);
-#endif
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::getPidErrorLimitRaw, pidtype, j, limit);
 }
@@ -237,11 +175,7 @@ bool CanBusControlboard::getPidErrorLimit(const yarp::dev::PidControlTypeEnum & 
 
 bool CanBusControlboard::getPidErrorLimits(const yarp::dev::PidControlTypeEnum & pidtype, double * limits)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s", yarp::os::Vocab32::decode(pidtype).c_str());
-#else
-    yCTrace(CBCB, "%s", yarp::os::Vocab::decode(pidtype).c_str());
-#endif
     return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::getPidErrorLimitsRaw, pidtype, limits);
 }
 
@@ -249,11 +183,7 @@ bool CanBusControlboard::getPidErrorLimits(const yarp::dev::PidControlTypeEnum &
 
 bool CanBusControlboard::resetPid(const yarp::dev::PidControlTypeEnum & pidtype, int j)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
-#else
-    yCTrace(CBCB, "%s %d", yarp::os::Vocab::decode(pidtype).c_str(), j);
-#endif
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::resetPidRaw, pidtype, j);
 }
@@ -262,11 +192,7 @@ bool CanBusControlboard::resetPid(const yarp::dev::PidControlTypeEnum & pidtype,
 
 bool CanBusControlboard::disablePid(const yarp::dev::PidControlTypeEnum & pidtype, int j)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
-#else
-    yCTrace(CBCB, "%s %d", yarp::os::Vocab::decode(pidtype).c_str(), j);
-#endif
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::disablePidRaw, pidtype, j);
 }
@@ -275,11 +201,7 @@ bool CanBusControlboard::disablePid(const yarp::dev::PidControlTypeEnum & pidtyp
 
 bool CanBusControlboard::enablePid(const yarp::dev::PidControlTypeEnum & pidtype, int j)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
-#else
-    yCTrace(CBCB, "%s %d", yarp::os::Vocab::decode(pidtype).c_str(), j);
-#endif
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::enablePidRaw, pidtype, j);
 }
@@ -288,11 +210,7 @@ bool CanBusControlboard::enablePid(const yarp::dev::PidControlTypeEnum & pidtype
 
 bool CanBusControlboard::setPidOffset(const yarp::dev::PidControlTypeEnum & pidtype, int j, double v)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s %d %f", yarp::os::Vocab32::decode(pidtype).c_str(), j, v);
-#else
-    yCTrace(CBCB, "%s %d %f", yarp::os::Vocab::decode(pidtype).c_str(), j, v);
-#endif
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::setPidOffsetRaw, pidtype, j, v);
 }
@@ -301,11 +219,7 @@ bool CanBusControlboard::setPidOffset(const yarp::dev::PidControlTypeEnum & pidt
 
 bool CanBusControlboard::isPidEnabled(const yarp::dev::PidControlTypeEnum & pidtype, int j, bool * enabled)
 {
-#if YARP_VERSION_MINOR >= 5
     yCTrace(CBCB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
-#else
-    yCTrace(CBCB, "%s %d", yarp::os::Vocab::decode(pidtype).c_str(), j);
-#endif
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::isPidEnabledRaw, pidtype, j, enabled);
 }

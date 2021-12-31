@@ -11,7 +11,7 @@ namespace roboticslab
 
 /**
  * @ingroup launchCanBus
- * @brief Launches one or more CAN bus drivers and controlboardwrapper2 network wrappers.
+ * @brief Launches one or more CAN bus drivers and control board network wrappers.
  */
 class LaunchCanBus : public yarp::os::RFModule
 {

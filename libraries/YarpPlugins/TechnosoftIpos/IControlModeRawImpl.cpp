@@ -46,10 +46,8 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
 {
 #if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
-#elif YARP_VERSION_MINOR >= 5
-    yCTrace(IPOS, "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
 #else
-    yCTrace(IPOS, "%d %s", j, yarp::os::Vocab::decode(mode).c_str());
+    yCTrace(IPOS, "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
 #endif
     CHECK_JOINT(j);
 
@@ -179,10 +177,8 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     default:
 #if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(IPOS, id()) << "Unsupported, unknown or read-only mode:" << yarp::os::Vocab32::decode(mode);
-#elif YARP_VERSION_MINOR >= 5
-        yCError(IPOS, "Unsupported, unknown or read-only mode: %s", yarp::os::Vocab32::decode(mode).c_str());
 #else
-        yCError(IPOS, "Unsupported, unknown or read-only mode: %s", yarp::os::Vocab::decode(mode).c_str());
+        yCError(IPOS, "Unsupported, unknown or read-only mode: %s", yarp::os::Vocab32::decode(mode).c_str());
 #endif
         return false;
     }
