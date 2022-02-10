@@ -32,6 +32,8 @@ if(NOT SKIP_AmorControlboard)
                                            YARP::YARP_dev
                                            AMOR::amor_api)
 
+    target_compile_features(AmorControlboard PRIVATE cxx_std_17)
+
     yarp_install(TARGETS AmorControlboard
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
                  ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR}

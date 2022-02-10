@@ -3,7 +3,7 @@
 #ifndef __AMOR_CONTROLBOARD_HPP__
 #define __AMOR_CONTROLBOARD_HPP__
 
-#include <stdio.h>
+#include <mutex>
 #include <vector>
 
 #include <yarp/os/all.h>
@@ -653,6 +653,7 @@ protected:
 private:
 
     AMOR_HANDLE handle;
+    mutable std::mutex handleMutex;
     yarp::dev::PolyDriver cartesianControllerDevice;
     bool usingCartesianController;
     int controlMode;

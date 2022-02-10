@@ -47,14 +47,12 @@ bool AmorControlboard::open(yarp::os::Searchable& config)
         if (amor_get_joint_info(handle, j, &jointInfo[j]) != AMOR_SUCCESS)
         {
             yCError(AMOR) << "amor_get_joint_info() failed for joint" << j << "with error:" << amor_error();
-            amor_release(handle);
             return false;
         }
 
         if (amor_get_status(handle, j, &jointStatus[j]) != AMOR_SUCCESS)
         {
             yCError(AMOR) << "amor_get_status() failed for joint" << j << "with error:" << amor_error();
-            amor_release(handle);
             return false;
         }
     }
@@ -64,7 +62,6 @@ bool AmorControlboard::open(yarp::os::Searchable& config)
     if (!getEncoders(positions.data()))
     {
         yCError(AMOR) << "getEncoders() failed";
-        amor_release(handle);
         return false;
     }
 
@@ -74,7 +71,6 @@ bool AmorControlboard::open(yarp::os::Searchable& config)
     if (!positionMove(positions.data()))
     {
         yCError(AMOR) << "positionMove() failed";
-        amor_release(handle);
         return false;
     }
 
@@ -87,7 +83,8 @@ bool AmorControlboard::open(yarp::os::Searchable& config)
         usingCartesianController = true;
 
         std::string subdevice = "AmorCartesianControl";
-        yarp::os::Value vHandle(&handle, sizeof handle);
+        yarp::os::Value vHandle(&handle, sizeof(handle));
+        yarp::os::Value vHandleMutex(&handleMutex, sizeof(handleMutex));
         yarp::os::Property cartesianControllerOptions;
 
         cartesianControllerOptions.fromString((config.toString()));
@@ -95,6 +92,7 @@ bool AmorControlboard::open(yarp::os::Searchable& config)
         cartesianControllerOptions.put("subdevice", subdevice);
         cartesianControllerOptions.put("name", cartesianControllerName->asString());
         cartesianControllerOptions.put("handle", vHandle);
+        cartesianControllerOptions.put("handleMutex", vHandleMutex);
         cartesianControllerOptions.setMonitor(config.getMonitor(), subdevice.c_str());
 
         cartesianControllerDevice.open(cartesianControllerOptions);
@@ -102,7 +100,6 @@ bool AmorControlboard::open(yarp::os::Searchable& config)
         if (!cartesianControllerDevice.isValid())
         {
             yCError(AMOR) << "AMOR cartesian controller device not valid";
-            amor_release(handle);
             return false;
         }
     }

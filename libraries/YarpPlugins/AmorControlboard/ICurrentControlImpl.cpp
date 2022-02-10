@@ -30,7 +30,7 @@ bool AmorControlboard::getCurrent(int m, double *curr)
 
     AMOR_VECTOR7 currents;
 
-    if (amor_get_actual_currents(handle, &currents) != AMOR_SUCCESS)
+    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_actual_currents(handle, &currents) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_actual_currents() failed: %s", amor_error());
         return false;
@@ -49,7 +49,7 @@ bool AmorControlboard::getCurrents(double *currs)
 
     AMOR_VECTOR7 currents;
 
-    if (amor_get_actual_currents(handle, &currents) != AMOR_SUCCESS)
+    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_actual_currents(handle, &currents) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_actual_currents() failed: %s", amor_error());
         return false;
@@ -73,7 +73,7 @@ bool AmorControlboard::getCurrentRange(int m, double *min, double *max)
 
     AMOR_JOINT_INFO parameters;
 
-    if (amor_get_joint_info(handle, m, &parameters) != AMOR_SUCCESS)
+    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_joint_info(handle, m, &parameters) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_joint_info() failed: %s", amor_error());
         return false;
@@ -111,7 +111,7 @@ bool AmorControlboard::setRefCurrents(const double *currs)
 
     std::copy(currs, currs + AMOR_NUM_JOINTS, currents);
 
-    if (amor_set_currents(handle, currents) != AMOR_SUCCESS)
+    if (std::lock_guard<std::mutex> lock(handleMutex); amor_set_currents(handle, currents) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_set_currents() failed: %s", amor_error());
         return false;
@@ -133,7 +133,7 @@ bool AmorControlboard::setRefCurrent(int m, double curr)
 
     AMOR_VECTOR7 currents;
 
-    if (amor_get_actual_currents(handle, &currents) != AMOR_SUCCESS)
+    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_actual_currents(handle, &currents) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_actual_currents() failed: %s", amor_error());
         return false;
@@ -141,7 +141,7 @@ bool AmorControlboard::setRefCurrent(int m, double curr)
 
     currents[m] = curr;
 
-    if (amor_set_currents(handle, currents) != AMOR_SUCCESS)
+    if (std::lock_guard<std::mutex> lock(handleMutex); amor_set_currents(handle, currents) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_set_currents() failed: %s", amor_error());
         return false;
@@ -158,7 +158,7 @@ bool AmorControlboard::setRefCurrents(const int n_motor, const int *motors, cons
 
     AMOR_VECTOR7 currents;
 
-    if (amor_get_actual_currents(handle, &currents) != AMOR_SUCCESS)
+    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_actual_currents(handle, &currents) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_actual_currents() failed: %s", amor_error());
         return false;
@@ -169,7 +169,7 @@ bool AmorControlboard::setRefCurrents(const int n_motor, const int *motors, cons
         currents[motors[i]] = currs[i];
     }
 
-    if (amor_set_currents(handle, currents) != AMOR_SUCCESS)
+    if (std::lock_guard<std::mutex> lock(handleMutex); amor_set_currents(handle, currents) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_set_currents() failed: %s", amor_error());
         return false;
@@ -186,7 +186,7 @@ bool AmorControlboard::getRefCurrents(double *currs)
 
     AMOR_VECTOR7 currents;
 
-    if (amor_get_req_currents(handle, &currents) != AMOR_SUCCESS)
+    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_req_currents(handle, &currents) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_req_currents() failed: %s", amor_error());
         return false;
@@ -210,7 +210,7 @@ bool AmorControlboard::getRefCurrent(int m, double *curr)
 
     AMOR_VECTOR7 currents;
 
-    if (amor_get_req_currents(handle, &currents) != AMOR_SUCCESS)
+    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_req_currents(handle, &currents) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_req_currents() failed: %s", amor_error());
         return false;

@@ -29,7 +29,7 @@ bool AmorControlboard::getLimits(int axis, double *min, double *max)
 
     AMOR_JOINT_INFO parameters;
 
-    if (amor_get_joint_info(handle, axis, &parameters) != AMOR_SUCCESS)
+    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_joint_info(handle, axis, &parameters) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_joint_info() failed: %s", amor_error());
         return false;
@@ -70,7 +70,7 @@ bool AmorControlboard::getVelLimits(int axis, double *min, double *max)
 
     AMOR_JOINT_INFO parameters;
 
-    if (amor_get_joint_info(handle, axis, &parameters) != AMOR_SUCCESS)
+    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_joint_info(handle, axis, &parameters) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_joint_info() failed: %s", amor_error());
         return false;
