@@ -116,6 +116,12 @@ bool TechnosoftIpos::getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParame
     params->bemf_scale = 0.0;
     params->ktau = vars.k;
     params->ktau_scale = 0.0;
+#if defined(YARP_VERSION_COMPARE) && YARP_VERSION_COMPARE(>=, 3, 6, 102)
+    params->viscousPos = 0.0;
+    params->viscousNeg = 0.0;
+    params->coulombPos = 0.0;
+    params->coulombNeg = 0.0;
+#endif
 
     return true;
 }
