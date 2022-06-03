@@ -38,7 +38,7 @@
 Serial pc(USBTX, USBRX);   // Serial connection
 DigitalOut led1(LED1);     // received
 CAN can(p30, p29);         // tx,rx
-Motor m(p24, p26, p25);    // pwm, fwd, rev (PWM, REVERSE, FORDWARD)
+Motor m(p22, p23, p24);    // pwm, fwd, rev (PWM, REVERSE, FORWARD)
 const uint8_t id = 64;     // right-hand: ID 65, left-hand: ID 64
 
 bool receive(float* value) {
