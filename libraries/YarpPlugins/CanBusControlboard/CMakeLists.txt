@@ -23,6 +23,7 @@ if(NOT SKIP_CanBusControlboard)
                                        IEncodersImpl.cpp
                                        IImpedanceControlImpl.cpp
                                        IInteractionModeImpl.cpp
+                                       IJointFaultImpl.cpp
                                        IMotorImpl.cpp
                                        IMotorEncodersImpl.cpp
                                        IPidControlImpl.cpp
@@ -47,18 +48,12 @@ if(NOT SKIP_CanBusControlboard)
                                        LogComponent.hpp
                                        LogComponent.cpp)
 
-    if(YARP_VERSION_SHORT VERSION_GREATER_EQUAL 3.6)
-        target_sources(CanBusControlboard PRIVATE IJointFaultImpl.cpp)
-    endif()
-
     target_link_libraries(CanBusControlboard YARP::YARP_os
                                              YARP::YARP_dev
                                              ROBOTICSLAB::CanBusSharerLib
                                              ROBOTICSLAB::CanOpenNodeLib
                                              ROBOTICSLAB::StateObserverLib
                                              ROBOTICSLAB::YarpDeviceMapperLib)
-
-    target_compile_features(CanBusControlboard PRIVATE cxx_std_14)
 
     yarp_install(TARGETS CanBusControlboard
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}

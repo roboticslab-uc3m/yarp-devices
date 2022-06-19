@@ -5,8 +5,6 @@
 
 #include <vector>
 
-#include <yarp/conf/version.h>
-
 #include <yarp/dev/ControlBoardInterfaces.h>
 
 #include "DeviceMapper.hpp"
@@ -48,9 +46,7 @@ class CanBusControlboard : public yarp::dev::DeviceDriver,
                            public yarp::dev::IEncodersTimed,
                            public yarp::dev::IImpedanceControl,
                            public yarp::dev::IInteractionMode,
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                            public yarp::dev::IJointFault,
-#endif
                            public yarp::dev::IMotor,
                            public yarp::dev::IMotorEncoders,
                            public yarp::dev::IPidControl,
@@ -166,11 +162,9 @@ public:
     bool setInteractionModes(yarp::dev::InteractionModeEnum * modes) override;
     bool setInteractionModes(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes) override;
 
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     //  --------- IJointFault declarations. Implementation in IJointFaultImpl.cpp ---------
 
     bool getLastJointFault(int j, int & fault, std::string & message) override;
-#endif
 
     //  --------- IMotor declarations. Implementation in IMotorImpl.cpp ---------
 

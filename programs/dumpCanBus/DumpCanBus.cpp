@@ -77,9 +77,7 @@ void DumpCanBus::onRead(yarp::os::Bottle & b)
 
     for (auto i = 0; i < b.size(); i++)
     {
-        auto * msg = b.get(i).asList();
-
-        if (msg)
+        if (auto * msg = b.get(i).asList(); msg)
         {
             printMessage(*msg, lastStamp);
         }

@@ -21,16 +21,16 @@ namespace roboticslab
 class Synapse
 {
 public:
-    static const int DATA_POINTS = 6; ///< Number of controlled motors
+    static constexpr int DATA_POINTS = 6; ///< Number of controlled motors
 
-    typedef float setpoint_t; ///< 4-byte long float
-    typedef std::array<setpoint_t, DATA_POINTS> Setpoints; ///< Container of Dextra setpoints.
+    using setpoint_t = float; ///< 4-byte long float
+    using Setpoints = std::array<setpoint_t, DATA_POINTS>; ///< Container of Dextra setpoints.
 
     static const std::array<std::pair<setpoint_t, setpoint_t>, DATA_POINTS> LIMITS; ///< Joint limits per motor
     static const std::array<std::string, DATA_POINTS> LABELS; ///< String labels that identify each motor
 
     //! Virtual destructor.
-    virtual ~Synapse() {}
+    virtual ~Synapse() = default;
 
     //! Configure handle for the comms interface, if necessary.
     virtual void configure(void * handle);

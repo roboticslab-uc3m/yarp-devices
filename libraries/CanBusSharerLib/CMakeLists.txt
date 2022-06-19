@@ -18,14 +18,10 @@ if(ENABLE_CanBusSharerLib)
     target_include_directories(CanBusSharerLib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                                       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-    target_compile_features(CanBusSharerLib PUBLIC cxx_std_11)
+    target_compile_features(CanBusSharerLib PUBLIC cxx_std_17)
 
     install(TARGETS CanBusSharerLib
-            EXPORT ROBOTICSLAB_YARP_DEVICES
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-            PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+            EXPORT ROBOTICSLAB_YARP_DEVICES)
 
     add_library(ROBOTICSLAB::CanBusSharerLib ALIAS CanBusSharerLib)
 

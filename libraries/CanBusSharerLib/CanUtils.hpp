@@ -12,11 +12,8 @@
 
 #include "CanMessage.hpp"
 
-namespace roboticslab
-{
-
 //! Contains CAN-related utilities.
-namespace CanUtils
+namespace roboticslab::CanUtils
 {
 
 /**
@@ -54,8 +51,8 @@ inline std::string msgToStr(const can_message & msg)
 template<typename T_int, typename T_frac>
 void encodeFixedPoint(double value, T_int * integer, T_frac * fractional)
 {
-    static_assert(std::is_integral<T_int>::value && std::is_integral<T_frac>::value, "Integral required.");
-    static_assert(std::is_unsigned<T_frac>::value, "Unsigned fractional type required.");
+    static_assert(std::is_integral_v<T_int> && std::is_integral_v<T_frac>, "Integral required.");
+    static_assert(std::is_unsigned_v<T_frac>, "Unsigned fractional type required.");
     double _int;
     *fractional = std::round(std::modf(value, &_int) * (1 << 8 * sizeof(T_frac)));
     *integer = static_cast<T_int>(_int);
@@ -70,13 +67,12 @@ void encodeFixedPoint(double value, T_int * integer, T_frac * fractional)
 template<typename T_int, typename T_frac>
 double decodeFixedPoint(T_int integer, T_frac fractional)
 {
-    static_assert(std::is_integral<T_int>::value && std::is_integral<T_frac>::value, "Integral required.");
-    static_assert(std::is_unsigned<T_frac>::value, "Unsigned fractional type required.");
+    static_assert(std::is_integral_v<T_int> && std::is_integral_v<T_frac>, "Integral required.");
+    static_assert(std::is_unsigned_v<T_frac>, "Unsigned fractional type required.");
     double frac = static_cast<double>(fractional) / (1 << 8 * sizeof(T_frac));
     return integer + (integer >= 0 ? frac : -frac);
 }
 
-} // namespace CanUtils
-} // namespace roboticslab
+} // namespace roboticslab::CanUtils
 
 #endif // __CAN_UTILS_HPP__

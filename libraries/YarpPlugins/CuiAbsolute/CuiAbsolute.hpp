@@ -83,7 +83,7 @@ public:
 
 private:
 
-    typedef yarp::conf::float32_t encoder_t;
+    using encoder_t = yarp::conf::float32_t;
 
     enum class CuiMode { PUSH, PULL, OFF };
     enum class CuiCommand : std::uint8_t { PUSH_START = 1, PUSH_STOP = 2, POLL = 3 };

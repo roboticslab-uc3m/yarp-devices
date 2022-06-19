@@ -15,8 +15,6 @@
 #include <string>
 #include <vector>
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/Log.h>
 
 #include "LogComponent.hpp"
@@ -59,21 +57,13 @@ bool CanBusSocket::waitUntilTimeout(io_operation op, bool * bufferReady)
         ret = ::select(s + 1, nullptr, &fds, nullptr, &tv);
         break;
     default:
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(SCK, id(), "Unhandled IO operation on select()");
-#else
-        yCError(SCK, "Unhandled IO operation on select()");
-#endif
         return false;
     }
 
     if (ret < 0)
     {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(SCK, id(), "select() error: %s", std::strerror(errno));
-#else
-        yCError(SCK, "select() error: %s", std::strerror(errno));
-#endif
         return false;
     }
     else if (ret == 0)
@@ -95,30 +85,18 @@ void CanBusSocket::interpretErrorFrame(const struct can_frame * msg)
 {
     if (msg->can_id & CAN_ERR_TX_TIMEOUT)
     {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(SCK, id(), "Error: TX timeout");
-#else
-        yCWarning(SCK, "Error: TX timeout (%s)", iface.c_str());
-#endif
     }
 
     if (msg->can_id & CAN_ERR_LOSTARB)
     {
         if (msg->data[0] == CAN_ERR_LOSTARB_UNSPEC)
         {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIWarning(SCK, id(), "Lost arbitration: unspecified");
-#else
-            yCWarning(SCK, "Lost arbitration: unspecified (%s)", iface.c_str());
-#endif
         }
         else
         {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIWarning(SCK, id(), "Lost arbitration: bit %d", msg->data[0]);
-#else
-            yCWarning(SCK, "Lost arbitration: bit %d (%s)", msg->data[0], iface.c_str());
-#endif
         }
     }
 
@@ -126,75 +104,43 @@ void CanBusSocket::interpretErrorFrame(const struct can_frame * msg)
     {
         if (msg->data[1] == CAN_ERR_CRTL_UNSPEC)
         {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIWarning(SCK, id(), "Controller: unspecified");
-#else
-            yCWarning(SCK, "Controller: unspecified (%s)", iface.c_str());
-#endif
         }
         else
         {
             if (msg->data[1] & CAN_ERR_CRTL_RX_OVERFLOW)
             {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIWarning(SCK, id(), "Controller: RX buffer overflow");
-#else
-                yCWarning(SCK, "Controller: RX buffer overflow (%s)", iface.c_str());
-#endif
             }
 
             if (msg->data[1] & CAN_ERR_CRTL_TX_OVERFLOW)
             {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIWarning(SCK, id(), "Controller: TX buffer overflow");
-#else
-                yCWarning(SCK, "Controller: TX buffer overflow (%s)", iface.c_str());
-#endif
             }
 
             if (msg->data[1] & CAN_ERR_CRTL_RX_WARNING)
             {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIWarning(SCK, id(), "Controller: reached warning level for RX errors");
-#else
-                yCWarning(SCK, "Controller: reached warning level for RX errors (%s)", iface.c_str());
-#endif
             }
 
             if (msg->data[1] & CAN_ERR_CRTL_TX_WARNING)
             {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIWarning(SCK, id(), "Controller: reached warning level for TX errors");
-#else
-                yCWarning(SCK, "Controller: reached warning level for TX errors (%s)", iface.c_str());
-#endif
             }
 
             if (msg->data[1] & CAN_ERR_CRTL_RX_PASSIVE)
             {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIWarning(SCK, id(), "Controller: reached error passive status RX");
-#else
-                yCWarning(SCK, "Controller: reached error passive status RX (%s)", iface.c_str());
-#endif
             }
 
             if (msg->data[1] & CAN_ERR_CRTL_TX_PASSIVE)
             {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIWarning(SCK, id(), "Controller: reached error passive status TX");
-#else
-                yCWarning(SCK, "Controller: reached error passive status TX (%s)", iface.c_str());
-#endif
             }
 
             if (msg->data[1] & CAN_ERR_CRTL_ACTIVE)
             {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIWarning(SCK, id(), "Controller: recovered to error active state");
-#else
-                yCWarning(SCK, "Controller: recovered to error active state (%s)", iface.c_str());
-#endif
             }
         }
     }
@@ -320,11 +266,7 @@ void CanBusSocket::interpretErrorFrame(const struct can_frame * msg)
 
         for (const auto & type : types)
         {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIWarning(SCK, id(), "Protocol violation: %s at %s", type.c_str(), location.c_str());
-#else
-            yCWarning(SCK, "Protocol violation: %s at %s (%s)", type.c_str(), location.c_str(), iface.c_str());
-#endif
         }
     }
 
@@ -332,123 +274,67 @@ void CanBusSocket::interpretErrorFrame(const struct can_frame * msg)
     {
         if (msg->data[4] == CAN_ERR_TRX_UNSPEC)
         {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIWarning(SCK, id(), "Transceiver status: unspecified");
-#else
-            yCWarning(SCK, "Transceiver status: unspecified (%s)", iface.c_str());
-#endif
         }
         else
         {
             switch (msg->data[4] & 0x07)
             {
             case CAN_ERR_TRX_CANH_NO_WIRE:
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIWarning(SCK, id(), "Transceiver status (CAN-H): no wire");
-#else
-                yCWarning(SCK, "Transceiver status (CAN-H): no wire (%s)", iface.c_str());
-#endif
                 break;
             case CAN_ERR_TRX_CANH_SHORT_TO_BAT:
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIWarning(SCK, id(), "Transceiver status (CAN-H): short to BAT");
-#else
-                yCWarning(SCK, "Transceiver status (CAN-H): short to BAT (%s)", iface.c_str());
-#endif
                 break;
             case CAN_ERR_TRX_CANH_SHORT_TO_VCC:
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIWarning(SCK, id(), "Transceiver status (CAN-H): short to VCC");
-#else
-                yCWarning(SCK, "Transceiver status (CAN-H): short to VCC (%s)", iface.c_str());
-#endif
                 break;
             case CAN_ERR_TRX_CANH_SHORT_TO_GND:
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIWarning(SCK, id(), "Transceiver status (CAN-H): short to GND");
-#else
-                yCWarning(SCK, "Transceiver status (CAN-H): short to GND (%s)", iface.c_str());
-#endif
                 break;
             }
 
             switch (msg->data[4] & 0x70)
             {
             case CAN_ERR_TRX_CANL_NO_WIRE:
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIWarning(SCK, id(), "Transceiver status (CAN-L): no wire");
-#else
-                yCWarning(SCK, "Transceiver status (CAN-L): no wire (%s)", iface.c_str());
-#endif
                 break;
             case CAN_ERR_TRX_CANL_SHORT_TO_BAT:
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIWarning(SCK, id(), "Transceiver status (CAN-L): short to BAT");
-#else
-                yCWarning(SCK, "Transceiver status (CAN-L): short to BAT (%s)", iface.c_str());
-#endif
                 break;
             case CAN_ERR_TRX_CANL_SHORT_TO_VCC:
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIWarning(SCK, id(), "Transceiver status (CAN-L): short to VCC");
-#else
-                yCWarning(SCK, "Transceiver status (CAN-L): short to VCC (%s)", iface.c_str());
-#endif
                 break;
             case CAN_ERR_TRX_CANL_SHORT_TO_GND:
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIWarning(SCK, id(), "Transceiver status (CAN-L): short to GND");
-#else
-                yCWarning(SCK, "Transceiver status (CAN-L): short to GND (%s)", iface.c_str());
-#endif
                 break;
             }
 
             if ((msg->data[4] & 0x80) == CAN_ERR_TRX_CANL_SHORT_TO_CANH)
             {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIWarning(SCK, id(), "Transceiver status: short between CAN-L and CAN-H");
-#else
-                yCWarning(SCK, "Transceiver status: short between CAN-L and CAN-H (%s)", iface.c_str());
-#endif
             }
         }
     }
 
     if (msg->can_id & CAN_ERR_ACK)
     {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(SCK, id(), "Received no ACK on transmission");
-#else
-        yCWarning(SCK, "Received no ACK on transmission (%s)", iface.c_str());
-#endif
     }
 
     if (msg->can_id & CAN_ERR_BUSOFF)
     {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(SCK, id(), "Bus off");
-#else
-        yCWarning(SCK, "Bus off (%s)", iface.c_str());
-#endif
     }
 
     if (msg->can_id & CAN_ERR_BUSERROR)
     {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(SCK, id(), "Bus error");
-#else
-        yCWarning(SCK, "Bus error (%s)", iface.c_str());
-#endif
     }
 
     if (msg->can_id & CAN_ERR_RESTARTED)
     {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(SCK, id(), "Controller restarted");
-#else
-        yCWarning(SCK, "Controller restarted (%s)", iface.c_str());
-#endif
     }
 }
 

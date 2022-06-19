@@ -13,11 +13,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::getRefTorqueRaw(int j, double * t)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
-#else
-    yCTrace(IPOS, "%d", j);
-#endif
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_TORQUE);
     *t = vars.synchronousCommandTarget;
@@ -35,11 +31,7 @@ bool TechnosoftIpos::getRefTorquesRaw(double * t)
 
 bool TechnosoftIpos::setRefTorqueRaw(int j, double t)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d %f", j, t);
-#else
-    yCTrace(IPOS, "%d %f", j, t);
-#endif
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_TORQUE);
     vars.synchronousCommandTarget = t;
@@ -57,11 +49,7 @@ bool TechnosoftIpos::setRefTorquesRaw(const double * t)
 
 bool TechnosoftIpos::getTorqueRaw(int j, double * t)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
-#else
-    yCTrace(IPOS, "%d", j);
-#endif
     CHECK_JOINT(j);
     std::int16_t temp = vars.lastCurrentRead;
     double curr = vars.internalUnitsToCurrent(temp);
@@ -80,11 +68,7 @@ bool TechnosoftIpos::getTorquesRaw(double * t)
 
 bool TechnosoftIpos::getTorqueRangeRaw(int j, double * min, double * max)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
-#else
-    yCTrace(IPOS, "%d", j);
-#endif
     CHECK_JOINT(j);
 
     return can->sdo()->upload<std::uint16_t>("Current limit", [this, min, max](auto data)
@@ -105,18 +89,14 @@ bool TechnosoftIpos::getTorqueRangesRaw(double * min, double * max)
 
 bool TechnosoftIpos::getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParameters * params)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
-#else
-    yCTrace(IPOS, "%d", j);
-#endif
     CHECK_JOINT(j);
 
     params->bemf = 0.0;
     params->bemf_scale = 0.0;
     params->ktau = vars.k;
     params->ktau_scale = 0.0;
-#if defined(YARP_VERSION_COMPARE) && (YARP_VERSION_MAJOR > 3 || YARP_VERSION_MINOR > 6) // >= 3.7.0
+#if YARP_VERSION_COMPARE(>=, 3, 7, 0)
     params->viscousPos = 0.0;
     params->viscousNeg = 0.0;
     params->coulombPos = 0.0;
@@ -130,11 +110,7 @@ bool TechnosoftIpos::getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParame
 
 bool TechnosoftIpos::setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorqueParameters params)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
-#else
-    yCTrace(IPOS, "%d", j);
-#endif
     CHECK_JOINT(j);
     vars.k = params.ktau;
     return true;

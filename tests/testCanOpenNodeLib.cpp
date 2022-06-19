@@ -18,10 +18,7 @@
 
 #include "FutureObserverLib.hpp"
 
-namespace roboticslab
-{
-
-namespace test
+namespace roboticslab::test
 {
 
 /**
@@ -84,7 +81,7 @@ class FakeCanSenderDelegate : public CanSenderDelegate
 {
 public:
     //! Store message data internally.
-    virtual bool prepareMessage(const can_message & msg) override
+    bool prepareMessage(const can_message & msg) override
     { return messages.push_back(msg), true; }
 
     //! Retrieve last message.
@@ -111,12 +108,12 @@ class CanOpenNodeTest : public testing::Test,
                         protected FutureObserver
 {
 public:
-    virtual void SetUp()
+    void SetUp() override
     {
         senderDelegate = new FakeCanSenderDelegate;
     }
 
-    virtual void TearDown()
+    void TearDown() override
     {
         shutdown();
         delete senderDelegate;
@@ -1213,5 +1210,4 @@ TEST_F(CanOpenNodeTest, CanOpenNode)
     ASSERT_EQ(actualNmt, expectedNmt);
 }
 
-} // namespace test
-} // namespace roboticslab
+} // namespace roboticslab::test

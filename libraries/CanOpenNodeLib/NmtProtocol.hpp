@@ -71,7 +71,7 @@ public:
     { callback = HandlerFn(); }
 
 private:
-    typedef std::function<void(NmtState)> HandlerFn;
+    using HandlerFn = std::function<void(NmtState)>;
 
     std::uint8_t id;
     CanSenderDelegate * sender;

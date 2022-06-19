@@ -2,8 +2,6 @@
 
 #include "DextraCanControlboard.hpp"
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Value.h>
@@ -19,10 +17,6 @@ namespace
 
 bool DextraCanControlboard::open(yarp::os::Searchable & config)
 {
-#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
-    yCDebug(DEXTRA) << "Config:" << config.toString();
-#endif
-
     canId = config.check("canId", yarp::os::Value(0), "can bus ID").asInt32();
 
     if (canId == 0)
@@ -31,9 +25,7 @@ bool DextraCanControlboard::open(yarp::os::Searchable & config)
         return false;
     }
 
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yarp::dev::DeviceDriver::setId("ID" + std::to_string(canId));
-#endif
 
     acquireSynapseHandle(new CanSynapse(canId));
 

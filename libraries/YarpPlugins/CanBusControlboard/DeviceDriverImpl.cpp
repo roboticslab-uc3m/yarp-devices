@@ -2,8 +2,6 @@
 
 #include "CanBusControlboard.hpp"
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Value.h>
@@ -17,10 +15,6 @@ using namespace roboticslab;
 
 bool CanBusControlboard::open(yarp::os::Searchable & config)
 {
-#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
-    yCDebug(CBCB) << "Config:" << config.toString();
-#endif
-
     if (!config.check("robotConfig") || !config.find("robotConfig").isBlob())
     {
         yCError(CBCB) << "Missing \"robotConfig\" property or not a blob";
@@ -197,9 +191,9 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
         }
     }
 
-    for (const auto & t : deviceMapper.getDevicesWithOffsets())
+    for (const auto & [rawDevice, offset] : deviceMapper.getDevicesWithOffsets())
     {
-        auto * iCanBusSharer = std::get<0>(t)->castToType<ICanBusSharer>();
+        auto * iCanBusSharer = rawDevice->castToType<ICanBusSharer>();
 
         if (!iCanBusSharer->initialize())
         {
@@ -255,9 +249,9 @@ bool CanBusControlboard::close()
     delete syncThread;
     syncThread = nullptr;
 
-    for (const auto & t : deviceMapper.getDevicesWithOffsets())
+    for (const auto & [rawDevice, offset] : deviceMapper.getDevicesWithOffsets())
     {
-        auto * iCanBusSharer = std::get<0>(t)->castToType<ICanBusSharer>();
+        auto * iCanBusSharer = rawDevice->castToType<ICanBusSharer>();
 
         if (iCanBusSharer && !iCanBusSharer->finalize())
         {

@@ -2,7 +2,6 @@
 
 #include "TechnosoftIpos.hpp"
 
-#include <yarp/conf/version.h>
 #include <yarp/os/Log.h>
 
 #include "LogComponent.hpp"
@@ -13,11 +12,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::getCurrentRaw(int m, double * curr)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", m);
-#else
-    yCTrace(IPOS, "%d", m);
-#endif
     CHECK_JOINT(m);
     std::int16_t temp = vars.lastCurrentRead;
     *curr = vars.internalUnitsToCurrent(temp);
@@ -35,11 +30,7 @@ bool TechnosoftIpos::getCurrentsRaw(double * currs)
 
 bool TechnosoftIpos::getCurrentRangeRaw(int m, double * min, double * max)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", m);
-#else
-    yCTrace(IPOS, "%d", m);
-#endif
     CHECK_JOINT(m);
 
     return can->sdo()->upload<std::uint16_t>("Current limit", [this, min, max](auto data)
@@ -59,11 +50,7 @@ bool TechnosoftIpos::getCurrentRangesRaw(double * min, double * max)
 
 bool TechnosoftIpos::setRefCurrentRaw(int m, double curr)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", m);
-#else
-    yCTrace(IPOS, "%d", m);
-#endif
     CHECK_JOINT(m);
     CHECK_MODE(VOCAB_CM_CURRENT);
     vars.synchronousCommandTarget = curr;
@@ -88,11 +75,7 @@ bool TechnosoftIpos::setRefCurrentsRaw(int n_motor, const int * motors, const do
 
 bool TechnosoftIpos::getRefCurrentRaw(int m, double * curr)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", m);
-#else
-    yCTrace(IPOS, "%d", m);
-#endif
     CHECK_JOINT(m);
     CHECK_MODE(VOCAB_CM_CURRENT);
     *curr = vars.synchronousCommandTarget;

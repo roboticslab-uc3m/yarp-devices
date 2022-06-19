@@ -24,13 +24,13 @@ namespace
         bool setAll = key == "all";
         bool allOk = true;
 
-        for (const auto & t : mapper.getDevicesWithOffsets())
+        for (const auto & [rawDevice, offset] : mapper.getDevicesWithOffsets())
         {
-            auto * iCanBusSharer = std::get<0>(t)->castToType<ICanBusSharer>();
+            auto * iCanBusSharer = rawDevice->castToType<ICanBusSharer>();
 
             if (setAll || key == "id" + std::to_string(iCanBusSharer->getId()))
             {
-                auto * p = std::get<0>(t)->getHandle<yarp::dev::IRemoteVariablesRaw>();
+                auto * p = rawDevice->getHandle<yarp::dev::IRemoteVariablesRaw>();
 
                 if (!p)
                 {
@@ -78,14 +78,14 @@ bool CanBusControlboard::getRemoteVariable(std::string key, yarp::os::Bottle & v
     bool queryAll = key == "all";
     val.clear();
 
-    for (const auto & t : deviceMapper.getDevicesWithOffsets())
+    for (const auto & [rawDevice, offset] : deviceMapper.getDevicesWithOffsets())
     {
-        auto * iCanBusSharer = std::get<0>(t)->castToType<ICanBusSharer>();
+        auto * iCanBusSharer = rawDevice->castToType<ICanBusSharer>();
         yarp::os::Bottle & nodeVal = queryAll ? val.addList() : val;
 
         if (queryAll || key == "id" + std::to_string(iCanBusSharer->getId()))
         {
-            auto * p = std::get<0>(t)->getHandle<yarp::dev::IRemoteVariablesRaw>();
+            auto * p = rawDevice->getHandle<yarp::dev::IRemoteVariablesRaw>();
             yarp::os::Bottle b;
 
             if (p && p->getRemoteVariablesListRaw(&b))
@@ -199,9 +199,9 @@ bool CanBusControlboard::getRemoteVariablesList(yarp::os::Bottle * listOfKeys)
     listOfKeys->clear();
 
     // Place each key in its own list so that clients can just call check('<key>') or !find('<key>').isNull().
-    for (const auto & t : deviceMapper.getDevicesWithOffsets())
+    for (const auto & [rawDevice, offset] : deviceMapper.getDevicesWithOffsets())
     {
-        auto * iCanBusSharer = std::get<0>(t)->castToType<ICanBusSharer>();
+        auto * iCanBusSharer = rawDevice->castToType<ICanBusSharer>();
         listOfKeys->addString("id" + std::to_string(iCanBusSharer->getId()));
     }
 

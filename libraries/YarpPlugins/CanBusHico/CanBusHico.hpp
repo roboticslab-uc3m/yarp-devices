@@ -4,7 +4,6 @@
 #define __CAN_BUS_HICO_HPP__
 
 #include <set>
-#include <map>
 #include <mutex>
 #include <string>
 #include <utility>
@@ -99,12 +98,8 @@ private:
     enum io_operation { READ, WRITE };
 
     bool waitUntilTimeout(io_operation op, bool * bufferReady);
-
-    static void initBitrateMap();
     bool bitrateToId(unsigned int bitrate, unsigned int * id);
     bool idToBitrate(unsigned int id, unsigned int * bitrate);
-
-    static std::map<unsigned int, unsigned int> idToBitrateMap;
 
     /** CAN file descriptor */
     int fileDescriptor {0};

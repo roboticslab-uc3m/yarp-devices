@@ -32,7 +32,7 @@ public:
 class EmcyConsumer final
 {
 public:
-    typedef std::pair<std::uint16_t, std::string> code_t; ///< Emergency error code
+    using code_t = std::pair<std::uint16_t, std::string>; ///< Emergency error code
 
     //! Constructor.
     EmcyConsumer() : codeRegistry(new EmcyCodeRegistry)
@@ -61,7 +61,7 @@ public:
     { callback = HandlerFn(); }
 
 private:
-    typedef std::function<void(code_t, std::uint8_t, const std::uint8_t *)> HandlerFn;
+    using HandlerFn = std::function<void(code_t, std::uint8_t, const std::uint8_t *)>;
 
     HandlerFn callback;
     EmcyCodeRegistry * codeRegistry;

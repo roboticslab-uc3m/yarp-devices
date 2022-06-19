@@ -2,8 +2,6 @@
 
 #include "DeviceMapper.hpp"
 
-#include <yarp/conf/version.h>
-
 #include <yarp/dev/ControlBoardInterfaces.h>
 
 namespace roboticslab // gcc <7 bug
@@ -20,9 +18,7 @@ struct RawDevice::Private
     yarp::dev::IEncodersTimedRaw * iEncodersTimedRaw;
     yarp::dev::IImpedanceControlRaw * iImpedanceControlRaw;
     yarp::dev::IInteractionModeRaw * iInteractionModeRaw;
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yarp::dev::IJointFaultRaw * iJointFaultRaw;
-#endif
     yarp::dev::IMotorRaw * iMotorRaw;
     yarp::dev::IMotorEncodersRaw * iMotorEncodersRaw;
     yarp::dev::IPidControlRaw * iPidControlRaw;
@@ -47,9 +43,7 @@ RawDevice::RawDevice(yarp::dev::PolyDriver * _driver)
     driver->view(priv->iEncodersTimedRaw);
     driver->view(priv->iImpedanceControlRaw);
     driver->view(priv->iInteractionModeRaw);
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     driver->view(priv->iJointFaultRaw);
-#endif
     driver->view(priv->iMotorRaw);
     driver->view(priv->iMotorEncodersRaw);
     driver->view(priv->iPidControlRaw);
@@ -105,11 +99,9 @@ template<>
 yarp::dev::IInteractionModeRaw * RawDevice::getHandle() const
 { return priv->iInteractionModeRaw; }
 
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
 template<>
 yarp::dev::IJointFaultRaw * RawDevice::getHandle() const
 { return priv->iJointFaultRaw; }
-#endif
 
 template<>
 yarp::dev::IMotorRaw * RawDevice::getHandle() const

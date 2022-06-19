@@ -10,7 +10,7 @@ using namespace roboticslab;
 
 yarp::dev::CanMessage & SocketCanMessage::operator=(const yarp::dev::CanMessage & l)
 {
-    const SocketCanMessage & tmp = dynamic_cast<const SocketCanMessage &>(l);
+    const auto & tmp = dynamic_cast<const SocketCanMessage &>(l);
     std::memcpy(message, tmp.message, sizeof(struct can_frame));
     return *this;
 }

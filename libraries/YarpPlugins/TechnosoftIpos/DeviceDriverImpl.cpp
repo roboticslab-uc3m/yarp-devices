@@ -4,8 +4,6 @@
 
 #include <functional>
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
 
@@ -34,17 +32,11 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     if (!commonGroup.isNull())
     {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCDebugOnce(IPOS) << commonGroup.toString();
-#endif
         iposGroup.fromString(commonGroup.toString());
     }
 
     iposGroup.fromString(config.toString(), false); // override common options
-
-#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
-    yCDebug(IPOS) << "Config:" << iposGroup.toString();
-#endif
 
     const auto & driverGroup = robotConfig->findGroup(iposGroup.find("driver").asString());
     const auto & motorGroup = robotConfig->findGroup(iposGroup.find("motor").asString());
@@ -79,9 +71,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
         return false;
     }
 
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yarp::dev::DeviceDriver::setId("ID" + std::to_string(vars.canId));
-#endif
 
     if (iposGroup.check("externalEncoder", "external encoder"))
     {
@@ -90,11 +80,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
         if (externalEncoderGroup.isNull())
         {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(IPOS, id()) << "Missing external encoder device group" << externalEncoder;
-#else
-            yCError(IPOS) << "Missing external encoder device group" << externalEncoder;
-#endif
             return false;
         }
 
@@ -105,31 +91,19 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
         if (!externalEncoderDevice.open(externalEncoderOptions))
         {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(IPOS, id()) << "Unable to open external encoder device" << externalEncoder;
-#else
-            yCError(IPOS) << "Unable to open external encoder device" << externalEncoder;
-#endif
             return false;
         }
 
         if (!externalEncoderDevice.view(iEncodersTimedRawExternal))
         {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(IPOS, id()) << "Unable to view IEncodersTimedRaw in" << externalEncoder;
-#else
-            yCError(IPOS) << "Unable to view IEncodersTimedRaw in" << externalEncoder;
-#endif
             return false;
         }
 
         if (!externalEncoderDevice.view(iExternalEncoderCanBusSharer))
         {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(IPOS, id()) << "Unable to view ICanBusSharer in" << externalEncoder;
-#else
-            yCError(IPOS) << "Unable to view ICanBusSharer in" << externalEncoder;
-#endif
             return false;
         }
     }

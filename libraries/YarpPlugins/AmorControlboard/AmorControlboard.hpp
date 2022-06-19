@@ -6,7 +6,6 @@
 #include <mutex>
 #include <vector>
 
-#include <yarp/os/all.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 

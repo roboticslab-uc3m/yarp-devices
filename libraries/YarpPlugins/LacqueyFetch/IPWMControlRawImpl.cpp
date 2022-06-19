@@ -4,8 +4,7 @@
 
 #include <cstring>
 
-#include <yarp/conf/numeric.h>
-#include <yarp/conf/version.h>
+#include <algorithm> // std::clamp
 
 #include <yarp/os/Log.h>
 
@@ -25,14 +24,10 @@ bool LacqueyFetch::getNumberOfMotorsRaw(int * number)
 
 bool LacqueyFetch::setRefDutyCycleRaw(int m, double ref)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(LCQ, id(), "%d %f", m, ref);
-#else
-    yCTrace(LCQ, "%d %f", m, ref);
-#endif
     CHECK_JOINT(m);
 
-    ref = yarp::conf::clamp(ref, -100.0, 100.0);
+    ref = std::clamp(ref, -100.0, 100.0);
 
     const std::size_t len = sizeof refDutyCycles;
     std::uint8_t msgData[len];

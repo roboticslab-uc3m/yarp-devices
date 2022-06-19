@@ -105,7 +105,7 @@ public:
     { return StateObserverBase::notify(&remote); }
 
 protected:
-    virtual void setRemoteStorage(const void * remote, std::size_t len) override
+    void setRemoteStorage(const void * remote, std::size_t len) override
     { *static_cast<T *>(getRemoteStorage()) = *static_cast<const T *>(remote); }
 };
 
@@ -115,7 +115,7 @@ protected:
  * @tparam T Arithmetic type, see <a href="https://en.cppreference.com/w/c/language/arithmetic_types">reference</a>.
  */
 template<typename T>
-class TypedStateObserver<T, typename std::enable_if_t<std::is_arithmetic<T>::value>> final : private StateObserverBase
+class TypedStateObserver<T, typename std::enable_if_t<std::is_arithmetic_v<T>>> final : private StateObserverBase
 {
 public:
     using StateObserverBase::StateObserverBase;

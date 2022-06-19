@@ -100,7 +100,7 @@ bool EmcyConsumer::accept(const std::uint8_t * data)
     std::memcpy(&reg, data + 2, 1);
     std::memcpy(msef, data + 3, 5);
 
-    code_t codeToMsg = std::make_pair(code, codeRegistry->codeToMessage(code));
+    code_t codeToMsg = {code, codeRegistry->codeToMessage(code)};
 
     callback(codeToMsg, reg, msef);
     return true;

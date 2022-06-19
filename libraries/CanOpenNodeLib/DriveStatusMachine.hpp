@@ -60,7 +60,7 @@ enum class DriveTransition : std::uint16_t
 class DriveStatusMachine
 {
 public:
-    typedef std::bitset<16> word_t; ///< Fixed-size sequence of 16 bits
+    using word_t = std::bitset<16>; ///< Fixed-size sequence of 16 bits
 
     //! Constructor, registers RPDO handle.
     DriveStatusMachine(ReceivePdo * rpdo, double timeout)

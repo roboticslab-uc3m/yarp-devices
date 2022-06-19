@@ -21,6 +21,7 @@ if(NOT SKIP_TechnosoftIpos)
                                    IControlModeRawImpl.cpp
                                    ICurrentControlRawImpl.cpp
                                    IEncodersRawImpl.cpp
+                                   IJointFaultRawImpl.cpp
                                    IMotorRawImpl.cpp
                                    IMotorEncodersRawImpl.cpp
                                    IPositionControlRawImpl.cpp
@@ -35,17 +36,11 @@ if(NOT SKIP_TechnosoftIpos)
                                    LogComponent.hpp
                                    LogComponent.cpp)
 
-    if(YARP_VERSION_SHORT VERSION_GREATER_EQUAL 3.6)
-        target_sources(TechnosoftIpos PRIVATE IJointFaultRawImpl.cpp)
-    endif()
-
     target_link_libraries(TechnosoftIpos YARP::YARP_os
                                          YARP::YARP_dev
                                          ROBOTICSLAB::CanBusSharerLib
                                          ROBOTICSLAB::StateObserverLib
                                          ROBOTICSLAB::CanOpenNodeLib)
-
-    target_compile_features(TechnosoftIpos PUBLIC cxx_std_14)
 
     yarp_install(TARGETS TechnosoftIpos
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}

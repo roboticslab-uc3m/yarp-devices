@@ -2,8 +2,6 @@
 
 #include "TechnosoftIpos.hpp"
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Vocab.h>
 
@@ -16,11 +14,7 @@ using namespace roboticslab;
 
 bool TechnosoftIpos::getControlModeRaw(int j, int * mode)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
-#else
-    yCTrace(IPOS, "%d", j);
-#endif
     CHECK_JOINT(j);
     *mode = vars.actualControlMode;
     return true;
@@ -44,11 +38,7 @@ bool TechnosoftIpos::getControlModesRaw(int n_joint, const int * joints, int * m
 
 bool TechnosoftIpos::setControlModeRaw(int j, int mode)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
-#else
-    yCTrace(IPOS, "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
-#endif
     CHECK_JOINT(j);
 
     vars.requestedcontrolMode = mode;
@@ -160,11 +150,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         if (vars.actualControlMode == VOCAB_CM_HW_FAULT
             && !can->driveStatus()->requestTransition(DriveTransition::FAULT_RESET))
         {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(IPOS, id()) << "Unable to reset fault status";
-#else
-            yCError(IPOS, "Unable to reset fault status");
-#endif
             return false;
         }
 
@@ -175,11 +161,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
             && can->sdo()->download<std::int8_t>("Modes of Operation", 0, 0x6060); // reset drive mode
 
     default:
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(IPOS, id()) << "Unsupported, unknown or read-only mode:" << yarp::os::Vocab32::decode(mode);
-#else
-        yCError(IPOS, "Unsupported, unknown or read-only mode: %s", yarp::os::Vocab32::decode(mode).c_str());
-#endif
         return false;
     }
 }

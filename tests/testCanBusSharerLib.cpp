@@ -4,10 +4,7 @@
 
 #include "CanUtils.hpp"
 
-namespace roboticslab
-{
-
-namespace test
+namespace roboticslab::test
 {
 
 /**
@@ -23,13 +20,11 @@ namespace test
 class CanBusSharerTest : public testing::Test
 {
 public:
-    virtual void SetUp()
-    {
-    }
+    void SetUp() override
+    {}
 
-    virtual void TearDown()
-    {
-    }
+    void TearDown() override
+    {}
 };
 
 TEST_F(CanBusSharerTest, CanUtils)
@@ -70,5 +65,4 @@ TEST_F(CanBusSharerTest, CanUtils)
     ASSERT_NEAR(v4, -4444.06781, 1e-6);
 }
 
-} // namespace test
-} // namespace roboticslab
+} // namespace roboticslab::test

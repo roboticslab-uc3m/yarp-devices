@@ -2,8 +2,6 @@
 
 #include "DextraSerialControlboard.hpp"
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
@@ -22,10 +20,6 @@ constexpr auto DEFAULT_PORT = "/dev/ttyACM0"; // also /dev/ttyUSB0
 
 bool DextraSerialControlboard::open(yarp::os::Searchable & config)
 {
-#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
-    yCDebug(DEXTRA) << "Config:" << config.toString();
-#endif
-
     std::string port = config.check("port", yarp::os::Value(DEFAULT_PORT), "serial port").asString();
 
     // Should match https://github.com/roboticslab-uc3m/Dextra/blob/master/Control/synapse.py

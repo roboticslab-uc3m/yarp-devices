@@ -4,8 +4,6 @@
 
 #include <cmath>
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/IAxisInfo.h>
@@ -228,11 +226,7 @@ double StateVariables::clipSyncPositionTarget()
 
     if (std::abs(diff) > maxVel * syncPeriod)
     {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(IPOS, "ID" + std::to_string(canId), "Maximum velocity exceeded, clipping target position");
-#else
-        yCWarning(IPOS, "Maximum velocity exceeded, clipping target position (canId %d)", canId);
-#endif
         double newTarget = previous + maxVel * syncPeriod * sgn(diff);
         prevSyncTarget = newTarget;
         return newTarget;

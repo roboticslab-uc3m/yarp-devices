@@ -115,7 +115,7 @@ public:
     template<typename T>
     PdoConfiguration & addMapping(std::uint16_t index, std::uint8_t subindex = 0x00)
     {
-        static_assert(std::is_integral<T>::value, "Integral required.");
+        static_assert(std::is_integral_v<T>, "Integral required.");
         static_assert(sizeof(T) <= sizeof(std::uint32_t), "Size exceeds 4 bytes.");
         addMappingInternal((index << 16) + (subindex << 8) + sizeof(T) * 8);
         return *this;
@@ -159,10 +159,9 @@ protected:
     //! Retrieve PDO type.
     virtual PdoType getType() const = 0;
 
-    // https://stackoverflow.com/a/38776200
-    template<typename T1 = std::uint8_t, typename... Tn>
+    template<typename... Tn>
     static constexpr std::size_t size()
-    { return sizeof...(Tn) == 0 ? sizeof(T1) : sizeof(T1) + size<Tn...>(); }
+    { return (sizeof(Tn) + ... + 0); }
 
     std::uint8_t id;
     std::uint16_t cob;
@@ -199,7 +198,7 @@ public:
     {
         static_assert(sizeof...(Ts) > 0 && size<Ts...>() <= 8, "Illegal cumulative size.");
         std::uint8_t raw[size<Ts...>()]; unsigned int count = 0;
-        ordered_call{(pack(&data, raw, &count), true)...}; // https://w.wiki/7M$
+        (pack(&data, raw, &count), ...);
         return writeInternal(raw, count);
     }
 
@@ -208,13 +207,10 @@ protected:
     { return PdoType::RPDO; }
 
 private:
-    struct ordered_call
-    { template<typename... Ts> ordered_call(Ts...) { } };
-
     template<typename T>
     void pack(const T * data, std::uint8_t * buff, unsigned int * count)
     {
-        static_assert(std::is_integral<T>::value, "Integral required.");
+        static_assert(std::is_integral_v<T>, "Integral required.");
         packInternal(buff + *count, data, sizeof(T));
         *count += sizeof(T);
     }
@@ -263,7 +259,7 @@ protected:
     { return PdoType::TPDO; }
 
 private:
-    typedef std::function<bool(const std::uint8_t * data, unsigned int size)> HandlerFn;
+    using HandlerFn = std::function<bool(const std::uint8_t * data, unsigned int size)>;
 
     // https://stackoverflow.com/a/14058638
     struct ordered_call
@@ -276,7 +272,7 @@ private:
     template<typename T>
     T unpack(const std::uint8_t * buff, unsigned int * count)
     {
-        static_assert(std::is_integral<T>::value, "Integral required.");
+        static_assert(std::is_integral_v<T>, "Integral required.");
         T data;
         unpackInternal(&data, buff + *count, sizeof(T));
         *count += sizeof(T);

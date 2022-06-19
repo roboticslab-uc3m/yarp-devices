@@ -1,8 +1,4 @@
-# Copyright: Universidad Carlos III de Madrid (C) 2013;
-# Authors: Juan G. Victores & Raúl de Santos Rico
-# CopyPolicy: Released under the terms of the GNU GPL v2.0.
-
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.16)
 
 project(ROBOTICSLAB_YARP_DEVICES LANGUAGES CXX)
 
@@ -38,7 +34,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake
 
 # Hard dependencies.
 find_package(YCM 0.11 REQUIRED)
-find_package(YARP 3.5 REQUIRED COMPONENTS os dev sig)
+find_package(YARP 3.6 REQUIRED COMPONENTS os dev sig)
 
 # Soft dependencies.
 find_package(AMOR_API QUIET)

@@ -2,7 +2,6 @@
 
 #include "DextraRawControlboard.hpp"
 
-#include <yarp/conf/version.h>
 #include <yarp/os/Log.h>
 
 #include "LogComponent.hpp"
@@ -13,11 +12,7 @@ using namespace roboticslab;
 
 bool DextraRawControlboard::setPositionRaw(int j, double ref)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCTrace(DEXTRA, "%d %f", j, ref);
-#else
-    yCTrace(DEXTRA, "%d %f", j, ref);
-#endif
     return positionMoveRaw(j, ref);
 }
 

@@ -4,8 +4,6 @@
 
 #include <vector>
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
@@ -19,10 +17,6 @@ constexpr auto DEFAULT_CAN_PORT = 0;
 
 bool AmorControlboard::open(yarp::os::Searchable& config)
 {
-#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
-    yCDebug(AMOR) << "Config:" << config.toString();
-#endif
-
     int major, minor, build;
     amor_get_library_version(&major, &minor, &build);
 

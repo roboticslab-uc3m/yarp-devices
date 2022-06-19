@@ -2,7 +2,6 @@
 
 #include "TechnosoftIpos.hpp"
 
-#include <yarp/conf/version.h>
 #include <yarp/os/Log.h>
 
 #include "LogComponent.hpp"
@@ -21,11 +20,7 @@ bool TechnosoftIpos::getAxes(int * ax)
 
 bool TechnosoftIpos::resetEncoderRaw(int j)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
-#else
-    yCTrace(IPOS, "%d", j);
-#endif
     CHECK_JOINT(j);
     return setEncoderRaw(j, 0.0);
 }
@@ -41,11 +36,7 @@ bool TechnosoftIpos::resetEncodersRaw()
 
 bool TechnosoftIpos::setEncoderRaw(int j, double val)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d %f", j, val);
-#else
-    yCTrace(IPOS, "%d %f", j, val);
-#endif
     CHECK_JOINT(j);
     std::int32_t data = vars.degreesToInternalUnits(val);
 
@@ -69,11 +60,7 @@ bool TechnosoftIpos::setEncodersRaw(const double * vals)
 
 bool TechnosoftIpos::getEncoderRaw(int j, double * v)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
-#else
-    yCTrace(IPOS, "%d", j);
-#endif
     CHECK_JOINT(j);
     std::int32_t temp = vars.lastEncoderRead->queryPosition();
     *v = vars.internalUnitsToDegrees(temp);
@@ -91,11 +78,7 @@ bool TechnosoftIpos::getEncodersRaw(double * encs)
 
 bool TechnosoftIpos::getEncoderSpeedRaw(int j, double * sp)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
-#else
-    yCTrace(IPOS, "%d", j);
-#endif
     CHECK_JOINT(j);
     double temp = vars.lastEncoderRead->querySpeed();
     *sp = vars.internalUnitsToDegrees(temp, 1);
@@ -113,11 +96,7 @@ bool TechnosoftIpos::getEncoderSpeedsRaw(double * spds)
 
 bool TechnosoftIpos::getEncoderAccelerationRaw(int j, double * acc)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
-#else
-    yCTrace(IPOS, "%d", j);
-#endif
     CHECK_JOINT(j);
     double temp = vars.lastEncoderRead->queryAcceleration();
     *acc = vars.internalUnitsToDegrees(temp, 2);
@@ -135,11 +114,7 @@ bool TechnosoftIpos::getEncoderAccelerationsRaw(double * accs)
 
 bool TechnosoftIpos::getEncoderTimedRaw(int j, double * enc, double * time)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(IPOS, id(), "%d", j);
-#else
-    yCTrace(IPOS, "%d", j);
-#endif
     CHECK_JOINT(j);
     std::int32_t temp = vars.lastEncoderRead->queryPosition();
     *enc = vars.internalUnitsToDegrees(temp);

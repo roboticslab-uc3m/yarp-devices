@@ -4,8 +4,6 @@
 
 #include <cstdlib>
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Value.h>
 
@@ -27,10 +25,6 @@ constexpr auto DEFAULT_CALIB_ONE_Z = -25;
 
 bool WiimoteSensor::open(yarp::os::Searchable& config)
 {
-#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
-    yCDebug(WII) << "Config:" << config.toString();
-#endif
-
     int deviceId = config.check("deviceId", yarp::os::Value(DEFAULT_DEVICE), "Wiimote device number").asInt32();
 
     char * syspath = getDevicePath(deviceId);

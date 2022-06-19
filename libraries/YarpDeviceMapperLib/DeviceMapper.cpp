@@ -82,7 +82,7 @@ void DeviceMapper::enableParallelization(unsigned int concurrentTasks)
 
 bool DeviceMapper::registerDevice(yarp::dev::PolyDriver * driver)
 {
-    RawDevice * rd = new RawDevice(driver);
+    const auto * rd = new RawDevice(driver);
 
     int axes;
     bool ret;
@@ -111,9 +111,9 @@ bool DeviceMapper::registerDevice(yarp::dev::PolyDriver * driver)
 
 DeviceMapper::dev_index_t DeviceMapper::getDevice(int globalAxis) const
 {
-    const int deviceIndex = rawDeviceIndexAtGlobalAxisIndex[globalAxis];
-    const auto & t = rawDevicesWithOffsets[deviceIndex];
-    return {std::get<0>(t), globalAxis - std::get<1>(t)};
+    int deviceIndex = rawDeviceIndexAtGlobalAxisIndex[globalAxis];
+    const auto & [rawDevice, offset] = rawDevicesWithOffsets[deviceIndex];
+    return {rawDevice, globalAxis - offset};
 }
 
 const std::vector<DeviceMapper::dev_index_t> & DeviceMapper::getDevicesWithOffsets() const
@@ -130,12 +130,12 @@ std::vector<DeviceMapper::dev_group_t> DeviceMapper::getDevices(int globalAxesCo
     {
         const int globalAxis = globalAxes[i];
         const int deviceIndex = rawDeviceIndexAtGlobalAxisIndex[globalAxis];
-        const auto & t = rawDevicesWithOffsets[deviceIndex];
-        const int localIndex = globalAxis - std::get<1>(t);
+        const auto & [rawDevice, offset] = rawDevicesWithOffsets[deviceIndex];
+        const int localIndex = globalAxis - offset;
 
         if (deviceIndex != previousDeviceIndex)
         {
-            vec.emplace_back(std::get<0>(t), std::vector<int>{localIndex}, i);
+            vec.emplace_back(rawDevice, std::vector<int>{localIndex}, i);
             previousDeviceIndex = deviceIndex;
         }
         else
@@ -149,9 +149,9 @@ std::vector<DeviceMapper::dev_group_t> DeviceMapper::getDevices(int globalAxesCo
 
 void DeviceMapper::clear()
 {
-    for (const auto & t : rawDevicesWithOffsets)
+    for (const auto & [device, offset] : rawDevicesWithOffsets)
     {
-        delete std::get<0>(t);
+        delete device;
     }
 
     rawDevicesWithOffsets.clear();

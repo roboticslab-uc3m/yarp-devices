@@ -7,8 +7,6 @@
 #include <bitset>
 #include <string>
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/Log.h>
 #include <yarp/os/LogComponent.h>
 
@@ -102,15 +100,6 @@ bool SdoClient::send(const std::uint8_t * msg)
     return sender && sender->prepareMessage({getCobIdRx(), 8, msg});
 }
 
-std::string SdoClient::msgToStr(std::uint16_t cob, const std::uint8_t * msgData)
-{
-#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
-    return CanUtils::msgToStr(id, cob, 8, msgData);
-#else
-    return ""; // TODO: remove this entire method
-#endif
-}
-
 bool SdoClient::ping()
 {
     std::uint8_t requestMsg[8] = {0x40}; // index: 0x0000, subindex: 0x00
@@ -139,11 +128,7 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
 
     if ((bitsReceived >> 5) != 2 || expectedIndex != index || responseMsg[3] != subindex)
     {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(SDO, logId, "Client request (\"%s\") overrun", name.c_str());
-#else
-        yCError(SDO, "Client request (\"%s\") overrun (id %d)", name.c_str(), id);
-#endif
         return false;
     }
 
@@ -156,11 +141,7 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
 
             if (size != actualSize)
             {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIError(SDO, logId, "Client request (\"%s\") size mismatch: expected %u, got %u", name.c_str(), size, actualSize);
-#else
-                yCError(SDO, "Client request (\"%s\") size mismatch: expected %u, got %u (id %d)", name.c_str(), size, actualSize, id);
-#endif
                 return false;
             }
         }
@@ -174,19 +155,11 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
 
         if (size < len)
         {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(SDO, logId, "Segmented upload (\"%s\") insufficient memory allocated: expected %u, got %u", name.c_str(), len, size);
-#else
-            yCError(SDO, "Segmented upload (\"%s\") insufficient memory allocated: expected %u, got %u (id %d)", name.c_str(), len, size, id);
-#endif
             return false;
         }
 
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(SDO, logId, "Segmented upload (\"%s\") begin", name.c_str());
-#else
-        yCInfo(SDO, "Segmented upload (\"%s\") begin (id %d)", name.c_str(), id);
-#endif
 
         std::bitset<8> bitsSent(0x60);
         std::uint8_t segmentedMsg[8] = {0};
@@ -205,21 +178,13 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
 
             if ((bitsReceived >> 5) != 0)
             {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIError(SDO, logId, "Segmented upload (\"%s\") overrun", name.c_str());
-#else
-                yCError(SDO, "Segmented upload (\"%s\") overrun (id %d)", name.c_str(), id);
-#endif
                 return false;
             }
 
             if (bitsReceived[4] != bitsSent[4])
             {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIError(SDO, logId, "Segmented upload (\"%s\") toggle bit mismatch", name.c_str());
-#else
-                yCError(SDO, "Segmented upload (\"%s\") toggle bit mismatch (id %d)", name.c_str(), id);
-#endif
                 return false;
             }
 
@@ -233,11 +198,7 @@ bool SdoClient::uploadInternal(const std::string & name, void * data, std::uint3
         }
         while (!bitsReceived[0]); // continuation bit
 
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(SDO, logId, "Segmented upload (\"%s\") end", name.c_str());
-#else
-        yCInfo(SDO, "Segmented upload (\"%s\") end (id %d)", name.c_str(), id);
-#endif
     }
 
     return true;
@@ -272,11 +233,7 @@ bool SdoClient::downloadInternal(const std::string & name, const void * data, st
 
         if ((bitsReceived >> 5) != 3 || expectedIndex != index || confirmMsg[3] != subindex)
         {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIWarning(SDO, logId, "Client indication (\"%s\") overrun", name.c_str());
-#else
-            yCWarning(SDO, "Client indication (\"%s\") overrun (id %d)", name.c_str(), id);
-#endif
             return false;
         }
     }
@@ -297,22 +254,14 @@ bool SdoClient::downloadInternal(const std::string & name, const void * data, st
 
         if ((bitsReceived >> 5) != 3 || expectedIndex != index || confirmMsg[3] != subindex)
         {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(SDO, logId, "Client indication (\"%s\") overrun", name.c_str());
-#else
-            yCError(SDO, "Client indication (\"%s\") overrun (id %d)", name.c_str(), id);
-#endif
             return false;
         }
 
         std::bitset<8> bitsSent(0x00);
         std::uint32_t sent = 0;
 
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(SDO, logId, "Segmented download (\"%s\") begin", name.c_str());
-#else
-        yCInfo(SDO, "Segmented download (\"%s\") begin (id %d)", name.c_str(), id);
-#endif
 
         do
         {
@@ -343,21 +292,13 @@ bool SdoClient::downloadInternal(const std::string & name, const void * data, st
 
             if ((bitsReceived >> 5) != 1)
             {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIError(SDO, logId, "Segmented download (\"%s\") overrun", name.c_str());
-#else
-                yCError(SDO, "Segmented download (\"%s\") overrun (id %d)", name.c_str(), id);
-#endif
                 return false;
             }
 
             if (bitsReceived[4] != bitsSent[4])
             {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
                 yCIError(SDO, logId, "Segmented download (\"%s\") toggle bit mismatch", name.c_str());
-#else
-                yCError(SDO, "Segmented download (\"%s\") toggle bit mismatch (id %d)", name.c_str(), id);
-#endif
                 return false;
             }
 
@@ -366,11 +307,7 @@ bool SdoClient::downloadInternal(const std::string & name, const void * data, st
         }
         while (!bitsSent[0]); // continuation bit
 
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIInfo(SDO, logId, "Segmented download (\"%s\") end", name.c_str());
-#else
-        yCInfo(SDO, "Segmented download (\"%s\") end (id %d)", name.c_str(), id);
-#endif
     }
 
     return true;
@@ -397,29 +334,17 @@ bool SdoClient::download(const std::string & name, const std::string & s, std::u
 
 bool SdoClient::performTransfer(const std::string & name, const std::uint8_t * req, std::uint8_t * resp)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIInfo(SDO, logId, "Client transfer (\"%s\"): %s", name.c_str(), CanUtils::msgToStr(8, req).c_str());
-#else
-    yCInfo(SDO, "Client transfer (\"%s\") %s", name.c_str(), msgToStr(cobRx, req).c_str());
-#endif
 
     if (!send(req))
     {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(SDO, logId, "Client request/indication (\"%s\") unable to send packet", name.c_str());
-#else
-        yCError(SDO, "Client request/indication (\"%s\") unable to send packet (id %d)", name.c_str(), id);
-#endif
         return false;
     }
 
     if (!stateObserver.await(resp))
     {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(SDO, logId, "Client request/indication (\"%s\") inactive/timeout", name.c_str());
-#else
-        yCError(SDO, "Client request/indication (\"%s\") inactive/timeout (id %d)", name.c_str(), id);
-#endif
         return false;
     }
 
@@ -427,18 +352,10 @@ bool SdoClient::performTransfer(const std::string & name, const std::uint8_t * r
     {
         std::uint32_t code;
         std::memcpy(&code, resp + 4, sizeof(code));
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(SDO, logId, "Transfer abort (\"%s\"): %s", name.c_str(), parseAbortCode(code).c_str());
-#else
-        yCError(SDO, "Transfer abort (\"%s\"): %s (id %d)", name.c_str(), parseAbortCode(code).c_str(), id);
-#endif
         return false;
     }
 
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCIInfo(SDO, logId, "Server transfer (\"%s\"): %s", name.c_str(), CanUtils::msgToStr(8, resp).c_str());
-#else
-    yCInfo(SDO, "Server transfer (\"%s\") %s", name.c_str(), msgToStr(cobTx, resp).c_str());
-#endif
     return true;
 }

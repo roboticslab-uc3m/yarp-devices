@@ -4,8 +4,6 @@
 
 #include <algorithm>
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/Log.h>
 #include <yarp/os/Time.h>
 
@@ -17,11 +15,7 @@ using namespace roboticslab;
 
 bool DextraRawControlboard::resetEncoderRaw(int j)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", j);
-#else
-    yCTrace(DEXTRA, "%d", j);
-#endif
     return setEncoderRaw(j, 0.0);
 }
 
@@ -29,11 +23,7 @@ bool DextraRawControlboard::resetEncoderRaw(int j)
 
 bool DextraRawControlboard::resetEncodersRaw()
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "");
-#else
-    yCTrace(DEXTRA, "");
-#endif
     Synapse::Setpoints setpoints = {0};
     setSetpoints(setpoints);
     return true;
@@ -43,11 +33,7 @@ bool DextraRawControlboard::resetEncodersRaw()
 
 bool DextraRawControlboard::setEncoderRaw(int j, double val)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d %f", j, val);
-#else
-    yCTrace(DEXTRA, "%d %f", j, val);
-#endif
     CHECK_JOINT(j);
     setSetpoint(j, val);
     return true;
@@ -57,11 +43,7 @@ bool DextraRawControlboard::setEncoderRaw(int j, double val)
 
 bool DextraRawControlboard::setEncodersRaw(const double * vals)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "");
-#else
-    yCTrace(DEXTRA, "");
-#endif
     Synapse::Setpoints setpoints;
     std::copy(vals, vals + Synapse::DATA_POINTS, std::begin(setpoints));
     setSetpoints(setpoints);
@@ -72,11 +54,7 @@ bool DextraRawControlboard::setEncodersRaw(const double * vals)
 
 bool DextraRawControlboard::getEncoderRaw(int j, double * v)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", j);
-#else
-    yCTrace(DEXTRA, "%d", j);
-#endif
     CHECK_JOINT(j);
     *v = getSetpoint(j);
     return true;

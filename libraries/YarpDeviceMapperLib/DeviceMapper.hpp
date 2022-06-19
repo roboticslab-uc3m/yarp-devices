@@ -163,9 +163,9 @@ public:
     template<typename T, typename... T_ref>
     bool mapSingleJoint(single_mapping_fn<T, T_ref...> fn, int j, T_ref... ref)
     {
-        auto t = getDevice(j);
-        T * p = std::get<0>(t)->getHandle<T>();
-        return p ? (p->*fn)(std::get<1>(t), ref...) : false;
+        auto [device, offset] = getDevice(j);
+        T * p = device->getHandle<T>();
+        return p ? (p->*fn)(offset, ref...) : false;
     }
 
     //! Alias for a full-joint command. See class description.
@@ -179,10 +179,10 @@ public:
         auto task = createTask();
         bool ok = false;
 
-        for (const auto & t : getDevicesWithOffsets())
+        for (const auto & [device, offset] : getDevicesWithOffsets())
         {
-            T * p = std::get<0>(t)->getHandle<T>();
-            ok |= p && (task->add(p, fn, refs + std::get<1>(t)...), true);
+            T * p = device->template getHandle<T>();
+            ok |= p && (task->add(p, fn, refs + offset...), true);
         }
 
         // at least one targeted device must implement the 'T' iface
@@ -201,10 +201,10 @@ public:
         auto devices = getDevices(n_joint, joints); // extend lifetime of local joint vector
         bool ok = true;
 
-        for (const auto & t : devices)
+        for (const auto & [device, localIndices, globalIndex] : devices)
         {
-            T * p = std::get<0>(t)->getHandle<T>();
-            ok &= p && (task->add(p, fn, std::get<1>(t).size(), std::get<1>(t).data(), refs + std::get<2>(t)...), true);
+            T * p = device->template getHandle<T>();
+            ok &= p && (task->add(p, fn, localIndices.size(), localIndices.data(), refs + globalIndex...), true);
         }
 
         // all targeted devices must implement the 'T' iface

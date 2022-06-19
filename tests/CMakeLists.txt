@@ -14,7 +14,6 @@ if(ENABLE_tests)
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/FutureObserverLib.cpp "#include \"FutureObserverLib.hpp\"")
     add_library(FutureObserverLib STATIC FutureObserverLib.hpp
                                          ${CMAKE_CURRENT_BINARY_DIR}/FutureObserverLib.cpp)
-    target_compile_features(FutureObserverLib PUBLIC cxx_std_11)
 
     # testCanBusSharerLib
 
@@ -37,7 +36,6 @@ if(ENABLE_tests)
     if(ENABLE_CanOpenNodeLib)
         add_executable(testCanOpenNodeLib testCanOpenNodeLib.cpp)
         target_link_libraries(testCanOpenNodeLib ROBOTICSLAB::CanOpenNodeLib FutureObserverLib gtest_main)
-        target_compile_features(testCanOpenNodeLib PUBLIC cxx_std_14)
         gtest_discover_tests(testCanOpenNodeLib)
     endif()
 
@@ -46,7 +44,6 @@ if(ENABLE_tests)
     if(ENABLE_YarpDeviceMapperLib)
         add_executable(testYarpDeviceMapperLib testYarpDeviceMapperLib.cpp)
         target_link_libraries(testYarpDeviceMapperLib ROBOTICSLAB::YarpDeviceMapperLib YARP::YARP_dev gtest_main)
-        target_compile_features(testYarpDeviceMapperLib PUBLIC cxx_std_14)
         gtest_discover_tests(testYarpDeviceMapperLib)
     endif()
 else()

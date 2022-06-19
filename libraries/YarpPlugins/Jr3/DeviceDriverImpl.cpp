@@ -6,8 +6,6 @@
 #include <fcntl.h> // ::open
 #include <unistd.h> // ::close
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/LogStream.h>
 #include <yarp/os/SystemClock.h>
 
@@ -28,10 +26,6 @@ constexpr auto DEFAULT_FILTER_ID = 0;
 
 bool Jr3::open(yarp::os::Searchable& config)
 {
-#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
-    yCDebug(JR3) << "Config:" << config.toString();
-#endif
-
     yarp::os::Value * vNames;
 
     if (config.check("names", vNames, "sensor names"))

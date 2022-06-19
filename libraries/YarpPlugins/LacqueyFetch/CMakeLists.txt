@@ -23,8 +23,6 @@ if(NOT SKIP_LacqueyFetch)
                                        YARP::YARP_dev
                                        ROBOTICSLAB::CanBusSharerLib)
 
-    target_compile_features(LacqueyFetch PUBLIC cxx_std_11)
-
     yarp_install(TARGETS LacqueyFetch
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
                  ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR}

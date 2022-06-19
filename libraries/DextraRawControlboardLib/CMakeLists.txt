@@ -18,12 +18,7 @@ if(ENABLE_DextraRawControlboardLib)
 
     target_include_directories(DextraRawControlboardLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-    target_compile_features(DextraRawControlboardLib PUBLIC cxx_std_14)
-
-    install(TARGETS DextraRawControlboardLib
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(TARGETS DextraRawControlboardLib)
 
     add_library(ROBOTICSLAB::DextraRawControlboardLib ALIAS DextraRawControlboardLib)
 

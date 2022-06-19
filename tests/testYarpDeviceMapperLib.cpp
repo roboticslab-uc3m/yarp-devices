@@ -18,10 +18,7 @@
 #include "FutureTask.hpp"
 #include "DeviceMapper.hpp"
 
-namespace roboticslab
-{
-
-namespace test
+namespace roboticslab::test
 {
 
 /**
@@ -40,25 +37,25 @@ namespace test
  */
 struct DummyPositionDirectRawImpl : public yarp::dev::IPositionDirectRaw
 {
-    virtual bool getAxes(int * axes) override
+    bool getAxes(int * axes) override
     { *axes = 1; return true; }
 
-    virtual bool setPositionRaw(int j, double ref) override
+    bool setPositionRaw(int j, double ref) override
     { return ref >= 0.0 ? true : false; }
 
-    virtual bool setPositionsRaw(int n_joint, const int * joints, const double * refs) override
+    bool setPositionsRaw(int n_joint, const int * joints, const double * refs) override
     { return false; }
 
-    virtual bool setPositionsRaw(const double * refs) override
+    bool setPositionsRaw(const double * refs) override
     { return false; }
 
-    virtual bool getRefPositionRaw(int joint, double * ref) override
+    bool getRefPositionRaw(int joint, double * ref) override
     { *ref = joint; return true; }
 
-    virtual bool getRefPositionsRaw(double * refs) override
+    bool getRefPositionsRaw(double * refs) override
     { int axes; bool ret; return ret = getAxes(&axes), std::iota(refs, refs + axes, 0.0), ret; };
 
-    virtual bool getRefPositionsRaw(int n_joint, const int * joints, double * refs) override
+    bool getRefPositionsRaw(int n_joint, const int * joints, double * refs) override
     { std::copy_n(joints, n_joint, refs); return true; }
 };
 
@@ -77,7 +74,7 @@ struct JointDriver : public yarp::dev::DeviceDriver,
                      public DummyPositionDirectRawImpl
 {
     //! Retrieve the number of controlled axes.
-    virtual bool getAxes(int * axes) override
+    bool getAxes(int * axes) override
     { *axes = N; return true; }
 
     //! Generate dummy name that identifies this device given the number of axes.
@@ -97,12 +94,12 @@ class YarpDeviceMapperTest : public testing::Test
 {
 public:
     YarpDeviceMapperTest() : dummy(nullptr)
-    { }
+    {}
 
-    virtual void SetUp()
-    { }
+    void SetUp() override
+    {}
 
-    virtual void TearDown()
+    void TearDown() override
     {
         delete dummy;
 
@@ -264,10 +261,10 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
 
     // device 1 [0]
 
-    auto devAtIndex0 = mapper.getDevice(0);
-    auto * p0 = std::get<0>(devAtIndex0)->getHandle<yarp::dev::IPositionDirectRaw>();
+    auto [dev0, idx0] = mapper.getDevice(0);
+    auto * p0 = dev0->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p0, nullptr);
-    ASSERT_EQ(std::get<1>(devAtIndex0), localIndex0);
+    ASSERT_EQ(idx0, localIndex0);
 
     ASSERT_TRUE(p0->getAxes(&axes1));
     ASSERT_EQ(axes1, 1);
@@ -277,15 +274,15 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
 
     // device 2 [1-2]
 
-    auto devAtIndex1 = mapper.getDevice(1);
-    auto * p1 = std::get<0>(devAtIndex1)->getHandle<yarp::dev::IPositionDirectRaw>();
+    auto [dev1, idx1] = mapper.getDevice(1);
+    auto * p1 = dev1->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p1, nullptr);
-    ASSERT_EQ(std::get<1>(devAtIndex1), localIndex0);
+    ASSERT_EQ(idx1, localIndex0);
 
-    auto devAtIndex2 = mapper.getDevice(2);
-    auto * p2 = std::get<0>(devAtIndex2)->getHandle<yarp::dev::IPositionDirectRaw>();
+    auto [dev2, idx2] = mapper.getDevice(2);
+    auto * p2 = dev2->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p2, nullptr);
-    ASSERT_EQ(std::get<1>(devAtIndex2), localIndex1);
+    ASSERT_EQ(idx2, localIndex1);
 
     ASSERT_EQ(p1, p2);
 
@@ -299,20 +296,20 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
 
     // device 3 [3-5]
 
-    auto devAtIndex3 = mapper.getDevice(3);
-    auto * p3 = std::get<0>(devAtIndex3)->getHandle<yarp::dev::IPositionDirectRaw>();
+    auto [dev3, idx3] = mapper.getDevice(3);
+    auto * p3 = dev3->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p3, nullptr);
-    ASSERT_EQ(std::get<1>(devAtIndex3), localIndex0);
+    ASSERT_EQ(idx3, localIndex0);
 
-    auto devAtIndex4 = mapper.getDevice(4);
-    auto * p4 = std::get<0>(devAtIndex4)->getHandle<yarp::dev::IPositionDirectRaw>();
+    auto [dev4, idx4] = mapper.getDevice(4);
+    auto * p4 = dev4->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p4, nullptr);
-    ASSERT_EQ(std::get<1>(devAtIndex4), localIndex1);
+    ASSERT_EQ(idx4, localIndex1);
 
-    auto devAtIndex5 = mapper.getDevice(5);
-    auto * p5 = std::get<0>(devAtIndex5)->getHandle<yarp::dev::IPositionDirectRaw>();
+    auto [dev5, idx5] = mapper.getDevice(5);
+    auto * p5 = dev5->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p5, nullptr);
-    ASSERT_EQ(std::get<1>(devAtIndex5), localIndex2);
+    ASSERT_EQ(idx5, localIndex2);
 
     ASSERT_EQ(p3, p4);
     ASSERT_EQ(p3, p5);
@@ -329,25 +326,25 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
 
     // device 4 [6-9]
 
-    auto devAtIndex6 = mapper.getDevice(6);
-    auto * p6 = std::get<0>(devAtIndex6)->getHandle<yarp::dev::IPositionDirectRaw>();
+    auto [dev6, idx6] = mapper.getDevice(6);
+    auto * p6 = dev6->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p6, nullptr);
-    ASSERT_EQ(std::get<1>(devAtIndex6), localIndex0);
+    ASSERT_EQ(idx6, localIndex0);
 
-    auto devAtIndex7 = mapper.getDevice(7);
-    auto * p7 = std::get<0>(devAtIndex7)->getHandle<yarp::dev::IPositionDirectRaw>();
+    auto [dev7, idx7] = mapper.getDevice(7);
+    auto * p7 = dev7->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p7, nullptr);
-    ASSERT_EQ(std::get<1>(devAtIndex7), localIndex1);
+    ASSERT_EQ(idx7, localIndex1);
 
-    auto devAtIndex8 = mapper.getDevice(8);
-    auto * p8 = std::get<0>(devAtIndex8)->getHandle<yarp::dev::IPositionDirectRaw>();
+    auto [dev8, idx8] = mapper.getDevice(8);
+    auto * p8 = dev8->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p8, nullptr);
-    ASSERT_EQ(std::get<1>(devAtIndex8), localIndex2);
+    ASSERT_EQ(idx8, localIndex2);
 
-    auto devAtIndex9 = mapper.getDevice(9);
-    auto * p9 = std::get<0>(devAtIndex9)->getHandle<yarp::dev::IPositionDirectRaw>();
+    auto [dev9, idx9] = mapper.getDevice(9);
+    auto * p9 = dev9->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p9, nullptr);
-    ASSERT_EQ(std::get<1>(devAtIndex9), localIndex3);
+    ASSERT_EQ(idx9, localIndex3);
 
     ASSERT_EQ(p6, p7);
     ASSERT_EQ(p6, p8);
@@ -374,10 +371,10 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
     const auto & devicesWithOffsets = mapper.getDevicesWithOffsets();
     ASSERT_EQ(devicesWithOffsets.size(), 4);
 
-    ASSERT_EQ(std::get<0>(devicesWithOffsets[0]), std::get<0>(devAtIndex0));
-    ASSERT_EQ(std::get<0>(devicesWithOffsets[1]), std::get<0>(devAtIndex1));
-    ASSERT_EQ(std::get<0>(devicesWithOffsets[2]), std::get<0>(devAtIndex3));
-    ASSERT_EQ(std::get<0>(devicesWithOffsets[3]), std::get<0>(devAtIndex6));
+    ASSERT_EQ(std::get<0>(devicesWithOffsets[0]), dev0);
+    ASSERT_EQ(std::get<0>(devicesWithOffsets[1]), dev1);
+    ASSERT_EQ(std::get<0>(devicesWithOffsets[2]), dev3);
+    ASSERT_EQ(std::get<0>(devicesWithOffsets[3]), dev6);
 
     ASSERT_EQ(std::get<1>(devicesWithOffsets[0]), 0);
     ASSERT_EQ(std::get<1>(devicesWithOffsets[1]), 1);
@@ -391,11 +388,11 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
     auto devices = mapper.getDevices(globalAxesCount, globalAxes);
     ASSERT_EQ(devices.size(), 3);
 
-    ASSERT_EQ(std::get<0>(devices[0]), std::get<0>(devAtIndex2));
-    ASSERT_EQ(std::get<0>(devices[1]), std::get<0>(devAtIndex4));
-    ASSERT_EQ(std::get<0>(devices[1]), std::get<0>(devAtIndex5)); // same device
-    ASSERT_EQ(std::get<0>(devices[2]), std::get<0>(devAtIndex6));
-    ASSERT_EQ(std::get<0>(devices[2]), std::get<0>(devAtIndex8)); // same device
+    ASSERT_EQ(std::get<0>(devices[0]), dev2);
+    ASSERT_EQ(std::get<0>(devices[1]), dev4);
+    ASSERT_EQ(std::get<0>(devices[1]), dev5); // same device
+    ASSERT_EQ(std::get<0>(devices[2]), dev6);
+    ASSERT_EQ(std::get<0>(devices[2]), dev8); // same device
 
     ASSERT_EQ(std::get<1>(devices[0]).size(), 1);
     ASSERT_EQ(std::get<1>(devices[1]).size(), 2);
@@ -435,5 +432,4 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
     ASSERT_EQ(std::vector<double>(ref_group, ref_group + jointCount), (std::vector<double>{0, 0, 2, 1, 3})); // parens intentional
 }
 
-} // namespace test
-} // namespace roboticslab
+} // namespace roboticslab::test

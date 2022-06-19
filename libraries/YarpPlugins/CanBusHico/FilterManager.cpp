@@ -9,7 +9,6 @@
 #include <set>
 #include <vector>
 
-#include <yarp/conf/version.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 
@@ -116,11 +115,7 @@ bool CanBusHico::FilterManager::clearFilters(bool clearStage)
 {
     if (::ioctl(fd, IOC_CLEAR_FILTERS) == -1)
     {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, owner.id()) << "ioctl() error while clearing filters:" << std::strerror(errno);
-#else
-        yCError(HICO) << "ioctl() error while clearing filters:" << std::strerror(errno);
-#endif
         return false;
     }
 
@@ -145,11 +140,7 @@ bool CanBusHico::FilterManager::setMaskedFilter(unsigned int id)
 
     if (::ioctl(fd, IOC_SET_FILTER, &filter) == -1)
     {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, owner.id()) << "Could not set filter:" << std::strerror(errno);
-#else
-        yCError(HICO) << "Could not set filter:" << std::strerror(errno);
-#endif
         return false;
     }
 
@@ -169,11 +160,7 @@ bool roboticslab::CanBusHico::FilterManager::setRangedFilter(unsigned int lower,
 
     if (::ioctl(fd, IOC_SET_FILTER, &filter) == -1)
     {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, owner.id()) << "Could not set filter:" << std::strerror(errno);
-#else
-        yCError(HICO) << "Could not set filter:" << std::strerror(errno);
-#endif
         return false;
     }
 
@@ -193,12 +180,12 @@ bool CanBusHico::FilterManager::bulkUpdate()
 
     if (enableRanges)
     {
-        std::set<unsigned int>::iterator itSeq = stage.begin();
-        std::set<unsigned int>::const_iterator itEnd = stage.end();
+        auto itSeq = stage.begin();
+        auto itEnd = stage.cend();
 
         while (itSeq != itEnd)
         {
-            std::set<unsigned int>::iterator itNext = std::adjacent_find(itSeq, itEnd, not_consecutive());
+            auto itNext = std::adjacent_find(itSeq, itEnd, not_consecutive());
 
             if (itNext != itEnd)
             {
@@ -211,7 +198,7 @@ bool CanBusHico::FilterManager::bulkUpdate()
     }
     else
     {
-        for (std::set<unsigned int>::const_iterator it = stage.begin(); it != stage.end(); ++it)
+        for (auto it = stage.cbegin(); it != stage.cend(); ++it)
         {
             sequences.emplace_back(1, *it);
         }
@@ -219,11 +206,7 @@ bool CanBusHico::FilterManager::bulkUpdate()
 
     if (sequences.size() > MAX_FILTERS)
     {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(HICO, owner.id(), "MAX_FILTERS exceeded (%zu > %d)", sequences.size(), MAX_FILTERS);
-#else
-        yCWarning(HICO, "MAX_FILTERS exceeded (%zu > %d)", sequences.size(), MAX_FILTERS);
-#endif
         valid = false;
     }
     else

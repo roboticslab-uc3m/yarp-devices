@@ -6,10 +6,7 @@
 
 #include "FutureObserverLib.hpp"
 
-namespace roboticslab
-{
-
-namespace test
+namespace roboticslab::test
 {
 
 /**
@@ -26,11 +23,10 @@ class StateObserverTest : public testing::Test,
                           protected FutureObserver
 {
 public:
-    virtual void SetUp()
-    {
-    }
+    void SetUp() override
+    {}
 
-    virtual void TearDown()
+    void TearDown() override
     {
         shutdown();
     }
@@ -110,5 +106,4 @@ TEST_F(StateObserverTest, StateObserver)
     ASSERT_TRUE(emptyStateObserver.notify());
 }
 
-} // namespace test
-} // namespace roboticslab
+} // namespace roboticslab::test

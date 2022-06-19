@@ -9,9 +9,6 @@ if(ENABLE_dumpCanBus)
     target_link_libraries(dumpCanBus YARP::YARP_os
                                      YARP::YARP_init)
 
-    target_compile_features(dumpCanBus PRIVATE cxx_std_11)
-
-    install(TARGETS dumpCanBus
-            DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(TARGETS dumpCanBus)
 
 endif()

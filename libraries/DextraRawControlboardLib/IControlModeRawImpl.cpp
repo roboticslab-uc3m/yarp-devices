@@ -2,8 +2,6 @@
 
 #include "DextraRawControlboard.hpp"
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/Log.h>
 #include <yarp/os/Vocab.h>
 
@@ -15,11 +13,7 @@ using namespace roboticslab;
 
 bool DextraRawControlboard::getControlModeRaw(int j, int * mode)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d", j);
-#else
-    yCTrace(DEXTRA, "%d", j);
-#endif
     CHECK_JOINT(j);
     *mode = VOCAB_CM_POSITION;
     return true;
@@ -57,13 +51,9 @@ bool DextraRawControlboard::getControlModesRaw(int n_joint, const int * joints, 
 
 bool DextraRawControlboard::setControlModeRaw(int j, int mode)
 {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
     yCITrace(DEXTRA, id(), "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
-#else
-    yCTrace(DEXTRA, "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
-#endif
     CHECK_JOINT(j);
-    return false; // don't allow control modes other than position direct, for onw
+    return false; // don't allow any control modes other than position direct, for now
 }
 
 // -----------------------------------------------------------------------------

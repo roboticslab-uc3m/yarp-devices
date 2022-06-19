@@ -9,9 +9,9 @@
 #include <cerrno>
 #include <cassert>
 
+#include <map>
 #include <stdexcept>
 
-#include <yarp/conf/version.h>
 #include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
@@ -27,11 +27,19 @@ namespace
         tv->tv_sec = timeMs / 1000;
         tv->tv_usec = (timeMs % 1000) * 1000;
     }
+
+    const std::map<unsigned int, unsigned int> idToBitrateMap {
+        {BITRATE_10k, 10000},
+        {BITRATE_20k, 20000},
+        {BITRATE_50k, 50000},
+        {BITRATE_100k, 100000},
+        {BITRATE_125k, 125000},
+        {BITRATE_250k, 250000},
+        {BITRATE_500k, 500000},
+        {BITRATE_800k, 800000},
+        {BITRATE_1000k, 1000000}
+    };
 }
-
-// -----------------------------------------------------------------------------
-
-std::map<unsigned int, unsigned int> CanBusHico::idToBitrateMap;
 
 // -----------------------------------------------------------------------------
 
@@ -58,21 +66,13 @@ bool CanBusHico::waitUntilTimeout(io_operation op, bool * bufferReady)
         ret = ::select(fileDescriptor + 1, 0, &fds, 0, &tv);
         break;
     default:
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, id(), "Unhandled IO operation on select()");
-#else
-        yCError(HICO, "Unhandled IO operation on select()");
-#endif
         return false;
     }
 
     if (ret < 0)
     {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(HICO, id(), "select() error: %s", std::strerror(errno));
-#else
-        yCError(HICO, "select() error: %s", std::strerror(errno));
-#endif
         return false;
     }
     else if (ret == 0)
@@ -90,30 +90,13 @@ bool CanBusHico::waitUntilTimeout(io_operation op, bool * bufferReady)
 
 // -----------------------------------------------------------------------------
 
-void CanBusHico::initBitrateMap()
-{
-    idToBitrateMap[BITRATE_10k] = 10000;
-    idToBitrateMap[BITRATE_20k] = 20000;
-    idToBitrateMap[BITRATE_50k] = 50000;
-    idToBitrateMap[BITRATE_100k] = 100000;
-    idToBitrateMap[BITRATE_125k] = 125000;
-    idToBitrateMap[BITRATE_250k] = 250000;
-    idToBitrateMap[BITRATE_500k] = 500000;
-    idToBitrateMap[BITRATE_800k] = 800000;
-    idToBitrateMap[BITRATE_1000k] = 1000000;
-}
-
-// -----------------------------------------------------------------------------
-
 bool CanBusHico::bitrateToId(unsigned int bitrate, unsigned int * id)
 {
-    std::map<unsigned int, unsigned int>::const_iterator it;
-
-    for (it = idToBitrateMap.begin(); it != idToBitrateMap.end(); ++it)
+    for (const auto & [_id, _bitrate] : idToBitrateMap)
     {
-        if (it->second == bitrate)
+        if (_bitrate == bitrate)
         {
-            *id = it->first;
+            *id = _id;
             return true;
         }
     }
@@ -154,11 +137,7 @@ CanBusHico::FilterManager::filter_config CanBusHico::parseFilterConfiguration(co
     }
     else
     {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIWarning(HICO, id()) << "Unrecognized filter configuration, setting DISABLED:" << str;
-#else
-        yCWarning(HICO) << "Unrecognized filter configuration, setting DISABLED:" << str;
-#endif
         return FilterManager::DISABLED;
     }
 }

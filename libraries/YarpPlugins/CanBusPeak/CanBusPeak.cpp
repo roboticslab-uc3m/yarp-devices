@@ -9,7 +9,6 @@
 #include <cassert>
 #include <cerrno>
 
-#include <yarp/conf/version.h>
 #include <yarp/os/Log.h>
 
 #include "LogComponent.hpp"
@@ -52,21 +51,13 @@ bool CanBusPeak::waitUntilTimeout(io_operation op, bool * bufferReady)
         ret = ::select(fileDescriptor + 1, 0, &fds, 0, &tv);
         break;
     default:
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(PEAK, id(), "Unhandled IO operation on select()");
-#else
-        yCError(PEAK, "Unhandled IO operation on select()");
-#endif
         return false;
     }
 
     if (ret < 0)
     {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(PEAK, id(), "select() error: %s", std::strerror(errno));
-#else
-        yCError(PEAK, "select() error: %s", std::strerror(errno));
-#endif
         return false;
     }
     else if (ret == 0)
@@ -96,7 +87,7 @@ std::uint64_t CanBusPeak::computeAcceptanceCodeAndMask()
 
     if (activeFilters.empty())
     {
-        return (std::uint64_t)mask;
+        return static_cast<std::uint64_t>(mask);
     }
 
     std::uint32_t code = ~0x0;
@@ -104,7 +95,7 @@ std::uint64_t CanBusPeak::computeAcceptanceCodeAndMask()
 
     bool firstRun = true;
 
-    for (std::set<unsigned int>::const_iterator it = activeFilters.begin(); it != activeFilters.end(); ++it)
+    for (auto it = activeFilters.cbegin(); it != activeFilters.cend(); ++it)
     {
         // logical AND
         code &= *it;
@@ -120,7 +111,7 @@ std::uint64_t CanBusPeak::computeAcceptanceCodeAndMask()
         firstRun = false;
     }
 
-    return ((std::uint64_t)code << 32) | mask;
+    return (static_cast<std::uint64_t>(code) << 32) | mask;
 }
 
 // -----------------------------------------------------------------------------

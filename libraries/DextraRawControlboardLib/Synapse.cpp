@@ -7,14 +7,11 @@
 
 using namespace roboticslab;
 
-namespace
-{
-    const unsigned char HEADER = 0x7E;
-    const unsigned char FOOTER = 0x7E;
-    const int FLOAT_SIZE = sizeof(Synapse::setpoint_t);
-    const int MESSAGE_SIZE = (FLOAT_SIZE + 1) * Synapse::DATA_POINTS;
-    const unsigned char FINGER_ADDRESS[Synapse::DATA_POINTS] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
-}
+constexpr unsigned char HEADER = 0x7E;
+constexpr unsigned char FOOTER = 0x7E;
+constexpr int FLOAT_SIZE = sizeof(Synapse::setpoint_t);
+constexpr int MESSAGE_SIZE = (FLOAT_SIZE + 1) * Synapse::DATA_POINTS;
+constexpr unsigned char FINGER_ADDRESS[Synapse::DATA_POINTS] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
 
 const std::array<std::pair<Synapse::setpoint_t, Synapse::setpoint_t>, Synapse::DATA_POINTS> Synapse::LIMITS = {
     {0, 90},

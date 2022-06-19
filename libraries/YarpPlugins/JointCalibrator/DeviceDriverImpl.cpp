@@ -2,8 +2,6 @@
 
 #include "JointCalibrator.hpp"
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
@@ -40,10 +38,6 @@ namespace
 
 bool JointCalibrator::open(yarp::os::Searchable & config)
 {
-#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
-    yCDebug(JC) << "Config:" << config.toString();
-#endif
-
     axes = config.check("joints", yarp::os::Value(0), "number of controlled axes").asInt32();
 
     if (axes == 0)

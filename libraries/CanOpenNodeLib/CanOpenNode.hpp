@@ -39,7 +39,7 @@ public:
 
     //! Constructor, creates and configures all handles.
     CanOpenNode(unsigned int id, double sdoTimeout = SDO_TIMEOUT,
-            double stateTimeout = STATE_MACHINE_TIMEOUT, CanSenderDelegate * sender = nullptr);
+                double stateTimeout = STATE_MACHINE_TIMEOUT, CanSenderDelegate * sender = nullptr);
 
     //! Deleted copy constructor.
     CanOpenNode(const CanOpenNode &) = delete;
@@ -105,7 +105,7 @@ public:
     DriveStatusMachine * driveStatus() const
     { return _driveStatus; }
 
-    virtual bool notifyMessage(const can_message & msg) override;
+    bool notifyMessage(const can_message & msg) override;
 
 private:
     unsigned int _id;

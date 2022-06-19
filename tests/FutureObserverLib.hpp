@@ -10,10 +10,7 @@
 #include <future>
 #include <vector>
 
-namespace roboticslab
-{
-
-namespace test
+namespace roboticslab::test
 {
 
 /**
@@ -85,7 +82,6 @@ private:
     std::function<bool()> fn;
 };
 
-} // namespace test
-} // namespace roboticslab
+} // namespace roboticslab::test
 
 #endif // __FUTURE_OBSERVER_HPP__

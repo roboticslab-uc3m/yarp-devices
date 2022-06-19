@@ -1,7 +1,5 @@
 #include "AravisGigE.hpp"
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
@@ -10,10 +8,6 @@ using namespace roboticslab;
 
 bool AravisGigE::open(yarp::os::Searchable &config)
 {
-#if !defined(YARP_VERSION_COMPARE) // < 3.6.0
-    yCDebug(ARV) << "Config:" << config.toString();
-#endif
-
     //-- Configuration of Aravis GigE Camera device
     if (config.check("fake", "enable fake Aravis camera"))
     {

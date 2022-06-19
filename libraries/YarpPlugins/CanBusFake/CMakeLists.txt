@@ -17,8 +17,6 @@ if(NOT SKIP_CanBusFake)
 
     target_link_libraries(CanBusFake YARP::YARP_dev)
 
-    target_compile_features(CanBusFake PRIVATE cxx_std_11)
-
     yarp_install(TARGETS CanBusFake
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
                  ARCHIVE DESTINATION ${ROBOTICSLAB-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR}

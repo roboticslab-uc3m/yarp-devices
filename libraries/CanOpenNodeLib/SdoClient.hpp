@@ -68,7 +68,7 @@ public:
     template<typename T>
     bool upload(const std::string & name, T * data, std::uint16_t index, std::uint8_t subindex = 0x00)
     {
-        static_assert(std::is_integral<T>::value, "Integral required.");
+        static_assert(std::is_integral_v<T>, "Integral required.");
         return uploadInternal(name, data, sizeof(T), index, subindex);
     }
 
@@ -102,7 +102,7 @@ public:
     template<typename T>
     bool download(const std::string & name, T data, std::uint16_t index, std::uint8_t subindex = 0x00)
     {
-        static_assert(std::is_integral<T>::value, "Integral required.");
+        static_assert(std::is_integral_v<T>, "Integral required.");
         return downloadInternal(name, &data, sizeof(T), index, subindex);
     }
 
@@ -149,8 +149,6 @@ public:
 
 private:
     bool send(const std::uint8_t * msg);
-    std::string msgToStr(std::uint16_t cob, const std::uint8_t * msgData);
-
     bool uploadInternal(const std::string & name, void * data, std::uint32_t size, std::uint16_t index, std::uint8_t subindex);
     bool downloadInternal(const std::string & name, const void * data, std::uint32_t size, std::uint16_t index, std::uint8_t subindex);
     bool performTransfer(const std::string & name, const std::uint8_t * req, std::uint8_t * resp);

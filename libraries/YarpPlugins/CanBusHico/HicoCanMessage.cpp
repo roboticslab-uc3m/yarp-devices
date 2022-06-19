@@ -23,7 +23,7 @@ HicoCanMessage::~HicoCanMessage()
 
 yarp::dev::CanMessage & HicoCanMessage::operator=(const yarp::dev::CanMessage & l)
 {
-    const HicoCanMessage & tmp = dynamic_cast<const HicoCanMessage &>(l);
+    const auto & tmp = dynamic_cast<const HicoCanMessage &>(l);
     std::memcpy(message, tmp.message, sizeof(struct can_msg));
     return *this;
 }

@@ -5,20 +5,11 @@
 #include <cstring>
 
 #include <bitset>
+#include <optional>
 #include <vector>
-
-#include <yarp/conf/version.h>
 
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
-
-#if defined(USE_NONSTD_OPTIONAL)
-# include "nonstd/optional.hpp"
-using nonstd::optional;
-#else
-# include <optional>
-using std::optional;
-#endif
 
 using namespace roboticslab;
 
@@ -29,12 +20,12 @@ namespace
 
 struct PdoConfiguration::Private
 {
-    optional<bool> valid;
-    optional<bool> rtr;
-    optional<PdoTransmissionType> transmissionType;
-    optional<std::uint16_t> inhibitTime;
-    optional<std::uint16_t> eventTimer;
-    optional<std::uint8_t> syncStartValue;
+    std::optional<bool> valid;
+    std::optional<bool> rtr;
+    std::optional<PdoTransmissionType> transmissionType;
+    std::optional<std::uint16_t> inhibitTime;
+    std::optional<std::uint16_t> eventTimer;
+    std::optional<std::uint8_t> syncStartValue;
     std::vector<std::uint32_t> mappings;
 };
 
@@ -124,11 +115,7 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
         mappingIdx = 0x1A00 + n - 1;
         break;
     default:
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
         yCIError(PDO, logId) << "Unknown PDO type";
-#else
-        yCError(PDO) << "Unknown PDO type";
-#endif
         return false;
     }
 
@@ -148,11 +135,7 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
     {
         if (getType() != PdoType::TPDO)
         {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(PDO, logId) << "Illegal RTR usage on non-TPDO node";
-#else
-            yCError(PDO) << "Illegal RTR usage on non-TPDO node";
-#endif
             return false;
         }
 
@@ -183,11 +166,7 @@ bool PdoProtocol::configure(const PdoConfiguration & conf)
     {
         if (getType() != PdoType::TPDO)
         {
-#if defined(YARP_VERSION_COMPARE) // >= 3.6.0
             yCIError(PDO, logId) << "Illegal SYNC start value usage on non-TPDO node";
-#else
-            yCError(PDO) << "Illegal SYNC start value usage on non-TPDO node";
-#endif
             return false;
         }
 

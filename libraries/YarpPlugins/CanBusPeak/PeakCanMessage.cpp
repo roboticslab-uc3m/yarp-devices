@@ -23,7 +23,7 @@ PeakCanMessage::~PeakCanMessage()
 
 yarp::dev::CanMessage & PeakCanMessage::operator=(const yarp::dev::CanMessage & l)
 {
-    const PeakCanMessage & tmp = dynamic_cast<const PeakCanMessage &>(l);
+    const auto & tmp = dynamic_cast<const PeakCanMessage &>(l);
     std::memcpy(message, tmp.message, sizeof(struct pcanfd_msg));
     return *this;
 }
