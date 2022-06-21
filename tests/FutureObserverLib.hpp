@@ -30,7 +30,7 @@ public:
     virtual ~FutureObserver() = default;
 
     //! Finalize all pending tasks and clean queue.
-    virtual void shutdown()
+    void shutdown()
     {
         for (auto f : futures)
         {
@@ -61,7 +61,7 @@ private:
  * @ingroup FutureObserverLib
  * @brief Functor wait-with-callback class.
  */
-class observer_timer
+class observer_timer final
 {
 public:
     //! Register function object and configure wait time.

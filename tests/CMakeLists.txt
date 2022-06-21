@@ -14,6 +14,7 @@ if(ENABLE_tests)
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/FutureObserverLib.cpp "#include \"FutureObserverLib.hpp\"")
     add_library(FutureObserverLib STATIC FutureObserverLib.hpp
                                          ${CMAKE_CURRENT_BINARY_DIR}/FutureObserverLib.cpp)
+    target_compile_features(FutureObserverLib PUBLIC cxx_std_17)
 
     # testCanBusSharerLib
 
