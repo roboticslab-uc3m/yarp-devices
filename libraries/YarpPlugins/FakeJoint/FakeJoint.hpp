@@ -5,6 +5,7 @@
 
 #include <string>
 
+#include <yarp/os/SystemClock.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
 #include "ICanBusSharer.hpp"
@@ -191,7 +192,7 @@ public:
     //  ---------- IEncodersTimedRaw declarations ----------
 
     bool getEncoderTimedRaw(int j, double * enc, double * time) override
-    { *enc = *time = 0.0; return true; }
+    { *enc = 0.0; *time = yarp::os::SystemClock::nowSystem(); return true; }
     bool getEncodersTimedRaw(double * encs, double * times) override
     { return getEncoderTimedRaw(0, &encs[0], &times[0]); }
 
@@ -262,7 +263,7 @@ public:
     bool getMotorEncodersRaw(double * encs) override
     { return getMotorEncoderRaw(0, &encs[0]); }
     bool getMotorEncoderTimedRaw(int m, double * enc, double * stamp) override
-    { *enc = *stamp = 0.0; return true; }
+    { *enc = 0.0; *stamp = yarp::os::SystemClock::nowSystem(); return true; }
     bool getMotorEncodersTimedRaw(double * encs, double * stamps) override
     { return getMotorEncoderTimedRaw(0, &encs[0], &stamps[0]); }
     bool getMotorEncoderSpeedRaw(int m, double * sp) override
