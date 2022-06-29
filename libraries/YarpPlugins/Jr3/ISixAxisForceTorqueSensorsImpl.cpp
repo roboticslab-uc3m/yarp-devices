@@ -70,6 +70,12 @@ bool Jr3::getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::
     out[4] = fm.m[1] * fs[sens_index].m[1] * factor;
     out[5] = fm.m[2] * fs[sens_index].m[2] * factor;
 
+    if (isDextrorotary)
+    {
+        out[0] = -out[0];
+        out[3] = -out[3];
+    }
+
     timestamp = yarp::os::SystemClock::nowSystem();
 
     return true;

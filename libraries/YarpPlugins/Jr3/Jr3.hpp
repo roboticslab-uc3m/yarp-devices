@@ -103,6 +103,7 @@ private:
     force_array fs[4];
     unsigned long int filters[4];
     std::vector<std::string> names {"ch0", "ch1", "ch2", "ch3"};
+    bool isDextrorotary {false};
 };
 
 } // namespace roboticslab

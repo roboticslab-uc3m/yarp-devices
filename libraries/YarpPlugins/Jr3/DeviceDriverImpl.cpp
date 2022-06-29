@@ -68,6 +68,19 @@ bool Jr3::open(yarp::os::Searchable& config)
 
     loadFilters(filterId);
 
+    yCInfo(JR3) << "Using filter ID:" << filterId;
+
+    isDextrorotary = config.check("dextrorotary", "assume dextrorotary XYZ coordinates");
+
+    if (isDextrorotary)
+    {
+        yCInfo(JR3) << "Assuming dextrorotary XYZ coordinates";
+    }
+    else
+    {
+        yCInfo(JR3) << "Assuming levorotary XYZ coordinates";
+    }
+
     if ((fd = ::open("/dev/jr3", O_RDWR)) < 0)
     {
         yCError(JR3) << "Can't open device, no way to read force!";
