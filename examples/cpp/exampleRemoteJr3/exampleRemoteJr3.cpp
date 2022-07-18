@@ -10,75 +10,112 @@
  * @example{lineno} exampleRemoteJr3.cpp
  */
 
-#include <cstdio>
-
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Time.h>
 
+#include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/IAnalogSensor.h>
 
-#include <yarp/sig/Vector.h>
-
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
     yarp::os::Network yarp;
 
     if (!yarp::os::Network::checkNetwork())
     {
-        std::printf("Please start a yarp name server first\n");
+        yError() << "Please start a yarp name server first";
         return 1;
     }
 
-    yarp::os::Property options;
-    options.put("device", "analogsensorclient");
-    options.put("remote", "/jr3/ch0:o");
-    options.put("local", "/jr3/ch0:i");
+    yarp::os::Property options {
+        {"device", yarp::os::Value("multipleanalogsensorsclient")},
+        {"remote", yarp::os::Value("/jr3")},
+        {"local", yarp::os::Value("/exampleRemoteJr3")}
+    };
 
-    yarp::dev::PolyDriver dd(options);
+    yarp::dev::PolyDriver device(options);
 
-    if (!dd.isValid())
+    if (!device.isValid())
     {
-        std::printf("Device not available.\n");
+        yError() << "Device not available";
         return 1;
     }
 
-    yarp::dev::IAnalogSensor *iAnalogSensor;
+    yarp::dev::ISixAxisForceTorqueSensors * sensor;
 
-    if (!dd.view(iAnalogSensor))
+    if (!device.view(sensor))
     {
-        std::printf("[error] Problems acquiring interface\n");
+        yError() << "Unable to acquire interface";
         return 1;
     }
 
-    std::printf("[success] acquired interface\n");
+    int channels = sensor->getNrOfSixAxisForceTorqueSensors();
+    yInfo() << "Channels:" << channels;
 
-    // The following delay should avoid 0 channels and bad read
-    yarp::os::Time::delay(1);
-
-    int channels = iAnalogSensor->getChannels();
-    std::printf("channels: %d\n", channels);
-
-    // Of course we dislike while(1)
-    while (true)
+    for (auto ch = 0; ch < channels; ch++)
     {
-        yarp::sig::Vector vector;
-        int ret = iAnalogSensor->read(vector);
+        std::string name;
 
-        if (ret == yarp::dev::IAnalogSensor::AS_OK)
+        if (!sensor->getSixAxisForceTorqueSensorName(ch, name))
         {
-            std::printf("Good read, got: %s\n", vector.toString().c_str());
+            yError() << "Unable to get name of channel" << ch;
+            return 1;
         }
-        else
-        {
-            std::printf("Bad read, error: %d\n", ret);
-            //return 1;  // Commenting out, too draconian; on init there can be several until stabilized
-        }
+
+        yInfo() << "Channel" << ch << "has name:" << name;
     }
 
-    dd.close();
+    int status;
+    int retry = 0;
+    constexpr auto MAX_RETRIES = 10;
 
+    do
+    {
+        status = yarp::dev::MAS_OK; // = 0
+
+        for (auto ch = 0; ch < channels; ch++)
+        {
+            status += sensor->getSixAxisForceTorqueSensorStatus(ch);
+        }
+
+        yInfo() << "Waiting for sensor to be ready... retry" << ++retry;
+
+        if (retry >= MAX_RETRIES)
+        {
+            yError() << "Sensor initialization failure, max number of retries exceeded";
+            return 1;
+        }
+
+        yarp::os::SystemClock::delaySystem(0.1);
+    }
+    while (status != yarp::dev::MAS_OK);
+
+    int n = 0;
+    constexpr auto MAX_ITERS = 500;
+
+    yInfo() << "Performing" << MAX_ITERS << "read iterations";
+
+    yarp::sig::Vector out;
+    double timestamp;
+
+    while (n++ < MAX_ITERS)
+    {
+        for (auto ch = 0; ch < channels; ch++)
+        {
+            if (!sensor->getSixAxisForceTorqueSensorMeasure(ch, out, timestamp))
+            {
+                yError() << "Unable to read channel" << ch;
+                return 1;
+            }
+
+            yInfo("[%d] [%f] Channel %d: %s", n, timestamp, ch, out.toString().c_str());
+        }
+
+        yarp::os::SystemClock::delaySystem(0.01);
+    }
+
+    yInfo() << "Done";
     return 0;
 }

@@ -4,40 +4,68 @@
 
 ## @example{lineno} exampleRemoteJr3.py
 
+import time
 import yarp
 
 yarp.Network.init()
 
-if yarp.Network.checkNetwork() != True:
+if not yarp.Network.checkNetwork():
     print('[error] Please try running yarp server')
     quit()
 
 options = yarp.Property()
-options.put('device','analogsensorclient')
-options.put('remote','/jr3/ch0:o')
-options.put('local','/jr3/ch0:i')
-dd = yarp.PolyDriver(options)  # calls open -> connects
+options.put('device', 'multipleanalogsensorsclient')
+options.put('remote', '/jr3')
+options.put('local', '/exampleRemoteJr3')
 
-if not dd.isValid():
-    print('Cannot open the device!')
+device = yarp.PolyDriver(options)
+
+if not device.isValid():
+    print('Device not available')
     quit()
 
-iAnalogSensor = dd.viewIAnalogSensor()
+sensor = device.viewISixAxisForceTorqueSensors()
 
-# The following delay should avoid 0 channels and bad read
-print('delay(1)')
-yarp.Time.delay(1)
+channels = sensor.getNrOfSixAxisForceTorqueSensors()
+print('Channels:', channels)
 
-channels = iAnalogSensor.getChannels()
-print('channels:', channels)
+for ch in range(channels):
+    name = sensor.getSixAxisForceTorqueSensorName(ch)
+    print('Channel %d has name: %s' % (ch, name))
 
-# Of course we dislike while(1)
-while 1:
-    vector = yarp.Vector(channels)
-    iAnalogSensor.read(vector)
-    vector_list = []
-    for i in range(vector.size()):
-        vector_list.append( vector[i] )
-    print('[%s]' % ', '.join(map(str, vector_list)))
+status = -1
+retry = 0
+MAX_RETRIES = 10
 
-print('bye!')
+while status != yarp.MAS_OK:
+    status = yarp.MAS_OK # = 0
+
+    for ch in range(channels):
+        status += sensor.getSixAxisForceTorqueSensorStatus(ch)
+
+    retry += 1
+    print('Waiting for sensor to be ready... retry', retry)
+
+    if retry == MAX_RETRIES:
+        print('[error] Sensor initialization failure, max number of retries exceeded')
+        quit()
+
+    time.sleep(0.1)
+
+n = 0
+MAX_ITERS = 500
+
+print('Performing %d read iterations' % MAX_ITERS)
+
+out = yarp.Vector()
+
+while n < MAX_ITERS:
+    n += 1
+
+    for ch in range(channels):
+        timestamp = sensor.getSixAxisForceTorqueSensorMeasure(ch, out)
+        print("[%d] [%f] Channel %d: %s" % (n, timestamp, ch, out.toString()));
+
+    time.sleep(0.01)
+
+print('Done')

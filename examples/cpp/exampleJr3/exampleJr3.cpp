@@ -10,155 +10,92 @@
  * @example{lineno} exampleJr3.cpp
  */
 
-#include <cstdio>
-
-#include <yarp/os/Network.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/ResourceFinder.h>
-#include <yarp/os/Time.h>
+#include <yarp/os/SystemClock.h>
 
+#include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/IAnalogSensor.h>
 
-#include <yarp/sig/Vector.h>
-
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
-    yarp::os::Network yarp;
+    yarp::os::Property options {{"device", yarp::os::Value("Jr3")}};
 
-    if (!yarp::os::Network::checkNetwork())
+    yarp::dev::PolyDriver device(options);
+
+    if (!device.isValid())
     {
-        std::printf("Please start a yarp name server first\n");
+        yError() << "Device not available";
         return 1;
     }
 
-    yarp::os::Property options;
-    options.put("device", "Jr3");
+    yarp::dev::ISixAxisForceTorqueSensors * sensor;
 
-    yarp::dev::PolyDriver dd(options);
-
-    if (!dd.isValid())
+    if (!device.view(sensor))
     {
-        std::printf("Device not available.\n");
+        yError() << "Unable to acquire interface";
         return 1;
     }
 
-    yarp::dev::IAnalogSensor *iAnalogSensor;
+    int channels = sensor->getNrOfSixAxisForceTorqueSensors();
+    yInfo() << "Channels:" << channels;
 
-    if (!dd.view(iAnalogSensor))
+    for (auto ch = 0; ch < channels; ch++)
     {
-        std::printf("[error] Problems acquiring interface\n");
-        return 1;
+        std::string name;
+        sensor->getSixAxisForceTorqueSensorName(ch, name);
+        yInfo() << "Channel" << ch << "has name:" << name;
     }
 
-    printf("[success] acquired interface\n");
+    int status;
+    int retry = 0;
+    constexpr auto MAX_RETRIES = 10;
 
-    int channels = iAnalogSensor->getChannels();
-    std::printf("channels: %d\n", channels);
-
-    // The following delay should avoid 0 channels and bad read
-    yarp::os::Time::delay(1);
-
-    char ch;
-    int cont = 0;
-
-    // Of course we dislike while(1)
-    while (true)
+    do
     {
-        // every 500 readings of the sensor, the app asks you if you want to reset it (calibrate chennel's sensor to 0)
-        if (cont > 500)
+        status = yarp::dev::MAS_OK; // = 0
+
+        for (auto ch = 0; ch < channels; ch++)
         {
-            std::printf("reset sensor? select channel (0,1,2,3) or 'a' to reset all\n");
-            ch = getchar();
-
-            if (ch == '0' || ch == '1' || ch == '2' || ch == '3')
-            {
-                std::printf("channel chosen: %d\n", (int)ch - '0');
-
-                int ret = iAnalogSensor->calibrateChannel((int)ch - '0');
-
-                if (ret == yarp::dev::IAnalogSensor::AS_OK)
-                {
-                    std::printf("[OK] Channel (%d) reset\n", ch);
-                }
-                else
-                {
-                    std::printf("[ERROR] Calibrating channel...\n");
-                    return 1;
-                }
-            }
-
-            if (ch == 'a')
-            {
-                int ret = iAnalogSensor->calibrateSensor();
-
-                if (ret == yarp::dev::IAnalogSensor::AS_OK)
-                {
-                    std::printf("[OK] All channels reseted\n");
-                }
-                else
-                {
-                    std::printf("[ERROR] Calibrating sensor...\n");
-                    return 1;
-                }
-            }
-
-            cont = 0;
+            status += sensor->getSixAxisForceTorqueSensorStatus(ch);
         }
 
-        // sensor reading
-        yarp::sig::Vector vector;
-        int ret = iAnalogSensor->read(vector);
+        yInfo() << "Waiting for sensor to be ready... retry" << ++retry;
 
-        if (ret == yarp::dev::IAnalogSensor::AS_OK)
+        if (retry >= MAX_RETRIES)
         {
-            std::printf("Channel 0: ( ");
-
-            for (int i = 0; i < 6; i++)
-            {
-                std::printf("%f ", vector[i]);
-            }
-
-            std::printf(")\n ");
-
-            std::printf("Channel 1: ( ");
-
-            for (int i = 6; i < 12; i++)
-            {
-                std::printf("%f ", vector[i]);
-            }
-
-            std::printf(")\n ");
-
-            std::printf("Channel 2: ( ");
-
-            for (int i = 12; i < 18; i++)
-            {
-                std::printf("%f ", vector[i]);
-            }
-
-            std::printf(")\n ");
-
-            std::printf("Channel 3: ( ");
-
-            for (int i = 18; i < 24; i++)
-            {
-                std::printf("%f ", vector[i]);
-            }
-
-            std::printf(")\n ");
-
-            cont++;
-            yarp::os::Time::delay(0.01);
+            yError() << "Sensor initialization failure, max number of retries exceeded";
+            return 1;
         }
-        else
+
+        yarp::os::SystemClock::delaySystem(0.1);
+    }
+    while (status != yarp::dev::MAS_OK);
+
+    int n = 0;
+    constexpr auto MAX_ITERS = 500;
+
+    yInfo() << "Performing" << MAX_ITERS << "read iterations";
+
+    yarp::sig::Vector out;
+    double timestamp;
+
+    while (n++ < MAX_ITERS)
+    {
+        for (auto ch = 0; ch < channels; ch++)
         {
-            std::printf("Bad read, error: %d\n", ret);
-            //return 1;  // Commenting out, too draconian; on init there can be several until stabilized
+            if (!sensor->getSixAxisForceTorqueSensorMeasure(ch, out, timestamp))
+            {
+                yError() << "Unable to read channel" << ch;
+                return 1;
+            }
+
+            yInfo("[%d] [%f] Channel %d: %s", n, timestamp, ch, out.toString().c_str());
         }
+
+        yarp::os::SystemClock::delaySystem(0.01);
     }
 
-    dd.close();
-
+    yInfo() << "Done";
     return 0;
 }
