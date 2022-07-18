@@ -59,16 +59,16 @@ bool Jr3::getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::
         return false;
     }
 
-    out.resize(6);
+    static constexpr auto factor = 1.0 / 16384.0;
 
-    constexpr auto factor = 1.0 / 16384.0;
-
-    out[0] = fm.f[0] * fs[sens_index].f[0] * factor;
-    out[1] = fm.f[1] * fs[sens_index].f[1] * factor;
-    out[2] = fm.f[2] * fs[sens_index].f[2] * factor;
-    out[3] = fm.m[0] * fs[sens_index].m[0] * factor;
-    out[4] = fm.m[1] * fs[sens_index].m[1] * factor;
-    out[5] = fm.m[2] * fs[sens_index].m[2] * factor;
+    out = {
+        fm.f[0] * fs[sens_index].f[0] * factor,
+        fm.f[1] * fs[sens_index].f[1] * factor,
+        fm.f[2] * fs[sens_index].f[2] * factor,
+        fm.m[0] * fs[sens_index].m[0] * factor,
+        fm.m[1] * fs[sens_index].m[1] * factor,
+        fm.m[2] * fs[sens_index].m[2] * factor
+    };
 
     if (isDextrorotary)
     {

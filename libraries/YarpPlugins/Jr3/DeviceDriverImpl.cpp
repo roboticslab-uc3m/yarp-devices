@@ -6,6 +6,9 @@
 #include <fcntl.h> // ::open
 #include <unistd.h> // ::close
 
+#include <algorithm> // std::equal
+#include <iterator> // std::begin, std::end
+
 #include <yarp/os/LogStream.h>
 #include <yarp/os/SystemClock.h>
 
@@ -19,6 +22,29 @@
     } while (0)
 
 using namespace roboticslab;
+
+namespace
+{
+    bool checkFullScales(int n, const force_array & actual, const force_array & reference)
+    {
+        bool isEqual =
+            std::equal(std::cbegin(actual.f), std::cend(actual.f), std::cbegin(reference.f)) &&
+            std::equal(std::cbegin(actual.m), std::cend(actual.m), std::cbegin(reference.m));
+
+        if (isEqual)
+        {
+            yCInfo(JR3) << "Full scales of channel" << n << "set to:" << actual.f << actual.m;
+            return true;
+        }
+        else
+        {
+            yCError(JR3) << "Full scales not correctly set for channel" << n;
+            yCInfo(JR3) << "Actual:" << actual.f << actual.m;
+            yCInfo(JR3) << "Reference:" << reference.f << reference.m;
+            return false;
+        }
+    }
+}
 
 constexpr auto DEFAULT_FILTER_ID = 0;
 
@@ -88,14 +114,16 @@ bool Jr3::open(yarp::os::Searchable& config)
     }
 
     //-- Force fullscales.
+    //-- Was `fs_w.m[X] = 5.5`, see https://github.com/roboticslab-uc3m/yarp-devices/issues/184
+
     force_array fs_w, fs_a0, fs_a1;
 
     fs_w.f[0] = 110;
     fs_w.f[1] = 110;
     fs_w.f[2] = 220;
-    fs_w.m[0] = 5.5;
-    fs_w.m[1] = 5.5;
-    fs_w.m[2] = 5.5;
+    fs_w.m[0] = 5;
+    fs_w.m[1] = 5;
+    fs_w.m[2] = 5;
 
     fs_a0.f[0] = 317;
     fs_a0.f[1] = 314;
@@ -120,20 +148,16 @@ bool Jr3::open(yarp::os::Searchable& config)
 
     //-- Make sure fullscales were set.
     ::ioctl(fd, IOCTL0_JR3_GET_FULL_SCALES, &fs[0]);
-    yCInfo(JR3) << "Full scales of Sensor 0 are:" << fs[0].f[0] << fs[0].f[1] << fs[0].f[2] << fs[0].m[0] << fs[0].m[1] << fs[0].m[2];
     ::ioctl(fd, IOCTL1_JR3_GET_FULL_SCALES, &fs[1]);
-    yCInfo(JR3) << "Full scales of Sensor 1 are:" << fs[1].f[0] << fs[1].f[1] << fs[1].f[2] << fs[1].m[0] << fs[1].m[1] << fs[1].m[2];
     ::ioctl(fd, IOCTL2_JR3_GET_FULL_SCALES, &fs[2]);
-    yCInfo(JR3) << "Full scales of Sensor 2 are:" << fs[2].f[0] << fs[2].f[1] << fs[2].f[2] << fs[2].m[0] << fs[2].m[1] << fs[2].m[2];
     ::ioctl(fd, IOCTL3_JR3_GET_FULL_SCALES, &fs[3]);
-    yCInfo(JR3) << "Full scales of Sensor 3 are:" << fs[3].f[0] << fs[3].f[1] << fs[3].f[2] << fs[3].m[0] << fs[3].m[1] << fs[3].m[2];
 
-    ::ioctl(fd, IOCTL0_JR3_ZEROOFFS);
-    ::ioctl(fd, IOCTL1_JR3_ZEROOFFS);
-    ::ioctl(fd, IOCTL2_JR3_ZEROOFFS);
-    ::ioctl(fd, IOCTL3_JR3_ZEROOFFS);
-
-    return true;
+    return
+        checkFullScales(0, fs[0], fs_a0) &&
+        checkFullScales(1, fs[1], fs_a1) &&
+        checkFullScales(2, fs[2], fs_w) &&
+        checkFullScales(3, fs[3], fs_w) &&
+        calibrateSensor() == yarp::dev::IAnalogSensor::AS_OK;
 }
 
 // -----------------------------------------------------------------------------
