@@ -8,6 +8,8 @@
 #include <chrono>
 #include <functional>
 #include <future>
+#include <thread>
+#include <utility>
 #include <vector>
 
 namespace roboticslab::test
