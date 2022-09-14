@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "TechnosoftIpos.hpp"
+#include "embedded-pid/TechnosoftIposEmbedded.hpp"
 
 #include <cmath>
 
@@ -15,7 +15,7 @@ using namespace roboticslab;
 
 // ----------------------------------------------------------------------------------
 
-bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
+bool TechnosoftIposEmbedded::velocityMoveRaw(int j, double sp)
 {
     yCITrace(IPOS, id(), "%d %f", j, sp);
     CHECK_JOINT(j);
@@ -42,21 +42,21 @@ bool TechnosoftIpos::velocityMoveRaw(int j, double sp)
 
 // ----------------------------------------------------------------------------------
 
-bool TechnosoftIpos::velocityMoveRaw(const double * sp)
+bool TechnosoftIposEmbedded::velocityMoveRaw(const double * sp)
 {
     return velocityMoveRaw(0, sp[0]);
 }
 
 // ----------------------------------------------------------------------------------
 
-bool TechnosoftIpos::velocityMoveRaw(int n_joint, const int * joints, const double * spds)
+bool TechnosoftIposEmbedded::velocityMoveRaw(int n_joint, const int * joints, const double * spds)
 {
     return velocityMoveRaw(joints[0], spds[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getRefVelocityRaw(int joint, double * vel)
+bool TechnosoftIposEmbedded::getRefVelocityRaw(int joint, double * vel)
 {
     yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
@@ -67,14 +67,14 @@ bool TechnosoftIpos::getRefVelocityRaw(int joint, double * vel)
 
 // ------------------------------------------------------------------------------
 
-bool TechnosoftIpos::getRefVelocitiesRaw(double * vels)
+bool TechnosoftIposEmbedded::getRefVelocitiesRaw(double * vels)
 {
     return getRefVelocityRaw(0, &vels[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getRefVelocitiesRaw(int n_joint, const int * joints, double * vels)
+bool TechnosoftIposEmbedded::getRefVelocitiesRaw(int n_joint, const int * joints, double * vels)
 {
     return getRefVelocityRaw(joints[0], &vels[0]);
 }

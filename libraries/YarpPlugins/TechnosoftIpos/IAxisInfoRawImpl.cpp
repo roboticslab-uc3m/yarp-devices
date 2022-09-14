@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "TechnosoftIpos.hpp"
+#include "TechnosoftIposBase.hpp"
 
 #include <yarp/os/Log.h>
 
@@ -10,7 +10,7 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getAxisNameRaw(int axis, std::string & name)
+bool TechnosoftIposBase::getAxisNameRaw(int axis, std::string & name)
 {
     yCITrace(IPOS, id(), "%d", axis);
     CHECK_JOINT(axis);
@@ -20,7 +20,7 @@ bool TechnosoftIpos::getAxisNameRaw(int axis, std::string & name)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type)
+bool TechnosoftIposBase::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type)
 {
     yCITrace(IPOS, id(), "%d", axis);
     CHECK_JOINT(axis);

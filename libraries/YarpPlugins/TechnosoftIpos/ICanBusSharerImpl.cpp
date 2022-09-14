@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "TechnosoftIpos.hpp"
+#include "TechnosoftIposBase.hpp"
 
 #include <cctype> // std::isspace
 
@@ -36,14 +36,14 @@ namespace
 
 // -----------------------------------------------------------------------------
 
-unsigned int TechnosoftIpos::getId()
+unsigned int TechnosoftIposBase::getId()
 {
     return can->getId();
 }
 
 // -----------------------------------------------------------------------------
 
-std::vector<unsigned int> TechnosoftIpos::getAdditionalIds()
+std::vector<unsigned int> TechnosoftIposBase::getAdditionalIds()
 {
     if (iExternalEncoderCanBusSharer)
     {
@@ -55,7 +55,7 @@ std::vector<unsigned int> TechnosoftIpos::getAdditionalIds()
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::registerSender(CanSenderDelegate * sender)
+bool TechnosoftIposBase::registerSender(CanSenderDelegate * sender)
 {
     can->configureSender(sender);
     return iExternalEncoderCanBusSharer && iExternalEncoderCanBusSharer->registerSender(sender);
@@ -63,7 +63,7 @@ bool TechnosoftIpos::registerSender(CanSenderDelegate * sender)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::initialize()
+bool TechnosoftIposBase::initialize()
 {
     if (!can->sdo()->ping())
     {
@@ -99,7 +99,7 @@ bool TechnosoftIpos::initialize()
         || (iExternalEncoderCanBusSharer && !iExternalEncoderCanBusSharer->initialize())
         || !setLimitsRaw(0, vars.min, vars.max)
         || !setRefSpeedRaw(0, vars.refSpeed)
-        || !setRefAccelerationRaw(0, vars.refAcceleration)
+        || !IPositionControlRaw::setRefAccelerationRaw(0, vars.refAcceleration)
         // synchronize absolute (master) and relative (slave) encoders
         || (iEncodersTimedRawExternal && (!iEncodersTimedRawExternal->getEncodersRaw(&extEnc) || !setEncoderRaw(0, extEnc)))
         || !can->tpdo1()->configure(vars.tpdo1Conf)
@@ -130,7 +130,7 @@ bool TechnosoftIpos::initialize()
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::finalize()
+bool TechnosoftIposBase::finalize()
 {
     if (monitorThread && monitorThread->isRunning())
     {
@@ -172,7 +172,7 @@ bool TechnosoftIpos::finalize()
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::notifyMessage(const can_message & message)
+bool TechnosoftIposBase::notifyMessage(const can_message & message)
 {
     if (iExternalEncoderCanBusSharer && iExternalEncoderCanBusSharer->getId() == (message.id & 0x7F))
     {
@@ -190,55 +190,9 @@ bool TechnosoftIpos::notifyMessage(const can_message & message)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::synchronize()
+bool TechnosoftIposBase::synchronize()
 {
-    if (!vars.enableSync)
-    {
-        return true;
-    }
-
-    switch (vars.actualControlMode.load())
-    {
-    case VOCAB_CM_VELOCITY:
-    {
-        if (vars.enableCsv)
-        {
-            double value = vars.synchronousCommandTarget * vars.syncPeriod;
-            std::int32_t data = vars.degreesToInternalUnits(value);
-            return can->rpdo3()->write(data);
-        }
-        else
-        {
-            double value = vars.degreesToInternalUnits(vars.synchronousCommandTarget, 1);
-
-            std::int16_t dataInt;
-            std::uint16_t dataFrac;
-            CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
-
-            std::int32_t data = (dataInt << 16) + dataFrac;
-            return can->rpdo3()->write(data);
-        }
-    }
-    case VOCAB_CM_TORQUE:
-    {
-        double curr = vars.torqueToCurrent(vars.synchronousCommandTarget);
-        std::int32_t data = vars.currentToInternalUnits(curr) << 16;
-        return can->rpdo3()->write(data);
-    }
-    case VOCAB_CM_CURRENT:
-    {
-        std::int32_t data = vars.currentToInternalUnits(vars.synchronousCommandTarget) << 16;
-        return can->rpdo3()->write(data);
-    }
-    case VOCAB_CM_POSITION_DIRECT:
-    {
-        double value = vars.clipSyncPositionTarget();
-        std::int32_t data = vars.degreesToInternalUnits(value);
-        return can->rpdo3()->write(data);
-    }
-    default:
-        return true;
-    }
+    return true;
 }
 
 // -----------------------------------------------------------------------------

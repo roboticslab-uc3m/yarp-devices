@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "TechnosoftIpos.hpp"
+#include "TechnosoftIposBase.hpp"
 
 #include <yarp/os/Log.h>
 
@@ -10,14 +10,14 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getNumberOfMotorEncodersRaw(int * num)
+bool TechnosoftIposBase::getNumberOfMotorEncodersRaw(int * num)
 {
     return getAxes(num);
 }
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::resetMotorEncoderRaw(int m)
+bool TechnosoftIposBase::resetMotorEncoderRaw(int m)
 {
     yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
@@ -26,14 +26,14 @@ bool TechnosoftIpos::resetMotorEncoderRaw(int m)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::resetMotorEncodersRaw()
+bool TechnosoftIposBase::resetMotorEncodersRaw()
 {
     return resetMotorEncoderRaw(0);
 }
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::setMotorEncoderCountsPerRevolutionRaw(int m, double cpr)
+bool TechnosoftIposBase::setMotorEncoderCountsPerRevolutionRaw(int m, double cpr)
 {
     yCITrace(IPOS, id(), "%d %f", m, cpr);
     CHECK_JOINT(m);
@@ -43,7 +43,7 @@ bool TechnosoftIpos::setMotorEncoderCountsPerRevolutionRaw(int m, double cpr)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getMotorEncoderCountsPerRevolutionRaw(int m, double * cpr)
+bool TechnosoftIposBase::getMotorEncoderCountsPerRevolutionRaw(int m, double * cpr)
 {
     yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
@@ -53,7 +53,7 @@ bool TechnosoftIpos::getMotorEncoderCountsPerRevolutionRaw(int m, double * cpr)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::setMotorEncoderRaw(int m, double val)
+bool TechnosoftIposBase::setMotorEncoderRaw(int m, double val)
 {
     yCITrace(IPOS, id(), "%d %f", m, val);
     CHECK_JOINT(m);
@@ -70,14 +70,14 @@ bool TechnosoftIpos::setMotorEncoderRaw(int m, double val)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::setMotorEncodersRaw(const double * vals)
+bool TechnosoftIposBase::setMotorEncodersRaw(const double * vals)
 {
     return setMotorEncoderRaw(0, vals[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getMotorEncoderRaw(int m, double * v)
+bool TechnosoftIposBase::getMotorEncoderRaw(int m, double * v)
 {
     yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
@@ -88,14 +88,14 @@ bool TechnosoftIpos::getMotorEncoderRaw(int m, double * v)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getMotorEncodersRaw(double * encs)
+bool TechnosoftIposBase::getMotorEncodersRaw(double * encs)
 {
     return getMotorEncoderSpeedRaw(0, &encs[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getMotorEncoderTimedRaw(int m, double * enc, double * stamp)
+bool TechnosoftIposBase::getMotorEncoderTimedRaw(int m, double * enc, double * stamp)
 {
     yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
@@ -107,14 +107,14 @@ bool TechnosoftIpos::getMotorEncoderTimedRaw(int m, double * enc, double * stamp
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getMotorEncodersTimedRaw(double * encs, double * stamps)
+bool TechnosoftIposBase::getMotorEncodersTimedRaw(double * encs, double * stamps)
 {
     return getMotorEncoderTimedRaw(0, &encs[0], &stamps[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getMotorEncoderSpeedRaw(int m, double * sp)
+bool TechnosoftIposBase::getMotorEncoderSpeedRaw(int m, double * sp)
 {
     yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
@@ -125,14 +125,14 @@ bool TechnosoftIpos::getMotorEncoderSpeedRaw(int m, double * sp)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getMotorEncoderSpeedsRaw(double * spds)
+bool TechnosoftIposBase::getMotorEncoderSpeedsRaw(double * spds)
 {
     return getMotorEncoderSpeedRaw(0, &spds[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getMotorEncoderAccelerationRaw(int m, double * acc)
+bool TechnosoftIposBase::getMotorEncoderAccelerationRaw(int m, double * acc)
 {
     yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
@@ -143,7 +143,7 @@ bool TechnosoftIpos::getMotorEncoderAccelerationRaw(int m, double * acc)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getMotorEncoderAccelerationsRaw(double * accs)
+bool TechnosoftIposBase::getMotorEncoderAccelerationsRaw(double * accs)
 {
     return getMotorEncoderAccelerationRaw(0, &accs[0]);
 }

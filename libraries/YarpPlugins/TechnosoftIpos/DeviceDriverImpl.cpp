@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "TechnosoftIpos.hpp"
+#include "TechnosoftIposBase.hpp"
 
 #include <functional>
 
@@ -8,6 +8,7 @@
 #include <yarp/os/Property.h>
 
 #include "LogComponent.hpp"
+#include "TechnosoftIposEmcy.hpp"
 
 using namespace roboticslab;
 
@@ -17,14 +18,8 @@ constexpr auto DEFAULT_DRIVE_STATE_TIMEOUT = 2.0;
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::open(yarp::os::Searchable & config)
+bool TechnosoftIposBase::open(yarp::os::Searchable & config)
 {
-    if (!config.check("robotConfig") || !config.find("robotConfig").isBlob())
-    {
-        yCError(IPOS) << "Missing \"robotConfig\" property or not a blob";
-        return false;
-    }
-
     const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
 
     const auto & commonGroup = robotConfig->findGroup("common-ipos");
@@ -32,7 +27,6 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     if (!commonGroup.isNull())
     {
-        yCDebugOnce(IPOS) << commonGroup.toString();
         iposGroup.fromString(commonGroup.toString());
     }
 
@@ -158,14 +152,14 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     using namespace std::placeholders;
 
-    can->tpdo1()->registerHandler<std::uint16_t, std::uint16_t, std::int8_t>(std::bind(&TechnosoftIpos::handleTpdo1, this, _1, _2, _3));
-    can->tpdo2()->registerHandler<std::uint16_t, std::uint16_t>(std::bind(&TechnosoftIpos::handleTpdo2, this, _1, _2));
-    can->tpdo3()->registerHandler<std::int32_t, std::int16_t>(std::bind(&TechnosoftIpos::handleTpdo3, this, _1, _2));
+    can->tpdo1()->registerHandler<std::uint16_t, std::uint16_t, std::int8_t>(std::bind(&TechnosoftIposBase::handleTpdo1, this, _1, _2, _3));
+    can->tpdo2()->registerHandler<std::uint16_t, std::uint16_t>(std::bind(&TechnosoftIposBase::handleTpdo2, this, _1, _2));
+    can->tpdo3()->registerHandler<std::int32_t, std::int16_t>(std::bind(&TechnosoftIposBase::handleTpdo3, this, _1, _2));
 
-    can->emcy()->registerHandler(std::bind(&TechnosoftIpos::handleEmcy, this, _1, _2, _3));
+    can->emcy()->registerHandler(std::bind(&TechnosoftIposBase::handleEmcy, this, _1, _2, _3));
     can->emcy()->setErrorCodeRegistry<TechnosoftIposEmcy>();
 
-    can->nmt()->registerHandler(std::bind(&TechnosoftIpos::handleNmt, this, _1));
+    can->nmt()->registerHandler(std::bind(&TechnosoftIposBase::handleNmt, this, _1));
 
     if (iposGroup.check("monitorPeriod", "monitor thread period (seconds)"))
     {
@@ -173,7 +167,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
         if (monitorPeriod > 0.0)
         {
-            monitorThread = new yarp::os::Timer(yarp::os::TimerSettings(monitorPeriod), std::bind(&TechnosoftIpos::monitorWorker, this, _1), false);
+            monitorThread = new yarp::os::Timer(yarp::os::TimerSettings(monitorPeriod), std::bind(&TechnosoftIposBase::monitorWorker, this, _1), false);
         }
         else
         {
@@ -186,7 +180,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::close()
+bool TechnosoftIposBase::close()
 {
     // we need to do this in finalize(), too, since the monitor thread could be
     // still requesting CAN transfers even after CAN RX/TX threads have been
@@ -198,9 +192,6 @@ bool TechnosoftIpos::close()
 
     delete monitorThread;
     monitorThread = nullptr;
-
-    delete ipBuffer;
-    ipBuffer = nullptr;
 
     delete can;
     can = nullptr;

@@ -106,7 +106,7 @@ struct StateVariables
     std::bitset<16> der;
     std::bitset<16> der2;
     std::bitset<16> cer;
-    std::bitset<16> ipStatus;
+
     std::int8_t modesOfOperation {0};
 
     bool configuredOnce {false};
@@ -137,13 +137,6 @@ struct StateVariables
     std::atomic<double> synchronousCommandTarget {0.0};
     std::atomic<double> prevSyncTarget {0.0};
 
-    std::atomic<bool> enableSync {false};
-    std::atomic<bool> enableCsv {false};
-
-    std::atomic<bool> ipMotionStarted {false};
-    std::atomic<bool> ipBufferFilled {false};
-    std::atomic<bool> ipBufferEnabled {false};
-
     // read only, conceptually immutable
 
     yarp::conf::vocab32_t initialMode {0};
@@ -163,7 +156,7 @@ struct StateVariables
     double heartbeatPeriod {0.0};
     double syncPeriod {0.0};
 
-    unsigned int canId = 0;
+    unsigned int canId {0};
 };
 
 } // namespace roboticslab

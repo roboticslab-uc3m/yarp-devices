@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "TechnosoftIpos.hpp"
+#include "embedded-pid/TechnosoftIposEmbedded.hpp"
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Vocab.h>
@@ -12,7 +12,7 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getControlModeRaw(int j, int * mode)
+bool TechnosoftIposEmbedded::getControlModeRaw(int j, int * mode)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
@@ -22,21 +22,21 @@ bool TechnosoftIpos::getControlModeRaw(int j, int * mode)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getControlModesRaw(int * modes)
+bool TechnosoftIposEmbedded::getControlModesRaw(int * modes)
 {
     return getControlModeRaw(0, &modes[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getControlModesRaw(int n_joint, const int * joints, int * modes)
+bool TechnosoftIposEmbedded::getControlModesRaw(int n_joint, const int * joints, int * modes)
 {
     return getControlModeRaw(joints[0], &modes[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::setControlModeRaw(int j, int mode)
+bool TechnosoftIposEmbedded::setControlModeRaw(int j, int mode)
 {
     yCITrace(IPOS, id(), "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
     CHECK_JOINT(j);
@@ -50,7 +50,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         return true;
     }
 
-    vars.enableSync = false;
+    enableSync = false;
 
     // reset mode-specific bits (4-6) and halt bit (8)
     if (!can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4).reset(5).reset(6).reset(8)))
@@ -79,7 +79,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     case VOCAB_CM_VELOCITY:
         vars.synchronousCommandTarget = 0.0;
 
-        if (vars.enableCsv)
+        if (enableCsv)
         {
             return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
                 && can->rpdo3()->configure(rpdo3conf.addMapping<std::int32_t>(0x607A))
@@ -111,8 +111,8 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
     case VOCAB_CM_POSITION_DIRECT:
         if (ipBuffer)
         {
-            vars.ipBufferFilled = vars.ipMotionStarted = false;
-            vars.ipBufferEnabled = true;
+            ipBufferFilled = ipMotionStarted = false;
+            ipBufferEnabled = true;
             ipBuffer->clearQueue();
 
             PdoConfiguration rpdo3Conf;
@@ -130,7 +130,7 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
         }
 
         // bug in F508M/F509M firmware, switch to homing mode to stop controlling profile velocity
-        if (vars.actualControlMode == VOCAB_CM_VELOCITY && !vars.enableCsv
+        if (vars.actualControlMode == VOCAB_CM_VELOCITY && !enableCsv
             && !can->sdo()->download<std::int8_t>("Modes of Operation", 6, 0x6060))
         {
             return false;
@@ -168,14 +168,14 @@ bool TechnosoftIpos::setControlModeRaw(int j, int mode)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::setControlModesRaw(int * modes)
+bool TechnosoftIposEmbedded::setControlModesRaw(int * modes)
 {
     return setControlModeRaw(0, modes[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::setControlModesRaw(int n_joint, const int * joints, int * modes)
+bool TechnosoftIposEmbedded::setControlModesRaw(int n_joint, const int * joints, int * modes)
 {
     return setControlModeRaw(joints[0], modes[0]);
 }

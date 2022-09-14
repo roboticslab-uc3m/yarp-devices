@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "TechnosoftIpos.hpp"
+#include "TechnosoftIposBase.hpp"
 
 #include <yarp/os/Log.h>
 
@@ -10,7 +10,7 @@ using namespace roboticslab;
 
 // --------------------------------------------------------------------------------
 
-bool TechnosoftIpos::getAxes(int * ax)
+bool TechnosoftIposBase::getAxes(int * ax)
 {
     *ax = 1;
     return true;
@@ -18,7 +18,7 @@ bool TechnosoftIpos::getAxes(int * ax)
 
 // -----------------------------------------------------------------------------------
 
-bool TechnosoftIpos::resetEncoderRaw(int j)
+bool TechnosoftIposBase::resetEncoderRaw(int j)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
@@ -27,14 +27,14 @@ bool TechnosoftIpos::resetEncoderRaw(int j)
 
 // -----------------------------------------------------------------------------------
 
-bool TechnosoftIpos::resetEncodersRaw()
+bool TechnosoftIposBase::resetEncodersRaw()
 {
     return resetEncoderRaw(0);
 }
 
 // -----------------------------------------------------------------------------------
 
-bool TechnosoftIpos::setEncoderRaw(int j, double val)
+bool TechnosoftIposBase::setEncoderRaw(int j, double val)
 {
     yCITrace(IPOS, id(), "%d %f", j, val);
     CHECK_JOINT(j);
@@ -51,14 +51,14 @@ bool TechnosoftIpos::setEncoderRaw(int j, double val)
 
 // -----------------------------------------------------------------------------------
 
-bool TechnosoftIpos::setEncodersRaw(const double * vals)
+bool TechnosoftIposBase::setEncodersRaw(const double * vals)
 {
     return setEncoderRaw(0, vals[0]);
 }
 
 // -----------------------------------------------------------------------------------
 
-bool TechnosoftIpos::getEncoderRaw(int j, double * v)
+bool TechnosoftIposBase::getEncoderRaw(int j, double * v)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
@@ -69,14 +69,14 @@ bool TechnosoftIpos::getEncoderRaw(int j, double * v)
 
 // -----------------------------------------------------------------------------------
 
-bool TechnosoftIpos::getEncodersRaw(double * encs)
+bool TechnosoftIposBase::getEncodersRaw(double * encs)
 {
     return getEncoderRaw(0, &encs[0]);
 }
 
 // -----------------------------------------------------------------------------------
 
-bool TechnosoftIpos::getEncoderSpeedRaw(int j, double * sp)
+bool TechnosoftIposBase::getEncoderSpeedRaw(int j, double * sp)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
@@ -87,14 +87,14 @@ bool TechnosoftIpos::getEncoderSpeedRaw(int j, double * sp)
 
 // -----------------------------------------------------------------------------------
 
-bool TechnosoftIpos::getEncoderSpeedsRaw(double * spds)
+bool TechnosoftIposBase::getEncoderSpeedsRaw(double * spds)
 {
     return getEncoderSpeedRaw(0, &spds[0]);
 }
 
 // -----------------------------------------------------------------------------------
 
-bool TechnosoftIpos::getEncoderAccelerationRaw(int j, double * acc)
+bool TechnosoftIposBase::getEncoderAccelerationRaw(int j, double * acc)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
@@ -105,14 +105,14 @@ bool TechnosoftIpos::getEncoderAccelerationRaw(int j, double * acc)
 
 // -----------------------------------------------------------------------------------
 
-bool TechnosoftIpos::getEncoderAccelerationsRaw(double * accs)
+bool TechnosoftIposBase::getEncoderAccelerationsRaw(double * accs)
 {
     return getEncoderAccelerationRaw(0, &accs[0]);
 }
 
 //---------------------------------------------------------------------------------------
 
-bool TechnosoftIpos::getEncoderTimedRaw(int j, double * enc, double * time)
+bool TechnosoftIposBase::getEncoderTimedRaw(int j, double * enc, double * time)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
@@ -124,7 +124,7 @@ bool TechnosoftIpos::getEncoderTimedRaw(int j, double * enc, double * time)
 
 // -----------------------------------------------------------------------------------
 
-bool TechnosoftIpos::getEncodersTimedRaw(double * encs, double * times)
+bool TechnosoftIposBase::getEncodersTimedRaw(double * encs, double * times)
 {
     return getEncoderTimedRaw(0, &encs[0], &times[0]);
 }

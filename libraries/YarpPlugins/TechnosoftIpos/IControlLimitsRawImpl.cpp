@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "TechnosoftIpos.hpp"
+#include "TechnosoftIposBase.hpp"
 
 #include <yarp/os/LogStream.h>
 
@@ -10,7 +10,7 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::setLimitsRaw(int axis, double min, double max)
+bool TechnosoftIposBase::setLimitsRaw(int axis, double min, double max)
 {
     yCITrace(IPOS, id(), "%d %f %f", axis, min, max);
     CHECK_JOINT(axis);
@@ -35,7 +35,7 @@ bool TechnosoftIpos::setLimitsRaw(int axis, double min, double max)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::setLimitRaw(double limit, bool isMin)
+bool TechnosoftIposBase::setLimitRaw(double limit, bool isMin)
 {
     std::string name = "Software position limit: ";
     std::uint8_t subindex;
@@ -57,7 +57,7 @@ bool TechnosoftIpos::setLimitRaw(double limit, bool isMin)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getLimitsRaw(int axis, double * min, double * max)
+bool TechnosoftIposBase::getLimitsRaw(int axis, double * min, double * max)
 {
     yCITrace(IPOS, id(), "%d", axis);
     CHECK_JOINT(axis);
@@ -74,7 +74,7 @@ bool TechnosoftIpos::getLimitsRaw(int axis, double * min, double * max)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getLimitRaw(double * limit, bool isMin)
+bool TechnosoftIposBase::getLimitRaw(double * limit, bool isMin)
 {
     std::string name = "Software position limit: ";
     std::uint8_t subindex;
@@ -97,7 +97,7 @@ bool TechnosoftIpos::getLimitRaw(double * limit, bool isMin)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
+bool TechnosoftIposBase::setVelLimitsRaw(int axis, double min, double max)
 {
     yCITrace(IPOS, id(), "%d %f %f", axis, min, max);
     CHECK_JOINT(axis);
@@ -114,7 +114,7 @@ bool TechnosoftIpos::setVelLimitsRaw(int axis, double min, double max)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getVelLimitsRaw(int axis, double * min, double * max)
+bool TechnosoftIposBase::getVelLimitsRaw(int axis, double * min, double * max)
 {
     yCITrace(IPOS, id(), "%d", axis);
     CHECK_JOINT(axis);

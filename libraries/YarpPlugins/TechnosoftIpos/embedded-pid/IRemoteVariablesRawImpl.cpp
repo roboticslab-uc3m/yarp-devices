@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "TechnosoftIpos.hpp"
+#include "embedded-pid/TechnosoftIposEmbedded.hpp"
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
@@ -11,7 +11,7 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & val)
+bool TechnosoftIposEmbedded::getRemoteVariableRaw(std::string key, yarp::os::Bottle & val)
 {
     yCITrace(IPOS, id(), "%s: %s", key.c_str(), val.toString().c_str());
 
@@ -39,7 +39,7 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
     {
         yarp::os::Bottle & list = val.addList();
         list.addString("enable");
-        list.addInt8(vars.enableCsv);
+        list.addInt8(enableCsv);
         return true;
     }
 
@@ -49,7 +49,7 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val)
+bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val)
 {
     yCITrace(IPOS, id(), "%s", key.c_str());
 
@@ -118,7 +118,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
 
         bool requested = val.find("enable").asBool();
 
-        if (requested ^ vars.enableCsv)
+        if (requested ^ enableCsv)
         {
             if (vars.actualControlMode == VOCAB_CM_VELOCITY)
             {
@@ -126,7 +126,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
                 return false;
             }
 
-            vars.enableCsv = requested;
+            enableCsv = requested;
         }
         else
         {
@@ -142,7 +142,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys)
+bool TechnosoftIposEmbedded::getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys)
 {
     yCITrace(IPOS, id());
 
