@@ -7,6 +7,9 @@
 
 #include "LogComponent.hpp"
 
+// only position PID (for now?)
+#define CHECK_PID_TYPE(type) do { if ((type) != yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION) return false; } while (0)
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
@@ -15,7 +18,10 @@ bool TechnosoftIposExternal::setPidRaw(const yarp::dev::PidControlTypeEnum & pid
 {
     yCITrace(IPOS, id(), "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
-    return false;
+    CHECK_PID_TYPE(pidtype);
+    std::lock_guard<std::mutex> lock(pidMutex);
+    positionPid = pid;
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -31,6 +37,7 @@ bool TechnosoftIposExternal::setPidReferenceRaw(const yarp::dev::PidControlTypeE
 {
     yCITrace(IPOS, id(), "%s %d %f", yarp::os::Vocab32::decode(pidtype).c_str(), j, ref);
     CHECK_JOINT(j);
+    CHECK_PID_TYPE(pidtype);
     return false;
 }
 
@@ -47,6 +54,7 @@ bool TechnosoftIposExternal::setPidErrorLimitRaw(const yarp::dev::PidControlType
 {
     yCITrace(IPOS, id(), "%s %d %f", yarp::os::Vocab32::decode(pidtype).c_str(), j, limit);
     CHECK_JOINT(j);
+    CHECK_PID_TYPE(pidtype);
     return false;
 }
 
@@ -63,6 +71,7 @@ bool TechnosoftIposExternal::getPidErrorRaw(const yarp::dev::PidControlTypeEnum 
 {
     yCITrace(IPOS, id(), "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
+    CHECK_PID_TYPE(pidtype);
     return false;
 }
 
@@ -79,6 +88,7 @@ bool TechnosoftIposExternal::getPidOutputRaw(const yarp::dev::PidControlTypeEnum
 {
     yCITrace(IPOS, id(), "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
+    CHECK_PID_TYPE(pidtype);
     return false;
 }
 
@@ -95,7 +105,9 @@ bool TechnosoftIposExternal::getPidRaw(const yarp::dev::PidControlTypeEnum & pid
 {
     yCITrace(IPOS, id(), "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
-    return false;
+    CHECK_PID_TYPE(pidtype);
+    *pid = positionPid;
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -111,6 +123,7 @@ bool TechnosoftIposExternal::getPidReferenceRaw(const yarp::dev::PidControlTypeE
 {
     yCITrace(IPOS, id(), "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
+    CHECK_PID_TYPE(pidtype);
     return false;
 }
 
@@ -127,6 +140,7 @@ bool TechnosoftIposExternal::getPidErrorLimitRaw(const yarp::dev::PidControlType
 {
     yCITrace(IPOS, id(), "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
+    CHECK_PID_TYPE(pidtype);
     return false;
 }
 
@@ -143,6 +157,7 @@ bool TechnosoftIposExternal::resetPidRaw(const yarp::dev::PidControlTypeEnum & p
 {
     yCITrace(IPOS, id(), "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
+    CHECK_PID_TYPE(pidtype);
     return false;
 }
 
@@ -152,6 +167,7 @@ bool TechnosoftIposExternal::disablePidRaw(const yarp::dev::PidControlTypeEnum &
 {
     yCITrace(IPOS, id(), "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
+    CHECK_PID_TYPE(pidtype);
     return false;
 }
 
@@ -161,6 +177,7 @@ bool TechnosoftIposExternal::enablePidRaw(const yarp::dev::PidControlTypeEnum & 
 {
     yCITrace(IPOS, id(), "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
+    CHECK_PID_TYPE(pidtype);
     return false;
 }
 
@@ -170,6 +187,7 @@ bool TechnosoftIposExternal::setPidOffsetRaw(const yarp::dev::PidControlTypeEnum
 {
     yCITrace(IPOS, id(), "%s %d %f", yarp::os::Vocab32::decode(pidtype).c_str(), j, v);
     CHECK_JOINT(j);
+    CHECK_PID_TYPE(pidtype);
     return false;
 }
 
@@ -179,6 +197,7 @@ bool TechnosoftIposExternal::isPidEnabledRaw(const yarp::dev::PidControlTypeEnum
 {
     yCITrace(IPOS, id(), "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
+    CHECK_PID_TYPE(pidtype);
     return false;
 }
 

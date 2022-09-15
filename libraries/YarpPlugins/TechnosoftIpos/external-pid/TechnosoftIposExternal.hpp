@@ -3,6 +3,8 @@
 #ifndef __TECHNOSOFT_IPOS_EXTERNAL_HPP__
 #define __TECHNOSOFT_IPOS_EXTERNAL_HPP__
 
+#include <mutex>
+
 #include <yarp/conf/numeric.h>
 
 #include "TechnosoftIposBase.hpp"
@@ -157,6 +159,9 @@ private:
     double maxImpedanceStiffness {0.0};
     double minImpedanceDamping {0.0};
     double maxImpedanceDamping {0.0};
+
+    std::mutex pidMutex;
+    yarp::dev::Pid positionPid;
 };
 
 } // namespace roboticslab
