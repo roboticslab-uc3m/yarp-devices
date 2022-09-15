@@ -42,6 +42,18 @@ if(NOT SKIP_TechnosoftIpos)
                                           embedded-pid/IRemoteVariablesRawImpl.cpp
                                           embedded-pid/IVelocityControlRawImpl.cpp)
 
+    target_sources(TechnosoftIpos PRIVATE external-pid/TechnosoftIposExternal.hpp
+                                          external-pid/TechnosoftIposExternal.cpp
+                                          external-pid/DeviceDriverImpl.cpp
+                                          external-pid/ICanBusSharerImpl.cpp
+                                          external-pid/IControlModeRawImpl.cpp
+                                          external-pid/IImpedanceControlRawImpl.cpp
+                                          external-pid/IInteractionModeRawImpl.cpp
+                                          external-pid/IPidControlRawImpl.cpp
+                                          external-pid/IPositionControlRawImpl.cpp
+                                          external-pid/IPositionDirectRawImpl.cpp
+                                          external-pid/IVelocityControlRawImpl.cpp)
+
     target_include_directories(TechnosoftIpos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
     target_link_libraries(TechnosoftIpos YARP::YARP_os

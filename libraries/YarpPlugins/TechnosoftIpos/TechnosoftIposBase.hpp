@@ -13,9 +13,12 @@
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/ICurrentControl.h>
 #include <yarp/dev/IEncodersTimed.h>
+#include <yarp/dev/IImpedanceControl.h>
+#include <yarp/dev/IInteractionMode.h>
 #include <yarp/dev/IJointFault.h>
 #include <yarp/dev/IMotor.h>
 #include <yarp/dev/IMotorEncoders.h>
+#include <yarp/dev/IPidControl.h>
 #include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/IPositionDirect.h>
 #include <yarp/dev/IRemoteVariables.h>
@@ -44,9 +47,12 @@ class TechnosoftIposBase : public yarp::dev::DeviceDriver,
                            public yarp::dev::IControlModeRaw,
                            public yarp::dev::ICurrentControlRaw,
                            public yarp::dev::IEncodersTimedRaw,
+                           public yarp::dev::IImpedanceControlRaw,
+                           public yarp::dev::IInteractionModeRaw,
                            public yarp::dev::IJointFaultRaw,
                            public yarp::dev::IMotorRaw,
                            public yarp::dev::IMotorEncodersRaw,
+                           public yarp::dev::IPidControlRaw,
                            public yarp::dev::IPositionControlRaw,
                            public yarp::dev::IPositionDirectRaw,
                            public yarp::dev::IRemoteVariablesRaw,
@@ -122,6 +128,45 @@ public:
     bool getEncoderTimedRaw(int j, double * encs, double * time) override;
     bool getEncodersTimedRaw(double * encs, double * time) override;
 
+    //  ---------- IImpedanceControlRaw declarations. Implementation in IImpedanceControlRawImpl.cpp ----------
+
+    //bool getAxes(int * ax) override;
+
+    bool getImpedanceRaw(int j, double * stiffness, double * damping) override
+    { return false; }
+
+    bool setImpedanceRaw(int j, double stiffness, double damping) override
+    { return false; }
+
+    bool setImpedanceOffsetRaw(int j, double offset) override
+    { return false; }
+
+    bool getImpedanceOffsetRaw(int j, double * offset) override
+    { return false; }
+
+    bool getCurrentImpedanceLimitRaw(int j, double * min_stiff, double * max_stiff, double * min_damp, double * max_damp) override
+    { return false; }
+
+    //  ---------- IInteractionModeRaw declarations. Implementation in IInteractionModeRawImpl.cpp ----------
+
+    bool getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum * mode) override
+    { return false; }
+
+    bool getInteractionModesRaw(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes) override
+    { return false; }
+
+    bool getInteractionModesRaw(yarp::dev::InteractionModeEnum * modes) override
+    { return false; }
+
+    bool setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode) override
+    { return false; }
+
+    bool setInteractionModesRaw(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes) override
+    { return false; }
+
+    bool setInteractionModesRaw(yarp::dev::InteractionModeEnum * modes) override
+    { return false; }
+
     //  ---------- IJointFaultRaw declarations. Implementation in IJointFaultRawImpl.cpp ----------
 
     bool getLastJointFaultRaw(int j, int & fault, std::string & message) override;
@@ -153,6 +198,82 @@ public:
     bool getMotorEncoderSpeedsRaw(double * spds) override;
     bool getMotorEncoderAccelerationRaw(int m, double * spds) override;
     bool getMotorEncoderAccelerationsRaw(double * vaccs) override;
+
+    //  --------- IPidControlRaw declarations. Implementation in IPidControlRawImpl.cpp ---------
+
+    bool setPidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, const yarp::dev::Pid & pid) override
+    { return false; }
+
+    bool setPidsRaw(const yarp::dev::PidControlTypeEnum & pidtype, const yarp::dev::Pid * pids) override
+    { return false; }
+
+    bool setPidReferenceRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double ref) override
+    { return false; }
+
+    bool setPidReferencesRaw(const yarp::dev::PidControlTypeEnum & pidtype, const double * refs) override
+    { return false; }
+
+    bool setPidErrorLimitRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double limit) override
+    { return false; }
+
+    bool setPidErrorLimitsRaw(const yarp::dev::PidControlTypeEnum & pidtype, const double * limits) override
+    { return false; }
+
+    bool getPidErrorRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * err) override
+    { return false; }
+
+    bool getPidErrorsRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * errs) override
+    { return false; }
+
+    bool getPidOutputRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * out) override
+    { return false; }
+
+    bool getPidOutputsRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * outs) override
+    { return false; }
+
+    bool getPidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, yarp::dev::Pid * pid) override
+    { return false; }
+
+    bool getPidsRaw(const yarp::dev::PidControlTypeEnum & pidtype, yarp::dev::Pid * pids) override
+    { return false; }
+
+    bool getPidReferenceRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * ref) override
+    { return false; }
+
+    bool getPidReferencesRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * refs) override
+    { return false; }
+
+    bool getPidErrorLimitRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * limit) override
+    { return false; }
+
+    bool getPidErrorLimitsRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * limits) override
+    { return false; }
+
+    bool resetPidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j) override
+    { return false; }
+
+    bool disablePidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j) override
+    { return false; }
+
+    bool enablePidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j) override
+    { return false; }
+
+    bool setPidOffsetRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double v) override
+    { return false; }
+
+    bool isPidEnabledRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, bool * enabled) override
+    { return false; }
+
+    // ------- IRemoteVariablesRaw declarations. Implementation in IRemoteVariablesRawImpl.cpp -------
+
+    bool getRemoteVariableRaw(std::string key, yarp::os::Bottle & val) override
+    { return false; }
+
+    bool setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val) override
+    { return false; }
+
+    bool getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys) override
+    { return false; }
 
     // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
 

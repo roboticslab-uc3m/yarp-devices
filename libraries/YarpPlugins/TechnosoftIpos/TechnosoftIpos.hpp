@@ -24,9 +24,12 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver,
                        public yarp::dev::IControlModeRaw,
                        public yarp::dev::ICurrentControlRaw,
                        public yarp::dev::IEncodersTimedRaw,
+                       public yarp::dev::IImpedanceControlRaw,
+                       public yarp::dev::IInteractionModeRaw,
                        public yarp::dev::IJointFaultRaw,
                        public yarp::dev::IMotorRaw,
                        public yarp::dev::IMotorEncodersRaw,
+                       public yarp::dev::IPidControlRaw,
                        public yarp::dev::IPositionControlRaw,
                        public yarp::dev::IPositionDirectRaw,
                        public yarp::dev::IRemoteVariablesRaw,
@@ -183,6 +186,45 @@ public:
     bool getEncodersTimedRaw(double * encs, double * time) override
     { return impl->getEncodersTimedRaw(encs, time); }
 
+    //  ---------- IImpedanceControlRaw declarations. Implementation in IImpedanceControlRawImpl.cpp ----------
+
+    //bool getAxes(int * ax) override;
+
+    bool getImpedanceRaw(int j, double * stiffness, double * damping) override
+    { return impl->getImpedanceRaw(j, stiffness, damping); }
+
+    bool setImpedanceRaw(int j, double stiffness, double damping) override
+    { return impl->setImpedanceRaw(j, stiffness, damping); }
+
+    bool setImpedanceOffsetRaw(int j, double offset) override
+    { return impl->setImpedanceOffsetRaw(j, offset); }
+
+    bool getImpedanceOffsetRaw(int j, double * offset) override
+    { return impl->getImpedanceOffsetRaw(j, offset); }
+
+    bool getCurrentImpedanceLimitRaw(int j, double * min_stiff, double * max_stiff, double * min_damp, double * max_damp) override
+    { return impl->getCurrentImpedanceLimitRaw(j, min_stiff, max_stiff, min_damp, max_damp); }
+
+    //  ---------- IInteractionModeRaw declarations. Implementation in IInteractionModeRawImpl.cpp ----------
+
+    bool getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum * mode) override
+    { return impl->getInteractionModeRaw(axis, mode); }
+
+    bool getInteractionModesRaw(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes) override
+    { return impl->getInteractionModesRaw(n_joints, joints, modes); }
+
+    bool getInteractionModesRaw(yarp::dev::InteractionModeEnum * modes) override
+    { return impl->getInteractionModesRaw(modes); }
+
+    bool setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode) override
+    { return impl->setInteractionModeRaw(axis, mode); }
+
+    bool setInteractionModesRaw(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes) override
+    { return impl->setInteractionModesRaw(n_joints, joints, modes); }
+
+    bool setInteractionModesRaw(yarp::dev::InteractionModeEnum * modes) override
+    { return impl->setInteractionModesRaw(modes); }
+
     //  ---------- IJointFaultRaw declarations. Implementation in IJointFaultRawImpl.cpp ----------
 
     bool getLastJointFaultRaw(int j, int & fault, std::string & message) override
@@ -257,6 +299,71 @@ public:
 
     bool getMotorEncoderAccelerationsRaw(double * vaccs) override
     { return impl->getMotorEncoderAccelerationsRaw(vaccs); }
+
+    //  --------- IPidControlRaw declarations. Implementation in IPidControlRawImpl.cpp ---------
+
+    bool setPidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, const yarp::dev::Pid & pid) override
+    { return impl->setPidRaw(pidtype, j, pid); }
+
+    bool setPidsRaw(const yarp::dev::PidControlTypeEnum & pidtype, const yarp::dev::Pid * pids) override
+    { return impl->setPidsRaw(pidtype, pids); }
+
+    bool setPidReferenceRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double ref) override
+    { return impl->setPidReferenceRaw(pidtype, j, ref); }
+
+    bool setPidReferencesRaw(const yarp::dev::PidControlTypeEnum & pidtype, const double * refs) override
+    { return impl->setPidReferencesRaw(pidtype, refs); }
+
+    bool setPidErrorLimitRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double limit) override
+    { return impl->setPidErrorLimitRaw(pidtype, j, limit); }
+
+    bool setPidErrorLimitsRaw(const yarp::dev::PidControlTypeEnum & pidtype, const double * limits) override
+    { return impl->setPidErrorLimitsRaw(pidtype, limits); }
+
+    bool getPidErrorRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * err) override
+    { return impl->getPidErrorRaw(pidtype, j, err); }
+
+    bool getPidErrorsRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * errs) override
+    { return impl->getPidErrorsRaw(pidtype, errs); }
+
+    bool getPidOutputRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * out) override
+    { return impl->getPidOutputRaw(pidtype, j, out); }
+
+    bool getPidOutputsRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * outs) override
+    { return impl->getPidOutputsRaw(pidtype, outs); }
+
+    bool getPidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, yarp::dev::Pid * pid) override
+    { return impl->getPidRaw(pidtype, j, pid); }
+
+    bool getPidsRaw(const yarp::dev::PidControlTypeEnum & pidtype, yarp::dev::Pid * pids) override
+    { return impl->getPidsRaw(pidtype, pids); }
+
+    bool getPidReferenceRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * ref) override
+    { return impl->getPidReferenceRaw(pidtype, j, ref); }
+
+    bool getPidReferencesRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * refs) override
+    { return impl->getPidReferencesRaw(pidtype, refs); }
+
+    bool getPidErrorLimitRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * limit) override
+    { return impl->getPidErrorLimitRaw(pidtype, j, limit); }
+
+    bool getPidErrorLimitsRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * limits) override
+    { return impl->getPidErrorLimitsRaw(pidtype, limits); }
+
+    bool resetPidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j) override
+    { return impl->resetPidRaw(pidtype, j); }
+
+    bool disablePidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j) override
+    { return impl->disablePidRaw(pidtype, j); }
+
+    bool enablePidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j) override
+    { return impl->enablePidRaw(pidtype, j); }
+
+    bool setPidOffsetRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double v) override
+    { return impl->setPidOffsetRaw(pidtype, j, v); }
+
+    bool isPidEnabledRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, bool * enabled) override
+    { return impl->isPidEnabledRaw(pidtype, j, enabled); }
 
     // ------- IPositionControlRaw declarations. Implementation in IPositionControlRawImpl.cpp -------
 

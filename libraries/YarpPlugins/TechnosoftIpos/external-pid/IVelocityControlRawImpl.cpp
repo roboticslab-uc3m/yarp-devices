@@ -1,11 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "embedded-pid/TechnosoftIposEmbedded.hpp"
+#include "external-pid/TechnosoftIposExternal.hpp"
 
 #include <cmath>
 
 #include <algorithm> // std::clamp
 
+#include <yarp/conf/numeric.h>
 #include <yarp/os/Log.h>
 
 #include "LogComponent.hpp"
@@ -14,7 +15,7 @@ using namespace roboticslab;
 
 // ----------------------------------------------------------------------------------
 
-bool TechnosoftIposEmbedded::velocityMoveRaw(int j, double sp)
+bool TechnosoftIposExternal::velocityMoveRaw(int j, double sp)
 {
     yCITrace(IPOS, id(), "%d %f", j, sp);
     CHECK_JOINT(j);
@@ -28,52 +29,43 @@ bool TechnosoftIposEmbedded::velocityMoveRaw(int j, double sp)
         sp = std::clamp(sp, -maxVel, maxVel);
     }
 
-    // reset halt bit
-    if (can->driveStatus()->controlword()[8]
-        && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)))
-    {
-        return false;
-    }
-
-    vars.synchronousCommandTarget = sp;
-    return true;
+    return false;
 }
 
 // ----------------------------------------------------------------------------------
 
-bool TechnosoftIposEmbedded::velocityMoveRaw(const double * sp)
+bool TechnosoftIposExternal::velocityMoveRaw(const double * sp)
 {
     return velocityMoveRaw(0, sp[0]);
 }
 
 // ----------------------------------------------------------------------------------
 
-bool TechnosoftIposEmbedded::velocityMoveRaw(int n_joint, const int * joints, const double * spds)
+bool TechnosoftIposExternal::velocityMoveRaw(int n_joint, const int * joints, const double * spds)
 {
     return velocityMoveRaw(joints[0], spds[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIposEmbedded::getRefVelocityRaw(int joint, double * vel)
+bool TechnosoftIposExternal::getRefVelocityRaw(int joint, double * vel)
 {
     yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_VELOCITY);
-    *vel = vars.synchronousCommandTarget;
-    return true;
+    return false;
 }
 
 // ------------------------------------------------------------------------------
 
-bool TechnosoftIposEmbedded::getRefVelocitiesRaw(double * vels)
+bool TechnosoftIposExternal::getRefVelocitiesRaw(double * vels)
 {
     return getRefVelocityRaw(0, &vels[0]);
 }
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIposEmbedded::getRefVelocitiesRaw(int n_joint, const int * joints, double * vels)
+bool TechnosoftIposExternal::getRefVelocitiesRaw(int n_joint, const int * joints, double * vels)
 {
     return getRefVelocityRaw(joints[0], &vels[0]);
 }
