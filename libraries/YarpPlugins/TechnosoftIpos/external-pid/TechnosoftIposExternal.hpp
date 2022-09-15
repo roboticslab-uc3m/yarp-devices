@@ -3,6 +3,8 @@
 #ifndef __TECHNOSOFT_IPOS_EXTERNAL_HPP__
 #define __TECHNOSOFT_IPOS_EXTERNAL_HPP__
 
+#include <yarp/conf/numeric.h>
+
 #include "TechnosoftIposBase.hpp"
 
 namespace roboticslab
@@ -144,6 +146,17 @@ public:
 private:
     void interpretModesOfOperation(std::int8_t modesOfOperation) override;
     void reset() override;
+
+    yarp::conf::vocab32_t initialInteractionMode {0};
+
+    std::atomic<double> impedanceStiffness {0.0};
+    std::atomic<double> impedanceDamping {0.0};
+    std::atomic<double> impedanceOffset {0.0};
+
+    double minImpedanceStiffness {0.0};
+    double maxImpedanceStiffness {0.0};
+    double minImpedanceDamping {0.0};
+    double maxImpedanceDamping {0.0};
 };
 
 } // namespace roboticslab

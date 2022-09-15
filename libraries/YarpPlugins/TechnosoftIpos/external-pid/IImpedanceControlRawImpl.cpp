@@ -2,7 +2,7 @@
 
 #include "external-pid/TechnosoftIposExternal.hpp"
 
-#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
 
@@ -14,7 +14,11 @@ bool TechnosoftIposExternal::getImpedanceRaw(int j, double * stiffness, double *
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-    return false;
+
+    *stiffness = impedanceStiffness;
+    *damping = impedanceDamping;
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -23,7 +27,22 @@ bool TechnosoftIposExternal::setImpedanceRaw(int j, double stiffness, double dam
 {
     yCITrace(IPOS, id(), "%d %f %f", j, stiffness, damping);
     CHECK_JOINT(j);
-    return false;
+
+    if (stiffness < minImpedanceStiffness || stiffness > maxImpedanceStiffness)
+    {
+        yCIError(IPOS, id(), "Invalid stiffness: %f (not in [%f, %f])", stiffness, minImpedanceStiffness, maxImpedanceStiffness);
+        return false;
+    }
+
+    if (damping < minImpedanceDamping || damping > maxImpedanceDamping)
+    {
+        yCIError(IPOS, id(), "Invalid damping: %f (not in [%f, %f])", damping, minImpedanceDamping, maxImpedanceDamping);
+        return false;
+    }
+
+    impedanceStiffness = stiffness;
+    impedanceDamping = damping;
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -32,7 +51,15 @@ bool TechnosoftIposExternal::setImpedanceOffsetRaw(int j, double offset)
 {
     yCITrace(IPOS, id(), "%d %f", j, offset);
     CHECK_JOINT(j);
-    return false;
+
+    if (offset < 0.0)
+    {
+        yCIError(IPOS, id()) << "Invalid offset:" << offset;
+        return false;
+    }
+
+    impedanceOffset = offset;
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -41,7 +68,8 @@ bool TechnosoftIposExternal::getImpedanceOffsetRaw(int j, double * offset)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-    return false;
+    *offset = impedanceOffset;
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -50,7 +78,13 @@ bool TechnosoftIposExternal::getCurrentImpedanceLimitRaw(int j, double * min_sti
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-    return false;
+
+    *min_stiff = minImpedanceStiffness;
+    *max_stiff = maxImpedanceStiffness;
+    *min_damp = minImpedanceDamping;
+    *max_damp = maxImpedanceDamping;
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
