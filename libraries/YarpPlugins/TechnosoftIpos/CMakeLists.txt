@@ -45,6 +45,8 @@ if(NOT SKIP_TechnosoftIpos)
     target_sources(TechnosoftIpos PRIVATE external-pid/TechnosoftIposExternal.hpp
                                           external-pid/TechnosoftIposExternal.cpp
                                           external-pid/DeviceDriverImpl.cpp
+                                          external-pid/TrapezoidalTrajectory.hpp
+                                          external-pid/TrapezoidalTrajectory.cpp
                                           external-pid/ICanBusSharerImpl.cpp
                                           external-pid/IControlModeRawImpl.cpp
                                           external-pid/IImpedanceControlRawImpl.cpp
