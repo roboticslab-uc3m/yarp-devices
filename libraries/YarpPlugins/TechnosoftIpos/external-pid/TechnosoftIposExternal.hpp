@@ -8,6 +8,7 @@
 #include <yarp/conf/numeric.h>
 
 #include "TechnosoftIposBase.hpp"
+#include "TrapezoidalTrajectory.hpp"
 
 namespace roboticslab
 {
@@ -162,6 +163,9 @@ private:
 
     std::mutex pidMutex;
     yarp::dev::Pid positionPid;
+
+    TrapezoidalTrajectory positionTrajectory;
+    std::atomic<double> targetPosition {0.0};
 };
 
 } // namespace roboticslab

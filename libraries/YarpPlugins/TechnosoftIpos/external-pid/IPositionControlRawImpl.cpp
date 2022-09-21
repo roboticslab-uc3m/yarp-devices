@@ -19,7 +19,11 @@ bool TechnosoftIposExternal::positionMoveRaw(int j, double ref)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    return false;
+    double initialPosition = vars.internalUnitsToDegrees(vars.lastEncoderRead->queryPosition());
+    targetPosition = ref;
+    positionTrajectory.configure(vars.syncPeriod, initialPosition, targetPosition, vars.refSpeed, vars.refAcceleration);
+
+    return true;
 }
 
 // --------------------------------------------------------------------------------
@@ -44,7 +48,11 @@ bool TechnosoftIposExternal::relativeMoveRaw(int j, double delta)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    return false;
+    double initialPosition = vars.internalUnitsToDegrees(vars.lastEncoderRead->queryPosition());
+    targetPosition = initialPosition + delta;
+    positionTrajectory.configure(vars.syncPeriod, initialPosition, targetPosition, vars.refSpeed, vars.refAcceleration);
+
+    return true;
 }
 
 // --------------------------------------------------------------------------------
@@ -67,7 +75,8 @@ bool TechnosoftIposExternal::checkMotionDoneRaw(int j, bool * flag)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-    return false;
+    *flag = !positionTrajectory.isActive();
+    return true;
 }
 
 // --------------------------------------------------------------------------------
@@ -102,7 +111,8 @@ bool TechnosoftIposExternal::setRefSpeedRaw(int j, double sp)
         return false;
     }
 
-    return false;
+    vars.refSpeed = sp;
+    return true;
 }
 
 // --------------------------------------------------------------------------------
@@ -132,7 +142,8 @@ bool TechnosoftIposExternal::setRefAccelerationRaw(int j, double acc)
         return false;
     }
 
-    return false;
+    vars.refAcceleration = acc;
+    return true;
 }
 
 // --------------------------------------------------------------------------------
@@ -155,8 +166,8 @@ bool TechnosoftIposExternal::getRefSpeedRaw(int j, double * ref)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-
-    return false;
+    *ref = vars.refSpeed;
+    return true;
 }
 
 // --------------------------------------------------------------------------------
@@ -179,8 +190,8 @@ bool TechnosoftIposExternal::getRefAccelerationRaw(int j, double * acc)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-
-    return false;
+    *acc = vars.refAcceleration;
+    return true;
 }
 
 // --------------------------------------------------------------------------------
@@ -227,8 +238,8 @@ bool TechnosoftIposExternal::getTargetPositionRaw(int joint, double * ref)
 {
     yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
-
-    return false;
+    *ref = targetPosition;
+    return true;
 }
 
 // --------------------------------------------------------------------------------

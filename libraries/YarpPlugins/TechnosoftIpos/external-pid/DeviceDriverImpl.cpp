@@ -24,6 +24,12 @@ bool TechnosoftIposExternal::open(yarp::os::Searchable & config)
 
     iposGroup.fromString(config.toString(), false); // override common options
 
+    if (!config.check("syncPeriod"))
+    {
+        yCIError(IPOS, id()) << "Missing mandatory --syncPeriod parameter";
+        return false;
+    }
+
     initialInteractionMode = iposGroup.check("initialInteractionMode", yarp::os::Value(yarp::dev::InteractionModeEnum::VOCAB_IM_STIFF),
         "initial YARP interaction mode vocab").asVocab32();
 

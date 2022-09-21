@@ -15,8 +15,8 @@ bool TechnosoftIposExternal::setPositionRaw(int j, double ref)
     yCITrace(IPOS, id(), "%d %f", j, ref);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
-
-    return false;
+    vars.synchronousCommandTarget = ref;
+    return true;
 }
 // -----------------------------------------------------------------------------
 
@@ -39,8 +39,8 @@ bool TechnosoftIposExternal::getRefPositionRaw(int joint, double * ref)
     yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
-
-    return false;
+    *ref = vars.synchronousCommandTarget;
+    return true;
 }
 
 // -----------------------------------------------------------------------------

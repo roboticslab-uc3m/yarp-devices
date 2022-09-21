@@ -8,7 +8,18 @@ using namespace roboticslab;
 
 bool TechnosoftIposExternal::synchronize()
 {
-    return false;
+    switch (vars.actualControlMode.load())
+    {
+    case VOCAB_CM_POSITION:
+        positionTrajectory.update();
+        vars.synchronousCommandTarget = positionTrajectory.queryPosition();
+        // fall-through
+    case VOCAB_CM_POSITION_DIRECT:
+        // TODO: PID output
+        break;
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
