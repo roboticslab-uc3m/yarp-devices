@@ -12,11 +12,18 @@ bool TechnosoftIposExternal::synchronize()
     {
     case VOCAB_CM_POSITION:
         positionTrajectory.update();
-        vars.synchronousCommandTarget = positionTrajectory.queryPosition();
+        setPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, positionTrajectory.queryPosition());
         // fall-through
     case VOCAB_CM_POSITION_DIRECT:
-        // TODO: PID output
-        break;
+    {
+        double forceCommand;
+        getPidOutputRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, &forceCommand);
+        double curr = vars.torqueToCurrent(vars.synchronousCommandTarget);
+        std::int32_t data = vars.currentToInternalUnits(curr) << 16;
+        return can->rpdo3()->write(data);
+    }
+    default:
+        return false;
     }
 
     return true;

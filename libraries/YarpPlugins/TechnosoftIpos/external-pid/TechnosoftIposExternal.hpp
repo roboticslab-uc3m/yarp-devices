@@ -163,6 +163,9 @@ private:
 
     std::mutex pidMutex;
     yarp::dev::Pid positionPid;
+    std::atomic<double> positionReference {0.0};
+    double proportionalError {0.0};
+    double integralError {0.0};
 
     TrapezoidalTrajectory positionTrajectory;
     std::atomic<double> targetPosition {0.0};

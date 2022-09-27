@@ -48,6 +48,7 @@ bool TechnosoftIposExternal::setControlModeRaw(int j, int mode)
     case VOCAB_CM_POSITION:
         vars.actualControlMode = VOCAB_CM_POSITION;
         positionTrajectory.reset(vars.internalUnitsToDegrees(currentPositionRead));
+        resetPidRaw(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, 0);
         break;
     case VOCAB_CM_POSITION_DIRECT:
         vars.actualControlMode = VOCAB_CM_POSITION_DIRECT;

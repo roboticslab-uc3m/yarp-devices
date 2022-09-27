@@ -15,8 +15,7 @@ bool TechnosoftIposExternal::setPositionRaw(int j, double ref)
     yCITrace(IPOS, id(), "%d %f", j, ref);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
-    vars.synchronousCommandTarget = ref;
-    return true;
+    return setPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, ref);
 }
 // -----------------------------------------------------------------------------
 
@@ -39,8 +38,7 @@ bool TechnosoftIposExternal::getRefPositionRaw(int joint, double * ref)
     yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
-    *ref = vars.synchronousCommandTarget;
-    return true;
+    return getPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, ref);
 }
 
 // -----------------------------------------------------------------------------
