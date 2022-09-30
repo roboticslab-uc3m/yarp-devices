@@ -163,7 +163,8 @@ private:
 
     std::mutex pidMutex;
     yarp::dev::Pid positionPid;
-    std::atomic<double> positionReference {0.0};
+    double positionReference {0.0};
+    double positionErrorLimit {0.0};
     double proportionalError {0.0};
     double integralError {0.0};
 

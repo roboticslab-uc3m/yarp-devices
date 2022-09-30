@@ -81,6 +81,14 @@ bool TechnosoftIposExternal::open(yarp::os::Searchable & config)
     positionPid.setStictionValues(positionStictionUp, positionStictionDown);
     positionPid.setKff(positionKff);
 
+    positionErrorLimit = iposGroup.check("positionErrorLimit", yarp::os::Value(0.0), "position PID error limit (degrees)").asFloat64();
+
+    if (positionErrorLimit < 0.0)
+    {
+        yCIError(IPOS, id()) << "Illegal position error limit:" << positionErrorLimit;
+        return false;
+    }
+
     return TechnosoftIposBase::open(config);
 }
 
