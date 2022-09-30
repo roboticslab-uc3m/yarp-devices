@@ -8,18 +8,25 @@ using namespace roboticslab;
 
 bool TechnosoftIposExternal::synchronize()
 {
+    double forceCommand;
+
     switch (vars.actualControlMode.load())
     {
     case VOCAB_CM_POSITION:
     case VOCAB_CM_VELOCITY:
+    {
         trapTrajectory.update();
         setPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, trapTrajectory.queryPosition());
-        // fall-through
+        getPidOutputRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, &forceCommand); // TODO: check return value
+        double curr = vars.torqueToCurrent(forceCommand);
+        std::int32_t data = vars.currentToInternalUnits(curr) << 16;
+        return can->rpdo3()->write(data);
+    }
     case VOCAB_CM_POSITION_DIRECT:
     {
-        double forceCommand;
+        setPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, commandBuffer.interpolate());
         getPidOutputRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, &forceCommand); // TODO: check return value
-        double curr = vars.torqueToCurrent(vars.synchronousCommandTarget);
+        double curr = vars.torqueToCurrent(forceCommand);
         std::int32_t data = vars.currentToInternalUnits(curr) << 16;
         return can->rpdo3()->write(data);
     }

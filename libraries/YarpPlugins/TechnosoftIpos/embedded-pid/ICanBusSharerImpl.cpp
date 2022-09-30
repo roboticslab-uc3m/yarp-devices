@@ -24,13 +24,13 @@ bool TechnosoftIposEmbedded::synchronize()
     {
         if (enableCsv)
         {
-            double value = vars.synchronousCommandTarget * vars.syncPeriod;
+            double value = commandBuffer.interpolate() * vars.syncPeriod;
             std::int32_t data = vars.degreesToInternalUnits(value);
             return can->rpdo3()->write(data);
         }
         else
         {
-            double value = vars.degreesToInternalUnits(vars.synchronousCommandTarget, 1);
+            double value = vars.degreesToInternalUnits(commandBuffer.interpolate(), 1);
 
             std::int16_t dataInt;
             std::uint16_t dataFrac;
@@ -42,19 +42,18 @@ bool TechnosoftIposEmbedded::synchronize()
     }
     case VOCAB_CM_TORQUE:
     {
-        double curr = vars.torqueToCurrent(vars.synchronousCommandTarget);
+        double curr = vars.torqueToCurrent(commandBuffer.interpolate());
         std::int32_t data = vars.currentToInternalUnits(curr) << 16;
         return can->rpdo3()->write(data);
     }
     case VOCAB_CM_CURRENT:
     {
-        std::int32_t data = vars.currentToInternalUnits(vars.synchronousCommandTarget) << 16;
+        std::int32_t data = vars.currentToInternalUnits(commandBuffer.interpolate()) << 16;
         return can->rpdo3()->write(data);
     }
     case VOCAB_CM_POSITION_DIRECT:
     {
-        double value = vars.clipSyncPositionTarget();
-        std::int32_t data = vars.degreesToInternalUnits(value);
+        std::int32_t data = vars.degreesToInternalUnits(commandBuffer.interpolate());
         return can->rpdo3()->write(data);
     }
     default:

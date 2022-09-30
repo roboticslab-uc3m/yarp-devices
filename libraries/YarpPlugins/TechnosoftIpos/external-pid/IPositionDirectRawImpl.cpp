@@ -15,7 +15,8 @@ bool TechnosoftIposExternal::setPositionRaw(int j, double ref)
     yCITrace(IPOS, id(), "%d %f", j, ref);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
-    return setPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, ref);
+    commandBuffer.accept(ref); // TODO: clip if exceeds max speed
+    return true;
 }
 // -----------------------------------------------------------------------------
 
@@ -38,7 +39,7 @@ bool TechnosoftIposExternal::getRefPositionRaw(int joint, double * ref)
     yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
-    return getPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, ref);
+    return commandBuffer.getStoredCommand();
 }
 
 // -----------------------------------------------------------------------------

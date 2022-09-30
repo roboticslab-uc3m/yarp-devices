@@ -77,7 +77,7 @@ bool TechnosoftIposEmbedded::setControlModeRaw(int j, int mode)
             && vars.awaitControlMode(mode);
 
     case VOCAB_CM_VELOCITY:
-        vars.synchronousCommandTarget = 0.0;
+        commandBuffer.reset(0.0);
 
         if (enableCsv)
         {
@@ -99,7 +99,7 @@ bool TechnosoftIposEmbedded::setControlModeRaw(int j, int mode)
 
     case VOCAB_CM_CURRENT:
     case VOCAB_CM_TORQUE:
-        vars.synchronousCommandTarget = 0.0;
+        commandBuffer.reset(0.0);
 
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
             && can->rpdo3()->configure(rpdo3conf.addMapping<std::int32_t>(0x201C))
@@ -136,8 +136,7 @@ bool TechnosoftIposEmbedded::setControlModeRaw(int j, int mode)
             return false;
         }
 
-        vars.synchronousCommandTarget = vars.internalUnitsToDegrees(vars.lastEncoderRead->queryPosition());
-        vars.prevSyncTarget.store(vars.synchronousCommandTarget);
+        commandBuffer.reset(vars.internalUnitsToDegrees(vars.lastEncoderRead->queryPosition()));
 
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
             && can->rpdo3()->configure(rpdo3conf.addMapping<std::int32_t>(0x607A))

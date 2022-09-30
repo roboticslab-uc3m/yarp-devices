@@ -2,7 +2,7 @@
 
 #include "StateVariables.hpp"
 
-#include <cmath>
+#include <cmath> // std::pow
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Vocab.h>
@@ -11,17 +11,6 @@
 #include "LogComponent.hpp"
 
 using namespace roboticslab;
-
-namespace
-{
-    // return -1 for negative numbers, +1 for positive numbers, 0 for zero
-    // https://stackoverflow.com/a/4609795
-    template<typename T>
-    inline int sgn(T val)
-    {
-        return (T(0) < val) - (val < T(0));
-    }
-};
 
 // -----------------------------------------------------------------------------
 
@@ -218,28 +207,6 @@ bool StateVariables::validateInitialState()
 
 // -----------------------------------------------------------------------------
 
-double StateVariables::clipSyncPositionTarget()
-{
-    double requested = synchronousCommandTarget;
-    double previous = prevSyncTarget;
-    double diff = requested - previous;
-
-    if (std::abs(diff) > maxVel * syncPeriod)
-    {
-        yCIWarning(IPOS, "ID" + std::to_string(canId), "Maximum velocity exceeded, clipping target position");
-        double newTarget = previous + maxVel * syncPeriod * sgn(diff);
-        prevSyncTarget = newTarget;
-        return newTarget;
-    }
-    else
-    {
-        prevSyncTarget.store(synchronousCommandTarget);
-        return requested;
-    }
-}
-
-// -----------------------------------------------------------------------------
-
 void StateVariables::reset()
 {
     msr = mer = der = der2 = cer = 0;
@@ -249,7 +216,6 @@ void StateVariables::reset()
     lastCurrentRead = 0.0;
 
     requestedcontrolMode = 0;
-    synchronousCommandTarget = prevSyncTarget = 0.0;
 }
 
 // -----------------------------------------------------------------------------

@@ -35,7 +35,7 @@ bool TechnosoftIposEmbedded::velocityMoveRaw(int j, double sp)
         return false;
     }
 
-    vars.synchronousCommandTarget = sp;
+    commandBuffer.accept(sp);
     return true;
 }
 
@@ -60,7 +60,7 @@ bool TechnosoftIposEmbedded::getRefVelocityRaw(int joint, double * vel)
     yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_VELOCITY);
-    *vel = vars.synchronousCommandTarget;
+    *vel = commandBuffer.getStoredCommand();
     return true;
 }
 

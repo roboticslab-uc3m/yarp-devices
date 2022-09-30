@@ -15,6 +15,8 @@ if(NOT SKIP_TechnosoftIpos)
                                           TechnosoftIposBase.cpp
                                           TechnosoftIposEmcy.hpp
                                           TechnosoftIposEmcy.cpp
+                                          CommandBuffer.hpp
+                                          CommandBuffer.cpp
                                           DeviceDriverImpl.cpp
                                           IAxisInfoRawImpl.cpp
                                           ICanBusSharerImpl.cpp

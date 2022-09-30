@@ -27,6 +27,7 @@
 #include <yarp/dev/PolyDriver.h>
 
 #include "CanOpenNode.hpp"
+#include "CommandBuffer.hpp"
 #include "ICanBusSharer.hpp"
 #include "StateVariables.hpp"
 
@@ -308,6 +309,7 @@ protected:
 
     CanOpenNode * can;
     StateVariables vars;
+    CommandBuffer commandBuffer;
 
 private:
 
