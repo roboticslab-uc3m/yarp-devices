@@ -20,8 +20,7 @@ bool TechnosoftIposExternal::positionMoveRaw(int j, double ref)
     CHECK_MODE(VOCAB_CM_POSITION);
 
     double initialPosition = vars.internalUnitsToDegrees(vars.lastEncoderRead->queryPosition());
-    targetPosition = ref;
-    positionTrajectory.configure(vars.syncPeriod, initialPosition, targetPosition, vars.refSpeed, vars.refAcceleration);
+    trapTrajectory.configure(vars.syncPeriod, initialPosition, ref, vars.refSpeed, vars.refAcceleration);
 
     return true;
 }
@@ -49,8 +48,7 @@ bool TechnosoftIposExternal::relativeMoveRaw(int j, double delta)
     CHECK_MODE(VOCAB_CM_POSITION);
 
     double initialPosition = vars.internalUnitsToDegrees(vars.lastEncoderRead->queryPosition());
-    targetPosition = initialPosition + delta;
-    positionTrajectory.configure(vars.syncPeriod, initialPosition, targetPosition, vars.refSpeed, vars.refAcceleration);
+    trapTrajectory.configure(vars.syncPeriod, initialPosition, initialPosition + delta, vars.refSpeed, vars.refAcceleration);
 
     return true;
 }
@@ -75,7 +73,7 @@ bool TechnosoftIposExternal::checkMotionDoneRaw(int j, bool * flag)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-    *flag = !positionTrajectory.isActive();
+    *flag = !trapTrajectory.isActive();
     return true;
 }
 
@@ -238,7 +236,7 @@ bool TechnosoftIposExternal::getTargetPositionRaw(int joint, double * ref)
 {
     yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
-    *ref = targetPosition;
+    *ref = trapTrajectory.getTargetPosition();
     return true;
 }
 

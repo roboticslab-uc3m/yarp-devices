@@ -18,14 +18,20 @@ public:
     //! Constructor.
     TrapezoidalTrajectory();
 
-    //! Set motion parameters.
-    void configure(double period, double initial, double target, double refSpeed, double refAcceleration);
+    //! Set motion parameters (using target position).
+    void configure(double period, double initialPosition, double targetPosition, double refSpeed, double refAcceleration);
+
+    //! Set motion parameters (infinite motion).
+    void configure(double period, double initialPosition, double targetVelocity, double refAcceleration);
 
     //! Reset state, remember current position (units).
     void reset(double currentPosition);
 
     //! Update trajectory state, must be called on regular intervals of `period`.
     void update();
+
+    //! Query configured target position (units).
+    double getTargetPosition() const;
 
     //! Retrieve last position reference (units).
     double queryPosition() const;

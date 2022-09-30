@@ -167,8 +167,7 @@ private:
     double proportionalError {0.0};
     double integralError {0.0};
 
-    TrapezoidalTrajectory positionTrajectory;
-    std::atomic<double> targetPosition {0.0};
+    TrapezoidalTrajectory trapTrajectory;
 };
 
 } // namespace roboticslab

@@ -11,8 +11,9 @@ bool TechnosoftIposExternal::synchronize()
     switch (vars.actualControlMode.load())
     {
     case VOCAB_CM_POSITION:
-        positionTrajectory.update();
-        setPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, positionTrajectory.queryPosition());
+    case VOCAB_CM_VELOCITY:
+        trapTrajectory.update();
+        setPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, trapTrajectory.queryPosition());
         // fall-through
     case VOCAB_CM_POSITION_DIRECT:
     {

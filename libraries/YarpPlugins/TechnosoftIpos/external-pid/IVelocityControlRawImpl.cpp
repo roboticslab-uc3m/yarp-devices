@@ -6,7 +6,6 @@
 
 #include <algorithm> // std::clamp
 
-#include <yarp/conf/numeric.h>
 #include <yarp/os/Log.h>
 
 #include "LogComponent.hpp"
@@ -29,7 +28,10 @@ bool TechnosoftIposExternal::velocityMoveRaw(int j, double sp)
         sp = std::clamp(sp, -maxVel, maxVel);
     }
 
-    return false;
+    double initialPosition = vars.internalUnitsToDegrees(vars.lastEncoderRead->queryPosition());
+    trapTrajectory.configure(vars.syncPeriod, initialPosition, sp, vars.refAcceleration);
+
+    return true;
 }
 
 // ----------------------------------------------------------------------------------
@@ -53,7 +55,8 @@ bool TechnosoftIposExternal::getRefVelocityRaw(int joint, double * vel)
     yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_VELOCITY);
-    return false;
+    *vel = trapTrajectory.queryVelocity();
+    return true;
 }
 
 // ------------------------------------------------------------------------------

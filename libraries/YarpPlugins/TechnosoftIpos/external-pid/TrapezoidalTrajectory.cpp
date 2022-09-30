@@ -4,6 +4,8 @@
 
 #include <cmath>
 
+#include <limits>
+
 using namespace roboticslab;
 
 // -------------------------------------------------------------------------------------
@@ -25,7 +27,7 @@ TrapezoidalTrajectory::TrapezoidalTrajectory()
 
 // -------------------------------------------------------------------------------------
 
-void TrapezoidalTrajectory::configure(double period, double initial, double target, double refSpeed, double refAcceleration)
+void TrapezoidalTrajectory::configure(double period, double initialPosition, double targetPosition, double refSpeed, double refAcceleration)
 {
     std::lock_guard<std::mutex> lock(mutex);
 
@@ -35,16 +37,16 @@ void TrapezoidalTrajectory::configure(double period, double initial, double targ
     }
 
     this->period = period;
-    targetPosition = target;
+    targetPosition = targetPosition;
     prevRefSpeed = velocityReference; // last computed velocity from previous trajectory
 
-    double sign = (target - initial >= 0.0) ? 1.0 : -1.0;
+    double sign = (targetPosition - initialPosition >= 0.0) ? 1.0 : -1.0;
     this->refSpeed = sign * refSpeed;
     this->refAcceleration = sign * refAcceleration;
 
     // hypothetic distance traveled using a double-ramp (i.e. triangular) trajectory that reaches the reference speed
     double deltaTriMax = 0.5 * (2 * refSpeed * refSpeed - prevRefSpeed * prevRefSpeed) / refAcceleration;
-    double deltaTotal = target - initial;
+    double deltaTotal = targetPosition - initialPosition;
 
     if (std::abs(deltaTotal) > std::abs(deltaTriMax))
     {
@@ -65,8 +67,16 @@ void TrapezoidalTrajectory::configure(double period, double initial, double targ
     }
 
     tick = 0;
-    positionReference = initial;
+    positionReference = initialPosition;
     active = true;
+}
+
+// -------------------------------------------------------------------------------------
+
+void TrapezoidalTrajectory::configure(double period, double initialPosition, double targetVelocity, double refAcceleration)
+{
+    double targetPosition = std::copysign(std::numeric_limits<double>::infinity(), targetVelocity);
+    return configure(period, initialPosition, targetPosition, std::abs(targetVelocity), refAcceleration);
 }
 
 // -------------------------------------------------------------------------------------
@@ -126,6 +136,14 @@ void TrapezoidalTrajectory::update()
     }
 
     positionReference += step;
+}
+
+// -------------------------------------------------------------------------------------
+
+double TrapezoidalTrajectory::getTargetPosition() const
+{
+    std::lock_guard<std::mutex> lock(mutex);
+    return targetPosition;
 }
 
 // -------------------------------------------------------------------------------------
