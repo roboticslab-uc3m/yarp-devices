@@ -3,9 +3,8 @@
 #ifndef __TECHNOSOFT_IPOS_EXTERNAL_HPP__
 #define __TECHNOSOFT_IPOS_EXTERNAL_HPP__
 
+#include <atomic>
 #include <mutex>
-
-#include <yarp/conf/numeric.h>
 
 #include "TechnosoftIposBase.hpp"
 #include "TrapezoidalTrajectory.hpp"
@@ -150,11 +149,7 @@ private:
     void interpretModesOfOperation(std::int8_t modesOfOperation) override;
     void reset() override;
 
-    yarp::conf::vocab32_t initialInteractionMode {0};
-
-    std::atomic<double> impedanceStiffness {0.0};
-    std::atomic<double> impedanceDamping {0.0};
-    std::atomic<double> impedanceOffset {0.0};
+    std::atomic<yarp::dev::InteractionModeEnum> actualInteractionMode {yarp::dev::InteractionModeEnum::VOCAB_IM_UNKNOWN};
 
     double minImpedanceStiffness {0.0};
     double maxImpedanceStiffness {0.0};
@@ -162,7 +157,11 @@ private:
     double maxImpedanceDamping {0.0};
 
     std::mutex pidMutex;
+
+    yarp::dev::Pid * activePid {nullptr};
     yarp::dev::Pid positionPid;
+    yarp::dev::Pid impedancePid;
+
     double positionReference {0.0};
     double positionErrorLimit {0.0};
     double proportionalError {0.0};

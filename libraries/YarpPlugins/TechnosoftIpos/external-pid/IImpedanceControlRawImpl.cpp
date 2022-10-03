@@ -15,8 +15,9 @@ bool TechnosoftIposExternal::getImpedanceRaw(int j, double * stiffness, double *
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
 
-    *stiffness = impedanceStiffness;
-    *damping = impedanceDamping;
+    std::lock_guard lock(pidMutex);
+    *stiffness = impedancePid.kp;
+    *damping = impedancePid.kd;
 
     return true;
 }
@@ -40,8 +41,9 @@ bool TechnosoftIposExternal::setImpedanceRaw(int j, double stiffness, double dam
         return false;
     }
 
-    impedanceStiffness = stiffness;
-    impedanceDamping = damping;
+    std::lock_guard lock(pidMutex);
+    impedancePid.setKp(stiffness);
+    impedancePid.setKd(damping);
     return true;
 }
 
@@ -52,13 +54,9 @@ bool TechnosoftIposExternal::setImpedanceOffsetRaw(int j, double offset)
     yCITrace(IPOS, id(), "%d %f", j, offset);
     CHECK_JOINT(j);
 
-    if (offset < 0.0)
-    {
-        yCIError(IPOS, id()) << "Invalid offset:" << offset;
-        return false;
-    }
+    std::lock_guard lock(pidMutex);
+    impedancePid.setOffset(offset);
 
-    impedanceOffset = offset;
     return true;
 }
 
@@ -68,7 +66,10 @@ bool TechnosoftIposExternal::getImpedanceOffsetRaw(int j, double * offset)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-    *offset = impedanceOffset;
+
+    std::lock_guard lock(pidMutex);
+    *offset = impedancePid.offset;
+
     return true;
 }
 

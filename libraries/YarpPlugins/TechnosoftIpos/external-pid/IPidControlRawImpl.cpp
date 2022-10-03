@@ -23,7 +23,7 @@ bool TechnosoftIposExternal::setPidRaw(const yarp::dev::PidControlTypeEnum & pid
     yCITrace(IPOS, id(), "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
     CHECK_PID_TYPE(pidtype);
-    std::lock_guard<std::mutex> lock(pidMutex);
+    std::lock_guard lock(pidMutex);
     positionPid = pid;
     return true;
 }
@@ -42,7 +42,7 @@ bool TechnosoftIposExternal::setPidReferenceRaw(const yarp::dev::PidControlTypeE
     yCITrace(IPOS, id(), "%s %d %f", yarp::os::Vocab32::decode(pidtype).c_str(), j, ref);
     CHECK_JOINT(j);
     CHECK_PID_TYPE(pidtype);
-    std::lock_guard<std::mutex> lock(pidMutex);
+    std::lock_guard lock(pidMutex);
     positionReference = ref;
     return true;
 }
@@ -61,7 +61,7 @@ bool TechnosoftIposExternal::setPidErrorLimitRaw(const yarp::dev::PidControlType
     yCITrace(IPOS, id(), "%s %d %f", yarp::os::Vocab32::decode(pidtype).c_str(), j, limit);
     CHECK_JOINT(j);
     CHECK_PID_TYPE(pidtype);
-    std::lock_guard<std::mutex> lock(pidMutex);
+    std::lock_guard lock(pidMutex);
     positionErrorLimit = limit;
     return true;
 }
@@ -80,7 +80,7 @@ bool TechnosoftIposExternal::getPidErrorRaw(const yarp::dev::PidControlTypeEnum 
     yCITrace(IPOS, id(), "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
     CHECK_PID_TYPE(pidtype);
-    std::lock_guard<std::mutex> lock(pidMutex);
+    std::lock_guard lock(pidMutex);
     *err = positionReference - vars.internalUnitsToDegrees(vars.lastEncoderRead->queryPosition());
     return true;
 }
@@ -101,9 +101,9 @@ bool TechnosoftIposExternal::getPidOutputRaw(const yarp::dev::PidControlTypeEnum
     CHECK_PID_TYPE(pidtype);
 
     double position = vars.internalUnitsToDegrees(vars.lastEncoderRead->queryPosition());
-    double scale = 1.0 / (positionPid.scale * positionPid.scale);
+    double scale = 1.0 / (activePid->scale * activePid->scale);
 
-    std::lock_guard<std::mutex> lock(pidMutex);
+    std::lock_guard lock(pidMutex);
     double prevProportionalError = proportionalError;
     proportionalError = position - positionReference;
 
@@ -113,24 +113,24 @@ bool TechnosoftIposExternal::getPidOutputRaw(const yarp::dev::PidControlTypeEnum
         return false;
     }
 
-    double proportionalTerm = positionPid.kp * proportionalError * scale;
+    double proportionalTerm = activePid->kp * proportionalError * scale;
 
     double integralTerm = 0.0;
 
-    if (positionPid.ki != 0.0)
+    if (activePid->ki != 0.0)
     {
         integralError += proportionalError * vars.syncPeriod;
-        integralTerm = std::clamp(positionPid.ki * integralError * scale, -positionPid.max_int, positionPid.max_int);
-        integralError = integralTerm / positionPid.ki;
+        integralTerm = std::clamp(activePid->ki * integralError * scale, -activePid->max_int, activePid->max_int);
+        integralError = integralTerm / activePid->ki;
     }
 
     double derivativeError = (proportionalError - prevProportionalError) / vars.syncPeriod;
-    double derivativeTerm = positionPid.kd * derivativeError * scale;
+    double derivativeTerm = activePid->kd * derivativeError * scale;
 
-    double feedForwardTerm = positionReference * positionPid.kff;
-    double combinedTerms = proportionalTerm + integralTerm + derivativeTerm + feedForwardTerm + positionPid.offset;
+    double feedForwardTerm = positionReference * activePid->kff;
+    double combinedTerms = proportionalTerm + integralTerm + derivativeTerm + feedForwardTerm + activePid->offset;
 
-    *out = std::clamp(combinedTerms, -positionPid.max_output, positionPid.max_output);
+    *out = std::clamp(combinedTerms, -activePid->max_output, activePid->max_output);
     return true;
 }
 
@@ -148,7 +148,7 @@ bool TechnosoftIposExternal::getPidRaw(const yarp::dev::PidControlTypeEnum & pid
     yCITrace(IPOS, id(), "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
     CHECK_PID_TYPE(pidtype);
-    std::lock_guard<std::mutex> lock(pidMutex);
+    std::lock_guard lock(pidMutex);
     *pid = positionPid;
     return true;
 }
@@ -167,7 +167,7 @@ bool TechnosoftIposExternal::getPidReferenceRaw(const yarp::dev::PidControlTypeE
     yCITrace(IPOS, id(), "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
     CHECK_PID_TYPE(pidtype);
-    std::lock_guard<std::mutex> lock(pidMutex);
+    std::lock_guard lock(pidMutex);
     *ref = positionReference;
     return true;
 }
@@ -186,7 +186,7 @@ bool TechnosoftIposExternal::getPidErrorLimitRaw(const yarp::dev::PidControlType
     yCITrace(IPOS, id(), "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
     CHECK_PID_TYPE(pidtype);
-    std::lock_guard<std::mutex> lock(pidMutex);
+    std::lock_guard lock(pidMutex);
     *limit = positionErrorLimit;
     return true;
 }
@@ -205,7 +205,7 @@ bool TechnosoftIposExternal::resetPidRaw(const yarp::dev::PidControlTypeEnum & p
     yCITrace(IPOS, id(), "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
     CHECK_PID_TYPE(pidtype);
-    std::lock_guard<std::mutex> lock(pidMutex);
+    std::lock_guard lock(pidMutex);
     positionReference = vars.internalUnitsToDegrees(vars.lastEncoderRead->queryPosition());
     proportionalError = integralError = 0.0;
     return true;
@@ -240,8 +240,8 @@ bool TechnosoftIposExternal::setPidOffsetRaw(const yarp::dev::PidControlTypeEnum
     yCITrace(IPOS, id(), "%s %d %f", yarp::os::Vocab32::decode(pidtype).c_str(), j, v);
     CHECK_JOINT(j);
     CHECK_PID_TYPE(pidtype);
-    std::lock_guard<std::mutex> lock(pidMutex);
-    positionPid.offset = v;
+    std::lock_guard lock(pidMutex);
+    activePid->offset = v;
     return true;
 }
 

@@ -30,12 +30,18 @@ bool TechnosoftIposExternal::open(yarp::os::Searchable & config)
         return false;
     }
 
-    initialInteractionMode = iposGroup.check("initialInteractionMode", yarp::os::Value(yarp::dev::InteractionModeEnum::VOCAB_IM_STIFF),
+    auto initialInteractionMode = iposGroup.check("initialInteractionMode", yarp::os::Value(yarp::dev::InteractionModeEnum::VOCAB_IM_UNKNOWN),
         "initial YARP interaction mode vocab").asVocab32();
 
-    impedanceStiffness = iposGroup.check("impedanceStiffness", yarp::os::Value(0.0), "impedance stiffness (Nm)").asFloat64();
-    impedanceDamping = iposGroup.check("impedanceDamping", yarp::os::Value(0.0), "impedance damping (Nm*seconds)").asFloat64();
-    impedanceOffset = iposGroup.check("impedanceOffset", yarp::os::Value(0.0), "impedance offset").asFloat64();
+    if (!setInteractionModeRaw(0, static_cast<yarp::dev::InteractionModeEnum>(initialInteractionMode)))
+    {
+        yCIError(IPOS, id()) << "Unable to configure initial interaction mode";
+        return false;
+    }
+
+    auto impedanceStiffness = iposGroup.check("impedanceStiffness", yarp::os::Value(0.0), "impedance stiffness (Nm)").asFloat64();
+    auto impedanceDamping = iposGroup.check("impedanceDamping", yarp::os::Value(0.0), "impedance damping (Nm*seconds)").asFloat64();
+    auto impedanceOffset = iposGroup.check("impedanceOffset", yarp::os::Value(0.0), "impedance offset").asFloat64();
 
     minImpedanceStiffness = iposGroup.check("minImpedanceStiffness", yarp::os::Value(0.0), "minimum impedance stiffness (Nm)").asFloat64();
     maxImpedanceStiffness = iposGroup.check("maxImpedanceStiffness", yarp::os::Value(0.0), "maximum impedance stiffness (Nm)").asFloat64();
@@ -44,19 +50,19 @@ bool TechnosoftIposExternal::open(yarp::os::Searchable & config)
 
     if (impedanceStiffness < minImpedanceStiffness || impedanceStiffness > maxImpedanceStiffness)
     {
-        yCIError(IPOS, id(), "Invalid stiffness: %f (not in [%f, %f])", impedanceStiffness.load(), minImpedanceStiffness, maxImpedanceStiffness);
+        yCIError(IPOS, id(), "Invalid stiffness: %f (not in [%f, %f])", impedanceStiffness, minImpedanceStiffness, maxImpedanceStiffness);
         return false;
     }
 
     if (impedanceDamping < minImpedanceDamping || impedanceDamping > maxImpedanceDamping)
     {
-        yCIError(IPOS, id(), "Invalid damping: %f (not in [%f, %f])", impedanceDamping.load(), minImpedanceDamping, maxImpedanceDamping);
+        yCIError(IPOS, id(), "Invalid damping: %f (not in [%f, %f])", impedanceDamping, minImpedanceDamping, maxImpedanceDamping);
         return false;
     }
 
     if (impedanceOffset < 0.0)
     {
-        yCIError(IPOS, id()) << "Illegal offset:" << impedanceOffset.load();
+        yCIError(IPOS, id()) << "Illegal offset:" << impedanceOffset;
         return false;
     }
 
@@ -80,6 +86,13 @@ bool TechnosoftIposExternal::open(yarp::os::Searchable & config)
     positionPid.setScale(positionScale);
     positionPid.setStictionValues(positionStictionUp, positionStictionDown);
     positionPid.setKff(positionKff);
+
+    impedancePid.setKp(impedanceStiffness);
+    impedancePid.setKd(impedanceDamping);
+    impedancePid.setMaxOut(positionMaxOutput); // re-use
+    impedancePid.setOffset(impedanceOffset);
+    impedancePid.setScale(1.0);
+    impedancePid.setStictionValues(positionStictionUp, positionStictionDown); // re-use
 
     positionErrorLimit = iposGroup.check("positionErrorLimit", yarp::os::Value(0.0), "position PID error limit (degrees)").asFloat64();
 
