@@ -98,9 +98,9 @@ double EncoderRead::queryTime() const
 
 bool StateVariables::validateInitialState()
 {
-    if (actualControlMode == 0)
+    if (initialMode == 0)
     {
-        yCWarning(IPOS) << "Illegal initial control mode";
+        yCWarning(IPOS) << "Illegal initial control mode:" << yarp::os::Vocab32::decode(initialMode);
         return false;
     }
 
