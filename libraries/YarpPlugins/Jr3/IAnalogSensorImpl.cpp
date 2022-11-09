@@ -56,6 +56,8 @@ int Jr3::getChannels()
 
 int Jr3::calibrateSensor()
 {
+    yCInfo(JR3) << "Calibrating sensor..."; // = set to zero
+
     constexpr auto ok = yarp::dev::IAnalogSensor::AS_OK;
 
     auto ok0 = calibrateChannel(0);
