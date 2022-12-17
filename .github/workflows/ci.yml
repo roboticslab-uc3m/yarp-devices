@@ -83,6 +83,12 @@ jobs:
         token: ${{secrets.AMOR_API}}
         path: .deps/amor-api
 
+    - name: Check out jr3pci-linux
+      uses: actions/checkout@v3
+      with:
+        repository: roboticslab-uc3m/jr3pci-linux
+        path: .deps/jr3pci-linux
+
     - name: Install dependencies via apt
       run: sudo apt-get update && sudo apt-get install -qq ccache libboost-thread-dev libeigen3-dev intltool libxml2-dev libglib2.0-dev libusb-1.0-0-dev libspnav-dev libxwiimote-dev libgtest-dev
 
@@ -137,6 +143,9 @@ jobs:
         cmake -S .deps/amor-api -B .deps/amor-api/build $CMAKE_CCACHE_LAUNCHER -DENABLE_udev_rules=OFF
         cmake --build .deps/amor-api/build
         sudo cmake --install .deps/amor-api/build
+
+    - name: Install jr3pci-linux header
+      run: sudo make -C .deps/jr3pci-linux install-header
 
     - name: Configure yarp-devices
       run: cmake -S . -B build $CMAKE_CCACHE_LAUNCHER -DENABLE_examples=ON
