@@ -91,9 +91,6 @@ struct StateVariables
     //! Convert torque (Nm) to current (amperes).
     double torqueToCurrent(double torque) const;
 
-    //! Clip travelled distance according to the maximum velocity allowed.
-    double clipSyncPositionTarget();
-
     //! Reset internal state.
     void reset();
 
@@ -133,9 +130,6 @@ struct StateVariables
     std::atomic<std::uint8_t> lastNmtState {0};
     std::atomic<std::uint16_t> lastFaultCode {0};
     std::atomic<const char *> lastFaultMessage;
-
-    std::atomic<double> synchronousCommandTarget {0.0};
-    std::atomic<double> prevSyncTarget {0.0};
 
     std::atomic<bool> enableSync {false};
     std::atomic<bool> enableCsv {false};

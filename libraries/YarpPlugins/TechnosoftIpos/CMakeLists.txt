@@ -14,6 +14,8 @@ if(NOT SKIP_TechnosoftIpos)
     yarp_add_plugin(TechnosoftIpos TechnosoftIpos.hpp
                                    TechnosoftIpos.cpp
                                    TechnosoftIposEmcy.cpp
+                                   CommandBuffer.hpp
+                                   CommandBuffer.cpp
                                    DeviceDriverImpl.cpp
                                    IAxisInfoRawImpl.cpp
                                    ICanBusSharerImpl.cpp

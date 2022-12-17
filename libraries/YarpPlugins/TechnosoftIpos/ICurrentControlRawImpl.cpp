@@ -53,7 +53,7 @@ bool TechnosoftIpos::setRefCurrentRaw(int m, double curr)
     yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
     CHECK_MODE(VOCAB_CM_CURRENT);
-    vars.synchronousCommandTarget = curr;
+    commandBuffer.accept(curr);
     return true;
 }
 
@@ -78,7 +78,7 @@ bool TechnosoftIpos::getRefCurrentRaw(int m, double * curr)
     yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
     CHECK_MODE(VOCAB_CM_CURRENT);
-    *curr = vars.synchronousCommandTarget;
+    *curr = commandBuffer.getStoredCommand();
     return true;
 }
 

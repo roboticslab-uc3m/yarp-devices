@@ -22,6 +22,7 @@
 #include <yarp/dev/PolyDriver.h>
 
 #include "CanOpenNode.hpp"
+#include "CommandBuffer.hpp"
 #include "ICanBusSharer.hpp"
 
 #include "InterpolatedPositionBuffer.hpp"
@@ -294,6 +295,8 @@ private:
     roboticslab::ICanBusSharer * iExternalEncoderCanBusSharer;
 
     StateVariables vars;
+
+    CommandBuffer commandBuffer;
 
     InterpolatedPositionBuffer * ipBuffer;
 

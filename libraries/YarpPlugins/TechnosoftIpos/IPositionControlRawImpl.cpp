@@ -267,7 +267,7 @@ bool TechnosoftIpos::stopRaw(int j)
 
     return (vars.actualControlMode == VOCAB_CM_POSITION || vars.actualControlMode == VOCAB_CM_VELOCITY)
         && can->driveStatus()->controlword(can->driveStatus()->controlword().set(8)) // stop with profile acceleration
-        && (vars.synchronousCommandTarget = 0.0, true);
+        && (commandBuffer.reset(0.0), true);
 }
 
 // --------------------------------------------------------------------------------
