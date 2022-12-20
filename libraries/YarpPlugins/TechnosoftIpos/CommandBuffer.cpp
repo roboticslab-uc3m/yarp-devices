@@ -2,6 +2,8 @@
 
 #include "CommandBuffer.hpp"
 
+#include <algorithm> // std::max
+
 #include <yarp/os/SystemClock.h>
 
 using namespace roboticslab;
@@ -35,8 +37,11 @@ double CommandBuffer::interpolate()
     }
     else
     {
-        double slope = (storedCommand - interpolationResult) / (nextExpectedCommandTimestamp - interpolationTimestamp);
-        interpolationResult += interpolationPeriod * slope;
+        // using `std::max` in order to soften the interpolated slope and thus avoid overshoot
+        double interval = std::max(nextExpectedCommandTimestamp - interpolationTimestamp, interpolationPeriod);
+
+        // having y = f(t): f(t+1) = f(t) + t * (delta_y / delta_t)
+        interpolationResult += interpolationPeriod * (storedCommand - interpolationResult) / interval;
     }
 
     interpolationTimestamp = now;
