@@ -96,6 +96,7 @@ bool Jr3::open(yarp::os::Searchable& config)
 
     yCInfo(JR3) << "Using filter ID:" << filterId;
 
+    // https://github.com/roboticslab-uc3m/jr3pci-linux/issues/10
     isDextrorotary = config.check("dextrorotary", "assume dextrorotary XYZ coordinates");
 
     if (isDextrorotary)
@@ -157,6 +158,11 @@ bool Jr3::open(yarp::os::Searchable& config)
         checkFullScales(1, fs[1], fs_a1) &&
         checkFullScales(2, fs[2], fs_w) &&
         checkFullScales(3, fs[3], fs_w) &&
+        // The acquisition board will perform set-to-zero exactly once on power-up,
+        // so there is no way to know the initial force/torque values in case a
+        // payload is attached (e.g. a gripper). To keep things more deterministic,
+        // this device will additionally set-to-zero during start by default.
+        // https://github.com/roboticslab-uc3m/jr3pci-linux/issues/11
         calibrateSensor() == yarp::dev::IAnalogSensor::AS_OK;
 }
 

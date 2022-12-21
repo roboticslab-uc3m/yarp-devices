@@ -10,7 +10,7 @@
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
-#include "jr3pci-ioctl.h"
+#include <jr3pci-ioctl.h>
 
 namespace roboticslab
 {

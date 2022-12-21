@@ -2,9 +2,13 @@
 
 #include "CommandBuffer.hpp"
 
+#include <algorithm> // std::max
+
 #include <yarp/os/SystemClock.h>
 
 using namespace roboticslab;
+
+constexpr double COMMAND_GAP_FACTOR = 1.1;
 
 // -----------------------------------------------------------------------------
 
@@ -23,11 +27,11 @@ double CommandBuffer::interpolate()
 {
     std::lock_guard lock(mutex);
 
-    double now = yarp::os::SystemClock::nowSystem();
-    double nextExpectedCommandTimestamp = commandTimestamp + commandPeriod;
-    double interpolationPeriod = now - interpolationTimestamp;
+    const double now = yarp::os::SystemClock::nowSystem();
+    const double nextExpectedCommandTimestamp = commandTimestamp + commandPeriod;
+    const double interpolationPeriod = now - interpolationTimestamp;
 
-    if (now >= nextExpectedCommandTimestamp || 1.1 * interpolationPeriod >= commandPeriod)
+    if (now >= nextExpectedCommandTimestamp || COMMAND_GAP_FACTOR * interpolationPeriod >= commandPeriod)
     {
         // either the next command was skipped, it didn't arrive on time or perhaps periods
         // were meant to match, so just return the last stored command
@@ -35,8 +39,11 @@ double CommandBuffer::interpolate()
     }
     else
     {
-        double slope = (storedCommand - interpolationResult) / (nextExpectedCommandTimestamp - interpolationTimestamp);
-        interpolationResult += interpolationPeriod * slope;
+        // using `std::max` in order to soften the interpolated slope and thus avoid overshoot
+        double interval = std::max(nextExpectedCommandTimestamp - interpolationTimestamp, interpolationPeriod);
+
+        // having y = f(t): f(t+1) = f(t) + t * (delta_y / delta_t)
+        interpolationResult += interpolationPeriod * (storedCommand - interpolationResult) / interval;
     }
 
     interpolationTimestamp = now;

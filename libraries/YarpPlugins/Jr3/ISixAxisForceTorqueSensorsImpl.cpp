@@ -65,9 +65,10 @@ bool Jr3::getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::
         fm.f[0] * fs[sens_index].f[0] * factor,
         fm.f[1] * fs[sens_index].f[1] * factor,
         fm.f[2] * fs[sens_index].f[2] * factor,
-        fm.m[0] * fs[sens_index].m[0] * factor,
-        fm.m[1] * fs[sens_index].m[1] * factor,
-        fm.m[2] * fs[sens_index].m[2] * factor
+        // torque units are [daNm], hence we need to divide by 10
+        fm.m[0] * fs[sens_index].m[0] * factor * 0.1,
+        fm.m[1] * fs[sens_index].m[1] * factor * 0.1,
+        fm.m[2] * fs[sens_index].m[2] * factor * 0.1
     };
 
     if (isDextrorotary)
