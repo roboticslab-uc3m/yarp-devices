@@ -2,7 +2,7 @@
 
 #include "TrapezoidalTrajectory.hpp"
 
-#include <cmath>
+#include <cmath> // std::abs, std::copysign, std::sqrt
 
 #include <limits>
 
@@ -29,7 +29,7 @@ TrapezoidalTrajectory::TrapezoidalTrajectory()
 
 void TrapezoidalTrajectory::configure(double period, double initialPosition, double targetPosition, double refSpeed, double refAcceleration)
 {
-    std::lock_guard<std::mutex> lock(mutex);
+    std::lock_guard lock(mutex);
 
     if (refSpeed < 0.0 || refAcceleration < 0.0)
     {
@@ -83,7 +83,7 @@ void TrapezoidalTrajectory::configure(double period, double initialPosition, dou
 
 void TrapezoidalTrajectory::reset(double currentPosition)
 {
-    std::lock_guard<std::mutex> lock(mutex);
+    std::lock_guard lock(mutex);
     targetPosition = currentPosition; // updated
     prevRefSpeed = refSpeed = refAcceleration = 0.0;
     ta = tb = tc = 0.0;
@@ -97,7 +97,7 @@ void TrapezoidalTrajectory::reset(double currentPosition)
 
 void TrapezoidalTrajectory::update()
 {
-    std::lock_guard<std::mutex> lock(mutex);
+    std::lock_guard lock(mutex);
 
     if (!active)
     {
@@ -142,7 +142,7 @@ void TrapezoidalTrajectory::update()
 
 double TrapezoidalTrajectory::getTargetPosition() const
 {
-    std::lock_guard<std::mutex> lock(mutex);
+    std::lock_guard lock(mutex);
     return targetPosition;
 }
 
@@ -150,7 +150,7 @@ double TrapezoidalTrajectory::getTargetPosition() const
 
 double TrapezoidalTrajectory::queryPosition() const
 {
-    std::lock_guard<std::mutex> lock(mutex);
+    std::lock_guard lock(mutex);
     return positionReference;
 }
 
@@ -158,7 +158,7 @@ double TrapezoidalTrajectory::queryPosition() const
 
 double TrapezoidalTrajectory::queryVelocity() const
 {
-    std::lock_guard<std::mutex> lock(mutex);
+    std::lock_guard lock(mutex);
     return velocityReference;
 }
 
@@ -166,7 +166,7 @@ double TrapezoidalTrajectory::queryVelocity() const
 
 double TrapezoidalTrajectory::queryTime() const
 {
-    std::lock_guard<std::mutex> lock(mutex);
+    std::lock_guard lock(mutex);
     return tick * period;
 }
 
@@ -174,7 +174,7 @@ double TrapezoidalTrajectory::queryTime() const
 
 bool TrapezoidalTrajectory::isActive() const
 {
-    std::lock_guard<std::mutex> lock(mutex);
+    std::lock_guard lock(mutex);
     return active;
 }
 
