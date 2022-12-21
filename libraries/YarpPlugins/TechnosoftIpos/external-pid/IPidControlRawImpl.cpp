@@ -30,13 +30,6 @@ bool TechnosoftIposExternal::setPidRaw(const yarp::dev::PidControlTypeEnum & pid
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIposExternal::setPidsRaw(const yarp::dev::PidControlTypeEnum & pidtype, const yarp::dev::Pid * pids)
-{
-    return setPidRaw(pidtype, 0, pids[0]);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIposExternal::setPidReferenceRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double ref)
 {
     yCITrace(IPOS, id(), "%s %d %f", yarp::os::Vocab32::decode(pidtype).c_str(), j, ref);
@@ -45,13 +38,6 @@ bool TechnosoftIposExternal::setPidReferenceRaw(const yarp::dev::PidControlTypeE
     std::lock_guard lock(pidMutex);
     positionReference = ref;
     return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIposExternal::setPidReferencesRaw(const yarp::dev::PidControlTypeEnum & pidtype, const double * refs)
-{
-    return setPidReferenceRaw(pidtype, 0, refs[0]);
 }
 
 // -----------------------------------------------------------------------------
@@ -68,13 +54,6 @@ bool TechnosoftIposExternal::setPidErrorLimitRaw(const yarp::dev::PidControlType
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIposExternal::setPidErrorLimitsRaw(const yarp::dev::PidControlTypeEnum & pidtype, const double * limits)
-{
-    return setPidErrorLimitRaw(pidtype, 0, limits[0]);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIposExternal::getPidErrorRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * err)
 {
     yCITrace(IPOS, id(), "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
@@ -83,13 +62,6 @@ bool TechnosoftIposExternal::getPidErrorRaw(const yarp::dev::PidControlTypeEnum 
     std::lock_guard lock(pidMutex);
     *err = positionReference - internalUnitsToDegrees(lastEncoderRead->queryPosition());
     return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIposExternal::getPidErrorsRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * errs)
-{
-    return getPidErrorRaw(pidtype, 0, &errs[0]);
 }
 
 // -----------------------------------------------------------------------------
@@ -136,13 +108,6 @@ bool TechnosoftIposExternal::getPidOutputRaw(const yarp::dev::PidControlTypeEnum
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIposExternal::getPidOutputsRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * outs)
-{
-    return getPidOutputRaw(pidtype, 0, &outs[0]);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIposExternal::getPidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, yarp::dev::Pid * pid)
 {
     yCITrace(IPOS, id(), "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
@@ -151,13 +116,6 @@ bool TechnosoftIposExternal::getPidRaw(const yarp::dev::PidControlTypeEnum & pid
     std::lock_guard lock(pidMutex);
     *pid = positionPid;
     return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIposExternal::getPidsRaw(const yarp::dev::PidControlTypeEnum & pidtype, yarp::dev::Pid * pids)
-{
-    return getPidRaw(pidtype, 0, &pids[0]);
 }
 
 // -----------------------------------------------------------------------------
@@ -174,13 +132,6 @@ bool TechnosoftIposExternal::getPidReferenceRaw(const yarp::dev::PidControlTypeE
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIposExternal::getPidReferencesRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * refs)
-{
-    return getPidReferenceRaw(pidtype, 0, &refs[0]);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIposExternal::getPidErrorLimitRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * limit)
 {
     yCITrace(IPOS, id(), "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
@@ -189,13 +140,6 @@ bool TechnosoftIposExternal::getPidErrorLimitRaw(const yarp::dev::PidControlType
     std::lock_guard lock(pidMutex);
     *limit = positionErrorLimit;
     return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIposExternal::getPidErrorLimitsRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * limits)
-{
-    return getPidErrorLimitRaw(pidtype, 0, &limits[0]);
 }
 
 // -----------------------------------------------------------------------------

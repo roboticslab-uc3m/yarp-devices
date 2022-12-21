@@ -26,13 +26,6 @@ bool TechnosoftIposBase::resetMotorEncoderRaw(int m)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIposBase::resetMotorEncodersRaw()
-{
-    return resetMotorEncoderRaw(0);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIposBase::setMotorEncoderCountsPerRevolutionRaw(int m, double cpr)
 {
     yCITrace(IPOS, id(), "%d %f", m, cpr);
@@ -70,13 +63,6 @@ bool TechnosoftIposBase::setMotorEncoderRaw(int m, double val)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIposBase::setMotorEncodersRaw(const double * vals)
-{
-    return setMotorEncoderRaw(0, vals[0]);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIposBase::getMotorEncoderRaw(int m, double * v)
 {
     yCITrace(IPOS, id(), "%d", m);
@@ -84,13 +70,6 @@ bool TechnosoftIposBase::getMotorEncoderRaw(int m, double * v)
     std::int32_t temp = lastEncoderRead->queryPosition();
     *v = reverse ? -temp : temp;
     return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIposBase::getMotorEncodersRaw(double * encs)
-{
-    return getMotorEncoderSpeedRaw(0, &encs[0]);
 }
 
 // -----------------------------------------------------------------------------
@@ -107,13 +86,6 @@ bool TechnosoftIposBase::getMotorEncoderTimedRaw(int m, double * enc, double * s
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIposBase::getMotorEncodersTimedRaw(double * encs, double * stamps)
-{
-    return getMotorEncoderTimedRaw(0, &encs[0], &stamps[0]);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIposBase::getMotorEncoderSpeedRaw(int m, double * sp)
 {
     yCITrace(IPOS, id(), "%d", m);
@@ -125,13 +97,6 @@ bool TechnosoftIposBase::getMotorEncoderSpeedRaw(int m, double * sp)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIposBase::getMotorEncoderSpeedsRaw(double * spds)
-{
-    return getMotorEncoderSpeedRaw(0, &spds[0]);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIposBase::getMotorEncoderAccelerationRaw(int m, double * acc)
 {
     yCITrace(IPOS, id(), "%d", m);
@@ -139,13 +104,6 @@ bool TechnosoftIposBase::getMotorEncoderAccelerationRaw(int m, double * acc)
     double temp = lastEncoderRead->queryAcceleration();
     *acc = reverse ? -temp : temp;
     return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIposBase::getMotorEncoderAccelerationsRaw(double * accs)
-{
-    return getMotorEncoderAccelerationRaw(0, &accs[0]);
 }
 
 // -----------------------------------------------------------------------------

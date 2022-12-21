@@ -27,20 +27,6 @@ bool TechnosoftIposEmbedded::positionMoveRaw(int j, double ref)
 
 // --------------------------------------------------------------------------------
 
-bool TechnosoftIposEmbedded::positionMoveRaw(const double * refs)
-{
-    return positionMoveRaw(0, refs[0]);
-}
-
-// --------------------------------------------------------------------------------
-
-bool TechnosoftIposEmbedded::positionMoveRaw(int n_joint, const int * joints, const double * refs)
-{
-    return positionMoveRaw(joints[0], refs[0]);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIposEmbedded::relativeMoveRaw(int j, double delta)
 {
     yCITrace(IPOS, id(), "%d %f", j, delta);
@@ -55,20 +41,6 @@ bool TechnosoftIposEmbedded::relativeMoveRaw(int j, double delta)
 
 // --------------------------------------------------------------------------------
 
-bool TechnosoftIposEmbedded::relativeMoveRaw(const double * deltas)
-{
-    return relativeMoveRaw(0, deltas[0]);
-}
-
-// --------------------------------------------------------------------------------
-
-bool TechnosoftIposEmbedded::relativeMoveRaw(int n_joint, const int * joints, const double * deltas)
-{
-    return relativeMoveRaw(joints[0], deltas[0]);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIposEmbedded::checkMotionDoneRaw(int j, bool * flag)
 {
     yCITrace(IPOS, id(), "%d", j);
@@ -78,20 +50,6 @@ bool TechnosoftIposEmbedded::checkMotionDoneRaw(int j, bool * flag)
 }
 
 // --------------------------------------------------------------------------------
-
-bool TechnosoftIposEmbedded::checkMotionDoneRaw(bool * flag)
-{
-    return checkMotionDoneRaw(0, flag);
-}
-
-// --------------------------------------------------------------------------------
-
-bool TechnosoftIposEmbedded::checkMotionDoneRaw(int n_joint, const int * joints, bool * flag)
-{
-    return checkMotionDoneRaw(joints[0], flag);
-}
-
-// -----------------------------------------------------------------------------
 
 bool TechnosoftIposEmbedded::setRefSpeedRaw(int j, double sp)
 {
@@ -128,20 +86,6 @@ bool TechnosoftIposEmbedded::setRefSpeedRaw(int j, double sp)
 
 // --------------------------------------------------------------------------------
 
-bool TechnosoftIposEmbedded::setRefSpeedsRaw(const double * spds)
-{
-    return setRefSpeedRaw(0, spds[0]);
-}
-
-// --------------------------------------------------------------------------------
-
-bool TechnosoftIposEmbedded::setRefSpeedsRaw(int n_joint, const int * joints, const double * spds)
-{
-    return setRefSpeedRaw(joints[0], spds[0]);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIposEmbedded::setRefAccelerationRaw(int j, double acc)
 {
     yCITrace(IPOS, id(), "%d %f", j, acc);
@@ -172,20 +116,6 @@ bool TechnosoftIposEmbedded::setRefAccelerationRaw(int j, double acc)
 
 // --------------------------------------------------------------------------------
 
-bool TechnosoftIposEmbedded::setRefAccelerationsRaw(const double * accs)
-{
-    return setRefAccelerationRaw(0, accs[0]);
-}
-
-// --------------------------------------------------------------------------------
-
-bool TechnosoftIposEmbedded::setRefAccelerationsRaw(int n_joint, const int * joints, const double * accs)
-{
-    return setRefAccelerationRaw(joints[0], accs[0]);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIposEmbedded::getRefSpeedRaw(int j, double * ref)
 {
     yCITrace(IPOS, id(), "%d", j);
@@ -208,20 +138,6 @@ bool TechnosoftIposEmbedded::getRefSpeedRaw(int j, double * ref)
 }
 
 // --------------------------------------------------------------------------------
-
-bool TechnosoftIposEmbedded::getRefSpeedsRaw(double * spds)
-{
-    return getRefSpeedRaw(0, &spds[0]);
-}
-
-// --------------------------------------------------------------------------------
-
-bool TechnosoftIposEmbedded::getRefSpeedsRaw(int n_joint, const int * joints, double * spds)
-{
-    return getRefSpeedRaw(joints[0], &spds[0]);
-}
-
-// -----------------------------------------------------------------------------
 
 bool TechnosoftIposEmbedded::getRefAccelerationRaw(int j, double * acc)
 {
@@ -246,20 +162,6 @@ bool TechnosoftIposEmbedded::getRefAccelerationRaw(int j, double * acc)
 
 // --------------------------------------------------------------------------------
 
-bool TechnosoftIposEmbedded::getRefAccelerationsRaw(double * accs)
-{
-    return getRefAccelerationRaw(0, &accs[0]);
-}
-
-// --------------------------------------------------------------------------------
-
-bool TechnosoftIposEmbedded::getRefAccelerationsRaw(int n_joint, const int * joints, double * accs)
-{
-    return getRefAccelerationRaw(joints[0], &accs[0]);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIposEmbedded::stopRaw(int j)
 {
     yCITrace(IPOS, id(), "%d", j);
@@ -272,20 +174,6 @@ bool TechnosoftIposEmbedded::stopRaw(int j)
 
 // --------------------------------------------------------------------------------
 
-bool TechnosoftIposEmbedded::stopRaw()
-{
-    return stopRaw(0);
-}
-
-// --------------------------------------------------------------------------------
-
-bool TechnosoftIposEmbedded::stopRaw(int n_joint, const int * joints)
-{
-    return stopRaw(joints[0]);
-}
-
-// --------------------------------------------------------------------------------
-
 bool TechnosoftIposEmbedded::getTargetPositionRaw(int joint, double * ref)
 {
     yCITrace(IPOS, id(), "%d", joint);
@@ -294,20 +182,6 @@ bool TechnosoftIposEmbedded::getTargetPositionRaw(int joint, double * ref)
     return can->sdo()->upload<std::int32_t>("Target position", [this, ref](auto data)
         { *ref = internalUnitsToDegrees(data); },
         0x607A);
-}
-
-// --------------------------------------------------------------------------------
-
-bool TechnosoftIposEmbedded::getTargetPositionsRaw(double * refs)
-{
-    return getTargetPositionRaw(0, &refs[0]);
-}
-
-// --------------------------------------------------------------------------------
-
-bool TechnosoftIposEmbedded::getTargetPositionsRaw(int n_joint, const int * joints, double * refs)
-{
-    return getTargetPositionRaw(joints[0], &refs[0]);
 }
 
 // --------------------------------------------------------------------------------

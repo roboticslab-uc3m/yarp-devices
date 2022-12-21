@@ -99,7 +99,7 @@ bool TechnosoftIposBase::initialize()
         || (iExternalEncoderCanBusSharer && !iExternalEncoderCanBusSharer->initialize())
         || !setLimitsRaw(0, min, max)
         || !setRefSpeedRaw(0, refSpeed)
-        || !IPositionControlRaw::setRefAccelerationRaw(0, refAcceleration)
+        || !setRefAccelerationRaw(0, refAcceleration)
         // synchronize absolute (master) and relative (slave) encoders
         || (iEncodersTimedRawExternal && (!iEncodersTimedRawExternal->getEncodersRaw(&extEnc) || !setEncoderRaw(0, extEnc)))
         || !can->tpdo1()->configure(tpdo1Conf)

@@ -22,20 +22,6 @@ bool TechnosoftIposEmbedded::getControlModeRaw(int j, int * mode)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIposEmbedded::getControlModesRaw(int * modes)
-{
-    return getControlModeRaw(0, &modes[0]);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIposEmbedded::getControlModesRaw(int n_joint, const int * joints, int * modes)
-{
-    return getControlModeRaw(joints[0], &modes[0]);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIposEmbedded::setControlModeRaw(int j, int mode)
 {
     yCITrace(IPOS, id(), "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
@@ -163,20 +149,6 @@ bool TechnosoftIposEmbedded::setControlModeRaw(int j, int mode)
         yCIError(IPOS, id()) << "Unsupported, unknown or read-only mode:" << yarp::os::Vocab32::decode(mode);
         return false;
     }
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIposEmbedded::setControlModesRaw(int * modes)
-{
-    return setControlModeRaw(0, modes[0]);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIposEmbedded::setControlModesRaw(int n_joint, const int * joints, int * modes)
-{
-    return setControlModeRaw(joints[0], modes[0]);
 }
 
 // -----------------------------------------------------------------------------

@@ -21,20 +21,6 @@ bool TechnosoftIposExternal::getInteractionModeRaw(int axis, yarp::dev::Interact
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIposExternal::getInteractionModesRaw(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes)
-{
-    return getInteractionModeRaw(joints[0], &modes[0]);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIposExternal::getInteractionModesRaw(yarp::dev::InteractionModeEnum * modes)
-{
-    return getInteractionModeRaw(0, &modes[0]);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIposExternal::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
 {
     yCITrace(IPOS, id(), "%d %s", axis, yarp::os::Vocab32::decode(mode).c_str());
@@ -58,20 +44,6 @@ bool TechnosoftIposExternal::setInteractionModeRaw(int axis, yarp::dev::Interact
     lock.unlock();
     actualInteractionMode = mode;
     return resetPidRaw(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, 0);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIposExternal::setInteractionModesRaw(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes)
-{
-    return setInteractionModeRaw(joints[0], modes[0]);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIposExternal::setInteractionModesRaw(yarp::dev::InteractionModeEnum * modes)
-{
-    return setInteractionModeRaw(0, modes[0]);
 }
 
 // -----------------------------------------------------------------------------

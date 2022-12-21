@@ -27,13 +27,6 @@ bool TechnosoftIposBase::resetEncoderRaw(int j)
 
 // -----------------------------------------------------------------------------------
 
-bool TechnosoftIposBase::resetEncodersRaw()
-{
-    return resetEncoderRaw(0);
-}
-
-// -----------------------------------------------------------------------------------
-
 bool TechnosoftIposBase::setEncoderRaw(int j, double val)
 {
     yCITrace(IPOS, id(), "%d %f", j, val);
@@ -51,13 +44,6 @@ bool TechnosoftIposBase::setEncoderRaw(int j, double val)
 
 // -----------------------------------------------------------------------------------
 
-bool TechnosoftIposBase::setEncodersRaw(const double * vals)
-{
-    return setEncoderRaw(0, vals[0]);
-}
-
-// -----------------------------------------------------------------------------------
-
 bool TechnosoftIposBase::getEncoderRaw(int j, double * v)
 {
     yCITrace(IPOS, id(), "%d", j);
@@ -65,13 +51,6 @@ bool TechnosoftIposBase::getEncoderRaw(int j, double * v)
     std::int32_t temp = lastEncoderRead->queryPosition();
     *v = internalUnitsToDegrees(temp);
     return true;
-}
-
-// -----------------------------------------------------------------------------------
-
-bool TechnosoftIposBase::getEncodersRaw(double * encs)
-{
-    return getEncoderRaw(0, &encs[0]);
 }
 
 // -----------------------------------------------------------------------------------
@@ -87,13 +66,6 @@ bool TechnosoftIposBase::getEncoderSpeedRaw(int j, double * sp)
 
 // -----------------------------------------------------------------------------------
 
-bool TechnosoftIposBase::getEncoderSpeedsRaw(double * spds)
-{
-    return getEncoderSpeedRaw(0, &spds[0]);
-}
-
-// -----------------------------------------------------------------------------------
-
 bool TechnosoftIposBase::getEncoderAccelerationRaw(int j, double * acc)
 {
     yCITrace(IPOS, id(), "%d", j);
@@ -104,13 +76,6 @@ bool TechnosoftIposBase::getEncoderAccelerationRaw(int j, double * acc)
 }
 
 // -----------------------------------------------------------------------------------
-
-bool TechnosoftIposBase::getEncoderAccelerationsRaw(double * accs)
-{
-    return getEncoderAccelerationRaw(0, &accs[0]);
-}
-
-//---------------------------------------------------------------------------------------
 
 bool TechnosoftIposBase::getEncoderTimedRaw(int j, double * enc, double * time)
 {
@@ -123,10 +88,3 @@ bool TechnosoftIposBase::getEncoderTimedRaw(int j, double * enc, double * time)
 }
 
 // -----------------------------------------------------------------------------------
-
-bool TechnosoftIposBase::getEncodersTimedRaw(double * encs, double * times)
-{
-    return getEncoderTimedRaw(0, &encs[0], &times[0]);
-}
-
-// -----------------------------------------------------------------------------

@@ -63,20 +63,6 @@ bool TechnosoftIposEmbedded::setPositionRaw(int j, double ref)
 }
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIposEmbedded::setPositionsRaw(const double * refs)
-{
-    return setPositionRaw(0, refs[0]);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIposEmbedded::setPositionsRaw(int n_joint, const int * joints, const double * refs)
-{
-    return setPositionRaw(joints[0], refs[0]);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIposEmbedded::getRefPositionRaw(int joint, double * ref)
 {
     yCITrace(IPOS, id(), "%d", joint);
@@ -93,20 +79,6 @@ bool TechnosoftIposEmbedded::getRefPositionRaw(int joint, double * ref)
     }
 
     return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIposEmbedded::getRefPositionsRaw(double * refs)
-{
-    return getRefPositionRaw(0, &refs[0]);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIposEmbedded::getRefPositionsRaw(int n_joint, const int * joints, double * refs)
-{
-    return getRefPositionRaw(joints[0], &refs[0]);
 }
 
 // -----------------------------------------------------------------------------

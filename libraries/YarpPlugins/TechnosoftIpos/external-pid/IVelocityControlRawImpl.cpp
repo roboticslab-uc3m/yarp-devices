@@ -36,20 +36,6 @@ bool TechnosoftIposExternal::velocityMoveRaw(int j, double sp)
 
 // ----------------------------------------------------------------------------------
 
-bool TechnosoftIposExternal::velocityMoveRaw(const double * sp)
-{
-    return velocityMoveRaw(0, sp[0]);
-}
-
-// ----------------------------------------------------------------------------------
-
-bool TechnosoftIposExternal::velocityMoveRaw(int n_joint, const int * joints, const double * spds)
-{
-    return velocityMoveRaw(joints[0], spds[0]);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIposExternal::getRefVelocityRaw(int joint, double * vel)
 {
     yCITrace(IPOS, id(), "%d", joint);
@@ -60,17 +46,3 @@ bool TechnosoftIposExternal::getRefVelocityRaw(int joint, double * vel)
 }
 
 // ------------------------------------------------------------------------------
-
-bool TechnosoftIposExternal::getRefVelocitiesRaw(double * vels)
-{
-    return getRefVelocityRaw(0, &vels[0]);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIposExternal::getRefVelocitiesRaw(int n_joint, const int * joints, double * vels)
-{
-    return getRefVelocityRaw(joints[0], &vels[0]);
-}
-
-// -----------------------------------------------------------------------------

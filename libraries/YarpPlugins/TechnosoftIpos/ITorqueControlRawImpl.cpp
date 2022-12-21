@@ -22,13 +22,6 @@ bool TechnosoftIposBase::getRefTorqueRaw(int j, double * t)
 
 // -------------------------------------------------------------------------------------
 
-bool TechnosoftIposBase::getRefTorquesRaw(double * t)
-{
-    return getRefTorqueRaw(0, &t[0]);
-}
-
-// -------------------------------------------------------------------------------------
-
 bool TechnosoftIposBase::setRefTorqueRaw(int j, double t)
 {
     yCITrace(IPOS, id(), "%d %f", j, t);
@@ -36,13 +29,6 @@ bool TechnosoftIposBase::setRefTorqueRaw(int j, double t)
     CHECK_MODE(VOCAB_CM_TORQUE);
     commandBuffer.accept(t);
     return true;
-}
-
-// -------------------------------------------------------------------------------------
-
-bool TechnosoftIposBase::setRefTorquesRaw(const double * t)
-{
-    return setRefTorqueRaw(0, t[0]);
 }
 
 // -------------------------------------------------------------------------------------
@@ -59,13 +45,6 @@ bool TechnosoftIposBase::getTorqueRaw(int j, double * t)
 
 // -------------------------------------------------------------------------------------
 
-bool TechnosoftIposBase::getTorquesRaw(double * t)
-{
-    return getTorqueRaw(0, &t[0]);
-}
-
-// -------------------------------------------------------------------------------------
-
 bool TechnosoftIposBase::getTorqueRangeRaw(int j, double * min, double * max)
 {
     yCITrace(IPOS, id(), "%d", j);
@@ -76,13 +55,6 @@ bool TechnosoftIposBase::getTorqueRangeRaw(int j, double * min, double * max)
           *max = currentToTorque(temp);
           *min = -(*max); },
         0x207F);
-}
-
-// -------------------------------------------------------------------------------------
-
-bool TechnosoftIposBase::getTorqueRangesRaw(double * min, double * max)
-{
-    return getTorqueRangeRaw(0, &min[0], &max[0]);
 }
 
 // -------------------------------------------------------------------------------------

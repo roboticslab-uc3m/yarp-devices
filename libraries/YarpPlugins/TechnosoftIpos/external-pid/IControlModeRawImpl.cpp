@@ -21,20 +21,6 @@ bool TechnosoftIposExternal::getControlModeRaw(int j, int * mode)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIposExternal::getControlModesRaw(int * modes)
-{
-    return getControlModeRaw(0, &modes[0]);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIposExternal::getControlModesRaw(int n_joint, const int * joints, int * modes)
-{
-    return getControlModeRaw(joints[0], &modes[0]);
-}
-
-// -----------------------------------------------------------------------------
-
 bool TechnosoftIposExternal::setControlModeRaw(int j, int mode)
 {
     yCITrace(IPOS, id(), "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
@@ -58,20 +44,6 @@ bool TechnosoftIposExternal::setControlModeRaw(int j, int mode)
     }
 
     return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIposExternal::setControlModesRaw(int * modes)
-{
-    return setControlModeRaw(0, modes[0]);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIposExternal::setControlModesRaw(int n_joint, const int * joints, int * modes)
-{
-    return setControlModeRaw(joints[0], modes[0]);
 }
 
 // -----------------------------------------------------------------------------

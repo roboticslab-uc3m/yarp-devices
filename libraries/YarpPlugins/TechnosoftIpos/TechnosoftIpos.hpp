@@ -406,13 +406,13 @@ public:
     { return impl->setRefSpeedsRaw(n_joint, joints, spds); }
 
     bool setRefAccelerationRaw(int j, double acc) override
-    { return impl->IPositionControlRaw::setRefAccelerationRaw(j, acc); }
+    { return impl->setRefAccelerationRaw(j, acc); }
 
     bool setRefAccelerationsRaw(const double * accs) override
-    { return impl->IPositionControlRaw::setRefAccelerationsRaw(accs); }
+    { return impl->setRefAccelerationsRaw(accs); }
 
     bool setRefAccelerationsRaw(int n_joint, const int * joints, const double * accs) override
-    { return impl->IPositionControlRaw::setRefAccelerationsRaw(n_joint, joints, accs); }
+    { return impl->setRefAccelerationsRaw(n_joint, joints, accs); }
 
     bool getRefSpeedRaw(int j, double * ref) override
     { return impl->getRefSpeedRaw(j, ref); }
@@ -424,22 +424,22 @@ public:
     { return impl->getRefSpeedsRaw(n_joint, joints, spds); }
 
     bool getRefAccelerationRaw(int j, double * acc) override
-    { return impl->IPositionControlRaw::getRefAccelerationRaw(j, acc); }
+    { return impl->getRefAccelerationRaw(j, acc); }
 
     bool getRefAccelerationsRaw(double * accs) override
-    { return impl->IPositionControlRaw::getRefAccelerationsRaw(accs); }
+    { return impl->getRefAccelerationsRaw(accs); }
 
     bool getRefAccelerationsRaw(int n_joint, const int * joints, double * accs) override
-    { return impl->IPositionControlRaw::getRefAccelerationsRaw(n_joint, joints, accs); }
+    { return impl->getRefAccelerationsRaw(n_joint, joints, accs); }
 
     bool stopRaw(int j) override
-    { return impl->IPositionControlRaw::stopRaw(j); }
+    { return impl->stopRaw(j); }
 
     bool stopRaw() override
-    { return impl->IPositionControlRaw::stopRaw(); }
+    { return impl->stopRaw(); }
 
     bool stopRaw(int n_joint, const int * joints) override
-    { return impl->IPositionControlRaw::stopRaw(n_joint, joints); }
+    { return impl->stopRaw(n_joint, joints); }
 
     bool getTargetPositionRaw(int joint, double * ref) override
     { return impl->getTargetPositionRaw(joint, ref); }
