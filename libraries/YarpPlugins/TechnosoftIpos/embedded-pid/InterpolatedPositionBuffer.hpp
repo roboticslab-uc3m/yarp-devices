@@ -12,8 +12,6 @@
 
 #include <yarp/os/Searchable.h>
 
-#include "StateVariables.hpp"
-
 namespace roboticslab
 {
 
@@ -28,13 +26,13 @@ class InterpolatedPositionBuffer
 {
 public:
     //! Constructor, sets internal invariable parameters.
-    InterpolatedPositionBuffer(const StateVariables & vars, int periodMs);
+    InterpolatedPositionBuffer(double samplingPeriod, double interpolationPeriod);
 
     //! Virtual destructor.
     virtual ~InterpolatedPositionBuffer() = default;
 
-    //! Store initial position.
-    void setInitial(double initialTarget);
+    //! Store initial position (internal units).
+    void setInitial(int initialTarget);
 
     //! Get buffer type as string identifier (pt/pvt).
     virtual std::string getType() const = 0;
@@ -51,14 +49,14 @@ public:
     //! Generate interpolation submode register value (object 60C0h).
     virtual std::int16_t getSubMode() const = 0;
 
-    //! Place a new setpoint at the end of the queue.
-    void addSetpoint(double target);
+    //! Place a new setpoint (internal units) at the end of the queue.
+    void addSetpoint(int target);
 
     //! Generate next batch of setpoints popped from the front of the queue.
     std::vector<std::uint64_t> popBatch(bool fullBuffer);
 
-    //! Retrieve last point loaded into the buffer.
-    double getPrevTarget() const;
+    //! Retrieve last point loaded into the buffer (internal units).
+    int getPrevTarget() const;
 
     //! Report whether there are enough points in the queue to fill the buffer.
     bool isQueueReady() const;
@@ -70,7 +68,7 @@ public:
     void clearQueue();
 
 protected:
-    using ip_record = std::pair<double, double>;
+    using ip_record = std::pair<int, double>; // position (internal units), timestamp (seconds)
 
     //! Retrieve current integrity counter value.
     std::uint8_t getIntegrityCounter() const;
@@ -78,16 +76,16 @@ protected:
     //! Determine how many points should be left in the queue on each non-final batch update.
     virtual std::size_t getOffset() const;
 
-    //! Obtain time in UI samples for current segment, update internal counters.
+    //! Obtain time samples (internal units) for current segment, update internal counters.
     std::uint16_t getSampledTime(double currentTimestamp);
 
-    //! Compute mean velocity between two setpoints.
+    //! Compute mean velocity (internal units) between two setpoints.
     double getMeanVelocity(const ip_record & earliest, const ip_record & latest) const;
 
     //! Generate interpolation data record given three contiguous position target (object 60C1h).
     virtual std::uint64_t makeDataRecord(const ip_record & previous, const ip_record & current, const ip_record & next) = 0;
 
-    const StateVariables & vars;
+    const double samplingPeriod; // [s]
 
 private:
     const std::uint16_t fixedSamples;
@@ -138,7 +136,7 @@ protected:
 };
 
 //! Factory method.
-InterpolatedPositionBuffer * createInterpolationBuffer(const yarp::os::Searchable & config, const StateVariables & vars);
+InterpolatedPositionBuffer * createInterpolationBuffer(const yarp::os::Searchable & config, double samplingPeriod);
 
 } // namespace roboticslab
 

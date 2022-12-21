@@ -14,7 +14,7 @@ bool TechnosoftIposBase::getAxisNameRaw(int axis, std::string & name)
 {
     yCITrace(IPOS, id(), "%d", axis);
     CHECK_JOINT(axis);
-    name = vars.axisName;
+    name = axisName;
     return true;
 }
 
@@ -24,7 +24,7 @@ bool TechnosoftIposBase::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & ty
 {
     yCITrace(IPOS, id(), "%d", axis);
     CHECK_JOINT(axis);
-    type = static_cast<yarp::dev::JointTypeEnum>(vars.jointType);
+    type = static_cast<yarp::dev::JointTypeEnum>(jointType);
     return true;
 }
 

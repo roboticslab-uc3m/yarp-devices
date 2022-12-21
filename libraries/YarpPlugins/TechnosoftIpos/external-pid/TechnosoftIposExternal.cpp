@@ -8,7 +8,7 @@ using namespace roboticslab;
 
 void TechnosoftIposExternal::interpretModesOfOperation(std::int8_t modesOfOperation)
 {
-    if (vars.modesOfOperation == modesOfOperation)
+    if (this->modesOfOperation == modesOfOperation)
     {
         return;
     }
@@ -17,17 +17,19 @@ void TechnosoftIposExternal::interpretModesOfOperation(std::int8_t modesOfOperat
     {
     default:
         TechnosoftIposBase::interpretModesOfOperation(modesOfOperation);
-        vars.actualControlMode = VOCAB_CM_UNKNOWN;
+        actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     }
 
-    vars.modesOfOperation = modesOfOperation;
-    vars.controlModeObserverPtr->notify();
+    this->modesOfOperation = modesOfOperation;
+    controlModeObserverPtr->notify();
 }
 
 // -----------------------------------------------------------------------------
 
 void TechnosoftIposExternal::reset()
-{}
+{
+    TechnosoftIposBase::reset();
+}
 
 // -----------------------------------------------------------------------------

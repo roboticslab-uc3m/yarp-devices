@@ -21,13 +21,12 @@ bool TechnosoftIposEmbedded::setPositionRaw(int j, double ref)
 
     if (ipBuffer)
     {
-        ipBuffer->addSetpoint(ref); // register point in the internal queue
+        ipBuffer->addSetpoint(degreesToInternalUnits(ref)); // register point in the internal queue
 
         // ip mode is enabled, drive's buffer is empty, motion has not started yet, we have enough points in the queue
         if (ipBufferEnabled && !ipBufferFilled && !ipMotionStarted && ipBuffer->isQueueReady())
         {
-            std::int32_t refInternal = vars.lastEncoderRead->queryPosition();
-            ipBuffer->setInitial(vars.internalUnitsToDegrees(refInternal));
+            ipBuffer->setInitial(lastEncoderRead->queryPosition());
 
             bool ok = true;
 
@@ -48,7 +47,7 @@ bool TechnosoftIposEmbedded::setPositionRaw(int j, double ref)
         double diff = ref - previousRef;
         double period = currentTimestamp - previousTimestamp;
         double velocity = std::abs(diff / period);
-        double maxVel = vars.maxVel.load();
+        double maxVel = this->maxVel;
 
         if (velocity > maxVel)
         {
@@ -86,7 +85,7 @@ bool TechnosoftIposEmbedded::getRefPositionRaw(int joint, double * ref)
 
     if (ipBuffer)
     {
-        *ref = ipBuffer->getPrevTarget();
+        *ref = internalUnitsToDegrees(ipBuffer->getPrevTarget());
     }
     else
     {

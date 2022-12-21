@@ -81,7 +81,7 @@ bool TechnosoftIposExternal::getPidErrorRaw(const yarp::dev::PidControlTypeEnum 
     CHECK_JOINT(j);
     CHECK_PID_TYPE(pidtype);
     std::lock_guard lock(pidMutex);
-    *err = positionReference - vars.internalUnitsToDegrees(vars.lastEncoderRead->queryPosition());
+    *err = positionReference - internalUnitsToDegrees(lastEncoderRead->queryPosition());
     return true;
 }
 
@@ -100,7 +100,7 @@ bool TechnosoftIposExternal::getPidOutputRaw(const yarp::dev::PidControlTypeEnum
     CHECK_JOINT(j);
     CHECK_PID_TYPE(pidtype);
 
-    double position = vars.internalUnitsToDegrees(vars.lastEncoderRead->queryPosition());
+    double position = internalUnitsToDegrees(lastEncoderRead->queryPosition());
     double scale = 1.0 / (activePid->scale * activePid->scale);
 
     std::lock_guard lock(pidMutex);
@@ -119,12 +119,12 @@ bool TechnosoftIposExternal::getPidOutputRaw(const yarp::dev::PidControlTypeEnum
 
     if (activePid->ki != 0.0)
     {
-        integralError += proportionalError * vars.syncPeriod;
+        integralError += proportionalError * syncPeriod;
         integralTerm = std::clamp(activePid->ki * integralError * scale, -activePid->max_int, activePid->max_int);
         integralError = integralTerm / activePid->ki;
     }
 
-    double derivativeError = (proportionalError - prevProportionalError) / vars.syncPeriod;
+    double derivativeError = (proportionalError - prevProportionalError) / syncPeriod;
     double derivativeTerm = activePid->kd * derivativeError * scale;
 
     double feedForwardTerm = positionReference * activePid->kff;
@@ -206,7 +206,7 @@ bool TechnosoftIposExternal::resetPidRaw(const yarp::dev::PidControlTypeEnum & p
     CHECK_JOINT(j);
     CHECK_PID_TYPE(pidtype);
     std::lock_guard lock(pidMutex);
-    positionReference = vars.internalUnitsToDegrees(vars.lastEncoderRead->queryPosition());
+    positionReference = internalUnitsToDegrees(lastEncoderRead->queryPosition());
     proportionalError = integralError = 0.0;
     return true;
 }

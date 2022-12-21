@@ -51,9 +51,9 @@ bool TechnosoftIposBase::getTorqueRaw(int j, double * t)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-    std::int16_t temp = vars.lastCurrentRead;
-    double curr = vars.internalUnitsToCurrent(temp);
-    *t = vars.currentToTorque(curr);
+    std::int16_t temp = lastCurrentRead;
+    double curr = internalUnitsToCurrent(temp);
+    *t = currentToTorque(curr);
     return true;
 }
 
@@ -72,8 +72,8 @@ bool TechnosoftIposBase::getTorqueRangeRaw(int j, double * min, double * max)
     CHECK_JOINT(j);
 
     return can->sdo()->upload<std::uint16_t>("Current limit", [this, min, max](auto data)
-        { double temp = vars.internalUnitsToPeakCurrent(data);
-          *max = vars.currentToTorque(temp);
+        { double temp = internalUnitsToPeakCurrent(data);
+          *max = currentToTorque(temp);
           *min = -(*max); },
         0x207F);
 }
@@ -94,7 +94,7 @@ bool TechnosoftIposBase::getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorquePa
 
     params->bemf = 0.0;
     params->bemf_scale = 0.0;
-    params->ktau = vars.k;
+    params->ktau = k;
     params->ktau_scale = 0.0;
 #if YARP_VERSION_COMPARE(>=, 3, 7, 0)
     params->viscousPos = 0.0;
@@ -112,7 +112,7 @@ bool TechnosoftIposBase::setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTo
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-    vars.k = params.ktau;
+    k = params.ktau;
     return true;
 }
 

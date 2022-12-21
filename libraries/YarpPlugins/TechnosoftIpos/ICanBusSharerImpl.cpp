@@ -70,10 +70,10 @@ bool TechnosoftIposBase::initialize()
         return false;
     }
 
-    if (!vars.configuredOnce)
+    if (!configuredOnce)
     {
         // retrieve static drive info
-        vars.configuredOnce = can->sdo()->upload("Manufacturer software version",
+        configuredOnce = can->sdo()->upload("Manufacturer software version",
                 [this](const auto & data)
                 {
                     yCIInfo(IPOS, id()) << "Firmware version:" << rtrim(data);
@@ -95,18 +95,18 @@ bool TechnosoftIposBase::initialize()
 
     double extEnc;
 
-    if (!vars.configuredOnce
+    if (!configuredOnce
         || (iExternalEncoderCanBusSharer && !iExternalEncoderCanBusSharer->initialize())
-        || !setLimitsRaw(0, vars.min, vars.max)
-        || !setRefSpeedRaw(0, vars.refSpeed)
-        || !IPositionControlRaw::setRefAccelerationRaw(0, vars.refAcceleration)
+        || !setLimitsRaw(0, min, max)
+        || !setRefSpeedRaw(0, refSpeed)
+        || !IPositionControlRaw::setRefAccelerationRaw(0, refAcceleration)
         // synchronize absolute (master) and relative (slave) encoders
         || (iEncodersTimedRawExternal && (!iEncodersTimedRawExternal->getEncodersRaw(&extEnc) || !setEncoderRaw(0, extEnc)))
-        || !can->tpdo1()->configure(vars.tpdo1Conf)
-        || !can->tpdo2()->configure(vars.tpdo2Conf)
-        || !can->tpdo3()->configure(vars.tpdo3Conf)
-        || (vars.heartbeatPeriod != 0.0
-                && !can->sdo()->download<std::uint16_t>("Producer Heartbeat Time", vars.heartbeatPeriod * 1000, 0x1017))
+        || !can->tpdo1()->configure(tpdo1Conf)
+        || !can->tpdo2()->configure(tpdo2Conf)
+        || !can->tpdo3()->configure(tpdo3Conf)
+        || (heartbeatPeriod != 0.0
+                && !can->sdo()->download<std::uint16_t>("Producer Heartbeat Time", heartbeatPeriod * 1000, 0x1017))
         || !can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE)
         || (can->driveStatus()->getCurrentState() == DriveState::NOT_READY_TO_SWITCH_ON
                 && !can->driveStatus()->awaitState(DriveState::SWITCH_ON_DISABLED)))
@@ -115,12 +115,12 @@ bool TechnosoftIposBase::initialize()
         return false;
     }
 
-    vars.lastHeartbeat = yarp::os::Time::now();
-    vars.actualControlMode = VOCAB_CM_CONFIGURED;
+    lastHeartbeat = yarp::os::Time::now();
+    actualControlMode = VOCAB_CM_CONFIGURED;
 
     if (!can->driveStatus()->requestState(DriveState::SWITCHED_ON)
-            || !vars.awaitControlMode(VOCAB_CM_IDLE)
-            || !setControlModeRaw(0, vars.initialMode))
+            || !awaitControlMode(VOCAB_CM_IDLE)
+            || !setControlModeRaw(0, initialMode))
     {
         yCIWarning(IPOS, id()) << "Initial drive state transitions failed";
     }
@@ -139,7 +139,7 @@ bool TechnosoftIposBase::finalize()
 
     bool ok = true;
 
-    if (vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED)
+    if (actualControlMode != VOCAB_CM_NOT_CONFIGURED)
     {
         if (can->driveStatus()->getCurrentState() == DriveState::OPERATION_ENABLED)
         {
@@ -152,7 +152,7 @@ bool TechnosoftIposBase::finalize()
             ok = false;
         }
 
-        vars.actualControlMode = VOCAB_CM_CONFIGURED;
+        actualControlMode = VOCAB_CM_CONFIGURED;
     }
 
     if (!can->nmt()->issueServiceCommand(NmtService::RESET_NODE))
@@ -166,7 +166,7 @@ bool TechnosoftIposBase::finalize()
         ok = ok && iExternalEncoderCanBusSharer->finalize();
     }
 
-    vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
+    actualControlMode = VOCAB_CM_NOT_CONFIGURED;
     return ok;
 }
 

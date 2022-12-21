@@ -15,7 +15,7 @@ bool TechnosoftIposExternal::getControlModeRaw(int j, int * mode)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-    *mode = vars.actualControlMode;
+    *mode = actualControlMode;
     return false;
 }
 
@@ -40,18 +40,18 @@ bool TechnosoftIposExternal::setControlModeRaw(int j, int mode)
     yCITrace(IPOS, id(), "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
     CHECK_JOINT(j);
 
-    vars.requestedcontrolMode = vars.actualControlMode = mode;
-    auto currentPositionRead = vars.lastEncoderRead->queryPosition();
+    requestedcontrolMode = actualControlMode = mode;
+    auto currentPositionRead = lastEncoderRead->queryPosition();
 
     switch (mode)
     {
     case VOCAB_CM_POSITION:
     case VOCAB_CM_VELOCITY:
-        trapTrajectory.reset(vars.internalUnitsToDegrees(currentPositionRead));
+        trapTrajectory.reset(internalUnitsToDegrees(currentPositionRead));
         resetPidRaw(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, 0);
         break;
     case VOCAB_CM_POSITION_DIRECT:
-        commandBuffer.reset(vars.internalUnitsToDegrees(currentPositionRead));
+        commandBuffer.reset(internalUnitsToDegrees(currentPositionRead));
         break;
     default:
         return false; // TODO

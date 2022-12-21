@@ -20,7 +20,7 @@ bool TechnosoftIposEmbedded::positionMoveRaw(int j, double ref)
     CHECK_MODE(VOCAB_CM_POSITION);
 
     return !can->driveStatus()->controlword()[8] // check halt bit
-        && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(ref), 0x607A)
+        && can->sdo()->download<std::int32_t>("Target position", degreesToInternalUnits(ref), 0x607A)
         // new setpoint (assume absolute target position)
         && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).reset(6));
 }
@@ -48,7 +48,7 @@ bool TechnosoftIposEmbedded::relativeMoveRaw(int j, double delta)
     CHECK_MODE(VOCAB_CM_POSITION);
 
     return !can->driveStatus()->controlword()[8] // check halt bit
-        && can->sdo()->download<std::int32_t>("Target position", vars.degreesToInternalUnits(delta), 0x607A)
+        && can->sdo()->download<std::int32_t>("Target position", degreesToInternalUnits(delta), 0x607A)
         // new setpoint (assume relative target position)
         && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).set(6));
 }
@@ -103,13 +103,13 @@ bool TechnosoftIposEmbedded::setRefSpeedRaw(int j, double sp)
         yCIWarning(IPOS, id()) << "Illegal negative speed provided:" << sp;
         return false;
     }
-    else if (sp > vars.maxVel)
+    else if (sp > maxVel)
     {
-        yCIWarning(IPOS, id()) << "Reference speed exceeds maximum velocity, i.e." << vars.maxVel.load();
+        yCIWarning(IPOS, id()) << "Reference speed exceeds maximum velocity, i.e." << maxVel.load();
         return false;
     }
 
-    double value = std::abs(vars.degreesToInternalUnits(sp, 1));
+    double value = std::abs(degreesToInternalUnits(sp, 1));
 
     std::uint16_t dataInt;
     std::uint16_t dataFrac;
@@ -122,7 +122,7 @@ bool TechnosoftIposEmbedded::setRefSpeedRaw(int j, double sp)
         return false;
     }
 
-    vars.refSpeed = sp;
+    refSpeed = sp;
     return true;
 }
 
@@ -153,7 +153,7 @@ bool TechnosoftIposEmbedded::setRefAccelerationRaw(int j, double acc)
         return false;
     }
 
-    double value = std::abs(vars.degreesToInternalUnits(acc, 2));
+    double value = std::abs(degreesToInternalUnits(acc, 2));
 
     std::uint16_t dataInt;
     std::uint16_t dataFrac;
@@ -166,7 +166,7 @@ bool TechnosoftIposEmbedded::setRefAccelerationRaw(int j, double acc)
         return false;
     }
 
-    vars.refAcceleration = acc;
+    refAcceleration = acc;
     return true;
 }
 
@@ -191,9 +191,9 @@ bool TechnosoftIposEmbedded::getRefSpeedRaw(int j, double * ref)
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
 
-    if (vars.actualControlMode == VOCAB_CM_NOT_CONFIGURED)
+    if (actualControlMode == VOCAB_CM_NOT_CONFIGURED)
     {
-        *ref = vars.refSpeed;
+        *ref = refSpeed;
         return true;
     }
 
@@ -202,7 +202,7 @@ bool TechnosoftIposEmbedded::getRefSpeedRaw(int j, double * ref)
             std::uint16_t dataInt = data >> 16;
             std::uint16_t dataFrac = data & 0xFFFF;
             double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
-            *ref = std::abs(vars.internalUnitsToDegrees(value, 1));
+            *ref = std::abs(internalUnitsToDegrees(value, 1));
         },
         0x6081);
 }
@@ -228,9 +228,9 @@ bool TechnosoftIposEmbedded::getRefAccelerationRaw(int j, double * acc)
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
 
-    if (vars.actualControlMode == VOCAB_CM_NOT_CONFIGURED)
+    if (actualControlMode == VOCAB_CM_NOT_CONFIGURED)
     {
-        *acc = vars.refAcceleration;
+        *acc = refAcceleration;
         return true;
     }
 
@@ -239,7 +239,7 @@ bool TechnosoftIposEmbedded::getRefAccelerationRaw(int j, double * acc)
             std::uint16_t dataInt = data >> 16;
             std::uint16_t dataFrac = data & 0xFFFF;
             double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
-            *acc = std::abs(vars.internalUnitsToDegrees(value, 2));
+            *acc = std::abs(internalUnitsToDegrees(value, 2));
         },
         0x6083);
 }
@@ -265,7 +265,7 @@ bool TechnosoftIposEmbedded::stopRaw(int j)
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
 
-    return (vars.actualControlMode == VOCAB_CM_POSITION || vars.actualControlMode == VOCAB_CM_VELOCITY)
+    return (actualControlMode == VOCAB_CM_POSITION || actualControlMode == VOCAB_CM_VELOCITY)
         && can->driveStatus()->controlword(can->driveStatus()->controlword().set(8)) // stop with profile acceleration
         && (commandBuffer.reset(0.0), true);
 }
@@ -292,7 +292,7 @@ bool TechnosoftIposEmbedded::getTargetPositionRaw(int joint, double * ref)
     CHECK_JOINT(joint);
 
     return can->sdo()->upload<std::int32_t>("Target position", [this, ref](auto data)
-        { *ref = vars.internalUnitsToDegrees(data); },
+        { *ref = internalUnitsToDegrees(data); },
         0x607A);
 }
 

@@ -20,7 +20,7 @@ bool TechnosoftIposEmbedded::velocityMoveRaw(int j, double sp)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_VELOCITY);
 
-    const auto maxVel = vars.maxVel.load();
+    const double maxVel = this->maxVel;
 
     if (std::abs(sp) > maxVel)
     {

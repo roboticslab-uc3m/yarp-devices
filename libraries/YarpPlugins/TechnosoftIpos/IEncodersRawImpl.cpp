@@ -38,14 +38,14 @@ bool TechnosoftIposBase::setEncoderRaw(int j, double val)
 {
     yCITrace(IPOS, id(), "%d %f", j, val);
     CHECK_JOINT(j);
-    std::int32_t data = vars.degreesToInternalUnits(val);
+    std::int32_t data = degreesToInternalUnits(val);
 
     if (!can->sdo()->download("Set actual position", data, 0X2081))
     {
         return false;
     }
 
-    vars.lastEncoderRead->reset(data);
+    lastEncoderRead->reset(data);
     return true;
 }
 
@@ -62,8 +62,8 @@ bool TechnosoftIposBase::getEncoderRaw(int j, double * v)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-    std::int32_t temp = vars.lastEncoderRead->queryPosition();
-    *v = vars.internalUnitsToDegrees(temp);
+    std::int32_t temp = lastEncoderRead->queryPosition();
+    *v = internalUnitsToDegrees(temp);
     return true;
 }
 
@@ -80,8 +80,8 @@ bool TechnosoftIposBase::getEncoderSpeedRaw(int j, double * sp)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-    double temp = vars.lastEncoderRead->querySpeed();
-    *sp = vars.internalUnitsToDegrees(temp, 1);
+    double temp = lastEncoderRead->querySpeed();
+    *sp = internalUnitsToDegrees(temp, 1);
     return true;
 }
 
@@ -98,8 +98,8 @@ bool TechnosoftIposBase::getEncoderAccelerationRaw(int j, double * acc)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-    double temp = vars.lastEncoderRead->queryAcceleration();
-    *acc = vars.internalUnitsToDegrees(temp, 2);
+    double temp = lastEncoderRead->queryAcceleration();
+    *acc = internalUnitsToDegrees(temp, 2);
     return true;
 }
 
@@ -116,9 +116,9 @@ bool TechnosoftIposBase::getEncoderTimedRaw(int j, double * enc, double * time)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-    std::int32_t temp = vars.lastEncoderRead->queryPosition();
-    *enc = vars.internalUnitsToDegrees(temp);
-    *time = vars.lastEncoderRead->queryTime();
+    std::int32_t temp = lastEncoderRead->queryPosition();
+    *enc = internalUnitsToDegrees(temp);
+    *time = lastEncoderRead->queryTime();
     return true;
 }
 

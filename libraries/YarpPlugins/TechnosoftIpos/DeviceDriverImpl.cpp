@@ -37,35 +37,35 @@ bool TechnosoftIposBase::open(yarp::os::Searchable & config)
     const auto & gearboxGroup = robotConfig->findGroup(iposGroup.find("gearbox").asString());
     const auto & encoderGroup = robotConfig->findGroup(iposGroup.find("encoder").asString());
 
-    vars.canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32(); // id-specific
+    canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32(); // id-specific
 
-    vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
+    actualControlMode = VOCAB_CM_NOT_CONFIGURED;
 
-    vars.axisName = config.check("name", yarp::os::Value(""), "axis name").asString(); // id-specific
-    vars.jointType = iposGroup.check("type", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "joint type [atrv|atpr|unkn]").asVocab32();
-    vars.max = iposGroup.check("max", yarp::os::Value(0.0), "max (meters or degrees)").asFloat64();
-    vars.min = iposGroup.check("min", yarp::os::Value(0.0), "min (meters or degrees)").asFloat64();
-    vars.maxVel = iposGroup.check("maxVel", yarp::os::Value(0.0), "maxVel (meters/second or degrees/second)").asFloat64();
-    vars.refSpeed = iposGroup.check("refSpeed", yarp::os::Value(0.0), "ref speed (meters/second or degrees/second)").asFloat64();
-    vars.refAcceleration = iposGroup.check("refAcceleration", yarp::os::Value(0.0), "ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
-    vars.drivePeakCurrent = driverGroup.check("peakCurrent", yarp::os::Value(0.0), "peak drive current (amperes)").asFloat64();
-    vars.k = motorGroup.check("k", yarp::os::Value(0.0), "motor constant").asFloat64();
-    vars.tr = gearboxGroup.check("tr", yarp::os::Value(0.0), "reduction").asFloat64();
-    vars.tr = vars.tr * iposGroup.check("extraTr", yarp::os::Value(1.0), "extra reduction").asFloat64();
-    vars.encoderPulses = encoderGroup.check("encoderPulses", yarp::os::Value(0), "encoderPulses").asInt32();
-    vars.samplingPeriod = iposGroup.check("samplingPeriod", yarp::os::Value(0.0), "samplingPeriod (seconds)").asFloat64();
-    vars.reverse = iposGroup.check("reverse", yarp::os::Value(false), "reverse motor encoder counts").asBool();
-    vars.heartbeatPeriod = iposGroup.check("heartbeatPeriod", yarp::os::Value(0.0), "CAN heartbeat period (seconds)").asFloat64();
-    vars.syncPeriod = iposGroup.check("syncPeriod", yarp::os::Value(0.0), "SYNC message period (seconds)").asFloat64();
-    vars.initialMode = iposGroup.check("initialMode", yarp::os::Value(VOCAB_CM_IDLE), "initial YARP control mode vocab").asVocab32();
+    axisName = config.check("name", yarp::os::Value(""), "axis name").asString(); // id-specific
+    jointType = iposGroup.check("type", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "joint type [atrv|atpr|unkn]").asVocab32();
+    max = iposGroup.check("max", yarp::os::Value(0.0), "max (meters or degrees)").asFloat64();
+    min = iposGroup.check("min", yarp::os::Value(0.0), "min (meters or degrees)").asFloat64();
+    maxVel = iposGroup.check("maxVel", yarp::os::Value(0.0), "maxVel (meters/second or degrees/second)").asFloat64();
+    refSpeed = iposGroup.check("refSpeed", yarp::os::Value(0.0), "ref speed (meters/second or degrees/second)").asFloat64();
+    refAcceleration = iposGroup.check("refAcceleration", yarp::os::Value(0.0), "ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
+    drivePeakCurrent = driverGroup.check("peakCurrent", yarp::os::Value(0.0), "peak drive current (amperes)").asFloat64();
+    k = motorGroup.check("k", yarp::os::Value(0.0), "motor constant").asFloat64();
+    tr = gearboxGroup.check("tr", yarp::os::Value(0.0), "reduction").asFloat64();
+    tr = tr * iposGroup.check("extraTr", yarp::os::Value(1.0), "extra reduction").asFloat64();
+    encoderPulses = encoderGroup.check("encoderPulses", yarp::os::Value(0), "encoderPulses").asInt32();
+    samplingPeriod = iposGroup.check("samplingPeriod", yarp::os::Value(0.0), "samplingPeriod (seconds)").asFloat64();
+    reverse = iposGroup.check("reverse", yarp::os::Value(false), "reverse motor encoder counts").asBool();
+    heartbeatPeriod = iposGroup.check("heartbeatPeriod", yarp::os::Value(0.0), "CAN heartbeat period (seconds)").asFloat64();
+    syncPeriod = iposGroup.check("syncPeriod", yarp::os::Value(0.0), "SYNC message period (seconds)").asFloat64();
+    initialMode = iposGroup.check("initialMode", yarp::os::Value(VOCAB_CM_IDLE), "initial YARP control mode vocab").asVocab32();
 
-    if (!vars.validateInitialState())
+    if (!validateInitialState())
     {
         yCError(IPOS) << "Invalid configuration parameters";
         return false;
     }
 
-    yarp::dev::DeviceDriver::setId("ID" + std::to_string(vars.canId));
+    yarp::dev::DeviceDriver::setId("ID" + std::to_string(canId));
 
     if (iposGroup.check("externalEncoder", "external encoder"))
     {
@@ -107,9 +107,7 @@ bool TechnosoftIposBase::open(yarp::os::Searchable & config)
     double driveStateTimeout = iposGroup.check("driveStateTimeout", yarp::os::Value(DEFAULT_DRIVE_STATE_TIMEOUT),
             "CAN drive state timeout (seconds)").asFloat64();
 
-    can = new CanOpenNode(vars.canId, sdoTimeout, driveStateTimeout);
-
-    PdoConfiguration tpdo1Conf;
+    can = new CanOpenNode(canId, sdoTimeout, driveStateTimeout);
 
     // Manufacturer Status Register (1002h) and Modes of Operation Display (6061h)
     tpdo1Conf.addMapping<std::uint32_t>(0x1002).addMapping<std::int8_t>(0x6061);
@@ -124,8 +122,6 @@ bool TechnosoftIposBase::open(yarp::os::Searchable & config)
         tpdo1Conf.setEventTimer(iposGroup.find("tpdo1EventTimer").asFloat64() * 1e3); // pass milliseconds
     }
 
-    PdoConfiguration tpdo2Conf;
-
     // Motion Error Register (2000h) and Detailed Error Register (2002h)
     tpdo2Conf.addMapping<std::uint16_t>(0x2000).addMapping<std::uint16_t>(0x2002);
 
@@ -139,16 +135,10 @@ bool TechnosoftIposBase::open(yarp::os::Searchable & config)
         tpdo2Conf.setEventTimer(iposGroup.find("tpdo2EventTimer").asFloat64() * 1e3); // pass milliseconds
     }
 
-    PdoConfiguration tpdo3Conf;
-
     // Position actual internal value (6063h) and Torque actual value (6077h)
     tpdo3Conf.addMapping<std::int32_t>(0x6063).addMapping<std::int16_t>(0x6077);
 
     tpdo3Conf.setTransmissionType(PdoTransmissionType::SYNCHRONOUS_CYCLIC);
-
-    vars.tpdo1Conf = tpdo1Conf;
-    vars.tpdo2Conf = tpdo2Conf;
-    vars.tpdo3Conf = tpdo3Conf;
 
     using namespace std::placeholders;
 
@@ -171,7 +161,7 @@ bool TechnosoftIposBase::open(yarp::os::Searchable & config)
         }
         else
         {
-            vars.heartbeatPeriod = 0.0; // disable
+            heartbeatPeriod = 0.0; // disable
         }
     }
 

@@ -12,7 +12,7 @@ using namespace roboticslab;
 
 void TechnosoftIposEmbedded::interpretModesOfOperation(std::int8_t modesOfOperation)
 {
-    if (vars.modesOfOperation == modesOfOperation)
+    if (this->modesOfOperation == modesOfOperation)
     {
         return;
     }
@@ -21,37 +21,37 @@ void TechnosoftIposEmbedded::interpretModesOfOperation(std::int8_t modesOfOperat
     {
     case -5:
         yCIInfo(IPOS, id()) << "iPOS specific: External Reference Torque Mode";
-        vars.actualControlMode = vars.requestedcontrolMode == VOCAB_CM_TORQUE ? VOCAB_CM_TORQUE : VOCAB_CM_CURRENT;
+        actualControlMode = requestedcontrolMode == VOCAB_CM_TORQUE ? VOCAB_CM_TORQUE : VOCAB_CM_CURRENT;
         enableSync = true;
         break;
     case 1:
         yCIInfo(IPOS, id()) << "Profile Position Mode";
-        vars.actualControlMode = VOCAB_CM_POSITION;
+        actualControlMode = VOCAB_CM_POSITION;
         enableSync = false;
         break;
     case 3:
         yCIInfo(IPOS, id()) << "Profile Velocity Mode";
-        vars.actualControlMode = enableCsv ? VOCAB_CM_UNKNOWN : VOCAB_CM_VELOCITY;
+        actualControlMode = enableCsv ? VOCAB_CM_UNKNOWN : VOCAB_CM_VELOCITY;
         enableSync = !enableCsv;
         break;
     case 7:
         yCIInfo(IPOS, id()) << "Interpolated Position Mode";
-        vars.actualControlMode = VOCAB_CM_POSITION_DIRECT;
+        actualControlMode = VOCAB_CM_POSITION_DIRECT;
         enableSync = false;
         break;
     case 8:
         yCIInfo(IPOS, id()) << "Cyclic Synchronous Position Mode";
-        vars.actualControlMode = enableCsv ? VOCAB_CM_VELOCITY : VOCAB_CM_POSITION_DIRECT;
+        actualControlMode = enableCsv ? VOCAB_CM_VELOCITY : VOCAB_CM_POSITION_DIRECT;
         enableSync = true;
         break;
     default:
         TechnosoftIposBase::interpretModesOfOperation(modesOfOperation);
-        vars.actualControlMode = VOCAB_CM_UNKNOWN;
+        actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     }
 
-    vars.modesOfOperation = modesOfOperation;
-    vars.controlModeObserverPtr->notify();
+    this->modesOfOperation = modesOfOperation;
+    controlModeObserverPtr->notify();
 }
 
 // -----------------------------------------------------------------------------
@@ -106,6 +106,7 @@ void TechnosoftIposEmbedded::interpretIpStatus(std::uint16_t status)
 
 void TechnosoftIposEmbedded::reset()
 {
+    TechnosoftIposBase::reset();
     ipStatus = 0;
     ipMotionStarted = ipBufferFilled = ipBufferEnabled = false;
     enableSync = false;

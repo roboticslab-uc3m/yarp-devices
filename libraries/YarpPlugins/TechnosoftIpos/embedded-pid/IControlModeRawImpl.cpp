@@ -16,7 +16,7 @@ bool TechnosoftIposEmbedded::getControlModeRaw(int j, int * mode)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-    *mode = vars.actualControlMode;
+    *mode = actualControlMode;
     return true;
 }
 
@@ -41,12 +41,12 @@ bool TechnosoftIposEmbedded::setControlModeRaw(int j, int mode)
     yCITrace(IPOS, id(), "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
     CHECK_JOINT(j);
 
-    vars.requestedcontrolMode = mode;
-    bool extRefTorque = vars.actualControlMode == VOCAB_CM_TORQUE || vars.actualControlMode == VOCAB_CM_CURRENT;
+    requestedcontrolMode = mode;
+    bool extRefTorque = actualControlMode == VOCAB_CM_TORQUE || actualControlMode == VOCAB_CM_CURRENT;
 
-    if (mode == vars.actualControlMode || (extRefTorque && (mode == VOCAB_CM_CURRENT || mode == VOCAB_CM_TORQUE)))
+    if (mode == actualControlMode || (extRefTorque && (mode == VOCAB_CM_CURRENT || mode == VOCAB_CM_TORQUE)))
     {
-        vars.actualControlMode.store(vars.requestedcontrolMode.load()); // disambiguate torque/current modes
+        actualControlMode.store(requestedcontrolMode.load()); // disambiguate torque/current modes
         return true;
     }
 
@@ -71,10 +71,10 @@ bool TechnosoftIposEmbedded::setControlModeRaw(int j, int mode)
     {
     case VOCAB_CM_POSITION:
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
-            && can->sdo()->download<std::int32_t>("Target position", vars.lastEncoderRead->queryPosition(), 0x607A)
+            && can->sdo()->download<std::int32_t>("Target position", lastEncoderRead->queryPosition(), 0x607A)
             && can->sdo()->download<std::int8_t>("Modes of Operation", 1, 0x6060)
             && can->driveStatus()->controlword(can->driveStatus()->controlword().set(5)) // change set immediately
-            && vars.awaitControlMode(mode);
+            && awaitControlMode(mode);
 
     case VOCAB_CM_VELOCITY:
         commandBuffer.reset(0.0);
@@ -83,18 +83,18 @@ bool TechnosoftIposEmbedded::setControlModeRaw(int j, int mode)
         {
             return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
                 && can->rpdo3()->configure(rpdo3conf.addMapping<std::int32_t>(0x607A))
-                && can->sdo()->download<std::uint8_t>("Interpolation time period", vars.syncPeriod * 1000, 0x60C2, 0x01)
+                && can->sdo()->download<std::uint8_t>("Interpolation time period", syncPeriod * 1000, 0x60C2, 0x01)
                 && can->sdo()->download<std::int8_t>("Interpolation time period", -3, 0x60C2, 0x02)
                 && can->sdo()->download<std::int8_t>("Modes of Operation", 8, 0x6060)
                 && can->driveStatus()->controlword(can->driveStatus()->controlword().set(6)) // relative position mode
-                && vars.awaitControlMode(mode);
+                && awaitControlMode(mode);
         }
         else
         {
             return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
                 && can->rpdo3()->configure(rpdo3conf.addMapping<std::int32_t>(0x60FF))
                 && can->sdo()->download<std::int8_t>("Modes of Operation", 3, 0x6060)
-                && vars.awaitControlMode(mode);
+                && awaitControlMode(mode);
         }
 
     case VOCAB_CM_CURRENT:
@@ -106,7 +106,7 @@ bool TechnosoftIposEmbedded::setControlModeRaw(int j, int mode)
             && can->sdo()->download<std::uint16_t>("External Reference Type", 1, 0x201D)
             && can->sdo()->download<std::int8_t>("Modes of Operation", -5, 0x6060)
             && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4)) // new setpoint (assume target position)
-            && vars.awaitControlMode(mode);
+            && awaitControlMode(mode);
 
     case VOCAB_CM_POSITION_DIRECT:
         if (ipBuffer)
@@ -126,27 +126,27 @@ bool TechnosoftIposEmbedded::setControlModeRaw(int j, int mode)
                 && can->sdo()->download("Interpolated position buffer length", ipBuffer->getBufferSize(), 0x2073)
                 && can->sdo()->download("Interpolated position buffer configuration", ipBuffer->getBufferConfig(), 0x2074)
                 && can->sdo()->download<std::int8_t>("Modes of Operation", 7, 0x6060)
-                && vars.awaitControlMode(VOCAB_CM_POSITION_DIRECT);
+                && awaitControlMode(VOCAB_CM_POSITION_DIRECT);
         }
 
         // bug in F508M/F509M firmware, switch to homing mode to stop controlling profile velocity
-        if (vars.actualControlMode == VOCAB_CM_VELOCITY && !enableCsv
+        if (actualControlMode == VOCAB_CM_VELOCITY && !enableCsv
             && !can->sdo()->download<std::int8_t>("Modes of Operation", 6, 0x6060))
         {
             return false;
         }
 
-        commandBuffer.reset(vars.internalUnitsToDegrees(vars.lastEncoderRead->queryPosition()));
+        commandBuffer.reset(internalUnitsToDegrees(lastEncoderRead->queryPosition()));
 
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
             && can->rpdo3()->configure(rpdo3conf.addMapping<std::int32_t>(0x607A))
-            && can->sdo()->download<std::uint8_t>("Interpolation time period", vars.syncPeriod * 1000, 0x60C2, 0x01)
+            && can->sdo()->download<std::uint8_t>("Interpolation time period", syncPeriod * 1000, 0x60C2, 0x01)
             && can->sdo()->download<std::int8_t>("Interpolation time period", -3, 0x60C2, 0x02)
             && can->sdo()->download<std::int8_t>("Modes of Operation", 8, 0x6060)
-            && vars.awaitControlMode(mode);
+            && awaitControlMode(mode);
 
     case VOCAB_CM_FORCE_IDLE:
-        if (vars.actualControlMode == VOCAB_CM_HW_FAULT
+        if (actualControlMode == VOCAB_CM_HW_FAULT
             && !can->driveStatus()->requestTransition(DriveTransition::FAULT_RESET))
         {
             yCIError(IPOS, id()) << "Unable to reset fault status";

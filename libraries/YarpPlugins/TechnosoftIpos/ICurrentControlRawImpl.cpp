@@ -14,8 +14,8 @@ bool TechnosoftIposBase::getCurrentRaw(int m, double * curr)
 {
     yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
-    std::int16_t temp = vars.lastCurrentRead;
-    *curr = vars.internalUnitsToCurrent(temp);
+    std::int16_t temp = lastCurrentRead;
+    *curr = internalUnitsToCurrent(temp);
     return true;
 }
 
@@ -34,7 +34,7 @@ bool TechnosoftIposBase::getCurrentRangeRaw(int m, double * min, double * max)
     CHECK_JOINT(m);
 
     return can->sdo()->upload<std::uint16_t>("Current limit", [this, min, max](auto data)
-        { *max = vars.internalUnitsToPeakCurrent(data);
+        { *max = internalUnitsToPeakCurrent(data);
           *min = -(*max); },
         0x207F);
 }

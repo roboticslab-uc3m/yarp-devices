@@ -61,8 +61,8 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
             return false;
         }
 
-        // check on vars.requestedControlMode to avoid race conditions during mode switch
-        if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT || vars.requestedcontrolMode == VOCAB_CM_POSITION_DIRECT)
+        // check on requestedControlMode to avoid race conditions during mode switch
+        if (actualControlMode == VOCAB_CM_POSITION_DIRECT || requestedcontrolMode == VOCAB_CM_POSITION_DIRECT)
         {
             yCIError(IPOS, id()) << "Currently in posd mode, cannot change config params right now";
             return false;
@@ -90,7 +90,7 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
 
         if (dict->find("enable").asBool())
         {
-            ipBuffer = createInterpolationBuffer(val, vars);
+            ipBuffer = createInterpolationBuffer(val, samplingPeriod);
 
             if (!ipBuffer)
             {
@@ -120,7 +120,7 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
 
         if (requested ^ enableCsv)
         {
-            if (vars.actualControlMode == VOCAB_CM_VELOCITY)
+            if (actualControlMode == VOCAB_CM_VELOCITY)
             {
                 yCIError(IPOS, id()) << "Currently in vel mode, cannot change internal mode mapping right now";
                 return false;

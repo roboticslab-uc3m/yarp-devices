@@ -20,7 +20,7 @@ bool TechnosoftIposExternal::velocityMoveRaw(int j, double sp)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_VELOCITY);
 
-    const auto maxVel = vars.maxVel.load();
+    const double maxVel = this->maxVel;
 
     if (std::abs(sp) > maxVel)
     {
@@ -28,8 +28,8 @@ bool TechnosoftIposExternal::velocityMoveRaw(int j, double sp)
         sp = std::clamp(sp, -maxVel, maxVel);
     }
 
-    double initialPosition = vars.internalUnitsToDegrees(vars.lastEncoderRead->queryPosition());
-    trapTrajectory.configure(vars.syncPeriod, initialPosition, sp, vars.refAcceleration);
+    double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
+    trapTrajectory.configure(syncPeriod, initialPosition, sp, refAcceleration);
 
     return true;
 }

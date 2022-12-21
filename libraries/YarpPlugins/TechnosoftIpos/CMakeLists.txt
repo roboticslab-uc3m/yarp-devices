@@ -17,6 +17,8 @@ if(NOT SKIP_TechnosoftIpos)
                                           TechnosoftIposEmcy.cpp
                                           CommandBuffer.hpp
                                           CommandBuffer.cpp
+                                          EncoderRead.hpp
+                                          EncoderRead.cpp
                                           DeviceDriverImpl.cpp
                                           IAxisInfoRawImpl.cpp
                                           ICanBusSharerImpl.cpp
@@ -27,8 +29,6 @@ if(NOT SKIP_TechnosoftIpos)
                                           IMotorRawImpl.cpp
                                           IMotorEncodersRawImpl.cpp
                                           ITorqueControlRawImpl.cpp
-                                          StateVariables.hpp
-                                          StateVariables.cpp
                                           LogComponent.hpp
                                           LogComponent.cpp)
 

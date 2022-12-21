@@ -19,8 +19,8 @@ bool TechnosoftIposExternal::positionMoveRaw(int j, double ref)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    double initialPosition = vars.internalUnitsToDegrees(vars.lastEncoderRead->queryPosition());
-    trapTrajectory.configure(vars.syncPeriod, initialPosition, ref, vars.refSpeed, vars.refAcceleration);
+    double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
+    trapTrajectory.configure(syncPeriod, initialPosition, ref, refSpeed, refAcceleration);
 
     return true;
 }
@@ -47,8 +47,8 @@ bool TechnosoftIposExternal::relativeMoveRaw(int j, double delta)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    double initialPosition = vars.internalUnitsToDegrees(vars.lastEncoderRead->queryPosition());
-    trapTrajectory.configure(vars.syncPeriod, initialPosition, initialPosition + delta, vars.refSpeed, vars.refAcceleration);
+    double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
+    trapTrajectory.configure(syncPeriod, initialPosition, initialPosition + delta, refSpeed, refAcceleration);
 
     return true;
 }
@@ -103,13 +103,13 @@ bool TechnosoftIposExternal::setRefSpeedRaw(int j, double sp)
         yCIWarning(IPOS, id()) << "Illegal negative speed provided:" << sp;
         return false;
     }
-    else if (sp > vars.maxVel)
+    else if (sp > maxVel)
     {
-        yCIWarning(IPOS, id()) << "Reference speed exceeds maximum velocity, i.e." << vars.maxVel.load();
+        yCIWarning(IPOS, id()) << "Reference speed exceeds maximum velocity, i.e." << maxVel.load();
         return false;
     }
 
-    vars.refSpeed = sp;
+    refSpeed = sp;
     return true;
 }
 
@@ -140,7 +140,7 @@ bool TechnosoftIposExternal::setRefAccelerationRaw(int j, double acc)
         return false;
     }
 
-    vars.refAcceleration = acc;
+    refAcceleration = acc;
     return true;
 }
 
@@ -164,7 +164,7 @@ bool TechnosoftIposExternal::getRefSpeedRaw(int j, double * ref)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-    *ref = vars.refSpeed;
+    *ref = refSpeed;
     return true;
 }
 
@@ -188,7 +188,7 @@ bool TechnosoftIposExternal::getRefAccelerationRaw(int j, double * acc)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-    *acc = vars.refAcceleration;
+    *acc = refAcceleration;
     return true;
 }
 

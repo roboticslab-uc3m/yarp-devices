@@ -2,6 +2,7 @@
 
 #include "TechnosoftIposBase.hpp"
 
+#include <cmath> // std::pow
 #include <cstring>
 
 #include <sstream>
@@ -9,6 +10,9 @@
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Vocab.h>
+
+#include <yarp/dev/IAxisInfo.h>
 
 #include "LogComponent.hpp"
 
@@ -40,7 +44,7 @@ bool TechnosoftIposBase::reportBitToggle(report_storage report, int level, std::
 
             if (level == FAULT)
             {
-                vars.lastFaultMessage = msgSet;
+                lastFaultMessage = msgSet;
             }
         }
         else
@@ -56,7 +60,7 @@ bool TechnosoftIposBase::reportBitToggle(report_storage report, int level, std::
 
 void TechnosoftIposBase::interpretMsr(std::uint16_t msr)
 {
-    report_storage report{"MSR", msr, vars.msr};
+    report_storage report{"MSR", msr, this->msr};
 
     reportBitToggle(report, INFO, 0, "Drive/motor initialization performed.");
     reportBitToggle(report, NONE, 1, "Position trigger 1 reached.");
@@ -75,14 +79,14 @@ void TechnosoftIposBase::interpretMsr(std::uint16_t msr)
     reportBitToggle(report, INFO, 14, "Reference position in absolute electronic camming mode reached.");
     reportBitToggle(report, WARN, 15, "Drive/motor in fault status.");
 
-    vars.msr = msr;
+    this->msr = msr;
 }
 
 // -----------------------------------------------------------------------------
 
 void TechnosoftIposBase::interpretMer(std::uint16_t mer)
 {
-    report_storage report{"MER", mer, vars.mer};
+    report_storage report{"MER", mer, this->mer};
 
     bool isSet = false;
 
@@ -105,17 +109,17 @@ void TechnosoftIposBase::interpretMer(std::uint16_t mer)
 
     if (isSet)
     {
-        vars.lastFaultCode = mer;
+        lastFaultCode = mer;
     }
 
-    vars.mer = mer;
+    this->mer = mer;
 }
 
 // -----------------------------------------------------------------------------
 
 void TechnosoftIposBase::interpretDer(std::uint16_t der)
 {
-    report_storage report{"DER", der, vars.der};
+    report_storage report{"DER", der, this->der};
 
     reportBitToggle(report, WARN, 0, "The number of nested function calls exceeded the length of TML stack. Last function call was ignored.");
     reportBitToggle(report, WARN, 1, "A RET/RETI instruction was executed while no function/ISR was active.");
@@ -134,14 +138,14 @@ void TechnosoftIposBase::interpretDer(std::uint16_t der)
     reportBitToggle(report, WARN, 14, "STO or Enable circuit hardware error.");
     reportBitToggle(report, WARN, 15, "EEPROM Locked. An attempt to write in the EEPROM will be ignored.");
 
-    vars.der = der;
+    this->der = der;
 }
 
 // -----------------------------------------------------------------------------
 
 void TechnosoftIposBase::interpretDer2(std::uint16_t der2)
 {
-    report_storage report{"DER2", der2, vars.der2};
+    report_storage report{"DER2", der2, this->der2};
 
     reportBitToggle(report, WARN, 0, "BiSS data CRC error");
     reportBitToggle(report, WARN, 1, "BiSS data warning bit is set");
@@ -152,14 +156,14 @@ void TechnosoftIposBase::interpretDer2(std::uint16_t der2)
     reportBitToggle(report, WARN, 6, "Position wraparound.");
     // 6-15: reserved
 
-    vars.der2 = der2;
+    this->der2 = der2;
 }
 
 // -----------------------------------------------------------------------------
 
 void TechnosoftIposBase::interpretCer(std::uint16_t cer)
 {
-    report_storage report{"CER", cer, vars.cer};
+    report_storage report{"CER", cer, this->cer};
 
     reportBitToggle(report, WARN, 0, "RS232 reception error.");
     reportBitToggle(report, WARN, 1, "RS232 transmission timeout error.");
@@ -171,7 +175,7 @@ void TechnosoftIposBase::interpretCer(std::uint16_t cer)
     reportBitToggle(report, WARN, 7, "SPI timeout on write operation.");
     // 8-15: reserved
 
-    vars.cer = cer;
+    this->cer = cer;
 }
 
 // -----------------------------------------------------------------------------
@@ -182,10 +186,10 @@ void TechnosoftIposBase::interpretStatusword(std::uint16_t statusword)
     {
     case DriveState::FAULT_REACTION_ACTIVE:
     case DriveState::FAULT:
-        vars.actualControlMode = VOCAB_CM_HW_FAULT;
+        actualControlMode = VOCAB_CM_HW_FAULT;
         break;
     case DriveState::SWITCHED_ON:
-        vars.actualControlMode = VOCAB_CM_IDLE;
+        actualControlMode = VOCAB_CM_IDLE;
         break;
     default:
         break;
@@ -208,7 +212,7 @@ void TechnosoftIposBase::interpretStatusword(std::uint16_t statusword)
             "Remote – drive is in local mode and will not execute the command message.");
 
     if (reportBitToggle(report, INFO, 10, "Target reached.")
-        && vars.actualControlMode == VOCAB_CM_POSITION // does not work on velocity profile mode
+        && actualControlMode == VOCAB_CM_POSITION // does not work on velocity profile mode
         && can->driveStatus()->controlword()[8]
         && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)))
     {
@@ -217,7 +221,7 @@ void TechnosoftIposBase::interpretStatusword(std::uint16_t statusword)
 
     reportBitToggle(report, INFO, 11, "Internal Limit Active.");
 
-    switch (vars.modesOfOperation)
+    switch (modesOfOperation)
     {
     case 1: // profile position
         if (reportBitToggle(report, INFO, 12, "Trajectory generator will not accept a new set-point.",
@@ -309,8 +313,8 @@ void TechnosoftIposBase::handleTpdo2(std::uint16_t mer, std::uint16_t der)
 
 void TechnosoftIposBase::handleTpdo3(std::int32_t position, std::int16_t current)
 {
-    vars.lastEncoderRead->update(position);
-    vars.lastCurrentRead = current;
+    lastEncoderRead->update(position);
+    lastCurrentRead = current;
 }
 
 // -----------------------------------------------------------------------------
@@ -355,11 +359,11 @@ void TechnosoftIposBase::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg,
 
 void TechnosoftIposBase::handleNmt(NmtState state)
 {
-    vars.lastHeartbeat = yarp::os::Time::now();
+    lastHeartbeat = yarp::os::Time::now();
     std::uint8_t nmtState = static_cast<std::uint8_t>(state);
 
     // always report boot-up
-    if (state != NmtState::BOOTUP && vars.lastNmtState == nmtState)
+    if (state != NmtState::BOOTUP && lastNmtState == nmtState)
     {
         return;
     }
@@ -387,26 +391,25 @@ void TechnosoftIposBase::handleNmt(NmtState state)
 
     yCIInfo(IPOS, id()) << "Heartbeat:" << s;
 
-    vars.lastNmtState = nmtState;
+    lastNmtState = nmtState;
 }
 
 // -----------------------------------------------------------------------------
 
 bool TechnosoftIposBase::monitorWorker(const yarp::os::YarpTimerEvent & event)
 {
-    bool isConfigured = vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED;
-    double elapsed = event.currentReal - vars.lastHeartbeat;
+    bool isConfigured = actualControlMode != VOCAB_CM_NOT_CONFIGURED;
+    double elapsed = event.currentReal - lastHeartbeat;
 
-    if (vars.heartbeatPeriod != 0.0 && isConfigured && elapsed > event.lastDuration)
+    if (heartbeatPeriod != 0.0 && isConfigured && elapsed > event.lastDuration)
     {
         yCIError(IPOS, id()) << "Last heartbeat response was" << elapsed << "seconds ago";
-        vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
+        actualControlMode = VOCAB_CM_NOT_CONFIGURED;
         can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
         can->driveStatus()->reset();
-        vars.reset();
         reset();
     }
-    else if (!isConfigured && elapsed < event.lastDuration && vars.lastNmtState == 0) // boot-up event
+    else if (!isConfigured && elapsed < event.lastDuration && lastNmtState == 0) // boot-up event
     {
         if (!initialize())
         {
@@ -416,6 +419,197 @@ bool TechnosoftIposBase::monitorWorker(const yarp::os::YarpTimerEvent & event)
     }
 
     return true;
+}
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIposBase::validateInitialState()
+{
+    if (initialMode == 0)
+    {
+        yCWarning(IPOS) << "Illegal initial control mode:" << yarp::os::Vocab32::decode(initialMode);
+        return false;
+    }
+
+    if (tr <= 0.0)
+    {
+        yCWarning(IPOS) << "Illegal transmission ratio:" << tr.load();
+        return false;
+    }
+
+    if (k <= 0.0)
+    {
+        yCWarning(IPOS) << "Illegal motor constant:" << k.load();
+        return false;
+    }
+
+    if (encoderPulses <= 0)
+    {
+        yCWarning(IPOS) << "Illegal encoder pulses per revolution:" << encoderPulses.load();
+        return false;
+    }
+
+    if (maxVel <= 0.0)
+    {
+        yCWarning(IPOS) << "Illegal maximum velocity:" << maxVel.load();
+        return false;
+    }
+
+    if (refSpeed <= 0.0)
+    {
+        yCWarning(IPOS) << "Illegal reference speed:" << refSpeed.load();
+        return false;
+    }
+
+    if (refAcceleration <= 0.0)
+    {
+        yCWarning(IPOS) << "Illegal reference acceleration:" << refAcceleration.load();
+        return false;
+    }
+
+    if (drivePeakCurrent <= 0.0)
+    {
+        yCWarning(IPOS) << "Illegal drive peak current:" << drivePeakCurrent;
+        return false;
+    }
+
+    if (samplingPeriod <= 0.0)
+    {
+        yCWarning(IPOS) << "Illegal sampling period:" << samplingPeriod;
+        return false;
+    }
+
+    if (refSpeed > maxVel)
+    {
+        yCWarning(IPOS) << "Reference speed greater than maximum velocity:" << refSpeed.load() << ">" << maxVel.load();
+        return false;
+    }
+
+    if (min >= max)
+    {
+        yCWarning(IPOS) << "Illegal joint limits (min, max):" << min.load() << ">=" << max.load();
+        return false;
+    }
+
+    if (axisName.empty())
+    {
+        yCWarning(IPOS) << "Empty string as axis name";
+        return false;
+    }
+
+    switch (jointType)
+    {
+    case yarp::dev::VOCAB_JOINTTYPE_REVOLUTE:
+    case yarp::dev::VOCAB_JOINTTYPE_PRISMATIC:
+    case yarp::dev::VOCAB_JOINTTYPE_UNKNOWN:
+        break;
+    default:
+        yCWarning(IPOS) << "Illegal joint type vocab:" << yarp::os::Vocab32::decode(jointType);
+        return false;
+    }
+
+    if (heartbeatPeriod < 0.0)
+    {
+        yCWarning(IPOS) << "Illegal heartbeat period:" << heartbeatPeriod;
+        return false;
+    }
+
+    if (heartbeatPeriod * 1e3 != static_cast<int>(heartbeatPeriod * 1e3))
+    {
+        yCWarning(IPOS) << "Heartbeat period exceeds millisecond precision:" << heartbeatPeriod << "(s)";
+        return false;
+    }
+
+    if (syncPeriod <= 0.0 || syncPeriod > 255.0)
+    {
+        yCWarning(IPOS) << "Illegal SYNC period:" << syncPeriod;
+        return false;
+    }
+
+    if (syncPeriod * 1e3 != static_cast<int>(syncPeriod * 1e3))
+    {
+        yCWarning(IPOS) << "SYNC period exceeds millisecond precision:" << syncPeriod << "(s)";
+        return false;
+    }
+
+    if (canId == 0)
+    {
+        yCWarning(IPOS) << "Illegal CAN ID:" << canId;
+        return false;
+    }
+
+    lastEncoderRead = std::make_unique<EncoderRead>(samplingPeriod);
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+void TechnosoftIposBase::reset()
+{
+    msr = mer = der = der2 = cer = 0;
+    modesOfOperation = 0;
+
+    lastEncoderRead->reset();
+    lastCurrentRead = 0.0;
+
+    requestedcontrolMode = 0;
+}
+
+// -----------------------------------------------------------------------------
+
+bool TechnosoftIposBase::awaitControlMode(yarp::conf::vocab32_t mode)
+{
+    return actualControlMode == mode || controlModeObserverPtr->await();
+}
+
+// -----------------------------------------------------------------------------
+
+double TechnosoftIposBase::degreesToInternalUnits(double value, int derivativeOrder) const
+{
+    return value * tr * (reverse ? -1 : 1) * (encoderPulses / 360.0) * std::pow(samplingPeriod, derivativeOrder);
+}
+
+// -----------------------------------------------------------------------------
+
+double TechnosoftIposBase::internalUnitsToDegrees(double value, int derivativeOrder) const
+{
+    return value / (tr * (reverse ? -1 : 1) * (encoderPulses / 360.0) * std::pow(samplingPeriod, derivativeOrder));
+}
+
+// -----------------------------------------------------------------------------
+
+std::int16_t TechnosoftIposBase::currentToInternalUnits(double value) const
+{
+    return value * (reverse ? -1 : 1) * 65520.0 / (2.0 * drivePeakCurrent);
+}
+
+// -----------------------------------------------------------------------------
+
+double TechnosoftIposBase::internalUnitsToCurrent(std::int16_t value) const
+{
+    return value * (reverse ? -1 : 1) * 2.0 * drivePeakCurrent / 65520.0;
+}
+
+// -----------------------------------------------------------------------------
+
+double TechnosoftIposBase::internalUnitsToPeakCurrent(std::int16_t value) const
+{
+    return 2.0 * drivePeakCurrent * (32767.0 - value) / 65520.0;
+}
+
+// -----------------------------------------------------------------------------
+
+double TechnosoftIposBase::currentToTorque(double current) const
+{
+    return current * tr * k;
+}
+
+// -----------------------------------------------------------------------------
+
+double TechnosoftIposBase::torqueToCurrent(double torque) const
+{
+    return torque / (tr * k);
 }
 
 // -----------------------------------------------------------------------------
