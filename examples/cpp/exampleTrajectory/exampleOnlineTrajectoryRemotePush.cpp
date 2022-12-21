@@ -11,20 +11,18 @@
  * @example{lineno} exampleOnlineTrajectoryRemotePush.cpp
  *
  * A constant-velocity, single-joint trajectory is generated with configurable final target, motion
- * speed and period between consecutive points. The period is assumed constant and must be sent at
- * precise intervals if commanding the real robot (maps to cyclic synchronous position mode, a.k.a.
- * CSP). Although prepared for remote execution, this application could be rewritten to connect to
- * a local instance of @ref CanBusControlboard; however, a better alternative exists (see notes).
- * The techniques showcased here are especially suited for online-generated trajectories, e.g.
- * joystick teleoperation of visual servoing.
+ * speed and period between consecutive points. Although it is not mandatory, it is a good practice
+ * to force the period to be constant and sent at precise intervals if commanding the real robot
+ * (maps to cyclic synchronous position mode, a.k.a. CSP). Although prepared for remote execution,
+ * this application could be rewritten to connect to a local instance of @ref CanBusControlboard;
+ * however, a better alternative exists (see notes). The techniques showcased here are especially
+ * suited for online-generated trajectories, e.g. joystick teleoperation or visual servoing.
  *
  * Usage (showing default option values):
 @verbatim
  exampleOnlineTrajectoryRemotePush --remote /teo/leftArm --joint 5 --speed 2.0 --target -20.0 --period 50
 @endverbatim
  *
- * @warning If commanding the real robot, it is paramount that the `--period` option (milliseconds)
- * matches `--syncPeriod` (seconds) in @ref CanBusControlboard.
  * @see @ref exampleOnlineTrajectoryLocalPull.cpp Command a local instance of the real robot controller via
  * callback.
  * @see @ref exampleOnlineTrajectoryRemotePull.cpp Command a remote robot via callback, be it real or simulated.
