@@ -16,7 +16,7 @@ bool TechnosoftIpos::getRefTorqueRaw(int j, double * t)
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_TORQUE);
-    *t = vars.synchronousCommandTarget;
+    *t = commandBuffer.getStoredCommand();
     return true;
 }
 
@@ -34,7 +34,7 @@ bool TechnosoftIpos::setRefTorqueRaw(int j, double t)
     yCITrace(IPOS, id(), "%d %f", j, t);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_TORQUE);
-    vars.synchronousCommandTarget = t;
+    commandBuffer.accept(t);
     return true;
 }
 

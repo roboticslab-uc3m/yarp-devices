@@ -2,7 +2,10 @@
 
 #include "TechnosoftIpos.hpp"
 
+#include <cmath> // std::abs, std::copysign
+
 #include <yarp/os/Log.h>
+#include <yarp/os/SystemClock.h>
 
 #include "LogComponent.hpp"
 
@@ -39,7 +42,22 @@ bool TechnosoftIpos::setPositionRaw(int j, double ref)
     }
     else
     {
-        vars.synchronousCommandTarget = ref;
+        double previousTimestamp;
+        double currentTimestamp = yarp::os::SystemClock::nowSystem();
+        double previousRef = commandBuffer.getStoredCommand(&previousTimestamp);
+        double diff = ref - previousRef;
+        double period = currentTimestamp - previousTimestamp;
+        double velocity = std::abs(diff / period);
+        double maxVel = vars.maxVel.load();
+
+        if (velocity > maxVel)
+        {
+            double newRef = previousRef + std::copysign(maxVel * period, diff);
+            yCIWarning(IPOS, id(), "Maximum velocity exceeded (%f > %f), clipping reference from %f to %f", velocity, maxVel, ref, newRef);
+            ref = newRef;
+        }
+
+        commandBuffer.accept(ref);
     }
 
     return true;
@@ -72,7 +90,7 @@ bool TechnosoftIpos::getRefPositionRaw(int joint, double * ref)
     }
     else
     {
-        *ref = vars.synchronousCommandTarget;
+        *ref = commandBuffer.getStoredCommand();
     }
 
     return true;
