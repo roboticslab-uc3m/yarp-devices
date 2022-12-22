@@ -66,7 +66,7 @@ private:
     void interpretIpStatus(std::uint16_t ipStatus) override;
     void reset() override;
 
-    InterpolatedPositionBuffer * ipBuffer;
+    InterpolatedPositionBuffer * ipBuffer {nullptr};
 
     std::bitset<16> ipStatus;
 
