@@ -57,7 +57,9 @@ bool TechnosoftIposBase::open(yarp::os::Searchable & config)
     reverse = iposGroup.check("reverse", yarp::os::Value(false), "reverse motor encoder counts").asBool();
     heartbeatPeriod = iposGroup.check("heartbeatPeriod", yarp::os::Value(0.0), "CAN heartbeat period (seconds)").asFloat64();
     syncPeriod = iposGroup.check("syncPeriod", yarp::os::Value(0.0), "SYNC message period (seconds)").asFloat64();
-    initialMode = iposGroup.check("initialMode", yarp::os::Value(VOCAB_CM_IDLE), "initial YARP control mode vocab").asVocab32();
+    // back-compat
+    auto initialMode = iposGroup.check("initialMode", yarp::os::Value(VOCAB_CM_IDLE), "initial YARP control mode vocab").asVocab32();
+    initialControlMode = iposGroup.check("initialControlMode", yarp::os::Value(initialMode), "initial YARP control mode vocab").asVocab32();
 
     if (!validateInitialState())
     {

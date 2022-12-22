@@ -56,7 +56,7 @@ bool TechnosoftIposExternal::setRefSpeedRaw(int j, double sp)
     yCITrace(IPOS, id(), "%d %f", j, sp);
     CHECK_JOINT(j);
 
-    if (sp < 0.0)
+    if (sp <= 0.0)
     {
         yCIWarning(IPOS, id()) << "Illegal negative speed provided:" << sp;
         return false;
@@ -78,7 +78,7 @@ bool TechnosoftIposExternal::setRefAccelerationRaw(int j, double acc)
     yCITrace(IPOS, id(), "%d %f", j, acc);
     CHECK_JOINT(j);
 
-    if (acc < 0.0)
+    if (acc <= 0.0)
     {
         yCIWarning(IPOS, id()) << "Illegal negative acceleration provided:" << acc;
         return false;
@@ -115,7 +115,13 @@ bool TechnosoftIposExternal::stopRaw(int j)
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
 
-    return false;
+    if (actualControlMode != VOCAB_CM_POSITION && actualControlMode != VOCAB_CM_VELOCITY)
+    {
+        return false;
+    }
+
+    trapTrajectory.reset(internalUnitsToDegrees(lastEncoderRead->queryPosition()));
+    return true;
 }
 
 // --------------------------------------------------------------------------------

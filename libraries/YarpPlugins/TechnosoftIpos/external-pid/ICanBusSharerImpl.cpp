@@ -6,35 +6,49 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
+bool TechnosoftIposExternal::initialize()
+{
+    return TechnosoftIposBase::initialize()
+        && setInteractionModeRaw(0, static_cast<yarp::dev::InteractionModeEnum>(initialInteractionMode));
+}
+
+// -----------------------------------------------------------------------------
+
 bool TechnosoftIposExternal::synchronize()
 {
-    double forceCommand;
+    int mode = actualControlMode;
+    double current;
 
-    switch (actualControlMode.load())
+    if (mode == VOCAB_CM_POSITION || mode == VOCAB_CM_VELOCITY)
     {
-    case VOCAB_CM_POSITION:
-    case VOCAB_CM_VELOCITY:
-    {
+        double forceCommand;
         trapTrajectory.update();
         setPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, trapTrajectory.queryPosition());
-        getPidOutputRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, &forceCommand); // TODO: check return value
-        double curr = torqueToCurrent(forceCommand);
-        std::int32_t data = currentToInternalUnits(curr) << 16;
-        return can->rpdo3()->write(data);
+        getPidOutputRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, &forceCommand);
+        current = torqueToCurrent(forceCommand);
     }
-    case VOCAB_CM_POSITION_DIRECT:
+    else if (mode == VOCAB_CM_POSITION_DIRECT)
     {
+        double forceCommand;
         setPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, commandBuffer.interpolate());
-        getPidOutputRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, &forceCommand); // TODO: check return value
-        double curr = torqueToCurrent(forceCommand);
-        std::int32_t data = currentToInternalUnits(curr) << 16;
-        return can->rpdo3()->write(data);
+        getPidOutputRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, &forceCommand);
+        current = torqueToCurrent(forceCommand);
     }
-    default:
-        return false;
+    else if (mode == VOCAB_CM_TORQUE)
+    {
+        current = torqueToCurrent(commandBuffer.interpolate());
+    }
+    else if (mode == VOCAB_CM_CURRENT)
+    {
+        current = commandBuffer.interpolate();
+    }
+    else
+    {
+        return true;
     }
 
-    return true;
+    std::int32_t data = currentToInternalUnits(current) << 16;
+    return can->rpdo3()->write(data);
 }
 
 // -----------------------------------------------------------------------------

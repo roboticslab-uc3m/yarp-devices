@@ -26,6 +26,7 @@ public:
 
     //  --------- ICanBusSharer declarations. Implementation in ICanBusSharerImpl.cpp ---------
 
+    bool initialize() override;
     bool synchronize() override;
 
     //  --------- IControlModeRaw declarations. Implementation in IControlModeRawImpl.cpp ---------
@@ -88,6 +89,7 @@ private:
     void interpretModesOfOperation(std::int8_t modesOfOperation) override;
     void reset() override;
 
+    yarp::conf::vocab32_t initialInteractionMode {0};
     std::atomic<yarp::dev::InteractionModeEnum> actualInteractionMode {yarp::dev::InteractionModeEnum::VOCAB_IM_UNKNOWN};
 
     double minImpedanceStiffness {0.0};

@@ -30,14 +30,8 @@ bool TechnosoftIposExternal::open(yarp::os::Searchable & config)
         return false;
     }
 
-    auto initialInteractionMode = iposGroup.check("initialInteractionMode", yarp::os::Value(yarp::dev::InteractionModeEnum::VOCAB_IM_UNKNOWN),
+    initialInteractionMode = iposGroup.check("initialInteractionMode", yarp::os::Value(yarp::dev::InteractionModeEnum::VOCAB_IM_UNKNOWN),
         "initial YARP interaction mode vocab").asVocab32();
-
-    if (!setInteractionModeRaw(0, static_cast<yarp::dev::InteractionModeEnum>(initialInteractionMode)))
-    {
-        yCIError(IPOS, id()) << "Unable to configure initial interaction mode";
-        return false;
-    }
 
     auto impedanceStiffness = iposGroup.check("impedanceStiffness", yarp::os::Value(0.0), "impedance stiffness (Nm)").asFloat64();
     auto impedanceDamping = iposGroup.check("impedanceDamping", yarp::os::Value(0.0), "impedance damping (Nm*seconds)").asFloat64();

@@ -25,7 +25,8 @@ bool TechnosoftIposExternal::getRefPositionRaw(int joint, double * ref)
     yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
-    return commandBuffer.getStoredCommand();
+    *ref = commandBuffer.getStoredCommand();
+    return true;
 }
 
 // -----------------------------------------------------------------------------

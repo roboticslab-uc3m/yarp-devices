@@ -60,7 +60,7 @@ bool TechnosoftIposExternal::getPidErrorRaw(const yarp::dev::PidControlTypeEnum 
     CHECK_JOINT(j);
     CHECK_PID_TYPE(pidtype);
     std::lock_guard lock(pidMutex);
-    *err = positionReference - internalUnitsToDegrees(lastEncoderRead->queryPosition());
+    *err = proportionalError;
     return true;
 }
 
@@ -77,12 +77,12 @@ bool TechnosoftIposExternal::getPidOutputRaw(const yarp::dev::PidControlTypeEnum
 
     std::lock_guard lock(pidMutex);
     double prevProportionalError = proportionalError;
-    proportionalError = position - positionReference;
+    proportionalError = positionReference - position;
 
     if (std::abs(proportionalError) > positionErrorLimit)
     {
-        yCIError(IPOS, id(), "Proportional error %f exceeds limit %f", std::abs(proportionalError), positionErrorLimit);
-        return false;
+        yCIWarning(IPOS, id(), "Proportional error %f clamped to %f", std::abs(proportionalError), positionErrorLimit);
+        proportionalError = std::clamp(proportionalError, -positionErrorLimit, positionErrorLimit);
     }
 
     double proportionalTerm = activePid->kp * proportionalError * scale;
@@ -185,7 +185,7 @@ bool TechnosoftIposExternal::setPidOffsetRaw(const yarp::dev::PidControlTypeEnum
     CHECK_JOINT(j);
     CHECK_PID_TYPE(pidtype);
     std::lock_guard lock(pidMutex);
-    activePid->offset = v;
+    positionPid.offset = v;
     return true;
 }
 

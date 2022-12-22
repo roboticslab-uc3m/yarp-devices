@@ -2,6 +2,10 @@
 
 #include "TechnosoftIposExternal.hpp"
 
+#include <yarp/os/LogStream.h>
+
+#include "LogComponent.hpp"
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
@@ -15,6 +19,10 @@ void TechnosoftIposExternal::interpretModesOfOperation(std::int8_t modesOfOperat
 
     switch (modesOfOperation)
     {
+    case -5:
+        yCIInfo(IPOS, id()) << "iPOS specific: External Reference Torque Mode";
+        actualControlMode.store(requestedcontrolMode);
+        break;
     default:
         TechnosoftIposBase::interpretModesOfOperation(modesOfOperation);
         actualControlMode = VOCAB_CM_UNKNOWN;
@@ -30,6 +38,7 @@ void TechnosoftIposExternal::interpretModesOfOperation(std::int8_t modesOfOperat
 void TechnosoftIposExternal::reset()
 {
     TechnosoftIposBase::reset();
+    resetPidRaw(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, 0);
 }
 
 // -----------------------------------------------------------------------------

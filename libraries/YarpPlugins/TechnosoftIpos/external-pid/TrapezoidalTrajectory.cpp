@@ -27,26 +27,25 @@ TrapezoidalTrajectory::TrapezoidalTrajectory()
 
 // -------------------------------------------------------------------------------------
 
-void TrapezoidalTrajectory::configure(double period, double initialPosition, double targetPosition, double refSpeed, double refAcceleration)
+void TrapezoidalTrajectory::configure(double period, double initialPosition, double targetPosition, double speed, double acceleration)
 {
-    std::lock_guard lock(mutex);
-
-    if (refSpeed < 0.0 || refAcceleration < 0.0)
+    if (period <= 0.0 || speed <= 0.0 || acceleration <= 0.0)
     {
-        return; // should be handled by caller
+        return; // should be checked by callers
     }
 
+    std::lock_guard lock(mutex);
+
     this->period = period;
-    targetPosition = targetPosition;
+    this->targetPosition = targetPosition;
     prevRefSpeed = velocityReference; // last computed velocity from previous trajectory
 
-    double sign = (targetPosition - initialPosition >= 0.0) ? 1.0 : -1.0;
-    this->refSpeed = sign * refSpeed;
-    this->refAcceleration = sign * refAcceleration;
+    const double deltaTotal = targetPosition - initialPosition;
+    refSpeed = std::copysign(speed, deltaTotal);
+    refAcceleration = std::copysign(acceleration, deltaTotal);
 
     // hypothetic distance traveled using a double-ramp (i.e. triangular) trajectory that reaches the reference speed
-    double deltaTriMax = 0.5 * (2 * refSpeed * refSpeed - prevRefSpeed * prevRefSpeed) / refAcceleration;
-    double deltaTotal = targetPosition - initialPosition;
+    const double deltaTriMax = 0.5 * (2 * refSpeed * refSpeed - prevRefSpeed * prevRefSpeed) / refAcceleration;
 
     if (std::abs(deltaTotal) > std::abs(deltaTriMax))
     {
@@ -60,7 +59,7 @@ void TrapezoidalTrajectory::configure(double period, double initialPosition, dou
     else
     {
         // triangular profile
-        double peakVelocity = sign * std::sqrt(0.5 * (2 * refAcceleration * deltaTotal + prevRefSpeed * prevRefSpeed));
+        double peakVelocity = std::copysign(std::sqrt(0.5 * (2 * refAcceleration * deltaTotal + prevRefSpeed * prevRefSpeed)), deltaTotal);
         ta = (peakVelocity - prevRefSpeed) / refAcceleration;
         tb = ta;
         tc = ta + (peakVelocity / refAcceleration);
@@ -73,10 +72,10 @@ void TrapezoidalTrajectory::configure(double period, double initialPosition, dou
 
 // -------------------------------------------------------------------------------------
 
-void TrapezoidalTrajectory::configure(double period, double initialPosition, double targetVelocity, double refAcceleration)
+void TrapezoidalTrajectory::configure(double period, double initialPosition, double targetVelocity, double acceleration)
 {
     double targetPosition = std::copysign(std::numeric_limits<double>::infinity(), targetVelocity);
-    return configure(period, initialPosition, targetPosition, std::abs(targetVelocity), refAcceleration);
+    return configure(period, initialPosition, targetPosition, std::abs(targetVelocity), acceleration);
 }
 
 // -------------------------------------------------------------------------------------

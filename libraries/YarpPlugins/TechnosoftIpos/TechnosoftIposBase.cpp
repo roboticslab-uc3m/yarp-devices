@@ -425,9 +425,9 @@ bool TechnosoftIposBase::monitorWorker(const yarp::os::YarpTimerEvent & event)
 
 bool TechnosoftIposBase::validateInitialState()
 {
-    if (initialMode == 0)
+    if (initialControlMode == 0)
     {
-        yCWarning(IPOS) << "Illegal initial control mode:" << yarp::os::Vocab32::decode(initialMode);
+        yCWarning(IPOS) << "Illegal initial control mode:" << yarp::os::Vocab32::decode(initialControlMode);
         return false;
     }
 

@@ -548,7 +548,7 @@ protected:
 
     // read only after initial configuration, conceptually immutable
 
-    yarp::conf::vocab32_t initialMode {0};
+    yarp::conf::vocab32_t initialControlMode {0};
 
     double drivePeakCurrent {0.0};
     double samplingPeriod {0.0};

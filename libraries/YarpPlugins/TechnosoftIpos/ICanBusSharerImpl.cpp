@@ -120,7 +120,7 @@ bool TechnosoftIposBase::initialize()
 
     if (!can->driveStatus()->requestState(DriveState::SWITCHED_ON)
             || !awaitControlMode(VOCAB_CM_IDLE)
-            || !setControlModeRaw(0, initialMode))
+            || !setControlModeRaw(0, initialControlMode))
     {
         yCIWarning(IPOS, id()) << "Initial drive state transitions failed";
     }
