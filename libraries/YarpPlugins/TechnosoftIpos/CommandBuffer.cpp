@@ -2,13 +2,11 @@
 
 #include "CommandBuffer.hpp"
 
-#include <algorithm> // std::max
-
 #include <yarp/os/SystemClock.h>
 
 using namespace roboticslab;
 
-constexpr double COMMAND_GAP_FACTOR = 1.1;
+constexpr double COMMAND_TIMEOUT = 1.0; // seconds
 
 // -----------------------------------------------------------------------------
 
@@ -31,19 +29,21 @@ double CommandBuffer::interpolate()
     const double nextExpectedCommandTimestamp = commandTimestamp + commandPeriod;
     const double interpolationPeriod = now - interpolationTimestamp;
 
-    if (now >= nextExpectedCommandTimestamp || COMMAND_GAP_FACTOR * interpolationPeriod >= commandPeriod)
+    if (now > nextExpectedCommandTimestamp || commandPeriod > COMMAND_TIMEOUT)
     {
-        // either the next command was skipped, it didn't arrive on time or perhaps periods
-        // were meant to match, so just return the last stored command
+        // cond. 1: the next command was skipped, it didn't arrive on time or none was received yet
+        // cond. 2: the last command was received too long ago, perhaps it was a single step command?
+        // in either case, we don't interpolate and just process the last received command (again)
         interpolationResult = storedCommand;
     }
     else
     {
-        // using `std::max` in order to soften the interpolated slope and thus avoid overshoot
-        double interval = std::max(nextExpectedCommandTimestamp - interpolationTimestamp, interpolationPeriod);
+        // note that `interpolationTimestamp` is equal to the `now` value of the previous iteration,
+        // hence the reaching of `storedCommand` will be delayed (resulting in a softer slope)
+        double slope = (storedCommand - interpolationResult) / (nextExpectedCommandTimestamp - interpolationTimestamp);
 
-        // having y = f(t): f(t+1) = f(t) + t * (delta_y / delta_t)
-        interpolationResult += interpolationPeriod * (storedCommand - interpolationResult) / interval;
+        // having y = f(t): f(t+T) = f(t) + T * (delta_y / delta_t)
+        interpolationResult += interpolationPeriod * slope;
     }
 
     interpolationTimestamp = now;
