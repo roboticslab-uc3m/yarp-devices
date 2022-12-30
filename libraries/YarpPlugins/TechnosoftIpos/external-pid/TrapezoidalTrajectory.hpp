@@ -19,16 +19,16 @@ public:
     TrapezoidalTrajectory();
 
     //! Set motion parameters (using target position).
-    void configure(double period, double initialPosition, double targetPosition, double refSpeed, double refAcceleration);
+    void configure(double initialPosition, double targetPosition, double refSpeed, double refAcceleration);
 
     //! Set motion parameters (infinite motion).
-    void configure(double period, double initialPosition, double targetVelocity, double refAcceleration);
+    void configure(double initialPosition, double targetVelocity, double refAcceleration);
 
     //! Reset state, remember current position (units).
     void reset(double currentPosition);
 
     //! Update trajectory state, must be called on regular intervals of `period`.
-    void update();
+    void update(double timestamp);
 
     //! Query configured target position (units).
     double getTargetPosition() const;
@@ -46,17 +46,15 @@ public:
     bool isActive() const;
 
 private:
-    double period;
+    double ta, a1, a2, a3;
+    double tb, b2, b3;
+    double tc, c1, c2, c3;
+
+    double startTimestamp;
     double targetPosition;
-    double prevRefSpeed;
-    double refSpeed;
-    double refAcceleration;
-    double ta;
-    double tb;
-    double tc;
-    int tick;
     double positionReference;
     double velocityReference;
+
     bool active;
     mutable std::mutex mutex;
 };

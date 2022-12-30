@@ -20,7 +20,7 @@ bool TechnosoftIposExternal::positionMoveRaw(int j, double ref)
     CHECK_MODE(VOCAB_CM_POSITION);
 
     double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
-    trapTrajectory.configure(syncPeriod, initialPosition, ref, refSpeed, refAcceleration);
+    trapTrajectory.configure(initialPosition, ref, refSpeed, refAcceleration);
 
     return true;
 }
@@ -34,7 +34,7 @@ bool TechnosoftIposExternal::relativeMoveRaw(int j, double delta)
     CHECK_MODE(VOCAB_CM_POSITION);
 
     double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
-    trapTrajectory.configure(syncPeriod, initialPosition, initialPosition + delta, refSpeed, refAcceleration);
+    trapTrajectory.configure(initialPosition, initialPosition + delta, refSpeed, refAcceleration);
 
     return true;
 }

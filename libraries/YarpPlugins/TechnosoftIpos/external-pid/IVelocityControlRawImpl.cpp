@@ -29,7 +29,7 @@ bool TechnosoftIposExternal::velocityMoveRaw(int j, double sp)
     }
 
     double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
-    trapTrajectory.configure(syncPeriod, initialPosition, sp, refAcceleration);
+    trapTrajectory.configure(initialPosition, sp, refAcceleration);
 
     return true;
 }
