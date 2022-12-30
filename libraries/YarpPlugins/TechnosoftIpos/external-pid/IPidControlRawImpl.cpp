@@ -102,7 +102,13 @@ bool TechnosoftIposExternal::getPidOutputRaw(const yarp::dev::PidControlTypeEnum
     double feedForwardTerm = positionReference * activePid->kff;
     double combinedTerms = proportionalTerm + integralTerm + derivativeTerm + feedForwardTerm + activePid->offset;
 
-    *out = std::clamp(combinedTerms, -activePid->max_output, activePid->max_output);
+    if (std::abs(combinedTerms) > activePid->max_output)
+    {
+        yCIWarning(IPOS, id(), "PID output %f clamped to %f", std::abs(combinedTerms), activePid->max_output);
+        combinedTerms = std::clamp(combinedTerms, -activePid->max_output, activePid->max_output);
+    }
+
+    *out = combinedTerms;
     return true;
 }
 
