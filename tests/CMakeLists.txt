@@ -11,7 +11,8 @@ if(ENABLE_tests)
 
     # FutureObserverLib
 
-    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/FutureObserverLib.cpp "#include \"FutureObserverLib.hpp\"")
+    file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/FutureObserverLib.cpp
+                  CONTENT "#include \"FutureObserverLib.hpp\"")
     add_library(FutureObserverLib STATIC FutureObserverLib.hpp
                                          ${CMAKE_CURRENT_BINARY_DIR}/FutureObserverLib.cpp)
     target_compile_features(FutureObserverLib PUBLIC cxx_std_17)
