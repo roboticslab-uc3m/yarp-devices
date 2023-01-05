@@ -5,6 +5,7 @@
 #include <cmath>
 
 #include <yarp/os/LogStream.h>
+#include <yarp/os/SystemClock.h>
 
 #include "CanUtils.hpp"
 #include "LogComponent.hpp"
@@ -20,8 +21,9 @@ bool TechnosoftIposExternal::positionMoveRaw(int j, double ref)
     CHECK_MODE(VOCAB_CM_POSITION);
 
     double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
-    trapTrajectory.configure(initialPosition, ref, refSpeed, refAcceleration);
+    double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
 
+    trapTrajectory.setTargetPosition(yarp::os::SystemClock::nowSystem(), initialPosition, initialVelocity, ref, refSpeed, refAcceleration);
     return true;
 }
 
@@ -34,8 +36,9 @@ bool TechnosoftIposExternal::relativeMoveRaw(int j, double delta)
     CHECK_MODE(VOCAB_CM_POSITION);
 
     double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
-    trapTrajectory.configure(initialPosition, initialPosition + delta, refSpeed, refAcceleration);
+    double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
 
+    trapTrajectory.setTargetPosition(yarp::os::SystemClock::nowSystem(), initialPosition, initialVelocity, initialPosition + delta, refSpeed, refAcceleration);
     return true;
 }
 

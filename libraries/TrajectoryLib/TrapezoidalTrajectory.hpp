@@ -16,20 +16,27 @@ namespace roboticslab
 class TrapezoidalTrajectory
 {
 public:
+    struct Reference
+    {
+        double position; // units
+        double velocity; // units/seconds
+        double acceleration; // units/seconds^2
+    };
+
     //! Constructor.
     TrapezoidalTrajectory();
 
     //! Set motion parameters (using target position).
-    void configure(double initialPosition, double targetPosition, double refSpeed, double refAcceleration);
+    void setTargetPosition(double startTimestamp, double initialPosition, double initialVelocity, double targetPosition, double refSpeed, double refAcceleration);
 
     //! Set motion parameters (infinite motion).
-    void configure(double initialPosition, double targetVelocity, double refAcceleration);
+    void setTargetVelocity(double startTimestamp, double initialPosition, double initialVelocity, double targetVelocity, double refAcceleration);
 
     //! Reset state, remember current position (units).
     void reset(double currentPosition);
 
     //! Update trajectory state, must be called on regular intervals of `period`.
-    void update(double timestamp);
+    Reference update(double timestamp);
 
     //! Query configured target position (units).
     double getTargetPosition() const;
@@ -40,7 +47,10 @@ public:
     //! Retrieve last velocity reference (units/seconds).
     double queryVelocity() const;
 
-    //! Retrieve last updated time since start (seconds).
+    //! Retrieve last acceleration reference (units/seconds^2).
+    double queryAcceleration() const;
+
+    //! Retrieve elapsed time since start (seconds).
     double queryTime() const;
 
     //! Whether the trajectory is currently ongoing.
@@ -53,8 +63,11 @@ private:
 
     double startTimestamp;
     double targetPosition;
+
     double positionReference;
     double velocityReference;
+    double accelerationReference;
+    double elapsedTime;
 
     bool active;
     mutable std::mutex mutex;

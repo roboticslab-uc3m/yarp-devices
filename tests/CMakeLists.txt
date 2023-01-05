@@ -40,6 +40,14 @@ if(ENABLE_tests)
         gtest_discover_tests(testCanOpenNodeLib)
     endif()
 
+    # testTrajectoryLib
+
+    if(ENABLE_TrajectoryLib)
+        add_executable(testTrajectoryLib testTrajectoryLib.cpp)
+        target_link_libraries(testTrajectoryLib ROBOTICSLAB::TrajectoryLib gtest_main)
+        gtest_discover_tests(testTrajectoryLib)
+    endif()
+
     # testYarpDeviceMapperLib
 
     if(ENABLE_YarpDeviceMapperLib)

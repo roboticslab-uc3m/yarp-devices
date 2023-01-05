@@ -24,8 +24,8 @@ bool TechnosoftIposExternal::synchronize()
     if (mode == VOCAB_CM_POSITION || mode == VOCAB_CM_VELOCITY)
     {
         double forceCommand;
-        trapTrajectory.update(yarp::os::SystemClock::nowSystem());
-        setPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, trapTrajectory.queryPosition());
+        auto reference = trapTrajectory.update(yarp::os::SystemClock::nowSystem());
+        setPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, reference.position);
         getPidOutputRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, &forceCommand);
         current = torqueToCurrent(forceCommand);
     }
