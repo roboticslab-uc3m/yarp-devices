@@ -7,7 +7,7 @@ yarp_prepare_plugin(TechnosoftIpos
                     TYPE roboticslab::TechnosoftIpos
                     INCLUDE TechnosoftIpos.hpp
                     DEFAULT ON
-                    DEPENDS ENABLE_CanBusSharerLib)
+                    DEPENDS "ENABLE_CanBusSharerLib;ENABLE_CanOpenNodeLib;ENABLE_StateObserverLib")
 
 if(NOT SKIP_TechnosoftIpos)
 
