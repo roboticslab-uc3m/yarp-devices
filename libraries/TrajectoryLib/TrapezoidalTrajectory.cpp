@@ -4,9 +4,8 @@
 
 #include <cmath> // std::abs, std::copysign, std::sqrt
 
+#include <chrono>
 #include <limits>
-
-#include <yarp/os/SystemClock.h>
 
 using namespace roboticslab;
 
@@ -16,8 +15,14 @@ namespace
 {
     // https://stackoverflow.com/a/4609795/10404307
     template <typename T>
-    int sgn(T val) {
+    inline int sgn(T val) {
         return (T(0) < val) - (val < T(0));
+    }
+
+    // from yarp/os/SystemClock.cpp
+    inline double now()
+    {
+        return std::chrono::time_point_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now()).time_since_epoch().count();
     }
 }
 
@@ -146,7 +151,7 @@ void TrapezoidalTrajectory::configure(const double initialPosition, const double
         c3 = a3 + 0.5 * (peakVelocity * peakVelocity - velocityReference * velocityReference) / firstAccelerationRamp;
     }
 
-    startTimestamp = yarp::os::SystemClock::nowSystem();
+    startTimestamp = now();
     positionReference = initialPosition;
     active = true;
 }
@@ -165,7 +170,7 @@ void TrapezoidalTrajectory::reset(double currentPosition)
 {
     std::lock_guard lock(mutex);
 
-    startTimestamp = yarp::os::SystemClock::nowSystem();
+    startTimestamp = now();
     positionReference = targetPosition = currentPosition; // updated
     velocityReference = 0.0;
 
@@ -241,7 +246,7 @@ double TrapezoidalTrajectory::queryVelocity() const
 double TrapezoidalTrajectory::queryTime() const
 {
     std::lock_guard lock(mutex);
-    return yarp::os::SystemClock::nowSystem() - startTimestamp;
+    return now() - startTimestamp;
 }
 
 // -------------------------------------------------------------------------------------

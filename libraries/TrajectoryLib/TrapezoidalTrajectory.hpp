@@ -9,7 +9,8 @@ namespace roboticslab
 {
 
 /**
- * @ingroup TechnosoftIpos
+ * @ingroup yarp_devices_libraries
+ * @defgroup TrajectoryLib
  * @brief Trapezoidal trajectory generator.
  */
 class TrapezoidalTrajectory

@@ -44,27 +44,30 @@ if(NOT SKIP_TechnosoftIpos)
                                           embedded-pid/IRemoteVariablesRawImpl.cpp
                                           embedded-pid/IVelocityControlRawImpl.cpp)
 
-    target_sources(TechnosoftIpos PRIVATE external-pid/TechnosoftIposExternal.hpp
-                                          external-pid/TechnosoftIposExternal.cpp
-                                          external-pid/DeviceDriverImpl.cpp
-                                          external-pid/TrapezoidalTrajectory.hpp
-                                          external-pid/TrapezoidalTrajectory.cpp
-                                          external-pid/ICanBusSharerImpl.cpp
-                                          external-pid/IControlModeRawImpl.cpp
-                                          external-pid/IImpedanceControlRawImpl.cpp
-                                          external-pid/IInteractionModeRawImpl.cpp
-                                          external-pid/IPidControlRawImpl.cpp
-                                          external-pid/IPositionControlRawImpl.cpp
-                                          external-pid/IPositionDirectRawImpl.cpp
-                                          external-pid/IVelocityControlRawImpl.cpp)
+    if(ENABLE_TrajectoryLib)
+        target_sources(TechnosoftIpos PRIVATE external-pid/TechnosoftIposExternal.hpp
+                                              external-pid/TechnosoftIposExternal.cpp
+                                              external-pid/DeviceDriverImpl.cpp
+                                              external-pid/ICanBusSharerImpl.cpp
+                                              external-pid/IControlModeRawImpl.cpp
+                                              external-pid/IImpedanceControlRawImpl.cpp
+                                              external-pid/IInteractionModeRawImpl.cpp
+                                              external-pid/IPidControlRawImpl.cpp
+                                              external-pid/IPositionControlRawImpl.cpp
+                                              external-pid/IPositionDirectRawImpl.cpp
+                                              external-pid/IVelocityControlRawImpl.cpp)
+
+        target_link_libraries(TechnosoftIpos ROBOTICSLAB::TrajectoryLib)
+        target_compile_definitions(TechnosoftIpos PRIVATE HAVE_EXTERNAL_PID_IMPL)
+    endif()
 
     target_include_directories(TechnosoftIpos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
     target_link_libraries(TechnosoftIpos YARP::YARP_os
                                          YARP::YARP_dev
                                          ROBOTICSLAB::CanBusSharerLib
-                                         ROBOTICSLAB::StateObserverLib
-                                         ROBOTICSLAB::CanOpenNodeLib)
+                                         ROBOTICSLAB::CanOpenNodeLib
+                                         ROBOTICSLAB::StateObserverLib)
 
     yarp_install(TARGETS TechnosoftIpos
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
