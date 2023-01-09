@@ -66,6 +66,12 @@ void TrapezoidalTrajectory::setTargetVelocity(double startTimestamp, double init
 
     if (std::abs(targetVelocity) < epsilon)
     {
+        if (std::abs(initialVelocity) < epsilon)
+        {
+            reset(initialPosition);
+            return;
+        }
+
         // special case: we want to stop as soon as possible
         double targetPosition = initialPosition + 0.5 * initialVelocity * initialVelocity / std::copysign(acceleration, initialVelocity);
         configure(startTimestamp, initialPosition, initialVelocity, targetPosition, 0.0, acceleration);
