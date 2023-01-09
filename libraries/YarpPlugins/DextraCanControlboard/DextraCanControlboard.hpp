@@ -60,7 +60,7 @@ public:
     bool finalize() override;
     bool notifyMessage(const can_message & message) override;
     bool registerSender(CanSenderDelegate * sender) override;
-    bool synchronize() override;
+    bool synchronize(double timestamp) override;
 
 protected:
     unsigned int canId;

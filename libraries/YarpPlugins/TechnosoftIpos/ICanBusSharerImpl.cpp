@@ -189,10 +189,3 @@ bool TechnosoftIposBase::notifyMessage(const can_message & message)
 }
 
 // -----------------------------------------------------------------------------
-
-bool TechnosoftIposBase::synchronize()
-{
-    return true;
-}
-
-// -----------------------------------------------------------------------------

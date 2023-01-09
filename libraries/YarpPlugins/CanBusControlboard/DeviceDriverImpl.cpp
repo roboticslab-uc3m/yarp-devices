@@ -227,7 +227,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
         if (config.check("syncObserver", obs, "synchronization signal observer"))
         {
-            auto * observer = *reinterpret_cast<StateObserver * const *>(obs->asBlob());
+            auto * observer = *reinterpret_cast<TypedStateObserver<double> * const *>(obs->asBlob());
             syncThread->setObserver(observer);
         }
     }

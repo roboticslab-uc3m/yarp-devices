@@ -14,7 +14,7 @@ bool TechnosoftIposExternal::initialize()
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIposExternal::synchronize()
+bool TechnosoftIposExternal::synchronize(double timestamp)
 {
     int mode = actualControlMode;
     double current;

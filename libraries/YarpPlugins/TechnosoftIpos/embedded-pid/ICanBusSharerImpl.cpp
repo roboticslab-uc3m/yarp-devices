@@ -11,7 +11,7 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIposEmbedded::synchronize()
+bool TechnosoftIposEmbedded::synchronize(double timestamp)
 {
     if (!enableSync)
     {

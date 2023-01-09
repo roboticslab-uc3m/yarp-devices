@@ -44,7 +44,7 @@ public:
     virtual bool registerSender(CanSenderDelegate * sender) = 0;
 
     //! Perform synchronized action on CAN master's request.
-    virtual bool synchronize() = 0;
+    virtual bool synchronize(double timestamp) = 0;
 };
 
 } // namespace roboticslab
