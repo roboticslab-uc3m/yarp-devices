@@ -27,10 +27,12 @@ public:
     TrapezoidalTrajectory();
 
     //! Set motion parameters (using target position).
-    void setTargetPosition(double startTimestamp, double initialPosition, double initialVelocity, double targetPosition, double refSpeed, double refAcceleration);
+    void setTargetPosition(double startTimestamp, double initialPosition, double initialVelocity,
+                           double targetPosition, double refSpeed, double refAcceleration);
 
     //! Set motion parameters (infinite motion).
-    void setTargetVelocity(double startTimestamp, double initialPosition, double initialVelocity, double targetVelocity, double refAcceleration);
+    void setTargetVelocity(double startTimestamp, double initialPosition, double initialVelocity,
+                           double targetVelocity, double refAcceleration);
 
     //! Reset state, remember current position (units).
     void reset(double currentPosition);
@@ -57,6 +59,9 @@ public:
     bool isActive() const;
 
 private:
+    void configure(double startTimestamp, double initialPosition, double initialVelocity,
+                   double targetPosition, double refSpeed, double refAcceleration);
+
     double ta, a1, a2, a3;
     double tb, b2, b3;
     double tc, c1, c2, c3;

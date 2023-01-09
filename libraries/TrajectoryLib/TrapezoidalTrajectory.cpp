@@ -41,25 +41,51 @@ TrapezoidalTrajectory::TrapezoidalTrajectory()
 
 // -------------------------------------------------------------------------------------
 
-void TrapezoidalTrajectory::setTargetPosition(const double timestamp, const double initialPosition, const double initialVelocity,
-                                              const double target, const double speed, const double acceleration)
+void TrapezoidalTrajectory::setTargetPosition(double timestamp, double initialPosition, double initialVelocity,
+                                              double target, double speed, double acceleration)
+{
+    if (speed <= 0.0 || acceleration <= 0.0 || std::abs(target - initialPosition) < epsilon && std::abs(initialVelocity) < epsilon)
+    {
+        reset(initialPosition);
+        return;
+    }
+
+    configure(timestamp, initialPosition, initialVelocity, target, speed, acceleration);
+}
+
+// -------------------------------------------------------------------------------------
+
+void TrapezoidalTrajectory::setTargetVelocity(double startTimestamp, double initialPosition, double initialVelocity,
+                                              double targetVelocity, double acceleration)
+{
+    if (acceleration <= 0.0)
+    {
+        reset(initialPosition);
+        return;
+    }
+
+    if (std::abs(targetVelocity) < epsilon)
+    {
+        // special case: we want to stop as soon as possible
+        double targetPosition = initialPosition + 0.5 * initialVelocity * initialVelocity / std::copysign(acceleration, initialVelocity);
+        configure(startTimestamp, initialPosition, initialVelocity, targetPosition, 0.0, acceleration);
+        return;
+    }
+
+    // otherwise, move indefinitely at `targetVelocity`
+    double targetPosition = std::copysign(std::numeric_limits<double>::infinity(), targetVelocity);
+    configure(startTimestamp, initialPosition, initialVelocity, targetPosition, std::abs(targetVelocity), acceleration);
+}
+
+// -------------------------------------------------------------------------------------
+
+void TrapezoidalTrajectory::configure(const double timestamp, const double initialPosition, const double initialVelocity,
+                                      const double target, const double speed, const double acceleration)
 {
     // displacement along the desired trajectory; can be negative (depending on the direction of motion) and lesser
     // than the total distance travelled due to backtracking (if overshoot occurs or if initially we are moving in the
     // opposite direction)
     const double deltaTotal = target - initialPosition;
-
-    if (speed <= 0.0 || acceleration <= 0.0 || std::abs(deltaTotal) < epsilon && std::abs(initialVelocity) < epsilon)
-    {
-        std::lock_guard lock(mutex);
-
-        positionReference = targetPosition = initialPosition;
-        velocityReference = accelerationReference = 0.0;
-        elapsedTime = 0.0;
-
-        active = false;
-        return;
-    }
 
     // distance travelled before stopping given the initial speed (can be zero) and input deceleration
     const double steepestStopDistance = 0.5 * initialVelocity * initialVelocity / acceleration; // >= 0
@@ -185,14 +211,6 @@ void TrapezoidalTrajectory::setTargetPosition(const double timestamp, const doub
     accelerationReference = firstAccelerationRamp;
 
     active = true;
-}
-
-// -------------------------------------------------------------------------------------
-
-void TrapezoidalTrajectory::setTargetVelocity(double startTimestamp, double initialPosition, double initialVelocity, double targetVelocity, double acceleration)
-{
-    double targetPosition = std::copysign(std::numeric_limits<double>::infinity(), targetVelocity);
-    return setTargetPosition(startTimestamp, initialPosition, initialVelocity, targetPosition, std::abs(targetVelocity), acceleration);
 }
 
 // -------------------------------------------------------------------------------------

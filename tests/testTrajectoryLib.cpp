@@ -677,4 +677,34 @@ TEST_F(TrajectoryTest, LeftHalfRectangular)
     ASSERT_TRUE(trajectory.isActive());
 }
 
+TEST_F(TrajectoryTest, Stop)
+{
+    double initialPosition = 20.0;
+    double initialVelocity = 4.0;
+    double targetVelocity = 0.0;
+    double refAcceleration = 2.0;
+
+    trajectory.setTargetVelocity(ts, initialPosition, initialVelocity, targetVelocity, refAcceleration);
+
+    ASSERT_TRUE(trajectory.isActive());
+
+    REF_ASSERT(trajectory.update(ts), initialPosition, initialVelocity, -refAcceleration); // deceleration ramp
+    REF_ASSERT(trajectory.update(ts + 1.0), 23.0, 2.0, -refAcceleration); // deceleration ramp
+    REF_ASSERT(trajectory.update(ts + 2.0), 24.0, 0.0, 0.0); // trajectory completed
+
+    ASSERT_FALSE(trajectory.isActive());
+
+    initialVelocity = -initialVelocity; // reverse direction
+
+    trajectory.setTargetVelocity(ts, initialPosition, initialVelocity, targetVelocity, refAcceleration);
+
+    ASSERT_TRUE(trajectory.isActive());
+
+    REF_ASSERT(trajectory.update(ts), initialPosition, initialVelocity, refAcceleration); // deceleration ramp
+    REF_ASSERT(trajectory.update(ts + 1.0), 17.0, -2.0, refAcceleration); // deceleration ramp
+    REF_ASSERT(trajectory.update(ts + 2.0), 16.0, 0.0, 0.0); // trajectory completed
+
+    ASSERT_FALSE(trajectory.isActive());
+}
+
 } // namespace roboticslab::test

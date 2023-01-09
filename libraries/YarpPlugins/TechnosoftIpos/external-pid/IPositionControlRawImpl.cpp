@@ -136,7 +136,11 @@ bool TechnosoftIposExternal::stopRaw(int j)
         return false;
     }
 
-    trapTrajectory.reset(internalUnitsToDegrees(lastEncoderRead->queryPosition()));
+    double now = yarp::os::SystemClock::nowSystem();
+    double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
+    double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
+
+    trapTrajectory.setTargetVelocity(now, initialPosition, initialVelocity, 0.0, refAcceleration);
     return true;
 }
 
