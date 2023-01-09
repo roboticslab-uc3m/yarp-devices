@@ -203,6 +203,14 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
     if (config.check("syncPeriod", "SYNC message period (s)"))
     {
+        auto syncPeriod = config.find("syncPeriod").asFloat64();
+
+        if (syncPeriod <= 0.0)
+        {
+            yCError(CBCB) << "Invalid --syncPeriod:" << syncPeriod;
+            return false;
+        }
+
         FutureTaskFactory * taskFactory;
 
         if (busDevices.size() > 1)
@@ -214,8 +222,8 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             taskFactory = new SequentialTaskFactory;
         }
 
-        syncThread = new SyncPeriodicThread(canBusBrokers, taskFactory);
-        syncThread->setPeriod(config.find("syncPeriod").asFloat64());
+        syncThread = new SyncPeriodicThread(canBusBrokers, taskFactory); // owns `taskFactory`
+        syncThread->setPeriod(syncPeriod);
 
         if (!syncThread->openPort("/sync:o"))
         {
@@ -230,6 +238,10 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
             auto * observer = *reinterpret_cast<StateObserver * const *>(obs->asBlob());
             syncThread->setObserver(observer);
         }
+    }
+    else
+    {
+        yCWarning(CBCB) << "Synchronization thread not enabled, use --syncPeriod";
     }
 
     return !syncThread || syncThread->start();
