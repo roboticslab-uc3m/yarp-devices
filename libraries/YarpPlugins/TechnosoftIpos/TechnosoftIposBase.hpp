@@ -92,7 +92,6 @@ public:
     bool initialize() override;
     bool finalize() override;
     bool registerSender(CanSenderDelegate * sender) override;
-    bool synchronize() override;
 
     //  --------- IAxisInfoRaw declarations. Implementation in IAxisInfoRawImpl.cpp ---------
 

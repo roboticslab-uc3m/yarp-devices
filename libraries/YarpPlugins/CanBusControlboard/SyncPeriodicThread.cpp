@@ -43,22 +43,20 @@ bool SyncPeriodicThread::openPort(const std::string & name)
 
 void SyncPeriodicThread::run()
 {
+    auto now = yarp::os::SystemClock::nowSystem();
     auto task = taskFactory->createTask();
 
-    for (auto * canBusBroker : canBusBrokers)
+    for (auto * broker : canBusBrokers)
     {
-        task->add([canBusBroker]
+        task->add([broker, now]
             {
-                auto * reader = canBusBroker->getReader();
-                auto * writer = canBusBroker->getWriter();
-
-                for (auto * handle : reader->getHandles())
+                for (auto * handle : broker->getReader()->getHandles())
                 {
-                    handle->synchronize();
+                    handle->synchronize(now);
                 }
 
-                writer->getDelegate()->prepareMessage({0x80, 0, nullptr}); // SYNC
-                writer->flush();
+                broker->getWriter()->getDelegate()->prepareMessage({0x80, 0, nullptr}); // SYNC
+                broker->getWriter()->flush();
                 return true;
             });
     }
@@ -67,8 +65,6 @@ void SyncPeriodicThread::run()
 
     if (syncPort.isOpen())
     {
-        auto now = yarp::os::SystemClock::nowSystem();
-
         double sec;
         double nsec = std::modf(now, &sec) * 1e9;
 
@@ -82,7 +78,7 @@ void SyncPeriodicThread::run()
 
     if (syncObserver)
     {
-        syncObserver->notify();
+        syncObserver->notify(now);
     }
 }
 

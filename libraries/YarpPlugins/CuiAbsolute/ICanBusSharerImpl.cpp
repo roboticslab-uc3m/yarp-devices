@@ -89,7 +89,7 @@ bool CuiAbsolute::registerSender(CanSenderDelegate * sender)
 
 // -----------------------------------------------------------------------------
 
-bool CuiAbsolute:: synchronize()
+bool CuiAbsolute:: synchronize(double timestamp)
 {
     return true;
 }

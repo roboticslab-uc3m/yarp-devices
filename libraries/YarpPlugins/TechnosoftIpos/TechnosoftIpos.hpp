@@ -67,8 +67,8 @@ public:
     bool registerSender(CanSenderDelegate * sender) override
     { return impl->registerSender(sender); }
 
-    bool synchronize() override
-    { return impl->synchronize(); }
+    bool synchronize(double timestamp) override
+    { return impl->synchronize(timestamp); }
 
     //  --------- IAxisInfoRaw declarations. Implementation in IAxisInfoRawImpl.cpp ---------
 

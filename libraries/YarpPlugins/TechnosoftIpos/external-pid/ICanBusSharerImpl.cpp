@@ -2,8 +2,6 @@
 
 #include "external-pid/TechnosoftIposExternal.hpp"
 
-#include <yarp/os/SystemClock.h>
-
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
@@ -16,7 +14,7 @@ bool TechnosoftIposExternal::initialize()
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIposExternal::synchronize()
+bool TechnosoftIposExternal::synchronize(double timestamp)
 {
     int mode = actualControlMode;
     double current;
@@ -24,7 +22,7 @@ bool TechnosoftIposExternal::synchronize()
     if (mode == VOCAB_CM_POSITION || mode == VOCAB_CM_VELOCITY)
     {
         double forceCommand;
-        auto reference = trapTrajectory.update(yarp::os::SystemClock::nowSystem());
+        auto reference = trapTrajectory.update(timestamp);
         setPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, reference.position);
         getPidOutputRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, &forceCommand);
         current = torqueToCurrent(forceCommand);

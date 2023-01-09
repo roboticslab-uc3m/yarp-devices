@@ -42,7 +42,7 @@ bool LacqueyFetch::registerSender(CanSenderDelegate * sender)
 
 // -----------------------------------------------------------------------------
 
-bool LacqueyFetch::synchronize()
+bool LacqueyFetch::synchronize(double timestamp)
 {
     return true;
 }

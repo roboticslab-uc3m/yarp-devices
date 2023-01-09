@@ -38,7 +38,7 @@ public:
     bool openPort(const std::string & name);
 
     //! Set synchronization observer.
-    void setObserver(StateObserver * syncObserver)
+    void setObserver(TypedStateObserver<double> * syncObserver)
     { this->syncObserver = syncObserver; }
 
     //! Periodic task.
@@ -47,7 +47,7 @@ public:
 private:
     std::vector<CanBusBroker *> & canBusBrokers;
     FutureTaskFactory * taskFactory;
-    StateObserver * syncObserver;
+    TypedStateObserver<double> * syncObserver;
     yarp::os::Port syncPort;
     yarp::os::PortWriterBuffer<yarp::os::Bottle> syncWriter;
 };

@@ -26,7 +26,7 @@ public:
 
     //  --------- ICanBusSharer declarations. Implementation in ICanBusSharerImpl.cpp ---------
 
-    bool synchronize() override;
+    bool synchronize(double timestamp) override;
 
     //  --------- IControlModeRaw declarations. Implementation in IControlModeRawImpl.cpp ---------
 

@@ -84,7 +84,7 @@ int main(int argc, char * argv[])
         return 1;
     }
 
-    roboticslab::StateObserver syncObserver(1.0);
+    roboticslab::TypedStateObserver<double> syncObserver(1.0);
     auto * syncObserverPtr = &syncObserver;
 
     yarp::os::Property options;
@@ -143,16 +143,17 @@ int main(int argc, char * argv[])
     const double offset = yarp::os::SystemClock::nowSystem();
 
     double lastRef;
+    double lastTimestamp;
 
     while (posd->getRefPosition(0, &lastRef) && std::abs(lastRef - initialPos) < std::abs(target - initialPos))
     {
-        if (!syncObserver.await())
+        if (!syncObserver.await(&lastTimestamp))
         {
             yWarning() << "Sync observer timeout";
             break;
         }
 
-        double t = yarp::os::SystemClock::nowSystem() - offset;
+        double t = lastTimestamp - offset;
         double e = initialPos + velocity * t;
         posd->setPosition(0, e);
     }
