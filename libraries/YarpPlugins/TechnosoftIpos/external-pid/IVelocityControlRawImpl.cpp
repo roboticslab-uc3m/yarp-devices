@@ -7,6 +7,7 @@
 #include <algorithm> // std::clamp
 
 #include <yarp/os/Log.h>
+#include <yarp/os/SystemClock.h>
 
 #include "LogComponent.hpp"
 
@@ -29,8 +30,9 @@ bool TechnosoftIposExternal::velocityMoveRaw(int j, double sp)
     }
 
     double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
-    trapTrajectory.configure(syncPeriod, initialPosition, sp, refAcceleration);
+    double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
 
+    trapTrajectory.setTargetVelocity(yarp::os::SystemClock::nowSystem(), initialPosition, initialVelocity, sp, refAcceleration);
     return true;
 }
 

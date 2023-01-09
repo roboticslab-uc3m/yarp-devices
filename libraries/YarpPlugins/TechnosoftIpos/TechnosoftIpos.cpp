@@ -6,7 +6,10 @@
 #include <yarp/os/Property.h>
 
 #include "embedded-pid/TechnosoftIposEmbedded.hpp"
-#include "external-pid/TechnosoftIposExternal.hpp"
+
+#ifdef HAVE_EXTERNAL_PID_IMPL
+# include "external-pid/TechnosoftIposExternal.hpp"
+#endif
 
 #include "LogComponent.hpp"
 
@@ -41,9 +44,16 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
     {
         yCInfo(IPOS) << "Using embedded PID implementation";
         impl = new TechnosoftIposEmbedded;
-    } else {
+    }
+    else
+    {
+#ifdef HAVE_EXTERNAL_PID_IMPL
         yCInfo(IPOS) << "Using external PID implementation";
         impl = new TechnosoftIposExternal;
+#else
+        yCError(IPOS) << "External PID implementation not available";
+        return false;
+#endif
     }
 
     return impl->open(config);

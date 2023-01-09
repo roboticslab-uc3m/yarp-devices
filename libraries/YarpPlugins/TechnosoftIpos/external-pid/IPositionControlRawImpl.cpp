@@ -5,6 +5,7 @@
 #include <cmath>
 
 #include <yarp/os/LogStream.h>
+#include <yarp/os/SystemClock.h>
 
 #include "CanUtils.hpp"
 #include "LogComponent.hpp"
@@ -20,8 +21,9 @@ bool TechnosoftIposExternal::positionMoveRaw(int j, double ref)
     CHECK_MODE(VOCAB_CM_POSITION);
 
     double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
-    trapTrajectory.configure(syncPeriod, initialPosition, ref, refSpeed, refAcceleration);
+    double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
 
+    trapTrajectory.setTargetPosition(yarp::os::SystemClock::nowSystem(), initialPosition, initialVelocity, ref, refSpeed, refAcceleration);
     return true;
 }
 
@@ -33,9 +35,11 @@ bool TechnosoftIposExternal::relativeMoveRaw(int j, double delta)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
+    double now = yarp::os::SystemClock::nowSystem();
     double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
-    trapTrajectory.configure(syncPeriod, initialPosition, initialPosition + delta, refSpeed, refAcceleration);
+    double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
 
+    trapTrajectory.setTargetPosition(now, initialPosition, initialVelocity, initialPosition + delta, refSpeed, refAcceleration);
     return true;
 }
 
@@ -58,14 +62,20 @@ bool TechnosoftIposExternal::setRefSpeedRaw(int j, double sp)
 
     if (sp <= 0.0)
     {
-        yCIWarning(IPOS, id()) << "Illegal negative speed provided:" << sp;
+        yCIWarning(IPOS, id()) << "Illegal reference speed provided:" << sp;
         return false;
     }
     else if (sp > maxVel)
     {
-        yCIWarning(IPOS, id()) << "Reference speed exceeds maximum velocity, i.e." << maxVel.load();
+        yCIWarning(IPOS, id()) << "Reference speed exceeds maximum velocity:" << sp << ">" << maxVel.load();
         return false;
     }
+
+    double now = yarp::os::SystemClock::nowSystem();
+    double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
+    double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
+
+    trapTrajectory.setTargetPosition(now, initialPosition, initialVelocity, trapTrajectory.getTargetPosition(), sp, refAcceleration);
 
     refSpeed = sp;
     return true;
@@ -80,9 +90,15 @@ bool TechnosoftIposExternal::setRefAccelerationRaw(int j, double acc)
 
     if (acc <= 0.0)
     {
-        yCIWarning(IPOS, id()) << "Illegal negative acceleration provided:" << acc;
+        yCIWarning(IPOS, id()) << "Illegal reference acceleration provided:" << acc;
         return false;
     }
+
+    double now = yarp::os::SystemClock::nowSystem();
+    double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
+    double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
+
+    trapTrajectory.setTargetPosition(now, initialPosition, initialVelocity, trapTrajectory.getTargetPosition(), refSpeed, acc);
 
     refAcceleration = acc;
     return true;
@@ -120,7 +136,11 @@ bool TechnosoftIposExternal::stopRaw(int j)
         return false;
     }
 
-    trapTrajectory.reset(internalUnitsToDegrees(lastEncoderRead->queryPosition()));
+    double now = yarp::os::SystemClock::nowSystem();
+    double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
+    double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
+
+    trapTrajectory.setTargetVelocity(now, initialPosition, initialVelocity, 0.0, refAcceleration);
     return true;
 }
 
