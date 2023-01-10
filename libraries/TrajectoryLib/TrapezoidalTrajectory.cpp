@@ -245,7 +245,7 @@ TrapezoidalTrajectory::Reference TrapezoidalTrajectory::update(double timestamp)
 
     if (!active)
     {
-        return {};
+        return {positionReference, velocityReference, accelerationReference};
     }
 
     elapsedTime = timestamp - startTimestamp;
