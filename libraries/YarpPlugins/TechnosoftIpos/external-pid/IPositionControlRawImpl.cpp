@@ -71,11 +71,14 @@ bool TechnosoftIposExternal::setRefSpeedRaw(int j, double sp)
         return false;
     }
 
-    double now = yarp::os::SystemClock::nowSystem();
-    double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
-    double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
+    if (trapTrajectory.isActive())
+    {
+        double now = yarp::os::SystemClock::nowSystem();
+        double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
+        double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
 
-    trapTrajectory.setTargetPosition(now, initialPosition, initialVelocity, trapTrajectory.getTargetPosition(), sp, refAcceleration);
+        trapTrajectory.setTargetPosition(now, initialPosition, initialVelocity, trapTrajectory.getTargetPosition(), sp, refAcceleration);
+    }
 
     refSpeed = sp;
     return true;
@@ -94,11 +97,14 @@ bool TechnosoftIposExternal::setRefAccelerationRaw(int j, double acc)
         return false;
     }
 
-    double now = yarp::os::SystemClock::nowSystem();
-    double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
-    double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
+    if (trapTrajectory.isActive())
+    {
+        double now = yarp::os::SystemClock::nowSystem();
+        double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
+        double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
 
-    trapTrajectory.setTargetPosition(now, initialPosition, initialVelocity, trapTrajectory.getTargetPosition(), refSpeed, acc);
+        trapTrajectory.setTargetPosition(now, initialPosition, initialVelocity, trapTrajectory.getTargetPosition(), refSpeed, acc);
+    }
 
     refAcceleration = acc;
     return true;
@@ -136,11 +142,15 @@ bool TechnosoftIposExternal::stopRaw(int j)
         return false;
     }
 
-    double now = yarp::os::SystemClock::nowSystem();
-    double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
-    double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
+    if (trapTrajectory.isActive())
+    {
+        double now = yarp::os::SystemClock::nowSystem();
+        double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
+        double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
 
-    trapTrajectory.setTargetVelocity(now, initialPosition, initialVelocity, 0.0, refAcceleration);
+        trapTrajectory.setTargetVelocity(now, initialPosition, initialVelocity, 0.0, refAcceleration);
+    }
+
     return true;
 }
 
