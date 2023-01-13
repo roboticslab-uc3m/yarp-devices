@@ -56,7 +56,8 @@ bool TechnosoftIposExternal::setControlModeRaw(int j, int mode)
         // no break
     case VOCAB_CM_IDLE:
         return can->driveStatus()->requestState(DriveState::SWITCHED_ON)
-            && can->sdo()->download<std::int8_t>("Modes of Operation", 0, 0x6060); // reset drive mode
+            && can->sdo()->download<std::int8_t>("Modes of Operation", 0, 0x6060) // reset drive mode
+            && can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)); // disable ext. ref. torque mode
     default:
         yCIError(IPOS, id()) << "Unsupported, unknown or read-only mode:" << yarp::os::Vocab32::decode(mode);
         return false;
@@ -79,7 +80,7 @@ bool TechnosoftIposExternal::setControlModeRaw(int j, int mode)
             && can->rpdo3()->configure(rpdo3conf.addMapping<std::int32_t>(0x201C))
             && can->sdo()->download<std::uint16_t>("External Reference Type", 1, 0x201D)
             && can->sdo()->download<std::int8_t>("Modes of Operation", -5, 0x6060)
-            // configure new setpoint (4: assume target position), reset other mode-specific bits (5-6) and halt bit (8)
+            // configure new setpoint (4: enable ext. ref. torque mode), reset other mode-specific bits (5-6) and halt bit (8)
             && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).reset(5).reset(6).reset(8))
             && awaitControlMode(mode);
     }
