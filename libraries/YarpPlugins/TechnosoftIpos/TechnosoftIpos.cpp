@@ -9,7 +9,7 @@
 #include <string>
 
 #include <yarp/os/LogStream.h>
-#include <yarp/os/Time.h>
+#include <yarp/os/SystemClock.h>
 
 #include "LogComponent.hpp"
 
@@ -446,7 +446,7 @@ void TechnosoftIpos::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg, con
 
 void TechnosoftIpos::handleNmt(NmtState state)
 {
-    vars.lastHeartbeat = yarp::os::Time::now();
+    vars.lastHeartbeat = yarp::os::SystemClock::nowSystem();
     std::uint8_t nmtState = static_cast<std::uint8_t>(state);
 
     // always report boot-up

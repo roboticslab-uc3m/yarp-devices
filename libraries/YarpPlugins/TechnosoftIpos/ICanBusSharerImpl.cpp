@@ -7,7 +7,7 @@
 #include <algorithm> // std::find_if
 
 #include <yarp/os/LogStream.h>
-#include <yarp/os/Time.h>
+#include <yarp/os/SystemClock.h>
 #include <yarp/os/Vocab.h>
 
 #include "CanUtils.hpp"
@@ -115,7 +115,7 @@ bool TechnosoftIpos::initialize()
         return false;
     }
 
-    vars.lastHeartbeat = yarp::os::Time::now();
+    vars.lastHeartbeat = yarp::os::SystemClock::nowSystem();
     vars.actualControlMode = VOCAB_CM_CONFIGURED;
 
     if (!can->driveStatus()->requestState(DriveState::SWITCHED_ON)
