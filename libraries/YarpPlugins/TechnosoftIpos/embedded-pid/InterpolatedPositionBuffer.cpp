@@ -23,16 +23,16 @@ constexpr std::size_t PT_BUFFER_MAX = 9; // 285 if properly configured
 constexpr std::size_t PVT_BUFFER_MAX = 7; // 222 if properly configured
 constexpr std::size_t BUFFER_LOW = 4; // max: 15
 
-InterpolatedPositionBuffer::InterpolatedPositionBuffer(const StateVariables & _vars, int periodMs)
-    : vars(_vars),
-      fixedSamples(periodMs * 0.001 / vars.samplingPeriod),
+InterpolatedPositionBuffer::InterpolatedPositionBuffer(double samplingPeriod, double interpolationPeriod)
+    : samplingPeriod(samplingPeriod),
+      fixedSamples(interpolationPeriod / samplingPeriod),
       integrityCounter(0),
-      prevTarget({0.0, 0.0}),
+      prevTarget({0, 0.0}),
       initialTimestamp(0.0),
       sampleCount(0)
 { }
 
-void InterpolatedPositionBuffer::setInitial(double initialTarget)
+void InterpolatedPositionBuffer::setInitial(int initialTarget)
 {
     std::lock_guard<std::mutex> lock(queueMutex);
     initialTimestamp = 0.0; // dummy timestamp, to be amended later on
@@ -42,7 +42,7 @@ void InterpolatedPositionBuffer::setInitial(double initialTarget)
 
 int InterpolatedPositionBuffer::getPeriodMs() const
 {
-    return fixedSamples * vars.samplingPeriod * 1000.0;
+    return fixedSamples * samplingPeriod * 1000.0;
 }
 
 std::uint16_t InterpolatedPositionBuffer::getBufferConfig() const
@@ -53,7 +53,7 @@ std::uint16_t InterpolatedPositionBuffer::getBufferConfig() const
     return bits.to_ulong();
 }
 
-void InterpolatedPositionBuffer::addSetpoint(double target)
+void InterpolatedPositionBuffer::addSetpoint(int target)
 {
     std::lock_guard<std::mutex> lock(queueMutex);
     pendingTargets.emplace_back(target, yarp::os::SystemClock::nowSystem());
@@ -96,7 +96,7 @@ std::vector<std::uint64_t> InterpolatedPositionBuffer::popBatch(bool fullBuffer)
             pendingTargets.pop_front();
 
             // If available, capture next point, otherwise default to empty pair.
-            ip_record nextTarget = !pendingTargets.empty() ? pendingTargets.front() : std::make_pair(0.0, 0.0);
+            ip_record nextTarget = !pendingTargets.empty() ? pendingTargets.front() : std::make_pair(0, 0.0);
 
             auto setpoint = makeDataRecord(prevTarget, currTarget, nextTarget);
 
@@ -108,7 +108,7 @@ std::vector<std::uint64_t> InterpolatedPositionBuffer::popBatch(bool fullBuffer)
     return batch;
 }
 
-double InterpolatedPositionBuffer::getPrevTarget() const
+int InterpolatedPositionBuffer::getPrevTarget() const
 {
     std::lock_guard<std::mutex> lock(queueMutex);
     return prevTarget.first;
@@ -153,7 +153,7 @@ std::uint16_t InterpolatedPositionBuffer::getSampledTime(double currentTimestamp
 
     // Asynchronous interpolation.
     double elapsed = currentTimestamp - initialTimestamp;
-    int samplesSinceStart = elapsed / vars.samplingPeriod;
+    int samplesSinceStart = elapsed / samplingPeriod;
     std::uint16_t currentWindow = samplesSinceStart - sampleCount;
     sampleCount = samplesSinceStart;
     return currentWindow;
@@ -166,7 +166,7 @@ double InterpolatedPositionBuffer::getMeanVelocity(const ip_record & earliest, c
     if (fixedSamples != 0)
     {
         // Synchronous interpolation.
-        return distance / (fixedSamples * vars.samplingPeriod);
+        return distance / (fixedSamples * samplingPeriod);
     }
     else
     {
@@ -194,7 +194,7 @@ std::uint64_t PtBuffer::makeDataRecord(const ip_record & previous, const ip_reco
 {
     std::uint64_t data = 0;
 
-    std::int32_t p = vars.degreesToInternalUnits(current.first);
+    std::int32_t p = current.first;
     std::uint16_t t = getSampledTime(current.second);
     std::uint8_t ic = getIntegrityCounter() << 1;
 
@@ -229,7 +229,7 @@ std::uint64_t PvtBuffer::makeDataRecord(const ip_record & previous, const ip_rec
 {
     std::uint64_t data = 0;
 
-    std::int32_t position = vars.degreesToInternalUnits(current.first);
+    std::int32_t position = current.first;
     std::int16_t p_lsb = position & 0x0000FFFF;
     std::int8_t p_msb = ((position & 0x00FF0000) << 8) >> 24;
 
@@ -240,7 +240,7 @@ std::uint64_t PvtBuffer::makeDataRecord(const ip_record & previous, const ip_rec
     {
         double prevVelocity = getMeanVelocity(previous, current);
         double nextVelocity = getMeanVelocity(current, next);
-        double velocity = vars.degreesToInternalUnits((prevVelocity + nextVelocity) / 2.0, 1);
+        double velocity = (prevVelocity + nextVelocity) * samplingPeriod / 2.0;
 
         std::int16_t v_int;
         std::uint8_t v_frac;
@@ -263,28 +263,28 @@ std::uint64_t PvtBuffer::makeDataRecord(const ip_record & previous, const ip_rec
 namespace roboticslab
 {
 
-InterpolatedPositionBuffer * createInterpolationBuffer(const yarp::os::Searchable & config, const StateVariables & vars)
+InterpolatedPositionBuffer * createInterpolationBuffer(const yarp::os::Searchable & config, double samplingPeriod)
 {
     std::string mode = config.check("mode", yarp::os::Value(""), "interpolated position submode [pt|pvt]").asString();
     int periodMs = config.check("periodMs", yarp::os::Value(0), "interpolated position fixed period (ms)").asInt32();
 
     if (periodMs < 0)
     {
-        yCIError(IPOS, "ID" + std::to_string(vars.canId)) << "Illegal \"periodMs\":" << periodMs;
+        yCError(IPOS) << "Illegal \"periodMs\":" << periodMs;
         return nullptr;
     }
 
     if (mode == "pt")
     {
-        return new PtBuffer(vars, periodMs);
+        return new PtBuffer(samplingPeriod, periodMs * 0.001);
     }
     else if (mode == "pvt")
     {
-        return new PvtBuffer(vars, periodMs);
+        return new PvtBuffer(samplingPeriod, periodMs * 0.001);
     }
     else
     {
-        yCIError(IPOS, "ID" + std::to_string(vars.canId)) << "Unsupported interpolated position submode:" << mode;
+        yCError(IPOS) << "Unsupported interpolated position submode:" << mode;
         return nullptr;
     }
 }

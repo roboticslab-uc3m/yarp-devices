@@ -64,7 +64,7 @@ public:
     { return true; }
     bool registerSender(CanSenderDelegate * sender) override
     { return true; }
-    bool synchronize() override
+    bool synchronize(double timestamp) override
     { return true; }
 
     //  --------- IAmplifierControlRaw declarations ---------

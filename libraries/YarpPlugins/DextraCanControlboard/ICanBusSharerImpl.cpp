@@ -30,7 +30,7 @@ bool DextraCanControlboard::notifyMessage(const can_message & message)
     return true;
 }
 
-bool DextraCanControlboard::synchronize()
+bool DextraCanControlboard::synchronize(double timestamp)
 {
     return true;
 }

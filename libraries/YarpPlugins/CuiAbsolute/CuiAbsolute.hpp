@@ -60,7 +60,7 @@ public:
     bool initialize() override;
     bool finalize() override;
     bool registerSender(CanSenderDelegate * sender) override;
-    bool synchronize() override;
+    bool synchronize(double timestamp) override;
 
     //  ---------- IEncodersRaw declarations. Implementation in IEncodersRawImpl.cpp ----------
 

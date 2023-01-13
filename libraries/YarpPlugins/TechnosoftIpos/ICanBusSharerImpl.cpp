@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "TechnosoftIpos.hpp"
+#include "TechnosoftIposBase.hpp"
 
 #include <cctype> // std::isspace
 
@@ -36,14 +36,14 @@ namespace
 
 // -----------------------------------------------------------------------------
 
-unsigned int TechnosoftIpos::getId()
+unsigned int TechnosoftIposBase::getId()
 {
     return can->getId();
 }
 
 // -----------------------------------------------------------------------------
 
-std::vector<unsigned int> TechnosoftIpos::getAdditionalIds()
+std::vector<unsigned int> TechnosoftIposBase::getAdditionalIds()
 {
     if (iExternalEncoderCanBusSharer)
     {
@@ -55,7 +55,7 @@ std::vector<unsigned int> TechnosoftIpos::getAdditionalIds()
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::registerSender(CanSenderDelegate * sender)
+bool TechnosoftIposBase::registerSender(CanSenderDelegate * sender)
 {
     can->configureSender(sender);
     return iExternalEncoderCanBusSharer && iExternalEncoderCanBusSharer->registerSender(sender);
@@ -63,17 +63,17 @@ bool TechnosoftIpos::registerSender(CanSenderDelegate * sender)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::initialize()
+bool TechnosoftIposBase::initialize()
 {
     if (!can->sdo()->ping())
     {
         return false;
     }
 
-    if (!vars.configuredOnce)
+    if (!configuredOnce)
     {
         // retrieve static drive info
-        vars.configuredOnce = can->sdo()->upload("Manufacturer software version",
+        configuredOnce = can->sdo()->upload("Manufacturer software version",
                 [this](const auto & data)
                 {
                     yCIInfo(IPOS, id()) << "Firmware version:" << rtrim(data);
@@ -95,18 +95,18 @@ bool TechnosoftIpos::initialize()
 
     double extEnc;
 
-    if (!vars.configuredOnce
+    if (!configuredOnce
         || (iExternalEncoderCanBusSharer && !iExternalEncoderCanBusSharer->initialize())
-        || !setLimitsRaw(0, vars.min, vars.max)
-        || !setRefSpeedRaw(0, vars.refSpeed)
-        || !setRefAccelerationRaw(0, vars.refAcceleration)
+        || !setLimitsRaw(0, min, max)
+        || !setRefSpeedRaw(0, refSpeed)
+        || !setRefAccelerationRaw(0, refAcceleration)
         // synchronize absolute (master) and relative (slave) encoders
         || (iEncodersTimedRawExternal && (!iEncodersTimedRawExternal->getEncodersRaw(&extEnc) || !setEncoderRaw(0, extEnc)))
-        || !can->tpdo1()->configure(vars.tpdo1Conf)
-        || !can->tpdo2()->configure(vars.tpdo2Conf)
-        || !can->tpdo3()->configure(vars.tpdo3Conf)
-        || (vars.heartbeatPeriod != 0.0
-                && !can->sdo()->download<std::uint16_t>("Producer Heartbeat Time", vars.heartbeatPeriod * 1000, 0x1017))
+        || !can->tpdo1()->configure(tpdo1Conf)
+        || !can->tpdo2()->configure(tpdo2Conf)
+        || !can->tpdo3()->configure(tpdo3Conf)
+        || (heartbeatPeriod != 0.0
+                && !can->sdo()->download<std::uint16_t>("Producer Heartbeat Time", heartbeatPeriod * 1000, 0x1017))
         || !can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE)
         || (can->driveStatus()->getCurrentState() == DriveState::NOT_READY_TO_SWITCH_ON
                 && !can->driveStatus()->awaitState(DriveState::SWITCH_ON_DISABLED)))
@@ -115,12 +115,12 @@ bool TechnosoftIpos::initialize()
         return false;
     }
 
-    vars.lastHeartbeat = yarp::os::SystemClock::nowSystem();
-    vars.actualControlMode = VOCAB_CM_CONFIGURED;
+    lastHeartbeat = yarp::os::SystemClock::nowSystem();
+    actualControlMode = VOCAB_CM_CONFIGURED;
 
     if (!can->driveStatus()->requestState(DriveState::SWITCHED_ON)
-            || !vars.awaitControlMode(VOCAB_CM_IDLE)
-            || !setControlModeRaw(0, vars.initialMode))
+            || !awaitControlMode(VOCAB_CM_IDLE)
+            || !setControlModeRaw(0, initialControlMode))
     {
         yCIWarning(IPOS, id()) << "Initial drive state transitions failed";
     }
@@ -130,7 +130,7 @@ bool TechnosoftIpos::initialize()
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::finalize()
+bool TechnosoftIposBase::finalize()
 {
     if (monitorThread && monitorThread->isRunning())
     {
@@ -139,7 +139,7 @@ bool TechnosoftIpos::finalize()
 
     bool ok = true;
 
-    if (vars.actualControlMode != VOCAB_CM_NOT_CONFIGURED)
+    if (actualControlMode != VOCAB_CM_NOT_CONFIGURED)
     {
         if (can->driveStatus()->getCurrentState() == DriveState::OPERATION_ENABLED)
         {
@@ -152,7 +152,7 @@ bool TechnosoftIpos::finalize()
             ok = false;
         }
 
-        vars.actualControlMode = VOCAB_CM_CONFIGURED;
+        actualControlMode = VOCAB_CM_CONFIGURED;
     }
 
     if (!can->nmt()->issueServiceCommand(NmtService::RESET_NODE))
@@ -166,13 +166,13 @@ bool TechnosoftIpos::finalize()
         ok = ok && iExternalEncoderCanBusSharer->finalize();
     }
 
-    vars.actualControlMode = VOCAB_CM_NOT_CONFIGURED;
+    actualControlMode = VOCAB_CM_NOT_CONFIGURED;
     return ok;
 }
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::notifyMessage(const can_message & message)
+bool TechnosoftIposBase::notifyMessage(const can_message & message)
 {
     if (iExternalEncoderCanBusSharer && iExternalEncoderCanBusSharer->getId() == (message.id & 0x7F))
     {
@@ -186,58 +186,6 @@ bool TechnosoftIpos::notifyMessage(const can_message & message)
     }
 
     return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::synchronize()
-{
-    if (!vars.enableSync)
-    {
-        return true;
-    }
-
-    switch (vars.actualControlMode.load())
-    {
-    case VOCAB_CM_VELOCITY:
-    {
-        if (vars.enableCsv)
-        {
-            double value = commandBuffer.interpolate() * vars.syncPeriod;
-            std::int32_t data = vars.degreesToInternalUnits(value);
-            return can->rpdo3()->write(data);
-        }
-        else
-        {
-            double value = vars.degreesToInternalUnits(commandBuffer.interpolate(), 1);
-
-            std::int16_t dataInt;
-            std::uint16_t dataFrac;
-            CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
-
-            std::int32_t data = (dataInt << 16) + dataFrac;
-            return can->rpdo3()->write(data);
-        }
-    }
-    case VOCAB_CM_TORQUE:
-    {
-        double curr = vars.torqueToCurrent(commandBuffer.interpolate());
-        std::int32_t data = vars.currentToInternalUnits(curr) << 16;
-        return can->rpdo3()->write(data);
-    }
-    case VOCAB_CM_CURRENT:
-    {
-        std::int32_t data = vars.currentToInternalUnits(commandBuffer.interpolate()) << 16;
-        return can->rpdo3()->write(data);
-    }
-    case VOCAB_CM_POSITION_DIRECT:
-    {
-        std::int32_t data = vars.degreesToInternalUnits(commandBuffer.interpolate());
-        return can->rpdo3()->write(data);
-    }
-    default:
-        return true;
-    }
 }
 
 // -----------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "TechnosoftIpos.hpp"
+#include "embedded-pid/TechnosoftIposEmbedded.hpp"
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
@@ -11,7 +11,7 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & val)
+bool TechnosoftIposEmbedded::getRemoteVariableRaw(std::string key, yarp::os::Bottle & val)
 {
     yCITrace(IPOS, id(), "%s: %s", key.c_str(), val.toString().c_str());
 
@@ -39,7 +39,7 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
     {
         yarp::os::Bottle & list = val.addList();
         list.addString("enable");
-        list.addInt8(vars.enableCsv);
+        list.addInt8(enableCsv);
         return true;
     }
 
@@ -49,7 +49,7 @@ bool TechnosoftIpos::getRemoteVariableRaw(std::string key, yarp::os::Bottle & va
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val)
+bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val)
 {
     yCITrace(IPOS, id(), "%s", key.c_str());
 
@@ -61,8 +61,8 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
             return false;
         }
 
-        // check on vars.requestedControlMode to avoid race conditions during mode switch
-        if (vars.actualControlMode == VOCAB_CM_POSITION_DIRECT || vars.requestedcontrolMode == VOCAB_CM_POSITION_DIRECT)
+        // check on requestedControlMode to avoid race conditions during mode switch
+        if (actualControlMode == VOCAB_CM_POSITION_DIRECT || requestedcontrolMode == VOCAB_CM_POSITION_DIRECT)
         {
             yCIError(IPOS, id()) << "Currently in posd mode, cannot change config params right now";
             return false;
@@ -90,7 +90,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
 
         if (dict->find("enable").asBool())
         {
-            ipBuffer = createInterpolationBuffer(val, vars);
+            ipBuffer = createInterpolationBuffer(val, samplingPeriod);
 
             if (!ipBuffer)
             {
@@ -118,15 +118,15 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
 
         bool requested = val.find("enable").asBool();
 
-        if (requested ^ vars.enableCsv)
+        if (requested ^ enableCsv)
         {
-            if (vars.actualControlMode == VOCAB_CM_VELOCITY)
+            if (actualControlMode == VOCAB_CM_VELOCITY)
             {
                 yCIError(IPOS, id()) << "Currently in vel mode, cannot change internal mode mapping right now";
                 return false;
             }
 
-            vars.enableCsv = requested;
+            enableCsv = requested;
         }
         else
         {
@@ -142,7 +142,7 @@ bool TechnosoftIpos::setRemoteVariableRaw(std::string key, const yarp::os::Bottl
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys)
+bool TechnosoftIposEmbedded::getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys)
 {
     yCITrace(IPOS, id());
 

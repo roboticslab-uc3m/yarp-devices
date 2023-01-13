@@ -1,7 +1,3 @@
-# Copyright: (C) 2017 Universidad Carlos III de Madrid
-# Author: Juan G. Victores & Raul de Santos Rico
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
 yarp_prepare_plugin(TechnosoftIpos
                     CATEGORY device
                     TYPE roboticslab::TechnosoftIpos
@@ -11,38 +7,67 @@ yarp_prepare_plugin(TechnosoftIpos
 
 if(NOT SKIP_TechnosoftIpos)
 
-    yarp_add_plugin(TechnosoftIpos TechnosoftIpos.hpp
-                                   TechnosoftIpos.cpp
-                                   TechnosoftIposEmcy.cpp
-                                   CommandBuffer.hpp
-                                   CommandBuffer.cpp
-                                   DeviceDriverImpl.cpp
-                                   IAxisInfoRawImpl.cpp
-                                   ICanBusSharerImpl.cpp
-                                   IControlLimitsRawImpl.cpp
-                                   IControlModeRawImpl.cpp
-                                   ICurrentControlRawImpl.cpp
-                                   IEncodersRawImpl.cpp
-                                   IJointFaultRawImpl.cpp
-                                   IMotorRawImpl.cpp
-                                   IMotorEncodersRawImpl.cpp
-                                   IPositionControlRawImpl.cpp
-                                   IPositionDirectRawImpl.cpp
-                                   IRemoteVariablesRawImpl.cpp
-                                   ITorqueControlRawImpl.cpp
-                                   IVelocityControlRawImpl.cpp
-                                   InterpolatedPositionBuffer.hpp
-                                   InterpolatedPositionBuffer.cpp
-                                   StateVariables.hpp
-                                   StateVariables.cpp
-                                   LogComponent.hpp
-                                   LogComponent.cpp)
+    yarp_add_plugin(TechnosoftIpos)
+
+    target_sources(TechnosoftIpos PRIVATE TechnosoftIpos.hpp
+                                          TechnosoftIpos.cpp
+                                          TechnosoftIposBase.hpp
+                                          TechnosoftIposBase.cpp
+                                          TechnosoftIposEmcy.hpp
+                                          TechnosoftIposEmcy.cpp
+                                          CommandBuffer.hpp
+                                          CommandBuffer.cpp
+                                          EncoderRead.hpp
+                                          EncoderRead.cpp
+                                          DeviceDriverImpl.cpp
+                                          IAxisInfoRawImpl.cpp
+                                          ICanBusSharerImpl.cpp
+                                          IControlLimitsRawImpl.cpp
+                                          ICurrentControlRawImpl.cpp
+                                          IEncodersRawImpl.cpp
+                                          IJointFaultRawImpl.cpp
+                                          IMotorRawImpl.cpp
+                                          IMotorEncodersRawImpl.cpp
+                                          ITorqueControlRawImpl.cpp
+                                          LogComponent.hpp
+                                          LogComponent.cpp)
+
+    target_sources(TechnosoftIpos PRIVATE embedded-pid/TechnosoftIposEmbedded.hpp
+                                          embedded-pid/TechnosoftIposEmbedded.cpp
+                                          embedded-pid/DeviceDriverImpl.cpp
+                                          embedded-pid/InterpolatedPositionBuffer.hpp
+                                          embedded-pid/InterpolatedPositionBuffer.cpp
+                                          embedded-pid/ICanBusSharerImpl.cpp
+                                          embedded-pid/IControlModeRawImpl.cpp
+                                          embedded-pid/IPositionControlRawImpl.cpp
+                                          embedded-pid/IPositionDirectRawImpl.cpp
+                                          embedded-pid/IRemoteVariablesRawImpl.cpp
+                                          embedded-pid/IVelocityControlRawImpl.cpp)
+
+    if(ENABLE_TrajectoryLib)
+        target_sources(TechnosoftIpos PRIVATE external-pid/TechnosoftIposExternal.hpp
+                                              external-pid/TechnosoftIposExternal.cpp
+                                              external-pid/DeviceDriverImpl.cpp
+                                              external-pid/ICanBusSharerImpl.cpp
+                                              external-pid/IControlModeRawImpl.cpp
+                                              external-pid/IImpedanceControlRawImpl.cpp
+                                              external-pid/IInteractionModeRawImpl.cpp
+                                              external-pid/IPidControlRawImpl.cpp
+                                              external-pid/IPositionControlRawImpl.cpp
+                                              external-pid/IPositionDirectRawImpl.cpp
+                                              external-pid/IVelocityControlRawImpl.cpp)
+
+        target_link_libraries(TechnosoftIpos ROBOTICSLAB::TrajectoryLib)
+        target_compile_definitions(TechnosoftIpos PRIVATE HAVE_EXTERNAL_PID_IMPL)
+    endif()
+
+    target_include_directories(TechnosoftIpos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
     target_link_libraries(TechnosoftIpos YARP::YARP_os
                                          YARP::YARP_dev
                                          ROBOTICSLAB::CanBusSharerLib
-                                         ROBOTICSLAB::StateObserverLib
-                                         ROBOTICSLAB::CanOpenNodeLib)
+                                         ROBOTICSLAB::CanOpenNodeLib
+                                         ROBOTICSLAB::StateObserverLib)
 
     yarp_install(TARGETS TechnosoftIpos
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}

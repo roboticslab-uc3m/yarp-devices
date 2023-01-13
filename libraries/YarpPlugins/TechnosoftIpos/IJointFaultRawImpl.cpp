@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "TechnosoftIpos.hpp"
+#include "TechnosoftIposBase.hpp"
 
 #include <yarp/os/Log.h>
 
@@ -10,12 +10,12 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getLastJointFaultRaw(int axis, int & fault, std::string & message)
+bool TechnosoftIposBase::getLastJointFaultRaw(int axis, int & fault, std::string & message)
 {
     yCITrace(IPOS, id(), "%d", axis);
     CHECK_JOINT(axis);
-    fault = vars.lastFaultCode;
-    message = vars.lastFaultMessage;
+    fault = lastFaultCode;
+    message = lastFaultMessage;
     return true;
 }
 

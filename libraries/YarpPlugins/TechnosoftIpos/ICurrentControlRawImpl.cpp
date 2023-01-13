@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "TechnosoftIpos.hpp"
+#include "TechnosoftIposBase.hpp"
 
 #include <yarp/os/Log.h>
 
@@ -10,45 +10,31 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getCurrentRaw(int m, double * curr)
+bool TechnosoftIposBase::getCurrentRaw(int m, double * curr)
 {
     yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
-    std::int16_t temp = vars.lastCurrentRead;
-    *curr = vars.internalUnitsToCurrent(temp);
+    std::int16_t temp = lastCurrentRead;
+    *curr = internalUnitsToCurrent(temp);
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getCurrentsRaw(double * currs)
-{
-    return getCurrentRaw(0, &currs[0]);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::getCurrentRangeRaw(int m, double * min, double * max)
+bool TechnosoftIposBase::getCurrentRangeRaw(int m, double * min, double * max)
 {
     yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
 
     return can->sdo()->upload<std::uint16_t>("Current limit", [this, min, max](auto data)
-        { *max = vars.internalUnitsToPeakCurrent(data);
+        { *max = internalUnitsToPeakCurrent(data);
           *min = -(*max); },
         0x207F);
 }
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::getCurrentRangesRaw(double * min, double * max)
-{
-    return getCurrentRangeRaw(0, min, max);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::setRefCurrentRaw(int m, double curr)
+bool TechnosoftIposBase::setRefCurrentRaw(int m, double curr)
 {
     yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
@@ -59,34 +45,13 @@ bool TechnosoftIpos::setRefCurrentRaw(int m, double curr)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIpos::setRefCurrentsRaw(const double * currs)
-{
-    return setRefCurrentRaw(0, currs[0]);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::setRefCurrentsRaw(int n_motor, const int * motors, const double * currs)
-{
-    return setRefCurrentRaw(motors[0], currs[0]);
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::getRefCurrentRaw(int m, double * curr)
+bool TechnosoftIposBase::getRefCurrentRaw(int m, double * curr)
 {
     yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
     CHECK_MODE(VOCAB_CM_CURRENT);
     *curr = commandBuffer.getStoredCommand();
     return true;
-}
-
-// -----------------------------------------------------------------------------
-
-bool TechnosoftIpos::getRefCurrentsRaw(double * currs)
-{
-    return getRefCurrentRaw(0, &currs[0]);
 }
 
 // -----------------------------------------------------------------------------
