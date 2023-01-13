@@ -20,10 +20,11 @@ bool TechnosoftIposExternal::positionMoveRaw(int j, double ref)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
+    double now = yarp::os::SystemClock::nowSystem();
     double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
     double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
 
-    trapTrajectory.setTargetPosition(yarp::os::SystemClock::nowSystem(), initialPosition, initialVelocity, ref, refSpeed, refAcceleration);
+    trapTrajectory.setTargetPosition(now, initialPosition, initialVelocity, ref, refSpeed, refAcceleration);
     return true;
 }
 

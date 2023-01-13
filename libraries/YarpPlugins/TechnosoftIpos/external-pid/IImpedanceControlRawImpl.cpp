@@ -29,15 +29,15 @@ bool TechnosoftIposExternal::setImpedanceRaw(int j, double stiffness, double dam
     yCITrace(IPOS, id(), "%d %f %f", j, stiffness, damping);
     CHECK_JOINT(j);
 
-    if (stiffness < minImpedanceStiffness || stiffness > maxImpedanceStiffness)
+    if (stiffness < minStiffness || stiffness > maxStiffness)
     {
-        yCIError(IPOS, id(), "Invalid stiffness: %f (not in [%f, %f])", stiffness, minImpedanceStiffness, maxImpedanceStiffness);
+        yCIError(IPOS, id(), "Invalid stiffness: %f (not in [%f, %f])", stiffness, minStiffness, maxStiffness);
         return false;
     }
 
-    if (damping < minImpedanceDamping || damping > maxImpedanceDamping)
+    if (damping < minDamping || damping > maxDamping)
     {
-        yCIError(IPOS, id(), "Invalid damping: %f (not in [%f, %f])", damping, minImpedanceDamping, maxImpedanceDamping);
+        yCIError(IPOS, id(), "Invalid damping: %f (not in [%f, %f])", damping, minDamping, maxDamping);
         return false;
     }
 
@@ -80,10 +80,10 @@ bool TechnosoftIposExternal::getCurrentImpedanceLimitRaw(int j, double * min_sti
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
 
-    *min_stiff = minImpedanceStiffness;
-    *max_stiff = maxImpedanceStiffness;
-    *min_damp = minImpedanceDamping;
-    *max_damp = maxImpedanceDamping;
+    *min_stiff = minStiffness;
+    *max_stiff = maxStiffness;
+    *min_damp = minDamping;
+    *max_damp = maxDamping;
 
     return true;
 }

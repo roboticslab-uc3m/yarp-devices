@@ -92,10 +92,10 @@ private:
     yarp::conf::vocab32_t initialInteractionMode {0};
     std::atomic<yarp::dev::InteractionModeEnum> actualInteractionMode {yarp::dev::InteractionModeEnum::VOCAB_IM_UNKNOWN};
 
-    double minImpedanceStiffness {0.0};
-    double maxImpedanceStiffness {0.0};
-    double minImpedanceDamping {0.0};
-    double maxImpedanceDamping {0.0};
+    double minStiffness {0.0};
+    double maxStiffness {0.0};
+    double minDamping {0.0};
+    double maxDamping {0.0};
 
     std::mutex pidMutex;
 
@@ -104,7 +104,7 @@ private:
     yarp::dev::Pid impedancePid;
 
     double positionReference {0.0};
-    double positionErrorLimit {0.0};
+    double errorLimit {0.0};
     double proportionalError {0.0};
     double integralError {0.0};
 

@@ -33,24 +33,24 @@ bool TechnosoftIposExternal::open(yarp::os::Searchable & config)
     initialInteractionMode = iposGroup.check("initialInteractionMode", yarp::os::Value(yarp::dev::InteractionModeEnum::VOCAB_IM_UNKNOWN),
         "initial YARP interaction mode vocab").asVocab32();
 
-    auto impedanceStiffness = iposGroup.check("impedanceStiffness", yarp::os::Value(0.0), "impedance stiffness (Nm)").asFloat64();
-    auto impedanceDamping = iposGroup.check("impedanceDamping", yarp::os::Value(0.0), "impedance damping (Nm*seconds)").asFloat64();
+    auto stiffness = iposGroup.check("stiffness", yarp::os::Value(0.0), "impedance stiffness (Nm)").asFloat64();
+    auto damping = iposGroup.check("damping", yarp::os::Value(0.0), "impedance damping (Nm*seconds)").asFloat64();
     auto impedanceOffset = iposGroup.check("impedanceOffset", yarp::os::Value(0.0), "impedance offset").asFloat64();
 
-    minImpedanceStiffness = iposGroup.check("minImpedanceStiffness", yarp::os::Value(0.0), "minimum impedance stiffness (Nm)").asFloat64();
-    maxImpedanceStiffness = iposGroup.check("maxImpedanceStiffness", yarp::os::Value(0.0), "maximum impedance stiffness (Nm)").asFloat64();
-    minImpedanceDamping = iposGroup.check("minImpedanceDamping", yarp::os::Value(0.0), "minimum impedance damping (Nm*seconds)").asFloat64();
-    maxImpedanceDamping = iposGroup.check("maxImpedanceDamping", yarp::os::Value(0.0), "maximum impedance damping (Nm*seconds)").asFloat64();
+    minStiffness = iposGroup.check("minStiffness", yarp::os::Value(0.0), "minimum impedance stiffness (Nm)").asFloat64();
+    maxStiffness = iposGroup.check("maxStiffness", yarp::os::Value(0.0), "maximum impedance stiffness (Nm)").asFloat64();
+    minDamping = iposGroup.check("minDamping", yarp::os::Value(0.0), "minimum impedance damping (Nm*seconds)").asFloat64();
+    maxDamping = iposGroup.check("maxDamping", yarp::os::Value(0.0), "maximum impedance damping (Nm*seconds)").asFloat64();
 
-    if (impedanceStiffness < minImpedanceStiffness || impedanceStiffness > maxImpedanceStiffness)
+    if (stiffness < minStiffness || stiffness > maxStiffness)
     {
-        yCIError(IPOS, id(), "Invalid stiffness: %f (not in [%f, %f])", impedanceStiffness, minImpedanceStiffness, maxImpedanceStiffness);
+        yCIError(IPOS, id(), "Invalid stiffness: %f (not in [%f, %f])", stiffness, minStiffness, maxStiffness);
         return false;
     }
 
-    if (impedanceDamping < minImpedanceDamping || impedanceDamping > maxImpedanceDamping)
+    if (damping < minDamping || damping > maxDamping)
     {
-        yCIError(IPOS, id(), "Invalid damping: %f (not in [%f, %f])", impedanceDamping, minImpedanceDamping, maxImpedanceDamping);
+        yCIError(IPOS, id(), "Invalid damping: %f (not in [%f, %f])", damping, minDamping, maxDamping);
         return false;
     }
 
@@ -60,39 +60,39 @@ bool TechnosoftIposExternal::open(yarp::os::Searchable & config)
         return false;
     }
 
-    auto positionKp = iposGroup.check("positionKp", yarp::os::Value(0.0), "position PID Kp").asFloat64();
-    auto positionKi = iposGroup.check("positionKi", yarp::os::Value(0.0), "position PID Ki").asFloat64();
-    auto positionKd = iposGroup.check("positionKd", yarp::os::Value(0.0), "position PID Kd").asFloat64();
-    auto positionMaxInt = iposGroup.check("positionMaxInt", yarp::os::Value(0.0), "position PID saturation threshold").asFloat64();
-    auto positionMaxOutput = iposGroup.check("positionMaxOutput", yarp::os::Value(0.0), "position PID maximum output").asFloat64();
-    auto positionOffset = iposGroup.check("positionOffset", yarp::os::Value(0.0), "position PID offset").asFloat64();
-    auto positionScale = iposGroup.check("positionScale", yarp::os::Value(1.0), "position PID scale").asFloat64();
-    auto positionStictionUp = iposGroup.check("positionStictionUp", yarp::os::Value(0.0), "position PID stiction up").asFloat64();
-    auto positionStictionDown = iposGroup.check("positionStictionDown", yarp::os::Value(0.0), "position PID stiction down").asFloat64();
-    auto positionKff = iposGroup.check("positionKff", yarp::os::Value(0.0), "position PID feed-forward").asFloat64();
+    auto kp = iposGroup.check("kp", yarp::os::Value(0.0), "position PID Kp").asFloat64();
+    auto ki = iposGroup.check("ki", yarp::os::Value(0.0), "position PID Ki").asFloat64();
+    auto kd = iposGroup.check("kd", yarp::os::Value(0.0), "position PID Kd").asFloat64();
+    auto maxInt = iposGroup.check("maxInt", yarp::os::Value(0.0), "position PID saturation threshold").asFloat64();
+    auto maxOutput = iposGroup.check("maxOutput", yarp::os::Value(0.0), "position PID maximum output").asFloat64();
+    auto offset = iposGroup.check("offset", yarp::os::Value(0.0), "position PID offset").asFloat64();
+    auto scale = iposGroup.check("scale", yarp::os::Value(1.0), "position PID scale").asFloat64();
+    auto stictionUp = iposGroup.check("stictionUp", yarp::os::Value(0.0), "position PID stiction up").asFloat64();
+    auto stictionDown = iposGroup.check("stictionDown", yarp::os::Value(0.0), "position PID stiction down").asFloat64();
+    auto kff = iposGroup.check("kff", yarp::os::Value(0.0), "position PID feed-forward").asFloat64();
 
-    positionPid.setKp(positionKp);
-    positionPid.setKi(positionKi);
-    positionPid.setKd(positionKd);
-    positionPid.setMaxInt(positionMaxInt);
-    positionPid.setMaxOut(positionMaxOutput);
-    positionPid.setOffset(positionOffset);
-    positionPid.setScale(positionScale);
-    positionPid.setStictionValues(positionStictionUp, positionStictionDown);
-    positionPid.setKff(positionKff);
+    positionPid.setKp(kp);
+    positionPid.setKi(ki);
+    positionPid.setKd(kd);
+    positionPid.setMaxInt(maxInt);
+    positionPid.setMaxOut(maxOutput);
+    positionPid.setOffset(offset);
+    positionPid.setScale(scale);
+    positionPid.setStictionValues(stictionUp, stictionDown);
+    positionPid.setKff(kff);
 
-    impedancePid.setKp(impedanceStiffness);
-    impedancePid.setKd(impedanceDamping);
-    impedancePid.setMaxOut(positionMaxOutput); // re-use
+    impedancePid.setKp(stiffness);
+    impedancePid.setKd(damping);
+    impedancePid.setMaxOut(maxOutput); // re-use
     impedancePid.setOffset(impedanceOffset);
     impedancePid.setScale(1.0);
-    impedancePid.setStictionValues(positionStictionUp, positionStictionDown); // re-use
+    impedancePid.setStictionValues(stictionUp, stictionDown); // re-use
 
-    positionErrorLimit = iposGroup.check("positionErrorLimit", yarp::os::Value(0.0), "position PID error limit (degrees)").asFloat64();
+    errorLimit = iposGroup.check("errorLimit", yarp::os::Value(0.0), "position PID error limit (degrees)").asFloat64();
 
-    if (positionErrorLimit < 0.0)
+    if (errorLimit < 0.0)
     {
-        yCIError(IPOS, id()) << "Illegal position error limit:" << positionErrorLimit;
+        yCIError(IPOS, id()) << "Illegal position error limit:" << errorLimit;
         return false;
     }
 
