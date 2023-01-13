@@ -55,6 +55,8 @@ bool TechnosoftIposExternal::setControlModeRaw(int j, int mode)
         }
         // no break
     case VOCAB_CM_IDLE:
+        trapTrajectory.reset(internalUnitsToDegrees(lastEncoderRead->queryPosition())); // reset stored velocity reference
+
         return can->driveStatus()->requestState(DriveState::SWITCHED_ON)
             && can->sdo()->download<std::int8_t>("Modes of Operation", 0, 0x6060) // reset drive mode
             && can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)); // disable ext. ref. torque mode
