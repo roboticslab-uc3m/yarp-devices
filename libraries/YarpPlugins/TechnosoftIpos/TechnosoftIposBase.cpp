@@ -212,7 +212,7 @@ void TechnosoftIposBase::interpretStatusword(std::uint16_t statusword)
             "Remote – drive is in local mode and will not execute the command message.");
 
     if (reportBitToggle(report, INFO, 10, "Target reached.")
-        && actualControlMode == VOCAB_CM_POSITION // does not work on velocity profile mode
+        && modesOfOperation == 1 // profile position; does not work on profile velocity mode
         && can->driveStatus()->controlword()[8]
         && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)))
     {
