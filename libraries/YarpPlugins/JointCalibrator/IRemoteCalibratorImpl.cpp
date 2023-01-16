@@ -7,6 +7,7 @@
 #include <numeric>
 
 #include <yarp/os/LogStream.h>
+#include <yarp/os/SystemClock.h>
 
 #include "LogComponent.hpp"
 
@@ -106,12 +107,17 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
         return false;
     }
 
+    if (!isBlocking)
+    {
+        return true;
+    }
+
     bool ok = true;
     bool done = false;
 
     do
     {
-        yarp::os::Time::delay(MOTION_CHECK_INTERVAL);
+        yarp::os::SystemClock::delaySystem(MOTION_CHECK_INTERVAL);
 
         if (!iPositionControl->checkMotionDone(ids.size(), ids.data(), &done))
         {

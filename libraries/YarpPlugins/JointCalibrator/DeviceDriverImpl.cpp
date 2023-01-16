@@ -39,6 +39,7 @@ namespace
 bool JointCalibrator::open(yarp::os::Searchable & config)
 {
     axes = config.check("joints", yarp::os::Value(0), "number of controlled axes").asInt32();
+    isBlocking = config.check("block", yarp::os::Value(false), "commands should block").asBool();
 
     if (axes == 0)
     {

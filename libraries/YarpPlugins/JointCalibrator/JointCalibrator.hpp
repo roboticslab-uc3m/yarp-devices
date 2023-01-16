@@ -64,6 +64,7 @@ private:
     bool move(const std::vector<int> & joints, const MovementSpecs & specs);
 
     int axes;
+    bool isBlocking;
 
     MovementSpecs homeSpecs;
     MovementSpecs parkSpecs;
