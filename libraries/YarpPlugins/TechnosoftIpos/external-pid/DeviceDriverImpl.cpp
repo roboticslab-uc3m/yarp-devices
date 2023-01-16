@@ -24,12 +24,6 @@ bool TechnosoftIposExternal::open(yarp::os::Searchable & config)
 
     iposGroup.fromString(config.toString(), false); // override common options
 
-    if (!config.check("syncPeriod"))
-    {
-        yCIError(IPOS, id()) << "Missing mandatory --syncPeriod parameter";
-        return false;
-    }
-
     initialInteractionMode = iposGroup.check("initialInteractionMode", yarp::os::Value(yarp::dev::InteractionModeEnum::VOCAB_IM_UNKNOWN),
         "initial YARP interaction mode vocab").asVocab32();
 
@@ -44,19 +38,19 @@ bool TechnosoftIposExternal::open(yarp::os::Searchable & config)
 
     if (stiffness < minStiffness || stiffness > maxStiffness)
     {
-        yCIError(IPOS, id(), "Invalid stiffness: %f (not in [%f, %f])", stiffness, minStiffness, maxStiffness);
+        yCError(IPOS, "Invalid stiffness: %f (not in [%f, %f])", stiffness, minStiffness, maxStiffness);
         return false;
     }
 
     if (damping < minDamping || damping > maxDamping)
     {
-        yCIError(IPOS, id(), "Invalid damping: %f (not in [%f, %f])", damping, minDamping, maxDamping);
+        yCError(IPOS, "Invalid damping: %f (not in [%f, %f])", damping, minDamping, maxDamping);
         return false;
     }
 
     if (impedanceOffset < 0.0)
     {
-        yCIError(IPOS, id()) << "Illegal offset:" << impedanceOffset;
+        yCError(IPOS) << "Illegal offset:" << impedanceOffset;
         return false;
     }
 
@@ -90,9 +84,9 @@ bool TechnosoftIposExternal::open(yarp::os::Searchable & config)
 
     errorLimit = iposGroup.check("errorLimit", yarp::os::Value(0.0), "position PID error limit (degrees)").asFloat64();
 
-    if (errorLimit < 0.0)
+    if (errorLimit <= 0.0)
     {
-        yCIError(IPOS, id()) << "Illegal position error limit:" << errorLimit;
+        yCError(IPOS) << "Illegal position error limit:" << errorLimit;
         return false;
     }
 
