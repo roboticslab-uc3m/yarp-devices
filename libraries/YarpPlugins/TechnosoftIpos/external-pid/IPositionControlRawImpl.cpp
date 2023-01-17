@@ -20,11 +20,10 @@ bool TechnosoftIposExternal::positionMoveRaw(int j, double ref)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    double now = yarp::os::SystemClock::nowSystem();
-    double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
-    double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
+    trajectory.setTargetPosition(yarp::os::SystemClock::nowSystem(),
+                                 trajectory.queryPosition(), trajectory.queryVelocity(),
+                                 ref, refSpeed, refAcceleration);
 
-    trapTrajectory.setTargetPosition(now, initialPosition, initialVelocity, ref, refSpeed, refAcceleration);
     return true;
 }
 
@@ -36,11 +35,10 @@ bool TechnosoftIposExternal::relativeMoveRaw(int j, double delta)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    double now = yarp::os::SystemClock::nowSystem();
-    double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
-    double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
+    trajectory.setTargetPosition(yarp::os::SystemClock::nowSystem(),
+                                 trajectory.queryPosition(), trajectory.queryVelocity(),
+                                 trajectory.queryPosition() + delta, refSpeed, refAcceleration);
 
-    trapTrajectory.setTargetPosition(now, initialPosition, initialVelocity, initialPosition + delta, refSpeed, refAcceleration);
     return true;
 }
 
@@ -50,7 +48,7 @@ bool TechnosoftIposExternal::checkMotionDoneRaw(int j, bool * flag)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-    *flag = !trapTrajectory.isActive();
+    *flag = !trajectory.isActive();
     return true;
 }
 
@@ -72,13 +70,11 @@ bool TechnosoftIposExternal::setRefSpeedRaw(int j, double sp)
         return false;
     }
 
-    if (trapTrajectory.isActive())
+    if (trajectory.isActive())
     {
-        double now = yarp::os::SystemClock::nowSystem();
-        double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
-        double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
-
-        trapTrajectory.setTargetPosition(now, initialPosition, initialVelocity, trapTrajectory.getTargetPosition(), sp, refAcceleration);
+        trajectory.setTargetPosition(yarp::os::SystemClock::nowSystem(),
+                                     trajectory.queryPosition(), trajectory.queryVelocity(),
+                                     trajectory.getTargetPosition(), sp, refAcceleration);
     }
 
     refSpeed = sp;
@@ -98,13 +94,11 @@ bool TechnosoftIposExternal::setRefAccelerationRaw(int j, double acc)
         return false;
     }
 
-    if (trapTrajectory.isActive())
+    if (trajectory.isActive())
     {
-        double now = yarp::os::SystemClock::nowSystem();
-        double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
-        double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
-
-        trapTrajectory.setTargetPosition(now, initialPosition, initialVelocity, trapTrajectory.getTargetPosition(), refSpeed, acc);
+        trajectory.setTargetPosition(yarp::os::SystemClock::nowSystem(),
+                                     trajectory.queryPosition(), trajectory.queryVelocity(),
+                                     trajectory.getTargetPosition(), refSpeed, acc);
     }
 
     refAcceleration = acc;
@@ -143,13 +137,11 @@ bool TechnosoftIposExternal::stopRaw(int j)
         return false;
     }
 
-    if (trapTrajectory.isActive())
+    if (trajectory.isActive())
     {
-        double now = yarp::os::SystemClock::nowSystem();
-        double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
-        double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
-
-        trapTrajectory.setTargetVelocity(now, initialPosition, initialVelocity, 0.0, refAcceleration);
+        trajectory.setTargetVelocity(yarp::os::SystemClock::nowSystem(),
+                                     trajectory.queryPosition(), trajectory.queryVelocity(),
+                                     0.0, refAcceleration);
     }
 
     return true;
@@ -161,7 +153,7 @@ bool TechnosoftIposExternal::getTargetPositionRaw(int joint, double * ref)
 {
     yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
-    *ref = trapTrajectory.getTargetPosition();
+    *ref = trajectory.getTargetPosition();
     return true;
 }
 

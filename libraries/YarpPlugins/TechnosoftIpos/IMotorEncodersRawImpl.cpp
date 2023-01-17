@@ -52,7 +52,7 @@ bool TechnosoftIposBase::setMotorEncoderRaw(int m, double val)
     CHECK_JOINT(m);
     std::int32_t data = reverse ? -val : val;
 
-    if (!can->sdo()->download("Set actual position", data, 0X2081))
+    if (!can->sdo()->download("Set actual position", data, 0x2081))
     {
         return false;
     }

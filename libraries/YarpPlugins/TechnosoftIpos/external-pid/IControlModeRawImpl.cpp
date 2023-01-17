@@ -37,7 +37,7 @@ bool TechnosoftIposExternal::setControlModeRaw(int j, int mode)
     {
     case VOCAB_CM_POSITION:
     case VOCAB_CM_VELOCITY:
-        trapTrajectory.reset(internalUnitsToDegrees(lastEncoderRead->queryPosition()));
+        trajectory.reset(internalUnitsToDegrees(lastEncoderRead->queryPosition()));
         resetPidRaw(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, 0);
         break;
     case VOCAB_CM_POSITION_DIRECT:
@@ -55,8 +55,6 @@ bool TechnosoftIposExternal::setControlModeRaw(int j, int mode)
         }
         // no break
     case VOCAB_CM_IDLE:
-        trapTrajectory.reset(internalUnitsToDegrees(lastEncoderRead->queryPosition())); // reset stored velocity reference
-
         return can->driveStatus()->requestState(DriveState::SWITCHED_ON)
             && can->sdo()->download<std::int8_t>("Modes of Operation", 0, 0x6060) // reset drive mode
             && can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)); // disable ext. ref. torque mode
@@ -78,13 +76,30 @@ bool TechnosoftIposExternal::setControlModeRaw(int j, int mode)
         PdoConfiguration rpdo3conf;
         rpdo3conf.setTransmissionType(PdoTransmissionType::SYNCHRONOUS_CYCLIC);
 
-        return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
+        bool ret = can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
             && can->rpdo3()->configure(rpdo3conf.addMapping<std::int32_t>(0x201C))
             && can->sdo()->download<std::uint16_t>("External Reference Type", 1, 0x201D)
             && can->sdo()->download<std::int8_t>("Modes of Operation", -5, 0x6060)
             // configure new setpoint (4: enable ext. ref. torque mode), reset other mode-specific bits (5-6) and halt bit (8)
             && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).reset(5).reset(6).reset(8))
             && awaitControlMode(mode);
+
+        // the point of the following instructions is to refresh the position reference as close to the command loop (in
+        // synchronize()) as possible; without this, the motor may jolt right after the transition from idle to command mode
+
+        if (ret) // successfully updated `actualControlMode`
+        {
+            if (mode == VOCAB_CM_POSITION || mode == VOCAB_CM_VELOCITY)
+            {
+                trajectory.reset(internalUnitsToDegrees(lastEncoderRead->queryPosition()));
+            }
+            else if (mode == VOCAB_CM_POSITION_DIRECT)
+            {
+                commandBuffer.reset(internalUnitsToDegrees(lastEncoderRead->queryPosition()));
+            }
+        }
+
+        return ret;
     }
 }
 

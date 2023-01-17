@@ -2,7 +2,7 @@
 
 #include "external-pid/TechnosoftIposExternal.hpp"
 
-#include <cmath>
+#include <cmath> // std::abs
 
 #include <algorithm> // std::clamp
 
@@ -29,10 +29,10 @@ bool TechnosoftIposExternal::velocityMoveRaw(int j, double sp)
         sp = std::clamp(sp, -maxVel, maxVel);
     }
 
-    double initialPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
-    double initialVelocity = internalUnitsToDegrees(lastEncoderRead->querySpeed(), 1);
+    trajectory.setTargetVelocity(yarp::os::SystemClock::nowSystem(),
+                                 trajectory.queryPosition(), trajectory.queryVelocity(),
+                                 sp, refAcceleration);
 
-    trapTrajectory.setTargetVelocity(yarp::os::SystemClock::nowSystem(), initialPosition, initialVelocity, sp, refAcceleration);
     return true;
 }
 
@@ -43,7 +43,7 @@ bool TechnosoftIposExternal::getRefVelocityRaw(int joint, double * vel)
     yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_VELOCITY);
-    *vel = trapTrajectory.queryVelocity();
+    *vel = trajectory.queryVelocity();
     return true;
 }
 

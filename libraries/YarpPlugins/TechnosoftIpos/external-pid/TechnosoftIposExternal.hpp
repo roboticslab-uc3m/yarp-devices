@@ -108,7 +108,7 @@ private:
     double proportionalError {0.0};
     double integralError {0.0};
 
-    TrapezoidalTrajectory trapTrajectory;
+    TrapezoidalTrajectory trajectory;
 };
 
 } // namespace roboticslab
