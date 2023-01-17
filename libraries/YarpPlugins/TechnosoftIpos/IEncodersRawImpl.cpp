@@ -33,7 +33,7 @@ bool TechnosoftIposBase::setEncoderRaw(int j, double val)
     CHECK_JOINT(j);
     std::int32_t data = degreesToInternalUnits(val);
 
-    if (!can->sdo()->download("Set actual position", data, 0X2081))
+    if (!can->sdo()->download("Set actual position", data, 0x2081))
     {
         return false;
     }
