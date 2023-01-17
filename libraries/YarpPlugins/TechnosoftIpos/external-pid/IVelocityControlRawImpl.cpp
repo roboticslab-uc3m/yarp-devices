@@ -29,8 +29,13 @@ bool TechnosoftIposExternal::velocityMoveRaw(int j, double sp)
         sp = std::clamp(sp, -maxVel, maxVel);
     }
 
+    double initialPosition = trajectory.isActive()
+        ? trajectory.queryPosition()
+        // account for any minimal displacements that can occur between mode change and the first command
+        : internalUnitsToDegrees(lastEncoderRead->queryPosition());
+
     trajectory.setTargetVelocity(yarp::os::SystemClock::nowSystem(),
-                                 trajectory.queryPosition(), trajectory.queryVelocity(),
+                                 initialPosition, trajectory.queryVelocity(),
                                  sp, refAcceleration);
 
     return true;
