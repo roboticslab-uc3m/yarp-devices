@@ -20,13 +20,8 @@ bool TechnosoftIposExternal::positionMoveRaw(int j, double ref)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    double initialPosition = trajectory.isActive()
-        ? trajectory.queryPosition()
-        // account for any minimal displacements that can occur between mode change and the first command
-        : internalUnitsToDegrees(lastEncoderRead->queryPosition());
-
     trajectory.setTargetPosition(yarp::os::SystemClock::nowSystem(),
-                                 initialPosition, trajectory.queryVelocity(),
+                                 trajectory.queryPosition(), trajectory.queryVelocity(),
                                  ref, refSpeed, refAcceleration);
 
     return true;
@@ -40,13 +35,8 @@ bool TechnosoftIposExternal::relativeMoveRaw(int j, double delta)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    double initialPosition = trajectory.isActive()
-        ? trajectory.queryPosition()
-        // account for any minimal displacements that can occur between mode change and the first command
-        : internalUnitsToDegrees(lastEncoderRead->queryPosition());
-
     trajectory.setTargetPosition(yarp::os::SystemClock::nowSystem(),
-                                 initialPosition, trajectory.queryVelocity(),
+                                 trajectory.queryPosition(), trajectory.queryVelocity(),
                                  trajectory.queryPosition() + delta, refSpeed, refAcceleration);
 
     return true;
