@@ -50,9 +50,9 @@ bool JointCalibrator::open(yarp::os::Searchable & config)
     return checkAndSet(axes, config, homeSpecs.pos, "home", "homes", "zero position (degrees)")
             && checkAndSet(axes, config, homeSpecs.vel, "homeVel", "homeVels", "zero velocity (degrees/second)")
             && checkAndSet(axes, config, homeSpecs.acc, "homeAcc", "homeAccs", "zero acceleration (degrees/second^2)")
-            && checkAndSet(axes, config, parkSpecs.pos, "park", "parks", "zero position (degrees)")
-            && checkAndSet(axes, config, parkSpecs.vel, "parkVel", "parkVels", "zero velocity (degrees/second)")
-            && checkAndSet(axes, config, parkSpecs.acc, "parkAcc", "parkAccs", "zero acceleration (degrees/second^2)");
+            && checkAndSet(axes, config, parkSpecs.pos, "park", "parks", "park position (degrees)")
+            && checkAndSet(axes, config, parkSpecs.vel, "parkVel", "parkVels", "park velocity (degrees/second)")
+            && checkAndSet(axes, config, parkSpecs.acc, "parkAcc", "parkAccs", "park acceleration (degrees/second^2)");
 }
 
 bool JointCalibrator::close()
