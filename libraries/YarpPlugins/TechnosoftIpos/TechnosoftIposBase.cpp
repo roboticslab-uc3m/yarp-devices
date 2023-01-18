@@ -350,7 +350,7 @@ void TechnosoftIposBase::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg,
         break;
     }
     default:
-        yCIWarning(IPOS, id()) << emcyMessage;
+        yCIWarning(IPOS, id()) << "[EMCY]" << emcyMessage;
         break;
     }
 }
