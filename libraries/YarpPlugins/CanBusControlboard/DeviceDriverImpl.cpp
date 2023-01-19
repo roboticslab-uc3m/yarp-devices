@@ -195,7 +195,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
     {
         auto * iCanBusSharer = rawDevice->castToType<ICanBusSharer>();
 
-        if (!iCanBusSharer->initialize())
+        if (iCanBusSharer && !iCanBusSharer->initialize())
         {
             yCError(CBCB) << "Node device id" << iCanBusSharer->getId() << "could not initialize CAN comms";
         }
