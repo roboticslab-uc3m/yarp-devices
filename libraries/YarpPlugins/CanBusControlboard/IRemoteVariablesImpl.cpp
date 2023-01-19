@@ -2,9 +2,8 @@
 
 #include "CanBusControlboard.hpp"
 
-#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
-#include "ICanBusSharer.hpp"
 #include "LogComponent.hpp"
 
 using namespace roboticslab;
@@ -17,7 +16,7 @@ namespace
     {
         if (val.size() != 2 || !val.get(0).isString() || !val.get(1).isList())
         {
-            yCError(CBCB, "Illegal bottle format, expected string key and list value");
+            yCError(CBCB) << "Illegal bottle format, expected string key and list value";
             return false;
         }
 
@@ -26,9 +25,9 @@ namespace
 
         for (const auto & [rawDevice, offset] : mapper.getDevicesWithOffsets())
         {
-            auto * iCanBusSharer = rawDevice->castToType<ICanBusSharer>();
+            const auto id = rawDevice->getId();
 
-            if (setAll || key == "id" + std::to_string(iCanBusSharer->getId()))
+            if (!id.empty() && (setAll || key == id))
             {
                 auto * p = rawDevice->getHandle<yarp::dev::IRemoteVariablesRaw>();
 
@@ -36,11 +35,11 @@ namespace
                 {
                     if (!setAll)
                     {
-                        yCError(CBCB, "Unsupported interface: \"%s\"", key.c_str());
+                        yCError(CBCB) << "Unsupported interface:" << key;
                         return false;
                     }
 
-                    yCWarning(CBCB, "Unsupported interface: \"id%d\"", iCanBusSharer->getId());
+                    yCWarning(CBCB) << "Unsupported interface:" << id;
                 }
                 else if (!p->setRemoteVariableRaw(val.get(0).asString(), *val.get(1).asList()))
                 {
@@ -49,7 +48,7 @@ namespace
                         return false;
                     }
 
-                    yCWarning(CBCB, "Request failed: \"id%d\"", iCanBusSharer->getId());
+                    yCWarning(CBCB) << "Request failed:" << id;
                     allOk = false;
                 }
                 else if (!setAll)
@@ -61,7 +60,7 @@ namespace
 
         if (!setAll)
         {
-            yCError(CBCB, "Node \"%s\" not found, type e.g. \"id19\" or \"all\"", key.c_str());
+            yCError(CBCB) << "Node" << key << "not found, type e.g. \"ID19\" or \"all\"";
             return false;
         }
 
@@ -80,17 +79,17 @@ bool CanBusControlboard::getRemoteVariable(std::string key, yarp::os::Bottle & v
 
     for (const auto & [rawDevice, offset] : deviceMapper.getDevicesWithOffsets())
     {
-        auto * iCanBusSharer = rawDevice->castToType<ICanBusSharer>();
+        const auto id = rawDevice->getId();
         yarp::os::Bottle & nodeVal = queryAll ? val.addList() : val;
 
-        if (queryAll || key == "id" + std::to_string(iCanBusSharer->getId()))
+        if (!id.empty() && (queryAll || key == id))
         {
             auto * p = rawDevice->getHandle<yarp::dev::IRemoteVariablesRaw>();
             yarp::os::Bottle b;
 
             if (p && p->getRemoteVariablesListRaw(&b))
             {
-                nodeVal.addString("id" + std::to_string(iCanBusSharer->getId()));
+                nodeVal.addString(id);
                 bool ok = true;
 
                 for (int j = 0; j < b.size(); j++)
@@ -106,19 +105,19 @@ bool CanBusControlboard::getRemoteVariable(std::string key, yarp::os::Bottle & v
 
             if (!queryAll)
             {
-                yCError(CBCB, "Unsupported interface: \"%s\"", key.c_str());
+                yCError(CBCB) << "Unsupported interface:" << key;
                 return false;
             }
             else if (!p)
             {
-                yCWarning(CBCB, "Unsupported interface: \"id%d\"", iCanBusSharer->getId());
+                yCWarning(CBCB) << "Unsupported interface:" << id;
             }
         }
     }
 
     if (!queryAll)
     {
-        yCError(CBCB, "Node \"%s\" not found, type e.g. \"id19\" or \"all\"", key.c_str());
+        yCError(CBCB) << "Node" << key << "not found, type e.g. \"ID19\" or \"all\"";
         return false;
     }
 
@@ -139,7 +138,7 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
         {
             if (!val.get(i).isList())
             {
-                yCError(CBCB, "Not a list: %s", val.get(i).toString().c_str());
+                yCError(CBCB) << "Not a list:", val.get(i).toString();
                 return false;
             }
 
@@ -147,13 +146,13 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
 
             if (b->size() != 2 || !b->get(0).isString() || !b->get(1).isList())
             {
-                yCError(CBCB, "Illegal bottle format, expected string key and list value: %s", b->toString().c_str());
+                yCError(CBCB) << "Illegal bottle format, expected string key and list value:" << b->toString();
                 return false;
             }
 
             if (b->get(0).asString() == "all")
             {
-                yCError(CBCB, "Cannot set all node vars in multi mode");
+                yCError(CBCB) << "Cannot set all node vars in multi mode";
                 return false;
             }
 
@@ -165,7 +164,7 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
 
     if (val.size() == 0)
     {
-        yCError(CBCB, "Empty value list");
+        yCError(CBCB) << "Empty value list";
         return false;
     }
 
@@ -177,7 +176,7 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
         {
             if (!val.get(i).isList())
             {
-                yCError(CBCB, "Not a list: %s", val.get(i).toString().c_str());
+                yCError(CBCB) << "Not a list:" << val.get(i).toString();
                 return false;
             }
 
@@ -201,8 +200,12 @@ bool CanBusControlboard::getRemoteVariablesList(yarp::os::Bottle * listOfKeys)
     // Place each key in its own list so that clients can just call check('<key>') or !find('<key>').isNull().
     for (const auto & [rawDevice, offset] : deviceMapper.getDevicesWithOffsets())
     {
-        auto * iCanBusSharer = rawDevice->castToType<ICanBusSharer>();
-        listOfKeys->addString("id" + std::to_string(iCanBusSharer->getId()));
+        const auto id = rawDevice->getId();
+
+        if (!id.empty())
+        {
+            listOfKeys->addString(id);
+        }
     }
 
     return true;

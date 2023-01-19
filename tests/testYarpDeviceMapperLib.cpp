@@ -135,6 +135,7 @@ protected:
 
         yarp::os::Property config;
         config.put("device", T::name());
+        config.put("id", T::name());
 
         auto * driver = new yarp::dev::PolyDriver(config);
         drivers.push(driver, T::name().c_str());
@@ -232,10 +233,11 @@ TEST_F(YarpDeviceMapperTest, ParallelTask)
 
 TEST_F(YarpDeviceMapperTest, RawDevice)
 {
-    RawDevice rd(getDriver<JointDriver<1>>());
-    auto * p = rd.getHandle<yarp::dev::IPositionDirectRaw>();
-    ASSERT_NE(p, nullptr);
+    auto * driver = getDriver<JointDriver<1>>();
+    RawDevice rd(driver);
+    ASSERT_NE(rd.getHandle<yarp::dev::IPositionDirectRaw>(), nullptr);
     ASSERT_EQ(rd.castToType<std::string>(), nullptr);
+    ASSERT_EQ(rd.getId(), driver->id());
 }
 
 TEST_F(YarpDeviceMapperTest, DeviceMapper)

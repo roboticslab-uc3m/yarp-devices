@@ -4,6 +4,7 @@
 #define __DEVICE_MAPPER_HPP__
 
 #include <memory>
+#include <string>
 #include <tuple>
 #include <vector>
 
@@ -42,6 +43,13 @@ public:
      */
     template<typename T>
     T * getHandle() const;
+
+    /**
+     * @brief Retrieve the device id (can be an empty string if not set).
+     * @return A string containing the device id.
+     */
+    std::string getId() const
+    { return driver->id(); }
 
     /**
      * @brief Perform a dynamic cast on the given type.

@@ -47,6 +47,9 @@ public:
     bool open(yarp::os::Searchable & config) override;
     bool close() override;
 
+    std::string id() const override
+    { return impl->id(); }
+
     //  --------- ICanBusSharer declarations. Implementation in ICanBusSharerImpl.cpp ---------
 
     unsigned int getId() override
