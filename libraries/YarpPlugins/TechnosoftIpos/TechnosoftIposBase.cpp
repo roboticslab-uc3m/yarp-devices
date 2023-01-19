@@ -427,73 +427,73 @@ bool TechnosoftIposBase::validateInitialState()
 {
     if (initialControlMode == 0)
     {
-        yCWarning(IPOS) << "Illegal initial control mode:" << yarp::os::Vocab32::decode(initialControlMode);
+        yCIWarning(IPOS, id()) << "Illegal initial control mode:" << yarp::os::Vocab32::decode(initialControlMode);
         return false;
     }
 
     if (tr <= 0.0)
     {
-        yCWarning(IPOS) << "Illegal transmission ratio:" << tr.load();
+        yCIWarning(IPOS, id()) << "Illegal transmission ratio:" << tr.load();
         return false;
     }
 
     if (k <= 0.0)
     {
-        yCWarning(IPOS) << "Illegal motor constant:" << k.load();
+        yCIWarning(IPOS, id()) << "Illegal motor constant:" << k.load();
         return false;
     }
 
     if (encoderPulses <= 0)
     {
-        yCWarning(IPOS) << "Illegal encoder pulses per revolution:" << encoderPulses.load();
+        yCIWarning(IPOS, id()) << "Illegal encoder pulses per revolution:" << encoderPulses.load();
         return false;
     }
 
     if (maxVel <= 0.0)
     {
-        yCWarning(IPOS) << "Illegal maximum velocity:" << maxVel.load();
+        yCIWarning(IPOS, id()) << "Illegal maximum velocity:" << maxVel.load();
         return false;
     }
 
     if (refSpeed <= 0.0)
     {
-        yCWarning(IPOS) << "Illegal reference speed:" << refSpeed.load();
+        yCIWarning(IPOS, id()) << "Illegal reference speed:" << refSpeed.load();
         return false;
     }
 
     if (refAcceleration <= 0.0)
     {
-        yCWarning(IPOS) << "Illegal reference acceleration:" << refAcceleration.load();
+        yCIWarning(IPOS, id()) << "Illegal reference acceleration:" << refAcceleration.load();
         return false;
     }
 
     if (drivePeakCurrent <= 0.0)
     {
-        yCWarning(IPOS) << "Illegal drive peak current:" << drivePeakCurrent;
+        yCIWarning(IPOS, id()) << "Illegal drive peak current:" << drivePeakCurrent;
         return false;
     }
 
     if (samplingPeriod <= 0.0)
     {
-        yCWarning(IPOS) << "Illegal sampling period:" << samplingPeriod;
+        yCIWarning(IPOS, id()) << "Illegal sampling period:" << samplingPeriod;
         return false;
     }
 
     if (refSpeed > maxVel)
     {
-        yCWarning(IPOS) << "Reference speed greater than maximum velocity:" << refSpeed.load() << ">" << maxVel.load();
+        yCIWarning(IPOS, id()) << "Reference speed greater than maximum velocity:" << refSpeed.load() << ">" << maxVel.load();
         return false;
     }
 
     if (min >= max)
     {
-        yCWarning(IPOS) << "Illegal joint limits (min, max):" << min.load() << ">=" << max.load();
+        yCIWarning(IPOS, id()) << "Illegal joint limits (min, max):" << min.load() << ">=" << max.load();
         return false;
     }
 
     if (axisName.empty())
     {
-        yCWarning(IPOS) << "Empty string as axis name";
+        yCIWarning(IPOS, id()) << "Empty string as axis name";
         return false;
     }
 
@@ -504,37 +504,37 @@ bool TechnosoftIposBase::validateInitialState()
     case yarp::dev::VOCAB_JOINTTYPE_UNKNOWN:
         break;
     default:
-        yCWarning(IPOS) << "Illegal joint type vocab:" << yarp::os::Vocab32::decode(jointType);
+        yCIWarning(IPOS, id()) << "Illegal joint type vocab:" << yarp::os::Vocab32::decode(jointType);
         return false;
     }
 
     if (heartbeatPeriod < 0.0)
     {
-        yCWarning(IPOS) << "Illegal heartbeat period:" << heartbeatPeriod;
+        yCIWarning(IPOS, id()) << "Illegal heartbeat period:" << heartbeatPeriod;
         return false;
     }
 
     if (heartbeatPeriod * 1e3 != static_cast<int>(heartbeatPeriod * 1e3))
     {
-        yCWarning(IPOS) << "Heartbeat period exceeds millisecond precision:" << heartbeatPeriod << "(s)";
+        yCIWarning(IPOS, id()) << "Heartbeat period exceeds millisecond precision:" << heartbeatPeriod << "(s)";
         return false;
     }
 
     if (syncPeriod <= 0.0 || syncPeriod > 255.0)
     {
-        yCWarning(IPOS) << "Illegal SYNC period:" << syncPeriod;
+        yCIWarning(IPOS, id()) << "Illegal SYNC period:" << syncPeriod;
         return false;
     }
 
     if (syncPeriod * 1e3 != static_cast<int>(syncPeriod * 1e3))
     {
-        yCWarning(IPOS) << "SYNC period exceeds millisecond precision:" << syncPeriod << "(s)";
+        yCIWarning(IPOS, id()) << "SYNC period exceeds millisecond precision:" << syncPeriod << "(s)";
         return false;
     }
 
     if (canId == 0)
     {
-        yCWarning(IPOS) << "Illegal CAN ID:" << canId;
+        yCIWarning(IPOS, id()) << "Illegal CAN ID:" << canId;
         return false;
     }
 

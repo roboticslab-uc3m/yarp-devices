@@ -38,19 +38,19 @@ bool TechnosoftIposExternal::open(yarp::os::Searchable & config)
 
     if (stiffness < minStiffness || stiffness > maxStiffness)
     {
-        yCError(IPOS, "Invalid stiffness: %f (not in [%f, %f])", stiffness, minStiffness, maxStiffness);
+        yCIError(IPOS, id(), "Invalid stiffness: %f (not in [%f, %f])", stiffness, minStiffness, maxStiffness);
         return false;
     }
 
     if (damping < minDamping || damping > maxDamping)
     {
-        yCError(IPOS, "Invalid damping: %f (not in [%f, %f])", damping, minDamping, maxDamping);
+        yCIError(IPOS, id(), "Invalid damping: %f (not in [%f, %f])", damping, minDamping, maxDamping);
         return false;
     }
 
     if (impedanceOffset < 0.0)
     {
-        yCError(IPOS) << "Illegal offset:" << impedanceOffset;
+        yCIError(IPOS, id()) << "Illegal offset:" << impedanceOffset;
         return false;
     }
 
@@ -86,7 +86,7 @@ bool TechnosoftIposExternal::open(yarp::os::Searchable & config)
 
     if (errorLimit <= 0.0)
     {
-        yCError(IPOS) << "Illegal position error limit:" << errorLimit;
+        yCIError(IPOS, id()) << "Illegal position error limit:" << errorLimit;
         return false;
     }
 

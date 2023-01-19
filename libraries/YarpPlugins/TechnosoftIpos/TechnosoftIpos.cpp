@@ -38,17 +38,20 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     iposGroup.fromString(config.toString(), false); // override common options
 
+    auto canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32(); // id-specific
     auto useEmbeddedPid = iposGroup.check("useEmbeddedPid", yarp::os::Value(true), "use embedded PID").asBool();
+
+    const auto id = "ID" + std::to_string(canId);
 
     if (useEmbeddedPid)
     {
-        yCInfo(IPOS) << "Using embedded PID implementation";
+        yCIInfo(IPOS, id) << "Using embedded PID implementation";
         impl = new TechnosoftIposEmbedded;
     }
     else
     {
 #ifdef HAVE_EXTERNAL_PID_IMPL
-        yCInfo(IPOS) << "Using external PID implementation";
+        yCIInfo(IPOS, id) << "Using external PID implementation";
         impl = new TechnosoftIposExternal;
 #else
         yCError(IPOS) << "External PID implementation not available";
@@ -56,6 +59,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 #endif
     }
 
+    impl->setId(id);
     return impl->open(config);
 }
 

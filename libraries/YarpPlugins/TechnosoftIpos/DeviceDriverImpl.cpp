@@ -63,11 +63,9 @@ bool TechnosoftIposBase::open(yarp::os::Searchable & config)
 
     if (!validateInitialState())
     {
-        yCError(IPOS) << "Invalid configuration parameters";
+        yCIError(IPOS, id()) << "Invalid configuration parameters";
         return false;
     }
-
-    yarp::dev::DeviceDriver::setId("ID" + std::to_string(canId));
 
     if (iposGroup.check("externalEncoder", "external encoder"))
     {
