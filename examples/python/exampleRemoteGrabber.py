@@ -4,18 +4,21 @@
 
 ## @example{lineno} exampleRemoteGrabber.py
 
-import yarp  # imports YARP
-yarp.Network.init() #Check for YARP network
+import yarp
+yarp.Network.init() # Check for YARP network
+
 if not yarp.Network.checkNetwork():
     print('Could not connect to YARP network. Please try running YARP server.')
     quit()
 
 # Create and configure driver
 options = yarp.Property()
-options.put('device','remote_grabber')
+options.put('device','frameGrabber_nwc_yarp')
 options.put('remote', '/grabber')
 options.put('local','/python/grabber')
+
 dd = yarp.PolyDriver(options)
+
 if not dd.isValid():
     print('[error] Please launch camera side')
     quit()
