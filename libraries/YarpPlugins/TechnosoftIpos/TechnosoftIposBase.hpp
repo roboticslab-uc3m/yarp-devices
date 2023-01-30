@@ -432,6 +432,9 @@ public:
 
     bool setRefTorqueRaw(int j, double t) override;
 
+    bool setRefTorquesRaw(int n_joint, const int * joints, const double * t) override
+    { return setRefTorqueRaw(joints[0], t[0]); }
+
     bool setRefTorquesRaw(const double * t) override
     { return setRefTorqueRaw(0, t[0]); }
 
