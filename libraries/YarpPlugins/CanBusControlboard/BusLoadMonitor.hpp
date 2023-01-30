@@ -9,7 +9,7 @@
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/os/PortWriterBuffer.h>
 
-#include "CanMessageNotifier.hpp"
+#include "ICanMessageNotifier.hpp"
 
 namespace roboticslab
 {
@@ -18,7 +18,7 @@ namespace roboticslab
  * @ingroup CanBusControlboard
  * @brief Registers load statistics per single CAN bus.
  */
-class OneWayMonitor : public CanMessageNotifier
+class OneWayMonitor : public ICanMessageNotifier
 {
 public:
     //! Tell observers a new CAN message has arrived.
@@ -46,10 +46,10 @@ public:
     void setBitrate(unsigned int bitrate)
     { this->bitrate = bitrate; }
 
-    CanMessageNotifier * getReadMonitor()
+    ICanMessageNotifier * getReadMonitor()
     { return &readMonitor; }
 
-    CanMessageNotifier * getWriteMonitor()
+    ICanMessageNotifier * getWriteMonitor()
     { return &writeMonitor; }
 
 protected:

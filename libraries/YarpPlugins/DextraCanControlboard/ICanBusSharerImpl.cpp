@@ -19,7 +19,7 @@ bool DextraCanControlboard::finalize()
     return true;
 }
 
-bool DextraCanControlboard::registerSender(CanSenderDelegate * sender)
+bool DextraCanControlboard::registerSender(ICanSenderDelegate * sender)
 {
     synapse->configure(sender);
     return true;

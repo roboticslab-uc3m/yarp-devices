@@ -62,7 +62,7 @@ public:
     { return true; }
     bool finalize() override
     { return true; }
-    bool registerSender(CanSenderDelegate * sender) override
+    bool registerSender(ICanSenderDelegate * sender) override
     { return true; }
     bool synchronize(double timestamp) override
     { return true; }

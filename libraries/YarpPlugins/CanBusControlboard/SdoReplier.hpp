@@ -5,8 +5,8 @@
 
 #include <yarp/os/PortReader.h>
 
-#include "CanMessageNotifier.hpp"
-#include "CanSenderDelegate.hpp"
+#include "ICanMessageNotifier.hpp"
+#include "ICanSenderDelegate.hpp"
 
 namespace roboticslab
 {
@@ -21,7 +21,7 @@ namespace roboticslab
  * the RPC client.
  */
 class SdoReplier final : public yarp::os::PortReader,
-                         public CanMessageNotifier
+                         public ICanMessageNotifier
 {
 public:
     //! Constructor.
@@ -37,11 +37,11 @@ public:
     bool notifyMessage(const can_message & msg) override;
 
     //! Configure CAN sender handle.
-    void configureSender(CanSenderDelegate * sender)
+    void configureSender(ICanSenderDelegate * sender)
     { this->sender = sender; }
 
 private:
-    CanSenderDelegate * sender;
+    ICanSenderDelegate * sender;
 
     class Private;
     Private * priv;

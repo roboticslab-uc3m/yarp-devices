@@ -67,7 +67,7 @@ public:
     bool finalize() override
     { return impl->finalize(); }
 
-    bool registerSender(CanSenderDelegate * sender) override
+    bool registerSender(ICanSenderDelegate * sender) override
     { return impl->registerSender(sender); }
 
     bool synchronize(double timestamp) override

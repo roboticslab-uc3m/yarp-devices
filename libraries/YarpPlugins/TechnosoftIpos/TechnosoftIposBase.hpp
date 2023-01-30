@@ -91,7 +91,7 @@ public:
     bool notifyMessage(const can_message & message) override;
     bool initialize() override;
     bool finalize() override;
-    bool registerSender(CanSenderDelegate * sender) override;
+    bool registerSender(ICanSenderDelegate * sender) override;
 
     //  --------- IAxisInfoRaw declarations. Implementation in IAxisInfoRawImpl.cpp ---------
 

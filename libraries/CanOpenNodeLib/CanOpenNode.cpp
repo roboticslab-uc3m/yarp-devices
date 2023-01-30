@@ -4,7 +4,7 @@
 
 using namespace roboticslab;
 
-CanOpenNode::CanOpenNode(unsigned int id, double sdoTimeout, double stateTimeout, CanSenderDelegate * sender)
+CanOpenNode::CanOpenNode(unsigned int id, double sdoTimeout, double stateTimeout, ICanSenderDelegate * sender)
     : _id(id),
       _sdo(new SdoClient(_id, 0x600, 0x580, sdoTimeout, sender)),
       _rpdo1(new ReceivePdo(_id, 0x200, 1, _sdo, sender)),
@@ -39,7 +39,7 @@ CanOpenNode::~CanOpenNode()
     delete _sdo;
 }
 
-void CanOpenNode::configureSender(CanSenderDelegate * sender)
+void CanOpenNode::configureSender(ICanSenderDelegate * sender)
 {
     _sdo->configureSender(sender);
     _rpdo1->configureSender(sender);

@@ -6,8 +6,8 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "CanMessageNotifier.hpp"
-#include "CanSenderDelegate.hpp"
+#include "ICanMessageNotifier.hpp"
+#include "ICanSenderDelegate.hpp"
 #include "SdoClient.hpp"
 #include "PdoProtocol.hpp"
 #include "EmcyConsumer.hpp"
@@ -31,7 +31,7 @@ namespace roboticslab
  * even if clients are not going to use them all. Also, it forwards CAN messages
  * to their corresponding protocol instances given the COB-ID.
  */
-class CanOpenNode final : public CanMessageNotifier
+class CanOpenNode final : public ICanMessageNotifier
 {
 public:
     static constexpr double SDO_TIMEOUT = 0.1;  ///< Timeout on SDO transfers (seconds)
@@ -39,7 +39,7 @@ public:
 
     //! Constructor, creates and configures all handles.
     CanOpenNode(unsigned int id, double sdoTimeout = SDO_TIMEOUT,
-                double stateTimeout = STATE_MACHINE_TIMEOUT, CanSenderDelegate * sender = nullptr);
+                double stateTimeout = STATE_MACHINE_TIMEOUT, ICanSenderDelegate * sender = nullptr);
 
     //! Deleted copy constructor.
     CanOpenNode(const CanOpenNode &) = delete;
@@ -51,7 +51,7 @@ public:
     ~CanOpenNode();
 
     //! Pass sender handle to internal CAN protocol handles.
-    void configureSender(CanSenderDelegate * sender);
+    void configureSender(ICanSenderDelegate * sender);
 
     //! Retrieve CAN node id.
     unsigned int getId() const

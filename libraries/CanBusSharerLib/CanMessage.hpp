@@ -14,7 +14,7 @@ namespace roboticslab
  * structure is a mere vehicle to pass CAN messages around without the
  * cost of copying too much stuff.
  *
- * See companion classes @ref CanSenderDelegate and @ref CanMessageNotifier.
+ * See companion classes @ref ICanSenderDelegate and @ref ICanMessageNotifier.
  */
 struct can_message
 {

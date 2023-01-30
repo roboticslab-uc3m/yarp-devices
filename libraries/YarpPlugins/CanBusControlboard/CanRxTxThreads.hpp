@@ -73,7 +73,7 @@ public:
     }
 
     //! Attach CAN bus load monitor.
-    void attachBusLoadMonitor(CanMessageNotifier * busLoadMonitor)
+    void attachBusLoadMonitor(ICanMessageNotifier * busLoadMonitor)
     { this->busLoadMonitor = busLoadMonitor; }
 
 protected:
@@ -90,7 +90,7 @@ protected:
 
     yarp::os::Stamp lastStamp;
 
-    CanMessageNotifier * busLoadMonitor;
+    ICanMessageNotifier * busLoadMonitor;
 
     unsigned int bufferSize;
     double delay;
@@ -120,7 +120,7 @@ public:
     { return handles; }
 
     //! Attach custom CAN message responder handle.
-    void attachCanNotifier(CanMessageNotifier * canMessageNotifier)
+    void attachCanNotifier(ICanMessageNotifier * canMessageNotifier)
     { this->canMessageNotifier = canMessageNotifier; }
 
     void run() override;
@@ -128,7 +128,7 @@ public:
 private:
     std::vector<ICanBusSharer *> handles;
     std::unordered_map<unsigned int, ICanBusSharer *> canIdToHandle;
-    CanMessageNotifier * canMessageNotifier;
+    ICanMessageNotifier * canMessageNotifier;
 };
 
 /**
@@ -148,7 +148,7 @@ public:
     ~CanWriterThread() override;
 
     //! Retrieve a handle to the CAN sender delegate.
-    CanSenderDelegate * getDelegate()
+    ICanSenderDelegate * getDelegate()
     { return sender; }
 
     //! Send awaiting messages and clear the queue.
@@ -161,7 +161,7 @@ private:
     void handlePartialWrite(unsigned int sent);
 
     unsigned int preparedMessages;
-    CanSenderDelegate * sender;
+    ICanSenderDelegate * sender;
     mutable std::mutex bufferMutex;
 };
 

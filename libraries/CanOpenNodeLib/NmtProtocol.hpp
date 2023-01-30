@@ -7,7 +7,7 @@
 
 #include <functional>
 
-#include "CanSenderDelegate.hpp"
+#include "ICanSenderDelegate.hpp"
 
 namespace roboticslab
 {
@@ -47,12 +47,12 @@ public:
     static constexpr std::uint8_t BROADCAST = 0; ///< Broadcast CAN ID
 
     //! Constructor, registers CAN sender handle.
-    NmtProtocol(std::uint8_t id, CanSenderDelegate * sender = nullptr)
+    NmtProtocol(std::uint8_t id, ICanSenderDelegate * sender = nullptr)
         : id(id), sender(sender)
     { }
 
     //! Configure CAN sender delegate handle.
-    void configureSender(CanSenderDelegate * sender)
+    void configureSender(ICanSenderDelegate * sender)
     { this->sender = sender; }
 
     //! Send NMT service indication.
@@ -74,7 +74,7 @@ private:
     using HandlerFn = std::function<void(NmtState)>;
 
     std::uint8_t id;
-    CanSenderDelegate * sender;
+    ICanSenderDelegate * sender;
 
     HandlerFn callback;
 };

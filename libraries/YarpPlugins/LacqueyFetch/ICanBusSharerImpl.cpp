@@ -34,7 +34,7 @@ bool LacqueyFetch::notifyMessage(const can_message & message)
 
 // -----------------------------------------------------------------------------
 
-bool LacqueyFetch::registerSender(CanSenderDelegate * sender)
+bool LacqueyFetch::registerSender(ICanSenderDelegate * sender)
 {
     this->sender = sender;
     return true;

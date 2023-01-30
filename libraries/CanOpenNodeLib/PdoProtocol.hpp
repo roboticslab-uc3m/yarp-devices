@@ -10,7 +10,7 @@
 #include <type_traits>
 #include <utility> // std::forward
 
-#include "CanSenderDelegate.hpp"
+#include "ICanSenderDelegate.hpp"
 #include "SdoClient.hpp"
 
 namespace roboticslab
@@ -178,12 +178,12 @@ class ReceivePdo final : public PdoProtocol
 {
 public:
     //! Constructor, registers SDO and CAN sender handles.
-    ReceivePdo(std::uint8_t id, std::uint16_t cob, unsigned int n, SdoClient * sdo, CanSenderDelegate * sender = nullptr)
+    ReceivePdo(std::uint8_t id, std::uint16_t cob, unsigned int n, SdoClient * sdo, ICanSenderDelegate * sender = nullptr)
         : PdoProtocol(id, cob, n, sdo), sender(sender)
     { }
 
     //! Configure CAN sender delegate handle.
-    void configureSender(CanSenderDelegate * sender)
+    void configureSender(ICanSenderDelegate * sender)
     { this->sender = sender; }
 
     /**
@@ -218,7 +218,7 @@ private:
     void packInternal(std::uint8_t * buff, const void * data, unsigned int size);
     bool writeInternal(const std::uint8_t * data, unsigned int size);
 
-    CanSenderDelegate * sender;
+    ICanSenderDelegate * sender;
 };
 
 /**

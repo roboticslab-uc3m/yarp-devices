@@ -15,7 +15,7 @@ CanSynapse::CanSynapse(unsigned int _canId)
 
 void CanSynapse::configure(void * handle)
 {
-    sender = static_cast<CanSenderDelegate *>(handle);
+    sender = static_cast<ICanSenderDelegate *>(handle);
     configured = true;
 }
 

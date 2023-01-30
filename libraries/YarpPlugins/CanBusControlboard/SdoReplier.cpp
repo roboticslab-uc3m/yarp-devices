@@ -114,7 +114,7 @@ namespace
 class SdoReplier::Private
 {
 public:
-    SdoClient ** allocate(unsigned int id, CanSenderDelegate * sender)
+    SdoClient ** allocate(unsigned int id, ICanSenderDelegate * sender)
     {
         sdoClient = new SdoClient(id, SDO_COB_RX, SDO_COB_TX, SDO_TIMEOUT, sender);
         return &sdoClient;

@@ -59,7 +59,7 @@ public:
     bool notifyMessage(const can_message & message) override;
     bool initialize() override;
     bool finalize() override;
-    bool registerSender(CanSenderDelegate * sender) override;
+    bool registerSender(ICanSenderDelegate * sender) override;
     bool synchronize(double timestamp) override;
 
     //  ---------- IEncodersRaw declarations. Implementation in IEncodersRawImpl.cpp ----------
@@ -106,7 +106,7 @@ private:
     encoder_t encoder;
     double encoderTimestamp;
 
-    CanSenderDelegate * sender;
+    ICanSenderDelegate * sender;
     StateObserver * pushStateObserver;
     TypedStateObserver<encoder_t> * pollStateObserver;
 

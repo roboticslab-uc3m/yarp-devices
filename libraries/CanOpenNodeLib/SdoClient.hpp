@@ -9,7 +9,7 @@
 #include <type_traits>
 #include <utility>
 
-#include "CanSenderDelegate.hpp"
+#include "ICanSenderDelegate.hpp"
 #include "StateObserver.hpp"
 
 namespace roboticslab
@@ -32,7 +32,7 @@ class SdoClient final
 {
 public:
     //! Constructor, registers CAN sender handle.
-    SdoClient(std::uint8_t id, std::uint16_t cobRx, std::uint16_t cobTx, double timeout, CanSenderDelegate * sender = nullptr)
+    SdoClient(std::uint8_t id, std::uint16_t cobRx, std::uint16_t cobTx, double timeout, ICanSenderDelegate * sender = nullptr)
         : id(id), cobRx(cobRx), cobTx(cobTx), logId("ID" + std::to_string(id)), sender(sender), stateObserver(timeout)
     {}
 
@@ -45,7 +45,7 @@ public:
     { return cobTx + id; }
 
     //! Configure CAN sender delegate handle.
-    void configureSender(CanSenderDelegate * sender)
+    void configureSender(ICanSenderDelegate * sender)
     { this->sender = sender; }
 
     //! Notify observers on an SDO package sent by the drive.
@@ -158,7 +158,7 @@ private:
     std::uint16_t cobTx;
     std::string logId;
 
-    CanSenderDelegate * sender;
+    ICanSenderDelegate * sender;
     TypedStateObserver<std::uint8_t[]> stateObserver;
 };
 

@@ -50,7 +50,7 @@ public:
     bool notifyMessage(const can_message & message) override;
     bool initialize() override;
     bool finalize() override;
-    bool registerSender(CanSenderDelegate * sender) override;
+    bool registerSender(ICanSenderDelegate * sender) override;
     bool synchronize(double timestamp) override;
 
     //  --------- IControlModeRaw declarations. Implementation in IControlModeRawImpl.cpp ---------
@@ -79,7 +79,7 @@ private:
 
     unsigned int canId;
     yarp::conf::float32_t refDutyCycles;
-    CanSenderDelegate * sender;
+    ICanSenderDelegate * sender;
 };
 
 } // namespace roboticslab

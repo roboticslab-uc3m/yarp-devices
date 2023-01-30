@@ -8,7 +8,7 @@
 #include <utility>
 #include <vector>
 
-#include "CanSenderDelegate.hpp"
+#include "ICanSenderDelegate.hpp"
 #include "SdoClient.hpp"
 #include "PdoProtocol.hpp"
 #include "NmtProtocol.hpp"
@@ -77,7 +77,7 @@ struct fake_message
  * @ingroup testCanOpenNodeLib
  * @brief Stores registered fake CAN messages and eases access to them.
  */
-class FakeCanSenderDelegate : public CanSenderDelegate
+class FakeCanSenderDelegate : public ICanSenderDelegate
 {
 public:
     //! Store message data internally.

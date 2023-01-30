@@ -36,7 +36,7 @@ protected:
 
 private:
     unsigned int canId;
-    CanSenderDelegate * sender;
+    ICanSenderDelegate * sender;
 };
 
 /**
@@ -59,7 +59,7 @@ public:
     bool initialize() override;
     bool finalize() override;
     bool notifyMessage(const can_message & message) override;
-    bool registerSender(CanSenderDelegate * sender) override;
+    bool registerSender(ICanSenderDelegate * sender) override;
     bool synchronize(double timestamp) override;
 
 protected:

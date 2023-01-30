@@ -7,7 +7,7 @@
 
 #include <yarp/dev/CanBusInterface.h>
 
-#include "CanSenderDelegate.hpp"
+#include "ICanSenderDelegate.hpp"
 
 namespace roboticslab
 {
@@ -16,7 +16,7 @@ namespace roboticslab
  * @ingroup CanBusControlboard
  * @brief A sender delegate that adheres to standard YARP interfaces for CAN.
  */
-class YarpCanSenderDelegate : public CanSenderDelegate
+class YarpCanSenderDelegate : public ICanSenderDelegate
 {
 public:
     //! Constructor, takes a reference to an existing CAN message buffer.

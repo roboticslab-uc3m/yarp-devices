@@ -81,7 +81,7 @@ bool CuiAbsolute::notifyMessage(const can_message & message)
 
 // -----------------------------------------------------------------------------
 
-bool CuiAbsolute::registerSender(CanSenderDelegate * sender)
+bool CuiAbsolute::registerSender(ICanSenderDelegate * sender)
 {
     this->sender = sender;
     return true;

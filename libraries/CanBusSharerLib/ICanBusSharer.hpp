@@ -5,8 +5,8 @@
 
 #include <vector>
 
-#include "CanMessageNotifier.hpp"
-#include "CanSenderDelegate.hpp"
+#include "ICanMessageNotifier.hpp"
+#include "ICanSenderDelegate.hpp"
 
 namespace roboticslab
 {
@@ -21,7 +21,7 @@ namespace roboticslab
  * @ingroup CanBusSharerLib
  * @brief Abstract base for a CAN bus sharer.
  */
-class ICanBusSharer : public CanMessageNotifier
+class ICanBusSharer : public ICanMessageNotifier
 {
 public:
     //! Destructor.
@@ -41,7 +41,7 @@ public:
     virtual bool finalize() = 0;
 
     //! Pass a handle to a CAN sender delegate instance.
-    virtual bool registerSender(CanSenderDelegate * sender) = 0;
+    virtual bool registerSender(ICanSenderDelegate * sender) = 0;
 
     //! Perform synchronized action on CAN master's request.
     virtual bool synchronize(double timestamp) = 0;
