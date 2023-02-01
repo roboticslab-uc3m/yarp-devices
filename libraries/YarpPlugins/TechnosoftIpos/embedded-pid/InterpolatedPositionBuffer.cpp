@@ -9,12 +9,9 @@
 #include <bitset>
 #include <iterator>
 
-#include <yarp/os/LogStream.h>
 #include <yarp/os/SystemClock.h>
-#include <yarp/os/Value.h>
 
 #include "CanUtils.hpp"
-#include "LogComponent.hpp"
 
 using namespace roboticslab;
 
@@ -38,11 +35,6 @@ void InterpolatedPositionBuffer::setInitial(int initialTarget)
     initialTimestamp = 0.0; // dummy timestamp, to be amended later on
     prevTarget = {initialTarget, initialTimestamp};
     sampleCount = 0;
-}
-
-int InterpolatedPositionBuffer::getPeriodMs() const
-{
-    return fixedSamples * samplingPeriod * 1000.0;
 }
 
 std::uint16_t InterpolatedPositionBuffer::getBufferConfig() const
@@ -175,11 +167,6 @@ double InterpolatedPositionBuffer::getMeanVelocity(const ip_record & earliest, c
     }
 }
 
-std::string PtBuffer::getType() const
-{
-    return "pt";
-}
-
 std::uint16_t PtBuffer::getBufferSize() const
 {
     return PT_BUFFER_MAX;
@@ -203,11 +190,6 @@ std::uint64_t PtBuffer::makeDataRecord(const ip_record & previous, const ip_reco
     std::memcpy((unsigned char *)&data + 7, &ic, sizeof(ic));
 
     return data;
-}
-
-std::string PvtBuffer::getType() const
-{
-    return "pvt";
 }
 
 std::uint16_t PvtBuffer::getBufferSize() const
@@ -259,34 +241,3 @@ std::uint64_t PvtBuffer::makeDataRecord(const ip_record & previous, const ip_rec
 
     return data;
 }
-
-namespace roboticslab
-{
-
-InterpolatedPositionBuffer * createInterpolationBuffer(const yarp::os::Searchable & config, double samplingPeriod)
-{
-    std::string mode = config.check("mode", yarp::os::Value(""), "interpolated position submode [pt|pvt]").asString();
-    int periodMs = config.check("periodMs", yarp::os::Value(0), "interpolated position fixed period (ms)").asInt32();
-
-    if (periodMs < 0)
-    {
-        yCError(IPOS) << "Illegal \"periodMs\":" << periodMs;
-        return nullptr;
-    }
-
-    if (mode == "pt")
-    {
-        return new PtBuffer(samplingPeriod, periodMs * 0.001);
-    }
-    else if (mode == "pvt")
-    {
-        return new PvtBuffer(samplingPeriod, periodMs * 0.001);
-    }
-    else
-    {
-        yCError(IPOS) << "Unsupported interpolated position submode:" << mode;
-        return nullptr;
-    }
-}
-
-} // namespace roboticslab

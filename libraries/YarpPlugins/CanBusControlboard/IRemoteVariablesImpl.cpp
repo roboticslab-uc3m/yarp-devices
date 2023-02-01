@@ -14,9 +14,9 @@ namespace
 {
     bool setSingleKeyValuePair(const std::string & key, const yarp::os::Bottle & val, const DeviceMapper & mapper)
     {
-        if (val.size() != 2 || !val.get(0).isString() || !val.get(1).isList())
+        if (val.size() != 2 || !val.get(0).isString())
         {
-            yCError(CBCB) << "Illegal bottle format, expected string key and list value";
+            yCError(CBCB) << "Illegal bottle format, two elements expected: string key and value:" << val.toString();
             return false;
         }
 
@@ -41,7 +41,7 @@ namespace
 
                     yCWarning(CBCB) << "Unsupported interface:" << id;
                 }
-                else if (!p->setRemoteVariableRaw(val.get(0).asString(), *val.get(1).asList()))
+                else if (!p->setRemoteVariableRaw(val.get(0).asString(), val.tail()))
                 {
                     if (!setAll)
                     {
@@ -80,16 +80,22 @@ bool CanBusControlboard::getRemoteVariable(std::string key, yarp::os::Bottle & v
     for (const auto & [rawDevice, offset] : deviceMapper.getDevicesWithOffsets())
     {
         const auto id = rawDevice->getId();
-        yarp::os::Bottle & nodeVal = queryAll ? val.addList() : val;
 
         if (!id.empty() && (queryAll || key == id))
         {
             auto * p = rawDevice->getHandle<yarp::dev::IRemoteVariablesRaw>();
             yarp::os::Bottle b;
 
-            if (p && p->getRemoteVariablesListRaw(&b))
+            if (p && p->getRemoteVariablesListRaw(&b) && b.size() != 0)
             {
-                nodeVal.addString(id);
+                // additional nesting because of controlboardremapper+yarpmotorgui
+                auto & nodeVal = val.addList();
+
+                if (queryAll)
+                {
+                    nodeVal.addString(id);
+                }
+
                 bool ok = true;
 
                 for (int j = 0; j < b.size(); j++)
@@ -142,21 +148,32 @@ bool CanBusControlboard::setRemoteVariable(std::string key, const yarp::os::Bott
                 return false;
             }
 
-            yarp::os::Bottle * b = val.get(i).asList();
+            const auto * nestedVal = val.get(i).asList();
 
-            if (b->size() != 2 || !b->get(0).isString() || !b->get(1).isList())
+            if (nestedVal->size() < 2 || !nestedVal->get(0).isString())
             {
-                yCError(CBCB) << "Illegal bottle format, expected string key and list value:" << b->toString();
+                yCError(CBCB) << "Illegal bottle format, expected string ID and values:" << nestedVal->toString();
                 return false;
             }
 
-            if (b->get(0).asString() == "all")
+            const auto id = nestedVal->get(0).asString();
+
+            if (id == "all")
             {
                 yCError(CBCB) << "Cannot set all node vars in multi mode";
                 return false;
             }
 
-            ok &= setRemoteVariable(b->get(0).asString(), *b->get(1).asList());
+            for (int i = 1; i < nestedVal->size(); i++)
+            {
+                if (!nestedVal->get(i).isList())
+                {
+                    yCError(CBCB) << "Not a list:" << nestedVal->get(i).toString();
+                    return false;
+                }
+
+                ok &= setSingleKeyValuePair(id, *nestedVal->get(i).asList(), deviceMapper);
+            }
         }
 
         return ok;
