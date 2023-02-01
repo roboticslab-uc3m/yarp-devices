@@ -46,15 +46,11 @@ if mode is None or enc is None or posd is None or var is None:
     raise SystemExit
 
 p = yarp.Property()
-p.put('enable', True)
-p.put('mode', args.ip)
-
-v = yarp.Value()
-v.asList().addString('linInterp')
-v.asList().addList().fromString(p.toString())
+p.put('ipMode', args.ip)
+p.put('enableIp', True) # important: place this last
 
 b = yarp.Bottle()
-b.add(v)
+b.addList().fromString(p.toString()) # additional nesting because of controlboardremapper
 
 if not var.setRemoteVariable('all', b):
     print('Unable to set interpolation mode')

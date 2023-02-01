@@ -117,15 +117,14 @@ int main(int argc, char * argv[])
         return 1;
     }
 
-    yarp::os::Property p {{"enable", yarp::os::Value(true)},
-                          {"mode", yarp::os::Value(ip)},
-                          {"periodMs", yarp::os::Value(period * 1000.0)}};
+    yarp::os::Bottle b;
+    yarp::os::Bottle & bb = b.addList(); // additional nesting because of controlboardremapper
 
-    yarp::os::Value v;
-    v.asList()->addString("linInterp");
-    v.asList()->addList().fromString(p.toString());
+    bb.addList() = {yarp::os::Value("ipMode"), yarp::os::Value(ip)};
+    bb.addList() = {yarp::os::Value("ipPeriodMs"), yarp::os::Value(period * 1000.0)};
+    bb.addList() = {yarp::os::Value("enableIp"), yarp::os::Value(true)}; // important: place this last
 
-    if (!var->setRemoteVariable("all", {v}))
+    if (!var->setRemoteVariable("all", b))
     {
         yError() << "Unable to set interpolation mode";
         return 1;
