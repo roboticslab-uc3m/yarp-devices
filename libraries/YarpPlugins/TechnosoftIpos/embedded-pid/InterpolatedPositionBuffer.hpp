@@ -10,8 +10,6 @@
 #include <string>
 #include <vector>
 
-#include <yarp/os/Searchable.h>
-
 namespace roboticslab
 {
 
@@ -134,9 +132,6 @@ protected:
     std::size_t getOffset() const override;
     std::uint64_t makeDataRecord(const ip_record & previous, const ip_record & current, const ip_record & next) override;
 };
-
-//! Factory method.
-InterpolatedPositionBuffer * createInterpolationBuffer(const yarp::os::Searchable & config, double samplingPeriod);
 
 } // namespace roboticslab
 

@@ -9,12 +9,9 @@
 #include <bitset>
 #include <iterator>
 
-#include <yarp/os/LogStream.h>
 #include <yarp/os/SystemClock.h>
-#include <yarp/os/Value.h>
 
 #include "CanUtils.hpp"
-#include "LogComponent.hpp"
 
 using namespace roboticslab;
 
@@ -259,34 +256,3 @@ std::uint64_t PvtBuffer::makeDataRecord(const ip_record & previous, const ip_rec
 
     return data;
 }
-
-namespace roboticslab
-{
-
-InterpolatedPositionBuffer * createInterpolationBuffer(const yarp::os::Searchable & config, double samplingPeriod)
-{
-    std::string mode = config.check("mode", yarp::os::Value(""), "interpolated position submode [pt|pvt]").asString();
-    int periodMs = config.check("periodMs", yarp::os::Value(0), "interpolated position fixed period (ms)").asInt32();
-
-    if (periodMs < 0)
-    {
-        yCError(IPOS) << "Illegal \"periodMs\":" << periodMs;
-        return nullptr;
-    }
-
-    if (mode == "pt")
-    {
-        return new PtBuffer(samplingPeriod, periodMs * 0.001);
-    }
-    else if (mode == "pvt")
-    {
-        return new PvtBuffer(samplingPeriod, periodMs * 0.001);
-    }
-    else
-    {
-        yCError(IPOS) << "Unsupported interpolated position submode:" << mode;
-        return nullptr;
-    }
-}
-
-} // namespace roboticslab

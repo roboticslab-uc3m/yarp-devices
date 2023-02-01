@@ -2,6 +2,8 @@
 
 #include "CanBusControlboard.hpp"
 
+#include <unordered_set>
+
 #include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
@@ -195,17 +197,26 @@ bool CanBusControlboard::getRemoteVariablesList(yarp::os::Bottle * listOfKeys)
 {
     yCTrace(CBCB, "");
 
-    listOfKeys->clear();
+    std::unordered_set<std::string> uniqueKeys;
 
-    // Place each key in its own list so that clients can just call check('<key>') or !find('<key>').isNull().
     for (const auto & [rawDevice, offset] : deviceMapper.getDevicesWithOffsets())
     {
-        const auto id = rawDevice->getId();
+        auto * iRemoteVars = rawDevice->castToType<yarp::dev::IRemoteVariablesRaw>();
 
-        if (!id.empty())
+        if (yarp::os::Bottle b; iRemoteVars && iRemoteVars->getRemoteVariablesListRaw(&b))
         {
-            listOfKeys->addString(id);
+            for (int i = 0; i < b.size(); i++)
+            {
+                uniqueKeys.insert(b.get(i).asString());
+            }
         }
+    }
+
+    listOfKeys->clear();
+
+    for (auto & key : uniqueKeys)
+    {
+        listOfKeys->addString(key);
     }
 
     return true;

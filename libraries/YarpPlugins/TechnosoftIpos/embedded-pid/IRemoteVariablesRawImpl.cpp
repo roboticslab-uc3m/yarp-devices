@@ -3,7 +3,6 @@
 #include "embedded-pid/TechnosoftIposEmbedded.hpp"
 
 #include <yarp/os/LogStream.h>
-#include <yarp/os/Property.h>
 
 #include "LogComponent.hpp"
 
@@ -15,36 +14,28 @@ bool TechnosoftIposEmbedded::getRemoteVariableRaw(std::string key, yarp::os::Bot
 {
     yCITrace(IPOS, id(), "%s: %s", key.c_str(), val.toString().c_str());
 
-    val.clear();
-    val.addString(key);
-
-    if (key == "linInterp")
+    if (key == "enableIp")
     {
-        yarp::os::Property & dict = val.addDict();
-
-        if (!ipBuffer)
-        {
-            dict.put("enable", false);
-        }
-        else
-        {
-            dict.put("enable", true);
-            dict.put("periodMs", ipBuffer->getPeriodMs());
-            dict.put("mode", ipBuffer->getType());
-        }
-
-        return true;
+        val.addInt32(ipBuffer ? 1 : 0);
     }
-    else if (key == "csv")
+    else if (key == "ipMode")
     {
-        yarp::os::Bottle & list = val.addList();
-        list.addString("enable");
-        list.addInt8(enableCsv);
-        return true;
+        val.addString(ipBuffer ? ipBuffer->getType() : ipMode);
+    }
+    else if (key == "ipPeriodMs")
+    {
+        val.addInt32(ipBuffer ? ipBuffer->getPeriodMs() : ipPeriodMs);
+    }
+    else if (key == "enableCsv")
+    {
+        val.addInt32(enableCsv ? 1 : 0);
+    }
+    else
+    {
+        val.addInt32(0);
     }
 
-    yCIError(IPOS, id()) << "Unsupported key:" << key;
-    return false;
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -53,74 +44,91 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
 {
     yCITrace(IPOS, id(), "%s", key.c_str());
 
-    if (key == "linInterp")
+    if (key == "enableIp")
     {
-        if (val.size() == 0 || (!val.get(0).isDict() && !val.get(0).isList()))
+        auto requested = val.get(0).asBool();
+
+        if (requested ^ (ipBuffer != nullptr))
         {
-            yCIError(IPOS, id()) << "Empty value or not a dict";
-            return false;
-        }
-
-        // check on requestedControlMode to avoid race conditions during mode switch
-        if (actualControlMode == VOCAB_CM_POSITION_DIRECT || requestedcontrolMode == VOCAB_CM_POSITION_DIRECT)
-        {
-            yCIError(IPOS, id()) << "Currently in posd mode, cannot change config params right now";
-            return false;
-        }
-
-        yarp::os::Searchable * dict;
-
-        if (val.get(0).isDict())
-        {
-            dict = val.get(0).asDict(); // C++ API
-        }
-        else
-        {
-            dict = val.get(0).asList(); // CLI (RPC via terminal)
-        }
-
-        if (!dict->check("enable"))
-        {
-            yCIError(IPOS, id()) << "Missing \"enable\" option";
-            return false;
-        }
-
-        delete ipBuffer;
-        ipBuffer = nullptr;
-
-        if (dict->find("enable").asBool())
-        {
-            ipBuffer = createInterpolationBuffer(val, samplingPeriod);
-
-            if (!ipBuffer)
+            if (actualControlMode == VOCAB_CM_POSITION_DIRECT || requestedcontrolMode == VOCAB_CM_POSITION_DIRECT)
             {
-                yCIError(IPOS, id()) << "Cannot create ip buffer";
+                yCIError(IPOS, id()) << "Currently in posd mode, cannot change config params right now";
                 return false;
             }
 
-            yCIInfo(IPOS, id()) << "Created" << ipBuffer->getType() << "buffer with" << ipBuffer->getBufferSize()
-                                << "points and period" << ipBuffer->getPeriodMs() << "ms";
+            if (requested)
+            {
+                if (ipMode == "pt")
+                {
+                    ipBuffer = new PtBuffer(samplingPeriod, ipPeriodMs * 0.001);
+                }
+                else if (ipMode == "pvt")
+                {
+                    ipBuffer = new PvtBuffer(samplingPeriod, ipPeriodMs * 0.001);
+                }
+
+                yCIInfo(IPOS, id()) << "Created" << ipBuffer->getType() << "buffer with" << ipBuffer->getBufferSize()
+                                    << "points and period" << ipBuffer->getPeriodMs() << "ms";
+            }
+            else
+            {
+                delete ipBuffer;
+                ipBuffer = nullptr;
+                yCIInfo(IPOS, id()) << "Switched back to CSP mode";
+            }
         }
         else
         {
-            yCIInfo(IPOS, id()) << "Switched back to CSP mode";
+            yCIWarning(IPOS, id()) << "IP mode already" << (requested ? "enabled" : "disabled");
         }
-
-        return true;
     }
-    else if (key == "csv")
+    else if (key == "ipMode")
     {
-        if (!val.check("enable"))
+        if (actualControlMode == VOCAB_CM_POSITION_DIRECT || requestedcontrolMode == VOCAB_CM_POSITION_DIRECT)
         {
-            yCIError(IPOS, id()) << "Missing \"enable\" option";
+            yCIError(IPOS, id()) << "Currently in posd mode, cannot change ip submode right now";
             return false;
         }
 
-        bool requested = val.find("enable").asBool();
+        auto value = val.get(0).asString();
+
+        if (value == "pt" || value == "pvt")
+        {
+            ipMode = value;
+        }
+        else
+        {
+            yCIError(IPOS, id()) << "Illegal ip submode:" << value;
+            return false;
+        }
+    }
+    else if (key == "ipPeriodMs")
+    {
+        if (actualControlMode == VOCAB_CM_POSITION_DIRECT || requestedcontrolMode == VOCAB_CM_POSITION_DIRECT)
+        {
+            yCIError(IPOS, id()) << "Currently in posd mode, cannot change ip period right now";
+            return false;
+        }
+
+        auto value = val.get(0).asInt32();
+
+        if (value >= 0)
+        {
+            ipPeriodMs = value;
+        }
+        else
+        {
+            yCIError(IPOS, id()) << "Illegal ip period:" << value;
+            return false;
+        }
+    }
+    else if (key == "enableCsv")
+    {
+        auto requested = val.get(0).asBool();
 
         if (requested ^ enableCsv)
         {
-            if (actualControlMode == VOCAB_CM_VELOCITY)
+            if (actualControlMode == VOCAB_CM_VELOCITY || requestedcontrolMode == VOCAB_CM_VELOCITY)
             {
                 yCIError(IPOS, id()) << "Currently in vel mode, cannot change internal mode mapping right now";
                 return false;
@@ -130,14 +138,11 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
         }
         else
         {
-            yCIWarning(IPOS, id()) << "CSV mode already enabled/disabled";
+            yCIWarning(IPOS, id()) << "CSV mode already" << (requested ? "enabled" : "disabled");
         }
-
-        return true;
     }
 
-    yCIError(IPOS, id()) << "Unsupported key:" << key;
-    return false;
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -147,10 +152,10 @@ bool TechnosoftIposEmbedded::getRemoteVariablesListRaw(yarp::os::Bottle * listOf
     yCITrace(IPOS, id());
 
     listOfKeys->clear();
-
-    // Place each key in its own list so that clients can just call check('<key>') or !find('<key>').isNull().
-    listOfKeys->addString("linInterp");
-    listOfKeys->addString("csv");
+    listOfKeys->addString("enableIp");
+    listOfKeys->addString("ipMode");
+    listOfKeys->addString("ipPeriodMs");
+    listOfKeys->addString("enableCsv");
 
     return true;
 }
