@@ -7,7 +7,6 @@
 
 #include <deque>
 #include <mutex>
-#include <string>
 #include <vector>
 
 namespace roboticslab
@@ -31,9 +30,6 @@ public:
 
     //! Store initial position (internal units).
     void setInitial(int initialTarget);
-
-    //! Get buffer type as string identifier (pt/pvt).
-    virtual std::string getType() const = 0;
 
     //! Get PT/PVT period if fixed (synchronous), zero otherwise (asynchronous).
     int getPeriodMs() const;
@@ -104,7 +100,6 @@ class PtBuffer : public InterpolatedPositionBuffer
 public:
     using InterpolatedPositionBuffer::InterpolatedPositionBuffer;
 
-    std::string getType() const override;
     std::uint16_t getBufferSize() const override;
     std::int16_t getSubMode() const override;
 
@@ -124,7 +119,6 @@ class PvtBuffer : public InterpolatedPositionBuffer
 public:
     using InterpolatedPositionBuffer::InterpolatedPositionBuffer;
 
-    std::string getType() const override;
     std::uint16_t getBufferSize() const override;
     std::int16_t getSubMode() const override;
 

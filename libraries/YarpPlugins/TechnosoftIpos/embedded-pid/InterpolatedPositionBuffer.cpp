@@ -37,11 +37,6 @@ void InterpolatedPositionBuffer::setInitial(int initialTarget)
     sampleCount = 0;
 }
 
-int InterpolatedPositionBuffer::getPeriodMs() const
-{
-    return fixedSamples * samplingPeriod * 1000.0;
-}
-
 std::uint16_t InterpolatedPositionBuffer::getBufferConfig() const
 {
     std::bitset<16> bits("1011000010000000"); // 0xB080
@@ -172,11 +167,6 @@ double InterpolatedPositionBuffer::getMeanVelocity(const ip_record & earliest, c
     }
 }
 
-std::string PtBuffer::getType() const
-{
-    return "pt";
-}
-
 std::uint16_t PtBuffer::getBufferSize() const
 {
     return PT_BUFFER_MAX;
@@ -200,11 +190,6 @@ std::uint64_t PtBuffer::makeDataRecord(const ip_record & previous, const ip_reco
     std::memcpy((unsigned char *)&data + 7, &ic, sizeof(ic));
 
     return data;
-}
-
-std::string PvtBuffer::getType() const
-{
-    return "pvt";
 }
 
 std::uint16_t PvtBuffer::getBufferSize() const

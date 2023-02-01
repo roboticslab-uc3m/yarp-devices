@@ -14,17 +14,19 @@ bool TechnosoftIposEmbedded::getRemoteVariableRaw(std::string key, yarp::os::Bot
 {
     yCITrace(IPOS, id(), "%s: %s", key.c_str(), val.toString().c_str());
 
+    val.addString(key);
+
     if (key == "enableIp")
     {
         val.addInt32(ipBuffer ? 1 : 0);
     }
     else if (key == "ipMode")
     {
-        val.addString(ipBuffer ? ipBuffer->getType() : ipMode);
+        val.addString(ipMode);
     }
     else if (key == "ipPeriodMs")
     {
-        val.addInt32(ipBuffer ? ipBuffer->getPeriodMs() : ipPeriodMs);
+        val.addInt32(ipPeriodMs);
     }
     else if (key == "enableCsv")
     {
@@ -32,7 +34,8 @@ bool TechnosoftIposEmbedded::getRemoteVariableRaw(std::string key, yarp::os::Bot
     }
     else
     {
-        val.addInt32(0);
+        yCIError(IPOS, id()) << "Unsupported key:" << key;
+        return false;
     }
 
     return true;
@@ -67,8 +70,8 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
                     ipBuffer = new PvtBuffer(samplingPeriod, ipPeriodMs * 0.001);
                 }
 
-                yCIInfo(IPOS, id()) << "Created" << ipBuffer->getType() << "buffer with" << ipBuffer->getBufferSize()
-                                    << "points and period" << ipBuffer->getPeriodMs() << "ms";
+                yCIInfo(IPOS, id()) << "Created" << ipMode << "buffer with" << ipBuffer->getBufferSize()
+                                    << "points and period" << ipPeriodMs << "ms";
             }
             else
             {
@@ -135,11 +138,17 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
             }
 
             enableCsv = requested;
+            yCIInfo(IPOS, id()) << "CSV mode" << (requested ? "enabled" : "disabled");
         }
         else
         {
             yCIWarning(IPOS, id()) << "CSV mode already" << (requested ? "enabled" : "disabled");
         }
+    }
+    else
+    {
+        yCIError(IPOS, id()) << "Unsupported key:" << key;
+        return false;
     }
 
     return true;
@@ -152,9 +161,11 @@ bool TechnosoftIposEmbedded::getRemoteVariablesListRaw(yarp::os::Bottle * listOf
     yCITrace(IPOS, id());
 
     listOfKeys->clear();
-    listOfKeys->addString("enableIp");
+
+    // the order is relevant, e.g. enableIp depends on the ip* variables
     listOfKeys->addString("ipMode");
     listOfKeys->addString("ipPeriodMs");
+    listOfKeys->addString("enableIp");
     listOfKeys->addString("enableCsv");
 
     return true;
