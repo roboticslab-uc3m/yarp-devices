@@ -129,9 +129,15 @@ bool TechnosoftIposEmbedded::stopRaw(int j)
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
 
+    if (enableCsv && actualControlMode == VOCAB_CM_VELOCITY)
+    {
+        // don't mess with the halt bit here so that it doesn'o't need to be reset by `velocityMode()` later
+        commandBuffer.reset(0.0);
+        return true;
+    }
+
     return (actualControlMode == VOCAB_CM_POSITION || actualControlMode == VOCAB_CM_VELOCITY)
-        && can->driveStatus()->controlword(can->driveStatus()->controlword().set(8)) // stop with profile acceleration
-        && (commandBuffer.reset(0.0), true);
+        && can->driveStatus()->controlword(can->driveStatus()->controlword().set(8)); // stop with profile acceleration
 }
 
 // --------------------------------------------------------------------------------
