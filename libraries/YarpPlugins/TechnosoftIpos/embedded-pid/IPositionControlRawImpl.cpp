@@ -22,7 +22,8 @@ bool TechnosoftIposEmbedded::positionMoveRaw(int j, double ref)
     return !can->driveStatus()->controlword()[8] // check halt bit
         && can->sdo()->download<std::int32_t>("Target position", degreesToInternalUnits(ref), 0x607A)
         // new setpoint (assume absolute target position)
-        && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).reset(6));
+        && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).reset(6))
+        && (targetPosition = ref, true);
 }
 
 // --------------------------------------------------------------------------------
@@ -36,7 +37,8 @@ bool TechnosoftIposEmbedded::relativeMoveRaw(int j, double delta)
     return !can->driveStatus()->controlword()[8] // check halt bit
         && can->sdo()->download<std::int32_t>("Target position", degreesToInternalUnits(delta), 0x607A)
         // new setpoint (assume relative target position)
-        && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).set(6));
+        && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).set(6))
+        && (targetPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition()) + delta, true);
 }
 
 // --------------------------------------------------------------------------------
@@ -179,9 +181,10 @@ bool TechnosoftIposEmbedded::getTargetPositionRaw(int joint, double * ref)
     yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
 
-    return can->sdo()->upload<std::int32_t>("Target position", [this, ref](auto data)
-        { *ref = internalUnitsToDegrees(data); },
-        0x607A);
+    // target position is stored in 0x607A; using local variable to avoid frequent SDO requests
+    // (yarpmotorgui calls this quite fast)
+    *ref = targetPosition;
+    return true;
 }
 
 // --------------------------------------------------------------------------------

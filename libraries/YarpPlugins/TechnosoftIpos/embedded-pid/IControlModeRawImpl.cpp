@@ -56,6 +56,8 @@ bool TechnosoftIposEmbedded::setControlModeRaw(int j, int mode)
     switch (mode)
     {
     case VOCAB_CM_POSITION:
+        targetPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition());
+
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
             && can->sdo()->download<std::int32_t>("Target position", lastEncoderRead->queryPosition(), 0x607A)
             && can->sdo()->download<std::int8_t>("Modes of Operation", 1, 0x6060)
@@ -77,6 +79,8 @@ bool TechnosoftIposEmbedded::setControlModeRaw(int j, int mode)
         }
         else
         {
+            targetVelocity = 0.0;
+
             return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
                 && can->sdo()->download<std::int8_t>("Modes of Operation", 3, 0x6060)
                 && awaitControlMode(mode);

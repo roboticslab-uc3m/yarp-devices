@@ -110,6 +110,7 @@ void TechnosoftIposEmbedded::reset()
     ipStatus = 0;
     ipMotionStarted = ipBufferFilled = ipBufferEnabled = false;
     enableSync = false;
+    targetPosition = targetVelocity = 0.0;
 }
 
 // -----------------------------------------------------------------------------

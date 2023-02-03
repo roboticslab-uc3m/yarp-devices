@@ -42,6 +42,8 @@ bool TechnosoftIposEmbedded::velocityMoveRaw(int j, double sp)
         return false;
     }
 
+    targetVelocity = sp;
+
     double value = degreesToInternalUnits(sp, 1);
 
     std::int16_t dataInt;
@@ -66,15 +68,10 @@ bool TechnosoftIposEmbedded::getRefVelocityRaw(int joint, double * vel)
         return true;
     }
 
-    return can->sdo()->upload<std::int32_t>("Velocity demand value", [this, vel](auto data)
-        {
-            // FIXME: this is NOT working as expected
-            std::int16_t dataInt = data >> 16;
-            std::uint16_t dataFrac = data & 0xFFFF;
-            double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
-            *vel = internalUnitsToDegrees(value, 1);
-        },
-        0x606B);
+    // target velocity is stored in 0x606B; using local variable to avoid frequent SDO requests
+    // (yarpmotorgui calls this quite fast)
+    *vel = targetVelocity;
+    return true;
 }
 
 // ------------------------------------------------------------------------------
