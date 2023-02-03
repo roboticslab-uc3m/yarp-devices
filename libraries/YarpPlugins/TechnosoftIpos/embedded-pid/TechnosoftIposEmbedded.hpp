@@ -67,8 +67,8 @@ private:
     void reset() override;
 
     InterpolatedPositionBuffer * ipBuffer {nullptr};
-    std::string ipMode {"pt"};
-    int ipPeriodMs {50};
+    std::string ipMode;
+    int ipPeriodMs {0};
 
     std::bitset<16> ipStatus;
 

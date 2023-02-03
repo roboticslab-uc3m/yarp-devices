@@ -80,10 +80,6 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
                 yCIInfo(IPOS, id()) << "Switched back to CSP mode";
             }
         }
-        else
-        {
-            yCIWarning(IPOS, id()) << "IP mode already" << (requested ? "enabled" : "disabled");
-        }
     }
     else if (key == "ipMode")
     {
@@ -101,7 +97,7 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
         }
         else
         {
-            yCIError(IPOS, id()) << "Illegal ip submode:" << value;
+            yCIError(IPOS, id()) << "Illegal ip submode:" << value << "(expected 'pt' or 'pvt')";
             return false;
         }
     }
@@ -139,10 +135,6 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
 
             enableCsv = requested;
             yCIInfo(IPOS, id()) << "CSV mode" << (requested ? "enabled" : "disabled");
-        }
-        else
-        {
-            yCIWarning(IPOS, id()) << "CSV mode already" << (requested ? "enabled" : "disabled");
         }
     }
     else
