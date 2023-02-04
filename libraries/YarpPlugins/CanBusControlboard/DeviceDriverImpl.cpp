@@ -23,7 +23,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
     const auto * robotConfig = *reinterpret_cast<yarp::os::Property * const *>(config.find("robotConfig").asBlob());
 
-    auto * canBuses = config.find("buses").asList();
+    const auto * canBuses = config.find("buses").asList();
 
     if (!canBuses)
     {
@@ -64,7 +64,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
             if (!isFakeNode)
             {
-                auto & nodeGroup = robotConfig->findGroup(node);
+                const auto & nodeGroup = robotConfig->findGroup(node);
 
                 if (nodeGroup.isNull())
                 {
@@ -122,7 +122,7 @@ bool CanBusControlboard::open(yarp::os::Searchable & config)
 
         if (!isFakeBus)
         {
-            auto & canBusGroup = robotConfig->findGroup(canBus);
+            const auto & canBusGroup = robotConfig->findGroup(canBus);
 
             if (canBusGroup.isNull())
             {
