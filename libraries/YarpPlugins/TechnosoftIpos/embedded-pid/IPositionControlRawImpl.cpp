@@ -22,7 +22,8 @@ bool TechnosoftIposEmbedded::positionMoveRaw(int j, double ref)
     return !can->driveStatus()->controlword()[8] // check halt bit
         && can->sdo()->download<std::int32_t>("Target position", degreesToInternalUnits(ref), 0x607A)
         // new setpoint (assume absolute target position)
-        && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).reset(6));
+        && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).reset(6))
+        && (targetPosition = ref, true);
 }
 
 // --------------------------------------------------------------------------------
@@ -36,7 +37,8 @@ bool TechnosoftIposEmbedded::relativeMoveRaw(int j, double delta)
     return !can->driveStatus()->controlword()[8] // check halt bit
         && can->sdo()->download<std::int32_t>("Target position", degreesToInternalUnits(delta), 0x607A)
         // new setpoint (assume relative target position)
-        && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).set(6));
+        && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4).set(6))
+        && (targetPosition = internalUnitsToDegrees(lastEncoderRead->queryPosition()) + delta, true);
 }
 
 // --------------------------------------------------------------------------------
@@ -74,14 +76,7 @@ bool TechnosoftIposEmbedded::setRefSpeedRaw(int j, double sp)
     CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
 
     std::uint32_t data = (dataInt << 16) + dataFrac;
-
-    if (!can->sdo()->download("Profile velocity", data, 0x6081))
-    {
-        return false;
-    }
-
-    refSpeed = sp;
-    return true;
+    return can->sdo()->download("Profile velocity", data, 0x6081) && (refSpeed = sp, true);
 }
 
 // --------------------------------------------------------------------------------
@@ -104,14 +99,7 @@ bool TechnosoftIposEmbedded::setRefAccelerationRaw(int j, double acc)
     CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
 
     std::uint32_t data = (dataInt << 16) + dataFrac;
-
-    if (!can->sdo()->download("Profile acceleration", data, 0x6083))
-    {
-        return false;
-    }
-
-    refAcceleration = acc;
-    return true;
+    return can->sdo()->download("Profile acceleration", data, 0x6083) && (refAcceleration = acc, true);
 }
 
 // --------------------------------------------------------------------------------
@@ -120,21 +108,8 @@ bool TechnosoftIposEmbedded::getRefSpeedRaw(int j, double * ref)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-
-    if (actualControlMode == VOCAB_CM_NOT_CONFIGURED)
-    {
-        *ref = refSpeed;
-        return true;
-    }
-
-    return can->sdo()->upload<std::uint32_t>("Profile velocity", [this, ref](auto data)
-        {
-            std::uint16_t dataInt = data >> 16;
-            std::uint16_t dataFrac = data & 0xFFFF;
-            double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
-            *ref = std::abs(internalUnitsToDegrees(value, 1));
-        },
-        0x6081);
+    *ref = refSpeed;
+    return true;
 }
 
 // --------------------------------------------------------------------------------
@@ -143,21 +118,8 @@ bool TechnosoftIposEmbedded::getRefAccelerationRaw(int j, double * acc)
 {
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
-
-    if (actualControlMode == VOCAB_CM_NOT_CONFIGURED)
-    {
-        *acc = refAcceleration;
-        return true;
-    }
-
-    return can->sdo()->upload<std::uint32_t>("Profile acceleration", [this, acc](auto data)
-        {
-            std::uint16_t dataInt = data >> 16;
-            std::uint16_t dataFrac = data & 0xFFFF;
-            double value = CanUtils::decodeFixedPoint(dataInt, dataFrac);
-            *acc = std::abs(internalUnitsToDegrees(value, 2));
-        },
-        0x6083);
+    *acc = refAcceleration;
+    return true;
 }
 
 // --------------------------------------------------------------------------------
@@ -167,9 +129,15 @@ bool TechnosoftIposEmbedded::stopRaw(int j)
     yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
 
+    if (enableCsv && actualControlMode == VOCAB_CM_VELOCITY)
+    {
+        // don't mess with the halt bit here so that it doesn'o't need to be reset by `velocityMode()` later
+        commandBuffer.reset(0.0);
+        return true;
+    }
+
     return (actualControlMode == VOCAB_CM_POSITION || actualControlMode == VOCAB_CM_VELOCITY)
-        && can->driveStatus()->controlword(can->driveStatus()->controlword().set(8)) // stop with profile acceleration
-        && (commandBuffer.reset(0.0), true);
+        && can->driveStatus()->controlword(can->driveStatus()->controlword().set(8)); // stop with profile acceleration
 }
 
 // --------------------------------------------------------------------------------
@@ -179,9 +147,10 @@ bool TechnosoftIposEmbedded::getTargetPositionRaw(int joint, double * ref)
     yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
 
-    return can->sdo()->upload<std::int32_t>("Target position", [this, ref](auto data)
-        { *ref = internalUnitsToDegrees(data); },
-        0x607A);
+    // target position is stored in 0x607A; using local variable to avoid frequent SDO requests
+    // (yarpmotorgui calls this quite fast)
+    *ref = targetPosition;
+    return true;
 }
 
 // --------------------------------------------------------------------------------

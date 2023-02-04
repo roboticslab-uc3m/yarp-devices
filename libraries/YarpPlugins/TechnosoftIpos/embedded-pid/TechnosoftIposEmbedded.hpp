@@ -78,6 +78,9 @@ private:
 
     std::atomic<bool> enableSync {false};
     std::atomic<bool> enableCsv {false};
+
+    std::atomic<double> targetPosition {0.0};
+    std::atomic<double> targetVelocity {0.0};
 };
 
 } // namespace roboticslab

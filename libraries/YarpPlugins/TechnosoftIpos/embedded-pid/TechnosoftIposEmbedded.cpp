@@ -32,7 +32,7 @@ void TechnosoftIposEmbedded::interpretModesOfOperation(std::int8_t modesOfOperat
     case 3:
         yCIInfo(IPOS, id()) << "Profile Velocity Mode";
         actualControlMode = enableCsv ? VOCAB_CM_UNKNOWN : VOCAB_CM_VELOCITY;
-        enableSync = !enableCsv;
+        enableSync = false;
         break;
     case 7:
         yCIInfo(IPOS, id()) << "Interpolated Position Mode";
@@ -110,6 +110,7 @@ void TechnosoftIposEmbedded::reset()
     ipStatus = 0;
     ipMotionStarted = ipBufferFilled = ipBufferEnabled = false;
     enableSync = false;
+    targetPosition = targetVelocity = 0.0;
 }
 
 // -----------------------------------------------------------------------------

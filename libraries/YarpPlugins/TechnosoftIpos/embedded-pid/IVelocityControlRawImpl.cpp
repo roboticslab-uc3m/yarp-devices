@@ -2,12 +2,13 @@
 
 #include "embedded-pid/TechnosoftIposEmbedded.hpp"
 
-#include <cmath>
+#include <cmath> // std::abs
 
 #include <algorithm> // std::clamp
 
 #include <yarp/os/Log.h>
 
+#include "CanUtils.hpp"
 #include "LogComponent.hpp"
 
 using namespace roboticslab;
@@ -28,6 +29,12 @@ bool TechnosoftIposEmbedded::velocityMoveRaw(int j, double sp)
         sp = std::clamp(sp, -maxVel, maxVel);
     }
 
+    if (enableCsv)
+    {
+        commandBuffer.accept(sp);
+        return true;
+    }
+
     // reset halt bit
     if (can->driveStatus()->controlword()[8]
         && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)))
@@ -35,8 +42,16 @@ bool TechnosoftIposEmbedded::velocityMoveRaw(int j, double sp)
         return false;
     }
 
-    commandBuffer.accept(sp);
-    return true;
+    targetVelocity = sp;
+
+    double value = degreesToInternalUnits(sp, 1);
+
+    std::int16_t dataInt;
+    std::uint16_t dataFrac;
+    CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
+
+    std::int32_t data = (dataInt << 16) + dataFrac;
+    return can->sdo()->download<std::int32_t>("Target velocity", data, 0x60FF);
 }
 
 // ----------------------------------------------------------------------------------
@@ -46,7 +61,16 @@ bool TechnosoftIposEmbedded::getRefVelocityRaw(int joint, double * vel)
     yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_VELOCITY);
-    *vel = commandBuffer.getStoredCommand();
+
+    if (enableCsv)
+    {
+        *vel = commandBuffer.getStoredCommand();
+        return true;
+    }
+
+    // target velocity is stored in 0x606B; using local variable to avoid frequent SDO requests
+    // (yarpmotorgui calls this quite fast)
+    *vel = targetVelocity;
     return true;
 }
 
