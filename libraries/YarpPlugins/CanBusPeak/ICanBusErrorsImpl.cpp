@@ -17,7 +17,7 @@ bool CanBusPeak::canGetErrors(yarp::dev::CanErrors & err)
     struct pcanfd_state pfds;
 
     {
-        std::lock_guard<std::mutex> lockGuard(canBusReady);
+        std::lock_guard lockGuard(canBusReady);
         int res = pcanfd_get_state(fileDescriptor, &pfds);
 
         if (res < 0)

@@ -146,7 +146,7 @@ bool DriveStatusMachine::update(std::uint16_t statusword)
     // state machine-related bits (at least those we can transition to)
     static constexpr word_t statuswordMask = 0b0000'0000'0110'0111;
 
-    std::lock_guard<std::mutex> lock(stateMutex);
+    std::lock_guard lock(stateMutex);
     const word_t old = _statusword;
     _statusword = statusword;
 
@@ -162,13 +162,13 @@ bool DriveStatusMachine::update(std::uint16_t statusword)
 
 void DriveStatusMachine::reset()
 {
-    std::lock_guard<std::mutex> lock(stateMutex);
+    std::lock_guard lock(stateMutex);
     _statusword = _controlword = 0;
 }
 
 DriveStatusMachine::word_t DriveStatusMachine::controlword() const
 {
-    std::lock_guard<std::mutex> lock(stateMutex);
+    std::lock_guard lock(stateMutex);
     return _controlword;
 }
 
@@ -179,14 +179,14 @@ bool DriveStatusMachine::controlword(const word_t & controlbits)
         return false;
     }
 
-    std::lock_guard<std::mutex> lock(stateMutex);
+    std::lock_guard lock(stateMutex);
     _controlword = controlbits;
     return true;
 }
 
 DriveStatusMachine::word_t DriveStatusMachine::statusword() const
 {
-    std::lock_guard<std::mutex> lock(stateMutex);
+    std::lock_guard lock(stateMutex);
     return _statusword;
 }
 

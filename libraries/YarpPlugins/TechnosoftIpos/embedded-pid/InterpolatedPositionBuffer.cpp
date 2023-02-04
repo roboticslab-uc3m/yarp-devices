@@ -31,7 +31,7 @@ InterpolatedPositionBuffer::InterpolatedPositionBuffer(double samplingPeriod, do
 
 void InterpolatedPositionBuffer::setInitial(int initialTarget)
 {
-    std::lock_guard<std::mutex> lock(queueMutex);
+    std::lock_guard lock(queueMutex);
     initialTimestamp = 0.0; // dummy timestamp, to be amended later on
     prevTarget = {initialTarget, initialTimestamp};
     sampleCount = 0;
@@ -47,13 +47,13 @@ std::uint16_t InterpolatedPositionBuffer::getBufferConfig() const
 
 void InterpolatedPositionBuffer::addSetpoint(int target)
 {
-    std::lock_guard<std::mutex> lock(queueMutex);
+    std::lock_guard lock(queueMutex);
     pendingTargets.emplace_back(target, yarp::os::SystemClock::nowSystem());
 }
 
 std::vector<std::uint64_t> InterpolatedPositionBuffer::popBatch(bool fullBuffer)
 {
-    std::lock_guard<std::mutex> lock(queueMutex);
+    std::lock_guard lock(queueMutex);
 
     if (pendingTargets.empty())
     {
@@ -102,26 +102,26 @@ std::vector<std::uint64_t> InterpolatedPositionBuffer::popBatch(bool fullBuffer)
 
 int InterpolatedPositionBuffer::getPrevTarget() const
 {
-    std::lock_guard<std::mutex> lock(queueMutex);
+    std::lock_guard lock(queueMutex);
     return prevTarget.first;
 }
 
 bool InterpolatedPositionBuffer::isQueueReady() const
 {
-    std::lock_guard<std::mutex> lock(queueMutex);
+    std::lock_guard lock(queueMutex);
     // account for the offset (only PVT) and one extra point in async mode (`>` instead of `>=`)
     return pendingTargets.size() > getBufferSize() + getOffset();
 }
 
 bool InterpolatedPositionBuffer::isQueueEmpty() const
 {
-    std::lock_guard<std::mutex> lock(queueMutex);
+    std::lock_guard lock(queueMutex);
     return pendingTargets.empty();
 }
 
 void InterpolatedPositionBuffer::clearQueue()
 {
-    std::lock_guard<std::mutex> lock(queueMutex);
+    std::lock_guard lock(queueMutex);
     pendingTargets.clear();
 }
 

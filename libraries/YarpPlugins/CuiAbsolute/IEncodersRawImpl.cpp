@@ -71,7 +71,7 @@ bool CuiAbsolute::getEncoderRaw(int j, double * v)
         return true;
     }
 
-    std::lock_guard<std::mutex> lock(mutex);
+    std::lock_guard lock(mutex);
     *v = encoder;
     return true;
 }
@@ -147,7 +147,7 @@ bool CuiAbsolute::getEncoderTimedRaw(int j, double * enc, double * time)
         }
     }
 
-    std::lock_guard<std::mutex> lock(mutex);
+    std::lock_guard lock(mutex);
     *enc = encoder;
     *time = encoderTimestamp;
     return true;

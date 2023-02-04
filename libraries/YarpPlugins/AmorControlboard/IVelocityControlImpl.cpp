@@ -21,7 +21,7 @@ bool AmorControlboard::velocityMove(int j, double sp)
 
     AMOR_VECTOR7 velocities;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_actual_velocities(handle, &velocities) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); amor_get_actual_velocities(handle, &velocities) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_actual_velocities() failed: %s", amor_error());
         return false;
@@ -29,7 +29,7 @@ bool AmorControlboard::velocityMove(int j, double sp)
 
     velocities[j] = toRad(sp);
 
-    std::lock_guard<std::mutex> lock(handleMutex);
+    std::lock_guard lock(handleMutex);
     return amor_set_velocities(handle, velocities) == AMOR_SUCCESS;
 }
 
@@ -44,7 +44,7 @@ bool AmorControlboard::velocityMove(const double *sp)
         velocities[j] = toRad(sp[j]);
     }
 
-    std::lock_guard<std::mutex> lock(handleMutex);
+    std::lock_guard lock(handleMutex);
     return amor_set_velocities(handle, velocities) == AMOR_SUCCESS;
 }
 
@@ -61,7 +61,7 @@ bool AmorControlboard::velocityMove(const int n_joint, const int *joints, const 
 
     AMOR_VECTOR7 velocities;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); n_joint < AMOR_NUM_JOINTS && amor_get_actual_velocities(handle, &velocities) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); n_joint < AMOR_NUM_JOINTS && amor_get_actual_velocities(handle, &velocities) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_actual_velocities() failed: %s", amor_error());
         return false;
@@ -72,7 +72,7 @@ bool AmorControlboard::velocityMove(const int n_joint, const int *joints, const 
         velocities[joints[j]] = toRad(spds[j]);
     }
 
-    std::lock_guard<std::mutex> lock(handleMutex);
+    std::lock_guard lock(handleMutex);
     return amor_set_velocities(handle, velocities) == AMOR_SUCCESS;
 }
 
@@ -89,7 +89,7 @@ bool AmorControlboard::getRefVelocity(const int joint, double *vel)
 
     AMOR_VECTOR7 velocities;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_req_velocities(handle, &velocities) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); amor_get_req_velocities(handle, &velocities) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_req_velocities() failed: %s", amor_error());
         return false;
@@ -108,7 +108,7 @@ bool AmorControlboard::getRefVelocities(double *vels)
 
     AMOR_VECTOR7 velocities;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_req_velocities(handle, &velocities) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); amor_get_req_velocities(handle, &velocities) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_req_velocities() failed: %s", amor_error());
         return false;
@@ -135,7 +135,7 @@ bool AmorControlboard::getRefVelocities(const int n_joint, const int *joints, do
 
     AMOR_VECTOR7 velocities;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_req_velocities(handle, &velocities) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); amor_get_req_velocities(handle, &velocities) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_req_velocities() failed: %s", amor_error());
         return false;

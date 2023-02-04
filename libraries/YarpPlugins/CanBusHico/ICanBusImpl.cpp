@@ -28,7 +28,7 @@ bool CanBusHico::canSetBaudRate(unsigned int rate)
         return false;
     }
 
-    std::lock_guard<std::mutex> lockGuard(canBusReady);
+    std::lock_guard lockGuard(canBusReady);
 
     if (bitrateState.first)
     {
@@ -96,7 +96,7 @@ bool CanBusHico::canIdAdd(unsigned int _id)
         return false;
     }
 
-    std::lock_guard<std::mutex> lockGuard(canBusReady);
+    std::lock_guard lockGuard(canBusReady);
 
     if (filterManager->hasId(_id))
     {
@@ -135,7 +135,7 @@ bool CanBusHico::canIdDelete(unsigned int _id)
         return false;
     }
 
-    std::lock_guard<std::mutex> lockGuard(canBusReady);
+    std::lock_guard lockGuard(canBusReady);
 
     if (_id == 0)
     {
@@ -183,7 +183,7 @@ bool CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigne
 
     *read = 0;
 
-    std::lock_guard<std::mutex> lockGuard(canBusReady);
+    std::lock_guard lockGuard(canBusReady);
 
     for (unsigned int i = 0; i < size; i++)
     {
@@ -246,7 +246,7 @@ bool CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, 
 
     *sent = 0;
 
-    std::lock_guard<std::mutex> lockGuard(canBusReady);
+    std::lock_guard lockGuard(canBusReady);
 
     for (unsigned int i = 0; i < size; i++)
     {

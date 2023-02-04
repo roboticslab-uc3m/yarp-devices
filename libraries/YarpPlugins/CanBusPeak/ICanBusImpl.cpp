@@ -64,7 +64,7 @@ bool CanBusPeak::canGetBaudRate(unsigned int * rate)
 
 bool CanBusPeak::canIdAdd(unsigned int _id)
 {
-    std::lock_guard<std::mutex> lockGuard(canBusReady);
+    std::lock_guard lockGuard(canBusReady);
 
     if (activeFilters.find(_id) != activeFilters.end())
     {
@@ -94,7 +94,7 @@ bool CanBusPeak::canIdAdd(unsigned int _id)
 
 bool CanBusPeak::canIdDelete(unsigned int _id)
 {
-    std::lock_guard<std::mutex> lockGuard(canBusReady);
+    std::lock_guard lockGuard(canBusReady);
 
     if (_id == 0)
     {
@@ -147,7 +147,7 @@ bool CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigne
     int res;
 
     {
-        std::lock_guard<std::mutex> lockGuard(canBusReady);
+        std::lock_guard lockGuard(canBusReady);
 
         if (blockingMode && rxTimeoutMs > 0)
         {
@@ -200,7 +200,7 @@ bool CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, 
     int res;
 
     {
-        std::lock_guard<std::mutex> lockGuard(canBusReady);
+        std::lock_guard lockGuard(canBusReady);
 
         // Point at first member of an internally defined array of pcanfd_msg structs.
         const struct pcanfd_msg * pfdm = reinterpret_cast<const struct pcanfd_msg *>(msgs.getPointer()[0]->getPointer());

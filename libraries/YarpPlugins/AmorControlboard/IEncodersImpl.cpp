@@ -53,7 +53,7 @@ bool AmorControlboard::getEncoder(int j, double *v)
 
     AMOR_VECTOR7 positions;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_actual_positions() failed: %s", amor_error());
         return false;
@@ -72,7 +72,7 @@ bool AmorControlboard::getEncoders(double *encs)
 
     AMOR_VECTOR7 positions;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_actual_positions() failed: %s", amor_error());
         return false;
@@ -99,7 +99,7 @@ bool AmorControlboard::getEncoderSpeed(int j, double *sp)
 
     AMOR_VECTOR7 velocities;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_actual_velocities(handle, &velocities) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); amor_get_actual_velocities(handle, &velocities) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_actual_velocities() failed: %s", amor_error());
         return false;
@@ -118,7 +118,7 @@ bool AmorControlboard::getEncoderSpeeds(double *spds)
 
     AMOR_VECTOR7 velocities;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_actual_velocities(handle, &velocities) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); amor_get_actual_velocities(handle, &velocities) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_actual_velocities() failed: %s", amor_error());
         return false;

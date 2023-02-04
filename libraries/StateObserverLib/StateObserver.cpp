@@ -22,7 +22,7 @@ namespace
 
         bool wait()
         {
-            std::unique_lock<std::mutex> lock(mutex);
+            std::unique_lock lock(mutex);
             count--;
 
             if (count < 0)
@@ -44,7 +44,7 @@ namespace
 
         void post()
         {
-            std::lock_guard<std::mutex> lock(mutex);
+            std::lock_guard lock(mutex);
             count++;
 
             if (count <= 0)
@@ -78,7 +78,7 @@ public:
 
     bool await(void * raw)
     {
-        std::lock_guard<std::mutex> awaitLock(awaitMutex);
+        std::lock_guard awaitLock(awaitMutex);
 
         if (!active)
         {
@@ -86,7 +86,7 @@ public:
         }
 
         {
-            std::lock_guard<std::mutex> registryLock(registryMutex);
+            std::lock_guard registryLock(registryMutex);
             semaphore = new BinaryTimedSemaphore(owner.getTimeout());
             remoteStorage = raw;
         }
@@ -94,7 +94,7 @@ public:
         bool timedOut = !semaphore->wait();
 
         {
-            std::lock_guard<std::mutex> registryLock(registryMutex);
+            std::lock_guard registryLock(registryMutex);
             delete semaphore;
             semaphore = nullptr;
         }
@@ -109,7 +109,7 @@ public:
             return false;
         }
 
-        std::lock_guard<std::mutex> lock(registryMutex);
+        std::lock_guard lock(registryMutex);
 
         if (semaphore != nullptr)
         {
@@ -127,7 +127,7 @@ public:
     void interrupt()
     {
         active = false;
-        std::lock_guard<std::mutex> lock(registryMutex);
+        std::lock_guard lock(registryMutex);
 
         if (semaphore != nullptr)
         {

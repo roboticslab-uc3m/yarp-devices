@@ -15,7 +15,7 @@ using namespace roboticslab;
 
 bool CanBusHico::canGetErrors(yarp::dev::CanErrors & err)
 {
-    std::lock_guard<std::mutex> lockGuard(canBusReady);
+    std::lock_guard lockGuard(canBusReady);
 
     unsigned int status;
 

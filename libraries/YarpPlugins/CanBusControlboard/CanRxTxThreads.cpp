@@ -120,7 +120,7 @@ void CanReaderThread::run()
 
         if (dumpWriter && dump.size() != 0)
         {
-            std::lock_guard<std::mutex> lock(*dumpMutex);
+            std::lock_guard lock(*dumpMutex);
             dumpPort->setEnvelope(lastStamp);
             dumpWriter->prepare() = std::move(dump);
             dumpWriter->write(true); // wait until any previous sends are complete
@@ -148,7 +148,7 @@ CanWriterThread::~CanWriterThread()
 
 void CanWriterThread::flush()
 {
-    std::lock_guard<std::mutex> lock(bufferMutex);
+    std::lock_guard lock(bufferMutex);
 
     //-- Nothing to write, exit.
     if (preparedMessages == 0) return;
@@ -186,7 +186,7 @@ void CanWriterThread::flush()
 
         if (dumpWriter && dump.size() != 0)
         {
-            std::lock_guard<std::mutex> lock(*dumpMutex);
+            std::lock_guard lock(*dumpMutex);
             dumpPort->setEnvelope(lastStamp);
             dumpWriter->prepare() = std::move(dump);
             dumpWriter->write(true); // wait until any previous sends are complete

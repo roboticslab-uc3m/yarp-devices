@@ -101,7 +101,7 @@ void WiimoteDispatcherThread::run()
 
 WiimoteEventData WiimoteDispatcherThread::getEventData() const
 {
-    std::lock_guard<std::mutex> lock(eventDataMutex);
+    std::lock_guard lock(eventDataMutex);
     return eventData;
 }
 

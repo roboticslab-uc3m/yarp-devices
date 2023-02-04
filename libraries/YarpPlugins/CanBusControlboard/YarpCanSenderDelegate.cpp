@@ -8,7 +8,7 @@ using namespace roboticslab;
 
 bool YarpCanSenderDelegate::prepareMessage(const can_message & msg)
 {
-    std::lock_guard<std::mutex> lock(bufferMutex);
+    std::lock_guard lock(bufferMutex);
 
     if (preparedMessages < maxSize)
     {

@@ -64,7 +64,7 @@ bool CuiAbsolute::notifyMessage(const can_message & message)
         std::memcpy(&v, message.data, message.len); // len = 4 bytes
         normalize(&v);
 
-        std::lock_guard<std::mutex> lock(mutex);
+        std::lock_guard lock(mutex);
         encoder = v;
         encoderTimestamp = yarp::os::Time::now();
 

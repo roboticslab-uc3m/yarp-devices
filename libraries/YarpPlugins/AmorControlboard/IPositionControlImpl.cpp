@@ -29,7 +29,7 @@ bool AmorControlboard::positionMove(int j, double ref)
 
     AMOR_VECTOR7 positions;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_actual_positions(): %s", amor_error());
         return false;
@@ -37,7 +37,7 @@ bool AmorControlboard::positionMove(int j, double ref)
 
     positions[j] = toRad(ref);
 
-    std::lock_guard<std::mutex> lock(handleMutex);
+    std::lock_guard lock(handleMutex);
     return amor_set_positions(handle, positions) == AMOR_SUCCESS;
 }
 
@@ -52,7 +52,7 @@ bool AmorControlboard::positionMove(const double *refs)
         positions[j] = toRad(refs[j]);
     }
 
-    std::lock_guard<std::mutex> lock(handleMutex);
+    std::lock_guard lock(handleMutex);
     return amor_set_positions(handle, positions) == AMOR_SUCCESS;
 }
 
@@ -69,7 +69,7 @@ bool AmorControlboard::relativeMove(int j, double delta)
 
     AMOR_VECTOR7 positions;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_actual_positions(): %s", amor_error());
         return false;
@@ -77,7 +77,7 @@ bool AmorControlboard::relativeMove(int j, double delta)
 
     positions[j] += toRad(delta);
 
-    std::lock_guard<std::mutex> lock(handleMutex);
+    std::lock_guard lock(handleMutex);
     return amor_set_positions(handle, positions) == AMOR_SUCCESS;
 }
 
@@ -92,7 +92,7 @@ bool AmorControlboard::relativeMove(const double *deltas)
         positions[j] += toRad(deltas[j]);
     }
 
-    std::lock_guard<std::mutex> lock(handleMutex);
+    std::lock_guard lock(handleMutex);
     return amor_set_positions(handle, positions) == AMOR_SUCCESS;
 }
 
@@ -116,7 +116,7 @@ bool AmorControlboard::checkMotionDone(bool *flag)
 
     amor_movement_status status;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_movement_status(handle, &status) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); amor_get_movement_status(handle, &status) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_movement_status(): %s", amor_error());
         return false;
@@ -172,7 +172,7 @@ bool AmorControlboard::getRefSpeed(int j, double *ref)
 
     AMOR_JOINT_INFO parameters;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_joint_info(handle, j, &parameters) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); amor_get_joint_info(handle, j, &parameters) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_joint_info(): %s", amor_error());
         return false;
@@ -193,7 +193,7 @@ bool AmorControlboard::getRefSpeeds(double *spds)
     {
         AMOR_JOINT_INFO parameters;
 
-        if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_joint_info(handle, j, &parameters) != AMOR_SUCCESS)
+        if (std::lock_guard lock(handleMutex); amor_get_joint_info(handle, j, &parameters) != AMOR_SUCCESS)
         {
             yCError(AMOR, "amor_get_joint_info(): %s", amor_error());
             return false;
@@ -218,7 +218,7 @@ bool AmorControlboard::getRefAcceleration(int j, double *acc)
 
     AMOR_JOINT_INFO parameters;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_joint_info(handle, j, &parameters) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); amor_get_joint_info(handle, j, &parameters) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_joint_info(): %s", amor_error());
         return false;
@@ -239,7 +239,7 @@ bool AmorControlboard::getRefAccelerations(double *accs)
     {
         AMOR_JOINT_INFO parameters;
 
-        if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_joint_info(handle, j, &parameters) != AMOR_SUCCESS)
+        if (std::lock_guard lock(handleMutex); amor_get_joint_info(handle, j, &parameters) != AMOR_SUCCESS)
         {
             yCError(AMOR, "amor_get_joint_info(): %s", amor_error());
             return false;
@@ -270,7 +270,7 @@ bool AmorControlboard::stop(int j)
 bool AmorControlboard::stop()
 {
     yCTrace(AMOR, "");
-    std::lock_guard<std::mutex> lock(handleMutex);
+    std::lock_guard lock(handleMutex);
     return amor_controlled_stop(handle) == AMOR_SUCCESS;
 }
 
@@ -287,7 +287,7 @@ bool AmorControlboard::positionMove(const int n_joint, const int *joints, const 
 
     AMOR_VECTOR7 positions;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); n_joint < AMOR_NUM_JOINTS && amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); n_joint < AMOR_NUM_JOINTS && amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_actual_positions(): %s", amor_error());
         return false;
@@ -298,7 +298,7 @@ bool AmorControlboard::positionMove(const int n_joint, const int *joints, const 
         positions[joints[j]] = toRad(refs[j]);
     }
 
-    std::lock_guard<std::mutex> lock(handleMutex);
+    std::lock_guard lock(handleMutex);
     return amor_set_positions(handle, positions) == AMOR_SUCCESS;
 }
 
@@ -315,7 +315,7 @@ bool AmorControlboard::relativeMove(const int n_joint, const int *joints, const 
 
     AMOR_VECTOR7 positions;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); n_joint < AMOR_NUM_JOINTS && amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); n_joint < AMOR_NUM_JOINTS && amor_get_actual_positions(handle, &positions) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_actual_positions(): %s", amor_error());
         return false;
@@ -326,7 +326,7 @@ bool AmorControlboard::relativeMove(const int n_joint, const int *joints, const 
         positions[joints[j]] += toRad(deltas[j]);
     }
 
-    std::lock_guard<std::mutex> lock(handleMutex);
+    std::lock_guard lock(handleMutex);
     return amor_set_positions(handle, positions) == AMOR_SUCCESS;
 }
 
@@ -343,7 +343,7 @@ bool AmorControlboard::checkMotionDone(const int n_joint, const int *joints, boo
 
     amor_movement_status status;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_movement_status(handle, &status) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); amor_get_movement_status(handle, &status) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_movement_status(): %s", amor_error());
         return false;
@@ -390,7 +390,7 @@ bool AmorControlboard::getRefSpeeds(const int n_joint, const int *joints, double
     {
         AMOR_JOINT_INFO parameters;
 
-        if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_joint_info(handle, joints[j], &parameters) != AMOR_SUCCESS)
+        if (std::lock_guard lock(handleMutex); amor_get_joint_info(handle, joints[j], &parameters) != AMOR_SUCCESS)
         {
             yCError(AMOR, "amor_get_joint_info(): %s", amor_error());
             return false;
@@ -417,7 +417,7 @@ bool AmorControlboard::getRefAccelerations(const int n_joint, const int *joints,
     {
         AMOR_JOINT_INFO parameters;
 
-        if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_joint_info(handle, joints[j], &parameters) != AMOR_SUCCESS)
+        if (std::lock_guard lock(handleMutex); amor_get_joint_info(handle, joints[j], &parameters) != AMOR_SUCCESS)
         {
             yCError(AMOR, "amor_get_joint_info(): %s", amor_error());
             return false;
@@ -456,7 +456,7 @@ bool AmorControlboard::getTargetPosition(const int joint, double *ref)
 
     AMOR_VECTOR7 positions;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_req_positions(handle, &positions) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); amor_get_req_positions(handle, &positions) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_req_positions(): %s", amor_error());
         return false;
@@ -475,7 +475,7 @@ bool AmorControlboard::getTargetPositions(double *refs)
 
     AMOR_VECTOR7 positions;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_req_positions(handle, &positions) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); amor_get_req_positions(handle, &positions) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_req_positions(): %s", amor_error());
         return false;
@@ -502,7 +502,7 @@ bool AmorControlboard::getTargetPositions(const int n_joint, const int *joints, 
 
     AMOR_VECTOR7 positions;
 
-    if (std::lock_guard<std::mutex> lock(handleMutex); amor_get_req_positions(handle, &positions) != AMOR_SUCCESS)
+    if (std::lock_guard lock(handleMutex); amor_get_req_positions(handle, &positions) != AMOR_SUCCESS)
     {
         yCError(AMOR, "amor_get_req_positions(): %s", amor_error());
         return false;
