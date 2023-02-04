@@ -2,10 +2,6 @@
 
 #include "embedded-pid/TechnosoftIposEmbedded.hpp"
 
-#include <yarp/os/LogStream.h>
-
-#include "LogComponent.hpp"
-
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
@@ -17,34 +13,27 @@ bool TechnosoftIposEmbedded::synchronize(double timestamp)
         return true;
     }
 
+    std::int32_t data;
+
     switch (actualControlMode.load())
     {
-    case VOCAB_CM_VELOCITY:
-    {
-        // enableCsv = true
-        double value = commandBuffer.interpolate() * syncPeriod;
-        std::int32_t data = degreesToInternalUnits(value);
-        return can->rpdo3()->write(data);
-    }
-    case VOCAB_CM_TORQUE:
-    {
-        double curr = torqueToCurrent(commandBuffer.interpolate());
-        std::int32_t data = currentToInternalUnits(curr) << 16;
-        return can->rpdo3()->write(data);
-    }
-    case VOCAB_CM_CURRENT:
-    {
-        std::int32_t data = currentToInternalUnits(commandBuffer.interpolate()) << 16;
-        return can->rpdo3()->write(data);
-    }
+    case VOCAB_CM_VELOCITY: // enableCsv = true
+        data = degreesToInternalUnits(commandBuffer.interpolate() * syncPeriod);
+        break;
     case VOCAB_CM_POSITION_DIRECT:
-    {
-        std::int32_t data = degreesToInternalUnits(commandBuffer.interpolate());
-        return can->rpdo3()->write(data);
-    }
+        data = degreesToInternalUnits(commandBuffer.interpolate());
+        break;
+    case VOCAB_CM_TORQUE:
+        data = currentToInternalUnits(torqueToCurrent(commandBuffer.interpolate())) << 16;
+        break;
+    case VOCAB_CM_CURRENT:
+        data = currentToInternalUnits(commandBuffer.interpolate()) << 16;
+        break;
     default:
         return true;
     }
+
+    return can->rpdo3()->write(data);
 }
 
 // -----------------------------------------------------------------------------
