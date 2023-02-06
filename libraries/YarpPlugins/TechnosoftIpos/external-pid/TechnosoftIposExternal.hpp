@@ -80,6 +80,12 @@ public:
     bool setPositionRaw(int j, double ref) override;
     bool getRefPositionRaw(int joint, double * ref) override;
 
+    // ------- IRemoteVariablesRaw declarations. Implementation in IRemoteVariablesRawImpl.cpp -------
+
+    bool getRemoteVariableRaw(std::string key, yarp::os::Bottle & val) override;
+    bool setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val) override;
+    bool getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys) override;
+
     //  --------- IVelocityControlRaw declarations. Implementation in IVelocityControlRawImpl.cpp ---------
 
     bool velocityMoveRaw(int j, double sp) override;
@@ -109,6 +115,8 @@ private:
     double integralError {0.0};
 
     TrapezoidalTrajectory trajectory;
+
+    std::atomic<bool> enableCsv {false};
 };
 
 } // namespace roboticslab

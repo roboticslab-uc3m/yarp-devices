@@ -8,6 +8,8 @@
 
 using namespace roboticslab;
 
+constexpr auto DEFAULT_ENABLE_CSV = false;
+
 // -----------------------------------------------------------------------------
 
 bool TechnosoftIposExternal::open(yarp::os::Searchable & config)
@@ -23,6 +25,13 @@ bool TechnosoftIposExternal::open(yarp::os::Searchable & config)
     }
 
     iposGroup.fromString(config.toString(), false); // override common options
+
+    auto enableCsvVal = iposGroup.check("enableCsv", yarp::os::Value(DEFAULT_ENABLE_CSV), "enable CSV mode");
+
+    if (!setRemoteVariableRaw("enableCsv", {enableCsvVal}))
+    {
+        return false;
+    }
 
     initialInteractionMode = iposGroup.check("initialInteractionMode", yarp::os::Value(yarp::dev::InteractionModeEnum::VOCAB_IM_UNKNOWN),
         "initial YARP interaction mode vocab").asVocab32();

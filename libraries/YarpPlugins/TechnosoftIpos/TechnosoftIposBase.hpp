@@ -412,17 +412,6 @@ public:
     bool getRefPositionsRaw(int n_joint, const int * joints, double * refs) override
     { return getRefPositionRaw(joints[0], &refs[0]); }
 
-    // ------- IRemoteVariablesRaw declarations. Implementation in IRemoteVariablesRawImpl.cpp -------
-
-    bool getRemoteVariableRaw(std::string key, yarp::os::Bottle & val) override
-    { return false; }
-
-    bool setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val) override
-    { return false; }
-
-    bool getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys) override
-    { return false; }
-
     // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
 
     bool getRefTorqueRaw(int j, double * t) override;

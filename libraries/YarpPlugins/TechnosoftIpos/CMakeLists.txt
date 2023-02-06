@@ -55,6 +55,7 @@ if(NOT SKIP_TechnosoftIpos)
                                               external-pid/IPidControlRawImpl.cpp
                                               external-pid/IPositionControlRawImpl.cpp
                                               external-pid/IPositionDirectRawImpl.cpp
+                                              external-pid/IRemoteVariablesRawImpl.cpp
                                               external-pid/IVelocityControlRawImpl.cpp)
 
         target_link_libraries(TechnosoftIpos ROBOTICSLAB::TrajectoryLib)

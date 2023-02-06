@@ -19,17 +19,26 @@ bool TechnosoftIposExternal::synchronize(double timestamp)
     int mode = actualControlMode;
     double current;
 
-    if (mode == VOCAB_CM_POSITION || mode == VOCAB_CM_VELOCITY)
+    if (mode == VOCAB_CM_POSITION || mode == VOCAB_CM_VELOCITY || mode == VOCAB_CM_POSITION_DIRECT)
     {
-        double forceCommand;
-        setPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, trajectory.update(timestamp).position);
-        getPidOutputRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, &forceCommand);
-        current = torqueToCurrent(forceCommand);
-    }
-    else if (mode == VOCAB_CM_POSITION_DIRECT)
-    {
-        double forceCommand;
-        setPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, commandBuffer.interpolate());
+        double target, forceCommand;
+
+        if (mode == VOCAB_CM_POSITION || mode == VOCAB_CM_VELOCITY && !enableCsv)
+        {
+            target = trajectory.update(timestamp).position;
+        }
+        else if (mode == VOCAB_CM_VELOCITY && enableCsv)
+        {
+            double prevTarget;
+            getPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, &prevTarget);
+            target = prevTarget + commandBuffer.interpolate() * syncPeriod;
+        }
+        else // mode == VOCAB_CM_POSITION_DIRECT
+        {
+            target = commandBuffer.interpolate();
+        }
+
+        setPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, target);
         getPidOutputRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, &forceCommand);
         current = torqueToCurrent(forceCommand);
     }

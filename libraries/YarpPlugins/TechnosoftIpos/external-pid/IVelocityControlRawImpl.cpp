@@ -29,9 +29,16 @@ bool TechnosoftIposExternal::velocityMoveRaw(int j, double sp)
         sp = std::clamp(sp, -maxVel, maxVel);
     }
 
-    trajectory.setTargetVelocity(yarp::os::SystemClock::nowSystem(),
-                                 trajectory.queryPosition(), trajectory.queryVelocity(),
-                                 sp, refAcceleration);
+    if (enableCsv)
+    {
+        commandBuffer.accept(sp);
+    }
+    else
+    {
+        trajectory.setTargetVelocity(yarp::os::SystemClock::nowSystem(),
+                                     trajectory.queryPosition(), trajectory.queryVelocity(),
+                                     sp, refAcceleration);
+    }
 
     return true;
 }
@@ -43,7 +50,7 @@ bool TechnosoftIposExternal::getRefVelocityRaw(int joint, double * vel)
     yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_VELOCITY);
-    *vel = trajectory.queryVelocity();
+    *vel = enableCsv ? commandBuffer.getStoredCommand() : trajectory.queryVelocity();
     return true;
 }
 

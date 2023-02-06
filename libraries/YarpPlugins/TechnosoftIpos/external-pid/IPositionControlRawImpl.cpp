@@ -137,7 +137,11 @@ bool TechnosoftIposExternal::stopRaw(int j)
         return false;
     }
 
-    if (trajectory.isActive())
+    if (actualControlMode == VOCAB_CM_VELOCITY && enableCsv)
+    {
+        commandBuffer.accept(0.0);
+    }
+    else if (trajectory.isActive())
     {
         trajectory.setTargetVelocity(yarp::os::SystemClock::nowSystem(),
                                      trajectory.queryPosition(), trajectory.queryVelocity(),
