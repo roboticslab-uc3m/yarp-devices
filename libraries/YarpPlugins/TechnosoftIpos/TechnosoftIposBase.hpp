@@ -459,6 +459,7 @@ public:
 protected:
 
     enum report_level { NONE, INFO, WARN, FAULT };
+    enum limit_switch { POSITIVE, NEGATIVE, INACTIVE };
 
     struct report_storage
     {
@@ -471,6 +472,7 @@ protected:
 
     virtual void interpretModesOfOperation(std::int8_t modesOfOperation) = 0;
     virtual void interpretIpStatus(std::uint16_t ipStatus) {}
+    virtual void onPositionLimitTriggered() = 0;
     virtual void reset() = 0;
 
     //! Wait with timeout for requested control mode change.
@@ -536,6 +538,8 @@ protected:
     std::atomic<std::uint8_t> lastNmtState {0};
     std::atomic<std::uint16_t> lastFaultCode {0};
     std::atomic<const char *> lastFaultMessage;
+
+    std::atomic<limit_switch> limitSwitchState {INACTIVE};
 
     // read only after initial configuration, conceptually immutable
 

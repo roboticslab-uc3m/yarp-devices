@@ -27,8 +27,18 @@ bool TechnosoftIposBase::setRefTorqueRaw(int j, double t)
     yCITrace(IPOS, id(), "%d %f", j, t);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_TORQUE);
-    commandBuffer.accept(t);
-    return true;
+
+    const auto state = this->limitSwitchState.load();
+
+    if (state == INACTIVE || state == POSITIVE && t <= 0.0 || state == NEGATIVE && t >= 0.0)
+    {
+        commandBuffer.accept(t);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 // -------------------------------------------------------------------------------------

@@ -35,6 +35,13 @@ void TechnosoftIposExternal::interpretModesOfOperation(std::int8_t modesOfOperat
 
 // -----------------------------------------------------------------------------
 
+void TechnosoftIposExternal::onPositionLimitTriggered()
+{
+    ;
+}
+
+// -----------------------------------------------------------------------------
+
 void TechnosoftIposExternal::reset()
 {
     TechnosoftIposBase::reset();

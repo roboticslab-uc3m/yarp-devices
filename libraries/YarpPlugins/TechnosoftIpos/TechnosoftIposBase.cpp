@@ -22,7 +22,7 @@ using namespace roboticslab;
 
 bool TechnosoftIposBase::reportBitToggle(report_storage report, int level, std::size_t pos, const char * msgSet, const char * msgReset)
 {
-    bool isSet = report.actual.test(pos);
+    const bool isSet = report.actual.test(pos);
 
     if (report.stored.test(pos) != isSet && level != NONE)
     {
@@ -68,8 +68,19 @@ void TechnosoftIposBase::interpretMsr(std::uint16_t msr)
     reportBitToggle(report, NONE, 3, "Position trigger 3 reached.");
     reportBitToggle(report, NONE, 4, "Position trigger 4 reached.");
     reportBitToggle(report, INFO, 5, "AUTORUN mode enabled.");
-    reportBitToggle(report, INFO, 6, "Limit switch positive event / interrupt triggered.");
-    reportBitToggle(report, INFO, 7, "Limit switch negative event / interrupt triggered.");
+
+    if (!reportBitToggle(report, INFO, 6, "Limit switch positive event / interrupt triggered.")
+        && limitSwitchState != INACTIVE && (limitSwitchState == POSITIVE ^ reverse))
+    {
+        limitSwitchState = INACTIVE; // only handle reset, triggering happens in the EMCY handler
+    }
+
+    if (!reportBitToggle(report, INFO, 7, "Limit switch negative event / interrupt triggered.")
+        && limitSwitchState != INACTIVE && (limitSwitchState == NEGATIVE ^ reverse))
+    {
+        limitSwitchState = INACTIVE; // only handle reset, triggering happens in the EMCY handler
+    }
+
     reportBitToggle(report, INFO, 8, "Capture event/interrupt triggered.");
     reportBitToggle(report, INFO, 9, "Target command reached.");
     reportBitToggle(report, WARN, 10, "Motor I2t protection warning level reached.");
@@ -349,6 +360,11 @@ void TechnosoftIposBase::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg,
         interpretIpStatus(ipStatus);
         break;
     }
+    case 0xFF06: // positive position limit software triggered
+    case 0xFF07: // negative position limit software triggered
+        limitSwitchState = (emcyCode == 0xFF06 ^ reverse) ? POSITIVE : NEGATIVE;
+        onPositionLimitTriggered();
+        // no break
     default:
         yCIWarning(IPOS, id()) << "[EMCY]" << emcyMessage;
         break;
@@ -554,6 +570,8 @@ void TechnosoftIposBase::reset()
     lastCurrentRead = 0.0;
 
     requestedcontrolMode = 0;
+
+    limitSwitchState = INACTIVE;
 }
 
 // -----------------------------------------------------------------------------

@@ -36,11 +36,21 @@ bool TechnosoftIposBase::getCurrentRangeRaw(int m, double * min, double * max)
 
 bool TechnosoftIposBase::setRefCurrentRaw(int m, double curr)
 {
-    yCITrace(IPOS, id(), "%d", m);
+    yCITrace(IPOS, id(), "%d %f", m, curr);
     CHECK_JOINT(m);
     CHECK_MODE(VOCAB_CM_CURRENT);
-    commandBuffer.accept(curr);
-    return true;
+
+    const bool state = this->limitSwitchState.load();
+
+    if (state == INACTIVE || state == POSITIVE && curr <= 0.0 || state == NEGATIVE && curr >= 0.0)
+    {
+        commandBuffer.accept(curr);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 // -----------------------------------------------------------------------------
