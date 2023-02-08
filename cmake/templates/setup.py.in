@@ -3,6 +3,7 @@
 from setuptools import setup
 from os.path import normpath # see https://github.com/roboticslab-uc3m/asibot-main/commit/320d03f
 
+# see https://github.com/roboticslab-uc3m/yarp-devices/issues/201 regarding package naming issues
 
 setup(name='yarp-devices',
       version='0.0.5',
