@@ -20,11 +20,20 @@ bool TechnosoftIposExternal::positionMoveRaw(int j, double ref)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    trajectory.setTargetPosition(yarp::os::SystemClock::nowSystem(),
-                                 trajectory.queryPosition(), trajectory.queryVelocity(),
-                                 ref, refSpeed, refAcceleration);
+    const auto state = this->limitSwitchState.load();
 
-    return true;
+    if (state == INACTIVE || state == POSITIVE && ref <= max || state == NEGATIVE && ref >= min)
+    {
+        trajectory.setTargetPosition(yarp::os::SystemClock::nowSystem(),
+                                     trajectory.queryPosition(), trajectory.queryVelocity(),
+                                     ref, refSpeed, refAcceleration);
+
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 // --------------------------------------------------------------------------------
@@ -35,11 +44,20 @@ bool TechnosoftIposExternal::relativeMoveRaw(int j, double delta)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    trajectory.setTargetPosition(yarp::os::SystemClock::nowSystem(),
-                                 trajectory.queryPosition(), trajectory.queryVelocity(),
-                                 trajectory.queryPosition() + delta, refSpeed, refAcceleration);
+    const auto state = this->limitSwitchState.load();
 
-    return true;
+    if (state == INACTIVE || state == POSITIVE && delta <= 0.0 || state == NEGATIVE && delta >= 0.0)
+    {
+        trajectory.setTargetPosition(yarp::os::SystemClock::nowSystem(),
+                                     trajectory.queryPosition(), trajectory.queryVelocity(),
+                                     trajectory.queryPosition() + delta, refSpeed, refAcceleration);
+
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 // --------------------------------------------------------------------------------

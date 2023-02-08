@@ -37,7 +37,32 @@ void TechnosoftIposExternal::interpretModesOfOperation(std::int8_t modesOfOperat
 
 void TechnosoftIposExternal::onPositionLimitTriggered()
 {
-    ;
+    auto mode = actualControlMode.load();
+
+    switch (mode)
+    {
+    case VOCAB_CM_POSITION:
+    case VOCAB_CM_VELOCITY:
+    case VOCAB_CM_POSITION_DIRECT:
+        if (mode == VOCAB_CM_POSITION || mode == VOCAB_CM_VELOCITY && !enableCsv)
+        {
+            trajectory.reset(internalUnitsToDegrees(lastEncoderRead->queryPosition()));
+        }
+        else if (mode == VOCAB_CM_POSITION_DIRECT)
+        {
+            commandBuffer.reset(internalUnitsToDegrees(lastEncoderRead->queryPosition()));
+        }
+        else // mode == VOCAB_CM_VELOCITY && enableCsv
+        {
+            commandBuffer.reset(0.0);
+        }
+
+        break;
+    case VOCAB_CM_TORQUE:
+    case VOCAB_CM_CURRENT:
+        commandBuffer.reset(0.0);
+        break;
+    }
 }
 
 // -----------------------------------------------------------------------------

@@ -29,18 +29,27 @@ bool TechnosoftIposExternal::velocityMoveRaw(int j, double sp)
         sp = std::clamp(sp, -maxVel, maxVel);
     }
 
-    if (enableCsv)
+    const auto state = this->limitSwitchState.load();
+
+    if (state == INACTIVE || state == POSITIVE && sp <= 0.0 || state == NEGATIVE && sp >= 0.0)
     {
-        commandBuffer.accept(sp);
+        if (enableCsv)
+        {
+            commandBuffer.accept(sp);
+        }
+        else
+        {
+            trajectory.setTargetVelocity(yarp::os::SystemClock::nowSystem(),
+                                         trajectory.queryPosition(), trajectory.queryVelocity(),
+                                         sp, refAcceleration);
+        }
+
+        return true;
     }
     else
     {
-        trajectory.setTargetVelocity(yarp::os::SystemClock::nowSystem(),
-                                     trajectory.queryPosition(), trajectory.queryVelocity(),
-                                     sp, refAcceleration);
+        return false;
     }
-
-    return true;
 }
 
 // ----------------------------------------------------------------------------------
