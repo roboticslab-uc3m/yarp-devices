@@ -112,7 +112,13 @@ void TechnosoftIposEmbedded::onPositionLimitTriggered()
     case VOCAB_CM_CURRENT:
         commandBuffer.reset(0.0); // updates reference on next SYNC
         break;
+    default:
+        return;
     }
+
+    // set halt bit (8), note this is faster than a SYNC command; also, ext. ref. torque
+    // is automatically disabled on halt, but we'll do it explicitly anyway (bit 4)
+    can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4).set(8));
 }
 
 // -----------------------------------------------------------------------------

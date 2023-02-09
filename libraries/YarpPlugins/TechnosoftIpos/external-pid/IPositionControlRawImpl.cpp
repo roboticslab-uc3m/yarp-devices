@@ -24,6 +24,15 @@ bool TechnosoftIposExternal::positionMoveRaw(int j, double ref)
 
     if (state == INACTIVE || state == POSITIVE && ref <= max || state == NEGATIVE && ref >= min)
     {
+        // reset halt bit (8) and re-enable ext. ref. torque (4)
+        if (can->driveStatus()->controlword()[8] &&
+            (!can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)) ||
+            // must be issued separately
+             !can->driveStatus()->controlword(can->driveStatus()->controlword().set(4))))
+        {
+            return false;
+        }
+
         trajectory.setTargetPosition(yarp::os::SystemClock::nowSystem(),
                                      trajectory.queryPosition(), trajectory.queryVelocity(),
                                      ref, refSpeed, refAcceleration);
@@ -48,6 +57,15 @@ bool TechnosoftIposExternal::relativeMoveRaw(int j, double delta)
 
     if (state == INACTIVE || state == POSITIVE && delta <= 0.0 || state == NEGATIVE && delta >= 0.0)
     {
+        // reset halt bit (8) and re-enable ext. ref. torque (4)
+        if (can->driveStatus()->controlword()[8] &&
+            (!can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)) ||
+            // must be issued separately
+             !can->driveStatus()->controlword(can->driveStatus()->controlword().set(4))))
+        {
+            return false;
+        }
+
         trajectory.setTargetPosition(yarp::os::SystemClock::nowSystem(),
                                      trajectory.queryPosition(), trajectory.queryVelocity(),
                                      trajectory.queryPosition() + delta, refSpeed, refAcceleration);

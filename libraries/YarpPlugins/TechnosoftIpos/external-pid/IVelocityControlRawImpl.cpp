@@ -33,6 +33,15 @@ bool TechnosoftIposExternal::velocityMoveRaw(int j, double sp)
 
     if (state == INACTIVE || state == POSITIVE && sp <= 0.0 || state == NEGATIVE && sp >= 0.0)
     {
+        // reset halt bit (8) and re-enable ext. ref. torque (4)
+        if (can->driveStatus()->controlword()[8] &&
+            (!can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)) ||
+            // must be issued separately
+             !can->driveStatus()->controlword(can->driveStatus()->controlword().set(4))))
+        {
+            return false;
+        }
+
         if (enableCsv)
         {
             commandBuffer.accept(sp);

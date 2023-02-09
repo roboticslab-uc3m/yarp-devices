@@ -106,10 +106,12 @@ bool TechnosoftIposBase::initialize()
         || !can->tpdo2()->configure(tpdo2Conf)
         || !can->tpdo3()->configure(tpdo3Conf)
         || (heartbeatPeriod != 0.0
-                && !can->sdo()->download<std::uint16_t>("Producer Heartbeat Time", heartbeatPeriod * 1000, 0x1017))
+            && !can->sdo()->download<std::uint16_t>("Producer Heartbeat Time", heartbeatPeriod * 1000, 0x1017))
+        // slow down on quick stop ramp and stay in Operation Enabled state
+        || !can->sdo()->download<std::int16_t>("Halt option code", 2, 0x605D)
         || !can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE)
         || (can->driveStatus()->getCurrentState() == DriveState::NOT_READY_TO_SWITCH_ON
-                && !can->driveStatus()->awaitState(DriveState::SWITCH_ON_DISABLED)))
+            && !can->driveStatus()->awaitState(DriveState::SWITCH_ON_DISABLED)))
     {
         yCIError(IPOS, id()) << "Initial SDO configuration and/or node start failed";
         return false;

@@ -20,6 +20,15 @@ bool TechnosoftIposExternal::setPositionRaw(int j, double ref)
 
     if (state == INACTIVE || state == POSITIVE && ref <= max || state == NEGATIVE && ref >= min)
     {
+        // reset halt bit (8) and re-enable ext. ref. torque (4)
+        if (can->driveStatus()->controlword()[8] &&
+            (!can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)) ||
+            // must be issued separately
+             !can->driveStatus()->controlword(can->driveStatus()->controlword().set(4))))
+        {
+            return false;
+        }
+
         commandBuffer.accept(ref); // TODO: clip if exceeds max speed
         return true;
     }

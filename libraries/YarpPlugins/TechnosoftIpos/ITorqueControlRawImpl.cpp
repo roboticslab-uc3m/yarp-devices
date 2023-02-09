@@ -32,6 +32,15 @@ bool TechnosoftIposBase::setRefTorqueRaw(int j, double t)
 
     if (state == INACTIVE || state == POSITIVE && t <= 0.0 || state == NEGATIVE && t >= 0.0)
     {
+        // reset halt bit (8) and re-enable ext. ref. torque (4)
+        if (can->driveStatus()->controlword()[8] &&
+            (!can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)) ||
+            // must be issued separately
+             !can->driveStatus()->controlword(can->driveStatus()->controlword().set(4))))
+        {
+            return false;
+        }
+
         commandBuffer.accept(t);
         return true;
     }
