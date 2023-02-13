@@ -93,6 +93,7 @@ public:
 
 private:
     void interpretModesOfOperation(std::int8_t modesOfOperation) override;
+    void onPositionLimitTriggered() override;
     void reset() override;
 
     yarp::conf::vocab32_t initialInteractionMode {0};

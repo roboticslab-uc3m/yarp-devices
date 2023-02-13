@@ -64,6 +64,7 @@ public:
 private:
     void interpretModesOfOperation(std::int8_t modesOfOperation) override;
     void interpretIpStatus(std::uint16_t ipStatus) override;
+    void onPositionLimitTriggered() override;
     void reset() override;
 
     InterpolatedPositionBuffer * ipBuffer {nullptr};

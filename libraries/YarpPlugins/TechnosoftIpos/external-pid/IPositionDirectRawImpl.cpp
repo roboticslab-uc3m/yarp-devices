@@ -15,8 +15,18 @@ bool TechnosoftIposExternal::setPositionRaw(int j, double ref)
     yCITrace(IPOS, id(), "%d %f", j, ref);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
-    commandBuffer.accept(ref); // TODO: clip if exceeds max speed
-    return true;
+
+    const auto state = this->limitSwitchState.load();
+
+    if (state == INACTIVE || state == POSITIVE && ref <= max || state == NEGATIVE && ref >= min)
+    {
+        commandBuffer.accept(ref); // TODO: clip if exceeds max speed
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 // -----------------------------------------------------------------------------
 

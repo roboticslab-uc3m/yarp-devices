@@ -104,6 +104,19 @@ void TechnosoftIposEmbedded::interpretIpStatus(std::uint16_t status)
 
 // -----------------------------------------------------------------------------
 
+void TechnosoftIposEmbedded::onPositionLimitTriggered()
+{
+    switch (actualControlMode.load())
+    {
+    case VOCAB_CM_TORQUE:
+    case VOCAB_CM_CURRENT:
+        commandBuffer.reset(0.0);
+        break;
+    }
+}
+
+// -----------------------------------------------------------------------------
+
 void TechnosoftIposEmbedded::reset()
 {
     TechnosoftIposBase::reset();
