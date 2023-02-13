@@ -84,6 +84,9 @@ public:
     bool prepareMessage(const can_message & msg) override
     { return messages.push_back(msg), true; }
 
+    void reportAvailability(bool available, unsigned int id) override
+    {}
+
     //! Retrieve last message.
     const fake_message & getLastMessage() const
     { return messages.back(); }

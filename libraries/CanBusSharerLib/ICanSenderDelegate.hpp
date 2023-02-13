@@ -26,6 +26,9 @@ public:
 
     //! Register CAN message for write.
     virtual bool prepareMessage(const can_message & msg) = 0;
+
+    //! Report availability of CAN node.
+    virtual void reportAvailability(bool available, unsigned int id) = 0;
 };
 
 } // namespace roboticslab

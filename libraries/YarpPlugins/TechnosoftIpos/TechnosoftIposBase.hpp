@@ -592,6 +592,7 @@ private:
     roboticslab::ICanBusSharer * iExternalEncoderCanBusSharer;
 
     yarp::os::Timer * monitorThread;
+    roboticslab::ICanSenderDelegate * sender;
 };
 
 } // namespace roboticslab

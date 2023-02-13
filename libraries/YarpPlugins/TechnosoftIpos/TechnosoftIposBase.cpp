@@ -470,13 +470,30 @@ bool TechnosoftIposBase::monitorWorker(const yarp::os::YarpTimerEvent & event)
         can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
         can->driveStatus()->reset();
         reset();
+
+        if (sender)
+        {
+            sender->reportAvailability(false, can->getId());
+        }
     }
     else if (!isConfigured && elapsed < event.lastDuration && lastNmtState == 0) // boot-up event
     {
+        yCIInfo(IPOS, id()) << "Boot-up detected, attempting initialization";
+
+        if (sender)
+        {
+            sender->reportAvailability(true, can->getId());
+        }
+
         if (!initialize())
         {
             yCIError(IPOS, id()) << "Unable to initialize CAN comms";
-            can->nmt()->issueServiceCommand(NmtService::RESET_NODE);
+            can->nmt()->issueServiceCommand(NmtService::RESET_NODE); // try again
+
+            if (sender)
+            {
+                sender->reportAvailability(false, can->getId());
+            }
         }
     }
 

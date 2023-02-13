@@ -3,7 +3,9 @@
 #ifndef __YARP_CAN_SENDER_DELEGATE_HPP__
 #define __YARP_CAN_SENDER_DELEGATE_HPP__
 
+#include <atomic>
 #include <mutex>
+#include <unordered_map>
 
 #include <yarp/dev/CanBusInterface.h>
 
@@ -25,16 +27,20 @@ public:
         : buffer(_buffer),
           bufferMutex(_bufferMutex),
           preparedMessages(n),
-          maxSize(size)
+          maxSize(size),
+          isActive(true)
     {}
 
     bool prepareMessage(const can_message & msg) override;
+    void reportAvailability(bool available, unsigned int id) override;
 
 private:
     yarp::dev::CanBuffer & buffer;
     std::mutex & bufferMutex;
     unsigned int & preparedMessages;
     unsigned int maxSize;
+    std::atomic_bool isActive;
+    std::unordered_map<unsigned int, bool> nodeAvailability;
 };
 
 } // namespace roboticslab
