@@ -2,10 +2,6 @@
 
 #include "TechnosoftIposEmbedded.hpp"
 
-#include <yarp/os/LogStream.h>
-
-#include "LogComponent.hpp"
-
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
@@ -20,38 +16,31 @@ void TechnosoftIposEmbedded::interpretModesOfOperation(std::int8_t modesOfOperat
     switch (modesOfOperation)
     {
     case -5:
-        yCIInfo(IPOS, id()) << "iPOS specific: External Reference Torque Mode";
         actualControlMode = requestedcontrolMode == VOCAB_CM_TORQUE ? VOCAB_CM_TORQUE : VOCAB_CM_CURRENT;
         enableSync = true;
         break;
     case 1:
-        yCIInfo(IPOS, id()) << "Profile Position Mode";
         actualControlMode = VOCAB_CM_POSITION;
         enableSync = false;
         break;
     case 3:
-        yCIInfo(IPOS, id()) << "Profile Velocity Mode";
         actualControlMode = enableCsv ? VOCAB_CM_UNKNOWN : VOCAB_CM_VELOCITY;
         enableSync = false;
         break;
     case 7:
-        yCIInfo(IPOS, id()) << "Interpolated Position Mode";
         actualControlMode = VOCAB_CM_POSITION_DIRECT;
         enableSync = false;
         break;
     case 8:
-        yCIInfo(IPOS, id()) << "Cyclic Synchronous Position Mode";
         actualControlMode = enableCsv ? VOCAB_CM_VELOCITY : VOCAB_CM_POSITION_DIRECT;
         enableSync = true;
         break;
     default:
-        TechnosoftIposBase::interpretModesOfOperation(modesOfOperation);
         actualControlMode = VOCAB_CM_UNKNOWN;
         break;
     }
 
-    this->modesOfOperation = modesOfOperation;
-    controlModeObserverPtr->notify();
+    TechnosoftIposBase::interpretModesOfOperation(modesOfOperation);
 }
 
 // -----------------------------------------------------------------------------

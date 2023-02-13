@@ -206,13 +206,13 @@ void TechnosoftIposBase::interpretStatusword(std::uint16_t statusword)
 
     report_storage report{"status", statusword, can->driveStatus()->statusword()};
 
-    reportBitToggle(report, INFO, 0, "Ready to switch on.");
-    reportBitToggle(report, INFO, 1, "Switched on.");
-    reportBitToggle(report, INFO, 2, "Operation enabled.");
-    reportBitToggle(report, INFO, 3, "Fault.");
+    reportBitToggle(report, NONE, 0, "Ready to switch on.");
+    reportBitToggle(report, NONE, 1, "Switched on.");
+    reportBitToggle(report, NONE, 2, "Operation enabled.");
+    reportBitToggle(report, NONE, 3, "Fault.");
     reportBitToggle(report, INFO, 4, "Motor supply voltage is present.", "Motor supply voltage is absent");
-    reportBitToggle(report, INFO, 5, "Quick Stop.");
-    reportBitToggle(report, INFO, 6, "Switch on disabled.");
+    reportBitToggle(report, NONE, 5, "Quick Stop.");
+    reportBitToggle(report, NONE, 6, "Switch on disabled.");
     reportBitToggle(report, WARN, 7, "A TML function / homing was called, while another TML function / homing is still in execution. The last call is ignored.",
             "No warning.");
     reportBitToggle(report, INFO, 8, "A TML function or homing is executed. Until the function or homing execution ends or is aborted, no other TML function / homing may be called.",
@@ -256,6 +256,47 @@ void TechnosoftIposBase::interpretStatusword(std::uint16_t statusword)
     reportBitToggle(report, INFO, 15, "Axis on. Power stage is enabled. Motor control is performed.",
             "Axis off. Power stage is disabled. Motor control is not performed.");
 
+    auto currentState = DriveStatusMachine::parseStatusword(statusword);
+
+    if (driveState != currentState)
+    {
+        std::string out;
+
+        switch (currentState)
+        {
+        case DriveState::NOT_READY_TO_SWITCH_ON:
+            out = "Not ready to switch on";
+            break;
+        case DriveState::SWITCH_ON_DISABLED:
+            out = "Switch on disabled";
+            break;
+        case DriveState::READY_TO_SWITCH_ON:
+            out = "Ready to switch on";
+            break;
+        case DriveState::SWITCHED_ON:
+            out = "Switched on";
+            break;
+        case DriveState::OPERATION_ENABLED:
+            out = "Operation enabled";
+            break;
+        case DriveState::FAULT_REACTION_ACTIVE:
+            out = "Fault reaction active";
+            break;
+        case DriveState::FAULT:
+            out = "Fault";
+            break;
+        case DriveState::QUICK_STOP_ACTIVE:
+            out = "Quick stop active";
+            break;
+        default:
+            out = "Unknown state";
+            break;
+        }
+
+        yCIInfo(IPOS, id()) << "[drive]" << out;
+        driveState = currentState;
+    }
+
     can->driveStatus()->update(statusword);
 }
 
@@ -263,42 +304,49 @@ void TechnosoftIposBase::interpretStatusword(std::uint16_t statusword)
 
 void TechnosoftIposBase::interpretModesOfOperation(std::int8_t modesOfOperation)
 {
+    std::string mode;
+
     switch (modesOfOperation)
     {
     case -5:
-        yCIInfo(IPOS, id()) << "iPOS specific: External Reference Torque Mode";
+        mode = "iPOS specific: external reference torque";
         break;
     case -4:
-        yCIInfo(IPOS, id()) << "iPOS specific: External Reference Speed Mode";
+        mode = "iPOS specific: external reference speed";
         break;
     case -3:
-        yCIInfo(IPOS, id()) << "iPOS specific: External Reference Position Mode";
+        mode = "iPOS specific: external reference position";
         break;
     case -2:
-        yCIInfo(IPOS, id()) << "iPOS specific: Electronic Camming Position Mode";
+        mode = "iPOS specific: electronic camming position";
         break;
     case -1:
-        yCIInfo(IPOS, id()) << "iPOS specific: Electronic Gearing Position Mode";
+        mode = "iPOS specific: electronic gearing position";
         break;
     case 1:
-        yCIInfo(IPOS, id()) << "Profile Position Mode";
+        mode = "Profile position";
         break;
     case 3:
-        yCIInfo(IPOS, id()) << "Profile Velocity Mode";
+        mode = "Profile velocity";
         break;
     case 6:
-        yCIInfo(IPOS, id()) << "Homing Mode";
+        mode = "Homing";
         break;
     case 7:
-        yCIInfo(IPOS, id()) << "Interpolated Position Mode";
+        mode = "Interpolated position";
         break;
     case 8:
-        yCIInfo(IPOS, id()) << "Cyclic Synchronous Position Mode";
+        mode = "Cyclic synchronous position";
         break;
     default:
-        yCIWarning(IPOS, id()) << "No mode set";
+        mode = "No mode set";
         break;
     }
+
+    yCIInfo(IPOS, id()) << "[mode]" << mode;
+
+    this->modesOfOperation = modesOfOperation;
+    controlModeObserverPtr->notify();
 }
 
 // -----------------------------------------------------------------------------
@@ -387,23 +435,23 @@ void TechnosoftIposBase::handleNmt(NmtState state)
     switch (state)
     {
     case NmtState::BOOTUP:
-        s = "boot-up";
+        s = "Boot-up";
         break;
     case NmtState::STOPPED:
-        s = "stopped";
+        s = "Stopped";
         break;
     case NmtState::OPERATIONAL:
-        s = "operational";
+        s = "Operational";
         break;
     case NmtState::PRE_OPERATIONAL:
-        s = "pre-operational";
+        s = "Pre-operational";
         break;
     default:
         yCIWarning(IPOS, id()) << "Unhandled state:" << static_cast<std::uint8_t>(state);
         return;
     }
 
-    yCIInfo(IPOS, id()) << "Heartbeat:" << s;
+    yCIInfo(IPOS, id()) << "[heartbeat]" << s;
 
     lastNmtState = nmtState;
 }
@@ -568,8 +616,8 @@ void TechnosoftIposBase::reset()
     lastCurrentRead = 0.0;
 
     requestedcontrolMode = 0;
-
     limitSwitchState = INACTIVE;
+    driveState = DriveState::NOT_READY_TO_SWITCH_ON;
 }
 
 // -----------------------------------------------------------------------------

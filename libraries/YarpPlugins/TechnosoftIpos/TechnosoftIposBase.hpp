@@ -515,6 +515,8 @@ protected:
 
     std::int8_t modesOfOperation {0};
 
+    DriveState driveState {DriveState::NOT_READY_TO_SWITCH_ON};
+
     bool configuredOnce {false};
 
     // read/write with atomic access
