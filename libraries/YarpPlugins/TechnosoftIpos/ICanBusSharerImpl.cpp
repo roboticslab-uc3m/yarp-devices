@@ -58,7 +58,7 @@ std::vector<unsigned int> TechnosoftIposBase::getAdditionalIds()
 bool TechnosoftIposBase::registerSender(ICanSenderDelegate * sender)
 {
     can->configureSender(sender);
-    return iExternalEncoderCanBusSharer && iExternalEncoderCanBusSharer->registerSender(sender);
+    return !iExternalEncoderCanBusSharer || iExternalEncoderCanBusSharer->registerSender(sender);
 }
 
 // -----------------------------------------------------------------------------
