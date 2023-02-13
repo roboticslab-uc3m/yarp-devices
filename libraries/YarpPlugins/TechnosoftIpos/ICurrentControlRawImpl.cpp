@@ -40,7 +40,7 @@ bool TechnosoftIposBase::setRefCurrentRaw(int m, double curr)
     CHECK_JOINT(m);
     CHECK_MODE(VOCAB_CM_CURRENT);
 
-    const bool state = this->limitSwitchState.load();
+    const bool state = limitSwitchState.load();
 
     if (state == INACTIVE || state == POSITIVE && curr <= 0.0 || state == NEGATIVE && curr >= 0.0)
     {

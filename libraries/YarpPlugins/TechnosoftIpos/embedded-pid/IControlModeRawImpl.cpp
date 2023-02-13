@@ -94,7 +94,7 @@ bool TechnosoftIposEmbedded::setControlModeRaw(int j, int mode)
             && can->rpdo3()->configure(rpdo3conf.addMapping<std::int32_t>(0x201C))
             && can->sdo()->download<std::uint16_t>("External Reference Type", 1, 0x201D)
             && can->sdo()->download<std::int8_t>("Modes of Operation", -5, 0x6060)
-            && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4)) // new setpoint (assume target position)
+            && can->driveStatus()->controlword(can->driveStatus()->controlword().set(4)) // enable ext. ref. torque mode
             && awaitControlMode(mode);
 
     case VOCAB_CM_POSITION_DIRECT:

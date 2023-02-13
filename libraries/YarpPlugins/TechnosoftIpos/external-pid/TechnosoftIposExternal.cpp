@@ -39,6 +39,8 @@ void TechnosoftIposExternal::onPositionLimitTriggered()
 {
     auto mode = actualControlMode.load();
 
+    // reset trajectory or command buffer on next SYNC
+
     switch (mode)
     {
     case VOCAB_CM_POSITION:

@@ -29,7 +29,7 @@ bool TechnosoftIposExternal::velocityMoveRaw(int j, double sp)
         sp = std::clamp(sp, -maxVel, maxVel);
     }
 
-    const auto state = this->limitSwitchState.load();
+    const auto state = limitSwitchState.load();
 
     if (state == INACTIVE || state == POSITIVE && sp <= 0.0 || state == NEGATIVE && sp >= 0.0)
     {

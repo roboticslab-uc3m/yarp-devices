@@ -28,7 +28,7 @@ bool TechnosoftIposBase::setRefTorqueRaw(int j, double t)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_TORQUE);
 
-    const auto state = this->limitSwitchState.load();
+    const auto state = limitSwitchState.load();
 
     if (state == INACTIVE || state == POSITIVE && t <= 0.0 || state == NEGATIVE && t >= 0.0)
     {

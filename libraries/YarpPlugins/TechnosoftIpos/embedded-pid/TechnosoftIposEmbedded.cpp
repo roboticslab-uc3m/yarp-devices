@@ -110,7 +110,7 @@ void TechnosoftIposEmbedded::onPositionLimitTriggered()
     {
     case VOCAB_CM_TORQUE:
     case VOCAB_CM_CURRENT:
-        commandBuffer.reset(0.0);
+        commandBuffer.reset(0.0); // updates reference on next SYNC
         break;
     }
 }

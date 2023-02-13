@@ -2,7 +2,7 @@
 
 #include "embedded-pid/TechnosoftIposEmbedded.hpp"
 
-#include <cmath>
+#include <cmath> // std::abs
 
 #include <yarp/os/LogStream.h>
 
@@ -131,13 +131,13 @@ bool TechnosoftIposEmbedded::stopRaw(int j)
 
     if (enableCsv && actualControlMode == VOCAB_CM_VELOCITY)
     {
-        // don't mess with the halt bit here so that it doesn'o't need to be reset by `velocityMode()` later
+        // don't mess with the halt bit here so that it doesn't need to be reset by `velocityMode()` later
         commandBuffer.reset(0.0);
         return true;
     }
 
     return (actualControlMode == VOCAB_CM_POSITION || actualControlMode == VOCAB_CM_VELOCITY)
-        && can->driveStatus()->controlword(can->driveStatus()->controlword().set(8)); // stop with profile acceleration
+        && can->driveStatus()->controlword(can->driveStatus()->controlword().set(8)); // halt
 }
 
 // --------------------------------------------------------------------------------

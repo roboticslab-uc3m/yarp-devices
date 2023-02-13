@@ -20,7 +20,7 @@ bool TechnosoftIposExternal::positionMoveRaw(int j, double ref)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    const auto state = this->limitSwitchState.load();
+    const auto state = limitSwitchState.load();
 
     if (state == INACTIVE || state == POSITIVE && ref <= max || state == NEGATIVE && ref >= min)
     {
@@ -44,7 +44,7 @@ bool TechnosoftIposExternal::relativeMoveRaw(int j, double delta)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
-    const auto state = this->limitSwitchState.load();
+    const auto state = limitSwitchState.load();
 
     if (state == INACTIVE || state == POSITIVE && delta <= 0.0 || state == NEGATIVE && delta >= 0.0)
     {

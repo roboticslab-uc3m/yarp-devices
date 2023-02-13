@@ -202,8 +202,6 @@ void TechnosoftIposBase::interpretStatusword(std::uint16_t statusword)
     case DriveState::SWITCHED_ON:
         actualControlMode = VOCAB_CM_IDLE;
         break;
-    default:
-        break;
     }
 
     report_storage report{"status", statusword, can->driveStatus()->statusword()};

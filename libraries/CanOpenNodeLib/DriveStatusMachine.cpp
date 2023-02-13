@@ -201,9 +201,7 @@ bool DriveStatusMachine::requestTransition(DriveTransition transition)
     auto it = nextStateOnTransition.find({initialState, transition});
     word_t requested = updateStateBits(controlword(), static_cast<std::uint16_t>(transition));
 
-    return it != nextStateOnTransition.cend()
-            && controlword(requested)
-            && awaitState(it->second);
+    return it != nextStateOnTransition.cend() && controlword(requested) && awaitState(it->second);
 }
 
 bool DriveStatusMachine::requestState(DriveState goalState)

@@ -16,7 +16,7 @@ bool TechnosoftIposExternal::setPositionRaw(int j, double ref)
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
 
-    const auto state = this->limitSwitchState.load();
+    const auto state = limitSwitchState.load();
 
     if (state == INACTIVE || state == POSITIVE && ref <= max || state == NEGATIVE && ref >= min)
     {

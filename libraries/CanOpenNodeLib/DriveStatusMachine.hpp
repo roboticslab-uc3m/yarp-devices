@@ -89,10 +89,10 @@ public:
     //! Parse stored bit representation of a statusword into a @ref DriveState enumerator.
     DriveState getCurrentState() const;
 
-    //! Request given drive transition via object 6040h, update stored controlword.
+    //! Request given drive transition via object 6040h (blocking), update stored controlword.
     bool requestTransition(DriveTransition transition);
 
-    //! Request given drive state, update stored controlword.
+    //! Request given drive state via object 6040h (blocking), update stored controlword.
     bool requestState(DriveState goalState);
 
     //! Await until drive reaches given state, with timeout.
