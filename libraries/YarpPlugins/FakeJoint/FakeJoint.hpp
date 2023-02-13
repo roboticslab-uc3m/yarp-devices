@@ -136,11 +136,11 @@ public:
     bool getControlModesRaw(int n_joint, const int * joints, int * modes) override
     { return getControlModeRaw(0, &modes[0]); }
     bool setControlModeRaw(int j, int mode) override
-    { return true; }
+    { controlMode = mode; return true; }
     bool setControlModesRaw(int * modes) override
-    { return true; }
+    { return setControlModeRaw(0, modes[0]); }
     bool setControlModesRaw(int n_joint, const int * joints, int * modes) override
-    { return true; }
+    { return setControlModeRaw(0, modes[0]); }
 
     //  --------- ICurrentControlRaw declarations ---------
 
@@ -472,6 +472,7 @@ public:
 
 private:
     std::string jointName;
+    int controlMode {VOCAB_CM_CONFIGURED};
 };
 
 } // namespace roboticslab
