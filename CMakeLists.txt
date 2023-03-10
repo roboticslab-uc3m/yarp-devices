@@ -2,12 +2,6 @@ cmake_minimum_required(VERSION 3.16)
 
 project(ROBOTICSLAB_YARP_DEVICES LANGUAGES CXX)
 
-# Add suffix for debug libraries.
-if(MSVC)
-    message(STATUS "Running on windows")
-    set(CMAKE_DEBUG_POSTFIX "d")
-endif()
-
 # Let the user specify a configuration (only single-config generators).
 if(NOT CMAKE_CONFIGURATION_TYPES)
     # Possible values.
@@ -34,7 +28,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake
 
 # Hard dependencies.
 find_package(YCM 0.11 REQUIRED)
-find_package(YARP 3.6 REQUIRED COMPONENTS os dev sig)
+find_package(YARP 3.7 REQUIRED COMPONENTS os dev sig)
 
 # Soft dependencies.
 find_package(AMOR_API QUIET)
