@@ -70,7 +70,7 @@ jobs:
       run: wget -O- -q http://ftp.acc.umu.se/pub/GNOME/sources/aravis/${ARAVIS_VER%.*}/aravis-$ARAVIS_VER.tar.xz | tar -C .deps -xJf -
 
     - name: Download libphidget21
-      run: wget -O- -q https://sourceforge.net/projects/roboticslab/files/External/phidget/libphidget_2.1.8.20151217.tar.gz/download | tar -C .deps -xzf -
+      run: wget -O- -q https://sourceforge.net/projects/roboticslab/files/External/phidget/libphidget_2.1.8.20151217.tar.gz | tar -C .deps -xzf -
 
     - name: Download Peak CAN driver
       run: wget -O- -q https://www.peak-system.com/fileadmin/media/linux/files/peak-linux-driver-$PEAK_DRIVER_VER.tar.gz | tar -C .deps -xzf -
