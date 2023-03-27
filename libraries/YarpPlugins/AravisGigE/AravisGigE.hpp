@@ -5,7 +5,7 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IFrameGrabberControls.h>
-#include <yarp/dev/IFrameGrabberImageRaw.h>
+#include <yarp/dev/IFrameGrabberImage.h>
 
 #include <arv.h>
 
