@@ -13,7 +13,6 @@ on:
 
 env:
   CMAKE_CCACHE_LAUNCHER: -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-  ARAVIS_VER: 0.6.4
   PEAK_DRIVER_VER: 8.11.0
 
 jobs:
@@ -66,8 +65,11 @@ jobs:
         ref: ${{matrix.robotology.yarp}}
         path: .deps/yarp
 
-    - name: Download ARAVIS
-      run: wget -O- -q http://ftp.acc.umu.se/pub/GNOME/sources/aravis/${ARAVIS_VER%.*}/aravis-$ARAVIS_VER.tar.xz | tar -C .deps -xJf -
+    - name: Check out ARAVIS
+      uses: actions/checkout@v3
+      with:
+        repository: AravisProject/aravis
+        path: .deps/aravis
 
     - name: Download libphidget21
       run: wget -O- -q https://sourceforge.net/projects/roboticslab/files/External/phidget/libphidget_2.1.8.20151217.tar.gz | tar -C .deps -xzf -
@@ -89,7 +91,7 @@ jobs:
         path: .deps/jr3pci-linux
 
     - name: Install dependencies via apt
-      run: sudo apt-get update && sudo apt-get install -qq ccache libboost-thread-dev libeigen3-dev intltool libxml2-dev libglib2.0-dev libusb-1.0-0-dev libspnav-dev libxwiimote-dev libgtest-dev
+      run: sudo apt-get update && sudo apt-get install -qq ccache libboost-thread-dev libeigen3-dev libusb-1.0-0-dev libspnav-dev libxwiimote-dev libgtest-dev
 
     - name: Set up CMake
       uses: jwlawson/actions-setup-cmake@v1
@@ -119,10 +121,12 @@ jobs:
         sudo cmake --install .deps/yarp/build
 
     - name: Build ARAVIS
-      working-directory: .deps/aravis-${{env.ARAVIS_VER}}
+      working-directory: .deps/aravis
       run: |
-        CC="ccache ${{matrix.compiler.cc}}" CXX="ccache ${{matrix.compiler.cxx}}" ./configure --enable-gtk-doc-html=no
-        make -j && sudo make install
+        sudo pip install meson ninja
+        meson setup build --auto-features=disabled -Dtests=false
+        meson compile -C build
+        sudo meson install -C build
 
     - name: Build libphidget21
       working-directory: .deps/libphidget-2.1.8.20151217
