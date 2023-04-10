@@ -57,67 +57,58 @@ public:
     bool setOnePush(int feature) override;
 
 private:
-    ArvCamera       *camera;                // Camera to control.
-    ArvStream       *stream;                // Object for video stream reception.
-    void            *framebuffer;           //
+    ArvCamera       *camera {nullptr};      // camera to control
+    ArvStream       *stream {nullptr};      // object for video stream reception
+    void            *framebuffer {nullptr}; //
 
-    unsigned int    payload;                // Width x height x Pixel width.
+    unsigned int    payload {0};            // width x height x pixel width
 
-    int             widthMin;               // Camera sensor minium width.
-    int             widthMax;               // Camera sensor maximum width.
-    int             heightMin;              // Camera sensor minium height.
-    int             heightMax;              // Camera sensor maximum height.
-    bool            fpsAvailable;
-    double          fpsMin;                 // Camera minium fps.
-    double          fpsMax;                 // Camera maximum fps.
-    bool            gainAvailable;
-    double          gainMin;                // Camera minimum gain.
-    double          gainMax;                // Camera maximum gain.
-    bool            exposureAvailable;
-    double          exposureMin;            // Camera's minimum exposure time.
-    double          exposureMax;            // Camera's maximum exposure time.
+    int             widthMin {0};           // camera sensor minium width
+    int             widthMax {0};           // camera sensor maximum width
+    int             heightMin {0};          // camera sensor minium height
+    int             heightMax {0};          // camera sensor maximum height
+    double          fpsMin {0.0};           // camera minimum fps
+    double          fpsMax {0.0};           // camera maximum fps
+    double          gainMin {0.0};          // camera minimum gain
+    double          gainMax {0.0};          // camera maximum gain
+    double          exposureMin {0.0};      // camera's minimum exposure time
+    double          exposureMax {0.0};      // camera's maximum exposure time
 
-    bool            controlExposure;        // Flag if automatic exposure shall be done by this SW
-    bool            autoGain;
-    double          targetGrey;             // Target grey value (mid grey))
+    bool            controlExposure {false}; // flag if automatic exposure shall be done by this SW
 
-    gint64          *pixelFormats;
+    gint64          *pixelFormats {nullptr};
     guint           pixelFormatsCnt;
 
 
-    int             num_buffers;            // number of payload transmission buffers
+    int             num_buffers {50};       // number of payload transmission buffers
 
     ArvPixelFormat  pixelFormat;            // pixel format
 
-    int             xoffset;                // current frame region x offset
-    int             yoffset;                // current frame region y offset
-    int             _width;                  // current frame width of frame
-    int             _height;                 // current frame height of image
+    int             xoffset {0};            // current frame region x offset
+    int             yoffset {0};            // current frame region y offset
+    int             _width {0};             // current frame width of frame
+    int             _height {0};            // current frame height of image
 
-    double          fps;                    // current value of fps
-    double          exposure;               // current value of exposure time
-    double          gain;                   // current value of gain
-    double          midGrey;                // current value of mid grey (brightness)
+    double          fps {0.0};              // current value of fps
+    double          exposure {0.0};         // current value of exposure time
+    double          gain {0.0};             // current value of gain
 
-    unsigned        frameID;                // current frame id
-    unsigned        prevFrameID;
-
-    //-- Lens Controls
-    bool zoomAvailable;
-    gint64 zoomMin;                            // Camera zoom minimum value
-    gint64 zoomMax;                            // Camera zoom maximum value
-    bool focusAvailable;
-    gint64 focusMin;                           // Camera focus minimum value
-    gint64 focusMax;                           // Camera focus maximum value
-    bool irisAvailable;
-    gint64 irisMin;                            // Camera iris minimum value
-    gint64 irisMax;                            // Camera iris maximum value
+    unsigned        frameID {0};            // current frame id
+    unsigned        prevFrameID {0};
 
     //-- IFrameGrabberControls2
-    std::map<cameraFeature_id_t, const char*> yarp_arv_int_feature_map; //-- Map yarp features with aravis feature ids
-    std::map<cameraFeature_id_t, const char*> yarp_arv_float_feat_map;
+    std::map<cameraFeature_id_t, const char *> yarp_arv_int_feature_map {
+        {YARP_FEATURE_ZOOM, "Zoom"},
+        {YARP_FEATURE_FOCUS, "Focus"},
+    };
+
+    std::map<cameraFeature_id_t, const char *> yarp_arv_float_feat_map {
+        {YARP_FEATURE_EXPOSURE, "ExposureTime"},
+        {YARP_FEATURE_GAIN, "Gain"},
+        {YARP_FEATURE_FRAME_RATE, "FPS"}
+    };
 };
 
-}
+} // namespace roboticslab
 
 #endif // __ARAVIS_GIGE_HPP__

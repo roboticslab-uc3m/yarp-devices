@@ -15,37 +15,9 @@ bool AravisGigE::open(yarp::os::Searchable &config)
         arv_enable_interface("Fake"); //-- Enables fake Aravis cameras (useful for debug / testing)
     }
 
-    //-- Data initialization
-    //-------------------------------------------------------------------------------
-    camera = nullptr;
-    stream = nullptr;
-    framebuffer = nullptr;
-
-    payload = 0;
-
-    widthMin = widthMax = heightMin = heightMax = 0;
-    xoffset = yoffset = _width = _height = 0;
-    fpsMin = fpsMax = fps = 0;
-    gainMin = gainMax = gain = 0;
-    exposureMin = exposureMax = exposure = 0;
-    controlExposure = false;
-    targetGrey = 0;
-    frameID = prevFrameID = 0;
-    num_buffers = 50;
-
-    //-- Initalize parameter mapping
-    yarp_arv_float_feat_map[YARP_FEATURE_EXPOSURE]  ="ExposureTime";
-    yarp_arv_float_feat_map[YARP_FEATURE_GAIN] = "Gain";
-    yarp_arv_float_feat_map[YARP_FEATURE_FRAME_RATE] = "FPS";
-    yarp_arv_int_feature_map[YARP_FEATURE_ZOOM] = "Zoom";
-    yarp_arv_int_feature_map[YARP_FEATURE_FOCUS] = "Focus";
-
     //-- Open Aravis device(s)
     //-------------------------------------------------------------------------------
     int index = 0; //-- Right now, index is hardcoded (in the future could be a param)
-
-    //-- Get device name (from index)
-    std::string deviceName;
 
     arv_update_device_list();
 
@@ -55,13 +27,13 @@ bool AravisGigE::open(yarp::os::Searchable &config)
         return false;
     }
 
-    deviceName = arv_get_device_id(index);
+    const auto * deviceName = arv_get_device_id(index);
 
     //-- Create Aravis camera
 #if ARAVIS_CHECK_VERSION(0, 7, 3)
-    camera = arv_camera_new(deviceName.c_str(), nullptr);
+    camera = arv_camera_new(deviceName, nullptr);
 #else
-    camera = arv_camera_new(deviceName.c_str());
+    camera = arv_camera_new(deviceName);
 #endif
 
     if (camera != nullptr)
@@ -129,9 +101,9 @@ bool AravisGigE::open(yarp::os::Searchable &config)
     yCInfo(ARV, "Height range: min=%d max=%d", heightMin, heightMax);
 
 #if ARAVIS_CHECK_VERSION(0, 7, 3)
-    fpsAvailable = arv_camera_is_frame_rate_available(camera, nullptr);
+    bool fpsAvailable = arv_camera_is_frame_rate_available(camera, nullptr);
 #else
-    fpsAvailable = arv_camera_is_frame_rate_available(camera);
+    bool fpsAvailable = arv_camera_is_frame_rate_available(camera);
 #endif
 
     if (fpsAvailable)
@@ -156,9 +128,9 @@ bool AravisGigE::open(yarp::os::Searchable &config)
     }
 
 #if ARAVIS_CHECK_VERSION(0, 7, 3)
-    gainAvailable = arv_camera_is_gain_available(camera, nullptr);
+    bool gainAvailable = arv_camera_is_gain_available(camera, nullptr);
 #else
-    gainAvailable = arv_camera_is_gain_available(camera);
+    bool gainAvailable = arv_camera_is_gain_available(camera);
 #endif
 
     if (gainAvailable)
@@ -183,9 +155,9 @@ bool AravisGigE::open(yarp::os::Searchable &config)
     }
 
 #if ARAVIS_CHECK_VERSION(0, 7, 3)
-    exposureAvailable = arv_camera_is_exposure_time_available(camera, nullptr);
+    bool exposureAvailable = arv_camera_is_exposure_time_available(camera, nullptr);
 #else
-    exposureAvailable = arv_camera_is_exposure_time_available(camera);
+    bool exposureAvailable = arv_camera_is_exposure_time_available(camera);
 #endif
 
     if (exposureAvailable)
@@ -212,16 +184,7 @@ bool AravisGigE::open(yarp::os::Searchable &config)
     //-- Lens controls availability
     yCInfo(ARV) << "Checking Lens Controls availability";
 
-    if (arv_device_get_feature(arv_camera_get_device(camera), "Zoom") == nullptr)
-    {
-        zoomAvailable = false;
-    }
-    else
-    {
-        zoomAvailable = true;
-    }
-
-    if (zoomAvailable)
+    if (gint64 zoomMin, zoomMax; arv_device_get_feature(arv_camera_get_device(camera), "Zoom") != nullptr)
     {
 #if ARAVIS_CHECK_VERSION(0, 7, 3)
         arv_device_get_integer_feature_bounds(arv_camera_get_device(camera), "Zoom", &zoomMin, &zoomMax, nullptr);
@@ -235,9 +198,7 @@ bool AravisGigE::open(yarp::os::Searchable &config)
         yCWarning(ARV) << "Zoom property not available";
     }
 
-    arv_device_get_feature(arv_camera_get_device(camera), "Focus") == nullptr ? focusAvailable = false : focusAvailable= true;
-
-    if (focusAvailable)
+    if (gint64 focusMin, focusMax; arv_device_get_feature(arv_camera_get_device(camera), "Focus") != nullptr)
     {
 #if ARAVIS_CHECK_VERSION(0, 7, 3)
         arv_device_get_integer_feature_bounds(arv_camera_get_device(camera), "Focus", &focusMin, &focusMax, nullptr);
