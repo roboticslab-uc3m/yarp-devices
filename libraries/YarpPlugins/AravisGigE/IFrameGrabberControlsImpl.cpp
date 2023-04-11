@@ -17,11 +17,7 @@ bool AravisGigE::getCameraDescription(CameraDescriptor * camera)
         camera->busType = BUS_UNKNOWN; //-- Temporary until we add a BUS_GIGE in YARP
     }
 
-#if ARAVIS_CHECK_VERSION(0, 7, 3)
     camera->deviceDescription = std::string(arv_camera_get_device_id(this->camera, nullptr)) + ": " + arv_camera_get_model_name(this->camera, nullptr);
-#else
-    camera->deviceDescription = std::string(arv_camera_get_device_id(this->camera)) + ": " + arv_camera_get_model_name(this->camera);
-#endif
     return true;
 }
 
@@ -62,20 +58,12 @@ bool AravisGigE::setFeature(int feature, double value)
     if (auto yarp_int_feature = yarp_arv_int_feature_map.find(f); yarp_int_feature != yarp_arv_int_feature_map.end())
     {
         //-- Check {here} that value is within range here (when you can inspect ranges)
-#if ARAVIS_CHECK_VERSION(0, 7, 3)
         arv_device_set_integer_feature_value(arv_camera_get_device(camera), yarp_int_feature->second, value, nullptr);
-#else
-        arv_device_set_integer_feature_value(arv_camera_get_device(camera), yarp_int_feature->second, value);
-#endif
     }
     else if (auto yarp_float_feature = yarp_arv_float_feat_map.find(f); yarp_float_feature != yarp_arv_float_feat_map.end())
     {
         //-- Check {here} that value is within range here (when you can inspect ranges)
-#if ARAVIS_CHECK_VERSION(0, 7, 3)
         arv_device_set_float_feature_value(arv_camera_get_device(camera), yarp_float_feature->second, value, nullptr);
-#else
-        arv_device_set_float_feature_value(arv_camera_get_device(camera), yarp_float_feature->second, value);
-#endif
     }
     else
     {
@@ -101,19 +89,11 @@ bool AravisGigE::getFeature(int feature, double * value)
 
     if (auto yarp_int_feature = yarp_arv_int_feature_map.find(f); yarp_int_feature != yarp_arv_int_feature_map.end())
     {
-#if ARAVIS_CHECK_VERSION(0, 7, 3)
         *value = arv_device_get_integer_feature_value(arv_camera_get_device(camera), yarp_int_feature->second, nullptr);
-#else
-        *value = arv_device_get_integer_feature_value(arv_camera_get_device(camera), yarp_int_feature->second);
-#endif
     }
     else if (auto yarp_float_feature = yarp_arv_float_feat_map.find(f); yarp_float_feature != yarp_arv_float_feat_map.end())
     {
-#if ARAVIS_CHECK_VERSION(0, 7, 3)
         *value = arv_device_get_float_feature_value(arv_camera_get_device(camera), yarp_float_feature->second, nullptr);
-#else
-        *value = arv_device_get_float_feature_value(arv_camera_get_device(camera), yarp_float_feature->second);
-#endif
     }
     else
     {

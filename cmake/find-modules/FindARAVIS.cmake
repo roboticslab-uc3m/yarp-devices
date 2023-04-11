@@ -7,7 +7,7 @@
 #  ARAVIS_VERSION - The version of Aravis package
 
 find_package(PkgConfig)
-pkg_search_module(ARAVIS aravis>=0.6 aravis-0.8 aravis-0.7 aravis-0.6)
+pkg_search_module(ARAVIS aravis>=0.8 aravis-0.8)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(ARAVIS REQUIRED_VARS ARAVIS_INCLUDE_DIRS ARAVIS_LIBRARIES ARAVIS_LIBRARY_DIRS
