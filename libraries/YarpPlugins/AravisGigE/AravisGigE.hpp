@@ -76,7 +76,6 @@ private:
 
     bool            controlExposure {false}; // flag if automatic exposure shall be done by this SW
 
-    gint64          * pixelFormats {nullptr};
     guint           pixelFormatsCnt;
 
 
@@ -96,7 +95,6 @@ private:
     unsigned        frameID {0};            // current frame id
     unsigned        prevFrameID {0};
 
-    //-- IFrameGrabberControls2
     std::map<cameraFeature_id_t, const char *> yarp_arv_int_feature_map {
         {YARP_FEATURE_ZOOM, "Zoom"},
         {YARP_FEATURE_FOCUS, "Focus"},

@@ -1,5 +1,8 @@
 #include "AravisGigE.hpp"
 
+#include <string>
+#include <unordered_set>
+
 #include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
@@ -17,13 +20,13 @@ bool AravisGigE::open(yarp::os::Searchable &config)
 
     //-- Open Aravis device(s)
     //-------------------------------------------------------------------------------
-    int index = 0; //-- Right now, index is hardcoded (in the future could be a param)
+    int index = config.check("index", yarp::os::Value(0), "camera index").asInt32();
 
     arv_update_device_list();
 
     if (index < 0 || index >= (int)arv_get_n_devices())
     {
-        yCError(ARV) << "Invalid device index, should be 0 <" << index << "< num_devices";
+        yCError(ARV) << "Invalid device index, should be 0 <" << index << "<" << arv_get_n_devices();
         return false;
     }
 
@@ -42,49 +45,71 @@ bool AravisGigE::open(yarp::os::Searchable &config)
     }
     else
     {
-        yCError(ARV) << "Could not create Aravis camera";
+        yCError(ARV) << "Could not create Aravis camera with index" << index << "and name" << deviceName;
         return false;
     }
 
     //-- Once we have a camera, we obtain the camera properties limits and initial values
-#if ARAVIS_CHECK_VERSION(0, 7, 4)
-    pixelFormats = arv_camera_dup_available_pixel_formats(camera, &pixelFormatsCnt, nullptr);
-    pixelFormat = arv_camera_get_pixel_format(camera, nullptr);
-#elif ARAVIS_CHECK_VERSION(0, 7, 3)
-    pixelFormats = arv_camera_get_available_pixel_formats(camera, &pixelFormatsCnt, nullptr);
-    pixelFormat = arv_camera_get_pixel_format(camera, nullptr);
-#else
-    pixelFormats = arv_camera_get_available_pixel_formats(camera, &pixelFormatsCnt);
-    pixelFormat = arv_camera_get_pixel_format(camera);
-#endif
+    std::unordered_set<std::string> availablePixelFormats;
 
     if (config.check("introspection", "print available pixel formats on device init"))
     {
         //-- List all  available formats
         guint n_pixel_formats;
 #if ARAVIS_CHECK_VERSION(0, 7, 4)
-        const char ** available_formats = arv_camera_dup_available_pixel_formats_as_display_names(camera, &n_pixel_formats, nullptr);
+        auto ** availableFormatsStrings = arv_camera_dup_available_pixel_formats_as_strings(camera, &n_pixel_formats, nullptr);
+        auto ** availableFormatsNames = arv_camera_dup_available_pixel_formats_as_display_names(camera, &n_pixel_formats, nullptr);
 #elif ARAVIS_CHECK_VERSION(0, 7, 3)
-        const char ** available_formats = arv_camera_get_available_pixel_formats_as_display_names(camera, &n_pixel_formats, nullptr);
+        auto ** availableFormatsStrings = arv_camera_get_available_pixel_formats_as_strings(camera, &n_pixel_formats, nullptr);
+        auto ** availableFormatsNames = arv_camera_get_available_pixel_formats_as_display_names(camera, &n_pixel_formats, nullptr);
 #else
-        const char ** available_formats = arv_camera_get_available_pixel_formats_as_display_names(camera, &n_pixel_formats);
+        auto ** availableFormatsStrings = arv_camera_get_available_pixel_formats_as_strings(camera, &n_pixel_formats);
+        auto ** availableFormatsNames = arv_camera_get_available_pixel_formats_as_display_names(camera, &n_pixel_formats);
 #endif
         yCInfo(ARV) << "Available pixel formats:";
 
         for (int i = 0; i < n_pixel_formats; i++)
         {
-            yCInfo(ARV) << available_formats[i];
+            yCInfo(ARV, "- %s (setting: %s)", availableFormatsNames[i], availableFormatsStrings[i]);
+            availablePixelFormats.emplace(availableFormatsStrings[i]);
         }
 
-#if ARAVIS_CHECK_VERSION(0, 7, 4)
-        g_free(available_formats);
+        g_free(availableFormatsStrings);
+        g_free(availableFormatsNames);
+    }
+
+    if (config.check("pixelFormat", "pixel format"))
+    {
+        //-- Set pixel format
+        auto requestedPixelFormatString = config.find("pixelFormat").asString();
+
+        if (availablePixelFormats.find(requestedPixelFormatString) == availablePixelFormats.end())
+        {
+            yCError(ARV) << "Requested pixel format" << requestedPixelFormatString << "is not available";
+            return false;
+        }
+
+        yCInfo(ARV) << "Setting pixel format to" << requestedPixelFormatString;
+
+#if ARAVIS_CHECK_VERSION(0, 7, 3)
+        arv_camera_set_pixel_format_from_string(camera, requestedPixelFormatString.c_str(), nullptr);
+#else
+        arv_camera_set_pixel_format_from_string(camera, requestedPixelFormatString.c_str());
+#endif
+    }
+    else
+    {
+#if ARAVIS_CHECK_VERSION(0, 7, 3)
+    yCInfo(ARV) << "Using pixel format:" << arv_camera_get_pixel_format_as_string(camera, nullptr);
+#else
+    yCInfo(ARV) << "Using pixel format:" << arv_camera_get_pixel_format_as_string(camera);
 #endif
     }
 
 #if ARAVIS_CHECK_VERSION(0, 7, 3)
-    yCInfo(ARV) << "Pixel format selected:" << arv_camera_get_pixel_format_as_string(camera, nullptr);
+    pixelFormat = arv_camera_get_pixel_format(camera, nullptr);
 #else
-    yCInfo(ARV) << "Pixel format selected:" << arv_camera_get_pixel_format_as_string(camera);
+    pixelFormat = arv_camera_get_pixel_format(camera);
 #endif
 
 #if ARAVIS_CHECK_VERSION(0, 7, 3)
@@ -285,14 +310,6 @@ bool AravisGigE::close()
         g_object_unref(stream);
         stream = nullptr;
     }
-
-#if ARAVIS_CHECK_VERSION(0, 7, 4)
-    if (pixelFormats)
-    {
-        g_free(pixelFormats);
-        pixelFormats = nullptr;
-    }
-#endif
 
     g_object_unref(camera);
     camera = nullptr;
