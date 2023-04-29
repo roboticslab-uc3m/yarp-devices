@@ -3,7 +3,7 @@
 ## Necessary requirements
 
 First, we need to install the MPLAB tool v.8.92. If we already have windows installed on our computer, we can install it by directly downloading the application in [this](https://drive.google.com/open?id=1n51XC7JwGAtncWq1itDxE7FpyqdSyaWD) link.
-In case of working with Ubuntu or another S.O, you can download VirtualBox and load the virtual machine contained in the following [link](https://drive.google.com/open?id=0BxR76I90oKSmQ0xsS0loZVhhRnM). This virtual machine contains all the necessary tools installed on Windows 7: **MPLAM IDE v.8.92** and **EasySetup**.
+In case of working with Ubuntu or another OS, you can download VirtualBox and load the virtual machine contained in the following [link](https://drive.google.com/open?id=0BxR76I90oKSmQ0xsS0loZVhhRnM). This virtual machine contains all the necessary tools installed on Windows 7: **MPLAB IDE v.8.92** and **EasySetup**.
 
 ## How to download the firmware on the PIC
 
@@ -11,7 +11,7 @@ Once MPLAB is opened, we load the project by selecting *Project > Open* and sele
 This will open the work environment, where `main.c` is the code file that will be compiled in our PIC.
 Make sure that the MPLAB is already connected to the PIC. We need external power connected to the programmer. It's recommended to disconnect the CAN wire that is connected to the driver so as not to derive electric current to it.
 
-First, we must modify [line 69](./Pic_source/main.c#L69), corresponding to the ID of that encoder. We can see the correspondence in the [diagram](https://robots.uc3m.es/teo-developer-manual/diagrams.html#joint-indexes) and adding 100 to the ID of the joint. Example: for the elbow of the left arm joint ID 24 we should write [ID 124](./Pic_source/main.c#L69).
+First, we must modify the `canId` variable corresponding to the ID of that encoder. We can see the correspondence in the [diagram](https://robots.uc3m.es/teo-developer-manual/diagrams.html#joint-indexes) and adding 100 to the ID of the joint. Example: for the elbow of the left arm joint ID 24 we should write `canId = 124`.
 Then we need to follow the next steps:
 * We compile: `Project> Build All`
 * Select the programmer: `Programmer> Select Programmer> MPLAB ICD 2`

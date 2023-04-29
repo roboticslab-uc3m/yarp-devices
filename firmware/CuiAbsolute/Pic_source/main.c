@@ -8,44 +8,22 @@
  *
  * @section teo_body_firmware_legal Legal
  *
- * Copyright: 2016 (C) Universidad Carlos III de Madrid
+ * Copyright: 2023 (C) Universidad Carlos III de Madrid
  *
- * Author: <a href="http://roboticslab.uc3m.es/roboticslab/people/r-de-santos">Raul de Santos Rico</a>
+ * Authors:
+ * - Román Avellán Martín
+ * - Raúl de Santos Rico
+ * - Bartek Łukawski
  *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see license/LGPL.TXT
  *
  * @section cuiAbsolute_install Installation
  *
  * You need to install MPLAB IDE v8.92 and MPLAB C Compiler for PIC18 MCUs. <br>
- * Open the proyect with MPLAB, open "main.c" file and change the value of "canId" variable (You can see <a class="el" href="http://robots.uc3m.es/index.php/CuiAbsolute_Documentation">correspondence</a>) <br>
+ * Open the proyect with MPLAB, open "main.c" file and change the value of "canId" variable. <br>
  * Also, to increase the time between sending messages,  you can modify "sendDelay" value too (see code documentation in main.c).
  * Then, build all. <br>
  * Finally, select programmer "MPLAB ICD 2", disconnect CAN-BUS connections of the PIC, connect and program it. <br>
- *
- * @section cuiAbsolute_running Running (assuming correct installation)
- *
- *
- * To test Cui Aboslute encoders are working properly, you need to start the program named "testCuiAbsolute" and see that the test passed correctly. <br>
- * Previously, you have to manually change the ID of Cui that you want to test in the code (example: #define CAN_ID 124), compile and reinstall. <br>
- * The testCuiAbsolute application can be edited at:
- * tests/testCuiAbsolute.cpp
-\verbatim
-[on terminal] testCuiAbsolute
-\endverbatim
- * And then, in the end of the test you should see this:
-\verbatim
-[----------] 3 tests from CuiAbsoluteTest (5082 ms total)
-
-[----------] Global test environment tear-down
-[==========] 3 tests from 1 test case ran. (5082 ms total)
-[  PASSED  ] 3 tests.
-\endverbatim
- *
- * @section cuiAbsolute_modify Modify
- *
- * This file can be edited at
- * firmware/CuiAbsolute/Pic_source/main.cpp
- *
  */
 
 #include <p18F2580.h>
