@@ -1,6 +1,3 @@
-# Copyright: (C) 2017 Universidad Carlos III de Madrid
-# Author: Juan G. Victores & Raul de Santos Rico
-
 yarp_prepare_plugin(EmulatedControlboard
                     CATEGORY device
                     TYPE roboticslab::EmulatedControlboard

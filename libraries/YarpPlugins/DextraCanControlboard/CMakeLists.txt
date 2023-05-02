@@ -1,7 +1,3 @@
-# Copyright: (C) 2019 Universidad Carlos III de Madrid
-# Author: Juan G. Victores & Jennifer Joana Gago Muñoz
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
 yarp_prepare_plugin(DextraCanControlboard
                     CATEGORY device
                     TYPE roboticslab::DextraCanControlboard

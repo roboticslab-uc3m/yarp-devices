@@ -1,7 +1,3 @@
-# Copyright: (C) 2017 Universidad Carlos III de Madrid
-# Author: Juan G. Victores & Raul de Santos Rico
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
 yarp_prepare_plugin(TextilesHand
                     CATEGORY device
                     TYPE roboticslab::TextilesHand
