@@ -4,21 +4,40 @@
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/ResourceFinder.h>
 
 #include "LogComponent.hpp"
 
 using namespace roboticslab;
 
-constexpr auto DEFAULT_CAN_BUS_DEVICE = "CanBusSocket";
-
 // -----------------------------------------------------------------------------
 
 bool ForceTorqueCan::open(yarp::os::Searchable & config)
 {
-    auto canBusDevice = config.check("canBus", yarp::os::Value(DEFAULT_CAN_BUS_DEVICE), "CAN bus device name").asString();
+    yarp::os::Property robotConfig;
+    auto & rf = yarp::os::ResourceFinder::getResourceFinderSingleton();
+    auto configPath = rf.findFileByName("config.ini"); // set YARP_ROBOT_NAME first
+
+    if (configPath.empty() || !robotConfig.fromConfigFile(configPath))
+    {
+        yCError(FTC) << "Robot config file not found or insufficient permissions:" << configPath;
+        return false;
+    }
+
+    auto canBusGroupName = config.check("canBus", yarp::os::Value("default"), "CAN bus device group").asString();
+    const auto & canBusGroup = robotConfig.findGroup(canBusGroupName);
+
+    if (canBusGroup.isNull())
+    {
+        yCError(FTC) << "Missing CAN bus device group:" << canBusGroupName;
+        return false;
+    }
 
     yarp::os::Property canBusOptions;
-    canBusOptions.setMonitor(config.getMonitor(), canBusDevice.c_str());
+    canBusOptions.setMonitor(config.getMonitor(), canBusGroupName.c_str());
+    canBusOptions.fromString(canBusGroup.toString());
+    canBusOptions.put("blockingMode", false); // enforce non-blocking mode
+    canBusOptions.put("allowPermissive", false); // always check usage requirements
 
     if (!canBus.open(canBusOptions))
     {
