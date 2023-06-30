@@ -36,7 +36,7 @@ bool ForceTorqueCan::open(yarp::os::Searchable & config)
     {
         auto canBus = canBuses->get(i).asString();
 
-        if (!config.check(canBus))
+        if (!robotConfig.check(canBus))
         {
             yCError(FTC) << "Missing CAN bus key:" << canBus;
             return false;
