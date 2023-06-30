@@ -3,6 +3,7 @@
 #include "ForceTorqueCan.hpp"
 
 #include <yarp/os/LogStream.h>
+#include <yarp/os/SystemClock.h>
 
 #include "LogComponent.hpp"
 
@@ -40,6 +41,8 @@ bool ForceTorqueCan::getSixAxisForceTorqueSensorFrameName(std::size_t sens_index
 
 bool ForceTorqueCan::getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const
 {
+    out = canReadThreads[sens_index]->getMeasurements();
+    timestamp = yarp::os::SystemClock::nowSystem();
     return true;
 }
 

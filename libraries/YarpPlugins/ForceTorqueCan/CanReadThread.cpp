@@ -61,6 +61,7 @@ void CanReadThread::threadRelease()
 void CanReadThread::run()
 {
     unsigned int read, i;
+    std::uint64_t data;
 
     while (!isStopping())
     {
@@ -75,10 +76,59 @@ void CanReadThread::run()
         {
             const auto & msg = canBuffer[i];
 
-            // TODO: for now, just log stuff
-            yCDebug(FTC, "Received from id %d: %s", msg.getId(), msgToStr(msg.getLen(), msg.getData()).c_str());
+            if (msg.getId() == 0x001)
+            {
+                yCDebug(FTC, "Received from id %d: %s", msg.getId(), msgToStr(msg.getLen(), msg.getData()).c_str());
+
+                std::memcpy(&data, msg.getData(), sizeof(data));
+                interpretMessage(data & 0x000000000005FFFF);
+                interpretMessage((data & 0x000000FFFFF00000) >> 20);
+                interpretMessage((data & 0x0FFFFF0000000000) >> 40);
+            }
         }
     }
+}
+
+// -----------------------------------------------------------------------------
+
+void CanReadThread::interpretMessage(std::uint32_t msg)
+{
+    std::uint8_t channel = (msg & 0x000F0000) >> 16;
+    std::uint16_t data = (msg & 0x0000FFFF);
+
+    std::lock_guard lock(msgMutex);
+
+    switch (channel)
+    {
+    case 1:
+        fx = static_cast<std::int16_t>(data) * 1150.0 / 16384;
+        break;
+    case 2:
+        fy = static_cast<std::int16_t>(data) * 1110.0 / 16384;
+        break;
+    case 3:
+        fz = static_cast<std::int16_t>(data) * 1850.0 / 16384;
+        break;
+    case 4:
+        mx = static_cast<std::int16_t>(data) * 56.0 / 16384;
+        break;
+    case 5:
+        my = static_cast<std::int16_t>(data) * 52.0 / 16384;
+        break;
+    case 6:
+        mz = static_cast<std::int16_t>(data) * 61.0 / 16384;
+        break;
+    default:
+        break;
+    }
+}
+
+// -----------------------------------------------------------------------------
+
+yarp::sig::Vector CanReadThread::getMeasurements() const
+{
+    std::lock_guard lock(msgMutex);
+    return {fx, fy, fz, mx, my, mz};
 }
 
 // -----------------------------------------------------------------------------
