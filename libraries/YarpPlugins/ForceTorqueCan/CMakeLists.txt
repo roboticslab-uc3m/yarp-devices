@@ -10,7 +10,8 @@ if(NOT SKIP_ForceTorqueCan)
     yarp_add_plugin(ForceTorqueCan ForceTorqueCan.hpp
                                    DeviceDriverImpl.cpp
                                    ISixAxisForceTorqueSensorsImpl.cpp
-                                   ThreadImpl.cpp
+                                   CanReadThread.hpp
+                                   CanReadThread.cpp
                                    LogComponent.hpp
                                    LogComponent.cpp)
 

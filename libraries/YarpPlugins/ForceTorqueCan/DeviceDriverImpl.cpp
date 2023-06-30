@@ -24,42 +24,93 @@ bool ForceTorqueCan::open(yarp::os::Searchable & config)
         return false;
     }
 
-    auto canBusGroupName = config.check("canBus", yarp::os::Value("default"), "CAN bus device group").asString();
-    const auto & canBusGroup = robotConfig.findGroup(canBusGroupName);
+    const auto * canBuses = config.find("canBuses").asList();
 
-    if (canBusGroup.isNull())
+    if (!canBuses)
     {
-        yCError(FTC) << "Missing CAN bus device group:" << canBusGroupName;
+        yCError(FTC) << "Missing key \"canBuses\" or not a list";
         return false;
     }
 
-    yarp::os::Property canBusOptions;
-    canBusOptions.setMonitor(config.getMonitor(), canBusGroupName.c_str());
-    canBusOptions.fromString(canBusGroup.toString());
-    canBusOptions.put("blockingMode", false); // enforce non-blocking mode
-    canBusOptions.put("allowPermissive", false); // always check usage requirements
-
-    if (!canBus.open(canBusOptions))
+    for (int i = 0; i < canBuses->size(); i++)
     {
-        yCError(FTC) << "Failed to open CAN device";
-        return false;
+        auto canBus = canBuses->get(i).asString();
+
+        if (!config.check(canBus))
+        {
+            yCError(FTC) << "Missing CAN bus key:" << canBus;
+            return false;
+        }
+
+        const auto & canBusGroup = robotConfig.findGroup(canBus);
+
+        if (canBusGroup.isNull())
+        {
+            yCError(FTC) << "Missing CAN bus device group:" << canBus;
+            return false;
+        }
+
+        auto * canBusDevice = new yarp::dev::PolyDriver;
+        canBusDevices.push_back(canBusDevice);
+
+        yarp::os::Property canBusOptions;
+        canBusOptions.setMonitor(config.getMonitor(), canBus.c_str());
+        canBusOptions.fromString(canBusGroup.toString());
+        canBusOptions.put("blockingMode", false); // enforce non-blocking mode
+        canBusOptions.put("allowPermissive", false); // always check usage requirements
+
+        if (!canBusDevice->open(canBusOptions))
+        {
+            yCError(FTC) << "Failed to open CAN device:" << canBus;
+            return false;
+        }
+
+        yarp::dev::ICanBus * iCanBus;
+        yarp::dev::ICanBufferFactory * iCanBufferFactory;
+
+        if (!canBusDevice->view(iCanBus) || !canBusDevice->view(iCanBufferFactory))
+        {
+            yCError(FTC) << "Failed to acquire CAN device interfaces:" << canBus;
+            return false;
+        }
+
+        auto * canReadThread = new CanReadThread(iCanBus, iCanBufferFactory);
+        canReadThreads.push_back(canReadThread);
+
+        if (!canReadThread->start())
+        {
+            yCError(FTC) << "Failed to start CAN read thread:" << canBus;
+            return false;
+        }
+
+        yCInfo(FTC) << "Started CAN read thread:" << canBus;
     }
 
-    if (!canBus.view(iCanBus) || !canBus.view(iCanBufferFactory))
-    {
-        yCError(FTC) << "Failed to acquire CAN device interfaces";
-        return false;
-    }
-
-    return yarp::os::Thread::start();
+    return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool ForceTorqueCan::close()
 {
-    bool ok = yarp::os::Thread::stop();
-    ok &= canBus.close();
+    bool ok = true;
+
+    for (auto * canReadThread : canReadThreads)
+    {
+        ok &= canReadThread->stop();
+        delete canReadThread;
+    }
+
+    canReadThreads.clear();
+
+    for (auto * canBusDevice : canBusDevices)
+    {
+        ok &= canBusDevice->close();
+        delete canBusDevice;
+    }
+
+    canBusDevices.clear();
+
     return ok;
 }
 

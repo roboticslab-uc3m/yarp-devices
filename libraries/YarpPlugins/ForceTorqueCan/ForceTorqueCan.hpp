@@ -3,12 +3,13 @@
 #ifndef __FORCE_TORQUE_CAN_HPP__
 #define __FORCE_TORQUE_CAN_HPP__
 
-#include <yarp/os/Thread.h>
+#include <vector>
 
-#include <yarp/dev/CanBusInterface.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
+
+#include "CanReadThread.hpp"
 
 namespace roboticslab
 {
@@ -24,8 +25,7 @@ namespace roboticslab
  * @brief Implementation of a CAN node that publishes data from a force-torque sensor.
  */
 class ForceTorqueCan : public yarp::dev::DeviceDriver,
-                       public yarp::dev::ISixAxisForceTorqueSensors,
-                       public yarp::os::Thread
+                       public yarp::dev::ISixAxisForceTorqueSensors
 {
 public:
     ForceTorqueCan()
@@ -45,18 +45,9 @@ public:
     bool getSixAxisForceTorqueSensorFrameName(std::size_t sens_index, std::string & name) const override;
     bool getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
 
-    //  --------- Thread Declarations. Implementation in ThreadImpl.cpp ---------
-    bool threadInit() override;
-    void threadRelease() override;
-    void run() override;
-
 private:
-    unsigned int bufferSize {0};
-    yarp::dev::PolyDriver canBus;
-
-    yarp::dev::ICanBus * iCanBus {nullptr};
-    yarp::dev::ICanBufferFactory * iCanBufferFactory {nullptr};
-    yarp::dev::CanBuffer canBuffer;
+    std::vector<yarp::dev::PolyDriver *> canBusDevices;
+    std::vector<CanReadThread *> canReadThreads;
 };
 
 } // namespace roboticslab

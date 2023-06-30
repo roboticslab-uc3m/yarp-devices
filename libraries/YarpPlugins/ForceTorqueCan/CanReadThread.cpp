@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "ForceTorqueCan.hpp"
+#include "CanReadThread.hpp"
 
 #include <cstdint>
 
@@ -14,6 +14,9 @@
 #include "LogComponent.hpp"
 
 using namespace roboticslab;
+
+constexpr auto RX_DELAY = 0.001; // [s] arbitrary, but small enough to allow the NWS to get fresh data
+constexpr auto BUFFER_SIZE = 500;
 
 // -----------------------------------------------------------------------------
 
@@ -40,31 +43,30 @@ namespace
 
 // -----------------------------------------------------------------------------
 
-bool ForceTorqueCan::threadInit()
+bool CanReadThread::threadInit()
 {
-    canBuffer = iCanBufferFactory->createBuffer(bufferSize);
+    canBuffer = iCanBufferFactory->createBuffer(BUFFER_SIZE);
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-void ForceTorqueCan::threadRelease()
+void CanReadThread::threadRelease()
 {
     iCanBufferFactory->destroyBuffer(canBuffer);
 }
 
 // -----------------------------------------------------------------------------
 
-void ForceTorqueCan::run()
+void CanReadThread::run()
 {
     unsigned int read, i;
 
     while (!isStopping())
     {
-        // arbitrary, but small enough to allow the NWS to get fresh data
-        yarp::os::SystemClock::delaySystem(0.001);
+        yarp::os::SystemClock::delaySystem(RX_DELAY);
 
-        if (!iCanBus->canRead(canBuffer, bufferSize, &read) || read == 0)
+        if (!iCanBus->canRead(canBuffer, BUFFER_SIZE, &read) || read == 0)
         {
             continue;
         }
