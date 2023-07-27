@@ -76,14 +76,16 @@ void CanReadThread::run()
         {
             const auto & msg = canBuffer[i];
 
-            if (msg.getId() == 0x001)
+            if ((msg.getId() & 0x07F) == 0x001)
             {
                 yCDebug(FTC, "Received from id %d: %s", msg.getId(), msgToStr(msg.getLen(), msg.getData()).c_str());
 
                 std::memcpy(&data, msg.getData(), sizeof(data));
-                interpretMessage(data & 0x000000000005FFFF);
-                interpretMessage((data & 0x000000FFFFF00000) >> 20);
-                interpretMessage((data & 0x0FFFFF0000000000) >> 40);
+
+                interpretMessage((msg.getId() & 0x380) >> 7,
+                                 data & 0x000000000000FFFF,
+                                 (data & 0x00000000FFFF0000) >> 16,
+                                 (data & 0x0000FFFF00000000) >> 32);
             }
         }
     }
@@ -91,34 +93,24 @@ void CanReadThread::run()
 
 // -----------------------------------------------------------------------------
 
-void CanReadThread::interpretMessage(std::uint32_t msg)
+void CanReadThread::interpretMessage(std::uint8_t op, std::int16_t val1, std::int16_t val2, std::int16_t val3)
 {
-    std::uint8_t channel = (msg & 0x000F0000) >> 16;
-    std::uint16_t data = (msg & 0x0000FFFF);
-
     std::lock_guard lock(msgMutex);
 
-    switch (channel)
+    switch (op)
     {
-    case 1:
-        fx = static_cast<std::int16_t>(data) * 1150.0 / 16384;
-        break;
-    case 2:
-        fy = static_cast<std::int16_t>(data) * 1110.0 / 16384;
-        break;
     case 3:
-        fz = static_cast<std::int16_t>(data) * 1850.0 / 16384;
-        break;
-    case 4:
-        mx = static_cast<std::int16_t>(data) * 56.0 / 16384;
+        fx = val1 * 1150.0 / 16384;
+        fy = val2 * 1110.0 / 16384;
+        fz = val3 * 1850.0 / 16384;
         break;
     case 5:
-        my = static_cast<std::int16_t>(data) * 52.0 / 16384;
-        break;
-    case 6:
-        mz = static_cast<std::int16_t>(data) * 61.0 / 16384;
+        mx = val1 * 56.0 / 16384;
+        my = val2 * 52.0 / 16384;
+        mz = val3 * 61.0 / 16384;
         break;
     default:
+        yCWarning(FTC, "Unknown operation %d", op);
         break;
     }
 }

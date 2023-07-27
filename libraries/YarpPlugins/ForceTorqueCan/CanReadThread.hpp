@@ -30,7 +30,7 @@ public:
     yarp::sig::Vector getMeasurements() const;
 
 private:
-    void interpretMessage(std::uint32_t msg);
+    void interpretMessage(std::uint8_t op, std::int16_t val1, std::int16_t val2, std::int16_t val3);
 
     yarp::dev::ICanBus * iCanBus {nullptr};
     yarp::dev::ICanBufferFactory * iCanBufferFactory {nullptr};
