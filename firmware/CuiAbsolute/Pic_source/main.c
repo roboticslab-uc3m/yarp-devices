@@ -9,21 +9,8 @@
  * @section teo_body_firmware_legal Legal
  *
  * Copyright: 2023 (C) Universidad Carlos III de Madrid
- *
- * Authors:
- * - Román Avellán Martín
- * - Raúl de Santos Rico
- * - Bartek Łukawski
- *
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see license/LGPL.TXT
- *
- * @section cuiAbsolute_install Installation
- *
- * You need to install MPLAB IDE v8.92 and MPLAB C Compiler for PIC18 MCUs. <br>
- * Open the proyect with MPLAB, open "main.c" file and change the value of "canId" variable. <br>
- * Also, to increase the time between sending messages,  you can modify "sendDelay" value too (see code documentation in main.c).
- * Then, build all. <br>
- * Finally, select programmer "MPLAB ICD 2", disconnect CAN-BUS connections of the PIC, connect and program it. <br>
+ * Original author: Román Avellán Martín (master's thesis, UC3M, 2015)
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later
  */
 
 #include <p18F2580.h>
