@@ -24,11 +24,6 @@ namespace roboticslab
  */
 
 /**
- * @defgroup yarp_devices_firmware Firmware
- * @brief yarp-devices firmware.
- */
-
-/**
  * @defgroup yarp_devices_programs Programs
  * @brief yarp-devices programs.
  */
