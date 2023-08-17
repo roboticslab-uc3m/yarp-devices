@@ -2,6 +2,8 @@
 
 #include "ForceTorqueCan.hpp"
 
+#include <vector>
+
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
@@ -30,6 +32,31 @@ bool ForceTorqueCan::open(yarp::os::Searchable & config)
     {
         yCError(FTC) << "Missing key \"canBuses\" or not a list";
         return false;
+    }
+
+    std::vector<float> filters;
+
+    const auto vFilters = config.check("filters", yarp::os::Value::getNullValue(), "cutoff frequency for each low-pass filter [Hz]");
+
+    if (vFilters.isList())
+    {
+        const auto * filtersList = vFilters.asList();
+
+        if (filtersList->size() != canBuses->size())
+        {
+            yCError(FTC) << "Number of filters does not match number of CAN buses";
+            return false;
+        }
+
+        for (int i = 0; i < filtersList->size(); i++)
+        {
+            filters.push_back(filtersList->get(i).asFloat32());
+        }
+    }
+    else if (config.check("filter", "common cutoff frequency for all low-pass filters [Hz]"))
+    {
+        const auto freq = config.find("filter").asFloat32();
+        filters.insert(filters.begin(), canBuses->size(), freq);
     }
 
     for (int i = 0; i < canBuses->size(); i++)
