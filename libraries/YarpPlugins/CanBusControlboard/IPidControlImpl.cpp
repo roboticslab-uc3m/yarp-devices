@@ -2,6 +2,8 @@
 
 #include "CanBusControlboard.hpp"
 
+#include <functional> // std::invoke
+
 #include <yarp/os/Log.h>
 #include <yarp/os/Vocab.h>
 
@@ -21,7 +23,7 @@ namespace
     {
         auto [device, offset] = dm.getDevice(j);
         auto * p = device->getHandle<yarp::dev::IPidControlRaw>();
-        return p && (p->*fn)(type, offset, ref...);
+        return p && std::invoke(fn, p, type, offset, ref...);
     }
 
     template<typename T_refs>
