@@ -45,7 +45,7 @@
 
 #include <StateObserver.hpp>
 
-constexpr auto DEFAULT_BUS = "pcan-leftArm";
+constexpr auto DEFAULT_BUS = "socket-leftArm";
 constexpr auto DEFAULT_IPOS = "id26-ipos";
 constexpr auto DEFAULT_SPEED = 2.0; // deg/s
 constexpr auto DEFAULT_TARGET = (-20.0);
