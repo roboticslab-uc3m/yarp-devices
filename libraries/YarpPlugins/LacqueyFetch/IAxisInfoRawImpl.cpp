@@ -2,7 +2,7 @@
 
 #include "LacqueyFetch.hpp"
 
-#include <yarp/os/LogStream.h>
+#include <yarp/os/Log.h>
 
 #include "LogComponent.hpp"
 
@@ -10,18 +10,21 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool LacqueyFetch::open(yarp::os::Searchable& config)
+bool LacqueyFetch::getAxisNameRaw(int axis, std::string & name)
 {
-    canId = config.check("canId", yarp::os::Value(0), "can bus ID").asInt8();
-    axisName = config.check("name", yarp::os::Value(""), "axis name").asString();
-    yarp::dev::DeviceDriver::setId("ID" + std::to_string(canId));
+    yCITrace(LCQ, id(), "%d", axis);
+    CHECK_JOINT(axis);
+    name = axisName;
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool LacqueyFetch::close()
+bool LacqueyFetch::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type)
 {
+    yCITrace(LCQ, id(), "%d", axis);
+    CHECK_JOINT(axis);
+    type = yarp::dev::VOCAB_JOINTTYPE_REVOLUTE;
     return true;
 }
 

@@ -29,7 +29,7 @@ bool DextraCanControlboard::open(yarp::os::Searchable & config)
 
     acquireSynapseHandle(new CanSynapse(canId));
 
-    return true;
+    return DextraRawControlboard::open(config); // parses axisPrefix
 }
 
 // -----------------------------------------------------------------------------

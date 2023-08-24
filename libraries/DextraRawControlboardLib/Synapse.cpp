@@ -14,21 +14,21 @@ constexpr int MESSAGE_SIZE = (FLOAT_SIZE + 1) * Synapse::DATA_POINTS;
 constexpr unsigned char FINGER_ADDRESS[Synapse::DATA_POINTS] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
 
 const std::array<std::pair<Synapse::setpoint_t, Synapse::setpoint_t>, Synapse::DATA_POINTS> Synapse::LIMITS = {
-    {0, 90},
-    {0, 10},
-    {0, 20},
-    {0, 20},
-    {0, 20},
-    {0, 20}
+    {0.0f, 90.0f},
+    {0.0f, 10.0f},
+    {0.0f, 20.0f},
+    {0.0f, 20.0f},
+    {0.0f, 20.0f},
+    {0.0f, 20.0f}
 };
 
 const std::array<std::string, Synapse::DATA_POINTS> Synapse::LABELS = {
-    "abductor",
-    "thumb",
-    "index",
-    "middle",
-    "ring",
-    "pinky"
+    "HandAbductor",
+    "ThumbFinger",
+    "IndexFinger",
+    "MiddleFinger",
+    "RingFinger",
+    "PinkyFinger"
 };
 
 void Synapse::configure(void * handle)

@@ -4,6 +4,7 @@
 #define __DEXTRA_RAW_CONTROLBOARD_HPP__
 
 #include <mutex>
+#include <string>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 
@@ -38,6 +39,10 @@ public:
 
     void acquireSynapseHandle(Synapse * synapse);
     void destroySynapse();
+
+    //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
+
+    bool open(yarp::os::Searchable & config) override;
 
     //  --------- IAxisInfoRaw declarations. Implementation in IAxisInfoRawImpl.cpp ---------
 
@@ -128,6 +133,7 @@ public:
 
 protected:
     Synapse * synapse {nullptr};
+    std::string axisPrefix;
 
 private:
     double getSetpoint(int j);

@@ -9,6 +9,7 @@ if(NOT SKIP_LacqueyFetch)
 
     yarp_add_plugin(LacqueyFetch LacqueyFetch.hpp
                                  DeviceDriverImpl.cpp
+                                 IAxisInfoRawImpl.cpp
                                  ICanBusSharerImpl.cpp
                                  IControlModeRawImpl.cpp
                                  IPWMControlRawImpl.cpp

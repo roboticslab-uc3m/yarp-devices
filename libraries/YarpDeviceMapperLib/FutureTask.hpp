@@ -31,7 +31,7 @@ public:
     //! Register a deferred callback given a generic class instance.
     template<typename T, typename Fn, typename... Args>
     void add(T * p, Fn && fn, Args &&... args)
-    { deferreds.push_back([=](int) { return (p->*fn)(args...); }); }
+    { deferreds.push_back([=](int) { return std::invoke(fn, p, args...); }); }
 
     //! Dispatch the registered callbacks and returns their joint result.
     virtual bool dispatch() = 0;

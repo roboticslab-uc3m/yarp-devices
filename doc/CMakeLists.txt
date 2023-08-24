@@ -23,7 +23,6 @@ set(DOXYGEN_USE_MDFILE_AS_MAINPAGE ./README.md)
 set(_doxygen_input README.md
                    doc
                    examples
-                   firmware
                    libraries
                    programs
                    share

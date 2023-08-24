@@ -5,9 +5,13 @@
 
 #include <cstdint>
 
+#include <string>
+
 #include <yarp/conf/numeric.h>
+#include <yarp/conf/version.h>
 
 #include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/IAxisInfo.h>
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IPWMControl.h>
 
@@ -30,6 +34,7 @@ namespace roboticslab
  * CAN bus joint (controlboard raw interfaces).
  */
 class LacqueyFetch : public yarp::dev::DeviceDriver,
+                     public yarp::dev::IAxisInfoRaw,
                      public yarp::dev::IControlModeRaw,
                      public yarp::dev::IPWMControlRaw,
                      public ICanBusSharer
@@ -52,6 +57,15 @@ public:
     bool finalize() override;
     bool registerSender(ICanSenderDelegate * sender) override;
     bool synchronize(double timestamp) override;
+
+    //  --------- IAxisInfoRaw declarations. Implementation in IAxisInfoRawImpl.cpp ---------
+
+#if YARP_VERSION_COMPARE(>=, 3, 8, 0)
+    bool getAxes(int * ax) override
+    { return getNumberOfMotorsRaw(ax); }
+#endif
+    bool getAxisNameRaw(int j, std::string & name) override;
+    bool getJointTypeRaw(int j, yarp::dev::JointTypeEnum & type) override;
 
     //  --------- IControlModeRaw declarations. Implementation in IControlModeRawImpl.cpp ---------
 
@@ -78,6 +92,7 @@ private:
     { return sender && sender->prepareMessage({canId, len, msgData}); }
 
     unsigned int canId;
+    std::string axisName;
     yarp::conf::float32_t refDutyCycles;
     ICanSenderDelegate * sender;
 };

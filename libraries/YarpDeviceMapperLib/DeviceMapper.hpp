@@ -3,6 +3,7 @@
 #ifndef __DEVICE_MAPPER_HPP__
 #define __DEVICE_MAPPER_HPP__
 
+#include <functional> // std::invoke
 #include <memory>
 #include <string>
 #include <tuple>
@@ -173,7 +174,7 @@ public:
     {
         auto [device, offset] = getDevice(j);
         T * p = device->getHandle<T>();
-        return p ? (p->*fn)(offset, ref...) : false;
+        return p ? std::invoke(fn, p, offset, ref...) : false;
     }
 
     //! Alias for a full-joint command. See class description.

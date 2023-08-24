@@ -51,7 +51,7 @@ bool DextraSerialControlboard::open(yarp::os::Searchable & config)
 
     raw.acquireSynapseHandle(new SerialSynapse(iSerialDevice));
 
-    return true;
+    return raw.open(config); // parses axisPrefix
 }
 
 // -----------------------------------------------------------------------------
