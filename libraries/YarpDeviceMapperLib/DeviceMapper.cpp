@@ -4,7 +4,9 @@
 
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
+
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
 using namespace roboticslab;
 
@@ -17,6 +19,8 @@ namespace
 {
     bool queryControlledAxes(const RawDevice * rd, int * axes, bool * ret)
     {
+        // control board interfaces
+
         if (rd->getHandle<yarp::dev::ICurrentControlRaw>())
         {
             *ret = rd->getHandle<yarp::dev::ICurrentControlRaw>()->getNumberOfMotorsRaw(axes);
@@ -57,6 +61,60 @@ namespace
         {
             *ret = rd->getHandle<yarp::dev::ITorqueControlRaw>()->getAxes(axes);
         }
+
+        // multiple analog sensors interfaces
+
+        else if (rd->getHandle<yarp::dev::IThreeAxisGyroscopes>())
+        {
+            *axes = rd->getHandle<yarp::dev::IThreeAxisGyroscopes>()->getNrOfThreeAxisGyroscopes();
+            *ret = true;
+        }
+        else if (rd->getHandle<yarp::dev::IThreeAxisLinearAccelerometers>())
+        {
+            *axes = rd->getHandle<yarp::dev::IThreeAxisLinearAccelerometers>()->getNrOfThreeAxisLinearAccelerometers();
+            *ret = true;
+        }
+        else if (rd->getHandle<yarp::dev::IThreeAxisMagnetometers>())
+        {
+            *axes = rd->getHandle<yarp::dev::IThreeAxisMagnetometers>()->getNrOfThreeAxisMagnetometers();
+            *ret = true;
+        }
+        else if (rd->getHandle<yarp::dev::IOrientationSensors>())
+        {
+            *axes = rd->getHandle<yarp::dev::IOrientationSensors>()->getNrOfOrientationSensors();
+            *ret = true;
+        }
+        else if (rd->getHandle<yarp::dev::ITemperatureSensors>())
+        {
+            *axes = rd->getHandle<yarp::dev::ITemperatureSensors>()->getNrOfTemperatureSensors();
+            *ret = true;
+        }
+        else if (rd->getHandle<yarp::dev::ISixAxisForceTorqueSensors>())
+        {
+            *axes = rd->getHandle<yarp::dev::ISixAxisForceTorqueSensors>()->getNrOfSixAxisForceTorqueSensors();
+            *ret = true;
+        }
+        else if (rd->getHandle<yarp::dev::IContactLoadCellArrays>())
+        {
+            *axes = rd->getHandle<yarp::dev::IContactLoadCellArrays>()->getNrOfContactLoadCellArrays();
+            *ret = true;
+        }
+        else if (rd->getHandle<yarp::dev::IEncoderArrays>())
+        {
+            *axes = rd->getHandle<yarp::dev::IEncoderArrays>()->getNrOfEncoderArrays();
+            *ret = true;
+        }
+        else if (rd->getHandle<yarp::dev::ISkinPatches>())
+        {
+            *axes = rd->getHandle<yarp::dev::ISkinPatches>()->getNrOfSkinPatches();
+            *ret = true;
+        }
+        else if (rd->getHandle<yarp::dev::IPositionSensors>())
+        {
+            *axes = rd->getHandle<yarp::dev::IPositionSensors>()->getNrOfPositionSensors();
+            *ret = true;
+        }
+
         else
         {
             return false;
