@@ -163,7 +163,21 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
             yarp::os::Property calibratorDeviceOptions;
             calibratorDeviceOptions.fromString(calibratorDeviceGroup.toString());
             calibratorDeviceOptions.put("robotConfig", yarp::os::Value::makeBlob(&robotConfigPtr, sizeof(robotConfigPtr)));
-            calibratorDeviceOptions.put("joints", mapperDeviceOptions.find("joints"));
+
+            if (mapperDeviceOptions.check("joints"))
+            {
+                calibratorDeviceOptions.put("joints", mapperDeviceOptions.find("joints"));
+            }
+            else if (mapperDeviceOptions.check("axesNames"))
+            {
+                const auto & axesNames = mapperDeviceOptions.find("axesNames");
+                calibratorDeviceOptions.put("joints", yarp::os::Value((int)axesNames.asList()->size()));
+            }
+            else
+            {
+                yCError(LCB) << "Missing joints or axesNames property in mapper device" << mapperDeviceLabel;
+                return false;
+            }
 
             yarp::dev::PolyDriver * calibratorDevice = new yarp::dev::PolyDriver;
             yarp::dev::PolyDriverDescriptor descriptor(calibratorDevice, "calibrator"); // key name enforced by ControlBoardRemapper::attachAllXxx()
