@@ -4,6 +4,7 @@ if(ENABLE_DextraRawControlboardLib)
 
     add_library(DextraRawControlboardLib SHARED DextraRawControlboard.hpp
                                                 DextraRawControlboard.cpp
+                                                DeviceDriverImpl.cpp
                                                 IAxisInfoRawImpl.cpp
                                                 IControlLimitsRawImpl.cpp
                                                 IControlModeRawImpl.cpp

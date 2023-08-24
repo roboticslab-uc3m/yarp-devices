@@ -14,7 +14,7 @@ bool DextraRawControlboard::getAxisNameRaw(int axis, std::string & name)
 {
     yCITrace(DEXTRA, id(), "%d", axis);
     CHECK_JOINT(axis);
-    name = Synapse::LABELS[axis];
+    name = axisPrefix + Synapse::LABELS[axis];
     return true;
 }
 
