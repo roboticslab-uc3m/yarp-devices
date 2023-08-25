@@ -12,7 +12,9 @@ if(ENABLE_DextraRawControlBoardLib)
                                                 IPositionControlRawImpl.cpp
                                                 IPositionDirectRawImpl.cpp
                                                 LogComponent.hpp
-                                                LogComponent.cpp)
+                                                LogComponent.cpp
+                                                Synapse.hpp
+                                                Synapse.cpp)
 
     target_link_libraries(DextraRawControlBoardLib PUBLIC YARP::YARP_dev
                                                    PRIVATE YARP::YARP_os)
