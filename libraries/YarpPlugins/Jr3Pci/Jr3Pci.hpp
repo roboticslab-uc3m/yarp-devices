@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __JR3_HPP__
-#define __JR3_HPP__
+#ifndef __JR3_PCI_HPP__
+#define __JR3_PCI_HPP__
 
 #include <string>
 #include <vector>
@@ -17,23 +17,23 @@ namespace roboticslab
 
 /**
  * @ingroup YarpPlugins
- * @defgroup Jr3
- * @brief Contains roboticslab::Jr3.
+ * @defgroup Jr3Pci
+ * @brief Contains roboticslab::Jr3Pci.
  */
 
  /**
- * @ingroup Jr3
- * @brief Implementation for the JR3 sensor. Launch as in: yarpdev --device Jr3 --period 20 --name /jr3:o
+ * @ingroup Jr3Pci
+ * @brief Implementation for the JR3 sensor (PCi board).
  */
-class Jr3 : public yarp::dev::DeviceDriver,
-            public yarp::dev::IAnalogSensor,
-            public yarp::dev::ISixAxisForceTorqueSensors
+class Jr3Pci : public yarp::dev::DeviceDriver,
+               public yarp::dev::IAnalogSensor,
+               public yarp::dev::ISixAxisForceTorqueSensors
 {
 public:
-    Jr3() : fd(0)
+    Jr3Pci() : fd(0)
     { }
 
-    ~Jr3() override
+    ~Jr3Pci() override
     { close(); }
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -108,4 +108,4 @@ private:
 
 } // namespace roboticslab
 
-#endif // __JR3_HPP__
+#endif // __JR3_PCI_HPP__

@@ -13,7 +13,7 @@ For unit testing, you'll need the googletest source package. Refer to [Install g
 - [../libraries/YarpPlugins/AravisGigE](../libraries/YarpPlugins/AravisGigE#requirements)
 - [../libraries/YarpPlugins/CanBusHico](../libraries/YarpPlugins/CanBusHico#requirements)
 - [../libraries/YarpPlugins/CanBusPeak](../libraries/YarpPlugins/CanBusPeak#requirements)
-- [../libraries/YarpPlugins/Jr3](../libraries/YarpPlugins/Jr3#requirements)
+- [../libraries/YarpPlugins/Jr3Pci](../libraries/YarpPlugins/Jr3Pci#requirements)
 - [../libraries/YarpPlugins/LeapMotionSensor](../libraries/YarpPlugins/LeapMotionSensor#requirements)
 - [../libraries/YarpPlugins/SpaceNavigator](../libraries/YarpPlugins/SpaceNavigator#requirements)
 - [../libraries/YarpPlugins/WiimoteSensor](../libraries/YarpPlugins/WiimoteSensor#requirements)

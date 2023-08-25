@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "Jr3.hpp"
+#include "Jr3Pci.hpp"
 
 #include <sys/ioctl.h>
 #include <fcntl.h> // ::open
@@ -33,14 +33,14 @@ namespace
 
         if (isEqual)
         {
-            yCInfo(JR3) << "Full scales of channel" << n << "set to:" << actual.f << actual.m;
+            yCInfo(JR3P) << "Full scales of channel" << n << "set to:" << actual.f << actual.m;
             return true;
         }
         else
         {
-            yCError(JR3) << "Full scales not correctly set for channel" << n;
-            yCInfo(JR3) << "Actual:" << actual.f << actual.m;
-            yCInfo(JR3) << "Reference:" << reference.f << reference.m;
+            yCError(JR3P) << "Full scales not correctly set for channel" << n;
+            yCInfo(JR3P) << "Actual:" << actual.f << actual.m;
+            yCInfo(JR3P) << "Reference:" << reference.f << reference.m;
             return false;
         }
     }
@@ -50,7 +50,7 @@ constexpr auto DEFAULT_FILTER_ID = 0;
 
 // -----------------------------------------------------------------------------
 
-bool Jr3::open(yarp::os::Searchable& config)
+bool Jr3Pci::open(yarp::os::Searchable& config)
 {
     yarp::os::Value * vNames;
 
@@ -58,7 +58,7 @@ bool Jr3::open(yarp::os::Searchable& config)
     {
         if (!vNames->isList())
         {
-            yCError(JR3) << "Parameter --names must be a list";
+            yCError(JR3P) << "Parameter --names must be a list";
             return false;
         }
 
@@ -66,7 +66,7 @@ bool Jr3::open(yarp::os::Searchable& config)
 
         if (b->size() > 4)
         {
-            yCError(JR3) << "Too many sensors:" << b->size();
+            yCError(JR3P) << "Too many sensors:" << b->size();
             return false;
         }
 
@@ -74,43 +74,43 @@ bool Jr3::open(yarp::os::Searchable& config)
         {
             if (!b->get(i).isString())
             {
-                yCError(JR3) << "Sensor name must be a string";
+                yCError(JR3P) << "Sensor name must be a string";
                 return false;
             }
 
             names[i] = b->get(i).asString();
         }
 
-        yCInfo(JR3) << "Using sensor names:" << names;
+        yCInfo(JR3P) << "Using sensor names:" << names;
     }
 
     int filterId = config.check("filter", yarp::os::Value(DEFAULT_FILTER_ID), "filter id (0-6)").asInt32();
 
     if (filterId < 0 || filterId > 6)
     {
-        yCError(JR3) << "Illegal filter ID (<0 or >6):" << filterId;
+        yCError(JR3P) << "Illegal filter ID (<0 or >6):" << filterId;
         return false;
     }
 
     loadFilters(filterId);
 
-    yCInfo(JR3) << "Using filter ID:" << filterId;
+    yCInfo(JR3P) << "Using filter ID:" << filterId;
 
     // https://github.com/roboticslab-uc3m/jr3pci-linux/issues/10
     isDextrorotary = config.check("dextrorotary", "assume dextrorotary XYZ coordinates");
 
     if (isDextrorotary)
     {
-        yCInfo(JR3) << "Assuming dextrorotary XYZ coordinates";
+        yCInfo(JR3P) << "Assuming dextrorotary XYZ coordinates";
     }
     else
     {
-        yCInfo(JR3) << "Assuming levorotary XYZ coordinates";
+        yCInfo(JR3P) << "Assuming levorotary XYZ coordinates";
     }
 
     if ((fd = ::open("/dev/jr3", O_RDWR)) < 0)
     {
-        yCError(JR3) << "Can't open device, no way to read force!";
+        yCError(JR3P) << "Can't open device, no way to read force!";
         return false;
     }
 
@@ -168,7 +168,7 @@ bool Jr3::open(yarp::os::Searchable& config)
 
 // -----------------------------------------------------------------------------
 
-bool Jr3::close()
+bool Jr3Pci::close()
 {
     if (fd)
     {
@@ -181,7 +181,7 @@ bool Jr3::close()
 
 // -----------------------------------------------------------------------------
 
-void Jr3::loadFilters(int id)
+void Jr3Pci::loadFilters(int id)
 {
     switch (id)
     {

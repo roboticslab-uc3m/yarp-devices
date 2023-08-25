@@ -2,12 +2,12 @@
 
 /**
  * @ingroup yarp_devices_examples_cpp
- * @defgroup exampleJr3 exampleJr3
- * @brief This example instantiates a local @ref Jr3 device.
+ * @defgroup exampleJr3Pci exampleJr3Pci
+ * @brief This example instantiates a local @ref Jr3Pci device.
  */
 
 /**
- * @example{lineno} exampleJr3.cpp
+ * @example{lineno} exampleJr3Pci.cpp
  */
 
 #include <yarp/os/LogStream.h>
@@ -19,7 +19,7 @@
 
 int main(int argc, char * argv[])
 {
-    yarp::os::Property options {{"device", yarp::os::Value("Jr3")}};
+    yarp::os::Property options {{"device", yarp::os::Value("Jr3Pci")}};
 
     yarp::dev::PolyDriver device(options);
 

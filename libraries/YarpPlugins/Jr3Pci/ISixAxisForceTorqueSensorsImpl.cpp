@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "Jr3.hpp"
+#include "Jr3Pci.hpp"
 
 #include <sys/ioctl.h>
 
@@ -17,21 +17,21 @@ constexpr auto NUM_SENSORS = 4;
 
 // -----------------------------------------------------------------------------
 
-std::size_t Jr3::getNrOfSixAxisForceTorqueSensors() const
+std::size_t Jr3Pci::getNrOfSixAxisForceTorqueSensors() const
 {
     return NUM_SENSORS;
 }
 
 // -----------------------------------------------------------------------------
 
-yarp::dev::MAS_status Jr3::getSixAxisForceTorqueSensorStatus(std::size_t sens_index) const
+yarp::dev::MAS_status Jr3Pci::getSixAxisForceTorqueSensorStatus(std::size_t sens_index) const
 {
     return yarp::dev::MAS_OK;
 }
 
 // -----------------------------------------------------------------------------
 
-bool Jr3::getSixAxisForceTorqueSensorName(std::size_t sens_index, std::string & name) const
+bool Jr3Pci::getSixAxisForceTorqueSensorName(std::size_t sens_index, std::string & name) const
 {
     CHECK_SENSOR(sens_index);
     name = names[sens_index];
@@ -40,14 +40,14 @@ bool Jr3::getSixAxisForceTorqueSensorName(std::size_t sens_index, std::string & 
 
 // -----------------------------------------------------------------------------
 
-bool Jr3::getSixAxisForceTorqueSensorFrameName(std::size_t sens_index, std::string & name) const
+bool Jr3Pci::getSixAxisForceTorqueSensorFrameName(std::size_t sens_index, std::string & name) const
 {
     return getSixAxisForceTorqueSensorName(sens_index, name);
 }
 
 // -----------------------------------------------------------------------------
 
-bool Jr3::getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const
+bool Jr3Pci::getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const
 {
     CHECK_SENSOR(sens_index);
 
@@ -55,7 +55,7 @@ bool Jr3::getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::
 
     if (::ioctl(fd, filters[sens_index], &fm) == -1)
     {
-        yCError(JR3) << "ioctl() on read sensor" << sens_index << "failed";
+        yCError(JR3P) << "ioctl() on read sensor" << sens_index << "failed";
         return false;
     }
 

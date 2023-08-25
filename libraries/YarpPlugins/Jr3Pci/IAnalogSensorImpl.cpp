@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "Jr3.hpp"
+#include "Jr3Pci.hpp"
 
 #include <sys/ioctl.h>
 
@@ -12,7 +12,7 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-int Jr3::read(yarp::sig::Vector &out)
+int Jr3Pci::read(yarp::sig::Vector &out)
 {
     bool ok = true;
     yarp::sig::Vector out0, out1, out2, out3;
@@ -40,23 +40,23 @@ int Jr3::read(yarp::sig::Vector &out)
 
 // -----------------------------------------------------------------------------
 
-int Jr3::getState(int ch)
+int Jr3Pci::getState(int ch)
 {
     return yarp::dev::IAnalogSensor::AS_OK;
 }
 
 // -----------------------------------------------------------------------------
 
-int Jr3::getChannels()
+int Jr3Pci::getChannels()
 {
     return getNrOfSixAxisForceTorqueSensors() * 6;
 }
 
 // -----------------------------------------------------------------------------
 
-int Jr3::calibrateSensor()
+int Jr3Pci::calibrateSensor()
 {
-    yCInfo(JR3) << "Calibrating sensor..."; // = set to zero
+    yCInfo(JR3P) << "Calibrating sensor..."; // = set to zero
 
     constexpr auto ok = yarp::dev::IAnalogSensor::AS_OK;
 
@@ -75,15 +75,15 @@ int Jr3::calibrateSensor()
 
 // -----------------------------------------------------------------------------
 
-int Jr3::calibrateSensor(const yarp::sig::Vector& value)
+int Jr3Pci::calibrateSensor(const yarp::sig::Vector& value)
 {
-    yCError(JR3) << "calibrateSensor(const yarp::sig::Vector& value) not implemented";
+    yCError(JR3P) << "calibrateSensor(const yarp::sig::Vector& value) not implemented";
     return yarp::dev::IAnalogSensor::AS_ERROR;
 }
 
 // -----------------------------------------------------------------------------
 
-int Jr3::calibrateChannel(int ch)
+int Jr3Pci::calibrateChannel(int ch)
 {
     int ok;
 
@@ -102,14 +102,14 @@ int Jr3::calibrateChannel(int ch)
         ok = ::ioctl(fd, IOCTL3_JR3_ZEROOFFS);
         break;
     default:
-        yCError(JR3) << "Illegal channel" << ch;
+        yCError(JR3P) << "Illegal channel" << ch;
         ok = -1;
         break;
     }
 
     if (ok == -1)
     {
-        yCError(JR3) << "ioctl() on calibrate channel" << ch << "failed";
+        yCError(JR3P) << "ioctl() on calibrate channel" << ch << "failed";
         return yarp::dev::IAnalogSensor::AS_ERROR;
     }
 
@@ -118,9 +118,9 @@ int Jr3::calibrateChannel(int ch)
 
 // -----------------------------------------------------------------------------
 
-int Jr3::calibrateChannel(int ch, double value)
+int Jr3Pci::calibrateChannel(int ch, double value)
 {
-    yCError(JR3) << "calibrateChannel(int ch, double value) not implemented";
+    yCError(JR3P) << "calibrateChannel(int ch, double value) not implemented";
     return yarp::dev::IAnalogSensor::AS_ERROR;
 }
 
