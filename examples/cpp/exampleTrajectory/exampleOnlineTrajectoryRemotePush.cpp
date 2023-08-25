@@ -14,7 +14,7 @@
  * speed and period between consecutive points. Although it is not mandatory, it is a good practice
  * to force the period to be constant and sent at precise intervals if commanding the real robot
  * (maps to cyclic synchronous position mode, a.k.a. CSP). Although prepared for remote execution,
- * this application could be rewritten to connect to a local instance of @ref CanBusControlboard;
+ * this application could be rewritten to connect to a local instance of @ref CanBusControlBoard;
  * however, a better alternative exists (see notes). The techniques showcased here are especially
  * suited for online-generated trajectories, e.g. joystick teleoperation or visual servoing.
  *

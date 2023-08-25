@@ -16,7 +16,7 @@ namespace roboticslab
 
 /**
  * @ingroup TechnosoftIpos
- * @brief Implementation for the Technosoft iPOS as a single CAN bus joint (controlboard raw interfaces).
+ * @brief Implementation for the Technosoft iPOS as a single CAN bus joint (control board raw interfaces).
  */
 class TechnosoftIpos : public yarp::dev::DeviceDriver,
                        public yarp::dev::IAxisInfoRaw,

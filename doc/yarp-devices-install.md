@@ -9,7 +9,7 @@ For unit testing, you'll need the googletest source package. Refer to [Install g
 
 ### Components with known additional/specific dependencies
 
-- [../libraries/YarpPlugins/AmorControlboard](../libraries/YarpPlugins/AmorControlboard#requirements)
+- [../libraries/YarpPlugins/AmorControlBoard](../libraries/YarpPlugins/AmorControlBoard#requirements)
 - [../libraries/YarpPlugins/AravisGigE](../libraries/YarpPlugins/AravisGigE#requirements)
 - [../libraries/YarpPlugins/CanBusHico](../libraries/YarpPlugins/CanBusHico#requirements)
 - [../libraries/YarpPlugins/CanBusPeak](../libraries/YarpPlugins/CanBusPeak#requirements)
@@ -19,7 +19,7 @@ For unit testing, you'll need the googletest source package. Refer to [Install g
 - [../libraries/YarpPlugins/WiimoteSensor](../libraries/YarpPlugins/WiimoteSensor#requirements)
 - [../programs/grabberControls2Gui](../programs/grabberControls2Gui#requirements)
 - The following components additionally need some kind of CAN Bus driver (e.g. a [CanBusHico](../libraries/YarpPlugins/CanBusHico) or [CanBusPeak](../libraries/YarpPlugins/CanBusPeak)):
-    - [../libraries/YarpPlugins/CanBusControlboard](../libraries/YarpPlugins/CanBusControlboard)
+    - [../libraries/YarpPlugins/CanBusControlBoard](../libraries/YarpPlugins/CanBusControlBoard)
     - [../libraries/YarpPlugins/CuiAbsolute](../libraries/YarpPlugins/CuiAbsolute)
     - [../libraries/YarpPlugins/FakeJoint](../libraries/YarpPlugins/FakeJoint)
     - [../libraries/YarpPlugins/LacqueyFetch](../libraries/YarpPlugins/LacqueyFetch)
