@@ -3,7 +3,7 @@
 First install the dependencies:
 - [Install CMake 3.16+](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-cmake.md/)
 - [Install YCM 0.11+](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-ycm.md/)
-- [Install YARP 3.6+](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md/)
+- [Install YARP 3.7+](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-yarp.md/)
 
 For unit testing, you'll need the googletest source package. Refer to [Install googletest](https://github.com/roboticslab-uc3m/installation-guides/blob/master/install-googletest.md/).
 
@@ -25,7 +25,6 @@ For unit testing, you'll need the googletest source package. Refer to [Install g
     - [../libraries/YarpPlugins/LacqueyFetch](../libraries/YarpPlugins/LacqueyFetch)
     - [../libraries/YarpPlugins/TechnosoftIpos](../libraries/YarpPlugins/TechnosoftIpos)
     - [../libraries/YarpPlugins/TextilesHand](../libraries/YarpPlugins/TextilesHand)
-
 
 ## Installation (Ubuntu)
 
