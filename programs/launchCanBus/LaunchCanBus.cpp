@@ -50,7 +50,7 @@ bool LaunchCanBus::configure(yarp::os::ResourceFinder &rf)
 
     auto mode = rf.check("mode", yarp::os::Value(VOCAB_CM_POSITION), "initial mode of operation").asVocab32();
 
-    yarp::os::Bottle devCan = rf.findGroup("devCan", "CAN controlboard devices").tail();
+    yarp::os::Bottle devCan = rf.findGroup("devCan", "CAN control board devices").tail();
     yarp::os::Bottle mapper = rf.findGroup("mapper", "YARP mapper devices").tail();
     yarp::os::Bottle wrapper = rf.findGroup("wrapper", "YARP wrappers devices").tail();
 

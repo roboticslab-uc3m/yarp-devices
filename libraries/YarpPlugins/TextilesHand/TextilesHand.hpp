@@ -25,7 +25,7 @@ namespace roboticslab
 
 /**
  * @ingroup TextilesHand
- * @brief Implementation for the custom UC3M Textiles Hand as a single CAN bus joint (controlboard raw interfaces).
+ * @brief Implementation for the custom UC3M Textiles Hand as a single CAN bus joint (control board raw interfaces).
  */
 class TextilesHand : public yarp::dev::DeviceDriver,
                      public yarp::dev::IControlMode,
