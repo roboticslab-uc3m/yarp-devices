@@ -1,7 +1,7 @@
 # YARP devices.
 add_subdirectory(AmorControlBoard)
 add_subdirectory(AravisGigE)
-add_subdirectory(CanBusControlBoard)
+add_subdirectory(CanBusBroker)
 add_subdirectory(CanBusFake)
 add_subdirectory(CanBusHico)
 add_subdirectory(CanBusPeak)

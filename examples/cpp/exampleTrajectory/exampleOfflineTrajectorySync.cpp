@@ -14,7 +14,7 @@
  * speed and period between consecutive points. The `yarp::dev::IRemoteVariables` interface is used
  * to configure and switch to interpolated position (pi) mode on the real robot. Although prepared
  * for remote execution, this application could be rewritten to connect to a local instance of
- * @ref CanBusControlBoard. The techniques showcased here are best aimed at trajectories fully
+ * @ref CanBusBroker. The techniques showcased here are best aimed at trajectories fully
  * available offline (e.g. loaded from file) that assume a constant period between points. To fully
  * take advantage of this fact, all points are sent to the robot in a single batch, hence the flow
  * of the program is slightly different from what you'd expect (no delay function within a for-loop).

@@ -15,7 +15,7 @@
  * position mode on the real robot, a.k.a. CSP). A callback is registered for listening to a
  * remote synchronization port, position commands will be prepared and sent in response.
  * Although prepared for remote execution, this application could be rewritten to connect to
- * a local instance of @ref CanBusControlBoard; however, a better alternative exists (see notes).
+ * a local instance of @ref CanBusBroker; however, a better alternative exists (see notes).
  * The techniques showcased here are especially suited for online-generated trajectories, e.g.
  * joystick teleoperation of visual servoing.
  *

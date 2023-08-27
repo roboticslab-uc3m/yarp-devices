@@ -19,7 +19,7 @@ For unit testing, you'll need the googletest source package. Refer to [Install g
 - [../libraries/YarpPlugins/WiimoteSensor](../libraries/YarpPlugins/WiimoteSensor#requirements)
 - [../programs/grabberControls2Gui](../programs/grabberControls2Gui#requirements)
 - The following components additionally need some kind of CAN Bus driver (e.g. a [CanBusHico](../libraries/YarpPlugins/CanBusHico) or [CanBusPeak](../libraries/YarpPlugins/CanBusPeak)):
-    - [../libraries/YarpPlugins/CanBusControlBoard](../libraries/YarpPlugins/CanBusControlBoard)
+    - [../libraries/YarpPlugins/CanBusBroker](../libraries/YarpPlugins/CanBusBroker)
     - [../libraries/YarpPlugins/CuiAbsolute](../libraries/YarpPlugins/CuiAbsolute)
     - [../libraries/YarpPlugins/FakeJoint](../libraries/YarpPlugins/FakeJoint)
     - [../libraries/YarpPlugins/LacqueyFetch](../libraries/YarpPlugins/LacqueyFetch)
