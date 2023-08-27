@@ -8,7 +8,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 
 #include "DeviceMapper.hpp"
-#include "CanBusBroker.hpp"
+#include "SingleBusBroker.hpp"
 #include "SyncPeriodicThread.hpp"
 
 #define CHECK_JOINT(j) do { int n = deviceMapper.getControlledAxes(); if ((j) < 0 || (j) > n - 1) return false; } while (0)
@@ -314,7 +314,7 @@ private:
 
     std::vector<yarp::dev::PolyDriver *> busDevices;
     std::vector<yarp::dev::PolyDriver *> nodeDevices;
-    std::vector<CanBusBroker *> canBusBrokers;
+    std::vector<SingleBusBroker *> brokers;
 
     SyncPeriodicThread * syncThread {nullptr};
 };

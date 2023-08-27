@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "CanBusBroker.hpp"
+#include "SingleBusBroker.hpp"
 
 #include <memory>
 
@@ -13,7 +13,7 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-CanBusBroker::CanBusBroker(const std::string & _name)
+SingleBusBroker::SingleBusBroker(const std::string & _name)
     : name(_name),
       readerThread(nullptr),
       writerThread(nullptr),
@@ -24,7 +24,7 @@ CanBusBroker::CanBusBroker(const std::string & _name)
 
 // -----------------------------------------------------------------------------
 
-CanBusBroker::~CanBusBroker()
+SingleBusBroker::~SingleBusBroker()
 {
     stopThreads();
 
@@ -44,7 +44,7 @@ CanBusBroker::~CanBusBroker()
 
 // -----------------------------------------------------------------------------
 
-bool CanBusBroker::configure(const yarp::os::Searchable & config)
+bool SingleBusBroker::configure(const yarp::os::Searchable & config)
 {
     int rxBufferSize = config.check("rxBufferSize", yarp::os::Value(0), "CAN bus RX buffer size").asInt32();
     int txBufferSize = config.check("txBufferSize", yarp::os::Value(0), "CAN bus TX buffer size").asInt32();
@@ -84,7 +84,7 @@ bool CanBusBroker::configure(const yarp::os::Searchable & config)
 
 // -----------------------------------------------------------------------------
 
-bool CanBusBroker::registerDevice(yarp::dev::PolyDriver * driver)
+bool SingleBusBroker::registerDevice(yarp::dev::PolyDriver * driver)
 {
     if (!driver->view(iCanBus))
     {
@@ -126,7 +126,7 @@ bool CanBusBroker::registerDevice(yarp::dev::PolyDriver * driver)
 
 // -----------------------------------------------------------------------------
 
-bool CanBusBroker::createPorts(const std::string & prefix)
+bool SingleBusBroker::createPorts(const std::string & prefix)
 {
     if (!dumpPort.open(prefix + "/dump:o"))
     {
@@ -195,7 +195,7 @@ bool CanBusBroker::createPorts(const std::string & prefix)
 
 // -----------------------------------------------------------------------------
 
-bool CanBusBroker::clearFilters()
+bool SingleBusBroker::clearFilters()
 {
     if (!iCanBus)
     {
@@ -214,7 +214,7 @@ bool CanBusBroker::clearFilters()
 
 // -----------------------------------------------------------------------------
 
-bool CanBusBroker::startThreads()
+bool SingleBusBroker::startThreads()
 {
     if (busLoadMonitor && !busLoadMonitor->start())
     {
@@ -239,7 +239,7 @@ bool CanBusBroker::startThreads()
 
 // -----------------------------------------------------------------------------
 
-bool CanBusBroker::stopThreads()
+bool SingleBusBroker::stopThreads()
 {
     sendPort.interrupt();
     commandReader.disableCallback();
@@ -273,7 +273,7 @@ bool CanBusBroker::stopThreads()
 
 // -----------------------------------------------------------------------------
 
-void CanBusBroker::onRead(yarp::os::Bottle & b)
+void SingleBusBroker::onRead(yarp::os::Bottle & b)
 {
     if (b.size() != 1 && b.size() != 2)
     {

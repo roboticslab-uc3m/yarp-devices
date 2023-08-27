@@ -10,9 +10,9 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-SyncPeriodicThread::SyncPeriodicThread(std::vector<CanBusBroker *> & _canBusBrokers, FutureTaskFactory * _taskFactory)
+SyncPeriodicThread::SyncPeriodicThread(std::vector<SingleBusBroker *> & _brokers, FutureTaskFactory * _taskFactory)
     : yarp::os::PeriodicThread(1.0, yarp::os::ShouldUseSystemClock::Yes, yarp::os::PeriodicThreadClock::Absolute),
-      canBusBrokers(_canBusBrokers),
+      brokers(_brokers),
       taskFactory(_taskFactory),
       syncObserver(nullptr)
 {}
@@ -46,7 +46,7 @@ void SyncPeriodicThread::run()
     auto now = yarp::os::SystemClock::nowSystem();
     auto task = taskFactory->createTask();
 
-    for (auto * broker : canBusBrokers)
+    for (auto * broker : brokers)
     {
         task->add([broker, now]
             {

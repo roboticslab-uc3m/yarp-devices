@@ -11,8 +11,8 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/PortWriterBuffer.h>
 
-#include "CanBusBroker.hpp"
 #include "FutureTask.hpp"
+#include "SingleBusBroker.hpp"
 #include "StateObserver.hpp"
 
 namespace roboticslab
@@ -29,7 +29,7 @@ class SyncPeriodicThread final : public yarp::os::PeriodicThread
 {
 public:
     //! Constructor, manages the lifetime of @ref taskFactory.
-    SyncPeriodicThread(std::vector<CanBusBroker *> & canBusBrokers, FutureTaskFactory * taskFactory);
+    SyncPeriodicThread(std::vector<SingleBusBroker *> & brokers, FutureTaskFactory * taskFactory);
 
     //! Destructor.
     ~SyncPeriodicThread() override;
@@ -45,7 +45,7 @@ public:
     void run() override;
 
 private:
-    std::vector<CanBusBroker *> & canBusBrokers;
+    std::vector<SingleBusBroker *> & brokers;
     FutureTaskFactory * taskFactory;
     TypedStateObserver<double> * syncObserver;
     yarp::os::Port syncPort;

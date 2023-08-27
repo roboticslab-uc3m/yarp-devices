@@ -159,16 +159,16 @@ bool CanBusControlBoard::open(yarp::os::Searchable & config)
 
         if (!isFakeBus)
         {
-            auto * canBusBroker = new CanBusBroker(canBus);
-            canBusBrokers.push_back(canBusBroker);
+            auto * broker = new SingleBusBroker(canBus);
+            brokers.push_back(broker);
 
-            if (!canBusBroker->configure(canBusOptions))
+            if (!broker->configure(canBusOptions))
             {
                 yCError(CBCB) << "Unable to configure broker of CAN bus device" << canBus;
                 return false;
             }
 
-            if (!canBusBroker->registerDevice(canBusDevice))
+            if (!broker->registerDevice(canBusDevice))
             {
                 yCError(CBCB) << "Unable to register CAN bus device" << canBus;
                 return false;
@@ -176,17 +176,17 @@ bool CanBusControlBoard::open(yarp::os::Searchable & config)
 
             for (auto * iCanBusSharer : busSharers)
             {
-                canBusBroker->getReader()->registerHandle(iCanBusSharer);
-                iCanBusSharer->registerSender(canBusBroker->getWriter()->getDelegate());
+                broker->getReader()->registerHandle(iCanBusSharer);
+                iCanBusSharer->registerSender(broker->getWriter()->getDelegate());
             }
         }
     }
 
-    for (auto * canBusBroker : canBusBrokers)
+    for (auto * broker : brokers)
     {
-        if (!canBusBroker->startThreads())
+        if (!broker->startThreads())
         {
-            yCError(CBCB) << "Unable to start CAN threads in" << canBusBroker->getName();
+            yCError(CBCB) << "Unable to start CAN threads in" << broker->getName();
             return false;
         }
     }
@@ -222,7 +222,7 @@ bool CanBusControlBoard::open(yarp::os::Searchable & config)
             taskFactory = new SequentialTaskFactory;
         }
 
-        syncThread = new SyncPeriodicThread(canBusBrokers, taskFactory); // owns `taskFactory`
+        syncThread = new SyncPeriodicThread(brokers, taskFactory); // owns `taskFactory`
         syncThread->setPeriod(syncPeriod);
 
         if (!syncThread->openPort("/sync:o"))
@@ -274,14 +274,14 @@ bool CanBusControlBoard::close()
 
     deviceMapper.clear();
 
-    for (auto * canBusBroker : canBusBrokers)
+    for (auto * broker : brokers)
     {
-        ok &= canBusBroker->stopThreads();
-        ok &= canBusBroker->clearFilters();
-        delete canBusBroker;
+        ok &= broker->stopThreads();
+        ok &= broker->clearFilters();
+        delete broker;
     }
 
-    canBusBrokers.clear();
+    brokers.clear();
 
     for (auto * device : nodeDevices)
     {

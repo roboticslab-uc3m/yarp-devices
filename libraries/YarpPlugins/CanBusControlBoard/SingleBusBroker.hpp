@@ -26,7 +26,7 @@ namespace roboticslab
 
 /**
  * @ingroup CanBusControlBoard
- * @brief Message broker of a CAN bus with YARP port intefaces.
+ * @brief Message broker of a CAN bus with YARP port interfaces.
  *
  * Instantiates and orchestrates independent CAN read/write threads and manages
  * message buffers. Outgoing messages are loaded into a queue and processed in
@@ -36,14 +36,14 @@ namespace roboticslab
  * This includes an output dump port, an input command port, and an RPC service
  * for confirmed SDO transfers.
  */
-class CanBusBroker final : public yarp::os::TypedReaderCallback<yarp::os::Bottle>
+class SingleBusBroker final : public yarp::os::TypedReaderCallback<yarp::os::Bottle>
 {
 public:
     //! Constructor, passes string identifier of the CAN bus.
-    CanBusBroker(const std::string & name);
+    SingleBusBroker(const std::string & name);
 
     //! Destructor.
-    ~CanBusBroker() override;
+    ~SingleBusBroker() override;
 
     //! Configure this CAN bus.
     bool configure(const yarp::os::Searchable & config);

@@ -29,12 +29,12 @@ if(NOT SKIP_CanBusControlBoard)
                                        IRemoteVariablesImpl.cpp
                                        ITorqueControlImpl.cpp
                                        IVelocityControlImpl.cpp
-                                       CanBusBroker.hpp
-                                       CanBusBroker.cpp
                                        CanRxTxThreads.hpp
                                        CanRxTxThreads.cpp
                                        SdoReplier.hpp
                                        SdoReplier.cpp
+                                       SingleBusBroker.hpp
+                                       SingleBusBroker.cpp
                                        BusLoadMonitor.hpp
                                        BusLoadMonitor.cpp
                                        YarpCanSenderDelegate.hpp

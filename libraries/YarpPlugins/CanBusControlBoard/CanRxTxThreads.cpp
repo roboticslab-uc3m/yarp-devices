@@ -9,7 +9,6 @@
 #include <yarp/os/SystemClock.h>
 
 #include "YarpCanSenderDelegate.hpp"
-#include "CanBusBroker.hpp"
 #include "LogComponent.hpp"
 
 using namespace roboticslab;
