@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
 #include "DeviceMapper.hpp"
 #include "SingleBusBroker.hpp"
@@ -37,6 +38,7 @@ namespace roboticslab
  * <a href="https://github.com/roboticslab-uc3m/yarp-devices/issues/241#issuecomment-569112698">instructions</a>.
  */
 class CanBusBroker : public yarp::dev::DeviceDriver,
+                     // control board interfaces
                      public yarp::dev::IAmplifierControl,
                      public yarp::dev::IAxisInfo,
                      public yarp::dev::IControlCalibration,
@@ -55,7 +57,18 @@ class CanBusBroker : public yarp::dev::DeviceDriver,
                      public yarp::dev::IPWMControl,
                      public yarp::dev::IRemoteVariables,
                      public yarp::dev::ITorqueControl,
-                     public yarp::dev::IVelocityControl
+                     public yarp::dev::IVelocityControl,
+                     // multiple analog sensors interfaces
+                     public yarp::dev::IContactLoadCellArrays,
+                     public yarp::dev::IEncoderArrays,
+                     public yarp::dev::IOrientationSensors,
+                     public yarp::dev::IPositionSensors,
+                     public yarp::dev::ISixAxisForceTorqueSensors,
+                     public yarp::dev::ISkinPatches,
+                     public yarp::dev::ITemperatureSensors,
+                     public yarp::dev::IThreeAxisGyroscopes,
+                     public yarp::dev::IThreeAxisLinearAccelerometers,
+                     public yarp::dev::IThreeAxisMagnetometers
 {
 public:
     ~CanBusBroker() override
@@ -66,7 +79,9 @@ public:
     bool open(yarp::os::Searchable & config) override;
     bool close() override;
 
-    //  --------- IAmplifierControl declarations. Implementation in IAmplifierControlImpl.cpp ---------
+    // ---------- CONTROL BOARD INTERFACES ----------
+
+    // --------- IAmplifierControl declarations. Implementation in IAmplifierControlImpl.cpp ---------
 
     bool enableAmp(int j) override;
     bool disableAmp(int j) override;
@@ -85,25 +100,25 @@ public:
     bool setPWMLimit(int j, double val) override;
     bool getPowerSupplyVoltage(int j, double * val) override;
 
-    //  --------- IAxisInfo declarations. Implementation in IAxisInfoImpl.cpp ---------
+    // --------- IAxisInfo declarations. Implementation in IAxisInfoImpl.cpp ---------
 
     bool getAxisName(int axis, std::string & name) override;
     bool getJointType(int axis, yarp::dev::JointTypeEnum & type) override;
 
-    //  --------- IControlCalibration declarations. Implementation in IControlCalibrationImpl.cpp ---------
+    // --------- IControlCalibration declarations. Implementation in IControlCalibrationImpl.cpp ---------
 
     bool calibrateAxisWithParams(int axis, unsigned int type, double p1, double p2, double p3) override;
     bool setCalibrationParameters(int axis, const yarp::dev::CalibrationParameters & params) override;
     bool calibrationDone(int j) override;
 
-    //  --------- IControlLimits declarations. Implementation in IControlLimitsImpl.cpp ---------
+    // --------- IControlLimits declarations. Implementation in IControlLimitsImpl.cpp ---------
 
     bool setLimits(int axis, double min, double max) override;
     bool getLimits(int axis, double * min, double * max) override;
     bool setVelLimits(int axis, double min, double max) override;
     bool getVelLimits(int axis, double * min, double * max) override;
 
-    //  --------- IControlMode declarations. Implementation in IControlModeImpl.cpp ---------
+    // --------- IControlMode declarations. Implementation in IControlModeImpl.cpp ---------
 
     bool getControlMode(int j, int * mode) override;
     bool getControlModes(int * modes) override;
@@ -112,7 +127,7 @@ public:
     bool setControlModes(int n_joint, const int * joints, int * modes) override;
     bool setControlModes(int * modes) override;
 
-    //  --------- ICurrentControl declarations. Implementation in ICurrentControlImpl.cpp ---------
+    // --------- ICurrentControl declarations. Implementation in ICurrentControlImpl.cpp ---------
 
     //bool getNumberOfMotors(int * ax) override;
     bool getCurrent(int m, double * curr) override;
@@ -125,7 +140,7 @@ public:
     bool getRefCurrent(int m, double * curr) override;
     bool getRefCurrents(double * currs) override;
 
-    //  ---------- IEncoders declarations. Implementation in IEncodersImpl.cpp ----------
+    // ---------- IEncoders declarations. Implementation in IEncodersImpl.cpp ----------
 
     bool getAxes(int * ax) override;
     bool resetEncoder(int j) override;
@@ -139,12 +154,12 @@ public:
     bool getEncoderAcceleration(int j, double * spds) override;
     bool getEncoderAccelerations(double * accs) override;
 
-    //  ---------- IEncodersTimed declarations. Implementation in IEncodersImpl.cpp ----------
+    // ---------- IEncodersTimed declarations. Implementation in IEncodersImpl.cpp ----------
 
     bool getEncoderTimed(int j, double * encs, double * time) override;
     bool getEncodersTimed(double * encs, double * times) override;
 
-    //  --------- IImpedanceControl declarations. Implementation in IImpedanceControlImpl.cpp ---------
+    // --------- IImpedanceControl declarations. Implementation in IImpedanceControlImpl.cpp ---------
 
     //bool getAxes(int * ax) override;
     bool getImpedance(int j, double * stiffness, double * damping) override;
@@ -162,11 +177,11 @@ public:
     bool setInteractionModes(yarp::dev::InteractionModeEnum * modes) override;
     bool setInteractionModes(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes) override;
 
-    //  --------- IJointFault declarations. Implementation in IJointFaultImpl.cpp ---------
+    // --------- IJointFault declarations. Implementation in IJointFaultImpl.cpp ---------
 
     bool getLastJointFault(int j, int & fault, std::string & message) override;
 
-    //  --------- IMotor declarations. Implementation in IMotorImpl.cpp ---------
+    // --------- IMotor declarations. Implementation in IMotorImpl.cpp ---------
 
     bool getNumberOfMotors(int * num) override;
     bool getTemperature(int m, double * val) override;
@@ -176,7 +191,7 @@ public:
     bool getGearboxRatio(int m, double * val) override;
     bool setGearboxRatio(int m, double val) override;
 
-    //  --------- IMotorEncoders declarations. Implementation in IMotorEncodersImpl.cpp ---------
+    // --------- IMotorEncoders declarations. Implementation in IMotorEncodersImpl.cpp ---------
 
     bool getNumberOfMotorEncoders(int * num) override;
     bool resetMotorEncoder(int m) override;
@@ -194,7 +209,7 @@ public:
     bool getMotorEncoderAcceleration(int m, double * acc) override;
     bool getMotorEncoderAccelerations(double * accs) override;
 
-    //  --------- IPidControl declarations. Implementation in IPidControlImpl.cpp ---------
+    // --------- IPidControl declarations. Implementation in IPidControlImpl.cpp ---------
 
     bool setPid(const yarp::dev::PidControlTypeEnum & pidtype, int j, const yarp::dev::Pid & pid) override;
     bool setPids(const yarp::dev::PidControlTypeEnum & pidtype, const yarp::dev::Pid * pids) override;
@@ -259,7 +274,7 @@ public:
     bool getRefPositions(double * refs) override;
     bool getRefPositions(int n_joint, const int * joints, double * refs) override;
 
-    //  --------- IPWMControl declarations. Implementation in IPWMControlImpl.cpp ---------
+    // --------- IPWMControl declarations. Implementation in IPWMControlImpl.cpp ---------
 
     //bool getNumberOfMotors(int * number) override;
     bool setRefDutyCycle(int m, double ref) override;
@@ -269,7 +284,7 @@ public:
     bool getDutyCycle(int m, double * val) override;
     bool getDutyCycles(double * vals) override;
 
-    // -----------IRemoteVariables declarations. Implementation in IRemoteVariablesImpl.cpp --------------
+    // ----------- IRemoteVariables declarations. Implementation in IRemoteVariablesImpl.cpp --------------
 
     bool getRemoteVariable(std::string key, yarp::os::Bottle & val) override;
     bool setRemoteVariable(std::string key, const yarp::os::Bottle & val) override;
@@ -290,7 +305,7 @@ public:
     bool getTorqueRange(int j, double * min, double * max) override;
     bool getTorqueRanges(double * min, double * max) override;
 
-    //  --------- IVelocityControl declarations. Implementation in IVelocityControlImpl.cpp ---------
+    // --------- IVelocityControl declarations. Implementation in IVelocityControlImpl.cpp ---------
 
     //bool getAxes(int * ax) override;
     bool velocityMove(int j, double spd) override;
@@ -308,6 +323,89 @@ public:
     //bool stop(int j) override;
     //bool stop() override;
     //bool stop(int n_joint, const int *joints) override;
+
+    // ---------- MULTIPLE ANALOG SENSORS INTERFACES ----------
+
+    // --------- IContactLoadCellArrays declarations. Implementation in IContactLoadCellArraysImpl.cpp ---------
+
+    std::size_t getNrOfContactLoadCellArrays() const override;
+    yarp::dev::MAS_status getContactLoadCellArrayStatus(std::size_t sens_index) const override;
+    bool getContactLoadCellArrayName(std::size_t sens_index, std::string & name) const override;
+    bool getContactLoadCellArrayMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+    std::size_t getContactLoadCellArraySize(std::size_t sens_index) const override;
+
+    // --------- IEncoderArrays declarations. Implementation in IEncoderArraysImpl.cpp ---------
+
+    std::size_t getNrOfEncoderArrays() const override;
+    yarp::dev::MAS_status getEncoderArrayStatus(std::size_t sens_index) const override;
+    bool getEncoderArrayName(std::size_t sens_index, std::string & name) const override;
+    bool getEncoderArrayMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+    std::size_t getEncoderArraySize(std::size_t sens_index) const override;
+
+    // --------- IOrientationSensors declarations. Implementation in IOrientationSensorsImpl.cpp ---------
+
+    std::size_t getNrOfOrientationSensors() const override;
+    yarp::dev::MAS_status getOrientationSensorStatus(std::size_t sens_index) const override;
+    bool getOrientationSensorName(std::size_t sens_index, std::string & name) const override;
+    bool getOrientationSensorFrameName(std::size_t sens_index, std::string & frameName) const override;
+    bool getOrientationSensorMeasureAsRollPitchYaw(std::size_t sens_index, yarp::sig::Vector & rpy, double & timestamp) const override;
+
+    // --------- IPositionSensors declarations. Implementation in IPositionSensorsImpl.cpp ---------
+
+    std::size_t getNrOfPositionSensors() const override;
+    yarp::dev::MAS_status getPositionSensorStatus(std::size_t sens_index) const override;
+    bool getPositionSensorName(std::size_t sens_index, std::string & name) const override;
+    bool getPositionSensorFrameName(std::size_t sens_index, std::string & frameName) const override;
+    bool getPositionSensorMeasure(std::size_t sens_index, yarp::sig::Vector & xyz, double & timestamp) const override;
+
+    // --------- ISixAxisForceTorqueSensors declarations. Implementation in ISixAxisForceTorqueSensorsImpl.cpp ---------
+
+    std::size_t getNrOfSixAxisForceTorqueSensors() const override;
+    yarp::dev::MAS_status getSixAxisForceTorqueSensorStatus(std::size_t sens_index) const override;
+    bool getSixAxisForceTorqueSensorName(std::size_t sens_index, std::string & name) const override;
+    bool getSixAxisForceTorqueSensorFrameName(std::size_t sens_index, std::string & frameName) const override;
+    bool getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+
+    // --------- ISkinPatches declarations. Implementation in ISkinPatchesImpl.cpp ---------
+
+    std::size_t getNrOfSkinPatches() const override;
+    yarp::dev::MAS_status getSkinPatchStatus(std::size_t sens_index) const override;
+    bool getSkinPatchName(std::size_t sens_index, std::string & name) const override;
+    bool getSkinPatchMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+    std::size_t getSkinPatchSize(std::size_t sens_index) const override;
+
+    // --------- ITemperatureSensors declarations. Implementation in ITemperatureSensorsImpl.cpp ---------
+
+    std::size_t getNrOfTemperatureSensors() const override;
+    yarp::dev::MAS_status getTemperatureSensorStatus(std::size_t sens_index) const override;
+    bool getTemperatureSensorName(std::size_t sens_index, std::string & name) const override;
+    bool getTemperatureSensorFrameName(std::size_t sens_index, std::string & frameName) const override;
+    bool getTemperatureSensorMeasure(std::size_t sens_index, double & out, double & timestamp) const override;
+    bool getTemperatureSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+
+    // --------- IThreeAxisGyroscopes declarations. Implementation in IThreeAxisGyroscopesImpl.cpp ---------
+
+    std::size_t getNrOfThreeAxisGyroscopes() const override;
+    yarp::dev::MAS_status getThreeAxisGyroscopeStatus(std::size_t sens_index) const override;
+    bool getThreeAxisGyroscopeName(std::size_t sens_index, std::string & name) const override;
+    bool getThreeAxisGyroscopeFrameName(std::size_t sens_index, std::string & frameName) const override;
+    bool getThreeAxisGyroscopeMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+
+    // --------- IThreeAxisLinearAccelerometers declarations. Implementation in IThreeAxisLinearAccelerometersImpl.cpp ---------
+
+    std::size_t getNrOfThreeAxisLinearAccelerometers() const override;
+    yarp::dev::MAS_status getThreeAxisLinearAccelerometerStatus(std::size_t sens_index) const override;
+    bool getThreeAxisLinearAccelerometerName(std::size_t sens_index, std::string & name) const override;
+    bool getThreeAxisLinearAccelerometerFrameName(std::size_t sens_index, std::string & frameName) const override;
+    bool getThreeAxisLinearAccelerometerMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+
+    // --------- IThreeAxisMagnetometers declarations. Implementation in IThreeAxisMagnetometersImpl.cpp ---------
+
+    std::size_t getNrOfThreeAxisMagnetometers() const override;
+    yarp::dev::MAS_status getThreeAxisMagnetometerStatus(std::size_t sens_index) const override;
+    bool getThreeAxisMagnetometerName(std::size_t sens_index, std::string & name) const override;
+    bool getThreeAxisMagnetometerFrameName(std::size_t sens_index, std::string & frameName) const override;
+    bool getThreeAxisMagnetometerMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
 
 private:
     DeviceMapper deviceMapper;

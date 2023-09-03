@@ -149,7 +149,7 @@ namespace
 }
 
 DeviceMapper::DeviceMapper()
-    : totalAxes(0), taskFactory(new SequentialTaskFactory)
+    : taskFactory(new SequentialTaskFactory)
 { }
 
 DeviceMapper::~DeviceMapper()
@@ -252,7 +252,7 @@ void DeviceMapper::clear()
     totalAxes = 0;
 }
 
-constexpr int DeviceMapper::getSensorFailureStatus()
+const int DeviceMapper::getSensorFailureStatus()
 {
     return yarp::dev::MAS_UNKNOWN;
 }

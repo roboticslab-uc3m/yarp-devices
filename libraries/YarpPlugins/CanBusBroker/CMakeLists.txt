@@ -10,6 +10,7 @@ if(NOT SKIP_CanBusBroker)
 
     yarp_add_plugin(CanBusBroker CanBusBroker.hpp
                                  DeviceDriverImpl.cpp
+                                 # control board interfaces
                                  IAmplifierControlImpl.cpp
                                  IAxisInfoImpl.cpp
                                  IControlCalibrationImpl.cpp
@@ -29,6 +30,18 @@ if(NOT SKIP_CanBusBroker)
                                  IRemoteVariablesImpl.cpp
                                  ITorqueControlImpl.cpp
                                  IVelocityControlImpl.cpp
+                                 # multiple analog sensors interfaces
+                                 IThreeAxisGyroscopesImpl.cpp
+                                 IThreeAxisLinearAccelerometersImpl.cpp
+                                 IThreeAxisMagnetometersImpl.cpp
+                                 IOrientationSensorsImpl.cpp
+                                 ITemperatureSensorsImpl.cpp
+                                 ISixAxisForceTorqueSensorsImpl.cpp
+                                 IContactLoadCellArraysImpl.cpp
+                                 IEncoderArraysImpl.cpp
+                                 ISkinPatchesImpl.cpp
+                                 IPositionSensorsImpl.cpp
+                                 # broker, NWS and misc stuff
                                  CanRxTxThreads.hpp
                                  CanRxTxThreads.cpp
                                  SdoReplier.hpp

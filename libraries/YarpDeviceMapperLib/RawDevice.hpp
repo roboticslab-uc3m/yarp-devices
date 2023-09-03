@@ -15,8 +15,8 @@ namespace roboticslab
  * @ingroup YarpDeviceMapperLib
  * @brief Immutable container for YARP raw interface handles.
  *
- * Performs all RTTI stuff on initial configuration to avoid dynamic_cast on
- * on every runtime command.
+ * Performs all RTTI stuff on initial configuration to avoid abusing
+ * dynamic_cast on runtime.
  */
 class RawDevice final
 {

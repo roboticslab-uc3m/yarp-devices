@@ -3,6 +3,8 @@
 #ifndef __DEVICE_MAPPER_HPP__
 #define __DEVICE_MAPPER_HPP__
 
+#include <cstdlib> // std::size_t
+
 #include <functional> // std::invoke
 #include <memory>
 #include <tuple>
@@ -215,30 +217,45 @@ public:
         return {&invalidDevice, 0};
     }
 
-    template<typename T>
-    using sensor_status_fn = int (T::*)(int) const;
+    template<typename T, typename T_out>
+    using sensor_status_fn = T_out (T::*)(std::size_t) const;
 
     /**
-      * @brief Retrieve the status of the sensor device at the specified global axes.
+      * @brief Retrieve the status of the sensor device at the specified global index.
       * @return An integer value representing sensor status.
       */
-    template<typename T>
-    int getSensorStatus(sensor_status_fn<T> fn, int index) const
+    template<typename T, typename T_out>
+    T_out getSensorStatus(sensor_status_fn<T, T_out> fn, std::size_t index) const
     {
         auto [device, offset] = getSensorDevice<T>(index);
         T * p = device->template getHandle<T>();
-        return p ? std::invoke(fn, p, offset) : getSensorFailureStatus();
+        return p ? std::invoke(fn, p, offset) : static_cast<T_out>(DeviceMapper::getSensorFailureStatus());
+    }
+
+    template<typename T>
+    using sensor_size_fn = std::size_t (T::*)(std::size_t) const;
+
+    /**
+      * @brief Retrieve the size of the sensor array at the specified global index.
+      * @return An integer value representing the sensor array size.
+      */
+    template<typename T>
+    std::size_t getSensorArraySize(sensor_size_fn<T> fn, std::size_t index) const
+    {
+        auto [device, offset] = getSensorDevice<T>(index);
+        T * p = device->template getHandle<T>();
+        return p ? std::invoke(fn, p, offset) : 0;
     }
 
     template<typename T, typename... T_out_params>
-    using sensor_output_fn = bool (T::*)(int, T_out_params &...) const;
+    using sensor_output_fn = bool (T::*)(std::size_t, T_out_params &...) const;
 
     /**
-      * @brief Retrieve information from the sensor device at the specified global axes.
+      * @brief Retrieve information from the sensor device at the specified global index.
       * @return True whether everything went fine, false otherwise.
       */
     template<typename T, typename... T_out_params>
-    bool getSensorOutput(sensor_output_fn<T, T_out_params...> fn, int index, T_out_params &... params) const
+    bool getSensorOutput(sensor_output_fn<T, T_out_params...> fn, std::size_t index, T_out_params &... params) const
     {
         auto [device, offset] = getSensorDevice<T>(index);
         T * p = device->template getHandle<T>();
@@ -246,7 +263,7 @@ public:
     }
 
 private:
-    static constexpr int getSensorFailureStatus();
+    static const int getSensorFailureStatus();
 
     using dev_index_offset_t = std::tuple<int, int, int>;
 
@@ -255,7 +272,7 @@ private:
     std::unordered_map<std::type_index, std::vector<dev_index_offset_t>> sensorOffsets;
     std::unordered_map<std::type_index, int> connectedSensors;
 
-    int totalAxes;
+    int totalAxes {0};
 
     std::unique_ptr<FutureTaskFactory> taskFactory;
 };

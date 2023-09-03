@@ -1,0 +1,51 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+#include "CanBusBroker.hpp"
+
+#include <yarp/os/Log.h>
+
+#include "LogComponent.hpp"
+
+using namespace roboticslab;
+
+// -----------------------------------------------------------------------------
+
+std::size_t CanBusBroker::getNrOfSkinPatches() const
+{
+    yCTrace(CBB, "");
+    return deviceMapper.getConnectedSensors<yarp::dev::ISkinPatches>();
+}
+
+// -----------------------------------------------------------------------------
+
+yarp::dev::MAS_status CanBusBroker::getSkinPatchStatus(std::size_t sens_index) const
+{
+    yCTrace(CBB, "%zu", sens_index);
+    return deviceMapper.getSensorStatus(&yarp::dev::ISkinPatches::getSkinPatchStatus, sens_index);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusBroker::getSkinPatchName(std::size_t sens_index, std::string & name) const
+{
+    yCTrace(CBB, "%zu", sens_index);
+    return deviceMapper.getSensorOutput(&yarp::dev::ISkinPatches::getSkinPatchName, sens_index, name);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CanBusBroker::getSkinPatchMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const
+{
+    yCTrace(CBB, "%zu", sens_index);
+    return deviceMapper.getSensorOutput(&yarp::dev::ISkinPatches::getSkinPatchMeasure, sens_index, out, timestamp);
+}
+
+// -----------------------------------------------------------------------------
+
+std::size_t CanBusBroker::getSkinPatchSize(std::size_t sens_index) const
+{
+    yCTrace(CBB, "%zu", sens_index);
+    return deviceMapper.getSensorArraySize(&yarp::dev::ISkinPatches::getSkinPatchSize, sens_index);
+}
+
+// -----------------------------------------------------------------------------
