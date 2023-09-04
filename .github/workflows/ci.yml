@@ -82,6 +82,9 @@ jobs:
         token: ${{secrets.AMOR_API}}
         path: .deps/amor-api
 
+    - name: Check out qbdevice-api
+      run: git clone --recursive https://bitbucket.org/qbrobotics/qbdevice-api-7.x.x.git .deps/qbdevice-api
+
     - name: Check out jr3pci-linux
       uses: actions/checkout@v3
       with:
@@ -143,11 +146,17 @@ jobs:
         cmake --build .deps/amor-api/build
         sudo cmake --install .deps/amor-api/build
 
+    - name: Build qbdevice-api
+      run: |
+        cmake -S .deps/qbdevice-api -B .deps/qbdevice-api/build $CMAKE_CCACHE_LAUNCHER
+        cmake --build .deps/qbdevice-api/build
+        sudo cmake --install .deps/qbdevice-api/build
+
     - name: Install jr3pci-linux header
       run: sudo make -C .deps/jr3pci-linux install-header
 
     - name: Configure yarp-devices
-      run: cmake -S . -B build $CMAKE_CCACHE_LAUNCHER -DENABLE_examples=ON
+      run: cmake -S . -B build $CMAKE_CCACHE_LAUNCHER -DENABLE_examples=ON -DSerial_DIR=.deps/qbdevice-api/serial
 
     - name: Compile yarp-devices
       run: cmake --build build
