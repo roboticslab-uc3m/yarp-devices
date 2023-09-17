@@ -191,7 +191,7 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
         }
     }
 
-    for (const auto & [rawDevice, offset] : deviceMapper.getDevicesWithOffsets())
+    for (const auto & rawDevice : deviceMapper.getDevices())
     {
         auto * iCanBusSharer = rawDevice->castToType<ICanBusSharer>();
 
@@ -261,7 +261,7 @@ bool CanBusBroker::close()
     delete syncThread;
     syncThread = nullptr;
 
-    for (const auto & [rawDevice, offset] : deviceMapper.getDevicesWithOffsets())
+    for (const auto & rawDevice : deviceMapper.getDevices())
     {
         auto * iCanBusSharer = rawDevice->castToType<ICanBusSharer>();
 

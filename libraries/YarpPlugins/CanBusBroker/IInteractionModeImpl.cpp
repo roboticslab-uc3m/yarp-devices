@@ -11,7 +11,7 @@ using namespace roboticslab;
 
 using raw_t = yarp::dev::IInteractionModeRaw;
 using enum_t = yarp::dev::InteractionModeEnum;
-using multi_mapping_fn = bool (raw_t::*)(int, int *, enum_t *);
+using multi_joints_fn = bool (raw_t::*)(int, int *, enum_t *);
 
 // -----------------------------------------------------------------------------
 
@@ -38,14 +38,14 @@ bool CanBusBroker::getInteractionModes(int n_joints, int * joints, yarp::dev::In
 
     auto task = deviceMapper.createTask();
     const int * c_joints = const_cast<const int *>(joints); // workaround
-    auto devices = deviceMapper.getDevices(n_joints, c_joints); // extend lifetime of local joint vector
+    auto devices = deviceMapper.getMotorDevicesWithIndices(n_joints, c_joints); // extend lifetime of local joint vector
     bool ok = true;
 
     for (const auto & t : devices)
     {
         auto * p = std::get<0>(t)->getHandle<yarp::dev::IInteractionModeRaw>();
         int * temp = const_cast<int *>(std::get<1>(t).data()); // workaround
-        multi_mapping_fn fn = &raw_t::getInteractionModesRaw;
+        multi_joints_fn fn = &raw_t::getInteractionModesRaw;
         ok &= p && (task->add(p, fn, std::get<1>(t).size(), temp, modes + std::get<2>(t)), true);
     }
 
@@ -77,14 +77,14 @@ bool CanBusBroker::setInteractionModes(int n_joints, int * joints, yarp::dev::In
 
     auto task = deviceMapper.createTask();
     const int * c_joints = const_cast<const int *>(joints); // workaround
-    auto devices = deviceMapper.getDevices(n_joints, c_joints); // extend lifetime of local joint vector
+    auto devices = deviceMapper.getMotorDevicesWithIndices(n_joints, c_joints); // extend lifetime of local joint vector
     bool ok = true;
 
     for (const auto & t : devices)
     {
         auto * p = std::get<0>(t)->getHandle<yarp::dev::IInteractionModeRaw>();
         int * temp = const_cast<int *>(std::get<1>(t).data()); // workaround
-        multi_mapping_fn fn = &raw_t::getInteractionModesRaw;
+        multi_joints_fn fn = &raw_t::getInteractionModesRaw;
         ok &= p && (task->add(p, fn, std::get<1>(t).size(), temp, modes + std::get<2>(t)), true);
     }
 

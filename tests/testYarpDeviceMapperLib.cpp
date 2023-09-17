@@ -251,7 +251,7 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
     ASSERT_TRUE(mapper.registerDevice(getDriver<JointDriver<3>>())); // [3-5]
     ASSERT_TRUE(mapper.registerDevice(getDriver<JointDriver<4>>())); // [6-9]
 
-    // DeviceMapper::getDevice
+    // DeviceMapper::getMotorDevice
 
     int axes1, axes2, axes3, axes4;
     double ref0, ref1, ref2, ref3;
@@ -263,7 +263,7 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
 
     // device 1 [0]
 
-    auto [dev0, idx0] = mapper.getDevice(0);
+    auto [dev0, idx0] = mapper.getMotorDevice(0);
     auto * p0 = dev0->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p0, nullptr);
     ASSERT_EQ(idx0, localIndex0);
@@ -276,12 +276,12 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
 
     // device 2 [1-2]
 
-    auto [dev1, idx1] = mapper.getDevice(1);
+    auto [dev1, idx1] = mapper.getMotorDevice(1);
     auto * p1 = dev1->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p1, nullptr);
     ASSERT_EQ(idx1, localIndex0);
 
-    auto [dev2, idx2] = mapper.getDevice(2);
+    auto [dev2, idx2] = mapper.getMotorDevice(2);
     auto * p2 = dev2->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p2, nullptr);
     ASSERT_EQ(idx2, localIndex1);
@@ -298,17 +298,17 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
 
     // device 3 [3-5]
 
-    auto [dev3, idx3] = mapper.getDevice(3);
+    auto [dev3, idx3] = mapper.getMotorDevice(3);
     auto * p3 = dev3->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p3, nullptr);
     ASSERT_EQ(idx3, localIndex0);
 
-    auto [dev4, idx4] = mapper.getDevice(4);
+    auto [dev4, idx4] = mapper.getMotorDevice(4);
     auto * p4 = dev4->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p4, nullptr);
     ASSERT_EQ(idx4, localIndex1);
 
-    auto [dev5, idx5] = mapper.getDevice(5);
+    auto [dev5, idx5] = mapper.getMotorDevice(5);
     auto * p5 = dev5->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p5, nullptr);
     ASSERT_EQ(idx5, localIndex2);
@@ -328,22 +328,22 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
 
     // device 4 [6-9]
 
-    auto [dev6, idx6] = mapper.getDevice(6);
+    auto [dev6, idx6] = mapper.getMotorDevice(6);
     auto * p6 = dev6->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p6, nullptr);
     ASSERT_EQ(idx6, localIndex0);
 
-    auto [dev7, idx7] = mapper.getDevice(7);
+    auto [dev7, idx7] = mapper.getMotorDevice(7);
     auto * p7 = dev7->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p7, nullptr);
     ASSERT_EQ(idx7, localIndex1);
 
-    auto [dev8, idx8] = mapper.getDevice(8);
+    auto [dev8, idx8] = mapper.getMotorDevice(8);
     auto * p8 = dev8->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p8, nullptr);
     ASSERT_EQ(idx8, localIndex2);
 
-    auto [dev9, idx9] = mapper.getDevice(9);
+    auto [dev9, idx9] = mapper.getMotorDevice(9);
     auto * p9 = dev9->getHandle<yarp::dev::IPositionDirectRaw>();
     ASSERT_NE(p9, nullptr);
     ASSERT_EQ(idx9, localIndex3);
@@ -368,9 +368,9 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
 
     ASSERT_EQ(mapper.getControlledAxes(), axes1 + axes2 + axes3 + axes4);
 
-    // DeviceMapper::getDevicesWithOffsets
+    // DeviceMapper::getMotorDevicesWithOffsets
 
-    const auto & devicesWithOffsets = mapper.getDevicesWithOffsets();
+    const auto & devicesWithOffsets = mapper.getMotorDevicesWithOffsets();
     ASSERT_EQ(devicesWithOffsets.size(), 4);
 
     ASSERT_EQ(std::get<0>(devicesWithOffsets[0]), dev0);
@@ -383,11 +383,11 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
     ASSERT_EQ(std::get<1>(devicesWithOffsets[2]), 3);
     ASSERT_EQ(std::get<1>(devicesWithOffsets[3]), 6);
 
-    // DeviceMapper::getDevices
+    // DeviceMapper::getMotorDevicesWithIndices
 
     const int globalAxesCount = 5;
     const int globalAxes[globalAxesCount] = {2, 4, 5, 6, 8};
-    auto devices = mapper.getDevices(globalAxesCount, globalAxes);
+    auto devices = mapper.getMotorDevicesWithIndices(globalAxesCount, globalAxes);
     ASSERT_EQ(devices.size(), 3);
 
     ASSERT_EQ(std::get<0>(devices[0]), dev2);

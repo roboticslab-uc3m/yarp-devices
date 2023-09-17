@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "DeviceMapper.hpp"
+#include "RawDevice.hpp"
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
@@ -45,41 +45,46 @@ struct RawDevice::Private
 };
 
 RawDevice::RawDevice(yarp::dev::PolyDriver * _driver)
-    : priv(new Private),
-      driver(_driver->getImplementation())
+    : priv(std::make_unique<Private>()),
+      driver(_driver)
 {
-    // control board interfaces
-    driver->view(priv->iAmplifierControlRaw);
-    driver->view(priv->iAxisInfoRaw);
-    driver->view(priv->iControlCalibrationRaw);
-    driver->view(priv->iControlLimitsRaw);
-    driver->view(priv->iControlModeRaw);
-    driver->view(priv->iCurrentControlRaw);
-    driver->view(priv->iEncodersTimedRaw);
-    driver->view(priv->iImpedanceControlRaw);
-    driver->view(priv->iInteractionModeRaw);
-    driver->view(priv->iJointFaultRaw);
-    driver->view(priv->iMotorRaw);
-    driver->view(priv->iMotorEncodersRaw);
-    driver->view(priv->iPidControlRaw);
-    driver->view(priv->iPositionControlRaw);
-    driver->view(priv->iPositionDirectRaw);
-    driver->view(priv->iPWMControlRaw);
-    driver->view(priv->iRemoteVariablesRaw);
-    driver->view(priv->iVelocityControlRaw);
-    driver->view(priv->iTorqueControlRaw);
+    if (driver)
+    {
+        auto * impl = driver->getImplementation();
 
-    // multiple analog sensors interfaces
-    driver->view(priv->iThreeAxisGyroscopes);
-    driver->view(priv->iThreeAxisLinearAccelerometers);
-    driver->view(priv->iThreeAxisMagnetometers);
-    driver->view(priv->iOrientationSensors);
-    driver->view(priv->iTemperatureSensors);
-    driver->view(priv->iSixAxisForceTorqueSensors);
-    driver->view(priv->iContactLoadCellArrays);
-    driver->view(priv->iEncoderArrays);
-    driver->view(priv->iSkinPatches);
-    driver->view(priv->iPositionSensors);
+        // control board interfaces
+        valid |= impl->view(priv->iAmplifierControlRaw);
+        valid |= impl->view(priv->iAxisInfoRaw);
+        valid |= impl->view(priv->iControlCalibrationRaw);
+        valid |= impl->view(priv->iControlLimitsRaw);
+        valid |= impl->view(priv->iControlModeRaw);
+        valid |= impl->view(priv->iCurrentControlRaw);
+        valid |= impl->view(priv->iEncodersTimedRaw);
+        valid |= impl->view(priv->iImpedanceControlRaw);
+        valid |= impl->view(priv->iInteractionModeRaw);
+        valid |= impl->view(priv->iJointFaultRaw);
+        valid |= impl->view(priv->iMotorRaw);
+        valid |= impl->view(priv->iMotorEncodersRaw);
+        valid |= impl->view(priv->iPidControlRaw);
+        valid |= impl->view(priv->iPositionControlRaw);
+        valid |= impl->view(priv->iPositionDirectRaw);
+        valid |= impl->view(priv->iPWMControlRaw);
+        valid |= impl->view(priv->iRemoteVariablesRaw);
+        valid |= impl->view(priv->iVelocityControlRaw);
+        valid |= impl->view(priv->iTorqueControlRaw);
+
+        // multiple analog sensors interfaces
+        valid |= impl->view(priv->iThreeAxisGyroscopes);
+        valid |= impl->view(priv->iThreeAxisLinearAccelerometers);
+        valid |= impl->view(priv->iThreeAxisMagnetometers);
+        valid |= impl->view(priv->iOrientationSensors);
+        valid |= impl->view(priv->iTemperatureSensors);
+        valid |= impl->view(priv->iSixAxisForceTorqueSensors);
+        valid |= impl->view(priv->iContactLoadCellArrays);
+        valid |= impl->view(priv->iEncoderArrays);
+        valid |= impl->view(priv->iSkinPatches);
+        valid |= impl->view(priv->iPositionSensors);
+    }
 }
 
 RawDevice::~RawDevice() = default;

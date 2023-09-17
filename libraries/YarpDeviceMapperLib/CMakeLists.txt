@@ -4,6 +4,7 @@ if(ENABLE_YarpDeviceMapperLib)
 
     add_library(YarpDeviceMapperLib SHARED DeviceMapper.hpp
                                            DeviceMapper.cpp
+                                           RawDevice.hpp
                                            RawDevice.cpp
                                            FutureTask.hpp
                                            FutureTask.cpp

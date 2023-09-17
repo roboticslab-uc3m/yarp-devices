@@ -23,7 +23,7 @@ namespace
         bool setAll = key == "all";
         bool allOk = true;
 
-        for (const auto & [rawDevice, offset] : mapper.getDevicesWithOffsets())
+        for (const auto & rawDevice : mapper.getDevices())
         {
             const auto id = rawDevice->getId();
 
@@ -77,7 +77,7 @@ bool CanBusBroker::getRemoteVariable(std::string key, yarp::os::Bottle & val)
     bool queryAll = key == "all";
     val.clear();
 
-    for (const auto & [rawDevice, offset] : deviceMapper.getDevicesWithOffsets())
+    for (const auto & rawDevice : deviceMapper.getDevices())
     {
         const auto id = rawDevice->getId();
 
@@ -215,7 +215,7 @@ bool CanBusBroker::getRemoteVariablesList(yarp::os::Bottle * listOfKeys)
     listOfKeys->clear();
 
     // Place each key in its own list so that clients can just call check('<key>') or !find('<key>').isNull().
-    for (const auto & [rawDevice, offset] : deviceMapper.getDevicesWithOffsets())
+    for (const auto & rawDevice : deviceMapper.getDevices())
     {
         const auto id = rawDevice->getId();
 

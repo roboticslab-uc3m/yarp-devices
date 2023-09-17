@@ -16,26 +16,26 @@ namespace
     using pid_t = yarp::dev::PidControlTypeEnum;
 
     template<typename... T_ref>
-    using single_mapping_fn = bool (yarp::dev::IPidControlRaw::*)(const pid_t &, int, T_ref...);
+    using single_joint_fn = bool (yarp::dev::IPidControlRaw::*)(const pid_t &, int, T_ref...);
 
     template<typename... T_ref>
-    bool mapSingleJoint(const DeviceMapper & dm, single_mapping_fn<T_ref...> fn, const pid_t & type, int j, T_ref... ref)
+    bool mapSingleJoint(const DeviceMapper & dm, single_joint_fn<T_ref...> fn, const pid_t & type, int j, T_ref... ref)
     {
-        auto [device, offset] = dm.getDevice(j);
+        auto [device, offset] = dm.getMotorDevice(j);
         auto * p = device->getHandle<yarp::dev::IPidControlRaw>();
         return p && std::invoke(fn, p, type, offset, ref...);
     }
 
     template<typename T_refs>
-    using full_mapping_fn = bool (yarp::dev::IPidControlRaw::*)(const pid_t &, T_refs *);
+    using all_joints_fn = bool (yarp::dev::IPidControlRaw::*)(const pid_t &, T_refs *);
 
     template<typename T_refs>
-    bool mapAllJoints(const DeviceMapper & dm, full_mapping_fn<T_refs> fn, const pid_t & type, T_refs * refs)
+    bool mapAllJoints(const DeviceMapper & dm, all_joints_fn<T_refs> fn, const pid_t & type, T_refs * refs)
     {
         auto task = dm.createTask();
         bool ok = true;
 
-        for (const auto & [device, offset] : dm.getDevicesWithOffsets())
+        for (const auto & [device, offset] : dm.getMotorDevicesWithOffsets())
         {
             auto * p = device->template getHandle<yarp::dev::IPidControlRaw>();
             ok &= p && (task->add(p, fn, type, refs + offset), true);

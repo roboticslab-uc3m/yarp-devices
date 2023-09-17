@@ -5,13 +5,15 @@
 
 #include <functional> // std::invoke
 #include <memory>
-#include <string>
 #include <tuple>
+#include <typeindex>
+#include <unordered_map>
 #include <vector>
 
 #include <yarp/dev/PolyDriver.h>
 
 #include "FutureTask.hpp"
+#include "RawDevice.hpp"
 
 namespace roboticslab
 {
@@ -24,57 +26,12 @@ namespace roboticslab
 
 /**
  * @ingroup YarpDeviceMapperLib
- * @brief Container for YARP raw motor interface handles.
- *
- * Performs all RTTI stuff on initial configuration to avoid dynamic_cast on
- * on every runtime command.
- */
-class RawDevice final
-{
-public:
-    //! Constructor, extracts all interface handles of the supplied driver.
-    explicit RawDevice(yarp::dev::PolyDriver * driver);
-
-    //! Destructor.
-    ~RawDevice();
-
-    /**
-     * @brief Retrieve a handle to a motor interface implemented by the device.
-     * @tparam T YARP raw motor interface.
-     */
-    template<typename T>
-    T * getHandle() const;
-
-    /**
-     * @brief Retrieve the device id (can be an empty string if not set).
-     * @return A string containing the device id.
-     */
-    std::string getId() const
-    { return driver->id(); }
-
-    /**
-     * @brief Perform a dynamic cast on the given type.
-     * @tparam T A type the original driver should be able to be cast to.
-     */
-    template<typename T>
-    T * castToType() const
-    { return dynamic_cast<T *>(driver); }
-
-private:
-    class Private;
-    std::unique_ptr<Private> priv;
-
-    yarp::dev::DeviceDriver * driver;
-};
-
-/**
- * @ingroup YarpDeviceMapperLib
  * @brief Exposes raw subdevice interface handles on a per-axis manner.
  *
  * Some raw subdevices might control several axes. This class knows how to map
- * YARP motor commands to the right controlled axis of the correct subdevice
- * given one or more indices, and forwards the call either in a sequential or
- * a parallel manner (see @ref FutureTask).
+ * YARP commands to the right controlled motor axis or sensor of the correct
+ * subdevice given one or more indices, and forwards the call either in a
+ * sequential or parallel manner (see @ref FutureTask).
  *
  * For example, given three raw subdevices that manage one, two and three axes,
  * respectively, a YARP command that requests global index '2' (zero-based) must
@@ -111,11 +68,18 @@ public:
     //! Destructor.
     ~DeviceMapper();
 
-    //! Whether to enable parallel mappings on how many concurrent threads.
+    //! Whether to enable parallel mappings and on how many concurrent threads.
     void enableParallelization(unsigned int concurrentTasks);
 
     //! Extract interface handles and perform sanity checks.
     bool registerDevice(yarp::dev::PolyDriver * driver);
+
+    //! Delete all internal handles.
+    void clear();
+
+    //! Create an instance of a deferred task.
+    std::unique_ptr<FutureTask> createTask() const
+    { return taskFactory->createTask(); }
 
     //! Tuple of a raw device pointer and either an offset or a local index.
     using dev_index_t = std::tuple<const RawDevice *, int>;
@@ -124,71 +88,71 @@ public:
     using dev_group_t = std::tuple<const RawDevice *, std::vector<int>, int>;
 
     /**
-     * @brief Retrieve a device handle and its local index given a global index.
+     * @brief Retrieve all registered raw devices, regardless of type.
+     * @return A vector of raw device smart pointers.
+     */
+    const std::vector<std::unique_ptr<const RawDevice>> & getDevices() const
+    { return devices; }
+
+    /**
+     * @brief Retrieve a motor device handle and its local index given a global index.
      * @param globalAxis The requested global axis index.
      *
-     * Aimed for simple, single-joint commands. See example and terminology in
+     * Aimed for simple, single-joint motor commands. See example and terminology in
      * class description.
      *
      * @return A pack of the subdevice handle and the obtained local index.
      */
-    dev_index_t getDevice(int globalAxis) const;
+    dev_index_t getMotorDevice(int globalAxis) const;
 
     /**
-     * @brief Retrieve all registered subdevices and their associated offsets.
+     * @brief Retrieve all registered motor subdevices and their associated offsets.
      *
-     * Aimed for full-mapping commands. See example and terminology in class description.
+     * Aimed for full-mapping motor commands. See example and terminology in class description.
      *
      * @return A vector of packs of subdevice handles and their offsets.
      */
-    const std::vector<dev_index_t> & getDevicesWithOffsets() const;
+    std::vector<dev_index_t> getMotorDevicesWithOffsets() const;
 
-     /**
-      * @brief Retrieve subdevices that map to the specified global axes.
+    /**
+      * @brief Retrieve motor subdevices that map to the specified global axes.
       *
-      * Aimed for joint-group commands. See example and terminology in class description.
+      * Aimed for joint-group motor commands. See example and terminology in class description.
       *
       * @return A vector of packs of subdevices, their requested local indices,
       * and the associated parameter offsets.
       */
-    std::vector<dev_group_t> getDevices(int globalAxesCount, const int * globalAxes) const;
+    std::vector<dev_group_t> getMotorDevicesWithIndices(int globalAxesCount, const int * globalAxes) const;
 
-    //! Clear all internal handles.
-    void clear();
-
-    //! Retrieve number of controlled axes across all subdevices.
+    //! Retrieve the number of controlled axes across all subdevices.
     int getControlledAxes() const
     { return totalAxes; }
 
-    //! Create an instance of a deferred task.
-    std::unique_ptr<FutureTask> createTask() const
-    { return taskFactory->createTask(); }
-
     //! Alias for a single-joint command. See class description.
     template<typename T, typename... T_ref>
-    using single_mapping_fn = bool (T::*)(int, T_ref...);
+    using motor_single_joint_fn = bool (T::*)(int, T_ref...);
 
     //! Single-joint command mapping. See class description.
     template<typename T, typename... T_ref>
-    bool mapSingleJoint(single_mapping_fn<T, T_ref...> fn, int j, T_ref... ref)
+    bool mapSingleJoint(motor_single_joint_fn<T, T_ref...> fn, int j, T_ref... ref)
     {
-        auto [device, offset] = getDevice(j);
+        auto [device, offset] = getMotorDevice(j);
         T * p = device->getHandle<T>();
         return p ? std::invoke(fn, p, offset, ref...) : false;
     }
 
     //! Alias for a full-joint command. See class description.
     template<typename T, typename... T_refs>
-    using full_mapping_fn = bool (T::*)(T_refs *...);
+    using motor_all_joints_fn = bool (T::*)(T_refs *...);
 
     //! Full-joint command mapping. See class description.
     template<typename T, typename... T_refs>
-    bool mapAllJoints(full_mapping_fn<T, T_refs...> fn, T_refs *... refs)
+    bool mapAllJoints(motor_all_joints_fn<T, T_refs...> fn, T_refs *... refs)
     {
         auto task = createTask();
         bool ok = false;
 
-        for (const auto & [device, offset] : getDevicesWithOffsets())
+        for (const auto & [device, offset] : getMotorDevicesWithOffsets())
         {
             T * p = device->template getHandle<T>();
             ok |= p && (task->add(p, fn, refs + offset...), true);
@@ -200,14 +164,14 @@ public:
 
     //! Alias for a joint-group command. See class description.
     template<typename T, typename... T_refs>
-    using multi_mapping_fn = bool (T::*)(int, const int *, T_refs *...);
+    using motor_multi_joints_fn = bool (T::*)(int, const int *, T_refs *...);
 
     //! Joint-group command mapping. See class description.
     template<typename T, typename... T_refs>
-    bool mapJointGroup(multi_mapping_fn<T, T_refs...> fn, int n_joint, const int * joints, T_refs *... refs)
+    bool mapJointGroup(motor_multi_joints_fn<T, T_refs...> fn, int n_joint, const int * joints, T_refs *... refs)
     {
         auto task = createTask();
-        auto devices = getDevices(n_joint, joints); // extend lifetime of local joint vector
+        auto devices = getMotorDevicesWithIndices(n_joint, joints); // extend lifetime of vector of local indices
         bool ok = true;
 
         for (const auto & [device, localIndices, globalIndex] : devices)
@@ -220,9 +184,77 @@ public:
         return ok && task->dispatch();
     }
 
+    //! Retrieve the number of connected sensors of the specified type across all subdevices.
+    template<typename T>
+    int getSensorCount() const
+    {
+        // operator[] will insert a default-constructed value if not found
+        if (auto it = connectedSensors.find(typeid(T)); it != connectedSensors.cend())
+        {
+            return it->second;
+        }
+
+        return 0;
+    }
+
+    /**
+     * @brief Retrieve a sensor device handle and its local index given a global index.
+     * @param globalAxis The requested global sensor index.
+     * @tparam T The requested sensor type.
+     * @return A pack of the subdevice handle and the obtained local index.
+     */
+    template<typename T>
+    dev_index_t getSensorDevice(int globalIndex) const
+    {
+        if (auto it = sensorOffsets.find(typeid(T)); it != sensorOffsets.cend())
+        {
+            const auto & [deviceIndex, offset, count] = it->second[globalIndex];
+            return {devices[deviceIndex].get(), globalIndex - offset};
+        }
+
+        return {&invalidDevice, 0};
+    }
+
+    template<typename T>
+    using sensor_status_fn = int (T::*)(int) const;
+
+    /**
+      * @brief Retrieve the status of the sensor device at the specified global axes.
+      * @return An integer value representing sensor status.
+      */
+    template<typename T>
+    int getSensorStatus(sensor_status_fn<T> fn, int index) const
+    {
+        auto [device, offset] = getSensorDevice<T>(index);
+        T * p = device->template getHandle<T>();
+        return p ? std::invoke(fn, p, offset) : getSensorFailureStatus();
+    }
+
+    template<typename T, typename... T_out_params>
+    using sensor_output_fn = bool (T::*)(int, T_out_params &...) const;
+
+    /**
+      * @brief Retrieve information from the sensor device at the specified global axes.
+      * @return True whether everything went fine, false otherwise.
+      */
+    template<typename T, typename... T_out_params>
+    bool getSensorOutput(sensor_output_fn<T, T_out_params...> fn, int index, T_out_params &... params) const
+    {
+        auto [device, offset] = getSensorDevice<T>(index);
+        T * p = device->template getHandle<T>();
+        return p ? std::invoke(fn, p, offset, params...) : false;
+    }
+
 private:
-    std::vector<dev_index_t> rawDevicesWithOffsets;
-    std::vector<int> rawDeviceIndexAtGlobalAxisIndex;
+    static constexpr int getSensorFailureStatus();
+
+    using dev_index_offset_t = std::tuple<int, int, int>;
+
+    std::vector<std::unique_ptr<const RawDevice>> devices;
+    std::vector<dev_index_offset_t> motorOffsets;
+    std::unordered_map<std::type_index, std::vector<dev_index_offset_t>> sensorOffsets;
+    std::unordered_map<std::type_index, int> connectedSensors;
+
     int totalAxes;
 
     std::unique_ptr<FutureTaskFactory> taskFactory;
