@@ -186,7 +186,7 @@ public:
 
     //! Retrieve the number of connected sensors of the specified type across all subdevices.
     template<typename T>
-    int getSensorCount() const
+    int getConnectedSensors() const
     {
         // operator[] will insert a default-constructed value if not found
         if (auto it = connectedSensors.find(typeid(T)); it != connectedSensors.cend())
