@@ -82,7 +82,7 @@ void CanReadThread::run()
 
                 std::memcpy(&data, msg.getData(), sizeof(data));
 
-                interpretMessage((msg.getId() & 0x380) >> 7,
+                interpretMessage((msg.getId() & 0x780) >> 7,
                                  data & 0x000000000000FFFF,
                                  (data & 0x00000000FFFF0000) >> 16,
                                  (data & 0x0000FFFF00000000) >> 32);
@@ -99,12 +99,12 @@ void CanReadThread::interpretMessage(std::uint8_t op, std::int16_t val1, std::in
 
     switch (op)
     {
-    case 3:
+    case 7:
         fx = val1 * 1150.0 / 16384;
         fy = val2 * 1110.0 / 16384;
         fz = val3 * 1850.0 / 16384;
         break;
-    case 5:
+    case 8:
         mx = val1 * 56.0 / 16384;
         my = val2 * 52.0 / 16384;
         mz = val3 * 61.0 / 16384;
