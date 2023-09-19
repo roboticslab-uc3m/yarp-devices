@@ -200,7 +200,7 @@ bool DeviceMapper::registerDevice(yarp::dev::PolyDriver * driver)
 
 DeviceMapper::dev_index_t DeviceMapper::getMotorDevice(int globalAxis) const
 {
-    const auto [deviceIndex, offset, axes] = motorOffsets[globalAxis];
+    const auto & [deviceIndex, offset, axes] = motorOffsets[globalAxis];
     return {devices[deviceIndex].get(), globalAxis - offset};
 }
 
@@ -210,7 +210,7 @@ std::vector<DeviceMapper::dev_index_t> DeviceMapper::getMotorDevicesWithOffsets(
 
     for (int i = 0; i < totalAxes; /**/)
     {
-        const auto [deviceIndex, offset, axes] = motorOffsets[i];
+        const auto & [deviceIndex, offset, axes] = motorOffsets[i];
         out.emplace_back(devices[deviceIndex].get(), offset);
         i += axes;
     }
@@ -226,7 +226,7 @@ std::vector<DeviceMapper::dev_group_t> DeviceMapper::getMotorDevicesWithIndices(
     for (int i = 0; i < globalAxesCount; i++)
     {
         const int globalAxis = globalAxes[i];
-        const auto [deviceIndex, offset, localAxes] = motorOffsets[globalAxis];
+        const auto & [deviceIndex, offset, localAxes] = motorOffsets[globalAxis];
         const int localIndex = globalAxis - offset;
 
         if (deviceIndex != previousDeviceIndex)
