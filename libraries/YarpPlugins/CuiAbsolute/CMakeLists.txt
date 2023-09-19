@@ -3,7 +3,7 @@ yarp_prepare_plugin(CuiAbsolute
                     TYPE roboticslab::CuiAbsolute
                     INCLUDE CuiAbsolute.hpp
                     DEFAULT ON
-                    DEPENDS ENABLE_CanBusSharerLib)
+                    DEPENDS "ENABLE_CanBusSharerLib;ENABLE_StateObserverLib")
 
 if(NOT SKIP_CuiAbsolute)
 
