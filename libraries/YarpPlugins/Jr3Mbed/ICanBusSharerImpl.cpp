@@ -13,6 +13,23 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
+namespace
+{
+    std::vector<std::int16_t> parseData(const can_message & message)
+    {
+        std::uint64_t data;
+        std::memcpy(&data, message.data, message.len);
+
+        return {
+            static_cast<std::int16_t>(data & 0x000000000000FFFF),
+            static_cast<std::int16_t>((data & 0x00000000FFFF0000) >> 16),
+            static_cast<std::int16_t>((data & 0x0000FFFF00000000) >> 32)
+        };
+    }
+}
+
+// -----------------------------------------------------------------------------
+
 unsigned int Jr3Mbed::getId()
 {
     return canId;
@@ -47,25 +64,18 @@ bool Jr3Mbed::notifyMessage(const can_message & message)
 {
     unsigned int op = (message.id - canId) >> 7;
 
-    std::uint64_t data; // TODO
-    std::memcpy(&data, message.data, message.len);
-
     switch (op)
     {
     case JR3_GET_FORCES:
     {
         std::lock_guard lock(rxMutex);
-        fx = (data & 0x000000000000FFFF) * 1150.0 / 16384;
-        fy = ((data & 0x00000000FFFF0000) >> 16) * 1110.0 / 16384;
-        fz = ((data & 0x0000FFFF00000000) >> 32) * 1850.0 / 16384;
+        rawForces = parseData(message);
         break;
     }
     case JR3_GET_MOMENTS:
     {
         std::lock_guard lock(rxMutex);
-        mx = (data & 0x000000000000FFFF) * 56.0 / 163840;
-        my = ((data & 0x00000000FFFF0000) >> 16) * 52.0 / 163840;
-        mz = ((data & 0x0000FFFF00000000) >> 32) * 61.0 / 163840;
+        rawMoments = parseData(message);
         break;
     }
     case JR3_ACK:

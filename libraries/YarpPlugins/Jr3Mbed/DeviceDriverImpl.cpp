@@ -56,6 +56,32 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
 
     ackStateObserver = new StateObserver(timeout);
 
+    if (!jr3Group.check("fullScales", "full scales for each axis [N]"))
+    {
+        yCIError(JR3M, id()) << R"(Missing "fullScales" property)";
+        return false;
+    }
+
+    const auto & fullScalesValue = jr3Group.find("fullScales");
+
+    if (!fullScalesValue.isList() || fullScalesValue.asList()->size() != 6)
+    {
+        yCIError(JR3M, id()) << R"(The "fullScales" property must be a 6-element list)";
+        return false;
+    }
+
+    const auto * fullScales = fullScalesValue.asList();
+
+    for (int i = 0; i < 3; i++)
+    {
+        forceScales.push_back(fullScales->get(i).asFloat64() / 16384.0);
+    }
+
+    for (int i = 3; i < 6; i++)
+    {
+        momentScales.push_back(fullScales->get(i).asFloat64() / 163840.0);
+    }
+
     if (jr3Group.check("asyncPeriod", "period of asynchronous publishing mode [s]"))
     {
         yCIInfo(JR3M, id()) << "Asynchronous mode requested";

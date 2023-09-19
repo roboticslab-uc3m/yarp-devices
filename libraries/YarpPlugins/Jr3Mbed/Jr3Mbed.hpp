@@ -3,8 +3,11 @@
 #ifndef __JR3_MBED_HPP__
 #define __JR3_MBED_HPP__
 
+#include <cstdint>
+
 #include <mutex>
 #include <string>
+#include <vector>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
@@ -88,12 +91,11 @@ private:
     StateObserver * ackStateObserver {nullptr};
     mutable std::mutex rxMutex;
 
-    double fx {0.0};
-    double fy {0.0};
-    double fz {0.0};
-    double mx {0.0};
-    double my {0.0};
-    double mz {0.0};
+    std::vector<std::int16_t> rawForces;
+    std::vector<std::int16_t> rawMoments;
+
+    std::vector<double> forceScales;
+    std::vector<double> momentScales;
 };
 
 } // namespace roboticslab
