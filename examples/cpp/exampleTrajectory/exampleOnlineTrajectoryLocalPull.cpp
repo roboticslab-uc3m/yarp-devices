@@ -13,7 +13,7 @@
  * A constant-velocity, single-joint trajectory is generated with configurable final target, motion
  * speed and period between consecutive points. The period is assumed constant (maps to cyclic
  * synchronous position mode on the real robot, a.k.a. CSP). A callback is registered for listening
- * to a local synchronization loop managed by @ref CanBusControlboard, position commands will be
+ * to a local synchronization loop managed by @ref CanBusBroker, position commands will be
  * prepared and sent in response. The techniques showcased here are especially suited for
  * online-generated trajectories, e.g. joystick teleoperation of visual servoing.
  *
@@ -88,7 +88,7 @@ int main(int argc, char * argv[])
     auto * syncObserverPtr = &syncObserver;
 
     yarp::os::Property options;
-    options.put("device", yarp::os::Value("CanBusControlboard"));
+    options.put("device", yarp::os::Value("CanBusBroker"));
     options.put("buses", yarp::os::Value::makeList(bus.c_str()));
     options.put(bus, yarp::os::Value::makeList(ipos.c_str()));
     options.put("syncPeriod", yarp::os::Value(period));

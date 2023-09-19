@@ -19,7 +19,7 @@ namespace roboticslab
 
 /**
  * @ingroup CanBusFake
- * @brief Fake CanBus driver, e.g. for testing CanBusControlboard with pure USB devices.
+ * @brief Fake CanBus driver, e.g. for testing CanBusBroker with pure USB devices.
  */
 class CanBusFake : public yarp::dev::DeviceDriver,
                    public yarp::dev::ICanBus,

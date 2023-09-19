@@ -21,7 +21,7 @@ namespace roboticslab
 
 /**
  * @ingroup FakeJoint
- * @brief Implementation for a fake joint Raw(instant movement) as a single CAN bus joint Raw(controlboard raw interfaces).
+ * @brief Implementation for a fake joint (instant movement) as a single CAN bus joint (control board raw interfaces).
  */
 class FakeJoint : public yarp::dev::DeviceDriver,
                   public yarp::dev::IAmplifierControlRaw,

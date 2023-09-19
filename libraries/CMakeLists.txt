@@ -1,6 +1,6 @@
 add_subdirectory(CanBusSharerLib)
 add_subdirectory(CanOpenNodeLib)
-add_subdirectory(DextraRawControlboardLib)
+add_subdirectory(DextraRawControlBoardLib)
 add_subdirectory(StateObserverLib)
 add_subdirectory(TrajectoryLib)
 add_subdirectory(YarpDeviceMapperLib)

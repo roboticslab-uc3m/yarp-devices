@@ -30,7 +30,7 @@ namespace roboticslab
 /**
  * @ingroup CuiAbsolute
  * @brief Implementation for the Cui Absolute Encoder custom UC3M circuit as a single
- * CAN bus joint (controlboard raw interfaces).
+ * CAN bus joint (control board raw interfaces).
  */
 class CuiAbsolute : public yarp::dev::DeviceDriver,
                     public yarp::dev::IEncodersTimedRaw,

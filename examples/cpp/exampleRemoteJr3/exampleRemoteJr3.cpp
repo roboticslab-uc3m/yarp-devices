@@ -3,7 +3,7 @@
 /**
  * @ingroup yarp_devices_examples_cpp
  * @defgroup exampleRemoteJr3 exampleRemoteJr3
- * @brief This example connects to a remote @ref Jr3 device.
+ * @brief This example connects to a remote Jr3 device.
  */
 
 /**

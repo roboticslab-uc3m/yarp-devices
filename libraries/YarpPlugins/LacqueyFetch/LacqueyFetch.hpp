@@ -31,7 +31,7 @@ namespace roboticslab
 /**
  * @ingroup LacqueyFetch
  * @brief Implementation for the Lacquey Fetch hand custom UC3M circuit as a single
- * CAN bus joint (controlboard raw interfaces).
+ * CAN bus joint (control board raw interfaces).
  */
 class LacqueyFetch : public yarp::dev::DeviceDriver,
                      public yarp::dev::IAxisInfoRaw,

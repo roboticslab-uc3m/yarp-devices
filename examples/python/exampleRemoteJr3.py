@@ -1,6 +1,6 @@
 ## @ingroup yarp_devices_examples_py
 #  @defgroup exampleRemoteJr3Py exampleRemoteJr3.py
-#  @brief This example connects to a remote @ref Jr3 device.
+#  @brief This example connects to a remote Jr3 device.
 
 ## @example{lineno} exampleRemoteJr3.py
 
