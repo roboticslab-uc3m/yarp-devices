@@ -78,7 +78,7 @@ void CanReadThread::run()
 
             if ((msg.getId() & 0x07F) == 0x001)
             {
-                yCDebug(FTC, "Received from id %d: %s", msg.getId(), msgToStr(msg.getLen(), msg.getData()).c_str());
+                yCDebug(JR3M, "Received from id %d: %s", msg.getId(), msgToStr(msg.getLen(), msg.getData()).c_str());
 
                 std::memcpy(&data, msg.getData(), sizeof(data));
 
@@ -110,7 +110,7 @@ void CanReadThread::interpretMessage(std::uint8_t op, std::int16_t val1, std::in
         mz = val3 * 61.0 / 16384;
         break;
     default:
-        yCWarning(FTC, "Unknown operation %d", op);
+        yCWarning(JR3M, "Unknown operation %d", op);
         break;
     }
 }

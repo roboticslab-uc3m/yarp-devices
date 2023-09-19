@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "ForceTorqueCan.hpp"
+#include "Jr3Mbed.hpp"
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/SystemClock.h>
@@ -11,35 +11,35 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-std::size_t ForceTorqueCan::getNrOfSixAxisForceTorqueSensors() const
+std::size_t Jr3Mbed::getNrOfSixAxisForceTorqueSensors() const
 {
     return 1;
 }
 
 // -----------------------------------------------------------------------------
 
-yarp::dev::MAS_status ForceTorqueCan::getSixAxisForceTorqueSensorStatus(std::size_t sens_index) const
+yarp::dev::MAS_status Jr3Mbed::getSixAxisForceTorqueSensorStatus(std::size_t sens_index) const
 {
     return yarp::dev::MAS_OK;
 }
 
 // -----------------------------------------------------------------------------
 
-bool ForceTorqueCan::getSixAxisForceTorqueSensorName(std::size_t sens_index, std::string & name) const
+bool Jr3Mbed::getSixAxisForceTorqueSensorName(std::size_t sens_index, std::string & name) const
 {
     return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool ForceTorqueCan::getSixAxisForceTorqueSensorFrameName(std::size_t sens_index, std::string & name) const
+bool Jr3Mbed::getSixAxisForceTorqueSensorFrameName(std::size_t sens_index, std::string & name) const
 {
     return getSixAxisForceTorqueSensorName(sens_index, name);
 }
 
 // -----------------------------------------------------------------------------
 
-bool ForceTorqueCan::getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const
+bool Jr3Mbed::getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const
 {
     out = canReadThreads[sens_index]->getMeasurements();
     timestamp = yarp::os::SystemClock::nowSystem();

@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "ForceTorqueCan.hpp"
+#include "Jr3Mbed.hpp"
 
 #include <vector>
 
@@ -14,7 +14,7 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool ForceTorqueCan::open(yarp::os::Searchable & config)
+bool Jr3Mbed::open(yarp::os::Searchable & config)
 {
     yarp::os::Property robotConfig;
     auto & rf = yarp::os::ResourceFinder::getResourceFinderSingleton();
@@ -22,7 +22,7 @@ bool ForceTorqueCan::open(yarp::os::Searchable & config)
 
     if (configPath.empty() || !robotConfig.fromConfigFile(configPath))
     {
-        yCError(FTC) << "Robot config file not found or insufficient permissions:" << configPath;
+        yCError(JR3M) << "Robot config file not found or insufficient permissions:" << configPath;
         return false;
     }
 
@@ -30,7 +30,7 @@ bool ForceTorqueCan::open(yarp::os::Searchable & config)
 
     if (!canBuses)
     {
-        yCError(FTC) << "Missing key \"canBuses\" or not a list";
+        yCError(JR3M) << "Missing key \"canBuses\" or not a list";
         return false;
     }
 
@@ -44,7 +44,7 @@ bool ForceTorqueCan::open(yarp::os::Searchable & config)
 
         if (filtersList->size() != canBuses->size())
         {
-            yCError(FTC) << "Number of filters does not match number of CAN buses";
+            yCError(JR3M) << "Number of filters does not match number of CAN buses";
             return false;
         }
 
@@ -65,7 +65,7 @@ bool ForceTorqueCan::open(yarp::os::Searchable & config)
 
         if (!robotConfig.check(canBus))
         {
-            yCError(FTC) << "Missing CAN bus key:" << canBus;
+            yCError(JR3M) << "Missing CAN bus key:" << canBus;
             return false;
         }
 
@@ -73,7 +73,7 @@ bool ForceTorqueCan::open(yarp::os::Searchable & config)
 
         if (canBusGroup.isNull())
         {
-            yCError(FTC) << "Missing CAN bus device group:" << canBus;
+            yCError(JR3M) << "Missing CAN bus device group:" << canBus;
             return false;
         }
 
@@ -88,7 +88,7 @@ bool ForceTorqueCan::open(yarp::os::Searchable & config)
 
         if (!canBusDevice->open(canBusOptions))
         {
-            yCError(FTC) << "Failed to open CAN device:" << canBus;
+            yCError(JR3M) << "Failed to open CAN device:" << canBus;
             return false;
         }
 
@@ -97,7 +97,7 @@ bool ForceTorqueCan::open(yarp::os::Searchable & config)
 
         if (!canBusDevice->view(iCanBus) || !canBusDevice->view(iCanBufferFactory))
         {
-            yCError(FTC) << "Failed to acquire CAN device interfaces:" << canBus;
+            yCError(JR3M) << "Failed to acquire CAN device interfaces:" << canBus;
             return false;
         }
 
@@ -106,11 +106,11 @@ bool ForceTorqueCan::open(yarp::os::Searchable & config)
 
         if (!canReadThread->start())
         {
-            yCError(FTC) << "Failed to start CAN read thread:" << canBus;
+            yCError(JR3M) << "Failed to start CAN read thread:" << canBus;
             return false;
         }
 
-        yCInfo(FTC) << "Started CAN read thread:" << canBus;
+        yCInfo(JR3M) << "Started CAN read thread:" << canBus;
     }
 
     return true;
@@ -118,7 +118,7 @@ bool ForceTorqueCan::open(yarp::os::Searchable & config)
 
 // -----------------------------------------------------------------------------
 
-bool ForceTorqueCan::close()
+bool Jr3Mbed::close()
 {
     bool ok = true;
 

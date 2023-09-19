@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __FORCE_TORQUE_CAN_HPP__
-#define __FORCE_TORQUE_CAN_HPP__
+#ifndef __JR3_MBED_HPP__
+#define __JR3_MBED_HPP__
 
 #include <vector>
 
@@ -16,22 +16,22 @@ namespace roboticslab
 
 /**
  * @ingroup YarpPlugins
- * @defgroup ForceTorqueCan
- * @brief Contains roboticslab::ForceTorqueCan.
+ * @defgroup Jr3Mbed
+ * @brief Contains roboticslab::Jr3Mbed.
  */
 
  /**
- * @ingroup ForceTorqueCan
- * @brief Implementation of a CAN node that publishes data from a force-torque sensor.
+ * @ingroup Jr3Mbed
+ * @brief Implementation of a CAN node on an Mbed board that publishes data from a JR3 sensor.
  */
-class ForceTorqueCan : public yarp::dev::DeviceDriver,
-                       public yarp::dev::ISixAxisForceTorqueSensors
+class Jr3Mbed : public yarp::dev::DeviceDriver,
+                public yarp::dev::ISixAxisForceTorqueSensors
 {
 public:
-    ForceTorqueCan()
+    Jr3Mbed()
     { }
 
-    ~ForceTorqueCan() override
+    ~Jr3Mbed() override
     { close(); }
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -52,4 +52,4 @@ private:
 
 } // namespace roboticslab
 
-#endif // __FORCE_TORQUE_CAN_HPP__
+#endif // __JR3_MBED_HPP__

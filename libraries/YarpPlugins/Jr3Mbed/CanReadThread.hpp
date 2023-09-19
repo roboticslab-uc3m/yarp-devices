@@ -14,7 +14,7 @@ namespace roboticslab
 {
 
 /**
- * @ingroup ForceTorqueCan
+ * @ingroup Jr3Mbed
  * @brief A thread for reading incoming CAN messages.
  */
 class CanReadThread : public yarp::os::Thread
