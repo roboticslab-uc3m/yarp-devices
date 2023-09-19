@@ -2,116 +2,68 @@
 
 #include "Jr3Mbed.hpp"
 
-#include <vector>
-
+#include <yarp/os/Bottle.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/ResourceFinder.h>
 
 #include "LogComponent.hpp"
 
 using namespace roboticslab;
 
+constexpr auto DEFAULT_TIMEOUT = 0.25; // [s]
+constexpr auto DEFAULT_MAX_RETRIES = 10;
+constexpr auto DEFAULT_FILTER = 0.0; // [Hz]
+
 // -----------------------------------------------------------------------------
 
 bool Jr3Mbed::open(yarp::os::Searchable & config)
 {
-    yarp::os::Property robotConfig;
-    auto & rf = yarp::os::ResourceFinder::getResourceFinderSingleton();
-    auto configPath = rf.findFileByName("config.ini"); // set YARP_ROBOT_NAME first
-
-    if (configPath.empty() || !robotConfig.fromConfigFile(configPath))
+    if (!config.check("robotConfig") || !config.find("robotConfig").isBlob())
     {
-        yCError(JR3M) << "Robot config file not found or insufficient permissions:" << configPath;
+        yCError(JR3M) << "Missing \"robotConfig\" property or not a blob";
         return false;
     }
 
-    const auto * canBuses = config.find("canBuses").asList();
+    const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
 
-    if (!canBuses)
+    yarp::os::Bottle & commonGroup = robotConfig->findGroup("common-jr3");
+    yarp::os::Property jr3Group;
+
+    if (!commonGroup.isNull())
     {
-        yCError(JR3M) << "Missing key \"canBuses\" or not a list";
+        yCDebugOnce(JR3M) << commonGroup.toString();
+        jr3Group.fromString(commonGroup.toString());
+    }
+
+    jr3Group.fromString(config.toString(), false); // override common options
+
+    canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt8(); // id-specific
+    auto timeout = jr3Group.check("timeout", yarp::os::Value(DEFAULT_TIMEOUT), "timeout [s]").asFloat64();
+    auto maxRetries = jr3Group.check("maxRetries", yarp::os::Value(DEFAULT_MAX_RETRIES), "max retries on timeout").asFloat64();
+
+    if (canId <= 0)
+    {
+        yCError(JR3M) << "Illegal CAN ID:" << canId;
         return false;
     }
 
-    std::vector<float> filters;
+    yarp::dev::DeviceDriver::setId("ID" + std::to_string(canId));
 
-    const auto vFilters = config.check("filters", yarp::os::Value::getNullValue(), "cutoff frequency for each low-pass filter [Hz]");
-
-    if (vFilters.isList())
+    if (timeout <= 0.0)
     {
-        const auto * filtersList = vFilters.asList();
-
-        if (filtersList->size() != canBuses->size())
-        {
-            yCError(JR3M) << "Number of filters does not match number of CAN buses";
-            return false;
-        }
-
-        for (int i = 0; i < filtersList->size(); i++)
-        {
-            filters.push_back(filtersList->get(i).asFloat32());
-        }
-    }
-    else if (config.check("filter", "common cutoff frequency for all low-pass filters [Hz]"))
-    {
-        const auto freq = config.find("filter").asFloat32();
-        filters.insert(filters.begin(), canBuses->size(), freq);
+        yCIError(JR3M, id()) << "Illegal timeout value:" << timeout;
+        return false;
     }
 
-    for (int i = 0; i < canBuses->size(); i++)
+    if (!jr3Group.check("mode", "publish mode [sync|async]"))
     {
-        auto canBus = canBuses->get(i).asString();
-
-        if (!robotConfig.check(canBus))
-        {
-            yCError(JR3M) << "Missing CAN bus key:" << canBus;
-            return false;
-        }
-
-        const auto & canBusGroup = robotConfig.findGroup(canBus);
-
-        if (canBusGroup.isNull())
-        {
-            yCError(JR3M) << "Missing CAN bus device group:" << canBus;
-            return false;
-        }
-
-        auto * canBusDevice = new yarp::dev::PolyDriver;
-        canBusDevices.push_back(canBusDevice);
-
-        yarp::os::Property canBusOptions;
-        canBusOptions.setMonitor(config.getMonitor(), canBus.c_str());
-        canBusOptions.fromString(canBusGroup.toString());
-        canBusOptions.put("blockingMode", false); // enforce non-blocking mode
-        canBusOptions.put("allowPermissive", false); // always check usage requirements
-
-        if (!canBusDevice->open(canBusOptions))
-        {
-            yCError(JR3M) << "Failed to open CAN device:" << canBus;
-            return false;
-        }
-
-        yarp::dev::ICanBus * iCanBus;
-        yarp::dev::ICanBufferFactory * iCanBufferFactory;
-
-        if (!canBusDevice->view(iCanBus) || !canBusDevice->view(iCanBufferFactory))
-        {
-            yCError(JR3M) << "Failed to acquire CAN device interfaces:" << canBus;
-            return false;
-        }
-
-        auto * canReadThread = new CanReadThread(iCanBus, iCanBufferFactory);
-        canReadThreads.push_back(canReadThread);
-
-        if (!canReadThread->start())
-        {
-            yCError(JR3M) << "Failed to start CAN read thread:" << canBus;
-            return false;
-        }
-
-        yCInfo(JR3M) << "Started CAN read thread:" << canBus;
+        yCIError(JR3M, id()) << "Missing \"mode\" property";
+        return false;
     }
+
+    std::string mode = jr3Group.find("mode").asString();
+
+    auto filter = config.check("filter", yarp::os::Value(DEFAULT_FILTER), "cutoff frequency for low-pass filter [Hz]").asFloat64();
 
     return true;
 }
@@ -120,25 +72,7 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
 
 bool Jr3Mbed::close()
 {
-    bool ok = true;
-
-    for (auto * canReadThread : canReadThreads)
-    {
-        ok &= canReadThread->stop();
-        delete canReadThread;
-    }
-
-    canReadThreads.clear();
-
-    for (auto * canBusDevice : canBusDevices)
-    {
-        ok &= canBusDevice->close();
-        delete canBusDevice;
-    }
-
-    canBusDevices.clear();
-
-    return ok;
+    return true;
 }
 
 // -----------------------------------------------------------------------------

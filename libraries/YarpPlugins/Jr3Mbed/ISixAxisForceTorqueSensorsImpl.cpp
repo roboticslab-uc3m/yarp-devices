@@ -2,10 +2,7 @@
 
 #include "Jr3Mbed.hpp"
 
-#include <yarp/os/LogStream.h>
 #include <yarp/os/SystemClock.h>
-
-#include "LogComponent.hpp"
 
 using namespace roboticslab;
 
@@ -41,7 +38,9 @@ bool Jr3Mbed::getSixAxisForceTorqueSensorFrameName(std::size_t sens_index, std::
 
 bool Jr3Mbed::getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const
 {
-    out = canReadThreads[sens_index]->getMeasurements();
+    rxMutex.lock();
+    out = {fx, fy, fz, mx, my, mz};
+    rxMutex.unlock();
     timestamp = yarp::os::SystemClock::nowSystem();
     return true;
 }
