@@ -5,27 +5,11 @@
 #include <cstdint>
 #include <cstring>
 
-#include <yarp/os/LogComponent.h>
+#include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
 
 using namespace roboticslab;
-
-namespace
-{
-    // keep this in sync with the firmware
-    enum can_ops
-    {
-        JR3_START_SYNC = 2, // 0x100
-        JR3_START_ASYNC,    // 0x180
-        JR3_STOP,           // 0x200
-        JR3_ZERO_OFFS,      // 0x280
-        JR3_SET_FILTER,     // 0x300
-        JR3_GET_FORCES,     // 0x380
-        JR3_GET_MOMENTS,    // 0x400
-        JR3_ACK,            // 0x480
-    };
-}
 
 // -----------------------------------------------------------------------------
 
@@ -38,14 +22,23 @@ unsigned int Jr3Mbed::getId()
 
 bool Jr3Mbed::initialize()
 {
-    return true;
+    switch (mode)
+    {
+    case SYNC:
+        return sendStartSyncCommand(filter);
+    case ASYNC:
+        return sendStartAsyncCommand(filter, asyncPeriod);
+    default:
+        yCIError(JR3M, id()) << "Unknown mode:" << static_cast<int>(mode);
+        return false;
+    }
 }
 
 // -----------------------------------------------------------------------------
 
 bool Jr3Mbed::finalize()
 {
-    return true;
+    return sendStopCommand();
 }
 
 // -----------------------------------------------------------------------------
@@ -54,7 +47,7 @@ bool Jr3Mbed::notifyMessage(const can_message & message)
 {
     unsigned int op = (message.id - canId) >> 7;
 
-    std::uint64_t data;
+    std::uint64_t data; // TODO
     std::memcpy(&data, message.data, message.len);
 
     switch (op)
@@ -70,13 +63,16 @@ bool Jr3Mbed::notifyMessage(const can_message & message)
     case JR3_GET_MOMENTS:
     {
         std::lock_guard lock(rxMutex);
-        mx = (data & 0x000000000000FFFF) * 56.0 / 16384;
-        my = ((data & 0x00000000FFFF0000) >> 16) * 52.0 / 16384;
-        mz = ((data & 0x0000FFFF00000000) >> 32) * 61.0 / 16384;
+        mx = (data & 0x000000000000FFFF) * 56.0 / 163840;
+        my = ((data & 0x00000000FFFF0000) >> 16) * 52.0 / 163840;
+        mz = ((data & 0x0000FFFF00000000) >> 32) * 61.0 / 163840;
         break;
     }
+    case JR3_ACK:
+        ackStateObserver->notify();
+        break;
     default:
-        yCWarning(JR3M, "Unknown operation %d", op);
+        yCIWarning(JR3M, id(), "Unsupported operation: %d", op);
         return false;
     }
 

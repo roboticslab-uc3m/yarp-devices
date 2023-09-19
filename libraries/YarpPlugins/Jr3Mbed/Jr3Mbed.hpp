@@ -4,11 +4,13 @@
 #define __JR3_MBED_HPP__
 
 #include <mutex>
+#include <string>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
 #include "ICanBusSharer.hpp"
+#include "StateObserver.hpp"
 
 namespace roboticslab
 {
@@ -57,8 +59,33 @@ public:
     bool getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
 
 private:
+    // keep this in sync with the firmware
+    enum can_ops
+    {
+        JR3_START_SYNC = 2, // 0x100
+        JR3_START_ASYNC,    // 0x180
+        JR3_STOP,           // 0x200
+        JR3_ZERO_OFFS,      // 0x280
+        JR3_SET_FILTER,     // 0x300
+        JR3_GET_FORCES,     // 0x380
+        JR3_GET_MOMENTS,    // 0x400
+        JR3_ACK,            // 0x480
+    };
+
+    enum jr3_mode
+    { SYNC, ASYNC, INVALID };
+
+    bool performRequest(const std::string & cmd, const can_message & msg);
+    bool sendStartSyncCommand(double filter);
+    bool sendStartAsyncCommand(double filter, double delay);
+    bool sendStopCommand();
+
     unsigned int canId {0};
+    double filter {0.0}; // cutoff frequency [Hz]
+    double asyncPeriod {0.0}; // [s]
+    jr3_mode mode {INVALID};
     ICanSenderDelegate * sender {nullptr};
+    StateObserver * ackStateObserver {nullptr};
     mutable std::mutex rxMutex;
 
     double fx {0.0};

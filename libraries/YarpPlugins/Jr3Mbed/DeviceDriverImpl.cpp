@@ -10,9 +10,8 @@
 
 using namespace roboticslab;
 
-constexpr auto DEFAULT_TIMEOUT = 0.25; // [s]
-constexpr auto DEFAULT_MAX_RETRIES = 10;
-constexpr auto DEFAULT_FILTER = 0.0; // [Hz]
+constexpr auto DEFAULT_TIMEOUT = 0.1; // [s]
+constexpr auto DEFAULT_FILTER = 0.0; // [Hz], 0.0 = no filter
 
 // -----------------------------------------------------------------------------
 
@@ -38,8 +37,8 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
     jr3Group.fromString(config.toString(), false); // override common options
 
     canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt8(); // id-specific
-    auto timeout = jr3Group.check("timeout", yarp::os::Value(DEFAULT_TIMEOUT), "timeout [s]").asFloat64();
-    auto maxRetries = jr3Group.check("maxRetries", yarp::os::Value(DEFAULT_MAX_RETRIES), "max retries on timeout").asFloat64();
+    filter = config.check("filter", yarp::os::Value(DEFAULT_FILTER), "cutoff frequency for low-pass filter [Hz]").asFloat64();
+    auto timeout = jr3Group.check("timeout", yarp::os::Value(DEFAULT_TIMEOUT), "CAN acknowledge timeout [s]").asFloat64();
 
     if (canId <= 0)
     {
@@ -51,19 +50,30 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
 
     if (timeout <= 0.0)
     {
-        yCIError(JR3M, id()) << "Illegal timeout value:" << timeout;
+        yCIError(JR3M, id()) << R"(Illegal "timeout" value:)" << timeout;
         return false;
     }
 
-    if (!jr3Group.check("mode", "publish mode [sync|async]"))
+    ackStateObserver = new StateObserver(timeout);
+
+    if (jr3Group.check("asyncPeriod", "period of asynchronous publishing mode [s]"))
     {
-        yCIError(JR3M, id()) << "Missing \"mode\" property";
-        return false;
+        yCIInfo(JR3M, id()) << "Asynchronous mode requested";
+        asyncPeriod = jr3Group.find("asyncPeriod").asFloat64();
+
+        if (asyncPeriod <= 0.0)
+        {
+            yCIError(JR3M, id()) << R"(Illegal "asyncPeriod" value:)" << asyncPeriod;
+            return false;
+        }
+
+        mode = ASYNC;
     }
-
-    std::string mode = jr3Group.find("mode").asString();
-
-    auto filter = config.check("filter", yarp::os::Value(DEFAULT_FILTER), "cutoff frequency for low-pass filter [Hz]").asFloat64();
+    else
+    {
+        yCIInfo(JR3M, id()) << "Synchronous mode requested";
+        mode = SYNC;
+    }
 
     return true;
 }
@@ -72,6 +82,12 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
 
 bool Jr3Mbed::close()
 {
+    if (ackStateObserver)
+    {
+        delete ackStateObserver;
+        ackStateObserver = nullptr;
+    }
+
     return true;
 }
 
