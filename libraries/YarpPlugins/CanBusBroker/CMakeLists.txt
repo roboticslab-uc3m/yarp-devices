@@ -11,36 +11,36 @@ if(NOT SKIP_CanBusBroker)
     yarp_add_plugin(CanBusBroker CanBusBroker.hpp
                                  DeviceDriverImpl.cpp
                                  # control board interfaces
-                                 IAmplifierControlImpl.cpp
-                                 IAxisInfoImpl.cpp
-                                 IControlCalibrationImpl.cpp
-                                 IControlLimitsImpl.cpp
-                                 IControlModeImpl.cpp
-                                 ICurrentControlImpl.cpp
-                                 IEncodersImpl.cpp
-                                 IImpedanceControlImpl.cpp
-                                 IInteractionModeImpl.cpp
-                                 IJointFaultImpl.cpp
-                                 IMotorImpl.cpp
-                                 IMotorEncodersImpl.cpp
-                                 IPidControlImpl.cpp
-                                 IPositionControlImpl.cpp
-                                 IPositionDirectImpl.cpp
-                                 IPWMControlImpl.cpp
-                                 IRemoteVariablesImpl.cpp
-                                 ITorqueControlImpl.cpp
-                                 IVelocityControlImpl.cpp
+                                 motor/IAmplifierControlImpl.cpp
+                                 motor/IAxisInfoImpl.cpp
+                                 motor/IControlCalibrationImpl.cpp
+                                 motor/IControlLimitsImpl.cpp
+                                 motor/IControlModeImpl.cpp
+                                 motor/ICurrentControlImpl.cpp
+                                 motor/IEncodersImpl.cpp
+                                 motor/IImpedanceControlImpl.cpp
+                                 motor/IInteractionModeImpl.cpp
+                                 motor/IJointFaultImpl.cpp
+                                 motor/IMotorImpl.cpp
+                                 motor/IMotorEncodersImpl.cpp
+                                 motor/IPidControlImpl.cpp
+                                 motor/IPositionControlImpl.cpp
+                                 motor/IPositionDirectImpl.cpp
+                                 motor/IPWMControlImpl.cpp
+                                 motor/IRemoteVariablesImpl.cpp
+                                 motor/ITorqueControlImpl.cpp
+                                 motor/IVelocityControlImpl.cpp
                                  # multiple analog sensors interfaces
-                                 IThreeAxisGyroscopesImpl.cpp
-                                 IThreeAxisLinearAccelerometersImpl.cpp
-                                 IThreeAxisMagnetometersImpl.cpp
-                                 IOrientationSensorsImpl.cpp
-                                 ITemperatureSensorsImpl.cpp
-                                 ISixAxisForceTorqueSensorsImpl.cpp
-                                 IContactLoadCellArraysImpl.cpp
-                                 IEncoderArraysImpl.cpp
-                                 ISkinPatchesImpl.cpp
-                                 IPositionSensorsImpl.cpp
+                                 sensor/IThreeAxisGyroscopesImpl.cpp
+                                 sensor/IThreeAxisLinearAccelerometersImpl.cpp
+                                 sensor/IThreeAxisMagnetometersImpl.cpp
+                                 sensor/IOrientationSensorsImpl.cpp
+                                 sensor/ITemperatureSensorsImpl.cpp
+                                 sensor/ISixAxisForceTorqueSensorsImpl.cpp
+                                 sensor/IContactLoadCellArraysImpl.cpp
+                                 sensor/IEncoderArraysImpl.cpp
+                                 sensor/ISkinPatchesImpl.cpp
+                                 sensor/IPositionSensorsImpl.cpp
                                  # broker, NWS and misc stuff
                                  CanRxTxThreads.hpp
                                  CanRxTxThreads.cpp
@@ -56,6 +56,8 @@ if(NOT SKIP_CanBusBroker)
                                  SyncPeriodicThread.cpp
                                  LogComponent.hpp
                                  LogComponent.cpp)
+
+    target_include_directories(CanBusBroker PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
     target_link_libraries(CanBusBroker YARP::YARP_os
                                        YARP::YARP_dev
