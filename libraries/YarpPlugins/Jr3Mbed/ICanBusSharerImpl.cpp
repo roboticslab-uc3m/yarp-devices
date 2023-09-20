@@ -62,31 +62,31 @@ bool Jr3Mbed::finalize()
 
 bool Jr3Mbed::notifyMessage(const can_message & message)
 {
-    unsigned int op = (message.id - canId) >> 7;
+    const unsigned int op = (message.id - canId) >> 7;
 
     switch (op)
     {
+    case JR3_BOOTUP:
+        yCIInfo(JR3M, id()) << "Bootup message received";
+        return initialize();
+    case JR3_ACK:
+        return ackStateObserver->notify();
     case JR3_GET_FORCES:
     {
         std::lock_guard lock(rxMutex);
         rawForces = parseData(message);
-        break;
+        return true;
     }
     case JR3_GET_MOMENTS:
     {
         std::lock_guard lock(rxMutex);
         rawMoments = parseData(message);
-        break;
+        return true;
     }
-    case JR3_ACK:
-        ackStateObserver->notify();
-        break;
     default:
-        yCIWarning(JR3M, id(), "Unsupported operation: %d", op);
+        yCIWarning(JR3M, id()) << "Unsupported operation:" << op;
         return false;
     }
-
-    return true;
 }
 
 // -----------------------------------------------------------------------------

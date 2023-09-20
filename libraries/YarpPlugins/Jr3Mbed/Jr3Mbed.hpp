@@ -65,14 +65,15 @@ private:
     // keep this in sync with the firmware
     enum can_ops
     {
-        JR3_START_SYNC = 2, // 0x100
-        JR3_START_ASYNC,    // 0x180
-        JR3_STOP,           // 0x200
-        JR3_ZERO_OFFS,      // 0x280
-        JR3_SET_FILTER,     // 0x300
-        JR3_GET_FORCES,     // 0x380
-        JR3_GET_MOMENTS,    // 0x400
-        JR3_ACK,            // 0x480
+        JR3_BOOTUP = 2,  // 0x100
+        JR3_ACK,         // 0x180
+        JR3_START_SYNC,  // 0x200
+        JR3_START_ASYNC, // 0x280
+        JR3_STOP,        // 0x300
+        JR3_ZERO_OFFS,   // 0x380
+        JR3_SET_FILTER,  // 0x400
+        JR3_GET_FORCES,  // 0x480
+        JR3_GET_MOMENTS  // 0x500
     };
 
     enum jr3_mode
