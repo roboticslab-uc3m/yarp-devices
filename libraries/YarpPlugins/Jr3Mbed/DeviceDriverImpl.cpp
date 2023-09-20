@@ -119,12 +119,20 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
         {
             std::lock_guard lock(rxMutex);
 
-            if (event.currentReal - timestamp < event.lastDuration)
+            double elapsed = event.currentReal - timestamp;
+
+            if (elapsed < event.lastDuration)
             {
+                if (status != yarp::dev::MAS_OK) // either timeout or awaiting first read
+                {
+                    yCIInfo(JR3M, id()) << "Sensor is responding";
+                }
+
                 status = yarp::dev::MAS_OK;
             }
-            else if (status == yarp::dev::MAS_OK)
+            else if (status == yarp::dev::MAS_OK) // timeout!
             {
+                yCIWarning(JR3M, id()) << "Sensor has timed out, last data was received" << elapsed << "seconds ago";
                 status = yarp::dev::MAS_TIMEOUT;
             }
             else
