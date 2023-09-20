@@ -2,7 +2,6 @@
 
 #include "Jr3Mbed.hpp"
 
-#include <yarp/os/Bottle.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
 
@@ -10,7 +9,10 @@
 
 using namespace roboticslab;
 
-constexpr auto DEFAULT_TIMEOUT = 0.1; // [s]
+constexpr auto FULL_SCALE = 16384; // 2^14
+
+constexpr auto DEFAULT_ACK_TIMEOUT = 0.01; // [s]
+constexpr auto DEFAULT_MONITOR_PERIOD = 0.1; // [s]
 constexpr auto DEFAULT_FILTER = 0.0; // [Hz], 0.0 = no filter
 
 // -----------------------------------------------------------------------------
@@ -19,13 +21,13 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
 {
     if (!config.check("robotConfig") || !config.find("robotConfig").isBlob())
     {
-        yCError(JR3M) << "Missing \"robotConfig\" property or not a blob";
+        yCError(JR3M) << R"(Missing "robotConfig" property or not a blob)";
         return false;
     }
 
     const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
 
-    yarp::os::Bottle & commonGroup = robotConfig->findGroup("common-jr3");
+    const auto & commonGroup = robotConfig->findGroup("common-jr3");
     yarp::os::Property jr3Group;
 
     if (!commonGroup.isNull())
@@ -37,8 +39,7 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
     jr3Group.fromString(config.toString(), false); // override common options
 
     canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt8(); // id-specific
-    filter = config.check("filter", yarp::os::Value(DEFAULT_FILTER), "cutoff frequency for low-pass filter [Hz]").asFloat64();
-    auto timeout = jr3Group.check("timeout", yarp::os::Value(DEFAULT_TIMEOUT), "CAN acknowledge timeout [s]").asFloat64();
+    filter = config.check("filter", yarp::os::Value(DEFAULT_FILTER), "cutoff frequency for low-pass filter (Hertz)").asFloat64();
 
     if (canId <= 0)
     {
@@ -48,15 +49,17 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
 
     yarp::dev::DeviceDriver::setId("ID" + std::to_string(canId));
 
-    if (timeout <= 0.0)
+    auto ackTimeout = jr3Group.check("ackTimeout", yarp::os::Value(DEFAULT_ACK_TIMEOUT), "CAN acknowledge timeout (seconds)").asFloat64();
+
+    if (ackTimeout <= 0.0)
     {
-        yCIError(JR3M, id()) << R"(Illegal "timeout" value:)" << timeout;
+        yCIError(JR3M, id()) << R"(Illegal "ackTimeout" value:)" << ackTimeout;
         return false;
     }
 
-    ackStateObserver = new StateObserver(timeout);
+    ackStateObserver = new StateObserver(ackTimeout);
 
-    if (!jr3Group.check("fullScales", "full scales for each axis [N]"))
+    if (!jr3Group.check("fullScales", "full scales for each axis"))
     {
         yCIError(JR3M, id()) << R"(Missing "fullScales" property)";
         return false;
@@ -74,15 +77,15 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
 
     for (int i = 0; i < 3; i++)
     {
-        forceScales.push_back(fullScales->get(i).asFloat64() / 16384.0);
+        forceScales.push_back(fullScales->get(i).asFloat64() / FULL_SCALE);
     }
 
     for (int i = 3; i < 6; i++)
     {
-        momentScales.push_back(fullScales->get(i).asFloat64() / 163840.0);
+        momentScales.push_back(fullScales->get(i).asFloat64() / (FULL_SCALE * 10));
     }
 
-    if (jr3Group.check("asyncPeriod", "period of asynchronous publishing mode [s]"))
+    if (jr3Group.check("asyncPeriod", "period of asynchronous publishing mode (seconds)"))
     {
         yCIInfo(JR3M, id()) << "Asynchronous mode requested";
         asyncPeriod = jr3Group.find("asyncPeriod").asFloat64();
@@ -101,6 +104,36 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
         mode = SYNC;
     }
 
+    auto monitorPeriod = jr3Group.check("monitorPeriod", yarp::os::Value(DEFAULT_MONITOR_PERIOD), "monitor thread period (seconds)").asFloat64();
+
+    if (monitorPeriod <= 0.0)
+    {
+        yCIError(JR3M, id()) << R"(Illegal "monitorPeriod" value:)" << monitorPeriod;
+        return false;
+    }
+
+    status = yarp::dev::MAS_WAITING_FOR_FIRST_READ;
+
+    monitorThread = new yarp::os::Timer(yarp::os::TimerSettings(monitorPeriod), [this](const auto & event)
+        {
+            std::lock_guard lock(rxMutex);
+
+            if (event.currentReal - timestamp < event.lastDuration)
+            {
+                status = yarp::dev::MAS_OK;
+            }
+            else if (status == yarp::dev::MAS_OK)
+            {
+                status = yarp::dev::MAS_TIMEOUT;
+            }
+            else
+            {
+                // still waiting for first read
+            }
+
+            return true;
+        }, false);
+
     return true;
 }
 
@@ -108,11 +141,19 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
 
 bool Jr3Mbed::close()
 {
-    if (ackStateObserver)
+    // we need to do this in finalize(), too, since the monitor thread could be
+    // still requesting CAN transfers even after CAN RX/TX threads have been
+    // closed in CanBusBroker::close()
+    if (monitorThread && monitorThread->isRunning())
     {
-        delete ackStateObserver;
-        ackStateObserver = nullptr;
+        monitorThread->stop();
     }
+
+    delete monitorThread;
+    monitorThread = nullptr;
+
+    delete ackStateObserver;
+    ackStateObserver = nullptr;
 
     return true;
 }

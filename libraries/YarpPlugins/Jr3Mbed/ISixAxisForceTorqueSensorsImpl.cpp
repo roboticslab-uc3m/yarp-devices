@@ -5,8 +5,6 @@
 #include <algorithm> // std::transform
 #include <functional> // std::multiplies
 
-#include <yarp/os/SystemClock.h>
-
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
@@ -20,7 +18,8 @@ std::size_t Jr3Mbed::getNrOfSixAxisForceTorqueSensors() const
 
 yarp::dev::MAS_status Jr3Mbed::getSixAxisForceTorqueSensorStatus(std::size_t sens_index) const
 {
-    return yarp::dev::MAS_OK;
+    std::lock_guard lock(rxMutex);
+    return status;
 }
 
 // -----------------------------------------------------------------------------
@@ -48,12 +47,12 @@ bool Jr3Mbed::getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::s
         std::lock_guard lock(rxMutex);
         _rawForces = rawForces;
         _rawMoments = rawMoments;
+        timestamp = this->timestamp;
     }
 
     std::transform(_rawForces.cbegin(), _rawForces.cend(), forceScales.cbegin(), out.begin(), std::multiplies<>{});
     std::transform(_rawMoments.cbegin(), _rawMoments.cend(), momentScales.cbegin(), out.begin() + 3, std::multiplies<>{});
 
-    timestamp = yarp::os::SystemClock::nowSystem();
     return true;
 }
 

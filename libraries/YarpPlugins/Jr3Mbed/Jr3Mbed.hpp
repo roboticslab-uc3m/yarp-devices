@@ -9,6 +9,8 @@
 #include <string>
 #include <vector>
 
+#include <yarp/os/Timer.h>
+
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
@@ -85,18 +87,27 @@ private:
     bool sendStopCommand();
 
     unsigned int canId {0};
+
     double filter {0.0}; // cutoff frequency [Hz]
     double asyncPeriod {0.0}; // [s]
+
     jr3_mode mode {INVALID};
+
     ICanSenderDelegate * sender {nullptr};
     StateObserver * ackStateObserver {nullptr};
+
     mutable std::mutex rxMutex;
 
     std::vector<std::int16_t> rawForces;
     std::vector<std::int16_t> rawMoments;
 
+    double timestamp {0.0};
+    yarp::dev::MAS_status status {yarp::dev::MAS_UNKNOWN};
+
     std::vector<double> forceScales;
     std::vector<double> momentScales;
+
+    yarp::os::Timer * monitorThread {nullptr};
 };
 
 } // namespace roboticslab

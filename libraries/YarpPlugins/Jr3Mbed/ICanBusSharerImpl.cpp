@@ -6,6 +6,7 @@
 #include <cstring>
 
 #include <yarp/os/LogStream.h>
+#include <yarp/os/SystemClock.h>
 
 #include "LogComponent.hpp"
 
@@ -67,20 +68,26 @@ bool Jr3Mbed::notifyMessage(const can_message & message)
     switch (op)
     {
     case JR3_BOOTUP:
+    {
         yCIInfo(JR3M, id()) << "Bootup message received";
+        std::lock_guard lock(rxMutex);
+        status = yarp::dev::MAS_WAITING_FOR_FIRST_READ;
         return initialize();
+    }
     case JR3_ACK:
         return ackStateObserver->notify();
     case JR3_GET_FORCES:
     {
         std::lock_guard lock(rxMutex);
         rawForces = parseData(message);
+        timestamp = yarp::os::SystemClock::nowSystem();
         return true;
     }
     case JR3_GET_MOMENTS:
     {
         std::lock_guard lock(rxMutex);
         rawMoments = parseData(message);
+        timestamp = yarp::os::SystemClock::nowSystem();
         return true;
     }
     default:
