@@ -91,6 +91,8 @@ private:
     double filter {0.0}; // cutoff frequency [Hz]
     double asyncPeriod {0.0}; // [s]
 
+    std::string name;
+
     jr3_mode mode {INVALID};
 
     ICanSenderDelegate * sender {nullptr};

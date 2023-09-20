@@ -26,6 +26,7 @@ yarp::dev::MAS_status Jr3Mbed::getSixAxisForceTorqueSensorStatus(std::size_t sen
 
 bool Jr3Mbed::getSixAxisForceTorqueSensorName(std::size_t sens_index, std::string & name) const
 {
+    name = this->name;
     return true;
 }
 

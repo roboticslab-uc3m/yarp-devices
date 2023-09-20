@@ -39,7 +39,8 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
     jr3Group.fromString(config.toString(), false); // override common options
 
     canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt8(); // id-specific
-    filter = config.check("filter", yarp::os::Value(DEFAULT_FILTER), "cutoff frequency for low-pass filter (Hertz)").asFloat64();
+    name = config.check("name", yarp::os::Value(""), "sensor name").asString(); // id-specific
+    filter = jr3Group.check("filter", yarp::os::Value(DEFAULT_FILTER), "cutoff frequency for low-pass filter (Hertz)").asFloat64();
 
     if (canId <= 0)
     {
@@ -59,7 +60,7 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
 
     ackStateObserver = new StateObserver(ackTimeout);
 
-    if (!jr3Group.check("fullScales", "full scales for each axis"))
+    if (!config.check("fullScales", "full scales for each axis")) // id-specific
     {
         yCIError(JR3M, id()) << R"(Missing "fullScales" property)";
         return false;
