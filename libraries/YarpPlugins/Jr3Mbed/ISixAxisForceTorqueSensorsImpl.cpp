@@ -41,19 +41,9 @@ bool Jr3Mbed::getSixAxisForceTorqueSensorFrameName(std::size_t sens_index, std::
 
 bool Jr3Mbed::getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const
 {
-    std::vector<std::int16_t> _rawForces;
-    std::vector<std::int16_t> _rawMoments;
-
-    {
-        std::lock_guard lock(rxMutex);
-        _rawForces = rawForces;
-        _rawMoments = rawMoments;
-        timestamp = this->timestamp;
-    }
-
-    std::transform(_rawForces.cbegin(), _rawForces.cend(), forceScales.cbegin(), out.begin(), std::multiplies<>{});
-    std::transform(_rawMoments.cbegin(), _rawMoments.cend(), momentScales.cbegin(), out.begin() + 3, std::multiplies<>{});
-
+    std::lock_guard lock(rxMutex);
+    std::transform(raw.cbegin(), raw.cend(), scales.cbegin(), out.begin(), std::multiplies<>{});
+    timestamp = this->timestamp;
     return true;
 }
 

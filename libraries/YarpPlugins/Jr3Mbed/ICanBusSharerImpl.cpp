@@ -5,6 +5,9 @@
 #include <cstdint>
 #include <cstring>
 
+#include <algorithm> // std::copy
+#include <tuple>
+
 #include <yarp/os/LogStream.h>
 #include <yarp/os/SystemClock.h>
 
@@ -16,16 +19,16 @@ using namespace roboticslab;
 
 namespace
 {
-    std::vector<std::int16_t> parseData(const can_message & message)
+    std::tuple<std::array<std::int16_t, 3>, std::uint16_t> parseData(const can_message & message)
     {
         std::uint64_t data;
         std::memcpy(&data, message.data, message.len);
 
-        return {
+        return {{
             static_cast<std::int16_t>(data & 0x000000000000FFFF),
             static_cast<std::int16_t>((data & 0x00000000FFFF0000) >> 16),
             static_cast<std::int16_t>((data & 0x0000FFFF00000000) >> 32)
-        };
+        }, static_cast<std::uint16_t>((data & 0xFFFF000000000000) >> 48)};
     }
 }
 
@@ -78,16 +81,24 @@ bool Jr3Mbed::notifyMessage(const can_message & message)
         return ackStateObserver->notify();
     case JR3_GET_FORCES:
     {
+        auto [forces, counter] = parseData(message);
         std::lock_guard lock(rxMutex);
-        rawForces = parseData(message);
-        timestamp = yarp::os::SystemClock::nowSystem();
+        buffer = forces;
+        integrityCounter = counter;
         return true;
     }
     case JR3_GET_MOMENTS:
     {
+        auto [moments, counter] = parseData(message);
         std::lock_guard lock(rxMutex);
-        rawMoments = parseData(message);
-        timestamp = yarp::os::SystemClock::nowSystem();
+
+        if (counter == integrityCounter)
+        {
+            std::copy(buffer.cbegin(), buffer.cend(), raw.begin());
+            std::copy(moments.cbegin(), moments.cend(), raw.begin() + 3);
+            timestamp = yarp::os::SystemClock::nowSystem();
+        }
+
         return true;
     }
     default:

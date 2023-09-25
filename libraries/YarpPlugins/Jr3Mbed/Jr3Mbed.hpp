@@ -5,9 +5,9 @@
 
 #include <cstdint>
 
+#include <array>
 #include <mutex>
 #include <string>
-#include <vector>
 
 #include <yarp/os/Timer.h>
 
@@ -92,6 +92,7 @@ private:
     double asyncPeriod {0.0}; // [s]
 
     std::string name;
+    std::array<double, 6> scales;
 
     jr3_mode mode {INVALID};
 
@@ -100,14 +101,12 @@ private:
 
     mutable std::mutex rxMutex;
 
-    std::vector<std::int16_t> rawForces;
-    std::vector<std::int16_t> rawMoments;
+    std::array<std::int16_t, 3> buffer {}; // zero-initialize
+    std::array<std::int16_t, 6> raw {}; // zero-initialize
 
     double timestamp {0.0};
     yarp::dev::MAS_status status {yarp::dev::MAS_UNKNOWN};
-
-    std::vector<double> forceScales;
-    std::vector<double> momentScales;
+    std::uint16_t integrityCounter {0};
 
     yarp::os::Timer * monitorThread {nullptr};
 };

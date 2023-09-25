@@ -80,15 +80,13 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
 
         for (int i = 0; i < 3; i++)
         {
-            forceScales.push_back(fullScales->get(i).asInt32() / static_cast<double>(FULL_SCALE));
+            scales[i] = fullScales->get(i).asInt16() / static_cast<double>(FULL_SCALE);
         }
 
         for (int i = 3; i < 6; i++)
         {
-            momentScales.push_back(fullScales->get(i).asInt32() / (static_cast<double>(FULL_SCALE) * 10));
+            scales[i] = fullScales->get(i).asInt16() / (static_cast<double>(FULL_SCALE) * 10);
         }
-
-        yCIInfo(JR3M, id()) << "Full scales set to:" << forceScales << momentScales;
     }
     else
     {
