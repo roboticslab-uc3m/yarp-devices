@@ -66,30 +66,40 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
         return false;
     }
 
-    const auto & fullScalesValue = jr3Group.find("fullScales");
-
-    if (!fullScalesValue.isList() || fullScalesValue.asList()->size() != 6)
+    if (jr3Group.check("fullScales", "list of full scales for each axis (3*N, 3*daNm)"))
     {
-        yCIError(JR3M, id()) << R"(The "fullScales" property must be a 6-element list)";
+        const auto & fullScalesValue = jr3Group.find("fullScales");
+
+        if (!fullScalesValue.isList() || fullScalesValue.asList()->size() != 6)
+        {
+            yCIError(JR3M, id()) << R"(The "fullScales" property must be a 6-element list of integers)";
+            return false;
+        }
+
+        const auto * fullScales = fullScalesValue.asList();
+
+        for (int i = 0; i < 3; i++)
+        {
+            forceScales.push_back(fullScales->get(i).asInt32() / static_cast<double>(FULL_SCALE));
+        }
+
+        for (int i = 3; i < 6; i++)
+        {
+            momentScales.push_back(fullScales->get(i).asInt32() / (static_cast<double>(FULL_SCALE) * 10));
+        }
+
+        yCIInfo(JR3M, id()) << "Full scales set to:" << forceScales << momentScales;
+    }
+    else
+    {
+        yCIError(JR3M, id()) << R"(Missing "fullScales" property)";
         return false;
-    }
-
-    const auto * fullScales = fullScalesValue.asList();
-
-    for (int i = 0; i < 3; i++)
-    {
-        forceScales.push_back(fullScales->get(i).asFloat64() / FULL_SCALE);
-    }
-
-    for (int i = 3; i < 6; i++)
-    {
-        momentScales.push_back(fullScales->get(i).asFloat64() / (FULL_SCALE * 10));
     }
 
     if (jr3Group.check("asyncPeriod", "period of asynchronous publishing mode (seconds)"))
     {
-        yCIInfo(JR3M, id()) << "Asynchronous mode requested";
         asyncPeriod = jr3Group.find("asyncPeriod").asFloat64();
+        yCIInfo(JR3M, id()) << "Asynchronous mode requested with period" << asyncPeriod << "[s]";
 
         if (asyncPeriod <= 0.0)
         {
