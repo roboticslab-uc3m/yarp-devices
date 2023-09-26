@@ -48,6 +48,12 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
         return false;
     }
 
+    if (filter < 0.0)
+    {
+        yCError(JR3M) << "Illegal filter value:" << filter;
+        return false;
+    }
+
     yarp::dev::DeviceDriver::setId("ID" + std::to_string(canId));
 
     auto ackTimeout = jr3Group.check("ackTimeout", yarp::os::Value(DEFAULT_ACK_TIMEOUT), "CAN acknowledge timeout (seconds)").asFloat64();
