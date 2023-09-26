@@ -18,7 +18,6 @@ std::size_t Jr3Mbed::getNrOfSixAxisForceTorqueSensors() const
 
 yarp::dev::MAS_status Jr3Mbed::getSixAxisForceTorqueSensorStatus(std::size_t sens_index) const
 {
-    std::lock_guard lock(rxMutex);
     return status;
 }
 
@@ -41,7 +40,8 @@ bool Jr3Mbed::getSixAxisForceTorqueSensorFrameName(std::size_t sens_index, std::
 
 bool Jr3Mbed::getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const
 {
-    std::lock_guard lock(rxMutex);
+    out.resize(raw.size());
+    std::lock_guard lock(mtx);
     std::transform(raw.cbegin(), raw.cend(), scales.cbegin(), out.begin(), std::multiplies<>{});
     timestamp = this->timestamp;
     return true;

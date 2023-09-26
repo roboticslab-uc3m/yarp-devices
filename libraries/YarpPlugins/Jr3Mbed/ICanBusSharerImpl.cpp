@@ -73,16 +73,16 @@ bool Jr3Mbed::notifyMessage(const can_message & message)
     case JR3_BOOTUP:
     {
         yCIInfo(JR3M, id()) << "Bootup message received";
-        std::lock_guard lock(rxMutex);
-        status = yarp::dev::MAS_WAITING_FOR_FIRST_READ;
-        return initialize();
+        isBooting = true;
+        // can't block here, let the monitor thread call the initialization routine
+        return true;
     }
     case JR3_ACK:
         return ackStateObserver->notify();
     case JR3_GET_FORCES:
     {
         auto [forces, counter] = parseData(message);
-        std::lock_guard lock(rxMutex);
+        std::lock_guard lock(mtx);
         buffer = forces;
         integrityCounter = counter;
         return true;
@@ -90,9 +90,8 @@ bool Jr3Mbed::notifyMessage(const can_message & message)
     case JR3_GET_MOMENTS:
     {
         auto [moments, counter] = parseData(message);
-        std::lock_guard lock(rxMutex);
 
-        if (counter == integrityCounter)
+        if (std::lock_guard lock(mtx); counter == integrityCounter)
         {
             std::copy(buffer.cbegin(), buffer.cend(), raw.begin());
             std::copy(moments.cbegin(), moments.cend(), raw.begin() + 3);

@@ -6,6 +6,7 @@
 #include <cstdint>
 
 #include <array>
+#include <atomic>
 #include <mutex>
 #include <string>
 
@@ -99,13 +100,14 @@ private:
     ICanSenderDelegate * sender {nullptr};
     StateObserver * ackStateObserver {nullptr};
 
-    mutable std::mutex rxMutex;
+    mutable std::mutex mtx;
 
     std::array<std::int16_t, 3> buffer {}; // zero-initialize
     std::array<std::int16_t, 6> raw {}; // zero-initialize
 
+    std::atomic<yarp::dev::MAS_status> status {yarp::dev::MAS_UNKNOWN};
+    std::atomic_bool isBooting {false};
     double timestamp {0.0};
-    yarp::dev::MAS_status status {yarp::dev::MAS_UNKNOWN};
     std::uint16_t integrityCounter {0};
 
     yarp::os::Timer * monitorThread {nullptr};
