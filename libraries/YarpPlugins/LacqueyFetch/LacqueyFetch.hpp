@@ -98,9 +98,10 @@ public:
     bool getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
 
 private:
+    static constexpr unsigned int CAN_OP = 0x780; // keep in sync with firmware
 
     bool send(unsigned int len, const std::uint8_t * msgData)
-    { return sender && sender->prepareMessage({canId, len, msgData}); }
+    { return sender && sender->prepareMessage({CAN_OP + canId, len, msgData}); }
 
     unsigned int canId {0};
     std::string axisName;
