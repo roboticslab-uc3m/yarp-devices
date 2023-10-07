@@ -14,6 +14,8 @@
 #include <yarp/dev/IAxisInfo.h>
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IPWMControl.h>
+#include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
+#include <yarp/dev/PolyDriver.h>
 
 #include "ICanBusSharer.hpp"
 
@@ -37,6 +39,7 @@ class LacqueyFetch : public yarp::dev::DeviceDriver,
                      public yarp::dev::IAxisInfoRaw,
                      public yarp::dev::IControlModeRaw,
                      public yarp::dev::IPWMControlRaw,
+                     public yarp::dev::ISixAxisForceTorqueSensors,
                      public ICanBusSharer
 {
 public:
@@ -86,15 +89,26 @@ public:
     bool getDutyCycleRaw(int m, double * val) override;
     bool getDutyCyclesRaw(double * vals) override;
 
+    //  --------- ISixAxisForceTorqueSensors Declarations. Implementation in ISixAxisForceTorqueSensorsImpl.cpp ---------
+
+    std::size_t getNrOfSixAxisForceTorqueSensors() const override;
+    yarp::dev::MAS_status getSixAxisForceTorqueSensorStatus(std::size_t sens_index) const override;
+    bool getSixAxisForceTorqueSensorName(std::size_t sens_index, std::string & name) const override;
+    bool getSixAxisForceTorqueSensorFrameName(std::size_t sens_index, std::string & name) const override;
+    bool getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+
 private:
 
     bool send(unsigned int len, const std::uint8_t * msgData)
     { return sender && sender->prepareMessage({canId, len, msgData}); }
 
-    unsigned int canId;
+    unsigned int canId {0};
     std::string axisName;
-    yarp::conf::float32_t refDutyCycles;
-    ICanSenderDelegate * sender;
+    yarp::conf::float32_t refDutyCycles {0};
+    ICanSenderDelegate * sender {nullptr};
+
+    yarp::dev::PolyDriver sensorDevice;
+    yarp::dev::ISixAxisForceTorqueSensors * sensor {nullptr};
 };
 
 } // namespace roboticslab
