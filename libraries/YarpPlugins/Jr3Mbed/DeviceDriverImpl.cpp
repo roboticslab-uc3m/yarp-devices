@@ -135,11 +135,21 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
             {
                 status = yarp::dev::MAS_WAITING_FOR_FIRST_READ;
 
+                if (sender)
+                {
+                    sender->reportAvailability(true, canId);
+                }
+
                 if (!initialize())
                 {
                     // perhaps it did initialize correctly, but CAN comms timed out;
                     // otherwise, we could have used MAS_ERROR here instead
                     status = yarp::dev::MAS_TIMEOUT;
+
+                    if (sender)
+                    {
+                        sender->reportAvailability(false, canId);
+                    }
                 }
 
                 isBooting = false;
@@ -158,12 +168,22 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
                     {
                         yCIInfo(JR3M, id()) << "Sensor is responding";
                         status = yarp::dev::MAS_OK;
+
+                        if (sender)
+                        {
+                            sender->reportAvailability(true, canId);
+                        }
                     }
                 }
                 else if (status == yarp::dev::MAS_OK) // timeout!
                 {
                     yCIWarning(JR3M, id()) << "Sensor has timed out, last data was received" << elapsed << "seconds ago";
                     status = yarp::dev::MAS_TIMEOUT;
+
+                    if (sender)
+                    {
+                        sender->reportAvailability(false, canId);
+                    }
                 }
                 else
                 {
