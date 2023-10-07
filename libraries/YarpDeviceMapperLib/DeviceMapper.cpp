@@ -3,6 +3,7 @@
 #include "DeviceMapper.hpp"
 
 #include <functional> // std::function
+#include <typeindex> // std::type_index
 #include <utility> // std::move
 
 #include <yarp/os/LogComponent.h>
@@ -20,47 +21,49 @@ namespace
 
 namespace
 {
+    using namespace yarp::dev;
+
     bool queryControlledAxes(const RawDevice * rd, int * axes, bool * ret)
     {
-        if (rd->getHandle<yarp::dev::ICurrentControlRaw>())
+        if (auto handle = rd->getHandle<ICurrentControlRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::ICurrentControlRaw>()->getNumberOfMotorsRaw(axes);
+            *ret = handle->getNumberOfMotorsRaw(axes);
         }
-        else if (rd->getHandle<yarp::dev::IEncodersRaw>())
+        else if (auto handle = rd->getHandle<IEncodersRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::IEncodersRaw>()->getAxes(axes);
+            *ret = handle->getAxes(axes);
         }
-        else if (rd->getHandle<yarp::dev::IImpedanceControlRaw>())
+        else if (auto handle = rd->getHandle<IImpedanceControlRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::IImpedanceControlRaw>()->getAxes(axes);
+            *ret = handle->getAxes(axes);
         }
-        else if (rd->getHandle<yarp::dev::IMotorRaw>())
+        else if (auto handle = rd->getHandle<IMotorRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::IMotorRaw>()->getNumberOfMotorsRaw(axes);
+            *ret = handle->getNumberOfMotorsRaw(axes);
         }
-        else if (rd->getHandle<yarp::dev::IMotorEncodersRaw>())
+        else if (auto handle = rd->getHandle<IMotorEncodersRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::IMotorEncodersRaw>()->getNumberOfMotorEncodersRaw(axes);
+            *ret = handle->getNumberOfMotorEncodersRaw(axes);
         }
-        else if (rd->getHandle<yarp::dev::IPositionControlRaw>())
+        else if (auto handle = rd->getHandle<IPositionControlRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::IPositionControlRaw>()->getAxes(axes);
+            *ret = handle->getAxes(axes);
         }
-        else if (rd->getHandle<yarp::dev::IPositionDirectRaw>())
+        else if (auto handle = rd->getHandle<IPositionDirectRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::IPositionDirectRaw>()->getAxes(axes);
+            *ret = handle->getAxes(axes);
         }
-        else if (rd->getHandle<yarp::dev::IPWMControlRaw>())
+        else if (auto handle = rd->getHandle<IPWMControlRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::IPWMControlRaw>()->getNumberOfMotorsRaw(axes);
+            *ret = handle->getNumberOfMotorsRaw(axes);
         }
-        else if (rd->getHandle<yarp::dev::IVelocityControlRaw>())
+        else if (auto handle = rd->getHandle<IVelocityControlRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::IVelocityControlRaw>()->getAxes(axes);
+            *ret = handle->getAxes(axes);
         }
-        else if (rd->getHandle<yarp::dev::ITorqueControlRaw>())
+        else if (auto handle = rd->getHandle<ITorqueControlRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::ITorqueControlRaw>()->getAxes(axes);
+            *ret = handle->getAxes(axes);
         }
         else
         {
@@ -70,79 +73,35 @@ namespace
         return true;
     }
 
-    bool queryConnectedSensors(const RawDevice * rd, std::function<void(int, std::type_index)> fn)
+    template<typename T>
+    bool _queryHelper(const RawDevice * rd, const std::function<void(int, std::type_index)> & cb, std::size_t (T::*fn)() const)
+    {
+        if (auto handle = rd->getHandle<T>(); handle != nullptr)
+        {
+            if (int count = std::invoke(fn, handle); count != 0)
+            {
+                cb(count, typeid(T));
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool queryConnectedSensors(const RawDevice * rd, std::function<void(int, std::type_index)> cb)
     {
         bool connected = false;
 
-        if (rd->getHandle<yarp::dev::IThreeAxisGyroscopes>())
-        {
-            int count = rd->getHandle<yarp::dev::IThreeAxisGyroscopes>()->getNrOfThreeAxisGyroscopes();
-            fn(count, std::type_index(typeid(yarp::dev::IThreeAxisGyroscopes)));
-            connected = true;
-        }
-
-        if (rd->getHandle<yarp::dev::IThreeAxisLinearAccelerometers>())
-        {
-            int count = rd->getHandle<yarp::dev::IThreeAxisLinearAccelerometers>()->getNrOfThreeAxisLinearAccelerometers();
-            fn(count, std::type_index(typeid(yarp::dev::IThreeAxisLinearAccelerometers)));
-            connected = true;
-        }
-
-        if (rd->getHandle<yarp::dev::IThreeAxisMagnetometers>())
-        {
-            int count = rd->getHandle<yarp::dev::IThreeAxisMagnetometers>()->getNrOfThreeAxisMagnetometers();
-            fn(count, std::type_index(typeid(yarp::dev::IThreeAxisMagnetometers)));
-            connected = true;
-        }
-
-        if (rd->getHandle<yarp::dev::IOrientationSensors>())
-        {
-            int count = rd->getHandle<yarp::dev::IOrientationSensors>()->getNrOfOrientationSensors();
-            fn(count, std::type_index(typeid(yarp::dev::IOrientationSensors)));
-            connected = true;
-        }
-
-        if (rd->getHandle<yarp::dev::ITemperatureSensors>())
-        {
-            int count = rd->getHandle<yarp::dev::ITemperatureSensors>()->getNrOfTemperatureSensors();
-            fn(count, std::type_index(typeid(yarp::dev::ITemperatureSensors)));
-            connected = true;
-        }
-
-        if (rd->getHandle<yarp::dev::ISixAxisForceTorqueSensors>())
-        {
-            int count = rd->getHandle<yarp::dev::ISixAxisForceTorqueSensors>()->getNrOfSixAxisForceTorqueSensors();
-            fn(count, std::type_index(typeid(yarp::dev::ISixAxisForceTorqueSensors)));
-            connected = true;
-        }
-
-        if (rd->getHandle<yarp::dev::IContactLoadCellArrays>())
-        {
-            int count = rd->getHandle<yarp::dev::IContactLoadCellArrays>()->getNrOfContactLoadCellArrays();
-            fn(count, std::type_index(typeid(yarp::dev::IContactLoadCellArrays)));
-            connected = true;
-        }
-
-        if (rd->getHandle<yarp::dev::IEncoderArrays>())
-        {
-            int count = rd->getHandle<yarp::dev::IEncoderArrays>()->getNrOfEncoderArrays();
-            fn(count, std::type_index(typeid(yarp::dev::IEncoderArrays)));
-            connected = true;
-        }
-
-        if (rd->getHandle<yarp::dev::ISkinPatches>())
-        {
-            int count = rd->getHandle<yarp::dev::ISkinPatches>()->getNrOfSkinPatches();
-            fn(count, std::type_index(typeid(yarp::dev::ISkinPatches)));
-            connected = true;
-        }
-
-        if (rd->getHandle<yarp::dev::IPositionSensors>())
-        {
-            int count = rd->getHandle<yarp::dev::IPositionSensors>()->getNrOfPositionSensors();
-            fn(count, std::type_index(typeid(yarp::dev::IPositionSensors)));
-            connected = true;
-        }
+        connected |= _queryHelper(rd, cb, &IThreeAxisGyroscopes::getNrOfThreeAxisGyroscopes);
+        connected |= _queryHelper(rd, cb, &IThreeAxisLinearAccelerometers::getNrOfThreeAxisLinearAccelerometers);
+        connected |= _queryHelper(rd, cb, &IThreeAxisMagnetometers::getNrOfThreeAxisMagnetometers);
+        connected |= _queryHelper(rd, cb, &IOrientationSensors::getNrOfOrientationSensors);
+        connected |= _queryHelper(rd, cb, &ITemperatureSensors::getNrOfTemperatureSensors);
+        connected |= _queryHelper(rd, cb, &ISixAxisForceTorqueSensors::getNrOfSixAxisForceTorqueSensors);
+        connected |= _queryHelper(rd, cb, &IContactLoadCellArrays::getNrOfContactLoadCellArrays);
+        connected |= _queryHelper(rd, cb, &IEncoderArrays::getNrOfEncoderArrays);
+        connected |= _queryHelper(rd, cb, &ISkinPatches::getNrOfSkinPatches);
+        connected |= _queryHelper(rd, cb, &IPositionSensors::getNrOfPositionSensors);
 
         return connected;
     }
