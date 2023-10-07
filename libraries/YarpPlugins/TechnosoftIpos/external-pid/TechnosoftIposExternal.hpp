@@ -108,6 +108,7 @@ private:
 
     yarp::dev::Pid * activePid {nullptr};
     yarp::dev::Pid positionPid;
+    yarp::dev::Pid velocityPid;
     yarp::dev::Pid impedancePid;
 
     double positionReference {0.0};

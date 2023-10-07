@@ -63,9 +63,9 @@ bool TechnosoftIposExternal::open(yarp::os::Searchable & config)
         return false;
     }
 
-    auto kp = iposGroup.check("kp", yarp::os::Value(0.0), "position PID Kp").asFloat64();
-    auto ki = iposGroup.check("ki", yarp::os::Value(0.0), "position PID Ki").asFloat64();
-    auto kd = iposGroup.check("kd", yarp::os::Value(0.0), "position PID Kd").asFloat64();
+    auto positionKp = iposGroup.check("positionKp", yarp::os::Value(0.0), "position PID Kp").asFloat64();
+    auto positionKi = iposGroup.check("positionKi", yarp::os::Value(0.0), "position PID Ki").asFloat64();
+    auto positionKd = iposGroup.check("positionKd", yarp::os::Value(0.0), "position PID Kd").asFloat64();
     auto maxInt = iposGroup.check("maxInt", yarp::os::Value(0.0), "position PID saturation threshold").asFloat64();
     auto maxOutput = iposGroup.check("maxOutput", yarp::os::Value(0.0), "position PID maximum output").asFloat64();
     auto offset = iposGroup.check("offset", yarp::os::Value(0.0), "position PID offset").asFloat64();
@@ -74,9 +74,9 @@ bool TechnosoftIposExternal::open(yarp::os::Searchable & config)
     auto stictionDown = iposGroup.check("stictionDown", yarp::os::Value(0.0), "position PID stiction down").asFloat64();
     auto kff = iposGroup.check("kff", yarp::os::Value(0.0), "position PID feed-forward").asFloat64();
 
-    positionPid.setKp(kp);
-    positionPid.setKi(ki);
-    positionPid.setKd(kd);
+    positionPid.setKp(positionKp);
+    positionPid.setKi(positionKi);
+    positionPid.setKd(positionKd);
     positionPid.setMaxInt(maxInt);
     positionPid.setMaxOut(maxOutput);
     positionPid.setOffset(offset);
@@ -95,7 +95,7 @@ bool TechnosoftIposExternal::open(yarp::os::Searchable & config)
 
     if (errorLimit <= 0.0)
     {
-        yCIError(IPOS, id()) << "Illegal position error limit:" << errorLimit;
+        yCIError(IPOS, id()) << "Illegal position PID error limit:" << errorLimit;
         return false;
     }
 
