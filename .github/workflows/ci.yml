@@ -75,13 +75,6 @@ jobs:
     - name: Download Peak CAN driver
       run: wget -O- -q https://www.peak-system.com/fileadmin/media/linux/files/peak-linux-driver-$PEAK_DRIVER_VER.tar.gz | tar -C .deps -xzf -
 
-    - name: Check out amor-api
-      uses: actions/checkout@v3
-      with:
-        repository: roboticslab-uc3m/amor-api
-        token: ${{secrets.AMOR_API}}
-        path: .deps/amor-api
-
     - name: Check out jr3pci-linux
       uses: actions/checkout@v3
       with:
@@ -89,7 +82,7 @@ jobs:
         path: .deps/jr3pci-linux
 
     - name: Install dependencies via apt
-      run: sudo apt-get update && sudo apt-get install -qq ccache libboost-thread-dev libeigen3-dev intltool libxml2-dev libglib2.0-dev libusb-1.0-0-dev libspnav-dev libxwiimote-dev libgtest-dev
+      run: sudo apt-get update && sudo apt-get install -qq ccache intltool libxml2-dev libglib2.0-dev libusb-1.0-0-dev libspnav-dev libxwiimote-dev libgtest-dev
 
     - name: Set up CMake
       uses: jwlawson/actions-setup-cmake@v1
@@ -136,12 +129,6 @@ jobs:
         CC="ccache ${{matrix.compiler.cc}}" CXX="ccache ${{matrix.compiler.cxx}}" make -C lib -j
         sudo make -C lib install
         sudo cp -f driver/pcan*.h /usr/include
-
-    - name: Build amor-api
-      run: |
-        cmake -S .deps/amor-api -B .deps/amor-api/build $CMAKE_CCACHE_LAUNCHER -DENABLE_udev_rules=OFF
-        cmake --build .deps/amor-api/build
-        sudo cmake --install .deps/amor-api/build
 
     - name: Install jr3pci-linux header
       run: sudo make -C .deps/jr3pci-linux install-header

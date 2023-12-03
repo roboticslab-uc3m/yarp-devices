@@ -9,7 +9,6 @@ For unit testing, you'll need the googletest source package. Refer to [Install g
 
 ### Components with known additional/specific dependencies
 
-- [../libraries/YarpPlugins/AmorControlBoard](../libraries/YarpPlugins/AmorControlBoard#requirements)
 - [../libraries/YarpPlugins/AravisGigE](../libraries/YarpPlugins/AravisGigE#requirements)
 - [../libraries/YarpPlugins/CanBusHico](../libraries/YarpPlugins/CanBusHico#requirements)
 - [../libraries/YarpPlugins/CanBusPeak](../libraries/YarpPlugins/CanBusPeak#requirements)
