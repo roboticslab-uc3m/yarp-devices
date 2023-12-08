@@ -38,8 +38,8 @@ jobs:
       matrix:
         os: [ubuntu-20.04, ubuntu-22.04]
         robotology:
-        - { yarp: yarp-3.7, cmake: 3.16.x }
         - { yarp: yarp-3.8, cmake: 3.16.x }
+        - { yarp: yarp-3.9, cmake: 3.16.x }
         - { yarp: master, cmake: 3.16.x }
         compiler:
         - { cc: gcc, cxx: g++ }
@@ -51,16 +51,16 @@ jobs:
 
     steps:
     - name: Check out yarp-devices
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Check out YCM
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: robotology/ycm
         path: .deps/ycm
 
     - name: Check out YARP
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: robotology/yarp
         ref: ${{matrix.robotology.yarp}}
@@ -76,7 +76,7 @@ jobs:
       run: wget -O- -q https://www.peak-system.com/fileadmin/media/linux/files/peak-linux-driver-$PEAK_DRIVER_VER.tar.gz | tar -C .deps -xzf -
 
     - name: Check out jr3pci-linux
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: roboticslab-uc3m/jr3pci-linux
         path: .deps/jr3pci-linux

@@ -10,6 +10,13 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
+bool LacqueyFetch::getAxes(int * ax)
+{
+    return getNumberOfMotorsRaw(ax);
+}
+
+// -----------------------------------------------------------------------------
+
 bool LacqueyFetch::getAxisNameRaw(int axis, std::string & name)
 {
     yCITrace(LCQ, id(), "%d", axis);
