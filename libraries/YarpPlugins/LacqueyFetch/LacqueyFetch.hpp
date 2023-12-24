@@ -8,7 +8,6 @@
 #include <string>
 
 #include <yarp/conf/numeric.h>
-#include <yarp/conf/version.h>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAxisInfo.h>
@@ -63,10 +62,7 @@ public:
 
     //  --------- IAxisInfoRaw declarations. Implementation in IAxisInfoRawImpl.cpp ---------
 
-#if YARP_VERSION_COMPARE(>=, 3, 8, 0)
-    bool getAxes(int * ax) override
-    { return getNumberOfMotorsRaw(ax); }
-#endif
+    bool getAxes(int * ax) override;
     bool getAxisNameRaw(int j, std::string & name) override;
     bool getJointTypeRaw(int j, yarp::dev::JointTypeEnum & type) override;
 
