@@ -7,6 +7,8 @@
 
 #include "LogComponent.hpp"
 
+constexpr auto DEFAULT_PORT = "/dev/ttyUSB0";
+
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------

@@ -6,7 +6,18 @@
 #include <mutex>
 #include <string>
 
-#include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/conf/version.h>
+
+#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/IAxisInfo.h>
+#include <yarp/dev/IControlLimits.h>
+#include <yarp/dev/IControlMode.h>
+#include <yarp/dev/IEncodersTimed.h>
+#include <yarp/dev/IPositionControl.h>
+#include <yarp/dev/IPositionDirect.h>
+#if YARP_VERSION_COMPARE(<, 3, 9, 0)
+# include <yarp/dev/IVelocityControl.h>
+#endif
 
 #include "Synapse.hpp"
 
@@ -31,8 +42,10 @@ class DextraRawControlBoard : public yarp::dev::DeviceDriver,
                               public yarp::dev::IControlModeRaw,
                               public yarp::dev::IEncodersTimedRaw,
                               public yarp::dev::IPositionControlRaw,
-                              public yarp::dev::IPositionDirectRaw,
-                              public yarp::dev::IVelocityControlRaw
+                              public yarp::dev::IPositionDirectRaw
+#if YARP_VERSION_COMPARE(<, 3, 9, 0)
+                              , public yarp::dev::IVelocityControlRaw
+#endif
 {
 public:
     ~DextraRawControlBoard() override = default;
@@ -121,6 +134,7 @@ public:
     bool setPositionsRaw(const int n_joint, const int *joints, const double *refs) override;
     bool setPositionsRaw(const double *refs) override;
 
+#if YARP_VERSION_COMPARE(<, 3, 9, 0)
     //  --------- IVelocityControlRaw declarations and stub implementations. ---------
 
     // re-implemented methods have been omitted
@@ -130,6 +144,7 @@ public:
     bool getRefVelocityRaw(int joint, double * vel) override { return false; }
     bool getRefVelocitiesRaw(double * vels) override { return false; }
     bool getRefVelocitiesRaw(int n_joint, const int * joints, double * vels) override { return false; }
+#endif
 
 protected:
     Synapse * synapse {nullptr};

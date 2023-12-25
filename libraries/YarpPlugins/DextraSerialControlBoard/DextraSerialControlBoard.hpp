@@ -3,7 +3,19 @@
 #ifndef __DEXTRA_SERIAL_CONTROL_BOARD_HPP__
 #define __DEXTRA_SERIAL_CONTROL_BOARD_HPP__
 
-#include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/conf/version.h>
+
+#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/IAxisInfo.h>
+#include <yarp/dev/IControlLimits.h>
+#include <yarp/dev/IControlMode.h>
+#include <yarp/dev/IEncodersTimed.h>
+#include <yarp/dev/IPositionControl.h>
+#include <yarp/dev/IPositionDirect.h>
+#if YARP_VERSION_COMPARE(<, 3, 9, 0)
+# include <yarp/dev/IVelocityControl.h>
+#endif
+
 #include <yarp/dev/ISerialDevice.h>
 #include <yarp/dev/PolyDriver.h>
 
@@ -47,11 +59,12 @@ class DextraSerialControlBoard : public yarp::dev::DeviceDriver,
                                  public yarp::dev::IControlMode,
                                  public yarp::dev::IEncodersTimed,
                                  public yarp::dev::IPositionControl,
-                                 public yarp::dev::IPositionDirect,
-                                 public yarp::dev::IVelocityControl
+                                 public yarp::dev::IPositionDirect
+#if YARP_VERSION_COMPARE(<, 3, 9, 0)
+                                 , public yarp::dev::IVelocityControl
+#endif
 {
 public:
-
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 
     virtual bool open(yarp::os::Searchable & config) override;
@@ -188,6 +201,7 @@ public:
     virtual bool setPositions(int n_joint, const int * joints, const double * refs) override
     { return raw.setPositionsRaw(n_joint, joints, refs); }
 
+#if YARP_VERSION_COMPARE(<, 3, 9, 0)
     //  --------- IVelocityControl declarations ---------
 
     virtual bool velocityMove(int j, double sp) override
@@ -202,9 +216,9 @@ public:
     { return raw.getRefVelocitiesRaw(vels); }
     virtual bool getRefVelocities(int n_joint, const int * joints, double * vels) override
     { return raw.getRefVelocitiesRaw(n_joint, joints, vels); }
+#endif
 
 protected:
-
     DextraRawControlBoard raw;
     yarp::dev::PolyDriver serialDevice;
 };

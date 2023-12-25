@@ -3,16 +3,18 @@
 #ifndef __TEXTILES_HAND_HPP__
 #define __TEXTILES_HAND_HPP__
 
+#include <yarp/conf/version.h>
+
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IControlMode.h>
-#include <yarp/dev/IEncodersTimed.h>
-#include <yarp/dev/IPositionControl.h>
+#if YARP_VERSION_COMPARE(<, 3, 9, 0)
+# include <yarp/dev/IEncodersTimed.h>
+# include <yarp/dev/IPositionControl.h>
+# include <yarp/dev/IVelocityControl.h>
+#endif
 #include <yarp/dev/IPositionDirect.h>
 #include <yarp/dev/ISerialDevice.h>
-#include <yarp/dev/IVelocityControl.h>
-
-#define DEFAULT_PORT "/dev/ttyUSB0"
 
 namespace roboticslab
 {
@@ -29,18 +31,14 @@ namespace roboticslab
  */
 class TextilesHand : public yarp::dev::DeviceDriver,
                      public yarp::dev::IControlMode,
+#if YARP_VERSION_COMPARE(<, 3, 9, 0)
                      public yarp::dev::IEncodersTimed,
                      public yarp::dev::IPositionControl,
-                     public yarp::dev::IPositionDirect,
-                     public yarp::dev::IVelocityControl
+                     public yarp::dev::IVelocityControl,
+#endif
+                     public yarp::dev::IPositionDirect
 {
 public:
-
-    TextilesHand()
-        : lastTarget(0.0),
-          iSerialDevice(nullptr)
-    { }
-
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
 
     bool open(yarp::os::Searchable & config) override;
@@ -55,6 +53,7 @@ public:
     bool setControlModes(int * modes) override;
     bool setControlModes(int n_joint, const int * joints, int * modes) override;
 
+#if YARP_VERSION_COMPARE(<, 3, 9, 0)
     //  ---------- IEncoders Declarations. Implementation in IEncodersImpl.cpp ----------
 
     //bool getAxes(int * ax) override;
@@ -105,16 +104,6 @@ public:
     bool getTargetPositions(double * refs) override { return false; }
     bool getTargetPositions(int n_joint, const int * joints, double * refs) override { return false; }
 
-    // ------- IPositionDirect declarations. Implementation in IPositionDirectImpl.cpp -------
-
-    bool getAxes(int * ax) override;
-    bool setPosition(int j, double ref) override;
-    bool setPositions(const double * refs) override;
-    bool setPositions(int n_joint, const int * joints, const double * refs) override;
-    bool getRefPosition(int joint, double * ref) override;
-    bool getRefPositions(double * refs) override;
-    bool getRefPositions(int n_joint, const int * joints, double * refs) override;
-
     //  --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
 
     //bool getAxes(int * ax) override;
@@ -133,13 +122,23 @@ public:
     //bool stop(int j) override;
     //bool stop() override;
     //bool stop(int n_joint, const int *joints) override;
+#endif // YARP_VERSION_COMPARE(<, 3, 9, 0)
+
+    // ------- IPositionDirect declarations. Implementation in IPositionDirectImpl.cpp -------
+
+    bool getAxes(int * ax) override;
+    bool setPosition(int j, double ref) override;
+    bool setPositions(const double * refs) override;
+    bool setPositions(int n_joint, const int * joints, const double * refs) override;
+    bool getRefPosition(int joint, double * ref) override;
+    bool getRefPositions(double * refs) override;
+    bool getRefPositions(int n_joint, const int * joints, double * refs) override;
 
 private:
-
-    double lastTarget;
+    double lastTarget {0.0};
 
     yarp::dev::PolyDriver serialDevice;
-    yarp::dev::ISerialDevice * iSerialDevice;
+    yarp::dev::ISerialDevice * iSerialDevice {nullptr};
 };
 
 } // namespace roboticslab
