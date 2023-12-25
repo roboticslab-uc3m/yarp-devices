@@ -13,8 +13,6 @@
 #include <yarp/dev/IAxisInfo.h>
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IPWMControl.h>
-#include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
-#include <yarp/dev/PolyDriver.h>
 
 #include "ICanBusSharer.hpp"
 
@@ -38,14 +36,9 @@ class LacqueyFetch : public yarp::dev::DeviceDriver,
                      public yarp::dev::IAxisInfoRaw,
                      public yarp::dev::IControlModeRaw,
                      public yarp::dev::IPWMControlRaw,
-                     public yarp::dev::ISixAxisForceTorqueSensors,
                      public ICanBusSharer
 {
 public:
-
-    LacqueyFetch() : canId(0), refDutyCycles(), sender(nullptr)
-    { }
-
     //  --------- DeviceDriver declarations. Implementation in LacqueyFetch.cpp ---------
 
     bool open(yarp::os::Searchable & config) override;
@@ -85,14 +78,6 @@ public:
     bool getDutyCycleRaw(int m, double * val) override;
     bool getDutyCyclesRaw(double * vals) override;
 
-    //  --------- ISixAxisForceTorqueSensors Declarations. Implementation in ISixAxisForceTorqueSensorsImpl.cpp ---------
-
-    std::size_t getNrOfSixAxisForceTorqueSensors() const override;
-    yarp::dev::MAS_status getSixAxisForceTorqueSensorStatus(std::size_t sens_index) const override;
-    bool getSixAxisForceTorqueSensorName(std::size_t sens_index, std::string & name) const override;
-    bool getSixAxisForceTorqueSensorFrameName(std::size_t sens_index, std::string & name) const override;
-    bool getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
-
 private:
     static constexpr unsigned int CAN_OP = 0x780; // keep in sync with firmware
 
@@ -103,9 +88,6 @@ private:
     std::string axisName;
     yarp::conf::float32_t refDutyCycles {0};
     ICanSenderDelegate * sender {nullptr};
-
-    yarp::dev::PolyDriver sensorDevice;
-    yarp::dev::ISixAxisForceTorqueSensors * sensor {nullptr};
 };
 
 } // namespace roboticslab

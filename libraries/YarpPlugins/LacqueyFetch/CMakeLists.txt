@@ -13,7 +13,6 @@ if(NOT SKIP_LacqueyFetch)
                                  ICanBusSharerImpl.cpp
                                  IControlModeRawImpl.cpp
                                  IPWMControlRawImpl.cpp
-                                 ISixAxisForceTorqueSensorsImpl.cpp
                                  LogComponent.hpp
                                  LogComponent.cpp)
 
