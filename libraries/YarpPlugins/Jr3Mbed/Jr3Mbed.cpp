@@ -12,11 +12,11 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool Jr3Mbed::performRequest(const std::string & cmd, const can_message & msg)
+bool Jr3Mbed::performRequest(const std::string & cmd, const can_message & msg, bool quiet)
 {
     if (!sender || !sender->prepareMessage(msg))
     {
-        yCIWarning(JR3M, id()) << "Unable to register" << cmd << "command";
+        yCIWarning((quiet ? JR3M_QUIET : JR3M), id()) << "Unable to register" << cmd << "command";
         return false;
     }
 
@@ -24,11 +24,18 @@ bool Jr3Mbed::performRequest(const std::string & cmd, const can_message & msg)
 
     if (!ackStateObserver->await(&response))
     {
-        yCIWarning(JR3M, id()) << "Command" << cmd << "timed out";
+        yCIWarning((quiet ? JR3M_QUIET : JR3M), id()) << "Command" << cmd << "timed out";
         return false;
     }
 
-    return response == JR3_READY;
+    if (response != static_cast<unsigned int>(jr3_state::READY))
+    {
+        yCIError(JR3M, id()) << "Sensor is in error state";
+        status = yarp::dev::MAS_status::MAS_ERROR;
+        return false;
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -42,7 +49,7 @@ bool Jr3Mbed::sendStartSyncCommand(double _filter)
     unsigned char data[sizeof(filter)];
     std::memcpy(data, &filter, sizeof(filter));
 
-    can_message msg {canId + (JR3_START_SYNC << 7), sizeof(filter), data};
+    can_message msg {getCommandId(can_ops::START_SYNC), sizeof(filter), data};
     return performRequest(cmd, msg);
 }
 
@@ -59,7 +66,7 @@ bool Jr3Mbed::sendStartAsyncCommand(double _filter, double _period)
     std::memcpy(data, &filter, sizeof(filter));
     std::memcpy(data + sizeof(filter), &period, sizeof(period));
 
-    can_message msg {canId + (JR3_START_ASYNC << 7), sizeof(filter) + sizeof(period), data};
+    can_message msg {getCommandId(can_ops::START_ASYNC), sizeof(filter) + sizeof(period), data};
     return performRequest(cmd, msg);
 }
 
@@ -68,8 +75,15 @@ bool Jr3Mbed::sendStartAsyncCommand(double _filter, double _period)
 bool Jr3Mbed::sendCommand(const std::string & cmd, can_ops op)
 {
     yCIInfo(JR3M, id()) << "Sending" << cmd << "command";
-    can_message msg {canId + (op << 7), 0, nullptr};
+    can_message msg {getCommandId(op), 0, nullptr};
     return performRequest(cmd, msg);
+}
+
+// -----------------------------------------------------------------------------
+
+bool Jr3Mbed::ping()
+{
+    return performRequest("ping", {getCommandId(can_ops::GET_STATE), 0, nullptr}, true);
 }
 
 // -----------------------------------------------------------------------------

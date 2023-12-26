@@ -43,11 +43,16 @@ unsigned int Jr3Mbed::getId()
 
 bool Jr3Mbed::initialize()
 {
+    if (!ping())
+    {
+        return false;
+    }
+
     switch (mode)
     {
-    case SYNC:
+    case jr3_mode::SYNC:
         return sendStartSyncCommand(filter);
-    case ASYNC:
+    case jr3_mode::ASYNC:
         return sendStartAsyncCommand(filter, asyncPeriod);
     default:
         yCIError(JR3M, id()) << "Unknown mode:" << static_cast<int>(mode);
@@ -59,27 +64,27 @@ bool Jr3Mbed::initialize()
 
 bool Jr3Mbed::finalize()
 {
-    return sendCommand("stop", JR3_STOP);
+    return sendCommand("stop", can_ops::STOP);
 }
 
 // -----------------------------------------------------------------------------
 
 bool Jr3Mbed::notifyMessage(const can_message & message)
 {
-    const unsigned int op = (message.id - canId) >> 7;
+    const auto op = static_cast<can_ops>((message.id - canId) >> 7);
 
     switch (op)
     {
-    case JR3_BOOTUP:
+    case can_ops::BOOTUP:
     {
         yCIInfo(JR3M, id()) << "Bootup message received";
         isBooting = true;
         // can't block here, let the monitor thread call the initialization routine
         return true;
     }
-    case JR3_ACK:
+    case can_ops::ACK:
         return message.len == 1 && ackStateObserver->notify(message.data[0]);
-    case JR3_FORCES:
+    case can_ops::FORCES:
     {
         auto [forces, counter] = parseData(message);
         std::lock_guard lock(mtx);
@@ -87,7 +92,7 @@ bool Jr3Mbed::notifyMessage(const can_message & message)
         integrityCounter = counter;
         return true;
     }
-    case JR3_MOMENTS:
+    case can_ops::MOMENTS:
     {
         auto [moments, counter] = parseData(message);
 
@@ -101,7 +106,7 @@ bool Jr3Mbed::notifyMessage(const can_message & message)
         return true;
     }
     default:
-        yCIWarning(JR3M, id()) << "Unsupported operation:" << op;
+        yCIWarning(JR3M, id()) << "Unsupported operation:" << static_cast<unsigned int>(op);
         return false;
     }
 }

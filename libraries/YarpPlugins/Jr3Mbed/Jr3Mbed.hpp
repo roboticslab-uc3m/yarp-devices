@@ -63,32 +63,37 @@ public:
 
 private:
     // keep this in sync with the firmware
-    enum can_ops
+    enum class can_ops : std::uint8_t
     {
-        JR3_BOOTUP = 2,  // 0x100
-        JR3_ACK,         // 0x180
-        JR3_START_SYNC,  // 0x200
-        JR3_START_ASYNC, // 0x280
-        JR3_STOP,        // 0x300
-        JR3_ZERO_OFFS,   // 0x380
-        JR3_SET_FILTER,  // 0x400
-        JR3_GET_FS,      // 0x480
-        JR3_RESET,       // 0x500
-        JR3_FORCES,      // 0x580
-        JR3_MOMENTS      // 0x600
+        BOOTUP = 2,  // 0x100
+        ACK,         // 0x180
+        START_SYNC,  // 0x200
+        START_ASYNC, // 0x280
+        STOP,        // 0x300
+        ZERO_OFFS,   // 0x380
+        SET_FILTER,  // 0x400
+        GET_FS,      // 0x480
+        GET_STATE,   // 0x500
+        RESET,       // 0x580
+        FORCES,      // 0x600
+        MOMENTS      // 0x680
     };
 
-    enum jr3_mode
+    enum class jr3_mode
     { SYNC, ASYNC, INVALID };
 
     // keep this in sync with the firmware
-    enum jr3_state : std::uint8_t
-    { JR3_UNINITIALIZED = 0x00, JR3_READY = 0x01 };
+    enum class jr3_state : std::uint8_t
+    { UNINITIALIZED = 0x00, READY = 0x01 };
 
-    bool performRequest(const std::string & cmd, const can_message & msg);
+    constexpr unsigned int getCommandId(can_ops op) const
+    { return canId + (static_cast<unsigned int>(op) << 7); }
+
+    bool performRequest(const std::string & cmd, const can_message & msg, bool quiet = false);
     bool sendStartSyncCommand(double filter);
     bool sendStartAsyncCommand(double filter, double delay);
     bool sendCommand(const std::string & cmd, can_ops op);
+    bool ping();
 
     unsigned int canId {0};
 
@@ -98,7 +103,7 @@ private:
     std::string name;
     std::array<double, 6> scales;
 
-    jr3_mode mode {INVALID};
+    jr3_mode mode {jr3_mode::INVALID};
 
     ICanSenderDelegate * sender {nullptr};
     TypedStateObserver<std::uint8_t> * ackStateObserver {nullptr};

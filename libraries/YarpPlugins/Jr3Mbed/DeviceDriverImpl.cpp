@@ -111,12 +111,12 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
             return false;
         }
 
-        mode = ASYNC;
+        mode = jr3_mode::ASYNC;
     }
     else
     {
         yCIInfo(JR3M, id()) << "Synchronous mode requested";
-        mode = SYNC;
+        mode = jr3_mode::SYNC;
     }
 
     auto monitorPeriod = jr3Group.check("monitorPeriod", yarp::os::Value(DEFAULT_MONITOR_PERIOD), "monitor thread period (seconds)").asFloat64();
