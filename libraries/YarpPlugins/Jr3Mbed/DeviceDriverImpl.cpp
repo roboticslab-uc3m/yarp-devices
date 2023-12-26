@@ -127,11 +127,9 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
         return false;
     }
 
-    status = yarp::dev::MAS_WAITING_FOR_FIRST_READ;
-
     monitorThread = new yarp::os::Timer(monitorPeriod, [this](const auto & event)
         {
-            if (isBooting)
+            if (isBooting.exchange(false)) // enter the condition if true, then set to false
             {
                 status = yarp::dev::MAS_WAITING_FOR_FIRST_READ;
 
@@ -140,55 +138,51 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
                     sender->reportAvailability(true, canId);
                 }
 
-                if (!initialize())
+                if (!initialize() && sender)
                 {
-                    // perhaps it did initialize correctly, but CAN comms timed out;
-                    // otherwise, we could have used MAS_ERROR here instead
-                    status = yarp::dev::MAS_TIMEOUT;
+                    sender->reportAvailability(false, canId);
+                }
+
+                return true;
+            }
+
+            mtx.lock();
+            auto elapsed = event.currentReal - timestamp;
+            mtx.unlock();
+
+            if (elapsed < event.lastDuration) // we have received data in time
+            {
+                // either timeout or awaiting first read
+                if (status.exchange(yarp::dev::MAS_OK) != yarp::dev::MAS_OK)
+                {
+                    yCIInfo(JR3M, id()) << "Sensor is responding";
 
                     if (sender)
                     {
-                        sender->reportAvailability(false, canId);
+                        sender->reportAvailability(true, canId);
                     }
                 }
+            }
+            else if (status == yarp::dev::MAS_ERROR)
+            {
+                // reportAvailability() has already been called from performRequest()
+            }
+            else if (status == yarp::dev::MAS_WAITING_FOR_FIRST_READ)
+            {
+                // nothing to do here
+            }
+            else if (status.exchange(yarp::dev::MAS_TIMEOUT) == yarp::dev::MAS_OK)
+            {
+                yCIWarning(JR3M, id()) << "Sensor has timed out, last data was received" << elapsed << "seconds ago";
 
-                isBooting = false;
+                if (sender)
+                {
+                    sender->reportAvailability(false, canId);
+                }
             }
             else
             {
-                mtx.lock();
-                auto localTimestamp = timestamp;
-                mtx.unlock();
-
-                auto elapsed = event.currentReal - localTimestamp;
-
-                if (elapsed < event.lastDuration) // we have received data in time
-                {
-                    if (status != yarp::dev::MAS_OK) // either timeout or awaiting first read
-                    {
-                        yCIInfo(JR3M, id()) << "Sensor is responding";
-                        status = yarp::dev::MAS_OK;
-
-                        if (sender)
-                        {
-                            sender->reportAvailability(true, canId);
-                        }
-                    }
-                }
-                else if (status == yarp::dev::MAS_OK) // timeout!
-                {
-                    yCIWarning(JR3M, id()) << "Sensor has timed out, last data was received" << elapsed << "seconds ago";
-                    status = yarp::dev::MAS_TIMEOUT;
-
-                    if (sender)
-                    {
-                        sender->reportAvailability(false, canId);
-                    }
-                }
-                else
-                {
-                    // still in timeout state or waiting for first read
-                }
+                // still in timeout state
             }
 
             return true;

@@ -64,6 +64,11 @@ bool Jr3Mbed::initialize()
 
 bool Jr3Mbed::finalize()
 {
+    if (monitorThread && monitorThread->isRunning())
+    {
+        monitorThread->stop();
+    }
+
     return sendCommand("stop", can_ops::STOP);
 }
 

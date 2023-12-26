@@ -31,10 +31,16 @@ bool Jr3Mbed::performRequest(const std::string & cmd, const can_message & msg, b
     if (response != static_cast<unsigned int>(jr3_state::READY))
     {
         yCIError(JR3M, id()) << "Sensor is in error state";
-        status = yarp::dev::MAS_status::MAS_ERROR;
+        status = yarp::dev::MAS_ERROR;
+        // avoid calling this repeatedly from the monitor thread; no concurrency issues here
+        // since all requests are handled either from the monitor thread or from finalize()
+        sender->reportAvailability(false, canId);
         return false;
     }
 
+    // all queries happen during initialization or shutdown, i.e. the usual transition involved
+    // here is from UNKNOWN/ERROR to WAITING (not during normal operation, besides stopping)
+    status = yarp::dev::MAS_WAITING_FOR_FIRST_READ;
     return true;
 }
 

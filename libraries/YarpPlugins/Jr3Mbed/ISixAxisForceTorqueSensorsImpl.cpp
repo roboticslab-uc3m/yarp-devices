@@ -20,7 +20,7 @@ std::size_t Jr3Mbed::getNrOfSixAxisForceTorqueSensors() const
 
 yarp::dev::MAS_status Jr3Mbed::getSixAxisForceTorqueSensorStatus(std::size_t sens_index) const
 {
-    CHECK_SENSOR(sens_index, yarp::dev::MAS_status::MAS_ERROR);
+    CHECK_SENSOR(sens_index, yarp::dev::MAS_ERROR);
     return status;
 }
 
