@@ -59,7 +59,7 @@ bool Jr3Mbed::initialize()
 
 bool Jr3Mbed::finalize()
 {
-    return sendStopCommand();
+    return sendCommand("stop", JR3_STOP);
 }
 
 // -----------------------------------------------------------------------------
@@ -78,8 +78,8 @@ bool Jr3Mbed::notifyMessage(const can_message & message)
         return true;
     }
     case JR3_ACK:
-        return ackStateObserver->notify();
-    case JR3_GET_FORCES:
+        return message.len == 1 && ackStateObserver->notify(message.data[0]);
+    case JR3_FORCES:
     {
         auto [forces, counter] = parseData(message);
         std::lock_guard lock(mtx);
@@ -87,7 +87,7 @@ bool Jr3Mbed::notifyMessage(const can_message & message)
         integrityCounter = counter;
         return true;
     }
-    case JR3_GET_MOMENTS:
+    case JR3_MOMENTS:
     {
         auto [moments, counter] = parseData(message);
 

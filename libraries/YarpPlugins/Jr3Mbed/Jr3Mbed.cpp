@@ -20,13 +20,15 @@ bool Jr3Mbed::performRequest(const std::string & cmd, const can_message & msg)
         return false;
     }
 
-    if (!ackStateObserver->await())
+    std::uint8_t response;
+
+    if (!ackStateObserver->await(&response))
     {
         yCIWarning(JR3M, id()) << "Command" << cmd << "timed out";
         return false;
     }
 
-    return true;
+    return response == JR3_READY;
 }
 
 // -----------------------------------------------------------------------------
@@ -51,7 +53,7 @@ bool Jr3Mbed::sendStartAsyncCommand(double _filter, double _period)
     std::string cmd = "start async";
     std::uint16_t filter = _filter * 10;
     std::uint32_t period = _period * 1e6;
-    yCIInfo(JR3M, id()) << "Sending" << cmd << "command with filter" << filter * 0.1 << "Hz and period" << period << "us";
+    yCIInfo(JR3M, id()) << "Sending" << cmd << "command with filter" << filter * 0.1 << "Hz and period" << period * 1e-3 << "ms";
 
     unsigned char data[sizeof(filter) + sizeof(period)];
     std::memcpy(data, &filter, sizeof(filter));
@@ -63,11 +65,10 @@ bool Jr3Mbed::sendStartAsyncCommand(double _filter, double _period)
 
 // -----------------------------------------------------------------------------
 
-bool Jr3Mbed::sendStopCommand()
+bool Jr3Mbed::sendCommand(const std::string & cmd, can_ops op)
 {
-    std::string cmd = "stop";
     yCIInfo(JR3M, id()) << "Sending" << cmd << "command";
-    can_message msg {canId + (JR3_STOP << 7), 0, nullptr};
+    can_message msg {canId + (op << 7), 0, nullptr};
     return performRequest(cmd, msg);
 }
 

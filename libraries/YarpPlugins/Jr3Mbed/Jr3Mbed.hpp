@@ -36,9 +36,6 @@ class Jr3Mbed : public yarp::dev::DeviceDriver,
                 public ICanBusSharer
 {
 public:
-    Jr3Mbed()
-    { }
-
     ~Jr3Mbed() override
     { close(); }
 
@@ -75,17 +72,23 @@ private:
         JR3_STOP,        // 0x300
         JR3_ZERO_OFFS,   // 0x380
         JR3_SET_FILTER,  // 0x400
-        JR3_GET_FORCES,  // 0x480
-        JR3_GET_MOMENTS  // 0x500
+        JR3_GET_FS,      // 0x480
+        JR3_RESET,       // 0x500
+        JR3_FORCES,      // 0x580
+        JR3_MOMENTS      // 0x600
     };
 
     enum jr3_mode
     { SYNC, ASYNC, INVALID };
 
+    // keep this in sync with the firmware
+    enum jr3_state : std::uint8_t
+    { JR3_UNINITIALIZED = 0x00, JR3_READY = 0x01 };
+
     bool performRequest(const std::string & cmd, const can_message & msg);
     bool sendStartSyncCommand(double filter);
     bool sendStartAsyncCommand(double filter, double delay);
-    bool sendStopCommand();
+    bool sendCommand(const std::string & cmd, can_ops op);
 
     unsigned int canId {0};
 
@@ -98,7 +101,7 @@ private:
     jr3_mode mode {INVALID};
 
     ICanSenderDelegate * sender {nullptr};
-    StateObserver * ackStateObserver {nullptr};
+    TypedStateObserver<std::uint8_t> * ackStateObserver {nullptr};
 
     mutable std::mutex mtx;
 
