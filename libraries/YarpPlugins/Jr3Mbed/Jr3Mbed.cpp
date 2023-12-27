@@ -49,8 +49,8 @@ bool Jr3Mbed::performRequest(const std::string & cmd, const can_message & msg, b
 bool Jr3Mbed::sendStartSyncCommand(double _filter)
 {
     std::string cmd = "start sync";
-    std::uint16_t filter = _filter * 10;
-    yCIInfo(JR3M, id()) << "Sending" << cmd << "command with filter" << filter * 0.1 << "Hz";
+    std::uint16_t filter = _filter * 100;
+    yCIInfo(JR3M, id()) << "Sending" << cmd << "command with filter" << filter * 0.01 << "Hz";
 
     unsigned char data[sizeof(filter)];
     std::memcpy(data, &filter, sizeof(filter));
@@ -64,9 +64,9 @@ bool Jr3Mbed::sendStartSyncCommand(double _filter)
 bool Jr3Mbed::sendStartAsyncCommand(double _filter, double _period)
 {
     std::string cmd = "start async";
-    std::uint16_t filter = _filter * 10;
+    std::uint16_t filter = _filter * 100;
     std::uint32_t period = _period * 1e6;
-    yCIInfo(JR3M, id()) << "Sending" << cmd << "command with filter" << filter * 0.1 << "Hz and period" << period * 1e-3 << "ms";
+    yCIInfo(JR3M, id()) << "Sending" << cmd << "command with filter" << filter * 0.01 << "Hz and period" << period * 1e-3 << "ms";
 
     unsigned char data[sizeof(filter) + sizeof(period)];
     std::memcpy(data, &filter, sizeof(filter));
