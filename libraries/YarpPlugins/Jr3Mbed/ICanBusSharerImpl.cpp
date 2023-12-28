@@ -86,7 +86,7 @@ bool Jr3Mbed::notifyMessage(const can_message & message)
         return true;
     }
     case can_ops::ACK:
-        return message.len == 1 && ackStateObserver->notify(message.data[0]);
+        return message.len >= 1 && ackStateObserver->notify(message.data, 1);
     case can_ops::FORCES:
     {
         auto [forces, counter] = parseData(message);

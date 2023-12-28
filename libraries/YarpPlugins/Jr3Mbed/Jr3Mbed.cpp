@@ -20,15 +20,15 @@ bool Jr3Mbed::performRequest(const std::string & cmd, const can_message & msg, b
         return false;
     }
 
-    std::uint8_t response;
+    std::uint8_t response[7];
 
-    if (!ackStateObserver->await(&response))
+    if (!ackStateObserver->await(response))
     {
         yCIWarning((quiet ? JR3M_QUIET : JR3M), id()) << "Command" << cmd << "timed out";
         return false;
     }
 
-    if (response != static_cast<unsigned int>(jr3_state::READY))
+    if (response[0] != static_cast<unsigned int>(jr3_state::READY))
     {
         yCIError(JR3M, id()) << "Sensor is in error state";
         status = yarp::dev::MAS_ERROR;

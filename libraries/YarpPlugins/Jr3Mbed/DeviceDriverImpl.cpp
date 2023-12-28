@@ -64,7 +64,7 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
         return false;
     }
 
-    ackStateObserver = new TypedStateObserver<std::uint8_t>(ackTimeout);
+    ackStateObserver = new TypedStateObserver<std::uint8_t[]>(ackTimeout);
 
     if (!config.check("fullScales", "full scales for each axis")) // id-specific
     {

@@ -65,26 +65,27 @@ private:
     // keep this in sync with the firmware
     enum class can_ops : std::uint16_t
     {
-        ACK         = 0x100,
-        START_SYNC  = 0x180,
-        START_ASYNC = 0x200,
-        STOP        = 0x280,
-        ZERO_OFFS   = 0x300,
-        SET_FILTER  = 0x380,
-        GET_FS      = 0x400,
-        GET_STATE   = 0x480,
-        RESET       = 0x500,
-        FORCES      = 0x580,
-        MOMENTS     = 0x600,
-        BOOTUP      = 0x700,
+        ACK            = 0x100,
+        START_SYNC     = 0x180,
+        START_ASYNC    = 0x200,
+        STOP           = 0x280,
+        ZERO_OFFS      = 0x300,
+        SET_FILTER     = 0x380,
+        GET_STATE      = 0x400,
+        GET_FS_FORCES  = 0x480,
+        GET_FS_MOMENTS = 0x500,
+        RESET          = 0x580,
+        FORCES         = 0x600,
+        MOMENTS        = 0x680,
+        BOOTUP         = 0x700,
     };
-
-    enum class jr3_mode
-    { SYNC, ASYNC, INVALID };
 
     // keep this in sync with the firmware
     enum class jr3_state : std::uint8_t
     { READY = 0x00, NOT_INITIALIZED = 0x01 };
+
+    enum class jr3_mode
+    { SYNC, ASYNC, INVALID };
 
     constexpr unsigned int getCommandId(can_ops op) const
     { return canId + static_cast<unsigned int>(op); }
@@ -106,7 +107,7 @@ private:
     jr3_mode mode {jr3_mode::INVALID};
 
     ICanSenderDelegate * sender {nullptr};
-    TypedStateObserver<std::uint8_t> * ackStateObserver {nullptr};
+    TypedStateObserver<std::uint8_t[]> * ackStateObserver {nullptr};
 
     mutable std::mutex mtx;
 
