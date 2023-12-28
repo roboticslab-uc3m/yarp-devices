@@ -2,6 +2,8 @@
 
 #include "Jr3Mbed.hpp"
 
+#include <functional> // std::bind
+
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
 
@@ -127,77 +129,8 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
         return false;
     }
 
-    monitorThread = new yarp::os::Timer(monitorPeriod, [this](const auto & event)
-        {
-            if (isBooting.exchange(false)) // enter the condition if true, then set to false
-            {
-                status = yarp::dev::MAS_WAITING_FOR_FIRST_READ;
-
-                if (sender)
-                {
-                    sender->reportAvailability(true, canId);
-                }
-
-                if (!initialize() && sender)
-                {
-                    sender->reportAvailability(false, canId);
-                }
-
-                return true;
-            }
-
-            mtx.lock();
-            auto elapsed = event.currentReal - timestamp;
-            auto counter = frameCounter;
-            mtx.unlock();
-
-            if (elapsed < event.lastDuration) // we have received data in time
-            {
-                // either timeout or awaiting first read
-                if (status.exchange(yarp::dev::MAS_OK) != yarp::dev::MAS_OK)
-                {
-                    yCIInfo(JR3M, id()) << "Sensor is responding";
-
-                    if (sender)
-                    {
-                        sender->reportAvailability(true, canId);
-                    }
-
-                    lastDiagnosticsTimestamp = event.currentReal;
-                    lastFrameCounter = counter;
-                }
-                else if (diagnosticsPeriod != 0.0 && event.currentReal - lastDiagnosticsTimestamp > diagnosticsPeriod)
-                {
-                    auto diff = lastFrameCounter > counter ? counter + (0xFFFF - lastFrameCounter) : counter - lastFrameCounter;
-                    auto rate = diff / (event.currentReal - lastDiagnosticsTimestamp);
-                    yCIDebug(JR3M, id()) << "Frame rate:" << rate << "Hz, " << diff << "packets";
-                    lastDiagnosticsTimestamp = event.currentReal;
-                }
-            }
-            else if (status == yarp::dev::MAS_ERROR)
-            {
-                // reportAvailability() has already been called from performRequest()
-            }
-            else if (status == yarp::dev::MAS_WAITING_FOR_FIRST_READ)
-            {
-                // nothing to do here
-            }
-            else if (status.exchange(yarp::dev::MAS_TIMEOUT) == yarp::dev::MAS_OK)
-            {
-                yCIWarning(JR3M, id()) << "Sensor has timed out, last data was received" << elapsed << "seconds ago";
-
-                if (sender)
-                {
-                    sender->reportAvailability(false, canId);
-                }
-            }
-            else
-            {
-                // still in timeout state
-            }
-
-            return true;
-        }, false);
+    using namespace std::placeholders;
+    monitorThread = new yarp::os::Timer(monitorPeriod, std::bind(&Jr3Mbed::monitorWorker, this, _1), false);
 
     // no more than 8 seconds since packets arrive at 8 KHz and the counter is only 16 bits wide (it overflows every 65536 frames)
     diagnosticsPeriod = config.check("diagnosticsPeriod", yarp::os::Value(0.0), "diagnostics period (seconds)").asFloat64();

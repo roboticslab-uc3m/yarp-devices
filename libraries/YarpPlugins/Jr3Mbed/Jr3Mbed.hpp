@@ -97,6 +97,8 @@ private:
     bool ping();
     bool queryFullScales();
 
+    bool monitorWorker(const yarp::os::YarpTimerEvent & event);
+
     unsigned int canId {0};
 
     double filter {0.0}; // cutoff frequency [Hz]
