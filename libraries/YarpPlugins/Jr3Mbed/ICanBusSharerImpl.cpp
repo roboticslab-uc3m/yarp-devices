@@ -99,14 +99,14 @@ bool Jr3Mbed::notifyMessage(const can_message & message)
         auto [forces, counter] = parseData(message);
         std::lock_guard lock(mtx);
         buffer = forces;
-        integrityCounter = counter;
+        frameCounter = counter;
         return true;
     }
     case can_ops::MOMENTS:
     {
         auto [moments, counter] = parseData(message);
 
-        if (std::lock_guard lock(mtx); counter == integrityCounter)
+        if (std::lock_guard lock(mtx); counter == frameCounter)
         {
             std::copy(buffer.cbegin(), buffer.cend(), raw.begin());
             std::copy(moments.cbegin(), moments.cend(), raw.begin() + 3);

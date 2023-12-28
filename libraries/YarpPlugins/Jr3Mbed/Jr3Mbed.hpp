@@ -119,7 +119,10 @@ private:
     std::atomic<yarp::dev::MAS_status> status {yarp::dev::MAS_UNKNOWN};
     std::atomic_bool isBooting {false};
     double timestamp {0.0};
-    std::uint16_t integrityCounter {0};
+    std::uint16_t frameCounter {0};
+    double diagnosticsPeriod {0.0};
+    double lastDiagnosticsTimestamp {0.0};
+    unsigned int lastFrameCounter {0};
 
     yarp::os::Timer * monitorThread {nullptr};
 

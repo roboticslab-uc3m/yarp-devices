@@ -148,6 +148,7 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
 
             mtx.lock();
             auto elapsed = event.currentReal - timestamp;
+            auto counter = frameCounter;
             mtx.unlock();
 
             if (elapsed < event.lastDuration) // we have received data in time
@@ -161,6 +162,16 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
                     {
                         sender->reportAvailability(true, canId);
                     }
+
+                    lastDiagnosticsTimestamp = event.currentReal;
+                    lastFrameCounter = counter;
+                }
+                else if (diagnosticsPeriod != 0.0 && event.currentReal - lastDiagnosticsTimestamp > diagnosticsPeriod)
+                {
+                    auto diff = lastFrameCounter > counter ? counter + (0xFFFF - lastFrameCounter) : counter - lastFrameCounter;
+                    auto rate = diff / (event.currentReal - lastDiagnosticsTimestamp);
+                    yCIDebug(JR3M, id()) << "Frame rate:" << rate << "Hz, " << diff << "packets";
+                    lastDiagnosticsTimestamp = event.currentReal;
                 }
             }
             else if (status == yarp::dev::MAS_ERROR)
@@ -187,6 +198,15 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
 
             return true;
         }, false);
+
+    // no more than 8 seconds since packets arrive at 8 KHz and the counter is only 16 bits wide (it overflows every 65536 frames)
+    diagnosticsPeriod = config.check("diagnosticsPeriod", yarp::os::Value(0.0), "diagnostics period (seconds)").asFloat64();
+
+    if (diagnosticsPeriod < 0.0)
+    {
+        yCIError(JR3M, id()) << R"(Illegal "diagnosticsPeriod" value:)" << diagnosticsPeriod;
+        return false;
+    }
 
     return true;
 }
