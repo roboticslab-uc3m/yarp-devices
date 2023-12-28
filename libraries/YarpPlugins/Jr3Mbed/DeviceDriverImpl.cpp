@@ -9,8 +9,6 @@
 
 using namespace roboticslab;
 
-constexpr auto FULL_SCALE = 16384; // 2^14
-
 constexpr auto DEFAULT_ACK_TIMEOUT = 0.01; // [s]
 constexpr auto DEFAULT_MONITOR_PERIOD = 0.1; // [s]
 constexpr auto DEFAULT_FILTER = 0.0; // [Hz], 0.0 = no filter
@@ -82,6 +80,8 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
             return false;
         }
 
+        yCIInfo(JR3M, id()) << "Using full scales from configuration file:" << fullScalesValue.toString();
+
         const auto * fullScales = fullScalesValue.asList();
 
         for (int i = 0; i < 3; i++)
@@ -96,8 +96,8 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
     }
     else
     {
-        yCIError(JR3M, id()) << R"(Missing "fullScales" property)";
-        return false;
+        yCIInfo(JR3M, id()) << R"(Missing "fullScales" property, will be queried from sensor on startup)";
+        shouldQueryFullScales = true;
     }
 
     if (jr3Group.check("asyncPeriod", "period of asynchronous publishing mode (seconds)"))

@@ -48,16 +48,23 @@ bool Jr3Mbed::initialize()
         return false;
     }
 
+    bool ret = false;
+
     switch (mode)
     {
     case jr3_mode::SYNC:
-        return sendStartSyncCommand(filter);
+        ret = sendStartSyncCommand(filter);
     case jr3_mode::ASYNC:
-        return sendStartAsyncCommand(filter, asyncPeriod);
+        ret = sendStartAsyncCommand(filter, asyncPeriod);
     default:
         yCIError(JR3M, id()) << "Unknown mode:" << static_cast<int>(mode);
         return false;
     }
+
+    ret = ret && (!shouldQueryFullScales || queryFullScales());
+    ret = ret && sendCommand("zero offsets", can_ops::ZERO_OFFS);
+
+    return ret;
 }
 
 // -----------------------------------------------------------------------------
@@ -86,7 +93,7 @@ bool Jr3Mbed::notifyMessage(const can_message & message)
         return true;
     }
     case can_ops::ACK:
-        return message.len >= 1 && ackStateObserver->notify(message.data, 1);
+        return ackStateObserver->notify(message.data, message.len);
     case can_ops::FORCES:
     {
         auto [forces, counter] = parseData(message);

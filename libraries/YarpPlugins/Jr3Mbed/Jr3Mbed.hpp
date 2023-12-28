@@ -90,11 +90,12 @@ private:
     constexpr unsigned int getCommandId(can_ops op) const
     { return canId + static_cast<unsigned int>(op); }
 
-    bool performRequest(const std::string & cmd, const can_message & msg, bool quiet = false);
+    bool performRequest(const std::string & cmd, const can_message & msg, std::uint8_t * response, bool quiet = false);
     bool sendStartSyncCommand(double filter);
     bool sendStartAsyncCommand(double filter, double delay);
     bool sendCommand(const std::string & cmd, can_ops op);
     bool ping();
+    bool queryFullScales();
 
     unsigned int canId {0};
 
@@ -103,6 +104,7 @@ private:
 
     std::string name;
     std::array<double, 6> scales;
+    bool shouldQueryFullScales {false};
 
     jr3_mode mode {jr3_mode::INVALID};
 
@@ -120,6 +122,8 @@ private:
     std::uint16_t integrityCounter {0};
 
     yarp::os::Timer * monitorThread {nullptr};
+
+    static constexpr unsigned int FULL_SCALE = 16384; // 2^14
 };
 
 } // namespace roboticslab
