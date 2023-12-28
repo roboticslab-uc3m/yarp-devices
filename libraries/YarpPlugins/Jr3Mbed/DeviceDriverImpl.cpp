@@ -141,7 +141,7 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
         return false;
     }
 
-    return true;
+    return monitorThread->start();
 }
 
 // -----------------------------------------------------------------------------
