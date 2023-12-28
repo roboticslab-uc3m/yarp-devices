@@ -247,17 +247,21 @@ attachToMapper:
             return false;
         }
 
-        yarp::dev::IWrapper * iWrapper;
+        yarp::dev::IWrapper * iWrapper = nullptr; // controlBoard_nws_yarp & multipleanalogsensorsserver
+        yarp::dev::IMultipleWrapper * iMultipleWrapper = nullptr; // only multipleanalogsensorsserver
 
-        if (!wrapperDevice->view(iWrapper))
+        if (!wrapperDevice->view(iWrapper) && !wrapperDevice->view(iMultipleWrapper))
         {
-            yCError(LCB) << "Unable to view IWrapper in" << wrapperDeviceLabel;
+            yCError(LCB) << "Unable to view IWrapper nor IMultipleWrapper in" << wrapperDeviceLabel;
             return false;
         }
 
         yarp::dev::PolyDriverDescriptor * linkedMapperDevice = mapperDevices[i];
 
-        if (!iWrapper->attach(linkedMapperDevice->poly))
+        yarp::dev::PolyDriverList tempList;
+        tempList.push(*linkedMapperDevice);
+
+        if ((iWrapper && !iWrapper->attach(linkedMapperDevice->poly)) || (iMultipleWrapper && !iMultipleWrapper->attachAll(tempList)))
         {
             yCError(LCB) << "Unable to attach mapper device" << linkedMapperDevice->key << "to wrapper device" << wrapperDeviceLabel;
             return false;
