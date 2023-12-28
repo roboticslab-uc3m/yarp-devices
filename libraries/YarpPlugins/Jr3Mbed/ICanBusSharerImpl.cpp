@@ -76,9 +76,7 @@ bool Jr3Mbed::finalize()
 
 bool Jr3Mbed::notifyMessage(const can_message & message)
 {
-    const auto op = static_cast<can_ops>((message.id - canId) >> 7);
-
-    switch (op)
+    switch (static_cast<can_ops>(message.id - canId))
     {
     case can_ops::BOOTUP:
     {
@@ -111,7 +109,7 @@ bool Jr3Mbed::notifyMessage(const can_message & message)
         return true;
     }
     default:
-        yCIWarning(JR3M, id()) << "Unsupported operation:" << static_cast<unsigned int>(op);
+        yCIWarning(JR3M, id()) << "Unsupported operation";
         return false;
     }
 }
