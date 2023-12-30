@@ -54,9 +54,9 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
         std::vector<ICanBusSharer *> busSharers;
         yarp::os::Bottle nodeIds;
 
-        for (int i = 0; i < nodes->size(); i++)
+        for (int j = 0; j < nodes->size(); j++)
         {
-            auto node = nodes->get(i).asString();
+            auto node = nodes->get(j).asString();
             auto isFakeNode = node.rfind("fake-", 0) == 0; // starts with "fake-"?
 
             yarp::os::Property nodeOptions;
