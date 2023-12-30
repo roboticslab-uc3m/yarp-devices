@@ -180,6 +180,16 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
                 iCanBusSharer->registerSender(broker->getWriter()->getDelegate());
             }
         }
+        else
+        {
+            auto * broker = new FakeBusBroker();
+            brokers.push_back(broker);
+
+            for (auto * iCanBusSharer : busSharers)
+            {
+                iCanBusSharer->registerSender(broker->getDelegate());
+            }
+        }
     }
 
     for (auto * broker : brokers)

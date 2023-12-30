@@ -43,6 +43,20 @@ private:
     std::unordered_map<unsigned int, bool> nodeAvailability;
 };
 
+/**
+ * @ingroup CanBusBroker
+ * @brief A sender delegate that does nothing.
+ */
+class FakeCanSenderDelegate : public ICanSenderDelegate
+{
+public:
+    bool prepareMessage(const can_message & msg) override
+    { return true; }
+
+    void reportAvailability(bool available, unsigned int id) override
+    { }
+};
+
 } // namespace roboticslab
 
 #endif // __YARP_CAN_SENDER_DELEGATE_HPP__

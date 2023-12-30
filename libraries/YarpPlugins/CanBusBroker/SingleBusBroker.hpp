@@ -101,6 +101,28 @@ private:
     BusLoadMonitor * busLoadMonitor;
 };
 
+/**
+ * @ingroup CanBusBroker
+ * @brief Fake message broker of a CAN bus.
+ *
+ * This class is used to instantiate a CAN bus broker without a real CAN bus.
+ */
+class FakeBusBroker final
+{
+public:
+    //! Constructor.
+    FakeBusBroker();
+
+    //! Destructor.
+    ~FakeBusBroker();
+
+    //! Retrieve a handle to the fake CAN sender delegate.
+    ICanSenderDelegate * getDelegate();
+
+private:
+    ICanSenderDelegate * sender;
+};
+
 } // namespace roboticslab
 
 #endif // __SINGLE_BUS_BROKER_HPP__

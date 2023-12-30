@@ -8,6 +8,7 @@
 
 #include "CanUtils.hpp"
 #include "LogComponent.hpp"
+#include "YarpCanSenderDelegate.hpp"
 
 using namespace roboticslab;
 
@@ -320,6 +321,19 @@ void SingleBusBroker::onRead(yarp::os::Bottle & b)
     can_message msg {id, size, raw.get()};
     writerThread->getDelegate()->prepareMessage(msg);
     yCInfo(CBB, "Remote command: %s", CanUtils::msgToStr(msg).c_str());
+}
+
+// -----------------------------------------------------------------------------
+
+FakeBusBroker::FakeBusBroker()
+    : sender(new FakeCanSenderDelegate())
+{ }
+
+// -----------------------------------------------------------------------------
+
+FakeBusBroker::~FakeBusBroker()
+{
+    delete sender;
 }
 
 // -----------------------------------------------------------------------------
