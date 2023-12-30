@@ -117,9 +117,6 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
             }
         }
 
-        yarp::os::Property canBusOptions;
-        canBusOptions.setMonitor(config.getMonitor(), canBus.c_str());
-
         if (!isFakeBus)
         {
             const auto & canBusGroup = robotConfig->findGroup(canBus);
@@ -130,6 +127,8 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
                 return false;
             }
 
+            yarp::os::Property canBusOptions;
+            canBusOptions.setMonitor(config.getMonitor(), canBus.c_str());
             canBusOptions.fromString(canBusGroup.toString());
             canBusOptions.put("robotConfig", config.find("robotConfig"));
             canBusOptions.put("blockingMode", false); // enforce non-blocking mode
@@ -142,23 +141,16 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
             {
                 canBusOptions.put("filteredIds", yarp::os::Value::makeList(nodeIds.toString().c_str()));
             }
-        }
-        else
-        {
-            canBusOptions.put("device", "CanBusFake");
-        }
 
-        auto * canBusDevice = new yarp::dev::PolyDriver;
-        busDevices.push_back(canBusDevice);
+            auto * canBusDevice = new yarp::dev::PolyDriver;
+            busDevices.push_back(canBusDevice);
 
-        if (!canBusDevice->open(canBusOptions))
-        {
-            yCError(CBB) << "canBusDevice instantiation failed:" << canBus;
-            return false;
-        }
+            if (!canBusDevice->open(canBusOptions))
+            {
+                yCError(CBB) << "canBusDevice instantiation failed:" << canBus;
+                return false;
+            }
 
-        if (!isFakeBus)
-        {
             auto * broker = new SingleBusBroker(canBus);
             brokers.push_back(broker);
 
@@ -211,32 +203,35 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
             return false;
         }
 
-        FutureTaskFactory * taskFactory;
+        FutureTaskFactory * taskFactory = nullptr;
 
         if (busDevices.size() > 1)
         {
             taskFactory = new ParallelTaskFactory(busDevices.size());
         }
-        else
+        else if (busDevices.size() == 1)
         {
             taskFactory = new SequentialTaskFactory;
         }
 
-        syncThread = new SyncPeriodicThread(brokers, taskFactory); // owns `taskFactory`
-        syncThread->setPeriod(syncPeriod);
-
-        if (!syncThread->openPort("/sync:o"))
+        if (taskFactory)
         {
-            yCError(CBB) << "Unable to open sync port";
-            return false;
-        }
+            syncThread = new SyncPeriodicThread(brokers, taskFactory); // owns `taskFactory`
+            syncThread->setPeriod(syncPeriod);
 
-        yarp::os::Value * obs;
+            if (!syncThread->openPort("/sync:o"))
+            {
+                yCError(CBB) << "Unable to open sync port";
+                return false;
+            }
 
-        if (config.check("syncObserver", obs, "synchronization signal observer"))
-        {
-            auto * observer = *reinterpret_cast<TypedStateObserver<double> * const *>(obs->asBlob());
-            syncThread->setObserver(observer);
+            yarp::os::Value * obs;
+
+            if (config.check("syncObserver", obs, "synchronization signal observer"))
+            {
+                auto * observer = *reinterpret_cast<TypedStateObserver<double> * const *>(obs->asBlob());
+                syncThread->setObserver(observer);
+            }
         }
     }
     else
