@@ -66,12 +66,6 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
 
     ackStateObserver = new TypedStateObserver<std::uint8_t[]>(ackTimeout);
 
-    if (!config.check("fullScales", "full scales for each axis")) // id-specific
-    {
-        yCIError(JR3M, id()) << R"(Missing "fullScales" property)";
-        return false;
-    }
-
     if (jr3Group.check("fullScales", "list of full scales for each axis (3*N, 3*daNm)"))
     {
         const auto & fullScalesValue = jr3Group.find("fullScales");
