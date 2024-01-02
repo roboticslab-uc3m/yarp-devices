@@ -177,8 +177,9 @@ bool Jr3Mbed::monitorWorker(const yarp::os::YarpTimerEvent & event)
         {
             auto diff = lastFrameCounter > counter ? counter + (0xFFFF - lastFrameCounter) : counter - lastFrameCounter;
             auto rate = diff / (event.currentReal - lastDiagnosticsTimestamp);
-            yCIDebug(JR3M, id()) << "Frame rate:" << rate << "Hz, " << diff << "packets";
+            yCIDebug(JR3M, id()) << "Frame rate:" << rate << "Hz," << diff << "packets";
             lastDiagnosticsTimestamp = event.currentReal;
+            lastFrameCounter = counter;
         }
     }
     else if (status == yarp::dev::MAS_ERROR)
