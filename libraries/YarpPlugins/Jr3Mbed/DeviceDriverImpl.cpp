@@ -127,7 +127,7 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
     monitorThread = new yarp::os::Timer(monitorPeriod, std::bind(&Jr3Mbed::monitorWorker, this, _1), false);
 
     // no more than 8 seconds since packets arrive at 8 KHz and the counter is only 16 bits wide (it overflows every 65536 frames)
-    diagnosticsPeriod = config.check("diagnosticsPeriod", yarp::os::Value(0.0), "diagnostics period (seconds)").asFloat64();
+    diagnosticsPeriod = jr3Group.check("diagnosticsPeriod", yarp::os::Value(0.0), "diagnostics period (seconds)").asFloat64();
 
     if (diagnosticsPeriod < 0.0)
     {
