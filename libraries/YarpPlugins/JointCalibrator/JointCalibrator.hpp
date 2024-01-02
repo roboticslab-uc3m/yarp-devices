@@ -38,7 +38,7 @@ struct MovementSpecs
  */
 class JointCalibrator : public yarp::dev::DeviceDriver,
                         public yarp::dev::IRemoteCalibrator,
-                        public yarp::dev::IWrapper
+                        public yarp::dev::WrapperSingle
 {
 public:
     JointCalibrator()

@@ -4,7 +4,7 @@
  * @ingroup yarp_devices_examples_cpp
  * @defgroup exampleRemoteControlBoardModule exampleRemoteControlBoardModule
  *
- * @brief This example connects to a remote control board device (e.g. @ref CanBusControlBoard) as a module.
+ * @brief This example connects to a remote control board device (e.g. @ref CanBusBroker) as a module.
  *
  * <b>Legal</b>
  *

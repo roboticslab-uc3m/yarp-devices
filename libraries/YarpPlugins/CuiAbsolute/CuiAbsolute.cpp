@@ -28,7 +28,7 @@ bool CuiAbsolute::performRequest(const std::string & name, unsigned int len, con
 
         if (v ? pollStateObserver->await(v) : pushStateObserver->await())
         {
-            yCIInfo(CUI, id(), "Succesfully processed \"%s\" command (%d/%d)", name.c_str(), retry, maxRetries);
+            yCIInfo(CUI, id(), "Successfully processed \"%s\" command (%d/%d)", name.c_str(), retry, maxRetries);
             normalize(v);
             return true;
         }

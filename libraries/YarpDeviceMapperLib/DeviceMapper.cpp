@@ -2,9 +2,15 @@
 
 #include "DeviceMapper.hpp"
 
+#include <functional> // std::function
+#include <typeindex> // std::type_index
+#include <utility> // std::move
+
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
+
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
 using namespace roboticslab;
 
@@ -15,47 +21,49 @@ namespace
 
 namespace
 {
+    using namespace yarp::dev;
+
     bool queryControlledAxes(const RawDevice * rd, int * axes, bool * ret)
     {
-        if (rd->getHandle<yarp::dev::ICurrentControlRaw>())
+        if (auto handle = rd->getHandle<ICurrentControlRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::ICurrentControlRaw>()->getNumberOfMotorsRaw(axes);
+            *ret = handle->getNumberOfMotorsRaw(axes);
         }
-        else if (rd->getHandle<yarp::dev::IEncodersRaw>())
+        else if (auto handle = rd->getHandle<IEncodersRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::IEncodersRaw>()->getAxes(axes);
+            *ret = handle->getAxes(axes);
         }
-        else if (rd->getHandle<yarp::dev::IImpedanceControlRaw>())
+        else if (auto handle = rd->getHandle<IImpedanceControlRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::IImpedanceControlRaw>()->getAxes(axes);
+            *ret = handle->getAxes(axes);
         }
-        else if (rd->getHandle<yarp::dev::IMotorRaw>())
+        else if (auto handle = rd->getHandle<IMotorRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::IMotorRaw>()->getNumberOfMotorsRaw(axes);
+            *ret = handle->getNumberOfMotorsRaw(axes);
         }
-        else if (rd->getHandle<yarp::dev::IMotorEncodersRaw>())
+        else if (auto handle = rd->getHandle<IMotorEncodersRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::IMotorEncodersRaw>()->getNumberOfMotorEncodersRaw(axes);
+            *ret = handle->getNumberOfMotorEncodersRaw(axes);
         }
-        else if (rd->getHandle<yarp::dev::IPositionControlRaw>())
+        else if (auto handle = rd->getHandle<IPositionControlRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::IPositionControlRaw>()->getAxes(axes);
+            *ret = handle->getAxes(axes);
         }
-        else if (rd->getHandle<yarp::dev::IPositionDirectRaw>())
+        else if (auto handle = rd->getHandle<IPositionDirectRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::IPositionDirectRaw>()->getAxes(axes);
+            *ret = handle->getAxes(axes);
         }
-        else if (rd->getHandle<yarp::dev::IPWMControlRaw>())
+        else if (auto handle = rd->getHandle<IPWMControlRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::IPWMControlRaw>()->getNumberOfMotorsRaw(axes);
+            *ret = handle->getNumberOfMotorsRaw(axes);
         }
-        else if (rd->getHandle<yarp::dev::IVelocityControlRaw>())
+        else if (auto handle = rd->getHandle<IVelocityControlRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::IVelocityControlRaw>()->getAxes(axes);
+            *ret = handle->getAxes(axes);
         }
-        else if (rd->getHandle<yarp::dev::ITorqueControlRaw>())
+        else if (auto handle = rd->getHandle<ITorqueControlRaw>(); handle != nullptr)
         {
-            *ret = rd->getHandle<yarp::dev::ITorqueControlRaw>()->getAxes(axes);
+            *ret = handle->getAxes(axes);
         }
         else
         {
@@ -64,10 +72,43 @@ namespace
 
         return true;
     }
+
+    template<typename T>
+    bool _queryHelper(const RawDevice * rd, const std::function<void(int, std::type_index)> & cb, std::size_t (T::*fn)() const)
+    {
+        if (auto handle = rd->getHandle<T>(); handle != nullptr)
+        {
+            if (int count = std::invoke(fn, handle); count != 0)
+            {
+                cb(count, typeid(T));
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool queryConnectedSensors(const RawDevice * rd, std::function<void(int, std::type_index)> cb)
+    {
+        bool connected = false;
+
+        connected |= _queryHelper(rd, cb, &IThreeAxisGyroscopes::getNrOfThreeAxisGyroscopes);
+        connected |= _queryHelper(rd, cb, &IThreeAxisLinearAccelerometers::getNrOfThreeAxisLinearAccelerometers);
+        connected |= _queryHelper(rd, cb, &IThreeAxisMagnetometers::getNrOfThreeAxisMagnetometers);
+        connected |= _queryHelper(rd, cb, &IOrientationSensors::getNrOfOrientationSensors);
+        connected |= _queryHelper(rd, cb, &ITemperatureSensors::getNrOfTemperatureSensors);
+        connected |= _queryHelper(rd, cb, &ISixAxisForceTorqueSensors::getNrOfSixAxisForceTorqueSensors);
+        connected |= _queryHelper(rd, cb, &IContactLoadCellArrays::getNrOfContactLoadCellArrays);
+        connected |= _queryHelper(rd, cb, &IEncoderArrays::getNrOfEncoderArrays);
+        connected |= _queryHelper(rd, cb, &ISkinPatches::getNrOfSkinPatches);
+        connected |= _queryHelper(rd, cb, &IPositionSensors::getNrOfPositionSensors);
+
+        return connected;
+    }
 }
 
 DeviceMapper::DeviceMapper()
-    : totalAxes(0), taskFactory(new SequentialTaskFactory)
+    : taskFactory(new SequentialTaskFactory)
 { }
 
 DeviceMapper::~DeviceMapper()
@@ -82,79 +123,95 @@ void DeviceMapper::enableParallelization(unsigned int concurrentTasks)
 
 bool DeviceMapper::registerDevice(yarp::dev::PolyDriver * driver)
 {
-    const auto * rd = new RawDevice(driver);
+    auto rd = std::make_unique<const RawDevice>(driver);
 
-    int axes;
     bool ret;
+    int localAxes;
+    bool isMotorDevice = queryControlledAxes(rd.get(), &localAxes, &ret);
 
-    if (!queryControlledAxes(rd, &axes, &ret))
+    if (isMotorDevice)
     {
-        yCWarning(DM) << "Unable to get controlled axes: missing interface implementation";
-        delete rd;
-        return false;
+        if (!ret)
+        {
+            yCWarning(DM) << "Motor interface detected, but unable to query controlled axes";
+            return false;
+        }
+
+        motorOffsets.insert(motorOffsets.end(), localAxes, {devices.size(), totalAxes, localAxes});
+        totalAxes += localAxes;
     }
 
-    if (ret)
+    bool isSensorDevice = queryConnectedSensors(rd.get(), [this](int count, std::type_index hashable)
     {
-        rawDeviceIndexAtGlobalAxisIndex.insert(rawDeviceIndexAtGlobalAxisIndex.end(), axes, rawDevicesWithOffsets.size());
-        rawDevicesWithOffsets.emplace_back(rd, totalAxes);
-        totalAxes += axes;
+        sensorOffsets[hashable].insert(sensorOffsets[hashable].end(), count, {devices.size(), connectedSensors[hashable], count});
+        connectedSensors[hashable] += count;
+    });
+
+    if (isMotorDevice || isSensorDevice)
+    {
+        devices.emplace_back(std::move(rd));
         return true;
     }
-    else
+
+    yCWarning(DM) << "Device does not implement any supported interfaces";
+    return false;
+}
+
+DeviceMapper::dev_index_t DeviceMapper::getMotorDevice(int globalAxis) const
+{
+    const auto & [deviceIndex, offset, axes] = motorOffsets[globalAxis];
+    return {devices[deviceIndex].get(), globalAxis - offset};
+}
+
+std::vector<DeviceMapper::dev_index_t> DeviceMapper::getMotorDevicesWithOffsets() const
+{
+    std::vector<dev_index_t> out;
+
+    for (int i = 0; i < totalAxes; /**/)
     {
-        yCWarning(DM) << "Unable to get controlled axes: query failure";
-        delete rd;
-        return false;
+        const auto & [deviceIndex, offset, axes] = motorOffsets[i];
+        out.emplace_back(devices[deviceIndex].get(), offset);
+        i += axes;
     }
+
+    return out;
 }
 
-DeviceMapper::dev_index_t DeviceMapper::getDevice(int globalAxis) const
+std::vector<DeviceMapper::dev_group_t> DeviceMapper::getMotorDevicesWithIndices(int globalAxesCount, const int * globalAxes) const
 {
-    int deviceIndex = rawDeviceIndexAtGlobalAxisIndex[globalAxis];
-    const auto & [rawDevice, offset] = rawDevicesWithOffsets[deviceIndex];
-    return {rawDevice, globalAxis - offset};
-}
-
-const std::vector<DeviceMapper::dev_index_t> & DeviceMapper::getDevicesWithOffsets() const
-{
-    return rawDevicesWithOffsets;
-}
-
-std::vector<DeviceMapper::dev_group_t> DeviceMapper::getDevices(int globalAxesCount, const int * globalAxes) const
-{
-    std::vector<dev_group_t> vec;
+    std::vector<dev_group_t> out;
     int previousDeviceIndex = -1;
 
     for (int i = 0; i < globalAxesCount; i++)
     {
         const int globalAxis = globalAxes[i];
-        const int deviceIndex = rawDeviceIndexAtGlobalAxisIndex[globalAxis];
-        const auto & [rawDevice, offset] = rawDevicesWithOffsets[deviceIndex];
+        const auto & [deviceIndex, offset, localAxes] = motorOffsets[globalAxis];
         const int localIndex = globalAxis - offset;
 
         if (deviceIndex != previousDeviceIndex)
         {
-            vec.emplace_back(rawDevice, std::vector<int>{localIndex}, i);
+            out.emplace_back(devices[deviceIndex].get(), std::vector<int>{localIndex}, i);
             previousDeviceIndex = deviceIndex;
         }
         else
         {
-            std::get<1>(vec.back()).push_back(localIndex);
+            std::get<1>(out.back()).push_back(localIndex);
         }
     }
 
-    return vec;
+    return out;
 }
 
 void DeviceMapper::clear()
 {
-    for (const auto & [device, offset] : rawDevicesWithOffsets)
-    {
-        delete device;
-    }
-
-    rawDevicesWithOffsets.clear();
-    rawDeviceIndexAtGlobalAxisIndex.clear();
+    devices.clear();
+    motorOffsets.clear();
+    sensorOffsets.clear();
+    connectedSensors.clear();
     totalAxes = 0;
+}
+
+const int DeviceMapper::getSensorFailureStatus()
+{
+    return yarp::dev::MAS_UNKNOWN;
 }

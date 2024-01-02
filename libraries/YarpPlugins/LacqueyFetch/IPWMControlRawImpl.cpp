@@ -29,7 +29,7 @@ bool LacqueyFetch::setRefDutyCycleRaw(int m, double ref)
 
     ref = std::clamp(ref, -100.0, 100.0);
 
-    const std::size_t len = sizeof refDutyCycles;
+    const std::size_t len = sizeof(refDutyCycles);
     std::uint8_t msgData[len];
     refDutyCycles = ref;
     std::memcpy(msgData, &refDutyCycles, len);

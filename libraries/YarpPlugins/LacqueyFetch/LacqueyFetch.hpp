@@ -39,10 +39,6 @@ class LacqueyFetch : public yarp::dev::DeviceDriver,
                      public ICanBusSharer
 {
 public:
-
-    LacqueyFetch() : canId(0), refDutyCycles(), sender(nullptr)
-    { }
-
     //  --------- DeviceDriver declarations. Implementation in LacqueyFetch.cpp ---------
 
     bool open(yarp::os::Searchable & config) override;
@@ -83,14 +79,15 @@ public:
     bool getDutyCyclesRaw(double * vals) override;
 
 private:
+    static constexpr unsigned int CAN_OP = 0x780; // keep in sync with firmware
 
     bool send(unsigned int len, const std::uint8_t * msgData)
-    { return sender && sender->prepareMessage({canId, len, msgData}); }
+    { return sender && sender->prepareMessage({CAN_OP + canId, len, msgData}); }
 
-    unsigned int canId;
+    unsigned int canId {0};
     std::string axisName;
-    yarp::conf::float32_t refDutyCycles;
-    ICanSenderDelegate * sender;
+    yarp::conf::float32_t refDutyCycles {0};
+    ICanSenderDelegate * sender {nullptr};
 };
 
 } // namespace roboticslab
