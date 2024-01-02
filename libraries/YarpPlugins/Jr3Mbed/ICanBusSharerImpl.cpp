@@ -25,7 +25,7 @@ namespace
         std::memcpy(&data, message.data, message.len);
 
         return {{
-            static_cast<std::int16_t>(data & 0x000000000000FFFF),
+            static_cast<std::int16_t> (data & 0x000000000000FFFF),
             static_cast<std::int16_t>((data & 0x00000000FFFF0000) >> 16),
             static_cast<std::int16_t>((data & 0x0000FFFF00000000) >> 32)
         }, static_cast<std::uint16_t>((data & 0xFFFF000000000000) >> 48)};
@@ -54,8 +54,10 @@ bool Jr3Mbed::initialize()
     {
     case jr3_mode::SYNC:
         ret = sendStartSyncCommand(filter);
+        break;
     case jr3_mode::ASYNC:
         ret = sendStartAsyncCommand(filter, asyncPeriod);
+        break;
     default:
         yCIError(JR3M, id()) << "Unknown mode:" << static_cast<int>(mode);
         return false;
@@ -116,7 +118,7 @@ bool Jr3Mbed::notifyMessage(const can_message & message)
         return true;
     }
     default:
-        yCIWarning(JR3M, id()) << "Unsupported operation";
+        yCIWarning(JR3M, id(), "Unsupported operation: 0x%02x", message.id - canId);
         return false;
     }
 }

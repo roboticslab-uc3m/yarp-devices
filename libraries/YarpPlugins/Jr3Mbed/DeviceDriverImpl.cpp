@@ -11,7 +11,7 @@
 
 using namespace roboticslab;
 
-constexpr auto DEFAULT_ACK_TIMEOUT = 0.01; // [s]
+constexpr auto DEFAULT_ACK_TIMEOUT = 0.25; // [s], **BEWARE**: start/stop takes time
 constexpr auto DEFAULT_MONITOR_PERIOD = 0.1; // [s]
 constexpr auto DEFAULT_FILTER = 0.0; // [Hz], 0.0 = no filter
 

@@ -74,7 +74,11 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
 
                 nodeOptions.fromString(nodeGroup.toString());
                 nodeOptions.put("robotConfig", config.find("robotConfig"));
-                nodeOptions.put("syncPeriod", config.find("syncPeriod"));
+
+                if (config.check("syncPeriod"))
+                {
+                    nodeOptions.put("syncPeriod", config.find("syncPeriod"));
+                }
             }
             else
             {
