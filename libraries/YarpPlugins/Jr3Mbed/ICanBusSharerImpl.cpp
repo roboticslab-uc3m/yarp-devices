@@ -64,7 +64,9 @@ bool Jr3Mbed::initialize()
     }
 
     ret = ret && (!shouldQueryFullScales || queryFullScales());
-    ret = ret && sendCommand("zero offsets", can_ops::ZERO_OFFS);
+
+    // wait for the sensor data to settle, otherwise zeroing will be inaccurate
+    ret = ret && (yarp::os::SystemClock::delaySystem(0.1), sendCommand("zero offsets", can_ops::ZERO_OFFS));
 
     return ret;
 }
