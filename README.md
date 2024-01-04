@@ -42,6 +42,8 @@ Some tricks for the different devices contained in this repository can be found 
 ## Similar and Related Projects
 
 - See [robotology/yarp#2372](https://github.com/robotology/yarp/issues/2372)
+- [roboticslab-uc3m/amor-yarp-devices](https://github.com/roboticslab-uc3m/amor-yarp-devices)
+- [roboticslab-uc3m/dextra-yarp-devices](https://github.com/roboticslab-uc3m/dextra-yarp-devices)
 - [asrob-uc3m/yarp-devices](https://github.com/asrob-uc3m/yarp-devices)
 - [HUMASoft/yarp-devices](https://github.com/HUMASoft/yarp-devices)
 - [HUMASoft/CiA402Device](https://github.com/HUMASoft/CiA402Device)
