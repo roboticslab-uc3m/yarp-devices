@@ -42,7 +42,7 @@ bool CuiAbsolute::open(yarp::os::Searchable & config)
     timeout = cuiGroup.check("timeout", yarp::os::Value(DEFAULT_TIMEOUT), "timeout (seconds)").asFloat64();
     maxRetries = cuiGroup.check("maxRetries", yarp::os::Value(DEFAULT_MAX_RETRIES), "max retries on timeout").asFloat64();
 
-    if (canId <= 0)
+    if (canId <= 0 || canId > 127)
     {
         yCError(CUI) << "Illegal CAN ID:" << canId;
         return false;

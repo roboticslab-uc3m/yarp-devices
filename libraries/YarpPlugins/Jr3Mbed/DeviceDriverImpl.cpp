@@ -42,13 +42,13 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
     name = config.check("name", yarp::os::Value(""), "sensor name").asString(); // id-specific
     filter = jr3Group.check("filter", yarp::os::Value(DEFAULT_FILTER), "cutoff frequency for low-pass filter (Hertz)").asFloat64();
 
-    if (canId <= 0)
+    if (canId <= 0 || canId > 127)
     {
         yCError(JR3M) << "Illegal CAN ID:" << canId;
         return false;
     }
 
-    if (filter < 0.0)
+    if (filter < 0.0 || filter > 655.35) // (2^16 - 1) / 100
     {
         yCError(JR3M) << "Illegal filter value:" << filter;
         return false;
