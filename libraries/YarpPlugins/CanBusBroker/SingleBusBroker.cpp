@@ -13,17 +13,6 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-SingleBusBroker::SingleBusBroker(const std::string & _name)
-    : name(_name),
-      readerThread(nullptr),
-      writerThread(nullptr),
-      iCanBus(nullptr),
-      iCanBufferFactory(nullptr),
-      busLoadMonitor(nullptr)
-{ }
-
-// -----------------------------------------------------------------------------
-
 SingleBusBroker::~SingleBusBroker()
 {
     stopThreads();
@@ -58,8 +47,8 @@ bool SingleBusBroker::configure(const yarp::os::Searchable & config)
         return false;
     }
 
-    readerThread = new CanReaderThread(name, rxDelay, rxBufferSize);
-    writerThread = new CanWriterThread(name, txDelay, txBufferSize);
+    readerThread = new CanReaderThread(busName, rxDelay, rxBufferSize);
+    writerThread = new CanWriterThread(busName, txDelay, txBufferSize);
 
     if (config.check("name", "YARP port prefix for remote CAN interface"))
     {
@@ -121,6 +110,7 @@ bool SingleBusBroker::registerDevice(yarp::dev::PolyDriver * driver)
         writerThread->setCanHandles(iCanBus, iCanBufferFactory);
     }
 
+    registered = true;
     return true;
 }
 
@@ -205,7 +195,7 @@ bool SingleBusBroker::clearFilters()
     // Clear CAN acceptance filters ('0' = all IDs that were previously set by canIdAdd).
     if (!iCanBus->canIdDelete(0))
     {
-        yCWarning(CBB) << "CAN filters on bus" << name << "may be preserved on the next run";
+        yCWarning(CBB) << "CAN filters on bus" << busName << "may be preserved on the next run";
         return false;
     }
 

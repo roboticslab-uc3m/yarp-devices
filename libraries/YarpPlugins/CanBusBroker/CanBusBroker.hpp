@@ -5,6 +5,7 @@
 
 #include <vector>
 
+#include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
@@ -25,7 +26,7 @@ namespace roboticslab
 
 /**
  * @ingroup CanBusBroker
- * @brief CAN-oriented control board that implements all YARP motor interfaces.
+ * @brief CAN-oriented control board that implements all YARP motor and MAS interfaces.
  *
  * This control board wrapper subdevice exposes motor commands to CAN nodes
  * modelled as wrapped motor raw subdevices (i.e. devices which implement the
@@ -38,6 +39,7 @@ namespace roboticslab
  * <a href="https://github.com/roboticslab-uc3m/yarp-devices/issues/241#issuecomment-569112698">instructions</a>.
  */
 class CanBusBroker : public yarp::dev::DeviceDriver,
+                     public yarp::dev::IMultipleWrapper,
                      // control board interfaces
                      public yarp::dev::IAmplifierControl,
                      public yarp::dev::IAxisInfo,
@@ -78,6 +80,11 @@ public:
 
     bool open(yarp::os::Searchable & config) override;
     bool close() override;
+
+    // -------- IMultipleWrapper declarations. Implementation in IMultipleWrapperImpl.cpp --------
+
+    bool attachAll(const yarp::dev::PolyDriverList & drivers) override;
+    bool detachAll() override;
 
     // ---------- CONTROL BOARD INTERFACES ----------
 
@@ -409,11 +416,7 @@ public:
 
 private:
     DeviceMapper deviceMapper;
-
-    std::vector<yarp::dev::PolyDriver *> busDevices;
-    std::vector<yarp::dev::PolyDriver *> nodeDevices;
     std::vector<SingleBusBroker *> brokers;
-
     SyncPeriodicThread * syncThread {nullptr};
 };
 

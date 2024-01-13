@@ -5,6 +5,7 @@
 
 #include <mutex>
 #include <string>
+#include <vector>
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Port.h>
@@ -39,8 +40,10 @@ namespace roboticslab
 class SingleBusBroker final : public yarp::os::TypedReaderCallback<yarp::os::Bottle>
 {
 public:
-    //! Constructor, passes string identifier of the CAN bus.
-    SingleBusBroker(const std::string & name);
+    //! Constructor, accepts the string identifiers of the CAN bus and its nodes.
+    SingleBusBroker(const std::string & _busName, const std::vector<std::string> & _nodeNames)
+        : busName(_busName), nodeNames(_nodeNames)
+    { }
 
     //! Destructor.
     ~SingleBusBroker() override;
@@ -60,17 +63,25 @@ public:
     //! Stop CAN read/write threads.
     bool stopThreads();
 
+    //! Whether a CAN input device driver is registered.
+    bool isRegistered() const
+    { return registered; }
+
     //! Get handle of the CAN RX thread.
     CanReaderThread * getReader() const
     { return readerThread; }
 
-    //! Get handle
+    //! Get handle of the CAN TX thread.
     CanWriterThread * getWriter() const
     { return writerThread; }
 
     //! Retrieve string identifier for this CAN bus.
-    std::string getName() const
-    { return name; }
+    const std::string & getBusName() const
+    { return busName; }
+
+    //! Retrieve string identifiers for the nodes of this CAN bus.
+    const std::vector<std::string> & getNodeNames() const
+    { return nodeNames; }
 
     //! Callback on incoming remote CAN commands.
     void onRead(yarp::os::Bottle & b) override;
@@ -79,13 +90,14 @@ private:
     //! Open remote CAN interface ports.
     bool createPorts(const std::string & prefix);
 
-    std::string name;
+    std::string busName;
+    std::vector<std::string> nodeNames;
 
-    CanReaderThread * readerThread;
-    CanWriterThread * writerThread;
+    CanReaderThread * readerThread {nullptr};
+    CanWriterThread * writerThread {nullptr};
 
-    yarp::dev::ICanBus * iCanBus;
-    yarp::dev::ICanBufferFactory * iCanBufferFactory;
+    yarp::dev::ICanBus * iCanBus {nullptr};
+    yarp::dev::ICanBufferFactory * iCanBufferFactory {nullptr};
 
     yarp::os::Port dumpPort;
     yarp::os::PortWriterBuffer<yarp::os::Bottle> dumpWriter;
@@ -98,7 +110,9 @@ private:
     SdoReplier sdoReplier;
 
     yarp::os::Port busLoadPort;
-    BusLoadMonitor * busLoadMonitor;
+    BusLoadMonitor * busLoadMonitor {nullptr};
+
+    bool registered {false};
 };
 
 } // namespace roboticslab

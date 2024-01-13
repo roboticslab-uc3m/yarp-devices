@@ -10,6 +10,7 @@ if(NOT SKIP_CanBusBroker)
 
     yarp_add_plugin(CanBusBroker CanBusBroker.hpp
                                  DeviceDriverImpl.cpp
+                                 IMultipleWrapperImpl.cpp
                                  # control board interfaces
                                  motor/IAmplifierControlImpl.cpp
                                  motor/IAxisInfoImpl.cpp
