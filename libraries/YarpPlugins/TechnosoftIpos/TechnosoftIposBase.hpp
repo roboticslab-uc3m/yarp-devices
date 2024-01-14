@@ -31,6 +31,7 @@
 #include <yarp/dev/IRemoteVariables.h>
 #include <yarp/dev/ITorqueControl.h>
 #include <yarp/dev/IVelocityControl.h>
+#include <yarp/dev/IWrapper.h>
 #include <yarp/dev/PolyDriver.h>
 
 #include "CanOpenNode.hpp"
@@ -52,6 +53,7 @@ namespace roboticslab
  * @brief Base class for all proxied TechnosoftIpos implementations.
  */
 class TechnosoftIposBase : public yarp::dev::DeviceDriver,
+                           public yarp::dev::IWrapper,
                            public yarp::dev::IAxisInfoRaw,
                            public yarp::dev::IControlLimitsRaw,
                            public yarp::dev::IControlModeRaw,
@@ -72,17 +74,15 @@ class TechnosoftIposBase : public yarp::dev::DeviceDriver,
 {
 public:
 
-    TechnosoftIposBase()
-        : can(nullptr),
-          iEncodersTimedRawExternal(nullptr),
-          iExternalEncoderCanBusSharer(nullptr),
-          monitorThread(nullptr)
-    {}
-
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 
     bool open(yarp::os::Searchable & config) override;
     bool close() override;
+
+    //  --------- IWrapper declarations. Implementation in IWrapperImpl.cpp ---------
+
+    bool attach(yarp::dev::PolyDriver * driver) override;
+    bool detach() override;
 
     //  --------- ICanBusSharer declarations. Implementation in ICanBusSharerImpl.cpp ---------
 
@@ -499,7 +499,7 @@ protected:
     //! Convert torque (Nm) to current (amperes).
     double torqueToCurrent(double torque) const;
 
-    CanOpenNode * can;
+    CanOpenNode * can {nullptr};
     CommandBuffer commandBuffer;
 
     std::unique_ptr<StateObserver> controlModeObserverPtr {new StateObserver(1.0)}; // arbitrary 1 second wait
@@ -587,12 +587,11 @@ private:
     bool setLimitRaw(double limit, bool isMin);
     bool getLimitRaw(double * limit, bool isMin);
 
-    yarp::dev::PolyDriver externalEncoderDevice;
-    yarp::dev::IEncodersTimedRaw * iEncodersTimedRawExternal;
-    roboticslab::ICanBusSharer * iExternalEncoderCanBusSharer;
+    yarp::dev::IEncodersTimedRaw * iEncodersTimedRawExternal {nullptr};
+    roboticslab::ICanBusSharer * iExternalEncoderCanBusSharer {nullptr};
 
-    yarp::os::Timer * monitorThread;
-    roboticslab::ICanSenderDelegate * sender;
+    yarp::os::Timer * monitorThread {nullptr};
+    roboticslab::ICanSenderDelegate * sender {nullptr};
 };
 
 } // namespace roboticslab

@@ -94,9 +94,7 @@ bool TechnosoftIposBase::initialize()
                 0x1018, 0x04);
     }
 
-    double extEnc;
-
-    if (!configuredOnce
+    if (double extEnc; !configuredOnce
         || (iExternalEncoderCanBusSharer && !iExternalEncoderCanBusSharer->initialize())
         || !setLimitsRaw(0, min, max)
         || !setRefSpeedRaw(0, refSpeed)

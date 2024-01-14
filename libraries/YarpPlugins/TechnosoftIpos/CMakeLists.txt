@@ -20,6 +20,7 @@ if(NOT SKIP_TechnosoftIpos)
                                           EncoderRead.hpp
                                           EncoderRead.cpp
                                           DeviceDriverImpl.cpp
+                                          IWrapperImpl.cpp
                                           IAxisInfoRawImpl.cpp
                                           ICanBusSharerImpl.cpp
                                           IControlLimitsRawImpl.cpp

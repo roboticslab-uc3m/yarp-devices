@@ -19,6 +19,7 @@ namespace roboticslab
  * @brief Implementation for the Technosoft iPOS as a single CAN bus joint (control board raw interfaces).
  */
 class TechnosoftIpos : public yarp::dev::DeviceDriver,
+                       public yarp::dev::IWrapper,
                        public yarp::dev::IAxisInfoRaw,
                        public yarp::dev::IControlLimitsRaw,
                        public yarp::dev::IControlModeRaw,
@@ -49,6 +50,14 @@ public:
 
     std::string id() const override
     { return impl->id(); }
+
+    //  --------- IWrapper declarations. Implementation in IWrapperImpl.cpp ---------
+
+    bool attach(yarp::dev::PolyDriver * driver) override
+    { return impl->attach(driver); }
+
+    bool detach() override
+    { return impl->detach(); }
 
     //  --------- ICanBusSharer declarations. Implementation in ICanBusSharerImpl.cpp ---------
 

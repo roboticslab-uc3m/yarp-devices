@@ -67,41 +67,6 @@ bool TechnosoftIposBase::open(yarp::os::Searchable & config)
         return false;
     }
 
-    if (iposGroup.check("externalEncoder", "external encoder"))
-    {
-        std::string externalEncoder = iposGroup.find("externalEncoder").asString();
-        yarp::os::Bottle & externalEncoderGroup = robotConfig->findGroup(externalEncoder);
-
-        if (externalEncoderGroup.isNull())
-        {
-            yCIError(IPOS, id()) << "Missing external encoder device group" << externalEncoder;
-            return false;
-        }
-
-        yarp::os::Property externalEncoderOptions;
-        externalEncoderOptions.fromString(externalEncoderGroup.toString());
-        externalEncoderOptions.put("robotConfig", config.find("robotConfig"));
-        externalEncoderOptions.setMonitor(config.getMonitor(), externalEncoder.c_str());
-
-        if (!externalEncoderDevice.open(externalEncoderOptions))
-        {
-            yCIError(IPOS, id()) << "Unable to open external encoder device" << externalEncoder;
-            return false;
-        }
-
-        if (!externalEncoderDevice.view(iEncodersTimedRawExternal))
-        {
-            yCIError(IPOS, id()) << "Unable to view IEncodersTimedRaw in" << externalEncoder;
-            return false;
-        }
-
-        if (!externalEncoderDevice.view(iExternalEncoderCanBusSharer))
-        {
-            yCIError(IPOS, id()) << "Unable to view ICanBusSharer in" << externalEncoder;
-            return false;
-        }
-    }
-
     double sdoTimeout = iposGroup.check("sdoTimeout", yarp::os::Value(DEFAULT_SDO_TIMEOUT),
             "CAN SDO timeout (seconds)").asFloat64();
     double driveStateTimeout = iposGroup.check("driveStateTimeout", yarp::os::Value(DEFAULT_DRIVE_STATE_TIMEOUT),
@@ -185,11 +150,6 @@ bool TechnosoftIposBase::close()
 
     delete can;
     can = nullptr;
-
-    if (externalEncoderDevice.isValid())
-    {
-        return externalEncoderDevice.close();
-    }
 
     return true;
 }
