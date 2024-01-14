@@ -18,6 +18,7 @@ constexpr auto DEFAULT_TX_TIMEOUT_MS = 0; // '0' means no timeout
 
 constexpr auto DEFAULT_BLOCKING_MODE = true;
 constexpr auto DEFAULT_ALLOW_PERMISSIVE = false;
+constexpr auto DEFAULT_PRESERVE_FILTERS = false;
 
 using namespace roboticslab;
 
@@ -74,7 +75,9 @@ bool CanBusPeak::open(yarp::os::Searchable& config)
         fileDescriptor = res;
     }
 
-    if (!config.check("preserveFilters", "don't clear acceptance filters on init"))
+    auto preserveFilters = config.check("preserveFilters", yarp::os::Value(DEFAULT_PRESERVE_FILTERS), "don't clear acceptance filters on init").asBool();
+
+    if (!preserveFilters)
     {
         res = pcanfd_del_filters(fileDescriptor);
 
