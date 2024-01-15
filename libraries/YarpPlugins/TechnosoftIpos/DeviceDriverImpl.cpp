@@ -130,7 +130,7 @@ bool TechnosoftIposBase::open(yarp::os::Searchable & config)
         }
     }
 
-    return !monitorThread || monitorThread->start();
+    return true;
 }
 
 // -----------------------------------------------------------------------------

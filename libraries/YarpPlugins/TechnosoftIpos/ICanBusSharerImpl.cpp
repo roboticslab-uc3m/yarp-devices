@@ -124,6 +124,13 @@ bool TechnosoftIposBase::initialize()
         yCIWarning(IPOS, id()) << "Initial drive state transitions failed";
     }
 
+    // the monitor thread itself may call `initialize()`, so we need to check to avoid starting twice
+    if (monitorThread && !monitorThread->isRunning() && !monitorThread->start())
+    {
+        yCIError(IPOS, id()) << "Unable to start monitor thread";
+        return false;
+    }
+
     return true;
 }
 
