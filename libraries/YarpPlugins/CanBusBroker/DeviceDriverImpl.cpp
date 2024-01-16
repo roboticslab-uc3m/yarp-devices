@@ -19,7 +19,7 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
 
     if (!buses)
     {
-        yCError(CBB) << "Missing key \"buses\" or not a list";
+        yCError(CBB) << R"(Missing key "buses" or not a list)";
         return false;
     }
 
@@ -56,6 +56,22 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
         {
             yCError(CBB) << "Unable to configure broker of CAN bus device" << bus;
             return false;
+        }
+    }
+
+    if (yarp::os::Value * v; config.check("fakeNodes", v, "fake CAN nodes"))
+    {
+        if (!v->isList())
+        {
+            yCError(CBB) << R"(Key "fakeNodes" must be a list)";
+            return false;
+        }
+
+        const auto * nodes = v->asList();
+
+        for (int i = 0; i < nodes->size(); i++)
+        {
+            fakeNodes.push(nullptr, nodes->get(i).asString().c_str());
         }
     }
 

@@ -8,6 +8,7 @@
 #include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
+#include <yarp/dev/PolyDriverList.h>
 
 #include "DeviceMapper.hpp"
 #include "SingleBusBroker.hpp"
@@ -415,8 +416,11 @@ public:
     bool getThreeAxisMagnetometerMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
 
 private:
+    const yarp::dev::PolyDriverDescriptor * tryCreateFakeNode(const yarp::dev::PolyDriverDescriptor * driver);
+
     DeviceMapper deviceMapper;
     std::vector<SingleBusBroker *> brokers;
+    yarp::dev::PolyDriverList fakeNodes;
     SyncPeriodicThread * syncThread {nullptr};
 };
 

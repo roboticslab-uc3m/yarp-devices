@@ -8,7 +8,8 @@ using namespace roboticslab;
 
 bool FakeJoint::open(yarp::os::Searchable & config)
 {
-    jointName = config.check("jointName", yarp::os::Value(""), "name of the fake joint").asString();
+    axisName = config.check("axisName", yarp::os::Value(""), "name of the fake axis").asString();
+    jointType = config.check("jointType", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "type of the fake joint [atrv|atpr|unkn]").asVocab32();
     return true;
 }
 

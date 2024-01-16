@@ -103,9 +103,9 @@ public:
     //  --------- IAxisInfoRaw declarations ---------
 
     bool getAxisNameRaw(int axis, std::string & name) override
-    {  name = jointName; return true; }
+    { name = axisName; return true; }
     bool getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type) override
-    { type = yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_UNKNOWN; return true; }
+    { type = static_cast<yarp::dev::JointTypeEnum>(jointType); return true; }
 
     //  --------- IControlCalibrationRaw declarations ---------
 
@@ -471,7 +471,8 @@ public:
     //bool stopRaw(int n_joint, const int *joints) override;
 
 private:
-    std::string jointName;
+    std::string axisName;
+    yarp::conf::vocab32_t jointType {yarp::dev::VOCAB_JOINTTYPE_UNKNOWN};
     int controlMode {VOCAB_CM_CONFIGURED};
 };
 

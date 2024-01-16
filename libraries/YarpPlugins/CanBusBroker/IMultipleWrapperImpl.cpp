@@ -6,11 +6,70 @@
 #include <iterator> // std::distance
 
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Property.h>
+
+#include <yarp/dev/IAxisInfo.h>
 
 #include "ICanBusSharer.hpp"
 #include "LogComponent.hpp"
 
 using namespace roboticslab;
+
+// -----------------------------------------------------------------------------
+
+const yarp::dev::PolyDriverDescriptor * CanBusBroker::tryCreateFakeNode(const yarp::dev::PolyDriverDescriptor * driver)
+{
+    for (auto i = 0; i < fakeNodes.size(); i++)
+    {
+        if (fakeNodes[i]->key == driver->key)
+        {
+            yCInfo(CBB) << "Requested instantiation of fake node device" << driver->key;
+
+            yarp::dev::IAxisInfoRaw * iAxisInfo;
+
+            if (!driver->poly->view(iAxisInfo))
+            {
+                yCError(CBB) << "Unable to view IAxisInfoRaw in" << driver->key;
+                return nullptr;
+            }
+
+            std::string axisName;
+
+            if (!iAxisInfo->getAxisNameRaw(0, axisName))
+            {
+                yCError(CBB) << "Unable to get axis name in" << driver->key;
+                return nullptr;
+            }
+
+            yarp::dev::JointTypeEnum jointType;
+
+            if (!iAxisInfo->getJointTypeRaw(0, jointType))
+            {
+                yCError(CBB) << "Unable to get joint type in" << driver->key;
+                return nullptr;
+            }
+
+            yarp::os::Property options {
+                {"device", yarp::os::Value("FakeJoint")},
+                {"axisName", yarp::os::Value(axisName)},
+                {"jointType", yarp::os::Value(jointType, true)} // isVocab32 = true
+            };
+
+            auto * fakeNode = new yarp::dev::PolyDriver;
+            fakeNodes[i]->poly = fakeNode;
+
+            if (!fakeNode->open(options))
+            {
+                yCError(CBB) << "Unable to open fake node device" << driver->key;
+                return nullptr;
+            }
+
+            return fakeNodes[i];
+        }
+    }
+
+    return driver;
+}
 
 // -----------------------------------------------------------------------------
 
@@ -60,7 +119,7 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
                 return false;
             }
 
-            nodes[index] = driver;
+            nodes[index] = tryCreateFakeNode(driver);
             hasNodeDevices = true;
         }
         else
@@ -195,6 +254,16 @@ bool CanBusBroker::detachAll()
     {
         ok &= broker->stopThreads();
         ok &= broker->clearFilters();
+    }
+
+    for (int i = 0; i < fakeNodes.size(); i++)
+    {
+        if (fakeNodes[i]->poly && fakeNodes[i]->poly->isValid())
+        {
+            ok &= fakeNodes[i]->poly->close();
+            delete fakeNodes[i]->poly;
+            fakeNodes[i]->poly = nullptr;
+        }
     }
 
     return ok;
