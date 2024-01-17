@@ -60,13 +60,13 @@ bool TechnosoftIposEmbedded::setRefSpeedRaw(int j, double sp)
 
     if (sp <= 0.0)
     {
-        yCIWarning(IPOS, id()) << "Illegal negative speed provided:" << sp;
+        yCIError(IPOS, id()) << "Illegal reference speed provided:" << sp;
         return false;
     }
     else if (sp > maxVel)
     {
         yCIWarning(IPOS, id()) << "Reference speed exceeds maximum velocity, i.e." << maxVel.load();
-        return false;
+        sp = maxVel;
     }
 
     double value = std::abs(degreesToInternalUnits(sp, 1));
@@ -88,7 +88,7 @@ bool TechnosoftIposEmbedded::setRefAccelerationRaw(int j, double acc)
 
     if (acc <= 0.0)
     {
-        yCIWarning(IPOS, id()) << "Illegal negative acceleration provided:" << acc;
+        yCIError(IPOS, id()) << "Illegal reference acceleration provided:" << acc;
         return false;
     }
 

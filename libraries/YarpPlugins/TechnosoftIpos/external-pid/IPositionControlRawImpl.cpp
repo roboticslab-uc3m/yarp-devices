@@ -79,13 +79,13 @@ bool TechnosoftIposExternal::setRefSpeedRaw(int j, double sp)
 
     if (sp <= 0.0)
     {
-        yCIWarning(IPOS, id()) << "Illegal reference speed provided:" << sp;
+        yCIError(IPOS, id()) << "Illegal reference speed provided:" << sp;
         return false;
     }
     else if (sp > maxVel)
     {
         yCIWarning(IPOS, id()) << "Reference speed exceeds maximum velocity:" << sp << ">" << maxVel.load();
-        return false;
+        sp = maxVel;
     }
 
     if (trajectory.isActive())
@@ -108,7 +108,7 @@ bool TechnosoftIposExternal::setRefAccelerationRaw(int j, double acc)
 
     if (acc <= 0.0)
     {
-        yCIWarning(IPOS, id()) << "Illegal reference acceleration provided:" << acc;
+        yCIError(IPOS, id()) << "Illegal reference acceleration provided:" << acc;
         return false;
     }
 
