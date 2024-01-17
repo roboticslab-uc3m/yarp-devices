@@ -77,14 +77,18 @@ bool TechnosoftIposExternal::setRefSpeedRaw(int j, double sp)
     yCITrace(IPOS, id(), "%d %f", j, sp);
     CHECK_JOINT(j);
 
-    if (sp <= 0.0)
+    if (sp < 0.0)
     {
         yCIError(IPOS, id()) << "Illegal reference speed provided:" << sp;
         return false;
     }
+    else if (sp == 0.0)
+    {
+        yCIWarning(IPOS, id()) << "Reference speed is zero, i.e. no motion will be performed";
+    }
     else if (sp > maxVel)
     {
-        yCIWarning(IPOS, id()) << "Reference speed exceeds maximum velocity:" << sp << ">" << maxVel.load();
+        yCIWarning(IPOS, id()) << "Reference speed exceeds maximum velocity:" << sp << ">" << maxVel.load() << "(will be clipped)";
         sp = maxVel;
     }
 
