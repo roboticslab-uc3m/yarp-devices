@@ -10,6 +10,8 @@
 
 #include "ICanBusSharer.hpp"
 
+constexpr auto JOINT_TYPE = yarp::dev::VOCAB_JOINTTYPE_REVOLUTE; // yarpmotorgui can't handle VOCAB_JOINTTYPE_UNKNOWN
+
 namespace roboticslab
 {
 
@@ -105,7 +107,7 @@ public:
     bool getAxisNameRaw(int axis, std::string & name) override
     {  name = jointName; return true; }
     bool getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type) override
-    { type = yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_UNKNOWN; return true; }
+    { type = JOINT_TYPE; return true; }
 
     //  --------- IControlCalibrationRaw declarations ---------
 
