@@ -103,15 +103,14 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
 
             if (!syncThread->openPort("/sync:o"))
             {
-                yCError(CBB) << "Unable to open sync port";
+                yCError(CBB) << "Unable to open synchronization port";
                 return false;
             }
 
-            yarp::os::Value * obs;
-
-            if (config.check("syncObserver", obs, "synchronization signal observer"))
+            if (yarp::os::Value * v; config.check("syncObserver", v, "synchronization signal observer") && v->isBlob())
             {
-                auto * observer = *reinterpret_cast<TypedStateObserver<double> * const *>(obs->asBlob());
+                yCDebug(CBB) << "Setting synchronization signal observer";
+                auto * observer = *reinterpret_cast<TypedStateObserver<double> * const *>(v->asBlob());
                 syncThread->setObserver(observer);
             }
         }
