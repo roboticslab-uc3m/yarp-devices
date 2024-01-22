@@ -130,6 +130,16 @@ bool TechnosoftIposBase::open(yarp::os::Searchable & config)
         }
     }
 
+    if (yarp::os::Value * val; iposGroup.check("disabledEncoders", val, "disabled encoder IDs") && val->isList())
+    {
+        const auto * ids = val->asList();
+
+        for (int i = 0; i < ids->size(); i++)
+        {
+            disabledEncoderIds.push_back(ids->get(i).asInt32());
+        }
+    }
+
     return true;
 }
 

@@ -9,6 +9,7 @@
 #include <bitset>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include <yarp/conf/numeric.h>
 
@@ -592,6 +593,8 @@ private:
 
     yarp::os::Timer * monitorThread {nullptr};
     roboticslab::ICanSenderDelegate * sender {nullptr};
+
+    std::vector<int> disabledEncoderIds;
 };
 
 } // namespace roboticslab
