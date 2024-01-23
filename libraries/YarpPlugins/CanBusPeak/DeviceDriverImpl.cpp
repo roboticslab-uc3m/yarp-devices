@@ -7,6 +7,7 @@
 #include <string>
 
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Property.h>
 
 #include "LogComponent.hpp"
 
@@ -24,16 +25,17 @@ using namespace roboticslab;
 
 // ------------------- DeviceDriver Related ------------------------------------
 
-bool CanBusPeak::open(yarp::os::Searchable& config)
+bool CanBusPeak::open(yarp::os::Searchable & config)
 {
-    std::string devicePath = config.check("port", yarp::os::Value(DEFAULT_PORT), "CAN device path").asString();
+    yarp::os::Property options;
+    options.fromString(config.findGroup("common").toString());
+    options.fromString(config.toString(), false); // override common options
 
-    yarp::dev::DeviceDriver::setId(devicePath);
+    auto devicePath = options.check("port", yarp::os::Value(DEFAULT_PORT), "CAN device path").asString();
+    auto bitrate = options.check("bitrate", yarp::os::Value(DEFAULT_BITRATE), "CAN bitrate (bps)").asInt32();
 
-    int bitrate = config.check("bitrate", yarp::os::Value(DEFAULT_BITRATE), "CAN bitrate (bps)").asInt32();
-
-    blockingMode = config.check("blockingMode", yarp::os::Value(DEFAULT_BLOCKING_MODE), "blocking mode enabled").asBool();
-    allowPermissive = config.check("allowPermissive", yarp::os::Value(DEFAULT_ALLOW_PERMISSIVE), "read/write permissive mode").asBool();
+    blockingMode = options.check("blockingMode", yarp::os::Value(DEFAULT_BLOCKING_MODE), "blocking mode enabled").asBool();
+    allowPermissive = options.check("allowPermissive", yarp::os::Value(DEFAULT_ALLOW_PERMISSIVE), "read/write permissive mode").asBool();
 
     int flags = OFD_BITRATE | PCANFD_INIT_STD_MSG_ONLY;
 
@@ -41,8 +43,8 @@ bool CanBusPeak::open(yarp::os::Searchable& config)
     {
         yCIInfo(PEAK, id()) << "Blocking mode enabled";
 
-        rxTimeoutMs = config.check("rxTimeoutMs", yarp::os::Value(DEFAULT_RX_TIMEOUT_MS), "RX timeout (milliseconds)").asInt32();
-        txTimeoutMs = config.check("txTimeoutMs", yarp::os::Value(DEFAULT_TX_TIMEOUT_MS), "TX timeout (milliseconds)").asInt32();
+        rxTimeoutMs = options.check("rxTimeoutMs", yarp::os::Value(DEFAULT_RX_TIMEOUT_MS), "RX timeout (milliseconds)").asInt32();
+        txTimeoutMs = options.check("txTimeoutMs", yarp::os::Value(DEFAULT_TX_TIMEOUT_MS), "TX timeout (milliseconds)").asInt32();
 
         if (rxTimeoutMs <= 0)
         {
@@ -75,7 +77,7 @@ bool CanBusPeak::open(yarp::os::Searchable& config)
         fileDescriptor = res;
     }
 
-    auto preserveFilters = config.check("preserveFilters", yarp::os::Value(DEFAULT_PRESERVE_FILTERS), "don't clear acceptance filters on init").asBool();
+    auto preserveFilters = options.check("preserveFilters", yarp::os::Value(DEFAULT_PRESERVE_FILTERS), "don't clear acceptance filters on init").asBool();
 
     if (!preserveFilters)
     {
@@ -97,9 +99,9 @@ bool CanBusPeak::open(yarp::os::Searchable& config)
     }
 
     //-- Load initial node IDs and set acceptance filters.
-    if (config.check("filteredIds", "filtered node IDs"))
+    if (options.check("filteredIds", "filtered node IDs"))
     {
-        const yarp::os::Bottle * ids = config.findGroup("filteredIds").get(1).asList();
+        const yarp::os::Bottle * ids = options.findGroup("filteredIds").get(1).asList();
 
         if (ids->size() != 0)
         {

@@ -12,6 +12,7 @@
 #include <string>
 
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Property.h>
 #include <yarp/os/Time.h>
 
 #include "LogComponent.hpp"
@@ -33,22 +34,24 @@ using namespace roboticslab;
 
 // ------------------- DeviceDriver Related ------------------------------------
 
-bool CanBusHico::open(yarp::os::Searchable& config)
+bool CanBusHico::open(yarp::os::Searchable & config)
 {
-    std::string devicePath = config.check("port", yarp::os::Value(DEFAULT_PORT), "CAN device path").asString();
-    int bitrate = config.check("bitrate", yarp::os::Value(DEFAULT_BITRATE), "CAN bitrate (bps)").asInt32();
+    yarp::os::Property options;
+    options.fromString(config.findGroup("common").toString());
+    options.fromString(config.toString(), false); // override common options
 
-    yarp::dev::DeviceDriver::setId(devicePath);
+    auto devicePath = options.check("port", yarp::os::Value(DEFAULT_PORT), "CAN device path").asString();
+    auto bitrate = options.check("bitrate", yarp::os::Value(DEFAULT_BITRATE), "CAN bitrate (bps)").asInt32();
 
-    blockingMode = config.check("blockingMode", yarp::os::Value(DEFAULT_BLOCKING_MODE), "CAN blocking mode enabled").asBool();
-    allowPermissive = config.check("allowPermissive", yarp::os::Value(DEFAULT_ALLOW_PERMISSIVE), "CAN read/write permissive mode").asBool();
+    blockingMode = options.check("blockingMode", yarp::os::Value(DEFAULT_BLOCKING_MODE), "CAN blocking mode enabled").asBool();
+    allowPermissive = options.check("allowPermissive", yarp::os::Value(DEFAULT_ALLOW_PERMISSIVE), "CAN read/write permissive mode").asBool();
 
     if (blockingMode)
     {
         yCIInfo(HICO, id()) << "Blocking mode enabled";
 
-        rxTimeoutMs = config.check("rxTimeoutMs", yarp::os::Value(DEFAULT_RX_TIMEOUT_MS), "CAN RX timeout (milliseconds)").asInt32();
-        txTimeoutMs = config.check("txTimeoutMs", yarp::os::Value(DEFAULT_TX_TIMEOUT_MS), "CAN TX timeout (milliseconds)").asInt32();
+        rxTimeoutMs = options.check("rxTimeoutMs", yarp::os::Value(DEFAULT_RX_TIMEOUT_MS), "CAN RX timeout (milliseconds)").asInt32();
+        txTimeoutMs = options.check("txTimeoutMs", yarp::os::Value(DEFAULT_TX_TIMEOUT_MS), "CAN TX timeout (milliseconds)").asInt32();
 
         if (rxTimeoutMs <= 0)
         {
@@ -67,7 +70,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
 
     yCIInfo(HICO, id()) << "Permissive mode flag for read/write operations:" << allowPermissive;
 
-    std::string filterConfigStr = config.check("filterConfiguration", yarp::os::Value(DEFAULT_FILTER_CONFIGURATION),
+    std::string filterConfigStr = options.check("filterConfiguration", yarp::os::Value(DEFAULT_FILTER_CONFIGURATION),
             "CAN filter configuration (disabled|noRange|maskAndRange)").asString();
 
     yCIInfo(HICO, id()) << "CAN filter configuration:" << filterConfigStr;
@@ -119,7 +122,7 @@ bool CanBusHico::open(yarp::os::Searchable& config)
     {
         filterManager = new FilterManager(*this, fileDescriptor, filterConfig == FilterManager::MASK_AND_RANGE);
 
-        if (!config.check("preserveFilters", "don't clear acceptance filters on init"))
+        if (!options.check("preserveFilters", "don't clear acceptance filters on init"))
         {
             if (!filterManager->clearFilters())
             {
@@ -137,9 +140,9 @@ bool CanBusHico::open(yarp::os::Searchable& config)
         }
 
         //-- Load initial node IDs and set acceptance filters.
-        if (config.check("filteredIds", "filtered node IDs"))
+        if (options.check("filteredIds", "filtered node IDs"))
         {
-            const yarp::os::Bottle * ids = config.findGroup("filteredIds").get(1).asList();
+            const yarp::os::Bottle * ids = options.findGroup("filteredIds").get(1).asList();
 
             if (ids->size() != 0)
             {

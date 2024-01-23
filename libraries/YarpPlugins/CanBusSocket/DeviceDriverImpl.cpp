@@ -14,6 +14,7 @@
 #include <utility>
 
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Property.h>
 
 #include "LogComponent.hpp"
 
@@ -27,20 +28,22 @@ constexpr auto DEFAULT_TX_TIMEOUT_MS = 0; // '0' means no timeout
 
 // ------------------- DeviceDriver Related ------------------------------------
 
-bool CanBusSocket::open(yarp::os::Searchable& config)
+bool CanBusSocket::open(yarp::os::Searchable & config)
 {
-    iface = config.check("port", yarp::os::Value(DEFAULT_PORT), "CAN socket interface").asString();
-    blockingMode = config.check("blockingMode", yarp::os::Value(DEFAULT_BLOCKING_MODE), "blocking mode enabled").asBool();
-    allowPermissive = config.check("allowPermissive", yarp::os::Value(DEFAULT_ALLOW_PERMISSIVE), "read/write permissive mode").asBool();
-    filterFunctionCodes = config.check("filterFunctionCodes", yarp::os::Value(true), "filter mask ignores CANopen function codes").asBool();
-    bitrate = config.check("bitrate", yarp::os::Value(0), "CAN bitrate (bps)").asInt32();
+    yarp::os::Property options;
+    options.fromString(config.findGroup("common").toString());
+    options.fromString(config.toString(), false); // override common options
 
-    yarp::dev::DeviceDriver::setId(iface);
+    iface = options.check("port", yarp::os::Value(DEFAULT_PORT), "CAN socket interface").asString();
+    blockingMode = options.check("blockingMode", yarp::os::Value(DEFAULT_BLOCKING_MODE), "blocking mode enabled").asBool();
+    allowPermissive = options.check("allowPermissive", yarp::os::Value(DEFAULT_ALLOW_PERMISSIVE), "read/write permissive mode").asBool();
+    filterFunctionCodes = options.check("filterFunctionCodes", yarp::os::Value(true), "filter mask ignores CANopen function codes").asBool();
+    bitrate = options.check("bitrate", yarp::os::Value(0), "CAN bitrate (bps)").asInt32();
 
     if (blockingMode)
     {
-        rxTimeoutMs = config.check("rxTimeoutMs", yarp::os::Value(DEFAULT_RX_TIMEOUT_MS), "CAN RX timeout (milliseconds)").asInt32();
-        txTimeoutMs = config.check("txTimeoutMs", yarp::os::Value(DEFAULT_TX_TIMEOUT_MS), "CAN TX timeout (milliseconds)").asInt32();
+        rxTimeoutMs = options.check("rxTimeoutMs", yarp::os::Value(DEFAULT_RX_TIMEOUT_MS), "CAN RX timeout (milliseconds)").asInt32();
+        txTimeoutMs = options.check("txTimeoutMs", yarp::os::Value(DEFAULT_TX_TIMEOUT_MS), "CAN TX timeout (milliseconds)").asInt32();
 
         if (rxTimeoutMs <= 0)
         {
@@ -111,9 +114,9 @@ bool CanBusSocket::open(yarp::os::Searchable& config)
         return false;
     }
 
-    if (config.check("filteredIds", "filtered node IDs"))
+    if (options.check("filteredIds", "filtered node IDs"))
     {
-        const auto * ids = config.findGroup("filteredIds").get(1).asList();
+        const auto * ids = options.findGroup("filteredIds").get(1).asList();
 
         if (ids->size() != 0)
         {
