@@ -48,9 +48,6 @@ public:
     bool open(yarp::os::Searchable & config) override;
     bool close() override;
 
-    std::string id() const override
-    { return impl->id(); }
-
     //  --------- IWrapper declarations. Implementation in IWrapperImpl.cpp ---------
 
     bool attach(yarp::dev::PolyDriver * driver) override

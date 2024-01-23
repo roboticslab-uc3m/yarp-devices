@@ -17,22 +17,14 @@ constexpr auto DEFAULT_ENABLE_CSV = false;
 
 bool TechnosoftIposEmbedded::open(yarp::os::Searchable & config)
 {
-    const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
+    yarp::os::Property options;
+    options.fromString(config.findGroup("common").toString());
+    options.fromString(config.toString(), false); // override common options
 
-    const auto & commonGroup = robotConfig->findGroup("common-ipos");
-    yarp::os::Property iposGroup;
-
-    if (!commonGroup.isNull())
-    {
-        iposGroup.fromString(commonGroup.toString());
-    }
-
-    iposGroup.fromString(config.toString(), false); // override common options
-
-    auto ipModeVal = iposGroup.check("ipMode", yarp::os::Value(DEFAULT_IP_MODE), "IP mode (pt, pvt)");
-    auto ipPeriodMsVal = iposGroup.check("ipPeriodMs", yarp::os::Value(DEFAULT_IP_PERIOD_MS), "IP period (ms)");
-    auto enableIpVal = iposGroup.check("enableIp", yarp::os::Value(DEFAULT_ENABLE_IP), "enable IP mode");
-    auto enableCsvVal = iposGroup.check("enableCsv", yarp::os::Value(DEFAULT_ENABLE_CSV), "enable CSV mode");
+    auto ipModeVal = options.check("ipMode", yarp::os::Value(DEFAULT_IP_MODE), "IP mode (pt, pvt)");
+    auto ipPeriodMsVal = options.check("ipPeriodMs", yarp::os::Value(DEFAULT_IP_PERIOD_MS), "IP period (ms)");
+    auto enableIpVal = options.check("enableIp", yarp::os::Value(DEFAULT_ENABLE_IP), "enable IP mode");
+    auto enableCsvVal = options.check("enableCsv", yarp::os::Value(DEFAULT_ENABLE_CSV), "enable CSV mode");
 
     if (!setRemoteVariableRaw("ipMode", {ipModeVal}) || !setRemoteVariableRaw("ipPeriodMs", {ipPeriodMsVal}) ||
         !setRemoteVariableRaw("enableIp", {enableIpVal}) || !setRemoteVariableRaw("enableCsv", {enableCsvVal}))

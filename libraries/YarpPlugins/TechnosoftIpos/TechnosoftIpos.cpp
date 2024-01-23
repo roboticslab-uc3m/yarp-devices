@@ -15,43 +15,25 @@
 
 using namespace roboticslab;
 
+constexpr auto DEFAULT_USE_EMBEDDED = true;
+
 // -----------------------------------------------------------------------------
 
 bool TechnosoftIpos::open(yarp::os::Searchable & config)
 {
-    if (!config.check("robotConfig") || !config.find("robotConfig").isBlob())
+    yarp::os::Property options;
+    options.fromString(config.findGroup("common").toString());
+    options.fromString(config.toString(), false); // override common options
+
+    if (options.check("useEmbeddedPid", yarp::os::Value(DEFAULT_USE_EMBEDDED), "use embedded PID").asBool())
     {
-        yCError(IPOS) << "Missing \"robotConfig\" property or not a blob";
-        return false;
-    }
-
-    const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
-
-    const auto & commonGroup = robotConfig->findGroup("common-ipos");
-    yarp::os::Property iposGroup;
-
-    if (!commonGroup.isNull())
-    {
-        yCDebugOnce(IPOS) << commonGroup.toString();
-        iposGroup.fromString(commonGroup.toString());
-    }
-
-    iposGroup.fromString(config.toString(), false); // override common options
-
-    auto canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32(); // id-specific
-    auto useEmbeddedPid = iposGroup.check("useEmbeddedPid", yarp::os::Value(true), "use embedded PID").asBool();
-
-    const auto id = "ID" + std::to_string(canId);
-
-    if (useEmbeddedPid)
-    {
-        yCIInfo(IPOS, id) << "Using embedded PID implementation";
+        yCIInfo(IPOS, id()) << "Using embedded PID implementation";
         impl = new TechnosoftIposEmbedded;
     }
     else
     {
 #ifdef HAVE_EXTERNAL_PID_IMPL
-        yCIInfo(IPOS, id) << "Using external PID implementation";
+        yCIInfo(IPOS, id()) << "Using external PID implementation";
         impl = new TechnosoftIposExternal;
 #else
         yCError(IPOS) << "External PID implementation not available";
@@ -59,7 +41,7 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 #endif
     }
 
-    impl->setId(id);
+    impl->setId(id());
     return impl->open(config);
 }
 
