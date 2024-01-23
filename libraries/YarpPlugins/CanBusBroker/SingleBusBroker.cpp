@@ -110,7 +110,6 @@ bool SingleBusBroker::registerDevice(yarp::dev::PolyDriver * driver)
         writerThread->setCanHandles(iCanBus, iCanBufferFactory);
     }
 
-    registered = true;
     return true;
 }
 

@@ -129,6 +129,12 @@ bool CanBusBroker::close()
 {
     bool ok = detachAll();
 
+    if (syncThread)
+    {
+        delete syncThread;
+        syncThread = nullptr;
+    }
+
     for (auto * broker : brokers)
     {
         delete broker;

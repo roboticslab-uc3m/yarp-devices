@@ -85,9 +85,6 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
     std::vector<const yarp::dev::PolyDriverDescriptor *> buses(brokers.size());
     std::vector<const yarp::dev::PolyDriverDescriptor *> nodes(nodeNames.size());
 
-    bool hasBusDevices = false;
-    bool hasNodeDevices = false;
-
     for (int i = 0; i < drivers.size(); i++)
     {
         const auto * driver = drivers[i];
@@ -105,7 +102,6 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
             }
 
             buses[index] = driver;
-            hasBusDevices = true;
         }
         else if (auto node = std::find_if(nodeNames.begin(), nodeNames.end(), [driver](const auto & name)
                                                                               { return name == driver->key; });
@@ -120,7 +116,6 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
             }
 
             nodes[index] = tryCreateFakeNode(driver);
-            hasNodeDevices = true;
         }
         else
         {
@@ -129,7 +124,7 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
         }
     }
 
-    if (hasBusDevices && std::any_of(buses.begin(), buses.end(), [](const auto * bus) { return bus == nullptr; }))
+    if (std::any_of(buses.begin(), buses.end(), [](const auto * bus) { return bus == nullptr; }))
     {
         std::vector<std::string> names;
 
@@ -145,7 +140,7 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
         return false;
     }
 
-    if (hasNodeDevices && std::any_of(nodes.begin(), nodes.end(), [](const auto * node) { return node == nullptr; }))
+    if (std::any_of(nodes.begin(), nodes.end(), [](const auto * node) { return node == nullptr; }))
     {
         std::vector<std::string> names;
 
@@ -161,23 +156,13 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
         return false;
     }
 
-    if (hasNodeDevices && std::any_of(brokers.begin(), brokers.end(), [](const auto * broker) { return !broker->isRegistered(); }))
-    {
-        yCError(CBB) << "Bus devices need to be attached prior to node devices";
-        return false;
-    }
+    yCInfo(CBB) << "Attached" << buses.size() << "bus devices and" << nodes.size() << "node devices";
 
     for (int i = 0; i < buses.size(); i++)
     {
         if (!brokers[i]->registerDevice(buses[i]->poly))
         {
             yCError(CBB) << "Unable to register bus device" << buses[i]->key;
-            return false;
-        }
-
-        if (!brokers[i]->startThreads())
-        {
-            yCError(CBB) << "Unable to start CAN threads in" << brokers[i]->getBusName();
             return false;
         }
     }
@@ -205,9 +190,17 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
                                                                  return std::find(names.begin(), names.end(), node->key) != names.end(); });
 
         auto * broker = *it;
-
         broker->getReader()->registerHandle(iCanBusSharer);
         iCanBusSharer->registerSender(broker->getWriter()->getDelegate());
+    }
+
+    for (int i = 0; i < buses.size(); i++)
+    {
+        if (!brokers[i]->startThreads())
+        {
+            yCError(CBB) << "Unable to start CAN threads in" << brokers[i]->getBusName();
+            return false;
+        }
     }
 
     for (const auto & rawDevice : deviceMapper.getDevices())
@@ -220,7 +213,13 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
         }
     }
 
-    return !syncThread || syncThread->start();
+    if (syncThread && !syncThread->isRunning() && !syncThread->start())
+    {
+        yCError(CBB) << "Unable to start synchronization thread";
+        return false;
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -233,9 +232,6 @@ bool CanBusBroker::detachAll()
     {
         syncThread->stop();
     }
-
-    delete syncThread;
-    syncThread = nullptr;
 
     for (const auto & rawDevice : deviceMapper.getDevices())
     {

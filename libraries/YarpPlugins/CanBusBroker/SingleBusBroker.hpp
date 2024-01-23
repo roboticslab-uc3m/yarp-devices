@@ -63,10 +63,6 @@ public:
     //! Stop CAN read/write threads.
     bool stopThreads();
 
-    //! Whether a CAN input device driver is registered.
-    bool isRegistered() const
-    { return registered; }
-
     //! Get handle of the CAN RX thread.
     CanReaderThread * getReader() const
     { return readerThread; }
