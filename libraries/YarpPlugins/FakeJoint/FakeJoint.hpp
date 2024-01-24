@@ -4,6 +4,7 @@
 #define __FAKE_JOINT_HPP__
 
 #include <string>
+#include <vector>
 
 #include <yarp/os/SystemClock.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
@@ -102,10 +103,11 @@ public:
 
     //  --------- IAxisInfoRaw declarations ---------
 
+    //bool getAxesRaw(int * ax) override;
     bool getAxisNameRaw(int axis, std::string & name) override
-    { name = axisName; return true; }
+    { name = axisNames[axis]; return true; }
     bool getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type) override
-    { type = static_cast<yarp::dev::JointTypeEnum>(jointType); return true; }
+    { type = static_cast<yarp::dev::JointTypeEnum>(jointTypes[axis]); return true; }
 
     //  --------- IControlCalibrationRaw declarations ---------
 
@@ -130,13 +132,13 @@ public:
     //  --------- IControlModeRaw declarations ---------
 
     bool getControlModeRaw(int j, int * mode) override
-    { *mode = controlMode; return true; }
+    { *mode = controlModes[j]; return true; }
     bool getControlModesRaw(int * modes) override
     { return getControlModeRaw(0, &modes[0]); }
     bool getControlModesRaw(int n_joint, const int * joints, int * modes) override
     { return getControlModeRaw(0, &modes[0]); }
     bool setControlModeRaw(int j, int mode) override
-    { controlMode = mode; return true; }
+    { controlModes[j] = mode; return true; }
     bool setControlModesRaw(int * modes) override
     { return setControlModeRaw(0, modes[0]); }
     bool setControlModesRaw(int n_joint, const int * joints, int * modes) override
@@ -167,7 +169,7 @@ public:
     //  ---------- IEncodersRaw declarations ----------.
 
     bool getAxes(int * ax) override
-    { *ax = 1; return true; }
+    { *ax = axes; return true; }
     bool resetEncoderRaw(int j) override
     { return true; }
     bool resetEncodersRaw() override
@@ -213,13 +215,13 @@ public:
     // ------- IInteractionModeRaw declarations -------
 
     bool getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum * mode) override
-    { *mode = interactionMode; return true; }
+    { *mode = interactionModes[axis]; return true; }
     bool getInteractionModesRaw(yarp::dev::InteractionModeEnum * modes) override
     { return getInteractionModeRaw(0, &modes[0]); }
     bool getInteractionModesRaw(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes) override
     { return getInteractionModeRaw(0, &modes[0]); }
     bool setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode) override
-    { interactionMode = mode; return true; }
+    { interactionModes[axis] = mode; return true; }
     bool setInteractionModesRaw(yarp::dev::InteractionModeEnum * modes) override
     { return true; }
     bool setInteractionModesRaw(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes) override
@@ -471,10 +473,11 @@ public:
     //bool stopRaw(int n_joint, const int *joints) override;
 
 private:
-    std::string axisName;
-    yarp::conf::vocab32_t jointType {yarp::dev::VOCAB_JOINTTYPE_UNKNOWN};
-    int controlMode {VOCAB_CM_CONFIGURED};
-    yarp::dev::InteractionModeEnum interactionMode {yarp::dev::VOCAB_IM_UNKNOWN};
+    unsigned int axes {0};
+    std::vector<std::string> axisNames;
+    std::vector<yarp::conf::vocab32_t> jointTypes;
+    std::vector<int> controlModes;
+    std::vector<yarp::dev::InteractionModeEnum> interactionModes;
 };
 
 } // namespace roboticslab

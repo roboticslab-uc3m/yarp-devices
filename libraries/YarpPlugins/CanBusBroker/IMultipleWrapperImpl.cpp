@@ -5,6 +5,7 @@
 #include <algorithm> // std::any_of, std::find_if, std::for_each
 #include <iterator> // std::distance
 
+#include <yarp/os/Bottle.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
 
@@ -33,30 +34,49 @@ const yarp::dev::PolyDriverDescriptor * CanBusBroker::tryCreateFakeNode(const ya
                 return nullptr;
             }
 
-            std::string axisName;
+            int axes;
 
-            if (!iAxisInfo->getAxisNameRaw(0, axisName))
+            if (!iAxisInfo->getAxes(&axes))
             {
-                yCError(CBB) << "Unable to get axis name in" << driver->key;
+                yCError(CBB) << "Unable to get number of axes in" << driver->key;
                 return nullptr;
             }
 
-            yarp::dev::JointTypeEnum jointType;
+            yarp::os::Bottle axisNames;
+            yarp::os::Bottle jointTypes;
 
-            if (!iAxisInfo->getJointTypeRaw(0, jointType))
+            for (int j = 0; j < axes; j++)
             {
-                yCError(CBB) << "Unable to get joint type in" << driver->key;
-                return nullptr;
+                std::string axisName;
+                yarp::dev::JointTypeEnum jointType;
+
+                if (!iAxisInfo->getAxisNameRaw(j, axisName))
+                {
+                    yCError(CBB) << "Unable to get axis name for joint" << j << "in" << driver->key;
+                    return nullptr;
+                }
+
+                if (!iAxisInfo->getJointTypeRaw(j, jointType))
+                {
+                    yCError(CBB) << "Unable to get joint type for joint" << j << "in" << driver->key;
+                    return nullptr;
+                }
+
+                axisNames.addString(axisName);
+                jointTypes.addVocab32(jointType);
             }
 
             yarp::os::Property options {
                 {"device", yarp::os::Value("FakeJoint")},
-                {"axisName", yarp::os::Value(axisName)},
-                {"jointType", yarp::os::Value(jointType, true)} // isVocab32 = true
+                {"axes", yarp::os::Value(axes)},
+                {"axisNames", yarp::os::Value(axisNames.toString().c_str())},
+                {"jointTypes", yarp::os::Value(jointTypes.toString().c_str())}
             };
 
             auto * fakeNode = new yarp::dev::PolyDriver;
             fakeNodes[i]->poly = fakeNode;
+
+            fakeNode->setId(driver->poly->id());
 
             if (!fakeNode->open(options))
             {

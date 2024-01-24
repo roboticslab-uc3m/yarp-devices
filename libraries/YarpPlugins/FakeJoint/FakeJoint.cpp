@@ -2,14 +2,48 @@
 
 #include "FakeJoint.hpp"
 
+#include <yarp/os/LogStream.h>
+
 using namespace roboticslab;
+
+namespace
+{
+    YARP_LOG_COMPONENT(FJ, "rl.FakeJoint")
+}
 
 // -----------------------------------------------------------------------------
 
 bool FakeJoint::open(yarp::os::Searchable & config)
 {
-    axisName = config.check("axisName", yarp::os::Value(""), "name of the fake axis").asString();
-    jointType = config.check("jointType", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "type of the fake joint [atrv|atpr|unkn]").asVocab32();
+    axes = config.check("axes", yarp::os::Value(1), "number of fake axes").asInt32();
+
+    const auto * names = config.find("axisNames").asList();
+    const auto * types = config.find("jointTypes").asList();
+
+    if (names == nullptr)
+    {
+        yCIError(FJ, id()) << R"(Missing key "axisNames" or not a list)";
+        return false;
+    }
+
+    if (types == nullptr)
+    {
+        yCIError(FJ, id()) << R"(Missing key "jointTypes" or not a list)";
+        return false;
+    }
+
+    if (names->size() != axes || types->size() != axes)
+    {
+        yCIError(FJ, id()) << "Number of axes, names and types must match";
+        return false;
+    }
+
+    for (int i = 0; i < axes; i++)
+    {
+        axisNames.push_back(names->get(i).asString());
+        jointTypes.push_back(types->get(i).asVocab32());
+    }
+
     return true;
 }
 
