@@ -176,7 +176,7 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
         return false;
     }
 
-    yCInfo(CBB) << "Attached" << buses.size() << "bus devices and" << nodes.size() << "node devices";
+    yCInfo(CBB) << "Attached" << buses.size() << "bus device(s) and" << nodes.size() << "node device(s)";
 
     for (int i = 0; i < buses.size(); i++)
     {

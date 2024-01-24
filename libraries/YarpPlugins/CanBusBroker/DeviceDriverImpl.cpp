@@ -15,7 +15,12 @@ using namespace roboticslab;
 
 bool CanBusBroker::open(yarp::os::Searchable & config)
 {
-    const auto * buses = config.find("buses").asList();
+    yarp::os::Property options;
+    options.fromString(config.findGroup("global").toString());
+    options.fromString(config.findGroup("common").toString(), false); // override global options
+    options.fromString(config.toString(), false); // override common options
+
+    const auto * buses = options.find("buses").asList();
 
     if (!buses)
     {
@@ -27,19 +32,19 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
     {
         auto bus = buses->get(i).asString();
 
-        if (!config.check(bus))
+        if (!options.check(bus))
         {
             yCError(CBB) << "Missing CAN bus key:" << bus;
             return false;
         }
 
-        if (!config.find(bus).isList())
+        if (!options.find(bus).isList())
         {
             yCError(CBB) << "Key" << bus << "must be a list";
             return false;
         }
 
-        const auto * nodes = config.find(bus).asList();
+        const auto * nodes = options.find(bus).asList();
 
         std::vector<std::string> names;
 
@@ -52,14 +57,14 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
         auto * broker = new SingleBusBroker(bus, names);
         brokers.push_back(broker);
 
-        if (!broker->configure(config))
+        if (!broker->configure(options))
         {
             yCError(CBB) << "Unable to configure broker of CAN bus device" << bus;
             return false;
         }
     }
 
-    if (yarp::os::Value * v; config.check("fakeNodes", v, "fake CAN nodes"))
+    if (yarp::os::Value * v; options.check("fakeNodes", v, "fake CAN nodes"))
     {
         if (!v->isList())
         {
@@ -75,9 +80,9 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
         }
     }
 
-    if (config.check("syncPeriod", "SYNC message period (s)"))
+    if (options.check("syncPeriod", "SYNC message period (s)"))
     {
-        auto syncPeriod = config.find("syncPeriod").asFloat64();
+        auto syncPeriod = options.find("syncPeriod").asFloat64();
 
         if (syncPeriod <= 0.0)
         {
@@ -107,7 +112,7 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
                 return false;
             }
 
-            if (yarp::os::Value * v; config.check("syncObserver", v, "synchronization signal observer") && v->isBlob())
+            if (yarp::os::Value * v; options.check("syncObserver", v, "synchronization signal observer") && v->isBlob())
             {
                 yCDebug(CBB) << "Setting synchronization signal observer";
                 auto * observer = *reinterpret_cast<TypedStateObserver<double> * const *>(v->asBlob());

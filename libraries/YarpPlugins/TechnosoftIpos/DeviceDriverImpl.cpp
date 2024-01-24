@@ -21,7 +21,8 @@ constexpr auto DEFAULT_DRIVE_STATE_TIMEOUT = 2.0;
 bool TechnosoftIposBase::open(yarp::os::Searchable & config)
 {
     yarp::os::Property iposOptions;
-    iposOptions.fromString(config.findGroup("common").toString());
+    iposOptions.fromString(config.findGroup("global").toString());
+    iposOptions.fromString(config.findGroup("common").toString(), false); // override global options
     iposOptions.fromString(config.toString(), false); // override common options
 
     const auto & driverOptions = config.findGroup("driver");
