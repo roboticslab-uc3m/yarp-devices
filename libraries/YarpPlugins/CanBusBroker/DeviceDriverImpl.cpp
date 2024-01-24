@@ -2,6 +2,8 @@
 
 #include "CanBusBroker.hpp"
 
+#include <string>
+
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Value.h>
 
@@ -72,11 +74,18 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
             return false;
         }
 
-        const auto * nodes = v->asList();
+        const auto * ids = v->asList();
 
-        for (int i = 0; i < nodes->size(); i++)
+        for (int i = 0; i < ids->size(); i++)
         {
-            fakeNodes.push(nullptr, nodes->get(i).asString().c_str());
+            if (!ids->get(i).isInt32())
+            {
+                yCError(CBB) << "Fake node ID must be an integer:" << ids->get(i).toString();
+                return false;
+            }
+
+            auto fakeId = "ID" + std::to_string(ids->get(i).asInt32());
+            fakeNodes.push(nullptr, fakeId.c_str());
         }
     }
 

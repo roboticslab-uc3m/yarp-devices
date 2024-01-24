@@ -44,6 +44,9 @@ bool FakeJoint::open(yarp::os::Searchable & config)
         jointTypes.push_back(types->get(i).asVocab32());
     }
 
+    controlModes.resize(axes, VOCAB_CM_CONFIGURED);
+    interactionModes.resize(axes, yarp::dev::VOCAB_IM_UNKNOWN);
+
     return true;
 }
 

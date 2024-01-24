@@ -134,15 +134,15 @@ public:
     bool getControlModeRaw(int j, int * mode) override
     { *mode = controlModes[j]; return true; }
     bool getControlModesRaw(int * modes) override
-    { return getControlModeRaw(0, &modes[0]); }
+    { bool ret = true; for (int i = 0; i < axes; i++) { ret &= getControlModeRaw(i, &modes[i]); } return ret; }
     bool getControlModesRaw(int n_joint, const int * joints, int * modes) override
-    { return getControlModeRaw(0, &modes[0]); }
+    { bool ret = true; for (int i = 0; i < n_joint; i++) { ret &= getControlModeRaw(joints[i], &modes[i]); } return ret; }
     bool setControlModeRaw(int j, int mode) override
     { controlModes[j] = mode; return true; }
     bool setControlModesRaw(int * modes) override
-    { return setControlModeRaw(0, modes[0]); }
+    { bool ret = true; for (int i = 0; i < axes; i++) { ret &= setControlModeRaw(i, modes[i]); } return ret; }
     bool setControlModesRaw(int n_joint, const int * joints, int * modes) override
-    { return setControlModeRaw(0, modes[0]); }
+    { bool ret = true; for (int i = 0; i < n_joint; i++) { ret &= setControlModeRaw(joints[i], modes[i]); } return ret; }
 
     //  --------- ICurrentControlRaw declarations ---------
 
@@ -217,15 +217,15 @@ public:
     bool getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum * mode) override
     { *mode = interactionModes[axis]; return true; }
     bool getInteractionModesRaw(yarp::dev::InteractionModeEnum * modes) override
-    { return getInteractionModeRaw(0, &modes[0]); }
+    { bool ret = true; for (int i = 0; i < axes; i++) { ret &= getInteractionModeRaw(i, &modes[i]); } return ret; }
     bool getInteractionModesRaw(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes) override
-    { return getInteractionModeRaw(0, &modes[0]); }
+    { bool ret = true; for (int i = 0; i < n_joints; i++) { ret &= getInteractionModeRaw(joints[i], &modes[i]); } return ret; }
     bool setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode) override
     { interactionModes[axis] = mode; return true; }
     bool setInteractionModesRaw(yarp::dev::InteractionModeEnum * modes) override
-    { return true; }
+    { bool ret = true; for (int i = 0; i < axes; i++) { ret &= setInteractionModeRaw(i, modes[i]); } return ret; }
     bool setInteractionModesRaw(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes) override
-    { return true; }
+    { bool ret = true; for (int i = 0; i < n_joints; i++) { ret &= setInteractionModeRaw(joints[i], modes[i]); } return ret; }
 
     //  --------- IMotorRaw declarations ---------
 

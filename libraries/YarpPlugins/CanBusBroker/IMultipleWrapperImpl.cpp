@@ -22,7 +22,7 @@ const yarp::dev::PolyDriverDescriptor * CanBusBroker::tryCreateFakeNode(const ya
 {
     for (auto i = 0; i < fakeNodes.size(); i++)
     {
-        if (fakeNodes[i]->key == driver->key)
+        if (fakeNodes[i]->key == driver->poly->id())
         {
             yCInfo(CBB) << "Requested instantiation of fake node device" << driver->key;
 
@@ -68,10 +68,12 @@ const yarp::dev::PolyDriverDescriptor * CanBusBroker::tryCreateFakeNode(const ya
 
             yarp::os::Property options {
                 {"device", yarp::os::Value("FakeJoint")},
-                {"axes", yarp::os::Value(axes)},
-                {"axisNames", yarp::os::Value(axisNames.toString().c_str())},
-                {"jointTypes", yarp::os::Value(jointTypes.toString().c_str())}
+                {"axes", yarp::os::Value(axes)}
             };
+
+            // no initializer list overload for these, sadly
+            options.put("axisNames", yarp::os::Value::makeList(axisNames.toString().c_str()));
+            options.put("jointTypes", yarp::os::Value::makeList(jointTypes.toString().c_str()));
 
             auto * fakeNode = new yarp::dev::PolyDriver;
             fakeNodes[i]->poly = fakeNode;
@@ -80,10 +82,11 @@ const yarp::dev::PolyDriverDescriptor * CanBusBroker::tryCreateFakeNode(const ya
 
             if (!fakeNode->open(options))
             {
-                yCError(CBB) << "Unable to open fake node device" << driver->key;
+                yCError(CBB) << "Unable to open fake node device" << fakeNodes[i]->key;
                 return nullptr;
             }
 
+            fakeNodes[i]->key = driver->key; // hackish, but we need this later on during attach
             return fakeNodes[i];
         }
     }
@@ -176,6 +179,15 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
         return false;
     }
 
+    for (int i = 0; i < fakeNodes.size(); i++)
+    {
+        if (fakeNodes[i]->poly == nullptr)
+        {
+            yCError(CBB) << "Fake node device" << fakeNodes[i]->key << "requested, but not instantiated";
+            return false;
+        }
+    }
+
     yCInfo(CBB) << "Attached" << buses.size() << "bus device(s) and" << nodes.size() << "node device(s)";
 
     for (int i = 0; i < buses.size(); i++)
@@ -186,6 +198,8 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
             return false;
         }
     }
+
+    yCInfo(CBB) << "Registered bus devices";
 
     for (int i = 0; i < nodes.size(); i++)
     {
@@ -214,6 +228,8 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
         iCanBusSharer->registerSender(broker->getWriter()->getDelegate());
     }
 
+    yCInfo(CBB) << "Registered node devices";
+
     for (int i = 0; i < buses.size(); i++)
     {
         if (!brokers[i]->startThreads())
@@ -222,6 +238,8 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
             return false;
         }
     }
+
+    yCInfo(CBB) << "Started CAN threads";
 
     for (const auto & rawDevice : deviceMapper.getDevices())
     {
@@ -233,11 +251,15 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
         }
     }
 
+    yCInfo(CBB) << "Initialized node devices";
+
     if (syncThread && !syncThread->isRunning() && !syncThread->start())
     {
         yCError(CBB) << "Unable to start synchronization thread";
         return false;
     }
+
+    yCInfo(CBB) << "Started synchronization thread";
 
     return true;
 }
