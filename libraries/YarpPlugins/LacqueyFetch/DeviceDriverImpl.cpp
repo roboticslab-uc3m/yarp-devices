@@ -10,11 +10,8 @@ using namespace roboticslab;
 
 bool LacqueyFetch::open(yarp::os::Searchable & config)
 {
-    const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
-
     canId = config.check("canId", yarp::os::Value(0), "can bus ID").asInt8();
     axisName = config.check("name", yarp::os::Value(""), "axis name").asString();
-    yarp::dev::DeviceDriver::setId("ID" + std::to_string(canId));
     return true;
 }
 

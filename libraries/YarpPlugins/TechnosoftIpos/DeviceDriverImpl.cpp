@@ -30,11 +30,11 @@ bool TechnosoftIposBase::open(yarp::os::Searchable & config)
     const auto & gearboxOptions = config.findGroup("gearbox");
     const auto & encoderOptions = config.findGroup("encoder");
 
-    canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32(); // id-specific
+    canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32(); // id-specific, don't override this
 
     actualControlMode = VOCAB_CM_NOT_CONFIGURED;
 
-    axisName = config.check("name", yarp::os::Value(""), "axis name").asString(); // id-specific
+    axisName = config.check("name", yarp::os::Value(""), "axis name").asString(); // id-specific, don't override this
     jointType = iposOptions.check("type", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "joint type [atrv|atpr|unkn]").asVocab32();
     max = iposOptions.check("max", yarp::os::Value(0.0), "max (meters or degrees)").asFloat64();
     min = iposOptions.check("min", yarp::os::Value(0.0), "min (meters or degrees)").asFloat64();

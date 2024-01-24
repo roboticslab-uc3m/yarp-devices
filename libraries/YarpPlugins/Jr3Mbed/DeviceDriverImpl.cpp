@@ -19,28 +19,13 @@ constexpr auto DEFAULT_FILTER = 0.0; // [Hz], 0.0 = no filter
 
 bool Jr3Mbed::open(yarp::os::Searchable & config)
 {
-    if (!config.check("robotConfig") || !config.find("robotConfig").isBlob())
-    {
-        yCError(JR3M) << R"(Missing "robotConfig" property or not a blob)";
-        return false;
-    }
+    yarp::os::Property jr3Options;
+    jr3Options.fromString(config.findGroup("common").toString());
+    jr3Options.fromString(config.toString(), false); // override common options
 
-    const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
-
-    const auto & commonGroup = robotConfig->findGroup("common-jr3");
-    yarp::os::Property jr3Group;
-
-    if (!commonGroup.isNull())
-    {
-        yCDebugOnce(JR3M) << commonGroup.toString();
-        jr3Group.fromString(commonGroup.toString());
-    }
-
-    jr3Group.fromString(config.toString(), false); // override common options
-
-    canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt8(); // id-specific
-    name = config.check("name", yarp::os::Value(""), "sensor name").asString(); // id-specific
-    filter = jr3Group.check("filter", yarp::os::Value(DEFAULT_FILTER), "cutoff frequency for low-pass filter (Hertz)").asFloat64();
+    canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt8(); // id-specific, don't override this
+    name = config.check("name", yarp::os::Value(""), "sensor name").asString(); // id-specific, don't override this
+    filter = jr3Options.check("filter", yarp::os::Value(DEFAULT_FILTER), "cutoff frequency for low-pass filter (Hertz)").asFloat64();
 
     if (canId <= 0 || canId > 127)
     {
@@ -54,9 +39,7 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
         return false;
     }
 
-    yarp::dev::DeviceDriver::setId("ID" + std::to_string(canId));
-
-    auto ackTimeout = jr3Group.check("ackTimeout", yarp::os::Value(DEFAULT_ACK_TIMEOUT), "CAN acknowledge timeout (seconds)").asFloat64();
+    auto ackTimeout = jr3Options.check("ackTimeout", yarp::os::Value(DEFAULT_ACK_TIMEOUT), "CAN acknowledge timeout (seconds)").asFloat64();
 
     if (ackTimeout <= 0.0)
     {
@@ -66,9 +49,9 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
 
     ackStateObserver = new TypedStateObserver<std::uint8_t[]>(ackTimeout);
 
-    if (jr3Group.check("fullScales", "list of full scales for each axis (3*N, 3*daNm)"))
+    if (jr3Options.check("fullScales", "list of full scales for each axis (3*N, 3*daNm)"))
     {
-        const auto & fullScalesValue = jr3Group.find("fullScales");
+        const auto & fullScalesValue = jr3Options.find("fullScales");
 
         if (!fullScalesValue.isList() || fullScalesValue.asList()->size() != 6)
         {
@@ -96,9 +79,9 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
         shouldQueryFullScales = true;
     }
 
-    if (jr3Group.check("asyncPeriod", "period of asynchronous publishing mode (seconds)"))
+    if (jr3Options.check("asyncPeriod", "period of asynchronous publishing mode (seconds)"))
     {
-        asyncPeriod = jr3Group.find("asyncPeriod").asFloat64();
+        asyncPeriod = jr3Options.find("asyncPeriod").asFloat64();
         yCIInfo(JR3M, id()) << "Asynchronous mode requested with period" << asyncPeriod << "[s]";
 
         if (asyncPeriod <= 0.0)
@@ -115,7 +98,7 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
         mode = jr3_mode::SYNC;
     }
 
-    auto monitorPeriod = jr3Group.check("monitorPeriod", yarp::os::Value(DEFAULT_MONITOR_PERIOD), "monitor thread period (seconds)").asFloat64();
+    auto monitorPeriod = jr3Options.check("monitorPeriod", yarp::os::Value(DEFAULT_MONITOR_PERIOD), "monitor thread period (seconds)").asFloat64();
 
     if (monitorPeriod <= 0.0)
     {
@@ -127,7 +110,7 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
     monitorThread = new yarp::os::Timer(monitorPeriod, std::bind(&Jr3Mbed::monitorWorker, this, _1), false);
 
     // no more than 8 seconds since packets arrive at 8 KHz and the counter is only 16 bits wide (it overflows every 65536 frames)
-    diagnosticsPeriod = jr3Group.check("diagnosticsPeriod", yarp::os::Value(0.0), "diagnostics period (seconds)").asFloat64();
+    diagnosticsPeriod = jr3Options.check("diagnosticsPeriod", yarp::os::Value(0.0), "diagnostics period (seconds)").asFloat64();
 
     if (diagnosticsPeriod < 0.0)
     {
