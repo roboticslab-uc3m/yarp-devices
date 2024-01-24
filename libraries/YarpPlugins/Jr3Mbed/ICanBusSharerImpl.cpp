@@ -63,12 +63,23 @@ bool Jr3Mbed::initialize()
         return false;
     }
 
-    ret = ret && (!shouldQueryFullScales || queryFullScales());
+    if (!ret
+        || (shouldQueryFullScales && !queryFullScales())
+        // wait for the sensor data to settle, otherwise zeroing will be inaccurate
+        || (yarp::os::SystemClock::delaySystem(0.1), !sendCommand("zero offsets", can_ops::ZERO_OFFS)))
+    {
+        yCIError(JR3M, id()) << "Initial configuration failed";
+        return false;
+    }
 
-    // wait for the sensor data to settle, otherwise zeroing will be inaccurate
-    ret = ret && (yarp::os::SystemClock::delaySystem(0.1), sendCommand("zero offsets", can_ops::ZERO_OFFS));
+    // the monitor thread itself may call `initialize()`, so we need to check to avoid starting twice
+    if (monitorThread && !monitorThread->isRunning() && !monitorThread->start())
+    {
+        yCIError(JR3M, id()) << "Unable to start monitor thread";
+        return false;
+    }
 
-    return ret;
+    return true;
 }
 
 // -----------------------------------------------------------------------------
