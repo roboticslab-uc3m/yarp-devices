@@ -247,7 +247,7 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
 
         if (iCanBusSharer && !iCanBusSharer->initialize())
         {
-            yCError(CBB) << "Node device id" << iCanBusSharer->getId() << "could not initialize CAN comms";
+            yCWarning(CBB) << "Node device id" << iCanBusSharer->getId() << "could not initialize CAN comms";
         }
     }
 
