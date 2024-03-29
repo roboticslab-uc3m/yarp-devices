@@ -60,7 +60,6 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
             auto isFakeNode = node.rfind("fake-", 0) == 0; // starts with "fake-"?
 
             yarp::os::Property nodeOptions;
-            nodeOptions.setMonitor(config.getMonitor(), node.c_str());
 
             if (!isFakeNode)
             {
@@ -132,7 +131,6 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
             }
 
             yarp::os::Property canBusOptions;
-            canBusOptions.setMonitor(config.getMonitor(), canBus.c_str());
             canBusOptions.fromString(canBusGroup.toString());
             canBusOptions.put("robotConfig", config.find("robotConfig"));
             canBusOptions.put("blockingMode", false); // enforce non-blocking mode
