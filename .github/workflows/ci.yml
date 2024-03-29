@@ -85,7 +85,7 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -qq ccache intltool libxml2-dev libglib2.0-dev libusb-1.0-0-dev libspnav-dev libxwiimote-dev libgtest-dev
 
     - name: Set up CMake
-      uses: jwlawson/actions-setup-cmake@v1
+      uses: jwlawson/actions-setup-cmake@v2
       with:
         cmake-version: ${{matrix.robotology.cmake}}
 
