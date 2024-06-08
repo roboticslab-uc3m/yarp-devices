@@ -2,7 +2,9 @@
 
 #include "SpaceNavigator.hpp"
 
-#include <algorithm> // std::clamp
+#include <cmath> // std::abs
+
+#include <algorithm> // std::clamp, std::copysign
 
 using namespace roboticslab;
 
@@ -19,22 +21,13 @@ double SpaceNavigator::enforceRange(double in)
 
 double SpaceNavigator::enforceDeadband(double in)
 {
-    double out;
-
-    if (in > deadband)
+    if (std::abs(in) <= deadband)
     {
-        out = in;
+        return 0.0;
     }
     else
     {
-        if (in < -deadband)
-        {
-            out = in;
-        }
-        else
-        {
-            out = 0.0;
-        }
+        const double slope = RANGE / (RANGE - deadband);
+        return slope * std::copysign(std::abs(in) - deadband, in);
     }
-    return out;
 }
