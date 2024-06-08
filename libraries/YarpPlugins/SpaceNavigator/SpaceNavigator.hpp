@@ -91,14 +91,6 @@ public:
      */
     int calibrateChannel(int ch, double value) override;
 
-protected:
-
-    //! @brief Enforce that a value is between -1 and 1
-    double enforceRange(double in);
-
-    //! @brief Enforce the deadband (setting values within deadband to zero)
-    double enforceDeadband(double in);
-
 private:
 
     double dx {0.0};

@@ -15,8 +15,7 @@ yarp_prepare_plugin(SpaceNavigator
 
 if(NOT SKIP_SpaceNavigator)
 
-    yarp_add_plugin(SpaceNavigator SpaceNavigator.cpp
-                                   SpaceNavigator.hpp
+    yarp_add_plugin(SpaceNavigator SpaceNavigator.hpp
                                    DeviceDriverImpl.cpp
                                    IAnalogSensorImpl.cpp)
 
