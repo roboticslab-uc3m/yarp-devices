@@ -35,11 +35,11 @@ class SpaceNavigator : public yarp::dev::DeviceDriver,
 {
 public:
 
-    SpaceNavigator();
-    ~SpaceNavigator() override;
+    ~SpaceNavigator() override
+    { close(); }
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
-    bool open(yarp::os::Searchable& config) override;
+    bool open(yarp::os::Searchable & config) override;
     bool close() override;
 
     //  --------- IAnalogSensor Declarations. Implementation in IAnalogSensorImpl.cpp ---------
@@ -48,7 +48,7 @@ public:
      * @param out a vector containing the sensor's last readings.
      * @return AS_OK or return code. AS_TIMEOUT if the sensor timed-out.
      */
-    int read(yarp::sig::Vector &out) override;
+    int read(yarp::sig::Vector & out) override;
 
     /**
      * Check the state value of a given channel.
@@ -74,7 +74,7 @@ public:
      * @param value a vector of calibration values.
      * @return status.
      */
-    int calibrateSensor(const yarp::sig::Vector& value) override;
+    int calibrateSensor(const yarp::sig::Vector & value) override;
 
     /**
      * Calibrates one single channel.
@@ -101,11 +101,19 @@ protected:
 
 private:
 
-    double dx, dy, dz;
-    double droll, dpitch, dyaw;
-    int button1, button2;
-    unsigned int noDataCounter;
-    double deadband;
+    double dx {0.0};
+    double dy {0.0};
+    double dz {0.0};
+
+    double droll {0.0};
+    double dpitch {0.0};
+    double dyaw {0.0};
+
+    int button1 {0};
+    int button2 {0};
+
+    unsigned int noDataCounter {0};
+    double deadband {0.0};
 };
 
 } // namespace roboticslab

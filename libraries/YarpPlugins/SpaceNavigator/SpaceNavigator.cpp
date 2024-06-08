@@ -2,46 +2,17 @@
 
 #include "SpaceNavigator.hpp"
 
+#include <algorithm> // std::clamp
+
 using namespace roboticslab;
 
-// -----------------------------------------------------------------------------
-
-SpaceNavigator::SpaceNavigator()
-    : dx(0.0), dy(0.0), dz(0.0),
-      droll(0.0), dpitch(0.0), dyaw(0.0),
-      button1(0), button2(0),
-      noDataCounter(0), deadband(0.0)
-{ }
-
-// -----------------------------------------------------------------------------
-
-SpaceNavigator::~SpaceNavigator()
-{
-    close();
-}
+constexpr auto RANGE = 1.0;
 
 // -----------------------------------------------------------------------------
 
 double SpaceNavigator::enforceRange(double in)
 {
-    double out;
-
-    if (in > 1)
-    {
-        out = 1;
-    }
-    else
-    {
-        if (in < -1)
-        {
-            out = -1;
-        }
-        else
-        {
-            out = in;
-        }
-    }
-    return out;
+    return std::clamp(in, -RANGE, RANGE);
 }
 
 // -----------------------------------------------------------------------------
