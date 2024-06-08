@@ -21,6 +21,12 @@ bool SpaceNavigator::open(yarp::os::Searchable & config)
 {
     deadband = config.check("deadband", yarp::os::Value(DEFAULT_DEADBAND), "deadband [0,1]").asFloat64();
 
+    if (deadband < 0.0 || deadband > 1.0)
+    {
+        yCError(SPNAV) << "Invalid deadband value (must be in [0,1]):" << deadband;
+        return false;
+    }
+
     if (spnav_open() == -1)
     {
         yCError(SPNAV) << "Failed to connect to the space navigator daemon";

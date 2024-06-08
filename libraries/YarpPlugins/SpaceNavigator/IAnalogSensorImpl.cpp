@@ -2,6 +2,10 @@
 
 #include "SpaceNavigator.hpp"
 
+#include <cmath> // std::abs, std::copysign
+
+#include <algorithm> // std::clamp
+
 using namespace roboticslab;
 
 constexpr auto NUM_CHANNELS = 8;
@@ -12,6 +16,27 @@ constexpr auto FULL_SCALE_ROLL = 415.0;
 constexpr auto FULL_SCALE_PITCH = 405.0;
 constexpr auto FULL_SCALE_YAW = 435.0;
 constexpr auto MAX_NO_DATA_ITERATIONS = 10;
+
+constexpr auto RANGE = 1.0;
+
+// -----------------------------------------------------------------------------
+
+namespace
+{
+    double normalize(double value, double deadband)
+    {
+        if (std::abs(value) <= deadband)
+        {
+            return 0.0;
+        }
+        else
+        {
+            const double slope = RANGE / (RANGE - deadband);
+            const double clamped = std::clamp(value, -RANGE, RANGE);
+            return slope * std::copysign(std::abs(clamped) - deadband, value);
+        }
+    }
+}
 
 // -----------------------------------------------------------------------------
 
@@ -52,12 +77,12 @@ int SpaceNavigator::read(yarp::sig::Vector &out)
 
     out.resize(NUM_CHANNELS);
 
-    out[0] = enforceDeadband(enforceRange(dx / FULL_SCALE_X));
-    out[1] = enforceDeadband(enforceRange(dy / FULL_SCALE_Y));
-    out[2] = enforceDeadband(enforceRange(dz / FULL_SCALE_Z));
-    out[3] = enforceDeadband(enforceRange(droll / FULL_SCALE_ROLL));
-    out[4] = enforceDeadband(enforceRange(dpitch / FULL_SCALE_PITCH));
-    out[5] = enforceDeadband(enforceRange(dyaw / FULL_SCALE_YAW));
+    out[0] = normalize(dx / FULL_SCALE_X, deadband);
+    out[1] = normalize(dy / FULL_SCALE_Y, deadband);
+    out[2] = normalize(dz / FULL_SCALE_Z, deadband);
+    out[3] = normalize(droll / FULL_SCALE_ROLL, deadband);
+    out[4] = normalize(dpitch / FULL_SCALE_PITCH, deadband);
+    out[5] = normalize(dyaw / FULL_SCALE_YAW, deadband);
 
     out[6] = button1;
     out[7] = button2;
