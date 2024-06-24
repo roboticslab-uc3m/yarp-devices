@@ -28,26 +28,37 @@ namespace roboticslab
 class SyncPeriodicThread final : public yarp::os::PeriodicThread
 {
 public:
-    //! Constructor, manages the lifetime of @ref taskFactory.
-    SyncPeriodicThread(std::vector<SingleBusBroker *> & brokers, FutureTaskFactory * taskFactory);
+    //! Constructor.
+    SyncPeriodicThread();
 
     //! Destructor.
     ~SyncPeriodicThread() override;
 
+    //! Register broker.
+    void registerBroker(SingleBusBroker * broker);
+
+    //! Retrieve registered brokers.
+    const auto & getBrokers() const
+    { return brokers; }
+
     //! Open synchronization port.
     bool openPort(const std::string & name);
 
-    //! Set synchronization observer.
-    void setObserver(TypedStateObserver<double> * syncObserver)
-    { this->syncObserver = syncObserver; }
+    //! Close synchronization port.
+    void closePort();
 
-    //! Periodic task.
+    //! Set synchronization observer.
+    void setObserver(TypedStateObserver<double> * syncObserver);
+
+protected:
+    void beforeStart() override;
+    bool threadInit() override;
     void run() override;
 
 private:
-    std::vector<SingleBusBroker *> & brokers;
-    FutureTaskFactory * taskFactory;
-    TypedStateObserver<double> * syncObserver;
+    std::vector<SingleBusBroker *> brokers;
+    FutureTaskFactory * taskFactory {nullptr};
+    TypedStateObserver<double> * syncObserver {nullptr};
     yarp::os::Port syncPort;
     yarp::os::PortWriterBuffer<yarp::os::Bottle> syncWriter;
 };

@@ -7,7 +7,6 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Value.h>
 
-#include "FutureTask.hpp"
 #include "ICanBusSharer.hpp"
 #include "LogComponent.hpp"
 
@@ -22,48 +21,39 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
     options.fromString(config.findGroup("common").toString(), false); // override global options
     options.fromString(config.toString(), false); // override common options
 
-    const auto * buses = options.find("buses").asList();
-
-    if (!buses)
+    if (yarp::os::Value * v; options.check("bus", v, "CAN bus") && v->isString())
     {
-        yCError(CBB) << R"(Missing key "buses" or not a list)";
-        return false;
+        auto bus = v->asString();
+
+        if (yarp::os::Value * vv; options.check("nodes", vv, "CAN nodes") && vv->isList())
+        {
+            const auto * nodes = vv->asList();
+
+            std::vector<std::string> names;
+
+            for (int j = 0; j < nodes->size(); j++)
+            {
+                auto node = nodes->get(j).asString();
+                names.push_back(node);
+            }
+
+            broker = new SingleBusBroker(bus, names);
+
+            if (!broker->configure(options))
+            {
+                yCError(CBB) << "Unable to configure broker of CAN bus device" << bus;
+                return false;
+            }
+        }
+        else
+        {
+            yCError(CBB) << R"(Missing key "nodes" or not a list)";
+        }
     }
-
-    for (int i = 0; i < buses->size(); i++)
+    else
     {
-        auto bus = buses->get(i).asString();
-
-        if (!options.check(bus))
-        {
-            yCError(CBB) << "Missing CAN bus key:" << bus;
-            return false;
-        }
-
-        if (!options.find(bus).isList())
-        {
-            yCError(CBB) << "Key" << bus << "must be a list";
-            return false;
-        }
-
-        const auto * nodes = options.find(bus).asList();
-
-        std::vector<std::string> names;
-
-        for (int j = 0; j < nodes->size(); j++)
-        {
-            auto node = nodes->get(j).asString();
-            names.push_back(node);
-        }
-
-        auto * broker = new SingleBusBroker(bus, names);
-        brokers.push_back(broker);
-
-        if (!broker->configure(options))
-        {
-            yCError(CBB) << "Unable to configure broker of CAN bus device" << bus;
-            return false;
-        }
+        yCError(CBB) << R"(Missing key "bus" or not a string)";
+        return false;
     }
 
     if (yarp::os::Value * v; options.check("fakeNodes", v, "fake CAN nodes"))
@@ -89,9 +79,9 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
         }
     }
 
-    if (options.check("syncPeriod", "SYNC message period (s)"))
+    if (yarp::os::Value * v; options.check("syncPeriod", v, "SYNC message period (s)"))
     {
-        auto syncPeriod = options.find("syncPeriod").asFloat64();
+        auto syncPeriod = v->asFloat64();
 
         if (syncPeriod <= 0.0)
         {
@@ -99,34 +89,16 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
             return false;
         }
 
-        FutureTaskFactory * taskFactory = nullptr;
+        auto & syncThread = getSyncThread();
 
-        if (brokers.size() > 1)
+        syncThread.registerBroker(broker);
+        syncThread.setPeriod(syncPeriod);
+
+        if (yarp::os::Value * vv; options.check("syncObserver", vv, "synchronization signal observer") && vv->isBlob())
         {
-            taskFactory = new ParallelTaskFactory(brokers.size());
-        }
-        else if (brokers.size() == 1)
-        {
-            taskFactory = new SequentialTaskFactory;
-        }
-
-        if (taskFactory)
-        {
-            syncThread = new SyncPeriodicThread(brokers, taskFactory); // owns `taskFactory`
-            syncThread->setPeriod(syncPeriod);
-
-            if (!syncThread->openPort("/sync:o"))
-            {
-                yCError(CBB) << "Unable to open synchronization port";
-                return false;
-            }
-
-            if (yarp::os::Value * v; options.check("syncObserver", v, "synchronization signal observer") && v->isBlob())
-            {
-                yCDebug(CBB) << "Setting synchronization signal observer";
-                auto * observer = *reinterpret_cast<TypedStateObserver<double> * const *>(v->asBlob());
-                syncThread->setObserver(observer);
-            }
+            yCDebug(CBB) << "Setting synchronization signal observer";
+            auto * observer = *reinterpret_cast<TypedStateObserver<double> * const *>(vv->asBlob());
+            syncThread.setObserver(observer);
         }
     }
     else
@@ -143,18 +115,12 @@ bool CanBusBroker::close()
 {
     bool ok = detachAll();
 
-    if (syncThread)
-    {
-        delete syncThread;
-        syncThread = nullptr;
-    }
-
-    for (auto * broker : brokers)
+    if (broker)
     {
         delete broker;
+        broker = nullptr;
     }
 
-    brokers.clear();
     return ok;
 }
 

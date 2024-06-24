@@ -10,33 +10,77 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-SyncPeriodicThread::SyncPeriodicThread(std::vector<SingleBusBroker *> & _brokers, FutureTaskFactory * _taskFactory)
-    : yarp::os::PeriodicThread(1.0, yarp::os::ShouldUseSystemClock::Yes, yarp::os::PeriodicThreadClock::Absolute),
-      brokers(_brokers),
-      taskFactory(_taskFactory),
-      syncObserver(nullptr)
+SyncPeriodicThread::SyncPeriodicThread()
+    : yarp::os::PeriodicThread(1.0,
+                               yarp::os::ShouldUseSystemClock::Yes,
+                               yarp::os::PeriodicThreadClock::Absolute)
 {}
 
 // -----------------------------------------------------------------------------
 
 SyncPeriodicThread::~SyncPeriodicThread()
 {
-    if (syncPort.isOpen())
-    {
-        syncPort.interrupt();
-        syncPort.close();
-    }
-
     delete taskFactory;
+}
+
+// -----------------------------------------------------------------------------
+
+void SyncPeriodicThread::registerBroker(SingleBusBroker * broker)
+{
+    brokers.push_back(broker);
 }
 
 // -----------------------------------------------------------------------------
 
 bool SyncPeriodicThread::openPort(const std::string & name)
 {
-    syncPort.setWriteOnly();
-    syncWriter.attach(syncPort);
-    return syncPort.open(name);
+    if (!syncPort.isOpen())
+    {
+        syncPort.setWriteOnly();
+        syncWriter.attach(syncPort);
+        return syncPort.open(name);
+    }
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+void SyncPeriodicThread::setObserver(TypedStateObserver<double> * syncObserver)
+{
+    this->syncObserver = syncObserver;
+}
+
+// -----------------------------------------------------------------------------
+
+void SyncPeriodicThread::closePort()
+{
+    if (syncPort.isOpen())
+    {
+        syncPort.interrupt();
+        syncPort.close();
+    }
+}
+
+// -----------------------------------------------------------------------------
+
+void SyncPeriodicThread::beforeStart()
+{
+    if (brokers.size() > 1)
+    {
+        taskFactory = new ParallelTaskFactory(brokers.size());
+    }
+    else if (brokers.size() == 1)
+    {
+        taskFactory = new SequentialTaskFactory;
+    }
+}
+
+// -----------------------------------------------------------------------------
+
+bool SyncPeriodicThread::threadInit()
+{
+    return taskFactory != nullptr;
 }
 
 // -----------------------------------------------------------------------------
@@ -48,7 +92,9 @@ void SyncPeriodicThread::run()
 
     for (auto * broker : brokers)
     {
-        task->add([broker, now]
+        if (broker->isInitialized())
+        {
+            task->add([broker, now]
             {
                 for (auto * handle : broker->getReader()->getHandles())
                 {
@@ -59,6 +105,7 @@ void SyncPeriodicThread::run()
                 broker->getWriter()->flush();
                 return true;
             });
+        }
     }
 
     task->dispatch();

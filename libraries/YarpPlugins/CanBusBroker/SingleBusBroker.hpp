@@ -3,6 +3,7 @@
 #ifndef __SINGLE_BUS_BROKER_HPP__
 #define __SINGLE_BUS_BROKER_HPP__
 
+#include <atomic>
 #include <mutex>
 #include <string>
 #include <vector>
@@ -82,6 +83,14 @@ public:
     //! Callback on incoming remote CAN commands.
     void onRead(yarp::os::Bottle & b) override;
 
+    //! Mark this instance as fully initialized or not.
+    void markInitialized(bool initialized)
+    { this->initialized = initialized; }
+
+    //! Check if this instance is fully initialized.
+    bool isInitialized() const
+    { return initialized; }
+
 private:
     //! Open remote CAN interface ports.
     bool createPorts(const std::string & prefix);
@@ -109,6 +118,7 @@ private:
     BusLoadMonitor * busLoadMonitor {nullptr};
 
     bool registered {false};
+    std::atomic_bool initialized {false};
 };
 
 } // namespace roboticslab

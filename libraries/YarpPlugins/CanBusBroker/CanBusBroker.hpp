@@ -3,8 +3,6 @@
 #ifndef __CAN_BUS_BROKER_HPP__
 #define __CAN_BUS_BROKER_HPP__
 
-#include <vector>
-
 #include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
@@ -416,12 +414,17 @@ public:
     bool getThreeAxisMagnetometerMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
 
 private:
+    static SyncPeriodicThread & getSyncThread()
+    {
+        static SyncPeriodicThread instance;
+        return instance;
+    }
+
     const yarp::dev::PolyDriverDescriptor * tryCreateFakeNode(const yarp::dev::PolyDriverDescriptor * driver);
 
     DeviceMapper deviceMapper;
-    std::vector<SingleBusBroker *> brokers;
     yarp::dev::PolyDriverList fakeNodes;
-    SyncPeriodicThread * syncThread {nullptr};
+    SingleBusBroker * broker {nullptr};
 };
 
 } // namespace roboticslab

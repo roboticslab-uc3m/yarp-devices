@@ -2,7 +2,7 @@
 
 #include "CanBusBroker.hpp"
 
-#include <algorithm> // std::any_of, std::find_if, std::for_each
+#include <algorithm> // std::any_of, std::find_if
 #include <iterator> // std::distance
 
 #include <yarp/os/Bottle.h>
@@ -98,33 +98,23 @@ const yarp::dev::PolyDriverDescriptor * CanBusBroker::tryCreateFakeNode(const ya
 
 bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
 {
-    std::vector<std::string> nodeNames; // flattened broker[i]->getNodeNames()
-
-    std::for_each(brokers.begin(), brokers.end(), [&nodeNames](const auto * broker)
-                                                  { nodeNames.insert(nodeNames.end(),
-                                                                     broker->getNodeNames().begin(),
-                                                                     broker->getNodeNames().end()); });
-
-    std::vector<const yarp::dev::PolyDriverDescriptor *> buses(brokers.size());
+    const auto & nodeNames = broker->getNodeNames();
+    const yarp::dev::PolyDriverDescriptor * bus = nullptr;
     std::vector<const yarp::dev::PolyDriverDescriptor *> nodes(nodeNames.size());
 
     for (int i = 0; i < drivers.size(); i++)
     {
         const auto * driver = drivers[i];
 
-        if (auto bus = std::find_if(brokers.begin(), brokers.end(), [driver](const auto * broker)
-                                                                    { return broker->getBusName() == driver->key; });
-            bus != brokers.end())
+        if (driver->key == broker->getBusName())
         {
-            int index = std::distance(brokers.begin(), bus);
-
-            if (buses[index] != nullptr)
+            if (bus != nullptr)
             {
                 yCError(CBB) << "Bus device" << driver->key << "already attached";
                 return false;
             }
 
-            buses[index] = driver;
+            bus = driver;
         }
         else if (auto node = std::find_if(nodeNames.begin(), nodeNames.end(), [driver](const auto & name)
                                                                               { return name == driver->key; });
@@ -147,19 +137,9 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
         }
     }
 
-    if (std::any_of(buses.begin(), buses.end(), [](const auto * bus) { return bus == nullptr; }))
+    if (bus == nullptr)
     {
-        std::vector<std::string> names;
-
-        for (int i = 0; i < buses.size(); i++)
-        {
-            if (buses[i] == nullptr)
-            {
-                names.push_back(brokers[i]->getBusName());
-            }
-        }
-
-        yCError(CBB) << "Some bus devices are missing:" << names;
+        yCError(CBB) << "The bus device is missing:" << broker->getBusName();
         return false;
     }
 
@@ -188,18 +168,15 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
         }
     }
 
-    yCInfo(CBB) << "Attached" << buses.size() << "bus device(s) and" << nodes.size() << "node device(s)";
+    yCInfo(CBB) << "Attached" << bus->key << "bus device and" << nodes.size() << "node device(s):" << nodeNames;
 
-    for (int i = 0; i < buses.size(); i++)
+    if (!broker->registerDevice(bus->poly))
     {
-        if (!brokers[i]->registerDevice(buses[i]->poly))
-        {
-            yCError(CBB) << "Unable to register bus device" << buses[i]->key;
-            return false;
-        }
+        yCError(CBB) << "Unable to register bus device" << bus->key;
+        return false;
     }
 
-    yCInfo(CBB) << "Registered bus devices";
+    yCInfo(CBB) << "Registered bus device";
 
     for (int i = 0; i < nodes.size(); i++)
     {
@@ -219,24 +196,16 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
             return false;
         }
 
-        auto it = std::find_if(brokers.begin(), brokers.end(), [node](const auto * broker)
-                                                               { const auto & names = broker->getNodeNames();
-                                                                 return std::find(names.begin(), names.end(), node->key) != names.end(); });
-
-        auto * broker = *it;
         broker->getReader()->registerHandle(iCanBusSharer);
         iCanBusSharer->registerSender(broker->getWriter()->getDelegate());
     }
 
     yCInfo(CBB) << "Registered node devices";
 
-    for (int i = 0; i < buses.size(); i++)
+    if (!broker->startThreads())
     {
-        if (!brokers[i]->startThreads())
-        {
-            yCError(CBB) << "Unable to start CAN threads in" << brokers[i]->getBusName();
-            return false;
-        }
+        yCError(CBB) << "Unable to start CAN threads in" << broker->getBusName();
+        return false;
     }
 
     yCInfo(CBB) << "Started CAN threads";
@@ -251,15 +220,31 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
         }
     }
 
+    broker->markInitialized(true);
+
     yCInfo(CBB) << "Initialized node devices";
 
-    if (syncThread && !syncThread->isRunning() && !syncThread->start())
+    if (auto & syncThread = getSyncThread(); !syncThread.getBrokers().empty())
     {
-        yCError(CBB) << "Unable to start synchronization thread";
-        return false;
-    }
+        if (!syncThread.openPort("/sync:o"))
+        {
+            yCError(CBB) << "Unable to open synchronization port";
+            return false;
+        }
 
-    yCInfo(CBB) << "Started synchronization thread";
+        if (!syncThread.isRunning())
+        {
+            if (!syncThread.start())
+            {
+                yCError(CBB) << "Unable to start synchronization thread";
+                return false;
+            }
+            else
+            {
+                yCInfo(CBB) << "Started synchronization thread";
+            }
+        }
+    }
 
     return true;
 }
@@ -270,29 +255,42 @@ bool CanBusBroker::detachAll()
 {
     bool ok = true;
 
-    if (syncThread && syncThread->isRunning())
+    if (broker)
     {
-        syncThread->stop();
+        broker->markInitialized(false);
+    }
+
+    if (auto & syncThread = getSyncThread(); syncThread.isRunning())
+    {
+        syncThread.stop();
+        syncThread.closePort();
+
+        yCInfo(CBB) << "Stopped synchronization thread";
     }
 
     for (const auto & rawDevice : deviceMapper.getDevices())
     {
         auto * iCanBusSharer = rawDevice->castToType<ICanBusSharer>();
+        yCDebug(CBB) << "Finalizing node device id" << iCanBusSharer->getId();
 
         if (iCanBusSharer && !iCanBusSharer->finalize())
         {
             yCWarning(CBB) << "Node device id" << iCanBusSharer->getId() << "could not finalize CAN comms";
             ok = false;
         }
+
+        yCDebug(CBB) << "Unregistering node device id" << iCanBusSharer->getId();
     }
 
     deviceMapper.clear();
 
-    for (auto * broker : brokers)
+    if (broker)
     {
         ok &= broker->stopThreads();
         ok &= broker->clearFilters();
     }
+
+    yCDebug(CBB) << "Stopped CAN threads";
 
     for (int i = 0; i < fakeNodes.size(); i++)
     {
