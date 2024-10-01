@@ -163,8 +163,7 @@ bool CanBusBroker::attachAll(const yarp::dev::PolyDriverList & drivers)
     {
         if (fakeNodes[i]->poly == nullptr)
         {
-            yCError(CBB) << "Fake node device" << fakeNodes[i]->key << "requested, but not instantiated";
-            return false;
+            yCWarning(CBB) << "Fake node device" << fakeNodes[i]->key << "requested, but not instantiated";
         }
     }
 
