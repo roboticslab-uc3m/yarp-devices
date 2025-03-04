@@ -33,7 +33,7 @@ def main(remote_port: 'Remote port running the AravisGigE grabber'='/grabber'):
 
     # Create and configure driver
     options = yarp.Property()
-    options.put('device', 'remote_grabber')
+    options.put('device', 'frameGrabber_nwc_yarp')
     options.put('remote', remote_port)
     options.put('local', '/grabberControls2Gui')
     dd = yarp.PolyDriver(options)
