@@ -16,7 +16,7 @@ using namespace roboticslab;
 
 unsigned int CuiAbsolute::getId()
 {
-    return canId;
+    return m_canId;
 }
 
 // -----------------------------------------------------------------------------
@@ -54,7 +54,7 @@ bool CuiAbsolute::notifyMessage(const can_message & message)
         return false;
     }
 
-    std::uint16_t op = message.id - canId;
+    std::uint16_t op = message.id - m_canId;
 
     switch (op)
     {

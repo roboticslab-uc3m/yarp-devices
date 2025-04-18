@@ -7,13 +7,11 @@
 
 #include "LogComponent.hpp"
 
-using namespace roboticslab;
-
 // ------------------- IPositionControl Related --------------------------------
 
 bool EmulatedControlBoard::getAxes(int *ax)
 {
-    *ax = axes;
+    *ax = m_axes;
     return true;
 }
 
@@ -21,7 +19,7 @@ bool EmulatedControlBoard::getAxes(int *ax)
 
 bool EmulatedControlBoard::positionMove(int j, double ref)  // encExposed = ref;
 {
-    if ((unsigned int)j > axes)
+    if ((unsigned int)j > m_axes)
     {
         yCError(ECB, "Axis index exceeds number of axes");
         return false;
@@ -38,7 +36,7 @@ bool EmulatedControlBoard::positionMove(int j, double ref)  // encExposed = ref;
     targetExposed[j] = ref;
     double encExposed = getEncExposed(j);
 
-    if (std::abs(targetExposed[j] - encExposed) < jointTol[j])
+    if (std::abs(targetExposed[j] - encExposed) < m_jointTols[j])
     {
         stop(j);  // puts jointStatus[j] = 0;
         yCInfo(ECB, "Joint q%d reached target", j + 1);
@@ -46,13 +44,13 @@ bool EmulatedControlBoard::positionMove(int j, double ref)  // encExposed = ref;
     }
     else if (ref > encExposed)
     {
-        //if(!velocityMove(j, refSpeed[j])) return false;
-        velRaw[j] = (refSpeed[j] * velRawExposed[j]);
+        //if(!velocityMove(j, m_refSpeeds[j])) return false;
+        velRaw[j] = (m_refSpeeds[j] * m_velRawExposeds[j]);
     }
     else
     {
-        //if(!velocityMove(j, -refSpeed[j])) return false;
-        velRaw[j] = -(refSpeed[j] * velRawExposed[j]);
+        //if(!velocityMove(j, -m_refSpeeds[j])) return false;
+        velRaw[j] = -(m_refSpeeds[j] * m_velRawExposeds[j]);
     }
 
     jointStatus[j] = POSITION_MOVE;
@@ -75,14 +73,14 @@ bool EmulatedControlBoard::positionMove(const double *refs)  // encExposed = ref
     double max_time = 0;
     std::vector<double> encsExposed = getEncsExposed();
 
-    for (unsigned int motor = 0; motor < axes; motor++)
+    for (unsigned int motor = 0; motor < m_axes; motor++)
     {
         yCInfo(ECB, "dist[%d]: %f", motor, std::abs(refs[motor] - encsExposed[motor]));
-        yCInfo(ECB, "refSpeed[%d]: %f", motor, refSpeed[motor]);
+        yCInfo(ECB, "m_refSpeeds[%d]: %f", motor, m_refSpeeds[motor]);
 
-        if (std::abs((refs[motor] - encsExposed[motor]) / refSpeed[motor]) > max_time)
+        if (std::abs((refs[motor] - encsExposed[motor]) / m_refSpeeds[motor]) > max_time)
         {
-            max_time = std::abs((refs[motor] - encsExposed[motor]) / refSpeed[motor]);
+            max_time = std::abs((refs[motor] - encsExposed[motor]) / m_refSpeeds[motor]);
             yCInfo(ECB, "candidate: %f", max_time);
         }
     }
@@ -90,10 +88,10 @@ bool EmulatedControlBoard::positionMove(const double *refs)  // encExposed = ref
     yCInfo(ECB, "max_time[final]: %f", max_time);
 
     // Set all the private parameters of the Rave class that correspond to this kind of movement!
-    for (unsigned int motor = 0; motor < axes; motor++)
+    for (unsigned int motor = 0; motor < m_axes; motor++)
     {
         targetExposed[motor] = refs[motor];
-        velRaw[motor] = ((refs[motor] - encsExposed[motor]) / max_time) * velRawExposed[motor];
+        velRaw[motor] = ((refs[motor] - encsExposed[motor]) / max_time) * m_velRawExposeds[motor];
 
         if (velRaw[motor] != velRaw[motor])
         {
@@ -103,7 +101,7 @@ bool EmulatedControlBoard::positionMove(const double *refs)  // encExposed = ref
         yCInfo(ECB, "velRaw[%d]: %f", motor, velRaw[motor]);
         jointStatus[motor] = POSITION_MOVE;
 
-        if (std::abs(targetExposed[motor] - encsExposed[motor]) < jointTol[motor])
+        if (std::abs(targetExposed[motor] - encsExposed[motor]) < m_jointTols[motor])
         {
             stop(motor);  // puts jointStatus[motor]=0;
             yCInfo(ECB, "Joint q%d reached target", motor + 1);
@@ -117,7 +115,7 @@ bool EmulatedControlBoard::positionMove(const double *refs)  // encExposed = ref
 
 bool EmulatedControlBoard::relativeMove(int j, double delta)
 {
-    if ((unsigned int)j > axes)
+    if ((unsigned int)j > m_axes)
     {
         return false;
     }
@@ -133,7 +131,7 @@ bool EmulatedControlBoard::relativeMove(int j, double delta)
     double encExposed = getEncExposed(j);
     targetExposed[j]= encExposed + delta;
 
-    if (std::abs(targetExposed[j] - encExposed) < jointTol[j])
+    if (std::abs(targetExposed[j] - encExposed) < m_jointTols[j])
     {
         stop(j);  // puts jointStatus[j]=0;
         yCInfo(ECB, "Joint q%d already at target", j + 1);
@@ -141,13 +139,13 @@ bool EmulatedControlBoard::relativeMove(int j, double delta)
     }
     else if (targetExposed[j] > encExposed)
     {
-        // if(!velocityMove(j, refSpeed[j])) return false;
-        velRaw[j] = (refSpeed[j] * velRawExposed[j]);
+        // if(!velocityMove(j, m_refSpeeds[j])) return false;
+        velRaw[j] = (m_refSpeeds[j] * m_velRawExposeds[j]);
     }
     else
     {
-        // if(!velocityMove(j, -refSpeed[j])) return false;
-        velRaw[j] = -(refSpeed[j] * velRawExposed[j]);
+        // if(!velocityMove(j, -m_refSpeeds[j])) return false;
+        velRaw[j] = -(m_refSpeeds[j] * m_velRawExposeds[j]);
     }
 
     jointStatus[j] = POSITION_MOVE;
@@ -170,22 +168,22 @@ bool EmulatedControlBoard::relativeMove(const double *deltas)  // encExposed = d
     double max_dist = 0;
     double time_max_dist = 0;
 
-    for (unsigned int motor = 0; motor < axes; motor++)
+    for (unsigned int motor = 0; motor < m_axes; motor++)
     {
         if (std::abs(deltas[motor]) > max_dist)
         {
             max_dist = std::abs(deltas[motor]);
-            time_max_dist = max_dist / refSpeed[motor];  // the max_dist motor will be at refSpeed
+            time_max_dist = max_dist / m_refSpeeds[motor];  // the max_dist motor will be at m_refSpeeds
         }
     }
 
     // Set all the private parameters of the Rave class that correspond to this kind of movement!
     std::vector<double> encsExposed = getEncsExposed();
 
-    for (unsigned int motor = 0; motor < axes; motor++)
+    for (unsigned int motor = 0; motor < m_axes; motor++)
     {
       targetExposed[motor] = encsExposed[motor] + deltas[motor];
-      velRaw[motor] = ((deltas[motor]) / time_max_dist) * velRawExposed[motor];
+      velRaw[motor] = ((deltas[motor]) / time_max_dist) * m_velRawExposeds[motor];
       yCInfo(ECB, "velRaw[%d]: %f", motor, velRaw[motor]);
       jointStatus[motor] = POSITION_MOVE;
     }
@@ -197,7 +195,7 @@ bool EmulatedControlBoard::relativeMove(const double *deltas)  // encExposed = d
 
 bool EmulatedControlBoard::checkMotionDone(int j, bool *flag)
 {
-    if ((unsigned int)j > axes)
+    if ((unsigned int)j > m_axes)
     {
         return false;
     }
@@ -219,7 +217,7 @@ bool EmulatedControlBoard::checkMotionDone(bool *flag)
 {
     bool done = true;
 
-    for (unsigned int i = 0; i < axes; i++)
+    for (unsigned int i = 0; i < m_axes; i++)
     {
         if (jointStatus[i] != NOT_CONTROLLING)
         {
@@ -235,12 +233,12 @@ bool EmulatedControlBoard::checkMotionDone(bool *flag)
 
 bool EmulatedControlBoard::setRefSpeed(int j, double sp)
 {
-    if ((unsigned int)j > axes)
+    if ((unsigned int)j > m_axes)
     {
         return false;
     }
 
-    refSpeed[j] = sp;
+    m_refSpeeds[j] = sp;
     return true;
 }
 
@@ -250,7 +248,7 @@ bool EmulatedControlBoard::setRefSpeeds(const double *spds)
 {
     bool ok = true;
 
-    for (unsigned int i = 0; i < axes; i++)
+    for (unsigned int i = 0; i < m_axes; i++)
     {
         ok &= setRefSpeed(i, spds[i]);
     }
@@ -262,7 +260,7 @@ bool EmulatedControlBoard::setRefSpeeds(const double *spds)
 
 bool EmulatedControlBoard::setRefAcceleration(int j, double acc)
 {
-    if ((unsigned int)j > axes)
+    if ((unsigned int)j > m_axes)
     {
         return false;
     }
@@ -277,7 +275,7 @@ bool EmulatedControlBoard::setRefAccelerations(const double *accs)
 {
     bool ok = true;
 
-    for (unsigned int i = 0; i < axes; i++)
+    for (unsigned int i = 0; i < m_axes; i++)
     {
         ok &= setRefAcceleration(i, accs[i]);
     }
@@ -289,12 +287,12 @@ bool EmulatedControlBoard::setRefAccelerations(const double *accs)
 
 bool EmulatedControlBoard::getRefSpeed(int j, double *ref)
 {
-    if ((unsigned int)j > axes)
+    if ((unsigned int)j > m_axes)
     {
         return false;
     }
 
-    *ref = refSpeed[j];
+    *ref = m_refSpeeds[j];
     return true;
 }
 
@@ -304,7 +302,7 @@ bool EmulatedControlBoard::getRefSpeeds(double *spds)
 {
     bool ok = true;
 
-    for (unsigned int i = 0; i < axes; i++)
+    for (unsigned int i = 0; i < m_axes; i++)
     {
         ok &= getRefSpeed(i, &spds[i]);
     }
@@ -316,7 +314,7 @@ bool EmulatedControlBoard::getRefSpeeds(double *spds)
 
 bool EmulatedControlBoard::getRefAcceleration(int j, double *acc)
 {
-    if ((unsigned int)j > axes)
+    if ((unsigned int)j > m_axes)
     {
         return false;
     }
@@ -331,7 +329,7 @@ bool EmulatedControlBoard::getRefAccelerations(double *accs)
 {
     bool ok = true;
 
-    for (unsigned int i = 0; i < axes; i++)
+    for (unsigned int i = 0; i < m_axes; i++)
     {
         ok &= getRefAcceleration(i, &accs[i]);
     }
@@ -343,7 +341,7 @@ bool EmulatedControlBoard::getRefAccelerations(double *accs)
 
 bool EmulatedControlBoard::stop(int j)
 {
-    if ((unsigned int)j > axes)
+    if ((unsigned int)j > m_axes)
     {
         return false;
     }
@@ -360,7 +358,7 @@ bool EmulatedControlBoard::stop()
 {
     bool ok = true;
 
-    for (unsigned int i = 0; i < axes; i++)
+    for (unsigned int i = 0; i < m_axes; i++)
     {
         ok &= stop(i);
     }

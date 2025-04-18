@@ -12,13 +12,12 @@
 #include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/WrapperSingle.h>
 
-namespace roboticslab
-{
+#include "JointCalibrator_ParamsParser.h"
 
 /**
  * @ingroup YarpPlugins
  * @defgroup JointCalibrator
- * @brief Contains roboticslab::JointCalibrator.
+ * @brief Contains JointCalibrator.
  */
 
 /**
@@ -38,13 +37,10 @@ struct MovementSpecs
  */
 class JointCalibrator : public yarp::dev::DeviceDriver,
                         public yarp::dev::IRemoteCalibrator,
-                        public yarp::dev::WrapperSingle
+                        public yarp::dev::WrapperSingle,
+                        public JointCalibrator_ParamsParser
 {
 public:
-    JointCalibrator()
-        : axes(0), iControlMode(nullptr), iEncoders(nullptr), iPositionControl(nullptr)
-    { }
-
     bool calibrateSingleJoint(int j) override;
     bool calibrateWholePart() override;
     bool homingSingleJoint(int j) override;
@@ -63,17 +59,12 @@ public:
 private:
     bool move(const std::vector<int> & joints, const MovementSpecs & specs);
 
-    int axes;
-    bool isBlocking;
-
     MovementSpecs homeSpecs;
     MovementSpecs parkSpecs;
 
-    yarp::dev::IControlMode * iControlMode;
-    yarp::dev::IEncoders * iEncoders;
-    yarp::dev::IPositionControl * iPositionControl;
+    yarp::dev::IControlMode * iControlMode {nullptr};
+    yarp::dev::IEncoders * iEncoders {nullptr};
+    yarp::dev::IPositionControl * iPositionControl {nullptr};
 };
-
-} // namespace roboticslab
 
 #endif // __JOINT_CALIBRATOR_HPP__

@@ -31,27 +31,22 @@ namespace
 
 // -----------------------------------------------------------------------------
 
-const int roboticslab::CanBusHico::FilterManager::MAX_FILTERS = 4;
-
-// -----------------------------------------------------------------------------
-
 CanBusHico::FilterManager::FilterManager(const CanBusHico & owner, int fileDescriptor, bool enableRanges)
     : owner(owner),
       fd(fileDescriptor),
       valid(true),
       enableRanges(enableRanges)
-{
-}
+{}
 
 // -----------------------------------------------------------------------------
 
-bool CanBusHico::FilterManager::parseIds(const yarp::os::Bottle & b)
+bool CanBusHico::FilterManager::parseIds(const std::vector<int> & ids)
 {
     bool modified = false;
 
-    for (int i = 0; i < b.size(); i++)
+    for (const auto id : ids)
     {
-        modified |= stage.insert(b.get(i).asInt32()).second;
+        modified |= stage.insert(id).second;
     }
 
     if (!stage.empty() && modified)
@@ -151,7 +146,7 @@ bool CanBusHico::FilterManager::setMaskedFilter(unsigned int id)
 
 // -----------------------------------------------------------------------------
 
-bool roboticslab::CanBusHico::FilterManager::setRangedFilter(unsigned int lower, unsigned int upper)
+bool CanBusHico::FilterManager::setRangedFilter(unsigned int lower, unsigned int upper)
 {
     struct can_filter filter;
     filter.type = FTYPE_RANGE;

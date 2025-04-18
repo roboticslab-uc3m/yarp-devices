@@ -9,16 +9,14 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 
 #include "ICanBusSharer.hpp"
+#include "FakeJoint_ParamsParser.h"
 
 constexpr auto JOINT_TYPE = yarp::dev::VOCAB_JOINTTYPE_REVOLUTE; // yarpmotorgui can't handle VOCAB_JOINTTYPE_UNKNOWN
-
-namespace roboticslab
-{
 
 /**
  * @ingroup YarpPlugins
  * @defgroup FakeJoint
- * @brief Contains roboticslab::FakeJoint.
+ * @brief Contains FakeJoint.
  */
 
 /**
@@ -44,7 +42,8 @@ class FakeJoint : public yarp::dev::DeviceDriver,
                   public yarp::dev::IRemoteVariablesRaw,
                   public yarp::dev::ITorqueControlRaw,
                   public yarp::dev::IVelocityControlRaw,
-                  public ICanBusSharer
+                  public roboticslab::ICanBusSharer,
+                  public FakeJoint_ParamsParser
 {
 public:
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -58,13 +57,13 @@ public:
 
     unsigned int getId() override
     { return 0; }
-    bool notifyMessage(const can_message & message) override
+    bool notifyMessage(const roboticslab::can_message & message) override
     { return true; }
     bool initialize() override
     { return true; }
     bool finalize() override
     { return true; }
-    bool registerSender(ICanSenderDelegate * sender) override
+    bool registerSender(roboticslab::ICanSenderDelegate * sender) override
     { return true; }
     bool synchronize(double timestamp) override
     { return true; }
@@ -105,7 +104,7 @@ public:
     //  --------- IAxisInfoRaw declarations ---------
 
     bool getAxisNameRaw(int axis, std::string & name) override
-    {  name = jointName; return true; }
+    {  name = m_jointName; return true; }
     bool getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type) override
     { type = JOINT_TYPE; return true; }
 
@@ -473,11 +472,8 @@ public:
     //bool stopRaw(int n_joint, const int *joints) override;
 
 private:
-    std::string jointName;
     int controlMode {VOCAB_CM_CONFIGURED};
     yarp::dev::InteractionModeEnum interactionMode {yarp::dev::VOCAB_IM_UNKNOWN};
 };
-
-} // namespace roboticslab
 
 #endif // __FAKE_JOINT_HPP__

@@ -19,52 +19,41 @@
 
 using namespace roboticslab;
 
-constexpr auto DEFAULT_PORT = "can0";
-constexpr auto DEFAULT_BLOCKING_MODE = true;
-constexpr auto DEFAULT_ALLOW_PERMISSIVE = false;
-constexpr auto DEFAULT_RX_TIMEOUT_MS = 1;
-constexpr auto DEFAULT_TX_TIMEOUT_MS = 0; // '0' means no timeout
-
 // ------------------- DeviceDriver Related ------------------------------------
 
 bool CanBusSocket::open(yarp::os::Searchable& config)
 {
-    iface = config.check("port", yarp::os::Value(DEFAULT_PORT), "CAN socket interface").asString();
-    blockingMode = config.check("blockingMode", yarp::os::Value(DEFAULT_BLOCKING_MODE), "blocking mode enabled").asBool();
-    allowPermissive = config.check("allowPermissive", yarp::os::Value(DEFAULT_ALLOW_PERMISSIVE), "read/write permissive mode").asBool();
-    filterFunctionCodes = config.check("filterFunctionCodes", yarp::os::Value(true), "filter mask ignores CANopen function codes").asBool();
-    bitrate = config.check("bitrate", yarp::os::Value(0), "CAN bitrate (bps)").asInt32();
-
-    yarp::dev::DeviceDriver::setId(iface);
-
-    if (blockingMode)
+    if (!parseParams(config))
     {
-        rxTimeoutMs = config.check("rxTimeoutMs", yarp::os::Value(DEFAULT_RX_TIMEOUT_MS), "CAN RX timeout (milliseconds)").asInt32();
-        txTimeoutMs = config.check("txTimeoutMs", yarp::os::Value(DEFAULT_TX_TIMEOUT_MS), "CAN TX timeout (milliseconds)").asInt32();
+        yCIError(SCK, id()) << "Could not parse parameters";
+        return false;
+    }
 
-        if (rxTimeoutMs <= 0)
+    yarp::dev::DeviceDriver::setId(m_port);
+
+    if (m_blockingMode)
+    {
+        if (m_rxTimeoutMs <= 0)
         {
             yCIWarning(SCK, id()) << "RX timeout value <= 0, CAN read calls will block until the buffer is ready";
         }
 
-        if (txTimeoutMs <= 0)
+        if (m_txTimeoutMs <= 0)
         {
             yCIWarning(SCK, id()) << "TX timeout value <= 0, CAN write calls will block until the buffer is ready";
         }
     }
 
-    yCIInfo(SCK, id()) << "Permissive mode flag for read/write operations set to" << allowPermissive;
-
-    if ((s = ::socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
+    if ((socketDescriptor = ::socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
     {
         yCIError(SCK, id()) << "Unable to open socket with error:" << std::strerror(errno);
         return false;
     }
 
     struct ifreq ifr;
-    std::strcpy(ifr.ifr_name, iface.c_str());
+    std::strcpy(ifr.ifr_name, m_port.c_str());
 
-    if (::ioctl(s, SIOCGIFINDEX, &ifr) < 0)
+    if (::ioctl(socketDescriptor, SIOCGIFINDEX, &ifr) < 0)
     {
         yCIError(SCK, id()) << "Unable to determine index with error:" << std::strerror(errno);
         return false;
@@ -74,23 +63,23 @@ bool CanBusSocket::open(yarp::os::Searchable& config)
     addr.can_family = AF_CAN;
     addr.can_ifindex = ifr.ifr_ifindex;
 
-    if (::bind(s, (struct sockaddr *)&addr, sizeof(addr)) < 0)
+    if (::bind(socketDescriptor, (struct sockaddr *)&addr, sizeof(addr)) < 0)
     {
         yCIError(SCK, id()) << "Unable to bind address with error:" << std::strerror(errno);
         return false;
     }
 
-    if (!blockingMode)
+    if (!m_blockingMode)
     {
         int fcntlFlags;
 
-        if ((fcntlFlags = ::fcntl(s, F_GETFL)) < 0)
+        if ((fcntlFlags = ::fcntl(socketDescriptor, F_GETFL)) < 0)
         {
             yCIError(SCK, id()) << "Unable to retrieve FD flags with error:" << std::strerror(errno);
             return false;
         }
 
-        if (::fcntl(s, F_SETFL, fcntlFlags | O_NONBLOCK) < 0)
+        if (::fcntl(socketDescriptor, F_SETFL, fcntlFlags | O_NONBLOCK) < 0)
         {
             yCIError(SCK, id()) << "Unable to set non-blocking mode with error:" << std::strerror(errno);
             return false;
@@ -105,41 +94,36 @@ bool CanBusSocket::open(yarp::os::Searchable& config)
 
     can_err_mask_t errorMask = CAN_ERR_MASK;
 
-    if (::setsockopt(s, SOL_CAN_RAW, CAN_RAW_ERR_FILTER, &errorMask, sizeof(errorMask)) < 0)
+    if (::setsockopt(socketDescriptor, SOL_CAN_RAW, CAN_RAW_ERR_FILTER, &errorMask, sizeof(errorMask)) < 0)
     {
         yCIError(SCK, id()) << "Unable to enable error frames with error:" << std::strerror(errno);
         return false;
     }
 
-    if (config.check("filteredIds", "filtered node IDs"))
+    if (!m_filteredIds.empty())
     {
-        const auto * ids = config.findGroup("filteredIds").get(1).asList();
-
-        if (ids->size() != 0)
+        for (const auto id : m_filteredIds)
         {
-            for (int i = 0; i < ids->size(); i++)
+            struct can_filter filter;
+            filter.can_id = id;
+            filter.can_mask = (CAN_EFF_FLAG | CAN_RTR_FLAG | CAN_SFF_MASK);
+
+            if (m_filterFunctionCodes)
             {
-                struct can_filter filter;
-                filter.can_id = ids->get(i).asInt32();
-                filter.can_mask = (CAN_EFF_FLAG | CAN_RTR_FLAG | CAN_SFF_MASK);
-
-                if (filterFunctionCodes)
-                {
-                    filter.can_mask &= ~0x780; // function codes, e.g. 0x580, are ignored in CANopen mode
-                }
-
-                filters.push_back(std::move(filter));
+                filter.can_mask &= ~0x780; // function codes, e.g. 0x580, are ignored in CANopen mode
             }
 
-            if (::setsockopt(s, SOL_CAN_RAW, CAN_RAW_FILTER, filters.data(), sizeof(struct can_filter) * filters.size()) < 0)
-            {
-                yCIError(SCK, id()) << "Unable to configure set of initial acceptance filters";
-                filters.clear();
-                return false;
-            }
-
-            yCIInfo(SCK, id()) << "Initial IDs added to set of acceptance filters";
+            filters.push_back(std::move(filter));
         }
+
+        if (::setsockopt(socketDescriptor, SOL_CAN_RAW, CAN_RAW_FILTER, filters.data(), sizeof(struct can_filter) * filters.size()) < 0)
+        {
+            yCIError(SCK, id()) << "Unable to configure set of initial acceptance filters";
+            filters.clear();
+            return false;
+        }
+
+        yCIInfo(SCK, id()) << "Initial IDs added to set of acceptance filters";
     }
 
     return true;
@@ -149,13 +133,13 @@ bool CanBusSocket::open(yarp::os::Searchable& config)
 
 bool CanBusSocket::close()
 {
-    if (s > 0 && ::close(s) < 0)
+    if (socketDescriptor > 0 && ::close(socketDescriptor) < 0)
     {
         yCIError(SCK, id()) << "Unable to close socket with error:" << std::strerror(errno);
         return false;
     }
 
-    s = 0;
+    socketDescriptor = 0;
     filters.clear();
     return true;
 }

@@ -31,7 +31,7 @@ bool TechnosoftIposExternal::synchronize(double timestamp)
         {
             double prevTarget;
             getPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, &prevTarget);
-            target = prevTarget + commandBuffer.interpolate() * syncPeriod;
+            target = prevTarget + commandBuffer.interpolate() * params.m_syncPeriod;
         }
         else // mode == VOCAB_CM_POSITION_DIRECT
         {

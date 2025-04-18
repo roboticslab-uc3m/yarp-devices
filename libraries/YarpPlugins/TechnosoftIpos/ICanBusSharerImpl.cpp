@@ -106,8 +106,8 @@ bool TechnosoftIposBase::initialize()
         || !can->tpdo1()->configure(tpdo1Conf)
         || !can->tpdo2()->configure(tpdo2Conf)
         || !can->tpdo3()->configure(tpdo3Conf)
-        || (heartbeatPeriod != 0.0
-                && !can->sdo()->download<std::uint16_t>("Producer Heartbeat Time", heartbeatPeriod * 1000, 0x1017))
+        || (monitorThread && params.m_heartbeatPeriod != 0.0
+                && !can->sdo()->download<std::uint16_t>("Producer Heartbeat Time", params.m_heartbeatPeriod * 1000, 0x1017))
         || !can->nmt()->issueServiceCommand(NmtService::START_REMOTE_NODE)
         || (can->driveStatus()->getCurrentState() == DriveState::NOT_READY_TO_SWITCH_ON
                 && !can->driveStatus()->awaitState(DriveState::SWITCH_ON_DISABLED)))

@@ -9,13 +9,12 @@
 #include <yarp/dev/IPositionDirect.h>
 #include <yarp/dev/ISerialDevice.h>
 
-namespace roboticslab
-{
+#include "TextilesHand_ParamsParser.h"
 
 /**
  * @ingroup YarpPlugins
  * @defgroup TextilesHand
- * @brief Contains roboticslab::TextilesHand.
+ * @brief Contains TextilesHand.
  */
 
 /**
@@ -24,7 +23,8 @@ namespace roboticslab
  */
 class TextilesHand : public yarp::dev::DeviceDriver,
                      public yarp::dev::IControlMode,
-                     public yarp::dev::IPositionDirect
+                     public yarp::dev::IPositionDirect,
+                     public TextilesHand_ParamsParser
 {
 public:
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -57,7 +57,5 @@ private:
     yarp::dev::PolyDriver serialDevice;
     yarp::dev::ISerialDevice * iSerialDevice {nullptr};
 };
-
-} // namespace roboticslab
 
 #endif // __TEXTILES_HAND_HPP__

@@ -1,19 +1,24 @@
 yarp_prepare_plugin(Jr3Mbed
                     CATEGORY device
-                    TYPE roboticslab::Jr3Mbed
+                    TYPE Jr3Mbed
                     INCLUDE Jr3Mbed.hpp
                     DEFAULT ON
-                    DEPENDS "ENABLE_CanBusSharerLib;ENABLE_StateObserverLib")
+                    DEPENDS "ENABLE_CanBusSharerLib;ENABLE_StateObserverLib"
+                    GENERATE_PARSER)
 
 if(NOT SKIP_Jr3Mbed)
 
-    yarp_add_plugin(Jr3Mbed Jr3Mbed.hpp
-                            Jr3Mbed.cpp
-                            DeviceDriverImpl.cpp
-                            ICanBusSharerImpl.cpp
-                            ISixAxisForceTorqueSensorsImpl.cpp
-                            LogComponent.hpp
-                            LogComponent.cpp)
+    yarp_add_plugin(Jr3Mbed)
+
+    target_sources(Jr3Mbed PRIVATE Jr3Mbed.hpp
+                                   Jr3Mbed.cpp
+                                   DeviceDriverImpl.cpp
+                                   ICanBusSharerImpl.cpp
+                                   ISixAxisForceTorqueSensorsImpl.cpp
+                                   Jr3Mbed_ParamsParser.h
+                                   Jr3Mbed_ParamsParser.cpp
+                                   LogComponent.hpp
+                                   LogComponent.cpp)
 
     target_link_libraries(Jr3Mbed YARP::YARP_os
                                   YARP::YARP_dev

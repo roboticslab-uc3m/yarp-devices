@@ -40,7 +40,7 @@ bool TechnosoftIposBase::setLimitRaw(double limit, bool isMin)
     std::string name = "Software position limit: ";
     std::uint8_t subindex;
 
-    if (isMin ^ reverse)
+    if (isMin ^ params.m_reverse)
     {
         name += "minimal position limit";
         subindex = 0x01;
@@ -79,7 +79,7 @@ bool TechnosoftIposBase::getLimitRaw(double * limit, bool isMin)
     std::string name = "Software position limit: ";
     std::uint8_t subindex;
 
-    if (isMin ^ reverse)
+    if (isMin ^ params.m_reverse)
     {
         name += "minimal position limit";
         subindex = 0x01;

@@ -6,13 +6,11 @@
 
 #include "LogComponent.hpp"
 
-using namespace roboticslab;
-
 // ------------------ IVelocity Related ----------------------------------------
 
 bool EmulatedControlBoard::velocityMove(int j, double sp)  // velExposed = sp;
 {
-    if ((unsigned int)j > axes)
+    if ((unsigned int)j > m_axes)
     {
         return false;
     }
@@ -24,7 +22,7 @@ bool EmulatedControlBoard::velocityMove(int j, double sp)  // velExposed = sp;
         return false;
     }
 
-    velRaw[j] = sp * velRawExposed[j];
+    velRaw[j] = sp * m_velRawExposeds[j];
     jointStatus[j] = VELOCITY_MOVE;
 
     return true;
@@ -36,7 +34,7 @@ bool EmulatedControlBoard::velocityMove(const double *sp)
 {
     bool ok = true;
 
-    for (unsigned int i = 0; i < axes; i++)
+    for (unsigned int i = 0; i < m_axes; i++)
     {
         ok &= velocityMove(i, sp[i]);
     }

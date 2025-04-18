@@ -19,6 +19,8 @@ namespace roboticslab
 class TechnosoftIposExternal : public TechnosoftIposBase
 {
 public:
+    using TechnosoftIposBase::TechnosoftIposBase;
+
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 
     bool open(yarp::os::Searchable & config) override;
@@ -98,11 +100,6 @@ private:
 
     yarp::conf::vocab32_t initialInteractionMode {0};
     std::atomic<yarp::dev::InteractionModeEnum> actualInteractionMode {yarp::dev::InteractionModeEnum::VOCAB_IM_UNKNOWN};
-
-    double minStiffness {0.0};
-    double maxStiffness {0.0};
-    double minDamping {0.0};
-    double maxDamping {0.0};
 
     std::mutex pidMutex;
 

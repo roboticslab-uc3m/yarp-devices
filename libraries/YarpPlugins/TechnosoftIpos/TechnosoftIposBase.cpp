@@ -70,13 +70,13 @@ void TechnosoftIposBase::interpretMsr(std::uint16_t msr)
     reportBitToggle(report, INFO, 5, "AUTORUN mode enabled.");
 
     if (!reportBitToggle(report, INFO, 6, "Limit switch positive event / interrupt triggered.")
-        && limitSwitchState != INACTIVE && (limitSwitchState == POSITIVE ^ reverse))
+        && limitSwitchState != INACTIVE && (limitSwitchState == POSITIVE ^ params.m_reverse))
     {
         limitSwitchState = INACTIVE; // only handle reset, triggering happens in the EMCY handler
     }
 
     if (!reportBitToggle(report, INFO, 7, "Limit switch negative event / interrupt triggered.")
-        && limitSwitchState != INACTIVE && (limitSwitchState == NEGATIVE ^ reverse))
+        && limitSwitchState != INACTIVE && (limitSwitchState == NEGATIVE ^ params.m_reverse))
     {
         limitSwitchState = INACTIVE; // only handle reset, triggering happens in the EMCY handler
     }
@@ -408,7 +408,7 @@ void TechnosoftIposBase::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg,
     }
     case 0xFF06: // positive position limit software triggered
     case 0xFF07: // negative position limit software triggered
-        limitSwitchState = (emcyCode == 0xFF06 ^ reverse) ? POSITIVE : NEGATIVE;
+        limitSwitchState = (emcyCode == 0xFF06 ^ params.m_reverse) ? POSITIVE : NEGATIVE;
         onPositionLimitTriggered();
         // no break
     default:
@@ -463,7 +463,7 @@ bool TechnosoftIposBase::monitorWorker(const yarp::os::YarpTimerEvent & event)
     bool isConfigured = actualControlMode != VOCAB_CM_NOT_CONFIGURED;
     double elapsed = event.currentReal - lastHeartbeat;
 
-    if (heartbeatPeriod != 0.0 && isConfigured && elapsed > event.lastDuration)
+    if (monitorThread && params.m_heartbeatPeriod != 0.0 && isConfigured && elapsed > event.lastDuration)
     {
         yCIError(IPOS, id()) << "Last heartbeat response was" << elapsed << "seconds ago";
         actualControlMode = VOCAB_CM_NOT_CONFIGURED;
@@ -502,122 +502,125 @@ bool TechnosoftIposBase::monitorWorker(const yarp::os::YarpTimerEvent & event)
 
 // -----------------------------------------------------------------------------
 
-bool TechnosoftIposBase::validateInitialState()
+bool TechnosoftIposBase::validateInitialState(const TechnosoftIpos_ParamsParser & params, const std::string & id)
 {
-    if (initialControlMode == 0)
+    // params.m_canId is checked in TechnosoftIpos::open()
+
+    if (params.m_name.empty())
     {
-        yCIWarning(IPOS, id()) << "Illegal initial control mode:" << yarp::os::Vocab32::decode(initialControlMode);
+        yCIWarning(IPOS, id) << "Illegal axis name (empty string)";
         return false;
     }
 
-    if (tr <= 0.0)
+    if (params.m_initialControlMode.empty())
     {
-        yCIWarning(IPOS, id()) << "Illegal transmission ratio:" << tr.load();
+        yCIWarning(IPOS, id) << "Illegal initial control mode (empty string)";
         return false;
     }
 
-    if (k <= 0.0)
+    if (params.m_gearbox_tr <= 0.0)
     {
-        yCIWarning(IPOS, id()) << "Illegal motor constant:" << k.load();
+        yCIWarning(IPOS, id) << "Illegal transmission ratio:" << params.m_gearbox_tr;
         return false;
     }
 
-    if (encoderPulses <= 0)
+    if (params.m_extraTr <= 0.0)
     {
-        yCIWarning(IPOS, id()) << "Illegal encoder pulses per revolution:" << encoderPulses.load();
+        yCIWarning(IPOS, id) << "Illegal extra transmission ratio:" << params.m_extraTr;
         return false;
     }
 
-    if (maxVel <= 0.0)
+    if (params.m_motor_k <= 0.0)
     {
-        yCIWarning(IPOS, id()) << "Illegal maximum velocity:" << maxVel.load();
+        yCIWarning(IPOS, id) << "Illegal motor constant:" << params.m_motor_k;
         return false;
     }
 
-    if (refSpeed <= 0.0)
+    if (params.m_encoder_encoderPulses <= 0)
     {
-        yCIWarning(IPOS, id()) << "Illegal reference speed:" << refSpeed.load();
+        yCIWarning(IPOS, id) << "Illegal encoder pulses per revolution:" << params.m_encoder_encoderPulses;
         return false;
     }
 
-    if (refAcceleration <= 0.0)
+    if (params.m_maxVel <= 0.0)
     {
-        yCIWarning(IPOS, id()) << "Illegal reference acceleration:" << refAcceleration.load();
+        yCIWarning(IPOS, id) << "Illegal maximum velocity:" << params.m_maxVel;
         return false;
     }
 
-    if (drivePeakCurrent <= 0.0)
+    if (params.m_refSpeed <= 0.0)
     {
-        yCIWarning(IPOS, id()) << "Illegal drive peak current:" << drivePeakCurrent;
+        yCIWarning(IPOS, id) << "Illegal reference speed:" << params.m_refSpeed;
         return false;
     }
 
-    if (samplingPeriod <= 0.0)
+    if (params.m_refAcceleration <= 0.0)
     {
-        yCIWarning(IPOS, id()) << "Illegal sampling period:" << samplingPeriod;
+        yCIWarning(IPOS, id) << "Illegal reference acceleration:" << params.m_refAcceleration;
         return false;
     }
 
-    if (refSpeed > maxVel)
+    if (params.m_driver_peakCurrent <= 0.0)
     {
-        yCIWarning(IPOS, id()) << "Reference speed greater than maximum velocity:" << refSpeed.load() << ">" << maxVel.load();
+        yCIWarning(IPOS, id) << "Illegal drive peak current:" << params.m_driver_peakCurrent;
         return false;
     }
 
-    if (min >= max)
+    if (params.m_samplingPeriod <= 0.0)
     {
-        yCIWarning(IPOS, id()) << "Illegal joint limits (min, max):" << min.load() << ">=" << max.load();
+        yCIWarning(IPOS, id) << "Illegal sampling period:" << params.m_samplingPeriod;
         return false;
     }
 
-    if (axisName.empty())
+    if (params.m_refSpeed > params.m_maxVel)
     {
-        yCIWarning(IPOS, id()) << "Empty string as axis name";
+        yCIWarning(IPOS, id) << "Reference speed greater than maximum velocity:" << params.m_refSpeed << ">" << params.m_maxVel;
         return false;
     }
 
-    switch (jointType)
+    if (params.m_min >= params.m_max)
     {
-    case yarp::dev::VOCAB_JOINTTYPE_REVOLUTE:
-    case yarp::dev::VOCAB_JOINTTYPE_PRISMATIC:
-    case yarp::dev::VOCAB_JOINTTYPE_UNKNOWN:
-        break;
-    default:
-        yCIWarning(IPOS, id()) << "Illegal joint type vocab:" << yarp::os::Vocab32::decode(jointType);
+        yCIWarning(IPOS, id) << "Illegal joint limits (min, max):" << params.m_min << ">=" << params.m_max;
         return false;
     }
 
-    if (heartbeatPeriod < 0.0)
+    if (params.m_name.empty())
     {
-        yCIWarning(IPOS, id()) << "Illegal heartbeat period:" << heartbeatPeriod;
+        yCIWarning(IPOS, id) << "Empty string as axis name";
         return false;
     }
 
-    if (heartbeatPeriod * 1e3 != static_cast<int>(heartbeatPeriod * 1e3))
+    if (params.m_type != yarp::os::Vocab32::decode(yarp::dev::VOCAB_JOINTTYPE_REVOLUTE) &&
+        params.m_type != yarp::os::Vocab32::decode(yarp::dev::VOCAB_JOINTTYPE_PRISMATIC) &&
+        params.m_type != yarp::os::Vocab32::decode(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN))
     {
-        yCIWarning(IPOS, id()) << "Heartbeat period exceeds millisecond precision:" << heartbeatPeriod << "(s)";
+        yCIWarning(IPOS, id) << "Illegal joint type vocab:" << params.m_type;
         return false;
     }
 
-    if (syncPeriod <= 0.0 || syncPeriod > 255.0)
+    if (params.m_heartbeatPeriod < 0.0)
     {
-        yCIWarning(IPOS, id()) << "Illegal SYNC period:" << syncPeriod;
+        yCIWarning(IPOS, id) << "Illegal heartbeat period:" << params.m_heartbeatPeriod;
         return false;
     }
 
-    if (syncPeriod * 1e3 != static_cast<int>(syncPeriod * 1e3))
+    if (params.m_heartbeatPeriod * 1e3 != static_cast<int>(params.m_heartbeatPeriod * 1e3))
     {
-        yCIWarning(IPOS, id()) << "SYNC period exceeds millisecond precision:" << syncPeriod << "(s)";
+        yCIWarning(IPOS, id) << "Heartbeat period exceeds millisecond precision:" << params.m_heartbeatPeriod << "(s)";
         return false;
     }
 
-    if (canId == 0)
+    if (params.m_syncPeriod <= 0.0 || params.m_syncPeriod > 255.0)
     {
-        yCIWarning(IPOS, id()) << "Illegal CAN ID:" << canId;
+        yCIWarning(IPOS, id) << "Illegal SYNC period:" << params.m_syncPeriod;
         return false;
     }
 
-    lastEncoderRead = std::make_unique<EncoderRead>(samplingPeriod);
+    if (params.m_syncPeriod * 1e3 != static_cast<int>(params.m_syncPeriod * 1e3))
+    {
+        yCIWarning(IPOS, id) << "SYNC period exceeds millisecond precision:" << params.m_syncPeriod << "(s)";
+        return false;
+    }
 
     return true;
 }
@@ -648,35 +651,35 @@ bool TechnosoftIposBase::awaitControlMode(yarp::conf::vocab32_t mode)
 
 double TechnosoftIposBase::degreesToInternalUnits(double value, int derivativeOrder) const
 {
-    return value * tr * (reverse ? -1 : 1) * (encoderPulses / 360.0) * std::pow(samplingPeriod, derivativeOrder);
+    return value * tr * (params.m_reverse ? -1 : 1) * (encoderPulses / 360.0) * std::pow(params.m_samplingPeriod, derivativeOrder);
 }
 
 // -----------------------------------------------------------------------------
 
 double TechnosoftIposBase::internalUnitsToDegrees(double value, int derivativeOrder) const
 {
-    return value / (tr * (reverse ? -1 : 1) * (encoderPulses / 360.0) * std::pow(samplingPeriod, derivativeOrder));
+    return value / (tr * (params.m_reverse ? -1 : 1) * (encoderPulses / 360.0) * std::pow(params.m_samplingPeriod, derivativeOrder));
 }
 
 // -----------------------------------------------------------------------------
 
 std::int16_t TechnosoftIposBase::currentToInternalUnits(double value) const
 {
-    return value * (reverse ? -1 : 1) * 65520.0 / (2.0 * drivePeakCurrent);
+    return value * (params.m_reverse ? -1 : 1) * 65520.0 / (2.0 * params.m_driver_peakCurrent);
 }
 
 // -----------------------------------------------------------------------------
 
 double TechnosoftIposBase::internalUnitsToCurrent(std::int16_t value) const
 {
-    return value * (reverse ? -1 : 1) * 2.0 * drivePeakCurrent / 65520.0;
+    return value * (params.m_reverse ? -1 : 1) * 2.0 * params.m_driver_peakCurrent / 65520.0;
 }
 
 // -----------------------------------------------------------------------------
 
 double TechnosoftIposBase::internalUnitsToPeakCurrent(std::int16_t value) const
 {
-    return 2.0 * drivePeakCurrent * (32767.0 - value) / 65520.0;
+    return 2.0 * params.m_driver_peakCurrent * (32767.0 - value) / 65520.0;
 }
 
 // -----------------------------------------------------------------------------

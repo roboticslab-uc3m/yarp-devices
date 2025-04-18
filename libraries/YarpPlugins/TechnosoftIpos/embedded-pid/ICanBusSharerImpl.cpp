@@ -18,7 +18,7 @@ bool TechnosoftIposEmbedded::synchronize(double timestamp)
     switch (actualControlMode.load())
     {
     case VOCAB_CM_VELOCITY: // enableCsv = true
-        data = degreesToInternalUnits(commandBuffer.interpolate() * syncPeriod);
+        data = degreesToInternalUnits(commandBuffer.interpolate() * params.m_syncPeriod);
         break;
     case VOCAB_CM_POSITION_DIRECT:
         data = degreesToInternalUnits(commandBuffer.interpolate());

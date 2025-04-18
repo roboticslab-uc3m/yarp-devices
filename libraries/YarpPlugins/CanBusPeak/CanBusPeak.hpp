@@ -14,21 +14,19 @@
 #include <libpcanfd.h>
 
 #include "PeakCanMessage.hpp"
-
-namespace roboticslab
-{
+#include "CanBusPeak_ParamsParser.h"
 
 /**
  * @ingroup YarpPlugins
  * @defgroup CanBusPeak
- * @brief Contains roboticslab::CanBusPeak.
+ * @brief Contains CanBusPeak.
  */
 
 /**
  * @ingroup CanBusPeak
  * @brief Custom buffer of PeakCanMessage instances.
  */
-class ImplementPeakCanBufferFactory : public yarp::dev::ImplementCanBufferFactory<PeakCanMessage, struct pcanfd_msg>
+class ImplementPeakCanBufferFactory : public yarp::dev::ImplementCanBufferFactory<roboticslab::PeakCanMessage, struct pcanfd_msg>
 {
 public:
     yarp::dev::CanBuffer createBuffer(int elem) override
@@ -36,7 +34,7 @@ public:
         yarp::dev::CanBuffer ret;
         struct pcanfd_msg * storage = new pcanfd_msg[elem];
         yarp::dev::CanMessage ** messages = new yarp::dev::CanMessage *[elem];
-        PeakCanMessage * tmp = new PeakCanMessage[elem];
+        auto * tmp = new roboticslab::PeakCanMessage[elem];
 
         std::memset(storage, 0, sizeof(struct pcanfd_msg) * elem);
 
@@ -62,31 +60,23 @@ public:
 class CanBusPeak : public yarp::dev::DeviceDriver,
                    public yarp::dev::ICanBus,
                    public yarp::dev::ICanBusErrors,
-                   public ImplementPeakCanBufferFactory
+                   public ImplementPeakCanBufferFactory,
+                   public CanBusPeak_ParamsParser
 {
 public:
-
-    ~CanBusPeak() override
-    { close(); }
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 
     bool open(yarp::os::Searchable& config) override;
-
     bool close() override;
 
     //  --------- ICanBus declarations. Implementation in ICanBusImpl.cpp ---------
 
     bool canSetBaudRate(unsigned int rate) override;
-
     bool canGetBaudRate(unsigned int * rate) override;
-
     bool canIdAdd(unsigned int id) override;
-
     bool canIdDelete(unsigned int id) override;
-
     bool canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait = false) override;
-
     bool canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait = false) override;
 
     //  --------- ICanBusErrors declarations. Implementation in ICanBusErrorsImpl.cpp ---------
@@ -102,17 +92,10 @@ private:
     std::uint64_t computeAcceptanceCodeAndMask();
 
     int fileDescriptor {0};
-    int rxTimeoutMs {0};
-    int txTimeoutMs {0};
-
-    bool blockingMode;
-    bool allowPermissive;
 
     mutable std::mutex canBusReady;
 
     std::set<unsigned int> activeFilters;
 };
-
-} // namespace roboticslab
 
 #endif // __CAN_BUS_PEAK_HPP__

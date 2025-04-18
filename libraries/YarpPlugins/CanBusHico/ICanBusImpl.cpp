@@ -175,9 +175,9 @@ bool CanBusHico::canIdDelete(unsigned int _id)
 
 bool CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait)
 {
-    if (!allowPermissive && wait != blockingMode)
+    if (!m_allowPermissive && wait != m_blockingMode)
     {
-        yCIError(HICO, id(), "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
+        yCIError(HICO, id(), "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, m_blockingMode);
         return false;
     }
 
@@ -187,7 +187,7 @@ bool CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigne
 
     for (unsigned int i = 0; i < size; i++)
     {
-        if (blockingMode && rxTimeoutMs > 0)
+        if (m_blockingMode && m_rxTimeoutMs > 0)
         {
             bool bufferReady;
 
@@ -211,7 +211,7 @@ bool CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigne
 
         if (ret == -1)
         {
-            if (!blockingMode && errno == EAGAIN)
+            if (!m_blockingMode && errno == EAGAIN)
             {
                 break;
             }
@@ -238,9 +238,9 @@ bool CanBusHico::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigne
 
 bool CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait)
 {
-    if (!allowPermissive && wait != blockingMode)
+    if (!m_allowPermissive && wait != m_blockingMode)
     {
-        yCIError(HICO, id(), "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
+        yCIError(HICO, id(), "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, m_blockingMode);
         return false;
     }
 
@@ -250,7 +250,7 @@ bool CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, 
 
     for (unsigned int i = 0; i < size; i++)
     {
-        if (blockingMode && txTimeoutMs > 0)
+        if (m_blockingMode && m_txTimeoutMs > 0)
         {
             bool bufferReady;
 
@@ -273,7 +273,7 @@ bool CanBusHico::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, 
 
         if (ret == -1)
         {
-            if (!blockingMode && errno == EAGAIN)
+            if (!m_blockingMode && errno == EAGAIN)
             {
                 break;
             }

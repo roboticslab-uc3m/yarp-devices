@@ -9,8 +9,6 @@
 
 #include "LogComponent.hpp"
 
-using namespace roboticslab;
-
 // -----------------------------------------------------------------------------
 
 void WiimoteDispatcherThread::beforeStart()

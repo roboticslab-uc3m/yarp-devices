@@ -5,33 +5,24 @@
 #include <cstdlib>
 
 #include <yarp/os/LogStream.h>
-#include <yarp/os/Value.h>
 
 #include "LogComponent.hpp"
-
-using namespace roboticslab;
-
-constexpr auto DEFAULT_DEVICE = 1;
-
-constexpr auto DEFAULT_CALIB_ZERO_X = -30;
-constexpr auto DEFAULT_CALIB_ZERO_Y = -22;
-constexpr auto DEFAULT_CALIB_ZERO_Z = 72;
-
-constexpr auto DEFAULT_CALIB_ONE_X = 69;
-constexpr auto DEFAULT_CALIB_ONE_Y = -123;
-constexpr auto DEFAULT_CALIB_ONE_Z = -25;
 
 // -----------------------------------------------------------------------------
 
 bool WiimoteSensor::open(yarp::os::Searchable& config)
 {
-    int deviceId = config.check("deviceId", yarp::os::Value(DEFAULT_DEVICE), "Wiimote device number").asInt32();
+    if (!parseParams(config))
+    {
+        yCError(WII) << "Cannot parse parameters";
+        return false;
+    }
 
-    char * syspath = getDevicePath(deviceId);
+    char * syspath = getDevicePath(m_deviceId);
 
     if (syspath == nullptr)
     {
-        yCError(WII) << "Cannot find device with number" << deviceId;
+        yCError(WII) << "Cannot find device with number" << m_deviceId;
         return false;
     }
 
@@ -54,19 +45,6 @@ bool WiimoteSensor::open(yarp::os::Searchable& config)
         yCError(WII) << "Cannot open interface, did you launch with sudo?" << ret;
         return false;
     }
-
-    calibZeroX = config.check("calibZeroX", yarp::os::Value(DEFAULT_CALIB_ZERO_X), "normalization value for X axis (zero)").asInt32();
-    calibZeroY = config.check("calibZeroY", yarp::os::Value(DEFAULT_CALIB_ZERO_Y), "normalization value for Y axis (zero)").asInt32();
-    calibZeroZ = config.check("calibZeroZ", yarp::os::Value(DEFAULT_CALIB_ZERO_Z), "normalization value for Z axis (zero)").asInt32();
-
-    calibOneX = config.check("calibOneX", yarp::os::Value(DEFAULT_CALIB_ONE_X), "normalization value for X axis (one)").asInt32();
-    calibOneY = config.check("calibOneY", yarp::os::Value(DEFAULT_CALIB_ONE_Y), "normalization value for Y axis (one)").asInt32();
-    calibOneZ = config.check("calibOneZ", yarp::os::Value(DEFAULT_CALIB_ONE_Z), "normalization value for Z axis (one)").asInt32();
-
-    yCInfo(WII, "Calibration (zero): x = %d, y = %d, z = %d", calibZeroX, calibZeroY, calibZeroZ);
-    yCInfo(WII, "Calibration (one): x = %d, y = %d, z = %d", calibOneX, calibOneY, calibOneZ);
-
-    yawActive = false;
 
     dispatcherThread.setInterfacePointer(iface);
     return dispatcherThread.start();

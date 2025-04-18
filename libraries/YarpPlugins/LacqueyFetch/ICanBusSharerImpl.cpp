@@ -8,7 +8,7 @@ using namespace roboticslab;
 
 unsigned int LacqueyFetch::getId()
 {
-    return canId;
+    return m_canId;
 }
 
 // -----------------------------------------------------------------------------

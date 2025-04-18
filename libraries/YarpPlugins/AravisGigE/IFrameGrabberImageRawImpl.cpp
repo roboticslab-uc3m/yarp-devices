@@ -4,8 +4,6 @@
 
 #include "LogComponent.hpp"
 
-using namespace roboticslab;
-
 bool AravisGigE::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono> &image)
 {
     //-- Right now it is implemented as polling (grab + retrieve image)

@@ -1,27 +1,29 @@
-# Copyright: (C) 2017 Universidad Carlos III de Madrid
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
 if(NOT XWiimote_FOUND AND (NOT DEFINED ENABLE_WiimoteSensor OR ENABLE_WiimoteSensor))
     message(WARNING "XWiimote package not found, disabling WiimoteSensor")
 endif()
 
 yarp_prepare_plugin(WiimoteSensor
                     CATEGORY device
-                    TYPE roboticslab::WiimoteSensor
+                    TYPE WiimoteSensor
                     INCLUDE WiimoteSensor.hpp
                     DEFAULT ON
                     DEPENDS "UNIX;XWiimote_FOUND"
-                    EXTRA_CONFIG WRAPPER=analogServer)
+                    EXTRA_CONFIG WRAPPER=analogServer
+                    GENERATE_PARSER)
 
 if(NOT SKIP_WiimoteSensor)
 
-    yarp_add_plugin(WiimoteSensor WiimoteSensor.hpp
-                                  WiimoteSensor.cpp
-                                  DeviceDriverImpl.cpp
-                                  IAnalogSensorImpl.cpp
-                                  WiimoteDispatcherThread.cpp
-                                  LogComponent.hpp
-                                  LogComponent.cpp)
+    yarp_add_plugin(WiimoteSensor)
+
+    target_sources(WiimoteSensor PRIVATE WiimoteSensor.hpp
+                                         WiimoteSensor.cpp
+                                         DeviceDriverImpl.cpp
+                                         IAnalogSensorImpl.cpp
+                                         WiimoteDispatcherThread.cpp
+                                         WiimoteSensor_ParamsParser.h
+                                         WiimoteSensor_ParamsParser.cpp
+                                         LogComponent.hpp
+                                         LogComponent.cpp)
 
     target_link_libraries(WiimoteSensor YARP::YARP_os
                                         YARP::YARP_dev

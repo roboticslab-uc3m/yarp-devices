@@ -36,7 +36,7 @@ namespace
 
 unsigned int Jr3Mbed::getId()
 {
-    return canId;
+    return m_canId;
 }
 
 // -----------------------------------------------------------------------------
@@ -53,10 +53,10 @@ bool Jr3Mbed::initialize()
     switch (mode)
     {
     case jr3_mode::SYNC:
-        ret = sendStartSyncCommand(filter);
+        ret = sendStartSyncCommand(m_filter);
         break;
     case jr3_mode::ASYNC:
-        ret = sendStartAsyncCommand(filter, asyncPeriod);
+        ret = sendStartAsyncCommand(m_filter, m_asyncPeriod);
         break;
     default:
         yCIError(JR3M, id()) << "Unknown mode:" << static_cast<int>(mode);
@@ -87,7 +87,7 @@ bool Jr3Mbed::finalize()
 
 bool Jr3Mbed::notifyMessage(const can_message & message)
 {
-    switch (static_cast<can_ops>(message.id - canId))
+    switch (static_cast<can_ops>(message.id - m_canId))
     {
     case can_ops::BOOTUP:
     {
@@ -120,7 +120,7 @@ bool Jr3Mbed::notifyMessage(const can_message & message)
         return true;
     }
     default:
-        yCIWarning(JR3M, id(), "Unsupported operation: 0x%02x", message.id - canId);
+        yCIWarning(JR3M, id(), "Unsupported operation: 0x%02x", message.id - m_canId);
         return false;
     }
 }

@@ -6,8 +6,6 @@
 
 #include "LogComponent.hpp"
 
-using namespace roboticslab;
-
 // -----------------------------------------------------------------------------
 
 int LeapMotionSensor::read(yarp::sig::Vector &out)
@@ -38,25 +36,22 @@ int LeapMotionSensor::read(yarp::sig::Vector &out)
     Leap::Vector direction = hand.direction();
     Leap::Vector normal = hand.palmNormal();
 
-    out.resize(getChannels());
-
     // https://developer.leapmotion.com/documentation/v2/cpp/api/Leap.Hand.html
     // https://developer.leapmotion.com/documentation/v2/cpp/api/Leap.Vector.html
 
-    // send translation coordinates in mm
-    out[0] = position.x;
-    out[1] = position.y;
-    out[2] = position.z;
-
-    // ...and rotations in radians (assume hand fingers pointing at -Z)
-    out[3] = direction.pitch();
-    out[4] = -direction.yaw();
-    out[5] = normal.roll();
-
-    out[6] = hand.grabStrength() > 0.5 ? 1.0 : 0.0;
-    out[7] = hand.pinchStrength() > 0.5 ? 1.0 : 0.0;
-
-    lastValidData = out;
+    lastValidData = out = {
+        // send translation coordinates in mm
+        position.x,
+        position.y,
+        position.z,
+        // ...and rotations in radians (assume hand fingers pointing at -Z)
+        direction.pitch(),
+        -direction.yaw(),
+        normal.roll(),
+        // gestures
+        hand.grabStrength() > 0.5 ? 1.0 : 0.0,
+        hand.pinchStrength() > 0.5 ? 1.0 : 0.0
+    };
 
     return yarp::dev::IAnalogSensor::AS_OK;
 }
@@ -72,7 +67,7 @@ int LeapMotionSensor::getState(int ch)
 
 int LeapMotionSensor::getChannels()
 {
-    return 8;
+    return NUM_CHANNELS;
 }
 
 // -----------------------------------------------------------------------------

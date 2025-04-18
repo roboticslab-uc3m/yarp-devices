@@ -2,7 +2,9 @@
 
 #include "LacqueyFetch.hpp"
 
-#include <yarp/os/Property.h>
+#include <yarp/os/LogStream.h>
+
+#include "LogComponent.hpp"
 
 using namespace roboticslab;
 
@@ -10,11 +12,26 @@ using namespace roboticslab;
 
 bool LacqueyFetch::open(yarp::os::Searchable & config)
 {
-    const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
+    if (!parseParams(config))
+    {
+        yCError(LCQ) << "Failed to parse parameters";
+        return false;
+    }
 
-    canId = config.check("canId", yarp::os::Value(0), "can bus ID").asInt8();
-    axisName = config.check("name", yarp::os::Value(""), "axis name").asString();
-    yarp::dev::DeviceDriver::setId("ID" + std::to_string(canId));
+    if (m_canId <= 0 || m_canId > 127)
+    {
+        yCError(LCQ) << "Illegal CAN ID:" << m_canId;
+        return false;
+    }
+
+    yarp::dev::DeviceDriver::setId("ID" + std::to_string(m_canId));
+
+    if (m_name.empty())
+    {
+        yCIWarning(LCQ, id()) << "Illegal axis name (empty string)";
+        return false;
+    }
+
     return true;
 }
 

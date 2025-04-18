@@ -4,7 +4,7 @@ endif()
 
 yarp_prepare_plugin(AravisGigE
                     CATEGORY device
-                    TYPE roboticslab::AravisGigE
+                    TYPE AravisGigE
                     INCLUDE AravisGigE.hpp
                     DEFAULT ON
                     DEPENDS ARAVIS_FOUND
@@ -14,12 +14,14 @@ if(NOT SKIP_AravisGigE)
 
     link_directories(${ARAVIS_LIBRARY_DIRS})
 
-    yarp_add_plugin(AravisGigE AravisGigE.hpp
-                               DeviceDriverImpl.cpp
-                               IFrameGrabberControlsImpl.cpp
-                               IFrameGrabberImageRawImpl.cpp
-                               LogComponent.hpp
-                               LogComponent.cpp)
+    yarp_add_plugin(AravisGigE)
+
+    target_sources(AravisGigE PRIVATE AravisGigE.hpp
+                                      DeviceDriverImpl.cpp
+                                      IFrameGrabberControlsImpl.cpp
+                                      IFrameGrabberImageRawImpl.cpp
+                                      LogComponent.hpp
+                                      LogComponent.cpp)
 
     target_link_libraries(AravisGigE YARP::YARP_os
                                      YARP::YARP_dev

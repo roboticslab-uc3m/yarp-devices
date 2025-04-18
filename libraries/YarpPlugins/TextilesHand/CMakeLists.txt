@@ -1,18 +1,23 @@
 yarp_prepare_plugin(TextilesHand
                     CATEGORY device
-                    TYPE roboticslab::TextilesHand
+                    TYPE TextilesHand
                     INCLUDE TextilesHand.hpp
                     DEFAULT ON
-                    EXTRA_CONFIG WRAPPER=controlBoard_nws_yarp)
+                    EXTRA_CONFIG WRAPPER=controlBoard_nws_yarp
+                    GENERATE_PARSER)
 
 if(NOT SKIP_TextilesHand)
 
-    yarp_add_plugin(TextilesHand TextilesHand.hpp
-                                 DeviceDriverImpl.cpp
-                                 IControlModeImpl.cpp
-                                 IPositionDirectImpl.cpp
-                                 LogComponent.hpp
-                                 LogComponent.cpp)
+    yarp_add_plugin(TextilesHand)
+
+    target_sources(TextilesHand PRIVATE TextilesHand.hpp
+                                        DeviceDriverImpl.cpp
+                                        IControlModeImpl.cpp
+                                        IPositionDirectImpl.cpp
+                                        TextilesHand_ParamsParser.h
+                                        TextilesHand_ParamsParser.cpp
+                                        LogComponent.hpp
+                                        LogComponent.cpp)
 
     target_link_libraries(TextilesHand YARP::YARP_os
                                        YARP::YARP_dev)

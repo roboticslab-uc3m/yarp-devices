@@ -1,20 +1,22 @@
-# Copyright: (C) 2019 Universidad Carlos III de Madrid
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
 yarp_prepare_plugin(JointCalibrator
                     CATEGORY device
-                    TYPE roboticslab::JointCalibrator
+                    TYPE JointCalibrator
                     INCLUDE JointCalibrator.hpp
-                    DEFAULT ON)
+                    DEFAULT ON
+                    GENERATE_PARSER)
 
 if(NOT SKIP_JointCalibrator)
 
-    yarp_add_plugin(JointCalibrator JointCalibrator.hpp
-                                    DeviceDriverImpl.cpp
-                                    IRemoteCalibratorImpl.cpp
-                                    WrapperSingleImpl.cpp
-                                    LogComponent.hpp
-                                    LogComponent.cpp)
+    yarp_add_plugin(JointCalibrator)
+
+    target_sources(JointCalibrator PRIVATE JointCalibrator.hpp
+                                           DeviceDriverImpl.cpp
+                                           IRemoteCalibratorImpl.cpp
+                                           WrapperSingleImpl.cpp
+                                           JointCalibrator_ParamsParser.h
+                                           JointCalibrator_ParamsParser.cpp
+                                           LogComponent.hpp
+                                           LogComponent.cpp)
 
     target_link_libraries(JointCalibrator YARP::YARP_os
                                           YARP::YARP_dev)

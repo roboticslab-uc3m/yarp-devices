@@ -6,25 +6,14 @@
 
 #include <algorithm> // std::clamp
 
-using namespace roboticslab;
-
-constexpr auto NUM_CHANNELS = 8;
-constexpr auto FULL_SCALE_X = 460.0;
-constexpr auto FULL_SCALE_Y = 430.0;
-constexpr auto FULL_SCALE_Z = 440.0;
-constexpr auto FULL_SCALE_ROLL = 415.0;
-constexpr auto FULL_SCALE_PITCH = 405.0;
-constexpr auto FULL_SCALE_YAW = 435.0;
-constexpr auto MAX_NO_DATA_ITERATIONS = 10;
-
-constexpr auto RANGE = 1.0;
-
 // -----------------------------------------------------------------------------
 
 namespace
 {
     double normalize(double value, double deadband)
     {
+        static constexpr auto RANGE = 1.0;
+
         if (std::abs(value) <= deadband)
         {
             return 0.0;
@@ -68,24 +57,23 @@ int SpaceNavigator::read(yarp::sig::Vector &out)
         noDataCounter++;
     }
 
-    if (noDataCounter >= MAX_NO_DATA_ITERATIONS)
+    if (noDataCounter >= m_maxNoDataIterations)
     {
         noDataCounter = 0;
         dx = dy = dz = droll = dpitch = dyaw = 0.0;
         //button1 = button2 = 0; // buttons should preserve pressed/released state
     }
 
-    out.resize(NUM_CHANNELS);
-
-    out[0] = normalize(dx / FULL_SCALE_X, deadband);
-    out[1] = normalize(dy / FULL_SCALE_Y, deadband);
-    out[2] = normalize(dz / FULL_SCALE_Z, deadband);
-    out[3] = normalize(droll / FULL_SCALE_ROLL, deadband);
-    out[4] = normalize(dpitch / FULL_SCALE_PITCH, deadband);
-    out[5] = normalize(dyaw / FULL_SCALE_YAW, deadband);
-
-    out[6] = button1;
-    out[7] = button2;
+    out = {
+        normalize(dx / m_fullScaleX, deadband),
+        normalize(dy / m_fullScaleY, deadband),
+        normalize(dz / m_fullScaleZ, deadband),
+        normalize(droll / m_fullScaleRoll, deadband),
+        normalize(dpitch / m_fullScalePitch, deadband),
+        normalize(dyaw / m_fullScaleYaw, deadband),
+        static_cast<double>(button1),
+        static_cast<double>(button2)
+    };
 
     return yarp::dev::IAnalogSensor::AS_OK;
 }
@@ -101,7 +89,7 @@ int SpaceNavigator::getState(int ch)
 
 int SpaceNavigator::getChannels()
 {
-    return NUM_CHANNELS;
+    return 8;
 }
 
 // -----------------------------------------------------------------------------

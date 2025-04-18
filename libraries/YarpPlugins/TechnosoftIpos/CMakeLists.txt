@@ -1,9 +1,10 @@
 yarp_prepare_plugin(TechnosoftIpos
                     CATEGORY device
-                    TYPE roboticslab::TechnosoftIpos
+                    TYPE TechnosoftIpos
                     INCLUDE TechnosoftIpos.hpp
                     DEFAULT ON
-                    DEPENDS "ENABLE_CanBusSharerLib;ENABLE_CanOpenNodeLib;ENABLE_StateObserverLib")
+                    DEPENDS "ENABLE_CanBusSharerLib;ENABLE_CanOpenNodeLib;ENABLE_StateObserverLib"
+                    GENERATE_PARSER)
 
 if(NOT SKIP_TechnosoftIpos)
 
@@ -29,6 +30,8 @@ if(NOT SKIP_TechnosoftIpos)
                                           IMotorRawImpl.cpp
                                           IMotorEncodersRawImpl.cpp
                                           ITorqueControlRawImpl.cpp
+                                          TechnosoftIpos_ParamsParser.h
+                                          TechnosoftIpos_ParamsParser.cpp
                                           LogComponent.hpp
                                           LogComponent.cpp)
 

@@ -6,13 +6,11 @@
 
 #include "LogComponent.hpp"
 
-using namespace roboticslab;
-
 // ------------------- IPositionDirect Related --------------------------------
 
 bool EmulatedControlBoard::setPosition(int j, double ref)
 {
-    if ((unsigned int)j > axes)
+    if ((unsigned int)j > m_axes)
     {
         yCError(ECB, "Axis index exceeds number of axes");
         return false;
@@ -25,7 +23,7 @@ bool EmulatedControlBoard::setPosition(int j, double ref)
     }
 
     targetExposed[j] = ref;
-    encRaw[j] = ref * encRawExposed[j];
+    encRaw[j] = ref * m_encRawExposeds[j];
 
     return true;
 }
@@ -50,7 +48,7 @@ bool EmulatedControlBoard::setPositions(const double *refs)
 {
     bool ok = true;
 
-    for (int j = 0; j < axes; j++)
+    for (int j = 0; j < m_axes; j++)
     {
         ok &= setPosition(j, refs[j]);
     }
@@ -62,7 +60,7 @@ bool EmulatedControlBoard::setPositions(const double *refs)
 
 bool EmulatedControlBoard::getRefPosition(const int joint, double *ref)
 {
-    if ((unsigned int)joint > axes)
+    if ((unsigned int)joint > m_axes)
     {
         yCError(ECB, "Axis index exceeds number of axes");
         return false;
@@ -85,7 +83,7 @@ bool EmulatedControlBoard::getRefPositions(double *refs)
 {
     bool ok = true;
 
-    for (int j = 0; j < axes; j++)
+    for (int j = 0; j < m_axes; j++)
     {
         ok &= getRefPosition(j, &refs[j]);
     }

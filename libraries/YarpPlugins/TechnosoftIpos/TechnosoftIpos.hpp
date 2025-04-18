@@ -5,13 +5,12 @@
 
 #include "TechnosoftIposBase.hpp"
 
-namespace roboticslab
-{
+#include "TechnosoftIpos_ParamsParser.h"
 
 /**
  * @ingroup YarpPlugins
  * @defgroup TechnosoftIpos
- * @brief Contains roboticslab::TechnosoftIpos.
+ * @brief Contains TechnosoftIpos.
  */
 
 /**
@@ -35,12 +34,10 @@ class TechnosoftIpos : public yarp::dev::DeviceDriver,
                        public yarp::dev::IRemoteVariablesRaw,
                        public yarp::dev::ITorqueControlRaw,
                        public yarp::dev::IVelocityControlRaw,
-                       public ICanBusSharer
+                       public roboticslab::ICanBusSharer,
+                       public TechnosoftIpos_ParamsParser
 {
 public:
-
-    ~TechnosoftIpos() override
-    { close(); }
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 
@@ -58,7 +55,7 @@ public:
     std::vector<unsigned int> getAdditionalIds() override
     { return impl->getAdditionalIds(); }
 
-    bool notifyMessage(const can_message & message) override
+    bool notifyMessage(const roboticslab::can_message & message) override
     { return impl->notifyMessage(message); }
 
     bool initialize() override
@@ -67,7 +64,7 @@ public:
     bool finalize() override
     { return impl->finalize(); }
 
-    bool registerSender(ICanSenderDelegate * sender) override
+    bool registerSender(roboticslab::ICanSenderDelegate * sender) override
     { return impl->registerSender(sender); }
 
     bool synchronize(double timestamp) override
@@ -557,9 +554,7 @@ public:
 
 private:
 
-    TechnosoftIposBase * impl {nullptr};
+    roboticslab::TechnosoftIposBase * impl {nullptr};
 };
-
-} // namespace roboticslab
 
 #endif // __TECHNOSOFT_IPOS_HPP__

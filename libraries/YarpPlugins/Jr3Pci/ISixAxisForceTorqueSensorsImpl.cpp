@@ -9,8 +9,6 @@
 
 #include "LogComponent.hpp"
 
-using namespace roboticslab;
-
 constexpr auto NUM_SENSORS = 4;
 
 #define CHECK_SENSOR(n) do { if ((n) < 0 || (n) > NUM_SENSORS - 1) return false; } while (0)
@@ -34,7 +32,7 @@ yarp::dev::MAS_status Jr3Pci::getSixAxisForceTorqueSensorStatus(std::size_t sens
 bool Jr3Pci::getSixAxisForceTorqueSensorName(std::size_t sens_index, std::string & name) const
 {
     CHECK_SENSOR(sens_index);
-    name = names[sens_index];
+    name = m_names[sens_index];
     return true;
 }
 
@@ -65,14 +63,15 @@ bool Jr3Pci::getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::si
         fm.f[0] * fs[sens_index].f[0] * factor,
         fm.f[1] * fs[sens_index].f[1] * factor,
         fm.f[2] * fs[sens_index].f[2] * factor,
-        // torque units are [daNm], hence we need to divide by 10
+        // torque units are [daNm], therefore we need to divide by 10
         fm.m[0] * fs[sens_index].m[0] * factor * 0.1,
         fm.m[1] * fs[sens_index].m[1] * factor * 0.1,
         fm.m[2] * fs[sens_index].m[2] * factor * 0.1
     };
 
-    if (isDextrorotary)
+    if (!m_levogyrate)
     {
+        // https://github.com/roboticslab-uc3m/jr3pci-linux/issues/10
         out[0] = -out[0];
         out[3] = -out[3];
     }

@@ -91,12 +91,12 @@ bool TechnosoftIposExternal::getPidOutputRaw(const yarp::dev::PidControlTypeEnum
 
     if (activePid->ki != 0.0)
     {
-        integralError += proportionalError * syncPeriod;
+        integralError += proportionalError * params.m_syncPeriod;
         integralTerm = std::clamp(activePid->ki * integralError * scale, -activePid->max_int, activePid->max_int);
         integralError = integralTerm / activePid->ki;
     }
 
-    double derivativeError = (proportionalError - prevProportionalError) / syncPeriod;
+    double derivativeError = (proportionalError - prevProportionalError) / params.m_syncPeriod;
     double derivativeTerm = activePid->kd * derivativeError * scale;
 
     double feedForwardTerm = positionReference * activePid->kff;

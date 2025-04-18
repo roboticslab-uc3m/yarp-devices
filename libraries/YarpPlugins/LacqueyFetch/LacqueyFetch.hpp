@@ -15,16 +15,14 @@
 #include <yarp/dev/IPWMControl.h>
 
 #include "ICanBusSharer.hpp"
+#include "LacqueyFetch_ParamsParser.h"
 
 #define CHECK_JOINT(j) do { int n; if (getNumberOfMotorsRaw(&n), (j) != n - 1) return false; } while (0)
-
-namespace roboticslab
-{
 
 /**
  * @ingroup YarpPlugins
  * @defgroup LacqueyFetch
- * @brief Contains roboticslab::LacqueyFetch.
+ * @brief Contains LacqueyFetch.
  */
 
 /**
@@ -36,7 +34,8 @@ class LacqueyFetch : public yarp::dev::DeviceDriver,
                      public yarp::dev::IAxisInfoRaw,
                      public yarp::dev::IControlModeRaw,
                      public yarp::dev::IPWMControlRaw,
-                     public ICanBusSharer
+                     public roboticslab::ICanBusSharer,
+                     public LacqueyFetch_ParamsParser
 {
 public:
     //  --------- DeviceDriver declarations. Implementation in LacqueyFetch.cpp ---------
@@ -47,10 +46,10 @@ public:
     //  --------- ICanBusSharer declarations. Implementation in LacqueyFetch.cpp ---------
 
     unsigned int getId() override;
-    bool notifyMessage(const can_message & message) override;
+    bool notifyMessage(const roboticslab::can_message & message) override;
     bool initialize() override;
     bool finalize() override;
-    bool registerSender(ICanSenderDelegate * sender) override;
+    bool registerSender(roboticslab::ICanSenderDelegate * sender) override;
     bool synchronize(double timestamp) override;
 
     //  --------- IAxisInfoRaw declarations. Implementation in IAxisInfoRawImpl.cpp ---------
@@ -82,14 +81,10 @@ private:
     static constexpr unsigned int CAN_OP = 0x780; // keep in sync with firmware
 
     bool send(unsigned int len, const std::uint8_t * msgData)
-    { return sender && sender->prepareMessage({CAN_OP + canId, len, msgData}); }
+    { return sender && sender->prepareMessage({CAN_OP + m_canId, len, msgData}); }
 
-    unsigned int canId {0};
-    std::string axisName;
     yarp::conf::float32_t refDutyCycles {0};
-    ICanSenderDelegate * sender {nullptr};
+    roboticslab::ICanSenderDelegate * sender {nullptr};
 };
-
-} // namespace roboticslab
 
 #endif // __LACQUEY_FETCH_HPP__

@@ -4,22 +4,27 @@ endif()
 
 yarp_prepare_plugin(CanBusPeak
                     CATEGORY device
-                    TYPE roboticslab::CanBusPeak
+                    TYPE CanBusPeak
                     INCLUDE CanBusPeak.hpp
                     DEFAULT ON
-                    DEPENDS "UNIX;PCan_FOUND")
+                    DEPENDS "UNIX;PCan_FOUND"
+                    GENERATE_PARSER)
 
 if(NOT SKIP_CanBusPeak)
 
-    yarp_add_plugin(CanBusPeak CanBusPeak.cpp
-                               CanBusPeak.hpp
-                               DeviceDriverImpl.cpp
-                               ICanBusImpl.cpp
-                               ICanBusErrorsImpl.cpp
-                               PeakCanMessage.cpp
-                               PeakCanMessage.hpp
-                               LogComponent.hpp
-                               LogComponent.cpp)
+    yarp_add_plugin(CanBusPeak)
+
+    target_sources(CanBusPeak PRIVATE CanBusPeak.cpp
+                                      CanBusPeak.hpp
+                                      DeviceDriverImpl.cpp
+                                      ICanBusImpl.cpp
+                                      ICanBusErrorsImpl.cpp
+                                      PeakCanMessage.cpp
+                                      PeakCanMessage.hpp
+                                      CanBusPeak_ParamsParser.h
+                                      CanBusPeak_ParamsParser.cpp
+                                      LogComponent.hpp
+                                      LogComponent.cpp)
 
     target_link_libraries(CanBusPeak YARP::YARP_os
                                      YARP::YARP_dev

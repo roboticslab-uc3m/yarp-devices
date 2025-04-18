@@ -8,96 +8,67 @@
 
 using namespace roboticslab;
 
-constexpr auto DEFAULT_ENABLE_CSV = false;
-
 // -----------------------------------------------------------------------------
 
 bool TechnosoftIposExternal::open(yarp::os::Searchable & config)
 {
-    const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
-
-    const auto & commonGroup = robotConfig->findGroup("common-ipos");
-    yarp::os::Property iposGroup;
-
-    if (!commonGroup.isNull())
-    {
-        iposGroup.fromString(commonGroup.toString());
-    }
-
-    iposGroup.fromString(config.toString(), false); // override common options
-
-    auto enableCsvVal = iposGroup.check("enableCsv", yarp::os::Value(DEFAULT_ENABLE_CSV), "enable CSV mode");
-
-    if (!setRemoteVariableRaw("enableCsv", {enableCsvVal}))
+    if (!setRemoteVariableRaw("enableCsv", {yarp::os::Value(params.m_enableCsv)}))
     {
         return false;
     }
 
-    initialInteractionMode = iposGroup.check("initialInteractionMode", yarp::os::Value(yarp::dev::InteractionModeEnum::VOCAB_IM_UNKNOWN),
-        "initial YARP interaction mode vocab").asVocab32();
-
-    auto stiffness = iposGroup.check("stiffness", yarp::os::Value(0.0), "impedance stiffness (Nm)").asFloat64();
-    auto damping = iposGroup.check("damping", yarp::os::Value(0.0), "impedance damping (Nm*seconds)").asFloat64();
-    auto impedanceOffset = iposGroup.check("impedanceOffset", yarp::os::Value(0.0), "impedance offset").asFloat64();
-
-    minStiffness = iposGroup.check("minStiffness", yarp::os::Value(0.0), "minimum impedance stiffness (Nm)").asFloat64();
-    maxStiffness = iposGroup.check("maxStiffness", yarp::os::Value(0.0), "maximum impedance stiffness (Nm)").asFloat64();
-    minDamping = iposGroup.check("minDamping", yarp::os::Value(0.0), "minimum impedance damping (Nm*seconds)").asFloat64();
-    maxDamping = iposGroup.check("maxDamping", yarp::os::Value(0.0), "maximum impedance damping (Nm*seconds)").asFloat64();
-
-    if (stiffness < minStiffness || stiffness > maxStiffness)
+    if (params.m_initialInteractionMode != yarp::os::Vocab32::decode(yarp::dev::InteractionModeEnum::VOCAB_IM_COMPLIANT) &&
+        params.m_initialInteractionMode != yarp::os::Vocab32::decode(yarp::dev::InteractionModeEnum::VOCAB_IM_COMPLIANT) &&
+        params.m_initialInteractionMode != yarp::os::Vocab32::decode(yarp::dev::InteractionModeEnum::VOCAB_IM_COMPLIANT))
     {
-        yCIError(IPOS, id(), "Invalid stiffness: %f (not in [%f, %f])", stiffness, minStiffness, maxStiffness);
+        yCIError(IPOS, id()) << "Illegal interaction mode vocab:" << params.m_initialInteractionMode;
         return false;
     }
 
-    if (damping < minDamping || damping > maxDamping)
+    initialInteractionMode = yarp::os::Vocab32::encode(params.m_initialInteractionMode);
+
+    if (params.m_stiffness < params.m_minStiffness || params.m_stiffness > params.m_maxStiffness)
     {
-        yCIError(IPOS, id(), "Invalid damping: %f (not in [%f, %f])", damping, minDamping, maxDamping);
+        yCIError(IPOS, id(), "Invalid stiffness: %f (not in [%f, %f])", params.m_stiffness, params.m_minStiffness, params.m_maxStiffness);
         return false;
     }
 
-    if (impedanceOffset < 0.0)
+    if (params.m_damping < params.m_minDamping || params.m_damping > params.m_maxDamping)
     {
-        yCIError(IPOS, id()) << "Illegal offset:" << impedanceOffset;
+        yCIError(IPOS, id(), "Invalid damping: %f (not in [%f, %f])", params.m_damping, params.m_minDamping, params.m_maxDamping);
         return false;
     }
 
-    auto kp = iposGroup.check("kp", yarp::os::Value(0.0), "position PID Kp").asFloat64();
-    auto ki = iposGroup.check("ki", yarp::os::Value(0.0), "position PID Ki").asFloat64();
-    auto kd = iposGroup.check("kd", yarp::os::Value(0.0), "position PID Kd").asFloat64();
-    auto maxInt = iposGroup.check("maxInt", yarp::os::Value(0.0), "position PID saturation threshold").asFloat64();
-    auto maxOutput = iposGroup.check("maxOutput", yarp::os::Value(0.0), "position PID maximum output").asFloat64();
-    auto offset = iposGroup.check("offset", yarp::os::Value(0.0), "position PID offset").asFloat64();
-    auto scale = iposGroup.check("scale", yarp::os::Value(1.0), "position PID scale").asFloat64();
-    auto stictionUp = iposGroup.check("stictionUp", yarp::os::Value(0.0), "position PID stiction up").asFloat64();
-    auto stictionDown = iposGroup.check("stictionDown", yarp::os::Value(0.0), "position PID stiction down").asFloat64();
-    auto kff = iposGroup.check("kff", yarp::os::Value(0.0), "position PID feed-forward").asFloat64();
+    if (params.m_impedanceOffset < 0.0)
+    {
+        yCIError(IPOS, id()) << "Illegal offset:" << params.m_impedanceOffset;
+        return false;
+    }
 
-    positionPid.setKp(kp);
-    positionPid.setKi(ki);
-    positionPid.setKd(kd);
-    positionPid.setMaxInt(maxInt);
-    positionPid.setMaxOut(maxOutput);
-    positionPid.setOffset(offset);
-    positionPid.setScale(scale);
-    positionPid.setStictionValues(stictionUp, stictionDown);
-    positionPid.setKff(kff);
+    positionPid.setKp(params.m_kp);
+    positionPid.setKi(params.m_ki);
+    positionPid.setKd(params.m_kd);
+    positionPid.setMaxInt(params.m_maxInt);
+    positionPid.setMaxOut(params.m_maxOutput);
+    positionPid.setOffset(params.m_offset);
+    positionPid.setScale(params.m_scale);
+    positionPid.setStictionValues(params.m_stictionUp, params.m_stictionDown);
+    positionPid.setKff(params.m_kff);
 
-    impedancePid.setKp(stiffness);
-    impedancePid.setKd(damping);
-    impedancePid.setMaxOut(maxOutput); // re-use
-    impedancePid.setOffset(impedanceOffset);
+    impedancePid.setKp(params.m_stiffness);
+    impedancePid.setKd(params.m_damping);
+    impedancePid.setMaxOut(params.m_maxOutput); // re-use
+    impedancePid.setOffset(params.m_impedanceOffset);
     impedancePid.setScale(1.0);
-    impedancePid.setStictionValues(stictionUp, stictionDown); // re-use
+    impedancePid.setStictionValues(params.m_stictionUp, params.m_stictionDown); // re-use
 
-    errorLimit = iposGroup.check("errorLimit", yarp::os::Value(0.0), "position PID error limit (degrees)").asFloat64();
-
-    if (errorLimit <= 0.0)
+    if (params.m_errorLimit <= 0.0)
     {
-        yCIError(IPOS, id()) << "Illegal position error limit:" << errorLimit;
+        yCIError(IPOS, id()) << "Illegal position error limit:" << params.m_errorLimit;
         return false;
     }
+
+    errorLimit = params.m_errorLimit;
 
     return TechnosoftIposBase::open(config);
 }

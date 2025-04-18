@@ -138,9 +138,9 @@ bool CanBusPeak::canIdDelete(unsigned int _id)
 
 bool CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait)
 {
-    if (!allowPermissive && wait != blockingMode)
+    if (!m_allowPermissive && wait != m_blockingMode)
     {
-        yCIError(PEAK, id(), "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
+        yCIError(PEAK, id(), "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, m_blockingMode);
         return false;
     }
 
@@ -149,7 +149,7 @@ bool CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigne
     {
         std::lock_guard lockGuard(canBusReady);
 
-        if (blockingMode && rxTimeoutMs > 0)
+        if (m_blockingMode && m_rxTimeoutMs > 0)
         {
             bool bufferReady;
 
@@ -170,7 +170,7 @@ bool CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigne
         res = pcanfd_recv_msgs_list(fileDescriptor, size, pfdm);
     }
 
-    if (!blockingMode && res == -EWOULDBLOCK)
+    if (!m_blockingMode && res == -EWOULDBLOCK)
     {
         *read = 0;
         return true;
@@ -191,9 +191,9 @@ bool CanBusPeak::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigne
 
 bool CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait)
 {
-    if (!allowPermissive && wait != blockingMode)
+    if (!m_allowPermissive && wait != m_blockingMode)
     {
-        yCIError(PEAK, id(), "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
+        yCIError(PEAK, id(), "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, m_blockingMode);
         return false;
     }
 
@@ -205,7 +205,7 @@ bool CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, 
         // Point at first member of an internally defined array of pcanfd_msg structs.
         const struct pcanfd_msg * pfdm = reinterpret_cast<const struct pcanfd_msg *>(msgs.getPointer()[0]->getPointer());
 
-        if (blockingMode && txTimeoutMs > 0)
+        if (m_blockingMode && m_txTimeoutMs > 0)
         {
             bool bufferReady;
 
@@ -224,7 +224,7 @@ bool CanBusPeak::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, 
         res = pcanfd_send_msgs_list(fileDescriptor, size, pfdm);
     }
 
-    if (!blockingMode && res == -EWOULDBLOCK)
+    if (!m_blockingMode && res == -EWOULDBLOCK)
     {
         *sent = 0;
         return true;

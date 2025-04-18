@@ -3,11 +3,9 @@
 #include "LeapMotionSensor.hpp"
 
 #include <yarp/os/LogStream.h>
-#include <yarp/os/Time.h>
+#include <yarp/os/SystemClock.h>
 
 #include "LogComponent.hpp"
-
-using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
@@ -30,7 +28,7 @@ bool LeapMotionSensor::open(yarp::os::Searchable& config)
 
         retries++;
         yCInfo(LEAP) << "Connection failed, retrying... " << retries;
-        yarp::os::Time::delay(1);
+        yarp::os::SystemClock::delaySystem(1);
     }
 
     if (retries == maxRetries)

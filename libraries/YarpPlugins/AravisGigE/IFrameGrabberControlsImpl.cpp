@@ -4,8 +4,6 @@
 
 #include "LogComponent.hpp"
 
-using namespace roboticslab;
-
 bool AravisGigE::getCameraDescription(CameraDescriptor *camera)
 {
     camera->busType = BUS_UNKNOWN; //-- Temporary until we add a BUS_GIGE in YARP

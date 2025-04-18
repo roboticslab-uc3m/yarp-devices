@@ -2,17 +2,15 @@
 
 #include "WiimoteSensor.hpp"
 
-using namespace roboticslab;
-
 // -----------------------------------------------------------------------------
 
 int WiimoteSensor::read(yarp::sig::Vector &out)
 {
     WiimoteEventData eventData = dispatcherThread.getEventData();
 
-    double normX = ((double) eventData.accelX - calibZeroX) / (calibOneX - calibZeroX);
-    double normY = ((double) eventData.accelY - calibZeroY) / (calibOneY - calibZeroY);
-    double normZ = ((double) eventData.accelZ - calibZeroZ) / (calibOneZ - calibZeroZ);
+    double normX = ((double) eventData.accelX - m_calibZeroX) / (m_calibOneX - m_calibZeroX);
+    double normY = ((double) eventData.accelY - m_calibZeroY) / (m_calibOneY - m_calibZeroY);
+    double normZ = ((double) eventData.accelZ - m_calibZeroZ) / (m_calibOneZ - m_calibZeroZ);
 
     if (eventData.button1)
     {
@@ -23,13 +21,14 @@ int WiimoteSensor::read(yarp::sig::Vector &out)
         yawActive = true;
     }
 
-    out.resize(5);  //-- [roll, pitch, A, B, yawActive]
-
-    out[0] = normX;
-    out[1] = normY;
-    out[2] = eventData.buttonA ? 1.0 : 0.0;
-    out[3] = eventData.buttonB ? 1.0 : 0.0;
-    out[4] = yawActive ? 1.0 : 0.0;
+    // [roll, pitch, A, B, yawActive]
+    out = {
+        normX,
+        normY,
+        eventData.buttonA ? 1.0 : 0.0,
+        eventData.buttonB ? 1.0 : 0.0,
+        yawActive ? 1.0 : 0.0
+    };
 
     return yarp::dev::IAnalogSensor::AS_OK;
 }
@@ -45,7 +44,7 @@ int WiimoteSensor::getState(int ch)
 
 int WiimoteSensor::getChannels()
 {
-    return 5;
+    return 8;
 }
 
 // -----------------------------------------------------------------------------

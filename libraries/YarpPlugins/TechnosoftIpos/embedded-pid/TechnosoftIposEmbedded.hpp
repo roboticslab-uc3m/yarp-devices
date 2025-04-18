@@ -19,6 +19,8 @@ namespace roboticslab
 class TechnosoftIposEmbedded : public TechnosoftIposBase
 {
 public:
+    using TechnosoftIposBase::TechnosoftIposBase;
+
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 
     bool open(yarp::os::Searchable & config) override;

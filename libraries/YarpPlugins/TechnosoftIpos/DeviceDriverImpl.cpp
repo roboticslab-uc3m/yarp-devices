@@ -12,64 +12,37 @@
 
 using namespace roboticslab;
 
-// seconds
-constexpr auto DEFAULT_SDO_TIMEOUT = 0.02;
-constexpr auto DEFAULT_DRIVE_STATE_TIMEOUT = 2.0;
 
 // -----------------------------------------------------------------------------
 
 bool TechnosoftIposBase::open(yarp::os::Searchable & config)
 {
-    const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
-
-    const auto & commonGroup = robotConfig->findGroup("common-ipos");
-    yarp::os::Property iposGroup;
-
-    if (!commonGroup.isNull())
-    {
-        iposGroup.fromString(commonGroup.toString());
-    }
-
-    iposGroup.fromString(config.toString(), false); // override common options
-
-    const auto & driverGroup = robotConfig->findGroup(iposGroup.find("driver").asString());
-    const auto & motorGroup = robotConfig->findGroup(iposGroup.find("motor").asString());
-    const auto & gearboxGroup = robotConfig->findGroup(iposGroup.find("gearbox").asString());
-    const auto & encoderGroup = robotConfig->findGroup(iposGroup.find("encoder").asString());
-
-    canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32(); // id-specific
-
     actualControlMode = VOCAB_CM_NOT_CONFIGURED;
 
-    axisName = config.check("name", yarp::os::Value(""), "axis name").asString(); // id-specific
-    jointType = iposGroup.check("type", yarp::os::Value(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN), "joint type [atrv|atpr|unkn]").asVocab32();
-    max = iposGroup.check("max", yarp::os::Value(0.0), "max (meters or degrees)").asFloat64();
-    min = iposGroup.check("min", yarp::os::Value(0.0), "min (meters or degrees)").asFloat64();
-    maxVel = iposGroup.check("maxVel", yarp::os::Value(0.0), "maxVel (meters/second or degrees/second)").asFloat64();
-    refSpeed = iposGroup.check("refSpeed", yarp::os::Value(0.0), "ref speed (meters/second or degrees/second)").asFloat64();
-    refAcceleration = iposGroup.check("refAcceleration", yarp::os::Value(0.0), "ref acceleration (meters/second^2 or degrees/second^2)").asFloat64();
-    drivePeakCurrent = driverGroup.check("peakCurrent", yarp::os::Value(0.0), "peak drive current (amperes)").asFloat64();
-    k = motorGroup.check("k", yarp::os::Value(0.0), "motor constant").asFloat64();
-    tr = gearboxGroup.check("tr", yarp::os::Value(0.0), "reduction").asFloat64();
-    tr = tr * iposGroup.check("extraTr", yarp::os::Value(1.0), "extra reduction").asFloat64();
-    encoderPulses = encoderGroup.check("encoderPulses", yarp::os::Value(0), "encoderPulses").asInt32();
-    samplingPeriod = iposGroup.check("samplingPeriod", yarp::os::Value(0.0), "samplingPeriod (seconds)").asFloat64();
-    reverse = iposGroup.check("reverse", yarp::os::Value(false), "reverse motor encoder counts").asBool();
-    heartbeatPeriod = iposGroup.check("heartbeatPeriod", yarp::os::Value(0.0), "CAN heartbeat period (seconds)").asFloat64();
-    syncPeriod = iposGroup.check("syncPeriod", yarp::os::Value(0.0), "SYNC message period (seconds)").asFloat64();
-    // back-compat
-    auto initialMode = iposGroup.check("initialMode", yarp::os::Value(VOCAB_CM_IDLE), "initial YARP control mode vocab").asVocab32();
-    initialControlMode = iposGroup.check("initialControlMode", yarp::os::Value(initialMode), "initial YARP control mode vocab").asVocab32();
-
-    if (!validateInitialState())
+    if (!validateInitialState(params, id()))
     {
         yCIError(IPOS, id()) << "Invalid configuration parameters";
         return false;
     }
 
-    if (iposGroup.check("externalEncoder", "external encoder"))
+    jointType = yarp::os::Vocab32::encode(params.m_type);
+    max = params.m_max;
+    min = params.m_min;
+    maxVel = params.m_maxVel;
+    refSpeed = params.m_refSpeed;
+    refAcceleration = params.m_refAcceleration;
+    k = params.m_motor_k;
+    tr = params.m_gearbox_tr * params.m_extraTr;
+    encoderPulses = params.m_encoder_encoderPulses;
+    initialControlMode = yarp::os::Vocab32::encode(params.m_initialControlMode);
+
+    if (config.check("externalEncoder", "external encoder"))
     {
-        std::string externalEncoder = iposGroup.find("externalEncoder").asString();
+        // TODO: this will go away in attach mode and no longer depend on upstream `config`
+
+        const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
+
+        std::string externalEncoder = config.find("externalEncoder").asString();
         yarp::os::Bottle & externalEncoderGroup = robotConfig->findGroup(externalEncoder);
 
         if (externalEncoderGroup.isNull())
@@ -101,37 +74,32 @@ bool TechnosoftIposBase::open(yarp::os::Searchable & config)
         }
     }
 
-    double sdoTimeout = iposGroup.check("sdoTimeout", yarp::os::Value(DEFAULT_SDO_TIMEOUT),
-            "CAN SDO timeout (seconds)").asFloat64();
-    double driveStateTimeout = iposGroup.check("driveStateTimeout", yarp::os::Value(DEFAULT_DRIVE_STATE_TIMEOUT),
-            "CAN drive state timeout (seconds)").asFloat64();
-
-    can = new CanOpenNode(canId, sdoTimeout, driveStateTimeout);
+    can = new CanOpenNode(params.m_canId, params.m_sdoTimeout, params.m_driveStateTimeout);
 
     // Manufacturer Status Register (1002h) and Modes of Operation Display (6061h)
     tpdo1Conf.addMapping<std::uint32_t>(0x1002).addMapping<std::int8_t>(0x6061);
 
-    if (iposGroup.check("tpdo1InhibitTime", "TPDO1 inhibit time (seconds)"))
+    if (params.m_tpdo1InhibitTime > 0.0)
     {
-        tpdo1Conf.setInhibitTime(iposGroup.find("tpdo1InhibitTime").asFloat64() * 1e4); // pass x100 microseconds
+        tpdo1Conf.setInhibitTime(params.m_tpdo1InhibitTime * 1e4); // pass x100 microseconds
     }
 
-    if (iposGroup.check("tpdo1EventTimer", "TPDO1 event timer (seconds)"))
+    if (params.m_tpdo1EventTimer > 0.0)
     {
-        tpdo1Conf.setEventTimer(iposGroup.find("tpdo1EventTimer").asFloat64() * 1e3); // pass milliseconds
+        tpdo1Conf.setEventTimer(params.m_tpdo1EventTimer * 1e3); // pass milliseconds
     }
 
     // Motion Error Register (2000h) and Detailed Error Register (2002h)
     tpdo2Conf.addMapping<std::uint16_t>(0x2000).addMapping<std::uint16_t>(0x2002);
 
-    if (iposGroup.check("tpdo2InhibitTime", "TPDO2 inhibit time (seconds)"))
+    if (params.m_tpdo2InhibitTime > 0.0)
     {
-        tpdo2Conf.setInhibitTime(iposGroup.find("tpdo2InhibitTime").asFloat64() * 1e4); // pass x100 microseconds
+        tpdo2Conf.setInhibitTime(params.m_tpdo2InhibitTime * 1e4); // pass x100 microseconds
     }
 
-    if (iposGroup.check("tpdo2EventTimer", "TPDO2 event timer (seconds)"))
+    if (params.m_tpdo2EventTimer > 0.0)
     {
-        tpdo2Conf.setEventTimer(iposGroup.find("tpdo2EventTimer").asFloat64() * 1e3); // pass milliseconds
+        tpdo2Conf.setEventTimer(params.m_tpdo2EventTimer * 1e3); // pass milliseconds
     }
 
     // Position actual internal value (6063h) and Torque actual value (6077h)
@@ -150,19 +118,12 @@ bool TechnosoftIposBase::open(yarp::os::Searchable & config)
 
     can->nmt()->registerHandler(std::bind(&TechnosoftIposBase::handleNmt, this, _1));
 
-    if (iposGroup.check("monitorPeriod", "monitor thread period (seconds)"))
+    if (params.m_monitorPeriod > 0.0)
     {
-        double monitorPeriod = iposGroup.find("monitorPeriod").asFloat64();
-
-        if (monitorPeriod > 0.0)
-        {
-            monitorThread = new yarp::os::Timer(yarp::os::TimerSettings(monitorPeriod), std::bind(&TechnosoftIposBase::monitorWorker, this, _1), false);
-        }
-        else
-        {
-            heartbeatPeriod = 0.0; // disable
-        }
+        monitorThread = new yarp::os::Timer(yarp::os::TimerSettings(params.m_monitorPeriod), std::bind(&TechnosoftIposBase::monitorWorker, this, _1), false);
     }
+
+    lastEncoderRead = std::make_unique<EncoderRead>(params.m_samplingPeriod);
 
     return !monitorThread || monitorThread->start();
 }

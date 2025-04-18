@@ -4,11 +4,6 @@
 
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/os/Value.h>
-
-using namespace roboticslab;
-
-constexpr auto DEFAULT_DEADBAND = 0.125;
 
 namespace
 {
@@ -19,11 +14,15 @@ namespace
 
 bool SpaceNavigator::open(yarp::os::Searchable & config)
 {
-    deadband = config.check("deadband", yarp::os::Value(DEFAULT_DEADBAND), "deadband [0,1]").asFloat64();
-
-    if (deadband < 0.0 || deadband > 1.0)
+    if (!parseParams(config))
     {
-        yCError(SPNAV) << "Invalid deadband value (must be in [0,1]):" << deadband;
+        yCError(SPNAV) << "Failed to parse parameters";
+        return false;
+    }
+
+    if (m_deadband < 0.0 || m_deadband > 1.0)
+    {
+        yCError(SPNAV) << "Invalid deadband value (must be in [0,1]):" << m_deadband;
         return false;
     }
 

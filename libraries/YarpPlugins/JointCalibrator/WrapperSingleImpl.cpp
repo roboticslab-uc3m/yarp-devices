@@ -2,17 +2,15 @@
 
 #include "JointCalibrator.hpp"
 
-using namespace roboticslab;
-
 bool JointCalibrator::attach(yarp::dev::PolyDriver * poly)
 {
     int localAxes;
 
     return poly->view(iControlMode)
-            && poly->view(iEncoders)
-            && poly->view(iPositionControl)
-            && iEncoders->getAxes(&localAxes)
-            && localAxes == axes;
+        && poly->view(iEncoders)
+        && poly->view(iPositionControl)
+        && iEncoders->getAxes(&localAxes)
+        && localAxes == m_joints;
 }
 
 bool JointCalibrator::detach()

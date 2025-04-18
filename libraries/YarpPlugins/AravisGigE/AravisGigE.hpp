@@ -9,13 +9,11 @@
 
 #include <arv.h>
 
-namespace roboticslab
-{
 
 /**
  * @ingroup YarpPlugins
  * @defgroup AravisGigE
- * @brief Contains roboticslab::AravisGigE.
+ * @brief Contains AravisGigE.
  */
 
  /**
@@ -27,8 +25,6 @@ class AravisGigE : public yarp::dev::DeviceDriver,
                    public yarp::dev::IFrameGrabberControls
 {
 public:
-
-    ~AravisGigE() override { close(); }
 
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
     bool open(yarp::os::Searchable& config) override;
@@ -117,7 +113,5 @@ private:
     std::map<cameraFeature_id_t, const char*> yarp_arv_int_feature_map; //-- Map yarp features with aravis feature ids
     std::map<cameraFeature_id_t, const char*> yarp_arv_float_feat_map;
 };
-
-}
 
 #endif // __ARAVIS_GIGE_HPP__

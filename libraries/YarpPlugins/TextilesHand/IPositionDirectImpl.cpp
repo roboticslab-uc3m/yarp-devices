@@ -6,11 +6,9 @@
 
 #include "LogComponent.hpp"
 
-using namespace roboticslab;
-
 // ----------------------------------------------------------------------------------------
 
-bool roboticslab::TextilesHand::getAxes(int * ax)
+bool TextilesHand::getAxes(int * ax)
 {
     *ax = 1;
     return true;

@@ -1,24 +1,29 @@
 yarp_prepare_plugin(EmulatedControlBoard
                     CATEGORY device
-                    TYPE roboticslab::EmulatedControlBoard
+                    TYPE EmulatedControlBoard
                     INCLUDE EmulatedControlBoard.hpp
                     DEFAULT ON
-                    EXTRA_CONFIG WRAPPER=controlBoard_nws_yarp)
+                    EXTRA_CONFIG WRAPPER=controlBoard_nws_yarp
+                    GENERATE_PARSER)
 
 if(NOT SKIP_EmulatedControlBoard)
 
-    yarp_add_plugin(EmulatedControlBoard EmulatedControlBoard.hpp
-                                         DeviceDriverImpl.cpp
-                                         IControlLimitsImpl.cpp
-                                         IControlModeImpl.cpp
-                                         IEncodersImpl.cpp
-                                         IPositionControlImpl.cpp
-                                         IPositionDirectImpl.cpp
-                                         IVelocityControlImpl.cpp
-                                         PeriodicThreadImpl.cpp
-                                         SharedArea.cpp
-                                         LogComponent.hpp
-                                         LogComponent.cpp)
+    yarp_add_plugin(EmulatedControlBoard)
+
+    target_sources(EmulatedControlBoard PRIVATE EmulatedControlBoard.hpp
+                                                DeviceDriverImpl.cpp
+                                                IControlLimitsImpl.cpp
+                                                IControlModeImpl.cpp
+                                                IEncodersImpl.cpp
+                                                IPositionControlImpl.cpp
+                                                IPositionDirectImpl.cpp
+                                                IVelocityControlImpl.cpp
+                                                PeriodicThreadImpl.cpp
+                                                EmulatedControlBoard_ParamsParser.h
+                                                EmulatedControlBoard_ParamsParser.cpp
+                                                SharedArea.cpp
+                                                LogComponent.hpp
+                                                LogComponent.cpp)
 
     target_link_libraries(EmulatedControlBoard YARP::YARP_os
                                                YARP::YARP_dev)

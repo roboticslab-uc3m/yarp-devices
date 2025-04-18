@@ -11,16 +11,14 @@
 #include "DeviceMapper.hpp"
 #include "SingleBusBroker.hpp"
 #include "SyncPeriodicThread.hpp"
+#include "CanBusBroker_ParamsParser.h"
 
 #define CHECK_JOINT(j) do { int n = deviceMapper.getControlledAxes(); if ((j) < 0 || (j) > n - 1) return false; } while (0)
-
-namespace roboticslab
-{
 
 /**
  * @ingroup YarpPlugins
  * @defgroup CanBusBroker
- * @brief Contains roboticslab::CanBusBroker.
+ * @brief Contains CanBusBroker.
  */
 
 /**
@@ -38,6 +36,7 @@ namespace roboticslab
  * <a href="https://github.com/roboticslab-uc3m/yarp-devices/issues/241#issuecomment-569112698">instructions</a>.
  */
 class CanBusBroker : public yarp::dev::DeviceDriver,
+                     public CanBusBroker_ParamsParser,
                      // control board interfaces
                      public yarp::dev::IAmplifierControl,
                      public yarp::dev::IAxisInfo,
@@ -71,9 +70,6 @@ class CanBusBroker : public yarp::dev::DeviceDriver,
                      public yarp::dev::IThreeAxisMagnetometers
 {
 public:
-    ~CanBusBroker() override
-    { close(); }
-
     // -------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp --------
 
     bool open(yarp::os::Searchable & config) override;
@@ -408,15 +404,13 @@ public:
     bool getThreeAxisMagnetometerMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
 
 private:
-    DeviceMapper deviceMapper;
+    roboticslab::DeviceMapper deviceMapper;
 
     std::vector<yarp::dev::PolyDriver *> busDevices;
     std::vector<yarp::dev::PolyDriver *> nodeDevices;
-    std::vector<SingleBusBroker *> brokers;
+    std::vector<roboticslab::SingleBusBroker *> brokers;
 
-    SyncPeriodicThread * syncThread {nullptr};
+    roboticslab::SyncPeriodicThread * syncThread {nullptr};
 };
-
-} // namespace roboticslab
 
 #endif // __CAN_BUS_BROKER_HPP__

@@ -5,14 +5,10 @@
 #include <cmath>
 
 #include <yarp/os/LogStream.h>
-#include <yarp/os/Time.h>
 
 #include "LogComponent.hpp"
 
 using namespace roboticslab;
-
-constexpr auto DEFAULT_TIMEOUT = 0.25; // [s]
-constexpr auto DEFAULT_MAX_RETRIES = 10;
 
 // -----------------------------------------------------------------------------
 
@@ -26,58 +22,44 @@ bool CuiAbsolute::open(yarp::os::Searchable & config)
 
     const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
 
-    yarp::os::Bottle & commonGroup = robotConfig->findGroup("common-cui");
-    yarp::os::Property cuiGroup;
+    yarp::os::Property fullConfig;
 
-    if (!commonGroup.isNull())
+    fullConfig.fromString(robotConfig->findGroup("common-cui").toString());
+    fullConfig.fromString(config.toString(), false); // override common options
+
+    if (!parseParams(fullConfig))
     {
-        yCDebugOnce(CUI) << commonGroup.toString();
-        cuiGroup.fromString(commonGroup.toString());
-    }
-
-    cuiGroup.fromString(config.toString(), false); // override common options
-
-    canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt8(); // id-specific
-    reverse = cuiGroup.check("reverse", yarp::os::Value(false), "reverse").asBool();
-    timeout = cuiGroup.check("timeout", yarp::os::Value(DEFAULT_TIMEOUT), "timeout (seconds)").asFloat64();
-    maxRetries = cuiGroup.check("maxRetries", yarp::os::Value(DEFAULT_MAX_RETRIES), "max retries on timeout").asFloat64();
-
-    if (canId <= 0 || canId > 127)
-    {
-        yCError(CUI) << "Illegal CAN ID:" << canId;
+        yCIError(CUI, id()) << "Could not parse parameters";
         return false;
     }
 
-    yarp::dev::DeviceDriver::setId("ID" + std::to_string(canId));
-
-    if (timeout <= 0.0)
+    if (m_canId <= 0 || m_canId > 127)
     {
-        yCIError(CUI, id()) << "Illegal CUI timeout value:" << timeout;
+        yCError(CUI) << "Illegal CAN ID:" << m_canId;
         return false;
     }
 
-    if (!cuiGroup.check("mode", "publish mode [push|pull]"))
+    yarp::dev::DeviceDriver::setId("ID" + std::to_string(m_canId));
+
+    if (m_timeout <= 0.0)
     {
-        yCIError(CUI, id()) << "Missing \"mode\" property";
+        yCIError(CUI, id()) << "Illegal CUI timeout value:" << m_timeout;
         return false;
     }
 
-    std::string mode = cuiGroup.find("mode").asString();
-
-    if (mode == "push")
+    if (m_mode == "push")
     {
-        pushStateObserver = new StateObserver(timeout);
+        pushStateObserver = new StateObserver(m_timeout);
         cuiMode = CuiMode::PUSH;
-        pushDelay = cuiGroup.check("pushDelay", yarp::os::Value(0), "Cui push mode delay [0-255]").asInt8();
     }
-    else if (mode == "pull")
+    else if (m_mode == "pull")
     {
-        pollStateObserver = new TypedStateObserver<encoder_t>(timeout);
+        pollStateObserver = new TypedStateObserver<encoder_t>(m_timeout);
         cuiMode = CuiMode::PULL;
     }
     else
     {
-        yCIError(CUI, id()) << "Unrecognized CUI mode:" << mode;
+        yCIError(CUI, id()) << "Unrecognized CUI mode:" << m_mode;
         return false;
     }
 
