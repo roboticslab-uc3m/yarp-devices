@@ -5,8 +5,6 @@
 #include <cstdint>
 #include <cstring> // std::memcpy
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
@@ -17,29 +15,17 @@ using namespace roboticslab;
 
 bool Jr3Mbed::performRequest(const std::string & cmd, const can_message & msg, std::uint8_t * response, bool quiet)
 {
-#if YARP_VERSION_COMPARE(>=, 3, 9, 0)
     yCIInfo(quiet ? JR3M_QUIET : JR3M, id()) << "Sending" << cmd << "command";
-#else
-    yCIInfo((quiet ? JR3M_QUIET : JR3M), id()) << "Sending" << cmd << "command";
-#endif
 
     if (!sender || !sender->prepareMessage(msg))
     {
-#if YARP_VERSION_COMPARE(>=, 3, 9, 0)
         yCIWarning(quiet ? JR3M_QUIET : JR3M, id()) << "Unable to register" << cmd << "command";
-#else
-        yCIWarning((quiet ? JR3M_QUIET : JR3M), id()) << "Unable to register" << cmd << "command";
-#endif
         return false;
     }
 
     if (!ackStateObserver->await(response))
     {
-#if YARP_VERSION_COMPARE(>=, 3, 9, 0)
         yCIWarning(quiet ? JR3M_QUIET : JR3M, id()) << "Command" << cmd << "timed out";
-#else
-        yCIWarning((quiet ? JR3M_QUIET : JR3M), id()) << "Command" << cmd << "timed out";
-#endif
         return false;
     }
 
