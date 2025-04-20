@@ -7,8 +7,6 @@
 
 #include "LogComponent.hpp"
 
-using namespace roboticslab;
-
 // ------------------- IControlMode Related ------------------------------------
 
 bool EmulatedControlBoard::getControlMode(int j, int *mode)
@@ -42,7 +40,7 @@ bool EmulatedControlBoard::getControlModes(int *modes)
 {
     bool ok = true;
 
-    for (unsigned int i = 0; i < axes; i++)
+    for (unsigned int i = 0; i < m_axes; i++)
     {
         ok &= getControlMode(i, &modes[i]);
     }
@@ -70,9 +68,9 @@ bool EmulatedControlBoard::setControlMode(const int j, const int mode)
 {
     yCTrace(ECB, "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
 
-    if ((unsigned int)j > axes)
+    if ((unsigned int)j > m_axes)
     {
-        yCError(ECB, "Axis index greater than number of axes (%d > %d)", j, axes);
+        yCError(ECB, "Axis index greater than number of axes (%d > %d)", j, m_axes);
         return false;
     }
 
@@ -111,7 +109,7 @@ bool EmulatedControlBoard::setControlModes(int *modes)
 {
     bool ok = true;
 
-    for (unsigned int i = 0; i < axes; i++)
+    for (unsigned int i = 0; i < m_axes; i++)
     {
         ok &= setControlMode(i, modes[i]);
     }

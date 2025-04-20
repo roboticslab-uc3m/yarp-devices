@@ -39,7 +39,7 @@ bool CanBusSocket::waitUntilTimeout(io_operation op, bool * bufferReady)
     fd_set fds;
 
     FD_ZERO(&fds);
-    FD_SET(s, &fds);
+    FD_SET(socketDescriptor, &fds);
 
     struct timeval tv;
 
@@ -49,12 +49,12 @@ bool CanBusSocket::waitUntilTimeout(io_operation op, bool * bufferReady)
     switch (op)
     {
     case READ:
-        setTimeval(rxTimeoutMs, &tv);
-        ret = ::select(s + 1, &fds, nullptr, nullptr, &tv);
+        setTimeval(m_rxTimeoutMs, &tv);
+        ret = ::select(socketDescriptor + 1, &fds, nullptr, nullptr, &tv);
         break;
     case WRITE:
-        setTimeval(txTimeoutMs, &tv);
-        ret = ::select(s + 1, nullptr, &fds, nullptr, &tv);
+        setTimeval(m_txTimeoutMs, &tv);
+        ret = ::select(socketDescriptor + 1, nullptr, &fds, nullptr, &tv);
         break;
     default:
         yCIError(SCK, id(), "Unhandled IO operation on select()");
@@ -72,7 +72,7 @@ bool CanBusSocket::waitUntilTimeout(io_operation op, bool * bufferReady)
     }
     else
     {
-        assert(FD_ISSET(s, &fds));
+        assert(FD_ISSET(socketDescriptor, &fds));
         *bufferReady = true;
     }
 

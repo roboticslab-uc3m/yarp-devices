@@ -40,6 +40,8 @@
 #include "PdoProtocol.hpp"
 #include "StateObserver.hpp"
 
+#include "TechnosoftIpos_ParamsParser.h"
+
 #define CHECK_JOINT(j) do { if (int ax; getAxes(&ax), (j) != ax - 1) return false; } while (0)
 
 #define CHECK_MODE(mode) do { if ((mode) != actualControlMode) return false; } while (0)
@@ -72,11 +74,8 @@ class TechnosoftIposBase : public yarp::dev::DeviceDriver,
 {
 public:
 
-    TechnosoftIposBase()
-        : can(nullptr),
-          iEncodersTimedRawExternal(nullptr),
-          iExternalEncoderCanBusSharer(nullptr),
-          monitorThread(nullptr)
+    TechnosoftIposBase(const TechnosoftIpos_ParamsParser & _params)
+        : params(_params)
     {}
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -499,7 +498,7 @@ protected:
     //! Convert torque (Nm) to current (amperes).
     double torqueToCurrent(double torque) const;
 
-    CanOpenNode * can;
+    CanOpenNode * can {nullptr};
     CommandBuffer commandBuffer;
 
     std::unique_ptr<StateObserver> controlModeObserverPtr {new StateObserver(1.0)}; // arbitrary 1 second wait
@@ -546,28 +545,18 @@ protected:
     // read only after initial configuration, conceptually immutable
 
     yarp::conf::vocab32_t initialControlMode {0};
-
-    double drivePeakCurrent {0.0};
-    double samplingPeriod {0.0};
-
-    std::string axisName;
     yarp::conf::vocab32_t jointType {0};
-
-    bool reverse {false};
 
     PdoConfiguration tpdo1Conf;
     PdoConfiguration tpdo2Conf;
     PdoConfiguration tpdo3Conf;
 
-    double heartbeatPeriod {0.0};
-    double syncPeriod {0.0};
-
-    unsigned int canId {0};
+    const TechnosoftIpos_ParamsParser & params;
 
 private:
 
     //! Make sure stored variables actually make sense.
-    bool validateInitialState();
+    static bool validateInitialState(const TechnosoftIpos_ParamsParser & params, const std::string & id);
 
     void interpretMsr(std::uint16_t msr);
     void interpretMer(std::uint16_t mer);
@@ -588,11 +577,11 @@ private:
     bool getLimitRaw(double * limit, bool isMin);
 
     yarp::dev::PolyDriver externalEncoderDevice;
-    yarp::dev::IEncodersTimedRaw * iEncodersTimedRawExternal;
-    roboticslab::ICanBusSharer * iExternalEncoderCanBusSharer;
+    yarp::dev::IEncodersTimedRaw * iEncodersTimedRawExternal {nullptr};
+    roboticslab::ICanBusSharer * iExternalEncoderCanBusSharer {nullptr};
 
-    yarp::os::Timer * monitorThread;
-    roboticslab::ICanSenderDelegate * sender;
+    yarp::os::Timer * monitorThread {nullptr};
+    roboticslab::ICanSenderDelegate * sender {nullptr};
 };
 
 } // namespace roboticslab

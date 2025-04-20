@@ -6,8 +6,6 @@
 
 #include "LogComponent.hpp"
 
-using namespace roboticslab;
-
 // -----------------------------------------------------------------------------
 
 bool TextilesHand::getControlMode(int j, int * mode)

@@ -1,9 +1,10 @@
 yarp_prepare_plugin(CanBusHico
                     CATEGORY device
-                    TYPE roboticslab::CanBusHico
+                    TYPE CanBusHico
                     INCLUDE CanBusHico.hpp
                     DEFAULT ON
-                    DEPENDS UNIX)
+                    DEPENDS UNIX
+                    GENERATE_PARSER)
 
 if(NOT SKIP_CanBusHico)
 
@@ -16,6 +17,8 @@ if(NOT SKIP_CanBusHico)
                                HicoCanMessage.cpp
                                HicoCanMessage.hpp
                                FilterManager.cpp
+                               CanBusHico_ParamsParser.h
+                               CanBusHico_ParamsParser.cpp
                                LogComponent.hpp
                                LogComponent.cpp)
 

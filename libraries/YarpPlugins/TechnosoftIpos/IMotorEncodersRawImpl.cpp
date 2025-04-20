@@ -50,7 +50,7 @@ bool TechnosoftIposBase::setMotorEncoderRaw(int m, double val)
 {
     yCITrace(IPOS, id(), "%d %f", m, val);
     CHECK_JOINT(m);
-    std::int32_t data = reverse ? -val : val;
+    std::int32_t data = params.m_reverse ? -val : val;
 
     if (!can->sdo()->download("Set actual position", data, 0x2081))
     {
@@ -68,7 +68,7 @@ bool TechnosoftIposBase::getMotorEncoderRaw(int m, double * v)
     yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
     std::int32_t temp = lastEncoderRead->queryPosition();
-    *v = reverse ? -temp : temp;
+    *v = params.m_reverse ? -temp : temp;
     return true;
 }
 
@@ -79,7 +79,7 @@ bool TechnosoftIposBase::getMotorEncoderTimedRaw(int m, double * enc, double * s
     yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
     std::int32_t temp =  lastEncoderRead->queryPosition();
-    *enc = reverse ? -temp : temp;
+    *enc = params.m_reverse ? -temp : temp;
     *stamp = lastEncoderRead->queryTime();
     return true;
 }
@@ -91,7 +91,7 @@ bool TechnosoftIposBase::getMotorEncoderSpeedRaw(int m, double * sp)
     yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
     double temp = lastEncoderRead->querySpeed();
-    *sp = reverse ? -temp : temp;
+    *sp = params.m_reverse ? -temp : temp;
     return true;
 }
 
@@ -102,7 +102,7 @@ bool TechnosoftIposBase::getMotorEncoderAccelerationRaw(int m, double * acc)
     yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
     double temp = lastEncoderRead->queryAcceleration();
-    *acc = reverse ? -temp : temp;
+    *acc = params.m_reverse ? -temp : temp;
     return true;
 }
 

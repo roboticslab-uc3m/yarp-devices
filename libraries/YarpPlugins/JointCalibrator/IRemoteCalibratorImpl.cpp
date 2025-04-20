@@ -2,16 +2,14 @@
 
 #include "JointCalibrator.hpp"
 
-#include <cmath>
+#include <cmath> // std::abs
 
-#include <numeric>
+#include <numeric> // std::iota
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/SystemClock.h>
 
 #include "LogComponent.hpp"
-
-using namespace roboticslab;
 
 constexpr double MOTION_CHECK_INTERVAL = 0.1; // seconds
 constexpr double POSITION_EPSILON = 0.01; // degrees
@@ -20,14 +18,14 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
 {
     for (int joint : joints)
     {
-        if (joint < 0 || joint > axes - 1)
+        if (joint < 0 || joint > m_joints - 1)
         {
             yCError(JC) << "Invalid joint id: %d" << joint;
             return false;
         }
     }
 
-    std::vector<double> encs(axes);
+    std::vector<double> encs(m_joints);
 
     if (!iEncoders->getEncoders(encs.data()))
     {
@@ -107,7 +105,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
         return false;
     }
 
-    if (!isBlocking)
+    if (!m_block)
     {
         return true;
     }
@@ -180,7 +178,7 @@ bool JointCalibrator::homingSingleJoint(int j)
 bool JointCalibrator::homingWholePart()
 {
     yCInfo(JC) << "Performing homing procedure on whole part";
-    std::vector<int> targets(axes);
+    std::vector<int> targets(m_joints);
     std::iota(targets.begin(), targets.end(), 0);
     return move(targets, homeSpecs);
 }
@@ -195,7 +193,7 @@ bool JointCalibrator::parkSingleJoint(int j, bool wait)
 bool JointCalibrator::parkWholePart()
 {
     yCInfo(JC) << "Performing park procedure on whole part";
-    std::vector<int> targets(axes);
+    std::vector<int> targets(m_joints);
     std::iota(targets.begin(), targets.end(), 0);
     return move(targets, parkSpecs);
 }

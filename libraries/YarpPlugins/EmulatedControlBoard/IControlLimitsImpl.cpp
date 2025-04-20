@@ -6,19 +6,17 @@
 
 #include "LogComponent.hpp"
 
-using namespace roboticslab;
-
 // ------------------- IControlLimits Related ------------------------------------
 
 bool EmulatedControlBoard::setLimits(int axis, double min, double max)
 {
-    if (axis >= int(axes))
+    if (axis >= int(m_axes))
     {
         return false;
     }
 
-    minLimit[axis] = min;
-    maxLimit[axis] = max;
+    m_minLimits[axis] = min;
+    m_maxLimits[axis] = max;
 
     yCDebug(ECB, "Range of axis %d set to: %f to %f", axis, min, max);
 
@@ -29,13 +27,13 @@ bool EmulatedControlBoard::setLimits(int axis, double min, double max)
 
 bool EmulatedControlBoard::getLimits(int axis, double *min, double *max)
 {
-    if (axis >= int(axes))
+    if (axis >= int(m_axes))
     {
         return false;
     }
 
-    *min = minLimit[axis];
-    *max = maxLimit[axis];
+    *min = m_minLimits[axis];
+    *max = m_maxLimits[axis];
 
     yCDebug(ECB, "Range of axis %d read: %f to %f", axis, *min, *max);
 
@@ -54,7 +52,7 @@ bool EmulatedControlBoard::setVelLimits(int axis, double min, double max)
 
 bool EmulatedControlBoard::getVelLimits(int axis, double *min, double *max)
 {
-    if (axis >= int(axes))
+    if (axis >= int(m_axes))
     {
         return false;
     }

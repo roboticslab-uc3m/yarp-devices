@@ -6,30 +6,23 @@
 
 #include "LogComponent.hpp"
 
-using namespace roboticslab;
-
 namespace
 {
-    bool checkAndSet(int axes, const yarp::os::Searchable & config, std::vector<double> & v,
-            const std::string & key, const std::string & keys, const std::string & comment)
+    bool checkAndSet(int axes, double global, const std::vector<double> & individual, std::vector<double> & out)
     {
-        if (config.check(key, "(shared) " + comment))
+        if (!individual.empty())
         {
-            v.assign(axes, config.find(key).asFloat64());
-        }
-        else if (config.check(keys, comment))
-        {
-            yarp::os::Bottle * parsed = config.find(keys).asList();
-
-            for (auto i = 0; i < parsed->size(); i++)
+            if (individual.size() != axes)
             {
-                v.push_back(parsed->get(i).asFloat64());
+                yCError(JC) << "Invalid size for individual values:" << individual.size() << "instead of" << axes;
+                return false;
             }
+
+            out = individual;
         }
         else
         {
-            yCError(JC) << "Missing" << key << "/" << keys << "key or size mismatch";
-            return false;
+            out.assign(axes, global);
         }
 
         return true;
@@ -38,21 +31,24 @@ namespace
 
 bool JointCalibrator::open(yarp::os::Searchable & config)
 {
-    axes = config.check("joints", yarp::os::Value(0), "number of controlled axes").asInt32();
-    isBlocking = config.check("block", yarp::os::Value(false), "commands should block").asBool();
-
-    if (axes == 0)
+    if (!parseParams(config))
     {
-        yCError(JC) << "Illegal axis count:" << axes;
+        yCError(JC) << "Unable to parse parameters";
         return false;
     }
 
-    return checkAndSet(axes, config, homeSpecs.pos, "home", "homes", "zero position (degrees)")
-            && checkAndSet(axes, config, homeSpecs.vel, "homeVel", "homeVels", "zero velocity (degrees/second)")
-            && checkAndSet(axes, config, homeSpecs.acc, "homeAcc", "homeAccs", "zero acceleration (degrees/second^2)")
-            && checkAndSet(axes, config, parkSpecs.pos, "park", "parks", "park position (degrees)")
-            && checkAndSet(axes, config, parkSpecs.vel, "parkVel", "parkVels", "park velocity (degrees/second)")
-            && checkAndSet(axes, config, parkSpecs.acc, "parkAcc", "parkAccs", "park acceleration (degrees/second^2)");
+    if (m_joints == 0)
+    {
+        yCError(JC) << "Illegal axis count:" << m_joints;
+        return false;
+    }
+
+    return checkAndSet(m_joints, m_home, m_homes, homeSpecs.pos)
+        && checkAndSet(m_joints, m_homeVel, m_homeVels, homeSpecs.vel)
+        && checkAndSet(m_joints, m_homeAcc, m_homeAccs, homeSpecs.acc)
+        && checkAndSet(m_joints, m_park, m_parks, parkSpecs.pos)
+        && checkAndSet(m_joints, m_parkVel, m_parkVels, parkSpecs.vel)
+        && checkAndSet(m_joints, m_parkAcc, m_parkAccs, parkSpecs.acc);
 }
 
 bool JointCalibrator::close()

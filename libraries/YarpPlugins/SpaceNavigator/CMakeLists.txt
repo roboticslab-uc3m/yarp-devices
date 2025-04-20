@@ -1,23 +1,25 @@
-# Copyright: (C) 2017 Universidad Carlos III de Madrid
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
 if(NOT Spnav_FOUND AND (NOT DEFINED ENABLE_SpaceNavigator OR ENABLE_SpaceNavigator))
     message(WARNING "Spnav package not found, disabling SpaceNavigator")
 endif()
 
 yarp_prepare_plugin(SpaceNavigator
                     CATEGORY device
-                    TYPE roboticslab::SpaceNavigator
+                    TYPE SpaceNavigator
                     INCLUDE SpaceNavigator.hpp
                     DEFAULT ON
                     DEPENDS "UNIX;Spnav_FOUND"
-                    EXTRA_CONFIG WRAPPER=analogServer)
+                    EXTRA_CONFIG WRAPPER=analogServer
+                    GENERATE_PARSER)
 
 if(NOT SKIP_SpaceNavigator)
 
-    yarp_add_plugin(SpaceNavigator SpaceNavigator.hpp
-                                   DeviceDriverImpl.cpp
-                                   IAnalogSensorImpl.cpp)
+    yarp_add_plugin(SpaceNavigator)
+
+    target_sources(SpaceNavigator PRIVATE SpaceNavigator.hpp
+                                          DeviceDriverImpl.cpp
+                                          IAnalogSensorImpl.cpp
+                                          SpaceNavigator_ParamsParser.h
+                                          SpaceNavigator_ParamsParser.cpp)
 
     target_link_libraries(SpaceNavigator YARP::YARP_os
                                          YARP::YARP_dev

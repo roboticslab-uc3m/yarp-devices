@@ -1,14 +1,19 @@
 yarp_prepare_plugin(FakeJoint
                     CATEGORY device
-                    TYPE roboticslab::FakeJoint
+                    TYPE FakeJoint
                     INCLUDE FakeJoint.hpp
                     DEFAULT ON
-                    DEPENDS ENABLE_CanBusSharerLib)
+                    DEPENDS ENABLE_CanBusSharerLib
+                    GENERATE_PARSER)
 
 if(NOT SKIP_FakeJoint)
 
-    yarp_add_plugin(FakeJoint FakeJoint.hpp
-                              FakeJoint.cpp)
+    yarp_add_plugin(FakeJoint)
+
+    target_sources(FakeJoint PRIVATE FakeJoint.hpp
+                                     FakeJoint.cpp
+                                     FakeJoint_ParamsParser.h
+                                     FakeJoint_ParamsParser.cpp)
 
     target_link_libraries(FakeJoint YARP::YARP_dev
                                     ROBOTICSLAB::CanBusSharerLib)

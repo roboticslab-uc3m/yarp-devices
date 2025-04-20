@@ -17,14 +17,12 @@
 
 #include "ICanBusSharer.hpp"
 #include "StateObserver.hpp"
-
-namespace roboticslab
-{
+#include "Jr3Mbed_ParamsParser.h"
 
 /**
  * @ingroup YarpPlugins
  * @defgroup Jr3Mbed
- * @brief Contains roboticslab::Jr3Mbed.
+ * @brief Contains Jr3Mbed.
  */
 
  /**
@@ -33,12 +31,10 @@ namespace roboticslab
  */
 class Jr3Mbed : public yarp::dev::DeviceDriver,
                 public yarp::dev::ISixAxisForceTorqueSensors,
-                public ICanBusSharer
+                public roboticslab::ICanBusSharer,
+                public Jr3Mbed_ParamsParser
 {
 public:
-    ~Jr3Mbed() override
-    { close(); }
-
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
 
     bool open(yarp::os::Searchable & config) override;
@@ -47,10 +43,10 @@ public:
     //  --------- ICanBusSharer declarations. Implementation in LacqueyFetch.cpp ---------
 
     unsigned int getId() override;
-    bool notifyMessage(const can_message & message) override;
+    bool notifyMessage(const roboticslab::can_message & message) override;
     bool initialize() override;
     bool finalize() override;
-    bool registerSender(ICanSenderDelegate * sender) override;
+    bool registerSender(roboticslab::ICanSenderDelegate * sender) override;
     bool synchronize(double timestamp) override;
 
     //  --------- ISixAxisForceTorqueSensors Declarations. Implementation in ISixAxisForceTorqueSensorsImpl.cpp ---------
@@ -88,9 +84,9 @@ private:
     { SYNC, ASYNC, INVALID };
 
     constexpr unsigned int getCommandId(can_ops op) const
-    { return canId + static_cast<unsigned int>(op); }
+    { return m_canId + static_cast<unsigned int>(op); }
 
-    bool performRequest(const std::string & cmd, const can_message & msg, std::uint8_t * response, bool quiet = false);
+    bool performRequest(const std::string & cmd, const roboticslab::can_message & msg, std::uint8_t * response, bool quiet = false);
     bool sendStartSyncCommand(double filter);
     bool sendStartAsyncCommand(double filter, double delay);
     bool sendCommand(const std::string & cmd, can_ops op);
@@ -99,19 +95,13 @@ private:
 
     bool monitorWorker(const yarp::os::YarpTimerEvent & event);
 
-    unsigned int canId {0};
-
-    double filter {0.0}; // cutoff frequency [Hz]
-    double asyncPeriod {0.0}; // [s]
-
-    std::string name;
     std::array<double, 6> scales;
     bool shouldQueryFullScales {false};
 
     jr3_mode mode {jr3_mode::INVALID};
 
-    ICanSenderDelegate * sender {nullptr};
-    TypedStateObserver<std::uint8_t[]> * ackStateObserver {nullptr};
+    roboticslab::ICanSenderDelegate * sender {nullptr};
+    roboticslab::TypedStateObserver<std::uint8_t[]> * ackStateObserver {nullptr};
 
     mutable std::mutex mtx;
 
@@ -122,7 +112,6 @@ private:
     std::atomic_bool isBooting {false};
     double timestamp {0.0};
     std::uint16_t frameCounter {0};
-    double diagnosticsPeriod {0.0};
     double lastDiagnosticsTimestamp {0.0};
     unsigned int lastFrameCounter {0};
 
@@ -130,7 +119,5 @@ private:
 
     static constexpr unsigned int FULL_SCALE = 16384; // 2^14
 };
-
-} // namespace roboticslab
 
 #endif // __JR3_MBED_HPP__

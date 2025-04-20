@@ -1,19 +1,24 @@
 yarp_prepare_plugin(CuiAbsolute
                     CATEGORY device
-                    TYPE roboticslab::CuiAbsolute
+                    TYPE CuiAbsolute
                     INCLUDE CuiAbsolute.hpp
                     DEFAULT ON
-                    DEPENDS "ENABLE_CanBusSharerLib;ENABLE_StateObserverLib")
+                    DEPENDS "ENABLE_CanBusSharerLib;ENABLE_StateObserverLib"
+                    GENERATE_PARSER)
 
 if(NOT SKIP_CuiAbsolute)
 
-    yarp_add_plugin(CuiAbsolute CuiAbsolute.hpp
-                                CuiAbsolute.cpp
-                                DeviceDriverImpl.cpp
-                                ICanBusSharerImpl.cpp
-                                IEncodersRawImpl.cpp
-                                LogComponent.hpp
-                                LogComponent.cpp)
+    yarp_add_plugin(CuiAbsolute)
+
+    target_sources(CuiAbsolute PRIVATE CuiAbsolute.hpp
+                                       CuiAbsolute.cpp
+                                       DeviceDriverImpl.cpp
+                                       ICanBusSharerImpl.cpp
+                                       IEncodersRawImpl.cpp
+                                       CuiAbsolute_ParamsParser.h
+                                       CuiAbsolute_ParamsParser.cpp
+                                       LogComponent.hpp
+                                       LogComponent.cpp)
 
     target_link_libraries(CuiAbsolute YARP::YARP_os
                                       YARP::YARP_dev

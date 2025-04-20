@@ -2,17 +2,11 @@
 
 #include "PhidgetSpatial.hpp"
 
-using namespace roboticslab;
-
-constexpr auto DEFAULT_NUM_CHANNELS = 11;
-
 // -----------------------------------------------------------------------------
 
 int PhidgetSpatial::read(yarp::sig::Vector &out)
 {
     hSemaphore.wait();
-
-    out.resize(DEFAULT_NUM_CHANNELS);
 
     double Gx = acceleration[0];
     double Gy = acceleration[1];
@@ -27,20 +21,22 @@ int PhidgetSpatial::read(yarp::sig::Vector &out)
     printf("Timestamp> seconds: %d -- microseconds: %d\n", data[i]->timestamp.seconds, data[i]->timestamp.microseconds);
     printf("Modul of gravity: %5f  and angle: %6f\n",modul,angle);*/
 
-    out[0] = acceleration[0];
-    out[1] = acceleration[1];
-    out[2] = acceleration[2];
+    out = {
+        acceleration[0],
+        acceleration[1],
+        acceleration[2],
 
-    out[3] = angularRate[0];
-    out[4] = angularRate[1];
-    out[5] = angularRate[2];
+        angularRate[0],
+        angularRate[1],
+        angularRate[2],
 
-    out[6] = magneticField[0];
-    out[7] = magneticField[1];
-    out[8] = magneticField[2];
+        magneticField[0],
+        magneticField[1],
+        magneticField[2],
 
-    out[9] = modul;
-    out[10] = angle;
+        modul,
+        angle
+    };
 
     hSemaphore.post();
 
@@ -58,7 +54,7 @@ int PhidgetSpatial::getState(int ch)
 
 int PhidgetSpatial::getChannels()
 {
-    return DEFAULT_NUM_CHANNELS;
+    return 11;
 }
 
 // -----------------------------------------------------------------------------

@@ -7,15 +7,15 @@
 
 #include "LogComponent.hpp"
 
-constexpr auto DEFAULT_PORT = "/dev/ttyUSB0";
-
-using namespace roboticslab;
-
 // -----------------------------------------------------------------------------
 
 bool TextilesHand::open(yarp::os::Searchable & config)
 {
-    std::string port = config.check("port", yarp::os::Value(DEFAULT_PORT), "serial port").asString();
+    if (!parseParams(config))
+    {
+        yCError(TXT) << "Unable to parse parameters";
+        return false;
+    }
 
     // check firmware/TextilesHand/pwmServer/pwmServer.ino
     // ...and https://www.arduino.cc/reference/en/language/functions/communication/serial/begin/
@@ -23,7 +23,7 @@ bool TextilesHand::open(yarp::os::Searchable & config)
 
     yarp::os::Property serialOptions({
         {"device", yarp::os::Value("serialport")},
-        {"comport", yarp::os::Value(port)},
+        {"comport", yarp::os::Value(m_port)},
         {"baudrate", yarp::os::Value(9600)},
         {"databits", yarp::os::Value(8)},
         {"paritymode", yarp::os::Value("NONE")},

@@ -27,40 +27,55 @@ bool TechnosoftIpos::open(yarp::os::Searchable & config)
 
     const auto * robotConfig = *reinterpret_cast<const yarp::os::Property * const *>(config.find("robotConfig").asBlob());
 
-    const auto & commonGroup = robotConfig->findGroup("common-ipos");
-    yarp::os::Property iposGroup;
+    yarp::os::Property fullConfig;
 
-    if (!commonGroup.isNull())
+    fullConfig.fromString(robotConfig->findGroup("common-ipos").toString());
+    fullConfig.fromString(config.toString(), false); // override common options
+
+    const auto & driverGroup = robotConfig->findGroup(fullConfig.find("driver").asString());
+    const auto & motorGroup = robotConfig->findGroup(fullConfig.find("motor").asString());
+    const auto & gearboxGroup = robotConfig->findGroup(fullConfig.find("gearbox").asString());
+    const auto & encoderGroup = robotConfig->findGroup(fullConfig.find("encoder").asString());
+
+    fullConfig.addGroup("driver").fromString(driverGroup.toString());
+    fullConfig.addGroup("motor").fromString(motorGroup.toString());
+    fullConfig.addGroup("gearbox").fromString(gearboxGroup.toString());
+    fullConfig.addGroup("encoder").fromString(encoderGroup.toString());
+
+    yCDebug(IPOS) << fullConfig.toString();
+
+    if (!parseParams(fullConfig))
     {
-        yCDebugOnce(IPOS) << commonGroup.toString();
-        iposGroup.fromString(commonGroup.toString());
+        yCError(IPOS) << "Could not parse parameters";
+        return false;
     }
 
-    iposGroup.fromString(config.toString(), false); // override common options
+    if (m_canId <= 0 || m_canId > 127)
+    {
+        yCError(IPOS) << "Illegal CAN ID:" << m_canId;
+        return false;
+    }
 
-    auto canId = config.check("canId", yarp::os::Value(0), "CAN node ID").asInt32(); // id-specific
-    auto useEmbeddedPid = iposGroup.check("useEmbeddedPid", yarp::os::Value(true), "use embedded PID").asBool();
+    const auto id = "ID" + std::to_string(m_canId);
 
-    const auto id = "ID" + std::to_string(canId);
-
-    if (useEmbeddedPid)
+    if (m_useEmbeddedPid)
     {
         yCIInfo(IPOS, id) << "Using embedded PID implementation";
-        impl = new TechnosoftIposEmbedded;
+        impl = new TechnosoftIposEmbedded(*this);
     }
     else
     {
 #ifdef HAVE_EXTERNAL_PID_IMPL
         yCIInfo(IPOS, id) << "Using external PID implementation";
-        impl = new TechnosoftIposExternal;
+        impl = new TechnosoftIposExternal(*this);
 #else
-        yCError(IPOS) << "External PID implementation not available";
+        yCIError(IPOS, id) << "External PID implementation not available";
         return false;
 #endif
     }
 
     impl->setId(id);
-    return impl->open(config);
+    return impl->open(fullConfig);
 }
 
 // -----------------------------------------------------------------------------

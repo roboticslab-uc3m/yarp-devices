@@ -71,7 +71,7 @@ bool TechnosoftIposEmbedded::setControlModeRaw(int j, int mode)
 
             return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
                 && can->rpdo3()->configure(rpdo3conf.addMapping<std::int32_t>(0x607A))
-                && can->sdo()->download<std::uint8_t>("Interpolation time period", syncPeriod * 1000, 0x60C2, 0x01)
+                && can->sdo()->download<std::uint8_t>("Interpolation time period", params.m_syncPeriod * 1000, 0x60C2, 0x01)
                 && can->sdo()->download<std::int8_t>("Interpolation time period", -3, 0x60C2, 0x02)
                 && can->sdo()->download<std::int8_t>("Modes of Operation", 8, 0x6060)
                 && can->driveStatus()->controlword(can->driveStatus()->controlword().set(6)) // relative position mode
@@ -129,7 +129,7 @@ bool TechnosoftIposEmbedded::setControlModeRaw(int j, int mode)
 
         return can->driveStatus()->requestState(DriveState::OPERATION_ENABLED)
             && can->rpdo3()->configure(rpdo3conf.addMapping<std::int32_t>(0x607A))
-            && can->sdo()->download<std::uint8_t>("Interpolation time period", syncPeriod * 1000, 0x60C2, 0x01)
+            && can->sdo()->download<std::uint8_t>("Interpolation time period", params.m_syncPeriod * 1000, 0x60C2, 0x01)
             && can->sdo()->download<std::int8_t>("Interpolation time period", -3, 0x60C2, 0x02)
             && can->sdo()->download<std::int8_t>("Modes of Operation", 8, 0x6060)
             && awaitControlMode(mode);

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16..3.28)
+cmake_minimum_required(VERSION 3.19...3.28)
 
 project(ROBOTICSLAB_YARP_DEVICES LANGUAGES CXX)
 
@@ -28,7 +28,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake
 
 # Hard dependencies.
 find_package(YCM 0.11 REQUIRED)
-find_package(YARP 3.8 REQUIRED COMPONENTS os dev sig)
+find_package(YARP 3.10 REQUIRED COMPONENTS os dev sig)
 
 # Soft dependencies.
 find_package(ARAVIS 0.4 QUIET)

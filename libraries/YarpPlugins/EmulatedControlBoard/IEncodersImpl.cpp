@@ -2,13 +2,11 @@
 
 #include "EmulatedControlBoard.hpp"
 
-using namespace roboticslab;
-
 // ------------------ IEncoders Related -----------------------------------------
 
 bool EmulatedControlBoard::resetEncoder(int j)
 {
-    if ((unsigned int)j > axes)
+    if ((unsigned int)j > m_axes)
     {
         return false;
     }
@@ -22,7 +20,7 @@ bool EmulatedControlBoard::resetEncoders()
 {
     bool ok = true;
 
-    for (unsigned int i = 0; i < axes; i++)
+    for (unsigned int i = 0; i < m_axes; i++)
     {
         ok &= resetEncoder(i);
     }
@@ -34,7 +32,7 @@ bool EmulatedControlBoard::resetEncoders()
 
 bool EmulatedControlBoard::setEncoder(int j, double val)  // encExposed = val;
 {
-    setEncRaw(j, val * encRawExposed[j]);
+    setEncRaw(j, val * m_encRawExposeds[j]);
     return true;
 }
 
@@ -42,11 +40,11 @@ bool EmulatedControlBoard::setEncoder(int j, double val)  // encExposed = val;
 
 bool EmulatedControlBoard::setEncoders(const double *vals)
 {
-    std::vector<double> v(axes);
+    std::vector<double> v(m_axes);
 
-    for (unsigned int i = 0; i < axes; i++)
+    for (unsigned int i = 0; i < m_axes; i++)
     {
-        v[i] = vals[i] * encRawExposed[i];
+        v[i] = vals[i] * m_encRawExposeds[i];
     }
 
     setEncsRaw(v);
@@ -67,7 +65,7 @@ bool EmulatedControlBoard::getEncoders(double *encs)
 {
     std::vector<double> v = getEncsExposed();
 
-    for (unsigned int i = 0; i < axes; i++)
+    for (unsigned int i = 0; i < m_axes; i++)
     {
         encs[i] = v[i];
     }
@@ -80,7 +78,7 @@ bool EmulatedControlBoard::getEncoders(double *encs)
 bool EmulatedControlBoard::getEncoderSpeed(int j, double *sp)
 {
     // Make it easy, give the current reference speed.
-    *sp = velRaw[j] / velRawExposed[j];  // begins to look like we should use semaphores.
+    *sp = velRaw[j] / m_velRawExposeds[j];  // begins to look like we should use semaphores.
     return true;
 }
 
@@ -90,7 +88,7 @@ bool EmulatedControlBoard::getEncoderSpeeds(double *spds)
 {
     bool ok = true;
 
-    for (unsigned int i = 0; i < axes; i++)
+    for (unsigned int i = 0; i < m_axes; i++)
     {
         ok &= getEncoderSpeed(i, &spds[i]);
     }
@@ -118,7 +116,7 @@ bool EmulatedControlBoard::getEncodersTimed(double *encs, double *time)
 {
     bool ok = true;
 
-    for (unsigned int i = 0; i < axes; i++)
+    for (unsigned int i = 0; i < m_axes; i++)
     {
         ok &= getEncoderTimed(i, &encs[i], &time[i]);
     }

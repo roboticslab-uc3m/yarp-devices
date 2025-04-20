@@ -58,11 +58,11 @@ bool CanBusHico::waitUntilTimeout(io_operation op, bool * bufferReady)
     switch (op)
     {
     case READ:
-        setTimeval(rxTimeoutMs, &tv);
+        setTimeval(m_rxTimeoutMs, &tv);
         ret = ::select(fileDescriptor + 1, &fds, 0, 0, &tv);
         break;
     case WRITE:
-        setTimeval(txTimeoutMs, &tv);
+        setTimeval(m_txTimeoutMs, &tv);
         ret = ::select(fileDescriptor + 1, 0, &fds, 0, &tv);
         break;
     default:

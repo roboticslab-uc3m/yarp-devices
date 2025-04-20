@@ -5,8 +5,6 @@
 #include <cstdint>
 #include <cstring> // std::memcpy
 
-#include <yarp/conf/version.h>
-
 #include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
@@ -17,29 +15,17 @@ using namespace roboticslab;
 
 bool Jr3Mbed::performRequest(const std::string & cmd, const can_message & msg, std::uint8_t * response, bool quiet)
 {
-#if YARP_VERSION_COMPARE(>=, 3, 9, 0)
     yCIInfo(quiet ? JR3M_QUIET : JR3M, id()) << "Sending" << cmd << "command";
-#else
-    yCIInfo((quiet ? JR3M_QUIET : JR3M), id()) << "Sending" << cmd << "command";
-#endif
 
     if (!sender || !sender->prepareMessage(msg))
     {
-#if YARP_VERSION_COMPARE(>=, 3, 9, 0)
         yCIWarning(quiet ? JR3M_QUIET : JR3M, id()) << "Unable to register" << cmd << "command";
-#else
-        yCIWarning((quiet ? JR3M_QUIET : JR3M), id()) << "Unable to register" << cmd << "command";
-#endif
         return false;
     }
 
     if (!ackStateObserver->await(response))
     {
-#if YARP_VERSION_COMPARE(>=, 3, 9, 0)
         yCIWarning(quiet ? JR3M_QUIET : JR3M, id()) << "Command" << cmd << "timed out";
-#else
-        yCIWarning((quiet ? JR3M_QUIET : JR3M), id()) << "Command" << cmd << "timed out";
-#endif
         return false;
     }
 
@@ -49,7 +35,7 @@ bool Jr3Mbed::performRequest(const std::string & cmd, const can_message & msg, s
         status = yarp::dev::MAS_ERROR;
         // avoid calling this repeatedly from the monitor thread; no concurrency issues here
         // since all requests are handled either from the monitor thread or from finalize()
-        sender->reportAvailability(false, canId);
+        sender->reportAvailability(false, m_canId);
         return false;
     }
 
@@ -156,12 +142,12 @@ bool Jr3Mbed::monitorWorker(const yarp::os::YarpTimerEvent & event)
 
         if (sender)
         {
-            sender->reportAvailability(true, canId);
+            sender->reportAvailability(true, m_canId);
         }
 
         if (!initialize() && sender)
         {
-            sender->reportAvailability(false, canId);
+            sender->reportAvailability(false, m_canId);
         }
 
         return true;
@@ -181,13 +167,13 @@ bool Jr3Mbed::monitorWorker(const yarp::os::YarpTimerEvent & event)
 
             if (sender)
             {
-                sender->reportAvailability(true, canId);
+                sender->reportAvailability(true, m_canId);
             }
 
             lastDiagnosticsTimestamp = event.currentReal;
             lastFrameCounter = counter;
         }
-        else if (diagnosticsPeriod != 0.0 && event.currentReal - lastDiagnosticsTimestamp > diagnosticsPeriod)
+        else if (m_diagnosticsPeriod != 0.0 && event.currentReal - lastDiagnosticsTimestamp > m_diagnosticsPeriod)
         {
             auto diff = lastFrameCounter > counter ? counter + (0xFFFF - lastFrameCounter) : counter - lastFrameCounter;
             auto rate = diff / (event.currentReal - lastDiagnosticsTimestamp);
@@ -210,7 +196,7 @@ bool Jr3Mbed::monitorWorker(const yarp::os::YarpTimerEvent & event)
 
         if (sender)
         {
-            sender->reportAvailability(false, canId);
+            sender->reportAvailability(false, m_canId);
         }
     }
     else

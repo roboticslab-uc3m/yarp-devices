@@ -2,7 +2,6 @@
 
 #include "TechnosoftIposBase.hpp"
 
-#include <yarp/conf/version.h>
 #include <yarp/os/Log.h>
 
 #include "LogComponent.hpp"
@@ -82,9 +81,7 @@ bool TechnosoftIposBase::getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorquePa
     params->viscousNeg = 0.0;
     params->coulombPos = 0.0;
     params->coulombNeg = 0.0;
-#if YARP_VERSION_COMPARE(>=, 3, 9, 0)
     params->velocityThres = 0.0;
-#endif
 
     return true;
 }

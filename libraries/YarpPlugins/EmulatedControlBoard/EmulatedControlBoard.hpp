@@ -3,22 +3,27 @@
 #ifndef __EMULATED_CONTROL_BOARD_HPP__
 #define __EMULATED_CONTROL_BOARD_HPP__
 
+#include <mutex>
 #include <vector>
 
 #include <yarp/os/PeriodicThread.h>
-#include <yarp/os/Semaphore.h>
 
-#include <yarp/dev/Drivers.h>
+#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/IControlLimits.h>
+#include <yarp/dev/IControlMode.h>
+#include <yarp/dev/IEncodersTimed.h>
+#include <yarp/dev/IPositionControl.h>
+#include <yarp/dev/IPositionDirect.h>
+#include <yarp/dev/IVelocityControl.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/ControlBoardInterfaces.h>
 
-namespace roboticslab
-{
+#include "EmulatedControlBoard_ParamsParser.h"
+
 
 /**
  * @ingroup YarpPlugins
  * @defgroup EmulatedControlBoard
- * @brief Contains roboticslab::EmulatedControlBoard.
+ * @brief Contains EmulatedControlBoard.
  */
 
 /**
@@ -32,12 +37,13 @@ class EmulatedControlBoard : public yarp::dev::DeviceDriver,
                              public yarp::dev::IPositionControl,
                              public yarp::dev::IPositionDirect,
                              public yarp::dev::IVelocityControl,
-                             public yarp::os::PeriodicThread
+                             public yarp::os::PeriodicThread,
+                             public EmulatedControlBoard_ParamsParser
 {
 public:
 
     // Set the thread period in the class constructor
-    EmulatedControlBoard() : PeriodicThread(1.0) {} // In seconds
+    EmulatedControlBoard() : yarp::os::PeriodicThread(1.0) {} // In seconds
 
     // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
 
@@ -129,6 +135,8 @@ public:
     bool threadInit() override;
     void run() override;
 
+protected:
+
     // ----- Shared Area Funcion declarations. Implementation in SharedArea.cpp -----
 
     void setEncRaw(const int index, const double position);
@@ -140,12 +148,10 @@ public:
     double getEncExposed(const int index);
     std::vector<double> getEncsExposed();
 
-    // ------------------------------- Private -------------------------------------
-
 private:
 
     enum jmc_state { NOT_CONTROLLING, POSITION_MOVE, RELATIVE_MOVE, VELOCITY_MOVE };
-    enum jmc_mode { POSITION_MODE, VELOCITY_MODE, POSITION_DIRECT_MODE };
+    enum jmc_mode { POSITION_MODE, VELOCITY_MODE, POSITION_DIRECT_MODE, UNKNOWN_MODE };
 
     bool setPositionMode(int j);
     bool setVelocityMode(int j);
@@ -153,28 +159,17 @@ private:
     bool setPositionDirectMode(int j);
 
     // General Joint Motion Controller parameters //
-    unsigned int axes;
-    double jmcMs;
-    jmc_mode controlMode;
-    double lastTime;
+    jmc_mode controlMode {UNKNOWN_MODE};
+    double lastTime {0.0};
 
-    yarp::os::Semaphore encRawMutex;  // SharedArea
+    std::mutex encRawMutex; // SharedArea
 
     std::vector<jmc_state> jointStatus;
 
     std::vector<double> encRaw;
-    std::vector<double> encRawExposed;  // For conversion.
-    std::vector<double> initPos;  // Exposed.
-    std::vector<double> jointTol;  // Exposed.
-    std::vector<double> maxLimit;  // Exposed.
-    std::vector<double> minLimit;  // Exposed.
-    std::vector<double> refAcc;  // Exposed.
-    std::vector<double> refSpeed;  // Exposed.
-    std::vector<double> targetExposed;  // Exposed.
-    std::vector<double> velRawExposed;  // For conversion.
+    std::vector<double> refAcc; // Exposed.
+    std::vector<double> targetExposed; // Exposed.
     std::vector<double> velRaw;
 };
-
-} // namespace roboticslab
 
 #endif // __EMULATED_CONTROL_BOARD_HPP__

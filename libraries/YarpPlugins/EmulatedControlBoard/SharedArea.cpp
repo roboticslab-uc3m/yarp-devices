@@ -2,24 +2,22 @@
 
 #include "EmulatedControlBoard.hpp"
 
-using namespace roboticslab;
-
 // ----------------------------------------------------------------------------
 
 void EmulatedControlBoard::setEncRaw(const int index, const double position)
 {
-    encRawMutex.wait();
+    encRawMutex.lock();
     encRaw[index] = position;
-    encRawMutex.post();
+    encRawMutex.unlock();
 }
 
 // ----------------------------------------------------------------------------
 
 void EmulatedControlBoard::setEncsRaw(const std::vector<double> & positions)
 {
-    encRawMutex.wait();
+    encRawMutex.lock();
     encRaw = positions;
-    encRawMutex.post();
+    encRawMutex.unlock();
 }
 
 // ----------------------------------------------------------------------------
@@ -27,9 +25,9 @@ void EmulatedControlBoard::setEncsRaw(const std::vector<double> & positions)
 double EmulatedControlBoard::getEncRaw(const int index)
 {
     double position;
-    encRawMutex.wait();
+    encRawMutex.lock();
     position = encRaw[index];
-    encRawMutex.post();
+    encRawMutex.unlock();
     return position;
 }
 
@@ -38,9 +36,9 @@ double EmulatedControlBoard::getEncRaw(const int index)
 std::vector<double> EmulatedControlBoard::getEncsRaw()
 {
     std::vector<double> positions;
-    encRawMutex.wait();
+    encRawMutex.lock();
     positions = encRaw;
-    encRawMutex.post();
+    encRawMutex.unlock();
     return positions;
 }
 
@@ -49,7 +47,7 @@ std::vector<double> EmulatedControlBoard::getEncsRaw()
 double EmulatedControlBoard::getEncExposed(const int index)
 {
     double rawPosition = getEncRaw(index);
-    return rawPosition / encRawExposed[index];
+    return rawPosition / m_encRawExposeds[index];
 }
 
 // ----------------------------------------------------------------------------
@@ -60,7 +58,7 @@ std::vector<double> EmulatedControlBoard::getEncsExposed()
 
     for (unsigned int i = 0; i < rawPositions.size(); i++)
     {
-        rawPositions[i] /= encRawExposed[i];
+        rawPositions[i] /= m_encRawExposeds[i];
     }
 
     return rawPositions;

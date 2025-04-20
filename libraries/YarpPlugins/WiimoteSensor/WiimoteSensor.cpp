@@ -8,8 +8,6 @@
 
 #include "LogComponent.hpp"
 
-using namespace roboticslab;
-
 // -----------------------------------------------------------------------------
 
 // Copy-paste from xwiishow.c.

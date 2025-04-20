@@ -2,13 +2,26 @@
 
 #include "FakeJoint.hpp"
 
+#include <yarp/os/LogComponent.h>
+#include <yarp/os/LogStream.h>
+
 using namespace roboticslab;
+
+namespace
+{
+    YARP_LOG_COMPONENT(FAKE, "yarp.device.fakejoint")
+}
 
 // -----------------------------------------------------------------------------
 
 bool FakeJoint::open(yarp::os::Searchable & config)
 {
-    jointName = config.check("jointName", yarp::os::Value(""), "name of the fake joint").asString();
+    if (!parseParams(config))
+    {
+        yCError(FAKE) << "Failed to parse parameters";
+        return false;
+    }
+
     return true;
 }
 

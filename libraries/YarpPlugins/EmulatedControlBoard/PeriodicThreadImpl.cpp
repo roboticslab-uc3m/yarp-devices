@@ -7,8 +7,6 @@
 
 #include "LogComponent.hpp"
 
-using namespace roboticslab;
-
 // ------------------- PeriodicThread Related ------------------------------------
 
 bool EmulatedControlBoard::threadInit()
@@ -26,18 +24,18 @@ void EmulatedControlBoard::run()
 
     const double now = yarp::os::Time::now();
 
-    for (unsigned int motor = 0; motor < axes; motor++)
+    for (unsigned int motor = 0; motor < m_axes; motor++)
     {
         encsRaw[motor] += velRaw[motor] * (now - lastTime);
 
         if (jointStatus[motor] != NOT_CONTROLLING)  // if set to move...
         {
-            if (encsExposed[motor] > maxLimit[motor] && velRaw[motor] > 0)  // SW max JL
+            if (encsExposed[motor] > m_maxLimits[motor] && velRaw[motor] > 0)  // SW max JL
             {
                 stop(motor);  // puts jointStatus[motor]=0;
                 yCWarning(ECB, "Moving joint q%d at configured max joint limit, stopping", motor + 1);
             }
-            else if (encsExposed[motor] < minLimit[motor] && velRaw[motor] < 0)  // SW min JL
+            else if (encsExposed[motor] < m_minLimits[motor] && velRaw[motor] < 0)  // SW min JL
             {
                 stop(motor);  // puts jointStatus[motor]=0;
                 yCWarning(ECB, "Moving joint q%d at configured min joint limit, stopping", motor + 1);
@@ -45,13 +43,13 @@ void EmulatedControlBoard::run()
             else if (jointStatus[motor] == POSITION_MOVE)  // check if target reached in pos or rel
             {
                 if (velRaw[motor] > 0 &&  // moving positive...
-                    encsExposed[motor] > (targetExposed[motor] - jointTol[motor]))
+                    encsExposed[motor] > (targetExposed[motor] - m_jointTols[motor]))
                 {
                     stop(motor);  // puts jointStatus[motor]=0;
                     yCInfo(ECB, "Joint q%d reached target", motor + 1);
                 }
                 else if (velRaw[motor] < 0 &&  // moving negative...
-                    encsExposed[motor] < (targetExposed[motor] + jointTol[motor]))
+                    encsExposed[motor] < (targetExposed[motor] + m_jointTols[motor]))
                 {
                     stop(motor);  // puts jointStatus[motor]=0;
                     yCInfo(ECB, "Joint q%d reached target", motor + 1);

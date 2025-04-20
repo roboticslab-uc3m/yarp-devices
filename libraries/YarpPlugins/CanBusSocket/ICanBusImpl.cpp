@@ -29,13 +29,13 @@ bool CanBusSocket::canSetBaudRate(unsigned int rate)
 
 bool CanBusSocket::canGetBaudRate(unsigned int * rate)
 {
-    if (bitrate == 0)
+    if (m_bitrate == 0)
     {
         yCIError(SCK, id()) << "Bitrate not available";
         return false;
     }
 
-    *rate = bitrate;
+    *rate = m_bitrate;
     return true;
 }
 
@@ -47,7 +47,7 @@ bool CanBusSocket::canIdAdd(unsigned int _id)
     filter.can_id = _id;
     filter.can_mask = (CAN_EFF_FLAG | CAN_RTR_FLAG | CAN_SFF_MASK);
 
-    if (filterFunctionCodes)
+    if (m_filterFunctionCodes)
     {
         filter.can_mask &= ~0x780; // function codes, e.g. 0x580, are ignored in CANopen mode
     }
@@ -60,7 +60,7 @@ bool CanBusSocket::canIdAdd(unsigned int _id)
 
     filters.push_back(std::move(filter));
 
-    if (::setsockopt(s, SOL_CAN_RAW, CAN_RAW_FILTER, filters.data(), sizeof(struct can_filter) * filters.size()) < 0)
+    if (::setsockopt(socketDescriptor, SOL_CAN_RAW, CAN_RAW_FILTER, filters.data(), sizeof(struct can_filter) * filters.size()) < 0)
     {
         yCIError(SCK, id()) << "Unable to add filter for id" << _id;
         filters.pop_back();
@@ -84,7 +84,7 @@ bool CanBusSocket::canIdDelete(unsigned int _id)
         filter.can_id = 0 | CAN_INV_FILTER;
         filter.can_mask = CAN_SFF_MASK;
 
-        if (::setsockopt(s, SOL_CAN_RAW, CAN_RAW_FILTER, &filter, sizeof(filter)) < 0)
+        if (::setsockopt(socketDescriptor, SOL_CAN_RAW, CAN_RAW_FILTER, &filter, sizeof(filter)) < 0)
         {
             yCIError(SCK, id()) << "Unable to reset filters";
             return false;
@@ -100,7 +100,7 @@ bool CanBusSocket::canIdDelete(unsigned int _id)
             return true;
         }
 
-        if (::setsockopt(s, SOL_CAN_RAW, CAN_RAW_FILTER, nullptr, 0) < 0)
+        if (::setsockopt(socketDescriptor, SOL_CAN_RAW, CAN_RAW_FILTER, nullptr, 0) < 0)
         {
             yCIError(SCK, id()) << "Unable to clear filters";
             return false;
@@ -108,7 +108,7 @@ bool CanBusSocket::canIdDelete(unsigned int _id)
 
         filters.erase(it);
 
-        if (::setsockopt(s, SOL_CAN_RAW, CAN_RAW_FILTER, filters.data(), sizeof(struct can_filter) * filters.size()) < 0)
+        if (::setsockopt(socketDescriptor, SOL_CAN_RAW, CAN_RAW_FILTER, filters.data(), sizeof(struct can_filter) * filters.size()) < 0)
         {
             yCIError(SCK, id()) << "Unable to add filters back while deleting id" << _id;
             filters.clear();
@@ -125,15 +125,15 @@ bool CanBusSocket::canIdDelete(unsigned int _id)
 
 bool CanBusSocket::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * read, bool wait)
 {
-    if (!allowPermissive && wait != blockingMode)
+    if (!m_allowPermissive && wait != m_blockingMode)
     {
-        yCIError(SCK, id(), "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
+        yCIError(SCK, id(), "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, m_blockingMode);
         return false;
     }
 
     *read = 0;
 
-    if (blockingMode && rxTimeoutMs > 0)
+    if (m_blockingMode && m_rxTimeoutMs > 0)
     {
         bool bufferReady;
 
@@ -154,11 +154,11 @@ bool CanBusSocket::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsig
         auto * _msg = reinterpret_cast<struct can_frame *>(msgs[i].getPointer());
 
         //-- read() returns the number of bytes read, -1 for errors, 0 for EOF.
-        int ret = ::read(s, _msg, sizeof(struct can_frame));
+        int ret = ::read(socketDescriptor, _msg, sizeof(struct can_frame));
 
         if (ret == -1)
         {
-            if (!blockingMode && errno == EAGAIN)
+            if (!m_blockingMode && errno == EAGAIN)
             {
                 break;
             }
@@ -192,15 +192,15 @@ bool CanBusSocket::canRead(yarp::dev::CanBuffer & msgs, unsigned int size, unsig
 
 bool CanBusSocket::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size, unsigned int * sent, bool wait)
 {
-    if (!allowPermissive && wait != blockingMode)
+    if (!m_allowPermissive && wait != m_blockingMode)
     {
-        yCIError(SCK, id(), "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, blockingMode);
+        yCIError(SCK, id(), "Blocking mode configuration mismatch: requested=%d, enabled=%d", wait, m_blockingMode);
         return false;
     }
 
     *sent = 0;
 
-    if (blockingMode && txTimeoutMs > 0)
+    if (m_blockingMode && m_txTimeoutMs > 0)
     {
         bool bufferReady;
 
@@ -221,11 +221,11 @@ bool CanBusSocket::canWrite(const yarp::dev::CanBuffer & msgs, unsigned int size
         const auto * _msg = reinterpret_cast<const struct can_frame *>(msgs[i].getPointer());
 
         //-- write() returns the number of bytes sent or -1 for errors.
-        int ret = ::write(s, _msg, sizeof(struct can_frame));
+        int ret = ::write(socketDescriptor, _msg, sizeof(struct can_frame));
 
         if (ret == -1)
         {
-            if (!blockingMode && errno == EAGAIN)
+            if (!m_blockingMode && errno == EAGAIN)
             {
                 break;
             }

@@ -11,9 +11,7 @@
 
 using namespace roboticslab;
 
-constexpr auto DEFAULT_ACK_TIMEOUT = 0.25; // [s], **BEWARE**: start/stop takes time
 constexpr auto DEFAULT_MONITOR_PERIOD = 0.1; // [s]
-constexpr auto DEFAULT_FILTER = 0.0; // [Hz], 0.0 = no filter
 
 // -----------------------------------------------------------------------------
 
@@ -38,56 +36,52 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
 
     jr3Group.fromString(config.toString(), false); // override common options
 
-    canId = config.check("canId", yarp::os::Value(0), "CAN bus ID").asInt8(); // id-specific
-    name = config.check("name", yarp::os::Value(""), "sensor name").asString(); // id-specific
-    filter = jr3Group.check("filter", yarp::os::Value(DEFAULT_FILTER), "cutoff frequency for low-pass filter (Hertz)").asFloat64();
-
-    if (canId <= 0 || canId > 127)
+    if (!parseParams(jr3Group))
     {
-        yCError(JR3M) << "Illegal CAN ID:" << canId;
+        yCIError(JR3M, id()) << "Could not parse parameters";
         return false;
     }
 
-    if (filter < 0.0 || filter > 655.35) // (2^16 - 1) / 100
+    if (m_canId <= 0 || m_canId > 127)
     {
-        yCError(JR3M) << "Illegal filter value:" << filter;
+        yCError(JR3M) << "Illegal CAN ID:" << m_canId;
         return false;
     }
 
-    yarp::dev::DeviceDriver::setId("ID" + std::to_string(canId));
-
-    auto ackTimeout = jr3Group.check("ackTimeout", yarp::os::Value(DEFAULT_ACK_TIMEOUT), "CAN acknowledge timeout (seconds)").asFloat64();
-
-    if (ackTimeout <= 0.0)
+    if (m_filter < 0.0 || m_filter > 655.35) // (2^16 - 1) / 100
     {
-        yCIError(JR3M, id()) << R"(Illegal "ackTimeout" value:)" << ackTimeout;
+        yCError(JR3M) << "Illegal filter value:" << m_filter;
         return false;
     }
 
-    ackStateObserver = new TypedStateObserver<std::uint8_t[]>(ackTimeout);
+    yarp::dev::DeviceDriver::setId("ID" + std::to_string(m_canId));
 
-    if (jr3Group.check("fullScales", "list of full scales for each axis (3*N, 3*daNm)"))
+    if (m_ackTimeout <= 0.0)
     {
-        const auto & fullScalesValue = jr3Group.find("fullScales");
+        yCIError(JR3M, id()) << R"(Illegal "ackTimeout" value:)" << m_ackTimeout;
+        return false;
+    }
 
-        if (!fullScalesValue.isList() || fullScalesValue.asList()->size() != 6)
+    ackStateObserver = new TypedStateObserver<std::uint8_t[]>(m_ackTimeout);
+
+    if (!m_fullScales.empty())
+    {
+        if (m_fullScales.size() != 6)
         {
             yCIError(JR3M, id()) << R"(The "fullScales" property must be a 6-element list of integers)";
             return false;
         }
 
-        yCIInfo(JR3M, id()) << "Using full scales from configuration file:" << fullScalesValue.toString();
-
-        const auto * fullScales = fullScalesValue.asList();
+        yCIInfo(JR3M, id()) << "Using full scales from configuration file:" << m_fullScales;
 
         for (int i = 0; i < 3; i++)
         {
-            scales[i] = fullScales->get(i).asInt16() / static_cast<double>(FULL_SCALE);
+            scales[i] = m_fullScales[i] / static_cast<double>(FULL_SCALE);
         }
 
         for (int i = 3; i < 6; i++)
         {
-            scales[i] = fullScales->get(i).asInt16() / (static_cast<double>(FULL_SCALE) * 10);
+            scales[i] = m_fullScales[i] / (static_cast<double>(FULL_SCALE) * 10);
         }
     }
     else
@@ -96,17 +90,9 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
         shouldQueryFullScales = true;
     }
 
-    if (jr3Group.check("asyncPeriod", "period of asynchronous publishing mode (seconds)"))
+    if (m_asyncPeriod > 0.0)
     {
-        asyncPeriod = jr3Group.find("asyncPeriod").asFloat64();
-        yCIInfo(JR3M, id()) << "Asynchronous mode requested with period" << asyncPeriod << "[s]";
-
-        if (asyncPeriod <= 0.0)
-        {
-            yCIError(JR3M, id()) << R"(Illegal "asyncPeriod" value:)" << asyncPeriod;
-            return false;
-        }
-
+        yCIInfo(JR3M, id()) << "Asynchronous mode requested with period" << m_asyncPeriod << "[s]";
         mode = jr3_mode::ASYNC;
     }
     else
@@ -115,23 +101,20 @@ bool Jr3Mbed::open(yarp::os::Searchable & config)
         mode = jr3_mode::SYNC;
     }
 
-    auto monitorPeriod = jr3Group.check("monitorPeriod", yarp::os::Value(DEFAULT_MONITOR_PERIOD), "monitor thread period (seconds)").asFloat64();
-
-    if (monitorPeriod <= 0.0)
+    if (m_monitorPeriod <= 0.0)
     {
-        yCIError(JR3M, id()) << R"(Illegal "monitorPeriod" value:)" << monitorPeriod;
+        yCIError(JR3M, id()) << R"(Illegal "monitorPeriod" value:)" << m_monitorPeriod;
         return false;
     }
 
     using namespace std::placeholders;
-    monitorThread = new yarp::os::Timer(monitorPeriod, std::bind(&Jr3Mbed::monitorWorker, this, _1), false);
+    monitorThread = new yarp::os::Timer(m_monitorPeriod, std::bind(&Jr3Mbed::monitorWorker, this, _1), false);
 
     // no more than 8 seconds since packets arrive at 8 KHz and the counter is only 16 bits wide (it overflows every 65536 frames)
-    diagnosticsPeriod = jr3Group.check("diagnosticsPeriod", yarp::os::Value(0.0), "diagnostics period (seconds)").asFloat64();
 
-    if (diagnosticsPeriod < 0.0)
+    if (m_diagnosticsPeriod < 0.0)
     {
-        yCIError(JR3M, id()) << R"(Illegal "diagnosticsPeriod" value:)" << diagnosticsPeriod;
+        yCIError(JR3M, id()) << R"(Illegal "diagnosticsPeriod" value:)" << m_diagnosticsPeriod;
         return false;
     }
 

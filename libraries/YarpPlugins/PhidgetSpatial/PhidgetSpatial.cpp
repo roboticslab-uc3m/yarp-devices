@@ -2,8 +2,6 @@
 
 #include "PhidgetSpatial.hpp"
 
-using namespace roboticslab;
-
 // -----------------------------------------------------------------------------
 
 int PhidgetSpatial::AttachHandler(CPhidgetHandle ENC, void *userptr)

@@ -63,11 +63,11 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
             {
                 if (ipMode == "pt")
                 {
-                    ipBuffer = new PtBuffer(samplingPeriod, ipPeriodMs * 0.001);
+                    ipBuffer = new PtBuffer(params.m_samplingPeriod, ipPeriodMs * 0.001);
                 }
                 else if (ipMode == "pvt")
                 {
-                    ipBuffer = new PvtBuffer(samplingPeriod, ipPeriodMs * 0.001);
+                    ipBuffer = new PvtBuffer(params.m_samplingPeriod, ipPeriodMs * 0.001);
                 }
 
                 yCIInfo(IPOS, id()) << "Created" << ipMode << "buffer with" << ipBuffer->getBufferSize()

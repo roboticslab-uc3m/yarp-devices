@@ -1,13 +1,10 @@
-# Copyright: (C) 2017 Universidad Carlos III de Madrid
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
 if(NOT Phidgets_FOUND AND (NOT DEFINED ENABLE_PhidgetSpatial OR PhidgetSpatial))
     message(WARNING "Phidgets package not found, disabling PhidgetSpatial")
 endif()
 
 yarp_prepare_plugin(PhidgetSpatial
                     CATEGORY device
-                    TYPE roboticslab::PhidgetSpatial
+                    TYPE PhidgetSpatial
                     INCLUDE PhidgetSpatial.hpp
                     DEFAULT ON
                     DEPENDS Phidgets_FOUND
@@ -15,10 +12,12 @@ yarp_prepare_plugin(PhidgetSpatial
 
 if(NOT SKIP_PhidgetSpatial)
 
-    yarp_add_plugin(PhidgetSpatial PhidgetSpatial.hpp
-                                   PhidgetSpatial.cpp
-                                   DeviceDriverImpl.cpp
-                                   IAnalogSensorImpl.cpp)
+    yarp_add_plugin(PhidgetSpatial)
+
+    target_sources(PhidgetSpatial PRIVATE PhidgetSpatial.hpp
+                                          PhidgetSpatial.cpp
+                                          DeviceDriverImpl.cpp
+                                          IAnalogSensorImpl.cpp)
 
     target_link_libraries(PhidgetSpatial YARP::YARP_os
                                          YARP::YARP_dev

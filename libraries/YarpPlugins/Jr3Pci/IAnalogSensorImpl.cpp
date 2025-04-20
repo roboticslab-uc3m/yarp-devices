@@ -8,8 +8,6 @@
 
 #include "LogComponent.hpp"
 
-using namespace roboticslab;
-
 // -----------------------------------------------------------------------------
 
 int Jr3Pci::read(yarp::sig::Vector &out)

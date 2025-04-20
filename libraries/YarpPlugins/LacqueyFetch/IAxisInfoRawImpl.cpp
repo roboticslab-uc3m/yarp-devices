@@ -21,7 +21,7 @@ bool LacqueyFetch::getAxisNameRaw(int axis, std::string & name)
 {
     yCITrace(LCQ, id(), "%d", axis);
     CHECK_JOINT(axis);
-    name = axisName;
+    name = m_name;
     return true;
 }
 

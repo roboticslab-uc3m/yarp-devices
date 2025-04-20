@@ -13,25 +13,21 @@
 #include <yarp/dev/CanBusInterface.h>
 
 #include "SocketCanMessage.hpp"
-
-namespace roboticslab
-{
+#include "CanBusSocket_ParamsParser.h"
 
 /**
  * @ingroup YarpPlugins
  * @defgroup CanBusSocket
- * @brief Contains roboticslab::CanBusSocket.
+ * @brief Contains CanBusSocket.
  *
  * See <a href="https://www.kernel.org/doc/html/latest/networking/can.html">documentation</a>.
  */
 class CanBusSocket : public yarp::dev::DeviceDriver,
                      public yarp::dev::ICanBus,
-                     public yarp::dev::ImplementCanBufferFactory<SocketCanMessage, struct can_frame>
+                     public yarp::dev::ImplementCanBufferFactory<roboticslab::SocketCanMessage, struct can_frame>,
+                     public CanBusSocket_ParamsParser
 {
 public:
-    ~CanBusSocket() override
-    { close(); }
-
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
@@ -50,17 +46,8 @@ private:
     bool waitUntilTimeout(io_operation op, bool * bufferReady);
     void interpretErrorFrame(const struct can_frame * msg);
 
-    std::string iface;
-    bool blockingMode;
-    bool allowPermissive;
-    bool filterFunctionCodes;
-    unsigned int bitrate {0};
-    int rxTimeoutMs {0};
-    int txTimeoutMs {0};
-    int s {0};
+    int socketDescriptor {0};
     std::vector<struct can_filter> filters;
 };
-
-} // namespace roboticslab
 
 #endif // __CAN_BUS_SOCKET_HPP__

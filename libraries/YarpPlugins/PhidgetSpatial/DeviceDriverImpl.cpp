@@ -2,8 +2,6 @@
 
 #include "PhidgetSpatial.hpp"
 
-using namespace roboticslab;
-
 // -----------------------------------------------------------------------------
 
 bool PhidgetSpatial::open(yarp::os::Searchable& config)

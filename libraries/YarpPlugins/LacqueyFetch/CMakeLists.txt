@@ -1,20 +1,25 @@
 yarp_prepare_plugin(LacqueyFetch
                     CATEGORY device
-                    TYPE roboticslab::LacqueyFetch
+                    TYPE LacqueyFetch
                     INCLUDE LacqueyFetch.hpp
                     DEFAULT ON
-                    DEPENDS ENABLE_CanBusSharerLib)
+                    DEPENDS ENABLE_CanBusSharerLib
+                    GENERATE_PARSER)
 
 if(NOT SKIP_LacqueyFetch)
 
-    yarp_add_plugin(LacqueyFetch LacqueyFetch.hpp
-                                 DeviceDriverImpl.cpp
-                                 IAxisInfoRawImpl.cpp
-                                 ICanBusSharerImpl.cpp
-                                 IControlModeRawImpl.cpp
-                                 IPWMControlRawImpl.cpp
-                                 LogComponent.hpp
-                                 LogComponent.cpp)
+    yarp_add_plugin(LacqueyFetch)
+
+    target_sources(LacqueyFetch PRIVATE LacqueyFetch.hpp
+                                        DeviceDriverImpl.cpp
+                                        IAxisInfoRawImpl.cpp
+                                        ICanBusSharerImpl.cpp
+                                        IControlModeRawImpl.cpp
+                                        IPWMControlRawImpl.cpp
+                                        LacqueyFetch_ParamsParser.h
+                                        LacqueyFetch_ParamsParser.cpp
+                                        LogComponent.hpp
+                                        LogComponent.cpp)
 
     target_link_libraries(LacqueyFetch YARP::YARP_os
                                        YARP::YARP_dev

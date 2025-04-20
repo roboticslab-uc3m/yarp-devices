@@ -15,16 +15,14 @@
 
 #include "ICanBusSharer.hpp"
 #include "StateObserver.hpp"
+#include "CuiAbsolute_ParamsParser.h"
 
 #define CHECK_JOINT(j) do { int ax; if (getAxes(&ax), (j) != ax - 1) return false; } while (0)
-
-namespace roboticslab
-{
 
 /**
  * @ingroup YarpPlugins
  * @defgroup CuiAbsolute
- * @brief Contains roboticslab::CuiAbsolute.
+ * @brief Contains CuiAbsolute.
  */
 
 /**
@@ -34,19 +32,10 @@ namespace roboticslab
  */
 class CuiAbsolute : public yarp::dev::DeviceDriver,
                     public yarp::dev::IEncodersTimedRaw,
-                    public ICanBusSharer
+                    public roboticslab::ICanBusSharer,
+                    public CuiAbsolute_ParamsParser
 {
 public:
-
-    CuiAbsolute()
-        : canId(0), timeout(0.0), maxRetries(0), retry(0), reverse(false),
-          cuiMode(CuiMode::OFF), pushDelay(0),
-          encoder(), encoderTimestamp(0.0),
-          sender(nullptr), pushStateObserver(nullptr), pollStateObserver(nullptr)
-    { }
-
-    ~CuiAbsolute() override
-    { close(); }
 
     //  --------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp ---------
 
@@ -56,10 +45,10 @@ public:
     //  --------- ICanBusSharer declarations. Implementation in ICanBusSharerImpl.cpp ---------
 
     unsigned int getId() override;
-    bool notifyMessage(const can_message & message) override;
+    bool notifyMessage(const roboticslab::can_message & message) override;
     bool initialize() override;
     bool finalize() override;
-    bool registerSender(ICanSenderDelegate * sender) override;
+    bool registerSender(roboticslab::ICanSenderDelegate * sender) override;
     bool synchronize(double timestamp) override;
 
     //  ---------- IEncodersRaw declarations. Implementation in IEncodersRawImpl.cpp ----------
@@ -94,25 +83,16 @@ private:
     bool pollEncoderRead(encoder_t * enc);
     void normalize(encoder_t * v);
 
-    unsigned int canId;
-    double timeout;
-    int maxRetries;
-    int retry;
-    bool reverse;
+    CuiMode cuiMode {CuiMode::OFF};
 
-    CuiMode cuiMode;
-    std::uint8_t pushDelay;
+    encoder_t encoder {};
+    double encoderTimestamp {0.0};
 
-    encoder_t encoder;
-    double encoderTimestamp;
-
-    ICanSenderDelegate * sender;
-    StateObserver * pushStateObserver;
-    TypedStateObserver<encoder_t> * pollStateObserver;
+    roboticslab::ICanSenderDelegate * sender {nullptr};
+    roboticslab::StateObserver * pushStateObserver {nullptr};
+    roboticslab::TypedStateObserver<encoder_t> * pollStateObserver {nullptr};
 
     mutable std::mutex mutex;
 };
-
-} // namespace roboticslab
 
 #endif // __CUI_ABSOLUTE_HPP__

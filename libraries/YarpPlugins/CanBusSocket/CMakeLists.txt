@@ -1,20 +1,25 @@
 yarp_prepare_plugin(CanBusSocket
                     CATEGORY device
-                    TYPE roboticslab::CanBusSocket
+                    TYPE CanBusSocket
                     INCLUDE CanBusSocket.hpp
                     DEFAULT ON
-                    DEPENDS UNIX)
+                    DEPENDS UNIX
+                    GENERATE_PARSER)
 
 if(NOT SKIP_CanBusSocket)
 
-    yarp_add_plugin(CanBusSocket CanBusSocket.cpp
-                                 CanBusSocket.hpp
-                                 DeviceDriverImpl.cpp
-                                 ICanBusImpl.cpp
-                                 SocketCanMessage.cpp
-                                 SocketCanMessage.hpp
-                                 LogComponent.hpp
-                                 LogComponent.cpp)
+    yarp_add_plugin(CanBusSocket)
+
+    target_sources(CanBusSocket PRIVATE CanBusSocket.cpp
+                                        CanBusSocket.hpp
+                                        DeviceDriverImpl.cpp
+                                        ICanBusImpl.cpp
+                                        SocketCanMessage.cpp
+                                        SocketCanMessage.hpp
+                                        CanBusSocket_ParamsParser.h
+                                        CanBusSocket_ParamsParser.cpp
+                                        LogComponent.hpp
+                                        LogComponent.cpp)
 
     target_link_libraries(CanBusSocket YARP::YARP_os
                                        YARP::YARP_dev)

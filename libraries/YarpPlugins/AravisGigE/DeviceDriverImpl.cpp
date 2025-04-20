@@ -4,8 +4,6 @@
 
 #include "LogComponent.hpp"
 
-using namespace roboticslab;
-
 bool AravisGigE::open(yarp::os::Searchable &config)
 {
     //-- Configuration of Aravis GigE Camera device

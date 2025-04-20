@@ -13,10 +13,10 @@ using namespace roboticslab;
 
 bool CuiAbsolute::performRequest(const std::string & name, unsigned int len, const std::uint8_t * data, encoder_t * v)
 {
-    const can_message msg {canId, len, data};
-    retry = 0;
+    const can_message msg {static_cast<std::uint8_t>(m_canId), len, data};
+    int retry = 0;
 
-    while (++retry <= maxRetries)
+    while (++retry <= m_maxRetries)
     {
         if (sender && !sender->prepareMessage(msg))
         {
@@ -24,19 +24,19 @@ bool CuiAbsolute::performRequest(const std::string & name, unsigned int len, con
             return false;
         }
 
-        yCIInfo(CUI, id(), "Registered \"%s\" command (%d/%d): %s", name.c_str(), retry, maxRetries, CanUtils::msgToStr(len, data).c_str());
+        yCIInfo(CUI, id(), "Registered \"%s\" command (%d/%d): %s", name.c_str(), retry, m_maxRetries, CanUtils::msgToStr(len, data).c_str());
 
         if (v ? pollStateObserver->await(v) : pushStateObserver->await())
         {
-            yCIInfo(CUI, id(), "Successfully processed \"%s\" command (%d/%d)", name.c_str(), retry, maxRetries);
+            yCIInfo(CUI, id(), "Successfully processed \"%s\" command (%d/%d)", name.c_str(), retry, m_maxRetries);
             normalize(v);
             return true;
         }
 
-        yCIWarning(CUI, id(), "Command \"%s\" timed out (%d/%d)", name.c_str(), retry, maxRetries);
+        yCIWarning(CUI, id(), "Command \"%s\" timed out (%d/%d)", name.c_str(), retry, m_maxRetries);
     }
 
-    yCIError(CUI, id(), "Max number of retries exceeded (%d)", maxRetries);
+    yCIError(CUI, id(), "Max number of retries exceeded (%d)", m_maxRetries);
     return false;
 }
 
@@ -44,7 +44,7 @@ bool CuiAbsolute::performRequest(const std::string & name, unsigned int len, con
 
 bool CuiAbsolute::startPushMode()
 {
-    const std::uint8_t msgData[] = {static_cast<std::uint8_t>(CuiCommand::PUSH_START), pushDelay};
+    const std::uint8_t msgData[] = {static_cast<std::uint8_t>(CuiCommand::PUSH_START), static_cast<std::uint8_t>(m_pushDelay)};
     return performRequest("push start", 2, msgData);
 }
 
@@ -68,7 +68,7 @@ bool CuiAbsolute::pollEncoderRead(encoder_t * enc)
 
 void CuiAbsolute::normalize(encoder_t * v)
 {
-    if (reverse)
+    if (m_reverse)
     {
         *v = -(*v);
     }

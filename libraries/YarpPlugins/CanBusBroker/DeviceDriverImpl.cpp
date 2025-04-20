@@ -23,17 +23,21 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
 
     const auto * robotConfig = *reinterpret_cast<yarp::os::Property * const *>(config.find("robotConfig").asBlob());
 
-    const auto * canBuses = config.find("buses").asList();
-
-    if (!canBuses)
+    if (!parseParams(config))
     {
-        yCError(CBB) << "Missing key \"buses\" or not a list";
+        yCError(CBB) << "Could not parse parameters";
         return false;
     }
 
-    for (int i = 0; i < canBuses->size(); i++)
+    if (m_buses.empty())
     {
-        auto canBus = canBuses->get(i).asString();
+        yCError(CBB) << "Key \"buses\" cannot be an empty list";
+        return false;
+    }
+
+    for (int i = 0; i < m_buses.size(); i++)
+    {
+        const auto & canBus = m_buses[i];
 
         if (!config.check(canBus))
         {
@@ -74,9 +78,9 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
                 nodeOptions.fromString(nodeGroup.toString());
                 nodeOptions.put("robotConfig", config.find("robotConfig"));
 
-                if (config.check("syncPeriod"))
+                if (m_syncPeriod > 0.0)
                 {
-                    nodeOptions.put("syncPeriod", config.find("syncPeriod"));
+                    nodeOptions.put("syncPeriod", m_syncPeriod);
                 }
             }
             else
@@ -195,16 +199,8 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
         }
     }
 
-    if (config.check("syncPeriod", "SYNC message period (s)"))
+    if (m_syncPeriod > 0.0)
     {
-        auto syncPeriod = config.find("syncPeriod").asFloat64();
-
-        if (syncPeriod <= 0.0)
-        {
-            yCError(CBB) << "Invalid --syncPeriod:" << syncPeriod;
-            return false;
-        }
-
         FutureTaskFactory * taskFactory = nullptr;
 
         if (busDevices.size() > 1)
@@ -219,7 +215,7 @@ bool CanBusBroker::open(yarp::os::Searchable & config)
         if (taskFactory)
         {
             syncThread = new SyncPeriodicThread(brokers, taskFactory); // owns `taskFactory`
-            syncThread->setPeriod(syncPeriod);
+            syncThread->setPeriod(m_syncPeriod);
 
             if (!syncThread->openPort("/sync:o"))
             {

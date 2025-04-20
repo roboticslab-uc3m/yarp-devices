@@ -14,7 +14,7 @@ bool TechnosoftIposBase::getAxisNameRaw(int axis, std::string & name)
 {
     yCITrace(IPOS, id(), "%d", axis);
     CHECK_JOINT(axis);
-    name = axisName;
+    name = params.m_name;
     return true;
 }
 

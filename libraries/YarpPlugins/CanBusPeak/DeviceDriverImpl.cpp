@@ -10,45 +10,32 @@
 
 #include "LogComponent.hpp"
 
-constexpr auto DEFAULT_PORT = "/dev/pcan0";
-constexpr auto DEFAULT_BITRATE = 1000000;
-
-constexpr auto DEFAULT_RX_TIMEOUT_MS = 1;
-constexpr auto DEFAULT_TX_TIMEOUT_MS = 0; // '0' means no timeout
-
-constexpr auto DEFAULT_BLOCKING_MODE = true;
-constexpr auto DEFAULT_ALLOW_PERMISSIVE = false;
-
 using namespace roboticslab;
 
 // ------------------- DeviceDriver Related ------------------------------------
 
 bool CanBusPeak::open(yarp::os::Searchable& config)
 {
-    std::string devicePath = config.check("port", yarp::os::Value(DEFAULT_PORT), "CAN device path").asString();
+    if (!parseParams(config))
+    {
+        yCIError(PEAK, id()) << "Unable to parse parameters";
+        return false;
+    }
 
-    yarp::dev::DeviceDriver::setId(devicePath);
-
-    int bitrate = config.check("bitrate", yarp::os::Value(DEFAULT_BITRATE), "CAN bitrate (bps)").asInt32();
-
-    blockingMode = config.check("blockingMode", yarp::os::Value(DEFAULT_BLOCKING_MODE), "blocking mode enabled").asBool();
-    allowPermissive = config.check("allowPermissive", yarp::os::Value(DEFAULT_ALLOW_PERMISSIVE), "read/write permissive mode").asBool();
+    yarp::dev::DeviceDriver::setId(m_port);
 
     int flags = OFD_BITRATE | PCANFD_INIT_STD_MSG_ONLY;
 
-    if (blockingMode)
+    if (m_blockingMode)
     {
         yCIInfo(PEAK, id()) << "Blocking mode enabled";
 
-        rxTimeoutMs = config.check("rxTimeoutMs", yarp::os::Value(DEFAULT_RX_TIMEOUT_MS), "RX timeout (milliseconds)").asInt32();
-        txTimeoutMs = config.check("txTimeoutMs", yarp::os::Value(DEFAULT_TX_TIMEOUT_MS), "TX timeout (milliseconds)").asInt32();
-
-        if (rxTimeoutMs <= 0)
+        if (m_rxTimeoutMs <= 0)
         {
             yCIWarning(PEAK, id()) << "RX timeout value <= 0, CAN read calls will block until the buffer is ready";
         }
 
-        if (txTimeoutMs <= 0)
+        if (m_txTimeoutMs <= 0)
         {
             yCIWarning(PEAK, id()) << "TX timeout value <= 0, CAN write calls will block until the buffer is ready";
         }
@@ -59,9 +46,7 @@ bool CanBusPeak::open(yarp::os::Searchable& config)
         flags |= OFD_NONBLOCKING;
     }
 
-    yCIInfo(PEAK, id()) << "Permissive mode flag for read/write operations set to" << allowPermissive;
-
-    int res = pcanfd_open(devicePath.c_str(), flags, bitrate);
+    int res = pcanfd_open(m_port.c_str(), flags, m_bitrate);
 
     if (res < 0)
     {
@@ -74,7 +59,7 @@ bool CanBusPeak::open(yarp::os::Searchable& config)
         fileDescriptor = res;
     }
 
-    if (!config.check("preserveFilters", "don't clear acceptance filters on init"))
+    if (!m_preserveFilters)
     {
         res = pcanfd_del_filters(fileDescriptor);
 
@@ -94,38 +79,29 @@ bool CanBusPeak::open(yarp::os::Searchable& config)
     }
 
     //-- Load initial node IDs and set acceptance filters.
-    if (config.check("filteredIds", "filtered node IDs"))
+    if (!m_filteredIds.empty())
     {
-        const yarp::os::Bottle * ids = config.findGroup("filteredIds").get(1).asList();
+        yCIInfo(PEAK, id()) << "Parsing filtered ids";
 
-        if (ids->size() != 0)
+        for (const auto id : m_filteredIds)
         {
-            yCIInfo(PEAK, id()) << "Parsing bottle of ids";
-
-            for (int i = 0; i < ids->size(); i++)
-            {
-                activeFilters.insert(ids->get(i).asInt32());
-            }
-
-            std::uint64_t acc = computeAcceptanceCodeAndMask();
-
-            yCIDebug(PEAK, id(), "New acceptance code+mask: %016lxh", acc);
-
-            res = pcanfd_set_option(fileDescriptor, PCANFD_OPT_ACC_FILTER_11B, &acc, sizeof(acc));
-
-            if (res < 0)
-            {
-                yCIError(PEAK, id()) << "Unable to set acceptance filters:" << std::strerror(-res);
-                activeFilters.clear();
-                return false;
-            }
-
-            yCIInfo(PEAK, id()) << "Initial IDs added to set of acceptance filters";
+            activeFilters.insert(id);
         }
-        else
+
+        std::uint64_t acc = computeAcceptanceCodeAndMask();
+
+        yCIDebug(PEAK, id(), "New acceptance code+mask: %016lxh", acc);
+
+        res = pcanfd_set_option(fileDescriptor, PCANFD_OPT_ACC_FILTER_11B, &acc, sizeof(acc));
+
+        if (res < 0)
         {
-            yCIInfo(PEAK, id()) << "No bottle of ids provided";
+            yCIError(PEAK, id()) << "Unable to set acceptance filters:" << std::strerror(-res);
+            activeFilters.clear();
+            return false;
         }
+
+        yCIInfo(PEAK, id()) << "Initial IDs added to set of acceptance filters";
     }
 
     return true;

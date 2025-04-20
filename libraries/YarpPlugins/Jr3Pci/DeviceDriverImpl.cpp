@@ -21,8 +21,6 @@
         filters[3] = IOCTL3_JR3_FILTER ## id; \
     } while (0)
 
-using namespace roboticslab;
-
 namespace
 {
     bool checkFullScales(int n, const force_array & actual, const force_array & reference)
@@ -46,67 +44,29 @@ namespace
     }
 }
 
-constexpr auto DEFAULT_FILTER_ID = 0;
-
 // -----------------------------------------------------------------------------
 
 bool Jr3Pci::open(yarp::os::Searchable& config)
 {
-    yarp::os::Value * vNames;
-
-    if (config.check("names", vNames, "sensor names"))
+    if (!parseParams(config))
     {
-        if (!vNames->isList())
-        {
-            yCError(JR3P) << "Parameter --names must be a list";
-            return false;
-        }
-
-        const auto b = vNames->asList();
-
-        if (b->size() > 4)
-        {
-            yCError(JR3P) << "Too many sensors:" << b->size();
-            return false;
-        }
-
-        for (auto i = 0; i < b->size(); ++i)
-        {
-            if (!b->get(i).isString())
-            {
-                yCError(JR3P) << "Sensor name must be a string";
-                return false;
-            }
-
-            names[i] = b->get(i).asString();
-        }
-
-        yCInfo(JR3P) << "Using sensor names:" << names;
-    }
-
-    int filterId = config.check("filter", yarp::os::Value(DEFAULT_FILTER_ID), "filter id (0-6)").asInt32();
-
-    if (filterId < 0 || filterId > 6)
-    {
-        yCError(JR3P) << "Illegal filter ID (<0 or >6):" << filterId;
+        yCError(JR3P) << "Failed to parse parameters";
         return false;
     }
 
-    loadFilters(filterId);
-
-    yCInfo(JR3P) << "Using filter ID:" << filterId;
-
-    // https://github.com/roboticslab-uc3m/jr3pci-linux/issues/10
-    isDextrorotary = config.check("dextrorotary", "assume dextrorotary XYZ coordinates");
-
-    if (isDextrorotary)
+    if (!m_names.empty() && m_names.size() != 4)
     {
-        yCInfo(JR3P) << "Assuming dextrorotary XYZ coordinates";
+        yCError(JR3P) << "Sensor list must have 4 elements, instead it has" << m_names.size();
+        return false;
     }
-    else
+
+    if (m_filter < 0 || m_filter > 6)
     {
-        yCInfo(JR3P) << "Assuming levorotary XYZ coordinates";
+        yCError(JR3P) << "Filter value must be between 0 and 6, instead it is" << m_filter;
+        return false;
     }
+
+    loadFilters(m_filter);
 
     if ((fd = ::open("/dev/jr3", O_RDWR)) < 0)
     {
@@ -114,7 +74,7 @@ bool Jr3Pci::open(yarp::os::Searchable& config)
         return false;
     }
 
-    //-- Force fullscales.
+    //-- Force fullscales (hardcoded for TEO sensors).
     //-- Was `fs_w.m[X] = 5.5`, see https://github.com/roboticslab-uc3m/yarp-devices/issues/184
 
     force_array fs_w, fs_a0, fs_a1;
