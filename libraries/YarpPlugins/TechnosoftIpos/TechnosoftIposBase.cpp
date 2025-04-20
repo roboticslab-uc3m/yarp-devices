@@ -70,13 +70,13 @@ void TechnosoftIposBase::interpretMsr(std::uint16_t msr)
     reportBitToggle(report, INFO, 5, "AUTORUN mode enabled.");
 
     if (!reportBitToggle(report, INFO, 6, "Limit switch positive event / interrupt triggered.")
-        && limitSwitchState != INACTIVE && (limitSwitchState == POSITIVE ^ params.m_reverse))
+        && limitSwitchState != INACTIVE && ((limitSwitchState == POSITIVE) ^ params.m_reverse))
     {
         limitSwitchState = INACTIVE; // only handle reset, triggering happens in the EMCY handler
     }
 
     if (!reportBitToggle(report, INFO, 7, "Limit switch negative event / interrupt triggered.")
-        && limitSwitchState != INACTIVE && (limitSwitchState == NEGATIVE ^ params.m_reverse))
+        && limitSwitchState != INACTIVE && ((limitSwitchState == NEGATIVE) ^ params.m_reverse))
     {
         limitSwitchState = INACTIVE; // only handle reset, triggering happens in the EMCY handler
     }
@@ -408,7 +408,7 @@ void TechnosoftIposBase::handleEmcy(EmcyConsumer::code_t code, std::uint8_t reg,
     }
     case 0xFF06: // positive position limit software triggered
     case 0xFF07: // negative position limit software triggered
-        limitSwitchState = (emcyCode == 0xFF06 ^ params.m_reverse) ? POSITIVE : NEGATIVE;
+        limitSwitchState = ((emcyCode == 0xFF06) ^ params.m_reverse) ? POSITIVE : NEGATIVE;
         onPositionLimitTriggered();
         // no break
     default:

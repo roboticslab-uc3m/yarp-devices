@@ -29,7 +29,7 @@ bool TechnosoftIposBase::setRefTorqueRaw(int j, double t)
 
     const auto state = limitSwitchState.load();
 
-    if (state == INACTIVE || state == POSITIVE && t <= 0.0 || state == NEGATIVE && t >= 0.0)
+    if (state == INACTIVE || (state == POSITIVE && t <= 0.0) || (state == NEGATIVE && t >= 0.0))
     {
         commandBuffer.accept(t);
         return true;

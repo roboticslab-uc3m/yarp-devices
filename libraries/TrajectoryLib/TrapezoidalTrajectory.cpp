@@ -156,7 +156,7 @@ void TrapezoidalTrajectory::configure(const double timestamp, const double initi
 
     std::lock_guard lock(mutex);
 
-    if (std::abs(deltaTotal) >= std::abs(deltaTriMax) ^ isOvershooting || firstAccelerationRamp == secondAccelerationRamp)
+    if ((std::abs(deltaTotal) >= std::abs(deltaTriMax)) ^ isOvershooting || firstAccelerationRamp == secondAccelerationRamp)
     {
         // trapezoidal profile: a double-ramp (i.e. triangular) trajectory is not enough to reach the target position,
         // therefore we need to apply a constant speed interval in the middle

@@ -74,16 +74,16 @@ struct DummySixAxisForceTorqueSensors : public yarp::dev::ISixAxisForceTorqueSen
     std::size_t getNrOfSixAxisForceTorqueSensors() const override
     { return 1; }
 
-    yarp::dev::MAS_status getSixAxisForceTorqueSensorStatus(std::size_t sens_index) const
+    yarp::dev::MAS_status getSixAxisForceTorqueSensorStatus(std::size_t sens_index) const override
     { return yarp::dev::MAS_OK; }
 
-    bool getSixAxisForceTorqueSensorName(std::size_t sens_index, std::string & name) const
+    bool getSixAxisForceTorqueSensorName(std::size_t sens_index, std::string & name) const override
     { name = "dummy"; return true; }
 
-    bool getSixAxisForceTorqueSensorFrameName(std::size_t sens_index, std::string & frameName) const
+    bool getSixAxisForceTorqueSensorFrameName(std::size_t sens_index, std::string & frameName) const override
     { frameName = "dummy"; return true; }
 
-    bool getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const
+    bool getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override
     { out[sens_index] = sens_index; timestamp = sens_index; return true; }
 };
 
