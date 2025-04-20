@@ -1,6 +1,3 @@
-# Copyright: (C) 2019 Universidad Carlos III de Madrid
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
 yarp_prepare_plugin(BottleExtract
                     CATEGORY portmonitor
                     TYPE roboticslab::BottleExtract

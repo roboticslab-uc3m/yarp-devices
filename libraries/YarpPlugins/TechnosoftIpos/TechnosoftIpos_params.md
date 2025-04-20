@@ -31,21 +31,21 @@
 |         |        enableIp        |  bool  |                  |     false     |    no    |          enable IP mode           |       only embedded PID       |
 |         |       enableCsv        |  bool  |                  |     false     |    no    |          enable CSV mode          |     embedded/external PID     |
 |         | initialInteractionMode | string |                  |     unkn      |    no    |  initial interaction mode vocab   | stif, comp; only external PID |
-|         |       stiffness        | double |       N\*m       |      0.0      |    no    |        impedance stiffness        |       only extenal PID        |
-|         |        damping         | double |     N\*m\*s      |      0.0      |    no    |         impedance damping         |       only extenal PID        |
-|         |    impedanceOffset     | double |     N\*m\*s      |      0.0      |    no    |         impedance offset          |       only extenal PID        |
-|         |      minStiffness      | double |       N\*m       |      0.0      |    no    |    minimum impedance stiffness    |       only extenal PID        |
-|         |      maxStiffness      | double |       N\*m       |      0.0      |    no    |    maximum impedance stiffness    |       only extenal PID        |
-|         |       minDamping       | double |     N\*m\*s      |      0.0      |    no    |     minimum impedance damping     |       only extenal PID        |
-|         |       maxDamping       | double |     N\*m\*s      |      0.0      |    no    |     maximum impedance damping     |       only extenal PID        |
-|         |           kp           | double |                  |      0.0      |    no    |          position PID Kp          |       only extenal PID        |
-|         |           ki           | double |                  |      0.0      |    no    |          position PID Ki          |       only extenal PID        |
-|         |           kd           | double |                  |      0.0      |    no    |          position PID Kd          |       only extenal PID        |
-|         |         maxInt         | double |                  |      0.0      |    no    | position PID saturation threshold |       only extenal PID        |
-|         |       maxOutput        | double |                  |      0.0      |    no    |   position PID maximum output     |       only extenal PID        |
-|         |         offset         | double |                  |      0.0      |    no    |        position PID offset        |       only extenal PID        |
-|         |         scale          | double |                  |      1.0      |    no    |        position PID scale         |       only extenal PID        |
-|         |       stictionUp       | double |                  |      0.0      |    no    |     position PID stiction up      |       only extenal PID        |
-|         |      stictionDown      | double |                  |      0.0      |    no    |    position PID stiction down     |       only extenal PID        |
-|         |          kff           | double |                  |      0.0      |    no    |     position PID feed-forward     |       only extenal PID        |
-|         |       errorLimit       | double |       deg        |      0.0      |    no    |     position PID error limit      |       only extenal PID        |
+|         |       stiffness        | double |       N\*m       |      0.0      |    no    |        impedance stiffness        |       only external PID       |
+|         |        damping         | double |     N\*m\*s      |      0.0      |    no    |         impedance damping         |       only external PID       |
+|         |    impedanceOffset     | double |     N\*m\*s      |      0.0      |    no    |         impedance offset          |       only external PID       |
+|         |      minStiffness      | double |       N\*m       |      0.0      |    no    |    minimum impedance stiffness    |       only external PID       |
+|         |      maxStiffness      | double |       N\*m       |      0.0      |    no    |    maximum impedance stiffness    |       only external PID       |
+|         |       minDamping       | double |     N\*m\*s      |      0.0      |    no    |     minimum impedance damping     |       only external PID       |
+|         |       maxDamping       | double |     N\*m\*s      |      0.0      |    no    |     maximum impedance damping     |       only external PID       |
+|         |           kp           | double |                  |      0.0      |    no    |          position PID Kp          |       only external PID       |
+|         |           ki           | double |                  |      0.0      |    no    |          position PID Ki          |       only external PID       |
+|         |           kd           | double |                  |      0.0      |    no    |          position PID Kd          |       only external PID       |
+|         |         maxInt         | double |                  |      0.0      |    no    | position PID saturation threshold |       only external PID       |
+|         |       maxOutput        | double |                  |      0.0      |    no    |   position PID maximum output     |       only external PID       |
+|         |         offset         | double |                  |      0.0      |    no    |        position PID offset        |       only external PID       |
+|         |         scale          | double |                  |      1.0      |    no    |        position PID scale         |       only external PID       |
+|         |       stictionUp       | double |                  |      0.0      |    no    |     position PID stiction up      |       only external PID       |
+|         |      stictionDown      | double |                  |      0.0      |    no    |    position PID stiction down     |       only external PID       |
+|         |          kff           | double |                  |      0.0      |    no    |     position PID feed-forward     |       only external PID       |
+|         |       errorLimit       | double |       deg        |      0.0      |    no    |     position PID error limit      |       only external PID       |

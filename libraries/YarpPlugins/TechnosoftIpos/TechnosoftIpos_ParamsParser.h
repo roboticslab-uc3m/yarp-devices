@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Apr 20 14:33:40 2025
+// Generated on: Sun Apr 20 16:50:20 2025
 
 
 #ifndef TECHNOSOFTIPOS_PARAMSPARSER_H
@@ -56,24 +56,24 @@
 * | -          | enableIp               | bool   | -                | false         | 0        | enable IP mode                    | only embedded PID             |
 * | -          | enableCsv              | bool   | -                | false         | 0        | enable CSV mode                   | embedded/external PID         |
 * | -          | initialInteractionMode | string | -                | unkn          | 0        | initial interaction mode vocab    | stif, comp; only external PID |
-* | -          | stiffness              | double | N\*m             | 0.0           | 0        | impedance stiffness               | only extenal PID              |
-* | -          | damping                | double | N\*m\*s          | 0.0           | 0        | impedance damping                 | only extenal PID              |
-* | -          | impedanceOffset        | double | N\*m\*s          | 0.0           | 0        | impedance offset                  | only extenal PID              |
-* | -          | minStiffness           | double | N\*m             | 0.0           | 0        | minimum impedance stiffness       | only extenal PID              |
-* | -          | maxStiffness           | double | N\*m             | 0.0           | 0        | maximum impedance stiffness       | only extenal PID              |
-* | -          | minDamping             | double | N\*m\*s          | 0.0           | 0        | minimum impedance damping         | only extenal PID              |
-* | -          | maxDamping             | double | N\*m\*s          | 0.0           | 0        | maximum impedance damping         | only extenal PID              |
-* | -          | kp                     | double | -                | 0.0           | 0        | position PID Kp                   | only extenal PID              |
-* | -          | ki                     | double | -                | 0.0           | 0        | position PID Ki                   | only extenal PID              |
-* | -          | kd                     | double | -                | 0.0           | 0        | position PID Kd                   | only extenal PID              |
-* | -          | maxInt                 | double | -                | 0.0           | 0        | position PID saturation threshold | only extenal PID              |
-* | -          | maxOutput              | double | -                | 0.0           | 0        | position PID maximum output       | only extenal PID              |
-* | -          | offset                 | double | -                | 0.0           | 0        | position PID offset               | only extenal PID              |
-* | -          | scale                  | double | -                | 1.0           | 0        | position PID scale                | only extenal PID              |
-* | -          | stictionUp             | double | -                | 0.0           | 0        | position PID stiction up          | only extenal PID              |
-* | -          | stictionDown           | double | -                | 0.0           | 0        | position PID stiction down        | only extenal PID              |
-* | -          | kff                    | double | -                | 0.0           | 0        | position PID feed-forward         | only extenal PID              |
-* | -          | errorLimit             | double | deg              | 0.0           | 0        | position PID error limit          | only extenal PID              |
+* | -          | stiffness              | double | N\*m             | 0.0           | 0        | impedance stiffness               | only external PID             |
+* | -          | damping                | double | N\*m\*s          | 0.0           | 0        | impedance damping                 | only external PID             |
+* | -          | impedanceOffset        | double | N\*m\*s          | 0.0           | 0        | impedance offset                  | only external PID             |
+* | -          | minStiffness           | double | N\*m             | 0.0           | 0        | minimum impedance stiffness       | only external PID             |
+* | -          | maxStiffness           | double | N\*m             | 0.0           | 0        | maximum impedance stiffness       | only external PID             |
+* | -          | minDamping             | double | N\*m\*s          | 0.0           | 0        | minimum impedance damping         | only external PID             |
+* | -          | maxDamping             | double | N\*m\*s          | 0.0           | 0        | maximum impedance damping         | only external PID             |
+* | -          | kp                     | double | -                | 0.0           | 0        | position PID Kp                   | only external PID             |
+* | -          | ki                     | double | -                | 0.0           | 0        | position PID Ki                   | only external PID             |
+* | -          | kd                     | double | -                | 0.0           | 0        | position PID Kd                   | only external PID             |
+* | -          | maxInt                 | double | -                | 0.0           | 0        | position PID saturation threshold | only external PID             |
+* | -          | maxOutput              | double | -                | 0.0           | 0        | position PID maximum output       | only external PID             |
+* | -          | offset                 | double | -                | 0.0           | 0        | position PID offset               | only external PID             |
+* | -          | scale                  | double | -                | 1.0           | 0        | position PID scale                | only external PID             |
+* | -          | stictionUp             | double | -                | 0.0           | 0        | position PID stiction up          | only external PID             |
+* | -          | stictionDown           | double | -                | 0.0           | 0        | position PID stiction down        | only external PID             |
+* | -          | kff                    | double | -                | 0.0           | 0        | position PID feed-forward         | only external PID             |
+* | -          | errorLimit             | double | deg              | 0.0           | 0        | position PID error limit          | only external PID             |
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
