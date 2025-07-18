@@ -28,7 +28,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake
 
 # Hard dependencies.
 find_package(YCM 0.11 REQUIRED)
-find_package(YARP 3.10 REQUIRED COMPONENTS os dev sig)
+find_package(YARP 3.11 REQUIRED COMPONENTS os dev sig)
 
 # Soft dependencies.
 find_package(ARAVIS 0.4 QUIET)
