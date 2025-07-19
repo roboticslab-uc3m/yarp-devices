@@ -24,8 +24,10 @@
 @verbatim
 yarpdev --device LeapMotionSensor --period 5 --name /leapmotion
 @endverbatim
+ *
+ * @deprecated See https://github.com/roboticslab-uc3m/yarp-devices/issues/265.
  */
-class LeapMotionSensor : public yarp::dev::DeviceDriver,
+class LeapMotionSensor : public yarp::dev::DeprecatedDeviceDriver,
                          public yarp::dev::IAnalogSensor
 {
 public:
