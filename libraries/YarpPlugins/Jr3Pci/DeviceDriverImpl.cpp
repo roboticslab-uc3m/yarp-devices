@@ -123,7 +123,7 @@ bool Jr3Pci::open(yarp::os::Searchable& config)
         // payload is attached (e.g. a gripper). To keep things more deterministic,
         // this device will additionally set-to-zero during start by default.
         // https://github.com/roboticslab-uc3m/jr3pci-linux/issues/11
-        calibrateSensor() == yarp::dev::IAnalogSensor::AS_OK;
+        calibrateSensor();
 }
 
 // -----------------------------------------------------------------------------

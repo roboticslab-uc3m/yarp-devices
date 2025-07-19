@@ -4,7 +4,6 @@
 #define __JR3_PCI_HPP__
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/IAnalogSensor.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
 #include <jr3pci-ioctl.h>
@@ -22,7 +21,6 @@
  * @brief Implementation for the JR3 sensor (PCi board).
  */
 class Jr3Pci : public yarp::dev::DeviceDriver,
-               public yarp::dev::IAnalogSensor,
                public yarp::dev::ISixAxisForceTorqueSensors,
                public Jr3Pci_ParamsParser
 {
@@ -30,15 +28,6 @@ public:
     //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
-
-    //  --------- IAnalogSensor Declarations. Implementation in IAnalogSensorImpl.cpp ---------
-    int read(yarp::sig::Vector &out) override;
-    int getState(int ch) override;
-    int getChannels() override;
-    int calibrateSensor() override;
-    int calibrateSensor(const yarp::sig::Vector& value) override;
-    int calibrateChannel(int ch) override;
-    int calibrateChannel(int ch, double value) override;
 
     //  --------- ISixAxisForceTorqueSensors Declarations. Implementation in ISixAxisForceTorqueSensorsImpl.cpp ---------
     std::size_t getNrOfSixAxisForceTorqueSensors() const override;
@@ -49,6 +38,8 @@ public:
 
 private:
     void loadFilters(int id);
+    bool calibrateSensor();
+    bool calibrateChannel(int ch);
 
     int fd {0};
     force_array fs[4];
