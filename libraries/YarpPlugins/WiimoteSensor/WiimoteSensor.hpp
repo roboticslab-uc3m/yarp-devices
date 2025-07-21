@@ -3,15 +3,16 @@
 #ifndef __WIIMOTE_SENSOR_HPP__
 #define __WIIMOTE_SENSOR_HPP__
 
-#include <mutex>
-
 #include <poll.h>
-#include <xwiimote.h>
+
+#include <mutex>
 
 #include <yarp/os/Thread.h>
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/IAnalogSensor.h>
+#include <yarp/dev/IJoypadController.h>
+
+#include <xwiimote.h>
 
 #include "WiimoteSensor_ParamsParser.h"
 
@@ -78,29 +79,33 @@ private:
  * @brief Implementation for the Wiimote controller.
  */
 class WiimoteSensor : public yarp::dev::DeviceDriver,
-                      public yarp::dev::IAnalogSensor,
+                      public yarp::dev::IJoypadController,
                       public WiimoteSensor_ParamsParser
 {
 public:
-    //  --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
+    // --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
-    //  --------- IAnalogSensor Declarations. Implementation in IAnalogSensorImpl.cpp ---------
-    int read(yarp::sig::Vector &out) override;
-    int getState(int ch) override;
-    int getChannels() override;
-    int calibrateSensor() override;
-    int calibrateSensor(const yarp::sig::Vector& value) override;
-    int calibrateChannel(int ch) override;
-    int calibrateChannel(int ch, double value) override;
+    // --------- IJoypadController Declarations. Implementation in IJoypadControllerImpl.cpp ---------
+    bool getAxisCount(unsigned int & axis_count) override;
+    bool getButtonCount(unsigned int & button_count) override;
+    bool getTrackballCount(unsigned int & trackball_count) override;
+    bool getHatCount(unsigned int & hat_count) override;
+    bool getTouchSurfaceCount(unsigned int & touch_count) override;
+    bool getStickCount(unsigned int & stick_count) override;
+    bool getStickDoF(unsigned int stick_id, unsigned int & DoF) override;
+    bool getButton(unsigned int button_id, float & value) override;
+    bool getTrackball(unsigned int trackball_id, yarp::sig::Vector & value) override;
+    bool getHat(unsigned int hat_id, unsigned char & value) override;
+    bool getAxis(unsigned int axis_id, double & value) override;
+    bool getStick(unsigned int stick_id, yarp::sig::Vector & value, yarp::dev::IJoypadController::JoypadCtrl_coordinateMode coordinate_mode) override;
+    bool getTouch(unsigned int touch_id, yarp::sig::Vector & value) override;
 
 private:
     static char * getDevicePath(int id);
 
     struct xwii_iface * iface {nullptr};
-
-    bool yawActive {false};
 
     WiimoteDispatcherThread dispatcherThread;
 };

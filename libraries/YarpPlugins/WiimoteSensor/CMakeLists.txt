@@ -8,7 +8,7 @@ yarp_prepare_plugin(WiimoteSensor
                     INCLUDE WiimoteSensor.hpp
                     DEFAULT ON
                     DEPENDS "UNIX;XWiimote_FOUND"
-                    EXTRA_CONFIG WRAPPER=analogServer
+                    EXTRA_CONFIG WRAPPER=JoypadControlServer
                     GENERATE_PARSER)
 
 if(NOT SKIP_WiimoteSensor)
@@ -18,7 +18,7 @@ if(NOT SKIP_WiimoteSensor)
     target_sources(WiimoteSensor PRIVATE WiimoteSensor.hpp
                                          WiimoteSensor.cpp
                                          DeviceDriverImpl.cpp
-                                         IAnalogSensorImpl.cpp
+                                         IJoypadControllerImpl.cpp
                                          WiimoteDispatcherThread.cpp
                                          WiimoteSensor_ParamsParser.h
                                          WiimoteSensor_ParamsParser.cpp
@@ -30,7 +30,7 @@ if(NOT SKIP_WiimoteSensor)
                                         XWiimote::XWiimote)
 
     if(XWiimote_VERSION VERSION_LESS "2")
-        target_compile_definitions(WiimoteSensor PRIVATE XWIIMOTE_LEGACY_INTERFACE)
+        target_compile_definitions(WiimoteSensor PRIVATE _XWIIMOTE_LEGACY_INTERFACE)
     endif()
 
     yarp_install(TARGETS WiimoteSensor

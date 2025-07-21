@@ -26,7 +26,7 @@ bool WiimoteSensor::open(yarp::os::Searchable& config)
         return false;
     }
 
-    int ret = xwii_iface_new(&iface, syspath);
+    int ret = ::xwii_iface_new(&iface, syspath);
 
     if (ret < 0)
     {
@@ -38,7 +38,7 @@ bool WiimoteSensor::open(yarp::os::Searchable& config)
     yCInfo(WII) << "Created xwii_iface" << syspath;
     std::free(syspath);
 
-    ret = xwii_iface_open(iface, XWII_IFACE_CORE | XWII_IFACE_ACCEL);
+    ret = ::xwii_iface_open(iface, XWII_IFACE_CORE | XWII_IFACE_ACCEL);
 
     if (ret < 0)
     {
@@ -58,7 +58,7 @@ bool WiimoteSensor::close()
 
     if (iface)
     {
-        xwii_iface_unref(iface);
+        ::xwii_iface_unref(iface);
         iface = nullptr;
     }
 
