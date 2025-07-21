@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Apr 20 14:33:40 2025
+// Generated on: Sun Jul 20 01:39:59 2025
 
 
 #ifndef SPACENAVIGATOR_PARAMSPARSER_H
@@ -26,12 +26,12 @@
 * | Group name | Parameter name      | Type   | Units | Default Value | Required | Description                       | Notes              |
 * |:----------:|:-------------------:|:------:|:-----:|:-------------:|:--------:|:---------------------------------:|:------------------:|
 * | -          | deadband            | double | -     | 0.125         | 0        | deadband                          | contained in [0,1] |
-* | -          | fullScaleX          | double | -     | 460.0         | 0        | full scale on axis X              | -                  |
-* | -          | fullScaleY          | double | -     | 430.0         | 0        | full scale on axis Y              | -                  |
-* | -          | fullScaleZ          | double | -     | 440.0         | 0        | full scale on axis Z              | -                  |
-* | -          | fullScaleRoll       | double | -     | 415.0         | 0        | full scale on roll                | -                  |
-* | -          | fullScalePitch      | double | -     | 405.0         | 0        | full scale on pitch               | -                  |
-* | -          | fullScaleYaw        | double | -     | 435.0         | 0        | full scale on yaw                 | -                  |
+* | -          | fullScaleX          | double | -     | 460.0         | 0        | full scale on translation axis X  | -                  |
+* | -          | fullScaleY          | double | -     | 430.0         | 0        | full scale on translation axis Y  | -                  |
+* | -          | fullScaleZ          | double | -     | 440.0         | 0        | full scale on translation axis Z  | -                  |
+* | -          | fullScaleRX         | double | -     | 415.0         | 0        | full scale on rotation axis X     | -                  |
+* | -          | fullScaleRY         | double | -     | 405.0         | 0        | full scale on rotation axis Y     | -                  |
+* | -          | fullScaleRZ         | double | -     | 435.0         | 0        | full scale on rotation axis Z     | -                  |
 * | -          | maxNoDataIterations | int    | -     | 10            | 0        | reset after this many poll events | -                  |
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
@@ -66,18 +66,18 @@ public:
     const std::string m_fullScaleX_defaultValue = {"460.0"};
     const std::string m_fullScaleY_defaultValue = {"430.0"};
     const std::string m_fullScaleZ_defaultValue = {"440.0"};
-    const std::string m_fullScaleRoll_defaultValue = {"415.0"};
-    const std::string m_fullScalePitch_defaultValue = {"405.0"};
-    const std::string m_fullScaleYaw_defaultValue = {"435.0"};
+    const std::string m_fullScaleRX_defaultValue = {"415.0"};
+    const std::string m_fullScaleRY_defaultValue = {"405.0"};
+    const std::string m_fullScaleRZ_defaultValue = {"435.0"};
     const std::string m_maxNoDataIterations_defaultValue = {"10"};
 
     double m_deadband = {0.125};
     double m_fullScaleX = {460.0};
     double m_fullScaleY = {430.0};
     double m_fullScaleZ = {440.0};
-    double m_fullScaleRoll = {415.0};
-    double m_fullScalePitch = {405.0};
-    double m_fullScaleYaw = {435.0};
+    double m_fullScaleRX = {415.0};
+    double m_fullScaleRY = {405.0};
+    double m_fullScaleRZ = {435.0};
     int m_maxNoDataIterations = {10};
 
     bool          parseParams(const yarp::os::Searchable & config) override;

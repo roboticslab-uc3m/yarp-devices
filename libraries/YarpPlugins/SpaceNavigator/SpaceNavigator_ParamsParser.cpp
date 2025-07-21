@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Apr 20 14:33:40 2025
+// Generated on: Sun Jul 20 01:39:59 2025
 
 
 #include "SpaceNavigator_ParamsParser.h"
@@ -32,9 +32,9 @@ std::vector<std::string> SpaceNavigator_ParamsParser::getListOfParams() const
     params.push_back("fullScaleX");
     params.push_back("fullScaleY");
     params.push_back("fullScaleZ");
-    params.push_back("fullScaleRoll");
-    params.push_back("fullScalePitch");
-    params.push_back("fullScaleYaw");
+    params.push_back("fullScaleRX");
+    params.push_back("fullScaleRY");
+    params.push_back("fullScaleRZ");
     params.push_back("maxNoDataIterations");
     return params;
 }
@@ -106,46 +106,46 @@ bool      SpaceNavigator_ParamsParser::parseParams(const yarp::os::Searchable & 
         prop_check.unput("fullScaleZ");
     }
 
-    //Parser of parameter fullScaleRoll
+    //Parser of parameter fullScaleRX
     {
-        if (config.check("fullScaleRoll"))
+        if (config.check("fullScaleRX"))
         {
-            m_fullScaleRoll = config.find("fullScaleRoll").asFloat64();
-            yCInfo(SpaceNavigatorParamsCOMPONENT) << "Parameter 'fullScaleRoll' using value:" << m_fullScaleRoll;
+            m_fullScaleRX = config.find("fullScaleRX").asFloat64();
+            yCInfo(SpaceNavigatorParamsCOMPONENT) << "Parameter 'fullScaleRX' using value:" << m_fullScaleRX;
         }
         else
         {
-            yCInfo(SpaceNavigatorParamsCOMPONENT) << "Parameter 'fullScaleRoll' using DEFAULT value:" << m_fullScaleRoll;
+            yCInfo(SpaceNavigatorParamsCOMPONENT) << "Parameter 'fullScaleRX' using DEFAULT value:" << m_fullScaleRX;
         }
-        prop_check.unput("fullScaleRoll");
+        prop_check.unput("fullScaleRX");
     }
 
-    //Parser of parameter fullScalePitch
+    //Parser of parameter fullScaleRY
     {
-        if (config.check("fullScalePitch"))
+        if (config.check("fullScaleRY"))
         {
-            m_fullScalePitch = config.find("fullScalePitch").asFloat64();
-            yCInfo(SpaceNavigatorParamsCOMPONENT) << "Parameter 'fullScalePitch' using value:" << m_fullScalePitch;
+            m_fullScaleRY = config.find("fullScaleRY").asFloat64();
+            yCInfo(SpaceNavigatorParamsCOMPONENT) << "Parameter 'fullScaleRY' using value:" << m_fullScaleRY;
         }
         else
         {
-            yCInfo(SpaceNavigatorParamsCOMPONENT) << "Parameter 'fullScalePitch' using DEFAULT value:" << m_fullScalePitch;
+            yCInfo(SpaceNavigatorParamsCOMPONENT) << "Parameter 'fullScaleRY' using DEFAULT value:" << m_fullScaleRY;
         }
-        prop_check.unput("fullScalePitch");
+        prop_check.unput("fullScaleRY");
     }
 
-    //Parser of parameter fullScaleYaw
+    //Parser of parameter fullScaleRZ
     {
-        if (config.check("fullScaleYaw"))
+        if (config.check("fullScaleRZ"))
         {
-            m_fullScaleYaw = config.find("fullScaleYaw").asFloat64();
-            yCInfo(SpaceNavigatorParamsCOMPONENT) << "Parameter 'fullScaleYaw' using value:" << m_fullScaleYaw;
+            m_fullScaleRZ = config.find("fullScaleRZ").asFloat64();
+            yCInfo(SpaceNavigatorParamsCOMPONENT) << "Parameter 'fullScaleRZ' using value:" << m_fullScaleRZ;
         }
         else
         {
-            yCInfo(SpaceNavigatorParamsCOMPONENT) << "Parameter 'fullScaleYaw' using DEFAULT value:" << m_fullScaleYaw;
+            yCInfo(SpaceNavigatorParamsCOMPONENT) << "Parameter 'fullScaleRZ' using DEFAULT value:" << m_fullScaleRZ;
         }
-        prop_check.unput("fullScaleYaw");
+        prop_check.unput("fullScaleRZ");
     }
 
     //Parser of parameter maxNoDataIterations
@@ -199,16 +199,16 @@ std::string      SpaceNavigator_ParamsParser::getDocumentationOfDeviceParams() c
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
     doc = doc + std::string("'deadband': deadband\n");
-    doc = doc + std::string("'fullScaleX': full scale on axis X\n");
-    doc = doc + std::string("'fullScaleY': full scale on axis Y\n");
-    doc = doc + std::string("'fullScaleZ': full scale on axis Z\n");
-    doc = doc + std::string("'fullScaleRoll': full scale on roll\n");
-    doc = doc + std::string("'fullScalePitch': full scale on pitch\n");
-    doc = doc + std::string("'fullScaleYaw': full scale on yaw\n");
+    doc = doc + std::string("'fullScaleX': full scale on translation axis X\n");
+    doc = doc + std::string("'fullScaleY': full scale on translation axis Y\n");
+    doc = doc + std::string("'fullScaleZ': full scale on translation axis Z\n");
+    doc = doc + std::string("'fullScaleRX': full scale on rotation axis X\n");
+    doc = doc + std::string("'fullScaleRY': full scale on rotation axis Y\n");
+    doc = doc + std::string("'fullScaleRZ': full scale on rotation axis Z\n");
     doc = doc + std::string("'maxNoDataIterations': reset after this many poll events\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device SpaceNavigator --deadband 0.125 --fullScaleX 460.0 --fullScaleY 430.0 --fullScaleZ 440.0 --fullScaleRoll 415.0 --fullScalePitch 405.0 --fullScaleYaw 435.0 --maxNoDataIterations 10\n";
+    doc = doc + " yarpdev --device SpaceNavigator --deadband 0.125 --fullScaleX 460.0 --fullScaleY 430.0 --fullScaleZ 440.0 --fullScaleRX 415.0 --fullScaleRY 405.0 --fullScaleRZ 435.0 --maxNoDataIterations 10\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device SpaceNavigator\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

@@ -159,9 +159,9 @@ bool SpaceNavigator::getStick(unsigned int stick_id, yarp::sig::Vector & value, 
         normalize(dx / m_fullScaleX, deadband),
         normalize(dy / m_fullScaleY, deadband),
         normalize(dz / m_fullScaleZ, deadband),
-        normalize(drx / m_fullScaleRoll, deadband),
-        normalize(dry / m_fullScalePitch, deadband),
-        normalize(drz / m_fullScaleYaw, deadband)
+        normalize(drx / m_fullScaleRX, deadband),
+        normalize(dry / m_fullScaleRY, deadband),
+        normalize(drz / m_fullScaleRZ, deadband)
     };
 
     return true;
