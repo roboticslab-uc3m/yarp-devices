@@ -28,6 +28,7 @@ bool SpaceNavigator::open(yarp::os::Searchable & config)
         return false;
     }
 
+#ifdef _SPNAV_NEW_INTERFACE
     if (char buf[256]; ::spnav_dev_name(buf, sizeof(buf)) != -1)
     {
         yCInfo(SPNAV) << "Device:" << std::string(buf);
@@ -59,6 +60,7 @@ bool SpaceNavigator::open(yarp::os::Searchable & config)
         yCError(SPNAV) << "Failed to set event mask";
         return false;
     }
+#endif
 
     return yarp::os::Thread::start();
 }

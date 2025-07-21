@@ -26,9 +26,11 @@ if(NOT SKIP_SpaceNavigator)
 
     target_link_libraries(SpaceNavigator YARP::YARP_os
                                          YARP::YARP_dev
-                                         ${SPNAV_LIBRARIES})
+                                         Spnav::Spnav)
 
-    target_include_directories(SpaceNavigator PRIVATE ${SPNAV_INCLUDE_DIRS})
+    if(Spnav_VERSION VERSION_GREATER_EQUAL 1.0)
+        target_compile_definitions(SpaceNavigator PRIVATE _SPNAV_NEW_INTERFACE)
+    endif()
 
     yarp_install(TARGETS SpaceNavigator
                  LIBRARY DESTINATION ${ROBOTICSLAB-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
