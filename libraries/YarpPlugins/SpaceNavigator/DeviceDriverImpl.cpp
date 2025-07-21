@@ -2,13 +2,9 @@
 
 #include "SpaceNavigator.hpp"
 
-#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
-namespace
-{
-    YARP_LOG_COMPONENT(SPNAV, "rl.SpaceNavigator")
-}
+#include "LogComponent.hpp"
 
 // -----------------------------------------------------------------------------
 
@@ -26,20 +22,20 @@ bool SpaceNavigator::open(yarp::os::Searchable & config)
         return false;
     }
 
-    if (spnav_open() == -1)
+    if (::spnav_open() == -1)
     {
         yCError(SPNAV) << "Failed to connect to the space navigator daemon";
         return false;
     }
 
-    return true;
+    return yarp::os::Thread::start();
 }
 
 // -----------------------------------------------------------------------------
 
 bool SpaceNavigator::close()
 {
-    return spnav_close() != -1;
+    return yarp::os::Thread::stop() & ::spnav_close() != -1;
 }
 
 // -----------------------------------------------------------------------------

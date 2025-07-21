@@ -8,7 +8,7 @@ yarp_prepare_plugin(SpaceNavigator
                     INCLUDE SpaceNavigator.hpp
                     DEFAULT ON
                     DEPENDS "UNIX;Spnav_FOUND"
-                    EXTRA_CONFIG WRAPPER=analogServer
+                    EXTRA_CONFIG WRAPPER=JoypadControlServer
                     GENERATE_PARSER)
 
 if(NOT SKIP_SpaceNavigator)
@@ -17,9 +17,12 @@ if(NOT SKIP_SpaceNavigator)
 
     target_sources(SpaceNavigator PRIVATE SpaceNavigator.hpp
                                           DeviceDriverImpl.cpp
-                                          IAnalogSensorImpl.cpp
+                                          IJoypadControllerImpl.cpp
+                                          ThreadImpl.cpp
                                           SpaceNavigator_ParamsParser.h
-                                          SpaceNavigator_ParamsParser.cpp)
+                                          SpaceNavigator_ParamsParser.cpp
+                                          LogComponent.hpp
+                                          LogComponent.cpp)
 
     target_link_libraries(SpaceNavigator YARP::YARP_os
                                          YARP::YARP_dev
