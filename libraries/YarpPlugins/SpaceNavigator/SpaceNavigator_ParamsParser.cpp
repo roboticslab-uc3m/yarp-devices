@@ -208,7 +208,7 @@ std::string      SpaceNavigator_ParamsParser::getDocumentationOfDeviceParams() c
     doc = doc + std::string("'maxNoDataIterations': reset after this many poll events\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device SpaceNavigator --deadband 0.125 --fullScaleX 460.0 --fullScaleY 430.0 --fullScaleZ 440.0 --fullScaleRX 415.0 --fullScaleRY 405.0 --fullScaleRZ 435.0 --maxNoDataIterations 10\n";
+    doc = doc + " yarpdev --device SpaceNavigator --deadband 0.125 --fullScaleX 460.0 --fullScaleY 430.0 --fullScaleZ 440.0 --fullScaleRX 415.0 --fullScaleRY 405.0 --fullScaleRZ 435.0 --maxNoDataIterations 100\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device SpaceNavigator\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

@@ -32,7 +32,7 @@
 * | -          | fullScaleRX         | double | -     | 415.0         | 0        | full scale on rotation axis X     | -                  |
 * | -          | fullScaleRY         | double | -     | 405.0         | 0        | full scale on rotation axis Y     | -                  |
 * | -          | fullScaleRZ         | double | -     | 435.0         | 0        | full scale on rotation axis Z     | -                  |
-* | -          | maxNoDataIterations | int    | -     | 10            | 0        | reset after this many poll events | -                  |
+* | -          | maxNoDataIterations | int    | -     | 100           | 0        | reset after this many poll events | -                  |
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
@@ -69,7 +69,7 @@ public:
     const std::string m_fullScaleRX_defaultValue = {"415.0"};
     const std::string m_fullScaleRY_defaultValue = {"405.0"};
     const std::string m_fullScaleRZ_defaultValue = {"435.0"};
-    const std::string m_maxNoDataIterations_defaultValue = {"10"};
+    const std::string m_maxNoDataIterations_defaultValue = {"100"};
 
     double m_deadband = {0.125};
     double m_fullScaleX = {460.0};
@@ -78,7 +78,7 @@ public:
     double m_fullScaleRX = {415.0};
     double m_fullScaleRY = {405.0};
     double m_fullScaleRZ = {435.0};
-    int m_maxNoDataIterations = {10};
+    int m_maxNoDataIterations = {100};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
     std::string   getDeviceClassName() const override { return m_device_classname; }

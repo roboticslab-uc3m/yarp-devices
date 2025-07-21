@@ -7,4 +7,4 @@
 |       |     fullScaleRX     | double |       |     415.0     |    no    |   full scale on rotation axis X   |                    |
 |       |     fullScaleRY     | double |       |     405.0     |    no    |   full scale on rotation axis Y   |                    |
 |       |     fullScaleRZ     | double |       |     435.0     |    no    |   full scale on rotation axis Z   |                    |
-|       | maxNoDataIterations |  int   |       |      10       |    no    | reset after this many poll events |                    |
+|       | maxNoDataIterations |  int   |       |      100      |    no    | reset after this many poll events |                    |
