@@ -1,4 +1,4 @@
-# WiimoteSensor
+# Wiimote
 
 ## Requirements
 Depends on:

@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __WIIMOTE_SENSOR_HPP__
-#define __WIIMOTE_SENSOR_HPP__
+#ifndef __WIIMOTE_HPP__
+#define __WIIMOTE_HPP__
 
 #include <poll.h>
 
@@ -14,16 +14,16 @@
 
 #include <xwiimote.h>
 
-#include "WiimoteSensor_ParamsParser.h"
+#include "Wiimote_ParamsParser.h"
 
 /**
  * @ingroup YarpPlugins
- * @defgroup WiimoteSensor
- * @brief Contains WiimoteSensor.
+ * @defgroup Wiimote
+ * @brief Contains Wiimote.
  */
 
 /**
- * @ingroup WiimoteSensor
+ * @ingroup Wiimote
  * @brief Holds key state data from input events.
  */
 struct WiimoteEventData
@@ -40,7 +40,7 @@ struct WiimoteEventData
 };
 
 /**
- * @ingroup WiimoteSensor
+ * @ingroup Wiimote
  * @brief Thread that listens to Wiimote events.
  */
 class WiimoteDispatcherThread : public yarp::os::Thread
@@ -75,12 +75,12 @@ private:
 };
 
 /**
- * @ingroup WiimoteSensor
+ * @ingroup Wiimote
  * @brief Implementation for the Wiimote controller.
  */
-class WiimoteSensor : public yarp::dev::DeviceDriver,
-                      public yarp::dev::IJoypadController,
-                      public WiimoteSensor_ParamsParser
+class Wiimote : public yarp::dev::DeviceDriver,
+                public yarp::dev::IJoypadController,
+                public Wiimote_ParamsParser
 {
 public:
     // --------- DeviceDriver Declarations. Implementation in DeviceDriverImpl.cpp ---------
@@ -110,4 +110,4 @@ private:
     WiimoteDispatcherThread dispatcherThread;
 };
 
-#endif // __WIIMOTE_SENSOR_HPP__
+#endif // __WIIMOTE_HPP__

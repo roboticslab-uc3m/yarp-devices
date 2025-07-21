@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "WiimoteSensor.hpp"
+#include "Wiimote.hpp"
 
 #include <cstdlib>
 
@@ -11,7 +11,7 @@
 // -----------------------------------------------------------------------------
 
 // Adapted from xwiishow.c.
-char * WiimoteSensor::getDevicePath(int id)
+char * Wiimote::getDevicePath(int id)
 {
     struct xwii_monitor * monitor;
     char * ent;

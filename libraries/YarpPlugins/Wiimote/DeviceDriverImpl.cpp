@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "WiimoteSensor.hpp"
+#include "Wiimote.hpp"
 
 #include <cstdlib>
 
@@ -10,7 +10,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool WiimoteSensor::open(yarp::os::Searchable& config)
+bool Wiimote::open(yarp::os::Searchable& config)
 {
     if (!parseParams(config))
     {
@@ -52,7 +52,7 @@ bool WiimoteSensor::open(yarp::os::Searchable& config)
 
 // -----------------------------------------------------------------------------
 
-bool WiimoteSensor::close()
+bool Wiimote::close()
 {
     dispatcherThread.stop();
 

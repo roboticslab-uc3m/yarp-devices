@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "WiimoteSensor.hpp"
+#include "Wiimote.hpp"
 
 #include <yarp/os/LogStream.h>
 
@@ -8,7 +8,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool WiimoteSensor::getAxisCount(unsigned int & axis_count)
+bool Wiimote::getAxisCount(unsigned int & axis_count)
 {
     axis_count = 3;
     return true;
@@ -16,7 +16,7 @@ bool WiimoteSensor::getAxisCount(unsigned int & axis_count)
 
 // -----------------------------------------------------------------------------
 
-bool WiimoteSensor::getButtonCount(unsigned int & button_count)
+bool Wiimote::getButtonCount(unsigned int & button_count)
 {
     button_count = 4;
     return true;
@@ -24,7 +24,7 @@ bool WiimoteSensor::getButtonCount(unsigned int & button_count)
 
 // -----------------------------------------------------------------------------
 
-bool WiimoteSensor::getTrackballCount(unsigned int & trackball_count)
+bool Wiimote::getTrackballCount(unsigned int & trackball_count)
 {
     trackball_count = 0;
     return true;
@@ -32,7 +32,7 @@ bool WiimoteSensor::getTrackballCount(unsigned int & trackball_count)
 
 // -----------------------------------------------------------------------------
 
-bool WiimoteSensor::getHatCount(unsigned int & hat_count)
+bool Wiimote::getHatCount(unsigned int & hat_count)
 {
     hat_count = 0;
     return true;
@@ -40,7 +40,7 @@ bool WiimoteSensor::getHatCount(unsigned int & hat_count)
 
 // -----------------------------------------------------------------------------
 
-bool WiimoteSensor::getTouchSurfaceCount(unsigned int & touch_count)
+bool Wiimote::getTouchSurfaceCount(unsigned int & touch_count)
 {
     touch_count = 0;
     return true;
@@ -48,7 +48,7 @@ bool WiimoteSensor::getTouchSurfaceCount(unsigned int & touch_count)
 
 // -----------------------------------------------------------------------------
 
-bool WiimoteSensor::getStickCount(unsigned int & stick_count)
+bool Wiimote::getStickCount(unsigned int & stick_count)
 {
     stick_count = 0;
     return true;
@@ -56,7 +56,7 @@ bool WiimoteSensor::getStickCount(unsigned int & stick_count)
 
 // -----------------------------------------------------------------------------
 
-bool WiimoteSensor::getStickDoF(unsigned int stick_id, unsigned int & DoF)
+bool Wiimote::getStickDoF(unsigned int stick_id, unsigned int & DoF)
 {
     DoF = 0;
     return true;
@@ -64,7 +64,7 @@ bool WiimoteSensor::getStickDoF(unsigned int stick_id, unsigned int & DoF)
 
 // -----------------------------------------------------------------------------
 
-bool WiimoteSensor::getButton(unsigned int button_id, float & value)
+bool Wiimote::getButton(unsigned int button_id, float & value)
 {
     if (button_id >= 4)
     {
@@ -91,21 +91,21 @@ bool WiimoteSensor::getButton(unsigned int button_id, float & value)
 
 // -----------------------------------------------------------------------------
 
-bool WiimoteSensor::getTrackball(unsigned int trackball_id, yarp::sig::Vector & value)
+bool Wiimote::getTrackball(unsigned int trackball_id, yarp::sig::Vector & value)
 {
     return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool WiimoteSensor::getHat(unsigned int hat_id, unsigned char & value)
+bool Wiimote::getHat(unsigned int hat_id, unsigned char & value)
 {
     return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool WiimoteSensor::getAxis(unsigned int axis_id, double & value)
+bool Wiimote::getAxis(unsigned int axis_id, double & value)
 {
     if (axis_id >= 3)
     {
@@ -144,14 +144,14 @@ bool WiimoteSensor::getAxis(unsigned int axis_id, double & value)
 
 // -----------------------------------------------------------------------------
 
-bool WiimoteSensor::getStick(unsigned int stick_id, yarp::sig::Vector & value, yarp::dev::IJoypadController::JoypadCtrl_coordinateMode coordinate_mode)
+bool Wiimote::getStick(unsigned int stick_id, yarp::sig::Vector & value, yarp::dev::IJoypadController::JoypadCtrl_coordinateMode coordinate_mode)
 {
     return false;
 }
 
 // -----------------------------------------------------------------------------
 
-bool WiimoteSensor::getTouch(unsigned int touch_id, yarp::sig::Vector & value)
+bool Wiimote::getTouch(unsigned int touch_id, yarp::sig::Vector & value)
 {
     return false;
 }

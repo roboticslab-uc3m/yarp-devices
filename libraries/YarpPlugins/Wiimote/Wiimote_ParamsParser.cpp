@@ -8,24 +8,24 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Apr 20 14:33:40 2025
+// Generated on: Sun Jul 20 01:39:59 2025
 
 
-#include "WiimoteSensor_ParamsParser.h"
+#include "Wiimote_ParamsParser.h"
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Value.h>
 
 namespace {
-    YARP_LOG_COMPONENT(WiimoteSensorParamsCOMPONENT, "yarp.device.WiimoteSensor")
+    YARP_LOG_COMPONENT(WiimoteParamsCOMPONENT, "yarp.device.Wiimote")
 }
 
 
-WiimoteSensor_ParamsParser::WiimoteSensor_ParamsParser()
+Wiimote_ParamsParser::Wiimote_ParamsParser()
 {
 }
 
 
-std::vector<std::string> WiimoteSensor_ParamsParser::getListOfParams() const
+std::vector<std::string> Wiimote_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
     params.push_back("deviceId");
@@ -39,12 +39,12 @@ std::vector<std::string> WiimoteSensor_ParamsParser::getListOfParams() const
 }
 
 
-bool      WiimoteSensor_ParamsParser::parseParams(const yarp::os::Searchable & config)
+bool      Wiimote_ParamsParser::parseParams(const yarp::os::Searchable & config)
 {
     //Check for --help option
     if (config.check("help"))
     {
-        yCInfo(WiimoteSensorParamsCOMPONENT) << getDocumentationOfDeviceParams();
+        yCInfo(WiimoteParamsCOMPONENT) << getDocumentationOfDeviceParams();
     }
 
     std::string config_string = config.toString();
@@ -54,11 +54,11 @@ bool      WiimoteSensor_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (config.check("deviceId"))
         {
             m_deviceId = config.find("deviceId").asInt64();
-            yCInfo(WiimoteSensorParamsCOMPONENT) << "Parameter 'deviceId' using value:" << m_deviceId;
+            yCInfo(WiimoteParamsCOMPONENT) << "Parameter 'deviceId' using value:" << m_deviceId;
         }
         else
         {
-            yCInfo(WiimoteSensorParamsCOMPONENT) << "Parameter 'deviceId' using DEFAULT value:" << m_deviceId;
+            yCInfo(WiimoteParamsCOMPONENT) << "Parameter 'deviceId' using DEFAULT value:" << m_deviceId;
         }
         prop_check.unput("deviceId");
     }
@@ -68,11 +68,11 @@ bool      WiimoteSensor_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (config.check("calibZeroX"))
         {
             m_calibZeroX = config.find("calibZeroX").asInt64();
-            yCInfo(WiimoteSensorParamsCOMPONENT) << "Parameter 'calibZeroX' using value:" << m_calibZeroX;
+            yCInfo(WiimoteParamsCOMPONENT) << "Parameter 'calibZeroX' using value:" << m_calibZeroX;
         }
         else
         {
-            yCInfo(WiimoteSensorParamsCOMPONENT) << "Parameter 'calibZeroX' using DEFAULT value:" << m_calibZeroX;
+            yCInfo(WiimoteParamsCOMPONENT) << "Parameter 'calibZeroX' using DEFAULT value:" << m_calibZeroX;
         }
         prop_check.unput("calibZeroX");
     }
@@ -82,11 +82,11 @@ bool      WiimoteSensor_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (config.check("calibZeroY"))
         {
             m_calibZeroY = config.find("calibZeroY").asInt64();
-            yCInfo(WiimoteSensorParamsCOMPONENT) << "Parameter 'calibZeroY' using value:" << m_calibZeroY;
+            yCInfo(WiimoteParamsCOMPONENT) << "Parameter 'calibZeroY' using value:" << m_calibZeroY;
         }
         else
         {
-            yCInfo(WiimoteSensorParamsCOMPONENT) << "Parameter 'calibZeroY' using DEFAULT value:" << m_calibZeroY;
+            yCInfo(WiimoteParamsCOMPONENT) << "Parameter 'calibZeroY' using DEFAULT value:" << m_calibZeroY;
         }
         prop_check.unput("calibZeroY");
     }
@@ -96,11 +96,11 @@ bool      WiimoteSensor_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (config.check("calibZeroZ"))
         {
             m_calibZeroZ = config.find("calibZeroZ").asInt64();
-            yCInfo(WiimoteSensorParamsCOMPONENT) << "Parameter 'calibZeroZ' using value:" << m_calibZeroZ;
+            yCInfo(WiimoteParamsCOMPONENT) << "Parameter 'calibZeroZ' using value:" << m_calibZeroZ;
         }
         else
         {
-            yCInfo(WiimoteSensorParamsCOMPONENT) << "Parameter 'calibZeroZ' using DEFAULT value:" << m_calibZeroZ;
+            yCInfo(WiimoteParamsCOMPONENT) << "Parameter 'calibZeroZ' using DEFAULT value:" << m_calibZeroZ;
         }
         prop_check.unput("calibZeroZ");
     }
@@ -110,11 +110,11 @@ bool      WiimoteSensor_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (config.check("calibOneX"))
         {
             m_calibOneX = config.find("calibOneX").asInt64();
-            yCInfo(WiimoteSensorParamsCOMPONENT) << "Parameter 'calibOneX' using value:" << m_calibOneX;
+            yCInfo(WiimoteParamsCOMPONENT) << "Parameter 'calibOneX' using value:" << m_calibOneX;
         }
         else
         {
-            yCInfo(WiimoteSensorParamsCOMPONENT) << "Parameter 'calibOneX' using DEFAULT value:" << m_calibOneX;
+            yCInfo(WiimoteParamsCOMPONENT) << "Parameter 'calibOneX' using DEFAULT value:" << m_calibOneX;
         }
         prop_check.unput("calibOneX");
     }
@@ -124,11 +124,11 @@ bool      WiimoteSensor_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (config.check("calibOneY"))
         {
             m_calibOneY = config.find("calibOneY").asInt64();
-            yCInfo(WiimoteSensorParamsCOMPONENT) << "Parameter 'calibOneY' using value:" << m_calibOneY;
+            yCInfo(WiimoteParamsCOMPONENT) << "Parameter 'calibOneY' using value:" << m_calibOneY;
         }
         else
         {
-            yCInfo(WiimoteSensorParamsCOMPONENT) << "Parameter 'calibOneY' using DEFAULT value:" << m_calibOneY;
+            yCInfo(WiimoteParamsCOMPONENT) << "Parameter 'calibOneY' using DEFAULT value:" << m_calibOneY;
         }
         prop_check.unput("calibOneY");
     }
@@ -138,11 +138,11 @@ bool      WiimoteSensor_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (config.check("calibOneZ"))
         {
             m_calibOneZ = config.find("calibOneZ").asInt64();
-            yCInfo(WiimoteSensorParamsCOMPONENT) << "Parameter 'calibOneZ' using value:" << m_calibOneZ;
+            yCInfo(WiimoteParamsCOMPONENT) << "Parameter 'calibOneZ' using value:" << m_calibOneZ;
         }
         else
         {
-            yCInfo(WiimoteSensorParamsCOMPONENT) << "Parameter 'calibOneZ' using DEFAULT value:" << m_calibOneZ;
+            yCInfo(WiimoteParamsCOMPONENT) << "Parameter 'calibOneZ' using DEFAULT value:" << m_calibOneZ;
         }
         prop_check.unput("calibOneZ");
     }
@@ -157,12 +157,12 @@ bool      WiimoteSensor_ParamsParser::parseParams(const yarp::os::Searchable & c
         {
             if (m_parser_is_strict)
             {
-                yCError(WiimoteSensorParamsCOMPONENT) << "User asking for parameter: "<<it->name <<" which is unknown to this parser!";
+                yCError(WiimoteParamsCOMPONENT) << "User asking for parameter: "<<it->name <<" which is unknown to this parser!";
                 extra_params_found = true;
             }
             else
             {
-                yCWarning(WiimoteSensorParamsCOMPONENT) << "User asking for parameter: "<< it->name <<" which is unknown to this parser!";
+                yCWarning(WiimoteParamsCOMPONENT) << "User asking for parameter: "<< it->name <<" which is unknown to this parser!";
             }
         }
 
@@ -176,11 +176,11 @@ bool      WiimoteSensor_ParamsParser::parseParams(const yarp::os::Searchable & c
 }
 
 
-std::string      WiimoteSensor_ParamsParser::getDocumentationOfDeviceParams() const
+std::string      Wiimote_ParamsParser::getDocumentationOfDeviceParams() const
 {
     std::string doc;
     doc = doc + std::string("\n=============================================\n");
-    doc = doc + std::string("This is the help for device: WiimoteSensor\n");
+    doc = doc + std::string("This is the help for device: Wiimote\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
     doc = doc + std::string("'deviceId': Wiimote device number\n");
@@ -192,8 +192,8 @@ std::string      WiimoteSensor_ParamsParser::getDocumentationOfDeviceParams() co
     doc = doc + std::string("'calibOneZ': normalization value for Z axis (one)\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device WiimoteSensor --deviceId 1 --calibZeroX -30 --calibZeroY -22 --calibZeroZ 72 --calibOneX 69 --calibOneY -123 --calibOneZ -25\n";
+    doc = doc + " yarpdev --device Wiimote --deviceId 1 --calibZeroX -30 --calibZeroY -22 --calibZeroZ 72 --calibOneX 69 --calibOneY -123 --calibOneZ -25\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device WiimoteSensor\n";
+    doc = doc + " yarpdev --device Wiimote\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

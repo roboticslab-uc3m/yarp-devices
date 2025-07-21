@@ -27,7 +27,7 @@ add_subdirectory(PhidgetSpatial)
 add_subdirectory(SpaceNavigator)
 add_subdirectory(TechnosoftIpos)
 add_subdirectory(TextilesHand)
-add_subdirectory(WiimoteSensor)
+add_subdirectory(Wiimote)
 
 # Port monitor plugins.
 add_subdirectory(PortMonitorPlugins)
