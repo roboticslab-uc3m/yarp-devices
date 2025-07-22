@@ -3,15 +3,16 @@
 #ifndef __PHIDGET_SPATIAL_HPP__
 #define __PHIDGET_SPATIAL_HPP__
 
-#include <yarp/os/all.h>
-#include <yarp/dev/Drivers.h>
-#include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/IAnalogSensor.h>
+#include <mutex>
 
-#include <vector>
-#include <math.h>
+#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
 #include <phidget21.h>
+
+constexpr auto NUM_SENSORS = 1;
+
+#define CHECK_SENSOR(n) do { if ((n) < 0 || (n) > NUM_SENSORS - 1) return false; } while (0)
 
 /**
  * @ingroup YarpPlugins
@@ -24,22 +25,37 @@
   * @brief Implementation of a Phidgets device.
   */
 class PhidgetSpatial : public yarp::dev::DeviceDriver,
-                       public yarp::dev::IAnalogSensor
+                       public yarp::dev::IThreeAxisLinearAccelerometers,
+                       public yarp::dev::IThreeAxisGyroscopes,
+                       public yarp::dev::IThreeAxisMagnetometers
 {
 public:
     // -------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp --------
-    bool open(yarp::os::Searchable& config) override;
+    bool open(yarp::os::Searchable & config) override;
     bool close() override;
 
-    //  --------- IAnalogSensor Declarations. Implementation in IAnalogSensorImpl.cpp ---------
-    int read(yarp::sig::Vector &out) override;
-    int getState(int ch) override;
-    int getChannels() override;
-    int calibrateSensor() override;
-    int calibrateSensor(const yarp::sig::Vector& value) override;
-    int calibrateChannel(int ch) override;
-    int calibrateChannel(int ch, double value) override;
+    // --------- IThreeAxisLinearAccelerometers Declarations. Implementation in IThreeAxisLinearAccelerometersImpl.cpp ---------
+    size_t getNrOfThreeAxisLinearAccelerometers() const;
+    yarp::dev::MAS_status getThreeAxisLinearAccelerometerStatus(size_t sens_index) const;
+    bool getThreeAxisLinearAccelerometerName(size_t sens_index, std::string & name) const;
+    bool getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string & frameName) const;
+    bool getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector & out, double & timestamp) const;
 
+    // --------- IThreeAxisGyroscopes Declarations. Implementation in IThreeAxisGyroscopesImpl.cpp ---------
+    size_t getNrOfThreeAxisGyroscopes() const;
+    yarp::dev::MAS_status getThreeAxisGyroscopeStatus(size_t sens_index) const;
+    bool getThreeAxisGyroscopeName(size_t sens_index, std::string & name) const;
+    bool getThreeAxisGyroscopeFrameName(size_t sens_index, std::string & frameName) const;
+    bool getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector & out, double & timestamp) const;
+
+    // --------- IThreeAxisMagnetometers Declarations. Implementation in IThreeAxisMagnetometersImpl.cpp ---------
+    size_t getNrOfThreeAxisMagnetometers() const;
+    yarp::dev::MAS_status getThreeAxisMagnetometerStatus(size_t sens_index) const;
+    bool getThreeAxisMagnetometerName(size_t sens_index, std::string & name) const;
+    bool getThreeAxisMagnetometerFrameName(size_t sens_index, std::string & frameName) const;
+    bool getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector & out, double & timestamp) const;
+
+private:
     // -- Helper Funcion declarations. Implementation in PhidgetSpatial.cpp --
 
     ///////////////////////////////////////////////////////////////////////////
@@ -50,19 +66,21 @@ public:
     // Copyright 2008 Phidgets Inc.  All rights reserved.
     // This work is licensed under the Creative Commons Attribution 2.5 Canada License.
     // view a copy of this license, visit http://creativecommons.org/licenses/by/2.5/ca/
-    static int AttachHandler(CPhidgetHandle ENC, void *userptr);
-    static int DetachHandler(CPhidgetHandle ENC, void *userptr);
-    static int ErrorHandler(CPhidgetHandle ENC, void *userptr, int ErrorCode, const char *Description);
-    static int SpatialDataHandler(CPhidgetSpatialHandle spatial, void *userptr, CPhidgetSpatial_SpatialEventDataHandle *data, int count);
-    int display_properties(CPhidgetSpatialHandle phid);
+    static int AttachHandler(CPhidgetHandle ENC, void * userptr);
+    static int DetachHandler(CPhidgetHandle ENC, void * userptr);
+    static int ErrorHandler(CPhidgetHandle ENC, void * userptr, int ErrorCode, const char * Description);
+    static int SpatialDataHandler(CPhidgetSpatialHandle spatial, void * userptr, CPhidgetSpatial_SpatialEventDataHandle * data, int count);
+    static int display_properties(CPhidgetSpatialHandle phid);
     ///////////////////////////////////////////////////////////////////////////
 
-private:
     CPhidgetSpatialHandle hSpatial0;
-    yarp::os::Semaphore hSemaphore;
+    mutable std::mutex mtx;
+
     double acceleration[3];
     double angularRate[3];
     double magneticField[3];
+
+    double timestamp {0.0};
 };
 
 #endif // __PHIDGET_SPATIAL_HPP__

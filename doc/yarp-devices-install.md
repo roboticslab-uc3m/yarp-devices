@@ -15,7 +15,7 @@ For unit testing, you'll need the googletest source package. Refer to [Install g
 - [../libraries/YarpPlugins/Jr3Pci](../libraries/YarpPlugins/Jr3Pci#requirements)
 - [../libraries/YarpPlugins/LeapMotionSensor](../libraries/YarpPlugins/LeapMotionSensor#requirements)
 - [../libraries/YarpPlugins/SpaceNavigator](../libraries/YarpPlugins/SpaceNavigator#requirements)
-- [../libraries/YarpPlugins/WiimoteSensor](../libraries/YarpPlugins/WiimoteSensor#requirements)
+- [../libraries/YarpPlugins/Wiimote](../libraries/YarpPlugins/Wiimote#requirements)
 - [../programs/grabberControls2Gui](../programs/grabberControls2Gui#requirements)
 - The following components additionally need some kind of CAN Bus driver (e.g. a [CanBusHico](../libraries/YarpPlugins/CanBusHico) or [CanBusPeak](../libraries/YarpPlugins/CanBusPeak)):
     - [../libraries/YarpPlugins/CanBusBroker](../libraries/YarpPlugins/CanBusBroker)

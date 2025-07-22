@@ -2,13 +2,9 @@
 
 #include "SpaceNavigator.hpp"
 
-#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
-namespace
-{
-    YARP_LOG_COMPONENT(SPNAV, "rl.SpaceNavigator")
-}
+#include "LogComponent.hpp"
 
 // -----------------------------------------------------------------------------
 
@@ -26,20 +22,54 @@ bool SpaceNavigator::open(yarp::os::Searchable & config)
         return false;
     }
 
-    if (spnav_open() == -1)
+    if (::spnav_open() == -1)
     {
-        yCError(SPNAV) << "Failed to connect to the space navigator daemon";
+        yCError(SPNAV) << "Failed to connect to spacenavd";
         return false;
     }
 
-    return true;
+#ifdef _SPNAV_NEW_INTERFACE
+    if (char buf[256]; ::spnav_dev_name(buf, sizeof(buf)) != -1)
+    {
+        yCInfo(SPNAV) << "Device:" << std::string(buf);
+    }
+
+    if (char buf[256]; ::spnav_dev_path(buf, sizeof(buf)) != -1)
+    {
+        yCInfo(SPNAV) << "Path:" << std::string(buf);
+    }
+
+    auto buttons = ::spnav_dev_buttons();
+    yCInfo(SPNAV) << "Buttons:" << buttons;
+
+    auto axes = ::spnav_dev_axes();
+    yCInfo(SPNAV) << "Axes:" << axes;
+
+    if (unsigned int vendor, product; ::spnav_dev_usbid(&vendor, &product) != -1)
+    {
+        yCInfo(SPNAV, "USB ID: %04x:%04x", vendor, product);
+    }
+
+    if (int type; (type = ::spnav_dev_type()) != -1)
+    {
+        yCInfo(SPNAV, "Device type: 0x%03X", type);
+    }
+
+    if (::spnav_evmask(SPNAV_EVMASK_INPUT) == -1)
+    {
+        yCError(SPNAV) << "Failed to set event mask";
+        return false;
+    }
+#endif
+
+    return yarp::os::Thread::start();
 }
 
 // -----------------------------------------------------------------------------
 
 bool SpaceNavigator::close()
 {
-    return spnav_close() != -1;
+    return yarp::os::Thread::stop() & ::spnav_close() != -1;
 }
 
 // -----------------------------------------------------------------------------

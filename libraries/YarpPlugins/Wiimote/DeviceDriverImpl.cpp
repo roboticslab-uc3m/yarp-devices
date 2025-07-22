@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "WiimoteSensor.hpp"
+#include "Wiimote.hpp"
 
 #include <cstdlib>
 
@@ -10,7 +10,7 @@
 
 // -----------------------------------------------------------------------------
 
-bool WiimoteSensor::open(yarp::os::Searchable& config)
+bool Wiimote::open(yarp::os::Searchable& config)
 {
     if (!parseParams(config))
     {
@@ -26,7 +26,7 @@ bool WiimoteSensor::open(yarp::os::Searchable& config)
         return false;
     }
 
-    int ret = xwii_iface_new(&iface, syspath);
+    int ret = ::xwii_iface_new(&iface, syspath);
 
     if (ret < 0)
     {
@@ -38,7 +38,7 @@ bool WiimoteSensor::open(yarp::os::Searchable& config)
     yCInfo(WII) << "Created xwii_iface" << syspath;
     std::free(syspath);
 
-    ret = xwii_iface_open(iface, XWII_IFACE_CORE | XWII_IFACE_ACCEL);
+    ret = ::xwii_iface_open(iface, XWII_IFACE_CORE | XWII_IFACE_ACCEL);
 
     if (ret < 0)
     {
@@ -52,13 +52,13 @@ bool WiimoteSensor::open(yarp::os::Searchable& config)
 
 // -----------------------------------------------------------------------------
 
-bool WiimoteSensor::close()
+bool Wiimote::close()
 {
     dispatcherThread.stop();
 
     if (iface)
     {
-        xwii_iface_unref(iface);
+        ::xwii_iface_unref(iface);
         iface = nullptr;
     }
 

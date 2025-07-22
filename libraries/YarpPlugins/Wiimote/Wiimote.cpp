@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "WiimoteSensor.hpp"
+#include "Wiimote.hpp"
 
 #include <cstdlib>
 
@@ -10,22 +10,22 @@
 
 // -----------------------------------------------------------------------------
 
-// Copy-paste from xwiishow.c.
-char * WiimoteSensor::getDevicePath(int id)
+// Adapted from xwiishow.c.
+char * Wiimote::getDevicePath(int id)
 {
     struct xwii_monitor * monitor;
     char * ent;
     int i = 0;
 
-    monitor = xwii_monitor_new(false, false);
+    monitor = ::xwii_monitor_new(false, false);
 
-    if (monitor == NULL)
+    if (monitor == nullptr)
     {
         yCError(WII) << "Cannot create monitor";
-        return NULL;
+        return nullptr;
     }
 
-    while ((ent = xwii_monitor_poll(monitor)))
+    while ((ent = ::xwii_monitor_poll(monitor)))
     {
         if (++i == id)
         {
@@ -35,8 +35,7 @@ char * WiimoteSensor::getDevicePath(int id)
         std::free(ent);
     }
 
-    xwii_monitor_unref(monitor);
-
+    ::xwii_monitor_unref(monitor);
     return ent;
 }
 

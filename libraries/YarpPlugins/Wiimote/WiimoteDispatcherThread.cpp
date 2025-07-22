@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "WiimoteSensor.hpp"
+#include "Wiimote.hpp"
 
 #include <cerrno>
 #include <cstring>
@@ -18,7 +18,7 @@ void WiimoteDispatcherThread::beforeStart()
     fds[0].fd = 0;
     fds[0].events = POLLIN;
 
-    fds[1].fd = xwii_iface_get_fd(iface);
+    fds[1].fd = ::xwii_iface_get_fd(iface);
     fds[1].events = POLLIN;
 
     fds_num = 2;
@@ -30,20 +30,20 @@ void WiimoteDispatcherThread::run()
 {
     WiimoteEventData localEventData;
 
-    while (!isStopping())
+    while (!yarp::os::Thread::isStopping())
     {
-        if (poll(fds, fds_num, -1) < 0 && errno != EINTR)
+        if (::poll(fds, fds_num, -1) < 0 && errno != EINTR)
         {
             yCError(WII) << "Cannot poll fds:" << -errno;
             return;
         }
 
-#ifdef XWIIMOTE_LEGACY_INTERFACE
+#ifdef _XWIIMOTE_LEGACY_INTERFACE
         // xwii_iface_dispatch not available on Trusty
         // https://github.com/roboticslab-uc3m/yarp-devices/issues/134
-        int ret = xwii_iface_poll(iface, &event);
+        int ret = ::xwii_iface_poll(iface, &event);
 #else
-        int ret = xwii_iface_dispatch(iface, &event, sizeof(event));
+        int ret = ::xwii_iface_dispatch(iface, &event, sizeof(event));
 #endif
 
         if (ret != 0)

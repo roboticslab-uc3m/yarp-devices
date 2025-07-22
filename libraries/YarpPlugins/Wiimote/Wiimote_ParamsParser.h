@@ -8,11 +8,11 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Apr 20 14:33:40 2025
+// Generated on: Sun Jul 20 01:39:59 2025
 
 
-#ifndef WIIMOTESENSOR_PARAMSPARSER_H
-#define WIIMOTESENSOR_PARAMSPARSER_H
+#ifndef WIIMOTE_PARAMSPARSER_H
+#define WIIMOTE_PARAMSPARSER_H
 
 #include <yarp/os/Searchable.h>
 #include <yarp/dev/IDeviceDriverParams.h>
@@ -20,7 +20,7 @@
 #include <cmath>
 
 /**
-* This class is the parameters parser for class WiimoteSensor.
+* This class is the parameters parser for class Wiimote.
 *
 * These are the used parameters:
 * | Group name | Parameter name | Type | Units | Default Value | Required | Description                           | Notes |
@@ -35,24 +35,24 @@
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
-* yarpdev --device WiimoteSensor --deviceId 1 --calibZeroX -30 --calibZeroY -22 --calibZeroZ 72 --calibOneX 69 --calibOneY -123 --calibOneZ -25
+* yarpdev --device Wiimote --deviceId 1 --calibZeroX -30 --calibZeroY -22 --calibZeroZ 72 --calibOneX 69 --calibOneY -123 --calibOneZ -25
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device WiimoteSensor
+* yarpdev --device Wiimote
 * \endcode
 *
 */
 
-class WiimoteSensor_ParamsParser : public yarp::dev::IDeviceDriverParams
+class Wiimote_ParamsParser : public yarp::dev::IDeviceDriverParams
 {
 public:
-    WiimoteSensor_ParamsParser();
-    ~WiimoteSensor_ParamsParser() override = default;
+    Wiimote_ParamsParser();
+    ~Wiimote_ParamsParser() override = default;
 
 public:
-    const std::string m_device_classname = {"WiimoteSensor"};
-    const std::string m_device_name = {"WiimoteSensor"};
+    const std::string m_device_classname = {"Wiimote"};
+    const std::string m_device_name = {"Wiimote"};
     bool m_parser_is_strict = false;
     struct parser_version_type
     {

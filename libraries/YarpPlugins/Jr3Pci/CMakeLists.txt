@@ -11,7 +11,7 @@ yarp_prepare_plugin(Jr3Pci
                     INCLUDE Jr3Pci.hpp
                     DEFAULT ON
                     DEPENDS "UNIX;JR3PCI_INCLUDE_DIR"
-                    EXTRA_CONFIG WRAPPER=analogServer
+                    EXTRA_CONFIG WRAPPER=multipleanalogsensorsserver
                     GENERATE_PARSER)
 
 if(NOT SKIP_Jr3Pci)
@@ -19,8 +19,8 @@ if(NOT SKIP_Jr3Pci)
     yarp_add_plugin(Jr3Pci)
 
     target_sources(Jr3Pci PRIVATE Jr3Pci.hpp
+                                  Jr3Pci.cpp
                                   DeviceDriverImpl.cpp
-                                  IAnalogSensorImpl.cpp
                                   ISixAxisForceTorqueSensorsImpl.cpp
                                   Jr3Pci_ParamsParser.h
                                   Jr3Pci_ParamsParser.cpp

@@ -21,12 +21,13 @@ add_subdirectory(JointCalibrator)
 add_subdirectory(Jr3Mbed)
 add_subdirectory(Jr3Pci)
 add_subdirectory(LacqueyFetch)
-add_subdirectory(LeapMotionSensor)
+# deprecated, see https://github.com/roboticslab-uc3m/yarp-devices/issues/265
+# add_subdirectory(LeapMotionSensor)
 add_subdirectory(PhidgetSpatial)
 add_subdirectory(SpaceNavigator)
 add_subdirectory(TechnosoftIpos)
 add_subdirectory(TextilesHand)
-add_subdirectory(WiimoteSensor)
+add_subdirectory(Wiimote)
 
 # Port monitor plugins.
 add_subdirectory(PortMonitorPlugins)

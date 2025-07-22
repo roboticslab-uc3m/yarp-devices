@@ -8,7 +8,7 @@ yarp_prepare_plugin(PhidgetSpatial
                     INCLUDE PhidgetSpatial.hpp
                     DEFAULT ON
                     DEPENDS Phidgets_FOUND
-                    EXTRA_CONFIG WRAPPER=analogServer)
+                    EXTRA_CONFIG WRAPPER=multipleanalogsensorsserver)
 
 if(NOT SKIP_PhidgetSpatial)
 
@@ -17,7 +17,11 @@ if(NOT SKIP_PhidgetSpatial)
     target_sources(PhidgetSpatial PRIVATE PhidgetSpatial.hpp
                                           PhidgetSpatial.cpp
                                           DeviceDriverImpl.cpp
-                                          IAnalogSensorImpl.cpp)
+                                          IThreeAxisLinearAccelerometersImpl.cpp
+                                          IThreeAxisGyroscopesImpl.cpp
+                                          IThreeAxisMagnetometersImpl.cpp
+                                          LogComponent.hpp
+                                          LogComponent.cpp)
 
     target_link_libraries(PhidgetSpatial YARP::YARP_os
                                          YARP::YARP_dev
