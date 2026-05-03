@@ -139,7 +139,7 @@ jobs:
       run: sudo make -C .deps/jr3pci-linux install-header
 
     - name: Configure main project
-      run: cmake -S . -B build -DENABLE_examples=ON
+      run: cmake -S . -B build -DENABLE_examples=ON -DALLOW_DEVICE_PARAM_PARSER_GENERATION=ON
 
     - name: Compile main project
       run: cmake --build build
