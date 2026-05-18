@@ -2,7 +2,7 @@ if(Python_VERSION VERSION_LESS 3.5 AND (NOT DEFINED ENABLE_grabbercontrols2gui O
     message(WARNING "Python interpreter not found or unsupported version (only 3.5+), disabling grabbercontrols2gui program")
 endif()
 
-cmake_dependent_option(ENABLE_grabbercontrols2gui "Enable/disable grabbercontrols2gui program" ON
+cmake_dependent_option(ENABLE_grabbercontrols2gui "Enable/disable grabbercontrols2gui program" OFF
                        "Python_FOUND;NOT Python_VERSION VERSION_LESS 3.5" OFF)
 
 if(ENABLE_grabbercontrols2gui)
