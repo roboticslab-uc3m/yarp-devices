@@ -70,8 +70,8 @@ jobs:
         ref: ${{matrix.robotology.yarp}}
         path: .deps/yarp
 
-    - name: Download ARAVIS
-      run: wget -O- -q https://github.com/AravisProject/aravis/archive/refs/tags/$ARAVIS_VER.tar.gz | tar -C .deps -xzf -
+    # - name: Download ARAVIS
+    #   run: wget -O- -q https://github.com/AravisProject/aravis/archive/refs/tags/$ARAVIS_VER.tar.gz | tar -C .deps -xzf -
 
     - name: Download libphidget21
       run: wget -O- -q https://sourceforge.net/projects/roboticslab/files/External/phidget/libphidget_2.1.8.20151217.tar.gz | tar -C .deps -xzf -
@@ -115,11 +115,11 @@ jobs:
         cmake --build .deps/yarp/build
         sudo cmake --install .deps/yarp/build
 
-    - name: Build ARAVIS
-      working-directory: .deps/aravis-${{env.ARAVIS_VER}}
-      run: |
-        CC="ccache ${{matrix.system.compiler.cc}}" CXX="ccache ${{matrix.system.compiler.cxx}}" ./autogen.sh --enable-gtk-doc-html=no
-        make -j && sudo make install
+    # - name: Build ARAVIS
+    #   working-directory: .deps/aravis-${{env.ARAVIS_VER}}
+    #   run: |
+    #     CC="ccache ${{matrix.system.compiler.cc}}" CXX="ccache ${{matrix.system.compiler.cxx}}" ./autogen.sh --enable-gtk-doc-html=no
+    #     make -j && sudo make install
 
     - name: Build libphidget21
       working-directory: .deps/libphidget-2.1.8.20151217
