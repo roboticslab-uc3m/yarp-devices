@@ -4,11 +4,6 @@
 
 #include <functional> // std::invoke
 
-#include <yarp/os/Log.h>
-#include <yarp/os/Vocab.h>
-
-#include "LogComponent.hpp"
-
 using namespace roboticslab;
 
 namespace
@@ -49,7 +44,6 @@ namespace
 
 bool CanBusBroker::setPid(const yarp::dev::PidControlTypeEnum & pidtype, int j, const yarp::dev::Pid & pid)
 {
-    yCTrace(CBB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
     return mapSingleJoint<const yarp::dev::Pid &>(deviceMapper, &yarp::dev::IPidControlRaw::setPidRaw, pidtype, j, pid);
 }
@@ -58,7 +52,6 @@ bool CanBusBroker::setPid(const yarp::dev::PidControlTypeEnum & pidtype, int j, 
 
 bool CanBusBroker::setPids(const yarp::dev::PidControlTypeEnum & pidtype, const yarp::dev::Pid * pids)
 {
-    yCTrace(CBB, "%s", yarp::os::Vocab32::decode(pidtype).c_str());
     return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::setPidsRaw, pidtype, pids);
 }
 
@@ -66,7 +59,6 @@ bool CanBusBroker::setPids(const yarp::dev::PidControlTypeEnum & pidtype, const 
 
 bool CanBusBroker::setPidReference(const yarp::dev::PidControlTypeEnum & pidtype, int j, double ref)
 {
-    yCTrace(CBB, "%s %d %f", yarp::os::Vocab32::decode(pidtype).c_str(), j, ref);
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::setPidReferenceRaw, pidtype, j, ref);
 }
@@ -75,7 +67,6 @@ bool CanBusBroker::setPidReference(const yarp::dev::PidControlTypeEnum & pidtype
 
 bool CanBusBroker::setPidReferences(const yarp::dev::PidControlTypeEnum & pidtype, const double * refs)
 {
-    yCTrace(CBB, "%s", yarp::os::Vocab32::decode(pidtype).c_str());
     return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::setPidReferencesRaw, pidtype, refs);
 }
 
@@ -83,7 +74,6 @@ bool CanBusBroker::setPidReferences(const yarp::dev::PidControlTypeEnum & pidtyp
 
 bool CanBusBroker::setPidErrorLimit(const yarp::dev::PidControlTypeEnum & pidtype, int j, double limit)
 {
-    yCTrace(CBB, "%s %d %f", yarp::os::Vocab32::decode(pidtype).c_str(), j, limit);
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::setPidErrorLimitRaw, pidtype, j, limit);
 }
@@ -92,7 +82,6 @@ bool CanBusBroker::setPidErrorLimit(const yarp::dev::PidControlTypeEnum & pidtyp
 
 bool CanBusBroker::setPidErrorLimits(const yarp::dev::PidControlTypeEnum & pidtype, const double * limits)
 {
-    yCTrace(CBB, "%s", yarp::os::Vocab32::decode(pidtype).c_str());
     return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::setPidErrorLimitsRaw, pidtype, limits);
 }
 
@@ -100,7 +89,6 @@ bool CanBusBroker::setPidErrorLimits(const yarp::dev::PidControlTypeEnum & pidty
 
 bool CanBusBroker::getPidError(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * err)
 {
-    yCTrace(CBB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::getPidErrorRaw, pidtype, j, err);
 }
@@ -109,7 +97,6 @@ bool CanBusBroker::getPidError(const yarp::dev::PidControlTypeEnum & pidtype, in
 
 bool CanBusBroker::getPidErrors(const yarp::dev::PidControlTypeEnum & pidtype, double * errs)
 {
-    yCTrace(CBB, "%s", yarp::os::Vocab32::decode(pidtype).c_str());
     return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::getPidErrorsRaw, pidtype, errs);
 }
 
@@ -117,7 +104,6 @@ bool CanBusBroker::getPidErrors(const yarp::dev::PidControlTypeEnum & pidtype, d
 
 bool CanBusBroker::getPidOutput(const yarp::dev::PidControlTypeEnum & pidtype, int j, double *out)
 {
-    yCTrace(CBB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::getPidOutputRaw, pidtype, j, out);
 }
@@ -126,7 +112,6 @@ bool CanBusBroker::getPidOutput(const yarp::dev::PidControlTypeEnum & pidtype, i
 
 bool CanBusBroker::getPidOutputs(const yarp::dev::PidControlTypeEnum & pidtype, double * outs)
 {
-    yCTrace(CBB, "%s", yarp::os::Vocab32::decode(pidtype).c_str());
     return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::getPidOutputsRaw, pidtype, outs);
 }
 
@@ -134,7 +119,6 @@ bool CanBusBroker::getPidOutputs(const yarp::dev::PidControlTypeEnum & pidtype, 
 
 bool CanBusBroker::getPid(const yarp::dev::PidControlTypeEnum & pidtype, int j, yarp::dev::Pid * pid)
 {
-    yCTrace(CBB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::getPidRaw, pidtype, j, pid);
 }
@@ -143,7 +127,6 @@ bool CanBusBroker::getPid(const yarp::dev::PidControlTypeEnum & pidtype, int j, 
 
 bool CanBusBroker::getPids(const yarp::dev::PidControlTypeEnum & pidtype, yarp::dev::Pid * pids)
 {
-    yCTrace(CBB, "%s", yarp::os::Vocab32::decode(pidtype).c_str());
     return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::getPidsRaw, pidtype, pids);
 }
 
@@ -151,7 +134,6 @@ bool CanBusBroker::getPids(const yarp::dev::PidControlTypeEnum & pidtype, yarp::
 
 bool CanBusBroker::getPidReference(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * ref)
 {
-    yCTrace(CBB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::getPidReferenceRaw, pidtype, j, ref);
 }
@@ -160,7 +142,6 @@ bool CanBusBroker::getPidReference(const yarp::dev::PidControlTypeEnum & pidtype
 
 bool CanBusBroker::getPidReferences(const yarp::dev::PidControlTypeEnum & pidtype, double * refs)
 {
-    yCTrace(CBB, "%s", yarp::os::Vocab32::decode(pidtype).c_str());
     return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::getPidReferencesRaw, pidtype, refs);
 }
 
@@ -168,7 +149,6 @@ bool CanBusBroker::getPidReferences(const yarp::dev::PidControlTypeEnum & pidtyp
 
 bool CanBusBroker::getPidErrorLimit(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * limit)
 {
-    yCTrace(CBB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::getPidErrorLimitRaw, pidtype, j, limit);
 }
@@ -177,7 +157,6 @@ bool CanBusBroker::getPidErrorLimit(const yarp::dev::PidControlTypeEnum & pidtyp
 
 bool CanBusBroker::getPidErrorLimits(const yarp::dev::PidControlTypeEnum & pidtype, double * limits)
 {
-    yCTrace(CBB, "%s", yarp::os::Vocab32::decode(pidtype).c_str());
     return mapAllJoints(deviceMapper, &yarp::dev::IPidControlRaw::getPidErrorLimitsRaw, pidtype, limits);
 }
 
@@ -185,7 +164,6 @@ bool CanBusBroker::getPidErrorLimits(const yarp::dev::PidControlTypeEnum & pidty
 
 bool CanBusBroker::resetPid(const yarp::dev::PidControlTypeEnum & pidtype, int j)
 {
-    yCTrace(CBB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::resetPidRaw, pidtype, j);
 }
@@ -194,7 +172,6 @@ bool CanBusBroker::resetPid(const yarp::dev::PidControlTypeEnum & pidtype, int j
 
 bool CanBusBroker::disablePid(const yarp::dev::PidControlTypeEnum & pidtype, int j)
 {
-    yCTrace(CBB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::disablePidRaw, pidtype, j);
 }
@@ -203,7 +180,6 @@ bool CanBusBroker::disablePid(const yarp::dev::PidControlTypeEnum & pidtype, int
 
 bool CanBusBroker::enablePid(const yarp::dev::PidControlTypeEnum & pidtype, int j)
 {
-    yCTrace(CBB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::enablePidRaw, pidtype, j);
 }
@@ -212,7 +188,6 @@ bool CanBusBroker::enablePid(const yarp::dev::PidControlTypeEnum & pidtype, int 
 
 bool CanBusBroker::setPidOffset(const yarp::dev::PidControlTypeEnum & pidtype, int j, double v)
 {
-    yCTrace(CBB, "%s %d %f", yarp::os::Vocab32::decode(pidtype).c_str(), j, v);
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::setPidOffsetRaw, pidtype, j, v);
 }
@@ -221,7 +196,6 @@ bool CanBusBroker::setPidOffset(const yarp::dev::PidControlTypeEnum & pidtype, i
 
 bool CanBusBroker::isPidEnabled(const yarp::dev::PidControlTypeEnum & pidtype, int j, bool * enabled)
 {
-    yCTrace(CBB, "%s %d", yarp::os::Vocab32::decode(pidtype).c_str(), j);
     CHECK_JOINT(j);
     return mapSingleJoint(deviceMapper, &yarp::dev::IPidControlRaw::isPidEnabledRaw, pidtype, j, enabled);
 }

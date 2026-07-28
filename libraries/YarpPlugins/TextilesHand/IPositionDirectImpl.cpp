@@ -2,10 +2,6 @@
 
 #include "TextilesHand.hpp"
 
-#include <yarp/os/Log.h>
-
-#include "LogComponent.hpp"
-
 // ----------------------------------------------------------------------------------------
 
 bool TextilesHand::getAxes(int * ax)
@@ -18,8 +14,6 @@ bool TextilesHand::getAxes(int * ax)
 
 bool TextilesHand::setPosition(int j, double ref)
 {
-    yCTrace(TXT, "%d %f", j, ref);
-
     if (j != 0) return false;
 
     char cmdByte[1];
@@ -64,7 +58,6 @@ bool TextilesHand::setPositions(int n_joint, const int * joints, const double * 
 
 bool TextilesHand::getRefPosition(int joint, double * ref)
 {
-    yCTrace(TXT, "%d", joint);
     *ref = lastTarget;
     return true;
 }

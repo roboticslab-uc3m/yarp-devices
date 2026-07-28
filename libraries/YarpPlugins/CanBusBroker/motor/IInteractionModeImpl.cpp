@@ -2,11 +2,6 @@
 
 #include "CanBusBroker.hpp"
 
-#include <yarp/os/Log.h>
-#include <yarp/os/Vocab.h>
-
-#include "LogComponent.hpp"
-
 using namespace roboticslab;
 
 using raw_t = yarp::dev::IInteractionModeRaw;
@@ -17,7 +12,6 @@ using multi_joints_fn = bool (raw_t::*)(int, int *, enum_t *);
 
 bool CanBusBroker::getInteractionMode(int axis, yarp::dev::InteractionModeEnum * mode)
 {
-    yCTrace(CBB, "%d", axis);
     CHECK_JOINT(axis);
     return deviceMapper.mapSingleJoint(&yarp::dev::IInteractionModeRaw::getInteractionModeRaw, axis, mode);
 }
@@ -26,7 +20,6 @@ bool CanBusBroker::getInteractionMode(int axis, yarp::dev::InteractionModeEnum *
 
 bool CanBusBroker::getInteractionModes(yarp::dev::InteractionModeEnum * modes)
 {
-    yCTrace(CBB, "");
     return deviceMapper.mapAllJoints(&yarp::dev::IInteractionModeRaw::getInteractionModesRaw, modes);
 }
 
@@ -34,7 +27,6 @@ bool CanBusBroker::getInteractionModes(yarp::dev::InteractionModeEnum * modes)
 
 bool CanBusBroker::getInteractionModes(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes)
 {
-    yCTrace(CBB, "%d", n_joints);
 
     auto task = deviceMapper.createTask();
     const int * c_joints = const_cast<const int *>(joints); // workaround
@@ -56,7 +48,6 @@ bool CanBusBroker::getInteractionModes(int n_joints, int * joints, yarp::dev::In
 
 bool CanBusBroker::setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode)
 {
-    yCTrace(CBB, "%d %s", axis, yarp::os::Vocab32::decode(mode).c_str());
     CHECK_JOINT(axis);
     return deviceMapper.mapSingleJoint(&yarp::dev::IInteractionModeRaw::setInteractionModeRaw, axis, mode);
 }
@@ -65,7 +56,6 @@ bool CanBusBroker::setInteractionMode(int axis, yarp::dev::InteractionModeEnum m
 
 bool CanBusBroker::setInteractionModes(yarp::dev::InteractionModeEnum * modes)
 {
-    yCTrace(CBB, "");
     return deviceMapper.mapAllJoints(&yarp::dev::IInteractionModeRaw::setInteractionModesRaw, modes);
 }
 
@@ -73,7 +63,6 @@ bool CanBusBroker::setInteractionModes(yarp::dev::InteractionModeEnum * modes)
 
 bool CanBusBroker::setInteractionModes(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes)
 {
-    yCTrace(CBB, "%d", n_joints);
 
     auto task = deviceMapper.createTask();
     const int * c_joints = const_cast<const int *>(joints); // workaround

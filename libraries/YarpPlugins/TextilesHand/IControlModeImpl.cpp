@@ -2,7 +2,7 @@
 
 #include "TextilesHand.hpp"
 
-#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
 
@@ -10,7 +10,6 @@
 
 bool TextilesHand::getControlMode(int j, int * mode)
 {
-    yCTrace(TXT, "%d", j);
     if (j != 0) return false;
     *mode = VOCAB_CM_POSITION_DIRECT;
     return true;
@@ -34,7 +33,7 @@ bool TextilesHand::getControlModes(int n_joint, const int * joints, int * modes)
 
 bool TextilesHand::setControlMode(int j, int mode)
 {
-    yCWarning(TXT, "setControlMode() not supported");
+    yCWarning(TXT) << "setControlMode() not supported";
     return false;
 }
 
@@ -42,7 +41,7 @@ bool TextilesHand::setControlMode(int j, int mode)
 
 bool TextilesHand::setControlModes(int * modes)
 {
-    yCWarning(TXT, "setControlModes() not supported");
+    yCWarning(TXT) << "setControlModes() not supported";
     return false;
 }
 
@@ -50,7 +49,7 @@ bool TextilesHand::setControlModes(int * modes)
 
 bool TextilesHand::setControlModes(int n_joint, const int * joints, int * modes)
 {
-    yCWarning(TXT, "setControlModes() not supported");
+    yCWarning(TXT) << "setControlModes() not supported";
     return false;
 }
 
