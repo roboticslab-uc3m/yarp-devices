@@ -20,7 +20,7 @@ env:
 
 jobs:
   maybe_skip:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     outputs:
       should_skip: ${{steps.skip_check.outputs.should_skip}}
     steps:
@@ -39,11 +39,10 @@ jobs:
       fail-fast: false
       matrix:
         system:
-        - { os: ubuntu-22.04, compiler: { cc: gcc-11,   cxx: g++-11 } }
-        # https://github.com/roboticslab-uc3m/questions-and-answers/issues/101
-        - { os: ubuntu-22.04, compiler: { cc: clang-15, cxx: clang++-15 } }
         - { os: ubuntu-24.04, compiler: { cc: gcc-13,   cxx: g++-13 } }
         - { os: ubuntu-24.04, compiler: { cc: clang-18, cxx: clang++-18 } }
+        - { os: ubuntu-26.04, compiler: { cc: gcc-15,   cxx: g++-15 } }
+        - { os: ubuntu-26.04, compiler: { cc: clang-21, cxx: clang++-21 } }
         robotology:
         # CMake 3.22 instead of 3.19 because of the CMAKE_BUILD_TYPE env var
         - { yarp: yarp-3.11, cmake: 3.22.x }
@@ -56,16 +55,16 @@ jobs:
 
     steps:
     - name: Check out main project
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Check out YCM
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         repository: robotology/ycm
         path: .deps/ycm
 
     - name: Check out YARP
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         repository: robotology/yarp
         ref: ${{matrix.robotology.yarp}}
@@ -81,7 +80,7 @@ jobs:
       run: wget -O- -q https://www.peak-system.com/fileadmin/media/linux/files/peak-linux-driver-$PEAK_DRIVER_VER.tar.gz | tar -C .deps -xzf -
 
     - name: Check out jr3pci-linux
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         repository: roboticslab-uc3m/jr3pci-linux
         path: .deps/jr3pci-linux
