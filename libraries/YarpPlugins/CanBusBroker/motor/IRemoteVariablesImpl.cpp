@@ -72,8 +72,6 @@ namespace
 
 bool CanBusBroker::getRemoteVariable(std::string key, yarp::os::Bottle & val)
 {
-    yCTrace(CBB, "%s", key.c_str());
-
     bool queryAll = key == "all";
     val.clear();
 
@@ -134,8 +132,6 @@ bool CanBusBroker::getRemoteVariable(std::string key, yarp::os::Bottle & val)
 
 bool CanBusBroker::setRemoteVariable(std::string key, const yarp::os::Bottle & val)
 {
-    yCTrace(CBB, "%s: %s", key.c_str(), val.toString().c_str());
-
     if (key == "multi")
     {
         bool ok = true;
@@ -210,8 +206,6 @@ bool CanBusBroker::setRemoteVariable(std::string key, const yarp::os::Bottle & v
 
 bool CanBusBroker::getRemoteVariablesList(yarp::os::Bottle * listOfKeys)
 {
-    yCTrace(CBB, "");
-
     listOfKeys->clear();
 
     // Place each key in its own list so that clients can just call check('<key>') or !find('<key>').isNull().

@@ -11,8 +11,6 @@
 
 bool EmulatedControlBoard::getControlMode(int j, int *mode)
 {
-    yCTrace(ECB, "%d", j);
-
     if (controlMode == POSITION_MODE)
     {
         *mode = VOCAB_CM_POSITION;
@@ -66,8 +64,6 @@ bool EmulatedControlBoard::getControlModes(const int n_joint, const int *joints,
 
 bool EmulatedControlBoard::setControlMode(const int j, const int mode)
 {
-    yCTrace(ECB, "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
-
     if ((unsigned int)j > m_axes)
     {
         yCError(ECB, "Axis index greater than number of axes (%d > %d)", j, m_axes);
