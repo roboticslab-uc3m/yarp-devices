@@ -15,7 +15,6 @@ env:
   CMAKE_C_COMPILER_LAUNCHER: ccache
   CMAKE_CXX_COMPILER_LAUNCHER: ccache
   CMAKE_BUILD_TYPE: Debug
-  ARAVIS_VER: ARAVIS_0_6_4
   PEAK_DRIVER_VER: 8.11.0
 
 jobs:
@@ -70,12 +69,6 @@ jobs:
         ref: ${{matrix.robotology.yarp}}
         path: .deps/yarp
 
-    - name: Check out ARAVIS
-      uses: actions/checkout@v3
-      with:
-        repository: AravisProject/aravis
-        path: .deps/aravis
-
     - name: Download libphidget21
       run: wget -O- -q https://sourceforge.net/projects/roboticslab/files/External/phidget/libphidget_2.1.8.20151217.tar.gz | tar -C .deps -xzf -
 
@@ -117,14 +110,6 @@ jobs:
         cmake -S .deps/yarp -B .deps/yarp/build -DSKIP_ACE=ON -DYARP_DISABLE_VERSION_SOURCE=ON
         cmake --build .deps/yarp/build
         sudo cmake --install .deps/yarp/build
-
-    - name: Build ARAVIS
-      working-directory: .deps/aravis
-      run: |
-        sudo pip install meson ninja
-        meson setup build --auto-features=disabled -Dtests=false
-        meson compile -C build
-        sudo meson install -C build
 
     - name: Build libphidget21
       working-directory: .deps/libphidget-2.1.8.20151217
