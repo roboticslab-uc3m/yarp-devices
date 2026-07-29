@@ -82,7 +82,7 @@ jobs:
         path: .deps/jr3pci-linux
 
     - name: Install dependencies via apt
-      run: sudo apt-get update && sudo apt-get install -qq ccache intltool gtk-doc-tools libxml2-dev libglib2.0-dev libusb-1.0-0-dev libspnav-dev libxwiimote-dev libgtest-dev
+      run: sudo apt-get update && sudo apt-get install -qq ccache libusb-1.0-0-dev libspnav-dev libxwiimote-dev libgtest-dev
 
     - name: Set up CMake
       uses: jwlawson/actions-setup-cmake@v2
