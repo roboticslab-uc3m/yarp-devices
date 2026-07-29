@@ -13,7 +13,6 @@ using namespace roboticslab;
 
 bool TechnosoftIposExternal::getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum * mode)
 {
-    yCITrace(IPOS, id(), "%d", axis);
     CHECK_JOINT(axis);
     *mode = actualInteractionMode;
     return true;
@@ -23,7 +22,6 @@ bool TechnosoftIposExternal::getInteractionModeRaw(int axis, yarp::dev::Interact
 
 bool TechnosoftIposExternal::setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode)
 {
-    yCITrace(IPOS, id(), "%d %s", axis, yarp::os::Vocab32::decode(mode).c_str());
     CHECK_JOINT(axis);
 
     if (mode == actualInteractionMode)

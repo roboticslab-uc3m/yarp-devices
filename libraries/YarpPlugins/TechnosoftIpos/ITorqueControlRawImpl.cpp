@@ -2,17 +2,12 @@
 
 #include "TechnosoftIposBase.hpp"
 
-#include <yarp/os/Log.h>
-
-#include "LogComponent.hpp"
-
 using namespace roboticslab;
 
 // -------------------------------------------------------------------------------------
 
 bool TechnosoftIposBase::getRefTorqueRaw(int j, double * t)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_TORQUE);
     *t = commandBuffer.getStoredCommand();
@@ -23,7 +18,6 @@ bool TechnosoftIposBase::getRefTorqueRaw(int j, double * t)
 
 bool TechnosoftIposBase::setRefTorqueRaw(int j, double t)
 {
-    yCITrace(IPOS, id(), "%d %f", j, t);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_TORQUE);
 
@@ -44,7 +38,6 @@ bool TechnosoftIposBase::setRefTorqueRaw(int j, double t)
 
 bool TechnosoftIposBase::getTorqueRaw(int j, double * t)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
     std::int16_t temp = lastCurrentRead;
     double curr = internalUnitsToCurrent(temp);
@@ -56,7 +49,6 @@ bool TechnosoftIposBase::getTorqueRaw(int j, double * t)
 
 bool TechnosoftIposBase::getTorqueRangeRaw(int j, double * min, double * max)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
 
     return can->sdo()->upload<std::uint16_t>("Current limit", [this, min, max](auto data)
@@ -70,7 +62,6 @@ bool TechnosoftIposBase::getTorqueRangeRaw(int j, double * min, double * max)
 
 bool TechnosoftIposBase::getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParameters * params)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
 
     params->bemf = 0.0;
@@ -90,7 +81,6 @@ bool TechnosoftIposBase::getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorquePa
 
 bool TechnosoftIposBase::setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorqueParameters params)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
     k = params.ktau;
     return true;

@@ -6,10 +6,6 @@
 
 #include <algorithm> // std::clamp
 
-#include <yarp/os/Log.h>
-
-#include "LogComponent.hpp"
-
 using namespace roboticslab;
 
 //--------------------------------------------------------------------------------------
@@ -24,7 +20,6 @@ bool LacqueyFetch::getNumberOfMotorsRaw(int * number)
 
 bool LacqueyFetch::setRefDutyCycleRaw(int m, double ref)
 {
-    yCITrace(LCQ, id(), "%d %f", m, ref);
     CHECK_JOINT(m);
 
     ref = std::clamp(ref, -100.0, 100.0);

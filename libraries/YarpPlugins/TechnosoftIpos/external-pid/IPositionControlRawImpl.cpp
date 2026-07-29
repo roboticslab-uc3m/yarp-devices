@@ -16,7 +16,6 @@ using namespace roboticslab;
 
 bool TechnosoftIposExternal::positionMoveRaw(int j, double ref)
 {
-    yCITrace(IPOS, id(), "%d %f", j, ref);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
@@ -40,7 +39,6 @@ bool TechnosoftIposExternal::positionMoveRaw(int j, double ref)
 
 bool TechnosoftIposExternal::relativeMoveRaw(int j, double delta)
 {
-    yCITrace(IPOS, id(), "%d %f", j, delta);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
@@ -64,7 +62,6 @@ bool TechnosoftIposExternal::relativeMoveRaw(int j, double delta)
 
 bool TechnosoftIposExternal::checkMotionDoneRaw(int j, bool * flag)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
     *flag = !trajectory.isActive();
     return true;
@@ -74,7 +71,6 @@ bool TechnosoftIposExternal::checkMotionDoneRaw(int j, bool * flag)
 
 bool TechnosoftIposExternal::setRefSpeedRaw(int j, double sp)
 {
-    yCITrace(IPOS, id(), "%d %f", j, sp);
     CHECK_JOINT(j);
 
     if (sp < 0.0)
@@ -107,7 +103,6 @@ bool TechnosoftIposExternal::setRefSpeedRaw(int j, double sp)
 
 bool TechnosoftIposExternal::setRefAccelerationRaw(int j, double acc)
 {
-    yCITrace(IPOS, id(), "%d %f", j, acc);
     CHECK_JOINT(j);
 
     if (acc <= 0.0)
@@ -131,7 +126,6 @@ bool TechnosoftIposExternal::setRefAccelerationRaw(int j, double acc)
 
 bool TechnosoftIposExternal::getRefSpeedRaw(int j, double * ref)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
     *ref = refSpeed;
     return true;
@@ -141,7 +135,6 @@ bool TechnosoftIposExternal::getRefSpeedRaw(int j, double * ref)
 
 bool TechnosoftIposExternal::getRefAccelerationRaw(int j, double * acc)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
     *acc = refAcceleration;
     return true;
@@ -151,7 +144,6 @@ bool TechnosoftIposExternal::getRefAccelerationRaw(int j, double * acc)
 
 bool TechnosoftIposExternal::stopRaw(int j)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
 
     if (actualControlMode != VOCAB_CM_POSITION && actualControlMode != VOCAB_CM_VELOCITY)
@@ -177,7 +169,6 @@ bool TechnosoftIposExternal::stopRaw(int j)
 
 bool TechnosoftIposExternal::getTargetPositionRaw(int joint, double * ref)
 {
-    yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
     *ref = trajectory.getTargetPosition();
     return true;

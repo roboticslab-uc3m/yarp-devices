@@ -12,7 +12,6 @@ using namespace roboticslab;
 
 bool TechnosoftIposBase::setLimitsRaw(int axis, double min, double max)
 {
-    yCITrace(IPOS, id(), "%d %f %f", axis, min, max);
     CHECK_JOINT(axis);
 
     bool okMin = false;
@@ -59,7 +58,6 @@ bool TechnosoftIposBase::setLimitRaw(double limit, bool isMin)
 
 bool TechnosoftIposBase::getLimitsRaw(int axis, double * min, double * max)
 {
-    yCITrace(IPOS, id(), "%d", axis);
     CHECK_JOINT(axis);
 
     if (actualControlMode == VOCAB_CM_NOT_CONFIGURED)
@@ -99,7 +97,6 @@ bool TechnosoftIposBase::getLimitRaw(double * limit, bool isMin)
 
 bool TechnosoftIposBase::setVelLimitsRaw(int axis, double min, double max)
 {
-    yCITrace(IPOS, id(), "%d %f %f", axis, min, max);
     CHECK_JOINT(axis);
 
     maxVel = max;
@@ -116,7 +113,6 @@ bool TechnosoftIposBase::setVelLimitsRaw(int axis, double min, double max)
 
 bool TechnosoftIposBase::getVelLimitsRaw(int axis, double * min, double * max)
 {
-    yCITrace(IPOS, id(), "%d", axis);
     CHECK_JOINT(axis);
 
     *min = -maxVel;

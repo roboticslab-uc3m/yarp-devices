@@ -51,7 +51,6 @@ bool TechnosoftIposBase::setTemperatureLimitRaw(int m, double temp)
 
 bool TechnosoftIposBase::getGearboxRatioRaw(int m, double * val)
 {
-    yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
     *val = tr;
     return true;
@@ -61,7 +60,6 @@ bool TechnosoftIposBase::getGearboxRatioRaw(int m, double * val)
 
 bool TechnosoftIposBase::setGearboxRatioRaw(int m, double val)
 {
-    yCITrace(IPOS, id(), "%d %f", m, val);
     CHECK_JOINT(m);
     tr = val;
     return true;

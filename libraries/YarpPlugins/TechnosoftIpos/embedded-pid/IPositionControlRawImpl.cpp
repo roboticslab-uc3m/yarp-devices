@@ -15,7 +15,6 @@ using namespace roboticslab;
 
 bool TechnosoftIposEmbedded::positionMoveRaw(int j, double ref)
 {
-    yCITrace(IPOS, id(), "%d %f", j, ref);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
@@ -30,7 +29,6 @@ bool TechnosoftIposEmbedded::positionMoveRaw(int j, double ref)
 
 bool TechnosoftIposEmbedded::relativeMoveRaw(int j, double delta)
 {
-    yCITrace(IPOS, id(), "%d %f", j, delta);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION);
 
@@ -45,7 +43,6 @@ bool TechnosoftIposEmbedded::relativeMoveRaw(int j, double delta)
 
 bool TechnosoftIposEmbedded::checkMotionDoneRaw(int j, bool * flag)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
     *flag = can->driveStatus()->getCurrentState() != DriveState::OPERATION_ENABLED || can->driveStatus()->statusword()[10];
     return true;
@@ -55,7 +52,6 @@ bool TechnosoftIposEmbedded::checkMotionDoneRaw(int j, bool * flag)
 
 bool TechnosoftIposEmbedded::setRefSpeedRaw(int j, double sp)
 {
-    yCITrace(IPOS, id(), "%d %f", j, sp);
     CHECK_JOINT(j);
 
     if (sp < 0.0)
@@ -87,7 +83,6 @@ bool TechnosoftIposEmbedded::setRefSpeedRaw(int j, double sp)
 
 bool TechnosoftIposEmbedded::setRefAccelerationRaw(int j, double acc)
 {
-    yCITrace(IPOS, id(), "%d %f", j, acc);
     CHECK_JOINT(j);
 
     if (acc <= 0.0)
@@ -110,7 +105,6 @@ bool TechnosoftIposEmbedded::setRefAccelerationRaw(int j, double acc)
 
 bool TechnosoftIposEmbedded::getRefSpeedRaw(int j, double * ref)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
     *ref = refSpeed;
     return true;
@@ -120,7 +114,6 @@ bool TechnosoftIposEmbedded::getRefSpeedRaw(int j, double * ref)
 
 bool TechnosoftIposEmbedded::getRefAccelerationRaw(int j, double * acc)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
     *acc = refAcceleration;
     return true;
@@ -130,7 +123,6 @@ bool TechnosoftIposEmbedded::getRefAccelerationRaw(int j, double * acc)
 
 bool TechnosoftIposEmbedded::stopRaw(int j)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
 
     if (enableCsv && actualControlMode == VOCAB_CM_VELOCITY)
@@ -148,7 +140,6 @@ bool TechnosoftIposEmbedded::stopRaw(int j)
 
 bool TechnosoftIposEmbedded::getTargetPositionRaw(int joint, double * ref)
 {
-    yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
 
     // target position is stored in 0x607A; using local variable to avoid frequent SDO requests

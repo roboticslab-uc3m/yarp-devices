@@ -17,7 +17,6 @@ using namespace roboticslab;
 
 bool TechnosoftIposEmbedded::velocityMoveRaw(int j, double sp)
 {
-    yCITrace(IPOS, id(), "%d %f", j, sp);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_VELOCITY);
 
@@ -58,7 +57,6 @@ bool TechnosoftIposEmbedded::velocityMoveRaw(int j, double sp)
 
 bool TechnosoftIposEmbedded::getRefVelocityRaw(int joint, double * vel)
 {
-    yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_VELOCITY);
 

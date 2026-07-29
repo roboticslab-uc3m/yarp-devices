@@ -2,17 +2,12 @@
 
 #include "external-pid/TechnosoftIposExternal.hpp"
 
-#include <yarp/os/Log.h>
-
-#include "LogComponent.hpp"
-
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
 bool TechnosoftIposExternal::setPositionRaw(int j, double ref)
 {
-    yCITrace(IPOS, id(), "%d %f", j, ref);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
 
@@ -32,7 +27,6 @@ bool TechnosoftIposExternal::setPositionRaw(int j, double ref)
 
 bool TechnosoftIposExternal::getRefPositionRaw(int joint, double * ref)
 {
-    yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
     *ref = commandBuffer.getStoredCommand();

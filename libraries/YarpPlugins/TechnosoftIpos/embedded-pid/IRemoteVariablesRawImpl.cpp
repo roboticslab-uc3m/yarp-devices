@@ -12,8 +12,6 @@ using namespace roboticslab;
 
 bool TechnosoftIposEmbedded::getRemoteVariableRaw(std::string key, yarp::os::Bottle & val)
 {
-    yCITrace(IPOS, id(), "%s: %s", key.c_str(), val.toString().c_str());
-
     val.addString(key);
 
     if (key == "enableIp")
@@ -45,8 +43,6 @@ bool TechnosoftIposEmbedded::getRemoteVariableRaw(std::string key, yarp::os::Bot
 
 bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val)
 {
-    yCITrace(IPOS, id(), "%s", key.c_str());
-
     if (key == "enableIp")
     {
         auto requested = val.get(0).asBool();
@@ -150,8 +146,6 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
 
 bool TechnosoftIposEmbedded::getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys)
 {
-    yCITrace(IPOS, id());
-
     listOfKeys->clear();
 
     // the order is relevant, e.g. enableIp depends on the ip* variables

@@ -2,10 +2,6 @@
 
 #include "LacqueyFetch.hpp"
 
-#include <yarp/os/Log.h>
-
-#include "LogComponent.hpp"
-
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
@@ -19,7 +15,6 @@ bool LacqueyFetch::getAxes(int * ax)
 
 bool LacqueyFetch::getAxisNameRaw(int axis, std::string & name)
 {
-    yCITrace(LCQ, id(), "%d", axis);
     CHECK_JOINT(axis);
     name = m_name;
     return true;
@@ -29,7 +24,6 @@ bool LacqueyFetch::getAxisNameRaw(int axis, std::string & name)
 
 bool LacqueyFetch::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type)
 {
-    yCITrace(LCQ, id(), "%d", axis);
     CHECK_JOINT(axis);
     type = yarp::dev::VOCAB_JOINTTYPE_REVOLUTE;
     return true;

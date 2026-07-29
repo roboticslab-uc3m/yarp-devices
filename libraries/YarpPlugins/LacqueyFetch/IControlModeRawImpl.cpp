@@ -12,7 +12,6 @@ using namespace roboticslab;
 
 bool LacqueyFetch::getControlModeRaw(int j, int * mode)
 {
-    yCITrace(LCQ, id(), "%d", j);
     CHECK_JOINT(j);
     *mode = VOCAB_CM_PWM;
     return true;

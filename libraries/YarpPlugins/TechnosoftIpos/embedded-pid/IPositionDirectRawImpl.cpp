@@ -15,7 +15,6 @@ using namespace roboticslab;
 
 bool TechnosoftIposEmbedded::setPositionRaw(int j, double ref)
 {
-    yCITrace(IPOS, id(), "%d %f", j, ref);
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
 
@@ -65,7 +64,6 @@ bool TechnosoftIposEmbedded::setPositionRaw(int j, double ref)
 
 bool TechnosoftIposEmbedded::getRefPositionRaw(int joint, double * ref)
 {
-    yCITrace(IPOS, id(), "%d", joint);
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
 

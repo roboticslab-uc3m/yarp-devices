@@ -2,10 +2,6 @@
 
 #include "TechnosoftIposBase.hpp"
 
-#include <yarp/os/Log.h>
-
-#include "LogComponent.hpp"
-
 using namespace roboticslab;
 
 // --------------------------------------------------------------------------------
@@ -20,7 +16,6 @@ bool TechnosoftIposBase::getAxes(int * ax)
 
 bool TechnosoftIposBase::resetEncoderRaw(int j)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
     return setEncoderRaw(j, 0.0);
 }
@@ -29,7 +24,6 @@ bool TechnosoftIposBase::resetEncoderRaw(int j)
 
 bool TechnosoftIposBase::setEncoderRaw(int j, double val)
 {
-    yCITrace(IPOS, id(), "%d %f", j, val);
     CHECK_JOINT(j);
     std::int32_t data = degreesToInternalUnits(val);
 
@@ -46,7 +40,6 @@ bool TechnosoftIposBase::setEncoderRaw(int j, double val)
 
 bool TechnosoftIposBase::getEncoderRaw(int j, double * v)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
     std::int32_t temp = lastEncoderRead->queryPosition();
     *v = internalUnitsToDegrees(temp);
@@ -57,7 +50,6 @@ bool TechnosoftIposBase::getEncoderRaw(int j, double * v)
 
 bool TechnosoftIposBase::getEncoderSpeedRaw(int j, double * sp)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
     double temp = lastEncoderRead->querySpeed();
     *sp = internalUnitsToDegrees(temp, 1);
@@ -68,7 +60,6 @@ bool TechnosoftIposBase::getEncoderSpeedRaw(int j, double * sp)
 
 bool TechnosoftIposBase::getEncoderAccelerationRaw(int j, double * acc)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
     double temp = lastEncoderRead->queryAcceleration();
     *acc = internalUnitsToDegrees(temp, 2);
@@ -79,7 +70,6 @@ bool TechnosoftIposBase::getEncoderAccelerationRaw(int j, double * acc)
 
 bool TechnosoftIposBase::getEncoderTimedRaw(int j, double * enc, double * time)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
     std::int32_t temp = lastEncoderRead->queryPosition();
     *enc = internalUnitsToDegrees(temp);

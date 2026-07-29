@@ -12,8 +12,6 @@ using namespace roboticslab;
 
 bool TechnosoftIposExternal::getRemoteVariableRaw(std::string key, yarp::os::Bottle & val)
 {
-    yCITrace(IPOS, id(), "%s: %s", key.c_str(), val.toString().c_str());
-
     val.addString(key);
 
     if (key == "enableCsv")
@@ -33,8 +31,6 @@ bool TechnosoftIposExternal::getRemoteVariableRaw(std::string key, yarp::os::Bot
 
 bool TechnosoftIposExternal::setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val)
 {
-    yCITrace(IPOS, id(), "%s", key.c_str());
-
     if (key == "enableCsv")
     {
         auto requested = val.get(0).asBool();
@@ -64,8 +60,6 @@ bool TechnosoftIposExternal::setRemoteVariableRaw(std::string key, const yarp::o
 
 bool TechnosoftIposExternal::getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys)
 {
-    yCITrace(IPOS, id());
-
     listOfKeys->clear();
     listOfKeys->addString("enableCsv");
 

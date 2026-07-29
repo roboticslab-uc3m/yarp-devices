@@ -2,17 +2,12 @@
 
 #include "TechnosoftIposBase.hpp"
 
-#include <yarp/os/Log.h>
-
-#include "LogComponent.hpp"
-
 using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
 bool TechnosoftIposBase::getCurrentRaw(int m, double * curr)
 {
-    yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
     std::int16_t temp = lastCurrentRead;
     *curr = internalUnitsToCurrent(temp);
@@ -23,7 +18,6 @@ bool TechnosoftIposBase::getCurrentRaw(int m, double * curr)
 
 bool TechnosoftIposBase::getCurrentRangeRaw(int m, double * min, double * max)
 {
-    yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
 
     return can->sdo()->upload<std::uint16_t>("Current limit", [this, min, max](auto data)
@@ -36,7 +30,6 @@ bool TechnosoftIposBase::getCurrentRangeRaw(int m, double * min, double * max)
 
 bool TechnosoftIposBase::setRefCurrentRaw(int m, double curr)
 {
-    yCITrace(IPOS, id(), "%d %f", m, curr);
     CHECK_JOINT(m);
     CHECK_MODE(VOCAB_CM_CURRENT);
 
@@ -57,7 +50,6 @@ bool TechnosoftIposBase::setRefCurrentRaw(int m, double curr)
 
 bool TechnosoftIposBase::getRefCurrentRaw(int m, double * curr)
 {
-    yCITrace(IPOS, id(), "%d", m);
     CHECK_JOINT(m);
     CHECK_MODE(VOCAB_CM_CURRENT);
     *curr = commandBuffer.getStoredCommand();

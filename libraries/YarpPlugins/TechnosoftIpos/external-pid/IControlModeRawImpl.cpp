@@ -13,7 +13,6 @@ using namespace roboticslab;
 
 bool TechnosoftIposExternal::getControlModeRaw(int j, int * mode)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
     *mode = actualControlMode;
     return true;
@@ -23,7 +22,6 @@ bool TechnosoftIposExternal::getControlModeRaw(int j, int * mode)
 
 bool TechnosoftIposExternal::setControlModeRaw(int j, int mode)
 {
-    yCITrace(IPOS, id(), "%d %s", j, yarp::os::Vocab32::decode(mode).c_str());
     CHECK_JOINT(j);
 
     requestedcontrolMode = mode;

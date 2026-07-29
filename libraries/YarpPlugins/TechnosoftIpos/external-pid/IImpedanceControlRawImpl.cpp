@@ -12,7 +12,6 @@ using namespace roboticslab;
 
 bool TechnosoftIposExternal::getImpedanceRaw(int j, double * stiffness, double * damping)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
 
     std::lock_guard lock(pidMutex);
@@ -26,7 +25,6 @@ bool TechnosoftIposExternal::getImpedanceRaw(int j, double * stiffness, double *
 
 bool TechnosoftIposExternal::setImpedanceRaw(int j, double stiffness, double damping)
 {
-    yCITrace(IPOS, id(), "%d %f %f", j, stiffness, damping);
     CHECK_JOINT(j);
 
     if (stiffness < params.m_minStiffness || stiffness > params.m_maxStiffness)
@@ -51,7 +49,6 @@ bool TechnosoftIposExternal::setImpedanceRaw(int j, double stiffness, double dam
 
 bool TechnosoftIposExternal::setImpedanceOffsetRaw(int j, double offset)
 {
-    yCITrace(IPOS, id(), "%d %f", j, offset);
     CHECK_JOINT(j);
 
     std::lock_guard lock(pidMutex);
@@ -64,7 +61,6 @@ bool TechnosoftIposExternal::setImpedanceOffsetRaw(int j, double offset)
 
 bool TechnosoftIposExternal::getImpedanceOffsetRaw(int j, double * offset)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
 
     std::lock_guard lock(pidMutex);
@@ -77,7 +73,6 @@ bool TechnosoftIposExternal::getImpedanceOffsetRaw(int j, double * offset)
 
 bool TechnosoftIposExternal::getCurrentImpedanceLimitRaw(int j, double * min_stiff, double * max_stiff, double * min_damp, double * max_damp)
 {
-    yCITrace(IPOS, id(), "%d", j);
     CHECK_JOINT(j);
 
     *min_stiff = params.m_minStiffness;
