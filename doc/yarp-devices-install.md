@@ -9,14 +9,12 @@ For unit testing, you'll need the googletest source package. Refer to [Install g
 
 ### Components with known additional/specific dependencies
 
-- [../libraries/YarpPlugins/AravisGigE](../libraries/YarpPlugins/AravisGigE#requirements)
 - [../libraries/YarpPlugins/CanBusHico](../libraries/YarpPlugins/CanBusHico#requirements)
 - [../libraries/YarpPlugins/CanBusPeak](../libraries/YarpPlugins/CanBusPeak#requirements)
 - [../libraries/YarpPlugins/Jr3Pci](../libraries/YarpPlugins/Jr3Pci#requirements)
 - [../libraries/YarpPlugins/LeapMotionSensor](../libraries/YarpPlugins/LeapMotionSensor#requirements)
 - [../libraries/YarpPlugins/SpaceNavigator](../libraries/YarpPlugins/SpaceNavigator#requirements)
 - [../libraries/YarpPlugins/Wiimote](../libraries/YarpPlugins/Wiimote#requirements)
-- [../programs/grabberControls2Gui](../programs/grabberControls2Gui#requirements)
 - The following components additionally need some kind of CAN Bus driver (e.g. a [CanBusHico](../libraries/YarpPlugins/CanBusHico) or [CanBusPeak](../libraries/YarpPlugins/CanBusPeak)):
     - [../libraries/YarpPlugins/CanBusBroker](../libraries/YarpPlugins/CanBusBroker)
     - [../libraries/YarpPlugins/CuiAbsolute](../libraries/YarpPlugins/CuiAbsolute)
@@ -40,14 +38,6 @@ sudo ldconfig  # Just in case
 ```
 
 Remember to enable the devices you want to compile using `ccmake` instead of `cmake`.
-
-### Useful info to install GrabberControls2Gui
-
-When installing GrabberControls2Gui, take into account the following points:
-
-* GrabberControls2Gui requires Python 3+ with custom yarp Python bindings installed. Currently, installing them is not an easy task (see [comment348230791@roboticslab-uc3m/yarp-devices#145](https://github.com/roboticslab-uc3m/yarp-devices/issues/145#issuecomment-348230791) and [roboticslab-uc3m/installation-guides#26](https://github.com/roboticslab-uc3m/installation-guides/issues/26)) but we expect this to change in the future.
-
-* Setup.py should take care of automatically installing the remaining dependencies for AravisGigEController (`sudo python3 setup.py install`).
 
 ## Useful links
 

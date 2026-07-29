@@ -1,4 +1,3 @@
 add_subdirectory(dumpCanBus)
-add_subdirectory(grabberControls2Gui)
 add_subdirectory(launchCanBus)
 add_subdirectory(sensorReader)
