@@ -153,11 +153,6 @@ private:
     enum jmc_state { NOT_CONTROLLING, POSITION_MOVE, RELATIVE_MOVE, VELOCITY_MOVE };
     enum jmc_mode { POSITION_MODE, VELOCITY_MODE, POSITION_DIRECT_MODE, UNKNOWN_MODE };
 
-    bool setPositionMode(int j);
-    bool setVelocityMode(int j);
-    bool setTorqueMode(int j);
-    bool setPositionDirectMode(int j);
-
     // General Joint Motion Controller parameters //
     jmc_mode controlMode {UNKNOWN_MODE};
     double lastTime {0.0};

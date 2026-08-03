@@ -73,13 +73,11 @@ bool EmulatedControlBoard::setControlMode(const int j, const int mode)
     switch (mode)
     {
     case VOCAB_CM_POSITION:
-        return setPositionMode(j);
+        return (controlMode == POSITION_MODE || stop(j)) && (controlMode = POSITION_MODE, true);
     case VOCAB_CM_VELOCITY:
-        return setVelocityMode(j);
-    case VOCAB_CM_TORQUE:
-        return setTorqueMode(j);
+        return (controlMode == VELOCITY_MODE || stop(j)) && (controlMode = VELOCITY_MODE, true);
     case VOCAB_CM_POSITION_DIRECT:
-        return setPositionDirectMode(j);
+        return (controlMode == POSITION_DIRECT_MODE || stop(j)) && (controlMode = POSITION_DIRECT_MODE, true);
     default:
         return false;
     }
