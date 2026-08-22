@@ -5,6 +5,8 @@
 
 #include <vector>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/dev/CalibratorInterfaces.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IControlMode.h>
@@ -41,6 +43,16 @@ class JointCalibrator : public yarp::dev::DeviceDriver,
                         public JointCalibrator_ParamsParser
 {
 public:
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    yarp::dev::ReturnValue calibrateSingleJoint(int j) override;
+    yarp::dev::ReturnValue calibrateWholePart() override;
+    yarp::dev::ReturnValue homingSingleJoint(int j) override;
+    yarp::dev::ReturnValue homingWholePart() override;
+    yarp::dev::ReturnValue parkSingleJoint(int j, bool wait) override;
+    yarp::dev::ReturnValue parkWholePart() override;
+    yarp::dev::ReturnValue quitCalibrate() override;
+    yarp::dev::ReturnValue quitPark() override;
+#else
     bool calibrateSingleJoint(int j) override;
     bool calibrateWholePart() override;
     bool homingSingleJoint(int j) override;
@@ -49,6 +61,7 @@ public:
     bool parkWholePart() override;
     bool quitCalibrate() override;
     bool quitPark() override;
+#endif
 
     bool attach(yarp::dev::PolyDriver * poly) override;
     bool detach() override;
@@ -57,7 +70,11 @@ public:
     bool close() override;
 
 private:
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    yarp::dev::ReturnValue move(const std::vector<int> & joints, const MovementSpecs & specs);
+#else
     bool move(const std::vector<int> & joints, const MovementSpecs & specs);
+#endif
 
     MovementSpecs homeSpecs;
     MovementSpecs parkSpecs;

@@ -6,6 +6,8 @@
 #include <typeindex> // std::type_index
 #include <utility> // std::move
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
@@ -31,11 +33,19 @@ namespace
         }
         else if (auto handle = rd->getHandle<IEncodersRaw>(); handle != nullptr)
         {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+            *ret = handle->getAxes(*reinterpret_cast<std::size_t *>(axes));
+#else
             *ret = handle->getAxes(axes);
+#endif
         }
         else if (auto handle = rd->getHandle<IImpedanceControlRaw>(); handle != nullptr)
         {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+            *ret = handle->getAxes(*reinterpret_cast<std::size_t *>(axes));
+#else
             *ret = handle->getAxes(axes);
+#endif
         }
         else if (auto handle = rd->getHandle<IMotorRaw>(); handle != nullptr)
         {
@@ -47,11 +57,19 @@ namespace
         }
         else if (auto handle = rd->getHandle<IPositionControlRaw>(); handle != nullptr)
         {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+            *ret = handle->getAxes(*reinterpret_cast<std::size_t *>(axes));
+#else
             *ret = handle->getAxes(axes);
+#endif
         }
         else if (auto handle = rd->getHandle<IPositionDirectRaw>(); handle != nullptr)
         {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+            *ret = handle->getAxes(*reinterpret_cast<std::size_t *>(axes));
+#else
             *ret = handle->getAxes(axes);
+#endif
         }
         else if (auto handle = rd->getHandle<IPWMControlRaw>(); handle != nullptr)
         {
@@ -59,11 +77,19 @@ namespace
         }
         else if (auto handle = rd->getHandle<IVelocityControlRaw>(); handle != nullptr)
         {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+            *ret = handle->getAxes(*reinterpret_cast<std::size_t *>(axes));
+#else
             *ret = handle->getAxes(axes);
+#endif
         }
         else if (auto handle = rd->getHandle<ITorqueControlRaw>(); handle != nullptr)
         {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+            *ret = handle->getAxes(*reinterpret_cast<std::size_t *>(axes));
+#else
             *ret = handle->getAxes(axes);
+#endif
         }
         else
         {

@@ -8,6 +8,7 @@
 #include <string>
 
 #include <yarp/conf/numeric.h>
+#include <yarp/conf/version.h>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAxisInfo.h>
@@ -17,7 +18,11 @@
 #include "ICanBusSharer.hpp"
 #include "LacqueyFetch_ParamsParser.h"
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+#define CHECK_JOINT(j) do { int n; if (getNumberOfMotorsRaw(&n), (j) != n - 1) return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds; } while (0)
+#else
 #define CHECK_JOINT(j) do { int n; if (getNumberOfMotorsRaw(&n), (j) != n - 1) return false; } while (0)
+#endif
 
 /**
  * @ingroup YarpPlugins
@@ -54,21 +59,46 @@ public:
 
     //  --------- IAxisInfoRaw declarations. Implementation in IAxisInfoRawImpl.cpp ---------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    yarp::dev::ReturnValue getAxes(std::size_t & ax) override;
+    yarp::dev::ReturnValue getAxisNameRaw(int j, std::string & name) override;
+    yarp::dev::ReturnValue getJointTypeRaw(int j, yarp::dev::JointTypeEnum & type) override;
+#else
     bool getAxes(int * ax) override;
     bool getAxisNameRaw(int j, std::string & name) override;
     bool getJointTypeRaw(int j, yarp::dev::JointTypeEnum & type) override;
+#endif
 
     //  --------- IControlModeRaw declarations. Implementation in IControlModeRawImpl.cpp ---------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    yarp::dev::ReturnValue getAvailableControlModesRaw(int j, std::vector<yarp::dev::SelectableControlModeEnum> & avail) override;
+    yarp::dev::ReturnValue getControlModeRaw(int j, yarp::dev::ControlModeEnum & mode) override;
+    yarp::dev::ReturnValue getControlModesRaw(std::vector<yarp::dev::ControlModeEnum> & modes) override;
+    yarp::dev::ReturnValue getControlModesRaw(const std::vector<int> & joints, std::vector<yarp::dev::ControlModeEnum> & modes) override;
+    yarp::dev::ReturnValue setControlModeRaw(int j, yarp::dev::SelectableControlModeEnum mode) override;
+    yarp::dev::ReturnValue setControlModesRaw(const std::vector<int> & joints, const std::vector<yarp::dev::SelectableControlModeEnum> & modes) override;
+    yarp::dev::ReturnValue setControlModesRaw(const std::vector<yarp::dev::SelectableControlModeEnum> & modes) override;
+#else
     bool getControlModeRaw(int j, int * mode) override;
     bool getControlModesRaw(int * modes) override;
     bool getControlModesRaw(int n_joint, const int * joints, int * modes) override;
     bool setControlModeRaw(int j, int mode) override;
     bool setControlModesRaw(int * modes) override;
     bool setControlModesRaw(int n_joint, const int * joints, int * modes) override;
+#endif
 
     // ------- IPWMControlRaw declarations. Implementation in IPWMControlRawImpl.cpp -------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    yarp::dev::ReturnValue getNumberOfMotorsRaw(int * number) override;
+    yarp::dev::ReturnValue setRefDutyCycleRaw(int m, double ref) override;
+    yarp::dev::ReturnValue setRefDutyCyclesRaw(const double * refs) override;
+    yarp::dev::ReturnValue getRefDutyCycleRaw(int m, double * ref) override;
+    yarp::dev::ReturnValue getRefDutyCyclesRaw(double * refs) override;
+    yarp::dev::ReturnValue getDutyCycleRaw(int m, double * val) override;
+    yarp::dev::ReturnValue getDutyCyclesRaw(double * vals) override;
+#else
     bool getNumberOfMotorsRaw(int * number) override;
     bool setRefDutyCycleRaw(int m, double ref) override;
     bool setRefDutyCyclesRaw(const double * refs) override;
@@ -76,6 +106,7 @@ public:
     bool getRefDutyCyclesRaw(double * refs) override;
     bool getDutyCycleRaw(int m, double * val) override;
     bool getDutyCyclesRaw(double * vals) override;
+#endif
 
 private:
     static constexpr unsigned int CAN_OP = 0x780; // keep in sync with firmware

@@ -10,6 +10,9 @@ using multi_joints_fn = bool (raw_t::*)(int, int *, enum_t *);
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue CanBusBroker::getInteractionMode(int axis, yarp::dev::InteractionModeEnum & mode)
+#else
 bool CanBusBroker::getInteractionMode(int axis, yarp::dev::InteractionModeEnum * mode)
 {
     CHECK_JOINT(axis);
@@ -18,14 +21,22 @@ bool CanBusBroker::getInteractionMode(int axis, yarp::dev::InteractionModeEnum *
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue CanBusBroker::getInteractionModes(std::vector<yarp::dev::InteractionModeEnum> & modes)
+#else
 bool CanBusBroker::getInteractionModes(yarp::dev::InteractionModeEnum * modes)
+#endif
 {
     return deviceMapper.mapAllJoints(&yarp::dev::IInteractionModeRaw::getInteractionModesRaw, modes);
 }
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue CanBusBroker::getInteractionModes(const std::vector<int> & joints, std::vector<yarp::dev::InteractionModeEnum> & modes)
+#else
 bool CanBusBroker::getInteractionModes(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes)
+#endif
 {
 
     auto task = deviceMapper.createTask();
@@ -46,7 +57,11 @@ bool CanBusBroker::getInteractionModes(int n_joints, int * joints, yarp::dev::In
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue CanBusBroker::setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode)
+#else
 bool CanBusBroker::setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode)
+#endif
 {
     CHECK_JOINT(axis);
     return deviceMapper.mapSingleJoint(&yarp::dev::IInteractionModeRaw::setInteractionModeRaw, axis, mode);
@@ -54,14 +69,22 @@ bool CanBusBroker::setInteractionMode(int axis, yarp::dev::InteractionModeEnum m
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue CanBusBroker::setInteractionModes(const std::vector<yarp::dev::InteractionModeEnum> & modes)
+#else
 bool CanBusBroker::setInteractionModes(yarp::dev::InteractionModeEnum * modes)
+#endif
 {
     return deviceMapper.mapAllJoints(&yarp::dev::IInteractionModeRaw::setInteractionModesRaw, modes);
 }
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue CanBusBroker::setInteractionModes(const std::vector<int> & joints, const std::vector<yarp::dev::InteractionModeEnum> & modes)
+#else
 bool CanBusBroker::setInteractionModes(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes)
+#endif
 {
 
     auto task = deviceMapper.createTask();

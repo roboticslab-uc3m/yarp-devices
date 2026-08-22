@@ -2,17 +2,26 @@
 
 #include "EmulatedControlBoard.hpp"
 
-#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
 
 // ------------------- IControlLimits Related ------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::setPosLimits(int axis, double min, double max)
+#else
 bool EmulatedControlBoard::setLimits(int axis, double min, double max)
+#endif
 {
-    if (axis >= int(m_axes))
+    if (axis < 0 || axis >= m_axes)
     {
+        yCError(ECB) << "Axis index out of bounds:" << axis;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+#else
         return false;
+#endif
     }
 
     m_minLimits[axis] = min;
@@ -20,16 +29,29 @@ bool EmulatedControlBoard::setLimits(int axis, double min, double max)
 
     yCDebug(ECB, "Range of axis %d set to: %f to %f", axis, min, max);
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-bool EmulatedControlBoard::getLimits(int axis, double *min, double *max)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::getPosLimits(int axis, double * min, double * max)
+#else
+bool EmulatedControlBoard::getLimits(int axis, double * min, double * max)
+#endif
 {
-    if (axis >= int(m_axes))
+    if (axis < 0 || axis >= m_axes)
     {
+        yCError(ECB) << "Axis index out of bounds:" << axis;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+#else
         return false;
+#endif
     }
 
     *min = m_minLimits[axis];
@@ -37,31 +59,56 @@ bool EmulatedControlBoard::getLimits(int axis, double *min, double *max)
 
     yCDebug(ECB, "Range of axis %d read: %f to %f", axis, *min, *max);
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::setVelLimits(int axis, double min, double max)
+#else
 bool EmulatedControlBoard::setVelLimits(int axis, double min, double max)
+#endif
 {
     yCWarning(ECB, "setVelLimits() not implemented");
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+#else
     return false;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-bool EmulatedControlBoard::getVelLimits(int axis, double *min, double *max)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::getVelLimits(int axis, double * min, double * max)
+#else
+bool EmulatedControlBoard::getVelLimits(int axis, double * min, double * max)
+#endif
 {
-    if (axis >= int(m_axes))
+    if (axis < 0 || axis >= m_axes)
     {
+        yCError(ECB) << "Axis index out of bounds:" << axis;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+#else
         return false;
+#endif
     }
 
     // yarpmotorgui's defaults (partitem.cpp)
-    *min = -100;
-    *max = 100;
+    *min = -100.0;
+    *max = 100.0;
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------

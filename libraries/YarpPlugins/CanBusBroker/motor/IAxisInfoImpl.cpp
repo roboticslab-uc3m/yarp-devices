@@ -6,7 +6,11 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue CanBusBroker::getAxisName(int axis, std::string & name)
+#else
 bool CanBusBroker::getAxisName(int axis, std::string & name)
+#endif
 {
     CHECK_JOINT(axis);
     auto fn = &yarp::dev::IAxisInfoRaw::getAxisNameRaw;
@@ -15,7 +19,11 @@ bool CanBusBroker::getAxisName(int axis, std::string & name)
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue CanBusBroker::getJointType(int axis, yarp::dev::JointTypeEnum & type)
+#else
 bool CanBusBroker::getJointType(int axis, yarp::dev::JointTypeEnum & type)
+#endif
 {
     CHECK_JOINT(axis);
     auto fn = &yarp::dev::IAxisInfoRaw::getJointTypeRaw;

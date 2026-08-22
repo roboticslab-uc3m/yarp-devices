@@ -12,7 +12,10 @@
 #include <unordered_map>
 #include <vector>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/ReturnValue.h>
 
 #include "FutureTask.hpp"
 #include "RawDevice.hpp"
@@ -132,24 +135,44 @@ public:
 
     //! Alias for a single-joint command. See class description.
     template<typename T, typename... T_ref>
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    using motor_single_joint_fn = yarp::dev::ReturnValue (T::*)(int, T_ref...);
+#else
     using motor_single_joint_fn = bool (T::*)(int, T_ref...);
+#endif
 
     //! Single-joint command mapping. See class description.
     template<typename T, typename... T_ref>
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    yarp::dev::ReturnValue mapSingleJoint(motor_single_joint_fn<T, T_ref...> fn, int j, T_ref... ref)
+#else
     bool mapSingleJoint(motor_single_joint_fn<T, T_ref...> fn, int j, T_ref... ref)
+#endif
     {
         auto [device, offset] = getMotorDevice(j);
         T * p = device->getHandle<T>();
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return p ? std::invoke(fn, p, offset, ref...) : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+#else
         return p ? std::invoke(fn, p, offset, ref...) : false;
+#endif
     }
 
     //! Alias for a full-joint command. See class description.
     template<typename T, typename... T_refs>
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    using motor_all_joints_fn = yarp::dev::ReturnValue (T::*)(T_refs *...);
+#else
     using motor_all_joints_fn = bool (T::*)(T_refs *...);
+#endif
 
     //! Full-joint command mapping. See class description.
     template<typename T, typename... T_refs>
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    yarp::dev::ReturnValue mapAllJoints(motor_all_joints_fn<T, T_refs...> fn, T_refs *... refs)
+#else
     bool mapAllJoints(motor_all_joints_fn<T, T_refs...> fn, T_refs *... refs)
+#endif
     {
         auto task = createTask();
         bool ok = false;
@@ -161,16 +184,30 @@ public:
         }
 
         // at least one targeted device must implement the 'T' iface
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return ok && task->dispatch()
+            ? yarp::dev::ReturnValue::return_code::return_value_ok
+            : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+#else
         return ok && task->dispatch();
+#endif
     }
 
     //! Alias for a joint-group command. See class description.
     template<typename T, typename... T_refs>
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    using motor_multi_joints_fn = yarp::dev::ReturnValue (T::*)(int, const int *, T_refs *...);
+#else
     using motor_multi_joints_fn = bool (T::*)(int, const int *, T_refs *...);
+#endif
 
     //! Joint-group command mapping. See class description.
     template<typename T, typename... T_refs>
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    yarp::dev::ReturnValue mapJointGroup(motor_multi_joints_fn<T, T_refs...> fn, int n_joint, const int * joints, T_refs *... refs)
+#else
     bool mapJointGroup(motor_multi_joints_fn<T, T_refs...> fn, int n_joint, const int * joints, T_refs *... refs)
+#endif
     {
         auto task = createTask();
         auto devices = getMotorDevicesWithIndices(n_joint, joints); // extend lifetime of vector of local indices
@@ -183,7 +220,14 @@ public:
         }
 
         // all targeted devices must implement the 'T' iface
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return ok && task->dispatch()
+            ? yarp::dev::ReturnValue::return_code::return_value_ok
+            : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+#else
         return ok && task->dispatch();
+    }
+#endif
     }
 
     //! Retrieve the number of connected sensors of the specified type across all subdevices.
