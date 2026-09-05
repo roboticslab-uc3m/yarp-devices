@@ -35,7 +35,7 @@ namespace
 
 bool SpaceNavigator::getAxisCount(unsigned int & axis_count)
 {
-    axis_count = 0;
+    axis_count = 6;
     return true;
 }
 
@@ -75,7 +75,7 @@ bool SpaceNavigator::getTouchSurfaceCount(unsigned int & touch_count)
 
 bool SpaceNavigator::getStickCount(unsigned int & stick_count)
 {
-    stick_count = 1;
+    stick_count = 0;
     return true;
 }
 
@@ -83,13 +83,7 @@ bool SpaceNavigator::getStickCount(unsigned int & stick_count)
 
 bool SpaceNavigator::getStickDoF(unsigned int stick_id, unsigned int & DoF)
 {
-    if (stick_id != 0)
-    {
-        return false;
-    }
-
-    DoF = 6; // 3 translations + 3 rotations
-    return true;
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -134,37 +128,41 @@ bool SpaceNavigator::getHat(unsigned int hat_id, unsigned char & value)
 
 bool SpaceNavigator::getAxis(unsigned int axis_id, double & value)
 {
-    return false;
+    std::lock_guard lock(mtx);
+
+    switch (axis_id)
+    {
+    case 0:
+        value = normalize(dx / m_fullScaleX, deadband);
+        break;
+    case 1:
+        value = normalize(dy / m_fullScaleY, deadband);
+        break;
+    case 2:
+        value = normalize(dz / m_fullScaleZ, deadband);
+        break;
+    case 3:
+        value = normalize(drx / m_fullScaleRX, deadband);
+        break;
+    case 4:
+        value = normalize(dry / m_fullScaleRY, deadband);
+        break;
+    case 5:
+        value = normalize(drz / m_fullScaleRZ, deadband);
+        break;
+    default:
+        yCError(SPNAV) << "Invalid axis ID:" << axis_id;
+        return false;
+    }
+
+    return true;
 }
 
 // -----------------------------------------------------------------------------
 
 bool SpaceNavigator::getStick(unsigned int stick_id, yarp::sig::Vector & value, yarp::dev::IJoypadController::JoypadCtrl_coordinateMode coordinate_mode)
 {
-    if (stick_id != 0)
-    {
-        yCError(SPNAV) << "Invalid stick ID:" << stick_id;
-        return false;
-    }
-
-    if (coordinate_mode != yarp::dev::IJoypadController::JypCtrlcoord_CARTESIAN)
-    {
-        yCError(SPNAV) << "Unsupported coordinate mode, only CARTESIAN ACCEPTED";
-        return false;
-    }
-
-    std::lock_guard lock(mtx);
-
-    value = {
-        normalize(dx / m_fullScaleX, deadband),
-        normalize(dy / m_fullScaleY, deadband),
-        normalize(dz / m_fullScaleZ, deadband),
-        normalize(drx / m_fullScaleRX, deadband),
-        normalize(dry / m_fullScaleRY, deadband),
-        normalize(drz / m_fullScaleRZ, deadband)
-    };
-
-    return true;
+    return false;
 }
 
 // -----------------------------------------------------------------------------
