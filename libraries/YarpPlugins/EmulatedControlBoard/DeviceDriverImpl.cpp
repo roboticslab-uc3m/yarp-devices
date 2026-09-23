@@ -40,15 +40,15 @@ bool EmulatedControlBoard::open(yarp::os::Searchable& config)
 
     if (m_mode == "pos")
     {
-        controlMode = POSITION_MODE;
+        controlMode = VOCAB_CM_POSITION;
     }
     else if (m_mode == "vel")
     {
-        controlMode = VELOCITY_MODE;
+        controlMode = VOCAB_CM_VELOCITY;
     }
     else if (m_mode == "posd")
     {
-        controlMode = POSITION_DIRECT_MODE;
+        controlMode = VOCAB_CM_POSITION_DIRECT;
     }
     else
     {

@@ -3,33 +3,45 @@
 #include "EmulatedControlBoard.hpp"
 
 #include <cmath>
-#include <yarp/os/Log.h>
+
+#include <yarp/os/LogStream.h>
 
 #include "LogComponent.hpp"
 
 // ------------------- IPositionControl Related --------------------------------
 
-bool EmulatedControlBoard::getAxes(int *ax)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::getAxes(std::size_t & ax)
+{
+    ax = m_axes;
+    return yarp::dev::ReturnValue::return_code::return_value_ok;
+}
+#else
+bool EmulatedControlBoard::getAxes(int * ax)
 {
     *ax = m_axes;
     return true;
 }
+#endif
 
 // -----------------------------------------------------------------------------
 
-bool EmulatedControlBoard::positionMove(int j, double ref)  // encExposed = ref;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::positionMove(int j, double ref)
+#else
+bool EmulatedControlBoard::positionMove(int j, double ref)
+#endif
 {
-    if ((unsigned int)j > m_axes)
-    {
-        yCError(ECB, "Axis index exceeds number of axes");
-        return false;
-    }
+    CHECK_JOINT(j);
 
-    // Check if we are in position mode.
-    if (controlMode != POSITION_MODE)
+    if (controlMode != VOCAB_CM_POSITION)
     {
-        yCError(ECB, "Will not positionMove as not in positionMode");
+        yCError(ECB) << "Will not positionMove as not in positionMode";
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return yarp::dev::ReturnValue::return_code::return_value_error_not_ready;
+#else
         return false;
+#endif
     }
 
     // Set all the private parameters of the Rave class that correspond to this kind of movement!
@@ -40,7 +52,11 @@ bool EmulatedControlBoard::positionMove(int j, double ref)  // encExposed = ref;
     {
         stop(j);  // puts jointStatus[j] = 0;
         yCInfo(ECB, "Joint q%d reached target", j + 1);
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return yarp::dev::ReturnValue::return_code::return_value_ok;
+#else
         return true;
+#endif
     }
     else if (ref > encExposed)
     {
@@ -55,18 +71,29 @@ bool EmulatedControlBoard::positionMove(int j, double ref)  // encExposed = ref;
 
     jointStatus[j] = POSITION_MOVE;
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-bool EmulatedControlBoard::positionMove(const double *refs)  // encExposed = refs;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::positionMove(const double * refs)
+#else
+bool EmulatedControlBoard::positionMove(const double * refs)
+#endif
 {
-    // Check if we are in position mode.
-    if (controlMode != POSITION_MODE)
+    if (controlMode != VOCAB_CM_POSITION)
     {
-        yCError(ECB, "Will not positionMove as not in positionMode");
+        yCError(ECB) << "Will not positionMove as not in positionMode";
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return yarp::dev::ReturnValue::return_code::return_value_error_not_ready;
+#else
         return false;
+#endif
     }
 
     // Find out the maximum time to move
@@ -81,11 +108,11 @@ bool EmulatedControlBoard::positionMove(const double *refs)  // encExposed = ref
         if (std::abs((refs[motor] - encsExposed[motor]) / m_refSpeeds[motor]) > max_time)
         {
             max_time = std::abs((refs[motor] - encsExposed[motor]) / m_refSpeeds[motor]);
-            yCInfo(ECB, "candidate: %f", max_time);
+            yCInfo(ECB) << "candidate:" << max_time;
         }
     }
 
-    yCInfo(ECB, "max_time[final]: %f", max_time);
+    yCInfo(ECB) << "max_time[final]:" << max_time;
 
     // Set all the private parameters of the Rave class that correspond to this kind of movement!
     for (unsigned int motor = 0; motor < m_axes; motor++)
@@ -108,23 +135,47 @@ bool EmulatedControlBoard::positionMove(const double *refs)  // encExposed = ref
         }
     }
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-bool EmulatedControlBoard::relativeMove(int j, double delta)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::positionMove(int n_joint, const int * joints, const double * refs)
+#else
+bool EmulatedControlBoard::positionMove(int n_joint, const int * joints, const double * refs)
+#endif
 {
-    if ((unsigned int)j > m_axes)
-    {
-        return false;
-    }
+    yCWarning(ECB) << "Group positionMove() not implemented yet";
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+#else
+    return false;
+#endif
+}
 
-    // Check if we are in position mode.
-    if (controlMode != POSITION_MODE)
+// -----------------------------------------------------------------------------
+
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::relativeMove(int j, double delta)
+#else
+bool EmulatedControlBoard::relativeMove(int j, double delta)
+#endif
+{
+    CHECK_JOINT(j);
+
+    if (controlMode != VOCAB_CM_POSITION)
     {
         yCError(ECB, "EmulatedControlBoard will not relativeMove as not in positionMode");
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return yarp::dev::ReturnValue::return_code::return_value_error_not_ready;
+#else
         return false;
+#endif
     }
 
     // Set all the private parameters of the Rave class that correspond to this kind of movement!
@@ -135,7 +186,11 @@ bool EmulatedControlBoard::relativeMove(int j, double delta)
     {
         stop(j);  // puts jointStatus[j]=0;
         yCInfo(ECB, "Joint q%d already at target", j + 1);
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return yarp::dev::ReturnValue::return_code::return_value_ok;
+#else
         return true;
+#endif
     }
     else if (targetExposed[j] > encExposed)
     {
@@ -150,18 +205,30 @@ bool EmulatedControlBoard::relativeMove(int j, double delta)
 
     jointStatus[j] = POSITION_MOVE;
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-bool EmulatedControlBoard::relativeMove(const double *deltas)  // encExposed = deltas + encExposed
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::relativeMove(const double * deltas)  // encExposed = deltas + encExposed
+#else
+bool EmulatedControlBoard::relativeMove(const double * deltas)  // encExposed = deltas + encExposed
+#endif
 {
     // Check if we are in position mode.
-    if (controlMode != POSITION_MODE)
+    if (controlMode != VOCAB_CM_POSITION)
     {
         yCError(ECB, "Will not relativeMove as not in positionMode");
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return yarp::dev::ReturnValue::return_code::return_value_error_not_ready;
+#else
         return false;
+#endif
     }
 
     // Find out the maximum angle to move
@@ -188,17 +255,38 @@ bool EmulatedControlBoard::relativeMove(const double *deltas)  // encExposed = d
       jointStatus[motor] = POSITION_MOVE;
     }
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-bool EmulatedControlBoard::checkMotionDone(int j, bool *flag)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::relativeMove(int n_joint, const int * joints, const double * deltas)
+#else
+bool EmulatedControlBoard::relativeMove(int n_joint, const int * joints, const double * deltas)
+#endif
 {
-    if ((unsigned int)j > m_axes)
-    {
-        return false;
-    }
+    yCWarning(ECB) << "Group relativeMove() not implemented yet";
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+#else
+    return false;
+#endif
+}
+
+// -----------------------------------------------------------------------------
+
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::checkMotionDone(int j, bool & flag)
+#else
+bool EmulatedControlBoard::checkMotionDone(int j, bool * flag)
+#endif
+{
+    CHECK_JOINT(j);
 
     bool done = true;
 
@@ -207,13 +295,22 @@ bool EmulatedControlBoard::checkMotionDone(int j, bool *flag)
         done = false;
     }
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    flag = done;
+    return yarp::dev::ReturnValue::return_code::return_value_ok;
+#else
     *flag = done;
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-bool EmulatedControlBoard::checkMotionDone(bool *flag)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::checkMotionDone(bool & flag)
+#else
+bool EmulatedControlBoard::checkMotionDone(bool * flag)
+#endif
 {
     bool done = true;
 
@@ -225,136 +322,302 @@ bool EmulatedControlBoard::checkMotionDone(bool *flag)
         }
     }
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    flag = done;
+    return yarp::dev::ReturnValue::return_code::return_value_ok;
+#else
     *flag = done;
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::checkMotionDone(const std::vector<int> & joints, bool & flag)
+#else
+bool EmulatedControlBoard::checkMotionDone(int n_joint, const int * joints, bool * flags)
+#endif
+{
+    yCWarning(ECB) << "Group checkMotionDone() not implemented yet";
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+#else
+    return false;
+#endif
+}
+
+// -----------------------------------------------------------------------------
+
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::setTrajSpeed(int j, double sp)
+#else
 bool EmulatedControlBoard::setRefSpeed(int j, double sp)
+#endif
 {
-    if ((unsigned int)j > m_axes)
-    {
-        return false;
-    }
-
+    CHECK_JOINT(j);
     m_refSpeeds[j] = sp;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-bool EmulatedControlBoard::setRefSpeeds(const double *spds)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::setTrajSpeeds(const double * spds)
+#else
+bool EmulatedControlBoard::setRefSpeeds(const double * spds)
+#endif
 {
     bool ok = true;
 
     for (unsigned int i = 0; i < m_axes; i++)
     {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        ok &= setTrajSpeed(i, spds[i]);
+#else
         ok &= setRefSpeed(i, spds[i]);
+#endif
     }
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return ok
+        ? yarp::dev::ReturnValue::return_code::return_value_ok
+        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+#else
     return ok;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::setTrajSpeeds(int n_joint, const int * joints, const double * spds)
+#else
+bool EmulatedControlBoard::setRefSpeeds(int n_joint, const int * joints, const double * spds)
+#endif
+{
+    yCWarning(ECB) << "Group setTrajSpeeds() not implemented yet";
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+#else
+    return false;
+#endif
+}
+
+// -----------------------------------------------------------------------------
+
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::setTrajAcceleration(int j, double acc)
+#else
 bool EmulatedControlBoard::setRefAcceleration(int j, double acc)
+#endif
 {
-    if ((unsigned int)j > m_axes)
-    {
-        return false;
-    }
-
+    CHECK_JOINT(j);
     refAcc[j] = acc;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-bool EmulatedControlBoard::setRefAccelerations(const double *accs)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::setTrajAccelerations(const double * accs)
+#else
+bool EmulatedControlBoard::setRefAccelerations(const double * accs)
+#endif
 {
     bool ok = true;
 
     for (unsigned int i = 0; i < m_axes; i++)
     {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        ok &= setTrajAcceleration(i, accs[i]);
+#else
         ok &= setRefAcceleration(i, accs[i]);
+#endif
     }
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return ok
+        ? yarp::dev::ReturnValue::return_code::return_value_ok
+        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+#else
     return ok;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-bool EmulatedControlBoard::getRefSpeed(int j, double *ref)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::setTrajAccelerations(int n_joint, const int * joints, const double * accs)
+#else
+bool EmulatedControlBoard::setRefAccelerations(int n_joint, const int * joints, const double * accs)
+#endif
 {
-    if ((unsigned int)j > m_axes)
-    {
-        return false;
-    }
+    yCWarning(ECB) << "Group setTrajAccelerations() not implemented yet";
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+#else
+    return false;
+#endif
+}
 
+// -----------------------------------------------------------------------------
+
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::getTrajSpeed(int j, double * ref)
+#else
+bool EmulatedControlBoard::getRefSpeed(int j, double * ref)
+#endif
+{
+    CHECK_JOINT(j);
     *ref = m_refSpeeds[j];
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-bool EmulatedControlBoard::getRefSpeeds(double *spds)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::getTrajSpeeds(double * spds)
+#else
+bool EmulatedControlBoard::getRefSpeeds(double * spds)
+#endif
 {
     bool ok = true;
 
     for (unsigned int i = 0; i < m_axes; i++)
     {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        ok &= getTrajSpeed(i, &spds[i]);
+#else
         ok &= getRefSpeed(i, &spds[i]);
+#endif
     }
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return ok
+        ? yarp::dev::ReturnValue::return_code::return_value_ok
+        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+#else
     return ok;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-bool EmulatedControlBoard::getRefAcceleration(int j, double *acc)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::getTrajSpeeds(int n_joint, const int * joints, double * spds)
+#else
+bool EmulatedControlBoard::getRefSpeeds(int n_joint, const int * joints, double * spds)
+#endif
 {
-    if ((unsigned int)j > m_axes)
-    {
-        return false;
-    }
-
-    *acc = refAcc[j];
-    return true;
+    yCWarning(ECB) << "Group getTrajSpeeds() not implemented yet";
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+#else
+    return false;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-bool EmulatedControlBoard::getRefAccelerations(double *accs)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::getTrajAcceleration(int j, double * acc)
+#else
+bool EmulatedControlBoard::getRefAcceleration(int j, double * acc)
+#endif
+{
+    CHECK_JOINT(j);
+    *acc = refAcc[j];
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_ok;
+#else
+    return true;
+#endif
+}
+
+// -----------------------------------------------------------------------------
+
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::getTrajAccelerations(double * accs)
+#else
+bool EmulatedControlBoard::getRefAccelerations(double * accs)
+#endif
 {
     bool ok = true;
 
     for (unsigned int i = 0; i < m_axes; i++)
     {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        ok &= getTrajAcceleration(i, &accs[i]);
+#else
         ok &= getRefAcceleration(i, &accs[i]);
+#endif
     }
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return ok
+        ? yarp::dev::ReturnValue::return_code::return_value_ok
+        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+#else
     return ok;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-bool EmulatedControlBoard::stop(int j)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::getTrajAccelerations(int n_joint, const int * joints, double * accs)
+#else
+bool EmulatedControlBoard::getRefAccelerations(int n_joint, const int * joints, double * accs)
+#endif
 {
-    if ((unsigned int)j > m_axes)
-    {
-        return false;
-    }
+    yCWarning(ECB) << "Group getTrajAccelerations() not implemented yet";
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+#else
+    return false;
+#endif
+}
+
+// -----------------------------------------------------------------------------
+
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::stop(int j)
+#else
+bool EmulatedControlBoard::stop(int j)
+#endif
+{
+    CHECK_JOINT(j);
 
     velRaw[j] = 0.0;
     jointStatus[j] = NOT_CONTROLLING;
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::stop()
+#else
 bool EmulatedControlBoard::stop()
+#endif
 {
     bool ok = true;
 
@@ -363,95 +626,77 @@ bool EmulatedControlBoard::stop()
         ok &= stop(i);
     }
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return ok
+        ? yarp::dev::ReturnValue::return_code::return_value_ok
+        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+#else
     return ok;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-bool EmulatedControlBoard::positionMove(const int n_joint, const int *joints, const double *refs)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::stop(int n_joint, const int * joints)
+#else
+bool EmulatedControlBoard::stop(int n_joint, const int * joints)
+#endif
 {
-    // must implement mask!
-    return positionMove(refs);
-}
-
-// -----------------------------------------------------------------------------
-
-bool EmulatedControlBoard::relativeMove(const int n_joint, const int *joints, const double *deltas)
-{
-    yCWarning(ECB, "Group relativeMove() not implemented yet");
+    yCWarning(ECB) << "Group stop() not implemented yet";
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+#else
     return false;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-bool EmulatedControlBoard::checkMotionDone(const int n_joint, const int *joints, bool *flags)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::getTargetPosition(int joint, double * ref)
+#else
+bool EmulatedControlBoard::getTargetPosition(int joint, double * ref)
+#endif
 {
-    yCWarning(ECB, "Group checkMotionDone() not implemented yet");
+    yCWarning(ECB) << "getTargetPosition() not implemented yet";
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+#else
     return false;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-bool EmulatedControlBoard::setRefSpeeds(const int n_joint, const int *joints, const double *spds)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::getTargetPositions(double * refs)
+#else
+bool EmulatedControlBoard::getTargetPositions(double * refs)
+#endif
 {
-    yCWarning(ECB, "Group setRefSpeeds() not implemented yet");
+    yCWarning(ECB) << "getTargetPositions() not implemented yet";
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+#else
     return false;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-bool EmulatedControlBoard::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue EmulatedControlBoard::getTargetPositions(int n_joint, const int * joints, double * refs)
+#else
+bool EmulatedControlBoard::getTargetPositions(int n_joint, const int * joints, double * refs)
+#endif
 {
-    yCWarning(ECB, "Group setRefAccelerations() not implemented yet");
+    yCWarning(ECB) << "getTargetPositions() not implemented yet";
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+#else
     return false;
-}
-
-// -----------------------------------------------------------------------------
-
-bool EmulatedControlBoard::getRefSpeeds(const int n_joint, const int *joints, double *spds)
-{
-    yCWarning(ECB, "Group getRefSpeeds() not implemented yet");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
-bool EmulatedControlBoard::getRefAccelerations(const int n_joint, const int *joints, double *accs)
-{
-    yCWarning(ECB, "Group getRefAccelerations() not implemented yet");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
-bool EmulatedControlBoard::stop(const int n_joint, const int *joints)
-{
-    yCWarning(ECB, "Group stop() not implemented yet");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
-bool EmulatedControlBoard::getTargetPosition(const int joint, double *ref)
-{
-    yCWarning(ECB, "getTargetPosition() not implemented yet");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
-bool EmulatedControlBoard::getTargetPositions(double *refs)
-{
-    yCWarning(ECB, "getTargetPositions() not implemented yet");
-    return false;
-}
-
-// -----------------------------------------------------------------------------
-
-bool EmulatedControlBoard::getTargetPositions(const int n_joint, const int *joints, double *refs)
-{
-    yCWarning(ECB, "getTargetPositions() not implemented yet");
-    return false;
+#endif
 }
 
 // -----------------------------------------------------------------------------

@@ -11,6 +11,7 @@
 #include <string>
 
 #include <yarp/conf/numeric.h>
+#include <yarp/conf/version.h>
 
 #include <yarp/os/Timer.h>
 
@@ -42,9 +43,13 @@
 
 #include "TechnosoftIpos_ParamsParser.h"
 
-#define CHECK_JOINT(j) do { if (int ax; getAxes(&ax), (j) != ax - 1) return false; } while (0)
-
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+#define CHECK_JOINT(j) do { if (std::size_t ax; getAxes(ax), (j) < 0 || (j) >= ax) return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds; } while (0)
+#define CHECK_MODE(mode) do { if ((mode) != actualControlMode) return yarp::dev::ReturnValue::return_code::return_value_error_not_ready; } while (0)
+#else
+#define CHECK_JOINT(j) do { if (int ax; getAxes(&ax), (j) < 0 || (j) >= ax) return false; } while (0)
 #define CHECK_MODE(mode) do { if ((mode) != actualControlMode) return false; } while (0)
+#endif
 
 namespace roboticslab
 {
@@ -74,6 +79,16 @@ class TechnosoftIposBase : public yarp::dev::DeviceDriver,
 {
 public:
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    using return_t = yarp::dev::ReturnValue;
+
+    constexpr static auto ret_not_ok = return_t::return_code::return_value_error_not_implemented_by_device;
+#else
+    using return_t = bool;
+
+    constexpr static auto ret_not_ok = false;
+#endif
+
     TechnosoftIposBase(const TechnosoftIpos_ParamsParser & _params)
         : params(_params)
     {}
@@ -94,366 +109,479 @@ public:
 
     //  --------- IAxisInfoRaw declarations. Implementation in IAxisInfoRawImpl.cpp ---------
 
-    bool getAxisNameRaw(int axis, std::string & name) override;
-    bool getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type) override;
+    return_t getAxisNameRaw(int axis, std::string & name) override;
+    return_t getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type) override;
 
     //  --------- IControlLimitsRaw declarations. Implementation in IControlLimitsRawImpl.cpp ---------
 
-    bool setLimitsRaw(int axis, double min, double max) override;
-    bool getLimitsRaw(int axis, double * min, double * max) override;
-    bool setVelLimitsRaw(int axis, double min, double max) override;
-    bool getVelLimitsRaw(int axis, double * min, double * max) override;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return_t setPosLimitsRaw(int axis, double min, double max) override;
+    return_t getPosLimitsRaw(int axis, double * min, double * max) override;
+#else
+    return_t setLimitsRaw(int axis, double min, double max) override;
+    return_t getLimitsRaw(int axis, double * min, double * max) override;
+#endif
+    return_t setVelLimitsRaw(int axis, double min, double max) override;
+    return_t getVelLimitsRaw(int axis, double * min, double * max) override;
 
     //  --------- IControlModeRaw declarations. Implementation in IControlModeRawImpl.cpp ---------
 
-    bool getControlModesRaw(int * modes) override
-    { return getControlModeRaw(0, &modes[0]); }
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return_t getControlModesRaw(std::vector<yarp::dev::ControlModeEnum> & modes) override
+    { return getControlModeRaw(0, modes[0]); }
 
-    bool getControlModesRaw(int n_joint, const int * joints, int * modes) override
-    { return getControlModeRaw(joints[0], &modes[0]); }
+    return_t getControlModesRaw(const std::vector<int> & joints, std::vector<yarp::dev::ControlModeEnum> & modes) override
+    { return getControlModeRaw(joints[0], modes[0]); }
 
-    bool setControlModesRaw(int * modes) override
+    return_t setControlModesRaw(const std::vector<yarp::dev::SelectableControlModeEnum> & modes) override
     { return setControlModeRaw(0, modes[0]); }
 
-    bool setControlModesRaw(int n_joint, const int * joints, int * modes) override
+    return_t setControlModesRaw(const std::vector<int> & joints, const std::vector<yarp::dev::SelectableControlModeEnum> & modes) override
     { return setControlModeRaw(joints[0], modes[0]); }
+#else
+    return_t getControlModesRaw(int * modes) override
+    { return getControlModeRaw(0, &modes[0]); }
+
+    return_t getControlModesRaw(int n_joint, const int * joints, int * modes) override
+    { return getControlModeRaw(joints[0], &modes[0]); }
+
+    return_t setControlModesRaw(int * modes) override
+    { return setControlModeRaw(0, modes[0]); }
+
+    return_t setControlModesRaw(int n_joint, const int * joints, int * modes) override
+    { return setControlModeRaw(joints[0], modes[0]); }
+#endif
 
     //  --------- ICurrentControlRaw declarations. Implementation in ICurrentControlRawImpl.cpp ---------
 
-    bool getCurrentRaw(int m, double * curr) override;
+    return_t getCurrentRaw(int m, double * curr) override;
 
-    bool getCurrentsRaw(double * currs) override
+    return_t getCurrentsRaw(double * currs) override
     { return getCurrentRaw(0, &currs[0]); }
 
-    bool getCurrentRangeRaw(int m, double * min, double * max) override;
+    return_t getCurrentRangeRaw(int m, double * min, double * max) override;
 
-    bool getCurrentRangesRaw(double * min, double * max) override
+    return_t getCurrentRangesRaw(double * min, double * max) override
     { return getCurrentRangeRaw(0, min, max); }
 
-    bool setRefCurrentRaw(int m, double curr) override;
+    return_t setRefCurrentRaw(int m, double curr) override;
 
-    bool setRefCurrentsRaw(const double * currs) override
+    return_t setRefCurrentsRaw(const double * currs) override
     { return setRefCurrentRaw(0, currs[0]); }
 
-    bool setRefCurrentsRaw(int n_motor, const int * motors, const double * currs) override
+    return_t setRefCurrentsRaw(int n_motor, const int * motors, const double * currs) override
     { return setRefCurrentRaw(motors[0], currs[0]); }
 
-    bool getRefCurrentRaw(int m, double * curr) override;
+    return_t getRefCurrentRaw(int m, double * curr) override;
 
-    bool getRefCurrentsRaw(double * currs) override
+    return_t getRefCurrentsRaw(double * currs) override
     { return getRefCurrentRaw(0, &currs[0]); }
 
     //  ---------- IEncodersRaw declarations. Implementation in IEncodersRawImpl.cpp ----------
 
-    bool getAxes(int * ax) override;
-    bool resetEncoderRaw(int j) override;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return_t getAxes(std::size_t & ax) override;
+#else
+    return_t getAxes(int * ax) override;
+#endif
 
-    bool resetEncodersRaw() override
+    return_t resetEncoderRaw(int j) override;
+
+    return_t resetEncodersRaw() override
     { return resetEncoderRaw(0); }
 
-    bool setEncoderRaw(int j, double val) override;
+    return_t setEncoderRaw(int j, double val) override;
 
-    bool setEncodersRaw(const double * vals) override
+    return_t setEncodersRaw(const double * vals) override
     { return setEncoderRaw(0, vals[0]); }
 
-    bool getEncoderRaw(int j, double * v) override;
+    return_t getEncoderRaw(int j, double * v) override;
 
-    bool getEncodersRaw(double * encs) override
+    return_t getEncodersRaw(double * encs) override
     { return getEncoderRaw(0, &encs[0]); }
 
-    bool getEncoderSpeedRaw(int j, double * sp) override;
+    return_t getEncoderSpeedRaw(int j, double * sp) override;
 
-    bool getEncoderSpeedsRaw(double * spds) override
+    return_t getEncoderSpeedsRaw(double * spds) override
     { return getEncoderSpeedRaw(0, &spds[0]); }
 
-    bool getEncoderAccelerationRaw(int j, double * spds) override;
+    return_t getEncoderAccelerationRaw(int j, double * spds) override;
 
-    bool getEncoderAccelerationsRaw(double * accs) override
+    return_t getEncoderAccelerationsRaw(double * accs) override
     { return getEncoderAccelerationRaw(0, &accs[0]); }
 
-    //  ---------- IEncodersTimedRaw declarations. Implementation in IEncodersRawImpl.cpp ----------
+    return_t getEncoderTimedRaw(int j, double * encs, double * time) override;
 
-    bool getEncoderTimedRaw(int j, double * encs, double * time) override;
-
-    bool getEncodersTimedRaw(double * encs, double * times) override
+    return_t getEncodersTimedRaw(double * encs, double * times) override
     { return getEncoderTimedRaw(0, &encs[0], &times[0]); }
 
     //  ---------- IImpedanceControlRaw declarations. Implementation in IImpedanceControlRawImpl.cpp ----------
 
-    bool getImpedanceRaw(int j, double * stiffness, double * damping) override
-    { return false; }
+    return_t getImpedanceRaw(int j, double * stiffness, double * damping) override
+    { return ret_not_ok; }
 
-    bool setImpedanceRaw(int j, double stiffness, double damping) override
-    { return false; }
+    return_t setImpedanceRaw(int j, double stiffness, double damping) override
+    { return ret_not_ok; }
 
-    bool setImpedanceOffsetRaw(int j, double offset) override
-    { return false; }
+    return_t setImpedanceOffsetRaw(int j, double offset) override
+    { return ret_not_ok; }
 
-    bool getImpedanceOffsetRaw(int j, double * offset) override
-    { return false; }
+    return_t getImpedanceOffsetRaw(int j, double * offset) override
+    { return ret_not_ok; }
 
-    bool getCurrentImpedanceLimitRaw(int j, double * min_stiff, double * max_stiff, double * min_damp, double * max_damp) override
-    { return false; }
+    return_t getCurrentImpedanceLimitRaw(int j, double * min_stiff, double * max_stiff, double * min_damp, double * max_damp) override
+    { return ret_not_ok; }
 
     //  ---------- IInteractionModeRaw declarations. Implementation in IInteractionModeRawImpl.cpp ----------
 
-    bool getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum * mode) override
-    { return false; }
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return_t getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum & mode) override
+    { return ret_not_ok; }
 
-    bool getInteractionModesRaw(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes) override
+    return_t getInteractionModesRaw(std::vector<yarp::dev::InteractionModeEnum> & modes) override
+    { return getInteractionModeRaw(0, modes[0]); }
+
+    return_t getInteractionModesRaw(const std::vector<int> & joints, std::vector<yarp::dev::InteractionModeEnum> & modes) override
+    { return getInteractionModeRaw(joints[0], modes[0]); }
+
+    return_t setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode) override
+    { return ret_not_ok; }
+
+    return_t setInteractionModesRaw(const std::vector<yarp::dev::InteractionModeEnum> & modes) override
+    { return setInteractionModeRaw(0, modes[0]); }
+
+    return_t setInteractionModesRaw(const std::vector<int> & joints, const std::vector<yarp::dev::InteractionModeEnum> & modes) override
+    { return setInteractionModeRaw(joints[0], modes[0]); }
+#else
+    return_t getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum * mode) override
+    { return ret_not_ok; }
+
+    return_t getInteractionModesRaw(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes) override
     { return getInteractionModeRaw(joints[0], &modes[0]); }
 
-    bool getInteractionModesRaw(yarp::dev::InteractionModeEnum * modes) override
+    return_t getInteractionModesRaw(yarp::dev::InteractionModeEnum * modes) override
     { return getInteractionModeRaw(0, &modes[0]); }
 
-    bool setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode) override
-    { return false; }
+    return_t setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode) override
+    { return ret_not_ok; }
 
-    bool setInteractionModesRaw(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes) override
+    return_t setInteractionModesRaw(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes) override
     { return setInteractionModeRaw(joints[0], modes[0]); }
 
-    bool setInteractionModesRaw(yarp::dev::InteractionModeEnum * modes) override
+    return_t setInteractionModesRaw(yarp::dev::InteractionModeEnum * modes) override
     { return setInteractionModeRaw(0, modes[0]); }
+#endif
 
     //  ---------- IJointFaultRaw declarations. Implementation in IJointFaultRawImpl.cpp ----------
 
-    bool getLastJointFaultRaw(int j, int & fault, std::string & message) override;
+    return_t getLastJointFaultRaw(int j, int & fault, std::string & message) override;
 
     //  --------- IMotorRaw declarations. Implementation in IMotorRawImpl.cpp ---------
 
-    bool getNumberOfMotorsRaw(int * num) override;
-    bool getTemperatureRaw(int m, double * val) override;
-    bool getTemperaturesRaw(double * vals) override;
-    bool getTemperatureLimitRaw(int m, double * temp) override;
-    bool setTemperatureLimitRaw(int m, double temp) override;
-    bool getGearboxRatioRaw(int m, double * val) override;
-    bool setGearboxRatioRaw(int m, double val) override;
+    return_t getNumberOfMotorsRaw(int * num) override;
+    return_t getTemperatureRaw(int m, double * val) override;
+    return_t getTemperaturesRaw(double * vals) override;
+    return_t getTemperatureLimitRaw(int m, double * temp) override;
+    return_t setTemperatureLimitRaw(int m, double temp) override;
+    return_t getGearboxRatioRaw(int m, double * val) override;
+    return_t setGearboxRatioRaw(int m, double val) override;
 
     //  --------- IMotorEncodersRaw declarations. Implementation in IMotorEncodersRawImpl.cpp ---------
 
-    bool getNumberOfMotorEncodersRaw(int * num) override;
-    bool resetMotorEncoderRaw(int m) override;
+    return_t getNumberOfMotorEncodersRaw(int * num) override;
+    return_t resetMotorEncoderRaw(int m) override;
 
-    bool resetMotorEncodersRaw() override
+    return_t resetMotorEncodersRaw() override
     { return resetMotorEncoderRaw(0); }
 
-    bool setMotorEncoderCountsPerRevolutionRaw(int m, double cpr) override;
-    bool getMotorEncoderCountsPerRevolutionRaw(int m, double * cpr) override;
-    bool setMotorEncoderRaw(int m, double val) override;
+    return_t setMotorEncoderCountsPerRevolutionRaw(int m, double cpr) override;
+    return_t getMotorEncoderCountsPerRevolutionRaw(int m, double * cpr) override;
+    return_t setMotorEncoderRaw(int m, double val) override;
 
-    bool setMotorEncodersRaw(const double * vals) override
+    return_t setMotorEncodersRaw(const double * vals) override
     { return setMotorEncoderRaw(0, vals[0]); }
 
-    bool getMotorEncoderRaw(int m, double * v) override;
+    return_t getMotorEncoderRaw(int m, double * v) override;
 
-    bool getMotorEncodersRaw(double * encs) override
+    return_t getMotorEncodersRaw(double * encs) override
     { return getMotorEncoderSpeedRaw(0, &encs[0]); }
 
-    bool getMotorEncoderTimedRaw(int m, double * encs, double * stamp) override;
+    return_t getMotorEncoderTimedRaw(int m, double * encs, double * stamp) override;
 
-    bool getMotorEncodersTimedRaw(double * encs, double * stamps) override
+    return_t getMotorEncodersTimedRaw(double * encs, double * stamps) override
     { return getMotorEncoderTimedRaw(0, &encs[0], &stamps[0]); }
 
-    bool getMotorEncoderSpeedRaw(int m, double * sp) override;
+    return_t getMotorEncoderSpeedRaw(int m, double * sp) override;
 
-    bool getMotorEncoderSpeedsRaw(double * spds) override
+    return_t getMotorEncoderSpeedsRaw(double * spds) override
     { return getMotorEncoderSpeedRaw(0, &spds[0]); }
 
-    bool getMotorEncoderAccelerationRaw(int m, double * spds) override;
+    return_t getMotorEncoderAccelerationRaw(int m, double * spds) override;
 
-    bool getMotorEncoderAccelerationsRaw(double * accs) override
+    return_t getMotorEncoderAccelerationsRaw(double * accs) override
     { return getMotorEncoderAccelerationRaw(0, &accs[0]); }
 
     //  --------- IPidControlRaw declarations. Implementation in IPidControlRawImpl.cpp ---------
 
-    bool setPidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, const yarp::dev::Pid & pid) override
-    { return false; }
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return_t getAvailablePidsRaw(int j, std::vector<yarp::dev::PidControlTypeEnum> & avail) override
+    { return ret_not_ok; }
+#endif
 
-    bool setPidsRaw(const yarp::dev::PidControlTypeEnum & pidtype, const yarp::dev::Pid * pids) override
+    return_t setPidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, const yarp::dev::Pid & pid) override
+    { return ret_not_ok; }
+
+    return_t setPidsRaw(const yarp::dev::PidControlTypeEnum & pidtype, const yarp::dev::Pid * pids) override
     { return setPidRaw(pidtype, 0, pids[0]); }
 
-    bool setPidReferenceRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double ref) override
-    { return false; }
+    return_t setPidReferenceRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double ref) override
+    { return ret_not_ok; }
 
-    bool setPidReferencesRaw(const yarp::dev::PidControlTypeEnum & pidtype, const double * refs) override
+    return_t setPidReferencesRaw(const yarp::dev::PidControlTypeEnum & pidtype, const double * refs) override
     { return setPidReferenceRaw(pidtype, 0, refs[0]); }
 
-    bool setPidErrorLimitRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double limit) override
-    { return false; }
+    return_t setPidErrorLimitRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double limit) override
+    { return ret_not_ok; }
 
-    bool setPidErrorLimitsRaw(const yarp::dev::PidControlTypeEnum & pidtype, const double * limits) override
+    return_t setPidErrorLimitsRaw(const yarp::dev::PidControlTypeEnum & pidtype, const double * limits) override
     { return setPidErrorLimitRaw(pidtype, 0, limits[0]); }
 
-    bool getPidErrorRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * err) override
-    { return false; }
+    return_t getPidErrorRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * err) override
+    { return ret_not_ok; }
 
-    bool getPidErrorsRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * errs) override
+    return_t getPidErrorsRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * errs) override
     { return getPidErrorRaw(pidtype, 0, &errs[0]); }
 
-    bool getPidOutputRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * out) override
-    { return false; }
+    return_t getPidOutputRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * out) override
+    { return ret_not_ok; }
 
-    bool getPidOutputsRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * outs) override
+    return_t getPidOutputsRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * outs) override
     { return getPidOutputRaw(pidtype, 0, &outs[0]); }
 
-    bool getPidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, yarp::dev::Pid * pid) override
-    { return false; }
+    return_t getPidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, yarp::dev::Pid * pid) override
+    { return ret_not_ok; }
 
-    bool getPidsRaw(const yarp::dev::PidControlTypeEnum & pidtype, yarp::dev::Pid * pids) override
+    return_t getPidsRaw(const yarp::dev::PidControlTypeEnum & pidtype, yarp::dev::Pid * pids) override
     { return getPidRaw(pidtype, 0, &pids[0]); }
 
-    bool getPidReferenceRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * ref) override
-    { return false; }
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return_t getPidOffsetRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double & v) override
+    { return ret_not_ok; }
 
-    bool getPidReferencesRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * refs) override
+    return_t getPidFeedforwardRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double & v) override
+    { return ret_not_ok; }
+
+    return_t getPidExtraInfoRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, yarp::dev::PidExtraInfo & info) override
+    { return ret_not_ok; }
+
+    return_t getPidExtraInfosRaw(const yarp::dev::PidControlTypeEnum & pidtype, std::vector<yarp::dev::PidExtraInfo> & info) override
+    { return ret_not_ok; }
+#endif
+
+    return_t getPidReferenceRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * ref) override
+    { return ret_not_ok; }
+
+    return_t getPidReferencesRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * refs) override
     { return getPidReferenceRaw(pidtype, 0, &refs[0]); }
 
-    bool getPidErrorLimitRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * limit) override
-    { return false; }
+    return_t getPidErrorLimitRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double * limit) override
+    { return ret_not_ok; }
 
-    bool getPidErrorLimitsRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * limits) override
+    return_t getPidErrorLimitsRaw(const yarp::dev::PidControlTypeEnum & pidtype, double * limits) override
     { return getPidErrorLimitRaw(pidtype, 0, &limits[0]); }
 
-    bool resetPidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j) override
-    { return false; }
+    return_t resetPidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j) override
+    { return ret_not_ok; }
 
-    bool disablePidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j) override
-    { return false; }
+    return_t disablePidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j) override
+    { return ret_not_ok; }
 
-    bool enablePidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j) override
-    { return false; }
+    return_t enablePidRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j) override
+    { return ret_not_ok; }
 
-    bool setPidOffsetRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double v) override
-    { return false; }
+    return_t setPidOffsetRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double v) override
+    { return ret_not_ok; }
 
-    bool isPidEnabledRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, bool * enabled) override
-    { return false; }
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return_t setPidFeedforwardRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, double v) override
+    { return ret_not_ok; }
+
+    return_t isPidEnabledRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, bool & enabled) override
+    { return ret_not_ok; }
+#else
+    return_t isPidEnabledRaw(const yarp::dev::PidControlTypeEnum & pidtype, int j, bool * enabled) override
+    { return ret_not_ok; }
+#endif
 
     // ------- IPositionControlRaw declarations. Implementation in IPositionControlRawImpl.cpp -------
 
     using yarp::dev::IPositionControlRaw::positionMoveRaw;
 
-    bool positionMoveRaw(const double * refs) override
+    return_t positionMoveRaw(const double * refs) override
     { return positionMoveRaw(0, refs[0]); }
 
-    bool positionMoveRaw(int n_joint, const int * joints, const double * refs) override
+    return_t positionMoveRaw(int n_joint, const int * joints, const double * refs) override
     { return positionMoveRaw(joints[0], refs[0]); }
 
     using yarp::dev::IPositionControlRaw::relativeMoveRaw;
 
-    bool relativeMoveRaw(const double * deltas) override
+    return_t relativeMoveRaw(const double * deltas) override
     { return relativeMoveRaw(0, deltas[0]); }
 
-    bool relativeMoveRaw(int n_joint, const int * joints, const double * deltas) override
+    return_t relativeMoveRaw(int n_joint, const int * joints, const double * deltas) override
     { return relativeMoveRaw(joints[0], deltas[0]); }
 
     using yarp::dev::IPositionControlRaw::checkMotionDoneRaw;
 
-    bool checkMotionDoneRaw(bool * flag) override
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return_t checkMotionDoneRaw(bool & flag) override
     { return checkMotionDoneRaw(0, flag); }
 
-    bool checkMotionDoneRaw(int n_joint, const int * joints, bool * flag) override
+    return_t checkMotionDoneRaw(const std::vector<int> & joints, bool & flag) override
     { return checkMotionDoneRaw(joints[0], flag); }
 
-    bool setRefSpeedsRaw(const double * spds) override
+    return_t setTrajSpeedsRaw(const double * spds) override
+    { return setTrajSpeedRaw(0, spds[0]); }
+
+    return_t setTrajSpeedsRaw(int n_joint, const int * joints, const double * spds) override
+    { return setTrajSpeedRaw(joints[0], spds[0]); }
+
+    using yarp::dev::IPositionControlRaw::setTrajAccelerationRaw;
+
+    return_t setTrajAccelerationsRaw(const double * accs) override
+    { return setTrajAccelerationRaw(0, accs[0]); }
+
+    return_t setTrajAccelerationsRaw(int n_joint, const int * joints, const double * accs) override
+    { return setTrajAccelerationRaw(joints[0], accs[0]); }
+
+    return_t getTrajSpeedsRaw(double * spds) override
+    { return getTrajSpeedRaw(0, &spds[0]); }
+
+    return_t getTrajSpeedsRaw(int n_joint, const int * joints, double * spds) override
+    { return getTrajSpeedRaw(joints[0], &spds[0]); }
+
+    using yarp::dev::IPositionControlRaw::getTrajAccelerationRaw;
+
+    return_t getTrajAccelerationsRaw(double * accs) override
+    { return getTrajAccelerationRaw(0, &accs[0]); }
+
+    return_t getTrajAccelerationsRaw(int n_joint, const int * joints, double * accs) override
+    { return getTrajAccelerationRaw(joints[0], &accs[0]); }
+#else
+    return_t checkMotionDoneRaw(bool * flag) override
+    { return checkMotionDoneRaw(0, flag); }
+
+    return_t checkMotionDoneRaw(int n_joint, const int * joints, bool * flag) override
+    { return checkMotionDoneRaw(joints[0], flag); }
+
+    return_t setRefSpeedsRaw(const double * spds) override
     { return setRefSpeedRaw(0, spds[0]); }
 
-    bool setRefSpeedsRaw(int n_joint, const int * joints, const double * spds) override
+    return_t setRefSpeedsRaw(int n_joint, const int * joints, const double * spds) override
     { return setRefSpeedRaw(joints[0], spds[0]); }
 
     using yarp::dev::IPositionControlRaw::setRefAccelerationRaw;
 
-    bool setRefAccelerationsRaw(const double * accs) override
+    return_t setRefAccelerationsRaw(const double * accs) override
     { return setRefAccelerationRaw(0, accs[0]); }
 
-    bool setRefAccelerationsRaw(int n_joint, const int * joints, const double * accs) override
+    return_t setRefAccelerationsRaw(int n_joint, const int * joints, const double * accs) override
     { return setRefAccelerationRaw(joints[0], accs[0]); }
 
-    bool getRefSpeedsRaw(double * spds) override
+    return_t getRefSpeedsRaw(double * spds) override
     { return getRefSpeedRaw(0, &spds[0]); }
 
-    bool getRefSpeedsRaw(int n_joint, const int * joints, double * spds) override
+    return_t getRefSpeedsRaw(int n_joint, const int * joints, double * spds) override
     { return getRefSpeedRaw(joints[0], &spds[0]); }
 
     using yarp::dev::IPositionControlRaw::getRefAccelerationRaw;
 
-    bool getRefAccelerationsRaw(double * accs) override
+    return_t getRefAccelerationsRaw(double * accs) override
     { return getRefAccelerationRaw(0, &accs[0]); }
 
-    bool getRefAccelerationsRaw(int n_joint, const int * joints, double * accs) override
+    return_t getRefAccelerationsRaw(int n_joint, const int * joints, double * accs) override
     { return getRefAccelerationRaw(joints[0], &accs[0]); }
+#endif
 
     using yarp::dev::IPositionControlRaw::stopRaw;
 
-    bool stopRaw() override
+    return_t stopRaw() override
     { return stopRaw(0); }
 
-    bool stopRaw(int n_joint, const int * joints) override
+    return_t stopRaw(int n_joint, const int * joints) override
     { return stopRaw(joints[0]); }
 
-    bool getTargetPositionsRaw(double * refs) override
+    return_t getTargetPositionsRaw(double * refs) override
     { return getTargetPositionRaw(0, &refs[0]); }
 
-    bool getTargetPositionsRaw(int n_joint, const int * joints, double * refs) override
+    return_t getTargetPositionsRaw(int n_joint, const int * joints, double * refs) override
     { return getTargetPositionRaw(joints[0], &refs[0]); }
 
     // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
 
-    bool setPositionsRaw(const double * refs) override
+    return_t setPositionsRaw(const double * refs) override
     { return setPositionRaw(0, refs[0]); }
 
-    bool setPositionsRaw(int n_joint, const int * joints, const double * refs) override
+    return_t setPositionsRaw(int n_joint, const int * joints, const double * refs) override
     { return setPositionRaw(joints[0], refs[0]); }
 
-    bool getRefPositionsRaw(double * refs) override
+    return_t getRefPositionsRaw(double * refs) override
     { return getRefPositionRaw(0, &refs[0]); }
 
-    bool getRefPositionsRaw(int n_joint, const int * joints, double * refs) override
+    return_t getRefPositionsRaw(int n_joint, const int * joints, double * refs) override
     { return getRefPositionRaw(joints[0], &refs[0]); }
 
     // -------- ITorqueControlRaw declarations. Implementation in ITorqueControlRawImpl.cpp --------
 
-    bool getRefTorqueRaw(int j, double * t) override;
+    return_t getRefTorqueRaw(int j, double * t) override;
 
-    bool getRefTorquesRaw(double * t) override
+    return_t getRefTorquesRaw(double * t) override
     { return getRefTorqueRaw(0, &t[0]); }
 
-    bool setRefTorqueRaw(int j, double t) override;
+    return_t setRefTorqueRaw(int j, double t) override;
 
-    bool setRefTorquesRaw(int n_joint, const int * joints, const double * t) override
+    return_t setRefTorquesRaw(int n_joint, const int * joints, const double * t) override
     { return setRefTorqueRaw(joints[0], t[0]); }
 
-    bool setRefTorquesRaw(const double * t) override
+    return_t setRefTorquesRaw(const double * t) override
     { return setRefTorqueRaw(0, t[0]); }
 
-    bool getTorqueRaw(int j, double * t) override;
+    return_t getTorqueRaw(int j, double * t) override;
 
-    bool getTorquesRaw(double * t) override
+    return_t getTorquesRaw(double * t) override
     { return getTorqueRaw(0, &t[0]); }
 
-    bool getTorqueRangeRaw(int j, double * min, double * max) override;
+    return_t getTorqueRangeRaw(int j, double * min, double * max) override;
 
-    bool getTorqueRangesRaw(double * min, double * max) override
+    return_t getTorqueRangesRaw(double * min, double * max) override
     { return getTorqueRangeRaw(0, &min[0], &max[0]); }
 
-    bool getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParameters * params) override;
-    bool setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorqueParameters params) override;
+    return_t getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParameters * params) override;
+    return_t setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorqueParameters params) override;
 
     //  --------- IVelocityControlRaw declarations. Implementation in IVelocityControlRawImpl.cpp ---------
 
     using yarp::dev::IVelocityControlRaw::velocityMoveRaw;
 
-    bool velocityMoveRaw(const double * sp) override
+    return_t velocityMoveRaw(const double * sp) override
     { return velocityMoveRaw(0, sp[0]); }
 
-    bool velocityMoveRaw(int n_joint, const int * joints, const double * spds) override
+    return_t velocityMoveRaw(int n_joint, const int * joints, const double * spds) override
     { return velocityMoveRaw(joints[0], spds[0]); }
 
-    bool getRefVelocitiesRaw(double * vels) override
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return_t getTargetVelocitiesRaw(double * vels) override
+    { return getTargetVelocityRaw(0, &vels[0]); }
+
+    return_t getTargetVelocitiesRaw(int n_joint, const int * joints, double * vels) override
+    { return getTargetVelocityRaw(joints[0], &vels[0]); }
+#else
+    return_t getRefVelocitiesRaw(double * vels) override
     { return getRefVelocityRaw(0, &vels[0]); }
 
-    bool getRefVelocitiesRaw(int n_joint, const int * joints, double * vels) override
+    return_t getRefVelocitiesRaw(int n_joint, const int * joints, double * vels) override
     { return getRefVelocityRaw(joints[0], &vels[0]); }
+#endif
 
 protected:
 
@@ -573,8 +701,8 @@ private:
 
     bool monitorWorker(const yarp::os::YarpTimerEvent & event);
 
-    bool setLimitRaw(double limit, bool isMin);
-    bool getLimitRaw(double * limit, bool isMin);
+    bool setPosLimitRaw(double limit, bool isMin);
+    bool getPosLimitRaw(double * limit, bool isMin);
 
     yarp::dev::PolyDriver externalEncoderDevice;
     yarp::dev::IEncodersTimedRaw * iEncodersTimedRawExternal {nullptr};

@@ -9,6 +9,8 @@
 #include <thread>
 #include <vector>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/IPositionControl.h>
@@ -39,6 +41,31 @@ namespace roboticslab::test
  */
 struct DummyPositionDirectRaw : public yarp::dev::IPositionDirectRaw
 {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    constexpr static auto ret_ok = yarp::dev::ReturnValue::return_code::return_value_ok;
+    constexpr static auto ret_err = yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+
+    yarp::dev::ReturnValue getAxes(std::size_t & axes) override
+    { axes = 1; return ret_ok; }
+
+    yarp::dev::ReturnValue setPositionRaw(int j, double ref) override
+    { return ref >= 0.0 ? ret_ok : ret_err; }
+
+    yarp::dev::ReturnValue setPositionsRaw(int n_joint, const int * joints, const double * refs) override
+    { return ret_err; }
+
+    yarp::dev::ReturnValue setPositionsRaw(const double * refs) override
+    { return ret_err; }
+
+    yarp::dev::ReturnValue getRefPositionRaw(int joint, double * ref) override
+    { *ref = joint; return ret_ok; }
+
+    yarp::dev::ReturnValue getRefPositionsRaw(double * refs) override
+    { std::size_t axes; bool ret; return ret = getAxes(axes), std::iota(refs, refs + axes, 0.0), ret ? ret_ok : ret_err; };
+
+    yarp::dev::ReturnValue getRefPositionsRaw(int n_joint, const int * joints, double * refs) override
+    { std::copy_n(joints, n_joint, refs); return ret_ok; }
+#else
     bool getAxes(int * axes) override
     { *axes = 1; return true; }
 
@@ -59,6 +86,7 @@ struct DummyPositionDirectRaw : public yarp::dev::IPositionDirectRaw
 
     bool getRefPositionsRaw(int n_joint, const int * joints, double * refs) override
     { std::copy_n(joints, n_joint, refs); return true; }
+#endif
 };
 
 /**
@@ -102,8 +130,13 @@ struct JointDriver : public yarp::dev::DeviceDriver,
                      public DummyPositionDirectRaw
 {
     //! Retrieve the number of controlled axes.
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    yarp::dev::ReturnValue getAxes(std::size_t & axes) override
+    { axes = N; return ret_ok; }
+#else
     bool getAxes(int * axes) override
     { *axes = N; return true; }
+#endif
 
     //! Generate a dummy name that identifies this device given the number of axes.
     static const std::string name()
@@ -345,7 +378,11 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
     {
         // DeviceMapper::getMotorDevice
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        std::size_t axes1, axes2, axes3, axes4;
+#else
         int axes1, axes2, axes3, axes4;
+#endif
         double ref0, ref1, ref2, ref3;
 
         // device 1 [0]
@@ -355,7 +392,11 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
         ASSERT_NE(p0, nullptr);
         ASSERT_EQ(idx0, localIndex0);
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        ASSERT_TRUE(p0->getAxes(axes1));
+#else
         ASSERT_TRUE(p0->getAxes(&axes1));
+#endif
         ASSERT_EQ(axes1, 1);
 
         ASSERT_TRUE(p0->getRefPositionRaw(localIndex0, &ref0));
@@ -375,7 +416,11 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
 
         ASSERT_EQ(p1, p2);
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        ASSERT_TRUE(p1->getAxes(axes2));
+#else
         ASSERT_TRUE(p1->getAxes(&axes2));
+#endif
         ASSERT_EQ(axes2, 2);
 
         ASSERT_TRUE(p1->getRefPositionRaw(localIndex0, &ref0));
@@ -403,7 +448,11 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
         ASSERT_EQ(p3, p4);
         ASSERT_EQ(p3, p5);
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        ASSERT_TRUE(p3->getAxes(axes3));
+#else
         ASSERT_TRUE(p3->getAxes(&axes3));
+#endif
         ASSERT_EQ(axes3, 3);
 
         ASSERT_TRUE(p3->getRefPositionRaw(localIndex0, &ref0));
@@ -439,7 +488,11 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
         ASSERT_EQ(p6, p8);
         ASSERT_EQ(p6, p9);
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        ASSERT_TRUE(p6->getAxes(axes4));
+#else
         ASSERT_TRUE(p6->getAxes(&axes4));
+#endif
         ASSERT_EQ(axes4, 4);
 
         ASSERT_TRUE(p6->getRefPositionRaw(localIndex0, &ref0));

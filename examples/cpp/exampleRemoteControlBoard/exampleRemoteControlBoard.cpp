@@ -39,6 +39,8 @@ make -j3
 
 #include <vector>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Time.h>
@@ -92,20 +94,30 @@ int main(int argc, char *argv[])
 
     std::printf("SUCCESS: Acquired robot interface\n");
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    std::size_t axes;
+    pos->getAxes(axes);
+#else
     int axes;
     pos->getAxes(&axes);
+#endif
 
-    std::vector<int> posModes(axes, VOCAB_CM_POSITION);
-    mode->setControlModes(posModes.data());
-
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    mode->setControlModes(std::vector(axes, yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION));
+#else
+    mode->setControlModes(std::vector(axes, VOCAB_CM_POSITION).data());
+#endif
     std::printf("test positionMove(1, 35.0)\n");
     pos->positionMove(1, 35.0);
 
     std::printf("Delaying 5 seconds...\n");
     yarp::os::Time::delay(5.0);
 
-    std::vector<int> velModes(axes, VOCAB_CM_VELOCITY);
-    mode->setControlModes(velModes.data());
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    mode->setControlModes(std::vector(axes, yarp::dev::SelectableControlModeEnum::VOCAB_CM_VELOCITY));
+#else
+    mode->setControlModes(std::vector(axes, VOCAB_CM_VELOCITY).data());
+#endif
 
     std::printf("test velocityMove(0, 10.0)\n");
     vel->velocityMove(0, 10.0);

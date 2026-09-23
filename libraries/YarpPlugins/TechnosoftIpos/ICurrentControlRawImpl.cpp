@@ -6,29 +6,51 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue TechnosoftIposBase::getCurrentRaw(int m, double * curr)
+#else
 bool TechnosoftIposBase::getCurrentRaw(int m, double * curr)
+#endif
 {
     CHECK_JOINT(m);
     std::int16_t temp = lastCurrentRead;
     *curr = internalUnitsToCurrent(temp);
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue TechnosoftIposBase::getCurrentRangeRaw(int m, double * min, double * max)
+#else
 bool TechnosoftIposBase::getCurrentRangeRaw(int m, double * min, double * max)
+#endif
 {
     CHECK_JOINT(m);
 
     return can->sdo()->upload<std::uint16_t>("Current limit", [this, min, max](auto data)
         { *max = internalUnitsToPeakCurrent(data);
           *min = -(*max); },
-        0x207F);
+        0x207F)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        ? yarp::dev::ReturnValue::return_code::return_value_ok
+        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+#else
+        ;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue TechnosoftIposBase::setRefCurrentRaw(int m, double curr)
+#else
 bool TechnosoftIposBase::setRefCurrentRaw(int m, double curr)
+#endif
 {
     CHECK_JOINT(m);
     CHECK_MODE(VOCAB_CM_CURRENT);
@@ -38,22 +60,38 @@ bool TechnosoftIposBase::setRefCurrentRaw(int m, double curr)
     if (state == INACTIVE || (state == POSITIVE && curr <= 0.0) || (state == NEGATIVE && curr >= 0.0))
     {
         commandBuffer.accept(curr);
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return yarp::dev::ReturnValue::return_code::return_value_ok;
+#else
         return true;
+#endif
     }
     else
     {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+#else
         return false;
+#endif
     }
 }
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue TechnosoftIposBase::getRefCurrentRaw(int m, double * curr)
+#else
 bool TechnosoftIposBase::getRefCurrentRaw(int m, double * curr)
+#endif
 {
     CHECK_JOINT(m);
     CHECK_MODE(VOCAB_CM_CURRENT);
     *curr = commandBuffer.getStoredCommand();
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue::return_code::return_value_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
