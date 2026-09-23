@@ -6,14 +6,29 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
-bool CanBusBroker::getNumberOfMotors(int * ax)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue CanBusBroker::getNumberOfMotors(int * num)
+#else
+bool CanBusBroker::getNumberOfMotors(int * num)
+#endif
 {
-    return getAxes(ax);
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    std::size_t ax;
+    auto ret = getAxes(ax);
+    *num = static_cast<int>(ax);
+    return ret;
+#else
+    return getAxes(num);
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue CanBusBroker::getTemperature(int m, double * val)
+#else
 bool CanBusBroker::getTemperature(int m, double * val)
+#endif
 {
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IMotorRaw::getTemperatureRaw, m, val);
@@ -21,14 +36,22 @@ bool CanBusBroker::getTemperature(int m, double * val)
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue CanBusBroker::getTemperatures(double * vals)
+#else
 bool CanBusBroker::getTemperatures(double * vals)
+#endif
 {
     return deviceMapper.mapAllJoints(&yarp::dev::IMotorRaw::getTemperaturesRaw, vals);
 }
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue CanBusBroker::getTemperatureLimit(int m, double * temp)
+#else
 bool CanBusBroker::getTemperatureLimit(int m, double * temp)
+#endif
 {
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IMotorRaw::getTemperatureLimitRaw, m, temp);
@@ -36,7 +59,11 @@ bool CanBusBroker::getTemperatureLimit(int m, double * temp)
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue CanBusBroker::setTemperatureLimit(int m, double temp)
+#else
 bool CanBusBroker::setTemperatureLimit(int m, double temp)
+#endif
 {
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IMotorRaw::setTemperatureLimitRaw, m, temp);
@@ -44,7 +71,11 @@ bool CanBusBroker::setTemperatureLimit(int m, double temp)
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue CanBusBroker::getGearboxRatio(int m, double * val)
+#else
 bool CanBusBroker::getGearboxRatio(int m, double * val)
+#endif
 {
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IMotorRaw::getGearboxRatioRaw, m, val);
@@ -52,7 +83,11 @@ bool CanBusBroker::getGearboxRatio(int m, double * val)
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue CanBusBroker::setGearboxRatio(int m, double val)
+#else
 bool CanBusBroker::setGearboxRatio(int m, double val)
+#endif
 {
     CHECK_JOINT(m);
     return deviceMapper.mapSingleJoint(&yarp::dev::IMotorRaw::setGearboxRatioRaw, m, val);

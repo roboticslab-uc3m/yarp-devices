@@ -31,6 +31,11 @@ if(NOT SKIP_CanBusBroker)
                                         LogComponent.hpp
                                         LogComponent.cpp)
 
+    if(YARP_VERSION VERSION_GREATER_EQUAL 4.0)
+        target_sources(CanBusBroker PRIVATE motor/IJointBrakeImpl.cpp
+                                            motor/IVelocityDirectImpl.cpp)
+    endif()
+
 
     # control board interfaces
     target_sources(CanBusBroker PRIVATE motor/IAmplifierControlImpl.cpp

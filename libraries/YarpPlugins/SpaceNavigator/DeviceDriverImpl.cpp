@@ -69,7 +69,7 @@ bool SpaceNavigator::open(yarp::os::Searchable & config)
 
 bool SpaceNavigator::close()
 {
-    return yarp::os::Thread::stop() & ::spnav_close() != -1;
+    return yarp::os::Thread::stop() & (::spnav_close() != -1);
 }
 
 // -----------------------------------------------------------------------------

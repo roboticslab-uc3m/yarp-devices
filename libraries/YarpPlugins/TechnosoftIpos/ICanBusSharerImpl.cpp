@@ -98,9 +98,15 @@ bool TechnosoftIposBase::initialize()
 
     if (!configuredOnce
         || (iExternalEncoderCanBusSharer && !iExternalEncoderCanBusSharer->initialize())
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        || !setPosLimitsRaw(0, min, max)
+        || !setTrajSpeedRaw(0, refSpeed)
+        || !setTrajAccelerationRaw(0, refAcceleration)
+#else
         || !setLimitsRaw(0, min, max)
         || !setRefSpeedRaw(0, refSpeed)
         || !setRefAccelerationRaw(0, refAcceleration)
+#endif
         // synchronize absolute (master) and relative (slave) encoders
         || (iEncodersTimedRawExternal && (!iEncodersTimedRawExternal->getEncodersRaw(&extEnc) || !setEncoderRaw(0, extEnc)))
         || !can->tpdo1()->configure(tpdo1Conf)
@@ -121,7 +127,11 @@ bool TechnosoftIposBase::initialize()
 
     if (!can->driveStatus()->requestState(DriveState::SWITCHED_ON)
             || !awaitControlMode(VOCAB_CM_IDLE)
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+            || !setControlModeRaw(0, static_cast<yarp::dev::SelectableControlModeEnum>(initialControlMode)))
+#else
             || !setControlModeRaw(0, initialControlMode))
+#endif
     {
         yCIWarning(IPOS, id()) << "Initial drive state transitions failed";
     }

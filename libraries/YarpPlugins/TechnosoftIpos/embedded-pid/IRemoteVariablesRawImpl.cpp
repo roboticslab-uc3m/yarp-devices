@@ -10,7 +10,11 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue TechnosoftIposEmbedded::getRemoteVariableRaw(std::string key, yarp::os::Bottle & val)
+#else
 bool TechnosoftIposEmbedded::getRemoteVariableRaw(std::string key, yarp::os::Bottle & val)
+#endif
 {
     val.addString(key);
 
@@ -33,15 +37,27 @@ bool TechnosoftIposEmbedded::getRemoteVariableRaw(std::string key, yarp::os::Bot
     else
     {
         yCIError(IPOS, id()) << "Unsupported key:" << key;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return yarp::dev::ReturnValue_error_input_out_of_bounds;
+#else
         return false;
+#endif
     }
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val)
+#else
 bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val)
+#endif
 {
     if (key == "enableIp")
     {
@@ -52,7 +68,11 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
             if (actualControlMode == VOCAB_CM_POSITION_DIRECT || requestedcontrolMode == VOCAB_CM_POSITION_DIRECT)
             {
                 yCIError(IPOS, id()) << "Currently in posd mode, cannot change config params right now";
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+                return yarp::dev::ReturnValue_error_not_ready;
+#else
                 return false;
+#endif
             }
 
             if (requested)
@@ -82,7 +102,11 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
         if (actualControlMode == VOCAB_CM_POSITION_DIRECT || requestedcontrolMode == VOCAB_CM_POSITION_DIRECT)
         {
             yCIError(IPOS, id()) << "Currently in posd mode, cannot change ip submode right now";
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+            return yarp::dev::ReturnValue_error_not_ready;
+#else
             return false;
+#endif
         }
 
         auto value = val.get(0).asString();
@@ -94,7 +118,11 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
         else
         {
             yCIError(IPOS, id()) << "Illegal ip submode:" << value << "(expected 'pt' or 'pvt')";
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+            return yarp::dev::ReturnValue_error_input_out_of_bounds;
+#else
             return false;
+#endif
         }
     }
     else if (key == "ipPeriodMs")
@@ -102,7 +130,11 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
         if (actualControlMode == VOCAB_CM_POSITION_DIRECT || requestedcontrolMode == VOCAB_CM_POSITION_DIRECT)
         {
             yCIError(IPOS, id()) << "Currently in posd mode, cannot change ip period right now";
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+            return yarp::dev::ReturnValue_error_not_ready;
+#else
             return false;
+#endif
         }
 
         auto value = val.get(0).asInt32();
@@ -114,7 +146,11 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
         else
         {
             yCIError(IPOS, id()) << "Illegal ip period:" << value;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+            return yarp::dev::ReturnValue_error_input_out_of_bounds;
+#else
             return false;
+#endif
         }
     }
     else if (key == "enableCsv")
@@ -126,7 +162,11 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
             if (actualControlMode == VOCAB_CM_VELOCITY || requestedcontrolMode == VOCAB_CM_VELOCITY)
             {
                 yCIError(IPOS, id()) << "Currently in vel mode, cannot change internal mode mapping right now";
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+                return yarp::dev::ReturnValue_error_not_ready;
+#else
                 return false;
+#endif
             }
 
             enableCsv = requested;
@@ -136,15 +176,27 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
     else
     {
         yCIError(IPOS, id()) << "Unsupported key:" << key;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return yarp::dev::ReturnValue_error_input_out_of_bounds;
+#else
         return false;
+#endif
     }
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue TechnosoftIposEmbedded::getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys)
+#else
 bool TechnosoftIposEmbedded::getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys)
+#endif
 {
     listOfKeys->clear();
 
@@ -154,7 +206,11 @@ bool TechnosoftIposEmbedded::getRemoteVariablesListRaw(yarp::os::Bottle * listOf
     listOfKeys->addString("enableIp");
     listOfKeys->addString("enableCsv");
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------

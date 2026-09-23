@@ -9,6 +9,7 @@
 #include <string>
 
 #include <yarp/conf/numeric.h>
+#include <yarp/conf/version.h>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IEncodersTimed.h>
@@ -17,7 +18,11 @@
 #include "StateObserver.hpp"
 #include "CuiAbsolute_ParamsParser.h"
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+#define CHECK_JOINT(j) do { std::size_t ax; if (getAxes(ax), (j) != static_cast<int>(ax) - 1) return yarp::dev::ReturnValue_error_input_out_of_bounds; } while (0)
+#else
 #define CHECK_JOINT(j) do { int ax; if (getAxes(&ax), (j) != ax - 1) return false; } while (0)
+#endif
 
 /**
  * @ingroup YarpPlugins
@@ -53,6 +58,21 @@ public:
 
     //  ---------- IEncodersRaw declarations. Implementation in IEncodersRawImpl.cpp ----------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    yarp::dev::ReturnValue getAxes(std::size_t & ax) override;
+    yarp::dev::ReturnValue resetEncoderRaw(int j) override;
+    yarp::dev::ReturnValue resetEncodersRaw() override;
+    yarp::dev::ReturnValue setEncoderRaw(int j, double val) override;
+    yarp::dev::ReturnValue setEncodersRaw(const double * vals) override;
+    yarp::dev::ReturnValue getEncoderRaw(int j, double * v) override;
+    yarp::dev::ReturnValue getEncodersRaw(double * encs) override;
+    yarp::dev::ReturnValue getEncoderSpeedRaw(int j, double * sp) override;
+    yarp::dev::ReturnValue getEncoderSpeedsRaw(double * spds) override;
+    yarp::dev::ReturnValue getEncoderAccelerationRaw(int j, double * spds) override;
+    yarp::dev::ReturnValue getEncoderAccelerationsRaw(double * accs) override;
+    yarp::dev::ReturnValue getEncodersTimedRaw(double * encs, double * time) override;
+    yarp::dev::ReturnValue getEncoderTimedRaw(int j, double * encs, double * time) override;
+#else
     bool getAxes(int * ax) override;
     bool resetEncoderRaw(int j) override;
     bool resetEncodersRaw() override;
@@ -64,11 +84,9 @@ public:
     bool getEncoderSpeedsRaw(double * spds) override;
     bool getEncoderAccelerationRaw(int j, double * spds) override;
     bool getEncoderAccelerationsRaw(double * accs) override;
-
-    //  ---------- IEncodersTimedRaw declarations. Implementation in IEncodersRawImpl.cpp ----------
-
     bool getEncodersTimedRaw(double * encs, double * time) override;
     bool getEncoderTimedRaw(int j, double * encs, double * time) override;
+#endif
 
 private:
 

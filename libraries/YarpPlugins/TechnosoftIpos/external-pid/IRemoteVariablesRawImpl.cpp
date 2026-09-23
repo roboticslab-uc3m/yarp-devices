@@ -10,7 +10,11 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue TechnosoftIposExternal::getRemoteVariableRaw(std::string key, yarp::os::Bottle & val)
+#else
 bool TechnosoftIposExternal::getRemoteVariableRaw(std::string key, yarp::os::Bottle & val)
+#endif
 {
     val.addString(key);
 
@@ -21,15 +25,27 @@ bool TechnosoftIposExternal::getRemoteVariableRaw(std::string key, yarp::os::Bot
     else
     {
         yCIError(IPOS, id()) << "Unsupported key:" << key;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return yarp::dev::ReturnValue_error_input_out_of_bounds;
+#else
         return false;
+#endif
     }
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue TechnosoftIposExternal::setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val)
+#else
 bool TechnosoftIposExternal::setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val)
+#endif
 {
     if (key == "enableCsv")
     {
@@ -40,7 +56,11 @@ bool TechnosoftIposExternal::setRemoteVariableRaw(std::string key, const yarp::o
             if (actualControlMode == VOCAB_CM_VELOCITY || requestedcontrolMode == VOCAB_CM_VELOCITY)
             {
                 yCIError(IPOS, id()) << "Currently in vel mode, cannot change internal mode mapping right now";
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+                return yarp::dev::ReturnValue_error_not_ready;
+#else
                 return false;
+#endif
             }
 
             enableCsv = requested;
@@ -50,20 +70,36 @@ bool TechnosoftIposExternal::setRemoteVariableRaw(std::string key, const yarp::o
     else
     {
         yCIError(IPOS, id()) << "Unsupported key:" << key;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return yarp::dev::ReturnValue_error_input_out_of_bounds;
+#else
         return false;
+#endif
     }
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue TechnosoftIposExternal::getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys)
+#else
 bool TechnosoftIposExternal::getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys)
+#endif
 {
     listOfKeys->clear();
     listOfKeys->addString("enableCsv");
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------

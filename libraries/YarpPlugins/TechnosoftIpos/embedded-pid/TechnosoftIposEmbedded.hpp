@@ -32,36 +32,54 @@ public:
 
     //  --------- IControlModeRaw declarations. Implementation in IControlModeRawImpl.cpp ---------
 
-    bool getControlModeRaw(int j, int * mode) override;
-    bool setControlModeRaw(int j, int mode) override;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return_t getAvailableControlModesRaw(int j, std::vector<yarp::dev::SelectableControlModeEnum> & avail) override;
+    return_t getControlModeRaw(int j, yarp::dev::ControlModeEnum & mode) override;
+    return_t setControlModeRaw(int j, yarp::dev::SelectableControlModeEnum mode) override;
+#else
+    return_t getControlModeRaw(int j, int * mode) override;
+    return_t setControlModeRaw(int j, int mode) override;
+#endif
 
     // ------- IPositionControlRaw declarations. Implementation in IPositionControlRawImpl.cpp -------
 
-    bool positionMoveRaw(int j, double ref) override;
-    bool relativeMoveRaw(int j, double delta) override;
-    bool checkMotionDoneRaw(int j, bool * flag) override;
-    bool setRefSpeedRaw(int j, double sp) override;
-    bool setRefAccelerationRaw(int j, double acc) override;
-    bool getRefSpeedRaw(int j, double * ref) override;
-    bool getRefAccelerationRaw(int j, double * acc) override;
-    bool stopRaw(int j) override;
-    bool getTargetPositionRaw(int joint, double * ref) override;
+    return_t positionMoveRaw(int j, double ref) override;
+    return_t relativeMoveRaw(int j, double delta) override;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return_t checkMotionDoneRaw(int j, bool & flag) override;
+    return_t setTrajSpeedRaw(int j, double sp) override;
+    return_t setTrajAccelerationRaw(int j, double acc) override;
+    return_t getTrajSpeedRaw(int j, double * ref) override;
+    return_t getTrajAccelerationRaw(int j, double * acc) override;
+#else
+    return_t checkMotionDoneRaw(int j, bool * flag) override;
+    return_t setRefSpeedRaw(int j, double sp) override;
+    return_t setRefAccelerationRaw(int j, double acc) override;
+    return_t getRefSpeedRaw(int j, double * ref) override;
+    return_t getRefAccelerationRaw(int j, double * acc) override;
+#endif
+    return_t stopRaw(int j) override;
+    return_t getTargetPositionRaw(int joint, double * ref) override;
 
     // ------- IPositionDirectRaw declarations. Implementation in IPositionDirectRawImpl.cpp -------
 
-    bool setPositionRaw(int j, double ref) override;
-    bool getRefPositionRaw(int joint, double * ref) override;
+    return_t setPositionRaw(int j, double ref) override;
+    return_t getRefPositionRaw(int joint, double * ref) override;
 
     // ------- IRemoteVariablesRaw declarations. Implementation in IRemoteVariablesRawImpl.cpp -------
 
-    bool getRemoteVariableRaw(std::string key, yarp::os::Bottle & val) override;
-    bool setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val) override;
-    bool getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys) override;
+    return_t getRemoteVariableRaw(std::string key, yarp::os::Bottle & val) override;
+    return_t setRemoteVariableRaw(std::string key, const yarp::os::Bottle & val) override;
+    return_t getRemoteVariablesListRaw(yarp::os::Bottle * listOfKeys) override;
 
     //  --------- IVelocityControlRaw declarations. Implementation in IVelocityControlRawImpl.cpp ---------
 
-    bool velocityMoveRaw(int j, double sp) override;
-    bool getRefVelocityRaw(int joint, double * vel) override;
+    return_t velocityMoveRaw(int j, double sp) override;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return_t getTargetVelocityRaw(int joint, double * vel) override;
+#else
+    return_t getRefVelocityRaw(int joint, double * vel) override;
+#endif
 
 private:
     void interpretModesOfOperation(std::int8_t modesOfOperation) override;

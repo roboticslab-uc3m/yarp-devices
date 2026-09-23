@@ -2,6 +2,8 @@
 
 #include "RawDevice.hpp"
 
+#include <yarp/conf/version.h>
+
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
@@ -20,6 +22,9 @@ struct RawDevice::Private
     yarp::dev::IEncodersTimedRaw * iEncodersTimedRaw;
     yarp::dev::IImpedanceControlRaw * iImpedanceControlRaw;
     yarp::dev::IInteractionModeRaw * iInteractionModeRaw;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    yarp::dev::IJointBrakeRaw * iJointBrakeRaw;
+#endif
     yarp::dev::IJointFaultRaw * iJointFaultRaw;
     yarp::dev::IMotorRaw * iMotorRaw;
     yarp::dev::IMotorEncodersRaw * iMotorEncodersRaw;
@@ -28,8 +33,11 @@ struct RawDevice::Private
     yarp::dev::IPositionDirectRaw * iPositionDirectRaw;
     yarp::dev::IPWMControlRaw * iPWMControlRaw;
     yarp::dev::IRemoteVariablesRaw * iRemoteVariablesRaw;
-    yarp::dev::IVelocityControlRaw * iVelocityControlRaw;
     yarp::dev::ITorqueControlRaw * iTorqueControlRaw;
+    yarp::dev::IVelocityControlRaw * iVelocityControlRaw;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    yarp::dev::IVelocityDirectRaw * iVelocityDirectRaw;
+#endif
 
     // multiple analog sensors interfaces
     yarp::dev::IThreeAxisGyroscopes * iThreeAxisGyroscopes;
@@ -62,6 +70,9 @@ RawDevice::RawDevice(yarp::dev::PolyDriver * _driver)
         valid |= impl->view(priv->iEncodersTimedRaw);
         valid |= impl->view(priv->iImpedanceControlRaw);
         valid |= impl->view(priv->iInteractionModeRaw);
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        valid |= impl->view(priv->iJointBrakeRaw);
+#endif
         valid |= impl->view(priv->iJointFaultRaw);
         valid |= impl->view(priv->iMotorRaw);
         valid |= impl->view(priv->iMotorEncodersRaw);
@@ -70,8 +81,11 @@ RawDevice::RawDevice(yarp::dev::PolyDriver * _driver)
         valid |= impl->view(priv->iPositionDirectRaw);
         valid |= impl->view(priv->iPWMControlRaw);
         valid |= impl->view(priv->iRemoteVariablesRaw);
-        valid |= impl->view(priv->iVelocityControlRaw);
         valid |= impl->view(priv->iTorqueControlRaw);
+        valid |= impl->view(priv->iVelocityControlRaw);
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        valid |= impl->view(priv->iVelocityDirectRaw);
+#endif
 
         // multiple analog sensors interfaces
         valid |= impl->view(priv->iThreeAxisGyroscopes);
@@ -133,6 +147,12 @@ template<>
 yarp::dev::IInteractionModeRaw * RawDevice::getHandle() const
 { return priv->iInteractionModeRaw; }
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+template<>
+yarp::dev::IJointBrakeRaw * RawDevice::getHandle() const
+{ return priv->iJointBrakeRaw; }
+#endif
+
 template<>
 yarp::dev::IJointFaultRaw * RawDevice::getHandle() const
 { return priv->iJointFaultRaw; }
@@ -166,12 +186,18 @@ yarp::dev::IRemoteVariablesRaw * RawDevice::getHandle() const
 { return priv->iRemoteVariablesRaw; }
 
 template<>
+yarp::dev::ITorqueControlRaw * RawDevice::getHandle() const
+{ return priv->iTorqueControlRaw; }
+
+template<>
 yarp::dev::IVelocityControlRaw * RawDevice::getHandle() const
 { return priv->iVelocityControlRaw; }
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
 template<>
-yarp::dev::ITorqueControlRaw * RawDevice::getHandle() const
-{ return priv->iTorqueControlRaw; }
+yarp::dev::IVelocityDirectRaw * RawDevice::getHandle() const
+{ return priv->iVelocityDirectRaw; }
+#endif
 
 // multiple analog sensors interfaces
 

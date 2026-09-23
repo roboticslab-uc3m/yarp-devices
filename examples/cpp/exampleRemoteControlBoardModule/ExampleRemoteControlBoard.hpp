@@ -8,8 +8,6 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
-constexpr auto DEFAULT_ROBOT = "/robot/part";
-
 namespace roboticslab
 {
 
@@ -19,11 +17,11 @@ public:
     int run(int argc, char **argv);
 
 private:
-    yarp::os::Network yarp; // connect to YARP network
-    yarp::dev::PolyDriver dd; //create a YARP multi-use driver
-    yarp::dev::IPositionControl *pos; //make a position controller object we call 'pos'
-    yarp::dev::IEncoders *enc; //make an encoder controller object we call 'enc'
-    yarp::dev::IVelocityControl *vel; //make a velocity controller object we call 'vel'
+    yarp::os::Network yarp;
+    yarp::dev::PolyDriver dd;
+    yarp::dev::IPositionControl * pos;
+    yarp::dev::IEncoders * enc;
+    yarp::dev::IVelocityControl * vel;
 };
 
 }  // namespace roboticslab

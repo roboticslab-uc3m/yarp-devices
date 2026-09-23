@@ -30,7 +30,7 @@ bool TechnosoftIposExternal::synchronize(double timestamp)
         else if (mode == VOCAB_CM_VELOCITY && enableCsv)
         {
             double prevTarget;
-            getPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, &prevTarget);
+            getPidReferenceRaw(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, 0, &prevTarget);
             target = prevTarget + commandBuffer.interpolate() * params.m_syncPeriod;
         }
         else // mode == VOCAB_CM_POSITION_DIRECT
@@ -38,8 +38,8 @@ bool TechnosoftIposExternal::synchronize(double timestamp)
             target = commandBuffer.interpolate();
         }
 
-        setPidReferenceRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, target);
-        getPidOutputRaw(yarp::dev::VOCAB_PIDTYPE_POSITION, 0, &forceCommand);
+        setPidReferenceRaw(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, 0, target);
+        getPidOutputRaw(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, 0, &forceCommand);
         current = torqueToCurrent(forceCommand);
     }
     else if (mode == VOCAB_CM_TORQUE)

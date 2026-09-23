@@ -13,7 +13,11 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue TechnosoftIposEmbedded::setPositionRaw(int j, double ref)
+#else
 bool TechnosoftIposEmbedded::setPositionRaw(int j, double ref)
+#endif
 {
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
@@ -35,7 +39,11 @@ bool TechnosoftIposEmbedded::setPositionRaw(int j, double ref)
             }
 
             ipBufferFilled = ok;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+            return ok ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
+#else
             return ok;
+#endif
         }
     }
     else
@@ -58,11 +66,20 @@ bool TechnosoftIposEmbedded::setPositionRaw(int j, double ref)
         commandBuffer.accept(ref);
     }
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue_ok;
+#else
     return true;
+#endif
 }
+
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue TechnosoftIposEmbedded::getRefPositionRaw(int joint, double * ref)
+#else
 bool TechnosoftIposEmbedded::getRefPositionRaw(int joint, double * ref)
+#endif
 {
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
@@ -76,7 +93,11 @@ bool TechnosoftIposEmbedded::getRefPositionRaw(int joint, double * ref)
         *ref = commandBuffer.getStoredCommand();
     }
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------

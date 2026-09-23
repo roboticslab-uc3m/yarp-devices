@@ -6,6 +6,8 @@
 #include <mutex>
 #include <vector>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/PeriodicThread.h>
 
 #include <yarp/dev/DeviceDriver.h>
@@ -19,6 +21,11 @@
 
 #include "EmulatedControlBoard_ParamsParser.h"
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+#define CHECK_JOINT(j) do { if ((j) < 0 || (j) >= m_axes) return yarp::dev::ReturnValue_error_input_out_of_bounds; } while (0)
+#else
+#define CHECK_JOINT(j) do { if ((j) < 0 || (j) >= m_axes) return false; } while (0)
+#endif
 
 /**
  * @ingroup YarpPlugins
@@ -41,104 +48,142 @@ class EmulatedControlBoard : public yarp::dev::DeviceDriver,
                              public EmulatedControlBoard_ParamsParser
 {
 public:
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    using return_t = yarp::dev::ReturnValue;
+#else
+    using return_t = bool;
+#endif
 
     // Set the thread period in the class constructor
     EmulatedControlBoard() : yarp::os::PeriodicThread(1.0) {} // In seconds
 
     // ------- IPositionControl declarations. Implementation in IPositionControlImpl.cpp -------
-
-    bool getAxes(int *ax) override;
-    bool positionMove(int j, double ref) override;
-    bool positionMove(const double *refs) override;
-    bool relativeMove(int j, double delta) override;
-    bool relativeMove(const double *deltas) override;
-    bool checkMotionDone(int j, bool *flag) override;
-    bool checkMotionDone(bool *flag) override;
-    bool setRefSpeed(int j, double sp) override;
-    bool setRefSpeeds(const double *spds) override;
-    bool setRefAcceleration(int j, double acc) override;
-    bool setRefAccelerations(const double *accs) override;
-    bool getRefSpeed(int j, double *ref) override;
-    bool getRefSpeeds(double *spds) override;
-    bool getRefAcceleration(int j, double *acc) override;
-    bool getRefAccelerations(double *accs) override;
-    bool stop(int j) override;
-    bool stop() override;
-    bool positionMove(int n_joint, const int *joints, const double *refs) override;
-    bool relativeMove(int n_joint, const int *joints, const double *deltas) override;
-    bool checkMotionDone(int n_joint, const int *joints, bool *flags) override;
-    bool setRefSpeeds(int n_joint, const int *joints, const double *spds) override;
-    bool setRefAccelerations(int n_joint, const int *joints, const double *accs) override;
-    bool getRefSpeeds(int n_joint, const int *joints, double *spds) override;
-    bool getRefAccelerations(int n_joint, const int *joints, double *accs) override;
-    bool stop(int n_joint, const int *joints) override;
-    bool getTargetPosition(int joint, double *ref) override;
-    bool getTargetPositions(double *refs) override;
-    bool getTargetPositions(int n_joint, const int *joints, double *refs) override;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return_t getAxes(std::size_t & ax) override;
+#else
+    return_t getAxes(int * ax) override;
+#endif
+    return_t positionMove(int j, double ref) override;
+    return_t positionMove(const double * refs) override;
+    return_t positionMove(int n_joint, const int * joints, const double * refs) override;
+    return_t relativeMove(int j, double delta) override;
+    return_t relativeMove(const double * deltas) override;
+    return_t relativeMove(int n_joint, const int * joints, const double * deltas) override;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return_t checkMotionDone(int j, bool & flag) override;
+    return_t checkMotionDone(bool & flag) override;
+    return_t checkMotionDone(const std::vector<int> & joints, bool & flag) override;
+    return_t setTrajSpeed(int j, double sp) override;
+    return_t setTrajSpeeds(const double * spds) override;
+    return_t setTrajSpeeds(int n_joint, const int * joints, const double * spds) override;
+    return_t getTrajSpeed(int j, double * ref) override;
+    return_t getTrajSpeeds(double * spds) override;
+    return_t getTrajSpeeds(int n_joint, const int * joints, double * spds) override;
+    return_t setTrajAcceleration(int j, double acc) override;
+    return_t setTrajAccelerations(const double * accs) override;
+    return_t setTrajAccelerations(int n_joint, const int * joints, const double * accs) override;
+    return_t getTrajAcceleration(int j, double * acc) override;
+    return_t getTrajAccelerations(double * accs) override;
+    return_t getTrajAccelerations(int n_joint, const int * joints, double * accs) override;
+#else
+    return_t checkMotionDone(int j, bool * flag) override;
+    return_t checkMotionDone(bool * flag) override;
+    return_t checkMotionDone(int n_joint, const int * joints, bool * flags) override;
+    return_t setRefSpeed(int j, double sp) override;
+    return_t setRefSpeeds(const double * spds) override;
+    return_t setRefSpeeds(int n_joint, const int * joints, const double * spds) override;
+    return_t getRefSpeed(int j, double * ref) override;
+    return_t getRefSpeeds(double * spds) override;
+    return_t getRefSpeeds(int n_joint, const int * joints, double * spds) override;
+    return_t setRefAcceleration(int j, double acc) override;
+    return_t setRefAccelerations(const double * accs) override;
+    return_t setRefAccelerations(int n_joint, const int * joints, const double * accs) override;
+    return_t getRefAcceleration(int j, double * acc) override;
+    return_t getRefAccelerations(double * accs) override;
+    return_t getRefAccelerations(int n_joint, const int * joints, double * accs) override;
+#endif
+    return_t stop(int j) override;
+    return_t stop() override;
+    return_t stop(int n_joint, const int * joints) override;
+    return_t getTargetPosition(int joint, double * ref) override;
+    return_t getTargetPositions(double * refs) override;
+    return_t getTargetPositions(int n_joint, const int * joints, double * refs) override;
 
     // ------- IPositionDirect declarations. Implementation in IPositionDirectImpl.cpp -------
-
-    bool setPosition(int j, double ref) override;
-    bool setPositions(int n_joint, const int *joints, const double *refs) override;
-    bool setPositions(const double *refs) override;
-    bool getRefPosition(int joint, double *ref) override;
-    bool getRefPositions(double *refs) override;
-    bool getRefPositions(int n_joint, const int *joints, double *refs) override;
+    return_t setPosition(int j, double ref) override;
+    return_t setPositions(int n_joint, const int * joints, const double * refs) override;
+    return_t setPositions(const double * refs) override;
+    return_t getRefPosition(int joint, double * ref) override;
+    return_t getRefPositions(double * refs) override;
+    return_t getRefPositions(int n_joint, const int * joints, double * refs) override;
 
     // ---------- IEncodersTimed Declarations. Implementation in IEncoderImpl.cpp ----------
-
-    bool resetEncoder(int j) override;
-    bool resetEncoders() override;
-    bool setEncoder(int j, double val) override;
-    bool setEncoders(const double *vals) override;
-    bool getEncoder(int j, double *v) override;
-    bool getEncoders(double *encs) override;
-    bool getEncoderSpeed(int j, double *sp) override;
-    bool getEncoderSpeeds(double *spds) override;
-    bool getEncoderAcceleration(int j, double *spds) override;
-    bool getEncoderAccelerations(double *accs) override;
-    bool getEncodersTimed(double *encs, double *time) override;
-    bool getEncoderTimed(int j, double *encs, double *time) override;
+    return_t resetEncoder(int j) override;
+    return_t resetEncoders() override;
+    return_t setEncoder(int j, double val) override;
+    return_t setEncoders(const double * vals) override;
+    return_t getEncoder(int j, double * v) override;
+    return_t getEncoders(double * encs) override;
+    return_t getEncodersTimed(double * encs, double * time) override;
+    return_t getEncoderTimed(int j, double * encs, double * time) override;
+    return_t getEncoderSpeed(int j, double * sp) override;
+    return_t getEncoderSpeeds(double * spds) override;
+    return_t getEncoderAcceleration(int j, double * spds) override;
+    return_t getEncoderAccelerations(double * accs) override;
 
     // --------- IVelocityControl Declarations. Implementation in IVelocityControlImpl.cpp ---------
-
-    bool velocityMove(int j, double sp) override;
-    bool velocityMove(const double *sp) override;
-    bool velocityMove(int n_joint, const int *joints, const double *spds) override;
-    bool getRefVelocity(int joint, double *vel) override;
-    bool getRefVelocities(double *vels) override;
-    bool getRefVelocities(int n_joint, const int *joints, double *vels) override;
+    return_t velocityMove(int j, double sp) override;
+    return_t velocityMove(const double * sp) override;
+    return_t velocityMove(int n_joint, const int * joints, const double * spds) override;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return_t getTargetVelocity(int joint, double * vel) override;
+    return_t getTargetVelocities(double * vels) override;
+    return_t getTargetVelocities(int n_joint, const int * joints, double * vels) override;
+#else
+    return_t getRefVelocity(int joint, double * vel) override;
+    return_t getRefVelocities(double * vels) override;
+    return_t getRefVelocities(int n_joint, const int * joints, double * vels) override;
+#endif
 
     // --------- IControlLimits Declarations. Implementation in IControlLimitsImpl.cpp ---------
-
-    bool setLimits(int axis, double min, double max) override;
-    bool getLimits(int axis, double *min, double *max) override;
-    bool setVelLimits(int axis, double min, double max) override;
-    bool getVelLimits(int axis, double *min, double *max) override;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return_t setPosLimits(int axis, double min, double max) override;
+    return_t getPosLimits(int axis, double * min, double * max) override;
+#else
+    return_t setLimits(int axis, double min, double max) override;
+    return_t getLimits(int axis, double * min, double * max) override;
+#endif
+    return_t setVelLimits(int axis, double min, double max) override;
+    return_t getVelLimits(int axis, double * min, double * max) override;
 
     // --------- IControlMode Declarations. Implementation in IControlModeImpl.cpp ---------
-
-    bool getControlMode(int j, int *mode) override;
-    bool getControlModes(int *modes) override;
-    bool getControlModes(int n_joint, const int *joints, int *modes) override;
-    bool setControlMode(int j, const int mode) override;
-    bool setControlModes(int n_joint, const int *joints, int *modes) override;
-    bool setControlModes(int *modes) override;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return_t getAvailableControlModes(int j, std::vector<yarp::dev::SelectableControlModeEnum> & avail) override;
+    return_t getControlMode(int j, yarp::dev::ControlModeEnum & mode) override;
+    return_t getControlModes(std::vector<yarp::dev::ControlModeEnum> & modes) override;
+    return_t getControlModes(const std::vector<int> & joints, std::vector<yarp::dev::ControlModeEnum> & modes) override;
+    return_t setControlMode(int j, yarp::dev::SelectableControlModeEnum mode) override;
+    return_t setControlModes(const std::vector<int> & joints, const std::vector<yarp::dev::SelectableControlModeEnum> & modes) override;
+    return_t setControlModes(const std::vector<yarp::dev::SelectableControlModeEnum> & modes) override;
+#else
+    return_t getControlMode(int j, int * mode) override;
+    return_t getControlModes(int * modes) override;
+    return_t getControlModes(int n_joint, const int * joints, int * modes) override;
+    return_t setControlMode(int j, const int mode) override;
+    return_t setControlModes(int n_joint, const int * joints, int * modes) override;
+    return_t setControlModes(int * modes) override;
+#endif
 
     // -------- DeviceDriver declarations. Implementation in DeviceDriverImpl.cpp --------
-
-    bool open(yarp::os::Searchable& config) override;
+    bool open(yarp::os::Searchable & config) override;
     bool close() override;
 
     // -------- PeriodicThread declarations. Implementation in PeriodicThreadImpl.cpp --------
-
     bool threadInit() override;
     void run() override;
 
 protected:
-
     // ----- Shared Area Funcion declarations. Implementation in SharedArea.cpp -----
-
     void setEncRaw(const int index, const double position);
     void setEncsRaw(const std::vector<double> & positions);
 
@@ -149,12 +194,9 @@ protected:
     std::vector<double> getEncsExposed();
 
 private:
-
     enum jmc_state { NOT_CONTROLLING, POSITION_MOVE, RELATIVE_MOVE, VELOCITY_MOVE };
-    enum jmc_mode { POSITION_MODE, VELOCITY_MODE, POSITION_DIRECT_MODE, UNKNOWN_MODE };
 
-    // General Joint Motion Controller parameters //
-    jmc_mode controlMode {UNKNOWN_MODE};
+    yarp::conf::vocab32_t controlMode {0};
     double lastTime {0.0};
 
     std::mutex encRawMutex; // SharedArea

@@ -25,17 +25,27 @@ namespace
 
     bool queryControlledAxes(const RawDevice * rd, int * axes, bool * ret)
     {
+        std::size_t ax;
+
         if (auto handle = rd->getHandle<ICurrentControlRaw>(); handle != nullptr)
         {
             *ret = handle->getNumberOfMotorsRaw(axes);
         }
         else if (auto handle = rd->getHandle<IEncodersRaw>(); handle != nullptr)
         {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+            *ret = handle->getAxes(ax) && (*axes = static_cast<int>(ax), true);
+#else
             *ret = handle->getAxes(axes);
+#endif
         }
         else if (auto handle = rd->getHandle<IImpedanceControlRaw>(); handle != nullptr)
         {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+            *ret = handle->getAxes(ax) && (*axes = static_cast<int>(ax), true);
+#else
             *ret = handle->getAxes(axes);
+#endif
         }
         else if (auto handle = rd->getHandle<IMotorRaw>(); handle != nullptr)
         {
@@ -47,24 +57,46 @@ namespace
         }
         else if (auto handle = rd->getHandle<IPositionControlRaw>(); handle != nullptr)
         {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+            *ret = handle->getAxes(ax) && (*axes = static_cast<int>(ax), true);
+#else
             *ret = handle->getAxes(axes);
+#endif
         }
         else if (auto handle = rd->getHandle<IPositionDirectRaw>(); handle != nullptr)
         {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+            *ret = handle->getAxes(ax) && (*axes = static_cast<int>(ax), true);
+#else
             *ret = handle->getAxes(axes);
+#endif
         }
         else if (auto handle = rd->getHandle<IPWMControlRaw>(); handle != nullptr)
         {
             *ret = handle->getNumberOfMotorsRaw(axes);
         }
-        else if (auto handle = rd->getHandle<IVelocityControlRaw>(); handle != nullptr)
-        {
-            *ret = handle->getAxes(axes);
-        }
         else if (auto handle = rd->getHandle<ITorqueControlRaw>(); handle != nullptr)
         {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+            *ret = handle->getAxes(ax) && (*axes = static_cast<int>(ax), true);
+#else
             *ret = handle->getAxes(axes);
+#endif
         }
+        else if (auto handle = rd->getHandle<IVelocityControlRaw>(); handle != nullptr)
+        {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+            *ret = handle->getAxes(ax) && (*axes = static_cast<int>(ax), true);
+#else
+            *ret = handle->getAxes(axes);
+#endif
+        }
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        else if (auto handle = rd->getHandle<IVelocityDirectRaw>(); handle != nullptr)
+        {
+            *ret = handle->getAxes(ax) && (*axes = static_cast<int>(ax), true);
+        }
+#endif
         else
         {
             return false;

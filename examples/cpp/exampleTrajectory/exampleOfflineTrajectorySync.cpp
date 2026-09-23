@@ -34,6 +34,8 @@
 
 #include <iostream>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
@@ -178,7 +180,11 @@ int main(int argc, char * argv[])
         std::cout << "." << std::flush;
         yarp::os::SystemClock::delaySystem(0.1);
     }
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    while (pos->checkMotionDone(motionDone) && !motionDone);
+#else
     while (pos->checkMotionDone(&motionDone) && !motionDone);
+#endif
 
     std::cout << " end" << std::endl;
 

@@ -33,7 +33,7 @@ public:
     void add(T * p, Fn && fn, Args &&... args)
     { deferreds.push_back([=](int) { return std::invoke(fn, p, args...); }); }
 
-    //! Dispatch the registered callbacks and returns their joint result.
+    //! Dispatch the registered callbacks and return their joint result.
     virtual bool dispatch() = 0;
 
     //! Get the number of registered deferred callbacks.

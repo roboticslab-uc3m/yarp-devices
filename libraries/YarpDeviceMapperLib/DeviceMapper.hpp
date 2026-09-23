@@ -5,6 +5,7 @@
 
 #include <cstdlib> // std::size_t
 
+#include <algorithm> // std::copy
 #include <functional> // std::invoke
 #include <memory>
 #include <tuple>
@@ -12,7 +13,10 @@
 #include <unordered_map>
 #include <vector>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/ReturnValue.h>
 
 #include "FutureTask.hpp"
 #include "RawDevice.hpp"
@@ -131,46 +135,167 @@ public:
     { return totalAxes; }
 
     //! Alias for a single-joint command. See class description.
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    template<typename T, typename... T_ref>
+    using motor_single_joint_fn = yarp::dev::ReturnValue (T::*)(int, T_ref...);
+
+    template<typename T, typename... T_ref>
+    using motor_single_joint_const_fn = yarp::dev::ReturnValue (T::*)(int, T_ref...) const;
+#else
     template<typename T, typename... T_ref>
     using motor_single_joint_fn = bool (T::*)(int, T_ref...);
+#endif
 
-    //! Single-joint command mapping. See class description.
-    template<typename T, typename... T_ref>
-    bool mapSingleJoint(motor_single_joint_fn<T, T_ref...> fn, int j, T_ref... ref)
+    //! Single-joint non-const command mapping. See class description.
+    template<typename T, typename... T_ref, typename... Args>
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    yarp::dev::ReturnValue mapSingleJoint(motor_single_joint_fn<T, T_ref...> fn, int j, Args &&... args)
+#else
+    bool mapSingleJoint(motor_single_joint_fn<T, T_ref...> fn, int j, Args &&... args)
+#endif
     {
         auto [device, offset] = getMotorDevice(j);
-        T * p = device->getHandle<T>();
-        return p ? std::invoke(fn, p, offset, ref...) : false;
+        auto * p = device ? device->getHandle<T>() : nullptr;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return p ? std::invoke(fn, p, offset, std::forward<Args>(args)...) : yarp::dev::ReturnValue_error_method_failed;
+#else
+        return p && std::invoke(fn, p, offset, std::forward<Args>(args)...);
+#endif
     }
+
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    //! Single-joint const command mapping. See class description.
+    template<typename T, typename... T_ref, typename... Args>
+    yarp::dev::ReturnValue mapSingleJoint(motor_single_joint_const_fn<T, T_ref...> fn, int j, Args &&... args) const
+    {
+        auto [device, offset] = getMotorDevice(j);
+        auto * p = device ? device->getHandle<T>() : nullptr;
+        return p ? std::invoke(fn, p, offset, std::forward<Args>(args)...) : yarp::dev::ReturnValue_error_method_failed;
+    }
+#endif
 
     //! Alias for a full-joint command. See class description.
     template<typename T, typename... T_refs>
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    using motor_all_joints_fn = yarp::dev::ReturnValue (T::*)(T_refs *...);
+#else
     using motor_all_joints_fn = bool (T::*)(T_refs *...);
+#endif
 
     //! Full-joint command mapping. See class description.
     template<typename T, typename... T_refs>
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    yarp::dev::ReturnValue mapAllJoints(motor_all_joints_fn<T, T_refs...> fn, T_refs *... refs)
+#else
     bool mapAllJoints(motor_all_joints_fn<T, T_refs...> fn, T_refs *... refs)
+#endif
     {
         auto task = createTask();
         bool ok = false;
 
         for (const auto & [device, offset] : getMotorDevicesWithOffsets())
         {
-            T * p = device->template getHandle<T>();
+            auto * p = device ? device->template getHandle<T>() : nullptr;
             ok |= p && (task->add(p, fn, refs + offset...), true);
         }
 
         // at least one targeted device must implement the 'T' iface
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return ok && task->dispatch() ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
+#else
         return ok && task->dispatch();
+#endif
     }
+
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    template<typename T, typename Elem>
+    using motor_all_joints_vec_fn = yarp::dev::ReturnValue (T::*)(std::vector<Elem> &);
+
+    // Overload for non-const std::vector<Elem> &.
+    template<typename T, typename Elem>
+    yarp::dev::ReturnValue mapAllJoints(motor_all_joints_vec_fn<T, Elem> fn, std::vector<Elem> & vec)
+    {
+        auto task = createTask();
+        bool ok = false;
+        const auto & devices = getMotorDevicesWithOffsets();
+
+        // store shared/ref sub-vectors so they remain alive and can be copied back
+        struct DeviceSubSlice
+        {
+            int offset;
+            std::vector<Elem> sub_vec;
+        };
+
+        auto slices = std::make_shared<std::vector<DeviceSubSlice>>();
+
+        for (auto i = 0; i < devices.size(); i++)
+        {
+            auto [device, offset] = devices[i];
+            auto * p = device ? device->template getHandle<T>() : nullptr;
+
+            if (p)
+            {
+                auto next_offset = (i + 1 < devices.size()) ? std::get<1>(devices[i + 1]) : vec.size();
+                slices->push_back({offset, std::vector(vec.begin() + offset, vec.begin() + next_offset)});
+                ok |= (task->add(p, fn, std::ref(slices->back().sub_vec)), true);
+            }
+        }
+
+        ok &= task->dispatch();
+
+        if (ok)
+        {
+            for (const auto & slice : *slices)
+            {
+                std::copy(slice.sub_vec.begin(), slice.sub_vec.end(), vec.begin() + slice.offset);
+            }
+        }
+
+        return ok ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
+    }
+
+    template<typename T, typename Elem>
+    using motor_all_joints_const_vec_fn = yarp::dev::ReturnValue (T::*)(const std::vector<Elem> &);
+
+    // Overload for const std::vector<Elem>&.
+    template<typename T, typename Elem>
+    yarp::dev::ReturnValue mapAllJoints(motor_all_joints_const_vec_fn<T, Elem> fn, const std::vector<Elem> & vec)
+    {
+        auto task = createTask();
+        bool ok = false;
+        const auto & devices = getMotorDevicesWithOffsets();
+
+        for (auto i = 0; i < devices.size(); i++)
+        {
+            auto [device, offset] = devices[i];
+            auto * p = device ? device->template getHandle<T>() : nullptr;
+
+            if (p)
+            {
+                auto next_offset = (i + 1 < devices.size()) ? std::get<1>(devices[i + 1]) : vec.size();
+                ok |= (task->add(p, fn, std::vector(vec.begin() + offset, vec.begin() + next_offset)), true);
+            }
+        }
+
+        return ok && task->dispatch() ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
+    }
+#endif
 
     //! Alias for a joint-group command. See class description.
     template<typename T, typename... T_refs>
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    using motor_multi_joints_fn = yarp::dev::ReturnValue (T::*)(int, const int *, T_refs *...);
+#else
     using motor_multi_joints_fn = bool (T::*)(int, const int *, T_refs *...);
+#endif
 
     //! Joint-group command mapping. See class description.
     template<typename T, typename... T_refs>
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    yarp::dev::ReturnValue mapJointGroup(motor_multi_joints_fn<T, T_refs...> fn, int n_joint, const int * joints, T_refs *... refs)
+#else
     bool mapJointGroup(motor_multi_joints_fn<T, T_refs...> fn, int n_joint, const int * joints, T_refs *... refs)
+#endif
     {
         auto task = createTask();
         auto devices = getMotorDevicesWithIndices(n_joint, joints); // extend lifetime of vector of local indices
@@ -178,13 +303,126 @@ public:
 
         for (const auto & [device, localIndices, globalIndex] : devices)
         {
-            T * p = device->template getHandle<T>();
+            auto * p = device ? device->template getHandle<T>() : nullptr;
             ok &= p && (task->add(p, fn, localIndices.size(), localIndices.data(), refs + globalIndex...), true);
         }
 
         // all targeted devices must implement the 'T' iface
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return ok && task->dispatch() ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
+#else
         return ok && task->dispatch();
+#endif
     }
+
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    template<typename T, typename Elem>
+    using motor_multi_joints_vec_fn = yarp::dev::ReturnValue (T::*)(const std::vector<int> &, std::vector<Elem> &);
+
+    // Overload for non-const std::vector output parameters (getters)
+    template<typename T, typename Elem>
+    yarp::dev::ReturnValue mapJointGroup(motor_multi_joints_vec_fn<T, Elem> fn, const std::vector<int> & joints, std::vector<Elem> & vec)
+    {
+        auto task = createTask();
+        auto devices = getMotorDevicesWithIndices(joints.size(), joints.data());
+        bool ok = true;
+
+        // data structure to hold local joint indices and sub-vector slice per device
+        struct SliceInfo
+        {
+            std::vector<size_t> global_indices;
+            std::vector<int> local_indices;
+            std::vector<Elem> sub_vec;
+        };
+
+        auto slices = std::make_shared<std::vector<SliceInfo>>();
+        slices->reserve(devices.size());
+
+        for (const auto & [device, localIndices, globalIndex] : devices)
+        {
+            auto * p = device ? device->template getHandle<T>() : nullptr;
+
+            if (p)
+            {
+                SliceInfo info;
+                info.local_indices = localIndices;
+                info.global_indices.reserve(localIndices.size());
+                info.sub_vec.reserve(localIndices.size());
+
+                // extract current elements corresponding to the targeted global joints
+                for (auto i = 0; i < localIndices.size(); ++i)
+                {
+                    auto g_idx = globalIndex + i; // or the global joint index for this element
+                    info.global_indices.push_back(g_idx);
+                    info.sub_vec.push_back(vec[g_idx]);
+                }
+
+                slices->push_back(std::move(info));
+                auto & current = slices->back();
+                ok &= (task->add(p, fn, std::cref(current.local_indices), std::ref(current.sub_vec)), true);
+            }
+        }
+
+        ok &= task->dispatch();
+
+        if (ok)
+        {
+            for (const auto & slice : *slices)
+            {
+                for (auto i = 0; i < slice.sub_vec.size(); ++i)
+                {
+                    vec[slice.global_indices[i]] = slice.sub_vec[i];
+                }
+            }
+        }
+
+        return ok ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
+    }
+
+    template<typename T, typename Elem>
+    using motor_multi_joints_const_vec_fn = yarp::dev::ReturnValue (T::*)(const std::vector<int> &, const std::vector<Elem> &);
+
+    // Overload for const std::vector input parameters (setters).
+    template<typename T, typename Elem>
+    yarp::dev::ReturnValue mapJointGroup(motor_multi_joints_const_vec_fn<T, Elem> fn, const std::vector<int> & joints, const std::vector<Elem> & vec)
+    {
+        auto task = createTask();
+        auto devices = getMotorDevicesWithIndices(joints.size(), joints.data());
+        bool ok = true;
+
+        struct SliceInfo
+        {
+            std::vector<int> local_indices;
+            std::vector<Elem> sub_vec;
+        };
+
+        auto slices = std::make_shared<std::vector<SliceInfo>>();
+        slices->reserve(devices.size());
+
+        for (const auto & [device, localIndices, globalIndex] : devices)
+        {
+            auto * p = device->template getHandle<T>();
+
+            if (p)
+            {
+                SliceInfo info;
+                info.local_indices = localIndices;
+                info.sub_vec.reserve(localIndices.size());
+
+                for (auto i = 0; i < localIndices.size(); ++i)
+                {
+                    info.sub_vec.push_back(vec[globalIndex + i]);
+                }
+
+                slices->push_back(std::move(info));
+                auto & current = slices->back();
+                ok &= (task->add(p, fn, std::cref(current.local_indices), std::cref(current.sub_vec)), true);
+            }
+        }
+
+        return ok && task->dispatch() ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
+    }
+#endif
 
     //! Retrieve the number of connected sensors of the specified type across all subdevices.
     template<typename T>
@@ -228,7 +466,7 @@ public:
     T_out getSensorStatus(sensor_status_fn<T, T_out> fn, std::size_t index) const
     {
         auto [device, offset] = getSensorDevice<T>(index);
-        T * p = device->template getHandle<T>();
+        auto * p = device->template getHandle<T>();
         return p ? std::invoke(fn, p, offset) : static_cast<T_out>(DeviceMapper::getSensorFailureStatus());
     }
 
@@ -243,7 +481,7 @@ public:
     std::size_t getSensorArraySize(sensor_size_fn<T> fn, std::size_t index) const
     {
         auto [device, offset] = getSensorDevice<T>(index);
-        T * p = device->template getHandle<T>();
+        auto * p = device->template getHandle<T>();
         return p ? std::invoke(fn, p, offset) : 0;
     }
 
@@ -258,7 +496,7 @@ public:
     bool getSensorOutput(sensor_output_fn<T, T_out_params...> fn, std::size_t index, T_out_params &... params) const
     {
         auto [device, offset] = getSensorDevice<T>(index);
-        T * p = device->template getHandle<T>();
+        auto * p = device->template getHandle<T>();
         return p ? std::invoke(fn, p, offset, params...) : false;
     }
 

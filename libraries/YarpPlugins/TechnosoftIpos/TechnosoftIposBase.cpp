@@ -590,9 +590,15 @@ bool TechnosoftIposBase::validateInitialState(const TechnosoftIpos_ParamsParser 
         return false;
     }
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    if (params.m_type != yarp::os::Vocab32::decode(static_cast<yarp::conf::vocab32_t>(yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_REVOLUTE)) &&
+        params.m_type != yarp::os::Vocab32::decode(static_cast<yarp::conf::vocab32_t>(yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_PRISMATIC)) &&
+        params.m_type != yarp::os::Vocab32::decode(static_cast<yarp::conf::vocab32_t>(yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_UNKNOWN)))
+#else
     if (params.m_type != yarp::os::Vocab32::decode(yarp::dev::VOCAB_JOINTTYPE_REVOLUTE) &&
         params.m_type != yarp::os::Vocab32::decode(yarp::dev::VOCAB_JOINTTYPE_PRISMATIC) &&
         params.m_type != yarp::os::Vocab32::decode(yarp::dev::VOCAB_JOINTTYPE_UNKNOWN))
+#endif
     {
         yCIWarning(IPOS, id) << "Illegal joint type vocab:" << params.m_type;
         return false;

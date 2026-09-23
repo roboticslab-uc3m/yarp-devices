@@ -15,7 +15,11 @@ using namespace roboticslab;
 
 // ----------------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue TechnosoftIposEmbedded::velocityMoveRaw(int j, double sp)
+#else
 bool TechnosoftIposEmbedded::velocityMoveRaw(int j, double sp)
+#endif
 {
     CHECK_JOINT(j);
     CHECK_MODE(VOCAB_CM_VELOCITY);
@@ -31,14 +35,22 @@ bool TechnosoftIposEmbedded::velocityMoveRaw(int j, double sp)
     if (enableCsv)
     {
         commandBuffer.accept(sp);
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return yarp::dev::ReturnValue_ok;
+#else
         return true;
+#endif
     }
 
     // reset halt bit
     if (can->driveStatus()->controlword()[8]
         && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)))
     {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return yarp::dev::ReturnValue_error_method_failed;
+#else
         return false;
+#endif
     }
 
     targetVelocity = sp;
@@ -50,12 +62,22 @@ bool TechnosoftIposEmbedded::velocityMoveRaw(int j, double sp)
     CanUtils::encodeFixedPoint(value, &dataInt, &dataFrac);
 
     std::int32_t data = (dataInt << 16) + dataFrac;
+
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return can->sdo()->download<std::int32_t>("Target velocity", data, 0x60FF)
+        ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
+#else
     return can->sdo()->download<std::int32_t>("Target velocity", data, 0x60FF);
+#endif
 }
 
 // ----------------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue TechnosoftIposEmbedded::getTargetVelocityRaw(int joint, double * vel)
+#else
 bool TechnosoftIposEmbedded::getRefVelocityRaw(int joint, double * vel)
+#endif
 {
     CHECK_JOINT(joint);
     CHECK_MODE(VOCAB_CM_VELOCITY);
@@ -63,13 +85,21 @@ bool TechnosoftIposEmbedded::getRefVelocityRaw(int joint, double * vel)
     if (enableCsv)
     {
         *vel = commandBuffer.getStoredCommand();
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        return yarp::dev::ReturnValue_ok;
+#else
         return true;
+#endif
     }
 
     // target velocity is stored in 0x606B; using local variable to avoid frequent SDO requests
     // (yarpmotorgui calls this quite fast)
     *vel = targetVelocity;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue_ok;
+#else
     return true;
+#endif
 }
 
 // ------------------------------------------------------------------------------

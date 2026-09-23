@@ -6,12 +6,20 @@ using namespace roboticslab;
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue TechnosoftIposBase::getLastJointFaultRaw(int axis, int & fault, std::string & message)
+#else
 bool TechnosoftIposBase::getLastJointFaultRaw(int axis, int & fault, std::string & message)
+#endif
 {
     CHECK_JOINT(axis);
     fault = lastFaultCode;
     message = lastFaultMessage;
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return yarp::dev::ReturnValue_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
