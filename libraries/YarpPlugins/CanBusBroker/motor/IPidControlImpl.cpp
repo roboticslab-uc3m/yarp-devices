@@ -22,7 +22,7 @@ namespace
     return_t mapSingleJoint(const DeviceMapper & dm, single_joint_fn<T_ref...> fn, const pid_t & type, int j, Args &&... args)
     {
         auto [device, offset] = dm.getMotorDevice(j);
-        auto * p = device->getHandle<yarp::dev::IPidControlRaw>();
+        auto * p = device ? device->getHandle<yarp::dev::IPidControlRaw>() : nullptr;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
         return p ? std::invoke(fn, p, type, offset, args...) : yarp::dev::ReturnValue_error_method_failed;
 #else
@@ -41,7 +41,7 @@ namespace
 
         for (const auto & [device, offset] : dm.getMotorDevicesWithOffsets())
         {
-            auto * p = device->template getHandle<yarp::dev::IPidControlRaw>();
+            auto * p = device ? device->template getHandle<yarp::dev::IPidControlRaw>() : nullptr;
             ok &= p && (task->add(p, fn, type, refs + offset), true);
         }
 
@@ -76,7 +76,7 @@ namespace
         for (size_t i = 0; i < devices.size(); ++i)
         {
             auto [device, offset] = devices[i];
-            auto * p = device->template getHandle<yarp::dev::IPidControlRaw>();
+            auto * p = device ? device->template getHandle<yarp::dev::IPidControlRaw>() : nullptr;
 
             if (p)
             {

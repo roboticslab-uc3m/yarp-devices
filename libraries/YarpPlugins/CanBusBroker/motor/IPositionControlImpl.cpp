@@ -108,7 +108,7 @@ yarp::dev::ReturnValue CanBusBroker::checkMotionDone(bool & flag)
 
     for (const auto & [device, offset] : devices)
     {
-        auto * p = device->getHandle<yarp::dev::IPositionControlRaw>();
+        auto * p = device ? device->getHandle<yarp::dev::IPositionControlRaw>() : nullptr;
 
         if (p)
         {
@@ -157,7 +157,7 @@ yarp::dev::ReturnValue CanBusBroker::checkMotionDone(const std::vector<int> & jo
 
     for (const auto & [device, localIndices, globalIndex] : devices)
     {
-        auto * p = device->getHandle<yarp::dev::IPositionControlRaw>();
+        auto * p = device ? device->getHandle<yarp::dev::IPositionControlRaw>() : nullptr;
 
         if (p)
         {

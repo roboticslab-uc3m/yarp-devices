@@ -75,14 +75,6 @@ namespace
         {
             *ret = handle->getNumberOfMotorsRaw(axes);
         }
-        else if (auto handle = rd->getHandle<IVelocityControlRaw>(); handle != nullptr)
-        {
-#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-            *ret = handle->getAxes(ax) && (*axes = static_cast<int>(ax), true);
-#else
-            *ret = handle->getAxes(axes);
-#endif
-        }
         else if (auto handle = rd->getHandle<ITorqueControlRaw>(); handle != nullptr)
         {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
@@ -91,6 +83,20 @@ namespace
             *ret = handle->getAxes(axes);
 #endif
         }
+        else if (auto handle = rd->getHandle<IVelocityControlRaw>(); handle != nullptr)
+        {
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+            *ret = handle->getAxes(ax) && (*axes = static_cast<int>(ax), true);
+#else
+            *ret = handle->getAxes(axes);
+#endif
+        }
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+        else if (auto handle = rd->getHandle<IVelocityDirectRaw>(); handle != nullptr)
+        {
+            *ret = handle->getAxes(ax) && (*axes = static_cast<int>(ax), true);
+        }
+#endif
         else
         {
             return false;

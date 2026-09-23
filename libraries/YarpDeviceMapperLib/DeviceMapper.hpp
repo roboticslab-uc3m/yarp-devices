@@ -135,14 +135,18 @@ public:
     { return totalAxes; }
 
     //! Alias for a single-joint command. See class description.
-    template<typename T, typename... T_ref>
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    template<typename T, typename... T_ref>
     using motor_single_joint_fn = yarp::dev::ReturnValue (T::*)(int, T_ref...);
+
+    template<typename T, typename... T_ref>
+    using motor_single_joint_const_fn = yarp::dev::ReturnValue (T::*)(int, T_ref...) const;
 #else
+    template<typename T, typename... T_ref>
     using motor_single_joint_fn = bool (T::*)(int, T_ref...);
 #endif
 
-    //! Single-joint command mapping. See class description.
+    //! Single-joint non-const command mapping. See class description.
     template<typename T, typename... T_ref, typename... Args>
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
     yarp::dev::ReturnValue mapSingleJoint(motor_single_joint_fn<T, T_ref...> fn, int j, Args &&... args)
@@ -151,13 +155,24 @@ public:
 #endif
     {
         auto [device, offset] = getMotorDevice(j);
-        T * p = device->getHandle<T>();
+        auto * p = device ? device->getHandle<T>() : nullptr;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
         return p ? std::invoke(fn, p, offset, std::forward<Args>(args)...) : yarp::dev::ReturnValue_error_method_failed;
 #else
         return p && std::invoke(fn, p, offset, std::forward<Args>(args)...);
 #endif
     }
+
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    //! Single-joint const command mapping. See class description.
+    template<typename T, typename... T_ref, typename... Args>
+    yarp::dev::ReturnValue mapSingleJoint(motor_single_joint_const_fn<T, T_ref...> fn, int j, Args &&... args) const
+    {
+        auto [device, offset] = getMotorDevice(j);
+        auto * p = device ? device->getHandle<T>() : nullptr;
+        return p ? std::invoke(fn, p, offset, std::forward<Args>(args)...) : yarp::dev::ReturnValue_error_method_failed;
+    }
+#endif
 
     //! Alias for a full-joint command. See class description.
     template<typename T, typename... T_refs>
@@ -180,7 +195,7 @@ public:
 
         for (const auto & [device, offset] : getMotorDevicesWithOffsets())
         {
-            auto * p = device->template getHandle<T>();
+            auto * p = device ? device->template getHandle<T>() : nullptr;
             ok |= p && (task->add(p, fn, refs + offset...), true);
         }
 
@@ -216,7 +231,7 @@ public:
         for (auto i = 0; i < devices.size(); i++)
         {
             auto [device, offset] = devices[i];
-            auto * p = device->template getHandle<T>();
+            auto * p = device ? device->template getHandle<T>() : nullptr;
 
             if (p)
             {
@@ -253,7 +268,7 @@ public:
         for (auto i = 0; i < devices.size(); i++)
         {
             auto [device, offset] = devices[i];
-            auto * p = device->template getHandle<T>();
+            auto * p = device ? device->template getHandle<T>() : nullptr;
 
             if (p)
             {
@@ -288,7 +303,7 @@ public:
 
         for (const auto & [device, localIndices, globalIndex] : devices)
         {
-            auto * p = device->template getHandle<T>();
+            auto * p = device ? device->template getHandle<T>() : nullptr;
             ok &= p && (task->add(p, fn, localIndices.size(), localIndices.data(), refs + globalIndex...), true);
         }
 
@@ -325,7 +340,7 @@ public:
 
         for (const auto & [device, localIndices, globalIndex] : devices)
         {
-            auto * p = device->template getHandle<T>();
+            auto * p = device ? device->template getHandle<T>() : nullptr;
 
             if (p)
             {
@@ -451,7 +466,7 @@ public:
     T_out getSensorStatus(sensor_status_fn<T, T_out> fn, std::size_t index) const
     {
         auto [device, offset] = getSensorDevice<T>(index);
-        T * p = device->template getHandle<T>();
+        auto * p = device->template getHandle<T>();
         return p ? std::invoke(fn, p, offset) : static_cast<T_out>(DeviceMapper::getSensorFailureStatus());
     }
 
@@ -466,7 +481,7 @@ public:
     std::size_t getSensorArraySize(sensor_size_fn<T> fn, std::size_t index) const
     {
         auto [device, offset] = getSensorDevice<T>(index);
-        T * p = device->template getHandle<T>();
+        auto * p = device->template getHandle<T>();
         return p ? std::invoke(fn, p, offset) : 0;
     }
 
@@ -481,7 +496,7 @@ public:
     bool getSensorOutput(sensor_output_fn<T, T_out_params...> fn, std::size_t index, T_out_params &... params) const
     {
         auto [device, offset] = getSensorDevice<T>(index);
-        T * p = device->template getHandle<T>();
+        auto * p = device->template getHandle<T>();
         return p ? std::invoke(fn, p, offset, params...) : false;
     }
 

@@ -53,6 +53,9 @@ class CanBusBroker : public yarp::dev::DeviceDriver,
                      public yarp::dev::IEncodersTimed,
                      public yarp::dev::IImpedanceControl,
                      public yarp::dev::IInteractionMode,
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+                     public yarp::dev::IJointBrake,
+#endif
                      public yarp::dev::IJointFault,
                      public yarp::dev::IMotor,
                      public yarp::dev::IMotorEncoders,
@@ -63,6 +66,9 @@ class CanBusBroker : public yarp::dev::DeviceDriver,
                      public yarp::dev::IRemoteVariables,
                      public yarp::dev::ITorqueControl,
                      public yarp::dev::IVelocityControl,
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+                     public yarp::dev::IVelocityDirect,
+#endif
                      // multiple analog sensors interfaces
                      public yarp::dev::IContactLoadCellArrays,
                      public yarp::dev::IEncoderArrays,
@@ -211,6 +217,15 @@ public:
     return_t setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode) override;
     return_t setInteractionModes(yarp::dev::InteractionModeEnum * modes) override;
     return_t setInteractionModes(int n_joints, int * joints, yarp::dev::InteractionModeEnum * modes) override;
+#endif
+
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    // --------- IJointBrake declarations. Implementation in IJointBrakeImpl.cpp ---------
+
+    return_t isJointBraked(int j, bool & braked) const override;
+    return_t setManualBrakeActive(int j, bool active) override;
+    return_t setAutoBrakeEnabled(int j, bool enabled) override;
+    return_t getAutoBrakeEnabled(int j, bool & enabled) const override;
 #endif
 
     // --------- IJointFault declarations. Implementation in IJointFaultImpl.cpp ---------
@@ -388,15 +403,17 @@ public:
     return_t getRefVelocities(double * vels) override;
     return_t getRefVelocities(int n_joint, const int * joints, double * vels) override;
 #endif
-    //return_t setTrajAcceleration(int j, double acc) override;
-    //return_t setTrajAccelerations(const double * accs) override;
-    //return_t setTrajAccelerations(int n_joint, const int * joints, const double * accs) override;
-    //return_t getTrajAcceleration(int j, double * acc) override;
-    //return_t getTrajAccelerations(double * accs) override;
-    //return_t getTrajAccelerations(int n_joint, const int * joints, double * accs) override;
-    //return_t stop(int j) override;
-    //return_t stop() override;
-    //return_t stop(int n_joint, const int * joints) override;
+
+    // ---------- IVelocityDirect declarations. Implementation in IVelocityDirectImpl.cpp ---------
+
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+    return_t setRefVelocity(int jnt, double vel) override;
+    return_t setRefVelocity(const std::vector<double> & vels) override;
+    return_t setRefVelocity(const std::vector<int> & jnts, const std::vector<double> & vels) override;
+    return_t getRefVelocity(int jnt, double & vel) override;
+    return_t getRefVelocity(std::vector<double> & vels) override;
+    return_t getRefVelocity(const std::vector<int> & jnts, std::vector<double> & vels) override;
+#endif
 
     // ---------- MULTIPLE ANALOG SENSORS INTERFACES ----------
 

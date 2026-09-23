@@ -46,7 +46,7 @@ bool CanBusBroker::getInteractionModes(int n_joints, int * joints, yarp::dev::In
 
     for (const auto & t : devices)
     {
-        auto * p = std::get<0>(t)->getHandle<yarp::dev::IInteractionModeRaw>();
+        auto * p = std::get<0>(t) ? std::get<0>(t)->getHandle<yarp::dev::IInteractionModeRaw>() : nullptr;
         int * temp = const_cast<int *>(std::get<1>(t).data()); // workaround
         multi_joints_fn fn = &yarp::dev::IInteractionModeRaw::getInteractionModesRaw;
         ok &= p && (task->add(p, fn, std::get<1>(t).size(), temp, modes + std::get<2>(t)), true);
@@ -98,9 +98,9 @@ bool CanBusBroker::setInteractionModes(int n_joints, int * joints, yarp::dev::In
 
     for (const auto & t : devices)
     {
-        auto * p = std::get<0>(t)->getHandle<yarp::dev::IInteractionModeRaw>();
+        auto * p = std::get<0>(t) ? std::get<0>(t)->getHandle<yarp::dev::IInteractionModeRaw>() : nullptr;
         int * temp = const_cast<int *>(std::get<1>(t).data()); // workaround
-        multi_joints_fn fn = &yarp::dev::IInteractionModeRaw::getInteractionModesRaw;
+        multi_joints_fn fn = &yarp::dev::IInteractionModeRaw::setInteractionModesRaw;
         ok &= p && (task->add(p, fn, std::get<1>(t).size(), temp, modes + std::get<2>(t)), true);
     }
 
