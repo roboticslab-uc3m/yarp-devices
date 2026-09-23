@@ -35,25 +35,25 @@ public:
     bool close() override;
 
     // --------- IThreeAxisLinearAccelerometers Declarations. Implementation in IThreeAxisLinearAccelerometersImpl.cpp ---------
-    size_t getNrOfThreeAxisLinearAccelerometers() const;
-    yarp::dev::MAS_status getThreeAxisLinearAccelerometerStatus(size_t sens_index) const;
-    bool getThreeAxisLinearAccelerometerName(size_t sens_index, std::string & name) const;
-    bool getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string & frameName) const;
-    bool getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector & out, double & timestamp) const;
+    size_t getNrOfThreeAxisLinearAccelerometers() const override;
+    yarp::dev::MAS_status getThreeAxisLinearAccelerometerStatus(size_t sens_index) const override;
+    bool getThreeAxisLinearAccelerometerName(size_t sens_index, std::string & name) const override;
+    bool getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string & frameName) const override;
+    bool getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
 
     // --------- IThreeAxisGyroscopes Declarations. Implementation in IThreeAxisGyroscopesImpl.cpp ---------
-    size_t getNrOfThreeAxisGyroscopes() const;
-    yarp::dev::MAS_status getThreeAxisGyroscopeStatus(size_t sens_index) const;
-    bool getThreeAxisGyroscopeName(size_t sens_index, std::string & name) const;
-    bool getThreeAxisGyroscopeFrameName(size_t sens_index, std::string & frameName) const;
-    bool getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector & out, double & timestamp) const;
+    size_t getNrOfThreeAxisGyroscopes() const override;
+    yarp::dev::MAS_status getThreeAxisGyroscopeStatus(size_t sens_index) const override;
+    bool getThreeAxisGyroscopeName(size_t sens_index, std::string & name) const override;
+    bool getThreeAxisGyroscopeFrameName(size_t sens_index, std::string & frameName) const override;
+    bool getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
 
     // --------- IThreeAxisMagnetometers Declarations. Implementation in IThreeAxisMagnetometersImpl.cpp ---------
-    size_t getNrOfThreeAxisMagnetometers() const;
-    yarp::dev::MAS_status getThreeAxisMagnetometerStatus(size_t sens_index) const;
-    bool getThreeAxisMagnetometerName(size_t sens_index, std::string & name) const;
-    bool getThreeAxisMagnetometerFrameName(size_t sens_index, std::string & frameName) const;
-    bool getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector & out, double & timestamp) const;
+    size_t getNrOfThreeAxisMagnetometers() const override;
+    yarp::dev::MAS_status getThreeAxisMagnetometerStatus(size_t sens_index) const override;
+    bool getThreeAxisMagnetometerName(size_t sens_index, std::string & name) const override;
+    bool getThreeAxisMagnetometerFrameName(size_t sens_index, std::string & frameName) const override;
+    bool getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
 
 private:
     // -- Helper Funcion declarations. Implementation in PhidgetSpatial.cpp --

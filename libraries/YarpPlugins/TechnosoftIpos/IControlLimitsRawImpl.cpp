@@ -84,7 +84,7 @@ bool TechnosoftIposBase::getLimitsRaw(int axis, double * min, double * max)
 #endif
     }
 
-    return getPosLimitRaw(min, true) & getPosLimitRaw(max, false)
+    return getPosLimitRaw(min, true) && getPosLimitRaw(max, false)
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
         ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
