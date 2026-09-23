@@ -19,7 +19,7 @@ bool LacqueyFetch::getControlModeRaw(int j, int * mode)
     CHECK_JOINT(j);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
     mode = yarp::dev::ControlModeEnum::VOCAB_CM_PWM;
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     *mode = VOCAB_CM_PWM;
     return true;
@@ -67,7 +67,7 @@ bool LacqueyFetch::setControlModeRaw(int j, int mode)
     CHECK_JOINT(j);
     yCIWarning(LCQ, id()) << "setControlModeRaw() not supported";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -83,7 +83,7 @@ bool LacqueyFetch::setControlModesRaw(int * modes)
 {
     yCIWarning(LCQ, id()) << "setControlModesRaw() not supported";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -99,7 +99,7 @@ bool LacqueyFetch::setControlModesRaw(int n_joint, const int * joints, int * mod
 {
     yCIWarning(LCQ, id()) << "setControlModesRaw() not supported";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif

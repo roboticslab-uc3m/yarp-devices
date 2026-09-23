@@ -38,14 +38,14 @@ bool TechnosoftIposEmbedded::getRemoteVariableRaw(std::string key, yarp::os::Bot
     {
         yCIError(IPOS, id()) << "Unsupported key:" << key;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+        return yarp::dev::ReturnValue_error_input_out_of_bounds;
 #else
         return false;
 #endif
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -69,7 +69,7 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
             {
                 yCIError(IPOS, id()) << "Currently in posd mode, cannot change config params right now";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-                return yarp::dev::ReturnValue::return_code::return_value_error_not_ready;
+                return yarp::dev::ReturnValue_error_not_ready;
 #else
                 return false;
 #endif
@@ -103,7 +103,7 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
         {
             yCIError(IPOS, id()) << "Currently in posd mode, cannot change ip submode right now";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-            return yarp::dev::ReturnValue::return_code::return_value_error_not_ready;
+            return yarp::dev::ReturnValue_error_not_ready;
 #else
             return false;
 #endif
@@ -119,7 +119,7 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
         {
             yCIError(IPOS, id()) << "Illegal ip submode:" << value << "(expected 'pt' or 'pvt')";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-            return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+            return yarp::dev::ReturnValue_error_input_out_of_bounds;
 #else
             return false;
 #endif
@@ -131,7 +131,7 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
         {
             yCIError(IPOS, id()) << "Currently in posd mode, cannot change ip period right now";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-            return yarp::dev::ReturnValue::return_code::return_value_error_not_ready;
+            return yarp::dev::ReturnValue_error_not_ready;
 #else
             return false;
 #endif
@@ -147,7 +147,7 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
         {
             yCIError(IPOS, id()) << "Illegal ip period:" << value;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-            return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+            return yarp::dev::ReturnValue_error_input_out_of_bounds;
 #else
             return false;
 #endif
@@ -163,7 +163,7 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
             {
                 yCIError(IPOS, id()) << "Currently in vel mode, cannot change internal mode mapping right now";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-                return yarp::dev::ReturnValue::return_code::return_value_error_not_ready;
+                return yarp::dev::ReturnValue_error_not_ready;
 #else
                 return false;
 #endif
@@ -177,14 +177,14 @@ bool TechnosoftIposEmbedded::setRemoteVariableRaw(std::string key, const yarp::o
     {
         yCIError(IPOS, id()) << "Unsupported key:" << key;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+        return yarp::dev::ReturnValue_error_input_out_of_bounds;
 #else
         return false;
 #endif
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -207,7 +207,7 @@ bool TechnosoftIposEmbedded::getRemoteVariablesListRaw(yarp::os::Bottle * listOf
     listOfKeys->addString("enableCsv");
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif

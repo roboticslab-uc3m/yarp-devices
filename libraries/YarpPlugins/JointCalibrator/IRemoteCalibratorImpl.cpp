@@ -26,7 +26,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
         {
             yCError(JC) << "Invalid joint id: %d" << joint;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-            return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+            return yarp::dev::ReturnValue_error_input_out_of_bounds;
 #else
             return false;
 #endif
@@ -39,7 +39,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
     {
         yCError(JC) << "Unable to retrieve initial position";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -62,7 +62,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
     {
         yCInfo(JC) << "All joints in target position, not moving";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_ok;
+        return yarp::dev::ReturnValue_ok;
 #else
         return true;
 #endif
@@ -78,7 +78,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
     {
         yCError(JC) << "Unable to retrieve initial reference speeds";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -94,7 +94,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
     {
         yCError(JC) << "Unable to retrieve initial reference accelerations";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -109,7 +109,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
     {
         yCError(JC) << "Unable to switch to position mode";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -134,7 +134,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
     {
         yCError(JC) << "Unable to set new reference speeds";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -148,7 +148,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
     {
         yCError(JC) << "Unable to set new reference accelerations";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -158,7 +158,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
     {
         yCError(JC) << "Unable to move motors to new position";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -167,7 +167,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
     if (!m_block)
     {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_ok;
+        return yarp::dev::ReturnValue_ok;
 #else
         return true;
 #endif
@@ -229,8 +229,7 @@ bool JointCalibrator::move(const std::vector<int> & joints, const MovementSpecs 
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return ok ? yarp::dev::ReturnValue::return_code::return_value_ok
-              : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+    return ok ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
     return ok;
 #endif
@@ -244,7 +243,7 @@ bool JointCalibrator::calibrateSingleJoint(int j)
 {
     yCWarning(JC) << "calibrateSingleJoint() not supported";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -258,7 +257,7 @@ bool JointCalibrator::calibrateWholePart()
 {
     yCWarning(JC) << "calibrateWholePart() not supported";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -318,7 +317,7 @@ bool JointCalibrator::quitCalibrate()
 {
     yCWarning(JC) << "quitCalibrate() not supported";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -332,7 +331,7 @@ bool JointCalibrator::quitPark()
 {
     yCWarning(JC) << "quitPark() not supported";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif

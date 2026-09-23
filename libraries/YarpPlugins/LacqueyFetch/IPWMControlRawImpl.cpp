@@ -18,7 +18,7 @@ bool LacqueyFetch::getNumberOfMotorsRaw(int * number)
 {
     *number = 1;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -42,9 +42,7 @@ bool LacqueyFetch::setRefDutyCycleRaw(int m, double ref)
     std::memcpy(msgData, &refDutyCycles, len);
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return send(len, msgData)
-        ? yarp::dev::ReturnValue::return_code::return_value_ok
-        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+    return send(len, msgData) ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
     return send(len, msgData);
 #endif
@@ -72,7 +70,7 @@ bool LacqueyFetch::getRefDutyCycleRaw(int m, double * ref)
     CHECK_JOINT(m);
     *ref = refDutyCycles;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -99,7 +97,7 @@ bool LacqueyFetch::getDutyCycleRaw(int m, double * val)
 {
     CHECK_JOINT(m);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif

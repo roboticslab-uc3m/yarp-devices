@@ -32,7 +32,7 @@ bool LacqueyFetch::getAxisNameRaw(int axis, std::string & name)
     CHECK_JOINT(axis);
     name = m_name;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -49,7 +49,7 @@ bool LacqueyFetch::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & type)
     CHECK_JOINT(axis);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
     type = yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_REVOLUTE;
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     type = yarp::dev::VOCAB_JOINTTYPE_REVOLUTE;
     return true;

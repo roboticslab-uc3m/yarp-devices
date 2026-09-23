@@ -16,7 +16,7 @@ bool Wiimote::getAxisCount(unsigned int & axis_count)
 {
     axis_count = 3;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -32,7 +32,7 @@ bool Wiimote::getButtonCount(unsigned int & button_count)
 {
     button_count = 4;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -48,7 +48,7 @@ bool Wiimote::getTrackballCount(unsigned int & trackball_count)
 {
     trackball_count = 0;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -64,7 +64,7 @@ bool Wiimote::getHatCount(unsigned int & hat_count)
 {
     hat_count = 0;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -80,7 +80,7 @@ bool Wiimote::getTouchSurfaceCount(unsigned int & touch_count)
 {
     touch_count = 0;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -96,7 +96,7 @@ bool Wiimote::getStickCount(unsigned int & stick_count)
 {
     stick_count = 0;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -124,7 +124,7 @@ bool Wiimote::getButton(unsigned int button_id, float & value)
     {
         yCError(WII) << "Invalid button ID:" << button_id;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+        return yarp::dev::ReturnValue_error_input_out_of_bounds;
 #else
         return false;
 #endif
@@ -149,7 +149,7 @@ bool Wiimote::getButton(unsigned int button_id, float & value)
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -164,7 +164,7 @@ bool Wiimote::getTrackball(unsigned int trackball_id, yarp::sig::Vector & value)
 #endif
 {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -179,7 +179,7 @@ bool Wiimote::getHat(unsigned int hat_id, unsigned char & value)
 #endif
 {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -197,7 +197,7 @@ bool Wiimote::getAxis(unsigned int axis_id, double & value)
     {
         yCError(WII) << "Invalid axis ID:" << axis_id;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+        return yarp::dev::ReturnValue_error_input_out_of_bounds;
 #else
         return false;
 #endif
@@ -230,7 +230,7 @@ bool Wiimote::getAxis(unsigned int axis_id, double & value)
 
     value = static_cast<double>(*accel - *calibZero) / static_cast<double>(*calibOne - *calibZero);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -261,7 +261,7 @@ yarp::dev::ReturnValue Wiimote::getAllAxes(std::vector<double> & values)
         static_cast<double>(*accelZ - *calibZeroZ) / static_cast<double>(*calibOneZ - *calibZeroZ)
     };
 
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 }
 #endif
 
@@ -274,7 +274,7 @@ bool Wiimote::getStick(unsigned int stick_id, yarp::sig::Vector & value, yarp::d
 #endif
 {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -289,7 +289,7 @@ bool Wiimote::getTouch(unsigned int touch_id, yarp::sig::Vector & value)
 #endif
 {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif

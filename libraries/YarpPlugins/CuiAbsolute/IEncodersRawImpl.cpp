@@ -15,7 +15,7 @@ using namespace roboticslab;
 yarp::dev::ReturnValue CuiAbsolute::getAxes(std::size_t & ax)
 {
     ax = 1;
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 }
 #else
 bool CuiAbsolute::getAxes(int * ax)
@@ -59,7 +59,7 @@ bool CuiAbsolute::setEncoderRaw(int j, double val)
     CHECK_JOINT(j);
     yCIWarning(CUI, id()) << "setEncoderRaw() not supported";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -75,7 +75,7 @@ bool CuiAbsolute::setEncodersRaw(const double * vals)
 {
     yCIWarning(CUI, id()) << "setEncodersRaw() not supported";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -98,7 +98,7 @@ bool CuiAbsolute::getEncoderRaw(int j, double * v)
         if (!pollEncoderRead(&enc))
         {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-            return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+            return yarp::dev::ReturnValue_error_method_failed;
 #else
             return false;
 #endif
@@ -106,7 +106,7 @@ bool CuiAbsolute::getEncoderRaw(int j, double * v)
 
         *v = enc;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_ok;
+        return yarp::dev::ReturnValue_ok;
 #else
         return true;
 #endif
@@ -115,7 +115,7 @@ bool CuiAbsolute::getEncoderRaw(int j, double * v)
     std::lock_guard lock(mutex);
     *v = encoder;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -143,7 +143,7 @@ bool CuiAbsolute::getEncoderSpeedRaw(int j, double * sp)
     CHECK_JOINT(j);
     yCIWarning(CUI, id()) << "getEncoderSpeedRaw() not supported";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -159,7 +159,7 @@ bool CuiAbsolute::getEncoderSpeedsRaw(double * spds)
 {
     yCIWarning(CUI, id()) << "getEncoderSpeedsRaw() not supported";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -176,7 +176,7 @@ bool CuiAbsolute::getEncoderAccelerationRaw(int j, double * spds)
     CHECK_JOINT(j);
     yCIWarning(CUI, id()) << "getEncoderAccelerationRaw() not supported";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -192,7 +192,7 @@ bool CuiAbsolute::getEncoderAccelerationsRaw(double * accs)
 {
     yCIWarning(CUI, id()) << "getEncoderAccelerationsRaw() not supported";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -226,7 +226,7 @@ bool CuiAbsolute::getEncoderTimedRaw(int j, double * enc, double * time)
             *enc = v;
             *time = yarp::os::Time::now();
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-            return yarp::dev::ReturnValue::return_code::return_value_ok;
+            return yarp::dev::ReturnValue_ok;
 #else
             return true;
 #endif
@@ -234,7 +234,7 @@ bool CuiAbsolute::getEncoderTimedRaw(int j, double * enc, double * time)
         else
         {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-            return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+            return yarp::dev::ReturnValue_error_method_failed;
 #else
             return false;
 #endif
@@ -245,7 +245,7 @@ bool CuiAbsolute::getEncoderTimedRaw(int j, double * enc, double * time)
     *enc = encoder;
     *time = encoderTimestamp;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif

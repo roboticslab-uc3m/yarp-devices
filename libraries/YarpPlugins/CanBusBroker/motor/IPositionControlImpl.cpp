@@ -119,11 +119,11 @@ yarp::dev::ReturnValue CanBusBroker::checkMotionDone(bool & flag)
 
     if (!ok || !task->dispatch())
     {
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
     }
 
     flag = std::all_of(sub_flags.begin(), sub_flags.end(), [](bool b) { return b; });
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 }
 #else
 bool CanBusBroker::checkMotionDone(bool * flag)
@@ -168,11 +168,11 @@ yarp::dev::ReturnValue CanBusBroker::checkMotionDone(const std::vector<int> & jo
 
     if (!ok || !task->dispatch())
     {
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
     }
 
     flag = std::all_of(sub_flags.begin(), sub_flags.end(), [](bool b) { return b; });
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 }
 #else
 bool CanBusBroker::checkMotionDone(int n_joint, const int * joints, bool * flag)

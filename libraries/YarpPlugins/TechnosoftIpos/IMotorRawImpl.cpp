@@ -35,7 +35,7 @@ bool TechnosoftIposBase::getTemperatureRaw(int m, double * val)
 {
     yCIError(IPOS, id(), "getTemperatureRaw() not supported");
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -51,7 +51,7 @@ bool TechnosoftIposBase::getTemperaturesRaw(double * vals)
 {
     yCIError(IPOS, id(), "getTemperaturesRaw() not supported");
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -67,7 +67,7 @@ bool TechnosoftIposBase::getTemperatureLimitRaw(int m, double * temp)
 {
     yCIError(IPOS, id(), "getTemperatureLimitRaw() not supported");
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -83,7 +83,7 @@ bool TechnosoftIposBase::setTemperatureLimitRaw(int m, double temp)
 {
     yCIError(IPOS, id(), "setTemperatureLimitRaw() not supported");
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -100,7 +100,7 @@ bool TechnosoftIposBase::getGearboxRatioRaw(int m, double * val)
     CHECK_JOINT(m);
     *val = tr;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -117,7 +117,7 @@ bool TechnosoftIposBase::setGearboxRatioRaw(int m, double val)
     CHECK_JOINT(m);
     tr = val;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif

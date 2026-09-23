@@ -34,9 +34,7 @@ bool EmulatedControlBoard::resetEncoders()
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return ok
-        ? yarp::dev::ReturnValue::return_code::return_value_ok
-        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+    return ok ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
     return ok;
 #endif
@@ -53,7 +51,7 @@ bool EmulatedControlBoard::setEncoder(int j, double val)
     CHECK_JOINT(j);
     setEncRaw(j, val * m_encRawExposeds[j]);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -76,7 +74,7 @@ bool EmulatedControlBoard::setEncoders(const double * vals)
 
     setEncsRaw(v);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -93,7 +91,7 @@ bool EmulatedControlBoard::getEncoder(int j, double * v)
     CHECK_JOINT(j);
     *v = getEncExposed(j);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -115,7 +113,7 @@ bool EmulatedControlBoard::getEncoders(double * encs)
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -134,7 +132,7 @@ bool EmulatedControlBoard::getEncoderSpeed(int j, double *sp)
     // Make it easy, give the current reference speed.
     *sp = velRaw[j] / m_velRawExposeds[j];  // begins to look like we should use semaphores.
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -156,9 +154,7 @@ bool EmulatedControlBoard::getEncoderSpeeds(double * spds)
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return ok
-        ? yarp::dev::ReturnValue::return_code::return_value_ok
-        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+    return ok ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
     return ok;
 #endif
@@ -169,7 +165,7 @@ bool EmulatedControlBoard::getEncoderSpeeds(double * spds)
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
 yarp::dev::ReturnValue EmulatedControlBoard::getEncoderAcceleration(int j, double * spds)
 {
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 }
 #else
 bool EmulatedControlBoard::getEncoderAcceleration(int j, double * spds)
@@ -183,7 +179,7 @@ bool EmulatedControlBoard::getEncoderAcceleration(int j, double * spds)
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
 yarp::dev::ReturnValue EmulatedControlBoard::getEncoderAccelerations(double * accs)
 {
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 }
 #else
 bool EmulatedControlBoard::getEncoderAccelerations(double * accs)
@@ -208,9 +204,7 @@ bool EmulatedControlBoard::getEncodersTimed(double * encs, double * time)
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return ok
-        ? yarp::dev::ReturnValue::return_code::return_value_ok
-        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+    return ok ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
     return ok;
 #endif

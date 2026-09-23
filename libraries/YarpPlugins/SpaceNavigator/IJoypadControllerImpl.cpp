@@ -41,7 +41,7 @@ bool SpaceNavigator::getAxisCount(unsigned int & axis_count)
 {
     axis_count = 6;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -57,7 +57,7 @@ bool SpaceNavigator::getButtonCount(unsigned int & button_count)
 {
     button_count = 2; // button1 and button2
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -73,7 +73,7 @@ bool SpaceNavigator::getTrackballCount(unsigned int & trackball_count)
 {
     trackball_count = 0;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -89,7 +89,7 @@ bool SpaceNavigator::getHatCount(unsigned int & hat_count)
 {
     hat_count = 0;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -105,7 +105,7 @@ bool SpaceNavigator::getTouchSurfaceCount(unsigned int & touch_count)
 {
     touch_count = 0;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -121,7 +121,7 @@ bool SpaceNavigator::getStickCount(unsigned int & stick_count)
 {
     stick_count = 0;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -151,7 +151,7 @@ bool SpaceNavigator::getButton(unsigned int button_id, float & value)
         std::lock_guard lock(mtx);
         value = button1;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_ok;
+        return yarp::dev::ReturnValue_ok;
 #else
         return true;
 #endif
@@ -161,7 +161,7 @@ bool SpaceNavigator::getButton(unsigned int button_id, float & value)
         std::lock_guard lock(mtx);
         value = button2;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_ok;
+        return yarp::dev::ReturnValue_ok;
 #else
         return true;
 #endif
@@ -169,7 +169,7 @@ bool SpaceNavigator::getButton(unsigned int button_id, float & value)
     default:
         yCError(SPNAV) << "Invalid button ID:" << button_id;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+        return yarp::dev::ReturnValue_error_input_out_of_bounds;
 #else
         return false;
 #endif
@@ -186,7 +186,7 @@ bool SpaceNavigator::getTrackball(unsigned int trackball_id, yarp::sig::Vector &
 {
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -201,7 +201,7 @@ bool SpaceNavigator::getHat(unsigned int hat_id, unsigned char & value)
 #endif
 {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -240,14 +240,14 @@ bool SpaceNavigator::getAxis(unsigned int axis_id, double & value)
     default:
         yCError(SPNAV) << "Invalid axis ID:" << axis_id;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+        return yarp::dev::ReturnValue_error_input_out_of_bounds;
 #else
         return false;
 #endif
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -267,7 +267,7 @@ yarp::dev::ReturnValue SpaceNavigator::getAllAxes(std::vector<double> & values)
         normalize(drz / m_fullScaleRZ, deadband)
     };
 
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 }
 #endif
 
@@ -280,7 +280,7 @@ bool SpaceNavigator::getStick(unsigned int stick_id, yarp::sig::Vector & value, 
 #endif
 {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -295,7 +295,7 @@ bool SpaceNavigator::getTouch(unsigned int touch_id, yarp::sig::Vector & value)
 #endif
 {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif

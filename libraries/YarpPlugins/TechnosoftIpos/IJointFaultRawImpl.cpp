@@ -16,7 +16,7 @@ bool TechnosoftIposBase::getLastJointFaultRaw(int axis, int & fault, std::string
     fault = lastFaultCode;
     message = lastFaultMessage;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif

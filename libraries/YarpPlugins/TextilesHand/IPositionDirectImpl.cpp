@@ -8,7 +8,7 @@
 yarp::dev::ReturnValue TextilesHand::getAxes(std::size_t & ax)
 {
     ax = 1;
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 }
 #else
 bool TextilesHand::getAxes(int * ax)
@@ -27,7 +27,7 @@ bool TextilesHand::setPosition(int j, double ref)
 #endif
 {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    if (j != 0) return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+    if (j != 0) return yarp::dev::ReturnValue_error_input_out_of_bounds;
 #else
     if (j != 0) return false;
 #endif
@@ -45,7 +45,7 @@ bool TextilesHand::setPosition(int j, double ref)
     else
     {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -54,7 +54,7 @@ bool TextilesHand::setPosition(int j, double ref)
     if (!iSerialDevice->send(cmdByte, 1))
     {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -62,7 +62,7 @@ bool TextilesHand::setPosition(int j, double ref)
 
     lastTarget = ref;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -100,7 +100,7 @@ bool TextilesHand::getRefPosition(int joint, double * ref)
 {
     *ref = lastTarget;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif

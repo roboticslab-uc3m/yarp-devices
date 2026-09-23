@@ -36,7 +36,7 @@ bool TechnosoftIposEmbedded::velocityMoveRaw(int j, double sp)
     {
         commandBuffer.accept(sp);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_ok;
+        return yarp::dev::ReturnValue_ok;
 #else
         return true;
 #endif
@@ -47,7 +47,7 @@ bool TechnosoftIposEmbedded::velocityMoveRaw(int j, double sp)
         && !can->driveStatus()->controlword(can->driveStatus()->controlword().reset(8)))
     {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -65,8 +65,7 @@ bool TechnosoftIposEmbedded::velocityMoveRaw(int j, double sp)
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
     return can->sdo()->download<std::int32_t>("Target velocity", data, 0x60FF)
-        ? yarp::dev::ReturnValue::return_code::return_value_ok
-        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
     return can->sdo()->download<std::int32_t>("Target velocity", data, 0x60FF);
 #endif
@@ -87,7 +86,7 @@ bool TechnosoftIposEmbedded::getRefVelocityRaw(int joint, double * vel)
     {
         *vel = commandBuffer.getStoredCommand();
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_ok;
+        return yarp::dev::ReturnValue_ok;
 #else
         return true;
 #endif
@@ -97,7 +96,7 @@ bool TechnosoftIposEmbedded::getRefVelocityRaw(int joint, double * vel)
     // (yarpmotorgui calls this quite fast)
     *vel = targetVelocity;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif

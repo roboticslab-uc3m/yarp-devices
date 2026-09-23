@@ -22,7 +22,7 @@ yarp::dev::ReturnValue EmulatedControlBoard::getAvailableControlModes(int j, std
         yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION_DIRECT
     };
 
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 }
 #endif
 
@@ -38,7 +38,7 @@ bool EmulatedControlBoard::getControlMode(int j, int * mode)
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
     mode = static_cast<yarp::dev::ControlModeEnum>(controlMode);
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     *mode = controlMode;
     return true;
@@ -69,9 +69,7 @@ bool EmulatedControlBoard::getControlModes(int * modes)
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return ok
-        ? yarp::dev::ReturnValue::return_code::return_value_ok
-        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+    return ok ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
     return ok;
 #endif
@@ -101,9 +99,7 @@ bool EmulatedControlBoard::getControlModes(int n_joint, const int * joints, int 
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return ok
-        ? yarp::dev::ReturnValue::return_code::return_value_ok
-        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+    return ok ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
     return ok;
 #endif
@@ -126,7 +122,7 @@ bool EmulatedControlBoard::setControlMode(int j, int mode)
     if (std::find(availableModes.begin(), availableModes.end(), mode) == availableModes.end())
     {
         yCError(ECB) << "Requested control mode not available for joint:" << j;
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
     }
 #else
     if (mode != VOCAB_CM_POSITION && mode != VOCAB_CM_VELOCITY && mode != VOCAB_CM_POSITION_DIRECT)
@@ -140,7 +136,7 @@ bool EmulatedControlBoard::setControlMode(int j, int mode)
     {
         yCError(ECB) << "Failed to stop joint before changing control mode:" << j;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -148,7 +144,7 @@ bool EmulatedControlBoard::setControlMode(int j, int mode)
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
     controlMode = static_cast<yarp::conf::vocab32_t>(mode);
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     controlMode = mode;
     return true;
@@ -171,9 +167,7 @@ bool EmulatedControlBoard::setControlModes(int * modes)
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return ok
-        ? yarp::dev::ReturnValue::return_code::return_value_ok
-        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+    return ok ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
     return ok;
 #endif
@@ -199,9 +193,7 @@ bool EmulatedControlBoard::setControlModes(int n_joint, const int * joints, int 
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return ok
-        ? yarp::dev::ReturnValue::return_code::return_value_ok
-        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+    return ok ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
     return ok;
 #endif

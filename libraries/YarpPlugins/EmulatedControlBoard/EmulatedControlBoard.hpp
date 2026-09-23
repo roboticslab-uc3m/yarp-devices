@@ -22,7 +22,7 @@
 #include "EmulatedControlBoard_ParamsParser.h"
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-#define CHECK_JOINT(j) do { if ((j) < 0 || (j) >= m_axes) return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds; } while (0)
+#define CHECK_JOINT(j) do { if ((j) < 0 || (j) >= m_axes) return yarp::dev::ReturnValue_error_input_out_of_bounds; } while (0)
 #else
 #define CHECK_JOINT(j) do { if ((j) < 0 || (j) >= m_axes) return false; } while (0)
 #endif

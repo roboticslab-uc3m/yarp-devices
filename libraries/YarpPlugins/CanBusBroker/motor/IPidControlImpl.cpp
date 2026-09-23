@@ -24,7 +24,7 @@ namespace
         auto [device, offset] = dm.getMotorDevice(j);
         auto * p = device->getHandle<yarp::dev::IPidControlRaw>();
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return p ? std::invoke(fn, p, type, offset, args...) : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return p ? std::invoke(fn, p, type, offset, args...) : yarp::dev::ReturnValue_error_method_failed;
 #else
         return p && std::invoke(fn, p, type, offset, args...);
 #endif
@@ -47,8 +47,8 @@ namespace
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
         return ok && task->dispatch()
-            ? yarp::dev::ReturnValue::return_code::return_value_ok
-            : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+            ? yarp::dev::ReturnValue_ok
+            : yarp::dev::ReturnValue_error_method_failed;
 #else
         return ok && task->dispatch();
 #endif
@@ -98,9 +98,7 @@ namespace
             }
         }
 
-        return ok
-            ? yarp::dev::ReturnValue::return_code::return_value_ok
-            : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return ok ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
     }
 #endif
 }

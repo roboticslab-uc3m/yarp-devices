@@ -20,7 +20,7 @@ bool TechnosoftIposExternal::getInteractionModeRaw(int axis, yarp::dev::Interact
     CHECK_JOINT(axis);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
     mode = actualInteractionMode;
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     *mode = actualInteractionMode;
     return true;
@@ -40,7 +40,7 @@ bool TechnosoftIposExternal::setInteractionModeRaw(int axis, yarp::dev::Interact
     if (mode == actualInteractionMode)
     {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_ok;
+        return yarp::dev::ReturnValue_ok;
 #else
         return true;
 #endif
@@ -63,7 +63,7 @@ bool TechnosoftIposExternal::setInteractionModeRaw(int axis, yarp::dev::Interact
     default:
         yCIError(IPOS, id()) << "Unsupported interaction mode" << yarp::os::Vocab32::decode(mode);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+        return yarp::dev::ReturnValue_error_input_out_of_bounds;
 #else
         return false;
 #endif

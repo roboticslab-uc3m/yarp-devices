@@ -19,7 +19,7 @@
 #include "LacqueyFetch_ParamsParser.h"
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-#define CHECK_JOINT(j) do { int n; if (getNumberOfMotorsRaw(&n), (j) != n - 1) return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds; } while (0)
+#define CHECK_JOINT(j) do { int n; if (getNumberOfMotorsRaw(&n), (j) != n - 1) return yarp::dev::ReturnValue_error_input_out_of_bounds; } while (0)
 #else
 #define CHECK_JOINT(j) do { int n; if (getNumberOfMotorsRaw(&n), (j) != n - 1) return false; } while (0)
 #endif

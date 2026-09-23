@@ -35,7 +35,7 @@ bool TechnosoftIposBase::setLimitsRaw(int axis, double min, double max)
 
     return okMin && okMax
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        ? yarp::dev::ReturnValue::return_code::return_value_ok : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
         ;
 #endif
@@ -78,7 +78,7 @@ bool TechnosoftIposBase::getLimitsRaw(int axis, double * min, double * max)
         *min = this->min;
         *max = this->max;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_ok;
+        return yarp::dev::ReturnValue_ok;
 #else
         return true;
 #endif
@@ -86,7 +86,7 @@ bool TechnosoftIposBase::getLimitsRaw(int axis, double * min, double * max)
 
     return getPosLimitRaw(min, true) & getPosLimitRaw(max, false)
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        ? yarp::dev::ReturnValue::return_code::return_value_ok : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
         ;
 #endif
@@ -133,7 +133,7 @@ bool TechnosoftIposBase::setVelLimitsRaw(int axis, double min, double max)
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -152,7 +152,7 @@ bool TechnosoftIposBase::getVelLimitsRaw(int axis, double * min, double * max)
     *max = maxVel;
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif

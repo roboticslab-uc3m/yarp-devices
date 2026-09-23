@@ -48,7 +48,7 @@ bool TechnosoftIposExternal::velocityMoveRaw(int j, double sp)
         }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_ok;
+        return yarp::dev::ReturnValue_ok;
 #else
         return true;
 #endif
@@ -56,7 +56,7 @@ bool TechnosoftIposExternal::velocityMoveRaw(int j, double sp)
     else
     {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -75,7 +75,7 @@ bool TechnosoftIposExternal::getRefVelocityRaw(int joint, double * vel)
     CHECK_MODE(VOCAB_CM_VELOCITY);
     *vel = enableCsv ? commandBuffer.getStoredCommand() : trajectory.queryVelocity();
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif

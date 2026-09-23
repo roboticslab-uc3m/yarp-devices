@@ -16,7 +16,7 @@ bool TechnosoftIposBase::getCurrentRaw(int m, double * curr)
     std::int16_t temp = lastCurrentRead;
     *curr = internalUnitsToCurrent(temp);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -37,8 +37,7 @@ bool TechnosoftIposBase::getCurrentRangeRaw(int m, double * min, double * max)
           *min = -(*max); },
         0x207F)
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        ? yarp::dev::ReturnValue::return_code::return_value_ok
-        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
         ;
 #endif
@@ -61,7 +60,7 @@ bool TechnosoftIposBase::setRefCurrentRaw(int m, double curr)
     {
         commandBuffer.accept(curr);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_ok;
+        return yarp::dev::ReturnValue_ok;
 #else
         return true;
 #endif
@@ -69,7 +68,7 @@ bool TechnosoftIposBase::setRefCurrentRaw(int m, double curr)
     else
     {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -88,7 +87,7 @@ bool TechnosoftIposBase::getRefCurrentRaw(int m, double * curr)
     CHECK_MODE(VOCAB_CM_CURRENT);
     *curr = commandBuffer.getStoredCommand();
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif

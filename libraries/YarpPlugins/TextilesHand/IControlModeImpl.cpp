@@ -11,10 +11,10 @@
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
 yarp::dev::ReturnValue TextilesHand::getAvailableControlModes(int j, std::vector<yarp::dev::SelectableControlModeEnum> & avail)
 {
-    if (j != 0) return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+    if (j != 0) return yarp::dev::ReturnValue_error_input_out_of_bounds;
     avail.clear();
     avail.push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION_DIRECT);
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 }
 #endif
 
@@ -23,9 +23,9 @@ yarp::dev::ReturnValue TextilesHand::getAvailableControlModes(int j, std::vector
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
 yarp::dev::ReturnValue TextilesHand::getControlMode(int j, yarp::dev::ControlModeEnum & mode)
 {
-    if (j != 0) return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+    if (j != 0) return yarp::dev::ReturnValue_error_input_out_of_bounds;
     mode = yarp::dev::ControlModeEnum::VOCAB_CM_POSITION_DIRECT;
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 }
 #else
 bool TextilesHand::getControlMode(int j, int * mode)
@@ -74,7 +74,7 @@ bool TextilesHand::setControlMode(int j, int mode)
 {
     yCWarning(TXT) << "setControlMode() not supported";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -90,7 +90,7 @@ bool TextilesHand::setControlModes(int * modes)
 {
     yCWarning(TXT) << "setControlModes() not supported";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -106,7 +106,7 @@ bool TextilesHand::setControlModes(int n_joint, const int * joints, int * modes)
 {
     yCWarning(TXT) << "setControlModes() not supported";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif

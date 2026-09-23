@@ -44,8 +44,8 @@
 #include "TechnosoftIpos_ParamsParser.h"
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-#define CHECK_JOINT(j) do { if (std::size_t ax; getAxes(ax), (j) < 0 || (j) >= ax) return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds; } while (0)
-#define CHECK_MODE(mode) do { if ((mode) != actualControlMode) return yarp::dev::ReturnValue::return_code::return_value_error_not_ready; } while (0)
+#define CHECK_JOINT(j) do { if (std::size_t ax; getAxes(ax), (j) < 0 || (j) >= ax) return yarp::dev::ReturnValue_error_input_out_of_bounds; } while (0)
+#define CHECK_MODE(mode) do { if ((mode) != actualControlMode) return yarp::dev::ReturnValue_error_not_ready; } while (0)
 #else
 #define CHECK_JOINT(j) do { if (int ax; getAxes(&ax), (j) < 0 || (j) >= ax) return false; } while (0)
 #define CHECK_MODE(mode) do { if ((mode) != actualControlMode) return false; } while (0)

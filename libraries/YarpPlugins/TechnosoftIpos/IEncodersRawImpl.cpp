@@ -10,7 +10,7 @@ using namespace roboticslab;
 yarp::dev::ReturnValue TechnosoftIposBase::getAxes(std::size_t & ax)
 {
     ax = 1;
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 }
 #else
 bool TechnosoftIposBase::getAxes(int * ax)
@@ -46,7 +46,7 @@ bool TechnosoftIposBase::setEncoderRaw(int j, double val)
     if (!can->sdo()->download("Set actual position", data, 0x2081))
     {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -54,7 +54,7 @@ bool TechnosoftIposBase::setEncoderRaw(int j, double val)
 
     lastEncoderRead->reset(data);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -72,7 +72,7 @@ bool TechnosoftIposBase::getEncoderRaw(int j, double * v)
     std::int32_t temp = lastEncoderRead->queryPosition();
     *v = internalUnitsToDegrees(temp);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -90,7 +90,7 @@ bool TechnosoftIposBase::getEncoderSpeedRaw(int j, double * sp)
     double temp = lastEncoderRead->querySpeed();
     *sp = internalUnitsToDegrees(temp, 1);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -108,7 +108,7 @@ bool TechnosoftIposBase::getEncoderAccelerationRaw(int j, double * acc)
     double temp = lastEncoderRead->queryAcceleration();
     *acc = internalUnitsToDegrees(temp, 2);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -127,7 +127,7 @@ bool TechnosoftIposBase::getEncoderTimedRaw(int j, double * enc, double * time)
     *enc = internalUnitsToDegrees(temp);
     *time = lastEncoderRead->queryTime();
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif

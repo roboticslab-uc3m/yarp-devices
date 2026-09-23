@@ -32,7 +32,7 @@ bool TechnosoftIposExternal::positionMoveRaw(int j, double ref)
                                      ref, refSpeed, refAcceleration);
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_ok;
+        return yarp::dev::ReturnValue_ok;
 #else
         return true;
 #endif
@@ -40,7 +40,7 @@ bool TechnosoftIposExternal::positionMoveRaw(int j, double ref)
     else
     {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -67,7 +67,7 @@ bool TechnosoftIposExternal::relativeMoveRaw(int j, double delta)
                                      trajectory.queryPosition() + delta, refSpeed, refAcceleration);
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_ok;
+        return yarp::dev::ReturnValue_ok;
 #else
         return true;
 #endif
@@ -75,7 +75,7 @@ bool TechnosoftIposExternal::relativeMoveRaw(int j, double delta)
     else
     {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -93,7 +93,7 @@ bool TechnosoftIposExternal::checkMotionDoneRaw(int j, bool * flag)
     CHECK_JOINT(j);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
     flag = !trajectory.isActive();
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     *flag = !trajectory.isActive();
     return true;
@@ -114,7 +114,7 @@ bool TechnosoftIposExternal::setRefSpeedRaw(int j, double sp)
     {
         yCIError(IPOS, id()) << "Illegal reference speed provided:" << sp;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+        return yarp::dev::ReturnValue_error_input_out_of_bounds;
 #else
         return false;
 #endif
@@ -138,7 +138,7 @@ bool TechnosoftIposExternal::setRefSpeedRaw(int j, double sp)
 
     refSpeed = sp;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -158,7 +158,7 @@ bool TechnosoftIposExternal::setRefAccelerationRaw(int j, double acc)
     {
         yCIError(IPOS, id()) << "Illegal reference acceleration provided:" << acc;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+        return yarp::dev::ReturnValue_error_input_out_of_bounds;
 #else
         return false;
 #endif
@@ -173,7 +173,7 @@ bool TechnosoftIposExternal::setRefAccelerationRaw(int j, double acc)
 
     refAcceleration = acc;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -190,7 +190,7 @@ bool TechnosoftIposExternal::getRefSpeedRaw(int j, double * ref)
     CHECK_JOINT(j);
     *ref = refSpeed;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -207,7 +207,7 @@ bool TechnosoftIposExternal::getRefAccelerationRaw(int j, double * acc)
     CHECK_JOINT(j);
     *acc = refAcceleration;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -226,7 +226,7 @@ bool TechnosoftIposExternal::stopRaw(int j)
     if (actualControlMode != VOCAB_CM_POSITION && actualControlMode != VOCAB_CM_VELOCITY)
     {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_not_ready;
+        return yarp::dev::ReturnValue_error_not_ready;
 #else
         return false;
 #endif
@@ -244,7 +244,7 @@ bool TechnosoftIposExternal::stopRaw(int j)
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -261,7 +261,7 @@ bool TechnosoftIposExternal::getTargetPositionRaw(int joint, double * ref)
     CHECK_JOINT(joint);
     *ref = trajectory.getTargetPosition();
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif

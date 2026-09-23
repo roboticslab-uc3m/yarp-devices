@@ -15,7 +15,7 @@ bool TechnosoftIposBase::getAxisNameRaw(int axis, std::string & name)
     CHECK_JOINT(axis);
     name = params.m_name;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -32,7 +32,7 @@ bool TechnosoftIposBase::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum & ty
     CHECK_JOINT(axis);
     type = static_cast<yarp::dev::JointTypeEnum>(jointType);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif

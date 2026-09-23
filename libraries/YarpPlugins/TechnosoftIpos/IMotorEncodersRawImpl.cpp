@@ -44,7 +44,7 @@ bool TechnosoftIposBase::setMotorEncoderCountsPerRevolutionRaw(int m, double cpr
     CHECK_JOINT(m);
     encoderPulses = cpr;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -61,7 +61,7 @@ bool TechnosoftIposBase::getMotorEncoderCountsPerRevolutionRaw(int m, double * c
     CHECK_JOINT(m);
     *cpr = encoderPulses;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -81,7 +81,7 @@ bool TechnosoftIposBase::setMotorEncoderRaw(int m, double val)
     if (!can->sdo()->download("Set actual position", data, 0x2081))
     {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -89,7 +89,7 @@ bool TechnosoftIposBase::setMotorEncoderRaw(int m, double val)
 
     lastEncoderRead->reset(data);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -107,7 +107,7 @@ bool TechnosoftIposBase::getMotorEncoderRaw(int m, double * v)
     std::int32_t temp = lastEncoderRead->queryPosition();
     *v = params.m_reverse ? -temp : temp;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -126,7 +126,7 @@ bool TechnosoftIposBase::getMotorEncoderTimedRaw(int m, double * enc, double * s
     *enc = params.m_reverse ? -temp : temp;
     *stamp = lastEncoderRead->queryTime();
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -144,7 +144,7 @@ bool TechnosoftIposBase::getMotorEncoderSpeedRaw(int m, double * sp)
     double temp = lastEncoderRead->querySpeed();
     *sp = params.m_reverse ? -temp : temp;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -162,7 +162,7 @@ bool TechnosoftIposBase::getMotorEncoderAccelerationRaw(int m, double * acc)
     double temp = lastEncoderRead->queryAcceleration();
     *acc = params.m_reverse ? -temp : temp;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif

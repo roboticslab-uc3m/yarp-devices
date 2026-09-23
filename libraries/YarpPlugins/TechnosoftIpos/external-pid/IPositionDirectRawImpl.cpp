@@ -21,7 +21,7 @@ bool TechnosoftIposExternal::setPositionRaw(int j, double ref)
     {
         commandBuffer.accept(ref); // TODO: clip if exceeds max speed
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_ok;
+        return yarp::dev::ReturnValue_ok;
 #else
         return true;
 #endif
@@ -29,7 +29,7 @@ bool TechnosoftIposExternal::setPositionRaw(int j, double ref)
     else
     {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -47,7 +47,7 @@ bool TechnosoftIposExternal::getRefPositionRaw(int joint, double * ref)
     CHECK_MODE(VOCAB_CM_POSITION_DIRECT);
     *ref = commandBuffer.getStoredCommand();
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif

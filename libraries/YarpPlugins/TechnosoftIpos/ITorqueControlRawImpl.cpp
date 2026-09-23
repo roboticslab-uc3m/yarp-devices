@@ -16,7 +16,7 @@ bool TechnosoftIposBase::getRefTorqueRaw(int j, double * t)
     CHECK_MODE(VOCAB_CM_TORQUE);
     *t = commandBuffer.getStoredCommand();
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -39,7 +39,7 @@ bool TechnosoftIposBase::setRefTorqueRaw(int j, double t)
     {
         commandBuffer.accept(t);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_ok;
+        return yarp::dev::ReturnValue_ok;
 #else
         return true;
 #endif
@@ -47,7 +47,7 @@ bool TechnosoftIposBase::setRefTorqueRaw(int j, double t)
     else
     {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -67,7 +67,7 @@ bool TechnosoftIposBase::getTorqueRaw(int j, double * t)
     double curr = internalUnitsToCurrent(temp);
     *t = currentToTorque(curr);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -89,8 +89,7 @@ bool TechnosoftIposBase::getTorqueRangeRaw(int j, double * min, double * max)
           *min = -(*max); },
         0x207F)
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        ? yarp::dev::ReturnValue::return_code::return_value_ok
-        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
         ;
 #endif
@@ -117,7 +116,7 @@ bool TechnosoftIposBase::getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorquePa
     params->velocityThres = 0.0;
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -134,7 +133,7 @@ bool TechnosoftIposBase::setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTo
     CHECK_JOINT(j);
     k = params.ktau;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif

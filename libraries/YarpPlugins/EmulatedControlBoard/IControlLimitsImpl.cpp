@@ -22,7 +22,7 @@ bool EmulatedControlBoard::setLimits(int axis, double min, double max)
     yCDebug(ECB, "Range of axis %d set to: %f to %f", axis, min, max);
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -44,7 +44,7 @@ bool EmulatedControlBoard::getLimits(int axis, double * min, double * max)
     yCDebug(ECB, "Range of axis %d read: %f to %f", axis, *min, *max);
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -60,7 +60,7 @@ bool EmulatedControlBoard::setVelLimits(int axis, double min, double max)
 {
     yCWarning(ECB, "setVelLimits() not implemented");
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -81,7 +81,7 @@ bool EmulatedControlBoard::getVelLimits(int axis, double * min, double * max)
     *max = 100.0;
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif

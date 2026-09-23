@@ -153,7 +153,7 @@ public:
         auto [device, offset] = getMotorDevice(j);
         T * p = device->getHandle<T>();
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return p ? std::invoke(fn, p, offset, std::forward<Args>(args)...) : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return p ? std::invoke(fn, p, offset, std::forward<Args>(args)...) : yarp::dev::ReturnValue_error_method_failed;
 #else
         return p && std::invoke(fn, p, offset, std::forward<Args>(args)...);
 #endif
@@ -186,9 +186,7 @@ public:
 
         // at least one targeted device must implement the 'T' iface
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return ok && task->dispatch()
-            ? yarp::dev::ReturnValue::return_code::return_value_ok
-            : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return ok && task->dispatch() ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
         return ok && task->dispatch();
 #endif
@@ -238,9 +236,7 @@ public:
             }
         }
 
-        return ok
-            ? yarp::dev::ReturnValue::return_code::return_value_ok
-            : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return ok ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
     }
 
     template<typename T, typename Elem>
@@ -266,9 +262,7 @@ public:
             }
         }
 
-        return ok && task->dispatch()
-            ? yarp::dev::ReturnValue::return_code::return_value_ok
-            : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return ok && task->dispatch() ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
     }
 #endif
 
@@ -300,9 +294,7 @@ public:
 
         // all targeted devices must implement the 'T' iface
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return ok && task->dispatch()
-            ? yarp::dev::ReturnValue::return_code::return_value_ok
-            : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return ok && task->dispatch() ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
         return ok && task->dispatch();
 #endif
@@ -369,9 +361,7 @@ public:
             }
         }
 
-        return ok
-            ? yarp::dev::ReturnValue::return_code::return_value_ok
-            : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return ok ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
     }
 
     template<typename T, typename Elem>
@@ -415,9 +405,7 @@ public:
             }
         }
 
-        return ok && task->dispatch()
-            ? yarp::dev::ReturnValue::return_code::return_value_ok
-            : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return ok && task->dispatch() ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
     }
 #endif
 

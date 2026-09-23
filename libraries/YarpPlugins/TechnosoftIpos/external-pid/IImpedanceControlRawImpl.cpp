@@ -23,7 +23,7 @@ bool TechnosoftIposExternal::getImpedanceRaw(int j, double * stiffness, double *
     *damping = impedancePid.kd;
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -43,7 +43,7 @@ bool TechnosoftIposExternal::setImpedanceRaw(int j, double stiffness, double dam
     {
         yCIError(IPOS, id(), "Invalid stiffness: %f (not in [%f, %f])", stiffness, params.m_minStiffness, params.m_maxStiffness);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+        return yarp::dev::ReturnValue_error_input_out_of_bounds;
 #else
         return false;
 #endif
@@ -53,7 +53,7 @@ bool TechnosoftIposExternal::setImpedanceRaw(int j, double stiffness, double dam
     {
         yCIError(IPOS, id(), "Invalid damping: %f (not in [%f, %f])", damping, params.m_minDamping, params.m_maxDamping);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+        return yarp::dev::ReturnValue_error_input_out_of_bounds;
 #else
         return false;
 #endif
@@ -63,7 +63,7 @@ bool TechnosoftIposExternal::setImpedanceRaw(int j, double stiffness, double dam
     impedancePid.setKp(stiffness);
     impedancePid.setKd(damping);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -83,7 +83,7 @@ bool TechnosoftIposExternal::setImpedanceOffsetRaw(int j, double offset)
     impedancePid.setOffset(offset);
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -103,7 +103,7 @@ bool TechnosoftIposExternal::getImpedanceOffsetRaw(int j, double * offset)
     *offset = impedancePid.offset;
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -125,7 +125,7 @@ bool TechnosoftIposExternal::getCurrentImpedanceLimitRaw(int j, double * min_sti
     *max_damp = params.m_maxDamping;
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif

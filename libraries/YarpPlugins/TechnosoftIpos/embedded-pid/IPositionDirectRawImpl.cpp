@@ -40,7 +40,7 @@ bool TechnosoftIposEmbedded::setPositionRaw(int j, double ref)
 
             ipBufferFilled = ok;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-            return ok ? yarp::dev::ReturnValue::return_code::return_value_ok : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+            return ok ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
             return ok;
 #endif
@@ -67,7 +67,7 @@ bool TechnosoftIposEmbedded::setPositionRaw(int j, double ref)
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -94,7 +94,7 @@ bool TechnosoftIposEmbedded::getRefPositionRaw(int joint, double * ref)
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif

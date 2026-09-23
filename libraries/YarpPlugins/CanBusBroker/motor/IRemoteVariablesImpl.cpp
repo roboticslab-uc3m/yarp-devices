@@ -108,9 +108,7 @@ bool CanBusBroker::getRemoteVariable(std::string key, yarp::os::Bottle & val)
                 if (!queryAll)
                 {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-                    return ok
-                        ? yarp::dev::ReturnValue::return_code::return_value_ok
-                        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+                    return ok ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
                     return ok;
 #endif
@@ -121,7 +119,7 @@ bool CanBusBroker::getRemoteVariable(std::string key, yarp::os::Bottle & val)
             {
                 yCError(CBB) << "Unsupported interface:" << key;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-                return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+                return yarp::dev::ReturnValue_error_method_failed;
 #else
                 return false;
 #endif
@@ -137,14 +135,14 @@ bool CanBusBroker::getRemoteVariable(std::string key, yarp::os::Bottle & val)
     {
         yCError(CBB) << "Node" << key << "not found, type e.g. \"ID19\" or \"all\"";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -168,7 +166,7 @@ bool CanBusBroker::setRemoteVariable(std::string key, const yarp::os::Bottle & v
             {
                 yCError(CBB) << "Not a list:", val.get(i).toString();
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-                return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+                return yarp::dev::ReturnValue_error_method_failed;
 #else
                 return false;
 #endif
@@ -180,7 +178,7 @@ bool CanBusBroker::setRemoteVariable(std::string key, const yarp::os::Bottle & v
             {
                 yCError(CBB) << "Illegal bottle format, expected string ID and values:" << nestedVal->toString();
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-                return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+                return yarp::dev::ReturnValue_error_method_failed;
 #else
                 return false;
 #endif
@@ -192,7 +190,7 @@ bool CanBusBroker::setRemoteVariable(std::string key, const yarp::os::Bottle & v
             {
                 yCError(CBB) << "Cannot set all node vars in multi mode";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-                return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+                return yarp::dev::ReturnValue_error_method_failed;
 #else
                 return false;
 #endif
@@ -204,7 +202,7 @@ bool CanBusBroker::setRemoteVariable(std::string key, const yarp::os::Bottle & v
                 {
                     yCError(CBB) << "Not a list:" << nestedVal->get(i).toString();
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-                    return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+                    return yarp::dev::ReturnValue_error_method_failed;
 #else
                     return false;
 #endif
@@ -215,9 +213,7 @@ bool CanBusBroker::setRemoteVariable(std::string key, const yarp::os::Bottle & v
         }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return ok
-            ? yarp::dev::ReturnValue::return_code::return_value_ok
-            : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return ok ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
         return ok;
 #endif
@@ -227,7 +223,7 @@ bool CanBusBroker::setRemoteVariable(std::string key, const yarp::os::Bottle & v
     {
         yCError(CBB) << "Empty value list";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return yarp::dev::ReturnValue_error_method_failed;
 #else
         return false;
 #endif
@@ -243,7 +239,7 @@ bool CanBusBroker::setRemoteVariable(std::string key, const yarp::os::Bottle & v
             {
                 yCError(CBB) << "Not a list:" << val.get(i).toString();
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-                return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+                return yarp::dev::ReturnValue_error_method_failed;
 #else
                 return false;
 #endif
@@ -254,8 +250,8 @@ bool CanBusBroker::setRemoteVariable(std::string key, const yarp::os::Bottle & v
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
         return ok
-            ? yarp::dev::ReturnValue::return_code::return_value_ok
-            : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+            ? yarp::dev::ReturnValue_ok
+            : yarp::dev::ReturnValue_error_method_failed;
 #else
         return ok;
 #endif
@@ -263,8 +259,8 @@ bool CanBusBroker::setRemoteVariable(std::string key, const yarp::os::Bottle & v
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
     return setSingleKeyValuePair(key, val, deviceMapper)
-        ? yarp::dev::ReturnValue::return_code::return_value_ok
-        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        ? yarp::dev::ReturnValue_ok
+        : yarp::dev::ReturnValue_error_method_failed;
 #else
     return setSingleKeyValuePair(key, val, deviceMapper);
 #endif
@@ -292,7 +288,7 @@ bool CanBusBroker::getRemoteVariablesList(yarp::os::Bottle * listOfKeys)
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif

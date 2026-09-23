@@ -20,7 +20,7 @@ bool EmulatedControlBoard::velocityMove(int j, double sp)
     {
         yCError(ECB) << "will not velocityMove as not in velocityMode";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_not_ready;
+        return yarp::dev::ReturnValue_error_not_ready;
 #else
         return false;
 #endif
@@ -30,7 +30,7 @@ bool EmulatedControlBoard::velocityMove(int j, double sp)
     jointStatus[j] = VELOCITY_MOVE;
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -52,9 +52,7 @@ bool EmulatedControlBoard::velocityMove(const double * sp)
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return ok
-        ? yarp::dev::ReturnValue::return_code::return_value_ok
-        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+    return ok ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
     return ok;
 #endif
@@ -76,9 +74,7 @@ bool EmulatedControlBoard::velocityMove(int n_joint, const int * joints, const d
     }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return ok
-        ? yarp::dev::ReturnValue::return_code::return_value_ok
-        : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+    return ok ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
     return ok;
 #endif
@@ -94,7 +90,7 @@ bool EmulatedControlBoard::getRefVelocity(int joint, double * vel)
 {
     yCWarning(ECB) << "getRefVelocity() not implemented yet";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -110,7 +106,7 @@ bool EmulatedControlBoard::getRefVelocities(double * vels)
 {
     yCWarning(ECB) << "getRefVelocities() not implemented yet";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -126,7 +122,7 @@ bool EmulatedControlBoard::getRefVelocities(int n_joint, const int * joints, dou
 {
     yCWarning(ECB) << "getRefVelocities() not implemented yet";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif

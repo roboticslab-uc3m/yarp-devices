@@ -26,7 +26,7 @@ yarp::dev::ReturnValue TechnosoftIposExternal::getAvailableControlModesRaw(int j
         yarp::dev::SelectableControlModeEnum::VOCAB_CM_IDLE
     };
 
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 }
 #endif
 
@@ -41,7 +41,7 @@ bool TechnosoftIposExternal::getControlModeRaw(int j, int * mode)
     CHECK_JOINT(j);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
     mode = static_cast<yarp::dev::ControlModeEnum>(actualControlMode.load());
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     *mode = actualControlMode;
     return true;
@@ -64,7 +64,7 @@ bool TechnosoftIposExternal::setControlModeRaw(int j, int mode)
     if (modeVocab == actualControlMode)
     {
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_ok;
+        return yarp::dev::ReturnValue_ok;
 #else
         return true;
 #endif
@@ -99,7 +99,7 @@ bool TechnosoftIposExternal::setControlModeRaw(int j, int mode)
         {
             yCIError(IPOS, id()) << "Unable to reset fault status";
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-            return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+            return yarp::dev::ReturnValue_error_method_failed;
 #else
             return false;
 #endif
@@ -110,8 +110,7 @@ bool TechnosoftIposExternal::setControlModeRaw(int j, int mode)
             && can->sdo()->download<std::int8_t>("Modes of Operation", 0, 0x6060) // reset drive mode
             && can->driveStatus()->controlword(can->driveStatus()->controlword().reset(4)) // disable ext. ref. torque mode
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-            ? yarp::dev::ReturnValue::return_code::return_value_ok
-            : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+            ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
             ;
 #endif
@@ -119,7 +118,7 @@ bool TechnosoftIposExternal::setControlModeRaw(int j, int mode)
         yCIError(IPOS, id()) << "Unsupported, unknown or read-only mode:" << yarp::os::Vocab32::decode(modeVocab);
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;
+        return yarp::dev::ReturnValue_error_input_out_of_bounds;
 #else
         return false;
 #endif
@@ -134,7 +133,7 @@ bool TechnosoftIposExternal::setControlModeRaw(int j, int mode)
     case VOCAB_CM_CURRENT:
         actualControlMode = modeVocab;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return yarp::dev::ReturnValue::return_code::return_value_ok;
+        return yarp::dev::ReturnValue_ok;
 #else
         return true;
 #endif
@@ -166,8 +165,7 @@ bool TechnosoftIposExternal::setControlModeRaw(int j, int mode)
         }
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-        return ret ? yarp::dev::ReturnValue::return_code::return_value_ok
-                   : yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+        return ret ? yarp::dev::ReturnValue_ok : yarp::dev::ReturnValue_error_method_failed;
 #else
         return ret;
 #endif

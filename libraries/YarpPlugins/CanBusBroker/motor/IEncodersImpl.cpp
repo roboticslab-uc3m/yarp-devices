@@ -10,7 +10,7 @@ using namespace roboticslab;
 yarp::dev::ReturnValue CanBusBroker::getAxes(std::size_t & axes)
 {
     axes = deviceMapper.getControlledAxes();
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 }
 #else
 bool CanBusBroker::getAxes(int * axes)

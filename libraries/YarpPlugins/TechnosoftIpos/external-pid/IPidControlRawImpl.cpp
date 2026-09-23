@@ -12,7 +12,7 @@
 
 // only position PID (for now?)
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-#define CHECK_PID_TYPE(type) do { if ((type) != yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION) return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device; } while (0)
+#define CHECK_PID_TYPE(type) do { if ((type) != yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION) return yarp::dev::ReturnValue_error_not_implemented_by_device; } while (0)
 #else
 #define CHECK_PID_TYPE(type) do { if ((type) != yarp::dev::VOCAB_PIDTYPE_POSITION) return false; } while (0)
 #endif
@@ -26,7 +26,7 @@ yarp::dev::ReturnValue TechnosoftIposExternal::getAvailablePidsRaw(int j, std::v
 {
     CHECK_JOINT(j);
     types = {yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION};
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 }
 #endif
 
@@ -43,7 +43,7 @@ bool TechnosoftIposExternal::setPidRaw(const yarp::dev::PidControlTypeEnum & pid
     std::lock_guard lock(pidMutex);
     positionPid = pid;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -57,7 +57,7 @@ yarp::dev::ReturnValue TechnosoftIposExternal::getPidOffsetRaw(const yarp::dev::
     CHECK_JOINT(j);
     CHECK_PID_TYPE(pidtype);
     yCIError(IPOS, id(), "getPidOffsetRaw() not implemented");
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 }
 
 // -----------------------------------------------------------------------------
@@ -67,7 +67,7 @@ yarp::dev::ReturnValue TechnosoftIposExternal::getPidFeedforwardRaw(const yarp::
     CHECK_JOINT(j);
     CHECK_PID_TYPE(pidtype);
     yCIError(IPOS, id(), "getPidFeedforwardRaw() not implemented");
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 }
 
 // -----------------------------------------------------------------------------
@@ -77,7 +77,7 @@ yarp::dev::ReturnValue TechnosoftIposExternal::getPidExtraInfoRaw(const yarp::de
     CHECK_JOINT(j);
     CHECK_PID_TYPE(pidtype);
     yCIError(IPOS, id(), "getPidExtraInfoRaw() not implemented");
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 }
 
 // -----------------------------------------------------------------------------
@@ -86,7 +86,7 @@ yarp::dev::ReturnValue TechnosoftIposExternal::getPidExtraInfosRaw(const yarp::d
 {
     CHECK_PID_TYPE(pidtype);
     yCIError(IPOS, id(), "getPidExtraInfosRaw() not implemented");
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 }
 #endif
 
@@ -103,7 +103,7 @@ bool TechnosoftIposExternal::setPidReferenceRaw(const yarp::dev::PidControlTypeE
     std::lock_guard lock(pidMutex);
     positionReference = ref;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -122,7 +122,7 @@ bool TechnosoftIposExternal::setPidErrorLimitRaw(const yarp::dev::PidControlType
     std::lock_guard lock(pidMutex);
     errorLimit = limit;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -141,7 +141,7 @@ bool TechnosoftIposExternal::getPidErrorRaw(const yarp::dev::PidControlTypeEnum 
     std::lock_guard lock(pidMutex);
     *err = proportionalError;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -196,7 +196,7 @@ bool TechnosoftIposExternal::getPidOutputRaw(const yarp::dev::PidControlTypeEnum
 
     *out = combinedTerms;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -215,7 +215,7 @@ bool TechnosoftIposExternal::getPidRaw(const yarp::dev::PidControlTypeEnum & pid
     std::lock_guard lock(pidMutex);
     *pid = positionPid;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -234,7 +234,7 @@ bool TechnosoftIposExternal::getPidReferenceRaw(const yarp::dev::PidControlTypeE
     std::lock_guard lock(pidMutex);
     *ref = positionReference;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -253,7 +253,7 @@ bool TechnosoftIposExternal::getPidErrorLimitRaw(const yarp::dev::PidControlType
     std::lock_guard lock(pidMutex);
     *limit = errorLimit;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -273,7 +273,7 @@ bool TechnosoftIposExternal::resetPidRaw(const yarp::dev::PidControlTypeEnum & p
     positionReference = internalUnitsToDegrees(lastEncoderRead->queryPosition());
     proportionalError = integralError = 0.0;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -291,7 +291,7 @@ bool TechnosoftIposExternal::disablePidRaw(const yarp::dev::PidControlTypeEnum &
     CHECK_PID_TYPE(pidtype);
     yCIError(IPOS, id(), "disablePidRaw() not implemented");
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -309,7 +309,7 @@ bool TechnosoftIposExternal::enablePidRaw(const yarp::dev::PidControlTypeEnum & 
     CHECK_PID_TYPE(pidtype);
     yCIError(IPOS, id(), "enablePidRaw() not implemented");
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 #else
     return false;
 #endif
@@ -328,7 +328,7 @@ bool TechnosoftIposExternal::setPidOffsetRaw(const yarp::dev::PidControlTypeEnum
     std::lock_guard lock(pidMutex);
     positionPid.offset = v;
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     return true;
 #endif
@@ -342,7 +342,7 @@ yarp::dev::ReturnValue TechnosoftIposExternal::setPidFeedforwardRaw(const yarp::
     CHECK_JOINT(j);
     CHECK_PID_TYPE(pidtype);
     yCIError(IPOS, id(), "setPidFeedforwardRaw() not implemented");
-    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    return yarp::dev::ReturnValue_error_not_implemented_by_device;
 }
 
 // -----------------------------------------------------------------------------
@@ -356,7 +356,7 @@ bool TechnosoftIposExternal::isPidEnabledRaw(const yarp::dev::PidControlTypeEnum
     CHECK_PID_TYPE(pidtype);
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
     enabled = true;
-    return yarp::dev::ReturnValue::return_code::return_value_ok;
+    return yarp::dev::ReturnValue_ok;
 #else
     *enabled = true;
     return true;
