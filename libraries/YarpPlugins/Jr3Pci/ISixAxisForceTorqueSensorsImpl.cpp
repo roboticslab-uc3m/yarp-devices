@@ -11,14 +11,26 @@
 
 constexpr auto NUM_SENSORS = 4;
 
-#define CHECK_SENSOR(n) do { if ((n) < 0 || (n) > NUM_SENSORS - 1) return false; } while (0)
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+#define CHECK_SENSOR(idx) do { std::size_t n; auto ret = getNrOfSixAxisForceTorqueSensors(n); if (!ret || (idx) < 0 || (idx) > n - 1) return yarp::dev::ReturnValue_error_input_out_of_bounds; } while (0)
+#else
+#define CHECK_SENSOR(idx) do { int n = getNrOfSixAxisForceTorqueSensors(); if ((idx) < 0 || (idx) > n - 1) return false; } while (0)
+#endif
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+yarp::dev::ReturnValue Jr3Pci::getNrOfSixAxisForceTorqueSensors(std::size_t & num) const
+{
+    num = NUM_SENSORS;
+    return yarp::dev::ReturnValue_ok;
+}
+#else
 std::size_t Jr3Pci::getNrOfSixAxisForceTorqueSensors() const
 {
     return NUM_SENSORS;
 }
+#endif
 
 // -----------------------------------------------------------------------------
 
@@ -29,23 +41,39 @@ yarp::dev::MAS_status Jr3Pci::getSixAxisForceTorqueSensorStatus(std::size_t sens
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+yarp::dev::ReturnValue Jr3Pci::getSixAxisForceTorqueSensorName(std::size_t sens_index, std::string & name) const
+#else
 bool Jr3Pci::getSixAxisForceTorqueSensorName(std::size_t sens_index, std::string & name) const
+#endif
 {
     CHECK_SENSOR(sens_index);
     name = m_names[sens_index];
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    return yarp::dev::ReturnValue_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+yarp::dev::ReturnValue Jr3Pci::getSixAxisForceTorqueSensorFrameName(std::size_t sens_index, std::string & name) const
+#else
 bool Jr3Pci::getSixAxisForceTorqueSensorFrameName(std::size_t sens_index, std::string & name) const
+#endif
 {
     return getSixAxisForceTorqueSensorName(sens_index, name);
 }
 
 // -----------------------------------------------------------------------------
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+yarp::dev::ReturnValue Jr3Pci::getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const
+#else
 bool Jr3Pci::getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const
+#endif
 {
     CHECK_SENSOR(sens_index);
 
@@ -54,7 +82,11 @@ bool Jr3Pci::getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::si
     if (::ioctl(fd, filters[sens_index], &fm) == -1)
     {
         yCError(JR3P) << "ioctl() on read sensor" << sens_index << "failed";
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+        return yarp::dev::ReturnValue_error_method_failed;
+#else
         return false;
+#endif
     }
 
     static constexpr auto factor = 1.0 / 16384.0;
@@ -78,7 +110,11 @@ bool Jr3Pci::getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::si
 
     timestamp = yarp::os::SystemClock::nowSystem();
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    return yarp::dev::ReturnValue_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------

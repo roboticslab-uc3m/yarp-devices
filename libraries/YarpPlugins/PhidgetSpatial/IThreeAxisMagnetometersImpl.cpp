@@ -2,10 +2,18 @@
 
 // -----------------------------------------------------------------------------
 
-size_t PhidgetSpatial::getNrOfThreeAxisMagnetometers() const
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+yarp::dev::ReturnValue PhidgetSpatial::getNrOfThreeAxisMagnetometers(std::size_t & num) const
+{
+    num = NUM_SENSORS;
+    return yarp::dev::ReturnValue_ok;
+}
+#else
+std::size_t PhidgetSpatial::getNrOfThreeAxisMagnetometers() const
 {
     return NUM_SENSORS;
 }
+#endif
 
 // -----------------------------------------------------------------------------
 
@@ -16,26 +24,39 @@ yarp::dev::MAS_status PhidgetSpatial::getThreeAxisMagnetometerStatus(size_t sens
 
 // -----------------------------------------------------------------------------
 
-
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+yarp::dev::ReturnValue PhidgetSpatial::getThreeAxisMagnetometerName(size_t sens_index, std::string & name) const
+#else
 bool PhidgetSpatial::getThreeAxisMagnetometerName(size_t sens_index, std::string & name) const
+#endif
 {
     CHECK_SENSOR(sens_index);
     name = "magnetometer";
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    return yarp::dev::ReturnValue_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+yarp::dev::ReturnValue PhidgetSpatial::getThreeAxisMagnetometerFrameName(size_t sens_index, std::string & frameName) const
+#else
 bool PhidgetSpatial::getThreeAxisMagnetometerFrameName(size_t sens_index, std::string & frameName) const
+#endif
 {
-    return getThreeAxisGyroscopeName(sens_index, frameName);
+    return getThreeAxisMagnetometerName(sens_index, frameName);
 }
 
 // -----------------------------------------------------------------------------
 
-
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+yarp::dev::ReturnValue PhidgetSpatial::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector & out, double & timestamp) const
+#else
 bool PhidgetSpatial::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector & out, double & timestamp) const
+#endif
 {
     CHECK_SENSOR(sens_index);
 
@@ -51,7 +72,11 @@ bool PhidgetSpatial::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::si
         timestamp = this->timestamp;
     }
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    return yarp::dev::ReturnValue_ok;
+#else
     return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------

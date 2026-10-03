@@ -10,6 +10,8 @@
  * @example{lineno} exampleRemoteJr3.cpp
  */
 
+#include <yarp/conf/version.h>
+
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
@@ -51,7 +53,12 @@ int main(int argc, char * argv[])
         return 1;
     }
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    std::size_t channels;
+    sensor->getNrOfSixAxisForceTorqueSensors(channels);
+#else
     int channels = sensor->getNrOfSixAxisForceTorqueSensors();
+#endif
     yInfo() << "Channels:" << channels;
 
     for (auto ch = 0; ch < channels; ch++)

@@ -106,11 +106,19 @@ namespace
     }
 
     template<typename T>
-    bool _queryHelper(const RawDevice * rd, const std::function<void(int, std::type_index)> & cb, std::size_t (T::*fn)() const)
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    bool _queryHelper(const RawDevice * rd, const std::function<void(std::size_t, std::type_index)> & cb, yarp::dev::ReturnValue (T::*fn)(std::size_t &) const)
+#else
+    bool _queryHelper(const RawDevice * rd, const std::function<void(std::size_t, std::type_index)> & cb, std::size_t (T::*fn)() const)
+#endif
     {
         if (auto handle = rd->getHandle<T>(); handle != nullptr)
         {
-            if (int count = std::invoke(fn, handle); count != 0)
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+            if (std::size_t count = 0; std::invoke(fn, handle, count) && count != 0)
+#else
+            if (std::size_t count = std::invoke(fn, handle); count != 0)
+#endif
             {
                 cb(count, typeid(T));
                 return true;
@@ -120,7 +128,7 @@ namespace
         return false;
     }
 
-    bool queryConnectedSensors(const RawDevice * rd, std::function<void(int, std::type_index)> cb)
+    bool queryConnectedSensors(const RawDevice * rd, std::function<void(std::size_t, std::type_index)> cb)
     {
         bool connected = false;
 
@@ -173,7 +181,7 @@ bool DeviceMapper::registerDevice(yarp::dev::PolyDriver * driver)
         totalAxes += localAxes;
     }
 
-    bool isSensorDevice = queryConnectedSensors(rd.get(), [this](int count, std::type_index hashable)
+    bool isSensorDevice = queryConnectedSensors(rd.get(), [this](std::size_t count, std::type_index hashable)
     {
         sensorOffsets[hashable].insert(sensorOffsets[hashable].end(), count, {devices.size(), connectedSensors[hashable], count});
         connectedSensors[hashable] += count;

@@ -99,6 +99,22 @@ struct DummyPositionDirectRaw : public yarp::dev::IPositionDirectRaw
  */
 struct DummySixAxisForceTorqueSensors : public yarp::dev::ISixAxisForceTorqueSensors
 {
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    yarp::dev::ReturnValue getNrOfSixAxisForceTorqueSensors(std::size_t & num) const override
+    { num = 1; return yarp::dev::ReturnValue_ok; }
+
+    yarp::dev::MAS_status getSixAxisForceTorqueSensorStatus(std::size_t sens_index) const override
+    { return yarp::dev::MAS_OK; }
+
+    yarp::dev::ReturnValue getSixAxisForceTorqueSensorName(std::size_t sens_index, std::string & name) const override
+    { name = "dummy"; return yarp::dev::ReturnValue_ok; }
+
+    yarp::dev::ReturnValue getSixAxisForceTorqueSensorFrameName(std::size_t sens_index, std::string & frameName) const override
+    { frameName = "dummy"; return yarp::dev::ReturnValue_ok; }
+
+    yarp::dev::ReturnValue getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override
+    { out[sens_index] = sens_index; timestamp = sens_index; return yarp::dev::ReturnValue_ok; }
+#else
     std::size_t getNrOfSixAxisForceTorqueSensors() const override
     { return 1; }
 
@@ -113,6 +129,7 @@ struct DummySixAxisForceTorqueSensors : public yarp::dev::ISixAxisForceTorqueSen
 
     bool getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override
     { out[sens_index] = sens_index; timestamp = sens_index; return true; }
+#endif
 };
 
 /**
@@ -158,8 +175,13 @@ struct SensorDriver : public yarp::dev::DeviceDriver,
                       public DummySixAxisForceTorqueSensors
 {
     //! Retrieve the number of connected sensors.
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    yarp::dev::ReturnValue getNrOfSixAxisForceTorqueSensors(std::size_t & num) const override
+    { num = N; return yarp::dev::ReturnValue_ok; }
+#else
     std::size_t getNrOfSixAxisForceTorqueSensors() const override
     { return N; }
+#endif
 
     //! Generate a dummy name that identifies this device given the number of sensors.
     static const std::string name()
@@ -565,7 +587,7 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
         ASSERT_EQ(devInvalid->getHandle<yarp::dev::IThreeAxisGyroscopes>(), nullptr);
         ASSERT_EQ(idInvalid, 0);
 
-        int sensors1, sensors2, sensors3, sensors4;
+        std::size_t sensors1, sensors2, sensors3, sensors4, sensorsTotal;
         double ref0, ref1, ref2, ref3;
         double timestamp;
         yarp::sig::Vector out(4);
@@ -596,7 +618,11 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
         ASSERT_EQ(p0, p2);
         ASSERT_EQ(p0, p3);
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+        ASSERT_TRUE(p0->getNrOfSixAxisForceTorqueSensors(sensors1));
+#else
         sensors1 = p0->getNrOfSixAxisForceTorqueSensors();
+#endif
         ASSERT_EQ(sensors1, 4);
 
         ASSERT_TRUE(p0->getSixAxisForceTorqueSensorMeasure(localIndex0, out, timestamp));
@@ -623,7 +649,11 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
         ASSERT_EQ(p4, p5);
         ASSERT_EQ(p4, p6);
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+        ASSERT_TRUE(p4->getNrOfSixAxisForceTorqueSensors(sensors2));
+#else
         sensors2 = p4->getNrOfSixAxisForceTorqueSensors();
+#endif
         ASSERT_EQ(sensors2, 3);
 
         ASSERT_TRUE(p4->getSixAxisForceTorqueSensorMeasure(localIndex1, out, timestamp));
@@ -644,7 +674,11 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
 
         ASSERT_EQ(p7, p8);
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+        ASSERT_TRUE(p7->getNrOfSixAxisForceTorqueSensors(sensors3));
+#else
         sensors3 = p7->getNrOfSixAxisForceTorqueSensors();
+#endif
         ASSERT_EQ(sensors3, 2);
 
         ASSERT_TRUE(p7->getSixAxisForceTorqueSensorMeasure(localIndex2, out, timestamp));
@@ -658,7 +692,11 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
         ASSERT_NE(p9, nullptr);
         ASSERT_EQ(idx9, localIndex0);
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+        ASSERT_TRUE(p9->getNrOfSixAxisForceTorqueSensors(sensors4));
+#else
         sensors4 = p9->getNrOfSixAxisForceTorqueSensors();
+#endif
         ASSERT_EQ(sensors4, 1);
 
         ASSERT_TRUE(p9->getSixAxisForceTorqueSensorMeasure(localIndex3, out, timestamp));
@@ -667,8 +705,14 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
 
         // DeviceMapper::getConnectedSensors
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+        ASSERT_TRUE(mapper.getConnectedSensors<yarp::dev::ISixAxisForceTorqueSensors>(sensorsTotal));
+        ASSERT_EQ(sensorsTotal, sensors1 + sensors2 + sensors3 + sensors4);
+        ASSERT_FALSE(mapper.getConnectedSensors<yarp::dev::IThreeAxisGyroscopes>(sensorsTotal));
+#else
         ASSERT_EQ(mapper.getConnectedSensors<yarp::dev::ISixAxisForceTorqueSensors>(), sensors1 + sensors2 + sensors3 + sensors4);
         ASSERT_EQ(mapper.getConnectedSensors<yarp::dev::IThreeAxisGyroscopes>(), 0);
+#endif
 
         // DeviceMapper::getDevices
 
@@ -679,37 +723,45 @@ TEST_F(YarpDeviceMapperTest, DeviceMapper)
         ASSERT_EQ(allDevices[7].get(), dev9);
     }
 
-    // DeviceMapper::createTask
+    {
+        // DeviceMapper::createTask
 
-    auto task = mapper.createTask();
-    ASSERT_EQ(task->size(), 0);
+        std::size_t sensorsTotal;
 
-    // DeviceMapper::mapSingleJoint
+        auto task = mapper.createTask();
+        ASSERT_EQ(task->size(), 0);
 
-    double ref_single;
-    ASSERT_TRUE(mapper.mapSingleJoint(&yarp::dev::IPositionDirectRaw::getRefPositionRaw, 8, &ref_single));
-    ASSERT_NEAR(ref_single, 2, EPSILON);
+        // DeviceMapper::mapSingleJoint
 
-    // DeviceMapper::mapAllJoints
+        double ref_single;
+        ASSERT_TRUE(mapper.mapSingleJoint(&yarp::dev::IPositionDirectRaw::getRefPositionRaw, 8, &ref_single));
+        ASSERT_NEAR(ref_single, 2, EPSILON);
 
-    double ref_full[10];
-    ASSERT_TRUE(mapper.mapAllJoints(&yarp::dev::IPositionDirectRaw::getRefPositionsRaw, ref_full));
-    ASSERT_EQ(std::vector<double>(ref_full, ref_full + 10), (std::vector<double>{0, 0, 1, 0, 1, 2, 0, 1, 2, 3})); // parens intentional
+        // DeviceMapper::mapAllJoints
 
-    // DeviceMapper::mapJointGroup
+        double ref_full[10];
+        ASSERT_TRUE(mapper.mapAllJoints(&yarp::dev::IPositionDirectRaw::getRefPositionsRaw, ref_full));
+        ASSERT_EQ(std::vector<double>(ref_full, ref_full + 10), (std::vector<double>{0, 0, 1, 0, 1, 2, 0, 1, 2, 3})); // parens intentional
 
-    const int jointCount = 5;
-    const int joints[jointCount] = {1, 3, 5, 7, 9};
-    double ref_group[jointCount];
-    ASSERT_TRUE(mapper.mapJointGroup(&yarp::dev::IPositionDirectRaw::getRefPositionsRaw, jointCount, joints, ref_group));
-    ASSERT_EQ(std::vector<double>(ref_group, ref_group + jointCount), (std::vector<double>{0, 0, 2, 1, 3})); // parens intentional
+        // DeviceMapper::mapJointGroup
 
-    // DeviceMapper::clear
+        const int jointCount = 5;
+        const int joints[jointCount] = {1, 3, 5, 7, 9};
+        double ref_group[jointCount];
+        ASSERT_TRUE(mapper.mapJointGroup(&yarp::dev::IPositionDirectRaw::getRefPositionsRaw, jointCount, joints, ref_group));
+        ASSERT_EQ(std::vector<double>(ref_group, ref_group + jointCount), (std::vector<double>{0, 0, 2, 1, 3})); // parens intentional
 
-    mapper.clear();
-    ASSERT_EQ(mapper.getDevices().size(), 0);
-    ASSERT_EQ(mapper.getControlledAxes(), 0);
-    ASSERT_EQ(mapper.getConnectedSensors<yarp::dev::ISixAxisForceTorqueSensors>(), 0);
+        // DeviceMapper::clear
+
+        mapper.clear();
+        ASSERT_EQ(mapper.getDevices().size(), 0);
+        ASSERT_EQ(mapper.getControlledAxes(), 0);
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+        ASSERT_FALSE(mapper.getConnectedSensors<yarp::dev::ISixAxisForceTorqueSensors>(sensorsTotal));
+#else
+        ASSERT_EQ(mapper.getConnectedSensors<yarp::dev::ISixAxisForceTorqueSensors>(), 0);
+#endif
+    }
 }
 
 } // namespace roboticslab::test

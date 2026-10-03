@@ -426,15 +426,28 @@ public:
 
     //! Retrieve the number of connected sensors of the specified type across all subdevices.
     template<typename T>
-    int getConnectedSensors() const
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    yarp::dev::ReturnValue getConnectedSensors(std::size_t & num) const
+#else
+    std::size_t getConnectedSensors() const
+#endif
     {
         // operator[] will insert a default-constructed value if not found
         if (auto it = connectedSensors.find(typeid(T)); it != connectedSensors.cend())
         {
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+            num = it->second;
+            return yarp::dev::ReturnValue_ok;
+#else
             return it->second;
+#endif
         }
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+        return yarp::dev::ReturnValue_error_method_failed;
+#else
         return 0;
+#endif
     }
 
     /**
@@ -486,18 +499,30 @@ public:
     }
 
     template<typename T, typename... T_out_params>
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    using sensor_output_fn = yarp::dev::ReturnValue (T::*)(std::size_t, T_out_params &...) const;
+#else
     using sensor_output_fn = bool (T::*)(std::size_t, T_out_params &...) const;
+#endif
 
     /**
       * @brief Retrieve information from the sensor device at the specified global index.
       * @return True whether everything went fine, false otherwise.
       */
     template<typename T, typename... T_out_params>
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    yarp::dev::ReturnValue getSensorOutput(sensor_output_fn<T, T_out_params...> fn, std::size_t index, T_out_params &... params) const
+#else
     bool getSensorOutput(sensor_output_fn<T, T_out_params...> fn, std::size_t index, T_out_params &... params) const
+#endif
     {
         auto [device, offset] = getSensorDevice<T>(index);
         auto * p = device->template getHandle<T>();
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+        return p ? std::invoke(fn, p, offset, params...) : yarp::dev::ReturnValue_error_method_failed;
+#else
         return p ? std::invoke(fn, p, offset, params...) : false;
+#endif
     }
 
 private:
@@ -508,7 +533,7 @@ private:
     std::vector<std::unique_ptr<const RawDevice>> devices;
     std::vector<dev_index_offset_t> motorOffsets;
     std::unordered_map<std::type_index, std::vector<dev_index_offset_t>> sensorOffsets;
-    std::unordered_map<std::type_index, int> connectedSensors;
+    std::unordered_map<std::type_index, std::size_t> connectedSensors;
 
     int totalAxes {0};
 

@@ -419,84 +419,165 @@ public:
 
     // --------- IContactLoadCellArrays declarations. Implementation in IContactLoadCellArraysImpl.cpp ---------
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    yarp::dev::ReturnValue getNrOfContactLoadCellArrays(std::size_t & num) const override;
+    yarp::dev::MAS_status getContactLoadCellArrayStatus(std::size_t sens_index) const override;
+    yarp::dev::ReturnValue getContactLoadCellArrayName(std::size_t sens_index, std::string & name) const override;
+    yarp::dev::ReturnValue getContactLoadCellArrayMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+    std::size_t getContactLoadCellArraySize(std::size_t sens_index) const override;
+#else
     std::size_t getNrOfContactLoadCellArrays() const override;
     yarp::dev::MAS_status getContactLoadCellArrayStatus(std::size_t sens_index) const override;
     bool getContactLoadCellArrayName(std::size_t sens_index, std::string & name) const override;
     bool getContactLoadCellArrayMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
     std::size_t getContactLoadCellArraySize(std::size_t sens_index) const override;
+#endif
 
     // --------- IEncoderArrays declarations. Implementation in IEncoderArraysImpl.cpp ---------
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    yarp::dev::ReturnValue getNrOfEncoderArrays(std::size_t & num) const override;
+    yarp::dev::MAS_status getEncoderArrayStatus(std::size_t sens_index) const override;
+    yarp::dev::ReturnValue getEncoderArrayName(std::size_t sens_index, std::string & name) const override;
+    yarp::dev::ReturnValue getEncoderArrayMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+    std::size_t getEncoderArraySize(std::size_t sens_index) const override;
+#else
     std::size_t getNrOfEncoderArrays() const override;
     yarp::dev::MAS_status getEncoderArrayStatus(std::size_t sens_index) const override;
     bool getEncoderArrayName(std::size_t sens_index, std::string & name) const override;
     bool getEncoderArrayMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
     std::size_t getEncoderArraySize(std::size_t sens_index) const override;
+#endif
 
     // --------- IOrientationSensors declarations. Implementation in IOrientationSensorsImpl.cpp ---------
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    yarp::dev::ReturnValue getNrOfOrientationSensors(std::size_t & num) const override;
+    yarp::dev::MAS_status getOrientationSensorStatus(std::size_t sens_index) const override;
+    yarp::dev::ReturnValue getOrientationSensorName(std::size_t sens_index, std::string & name) const override;
+    yarp::dev::ReturnValue getOrientationSensorFrameName(std::size_t sens_index, std::string & frameName) const override;
+    yarp::dev::ReturnValue getOrientationSensorMeasureAsRollPitchYaw(std::size_t sens_index, yarp::sig::Vector & rpy, double & timestamp) const override;
+#else
     std::size_t getNrOfOrientationSensors() const override;
     yarp::dev::MAS_status getOrientationSensorStatus(std::size_t sens_index) const override;
     bool getOrientationSensorName(std::size_t sens_index, std::string & name) const override;
     bool getOrientationSensorFrameName(std::size_t sens_index, std::string & frameName) const override;
     bool getOrientationSensorMeasureAsRollPitchYaw(std::size_t sens_index, yarp::sig::Vector & rpy, double & timestamp) const override;
+#endif
 
     // --------- IPositionSensors declarations. Implementation in IPositionSensorsImpl.cpp ---------
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    yarp::dev::ReturnValue getNrOfPositionSensors(std::size_t & num) const override;
+    yarp::dev::MAS_status getPositionSensorStatus(std::size_t sens_index) const override;
+    yarp::dev::ReturnValue getPositionSensorName(std::size_t sens_index, std::string & name) const override;
+    yarp::dev::ReturnValue getPositionSensorFrameName(std::size_t sens_index, std::string & frameName) const override;
+    yarp::dev::ReturnValue getPositionSensorMeasure(std::size_t sens_index, yarp::sig::Vector & xyz, double & timestamp) const override;
+#else
     std::size_t getNrOfPositionSensors() const override;
     yarp::dev::MAS_status getPositionSensorStatus(std::size_t sens_index) const override;
     bool getPositionSensorName(std::size_t sens_index, std::string & name) const override;
     bool getPositionSensorFrameName(std::size_t sens_index, std::string & frameName) const override;
     bool getPositionSensorMeasure(std::size_t sens_index, yarp::sig::Vector & xyz, double & timestamp) const override;
+#endif
 
     // --------- ISixAxisForceTorqueSensors declarations. Implementation in ISixAxisForceTorqueSensorsImpl.cpp ---------
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    yarp::dev::ReturnValue getNrOfSixAxisForceTorqueSensors(std::size_t & num) const override;
+    yarp::dev::MAS_status getSixAxisForceTorqueSensorStatus(std::size_t sens_index) const override;
+    yarp::dev::ReturnValue getSixAxisForceTorqueSensorName(std::size_t sens_index, std::string & name) const override;
+    yarp::dev::ReturnValue getSixAxisForceTorqueSensorFrameName(std::size_t sens_index, std::string & frameName) const override;
+    yarp::dev::ReturnValue getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+#else
     std::size_t getNrOfSixAxisForceTorqueSensors() const override;
     yarp::dev::MAS_status getSixAxisForceTorqueSensorStatus(std::size_t sens_index) const override;
     bool getSixAxisForceTorqueSensorName(std::size_t sens_index, std::string & name) const override;
     bool getSixAxisForceTorqueSensorFrameName(std::size_t sens_index, std::string & frameName) const override;
     bool getSixAxisForceTorqueSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+#endif
 
     // --------- ISkinPatches declarations. Implementation in ISkinPatchesImpl.cpp ---------
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    yarp::dev::ReturnValue getNrOfSkinPatches(std::size_t & num) const override;
+    yarp::dev::MAS_status getSkinPatchStatus(std::size_t sens_index) const override;
+    yarp::dev::ReturnValue getSkinPatchName(std::size_t sens_index, std::string & name) const override;
+    yarp::dev::ReturnValue getSkinPatchMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+    std::size_t getSkinPatchSize(std::size_t sens_index) const override;
+#else
     std::size_t getNrOfSkinPatches() const override;
     yarp::dev::MAS_status getSkinPatchStatus(std::size_t sens_index) const override;
     bool getSkinPatchName(std::size_t sens_index, std::string & name) const override;
     bool getSkinPatchMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
     std::size_t getSkinPatchSize(std::size_t sens_index) const override;
+#endif
 
     // --------- ITemperatureSensors declarations. Implementation in ITemperatureSensorsImpl.cpp ---------
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    yarp::dev::ReturnValue getNrOfTemperatureSensors(std::size_t & num) const override;
+    yarp::dev::MAS_status getTemperatureSensorStatus(std::size_t sens_index) const override;
+    yarp::dev::ReturnValue getTemperatureSensorName(std::size_t sens_index, std::string & name) const override;
+    yarp::dev::ReturnValue getTemperatureSensorFrameName(std::size_t sens_index, std::string & frameName) const override;
+    yarp::dev::ReturnValue getTemperatureSensorMeasure(std::size_t sens_index, double & out, double & timestamp) const override;
+    yarp::dev::ReturnValue getTemperatureSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+#else
     std::size_t getNrOfTemperatureSensors() const override;
     yarp::dev::MAS_status getTemperatureSensorStatus(std::size_t sens_index) const override;
     bool getTemperatureSensorName(std::size_t sens_index, std::string & name) const override;
     bool getTemperatureSensorFrameName(std::size_t sens_index, std::string & frameName) const override;
     bool getTemperatureSensorMeasure(std::size_t sens_index, double & out, double & timestamp) const override;
     bool getTemperatureSensorMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+#endif
 
     // --------- IThreeAxisGyroscopes declarations. Implementation in IThreeAxisGyroscopesImpl.cpp ---------
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    yarp::dev::ReturnValue getNrOfThreeAxisGyroscopes(std::size_t & num) const override;
+    yarp::dev::MAS_status getThreeAxisGyroscopeStatus(std::size_t sens_index) const override;
+    yarp::dev::ReturnValue getThreeAxisGyroscopeName(std::size_t sens_index, std::string & name) const override;
+    yarp::dev::ReturnValue getThreeAxisGyroscopeFrameName(std::size_t sens_index, std::string & frameName) const override;
+    yarp::dev::ReturnValue getThreeAxisGyroscopeMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+#else
     std::size_t getNrOfThreeAxisGyroscopes() const override;
     yarp::dev::MAS_status getThreeAxisGyroscopeStatus(std::size_t sens_index) const override;
     bool getThreeAxisGyroscopeName(std::size_t sens_index, std::string & name) const override;
     bool getThreeAxisGyroscopeFrameName(std::size_t sens_index, std::string & frameName) const override;
     bool getThreeAxisGyroscopeMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+#endif
 
     // --------- IThreeAxisLinearAccelerometers declarations. Implementation in IThreeAxisLinearAccelerometersImpl.cpp ---------
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    yarp::dev::ReturnValue getNrOfThreeAxisLinearAccelerometers(std::size_t & num) const override;
+    yarp::dev::MAS_status getThreeAxisLinearAccelerometerStatus(std::size_t sens_index) const override;
+    yarp::dev::ReturnValue getThreeAxisLinearAccelerometerName(std::size_t sens_index, std::string & name) const override;
+    yarp::dev::ReturnValue getThreeAxisLinearAccelerometerFrameName(std::size_t sens_index, std::string & frameName) const override;
+    yarp::dev::ReturnValue getThreeAxisLinearAccelerometerMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+#else
     std::size_t getNrOfThreeAxisLinearAccelerometers() const override;
     yarp::dev::MAS_status getThreeAxisLinearAccelerometerStatus(std::size_t sens_index) const override;
     bool getThreeAxisLinearAccelerometerName(std::size_t sens_index, std::string & name) const override;
     bool getThreeAxisLinearAccelerometerFrameName(std::size_t sens_index, std::string & frameName) const override;
     bool getThreeAxisLinearAccelerometerMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+#endif
 
     // --------- IThreeAxisMagnetometers declarations. Implementation in IThreeAxisMagnetometersImpl.cpp ---------
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    yarp::dev::ReturnValue getNrOfThreeAxisMagnetometers(std::size_t & num) const override;
+    yarp::dev::MAS_status getThreeAxisMagnetometerStatus(std::size_t sens_index) const override;
+    yarp::dev::ReturnValue getThreeAxisMagnetometerName(std::size_t sens_index, std::string & name) const override;
+    yarp::dev::ReturnValue getThreeAxisMagnetometerFrameName(std::size_t sens_index, std::string & frameName) const override;
+    yarp::dev::ReturnValue getThreeAxisMagnetometerMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+#else
     std::size_t getNrOfThreeAxisMagnetometers() const override;
     yarp::dev::MAS_status getThreeAxisMagnetometerStatus(std::size_t sens_index) const override;
     bool getThreeAxisMagnetometerName(std::size_t sens_index, std::string & name) const override;
     bool getThreeAxisMagnetometerFrameName(std::size_t sens_index, std::string & frameName) const override;
     bool getThreeAxisMagnetometerMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+#endif
 
 private:
     roboticslab::DeviceMapper deviceMapper;

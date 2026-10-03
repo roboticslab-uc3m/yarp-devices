@@ -5,6 +5,8 @@
 
 #include <mutex>
 
+#include <yarp/conf/version.h>
+
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
@@ -12,7 +14,11 @@
 
 constexpr auto NUM_SENSORS = 1;
 
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+#define CHECK_SENSOR(n) do { if ((n) < 0 || (n) > NUM_SENSORS - 1) return yarp::dev::ReturnValue_error_input_out_of_bounds; } while (0)
+#else
 #define CHECK_SENSOR(n) do { if ((n) < 0 || (n) > NUM_SENSORS - 1) return false; } while (0)
+#endif
 
 /**
  * @ingroup YarpPlugins
@@ -34,26 +40,50 @@ public:
     bool open(yarp::os::Searchable & config) override;
     bool close() override;
 
-    // --------- IThreeAxisLinearAccelerometers Declarations. Implementation in IThreeAxisLinearAccelerometersImpl.cpp ---------
-    size_t getNrOfThreeAxisLinearAccelerometers() const override;
-    yarp::dev::MAS_status getThreeAxisLinearAccelerometerStatus(size_t sens_index) const override;
-    bool getThreeAxisLinearAccelerometerName(size_t sens_index, std::string & name) const override;
-    bool getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string & frameName) const override;
-    bool getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+    // --------- IThreeAxisLinearAccelerometers declarations. Implementation in IThreeAxisLinearAccelerometersImpl.cpp ---------
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    yarp::dev::ReturnValue getNrOfThreeAxisLinearAccelerometers(std::size_t & num) const override;
+    yarp::dev::MAS_status getThreeAxisLinearAccelerometerStatus(std::size_t sens_index) const override;
+    yarp::dev::ReturnValue getThreeAxisLinearAccelerometerName(std::size_t sens_index, std::string & name) const override;
+    yarp::dev::ReturnValue getThreeAxisLinearAccelerometerFrameName(std::size_t sens_index, std::string & frameName) const override;
+    yarp::dev::ReturnValue getThreeAxisLinearAccelerometerMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+#else
+    std::size_t getNrOfThreeAxisLinearAccelerometers() const override;
+    yarp::dev::MAS_status getThreeAxisLinearAccelerometerStatus(std::size_t sens_index) const override;
+    bool getThreeAxisLinearAccelerometerName(std::size_t sens_index, std::string & name) const override;
+    bool getThreeAxisLinearAccelerometerFrameName(std::size_t sens_index, std::string & frameName) const override;
+    bool getThreeAxisLinearAccelerometerMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+#endif
 
-    // --------- IThreeAxisGyroscopes Declarations. Implementation in IThreeAxisGyroscopesImpl.cpp ---------
-    size_t getNrOfThreeAxisGyroscopes() const override;
-    yarp::dev::MAS_status getThreeAxisGyroscopeStatus(size_t sens_index) const override;
-    bool getThreeAxisGyroscopeName(size_t sens_index, std::string & name) const override;
-    bool getThreeAxisGyroscopeFrameName(size_t sens_index, std::string & frameName) const override;
-    bool getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+    // --------- IThreeAxisGyroscopes declarations. Implementation in IThreeAxisGyroscopesImpl.cpp ---------
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    yarp::dev::ReturnValue getNrOfThreeAxisGyroscopes(std::size_t & num) const override;
+    yarp::dev::MAS_status getThreeAxisGyroscopeStatus(std::size_t sens_index) const override;
+    yarp::dev::ReturnValue getThreeAxisGyroscopeName(std::size_t sens_index, std::string & name) const override;
+    yarp::dev::ReturnValue getThreeAxisGyroscopeFrameName(std::size_t sens_index, std::string & frameName) const override;
+    yarp::dev::ReturnValue getThreeAxisGyroscopeMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+#else
+    std::size_t getNrOfThreeAxisGyroscopes() const override;
+    yarp::dev::MAS_status getThreeAxisGyroscopeStatus(std::size_t sens_index) const override;
+    bool getThreeAxisGyroscopeName(std::size_t sens_index, std::string & name) const override;
+    bool getThreeAxisGyroscopeFrameName(std::size_t sens_index, std::string & frameName) const override;
+    bool getThreeAxisGyroscopeMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+#endif
 
-    // --------- IThreeAxisMagnetometers Declarations. Implementation in IThreeAxisMagnetometersImpl.cpp ---------
-    size_t getNrOfThreeAxisMagnetometers() const override;
-    yarp::dev::MAS_status getThreeAxisMagnetometerStatus(size_t sens_index) const override;
-    bool getThreeAxisMagnetometerName(size_t sens_index, std::string & name) const override;
-    bool getThreeAxisMagnetometerFrameName(size_t sens_index, std::string & frameName) const override;
-    bool getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+    // --------- IThreeAxisMagnetometers declarations. Implementation in IThreeAxisMagnetometersImpl.cpp ---------
+#if YARP_VERSION_COMPARE(>=, 4, 1, 0) || defined(YARP_NEXT)
+    yarp::dev::ReturnValue getNrOfThreeAxisMagnetometers(std::size_t & num) const override;
+    yarp::dev::MAS_status getThreeAxisMagnetometerStatus(std::size_t sens_index) const override;
+    yarp::dev::ReturnValue getThreeAxisMagnetometerName(std::size_t sens_index, std::string & name) const override;
+    yarp::dev::ReturnValue getThreeAxisMagnetometerFrameName(std::size_t sens_index, std::string & frameName) const override;
+    yarp::dev::ReturnValue getThreeAxisMagnetometerMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+#else
+    std::size_t getNrOfThreeAxisMagnetometers() const override;
+    yarp::dev::MAS_status getThreeAxisMagnetometerStatus(std::size_t sens_index) const override;
+    bool getThreeAxisMagnetometerName(std::size_t sens_index, std::string & name) const override;
+    bool getThreeAxisMagnetometerFrameName(std::size_t sens_index, std::string & frameName) const override;
+    bool getThreeAxisMagnetometerMeasure(std::size_t sens_index, yarp::sig::Vector & out, double & timestamp) const override;
+#endif
 
 private:
     // -- Helper Funcion declarations. Implementation in PhidgetSpatial.cpp --
