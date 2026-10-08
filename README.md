@@ -43,6 +43,7 @@ Some tricks for the different devices contained in this repository can be found 
 - [roboticslab-uc3m/amor-yarp-devices](https://github.com/roboticslab-uc3m/amor-yarp-devices)
 - [roboticslab-uc3m/dextra-yarp-devices](https://github.com/roboticslab-uc3m/dextra-yarp-devices)
 - [roboticslab-uc3m/aravis-yarp-devices](https://github.com/roboticslab-uc3m/aravis-yarp-devices)
+- [roboticslab-uc3m/teleop-yarp-devices](https://github.com/roboticslab-uc3m/teleop-yarp-devices)
 - [asrob-uc3m/yarp-devices](https://github.com/asrob-uc3m/yarp-devices)
 - [HUMASoft/yarp-devices](https://github.com/HUMASoft/yarp-devices)
 - [HUMASoft/CiA402Device](https://github.com/HUMASoft/CiA402Device)

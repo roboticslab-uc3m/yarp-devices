@@ -37,12 +37,9 @@ endif()
 # Soft dependencies.
 find_package(Doxygen QUIET)
 find_package(GTestSources 1.8 QUIET)
-find_package(Leap 2.3 EXACT QUIET)
 find_package(PCan 8.5 EXACT QUIET)
 find_package(Phidgets 2.1 EXACT QUIET)
 find_package(Python QUIET)
-find_package(Spnav QUIET)
-find_package(XWiimote 0.3 QUIET)
 
 # Always build YARP devices as MODULE libraries.
 set(YARP_FORCE_DYNAMIC_PLUGINS TRUE CACHE INTERNAL "Force dynamic plugins")
