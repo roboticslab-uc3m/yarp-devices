@@ -11,6 +11,17 @@ using namespace roboticslab;
 // -----------------------------------------------------------------------------
 
 #if YARP_VERSION_COMPARE(>=, 4, 0, 0)
+yarp::dev::ReturnValue LacqueyFetch::getAvailableControlModesRaw(int j, std::vector<yarp::dev::SelectableControlModeEnum> & avail)
+{
+    CHECK_JOINT(j);
+    avail = {yarp::dev::SelectableControlModeEnum::VOCAB_CM_PWM};
+    return yarp::dev::ReturnValue_ok;
+}
+#endif
+
+// -----------------------------------------------------------------------------
+
+#if YARP_VERSION_COMPARE(>=, 4, 0, 0)
 yarp::dev::ReturnValue LacqueyFetch::getControlModeRaw(int j, yarp::dev::ControlModeEnum & mode)
 #else
 bool LacqueyFetch::getControlModeRaw(int j, int * mode)
